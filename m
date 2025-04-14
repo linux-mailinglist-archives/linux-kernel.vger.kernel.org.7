@@ -1,172 +1,137 @@
-Return-Path: <linux-kernel+bounces-602272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AF71A878C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:32:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37BE8A878CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:33:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33B933A5D4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 07:32:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 025613AF49E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 07:33:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD31A1DC1A7;
-	Mon, 14 Apr 2025 07:32:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58CC12594AA;
+	Mon, 14 Apr 2025 07:33:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="awCovut7";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5Fe+XRD4"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="dw158rFs"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2434F1A3161;
-	Mon, 14 Apr 2025 07:32:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744615955; cv=none; b=gQf8HxHHDywhZ0FooiAUWjHiSfF2cj3ilefYMiEOiwNFCyf8GjnB98k5d0uon6M1lMwbZZPpIE0sfOTDv7CpwvrIDlOO16mZrgCAv6JXzkYo97MCwbnOnp847HyH2YQpHYYNpnHcdD4JM+HSkUdbALaPRrAhfsSw1HTa4Q5GkD0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744615955; c=relaxed/simple;
-	bh=tzEEwXbnXf4EP5gSjBkWwooM0FmRX6MPMkNxlvK9ESc=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=nw4sg6mSBGTk6QKvoQZsFm4bYfGpfl7ZQwTo/xJyAOSUc38s1GS01S/iC49p/QNUqPXK6adVDOA2/Lmh3S0aDtnzVEkQsxfE/dWf8U/82Q6vShbvul0qr57XpCjb+mg4wyZJc3zP/fmSfOAsbrKs4s2PPH+v08l6OmUn1/Z4fM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=awCovut7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5Fe+XRD4; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 14 Apr 2025 07:32:25 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744615949;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yzd/sNzUwzcCF4WdVvwkKiCySoTwG7TykwSehPyV72Y=;
-	b=awCovut7pz8p4U4WRsEQo+NBxyORTGjbodn1w7GCsN1QAQruJU2jDcROXvPcelb8eQWEA+
-	VygFAfyhlu2BxHCAgSJFPSq2JxAv/bfYB+XGaB2TxCqfnLdDbQwIDjo/qzywC/CKvDasOY
-	pHGKEMrZ1u1Zcfh/Wt/Mlde39pq7X+3NyNQ+SB63NEmmU5tLOHkvzMMOQ0nt4KaUC/efZ4
-	Mmh1JWdAjeslVhskzQNjykJTTAh7wIqSy0JmGi8cl5C0c5Ng6vOLudE5otA1c0StCUvTMe
-	HnAoZot2VQe1tpaDpKwPrTnNiZKt+d+Xn8Hq4P4CnNF1xRM/IBxnstgsH05pZw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744615949;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yzd/sNzUwzcCF4WdVvwkKiCySoTwG7TykwSehPyV72Y=;
-	b=5Fe+XRD45n3BHarLXKIX8l1pyBQ+3scC0i7aUJf68nCu9G4mZLtfbh7DL/e779b1hzfq2F
-	zLQG8WNDSIUGkDAw==
-From: "tip-bot2 for Uros Bizjak" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: core/urgent] genksyms: Handle typeof_unqual keyword and
- __seg_{fs,gs} qualifiers
-Cc: Paul Menzel <pmenzel@molgen.mpg.de>, Uros Bizjak <ubizjak@gmail.com>,
- Ingo Molnar <mingo@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Masahiro Yamada <yamada.masahiro@socionext.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250413220749.270704-1-ubizjak@gmail.com>
-References: <20250413220749.270704-1-ubizjak@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A9F258CEE;
+	Mon, 14 Apr 2025 07:33:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744616005; cv=pass; b=sIKzPKGLy1h+oBaI+xuYKjxifI1NXFJXv9OQwhYfm/VTvHxjIuumM+HECTF+ie1IuSNO+PlsffmCKYc0V9/+36OIUmDBXJgv7hw1FLLBAl6gCOshfJRi/oSByhITpDXP1JNVdiy7+9MFRCpjvPHNDLzZY5nqhTkyiaxmgeOC3SI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744616005; c=relaxed/simple;
+	bh=0DM+yECyVKmMRm/otDrf4OIShCY4xBTSKZrpEXD0gBY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p8K8rpyogwURuzCura6+3juKDZJzmE3Rm1bJp0YV8hClOKlC/k6vK3AAPi5rtd3wGYQeU3GzIFdVjGlt4e3DNeddcaw66DzpCPlQCUPxEM8xrBSJnS7w+fwdMzofESaL3MSPWFuJ8DS+TJdiPE5aY4UGAiAuAVuat25YUxKGtIw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=dw158rFs; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1744615967; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=S0354nrgj9hb6NeQadl1Jgb85f2XZ6MReFCZUBNsZDdDAzQrzRFwGnwr8EweP211SA50Xn4y+hioKW/Bz7wmSJyQzWGG86Adf+RIiSkVsJrAFwnk++2k92Nh+A0bocClaD6qEvMeHhwgCJW3OQZKy63j5AuNqVz9pD0HTHtwTRk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1744615967; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=r6Hcb7CoSvel25wAUR0OKJ4456sj4HsUlowzVIyObhI=; 
+	b=Qqza8kx+/OPX6Vbfz/xlS+1wWb4D/S0YtI/H9orFvcpgSpGFzTD7ZWXicQMorRRfkLY8zw0Zasu2X+LL5lPj0154UKv9ZEh+w1uw3aNmD0SyOa03w9DM4n1pwHykJNqkny8yw6F3vlYRtsis62vfJZSL6b8wVLirN7KXsEnTp8A=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
+	dmarc=pass header.from=<usama.anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1744615967;
+	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=r6Hcb7CoSvel25wAUR0OKJ4456sj4HsUlowzVIyObhI=;
+	b=dw158rFsigQq+3WvSfq3Kgi3Rvj53BgokKnVLW2u3VAHfgNngg/+0puXeBCjJE+y
+	/UGjtVvi3ANtObQaDu9BNvu0glsKVKO/GPUw9KS+PaIttwYgkUOw3xT4m8cT96ClSuA
+	71V/M5BsqaGYHQ1v/2k7u++MKga8gbd8jKW1CeHc=
+Received: by mx.zohomail.com with SMTPS id 1744615966149258.692739802746;
+	Mon, 14 Apr 2025 00:32:46 -0700 (PDT)
+Message-ID: <7d6b074c-8499-4984-b235-d1285b006ab3@collabora.com>
+Date: Mon, 14 Apr 2025 12:32:34 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174461594538.31282.5752735096854392083.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] bus: mhi: host: don't free bhie tables during
+ suspend/hibernation
+To: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Johannes Berg <johannes@sipsolutions.net>, Jeff Johnson
+ <jjohnson@kernel.org>, Jeffrey Hugo <quic_jhugo@quicinc.com>,
+ Yan Zhen <yanzhen@vivo.com>, Youssef Samir <quic_yabdulra@quicinc.com>,
+ Qiang Yu <quic_qianyu@quicinc.com>, Alex Elder <elder@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Kunwu Chan <chentao@kylinos.cn>, Jeff Hugo <jeff.hugo@oss.qualcomm.com>
+Cc: kernel@collabora.com, mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+ ath11k@lists.infradead.org
+References: <20250410145704.207969-1-usama.anjum@collabora.com>
+ <ba09ae0c-fe8d-8f4e-a1b8-9c7e5913c84e@quicinc.com>
+ <fc9ca0da-9f6a-42b5-aa79-abcd43c97043@collabora.com>
+ <e0159cb8-fe21-7f71-1ebe-744ed26bd698@quicinc.com>
+ <85580a01-289a-461b-b0f1-38fa1b96717c@collabora.com>
+ <1c0b2217-49d9-360c-ed60-db517eaf2ccc@quicinc.com>
+Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <1c0b2217-49d9-360c-ed60-db517eaf2ccc@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-The following commit has been merged into the core/urgent branch of tip:
+On 4/12/25 6:22 AM, Krishna Chaitanya Chundru wrote:
+> 
+> On 4/12/2025 12:02 AM, Muhammad Usama Anjum wrote:
+>> On 4/11/25 1:39 PM, Krishna Chaitanya Chundru wrote:
+>>>
+>>>
+>>> On 4/11/2025 12:32 PM, Muhammad Usama Anjum wrote:
+>>>> On 4/11/25 8:37 AM, Krishna Chaitanya Chundru wrote:
+>>>>>
+>>>>>
+>>>>> On 4/10/2025 8:26 PM, Muhammad Usama Anjum wrote:
+>>>>>> Fix dma_direct_alloc() failure at resume time during bhie_table
+>>>>>> allocation. There is a crash report where at resume time, the memory
+>>>>>> from the dma doesn't get allocated and MHI fails to re-initialize.
+>>>>>> There may be fragmentation of some kind which fails the allocation
+>>>>>> call.
+>>>>>>
+>>>>>> To fix it, don't free the memory at power down during suspend /
+>>>>>> hibernation. Instead, use the same allocated memory again after every
+>>>>>> resume / hibernation. This patch has been tested with resume and
+>>>>>> hibernation both.
+>>>>>>
+>>>>>> The rddm is of constant size for a given hardware. While the
+>>>>>> fbc_image
+>>>>>> size depends on the firmware. If the firmware changes, we'll free and
+>>>>> If firmware image will change between suspend and resume ?
+>>>> Yes, correct.
+>>>>
+>>> why the firmware image size will change between suspend & resume?
+>>> who will update the firmware image after bootup?
+>>> It is not expected behaviour.
+>> I was trying to research if the firmware can change or not. I've not
+>> found any documentation on it.
+>>
+>> If the firmare is updated in filesystem before suspend/hibernate, would
+>> the new firwmare be loaded the next time kernel resumes as the older
+>> firmware is no where to be found?
+>>
+>> What do you think about this?
+>>
+> I don't think firmware can be updated before suspend/hibernate. I don't
+> see any reason why it can be updated. If you think it can be updated
+> please quote relevant doc.
+I've not found any documentation on it. Let's wait for others to review
+and it it cannot be updated, I'll remove this part.
 
-Commit-ID:     1013f5636fd808569c1f4c40a58a4efc70713a28
-Gitweb:        https://git.kernel.org/tip/1013f5636fd808569c1f4c40a58a4efc70713a28
-Author:        Uros Bizjak <ubizjak@gmail.com>
-AuthorDate:    Mon, 14 Apr 2025 00:07:34 +02:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Mon, 14 Apr 2025 09:19:04 +02:00
-
-genksyms: Handle typeof_unqual keyword and __seg_{fs,gs} qualifiers
-
-Handle typeof_unqual, __typeof_unqual and __typeof_unqual__ keywords
-using TYPEOF_KEYW token in the same way as typeof keyword.
-
-Also ignore x86 __seg_fs and __seg_gs named address space qualifiers
-using X86_SEG_KEYW token in the same way as const, volatile or
-restrict qualifiers.
-
-Fixes: ac053946f5c4 ("compiler.h: introduce TYPEOF_UNQUAL() macro")
-Closes: https://lore.kernel.org/lkml/81a25a60-de78-43fb-b56a-131151e1c035@molgen.mpg.de/
-Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Link: https://lore.kernel.org/r/20250413220749.270704-1-ubizjak@gmail.com
----
- scripts/genksyms/keywords.c | 7 +++++++
- scripts/genksyms/parse.y    | 5 ++++-
- 2 files changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/scripts/genksyms/keywords.c b/scripts/genksyms/keywords.c
-index b85e097..ee1499d 100644
---- a/scripts/genksyms/keywords.c
-+++ b/scripts/genksyms/keywords.c
-@@ -17,6 +17,8 @@ static struct resword {
- 	{ "__signed__", SIGNED_KEYW },
- 	{ "__typeof", TYPEOF_KEYW },
- 	{ "__typeof__", TYPEOF_KEYW },
-+	{ "__typeof_unqual", TYPEOF_KEYW },
-+	{ "__typeof_unqual__", TYPEOF_KEYW },
- 	{ "__volatile", VOLATILE_KEYW },
- 	{ "__volatile__", VOLATILE_KEYW },
- 	{ "__builtin_va_list", VA_LIST_KEYW },
-@@ -40,6 +42,10 @@ static struct resword {
- 	// KAO. },
- 	// { "attribute", ATTRIBUTE_KEYW },
- 
-+	// X86 named address space qualifiers
-+	{ "__seg_gs", X86_SEG_KEYW },
-+	{ "__seg_fs", X86_SEG_KEYW },
-+
- 	{ "auto", AUTO_KEYW },
- 	{ "char", CHAR_KEYW },
- 	{ "const", CONST_KEYW },
-@@ -57,6 +63,7 @@ static struct resword {
- 	{ "struct", STRUCT_KEYW },
- 	{ "typedef", TYPEDEF_KEYW },
- 	{ "typeof", TYPEOF_KEYW },
-+	{ "typeof_unqual", TYPEOF_KEYW },
- 	{ "union", UNION_KEYW },
- 	{ "unsigned", UNSIGNED_KEYW },
- 	{ "void", VOID_KEYW },
-diff --git a/scripts/genksyms/parse.y b/scripts/genksyms/parse.y
-index ee600a8..efdcf07 100644
---- a/scripts/genksyms/parse.y
-+++ b/scripts/genksyms/parse.y
-@@ -91,6 +91,8 @@ static void record_compound(struct string_list **keyw,
- %token TYPEOF_KEYW
- %token VA_LIST_KEYW
- 
-+%token X86_SEG_KEYW
-+
- %token EXPORT_SYMBOL_KEYW
- 
- %token ASM_PHRASE
-@@ -292,7 +294,8 @@ type_qualifier_seq:
- 	;
- 
- type_qualifier:
--	CONST_KEYW | VOLATILE_KEYW
-+	X86_SEG_KEYW
-+	| CONST_KEYW | VOLATILE_KEYW
- 	| RESTRICT_KEYW
- 		{ /* restrict has no effect in prototypes so ignore it */
- 		  remove_node($1);
+-- 
+Regards,
+Usama
 
