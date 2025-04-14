@@ -1,176 +1,453 @@
-Return-Path: <linux-kernel+bounces-602373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84A95A879F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:15:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6DE3A879F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:15:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6F7E7A2F89
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:13:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B9C13B1334
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F209F259483;
-	Mon, 14 Apr 2025 08:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E445825A2AB;
+	Mon, 14 Apr 2025 08:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LIkBZX7X"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="F+5hJw5A";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pZ9ChVeO"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF912F42
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 08:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A152580E4;
+	Mon, 14 Apr 2025 08:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744618494; cv=none; b=tuNFIopv5mAxuh47B3F1Cq+E3465lzurFxDccJtU1O2T5ryFvVYtW/1PdioGAgvcP2QAI/pNBAvHFrQBOHLTnccXd5DTRv2+PRySpavhC+6JpCYMeF3LaXQ1n6SgdZ5Y3Xccjp+55OmqwQPN7u+NQR8s6x1pMTAF4Q8/uxDge2E=
+	t=1744618513; cv=none; b=gX7onkEOdc6dgZ9zDMbaGhof0GArDeJkmMJPFEsns8VoxO0xO/SR1V/lym/F7m3pt9A4FOPpxx54hvmSeljYk3FqGk6du72tTse0/PwJeYIuUytLxBWJvGtYPEYROdNvOGjE1um5kjkjp/MN8f1UV5Nk2gKrWQ3pUt2v8lDMir8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744618494; c=relaxed/simple;
-	bh=WTY2xF73491jcWi+pbUfD84Ujuuk6avE3RsdFENBEbI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hyc8YIW/mKbp0e4lPnGeGVaNvSNrT95thrr3ACVjyRkYgR5zT2KZDXJXHwvINy6o9B0dfGc8nTJ61ntZPC+bkCcRN3MvoAeKZ+BGmSMpKegGA0DZ8JF8E0ULwDewvypjqTZmi86BeenN+A8B+/gjY7A5EpLYkkNORjT4+DKHoGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LIkBZX7X; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-301d6cbbd5bso4139905a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 01:14:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744618492; x=1745223292; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dE9VD9RD6koBoFk7wXCP6jGtY5EgBLVP2+HcE47KE3Q=;
-        b=LIkBZX7Xv02wtc58kCU5PUul5KNF6uk4KL2VCO5sBmoTrzwgo2JcWVUGpxw8W73RLw
-         eK0SSxRdc5J2BtP9IOq/ClXpxXGLmObeZPuvvZW25NTueIrRfTiPNZc7Z6AJ1B9/Aq9c
-         MlkBcAAHc7SfY9hwEz7kMr5OMCyaf4ydsF/ed4yejiWDXkJj8JT6gud31eNGBd8KJkSp
-         Mw9DiXEeS9jP2lUYd8E9y3AtSZ56hw4HSkrm/TT1rwZFMmgpbIGwVLven3wBWCPoRBzQ
-         d6IxiyIZ0AJdD+Inw1GIT27zmxoPAF2v40zs19G7p7fIllDlRGwJZW8D0VJj0Be8stmV
-         8YEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744618492; x=1745223292;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dE9VD9RD6koBoFk7wXCP6jGtY5EgBLVP2+HcE47KE3Q=;
-        b=V6DhilDCSmiKhNQToWAz4IUBG25zHzBFzOmklfYbhZRGNZm//pR85t5Bcv8LOQh79x
-         SeaJi3bzEQxIJN2781uYx+h5NdJIvYefaJW4PKnjEbs+ACKlyAB1XZUzf1ZUlmdAQA5a
-         +vH9t8xuV8RL2VJP98iqiEcGobhWqL9ZRwHEpUFKiu6mswEenTBDySg4mehT/hjLXUd0
-         K8V2FuNmSK2caU2uiObGwvOq6d/8buI2muWl6iVNLwvH6Z3r4+mswaHC1AbAfR5uasQh
-         YMfE3hgd5genfgGf50r7oFbALKtL1cit8BDqpGpvCOfVPbiFI2CNdG5wjJrAKW/5JOzd
-         oncQ==
-X-Gm-Message-State: AOJu0YwBbPXYY1ZeZTzJ1UxaFTj7UlvwZJIPdtsHcjB8daAdMhL86/zu
-	0mv+vd8H/0vz2GPsOhr+HYqoFhoIn6J9Rb5O0h7Zg0P6owuviuLG
-X-Gm-Gg: ASbGncvrdnK4YyeyFzTmSrkgeYihK4DYpHlzZ7w4RnDlaib1+uzN4TRESlCN/5uLSbZ
-	BnDv3134JGv+elq6dEjESRTo/o7HjMmGcGoPMiNDOqsCXNWu8eITDtL+q12Qgcir5Esjg0qjofL
-	yXiLRYrvTewI7pps0h+3vYGiTsJV/7cFvDdaQCkV8olAiFqaTXS8KAsKKYM1W/NH1xmryG1KipU
-	k2cXtmedjEJTpRSVJdR6I0BLEIBJrYaPOTKERI17WYILlj7kQabiY/BW0wmt9ZY6ovVXs8nG3Xc
-	jjSC0VJdYg0mXUesRFItubVkSZYkKffgXST27yL+ziHm9wFFT///+b5H7uGCGnaz41ps650=
-X-Google-Smtp-Source: AGHT+IHZNL64bNtM1Gh4EgtOoA5Fj3JGdos+e7ftA8O6slt5XbT8WRDUX3EjS3Tn8E5q4eVggoZQOA==
-X-Received: by 2002:a17:90b:5206:b0:305:2d27:7ca7 with SMTP id 98e67ed59e1d1-308236523femr19745567a91.16.1744618491844;
-        Mon, 14 Apr 2025 01:14:51 -0700 (PDT)
-Received: from PC-YLX47FB9.company.local ([210.184.73.204])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-306dd1717cesm10731825a91.31.2025.04.14.01.14.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Apr 2025 01:14:51 -0700 (PDT)
-From: yangsonghua <jluyangsonghua@gmail.com>
-X-Google-Original-From: yangsonghua <yangsonghua@lixiang.com>
-To: tj@kernel.org,
-	void@manifault.com,
-	arighi@nvidia.com,
-	changwoo@igalia.com
-Cc: linux-kernel@vger.kernel.org,
-	sched-ext@meta.com,
-	yangsonghua <yangsonghua@lixiang.com>
-Subject: [PATCH v1] sched_ext: Improve cross-compilation support in Makefile
-Date: Mon, 14 Apr 2025 16:14:36 +0800
-Message-Id: <20250414081436.2574882-1-yangsonghua@lixiang.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1744618513; c=relaxed/simple;
+	bh=tFVtOp/vCpjyBcejWM8dmw7aqSKhkPSNCkQ5nuBBnXg=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=TnCMSTGiF4CUDJcEHthxh5xFZFH1KQdU9dSCi+RsltgZs4+xk5d9d5HzxLkaCvBRi856ZnOfjowlGjKbWEIcglSy3l3XG/8ZwASpzFo1Sh1OHGhmQR6lREVlqfTyrobgvq+12qz3TDcL9GmWbli+lGb4ZPbFrKH2Vn1HgR0eH5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=F+5hJw5A; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pZ9ChVeO; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 14 Apr 2025 08:15:05 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744618510;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XRRSW1MQCwaqqdtCCUZ/JveJw88OxB69vry56mXKx2A=;
+	b=F+5hJw5AXH/Gec81dhZQ/0LRrAJXA/YZoIUXWoptIS/lDFroEwmkw8rgFmM3a7IXrlKMm+
+	dbG1+AJ71XbejBV9U8q4pAPIxMXlAxrTNuJYz/9WRe2T4b+A9q+Z5D1T+ntJCiImQ3GJVO
+	FeUbfTFHmuqL32274B9YwDKop696KNyIeamjIQqmXu//2Nm+ZKI/n0b51X8AFUK9pqTGUq
+	isg/rFxpJ8/WdlRQe1stJqsG6/9hA/Qap5v8e+/Q51ElgphpD1+7dq+wYvHoBVenkikZqC
+	+8aavDxOb5UJaAxR0sFFHVbHGId1pOLNkNfPrAcPHz1AL4YhHEQJ0cxDCmjYSg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744618510;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XRRSW1MQCwaqqdtCCUZ/JveJw88OxB69vry56mXKx2A=;
+	b=pZ9ChVeOCxZbVzCy3T22bPhOY9clcdOisQyOKr7mXtMeRTWBOr1mAXWldPQhNPudDgaC3t
+	dBTV5AvbUCE+4fAQ==
+From: "tip-bot2 for Ingo Molnar" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/merge] x86/platform/amd: Move the <asm/amd_node.h> header
+ to <asm/amd/node.h>
+Cc: Ingo Molnar <mingo@kernel.org>, "Borislav Petkov (AMD)" <bp@alien8.de>,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Mario Limonciello <superm1@kernel.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250413084144.3746608-7-mingo@kernel.org>
+References: <20250413084144.3746608-7-mingo@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <174461850519.31282.4192093382144476566.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Modify the tools/sched_ext/Makefile to better handle cross-compilation
-environments by:
+The following commit has been merged into the x86/merge branch of tip:
 
-1. Fix host tools build directory structure by separating obj/ from output
-   (HOST_BUILD_DIR now points to $(OBJ_DIR)/host/obj)
-2. Properly propagate CROSS_COMPILE to libbpf sub-make invocation
-3. Add missing $(HOST_BPFOBJ) build rule with proper host toolchain flags
-   (ARCH=, CROSS_COMPILE=, explicit HOSTCC/HOSTLD)
-4. Consistently quote $(HOSTCC) in bpftool build rule
-5. Change LDFLAGS assignment to += to allow external extensions
+Commit-ID:     0a35c9280a9105e601cfe23b7c15522a195fa412
+Gitweb:        https://git.kernel.org/tip/0a35c9280a9105e601cfe23b7c15522a195fa412
+Author:        Ingo Molnar <mingo@kernel.org>
+AuthorDate:    Sun, 13 Apr 2025 10:41:44 +02:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Mon, 14 Apr 2025 09:34:17 +02:00
 
-The changes ensure proper cross-compilation behavior while maintaining
-backward compatibility with native builds. Host tools are now correctly
-built with the host toolchain while target binaries use the cross-toolchain.
+x86/platform/amd: Move the <asm/amd_node.h> header to <asm/amd/node.h>
 
-Signed-off-by: yangsonghua <yangsonghua@lixiang.com>
+Collect AMD specific platform header files in <asm/amd/*.h>.
+
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mario Limonciello <superm1@kernel.org>
+Link: https://lore.kernel.org/r/20250413084144.3746608-7-mingo@kernel.org
 ---
- tools/sched_ext/Makefile | 23 +++++++++++++++++------
- 1 file changed, 17 insertions(+), 6 deletions(-)
+ MAINTAINERS                          |  2 +-
+ arch/x86/include/asm/amd/nb.h        |  2 +-
+ arch/x86/include/asm/amd/node.h      | 60 +++++++++++++++++++++++++++-
+ arch/x86/include/asm/amd_node.h      | 60 +---------------------------
+ arch/x86/kernel/amd_node.c           |  2 +-
+ arch/x86/pci/fixup.c                 |  2 +-
+ drivers/edac/amd64_edac.c            |  2 +-
+ drivers/hwmon/k10temp.c              |  2 +-
+ drivers/platform/x86/amd/hsmp/acpi.c |  2 +-
+ drivers/platform/x86/amd/hsmp/plat.c |  2 +-
+ drivers/platform/x86/amd/pmc/pmc.c   |  2 +-
+ drivers/platform/x86/amd/pmf/core.c  |  2 +-
+ drivers/ras/amd/atl/internal.h       |  2 +-
+ sound/soc/amd/acp/acp-rembrandt.c    |  2 +-
+ sound/soc/amd/acp/acp63.c            |  2 +-
+ sound/soc/amd/acp/acp70.c            |  2 +-
+ sound/soc/sof/amd/acp.c              |  2 +-
+ 17 files changed, 75 insertions(+), 75 deletions(-)
+ create mode 100644 arch/x86/include/asm/amd/node.h
+ delete mode 100644 arch/x86/include/asm/amd_node.h
 
-diff --git a/tools/sched_ext/Makefile b/tools/sched_ext/Makefile
-index ca3815e572d8..d68780e2e03d 100644
---- a/tools/sched_ext/Makefile
-+++ b/tools/sched_ext/Makefile
-@@ -61,8 +61,8 @@ SCXOBJ_DIR := $(OBJ_DIR)/sched_ext
- BINDIR := $(OUTPUT_DIR)/bin
- BPFOBJ := $(BPFOBJ_DIR)/libbpf.a
- ifneq ($(CROSS_COMPILE),)
--HOST_BUILD_DIR		:= $(OBJ_DIR)/host
--HOST_OUTPUT_DIR	:= host-tools
-+HOST_BUILD_DIR		:= $(OBJ_DIR)/host/obj
-+HOST_OUTPUT_DIR	:= $(OBJ_DIR)/host
- HOST_INCLUDE_DIR	:= $(HOST_OUTPUT_DIR)/include
- else
- HOST_BUILD_DIR		:= $(OBJ_DIR)
-@@ -98,7 +98,7 @@ ifneq ($(LLVM),)
- CFLAGS += -Wno-unused-command-line-argument
- endif
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d4ea6d7..14bbb43 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1142,7 +1142,7 @@ M:	Mario Limonciello <mario.limonciello@amd.com>
+ M:	Yazen Ghannam <yazen.ghannam@amd.com>
+ L:	linux-kernel@vger.kernel.org
+ S:	Supported
+-F:	arch/x86/include/asm/amd_node.h
++F:	arch/x86/include/asm/amd/node.h
+ F:	arch/x86/kernel/amd_node.c
  
--LDFLAGS = -lelf -lz -lpthread
-+LDFLAGS += -lelf -lz -lpthread
+ AMD PDS CORE DRIVER
+diff --git a/arch/x86/include/asm/amd/nb.h b/arch/x86/include/asm/amd/nb.h
+index adfa085..ddb5108 100644
+--- a/arch/x86/include/asm/amd/nb.h
++++ b/arch/x86/include/asm/amd/nb.h
+@@ -4,7 +4,7 @@
  
- IS_LITTLE_ENDIAN = $(shell $(CC) -dM -E - </dev/null |				\
- 			grep 'define __BYTE_ORDER__ __ORDER_LITTLE_ENDIAN__')
-@@ -136,14 +136,25 @@ $(MAKE_DIRS):
- $(BPFOBJ): $(wildcard $(BPFDIR)/*.[ch] $(BPFDIR)/Makefile)			\
- 	   $(APIDIR)/linux/bpf.h						\
- 	   | $(OBJ_DIR)/libbpf
--	$(Q)$(MAKE) $(submake_extras) -C $(BPFDIR) OUTPUT=$(OBJ_DIR)/libbpf/	\
-+	$(Q)$(MAKE) $(submake_extras) CROSS_COMPILE=$(CROSS_COMPILE) 		\
-+		    -C $(BPFDIR) OUTPUT=$(OBJ_DIR)/libbpf/			\
- 		    EXTRA_CFLAGS='-g -O0 -fPIC'					\
-+		    LDFLAGS="$(LDFLAGS)"					\
- 		    DESTDIR=$(OUTPUT_DIR) prefix= all install_headers
+ #include <linux/ioport.h>
+ #include <linux/pci.h>
+-#include <asm/amd_node.h>
++#include <asm/amd/node.h>
  
-+$(HOST_BPFOBJ): $(wildcard $(BPFDIR)/*.[ch] $(BPFDIR)/Makefile)		\
-+	   $(APIDIR)/linux/bpf.h						\
-+	   | $(HOST_BUILD_DIR)/libbpf
-+	$(Q)$(MAKE) $(submake_extras) -C $(BPFDIR) 				\
-+		    OUTPUT=$(HOST_BUILD_DIR)/libbpf/				\
-+		    ARCH= CROSS_COMPILE= CC="$(HOSTCC)" LD=$(HOSTLD)		\
-+		    EXTRA_CFLAGS='-g -O0 -fPIC'					\
-+		    DESTDIR=$(HOST_OUTPUT_DIR) prefix= all install_headers
+ struct amd_nb_bus_dev_range {
+ 	u8 bus;
+diff --git a/arch/x86/include/asm/amd/node.h b/arch/x86/include/asm/amd/node.h
+new file mode 100644
+index 0000000..23fe617
+--- /dev/null
++++ b/arch/x86/include/asm/amd/node.h
+@@ -0,0 +1,60 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * AMD Node helper functions and common defines
++ *
++ * Copyright (c) 2024, Advanced Micro Devices, Inc.
++ * All Rights Reserved.
++ *
++ * Author: Yazen Ghannam <Yazen.Ghannam@amd.com>
++ *
++ * Note:
++ * Items in this file may only be used in a single place.
++ * However, it's prudent to keep all AMD Node functionality
++ * in a unified place rather than spreading throughout the
++ * kernel.
++ */
 +
- $(DEFAULT_BPFTOOL): $(wildcard $(BPFTOOLDIR)/*.[ch] $(BPFTOOLDIR)/Makefile)	\
- 		    $(HOST_BPFOBJ) | $(HOST_BUILD_DIR)/bpftool
- 	$(Q)$(MAKE) $(submake_extras)  -C $(BPFTOOLDIR)				\
--		    ARCH= CROSS_COMPILE= CC=$(HOSTCC) LD=$(HOSTLD)		\
-+		    ARCH= CROSS_COMPILE= CC="$(HOSTCC)" LD=$(HOSTLD)		\
- 		    EXTRA_CFLAGS='-g -O0'					\
- 		    OUTPUT=$(HOST_BUILD_DIR)/bpftool/				\
- 		    LIBBPF_OUTPUT=$(HOST_BUILD_DIR)/libbpf/			\
-@@ -185,7 +196,7 @@ $(addprefix $(BINDIR)/,$(c-sched-targets)): \
- 		$(SCX_COMMON_DEPS)
- 	$(eval sched=$(notdir $@))
- 	$(CC) $(CFLAGS) -c $(sched).c -o $(SCXOBJ_DIR)/$(sched).o
--	$(CC) -o $@ $(SCXOBJ_DIR)/$(sched).o $(HOST_BPFOBJ) $(LDFLAGS)
-+	$(CC) -o $@ $(SCXOBJ_DIR)/$(sched).o $(BPFOBJ) $(LDFLAGS)
++#ifndef _ASM_X86_AMD_NODE_H_
++#define _ASM_X86_AMD_NODE_H_
++
++#include <linux/pci.h>
++
++#define MAX_AMD_NUM_NODES	8
++#define AMD_NODE0_PCI_SLOT	0x18
++
++struct pci_dev *amd_node_get_func(u16 node, u8 func);
++struct pci_dev *amd_node_get_root(u16 node);
++
++static inline u16 amd_num_nodes(void)
++{
++	return topology_amd_nodes_per_pkg() * topology_max_packages();
++}
++
++#ifdef CONFIG_AMD_NODE
++int __must_check amd_smn_read(u16 node, u32 address, u32 *value);
++int __must_check amd_smn_write(u16 node, u32 address, u32 value);
++
++/* Should only be used by the HSMP driver. */
++int __must_check amd_smn_hsmp_rdwr(u16 node, u32 address, u32 *value, bool write);
++#else
++static inline int __must_check amd_smn_read(u16 node, u32 address, u32 *value) { return -ENODEV; }
++static inline int __must_check amd_smn_write(u16 node, u32 address, u32 value) { return -ENODEV; }
++
++static inline int __must_check amd_smn_hsmp_rdwr(u16 node, u32 address, u32 *value, bool write)
++{
++	return -ENODEV;
++}
++#endif /* CONFIG_AMD_NODE */
++
++/* helper for use with read_poll_timeout */
++static inline int smn_read_register(u32 reg)
++{
++	int data, rc;
++
++	rc = amd_smn_read(0, reg, &data);
++	if (rc)
++		return rc;
++
++	return data;
++}
++#endif /*_ASM_X86_AMD_NODE_H_*/
+diff --git a/arch/x86/include/asm/amd_node.h b/arch/x86/include/asm/amd_node.h
+deleted file mode 100644
+index 23fe617..0000000
+--- a/arch/x86/include/asm/amd_node.h
++++ /dev/null
+@@ -1,60 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-/*
+- * AMD Node helper functions and common defines
+- *
+- * Copyright (c) 2024, Advanced Micro Devices, Inc.
+- * All Rights Reserved.
+- *
+- * Author: Yazen Ghannam <Yazen.Ghannam@amd.com>
+- *
+- * Note:
+- * Items in this file may only be used in a single place.
+- * However, it's prudent to keep all AMD Node functionality
+- * in a unified place rather than spreading throughout the
+- * kernel.
+- */
+-
+-#ifndef _ASM_X86_AMD_NODE_H_
+-#define _ASM_X86_AMD_NODE_H_
+-
+-#include <linux/pci.h>
+-
+-#define MAX_AMD_NUM_NODES	8
+-#define AMD_NODE0_PCI_SLOT	0x18
+-
+-struct pci_dev *amd_node_get_func(u16 node, u8 func);
+-struct pci_dev *amd_node_get_root(u16 node);
+-
+-static inline u16 amd_num_nodes(void)
+-{
+-	return topology_amd_nodes_per_pkg() * topology_max_packages();
+-}
+-
+-#ifdef CONFIG_AMD_NODE
+-int __must_check amd_smn_read(u16 node, u32 address, u32 *value);
+-int __must_check amd_smn_write(u16 node, u32 address, u32 value);
+-
+-/* Should only be used by the HSMP driver. */
+-int __must_check amd_smn_hsmp_rdwr(u16 node, u32 address, u32 *value, bool write);
+-#else
+-static inline int __must_check amd_smn_read(u16 node, u32 address, u32 *value) { return -ENODEV; }
+-static inline int __must_check amd_smn_write(u16 node, u32 address, u32 value) { return -ENODEV; }
+-
+-static inline int __must_check amd_smn_hsmp_rdwr(u16 node, u32 address, u32 *value, bool write)
+-{
+-	return -ENODEV;
+-}
+-#endif /* CONFIG_AMD_NODE */
+-
+-/* helper for use with read_poll_timeout */
+-static inline int smn_read_register(u32 reg)
+-{
+-	int data, rc;
+-
+-	rc = amd_smn_read(0, reg, &data);
+-	if (rc)
+-		return rc;
+-
+-	return data;
+-}
+-#endif /*_ASM_X86_AMD_NODE_H_*/
+diff --git a/arch/x86/kernel/amd_node.c b/arch/x86/kernel/amd_node.c
+index b670fa8..a40176b 100644
+--- a/arch/x86/kernel/amd_node.c
++++ b/arch/x86/kernel/amd_node.c
+@@ -9,7 +9,7 @@
+  */
  
- $(c-sched-targets): %: $(BINDIR)/%
+ #include <linux/debugfs.h>
+-#include <asm/amd_node.h>
++#include <asm/amd/node.h>
  
--- 
-2.25.1
-
+ /*
+  * AMD Nodes are a physical collection of I/O devices within an SoC. There can be one
+diff --git a/arch/x86/pci/fixup.c b/arch/x86/pci/fixup.c
+index efefeb8..3633629 100644
+--- a/arch/x86/pci/fixup.c
++++ b/arch/x86/pci/fixup.c
+@@ -9,7 +9,7 @@
+ #include <linux/pci.h>
+ #include <linux/suspend.h>
+ #include <linux/vgaarb.h>
+-#include <asm/amd_node.h>
++#include <asm/amd/node.h>
+ #include <asm/hpet.h>
+ #include <asm/pci_x86.h>
+ 
+diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
+index 417940f..2518016 100644
+--- a/drivers/edac/amd64_edac.c
++++ b/drivers/edac/amd64_edac.c
+@@ -3,7 +3,7 @@
+ #include <linux/string_choices.h>
+ #include "amd64_edac.h"
+ #include <asm/amd/nb.h>
+-#include <asm/amd_node.h>
++#include <asm/amd/node.h>
+ 
+ static struct edac_pci_ctl_info *pci_ctl;
+ 
+diff --git a/drivers/hwmon/k10temp.c b/drivers/hwmon/k10temp.c
+index 3685906..472bcf6 100644
+--- a/drivers/hwmon/k10temp.c
++++ b/drivers/hwmon/k10temp.c
+@@ -20,7 +20,7 @@
+ #include <linux/module.h>
+ #include <linux/pci.h>
+ #include <linux/pci_ids.h>
+-#include <asm/amd_node.h>
++#include <asm/amd/node.h>
+ #include <asm/processor.h>
+ 
+ MODULE_DESCRIPTION("AMD Family 10h+ CPU core temperature monitor");
+diff --git a/drivers/platform/x86/amd/hsmp/acpi.c b/drivers/platform/x86/amd/hsmp/acpi.c
+index 3c7acb9..02e22c1 100644
+--- a/drivers/platform/x86/amd/hsmp/acpi.c
++++ b/drivers/platform/x86/amd/hsmp/acpi.c
+@@ -23,7 +23,7 @@
+ 
+ #include <uapi/asm-generic/errno-base.h>
+ 
+-#include <asm/amd_node.h>
++#include <asm/amd/node.h>
+ 
+ #include "hsmp.h"
+ 
+diff --git a/drivers/platform/x86/amd/hsmp/plat.c b/drivers/platform/x86/amd/hsmp/plat.c
+index 0eb73fc..c9a1b1e 100644
+--- a/drivers/platform/x86/amd/hsmp/plat.c
++++ b/drivers/platform/x86/amd/hsmp/plat.c
+@@ -18,7 +18,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/sysfs.h>
+ 
+-#include <asm/amd_node.h>
++#include <asm/amd/node.h>
+ 
+ #include "hsmp.h"
+ 
+diff --git a/drivers/platform/x86/amd/pmc/pmc.c b/drivers/platform/x86/amd/pmc/pmc.c
+index d789d6c..e5c4e6b 100644
+--- a/drivers/platform/x86/amd/pmc/pmc.c
++++ b/drivers/platform/x86/amd/pmc/pmc.c
+@@ -28,7 +28,7 @@
+ #include <linux/seq_file.h>
+ #include <linux/uaccess.h>
+ 
+-#include <asm/amd_node.h>
++#include <asm/amd/node.h>
+ 
+ #include "pmc.h"
+ 
+diff --git a/drivers/platform/x86/amd/pmf/core.c b/drivers/platform/x86/amd/pmf/core.c
+index a2cb2d5..cecadae 100644
+--- a/drivers/platform/x86/amd/pmf/core.c
++++ b/drivers/platform/x86/amd/pmf/core.c
+@@ -14,7 +14,7 @@
+ #include <linux/pci.h>
+ #include <linux/platform_device.h>
+ #include <linux/power_supply.h>
+-#include <asm/amd_node.h>
++#include <asm/amd/node.h>
+ #include "pmf.h"
+ 
+ /* PMF-SMU communication registers */
+diff --git a/drivers/ras/amd/atl/internal.h b/drivers/ras/amd/atl/internal.h
+index c63fee3..05bbee2 100644
+--- a/drivers/ras/amd/atl/internal.h
++++ b/drivers/ras/amd/atl/internal.h
+@@ -18,7 +18,7 @@
+ #include <linux/ras.h>
+ 
+ #include <asm/amd/nb.h>
+-#include <asm/amd_node.h>
++#include <asm/amd/node.h>
+ 
+ #include "reg_fields.h"
+ 
+diff --git a/sound/soc/amd/acp/acp-rembrandt.c b/sound/soc/amd/acp/acp-rembrandt.c
+index 746b6ed..c30a7b5 100644
+--- a/sound/soc/amd/acp/acp-rembrandt.c
++++ b/sound/soc/amd/acp/acp-rembrandt.c
+@@ -22,7 +22,7 @@
+ #include <linux/pci.h>
+ #include <linux/pm_runtime.h>
+ 
+-#include <asm/amd_node.h>
++#include <asm/amd/node.h>
+ 
+ #include "amd.h"
+ #include "../mach-config.h"
+diff --git a/sound/soc/amd/acp/acp63.c b/sound/soc/amd/acp/acp63.c
+index 52d895e..0ddde14 100644
+--- a/sound/soc/amd/acp/acp63.c
++++ b/sound/soc/amd/acp/acp63.c
+@@ -21,7 +21,7 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/pci.h>
+ 
+-#include <asm/amd_node.h>
++#include <asm/amd/node.h>
+ 
+ #include "amd.h"
+ #include "acp-mach.h"
+diff --git a/sound/soc/amd/acp/acp70.c b/sound/soc/amd/acp/acp70.c
+index 6d5f5ad..7f4a25b 100644
+--- a/sound/soc/amd/acp/acp70.c
++++ b/sound/soc/amd/acp/acp70.c
+@@ -23,7 +23,7 @@
+ #include "amd.h"
+ #include "acp-mach.h"
+ 
+-#include <asm/amd_node.h>
++#include <asm/amd/node.h>
+ 
+ #define DRV_NAME "acp_asoc_acp70"
+ 
+diff --git a/sound/soc/sof/amd/acp.c b/sound/soc/sof/amd/acp.c
+index 7c6d647..7e6f107 100644
+--- a/sound/soc/sof/amd/acp.c
++++ b/sound/soc/sof/amd/acp.c
+@@ -16,7 +16,7 @@
+ #include <linux/module.h>
+ #include <linux/pci.h>
+ 
+-#include <asm/amd_node.h>
++#include <asm/amd/node.h>
+ 
+ #include "../ops.h"
+ #include "acp.h"
 
