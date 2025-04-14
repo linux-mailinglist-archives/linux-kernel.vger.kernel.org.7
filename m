@@ -1,107 +1,209 @@
-Return-Path: <linux-kernel+bounces-603272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC47BA8859A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:48:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 696DFA885C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:52:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F267E5661CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:39:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA2A45602AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:39:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F4C7291142;
-	Mon, 14 Apr 2025 14:20:03 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D127A29117F;
+	Mon, 14 Apr 2025 14:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="ilqHsJsn";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="LUVeU7UL"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA6028F52E;
-	Mon, 14 Apr 2025 14:19:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF5D291148;
+	Mon, 14 Apr 2025 14:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744640402; cv=none; b=ij06P4udHjL7ZnYNs7888ALoZ9mHZUmFwlfz2UxPKTv2t1TRMkk9KZfPN6fS8POdpxyZG8reHo4kklVH5YmqKnkkSyfAksg4c0jmyVhrjyb8PEkkF6gBKD05jICS4520OI0g/tSpTDGIJDVqYDHjuRE42Wp7ykWHiZgwo67ZGOU=
+	t=1744640409; cv=none; b=DNT7LiCmKpAx9Ygv5GNUCJhpp63FqViip+FfgWz4iNbg8SIc0l7ZBr5uxb5AbtDjlUQ8cWG8uTk5gkbNHAp+ramObS2b52i3pSQaUqGHADniYWgVpY9nNBYbXqRjqx+9HlFBQEVC0nnC5+7GXoYr3F+UTK+6L3to+uYG4x4eeR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744640402; c=relaxed/simple;
-	bh=CwaFplckSD7S0EpcNcWb7VUupSTqyxxJFgfu202ina4=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I2zKKUQBpQNNzdr6zSrVLahx5xmRweyLCP1t9l1y3RVtXrQr56HD14TSxCNvu+5OWyDHXOPRFYZ0XkMBM7Ne2vayvQFu+Y0Iqq8uB0Qm3nRitQ5dlRziP9Kvb0ClGskSEu9IA8rckT+iEo0eiVBWLCv5oP4tdXO9Yw/CmsKXrOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZbqCK2SXpz6F94p;
-	Mon, 14 Apr 2025 22:18:37 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 489C61402EA;
-	Mon, 14 Apr 2025 22:19:52 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 14 Apr
- 2025 16:19:51 +0200
-Date: Mon, 14 Apr 2025 15:19:50 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Ira Weiny <ira.weiny@intel.com>
-CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Dan
- Williams" <dan.j.williams@intel.com>, Davidlohr Bueso <dave@stgolabs.net>,
-	Alison Schofield <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, <linux-cxl@vger.kernel.org>,
-	<nvdimm@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v9 01/19] cxl/mbox: Flag support for Dynamic Capacity
- Devices (DCD)
-Message-ID: <20250414151950.00001823@huawei.com>
-In-Reply-To: <20250413-dcd-type2-upstream-v9-1-1d4911a0b365@intel.com>
-References: <20250413-dcd-type2-upstream-v9-0-1d4911a0b365@intel.com>
-	<20250413-dcd-type2-upstream-v9-1-1d4911a0b365@intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1744640409; c=relaxed/simple;
+	bh=jXVyZDItmaL5AzoSHs1iPAA9ILTmI1rTDbn9+iURJQs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=a7wNkuty9rrx5DuHN7PaLQ6hrquGhh3O8zz3UiMlRDyQqnq70+kRasSxvL8ygXlhznYoxLIBJE5lCRVGUB7SK++H+E884YHFuO3PmqK4Nq7j7A4SlrKHD+eDxEE9HATxCa+n4B7SwICY7UZS2OHS/yDzc8L2Tj61Tk0QRbeN6Jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=ilqHsJsn; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=LUVeU7UL reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1744640405; x=1776176405;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=EXQyd0r4TZiqZpKsUTx2M/IYp8XzCZHA1OaGt/pVy74=;
+  b=ilqHsJsnFXHDYpGrTv4URmBwY5GNP9inrD58caZldCx6AiTe6r4mHeDt
+   2tPOSDurP1Ww+rR1EC3/J8CnED1Ns12892170PN+Z/g4ukV6UlQAXIYlS
+   H+Evx0bg0y5I/P8Jic60UbMJoTmC6kjShlfoRIKZEtwOIRCf5LHIW94WQ
+   6YlQqhguahAQEw5GgqHtFBCmQXJE0ZMI2jYUyYtQvJOCCcJO9ImWdRS58
+   nsEWqvbJk+1lUkp/ecMcmp3olkTSY8oD1DU94bd4gm2Sa8aZ5+iK9hi7t
+   PbYyfhTug3qiPZhhyaWUPEOhO+IyfLVjM/Jj4axAo66UdU9ws61oQ6RqY
+   A==;
+X-CSE-ConnectionGUID: oSsEAGTcRwy12Ys1dk3Cbw==
+X-CSE-MsgGUID: cLZBKCDnRzOCOQfG1eH8sg==
+X-IronPort-AV: E=Sophos;i="6.15,212,1739833200"; 
+   d="scan'208";a="43517552"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 14 Apr 2025 16:20:02 +0200
+X-CheckPoint: {67FD1992-1B-DC4DC9A0-F4F29281}
+X-MAIL-CPID: 6C967A4B7A7BB545A05DFDBA4709EEEB_0
+X-Control-Analysis: str=0001.0A006399.67FD1993.008A,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4496F16B658;
+	Mon, 14 Apr 2025 16:19:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1744640398;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EXQyd0r4TZiqZpKsUTx2M/IYp8XzCZHA1OaGt/pVy74=;
+	b=LUVeU7UL04FhGhMDoOsHSPSzV+Bax3bDk2Uz56ZDySKjvuo3p/zjaiKs3W4EjeC/O7l4gk
+	sl27UY7h8G13OJ1iNv0MKMNInjukXelfOXhXZEYSsri7+yRFFyg+kGJSuGcCwY+9MPsNwE
+	9Eg1YUhHsG90RD2I+nbLsVjZ241sPVcAIyJbhkTOkr7PGQA3yqK2vYg2vifiNIkCCzP/r0
+	Ol9OBqwt5LGyT+1CbmRS4eyKAC/bmn/e2QXTITzrvxxnEtxgwbG31ee75kzqTjuw7FzxxE
+	54tcc6dI1L1E2M9fU6C3LBFEX4Bd/eU9CCNXP/aBLQTZ0qu+FqGQyBfZQzi8sg==
+Message-ID: <c0c9cbcaf8bb8fd46d2ca618302bed8caa7bc812.camel@ew.tq-group.com>
+Subject: Re: [PATCH net-next 1/2] net: phy: dp83867: remove check of delay
+ strap configuration
+From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, netdev@vger.kernel.org,  linux-kernel@vger.kernel.org,
+ linux@ew.tq-group.com
+Date: Mon, 14 Apr 2025 16:19:56 +0200
+In-Reply-To: <8013ae5966dd22bcb698c0c09d2fc0912ae7ac25.1744639988.git.matthias.schiffer@ew.tq-group.com>
+References: 
+	<8013ae5966dd22bcb698c0c09d2fc0912ae7ac25.1744639988.git.matthias.schiffer@ew.tq-group.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
- frapeml500008.china.huawei.com (7.182.85.71)
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Sun, 13 Apr 2025 17:52:09 -0500
-Ira Weiny <ira.weiny@intel.com> wrote:
+On Mon, 2025-04-14 at 16:13 +0200, Matthias Schiffer wrote:
+> The check that intended to handle "rgmii" PHY mode differently from the
+> other RGMII modes never worked as intended:
+>=20
+> - added in commit 2a10154abcb7 ("net: phy: dp83867: Add TI dp83867 phy"):
+>   logic error caused the condition to always evaluate to true
+> - changed in commit a46fa260f6f5 ("net: phy: dp83867: Fix warning check
+>   for setting the internal delay"): now the condition always evaluates
+>   to false
+> - removed in commit 2b892649254f ("net: phy: dp83867: Set up RGMII TX
+>   delay")
+>=20
+> Around the time of the removal, commit c11669a2757e ("net: phy: dp83867:
+> Rework delay rgmii delay handling") started clearing the delay enable
+> flags in RGMIICTL (or it would have, if the condition ever evaluated to
+> true at that time). The change attempted to preserve the historical
+> behavior of not disabling internal delays with "rgmii" PHY mode and also
+> documented this in a comment, but due to a conflict between "Set up
+> RGMII TX delay" and "Rework delay rgmii delay handling", the behavior
+> dp83867_verify_rgmii_cfg() warned about (and that was also described in
+> a commit in dp83867_config_init()) disappeared in the following merge
 
-> Per the CXL 3.1 specification software must check the Command Effects
-> Log (CEL) for dynamic capacity command support.
-> 
-> Detect support for the DCD commands while reading the CEL, including:
-> 
-> 	Get DC Config
-> 	Get DC Extent List
-> 	Add DC Response
-> 	Release DC
-> 
-> Based on an original patch by Navneet Singh.
-> 
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-
-
-> +
-> +static bool cxl_verify_dcd_cmds(struct cxl_memdev_state *mds, unsigned long *cmds_seen)
-
-It's not immediately obvious to me what the right behavior
-from something called cxl_verify_dcd_cmds() is.  A comment might help with that.
-
-I think all it does right now is check if any bits are set. In my head
-it was going to check that all bits needed for a useful implementation were
-set. I did have to go check what a 'logical and' of a bitmap was defined as
-because that bit of the bitmap_and() return value wasn't obvious to me either!
+Ugh, of course I find a mistake in the commit message right after submittin=
+g the
+patch - this should read "a comment in ...". I'm going to wait for review a=
+nd
+then fix this in v2.
 
 
-> +{
-> +	DECLARE_BITMAP(all_cmds, CXL_DCD_ENABLED_MAX);
-> +	DECLARE_BITMAP(dst, CXL_DCD_ENABLED_MAX);
-> +
-> +	bitmap_fill(all_cmds, CXL_DCD_ENABLED_MAX);
-> +	return bitmap_and(dst, cmds_seen, all_cmds, CXL_DCD_ENABLED_MAX);
-> +}
-> +
+> of net into net-next in commit b4b12b0d2f02
+> ("Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net").
+>=20
+> While is doesn't appear that this breaking change was intentional, it
+> has been like this since 2019, and the new behavior to disable the delays
+> with "rgmii" PHY mode is generally desirable - in particular with MAC
+> drivers that have to fix up the delay mode, resulting in the PHY driver
+> not even seeing the same mode that was specified in the Device Tree.
+>=20
+> Remove the obsolete check and comment.
+>=20
+> Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+> ---
+>  drivers/net/phy/dp83867.c | 32 +-------------------------------
+>  1 file changed, 1 insertion(+), 31 deletions(-)
+>=20
+> diff --git a/drivers/net/phy/dp83867.c b/drivers/net/phy/dp83867.c
+> index 063266cafe9c7..e5b0c1b7be13f 100644
+> --- a/drivers/net/phy/dp83867.c
+> +++ b/drivers/net/phy/dp83867.c
+> @@ -92,11 +92,6 @@
+>  #define DP83867_STRAP_STS1_RESERVED		BIT(11)
+> =20
+>  /* STRAP_STS2 bits */
+> -#define DP83867_STRAP_STS2_CLK_SKEW_TX_MASK	GENMASK(6, 4)
+> -#define DP83867_STRAP_STS2_CLK_SKEW_TX_SHIFT	4
+> -#define DP83867_STRAP_STS2_CLK_SKEW_RX_MASK	GENMASK(2, 0)
+> -#define DP83867_STRAP_STS2_CLK_SKEW_RX_SHIFT	0
+> -#define DP83867_STRAP_STS2_CLK_SKEW_NONE	BIT(2)
+>  #define DP83867_STRAP_STS2_STRAP_FLD		BIT(10)
+> =20
+>  /* PHY CTRL bits */
+> @@ -510,25 +505,6 @@ static int dp83867_verify_rgmii_cfg(struct phy_devic=
+e *phydev)
+>  {
+>  	struct dp83867_private *dp83867 =3D phydev->priv;
+> =20
+> -	/* Existing behavior was to use default pin strapping delay in rgmii
+> -	 * mode, but rgmii should have meant no delay.  Warn existing users.
+> -	 */
+> -	if (phydev->interface =3D=3D PHY_INTERFACE_MODE_RGMII) {
+> -		const u16 val =3D phy_read_mmd(phydev, DP83867_DEVADDR,
+> -					     DP83867_STRAP_STS2);
+> -		const u16 txskew =3D (val & DP83867_STRAP_STS2_CLK_SKEW_TX_MASK) >>
+> -				   DP83867_STRAP_STS2_CLK_SKEW_TX_SHIFT;
+> -		const u16 rxskew =3D (val & DP83867_STRAP_STS2_CLK_SKEW_RX_MASK) >>
+> -				   DP83867_STRAP_STS2_CLK_SKEW_RX_SHIFT;
+> -
+> -		if (txskew !=3D DP83867_STRAP_STS2_CLK_SKEW_NONE ||
+> -		    rxskew !=3D DP83867_STRAP_STS2_CLK_SKEW_NONE)
+> -			phydev_warn(phydev,
+> -				    "PHY has delays via pin strapping, but phy-mode =3D 'rgmii'\n"
+> -				    "Should be 'rgmii-id' to use internal delays txskew:%x rxskew:%x=
+\n",
+> -				    txskew, rxskew);
+> -	}
+> -
+>  	/* RX delay *must* be specified if internal delay of RX is used. */
+>  	if ((phydev->interface =3D=3D PHY_INTERFACE_MODE_RGMII_ID ||
+>  	     phydev->interface =3D=3D PHY_INTERFACE_MODE_RGMII_RXID) &&
+> @@ -836,13 +812,7 @@ static int dp83867_config_init(struct phy_device *ph=
+ydev)
+>  		if (ret)
+>  			return ret;
+> =20
+> -		/* If rgmii mode with no internal delay is selected, we do NOT use
+> -		 * aligned mode as one might expect.  Instead we use the PHY's default
+> -		 * based on pin strapping.  And the "mode 0" default is to *use*
+> -		 * internal delay with a value of 7 (2.00 ns).
+> -		 *
+> -		 * Set up RGMII delays
+> -		 */
+> +		/* Set up RGMII delays */
+>  		val =3D phy_read_mmd(phydev, DP83867_DEVADDR, DP83867_RGMIICTL);
+> =20
+>  		val &=3D ~(DP83867_RGMII_TX_CLK_DELAY_EN | DP83867_RGMII_RX_CLK_DELAY_=
+EN);
 
-
+--=20
+TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
+any
+Amtsgericht M=C3=BCnchen, HRB 105018
+Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
+neider
+https://www.tq-group.com/
 
