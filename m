@@ -1,140 +1,158 @@
-Return-Path: <linux-kernel+bounces-603194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED40CA884DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:29:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C706A884E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:30:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F5431900E32
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:18:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80EC71896D9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:19:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072272957A3;
-	Mon, 14 Apr 2025 13:55:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F17C1296D15;
+	Mon, 14 Apr 2025 13:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="GDIRMpZv"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fyj4513e"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435D42957A1
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 13:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9474F2957D6;
+	Mon, 14 Apr 2025 13:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744638945; cv=none; b=ripltnpKkTEflUQ1Z+IqRza/pu3B2a3mBvKeIZgr91IVM5kOyD6MlhrFNVMcrNe7yyuLC1XDSrmSejkmKSpL9RUOnpHFktf8XEBReQuO+qgKe3ZX2Mzdt4lCUMhlZza0aoqPu7KQYUx0/CQGJFtM8TMs/v22I5/qsEX1LVETXuk=
+	t=1744638982; cv=none; b=bgIjapD0N3+iHc97+2HczfyMto7wFwPpTOlOwCHEV5uWO6u1cedMzLEjun2s7mqo+Ekv+BT/GQKfHrIXDguK+iPV00u4PLaCctJcLs5d5Zk0LZ5HoQ7YIvjPuEZfRWT7cRq+H9jyVTwv2Ny/JAtf4Qd0Cbb3fnFw6aPPoIp5+NI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744638945; c=relaxed/simple;
-	bh=Bp2rSa7YgUjksfq92C6U0dpNu6ZFkat6qi1m4BsAbjA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rvt0cyrKVuQ+tOZHUEyAQJ59BclA9Of7Q2TRgNo2wquawCdORDn9axQqta6N2QvGePQI2dCPkymzszESmOIdW4sRqkgH7H+O+Z0xERbrDV4yoGGi4Ujy2ec09BhOTz0fohfcHzP9EZHGmdB2PvYzGyo5OLl2I+YtjwLijiax4Jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=GDIRMpZv; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-39c0dfba946so3082313f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 06:55:42 -0700 (PDT)
+	s=arc-20240116; t=1744638982; c=relaxed/simple;
+	bh=byjSjrxCbhU5uc7aHlaZTnC0DJF5shLq5b+r4tgNpok=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C0A69Anw0KTTDl9YQekvYT6SCZf666iz5i6rLjpNHQem8d09rpFEI86L/8gtVuHRVdJPvzYS1S1wpuVXZVGHt1VW6GIKwX+3ayOJl2zmsOzixFheoA/m8C6DAZ/8zEsxLFJp68xVATrLkktHrFRIwt40BZGrRerIDYs6MCrBW50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fyj4513e; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-abbb12bea54so868665166b.0;
+        Mon, 14 Apr 2025 06:56:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1744638941; x=1745243741; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bp2rSa7YgUjksfq92C6U0dpNu6ZFkat6qi1m4BsAbjA=;
-        b=GDIRMpZvl+/8VO44OTGbpWiu5+9aCofVCpYp1w18TrO4wRmTD5ZQsoD/iBsCUghKzk
-         7k71qk4s8cGduamOve6y4LH5RQRhtKF4WzcYsDelh9VRjxHqo/eUSFIHhMC8w81A+LAf
-         AkvktK/LZXQr58cEmMdODb4WiCsxS8ULVO+dYDlCBXJii0lTuKx+bL9+XGXTuVMUvtg7
-         0UNyryap99iKXj5f4Dunmuo1C8fGxsS3EFdlRiDzAGlWi5cNaSeCrYMeFl4sqcKqu608
-         wRjyMR0d2kdneAYYEHG8d42cSM4VlrcoGM9DF8JpNtuH2Kuug3oEXcoRzcWSo8z63gzC
-         nLZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744638941; x=1745243741;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1744638978; x=1745243778; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Bp2rSa7YgUjksfq92C6U0dpNu6ZFkat6qi1m4BsAbjA=;
-        b=WX+aztErPGjej2YD6d4Oua+qx5amibNrxZRjr9EuEjNJ1lIjGM8BnYoguOyH8iTbZp
-         /IgLFXhH3ONcN3x2gI4KF0fi7uYOsxb8Sdv3WUlmJYBjJ/wVzt3WayszULQ/v5rEdzoH
-         sQ/aTIcYqXDZccP5fZzRH2LLMPwoM5KIHXb9Xvf0MvO0uWRWZhcUhfbrpValErN2M08f
-         2i/gNC2Doxh5h2V+FdxczBWadm5ZXaRN9RHVVLIXwcEXSWHdJU+NVlpdNyKYXB/xvooa
-         dZw/h1PytBPQh0lUYyHxFZ48p53HfZW5R4V54RnPut7X0FCAiPwrCwYgtrGghfVvLbSx
-         g7/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUyP+DrGrIsocexyKqi8brsL2z/Fe4Wirk42bRB2S4ZPWGvPuR9cspKA8El/LC/x1+fS9ojycMxbvhBVzw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwN01yw0z/9L+3qKfJZPMxmVd8u68qaKo2m07Ierw+nqcuvkxgR
-	+XG23qWpmfXSLCjtlFPOgo7oUPKXB1Mbv8CT3lHr4lfXLIRLGHc3taDltoXK5Q8=
-X-Gm-Gg: ASbGncs+A9mgHsx3xrdNz2L6jkyNJXTFrwBqZEx7Oz1Rvbc4VPX3t0OwZIYY994+2O5
-	JfDp8ln+fZ85Lx0yoMxrn0SHNM3ErM6dtSUXi1pCMvOk/AQwlRNHY6WmTeOvAR+jy/yDklQ1lIb
-	/YmBsctkeUBYWwFzHgd9uZ3hN/3f83M7V68lYoCUaN4Uy6QJ+OT9HTL/M4ZL+gQTq6vgXoZ4nLs
-	ni+Wlt8U/pLYdZNgMhVcmMFBzg8uct5I0VOOT7qamsrUCZ9G0kOU5LCkrjMAWpqtrdjq5zV/t+U
-	Mes0eKPPdxs9CGjdOM2yXFa05ASN5QGBnBFG6KdgCgs=
-X-Google-Smtp-Source: AGHT+IH7XfnEongCTvrfF5mvPiNUytCuC/Zcaba7Gv1vTVVOnakln7HNMXeyFjeGknI7uqcmE+o1wA==
-X-Received: by 2002:a05:6000:4205:b0:39b:ede7:8906 with SMTP id ffacd0b85a97d-39ea5200a2dmr8697154f8f.19.1744638941281;
-        Mon, 14 Apr 2025 06:55:41 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eaf445772sm11160518f8f.91.2025.04.14.06.55.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Apr 2025 06:55:40 -0700 (PDT)
-Date: Mon, 14 Apr 2025 15:55:39 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Waiman Long <llong@redhat.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
-	Tejun Heo <tj@kernel.org>, Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
-	cgroups@vger.kernel.org, linux-mm@kvack.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v6 1/2] mm/vmscan: Skip memcg with !usage in
- shrink_node_memcgs()
-Message-ID: <uaxa3qttqmaqxsphwukrxdbfrx6px7t4iytjdksuroqiu6w7in@75o4bigysttw>
-References: <20250414021249.3232315-1-longman@redhat.com>
- <20250414021249.3232315-2-longman@redhat.com>
- <kwvo4y6xjojvjf47pzv3uk545c2xewkl36ddpgwznctunoqvkx@lpqzxszmmkmj>
- <6572da04-d6d6-4f5e-9f17-b22d5a94b9fa@redhat.com>
+        bh=BTeEt1RU6eyQY7vNutEMrHzrVqwSVTKDzRQxwATIcm8=;
+        b=fyj4513eKAzRE2++cFFBP/ezTSebu2fuyb03TwCaTTAQeUDBGv4Vq1/4p+LHZ9x7Pp
+         gMDLZDzcg8+VKTI/pgqJmuLczLvU2WsCdrMSPp0j/2grn5RI3N+P4dU/1spGIdQtylUV
+         sh0dBZ1OSyEwKtDoQSRY1LBCoDa0VLc1cIU0Et51xBPoOwx+E5aumkELhKgmY+Wqheph
+         25WDK2uaGV7wKKbtn3PftWUEqWWucxKDpX5XS850lOE6dOzV1M6gvZJ34JM2L6Wz5M1T
+         0l08NGiITuvRzRnsJMSH7kGqzdeagByDhHOGHtLAUeYnbzuoK9BwGkXzWMq8YOVccXtz
+         x3Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744638978; x=1745243778;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BTeEt1RU6eyQY7vNutEMrHzrVqwSVTKDzRQxwATIcm8=;
+        b=koLZHG/JVoDeBVUkWlE0WOG9bfbFbbBm/2wNQvGXxU9N/QpqTpwvUcR2o56liIwbqP
+         Vy5WtZB6joKcPNgpvaeAJd07W+xxQJYq3AxPh2nTnGD4qW3ip6f1qVB5PGfQQ4owshuO
+         gEl7KSiZFTM8FEEPF/rd3KXKatMFvWdWyWSqF5bnvDSuP/iLxOpoolWAJxhReVyqfPp/
+         rfGXkL6oGoMjdsP6dWFGP5GpWEbSN5nfguuXqNqM92IJwQ6THs98KXN9Vb4KNIJ2La6N
+         Dl93mky2bSSd0LwGuON4mVWJZIIhDI0HrgqnJL2hhmFZ2Wkzgc9ZBtMQy3RQCjraOo3J
+         F4Lw==
+X-Forwarded-Encrypted: i=1; AJvYcCWHIKX/cVPLto8NTBjmWKuxfrY1qGit7aDleuCmUEVUhXaTE+Rvu1HPdOZWqmX3MeIjbPc74wcE@vger.kernel.org, AJvYcCWdPibqy8wjdwJbvoYO0V77XeJl1YV+Q9RhQIILZ6xaZU7RSJ+i6HM1bje4DjUt0ns5BAGjmQGioLAB@vger.kernel.org, AJvYcCWzk1gYspYURUmwgignkbVOXdhTiTMNspAY05UntrrBG166teEI01BXIHBwDWRB3hlRVMvR54gS5wPCyKfbYB7p@vger.kernel.org, AJvYcCXWu+f/xmmsfHDhgOy40h/b2l2JOttC7Q/pI2p1wMRGLePrq94Y+F60pXI1MWdaMQkfCH6YXEzSoJcw3Y1M@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywv4Pu2z6Q4Fs3EASZzJa+nK8FO0N0GmY0jFgwz8sthx2k/DnYE
+	jgLlNERQrkm++6MZSDyPo/DqYl6mOMtMiDi7gqW4jPjU+BpvLBDtHw+JkHiYn1P6g8DQYlxXpzo
+	1h6spczlCBFo++niexNqTLkN1LT4=
+X-Gm-Gg: ASbGncs4an7WzsiapHDMMywd7dklSMGZ1ECh7GQWZLQzEdja+9PYg2qoVA1sTSV8pax
+	p43Y5RaDynjtkqPFllpIL61aGSleYxeQf6hybX2CE3Zyx7UgUqvm9usyYKZuE8hSMA9V+z3oATR
+	fvbYiy5lcoLyN9V7NApSm3+w==
+X-Google-Smtp-Source: AGHT+IFUEu21Nbm/up+QwdSenWnwKsVw3A+E365YsrpZGwvNI/jyUUt21jdvv4Cojd3nbC1DCrPVyWKa+GqwZyFv1UU=
+X-Received: by 2002:a17:907:2ce5:b0:ac3:49f0:4d10 with SMTP id
+ a640c23a62f3a-acad359bc31mr910919266b.38.1744638977471; Mon, 14 Apr 2025
+ 06:56:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="bldxszh4zmrjgwhd"
-Content-Disposition: inline
-In-Reply-To: <6572da04-d6d6-4f5e-9f17-b22d5a94b9fa@redhat.com>
+References: <20250407172836.1009461-1-ivecera@redhat.com> <20250407172836.1009461-2-ivecera@redhat.com>
+ <Z_QTzwXvxcSh53Cq@smile.fi.intel.com> <eeddcda2-efe4-4563-bb2c-70009b374486@redhat.com>
+ <Z_ys4Lo46KusTBIj@smile.fi.intel.com> <f3fc9556-60ba-48c0-95f2-4c030e5c309e@redhat.com>
+ <79b9ee2f-091d-4e0f-bbe3-c56cf02c3532@redhat.com>
+In-Reply-To: <79b9ee2f-091d-4e0f-bbe3-c56cf02c3532@redhat.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 14 Apr 2025 16:55:41 +0300
+X-Gm-Features: ATxdqUHTg1jcbOzMa7pipDhqGfFcA0usaAkeGfTb7SQC00-heg8_75ap0kABLcc
+Message-ID: <CAHp75VcumcH_9-2P2iayGWwD3Y87A7CZyO9vxqvbaUptS1FeQw@mail.gmail.com>
+Subject: Re: [PATCH 01/28] mfd: Add Microchip ZL3073x support
+To: Ivan Vecera <ivecera@redhat.com>
+Cc: Andy Shevchenko <andy@kernel.org>, netdev@vger.kernel.org, 
+	Michal Schmidt <mschmidt@redhat.com>, Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>, Jiri Pirko <jiri@resnulli.us>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Prathosh Satish <Prathosh.Satish@microchip.com>, Lee Jones <lee@kernel.org>, 
+	Kees Cook <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Apr 14, 2025 at 2:52=E2=80=AFPM Ivan Vecera <ivecera@redhat.com> wr=
+ote:
+> On 14. 04. 25 1:39 odp., Ivan Vecera wrote:
+> > On 14. 04. 25 8:36 dop., Andy Shevchenko wrote:
+> >>> What is wrong here?
+> >>>
+> >>> I have a device that uses 7-bit addresses and have 16 register pages.
+> >>> Each pages is from 0x00-0x7f and register 0x7f is used as page select=
+or
+> >>> where bits 0-3 select the page.
+> >> The problem is that you overlap virtual page over the real one (the
+> >> main one).
+> >>
+> >> The drivers you mentioned in v2 discussions most likely are also buggy=
+.
+> >> As I implied in the above question the developers hardly get the
+> >> regmap ranges
+> >> right. It took me quite a while to see the issue, so it's not
+> >> particularly your
+> >> fault.
+> > Hi Andy,
+> >
+> > thank you I see the point.
+> >
+> > Do you mean that the selector register should not be part of the range?
+> >
+> > If so, does it mean that I have to specify a range for each page? Like
+> > this:
+> >
+> >      {
+> >          /* Page 0 */
+> >          .range_min    =3D 0x000,
+> >          .range_max    =3D 0x07e,
+> >          .selector_reg    =3D ZL3073x_PAGE_SEL,
+> >          .selector_mask    =3D GENMASK(3, 0),
+> >          .selector_shift    =3D 0,
+> >          .window_start    =3D 0,
+> >          .window_len    =3D 0x7e,
+> >      },
+> >      {
+> >          /* Page 1 */
+> >          .range_min    =3D 0x080,
+> >          .range_max    =3D 0x0fe,
+> >          .selector_reg    =3D ZL3073x_PAGE_SEL,
+> >          .selector_mask    =3D GENMASK(3, 0),
+> >          .selector_shift    =3D 0,
+> >          .window_start    =3D 0,
+> >          .window_len    =3D 0x7e,
+> >      },
 
---bldxszh4zmrjgwhd
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH v6 1/2] mm/vmscan: Skip memcg with !usage in
- shrink_node_memcgs()
-MIME-Version: 1.0
+...
 
-On Mon, Apr 14, 2025 at 09:15:57AM -0400, Waiman Long <llong@redhat.com> wrote:
-> I did see some low event in the no usage case because of the ">=" comparison
-> used in mem_cgroup_below_min().
+> Sorry,
+> .window_len =3D 0x7f /* Exclude selector reg */
 
-Do you refer to A/B/E or A/B/F from the test?
-It's OK to see some events if there was non-zero usage initially.
+It actually will make things worse. If selector register is accessible
+to all of the pages, it's better to include it in all pages.
 
-Nevertheless, which situation this patch changes that is not handled by
-mem_cgroup_below_min() already?
-
-> Yes, low event count for E is 0 in the !memory_recursiveprot case, but C/D
-> still have low events and setting no_low_events_index to -1 will fail the
-> test and it is not the same as not checking low event counts at all.
-
-I added yet another ignore_low_events_index variable (in my original
-proposal) not to fail the test. But feel free to come up with another
-implementation, I wanted to point out the "not specified" expectation
-for E with memory_recursiveprot.
-
-Michal
-
---bldxszh4zmrjgwhd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZ/0T2QAKCRAt3Wney77B
-SbJPAP0dXFDJG2wSX/yIyDLlLnQPzAglEx7DlhFbKKZN1ujpywD/cWz5HMwZq6XA
-v7d3QWoUA0RmWL0qHKFogwG/fe+bNQQ=
-=9Pga
------END PGP SIGNATURE-----
-
---bldxszh4zmrjgwhd--
+--=20
+With Best Regards,
+Andy Shevchenko
 
