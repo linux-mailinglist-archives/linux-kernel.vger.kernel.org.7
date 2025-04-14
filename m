@@ -1,97 +1,98 @@
-Return-Path: <linux-kernel+bounces-602361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E872CA879D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:09:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DB65A879DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:10:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 689027A4105
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:08:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AD287A6380
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F3E25A623;
-	Mon, 14 Apr 2025 08:08:53 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B3F259C84;
-	Mon, 14 Apr 2025 08:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8D4525DAFC;
+	Mon, 14 Apr 2025 08:09:00 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F9C025D8E3;
+	Mon, 14 Apr 2025 08:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744618133; cv=none; b=nllizoG+xR5UIuiasfuN6pqNFtVYsdIIljdHtbZOwVY1rxwy0JgmziuT9JWmki9+NeYu1Snqgi+I+P/cdeHwO+5tnCSWNJ7ebsmenWraXgcYMs2UlGisJNUjDfxxhL+56urvLffmsQ+Iu38MD2x8AyI01O4Uo8BxapaPL6ukUm0=
+	t=1744618140; cv=none; b=TXG+Pt+dJPN0ph7A8TxCqof56HGjJ2cK/iQdZxUu4OEDW8Cgk7YnuRwIvCNlr7SvrzrpFyGgx4hjk6eWzbR1V1IY7S6xW6Y1jdpJXur2Ga5z0NB6sMZLzhFJYv8NWPa/SK98/9yqJZ/Z6y0nkCA1GtX9HPrgKxX+jWh6SWoJ0ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744618133; c=relaxed/simple;
-	bh=RXiIoJmwdgY+eS+X74ykYmE1AL9TNuJ+L3FNsdrHTmE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Jjh4ljhdkHaCdME3zfYTfZ5eYD02x0CKh2+rv9dBPN3qDrfLgcZJVSDgDpSYI4B4sJJxJKANql1FADuGc/T1T32Lg6qqXyMF8aHtNqcEgtQYPwhe7Pp1AWjMYwyI8Byg0UVaFiG8NmH4YcjOzLx0kl475RXaKZfqTsCuWBJ9+BY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Zbfzg3KqPz13LPZ;
-	Mon, 14 Apr 2025 16:07:59 +0800 (CST)
-Received: from dggpemf100013.china.huawei.com (unknown [7.185.36.179])
-	by mail.maildlp.com (Postfix) with ESMTPS id B5282180080;
-	Mon, 14 Apr 2025 16:08:46 +0800 (CST)
-Received: from localhost.localdomain (10.50.165.33) by
- dggpemf100013.china.huawei.com (7.185.36.179) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 14 Apr 2025 16:08:46 +0800
-From: Yihang Li <liyihang9@huawei.com>
-To: <martin.petersen@oracle.com>, <James.Bottomley@HansenPartnership.com>
-CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linuxarm@huawei.com>, <liyihang9@huawei.com>, <liuyonglong@huawei.com>,
-	<prime.zeng@hisilicon.com>
-Subject: [PATCH v3 4/4] scsi: hisi_sas: Wait until eh is recovered
-Date: Mon, 14 Apr 2025 16:08:45 +0800
-Message-ID: <20250414080845.1220997-5-liyihang9@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250414080845.1220997-1-liyihang9@huawei.com>
-References: <20250414080845.1220997-1-liyihang9@huawei.com>
+	s=arc-20240116; t=1744618140; c=relaxed/simple;
+	bh=crlDOiIzpqHhF4EOe6WJHSMXqxU4ESK+mUAWvlLuFik=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DxIMpO1ZmIVie0OIeosHYc7CsAcrlu+vegaJlKz1VxV939LTius+gXZ0szR5VtVsj5EvfdVkr3FhaEtCtJgILvB48ndcxcKckV9TZa79lDI9RFP4NcV3MseQxzfXKdzX6a6lzGuhTXFEobljswJWpzXlEWlCCs6F/U4k8F3CUxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4D8C71007;
+	Mon, 14 Apr 2025 01:08:56 -0700 (PDT)
+Received: from [10.57.72.8] (unknown [10.57.72.8])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8752A3F694;
+	Mon, 14 Apr 2025 01:08:56 -0700 (PDT)
+Message-ID: <143378b0-5740-4f2b-9a79-f04cf9ef1f77@arm.com>
+Date: Mon, 14 Apr 2025 09:08:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemf100013.china.huawei.com (7.185.36.179)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] PM: EM: Fix potential division-by-zero error in
+ em_compute_costs()
+To: Yaxiong Tian <iambestgod@qq.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Yaxiong Tian <tianyaxiong@kylinos.cn>, rafael@kernel.org
+References: <tencent_EE27C7D1D6BDB3EE57A2C467CC59A866C405@qq.com>
+Content-Language: en-US
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <tencent_EE27C7D1D6BDB3EE57A2C467CC59A866C405@qq.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-SATA devices are lost when FLR is performed while the controller and disks
-are in suspended state.
+Hi Yaxiong,
 
-This is because the libata layer is called to initialize the SATA device
-during controller resuming. If FLR is executed at this time, the IDENTIFY
-command fails. As a result, the revalidate fails, and the SATA device is
-disabled by the libata layer.
+On 4/11/25 02:28, Yaxiong Tian wrote:
+> From: Yaxiong Tian <tianyaxiong@kylinos.cn>
+> 
+> When the device is of a non-CPU type, table[i].performance won't be
+> initialized in the previous em_init_performance(), resulting in division
+> by zero when calculating costs in em_compute_costs().
+> 
+> Since the 'cost' algorithm is only used for EAS energy efficiency
+> calculations and is currently not utilized by other device drivers, we
+> should add the _is_cpu_device(dev) check to prevent this division-by-zero
+> issue.
+> 
+> Fixes: <1b600da51073> ("PM: EM: Optimize em_cpu_energy() and remove division")
+> Signed-off-by: Yaxiong Tian <tianyaxiong@kylinos.cn>
+> ---
+>   kernel/power/energy_model.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
+> index d9b7e2b38c7a..d1fa7e8787b5 100644
+> --- a/kernel/power/energy_model.c
+> +++ b/kernel/power/energy_model.c
+> @@ -244,7 +244,7 @@ static int em_compute_costs(struct device *dev, struct em_perf_state *table,
+>   					cost, ret);
+>   				return -EINVAL;
+>   			}
+> -		} else {
+> +		} else if (_is_cpu_device(dev)) {
+>   			/* increase resolution of 'cost' precision */
+>   			power_res = table[i].power * 10;
+>   			cost = power_res / table[i].performance;
 
-So, wait until eh is recovered.
 
-Signed-off-by: Yihang Li <liyihang9@huawei.com>
----
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 2 ++
- 1 file changed, 2 insertions(+)
+As the test robot pointed out, please set the 'cost' to 0
+where it's declared.
 
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index 15f1d5d783cb..d7a5522890a3 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -5100,9 +5100,11 @@ static void hisi_sas_reset_prepare_v3_hw(struct pci_dev *pdev)
- {
- 	struct sas_ha_struct *sha = pci_get_drvdata(pdev);
- 	struct hisi_hba *hisi_hba = sha->lldd_ha;
-+	struct Scsi_Host *shost = hisi_hba->shost;
- 	struct device *dev = hisi_hba->dev;
- 	int rc;
- 
-+	wait_event(shost->host_wait, !scsi_host_in_recovery(shost));
- 	dev_info(dev, "FLR prepare\n");
- 	down(&hisi_hba->sem);
- 	set_bit(HISI_SAS_RESETTING_BIT, &hisi_hba->flags);
--- 
-2.33.0
+The rest should be fine.
 
+Regards,
+Lukasz
 
