@@ -1,96 +1,161 @@
-Return-Path: <linux-kernel+bounces-603729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71448A88B77
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 20:37:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33FBCA88B7D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 20:38:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98B947A33D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 18:36:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BDCA166499
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 18:38:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4345A28DEF6;
-	Mon, 14 Apr 2025 18:35:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A179228B4E8;
+	Mon, 14 Apr 2025 18:38:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DzueOWKl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="jdaE5j00"
+Received: from sender3-pp-f112.zoho.com (sender3-pp-f112.zoho.com [136.143.184.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C5F819FA8D;
-	Mon, 14 Apr 2025 18:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744655746; cv=none; b=WP9ppNAG3+6Jyg2nwC3whFlplscG0iDEZUISPxkJxafD2iuqo0w8M0Y90TZdm1OrzJMrM8+NHF10/cVoDXOzWibQPIpUNqQbCB448oA8ZVpKIelSFAnoanjWK5bVi4wXTVzIbYe5wJX8TPW3fCwsfW55r2IrAv9PKmZ11naZhZM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744655746; c=relaxed/simple;
-	bh=k2g0Mk9JKK4aalvTmKqSOU0NxOAcYOyOL4e+bs5uRZ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Li8r3UXjq3pr6WSplZSWWK5uxRBQjSlIYNZKU+iZPrTjD7PGYlgUQmtY6xR3jS2moRTYF4Z0K+6tXJVDTXmX/6ZPyDnjedhqXc1beS/W6szAkYJScslPMSKxzxT4Wvuc9igdfTyeAaXY/iqNl7OpOfHs52f2J4gPGwKxvsVTt30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DzueOWKl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22C94C4CEEB;
-	Mon, 14 Apr 2025 18:35:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744655746;
-	bh=k2g0Mk9JKK4aalvTmKqSOU0NxOAcYOyOL4e+bs5uRZ4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=DzueOWKl4BW13sJujFq5P68VjB/HMYPEWH0Iyt2DNdulLtZijxhRdc2OnflD2jdLE
-	 yeQNi/hPHrtuFXUBALVEUb6Hz8syT4auTaQHaY9DzLRsqngDg8bqwNqPORZkgNQYCI
-	 rOZ4nqdqjSXZBFpGyWGMpO4y+xStdLCZ+VVUDfYdy47UigkYnSjg/zHIDYlLpP0I6e
-	 6VDOwbJwvipc04OYKH6p3lVdzJ27sm/88TYcxF0IhMw0Gvvhw+uiPP+y1JNpNHejhO
-	 5SotQUsupH5yNu2ALc6353Rw7B/kNdhE1zlRjOVtPjQQzSk9t5aeRq+NnpApLEPZqs
-	 hbdWLfLxPbfSQ==
-Date: Mon, 14 Apr 2025 19:35:38 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano
- <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Lukasz Luba
- <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Laxman Dewangan
- <ldewangan@nvidia.com>, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] thermal: thermal-generic-adc: add temperature
- sensor channel
-Message-ID: <20250414193538.5eb8e4a4@jic23-huawei>
-In-Reply-To: <CAPVz0n16TbodhuTcqUufCk6=178ZTcc=2SLUjYHe5YsSJvettQ@mail.gmail.com>
-References: <20250310075638.6979-1-clamor95@gmail.com>
-	<20250310075638.6979-3-clamor95@gmail.com>
-	<CAPVz0n0NA+=+4da8izPvTn3XacdJndyxrvyMY-QvHdie206wVg@mail.gmail.com>
-	<20250412115354.0b266fae@jic23-huawei>
-	<CAPVz0n0eqLEjVgMX=4A8jZZ++Ffb_vfCRdqYdizDmuLbXjVb1w@mail.gmail.com>
-	<20250413102822.0cca4941@jic23-huawei>
-	<CAPVz0n16TbodhuTcqUufCk6=178ZTcc=2SLUjYHe5YsSJvettQ@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49CA328BAAE;
+	Mon, 14 Apr 2025 18:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744655902; cv=pass; b=HveC/gxCIPqZ28lwXHyJ1lOaoDQOQau5AfPUe8j9W189ahARO5Og30FvFVDFn/uTN2Yx4uGA466/da1P4tLHiYJvlKu/uEA5mGQ792gEid7GU67tspEKKPQAyUqp339EvfvIWfwyktSAD2DfpNY569rF670KJSFMeioNFGKFoV4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744655902; c=relaxed/simple;
+	bh=k7CY5ChVgpxOA/pS2KKuvOidHkwY/v1XTGkEgjc6YKM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=FUlDgLYIgnnMjdwhukJh9VyP0VeacBUU0eLVAPzNo2U39aUKwWHzV5cC6uajaMk77MiVz5AVxX6FmWZkVLVzSCwFJ5zBo/6RKle1ERgpuVpHnHnUbBa3BdTxkmgKZoP8xNHAMHGO2341/7xxYol/2SbHBAy+NCXAFuCtLsyudy4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=jdaE5j00; arc=pass smtp.client-ip=136.143.184.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1744655871; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=PMNc3gniZ/Pfki5mPuG8RzRFAmY7eATJN3KXe1HuhW6GpMclCzn8ARfnmWoMu80vwAN7GgaGOhiTVW0hz3sdxQRa5exakFFV3N9Ml3YMddjfjCauV1htP64kJfxD3TCSenMXNba1j0MSpgWLq5r+AQsn+mnOVLKdIEnoKyqhqd8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1744655871; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=UxeCCZVYevtkCT7thlYmN0LpZT3ruwqqeJ/LiyIL2bw=; 
+	b=BE6RPZxgkZZcnJhTcbdktx8LcMXP9uk4zGq+0E2a9mrs6yJsu0RvPlF2VARNhuNL16o7VIqPT0Oa4ZZkFKv4sqyn4f1vPesZU4yaa+IAd7mBIVSaghX6RnCR55Whk+GONBE3jFynIzEROf+PicYNxdq9aYBPOkRV/VJrlUL8/zE=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1744655871;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:To:To:Cc:Cc:Reply-To;
+	bh=UxeCCZVYevtkCT7thlYmN0LpZT3ruwqqeJ/LiyIL2bw=;
+	b=jdaE5j00+cdNEVv65UQnUCk5r3jjPfEfaUNlCYvpyNBETlXxFvWRgvVKdNxlEO0r
+	ByOK1aqtlNCeYW8I820ntemBCpT/p7e1Khs59ZBW19C1D/Ogfuilb3mTRp3x7Ibm2vM
+	iT+ZHUDXZPDdpJX+kmeXtWu1pbL4nHQ2TulLXzoU=
+Received: by mx.zohomail.com with SMTPS id 1744655869457172.63001317682392;
+	Mon, 14 Apr 2025 11:37:49 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Date: Mon, 14 Apr 2025 20:37:38 +0200
+Subject: [PATCH] arm64: dts: rockchip: enable pcie on Sige5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250414-rk3576-sige5-pcie-v1-1-0e950a96f392@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAPFV/WcC/zWOwQqDMBBEf0Vy7gY3TRSklP5H8aDJqotYbWKlR
+ fz3pkqPb2DezCoCeaYgimQVnhYOPD4i4CkRtqseLQG7yEKlyqQaNfj+bPIMArdkYLJMYEytnU3
+ RucaJ2Js8NfzenffyYE/PV1TPRyjqKhDYcRh4LpIlk2jAW/XrDhRCtY8WyeW/idogphJR5QYQe
+ lrIy088d/Oj7cF2PAUZdVdRbtsXyK4zK9IAAAA=
+X-Change-ID: 20250414-rk3576-sige5-pcie-55b4dc01ddfd
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: kernel@collabora.com, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>, 
+ Kever Yang <kever.yang@rock-chips.com>, 
+ Shawn Lin <shawn.lin@rock-chips.com>, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+X-Mailer: b4 0.14.2
 
+The ArmSoM Sige5 board exposes PCIe controller 0 on its M.2 slot on the
+bottom of the board. Enable the necessary nodes for it, and also add the
+correct pins for both the power enable GPIO and the PCIe reset GPIO.
 
-> > > > > > +
-> > > > > > +       indio_dev->name = dev_name(dev);  
-> > > >
-> > > > What does this end up as?  The convention in IIO is to name after
-> > > > a part number.  If you have duplicates this isn't how you tell them
-> > > > apart.  So I'd kind of expect thermal-generic-temp or
-> > > > something like that.
-> > > >  
-> > >
-> > > it is "generic-adc-thermal" with this name, it is not present anywhere in IIO.
-> > >  
-> 
-> Then this is acceptable?
+Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+---
+This depends on Kever's PCIe series[1], which is included as part of the
+b4 dependencies.
 
-That string is fine.  I'd still be tempted to hard code it here so the
-value is obvious to anyone looking at the driver.
+[1]: https://lore.kernel.org/linux-rockchip/20250414145110.11275-1-kever.yang@rock-chips.com/
+---
+ .../boot/dts/rockchip/rk3576-armsom-sige5.dts      | 23 ++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-Thanks,
+diff --git a/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts b/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts
+index 828bde7fab68dc6bcbd13d75c8a72540b3666071..964ee351d3b63fcb4ede70f4b6c06541715cfe19 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts
+@@ -117,6 +117,8 @@ vcc_2v0_pldo_s3: regulator-vcc-2v0-pldo-s3 {
+ 
+ 	vcc_3v3_pcie: regulator-vcc-3v3-pcie {
+ 		compatible = "regulator-fixed";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pcie_pwr_en>;
+ 		regulator-name = "vcc_3v3_pcie";
+ 		regulator-min-microvolt = <3300000>;
+ 		regulator-max-microvolt = <3300000>;
+@@ -177,6 +179,10 @@ vcc_3v3_ufs_s0: regulator-vcc-ufs-s0 {
+ 	};
+ };
+ 
++&combphy0_ps {
++	status = "okay";
++};
++
+ &cpu_l0 {
+ 	cpu-supply = <&vdd_cpu_lit_s0>;
+ };
+@@ -634,6 +640,14 @@ rgmii_phy1: phy@1 {
+ 	};
+ };
+ 
++&pcie0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pcie_reset>;
++	reset-gpios = <&gpio2 RK_PB4 GPIO_ACTIVE_HIGH>;
++	vpcie3v3-supply = <&vcc_3v3_pcie>;
++	status = "okay";
++};
++
+ &pinctrl {
+ 	headphone {
+ 		hp_det: hp-det {
+@@ -655,6 +669,15 @@ led_rgb_g: led-green-en {
+ 			rockchip,pins = <4 RK_PB2 RK_FUNC_GPIO &pcfg_pull_none>;
+ 		};
+ 	};
++
++	pcie {
++		pcie_pwr_en: pcie-pwr-en {
++			rockchip,pins = <3 RK_PD6 RK_FUNC_GPIO &pcfg_pull_down>;
++		};
++		pcie_reset: pcie-reset {
++			rockchip,pins = <2 RK_PB4 RK_FUNC_GPIO &pcfg_pull_up>;
++		};
++	};
+ };
+ 
+ &sdhci {
 
-Jonathan
+---
+base-commit: 8a834b0ac9ceb354a6e0b8cf5b363edca8221bdd
+change-id: 20250414-rk3576-sige5-pcie-55b4dc01ddfd
+prerequisite-message-id: <20250414145110.11275-1-kever.yang@rock-chips.com>
+prerequisite-patch-id: deb68e2b51dbf1fb35a16464d2be570ed4418f8b
+prerequisite-patch-id: 0a48a30fa57c8c11524167f4b753f58f918bb26d
+
+Best regards,
+-- 
+Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
 
