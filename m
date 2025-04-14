@@ -1,118 +1,142 @@
-Return-Path: <linux-kernel+bounces-603369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E120FA886F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:24:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F30C2A8866C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:08:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F035A19023DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:02:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA70A16A3BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF52123D2B9;
-	Mon, 14 Apr 2025 14:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 737082741CB;
+	Mon, 14 Apr 2025 14:59:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Lx4a5OGA"
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uvyip8VH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97FCA2749D7
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 14:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9BC82522BC;
+	Mon, 14 Apr 2025 14:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744642750; cv=none; b=Fmh6uDWe1VhxCp7x1yAHHbiW/0YTqCuh829frFL83uXuOUbHN8Hi1YDDhlafEwCXIzRINQElijBkXVlJXlldA0d/i/6/vxYRzPlTBsKphbeg9MDRUSODIpR2ybbVXymG5BVx69Adb/UYYb+VwvNyg8WGaZ1NNR5Owq/Q8iOqvrU=
+	t=1744642777; cv=none; b=UCIAuxCQI4LgV4t/xT0ZJKMwEuUt/7N0yqq2n+SuzEY5OwjVi1dJ8WU3jCN7zEE7IXXleADiy8S74nMZmMLWcj5p9XaBlaQ134O0PssLmBTxULp4okE0GUED2NUZiNbIBlziN3gqNTtn2ci8WDuUd3CpT/2GQs2atEP8rZw73Gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744642750; c=relaxed/simple;
-	bh=x8T8uwj/TLGIU0lF+Fq0pjFkLdrbonvSm35PpZ00zz0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bWGQ4oiuE8XzUNuZKFKYLhAKFvDdw5VjYtKyku8cMQG3P5THV/uav6Y+koOncuoQy9wZpJhax5GkUvPpb9TLrIEuYlQTNk4VnAv1Wt5HQkZxx0PAVkDh2ItZDPquEg2DRBYLmKpSP9QcpdGFGRzC5CvRKA3zEgoo1PXCrRs2Ego=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Lx4a5OGA; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-72bceb93f2fso2930327a34.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 07:59:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1744642746; x=1745247546; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PTu/tTBiLDnLTo19OmaQLQq2DdZvvnanifk4lVRIq1Y=;
-        b=Lx4a5OGAN9/Wf1napXhNyDcYomwPRaOVCyVQbaj0bXa2zSxDFnRIFmpGRUwuOqE9VO
-         6cmWfN0mR+El0gG72xwmkO+1/hAuMkV+36MH4UBqgY9t5lOITLd3BtecbiZnUhSuSAeb
-         ztPLzQ6xc0WSqYiSBcueOAuKe4jQbtcMe0RWY8lXWlKyqZOBVMwrNiGZZ2Comp7y75ET
-         NEVYutaqGa7/5XjcoDlV7vCUmmIdGZ6PB9rmiuWb7TBeLoJK0C9KZ5yvTBmEkmM5qQL5
-         Ju1ESoVCDly3fF/TMtsA0bfr/ZnPUHSHAmB+Um7+lVfYINKWpkHPIY235DGtQbh/juOu
-         XaZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744642746; x=1745247546;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PTu/tTBiLDnLTo19OmaQLQq2DdZvvnanifk4lVRIq1Y=;
-        b=PGa0wyh+sf4Wdc/8fm0RhEa1R/0QNKCoww2qpSiAulzmAF+nHLtAaxyW2XgT80WuC6
-         hQzvHIF9yfe+z+Ej5IXMf85Z9FE5P57PKQ8MvdM3KrFJrfNKNIReD9tpIl4T2me9L1bU
-         XP2vkj8sCdZn+yHfc50oLjyZ5nCbNJJ8Mt/Btwm6O22IPOE2MYuJt6PCoKzBgsJLYzEZ
-         +FRGbmLv3WZeip1YynSd8DWxutPVMLneytDcv9O99EpM645evyxKXpE6RlixTZgy6fvT
-         859/PbinqHyBJyl0yfiBuVWvFXnGRhjjAD1AG7vHQb48ndqf0m0laDFh+LdJFx5bzNoJ
-         hgXA==
-X-Forwarded-Encrypted: i=1; AJvYcCXCDonE+rlxDU6zSIhXCPbMT6hTKICpTpGj8yjz7jgRX7v5/koI4+b840D4S+U2iWa1+1j+SplFMaikf5s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyT/WpPHnbxejxQO+P5PynJ1n5t+by0Tngm3RGOw/DEPo8pQuM9
-	kak5p6JUIUeOSnCn9KMwZjowpA/bXZWux9129NKMBPn0S2Tqun7gwf7KAOYf9d0=
-X-Gm-Gg: ASbGncuB0x7Yj6XJGpzQII9UIbDodKz8jMq/5dSxeQOtRvpg41hJAVpJe4Xr9MkVBxU
-	UKqhBpyKNjJY+gVGAwle5zeLMCbHOiSi43JBfSkw34i2+aRF8HKOsC9jqpnxoaaTmVJlt0nm3us
-	F2+QgtMFEohAiTPznDC2JNovB42+IQ7cTGBDPxvidSGa7o3Q/z0/AEA3OQIFkbRcryUdg9KXN53
-	zpH6hlx2jNyofErRaSRf/0cQpDRqdqTbnJXyWoyV133blY00dh7waxwdYSl0SOnO9/79zQNxI/j
-	WTRSQTAQ9gb4scIpUvEy6JlU9Dk0EHFb02CkCzVtZMvHkX7Pnj7iOdBrbkSOg+UigGwvorxOEY+
-	fP7nq3Z9Sg1rBN/8c/SnUjMReYds5
-X-Google-Smtp-Source: AGHT+IF1glTK7Rxcw8wLI6vS9cuIAF6Jejh7PaHmK35pumQJ1AqOK5QhIhTv8QqFc965AKmemYt/Rg==
-X-Received: by 2002:a05:6830:6209:b0:72a:1222:9e8a with SMTP id 46e09a7af769-72e863c607fmr7034537a34.14.1744642746453;
-        Mon, 14 Apr 2025 07:59:06 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:442c:b496:9db4:da43? ([2600:8803:e7e4:1d00:442c:b496:9db4:da43])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-72e73d8ee4esm2029688a34.39.2025.04.14.07.59.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Apr 2025 07:59:06 -0700 (PDT)
-Message-ID: <0b1b428d-9ad0-4581-a13a-88f4ffd6c4e3@baylibre.com>
-Date: Mon, 14 Apr 2025 09:59:05 -0500
+	s=arc-20240116; t=1744642777; c=relaxed/simple;
+	bh=TXFo3YH0SnxAza+gtpMwQLt8XQCR/UmGU74NQR4Cdy8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YHEp7dXHesApy+CPOLUH9fcfyffFaJXEc3x/cCVobuyrH1QyR33DUfAv7c2Yngm+sclclmtaEPo4K5OkrejeOlhffjeoGrKWR2n58je0bOYHfSYFDKpNwe6p/VZpnWLJt0FdG/pC2cgrkHgYVAh/qZdzsar7Ud7X5+56+rPdpGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uvyip8VH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02829C4CEE2;
+	Mon, 14 Apr 2025 14:59:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744642777;
+	bh=TXFo3YH0SnxAza+gtpMwQLt8XQCR/UmGU74NQR4Cdy8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uvyip8VH1mVHDRmAzVsLu+a/nS+Oz9/it7MYuLKR5OZ/6LlfUQ6iphsK5o22269lz
+	 a9lqjbfexAfoqfKtaMpAJ3yn9JIVrg7+cdpmxjVkFV0Uo0VxZck0/3hO9jsAtHNTLd
+	 U19XuNYivnph0hLnjatmZaJpvLKRueBpmF60CTSXJg0EcpGIp1NHIoZ/CiiUpe5NaD
+	 NwWfNVCieYFLCMLSL7r1VANeo6tIecpE2dMDkqjfss2FDVAaMGs0C/HZouJMnQ4hdR
+	 iUpDoN3zUa3cfvNJVgNwpLPwu8RcR/zWZgCKydDYrdaIkG2KOgoAz8ewmeBHcuNzeh
+	 nUjO4Q6Y+LtRQ==
+Date: Mon, 14 Apr 2025 15:59:32 +0100
+From: Simon Horman <horms@kernel.org>
+To: Abdun Nihaal <abdun.nihaal@gmail.com>
+Cc: Markus Elfring <Markus.Elfring@web.de>, netdev@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Potnuri Bharat Teja <bharat@chelsio.com>,
+	Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>,
+	Vishal Kulkarni <vishal@chelsio.com>
+Subject: Re: [PATCH net-next] cxgb4: fix memory leak in
+ cxgb4_init_ethtool_filters() error path
+Message-ID: <20250414145932.GA1508032@horms.kernel.org>
+References: <20250409054323.48557-1-abdun.nihaal@gmail.com>
+ <5cb34dde-fb40-4654-806f-50e0c2ee3579@web.de>
+ <20250411145734.GH395307@horms.kernel.org>
+ <o4o32xf7oejvzyd3cb7sr4whvganh2uds3rvkxzcaqyhllaaum@iovzdahpu3ha>
+ <20250414145618.GT395307@horms.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iio: adc: Correct conditional logic for store mode
-To: Gabriel Shahrouzi <gshahrouzi@gmail.com>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-iio@vger.kernel.org,
- linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Cc: gshahrozui@gmail.com, skhan@linuxfoundation.org,
- kernelmentees@lists.linuxfoundation.org
-References: <20250414140901.460719-1-gshahrouzi@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250414140901.460719-1-gshahrouzi@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250414145618.GT395307@horms.kernel.org>
 
-On 4/14/25 9:09 AM, Gabriel Shahrouzi wrote:
-> The mode setting logic in ad7816_store_mode was reversed due to
-> incorrect handling of the strcmp return value. strcmp returns 0 on
-> match, so the `if (strcmp(buf, "full"))` block executed when the
-> input was not "full".
+On Mon, Apr 14, 2025 at 03:56:22PM +0100, Simon Horman wrote:
+> On Fri, Apr 11, 2025 at 09:52:29PM +0530, Abdun Nihaal wrote:
+> > On Fri, Apr 11, 2025 at 03:57:34PM +0100, Simon Horman wrote:
+> > > On Wed, Apr 09, 2025 at 05:47:46PM +0200, Markus Elfring wrote:
+> > > > …
+> > > > > +++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_ethtool.c
+> > > > > @@ -2270,6 +2270,7 @@ int cxgb4_init_ethtool_filters(struct adapter *adap)
+> > > > >  		eth_filter->port[i].bmap = bitmap_zalloc(nentries, GFP_KERNEL);
+> > > > >  		if (!eth_filter->port[i].bmap) {
+> > > > >  			ret = -ENOMEM;
+> > > > > +			kvfree(eth_filter->port[i].loc_array);
+> > > > >  			goto free_eth_finfo;
+> > > > >  		}
+> > > > >  	}
+> > > > 
+> > > > How do you think about to move the shown error code assignment behind the mentioned label
+> > > > (so that another bit of duplicate source code could be avoided)?
+> > > 
+> > > Hi Markus,
+> > > 
+> > > If you mean something like the following. Then I agree that it
+> > > is both in keeping with the existing error handling in this function
+> > > and addresses the problem at hand.
+> > > 
+> > > diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_ethtool.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_ethtool.c
+> > > index 7f3f5afa864f..df26d3388c00 100644
+> > > --- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_ethtool.c
+> > > +++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_ethtool.c
+> > > @@ -2270,13 +2270,15 @@ int cxgb4_init_ethtool_filters(struct adapter *adap)
+> > >                 eth_filter->port[i].bmap = bitmap_zalloc(nentries, GFP_KERNEL);
+> > >                 if (!eth_filter->port[i].bmap) {
+> > >                         ret = -ENOMEM;
+> > > -                       goto free_eth_finfo;
+> > > +                       goto free_eth_finfo_loc_array;
+> > >                 }
+> > >         }
+> > > 
+> > >         adap->ethtool_filters = eth_filter;
+> > >         return 0;
+> > > 
+> > > +free_eth_finfo_loc_array:
+> > > +       kvfree(eth_filter->port[i].loc_array);
+> > >  free_eth_finfo:
+> > >         while (i-- > 0) {
+> > >                 bitmap_free(eth_filter->port[i].bmap);
+> > > 
+> > 
+> > I think what Markus meant, was to move the ret = -ENOMEM from both the
+> > allocations in the loop, to after the free_eth_finfo label because it is
+> > -ENOMEM on both goto jumps.
+> > 
+> > But personally I would prefer having the ret code right after the call 
+> > that is failing. Also I would avoid creating new goto labels unless
+> > necessary, because it is easier to see the kvfree in context inside the
+> > loop, than to put it in a separate label.
+> > 
+> > I just tried to make the most minimal code change to fix the memory leak.
 > 
-> This resulted in "full" setting the mode to AD7816_PD (power-down) and
-> other inputs setting it to AD7816_FULL.
+> Thanks Nihaal,
 > 
-> Fix this by checking it against 0 to correctly check for "full" and
-> "power-down", mapping them to AD7816_FULL and AD7816_PD respectively.
+> I agree that your patch is fine as-is for the reasons you describe above.
 > 
+> Reviewed-by: Simon Horman <horms@kernel.org>
 
-Sounds like we need a Fixes: tag here that reference the commit
-that introduced the bug.
-
-> Signed-off-by: Gabriel Shahrouzi <gshahrouzi@gmail.com>
-> ---
+As the patch was marked as changes requested, presumably due to earlier
+discussion in this thread, could you please post a v2. You can include my
+tag above. And note under the scissors ("---") that adding the tag was the
+only change between v1 and v2.
 
