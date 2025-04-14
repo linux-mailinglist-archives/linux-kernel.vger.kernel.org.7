@@ -1,394 +1,143 @@
-Return-Path: <linux-kernel+bounces-602033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA17FA8758C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 03:48:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A525A87595
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 03:52:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21F407A2A6F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 01:47:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E4EB169C34
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 01:52:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E6D1BC07B;
-	Mon, 14 Apr 2025 01:46:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A28C18A953;
+	Mon, 14 Apr 2025 01:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CrSg4cpx"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="aWGYzSyl"
+Received: from mail-m49209.qiye.163.com (mail-m49209.qiye.163.com [45.254.49.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904A41B042C
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 01:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93BB8178372
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 01:52:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744595171; cv=none; b=OuMkMPslPlYNSbTzyY7W3KGdXb29Wfo42Frd0ly4/PcBQ8M3wXfDbKBELEtVxMyfrqqPE+hmZ0Woy9wc6udw3zQuMgiHvvIAc/QrDYztbm3U1HyvOQQg3MUqr8E0CPMu+PFlVVSX44KMkbaJzpQOgko1S4VGWdBTQUT6ncDlcmw=
+	t=1744595530; cv=none; b=QBaZa3ygXjGUuCG8Bbe6wsjeX8E1gFKgr2CJZwsIAl+RvlnIFJ3xA5x+82Sb74DQjYOeHSgWngNIIenxw0HrcbHX2pD8bQNWxCoBi77Qm8lOKMhXg8uuweZ7Sd9YPz4cSfDXkoP1qgvttUcVuQqPxde89jO0eeLSBR17dVil6FM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744595171; c=relaxed/simple;
-	bh=Ij+nQA+8RujoN7hiZEYeXEqqlyqHInUV/AL/W+TxWEE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Sj7J7pr1bykZeTHH5LzQdT40hcQdOFhQmH8rr8HNCoF+mR6HT4jondvaZepjUucK51w7nPY8xNDoAuBg8/aQsLqfUADzEpOa6/YelDzdKhL4bZY7sTuIOztiuoB3gAkDDT47vhNPZyp7NGHRcdS6DyEqmpQCzkyLvzHCIa766q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CrSg4cpx; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1744595166;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C+lfN/jDmhx15H28wr+ZCKCFpi48AsJfaRSyB2d11d8=;
-	b=CrSg4cpxZSZYNp3SKC0g7z3kvxtNwWAKZ4IXaWkyVsxL5lAyyB/oOPPMb8QXm3LwC25IaO
-	8vGMpwW1mUD7/JTeBoo1hA43ON+W8hon9qzTaEDJiYpADcImlDoKPWIGBXRpFLaYJ4WWgB
-	7caFwl1Dpqv+7dP+fZH5P7DhMCIe9ts=
-From: Dongsheng Yang <dongsheng.yang@linux.dev>
-To: axboe@kernel.dk,
-	hch@lst.de,
-	dan.j.williams@intel.com,
-	gregory.price@memverge.com,
-	John@groves.net,
-	Jonathan.Cameron@Huawei.com,
-	bbhushan2@marvell.com,
-	chaitanyak@nvidia.com,
-	rdunlap@infradead.org
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org,
-	linux-bcache@vger.kernel.org,
-	nvdimm@lists.linux.dev,
-	Dongsheng Yang <dongsheng.yang@linux.dev>
-Subject: [RFC PATCH 11/11] block: introduce pcache (persistent memory to be cache for block device)
-Date: Mon, 14 Apr 2025 01:45:05 +0000
-Message-Id: <20250414014505.20477-12-dongsheng.yang@linux.dev>
-In-Reply-To: <20250414014505.20477-1-dongsheng.yang@linux.dev>
-References: <20250414014505.20477-1-dongsheng.yang@linux.dev>
+	s=arc-20240116; t=1744595530; c=relaxed/simple;
+	bh=fBLTP093vuIiAC7yiioro40haF2CXcMH9lftbu3sCWg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=AKCOb1u/1YGDFo/mmxurTQWxd4FeNEA7e1g4C8BK3o3/h8Vs27X3e3bYLriNGRRiJw+p3upt2Dpisc0wEzbhksU6JsZTRnOYf5rSQ6nxSIDqDmTokZM4mgZuYyfk8WIi5vdWjO9nG8MhTupQ2H6T6tLE8Z8V6kGY58z97BRhClI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=aWGYzSyl; arc=none smtp.client-ip=45.254.49.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.26] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 11bad66ba;
+	Mon, 14 Apr 2025 09:46:49 +0800 (GMT+08:00)
+Message-ID: <65b5da62-3994-42e0-916c-4a8505fa3844@rock-chips.com>
+Date: Mon, 14 Apr 2025 09:46:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/7] drm/bridge: analogic_dp: drop panel_is_modeset
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+References: <20250401-panel-return-void-v1-0-93e1be33dc8d@oss.qualcomm.com>
+ <20250401-panel-return-void-v1-3-93e1be33dc8d@oss.qualcomm.com>
+Content-Language: en-US
+Cc: Laurent.pinchart@ideasonboard.com, airlied@gmail.com,
+ andrzej.hajda@intel.com, dri-devel@lists.freedesktop.org,
+ jernej.skrabec@gmail.com, jonas@kwiboo.se, linux-kernel@vger.kernel.org,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ neil.armstrong@linaro.org, quic_jesszhan@quicinc.com, rfoss@kernel.org,
+ simona@ffwll.ch, tzimmermann@suse.de
+From: Damon Ding <damon.ding@rock-chips.com>
+In-Reply-To: <20250401-panel-return-void-v1-3-93e1be33dc8d@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQk8aQ1ZLGh0YT0oaTRlOSU9WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+X-HM-Tid: 0a9631fa4e5d03a3kunm11bad66ba
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6ODo6HSo*PDIDPC4eHx5PKjoz
+	SBBPCRRVSlVKTE9PTkJOSUpKT0lOVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFITUNLNwY+
+DKIM-Signature:a=rsa-sha256;
+	b=aWGYzSylNmiXIDwCVvLnCAHkwVkH+FU/Po9CcypUW8aTsrHMC3rkXTEcXBG3rsC6VTLUs0kcRSGiRad3itQq2Z1wKUbpFJztxXAvFkstah8OhiI0iQyJMU8SmRH+VtmJGM72/tY4NRXsUX4hzikzu2EeAGWe5myDv2V8gItVo8k=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=Ig4iftYOsYlJff/8wBUz9XCqK3qD58dlsifH7hNudHw=;
+	h=date:mime-version:subject:message-id:from;
 
-This patch introduces the initial integration of `pcache`, a Linux kernel
-block layer module that leverages persistent memory (PMem) as a high-performance
-caching layer for traditional block devices (e.g., SSDs, HDDs).
+Hi Dmitry,
 
-- Persistent Memory as Cache:
-   - `pcache` uses DAX-enabled persistent memory (e.g., `/dev/pmemX`) to provide
-     fast, byte-addressable, non-volatile caching for block devices.
-   - Supports both direct-mapped and vmap-based access depending on DAX capabilities.
+On 2025/4/1 13:11, Dmitry Baryshkov wrote:
+> The dp->panel_is_modeset is now a write-only field. Drop it completely.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> ---
+>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 11 +----------
+>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |  1 -
+>   2 files changed, 1 insertion(+), 11 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> index 82dc4b01806f9728dc882b0128171838e81f21b0..704c6169116eb2601d2ad02dc7294455ceff5460 100644
+> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> @@ -964,9 +964,7 @@ static int analogix_dp_disable_psr(struct analogix_dp_device *dp)
+>    * is false, the panel will be unprepared.
+>    *
+>    * The function will disregard the current state
+> - * of the panel and either prepare/unprepare the panel based on @prepare. Once
+> - * it finishes, it will update dp->panel_is_modeset to reflect the current state
+> - * of the panel.
+> + * of the panel and either prepare/unprepare the panel based on @prepare.
+>    */
+>   static int analogix_dp_prepare_panel(struct analogix_dp_device *dp,
+>   				     bool prepare)
+> @@ -983,12 +981,6 @@ static int analogix_dp_prepare_panel(struct analogix_dp_device *dp,
+>   	else
+>   		ret = drm_panel_unprepare(dp->plat_data->panel);
+>   
+> -	if (ret)
+> -		goto out;
+> -
+> -	dp->panel_is_modeset = prepare;
+> -
+> -out:
+>   	mutex_unlock(&dp->panel_lock);
+>   	return ret;
+>   }
+> @@ -1532,7 +1524,6 @@ analogix_dp_probe(struct device *dev, struct analogix_dp_plat_data *plat_data)
+>   	dp->dpms_mode = DRM_MODE_DPMS_OFF;
+>   
+>   	mutex_init(&dp->panel_lock);
+> -	dp->panel_is_modeset = false;
+>   
+>   	/*
+>   	 * platform dp driver need containor_of the plat_data to get
+> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+> index 774d11574b095b093ddf2818ad5b84be6605c9bf..b679d5b71d276f458d905c936160f107225bc6c5 100644
+> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+> @@ -170,7 +170,6 @@ struct analogix_dp_device {
+>   	bool			psr_supported;
+>   
+>   	struct mutex		panel_lock;
+> -	bool			panel_is_modeset;
+>   
+>   	struct analogix_dp_plat_data *plat_data;
+>   };
+> 
 
-- Modular Architecture:
-   - `cache_dev`: represents a persistent memory device used as a cache.
-   - `backing_dev`: represents an individual block device being cached.
-   - `logic_dev`: exposes a block device (`/dev/pcacheX`) to userspace, serving as
-     the frontend interface for I/O.
-   - `cache`: implements core caching logic (hit/miss, writeback, GC, etc.).
+The patch has been verified with the eDP panel "lg,lp079qx1-sp0v" in 
+RK3588S EVB1 board.
 
-Design Motivation:
+Tested-by: Damon Ding <damon.ding@rock-chips.com>
 
-`pcache` is designed to bridge the performance gap between slow-but-large storage
-(HDDs, SATA/NVMe SSDs) and emerging byte-addressable persistent memory.
-Compared to traditional block layer caching, `pcache` is persistent, low-latency, highly concurrent,
-and more amenable to modern storage-class memory devices than legacy caching designs.
-
-This patch finalizes the series by wiring up the initialization entry point
-(`pcache_init()`), sysfs bus registration, root device handling, and Kconfig glue.
-
-With this, the `pcache` subsystem is ready to load as a kernel module and serve
-as a cache engine for block I/O.
-
-Signed-off-by: Dongsheng Yang <dongsheng.yang@linux.dev>
----
- MAINTAINERS                   |   8 ++
- drivers/block/Kconfig         |   2 +
- drivers/block/Makefile        |   2 +
- drivers/block/pcache/Kconfig  |  16 +++
- drivers/block/pcache/Makefile |   4 +
- drivers/block/pcache/main.c   | 194 ++++++++++++++++++++++++++++++++++
- 6 files changed, 226 insertions(+)
- create mode 100644 drivers/block/pcache/Kconfig
- create mode 100644 drivers/block/pcache/Makefile
- create mode 100644 drivers/block/pcache/main.c
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 00e94bec401e..5ee5879072b9 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18026,6 +18026,14 @@ S:	Maintained
- F:	drivers/leds/leds-pca9532.c
- F:	include/linux/leds-pca9532.h
- 
-+PCACHE (Pmem as cache for block device)
-+M:	Dongsheng Yang <dongsheng.yang@linux.dev>
-+M:	Zheng Gu <cengku@gmail.com>
-+R:	Linggang Zeng <linggang.linux@gmail.com>
-+L:	linux-block@vger.kernel.org
-+S:	Maintained
-+F:	drivers/block/pcache/
-+
- PCI DRIVER FOR AARDVARK (Marvell Armada 3700)
- M:	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
- M:	Pali Rohár <pali@kernel.org>
-diff --git a/drivers/block/Kconfig b/drivers/block/Kconfig
-index a97f2c40c640..27731dbed7f6 100644
---- a/drivers/block/Kconfig
-+++ b/drivers/block/Kconfig
-@@ -192,6 +192,8 @@ config BLK_DEV_LOOP_MIN_COUNT
- 
- source "drivers/block/drbd/Kconfig"
- 
-+source "drivers/block/pcache/Kconfig"
-+
- config BLK_DEV_NBD
- 	tristate "Network block device support"
- 	depends on NET
-diff --git a/drivers/block/Makefile b/drivers/block/Makefile
-index 1105a2d4fdcb..40b96ccbd414 100644
---- a/drivers/block/Makefile
-+++ b/drivers/block/Makefile
-@@ -43,3 +43,5 @@ obj-$(CONFIG_BLK_DEV_NULL_BLK)	+= null_blk/
- obj-$(CONFIG_BLK_DEV_UBLK)			+= ublk_drv.o
- 
- swim_mod-y	:= swim.o swim_asm.o
-+
-+obj-$(CONFIG_BLK_DEV_PCACHE)	+= pcache/
-diff --git a/drivers/block/pcache/Kconfig b/drivers/block/pcache/Kconfig
-new file mode 100644
-index 000000000000..2dc77354a4b1
---- /dev/null
-+++ b/drivers/block/pcache/Kconfig
-@@ -0,0 +1,16 @@
-+config BLK_DEV_PCACHE
-+	tristate "Persistent memory for cache of Block Device (Experimental)"
-+	depends on DEV_DAX && FS_DAX
-+	help
-+	  PCACHE provides a mechanism to use persistent memory (e.g., CXL persistent memory,
-+	  DAX-enabled devices) as a high-performance cache layer in front of
-+	  traditional block devices such as SSDs or HDDs.
-+
-+	  PCACHE is implemented as a kernel module that integrates with the block
-+	  layer and supports direct access (DAX) to persistent memory for low-latency,
-+	  byte-addressable caching.
-+
-+	  Note: This feature is experimental and should be tested thoroughly
-+	  before use in production environments.
-+
-+	  If unsure, say 'N'.
-diff --git a/drivers/block/pcache/Makefile b/drivers/block/pcache/Makefile
-new file mode 100644
-index 000000000000..0e7316ae20e1
---- /dev/null
-+++ b/drivers/block/pcache/Makefile
-@@ -0,0 +1,4 @@
-+pcache-y := main.o cache_dev.o backing_dev.o segment.o meta_segment.o logic_dev.o cache.o cache_segment.o cache_key.o cache_req.o cache_writeback.o cache_gc.o
-+
-+obj-$(CONFIG_BLK_DEV_PCACHE) += pcache.o
-+
-diff --git a/drivers/block/pcache/main.c b/drivers/block/pcache/main.c
-new file mode 100644
-index 000000000000..d0430c64aff3
---- /dev/null
-+++ b/drivers/block/pcache/main.c
-@@ -0,0 +1,194 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Copyright(C) 2025, Dongsheng Yang <dongsheng.yang@linux.dev>
-+ */
-+
-+#include <linux/capability.h>
-+#include <linux/device.h>
-+#include <linux/kernel.h>
-+#include <linux/parser.h>
-+
-+#include "pcache_internal.h"
-+#include "cache_dev.h"
-+#include "logic_dev.h"
-+
-+enum {
-+	PCACHE_REG_OPT_ERR		= 0,
-+	PCACHE_REG_OPT_FORCE,
-+	PCACHE_REG_OPT_FORMAT,
-+	PCACHE_REG_OPT_PATH,
-+};
-+
-+static const match_table_t register_opt_tokens = {
-+	{ PCACHE_REG_OPT_FORCE,		"force=%u" },
-+	{ PCACHE_REG_OPT_FORMAT,	"format=%u" },
-+	{ PCACHE_REG_OPT_PATH,		"path=%s" },
-+	{ PCACHE_REG_OPT_ERR,		NULL	}
-+};
-+
-+static int parse_register_options(char *buf,
-+		struct pcache_cache_dev_register_options *opts)
-+{
-+	substring_t args[MAX_OPT_ARGS];
-+	char *o, *p;
-+	int token, ret = 0;
-+
-+	o = buf;
-+
-+	while ((p = strsep(&o, ",\n")) != NULL) {
-+		if (!*p)
-+			continue;
-+
-+		token = match_token(p, register_opt_tokens, args);
-+		switch (token) {
-+		case PCACHE_REG_OPT_PATH:
-+			if (match_strlcpy(opts->path, &args[0],
-+				PCACHE_PATH_LEN) == 0) {
-+				ret = -EINVAL;
-+				break;
-+			}
-+			break;
-+		case PCACHE_REG_OPT_FORCE:
-+			if (match_uint(args, &token)) {
-+				ret = -EINVAL;
-+				goto out;
-+			}
-+			opts->force = (token != 0);
-+			break;
-+		case PCACHE_REG_OPT_FORMAT:
-+			if (match_uint(args, &token)) {
-+				ret = -EINVAL;
-+				goto out;
-+			}
-+			opts->format = (token != 0);
-+			break;
-+		default:
-+			pr_err("unknown parameter or missing value '%s'\n", p);
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+	}
-+
-+out:
-+	return ret;
-+}
-+
-+static ssize_t cache_dev_unregister_store(const struct bus_type *bus, const char *ubuf,
-+				      size_t size)
-+{
-+	u32 cache_dev_id;
-+	int ret;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	if (sscanf(ubuf, "cache_dev_id=%u", &cache_dev_id) != 1)
-+		return -EINVAL;
-+
-+	ret = cache_dev_unregister(cache_dev_id);
-+	if (ret < 0)
-+		return ret;
-+
-+	return size;
-+}
-+
-+static ssize_t cache_dev_register_store(const struct bus_type *bus, const char *ubuf,
-+				      size_t size)
-+{
-+	struct pcache_cache_dev_register_options opts = { 0 };
-+	char *buf;
-+	int ret;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	buf = kmemdup(ubuf, size + 1, GFP_KERNEL);
-+	if (IS_ERR(buf)) {
-+		pr_err("failed to dup buf for adm option: %d", (int)PTR_ERR(buf));
-+		return PTR_ERR(buf);
-+	}
-+	buf[size] = '\0';
-+
-+	ret = parse_register_options(buf, &opts);
-+	if (ret < 0) {
-+		kfree(buf);
-+		return ret;
-+	}
-+	kfree(buf);
-+
-+	ret = cache_dev_register(&opts);
-+	if (ret < 0)
-+		return ret;
-+
-+	return size;
-+}
-+
-+static BUS_ATTR_WO(cache_dev_unregister);
-+static BUS_ATTR_WO(cache_dev_register);
-+
-+static struct attribute *pcache_bus_attrs[] = {
-+	&bus_attr_cache_dev_unregister.attr,
-+	&bus_attr_cache_dev_register.attr,
-+	NULL,
-+};
-+
-+static const struct attribute_group pcache_bus_group = {
-+	.attrs = pcache_bus_attrs,
-+};
-+__ATTRIBUTE_GROUPS(pcache_bus);
-+
-+const struct bus_type pcache_bus_type = {
-+	.name		= "pcache",
-+	.bus_groups	= pcache_bus_groups,
-+};
-+
-+static void pcache_root_dev_release(struct device *dev)
-+{
-+}
-+
-+struct device pcache_root_dev = {
-+	.init_name =    "pcache",
-+	.release =      pcache_root_dev_release,
-+};
-+
-+static int __init pcache_init(void)
-+{
-+	int ret;
-+
-+	ret = device_register(&pcache_root_dev);
-+	if (ret < 0) {
-+		put_device(&pcache_root_dev);
-+		goto err;
-+	}
-+
-+	ret = bus_register(&pcache_bus_type);
-+	if (ret < 0)
-+		goto device_unregister;
-+
-+	ret = pcache_blkdev_init();
-+	if (ret < 0)
-+		goto bus_unregister;
-+
-+	return 0;
-+
-+bus_unregister:
-+	bus_unregister(&pcache_bus_type);
-+device_unregister:
-+	device_unregister(&pcache_root_dev);
-+err:
-+
-+	return ret;
-+}
-+
-+static void pcache_exit(void)
-+{
-+	pcache_blkdev_exit();
-+	bus_unregister(&pcache_bus_type);
-+	device_unregister(&pcache_root_dev);
-+}
-+
-+MODULE_AUTHOR("Dongsheng Yang <dongsheng.yang@linux.dev>");
-+MODULE_DESCRIPTION("PMem for Cache of block device");
-+MODULE_LICENSE("GPL v2");
-+module_init(pcache_init);
-+module_exit(pcache_exit);
--- 
-2.34.1
+Best regards,
+Damon
 
 
