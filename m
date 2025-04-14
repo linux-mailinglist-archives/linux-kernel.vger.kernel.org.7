@@ -1,112 +1,117 @@
-Return-Path: <linux-kernel+bounces-603005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F8CAA8827B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:37:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37D9EA88294
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:39:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 384CF1716E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:34:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 917603BAEF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:35:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 558B6253941;
-	Mon, 14 Apr 2025 13:27:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94C8228A1FE;
+	Mon, 14 Apr 2025 13:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bq7dejzX"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N5HeCQ6F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E404D288C90;
-	Mon, 14 Apr 2025 13:27:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E919828A1F3;
+	Mon, 14 Apr 2025 13:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744637244; cv=none; b=pEOMYGga2riwNWd1phBaHI3G8OI9waFTh6gdbdwJnfPcbB0S4ZX0293FUfYqVvz2RFli212J/qyg3AkdSCK5bHptO3ZhywjGWR9OnMb88aVdJDKfZ0JLn1FcgXQPdIgPSRVpk12KrxW0jlH/d5+59S7NgfaBuvHf9Q2e6IFbLuE=
+	t=1744637253; cv=none; b=C/n9ytXrlxnyG7KKxtolxiL6zsY9sZluCnYNy8mAZs3+jzHYTHcPcVf7UrlrzeMgWsuXFT7i9oLPGqU1qgZ1ukn7670e7de2OifPQhMxPynQltatT+yN0s1CIJ5RgCAVnApuklbuhD+brnLw0qEQYXoQSrZ4N4GLIXj+wfILAY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744637244; c=relaxed/simple;
-	bh=LZJSiNjAH6Oa2ChLaKL004LkS+w5IQsL9RmW7A+KpbQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Bm2e1HajBwpl99aPTkAcsf38gOTjLWVwRXm69/blLeV5VnDLFFkln4mKlT6HRhugmSAjC5qnGbAg/3Gl/aurtCNYLAOkPj9HsuGwPWM4AAtzomRTjBLhep/oJXMnbj/UtACBxaqsT0XbNLm06fjOxe/6vxujrIkQ5do9saKN37g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bq7dejzX; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30bfc8faef9so41071491fa.1;
-        Mon, 14 Apr 2025 06:27:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744637241; x=1745242041; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l2GarGfA59cCcsifpfMtHE+6H6aD/cbRRsW+VrYAjg8=;
-        b=bq7dejzXw+8dcRpC6N9q4KFFtG+6tZ4ds4sztHbCGsz+SLS64okhU6G7ml4AffXkg7
-         GMXa8qqpbyKWAbvGHITmngokDapbt6paLVp/MmwIwDy7Z1AX1vM8cqslX5LxgvMUuO7p
-         DFtKPUQNgVt9RLjfBDjyDaMsKUVrfT0doHavbouVTZhjUQknXz0jX2+St+5yCnLDNWVX
-         R3oTG7vEqDzEBp7xFlijh5JjOAj5k1MnJqj9R61XNBu4BkpbNh5YrRNqhLp2aZ28DpQF
-         5pEjXmu1lrxe50LfvuTXX3DFx95fdgaQRbj5H4Dsr0lXr5SHRRuCDKZvkzPVLnFwsnrP
-         mVjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744637241; x=1745242041;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l2GarGfA59cCcsifpfMtHE+6H6aD/cbRRsW+VrYAjg8=;
-        b=O7UfSrJxLtIdPtKuzHVTyElR9RN8HtexDzRLifrzJuM6dxKPxh/xFOAa3BPUsWLdMG
-         ffaOMbckeBJcy3KuFEKs4tT6WDXLDaQDercJ3XhNEtjRyVHG00aTyc248/C/wrYpe1Vg
-         D5h/Mw/tTCbJBriCWrPc00zwBOS98BHbMyrc4TNDZlqqxoyQJ4guQfxM8VO3UDcX1KnU
-         9sTjxpq8OWBPI2blnYLUsBQuVx4BMNZ7EgcBSz5KNf8ENga+vDeG7E+1aj8euCt01e/b
-         XZO9+yWyl/G08fxlIabBANBqlLK8utadLTnLvdwOjpLkENMy+P+fEpnBmrz2oc9rZ3hU
-         we1A==
-X-Forwarded-Encrypted: i=1; AJvYcCV9sqNrQaVuZG9ADwU4GCQ2gZ+jL5hBTPGVQzt1fKy9xQk6GOyp6fG0AINyedsW4lGH0j3UQXcNvhz3EBk=@vger.kernel.org, AJvYcCWufq3VKAnExedBNo9XL54ARl7x8bfGuM5BlKJBVfESIZbvVhAUCg+r8eCmDgvUNUQAj4B+VumMGnkPiUeZCNc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0pIWiHeN6rOE91IuBFF1xKXGc9Xt8Vy5KW4L5KRNdSVq7AhgR
-	O1dNKC66Cfo1S2v0vMusRzv5O/VAi25uKesnaBnrCQAiY5PTZbpN1RKuirYFaTRpa/Q9v5VDX+d
-	6SEu4/UEQF7057ypjWTUjtcYoHBs=
-X-Gm-Gg: ASbGncsa481g21BAdns35y/QgDwdW5gaDMAREBXDGprpvYKvyvENcwG500uBIBWcVx9
-	WYcWgJ2N+xKk+mvO+tOCNRxBLwwiYhc8WMixqFkON2Zc8daK4cMNsCowWRvNTS2n0+674ZGqCAA
-	EMZtFSilAOP9uAjSbPUCsOgDCO3tYqoR1cT3yO6Q==
-X-Google-Smtp-Source: AGHT+IElIOolL+iZP0f+Y+BgM95sfaRXz/LuHBUI5ARm+sVv9guruT7fCZ1Q66x3Pby6JWYAylZ00wRHOlSdxvFNl7I=
-X-Received: by 2002:a2e:b88d:0:b0:30b:a8c2:cbd3 with SMTP id
- 38308e7fff4ca-31049a80428mr46066281fa.28.1744637240405; Mon, 14 Apr 2025
- 06:27:20 -0700 (PDT)
+	s=arc-20240116; t=1744637253; c=relaxed/simple;
+	bh=oH1eW4mjfFf+HBxbIxg/zlJ2VSYoPk4kQzYqfN4r4wE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=GLsvDKTs2WGqkmwvnaULJgA2azYDZMgesbjnoWjuxpNsqPTMGpWYe+fxKF2I6lnlP2aKjdsajTVxAumQLmOMXc9CLXA7/4i/FoXNp7sT4iSF1yZxW4bNZRZegq4S9rrO+NTPJetTHpjFh2SDSp2RIK3L+sMHTM9NpkB/w9m2/4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N5HeCQ6F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1B90C4CEE2;
+	Mon, 14 Apr 2025 13:27:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744637252;
+	bh=oH1eW4mjfFf+HBxbIxg/zlJ2VSYoPk4kQzYqfN4r4wE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=N5HeCQ6FZcrXHPvMQQFxZSzvT4PI0w0sSNCGWhlDIC2PtjOfcSyL1soT4/oB17j1X
+	 DCeGhUMY4J034DTmyYdXgQ+4mi9Qdgo0Uo/7Fyi4CBFG/0lmAnvmyZCnQFFCy0mhY2
+	 snR6B5+K8QLxHX2I4mOCnmfSgw0sUBwwj/xe98zrPoV5PsPYbEjmyMLpidT1jTnetp
+	 LsTo08EI+GRIWRFfQfnIsv/voeowhrksNysHXXLfKCva/GdTjeyl5r1sxWRyP77pA6
+	 qrDIfEv3J3gm6HUmTRLvovZCWs4H46KMC5S3Z/ItMpul5zJIak90+LmjE4sbV1abgu
+	 E+TpFWn/bRIvw==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+	Michael Mueller <mimu@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Sasha Levin <sashal@kernel.org>,
+	borntraeger@linux.ibm.com,
+	imbrenda@linux.ibm.com,
+	hca@linux.ibm.com,
+	gor@linux.ibm.com,
+	agordeev@linux.ibm.com,
+	kvm@vger.kernel.org,
+	linux-s390@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.13 01/34] KVM: s390: Don't use %pK through tracepoints
+Date: Mon, 14 Apr 2025 09:26:55 -0400
+Message-Id: <20250414132729.679254-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250412-b4-container-of-type-check-v2-1-f3cc9934c160@gmail.com> <CANiq72kAYp0Z3VNS=JgApceCXx1OVXMNJJYcm8OnZdToz0zufQ@mail.gmail.com>
-In-Reply-To: <CANiq72kAYp0Z3VNS=JgApceCXx1OVXMNJJYcm8OnZdToz0zufQ@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Mon, 14 Apr 2025 09:26:43 -0400
-X-Gm-Features: ATxdqUGOesfZN0UEIar63QO9dKjiC7ZbO0odb_mk10rtxaJFzrOTVMNPZXADc4s
-Message-ID: <CAJ-ks9mrRYkEGJ38tTkDXg0RkSP7K8=wtWBa8y6S3dxDh7ei9A@mail.gmail.com>
-Subject: Re: [PATCH v2] rust: check type of `$ptr` in `container_of!`
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.13.11
+Content-Transfer-Encoding: 8bit
 
-On Sun, Apr 13, 2025 at 4:31=E2=80=AFPM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Sat, Apr 12, 2025 at 8:16=E2=80=AFPM Tamir Duberstein <tamird@gmail.co=
-m> wrote:
-> >
-> > ; diff --git a/rust/kernel/rbtree.rs b/rust/kernel/rbtree.rs
->
-> I am curious, what is the reason for the `;` notation? If is it to
-> avoid issues with the `diff` marker, then I think indenting with 4
-> spaces as usual would work.
+From: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
-`b4 prep --check` complains:
-  =E2=97=8F checkpatch.pl: :207: ERROR: Avoid using diff content in the com=
-mit
-message - patch(1) might not work
+[ Upstream commit 6c9567e0850be2f0f94ab64fa6512413fd1a1eb1 ]
 
-What do you suggest?
+Restricted pointers ("%pK") are not meant to be used through TP_format().
+It can unintentionally expose security sensitive, raw pointer values.
+
+Use regular pointer formatting instead.
+
+Link: https://lore.kernel.org/lkml/20250113171731-dc10e3c1-da64-4af0-b767-7c7070468023@linutronix.de/
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+Reviewed-by: Michael Mueller <mimu@linux.ibm.com>
+Link: https://lore.kernel.org/r/20250217-restricted-pointers-s390-v1-1-0e4ace75d8aa@linutronix.de
+Signed-off-by: Janosch Frank <frankja@linux.ibm.com>
+Message-ID: <20250217-restricted-pointers-s390-v1-1-0e4ace75d8aa@linutronix.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/s390/kvm/trace-s390.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/s390/kvm/trace-s390.h b/arch/s390/kvm/trace-s390.h
+index 9ac92dbf680db..9e28f165c114c 100644
+--- a/arch/s390/kvm/trace-s390.h
++++ b/arch/s390/kvm/trace-s390.h
+@@ -56,7 +56,7 @@ TRACE_EVENT(kvm_s390_create_vcpu,
+ 		    __entry->sie_block = sie_block;
+ 		    ),
+ 
+-	    TP_printk("create cpu %d at 0x%pK, sie block at 0x%pK",
++	    TP_printk("create cpu %d at 0x%p, sie block at 0x%p",
+ 		      __entry->id, __entry->vcpu, __entry->sie_block)
+ 	);
+ 
+@@ -255,7 +255,7 @@ TRACE_EVENT(kvm_s390_enable_css,
+ 		    __entry->kvm = kvm;
+ 		    ),
+ 
+-	    TP_printk("enabling channel I/O support (kvm @ %pK)\n",
++	    TP_printk("enabling channel I/O support (kvm @ %p)\n",
+ 		      __entry->kvm)
+ 	);
+ 
+-- 
+2.39.5
+
 
