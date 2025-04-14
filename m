@@ -1,186 +1,166 @@
-Return-Path: <linux-kernel+bounces-602664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50810A87D98
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 12:26:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BC5BA87D9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 12:27:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33BCC188ECBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:26:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC82E16BE68
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:26:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7416227BF8B;
-	Mon, 14 Apr 2025 10:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD4C2698BE;
+	Mon, 14 Apr 2025 10:24:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="umXj6i3R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eWGLZUdQ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ON52rTej";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eWGLZUdQ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ON52rTej"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6D1279341
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 10:23:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E227483
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 10:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744626227; cv=none; b=P4spodLAsHFGg7sjDwePIDUh3yZqnkSHA+vaPtjP6azC9QM8R7XgeDCRR3YmkpvvJaxX+JegyH1p+XWQBBfAVfpw/nfpQHzWvIcK4e/ADwIe5adNNJPmcQZNLPqLYg2Y5OQF8AokgpSYFLKBpW6vA3O20X57Wh8ZIp6V6dJe0Fk=
+	t=1744626252; cv=none; b=DksbFWYQEHXvFx8rxyIgSCjNrsy81KRak5y3dCaJZ52tcZgZgsWL18228cLDlrY5b4RjoqbTEYbyEI3d9ZFFcJd3Mx6Pto5Ig9csHtxNfzMf8MCMDPgEG34Ge99or2uehuhGTnT5r2xgWa02tXMdsTLG3IIVYUBwogLv68sVhEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744626227; c=relaxed/simple;
-	bh=nMFIBY0RgIPt6vT9IT5F6e0OUQcx7FacKNfeSYn92cI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GN0I6EzsgG493H1EQEwwesfwsgBCV+Y2TENrCtcb/tYe5WTdz0EfNwHrz9GBGuuaKxgsuaPyw9FYK5zzkvEeuXxprxCzJxBi0Z31ok1h6jxP0tXtZuvPAgDUhLOieThbslRiA/aYP73pcsMbtuJs2xPmxg4ejgNcpArUAljJ3iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=umXj6i3R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 862D6C4CEEB;
-	Mon, 14 Apr 2025 10:23:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744626227;
-	bh=nMFIBY0RgIPt6vT9IT5F6e0OUQcx7FacKNfeSYn92cI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=umXj6i3RNeUMIcjkx5BFaHtvKoprQEAVQXEECaY6vvxBr8lnL9Z5+YCdAVAPqt5aM
-	 P3/u9n9wpEguETjVYvi7Fd2zI/M0UijMVHJMQ7EYW5ATZoriFNfrTzNjdRkndqlG6X
-	 iS4D+e3osiYWgcBsHMqlwGFiPYLf5ARknoj0OoNNqTZYGvNc4K6/5pp8/5qBNjpy8j
-	 76JwVdtceeu7kz5KqWVzkbOBDK/q2EkEK/qnXk5imiudRQjCnbpbYf2SUbRL6BQvih
-	 Z+1wxlR9hUg+ReCoirMEbX+R5BoBL+mifFm01/qblzMUAY4SA2kWn0ZsxjoOPS5OCk
-	 N2cqTWzXbmnwg==
-From: Ingo Molnar <mingo@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 17/17] treewide, timers: Rename init_timers() => timers_init()
-Date: Mon, 14 Apr 2025 12:22:51 +0200
-Message-ID: <20250414102301.332225-18-mingo@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250414102301.332225-1-mingo@kernel.org>
-References: <20250414102301.332225-1-mingo@kernel.org>
+	s=arc-20240116; t=1744626252; c=relaxed/simple;
+	bh=bJkS8pdoPhOHbmv5878hnOxd7DhNaFYFet884RM0XGA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OPXqFKaqcW4vCWEeMRthQ1Awkxb4ybuvq0GmIh7A1qe3Qu79N8hExbfhKwEWELBCkAtdgumBNUcCZaFiCPTTbFcfEXT3HOySTAJ792O4TaSjpnk/kLcBDwnn4r9qodoPfYpuEgsa/KDLlH+uSrm0R9cPFZvJGwwz4cj0e9y46Lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eWGLZUdQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ON52rTej; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eWGLZUdQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ON52rTej; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A138C2122D;
+	Mon, 14 Apr 2025 10:24:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744626248; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H8pZ1ekNSuzCGbf1/ozGBr9ns5MGwbJ9vX66mbbuzuI=;
+	b=eWGLZUdQkN8rhGHJPhiETdEf0Xyn3osto9P+8QnsVnyaAxmy2nm4l9NF0kYp/UmxfZzysI
+	+wW727D9Dy+g8vf2Dx1y0yRqXbqamXQ7ZvU/zVpRCAM9x7yqTFpzI7js71bu2U2MYLoH9g
+	aSFktaLDEnUg09rRrXUXCUymvyCWpto=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744626248;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H8pZ1ekNSuzCGbf1/ozGBr9ns5MGwbJ9vX66mbbuzuI=;
+	b=ON52rTejpJKFUg6QhdFxhOOh4VdkLZhizhNnJZJ9XCqTl6fFq63Ppb6hL6Cmchgcfek4ox
+	MAdhrUBikm1RxRBA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=eWGLZUdQ;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=ON52rTej
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744626248; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H8pZ1ekNSuzCGbf1/ozGBr9ns5MGwbJ9vX66mbbuzuI=;
+	b=eWGLZUdQkN8rhGHJPhiETdEf0Xyn3osto9P+8QnsVnyaAxmy2nm4l9NF0kYp/UmxfZzysI
+	+wW727D9Dy+g8vf2Dx1y0yRqXbqamXQ7ZvU/zVpRCAM9x7yqTFpzI7js71bu2U2MYLoH9g
+	aSFktaLDEnUg09rRrXUXCUymvyCWpto=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744626248;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H8pZ1ekNSuzCGbf1/ozGBr9ns5MGwbJ9vX66mbbuzuI=;
+	b=ON52rTejpJKFUg6QhdFxhOOh4VdkLZhizhNnJZJ9XCqTl6fFq63Ppb6hL6Cmchgcfek4ox
+	MAdhrUBikm1RxRBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 869D01336F;
+	Mon, 14 Apr 2025 10:24:08 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id dJZCIEji/GdFQwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 14 Apr 2025 10:24:08 +0000
+Message-ID: <32eb2a11-2079-450b-a34c-ca432f416500@suse.cz>
+Date: Mon, 14 Apr 2025 12:24:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] slab: ensure slab->obj_exts is clear in a newly
+ allocated slab page
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev,
+ roman.gushchin@linux.dev, cl@linux.com, rientjes@google.com,
+ harry.yoo@oracle.com, souravpanda@google.com, pasha.tatashin@soleen.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20250411155737.1360746-1-surenb@google.com>
+ <c88ec69c-87ee-4865-8b2a-87f32f46b0bc@suse.cz>
+ <CAJuCfpE6_Hb40kyM7E4ESw8-_ptm3SARuL0q_YBB49cqkVbPig@mail.gmail.com>
+ <CAJuCfpGrJNiDWxsD=53ZOzWKHAh=xw2pGidg6oAgwj8mETGPQQ@mail.gmail.com>
+Content-Language: en-US
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <CAJuCfpGrJNiDWxsD=53ZOzWKHAh=xw2pGidg6oAgwj8mETGPQQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: A138C2122D
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MID_RHS_MATCH_FROM(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-Move this API to the canonical timers_*() namespace.
+On 4/11/25 19:45, Suren Baghdasaryan wrote:
+> On Fri, Apr 11, 2025 at 9:59 AM Suren Baghdasaryan <surenb@google.com> wrote:
+> 
+> Kent asked me to forward this (his email is misbehaving for some reason):
+> 
+> Yes, ktest doesn't flip on CONFIG_MEMCG.
+> 
+> Those checks you're talking about are also behind CONFIG_DEBUG_VM,
+> which isn't normally on. I did do some runs with it on and it didn't
 
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/sparc/kernel/irq.h         | 2 +-
- arch/sparc/kernel/leon_kernel.c | 2 +-
- arch/sparc/kernel/sun4d_irq.c   | 2 +-
- arch/sparc/kernel/sun4m_irq.c   | 2 +-
- arch/sparc/kernel/time_32.c     | 2 +-
- include/linux/timer.h           | 2 +-
- init/main.c                     | 2 +-
- kernel/time/timer.c             | 2 +-
- 8 files changed, 8 insertions(+), 8 deletions(-)
+Hm yes I forgot we moved them to be DEBUG_VM or debug_pagealloc only.
 
-diff --git a/arch/sparc/kernel/irq.h b/arch/sparc/kernel/irq.h
-index b02026ad6e34..07727cb9d9aa 100644
---- a/arch/sparc/kernel/irq.h
-+++ b/arch/sparc/kernel/irq.h
-@@ -55,7 +55,7 @@ extern struct sun4m_irq_global __iomem *sun4m_irq_global;
-  * specifics in their init functions.
-  */
- struct sparc_config {
--	void (*init_timers)(void);
-+	void (*timers_init)(void);
- 	unsigned int (*build_device_irq)(struct platform_device *op,
- 	                                 unsigned int real_irq);
- 
-diff --git a/arch/sparc/kernel/leon_kernel.c b/arch/sparc/kernel/leon_kernel.c
-index a43cf794bb1e..9260227aa3b7 100644
---- a/arch/sparc/kernel/leon_kernel.c
-+++ b/arch/sparc/kernel/leon_kernel.c
-@@ -500,7 +500,7 @@ void leon_enable_irq_cpu(unsigned int irq_nr, unsigned int cpu)
- 
- void __init leon_init_IRQ(void)
- {
--	sparc_config.init_timers      = leon_init_timers;
-+	sparc_config.timers_init      = leon_init_timers;
- 	sparc_config.build_device_irq = _leon_build_device_irq;
- 	sparc_config.clock_rate       = 1000000;
- 	sparc_config.clear_clock_irq  = leon_clear_clock_irq;
-diff --git a/arch/sparc/kernel/sun4d_irq.c b/arch/sparc/kernel/sun4d_irq.c
-index 9a137c70e8d1..0032ffae0229 100644
---- a/arch/sparc/kernel/sun4d_irq.c
-+++ b/arch/sparc/kernel/sun4d_irq.c
-@@ -509,7 +509,7 @@ void __init sun4d_init_IRQ(void)
- {
- 	local_irq_disable();
- 
--	sparc_config.init_timers      = sun4d_init_timers;
-+	sparc_config.timers_init      = sun4d_init_timers;
- 	sparc_config.build_device_irq = sun4d_build_device_irq;
- 	sparc_config.clock_rate       = SBUS_CLOCK_RATE;
- 	sparc_config.clear_clock_irq  = sun4d_clear_clock_irq;
-diff --git a/arch/sparc/kernel/sun4m_irq.c b/arch/sparc/kernel/sun4m_irq.c
-index 1079638986b5..fbbdd7ca2511 100644
---- a/arch/sparc/kernel/sun4m_irq.c
-+++ b/arch/sparc/kernel/sun4m_irq.c
-@@ -467,7 +467,7 @@ void __init sun4m_init_IRQ(void)
- 	if (num_cpu_iregs == 4)
- 		sbus_writel(0, &sun4m_irq_global->interrupt_target);
- 
--	sparc_config.init_timers      = sun4m_init_timers;
-+	sparc_config.timers_init      = sun4m_init_timers;
- 	sparc_config.build_device_irq = sun4m_build_device_irq;
- 	sparc_config.clock_rate       = SBUS_CLOCK_RATE;
- 	sparc_config.clear_clock_irq  = sun4m_clear_clock_irq;
-diff --git a/arch/sparc/kernel/time_32.c b/arch/sparc/kernel/time_32.c
-index 578fd0d49f30..1f83ca84ba2f 100644
---- a/arch/sparc/kernel/time_32.c
-+++ b/arch/sparc/kernel/time_32.c
-@@ -340,7 +340,7 @@ static void __init sparc32_late_time_init(void)
- static void __init sbus_time_init(void)
- {
- 	sparc_config.get_cycles_offset = sbus_cycles_offset;
--	sparc_config.init_timers();
-+	sparc_config.timers_init();
- }
- 
- void __init time_init(void)
-diff --git a/include/linux/timer.h b/include/linux/timer.h
-index dcc791bf84a4..ed55e8bf8467 100644
---- a/include/linux/timer.h
-+++ b/include/linux/timer.h
-@@ -168,7 +168,7 @@ extern int timer_delete(struct timer_list *timer);
- extern int timer_shutdown_sync(struct timer_list *timer);
- extern int timer_shutdown(struct timer_list *timer);
- 
--extern void init_timers(void);
-+extern void timers_init(void);
- struct hrtimer;
- extern enum hrtimer_restart it_real_fn(struct hrtimer *);
- 
-diff --git a/init/main.c b/init/main.c
-index 7f0a2a3dbd29..bf9c5d22953b 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -1002,7 +1002,7 @@ void start_kernel(void)
- 	init_IRQ();
- 	tick_init();
- 	rcu_init_nohz();
--	init_timers();
-+	timers_init();
- 	srcu_init();
- 	hrtimers_init();
- 	softirq_init();
-diff --git a/kernel/time/timer.c b/kernel/time/timer.c
-index cba4f1118263..7046a9c86bb2 100644
---- a/kernel/time/timer.c
-+++ b/kernel/time/timer.c
-@@ -2612,7 +2612,7 @@ static void __init init_timer_cpus(void)
- 		init_timer_cpu(cpu);
- }
- 
--void __init init_timers(void)
-+void __init timers_init(void)
- {
- 	init_timer_cpus();
- 	posix_cputimers_init_work();
--- 
-2.45.2
+> fire - only additional asserts Suren and I added - so something's
+> missing.
+> 
+> In the meantime, this needs to go in quickly as a hotfix because it's
+> a 6.15-rc1 regression, and I've been getting distros to enable memory
+> allocation profiling and I'd be shocked if it doesn't cause memcg
+> crashes as well.
 
+I'll send it this week so rc3.
 
