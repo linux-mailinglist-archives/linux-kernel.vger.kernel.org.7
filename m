@@ -1,206 +1,143 @@
-Return-Path: <linux-kernel+bounces-602959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40452A881BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:24:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C29B0A881C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:26:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E61103A86FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:24:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C3E7189273C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:26:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755FC23D2AA;
-	Mon, 14 Apr 2025 13:24:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CAA23D2AF;
+	Mon, 14 Apr 2025 13:24:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="T/pvW068";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3nt0s0Hf";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="T/pvW068";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3nt0s0Hf"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jnckoJTp"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391C917741
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 13:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76DBE2E3396
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 13:24:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744637071; cv=none; b=CNKLrLArp3pZxRJvdnQqy169/cw0RxMz6cjJyev3AYRS9JCPBxgfsw59yEif8w3+t6LfBNX5QdrtYspLlMVe89BSgHFSZ8iEh4Y8xTawc56ds+o0eB1zDW7/LYN2VWDTmp+ev39KH39DibV7kBMZeHCtAmi7gWfPG90/V1+zdGs=
+	t=1744637082; cv=none; b=Olsscm2Gcz/f3ySxaxIdqIFAEV8fypUHJGDiBTnVJuBwRyr2Zf+ZvkQ173xIksbLKtLZRnvlVq717uUFOnLEORpavNsc/YkKDlKbBMhZwBApdUYcem0y61YnUKymJLIl4t+UB2ybeSzo1zG98yfstDhOmobVlKvfrWtzYQf8h80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744637071; c=relaxed/simple;
-	bh=Hybz39FZma9Cyg3nKyz13PSchI9YPrOfhu5q7waKemo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=il+FzZjoTNvLYAtmC/B+G0akQ13+4Rov2cbQcnfRoemBqbbhgbJyStemVD8ZcDIPAf157DsEN4RM2IqvWGP+F5Bd85GMEkEjbuSeqP4cL06ljdGux9qr7+IU/Qr52liVX3O8rYYOtW7HCMnIS+De33H8FlhCbLYJH9Uk92ZWzMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=T/pvW068; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3nt0s0Hf; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=T/pvW068; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3nt0s0Hf; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5ED07218FE;
-	Mon, 14 Apr 2025 13:24:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1744637068; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G/XOuGgsFDfzaw3odh04S2DPENIai1JkJFf4sFeasm8=;
-	b=T/pvW068HgdILPwwvVNRYkcex0xoq4V7gQ5onNJtLqU/Jp/aL6G1NYZ0MN6Yl1DmzksgsX
-	3pOG9rmB53fvBYaauUB3Ez5Sl0y3qTofDy5OJRxD1Or1hkWvrmOzggyl6Nyx6hmTaJZSlp
-	Uddqwos63sG8FgxGzxxQDBLa6ZcBn3U=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1744637068;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G/XOuGgsFDfzaw3odh04S2DPENIai1JkJFf4sFeasm8=;
-	b=3nt0s0Hf09loo9mAN8WSGKpMNLtm5/x682S3d1CydYo5iEvVGu1ki80z+yyfrZQ+4yYtcj
-	rEd2mMHEwmRE/gAw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1744637068; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G/XOuGgsFDfzaw3odh04S2DPENIai1JkJFf4sFeasm8=;
-	b=T/pvW068HgdILPwwvVNRYkcex0xoq4V7gQ5onNJtLqU/Jp/aL6G1NYZ0MN6Yl1DmzksgsX
-	3pOG9rmB53fvBYaauUB3Ez5Sl0y3qTofDy5OJRxD1Or1hkWvrmOzggyl6Nyx6hmTaJZSlp
-	Uddqwos63sG8FgxGzxxQDBLa6ZcBn3U=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1744637068;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G/XOuGgsFDfzaw3odh04S2DPENIai1JkJFf4sFeasm8=;
-	b=3nt0s0Hf09loo9mAN8WSGKpMNLtm5/x682S3d1CydYo5iEvVGu1ki80z+yyfrZQ+4yYtcj
-	rEd2mMHEwmRE/gAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 53242136A7;
-	Mon, 14 Apr 2025 13:24:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 9pNHFIwM/WckfAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 14 Apr 2025 13:24:28 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 1760DA094B; Mon, 14 Apr 2025 15:24:28 +0200 (CEST)
-Date: Mon, 14 Apr 2025 15:24:28 +0200
-From: Jan Kara <jack@suse.cz>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: improve codegen in link_path_walk()
-Message-ID: <ayawbty4mgxuxkbncblr6xgl25ixjb34ywh3qxhozwuhxnr5t3@2fk4hmvtwuq3>
-References: <20250412110935.2267703-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1744637082; c=relaxed/simple;
+	bh=aY/1fKbaFYeuZIqGliNdGJUKlTqEKs5abT4Ep+BqkFU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FUtIlM49VsLkSmt/q3d99t0oc/RUrhR79gvzQXuBDvA2UrB85HuLJspHBctn4+E6Z+jSTn1tJqqUAM/5PftWJRcVONfsB0fb0jdj7gKHo2dQdrSMJS05wVnYkJ7vHiHLeTfwR7jFL+ntEsol4Ugd6J+twzFS1BUwgfYyPkHiLYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jnckoJTp; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53E99o70031333
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 13:24:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	02Rkx6hdb4JQY/Ijn44NbhfuIINmFhZjL7KXmSEDk+I=; b=jnckoJTpdLjpb92R
+	JFE6CQZuFy5FrMok02UFOGe39o5eHr/O4vdLekD86iTaGixkr3UAupYSa7X+ko4X
+	kS935FECRVHxhGRohZ/cHpad1IENgbI+CoIICMwj9LlyqNV+HigOZ7d2pkOphFhS
+	6cEyipqXxZIej1AF1jZIxlScxe64BQARe57PZZsLOW1pauEsDca+OWWMprT1xo8P
+	WbtOQcrAraALT5jVU1cV6lV1ocOaGwxc4xSPmGTVyQUEr0LDw0OaQ98yGO3WlTwI
+	kdgogWcGA3UMAco8EXt4V5fu2AWKJnBkP+DXkF6dkDD8ES/KhTHRpPSkOMVH/WCL
+	I3v/RQ==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ygxjvjaq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 13:24:40 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c5841ae28eso100784185a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 06:24:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744637079; x=1745241879;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=02Rkx6hdb4JQY/Ijn44NbhfuIINmFhZjL7KXmSEDk+I=;
+        b=qL1xngB1zB+qZcYb5fmGYZDZ4FJuYt9a8arW/txFQ4hGz6Wydfv1h8L9c+PPwPXbvB
+         LQnRpnL6Hg2XoOmAna0OAkmRQHTtpw873OzQTVKcXguqrT74POkR7Dz8rmyba903EGTd
+         d/qY/H49ct9YALreDjzn+uxtjWOKaUHQsMDMLAv4W5GSbCK4c9i/hzKEGQiV+ecLE/d2
+         N4sxj07B2lponhgliyrlwFZdOvrCoqgXswWpFyiQI+EsteLMJUUFsCEyPVjy1CVJ22LF
+         3FxeUTpyan+NUyFXCIxHXLGMD5x5hygBGuv4Sjhf/Ls/uqQxC4S/1/xvNhUNbJ7iBF+p
+         kJUA==
+X-Forwarded-Encrypted: i=1; AJvYcCX19Tiz+X8wKUMhWcH7jG1EIJdnprMvVjurdqAP92oxOZP5ov9j5nQ0/QjvzedLCIDQq2C05M+/6Xy3rIo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhIcfrrXKHDum18zh1Spv4jBkA8cFBHCpaLtDgSFyAv/gzaF6Q
+	9UuBDVEutgAl+LYbcfEOqLZXFuy4XkvfZSQpKUSUDc3i5z20CxTjOxMCpDP22dyyjWSrjW7q7JZ
+	cWbmKBknXS0BM6o+8Hr5vdcpaIbqGAcSnhbiYVU5cWqmhn5LUZMigvsOewT+YkA0h1e6h+so=
+X-Gm-Gg: ASbGncs5VLn54nOqXFxQtyu7JqVVXiEUaVUazvH5qF8bEstGR8cfrs96kLEnNEPrUbQ
+	1EfsMqJzecxb8vJCvpFkgll7hdHiatDm9FhgCIEUvUFOz62MZCaUkSi6/iA+xrInT+NSp3dtsYs
+	45cFE8l7olA7YSejSC8IYKBwSWoNB50kCqQdDdOrpIIqxaCDkQGhkBRFnOEa5L/pEv3q3NqbQRP
+	uLRnQbBwamzjbS7KsgKHj1QW4w4va/BRAVSCLgpC67NzUhs13MjMT+BOCGW4ZDqm555PvQpPrIj
+	qbp6zUwMSsFB9QsnYejyFT2y0jir2gman3w7xvnunQ/CjEKt0kAE/krcVfVG2g7Jng==
+X-Received: by 2002:a05:620a:45a4:b0:7c3:bae4:2339 with SMTP id af79cd13be357-7c7b1ae7e0bmr568800285a.11.1744637079158;
+        Mon, 14 Apr 2025 06:24:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHRa/QUfGBb0tF7zkWM/E/7q8wcm5etsdwSv+/cstcR8oAuNHxCD10hAM4FInQktT2x4+YUZw==
+X-Received: by 2002:a05:620a:45a4:b0:7c3:bae4:2339 with SMTP id af79cd13be357-7c7b1ae7e0bmr568798885a.11.1744637078599;
+        Mon, 14 Apr 2025 06:24:38 -0700 (PDT)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1be8d0esm896745566b.43.2025.04.14.06.24.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Apr 2025 06:24:38 -0700 (PDT)
+Message-ID: <1b783592-e59a-4e85-b727-d38b11411a9c@oss.qualcomm.com>
+Date: Mon, 14 Apr 2025 15:24:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250412110935.2267703-1-mjguzik@gmail.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-0.998];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/4] soc: qcom: llcc-qcom: Add support for SM8750
+To: Melody Olvera <quic_molvera@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
+        Trilok Soni <quic_tsoni@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250324-sm8750_llcc_master-v3-0-2afd5c0fdbde@quicinc.com>
+ <20250324-sm8750_llcc_master-v3-3-2afd5c0fdbde@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250324-sm8750_llcc_master-v3-3-2afd5c0fdbde@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=WecMa1hX c=1 sm=1 tr=0 ts=67fd0c98 cx=c_pps a=qKBjSQ1v91RyAK45QCPf5w==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=qAG6vWTBVeFq7agocEUA:9 a=QEXdDO2ut3YA:10
+ a=NFOGd7dJGGMPyQGDc5-O:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: HdbPypEzZHtIYUl66UaQV3Pyfvw-FDi9
+X-Proofpoint-ORIG-GUID: HdbPypEzZHtIYUl66UaQV3Pyfvw-FDi9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-14_04,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ adultscore=0 clxscore=1015 lowpriorityscore=0 phishscore=0 mlxscore=0
+ impostorscore=0 mlxlogscore=869 spamscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504140097
 
-On Sat 12-04-25 13:09:35, Mateusz Guzik wrote:
-> Looking at the asm produced by gcc 13.3 for x86-64:
-> 1. may_lookup() usage was not optimized for succeeding, despite the
->    routine being inlined and rightfully starting with likely(!err)
-> 2. the compiler assumed the path will have an indefinite amount of
->    slashes to skip, after which the result will be an empty name
+On 3/24/25 9:29 PM, Melody Olvera wrote:
+> Add system cache table and configs for SM8750 SoCs.
 > 
-> As such:
-> 1. predict may_lookup() succeeding
-> 2. check for one slash, no explicit predicts. do roll forward with
->    skipping more slashes while predicting there is only one
-> 3. predict the path to find was not a mere slash
-> 
-> This also has a side effect of shrinking the file:
-> add/remove: 1/1 grow/shrink: 0/3 up/down: 934/-1012 (-78)
-> Function                                     old     new   delta
-> link_path_walk                                 -     934    +934
-> path_parentat                                138     112     -26
-> path_openat                                 4864    4823     -41
-> path_lookupat                                418     374     -44
-> link_path_walk.part.constprop                901       -    -901
-> Total: Before=46639, After=46561, chg -0.17%
-> 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-
-Looks sensible. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
 > ---
-> 
-> I'm looking at skipping perm checks with an "everybody can MAY_EXEC and
-> there are no acls" bit for opflags. This crapper is a side effect of
-> straighetning out the code before I get there.
-> 
->  fs/namei.c | 11 +++++++----
->  1 file changed, 7 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 360a86ca1f02..40a636bbfa0c 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -2424,9 +2424,12 @@ static int link_path_walk(const char *name, struct nameidata *nd)
->  	nd->flags |= LOOKUP_PARENT;
->  	if (IS_ERR(name))
->  		return PTR_ERR(name);
-> -	while (*name=='/')
-> -		name++;
-> -	if (!*name) {
-> +	if (*name == '/') {
-> +		do {
-> +			name++;
-> +		} while (unlikely(*name == '/'));
-> +	}
-> +	if (unlikely(!*name)) {
->  		nd->dir_mode = 0; // short-circuit the 'hardening' idiocy
->  		return 0;
->  	}
-> @@ -2439,7 +2442,7 @@ static int link_path_walk(const char *name, struct nameidata *nd)
->  
->  		idmap = mnt_idmap(nd->path.mnt);
->  		err = may_lookup(idmap, nd);
-> -		if (err)
-> +		if (unlikely(err))
->  			return err;
->  
->  		nd->last.name = name;
-> -- 
-> 2.43.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
+[...]
+
+> +		.usecase_id = LLCC_WRCACHE,
+> +		.slice_id = 31,
+> +		.max_cap = 512,
+> +		.priority = 1,
+> +		.fixed_size = true,
+> +		.bonus_ways = 0xffffffff,
+
+This should still be .activate_on_init = true
+
+otherwise lgtm
+
+Konrad
 
