@@ -1,169 +1,178 @@
-Return-Path: <linux-kernel+bounces-603763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBF6CA88BED
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 21:04:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D183A88BF3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 21:08:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4AEF3B48E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 19:04:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C39541899756
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 19:08:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C678B28DEE6;
-	Mon, 14 Apr 2025 19:04:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F6B28BAB7;
+	Mon, 14 Apr 2025 19:08:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="iqhBsErW"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Omnf3q5l"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5884C74
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 19:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862BC7E9;
+	Mon, 14 Apr 2025 19:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744657480; cv=none; b=Y1LTkLz4iOkalBiRGXjDUaYBeqrj/UmE/U51eDzKBcIC84j3sWyY8AObSCGkWfDGfGaheCnqPfQZJa35Xbhwb/eu4hhn4/epwDqV64ymrpZgeiEfLuZe4LxVJrsOe61xRVE5zYeIY3zUbPpA6fGpB5SidYG2AZ97aLfWA+j2ccs=
+	t=1744657692; cv=none; b=K1Z6UOKBll9Umh5pWRTAu1Oo5tkYuYqDxdFghX8aSrsKNCWzWtgCH5nUh4LO9CW8YhVcbpo1hGYTV4jMw8hbzXpAPy6Yrjxw5612esLyyeIr3NUXAG28JzWrWdaNqOaJVjBkkJIMVqWSEpmbigQNOeO3UFW8GBpsIzui7B/XUS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744657480; c=relaxed/simple;
-	bh=DZJOc6WrSAEY9owB5FQgoe3x+B3vdTe1ADDIMIXhUG4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KaTZsSH2hdJMUse1XRkzqGWSfn0w4GjXI7zyi0LbKeis+L/x1oWPkePgthq/QBmEAcf8MpWcfdcdGFnJu/W8X8Rkuzu6UJ9DNMRvPxVuSzAen2lYtlNFXfN4CfHCRmiRBEQRmh/xKwZ9qKwSSlLeA++n2xnqoT4U0PICpwhv5Pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=iqhBsErW; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53EIUxnP001845
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 19:04:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	OETJdvcRlTDOC3wxrm7MGgDibXakzm2Chi5+CwgMXn0=; b=iqhBsErWeoSHj9J/
-	E045fLrifvanLVRlAnodQyBohn4gGtolujIB2SUUzOB1CPk7IVZSQYJLnzv/sIky
-	T2iI/EjCTc12ZsEw3TC+51CCdKIZky4cIvuF0PxxWJ1QdEfyWQMEx5WISqWTozZR
-	rM11Ayg53i2c/y79QoXyGCeXXJCYsmEuQEnjWeFN86mEyLl/iwqpWJJJcrfgGAR6
-	qGCdp3F3nWKNtGwdcWxpsSuW2WJBas6WpIyhrCDp1YII3DT/ZEGP1MKE8ClU1gvI
-	E2U7vHGHi4J8dcbvE3dPLT6pWrPt/zwGTj7+8T2WshytoyYsSToeth72Ba53alWO
-	gvdZZQ==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ydhq5t31-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 19:04:37 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6e905e89798so73623146d6.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 12:04:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744657476; x=1745262276;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OETJdvcRlTDOC3wxrm7MGgDibXakzm2Chi5+CwgMXn0=;
-        b=C579GWTlm5XY7MS5KGBgUV+DA14nDxbhYiur9Tz5ocU+XJtVlLDZT1I0IDeW3kgAag
-         JjK6xQoIeJ2zhCJjYXGFqFGMtWd+ftl3r6dffyVl0GHjV6bKY0Byp3llOqXN/NSpYMDn
-         wC+w2F1HDKF8VrgnHnsr5RTZ5E1t189G5PUYo/9KHQlbYDV1vmj/zoL7bAFyZNUOgzO/
-         +IUtl2pbqc1gC+9kLR8ThTPHs4qyCVr8TUKr5b0+WcQauLR9AamwdzlHAMy+Ig+AFoZw
-         3EbciVRGVZWRcNtj+kItuCzPLOxuCmYOH4qofLfZULRtpRlPwxZjilMZskKUUlqr9c4O
-         F9gA==
-X-Forwarded-Encrypted: i=1; AJvYcCVvHzs/plGnwfjvww6x0oYF9IhNtZStThneiEyDSCJBtGTBr0NWg7lfu4WMyXKc8fdRYQM2Bg8GvUJCF4g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+51bGp0aUvKjAjI3Y1zkDe9MA18hzaxnZCZCjtF/JXKlNRfW0
-	sKtIsx5RAwPriUbgVxZZXbzaJTWoXyb/agE/7eWuBd9itOrsKDLBwGknuQdqm3qn3yADBZSFACX
-	wHRn4Qb0dQMBJmI23z3WejrTr44dwxtVUtP//ZqjlLjq4q9PZk8Lr8+cjSTZiDSz7uQJypTgjdl
-	veX1XHOAo0EYwiUHjPTADriSjJTnUDm7uwQnE3Mg==
-X-Gm-Gg: ASbGncvDKCcbOgi8h2nZkpiPL24nn/5eaAn69ENlX0aUDQZj/a2W92BwsxFpdbAczkT
-	4QgWevDUaEmRAIfNxphG5qCP63RhRzDTN9OSs+yaHroo6otZm6kU6T8fmpcBbY4tPV9MezkA=
-X-Received: by 2002:ad4:5aac:0:b0:6e8:f945:ec5 with SMTP id 6a1803df08f44-6f230d9f19dmr188264976d6.24.1744657476366;
-        Mon, 14 Apr 2025 12:04:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGzelK//k2TwD46eVAuZhiJNjDOOOFl3EoM1T+XqSjz0DyaIMYpfLn3sF+Nm6yY82gIZ0h6m/EK/PQS4Vwle6I=
-X-Received: by 2002:ad4:5aac:0:b0:6e8:f945:ec5 with SMTP id
- 6a1803df08f44-6f230d9f19dmr188264526d6.24.1744657475883; Mon, 14 Apr 2025
- 12:04:35 -0700 (PDT)
+	s=arc-20240116; t=1744657692; c=relaxed/simple;
+	bh=346wJkGTLFnMQ6c9hyBWDU32uZ8F5QJqhkAA5EfubMU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=OiRDtY1GMooM4M+RnOVWWRLDReyaay0x5lpgEAexVsE8drRo/eHTBFDiUwQ2usirjXKRGh6TtxLHnfdkEONi7455N6NrVt/nmsG1xfwx/7wtftFl5b2N2KsFkBFczz8HzQegw29S/P1aANAH/aQ86av2ZwVhkUscpKHsgEM8E/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Omnf3q5l; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744657690; x=1776193690;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=346wJkGTLFnMQ6c9hyBWDU32uZ8F5QJqhkAA5EfubMU=;
+  b=Omnf3q5lb5SNgq+/vlEBDJ0ibwB69oDFBvGNF9mv8Kp3B3V9dW6ICo76
+   2I5Ma4LQ/V2HZnWmpgUF5IrsEucTxvgl+XmYCB62Kl2hu1MGcOl6Y2Sbl
+   A2MoUsU1xMeH9EIw+q8iLBYQ8mjmrQg6ptOWDxDiOd0umKiug1g/Ky9j/
+   ZB8QyhlWj4wIWk+i9XXzGIZr3Mp2SLKyGAOHxbq6dfQWqfWhTPgkPDwxp
+   KcRkTFkG0uRP1Pj66sGRINcJi5brDgG2o8v5KPEMT7l4K3+nOZYVwGqq3
+   TcaQvpCcTqvC0/GSZJEGQdwqEnsOlTm73mN9hN8tUliKgt0Nsu6Q93zaR
+   w==;
+X-CSE-ConnectionGUID: qGxqJ4AOTkCKjYcg0g43Cw==
+X-CSE-MsgGUID: RpeZ7x9dQ2aWUmDL+wvNpQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11403"; a="46307367"
+X-IronPort-AV: E=Sophos;i="6.15,212,1739865600"; 
+   d="scan'208";a="46307367"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 12:08:09 -0700
+X-CSE-ConnectionGUID: TVmv2tk7QWCjU/9KztJBTQ==
+X-CSE-MsgGUID: GVIDmg66S7uDVFzMYMJb/A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,212,1739865600"; 
+   d="scan'208";a="135070649"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 12:08:09 -0700
+Received: from [10.246.136.14] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.14])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 0AFBB20B5736;
+	Mon, 14 Apr 2025 12:08:05 -0700 (PDT)
+Message-ID: <cfa0aa31-3fe7-4174-8cce-89e8aadbcd07@linux.intel.com>
+Date: Mon, 14 Apr 2025 15:08:04 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250414-restricted-pointers-net-v1-0-12af0ce46cdd@linutronix.de> <20250414-restricted-pointers-net-v1-4-12af0ce46cdd@linutronix.de>
-In-Reply-To: <20250414-restricted-pointers-net-v1-4-12af0ce46cdd@linutronix.de>
-From: Loic Poulain <loic.poulain@oss.qualcomm.com>
-Date: Mon, 14 Apr 2025 21:04:25 +0200
-X-Gm-Features: ATxdqUFggdvW0Cci0Y7dRfrjAmK6JyGKc4MbfrCN7JALN63x-K56mHIpeth7yd4
-Message-ID: <CAFEp6-26mFztO-AfGrL0cScGFMR5Z3Sp1KOsUvH_FoJfK+8q2w@mail.gmail.com>
-Subject: Re: [PATCH net-next 4/7] wifi: wcn36xx: Don't use %pK through printk
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Jeff Johnson <jjohnson@kernel.org>, Loic Poulain <loic.poulain@linaro.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Francesco Dolcini <francesco@dolcini.it>,
-        Tony Nguyen <anthony.l.nguyen@intel.com>,
-        Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-        Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Saeed Mahameed <saeedm@nvidia.com>,
-        Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
-        ath10k@lists.infradead.org, linux-kernel@vger.kernel.org,
-        ath11k@lists.infradead.org, ath12k@lists.infradead.org,
-        wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-ORIG-GUID: JRs0yp8VSGvjOjNpK_4K3lEI2y0CMeQT
-X-Authority-Analysis: v=2.4 cv=C7DpyRP+ c=1 sm=1 tr=0 ts=67fd5c45 cx=c_pps a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=EUspDBNiAAAA:8 a=ZS808JPYK9pMg9uJusAA:9 a=QEXdDO2ut3YA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
-X-Proofpoint-GUID: JRs0yp8VSGvjOjNpK_4K3lEI2y0CMeQT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-14_07,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=977
- priorityscore=1501 suspectscore=0 clxscore=1015 spamscore=0 bulkscore=0
- impostorscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0 mlxscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504140138
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 00/16] Intel TPEBS min/max/mean/last support
+To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Caleb Biggers <caleb.biggers@intel.com>, Weilin Wang
+ <weilin.wang@intel.com>, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, Perry Taylor <perry.taylor@intel.com>,
+ Thomas Falcon <thomas.falcon@intel.com>
+References: <20250414174134.3095492-1-irogers@google.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20250414174134.3095492-1-irogers@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Apr 14, 2025 at 10:27=E2=80=AFAM Thomas Wei=C3=9Fschuh
-<thomas.weissschuh@linutronix.de> wrote:
->
-> In the past %pK was preferable to %p as it would not leak raw pointer
-> values into the kernel log.
-> Since commit ad67b74d2469 ("printk: hash addresses printed with %p")
-> the regular %p has been improved to avoid this issue.
-> Furthermore, restricted pointers ("%pK") were never meant to be used
-> through printk(). They can still unintentionally leak raw pointers or
-> acquire sleeping looks in atomic contexts.
->
-> Switch to the regular pointer formatting which is safer and
-> easier to reason about.
-> There are still a few users of %pK left, but these use it through seq_fil=
-e,
-> for which its usage is safe.
->
-> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
 
-Acked-by:  Loic Poulain <loic.poulain@oss.qualcomm.com>
 
-> ---
->  drivers/net/wireless/ath/wcn36xx/testmode.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On 2025-04-14 1:41 p.m., Ian Rogers wrote:
+> The patches add support to computing the min, max, mean or last
+> retirement latency and then using that value as the basis for metrics.
+> When values aren't available, support is added to use the retirement
+> latency as recorded for an event in the perf json.
+> 
+> Support is added for reading the retirement latency from the forked
+> perf command more than once. To avoid killing the process commands are
+> sent through the control fd. Some name handling is changed to make it
+> more robust.
+> 
+> Rather than retirement latency events having issues with perf record,
+> make it so that the retirement latency modifier enables sample
+> weights.
+> 
+> Note: the retirement latency JSON updates are part of:
+> https://lore.kernel.org/lkml/20250328175006.43110-1-irogers@google.com/
+> 
+> v5: Add Namhyung and Weilin's tags. Fix missing error path mutex
+>     unlock spotted by Namhyung.
+> 
+> v4: Don't use json min/max in retirement latency stats as they will
+>     never update afterwards. Warn once if json data is used when TPEBS
+>     recording was requested.
+> 
+> v3: Two fixes from Kan Liang. Ensure min/max statistics don't vary
+>     when real samples are encountered.
+> 
+> v2: Addition of header cleanup patch originally posted:
+>     https://lore.kernel.org/lkml/20241210191823.612631-1-irogers@google.com/
+>     as there are no arch specific reasons not to build this code.
+>     Fix bug in "perf pmu-events: Add retirement latency to JSON events
+>     inside of perf" where "t->stats.n != 0" should have been
+>     "t->stats.n == 0".
+>     Add patch so that perf record of a retirement latency event
+>     doesn't crash but instead enables sample weights for the event.
+> 
+> Ian Rogers (16):
+>   perf intel-tpebs: Cleanup header
+>   perf intel-tpebs: Simplify tpebs_cmd
+>   perf intel-tpebs: Rename tpebs_start to evsel__tpebs_open
+>   perf intel-tpebs: Separate evsel__tpebs_prepare out of
+>     evsel__tpebs_open
+>   perf intel-tpebs: Move cpumap_buf out of evsel__tpebs_open
+>   perf intel-tpebs: Reduce scope of tpebs_events_size
+>   perf intel-tpebs: Inline get_perf_record_args
+>   perf intel-tpebs: Ensure events are opened, factor out finding
+>   perf intel-tpebs: Refactor tpebs_results list
+>   perf intel-tpebs: Add support for updating counts in evsel__tpebs_read
+>   perf intel-tpebs: Add mutex for tpebs_results
+>   perf intel-tpebs: Don't close record on read
+>   perf intel-tpebs: Use stats for retirement latency statistics
+>   perf stat: Add mean, min, max and last --tpebs-mode options
+>   perf pmu-events: Add retirement latency to JSON events inside of perf
+>   perf record: Retirement latency cleanup in evsel__config
 >
-> diff --git a/drivers/net/wireless/ath/wcn36xx/testmode.c b/drivers/net/wi=
-reless/ath/wcn36xx/testmode.c
-> index e5142c052985ddf629b93d7b9687e6ba63a48e8b..d7a2a483cbc486308032709a9=
-9bba9a52ed0ff59 100644
-> --- a/drivers/net/wireless/ath/wcn36xx/testmode.c
-> +++ b/drivers/net/wireless/ath/wcn36xx/testmode.c
-> @@ -56,7 +56,7 @@ static int wcn36xx_tm_cmd_ptt(struct wcn36xx *wcn, stru=
-ct ieee80211_vif *vif,
->         msg =3D buf;
->
->         wcn36xx_dbg(WCN36XX_DBG_TESTMODE,
-> -                   "testmode cmd wmi msg_id 0x%04X msg_len %d buf %pK bu=
-f_len %d\n",
-> +                   "testmode cmd wmi msg_id 0x%04X msg_len %d buf %p buf=
-_len %d\n",
->                    msg->msg_id, msg->msg_body_length,
->                    buf, buf_len);
->
->
-> --
-> 2.49.0
->
->
+
+Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
+
+Thanks,
+Kan
+
+
+>  tools/perf/Documentation/perf-stat.txt   |   7 +
+>  tools/perf/builtin-stat.c                |  29 +-
+>  tools/perf/pmu-events/empty-pmu-events.c | 216 +++----
+>  tools/perf/pmu-events/jevents.py         |   6 +
+>  tools/perf/pmu-events/pmu-events.h       |   3 +
+>  tools/perf/util/Build                    |   2 +-
+>  tools/perf/util/evlist.c                 |   1 -
+>  tools/perf/util/evsel.c                  |  22 +-
+>  tools/perf/util/evsel.h                  |   6 +
+>  tools/perf/util/intel-tpebs.c            | 682 ++++++++++++++---------
+>  tools/perf/util/intel-tpebs.h            |  40 +-
+>  tools/perf/util/parse-events.c           |   4 +
+>  tools/perf/util/pmu.c                    |  52 +-
+>  tools/perf/util/pmu.h                    |   3 +
+>  14 files changed, 666 insertions(+), 407 deletions(-)
+> 
+
 
