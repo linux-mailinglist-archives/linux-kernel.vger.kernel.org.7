@@ -1,196 +1,158 @@
-Return-Path: <linux-kernel+bounces-603417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D320FA8871B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:28:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E40DA88766
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:37:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6A0D168793
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:28:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D18E1903F58
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D80D27A100;
-	Mon, 14 Apr 2025 15:27:03 +0000 (UTC)
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDFE327A90B;
+	Mon, 14 Apr 2025 15:27:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=fiona.klute@gmx.de header.b="maMGq3ye"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 126AF274642;
-	Mon, 14 Apr 2025 15:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA89427A111;
+	Mon, 14 Apr 2025 15:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744644422; cv=none; b=sq6roskqF47De0PunvhVSQWLTcMEZ9cIHD/MeargdjNYa6aA3Ux9D4vZjSPGTLDKJ0V4XWexlLCf0I0bDRejCP4kkKPTj+joaD5TiIuxd7B7ihvNp9vWGpu1jCZts+wcQk2jc07Qe0DtmnhgXw5qJQj32zqR8Jmz/GWDX02M17o=
+	t=1744644426; cv=none; b=ABK68NiU7rBaLhb1NXaEZ/q30JFypyPdLgcUolLa897R2e9jG3xBVEPCrevR8VOZSH8Vi0GNYpr5oHyuZ4RGZQbwivSq5mQ9qGKuHBFdaO404RrL50SLgLcbOP4WelMvhvwMFyrRiB7jZ+m5zNbjtoGoMZYR8MUEETC2tvEw/Yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744644422; c=relaxed/simple;
-	bh=myCQWYQ5yFgd2BuNSiywex37N2f8bLHvBD8YV269Ips=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nbSkVvBfbnuAyqdztd/ki0CuOHPUGxjDx0chebThjcBpSPbWCxLuLUSgZ5xJeLNm+NGoa6ZY0yjbD4jsvIbHHb8c+grBWXW638nd5HPlBPFYKvHY97fowkbFC/kwjdWumjSoSHwHzaiY4ALrY833T1MjabYZA0DZDOK/e3C4mXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev; spf=pass smtp.mailfrom=buenzli.dev; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buenzli.dev
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4Zbrk92D4Yz9vGD;
-	Mon, 14 Apr 2025 17:26:57 +0200 (CEST)
-From: Remo Senekowitsch <remo@buenzli.dev>
-To: Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Remo Senekowitsch <remo@buenzli.dev>
-Cc: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: [PATCH v2 5/5] samples: rust: platform: Add property read examples
-Date: Mon, 14 Apr 2025 17:26:30 +0200
-Message-ID: <20250414152630.1691179-6-remo@buenzli.dev>
-In-Reply-To: <20250414152630.1691179-1-remo@buenzli.dev>
-References: <20250326171411.590681-1-remo@buenzli.dev>
- <20250414152630.1691179-1-remo@buenzli.dev>
+	s=arc-20240116; t=1744644426; c=relaxed/simple;
+	bh=rZvHJrIwJz7NQmb5THdH9cX3LUXpNIok5gWtBcArh/o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=acUfVWjpr3l92zwcochefZ8+OXkuSLPkBhHH5+a5+l56RInvk7Qh3R5qEHtfiBKfneTi7S7P8RErwh2i4iwh+mH1pmJ4lAXiHSz47Hf3eGuNRt3WoHlg9FJTnuNkQ7zyCdIi3IyBgE5URCdSVoyK9wvhVk1kbiQRnzQOapWRH6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=fiona.klute@gmx.de header.b=maMGq3ye; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1744644407; x=1745249207; i=fiona.klute@gmx.de;
+	bh=rZvHJrIwJz7NQmb5THdH9cX3LUXpNIok5gWtBcArh/o=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=maMGq3yeDJYE6YVHxnKZNhqf7GrxMof5O/AzQQ0vsUQ4+rMjtb/iYVnak9m//uvQ
+	 tmU1+G4zvr+JImCMhRz3QC8uoSlS4zihGozDYxVCoO61jaBjPe18LSXhER/Z56C4x
+	 e46242K0nS4iXxx5eRkG/jzdlt8wB3dT23oTHGFl8p6PdFaPQOVFKCv+7V46WX0T+
+	 lBwpUdIBwsoYcFq5kJHWuf3bSw52OzmuN6fWzUWo1PTb5ZcQEwY3L/KJ6wLloIJby
+	 +SqKTaSivmwoiRQfXPCxlxI5hc0kaM8fnvu17WFjAZz3vVg4w0rUoXqlOWKL+Lj10
+	 Eq3RAdXAX1kUx/ZenQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from haruka.home.arpa ([85.22.122.10]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MRCK6-1thLCl2S84-00Tvpo; Mon, 14
+ Apr 2025 17:26:47 +0200
+From: Fiona Klute <fiona.klute@gmx.de>
+To: netdev@vger.kernel.org
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	Thangaraj Samynathan <Thangaraj.S@microchip.com>,
+	Rengarajan Sundararajan <Rengarajan.S@microchip.com>,
+	UNGLinuxDriver@microchip.com,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-list@raspberrypi.com,
+	Fiona Klute <fiona.klute@gmx.de>
+Subject: [PATCH net] net: phy: microchip: force IRQ polling mode for lan88xx
+Date: Mon, 14 Apr 2025 17:26:33 +0200
+Message-ID: <20250414152634.2786447-1-fiona.klute@gmx.de>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4Zbrk92D4Yz9vGD
+Content-Transfer-Encoding: base64
+X-Provags-ID: V03:K1:fQISuGsE84gb9tJCLkCkO/Mr1OEt+VwdckZX4vn2g6nRJr9qfV2
+ XFXA5hN8qUCg7Uo3lWax82mXATulmmp3btqvx1w4VJ81U7bBLgM3P4XNqrl27JLD7YVsRT2
+ 1V5G3JE/qERxCZiwQNUFdqSXx1FDSRODP+3zMn1cAK43D9vKwEprLDyKU/Kdh1WMWhlBm6j
+ 1q7Leab/kGBEZfo8ugD0Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:dpJC4PaD+dY=;X9vXcRxFnoJzXghKFD6BZKcLZaw
+ K1ubuCV0EmOCMCWujG1Y5NV6rEcjxdP4I3Za75rU2PaGSLfZqPOedOtAI46ArtTeiglGi3kPm
+ G4stvDoIbgS9a996Sen55Vymmo0j0L22NerOg/5lKjBV8zpIgkMU70LSS4ezg4ABPknEJJrQt
+ k6LlYMsWIlPwRjpr+8ku+QZQd3eppa4d68fbTdSmNdFbFWgTnzljzWKYUQwqOSIpSF6d1gi7u
+ mgR6VIlborTIHrzaqnY27CwobF2cfEXUGg2fYMptHF8grPJEzoEdMRX6V3JKi2meRYz/bISpP
+ NGeXBh/F3lf+jRimIvuAukXWZISyJXAVI5cULfCSRhpjA0+Qta+RKqYG7FLH3x1iZuzOObtq6
+ 13Z9x4X063xXFAfmy0xVUmSnlYPzHzY7ZIKZOt36YFgHnlxKbwuMw0qZ4tzXY46FHHFkV6x/c
+ 1BO0VT5dM/r0lmvexYj6Zty/FJvESiZwuK+xhWMFw85XOzoUzijWa90WR2bMR56/bAceOg9bJ
+ mWl0NhKrzLDUqH0Uwr4636nmk1BDb7gQmmjjdAtx4gX4RBgJnfJR3pP4HzG9qa4yerXDlIo/t
+ Fg8iKZmt+ClyWAX4sKMK88xVFYQ2WcWVYE5ygenXG2pT4TdzkkpjnQZpEmfFCzv1YZ6jxyJJz
+ cylFI6HYqJ/UKDABCR6TP1FIPxoY73wv+vu+HO79wwxN6N28x5XPvqhxbRPZ6M6m4twH+lW2w
+ 1BoB2S5HfINUEHrDCihzXWvC1iBpMganRp4QDfXUFptQROj+ikXifTOca9QdORlHGc1OrWxgU
+ PGLpOy5SKYTbXwzpYcq3XIVl2rKDOmI+tWOlqrg1UBfKrwC+9FMPJg8QQaFU+jW3R1jaFPh7n
+ /9718vMiIHyGIQPQQ/0QcHYJbxNfXtYmdrLg+CDYyjdOEWSsSUKLZaaSc5DjnqRL2AxCTZceD
+ +gEBgjDY30vaoeqCWjDmeDrur66C1cWuWanZD67NwCNN7+imd/Bt+VSqGNR+1shypx01LqnBJ
+ G83yEXe0r50ovExTl7H8DlnEo0LVzJE1mlEP/3DvPDax9ztt349hK7FigjFreauomXsuLNxDA
+ 7KEGkP6R9fBv9eKmIAcaev9wK6R/4vweNdMNCaoIsat0ATD00/llpFZyL8ox4DyR3uJFHzT2C
+ mEpo4EM4Sn7BqEKq+2yh1KjR5OGcy7NC6hCTRT5QZ2ng53TijjebxZUcJyEK3poMBCjkrk7hl
+ WcVD8V7RZVYZ1VW1rnboB16NtrowaU94S4ZfChmrJm48yuF2leoJ2wlvUHBe6IbbcEgeYniGh
+ ezCuhuavhmMIJGUHwf43swcmZjYryf144g8c0I9ZFoSAZ2I+QEr8CLYezBSz6aqT81xOiCAMj
+ YXE83bQYgRsGU31zy6Hvgo20bo9G7KfYk6qNVqzs9oZCRMctjNk6xz0sDvGOUg7vV9e9+XgIo
+ 5BZiz7XJBkg9GTD/6SEOPgL7bzJF5v7eDLuTNWs2J/Lvjsb/p230HLEfpgx3HoWPEdHidtba+
+ dktz9RFq2gZFfPchq0s=
 
-Add some example usage of the device property read methods for
-DT/ACPI/swnode properties.
-
-Co-developed-by: Rob Herring (Arm) <robh@kernel.org>
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-Signed-off-by: Remo Senekowitsch <remo@buenzli.dev>
----
- drivers/of/unittest-data/tests-platform.dtsi |  3 +
- samples/rust/rust_driver_platform.rs         | 69 +++++++++++++++++++-
- 2 files changed, 69 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/of/unittest-data/tests-platform.dtsi b/drivers/of/unittest-data/tests-platform.dtsi
-index 4171f43cf..50a51f38a 100644
---- a/drivers/of/unittest-data/tests-platform.dtsi
-+++ b/drivers/of/unittest-data/tests-platform.dtsi
-@@ -37,6 +37,9 @@ dev@100 {
- 			test-device@2 {
- 				compatible = "test,rust-device";
- 				reg = <0x2>;
-+
-+				test,u32-prop = <0xdeadbeef>;
-+				test,i16-array = /bits/ 16 <1 2 (-3) (-4)>;
- 			};
- 		};
- 
-diff --git a/samples/rust/rust_driver_platform.rs b/samples/rust/rust_driver_platform.rs
-index 8120609e2..0284f1840 100644
---- a/samples/rust/rust_driver_platform.rs
-+++ b/samples/rust/rust_driver_platform.rs
-@@ -2,7 +2,7 @@
- 
- //! Rust Platform driver sample.
- 
--use kernel::{c_str, of, platform, prelude::*};
-+use kernel::{c_str, of, platform, prelude::*, str::CString};
- 
- struct SampleDriver {
-     pdev: platform::Device,
-@@ -22,18 +22,81 @@ impl platform::Driver for SampleDriver {
-     const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> = Some(&OF_TABLE);
- 
-     fn probe(pdev: &mut platform::Device, info: Option<&Self::IdInfo>) -> Result<Pin<KBox<Self>>> {
--        dev_dbg!(pdev.as_ref(), "Probe Rust Platform driver sample.\n");
-+        let dev = pdev.as_ref();
-+
-+        dev_dbg!(dev, "Probe Rust Platform driver sample.\n");
- 
-         if let Some(info) = info {
--            dev_info!(pdev.as_ref(), "Probed with info: '{}'.\n", info.0);
-+            dev_info!(dev, "Probed with info: '{}'.\n", info.0);
-         }
- 
-+        Self::properties_parse(dev)?;
-+
-         let drvdata = KBox::new(Self { pdev: pdev.clone() }, GFP_KERNEL)?;
- 
-         Ok(drvdata.into())
-     }
- }
- 
-+impl SampleDriver {
-+    fn properties_parse(dev: &kernel::device::Device) -> Result<()> {
-+        if let Ok(idx) = dev.property_match_string(c_str!("compatible"), c_str!("test,rust-device"))
-+        {
-+            dev_info!(dev, "matched compatible string idx = {}\n", idx);
-+        }
-+
-+        if let Ok(str) = dev
-+            .property_read::<CString>(c_str!("compatible"))
-+            .required()
-+        {
-+            dev_info!(dev, "compatible string = {:?}\n", str);
-+        }
-+
-+        let prop = dev.property_read_bool(c_str!("test,bool-prop"));
-+        dev_info!(dev, "bool prop is {}\n", prop);
-+
-+        if dev.property_present(c_str!("test,u32-prop")) {
-+            dev_info!(dev, "'test,u32-prop' is present\n");
-+        }
-+
-+        let prop = dev
-+            .property_read::<u32>(c_str!("test,u32-optional-prop"))
-+            .or(0x12);
-+        dev_info!(
-+            dev,
-+            "'test,u32-optional-prop' is {:#x} (default = {:#x})\n",
-+            prop,
-+            0x12
-+        );
-+
-+        // Missing property without a default will print an error
-+        let _ = dev
-+            .property_read::<u32>(c_str!("test,u32-required-prop"))
-+            .required()?;
-+
-+        let prop: u32 = dev.property_read(c_str!("test,u32-prop")).required()?;
-+        dev_info!(dev, "'test,u32-prop' is {:#x}\n", prop);
-+
-+        // TODO: remove or replace with u16? `Property` is not implemented for
-+        // unsigned integers, as suggested by Andy Shevchenko.
-+
-+        let prop: [i16; 4] = dev.property_read(c_str!("test,i16-array")).required()?;
-+        dev_info!(dev, "'test,i16-array' is {:?}\n", prop);
-+        dev_info!(
-+            dev,
-+            "'test,i16-array' length is {}\n",
-+            dev.property_count_elem::<u16>(c_str!("test,i16-array"))?,
-+        );
-+
-+        let prop: KVec<i16> = dev
-+            .property_read_array_vec(c_str!("test,i16-array"), 4)?
-+            .required()?;
-+        dev_info!(dev, "'test,i16-array' is KVec {:?}\n", prop);
-+
-+        Ok(())
-+    }
-+}
-+
- impl Drop for SampleDriver {
-     fn drop(&mut self) {
-         dev_dbg!(self.pdev.as_ref(), "Remove Rust Platform driver sample.\n");
--- 
-2.49.0
-
+V2l0aCBsYW44OHh4IGJhc2VkIGRldmljZXMgdGhlIGxhbjc4eHggZHJpdmVyIGNhbiBnZXQgc3R1
+Y2sgaW4gYW4KaW50ZXJydXB0IGxvb3Agd2hpbGUgYnJpbmdpbmcgdGhlIGRldmljZSB1cCwgZmxv
+b2RpbmcgdGhlIGtlcm5lbCBsb2cKd2l0aCBtZXNzYWdlcyBsaWtlIHRoZSBmb2xsb3dpbmc6Cgps
+YW43OHh4IDItMzoxLjAgZW5wMXMwdTM6IGtldmVudCA0IG1heSBoYXZlIGJlZW4gZHJvcHBlZAoK
+UmVtb3ZpbmcgaW50ZXJydXB0IHN1cHBvcnQgZnJvbSB0aGUgbGFuODh4eCBQSFkgZHJpdmVyIGZv
+cmNlcyB0aGUKZHJpdmVyIHRvIHVzZSBwb2xsaW5nIGluc3RlYWQsIHdoaWNoIGF2b2lkcyB0aGUg
+cHJvYmxlbS4KClRoZSBpc3N1ZSBoYXMgYmVlbiBvYnNlcnZlZCB3aXRoIFJhc3BiZXJyeSBQaSBk
+ZXZpY2VzIGF0IGxlYXN0IHNpbmNlCjQuMTQgKHNlZSBbMV0sIGJ1ZyByZXBvcnQgZm9yIHRoZWly
+IGRvd25zdHJlYW0ga2VybmVsKSwgYXMgd2VsbCBhcwp3aXRoIE52aWRpYSBkZXZpY2VzIFsyXSBp
+biAyMDIwLCB3aGVyZSBkaXNhYmxpbmcgcG9sbGluZyB3YXMgdGhlCnZlbmRvci1zdWdnZXN0ZWQg
+d29ya2Fyb3VuZCAodG9nZXRoZXIgd2l0aCB0aGUgY2xhaW0gdGhhdCBwaHlsaWIKY2hhbmdlcyBp
+biA0LjkgbWFkZSB0aGUgaW50ZXJydXB0IGhhbmRsaW5nIGluIGxhbjc4eHggaW5jb21wYXRpYmxl
+KS4KCklwZXJmIHJlcG9ydHMgd2VsbCBvdmVyIDkwME1iaXRzL3NlYyBwZXIgZGlyZWN0aW9uIHdp
+dGggY2xpZW50IGluCi0tZHVhbHRlc3QgbW9kZSwgc28gdGhlcmUgZG9lcyBub3Qgc2VlbSB0byBi
+ZSBhIHNpZ25pZmljYW50IGltcGFjdCBvbgp0aHJvdWdocHV0IChsYW44OHh4IGRldmljZSBjb25u
+ZWN0ZWQgdmlhIHN3aXRjaCB0byB0aGUgcGVlcikuCgpbMV0gaHR0cHM6Ly9naXRodWIuY29tL3Jh
+c3BiZXJyeXBpL2xpbnV4L2lzc3Vlcy8yNDQ3ClsyXSBodHRwczovL2ZvcnVtcy5kZXZlbG9wZXIu
+bnZpZGlhLmNvbS90L2pldHNvbi14YXZpZXItYW5kLWxhbjc4MDAtcHJvYmxlbS8xNDIxMzQvMTEK
+Ckxpbms6IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnLzA5MDFkOTBkLTNmMjAtNGExMC1iNjgwLTlj
+OTc4ZTA0ZGRkYUBsdW5uLmNoClNpZ25lZC1vZmYtYnk6IEZpb25hIEtsdXRlIDxmaW9uYS5rbHV0
+ZUBnbXguZGU+CkNjOiBrZXJuZWwtbGlzdEByYXNwYmVycnlwaS5jb20KQ2M6IHN0YWJsZUB2Z2Vy
+Lmtlcm5lbC5vcmcKLS0tCiBkcml2ZXJzL25ldC9waHkvbWljcm9jaGlwLmMgfCA0NCAtLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgNDQgZGVsZXRp
+b25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvcGh5L21pY3JvY2hpcC5jIGIvZHJpdmVy
+cy9uZXQvcGh5L21pY3JvY2hpcC5jCmluZGV4IDBlMTdjYzQ1OGVmZC4uMDZlMjg2Mzg3ZmE5IDEw
+MDY0NAotLS0gYS9kcml2ZXJzL25ldC9waHkvbWljcm9jaGlwLmMKKysrIGIvZHJpdmVycy9uZXQv
+cGh5L21pY3JvY2hpcC5jCkBAIC0zNyw0NyArMzcsNiBAQCBzdGF0aWMgaW50IGxhbjg4eHhfd3Jp
+dGVfcGFnZShzdHJ1Y3QgcGh5X2RldmljZSAqcGh5ZGV2LCBpbnQgcGFnZSkKIAlyZXR1cm4gX19w
+aHlfd3JpdGUocGh5ZGV2LCBMQU44OFhYX0VYVF9QQUdFX0FDQ0VTUywgcGFnZSk7CiB9CiAKLXN0
+YXRpYyBpbnQgbGFuODh4eF9waHlfY29uZmlnX2ludHIoc3RydWN0IHBoeV9kZXZpY2UgKnBoeWRl
+dikKLXsKLQlpbnQgcmM7Ci0KLQlpZiAocGh5ZGV2LT5pbnRlcnJ1cHRzID09IFBIWV9JTlRFUlJV
+UFRfRU5BQkxFRCkgewotCQkvKiB1bm1hc2sgYWxsIHNvdXJjZSBhbmQgY2xlYXIgdGhlbSBiZWZv
+cmUgZW5hYmxlICovCi0JCXJjID0gcGh5X3dyaXRlKHBoeWRldiwgTEFOODhYWF9JTlRfTUFTSywg
+MHg3RkZGKTsKLQkJcmMgPSBwaHlfcmVhZChwaHlkZXYsIExBTjg4WFhfSU5UX1NUUyk7Ci0JCXJj
+ID0gcGh5X3dyaXRlKHBoeWRldiwgTEFOODhYWF9JTlRfTUFTSywKLQkJCSAgICAgICBMQU44OFhY
+X0lOVF9NQVNLX01ESU5UUElOX0VOXyB8Ci0JCQkgICAgICAgTEFOODhYWF9JTlRfTUFTS19MSU5L
+X0NIQU5HRV8pOwotCX0gZWxzZSB7Ci0JCXJjID0gcGh5X3dyaXRlKHBoeWRldiwgTEFOODhYWF9J
+TlRfTUFTSywgMCk7Ci0JCWlmIChyYykKLQkJCXJldHVybiByYzsKLQotCQkvKiBBY2sgaW50ZXJy
+dXB0cyBhZnRlciB0aGV5IGhhdmUgYmVlbiBkaXNhYmxlZCAqLwotCQlyYyA9IHBoeV9yZWFkKHBo
+eWRldiwgTEFOODhYWF9JTlRfU1RTKTsKLQl9Ci0KLQlyZXR1cm4gcmMgPCAwID8gcmMgOiAwOwot
+fQotCi1zdGF0aWMgaXJxcmV0dXJuX3QgbGFuODh4eF9oYW5kbGVfaW50ZXJydXB0KHN0cnVjdCBw
+aHlfZGV2aWNlICpwaHlkZXYpCi17Ci0JaW50IGlycV9zdGF0dXM7Ci0KLQlpcnFfc3RhdHVzID0g
+cGh5X3JlYWQocGh5ZGV2LCBMQU44OFhYX0lOVF9TVFMpOwotCWlmIChpcnFfc3RhdHVzIDwgMCkg
+ewotCQlwaHlfZXJyb3IocGh5ZGV2KTsKLQkJcmV0dXJuIElSUV9OT05FOwotCX0KLQotCWlmICgh
+KGlycV9zdGF0dXMgJiBMQU44OFhYX0lOVF9TVFNfTElOS19DSEFOR0VfKSkKLQkJcmV0dXJuIElS
+UV9OT05FOwotCi0JcGh5X3RyaWdnZXJfbWFjaGluZShwaHlkZXYpOwotCi0JcmV0dXJuIElSUV9I
+QU5ETEVEOwotfQotCiBzdGF0aWMgaW50IGxhbjg4eHhfc3VzcGVuZChzdHJ1Y3QgcGh5X2Rldmlj
+ZSAqcGh5ZGV2KQogewogCXN0cnVjdCBsYW44OHh4X3ByaXYgKnByaXYgPSBwaHlkZXYtPnByaXY7
+CkBAIC01MjgsOSArNDg3LDYgQEAgc3RhdGljIHN0cnVjdCBwaHlfZHJpdmVyIG1pY3JvY2hpcF9w
+aHlfZHJpdmVyW10gPSB7CiAJLmNvbmZpZ19hbmVnCT0gbGFuODh4eF9jb25maWdfYW5lZywKIAku
+bGlua19jaGFuZ2Vfbm90aWZ5ID0gbGFuODh4eF9saW5rX2NoYW5nZV9ub3RpZnksCiAKLQkuY29u
+ZmlnX2ludHIJPSBsYW44OHh4X3BoeV9jb25maWdfaW50ciwKLQkuaGFuZGxlX2ludGVycnVwdCA9
+IGxhbjg4eHhfaGFuZGxlX2ludGVycnVwdCwKLQogCS5zdXNwZW5kCT0gbGFuODh4eF9zdXNwZW5k
+LAogCS5yZXN1bWUJCT0gZ2VucGh5X3Jlc3VtZSwKIAkuc2V0X3dvbAk9IGxhbjg4eHhfc2V0X3dv
+bCwKLS0gCjIuNDkuMAoK
 
