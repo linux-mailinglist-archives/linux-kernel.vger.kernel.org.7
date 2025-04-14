@@ -1,146 +1,114 @@
-Return-Path: <linux-kernel+bounces-603509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06F75A888C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 18:41:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A178A888C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 18:41:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 137C117ADB3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:41:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0804F189987B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:41:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645FB28469D;
-	Mon, 14 Apr 2025 16:41:11 +0000 (UTC)
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A62C288CB9;
+	Mon, 14 Apr 2025 16:41:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q8L6O3n8"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5CEC1B3929;
-	Mon, 14 Apr 2025 16:41:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9EF62820AF;
+	Mon, 14 Apr 2025 16:41:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744648871; cv=none; b=eLoBknulMujPHl9frZFQr5GmeeO/rVr2AhJq3CtNC6dYx1B9IYmS2u72VyD28lYTJPQNPevUgoig8UKlz7YsgHPvefUFR/mEti/uf4X8DrBCTK2ZY7XdNoiTrxjvhgbgUT/n+AnDgAkk10S9464DVRg4jHvTdTgXpsTdU6byC0I=
+	t=1744648872; cv=none; b=d65r+QVfdyWI5BnEAX1CBkuUxuMQUptcqNJWK4l4l21vmV5+9rxwxan0sDE0EnoOcAWgPxw6rwgi99DM8Z3CYAHcYBzYWL0v5Lp5INUFPfJwvAGL9E6ru3qC7npCe5UynxLqTbvkrerDq8wJKDFBhcSqQXnUn8IfvZ54xLsKC0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744648871; c=relaxed/simple;
-	bh=5fKJs1w6oEvdNZJCvRG/59lOM3jjKtcfEX8F33cKXlU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=gc2CM3xrAR0Oz4VKd9U6gEJgVjBdSzSUedyPBqVfM50XrHtuED3vw4QwiDTpeg+Peg78V8QhEWqLDMIG4RPFxiXPaPFwbyjIk2algv58paZc3RW8pPySKjuSeKxXScLdr1wdYJ/8lmSgPCQMxgGdbskFbXcVEZk0/6INetSbK5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev; spf=pass smtp.mailfrom=buenzli.dev; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buenzli.dev
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4ZbtMZ3NPTz9tLk;
-	Mon, 14 Apr 2025 18:40:58 +0200 (CEST)
+	s=arc-20240116; t=1744648872; c=relaxed/simple;
+	bh=7OhxpBuonXoqqwgHU4YnELp3MYl43EUyqa8tiP/vePk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JMdxMj6D3uJPqDbHqdcSQubsgi6PdXAktN3bO74D2e06Whvr9MOJ2F+6Jy76+r7r/0Jzj601ikNb27XNFZ41WkWfp558dJdjArRX1+UjFyLwlemmA5Z7prVH+g0v8E/FVe3XoYp24FTGsd8THycU9yb93SzIVSh+wVkQwfngLX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q8L6O3n8; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744648871; x=1776184871;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=7OhxpBuonXoqqwgHU4YnELp3MYl43EUyqa8tiP/vePk=;
+  b=Q8L6O3n8/x2vgpajESBoLx4dEppCaJUAbR09DOCWmzvTEa7RlHbJIDaJ
+   Xt40/ruF5G2xw9i78b330S9IjdBzkUrtR/f8dP7Ba+jgfe63uWOUjcv9C
+   Uih+VV59vZ8H5HjrabYv2m1mbrX3wEHyOqhYvnW2HVbFAo3hBxuzXS80U
+   osPuGruDmNpsSu+0lFdV6Jw2fBjBzJdlK/pwbzTkoi/wr9toYLiTLwhRl
+   2UtbNLSdjnrM9tBSm3xnVIhqyZAFGbtNF9Szmc9KGKMPRfqz30+/4f8jx
+   NDS6/f5IHKFYvpevt6A6UsytLXO15nPvnX0SwZxTw+KPt1YnAsXxUak/B
+   w==;
+X-CSE-ConnectionGUID: yyRnbnXeS8qhq18t7bL/sA==
+X-CSE-MsgGUID: ANzuMlkvTrSP2xlI034BRw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11403"; a="46260513"
+X-IronPort-AV: E=Sophos;i="6.15,212,1739865600"; 
+   d="scan'208";a="46260513"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 09:41:10 -0700
+X-CSE-ConnectionGUID: uVWiwWU4Tm6Heaolflslng==
+X-CSE-MsgGUID: nzXHcC1fQQ2MQIFr/vkTBQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,212,1739865600"; 
+   d="scan'208";a="129868035"
+Received: from jamart5x-mobl1.amr.corp.intel.com (HELO desk) ([10.125.145.223])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 09:41:09 -0700
+Date: Mon, 14 Apr 2025 09:41:02 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Xi Ruoyao <xry111@xry111.site>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH] cpufreq: intel_pstate: Use raw_smp_processor_id() in
+ hwp_get_cpu_scaling()
+Message-ID: <20250414164102.vfk64a44mvutg4dh@desk>
+References: <20250412103434.5321-1-xry111@xry111.site>
+ <b7b0b3f98f8fad9cc9559e1c4ce832387c520d7a.camel@linux.intel.com>
+ <12659608.O9o76ZdvQC@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 14 Apr 2025 18:40:54 +0200
-Message-Id: <D96IEJBTKCGK.J44WDQUEHXVV@buenzli.dev>
-Cc: "Rob Herring" <robh@kernel.org>, "Saravana Kannan"
- <saravanak@google.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <benno.lossin@proton.me>,
- "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl"
- <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, <linux-kernel@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH v2 1/5] rust: Move property_present to separate file
-From: "Remo Senekowitsch" <remo@buenzli.dev>
-To: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250326171411.590681-1-remo@buenzli.dev>
- <20250414152630.1691179-1-remo@buenzli.dev>
- <20250414152630.1691179-2-remo@buenzli.dev> <Z_0xGRsI74PsAL_E@cassiopeiae>
-In-Reply-To: <Z_0xGRsI74PsAL_E@cassiopeiae>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <12659608.O9o76ZdvQC@rjwysocki.net>
 
-On Mon Apr 14, 2025 at 6:00 PM CEST, Danilo Krummrich wrote:
-> On Mon, Apr 14, 2025 at 05:26:26PM +0200, Remo Senekowitsch wrote:
->> Not all property-related APIs can be exposed directly on a device.
->> For example, iterating over child nodes of a device will yield
->> fwnode_handle. Thus, in order to access properties on these child nodes,
->> duplicate the APIs on a fwnode as they are in C.
->
-> What do you mean with "duplicate the APIs"?
+On Mon, Apr 14, 2025 at 05:19:04PM +0200, Rafael J. Wysocki wrote:
+> On Sunday, April 13, 2025 4:44:56 PM CEST srinivas pandruvada wrote:
+> > On Sat, 2025-04-12 at 18:34 +0800, Xi Ruoyao wrote:
+> > > Use raw_smp_processor_id() instead of plain smp_processor_id() in
+> > > hwp_get_cpu_scaling(), otherwise we get some errors on a Lenovo
+> > > Thinkpad
+> > > T14P Gen 2:
+> > > 
+> > >     BUG: using smp_processor_id() in preemptible [00000000] code:
+> > > swapper/0/1
+> > >     caller is hwp_get_cpu_scaling+0x7f/0xc0
+> > > 
+> > > Fixes: b52aaeeadfac ("cpufreq: intel_pstate: Avoid SMP calls to get
+> > > cpu-type")
+> > > Signed-off-by: Xi Ruoyao <xry111@xry111.site>
+> >
+> > Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+> 
+> It's still broken after this patch though because the function should
+> use the cpu_data() of the target CPU and not of the CPU running the code.
 
-The property related methods on `Device` and `FwNode` are mostly
-the same. Same names, same function signatures. The methods on
-`Device` simply call `self.fwnode()` and then the same method on
-`FwNode`. I was asked to do this so driver authors don't have to write
-`dev.fwnode().read_propert()` etc. every time they want to do something
-on the device itself. This is the case here for `property_present` as
-well as the methods added in the following patches.
+Sorry for missing that.
 
-> Also, this patch does three separate things.
->
->   (1) move property_present() to separate file
->   (2) implement FwNode abstraction
->   (3) implement Device::fwnode()
->
-> I'd rather keep property_present() in device.rs and also move fwnode() in=
-to
-> device.rs, even though in C it's in property.c. impl Device blocks should=
- be in
-> device.rs.
+I noticed that find_hybrid_pmu_for_cpu() doesn't take the cpu argument.
+Does it suffer from the same problem?
 
-I was asked to move it by Rob Herring on Zulip[1]. Dirk Behme also
-agreed with it[2]. I have no strong opinion on this, hopefully you can
-come to an agreement. Whatever it is, I'll happily implement it.
-
->> +++ b/rust/kernel/property.rs
->> @@ -0,0 +1,75 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +
->> +//! Unified device property interface.
->> +//!
->> +//! C header: [`include/linux/property.h`](srctree/include/linux/proper=
-ty.h)
->> +
->> +use core::ptr;
->> +
->> +use crate::{bindings, device::Device, str::CStr, types::Opaque};
->> +
->> +impl Device {
->> +    /// Obtain the fwnode corresponding to the device.
->> +    fn fwnode(&self) -> &FwNode {
->> +        // SAFETY: `self` is valid.
->> +        let fwnode_handle =3D unsafe { bindings::__dev_fwnode(self.as_r=
-aw()) };
->> +        if fwnode_handle.is_null() {
->> +            panic!("fwnode_handle cannot be null");
->
-> Please don't use panic!() unless you hit an error condition that is impos=
-sible
-> to handle.
->
-> If __dev_fwnode() can ever return NULL, make this function return
-> Option<&FwNode> instead.
-
-Rob Herring mentioned this in the previous thread already:
-
-> Users/drivers testing fwnode_handle/of_node for NULL is pretty common.
-> Though often that's a legacy code path, so maybe not allowing NULL is
-> fine for now.
-
-I asked a follow-up question about how to proceed but got no reply[3].
-
-Best regards,
-Remo
-
-Link: https://rust-for-linux.zulipchat.com/#narrow/channel/288089-General/t=
-opic/DS90UB954.20driver.20done.2C.20ready.20to.20upstream.3F/near/495807346=
- [1]
-Link: https://rust-for-linux.zulipchat.com/#narrow/channel/288089-General/t=
-opic/DS90UB954.20driver.20done.2C.20ready.20to.20upstream.3F/near/495945200=
- [2]
-Link: https://lore.kernel.org/rust-for-linux/D96HP1UV49SY.1U1BFA14P8XHE@bue=
-nzli.dev/T/#mc7967352b7bd1be812806939150511c1a5018bb1 [3]
+init_hybrid_pmu(int cpu)
+{
+	struct cpu_hw_events *cpuc = &per_cpu(cpu_hw_events, cpu);
+	struct x86_hybrid_pmu *pmu = find_hybrid_pmu_for_cpu();
 
