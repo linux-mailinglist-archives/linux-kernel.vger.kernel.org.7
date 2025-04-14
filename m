@@ -1,54 +1,63 @@
-Return-Path: <linux-kernel+bounces-602808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87C2DA87FA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:49:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7152FA87FB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:50:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 990DF1756B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:49:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 779EB1679DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D11428368C;
-	Mon, 14 Apr 2025 11:49:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5B562980BA;
+	Mon, 14 Apr 2025 11:50:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="B5TZlic7"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="pPvENMRg"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E3C539A;
-	Mon, 14 Apr 2025 11:49:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD45119924E;
+	Mon, 14 Apr 2025 11:50:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744631358; cv=none; b=h5Zubvc92/fGhstdC2Ck0EZX2yqUHsCIsZGMwRxoakSnWs243M4XhpbDvi3yrXL4MP0eo6VI73BaA0hGB4hDE7fv4/nsESxW2YeF0ow6m9QjGWY29sbRIuTLOFoXTcbPEkHEdxt5DmsnrQgC0TbcH23EgqDBkXYk2kbBjQrMwqs=
+	t=1744631436; cv=none; b=lLNzqlJEVdKAqkXPJul1gOXKpK+cPNHQFSSzUnbQ3b4r6SaecDuGn5a09tyTYi9ZPK3TMWGVO1xfwMSs6AYL7BjKdYVLB0Fc41oNgzynskN2WMyAJRk9H0A7Al1Tmhsyya+cyVuAAvgQF5P/udxSSiJR6GYmC3VMyclxL/APpRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744631358; c=relaxed/simple;
-	bh=ztxpMMJFLLvR1oZapArlbuf/s3HpqOv3E90SpnFpTec=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:References:
-	 In-Reply-To:Content-Type; b=JI9hh9P74WeJIOW4afS+As9M++V0HjU3doLP23juutbaz36HM1gwDDByU+37qQy7tcDCiJn5CfnPbXGxjoyan3N4y6WA63IaiNipqC5OlpN8iIRY2imXAwC1h7cAYdIk42jH+DQrISLfcNMYQP6wYB7UzPwh8YYSLLr6ufsRPcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=B5TZlic7; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1744631350; x=1745236150; i=wahrenst@gmx.net;
-	bh=ztxpMMJFLLvR1oZapArlbuf/s3HpqOv3E90SpnFpTec=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
-	 References:In-Reply-To:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=B5TZlic7IPw+iMxfK9Lw9WWs8SYX20bTSJlUcIxtp/PzT1ScTT/296LjM++pVwoH
-	 KsgGS0ZLHf0eFe2EwsWVPUxnVTAskcG+DUTb9PAEF8cYZtGHbGnp/RxbjDwusmlVg
-	 CyDfhnCH0QPJG5mGNy6kZdYtIpmuYEk5/nfAhZPYE1UmVpv8x8m02w95v4FsfVlJb
-	 eMRSoRZmNvVDsRnq1HL+maAKRE9qlj7VZ0H38bUx++udVrwMH2De8NuQ7XH6x8F4f
-	 VzpRSu70sfLuoLORrwVKXma7u4dsVEYk8Pkm04JTswtRxgcmWKhhGry/nCGqDa8CK
-	 8VEhHj+pUhiYeDjZYw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.107] ([37.4.251.153]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mof9P-1tFnGG3XYH-00ZWq1; Mon, 14
- Apr 2025 13:49:10 +0200
-Message-ID: <a1133205-7dcd-4875-8a1f-a7f128140730@gmx.net>
-Date: Mon, 14 Apr 2025 13:49:08 +0200
+	s=arc-20240116; t=1744631436; c=relaxed/simple;
+	bh=ZrzXp43neMTktJlC5UlCc6/EXuIAX9V8IWG+IqHuM7s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=no7T1X4/zWAz7/1orOc7fArVD6UlMGbos0srZMZZMIGwOOEi+ah+IFURaEymTHXvlSxZJCOPaeJfgD9P6zg8KrjlTojyN021yajBuQQGxprF75Js/s+cjmEUW66w3sZwWLu+LCuCcz7S9k50dYa7vZLmvQen5jET0r18QQW4f+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=pPvENMRg; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53EBo9lp2048113
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 14 Apr 2025 06:50:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1744631409;
+	bh=y5ACmq3Yrzj3X9LtXUICStUphd4BBh7NKKwspPcqHa0=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=pPvENMRg+2qi8WZHRAJ+9bEgDdLWUfvZ0fxDdW/IK49AZLeXQf9sU6sL2RdMksh3O
+	 bE4SGKB+lR8N43aalUVftuBBtZpujL5kWWuAzHqiEGtvB3lbf2ojRKcsX43+reUKWg
+	 aoJMD2UFL8RTaI31oMiK6Dzo8TMVqVao8Tn6BEoE=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53EBo9WB010676
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 14 Apr 2025 06:50:09 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 14
+ Apr 2025 06:50:08 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 14 Apr 2025 06:50:08 -0500
+Received: from [172.24.227.115] (abhilash-hp.dhcp.ti.com [172.24.227.115])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53EBo4rA059109;
+	Mon, 14 Apr 2025 06:50:05 -0500
+Message-ID: <e08b7127-4f9b-433e-b0f3-e2c4ef279b78@ti.com>
+Date: Mon, 14 Apr 2025 17:20:04 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,84 +65,115 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH v8 13/13] arm64: defconfig: Enable OF_OVERLAY option
-To: Andrea della Porta <andrea.porta@suse.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Krzysztof Wilczynski <kw@linux.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Linus Walleij
- <linus.walleij@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
- <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
- Herve Codina <herve.codina@bootlin.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Lunn
- <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>, kernel-list@raspberrypi.com
-References: <cover.1742418429.git.andrea.porta@suse.com>
- <9d5b41bf6d1565f0de96c7c1680bd404cba40189.1742418429.git.andrea.porta@suse.com>
+Subject: Re: [PATCH v2 1/7] arm64: dts: ti: j721e-sk: Add DT nodes for power
+ regulators
+To: "Kumar, Udit" <u-kumar1@ti.com>, <nm@ti.com>, <vigneshr@ti.com>
+CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <vaishnav.a@ti.com>, <jai.luthra@linux.dev>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <imx@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <stable@vger.kernel.org>
+References: <20250409134128.2098195-1-y-abhilashchandra@ti.com>
+ <20250409134128.2098195-2-y-abhilashchandra@ti.com>
+ <44c3ec3d-2fa3-4a61-8c93-5ef4791fcf8a@ti.com>
 Content-Language: en-US
-In-Reply-To: <9d5b41bf6d1565f0de96c7c1680bd404cba40189.1742418429.git.andrea.porta@suse.com>
-Autocrypt: addr=wahrenst@gmx.net; keydata=
- xjMEZ1dOJBYJKwYBBAHaRw8BAQdA7H2MMG3q8FV7kAPko5vOAeaa4UA1I0hMgga1j5iYTTvN
- IFN0ZWZhbiBXYWhyZW4gPHdhaHJlbnN0QGdteC5uZXQ+wo8EExYIADcWIQT3FXg+ApsOhPDN
- NNFuwvLLwiAwigUCZ1dOJAUJB4TOAAIbAwQLCQgHBRUICQoLBRYCAwEAAAoJEG7C8svCIDCK
- JQ4BAP4Y9uuHAxbAhHSQf6UZ+hl5BDznsZVBJvH8cZe2dSZ6AQCNgoc1Lxw1tvPscuC1Jd1C
- TZomrGfQI47OiiJ3vGktBc44BGdXTiQSCisGAQQBl1UBBQEBB0B5M0B2E2XxySUQhU6emMYx
- f5QR/BrEK0hs3bLT6Hb9WgMBCAfCfgQYFggAJhYhBPcVeD4Cmw6E8M000W7C8svCIDCKBQJn
- V04kBQkHhM4AAhsMAAoJEG7C8svCIDCKJxoA/i+kqD5bphZEucrJHw77ujnOQbiKY2rLb0pE
- aHMQoiECAQDVbj827W1Yai/0XEABIr8Ci6a+/qZ8Vz6MZzL5GJosAA==
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:T0QNT8oJFH3Ns/oSx+yvOcldq/37PEeJZ8dWssGFEoeeUNJGOj8
- KAfIXjvO1zKr1QEuPh7Eqjuqz2/z4zNabaGMxpSWbn1clCvFtqKNgYdhRGLS9tgQXUxW/se
- Tfk4+QgRqvFMd4vCU928Nm/NcWEAy0TPBmjeOKyqxFpQXGP2n71irv4xUMvjL7SMvpqm/0c
- M1XqzoKqO2/ChPsE+19rg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:jtrZ2GhFz9g=;d8d7oUs6bLbBoChY0c/bH2hp8ck
- XGrKelH8fwQk/0LqxpwXocMb9CXERgTSgjBpcgv5kgMBSy0KCQjo5T+E2x8qUWlqS5Vaxzloc
- pTYaVkPIQ2MLk5BsZvDYqHTpU/n50KPJJ5y/+XmXaLuvpQUK3MkpVuU8ulQoZs4d2djPLDx+v
- VUfqWpUAX2lBrYLk+c3JRboMIZWoOQM6yl6C+bzkYvczoG8LwZYsOYslVH7iyTA5XF1h2lc5w
- 9CFiY8SiiwDh3O7PtNhYH2ylGVLlnrJeKpcZCCyXrcEJt7bi4WLEN2jYTC6/fRXwgh11B+lfy
- zyGzLPzD5L8xSP1UsaLh+7SNeOYFVDbosrVloNwzNEyJkW3F/Ddz7Gs6FDrgRVTp9rhTMw1wm
- k1aOuTy72BYjctn3yJO/+c2A8PDCDnlxcQR7+Q0ZWTDc5xfO0ho2XYJ+E/PpymnS0k4XyFGAD
- 8aHzJyPF43s0VrW01FG1bupTaV+ZLUrm45yMRIn6OWOxEbB4s/GZtoxCUr117QE4HmYmlU/im
- 0wuFg96Vtqd16hmnorVDPs2Nj/uIfN5jkEJvRIIeufjVsYq5d8nRGrwFn8BF8JvFI/rwbLb52
- MPZY0LjXueBPZvHK90N6riGUDA7hrbIFqAJ874CfvOg++n44CcS9VtWXBanfp+1amcIId0AAx
- r8L69lfIabDc9qL8Vby9v2do6WTVykZJLqeEEJwbwlEJfbdWNSVF2WL/UCCRvFVbHccQLvcco
- TFtUWQMk7GWxPR3OxDikizp2gQWCYrtQm9qi7C4eJ46rCx7fgpR1JWiCfcUOFvFdCfNXI+45m
- o+8E09k1b2xWXUSnyWqmJIkG5tx3OINOz7odIwV6GRakKPaP+254OB2esGpBCZ+TM8+iIHFu4
- zuZc8flXXe2LipHd2BQtvKUf1TJ3BAupIfRm3Kae1AqP4aL5mlAxKZ51dZxoUZnDG3RaJmJpQ
- HlzVF8qQoGr+LVMkq1hu1I1zTGmtK5z5ZIPbqTEZqI9nCa0d9sHSEmd37svI7H7T/YOAWg0Pc
- RNL6H18wXttv36KJ1jp0G6IuFeTNta7cnUaW0o2JzyWPApIDcLebHenkiemf+Hl9pToRgquzR
- V2hC7F0r6JMP+vNEg+Ur7ZZgaRxe/uZ3Hg0zyW5GzJKo6Fry60qR/Vm7oPeqqjzxYF1iPqno3
- 6sjfYYHLhb+NpZNhAakG/q3YVR4QaXW/De1Zba4zang5EzvpnWTBZ0nrYQy2dB26Mwl41V11V
- V3bl2W41nR2JHbtGte4xy6po1IhfNqX7qEU56ZbrVHG3nt/aEW7A7Eh+Kfql/CwVkmA6VZS0x
- fEsKSx3VMu5nZTzZCSeZOT4WlDZf9zyO0smlAmZxE9iMwh4lWkuM1AX15hKi4twaARRKYekwd
- xnrZlNvZcMDl7LaTeT1hkNEhlqcHU5Tdl+zuPzGX7fiWqJiAZqM2fwoWAOcTywiCpeaM6sL03
- 1CNkjD9+vq9JFcuda+xardD/PgYZP+avbY519DXAi/+fBr4LF
+From: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+In-Reply-To: <44c3ec3d-2fa3-4a61-8c93-5ef4791fcf8a@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+Hi Udit,
 
-Am 19.03.25 um 22:52 schrieb Andrea della Porta:
-> The RP1 driver uses the infrastructure enabled by OF_OVERLAY config
-> option. Enable that option in defconfig in order to produce a kernel
-> usable on RaspberryPi5 avoiding to enable it separately.
->
-> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+On 11/04/25 19:04, Kumar, Udit wrote:
+> 
+> On 4/9/2025 7:11 PM, Yemike Abhilash Chandra wrote:
+>> Add device tree nodes for two power regulators on the J721E SK board.
+>> vsys_5v0: A fixed regulator representing the 5V supply output from the
+>> LM61460 and vdd_sd_dv: A GPIO-controlled TLV71033 regulator.
+>>
+>> J721E-SK schematics: https://www.ti.com/lit/zip/sprr438
+>> Fixes: 1bfda92a3a36 ("arm64: dts: ti: Add support for J721E SK")
+> 
+> For me does not looks like a fix, you can adding missing nodes
+> 
 
-Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
+Since we are adding the regulator nodes in the sensor overlay, (Patch 4 
+of this series) which in turn references these regulator nodes, I have
+included the Fixes tag in this patch as well.
 
+> 
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+>> ---
+>>   arch/arm64/boot/dts/ti/k3-j721e-sk.dts | 31 ++++++++++++++++++++++++++
+>>   1 file changed, 31 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/ti/k3-j721e-sk.dts 
+>> b/arch/arm64/boot/dts/ti/k3-j721e-sk.dts
+>> index 440ef57be294..4965957e6545 100644
+>> --- a/arch/arm64/boot/dts/ti/k3-j721e-sk.dts
+>> +++ b/arch/arm64/boot/dts/ti/k3-j721e-sk.dts
+>> @@ -184,6 +184,17 @@ vsys_3v3: fixedregulator-vsys3v3 {
+>>           regulator-boot-on;
+>>       };
+>> +    vsys_5v0: fixedregulator-vsys5v0 {
+>> +        /* Output of LM61460 */
+>> +        compatible = "regulator-fixed";
+>> +        regulator-name = "vsys_5v0";
+>> +        regulator-min-microvolt = <5000000>;
+>> +        regulator-max-microvolt = <5000000>;
+>> +        vin-supply = <&vusb_main>;
+>> +        regulator-always-on;
+>> +        regulator-boot-on;
+>> +    };
+>> +
+>>       vdd_mmc1: fixedregulator-sd {
+>>           compatible = "regulator-fixed";
+>>           pinctrl-names = "default";
+>> @@ -211,6 +222,20 @@ vdd_sd_dv_alt: gpio-regulator-tps659411 {
+>>                <3300000 0x1>;
+>>       };
+>> +    vdd_sd_dv: gpio-regulator-TLV71033 {
+>> +        compatible = "regulator-gpio";
+>> +        pinctrl-names = "default";
+>> +        pinctrl-0 = <&vdd_sd_dv_pins_default>;
+>> +        regulator-name = "tlv71033";
+>> +        regulator-min-microvolt = <1800000>;
+>> +        regulator-max-microvolt = <3300000>;
+>> +        regulator-boot-on;
+>> +        vin-supply = <&vsys_5v0>;
+>> +        gpios = <&main_gpio0 118 GPIO_ACTIVE_HIGH>;
+>> +        states = <1800000 0x0>,
+>> +             <3300000 0x1>;
+>> +    };
+>> +
+>>       transceiver1: can-phy1 {
+>>           compatible = "ti,tcan1042";
+>>           #phy-cells = <0>;
+>> @@ -613,6 +638,12 @@ J721E_WKUP_IOPAD(0xd4, PIN_OUTPUT, 7) /* (G26) 
+>> WKUP_GPIO0_9 */
+>>           >;
+>>       };
+>> +    vdd_sd_dv_pins_default: vdd-sd-dv-default-pins {
+>> +        pinctrl-single,pins = <
+>> +            J721E_IOPAD(0x1dc, PIN_INPUT, 7) /* (Y1) 
+>> SPI1_CLK.GPIO0_118 */
+> 
+> Shouldn't be this pin be output to control regulator ?
+> 
+
+Yes, I will correct this in the next revision.
+
+Thanks and Regards
+Yemike Abhilash Chandra
+
+> 
+>> +        >;
+>> +    };
+>> +
+>>       wkup_uart0_pins_default: wkup-uart0-default-pins {
+>>           pinctrl-single,pins = <
+>>               J721E_WKUP_IOPAD(0xa0, PIN_INPUT, 0) /* (J29) 
+>> WKUP_UART0_RXD */
 
