@@ -1,52 +1,45 @@
-Return-Path: <linux-kernel+bounces-602448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04F3CA87AFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:50:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6163A878AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:26:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C58F03B1F3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:50:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED2A416D96D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 07:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E765325A32D;
-	Mon, 14 Apr 2025 08:50:16 +0000 (UTC)
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01F432580DD;
+	Mon, 14 Apr 2025 07:25:52 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E11C2DF42
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 08:50:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01EA41A262D;
+	Mon, 14 Apr 2025 07:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744620616; cv=none; b=NVRaOauRzS91Sw/ZmaTGCj2BPtsohDjmtOaCauQwhGR8I++ojhx1xnw7e45wCTVsqqdc6AuRDBRUPhYLpJ8UD9mYbe0Q4yxVAjN2I3uYmNeB5g4042esc/TWGQD7B6fYNKA4qvF3+AOf83Ykul1q9z1euNI3KCe/S113YeQCFQM=
+	t=1744615551; cv=none; b=LJDGFqJW8uhNfZg9McYT5qJKqjUwqdE0fpXryNfGUCy6jfpNBSNQPW8yPkZ+INXDLXuCB/1iKAx9tXikxqWV3zx9aJP+0Qj1hr4Lp/ISvhXa8uk+Awb+QGp6BhVSRu+4eS6h67YOS1utqgi2HnJHX2FdaLi4Zwq8QTfzpglAgYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744620616; c=relaxed/simple;
-	bh=AOkbPHtX8IFfKVeAHn39ClWma+HMT8hyNfwCAeAz3FY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oWnvAaVumEGM6jTmyCyUuA77upxx+NeT+qNBPFxTjnnaqciXks0hQfHaElP5HvQyl9TIyCclM1RIpO5cWMnalOLYWdkHoCfagSnHBaiCX8MxxBNVSZXD60UwOJIF1fUuPlKC5EPo/ouKED0lk7E3mz9dCigz7/8CkFVYVvzRees=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:1dc6:8b60:8242:85de])
-	by xavier.telenet-ops.be with cmsmtp
-	id cwq42E0084wS71s01wq4mu; Mon, 14 Apr 2025 10:50:04 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1u4FVx-00000000YBx-0zUR;
-	Mon, 14 Apr 2025 10:50:04 +0200
-Received: from geert by rox.of.borg with local (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1u4EB8-0000000AoSL-3emS;
-	Mon, 14 Apr 2025 09:24:26 +0200
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: linux-m68k@lists.linux-m68k.org
-Cc: linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH] m68k: defconfig: Update defconfigs for v6.15-rc1
-Date: Mon, 14 Apr 2025 09:24:25 +0200
-Message-ID: <e7d9ff0ef58efaa3e0adcb7207e6b44d948caa25.1744615371.git.geert@linux-m68k.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1744615551; c=relaxed/simple;
+	bh=kkd8u8qjRsZKGfCBhYwabWw6BCgMMgLM99/L5iSUIiM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=erFjOkPaWw1KKnmaOaJPYuheLRSuZgnTT5QWjCWSfnQxc0wL1Nk9SlqgfdbPGAixefsxqWcPH2ugtS28woS7mO2Nfy4o6nn4TzrpO53qEk+UefifdKa9CJqSea+g78kRS7ybJS5xPg3s8z7QjxL8cm9XvaZ4atx1GvwjF1gQ0PM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [124.16.141.245])
+	by APP-05 (Coremail) with SMTP id zQCowAAHQwt4uPxnkVbnCA--.16352S2;
+	Mon, 14 Apr 2025 15:25:45 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH RESEND] usb: renesas_usbhs: Add error handling for usbhsf_fifo_select()
+Date: Mon, 14 Apr 2025 15:25:01 +0800
+Message-ID: <20250414072501.2259-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,386 +47,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAAHQwt4uPxnkVbnCA--.16352S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxJr1rGrWkZF1Utr4kXrWDArb_yoW8XrWfpF
+	W7G3y5ur1rJw1UXa1UJ3y8Zw1FvayFgry7ZrsrKa97AF13Ja12ya9YvF10vr1DG3yayw1F
+	g3WvyFs5Gan7CFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvl14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26r
+	xl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+	6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v2
+	6r126r1DMxkIecxEwVAFwVW8CwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
+	W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
+	1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
+	IIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvE
+	x4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvj
+	DU0xZFpf9x0JU7DGOUUUUU=
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBgoMA2f8nCRmcAAAs2
 
-  - Drop CONFIG_PRIME_NUMBERS=m (auto-modular since commit
-    313b38a6ecb46db4 ("lib/prime_numbers: convert self-test to KUnit")),
-  - Drop CONFIG_TEST_PRINTF=m (Replaced by auto-modular
-    CONFIG_PRINTF_KUNIT_TEST in commit 7a79e7daa84e2302 ("printf:
-    convert self-test to KUnit")),
-  - Drop CONFIG_TEST_SCANF=m (Replaced by auto-modular
-    CONFIG_SCANF_KUNIT_TEST in commit 97c1f302f2bc318e ("scanf: convert
-    self-test to KUnit")),
-  - Drop CONFIG_TEST_BLACKHOLE_DEV=m (replaced by auto-modular
-    CONFIG_BLACKHOLE_DEV_KUNIT_TEST in commit b341f6fd45abb188
-    ("blackhole_dev: convert self-test to KUnit")).
+In usbhsf_dcp_data_stage_prepare_pop(), the return value of
+usbhsf_fifo_select() needs to be checked. A proper implementation
+can be found in usbhsf_dma_try_pop_with_rx_irq().
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Add an error check and jump to PIO pop when FIFO selection fails.
+
+Fixes: 9e74d601de8a ("usb: gadget: renesas_usbhs: add data/status stage handler")
+Cc: stable@vger.kernel.org # v3.2+
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
 ---
-To be queued in the m68k tree for v6.16.
+ drivers/usb/renesas_usbhs/fifo.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
- arch/m68k/configs/amiga_defconfig    | 4 ----
- arch/m68k/configs/apollo_defconfig   | 4 ----
- arch/m68k/configs/atari_defconfig    | 4 ----
- arch/m68k/configs/bvme6000_defconfig | 4 ----
- arch/m68k/configs/hp300_defconfig    | 4 ----
- arch/m68k/configs/mac_defconfig      | 4 ----
- arch/m68k/configs/multi_defconfig    | 4 ----
- arch/m68k/configs/mvme147_defconfig  | 4 ----
- arch/m68k/configs/mvme16x_defconfig  | 4 ----
- arch/m68k/configs/q40_defconfig      | 4 ----
- arch/m68k/configs/sun3_defconfig     | 4 ----
- arch/m68k/configs/sun3x_defconfig    | 4 ----
- 12 files changed, 48 deletions(-)
-
-diff --git a/arch/m68k/configs/amiga_defconfig b/arch/m68k/configs/amiga_defconfig
-index 31ecb8b7b9f1e734..44c8182ebdaa368f 100644
---- a/arch/m68k/configs/amiga_defconfig
-+++ b/arch/m68k/configs/amiga_defconfig
-@@ -602,7 +602,6 @@ CONFIG_CRYPTO_USER_API_SKCIPHER=m
- CONFIG_CRYPTO_USER_API_RNG=m
- CONFIG_CRYPTO_USER_API_AEAD=m
- # CONFIG_CRYPTO_HW is not set
--CONFIG_PRIME_NUMBERS=m
- CONFIG_XZ_DEC_TEST=m
- CONFIG_GLOB_SELFTEST=m
- # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
-@@ -621,8 +620,6 @@ CONFIG_ATOMIC64_SELFTEST=m
- CONFIG_ASYNC_RAID6_TEST=m
- CONFIG_TEST_HEXDUMP=m
- CONFIG_TEST_KSTRTOX=m
--CONFIG_TEST_PRINTF=m
--CONFIG_TEST_SCANF=m
- CONFIG_TEST_BITMAP=m
- CONFIG_TEST_UUID=m
- CONFIG_TEST_XARRAY=m
-@@ -632,7 +629,6 @@ CONFIG_TEST_IDA=m
- CONFIG_TEST_BITOPS=m
- CONFIG_TEST_VMALLOC=m
- CONFIG_TEST_BPF=m
--CONFIG_TEST_BLACKHOLE_DEV=m
- CONFIG_FIND_BIT_BENCHMARK=m
- CONFIG_TEST_FIRMWARE=m
- CONFIG_TEST_SYSCTL=m
-diff --git a/arch/m68k/configs/apollo_defconfig b/arch/m68k/configs/apollo_defconfig
-index 1f57514624d515d3..730e7bc98cacd3b0 100644
---- a/arch/m68k/configs/apollo_defconfig
-+++ b/arch/m68k/configs/apollo_defconfig
-@@ -559,7 +559,6 @@ CONFIG_CRYPTO_USER_API_SKCIPHER=m
- CONFIG_CRYPTO_USER_API_RNG=m
- CONFIG_CRYPTO_USER_API_AEAD=m
- # CONFIG_CRYPTO_HW is not set
--CONFIG_PRIME_NUMBERS=m
- CONFIG_XZ_DEC_TEST=m
- CONFIG_GLOB_SELFTEST=m
- # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
-@@ -578,8 +577,6 @@ CONFIG_ATOMIC64_SELFTEST=m
- CONFIG_ASYNC_RAID6_TEST=m
- CONFIG_TEST_HEXDUMP=m
- CONFIG_TEST_KSTRTOX=m
--CONFIG_TEST_PRINTF=m
--CONFIG_TEST_SCANF=m
- CONFIG_TEST_BITMAP=m
- CONFIG_TEST_UUID=m
- CONFIG_TEST_XARRAY=m
-@@ -589,7 +586,6 @@ CONFIG_TEST_IDA=m
- CONFIG_TEST_BITOPS=m
- CONFIG_TEST_VMALLOC=m
- CONFIG_TEST_BPF=m
--CONFIG_TEST_BLACKHOLE_DEV=m
- CONFIG_FIND_BIT_BENCHMARK=m
- CONFIG_TEST_FIRMWARE=m
- CONFIG_TEST_SYSCTL=m
-diff --git a/arch/m68k/configs/atari_defconfig b/arch/m68k/configs/atari_defconfig
-index c38d2819aebe9954..efee64ffcc072e99 100644
---- a/arch/m68k/configs/atari_defconfig
-+++ b/arch/m68k/configs/atari_defconfig
-@@ -590,7 +590,6 @@ CONFIG_CRYPTO_USER_API_SKCIPHER=m
- CONFIG_CRYPTO_USER_API_RNG=m
- CONFIG_CRYPTO_USER_API_AEAD=m
- # CONFIG_CRYPTO_HW is not set
--CONFIG_PRIME_NUMBERS=m
- CONFIG_XZ_DEC_TEST=m
- CONFIG_GLOB_SELFTEST=m
- # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
-@@ -609,8 +608,6 @@ CONFIG_ATOMIC64_SELFTEST=m
- CONFIG_ASYNC_RAID6_TEST=m
- CONFIG_TEST_HEXDUMP=m
- CONFIG_TEST_KSTRTOX=m
--CONFIG_TEST_PRINTF=m
--CONFIG_TEST_SCANF=m
- CONFIG_TEST_BITMAP=m
- CONFIG_TEST_UUID=m
- CONFIG_TEST_XARRAY=m
-@@ -620,7 +617,6 @@ CONFIG_TEST_IDA=m
- CONFIG_TEST_BITOPS=m
- CONFIG_TEST_VMALLOC=m
- CONFIG_TEST_BPF=m
--CONFIG_TEST_BLACKHOLE_DEV=m
- CONFIG_FIND_BIT_BENCHMARK=m
- CONFIG_TEST_FIRMWARE=m
- CONFIG_TEST_SYSCTL=m
-diff --git a/arch/m68k/configs/bvme6000_defconfig b/arch/m68k/configs/bvme6000_defconfig
-index f0e673cb17eb7c67..20b2b16f6921f26d 100644
---- a/arch/m68k/configs/bvme6000_defconfig
-+++ b/arch/m68k/configs/bvme6000_defconfig
-@@ -551,7 +551,6 @@ CONFIG_CRYPTO_USER_API_SKCIPHER=m
- CONFIG_CRYPTO_USER_API_RNG=m
- CONFIG_CRYPTO_USER_API_AEAD=m
- # CONFIG_CRYPTO_HW is not set
--CONFIG_PRIME_NUMBERS=m
- CONFIG_XZ_DEC_TEST=m
- CONFIG_GLOB_SELFTEST=m
- # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
-@@ -570,8 +569,6 @@ CONFIG_ATOMIC64_SELFTEST=m
- CONFIG_ASYNC_RAID6_TEST=m
- CONFIG_TEST_HEXDUMP=m
- CONFIG_TEST_KSTRTOX=m
--CONFIG_TEST_PRINTF=m
--CONFIG_TEST_SCANF=m
- CONFIG_TEST_BITMAP=m
- CONFIG_TEST_UUID=m
- CONFIG_TEST_XARRAY=m
-@@ -581,7 +578,6 @@ CONFIG_TEST_IDA=m
- CONFIG_TEST_BITOPS=m
- CONFIG_TEST_VMALLOC=m
- CONFIG_TEST_BPF=m
--CONFIG_TEST_BLACKHOLE_DEV=m
- CONFIG_FIND_BIT_BENCHMARK=m
- CONFIG_TEST_FIRMWARE=m
- CONFIG_TEST_SYSCTL=m
-diff --git a/arch/m68k/configs/hp300_defconfig b/arch/m68k/configs/hp300_defconfig
-index e8ca5a50b86dad62..46a20a7f3582899c 100644
---- a/arch/m68k/configs/hp300_defconfig
-+++ b/arch/m68k/configs/hp300_defconfig
-@@ -561,7 +561,6 @@ CONFIG_CRYPTO_USER_API_SKCIPHER=m
- CONFIG_CRYPTO_USER_API_RNG=m
- CONFIG_CRYPTO_USER_API_AEAD=m
- # CONFIG_CRYPTO_HW is not set
--CONFIG_PRIME_NUMBERS=m
- CONFIG_XZ_DEC_TEST=m
- CONFIG_GLOB_SELFTEST=m
- # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
-@@ -580,8 +579,6 @@ CONFIG_ATOMIC64_SELFTEST=m
- CONFIG_ASYNC_RAID6_TEST=m
- CONFIG_TEST_HEXDUMP=m
- CONFIG_TEST_KSTRTOX=m
--CONFIG_TEST_PRINTF=m
--CONFIG_TEST_SCANF=m
- CONFIG_TEST_BITMAP=m
- CONFIG_TEST_UUID=m
- CONFIG_TEST_XARRAY=m
-@@ -591,7 +588,6 @@ CONFIG_TEST_IDA=m
- CONFIG_TEST_BITOPS=m
- CONFIG_TEST_VMALLOC=m
- CONFIG_TEST_BPF=m
--CONFIG_TEST_BLACKHOLE_DEV=m
- CONFIG_FIND_BIT_BENCHMARK=m
- CONFIG_TEST_FIRMWARE=m
- CONFIG_TEST_SYSCTL=m
-diff --git a/arch/m68k/configs/mac_defconfig b/arch/m68k/configs/mac_defconfig
-index b3a270441bb17755..6de38f254ef7b3d2 100644
---- a/arch/m68k/configs/mac_defconfig
-+++ b/arch/m68k/configs/mac_defconfig
-@@ -578,7 +578,6 @@ CONFIG_CRYPTO_USER_API_SKCIPHER=m
- CONFIG_CRYPTO_USER_API_RNG=m
- CONFIG_CRYPTO_USER_API_AEAD=m
- # CONFIG_CRYPTO_HW is not set
--CONFIG_PRIME_NUMBERS=m
- CONFIG_XZ_DEC_TEST=m
- CONFIG_GLOB_SELFTEST=m
- # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
-@@ -597,8 +596,6 @@ CONFIG_ATOMIC64_SELFTEST=m
- CONFIG_ASYNC_RAID6_TEST=m
- CONFIG_TEST_HEXDUMP=m
- CONFIG_TEST_KSTRTOX=m
--CONFIG_TEST_PRINTF=m
--CONFIG_TEST_SCANF=m
- CONFIG_TEST_BITMAP=m
- CONFIG_TEST_UUID=m
- CONFIG_TEST_XARRAY=m
-@@ -608,7 +605,6 @@ CONFIG_TEST_IDA=m
- CONFIG_TEST_BITOPS=m
- CONFIG_TEST_VMALLOC=m
- CONFIG_TEST_BPF=m
--CONFIG_TEST_BLACKHOLE_DEV=m
- CONFIG_FIND_BIT_BENCHMARK=m
- CONFIG_TEST_FIRMWARE=m
- CONFIG_TEST_SYSCTL=m
-diff --git a/arch/m68k/configs/multi_defconfig b/arch/m68k/configs/multi_defconfig
-index d215dba006ced779..5141a4660748009f 100644
---- a/arch/m68k/configs/multi_defconfig
-+++ b/arch/m68k/configs/multi_defconfig
-@@ -665,7 +665,6 @@ CONFIG_CRYPTO_USER_API_SKCIPHER=m
- CONFIG_CRYPTO_USER_API_RNG=m
- CONFIG_CRYPTO_USER_API_AEAD=m
- # CONFIG_CRYPTO_HW is not set
--CONFIG_PRIME_NUMBERS=m
- CONFIG_XZ_DEC_TEST=m
- CONFIG_GLOB_SELFTEST=m
- # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
-@@ -684,8 +683,6 @@ CONFIG_ATOMIC64_SELFTEST=m
- CONFIG_ASYNC_RAID6_TEST=m
- CONFIG_TEST_HEXDUMP=m
- CONFIG_TEST_KSTRTOX=m
--CONFIG_TEST_PRINTF=m
--CONFIG_TEST_SCANF=m
- CONFIG_TEST_BITMAP=m
- CONFIG_TEST_UUID=m
- CONFIG_TEST_XARRAY=m
-@@ -695,7 +692,6 @@ CONFIG_TEST_IDA=m
- CONFIG_TEST_BITOPS=m
- CONFIG_TEST_VMALLOC=m
- CONFIG_TEST_BPF=m
--CONFIG_TEST_BLACKHOLE_DEV=m
- CONFIG_FIND_BIT_BENCHMARK=m
- CONFIG_TEST_FIRMWARE=m
- CONFIG_TEST_SYSCTL=m
-diff --git a/arch/m68k/configs/mvme147_defconfig b/arch/m68k/configs/mvme147_defconfig
-index a888ed93ff829033..8c8b3b4bfa7fc794 100644
---- a/arch/m68k/configs/mvme147_defconfig
-+++ b/arch/m68k/configs/mvme147_defconfig
-@@ -551,7 +551,6 @@ CONFIG_CRYPTO_USER_API_SKCIPHER=m
- CONFIG_CRYPTO_USER_API_RNG=m
- CONFIG_CRYPTO_USER_API_AEAD=m
- # CONFIG_CRYPTO_HW is not set
--CONFIG_PRIME_NUMBERS=m
- CONFIG_XZ_DEC_TEST=m
- CONFIG_GLOB_SELFTEST=m
- # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
-@@ -570,8 +569,6 @@ CONFIG_ATOMIC64_SELFTEST=m
- CONFIG_ASYNC_RAID6_TEST=m
- CONFIG_TEST_HEXDUMP=m
- CONFIG_TEST_KSTRTOX=m
--CONFIG_TEST_PRINTF=m
--CONFIG_TEST_SCANF=m
- CONFIG_TEST_BITMAP=m
- CONFIG_TEST_UUID=m
- CONFIG_TEST_XARRAY=m
-@@ -581,7 +578,6 @@ CONFIG_TEST_IDA=m
- CONFIG_TEST_BITOPS=m
- CONFIG_TEST_VMALLOC=m
- CONFIG_TEST_BPF=m
--CONFIG_TEST_BLACKHOLE_DEV=m
- CONFIG_FIND_BIT_BENCHMARK=m
- CONFIG_TEST_FIRMWARE=m
- CONFIG_TEST_SYSCTL=m
-diff --git a/arch/m68k/configs/mvme16x_defconfig b/arch/m68k/configs/mvme16x_defconfig
-index b481782375f689ea..2897ecb29fbf71ed 100644
---- a/arch/m68k/configs/mvme16x_defconfig
-+++ b/arch/m68k/configs/mvme16x_defconfig
-@@ -552,7 +552,6 @@ CONFIG_CRYPTO_USER_API_SKCIPHER=m
- CONFIG_CRYPTO_USER_API_RNG=m
- CONFIG_CRYPTO_USER_API_AEAD=m
- # CONFIG_CRYPTO_HW is not set
--CONFIG_PRIME_NUMBERS=m
- CONFIG_XZ_DEC_TEST=m
- CONFIG_GLOB_SELFTEST=m
- # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
-@@ -571,8 +570,6 @@ CONFIG_ATOMIC64_SELFTEST=m
- CONFIG_ASYNC_RAID6_TEST=m
- CONFIG_TEST_HEXDUMP=m
- CONFIG_TEST_KSTRTOX=m
--CONFIG_TEST_PRINTF=m
--CONFIG_TEST_SCANF=m
- CONFIG_TEST_BITMAP=m
- CONFIG_TEST_UUID=m
- CONFIG_TEST_XARRAY=m
-@@ -582,7 +579,6 @@ CONFIG_TEST_IDA=m
- CONFIG_TEST_BITOPS=m
- CONFIG_TEST_VMALLOC=m
- CONFIG_TEST_BPF=m
--CONFIG_TEST_BLACKHOLE_DEV=m
- CONFIG_FIND_BIT_BENCHMARK=m
- CONFIG_TEST_FIRMWARE=m
- CONFIG_TEST_SYSCTL=m
-diff --git a/arch/m68k/configs/q40_defconfig b/arch/m68k/configs/q40_defconfig
-index 6eba743d8eb5c94e..a612cfc21cd8b5d7 100644
---- a/arch/m68k/configs/q40_defconfig
-+++ b/arch/m68k/configs/q40_defconfig
-@@ -568,7 +568,6 @@ CONFIG_CRYPTO_USER_API_SKCIPHER=m
- CONFIG_CRYPTO_USER_API_RNG=m
- CONFIG_CRYPTO_USER_API_AEAD=m
- # CONFIG_CRYPTO_HW is not set
--CONFIG_PRIME_NUMBERS=m
- CONFIG_XZ_DEC_TEST=m
- CONFIG_GLOB_SELFTEST=m
- # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
-@@ -587,8 +586,6 @@ CONFIG_ATOMIC64_SELFTEST=m
- CONFIG_ASYNC_RAID6_TEST=m
- CONFIG_TEST_HEXDUMP=m
- CONFIG_TEST_KSTRTOX=m
--CONFIG_TEST_PRINTF=m
--CONFIG_TEST_SCANF=m
- CONFIG_TEST_BITMAP=m
- CONFIG_TEST_UUID=m
- CONFIG_TEST_XARRAY=m
-@@ -598,7 +595,6 @@ CONFIG_TEST_IDA=m
- CONFIG_TEST_BITOPS=m
- CONFIG_TEST_VMALLOC=m
- CONFIG_TEST_BPF=m
--CONFIG_TEST_BLACKHOLE_DEV=m
- CONFIG_FIND_BIT_BENCHMARK=m
- CONFIG_TEST_FIRMWARE=m
- CONFIG_TEST_SYSCTL=m
-diff --git a/arch/m68k/configs/sun3_defconfig b/arch/m68k/configs/sun3_defconfig
-index 9bdbb418ffa88c63..dd262ee392f5fdcb 100644
---- a/arch/m68k/configs/sun3_defconfig
-+++ b/arch/m68k/configs/sun3_defconfig
-@@ -549,7 +549,6 @@ CONFIG_CRYPTO_USER_API_SKCIPHER=m
- CONFIG_CRYPTO_USER_API_RNG=m
- CONFIG_CRYPTO_USER_API_AEAD=m
- # CONFIG_CRYPTO_HW is not set
--CONFIG_PRIME_NUMBERS=m
- CONFIG_XZ_DEC_TEST=m
- CONFIG_GLOB_SELFTEST=m
- # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
-@@ -567,8 +566,6 @@ CONFIG_ATOMIC64_SELFTEST=m
- CONFIG_ASYNC_RAID6_TEST=m
- CONFIG_TEST_HEXDUMP=m
- CONFIG_TEST_KSTRTOX=m
--CONFIG_TEST_PRINTF=m
--CONFIG_TEST_SCANF=m
- CONFIG_TEST_BITMAP=m
- CONFIG_TEST_UUID=m
- CONFIG_TEST_XARRAY=m
-@@ -578,7 +575,6 @@ CONFIG_TEST_IDA=m
- CONFIG_TEST_BITOPS=m
- CONFIG_TEST_VMALLOC=m
- CONFIG_TEST_BPF=m
--CONFIG_TEST_BLACKHOLE_DEV=m
- CONFIG_FIND_BIT_BENCHMARK=m
- CONFIG_TEST_FIRMWARE=m
- CONFIG_TEST_SYSCTL=m
-diff --git a/arch/m68k/configs/sun3x_defconfig b/arch/m68k/configs/sun3x_defconfig
-index e1cf20fa534319e6..a4fe34bc23527fd4 100644
---- a/arch/m68k/configs/sun3x_defconfig
-+++ b/arch/m68k/configs/sun3x_defconfig
-@@ -549,7 +549,6 @@ CONFIG_CRYPTO_USER_API_SKCIPHER=m
- CONFIG_CRYPTO_USER_API_RNG=m
- CONFIG_CRYPTO_USER_API_AEAD=m
- # CONFIG_CRYPTO_HW is not set
--CONFIG_PRIME_NUMBERS=m
- CONFIG_XZ_DEC_TEST=m
- CONFIG_GLOB_SELFTEST=m
- # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
-@@ -568,8 +567,6 @@ CONFIG_ATOMIC64_SELFTEST=m
- CONFIG_ASYNC_RAID6_TEST=m
- CONFIG_TEST_HEXDUMP=m
- CONFIG_TEST_KSTRTOX=m
--CONFIG_TEST_PRINTF=m
--CONFIG_TEST_SCANF=m
- CONFIG_TEST_BITMAP=m
- CONFIG_TEST_UUID=m
- CONFIG_TEST_XARRAY=m
-@@ -579,7 +576,6 @@ CONFIG_TEST_IDA=m
- CONFIG_TEST_BITOPS=m
- CONFIG_TEST_VMALLOC=m
- CONFIG_TEST_BPF=m
--CONFIG_TEST_BLACKHOLE_DEV=m
- CONFIG_FIND_BIT_BENCHMARK=m
- CONFIG_TEST_FIRMWARE=m
- CONFIG_TEST_SYSCTL=m
+diff --git a/drivers/usb/renesas_usbhs/fifo.c b/drivers/usb/renesas_usbhs/fifo.c
+index 10607e273879..6cc07ab4782d 100644
+--- a/drivers/usb/renesas_usbhs/fifo.c
++++ b/drivers/usb/renesas_usbhs/fifo.c
+@@ -466,6 +466,7 @@ static int usbhsf_dcp_data_stage_prepare_pop(struct usbhs_pkt *pkt,
+ 	struct usbhs_pipe *pipe = pkt->pipe;
+ 	struct usbhs_priv *priv = usbhs_pipe_to_priv(pipe);
+ 	struct usbhs_fifo *fifo = usbhsf_get_cfifo(priv);
++	int ret;
+ 
+ 	if (usbhs_pipe_is_busy(pipe))
+ 		return 0;
+@@ -480,10 +481,14 @@ static int usbhsf_dcp_data_stage_prepare_pop(struct usbhs_pkt *pkt,
+ 
+ 	usbhs_pipe_sequence_data1(pipe); /* DATA1 */
+ 
+-	usbhsf_fifo_select(pipe, fifo, 0);
++	ret = usbhsf_fifo_select(pipe, fifo, 0);
++	if (ret < 0)
++		goto usbhsf_pio_prepare_pop;
++
+ 	usbhsf_fifo_clear(pipe, fifo);
+ 	usbhsf_fifo_unselect(pipe, fifo);
+ 
++usbhsf_pio_prepare_pop:
+ 	/*
+ 	 * change handler to PIO pop
+ 	 */
 -- 
-2.43.0
+2.42.0.windows.2
 
 
