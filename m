@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-602130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66068A876EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 06:27:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B1C5A876F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 06:29:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4A3F188FE57
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 04:27:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C35A03A6E5E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 04:29:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0013A19E806;
-	Mon, 14 Apr 2025 04:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CDEE19E966;
+	Mon, 14 Apr 2025 04:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="BVgoz2aB"
-Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="IvvA24aZ"
+Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DADBE28E3F;
-	Mon, 14 Apr 2025 04:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE9217DA82
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 04:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744604848; cv=none; b=cKL+hcuyjlbIoD42n8SJsW8cnF/t+P9Bfz23l78LPmjbXwB00K9xVPD33M4uBHPB3f95II6KRTDP6XegXt56IYcJxgU3soWEb1lzO9aISRZjmDWNH+3kJBYCAyGdZBZEEDTOB/hgNLMZH1bxq9ZGOJIzTGYrQ/K2sFHbqEHdJN8=
+	t=1744604959; cv=none; b=IYriGLAZtFFTI4UkozzONGVHuxZXOSMPc2qXSWYOrQ3/U3zgeSLdu8Ycv4U57PENs22qgwuKSW/fSkTBTSvivqW8TccQ2+uLejEmNU3Czo5/AQW9yH66V8aSaDljQeacpQptDwdJYlcyM+LU8AjaCWH/VDxAjRWDdn0ufvp32H8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744604848; c=relaxed/simple;
-	bh=j4MYb6RVTpLF/OHvBkanLy0iEejvwD4jd18R/nxyKLA=;
+	s=arc-20240116; t=1744604959; c=relaxed/simple;
+	bh=dFjpoHLwYiryRQGd0iDHH8wwDO4qSKHsYv4Y+8fobRA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Lkv4rmlh+xa5x6T2iEXteWJhJW5DTeuu9iUYCeMb76OUWDp1vqPeyiNM84nRVU4/pCtmV0/0HmySjPrrh+OZFHsFVsoFWn/VLIdodkz7HwPlTG+L9kNEXoc1f6HF89y/4i+EKKoGhDQ5xj8hX3Ln1L0kLpfFhk082+KJ8PZrLA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=BVgoz2aB; arc=none smtp.client-ip=18.169.211.239
+	 MIME-Version; b=WJs5RRMKszskx3DvcAsLjk02dQxEaXjx8ZKfKss/HaMkUYcpeh4z+d6vi8Ur6iSP6JE4eqUinXtEeAJtPJA4gniWw2FW9wqPeIX/YLtM92ZzfYjJ8wyTTiDW2pjBxttDkiL4pTyQrgHIaKOYbLhmpf194g7XRWEZSefvpaDDlQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=IvvA24aZ; arc=none smtp.client-ip=54.204.34.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1744604814;
-	bh=KPm6homno2OIodX8ovj0TGGxLESvoArCHRFaF6Tjv98=;
+	s=onoh2408; t=1744604854;
+	bh=ZzX8Z/mzhOSbpQ+4ov+n9ydOOvnwhcefBMjmLVxlxxQ=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=BVgoz2aB3GaY4IDSZn4IvHIUCBXdL1D5e0PcZKh0GSCA/OQLJ9pCGcPp4CwlpVj/0
-	 ClSQqR6JbdtYRYQMJOSPOqIacyuAuYL0G1K63TuRvif7cGEuBBFh3a0HOWedZ3ner3
-	 rdmW/LwadLxnkUvtqfLUeRcKLP5Ij1SeUHYcVS4o=
-X-QQ-mid: bizesmtpip4t1744604799t7c4642
-X-QQ-Originating-IP: CpTEDf2RT5I03ge7QTMeZ+lfzyPSflUOhm4AzwaerQo=
+	b=IvvA24aZ8DwzauZLL+3crgEvRg8zBZf4h0CFReeajIh0XtEVQK5qWNfqVLaCC2RIv
+	 l0lj+m5jcpseWJ993EXIJosAu1+fQiax8jpP7j3U4lu7bJTHI4lhWChqlZTpu9ihrE
+	 CA2YNITZyNlOe93ipe/uqOsf+PFtjYmiSBiVV6pg=
+X-QQ-mid: bizesmtpip4t1744604807t2f7bca
+X-QQ-Originating-IP: IlhwnyCWyIUNtgBVZwfyEMeZ6zSVm/eWDs20XGO8Rsw=
 Received: from localhost.localdomain ( [localhost])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 14 Apr 2025 12:26:36 +0800 (CST)
+	id ; Mon, 14 Apr 2025 12:26:42 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 16277305603624599492
-EX-QQ-RecipientCnt: 17
+X-BIZMAIL-ID: 8640425311280884179
+EX-QQ-RecipientCnt: 15
 From: WangYuli <wangyuli@uniontech.com>
 To: wangyuli@uniontech.com
 Cc: akpm@linux-foundation.org,
@@ -55,18 +55,16 @@ Cc: akpm@linux-foundation.org,
 	niecheng1@uniontech.com,
 	tglx@linutronix.de,
 	zhanjun@uniontech.com,
-	Rasesh Mody <rmody@marvell.com>,
-	Sudarsana Kalluru <skalluru@marvell.com>,
-	GR-Linux-NIC-Dev@marvell.com,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
+	Mark Fasheh <mark@fasheh.com>,
+	Joel Becker <jlbec@evilplan.org>,
+	Joseph Qi <joseph.qi@linux.alibaba.com>,
 	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org
-Subject: [PATCH v2 1/5] bna: bnad_dim_timeout: Rename del_timer_sync in comment
-Date: Mon, 14 Apr 2025 12:26:25 +0800
-Message-ID: <66962B9D4666B555+20250414042629.63019-1-wangyuli@uniontech.com>
+	Jens Axboe <axboe@kernel.dk>,
+	Dmitry Antipov <dmantipov@yandex.ru>,
+	ocfs2-devel@lists.linux.dev
+Subject: [PATCH v2 2/5] ocfs2: o2net_idle_timer: Rename del_timer_sync in comment
+Date: Mon, 14 Apr 2025 12:26:26 +0800
+Message-ID: <83353E80121F81DD+20250414042629.63019-2-wangyuli@uniontech.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <37A1CE32D2AEA134+20250414042251.61846-1-wangyuli@uniontech.com>
 References: <37A1CE32D2AEA134+20250414042251.61846-1-wangyuli@uniontech.com>
@@ -79,57 +77,62 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: M4lPCacZ9YlexUY+K5B6LtUk+dUYUPB7FRgYCF/GKPloyGJF0JkR5eZs
-	3vK2Kl0mGd27G9RdEVGX4MP4PF6pocXfiFrQQTeXpd0DtZPHTasijiTqA2cfBpTeEviJOEO
-	GssYJnpwEB2Y2A91SqMBFLM3/S7XJcDfmwBxsse2AcLP0iUywuWF3Zeq9kNSYaAhdDT5kRf
-	9oALXRJdvvKc6fDV85tSlVannn5GKC16m2pS3SSNglHqhd5n93UAMUgAL5u4M1yTxzb/9Av
-	4O0XW9XgUmuVSxi0nfrRkNqeKrmbMFEQ4S9RgujxKSVusi47z/7fX/KdMRVGsz0hNqd7rSV
-	jEaZa3/RPILHU24i7aZwHEp0986L9rVrorGz/Cuc8bBN9R/RTOnaI10wBmi0NCjUn0AKvuc
-	7aC3Nx+OWrQB5BkkM+UiE2SdUL3KefwQ9xzjkx92M5p+QC3ag5tITBnii4kiFi8fRz7v7xc
-	nuRgrbvgjc5DTVCRyc7HMvh/vg2MkEQPBJDPs0pyP4u9K3eQ3l0P/Yyw0w4i+E/cZ/WYK0O
-	8JWQv5RqnrbgIGaXaM+UgWQSn4Yor/8bEqlPpjGfolpPZLTsV1sNr+UnL5pYhNrUGWaC9nG
-	w6bjUtV6ZBks6lRVr5ojniGf2EzVy29GPAbXXBXQipocJvjCpW0+FEjDoOQL+WaoluUEUe9
-	qs5UNvOX5NehnWbEnFR5MA34FllqJOmMO588l8efgytLJupTMAs/McYiTDjpEdwAhX3jYzZ
-	YlL9DVm6oWO6ijVOhAcHIfxv3CUKF9KVc9wiO8HIc19cDLlgbV+ChPVDULVMm+BS14MiLM2
-	Ml0D5JGKFioNjcfR33k7+ClfrjqUbq/kWBGKKnQADDZuUfvHNcNLt0/yC3NSuM7Jd1OBLTg
-	azdAwhAuLaAcdxf7QOKEhRNMNiRxlDEF0u0j6Zqgjn4qTXPKnkpHpIHwibaj8jGtHO00ata
-	IYzjNdo2Wd3Cp5Lei6sa6bR18NtDI9h3G1249fwvhCQEjawEz0MrY9p6jGuYPYHzuRfMV32
-	RcX+aUvgNJF/JlfvORWij1eO05EJA=
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-XMAILINFO: NDzbcI2eQBLkmTFSIFOYz/4/TWAIYIlyD1Mc1Vs+f96itrSHEMWkl+fI
+	pDCWmKs7OpGeVawB9fii/rrtBgktCfynY3NLGs1ZUx7V2Lkq7CCWzLSzMUIESJQIjSH1x7B
+	QAT5pfiuVokqbYjV2iLWrFJ+AChqJrjxFYI2SE+4MMQe8CxivWvhnsyga9k3uKhYUerkMhi
+	grBGWyZkVa6hRrJ92FMAsSQQKm7yxfyfNTcmuY+ktLy2P/IQczt2D5ysJvmI1HLVFzxkzrl
+	AVVL9ARPK+XAYvSE4Ak2EjN2W111IdV5DQ7gFJYwkUZ+AHUfXBRFSK2/X1yyy+Swmb8l4YY
+	2uF3W3iZqoWp9XAO+Lt4na1eGg3J4mRGv9thyCpquf5mFsuLR7JZqISyEe0g/hqn2binWI3
+	G/0kUsofZlFllFDk9cU/JBIwYJ97ICUyiYCAVNcj0ZGKEMZZqx+brKiK/B56cOjO/RYQQYR
+	SpNVcE01dV6FVdIDWnxy4JcUiACk5CawkfOqxTGHxZPzFwXOITrOLv/r+IL+U10AbepCyqt
+	6mmncHB49oy85bj4quHwFHfBRnjtKuiTixv2TvTcZkFIR1TSOipvjPP9ZdLyIUYtUiMZYCE
+	dvxzFlEv+6ap3DaDfSbs77WNcYXAxWkOrUDnG5Ql5now4xGmuW1UuRuLOEzJT/Z3O6wDxoY
+	Mkg/rIEDcmvMMNjzk/siMszixpSmm/4sWgsq2vCmW0Ftz80zJuyDWldZwm3TFgGrkZYD/s1
+	91jTRTZPzWTdi/P7kZzJfWgj1Xfy2ivdDJoC54AFU5CMSeu/ho34/7OrOC9s07UIxEzYNqM
+	wG4Tjp2Qca9KTpIdU5VCYXQ1wWWYrv4DyKMH2IUlYXFvJb9wcZrSbvNXxgy9IHhFih7xSH4
+	zc3Uyj7BNYcqeX41Zrha+ShkAwXt81eWbaarVy1VULVAaIAg5aT+U0IZ52F+zdwihZ3YQsI
+	0hMhUp6qCRE346oVuZWzvAPInIOCxStGm9exFqHy1cXFVaI9OxXMAh9sTFiEEx97+NeWZIy
+	QAXortwLGxho3iB6jypQrCvK9nRDbofe2a7qyhOCf8SmLIb9ol
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
 X-QQ-RECHKSPAM: 0
 
 Commit 8fa7292fee5c ("treewide: Switch/rename to timer_delete[_sync]()")
 switched del_timer_sync to timer_delete_sync, but did not modify the
-comment for bnad_dim_timeout(). Now fix it.
+comment for o2net_idle_timer(). Now fix it.
 
-Cc: Rasesh Mody <rmody@marvell.com>
-Cc: Sudarsana Kalluru <skalluru@marvell.com>
-Cc: GR-Linux-NIC-Dev@marvell.com
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Eric Dumazet <edumazet@google.com>
+Cc: Mark Fasheh <mark@fasheh.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Joseph Qi <joseph.qi@linux.alibaba.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Jakub Kicinski <kuba@kernel.org>
-Cc: Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org
+Cc: WangYuli <wangyuli@uniontech.com>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Dmitry Antipov <dmantipov@yandex.ru>
+Cc: ocfs2-devel@lists.linux.dev
 Cc: linux-kernel@vger.kernel.org
+Acked-by: Joseph Qi <joseph.qi@linux.alibaba.com>
 Signed-off-by: WangYuli <wangyuli@uniontech.com>
 ---
- drivers/net/ethernet/brocade/bna/bnad.c | 2 +-
+Changelog:
+ *v1->v2: Add Joseph Qi's "Acked-by" tag.
+---
+ fs/ocfs2/cluster/tcp.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/brocade/bna/bnad.c b/drivers/net/ethernet/brocade/bna/bnad.c
-index a03eff3d4425..50eb54ecf1ba 100644
---- a/drivers/net/ethernet/brocade/bna/bnad.c
-+++ b/drivers/net/ethernet/brocade/bna/bnad.c
-@@ -1735,7 +1735,7 @@ bnad_iocpf_sem_timeout(struct timer_list *t)
-  *	Time	CPU m	CPU n
-  *	0       1 = test_bit
-  *	1			clear_bit
-- *	2			del_timer_sync
-+ *	2			timer_delete_sync
-  *	3	mod_timer
-  */
+diff --git a/fs/ocfs2/cluster/tcp.c b/fs/ocfs2/cluster/tcp.c
+index fce9beb214f0..43e652a2adaf 100644
+--- a/fs/ocfs2/cluster/tcp.c
++++ b/fs/ocfs2/cluster/tcp.c
+@@ -1483,7 +1483,7 @@ static void o2net_sc_send_keep_req(struct work_struct *work)
+ 	sc_put(sc);
+ }
  
+-/* socket shutdown does a del_timer_sync against this as it tears down.
++/* socket shutdown does a timer_delete_sync against this as it tears down.
+  * we can't start this timer until we've got to the point in sc buildup
+  * where shutdown is going to be involved */
+ static void o2net_idle_timer(struct timer_list *t)
 -- 
 2.49.0
 
