@@ -1,294 +1,139 @@
-Return-Path: <linux-kernel+bounces-602956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0F55A881B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:21:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31670A881B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:23:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDB997A5A95
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:20:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8854B1883063
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:23:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 585B523D2BC;
-	Mon, 14 Apr 2025 13:20:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1577B23D2B4;
+	Mon, 14 Apr 2025 13:23:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fFfvTj02"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FUBvirNX"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A052904;
-	Mon, 14 Apr 2025 13:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121A623D298;
+	Mon, 14 Apr 2025 13:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744636831; cv=none; b=O4eunnPFJhThMztOkyHJTAHFa7rKcq0ZE0EHJwDLyOZvRjb3SOavq9NKr3am7jxEyxLKDL2dj6SrAMb7z/9PRnFTFIlTFM1u/XzgOzD4kZ7mVHn4qDUwcAFV6lBeJD5vWW0aXerOPOHJagMEGDaGbvh0hfOQSDxfKaXQgkYVHgI=
+	t=1744636981; cv=none; b=sUo2Q9L2gAW+qn+a05Gc/V6L0dx9qaY5rHpbJUWb8BGA6/uqC/KrxOjINf/tI5HsJYOlrk8lV2llqgL7RqKzLY+7F5kX7xif7lAKWbhakH0sB/zrDYLXYC7d1Z22/FpwtAyiomCl4XSiXujGWw9bQf8W4eUgh/agEUfxtAw/i/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744636831; c=relaxed/simple;
-	bh=qLr88WKimglQqeHOQLqpTJLNV8oFxlm/UJuYGO5HLw4=;
+	s=arc-20240116; t=1744636981; c=relaxed/simple;
+	bh=YqZznskXltnYKmBVLbbwElNix3jQOvyAnCNlCgTo76Y=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q4e1O+9keRPeq/Ub137eKRPQjxzvY5IbqkmU/Ou0nJWCuHD/U5VzhT9kptTR/7oqUJVnscTSgkggZCcl+Hr+8tNZPiwGBNfYgIwZE66iO1gAouRy3jdG6hG34AEyb2YZoY6lTA6bynii0vD6Jw7QPjolAY0DWAcpzj4VkKPKLJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fFfvTj02; arc=none smtp.client-ip=209.85.219.172
+	 To:Cc:Content-Type; b=Ii1moUu7p7pjvVgIE4KanJE+rUwVSPNTOm1n57cXphJ0ySNZPzA/Q7RlpilVEMKxrgbzIqCeG+EIykoGJylWv5ece2rh6eQqzX/lpQn4QajxXDN4i1AgtpxE3TvneJ2Xn++qcE7eTyR2i1jD2SJyhV/9HBR8qjxDbFGlgKz5vsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FUBvirNX; arc=none smtp.client-ip=209.85.216.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e6b78b80393so529738276.1;
-        Mon, 14 Apr 2025 06:20:29 -0700 (PDT)
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2ff6ce72844so813032a91.2;
+        Mon, 14 Apr 2025 06:22:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744636828; x=1745241628; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1744636979; x=1745241779; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LENjcn0F6sVkTrTGTYqlO5GapuitcYgZ9GkCzUrs3jw=;
-        b=fFfvTj02eMiUJ2RK+saW0F5L23aB9VEwLUcBb9DHy4Cnn61VFiwHzbA2RaDFhXW3TS
-         rVBFaRu2eFWIHOmwHPZrQqgi/fqhb6CArfRZ1S2myMLxVL2NLuMSMzwk0wST8y36j0zj
-         MJqnP4mUYPVXGxPBp+8yqxBgKuLa1PSDsj4B+uF9267o8QRjhz9loV5s9eWaFqNtb8xr
-         dbwJPIsH1Lln0oDhxkVqer9EzKJpX7K64PlpGiZtA613e82ZQQ7WD71XnwCgfs08p6Od
-         Z4oRDIzVDJ9JgnxZlOykB1QNIwyvHba5eZkzdGpt5SJZ2pRmvMYOtFo8c52TQeKrNJQ9
-         hUFA==
+        bh=Df4ZlcRCkKHa57BJ2xndOrkK/FrGdY+gTPtYXvqZp/Y=;
+        b=FUBvirNXlyYNsQQ720KK9CNBXci40wAVWAPRaBmLf4osj6B4EOB0HubByzLc8vbcTI
+         AbXNRNGZlXBiKzSkKCVn/ChOXOGN0U3I6xYZR8CHLwd0JjnltyGXK9R54MwtTizVwahD
+         VYZmhC3aW6ilhU3PD/wIJ1K3E03t+IdvTuD1Olgrmi9/fS45VnUFmEqNMWl5iusRPPgT
+         wU4nv4FG0dYULSGD7Fm0U2Lzqp3pz8NAsOBkjf9F6zxmMqaEqk0krZvWDxoXp+OQUlxI
+         uqMJVOibsDw2sCKOrMOythQ4Q7lbmflgE3YUuvKtY3UQyrgIOXBw3/PVA0D657PNmDg4
+         EfYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744636828; x=1745241628;
+        d=1e100.net; s=20230601; t=1744636979; x=1745241779;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LENjcn0F6sVkTrTGTYqlO5GapuitcYgZ9GkCzUrs3jw=;
-        b=JH9HhrtyTnYB3TeqIaStihJI/p2J9Iqv0nEIQ/duj+vJeEM3IS7agDrnnMeryTtlsN
-         XMf1fkM7lJt5NY/mpa46/xOGVRPjHQ3pWgaE2RXGRCzuN4P77kiKULaRq4oyN+LAIRz2
-         Mla+KKnYHGnKMsyIvoEZ2kJOC8gabQzUOd+V9tGI7uDSzp8GJfF0PCFuOPupp16Hn3k7
-         RrMF9h2LxtDdZrbNthlmp5uzbCfcXTQERyvkBgD7RVR5FZZ5wk885n4bLhwNBuz3/lGM
-         9Me6qRMHBsXgC4ecKqKzbQcInAydbupJDYgF4YaWI+Io5ycDdg3vwqhOd1ZRCkDEkNnl
-         Q5wA==
-X-Forwarded-Encrypted: i=1; AJvYcCUmF9eFb1awaidDbE60MkfsUngQ4eQkJG1pvxkmImjQgzxDcEnQPLa4yGOV/06QAhY65Z5r8/J/7qo=@vger.kernel.org, AJvYcCVxRDBZtib3ZSqqB41rO5ZNZgQNVHSyAR/r3yM1oc2l5tHQWCo/4WCDtV25vnt7/605h7XsjpdWn9IeBXcN@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1aOfupJjraqMcblerZTGUhwUQ5xZGAwK5UR3Y2kXF9Qa7l3jI
-	YHyd/Wl9y8uU0jZ0L+Ue7ez5EA/i2GJAs3c1rWLS8lATyDJ5cWNvPUvSxCTKJh9paxVEeh4GzAp
-	c45kmMiwaviMdgQrLGKin/EpCEPg=
-X-Gm-Gg: ASbGnctvMxfnUl2Gt49dJwjBpzat7CnLb19DEoaaS0bKfq9rOp7BIErsU79vHcHqYyp
-	EevVa6lFwaqzIMTCwUnu86jpMa6nXBdf+Ud4WEvdJe6MWKRwfFZwzPRiGeO1skIqA/1yWndb6SP
-	Q1mpna/TZGJ0vgreuPY2k9Gw==
-X-Google-Smtp-Source: AGHT+IG2amwl5JKM5eKY909aHAmkd1x9CqgxNixASnHhRi3izkvF6iqhpJrxOPH6EgyiMOQdrtstSyaBk1Ahg1+Q45c=
-X-Received: by 2002:a05:6902:f83:b0:e60:9fb1:1f9f with SMTP id
- 3f1490d57ef6-e7070ccbca0mr8397968276.1.1744636828461; Mon, 14 Apr 2025
- 06:20:28 -0700 (PDT)
+        bh=Df4ZlcRCkKHa57BJ2xndOrkK/FrGdY+gTPtYXvqZp/Y=;
+        b=kqi83jEJHaVMJU46Kr5odwdhDJsgMzfNM5Ic9HFctpY9hFpXkCJb6OHCvlg0Q7dPkJ
+         fwBH1K3YaHpFt226KluW96uAG+5QOizaxdRjSoLfeEj18cOtEqjO90SvN56UV1zbYQVn
+         70AXMoWIsAzbzHqBOo6gMU0Z5tX7sn1Gdl9J8Ldcr+KddtLGv282FaKAxmQD892+PmFF
+         7CFo+Mqw++61SKENmO8FquywHzfvdciRuUpI1WmWLdUfvBOiD3LcWEs6M7YU96WACjwz
+         kEPHudE+G2/Z5v1drTPbQ+U8kivAgdKxag8cm8JSlFj3sIUHTdj7anofRL87KHbPQNJb
+         XihA==
+X-Forwarded-Encrypted: i=1; AJvYcCUmtMlhoE3tFZwTEaoQu2QZ1rLXPZJzcdfD9uMT22jCCCt3bAT1LBgDa4YBYLrtEGq8WXG4szJdy+K1t50=@vger.kernel.org, AJvYcCWEgnC5sM69+xVYQnUN4KH4n/4E4tV6Adg/FU0ODXc2+t0l5Wk0N5x2+GAZR58htUk/On+leniuSGeV+JD6bZk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxucz0pVaKoZKaqIl4gtOb+kfY923tbYEeMx5EwF0HRLu+hjEEo
+	8ozaVjrZXVotPrin6zXkb37Biq16gAV9piLkelBNKh4mt9BXlZitcgqt7LymAG1AqgFHO8PoKYy
+	TPNiXJuBM1CuBon6rFMzcLRtcjh8=
+X-Gm-Gg: ASbGncsXiMW5SNCSTzVBbdfYBSqYfrQOmmNZkglNBeSjXfbj1YPgRJIci5imsc5EjlF
+	rxbhftOZWwzTxSS5jlvHE31jKz+GtsM6Wnb5X1NH4C0nqmefbdBwKeueHPx7HEHipe5ZrE7aFbn
+	rr293zqVJYyxzhhx6prqoRNw==
+X-Google-Smtp-Source: AGHT+IH3zMwiQZZF0MrooAxLxss2WjlELR7XDWfoKS8xT5Swj4kCI9USG4kreGACDD6msII1YqtOpACzPgTOIcNg6iQ=
+X-Received: by 2002:a17:90b:1b0a:b0:306:e6ec:dc82 with SMTP id
+ 98e67ed59e1d1-308273f3c3amr5931863a91.6.1744636979074; Mon, 14 Apr 2025
+ 06:22:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250318230843.76068-1-l.rubusch@gmail.com> <20250318230843.76068-10-l.rubusch@gmail.com>
- <20250331114724.2c2c2e9b@jic23-huawei>
-In-Reply-To: <20250331114724.2c2c2e9b@jic23-huawei>
-From: Lothar Rubusch <l.rubusch@gmail.com>
-Date: Mon, 14 Apr 2025 15:19:52 +0200
-X-Gm-Features: ATxdqUHSoigYjNJ2OuCxPbSfz6S3orfIqN5K-YaZtimTd6RfqqB4OLGiGnX2DEA
-Message-ID: <CAFXKEHYXnN9ddSM3wzgRTCZDu3JiaBJ6n8htQEBCiS52G+QzQQ@mail.gmail.com>
-Subject: Re: [PATCH v5 09/11] iio: accel: adxl345: add inactivity feature
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, eraretuya@gmail.com
+References: <20250413005650.1745894-1-ojeda@kernel.org> <CAH5fLgiF0kZdOYaQi18_LTNx6Onq-5PBomA=bwS0m0z+C0wtvg@mail.gmail.com>
+In-Reply-To: <CAH5fLgiF0kZdOYaQi18_LTNx6Onq-5PBomA=bwS0m0z+C0wtvg@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 14 Apr 2025 15:22:44 +0200
+X-Gm-Features: ATxdqUGEpSrfVFnwvmwXXDxiUjWRT_U8CHO5cnUITp-hEVmYDeKZxvObhfYQwF0
+Message-ID: <CANiq72ngfTJ5PTYaJOOQ2NedERrLYzA62hL8Fgw5C4QkuZ2R-Q@mail.gmail.com>
+Subject: Re: [PATCH] rust: add C FFI types to the prelude
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 31, 2025 at 12:47=E2=80=AFPM Jonathan Cameron <jic23@kernel.org=
-> wrote:
+On Mon, Apr 14, 2025 at 10:47=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
+wrote:
 >
-> On Tue, 18 Mar 2025 23:08:41 +0000
-> Lothar Rubusch <l.rubusch@gmail.com> wrote:
->
-> > Add the inactivity feature of the sensor. When activity and inactivity
-> > are enabled, a link bit will be set linking activity and inactivity
-> > handling. Additionally, the auto-sleep mode will be enabled. Due to the
-> > link bit the sensor is going to auto-sleep when inactivity was
-> > detected.
-> >
-> > Inactivity detection needs a threshold to be configured, and a time
-> > after which it will go into inactivity state if measurements under
-> > threshold.
-> >
-> > When a ODR is configured this time for inactivity is adjusted with a
-> > corresponding reasonable default value, in order to have higher
-> > frequencies and lower inactivity times, and lower sample frequency but
-> > give more time until inactivity. Both with reasonable upper and lower
-> > boundaries, since many of the sensor's features (e.g. auto-sleep) will
-> > need to operate beween 12.5 Hz and 400 Hz. This is a default setting
-> > when actively changing sample frequency, explicitly setting the time
-> > until inactivity will overwrite the default.
-> >
-> > Similarly, setting the g-range will provide a default value for the
-> > activity and inactivity thresholds. Both are implicit defaults, but
-> > equally can be overwritten to be explicitly configured.
-> >
-> > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
->
-> A few comments inline.  The magic handling of the value 0 is
-> a bit of unexpected ABI.
->
-> Jonathan
->
-> > @@ -327,6 +358,7 @@ static int adxl345_set_act_inact_en(struct adxl345_=
-state *st,
-> >                                   bool cmd_en)
-> >  {
-> >       bool axis_en, en;
-> > +     unsigned int inact_time_s;
-> >       unsigned int threshold;
-> >       u32 axis_ctrl =3D 0;
-> >       int ret;
-> > @@ -345,6 +377,20 @@ static int adxl345_set_act_inact_en(struct adxl345=
-_state *st,
-> >               default:
-> >                       return -EINVAL;
-> >               }
-> > +     } else {
-> > +             switch (axis) {
-> > +             case IIO_MOD_X:
-> > +                     axis_ctrl =3D ADXL345_INACT_X_EN;
-> > +                     break;
-> > +             case IIO_MOD_Y:
-> > +                     axis_ctrl =3D ADXL345_INACT_Y_EN;
-> > +                     break;
-> > +             case IIO_MOD_Z:
-> > +                     axis_ctrl =3D ADXL345_INACT_Z_EN;
-> > +                     break;
-> > +             default:
-> > +                     return -EINVAL;
-> > +             }
-> >       }
-> >
-> >       if (cmd_en)
-> > @@ -365,11 +411,67 @@ static int adxl345_set_act_inact_en(struct adxl34=
-5_state *st,
-> >       if (type =3D=3D ADXL345_ACTIVITY) {
-> >               axis_en =3D FIELD_GET(ADXL345_REG_ACT_AXIS_MSK, axis_ctrl=
-) > 0;
-> >               en =3D axis_en && threshold > 0;
-> > +     } else {
->
-> So previous suggestion on setting en doesn't work but you can still combi=
-ne
-> the bits other than the type match to simplify code and get rid of axis_e=
-n
-> in both paths.
->
-> > +             ret =3D regmap_read(st->regmap, ADXL345_REG_TIME_INACT, &=
-inact_time_s);
-> > +             if (ret)
-> > +                     return ret;
-> > +
-> > +             axis_en =3D FIELD_GET(ADXL345_REG_INACT_AXIS_MSK, axis_ct=
-rl) > 0;
-> > +             en =3D axis_en && threshold > 0 && inact_time_s > 0;
-> >       }
->
-> > +/**
-> > + * adxl345_set_inact_time_s - Configure inactivity time explicitly or =
-by ODR.
-> > + * @st: The sensor state instance.
-> > + * @val_s: A desired time value, between 0 and 255.
-> > + *
-> > + * If val_s is 0, a default inactivity time will be computed. It shoul=
-d take
-> > + * power consumption into consideration. Thus it shall be shorter for =
-higher
-> > + * frequencies and longer for lower frequencies. Hence, frequencies ab=
-ove 255 Hz
-> > + * shall default to 10 s and frequencies below 10 Hz shall result in 2=
-55 s to
-> > + * detect inactivity.
->
-> I'd missed this previously.  I've no problem with a default time being se=
-t
-> on driver load, but a later write of 0 should not result in something ver=
-y different
-> as that's not standard use of the ABI.  If a user wants to go back to a s=
-ensible
-> default then they should have stored out what was set initially.
->
-> I don't mind if you update the default until the point where they first o=
-verride
-> it, but from there on we should obey what they request or error out if th=
-e
-> value requested is not possible.
->
+> I wonder if it would make more sense to rephrase this section to first
+> say that rfl has type aliases for the C integer types called c_int and
+> so on, then mention that they are available in the prelude, and then
+> at the end of the section have a note that we don't use the type
+> aliases from core::ffi. I think focusing on how to use C integer
+> types, rather than technical details about how they are defined, is
+> more relevant for a reader who is just looking for coding guidelines.
 
-Hm, I'm unsure if I got this wrong. It is not supposed to be an
-automatic feature to kick in and change user configured values,
-actually. Let me try to explain it differently:
-Setting a threshold for an inactivity time in [s] is always applied as
-a user wishes. Setting 0s for inactivity time IMHO does not make much
-sense, where one could also simply disable the sensor event. So, what
-I did now is I implemented when 0s was set by a user for inactivity
-time, it will result in an automatic adjustment of inactivity time,
-depending on range and odr.
+Hmm... I see what you mean. In other places in the document, we start
+comparing with userspace Rust in order to establish a bit of context.
+But, more importantly, in this particular guideline I think it is
+quite important to say "do not use the usual ones", because they are
+actually different types, i.e. it is not just a style thing.
 
-In v6 I will try to refrase the text, and double-check it's contained
-in documentation, too. Pls, let me know what you think.
+I have thought a couple times about perhaps changing the overall style
+of the document to have a 1-liner short summary on each guideline --
+some books do something like that consistently. And perhaps an
+example, before a longer description. So something like the following,
+which is closer to what you are suggesting:
 
-> > + *
-> > + * The approach simply subtracts the pre-decimal figure of the configu=
-red
-> > + * sample frequency from 255 s to compute inactivity time [s]. Sub-Hz =
-are thus
-> > + * ignored in this estimation. The recommended ODRs for various featur=
-es
-> > + * (activity/inactivity, sleep modes, free fall, etc.) lie between 12.=
-5 Hz and
-> > + * 400 Hz, thus higher or lower frequencies will result in the boundar=
-y
-> > + * defaults or need to be explicitly specified via val_s.
-> > + *
-> > + * Return: 0 or error value.
-> > + */
-> > +static int adxl345_set_inact_time_s(struct adxl345_state *st, u32 val_=
-s)
-> > +{
-> > +     unsigned int max_boundary =3D 255;
-> > +     unsigned int min_boundary =3D 10;
-> > +     unsigned int val =3D min(val_s, max_boundary);
-> > +     enum adxl345_odr odr;
-> > +     unsigned int regval;
-> > +     int ret;
-> > +
-> > +     if (val =3D=3D 0) {
-> > +             ret =3D regmap_read(st->regmap, ADXL345_REG_BW_RATE, &reg=
-val);
-> > +             if (ret)
-> > +                     return ret;
-> > +             odr =3D FIELD_GET(ADXL345_BW_RATE_MSK, regval);
-> > +
-> > +             val =3D (adxl345_odr_tbl[odr][0] > max_boundary)
-> > +                     ? min_boundary : max_boundary - adxl345_odr_tbl[o=
-dr][0];
-> > +     }
-> > +
-> > +     return regmap_write(st->regmap, ADXL345_REG_TIME_INACT, val);
-> >  }
-> >
->
-> > @@ -1546,10 +1697,18 @@ int adxl345_core_probe(struct device *dev, stru=
-ct regmap *regmap,
-> >               if (ret)
-> >                       return ret;
-> >
-> > +             ret =3D regmap_write(st->regmap, ADXL345_REG_TIME_INACT, =
-3);
-> > +             if (ret)
-> > +                     return ret;
-> > +
-> >               ret =3D regmap_write(st->regmap, ADXL345_REG_THRESH_ACT, =
-6);
-> >               if (ret)
-> >                       return ret;
-> >
-> > +             ret =3D regmap_write(st->regmap, ADXL345_REG_THRESH_INACT=
-, 4);
->
-> Comments on defaults are good.
->
-> > +             if (ret)
-> > +                     return ret;
-> > +
-> >               ret =3D regmap_write(st->regmap, ADXL345_REG_THRESH_TAP, =
-tap_threshold);
-> >               if (ret)
-> >                       return ret;
->
+    To refer to C types, use the FFI types (aliases) available from
+the `kernel` prelude, e.g. ``c_int``.
+
+    For instance:
+
+        ...
+
+    Refer to them with a single segment path: e.g. ``c_char`` instead
+of ``ffi::c_char`` or ``kernel::ffi::c_char``.
+
+    Do not use the `core::ffi::*` types -- they are different and some
+do not map to the correct C type.
+
+But even with this style, I think it is important putting the last
+sentence in the "1-liner summary". Otherwise, someone may skip the
+guideline thinking "oh, OK, it is just a style thing about using just
+small paths, I will fix it later", without realizing they are actually
+different sets of types unless they read the entire section, no?
+
+Thanks!
+
+Cheers,
+Miguel
 
