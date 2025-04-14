@@ -1,114 +1,159 @@
-Return-Path: <linux-kernel+bounces-603265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D0A8A8859F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:48:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B23FA88536
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:38:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58CB7564E54
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:37:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 884C67A11C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:37:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD0923D294;
-	Mon, 14 Apr 2025 14:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28ADE2741CB;
+	Mon, 14 Apr 2025 14:18:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kln8X0I0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ah561Kin"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20E865A79B;
-	Mon, 14 Apr 2025 14:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154272741C1;
+	Mon, 14 Apr 2025 14:18:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744640189; cv=none; b=bdtKxQspvx9FB2abo0q2jNvrMsls1hmkbFXQ3QcNtTGT03IGr+Y4g5CC3fCIkrm+7Vu+NLH16UhmvU0J8mJtT9BdBKaUEQhdtwOgjFfPJ0jT/CdGkK9UefNAzRwseh/TQq0uMCt4Fq9pkbuFl5MbL2KabCC/LbAiVz83HAYnalo=
+	t=1744640303; cv=none; b=ihijau53FoHYN26I+k26OObY9hXZTbsrSmdd0YtjPj72mRaFEMPcloEF1OYOBLJ6FqjG3RwLYlaStDFE+5KmpLudtp8zA5YmjgjCYegG9VghlxKid2f0c8V85cBX/1ZqGZ/TC/Bns+aqjQNro12ph/2i2j7RJpDxM+HPyhvAhhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744640189; c=relaxed/simple;
-	bh=yL0Sa6QkPb6yOTB+AKE1N/5GefbRJ1U5BkCbUn4519M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MMJTB5qtj/kEabTM78X1CJzcQXExN16lrBWgS+UBI4Q1y2sfSDGYZny5ka9K6ISyIMdCS1TUW7ypHMnV+gUfOAQqhcJ74mbBE1uzyNdNPA2Lx6vDH4txcuLDVnBi9y7Zm38kNaOku3gkl2pl43LiA8mF8vLMwlSfevoMP+10M9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kln8X0I0; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744640188; x=1776176188;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=yL0Sa6QkPb6yOTB+AKE1N/5GefbRJ1U5BkCbUn4519M=;
-  b=kln8X0I004ePfzr5FIsUdCHl2UpI8gjJq0WEnH9IFNwmfMtfr7LO2ppF
-   LifynZVYnUxE355oacO6n9ZEnLamroDD3Vmk2O5EKpr6PEE0bKUaTs94t
-   D/M3dqcHSLt5TRN9lh/MXcocJdmJ1mYNLBGu/DMSN3RNKKmfzxtkyYh05
-   dl91EvCdDMnBrBDpCguSY//MXLutjqTI3hdrj1gPHeWWEFEi18ZGfO4Kz
-   e/n/t40z4/2LkgBZ4x9etxK5QNCvRTiEliIIfVhw7hI5qPfK2NkPpWBts
-   0ZLwU3Z0i+uwxu4PgYEpTAC4jmXfi9Aa5ZFOOVmHGKHx7MI4uW/s+m7DS
-   Q==;
-X-CSE-ConnectionGUID: RdW9Uw0GQsOUdEA+XXKTVw==
-X-CSE-MsgGUID: RNDKuIidRp2WJW9BH8ydSg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11403"; a="45821629"
-X-IronPort-AV: E=Sophos;i="6.15,212,1739865600"; 
-   d="scan'208";a="45821629"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 07:16:27 -0700
-X-CSE-ConnectionGUID: 4Y9/6GOWReOyhUmHLgkaXg==
-X-CSE-MsgGUID: C6Xn+4YpTYqHvW0bGRqXtw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,212,1739865600"; 
-   d="scan'208";a="129791245"
-Received: from mylly.fi.intel.com (HELO [10.237.72.50]) ([10.237.72.50])
-  by orviesa006.jf.intel.com with ESMTP; 14 Apr 2025 07:16:24 -0700
-Message-ID: <7b619cf2-8f50-4f6e-9a5f-cce9112a99b3@linux.intel.com>
-Date: Mon, 14 Apr 2025 17:16:23 +0300
+	s=arc-20240116; t=1744640303; c=relaxed/simple;
+	bh=mTn3FMzsj26kIxnkZNAmti2WDoD3F3JMt47fLl0UKcQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IxTfvsTvY9q96xvFYGxTg+2/SYwH+qnQtjmlU57hF5SWyw5VqmwanLB5NIWtzMpEDifNVOU9Tac42U7Cecd5nOqKEb4jgHDCIB1mRyTsmtS0VPNypJqePMwWQBpLkxuusf/fAUUeShgYrUq9XUjpmGpUr1dShp8u6Xcz4GtIlas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ah561Kin; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53EAKA71029133;
+	Mon, 14 Apr 2025 14:17:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=J1d9DTJcE/z+4d1uC+sEutnQDyUt9v
+	5FZ9je4Eup1Ko=; b=ah561KinZjNqF6zq76DxnVBTSvamBRxYEhr7Z+gu/wYeYJ
+	j7dAB+GRAIBgfgcT4RReFRSB7Mggil+evOZs4y5hwzSYaWE4QeQ1gjZ+HGRkUdNu
+	pwXrRfEYgphoKE29KKWj5DPPBxTAdadEXNR3p1tOzlSCoHUJ64LwlntS5prWHWM/
+	ypBEt8HygnTXrT6MFoIK9aXcP6Apa1XfK3rhxUyJOl2bhpNUByVTq6q6beBiPmV1
+	wjohaUUBJj7eE9ivNowExDlwR07lfFYP7j7RrqeB2X+koXmdx0GpvTziQRFy8s24
+	0VxXFpeXm2aqdcwNxTwNhj/bC9jcAny5HST8QorQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 460nc4bs6s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Apr 2025 14:17:54 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 53EEDPx6027591;
+	Mon, 14 Apr 2025 14:17:53 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 460nc4bs6k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Apr 2025 14:17:53 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53ECwxMl017183;
+	Mon, 14 Apr 2025 14:17:52 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46040kpeha-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Apr 2025 14:17:52 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53EEHorV51577248
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 14 Apr 2025 14:17:50 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2CE2320043;
+	Mon, 14 Apr 2025 14:17:50 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2BFC320040;
+	Mon, 14 Apr 2025 14:17:49 +0000 (GMT)
+Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.171.13.82])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 14 Apr 2025 14:17:49 +0000 (GMT)
+Date: Mon, 14 Apr 2025 16:17:47 +0200
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: Nicholas Piggin <npiggin@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+        Hugh Dickins <hughd@google.com>, Guenter Roeck <linux@roeck-us.net>,
+        Juergen Gross <jgross@suse.com>, Jeremy Fitzhardinge <jeremy@goop.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        kasan-dev@googlegroups.com, sparclinux@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org
+Subject: Re: [PATCH v1 2/4] mm: Cleanup apply_to_pte_range() routine
+Message-ID: <Z/0ZC7HcSmoOEglw@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+References: <cover.1744037648.git.agordeev@linux.ibm.com>
+ <93102722541b1daf541fce9fb316a1a2614d8c86.1744037648.git.agordeev@linux.ibm.com>
+ <D93LW58FLXOS.2U8X0CO2H9H5S@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2,1/1] i2c: designware: Add SMBus Quick Command support
-To: ende.tan@starfivetech.com, linux-i2c@vger.kernel.org
-Cc: andriy.shevchenko@linux.intel.com, mika.westerberg@linux.intel.com,
- jsd@semihalf.com, andi.shyti@kernel.org, linux-kernel@vger.kernel.org,
- leyfoon.tan@starfivetech.com, endeneer@gmail.com
-References: <20250412093414.39351-1-ende.tan@starfivetech.com>
-Content-Language: en-US
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-In-Reply-To: <20250412093414.39351-1-ende.tan@starfivetech.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D93LW58FLXOS.2U8X0CO2H9H5S@gmail.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: u44-EjcfNgIEy_4sPtFf7SZelDSyFVJd
+X-Proofpoint-ORIG-GUID: DiJ-rrsNSTwxXUpWJqT680rFpek1uPzj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-14_04,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ priorityscore=1501 mlxscore=0 spamscore=0 adultscore=0 mlxlogscore=844
+ phishscore=0 clxscore=1015 lowpriorityscore=0 suspectscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2504140102
 
-Hi
+On Fri, Apr 11, 2025 at 04:46:58PM +1000, Nicholas Piggin wrote:
+> On Tue Apr 8, 2025 at 1:11 AM AEST, Alexander Gordeev wrote:
+> > Reverse 'create' vs 'mm == &init_mm' conditions and move
+> > page table mask modification out of the atomic context.
+> >
+> > Signed-off-by: Alexander Gordeev <agordeev@linux.ibm.com>
+> > ---
+> >  mm/memory.c | 28 +++++++++++++++++-----------
+> >  1 file changed, 17 insertions(+), 11 deletions(-)
+> >
+> > diff --git a/mm/memory.c b/mm/memory.c
+> > index 2d8c265fc7d6..f0201c8ec1ce 100644
+> > --- a/mm/memory.c
+> > +++ b/mm/memory.c
+> > @@ -2915,24 +2915,28 @@ static int apply_to_pte_range(struct mm_struct *mm, pmd_t *pmd,
+> >  				     pte_fn_t fn, void *data, bool create,
+> >  				     pgtbl_mod_mask *mask)
+> >  {
+> > +	int err = create ? -ENOMEM : -EINVAL;
+> 
+> Could you make this a new variable instead of reusing
+> existing err? 'const int pte_err' or something?
 
-On 4/12/25 12:34 PM, ende.tan@starfivetech.com wrote:
-> From: Tan En De <ende.tan@starfivetech.com>
-> 
-> Add support for SMBus Quick Read and Quick Write commands.
-> 
-> Signed-off-by: Tan En De <ende.tan@starfivetech.com>
-> ---
-> v1 -> v2: Removed redundant check of tx_limit and rx_limit
-> ---
->   drivers/i2c/busses/i2c-designware-core.h   |  4 ++++
->   drivers/i2c/busses/i2c-designware-master.c | 18 +++++++++++++++++-
->   2 files changed, 21 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-designware-core.h b/drivers/i2c/busses/i2c-designware-core.h
-> index 347843b4f5dd..91f17181ece1 100644
-> --- a/drivers/i2c/busses/i2c-designware-core.h
-> +++ b/drivers/i2c/busses/i2c-designware-core.h
-> @@ -40,6 +40,8 @@
->   
->   #define DW_IC_DATA_CMD_DAT			GENMASK(7, 0)
->   #define DW_IC_DATA_CMD_FIRST_DATA_BYTE		BIT(11)
-> +#define DW_IC_DATA_CMD_STOP			BIT(9)
-> +#define DW_IC_DATA_CMD_CMD			BIT(8)
->   
-If you like these defines would be nice to have in another patch before 
-this and convert i2c-designware-master.c to use them instead of 0x100, 
-BIT(9) and BIT(10) in existing code. Makes code more uniform together 
-with your change.
+Will do, when/if repost.
 
-I'm not demanding it but wanted to give you idea if you like to do some 
-additional cleanups to the code :-)
+...
+
+> > @@ -2944,12 +2948,14 @@ static int apply_to_pte_range(struct mm_struct *mm, pmd_t *pmd,
+> >  			}
+> >  		} while (addr += PAGE_SIZE, addr != end);
+> >  	}
+> > -	*mask |= PGTBL_PTE_MODIFIED;
+> >  
+> >  	arch_leave_lazy_mmu_mode();
+> >  
+> >  	if (mm != &init_mm)
+> >  		pte_unmap_unlock(mapped_pte, ptl);
+> > +
+> > +	*mask |= PGTBL_PTE_MODIFIED;
+> 
+> This is done just because we might as well? Less work in critical
+> section?
+
+Yes.
+
+Thanks!
 
