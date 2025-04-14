@@ -1,137 +1,111 @@
-Return-Path: <linux-kernel+bounces-604002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 703C8A88F11
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 00:26:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 083E4A88F1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 00:29:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5DB43B18F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 22:26:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B853189B804
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 22:30:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848CF1F8748;
-	Mon, 14 Apr 2025 22:26:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9571C1FF1B5;
+	Mon, 14 Apr 2025 22:29:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QebTuxHA"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="JN3DTeIO"
+Received: from smtp-fw-80006.amazon.com (smtp-fw-80006.amazon.com [99.78.197.217])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 392121F4E54
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 22:26:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E68A1B0F3C;
+	Mon, 14 Apr 2025 22:29:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744669579; cv=none; b=FPsNRfMQqx5xh24ICH7NVS38d7R7+1z+Eztvkb0lY2o/b6u1ULGv4kBc3xrj2+3e+RzP39cyA+FVS+Dm3/ZtNqQ5eNHx0917EJnDdphDzDpYhAaocVXHVLLiyDiHlcu02vZQHh/ER1A2WFUcECJrERMmB9wWOyD548RkUwmQvqE=
+	t=1744669781; cv=none; b=TiwEGZVoR/q7VAjKH2E3Um7+bHPXDrUJ5k5HhfFtkvUBG5jJKvrUEbqzqop1i7E0CFlrNST+M9IuPKK/bCY0bzh98A4UEGqOXcYwLBKzGFfFNSHIw8H+FCo8XKIeeOwpdyfduLUsId9crYX5gZjCkGEc045w2Ach1oDowkDCXB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744669579; c=relaxed/simple;
-	bh=U7cZReZjrr7NKXwZ5XAaa0GQ/TD//bG9K/aKMvyXmis=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FAT/l88KnFlHBG6WUwq/mVx5QHOav3xDJvHGNuNiGzTO53/YjJydqThoEA9FblqM2wv4wdgQt0OnJuuIs2NCw0GEQV511ufYGByaq9zWxk42wD1Qi+Yk4w97/dO6/HDP3Q+h9/73oVkFYOfhHSqxyZ5DClPpOhs3ZglLHWcG34E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QebTuxHA; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43ede096d73so35509795e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 15:26:17 -0700 (PDT)
+	s=arc-20240116; t=1744669781; c=relaxed/simple;
+	bh=aWzFmrByEiQpHeFqUMLJWrw0YrAKBEXSIOzTMhlEszA=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SA8gN4MeI10ExILi9BDlVU1zYMN1qFl55CDVyzeBNilt/GwFITrsdQ5yz6TP5+KXt6ub0YQ9DU/zSa1/UKpUX3HAuCkmvea2WB3eZWuyJ7R60yP0Qs3q+xaC5VwdOLDLWOtbnKQ6I42zwk6HNOhzC0YX3x3RqyFBONECpRXcTAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=JN3DTeIO; arc=none smtp.client-ip=99.78.197.217
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744669576; x=1745274376; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7Seffc+yZNHH7nQZK2TccuJe06M8bYwImxNduIh9Hks=;
-        b=QebTuxHArlXaGiN6Acymw+YgnysIUQzpfgD2X+9y78O2HAcBQB0283xkg0aPtxbFx6
-         r2h4oz8f3QF4+orj2curFfB22zBX5KppSMNClfHhp8Xhr/Qe3mIfLStEqKJZt9jNY+Xk
-         CPSGD3EUtQ3zTuOk2EUfHigd+vzRSw3uri7O632YnPAq5QOqjzIIKzwhzSgo5pclht/R
-         34UdDZHlD0HUdx30Ka52HkQUQVRYtXkWcoEFqjbt7pVX17sMetQEbF8oq5/12kLlKZmx
-         6X9TMZJiDOhyS8yVPmasHWg/h5e08SKdM+2y9OXGODC59tMyF5sI2XRzlyyxig++Zltu
-         bLHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744669576; x=1745274376;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7Seffc+yZNHH7nQZK2TccuJe06M8bYwImxNduIh9Hks=;
-        b=r3gPj18Ap6AopOmGiurltKkRbVjQgdMTTKmG6fxApSuuj9DPJjuTaRXMyAve4FfR0e
-         1iYwuBK3x/PIu/ktghs3mseUchu5W533fcRWubUxptNlALGnFSlj/xvOvJkC4mzHgAWD
-         6EhJ815ijhBpelS/l5rFlSSzuLUjCxmN1F+hxmP9xJPyDviMkdvK0KK4XeSymqMRjnbx
-         RRIYPeiJiWqRG9h2Mqyxd1LVN8UyDtOQJpYOhYehTHIsyMYHUWnTAqT2RtM2DPOvfli3
-         VGVjoGpb3ESQGN1B7saauu0Z5ioau5ImOUDsNsP0clbS0o/zyqbVj6qufLadf7nEpcXY
-         fkPA==
-X-Forwarded-Encrypted: i=1; AJvYcCVkGiQ60FME77KBtdyFtw1AGEoerw/VNnaFaZ96wYKR2IgEv9TsYwSftGxkUQfoTFle7Ev9INMrGjZoVC4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5sdDpN6IHPrQfFK1RDYTXV9QPLisinaXizsKb7ahmEc3QjOGw
-	M9/KQr5Kme7B/TLHDm+JWoCXisjK1LtQ7FDCEtyLME2dz6izWnTP
-X-Gm-Gg: ASbGncuLuAFAhv6hJKlAy5KSKOJmO3h0dJWdwnNA1yl4iH9JMRJ4SrzdErOQ1nvjdTm
-	/pHjfksj056piTxYX0X3kN9hynsHFHLxGqB2Cg6TKCUvBXZRbnywKEF59aGsvYZNQZqyQQKz4zq
-	W/1B8W7uyYHyPW7npuQc2IkEOQVP+YZSHrzQy7TlcaXRGX0fb4rR018RST9hxtRruWQFqWEX/P3
-	+M/u7g7JXHcvv0/go9lqv4o4BxFQRLp3G0dsq8qx7QIIrb2nOBAKLcYWbm/5HHLEmiCqp1W6MoR
-	p6oc/iuRor1kiXCYGZ57Nsr3C0B4SlSzv2wd1aeEz0s5EKhjHlQW2kc+7Vg0vyrJ
-X-Google-Smtp-Source: AGHT+IGl4JCafq/SyDh3qQGSjEQfpCYf/XEY/8sqQywe6otVD8GhNKZ2Fe8OOwdiYoKHHvDzNEJVxg==
-X-Received: by 2002:a05:6000:2212:b0:38f:2678:d790 with SMTP id ffacd0b85a97d-39eaaea67f4mr11937204f8f.33.1744669576284;
-        Mon, 14 Apr 2025 15:26:16 -0700 (PDT)
-Received: from f (cst-prg-79-34.cust.vodafone.cz. [46.135.79.34])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eae96c70csm12351447f8f.38.2025.04.14.15.26.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Apr 2025 15:26:15 -0700 (PDT)
-Date: Tue, 15 Apr 2025 00:26:05 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>, Ankur Arora <ankur.a.arora@oracle.com>, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org, 
-	torvalds@linux-foundation.org, akpm@linux-foundation.org, bp@alien8.de, 
-	dave.hansen@linux.intel.com, hpa@zytor.com, mingo@redhat.com, luto@kernel.org, 
-	paulmck@kernel.org, rostedt@goodmis.org, tglx@linutronix.de, willy@infradead.org, 
-	jon.grimm@amd.com, bharata@amd.com, raghavendra.kt@amd.com, 
-	boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
-Subject: Re: [PATCH v3 1/4] x86/clear_page: extend clear_page*() for
- multi-page clearing
-Message-ID: <pf2p3ugs3blztd5jtxuwrg3hc3qldc4a7lfpigf24tit5noyik@67qhychq2b77>
-References: <20250414034607.762653-1-ankur.a.arora@oracle.com>
- <20250414034607.762653-2-ankur.a.arora@oracle.com>
- <Z_yr_cmXti4kXHaX@gmail.com>
- <20250414110259.GF5600@noisy.programming.kicks-ass.net>
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1744669780; x=1776205780;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=aHHd5cv1PbgrN2FsZ3Kqs5/AxC5vUjD32/KdY+9chrU=;
+  b=JN3DTeIOmY0BiGysd/I3pF84jgl0x593hegB5x/P8n2wkjOuOofBGnIP
+   htf4KICA8AxQWFbXWxg70OBNXqxLzEOzTo8AUTzYE57MucUMzZouL/ki8
+   0wbDa6Fb/ud5Qaz/1rgDki8Qhb/PPs6eiSBNuBGG+YYtufMCfuyfNaXq1
+   A=;
+X-IronPort-AV: E=Sophos;i="6.15,213,1739836800"; 
+   d="scan'208";a="40586871"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-80006.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 22:29:38 +0000
+Received: from EX19MTAUWB002.ant.amazon.com [10.0.38.20:35975]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.62.147:2525] with esmtp (Farcaster)
+ id ce2f6dde-b6dc-4e42-a497-b74667ee2332; Mon, 14 Apr 2025 22:29:37 +0000 (UTC)
+X-Farcaster-Flow-ID: ce2f6dde-b6dc-4e42-a497-b74667ee2332
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Mon, 14 Apr 2025 22:29:37 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.187.170.39) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Mon, 14 Apr 2025 22:29:34 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <jlayton@kernel.org>
+CC: <akpm@linux-foundation.org>, <andrew@lunn.ch>, <davem@davemloft.net>,
+	<edumazet@google.com>, <horms@kernel.org>, <kuba@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <nathan@kernel.org>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>, <qasdev00@gmail.com>
+Subject: Re: [PATCH 4/4] net: register debugfs file for net_device refcnt tracker
+Date: Mon, 14 Apr 2025 15:27:36 -0700
+Message-ID: <20250414222926.72911-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250414-reftrack-dbgfs-v1-4-f03585832203@kernel.org>
+References: <20250414-reftrack-dbgfs-v1-4-f03585832203@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250414110259.GF5600@noisy.programming.kicks-ass.net>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D043UWC004.ant.amazon.com (10.13.139.206) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On Mon, Apr 14, 2025 at 01:02:59PM +0200, Peter Zijlstra wrote:
-> This symbol is written as a C function with C calling convention, even
-> though it is only meant to be called from that clear_page() alternative.
+From: Jeff Layton <jlayton@kernel.org>
+Date: Mon, 14 Apr 2025 10:45:49 -0400
+> As a nearly-final step in register_netdevice(), finalize the name in the
+> refcount tracker, and register a debugfs file for it.
 > 
-> If we want to go change all this, then we should go do the same we do
-> for __clear_user() and write it thusly:
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  net/core/dev.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> 	asm volatile(ALTERNATIVE("rep stosb",
-> 				 "call rep_stos_alternative", ALT_NOT(X86_FEATURE_FSRS)
-> 				 : "+c" (size), "+D" (addr), ASM_CALL_CONSTRAINT
-> 				 : "a" (0))
-> 
-> And forget about all those clear_page_*() thingies.
-> 
+> diff --git a/net/core/dev.c b/net/core/dev.c
+> index 2f7f5fd9ffec7c0fc219eb6ba57d57a55134186e..db9cac702bb2230ca2bbc2c04ac0a77482c65fc3 100644
+> --- a/net/core/dev.c
+> +++ b/net/core/dev.c
+> @@ -10994,6 +10994,8 @@ int register_netdevice(struct net_device *dev)
+>  	    dev->rtnl_link_state == RTNL_LINK_INITIALIZED)
+>  		rtmsg_ifinfo(RTM_NEWLINK, dev, ~0U, GFP_KERNEL, 0, NULL);
+>  
+> +	/* Register debugfs file for the refcount tracker */
+> +	ref_tracker_dir_debugfs(&dev->refcnt_tracker, dev->name);
 
-I have to disagree.
+dev->name is not unique across network namespaces, so we should specify
+a netns-specific parent dir here.
 
-Next to nobody has FSRS, so for now one would have to expect everyone
-would be punting to the routine. Did you mean ERMS as sizes are in fact
-not short?
+For example, syzkaller creates a bunch of devices with the same name in
+different network namespaces.
 
-rep_stos_alternative() as implemented right now sucks in its own right
-("small" areas sorted out with an 8 byte and 1 byte loops, bigger ones
-unrolled 64 byte loop at a time, no rep stos{b,q} in sight). Someone(tm)
-should fix it and for the sake of argument suppose it happened. That's
-still some code executed to figure out how to zero and to align the buf.
-
-Instead, I think one can start with just retiring clear_page_orig().
-
-With that sucker out of the way, an optional quest is to figure out if
-rep stosq vs rep stosb makes any difference for pages -- for all I know
-rep stosq is the way. This would require testing on quite a few uarchs
-and I'm not going to blame anyone for not being interested.
-
-Let's say nobody bothered OR rep stosb provides a win. In that case this
-can trivially ALTERNATIVE between rep stosb and rep stosq based on ERMS,
-no func calls necessary.
+Then, we also need to move the file when dev is moved to another netns
+in __dev_change_net_namespace().
 
