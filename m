@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-602550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1609CA87C55
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:50:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0DA3A87C56
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:51:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8C2C3B0692
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:50:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 969B918946B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D88526989C;
-	Mon, 14 Apr 2025 09:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D5D269AF5;
+	Mon, 14 Apr 2025 09:50:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XqdsGp1R"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lvM/HcC3"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A766268FE3
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 09:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C580A2690F8
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 09:50:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744624201; cv=none; b=nYrVz2qE8o0oLWHUyrUgsNHsjXt/JuI2s4a8ILdCeaPRL4vpviUEFKEe6+D1/7girhx3HNxK9R7l2awqn7T2UoXvTTU0Ep9HLA+87LswgLNAQLmpgtKzk5NFpdBwtlloRHN73KnLWjYfvZJqeAHlIkL5+AvIhT8GYbtyA6Xg/R4=
+	t=1744624202; cv=none; b=IZNthiQetq0V8SVTbB9HtbYds5Rsc39WUsP/zNWQKG5F/leUFo3OnnfesU5cqACJmlNukyPDIMLASng7YUte1kF8+Po6jdpW+L2N2gz38OTE5esR5jzCzxILrRwQA8HlipxH0dMOStiSRFx4v4NyRY25MVJGF93gNqCBlrk6WiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744624201; c=relaxed/simple;
-	bh=02tjDKQNWeXHFLJTCMQ3g4lvV4tJ61jI02p0lATS/lk=;
+	s=arc-20240116; t=1744624202; c=relaxed/simple;
+	bh=nfNlQaQAx8Vv722WAjFHHGbTA8WrwldfoILRmHYeMfU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EiWW7tOx0LtbDu7cSkUataycNlSpaK2rePhb37L/TkQ+m5Z+pS1pw3KF//qD7F3Lwj60hiIZ4sLAsDDjvCviAJnkf43T5eGMNb6NZhPDqxiK1YjH99gEnyLtU6szdl1W4Du8B4lUHSwEEbrFyrnKHb1e17Tx8xyPIsJ4TNYUO/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XqdsGp1R; arc=none smtp.client-ip=192.198.163.19
+	 MIME-Version; b=oBgp2eFCH9LiI/8OOiDsIb4L4IqPATXS0f9xmvsswSCqgW4Ol6PI0XtuRYRq5+aVCsEf7iYKTpiClT466Vuo5+SJ89dRHj1gnqvq/e7vaDZ+G6qebUN5AUx82GPkPtrRPUZtuB45vrfWnkrPObTUjGuuim5FC7jBAgFIr+eti+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lvM/HcC3; arc=none smtp.client-ip=192.198.163.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744624200; x=1776160200;
+  t=1744624201; x=1776160201;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=02tjDKQNWeXHFLJTCMQ3g4lvV4tJ61jI02p0lATS/lk=;
-  b=XqdsGp1RgcQciIYNxRftVjoJ2d4fEOGceqlm9nLFNp+VVRXuFC4B52k7
-   XsslvwwDi8CnOxY1IjbE0qlqtZWXoMPgzW4YSFe4sblq/TRBwrYxuEF+2
-   7MItih8W0fUhA65zNw83dNUykCG9tdii4Z2Wy1Um19hOSx8jEr6iORKnU
-   p7SiMdQlPQgHS/QzF0T03PAZwhZ2xAYQWOkmVmX4kFa50EXGaMB++zCXB
-   k6yacbLdtqNKcbCye6mfh9Co0mLNZCKVH++hoYCFMJXXIsdKJn6MBHByt
-   cmmc/KtQMx5R613osH6APufnJy0W7Qrdem28kEPZ54Gcd+9xKR+fisW5+
+  bh=nfNlQaQAx8Vv722WAjFHHGbTA8WrwldfoILRmHYeMfU=;
+  b=lvM/HcC3DPg6Nbc+/xwksvma6wRrJOQPFIBoYtsmAl3hwyhtUGwzqOHK
+   CwTxsuMRIdP264IyeTZQ+S0ru+4G8palBMPTLVNY0AFNQdtuWd5VEbevc
+   4OmAt0J8N2iYpLu50gLTrjufj4K2RrtpTPWJEZCY06yIXaxDDTtsFalFK
+   mAUVod0LH2zlHVwdUBMsqc4VUxJwTuqt5liMnXXXZJL833Fw4hvdAEckL
+   iXCWnTwZFE9ZziW2VTR1bg6r9n6Zfn4V+uawvvRdEM1mDdeWxxZVkp/LA
+   vvHNFLclyx35yThXVquWqLbE/IfIGXi9q58uOu6kPHjrpW86cRXZtjKdO
    w==;
-X-CSE-ConnectionGUID: HSUDrAv3Q9aPk6YBCQ0dzQ==
-X-CSE-MsgGUID: 9KOWsHMZSES1UCyIV8EGDA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11402"; a="45222770"
+X-CSE-ConnectionGUID: Swh8/SNpQpqnkUwKP6ZWkA==
+X-CSE-MsgGUID: pDsHyXx1QUK5Qyp9kyY9jg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11402"; a="45222798"
 X-IronPort-AV: E=Sophos;i="6.15,212,1739865600"; 
-   d="scan'208";a="45222770"
+   d="scan'208";a="45222798"
 Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 02:49:50 -0700
-X-CSE-ConnectionGUID: BoZK3I7aSxKrpxalSod1/g==
-X-CSE-MsgGUID: vEKs8QihR2iqWcdPAP7C5g==
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 02:49:56 -0700
+X-CSE-ConnectionGUID: lDl/VGowT/2n8NWNG/QJjg==
+X-CSE-MsgGUID: DNc8iYKlQUqQ80BgbgJJ9w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,212,1739865600"; 
-   d="scan'208";a="152954967"
+   d="scan'208";a="152954994"
 Received: from sannilnx-dsk.jer.intel.com ([10.12.231.107])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 02:49:45 -0700
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 02:49:50 -0700
 From: Alexander Usyskin <alexander.usyskin@intel.com>
 To: Miquel Raynal <miquel.raynal@bootlin.com>,
 	Richard Weinberger <richard@nod.at>,
@@ -81,9 +81,9 @@ Cc: Reuven Abliyev <reuven.abliyev@intel.com>,
 	intel-gfx@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	Alexander Usyskin <alexander.usyskin@intel.com>
-Subject: [PATCH v8 06/12] mtd: intel-dg: align 64bit read and write
-Date: Mon, 14 Apr 2025 12:37:57 +0300
-Message-ID: <20250414093803.2133463-7-alexander.usyskin@intel.com>
+Subject: [PATCH v8 07/12] mtd: intel-dg: wake card on operations
+Date: Mon, 14 Apr 2025 12:37:58 +0300
+Message-ID: <20250414093803.2133463-8-alexander.usyskin@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250414093803.2133463-1-alexander.usyskin@intel.com>
 References: <20250414093803.2133463-1-alexander.usyskin@intel.com>
@@ -95,68 +95,204 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-GSC NVM controller HW errors on quad access overlapping 1K border.
-Align 64bit read and write to avoid readq/writeq over 1K border.
+Enable runtime PM in mtd driver to notify graphics driver that
+whole card should be kept awake while nvm operations are
+performed through this driver.
 
+CC: Lucas De Marchi <lucas.demarchi@intel.com>
+Acked-by: Karthik Poosa <karthik.poosa@intel.com>
 Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
 Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
 ---
- drivers/mtd/devices/mtd_intel_dg.c | 35 ++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ drivers/mtd/devices/mtd_intel_dg.c | 79 +++++++++++++++++++++++++-----
+ 1 file changed, 67 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/mtd/devices/mtd_intel_dg.c b/drivers/mtd/devices/mtd_intel_dg.c
-index 4023f2ebc344..3535f7b64429 100644
+index 3535f7b64429..9f4bb15a03b8 100644
 --- a/drivers/mtd/devices/mtd_intel_dg.c
 +++ b/drivers/mtd/devices/mtd_intel_dg.c
-@@ -238,6 +238,24 @@ static ssize_t idg_write(struct intel_dg_nvm *nvm, u8 region,
- 		len_s -= to_shift;
- 	}
+@@ -15,11 +15,14 @@
+ #include <linux/module.h>
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/partitions.h>
++#include <linux/pm_runtime.h>
+ #include <linux/string.h>
+ #include <linux/slab.h>
+ #include <linux/sizes.h>
+ #include <linux/types.h>
  
-+	if (!IS_ALIGNED(to, sizeof(u64)) &&
-+	    ((to ^ (to + len_s)) & GENMASK(31, 10))) {
-+		/*
-+		 * Workaround reads/writes across 1k-aligned addresses
-+		 * (start u32 before 1k, end u32 after)
-+		 * as this fails on hardware.
-+		 */
-+		u32 data;
++#define INTEL_DG_NVM_RPM_TIMEOUT 500
 +
-+		memcpy(&data, &buf[0], sizeof(u32));
-+		idg_nvm_write32(nvm, to, data);
-+		if (idg_nvm_error(nvm))
-+			return -EIO;
-+		buf += sizeof(u32);
-+		to += sizeof(u32);
-+		len_s -= sizeof(u32);
+ struct intel_dg_nvm {
+ 	struct kref refcnt;
+ 	struct mtd_info mtd;
+@@ -460,6 +463,7 @@ static int intel_dg_mtd_erase(struct mtd_info *mtd, struct erase_info *info)
+ 	loff_t from;
+ 	size_t len;
+ 	size_t total_len;
++	int ret = 0;
+ 
+ 	if (WARN_ON(!nvm))
+ 		return -EINVAL;
+@@ -474,20 +478,28 @@ static int intel_dg_mtd_erase(struct mtd_info *mtd, struct erase_info *info)
+ 	total_len = info->len;
+ 	addr = info->addr;
+ 
++	ret = pm_runtime_resume_and_get(&mtd->dev);
++	if (ret < 0) {
++		dev_err(&mtd->dev, "rpm: get failed %d\n", ret);
++		return ret;
 +	}
 +
- 	len8 = ALIGN_DOWN(len_s, sizeof(u64));
- 	for (i = 0; i < len8; i += sizeof(u64)) {
- 		u64 data;
-@@ -295,6 +313,23 @@ static ssize_t idg_read(struct intel_dg_nvm *nvm, u8 region,
- 		from += from_shift;
+ 	guard(mutex)(&nvm->lock);
+ 
+ 	while (total_len > 0) {
+ 		if (!IS_ALIGNED(addr, SZ_4K) || !IS_ALIGNED(total_len, SZ_4K)) {
+ 			dev_err(&mtd->dev, "unaligned erase %llx %zx\n", addr, total_len);
+ 			info->fail_addr = addr;
+-			return -ERANGE;
++			ret = -ERANGE;
++			goto out;
+ 		}
+ 
+ 		idx = idg_nvm_get_region(nvm, addr);
+ 		if (idx >= nvm->nregions) {
+ 			dev_err(&mtd->dev, "out of range");
+ 			info->fail_addr = MTD_FAIL_ADDR_UNKNOWN;
+-			return -ERANGE;
++			ret = -ERANGE;
++			goto out;
+ 		}
+ 
+ 		from = addr - nvm->regions[idx].offset;
+@@ -503,14 +515,18 @@ static int intel_dg_mtd_erase(struct mtd_info *mtd, struct erase_info *info)
+ 		if (bytes < 0) {
+ 			dev_dbg(&mtd->dev, "erase failed with %zd\n", bytes);
+ 			info->fail_addr += nvm->regions[idx].offset;
+-			return bytes;
++			ret = bytes;
++			goto out;
+ 		}
+ 
+ 		addr += len;
+ 		total_len -= len;
  	}
  
-+	if (!IS_ALIGNED(from, sizeof(u64)) &&
-+	    ((from ^ (from + len_s)) & GENMASK(31, 10))) {
-+		/*
-+		 * Workaround reads/writes across 1k-aligned addresses
-+		 * (start u32 before 1k, end u32 after)
-+		 * as this fails on hardware.
-+		 */
-+		u32 data = idg_nvm_read32(nvm, from);
-+
-+		if (idg_nvm_error(nvm))
-+			return -EIO;
-+		memcpy(&buf[0], &data, sizeof(data));
-+		len_s -= sizeof(u32);
-+		buf += sizeof(u32);
-+		from += sizeof(u32);
+-	return 0;
++out:
++	pm_runtime_mark_last_busy(&mtd->dev);
++	pm_runtime_put_autosuspend(&mtd->dev);
++	return ret;
+ }
+ 
+ static int intel_dg_mtd_read(struct mtd_info *mtd, loff_t from, size_t len,
+@@ -539,17 +555,25 @@ static int intel_dg_mtd_read(struct mtd_info *mtd, loff_t from, size_t len,
+ 	if (len > nvm->regions[idx].size - from)
+ 		len = nvm->regions[idx].size - from;
+ 
++	ret = pm_runtime_resume_and_get(&mtd->dev);
++	if (ret < 0) {
++		dev_err(&mtd->dev, "rpm: get failed %zd\n", ret);
++		return ret;
 +	}
 +
- 	len8 = ALIGN_DOWN(len_s, sizeof(u64));
- 	for (i = 0; i < len8; i += sizeof(u64)) {
- 		u64 data = idg_nvm_read64(nvm, from + i);
+ 	guard(mutex)(&nvm->lock);
+ 
+ 	ret = idg_read(nvm, region, from, len, buf);
+ 	if (ret < 0) {
+ 		dev_dbg(&mtd->dev, "read failed with %zd\n", ret);
+-		return ret;
++	} else {
++		*retlen = ret;
++		ret = 0;
+ 	}
+ 
+-	*retlen = ret;
+-
+-	return 0;
++	pm_runtime_mark_last_busy(&mtd->dev);
++	pm_runtime_put_autosuspend(&mtd->dev);
++	return ret;
+ }
+ 
+ static int intel_dg_mtd_write(struct mtd_info *mtd, loff_t to, size_t len,
+@@ -578,17 +602,25 @@ static int intel_dg_mtd_write(struct mtd_info *mtd, loff_t to, size_t len,
+ 	if (len > nvm->regions[idx].size - to)
+ 		len = nvm->regions[idx].size - to;
+ 
++	ret = pm_runtime_resume_and_get(&mtd->dev);
++	if (ret < 0) {
++		dev_err(&mtd->dev, "rpm: get failed %zd\n", ret);
++		return ret;
++	}
++
+ 	guard(mutex)(&nvm->lock);
+ 
+ 	ret = idg_write(nvm, region, to, len, buf);
+ 	if (ret < 0) {
+ 		dev_dbg(&mtd->dev, "write failed with %zd\n", ret);
+-		return ret;
++	} else {
++		*retlen = ret;
++		ret = 0;
+ 	}
+ 
+-	*retlen = ret;
+-
+-	return 0;
++	pm_runtime_mark_last_busy(&mtd->dev);
++	pm_runtime_put_autosuspend(&mtd->dev);
++	return ret;
+ }
+ 
+ static void intel_dg_nvm_release(struct kref *kref)
+@@ -670,6 +702,15 @@ static int intel_dg_nvm_init_mtd(struct intel_dg_nvm *nvm, struct device *device
+ 
+ 	kfree(parts);
+ 
++	if (ret)
++		goto out;
++
++	devm_pm_runtime_enable(&nvm->mtd.dev);
++
++	pm_runtime_set_autosuspend_delay(&nvm->mtd.dev, INTEL_DG_NVM_RPM_TIMEOUT);
++	pm_runtime_use_autosuspend(&nvm->mtd.dev);
++
++out:
+ 	return ret;
+ }
+ 
+@@ -719,6 +760,17 @@ static int intel_dg_mtd_probe(struct auxiliary_device *aux_dev,
+ 	}
+ 	nvm->nregions = n; /* in case where kasprintf fail */
+ 
++	devm_pm_runtime_enable(device);
++
++	pm_runtime_set_autosuspend_delay(device, INTEL_DG_NVM_RPM_TIMEOUT);
++	pm_runtime_use_autosuspend(device);
++
++	ret = pm_runtime_resume_and_get(device);
++	if (ret < 0) {
++		dev_err(device, "rpm: get failed %d\n", ret);
++		goto err_norpm;
++	}
++
+ 	nvm->base = devm_ioremap_resource(device, &invm->bar);
+ 	if (IS_ERR(nvm->base)) {
+ 		dev_err(device, "mmio not mapped\n");
+@@ -740,9 +792,12 @@ static int intel_dg_mtd_probe(struct auxiliary_device *aux_dev,
+ 
+ 	dev_set_drvdata(&aux_dev->dev, nvm);
+ 
++	pm_runtime_put(device);
+ 	return 0;
+ 
+ err:
++	pm_runtime_put(device);
++err_norpm:
+ 	kref_put(&nvm->refcnt, intel_dg_nvm_release);
+ 	return ret;
+ }
 -- 
 2.43.0
 
