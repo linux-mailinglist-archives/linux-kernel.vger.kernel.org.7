@@ -1,189 +1,100 @@
-Return-Path: <linux-kernel+bounces-602532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C1C3A87C03
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:37:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BABA7A87C07
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EB14170B5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:37:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4257D1722AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6341F1506;
-	Mon, 14 Apr 2025 09:37:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B242673B7;
+	Mon, 14 Apr 2025 09:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="IidmJ1u8";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="r5Sc05bg";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="IidmJ1u8";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="r5Sc05bg"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="U5wwHp87"
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E6D1A83E8
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 09:37:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1FA6263898
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 09:37:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744623451; cv=none; b=fyQ2S3mwtCVb8tY2vkIRMImeYuypLRYqop79SPZP29ED1TEqy7hIWqkac1Ob4IvigYfd5VYKe9+lBGgcYQmEt32x8klYgaoLizDmvhdijA9Svq4Nob+Nf5Se2FjH2EdGirQ/HztxjpUscNTuOEm9+/EEp/i4KR2KZiRI2TcGQOo=
+	t=1744623456; cv=none; b=VVJRiu96OeiC34/WROmplU2K5mQfkw2eukz8lV3mooqioZUAgc639R70euvJwhvLHF/zDf7NeT8jUlDYJYZEpfV9U3AYk5JjOdHkFba6lLG/P3MuIxBdOjGAfWSTMMmUWRmcodF4ejsBBJ19mlLv9LMid189Bclffh8za2TbjAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744623451; c=relaxed/simple;
-	bh=IhLyXwuYheBjVEVxaMy5980Oauc1OEHNPpGuOtpKrcU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sq1Cn79JNU/DhLJpDcYIwVVWHcP8HZS+icOVnNjXKEfKSmDCOKeYG7pP3MBzpg0WWMOKhiqgdy4Va90h+MkBW5FxoQSp8DiK2yxL8SeLueb1W2R6W5UmOpYPKhZ6C/h7WG/jaKogO+KvMoH7YxQ1LKP+wR7cee+FgGQIypgcWTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=IidmJ1u8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=r5Sc05bg; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=IidmJ1u8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=r5Sc05bg; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6A5CE1F458;
-	Mon, 14 Apr 2025 09:37:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1744623447;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1744623456; c=relaxed/simple;
+	bh=RfmKRKgsCSXvsFbpEfR7G5fGocEUnY6wL7YBYirtd9I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rISDVWdtMKKtN5Chaj+5UieDXmx1GsucGwXjZXprgmDHmykxRGk4xRjbysbvV1qAShiQ4ee5a1zT3ekSgaU8bU73xPvjjfpzmoNb1hgpWCdBr5vGdPXrfxJoZ0yxVbczzcmLe77l3lE7HvTd6JbLOuy1JPORUznDsXFiD4FKUZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=U5wwHp87; arc=none smtp.client-ip=95.215.58.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <b6aea926-ebb6-48fe-a1be-6f428a648eae@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1744623449;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=EmBBQpa1y0uoauy46Pz+6qrIH5Gt6qQHqLKaec4xStM=;
-	b=IidmJ1u8NQNe2HuwFIqTsF2ZyAuxowGAf1sdY59HxcKs8/yu0lnaj3CxUgapyuhnxaXP8h
-	2rbf861zQe1a9RNA+n6iFGhIZTeLeRBzDXx2Q57V7KVNhQeS4wYyW8EzW/0AdpMHfsOpGS
-	AS06esk1AuWHN+p8c/NN13WQpMqBDCk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1744623447;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EmBBQpa1y0uoauy46Pz+6qrIH5Gt6qQHqLKaec4xStM=;
-	b=r5Sc05bgcKAf6rH9FsVPGVSFgtOdomkF0GfEAqk/VAXWYJ9nqcbZJkx419ZBqE9c/zwdPb
-	qSHz8FUc3uOaMTCw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=IidmJ1u8;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=r5Sc05bg
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1744623447;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EmBBQpa1y0uoauy46Pz+6qrIH5Gt6qQHqLKaec4xStM=;
-	b=IidmJ1u8NQNe2HuwFIqTsF2ZyAuxowGAf1sdY59HxcKs8/yu0lnaj3CxUgapyuhnxaXP8h
-	2rbf861zQe1a9RNA+n6iFGhIZTeLeRBzDXx2Q57V7KVNhQeS4wYyW8EzW/0AdpMHfsOpGS
-	AS06esk1AuWHN+p8c/NN13WQpMqBDCk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1744623447;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EmBBQpa1y0uoauy46Pz+6qrIH5Gt6qQHqLKaec4xStM=;
-	b=r5Sc05bgcKAf6rH9FsVPGVSFgtOdomkF0GfEAqk/VAXWYJ9nqcbZJkx419ZBqE9c/zwdPb
-	qSHz8FUc3uOaMTCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4834A136A7;
-	Mon, 14 Apr 2025 09:37:27 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id lYptEVfX/GeXNQAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Mon, 14 Apr 2025 09:37:27 +0000
-Date: Mon, 14 Apr 2025 11:37:26 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Yangtao Li <frank.li@vivo.com>
-Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] btrfs: make error handling more appropriate in
- btrfs_delayed_ref_init()
-Message-ID: <20250414093725.GC16750@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <20250410113858.149032-1-frank.li@vivo.com>
+	bh=dq648+S4Hz/D1ux1j2t4fcnqzswyqgLomIbtcNpKqs4=;
+	b=U5wwHp87Ecx4muexWBZG4O/daJF6fMDsFzfC9DSSkjunEY4Q8ztQUwKuWtT8w7pioc0OQq
+	tQLTRrQoBCwOiS7+kl+xscSWXHHL027H2V6PZBWGyz124wyZ4kHxI/mjZXvvuG5tczS3bw
+	uPwZ2Uz/ug3fORviq3lLflAf1TooDoQ=
+Date: Mon, 14 Apr 2025 10:37:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250410113858.149032-1-frank.li@vivo.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Queue-Id: 6A5CE1F458
-X-Spam-Score: -4.21
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[vivo.com:email,suse.cz:replyto,suse.cz:mid,suse.cz:dkim]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Subject: Re: [PATCH v1] ptp: ocp: fix NULL deref in _signal_summary_show
+To: Sagi Maimon <maimon.sagi@gmail.com>, jonathan.lemon@gmail.com,
+ richardcochran@gmail.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+References: <20250414085412.117120-1-maimon.sagi@gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20250414085412.117120-1-maimon.sagi@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Apr 10, 2025 at 05:38:58AM -0600, Yangtao Li wrote:
-> 1. Remove unnecessary goto
-> 2. Make the execution logic of the function jumped by goto more appropriate
+On 14/04/2025 09:54, Sagi Maimon wrote:
+> Sysfs signal show operations can invoke _signal_summary_show before
+> signal_out array elements are initialized, causing a NULL pointer
+> dereference. Add NULL checks for signal_out elements to prevent kernel
+> crashes.
 > 
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> Fixes: b325af3cfab9 ("ptp: ocp: Add signal generators and update sysfs nodes")
+> Signed-off-by: Sagi Maimon <maimon.sagi@gmail.com>
 > ---
->  fs/btrfs/delayed-ref.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
+>   drivers/ptp/ptp_ocp.c | 3 +++
+>   1 file changed, 3 insertions(+)
 > 
-> diff --git a/fs/btrfs/delayed-ref.c b/fs/btrfs/delayed-ref.c
-> index 98c5b61dabe8..e984f1761afa 100644
-> --- a/fs/btrfs/delayed-ref.c
-> +++ b/fs/btrfs/delayed-ref.c
-> @@ -1339,11 +1339,11 @@ int __init btrfs_delayed_ref_init(void)
->  {
->  	btrfs_delayed_ref_head_cachep = KMEM_CACHE(btrfs_delayed_ref_head, 0);
->  	if (!btrfs_delayed_ref_head_cachep)
-> -		goto fail;
-> +		return -ENOMEM;
->  
->  	btrfs_delayed_ref_node_cachep = KMEM_CACHE(btrfs_delayed_ref_node, 0);
->  	if (!btrfs_delayed_ref_node_cachep)
-> -		goto fail;
-> +		goto out;
->  
->  	btrfs_delayed_extent_op_cachep = KMEM_CACHE(btrfs_delayed_extent_op, 0);
->  	if (!btrfs_delayed_extent_op_cachep)
-> @@ -1351,6 +1351,8 @@ int __init btrfs_delayed_ref_init(void)
->  
->  	return 0;
->  fail:
-> -	btrfs_delayed_ref_exit();
-> +	kmem_cache_destroy(btrfs_delayed_ref_node_cachep);
-> +out:
-> +	kmem_cache_destroy(btrfs_delayed_ref_head_cachep);
+> diff --git a/drivers/ptp/ptp_ocp.c b/drivers/ptp/ptp_ocp.c
+> index 7945c6be1f7c..4c7893539cec 100644
+> --- a/drivers/ptp/ptp_ocp.c
+> +++ b/drivers/ptp/ptp_ocp.c
+> @@ -3963,6 +3963,9 @@ _signal_summary_show(struct seq_file *s, struct ptp_ocp *bp, int nr)
+>   	bool on;
+>   	u32 val;
+>   
+> +	if (!bp->signal_out[nr])
+> +		return;
+> +
+>   	on = signal->running;
+>   	sprintf(label, "GEN%d", nr + 1);
+>   	seq_printf(s, "%7s: %s, period:%llu duty:%d%% phase:%llu pol:%d",
 
-This is partially duplicating btrfs_delayed_ref_exit(), I'd rather reuse
-the exit helper.
+That's not correct, the dereference of bp->signal_out[nr] happens before
+the check. But I just wonder how can that even happen?
 
-I've checked if this can be done elsewhere, seems that there's only one
-other case btrfs_bioset_init(), which is partially duplicating
-btrfs_bioset_exit(). All other init/exit functions are trivial and
-allocate one structure. So if you want to do that cleanup, please update
-btrfs_bioset_init() to the preferred pattern. Thanks.
+I believe the proper fix is to move ptp_ocp_attr_group_add() closer to
+the end of ptp_ocp_adva_board_init() like it's done for other boards.
+
+--
+pw-bot: cr
 
