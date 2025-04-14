@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-603617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C940A88A26
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 19:44:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFB22A88A24
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 19:44:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C166F3B7231
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:43:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91D8716431C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:44:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62FB28F529;
-	Mon, 14 Apr 2025 17:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF71528F53E;
+	Mon, 14 Apr 2025 17:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r8Aac6ut"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OUOdqRMl"
 Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576E728F505
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 17:42:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882FE28B4E5
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 17:42:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744652534; cv=none; b=s0kcjqJ/lOWZxX+WGYk3ccqVyFkOUV+DIC3GC278xS76W4jALAmLq2U/6aPR7CvEoXlaMuwTindX+txqaIVZw1lO0198v5Jr2+rq1s/2iw9QPqbaeO6ryzqhEWvB+UiF58sKWkfs4nFu1iswqEJSNC+xv7eMW5uYpclcgqXi688=
+	t=1744652536; cv=none; b=HpFeiy5hf183UOD+Fng+unGbBgHSNddlqBJq7xnWkdpSx+WkzUEbqoBPbSsUqT0sBckyFnh7qMwKFIwyQq6i39rrlVw50V76E7OMgIcCl9NLtfz1Aw2nGOKMaPKukTOtVc5I6QKE6mgkGRuUmq0Kgo/z38rEt/WH/djr7EJ6x9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744652534; c=relaxed/simple;
-	bh=5clFH5cBbA9DkiIJRGFWXyQBekw3Gsouq1gTcIF6OIA=;
+	s=arc-20240116; t=1744652536; c=relaxed/simple;
+	bh=Ardu5Zto369kK4zW/dNPurCFIiVTURm10s2RGR0ve7o=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=ZsYbqS2QVM1FM09/2sH4u8VMEIX/YnaCPhh2n3WZMjnY+BYopmWWpLX2BU2HYdakceQnz63i/OGP/LMXPen3aT96dM/XTOAl6Oacd9Wg77+CS1q58uXppoGg5YVaJyaj2+w51M+KNx78PgfGyu7nVZZ1O+wIXmdShGFxWfOJvx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=r8Aac6ut; arc=none smtp.client-ip=209.85.214.201
+	 To:Content-Type; b=PLoTgz7qARZToUOSx7fS5obrbgD5FLAP5EcgiB4awuo4NxHIKU4cQS/dH4EBbR58ixkt6ma/hnjM3tPwqOUI/gD3fEBVhZDVn/ww3wA1OyeieuiRkdl2K0iStvaswCcdcvIXdQzgLs+BU4lTNp/KfxxDh+yGKcGK2SeHdPz596U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OUOdqRMl; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-224347aef79so61466865ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 10:42:12 -0700 (PDT)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-227ed471999so39953515ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 10:42:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744652531; x=1745257331; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1744652533; x=1745257333; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=2H/tpH/91QrndnjLgNTFU53UhH+5V7b1PzR5S5R0EcM=;
-        b=r8Aac6utzPDOKuLGbT0KWcn/7v919Tyt8kEfjkft3La72vw2HJlHQhlQlPUwYr+zp+
-         kXvE7ZInrur3GoBZ+ZKFC0e9ziqDNWpd4dDefFY7ge1nOanutzK/0n2Yml5dc3fZ0H3w
-         aOEz0Pd4LUGCXpZWKu50zUzq3SRXIETN5zHyYYSX2V7Mmb1ofJqBGw6j3pvxYjDBJ9Fc
-         L8x4DMgzXG9Qsu3vs9ewhA7URHh63vWwk2slQF7wiGTdGr+rENQdYD/HJV0kW1pmkWAb
-         dWtkQXLEULooEUvIz+Znvt4zbAOxKZsgTpN8WGO4+VoQLfZvMoZX9wdCivDMAN41WveH
-         2/8g==
+        bh=uWCJjFZOu/EVf/VdW/8Vm5rWlieUQQLXgc9oCiiDvVY=;
+        b=OUOdqRMlMhqtd2V+QMPRXUNGPqR9Ypw/7xAD/fMQJL865ECPLnxv0UQQTNn8ALynfg
+         k0yx1L8b7lSgou9D1UbOZMc/7vxloUCAvbb9N4IFBwOK7yvhIeqdxyPV0NOLzX711+V7
+         R15DtRmd6mA/TCLV9pSpbudVJkX+T0djLSBvid3SsVt1hIwMHgY4TXQwxqhAVMgnuAgc
+         4ymZCMvlqKuIswfj/4NjBHa+/ZyOGfQsVzS/rjDpNqj7quUt46bza8LM5/G7x0prlUxl
+         DoJLqksfQ7GMTImqDbflSgzNC8y2YTKQ+ietwnOLmyVkLwWmVVKvAxntk6iewqHwdQKW
+         h91Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744652531; x=1745257331;
+        d=1e100.net; s=20230601; t=1744652533; x=1745257333;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2H/tpH/91QrndnjLgNTFU53UhH+5V7b1PzR5S5R0EcM=;
-        b=hYrdJXM3VarJwoQziZSR12MYffiJA4tPHXJ7C8G/K3OV7hV3oqW2qz5oxkSAUrMl2G
-         BvQ+4+6UAqKumDbRBM0l5LdJnRkJF8kpVSNlEU5UwP2tmTCIwTZ/mjgxCnZ4VraHoBLY
-         efwTBc7+93zMTv9QetulCNA/liD66V5Mk3GOP2dGXCnsALKm8Z5gOCihGH5xOopcKdTz
-         HbuuFYpDB/jaR/miBTZteCT0d35WNDvL8n8V94/wmPqMAfRpx5raDSNA7muM503zj/Im
-         hf2ujyQQkGu9JiiZXqeehD94vhNp6KrDEVFattbi2D4jXV3dw33ob4Kuxig9mQzrPeSa
-         GAPg==
-X-Forwarded-Encrypted: i=1; AJvYcCWcW78g6bKsbqdk97IowqS2XlA+oIphNonFaO9QVyay1m+f8llHD4cTqBKROJfdco22YxjSv37poNEyhcE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypzpYlIb7bsuUiw4ht7R47bCq/af/libmcDW6bYR6u/Ss8yxLF
-	CSp9uJ3oWH1MtmRdKgHOwMRJU0u3dautWxA4tEa7TU2JytIgxMgFAQwFcu8NpLgyBMFCiUOzBtX
-	kXuITOw==
-X-Google-Smtp-Source: AGHT+IGxaixyz+5/bRId9UGgT/WpZ2tOtE4HFXXb6ZT+XhmhnXMMxhswPag0zV/Fr6Kb+wIMZNm0WsyOIfnb
-X-Received: from plbba6.prod.google.com ([2002:a17:902:7206:b0:21f:b748:a1c8])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e54b:b0:224:24d3:6103
- with SMTP id d9443c01a7336-22bea4efe70mr190994685ad.35.1744652531685; Mon, 14
- Apr 2025 10:42:11 -0700 (PDT)
-Date: Mon, 14 Apr 2025 10:41:26 -0700
+        bh=uWCJjFZOu/EVf/VdW/8Vm5rWlieUQQLXgc9oCiiDvVY=;
+        b=lvkhec1bjiuiEAEcsVESEZzu6G2BronPFRxR2GovOpUgZtr1K9cXW6/rV5Qh8ePEwZ
+         e8OiWnhY2GRG/0WPJnjvVL8WQ0Ov4E64d6FQ3S2Cnw86/WzpwXhQnzAFzE/jIaMEXPOm
+         MaxKHvhqKO3VIHpL2o6wPZ+vXZP4gtmVGfMixaF4hhrxv1KKGm6SIlq0uLSipyUD+U+8
+         bJims678OM4UI8FPVWtOotDZcqyi9cbzTv7pr3NjXK/S7wdzC6dhnq5cQ7R2Evt2KW8I
+         YkL6ISfrka1toIA0uibq99ef3epF7aF+Xp2E8CNqYFnU5cYORZqD/Cto2tFuAyjjedwX
+         aYMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWR4vn4rJLjp+oI8w4EPUeopvB9Qydb4U3bV3LMuLRd8qtVULtBqFYJYwzgshdCJKk/1maZQRDZkdbi7l8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7WDi1CeP+zn6vhHncmazxZyOLy2Z3NX+wD+eBc0eCL/BobH3n
+	4YCyHPRb4mFSsZ9eNSyh3N8qV01hqZ3+9lbk4Ozxu64ZoNuTxi9cYkk0YStXaLQSimG3pEY72at
+	Ykr9y6g==
+X-Google-Smtp-Source: AGHT+IG8dNrboCUfG+ZW8OqTLUhYiuQzZKuXDCNhKV/lf7U+k/W/b7E1OBBuHlvpn6ZP9CZcdt6kK0X9ke97
+X-Received: from plhb12.prod.google.com ([2002:a17:903:228c:b0:223:5739:92d])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:daca:b0:223:5e6a:57ab
+ with SMTP id d9443c01a7336-22bea4efe4dmr194271195ad.39.1744652533627; Mon, 14
+ Apr 2025 10:42:13 -0700 (PDT)
+Date: Mon, 14 Apr 2025 10:41:27 -0700
 In-Reply-To: <20250414174134.3095492-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,9 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250414174134.3095492-1-irogers@google.com>
 X-Mailer: git-send-email 2.49.0.604.gff1f9ca942-goog
-Message-ID: <20250414174134.3095492-9-irogers@google.com>
-Subject: [PATCH v5 08/16] perf intel-tpebs: Ensure events are opened, factor
- out finding
+Message-ID: <20250414174134.3095492-10-irogers@google.com>
+Subject: [PATCH v5 09/16] perf intel-tpebs: Refactor tpebs_results list
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -92,137 +91,326 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	Thomas Falcon <thomas.falcon@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Factor out finding an tpebs_retire_lat from an evsel. Don't blindly
-return when ignoring an open request, which happens after the first
-open request, ensure the event was started on a fork of perf record.
+evsel names and metric-ids are used for matching but this can be
+problematic, for example, multiple occurrences of the same retirement
+latency event become a single event for the record. Change the name of
+the record events so they are unique and reflect the evsel of the
+retirement latency event that opens them (the retirement latency
+event's evsel address is embedded within them). This allows an evsel
+based close to close the event when the retirement latency event is
+closed. This is important as perf stat has an evlist and the session
+listen to the record events has an evlist, knowing which event should
+remove the tpebs_retire_lat can't be tied to an evlist list as there
+is more than 1, so closing which evlist should cause the tpebs to
+stop? Using the evsel and the last one out doing the tpebs_stop is
+cleaner.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 Tested-by: Weilin Wang <weilin.wang@intel.com>
 Acked-by: Namhyung Kim <namhyung@kernel.org>
 ---
- tools/perf/util/intel-tpebs.c | 61 +++++++++++++++++++++--------------
- 1 file changed, 37 insertions(+), 24 deletions(-)
+ tools/perf/builtin-stat.c     |   2 -
+ tools/perf/util/evlist.c      |   1 -
+ tools/perf/util/evsel.c       |   2 +-
+ tools/perf/util/intel-tpebs.c | 150 +++++++++++++++++++++-------------
+ tools/perf/util/intel-tpebs.h |   2 +-
+ 5 files changed, 93 insertions(+), 64 deletions(-)
 
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index 68ea7589c143..80e491bd775b 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -681,8 +681,6 @@ static enum counter_recovery stat_handle_error(struct evsel *counter)
+ 	if (child_pid != -1)
+ 		kill(child_pid, SIGTERM);
+ 
+-	tpebs_delete();
+-
+ 	return COUNTER_FATAL;
+ }
+ 
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index c1a04141aed0..0a21da4f990f 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -183,7 +183,6 @@ void evlist__delete(struct evlist *evlist)
+ 	if (evlist == NULL)
+ 		return;
+ 
+-	tpebs_delete();
+ 	evlist__free_stats(evlist);
+ 	evlist__munmap(evlist);
+ 	evlist__close(evlist);
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index 121283f2f382..554252ed1aab 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -2759,7 +2759,7 @@ int evsel__open(struct evsel *evsel, struct perf_cpu_map *cpus,
+ void evsel__close(struct evsel *evsel)
+ {
+ 	if (evsel__is_retire_lat(evsel))
+-		tpebs_delete();
++		evsel__tpebs_close(evsel);
+ 	perf_evsel__close(&evsel->core);
+ 	perf_evsel__free_id(&evsel->core);
+ }
 diff --git a/tools/perf/util/intel-tpebs.c b/tools/perf/util/intel-tpebs.c
-index c4c818f32239..e42f3ec39a64 100644
+index e42f3ec39a64..a723687e67f6 100644
 --- a/tools/perf/util/intel-tpebs.c
 +++ b/tools/perf/util/intel-tpebs.c
-@@ -45,6 +45,8 @@ struct tpebs_retire_lat {
- 	int sum;
- 	/* Average of retire_latency, val = sum / count */
- 	double val;
-+	/* Has the event been sent to perf record? */
-+	bool started;
+@@ -35,10 +35,10 @@ static struct child_process tpebs_cmd;
+ 
+ struct tpebs_retire_lat {
+ 	struct list_head nd;
+-	/* Event name */
+-	char *name;
+-	/* Event name with the TPEBS modifier R */
+-	const char *tpebs_name;
++	/** @evsel: The evsel that opened the retire_lat event. */
++	struct evsel *evsel;
++	/** @event: Event passed to perf record. */
++	char *event;
+ 	/* Count of retire_latency values found in sample data */
+ 	size_t count;
+ 	/* Sum of all the retire_latency values in sample data */
+@@ -49,6 +49,8 @@ struct tpebs_retire_lat {
+ 	bool started;
  };
  
++static struct tpebs_retire_lat *tpebs_retire_lat__find(struct evsel *evsel);
++
  static int evsel__tpebs_start_perf_record(struct evsel *evsel, int control_fd[], int ack_fd[])
-@@ -94,6 +96,9 @@ static int evsel__tpebs_start_perf_record(struct evsel *evsel, int control_fd[],
- 	tpebs_cmd.out = -1;
- 	ret = start_command(&tpebs_cmd);
- 	zfree(&tpebs_cmd.argv);
-+	list_for_each_entry(t, &tpebs_results, nd)
-+		t->started = true;
-+
- 	return ret;
- }
- 
-@@ -214,6 +219,19 @@ static struct tpebs_retire_lat *tpebs_retire_lat__new(struct evsel *evsel)
- 	return result;
- }
- 
-+static struct tpebs_retire_lat *tpebs_retire_lat__find(struct evsel *evsel)
-+{
-+	struct tpebs_retire_lat *t;
-+
-+	list_for_each_entry(t, &tpebs_results, nd) {
-+		if (t->tpebs_name == evsel->name ||
-+		    !strcmp(t->tpebs_name, evsel->name) ||
-+		    (evsel->metric_id && !strcmp(t->tpebs_name, evsel->metric_id)))
-+			return t;
-+	}
-+	return NULL;
-+}
-+
- /**
-  * evsel__tpebs_prepare - create tpebs data structures ready for opening.
-  * @evsel: retire_latency evsel, all evsels on its list will be prepared.
-@@ -221,16 +239,11 @@ static struct tpebs_retire_lat *tpebs_retire_lat__new(struct evsel *evsel)
- static int evsel__tpebs_prepare(struct evsel *evsel)
  {
- 	struct evsel *pos;
--	struct tpebs_retire_lat *tpebs_event;
--
--	list_for_each_entry(tpebs_event, &tpebs_results, nd) {
--		if (!strcmp(tpebs_event->tpebs_name, evsel->name)) {
--			/*
--			 * evsel, or an identically named one, was already
--			 * prepared.
--			 */
--			return 0;
--		}
-+	struct tpebs_retire_lat *tpebs_event = tpebs_retire_lat__find(evsel);
-+
-+	if (tpebs_event) {
-+		/* evsel, or an identically named one, was already prepared. */
-+		return 0;
+ 	const char **record_argv;
+@@ -85,7 +87,7 @@ static int evsel__tpebs_start_perf_record(struct evsel *evsel, int control_fd[],
+ 
+ 	list_for_each_entry(t, &tpebs_results, nd) {
+ 		record_argv[i++] = "-e";
+-		record_argv[i++] = t->name;
++		record_argv[i++] = t->event;
  	}
- 	tpebs_event = tpebs_retire_lat__new(evsel);
- 	if (!tpebs_event)
-@@ -262,12 +275,19 @@ int evsel__tpebs_open(struct evsel *evsel)
+ 	record_argv[i++] = NULL;
+ 	assert(i == 10 + 2 * tpebs_event_size || i == 8 + 2 * tpebs_event_size);
+@@ -108,27 +110,20 @@ static int process_sample_event(const struct perf_tool *tool __maybe_unused,
+ 				struct evsel *evsel,
+ 				struct machine *machine __maybe_unused)
  {
- 	int ret;
- 
--	/*
--	 * We should only run tpebs_start when tpebs_recording is enabled.
--	 * And we should only run it once with all the required events.
--	 */
--	if (tpebs_cmd.pid != 0 || !tpebs_recording)
-+	/* We should only run tpebs_start when tpebs_recording is enabled. */
-+	if (!tpebs_recording)
- 		return 0;
-+	/* Only start the events once. */
-+	if (tpebs_cmd.pid != 0) {
-+		struct tpebs_retire_lat *t = tpebs_retire_lat__find(evsel);
-+
-+		if (!t || !t->started) {
-+			/* Fail, as the event wasn't started. */
-+			return -EBUSY;
-+		}
-+		return 0;
-+	}
- 
- 	ret = evsel__tpebs_prepare(evsel);
- 	if (ret)
-@@ -352,7 +372,6 @@ int evsel__tpebs_open(struct evsel *evsel)
- int tpebs_set_evsel(struct evsel *evsel, int cpu_map_idx, int thread)
- {
- 	__u64 val;
--	bool found = false;
+-	int ret = 0;
+-	const char *evname;
  	struct tpebs_retire_lat *t;
- 	struct perf_counts_values *count;
  
-@@ -367,19 +386,13 @@ int tpebs_set_evsel(struct evsel *evsel, int cpu_map_idx, int thread)
- 	tpebs_stop();
- 	count = perf_counts(evsel->counts, cpu_map_idx, thread);
- 
+-	evname = evsel__name(evsel);
+-
++	t = tpebs_retire_lat__find(evsel);
++	if (!t)
++		return -EINVAL;
+ 	/*
+ 	 * Need to handle per core results? We are assuming average retire
+ 	 * latency value will be used. Save the number of samples and the sum of
+ 	 * retire latency value for each event.
+ 	 */
 -	list_for_each_entry(t, &tpebs_results, nd) {
--		if (t->tpebs_name == evsel->name ||
--		    (evsel->metric_id && !strcmp(t->tpebs_name, evsel->metric_id))) {
--			found = true;
+-		if (!strcmp(evname, t->name)) {
+-			t->count += 1;
+-			t->sum += sample->retire_lat;
+-			t->val = (double) t->sum / t->count;
 -			break;
 -		}
 -	}
-+	t = tpebs_retire_lat__find(evsel);
+-
+-	return ret;
++	t->count += 1;
++	t->sum += sample->retire_lat;
++	t->val = (double) t->sum / t->count;
++	return 0;
+ }
  
- 	/* Set ena and run to non-zero */
- 	count->ena = count->run = 1;
- 	count->lost = 0;
+ static int process_feature_event(struct perf_session *session,
+@@ -183,50 +178,98 @@ static int tpebs_stop(void)
+ 	return ret;
+ }
  
--	if (!found) {
-+	if (!t) {
- 		/*
- 		 * Set default value or 0 when retire_latency for this event is
- 		 * not found from sampling data (record_tpebs not set or 0
+-static char *evsel__tpebs_name(struct evsel *evsel)
++/**
++ * evsel__tpebs_event() - Create string event encoding to pass to `perf record`.
++ */
++static int evsel__tpebs_event(struct evsel *evsel, char **event)
+ {
+ 	char *name, *modifier;
++	int ret;
+ 
+ 	name = strdup(evsel->name);
+ 	if (!name)
+-		return NULL;
++		return -ENOMEM;
+ 
+ 	modifier = strrchr(name, 'R');
+ 	if (!modifier) {
+-		pr_err("Tpebs event missing modifier '%s'\n", name);
+-		free(name);
+-		return NULL;
++		ret = -EINVAL;
++		goto out;
+ 	}
+-
+ 	*modifier = 'p';
+-	return name;
++	modifier = strchr(name, ':');
++	if (!modifier)
++		modifier = strrchr(name, '/');
++	if (!modifier) {
++		ret = -EINVAL;
++		goto out;
++	}
++	*modifier = '\0';
++	if (asprintf(event, "%s/name=tpebs_event_%p/%s", name, evsel, modifier + 1) > 0)
++		ret = 0;
++	else
++		ret = -ENOMEM;
++out:
++	if (ret)
++		pr_err("Tpebs event modifier broken '%s'\n", evsel->name);
++	free(name);
++	return ret;
+ }
+ 
+ static struct tpebs_retire_lat *tpebs_retire_lat__new(struct evsel *evsel)
+ {
+ 	struct tpebs_retire_lat *result = zalloc(sizeof(*result));
++	int ret;
+ 
+ 	if (!result)
+ 		return NULL;
+ 
+-	result->tpebs_name = evsel->name;
+-	result->name = evsel__tpebs_name(evsel);
+-	if (!result->name) {
++	ret = evsel__tpebs_event(evsel, &result->event);
++	if (ret) {
+ 		free(result);
+ 		return NULL;
+ 	}
++	result->evsel = evsel;
+ 	list_add_tail(&result->nd, &tpebs_results);
+ 	return result;
+ }
+ 
++static void tpebs_retire_lat__delete(struct tpebs_retire_lat *r)
++{
++	zfree(&r->event);
++	free(r);
++}
++
+ static struct tpebs_retire_lat *tpebs_retire_lat__find(struct evsel *evsel)
+ {
+ 	struct tpebs_retire_lat *t;
++	uint64_t num;
++	const char *evsel_name;
+ 
++	/*
++	 * Evsels will match for evlist with the retirement latency event. The
++	 * name with "tpebs_event_" prefix will be present on events being read
++	 * from `perf record`.
++	 */
++	if (evsel__is_retire_lat(evsel)) {
++		list_for_each_entry(t, &tpebs_results, nd) {
++			if (t->evsel == evsel)
++				return t;
++		}
++		return NULL;
++	}
++	evsel_name = strstr(evsel->name, "tpebs_event_");
++	if (!evsel_name) {
++		/* Unexpected that the perf record should have other events. */
++		return NULL;
++	}
++	errno = 0;
++	num = strtoull(evsel_name + 12, NULL, 16);
++	if (errno) {
++		pr_err("Bad evsel for tpebs find '%s'\n", evsel->name);
++		return NULL;
++	}
+ 	list_for_each_entry(t, &tpebs_results, nd) {
+-		if (t->tpebs_name == evsel->name ||
+-		    !strcmp(t->tpebs_name, evsel->name) ||
+-		    (evsel->metric_id && !strcmp(t->tpebs_name, evsel->metric_id)))
++		if ((uint64_t)t->evsel == num)
+ 			return t;
+ 	}
+ 	return NULL;
+@@ -363,8 +406,12 @@ int evsel__tpebs_open(struct evsel *evsel)
+ 		close(ack_fd[0]);
+ 		close(ack_fd[1]);
+ 	}
+-	if (ret)
+-		tpebs_delete();
++	if (ret) {
++		struct tpebs_retire_lat *t = tpebs_retire_lat__find(evsel);
++
++		list_del_init(&t->nd);
++		tpebs_retire_lat__delete(t);
++	}
+ 	return ret;
+ }
+ 
+@@ -414,34 +461,19 @@ int tpebs_set_evsel(struct evsel *evsel, int cpu_map_idx, int thread)
+ 	return 0;
+ }
+ 
+-static void tpebs_retire_lat__delete(struct tpebs_retire_lat *r)
+-{
+-	zfree(&r->name);
+-	free(r);
+-}
+-
+-
+-/*
+- * tpebs_delete - delete tpebs related data and stop the created thread and
+- * process by calling tpebs_stop().
+- *
+- * This function is called from evlist_delete() and also from builtin-stat
+- * stat_handle_error(). If tpebs_start() is called from places other then perf
+- * stat, need to ensure tpebs_delete() is also called to safely free mem and
+- * close the data read thread and the forked perf record process.
++/**
++ * evsel__tpebs_close() - delete tpebs related data. If the last event, stop the
++ * created thread and process by calling tpebs_stop().
+  *
+- * This function is also called in evsel__close() to be symmetric with
+- * tpebs_start() being called in evsel__open(). We will update this call site
+- * when move tpebs_start() to evlist level.
++ * This function is called in evsel__close() to be symmetric with
++ * evsel__tpebs_open() being called in evsel__open().
+  */
+-void tpebs_delete(void)
++void evsel__tpebs_close(struct evsel *evsel)
+ {
+-	struct tpebs_retire_lat *r, *rtmp;
++	struct tpebs_retire_lat *t = tpebs_retire_lat__find(evsel);
+ 
+-	tpebs_stop();
++	tpebs_retire_lat__delete(t);
+ 
+-	list_for_each_entry_safe(r, rtmp, &tpebs_results, nd) {
+-		list_del_init(&r->nd);
+-		tpebs_retire_lat__delete(r);
+-	}
++	if (list_empty(&tpebs_results))
++		tpebs_stop();
+ }
+diff --git a/tools/perf/util/intel-tpebs.h b/tools/perf/util/intel-tpebs.h
+index cc98203719c8..5c671181ec60 100644
+--- a/tools/perf/util/intel-tpebs.h
++++ b/tools/perf/util/intel-tpebs.h
+@@ -11,7 +11,7 @@ struct evsel;
+ extern bool tpebs_recording;
+ 
+ int evsel__tpebs_open(struct evsel *evsel);
+-void tpebs_delete(void);
++void evsel__tpebs_close(struct evsel *evsel);
+ int tpebs_set_evsel(struct evsel *evsel, int cpu_map_idx, int thread);
+ 
+ #endif /* __INTEL_TPEBS_H */
 -- 
 2.49.0.604.gff1f9ca942-goog
 
