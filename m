@@ -1,237 +1,234 @@
-Return-Path: <linux-kernel+bounces-603518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8103A888E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 18:47:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69614A888EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 18:48:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77A8C17A44C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:47:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5FF03A9EA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:48:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 600FB27F72B;
-	Mon, 14 Apr 2025 16:47:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E25F62820AF;
+	Mon, 14 Apr 2025 16:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lyADA7IT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C0WUev78"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5ABB2749C0
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 16:47:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744649257; cv=fail; b=WUBGw+11N9MZcF6bngpMcwnFsNqSeDw+5mARoTE4QH9tZBapUTnsNo+keuUkD8bXnKXNrPSkI+D8bdZWrIVDW+HNioYZ/1BfkOs7m14cxHR4Zz4QlGA45la0bW7CCPbRu4RKyMBQ7yMX0xFE9pH6Ik/yr3fdZ0vjGMfh4xA6lKY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744649257; c=relaxed/simple;
-	bh=jH9gRfjPDySHnz2l5xIZEmViowiFd4Mwj/oi/qnYu2s=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=pVj9LFN+fD/NxyD4GegFce/iYynbP0kjongE/igW2uZe4BaeYyHDW4RuWQyw32DYlJSAxQ9SOxk+eWi6t+ncoTBt7qqEKz01Ql2Z9fn0lmFpK9TRW67PwtSc4Njj+44zqsMshwH0g2uRzeAAwMy2d+ndrZ6PNnwFt1DTX+J1GX0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lyADA7IT; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744649256; x=1776185256;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=jH9gRfjPDySHnz2l5xIZEmViowiFd4Mwj/oi/qnYu2s=;
-  b=lyADA7IT6P9mWOlZB+czWFCyYjtoQh/Q5SM8YpG0q2+5Q0L0aSBEVQpQ
-   +KmJzJnnouyxOpFmpvkkuce9nh+Nl3rh1/qxsyaEXND38HZmATfxTWaEP
-   i97q7eq6K1fRfa1dFbzTLkucJYHN7Ot/NIkxpOZXg+3M8iap+MYdZVg8r
-   LdHkKMoN1wK7WpGofmXSECtU2rmAnOgXcypjkI4aENfxdewZxGwbmzSZx
-   De/X9Z/LTtsE9wiUOcBD9d1uZ3x2vvCkQemtghriXlnXcOu6zP/vcgNCA
-   U06/hYLERr4bDPF5ee6jxL2k83QmZgMtaormvknjOTG3nvfISft8oeEew
-   w==;
-X-CSE-ConnectionGUID: u7+C1tR6QXGDcmLcHZ/YYA==
-X-CSE-MsgGUID: Hj66wH3oTMG+AaIDf+VvOA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11403"; a="49962285"
-X-IronPort-AV: E=Sophos;i="6.15,212,1739865600"; 
-   d="scan'208";a="49962285"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 09:47:35 -0700
-X-CSE-ConnectionGUID: 436UmvSITqm3kyETpA3e8w==
-X-CSE-MsgGUID: fbT/t30nT9GMMlqIVFpdHw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,212,1739865600"; 
-   d="scan'208";a="134925803"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 09:47:35 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Mon, 14 Apr 2025 09:47:34 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Mon, 14 Apr 2025 09:47:34 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.169)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Mon, 14 Apr 2025 09:47:34 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=n8kwPUZhAbHseNGtWsWfMxpOW/c8toU1LL5ImqjFS+BwAOAfZrkt6QJjLLMonVjEdAFjH3xsjscCA6A0Z68ypsYubEDb54icbQByjMGaOYPDfPowEGO/NhVJBD0zYl0AJqZA4sg7xULUKktlTB6bghbmuDn4RAiUt+Ugs8XRAxaY1flNQXXEcmx3r4lYMS8gs4XvXu+Itud0kK9yOlBYvA9MX+DdYhUlM5Fif0CImyVSLWnE4ODA4uX4GCUKztgRfx5ih0U5MuqrrzjpCG5bb39tkvPbDZ4frhr//+VwUKMULN/jpgA/zTrAFUXzc4USFu1b6LgMcJeiGzpShROwPQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jH9gRfjPDySHnz2l5xIZEmViowiFd4Mwj/oi/qnYu2s=;
- b=QB6g3O5r8QucH7hhhFUskRcg5XgVC4aJ0S34wdXZYoF8wAmdFTO3NSXAhsKcrQBoGpBREwMnSxcS5D8iGtSs+2/J9JP10eHoumsgVALOkxzPA3RGKHiW3QSv7ndSG4Hm4sRAlE+mTUCjtbx6QGmD2Ym2fHWIV/RJLwpO5G3liA61j0joTx5sjz/1yf/IKQHkBzyeMfHo8ipTDWP/dID5Us1JYKWmA2QU4fsucCCfA9oncNuUpAucCrq4iK++3ZXIBqeeiEOQbJxnkYK0k8GuwPrsDZeOc7NqbiOt2fg6eewgw5DT+9znKpcIthboTkiSIKXEGbEzG9wsuC5BYcc+qQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB5549.namprd11.prod.outlook.com (2603:10b6:5:388::7) by
- CH3PR11MB8657.namprd11.prod.outlook.com (2603:10b6:610:1ca::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.29; Mon, 14 Apr
- 2025 16:47:31 +0000
-Received: from DM4PR11MB5549.namprd11.prod.outlook.com
- ([fe80::6c31:ab8a:d70:2555]) by DM4PR11MB5549.namprd11.prod.outlook.com
- ([fe80::6c31:ab8a:d70:2555%3]) with mapi id 15.20.8632.030; Mon, 14 Apr 2025
- 16:47:31 +0000
-Message-ID: <deee9bc9-6af0-46fa-af50-866c58ddf7ad@intel.com>
-Date: Mon, 14 Apr 2025 19:47:26 +0300
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] accel/habanalabs: Switch to use %ptTs
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-CC: Jani Nikula <jani.nikula@linux.intel.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>, "Oded
- Gabbay" <ogabbay@kernel.org>, "Elbaz, Koby" <koby.elbaz@intel.com>, "Sinyuk,
- Konstantin" <konstantin.sinyuk@intel.com>
-References: <20250305110126.2134307-1-andriy.shevchenko@linux.intel.com>
- <Z-PM8oBtTPzqv-S2@smile.fi.intel.com> <87zfh86rqi.fsf@intel.com>
- <81431521-bedf-4361-a222-0e8ec70bea69@intel.com>
- <Z_zeUAW7u8UgmEOo@smile.fi.intel.com>
-Content-Language: en-US
-From: "Avizrat, Yaron" <yaron.avizrat@intel.com>
-In-Reply-To: <Z_zeUAW7u8UgmEOo@smile.fi.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: TL2P290CA0002.ISRP290.PROD.OUTLOOK.COM
- (2603:1096:950:2::12) To DM4PR11MB5549.namprd11.prod.outlook.com
- (2603:10b6:5:388::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42DDA25C6E6;
+	Mon, 14 Apr 2025 16:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744649309; cv=none; b=HJG1zzXSNVkwvvZJdMGbnZ0byn2C+ChpnaJgpP9XwQUAAzltFgOrM8m33p43GdsRbC1baq0IRaI6V3cwvl8U6O/CkFM3JdxJaOC6zGLsQ7Y8ejjnhTPJA9d7eD6gwxI0wfhCLvrmW7tdrNOUnfrVjmB40et5EHL6lR1CmxVsCYc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744649309; c=relaxed/simple;
+	bh=IMPpmSGNgTERs/O4E0W84aAiLk4GyRsj/gZ9lKv00ao=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FrXqW7F/VHwRZ2UjhNGc6G6PfTkyk2jnN3LBudIwe94bPLMFcUjA7XTmeejQd6jaHGI6zRheDuFj/YvUffr4okC3gEOiBXfKOFvfMB0EezJhSIr2/TwJLUsnLvhhv4/pJKHGZLn32ph4jqax6+ezCR3O9STIHzkJinFhU4ukXMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C0WUev78; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-73bf1cef6ceso1335928b3a.0;
+        Mon, 14 Apr 2025 09:48:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744649306; x=1745254106; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ODC2OMPiIrGbg/DjmPjdt1iuNoNfGR/iB3ClA/te5kQ=;
+        b=C0WUev780+CHIeYsUv66yRGUpBRrryS0gtwnQ6rf+se2cFwg1z522f7lkXFwV1VTta
+         PYHRZ4uQsoPjNWHypG4RI2ihc5yNimGC4b1kHKjIOdfr9kH9Fa+KUX8mIWe3e9rS2hi8
+         6ps0YrBvDInIugWwjyXlEVVrThXmbhIxwz14wrUAOu2o1hfBwAfvWV1Lzw6guD2tMspb
+         Fh3yB4e3jE3Kn4E46D4vmzL5ZLsmF4/h7HPFu52YDE76jqDYGmdu1J0V2ydtYcBbuWA+
+         SQj9caINfC84/Kb1UdrL6M8wu+j1Rsut8pD8n5/2qhWL5WbwSWp5AEabaO8y36UxGOvr
+         8FZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744649306; x=1745254106;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ODC2OMPiIrGbg/DjmPjdt1iuNoNfGR/iB3ClA/te5kQ=;
+        b=aRJx6lxb0h2KudvLbhzVwnf25mkUxqMi4FCtUnwrfHp9i6A5Bq/a5JOW8adx6rioyF
+         mnGWFArKqemiAlfJA+U0J3gZBOqkTCh/2vkCN1RVUp3I3dyoIZmnJiOxUYLSDI6TwWnj
+         gx4VcYXLA7iiJfb33JNsKhMbgetKJsLoE0utzfG0hTew8QMCuvrmaPN6d0WTeNR9jTX5
+         wZQgEwzgym3iluVghbMS1fPdbXkQFU3cEJKvBZpKfRnmEK45x+PFkCY3BUTG08W7Cyp4
+         8iuPlfSXGrrAN+LAFkwGyL3BLs6Sl5OsQJlyN2sFDiJ8c6rugSUfn+jD2xkcg+IWX+eX
+         W1Kw==
+X-Gm-Message-State: AOJu0YyPd+mJA8diNGOmNBFN1TYssZh65dFYwNV0HyPAeqYBu4a3yu6d
+	W5qPE8QWPyS5Z37fMXxWR/Cuy3rVVQPKszYYtWsEAZCVkJ6U/V7ifrRMmRwYXxY=
+X-Gm-Gg: ASbGncuqhT4GLokwvgP+Wm0LMYTH3k/0iCkB3nvQC8pVy6yiQEguKutWuxWrLWthnrT
+	xoLx5NsMUAKJ+tRpaynOrooRSGu1T4r/1MBmRs986h+4kFBM/Kya42Ly+iFGe3EqvKOkkqEGZ3a
+	3FwUdKx7/KqAUan0OI1rh7bNETDLVKCGb4dYn0AxHCczKqm1agWUkp5v3lDLtgPns6XF3BJKZLz
+	KBPoGpRyEGm8DKfCLULlpugQk8EPpXofMFJABbHxsgld6gIkBY1H4eASYwLwR/c2101jUy32pxv
+	AhRGkNYoT2Tn0wZKbJoJ1uQ3wptjPjnKEjofDA==
+X-Google-Smtp-Source: AGHT+IGQPFkuLvBdIXu8RgihuXeeTxJXEaC3yFUvhcm0uj/MhC9/nUyCI3fWNBm+MqTxe/husNsVXQ==
+X-Received: by 2002:a05:6a00:1414:b0:736:57cb:f2b6 with SMTP id d2e1a72fcca58-73bd11fe7d1mr16905267b3a.12.1744649305880;
+        Mon, 14 Apr 2025 09:48:25 -0700 (PDT)
+Received: from fedora.. ([2405:201:f022:f80b:bc98:df72:df5a:60fa])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd21c5f51sm7084351b3a.56.2025.04.14.09.48.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Apr 2025 09:48:25 -0700 (PDT)
+From: Siddharth Menon <simeddon@gmail.com>
+To: linux-iio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	gregkh@linuxfoundation.org,
+	jic23@kernel.org,
+	Michael.Hennerich@analog.com,
+	lars@metafoo.de,
+	marcelo.schmitt1@gmail.com,
+	Siddharth Menon <simeddon@gmail.com>
+Subject: [PATCH] Documentation: iio: Document ad9832 driver
+Date: Mon, 14 Apr 2025 22:17:49 +0530
+Message-ID: <20250414164811.36879-1-simeddon@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB5549:EE_|CH3PR11MB8657:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9c53cfeb-5aab-4c7d-2416-08dd7b740c4d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?aDBzVWY0Q1ZwbThaZzhielpFQ2lyNjZSTzVJenlsbVdoRVZzYmNWY1JSRWY4?=
- =?utf-8?B?YncyS0xCZUJVd25SSGtiQzkrbDFMcGd3Y1JIM1E4WGFiL1hySzVEZjZ6UGsx?=
- =?utf-8?B?RUg5Ni80RHpIelFyNUVlRkxha3VkWG9FbzQwcVRiZGdWNVlEbDZsZFU3NGdh?=
- =?utf-8?B?S0cxMnRLMXJ3d1YzVVZ4aUtDTmZ1QjhXazFWNHhMVk5yc1lXd2lUNUJWNlM0?=
- =?utf-8?B?b01UK2NnTTA2bWZkQVMyRnhpMGZaUUg0Ynp2ZHBHNXBjSkdyL0JIS0I3TDJM?=
- =?utf-8?B?WlJ5VFJKTy9zQXBzcXB1RktGUFV1L0ZUMkFIdXNheUhiRHNuY1J5b1VQbGhJ?=
- =?utf-8?B?d3VNRjNEd0U0M3ErTDN5T1BLWVRydU90aklJTnlhc2ppY05kTGdYYTVMak8r?=
- =?utf-8?B?M1VGOS9lSEJjTVJKL2hGbi94U3hreHI5RU1YNjhUQjBaUXZUeGlIYTdzcGVn?=
- =?utf-8?B?MXRKTHlpNEJydFJMclRIYk0vQUJManZmMk5qOG9HdnJwekphQ01DekxHMFJD?=
- =?utf-8?B?Q1BFaWRZcDZTcTVWbTFGaG4yK0V2TUJ0aDRhdkpsNkFJRkk2ZVg5MkFyVnd4?=
- =?utf-8?B?d2s4TEhOK1BzTXR1S0luZTJKQ2d2TW1PVjZGYU5jbUdNQjhqS244UmlQQmZK?=
- =?utf-8?B?N0FLbDU5dWlNT2tFVDZRUzYyQ0dkaHVsM05vblBDRlFUMjJLNmloNFF1S24v?=
- =?utf-8?B?bnR4QjVvbGJ4UStGSXNUVm5KemF4VU1CY09LUVg1dlpmYm01T2t4cTdMaTJF?=
- =?utf-8?B?TEI3TFEwaXo1NDVFMW5DbXZ6ZWgwT2RxbHNVZWx4WDZtRHZIL0xpeWY0Umln?=
- =?utf-8?B?cmcrNEhrRXJETHQxaEZkZlNDbmxLeWRod2pqa2tEYlI3S2RuTTJUSUtBYkZQ?=
- =?utf-8?B?a1YrcVYwd1BVTDlycVB0VHVJT2MreDM0YW9kRlI5UVEwUVJwNTdvZkd5VkRL?=
- =?utf-8?B?WXdGSjJLcERKUmRINC90U0xKRWVmNFlodzBNMWJrdXphK3pzSnBLK1BxSExR?=
- =?utf-8?B?Um9GRVZ5T1E5a2dHa2RuRDRMUDVFSm50ODFpNmMxclhpaFNiQk4wM0VrNUFL?=
- =?utf-8?B?TE55aERpMjBMMjZMNTZRbnNLdG01ckVGYjdndHJlR2c2SkJON2V1VlIzRFY5?=
- =?utf-8?B?Unk3eDlYeDZ6a1BzZ1FBS09SdmdZclFyODhOM09uc1k3c1puT0Q0YlhWM25Q?=
- =?utf-8?B?dytrRS9rNGxSU20wanRiOFBPTjJ2bG01MHFaOTVwOGN3cTUxazF0c2ZQZHdD?=
- =?utf-8?B?Rnh5dlZldEkzN3JvR2dvUWRuNS9LeWd0ajhJY3RBMzJxTXJSVjVlZ3ZDbHRp?=
- =?utf-8?B?dnNCSmsrNTVXTFVxaVpQdHBBRkNjSVJYV0N6SFJUWEE5Wk9JMWZLMXFKTTJa?=
- =?utf-8?B?R2p5bnVSVXpDcVZ6ZTJUWnU1WUZmY0JWTEJGUXFoZ3RCNkZVMy9GOFhEY1lO?=
- =?utf-8?B?ajNpRitEcVlUeWxoRXk2Y2xhNzJVdXc2N280UW5VcWRpcTRTU052eGR6MHk0?=
- =?utf-8?B?RlAwWi8zdjZBYUFnQXN6eVQwcm5QSjVZaS81OUxzdnJ4NDNSb0FtcExpVHgz?=
- =?utf-8?B?ekRMV3k3UkNVclBrcW82RUhLZEJmU2x1QXd5THdNRklUa2t3di8wOTBBZXVa?=
- =?utf-8?B?bGl1c0E4NjBKVjMvTGVhbStWajZkQ3d1K3AxYUxtazdRbFg2WmhqYWF2OTZL?=
- =?utf-8?B?MmpIL1Y1SzZYQ1V0Z1Z4QXFZRi92ZlFZVDlKUE9NSTFpVzhUZ1VXbU5hQXJN?=
- =?utf-8?B?dWFkTlgxNU8zMEhwUmJGTGVwdXdyWUFBckVNRC8vSnlRMkk5SmJIanRXbm9C?=
- =?utf-8?B?VjBkc1B4LzVBUXRHODVkb3dyQkUraGUrcDhHZnNlTVBndUM1dUErNE9CYnBM?=
- =?utf-8?B?NDVTWTFOR0s3TG52SlR0bEcwSHdmZmJtUDhzbS9kL2lOUGtkU05PVEluR2M5?=
- =?utf-8?Q?MRn+USURGX0=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB5549.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Vlgyay85NmpENy8xWVI2cUhHdlJsb00wYkZQcjFRaEZjQVVlY3dVMjFyVkta?=
- =?utf-8?B?bldxdDdIV0tQdEtVamwvSTBxbC9ybjRqZGJsZXF2VCtPczBCam1zbHAvN3VN?=
- =?utf-8?B?c3dRa0xyTmdlcUxRWTRSWmVrZDJZZ3YzNUtlLy9nMUdtdGxXUEZ4VDFzZ21I?=
- =?utf-8?B?VzZTaXlUTDRCMytKaytIMmNuR3RkNkdCcm5jUCtBajlTTjFhbVJMTVNjeU8w?=
- =?utf-8?B?THMvdG94UmRrU2FUcWJsQmhzdElIT3drRy9xMHY1TlVUaFU2ZUZFaU4xN1Yr?=
- =?utf-8?B?UlRiNC9oR1NWSkZXMDQ1RTArTzVka0ROOURFeDhvZnNFZnNFUW1zOVlvQUt4?=
- =?utf-8?B?VDVaYzVYRnV3MkxMOWNBK1V6b1lVeFZWeVhxMXcxVlRxbXZFVXFXZ1J3dXpz?=
- =?utf-8?B?blZ2ZnNnMjViYi9FSE1nZE9VKzU3cEpZTGdueXUrVWVlNHFwKzlWdVQ2aVJO?=
- =?utf-8?B?R3VQWVJWOGJrTnBWcm1pRlZwVDZpZHN6YlhEbEZWbDVWNEpsdFRtSEdaMEFI?=
- =?utf-8?B?enpCUXlCQXVDS2ZiVWtoSktacWNKTEFVOEtRQzR5YTBsN0R2T0tKdGdzS0JW?=
- =?utf-8?B?U20yTlpYdFFXUnV0VnkzOVhWRXA1bnB0VFZOdFpGQ0s4YWtCZEZQQUJuSVd2?=
- =?utf-8?B?WHF1VEVnaHdLZFZOWkNIWUVRWC9MalljeTc2VnlycGRPNXREMWN4aDlENWVR?=
- =?utf-8?B?QjFOTXc1ZnZxUnRhOVE4MFNoM0FRUmkvNzBNcDNuWXRKdVpRcVVza2N5aTdr?=
- =?utf-8?B?dkprQXlqNUFZQU1Lb3V2VWt4Mm4xcUc4Wk9HczJVQlovOVFHY0FET2ZFQUx1?=
- =?utf-8?B?M3BoMkZRdjYrSEpYKzFLTTlYSmZjVTlMemNSN0NMVENuVWxRSzVIRnZudzdp?=
- =?utf-8?B?WG5yd3ZMa055SHRXcTgyeDZtUUMzR0NKN3dlN1JwSXhTYnlybmpUaVVRZ2Rn?=
- =?utf-8?B?ZEFJbFF3UmVRcjdWOFoxelI2VlpBYUluRTJheUFhb0xFbVd4MlQvcXZYZXZa?=
- =?utf-8?B?T3NGdGdDRkVObElsN1FMUVZkTElCbVR1OHEzcklNd3VwRUtvYWRLK1hTays3?=
- =?utf-8?B?bnAvZTQ1S3NhRXdpUlhsWVBqMm5NTDVlMlRiQ2I0aVFRRHF3NnlJaGsrWTRw?=
- =?utf-8?B?bTlwVW1iR0NSVmJhdjREaHZ0SmVBbVNaR3lzVVJxclZaT0xTOUovbE8xY05u?=
- =?utf-8?B?cmRvTnRHUERvbTFiWEgyZTl1Vm9DMUZvNWR4L0c5dmxSWU9VTHRxeFk4T25C?=
- =?utf-8?B?MHhZZk4ydWJYaFdFdkU0TTV6RDFvelBGYjVNbnVlVEgycSt6QnVHWTV1Wld1?=
- =?utf-8?B?ZWt2Yk9xa2dqSTJXV0Z2ekNDY2JqdEg3OHlQcEhsenZmNWZuQldvaFd3TEw1?=
- =?utf-8?B?bk5HT1BPckwwMGlLZHNhb2RqTGlJRXdNS0NuWkdQZ3NXMk13OGd3MXdjeHVi?=
- =?utf-8?B?Zk16K01BZW1BczRqNDJZTEJYclFKcUJCcW0vUmllTS9WeGdKUldaZ1NuSm9I?=
- =?utf-8?B?QWZYN1lBWmlSaFBtZmJpVGo0ZmdVYXNteUlsS2FSWEMxWk51SDBVTFNMUjRQ?=
- =?utf-8?B?OC9NRXVCVlg5UzArRlFPNG85ejNSOFVzQkduTWM4b3c0NzRoMHlJTk9Oa3ds?=
- =?utf-8?B?WGpPRmY0Rm13NUVvSEFKanZET1pMcVcvYnBmK2ZqRE1TeDZIWHVXRDMvbGp2?=
- =?utf-8?B?RnhKWVcrZTdVc2w3RmdpcTJFU2NVcUJBRFRaczNpMzYxN3A2OS9YTFFLMmNx?=
- =?utf-8?B?amo4aW1HeGQ4WTNGdjdTSUdoMU90WFFBOGxKNXNxdWxZQ1czN2JKbVVLRFY1?=
- =?utf-8?B?YjFyK2tDcWMxVEc5VU5xbkNpNEpEeExSdzRybXN1SHZEa01VRVFTVysycllw?=
- =?utf-8?B?Sm9hQTZncG4vNG5IQ2RmSTJ5ckhQSkk2b3BTTFRhK2VWKzZCNGRheGJRZkla?=
- =?utf-8?B?T2xhYVpCNCtjRXNEMTc3R1VBUTZpbkJYamFsK3p2VzJkRFNwbHJjUWRETWNw?=
- =?utf-8?B?Nlo0ZFF5aUVQK0RnZ24xRHREQVAyMFBKMFVFUWNIYVZOUmNKRFRTU3BuVUlU?=
- =?utf-8?B?OUhHak9vYzVCQzhlT29kaXA5cytDVVhhUVBQOWROaW80WXBvUEZVeHRpRk9J?=
- =?utf-8?B?eDRITDQ2Um5HVVcxNVNCSndSMjRESDlYV3l0RjA5MVQ0ZTR6d0ZwMldCT0tP?=
- =?utf-8?B?ZHc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9c53cfeb-5aab-4c7d-2416-08dd7b740c4d
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB5549.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Apr 2025 16:47:31.3251
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6SPOvsIJjq0KAtqhRKqcqpiqSGKkdNrdRa+DZKkI8GJqaQ3RmfNZDVu0Ndd9O+9gOM7iM6A8x3nL1Yytt1IF3A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB8657
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+The Analog Devices Inc. AD983X chips will benefit from a detailed
+driver documentation.
 
-On 14/04/2025 13:07, Andy Shevchenko wrote:
-> On Sun, Mar 30, 2025 at 02:15:50PM +0300, Avizrat, Yaron wrote:
->> On 26/03/2025 11:55, Jani Nikula wrote:
->>> On Wed, 26 Mar 2025, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
->>>> +Cc: Jani (sorry, forgot to add you in the first place).
->>>>
->>>> Do you think it's applicable now?
->>> Cc: Yaron, Koby, and Konstantin who are supposed to be the new
->>> maintainers for accel/habanalabs.
->>>
->>>
->>> BR,
->>> Jani.
->> Thanks for the help, We’ll verify this change in our CI/CD pipeline and update you ASAP.
-> What's news, please?
+This documents the current features supported by the driver.
 
-Hi Andy,
+Suggested-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Signed-off-by: Siddharth Menon <simeddon@gmail.com>
+---
+ Documentation/iio/ad9832.rst | 119 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 119 insertions(+)
+ create mode 100644 Documentation/iio/ad9832.rst
 
-Recently acked and merged into our repo. Will also push upstream later on.
-Appreciate the relevant contribution!
-
-
-Regards,
-Yaron
-
+diff --git a/Documentation/iio/ad9832.rst b/Documentation/iio/ad9832.rst
+new file mode 100644
+index 000000000000..a3a58569ff89
+--- /dev/null
++++ b/Documentation/iio/ad9832.rst
+@@ -0,0 +1,119 @@
++.. SPDX-License-Identifier: GPL-2.0-only
++
++================
++AD9832 driver
++================
++
++Direct Digital Synthesizer driver for Analog Devices Inc. AD9832 and AD9835.
++
++Supported devices
++=================
++
++The following chips are supported by this driver:
++
++* `AD9832 <https://www.analog.com/AD9832>`_
++* `AD9835 <https://www.analog.com/AD9835>`_
++
++The AD9832 is a numerically controlled oscillator employing
++a phase accumulator, a sine look-up table, and a 10-bit digital-
++to-analog converter (DAC) integrated on a single CMOS chip.
++
++Supported features
++==================
++
++SPI wiring modes
++----------------
++
++The driver currently supports the following SPI wiring configuration:
++
++3-wire mode
++^^^^^^^^^^^
++
++In this mode, communication occurs via SCLK, SDATA, and FSYNC signals.
++
++.. code-block::
++
++    +-------------+         +-------------+
++    |       FSYNC |<--------| CS/GPIO     |
++    |             |         |             |
++    |    AD983X   |         |     HOST    |
++    |             |         |             |
++    |       SDATA |<--------| MOSI        |
++    |        SCLK |<--------| SCK         |
++    +-------------+         +-------------+
++
++
++Channel configuration
++---------------------
++
++The AD9832 features two frequency registers (FREQ0 and FREQ1) and
++four phase registers (PHASE0, PHASE1, PHASE2, and PHASE3).
++The selection of which of these registers is actively used to generate
++the output waveform can be controlled in two ways: via external pins or
++via internal control bits.
++
++* Pin Control: The ``FSELECT`` pin determines whether FREQ0 REG or FREQ1
++  REG is used.
++* The ``PSEL0`` and ``PSEL1`` pins select which of the four PHASE registers
++  is active.
++* These pins are sampled on the rising edge of the master clock (MCLK).
++* Bit Control: This is utilized by the driver for the selection of the
++  frequency and phase registers can be controlled using internal bits.
++* Bit D11 (within a control word) can select the FREQx REG, and Bits D9 and
++  D10 can select the PHASEx REG.
++
++The source of control, whether from the external pins or the internal bits,
++is determined by the SELSRC bit (Select Source bit, D12) within a control
++register.
++When SELSRC = 0, the pins are used for selection, which is the default state
++after the CLR (Clear) bit is set high. When SELSRC = 1,
++the internal bits are used for selection.
++
++Synchronization
++---------------
++
++The SYNC bit (D13) determines how the reading of the FSELECT, PSEL0, and
++PSEL1 pins (when SELSRC = 0) is synchronized with the master clock (MCLK):
++
++When SYNC = 1: The reading of the pins is synchronized with the rising edge
++of MCLK. This ensures the inputs are valid at the sampling instant, even if
++the setup and hold times are violated. This mode introduces a latency of 8
++MCLK cycles.
++When SYNC = 0: The sampling occurs asynchronously, and the latency is reduced
++to 6 MCLK cycles if the timing characteristics are met.
++
++The SYNC bit is particularly important in applications where the timing of
++register selection changes is critical or when interfacing with control systems
++that may not strictly adhere to the setup and hold time requirements.
++
++Power Supply
++------------
++
++The AD9832 supports separate power supply pins for the analog and digital
++sections via the ``AVDD`` and ``DVDD`` inputs. Both pins support voltage
++ranges from 2.97V to 5.5V (5V ±10% or 3.3V ±10%).
++
++Proper decoupling is critical: both AVDD and DVDD should be decoupled with
++0.1µF ceramic capacitors in parallel with 10µF tantalum capacitors to AGND
++and DGND respectively.
++
++The device also supports a low power sleep mode, reducing current
++consumption to 350µA maximum. When powered down using the power-down bit,
++power consumption is reduced to 5mW (5V) or 3mW (3V).
++
++Reference Voltage
++-----------------
++
++The AD9832 supports using either an internal 1.21V reference or an external
++reference voltage via the ``REFIN`` input.
++
++If ``refin-supply`` is present, then an external reference of 1.21V nominal is
++supplied to the REFIN pin. If not specified, the internal reference is used
++and is available at the ``REFOUT`` pin.
++
++The internal reference has an accuracy of 1.21V ±7% min/max across the full
++temperature range (-40°C to +85°C) with a typical temperature coefficient of
++100 ppm/°C. The REFOUT pin should be decoupled with a 10nF capacitor to AGND.
++
++For applications requiring reduced wake-up time at low power supplies and
++low temperatures, the use of an external reference is recommended.
+-- 
+2.49.0
 
 
