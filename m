@@ -1,289 +1,315 @@
-Return-Path: <linux-kernel+bounces-602557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8EE2A87C63
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:52:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 999FAA87C0E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:40:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A662188B093
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:52:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C51D0188BF7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF27D266590;
-	Mon, 14 Apr 2025 09:50:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 410CC263C97;
+	Mon, 14 Apr 2025 09:39:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dAPVMJDT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c+CVztRr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F509266568
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 09:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65DE61A83E8;
+	Mon, 14 Apr 2025 09:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744624226; cv=none; b=HpNO+5iz0I0HDFTVNa2vSDPW3SKi84cP1inXLWwGq5eMbvM8O1etTNfpne04C0dVSvLrv41pCxSmsSneAdXnsqvNJZiEN8b2thVTqY6NKEeTxI4icEapnnQ/MItiZAbyxVasJaodTJja61D8RscPzGS/PQkzZtwo2wcpZupBH/I=
+	t=1744623588; cv=none; b=uiKpCvw896D6X8Et1GRB30LfxrssTjIzYVkdW3xT7yrKJLj0KO4bDL46LuKENBNk8roL9pGh+lF+tHHUTEaer4UzwVAeGAVz6a4j/ocYBOQ9KENhXirkN/hpaTdwe17hPLDYS4/LDKQV30qZz2LVoULajqEKkecA/g/5yDrObRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744624226; c=relaxed/simple;
-	bh=v6xyr5sQzPhwnMiPig6iTdAKcLxvTau35Jqv1TFXB8U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sjBa691VO7qb1eq7q8LLOPi2EULcOEJU6oCPv356ZCzNOJjoCqHj6s2iTwbpuP7BvBXI92tRShX/EijvGhAhGLbeRdObqF2ElEiJWSgN9wmpssSdNWDVEXomrCki8RiA5UqxJ3RlABIn9l10C1uqrsFFlQJbG6kBWjsVg1SXPDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dAPVMJDT; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744624225; x=1776160225;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=v6xyr5sQzPhwnMiPig6iTdAKcLxvTau35Jqv1TFXB8U=;
-  b=dAPVMJDTKbu96oyoFO9+SS6AeT+ky6spzwo6lvYKtOwA/joJfmAfEXTG
-   5P57p16+ydigCdudJaCv2CIwIBjiMA91mneAeVOJsz6Cg0FMBtrqxkMfe
-   usJ3wDostx/48H8ZEFiMzHiW/P1yk7Zg9WKB7u4C/add0IZ+BQXfdmo5o
-   HzGMomPPh41zZ5yjchQPrqFstZsq3UwXDRVSvzIhmb2AbNrJjhsehDwLt
-   HbWOD2VaIOFJomtNLFKwFOGRez6zM8pQtVE96II79G8fDGk0ncH2EmPl8
-   S7buE9lWk+B9pMKygSzifi8c6EHjigFasjhKixupuO+ebwu2Yy7TDBYZu
-   A==;
-X-CSE-ConnectionGUID: GJbMiV7yRD2qDBMHPFbiKQ==
-X-CSE-MsgGUID: 1TrsQLJTQTWnGpoxm9pNzg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11402"; a="45222908"
-X-IronPort-AV: E=Sophos;i="6.15,212,1739865600"; 
-   d="scan'208";a="45222908"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 02:50:24 -0700
-X-CSE-ConnectionGUID: 7b6uc3grQC2YOP1O4UE/cw==
-X-CSE-MsgGUID: AdRWJqEtTFKQJbcKK4L2CQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,212,1739865600"; 
-   d="scan'208";a="152955117"
-Received: from sannilnx-dsk.jer.intel.com ([10.12.231.107])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 02:50:18 -0700
-From: Alexander Usyskin <alexander.usyskin@intel.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	Karthik Poosa <karthik.poosa@intel.com>
-Cc: Reuven Abliyev <reuven.abliyev@intel.com>,
-	Oren Weil <oren.jer.weil@intel.com>, linux-mtd@lists.infradead.org,
-	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	Abliyev@web.codeaurora.org,
-	Alexander Usyskin <alexander.usyskin@intel.com>
-Subject: [PATCH v8 12/12] drm/xe/nvm: add support for non-posted erase
-Date: Mon, 14 Apr 2025 12:38:03 +0300
-Message-ID: <20250414093803.2133463-13-alexander.usyskin@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250414093803.2133463-1-alexander.usyskin@intel.com>
-References: <20250414093803.2133463-1-alexander.usyskin@intel.com>
+	s=arc-20240116; t=1744623588; c=relaxed/simple;
+	bh=Q6Id2DVIQ7WpykunC2Xl8NGlRgFxTtQAEK5zrDFV/ds=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vzmz3QTtyGBB1pnefpPwHwiil765GRYQoaBWiHqVnKRxGQqyl1iwW0VRWg2GcXkcJfmRt0HV4AKMand+4Va7cQ1Dmjuv2KEIY6MXYXqX1hIcX2Gfy3L0/LMPxn0l/DXx3ZOVHcx1Bdto919RfKO7cdRVxQyC0BJZ81bXoQy1kdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c+CVztRr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C8DAC4CEE2;
+	Mon, 14 Apr 2025 09:39:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744623587;
+	bh=Q6Id2DVIQ7WpykunC2Xl8NGlRgFxTtQAEK5zrDFV/ds=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c+CVztRrQnagwjDinqiMcWRFOAHLL6VxKCU8uuwqNDAIIkZoyFiz74af9erCrBBvZ
+	 lRNGVA//ZDhlzE4PkimCN9wrOJp/qsYxbfhdNjEljlcmc8t8BXLavpGQs4ZxKWUQTq
+	 v/sGSW5e5eC568e6EWMtIcxdn5MDyOuGeZCHEt3H9nM8KgxCsTL7/2+carytFFA287
+	 UKkVwegZyCoYDdioS0lB8NtS1E60hSScuDpMxF7ntdYe6QljY6ikF5kZHppQBD9Kkb
+	 3DARM5Z+5gs7r9+FZynlgbwsAOOPzDNLVttK2P0dzCNh8WH/mZn66nEHzV2Wyn5lM0
+	 kqu1Tg60Jcjdg==
+Date: Mon, 14 Apr 2025 11:39:39 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Danilo Krummrich <dakr@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	linux-pm@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+	rust-for-linux@vger.kernel.org,
+	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+	Erik Schilling <erik.schilling@linaro.org>,
+	Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>,
+	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
+	Yury Norov <yury.norov@gmail.com>, Burak Emir <bqe@google.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V9 15/17] rust: cpufreq: Extend abstractions for driver
+ registration
+Message-ID: <Z_zX22N9cFmVpC_5@pollux>
+References: <cover.1744366571.git.viresh.kumar@linaro.org>
+ <2f7a1331ad513b94fb47c05bf1d0f5c3fa803858.1744366572.git.viresh.kumar@linaro.org>
+ <Z_kD5G3WhcYlgqmr@cassiopeiae>
+ <20250414084706.rjsdaoxmug4p4e7l@vireshk-i7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250414084706.rjsdaoxmug4p4e7l@vireshk-i7>
 
-From: "Abliyev, Reuven" <reuven.abliyev@intel.com>
+On Mon, Apr 14, 2025 at 02:17:06PM +0530, Viresh Kumar wrote:
+> On 11-04-25, 13:58, Danilo Krummrich wrote:
+> > On Fri, Apr 11, 2025 at 04:25:14PM +0530, Viresh Kumar wrote:
+> 
+> > If no, it seems to me that you can even avoid allocating a struct cpufreq_driver
+> > dynamically and make it const instead.
+> 
+> I am not sure if I understood your suggestion. The Registration::new()
+> method still updates the instance of cpufreq_driver before passing it
+> to the C cpufreq core.
 
-Erase command is slow on discrete graphics storage
-and may overshot PCI completion timeout.
-BMG introduces the ability to have non-posted erase.
-Add driver support for non-posted erase with polling
-for erase completion.
+See comment in the diff below.
 
-Signed-off-by: Abliyev, Reuven <reuven.abliyev@intel.com>
-Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
----
- drivers/gpu/drm/xe/xe_nvm.c        | 25 +++++++++++++++++
- drivers/mtd/devices/mtd_intel_dg.c | 43 ++++++++++++++++++++++++++++--
- include/linux/intel_dg_nvm_aux.h   |  2 ++
- 3 files changed, 68 insertions(+), 2 deletions(-)
+> diff --git a/rust/kernel/cpufreq.rs b/rust/kernel/cpufreq.rs
+> index 4194b9558413..9b275d4d3eb6 100644
+> --- a/rust/kernel/cpufreq.rs
+> +++ b/rust/kernel/cpufreq.rs
+> @@ -685,13 +685,14 @@ fn drop(&mut self) {
+>  /// Reference: <https://docs.kernel.org/cpu-freq/cpu-drivers.html>
+>  #[vtable]
+>  pub trait Driver {
+> -    /// Driver specific data.
+> -    ///
+> -    /// Corresponds to the data retrieved via the kernel's `cpufreq_get_driver_data` function.
+> -    ///
+> -    /// Require `Data` to implement `ForeignOwnable`. We guarantee to never move the underlying
+> -    /// wrapped data structure.
+> -    type Data: ForeignOwnable;
+> +    /// Driver's name.
+> +    const NAME: &'static CStr;
+> +
+> +    /// Driver's flags.
+> +    const FLAGS: u16;
+> +
+> +    /// Boost support.
+> +    const BOOST_ENABLED: bool;
+>  
+>      /// Policy specific data.
+>      ///
+> @@ -804,8 +805,8 @@ fn register_em(_policy: &mut Policy) {
+>  ///
+>  /// ```
+>  /// use kernel::{
+> -///     c_str,
+>  ///     cpu, cpufreq,
+> +///     c_str,
+>  ///     device::Device,
+>  ///     macros::vtable,
+>  ///     sync::Arc,
+> @@ -817,7 +818,10 @@ fn register_em(_policy: &mut Policy) {
+>  ///
+>  /// #[vtable]
+>  /// impl cpufreq::Driver for FooDriver {
+> -///     type Data = ();
+> +///     const NAME: &'static CStr = c_str!("cpufreq-foo");
+> +///     const FLAGS: u16 = cpufreq::flags::NEED_INITIAL_FREQ_CHECK | cpufreq::flags::IS_COOLING_DEV;
+> +///     const BOOST_ENABLED: bool = true;
+> +///
+>  ///     type PData = Arc<FooDevice>;
+>  ///
+>  ///     fn init(policy: &mut cpufreq::Policy) -> Result<Self::PData> {
+> @@ -848,13 +852,7 @@ fn register_em(_policy: &mut Policy) {
+>  /// }
+>  ///
+>  /// fn foo_probe(dev: &Device) {
+> -///     cpufreq::Registration::<FooDriver>::new_foreign_owned(
+> -///         dev,
+> -///         c_str!("cpufreq-foo"),
+> -///         (),
+> -///         cpufreq::flags::NEED_INITIAL_FREQ_CHECK | cpufreq::flags::IS_COOLING_DEV,
+> -///         true,
+> -///     ).unwrap();
+> +///     cpufreq::Registration::<FooDriver>::new_foreign_owned(dev).unwrap();
+>  /// }
+>  /// ```
+>  pub struct Registration<T: Driver> {
 
-diff --git a/drivers/gpu/drm/xe/xe_nvm.c b/drivers/gpu/drm/xe/xe_nvm.c
-index 8aec20bc629a..dd91f2e37661 100644
---- a/drivers/gpu/drm/xe/xe_nvm.c
-+++ b/drivers/gpu/drm/xe/xe_nvm.c
-@@ -14,7 +14,15 @@
- #include "xe_sriov.h"
- 
- #define GEN12_GUNIT_NVM_BASE 0x00102040
-+#define GEN12_DEBUG_NVM_BASE 0x00101018
-+
-+#define GEN12_CNTL_PROTECTED_NVM_REG 0x0010100C
-+
- #define GEN12_GUNIT_NVM_SIZE 0x80
-+#define GEN12_DEBUG_NVM_SIZE 0x4
-+
-+#define NVM_NON_POSTED_ERASE_CHICKEN_BIT BIT(13)
-+
- #define HECI_FW_STATUS_2_NVM_ACCESS_MODE BIT(3)
- 
- static const struct intel_dg_nvm_region regions[INTEL_DG_NVM_REGIONS] = {
-@@ -28,6 +36,16 @@ static void xe_nvm_release_dev(struct device *dev)
- {
- }
- 
-+static bool xe_nvm_non_posted_erase(struct xe_device *xe)
-+{
-+	struct xe_gt *gt = xe_root_mmio_gt(xe);
-+
-+	if (xe->info.platform != XE_BATTLEMAGE)
-+		return false;
-+	return !(xe_mmio_read32(&gt->mmio, XE_REG(GEN12_CNTL_PROTECTED_NVM_REG)) &
-+		 NVM_NON_POSTED_ERASE_CHICKEN_BIT);
-+}
-+
- static bool xe_nvm_writable_override(struct xe_device *xe)
- {
- 	struct xe_gt *gt = xe_root_mmio_gt(xe);
-@@ -85,6 +103,7 @@ void xe_nvm_init(struct xe_device *xe)
- 	nvm = xe->nvm;
- 
- 	nvm->writable_override = xe_nvm_writable_override(xe);
-+	nvm->non_posted_erase = xe_nvm_non_posted_erase(xe);
- 	nvm->bar.parent = &pdev->resource[0];
- 	nvm->bar.start = GEN12_GUNIT_NVM_BASE + pdev->resource[0].start;
- 	nvm->bar.end = nvm->bar.start + GEN12_GUNIT_NVM_SIZE - 1;
-@@ -92,6 +111,12 @@ void xe_nvm_init(struct xe_device *xe)
- 	nvm->bar.desc = IORES_DESC_NONE;
- 	nvm->regions = regions;
- 
-+	nvm->bar2.parent = &pdev->resource[0];
-+	nvm->bar2.start = GEN12_DEBUG_NVM_BASE + pdev->resource[0].start;
-+	nvm->bar2.end = nvm->bar2.start + GEN12_DEBUG_NVM_SIZE - 1;
-+	nvm->bar2.flags = IORESOURCE_MEM;
-+	nvm->bar2.desc = IORES_DESC_NONE;
-+
- 	aux_dev = &nvm->aux_dev;
- 
- 	aux_dev->name = "nvm";
-diff --git a/drivers/mtd/devices/mtd_intel_dg.c b/drivers/mtd/devices/mtd_intel_dg.c
-index 9f4bb15a03b8..c898107a588f 100644
---- a/drivers/mtd/devices/mtd_intel_dg.c
-+++ b/drivers/mtd/devices/mtd_intel_dg.c
-@@ -28,6 +28,9 @@ struct intel_dg_nvm {
- 	struct mtd_info mtd;
- 	struct mutex lock; /* region access lock */
- 	void __iomem *base;
-+	void __iomem *base2;
-+	bool non_posted_erase;
-+
- 	size_t size;
- 	unsigned int nregions;
- 	struct {
-@@ -44,6 +47,7 @@ struct intel_dg_nvm {
- #define NVM_VALSIG_REG        0x00000010
- #define NVM_ADDRESS_REG       0x00000040
- #define NVM_REGION_ID_REG     0x00000044
-+#define NVM_DEBUG_REG         0x00000000
- /*
-  * [15:0]-Erase size = 0x0010 4K 0x0080 32K 0x0100 64K
-  * [23:16]-Reserved
-@@ -75,6 +79,9 @@ struct intel_dg_nvm {
- #define NVM_FREG_ADDR_SHIFT 12
- #define NVM_FREG_MIN_REGION_SIZE 0xFFF
- 
-+#define NVM_NON_POSTED_ERASE_DONE BIT(23)
-+#define NVM_NON_POSTED_ERASE_DONE_ITER 3000
-+
- static inline void idg_nvm_set_region_id(struct intel_dg_nvm *nvm, u8 region)
- {
- 	iowrite32((u32)region, nvm->base + NVM_REGION_ID_REG);
-@@ -370,11 +377,30 @@ idg_erase(struct intel_dg_nvm *nvm, u8 region, loff_t from, u64 len, u64 *fail_a
- {
- 	u64 i;
- 	const u32 block = 0x10;
-+	u32 reg;
-+	u32 iter = 0;
- 	void __iomem *base = nvm->base;
-+	void __iomem *base2 = nvm->base2;
- 
- 	for (i = 0; i < len; i += SZ_4K) {
- 		iowrite32(from + i, base + NVM_ADDRESS_REG);
- 		iowrite32(region << 24 | block, base + NVM_ERASE_REG);
-+		if (nvm->non_posted_erase) {
-+			/* Wait for Erase Done */
-+			reg = ioread32(base2 + NVM_DEBUG_REG);
-+			while (!(reg & NVM_NON_POSTED_ERASE_DONE) &&
-+				++iter < NVM_NON_POSTED_ERASE_DONE_ITER) {
-+				msleep(10);
-+				reg = ioread32(base2 + NVM_DEBUG_REG);
-+			}
-+			if (reg & NVM_NON_POSTED_ERASE_DONE) {
-+				/* Clear Erase Done */
-+				iowrite32(reg, base2 + NVM_DEBUG_REG);
-+			} else {
-+				*fail_addr = from + i;
-+				return -ETIME;
-+			}
-+		}
- 		/* Since the writes are via sguint
- 		 * we cannot do back to back erases.
- 		 */
-@@ -383,7 +409,8 @@ idg_erase(struct intel_dg_nvm *nvm, u8 region, loff_t from, u64 len, u64 *fail_a
- 	return len;
- }
- 
--static int intel_dg_nvm_init(struct intel_dg_nvm *nvm, struct device *device)
-+static int intel_dg_nvm_init(struct intel_dg_nvm *nvm, struct device *device,
-+			     bool non_posted_erase)
- {
- 	int ret;
- 	unsigned int i, n;
-@@ -443,7 +470,10 @@ static int intel_dg_nvm_init(struct intel_dg_nvm *nvm, struct device *device)
- 			n++;
- 	}
- 
-+	nvm->non_posted_erase = non_posted_erase;
-+
- 	dev_dbg(device, "Registered %d regions\n", n);
-+	dev_dbg(device, "Non posted erase %d\n", nvm->non_posted_erase);
- 
- 	/* Need to add 1 to the amount of memory
- 	 * so it is reported as an even block
-@@ -778,7 +808,16 @@ static int intel_dg_mtd_probe(struct auxiliary_device *aux_dev,
- 		goto err;
- 	}
- 
--	ret = intel_dg_nvm_init(nvm, device);
-+	if (invm->non_posted_erase) {
-+		nvm->base2 = devm_ioremap_resource(device, &invm->bar2);
-+		if (IS_ERR(nvm->base2)) {
-+			dev_err(device, "base2 mmio not mapped\n");
-+			ret = PTR_ERR(nvm->base2);
-+			goto err;
-+		}
-+	}
-+
-+	ret = intel_dg_nvm_init(nvm, device, invm->non_posted_erase);
- 	if (ret < 0) {
- 		dev_err(device, "cannot initialize nvm %d\n", ret);
- 		goto err;
-diff --git a/include/linux/intel_dg_nvm_aux.h b/include/linux/intel_dg_nvm_aux.h
-index 68df634c994c..bee25dfc6982 100644
---- a/include/linux/intel_dg_nvm_aux.h
-+++ b/include/linux/intel_dg_nvm_aux.h
-@@ -17,7 +17,9 @@ struct intel_dg_nvm_region {
- struct intel_dg_nvm_dev {
- 	struct auxiliary_device aux_dev;
- 	bool writable_override;
-+	bool non_posted_erase;
- 	struct resource bar;
-+	struct resource bar2;
- 	const struct intel_dg_nvm_region *regions;
- };
- 
--- 
-2.43.0
+You could define Registration<T: Driver> as
 
+	pub struct Registration<T: Driver>(
+	   NonNull<bindings::cpufreq_driver>,
+	   PhantomData<T>
+	);
+
+and subsequently...
+
+> @@ -868,13 +866,12 @@ unsafe impl<T: Driver> Sync for Registration<T> {}
+>  
+>  #[allow(clippy::non_send_fields_in_send_ty)]
+>  // SAFETY: Registration with and unregistration from the cpufreq subsystem can happen from any
+> -// thread.  Additionally, `T::Data` (which is dropped during unregistration) is `Send`, so it is
+> -// okay to move `Registration` to different threads.
+> +// thread.
+>  unsafe impl<T: Driver> Send for Registration<T> {}
+>  
+>  impl<T: Driver> Registration<T> {
+
+...add a new const of type bindings::cpufreq_driver, i.e.
+
+	const VTABLE: bindings::cpufreq_driver = bindings::cpufreq_driver {
+	   name: Self::copy_name(T::NAME),
+	   boost_enabled: T::BOOST_ENABLED,
+	   flags: T::FLAGS,
+	   [...]
+	}
+
+	const fn copy_name(name: &'static CStr) -> [kernel::ffi::c_char; CPUFREQ_NAME_LEN] {
+	   let src name.as_bytes_with_nul();
+	   let mut dst = [0; CPUFREQ_NAME_LEN];
+	   build_assert!(name.len() <= dst.len());
+
+	   let mut i = 0;
+	   while i < dst.len() {
+	      dst[i] = src[i];
+	      i += 1;
+	   }
+
+	   dst
+	}
+
+You should then be able to store a pointer of Self::VTABLE in your Registration
+and and hence avoid dynamic allocation of struct cpufreq_driver.
+
+>      /// Registers a CPU frequency driver with the cpufreq core.
+> -    pub fn new(name: &'static CStr, data: T::Data, flags: u16, boost: bool) -> Result<Self> {
+> +    pub fn new() -> Result<Self> {
+>          // Required due to Rust 1.82's stricter handling of `unsafe` in mutable statics. The
+>          // `unsafe` blocks aren't required anymore with later versions.
+>          #![allow(unused_unsafe)]
+> @@ -886,18 +883,18 @@ pub fn new(name: &'static CStr, data: T::Data, flags: u16, boost: bool) -> Resul
+>          let drv_ref = drv.get_mut();
+>  
+>          // Account for the trailing null byte.
+> -        let len = name.len() + 1;
+> +        let len = T::NAME.len() + 1;
+>          if len > drv_ref.name.len() {
+>              return Err(EINVAL);
+>          };
+>  
+> -        // SAFETY: `name` is a valid `CStr`, and we are copying it to an array of equal or larger
+> -        // size.
+> -        let name = unsafe { &*(name.as_bytes_with_nul() as *const [u8]) };
+> +        // SAFETY: `T::NAME` is a valid `CStr`, and we are copying it to an array of equal or
+> +        // larger size.
+> +        let name = unsafe { &*(T::NAME.as_bytes_with_nul() as *const [u8]) };
+>          drv_ref.name[..len].copy_from_slice(name);
+>  
+> -        drv_ref.boost_enabled = boost;
+> -        drv_ref.flags = flags;
+> +        drv_ref.boost_enabled = T::BOOST_ENABLED;
+> +        drv_ref.flags = T::FLAGS;
+>  
+>          // Initialize mandatory callbacks.
+>          drv_ref.init = Some(Self::init_callback);
+> @@ -995,10 +992,6 @@ pub fn new(name: &'static CStr, data: T::Data, flags: u16, boost: bool) -> Resul
+>              None
+>          };
+>  
+> -        // Set driver data before registering the driver, as the cpufreq core calls few callbacks
+> -        // before `cpufreq_register_driver` returns.
+> -        Self::set_data(drv_ref, data)?;
+> -
+>          // SAFETY: It is safe to register the driver with the cpufreq core in the kernel C code.
+>          to_result(unsafe { bindings::cpufreq_register_driver(drv_ref) })?;
+>  
+> @@ -1012,53 +1005,10 @@ pub fn new(name: &'static CStr, data: T::Data, flags: u16, boost: bool) -> Resul
+>      ///
+>      /// Instead the [`Registration`] is owned by [`Devres`] and will be revoked / dropped, once the
+>      /// device is detached.
+> -    pub fn new_foreign_owned(
+> -        dev: &Device,
+> -        name: &'static CStr,
+> -        data: T::Data,
+> -        flags: u16,
+> -        boost: bool,
+> -    ) -> Result<()> {
+> -        Devres::new_foreign_owned(dev, Self::new(name, data, flags, boost)?, GFP_KERNEL)?;
+> +    pub fn new_foreign_owned(dev: &Device) -> Result<()> {
+> +        Devres::new_foreign_owned(dev, Self::new()?, GFP_KERNEL)?;
+>          Ok(())
+>      }
+> -
+> -    // Sets the `Data` for the CPU frequency driver.
+> -    fn set_data(drv: &mut bindings::cpufreq_driver, data: T::Data) -> Result<()> {
+> -        if drv.driver_data.is_null() {
+> -            // Transfer the ownership of the data to the C code.
+> -            drv.driver_data = <T::Data as ForeignOwnable>::into_foreign(data) as _;
+> -            Ok(())
+> -        } else {
+> -            Err(EBUSY)
+> -        }
+> -    }
+> -
+> -    /// Returns borrowed `Data` previously set for the CPU frequency driver.
+> -    pub fn data(&mut self) -> Option<<T::Data as ForeignOwnable>::Borrowed<'static>> {
+> -        let drv = self.drv.get_mut();
+> -
+> -        if drv.driver_data.is_null() {
+> -            None
+> -        } else {
+> -            // SAFETY: The data is earlier set by us from `set_data`.
+> -            Some(unsafe { <T::Data as ForeignOwnable>::borrow(drv.driver_data) })
+> -        }
+> -    }
+> -
+> -    // Clears and returns the `Data` for the CPU frequency driver.
+> -    fn clear_data(&mut self) -> Option<T::Data> {
+> -        let drv = self.drv.get_mut();
+> -
+> -        if drv.driver_data.is_null() {
+> -            None
+> -        } else {
+> -            // SAFETY: The data is earlier set by us from `set_data`.
+> -            let data = Some(unsafe { <T::Data as ForeignOwnable>::from_foreign(drv.driver_data) });
+> -            drv.driver_data = ptr::null_mut();
+> -            data
+> -        }
+> -    }
+>  }
+>  
+>  // CPU frequency driver callbacks.
+> @@ -1313,8 +1263,5 @@ fn drop(&mut self) {
+>  
+>          // SAFETY: The driver was earlier registered from `new`.
+>          unsafe { bindings::cpufreq_unregister_driver(drv) };
+> -
+> -        // Free data
+> -        drop(self.clear_data());
+>      }
+>  }
 
