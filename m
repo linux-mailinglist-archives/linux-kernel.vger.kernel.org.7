@@ -1,229 +1,117 @@
-Return-Path: <linux-kernel+bounces-603412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F1ACA8870F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:27:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F043A88605
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 798CD167FF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:27:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABF4116482F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:55:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90B052749E8;
-	Mon, 14 Apr 2025 15:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1A1AD21;
+	Mon, 14 Apr 2025 14:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="hB3sYpDw"
-Received: from mail-m15589.qiye.163.com (mail-m15589.qiye.163.com [101.71.155.89])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d/jyxRfv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A50A198E75;
-	Mon, 14 Apr 2025 15:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D23C2FD
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 14:52:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744644412; cv=none; b=VDB1z24vtXxefLVkzc8ZVyJ8xk/+kMBd3t6AYfS878Cot028UNP7z7+u072khp8VDnXA1XNSGsDcPP94w0aOP2LBCw19bSKrDGKL/kerAqmcXp5+IGQmmEvcGJOOnG8UEchdcy1DEq73PFLauUify0599O4QQvdZrEwR862oIus=
+	t=1744642330; cv=none; b=JouFpYYsYO1ez3lv/USk9TnFjhAVrIWxX23xV6HBMwhnDr+07z0T8+cHSktX0CjPDu3T/4jHBs+o2LqJI2eUgTuGwevY4NjZkJn3zyfRtibQNrRoCKB4ptDw9L60G7kGkHGFQ01pxoHBrPx0IsvCEs4rVQ6sJF/P2wVA4VSQoFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744644412; c=relaxed/simple;
-	bh=+k2l1oPXRm7F1DfejGWjHslWk7QK+/HNjvhHlbJ7DPk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=D8W95GegmDgJ/lXTf/34GNsbLinDZnLILTGJZ55zKGkwsPSX80BH2JIKYv+kMYm48rvUweEwgt15nyqAG9Iz+VXsJH3z/hTJUCri1ubKu5usQSS6FL1YmBLqFFzeU9Yif2XAkeGjnmKMf4PYllT5yD0Ik0C0ot6VDiG+wFHRxaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=hB3sYpDw; arc=none smtp.client-ip=101.71.155.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from localhost.localdomain (unknown [124.72.37.3])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 11d4dc644;
-	Mon, 14 Apr 2025 22:51:15 +0800 (GMT+08:00)
-From: Kever Yang <kever.yang@rock-chips.com>
-To: heiko@sntech.de
-Cc: andersson@kernel.org,
-	Kever Yang <kever.yang@rock-chips.com>,
-	Shawn Lin <Shawn.lin@rock-chips.com>,
-	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Finley Xiao <finley.xiao@rock-chips.com>,
-	Frank Wang <frank.wang@rock-chips.com>,
-	Rob Herring <robh@kernel.org>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-rockchip@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	Andy Yan <andy.yan@rock-chips.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v9 2/2] arm64: dts: rockchip: Add rk3576 pcie nodes
-Date: Mon, 14 Apr 2025 22:51:10 +0800
-Message-Id: <20250414145110.11275-3-kever.yang@rock-chips.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250414145110.11275-1-kever.yang@rock-chips.com>
-References: <20250414145110.11275-1-kever.yang@rock-chips.com>
+	s=arc-20240116; t=1744642330; c=relaxed/simple;
+	bh=EWYXK6utjGSeOg8p9KKcNQ8UUIiM6+pFjWHg83VZzLI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UP3SYlnSY8MC8EQak8YrLzM/SD3BU92uQS+HuYfRcAb9czJLwjvvOtKRtdnD9oNuArQDC65vQh4B9m2TDcDkEZxMC6RahASIN2xTewqwYDKSFu7c3fvVG7Uug8auXF5VTYLGr6WmbUKBaw8LXciCBnv5yEmdwca/iS3e9Ze+RoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d/jyxRfv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C356C4CEE2;
+	Mon, 14 Apr 2025 14:52:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744642329;
+	bh=EWYXK6utjGSeOg8p9KKcNQ8UUIiM6+pFjWHg83VZzLI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d/jyxRfv6Jlouc1xYJokyPIJpZYjp1k9a1moCqo2GJYS7ibupG5sztbcej1OLuiRy
+	 4qD6hxnUJysVAqJZ+wRBj/xl8cX9IkH74FJyQBAFfKEbC8WUmfxt2H0p0ggPV4MUIL
+	 A/UX0aoGRw/t7lade3HYf4HoXNo0G/M6VV1rJslBZNrByQYK8HIYplG6d7VzAb90DA
+	 TFPyzSX218fOy4tYkWHNM07CH8a6KHXYgrGmOJmdow7xJ39X1iZw8XviyeP5W5r29+
+	 GpTZEo5PQLY0TE3YuKlI41p/cKusLYyRv5ViQTv9Kylskq1Djx17Cl56QXnUWEcFtH
+	 M6+cbqJG7cUgw==
+Date: Mon, 14 Apr 2025 16:52:07 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Dmitry Baryshkov <lumag@kernel.org>
+Subject: Re: [PATCH v5 03/11] drm/connector: add CEC-related fields
+Message-ID: <20250414-augmented-origami-fulmar-acb97b@houat>
+References: <20250407-drm-hdmi-connector-cec-v5-0-04809b10d206@oss.qualcomm.com>
+ <20250407-drm-hdmi-connector-cec-v5-3-04809b10d206@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZHUxOVksYH09IGBodGU4YQ1YVFAkWGhdVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlKSU9VTElVSExVSFlXWRYaDxIVHRRZQVlPS0hVSktJT09PSFVKS0tVSk
-	JLS1kG
-X-HM-Tid: 0a9634c8780e03afkunm11d4dc644
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PDo6KDo5DDICKCIyFQsaEgwX
-	URwwChhVSlVKTE9PTU9JSUxNSE1OVTMWGhIXVRAeDR4JVQIaFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlKSU9VTElVSExVSFlXWQgBWUFNSkxNNwY+
-DKIM-Signature:a=rsa-sha256;
-	b=hB3sYpDwBdONwfyis3qy/ejybMjwYCXPzz3gyNkjKhDFeBr0+Z3BJJBDOzSHEQYUK9x3Z0kGfiU82Nb+fIDSfpRb99efLuW/EWYJxuc6s8RGRkwyehCxDEicpu6I4/UlmHTBHwMPe3fo48oxyagMFWPj3FVr/itVf/sGA6GMQoA=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=BMyW69xBujr16RW/ur+G/bEl35YV1xsgbxuCmqUJKOk=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pc6nu3m6jzhyff3u"
+Content-Disposition: inline
+In-Reply-To: <20250407-drm-hdmi-connector-cec-v5-3-04809b10d206@oss.qualcomm.com>
 
-rk3576 has two pcie controllers, both are pcie2x1 work with
-naneng-combphy.
 
-Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
-Tested-by: Shawn Lin <Shawn.lin@rock-chips.com>
----
+--pc6nu3m6jzhyff3u
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH v5 03/11] drm/connector: add CEC-related fields
+MIME-Version: 1.0
 
-Changes in v9:
-- rebase on 6.15-rc1
-- Add test tag
+Hi,
 
-Changes in v8: None
-Changes in v7:
-- re-order the properties.
+On Mon, Apr 07, 2025 at 06:11:00PM +0300, Dmitry Baryshkov wrote:
+> +/**
+> + * struct drm_connector_cec - DRM Connector CEC-related structure
+> + */
+> +struct drm_connector_cec {
+> +	/**
+> +	 * @mutex: protects all fields in this structure.
+> +	 */
+> +	struct mutex mutex;
+> +
+> +	/**
+> +	 * @funcs: CEC Control Functions
+> +	 */
+> +	const struct drm_connector_cec_funcs *funcs;
+> +
+> +	/**
+> +	 * @data: CEC implementation-specific data
+> +	 */
+> +	void *data;
 
-Changes in v6: None
-Changes in v5: None
-Changes in v4: None
-Changes in v3:
-- Update the subject
+Is there a reason we don't just skip that data? The only user I'm seeing
+so far are the helpers, and they only put the cec_adapter pointer in
+there.
 
-Changes in v2:
-- Update clock and reset names and sequence to pass DTB check
+Can't we pass the connector to CEC and make the adapter part of drm_connector_cec?
 
- arch/arm64/boot/dts/rockchip/rk3576.dtsi | 108 +++++++++++++++++++++++
- 1 file changed, 108 insertions(+)
+--pc6nu3m6jzhyff3u
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3576.dtsi b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-index ebb5fc8bb8b1..a6bfef82d50b 100644
---- a/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-@@ -1240,6 +1240,114 @@ qos_npu_m1ro: qos@27f22100 {
- 			reg = <0x0 0x27f22100 0x0 0x20>;
- 		};
- 
-+		pcie0: pcie@2a200000 {
-+			compatible = "rockchip,rk3576-pcie", "rockchip,rk3568-pcie";
-+			reg = <0x0 0x22000000 0x0 0x00400000>,
-+			      <0x0 0x2a200000 0x0 0x00010000>,
-+			      <0x0 0x20000000 0x0 0x00100000>;
-+			reg-names = "dbi", "apb", "config";
-+			bus-range = <0x0 0xf>;
-+			clocks = <&cru ACLK_PCIE0_MST>, <&cru ACLK_PCIE0_SLV>,
-+				 <&cru ACLK_PCIE0_DBI>, <&cru PCLK_PCIE0>,
-+				 <&cru CLK_PCIE0_AUX>;
-+			clock-names = "aclk_mst", "aclk_slv",
-+				      "aclk_dbi", "pclk",
-+				      "aux";
-+			device_type = "pci";
-+			interrupts = <GIC_SPI 281 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 282 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 279 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 280 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 278 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 283 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "sys", "pmc", "msg", "legacy", "err", "msi";
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 7>;
-+			interrupt-map = <0 0 0 1 &pcie0_intc 0>,
-+					<0 0 0 2 &pcie0_intc 1>,
-+					<0 0 0 3 &pcie0_intc 2>,
-+					<0 0 0 4 &pcie0_intc 3>;
-+			linux,pci-domain = <0>;
-+			max-link-speed = <2>;
-+			num-ib-windows = <8>;
-+			num-viewport = <8>;
-+			num-ob-windows = <2>;
-+			num-lanes = <1>;
-+			phys = <&combphy0_ps PHY_TYPE_PCIE>;
-+			phy-names = "pcie-phy";
-+			power-domains = <&power RK3576_PD_PHP>;
-+			ranges = <0x01000000 0x0 0x20100000 0x0 0x20100000 0x0 0x00100000
-+				  0x02000000 0x0 0x20200000 0x0 0x20200000 0x0 0x00e00000
-+				  0x03000000 0x9 0x00000000 0x9 0x00000000 0x0 0x80000000>;
-+			resets = <&cru SRST_PCIE0_POWER_UP>, <&cru SRST_P_PCIE0>;
-+			reset-names = "pwr", "pipe";
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			status = "disabled";
-+
-+			pcie0_intc: legacy-interrupt-controller {
-+				interrupt-controller;
-+				#address-cells = <0>;
-+				#interrupt-cells = <1>;
-+				interrupt-parent = <&gic>;
-+				interrupts = <GIC_SPI 280 IRQ_TYPE_EDGE_RISING>;
-+			};
-+		};
-+
-+		pcie1: pcie@2a210000 {
-+			compatible = "rockchip,rk3576-pcie", "rockchip,rk3568-pcie";
-+			reg = <0x0 0x22400000 0x0 0x00400000>,
-+			      <0x0 0x2a210000 0x0 0x00010000>,
-+			      <0x0 0x21000000 0x0 0x00100000>;
-+			reg-names = "dbi", "apb", "config";
-+			bus-range = <0x20 0x2f>;
-+			clocks = <&cru ACLK_PCIE1_MST>, <&cru ACLK_PCIE1_SLV>,
-+				 <&cru ACLK_PCIE1_DBI>, <&cru PCLK_PCIE1>,
-+				 <&cru CLK_PCIE1_AUX>;
-+			clock-names = "aclk_mst", "aclk_slv",
-+				      "aclk_dbi", "pclk",
-+				      "aux";
-+			device_type = "pci";
-+			interrupts = <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 264 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "sys", "pmc", "msg", "legacy", "err", "msi";
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 7>;
-+			interrupt-map = <0 0 0 1 &pcie1_intc 0>,
-+					<0 0 0 2 &pcie1_intc 1>,
-+					<0 0 0 3 &pcie1_intc 2>,
-+					<0 0 0 4 &pcie1_intc 3>;
-+			linux,pci-domain = <0>;
-+			max-link-speed = <2>;
-+			num-ib-windows = <8>;
-+			num-viewport = <8>;
-+			num-ob-windows = <2>;
-+			num-lanes = <1>;
-+			phys = <&combphy1_psu PHY_TYPE_PCIE>;
-+			phy-names = "pcie-phy";
-+			power-domains = <&power RK3576_PD_SUBPHP>;
-+			ranges = <0x01000000 0x0 0x21100000 0x0 0x21100000 0x0 0x00100000
-+				  0x02000000 0x0 0x21200000 0x0 0x21200000 0x0 0x00e00000
-+				  0x03000000 0x9 0x80000000 0x9 0x80000000 0x0 0x80000000>;
-+			resets = <&cru SRST_PCIE1_POWER_UP>, <&cru SRST_P_PCIE1>;
-+			reset-names = "pwr", "pipe";
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			status = "disabled";
-+
-+			pcie1_intc: legacy-interrupt-controller {
-+				interrupt-controller;
-+				#address-cells = <0>;
-+				#interrupt-cells = <1>;
-+				interrupt-parent = <&gic>;
-+				interrupts = <GIC_SPI 266 IRQ_TYPE_EDGE_RISING>;
-+			};
-+		};
-+
- 		gmac0: ethernet@2a220000 {
- 			compatible = "rockchip,rk3576-gmac", "snps,dwmac-4.20a";
- 			reg = <0x0 0x2a220000 0x0 0x10000>;
--- 
-2.25.1
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZ/0hFgAKCRDj7w1vZxhR
+xfO9AP4378jYjCW1nqnXF/1sSnm/il612oYqWtMMxU3TETGBFAD/UMRtM6qs/l2Z
+c8AeNXMCFUMqpaiXwg0vvadrAr/q9gY=
+=bCGT
+-----END PGP SIGNATURE-----
+
+--pc6nu3m6jzhyff3u--
 
