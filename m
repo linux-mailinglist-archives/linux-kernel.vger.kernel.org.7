@@ -1,108 +1,278 @@
-Return-Path: <linux-kernel+bounces-603180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 548C5A884AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:24:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2EC0A8849F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:23:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93E8419007BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:15:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 115511902B0E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:15:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAAA9291148;
-	Mon, 14 Apr 2025 13:49:54 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F20170A0B;
+	Mon, 14 Apr 2025 13:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f6iOU3ea"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F97252288
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 13:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E6A1805B;
+	Mon, 14 Apr 2025 13:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744638594; cv=none; b=eZ+/EgSReffkNLdyP1OIz+ZrwTINGBOsp+tA+JN5Pkz/+p9pYLaySk0ryGV9BTMWcbjgV/IcBIlzoXO4xynLnccYO/N8kgGXSmbwUQoL9TXlBWddFPGbhFUwBIrWrt9k3FV3vySHnMqmFIiaZuByjLoI0CUoHBWmkyHzNJdcHPA=
+	t=1744638744; cv=none; b=GyC6tHlYH5VynWJGxuNTte5hZDLb9sLw5FvWcsp6wuzN9IwDbO95jY0wyM/XNOOupvSmHtu+AeLLHlGIVjq8isbkoYuIwXNitnDz9IwrFUwzK9Ll2Bw+zl2a304eBxkSKnIMYP9Y8w+LIs/1PLMXX0PtdLnadnpTC7PTzJsUIDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744638594; c=relaxed/simple;
-	bh=zVAXMbiliQoKMwfqMTirGNwxtHFwB03efGSbTMkE0Y4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RwBmx7jO/4P0QDIt2XZ1bHbotlJSrLC44pK82JcyXYzQkTcxGZjm8/MlLH3MpImFbM12i1+FhjCeufeGScUunB9o/BziuxnV1eTqAxkOi72tpNd4kwGzHdpYAHnVyqOAQESrsBcUOAASyugP39skY14hLOgWzrHpN6+A7NndDlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A73B4C4CEE2;
-	Mon, 14 Apr 2025 13:49:52 +0000 (UTC)
-Date: Mon, 14 Apr 2025 14:49:50 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Ross Stutterheim <ross.stutterheim@garmin.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	ross.sweng@gmail.com, Mike Rapoport <rppt@kernel.org>,
-	Russell King <linux@armlinux.org.uk>
-Subject: Re: [PATCH] arm[64]/memremap: fix arch_memremap_can_ram_remap()
-Message-ID: <Z_0SfqQHsKs3S1cn@arm.com>
-References: <20250414133219.107455-1-ross.stutterheim@garmin.com>
+	s=arc-20240116; t=1744638744; c=relaxed/simple;
+	bh=2us9Yy1h7Rn5Y+xf7l2KgkWlECqJmgw3NVFKQasnIk8=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=s08674OFoxcVJJhCIk+v/fNArNBM7kqf58A6iGj+VMvydoiSddxb7rwHC8dgku5843pQktVEdnvQA/Gtu7VRG8QPbgoGe+AkZzlCNR7lAy3JmHQnSOOLbUuyTeuX0bK1qlB/prsqJ4om1UwsipNnZV3JMZZOKxWk+B48NRXDPW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f6iOU3ea; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744638743; x=1776174743;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=2us9Yy1h7Rn5Y+xf7l2KgkWlECqJmgw3NVFKQasnIk8=;
+  b=f6iOU3eaUyFJVW2ajIixo/jL3jSy4sm9pDMDgFOKLhWHT6+vbgzY8oPM
+   L6/o8hEaln8wyVS866Lca1kWqEtvx4u8lwxAr1FW5dPxZMgwdhwWX3KEy
+   YmlMFyCN7OfXbYDETkzjei3imkUze9YBK+MI2htB7KrzvT4Fbxo9nSrUZ
+   ui2Z5NiCBZq4IkUHf9RCM57b85Svx7YRMHXC9dU0tkytR+4V3iezj8H7N
+   U8lYj8MbZirXusmbcUH7FQvTiHJDor9Bf8T/Lf9pDckhilyWyJASPC/zR
+   Ltl1aLnyh363a/yBr6dZLp8IKHvWbSlrHjVxXh4ZiNJ6qV73b8jWV+Z/I
+   g==;
+X-CSE-ConnectionGUID: 6lQnJmF3TXa+EmJ/DOcv1g==
+X-CSE-MsgGUID: Cq3szEBIR0GOA1l93Th0EQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11403"; a="57475329"
+X-IronPort-AV: E=Sophos;i="6.15,212,1739865600"; 
+   d="scan'208";a="57475329"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 06:52:23 -0700
+X-CSE-ConnectionGUID: z84XrAOnQvaQbVfugPEkBg==
+X-CSE-MsgGUID: N/HG3ICZS8C987amuYcghQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,212,1739865600"; 
+   d="scan'208";a="134664588"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.8])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 06:52:19 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 14 Apr 2025 16:52:16 +0300 (EEST)
+To: =?ISO-8859-2?Q?Ond=F8ej_Jirman?= <megi@xff.cz>
+cc: Guenter Roeck <linux@roeck-us.net>, Bjorn Helgaas <bhelgaas@google.com>, 
+    linux-pci@vger.kernel.org, 
+    =?ISO-8859-2?Q?Micha=B3_Winiarski?= <michal.winiarski@intel.com>, 
+    Igor Mammedov <imammedo@redhat.com>, LKML <linux-kernel@vger.kernel.org>, 
+    Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH 24/25] PCI: Perform reset_resource() and build fail list
+ in sync
+In-Reply-To: <rndyvjlylykt7aj6czm5awh47ddi3j22zna45zfppq5iu4xdgd@tqvzfa524vd3>
+Message-ID: <d42d4239-ed64-a1ff-9d86-905460bfeb6c@linux.intel.com>
+References: <20241216175632.4175-25-ilpo.jarvinen@linux.intel.com> <01eb7d40-f5b5-4ec5-b390-a5c042c30aff@roeck-us.net> <75f74b48-edd8-7d1c-d303-1222d12e3812@linux.intel.com> <6612c4d2-2533-98ef-7c89-f61d80c3e3e2@linux.intel.com> <5eb8fd42-b288-4ecb-ae0e-177904cc0a14@roeck-us.net>
+ <c34c6dc2-5ab2-1a81-3ba4-b3bc2c016945@linux.intel.com> <nb4knp52jylojmj3jsvvgq2dsbn3srruxmkqfuto2k3hv3fnqs@6rkqgdved6gi> <9c9d5aed-ae10-f590-3e59-34234d4d8f7d@linux.intel.com> <tuhhms3jfcbgzzgmxt7ghvhp5zoh56ue2ikvge2kdhsudnpoon@elmy6yymd6bf>
+ <a822896a-de7d-697c-2240-2afa95b318f3@linux.intel.com> <rndyvjlylykt7aj6czm5awh47ddi3j22zna45zfppq5iu4xdgd@tqvzfa524vd3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250414133219.107455-1-ross.stutterheim@garmin.com>
+Content-Type: multipart/mixed; boundary="8323328-1273008509-1744638736=:10563"
 
-Please cc the maintainers and the original contributor of the commit you
-are fixing, otherwise the patch may not be noticed.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-On Mon, Apr 14, 2025 at 08:32:19AM -0500, Ross Stutterheim wrote:
-> commit 260364d112bc ("arm[64]/memremap: don't abuse pfn_valid() to ensure
-> presence of linear map") added the definition of
-> arch_memremap_can_ram_remap() for arm[64] specific filtering of what pages
-> can be used from the linear mapping. memblock_is_map_memory() was called
-> with the pfn of the address given to arch_memremap_can_ram_remap();
-> however, memblock_is_map_memory() expects to be given an address, not a
-> pfn.
-> 
-> This results in calls to memremap() returning a newly mapped area when
-> it should return an address in the existing linear mapping.
-> 
-> Fix this by removing the address to pfn translation and pass the
-> address directly.
-> 
-> Fixes: 260364d112bc ("arm[64]/memremap: don't abuse pfn_valid() to ensure presence of linear map")
-> Signed-off-by: Ross Stutterheim <ross.stutterheim@garmin.com>
-> ---
->  arch/arm/mm/ioremap.c   | 4 +---
->  arch/arm64/mm/ioremap.c | 4 +---
->  2 files changed, 2 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/arm/mm/ioremap.c b/arch/arm/mm/ioremap.c
-> index 748698e91a4b..27e64f782cb3 100644
-> --- a/arch/arm/mm/ioremap.c
-> +++ b/arch/arm/mm/ioremap.c
-> @@ -515,7 +515,5 @@ void __init early_ioremap_init(void)
->  bool arch_memremap_can_ram_remap(resource_size_t offset, size_t size,
->  				 unsigned long flags)
->  {
-> -	unsigned long pfn = PHYS_PFN(offset);
-> -
-> -	return memblock_is_map_memory(pfn);
-> +	return memblock_is_map_memory(offset);
->  }
+--8323328-1273008509-1744638736=:10563
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-This indeed needs fixing.
+On Mon, 14 Apr 2025, Ond=C5=99ej Jirman wrote:
+> On Mon, Apr 14, 2025 at 04:15:01PM +0300, Ilpo J=C3=A4rvinen wrote:
+> > On Mon, 14 Apr 2025, Ond=C5=99ej Jirman wrote:
+> > > On Mon, Apr 14, 2025 at 12:52:15PM +0300, Ilpo J=C3=A4rvinen wrote:
+> > > > On Fri, 11 Apr 2025, Ond=C5=99ej Jirman wrote:
+> > > >=20
+> > > > > Hello Ilpo,
+> > > > >=20
+> > > > > On Tue, Apr 01, 2025 at 08:38:48PM +0300, Ilpo J=C3=A4rvinen wrot=
+e:
+> > > > > > That log wasn't taken from a bad case but it doesn't matter any=
+more as I=20
+> > > > > > could test this with qemu myself, thanks for providing enough t=
+o make it=20
+> > > > > > easy to reproduce & test it locally :-).
+> > > > > >=20
+> > > > > > The problem is caused by assign+release cycle being destructive=
+ on start=20
+> > > > > > aligned resources because successful assigment overwrites the s=
+tart field.=20
+> > > > > > I'll send a patch to fix the problem once I've given it a bit m=
+ore thought
+> > > > > > as this resource fitting code is somewhat complex.
+> > > > >=20
+> > > > > BTW, same thing here on a different SoC:
+> > > > >=20
+> > > > > https://lore.kernel.org/lkml/hrcsm2bo4ysqj2ggejndlou32cdc7yiknnm5=
+nrlcoz4d64wall@7te4dfqsoe3y/T/#u
+> > > > >=20
+> > > > > There are kernel logs there, too, although I don't have dynamic d=
+ebug enabled
+> > > > > in the kernel.
+> > > > >=20
+> > > > > Interestingly, bisect pointed me initially to a different commit.=
+ Reverting
+> > > > > it helped, but just on one board (QuartzPro64).
+> > > >=20
+> > > > Hi,
+> > > >=20
+> > > > Since you didn't mention it, I guess you haven't tried the fix:
+> > > >=20
+> > > > https://patchwork.kernel.org/project/linux-pci/patch/20250403093137=
+=2E1481-1-ilpo.jarvinen@linux.intel.com/
+> > >=20
+> > > This patch works. Thank you.
+> >=20
+> > Thanks for testing. If you feel confident enough, please send your=20
+> > Tested-by tag to its thread (not this one).
+> >=20
+> > > One difference compared to 6.14 that I'm noticing
+> > > in the kernel log is that "save config" sequences now are printed twi=
+ce for
+> > > unpopulated port. Not sure if it's related to your patches. Previousl=
+y it was
+> > > printed just once.
+> >=20
+> > I don't think it is related. The resource fitting/assignment changes=20
+> > should not impact PCI save/restore AFAIK (except by preventing device f=
+rom=20
+> > working in the first place if necessary resources do not get assigned).
+> >=20
+> > PCI state saving has always seemed like that in most logs I've seen wit=
+h=20
+> > dyndbg enabled, that is, the state is seemingly saved multiple times,=
+=20
+> > often right after the previous save too. So TBH, I'm not convinced it's=
+=20
+> > even something new. If you have backtraces to show those places that=20
+> > invoke pci_save_state() I can take a look but I don't expect much to=20
+> > come out of that.
+>=20
+> You're right. It's unrelated. The traces:
+>=20
+> [    1.878732]  show_stack+0x28/0x80 (C)
+> [    1.878751]  dump_stack_lvl+0x58/0x74
+> [    1.878762]  dump_stack+0x14/0x1c
+> [    1.878772]  pci_save_state+0x34/0x1e8
+> [    1.878783]  pcie_portdrv_probe+0x330/0x6a8
+> [    1.878794]  local_pci_probe+0x3c/0xa0
+> [    1.878804]  pci_device_probe+0xac/0x194
+> [    1.878813]  really_probe+0xbc/0x388
+> [    1.878825]  __driver_probe_device+0x78/0x144
+> [    1.878837]  driver_probe_device+0x38/0x110
+> [    1.878850]  __device_attach_driver+0xb0/0x150
+> [    1.878862]  bus_for_each_drv+0x6c/0xb0
+> [    1.878873]  __device_attach+0x98/0x1a0
+> [    1.878886]  device_attach+0x10/0x20
+> [    1.878897]  pci_bus_add_device+0x84/0x12c
+> [    1.878911]  pci_bus_add_devices+0x40/0x90
+> [    1.878924]  pci_host_probe+0x88/0xe4
+> [    1.878933]  dw_pcie_host_init+0x258/0x714
+> [    1.878945]  rockchip_pcie_probe+0x2f0/0x3f8
+> [    1.878956]  platform_probe+0x64/0xcc
+> [    1.878965]  really_probe+0xbc/0x388
+> [    1.878977]  __driver_probe_device+0x78/0x144
+> [    1.878989]  driver_probe_device+0x38/0x110
+> [    1.879001]  __device_attach_driver+0xb0/0x150
+> [    1.879014]  bus_for_each_drv+0x6c/0xb0
+> [    1.879025]  __device_attach+0x98/0x1a0
+> [    1.879037]  device_initial_probe+0x10/0x20
+> [    1.879049]  bus_probe_device+0xa8/0xb8
+> [    1.879061]  deferred_probe_work_func+0xa4/0xf0
+> [    1.879072]  process_one_work+0x13c/0x2bc
+> [    1.879084]  worker_thread+0x284/0x460
+> [    1.879094]  kthread+0xe4/0x1a0
+> [    1.879107]  ret_from_fork+0x10/0x20
+> [    1.879121] pcieport 0002:20:00.0: save config 0x00: 0x35881d87
+> [    1.879158] pcieport 0002:20:00.0: save config 0x04: 0x00100507
+> [    1.879168] pcieport 0002:20:00.0: save config 0x08: 0x06040001
+> [    1.879177] pcieport 0002:20:00.0: save config 0x0c: 0x00010000
+> [    1.879221] pcieport 0002:20:00.0: save config 0x10: 0x00000000
+> [    1.879232] pcieport 0002:20:00.0: save config 0x14: 0x00000000
+> [    1.879242] pcieport 0002:20:00.0: save config 0x18: 0x00212120
+> [    1.879251] pcieport 0002:20:00.0: save config 0x1c: 0x000000f0
+> [    1.879260] pcieport 0002:20:00.0: save config 0x20: 0x0000fff0
+> [    1.879270] pcieport 0002:20:00.0: save config 0x24: 0x0001fff1
+> [    1.879279] pcieport 0002:20:00.0: save config 0x28: 0x00000000
+> [    1.879289] pcieport 0002:20:00.0: save config 0x2c: 0x00000000
+> [    1.879298] pcieport 0002:20:00.0: save config 0x30: 0x00000000
+> [    1.879307] pcieport 0002:20:00.0: save config 0x34: 0x00000040
+> [    1.879316] pcieport 0002:20:00.0: save config 0x38: 0x00000000
+> [    1.879325] pcieport 0002:20:00.0: save config 0x3c: 0x00020194       =
+       =20
+> [    1.879376] pcieport 0002:20:00.0: vgaarb: pci_notify
+>=20
+> second time it's from:
+>=20
+> [    2.004478] Workqueue: pm pm_runtime_work
+> [    2.004488] Call trace:
+> [    2.004491]  show_stack+0x28/0x80 (C)
+> [    2.004500]  dump_stack_lvl+0x58/0x74
+> [    2.004506]  dump_stack+0x14/0x1c
+> [    2.004511]  pci_save_state+0x34/0x1e8
+> [    2.004516]  pci_pm_runtime_suspend+0xa8/0x1e0
+> [    2.004521]  __rpm_callback+0x3c/0x220
+> [    2.004527]  rpm_callback+0x6c/0x80
+> [    2.004532]  rpm_suspend+0xec/0x674
+> [    2.004537]  pm_runtime_work+0x104/0x114
+> [    2.004542]  process_one_work+0x13c/0x2bc
+> [    2.004548]  worker_thread+0x284/0x460
+> [    2.004552]  kthread+0xe4/0x1a0
+> [    2.004559]  ret_from_fork+0x10/0x20
+> [    2.004567] pcieport 0002:20:00.0: save config 0x00: 0x35881d87
+> [    2.004578] pcieport 0002:20:00.0: save config 0x04: 0x00100507
+> [    2.004583] pcieport 0002:20:00.0: save config 0x08: 0x06040001
+> [    2.004587] pcieport 0002:20:00.0: save config 0x0c: 0x00010000
+> [    2.004591] pcieport 0002:20:00.0: save config 0x10: 0x00000000
+> [    2.004596] pcieport 0002:20:00.0: save config 0x14: 0x00000000
+> [    2.004600] pcieport 0002:20:00.0: save config 0x18: 0x00212120
+> [    2.004604] pcieport 0002:20:00.0: save config 0x1c: 0x000000f0
+> [    2.004608] pcieport 0002:20:00.0: save config 0x20: 0x0000fff0
+> [    2.004613] pcieport 0002:20:00.0: save config 0x24: 0x0001fff1
+> [    2.004617] pcieport 0002:20:00.0: save config 0x28: 0x00000000
+> [    2.004621] pcieport 0002:20:00.0: save config 0x2c: 0x00000000
+> [    2.004625] pcieport 0002:20:00.0: save config 0x30: 0x00000000
+> [    2.004629] pcieport 0002:20:00.0: save config 0x34: 0x00000040
+> [    2.004633] pcieport 0002:20:00.0: save config 0x38: 0x00000000
+> [    2.004638] pcieport 0002:20:00.0: save config 0x3c: 0x00020194
+> [    2.004662] pcieport 0002:20:00.0: PME# enabled
+>=20
+> on 6.15-rc:
+>=20
+> cat /sys/class/pci_bus/0002:20/device/0002:20:00.0/power/runtime_status  =
+                                                                           =
+                                                                         OK
+> suspended
+>=20
+> on 6.14:
+>=20
+> cat /sys/class/pci_bus/0002:20/device/0002:20:00.0/power/runtime_status  =
+                                                                           =
+                                                                         OK
+> active
+>=20
+> So some other unrelated change in 6.15-rc just enabled RPM to suspend the=
+ unused
+> port.
 
-> diff --git a/arch/arm64/mm/ioremap.c b/arch/arm64/mm/ioremap.c
-> index 10e246f11271..48c38c986b95 100644
-> --- a/arch/arm64/mm/ioremap.c
-> +++ b/arch/arm64/mm/ioremap.c
-> @@ -51,7 +51,5 @@ void __init early_ioremap_init(void)
->  bool arch_memremap_can_ram_remap(resource_size_t offset, size_t size,
->  				 unsigned long flags)
->  {
-> -	unsigned long pfn = PHYS_PFN(offset);
-> -
-> -	return pfn_is_map_memory(pfn);
-> +	return pfn_is_map_memory(offset);
+Ah right, makes sense, now that you mention I recall D3 became allowed for=
+=20
+PCI bridge on non-x86 archs but I just couldn't make the connection in my=
+=20
+mind.
 
-This is already correct.
+--=20
+ i.
 
--- 
-Catalin
+--8323328-1273008509-1744638736=:10563--
 
