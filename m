@@ -1,240 +1,127 @@
-Return-Path: <linux-kernel+bounces-602454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93927A87B04
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:51:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 716CCA87B0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:52:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FA0A16B0E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:51:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A300D7A906F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:51:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDBE725A646;
-	Mon, 14 Apr 2025 08:51:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A2EE25A349
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 08:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C966625A63F;
+	Mon, 14 Apr 2025 08:52:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AW6qmC5I"
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E1BDF42;
+	Mon, 14 Apr 2025 08:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744620697; cv=none; b=X9L9yyYsmhZvn9j/q+flAadwRDe7mhcAHXo7qP8Tk+p0IVfwn5I+VSSiSnSadShnRI+eAZ/ry9Pv6XcQrZ5xLnMR1ewM5GkBhWrTpgq3zIoG4i1myTZLIOH0Ov4H0dZ6uGy+tR57NahHiMsbMHWCDaCMu2kMI/ffdw/sv2IM8kQ=
+	t=1744620752; cv=none; b=G++C6qUDOcsXqB+LT0fs6Y1MRaHilEgAR9QA7mZo9XdbpPZ6CwEfgx0sE6YVRmCJ95AESuRpexuJMewMqpT/Hv4KMUt+SbA4KerpqfDiSApwp/ZZ+eshgshIz5KxIr5mFDPmNFyICRjCYkb8cFNl5xegHC6f45Qnl/AaTSea+i4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744620697; c=relaxed/simple;
-	bh=qTBEdEvrXe4rP0P8azJ8A59y0FcmHycSAHTGl1pLiGA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BOBEIYX3/UPEZxHI/mv/iCeFSYihw3Vb+ULI1DqKWmjDQ4KqhWEu70HzptXHN87bznt5c0OACB76aVvB/1/jiUlmmhtqkE8mKcC5ziYvFhJc+NKZR/E/A6EDRb1V8K20wTJ/qOF9IDhvOrEpVB++X5onm/lnRdFLbUGqdYCSlvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8693A1007;
-	Mon, 14 Apr 2025 01:51:33 -0700 (PDT)
-Received: from [10.163.75.110] (unknown [10.163.75.110])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D2F5E3F66E;
-	Mon, 14 Apr 2025 01:51:30 -0700 (PDT)
-Message-ID: <a084d29e-8027-4d20-a1b4-584bdbbe111d@arm.com>
-Date: Mon, 14 Apr 2025 14:21:27 +0530
+	s=arc-20240116; t=1744620752; c=relaxed/simple;
+	bh=njlJ6wOPTfgXbiVOtvyAn8VB29ZgxhG14ZDHCkhqO1c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UXF6RVylfc12feN5NuMHwn82mQ+16mAKDSCyMVZm858QrcQs2zOx7rR4QU7yt26Uf4yphIhPaWpwMywANjm/XdVU2Vys/oGa8Bf9i3znHMx394i5/J/5EXdTX6HBgxuDmmp2SpwmhLido0Om88xCVlrEmPbBcQATXnubWjt9CCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AW6qmC5I; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-52413efd0d3so1707430e0c.2;
+        Mon, 14 Apr 2025 01:52:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744620749; x=1745225549; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RK1FjQCAv98Eay4SPuOitMP3sY6he/myS3klmD5dY54=;
+        b=AW6qmC5IPbxz4Os6/GQ7QlrGXje+Ynhqgf5gEeZhCfvhwfoY+s1JApLJKoX0agIs68
+         mFIiLXV+X3RrIiAm2ZWw3gaXrpgGXGZ0BMmu2QHjTHJfx6g8GFL+XNFczrnMeMQlDZ+E
+         teubzc4eUzcU26cwt4XPo75NGxdZ5PXX/ID+h+iv9mXt8PA2XIBiL3TxDlOzE1nqWnjo
+         5D1eZbkBJKwpwep9tCZEGCIefLCKCmOETbE23aPuC8qpMiKDoZr+VhrNnZRrtmnxDHSH
+         7ijwP0Zla/F1WxMl4KXYksd9cJeEsOvNfmxy3cmR0ok4fmYsaYZTPgciEC03F2XYmazv
+         Qoig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744620749; x=1745225549;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RK1FjQCAv98Eay4SPuOitMP3sY6he/myS3klmD5dY54=;
+        b=UZ0a60jdoRjP104cvqr1fYY+Zh4VJAEGCB2PgjqXmJzdAZKGBhfjPS6RM8ZsFUJ5cp
+         utyeaWrm/XJrakW8eKNKsxk2KSeMGUMgr1ApsWNV/4ln9+po7y0L9vm9JH0hADg+fjm+
+         /qH/ip2xtC5s7UQ3rRnbYwRCZ3v6OYwEQPTmNg53ePjFGWiDB6jlU2ZzJqa2RgY+G57X
+         1nfgvJUaEh9+Z4O5rzwhNrnXP4TzS1XRC8BTKNdfDxGsR1cV6OE521bjtbjn1jSLpKq3
+         shQQSA3+KGZ0gQjFDUhffQfKMUBOFcVapS6uqMGMZ8VDwBdbtjQb9tOiNjM8S8I2wGBM
+         WnJw==
+X-Forwarded-Encrypted: i=1; AJvYcCViPkdkEpqHoQRQhU1ru8YG0UHobQYTDrwIzS3x7wYv4FbBjprD0TZlKMehzxKRyhJ/+5Nkmv5y@vger.kernel.org, AJvYcCWGqQ7bWB965qkivPnNMl1hJQc4wTCEdHt8JQtv2U3JtjEGLtGJRyKetjZ8uxauogV1GuuLZxA6dFyg85L1@vger.kernel.org, AJvYcCXAC1ssdgWYd6UpdG3eAfiVcz/q7aJfB/3C2nx3BErNcIhGZpbUwGLPP8fv8didMrxl6Nxo9vlJ+OHa@vger.kernel.org, AJvYcCXkUgiZn4aU0KdtWRP1scEEjpkhNLMOy4VtQlJWeZta9mabVlRtJS543si52LvY1kGNVl7Lg2I9vdGJScWlCJLgyKs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOnGsHLfZLig6LCa0xDjKJMHtqj0bRtCF1quwzsv/H93cc0Mfc
+	xt7/yU6LzHMyrLBxMmTFl/Ame81zTL/BhXqjpowr2cKtTq5ca7Ha9rb2/a83lsSmijoCmH6nU5I
+	BrG8Q00cG5JmJQ9X6MzONdlEQL8o=
+X-Gm-Gg: ASbGnctjPh6TC4Xiu4WOWvudlsaUOgm8yaKYroliU9MNnDXPuIoRLxs8yor3qeHGdka
+	pzB4NT50QksGBWevm/gSOA5pp6exVQV8JbRQvS4kKSl9n7Ca5iyjMoetHlyBoXGFZoY2vUbQyC5
+	fMjUaUhc1Apoy4jaWfsQAxtA==
+X-Google-Smtp-Source: AGHT+IHDQYAJXdFj/iNG0npq557KpIZpBxXkLL2l+9hPwfBOs75fehWJLdCe6um+3vhYJFwWD4BbKD7nZni0VXc/gQE=
+X-Received: by 2002:a05:6122:319d:b0:527:67da:74ee with SMTP id
+ 71dfb90a1353d-527c34d1fd1mr7094050e0c.5.1744620749318; Mon, 14 Apr 2025
+ 01:52:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] mm/contpte: Optimize loop to reduce redundant
- operations
-To: Ryan Roberts <ryan.roberts@arm.com>, Lance Yang <ioworker0@gmail.com>,
- Xavier <xavier_qy@163.com>
-Cc: Barry Song <21cnbao@gmail.com>, catalin.marinas@arm.com, will@kernel.org,
- akpm@linux-foundation.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>,
- Matthew Wilcox <willy@infradead.org>, Zi Yan <ziy@nvidia.com>
-References: <20250407092243.2207837-1-xavier_qy@163.com>
- <CAGsJ_4wsW+urp6gbp+yDG40fZw9Bszny2iJVsV_AzzGqgQy+4g@mail.gmail.com>
- <7dccb3a2-f5e2-4f9e-8f5c-465a1d3ffdb6@arm.com>
- <CAK1f24=5-VVJoE75wrskXxrGi=KmrbxSYH9P69PRPiOxQuArpA@mail.gmail.com>
- <1613c84e-1e65-44cd-9f23-1c9870df4655@arm.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <1613c84e-1e65-44cd-9f23-1c9870df4655@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250407120317.127056-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250407104447.072449cd@kernel.org>
+In-Reply-To: <20250407104447.072449cd@kernel.org>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 14 Apr 2025 09:52:03 +0100
+X-Gm-Features: ATxdqUEHxcklYN6PVPbrfMER-iWYYX-JiIMzDYloXSJi2mPCrezqGIzibq2L6CY
+Message-ID: <CA+V-a8uqkG+u_ZXztPe7R0BNV6BA46KgGRHRW-G3axBt566pEQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v5 0/3] Add GBETH glue layer driver for Renesas
+ RZ/V2H(P) SoC
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Richard Cochran <richardcochran@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
+	Jose Abreu <joabreu@synopsys.com>, netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Jakub,
 
+On Mon, Apr 7, 2025 at 6:44=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wro=
+te:
+>
+> On Mon,  7 Apr 2025 13:03:14 +0100 Prabhakar wrote:
+> > This patch series adds support for the GBETH (Gigabit Ethernet) glue la=
+yer
+> > driver for the Renesas RZ/V2H(P) SoC. The GBETH IP is integrated with
+> > the Synopsys DesignWare MAC (version 5.20). The changes include updatin=
+g
+> > the device tree bindings, documenting the GBETH bindings, and adding th=
+e
+> > DWMAC glue layer for the Renesas GBETH.
+>
+> This was posted prior to the "net-next is OPEN" announcement:
+> https://lore.kernel.org/all/20250407055403.7a8f40df@kernel.org/
+>
+> In the interest of fairness towards those who correctly wait
+> for the tree to be open I will ask you to repost this again,
+> in a couple of days.
+>
+Are you ok for me to now respin this series?
 
-On 14/04/25 1:36 pm, Ryan Roberts wrote:
-> On 12/04/2025 06:05, Lance Yang wrote:
->> On Sat, Apr 12, 2025 at 1:30 AM Dev Jain <dev.jain@arm.com> wrote:
->>>
->>> +others
->>>
->>> On 11/04/25 2:55 am, Barry Song wrote:
->>>> On Mon, Apr 7, 2025 at 9:23 PM Xavier <xavier_qy@163.com> wrote:
->>>>>
->>>>> This commit optimizes the contpte_ptep_get function by adding early
->>>>>    termination logic. It checks if the dirty and young bits of orig_pte
->>>>>    are already set and skips redundant bit-setting operations during
->>>>>    the loop. This reduces unnecessary iterations and improves performance.
->>>>>
->>>>> Signed-off-by: Xavier <xavier_qy@163.com>
->>>>> ---
->>>>>    arch/arm64/mm/contpte.c | 13 +++++++++++--
->>>>>    1 file changed, 11 insertions(+), 2 deletions(-)
->>>>>
->>>>> diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
->>>>> index bcac4f55f9c1..ca15d8f52d14 100644
->>>>> --- a/arch/arm64/mm/contpte.c
->>>>> +++ b/arch/arm64/mm/contpte.c
->>>>> @@ -163,17 +163,26 @@ pte_t contpte_ptep_get(pte_t *ptep, pte_t orig_pte)
->>>>>
->>>>>           pte_t pte;
->>>>>           int i;
->>>>> +       bool dirty = false;
->>>>> +       bool young = false;
->>>>>
->>>>>           ptep = contpte_align_down(ptep);
->>>>>
->>>>>           for (i = 0; i < CONT_PTES; i++, ptep++) {
->>>>>                   pte = __ptep_get(ptep);
->>>>>
->>>>> -               if (pte_dirty(pte))
->>>>> +               if (!dirty && pte_dirty(pte)) {
->>>>> +                       dirty = true;
->>>>>                           orig_pte = pte_mkdirty(orig_pte);
->>>>> +               }
->>>>>
->>>>> -               if (pte_young(pte))
->>>>> +               if (!young && pte_young(pte)) {
->>>>> +                       young = true;
->>>>>                           orig_pte = pte_mkyoung(orig_pte);
->>>>> +               }
->>>>> +
->>>>> +               if (dirty && young)
->>>>> +                       break;
->>>>
->>>> This kind of optimization is always tricky. Dev previously tried a similar
->>>> approach to reduce the loop count, but it ended up causing performance
->>>> degradation:
->>>> https://lore.kernel.org/linux-mm/20240913091902.1160520-1-dev.jain@arm.com/
->>>>
->>>> So we may need actual data to validate this idea.
->>>
->>> The original v2 patch does not work, I changed it to the following:
->>>
->>> diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
->>> index bcac4f55f9c1..db0ad38601db 100644
->>> --- a/arch/arm64/mm/contpte.c
->>> +++ b/arch/arm64/mm/contpte.c
->>> @@ -152,6 +152,16 @@ void __contpte_try_unfold(struct mm_struct *mm,
->>> unsigned long addr,
->>>    }
->>>    EXPORT_SYMBOL_GPL(__contpte_try_unfold);
->>>
->>> +#define CHECK_CONTPTE_FLAG(start, ptep, orig_pte, flag) \
->>> +       int _start; \
->>> +       pte_t *_ptep = ptep; \
->>> +       for (_start = start; _start < CONT_PTES; _start++, ptep++) { \
->>> +               if (pte_##flag(__ptep_get(_ptep))) { \
->>> +                       orig_pte = pte_mk##flag(orig_pte); \
->>> +                       break; \
->>> +               } \
->>> +       }
->>> +
->>>    pte_t contpte_ptep_get(pte_t *ptep, pte_t orig_pte)
->>>    {
->>>           /*
->>> @@ -169,11 +179,17 @@ pte_t contpte_ptep_get(pte_t *ptep, pte_t orig_pte)
->>>           for (i = 0; i < CONT_PTES; i++, ptep++) {
->>>                   pte = __ptep_get(ptep);
->>>
->>> -               if (pte_dirty(pte))
->>> +               if (pte_dirty(pte)) {
->>>                           orig_pte = pte_mkdirty(orig_pte);
->>> +                       CHECK_CONTPTE_FLAG(i, ptep, orig_pte, young);
->>> +                       break;
->>> +               }
->>>
->>> -               if (pte_young(pte))
->>> +               if (pte_young(pte)) {
->>>                           orig_pte = pte_mkyoung(orig_pte);
->>> +                       CHECK_CONTPTE_FLAG(i, ptep, orig_pte, dirty);
->>> +                       break;
->>> +               }
->>>           }
->>>
->>>           return orig_pte;
->>>
->>> Some rudimentary testing with micromm reveals that this may be
->>> *slightly* faster. I cannot say for sure yet.
->>
->> Yep, this change works as expected, IIUC.
->>
->> However, I'm still wondering if the added complexity is worth it for
->> such a slight/negligible performance gain. That said, if we have
->> solid numbers/data to back it up, all doubts would disappear ;)
-> 
-> I agree with Barry; we need clear performance improvement numbers to consider
-> this type of optimization. I doubt there will be measurable improvement for 4K
-> and 64K base pages (because the the number of PTEs in a contpte block are 16 and
-> 32 respectively). But 16K base pages may benefit given there are 128 PTEs in a
-> contpte block for that case.
-> 
-> Also FWIW, I'm struggling to understand CHECK_CONTPTE_FLAG(); Perhaps something
-> like this would suffice?
-
-The idea of CHECK_CONTPTE_FLAG() is to check only for the other flag 
-until it's found; the diff below will still keep checking for both until 
-both are found.
-
-> 
-> ----8<----
-> diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
-> index 55107d27d3f8..7787b116b339 100644
-> --- a/arch/arm64/mm/contpte.c
-> +++ b/arch/arm64/mm/contpte.c
-> @@ -169,11 +169,17 @@ pte_t contpte_ptep_get(pte_t *ptep, pte_t orig_pte)
->          for (i = 0; i < CONT_PTES; i++, ptep++) {
->                  pte = __ptep_get(ptep);
-> 
-> -               if (pte_dirty(pte))
-> +               if (pte_dirty(pte)) {
->                          orig_pte = pte_mkdirty(orig_pte);
-> +                       if (pte_young(orig_pte))
-> +                               break;
-> +               }
-> 
-> -               if (pte_young(pte))
-> +               if (pte_young(pte)) {
->                          orig_pte = pte_mkyoung(orig_pte);
-> +                       if (pte_dirty(orig_pte))
-> +                               break;
-> +               }
->          }
-> 
->          return orig_pte;
-> ----8<----
-> 
-> Thanks,
-> Ryan
-> 
-> 
->>
->> Thanks,
->> Lance
->>
->>>
->>>>
->>>>>           }
->>>>>
->>>>>           return orig_pte;
->>>>> --
->>>>> 2.34.1
->>>>>
->>>>
->>>> Thanks
->>>> Barry
->>>>
->>>
-> 
-
+Cheers,
+Prabhakar
 
