@@ -1,103 +1,92 @@
-Return-Path: <linux-kernel+bounces-603315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91DE3A8861C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:00:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 520E5A885D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:54:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4675B19037E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:50:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86C09169778
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:50:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272DD27A917;
-	Mon, 14 Apr 2025 14:41:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5F3927EC89;
+	Mon, 14 Apr 2025 14:42:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fo2J8iIh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c0bPt/tu"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895282F42
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 14:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846DC2DFA2C
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 14:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744641688; cv=none; b=Tb9QKhWc97VylCakEZZwMSK2bRNeRq7bED2/tsm7uPTsg6fK5HL2wGbgsgUTsKjt6ZA7K48lu3BSNC/cz2AN4V/tyCIO8nKA54KrlnlL/Smi5DktSLtGnDzSAkbhTxC1qpYIQL2e4IIKcbo+fOf+GFVOzbFgXJV49jLaCdBaqHk=
+	t=1744641755; cv=none; b=PvRJRT9oMAcA7gdpzfuvz500sjiNbZMKV1bCn6ouCLJfyLrAve81TMlsPBRz+TsQW+LZmBCqiDNBezfS1L8ics3QnNvFVVFgmYcbnzWWMAs0W+xWWx4GslCLpBRUYnBh8j7sEw7S1tsy4c1dxqAxYdAxPQM9Ghp3bY9bUD0IPC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744641688; c=relaxed/simple;
-	bh=cWqnGKre/AJ+uBJDkw2xfSaRhLZK6lmGSm5x9aeHPGg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nfjQJlffs81FOiXUbqGP56AhreO4hs5TZzOQlN2Phjkc7hy+GMvrReJUZnw2OCqXUZxRupuYNIy1STJjt39UcDPHYpiU8EPMAam+nZaQyXJsQwPjdIizS47xL5SvRDZLlb3omQjmNkveVV/5R62L7LGxwdFdd1JpR8CpfI0skwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fo2J8iIh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D4EEC4CEE2;
-	Mon, 14 Apr 2025 14:41:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744641688;
-	bh=cWqnGKre/AJ+uBJDkw2xfSaRhLZK6lmGSm5x9aeHPGg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fo2J8iIhDDDjtlNmmfpOmEqeq5AOfb9f1YVPvFeU/qRn33XnWUVF4J80EMbMwLxcK
-	 99YdPtbWncuGBxy9ZEDesg6vf31ZeDt+g/Sc8XZOgBLBZDF+AM4mSYgmhdQKm2ZJd2
-	 XwFD/XqTNWdFG/COCZ15eRnWQoX+uyPD1AGBzHhXUhrq7I9iSGgXVqsHt8+YBtrerF
-	 e8MhB4IAcim92G8FggtQKdzNJbbP+Bqd7qz575vkIfMAsG2flaEFHESqwaB4Bps8uH
-	 GMHWnTUubhHpq1Z3k+zDcZwo2exqididE9rQ+C8c5ASaxyW8Bj0PtDsk/xunZFi3Wv
-	 SmQD6KVwCbIlw==
-Date: Mon, 14 Apr 2025 16:41:25 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Dmitry Baryshkov <lumag@kernel.org>
-Subject: Re: [PATCH v5 08/11] drm/vc4: hdmi: switch to generic CEC helpers
-Message-ID: <20250414-thundering-marmoset-of-promotion-c8e0dc@houat>
-References: <20250407-drm-hdmi-connector-cec-v5-0-04809b10d206@oss.qualcomm.com>
- <20250407-drm-hdmi-connector-cec-v5-8-04809b10d206@oss.qualcomm.com>
+	s=arc-20240116; t=1744641755; c=relaxed/simple;
+	bh=djtPIricfHsVI23PycDI/GBe8v9Mj3BQR5+LxJFEu9w=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Yy8Szjo28KoORXyfC4cpiwIluJy9vLuQ+/4d9gCFKugRkb8FJZaTBjxDQZj9/EAkJ27z0caSiiHurNPlnk3vRcN/owEBSkN/1oCqwaHzEvKf8CeMdPc5xQ9I16e4ttQSDfofzhm8ld+xgk7sDCavftahLcSnszYSbhMPpP9Eqa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c0bPt/tu; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5edc07c777eso5695219a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 07:42:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744641751; x=1745246551; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:reply-to:mime-version:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=djtPIricfHsVI23PycDI/GBe8v9Mj3BQR5+LxJFEu9w=;
+        b=c0bPt/tunPhJsfaqa/aUW3sL8+jcyay6fcQi4hWAyQtZ4s1e2iHcxJKN6EKWJE0d0Y
+         Irp6rZx0BW9OkxxPssTL0npKH66bYCeCDPsBZpDYnIiQ9tFytGNO7htsg/bcxHC6GLLJ
+         5wzjKYT6EIknhNa8EQl9erEel/iyj/hA2SGhUu1GCDZhOUAW+g/jXjQJj1adD376DFjV
+         Z1m/zUkP1i/rcNbZuV0WT5ZMH0XmGhry7ZN7THr8FzMCNt5SyHPOGAAJfneeqp4t6Boh
+         pP4nX4T9dPzLxQs00jsvF+uCMRLTRi9s8BZFX/Rq6ubeoyRIlPzexDvJFk7cf2pyuqJD
+         vbsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744641751; x=1745246551;
+        h=cc:to:subject:message-id:date:from:reply-to:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=djtPIricfHsVI23PycDI/GBe8v9Mj3BQR5+LxJFEu9w=;
+        b=PB0QKc0T7lt/oSiyyUVV4KVIUhSYTU7P8SyA131PCo/ZEr/0NTl00gKOMTayVwzxa+
+         GQSL9mW3JFK8M7IGz9q+ENW2uGdJes3xplsZ5G/wgsoLYzYeImfKfi3SvV4YlpT359/H
+         as06ZWfKVx2vwn1Sp43IXMcDJSDHVXK3x/syhLP5p7jaWvSCn+FlTf+MiijvXPlRJ6Ob
+         ZVujDsYV5l8R4Oj9mit8S/xCfNYZAAMzDFvRJut2uJXOrqo8i/Wi2XM7y6Mqmv1JwL4W
+         +X518Elra6X+cHQL+MWTnXWamprtqq6IeRB1/3xeYMeq3hPQK8QO2/2tsae6aiY2iqu4
+         s7Ig==
+X-Gm-Message-State: AOJu0Ywum7TPkvw4zSIowYfnJzDejomKK20CSgt/70mti/p294OhLA6k
+	G9bn+7qrHqeVoFExfAtpffggcRbOrryFI81yAreVqxl1rPZMBN4WQcDkeKGZNhPPVRb5lzHVeYf
+	kyamUUAwCp6G5ENypVZkEYXIIrQ/XC9osS0adPA==
+X-Gm-Gg: ASbGncsK66TZKct4u6PI9EGsQP74rzDBSpDEsaQkvO5l88hbZvU2qM6UWtWWfTAzC71
+	QbcyLSrbzVV/SlwxCp4u/g8lCy2jmaTUv4U7klNUWs0sfqeE5GMS/MtoQkg7wEbK6PV1WnF9MXf
+	uvc68Tm1g7nZLOWdwSVmFriQ==
+X-Google-Smtp-Source: AGHT+IFsEcGGKysAt2vnofSURYifpIKNzH9MB3cjbD3WlRr9gBUyEtpSG8hJvd0FN0uCbpU39LWRCsSE6cXDMGEfYF0=
+X-Received: by 2002:a05:6402:845:b0:5ee:486:9d4b with SMTP id
+ 4fb4d7f45d1cf-5f37014465fmr10040923a12.34.1744641751210; Mon, 14 Apr 2025
+ 07:42:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kisrvyl6ygk7uwlb"
-Content-Disposition: inline
-In-Reply-To: <20250407-drm-hdmi-connector-cec-v5-8-04809b10d206@oss.qualcomm.com>
+Reply-To: ludloff@gmail.com
+From: Christian Ludloff <ludloff@gmail.com>
+Date: Mon, 14 Apr 2025 16:42:20 +0200
+X-Gm-Features: ATxdqUFBVoO29GwOxxkKyUuhT2RpIRz1JcuDmC5FOD6Sg1krHAdXW8vFt8lFRwM
+Message-ID: <CAKSQd8VKwk=d+ymSp8t3Y6n+pJP45FRXJXWRWmzc4-DTm=6f9Q@mail.gmail.com>
+Subject: Re: [PATCH] x86/cpu: Add two Intel CPU model numbers
+To: linux-kernel@vger.kernel.org
+Cc: patches@lists.linux.dev, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+> [...] propose we do the below.
+>
+> +#define INTEL_DIAMONDRAPIDS_X IFM(19, 0x01) /* Panther Cove */
 
---kisrvyl6ygk7uwlb
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH v5 08/11] drm/vc4: hdmi: switch to generic CEC helpers
-MIME-Version: 1.0
+Make it so.
 
-On Mon, Apr 07, 2025 at 06:11:05PM +0300, Dmitry Baryshkov wrote:
-> +static const struct drm_connector_hdmi_cec_adapter_ops vc4_hdmi_cec_adap_ops = {
-> +	.base.unregister = drm_connector_hdmi_cec_unregister,
-> +	.init = vc4_hdmi_cec_init,
-> +	.enable = vc4_hdmi_cec_adap_enable,
-> +	.log_addr = vc4_hdmi_cec_adap_log_addr,
-> +	.transmit = vc4_hdmi_cec_adap_transmit,
-> +};
+(In light of the fresh RPC = RPL,BTL mess.)
 
-Did you compile it? it looks like drm_connector_hdmi_cec_adapter_ops has been renamed, and it
-doesn't have a base.unregister field anymore?
-
-Maxime
-
---kisrvyl6ygk7uwlb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZ/0elAAKCRDj7w1vZxhR
-xRstAQDseeLF3+wOjRX4FDWG1gzsPN4u0U3uth+lr62PR0BwxAD8D+xv+rQhSZRL
-r0aNflxzktpW7TPg2LqP74PvX2cw0g0=
-=+zwv
------END PGP SIGNATURE-----
-
---kisrvyl6ygk7uwlb--
+--
+Christian
 
