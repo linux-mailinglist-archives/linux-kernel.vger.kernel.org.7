@@ -1,203 +1,116 @@
-Return-Path: <linux-kernel+bounces-603252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1182A88537
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:38:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 871E4A8853F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:39:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 565CD167EE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:34:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53C1D171E70
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:34:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF8719F130;
-	Mon, 14 Apr 2025 14:10:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFAE22749F3;
+	Mon, 14 Apr 2025 14:11:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JmtHzcMT"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hBbBEZgz"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06142749D9
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 14:10:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814B723D2AF;
+	Mon, 14 Apr 2025 14:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744639816; cv=none; b=FjLEGTzWCgdJN6c3aPv3aqm6fq463XPp+Ja59eqHzX+7aTQz4I/w83zjAEQLcKj8ZR+FChDintJdq5mrKr0Xd+4MyRBBDaKnWxY48akk3BiAt4y8AZKbMcRCuFCCq4jj63Y6LdKXUMA4g1TdvreYr58eooDoiC+iCkGwXy8u1Ng=
+	t=1744639866; cv=none; b=qw/xBGJcke7Th8wUoJnRWHTk1g4cyPzJuZa0xbUzdjyoiVAhyuiNJjNCrpCVJZPemtdYPiDBVtFb5HVOtWmKkADR0c/+++cd8nIeOYSpifG9JSS6QcAqNrvJGrjK2vWtq9VSE4W/oGbfDPZXTsz8g1So7IXcLPgETlKAyDx8DxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744639816; c=relaxed/simple;
-	bh=vDKshwSTLzfVb2b9QCGRuLoLV9vmwy7bdEHMCW4HXco=;
+	s=arc-20240116; t=1744639866; c=relaxed/simple;
+	bh=2UF1+d4niNyOW8VA+r1HnFvlvMrBYZBQGW+6Ol6wzTU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DnfgJvwM/SII2KbIuWSyGmoTllBv+HV5olUfw0t3tmyUCLoo0JY3OTxilJ9Rsxt6bdSYcYSsba11GWgywnmvFUHnWnNhfMBtquMXPQqsExthlmWcAmDvH3MVn0SkxkOEM+5aMlYbiyGj4GmIkN1mXznBjI1I1JQXETGVrImg6rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JmtHzcMT; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-abbd96bef64so908320866b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 07:10:13 -0700 (PDT)
+	 To:Cc:Content-Type; b=UlBh/kyw75YekILOkiSORSRmIYgJs25bLrLCRFqjsqbvq4LfHeJbBpiaQMUcbPuh8dznqLYEzKMitZrZ1lh2UISRdH1ubeb+347BgmYWr803Pp7sagSXMypR2vfIgNHUiQlapa0QMJ+qTfHlaOqVa3j94CFEL8htnHaAcdUbvqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hBbBEZgz; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ac2dfdf3c38so860975966b.3;
+        Mon, 14 Apr 2025 07:11:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1744639812; x=1745244612; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1744639863; x=1745244663; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=V3ULzXYtgp5knes5jjtCb7NVfP7NhcV6WWSN7DiMNC0=;
-        b=JmtHzcMTHHxQwX8jGlv0Ilp9i4Ot/f/2pFQ+/2+2dIAh4bOBDXtmw9W+EDhVvziJQW
-         x+WxdRHD/FTySaQmmOuHD9gFBq69zHkiiNYIfQV9wdIVsbQrcdZ17EApD/3lNK7cIMOq
-         32GItiv+XWXf1BLrFFU01rt40yuctHkUgOn6/Ckq4yxRC5TbdY+/5DS+Ft52aduM3Lrm
-         CIcG4kf141QFMn34iruEro3ZJj5wU8wO7RILGaTuhUaZaaqsIqYfgZRMc6hkkYtiBNad
-         hsN/zSGxNJmFV5VPrR+ZkRS4fpewCtiDBv8tP3Y0vySeLDYCNg4r9g+2n8zr0+hUfeo4
-         OzhA==
+        bh=2UF1+d4niNyOW8VA+r1HnFvlvMrBYZBQGW+6Ol6wzTU=;
+        b=hBbBEZgzBI6VAJ6QJ6z801z8cKRKRp5BlHt0wxbfGYh1i/Ll3CxXYFDLVqysnVUP5z
+         JyQpuqDe9+x4JfPxkaABK7vFZyungHo24DmlP8b5bSKTqr6ndNvU2hUQ9oLvJkTpvBud
+         xe9IKcLwoA5yBapuHXNpuKTGt/NDBAreczuk6lzwroAj7IAFdmgDb7s3xYYC3SvJORRS
+         4fdDrF3mbGDbSe8wfzvYYsxaaXoA/R+IYO3Xy++YCCqKBc1O7JQ/J4Nle31grjiymSeB
+         AFPXF+5H5XeajHxGOb0ku04lPSb2qQie2s+ShQ8pcullZsHVZ5YP2x0ul9kaEC07xgCy
+         L0yA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744639812; x=1745244612;
+        d=1e100.net; s=20230601; t=1744639863; x=1745244663;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=V3ULzXYtgp5knes5jjtCb7NVfP7NhcV6WWSN7DiMNC0=;
-        b=BGVA8bzZT0/CUBtjvhQ1kh8DsYrz164LOxLEt43JiK+gAK1wVv0BI47kS7W+03gnLD
-         IzZg+u31Q6ZN2oaJFz4FrI7bQXY0ppl02LX/MXRctqWK5UHJNpAx87VZ9D1WyE+icv41
-         09k3mzfqnT2p1mvsT2My4cPVzZXFqo5i5QHlFZ8rdXCehsfghUKd33CK4RiPsHcT0E/B
-         dyvqNszr3hC6LrPLKJtTelb4Meo0krubOqIICgjJZ1IqLOLMh4ZS8Rvth/jZi+nJy4v8
-         Ho2ps/hmrUDSj9mJR8c5HMfsfHAVKZKvJJu78hJS+4JFjrAnZ8Xr0XjoEOXhixdlQ3Oc
-         ek9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWfDt0Y4X6Co2vmjAifldOz3DY7enj4FPvDTMZCDZPO66pCIznykPzEXTUwUlDt1dC8LuSVEKD28ZVDlgs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyF/ELsTowUryfVcY6KTcMxdlimhfsOneEjjl7tDDidHLh/Vsda
-	wJAPjas8C+XoKldNnmFA27sZrywimWZZOpIjLbcJPE7IFuJxE36HM4U3HbR6NkRcW1vS8PR5Vif
-	Fa9pnFEvgZHp4I8vn3InZeP1B0CTGSVTx5371KQ==
-X-Gm-Gg: ASbGncvV2F1uQJhdUuOaLVqrNMJbrt48TSSNe1gAbzzFkFUj6oQGPACNPQKsVxAsNAw
-	0Egs9lGjwZ3ARFciZCHOPuN2e7kCpuEEZHvGfa0HS6+eSRkNPzqF5WV0hHXEPxREP2ZEATbVN4j
-	MVqeBsTYWqgkAGFumxqfGV
-X-Google-Smtp-Source: AGHT+IELmTa6kdG3m1wAOWSwzEYUsnM/AZVCS9gi1W5ygeB0nf9Akb94M2AIebg2Cbph/RHIMED8A0XttdyPTJBTj2w=
-X-Received: by 2002:a17:907:3d91:b0:ac7:391b:e689 with SMTP id
- a640c23a62f3a-acad36da6b2mr1186418366b.59.1744639811991; Mon, 14 Apr 2025
- 07:10:11 -0700 (PDT)
+        bh=2UF1+d4niNyOW8VA+r1HnFvlvMrBYZBQGW+6Ol6wzTU=;
+        b=IRvP1J4IX+WVmW7iZtAB6gb5OdHMtsoB/kwW69Ndd1U8EfbX+/QowuxvVK6MvPOBPB
+         njk5cjVg1eb3Bpmiz9EXwg5QoI6YovFfad4O1oUtheYvLQnbp+aV4q3WCq6QvEG4JnTc
+         TcOINzO+7g4OQNc34kK7Nq1zmiuOib0A4iNvrxKgqdlqI8E8C0FZ5nj4uMl7OXXhygZX
+         UEdaL5QbR8XXmt7JW0QFK7ykksPIX3HG7/c9ecrL1wKXp9LFXYcopqAaddU1cEFwE9X7
+         codxZrKslJT1xr6wI0CbnFi2T9CA3MIk1zE0LJp1bKrX4Hb1zQXHPj90yElt3ZOk+5/C
+         xDog==
+X-Forwarded-Encrypted: i=1; AJvYcCVYaYylHIFMlOa1oorNbhHcM+TcGZFjrD2zKrTEwh/p2yuhKDBpzcW0nPMCjONf8+Gu30zeZexqFMANqmeIz8S+@vger.kernel.org, AJvYcCVnGs/s7NT/NBDmN5q0/LHH8rhx+ghYw2ZiVhPRZdPUWKUVmw1G5w5Avm8Ys3M1eAO6nXBbY9b6ZsizX8wj@vger.kernel.org, AJvYcCWz8+UJ+4Lc8y3ZC/PKML+lKOMh9JkXSO9lzdw1I72j6cHQIC1co2vbTMBHXqvGU61Zd3Pd6YjV@vger.kernel.org, AJvYcCX827BtMS4phjE+Xrm+BxwmiSXnAiVHnQfcW8rABY4lYLzgW1BxCRaVs4CooFIlGAGmFtQdlDlYfdyW@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTPTSV5vK8dc4rN6zGoEK2FiQGo5ivQlEel852BMhd1as+26ed
+	0X/D3iS2tfP3myfc8HW3L2jw4hhvWs+f0nExtY7iIYNgvErfuV0yaWe0pJKCYbpElBIiPqX40Au
+	0rfdV6P2/aeGWgOLYMDfzmvosR+Y=
+X-Gm-Gg: ASbGncuyfV11xZW2rPKbazH9qPAIQ8zuAKV54lnZ7s2nQ23wdzNYTqnyvi83ASBZ8hQ
+	H7OXuV1bpnlrfTVaKIo/GVHPMb3Mlv2k9HxxFOG1G+gyoKaYqry8O66fDerczsfo9LEkVAIjSQo
+	LjJ0A1A6yCEUDxIO0S1zgQTA==
+X-Google-Smtp-Source: AGHT+IFoPgrticcftSCZx1LGPInW+lGPNUg8jlDa6rvGb7o/dXr02rm19k0XwSHPZJei1J02/SX8L17QergcAsaWUv8=
+X-Received: by 2002:a17:907:728e:b0:ac7:391a:e158 with SMTP id
+ a640c23a62f3a-acad36c3b7fmr979623666b.59.1744639862468; Mon, 14 Apr 2025
+ 07:11:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250411034425.173648-1-frank.li@vivo.com> <CAPjX3Fe34HVF2JUi2DEyxqShFhadxy7M7F6xTA_yVn5ywHMBhQ@mail.gmail.com>
- <SEZPR06MB526928EBDA13B6463D7EE00BE8B32@SEZPR06MB5269.apcprd06.prod.outlook.com>
-In-Reply-To: <SEZPR06MB526928EBDA13B6463D7EE00BE8B32@SEZPR06MB5269.apcprd06.prod.outlook.com>
-From: Daniel Vacek <neelx@suse.com>
-Date: Mon, 14 Apr 2025 16:10:01 +0200
-X-Gm-Features: ATxdqUGqwksgvRY6yOhrk3sIyK_6RLT1HyjWUkZFMqMHqeY4xOQJGFeLp1V1UxM
-Message-ID: <CAPjX3FcGaV9rQXRodznCud+_zzHao3ZWfNnuFAv=ut=uGi3MPw@mail.gmail.com>
-Subject: Re: [PATCH] btrfs: use BTRFS_PATH_AUTO_FREE in btrfs_truncate_inode_items()
-To: =?UTF-8?B?5p2O5oms6Z+s?= <frank.li@vivo.com>
-Cc: "clm@fb.com" <clm@fb.com>, "josef@toxicpanda.com" <josef@toxicpanda.com>, 
-	"dsterba@suse.com" <dsterba@suse.com>, 
-	"linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250407172836.1009461-1-ivecera@redhat.com> <20250407172836.1009461-2-ivecera@redhat.com>
+ <Z_QTzwXvxcSh53Cq@smile.fi.intel.com> <eeddcda2-efe4-4563-bb2c-70009b374486@redhat.com>
+ <Z_ys4Lo46KusTBIj@smile.fi.intel.com> <f3fc9556-60ba-48c0-95f2-4c030e5c309e@redhat.com>
+ <79b9ee2f-091d-4e0f-bbe3-c56cf02c3532@redhat.com> <b54e4da8-20a5-4464-a4b7-f4d8f70af989@redhat.com>
+In-Reply-To: <b54e4da8-20a5-4464-a4b7-f4d8f70af989@redhat.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 14 Apr 2025 17:10:25 +0300
+X-Gm-Features: ATxdqUEK9qElNdnTKa2QHn3BaDCna6lMjxXsS9Z11fOG73o2nUUr80_22U4xjJ8
+Message-ID: <CAHp75Ve2KwOEdd=6stm0VXPmuMG-ZRzp8o5PT_db_LYxStqEzg@mail.gmail.com>
+Subject: Re: [PATCH 01/28] mfd: Add Microchip ZL3073x support
+To: Ivan Vecera <ivecera@redhat.com>
+Cc: Andy Shevchenko <andy@kernel.org>, netdev@vger.kernel.org, 
+	Michal Schmidt <mschmidt@redhat.com>, Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>, Jiri Pirko <jiri@resnulli.us>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Prathosh Satish <Prathosh.Satish@microchip.com>, Lee Jones <lee@kernel.org>, 
+	Kees Cook <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, 14 Apr 2025 at 15:34, =E6=9D=8E=E6=89=AC=E9=9F=AC <frank.li@vivo.co=
-m> wrote:
->
-> Hi Daniel,
->
-> > And what about the other functions in that file? We could even get rid =
-of two allocations passing the path from ..._inode_ref() to ..._inode_extre=
-f().
->
-> I made the following changes, is this what you meant?
-> I will do the rest if that's ok.
->
-> Thx,
-> Yangtao
->
-> diff --git a/fs/btrfs/inode-item.c b/fs/btrfs/inode-item.c
-> index 3530de0618c8..e082d7e27c29 100644
-> --- a/fs/btrfs/inode-item.c
-> +++ b/fs/btrfs/inode-item.c
-> @@ -105,11 +105,11 @@ btrfs_lookup_inode_extref(struct btrfs_trans_handle=
- *trans,
->
->  static int btrfs_del_inode_extref(struct btrfs_trans_handle *trans,
->                                   struct btrfs_root *root,
-> +                                 struct btrfs_path *path,
->                                   const struct fscrypt_str *name,
->                                   u64 inode_objectid, u64 ref_objectid,
->                                   u64 *index)
->  {
-> -       struct btrfs_path *path;
->         struct btrfs_key key;
->         struct btrfs_inode_extref *extref;
->         struct extent_buffer *leaf;
-> @@ -131,7 +131,7 @@ static int btrfs_del_inode_extref(struct btrfs_trans_=
-handle *trans,
->         if (ret > 0)
->                 ret =3D -ENOENT;
->         if (ret < 0)
-> -               goto out;
-> +               return ret;
->
->         /*
->          * Sanity check - did we find the right item for this name?
-> @@ -142,8 +142,7 @@ static int btrfs_del_inode_extref(struct btrfs_trans_=
-handle *trans,
->                                                 ref_objectid, name);
->         if (!extref) {
->                 btrfs_abort_transaction(trans, -ENOENT);
-> -               ret =3D -ENOENT;
-> -               goto out;
-> +               return -ENOENT;
->         }
->
->         leaf =3D path->nodes[0];
-> @@ -156,8 +155,7 @@ static int btrfs_del_inode_extref(struct btrfs_trans_=
-handle *trans,
->                  * Common case only one ref in the item, remove the
->                  * whole item.
->                  */
-> -               ret =3D btrfs_del_item(trans, root, path);
-> -               goto out;
-> +               return btrfs_del_item(trans, root, path);
->         }
->
->         ptr =3D (unsigned long)extref;
-> @@ -168,9 +166,6 @@ static int btrfs_del_inode_extref(struct btrfs_trans_=
-handle *trans,
->
->         btrfs_truncate_item(trans, path, item_size - del_len, 1);
->
-> -out:
-> -       btrfs_free_path(path);
-> -
->         return ret;
+On Mon, Apr 14, 2025 at 5:07=E2=80=AFPM Ivan Vecera <ivecera@redhat.com> wr=
+ote:
+> On 14. 04. 25 1:52 odp., Ivan Vecera wrote:
 
-And if I look correctly you can also directly return 0 here.
+...
 
->  }
+> Long story short, I have to move virtual range outside real address
+> range and apply this offset in the driver code.
 >
-> @@ -178,7 +173,7 @@ int btrfs_del_inode_ref(struct btrfs_trans_handle *tr=
-ans,
->                         struct btrfs_root *root, const struct fscrypt_str=
- *name,
->                         u64 inode_objectid, u64 ref_objectid, u64 *index)
->  {
-> -       struct btrfs_path *path;
-> +       BTRFS_PATH_AUTO_FREE(path);
->         struct btrfs_key key;
->         struct btrfs_inode_ref *ref;
->         struct extent_buffer *leaf;
-> @@ -230,7 +225,7 @@ int btrfs_del_inode_ref(struct btrfs_trans_handle *tr=
-ans,
->                               item_size - (ptr + sub_item_len - item_star=
-t));
->         btrfs_truncate_item(trans, path, item_size - sub_item_len, 1);
->  out:
-> -       btrfs_free_path(path);
-> +       btrfs_release_path(path);
->
->         if (search_ext_refs) {
->                 /*
-> @@ -238,7 +233,7 @@ int btrfs_del_inode_ref(struct btrfs_trans_handle *tr=
-ans,
->                  * name in our ref array. Find and remove the extended
->                  * inode ref then.
->                  */
-> -               return btrfs_del_inode_extref(trans, root, name,
-> +               return btrfs_del_inode_extref(trans, root, path, name,
->                                               inode_objectid, ref_objecti=
-d, index);
->         }
+> Is this correct?
+
+Bingo!
+
+And for the offsets, you form them as "page number * page offset +
+offset inside the page".
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
