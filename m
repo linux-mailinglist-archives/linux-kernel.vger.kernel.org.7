@@ -1,147 +1,227 @@
-Return-Path: <linux-kernel+bounces-603438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6051FA88776
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:39:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00D1EA8878E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:42:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8E0B172B16
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:39:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8F8A18850D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:37:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4214B274FDA;
-	Mon, 14 Apr 2025 15:38:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B8E274FDA;
+	Mon, 14 Apr 2025 15:37:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sargun.me header.i=@sargun.me header.b="HHJtgGjE"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ROUdZb/A"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CFFB192D8A
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 15:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 956171A9B48;
+	Mon, 14 Apr 2025 15:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744645121; cv=none; b=afu26aejAiRZ37/OvwLoV/qzdaUikLEYYBVnUli63XEtMH+9iCpgAsPQKNGLPZEvoPcZmpQu5v2rtP4SZkrxN8qOMpK00kinh6NJvh+no43FmoX3Dp8xeIuK21K2uxPYs7AQz/RqrBNw+/H3DwO3a/OtercFBO+Gk0uEL4eHRjE=
+	t=1744645061; cv=none; b=eaVv2Ll58/yvhaYjArbNGuB0yLtFY8DHJ6dqADcfonDq8IPwLzoGm/itm/ZGxTRRuzQ+5cJsklW5k5SkAZ6CCrjs//AihlgnWsfqyMFAyCWFzMP8Dw2ebUfC5nlDBgyGKyOgL0DBCeCDsdwdQNBFSqWCXlez4mxEk2tX22j8qD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744645121; c=relaxed/simple;
-	bh=QQWrFCU0lxYwyZvkufIrKpj9QZGeF1jQQqxeadFVPSI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PhHhQUi1YfMz7EM5zziq2XKV75wjZ+pVH5WTTrjDGgxsZJjvlZuW5TIXX7Rlbqje9mZew5+TyQ5RTLQQ9+F6pPQZpJ15BQLJ9bWEnuninlpSU0zkBMQsr1lqlogGO5QjtHMFH1No6F8kDzTsvnWAwXCVHi4oSX4bt/wh/xjXK7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sargun.me; spf=pass smtp.mailfrom=sargun.me; dkim=pass (1024-bit key) header.d=sargun.me header.i=@sargun.me header.b=HHJtgGjE; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sargun.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sargun.me
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e707fba5a16so229296276.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 08:38:39 -0700 (PDT)
+	s=arc-20240116; t=1744645061; c=relaxed/simple;
+	bh=9eA0G2YnsWGbHG56g49nbEXD6xFoAGUKbnrZB7bpMaE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZMsnB9wPlElG6hRi60uEYBBu/dAaI2Oc5svpsBrPm2KbN9ZGV+M4FyjAgSOb2/fqSOflJPxL+c/uRgzG2mabVCRpQVPKBdAoFZbbFLCYLf4fZVKFe2YPp6CQ8xS3jkHuiMQzDuwZqR/GCtNcHB8M/fFkeif3wnJPcZrjtnkFtsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ROUdZb/A; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-301918a4e1bso3506680a91.1;
+        Mon, 14 Apr 2025 08:37:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sargun.me; s=google; t=1744645118; x=1745249918; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cg7wm1gQKxPnYT5N6cnKLlagimUWPqnH4hJORex0FBs=;
-        b=HHJtgGjEv06ipS7G0Ge46lVbecHEBRJSmXdDLuOmcl0FpN/pv+Jt2h+bBmYx/vB3fp
-         PtEXqMA78ovGjreYYK9OtDhRweY+eAX+wmRJ1o+UPBRnStwQQWa+kGnnKP0jRYgp1cij
-         DAyqzayBxZryvTfZX2hrp0/jZfUGVGWyEm3Ys=
+        d=gmail.com; s=20230601; t=1744645059; x=1745249859; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Mokm6ZH48h5sXQ5iAT2NSE+CCCr/3eOYDxIfr/1engI=;
+        b=ROUdZb/A7gBJBzaGTOQa37RaWCxJSfLBTZ6YRoTom7zwiD0ddOafdsZtJ6Fe2QYGqB
+         iutwSPIyC/EMF0avAQ9kaAPSx9mQ0yS0jWyyfox4Wpg2cSx/LbuI5+c5/0SNgfZwiZot
+         hjcufoxftlg0C75kBlQZtAWgtJPQzh0ZfJo6+sMOcOIirxFcEMUbIh3Z5sUdAjjmQLiW
+         vYuieKgANvTYe/goWkQy83o0GjnUXQGu6/PTphfrRVLhFiAfwuwN+qDVn5j3Jc1bsqTw
+         rtCL8pfS9tlDAhjIgMWN/zhOxh2eJkmpnomP39IOap55Goh9vCZyOFajYeW17prW/g5k
+         JPcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744645118; x=1745249918;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Cg7wm1gQKxPnYT5N6cnKLlagimUWPqnH4hJORex0FBs=;
-        b=wAyWbOdcWZGbfeie2rWhWQ/kp/E0tRgC7fMOxdk8a2pAUWtrBI09iSHFOAdS4rKSv4
-         hrEtgoDQhRTwP/3e+9UeVDSkgWExxtetwh4yvcZLqO6eAsQbuYWx8OzK/U3emfFLr16d
-         FV2seBDQBIS2vEirL94nXJzQTFFovqpBU3RTkxhLF4OoP9P57wvhixC+xQ52LyLQyzBF
-         GtsbansVHjdL960R2gpPEVqd1CiKhcJ2pLZMrP/ckPgK7zP5rdMHbqU3vqcVZsDCZm8S
-         e/wSdFT8b5sUJoeq228qNRzkjgqbfNrAHe/I4YFwz8S8jMNQhBTcx5tk5gvbP0m+Flcq
-         PMJQ==
-X-Gm-Message-State: AOJu0Yzmwf8toeOBRP58MvcK/8N1ruD1dhqPk7kJeTpnoTdH3C4p3pLt
-	WANwEoMBlk5oDNLGblh1DEtBsL9Ymfkspz3I6gilSKgybmyXc++2DqbStSBljy+zSdGCBVVhi+Y
-	x0m8=
-X-Gm-Gg: ASbGnctXXzhoZyFTg6lf7IUBY+XVXlMug3yaipAAqf3Zz81xeZ3Nw/IAnAYLSYTzvf6
-	2GgPi2P2I+7a9/3UlygGivfMN9MmqJdzBBD3bx+bzwQ0rtTctrxdP5s4/jkkRt4e29y9+zv5HUD
-	oW64ztiuN4+oj3UlnXwkVrNWCD+9qSxtvIC1joD7qhp2y0YVBwOwTDvB6igZgLfUHwvZNaNDAzz
-	2hm+M84jWw0AuyVKp4MQFVrqvXa6+CiFubpchJe6ACeFKxU2/C0JKjT3EQWaM9y+PreDilAXLuZ
-	jRRW6yRQdIPz0v7xGB5NkVPhPtrO7w==
-X-Google-Smtp-Source: AGHT+IFXaJHA4jn4texV8xgFTA2mT/ZVZHNvt7z4f2KvUDw2pLx36QdW+AE9X7ghaoCnIgTjMYyeMA==
-X-Received: by 2002:a05:690c:d94:b0:6f5:be28:632c with SMTP id 00721157ae682-705599965b5mr95917727b3.2.1744645117480;
-        Mon, 14 Apr 2025 08:38:37 -0700 (PDT)
-Received: from localhost ([2a03:2880:25ff:8::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-7053e11d349sm31264617b3.43.2025.04.14.08.38.36
+        d=1e100.net; s=20230601; t=1744645059; x=1745249859;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mokm6ZH48h5sXQ5iAT2NSE+CCCr/3eOYDxIfr/1engI=;
+        b=vNul2fgg1QetpxYF1tP8KPsZ/BIaRQ6jvMll6r118sfd8iOy59hlGgASI5GTad0zmC
+         GaMVZ9fLViufsMch7wtof/hIQs9uSj3CDIF5/rdHfjNX0tFYS7h8yK3ioP8+0ni78bR8
+         PkAW4wIFr9O5S2DwdoIq8sHRp/FvgcFUrg3oCtaqEWOL5C8tQ054N2hjPXQUM506eTR1
+         BjUTvjsO17FEgLJMIGrccHvftdhZra2KYnzLmfPCMP5PODsVTdUPXkjEcYLXKTb97N1M
+         H8fTDf5fK8fEFRLFmNINesK1Mf9WD5+8dW0u0gqp82QGf/pL7Uth7ELHDUvyzJkuu4ms
+         IEXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUpi/071cVygeuVu60tbuwCLb8k7jEC2HwgTduXhiZuBZJmOYhDfokh9L0+WzzQZiVlM8RvqDh8z0Yd@vger.kernel.org, AJvYcCVFkLx5wKxixYXaA3IgRoBfqqE3hn7ENVGuiH/f+wSuVWhVAxXRGZwtDuCPTXOpC5jZuXGQUKH0EbVkTZr6@vger.kernel.org, AJvYcCVV7F+oOAlCniZXKHv632MffdXDt6bgzxSGjgr22rJGsJcehJee+e0pGrW5aKq9aDNC6algI6JMCOma@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw10j0Ipn7Cul/2ZJqF0AZs8Q5Ox0lYrgAZyJRHFV9KBgsr9vQQ
+	WUBHcy2HvDlAsOJlzHvQPuw7LaYC+p70DeJhQCKUAFNFZqtRb0H2
+X-Gm-Gg: ASbGncu3BqpTfiXLYVghSOek0WmhR4gi50QASflI57wCdrvhQ3+N67n9BryIWjtn/qT
+	npcpH3V6rRM2E3YI8BBMf2jUYFj4/h5LGHz3YWCd36Fb7MOxpt1ggFeVglRCdyuI+QgVio9Ao5Y
+	VTrf/5r0Td2+DxZVRq7m6at0s68qWTUFfcjAt0L0iRYlVqQxi4NgtwIvum1eVjVC5dZJV2bn83p
+	WLBYT/PPol0vOhl4rqRTnx319m9EUr7OmllKc0jGPW1x9fp5g3OScE51HAyLG+WNeGDzKy5Rihx
+	bovYsNwFOI6vSCphIHPorUrHMy5Pd2HrA965K9Asx42PSuMCEosZFnFq77Q=
+X-Google-Smtp-Source: AGHT+IGZsxgQ60vAJuvwxmwilDb8mJqLVo6mioN8QshkEcroQC5a2lPwjRGuXJKzKyRTL3DGpS4BOw==
+X-Received: by 2002:a17:90b:2891:b0:2ee:db8a:2a01 with SMTP id 98e67ed59e1d1-308237ce138mr14871891a91.30.1744645058550;
+        Mon, 14 Apr 2025 08:37:38 -0700 (PDT)
+Received: from localhost ([2804:30c:92d:f600:d5e4:543:c403:4767])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-306dd2fe1a4sm6679448a91.0.2025.04.14.08.37.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Apr 2025 08:38:36 -0700 (PDT)
-From: Sargun Dhillon <sargun@sargun.me>
-To: linux-kernel@vger.kernel.org,
-	linux-edac@vger.kernel.org
-Cc: Sargun Dhillon <sargun@sargun.me>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Tony Luck <tony.luck@intel.com>,
-	Borislav Petkov <bp@alien8.de>
-Subject: [PATCH v2] trace, RAS: Use __print_symbolic helper for entry severity for aer_events
-Date: Mon, 14 Apr 2025 08:38:34 -0700
-Message-ID: <20250414153835.947207-1-sargun@sargun.me>
-X-Mailer: git-send-email 2.47.1
+        Mon, 14 Apr 2025 08:37:37 -0700 (PDT)
+Date: Mon, 14 Apr 2025 12:38:46 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	jic23@kernel.org, lars@metafoo.de, Michael.Hennerich@analog.com,
+	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Subject: Re: [PATCH v1 7/7] iio: adc: ad4170: Add support for weigh scale and
+ RTD sensors
+Message-ID: <Z_0sBomGtMKXysgJ@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1744200264.git.marcelo.schmitt@analog.com>
+ <56e76070b72d15950bf1fb01e68e94c42e79905b.1744200264.git.marcelo.schmitt@analog.com>
+ <149672e84f09fb178c90856920e3cfd4f140529d.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <149672e84f09fb178c90856920e3cfd4f140529d.camel@gmail.com>
 
-The chained ternary conditional operator in the perf event format for
-ras:aer_event was causing a misrepresentation of the severity of the event
-when used with "perf script". Rather than building our own hand-rolled
-formatting, just use the __print_symbolic helper to format it.
+...
+> > +static int ad4170_setup_rtd(struct ad4170_state *st,
+> > +			    struct fwnode_handle *child,
+> > +			    struct ad4170_setup *setup, u32 *exc_pins,
+> > +			    int num_exc_pins, int exc_cur, bool ac_excited)
+> > +{
+> > +	int current_src, ret, i;
+> > +
+> > +	for (i = 0; i < num_exc_pins; i++) {
+> > +		unsigned int pin = exc_pins[i];
+> > +
+> > +		current_src |= FIELD_PREP(AD4170_CURRENT_SRC_I_OUT_PIN_MSK,
+> > pin);
+> > +		current_src |= FIELD_PREP(AD4170_CURRENT_SRC_I_OUT_VAL_MSK,
+> > exc_cur);
+> > +
+> > +		ret = regmap_write(st->regmap16, AD4170_CURRENT_SRC_REG(i),
+> > +				   current_src);
+> > +		if (ret)
+> > +			return ret;
+> > +	}
+> > +
+> > +	if (ac_excited)
+> > +		setup->misc |= FIELD_PREP(AD4170_MISC_CHOP_IEXC_MSK,
+> > +					  num_exc_pins == 2 ? 0x2 : 0x3);
+> > +
+> > +	return 0;
+> > +}
+> 
+> In the above I do not see any explicit GPIO configuration which makes me wonder
+> if having the RTD is mutual exclusive with having GPIOs?
 
-Specifically, all corrected errors were being formatted as non-fatal,
-uncorrected errors, as shown below with the BAD_TLP errors, which is
-correctable. This is due to a bug in libtraceevent, where chained
-ternary conditions are not parsed correctly.
+For RTD sensors, it's recommended to use a different excitation mechanism which
+is configured in CURRENT_SOURCE and MISCELLANEOUS registers. The current source
+for RTD sensor excitation could come from a GPIO, but only implemented support
+for outputting the current from an analog pin. Will handle the case of using
+GPIOs in v2.
 
-The before / after are as follows (and also tested to make sure
-uncorrectable events) still show up as uncorrectable.
+> 
+> > +
+> > +static int ad4170_setup_bridge(struct ad4170_state *st,
+> > +			       struct fwnode_handle *child,
+> > +			       struct ad4170_setup *setup, u32 *exc_pins,
+> > +			       int num_exc_pins, int exc_cur, bool
+> > ac_excited)
+> > +{
+> > +	int current_src, ret, i;
+> > +
+> > +	if (!ac_excited)
+> > +		return 0;
+> 
+> Same as above, if !ac_excited, can't we use the GPIOs? because
+> ad4170_validate_excitation_pins() just unconditionally sets
+> AD4170_GPIO_AC_EXCITATION. Or maybe this DT property is only adding
+> complexity... See below
 
-aer-inject was used with the following AER event injection script:
-AER
-PCI_ID 00:05.0
-COR_STATUS BAD_TLP
-HEADER_LOG 0 1 2 3
+I see, maybe AD4170_GPIO_EXCITATION would better describe the function. 
 
-dmesg (unchanged between runs):
-pcieport 0000:00:05.0: aer_inject: Injecting errors 00000040/00000000 into device 0000:00:05.0
-pcieport 0000:00:05.0: AER: Correctable error message received from 0000:00:05.0
-pcieport 0000:00:05.0: PCIe Bus Error: severity=Correctable, type=Data Link Layer, (Receiver ID)
-pcieport 0000:00:05.0:   device [1b36:000c] error status/mask=00000040/0000e000
-pcieport 0000:00:05.0:    [ 6] BadTLP
+...
+> > +
+> > +			st->gpio_fn[3] |= AD4170_GPIO_OUTPUT;
+> > +			st->gpio_fn[2] |= AD4170_GPIO_OUTPUT;
+> > +			st->gpio_fn[1] |= AD4170_GPIO_OUTPUT;
+> > +			st->gpio_fn[0] |= AD4170_GPIO_OUTPUT;
+> 
+> Not sure if you gain much with having the funcs OR'ed like this... If I'm not
+> missing nothing it's only about logging in ad4170_validate_excitation_pins()?
+> It's up to you but I would consider using bitmaps (unsigned long) for this and
+> just test the bits.
+> 
+Ah, yes, a bitmap is what was trying to do but misimplemented it.
+There are 4 possible functions for AD4170 GPIOs.
+(1) Power-down switches (currently not supported);
+(2) External sensor excitation;
+(3) GPIO;
+(4) CHANNEL_TO_GPIO (not eager to support that).
 
-Before:
-virtme-ng:/# perf script |cat
-   irq/24-aerdrv     424 [002]   392.240255:          ras:aer_event: 0000:00:05.0 PCIe Bus Error: severity=Uncorrected, non-fatal, Bad TLP, TLP Header=Not available
+If a GPIO is used for external circuit excitation, we don't want to export it as
+a GPIO. If the GPIO were set a power-down switch we would also not expose it.
 
-After:
-   irq/24-aerdrv     424 [002]    29.198383:          ras:aer_event: 0000:00:05.0 PCIe Bus Error: severity=Corrected, Bad TLP, TLP Header=Not available
+...
+> > +
+> > +	ac_excited = fwnode_property_read_bool(child, "adi,ac-excited");
+> > +
+> > +	num_exc_pins = fwnode_property_count_u32(child, "adi,excitation-
+> > pins");
+> > +	if (num_exc_pins != 2 && num_exc_pins != 4)
+> > +		return dev_err_probe(dev, -EINVAL,
+> > +				     "Invalid number of excitation pins\n");
+> 
+> Can't we assume that a valid num_exc_pins property means ac_excited = true?
+> Because that looks to be the logic in ad4170_validate_excitation_pins().
 
-Signed-off-by: Sargun Dhillon <sargun@sargun.me>
----
- include/ras/ras_event.h | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Unfortunately, no. The user may want and set AD4170 to DC excite the external
+circuit. They may want to use the same set of excitation pins, but not enable
+channel chop or output current chop (leading to DC excitation). Well, we may
+choose to not support the DC case in the driver I guess, but since this is
+already fairly complicated, why not going an step further to support it fully?
 
-diff --git a/include/ras/ras_event.h b/include/ras/ras_event.h
-index e5f7ee0864e7..9312007096d7 100644
---- a/include/ras/ras_event.h
-+++ b/include/ras/ras_event.h
-@@ -327,9 +327,10 @@ TRACE_EVENT(aer_event,
- 
- 	TP_printk("%s PCIe Bus Error: severity=%s, %s, TLP Header=%s\n",
- 		__get_str(dev_name),
--		__entry->severity == AER_CORRECTABLE ? "Corrected" :
--			__entry->severity == AER_FATAL ?
--			"Fatal" : "Uncorrected, non-fatal",
-+		__print_symbolic(__entry->severity,
-+				 {AER_NONFATAL, "Uncorrected, non-fatal"},
-+				 {AER_FATAL, "Fatal"},
-+				 {AER_CORRECTABLE, "Corrected"}),
- 		__entry->severity == AER_CORRECTABLE ?
- 		__print_flags(__entry->status, "|", aer_correctable_errors) :
- 		__print_flags(__entry->status, "|", aer_uncorrectable_errors),
--- 
-2.47.1
+> 
+> > +
+> > +	ret = fwnode_property_read_u32_array(child, "adi,excitation-pins",
+> > +					     exc_pins, num_exc_pins);
+> > +	if (ret)
+> > +		return dev_err_probe(dev, ret,
+> > +				     "Failed to read adi,excitation-pins\n");
+> > +
+...
+> > @@ -2081,6 +2412,10 @@ static int ad4170_parse_firmware(struct iio_dev
+> > *indio_dev)
+> >  
+> >  	/* Only create a GPIO chip if flagged for it */
+> >  	if (device_property_read_bool(&st->spi->dev, "gpio-controller")) {
+> > +		for (i = 0; i < AD4170_NUM_GPIO_PINS; i++)
+> > +			if (st->gpio_fn[i] != AD4170_GPIO_UNASIGNED)
+> > +				return 0;
+> 
+> I think you could improve this... You're taking an all or nothing approach.
+> IIUC, we can have cases where only two GPIOs are in use which means we could use
+> the other 2? There the gpiochio init_valid_mask() call that you could
+> potentially use.
 
+Isn't gpiochio init_valid_mask() only to distinguish between GPIOs that can
+(or cannot) be used as interrupts? Not sure AD4170 GPIOs can be used for
+interrupts at all (think they can't) so didn't implement init_valid_mask().
+
+Thanks,
+Marcelo
 
