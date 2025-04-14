@@ -1,103 +1,131 @@
-Return-Path: <linux-kernel+bounces-602465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 316CFA87B2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:58:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EAE26A87B5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:04:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83D6A1891CE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:58:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72098188326A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:04:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFBBA25DCE3;
-	Mon, 14 Apr 2025 08:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EAD525EF8A;
+	Mon, 14 Apr 2025 09:03:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="WW2mgQtK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="HlFUZ5Rf"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A1029D19;
-	Mon, 14 Apr 2025 08:58:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A43A25C71C;
+	Mon, 14 Apr 2025 09:03:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744621114; cv=none; b=KaMWNJ0uCQ44dARcoVV6Wjc/pn+VroIKTy3wvwL7LIGgswVGeDT0KVDEYh/OTdeYz6/Usp7ri2ELUixGTHMNuz6llkI/XBqKm9GzKge8rxXsFsy4oIVkI3fg9VXFGO2FIqKOkFZqLSM5cFRvQG1gM2iFbqnFWJU70aps3TIGLTo=
+	t=1744621434; cv=none; b=rPJgYe1FnDhAY6QxPYlzLIXl72icottYlG04B+vcsg7WLdQTOSt5WDS9CryrfrQtmKr5/alGxNiZSMg7mchrUKM3ze2mR/l18ArxQD0g9PzrTCuQPw0QUfA8Gu3LKswTuqg9OVyde6KDsqtEPcryb/jVPRfG8SpFEXyhjkWn570=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744621114; c=relaxed/simple;
-	bh=cDCg7kZe9XYJRnj5EtD58kfDWWU0IFD44ydOOCFeVBI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W4qZ3h+DJuI5Rn4cMLnYTVWXc7w75c+2lP1/MgRukeyobuOupx+VJYrxTSeJTeQjS/ZzrAG9f0BXAq3DhazLlTwoqGYPk8dGbGAly+z0XKDY/h23SkLMWsoKAheI7p1aWx7d+/aqdoEPdhJfbDi7VE7vAgGeiVK0cK8zJKnZRWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=WW2mgQtK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DACEFC4CEE2;
-	Mon, 14 Apr 2025 08:58:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1744621113;
-	bh=cDCg7kZe9XYJRnj5EtD58kfDWWU0IFD44ydOOCFeVBI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WW2mgQtKJFst6/rbJhHuohhNDCSEOuBE4hUAGyMLos4Qm2f12/6ovmU9ScQdvO8hP
-	 tKZY6w0qaLg/xNO3LWuT9YYRq81e4CsQbA7ZEAj6JOpCZ4C/eqyan7ux46OLCu+OR7
-	 sA6nhYjBHDJo2UGYpHw2PtOgxwmoGbdkEcctrViY=
-Date: Mon, 14 Apr 2025 10:58:29 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-Cc: "thierry.bultel@linatsea.fr" <thierry.bultel@linatsea.fr>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"geert@linux-m68k.org" <geert@linux-m68k.org>,
-	Paul Barker <paul.barker.ct@bp.renesas.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
-Subject: Re: [PATCH v7 10/13] serial: sh-sci: Add support for RZ/T2H SCI
-Message-ID: <2025041456-legacy-craftwork-2d8b@gregkh>
-References: <20250403212919.1137670-1-thierry.bultel.yh@bp.renesas.com>
- <20250403212919.1137670-11-thierry.bultel.yh@bp.renesas.com>
- <2025041152-puzzling-clinking-e573@gregkh>
- <TYCPR01MB11492DDF2728C9D3B3F14DCA38AB32@TYCPR01MB11492.jpnprd01.prod.outlook.com>
+	s=arc-20240116; t=1744621434; c=relaxed/simple;
+	bh=LAT0BgQbCPYYeUrFypMShtj2rc1C0XoL44C8QAlySGM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gSgiJ3m30LcwtEu7J67nq78znJCzs9nmajR55cC/wuZ2kgXbIipyXIUVTVGzKGgaUR6Fti/RfHyPB//zThYZ31/D/Rf1QQxvzvSn+TEB9N6yyCTp7TQMVsIWTdFV8QZQgar0g9+A/XJgYFphPuY3eQ2UIJQ4d5UcIzvItlPF7F8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=HlFUZ5Rf; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 5e60492e190f11f08eb9c36241bbb6fb-20250414
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=KYJWpcm80GWs45Q4a62R/BJuN0ukztFixJ7xVAURG3g=;
+	b=HlFUZ5Rf/i/mB1+LrYVUp2HoT0caQYChwGeIqF20wlQOJ9MI1hfjn9tiGz3g1y9e5CxKWpIaPm8oaxRAf9u4s8Z+9fnSa+jfA2W9Oi/uY+93fH24KvC5lQa6Z85UoGrTepcU6lFPPkeS6RzGeyNdsy0r8Ls6NS9QdwfhkkUKIgg=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.2.1,REQID:195732db-4071-45db-8101-732f586e69b6,IP:0,UR
+	L:0,TC:0,Content:0,EDM:-30,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-30
+X-CID-META: VersionHash:0ef645f,CLOUDID:96d8388b-0afe-4897-949e-8174746b1932,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:2,IP:nil
+	,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
+	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 5e60492e190f11f08eb9c36241bbb6fb-20250414
+Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw02.mediatek.com
+	(envelope-from <ot_cathy.xu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1244373102; Mon, 14 Apr 2025 17:03:44 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Mon, 14 Apr 2025 17:03:43 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Mon, 14 Apr 2025 17:03:42 +0800
+From: Cathy Xu <ot_cathy.xu@mediatek.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Sean Wang <sean.wang@kernel.org>,
+	Lei Xue <lei.xue@mediatek.com>
+CC: <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, <yong.mao@mediatek.com>,
+	<Axe.Yang@mediatek.com>, <Andy-ld.Lu@mediatek.com>,
+	<Wenbin.Mei@mediatek.com>, <Jimin.Wang@mediatek.com>, Cathy Xu
+	<ot_cathy.xu@mediatek.com>
+Subject: [PATCH v7 0/3] pinctrl: mediatek: Add pinctrl driver on mt8196
+Date: Mon, 14 Apr 2025 16:59:25 +0800
+Message-ID: <20250414090215.16091-1-ot_cathy.xu@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <TYCPR01MB11492DDF2728C9D3B3F14DCA38AB32@TYCPR01MB11492.jpnprd01.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Mon, Apr 14, 2025 at 07:54:12AM +0000, Thierry Bultel wrote:
-> Hi Greg,
-> 
-> > -----Original Message-----
-> > From: Greg KH <gregkh@linuxfoundation.org>
-> > Sent: vendredi 11 avril 2025 16:57
-> > To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-> > Cc: thierry.bultel@linatsea.fr; linux-renesas-soc@vger.kernel.org;
-> > geert@linux-m68k.org; Paul Barker <paul.barker.ct@bp.renesas.com>; Wolfram
-> > Sang <wsa+renesas@sang-engineering.com>; linux-kernel@vger.kernel.org;
-> > linux-serial@vger.kernel.org
-> > Subject: Re: [PATCH v7 10/13] serial: sh-sci: Add support for RZ/T2H SCI
-> > 
-> > On Thu, Apr 03, 2025 at 11:29:12PM +0200, Thierry Bultel wrote:
-> > > --- a/include/uapi/linux/serial_core.h
-> > > +++ b/include/uapi/linux/serial_core.h
-> > > @@ -231,6 +231,9 @@
-> > >  /* Sunplus UART */
-> > >  #define PORT_SUNPLUS	123
-> > >
-> > > +/* SH-SCI */
-> > > +#define PORT_RSCI	124
-> > 
-> > Why do you need to tell userspace about this specific port?  Is that a
-> > hard requirement that your userspace tools require?  If not, please don't
-> > export this here.
-> 
-> This point has been discussed with Geert and Wolfram.
-> We cannot use PORT_GENERIC for this IP, and adding the new type
-> is just keeping consistent with the sh-sci driver.
+Changes in v7:
+- Add eint registers in dt-binding.
 
-But, why does userspace need to know this number?  And why doesn't
-PORT_GENERIC work?
+Changes in v6:
+- Simplify the register description and adjust the order of properties
+  in dt-binding.
 
-thanks,
+Changes in v5:
+- Remove header file to fix dt-binding check error.
+- Add /* sentinel */ in pinctrl-mt8196.c.
 
-greg k-h
+Changes in v4:
+- Add rsel-resistence-in-si-unit and remove RSEL macro magic
+  number in mediatek,mt8196-pinctrl.yaml.
+- Add values in SI units option to |struct mtk_pin_soc| in
+  pinctrl-mt8196.c.
+- Move pinmux macro header file to arch/arm64/boot/dts/mediatek.
+
+Changes in v3:
+- Remove drive-strength-microamp & rsel-resistence-in-si-unit
+  related description in mediatek,mt8196-pinctrl.yaml.
+- Use pm_sleep_ptr() in pinctrl-mt8196.c to fix build error.
+
+Changes in v2:
+- Fix driver file's coding style.
+- Add pinctrl binding document.
+
+Cathy Xu (3):
+  dt-bindings: pinctrl: mediatek: Add support for mt8196
+  arm64: dts: mediatek: mt8196: Add pinmux macro header file
+  pinctrl: mediatek: Add pinctrl driver on mt8196
+
+ .../pinctrl/mediatek,mt8196-pinctrl.yaml      |  236 ++
+ arch/arm64/boot/dts/mediatek/mt8196-pinfunc.h | 1574 ++++++++++
+ drivers/pinctrl/mediatek/Kconfig              |   12 +
+ drivers/pinctrl/mediatek/Makefile             |    1 +
+ drivers/pinctrl/mediatek/pinctrl-mt8196.c     | 1859 +++++++++++
+ drivers/pinctrl/mediatek/pinctrl-mtk-mt8196.h | 2789 +++++++++++++++++
+ 6 files changed, 6471 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/mediatek,mt8196-pinctrl.yaml
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8196-pinfunc.h
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt8196.c
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt8196.h
+
+-- 
+2.45.2
+
 
