@@ -1,98 +1,119 @@
-Return-Path: <linux-kernel+bounces-603283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CC15A8855E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:41:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95640A88591
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:47:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A68617A8E27
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:40:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36F0816A35B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E3D27F757;
-	Mon, 14 Apr 2025 14:25:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C1B274FD5;
+	Mon, 14 Apr 2025 14:27:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KyP9D3Nv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sb6XnLm6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8676C27F73A;
-	Mon, 14 Apr 2025 14:25:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4535A27F759;
+	Mon, 14 Apr 2025 14:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744640728; cv=none; b=G4vP7eL853s1u1MZqqObSVnMbXxbZtm8whLA/bo8HS6nQ4L//j2eywgwps3gLPYUclw5kDBhzwKoa7xaFuWLEpxQh23k07sLhsaHJYMmbjWsB70AevaoKQA7W5KcPtkEDtrvYRq/f30O/1h4hsUxN1ygR/5my0xJJ+KSpa/fBt0=
+	t=1744640824; cv=none; b=bvN2j2/7M6xI5T5sw7UW5BjSf15gZfX9aAlkUY6SWjJWLV/BVzhKKC/g9i1RptUc96jgDa6+4SZdBL7z90ZMHn1FZq9l5OFv7azWrvumdNbqXtzZ1pEF0BivYaZ3dwuTp6cpyih9+Utr4ljP6Tcze/7EXpd/TrYsbkQbOo001BE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744640728; c=relaxed/simple;
-	bh=3daDj0mcIsp68OogGpd0fzNPIdyotvmgnk6RkCbuVWc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=cnU2LjeRg4GC6PpCA5TF8rPtfH6dP1nGMMTMadO4ddvb8JY2RpRiasQu74338fPKLs1+lnt5T6fQsSEgj9VLLqPkhK/GDh7gWUPVa/PUNVYm6DnpHAUawpDBVtdj+vzfGKns2wn++R6yIFw2TYByQHnwoSedy0MOxnGCIG8llpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KyP9D3Nv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FE2DC4CEE2;
-	Mon, 14 Apr 2025 14:25:24 +0000 (UTC)
+	s=arc-20240116; t=1744640824; c=relaxed/simple;
+	bh=jLiMpwfjAhP34pBct7SUNsjIF29sZ2YgJztMNCFrHFY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DhrVZ4H69wsQeEroVeTyouxEZb1ZmpeRlJ0UBaOOtaIUNKHzyor5pvue0O0PTGrg039YEYGLRQNJpp21DrCIMfPV2neuClPQobnREnSsFKGQe2/P0kbLkxO1goxVobo3ENh/1K326sHBrMbE2WVuwgv6fSHyc352K8aWdA+fjic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sb6XnLm6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8399C4CEE2;
+	Mon, 14 Apr 2025 14:27:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744640727;
-	bh=3daDj0mcIsp68OogGpd0fzNPIdyotvmgnk6RkCbuVWc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=KyP9D3Nvl9VPs4Y+adIbgJ/kWDV8oOJFDl25SW4Z8E3+fC5MdUg2iVjQ3ngxK6IHd
-	 xveMv/ctz4aIS3rkjZhiFXun4FauYhVpTc2nNHA4xMvq6kV4ZiXWvPE8melIYiWUd5
-	 WyGC28M9iH2WBh+W4SvBqfKeGzMPFqTKT7rNVN8Sl0KmrJ+8iuyGjqxdvXf11M1So3
-	 bYcp2JgZBOB5D553M4LCbhOyqODMDAxOKOCe8jJj0cRJvhNAuI3A2Docv8DbQn/jS9
-	 Hu3nE2pUhk3iL5f667EVFF7Ns2T2KTRFl8m6EvMW4c6HiwJsh4+D8qw7O8nW5iH2aW
-	 d7RuK1wsCPezQ==
-From: Mark Brown <broonie@kernel.org>
-To: Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, Mans Rullgard <mans@mansr.com>
-Cc: Pan Nan <pannan@allwinnertech.com>, Maxime Ripard <mripard@kernel.org>, 
- linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-In-Reply-To: <20250410115303.5150-1-mans@mansr.com>
-References: <20250410115303.5150-1-mans@mansr.com>
-Subject: Re: [PATCH] spi: sun4i: add support for GPIO chip select lines
-Message-Id: <174464072481.99542.17446384569030524351.b4-ty@kernel.org>
-Date: Mon, 14 Apr 2025 15:25:24 +0100
+	s=k20201202; t=1744640823;
+	bh=jLiMpwfjAhP34pBct7SUNsjIF29sZ2YgJztMNCFrHFY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sb6XnLm6FpFtHh7X5vPM1gOLsfXO0TXqz8uXjCxqbIzwg/FU/2scunQTXoLpJQVUy
+	 +TLuVEZk/JUR1ixmT1AxKhmV4Ch+fnW5kTSOw8uurqjs64wswoyPMbY5ZIPBZuD8Ex
+	 GcjSbxrSyGtoThn4q4ATk51wcU8P07butGxNhlMoscIAOhoQVV3J4ZXONu80h8RqgK
+	 9aGCXYA2ckLGN9NjCJu+6KZzKv5yYY2XmlYJFUgpFEGfaMlHtZIXoofcGjQFA2YYvq
+	 2lx6U9xJt0gkB+ubXNpO4wmXkmN62+IqqQUrM4M/ZH2J8S9mstgth17T8hiGy3nssy
+	 CXE8oR0eOWcMQ==
+Date: Mon, 14 Apr 2025 16:26:59 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Luca Boccassi <luca.boccassi@gmail.com>, 
+	Lennart Poettering <lennart@poettering.net>, Daan De Meyer <daan.j.demeyer@gmail.com>, 
+	Mike Yuan <me@yhndnzj.com>, Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] coredump: hand a pidfd to the usermode coredump
+ helper
+Message-ID: <20250414-gesiegt-zweihundert-3286f895aa3d@brauner>
+References: <20250414-work-coredump-v2-0-685bf231f828@kernel.org>
+ <20250414-work-coredump-v2-3-685bf231f828@kernel.org>
+ <20250414141450.GE28345@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-c25d1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250414141450.GE28345@redhat.com>
 
-On Thu, 10 Apr 2025 12:53:03 +0100, Mans Rullgard wrote:
-> Set use_gpio_descriptors to true so that GPIOs can be used for chip
-> select in accordance with the DT binding.
+On Mon, Apr 14, 2025 at 04:14:50PM +0200, Oleg Nesterov wrote:
+> On 04/14, Christian Brauner wrote:
+> >
+> > -static int umh_pipe_setup(struct subprocess_info *info, struct cred *new)
+> > +static int umh_coredump_setup(struct subprocess_info *info, struct cred *new)
+> >  {
+> >  	struct file *files[2];
+> >  	struct coredump_params *cp = (struct coredump_params *)info->data;
+> >  	int err;
+> >
+> > +	if (cp->pid) {
+> > +		struct file *pidfs_file __free(fput) = NULL;
+> > +
+> > +		pidfs_file = pidfs_alloc_file(cp->pid, 0);
+> > +		if (IS_ERR(pidfs_file))
+> > +			return PTR_ERR(pidfs_file);
+> > +
+> > +		/*
+> > +		 * Usermode helpers are childen of either
+> > +		 * system_unbound_wq or of kthreadd. So we know that
+> > +		 * we're starting off with a clean file descriptor
+> > +		 * table. So we should always be able to use
+> > +		 * COREDUMP_PIDFD_NUMBER as our file descriptor value.
+> > +		 */
+> > +		VFS_WARN_ON_ONCE((pidfs_file = fget_raw(COREDUMP_PIDFD_NUMBER)) != NULL);
+> > +
+> > +		err = replace_fd(COREDUMP_PIDFD_NUMBER, pidfs_file, 0);
+> > +		if (err < 0)
+> > +			return err;
 > 
+> Yes, but if replace_fd() succeeds we need to nullify pidfs_file
+> to avoid fput from __free(fput) ?
+
+No, since replace_fd() takes its own reference via do_dup2():
+
+replace_fd()
+-> do_dup2()
+   {
+	get_file(file)
+	rcu_assign_pointer(fdt->fd[fd], file);
+   }
+
+so we always need to call it. I had a comment about this in the previous
+patchset so people don't get confused. I can add it back.
+
+Let me know if you're happy with this otherwise.
+
 > 
-
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/1] spi: sun4i: add support for GPIO chip select lines
-      commit: 36ff6c3f5084f2dbb6cd89d15b78cf734e9abfa6
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+> And I think in this case __free(fput) doesn't buy too much, but
+> up to you.
+> 
+> Oleg.
+> 
 
