@@ -1,204 +1,293 @@
-Return-Path: <linux-kernel+bounces-602937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B7E3A88139
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:11:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49F58A88155
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:13:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CC9217564B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:11:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E210E3A2161
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:12:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62CA62D1F42;
-	Mon, 14 Apr 2025 13:11:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797782D1F60;
+	Mon, 14 Apr 2025 13:12:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="I81ncViJ"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2082.outbound.protection.outlook.com [40.107.92.82])
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="HT9Akc77"
+Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011006.outbound.protection.outlook.com [52.101.125.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC461465A1;
-	Mon, 14 Apr 2025 13:11:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579AE2D1F55;
+	Mon, 14 Apr 2025 13:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.6
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744636273; cv=fail; b=GV7Ysqal4DbfYJzrHjGq1Ba4ZxlKmISMpRehqgCWtt5D4iu3J1y0d5zMLpeGgaZx4nRFy6qFJzUAGd0BGrm3dvSXXhxpRl9TUD8O4fWPmTQ8PT+sYoQ7II5Ij3HG3eVPNf504mcPdndyA5nZUNye2lWwK2SZj+stWUAbU5wEwxc=
+	t=1744636376; cv=fail; b=Z6h2whrTzYi8Nsb+p4W/2K3uPNb0mgtr40B4TdUeoLEJBru0rspZ7JM06XZsxBD3LjpJQNhAFSVngr2wJa+Y6wopLFOQz1HaeB6bPB5H+OMR9ASJfkjeBtxIeXdxrp5JUgNJuaYq6PU2iWGjYa6yGGAFhAfk7cVjqbFXdL5MJj0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744636273; c=relaxed/simple;
-	bh=ccIdKaBZ7wlUEvYiQWNHU9i/3lH+lE5CPabUjcQvHr0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=nkA0KeB7u6BpeY582+HuNpEGx3SXdJjTZsfMelejyi47hadVZUXNLa13Yptb6ShjynzDipSX6UHI9gPoJWCmez8mV1JM5Ackt9GBuCx0CctODy9xFF6oDwrUgP25hdo1tFOh3GxIrrCjsY7DmTt6A3AhG1tTqHr7n8NFmcWiXiY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=I81ncViJ; arc=fail smtp.client-ip=40.107.92.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1744636376; c=relaxed/simple;
+	bh=nf9hdikBdwtjDM54e6UAVgy494fp4jy78vse/QdsKKc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=JUY5QSVVA/QgUk+7bOopu0qXiCJEi4Tc9h9+KGQ00yun9Ll1h5q7GZ9fi1niuP9tqpuKmuDAMtbtJla2oaoG7U8o840AmFk42Un/zpS5GeQaQoCjGUGVkX968RiiNBAVyN6YkDWNMgLJ1G9vSRA3dy9IXPeHCqttROIR857Z/Vk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=HT9Akc77; arc=fail smtp.client-ip=52.101.125.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uLLHOOgaPf/B/cmj681D2ySufDlmwxnIlbGP3aAld72LjBJKzIgTjkjw0ZgdcxEr4IcnrELicQNNTeE5eb7cSD8gJrWR/MNyTTiJiH+wbsiXMt/P+ZQhapLA8c38hLjsaFUWNrLdn35Dm55E4gk3SxWCq2cSpzE7X6Pc4fupQu1F3Vum9GUIQBs0ZIKW3zRrANroMMPGVwx6k4I8qoUtLKzrOjhY1U2u5ygOz6QnSAVN/5wFF/ZsP8M7GOBKbtzf0i39XkrLD9JQdeFWqAnna7hQiUXNfExIRBJ9dgJYhrg7vRUytgzz9+4ARy4x2I+t2pqyrFPQJgd31AjBMJ8Q2g==
+ b=eY5KHztz36jlJJu0o2r+5m6JKH2XT2mThUixFimlkX3o4dt49cCtqPC6O/E9ecdVtANtPO1xrVScR4T9pcaffhLAbXYFe/zEy10emoX8AWp82jnJOavL+h9yXmP3prQF0w9IFrFMnj7ODLEKX68Famz1a7rlbElxaXR82Q9COEKh2jrfpUsSodk1yVEcT/YiV4LryCqFtyUztKc2cZUKjlFMF5TTKE/fu2cdEcLkNMTTvV5wwqCMMYquC8+U9dWKrMgOOOiod1xzPzpn7BJlrWWxu4LOB8nIqeHrmx1PUcgz/tES1X0yyFS+OthSUbue6b9sNdQzJ8f2XZNPZ5j2Cg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=V6bbR1cLIW1oa7vD2V5Gq4W5FqXu9GqgkZB8ahOXIqo=;
- b=ozLNMD5k8jYpahup9cM9xOrNkeGFyrt4QxZiUcrhMfUMnA0mSmisbh1AYLq4q0WmN6y+G+LDgV5OvzIfhIKPOHKjT24hUIcyiCpVZhXSKcFMbwm/8G+g4BCNHbjpibvijCpfY29ahfsY8zY1qr7rlkRPPclElLBGzrDdphSnyDKWxmS3oZ6semVzt5PVlUbHppVzSCcJr/WagOz2WrSU9Hv1CaUa8t0P1WD18g1L+G/4PX/IVV61dQ6Gl+/EehZkV91MyvZjx+oemHz+hIczkHg7v1lyidDLMHCjExY2xDDLB08Y3yBrtBPtMFEcuq7lxilI7/zgeezXzMxhRsHqsg==
+ bh=zkFRfRYnEX0OQa/eXUvCZwJBkGV4uJkYlctURANcoUE=;
+ b=dNzYRGE7X6eZZVurUGDhTblzIxVFh74J32D0H39dG63C4wQI1rCQzRLxl6Y+PBNYnG6Ieus+fsrk+KtkxFpWJAIAWqLcH8jL9XEuLhvomuTLkHRMo3UHxdWcZt1E9ChGub2Gz1TsHj6PMtW8yyLw33puXzUgYgXruGJJln43yfH+V4a53QqtV/1urgaFgHGA/p+TFtQAYhhEjdDlOj7qkZf9EUZKAEyYh+GIIdXMDaJ0Hf8em6J9Xj5A2jEF94wqv/fXCE+OedUxcLNmnj9hs4JnmhSCA+J+l6z0ATGcGyVNfEKv0ynROjErB76LerHrZQgxsmXfEUaGroZL0u1p5Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V6bbR1cLIW1oa7vD2V5Gq4W5FqXu9GqgkZB8ahOXIqo=;
- b=I81ncViJlZrxi1pcc5EVsZzNElJLJtnkJkaKNVLoMqFsKy5xnHscWcia0Qk2Rb5V/gBITN7bSF8A+Qdv1AP3wOTWflyOjGWmceVHI2m090lGwGb4/a7Inng5hMUgTiIuZra7apYm2lIw084wcko1+glz+E9JcRrOjAIFdFyxhLc=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
- IA0PR12MB7699.namprd12.prod.outlook.com (2603:10b6:208:431::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8632.28; Mon, 14 Apr 2025 13:11:09 +0000
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f%7]) with mapi id 15.20.8632.030; Mon, 14 Apr 2025
- 13:11:08 +0000
-Date: Mon, 14 Apr 2025 09:11:01 -0400
-From: Yazen Ghannam <yazen.ghannam@amd.com>
-To: "Naik, Avadhut" <avadnaik@amd.com>
-Cc: linux-edac@vger.kernel.org, bp@alien8.de, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, Avadhut Naik <avadhut.naik@amd.com>
-Subject: Re: [PATCH] EDAC/amd64: Fix size calculation for Non-Power-of-Two
- DIMMs
-Message-ID: <20250414131101.GA65192@yaz-khff2.amd.com>
-References: <20250327210718.1640762-1-avadhut.naik@amd.com>
- <20250405005832.GA1625290@yaz-khff2.amd.com>
- <642236b9-a19f-417b-bf1c-888ca54cecca@amd.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <642236b9-a19f-417b-bf1c-888ca54cecca@amd.com>
-X-ClientProxiedBy: BN9PR03CA0853.namprd03.prod.outlook.com
- (2603:10b6:408:13d::18) To DM4PR12MB6373.namprd12.prod.outlook.com
- (2603:10b6:8:a4::7)
+ bh=zkFRfRYnEX0OQa/eXUvCZwJBkGV4uJkYlctURANcoUE=;
+ b=HT9Akc77FZfR6EorjyLLstZ1leWQwmn2Lk+Lqq5ZSl8H2kdB5Bwt4gkbBJ+pW6RuoJDNABjgpK9v9B63cnSGtuDNCZ0o3cOritYJc/og+FP2hXkmNKk4F/5ZbOEwr4W6nBimSvvFHYY2UHf9DmqXk7wu5p4gfd82ewnOE+uHRgY=
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
+ by OSCPR01MB12642.jpnprd01.prod.outlook.com (2603:1096:604:33d::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.35; Mon, 14 Apr
+ 2025 13:12:46 +0000
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1%4]) with mapi id 15.20.8632.030; Mon, 14 Apr 2025
+ 13:12:46 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Biju Das <biju.das.jz@bp.renesas.com>, Prabhakar
+	<prabhakar.csengg@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+CC: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Fabrizio
+ Castro <fabrizio.castro.jz@renesas.com>, Prabhakar Mahadev Lad
+	<prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: RE: [PATCH v4 2/3] reset: Add USB2PHY port reset driver for Renesas
+ RZ/V2H(P)
+Thread-Topic: [PATCH v4 2/3] reset: Add USB2PHY port reset driver for Renesas
+ RZ/V2H(P)
+Thread-Index: AQHbrT006JPvaQdayU6PWC6vZahsdLOjIFkAgAACvKA=
+Date: Mon, 14 Apr 2025 13:12:46 +0000
+Message-ID:
+ <TY3PR01MB11346BE277FA935E0CA7B686986B32@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <20250414130020.248374-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250414130020.248374-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <TY3PR01MB113469552384EB52CED89FDC286B32@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+In-Reply-To:
+ <TY3PR01MB113469552384EB52CED89FDC286B32@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OSCPR01MB12642:EE_
+x-ms-office365-filtering-correlation-id: b6a9fe57-200c-438f-f1f2-08dd7b560ccc
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|7416014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?aOhJrw1oXBkTrXi9xPzOMSm5KKiU7CMZwpbdpop5aAOnuMFIjjAljrrcgC35?=
+ =?us-ascii?Q?y9NBuM4Rhn5MmvWeVbePlC8Q7RL1fjS6BmSH5wxxqzdRIn1ZQxsOYt8IvNyd?=
+ =?us-ascii?Q?cEBu+ERNOEr5E/41Rsi4b47jJVlA5whMFH2JkdleiVwtvox60zn+0/2Ezn6Z?=
+ =?us-ascii?Q?8V/oidAll5a1hRfUwlGE4ihEyavQ3UEVDOzTUG2tUIbZOfyh3oweh/6xzQc4?=
+ =?us-ascii?Q?XZoEEFhfv19fZnPKHwuvkCIqDFViPgu/pjkGY4CNQ2qBjrGZumSr/w+c6NVC?=
+ =?us-ascii?Q?nDqx3QV4M6swCfUZ6Mkc//Tr4ifJ6EKpH/oZTkJfDKFrKfIfRGmwg8DyCVwp?=
+ =?us-ascii?Q?wZdLqrIqbD62wqh0y50I4dqg0CDtmFGG6kj/QEdeFVAjWDn8AmU5+5CIZ0mn?=
+ =?us-ascii?Q?kKdq+ZuRU74Feykh0ulpJ0XgAEH0VMDlANXlEbmHYiJMtQV1HGGZ+OLi5yuq?=
+ =?us-ascii?Q?+8tH51EoCtKXcyzet1Ee4IfaKILgKkv/PoC2v2OYJJYvRhw31IOWH/UHZ43J?=
+ =?us-ascii?Q?fAoPU8fqHks6bMNMP546p7S+xcubIzMP/bqLjnO/Dv21L6Yatf2pUHHCvsWK?=
+ =?us-ascii?Q?SlhImsza766eMlfTHsBFP+9aPqjJmWsyvzCIIeVy24i7UdUGPsBgp6kUO3Lm?=
+ =?us-ascii?Q?/tqJ48SAKjkAKvZbRt5FSWDFyi9tbireX8msD3sEtQPDKTdbSQf8l+VqUZMp?=
+ =?us-ascii?Q?tKkqtZjSJGGc5pKVD7mNccusWOFMclQzRfDlN5OOQnp7MjF0gYF3NIJ6rfJ6?=
+ =?us-ascii?Q?hWP/II+zQkv++3mEdTJXz+0UUyre8G7G+m/gQRlfAaqhb1Z/Q6ctJRlK1tjz?=
+ =?us-ascii?Q?nDea37oj/u0u3F4ei50zXEh2nlHLchYe/Ycu7wVQNDzWHx8OiOt5QUHUvhRp?=
+ =?us-ascii?Q?L9U3YYUis5HH+eIs8VqpPUF0I+YItqUHG+u+Mk2TlJbtK5hZpVT2lijuxT/C?=
+ =?us-ascii?Q?ey8CujPV8GgzgedUtWJdbX2XpTnWX484i+EeCN//VN8Ktp/TC9r6I0ZGqkDL?=
+ =?us-ascii?Q?PXBkax2XPce/Ig0b06Ky8cWwznK8to1slqnlbNf+SkJhmk6EmTVQwhNu0NRy?=
+ =?us-ascii?Q?mb0MvwLpV2GTeemtLXLnkGASny4Opt8OCxLusmhH4SKTyly5t/qbn6fLNipM?=
+ =?us-ascii?Q?3hRYMvsZCeiFb1bfW9FupcgDsX9lkMdODjhm45VMrMG+N1vCrKSTqslriAzi?=
+ =?us-ascii?Q?1PO3SPqgMaaQVc26/zZOLBaPvSLKPFl+mt1UcCbc/FLh9ZyEQW636rSDsIGo?=
+ =?us-ascii?Q?5oqY5aB5lHSogOo/MlYpxS7XxpYfZkZmFkk74uhjydU+Is32ZgSpe9CxPeGU?=
+ =?us-ascii?Q?r2vR+KbdAHxAueG/Odh82lGUPxBLWirhgy6XZCLFJdTKM/HsufOKR/jo1rUO?=
+ =?us-ascii?Q?E7vpUZTgepUNi+ysjbh4CSDtyw7+2IluDJm0wGT0TsvJ2F2qfMavQvGNx6gF?=
+ =?us-ascii?Q?ggcFOp8kTHgNdv7WFmoSgDTf2f8O/a0f9DQuPvsVpNcY9aA4pCsXrQ=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?G/KxP2lVjh0tfL4B7IYiCJWuA5Ws2WAZj4dJAHsDvHZEGXpLiMw0NE+oTmcq?=
+ =?us-ascii?Q?db/KkOx6SyS/rl+9c3zaK3H5sS4I/HA8PnfH6d/1tanarhhejLzrRlHAs/ke?=
+ =?us-ascii?Q?liBltKvCImc25lBBVzO0D20dlTg0seG5eGEO8QLxLrpJPJF2zEJK0v7y7aHb?=
+ =?us-ascii?Q?kLTVOII9tElvwPx1LFY8sBWYQD+bGttrdC/7ateX3ur+Hw6dmMXW/dlAwMdJ?=
+ =?us-ascii?Q?5MNi2KKUUugelFjqNqc6SCL9PDIuvDpGx7+XwYndpva4bkyr/Av0pluvi8jb?=
+ =?us-ascii?Q?a7OHFviOuwnLdOg951r85cJ6hJqEuCg8wgnJJfM8SrMj+oDOWtwkuxc5O6AV?=
+ =?us-ascii?Q?yh4Qh5VyOEUtepjH26iVuIiCWguR2SkDdD0wz9ClYCTHK8aJk/q9D6sAOeKG?=
+ =?us-ascii?Q?jSNInW8oOh6pdddXa9W5kiGPUCDe9OOEGd9i+ps2LBnoO7sIWCD50ounSFnN?=
+ =?us-ascii?Q?3frfrQX3RqmQINaWrNVS0QQ7Ub3B4A25Xgi9OZx3VqpGPQ9woyGEJG1f7FtE?=
+ =?us-ascii?Q?Shv76v6IEENl4bzD4d/POr642/VJNA43DY4z/Q9qowanabGbKlLd/VDVS6TM?=
+ =?us-ascii?Q?WeGLAL2qLRoQOFWeJ1iosdc7Ddrei/D4U0ijqUs5uRwvAxSdPzHQfSoLGofu?=
+ =?us-ascii?Q?WRk8ByX+10B3wDDgn4LUoSbq4pU/jMC7EGjQbakXCQLYQHv6PTTC3ohbeVIv?=
+ =?us-ascii?Q?xKn/vb5YM7AbeMkNpDmyk9VGK3h9EsOih89NJEiiZC0ErXeFHGlcAxPnWQPN?=
+ =?us-ascii?Q?JtEEQizn8aMmiTAXnu7ig0dF5eirv0+oSIzcjthtz96DFxUKSJFVkcOoxyuG?=
+ =?us-ascii?Q?c2foRbummlz1ExkerRnfpRO7qg815iG4kIKXtVEJMpbx+MlAgM3MEgOu5+/h?=
+ =?us-ascii?Q?dS4ASLvO/A+LJioK3FJnm3HokSxbbc28LWXCV8OzLJikI0eLxg9xlp4MOynv?=
+ =?us-ascii?Q?xQ9OiYDWoIbx6m9Ncnz3QDzrFi0nm9MknFyBHHLnPb54KMJ5L1obOd0wmaEz?=
+ =?us-ascii?Q?ytQ6pgd1uGSAMYvoO5VRu9xtlnxV0/adjJZhFtDGuMfkhAzKO7raVlJnWDnO?=
+ =?us-ascii?Q?uQ3wkZIbuSwG23m5tcM3KZdd7ijXnfG7Iokz7g1dw0rj2Z7TRt2WvP/pK0c/?=
+ =?us-ascii?Q?Lrwb7MNQpALGw9QqnBPw2Cq4pYVuGkeT+14NoC37V/FzpNZSxiAMu6nUX3Fk?=
+ =?us-ascii?Q?+GQoxaWKCO0xZ683hy+lCCQGNuN2qBwx3dxipkLC3unca2gN39d6fz97gEi0?=
+ =?us-ascii?Q?yx6urdoEdltjhKndJBtfsxvOU8op9Ue1TQuVIJktiGq1Tcr9X0tDwOSu1JDX?=
+ =?us-ascii?Q?U0Kjdc81oFpVvZk0W/TECextWaWY+ojOYFtHMhGLII6uv3Q5hSbGP3fGNDeJ?=
+ =?us-ascii?Q?B+W7LuDhrQJDoaBeB8MHxYt8gejvJ+4LpGDa5b7M9dNfKcBvGWUbu2t5VaKL?=
+ =?us-ascii?Q?DKnJgoJeE3kOWi0NA1g6khD0v1zWeMil8OE/Yf/Nmw33OVFbi+lj82aL37U4?=
+ =?us-ascii?Q?9yfkFOzkgUmnwALAL50MOMA7k8roHysexkEIdupZbSCuJxkJlT6mcQ59tyZv?=
+ =?us-ascii?Q?v+ou3NHLspWicYUP6VQyIHwp5A2kAz8CXH4eP6Tv26wLYHgaOyN4X0dH65Zl?=
+ =?us-ascii?Q?kA=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|IA0PR12MB7699:EE_
-X-MS-Office365-Filtering-Correlation-Id: 55f39a9a-1ef7-4bf9-5929-08dd7b55d21f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?oXti6amTBojEqe6npUR3j8i5xKbbj/COgS7kKUWCR51VDNnIuBNlcdYgRDSo?=
- =?us-ascii?Q?07Z69Z5/kQKT9q4W6v6e04HK1KTBO3J7bqXltOHn0WKdKLt7tMDscFY85a5M?=
- =?us-ascii?Q?7PQcj2k6BIymmdTExj7voy4OpR8eh9B9BCjxP+8e4+tXLjv5VppySR2hNbFC?=
- =?us-ascii?Q?MMyq+k+S7MLhxgYPUwdB95hDqNOqksEiGu/un8/7nUXbwKpxF5OKjxrnZ0oe?=
- =?us-ascii?Q?A6BcQWU8EsDZ2gxDST1to5Bv/nBuHkRvZY2P1uE41GNbNhu1MHbWnoAb9Rsh?=
- =?us-ascii?Q?6i23EMEKR08QldC4efDyhZKNH/2lzraVqQiliUxZi1Dym3fhI3CBHrjsC5zU?=
- =?us-ascii?Q?/UDtz3o4OEZUWy9PEp6WtTIUjq+GFWOWd+XnTGibwYoHv683LsOgrNjFTMLm?=
- =?us-ascii?Q?DP6rRY6b2CyO1a967tvEbLV7USsLR5M3OO+45gtrnuZG/z+k73iTeHIv4lJz?=
- =?us-ascii?Q?LP0vWFLdOSvXx9xgu90LdUUZEZRhcTFO3R9eACSsaNgBXMvdPYMzPb0d4vdF?=
- =?us-ascii?Q?X90JDRFu/zhWUQd6dl2ruXwoZ7X+ISKcxtqvWRojynsQ3Jee3vAHB2olm5FW?=
- =?us-ascii?Q?qf1lfDnVQx1zb8gRBfTs3F1N+RER9aIz3nWK/a5PpIPHJGf0HXuWSzgAg6YB?=
- =?us-ascii?Q?rzgVVwCDfFkF+09ws/x2LYofnxE1M/mimYTQhgm9/hN7mzyOsQPVUyQ5X2dj?=
- =?us-ascii?Q?lV6kLuVUf/BPD52yL3d0jlCp5od0BesBW30s/E1aPHwFPu8xuIcheqa/cg+U?=
- =?us-ascii?Q?YvUEyOF+P06xDZojhFX/gSS7jRORFzw8y4VW+/DBO/MLzIyYnP46CKQkOIuq?=
- =?us-ascii?Q?6Qn0xDJsBeyS4BYIXdA7fk39VJenD63EXYcEuWG0bT+Wzliv2qtQk8X5iBNw?=
- =?us-ascii?Q?h2fxsNakrMNqzr/DvXGe0qhwmBbTZz6Etbhj3b2V+nstgifKCyX2M538YLgB?=
- =?us-ascii?Q?BY3xMDQxEb0AoNjNwm1n1Y028b9x9t9F+l2WXpifZwCEBdDwOa9girDM4v3X?=
- =?us-ascii?Q?wBToLNvaD0uc1y7Di0/6lFDgwbL9TcHXjyI+5aTEj2K9p7bWPiedBnU80SL5?=
- =?us-ascii?Q?nXq6BObBSCGjPB+vf+WlIYDTE9W1l2do0/F2c0TNZqzgg1pFXIUdxa8+hrue?=
- =?us-ascii?Q?soTXe4Mx7hFqrP7zQeDFuD4mRK7xqSjczJmPx2wMPuZ8TQJ9UTF1ukZZhyfZ?=
- =?us-ascii?Q?/Jwrlk09kkGvmtV6bb3HG2fQLpCV84TNinUJVQGxND6FwW8k6YSST52PbzqP?=
- =?us-ascii?Q?UFJnxxq6WZzHwVtnXiFqTS34WgYCKZYt6fpIq8ufLcz+T89ogg0BHjpU+7kC?=
- =?us-ascii?Q?lHCkK4ldgMd56g4B61pNyce7eV404yacmSpb36kLgxrwYQaPWOnum6w/X5mN?=
- =?us-ascii?Q?QLyQfifUfoZMI62OkkwvQarxkwIcAlIBuLebTW1x1HWGLQR9nY2hM1Y7hRms?=
- =?us-ascii?Q?QTpsgaPFlCI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?qKrlqDF8NX5zfD8L+Y83oPYIsyK1bw/qJd/ZfxMgdG9igQ+WhXl1YzN6No4F?=
- =?us-ascii?Q?nLbCNzdg6IAFgGnqVkAkCbBXb+mMlMUs10sQ6FTEQXbbwww1ar3K07dgCXHJ?=
- =?us-ascii?Q?gxLMf+n0uqk5BTfRysgv2WABBu0Urb62KTuImYGss6NaD7WHgEN+tCLvsVyQ?=
- =?us-ascii?Q?1NTy0GH4PbF2skdVPUgvV4u1hLzYgDMxm8855DIP+J+U2HUcs6ryzwnVGPqG?=
- =?us-ascii?Q?EZebQu60cJjqvQFDDt/iFY6WdpfmefF/vdp4MM6HLnrYayJilfCi669Xrc82?=
- =?us-ascii?Q?StPl/Wa2Nut0cE1Ql5nbuq7DRij/7fVz7ASHZdFclkVuja6pH9Dbt9/J/V5W?=
- =?us-ascii?Q?6HM2427euzRysgLu5zZCcIccFhFyBtcfP34ZhlFay2riSx8VBdr8nMeiSuJb?=
- =?us-ascii?Q?3zSa4fPzg9Vy/FFNPoKMMaJTpxEEc8LErpJ28R7oCfs5ZzY4dBvuUw2wnhT2?=
- =?us-ascii?Q?u5iQkHkHXaiSaYBj6OagrDYJr8109S9wNvfijPxgh3XvBOwPSwexN7PpAzYF?=
- =?us-ascii?Q?a8jFxSIZsKF9k0xJq/ULJ0M5RYx6j2CgDVWFE37p6JiF6Ri/ag/JbabjobPo?=
- =?us-ascii?Q?6b6z8X7zb7Rb651qUs3vrnn9ygG5g4GxGaOXdFzGSm3cAdORqk6IRroSJ/3g?=
- =?us-ascii?Q?H0rbm/mhcLlVHsuj+eHZrVmbRCf8XHC64jVtf+KDUQG0rDtYW6iuhRQ7Avsg?=
- =?us-ascii?Q?03GYDkOWt0wK94sYFqexO2vZ3mvg5zvCyyW72I+BRMpXmLCyvJP7jV0gkRKX?=
- =?us-ascii?Q?NZeBoVX7C4gB7uDom8oH1xIOW6DOxH4iN9dBDStiRKmvGaOWA2rUfEJdCWz6?=
- =?us-ascii?Q?h/yuZ7XuHTvXQdnaxOHTFe48KZ9bL/TxLfaSvVq2WRmG37ThdekaE9NHuatX?=
- =?us-ascii?Q?xSt2+ehQeu2QuogIdF+R0goEC3SdB8UR/KjLcGl/DtaJIoddm2Iu35q2RUBx?=
- =?us-ascii?Q?XCGfswjpwsYiRRngcIAEmFalbwjsLCAz1M4Nho+8ZootIZn26+eMEAaQqOyj?=
- =?us-ascii?Q?6QlPtV8s62fwxeaB4UZ95oRktcHPNUEQAl14yjLY04KXksiJT2PtKz/euIgB?=
- =?us-ascii?Q?MUUlkDZOoWda3vTFL9Lp775jbfA+HYVbg9XMDJ7Ecm3LMoFfvVeW064/7RG4?=
- =?us-ascii?Q?Gf2kxsrLLxYxN/apmdy3Rix8eYoNPwvKQr1oMFgSUDbji+Ls+UInY3wwxXwl?=
- =?us-ascii?Q?cYlOfEv0+R8SYe4sOH9mZCKUGn2tdt21tK9eJmJI41CUa9Rw09NvvxQAGaAe?=
- =?us-ascii?Q?YH5QYJuYUu553kZMzLFr7ra04oxHvPPplRm1MTrPDDWryvDmj/Mw+7+2GMTi?=
- =?us-ascii?Q?FrFC5GUJRw+RE1zvWpOqngdMvY0IWHvJA6zJZ3rT/pJgDD8U4gJeFwTaIUdv?=
- =?us-ascii?Q?SyU9ImeGjaRyQGwrdMmBKLKHkT5LNcgqXjlvVxz+VywheLdoO+zVhdhkRtBA?=
- =?us-ascii?Q?YWkQd8vIlXirbxQXEnJpdkDF9iBPCnjoTIeGAOGMikUhebY9KCcRAN5xLv5j?=
- =?us-ascii?Q?ukFOpGgffroGlQuE1o4Sydfm8PUGc/w9EqWlbXz0xvQokoNcDU9mP5CMAVin?=
- =?us-ascii?Q?vPa4h6nfLPCmr648pTQW48RpxSOjI6ySKWQvi7HZ?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 55f39a9a-1ef7-4bf9-5929-08dd7b55d21f
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
+X-OriginatorOrg: bp.renesas.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Apr 2025 13:11:08.7052
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b6a9fe57-200c-438f-f1f2-08dd7b560ccc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Apr 2025 13:12:46.8170
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: t/B2bYKDvSEtcB9uIX31J+BcOELsQbUuFVnCVjC3M9bdKpGogOCBMVugAVCKQEHjUvMzk+U+v28JtEx9j32+UA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7699
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: VD2GaflS2ReFdqqnb71o3up6JEtGLuXzvFEwuTejT4zR1m8a1PzhDKdHY9pzlmm+so2KC2freTK6TVzYsZN4+GhGkVw/AJ7nElU7hgdXeNA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSCPR01MB12642
 
-On Wed, Apr 09, 2025 at 12:48:57AM -0500, Naik, Avadhut wrote:
 
-[...]
 
-> >>  
-> >>  	edac_dbg(1, "CS%d DIMM%d AddrMasks:\n", csrow_nr, dimm);
-> >> -	edac_dbg(1, "  Original AddrMask: 0x%x\n", addr_mask_orig);
-> >> -	edac_dbg(1, "  Deinterleaved AddrMask: 0x%x\n", addr_mask_deinterleaved);
-> >> +	edac_dbg(1, "  Primary AddrMask: 0x%x\n", addr_mask);
-> >>  
-> >>  	/* Register [31:1] = Address [39:9]. Size is in kBs here. */
-> >> -	size = (addr_mask_deinterleaved >> 2) + 1;
-> >> +	size = calculate_cs_size(addr_mask, cs_mode);
-> >> +
-> >> +	if (addr_mask_sec) {
-> > 
-> > I think we can skip this check.
-> > 
-> Commented below on this.
-> 
-> > For debug messages, it doesn't hurt to be more explicit. So printing a
-> > 'mask: 0x0' message is more helpful/reassuring than 'no message'.
-> > 
-> >> +		edac_dbg(1, "  Secondary AddrMask: 0x%x\n", addr_mask);
-> > 
-> > addr_mask -> addr_mask_sec
-> > 
-> >> +		size += calculate_cs_size(addr_mask_sec, cs_mode);
-> > 
-> > Maybe add a "!mask" check to return early if you want to save some
-> > cycles in this helper function.
-> > 
-> In a way, this is the reason why I had added the above condition check.
-> To avoid unnecessary function calls.
-> 
-> AFAIK, power-of-2 DIMMs are predominantly used, so the Secondary Address
-> Mask register will seldom be used.
-> 
-> Would you agree?
+> -----Original Message-----
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+> Sent: 14 April 2025 14:05
+> To: Prabhakar <prabhakar.csengg@gmail.com>; Philipp Zabel <p.zabel@pengut=
+ronix.de>; Rob Herring
+> <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor Dooley=
+ <conor+dt@kernel.org>; Geert
+> Uytterhoeven <geert+renesas@glider.be>; Magnus Damm <magnus.damm@gmail.co=
+m>
+> Cc: linux-renesas-soc@vger.kernel.org; devicetree@vger.kernel.org; linux-=
+kernel@vger.kernel.org;
+> Fabrizio Castro <fabrizio.castro.jz@renesas.com>; Prabhakar Mahadev Lad <=
+prabhakar.mahadev-
+> lad.rj@bp.renesas.com>
+> Subject: RE: [PATCH v4 2/3] reset: Add USB2PHY port reset driver for Rene=
+sas RZ/V2H(P)
+>=20
+> Hi Prabhakar,
+>=20
+> Thanks for the patch.
+>=20
+> > -----Original Message-----
+> > From: Prabhakar <prabhakar.csengg@gmail.com>
+> > Sent: 14 April 2025 14:00
+> > Subject: [PATCH v4 2/3] reset: Add USB2PHY port reset driver for
+> > Renesas RZ/V2H(P)
+> >
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Implement a USB2PHY port reset driver for the Renesas RZ/V2H(P) SoC.
+> > Enable control of USB2.0 PHY reset and power-down operations,
+> > including assert and deassert functionalities for the PHY.
+> >
+> > Leverage device tree (OF) data to support future SoCs with similar
+> > USB2PHY hardware but varying register configurations. Define
+> > initialization values and control register settings to ensure flexibili=
+ty for upcoming platforms.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> >  drivers/reset/Kconfig               |   7 +
+> >  drivers/reset/Makefile              |   1 +
+> >  drivers/reset/reset-rzv2h-usb2phy.c | 241
+> > ++++++++++++++++++++++++++++
+> >  3 files changed, 249 insertions(+)
+> >  create mode 100644 drivers/reset/reset-rzv2h-usb2phy.c
+> >
+> > diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig index
+> > 99f6f9784e68..6c7dbd8ca580 100644
+> > --- a/drivers/reset/Kconfig
+> > +++ b/drivers/reset/Kconfig
+> > @@ -225,6 +225,13 @@ config RESET_RZG2L_USBPHY_CTRL
+> >  	  Support for USBPHY Control found on RZ/G2L family. It mainly
+> >  	  controls reset and power down of the USB/PHY.
+> >
+> > +config RESET_RZV2H_USB2PHY
+> > +	tristate "Renesas RZ/V2H(P) (and similar SoCs) USB2PHY Reset driver"
+> > +	depends on ARCH_RENESAS || COMPILE_TEST
+> > +	help
+> > +	  Support for USB2PHY Port reset Control found on the RZ/V2H(P) SoC
+> > +	  (and similar SoCs).
+> > +
+> >  config RESET_SCMI
+> >  	tristate "Reset driver controlled via ARM SCMI interface"
+> >  	depends on ARM_SCMI_PROTOCOL || COMPILE_TEST diff --git
+> > a/drivers/reset/Makefile b/drivers/reset/Makefile index
+> > 31f9904d13f9..30d0fb4ac965 100644
+> > --- a/drivers/reset/Makefile
+> > +++ b/drivers/reset/Makefile
+> > @@ -31,6 +31,7 @@ obj-$(CONFIG_RESET_QCOM_AOSS) +=3D reset-qcom-aoss.o
+> >  obj-$(CONFIG_RESET_QCOM_PDC) +=3D reset-qcom-pdc.o
+> >  obj-$(CONFIG_RESET_RASPBERRYPI) +=3D reset-raspberrypi.o
+> >  obj-$(CONFIG_RESET_RZG2L_USBPHY_CTRL) +=3D reset-rzg2l-usbphy-ctrl.o
+> > +obj-$(CONFIG_RESET_RZV2H_USB2PHY) +=3D reset-rzv2h-usb2phy.o
+> >  obj-$(CONFIG_RESET_SCMI) +=3D reset-scmi.o
+> >  obj-$(CONFIG_RESET_SIMPLE) +=3D reset-simple.o
+> >  obj-$(CONFIG_RESET_SOCFPGA) +=3D reset-socfpga.o diff --git
+> > a/drivers/reset/reset-rzv2h-usb2phy.c
+> > b/drivers/reset/reset-rzv2h-usb2phy.c
+> > new file mode 100644
+> > index 000000000000..737b768829c9
+> > --- /dev/null
+> > +++ b/drivers/reset/reset-rzv2h-usb2phy.c
+> > @@ -0,0 +1,241 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Renesas RZ/V2H(P) USB2PHY Port reset control driver
+> > + *
+> > + * Copyright (C) 2025 Renesas Electronics Corporation  */
+> > +
+> > +#include <linux/cleanup.h>
+> > +#include <linux/delay.h>
+> > +#include <linux/io.h>
+> > +#include <linux/module.h>
+> > +#include <linux/of.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/pm_runtime.h>
+> > +#include <linux/reset.h>
+> > +#include <linux/reset-controller.h>
+>=20
+> > +
+> > +	priv->data =3D data;
+> > +	priv->dev =3D dev;
+> > +	priv->base =3D devm_platform_ioremap_resource(pdev, 0);
+> > +	if (IS_ERR(priv->base))
+> > +		return PTR_ERR(priv->base);
+> > +
+> > +	rstc =3D devm_reset_control_get_shared_deasserted(dev, NULL);
+> > +	if (IS_ERR(rstc))
+> > +		return dev_err_probe(dev, PTR_ERR(rstc),
+> > +				     "failed to get deasserted reset\n");
+> > +
+> > +	spin_lock_init(&priv->lock);
+> > +	dev_set_drvdata(dev, priv);
 
-I don't know. It seems non-power-of-2 (24G, 48G, 96G) is becoming more
-common for individual DIMMs and sets of DIMMs.
+Also looks it is unused.
 
-Thinking on it more, I don't think we need to be concerned about saving
-cycles here. These functions are only called during module init,
-correct?
-
-Thanks,
-Yazen
+Cheers,
+Biju
 
