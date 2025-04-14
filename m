@@ -1,98 +1,120 @@
-Return-Path: <linux-kernel+bounces-603565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66681A889B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 19:23:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11CF7A889B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 19:25:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FBFB17456D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:23:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38E8C3ADABA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:24:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAE5828936B;
-	Mon, 14 Apr 2025 17:23:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA49289366;
+	Mon, 14 Apr 2025 17:25:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eK09fqo6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SyZsVgCG"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1384423D285;
-	Mon, 14 Apr 2025 17:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBAFD289363;
+	Mon, 14 Apr 2025 17:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744651424; cv=none; b=NvtF/ieF2vNZjZyVmKg7S6YxnfLFDVqAEX2Hn12OLXCxHj2bzQY9qjOek9cu0U5gKJcDRBnaaatrH6PpAc3j62xmjuBvgp4kiYpZTTKLLbehfv+++5S3krAZMFXC5ADeFXJEmEnnPKR6RV8zf6J7D1a2wyCfDPHtYY6B6hhKqoI=
+	t=1744651508; cv=none; b=GG21PAEAl1e0DqHcJF9g/3eWhWg5ZDi7L+Av7VbfeQo+apv3AjGb0RzeA+mQvfIsh7EqsUghCvAro3CrIyrMSQ6cL/TF/zOvg19GBjHdFtXvPiJS1B4WCSxOdKYp8W9kt6AO9r4Yt08kyj/xNOE6kBR/uy3uvNmWgHgEEguWYBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744651424; c=relaxed/simple;
-	bh=GPTmCec+ZNuZRCM/kaKGVD8ffsbiT/xRq/puE0O1Dm0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C73SGBmCwR6NjiLjpaklcEpp/AivRp/zwxVVM2+iyRe5z+zapM723FNPSMsF2dlcZVKLrs3MdlwVDMazsChyliGPRuVTtQ1IBPKHtqcUKTLMIPN7qWQZM6VrIa0oeaekxk1ORUF/QRcEOckq0dIsQq7H528Ji/KLB8OyyU/grBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eK09fqo6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 458C0C4CEE2;
-	Mon, 14 Apr 2025 17:23:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744651423;
-	bh=GPTmCec+ZNuZRCM/kaKGVD8ffsbiT/xRq/puE0O1Dm0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eK09fqo6Tst8TjcXpz2D1a2TMRdcjSZcXkpRtG+qVGFTMUWiL1VRiUNzvuD4U+xX1
-	 YbA3FRJRclAlPHccWt4t1GRhlPiNvBsiAKg6OUIzh663Vpoi6PP9zmeXhgR5ASOgg5
-	 ei8iNwuUuJVbRH2KyQhz2mdzNbligi8n6lu2R8+ZJuiY80DsNcDxY7g/mw9SkZk2KZ
-	 ofGzlgfWxYRf0Vv920pyYWYafLhgtYuiFkJjEmwkzyClZIn2MUJYRt8BPT7dEmI3jZ
-	 /NfhN7mAeW2PSg8P8zMnvOXUMjFaFUbgFLuHihKjfrUBbwZDfxBShCL7/InTNfb1MZ
-	 KThyK3y6SeMTg==
-Date: Mon, 14 Apr 2025 07:23:42 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Tamir Duberstein <tamird@gmail.com>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] workqueue: rust: add creation of workqueues
-Message-ID: <Z_1EnkPiBKakGYtM@slm.duckdns.org>
-References: <20250411-create-workqueue-v1-1-f7dbe7f1e05f@google.com>
+	s=arc-20240116; t=1744651508; c=relaxed/simple;
+	bh=S5MMPIqTPH2JEdSYmd02G+GREAZMQM2lkUVv1l0JNB0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GjfGch1l975HGYUL2Phxpnn2W0YaWmIz+PfK3ASQXYqr+x4C1eHKBM5DX6Otj4bru0xpkoUWt4D42Pbi/VoSVCY1ZZEGVRG7EHg4NAlpkRIXIMCYJMBvZU9M2/5oakepB9vQMpK2OjkqmjjrPdlN6bPr2wQrRUaON6iJkHbDyQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SyZsVgCG; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5ec9d24acfbso10210644a12.0;
+        Mon, 14 Apr 2025 10:25:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744651505; x=1745256305; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S5MMPIqTPH2JEdSYmd02G+GREAZMQM2lkUVv1l0JNB0=;
+        b=SyZsVgCG73R2Ot3rWm9GwGhmy5Y0OdlthDLwtAgHp0qkD7BvDMZom6oN3UgSuuwFuR
+         kf3BuCkjs4V8J1Xwwd9o2CU3VyNbjCjZw/6+2HzJWOQtIJ8j3nV0UhtCDwp4ZG2C1L0i
+         Bbk111iJ9UB0COxXcun6qxkUvGpLT5V9xXMlL7S9KhRtEzqKFAEac/sIuKcqX5pTa0/T
+         zxzAS0Cr9KzPJ4BNuNcOpT8vbgcNIh00Qmjf/s5l8j/O7j5/i0S00X7og4Z5/56LTKHp
+         Bimxdnc4pAMpYmHDmS/ZGJZZvjPUZkBdCUeEm278rCBnpTVaNw0LIUbeGont9i1Kn0tv
+         lDCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744651505; x=1745256305;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=S5MMPIqTPH2JEdSYmd02G+GREAZMQM2lkUVv1l0JNB0=;
+        b=Aebec+MeCtv0v9MWX1ZQvjBChLlCHz/UBNmZS3JeRJBy2x/HMKTExu56EbRBd3py17
+         xdYNO2kqmjEyaQdr+D1EEGsK/vEa/f9ymD86a5jVLQ57+RLzte0Mhjy868hGPClePfYh
+         cmL5LJSyUjMpT9Rgu3bViBE4+A8i7g8sS3hxdelxPfo82HuNMvgMrDce6qmuRgY9+Z2C
+         fwQDL1+Ut7g1BE9uPobox4j0RJaWFhwc9ONnnSOUfRpNqnqxWukYMnvSp3eYU7GGAujt
+         TsKFx/IuudWYyUXEoYFaxjZWXiofOArCb2eWtih2xDS+9Htp7s1ke76XlvJgM24rnpxp
+         N2Pg==
+X-Forwarded-Encrypted: i=1; AJvYcCVPKpeBa1A0rAoSEEfF77iNsCE9lgf+mZGxVe0m10G5RFw7IFnKzoycGvNOYwBmxooZ9pVVmmPTZa9ouAOO@vger.kernel.org, AJvYcCVh+q8Yy01100QGohc0U080SR3oSYS4dKnYszmj8zHHEr2SLfYpgN0wUnitakZzMeWrnmsT3JBYWgNT@vger.kernel.org, AJvYcCXXCWJr8akZrzDnHOQV1dttk9AAVbi0NrVoC2Rkx7p4eEk7+Mi6/uz0peW2u40EjKlJdZQl4TBKdzty@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHJPcRn0q+8+HYhh4NORQCTRKFWbKOd+ZUkJ/JCqIA/HAw8GYu
+	MtUlUfB2OX1cePpllS72Afx6CHVL8ylODt+mV+3xZMW6FbUeYPz2u9lHa33PUIorH1XQvoePjnm
+	ThI2pxdmV/96aEV9TgaKkhKCmNWI=
+X-Gm-Gg: ASbGncsXezHVlfXYs3v2Axj366Y2Hb6i4Cr1kgEDpMol5RsfbvYigEAL20j90eIEHdb
+	ddcPmQmpnbRuYFCt/emudwCfqi7vNuQ4EBUH/zV+a62tcF2sbKNpLI3kRRZbKmMFFmraSu6OeZq
+	y0eksw1pE9paIkUBEJLt+AhA==
+X-Google-Smtp-Source: AGHT+IG2QcYojr21rG5cPrm4BVHO4RvMT0edy/7fHe6WGPbezY/teacJD34am1KrFosC8vc8ScReIjIFuaIELXr3GDE=
+X-Received: by 2002:a17:907:3f0f:b0:ac3:ed4d:c9a1 with SMTP id
+ a640c23a62f3a-acb16810139mr33459766b.17.1744651504714; Mon, 14 Apr 2025
+ 10:25:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250411-create-workqueue-v1-1-f7dbe7f1e05f@google.com>
+References: <cover.1744200264.git.marcelo.schmitt@analog.com>
+ <56e76070b72d15950bf1fb01e68e94c42e79905b.1744200264.git.marcelo.schmitt@analog.com>
+ <149672e84f09fb178c90856920e3cfd4f140529d.camel@gmail.com> <Z_0sBomGtMKXysgJ@debian-BULLSEYE-live-builder-AMD64>
+In-Reply-To: <Z_0sBomGtMKXysgJ@debian-BULLSEYE-live-builder-AMD64>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 14 Apr 2025 20:24:27 +0300
+X-Gm-Features: ATxdqUGXWe4I2RP946LA264Mds0nTZUdAW-UzXxJ-zQ5D0aLP69VaMKKmJfCPVA
+Message-ID: <CAHp75VdxwKrqhvKAzZmbh+NsUOi2bsdCj7MdnLEP2gK7sY8PRw@mail.gmail.com>
+Subject: Re: [PATCH v1 7/7] iio: adc: ad4170: Add support for weigh scale and
+ RTD sensors
+To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Cc: =?UTF-8?B?TnVubyBTw6E=?= <noname.nuno@gmail.com>, 
+	Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, jic23@kernel.org, 
+	lars@metafoo.de, Michael.Hennerich@analog.com, dlechner@baylibre.com, 
+	nuno.sa@analog.com, andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Mon, Apr 14, 2025 at 6:37=E2=80=AFPM Marcelo Schmitt
+<marcelo.schmitt1@gmail.com> wrote:
 
-On Fri, Apr 11, 2025 at 03:34:24PM +0000, Alice Ryhl wrote:
-> Creating workqueues is needed by various GPU drivers. Not only does it
-> give you better control over execution, it also allows devices to ensure
-> that all tasks have exited before the device is unbound (or similar) by
-> running the workqueue destructor.
-> 
-> This patch is being developed in parallel with the new Owned type [1].
-> The OwnedQueue struct becomes redundant once [1] lands; at that point it
-> can be replaced with Owned<Queue>, and constructors can be moved to the
-> Queue type.
-> 
-> A wrapper type WqFlags is provided for workqueue flags. Since we only
-> provide the | operator for this wrapper type, this makes it impossible
-> to pass internal workqueue flags to the workqueue constructor. It has
-> the consequence that we need a separate constant for the no-flags case,
-> as the constructor does not accept a literal 0. I named this constant
-> "BOUND" to signify the opposite of UNBOUND.
+...
 
-Maybe name it NONE or DUMMY? Doesn't affect this patch but [UN]BOUND are a
-bit confusing and as a part of the effort to reduce unnecessary usage of
-cpu-bound workqueues, there's a plan to flip the default and use PERCPU for
-the cpu-bound workqueues.
+> > I think you could improve this... You're taking an all or nothing appro=
+ach.
+> > IIUC, we can have cases where only two GPIOs are in use which means we =
+could use
+> > the other 2? There the gpiochio init_valid_mask() call that you could
+> > potentially use.
+>
+> Isn't gpiochio init_valid_mask() only to distinguish between GPIOs that c=
+an
+> (or cannot) be used as interrupts? Not sure AD4170 GPIOs can be used for
+> interrupts at all (think they can't) so didn't implement init_valid_mask(=
+).
 
-Thanks.
+There are two masks, one per GPIO, and one per GPIO-as-IRQ. I agree
+that it's better to use valid mask and not reinvent a wheel.
 
--- 
-tejun
+--=20
+With Best Regards,
+Andy Shevchenko
 
