@@ -1,54 +1,79 @@
-Return-Path: <linux-kernel+bounces-602667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7048CA87DA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 12:28:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F044EA87DA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 12:28:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 044753A2C8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:27:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EA76166416
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:28:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E218A26AA9D;
-	Mon, 14 Apr 2025 10:25:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D95226B2B5;
+	Mon, 14 Apr 2025 10:26:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="KgzHsE2/"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kTCW/Sp4"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCCA4268C75;
-	Mon, 14 Apr 2025 10:25:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E448526B2A7
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 10:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744626349; cv=none; b=G3MnGhOvGE1TBbKIoMmNvJM/r8BYQOwkikGMCoHguQ02UPkwQfFVoKa9TH85ZTiG4HNjGVLYHM34XbaoF3r+S3ouUHtnH9qu8pIQT7heUurnp6Mar7Z+TzqVRbe3Mw/e8xHjUd4DmlUQ6bnbFxxC8uZBD6Vz24IAWDqV3EIvs7c=
+	t=1744626374; cv=none; b=peAHAqMQE1Vs6p8gqMHEyTMgZqEU3ke+lUKr8ItSDm9qsVn3nqckjAMDgmCTfEf1MNzRxXomIe1w3DeV1UlzxyoKOukL+jsHuhzOIAekyLudjsLUSaDm3Mqe5IjhOgmXHi7C6BBUcTDdUcwuKj4DBYOz4oUsXltdqAfCg993ky4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744626349; c=relaxed/simple;
-	bh=bl8BfAV621uanXZNR0S0HLnYSKjXIcTr8aYHoHGc9zQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FbipSn7LqhVYEx0cxb0zDGhgGacTK4Xv+aMdR/sueuc1IkowxpLBd4ajSNhiKMeLHc7CCCVYNE5CaOQEPxMQy/CNzAjqLv1X82vfmSSfh3kYUNSw6spYJ/qllA/lcqyRnR/R2zofRboDzca6y3xOJpKTPzU8Exh5E7V6GoALQ0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=KgzHsE2/; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1744626345;
-	bh=bl8BfAV621uanXZNR0S0HLnYSKjXIcTr8aYHoHGc9zQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KgzHsE2/SoDtI8JVC+b72sH/U+Et+tQBmLOV9hIDcYdAow6lG7x+0yuZsIyzrd9qu
-	 azJPDrcZZAsLTbkZynnCw4Kh/+V80dghJ4VI7WUi/c2wvXpUssGH8ifmyHhO3Lzd0M
-	 axSs23lyRuXjYH7MrRvIISSG0lyGZiCWD+ATPBCt5LU8vX69e7hOCUBZkRaUwWYzbH
-	 AG5SWsOXFXX4Cewgbt55t6qACuR+v4OjEpHwY03Vo+neGna6v2UyrPMa2HbrbFNJxB
-	 iFhuxn7ipuUZ1Ptn//6Uesi86pSnczmAKu0QMF07EILUl5Prhf7HrhFYMfUc+Y46uh
-	 drexMz8zuE/5g==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2F10017E0809;
-	Mon, 14 Apr 2025 12:25:44 +0200 (CEST)
-Message-ID: <4216ff34-66dc-4601-b2d4-0a51595d0b59@collabora.com>
-Date: Mon, 14 Apr 2025 12:25:43 +0200
+	s=arc-20240116; t=1744626374; c=relaxed/simple;
+	bh=axOkP6NTc205XhOa9w7TMVlJ2Ruy5u08gJeU2uxBXGE=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ZLQANSYLv87cI5R9TSXm2mc51LUfu1wOiayBFyD+OX5aUkj8CwLHvOW/SkJ8T3b4PwrrKptAoNRatq1I8plhJkfMnO1oXxaDRWQE8dUoBoUcNxgME0TD1zEneol/XZf0yl7CcI1v+m15AzxDlcJo6nzkC+tLU3v16FLX/BNXYL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kTCW/Sp4; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-39129fc51f8so3546210f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 03:26:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744626369; x=1745231169; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=WAiRw+6AEMtqu5XLeIz/zqxIIUJ+4yNnfRZDXY2auok=;
+        b=kTCW/Sp4xkfGdgBLOkHxvnhPuoF8FllcyVkTew7Zr4gKS24HP9qst5DftWUilXqq27
+         OBOpZ4X0yWDQG6H/e1xa5NqXtFS2BIpaF38PGYFluRcEBq0VL/vcJhRvOJI5MH6KphgU
+         H4cZxTdT0Oi+VBx482CFLRqbeYZG07SlzYf6WiYTKeLEGS96ptEcQ0+N64JDmmGTpIvt
+         sm3xCmtcywFZoGVdpNL0vZrWt2OJuoVEVGGRT1GS26ZDPKfg4K4iaH1w1qkqPOfspQPw
+         gnXzAeeWT55iyRI/roQHfFu0X4zLiC+zsYjRAWNoKubk+CyJplLhl7FgVvklEYoy43SQ
+         UHog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744626369; x=1745231169;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WAiRw+6AEMtqu5XLeIz/zqxIIUJ+4yNnfRZDXY2auok=;
+        b=ivip3JmMbKmUkCgy/2FFMFeaa/4aKbwjwKAVMlUvk6DZUau09dzmKK6Ic3wvE8ttaU
+         AyBXawvz0dSG8jTtZrXqemXzJ9MqH52HrxYorEL+HvpqKUNzX0V6niO8Cv7GEqcfUfnu
+         gAX+JG94ZdRctWQw3XHMoBXU0rNQysmK1e4/cAJ/qa9CMAB1hMtcfb7rFc5uBDyM/1eu
+         FS7JQQeyPDH7i5bjOMvUSGQKxsEoe0rSWaInMYPN/fGW2a51WZv5iCd0i2u80gJ2XxQ5
+         6/XyhKD2tL7pt/BGsFZrXK/3Xbgby3EOazOCttQ3daqvFdWy+m5Q8bS7ELTsXiRHt5oL
+         qm+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUeIoqvxT9m9FOG5TDqixr4eq4+m/rqSEYvEcd0YJzBQpVADddtus44nkazFNL2ymCQI5lN5W2QtWACRHA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw905g1HcNlm2MJ3RS5Q9Q+n0t58DKzZxR8JYrfrmvdgtnYMReb
+	CEg312OEemcAHacKmxa8OxnHbXucd2xaUhzaYOGoJRd2XrxSoKP3JVaWgnZkqRU=
+X-Gm-Gg: ASbGncuL/RV9Yky0W5gpXAOTY4aIHcCiaTAGnnFRaRJbP0Ygull7MgghhjrxiKco2L6
+	66GefxAHWHL906P6v5ewYUty6mUS6hRunb/vjEoJ+dLF/nYMSLoEHkZkyRsnYZOrtAZ5C/ymLs/
+	cmUxhmtSnEj+k9ETkvMNlYhbN/L38NGUAOO3tsK50zn9UEznufnyC+BoHkiotfZ6RNa3iJJ4zJl
+	Mk6Qx7OYy35Y5/SwdiRrzrtFXKv5r8jAM/xgyEM34wGkCqI2eVWCtE5VBInhaYcx9W1fQJQLsGZ
+	BSSSnVH5S8tuVssxFSMqS5gye91lJ4VBrlxvhQM+FiF5eX7yErjPYiBIAc80hdX+wj/bTLPPpqF
+	3QXjGl5VnvRtOaGEM
+X-Google-Smtp-Source: AGHT+IF3yfPKg4s1qCnN4GnM/8MBvLAVhWgFCy6k4OXusWu3X8aq2b3tylwXbrCicC8DSWVM4b6URg==
+X-Received: by 2002:a05:6000:2812:b0:38d:d371:e04d with SMTP id ffacd0b85a97d-39eaaea70d6mr6538663f8f.34.1744626369174;
+        Mon, 14 Apr 2025 03:26:09 -0700 (PDT)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f2066d6e8sm180459745e9.23.2025.04.14.03.26.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Apr 2025 03:26:08 -0700 (PDT)
+Message-ID: <137c68d5-36c5-4977-921b-e4b07b22113c@linaro.org>
+Date: Mon, 14 Apr 2025 11:26:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,216 +81,118 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 4/5] phy: mediatek: xsphy: support type switch by pericfg
-To: Frank Wunderlich <linux@fw-web.de>,
- Chunfeng Yun <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Frank Wunderlich <frank-w@public-files.de>,
- Daniel Golle <daniel@makrotopia.org>, Sam Shih <sam.shih@mediatek.com>,
- MandyJH Liu <mandyjh.liu@mediatek.com>,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250413085806.8544-1-linux@fw-web.de>
- <20250413085806.8544-5-linux@fw-web.de>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH 01/20] media: iris: Skip destroying internal buffer if not
+ dequeued
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Stefan Schmidt <stefan.schmidt@linaro.org>, Hans Verkuil
+ <hverkuil@xs4all.nl>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, stable@vger.kernel.org
+References: <20250408-iris-dec-hevc-vp9-v1-0-acd258778bd6@quicinc.com>
+ <20250408-iris-dec-hevc-vp9-v1-1-acd258778bd6@quicinc.com>
+ <811cd70e-dc27-4ce0-b7da-296fa5926f90@linaro.org>
 Content-Language: en-US
-In-Reply-To: <20250413085806.8544-5-linux@fw-web.de>
+In-Reply-To: <811cd70e-dc27-4ce0-b7da-296fa5926f90@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Il 13/04/25 10:58, Frank Wunderlich ha scritto:
-> From: Daniel Golle <daniel@makrotopia.org>
+On 11/04/2025 13:10, Bryan O'Donoghue wrote:
+> On 08/04/2025 16:54, Dikshita Agarwal wrote:
+>> Firmware might hold the DPB buffers for reference in case of sequence
+>> change, so skip destroying buffers for which QUEUED flag is not removed.
+>>
+>> Cc: stable@vger.kernel.org
+>> Fixes: 73702f45db81 ("media: iris: allocate, initialize and queue 
+>> internal buffers")
+>> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+>> ---
+>>   drivers/media/platform/qcom/iris/iris_buffer.c | 7 +++++++
+>>   1 file changed, 7 insertions(+)
+>>
+>> diff --git a/drivers/media/platform/qcom/iris/iris_buffer.c b/drivers/ 
+>> media/platform/qcom/iris/iris_buffer.c
+>> index e5c5a564fcb8..75fe63cc2327 100644
+>> --- a/drivers/media/platform/qcom/iris/iris_buffer.c
+>> +++ b/drivers/media/platform/qcom/iris/iris_buffer.c
+>> @@ -396,6 +396,13 @@ int iris_destroy_internal_buffers(struct 
+>> iris_inst *inst, u32 plane)
+>>       for (i = 0; i < len; i++) {
+>>           buffers = &inst->buffers[internal_buf_type[i]];
+>>           list_for_each_entry_safe(buf, next, &buffers->list, list) {
+>> +            /*
+>> +             * skip destroying internal(DPB) buffer if firmware
+>> +             * did not return it.
+>> +             */
+>> +            if (buf->attr & BUF_ATTR_QUEUED)
+>> +                continue;
+>> +
+>>               ret = iris_destroy_internal_buffer(inst, buf);
+>>               if (ret)
+>>                   return ret;
+>>
 > 
-> Patch from Sam Shih <sam.shih@mediatek.com> found in MediaTek SDK
-> released under GPL.
+> iris_destroy_internal_buffers() is called from
 > 
-> Get syscon and use it to set the PHY type.
-> Extend support to PCIe and SGMII mode in addition to USB2 and USB3.
+> - iris_vdec_streamon_output
+> - iris_venc_streamon_output
+> - iris_close
 > 
-
-That's really exactly the same code that is in phy-mtk-tphy.c ... and actually
-there's a whole lot of code that is duplicated between TPHY and XSPHY...
-
-It's even possible to just add the XSPHY to the TPHY driver and call it a day
-if we really want to, but I'll leave that decision to the maintainer.
-
-Another way would be to add a phy-mtk-tphy-common.c and migrate all of the common
-code that can be shared from both XSPHY and TPHY in there....
-
-Besides, if you check the register layout - even that is something like 90% the
-same (actually, looks like even more than that, but for the sake of being
-conservative...) so this really points me at believing that, despite the naming
-change, those IPs are just incremental versions, or XSPHY is simply a reduced
-functionality TPHY.
-
-Either way, those are sharing really too much code to just keep duplicating :-)
-
-P.S.: Those comments are only for the code, not for the binding.
-
-Cheers,
-Angelo
-
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> So if we skip releasing the buffer here, when will the memory be released ?
+> 
+> Particularly the kfree() in iris_destroy_internal_buffer() ?
+> 
+> iris_close -> iris_destroy_internal_buffers ! -> iris_destroy_buffer
+> 
+> Is a leak right ?
+> 
 > ---
->   drivers/phy/mediatek/phy-mtk-xsphy.c | 85 +++++++++++++++++++++++++++-
->   1 file changed, 84 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/phy/mediatek/phy-mtk-xsphy.c b/drivers/phy/mediatek/phy-mtk-xsphy.c
-> index 7c248f5cfca5..c0ddb9273cc3 100644
-> --- a/drivers/phy/mediatek/phy-mtk-xsphy.c
-> +++ b/drivers/phy/mediatek/phy-mtk-xsphy.c
-> @@ -11,10 +11,12 @@
->   #include <linux/clk.h>
->   #include <linux/delay.h>
->   #include <linux/iopoll.h>
-> +#include <linux/mfd/syscon.h>
->   #include <linux/module.h>
->   #include <linux/of_address.h>
->   #include <linux/phy/phy.h>
->   #include <linux/platform_device.h>
-> +#include <linux/regmap.h>
->   
->   #include "phy-mtk-io.h"
->   
-> @@ -81,12 +83,22 @@
->   #define XSP_SR_COEF_DIVISOR	1000
->   #define XSP_FM_DET_CYCLE_CNT	1024
->   
-> +/* PHY switch between pcie/usb3/sgmii */
-> +#define USB_PHY_SWITCH_CTRL	0x0
-> +#define RG_PHY_SW_TYPE		GENMASK(3, 0)
-> +#define RG_PHY_SW_PCIE		0x0
-> +#define RG_PHY_SW_USB3		0x1
-> +#define RG_PHY_SW_SGMII		0x2
-> +
->   struct xsphy_instance {
->   	struct phy *phy;
->   	void __iomem *port_base;
->   	struct clk *ref_clk;	/* reference clock of anolog phy */
->   	u32 index;
->   	u32 type;
-> +	struct regmap *type_sw;
-> +	u32 type_sw_reg;
-> +	u32 type_sw_index;
->   	/* only for HQA test */
->   	int efuse_intr;
->   	int efuse_tx_imp;
-> @@ -259,6 +271,10 @@ static void phy_parse_property(struct mtk_xsphy *xsphy,
->   			inst->efuse_intr, inst->efuse_tx_imp,
->   			inst->efuse_rx_imp);
->   		break;
-> +	case PHY_TYPE_PCIE:
-> +	case PHY_TYPE_SGMII:
-> +		/* nothing to do */
-> +		break;
->   	default:
->   		dev_err(xsphy->dev, "incompatible phy type\n");
->   		return;
-> @@ -305,6 +321,62 @@ static void u3_phy_props_set(struct mtk_xsphy *xsphy,
->   				     RG_XTP_LN0_RX_IMPSEL, inst->efuse_rx_imp);
->   }
->   
-> +/* type switch for usb3/pcie/sgmii */
-> +static int phy_type_syscon_get(struct xsphy_instance *instance,
-> +			       struct device_node *dn)
-> +{
-> +	struct of_phandle_args args;
-> +	int ret;
-> +
-> +	/* type switch function is optional */
-> +	if (!of_property_present(dn, "mediatek,syscon-type"))
-> +		return 0;
-> +
-> +	ret = of_parse_phandle_with_fixed_args(dn, "mediatek,syscon-type",
-> +					       2, 0, &args);
-> +	if (ret)
-> +		return ret;
-> +
-> +	instance->type_sw_reg = args.args[0];
-> +	instance->type_sw_index = args.args[1] & 0x3; /* <=3 */
-> +	instance->type_sw = syscon_node_to_regmap(args.np);
-> +	of_node_put(args.np);
-> +	dev_info(&instance->phy->dev, "type_sw - reg %#x, index %d\n",
-> +		 instance->type_sw_reg, instance->type_sw_index);
-> +
-> +	return PTR_ERR_OR_ZERO(instance->type_sw);
-> +}
-> +
-> +static int phy_type_set(struct xsphy_instance *instance)
-> +{
-> +	int type;
-> +	u32 offset;
-> +
-> +	if (!instance->type_sw)
-> +		return 0;
-> +
-> +	switch (instance->type) {
-> +	case PHY_TYPE_USB3:
-> +		type = RG_PHY_SW_USB3;
-> +		break;
-> +	case PHY_TYPE_PCIE:
-> +		type = RG_PHY_SW_PCIE;
-> +		break;
-> +	case PHY_TYPE_SGMII:
-> +		type = RG_PHY_SW_SGMII;
-> +		break;
-> +	case PHY_TYPE_USB2:
-> +	default:
-> +		return 0;
-> +	}
-> +
-> +	offset = instance->type_sw_index * BITS_PER_BYTE;
-> +	regmap_update_bits(instance->type_sw, instance->type_sw_reg,
-> +			   RG_PHY_SW_TYPE << offset, type << offset);
-> +
-> +	return 0;
-> +}
-> +
->   static int mtk_phy_init(struct phy *phy)
->   {
->   	struct xsphy_instance *inst = phy_get_drvdata(phy);
-> @@ -325,6 +397,10 @@ static int mtk_phy_init(struct phy *phy)
->   	case PHY_TYPE_USB3:
->   		u3_phy_props_set(xsphy, inst);
->   		break;
-> +	case PHY_TYPE_PCIE:
-> +	case PHY_TYPE_SGMII:
-> +		/* nothing to do, only used to set type */
-> +		break;
->   	default:
->   		dev_err(xsphy->dev, "incompatible phy type\n");
->   		clk_disable_unprepare(inst->ref_clk);
-> @@ -403,12 +479,15 @@ static struct phy *mtk_phy_xlate(struct device *dev,
->   
->   	inst->type = args->args[0];
->   	if (!(inst->type == PHY_TYPE_USB2 ||
-> -	      inst->type == PHY_TYPE_USB3)) {
-> +	      inst->type == PHY_TYPE_USB3 ||
-> +	      inst->type == PHY_TYPE_PCIE ||
-> +	      inst->type == PHY_TYPE_SGMII)) {
->   		dev_err(dev, "unsupported phy type: %d\n", inst->type);
->   		return ERR_PTR(-EINVAL);
->   	}
->   
->   	phy_parse_property(xsphy, inst);
-> +	phy_type_set(inst);
->   
->   	return inst->phy;
->   }
-> @@ -510,6 +589,10 @@ static int mtk_xsphy_probe(struct platform_device *pdev)
->   			dev_err(dev, "failed to get ref_clk(id-%d)\n", port);
->   			return PTR_ERR(inst->ref_clk);
->   		}
-> +
-> +		retval = phy_type_syscon_get(inst, child_np);
-> +		if (retval)
-> +			return retval;
->   	}
->   
->   	provider = devm_of_phy_provider_register(dev, mtk_phy_xlate);
+> bod
 
+Thinking about this some more, I believe we should have some sort of 
+reaping routine.
 
+- The firmware fails to release a buffer, it is up to APSS/Linux
+   to run some kind of reaping routine.
+   We can debate when is the right time to reset.
+   Perhaps instead of ignoring the buffer as you have done here
+   we schedule work with a timeout and if the timeout expires then
+   this triggers a reset/reap routine.
+
+- Since Linux allocates a buffer on the APSS side, you can't have a
+   situation where firmware can indefinitely hold memory.
+
+- APSS is in effect the bus master here since it can assert/deassert
+   RESET lines to the firmware, can control regulators and clocks.
+
+So we should have some kind of watchdog logic here.
+
+As alluded to above, what exactly do you do if firmware never returns a 
+buffer ? Accept memory leak on the APSS side ?
+
+Rather we should agree when it is appropriate to run a watchdog routine to
+
+1. Timeout firmware not returning a buffer
+2. Put the iris/venus hardware into reset
+3. Reap leaked memory
+4. Restart
+
+I see we have IRQ based watchdog logic but, I don't see that it reaps 
+memory.
+
+In any case we should have the ability to reset iris and reclaim/reap 
+memory in this type of situation.
+
+Perhaps I'm off on a rant here but, this seems like a problem we should 
+address with a more comprehensive solution.
+
+---
+bod
 
