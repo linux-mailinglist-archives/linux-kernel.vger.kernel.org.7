@@ -1,218 +1,164 @@
-Return-Path: <linux-kernel+bounces-602846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 702CFA88014
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:11:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 887C4A88017
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:11:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED2D43A72EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 12:11:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECFF117390A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 12:11:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C0129DB90;
-	Mon, 14 Apr 2025 12:11:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D19B2BE7A1;
+	Mon, 14 Apr 2025 12:11:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="czEcNWY+"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Me95RUpC"
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E2680B;
-	Mon, 14 Apr 2025 12:11:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077B880B;
+	Mon, 14 Apr 2025 12:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744632693; cv=none; b=qk+CJ3KEHPksT3BLCqVfnoSYGPqSCU/7qnAkdB3Lm0ca6iNatAeNkrBlKOSdIwCJJQPgK3UuCbN3849BCVIWIt+yNnWCCDvPCz9XCj51Y2657RMQwdpi1OSlyuctEF60qRphyzJd5dQ0W5V359ejtlWLKx4trmBdPOyPqROlXI8=
+	t=1744632701; cv=none; b=Lgk9MUZGgS8EEzFJBznmB0FV6ygE7TtLJ/X/1RKmxV+ZWxqdPb16PB5MuESPbuKZqUI2ho/T1S/R+nGVV50QwaBul3ADkBstRVql6IjHV2ELLnYTbLQvTeME9JqEWsJVI0zJi8oNIuxXHkSq7o3bbMzm8DKrqzWyFf12MvLbckg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744632693; c=relaxed/simple;
-	bh=yjklxsIZi4G/0FrM8nYOnD6uKZbJXa2YOYpp1NX6HXA=;
+	s=arc-20240116; t=1744632701; c=relaxed/simple;
+	bh=bnGxRLs+K1CD65Hx8HF8eGtWOdGRG6IAiUaBqUPEOhU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mqb28Txd8K7olAf/rr5NpyeDVvLLa2GLLd4fYY81hytJ9gPT8B7/Iqo9i9/nB4GqLXR2MxtdyR7blQEFga/ECeQdrlyIOqnpTotsy/PFJ5ozKi/sazUxa+BYPg4GILic+yv4xJoBSTToToVfqqnL8DNKPZNmJXcs5LzxT228rGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=czEcNWY+; arc=none smtp.client-ip=209.85.219.175
+	 To:Cc:Content-Type; b=mvGNQSC6kyhH/xMjRum/Bul7FrK3ZKV6Yxqi+N5wU1UZ0+tPcp7/1B0C6K3sBJ6bLHbu2Pw/bI9UGDvpq6pOcy1K+Eu+L8sDgZ6epYC6z+mMIsJZS6L0yUdfiKjEimZ0iUl7PacikEIKFSPOz8gUX73wQyuphV5NaiXYmPbKaCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Me95RUpC; arc=none smtp.client-ip=209.85.222.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e6e50418da6so3845814276.3;
-        Mon, 14 Apr 2025 05:11:31 -0700 (PDT)
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-86cd8bcd8dfso160593241.0;
+        Mon, 14 Apr 2025 05:11:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744632690; x=1745237490; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1744632699; x=1745237499; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=q4nw7PbrtgjL7S19J+yVLhjLNTYkyI+7kVEtkH7yzDc=;
-        b=czEcNWY+G6HeOo9d+toAEhIqTstNLYxrSWDlp7v+Tyy9yzzlFK4AqBfA5UXn2WVN9M
-         5Ugj5v4+tTIIJkw5inPbllL9runeMhaApOSajipTCdC7LwQSps/mWetn6QWFha0JpOVF
-         As3RkDM/4snWOFq65DfWwoQw6CrXyA/BBOckxBtsSdm1fEbnkmbE+XDKZBpCfWLotfMF
-         yu6OOXT73bBtovJuH6La0USZfjRa3SrLU3B3fM2RHowl16Busei3rOTYzNGX+Sc9sMJM
-         jRCvVm6lkrcs25hb+NPntFukHGDHomm0VA+jsW+AbsplF8IgyhZ0/ul4o7DK3oOlKxkI
-         EKug==
+        bh=ac6H1/o/h+9u2eKjIhXkLMaofu5biYHSL+e4b7ZsNoc=;
+        b=Me95RUpCaGgc69j61FaFshjtTYENg13e+D47PgRr5hIFM5GBn7vBDRucNvVdWIOund
+         KR09nLZMlSn+QOPT1/faj8DyfPfgC2AcrZxsATjq3FZ3ayNtt8RBzR1xIb/mz5Sm2xJo
+         8Lflg3NpeokLWKItyqox7aS+1jqODFwuK5yhMMI+POg8fGxffbhhtG9r9ohvScuLGaSp
+         jBQEsJ+tTrOAd41GCvrsZ+YqEv5JMT7f5KwZ40ydskw+8NGCWV6OYf/Y9mJyXMBS9cSX
+         6mT+aqppiN8dhIIE+EY4Hu4hKenUEQGRG3ljMkeDlAGVFP/V0zvmOsAlqQLCgO1gMhm+
+         nJFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744632690; x=1745237490;
+        d=1e100.net; s=20230601; t=1744632699; x=1745237499;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=q4nw7PbrtgjL7S19J+yVLhjLNTYkyI+7kVEtkH7yzDc=;
-        b=ZiNHy4en95itV/RIRpnGd1ao/r1VoxdsbbnJ2tO63OTNAYbn5x7BTl2wAnEeJGwRoj
-         bcSCX4Y4zFIf0DAHaIs9KN/gFFJTSCA0MtxQAFTV/4RP6tWPXQDdnoQYa/h7X5R4v+0d
-         wENQpSzMrx9wUGMXYZrtYATPXjxOE+2vMRk8hP0YDK5ypGF6SxdwbyYaCxmlp6+1/tIb
-         MZuYTZ4KCAnY3AfF7OaXuZ0CnmGlcDaliD16MuJ9z7oCH5PHEKLoygBgHTLqug5CblVb
-         sPTeGcADPHk4GRyvtxGVu1Kk15NNa2gfv6Zit2WsJoOFPfEssRshQyaW2XmsJN/LPpD/
-         jQdw==
-X-Forwarded-Encrypted: i=1; AJvYcCVhfOur4jKoAN+gSGvDr+4ave5uPv901fosdpx8tNAd6+QgykekaGW5GhE12wN2egQQ5CzOjY/gNli90Y4=@vger.kernel.org, AJvYcCViqcM9xfPsB1/oRPfq3c5yCMubFxyDjmW2pXQUp6SIXu5ARlkKjmy00OcQ2Yw9YxttLuB9QvfI@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKMwOGc9jJ/Tmmp8SzFk6o3l8y6nNpU48vU9L279XR1FvQviHL
-	LRNHu9GNG7RKlOxm8nTENwZgRpK32WwMOCmlGH8bTbgw9BDKJkvWjTn/UiEdkfA3Yvrm8hZZgGV
-	FvxUKD374wtzG4JhntW+5akGLhms=
-X-Gm-Gg: ASbGncvzIyExSv0FIgzhz+KGIH54VDyOQHk3wsfFJJpOnEjDhNa9UV5NlgF8q26ecMz
-	mvZb72h/Q4YvUWVvb7QNkr8u+HQKLZgMmTVb/WN+4spW/h95tn8bY8qTYKuoO+umzeiyslNbVnA
-	YjKR+kw3ozwy/16m/8bRUk
-X-Google-Smtp-Source: AGHT+IGyRMgKNo0PrJaG9tIFBBWyclUfl5rSOD+CS6dgifaFt95O2XZhtFABT7IeajvldSLSfs+2pFRydG5JKaDclIs=
-X-Received: by 2002:a05:6902:2e0b:b0:e6d:ea22:f32b with SMTP id
- 3f1490d57ef6-e704dfa92c2mr20588206276.28.1744632690454; Mon, 14 Apr 2025
- 05:11:30 -0700 (PDT)
+        bh=ac6H1/o/h+9u2eKjIhXkLMaofu5biYHSL+e4b7ZsNoc=;
+        b=ad3VF6OTE1NFdsQDlSw0vI7evfYZnkVJYai552Sa1A0N8Zbzj2s/SwL9xRVrFMNxjs
+         5WlNVygh71PdIyvMyZ1bRZCnZZSSw/zt64Lpc4Icy/F1h0eZtcmSjum++ip6P13knw3G
+         95ashmcDv5jSIDfKJByLsjxzGthJm65pxq6QxW2ek5bs9RQEJXzu6CdysyM/w+Yid3YF
+         x97HfGAw3v198iv1cON5MSmioN/UAcjhIpMIMzjOvf6ZMGWCHpK++lSlQsvqGGkeYniP
+         KQzciWcE63jxQR9M0XllLoH875yGdW8Q8Mp/Pnk9jSrIdkDcOp7YQBs23kEN/GrUIY0m
+         JyeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW1THRjcUOrhKm1LO3kiLVa7Yeqerg1O+DBYx6F2Rw7v+EnQoBcQ9wkfX3M81okfFXFmnWrGcvEoyoS@vger.kernel.org, AJvYcCXKq0yE8RDszOWS+wlspAgSYSTf5QnkCC7QfKKvrMtEtYFNMegoRLTedShgnkuz32PYvakVVMDw8jDuvH/P@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJwbe0ZBSXjDdm0tP2fV2/OS6u2WOb64eiSbrYPa9Lu94OQCWC
+	ASt5VMGuBwCZbeRnp7St+xzWvGYdBIN6/4i+qiH/t7p9F36i/Hqdvo+wIIxq9dQl9srIiCdwvJy
+	k7rshBsA4JxNwcboLsDlFvL5jqQ==
+X-Gm-Gg: ASbGncspxQQYy6y54vQMDhBK6Bqri82l+u9XdmV9gh/0nA3JkzkmUwbZUJglXVYQ8YW
+	x7c8vhyEV9IT/q6+dZ3C/IkK25qBTk1dCULZ3S/YR7NlA6skX0dfE+NeOTMcwceGZzil85l5br/
+	AdypIQWXJYJKewJIK3Yebv4rE=
+X-Google-Smtp-Source: AGHT+IF+TKucMPytpTJ5R+CA8NEB5VA18YC7dTPTBjoM8fCHrXGk3NfE5eJA70tng973CAZHmwTuo9mPRPDMashJT88=
+X-Received: by 2002:a05:6102:568c:b0:4c1:8047:e002 with SMTP id
+ ada2fe7eead31-4c9e4ebb690mr2539916137.1.1744632698529; Mon, 14 Apr 2025
+ 05:11:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250412122428.108029-2-jonas.gorski@gmail.com> <20250414113926.vpy3gvck6etkscmu@skbuf>
-In-Reply-To: <20250414113926.vpy3gvck6etkscmu@skbuf>
-From: Jonas Gorski <jonas.gorski@gmail.com>
-Date: Mon, 14 Apr 2025 14:11:18 +0200
-X-Gm-Features: ATxdqUHCD9GlyKIfgeBXNV_bmQRQFLMswkNjKtvjsnGrbL_Adgi9g8DQ-gPBprU
-Message-ID: <CAOiHx=kRUE8_-4q6wOytrZObyyeSBMTHRMhaFGWDAJ-KBq5vFA@mail.gmail.com>
-Subject: Re: [PATCH RFC net 1/2] net: bridge: switchdev: do not notify new
- brentries as changed
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: Nikolay Aleksandrov <razor@blackwall.org>, Ido Schimmel <idosch@nvidia.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Andrew Lunn <andrew@lunn.ch>, bridge@lists.linux.dev, netdev@vger.kernel.org, 
+References: <20250412193153.49138-1-chenyuan0y@gmail.com> <D9694O0MKV31.3SY6ZCTSKXWI9@bootlin.com>
+In-Reply-To: <D9694O0MKV31.3SY6ZCTSKXWI9@bootlin.com>
+From: Chenyuan Yang <chenyuan0y@gmail.com>
+Date: Mon, 14 Apr 2025 07:11:27 -0500
+X-Gm-Features: ATxdqUEmzNKqNy2VeDRm0Ya7G52O07CobBBqgfreeKbyqmOiDNlMjis513mrcFY
+Message-ID: <CALGdzurLWayryjUEdSy4iuHAgFO=RA=HN=u+BZY96JqESKvi+A@mail.gmail.com>
+Subject: Re: [PATCH] gpio: nomadik: Add check for clk_enable()
+To: =?UTF-8?B?VGjDqW8gTGVicnVu?= <theo.lebrun@bootlin.com>
+Cc: linus.walleij@linaro.org, brgl@bgdev.pl, 
+	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 14, 2025 at 1:39=E2=80=AFPM Vladimir Oltean <vladimir.oltean@nx=
-p.com> wrote:
+On Mon, Apr 14, 2025 at 4:24=E2=80=AFAM Th=C3=A9o Lebrun <theo.lebrun@bootl=
+in.com> wrote:
 >
-> On Sat, Apr 12, 2025 at 02:24:27PM +0200, Jonas Gorski wrote:
-> > When adding a bridge vlan that is pvid or untagged after the vlan has
-> > already been added to any other switchdev backed port, the vlan change
-> > will be propagated as changed, since the flags change.
-> >
-> > This causes the vlan to not be added to the hardware for DSA switches,
-> > since the DSA handler ignores any vlans for the CPU or DSA ports that
-> > are changed.
-> >
-> > E.g. the following order of operations would work:
-> >
-> > $ ip link add swbridge type bridge vlan_filtering 1 vlan_default_pvid 1
-
-as mentioned for the cover letter, I will fix the example to use
-default_pvid 0 to have a "working" example.
-
-> > $ ip link set lan1 master swbridge
-> > $ bridge vlan add dev swbridge vid 1 pvid untagged self
-> > $ bridge vlan add dev lan1 vid 1 pvid untagged
-> >
-> > but this order would brake:
+> Hello Chenyuan, Linus, Bartosz,
 >
-> nitpick: s/brake/break/
-
-Thanks, :set spell clearly didn't help here.
-
-> > $ ip link add swbridge type bridge vlan_filtering 1 vlan_default_pvid 1
-> > $ ip link set lan1 master swbridge
-> > $ bridge vlan add dev lan1 vid 1 pvid untagged
-> > $ bridge vlan add dev swbridge vid 1 pvid untagged self
+> On Sat Apr 12, 2025 at 9:31 PM CEST, Chenyuan Yang wrote:
+> > Add check for the return value of clk_enable() to catch
+> > the potential error.
 > >
-> > Additionally, the vlan on the bridge itself would become undeletable:
+> > This is similar to the commit 8332e6670997
+> > ("spi: zynq-qspi: Add check for clk_enable()").
 > >
-> > $ bridge vlan
-> > port              vlan-id
-> > lan1              1 PVID Egress Untagged
-> > swbridge          1 PVID Egress Untagged
-> > $ bridge vlan del dev swbridge vid 1 self
-> > $ bridge vlan
-> > port              vlan-id
-> > lan1              1 PVID Egress Untagged
-> > swbridge          1 Egress Untagged
-> >
-> > since the vlan was never added to DSA's vlan list, so deleting it will
-> > cause an error, causing the bridge code to not remove it.
-> >
-> > Fix this by checking if flags changed only for vlans that are already
-> > brentry and pass changed as false for those that become brentries, as
-> > these are a new vlan (member) from the switchdev point of view.
-> >
-> > Fixes: 8d23a54f5bee ("net: bridge: switchdev: differentiate new VLANs f=
-rom changed ones")
-> > Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+> > Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
+> > Fixes: 966942ae4936 ("gpio: nomadik: extract GPIO platform driver from =
+drivers/pinctrl/nomadik/")
 > > ---
-> >  net/bridge/br_vlan.c | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >  drivers/gpio/gpio-nomadik.c | 5 ++++-
+> >  1 file changed, 4 insertions(+), 1 deletion(-)
 > >
-> > diff --git a/net/bridge/br_vlan.c b/net/bridge/br_vlan.c
-> > index d9a69ec9affe..939a3aa78d5c 100644
-> > --- a/net/bridge/br_vlan.c
-> > +++ b/net/bridge/br_vlan.c
-> > @@ -715,8 +715,8 @@ static int br_vlan_add_existing(struct net_bridge *=
-br,
-> >                               u16 flags, bool *changed,
-> >                               struct netlink_ext_ack *extack)
+> > diff --git a/drivers/gpio/gpio-nomadik.c b/drivers/gpio/gpio-nomadik.c
+> > index fa19a44943fd..dbc4cdddf4df 100644
+> > --- a/drivers/gpio/gpio-nomadik.c
+> > +++ b/drivers/gpio/gpio-nomadik.c
+> > @@ -262,8 +262,11 @@ static unsigned int nmk_gpio_irq_startup(struct ir=
+q_data *d)
 > >  {
-> > -     bool would_change =3D __vlan_flags_would_change(vlan, flags);
-> >       bool becomes_brentry =3D false;
-> > +     bool would_change =3D false;
-> >       int err;
+> >       struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
+> >       struct nmk_gpio_chip *nmk_chip =3D gpiochip_get_data(gc);
+> > +     int ret;
 > >
-> >       if (!br_vlan_is_brentry(vlan)) {
-> > @@ -725,6 +725,8 @@ static int br_vlan_add_existing(struct net_bridge *=
-br,
-> >                       return -EINVAL;
-> >
-> >               becomes_brentry =3D true;
-> > +     } else {
-> > +             would_change =3D __vlan_flags_would_change(vlan, flags);
-> >       }
-> >
-> >       /* Master VLANs that aren't brentries weren't notified before,
-> > --
-> > 2.43.0
-> >
+> > -     clk_enable(nmk_chip->clk);
+> > +     ret =3D clk_enable(nmk_chip->clk);
+> > +     if (ret)
+> > +             return ret;
+> >       nmk_gpio_irq_unmask(d);
+> >       return 0;
+> >  }
 >
-> You might want to mention that "bool *changed" is used later in
-> br_process_vlan_info() to make a decision whether to call
-> br_vlan_notify(RTM_NEWVLAN) or not. We want to notify switchdev with
-> changed=3Dfalse, but we want to keep notifying the change to rtnetlink.
+> Returning a negative value whereas the ->irq_startup() [0] return value
+> is an unsigned int? From some quick godbolt testing and briefly reading
+> the spec it looks safe to do a round trip (signed->unsigned->signed),
+> though not ideal to my eyes.
 >
-> The rtnetlink notification still happens even if we don't set
-> would_change here, because it depends on this code snippet:
+> The caller is __irq_startup() [1].
 >
->         if (becomes_brentry) {
->                 ...
->                 *changed =3D true;
->                 ...
->         }
+> As for why irq_startup returns an unsigned int, I am unsure. The kernel
+> Git history isn't enough to know more. The startup field in struct
+> hw_interrupt_type appeared on v2.3.14 [2], so no commit message to
+> explain decisions.
 >
-> and not on this one:
->
->         if (would_change)
->                 *changed =3D true;
->
-> That was my only concern with this change (I had missed the first snippet
-> when initially reading the code), and I didn't see in the commit log
-> some sort of attention paid to this detail.
+> Seeing the __irq_startup() code, my proposal would be to turn the return
+> value to a signed int, but I haven't exhaustively checked codepaths.
 
-Will add it. And I did check that, even considered shortly to merge this to
+Good catch! I agree that using a signed int could be a better option.
 
-        if (becomes_brentry || would_change)
-                *changed =3D true;
+Dear Linus and Bartosz, could you please share your thoughts? If
+you=E2=80=99re on board with the change, I=E2=80=99ll go ahead and send a n=
+ew patch.
 
-but then considered that a refactoring too much.
-
+> Thanks,
 >
-> With that:
+> [0]: https://elixir.bootlin.com/linux/v6.13.7/source/include/linux/irq.h#=
+L503
+> [1]: https://elixir.bootlin.com/linux/v6.13.7/source/kernel/irq/chip.c#L2=
+44
+> [2]: https://elixir.bootlin.com/linux/2.3.14/source/include/linux/irq.h#L=
+21
 >
-> Reviewed-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+> --
+> Th=C3=A9o Lebrun, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
 
-Thank you!
+-Chenyuan
 
