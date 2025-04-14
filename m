@@ -1,189 +1,174 @@
-Return-Path: <linux-kernel+bounces-603663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7C8BA88AA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 20:03:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7566AA88AAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 20:04:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB2FB7AA91A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 18:02:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8B54189A790
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 18:04:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1604D28A1D8;
-	Mon, 14 Apr 2025 18:03:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4052828B4F0;
+	Mon, 14 Apr 2025 18:04:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kX5sbQsn";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AwUh6FRP"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Y/jlWcoe"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2066.outbound.protection.outlook.com [40.107.95.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF60539A
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 18:03:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744653782; cv=none; b=p9DTwFfadphKId1ceWxiPeQ1S1k24AVW/U8x1XmcTkdzGWnFU+2S09L02TEaqqOxOwVc3RAVxpFi7WEU/WZhmdLnVdypVwGr2u3ISaUtewV5sZaxJytqSHXM343/IL8b/mGVPROC15M971kq/dkI7c93ktKUH7a7gob/IJfryPk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744653782; c=relaxed/simple;
-	bh=KZLZm38fvN7eoFZ7AVti9iLhoYnoSNpOttdP4s28SGE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=YkVTaoR1mk8Po7uB0YLHxDtVxLY4ay+Mx4m2JAwFpHHNVjJCuXZR2PT8+soBo9+IuCR4GiFo+UGBBjylLDUohlcsXWtb5N5FPSqVm7QZ66Jmi82XOC2L6vI7Gego0VziD5tGyJ9cRpCrABrwRfFl8/NcxRWvERQv8hB+dpVLLaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kX5sbQsn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AwUh6FRP; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744653778;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EQqudjAlTHduY4Y4lsejGgZN+jnS3ffTjfYPiImdjK8=;
-	b=kX5sbQsnGqQjYwhXNWSaLaFrUx5lZfl9GcoHnVRMgqVUSMQpbRXOPX8x1IIfdchV95ALuJ
-	LduhJaRM3OoPSPg0/7Tu/j4ILsU5KJK0r8/pAhjTxy3EX3gR6YGNfsymJjlS+RSBrrsQYF
-	iXbqhWtWUwF4WnWLJMj5qSwjrGtVL5lT3dPEby39dEheF4TayP+f7E7kMHPqsJie4iqiVw
-	J/qtsCRtqxaenTTE6E41KoddeLKxHo185d84hfn97AGno2zoh7p2bETwMqvmES8cmXpAWO
-	Hm1+UgV+psWPqL+ZNNYZyehQBsBX+mPRkVWSpGW+ww6l1Y/cygmhYXNd8UqMQA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744653778;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EQqudjAlTHduY4Y4lsejGgZN+jnS3ffTjfYPiImdjK8=;
-	b=AwUh6FRPoc+Kd0Doc70kww1SEms7JIeE2waKcZVJKL7vhimI6GRs9TwdXT6cMxNyUce7QO
-	KRFMr1MrY1WsobDQ==
-To: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
-Cc: Frederic Weisbecker <frederic@kernel.org>, "H . Peter Anvin"
- <hpa@zytor.com>, Linus Torvalds <torvalds@linux-foundation.org>, Peter
- Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Anil
- Gurumurthy <anil.gurumurthy@qlogic.com>, "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
- <martin.petersen@oracle.com>, Sudarsana Kalluru
- <sudarsana.kalluru@qlogic.com>
-Subject: Re: [PATCH 02/17] scsi: bfa: Rename 'timer_mod' to 'timer_module'
-In-Reply-To: <20250414102301.332225-3-mingo@kernel.org>
-References: <20250414102301.332225-1-mingo@kernel.org>
- <20250414102301.332225-3-mingo@kernel.org>
-Date: Mon, 14 Apr 2025 20:02:57 +0200
-Message-ID: <87lds2sjse.ffs@tglx>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAEC61624E9;
+	Mon, 14 Apr 2025 18:04:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744653864; cv=fail; b=Os8UMxzpr+cL6DurwbgScs2lQeWZq7dlZi05ez8wSM70hSu1rDxpRORsk7Vo3brRemJ1a0xjZOvpsH2UefoYUP0XJS8VdjG+gP/hV8BKCmnWeG1wFcag9g9SGUG9LK6tbcZK3AalSiMqjTSglIPtcopR+Qb5IgrTr+nMOsrEF4o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744653864; c=relaxed/simple;
+	bh=AI60pU4M9G6DR9KCWLfs4fabDmdwrFYuxdk5LvZdJMc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pcJMIJbRr39ld58RjFEqcLqHeM1Nfy58osupK917KiEzhOQd2cEEUHcZ+fYNqkUfeHjXHYRujstDD3MsuUjLuufurV+x9SeJmr5VPbSYG43FOg5UqiFDTCBLKeiG+hBOoPvmKkHzm8HECNxQrjWXNqJ2VU80bxtIxgwoe5g9ZZ8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Y/jlWcoe; arc=fail smtp.client-ip=40.107.95.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jWIHcFKjTum4fMeFcgBqUEUrBgjYFBKnk/D+FwiBHLMCOoLc8wtprfEh8h2g00KRY5ywIo+h/G3i8g+gxFz2D6yHYWqK1zfIUOSELxg9YkwhDDu0J/FpxjNpgNSGNSb2nlAJPwITbIsLTI8qX/WOMEARGKaWPHvJMoJTJqmzWr/aT3jE0zxad3kHpqzC1wARXJ6e3KS2WXGAhfOIopY034j5eWSFKEzhuJk2i5l0tu8SisWJoLWW5d/CQT62utbpxsYeZVt3KOyCVeBG+ElqaWn60hOZfAOqjFfajweB2GLGpLjxxZuNihloTLpzLWGBWpnKfb3BgkOcc+Oey6/kNg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=d1KO5KPGeFnF5imdzk3sXi/swkvTqWyhJAXDTq4weYk=;
+ b=uTL5uiuLlEsqUx/Xs1C1qEZkH3qiQGWQTU6RFIkUvMfTEZu8sN0mhqOWPrzQNjeFInKqamGi9UrbFhSTxc4dK8hin8DveAFKrW8ZjvoZP24PbVcqDfS7rMHJfY3wZfDptw44Q+V/vIwC+nH/y1RriSOWKNw1oRe04S+lghXAriYhYjRgxmZHW001gxoH/IP+jKgiMNLWxsBnruKFgE/tMq7l3B9jBugl35LWl31IJ4hNcDB4diOSBzR7iO+orCn1KNZIezAkcEhWRsVBCtE09M801CIemTvENxq6j0Ub9uKXcAmUJuVMOc04O3ffCjUiou1bgkhce8BsWLDCnMkh/g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=oracle.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=d1KO5KPGeFnF5imdzk3sXi/swkvTqWyhJAXDTq4weYk=;
+ b=Y/jlWcoeKUFga58Az7zk5kNxGBTBRiC9rqfbUhtmxrk6WLc9OX14sTw13nI6jvqa/ILtakxDugBLWMpsWwRMAnNzRZtg1RF0z4aFVCJesRTvWIlKdkjIkt/lv2hMr39lNk+68NrApIDXuZJuFxdz2Y05BWWoeobI79BuKg5zV4gQhhyDCkBOg5XHXV1vOVPqdIfFAU+CFSxD03RCsnLlI1HvGey8GgV/+XOdpT02WK3QkM6F37b1dsBXhRwWEswD8LmjAC1WNP4U+B5ZvyekrXAy4cn3V6gS/3NzapV/gNCoejadE+skxiSkzGnF37QnhgVqcM+pw6Nl6mWQoQC4dg==
+Received: from MW3PR05CA0015.namprd05.prod.outlook.com (2603:10b6:303:2b::20)
+ by SN7PR12MB7249.namprd12.prod.outlook.com (2603:10b6:806:2a9::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.30; Mon, 14 Apr
+ 2025 18:04:19 +0000
+Received: from MWH0EPF000971E6.namprd02.prod.outlook.com
+ (2603:10b6:303:2b:cafe::24) by MW3PR05CA0015.outlook.office365.com
+ (2603:10b6:303:2b::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.15 via Frontend Transport; Mon,
+ 14 Apr 2025 18:04:18 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ MWH0EPF000971E6.mail.protection.outlook.com (10.167.243.74) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8655.12 via Frontend Transport; Mon, 14 Apr 2025 18:04:18 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 14 Apr
+ 2025 11:04:02 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 14 Apr
+ 2025 11:04:01 -0700
+Received: from Asurada-Nvidia (10.127.8.11) by mail.nvidia.com (10.129.68.9)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Mon, 14 Apr 2025 11:04:00 -0700
+Date: Mon, 14 Apr 2025 11:03:58 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: ALOK TIWARI <alok.a.tiwari@oracle.com>
+CC: <jgg@nvidia.com>, <kevin.tian@intel.com>, <corbet@lwn.net>,
+	<will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
+	<thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <jonathanh@nvidia.com>,
+	<shuah@kernel.org>, <praan@google.com>, <nathan@kernel.org>,
+	<peterz@infradead.org>, <yi.l.liu@intel.com>, <jsnitsel@redhat.com>,
+	<mshavit@google.com>, <zhangzekun11@huawei.com>, <iommu@lists.linux.dev>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <patches@lists.linux.dev>
+Subject: Re: [PATCH v1 03/16] iommu: Add iommu_copy_struct_to_user helper
+Message-ID: <Z/1ODlyv7CXpMRXd@Asurada-Nvidia>
+References: <cover.1744353300.git.nicolinc@nvidia.com>
+ <65b51f57d08069c9da909586faf4e73d247a54f5.1744353300.git.nicolinc@nvidia.com>
+ <480536af-6830-43ce-a327-adbd13dc3f1d@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <480536af-6830-43ce-a327-adbd13dc3f1d@oracle.com>
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000971E6:EE_|SN7PR12MB7249:EE_
+X-MS-Office365-Filtering-Correlation-Id: 983e4fb2-51e7-4adf-afa7-08dd7b7ec6de
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|1800799024|376014|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?29R8euF/Gq+7yn6NDddypLmokaD6zjXGre5pBiOMVjX5a0wah264qfxg2wYQ?=
+ =?us-ascii?Q?QNy7Urvvqbo9YelkHgSG3AcTf9YOHjN+LUwEVTkI9YEXCNp4UkR4yzMC0DYL?=
+ =?us-ascii?Q?QFMih211paC8VPNSfSQ9S/cTSdrDXxW8wAcHMncfwIul2XuTjhLMig/o64jG?=
+ =?us-ascii?Q?nfrXtBo1rGHiQFrDFNToKjHM2xT93SRtgzYn8leBXFPOS1v1P97NhByVvftW?=
+ =?us-ascii?Q?vw2U7FpuL9d3FwMBfTIRo5msKY4LKpIoB/RmvcZaS3u+ed2D4O/qJVpyPOCt?=
+ =?us-ascii?Q?CCeuIhNpqCB1kGZdvDYlv89gSKFYxn1etApoP/O0vHyqwTVMP5yoB/+LGp6o?=
+ =?us-ascii?Q?qMSH3oqHftTcoFQ0MKIVD7TWVuegr9HOObEavvLnlzuBgLF1bGRsbUaOXjI3?=
+ =?us-ascii?Q?amynTqaKzAYQt0bkrBcSIr35rzeu4NkW7PVHUyopEGHv9uBmHtOOiXpRHIYf?=
+ =?us-ascii?Q?Pt9gzF9rDh1oiYlCeJ354Vd6Vr2N8DZ3lFlyfaYof89HXfD+mjajad0u57eq?=
+ =?us-ascii?Q?mR03Z6u2rn5xnx00md7VZG/6NQT9su9YTT0eUTWeGFK9jtdUX6FndimZeO46?=
+ =?us-ascii?Q?0+aPU3sn+OkXPKu80VIJWQ61e4GkwCBSggs0Bn6hqsDRww7oOcg0qDrp5+rq?=
+ =?us-ascii?Q?cWtXqHF/b753plwDLlQAr7RkGqix3+1K1wkql8RogfEBCk2SNO/R3kYcJzyg?=
+ =?us-ascii?Q?cr/G9ck7XlO58kUqsJQ69opMnF6/vPHNphBTYuMlVo5PbxsxRheTEWqJAun3?=
+ =?us-ascii?Q?rDV2oVUwuUktHkMDlUVrjHd8NJwohdCumqxXOsWdNuGNJ2uE7TZrc6RipeVS?=
+ =?us-ascii?Q?AhlS3f66sfghPwF3zJGIb1d1EH2/iyJU0U9mBkGRDh3YQAIdYvHpXeDYi7oS?=
+ =?us-ascii?Q?TJVbgx1JQUosciFPgRoA4ncqyVXiq2jygwbw4RIUWa/PIp/VPtl/rFBbVMZe?=
+ =?us-ascii?Q?p2gjDurUyoHCdSlcmP84OSqozUyeEtGTT0aOiaBYOZ9/KtyV8Jbv41/g6pYz?=
+ =?us-ascii?Q?dn2Dqd9ISrnm+OLXdhNMuWFpm1wHXw9q2QAL6/b+RpkuDtV44HkNNivV3uQC?=
+ =?us-ascii?Q?Q/C2186Fd4UtxQwhxNJYr0kyDpjUTmlMtrouI1p+hYoPl/Gomz7lDdQR9vqN?=
+ =?us-ascii?Q?+9oS1eeY/sCmORl9U7QMi7V+RTdICs1EJrBMZbF6BtkaaQOmZALnsDUgnXOy?=
+ =?us-ascii?Q?LJ4HBI9G+7l2IXRtv9g4eO/+UpNbDBtLO3qycV42LfEbmklvdLSdIfBjMr9X?=
+ =?us-ascii?Q?FdI2HyfHL3xKjGqSzS3EACLOdf/zRcoH1tNIfwySvdSNAEFt9/eGO0GPtiGt?=
+ =?us-ascii?Q?oD+TD2te3auW8Q7LlD4qukefhww/SczxfM84mcUVWskI10BW6FkkKwLxXE34?=
+ =?us-ascii?Q?XDvGrmxyXLB0Wpz8KcIQxkIHBbzGU2L8WL4Sew4XnoN1kdbTuDo6BanNefwU?=
+ =?us-ascii?Q?k4jrOLCLQKFxaKIFRN+v2wxBJug4UugndBqMuMfsRP4MBVPyf1L2u8OpoQvR?=
+ =?us-ascii?Q?rk5AG4ZypeA25N7j/23dnG+xRcDd7/1yyNbO?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Apr 2025 18:04:18.7494
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 983e4fb2-51e7-4adf-afa7-08dd7b7ec6de
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000971E6.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7249
 
-On Mon, Apr 14 2025 at 12:22, Ingo Molnar wrote:
+On Fri, Apr 11, 2025 at 06:05:30PM +0530, ALOK TIWARI wrote:
+> On 11-04-2025 12:07, Nicolin Chen wrote:
+> > + * iommu_copy_struct_to_user - Report iommu driver specific user space data
+> > + * @user_data: Pointer to a struct iommu_user_data for user space data location
+> > + * @ksrc: Pointer to an iommu driver specific user data that is defined in
+> > + *        include/uapi/linux/iommufd.h
+> > + * @data_type: The data type of the @ksrc. Must match with @user_data->type
+> > + * @min_last: The last memember of the data structure @ksrc points in the
+> 
+> old typo  memember -> member
 
-> We'd like to introduce timer_mod() in the kernel, so make
-> sure the namespace is clear.
+Fixed for this one.
 
-Interesting.
+And yea, we need a patch fixing iommu_copy_struct_from_user() too.
 
->  arch/arm/mach-omap1/pm.c                         |  2 +-
->  arch/arm/mach-s3c/s3c64xx.c                      |  4 +--
->  arch/arm/mach-s3c/s3c64xx.h                      |  6 ++---
->  arch/x86/kvm/cpuid.c                             |  4 +--
->  arch/x86/kvm/lapic.c                             | 18 ++++++-------
->  arch/x86/kvm/lapic.h                             |  4 +--
->  drivers/clocksource/timer-ti-32k.c               |  4 +--
->  drivers/clocksource/timer-ti-dm.c                |  6 ++---
->  drivers/comedi/drivers/addi_apci_3120.c          | 20 +++++++-------
->  drivers/comedi/drivers/addi_apci_3501.c          |  2 +-
->  drivers/counter/rz-mtu3-cnt.c                    | 16 +++++------
->  drivers/fpga/dfl-n3000-nios.c                    | 20 +++++++-------
->  drivers/gpu/drm/msm/msm_drv.h                    |  4 +--
->  drivers/gpu/drm/msm/msm_io_utils.c               |  4 +--
->  drivers/leds/leds-netxbig.c                      |  4 +--
->  drivers/scsi/bfa/bfa.h                           |  2 +-
->  drivers/scsi/bfa/bfa_core.c                      |  4 +--
->  drivers/scsi/bfa/bfa_ioc.c                       | 20 +++++++-------
->  drivers/scsi/bfa/bfa_ioc.h                       | 10 +++----
->  drivers/scsi/bfa/bfa_modules.h                   |  2 +-
->  drivers/scsi/bfa/bfad.c                          |  2 +-
->  fs/timerfd.c                                     |  2 +-
->  include/clocksource/timer-ti-dm.h                |  2 +-
->  include/linux/hrtimer.h                          | 24 ++++++++---------
->  include/linux/torture.h                          |  2 +-
->  include/trace/events/rxrpc.h                     | 16 +++++------
->  include/trace/events/timer.h                     | 14 +++++-----
->  io_uring/rw.c                                    |  2 +-
->  io_uring/timeout.c                               |  8 +++---
->  io_uring/timeout.h                               |  2 +-
->  kernel/bpf/helpers.c                             |  2 +-
->  kernel/time/hrtimer.c                            | 34 ++++++++++++------------
->  kernel/time/posix-timers.c                       |  2 +-
->  kernel/time/sleep_timeout.c                      |  6 ++---
->  kernel/torture.c                                 |  2 +-
->  net/rxrpc/ar-internal.h                          |  4 +--
->  net/rxrpc/call_event.c                           |  2 +-
->  net/rxrpc/input.c                                |  4 +--
->  net/rxrpc/input_rack.c                           | 10 +++----
->  net/rxrpc/output.c                               |  2 +-
->  rust/kernel/time/hrtimer.rs                      | 32 +++++++++++-----------
->  tools/testing/selftests/bpf/progs/test_vmlinux.c |  4 +--
->  42 files changed, 167 insertions(+), 167 deletions(-)
-
-All of that is related to 'scsi: bfa:', right?
-
-> diff --git a/arch/arm/mach-omap1/pm.c b/arch/arm/mach-omap1/pm.c
-> index 6a5815aa05e6..ce9295ca2960 100644
-> --- a/arch/arm/mach-omap1/pm.c
-> +++ b/arch/arm/mach-omap1/pm.c
-> @@ -118,7 +118,7 @@ void omap1_pm_idle(void)
->  #endif
->  
->  #ifdef CONFIG_OMAP_DM_TIMER
-> -	use_idlect1 = omap_dm_timer_modify_idlect_mask(use_idlect1);
-> +	use_idlect1 = omap_dm_timer_moduleify_idlect_mask(use_idlect1);
-
-I have no idea how this is related to the subject or the change log of
-this patch.
-
->  #endif
->  
->  	if (omap_dma_running())
-> diff --git a/arch/arm/mach-s3c/s3c64xx.c b/arch/arm/mach-s3c/s3c64xx.c
-> index 6c70ea7f2931..6c1d020b181e 100644
-> --- a/arch/arm/mach-s3c/s3c64xx.c
-> +++ b/arch/arm/mach-s3c/s3c64xx.c
-> @@ -165,8 +165,8 @@ static struct samsung_pwm_variant s3c64xx_pwm_variant = {
->  	.tclk_mask	= (1 << 7) | (1 << 6) | (1 << 5),
->  };
->  
-> -void __init s3c64xx_set_timer_source(enum s3c64xx_timer_mode event,
-> -				     enum s3c64xx_timer_mode source)
-> +void __init s3c64xx_set_timer_source(enum s3c64xx_timer_modulee event,
-> +				     enum s3c64xx_timer_modulee source)
-
-> -enum s3c64xx_timer_mode {
-> +enum s3c64xx_timer_modulee {
-
-> -			apic->lapic_timer.timer_mode_mask = 3 << 17;
-> +			apic->lapic_timer.timer_modulee_mask = 3 << 17;
-
-> -	u32 timer_mode;
-> -	u32 timer_mode_mask;
-> +	u32 timer_modulee;
-> +	u32 timer_modulee_mask;
-
-> -	struct bfa_timer_mod_s	*timer_mod;
-> +	struct bfa_timer_module_s	*timer_module;
-
-> -static void __init ti_32k_timer_module_init(struct device_node *np,
-> +static void __init ti_32k_timer_moduleule_init(struct device_node *np,
-
-Seriously?
-
-Has AI gone wild or what?
-
-There is not a single instance of change in this pile, which actually
-makes sense.
-
-This thing definitely qualifies for the 'garbage of the year' award and
-already leads the decade rankings by far.
-
-Thanks,
-
-        tglx
+Thanks
+Nicolin
 
