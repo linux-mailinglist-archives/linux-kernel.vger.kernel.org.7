@@ -1,176 +1,115 @@
-Return-Path: <linux-kernel+bounces-603195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33A6AA884A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:24:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C958A884CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:27:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3697717D34F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:18:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D861D188C4BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:19:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C572957C0;
-	Mon, 14 Apr 2025 13:56:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F04A296D38;
+	Mon, 14 Apr 2025 13:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="nSue+Mhi"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f/0pocpD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE34253947
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 13:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA1C52750E7;
+	Mon, 14 Apr 2025 13:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744638978; cv=none; b=NTErazP+FqwIAFCYTf4N+Vh7bFGYqpFpme6XYupTS8x4WVXgDL2FSL9jlQZOYih2uf/Y7AV8hkDy5clgQr/nPdnsg3StvMsQ5t6CHisreOBEWH6+SCuPmlWmEzBKSRNhuC0uGe3waZ7vrSh4uCanZlMStoROOEeH3rQPfpGsPeo=
+	t=1744638987; cv=none; b=QDQbWS2x6EUUJG+KL9+NkWCktMVWvLJvLCBMnTFWu3ILoPtw3/Q8A+7Mgr6hC2znQbmQxx+OWg8bG8bLhF+GZCEXHVvxD4Wct9nZwepnMi3+ztatKBu32IQNIMn5YrVeuQ4fcJqZlZlpTAtH6IHaGMdT1k2DrhrovfhcPy3LppU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744638978; c=relaxed/simple;
-	bh=uhXCK6Zf6sye5f+kTXxkk6TOXTEo1CmGh0O5s/dDSHk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hTlm1F+IuBo6eZdvOstaRsrqhijiBHfKpwmgujJsNpQjtP6k40mINDTCt+sCT3+4sbj21yM6HS+RXGxFX12vJuDWsomfgfgMnMjzDxRKvitARDuBGOGaXUfMjk1P8BNOkN/yxSZGeIPouJocdJKTNBSAbbd9yv2bLlDM8harxO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=nSue+Mhi; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43ed8d32a95so37068465e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 06:56:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1744638973; x=1745243773; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wSPX/TbzronNETf+6T1qob9Fj8RgDBqBjqNXnAsD94g=;
-        b=nSue+MhiY3cycxAybvNK3uHNe2NCl9lvw9NNR6a84Yb+byMHjsJFem+SAbZb3J2cV8
-         BkWS4aXWxAoqeVooRYXHv+w07YAh7IWJ90/7AeJm0NYd16wfICPG8LdX9hrorDpsr48r
-         0BeMMwyB8jVatjgS1m/NUOFr9/CzehvhwQ7G4XcIsK5xzEYDJi+qH1INZ3fAR0dRZVTL
-         zw9XPCSkroOKVcz9GQdK9kEnWqPqktqlcsDD6tge/ejf0pBPSGv70fEbPtKoJtD5RCoy
-         +hwOA6QKAObXpPETcI7hb5s+KMBBVy8HB9cw0rNHKGO/z2a7RhhWpQ+ZQ6lnBW1OuAI4
-         bMbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744638973; x=1745243773;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wSPX/TbzronNETf+6T1qob9Fj8RgDBqBjqNXnAsD94g=;
-        b=oEGT2BtIjHVbu/vikKCTz76sLLG1BcKuGyTICJTYiidSWxU20NZzuUK1JXa08OfQcK
-         gznJaBr9yIrofRwOuyvvHGfkxSf66x9b/dr8TVYKYF3Ukc3BL0rv9p2UZV2QdQKcDxI/
-         r+vWlweLm4NsFgD+qtIbm7sp8ouXoUHlwWULgLEsWDxXSkUU1UfBD0bSM7wptmF9NCC+
-         UdAozkX74y9INvxfonefjxQ3YOfk5DbUrZRWiWpI1PZf100+wLEaJK98wnJmFtwqL6BW
-         ahAfVhIfs+9NiofRnMDZb20sLfAG3BWZYQFn2u997ld2kJJEITNpmQAUl0HBRj93eV+B
-         SYqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVR4Qo9M/V2rQMC5A+v1sD3J8qRYx1FN+1YhuB47FBkS1XcwaOvtkEIljgVOY+OF4poJu0QP8Q8diQ18ws=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzk/iufr4gdfloa8N8/pxlQS33g0DSFrLU8qcWIcq1Fr4nsVerY
-	L+atRi8lZOO3+XVTIcrQqrX4y1DOfPC7flqta4ZcW/POm36zA1cSfnfbW4UvEps=
-X-Gm-Gg: ASbGncuSOU2IcOULb4L+CyShpMtS4vSf/CE8DsdPsUQaSzJ9xJtGiEZg2qfkCeWHvY8
-	+EPg3qb9EWgZryK8q0pY5XMeHKWU3WqeVznwmwNRdcZsbCU1XLbUs2KdfCDLl9LD9qnSJbOjgAs
-	ULOMXm/nMEX/HiV+vCY9a9MOSAyBR3fZWnntIIrArP9ezKe2lb0M0jT+SzYMIiusb6Qr0Lk+xvs
-	13pgpSkveZO9IuricL1w9QivJ/xbyr9uogKOIHPxXy4pRA5hG1Zm4ptuNLOP3GxdY8xap7sAka2
-	vSKowlEi5scrSbd8Eu0whInS++LFCQML0ij/6ITR6kxo4tXQF4XaYka+GB+cjIyZXf+DEz+vJGO
-	LbsImUx9GJOV5
-X-Google-Smtp-Source: AGHT+IEiisaCyzTv/c4YGT/191xkPS9XSCL07GXPd0MhBX6X1cLo7SxgbsZldJJbAyTaapzLfN0VMA==
-X-Received: by 2002:a05:6000:2507:b0:391:6fd:bb65 with SMTP id ffacd0b85a97d-39ea51eef37mr9727002f8f.9.1744638973332;
-        Mon, 14 Apr 2025 06:56:13 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:5ee:79d0:2dda:96f4:b94d:164c? ([2a01:e0a:5ee:79d0:2dda:96f4:b94d:164c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eae97751fsm11004403f8f.41.2025.04.14.06.56.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Apr 2025 06:56:12 -0700 (PDT)
-Message-ID: <97cfeafe-7044-4f06-b2e6-e4a158419473@baylibre.com>
-Date: Mon, 14 Apr 2025 15:56:11 +0200
+	s=arc-20240116; t=1744638987; c=relaxed/simple;
+	bh=NFLGYLwfMv4O8oauiY7vmwB/nw7imAlHzVax0tuTb+E=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=i6Ja071a5w47RglaC/5BFii8HOES/zAxm4s49HG+SgOEsOLx26FAszeGtcmp4PqO/VipZMZ53xt1qxO3wJF4Z6WqbMcwqwNXoa/6bganc4Avjs9dwWzIB4067d9/OoUijTm7RuevxUP/pMDN5GK3Qr/2YLLpSgdvauoRxU7OrzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f/0pocpD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48C4BC4CEE2;
+	Mon, 14 Apr 2025 13:56:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744638986;
+	bh=NFLGYLwfMv4O8oauiY7vmwB/nw7imAlHzVax0tuTb+E=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=f/0pocpDSbkaNH9t2nd0UfGeZ2kaghu7xBWHR8+RAV/ZT/esgLAF5DrxIVl7ml2Sr
+	 vzP30Qc8TpuvpR/0hyX2N/+1EGKYtsKhy9I0dF/FXx1QNBwPUjNKeceQFehm+RZ+tj
+	 n/MCvgJrKHDuQfmpOfoq28JeTkcCxqGGIEnMwDqMPoUTLk2RnvACi77o40eV0GEGek
+	 WaGgqDcr8ZCsbvA7fCPhLtGHyEJ6CSJd+si0BmTDAK0uIOtxmIfbjIX4Xx/4olHACc
+	 UkgJiOiV8WZTzb+poBd4KmPe9cjh5cfcVA01v7fQGNs7vDSkkkBe5fAqlz5ioY093k
+	 hs/OwjkW6ARlA==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Shenghao Ding <shenghao-ding@ti.com>, 
+ Kevin Lu <kevin-lu@ti.com>, Baojun Xu <baojun.xu@ti.com>, 
+ Dan Murphy <dmurphy@ti.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shi Fu <shifu0704@thundersoft.com>, 
+ Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+ James Calligeros <jcalligeros99@gmail.com>
+Cc: Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+ =?utf-8?q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>, 
+ Hector Martin <marcan@marcan.st>, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ asahi@lists.linux.dev, linux-hwmon@vger.kernel.org, 
+ Neal Gompa <neal@gompa.dev>
+In-Reply-To: <20250227-apple-codec-changes-v3-0-cbb130030acf@gmail.com>
+References: <20250227-apple-codec-changes-v3-0-cbb130030acf@gmail.com>
+Subject: Re: (subset) [PATCH v3 00/20] ASoC: tas27{64,70}: improve support
+ for Apple codec variants
+Message-Id: <174463898202.86688.2390703716966922295.b4-ty@kernel.org>
+Date: Mon, 14 Apr 2025 14:56:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/5] rtc: mt6397: Remove start time parameters
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Eddie Huang <eddie.huang@mediatek.com>, Sean Wang
- <sean.wang@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-rtc@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250109-enable-rtc-v3-0-f003e8144419@baylibre.com>
- <20250109-enable-rtc-v3-4-f003e8144419@baylibre.com>
- <20250411133609a1295543@mail.local> <202504111339359e840246@mail.local>
- <968001f7-96d1-4ad5-8c36-28cac5dc30f1@collabora.com>
-Content-Language: en-US
-From: Alexandre Mergnat <amergnat@baylibre.com>
-In-Reply-To: <968001f7-96d1-4ad5-8c36-28cac5dc30f1@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-c25d1
 
-
-
-On 14/04/2025 13:09, AngeloGioacchino Del Regno wrote:
-> Il 11/04/25 15:39, Alexandre Belloni ha scritto:
->> On 11/04/2025 15:36:12+0200, Alexandre Belloni wrote:
->>> On 11/04/2025 14:35:57+0200, Alexandre Mergnat wrote:
->>>> The start time parameters is currently hardcoded to the driver, but
->>>> it may not fit with all equivalent RTC that driver is able to support.
->>>>
->>>> Remove the start_secs and set_start_time value setup because it
->>>> will be handled by the rtc_device_get_offset function using the
->>>> start-year DTS property.
->>>>
->>>> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
->>>> ---
->>>>   drivers/rtc/rtc-mt6397.c | 2 --
->>>>   1 file changed, 2 deletions(-)
->>>>
->>>> diff --git a/drivers/rtc/rtc-mt6397.c b/drivers/rtc/rtc-mt6397.c
->>>> index 692c00ff544b2..d47626d47602f 100644
->>>> --- a/drivers/rtc/rtc-mt6397.c
->>>> +++ b/drivers/rtc/rtc-mt6397.c
->>>> @@ -291,8 +291,6 @@ static int mtk_rtc_probe(struct platform_device *pdev)
->>>>       rtc->rtc_dev->ops = &mtk_rtc_ops;
->>>>       rtc->rtc_dev->range_min = RTC_TIMESTAMP_BEGIN_1900;
->>>>       rtc->rtc_dev->range_max = mktime64(2027, 12, 31, 23, 59, 59);
->>>> -    rtc->rtc_dev->start_secs = mktime64(1968, 1, 2, 0, 0, 0);
->>>> -    rtc->rtc_dev->set_start_time = true;
->>>
->>> This is going to break the time for people upgrading their kernel, you
->>> are unfortunately stuck with this.
->>>
->>
->> To be clear, the breakage will happen when upgrading the kernel but not
->> the device tree with 5/5
->>
+On Thu, 27 Feb 2025 22:07:27 +1000, James Calligeros wrote:
+> This series introduces a number of changes to the drivers for
+> the Texas Instruments TAS2764 and TAS2770 amplifiers in order to
+> introduce (and improve in the case of TAS2770) support for the
+> variants of these amps found in Apple Silicon Macs.
 > 
-> Yes, you're stuck with this. Devicetree has to be retrocompatible.
+> Apple's variant of TAS2764 is known as SN012776, and as always with
+> Apple is a subtly incompatible variant with a number of quirks. It
+> is not publicly available. The TAS2770 variant is known as TAS5770L,
+> and does not require incompatible handling.
 > 
-> Besides, this start_secs is what gets used by default, and the start-year
-> devicetree property should take precedence and effectively override the
-> start_secs default.
-> 
-> Just keep it there.... :-)
+> [...]
 
-When you boot your board for the first time, is the date January 2nd 1968 ? If not, that mean it is 
-used as a finetune offset year.
-IMHO, mktime64(1968, 1, 2, 0, 0, 0) is a workaround for the rtc framework issue we try to solve in 
-this serie because start_secs is negative (1968 < 1970). Now framework handle the negative value 
-properly, even if you keep mktime64(1968, 1, 2, 0, 0, 0) , the device time will change. I prefer to 
-notify you.  :)
+Applied to
 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-TBH, it's hard to follow the logic, so I've a question:
-If I push in my V4 a framework fix that drivers using year < 1970 will need to have a new start_secs 
-or start-year value to stay aligned with there previous value, do you will accept it ?
+Thanks!
 
-Because drivers implementation are based on a bugged framework, so it's impossible, IMHO, to fix the 
-framework without impacting date values.
+[07/20] ASoC: tas2764: Reinit cache on part reset
+        commit: 592ab3936b096da5deb64d4c906edbeb989174d6
 
-If you don't want to touch framework, then consider offset year in the drivers to reach above 1970 :)
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-If you have a solution to keep "rtc->rtc_dev->start_secs = mktime64(1968, 1, 2, 0, 0, 0);" without 
-having the date changed, don't hesitate to tell me, I'm not forcing for a specific one, just tell me 
-what you prefer for the V4.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Regards,
-Alex
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
--- 
-Regards,
-Alexandre
+Thanks,
+Mark
+
 
