@@ -1,39 +1,64 @@
-Return-Path: <linux-kernel+bounces-602330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE57FA8796F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:52:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CA12A87978
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:53:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8D47168915
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 07:52:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDB1B7A268A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 07:52:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B3BA2580ED;
-	Mon, 14 Apr 2025 07:52:39 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9511D539A
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 07:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8074E2594B9;
+	Mon, 14 Apr 2025 07:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QxmGkhpS"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA411258CC3;
+	Mon, 14 Apr 2025 07:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744617159; cv=none; b=Ct+c8skkcXEr0dyOKgIBl1GUwvFClZ3GLLLCo4OJIMx6EZOBnQv2uWbSzrw9oXRoiCftuZNsi1S3K88jn75V9m4T0YzYUiq4loLWff1zCW1FjW+VT15d6fWk28EHKk7Kvw2fxHaIA9h8CzNX4ownSFamYyBalSBB5lHdO/vQIxI=
+	t=1744617178; cv=none; b=tZF2V+7RrO8JH5ihHYI/wC+Ns27Xqx0XSDBfwFIPgzUfALk1CpRgWZewKxs99GucRhWtfGta0Y8mVPW4jE5lHiK85nVotqc173dVLRCRN3pQ7QfkK86RQ5d6Vw1nqk7Oo66nPwd/7B3hxBsG5LDN0VnRVej5OV1fWmixQtIm5L4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744617159; c=relaxed/simple;
-	bh=WsO/QgvjFVAT0vfF+NDb5gjqkzvA3Vt1GNWmQLH1Mps=;
+	s=arc-20240116; t=1744617178; c=relaxed/simple;
+	bh=bkxSTtdDFyviSpupmhNaBQ6cbugxxLS+/kDSWvSJ76Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BgDVjgKyWHX63WIrIaHWJ+OgOiiC3UQf/eSEmyO+qAYOCYjEYWZAFs/9cST8a/Da0dH89M+xSXVyI5AB7+vYIEZeiAkxy7rveobkVbLl2kul48zC2qodic0BkWHPvTgn74SbDAY/E1w1lHBt80UDrhPyDKV4qrz/hkjhAoZkyg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 01E621007;
-	Mon, 14 Apr 2025 00:52:34 -0700 (PDT)
-Received: from [10.57.88.7] (unknown [10.57.88.7])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0CAA83F694;
-	Mon, 14 Apr 2025 00:52:33 -0700 (PDT)
-Message-ID: <6e6305fd-3b93-43ec-8114-e81b2926adfc@arm.com>
-Date: Mon, 14 Apr 2025 08:52:32 +0100
+	 In-Reply-To:Content-Type; b=BZtC/WY0RWSv1eN+tY4UhsvRs8ZNW3sPJzve3n0o7xQ8K+hJ+ckYUBvsJb8/lEJ7lMk4RIexU6ZSaLrUrhooGYPPOu+MZGeA4k14pzdV+ycuQclnQCtfOHrzTq9l+jq30nwyDnCbezEEw6jp8F7vSBEHqDG5K3xstyS5HzTN6Zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QxmGkhpS; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744617177; x=1776153177;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=bkxSTtdDFyviSpupmhNaBQ6cbugxxLS+/kDSWvSJ76Q=;
+  b=QxmGkhpSr861b0QkSyyNmzST0HfhE2m0Na45tlYBHEyNTOq+PV14vXSY
+   T76xwsbIoIeuwEt9wN+6+4LhanPCtqgWP6lsEAmmPHPgmyDm3OAhFPEpB
+   REWvycVtpyQ1EgvBaEBQwu2cmbybwX79qJDdbNOflVSrWkl9vhs4L3fmd
+   MnT6krmism3nZPHzr9cXc085Ev1yBtApkELJQAXulwWWDW8DVSMsuUi6U
+   jvXRhPTL1o6xofP5/GK5I4EGNBLCVKksUa6FYDfuMJaXxoTMqfw1PESWS
+   BW/19pyh5PvwZd3JRMlQvUxHD0xxgVsG/4HZHMEm9ZN/9qxU9qkNneW6f
+   w==;
+X-CSE-ConnectionGUID: qVULuznmQR+NTgVjHz4VAg==
+X-CSE-MsgGUID: nErD2bQZTY6MC2IEgZhe1A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11402"; a="56719738"
+X-IronPort-AV: E=Sophos;i="6.15,211,1739865600"; 
+   d="scan'208";a="56719738"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 00:52:56 -0700
+X-CSE-ConnectionGUID: Suur3q4vQw+2nfVCvxYgvw==
+X-CSE-MsgGUID: xK+m8O66QHi0jOcG9OUxgw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,211,1739865600"; 
+   d="scan'208";a="130294561"
+Received: from unknown (HELO [10.238.224.239]) ([10.238.224.239])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 00:52:52 -0700
+Message-ID: <c8ae2d43-157c-408a-af89-7248b30d52d1@linux.intel.com>
+Date: Mon, 14 Apr 2025 15:52:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,133 +66,106 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64/mm: Re-organise setting up FEAT_S1PIE registers
- PIRE0_EL1 and PIR_EL1
-To: Anshuman Khandual <anshuman.khandual@arm.com>,
- linux-arm-kernel@lists.infradead.org
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Ard Biesheuvel <ardb@kernel.org>,
- linux-kernel@vger.kernel.org
-References: <20250410074024.1545768-1-anshuman.khandual@arm.com>
-Content-Language: en-GB
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20250410074024.1545768-1-anshuman.khandual@arm.com>
+Subject: Re: [PATCH v1 1/2] platform/x86: int3472: add hpd pin support
+To: Hans de Goede <hdegoede@redhat.com>,
+ Dongcheng Yan <dongcheng.yan@intel.com>, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, sakari.ailus@linux.intel.com,
+ hverkuil@xs4all.nl, andriy.shevchenko@linux.intel.com,
+ u.kleine-koenig@baylibre.com, ricardo.ribalda@gmail.com,
+ bingbu.cao@linux.intel.com
+Cc: stable@vger.kernel.org, hao.yao@intel.com
+References: <20250411082357.392713-1-dongcheng.yan@intel.com>
+ <cfc709a8-85fc-4e44-9dcf-ae3ef7ee0738@redhat.com>
+Content-Language: en-US
+From: "Yan, Dongcheng" <dongcheng.yan@linux.intel.com>
+In-Reply-To: <cfc709a8-85fc-4e44-9dcf-ae3ef7ee0738@redhat.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/04/2025 08:40, Anshuman Khandual wrote:
-> mov_q cannot really move PIE_E[0|1] macros into a general purpose register
-> as expected if those macro constants contain some 128 bit layout elements,
-> required for D128 page tables. Fix this problem via first loading up these
-> macro constants into a given memory location and then subsequently setting
-> up registers PIRE0_EL1 and PIR_EL1 by retrieving the memory stored values.
+Hi hans,
 
-From memory, the primary issue is that for D128, PIE_E[0|1] are defined in terms
-of 128-bit types with shifting and masking, which the assembler can't do? It
-would be good to spell this out.
-
+On 4/11/2025 4:33 PM, Hans de Goede wrote:
+> Hi,
 > 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Ard Biesheuvel <ardb@kernel.org>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ---
-> This patch applies on v6.15-rc1
+> On 11-Apr-25 10:23 AM, Dongcheng Yan wrote:
+>> Typically HDMI to MIPI CSI-2 bridges have a pin to signal image data is
+>> being received. On the host side this is wired to a GPIO for polling or
+>> interrupts. This includes the Lontium HDMI to MIPI CSI-2 bridges
+>> lt6911uxe and lt6911uxc.
+>>
+>> The GPIO "hpd" is used already by other HDMI to CSI-2 bridges, use it
+>> here as well.
+>>
+>> Signed-off-by: Dongcheng Yan <dongcheng.yan@intel.com>
+>> ---
+>>  drivers/platform/x86/intel/int3472/common.h   | 1 +
+>>  drivers/platform/x86/intel/int3472/discrete.c | 6 ++++++
+>>  2 files changed, 7 insertions(+)
+>>
+>> diff --git a/drivers/platform/x86/intel/int3472/common.h b/drivers/platform/x86/intel/int3472/common.h
+>> index 145dec66df64..db4cd3720e24 100644
+>> --- a/drivers/platform/x86/intel/int3472/common.h
+>> +++ b/drivers/platform/x86/intel/int3472/common.h
+>> @@ -22,6 +22,7 @@
+>>  #define INT3472_GPIO_TYPE_POWER_ENABLE				0x0b
+>>  #define INT3472_GPIO_TYPE_CLK_ENABLE				0x0c
+>>  #define INT3472_GPIO_TYPE_PRIVACY_LED				0x0d
+>> +#define INT3472_GPIO_TYPE_HOTPLUG_DETECT			0x13
+>>  
+>>  #define INT3472_PDEV_MAX_NAME_LEN				23
+>>  #define INT3472_MAX_SENSOR_GPIOS				3
+>> diff --git a/drivers/platform/x86/intel/int3472/discrete.c b/drivers/platform/x86/intel/int3472/discrete.c
+>> index 30ff8f3ea1f5..28d41b1b3809 100644
+>> --- a/drivers/platform/x86/intel/int3472/discrete.c
+>> +++ b/drivers/platform/x86/intel/int3472/discrete.c
+>> @@ -186,6 +186,10 @@ static void int3472_get_con_id_and_polarity(struct acpi_device *adev, u8 *type,
+>>  		*con_id = "privacy-led";
+>>  		*gpio_flags = GPIO_ACTIVE_HIGH;
+>>  		break;
+>> +	case INT3472_GPIO_TYPE_HOTPLUG_DETECT:
+>> +		*con_id = "hpd";
+>> +		*gpio_flags = GPIO_LOOKUP_FLAGS_DEFAULT;
 > 
->  arch/arm64/kernel/head.S         | 3 +++
->  arch/arm64/kernel/pi/map_range.c | 6 ++++++
->  arch/arm64/kernel/pi/pi.h        | 1 +
->  arch/arm64/mm/mmu.c              | 1 +
->  arch/arm64/mm/proc.S             | 5 +++--
->  5 files changed, 14 insertions(+), 2 deletions(-)
+> This looks wrong, we really need to clearly provide a polarity
+> here since the ACPI GPIO resources do not provide one.
 > 
-> diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
-> index 2ce73525de2c..4950d9cc638a 100644
-> --- a/arch/arm64/kernel/head.S
-> +++ b/arch/arm64/kernel/head.S
-> @@ -126,6 +126,9 @@ SYM_CODE_START(primary_entry)
->  	 * On return, the CPU will be ready for the MMU to be turned on and
->  	 * the TCR will have been set.
->  	 */
-> +	adr_l	x0, pir_data
-> +	bl      __pi_load_pir_data
+I tested gpio_flags=GPIO_LOOKUP_FLAGS_DEFAULT/HIGH/LOW, the lt6911uxe
+driver can pass the test and work normally. Is this the rule of int3472
+driver?
+In addition, GPIO_LOOKUP_FLAGS_DEFAULT	= GPIO_ACTIVE_HIGH |
+GPIO_PERSISTENT as defined, maybe it provides a polarity also.
+I can change to GPIO_ACTIVE_LOW, but I want to understand the reason.
 
-Using C code to pre-calculate the values into global variables that the assembly
-code then loads and stuffs into the PIR registers feels hacky. I wonder if we
-can instead pre-calculate into asm-offsets.h? e.g. add the following to
-asm-offsets.c:
-
-DEFINE(PIE_E0_ASM, PIE_E0);
-DEFINE(PIE_E1_ASM, PIE_E1);
-
-Which will generate the asm-offsets.h header with PIE_E[0|1]_ASM with the
-pre-calculated values that you can then use in proc.S?
-
-Or if that doesn't work for some reason, is it possible to store to the PIR
-registers directly from the C code?
-
-Thanks,
-Ryan
-
-> +
->  	bl	__cpu_setup			// initialise processor
->  	b	__primary_switch
->  SYM_CODE_END(primary_entry)
-> diff --git a/arch/arm64/kernel/pi/map_range.c b/arch/arm64/kernel/pi/map_range.c
-> index 81345f68f9fc..cd9d24e73046 100644
-> --- a/arch/arm64/kernel/pi/map_range.c
-> +++ b/arch/arm64/kernel/pi/map_range.c
-> @@ -103,3 +103,9 @@ asmlinkage u64 __init create_init_idmap(pgd_t *pg_dir, pteval_t clrmask)
->  
->  	return ptep;
->  }
-> +
-> +asmlinkage void __init load_pir_data(u64 pir_data[])
-> +{
-> +	pir_data[0] = PIE_E0;
-> +	pir_data[1] = PIE_E1;
-> +}
-> diff --git a/arch/arm64/kernel/pi/pi.h b/arch/arm64/kernel/pi/pi.h
-> index c91e5e965cd3..ae61df4fdb77 100644
-> --- a/arch/arm64/kernel/pi/pi.h
-> +++ b/arch/arm64/kernel/pi/pi.h
-> @@ -34,3 +34,4 @@ void map_range(u64 *pgd, u64 start, u64 end, u64 pa, pgprot_t prot,
->  asmlinkage void early_map_kernel(u64 boot_status, void *fdt);
->  
->  asmlinkage u64 create_init_idmap(pgd_t *pgd, pteval_t clrmask);
-> +asmlinkage void load_pir_data(u64 pir_data[]);
-> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> index ea6695d53fb9..762e81ff4e85 100644
-> --- a/arch/arm64/mm/mmu.c
-> +++ b/arch/arm64/mm/mmu.c
-> @@ -58,6 +58,7 @@ static bool rodata_is_rw __ro_after_init = true;
->   * with MMU turned off.
->   */
->  long __section(".mmuoff.data.write") __early_cpu_boot_status;
-> +unsigned long __section(".mmuoff.data.write") pir_data[2];
->  
->  /*
->   * Empty_zero_page is a special page that is used for zero-initialized data
-> diff --git a/arch/arm64/mm/proc.S b/arch/arm64/mm/proc.S
-> index fb30c8804f87..7dd28cf101c2 100644
-> --- a/arch/arm64/mm/proc.S
-> +++ b/arch/arm64/mm/proc.S
-> @@ -524,9 +524,10 @@ alternative_else_nop_endif
->  #define PTE_MAYBE_NG		0
->  #define PTE_MAYBE_SHARED	0
->  
-> -	mov_q	x0, PIE_E0
-> +	adr_l	x1, pir_data
-> +	ldr	x0, [x1, #0]
->  	msr	REG_PIRE0_EL1, x0
-> -	mov_q	x0, PIE_E1
-> +	ldr	x0, [x1, #8]
->  	msr	REG_PIR_EL1, x0
->  
->  #undef PTE_MAYBE_NG
+Best Regard,
+Dongcheng> Regards,
+> 
+> Hans
+> 
+> 
+> 
+>> +		break;
+>>  	case INT3472_GPIO_TYPE_POWER_ENABLE:
+>>  		*con_id = "power-enable";
+>>  		*gpio_flags = GPIO_ACTIVE_HIGH;
+>> @@ -212,6 +216,7 @@ static void int3472_get_con_id_and_polarity(struct acpi_device *adev, u8 *type,
+>>   * 0x0b Power enable
+>>   * 0x0c Clock enable
+>>   * 0x0d Privacy LED
+>> + * 0x13 Hotplug detect
+>>   *
+>>   * There are some known platform specific quirks where that does not quite
+>>   * hold up; for example where a pin with type 0x01 (Power down) is mapped to
+>> @@ -281,6 +286,7 @@ static int skl_int3472_handle_gpio_resources(struct acpi_resource *ares,
+>>  	switch (type) {
+>>  	case INT3472_GPIO_TYPE_RESET:
+>>  	case INT3472_GPIO_TYPE_POWERDOWN:
+>> +	case INT3472_GPIO_TYPE_HOTPLUG_DETECT:
+>>  		ret = skl_int3472_map_gpio_to_sensor(int3472, agpio, con_id, gpio_flags);
+>>  		if (ret)
+>>  			err_msg = "Failed to map GPIO pin to sensor\n";
+>>
+>> base-commit: 01c6df60d5d4ae00cd5c1648818744838bba7763
+> 
+> 
 
 
