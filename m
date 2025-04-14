@@ -1,248 +1,118 @@
-Return-Path: <linux-kernel+bounces-602849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B0EAA88019
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:12:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94E4AA88023
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:13:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D74217500A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 12:12:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EB0E18965CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 12:13:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32DD429DB8B;
-	Mon, 14 Apr 2025 12:11:49 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A81429CB4E
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 12:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D2629DB90;
+	Mon, 14 Apr 2025 12:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KapxsIUU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1D56280A51
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 12:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744632708; cv=none; b=Rn5sI/+OG+02TS6EigBDlPUfMfZWGi4PwmtaJJRsxe2j5/JiWlcbOPotsiw/8kczz91SvXToUyTpIy4D08eUrFWz5U/WFKmDBACq2nVDgwvUrk+3UsjZmBDblYmf85crtVceriyRG+K66hnffw419cVgJLIGzQvQwDdAOAH5mV4=
+	t=1744632767; cv=none; b=idIL3yGxiJ8VldpYjB1zoZLmusz0jMgew9rrpoCBEG6o830/Ubv64KF4Bjg48hIf4xIN+CvWPpNASWfkOr1VA3avp9gTv91gz0Z7xieZ+0qaepU3eHSkeZ/GcbIZRIKtUpLBoQfGtmzDik2XqAGw7NRCwIa/Ry+eFfzy2x+CgtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744632708; c=relaxed/simple;
-	bh=5sHvKU5p6R98G5qUQJWChqm7Hb1WtvUEerciJ7Sg8Wk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GHQVX3YGBBDksrIynf0abC3j0MiKMvzKYFTET7EXwMjk5o0Sjivg0fQuIGg2Gopa9XpQ5b55n//tGD1nT2ky3rX+ZVerj3MI67AjOG+Rpe1I0Q8Y3xHL4Ntl2pEpB2VN+m1WqrxCRiSYv3BiMAQK/63IGGFhgH9QDWITVHNEjqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6B6091007;
-	Mon, 14 Apr 2025 05:11:44 -0700 (PDT)
-Received: from [10.57.86.225] (unknown [10.57.86.225])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E8CA83F694;
-	Mon, 14 Apr 2025 05:11:43 -0700 (PDT)
-Message-ID: <f0e109c7-6bb2-4218-bc76-c5de39184064@arm.com>
-Date: Mon, 14 Apr 2025 13:11:42 +0100
+	s=arc-20240116; t=1744632767; c=relaxed/simple;
+	bh=1S+ITQydYbgE+uA/RIk7xnL9LLWkvENVbfnlHt0wCsQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ND+3aHAhmb+rckwA0avnRRaUwfNQXgjU2/iR53c14Y1l2Wi1KD9qKjxbqWw8hSYk/7zTIrlXfbwnTCMv5zKET+VUiCWVaNocuGcnqwuGVTW/oG27VcC8opLsV3S6r26TxbMiOucYdfTl203XfBZOvlJmxEYlOzgT5+Tfbu3TVs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KapxsIUU; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744632763;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xE6hbqCqCOzEbv4rU1vZXMJioz7aWAmnIdx1bIH/tng=;
+	b=KapxsIUU86quHFmO8p7+91T0HuoabKz1zunXcHti4pog061b+IDtUdaK5ZTt6FhEVEfuJL
+	JTE6xg1vbHcEJXZs8sOBV6pjp6/4PqFkDT8lc1Rp9m4Ch1gvEAiEQmi1X/8mhUPm8+i0En
+	zIkCbJGnDIH8ZGp3iXxdxfELxNu9JBw=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-94-NNlnUyEPPz-pBzCRNTXsmQ-1; Mon,
+ 14 Apr 2025 08:12:38 -0400
+X-MC-Unique: NNlnUyEPPz-pBzCRNTXsmQ-1
+X-Mimecast-MFC-AGG-ID: NNlnUyEPPz-pBzCRNTXsmQ_1744632757
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A3CCD195608B;
+	Mon, 14 Apr 2025 12:12:36 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.114])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 3DE761956094;
+	Mon, 14 Apr 2025 12:12:32 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 14 Apr 2025 14:12:00 +0200 (CEST)
+Date: Mon, 14 Apr 2025 14:11:56 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Luca Boccassi <luca.boccassi@gmail.com>,
+	Lennart Poettering <lennart@poettering.net>,
+	Daan De Meyer <daan.j.demeyer@gmail.com>,
+	Mike Yuan <me@yhndnzj.com>,
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] coredump: fix error handling for replace_fd()
+Message-ID: <20250414121156.GA28345@redhat.com>
+References: <20250414-work-coredump-v1-0-6caebc807ff4@kernel.org>
+ <20250414-work-coredump-v1-2-6caebc807ff4@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] mm/contpte: Optimize loop to reduce redundant
- operations
-Content-Language: en-GB
-To: Dev Jain <dev.jain@arm.com>, Lance Yang <ioworker0@gmail.com>,
- Xavier <xavier_qy@163.com>
-Cc: Barry Song <21cnbao@gmail.com>, catalin.marinas@arm.com, will@kernel.org,
- akpm@linux-foundation.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>,
- Matthew Wilcox <willy@infradead.org>, Zi Yan <ziy@nvidia.com>
-References: <20250407092243.2207837-1-xavier_qy@163.com>
- <CAGsJ_4wsW+urp6gbp+yDG40fZw9Bszny2iJVsV_AzzGqgQy+4g@mail.gmail.com>
- <7dccb3a2-f5e2-4f9e-8f5c-465a1d3ffdb6@arm.com>
- <CAK1f24=5-VVJoE75wrskXxrGi=KmrbxSYH9P69PRPiOxQuArpA@mail.gmail.com>
- <1613c84e-1e65-44cd-9f23-1c9870df4655@arm.com>
- <a084d29e-8027-4d20-a1b4-584bdbbe111d@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <a084d29e-8027-4d20-a1b4-584bdbbe111d@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250414-work-coredump-v1-2-6caebc807ff4@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On 14/04/2025 09:51, Dev Jain wrote:
-> 
-> 
-> On 14/04/25 1:36 pm, Ryan Roberts wrote:
->> On 12/04/2025 06:05, Lance Yang wrote:
->>> On Sat, Apr 12, 2025 at 1:30 AM Dev Jain <dev.jain@arm.com> wrote:
->>>>
->>>> +others
->>>>
->>>> On 11/04/25 2:55 am, Barry Song wrote:
->>>>> On Mon, Apr 7, 2025 at 9:23 PM Xavier <xavier_qy@163.com> wrote:
->>>>>>
->>>>>> This commit optimizes the contpte_ptep_get function by adding early
->>>>>>    termination logic. It checks if the dirty and young bits of orig_pte
->>>>>>    are already set and skips redundant bit-setting operations during
->>>>>>    the loop. This reduces unnecessary iterations and improves performance.
->>>>>>
->>>>>> Signed-off-by: Xavier <xavier_qy@163.com>
->>>>>> ---
->>>>>>    arch/arm64/mm/contpte.c | 13 +++++++++++--
->>>>>>    1 file changed, 11 insertions(+), 2 deletions(-)
->>>>>>
->>>>>> diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
->>>>>> index bcac4f55f9c1..ca15d8f52d14 100644
->>>>>> --- a/arch/arm64/mm/contpte.c
->>>>>> +++ b/arch/arm64/mm/contpte.c
->>>>>> @@ -163,17 +163,26 @@ pte_t contpte_ptep_get(pte_t *ptep, pte_t orig_pte)
->>>>>>
->>>>>>           pte_t pte;
->>>>>>           int i;
->>>>>> +       bool dirty = false;
->>>>>> +       bool young = false;
->>>>>>
->>>>>>           ptep = contpte_align_down(ptep);
->>>>>>
->>>>>>           for (i = 0; i < CONT_PTES; i++, ptep++) {
->>>>>>                   pte = __ptep_get(ptep);
->>>>>>
->>>>>> -               if (pte_dirty(pte))
->>>>>> +               if (!dirty && pte_dirty(pte)) {
->>>>>> +                       dirty = true;
->>>>>>                           orig_pte = pte_mkdirty(orig_pte);
->>>>>> +               }
->>>>>>
->>>>>> -               if (pte_young(pte))
->>>>>> +               if (!young && pte_young(pte)) {
->>>>>> +                       young = true;
->>>>>>                           orig_pte = pte_mkyoung(orig_pte);
->>>>>> +               }
->>>>>> +
->>>>>> +               if (dirty && young)
->>>>>> +                       break;
->>>>>
->>>>> This kind of optimization is always tricky. Dev previously tried a similar
->>>>> approach to reduce the loop count, but it ended up causing performance
->>>>> degradation:
->>>>> https://lore.kernel.org/linux-mm/20240913091902.1160520-1-dev.jain@arm.com/
->>>>>
->>>>> So we may need actual data to validate this idea.
->>>>
->>>> The original v2 patch does not work, I changed it to the following:
->>>>
->>>> diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
->>>> index bcac4f55f9c1..db0ad38601db 100644
->>>> --- a/arch/arm64/mm/contpte.c
->>>> +++ b/arch/arm64/mm/contpte.c
->>>> @@ -152,6 +152,16 @@ void __contpte_try_unfold(struct mm_struct *mm,
->>>> unsigned long addr,
->>>>    }
->>>>    EXPORT_SYMBOL_GPL(__contpte_try_unfold);
->>>>
->>>> +#define CHECK_CONTPTE_FLAG(start, ptep, orig_pte, flag) \
->>>> +       int _start; \
->>>> +       pte_t *_ptep = ptep; \
->>>> +       for (_start = start; _start < CONT_PTES; _start++, ptep++) { \
->>>> +               if (pte_##flag(__ptep_get(_ptep))) { \
->>>> +                       orig_pte = pte_mk##flag(orig_pte); \
->>>> +                       break; \
->>>> +               } \
->>>> +       }
->>>> +
->>>>    pte_t contpte_ptep_get(pte_t *ptep, pte_t orig_pte)
->>>>    {
->>>>           /*
->>>> @@ -169,11 +179,17 @@ pte_t contpte_ptep_get(pte_t *ptep, pte_t orig_pte)
->>>>           for (i = 0; i < CONT_PTES; i++, ptep++) {
->>>>                   pte = __ptep_get(ptep);
->>>>
->>>> -               if (pte_dirty(pte))
->>>> +               if (pte_dirty(pte)) {
->>>>                           orig_pte = pte_mkdirty(orig_pte);
->>>> +                       CHECK_CONTPTE_FLAG(i, ptep, orig_pte, young);
->>>> +                       break;
->>>> +               }
->>>>
->>>> -               if (pte_young(pte))
->>>> +               if (pte_young(pte)) {
->>>>                           orig_pte = pte_mkyoung(orig_pte);
->>>> +                       CHECK_CONTPTE_FLAG(i, ptep, orig_pte, dirty);
->>>> +                       break;
->>>> +               }
->>>>           }
->>>>
->>>>           return orig_pte;
->>>>
->>>> Some rudimentary testing with micromm reveals that this may be
->>>> *slightly* faster. I cannot say for sure yet.
->>>
->>> Yep, this change works as expected, IIUC.
->>>
->>> However, I'm still wondering if the added complexity is worth it for
->>> such a slight/negligible performance gain. That said, if we have
->>> solid numbers/data to back it up, all doubts would disappear ;)
->>
->> I agree with Barry; we need clear performance improvement numbers to consider
->> this type of optimization. I doubt there will be measurable improvement for 4K
->> and 64K base pages (because the the number of PTEs in a contpte block are 16 and
->> 32 respectively). But 16K base pages may benefit given there are 128 PTEs in a
->> contpte block for that case.
->>
->> Also FWIW, I'm struggling to understand CHECK_CONTPTE_FLAG(); Perhaps something
->> like this would suffice?
-> 
-> The idea of CHECK_CONTPTE_FLAG() is to check only for the other flag until it's
-> found; the diff below will still keep checking for both until both are found.
+On 04/14, Christian Brauner wrote:
+>
+> The replace_fd() helper returns the file descriptor number on success
+> and a negative error code on failure. The current error handling in
+> umh_pipe_setup() only works because the file descriptor that is replaced
+> is zero but that's pretty volatile. Explicitly check for a negative
+> error code.
 
-Oh I see. Although you're effectively just saving a tbnz instruction, which will
-be in the noise.
+...
 
-Anyway, come back with numbers and we can talk :)
+> @@ -515,6 +517,9 @@ static int umh_pipe_setup(struct subprocess_info *info, struct cred *new)
+>  
+>  	err = replace_fd(0, files[0], 0);
+>  	fput(files[0]);
+> +	if (err < 0)
+> +		return err;
+> +
+>  	/* and disallow core files too */
+>  	current->signal->rlim[RLIMIT_CORE] = (struct rlimit){1, 1};
 
-> 
->>
->> ----8<----
->> diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
->> index 55107d27d3f8..7787b116b339 100644
->> --- a/arch/arm64/mm/contpte.c
->> +++ b/arch/arm64/mm/contpte.c
->> @@ -169,11 +169,17 @@ pte_t contpte_ptep_get(pte_t *ptep, pte_t orig_pte)
->>          for (i = 0; i < CONT_PTES; i++, ptep++) {
->>                  pte = __ptep_get(ptep);
->>
->> -               if (pte_dirty(pte))
->> +               if (pte_dirty(pte)) {
->>                          orig_pte = pte_mkdirty(orig_pte);
->> +                       if (pte_young(orig_pte))
->> +                               break;
->> +               }
->>
->> -               if (pte_young(pte))
->> +               if (pte_young(pte)) {
->>                          orig_pte = pte_mkyoung(orig_pte);
->> +                       if (pte_dirty(orig_pte))
->> +                               break;
->> +               }
->>          }
->>
->>          return orig_pte;
->> ----8<----
->>
->> Thanks,
->> Ryan
->>
->>
->>>
->>> Thanks,
->>> Lance
->>>
->>>>
->>>>>
->>>>>>           }
->>>>>>
->>>>>>           return orig_pte;
->>>>>> -- 
->>>>>> 2.34.1
->>>>>>
->>>>>
->>>>> Thanks
->>>>> Barry
->>>>>
->>>>
->>
-> 
+The patch looks trivial and correct, but if we do not want to rely on
+the fact that replace_fd(fd => 0) return 0 on sucess, then this patch
+should also do
+
+	-	return err;
+	+	return 0;
+
+?
+
+otherwise this cleanup looks "incomplete" to me.
+
+Oleg.
 
 
