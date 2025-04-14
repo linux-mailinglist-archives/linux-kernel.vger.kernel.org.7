@@ -1,141 +1,175 @@
-Return-Path: <linux-kernel+bounces-602510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70272A87BC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:21:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC765A87BC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:23:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B387170DA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:21:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB33E3ACC45
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:22:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED8CA25E821;
-	Mon, 14 Apr 2025 09:21:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8484F25EF85;
+	Mon, 14 Apr 2025 09:23:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HXaeWxBa"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PFAoR7Ek";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Prcl1iwK";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zxKvh6lM";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tHz5QMMA"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A4061A8401;
-	Mon, 14 Apr 2025 09:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF1B1CDFD5
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 09:23:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744622504; cv=none; b=SZwcXR6enavMj70Z93LLnRQHr4dzlCCaQWsSJhrH+03GIiak5Mquoms7ekz7rEo0oTybGDReNLQE9lc8bJ3Ta7a72hVQAy9uF+/zflJlCWsINMtd6/f7cI1JPVHUPb1BcaGoaq/eELVe9F4qolqV3vuhxvF1cw5rKJv5Ejx6W0c=
+	t=1744622581; cv=none; b=r13EkH2QZnhBkFKXOURpYD9xwT2/H7awLStRK23GlOcgafbBPZeVlE9MIipmS5QZ4en+tmDePAcYkpe6yJEil8KSfW8wyiNnPjaVRbc1FKz1af2fhdtYWIr88QTAsVRj3dhUyJI4IlrNUjsBlxNYxpPP8DJOE6UWt5+sxJI0Aug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744622504; c=relaxed/simple;
-	bh=N59YpcZcLeDa/zxZlDsu6vEbwkY/gNwqTb4h/B+Y8G8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=I5duJMsbzj8zGGXBPGg0K4cXUpx/FzCONmry78WFY1+u3zxSuwWS8Q2cGdA29xgFzKKU0bp4I8vp0ZngTrgkkK/vSbxBVv/nOzZzZx9eYLBWKZQjNtwyUhjHpOJofgomJwW4ko11yQ4/w6GU9KPj0T/wYgRFboL/VIhVjBUiLQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HXaeWxBa; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-224171d6826so56167375ad.3;
-        Mon, 14 Apr 2025 02:21:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744622502; x=1745227302; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hcIpcFpfqBHwqvO9sUQQyRsFssd9wbcfPsd1vHKjYfc=;
-        b=HXaeWxBao20l9uFPgR7JOVreQINODQTdgRbdE+PQtmsWihAr647MylkKtIX6J76r7D
-         cETW3ZWSAt+cq84meig8ASA4Do3pgNt8jJvnFVkY6ML0WwzyeKIC6PsoCk4PJejaTR/u
-         /EPmo4RArfGCTk79FOmRmnJSGwoInKUsqDO1r8U85J/W3uoesSdRWO6mlnQcL95W1Vbn
-         XYtNt6cq9Ki+AuVX2NQCzkzlJyDNIZM7RelodNOwPJKiMHtW8t6mUIYS5yeYrCwRvRFT
-         S7AKoWt1qRpimv6dpeGGbIpIrQ4ShZYsQdMfI6A/vrmi49CPCytqF8vntN8D1Fj8MOl3
-         24xA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744622502; x=1745227302;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hcIpcFpfqBHwqvO9sUQQyRsFssd9wbcfPsd1vHKjYfc=;
-        b=l0xDp7zvVDAz41u90ImKvn5q4+FUwFgzRWYP4XDAiqrAbEEkv4kRb2wLnCUG3IZc0u
-         irUUXt6UGa1LceD21ZuXRRe+UZPw+KCbSUMfR6Nu1/GTcexn38pWKLfNndGyTEF8qkXV
-         B/ZXOgef2B9ErPf2UQlhyIfw+vUSF3v180SlTwyWhyYfa35SJs8N8VzZPWbuAWdh+PaJ
-         XAXdSTNs1RzHnO0r7Vg89xVijjQ6esFEPXMGMUHpfAl1k1x4QHFkBZT0z5PVDAfteBY4
-         xQXO4NqrHnDBnIEwuU4rRgewkYdxUMNnWU8LD8HT50EiQffkQiYrjSEiIoaM2FT3/HBJ
-         Yajw==
-X-Forwarded-Encrypted: i=1; AJvYcCXLkBheFuw2n2zWXaWIy0hrjeqr/hMxA+Cvs4Dr00KYXi8TcJ0cv11AJEx3g/8B6zyLBiaDM/Wh564AJm0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+Wypao2IPvbkRbWHssJDFJdU0GqoHXAC6W6IXK/KxDqX5UXNq
-	p8IdND9H8sVuaio1ynFV0pWZXm/0798/3STWNPf9LtFqquK3hm/r
-X-Gm-Gg: ASbGnct1WI3ZUNq8yij13TWZBAN8AfqttLeanl8OMiOuRI4tRVLUOmYE35+PtGtqmiN
-	HLOjH31ME5YSEuFT6KBekJUJwnATjDm4o7hdBgokP3ME4kLvSsoWsbETU7DjTnnhjW5g1J191Md
-	AkZ9ewctGHv9wg8vK3W5Z32mg84Z9r6u7hNhNhht7p+YrLwu4rvq0632YpyKOKMUHOMICiXhVIy
-	LENW2ok/tzR/IAqWw47VfSQ79XAGmEWFQHneV4P1SbcO8yGNuy5LdgbV1n4ZYfthkzfMKjWbFNK
-	X2jwtQ49Oq4stDHN8dxRoWHZp3/iPNDUl/PbpErj7JJTRAPBQIGW+PKhmH6A4pwVW7CKvWEbCcg
-	f7/M=
-X-Google-Smtp-Source: AGHT+IFbu47bl5tC8pp9w0xe/eoS/L4IF6o7u5p4WUZOUfDlClHyr5JNlXze4WFeUm2pxwMxdCQ/oQ==
-X-Received: by 2002:a17:902:d2d1:b0:223:f928:4553 with SMTP id d9443c01a7336-22bea50bb7dmr166290245ad.44.1744622502234;
-        Mon, 14 Apr 2025 02:21:42 -0700 (PDT)
-Received: from SHOUYELIU-MC0.tencent.com ([43.132.141.21])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7c99f23sm94987885ad.154.2025.04.14.02.21.40
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 14 Apr 2025 02:21:41 -0700 (PDT)
-From: shouyeliu <shouyeliu@gmail.com>
-To: srinivas.pandruvada@linux.intel.com,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com
-Cc: platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	shouyeliu <shouyeliu@gmail.com>
-Subject: [PATCH] platform/x86/intel-uncore-freq: fix inconsistent state on init failure
-Date: Mon, 14 Apr 2025 17:21:32 +0800
-Message-Id: <20250414092132.40369-1-shouyeliu@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1744622581; c=relaxed/simple;
+	bh=xnCc7LUdCE8A0jAetS5WlNpM1cLLzzzYqwEDyHMWkD0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dpBf5pLitOSFyPisa9q77nHevQl/2XoNTWotwAxje/4+Wk/kUhNrzkwOeWqq3Og6lqda9sc2ZfkSQb9VDRX0SSkJFZ+FDEQTsWE6npkoVXbSLvHJsma744NomF827ogdyAnDQqDsVzdR40GZwXI5GygEK94ol12345NJbeIjXqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PFAoR7Ek; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Prcl1iwK; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zxKvh6lM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tHz5QMMA; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 5853A2125D;
+	Mon, 14 Apr 2025 09:22:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744622578;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fTJ2sT8ir4Gfn1MTTn6LhWi1R6St8alGrdGiGAdMgLg=;
+	b=PFAoR7Ek0yy6zm05Efw1DG7iNMKzXoOMdUIswbk+bimpGO5kAxL5tbwu/CLS9V6QfX/5OI
+	Q99+YGnGcgW0AOtRs5ndOE7oHzgEgtrMaRGMrsTfSglMBQjtQ/1GkK7ludn+xTehJTzUa1
+	3IOSV7IKDxG22h1E9eitimY5nhZ9l98=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744622578;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fTJ2sT8ir4Gfn1MTTn6LhWi1R6St8alGrdGiGAdMgLg=;
+	b=Prcl1iwKct5UEhVTw0+5YwBdMzJ3v9ofwQPxV1yYXGc5dyNt6/zUPPGSN4mZbKBTxKAs9l
+	aZqTNShSXLj3trCQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=zxKvh6lM;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=tHz5QMMA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744622577;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fTJ2sT8ir4Gfn1MTTn6LhWi1R6St8alGrdGiGAdMgLg=;
+	b=zxKvh6lMdtNRaakbbadbPmIZ3J9qbkgki0pYzHKV7q5r3xT3werS80Vrz+AQvKbsOjbIs4
+	YsAmq+uKn3oDFkV8bKwfbVl4u/q7pw2VYqYYXrp1FJdAR0DA/AcnJFh0N2TcpL2WjpV3IS
+	6vROV6hQaunpkYlbfivTZnZtlQGWXJY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744622577;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fTJ2sT8ir4Gfn1MTTn6LhWi1R6St8alGrdGiGAdMgLg=;
+	b=tHz5QMMApoC++KogAIvXz+VrZovgm5mj5aFxNuVX3TN7AMfZ7y77m/knPafb6ealWlH2t2
+	EGRaG+dlbZB2P4CA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 37583136A7;
+	Mon, 14 Apr 2025 09:22:57 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id VkIoDfHT/Gc6MQAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Mon, 14 Apr 2025 09:22:57 +0000
+Date: Mon, 14 Apr 2025 11:22:52 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Daniel Vacek <neelx@suse.com>
+Cc: Yangtao Li <frank.li@vivo.com>, clm@fb.com, josef@toxicpanda.com,
+	dsterba@suse.com, linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] btrfs: use BTRFS_PATH_AUTO_FREE in
+ btrfs_truncate_inode_items()
+Message-ID: <20250414092251.GB16750@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <20250411034425.173648-1-frank.li@vivo.com>
+ <CAPjX3Fe34HVF2JUi2DEyxqShFhadxy7M7F6xTA_yVn5ywHMBhQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPjX3Fe34HVF2JUi2DEyxqShFhadxy7M7F6xTA_yVn5ywHMBhQ@mail.gmail.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Rspamd-Queue-Id: 5853A2125D
+X-Spam-Score: -4.21
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.21 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-When uncore_event_cpu_online() fails to initialize a control CPU (e.g.,
-due to memory allocation failure or uncore_freq_add_entry() errors),
-the code leaves stale entries in uncore_cpu_mask after that online CPU
-will not try to call uncore_freq_add_entry, resulting in no sys interface.
+On Fri, Apr 11, 2025 at 04:17:38PM +0200, Daniel Vacek wrote:
+> On Fri, 11 Apr 2025 at 05:25, Yangtao Li <frank.li@vivo.com> wrote:
+> >
+> > All cleanup paths lead to btrfs_path_free so we can define path with the
+> > automatic free callback.
+> >
+> > And David Sterba point out that:
+> >         We may still find cases worth converting, the typical pattern is
+> >         btrfs_path_alloc() somewhere near top of the function and
+> >         btrfs_free_path() called right before a return.
+> >
+> > So let's convert it.
+> >
+> > Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> > ---
+> >  fs/btrfs/inode-item.c | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> And what about the other functions in that file? We could even get rid
+> of two allocations passing the path from ..._inode_ref() to
+> ..._inode_extref().
 
-Signed-off-by: shouyeliu <shouyeliu@gmail.com>
----
- .../x86/intel/uncore-frequency/uncore-frequency.c    | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+If you mean to pass the path object from btrfs_del_inode_ref() to
+btrfs_del_inode_extref() yeah this looks like a good optimization and
+reducing the allocations (and potential failures).
 
-diff --git a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency.c b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency.c
-index 40bbf8e45fa4..1de0a4a9d6cd 100644
---- a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency.c
-+++ b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency.c
-@@ -146,15 +146,13 @@ static int uncore_event_cpu_online(unsigned int cpu)
- {
- 	struct uncore_data *data;
- 	int target;
-+	int ret;
- 
- 	/* Check if there is an online cpu in the package for uncore MSR */
- 	target = cpumask_any_and(&uncore_cpu_mask, topology_die_cpumask(cpu));
- 	if (target < nr_cpu_ids)
- 		return 0;
- 
--	/* Use this CPU on this die as a control CPU */
--	cpumask_set_cpu(cpu, &uncore_cpu_mask);
--
- 	data = uncore_get_instance(cpu);
- 	if (!data)
- 		return 0;
-@@ -163,7 +161,13 @@ static int uncore_event_cpu_online(unsigned int cpu)
- 	data->die_id = topology_die_id(cpu);
- 	data->domain_id = UNCORE_DOMAIN_ID_INVALID;
- 
--	return uncore_freq_add_entry(data, cpu);
-+	ret = uncore_freq_add_entry(data, cpu);
-+	if (!ret) {
-+		/* Use this CPU on this die as a control CPU */
-+		cpumask_set_cpu(cpu, &uncore_cpu_mask);
-+	}
-+
-+	return ret;
- }
- 
- static int uncore_event_cpu_offline(unsigned int cpu)
--- 
-2.19.1
-
+The other cases in the "..._inode_ref" is btrfs_insert_inode_ref() ->
+btrfs_insert_inode_extref().
 
