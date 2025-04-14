@@ -1,179 +1,230 @@
-Return-Path: <linux-kernel+bounces-602899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AB08A880B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:43:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4254A88051
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:24:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADE821776C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 12:43:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 644201896286
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 12:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3CF2BD5A0;
-	Mon, 14 Apr 2025 12:43:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BADC12BE7C0;
+	Mon, 14 Apr 2025 12:24:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RsAdBq9H"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="o94q2w6w"
+Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11011019.outbound.protection.outlook.com [52.101.129.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627692580F9
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 12:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744634585; cv=none; b=EIfWsypQPI8pR/Z86yy0bep+JUUIHpU7CNVHBIXL6FFjdEJkEnTHfXB5Qs5xt0gmQCr4LSrTej3E3AWTKtnVBm3f4hFlgH9kOOWMfYWF31kKQUdT2BpzzjqJYI35x85R9/N1qc1iY1V91DgvTPh4fZVf60DpqhuD9TY50ONfD0g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744634585; c=relaxed/simple;
-	bh=mkz2kA+VXnowiojV4uf1dKbm0WdGQAV1VMpX8sQUKbk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MNFbBqxgoUucc69WjtXteJ5g4ROvVcDVTPOoZPj1EhTuSNibgrz6fDgAWTiX85hLszKayJL/7Rlnmd/9hkndoaL4qRaWgCxFaWDZ8PkP0/VopP6ipAbI4hfjDjz87DI4RMXNZk5TS+wv8VfBs82R+ZXVJaivM5NeCgoFhcXy/vA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RsAdBq9H; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43d2d952eb1so34387985e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 05:43:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1744634581; x=1745239381; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=T9ixK134YSYVvgH5n+g61PRZpWOKvjguSgzISWbKA2I=;
-        b=RsAdBq9HVJZPiOtXUhr4Yy/KlVOOZMiHRMjgSA6rTYzvprpodglhgCe5ufVYdoKibL
-         1r07vATVUoCqq6TBJy6lAKDgNlWF+bJ/MvQuCTgQmOut9arLH8yx/qcBWqwYJpXeOhBB
-         FY/v38ZLMLYhtF4tJPQABh5tWzqdR/N8Jorf4VnIpfIjK+uhCpgx80E5nlah9UD6b1uB
-         pNyyc3FS3pj+HOAnhgVzadQ7ZOaKiMLytyubPxmgTsBvYxl8NJikCWdhw9TBfJOnlQYB
-         kB48EmwtrizcPpkusu0Hfxj2cwq5wwHaWVBE6ikvBJOJBOQJ2biOkKYEoYeI+MS0pyCd
-         rJ6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744634581; x=1745239381;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T9ixK134YSYVvgH5n+g61PRZpWOKvjguSgzISWbKA2I=;
-        b=sH1Jl8vjDkagR61GvTCNDBbD+I4+8nvQkNAlvZoGkzk0PCmAbfu6jX2sMuRmy1+uul
-         9JiAeGocckkyuxWMsgmys3+FnOwc8fZFf+j9uxSlVQNIQEgX2AZ1PcjzIllZ/kElWYXO
-         ZZR+S2rBBSy/D/jOPPokClqnAJbGuW/29se+z7+De4VvScqrH9Sf+VhIJ/ih4wNDO6LF
-         9OlH1ayWdw1gBuKidIvuZH1t3a+BwXLPD/A01Wi+TRwhmI9qT53ccAc+rALNHQu4yBwb
-         47yogzF9e9UNOLhoYN/63uT2wEZa304l5z6LMz+EtvUnw8h4GcdaV8jwY06SzttL31vY
-         ysLw==
-X-Forwarded-Encrypted: i=1; AJvYcCXkCcK/j3lr16RuTRw6OeK7JWrgx09I8trmOSZrsel9xfsha/E02MfOaiBUhBckJzRsOxOfylyb1kduJbA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySvJCazXE1fH58brlzObG2js2J2lAAox4kLnFa/4aeUPkjK83p
-	Adx4U1U8bDaM9isnF7bSKrjzP+y76fQ9nlLf1JK7pi4yUFvo0yfL80cQK6uImW0=
-X-Gm-Gg: ASbGnctUkABO7X85NQUHpX7wJHyKT4TstmjanqgtD/2xYrGI5QYswdo5vPDEmSAybYN
-	WHk6njiUZGjaCVdDOZCFf/+SjrVMNFSmzC176QWS4uQOXe/5LCA67zm3TCpULJRyQXSpj12RmRo
-	XBZLUutUT707GWJDzLGrnYWhww1P/PuSyr6s9dxVNI+tya9aTHBeGfW34CjaxnkL53z7FQRqhM5
-	HE4eXO7/RnBw1TWmjxR1+ko+HV9AjVsWCAtqyezPXB2CDluzXdu+hJ07fJ7JyICzESnIoxbzb9u
-	vLFxZb+6okdKkMbBIyQXrTdr6SU3FC3gPmz2MRKHVQE=
-X-Google-Smtp-Source: AGHT+IH7iIHRZ3vV/WkqxRDldhrP0zYk3mfrclbeNsJTpYta2piT0N21vJ20EAFWMAd7XZkrfuQvEQ==
-X-Received: by 2002:a05:600c:8519:b0:43d:300f:fa51 with SMTP id 5b1f17b1804b1-43f3a93ebb3mr104821235e9.9.1744634580452;
-        Mon, 14 Apr 2025 05:43:00 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f233c817dsm173048895e9.23.2025.04.14.05.42.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Apr 2025 05:43:00 -0700 (PDT)
-Date: Mon, 14 Apr 2025 14:42:58 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Waiman Long <longman@redhat.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
-	Tejun Heo <tj@kernel.org>, Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
-	cgroups@vger.kernel.org, linux-mm@kvack.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v6 1/2] mm/vmscan: Skip memcg with !usage in
- shrink_node_memcgs()
-Message-ID: <kwvo4y6xjojvjf47pzv3uk545c2xewkl36ddpgwznctunoqvkx@lpqzxszmmkmj>
-References: <20250414021249.3232315-1-longman@redhat.com>
- <20250414021249.3232315-2-longman@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C301E505;
+	Mon, 14 Apr 2025 12:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.129.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744633475; cv=fail; b=X+ILAOaEqvGA84U+/ev5T9rTcy2fGVUVN1yw+s5VgJarTj2gJU2l8EHGNfdvxdAh6H7My2KbKVTEi0w99jCYXzTKg7TPjxOat/VQvhxwUDNkY4+iJiasdoJSd7Q1H4fKJcCZPw0u59YTwbo0M6rwJVNXFQ0C7VTu++DDNd/YjBw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744633475; c=relaxed/simple;
+	bh=zxSq5QHp0MAk/toP0kSYknsb20OtKOcip37MvS6xBpo=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=eKTH6r7q2J//LTRC0VUTGCwUAS4QOLO+7bXwcDuJ1XeGAGaWBAMQ7b2S8bly0UxvjFRuYkCEkFNsrX2aParlswCZMfYW/LKFca+lPE98ef/yN0C7+JpbPaoCBexSisIFR12oyIWBhNU9X8LbuquK4Okq/IpjppC2rKn2GTCtK3c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=o94q2w6w; arc=fail smtp.client-ip=52.101.129.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FZU6aZx6X96hu+jQYtgT7g1xY5m1Xfs4QZ6JDrU/aGY8/9mb8zZhOdiQ3YD3SDcFdzDIsQ751Hj8AHIqaBu/4tSzVuu/Z5yvrlwV9pDUnbZGaE4AUPTDqiwoVuknA2Qdn9GqwrhPYTe8nZczY0DfZ9UvCK5uNOY/x1rkw7cLhw1Q5nsi9LzegpoGye5AZucQY5S+0xzKs0ojdO1KHS/8rSKb+sBelC+ie3xk/s6MzGOeMCzaEgNmQwxSDbdA2NXiGM0JuEArBSU7nb8FtKWbjAuRgeRJUpTI/0V3+2MYFAn9koXbraeqMtJzVHixbbIJzqalmZzIlubz2AYBKcYGtw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IQsym7/tp3W+AKySrYNBVGZPvZkWRUeoLGSamGcALQU=;
+ b=zLvEb57hKIyCZVatwLrUkM4xellEYXw9tm2Hs4g3QtJitm0D4HzsOF1XMQcrKTcTLq17qEehkocrIEelfqXbLvux/PH6ilYyLtCchxcHEeWc+G0TUg+XR2+QLhHDvCmpklC2+vZDf4fYj2wp0NDmIENZILqrQqZi1zjIya3pRRJdmvN/dnLVK2gOBNsnkUQVw5LeSWMrUR3bAySKSJ4wSeMJ3Cfqb86+3a6WDpEs/oolRq4yDBRQe9b046T7zyK6eVU32K7KHMOAE7ds9ekvYBk+s/y13/spgoZOiPLRDVq+fQ9CaLiilxvmiIVmo/Z0+W303znPPgX3s5xUBMc3wA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IQsym7/tp3W+AKySrYNBVGZPvZkWRUeoLGSamGcALQU=;
+ b=o94q2w6wK9I74NBc5r6VH2biRDt+cht8K2KruaCm2Q39kvITRfmtICqWFKYdjAy+/MELpWThf2rGGdBzMvxPRfw/VBYq0GW9TBbq50dBeQRlkVq9GDq5RYudHoBKVEx11/J2S6ERw5my3u1UHjE0pZkFUy8+UVHLyuEppn6I2RA1prPjL+fnfdiEvq0BCBGwzO3kOa/7h4qYGxnR2pDSQfVLflBkIdMUROlFptvRRAcwtwjpUWVvL3H7WByMNYq7XZOA/P7TBO2sMkzSabnNA3WPLplaJsoXr1wmvG9kgK7akipigOptVqdUmDtxR2FwfVI82fyh8MXJKZekw0ph6w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
+ by KL1PR06MB6321.apcprd06.prod.outlook.com (2603:1096:820:e0::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.29; Mon, 14 Apr
+ 2025 12:24:26 +0000
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::8c74:6703:81f7:9535]) by SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::8c74:6703:81f7:9535%6]) with mapi id 15.20.8632.030; Mon, 14 Apr 2025
+ 12:24:23 +0000
+From: Yangtao Li <frank.li@vivo.com>
+To: clm@fb.com,
+	josef@toxicpanda.com,
+	dsterba@suse.com
+Cc: linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yangtao Li <frank.li@vivo.com>
+Subject: [PATCH] btrfs: reuse exit helper in btrfs_bioset_init()
+Date: Mon, 14 Apr 2025 06:44:01 -0600
+Message-Id: <20250414124401.739723-1-frank.li@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR01CA0027.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:192::7) To SEZPR06MB5269.apcprd06.prod.outlook.com
+ (2603:1096:101:78::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="npwwpgxnj2lpvqxn"
-Content-Disposition: inline
-In-Reply-To: <20250414021249.3232315-2-longman@redhat.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|KL1PR06MB6321:EE_
+X-MS-Office365-Filtering-Correlation-Id: b683baf3-6e05-4469-7ef8-08dd7b4f49f7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|366016|52116014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?3QhqNqqfgbEtgtTpd92TPx8qFL7lC+71O3mOwKIFGBTH08efdCaVynnpF3O6?=
+ =?us-ascii?Q?+pv9Um2jDpA/KqKIf/e8mpzTJnpBgO31qlmCvzwQxCzQfGvh8CN1jurBi3wy?=
+ =?us-ascii?Q?ed9tnlxB+B62rBpXE0bX/nrB0Cub8MgroLJTME0YTCxIO2JFUv9HwUJuDjxv?=
+ =?us-ascii?Q?Ix5f4AAlDuX38IHMakKn+pPqcmTHv4GRX8tfFHNGWiB4LeEiKeHymSheCQsU?=
+ =?us-ascii?Q?YPqPtrU94ItnlOVzZks2PedKqAqSlTFwUUSAvmN3EGNPQ9o4LsV0RPY0R8zL?=
+ =?us-ascii?Q?U7yAVYVf9UGdzIzbaTH/gckMMUJD83AcJVtpMOi2XSdMSjXkcm0+ZwTkNc/h?=
+ =?us-ascii?Q?vO8enPPdtQLQrviGz706ztycjjLgE4MfwB3yK0BiFbmb2msG6NRjWLNYg5lm?=
+ =?us-ascii?Q?RiROzkLlzhF4JN1xY9mWH5Vkl7cLu8xS8UwXawChd1d+elKW0q4YUIF761Ir?=
+ =?us-ascii?Q?OR9bDWuzNEHCjslbqx13JAjJuZ9YNngKlLiDXEzVecoKNYCVY0AY771+23Kd?=
+ =?us-ascii?Q?+dx/hJDkuDFktHFfMZDGIG+1klKF03hVcelJ507TphZnpUgo9KSB8rXy9T0x?=
+ =?us-ascii?Q?LDpSk1dX/Ch3vfjiy6TmMCyCqhc98D19doGG+UIv+UAVHvUmkewT/QmlPKTl?=
+ =?us-ascii?Q?2rJfqlXOiO/J1hj3Fg5+10JqaSbEMfLHZu23OjZCANRVDoV4h0eplhACFil5?=
+ =?us-ascii?Q?uUCBJp9mDP/6UaLSbItutnJarsW92qKhBXgshzEGGs1dOvdJol0FNZjdtAA8?=
+ =?us-ascii?Q?JLwL4Ve/2VIElFoNEj0gcJCiI9fLM8LmbzpPjY096OsxwZSEnrhfK36cvN6p?=
+ =?us-ascii?Q?bgntAJV3Pt3MrLb2tRQ6dQwhoL7eLYG4y4DWSRKMGjjpzGtNRSCdNNR4CHSO?=
+ =?us-ascii?Q?LHC3hmXY/Rf08R3J9yTexRKE5L2AjdMl7HQuN6UQoCyZHf0n1ZBOecYtDXvW?=
+ =?us-ascii?Q?XvPtYqTA8rUj5aP2i8BXzduErC+HpbclIXbQCYndJrL0iZANdz6A4cPOhFsF?=
+ =?us-ascii?Q?9Ecv5/aA6CrANbI9n6xtqNVcc/oJ3LuWoNyI6Vv6/S/IPc7kzt1sO5B73CmG?=
+ =?us-ascii?Q?tIOSi3ctJYcA5lxQBGiTD1w/QEd4bQ7HDTtgyq9ge34rVz+SntZV90EttPJp?=
+ =?us-ascii?Q?hMHPcs3nCka01gpfdZMY7nuJ2QajlNCrtyl7eL7wLiV7uDQWEeAa5ncLJnlM?=
+ =?us-ascii?Q?NldonVaRBYMnAWDpi6v52+CUq7h4ZT+skpjgdlr2QJghQNapVm1nw7FmDZbS?=
+ =?us-ascii?Q?VaGxAcrnGKKub71mnbLXKFEwt2fvdlB/Qb/ORJLrqR6Whnfap0VaChClg4NP?=
+ =?us-ascii?Q?NVZINjuL8YkRC3CSDuqvWtKasIuA2F4q/L/xo41bLbLvUfEi7LH+iFiyQfqx?=
+ =?us-ascii?Q?/pN1Msovubj+msDXDzVjXRWRhQkOVhjLUvtXHmf7KUX94Hen9n6MsT5JIAPc?=
+ =?us-ascii?Q?8ZFk4MkD/xuz2ANEUI9AdmPGtVaIkm5jNaqTCkm1ZRW8O9IPGTuAvw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?xagh9xFnldemUwhx+xOgwZgMS620qWvVxgfYVwUaafl+eeXhZ/K8PQ0nDT5Q?=
+ =?us-ascii?Q?jDkqRKu3a7FQRJFmJOCBUo1L50jLZ5t6xaGYNT4GDFjQONbcBrS2YxGm6Xv4?=
+ =?us-ascii?Q?lvKZcccK6XngQhWVXI7sCOgQ6srTR6psfiIs6Sh3R1lKZh1xBvDjykX/IQLf?=
+ =?us-ascii?Q?ZmbKp2HnwYORnJRQWEOlPgtCCec6MzsAtqfEkcaYgVRLbg9lF3LhjQ/HZATZ?=
+ =?us-ascii?Q?JrL7biSjqA4dK6NB8eOx/m7cs8en6sBhYXDcf4qZtuPBUD6qdqt8rFLIeW0n?=
+ =?us-ascii?Q?42iTWj58newsk/HboQtxZ3hfL8i2mlQnamyM0R2rdwEpf178D3JC5gZBisfe?=
+ =?us-ascii?Q?WPA9N2YWqFNnW+jR/ZyhtzZr5MfCsjpBnP3IIRd8KA3nCeV+xkD5iYJVvWW0?=
+ =?us-ascii?Q?oDMyyz8Wy462waRJydFixbyilUgrFj62CpOvtyL8pNz9TK0TH0DuB4oR1Dnr?=
+ =?us-ascii?Q?v1Yr6bCiieM+FF0SPNXaoFltA6GTMiVfFY+2Tij6lHIZ6yE2FIqZqRrZo21G?=
+ =?us-ascii?Q?sPd7XCFvKjLlfVOjAjg/jWZDt86F9U5lMzUNYMCjl1MHE1+eb1ekWZ3sKolL?=
+ =?us-ascii?Q?rwzUcR4/8M/kp+hZqhWNeyH1sL45/lxuLsQgE1bOrXGaEfZ5In94E2MufoOX?=
+ =?us-ascii?Q?YFjzlHuSnBpKAzjDiKtad78SUe14u86fxinaOZ+cHciqo4UOIjcihvbY3Fjj?=
+ =?us-ascii?Q?7cjr8VsF08UH29Jk5LQbyOAvhuLCx0CYBDkkzj6MbvRS3b0W01UCZz/P0wBO?=
+ =?us-ascii?Q?ffHJBxNaETQSs9lxsBPeNfwWKRBMZL7eHi/kJcAcCwFcXFwxjpcoL/no1H19?=
+ =?us-ascii?Q?ZNOsie0gnSgG2zlf/6PuQO3yXarzeeBg1bf2Q0DrTTzpjW8crq9UauevjJ6u?=
+ =?us-ascii?Q?ZGX+QOTig6edcfl+3MdNZCC3BPgFfLuTeYN6pI/XvciR862riuJ6UlVgrGaT?=
+ =?us-ascii?Q?+vHx2Khopjx6wxfEOuKtTXGmFwWpFIQ54FWl1+AJO/Wwif0hpQE6eaTSBrBw?=
+ =?us-ascii?Q?sYysU/oOADFcGvRcHC4NcNePosD7Mw9IvoletKau4LPvNdIh4Gr74ZYTmDNq?=
+ =?us-ascii?Q?05C70nf+s5vUUaA2igy/qD6O9ApD000e9QitJqdUccMVqSmxxeyCRXvaJ4Ws?=
+ =?us-ascii?Q?PDl6sUV+Ig/U1bp8c+9Qo1WCMZb4+WWsuaY4KzOTsgCunGOyI7AOXqIXSoiP?=
+ =?us-ascii?Q?RdfGWzxVXlzYnsek3ULIqZzrDNpbN9EV5fkx+n9KBmzix+bLi6a1VEvSHB9V?=
+ =?us-ascii?Q?3DwsAg1bmcKeye17JOrLG/EC8ZCFbo8alnWWGRqryVQS+dl9GZnEjvrwjJIY?=
+ =?us-ascii?Q?03jJcFv+/KtYI5aRS8zmQJe//VNvr42fkUzaF+UHL3sc98P3cjxQxNUUs3Yw?=
+ =?us-ascii?Q?dzyYQOhcwJwGwiW7olKKN6/Eg1VbbvSVlgtuNm9CtaKg57t8B4SfjEhrrWBe?=
+ =?us-ascii?Q?9pyCcnyyQZK1aDPraxn0cjMdAgvQ8x0fsGy5hr9p5PhLFqz1JGtzx0LRI0lX?=
+ =?us-ascii?Q?97YbUjQkWQdLIR7d7wNU8tAmCiU+Z5ayje/j1cMun2uvBDBp1N75WKKtSAce?=
+ =?us-ascii?Q?BoVTB0um5eNxxIog28ggdj7FgvLyP6ZKNrkJ9dHI?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b683baf3-6e05-4469-7ef8-08dd7b4f49f7
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Apr 2025 12:24:23.3183
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Zgq+vYadRBGWPKFDFnRv3F31mYpiZWVKKsBp1cfwInulKKgms0c+Wy1feR+cLJwurYn+uRg8g0UG5cZsyhHGmg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6321
 
+As David Sterba said before:
 
---npwwpgxnj2lpvqxn
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v6 1/2] mm/vmscan: Skip memcg with !usage in
- shrink_node_memcgs()
-MIME-Version: 1.0
+  This is partially duplicating btrfs_delayed_ref_exit(), I'd rather reuse
+  the exit helper.
 
-On Sun, Apr 13, 2025 at 10:12:48PM -0400, Waiman Long <longman@redhat.com> =
-wrote:
-> 2) memory.low is set to a non-zero value but the cgroup has no task in
->    it so that it has an effective low value of 0. Again it may have a
->    non-zero low event count if memory reclaim happens. This is probably
->    not a result expected by the users and it is really doubtful that
->    users will check an empty cgroup with no task in it and expecting
->    some non-zero event counts.
+  I've checked if this can be done elsewhere, seems that there's only one
+  other case btrfs_bioset_init(), which is partially duplicating
+  btrfs_bioset_exit(). All other init/exit functions are trivial and
+  allocate one structure. So if you want to do that cleanup, please update
+  btrfs_bioset_init() to the preferred pattern. Thanks.
 
-I think you want to distinguish "no tasks" vs "no usage" in this
-paragraph.
+So let's convert it.
 
+Signed-off-by: Yangtao Li <frank.li@vivo.com>
+---
+ fs/btrfs/bio.c | 30 +++++++++++++-----------------
+ 1 file changed, 13 insertions(+), 17 deletions(-)
 
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -5963,6 +5963,10 @@ static void shrink_node_memcgs(pg_data_t *pgdat, s=
-truct scan_control *sc)
-> =20
->  		mem_cgroup_calculate_protection(target_memcg, memcg);
-> =20
-> +		/* Skip memcg with no usage */
-> +		if (!mem_cgroup_usage(memcg, false))
-> +			continue;
-> +
->  		if (mem_cgroup_below_min(target_memcg, memcg)) {
+diff --git a/fs/btrfs/bio.c b/fs/btrfs/bio.c
+index 8c2eee1f1878..f6f84837d62b 100644
+--- a/fs/btrfs/bio.c
++++ b/fs/btrfs/bio.c
+@@ -892,6 +892,14 @@ void btrfs_submit_repair_write(struct btrfs_bio *bbio, int mirror_num, bool dev_
+ 	btrfs_bio_end_io(bbio, errno_to_blk_status(ret));
+ }
+ 
++void __cold btrfs_bioset_exit(void)
++{
++	mempool_exit(&btrfs_failed_bio_pool);
++	bioset_exit(&btrfs_repair_bioset);
++	bioset_exit(&btrfs_clone_bioset);
++	bioset_exit(&btrfs_bioset);
++}
++
+ int __init btrfs_bioset_init(void)
+ {
+ 	if (bioset_init(&btrfs_bioset, BIO_POOL_SIZE,
+@@ -900,29 +908,17 @@ int __init btrfs_bioset_init(void)
+ 		return -ENOMEM;
+ 	if (bioset_init(&btrfs_clone_bioset, BIO_POOL_SIZE,
+ 			offsetof(struct btrfs_bio, bio), 0))
+-		goto out_free_bioset;
++		goto out;
+ 	if (bioset_init(&btrfs_repair_bioset, BIO_POOL_SIZE,
+ 			offsetof(struct btrfs_bio, bio),
+ 			BIOSET_NEED_BVECS))
+-		goto out_free_clone_bioset;
++		goto out;
+ 	if (mempool_init_kmalloc_pool(&btrfs_failed_bio_pool, BIO_POOL_SIZE,
+ 				      sizeof(struct btrfs_failed_bio)))
+-		goto out_free_repair_bioset;
++		goto out;
+ 	return 0;
+ 
+-out_free_repair_bioset:
+-	bioset_exit(&btrfs_repair_bioset);
+-out_free_clone_bioset:
+-	bioset_exit(&btrfs_clone_bioset);
+-out_free_bioset:
+-	bioset_exit(&btrfs_bioset);
++out:
++	btrfs_bioset_exit();
+ 	return -ENOMEM;
+ }
+-
+-void __cold btrfs_bioset_exit(void)
+-{
+-	mempool_exit(&btrfs_failed_bio_pool);
+-	bioset_exit(&btrfs_repair_bioset);
+-	bioset_exit(&btrfs_clone_bioset);
+-	bioset_exit(&btrfs_bioset);
+-}
+-- 
+2.39.0
 
-As I think more about this -- the idea expressed by the diff makes
-sense. But is it really a change?
-For non-root memcgs, they'll be skipped because 0 >=3D 0 (in
-mem_cgroup_below_min()) and root memcg would hardly be skipped.
-
-
-> --- a/tools/testing/selftests/cgroup/test_memcontrol.c
-> +++ b/tools/testing/selftests/cgroup/test_memcontrol.c
-> @@ -380,10 +380,10 @@ static bool reclaim_until(const char *memcg, long g=
-oal);
->   *
->   * Then it checks actual memory usages and expects that:
->   * A/B    memory.current ~=3D 50M
-> - * A/B/C  memory.current ~=3D 29M
-> - * A/B/D  memory.current ~=3D 21M
-> - * A/B/E  memory.current ~=3D 0
-> - * A/B/F  memory.current  =3D 0
-> + * A/B/C  memory.current ~=3D 29M [memory.events:low > 0]
-> + * A/B/D  memory.current ~=3D 21M [memory.events:low > 0]
-> + * A/B/E  memory.current ~=3D 0   [memory.events:low =3D=3D 0 if !memory=
-_recursiveprot, > 0 otherwise]
-
-Please note the subtlety in my suggestion -- I want the test with
-memory_recursiveprot _not_ to check events count at all. Because:
-	a) it forces single interpretation of low events wrt effective
-	   low limit=20
-	b) effective low limit should still be 0 in E in this testcase
-	   (there should be no unclaimed protection of C and D).
-
-> + * A/B/F  memory.current  =3D 0   [memory.events:low =3D=3D 0]
-
-
-Thanks,
-Michal
-
---npwwpgxnj2lpvqxn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZ/0C0AAKCRAt3Wney77B
-Sd/BAP9TY2qAV5thRUJlYr+lBEw43c7tulDcGAlAmMTw3fVIxgD/TAOGmPlsQ9YN
-ZZJQOw3S4qTSiiwaCq9RFx8VCKUEjwE=
-=J0fF
------END PGP SIGNATURE-----
-
---npwwpgxnj2lpvqxn--
 
