@@ -1,114 +1,142 @@
-Return-Path: <linux-kernel+bounces-603253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 868D9A8853B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:38:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A88DA885BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:52:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 818C5171BC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:34:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35697565DB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E93A927A13D;
-	Mon, 14 Apr 2025 14:10:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D8E284660;
+	Mon, 14 Apr 2025 14:11:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RsE1fqnY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MmL1Mb9r"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A37E19539F;
-	Mon, 14 Apr 2025 14:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74DB127A921;
+	Mon, 14 Apr 2025 14:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744639833; cv=none; b=DRNitMs4b+/KJ0CrMIiF/qPRf0tCRWGpmSq3MacLSrezkqOU6k96pcySSEbGVCeAKVa0Y6x0XvR/WCt/R4nVMG7Ox4Jp836PSEmtD0YbNubr3ftLD53nCdIfxf95AHpTW6chZTve/+D0faVmdcyr2h4BYRxyY4U3QXMjjgMoivo=
+	t=1744639904; cv=none; b=ia2bTGoY/Uhriqz5A4jNkAYunKNJrSk8RvwLp0jcZhZkOvugTD4qPAwkjuo2NwNDlUw6JaSqU8wbeQIeNHIGZB7C9figI3fQWp8IXeuUrP6VmFE9nzXUfjJsF7ox4LqQggRjImJwM96rvKjnJg4tiow2NYp5GTcYyUElUFFTJSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744639833; c=relaxed/simple;
-	bh=UAdCAcDDcbUAFaQhhiPijezFVFrbVIScJZbGC9BYzaw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BygdRO6AmEo4Nl+RhRXCD/kB/b6H0/xhP7iXX+o6/+uOSVIsetrg7QyFZxr/rJDvBP1DwXwPVnNhDkXsrrFHFhFKMnobMOtpF3LlxoR+m1x8iu/uAvIUkEIf8U4jyY4A3TMsVMQ8BVeg5kFyfph+mJgx2zcU2nEan5e7c0IG1MU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RsE1fqnY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEAEAC4CEE2;
-	Mon, 14 Apr 2025 14:10:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744639833;
-	bh=UAdCAcDDcbUAFaQhhiPijezFVFrbVIScJZbGC9BYzaw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RsE1fqnYQ0D/umEGmNaSWaZcYYZlpe8oJ4M9bNmQUXNC47OUyTTQ7DB18P+L6ECfU
-	 BUOknsLyEtUAUxoXGJ8P/TLemQCIiv7oKKaL7iPzY3CrBKbeA/VaAUOTSQOnLviFpH
-	 Z/1mOoDTt3raVyS/XYhqxZBV5YbWFQpPnBReB/ykzLWof49KucUxQCJ4tD5/dfiWkI
-	 Wvqm1qlxJwJnHY5kRdOgzC9m2nEm6ThmVtaNH7tkkIPxgWfFZ59yHNhwe8jiGYfbmY
-	 jrrMTJPPkCNVGmSDXakfvukg/6IL18z5IwrDVgDp6vHgvx+YVoswa+iJJC1RfYw/91
-	 SVNFl3op8CVzw==
-Date: Mon, 14 Apr 2025 15:10:27 +0100
-From: Mark Brown <broonie@kernel.org>
-To: =?iso-8859-1?B?Q3Pza+Fz?= Bence <csokas.bence@prolan.hu>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Varshini Rajendran <varshini.rajendran@microchip.com>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>, linux-spi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Alexander Dahl <ada@thorsis.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Pavel Machek <pavel@kernel.org>
-Subject: Re: [PATCH v6 1/2] pm: runtime: Add new devm functions
-Message-ID: <58e37046-f9fd-41cf-a5f5-f7cbb1eb97ab@sirena.org.uk>
-References: <20250327195928.680771-2-csokas.bence@prolan.hu>
- <20250327195928.680771-3-csokas.bence@prolan.hu>
- <CAJZ5v0jmuzvo-xzGBDhGVBbY7svbrqEdi-SeJrx5BG=qtN6ZiQ@mail.gmail.com>
- <832eb5e3-7e2d-4ed2-8571-eca9fe129013@prolan.hu>
+	s=arc-20240116; t=1744639904; c=relaxed/simple;
+	bh=EblBvegSnNOt+gChlJRc5y2uhznERwN63/BcMkBvUtk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nvFKneIW0aB0bx7mCRnQuQmAbOHcgVgItzV2+sse3aX6L89yrrqdTowEPvWjwpeRsiMu7HkN2bkKD2w6ie2/GXc6ENU/fV3mVbaqjwuaLY2vMQGIVrSOmrm6wFdYUlKr5fiBBnxfzVYEPwtm7iWRv0GOAqZBdrAj9QzDAQMME3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MmL1Mb9r; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-310447fe59aso37286651fa.0;
+        Mon, 14 Apr 2025 07:11:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744639900; x=1745244700; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FIkLP/fQvXNSmz2D/nxX5r5/35zlQ4vXp0PlEAwBoSY=;
+        b=MmL1Mb9rqDNwOg9z819eiP6g7JshYwqt6inkIJEvT/bR3RcHQ3a3SUFl87Uf/bQxlV
+         BgS2Xwkw/DQq6RG8I73iUu5whDTZmnN991D8l5dhQXDRmago2VtfMusGyPh9xxEs4pSq
+         xlUqO6QzeWHxxYwDMucmJmE8IFCewjDKoV6gVR9AX4IJy3e9MNIiT7EY0p7blm6pEmNI
+         IE+lwcibrdTOhQzuINSlHnQUA/NvabFaaaYHatAAgVYK1psI9hh1Qa96VxYd1zQtc0Xc
+         6clUhIn26GlstMBqMTJNm9ilcokQfJty6UExBPh0DIKS+ibXFDiUsS9QmA9WQDwMUmr1
+         /xPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744639900; x=1745244700;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FIkLP/fQvXNSmz2D/nxX5r5/35zlQ4vXp0PlEAwBoSY=;
+        b=fV5Ik7fIGZ2oGhoBLClohDCirnedzipgQoOh5L3vrXxI8ivLS8J8/TimpVqYuvhiGx
+         GsRG7RFR0Q3tPW6jKKMtt52fMtLYUvvPCb9c79n4jtR7zY7YQWwsxQuPlGICcoqz8pNa
+         iH+2MbIGrzgM43PJVLknsIa+ykmaZ5mDCiGs2QLKjmPKvVBz3bIApOuTy6cf4wz8aeyo
+         r0D2ghagvqZ5TCy1YP69hd6xGiKmmell210ut+WMtoY+3KH+WzyM2EWeqrSKk8+dIuPG
+         Pfy0KdsCutb+GCfIS3R+e0gKs4A7QOKVlLfXTbyGN60UYiWUC437QRcAaedV2tE0b5Ml
+         5ffw==
+X-Forwarded-Encrypted: i=1; AJvYcCUzUn436u8iRJlabWcD3gfIwyRl03OiEhhk9BjyDsxnrXkZV5Lxao/zigU1U4cuNLXkcawcp7EhIHxFS3Y=@vger.kernel.org, AJvYcCVV9OAXUv4k4REzOWnFNUCB3VFMWH0D3IVoO8kQVdPC4bpvkozka1x0X3IzeI8NMP28j/pX6t1RQuApFM0z8UU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzV5BKEDI0O7zywuKmPCaSfTSC0nrXpBeULn+fVYR1IT29wgHPK
+	bhMzJw6HIy3AD9+GeSZDxNm2F1Nj/7jn/yaVf0c5CzBv30HR9aKHaGwyfXeYJHqP7F/Vhmgf6F2
+	7l9/pDJ7cEWi/hid6J2Gj4C00YEM=
+X-Gm-Gg: ASbGnct5fkzjxvyEoUH/vfY9ZU42chOKXJvMXi8JT+1c22ELrFuMIe4Sq5cn8tIUBXR
+	pHHzL/a0Zimk4VZzqqCvnrCz5BgUxta5PxDryJ6suaVSQzaX6igaX6RrjOnoNSCl1B4XS1Fmb+u
+	ERESB4MfuELtLcSGiUX4530LezcWpdFuXc2h/ZhQ==
+X-Google-Smtp-Source: AGHT+IEBJbShyUUSqv7ryp6jyAl8lHdgUBSqXAQy6ELIn46wrDbEXN16PdPI7kNjONyEOGFqubDeOofUNz6tLg0K+cU=
+X-Received: by 2002:a2e:a913:0:b0:308:f3b4:ea66 with SMTP id
+ 38308e7fff4ca-31049a93017mr49404321fa.28.1744639900116; Mon, 14 Apr 2025
+ 07:11:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nb4I0smoCForxcgo"
-Content-Disposition: inline
-In-Reply-To: <832eb5e3-7e2d-4ed2-8571-eca9fe129013@prolan.hu>
-X-Cookie: Good day to avoid cops.  Crawl to work.
-
-
---nb4I0smoCForxcgo
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+References: <20250412-b4-container-of-type-check-v2-1-f3cc9934c160@gmail.com> <Z_0V85LF2d4EquZQ@google.com>
+In-Reply-To: <Z_0V85LF2d4EquZQ@google.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Mon, 14 Apr 2025 10:11:04 -0400
+X-Gm-Features: ATxdqUHn6O9Fy2o5Qei-hwgPIqzTQ4SFV56eks-Cdm5ec-O4oGKovntmpFC8FyU
+Message-ID: <CAJ-ks9mRYQB-nshNjnPM6T+EAdqz+oWuWR=Mdnb=aOY1Aevhhg@mail.gmail.com>
+Subject: Re: [PATCH v2] rust: check type of `$ptr` in `container_of!`
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 14, 2025 at 03:56:47PM +0200, Cs=F3k=E1s Bence wrote:
-> On 2025. 04. 09. 19:43, Rafael J. Wysocki wrote:
+On Mon, Apr 14, 2025 at 10:04=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
+wrote:
+>
+> On Sat, Apr 12, 2025 at 02:16:08PM -0400, Tamir Duberstein wrote:
+> > +    ($field_ptr:expr, $Container:ty, $($fields:tt)*) =3D> {{
+> > +        let offset: usize =3D ::core::mem::offset_of!($Container, $($f=
+ields)*);
+> > +        let container_ptr =3D $field_ptr.byte_sub(offset).cast::<$Cont=
+ainer>();
+> > +        if false {
+> > +            let field_ptr =3D ::core::ptr::addr_of!((*container_ptr).$=
+($fields)*).cast_mut();
+> > +            [$field_ptr, field_ptr]; // typeof(`$ptr_to_field`) =3D=3D=
+ typeof(`$Container.$($fields)*`)
+>
+> This evaluates $field_ptr twice. The `if false` avoids bad stuff if the
+> expression has side-effects, but still seems sub-optimal.
 
-> > I can apply this one alone if you want me to do that, but I could also
-> > apply the other patch in the series if it got an ACK from the driver
-> > maintainer.
+I don't disagree but I intentionally made this choice so that the
+compiler error was clear about the LHS element being one of the
+arguments to the macro. But maybe the comment provides enough clarity.
+The alternative error is
 
-> I think you can apply it and then Mark can apply the SPI part to his tree.
-> @broonie what do you think?
+> error[E0308]: mismatched types
+>    --> rust/kernel/lib.rs:207:25
+>     |
+> 207 |             [field_ptr, container_field_ptr]; // typeof(`$field_ptr=
+`) =3D=3D typeof(`$Container.$($fields)*`)
+>     |                         ^^^^^^^^^^^^^^^^^^^ expected `*mut rb_node`=
+, found `*mut K`
+>     |
+>    ::: rust/kernel/rbtree.rs:270:6
+>     |
+> 270 | impl<K, V> RBTree<K, V>
+>     |      - found this type parameter
+> ...
+> 332 |             let node =3D unsafe { container_of!(curr, Node<K, V>, k=
+ey) };
+>     |                                 -----------------------------------=
+- in this macro invocation
+>     |
+>     =3D note: expected raw pointer `*mut bindings::rb_node`
+>                found raw pointer `*mut K`
+>     =3D note: this error originates in the macro `container_of` (in Night=
+ly builds, run with -Z macro-backtrace for more info)
+>
+> error: aborting due to 1 previous error
 
-Please don't add random characters to my name.
-
-I'd need a tag since the driver change isn't going to build without the
-new API.
-
---nb4I0smoCForxcgo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmf9F1IACgkQJNaLcl1U
-h9CVyQf+OoBLAj4WQr+H7BEg9lObLdNL4KRPrtCilkLER2n2jv1LKxR5AOVaM5s0
-a5jKczyVXb543ZHBu2u2Mr3F2ofULa7INlrO88vcmVjI0QQgaKweqTO0Z6bL8atX
-D0gRFG0/QKfQ/EscdGHTVDza0RH5LNDwzz7Jw3guBzw5lu1d7raDhXCmorKVzMAc
-H1yoyUGhmLGv71cpmm3Y4vO3hvQZP4O50+8f83Ntf7A/TpByOrxd8RI6wtFndpJU
-FJalHnIvuMSv1djWNklF0r2E41AheaCGCxGO3SlLffqjXbGh98QS7a3mG8yjMOCA
-TR41WG7xTs+F7TjDT4E1tYyh/vdRjg==
-=mnIx
------END PGP SIGNATURE-----
-
---nb4I0smoCForxcgo--
+Seems OK to me, so I'll do this in v3.
 
