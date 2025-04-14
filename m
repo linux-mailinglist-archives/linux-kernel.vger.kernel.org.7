@@ -1,123 +1,132 @@
-Return-Path: <linux-kernel+bounces-602211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 655D9A8781F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:47:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05C5EA87827
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:49:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FAF61706F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 06:47:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 301E73B1BF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 06:48:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72EE21AF0C7;
-	Mon, 14 Apr 2025 06:47:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679541BD4F7;
+	Mon, 14 Apr 2025 06:48:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UqNq0tQ7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mP0VR8Ne"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1C04C74;
-	Mon, 14 Apr 2025 06:47:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F0761B4132
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 06:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744613273; cv=none; b=qiLfID4Uje5bv+0Xrk0EGPuwTF3+TQUlVqhs+hZicr3mR6bsTnjBP7YBPG6exbWC6O08iyG0TDHwZzb0P8Ppj+OOW5v0P4OwFNGBO5M0gWK63xHpmzENsSe0VLsdjvAYDPMS0zfHM7FKOR6gy5hR2mvt+HbGgvXmYytA4Qdf7Ko=
+	t=1744613318; cv=none; b=nqkF+yV3scBl3v3qkCIHmUdGgfoarM5KjMOVBRT2d98IY44tpU79MM/997Bn16Tct7cypKPoADX7hBzwMM5YmsyZ0yoLSK2WK9HcngXjgQjdzBwZB7ejJ0ZADcwcwmee3BIQ1CFiFKTxXLZh3PUZec+XJjbGQ4IGDfeBPFgEQrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744613273; c=relaxed/simple;
-	bh=NnvFhqzJp+sQfGYnEmXYlEqZg74684Lg4+6wpOpPkYU=;
+	s=arc-20240116; t=1744613318; c=relaxed/simple;
+	bh=Lw2KXpWu8jDdtPhTEqm4VVhJ0ttQl0BjqJFnfi/RPI4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h7V+ioY3iPqbRl75OD1Itxt2869EZ8mf8lDWWVPonMvCYh7lqeehhLs/pA9fl7Ch3boiH2AJWW5HNaiElwcWMus9Aq/lYr0nWE5hth7oF16B7N9C3ISqOku3J/5v4T6nAKtJWDrUt8r3S6+FWb57mFmIcuCSGDmMWPSWKvkiCF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UqNq0tQ7; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744613272; x=1776149272;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=NnvFhqzJp+sQfGYnEmXYlEqZg74684Lg4+6wpOpPkYU=;
-  b=UqNq0tQ7eUTubYRMBHMkqYB93mJ+VX4u7AZwrf63NF51rDWZA69/dkiv
-   Xh8BglPQp7HfFqy9LFkroGEZxaR9gTyXcZ5kIiGQkwr3pchvNOw6NHIGV
-   MZsphRq9FCFJLy7O1D5rmEGIH775yk1ulVrre1p91k4tGGJuGwSWfjEOk
-   2mOfb9920tLctR96HhgMtMyOR13/xFFTl9xxy1Pa19RDj+sB5wE4EMsWZ
-   oOzUBu4hRdMK98EHx0YApR+2QcWGdcX57X5eqpIxTMgO1jLO5pD4RGeRo
-   JtE63cJ1rLo9oO/bSlSY3iuVHBgAFhBcT1ElvdS06zQ3FPuX5nAFhAS8M
-   A==;
-X-CSE-ConnectionGUID: nyWqEV8jRfSFIH1XP5T7yA==
-X-CSE-MsgGUID: JRb8TcGoRyCW6EooR9p7sQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11402"; a="46232217"
-X-IronPort-AV: E=Sophos;i="6.15,211,1739865600"; 
-   d="scan'208";a="46232217"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2025 23:47:51 -0700
-X-CSE-ConnectionGUID: crWPcHSdT2KU4PmWj4rqAQ==
-X-CSE-MsgGUID: 5l5K5hKjTPmdNeVpbS6qvQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,211,1739865600"; 
-   d="scan'208";a="134702329"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2025 23:47:49 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1u4Dbd-0000000C9fc-1CAO;
-	Mon, 14 Apr 2025 09:47:45 +0300
-Date: Mon, 14 Apr 2025 09:47:44 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] property: Use tidy for_each_named_* macros
-Message-ID: <Z_yvkKTgI4XSlGya@smile.fi.intel.com>
-References: <Z_ew4DN0z71nCX3C@mva-rohm>
- <Z_yvNl23GcEpOkK1@smile.fi.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pulfUNE7xILRhXK30cjEZ3ymb5dwcsUvG4PrvnQBf6MnEbNOfsWK+Dtbl1IkNrU8UxMkVIMyrHND1HsJJ4I0jHkLkRmNUpbla/jmH8HuselY2Pnz4uliVJgbi37uCibbVSImEBNEf/WVMpIb+fG6coi6Qo5Jh45bBf/OHiOr7WQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mP0VR8Ne; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 14 Apr 2025 12:18:18 +0530
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1744613305;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YaBBYXHfLF++cExY9hjSu3QHr8Mvyrqh9+FHlLk33ro=;
+	b=mP0VR8NeyztZF6hFVhgFhodcSN3xqJXCf+sxhThfbf+3vD4UsKkMYQ+TOj7bGCKMz+YypF
+	RIwGyf88gDMgqqjy+yBfuvhM7ikDNifrSIWS6g/nc/4St2JbZAGHCTuZ+1c6De+eQAwIR+
+	zCUD3IJWTTbjQXv86+Zabg8xkDGJApU=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Jai Luthra <jai.luthra@linux.dev>
+To: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+Cc: nm@ti.com, vigneshr@ti.com, kristo@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, vaishnav.a@ti.com, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, u-kumar1@ti.com, stable@vger.kernel.org
+Subject: Re: [PATCH v2 5/7] arm64: dts: ti: k3-am62x: Remove clock-names
+ property from IMX219 overlay
+Message-ID: <tosg63tki3b7xqr4kiioav3pjq3hwmj5vygb4d4ju46o7eyyfz@yowubjrrnsvh>
+X-PGP-Key: http://jailuthra.in/files/public-key.asc
+References: <20250409134128.2098195-1-y-abhilashchandra@ti.com>
+ <20250409134128.2098195-6-y-abhilashchandra@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="udmjswxldcpwpkxo"
 Content-Disposition: inline
-In-Reply-To: <Z_yvNl23GcEpOkK1@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-
-On Mon, Apr 14, 2025 at 09:46:14AM +0300, Andy Shevchenko wrote:
-> On Thu, Apr 10, 2025 at 02:52:00PM +0300, Matti Vaittinen wrote:
-> > Implementing if-conditions inside for_each_x() macros requires some
-> > thinking to avoid side effects in the calling code. Resulting code
-> > may look somewhat awkward, and there are couple of different ways it is
-> > usually done.
-> > 
-> > Standardizing this to one way can help making it more obvious for a code
-> > reader and writer. The newly added for_each_if() is a way to achieve this.
-> > 
-> > Use for_each_if() to make these macros look like many others which
-> > should in the long run help reading the code.
-> 
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Thanks for cleaning these up!
-> 
-> > ---
-> > The patch was crafted against the IIO/testing branch, and it depends on
-> > the 76125d7801e5 ("property: Add functions to iterate named child").
-> > Hence I'd suggest taking this via IIO tree (if this gets accepted).
-> 
-> I'm not sure why. The for_each_if() is part of v6.15-rc1.
-
-Ah, I see, you are trying to fix newly introduced stuff? I would rather suggest
-to make this straightforward against the current upstream and ask Jonathan to
-rebase the testing to fold the fixes into a new APIs.
-
--- 
-With Best Regards,
-Andy Shevchenko
+In-Reply-To: <20250409134128.2098195-6-y-abhilashchandra@ti.com>
+X-Migadu-Flow: FLOW_OUT
 
 
+--udmjswxldcpwpkxo
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 5/7] arm64: dts: ti: k3-am62x: Remove clock-names
+ property from IMX219 overlay
+MIME-Version: 1.0
+
+Thanks for the fix,
+
+On Wed, Apr 09, 2025 at 07:11:26PM +0530, Yemike Abhilash Chandra wrote:
+> The IMX219 sensor device tree bindings do not include a clock-names
+> property. Remove the incorrectly added clock-names entry to avoid
+> dtbs_check warnings.
+>=20
+> Fixes: 4111db03dc05 ("arm64: dts: ti: k3-am62x: Add overlay for IMX219")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+
+Reviewed-by: Jai Luthra <jai.luthra@linux.dev>
+
+> ---
+>  arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-imx219.dtso | 1 -
+>  1 file changed, 1 deletion(-)
+>=20
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-imx219.dtso b/arch/a=
+rm64/boot/dts/ti/k3-am62x-sk-csi2-imx219.dtso
+> index 76ca02127f95..7a0d35eb04d3 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-imx219.dtso
+> +++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-imx219.dtso
+> @@ -39,7 +39,6 @@ ov5640: camera@10 {
+>  				reg =3D <0x10>;
+> =20
+>  				clocks =3D <&clk_imx219_fixed>;
+> -				clock-names =3D "xclk";
+> =20
+>  				reset-gpios =3D <&exp1 13 GPIO_ACTIVE_HIGH>;
+> =20
+> --=20
+> 2.34.1
+>=20
+
+--udmjswxldcpwpkxo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEETeDYGOXVdejUWq/FQ96R+SSacUUFAmf8r7IACgkQQ96R+SSa
+cUUWUw/9EANMG5P9O57SqaT7wfQ/VnxxlUUfXTqeHoYXuwDgLK/gIxA2AxlJzf1z
+PjUvXjnwdn/2xnJzUlOJihlLkvqoG9oAaKKG3LUUx2AV5TA5jpX38M3ifvTjn5WK
+8tIBq0EtGH8sC3vbx2RT7L3Lu1nA021oUXj8IK9IGtcCh4afVB2bGCDQmghY12WO
+2P4XKVrMg11LUfm7Xpmo2JB6Nlc2P+lleh8UVr4kXhDtKp5MAJAJhEw+n7rfTUYU
+FBpZOPNIwzxQNRhSVGY9n70A6vCzM6Z2zVPIwXHOX0IOAqBFywqrlF9iV+znyWoK
+2wngiE5gcOxcsCjXuZSVCCtXz03yKvt4ELHGqy5t/N7Z6n3pL1ZY+WNcpqrGokMV
+8EOYQKV+Wmon965m9T/HntHHxzAdnD2KF6bcM8Un7HK+Zit1SwMAmq5Ffml0IrMl
+u8m9rNUL3enJgPrgy9JE3ZvqaMtbgQAxYUOuA7Gcx8uD3MvoR5KrIZZge0uWF9OI
+w8QASdBjVSuucWJKathj5CSE6fBHBj4QY2Fqy1Kd2qCopbCwVZ4gPuEDoyoe5GwV
+TlRR2aPcINRH/ehtZMUN77r8Szl0YasXgskYQu42XRNSwcYE2J/Vf+B8SmaBVCsF
+4t1aDcsGWZY3efzRSv4pdimo83qz96p8R468u5ngKyiPuo8QU5Y=
+=tCJn
+-----END PGP SIGNATURE-----
+
+--udmjswxldcpwpkxo--
 
