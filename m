@@ -1,80 +1,87 @@
-Return-Path: <linux-kernel+bounces-603508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 764D9A888C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 18:41:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71086A888BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 18:40:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5B4F3B4743
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:41:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30B573B41FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D999284694;
-	Mon, 14 Apr 2025 16:41:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="Im93iHAa"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FDE22820AF;
+	Mon, 14 Apr 2025 16:40:19 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF454279903;
-	Mon, 14 Apr 2025 16:41:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E091B3929
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 16:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744648870; cv=none; b=gW0urV9Whti7Dm8sSYllTU99OKOLZmHleME4Aa/hLjM1fyQlXkmQgBNfFAQGD8YtIl90Jx1NcyLKVC4abBYKc1nfH45Hwa7VIyR1B11AgemdmsNruHC3kUcYQNNjO4AmRKGMdXqdI/0j+Kya5rjf9sKsFOMvsQ+xsV0Cno36Jo0=
+	t=1744648819; cv=none; b=nfQ1WMZfgAysXgxpcw6zbbq/tdG3UFqYPfNMTuqZvxdm4oEFoo7Qb32Ox/QjkvhQMp8hGafFGNMkmlpbZ1sOiIG6lFIJ2XDqfNiTnFhnIgOoKWHs+r8TNdU8Krpl4GfHu2LHjE2ywGksJQbSEw+6sVCvkrSN6si94N9lHPfSoIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744648870; c=relaxed/simple;
-	bh=yFrck275ZtBjk95YqcbCA+f9RitQzmjgpVgi08uiIJ4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=R8Smozfm4nqvrUl0a7bYs834Aj2vK6ORNK4Wb04/fAFR+OZV9knSiJJ8xYRiGTt+zyYf7yXQGdk/SD5EFxadzOcQXiyNvkg0t0Nhw0Flxmx1xZAEewEtA4DQu27BEZVL6mI62vb0T4aOYoMjrAHOFM5p6NNFLm1UchFC9MIBlqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=Im93iHAa; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net EF17141062
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1744648868; bh=wX4JW4LDlFSVkvOT0ahTg9N82VpsuNanMqc4ZUSb80A=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Im93iHAapRQScNBN+z5UJRmOi3rI4CVaw3L0T9bZ46nx90ceiFac8wNzcf6l2AxXu
-	 q+lMmjU8HOw7U9yoCnKViM5Hba1YIYkqaSZwzj6yQSRiptKeieeNViTqz+GjB6de+S
-	 H5pHyZsi29j8fsxOlVLeEtw5otI67o4a842xhdQGej8n2pQje3Hq+jqqmf8ZEWy7Ej
-	 6fuDD1Ftei5blD9savdf3AMxcYh3jyRW83tHmXWhfyHm3XMq0nBgzf4so9Ftej4+zw
-	 xBD2P8yfm4YcZPlFSDAGMMvpT8C9xXhof9ezc7aeDU0Pgl5Ivw1xs3SdSEwB+fRPp4
-	 dZ2wzXsMp5lVg==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id EF17141062;
-	Mon, 14 Apr 2025 16:41:07 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Chih Yun Lin <noralin249@gmail.com>
-Cc: jikos@kernel.org, bentiss@kernel.org, linux-input@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Chih Yun Lin
- <noralin249@gmail.com>
-Subject: Re: [PATCH] docs: hid: Fix typo in intel-thc-hid.rst
-In-Reply-To: <20250330084518.20916-1-noralin249@gmail.com>
-References: <20250330084518.20916-1-noralin249@gmail.com>
-Date: Mon, 14 Apr 2025 10:41:07 -0600
-Message-ID: <87a58iae70.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1744648819; c=relaxed/simple;
+	bh=m75HaPFiKIYPfUfjID1f6sX7VYwIkyrap18FkA2hZCk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mwxkd+wamcZKy+6vQiLl0jTlp2X7xGI0o+Aj1Ryoi16j67mOyZ8AxRpqMhohOhAHN4S+mr6oRGEvo+EGbkISha3JmHwF4GXLYwaX2WWw65g0Uoeg0gnGCYcwPwsWwooT2TroshX4HZvOXfkEcOYKavGS7ZqOvS3mx1Ly5sZVtIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5946FC4CEE2;
+	Mon, 14 Apr 2025 16:40:18 +0000 (UTC)
+Date: Mon, 14 Apr 2025 12:41:49 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Prakash Sangappa <prakash.sangappa@oracle.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "peterz@infradead.org" <peterz@infradead.org>,
+ "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>
+Subject: Re: [PATCH 0/2] Scheduler time extension
+Message-ID: <20250414124149.2543d6c0@gandalf.local.home>
+In-Reply-To: <1142C71C-32B8-4C34-BA3F-4D061BA25620@oracle.com>
+References: <20250215005414.224409-1-prakash.sangappa@oracle.com>
+	<20250217120000.5ae1201a@gandalf.local.home>
+	<821926D8-ABED-4B66-9E2D-39594DB82FA1@oracle.com>
+	<20250322061422.2b24f021@batman.local.home>
+	<1142C71C-32B8-4C34-BA3F-4D061BA25620@oracle.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Chih Yun Lin <noralin249@gmail.com> writes:
+On Fri, 11 Apr 2025 20:54:14 +0000
+Prakash Sangappa <prakash.sangappa@oracle.com> wrote:
 
-> Corrected the spelling of "triggerred" to "triggered" and "flexiblity"
-> to "flexibility".
->
-> Signed-off-by: Chih Yun Lin <noralin249@gmail.com>
-> ---
->  Documentation/hid/intel-thc-hid.rst | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+> > On Mar 22, 2025, at 3:14=E2=80=AFAM, Steven Rostedt <rostedt@goodmis.or=
+g> wrote:
+> >=20
+> > On Tue, 18 Mar 2025 16:10:09 +0000
+> > Prakash Sangappa <prakash.sangappa@oracle.com> wrote:
+> >  =20
+> >> How do we proceed on this feature?=20
+> >> Are we leaning towards enabling this feature for SCHED_OTHER only unde=
+r PREEMPT_LAZY? =20
+> >=20
+> > The merge window is about to open and I'm way behind in what needs to g=
+o in.
+> >=20
+> > Let's continue this discussion after rc1 comes out. =20
+>=20
+> Can the API be finalized? We have an use case which will benefit from it.=
+ So like to see this feature
+> merged.=20
 
-Applied, thanks.
+I'm still not for SCHED_OTHER tasks being allowed to delay RT or deadline
+tasks, even for 5us. But if that's what Peter wants, I'm not going to nack
+it.
 
-jon
+Just keep it configurable so that it can be easily disabled, as I have no
+intentions of using it.
+
+-- Steve
 
