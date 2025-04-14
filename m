@@ -1,176 +1,135 @@
-Return-Path: <linux-kernel+bounces-603424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E784AA8875D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:37:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D264A8873D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:33:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC259563C9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:30:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 596E916B889
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51C5E2797A9;
-	Mon, 14 Apr 2025 15:29:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C275442A92;
+	Mon, 14 Apr 2025 15:33:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="mntqWbOF"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YxDmIo2/"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E68FE2741D6;
-	Mon, 14 Apr 2025 15:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A148A192D8A;
+	Mon, 14 Apr 2025 15:33:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744644562; cv=none; b=iSY6stPgN4IJo7POhcAbJ4eZvgQ2RirD+AtqkCDKr9zRyqDyjzrOEFGbJLMNsONDy0iAlQrB694EbBJn5Zva2nowYh6fII42pJ2uWuhsM5aRU6t+4V6E3jGA81AD0anF+MMlY8V9NfA0cNVm2c06C51EQ+ic3IhpygrIOca6qKM=
+	t=1744644793; cv=none; b=fsZBl1CyIKT4cNiFi4FGOnmTh4Oagl6572lfitHWfDatliPJJkNvAL0ORAnOOY/XFPIuHUOHr0pZ5fQxLbfWHYQm/p6XpQzrNp42PyYkTL3OSWYkDeer1r1qn96tn1xMP1STpoSTUDmf45BNq8QKlIRFxB5qekr24oHgZUAE6xU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744644562; c=relaxed/simple;
-	bh=Zfxt9pzsycQ44C7fc2uUTKbR36TCBIXwtLawvoFRbzw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Aml0hXol5+iTxIX1OdQqEHzhS0mqNFSFoJsRynNFY1sW6AJSsxTR4r1dS0FzXS9UB/hTjx9bvYitGJ9Y2oT9qB5KOC7YQZspM8yLRXE1PuFhoI4V8laWLA2wfy9tbM4ki5olPviQuD3DFdgDH6l2C2ye4sfGDqxmT/pGEb6KwyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=mntqWbOF; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net DFB8E41062
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1744644560; bh=1jK3yJ43Y4sGCHxXLdedDiZmuvB+Y7tZLtCUL/i2on0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=mntqWbOFsNQAYHj4sRpw8TY+m9L7Rs6tBkz6DFlTly52FEbncyeA5i31M0iPnzPK+
-	 TGzjG/rK4p28IhjqJwCU1hxm2bDWBZat4Tgw64dyrNJuxzV3QVEoPfErarkG4TZvpg
-	 Ae+FyeXvaWUC036W1eH5XGTQSze211UIM3U5UGZXPtAM9ZtlqkSSCko/Nh3lu03cfn
-	 g6aHHtHltbRHjmykKm1hq6CmjWDbv355H5T0gigaKGkKeCyPHjPK4+6XrpeU/XK7dt
-	 0nejM/3CsjLtddWl9lyt329RqtoqGFILA8/w38XHfM9zygkIZrdItXWdfWWrNXsdAR
-	 JwT6B07E/hdtw==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id DFB8E41062;
-	Mon, 14 Apr 2025 15:29:19 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: saivishnu725@gmail.com, mchehab@kernel.org
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, saivishnu725
- <saivishnu725@gmail.com>
-Subject: Re: [PATCH] Add --interactive option to prompt for dependency
- installation if missing
-In-Reply-To: <20250410155414.47114-1-saivishnu725@gmail.com>
-References: <20250410155414.47114-1-saivishnu725@gmail.com>
-Date: Mon, 14 Apr 2025 09:29:19 -0600
-Message-ID: <87ikn6bw34.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1744644793; c=relaxed/simple;
+	bh=Shx9w5ToVCi4sff7w0CjLM7Z/phSkqNv+tYwUPKOOTI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nKshjovJexVIS2/YhQP7WZAXFgI166t9yKLuqKfp5cAtwU8nYR5vLjq3es0cPzKmnD95TrIJrvw28NTd6ivY/bWOFmU7m2Itq2M4WH9kXyIzAwBns19VAY4DuaA5GpQbiREF44UWCX9MA3R49cPAL+WHq+XjQ4ZuE72FuJZHMtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YxDmIo2/; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-47692b9d059so58256121cf.3;
+        Mon, 14 Apr 2025 08:33:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744644790; x=1745249590; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mqOeOTVBHYK93IJiadkRz71/O+ouQlq6IAs4FzVsl24=;
+        b=YxDmIo2/jX/Oro4aI3ZVIcEsG0plAUKZYtXzAsKAZyAxO6qNizQUt1hqhSj3jjoHgk
+         4r2Q0xlr2P2cUPHRuQNG7JeeOuM00tUuWlhj5tB9zX7esJO0uBVyEijKE5rW19L/LJhr
+         urEFt0FxH6hgqNljEHw15JT/dt+n1/9ANIA+TJ+opy9Dl8IBeHzs/KGwTkvL8w03uoFm
+         eylqUuUnMZ0U0TGj0RGIn7514S+uyJRThLNfhJwtLSAER0Yi8F5W1Q2TMMa0dHZ9D2J4
+         PtcIL+m6ERRqlJxiHhkEeg0gbLmpcDjAfWcyh6Ged2pWS9+QHEkKDEQjK4EgBOo8Sp4I
+         /2Gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744644790; x=1745249590;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mqOeOTVBHYK93IJiadkRz71/O+ouQlq6IAs4FzVsl24=;
+        b=CHPpOLFtluLWsQsTmAdzbXa1aUarkZwgrBoR4vef/cpGGp09OWVT5o8erRy8bQgXKw
+         nChjVWYIa6fYZDKH0dr3V2vaiseKEhephfEUxjwIzsNZDZ/4UvtkJwbss+YxyQfMxX0r
+         Kxztk1EuNog8UwhjkOzAPtZgprf3+YMYUwKj1z4YFC+vsh2Xoq2+HqDz1YtEumHqiaxj
+         FcBdf2ecT35vBwJTibyjnIBsZtPa7gtw8XEtpoNuzccP1SzmvQMd8UYf9icD5LZtbccS
+         FaKsOv1UDTb+pR+C4LBzos2ocr6SmV5DrxsiJVXckXRo2AiSG1/PiwyA2idEA8xFa0zK
+         txNw==
+X-Forwarded-Encrypted: i=1; AJvYcCVtGwiFrf4I5vk+I2YMqxQfh6oD2hSFXEhgogYiiMdzlm6i/mPTP+z/XSL90llPgMtLa15eILRFIX0=@vger.kernel.org, AJvYcCWVY/qgHXMEvajB5FN2svhjGCpzmBQmHiU0D0ma+6xt+wqkWkNn1+KhTOqlduZRDqRuYoPfOnb8@vger.kernel.org, AJvYcCWoBYmRFQwAos6ZsTmb5D2WXBvR+n5zhHl+HS9pZZLWhBxhNYFvfe/rU/Bh7Gra+D/+MJ4Uk8tZkN7zx4Lh@vger.kernel.org
+X-Gm-Message-State: AOJu0Yybr3WNA5f3p0VoBuj9CGh7JhehEGg0SXin3FysWvWd4Fph/RfA
+	GqKu7+MKVkJr8WqSwJ0q9P6Qoc6+gxtP8VMT7X0WOwc19QRTEagZ
+X-Gm-Gg: ASbGncuH5wWwDHdyFQG6nbUETvabjWLeGajUUIby1AR+J52ao8gtsiGSkvBpwuW4Hoy
+	JM65dGsTd+mrVBJm3FSuwZq89Nf9P7S2Fo0mS7Iy9NIY3pQeiclgchyAzAp2CgFMExe7Tlm6A94
+	gM5ADyhCjVOqCEnQcivbVpOHomiJbdfK/xFCup+Nz3QeiRvhnQfYGJ+MMhduTlrhoE76Pp4b4Ox
+	fMLtsmIywPEafwj7t2+tcZv0KlI+54s7bvWSv5EyAO5u6Td1VsokkjZU7iw48v1OuOcxBqaYEGf
+	sh+Oyg5nFfm7701ewFK1c3Ujf6NCh/GsLxb1k4PiVXsYWEjJ5w5W2HCVBSC54Sov+PVoU2MJ1+K
+	oeDKHIoorLF+zuHtNDVA=
+X-Google-Smtp-Source: AGHT+IFCLt0ApqsTq3XSso3U4ONT+jE0KrQ/fisUlyIY/KK1qUJCT+C3nq/DixG4n6Rq/m74n33oeg==
+X-Received: by 2002:ac8:7d43:0:b0:476:91f1:9e5 with SMTP id d75a77b69052e-479775e989bmr229803901cf.50.1744644789837;
+        Mon, 14 Apr 2025 08:33:09 -0700 (PDT)
+Received: from theriatric.mshome.net (c-73-123-232-110.hsd1.ma.comcast.net. [73.123.232.110])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4796eb0b26fsm75956541cf.1.2025.04.14.08.33.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Apr 2025 08:33:09 -0700 (PDT)
+From: Gabriel Shahrouzi <gshahrouzi@gmail.com>
+To: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-iio@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: gshahrouzi@gmail.com,
+	skhan@linuxfoundation.org,
+	kernelmentees@lists.linuxfoundation.org,
+	stable@vger.kernel.org
+Subject: [PATCH] iio: adc: Correct conditional logic for store mode
+Date: Mon, 14 Apr 2025 11:29:20 -0400
+Message-ID: <20250414152920.467505-1-gshahrouzi@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Thanks for working to make our tooling better.  Various comments...
+The mode setting logic in ad7816_store_mode was reversed due to
+incorrect handling of the strcmp return value. strcmp returns 0 on
+match, so the `if (strcmp(buf, "full"))` block executed when the
+input was not "full".
 
-saivishnu725@gmail.com writes:
+This resulted in "full" setting the mode to AD7816_PD (power-down) and
+other inputs setting it to AD7816_FULL.
 
-> From: saivishnu725 <saivishnu725@gmail.com>
->
-> Introduce the --interactive flag to enable user prompts before running commands to install missing dependencies.
-> Asks if the user would like to run the distro appropriate commands if any dependency is not available.
+Fix this by checking it against 0 to correctly check for "full" and
+"power-down", mapping them to AD7816_FULL and AD7816_PD respectively.
 
-Please keep changelog text within the 80-column limit.
+Fixes: 7924425db04a ("staging: iio: adc: new driver for AD7816 devices")
+Signed-off-by: Gabriel Shahrouzi <gshahrouzi@gmail.com>
 
-> Signed-off-by: saivishnu725 <saivishnu725@gmail.com>
+---
+Changes since v2:
+	- Add fixes tag that references commit that introduced the bug.
+        - Replace sysfs_streq with strcmp.
+---
+ drivers/staging/iio/adc/ad7816.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The signoff should have your full name, please.
+diff --git a/drivers/staging/iio/adc/ad7816.c b/drivers/staging/iio/adc/ad7816.c
+index 6c14d7bcdd675..081b17f498638 100644
+--- a/drivers/staging/iio/adc/ad7816.c
++++ b/drivers/staging/iio/adc/ad7816.c
+@@ -136,7 +136,7 @@ static ssize_t ad7816_store_mode(struct device *dev,
+ 	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+ 	struct ad7816_chip_info *chip = iio_priv(indio_dev);
+ 
+-	if (strcmp(buf, "full")) {
++	if (strcmp(buf, "full") == 0) {
+ 		gpiod_set_value(chip->rdwr_pin, 1);
+ 		chip->mode = AD7816_FULL;
+ 	} else {
+-- 
+2.43.0
 
-> ---
->  scripts/sphinx-pre-install | 27 ++++++++++++++++++++++++---
->  1 file changed, 24 insertions(+), 3 deletions(-)
->
-> diff --git a/scripts/sphinx-pre-install b/scripts/sphinx-pre-install
-> index ad9945ccb0cf..581d694eb0fd 100755
-> --- a/scripts/sphinx-pre-install
-> +++ b/scripts/sphinx-pre-install
-> @@ -42,6 +42,7 @@ my $latest_avail_ver;
->  my $pdf = 1;
->  my $virtualenv = 1;
->  my $version_check = 0;
-> +my $interactive = 0;
->  
->  #
->  # List of required texlive packages on Fedora and OpenSuse
-> @@ -338,6 +339,21 @@ sub which($)
->  	return undef;
->  }
->  
-> +sub run_if_interactive($)
-> +{
-> +	my $command = shift;
-> +
-> +	if ($interactive) {
-> +		printf("Do you want to run the command now [Y/n]: ");
-> +		my $user_input = <STDIN>;
-> +		chomp $user_input;
-> +		if ($user_input =~ /Y|y/) {
-> +			printf("\$ $command\n");
-> +			system($command);
-> +		}
-> +	}
-> +}
-
-It seems to me that you might want to check the exit status of the
-command and stop if something does not work properly.
-
->  #
->  # Subroutines that check distro-specific hints
->  #
-> @@ -374,7 +390,9 @@ sub give_debian_hints()
->  
->  	return if (!$need && !$optional);
->  	printf("You should run:\n") if ($verbose_warn_install);
-> -	printf("\n\tsudo apt-get install $install\n");
-> +	my $command = "sudo apt-get install $install";
-> +	printf("\n\t$command\n");
-> +	run_if_interactive($command);
->  }
-
-It seems you'll print the command twice?
-
->  sub give_redhat_hints()
-> @@ -1002,12 +1020,15 @@ while (@ARGV) {
->  		$pdf = 0;
->  	} elsif ($arg eq "--version-check"){
->  		$version_check = 1;
-> +	} elsif ($arg eq "--interactive") {
-> +		$interactive = 1;
->  	} else {
-> -		print "Usage:\n\t$0 <--no-virtualenv> <--no-pdf> <--version-check>\n\n";
-> +		print "Usage:\n\t$0 <--no-virtualenv> <--no-pdf> <--version-check> <--interactive>\n\n";
->  		print "Where:\n";
->  		print "\t--no-virtualenv\t- Recommend installing Sphinx instead of using a virtualenv\n";
->  		print "\t--version-check\t- if version is compatible, don't check for missing dependencies\n";
-> -		print "\t--no-pdf\t- don't check for dependencies required to build PDF docs\n\n";
-> +		print "\t--no-pdf\t- don't check for dependencies required to build PDF docs\n";
-> +		print "\t--interactive\t- Ask to install missing dependencies\n\n";
->  		exit -1;
->  	}
->  }
-> -- 
->
-> This is not the complete patch - I'm sending this to get early feedback before I go further. If this looks good, I plan to follow up with additional patches that will:
-> 1. use the run_if_interactive on the hints for every distro
-> 2. add more quality-to-life features to make the script more useful
->
-> Any form of feedback would be helpful! If there is a reason why none of the scripts are interactable, please let me know why.
-
-Here too, please stick with the 80-column limit.
-
-When you post an RFC patch like this, it's good to put "RFC" into the
-subject line, just to help ensure that it doesn't end up being applied
-prematurely.
-
-Overall, I have no objection to the intent of the patch.  Nobody has
-asked for this, but that doesn't mean that they wouldn't have found it
-useful.  If you want to proceed, I would expect to apply the final
-result.
-
-Thanks,
-
-jon
 
