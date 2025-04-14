@@ -1,233 +1,140 @@
-Return-Path: <linux-kernel+bounces-602293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84159A87906
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:38:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8695BA87918
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:40:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D6C73AD586
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 07:37:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CE053A56DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 07:39:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F5852676C3;
-	Mon, 14 Apr 2025 07:35:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D8625A62C;
+	Mon, 14 Apr 2025 07:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LIlM0Zzl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gH4fpj3G"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17623259CAE;
-	Mon, 14 Apr 2025 07:35:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C4E265CBC;
+	Mon, 14 Apr 2025 07:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744616125; cv=none; b=PySoqG5e5rKl1GnWpmiqlDCL24ANbcvoLAvAqGc46m/IaIAk3m2JXeqVxu6Px9ppC/1OJqv4xSBwwmBUkq+efEqIZtRlqraIRaWp7LtvTxZrbnjfVO2+XjY92hoFBYEXaWfdMJ+XmZn7E88CmzyllAoqJNcWcBU0waAruYzdElI=
+	t=1744616140; cv=none; b=Xng5OphEDuX68J3J/6W+zMO3FCAev/KnhY6fhWC6+6uE0tiaa1CxM1fFUISLgUGYRUsazufhHJcsdbGkIK88wqPbg5HmWzLIdX22epBCTrZ62tHY8dHOIzUFvAT5D9leTCJX7E3SP5Uzb+M/iLkfYKGFS6n7Lo9eDiPe3NhoI+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744616125; c=relaxed/simple;
-	bh=1cIaLPHNQB/5+LqCUunNZPIQeykPELnJ9hylsosHn44=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=m5XvuJu7RwiFUKMpEx0t8LYdFtP+Z0/xKZ1h088WDS+Uvxj+jGdeJOQsH2mTUQzq5YYKkiSYAmDX7mSY4JqDDVBSZ0fOvt80iuhQN77sQZR8wfy0Hnx+IrvwisbFcJYLU+F21aWxZq6BtFh4QSTSm3p94hqOmqzJ2cDeBJKElZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LIlM0Zzl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 8D5B1C4CEF1;
-	Mon, 14 Apr 2025 07:35:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744616124;
-	bh=1cIaLPHNQB/5+LqCUunNZPIQeykPELnJ9hylsosHn44=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=LIlM0ZzlWUb0NBiWvmhg+4+SRs01SF73LVmJv37EyRcP42+GtzTnooLtAmtnTyXWN
-	 Kt/MBj9LErCEA993/S8MIBnhP3x22WANqCtWqbylbbN0Z3dkdzf3dylKSIK3u2NSPh
-	 KGc2JjxOk/OuOvv3CHwBM+l31rFaHm9F6dPESe0/8bIjZEqUJGqyTrovFHLE4GqIP1
-	 TBgre6t9DVbE1CmHqfRzjwpf10ZUGBA7FcbnL5asL+j85CocnsvVzRBWZl8UB3VDZn
-	 olpkf/kbOaSf2oJxW0bMBbEd8PrEiWV9VYkiRzMkeoc8sWTc2NfYd9VVvcqxNzTuVp
-	 Cc6F3h0rcAu5g==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 813B3C369B5;
-	Mon, 14 Apr 2025 07:35:24 +0000 (UTC)
-From: Keke Li via B4 Relay <devnull+keke.li.amlogic.com@kernel.org>
-Date: Mon, 14 Apr 2025 15:35:16 +0800
-Subject: [PATCH v8 03/10] dt-bindings: media: Add
- amlogic,c3-mipi-adapter.yaml
+	s=arc-20240116; t=1744616140; c=relaxed/simple;
+	bh=KTe3uWaWlgANscop60ILOfJGk6PaXW06xvdFjDJSwTM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DDQ3t84/JrkxeR415gNKJgfpd8+SEY07UXFaJs6VwM6nn9heJjCEr7bv/JcoYT3/PWTiGo1h0R9b2+1DBZyuQTpqUx5ulTIIw+9b9x1Ch+eqnn0vy74w5S5hcC2Q9mFMbqtt6TXYhEAWUTuZJa3/CS+qg+tbyNWQ6ic6gIgScPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gH4fpj3G; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-72d3b48d2ffso3707201b3a.2;
+        Mon, 14 Apr 2025 00:35:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744616138; x=1745220938; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aWQtHqSbTf9NzEXG3WeHgoYFaTCv1grfOd+Mceut8xA=;
+        b=gH4fpj3GJaXEszXKxhKLCVb185enWmE8XDBPp8ClUPxeY1F84Z3puXdwu7GjrqXy0e
+         yrNNRLOG5gqr9g/EAdNZ33Ss4m/5eaSkZU4LyQWTNIpPwM02Nqvki36HpmBWFpD+aT7j
+         ev/+QFRRmm72hhw5W61zf1fuSNs9JBA3grGBgOdUWzGRrIg4x0SDAzixgOt+JyOZMPS7
+         hb98zG1XMVXPlpPuclHxD/GmnioPlMkTi8//S97r3JxV3NfxherFwCHyiXKar/yo2I2x
+         wSACgfGoYAcA6CuGIg3Ub+91iIi1HjVjDWTTXrL3O/6RTffSn2EPcuI+Ri5Ic135RjQs
+         frQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744616138; x=1745220938;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aWQtHqSbTf9NzEXG3WeHgoYFaTCv1grfOd+Mceut8xA=;
+        b=JSX0NgN3Bq58DxFzZ0MHw2NDljRN0f4ejQiI6/vrZ5LsVKc5xRlFkI8YTlRO1HKSHn
+         iYR1fEE8uI5eayacvOg6JzfMyUlvA4HA8gFFtL1uv7JXwuwlGmb4cdhPuFedjNQy3Js/
+         aKF++wIeMUKTDc3ktEI+1siMb4R9eVqPAwReddqs4MVzG68ABDyonkXnQ1OUDmi7mfZM
+         DOmqYvQEgctrLsmKRfujb1mrjDcTF7Vld8C8GeHmqVhv7onIBAH6QZFOqXXoI3g/Lh88
+         5NOzmv1QXH497lrATDjW67SmOKJ1h3H9bsOL/ICT24X5rZrhAJ2nWl+fr+TPaT9/5nzl
+         s19g==
+X-Forwarded-Encrypted: i=1; AJvYcCUhb9b+0mmPB970wTLOK3DbR3Ms70xFBpBoIOOMALXMLL+s5IHnkFNS+RygXdYTx4dPzl3k3EkKUpgnOH4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywvwh1QsXlWsNU7VR/Et3rb4w2IGbLBbCz0dLILRfi/91tEGPaD
+	5xQo/TibredCDVHFUixP41tkgdjzDGO7ePf9IoC0CPiojDzpj/RSL8jGHNZizwc=
+X-Gm-Gg: ASbGncuSZrGS3q7ruVBwxT8lISkeq9DvcDMipMkOD497TxdubFjww575tv89rGv9Sd2
+	PxFLx6m73WXZb4BkD29V4+x9G6IYYRrygBezytMaVLHnKGkAFo0g/RccpueSnFtoV/A2Eui3aVM
+	AdXe8SaM5nYb7Qoptwvt63Kry7eG7pbIQjkVeONsyiOg2jwo50XuaUR/FQ/oMVLTM2E8gFynEIj
+	utI7vVLmP0tmqrSgg5HjwdKamkpoK166ATu5RgMsx4dSiszzPfI39Z8D2PpEcY8XvG9zm7Uxfc6
+	5D6GUE1tu6UubdoV4PDM33Sp6sZNMNNmmHtbSjXiW7jQckiI3OwTGLl76new
+X-Google-Smtp-Source: AGHT+IE3VhdggcNXYAgq0b6PYooX5zuI2ynpcIPLIPK5E38pSNyG5MDqPQafDO4ubU5wA1GBOa1Txw==
+X-Received: by 2002:a05:6a21:9012:b0:1f5:59e5:8ade with SMTP id adf61e73a8af0-2017996f6c8mr17350608637.29.1744616137864;
+        Mon, 14 Apr 2025 00:35:37 -0700 (PDT)
+Received: from localhost.localdomain ([2405:201:c408:a0b5:82a7:fae4:9cf0:3b75])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b0830418644sm1615915a12.39.2025.04.14.00.35.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Apr 2025 00:35:37 -0700 (PDT)
+From: Kevin Paul Reddy Janagari <kevinpaul468@gmail.com>
+To: robert.moore@intel.com,
+	rafael.j.wysocki@intel.com,
+	lenb@kernel.org
+Cc: linux-acpi@vger.kernel.org,
+	acpica-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	kevinpaul468@gmail.com
+Subject: [PATCH] acpica: Removing deprecated strncpy()
+Date: Mon, 14 Apr 2025 13:05:17 +0530
+Message-Id: <20250414073517.57745-1-kevinpaul468@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250414-c3isp-v8-3-9f89e537494e@amlogic.com>
-References: <20250414-c3isp-v8-0-9f89e537494e@amlogic.com>
-In-Reply-To: <20250414-c3isp-v8-0-9f89e537494e@amlogic.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kieran.bingham@ideasonboard.com, 
- laurent.pinchart@ideasonboard.com, dan.scally@ideasonboard.com, 
- jacopo.mondi@ideasonboard.com, Keke Li <keke.li@amlogic.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744616122; l=4007;
- i=keke.li@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=VZgmTk/2LMskTiPGwxTiC/AlIhPdjiMlAQOFd8twkZ8=;
- b=ttIR816BLzOLrvvZ8iY0XeMWGRWHQCn4jLpsWu5ddG2tljQTS1fAMoHBCYl9Eu/JxZfs9h4qQ
- Ln+yuNrfTTYCD4FFzafCUXPKB240jKnGR6oEE3Pw1yzajrG0Hqk4NOv
-X-Developer-Key: i=keke.li@amlogic.com; a=ed25519;
- pk=XxNPTsQ0YqMJLLekV456eoKV5gbSlxnViB1k1DhfRmU=
-X-Endpoint-Received: by B4 Relay for keke.li@amlogic.com/20240902 with
- auth_id=204
-X-Original-From: Keke Li <keke.li@amlogic.com>
-Reply-To: keke.li@amlogic.com
+Content-Transfer-Encoding: 8bit
 
-From: Keke Li <keke.li@amlogic.com>
+This patch suggests the replacement of strncpy with strscpy
+as per Documentation/process/deprecated.
+The strncpy() fails to guarantee NULL termination,
+The function adds zero pads which isn't really convenient for short strings
+as it may cause performance issues.
 
-c3-mipi-adapter is used to organize mipi data and
-send raw data to ISP module.
+strscpy() is a preferred replacement because
+it overcomes the limitations of strncpy mentioned above.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Keke Li <keke.li@amlogic.com>
+Compile Tested
+
+Signed-off-by: Kevin Paul Reddy Janagari <kevinpaul468@gmail.com>
 ---
- .../bindings/media/amlogic,c3-mipi-adapter.yaml    | 111 +++++++++++++++++++++
- MAINTAINERS                                        |   6 ++
- 2 files changed, 117 insertions(+)
+ drivers/acpi/acpica/exconvrt.c | 2 +-
+ drivers/acpi/acpica/tbfind.c   | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/media/amlogic,c3-mipi-adapter.yaml b/Documentation/devicetree/bindings/media/amlogic,c3-mipi-adapter.yaml
-new file mode 100644
-index 000000000000..ba43bc6709a0
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/amlogic,c3-mipi-adapter.yaml
-@@ -0,0 +1,111 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/media/amlogic,c3-mipi-adapter.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Amlogic C3 MIPI adapter receiver
-+
-+maintainers:
-+  - Keke Li <keke.li@amlogic.com>
-+
-+description:
-+  MIPI adapter is used to convert the MIPI CSI-2 data
-+  into an ISP supported data format.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - amlogic,c3-mipi-adapter
-+
-+  reg:
-+    maxItems: 3
-+
-+  reg-names:
-+    items:
-+      - const: top
-+      - const: fd
-+      - const: rd
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 2
-+
-+  clock-names:
-+    items:
-+      - const: vapb
-+      - const: isp0
-+
-+  ports:
-+    $ref: /schemas/graph.yaml#/properties/ports
-+
-+    properties:
-+      port@0:
-+        $ref: /schemas/graph.yaml#/properties/port
-+        description: input port node.
-+
-+      port@1:
-+        $ref: /schemas/graph.yaml#/properties/port
-+        description: output port node.
-+
-+    required:
-+      - port@0
-+      - port@1
-+
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - power-domains
-+  - clocks
-+  - clock-names
-+  - ports
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/amlogic,c3-peripherals-clkc.h>
-+    #include <dt-bindings/power/amlogic,c3-pwrc.h>
-+
-+    soc {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        adap: adap@ff010000 {
-+            compatible = "amlogic,c3-mipi-adapter";
-+            reg = <0x0 0xff010000 0x0 0x100>,
-+                  <0x0 0xff01b000 0x0 0x100>,
-+                  <0x0 0xff01d000 0x0 0x200>;
-+            reg-names = "top", "fd", "rd";
-+            power-domains = <&pwrc PWRC_C3_ISP_TOP_ID>;
-+            clocks = <&clkc_periphs CLKID_VAPB>,
-+                     <&clkc_periphs CLKID_ISP0>;
-+            clock-names = "vapb", "isp0";
-+            assigned-clocks = <&clkc_periphs CLKID_VAPB>,
-+                              <&clkc_periphs CLKID_ISP0>;
-+            assigned-clock-rates = <0>, <400000000>;
-+
-+            ports {
-+                #address-cells = <1>;
-+                #size-cells = <0>;
-+
-+                port@0 {
-+                    reg = <0>;
-+                    c3_adap_in: endpoint {
-+                        remote-endpoint = <&c3_mipi_csi_out>;
-+                    };
-+                };
-+
-+                port@1 {
-+                    reg = <1>;
-+                    c3_adap_out: endpoint {
-+                        remote-endpoint = <&c3_isp_in>;
-+                    };
-+                };
-+            };
-+        };
-+    };
-+...
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 311847a6d69d..239bce65db41 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1255,6 +1255,12 @@ F:	Documentation/devicetree/bindings/perf/amlogic,g12-ddr-pmu.yaml
- F:	drivers/perf/amlogic/
- F:	include/soc/amlogic/
+diff --git a/drivers/acpi/acpica/exconvrt.c b/drivers/acpi/acpica/exconvrt.c
+index bb1be42daee1..648e68a31e1f 100644
+--- a/drivers/acpi/acpica/exconvrt.c
++++ b/drivers/acpi/acpica/exconvrt.c
+@@ -226,7 +226,7 @@ acpi_ex_convert_to_buffer(union acpi_operand_object *obj_desc,
+ 		/* Copy the string to the buffer */
  
-+AMLOGIC MIPI ADAPTER DRIVER
-+M:	Keke Li <keke.li@amlogic.com>
-+L:	linux-media@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/media/amlogic,c3-mipi-adapter.yaml
-+
- AMLOGIC MIPI CSI2 DRIVER
- M:	Keke Li <keke.li@amlogic.com>
- L:	linux-media@vger.kernel.org
-
+ 		new_buf = return_desc->buffer.pointer;
+-		strncpy((char *)new_buf, (char *)obj_desc->string.pointer,
++		strscpy((char *)new_buf, (char *)obj_desc->string.pointer,
+ 			obj_desc->string.length);
+ 		break;
+ 
+diff --git a/drivers/acpi/acpica/tbfind.c b/drivers/acpi/acpica/tbfind.c
+index 1c1b2e284bd9..5536d1755188 100644
+--- a/drivers/acpi/acpica/tbfind.c
++++ b/drivers/acpi/acpica/tbfind.c
+@@ -57,8 +57,8 @@ acpi_tb_find_table(char *signature,
+ 
+ 	memset(&header, 0, sizeof(struct acpi_table_header));
+ 	ACPI_COPY_NAMESEG(header.signature, signature);
+-	strncpy(header.oem_id, oem_id, ACPI_OEM_ID_SIZE);
+-	strncpy(header.oem_table_id, oem_table_id, ACPI_OEM_TABLE_ID_SIZE);
++	strscpy(header.oem_id, oem_id, ACPI_OEM_ID_SIZE);
++	strscpy(header.oem_table_id, oem_table_id, ACPI_OEM_TABLE_ID_SIZE);
+ 
+ 	/* Search for the table */
+ 
 -- 
-2.49.0
-
+2.39.5
 
 
