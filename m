@@ -1,202 +1,176 @@
-Return-Path: <linux-kernel+bounces-603408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F0C2A8873E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:33:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BBF7A88755
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:35:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3AB0189F775
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:26:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBB4519014D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:26:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68AE72750E6;
-	Mon, 14 Apr 2025 15:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC8B827467D;
+	Mon, 14 Apr 2025 15:26:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mKR+RszO"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2049.outbound.protection.outlook.com [40.107.100.49])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VuQmmMGG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE9B2DFA3B;
-	Mon, 14 Apr 2025 15:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744644346; cv=fail; b=cAju+hu3rjNMbZPp54l7yXrAceymAl7s0H5Nz3sZIKtNhV20khiFqeKnoYo/GPyKxDcHHkExP024CHUM2kX+fWaFHm9MMVW1APSc736c2JsOOVVQ2OuJuA/H2I5o2lgtJ4AfsB9qDu1E6TylVfO7azhkPVQo2etTMouUqQVp4LA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744644346; c=relaxed/simple;
-	bh=MZ2Lu3sVZ3RBeGRlYvrnKwR3Ow8Y3MSvQYMAoJCIWaQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Vj5V4WjpjMWCtZtp9SkXcbIcIqO8WzjYAbFBK34KtHjpjLmmT8I1Yaxg5nwK1JE633snfjag/pCPgFdl0a0UzE9MMicdguVpg3RLMYkpNwQ+ULB+LEAVl+vn2wTXYIRo7ifCR6cKcdsQOGm5zS7QyL/yxTz4iPXjvgU3SkkD9tI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mKR+RszO; arc=fail smtp.client-ip=40.107.100.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yMA4rLmZ0sFtKr24P+WkRY5EybDYAZSpEcnfxneyf4YXOqN0m+VSvzChBu6BLBIQOrykeHp6L5TdpSNFK2UJu6JUIeouOj29oevdEP70vXg+ecSno5QPurwVC+D3ogwYyq4sild7+pUwe+QOTyFb4dQ7go6Md71W+uvKF6hmoscx3K4O3Xn1sV3ytamK1gBfyQN/xEqRqsPiDMUZ+TYnR8hXFAuI/14mdspacKS9A0M2KbUJlZZGca5V5qdntFwaBk4YA3KkS972q0AC2HmNX9UxJ+c81OUxWlCTPD3E6T24RiOX09YGrgfrr40LO/Wst3oSulRy96thBM4Adh+11A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MZ2Lu3sVZ3RBeGRlYvrnKwR3Ow8Y3MSvQYMAoJCIWaQ=;
- b=Ab7z0wRrRP8brxbZQy4kWlfuJUxEdOAhhTjT+OWXoYzkgYnsU/tcHcLfhQrqbkYkm0vXmglkPDxPWIn5mLT0geqE9FZCPVYMAaAzT0a16Y/FRJiSdLM2Th72wRZKR9jYGKwDLK5D6w8yTSNl112cD9GdWtHl3pTZvMZ9SAfm9ZV/3uUotS+W8zOpoKBWp3WS42KeffdkelNx5J6uGDf2siLUIw5PVlQiG4QZU0da8lAQCi87R1LP5s82Kw8QV+2n1kC91V08nofnVWDXyZTfJaKBFC3qOj+ER0sgXVwyr5ftQ7plAr2F/8gZutkxQH0htWi/KDqulQTXDtdQE23yYw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MZ2Lu3sVZ3RBeGRlYvrnKwR3Ow8Y3MSvQYMAoJCIWaQ=;
- b=mKR+RszO9j91HsAWgIK0dB7hx4xVitwHIkS7qejr5+9kNCBfOSytwaHl3fN8YwIKfZD1JCG+6CvWbh0sOxjGkyTVhwrtdObOOTya6hemH+glGNgMTY+a/GOlONQUgTIfO7iVSa/Bqyufa+7rwJJmuDpQ8XVrPbdYmeI5WQTDGiVobRUQ7Pruq2WU7jBrOD4S0/g94Y5+s4MG4Cp0HETMSzNPowGtKEAcRC8tHITEQ49ywAOtA2In0EKW70EyH0jlqyHnpshS/4/3cXazMd2yGbxGOXeXcxVXXkugEeM5Elz7TJJ5HnANSW+toOFcxZRLyD2eJqQuN8bdhdeHokNpgQ==
-Received: from MW6PR12MB8897.namprd12.prod.outlook.com (2603:10b6:303:24a::19)
- by LV8PR12MB9450.namprd12.prod.outlook.com (2603:10b6:408:202::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.33; Mon, 14 Apr
- 2025 15:25:41 +0000
-Received: from MW6PR12MB8897.namprd12.prod.outlook.com
- ([fe80::7c55:5a45:be80:e971]) by MW6PR12MB8897.namprd12.prod.outlook.com
- ([fe80::7c55:5a45:be80:e971%4]) with mapi id 15.20.8632.025; Mon, 14 Apr 2025
- 15:25:40 +0000
-From: Matt Ochs <mochs@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-CC: Jason Gunthorpe <jgg@nvidia.com>, Kevin Tian <kevin.tian@intel.com>,
-	"corbet@lwn.net" <corbet@lwn.net>, Will Deacon <will@kernel.org>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>, "joro@8bytes.org"
-	<joro@8bytes.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-	Krishna Reddy <vdumpa@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>,
-	"shuah@kernel.org" <shuah@kernel.org>, "praan@google.com" <praan@google.com>,
-	"nathan@kernel.org" <nathan@kernel.org>, "peterz@infradead.org"
-	<peterz@infradead.org>, "yi.l.liu@intel.com" <yi.l.liu@intel.com>,
-	"jsnitsel@redhat.com" <jsnitsel@redhat.com>, "mshavit@google.com"
-	<mshavit@google.com>, "zhangzekun11@huawei.com" <zhangzekun11@huawei.com>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org"
-	<linux-tegra@vger.kernel.org>, "linux-kselftest@vger.kernel.org"
-	<linux-kselftest@vger.kernel.org>, "patches@lists.linux.dev"
-	<patches@lists.linux.dev>
-Subject: Re: [PATCH v1 03/16] iommu: Add iommu_copy_struct_to_user helper
-Thread-Topic: [PATCH v1 03/16] iommu: Add iommu_copy_struct_to_user helper
-Thread-Index: AQHbqqxycY3zsiQC70qs19S+0CsyIbOjTY+A
-Date: Mon, 14 Apr 2025 15:25:40 +0000
-Message-ID: <86881827-8E2D-461C-BDA3-FA8FD14C343C@nvidia.com>
-References: <cover.1744353300.git.nicolinc@nvidia.com>
- <65b51f57d08069c9da909586faf4e73d247a54f5.1744353300.git.nicolinc@nvidia.com>
-In-Reply-To:
- <65b51f57d08069c9da909586faf4e73d247a54f5.1744353300.git.nicolinc@nvidia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MW6PR12MB8897:EE_|LV8PR12MB9450:EE_
-x-ms-office365-filtering-correlation-id: ae5d3336-aa03-4cdc-ad0c-08dd7b689d63
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|376014|7416014|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?bFRsY3JaUXpidVlTZ0ZxQmFSY1pFTnRnUUlQc2NpMHpOSjc4TGpZWXMxWjdY?=
- =?utf-8?B?YkpKcGZCQ3BJWGJPRnlUZ2d5b2FHbUYxdmpodC9PRyt1aGRoMkg2cTJZOER5?=
- =?utf-8?B?TE5ORi9XelVpUjY4TGhseUxROXdMbzhES1k4Y0c1NnIrUUlhZXFzWXB1N2dS?=
- =?utf-8?B?Z2tRaWwrN2t2YnprTmN4ZkFocS83aHMyYzU0eW1PQnNOcjZTRGhBYnBxNjBE?=
- =?utf-8?B?YWVRRGJIVjBLdFNNNWRhVG5rNlRqOGUyNWo4Q2plQWNxaDdWL24yN3JFLzNS?=
- =?utf-8?B?Tk41dlhTeEU4bk5lK0RrSkQ3Z1I0MklORWhPQVBTeFZJSjhESzhuNk93bEUx?=
- =?utf-8?B?WERXZWFsUTZ0UFpNV0loNzF3dDBaalB4cS9ybkZTdjRjT2sram9RaDdjREZi?=
- =?utf-8?B?dnZxOU9BWjhlemhJTzh5VHVtQTRqSzNObDBzV1ExbFhFTFFRcGpXL1pYUWM3?=
- =?utf-8?B?SFhyckhMWWxVc3dGQ0oyWlFjNjJndlBycVVvb2ZzV2RXMUp6dFVxRGlwY0RG?=
- =?utf-8?B?RVlTNDU2OEpKajV3ZUU0Qm1Dc2VQcHRDeUsxUDc5cmdDRjNpKzhHa1lPbjJN?=
- =?utf-8?B?M1hjYlJpQjIvcU9Rd3YvUCtqUks1ejJ0eXRGR1QwL0srejNRZHFUcjNCK1Zw?=
- =?utf-8?B?d3R2dWM1cmdFYndub0VuNDA3U3BiVFBuODYrZ3Z0ZVNOYXlhUG1GZWVMOTlL?=
- =?utf-8?B?WWlSMHVNWXp2SjFFc0VOcWx6TmJ2c0N4azhveUhMcmpxWmhHd3dFUittQm1w?=
- =?utf-8?B?djhsWVkxZlo4OFBDK09UMWNGWVdBVVB5cktXek90clZoTG5Vd3JGd1pGRnBY?=
- =?utf-8?B?cWJDZUNwLzRKMi9zM1IxRDVMSHJQZzBvM3BOSGY1cHlnS20xRlpIemdGWjBD?=
- =?utf-8?B?SG53Zmw4V3k1dExPR3l0aVpmWW1HMXByU3pSUng5N2NFZEt3WUpIMEtSc2Y1?=
- =?utf-8?B?L2NEWVpjZC9oWWplNGJwN29BZzJBaWV4cVUyY3hnY1RicDVwTTBqMGVoMVcy?=
- =?utf-8?B?STRVeGhZR05XZW12YUc3dWEzK2RmMWM1UVlGaVFwTlNaRFVqRThVdkZFcDZY?=
- =?utf-8?B?cGp3b2U4eUNaRjB4UFhVeUxDcFFmaVZzZFUyTTZnSzVvcUY2bzh4bE01NWI3?=
- =?utf-8?B?NmRUa2M2Zytrb1NKRzhtK0xybUl6N0VNTDB4eGZtTTB4UW1ZZ1ZnN3hQT0hX?=
- =?utf-8?B?MW9jSlJ3dFZjbTNtcUxyYWVEREFvYmExbEprbW5PRUdod2hzanprSzkwNlZo?=
- =?utf-8?B?NUg4QmViVFdUM3FrTGdaeVJZemVpcFVZVXM5b045dWlYZEVWNUp6WEd4eWFS?=
- =?utf-8?B?UFZWNTdXdkZqUHFGaTFoZHRxQ0Q0V2w1NmRyM0Vxc2JxNlZiNExja2d6Z2Fs?=
- =?utf-8?B?azF3M0xPc3NYTmJBaGZWR2Q0aG41ajMzYXZwalNyNEUwUUNwRXlRNHJrNkEv?=
- =?utf-8?B?Sjk4ZzJZRnhJbmVhTldWNktNSG9rY2xnSWJQMzdpbzlvS28xK0IwdWtxazNw?=
- =?utf-8?B?aE14cXdxNFBWMEVReER3ZHhxV3F5TCtETFNVbVJGRWRrZUtudTdmeFBLVDdH?=
- =?utf-8?B?UHRBRFp4ZEFVWC9oV20raWRoUFhWcWJKRUx4NWIzcnVBazJJYUhCK1g4ajBI?=
- =?utf-8?B?YUMwYXJJZUY1V0FWb0ttKzRJUXVvK2dFcGNaankzVmYzZG0zSXBKdnJZNGlB?=
- =?utf-8?B?WFdiSFBvRjlrQzVxazVoemRUa1JuNm1SRkdWT29vVllZQ3FUY0xLY0RDRWRQ?=
- =?utf-8?B?Q3ZFNjNVeFhocElGR0VLb3hYNTU1Szg1TFA4ZFBzcE92bzR4U1dPc0JOVDlH?=
- =?utf-8?B?b2tqU1o1SVZrZDN6VDV4OFdtRE5BOGRCS2E1WDh6MEIranlzbFNaRVlWdmwz?=
- =?utf-8?B?VG1vYjBEUHZhcFZSMFdQTFU2bEloS2ZYM2tYV2JNZ2NpL0RQYXNjWmp0dVhG?=
- =?utf-8?B?ek1YR3RNcUhzK2NxTm4zd3ZuSTNySCt3VDRsQ1NibzA2ZXBKdlk2eHBlQlJM?=
- =?utf-8?B?bmQ3cERTZ29nPT0=?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW6PR12MB8897.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?RjdZVFJYeDJEU1B0eGJnWDd1V3ZLbnhWR0hlM0FtWEVVcEI2emU5SlAvWExj?=
- =?utf-8?B?UGY4MVlYNjFiWHg1R0hxRFVvaUgxVTVqcmFBYXhNWnR6VUpGbTNFdVRadHA1?=
- =?utf-8?B?V2NTczIzZjBiYm9hNlM4QUtFNDBEMy9temJyR0tXdEZkbDVuRC9LSnNORmg5?=
- =?utf-8?B?Q2g4cmdNY1ZYUXRqNFh4Y1FIcDhVYk5PM1lsaUhxYXRVOEFXWE1hNG00cTRt?=
- =?utf-8?B?OTNzL3JEM2E2dTd3Rm56Z3JQRlI5cEhUUlFxYWFBS1RRVjZHTWZETEUwcHlS?=
- =?utf-8?B?NFY3R1hieTl2T3k2UzdFODZIZlZPK3VFb2pFdFlBemI5NDBQR3BJRm5mQmxw?=
- =?utf-8?B?ODJHU1lLb2dhb2plWVlhQkc4WXVtbFdwSUt3ZlV1Nm9OZTRGL3NoZkdFaFhj?=
- =?utf-8?B?MDFzL0xPVUJOSmtjOGV0ZlFWeFlFeUp3dUs3NTJBWnJEajhONXdXZHlHc0Vt?=
- =?utf-8?B?bFc1VWtOZ01jQlhmZndUMisrOTl0bERoclpBS0ZNOEp4NGFYbHdaU2hvNE1l?=
- =?utf-8?B?bEdTaEtCNVh5bFV2U1FoLzB6QnJ3SVFUM05ZZ1U1bHBtenBkd2NvdjR6ckt2?=
- =?utf-8?B?Uy9nS3A3Mm5nb0RyTGtYRWp0cDFyd2I2NVRsM1lMSVIxV0RseHNQNXVlaTVu?=
- =?utf-8?B?Zk1DVmYvd0p2VWxOekdGSVFKejBBN0NhNmtkUGk3TGVOTGVTMDJjZTBob0lP?=
- =?utf-8?B?KzEvYWprRHhTMDFHK2NHeDdqTTU0dDBJQUswS3pJbmo3REsxS2x5RkY4c3ow?=
- =?utf-8?B?RjVFK0VKUXkrcmJKNk1qNVpUMnRTKytqZTBNdzA1MmNwZlFjZ2picWw2RGRB?=
- =?utf-8?B?ZFd3U3FKWmFzc0lScy9XQzhQRXBoWXdUMy9EN0RLaVRnb25PY2tXSXlZNVlX?=
- =?utf-8?B?M0ZEYytEeXQ5NDVRSHZjT0w4cTd2bmxWNXluQW15ODltTmQzdGRES25Fc1hm?=
- =?utf-8?B?NXpVbWRyVjJCYkpXZzlyMU1NVHZqOC80b0E0Yzc0dnlmMEdrUFJNM09RQ1pJ?=
- =?utf-8?B?LytsNTBkWUNBK2xFU0VicjBJdUdzNGQyUlZxQUFxSGhOQStsbHI0WUVMM3pM?=
- =?utf-8?B?RjlUNVhrd3hiNHBBMndBYVRjNHdCNFBDVG5iWFhVVVNDcjJUdGpPTjNnVVh2?=
- =?utf-8?B?N2RDQW9RTE5aREJWWG45V2FMRXJ2clRqd2RCbjFFdzBBa0tkQ3NXVlhaa2VL?=
- =?utf-8?B?dUhMemphaGViaEFsV2pGbUhVSVBMS2NodFRuN1VHZzFuQjRvMUdBT1VKVU96?=
- =?utf-8?B?RU1BMGFUWUk2NUJlZzlXRnU4ZmF6Q2czaVlybXFUZTlGTDBtWE01aEtMMGJk?=
- =?utf-8?B?QmxKcnRvaWs4c0FSMXZmbTNtSTdBbHBJR3V5U1VqS0JibGt4K3JLZ2xQNTdZ?=
- =?utf-8?B?cTVCSHNKSnNDak14cU1FT1JucWdQUU5hMUhOekVFRXE2SUNCTTEzc1dWY0Zx?=
- =?utf-8?B?N1JMZjNkb1JYV0d4UzY4RldPZjNHRVA4Yks0ejN6N1dKR2NkcGcxci9maUJT?=
- =?utf-8?B?SE9KaFJKRFpmMjJWRXlxSlpmK3FqdmtBNzJLVm9mTStSQ3dGQWJYQzR5NWFq?=
- =?utf-8?B?VFZVME5FQWdqVFpIYTBZTHlPOUVoaG1BQjk3YmNXM0lPR3FjN0tRV0hQQ2F2?=
- =?utf-8?B?Uy8xZ2l3QUhHQjk1dUNPL1BMempWVTI4UVVCYlJlL0ZRQlAwbUFxazhheGpJ?=
- =?utf-8?B?Sk9iZDlJWEo0QUs1T3RBZkptV0VFWmlrOFRPa3dWU3hQZ3RtejIvSjFkQVJk?=
- =?utf-8?B?TDhWVmN5ZDJIem44UXVNYlF5aGZRWGtYT3owMlAyTDZzOGxEYkk1TmNUb3hS?=
- =?utf-8?B?RVJzbEIvL2plY1lnbEp4MUU0TzE0VzM4SUwvSlVzdThDOEtHM0hndU5peUZQ?=
- =?utf-8?B?ZjZUc3o0cjZXcVRVMXhJK25hb0FaY3VYa0VvNWwvdlpKT2lyUDdONnBnTlZG?=
- =?utf-8?B?RnlFMlRHbnVjVjUvM1M1eTh2M2VtdnF3WDV6SW1icFhZSFhjSzhvZm1wSHN1?=
- =?utf-8?B?OUtvTGtFbVY1Z3RJbUhOSkVkR3Q2NHIzNVQwS0dNdGd4QUd0b1V3dzB6MkNY?=
- =?utf-8?B?R1lzQ2NpR2ZXUGdETW5oNnhibnpNZGl5dlo3WExFcmlmREQ5SXBIb2FFOFpr?=
- =?utf-8?Q?wHHEts+dUWop6r+9QOJqZNLX3?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <0B96BC78D1A4DA4CBB02157AA0AEB438@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF482741CB;
+	Mon, 14 Apr 2025 15:26:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744644382; cv=none; b=DB2qvZxkUOiVo3tzzTtsZSlNvBy55mzY9mdGJtQ6vqHOumqSbeLjBoq33PO9RxQv76cK0DH0gtUBOlzbq3SYcnFyQjdfJAbPaMWW8hoY8JQugMoH+k/SWqxH4rjtvEfeiJOAdQ3htSAPDB5+DZopUEORc3EPFqiWac8oPeE5XlI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744644382; c=relaxed/simple;
+	bh=lOWJwifRCn7NKQa2BRVeLtf2r9i5Lev8/V1R6B783wY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=p3rnMAWcutIQoIKigqpE9W9RLdZW1P7TaKQHNfSkuoku1XBKyL2GexnHhIJsrKTFWRrbeYh9Lku88N+Ctn9Re+PjuWpxm3en2cN8Hw08Qiy6fWO8ShBoqLaY8NtPPHXzgiEcVL0Cbn3Y6ACLtfMnaaj047snzOoQpnUWzWDkpQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VuQmmMGG; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744644380; x=1776180380;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=lOWJwifRCn7NKQa2BRVeLtf2r9i5Lev8/V1R6B783wY=;
+  b=VuQmmMGGYcA0AR0Zu1AofrvLygBQbYTfPU14yAlFYnLir5XD2t8CZw9O
+   Kr8XCj04pt4qIhUpNckVTMnxLttwSOl16p5hxTtTo/la9aYUQyBy9YFA+
+   qzRo0R5l3XAEP+V1TsU3z3E2ySOqRb93BT9KgmAZgR7kUgVZLmz0XCIp+
+   f+nlnEJAqEAkabLLbbizX4LHCl9oQZmnSumC/Ltm6F6BaXbrxV2edxunr
+   aaR51UFzMTKkETwI2gG33ni3VXCImpfT3qE4yGKEqLC6zwr8GB5Fg1Ddt
+   EwxW0KYndwxqHsJ72GZZA8jvfTP+/Id3UDBP/tBq11XOYPhti5oJLyPH7
+   Q==;
+X-CSE-ConnectionGUID: 0tqnblYxSsqR4AcsHA/FuA==
+X-CSE-MsgGUID: snPiZKCzTbKZeQwcA4ixmw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11403"; a="45830490"
+X-IronPort-AV: E=Sophos;i="6.15,212,1739865600"; 
+   d="scan'208";a="45830490"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 08:26:19 -0700
+X-CSE-ConnectionGUID: h4k/5wCISr2kwajSYhgS5g==
+X-CSE-MsgGUID: T+yrJBNiTtKgFaQfG3a8wA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,212,1739865600"; 
+   d="scan'208";a="160850503"
+Received: from spandruv-desk1.amr.corp.intel.com ([10.125.109.3])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 08:26:18 -0700
+Message-ID: <5dd2e5c6abb39dfafee91247cd8473ec643280ac.camel@linux.intel.com>
+Subject: Re: [PATCH] cpufreq: intel_pstate: Use raw_smp_processor_id() in
+ hwp_get_cpu_scaling()
+From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Xi Ruoyao <xry111@xry111.site>, "Rafael J. Wysocki" <rafael@kernel.org>,
+  Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Dave Hansen
+ <dave.hansen@linux.intel.com>,  linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>
+Date: Mon, 14 Apr 2025 08:26:18 -0700
+In-Reply-To: <12659608.O9o76ZdvQC@rjwysocki.net>
+References: <20250412103434.5321-1-xry111@xry111.site>
+	 <b7b0b3f98f8fad9cc9559e1c4ce832387c520d7a.camel@linux.intel.com>
+	 <12659608.O9o76ZdvQC@rjwysocki.net>
+Autocrypt: addr=srinivas.pandruvada@linux.intel.com; prefer-encrypt=mutual;
+ keydata=mQGNBGYHNAsBDAC7tv5u9cIsSDvdgBBEDG0/a/nTaC1GXOx5MFNEDL0LWia2p8Asl7igx
+ YrB68fyfPNLSIgtCmps0EbRUkPtoN5/HTbAEZeJUTL8Xdoe6sTywf8/6/DMheEUzprE4Qyjt0HheW
+ y1JGvdOA0f1lkxCnPXeiiDY4FUqQHr3U6X4FPqfrfGlrMmGvntpKzOTutlQl8eSAprtgZ+zm0Jiwq
+ NSiSBOt2SlbkGu9bBYx7mTsrGv+x7x4Ca6/BO9o5dIvwJOcfK/cXC/yxEkr1ajbIUYZFEzQyZQXrT
+ GUGn8j3/cXQgVvMYxrh3pGCq9Q0Q6PAwQYhm97ipXa86GcTpP5B2ip9xclPtDW99sihiL8euTWRfS
+ TUsEI+1YzCyz5DU32w3WiXr3ITicaMV090tMg9phIZsjfFbnR8hY03n0kRNWWFXi/ch2MsZCCqXIB
+ oY/SruNH9Y6mnFKW8HSH762C7On8GXBYJzH6giLGeSsbvis2ZmV/r+LmswwZ6ACcOKLlvvIukAEQE
+ AAbQ5U3Jpbml2YXMgUGFuZHJ1dmFkYSA8c3Jpbml2YXMucGFuZHJ1dmFkYUBsaW51eC5pbnRlbC5j
+ b20+iQHRBBMBCAA7FiEEdki2SeUi0wlk2xcjOqtdDMJyisMFAmYHNAsCGwMFCwkIBwICIgIGFQoJC
+ AsCBBYCAwECHgcCF4AACgkQOqtdDMJyisMobAv+LLYUSKNuWhRN3wS7WocRPCi3tWeBml+qivCwyv
+ oZbmE2LcxYFnkcj6YNoS4N1CHJCr7vwefWTzoKTTDYqz3Ma0D0SbR1p/dH0nDgN34y41HpIHf0tx0
+ UxGMgOWJAInq3A7/mNkoLQQ3D5siG39X3bh9Ecg0LhMpYwP/AYsd8X1ypCWgo8SE0J/6XX/HXop2a
+ ivimve15VklMhyuu2dNWDIyF2cWz6urHV4jmxT/wUGBdq5j87vrJhLXeosueRjGJb8/xzl34iYv08
+ wOB0fP+Ox5m0t9N5yZCbcaQug3hSlgp9hittYRgIK4GwZtNO11bOzeCEMk+xFYUoa5V8JWK9/vxrx
+ NZEn58vMJ/nxoJzkb++iV7KBtsqErbs5iDwFln/TRJAQDYrtHJKLLFB9BGUDuaBOmFummR70Rbo55
+ J9fvUHc2O70qteKOt5A0zv7G8uUdIaaUHrT+VOS7o+MrbPQcSk+bl81L2R7TfWViCmKQ60sD3M90Y
+ oOfCQxricddC
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MW6PR12MB8897.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ae5d3336-aa03-4cdc-ad0c-08dd7b689d63
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Apr 2025 15:25:40.3576
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: nYejHqIuvgbha7orDV8orosavfpaaLZ3n4dP5Xov8LPcTBtfGI2kV22AhppQWdqekBaxQ/OwF4X4I7YDHScVEQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9450
 
-PiBPbiBBcHIgMTEsIDIwMjUsIGF0IDE6MzfigK9BTSwgTmljb2xpbiBDaGVuIDxuaWNvbGluY0Bu
-dmlkaWEuY29tPiB3cm90ZToNCj4gK19faW9tbXVfY29weV9zdHJ1Y3RfdG9fdXNlcihjb25zdCBz
-dHJ1Y3QgaW9tbXVfdXNlcl9kYXRhICpkc3RfZGF0YSwNCj4gKyAgICB2b2lkICpzcmNfZGF0YSwg
-dW5zaWduZWQgaW50IGRhdGFfdHlwZSwNCj4gKyAgICBzaXplX3QgZGF0YV9sZW4sIHNpemVfdCBt
-aW5fbGVuKQ0KPiArew0KPiArIGlmIChkc3RfZGF0YS0+dHlwZSAhPSBkYXRhX3R5cGUpDQo+ICsg
-cmV0dXJuIC1FSU5WQUw7DQo+ICsgaWYgKFdBUk5fT04oIWRzdF9kYXRhIHx8ICFzcmNfZGF0YSkp
-DQo+ICsgcmV0dXJuIC1FSU5WQUw7DQoNClRoZSBOVUxMIHBvaW50ZXIgY2hlY2sgc2hvdWxkIGJl
-IGZpcnN0Lg0KDQoNCi1tYXR0DQoNCg==
+On Mon, 2025-04-14 at 17:19 +0200, Rafael J. Wysocki wrote:
+> On Sunday, April 13, 2025 4:44:56 PM CEST srinivas pandruvada wrote:
+> > On Sat, 2025-04-12 at 18:34 +0800, Xi Ruoyao wrote:
+> > > Use raw_smp_processor_id() instead of plain smp_processor_id() in
+> > > hwp_get_cpu_scaling(), otherwise we get some errors on a Lenovo
+> > > Thinkpad
+> > > T14P Gen 2:
+> > >=20
+> > > =C2=A0=C2=A0=C2=A0 BUG: using smp_processor_id() in preemptible [0000=
+0000] code:
+> > > swapper/0/1
+> > > =C2=A0=C2=A0=C2=A0 caller is hwp_get_cpu_scaling+0x7f/0xc0
+> > >=20
+> > > Fixes: b52aaeeadfac ("cpufreq: intel_pstate: Avoid SMP calls to
+> > > get
+> > > cpu-type")
+> > > Signed-off-by: Xi Ruoyao <xry111@xry111.site>
+> >=20
+> > Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+>=20
+> It's still broken after this patch though because the function should
+> use the cpu_data() of the target CPU and not of the CPU running the
+> code.
+
+That is correct. The below patch should work.
+
+Thanks,
+Srinivas
+
+>=20
+> The patch below should fix it.
+>=20
+> =3D=3D=3D
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Subject: [PATCH v1] cpufreq: intel_pstate: Fix hwp_get_cpu_scaling()
+>=20
+> Commit b52aaeeadfac ("cpufreq: intel_pstate: Avoid SMP calls to get
+> cpu-type") introduced two issues into hwp_get_cpu_scaling().=C2=A0 First,
+> it made that function use the CPU type of the CPU running the code
+> even though the target CPU is passed as the argument to it and
+> second,
+> it used smp_processor_id() for that even though hwp_get_cpu_scaling()
+> runs in preemptible context.
+>=20
+> Fix both of these problems by simply passing "cpu" to cpu_data().
+>=20
+> Fixes: b52aaeeadfac ("cpufreq: intel_pstate: Avoid SMP calls to get
+> cpu-type")
+> Link:
+> https://lore.kernel.org/linux-pm/20250412103434.5321-1-xry111@xry111.site=
+/
+> Reported-by: Xi Ruoyao <xry111@xry111.site>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+> =C2=A0drivers/cpufreq/intel_pstate.c |=C2=A0=C2=A0=C2=A0 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> --- a/drivers/cpufreq/intel_pstate.c
+> +++ b/drivers/cpufreq/intel_pstate.c
+> @@ -2336,7 +2336,7 @@
+> =C2=A0static int hwp_get_cpu_scaling(int cpu)
+> =C2=A0{
+> =C2=A0	if (hybrid_scaling_factor) {
+> -		struct cpuinfo_x86 *c =3D
+> &cpu_data(smp_processor_id());
+> +		struct cpuinfo_x86 *c =3D &cpu_data(cpu);
+> =C2=A0		u8 cpu_type =3D c->topo.intel_type;
+> =C2=A0
+> =C2=A0		/*
+>=20
+>=20
+>=20
+>=20
+
 
