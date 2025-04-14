@@ -1,85 +1,122 @@
-Return-Path: <linux-kernel+bounces-603764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97A39A88BF0
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 21:07:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B548A88BE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 21:04:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2681F3B58CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 19:07:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66CBF189AF30
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 19:04:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449B328BA8A;
-	Mon, 14 Apr 2025 19:07:22 +0000 (UTC)
-Received: from sdore.me (unknown [95.165.1.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35CCD28DEF0;
+	Mon, 14 Apr 2025 19:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KMAGrRZi"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47BF72741C6
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 19:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.165.1.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25AE28BAB7;
+	Mon, 14 Apr 2025 19:03:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744657641; cv=none; b=NDTVtkOpFneJ/zqOsZ4z24a+3bEWHJN8fxhTg+BV7ajr5VY9xBeAKRHW6yxmJUNmSn2y0F1WDHjT1d1loSo1GHWJMgr2dlHWgEnzXQAFxBhTqzfBFUIqV9dD4S/hjMxUw3t2lUksmIXLFikLrrtF0tmmNA0Jbf4TM71TXHZrGw8=
+	t=1744657429; cv=none; b=PGhZ2WbDxxnbESUZMnaX8pRbRd+WBRMmI/BNe9/UngkUHkWGes4Rlcqem0Avm2TUEjyvZKYHTL1RGDN/8CU4pyCVqOjXHP3Iw3AM6P+TzOPvtJHHLW1xVXz6yJk5YydDoZGWcbSubxEnZCbeCDvSDo4xbrqJYd5uZZtytrO77HY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744657641; c=relaxed/simple;
-	bh=S3b8ZSnJWbfd0kprCjRmIc2v1sWqChPzcg68PvhPvnY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=O9GkiQQ50tFb0ZiA9LIWfo5C44Yl6s0UaS2ZN+diLGyEQRHJ51qHSFPElyTkXkoY9Dm9bf4H2l4QgSF9+vwy9IKpIhfFeASu1AXf+9T51UKpaYYj5tV2AnsyMswpaAhqY28juxxFRJbyl2BQUc6Im+ENoq+P4IxxpuY69974lHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sdore.me; spf=pass smtp.mailfrom=sdore.me; arc=none smtp.client-ip=95.165.1.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sdore.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sdore.me
-Received: from [192.168.1.2] (Beast.lan [192.168.1.2])
-	by sdore.me (Postfix) with ESMTPSA id 51230F923E00D;
-	Mon, 14 Apr 2025 22:00:01 +0300 (MSK)
-Message-ID: <7e2cb3cdcee84975a439980cb94d93eac14bae11.camel@sdore.me>
-Subject: Re: =?UTF-8?Q?=E2=9C=97?= i915.CI.BAT: failure for series starting
- with [v3,1/2] drm/edid: Implement DisplayID Type IX & X timing blocks
- parsing
-From: Egor Vorontsov <sdoregor@sdore.me>
-Reply-To: sdoregor@sdore.me
-To: intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, Maarten Lankhorst	
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
- Thomas Zimmermann <tzimmermann@suse.de>, Jani Nikula
- <jani.nikula@linux.intel.com>, Egor Vorontsov <sdoregor@sdore.me>
-Date: Mon, 14 Apr 2025 22:00:01 +0300
-In-Reply-To: <173955656648.2118687.12350276607296168996@b555e5b46a47>
-References: <20250214110643.506740-1-sdoregor@sdore.me>
-	 <173955656648.2118687.12350276607296168996@b555e5b46a47>
-Autocrypt: addr=sdoregor@sdore.me; prefer-encrypt=mutual;
- keydata=mQINBGDSFnMBEADfvtLiuRL6CHdMzETKrux7sNHWG+eJ2+pgRZ3Nc9pH/YWqjoed8OpFx
- OLeUxr9YSQ3uMD//JEe3+Sgte29Z3PAAHVkCwKBIucCnhHpXbcQZgC9xYMCd6GWR5+DpXN9szOIyb
- kvnEtuqTddz6Q7fYsaFDs0pH3jUUWmSAyCn2JCIRfT22XgO44B/yoqnM3JXHAayeHbEAQOzMe81q3
- deauI9W7SC9ScRT6VkgLuc+SxqH99el/OkiKTe/QpO6I6cVS8leesqnOGffkRPos/o2eRonqgDu0e
- Mw4YTu0x5iNr8Lbr4TefU2W1l6M3MNwOsLmI+58+3fK1vh0QqZ70NC4eyD9UEXk3mJyV7epfNU6fY
- 0mFJbAhGV1TXomcy2MlOD1rDixw85zdK5uUwp0tfEkpxqKtihJmrTdApOTTVed303CLzgDsMokTIe
- aUOPqVZoWFDkvOzq6IppBkApJHBf1lcLlgwEn3cLQlGpYRSSi5NY3+UYtcOEZLDbF3TO6ncY8W2h3
- yQH/sAcSllfKKvkhdqEz4/Mha3GbZQXWgjrLy9BcISsQFj+DBN54I6a6kLm2n5wXH99sOp7s3jMeN
- zSU6PtuxZq4Gkt2K5JGT8yrIdfJfOH7yRUVm+8JqKNKqd6oczlDKV+lzRk9M/kjb8VQivaNSNwTo9
- 3NxEuft0+tZgwARAQABtCJFZ29yIFZvcm9udHNvdiA8c2RvcmVnb3JAc2RvcmUubWU+iQJOBBMBCA
- A4FiEEXlTCjXwaPBiJP3U33a9iH2xv60MFAmDSFnMCGwMFCwkIBwIGFQoJCAsCBBYCAwECHgECF4A
- ACgkQ3a9iH2xv60OquRAAgbgenXi+Ud0tYoAz6giuFKYqzuEYuoSVkjxYvZq90ODrzbu7EdvMVuKA
- qNqYjs3VRBPBMHXhJKEftKbX4bZwCoC2o2wB5oV5O13jVN083r49FTLCxmOoufCkaqscBBxi/X2T6
- +i0n5Nqx5NLBL0kE4NMTk1jxEEyuEjv7bBMs196G/d3EpNJT3YGkLXBUibpaSaVjE6zBr3UygieLD
- 2QXNkRJubx2d0FoD8TezSt5hsHWg9FOElsW6ZImRI+5q+ptL39K3cpjxHMKyhmo7xypD5XNWdmsmV
- 1+STnK7R+id18xs7JUDxHBtG7Z/3K6txgF5CPbPvtaEi9fB3K/uS03BnIzsY2/cY3r9UHHrHa/sP6
- DhDwj9dr2xIFG5w6ZNh4mUTHEJoWKEEsYKwXy2eJCB3XvP7GURAm8fXdIapONbHDYj7XX49Mj+LBr
- s4PNBuKaZTFgGQ6RSc7LpAR56xaEDR93m7zNy84mQtpab/owaox1A+BEujzKK/vEDvj9f8EWlWZRa
- DH2auNNAxdr2ACR8RzkojcFDCErAgc5sFQrgVUlvNmMdn3VL0CWmndzEQxsOdgVk9SwoHHYpHf4Cg
- gtchq3pTQ5XSRaP/wxOtQpzqJWq5uFERBTLU8WRXYv3mM3KMdvtTJadF8+P+KSSnn+/yHahR0HKVx
- PtHSH7Px/vI=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.0 
+	s=arc-20240116; t=1744657429; c=relaxed/simple;
+	bh=Y/eydiMqkLYo6xxcAikKcaBMqiwERE9XwRwOYoJPhTw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TcHXULzWq3FFzbnBJ5ST+DH5KEgZx1FL/vKYrlBY9hsBTjYezhXnVBaqtxxea+T4K6qybZ2xkvuQyQdtClPAUDIJiUntu48pMoH3lh9I10GZXVUUxUvtxwiSBlr2xFikKdfN9HH7G/EVR5JLb0rGlxf6d8fAVLKZNbyeyZUs1HE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KMAGrRZi; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=CfQ/VDuRGvjV05uf8TH8cpoPsYAPWh3vrUlOAz73d0g=; b=KMAGrRZi9t0ZCWveqHabnHqE0j
+	seBnnlErt+Wma68pLPL2ySPPcrgx5S5bhuzw8GYQ49tkD82tGyzoIkeU6Ma1U1zp/pq1hagfH1bla
+	vS0+9sc361kxcb6j/4/abgCPV66hS411lSYC3o+KQVfVxeMvUHOm/DDkzzgL3venjQiZRhR9fgtTB
+	qdfjD4isd2d2zLA3M5Z4jr1BxEnu2IZV3NhRJfhLy3A6GFxqC0W4058UJKHSfOXiYPKoU8+s5c6uj
+	rWQO1o691ozw2zBQl3NOhUPgVpQHpCocqnv18+AmdCqrKmDuElI6fB6xGyK98yAYvu79F0bYQdKYX
+	pDFB4ZbA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1u4P3t-0000000ExxR-0mj0;
+	Mon, 14 Apr 2025 19:01:44 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id C412B3003AF; Mon, 14 Apr 2025 21:01:38 +0200 (CEST)
+Date: Mon, 14 Apr 2025 21:01:38 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Ravi Bangoria <ravi.bangoria@amd.com>,
+	linux-perf-users@vger.kernel.org,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [tip:perf/core] [perf]  da916e96e2:
+ BUG:KASAN:null-ptr-deref_in_put_event
+Message-ID: <20250414190138.GB13096@noisy.programming.kicks-ass.net>
+References: <202504131701.941039cd-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202504131701.941039cd-lkp@intel.com>
 
-The patchset seems stalled, presumably because of this CI dead end.
+On Mon, Apr 14, 2025 at 09:59:25AM +0800, kernel test robot wrote:
+> 
+> 
+> Hello,
+> 
+> kernel test robot noticed "BUG:KASAN:null-ptr-deref_in_put_event" on:
+> 
+> commit: da916e96e2dedcb2d40de77a7def833d315b81a6 ("perf: Make perf_pmu_unregister() useable")
+> https://git.kernel.org/cgit/linux/kernel/git/tip/tip.git perf/core
+> 
+> [test failed on linux-next/master 29e7bf01ed8033c9a14ed0dc990dfe2736dbcd18]
+> 
+> in testcase: trinity
+> version: trinity-x86_64-ba2360ed-1_20241228
+> with following parameters:
+> 
+> 	runtime: 300s
+> 	group: group-02
+> 	nr_groups: 5
+> 
+> 
+> 
+> config: x86_64-randconfig-078-20250407
+> compiler: clang-20
+> test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
+> 
+> (please refer to attached dmesg/kmsg for entire log/backtrace)
+> 
+> 
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <oliver.sang@intel.com>
+> | Closes: https://lore.kernel.org/oe-lkp/202504131701.941039cd-lkp@intel.com
+> 
 
-Is there anything I can do about this issue, or did the thread just get
-lost? Some are even pinging me directly on the state of this now.
+Does this help?
+
+---
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 2eb9cd5d86a1..528b679aaf7e 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -5687,7 +5687,7 @@ static void put_event(struct perf_event *event)
+ 	_free_event(event);
+ 
+ 	/* Matches the refcount bump in inherit_event() */
+-	if (parent)
++	if (parent && parent != EVENT_TOMBSTONE)
+ 		put_event(parent);
+ }
+ 
 
