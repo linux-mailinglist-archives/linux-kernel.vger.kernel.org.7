@@ -1,202 +1,90 @@
-Return-Path: <linux-kernel+bounces-602062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BA1EA875F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 05:00:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A44EA875FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 05:03:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4522C16F718
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 03:00:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04219188DE8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 03:03:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA8D3191499;
-	Mon, 14 Apr 2025 03:00:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pB0MDPhQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86751191499;
+	Mon, 14 Apr 2025 03:03:10 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06011AD51;
-	Mon, 14 Apr 2025 03:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6189C17A31C;
+	Mon, 14 Apr 2025 03:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744599618; cv=none; b=ZaU9+aP7XBccwZIXlEaE6Ji5jbbFIE2QdYaAHOsZcGdSAiwhFR6N0jV92gIKj5PE5pKRwnPzV0FNfgQ31GmaYx64f5Fyb+r11kJEZCjTek+Tf+71qFv5SOJiiR+ScZDhS54bXj5SvE3kA3B912QKG+TgOfUiVLlnOmbxJefBGEg=
+	t=1744599790; cv=none; b=i8MYgNEsYSCoVcCGAnErk7F366FnaiPUl63ZbmXyY2ER6IQjwyrLoBiPe9JggIAh4D9TDqzhPE5Kql4uac92WQfVgJ3akggWdl9EI1FmX64kk68//APb39DXwWUQy1TS0r5oXbPiLv4ZZt49MHYB8cWUQ2oRp4Znt1QNm4DDVug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744599618; c=relaxed/simple;
-	bh=5jqtjDnwxSBtJOLqJhkrIDIeuZ+V3NY6fYonRrvqp90=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=rYU9r+GL4IUe5yrQyPoJzQYJkwtcsyfTlMS9uf39D0CyFB3HVk7YfWLLdicyEHhLCoztSMx+yuWnUgh9XJJml8QYHCakQT3iHFdD4wzeIboHcOS0bm7LiWrHLh6WW79PCegSvLTfKHamc1idFJXbIzJBLnbID5Iroqc73hm9jNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pB0MDPhQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 672D1C4CEDD;
-	Mon, 14 Apr 2025 03:00:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744599617;
-	bh=5jqtjDnwxSBtJOLqJhkrIDIeuZ+V3NY6fYonRrvqp90=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pB0MDPhQL7p6oIMgPI1fAmxmJIgBN28j0xDVJprSB5RgElYT2p9L6x+zIucWU6gP+
-	 YK3JlSbJ7ftWXyoLTb8l+/NAqAZEVloyHymir9UiCeBdUaoflp7DGUnrQRiyzGlqYP
-	 aJy1bgu9tkcY2A5EP9NSPQ3GvhV9Wg8k1qc7mwEIr44ldFg57MiNSZrCh6KjeO8UM1
-	 94vfgqBnEMz9gsgEQZTFx9NtG6J2KdwmsHnmQGoJc7+J/onzOrXpvjHKZWBn/Oohck
-	 lXnl+X68P+/N/4wt1lJVaua+bPYCzpqhGuu71wYgd4yVAE6FdYBygAtlEwrIDjFapZ
-	 fuqojo9xOAjjg==
-Date: Mon, 14 Apr 2025 12:00:13 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, Masami Hiramatsu
- <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, Sven Schnelle <svens@linux.ibm.com>, Paul
- Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>, Donglin
- Peng <dolinux.peng@gmail.com>, Zheng Yejian <zhengyejian@huaweicloud.com>,
- Aishwarya.TCV@arm.com
-Subject: Re: [PATCH v4 2/4] ftrace: Add support for function argument to
- graph tracer
-Message-Id: <20250414120013.895b0cc99e52c41eb8ec3774@kernel.org>
-In-Reply-To: <20250411152610.64d555bf@gandalf.local.home>
-References: <20250227185804.639525399@goodmis.org>
-	<20250227185822.810321199@goodmis.org>
-	<ccc40f2b-4b9e-4abd-8daf-d22fce2a86f0@sirena.org.uk>
-	<20250410131745.04c126eb@gandalf.local.home>
-	<c41e5ee7-18ba-40cf-8a31-19062d94f7b9@sirena.org.uk>
-	<20250411124552.36564a07@gandalf.local.home>
-	<2edc0ba8-2f45-40dc-86d9-5ab7cea8938c@sirena.org.uk>
-	<20250411131254.3e6155ea@gandalf.local.home>
-	<350786cc-9e40-4396-ab95-4f10d69122fb@sirena.org.uk>
-	<9dafc156-1272-4039-a9c0-3448a1bd6d1f@sirena.org.uk>
-	<20250411142427.3abfb3c3@gandalf.local.home>
-	<20250411143132.56096f76@gandalf.local.home>
-	<20250411151358.1d4fd8c7@gandalf.local.home>
-	<20250411152610.64d555bf@gandalf.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1744599790; c=relaxed/simple;
+	bh=LKIFe5JPppNtFd1XjOtRi87X4iO2e9aUB6eXsxN/luA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MRyMPLMdqswBIzeuvhRb9IT/hXwhbybo3ggPcBlPPtJItJxMcWsbPYD3QijLSIcnpz8nzHG85HvpcDHLupiAwrVacBEgPWNhSPfQ07el4s69ngi0qeX+6Aj7bIr6RFihZMn/RiXwj9Tud8QLDMkjdFntv+9TkXCtMwOLI7mAEV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 53E325NM013800;
+	Mon, 14 Apr 2025 11:02:05 +0800 (+08)
+	(envelope-from Yunlong.Xing@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4ZbX9M5Rf0z2LH777;
+	Mon, 14 Apr 2025 11:00:55 +0800 (CST)
+Received: from tj10379pcu1.spreadtrum.com (10.5.32.15) by
+ BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.48; Mon, 14 Apr 2025 11:02:02 +0800
+From: Yunlong Xing <yunlong.xing@unisoc.com>
+To: <axboe@kernel.dk>, <linux-block@vger.kernel.org>, <bvanassche@acm.org>
+CC: <niuzhiguo84@gmail.com>, <yunlongxing23@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <hao_hao.wang@unisoc.com>,
+        <zhiguo.niu@unisoc.com>
+Subject: [PATCH V2] loop: aio inherit the ioprio of original request
+Date: Mon, 14 Apr 2025 11:01:59 +0800
+Message-ID: <20250414030159.501180-1-yunlong.xing@unisoc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+X-MAIL:SHSQR01.spreadtrum.com 53E325NM013800
 
-On Fri, 11 Apr 2025 15:26:10 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+Set cmd->iocb.ki_ioprio to the ioprio of loop device's request.
+The purpose is to inherit the original request ioprio in the aio
+flow.
 
-> 
-> Replying to my email as it appears gmail blocked it. Probably due to all
-> the escape characters my output had. Resending with that cut out.
-> 
-> Masami, I was sent a message from gmail that it blocked this from you.
+Signed-off-by: Yunlong Xing <yunlong.xing@unisoc.com>
+Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>=
+---
+V2:
+- Assign cmd->iocb.ki_ioprio in lo_rw_aio()
+---
+ drivers/block/loop.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Hi, I could find it. Let me reply!
-
-> 
-> If you want to see the original email:
-> 
->   https://lore.kernel.org/all/20250411151358.1d4fd8c7@gandalf.local.home/
-> 
-> -- Steve
-> 
-> On Fri, 11 Apr 2025 15:13:58 -0400
-> Steven Rostedt <rostedt@goodmis.org> wrote:
-> 
-> > On Fri, 11 Apr 2025 14:31:32 -0400
-> > Steven Rostedt <rostedt@goodmis.org> wrote:
-> > 
-> > > Hmm, I just tested this, and it fails on my box too (I test on a debian VM).
-> > > 
-> > > It fails with and without setting it to bash. I'll take a look too.  
-> > 
-> > Hmm, maybe it is a bashism.
-> > 
-> > The test has this:
-> > 
-> >   # Max arguments limitation
-> >   MAX_ARGS=128
-> >   EXCEED_ARGS=$((MAX_ARGS + 1))
-> > 
-> >   check_max_args() { # event_header
-> >     TEST_STRING=$1
-> >     # Acceptable
-> >     for i in `seq 1 $MAX_ARGS`; do
-> >       TEST_STRING="$TEST_STRING \\$i"
-> >     done
-> >     echo "$TEST_STRING" >> dynamic_events
-> >     echo > dynamic_events
-> >     # Error
-> >     TEST_STRING="$TEST_STRING \\$EXCEED_ARGS"
-> >     ! echo "$TEST_STRING" >> dynamic_events
-> >     return 0
-> >   }
-> > 
-> >   # Kprobe max args limitation
-> >   if grep -q "kprobe_events" README; then
-> >     check_max_args "p vfs_read"
-> >   fi
-> > 
-> > So I tried manually executing this in bash:
-> > 
-> > --------------------------8<--------------------------
-> > # TEST_STRING='p vfs_read'
-> > # for i in `seq 1 128`; do TEST_STRING="$TEST_STRING \\$i" ; done
-> > # echo $TEST_STRING
-> > p vfs_read \1 \2
-> 
-> [ This  is cut out to see if it doesn't trigger gmail blocking it again! ]
-> 
-> > # echo "$TEST_STRING" >> /sys/kernel/tracing/dynamic_events
-> > # echo $?
-> > 0
-> > # cat /sys/kernel/tracing/dynamic_events
-> > p:kprobes/p_vfs_read_0 vfs_read arg1=\1
-> 
-> [ This  is cut out to see if it doesn't trigger gmail blocking it again! ]
-> 
-> > -------------------------->8--------------------------  
-> > 
-> > Doing the same in dash:
-> > 
-> > --------------------------8<--------------------------
-> > # dash
-> > # TEST_STRING='p vfs_read'
-> > # for i in `seq 1 128`; do TEST_STRING="$TEST_STRING \\$i" ; done
-> > # echo $TEST_STRING
-> > p vfs_read         \8 \9 	 
-> 
-> [ This  is cut out to see if it doesn't trigger gmail blocking it again! ]
-> 
-> > # echo "$TEST_STRING" >> /sys/kernel/tracing/dynamic_events
-> > dash: 8: echo: echo: I/O error
-> > -------------------------->8--------------------------  
-> > 
-> > Looks like dash will translate those "\#" into the ASCII equivalent,
-> > whereas bash does not.
-> > 
-> > This patch seems to fix it:
-> > 
-> > diff --git a/tools/testing/selftests/ftrace/test.d/dynevent/dynevent_limitations.tc b/tools/testing/selftests/ftrace/test.d/dynevent/dynevent_limitations.tc
-> > index 6b94b678741a..ebe2a34cbf92 100644
-> > --- a/tools/testing/selftests/ftrace/test.d/dynevent/dynevent_limitations.tc
-> > +++ b/tools/testing/selftests/ftrace/test.d/dynevent/dynevent_limitations.tc
-> > @@ -11,7 +11,7 @@ check_max_args() { # event_header
-> >    TEST_STRING=$1
-> >    # Acceptable
-> >    for i in `seq 1 $MAX_ARGS`; do
-> > -    TEST_STRING="$TEST_STRING \\$i"
-> > +    TEST_STRING="$TEST_STRING \\\\$i"
-> >    done
-> >    echo "$TEST_STRING" >> dynamic_events
-> >    echo > dynamic_events
-> > 
-> > 
-> > Masami, you just recently added this test (it's dated March 27th 2025), did
-> > you mean to write in the ASCII characters? Why the backslash?
-> > 
-> > -- Steve
-> 
-
-
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index 674527d770dc..dd7f33d47f4f 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -447,7 +447,7 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
+ 	cmd->iocb.ki_filp = file;
+ 	cmd->iocb.ki_complete = lo_rw_aio_complete;
+ 	cmd->iocb.ki_flags = IOCB_DIRECT;
+-	cmd->iocb.ki_ioprio = IOPRIO_PRIO_VALUE(IOPRIO_CLASS_NONE, 0);
++	cmd->iocb.ki_ioprio = req_get_ioprio(rq);
+ 
+ 	if (rw == ITER_SOURCE)
+ 		ret = file->f_op->write_iter(&cmd->iocb, &iter);
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+2.25.1
+
 
