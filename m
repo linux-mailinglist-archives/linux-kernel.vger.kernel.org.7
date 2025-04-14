@@ -1,78 +1,150 @@
-Return-Path: <linux-kernel+bounces-603607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9627FA88A18
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 19:42:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9E0AA88A30
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 19:46:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B197E3B6A49
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:41:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E4C518958CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:45:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E10228BAAF;
-	Mon, 14 Apr 2025 17:41:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32C4528B4FD;
+	Mon, 14 Apr 2025 17:42:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vmxvv/nT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BiSHoYa3"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D2528A1F4;
-	Mon, 14 Apr 2025 17:41:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99FC1292917
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 17:42:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744652472; cv=none; b=EBKbMX1cuX1f5svkEyjkEGjRX8OZvKNh9g7hOkQNwP/7FqM0K5wGG4nZQivsRkl5LrQ3iIzkrdiyRCI1tsdJsAPy41AoAepZK3DT9DcXJQi7yol7DRa/oDJpxbESLDDjB0ANmDxhr2/oPvevkLnfZgfbTD5t1ASnF64gvfu/BcU=
+	t=1744652549; cv=none; b=HuuCjUJLOMKHIIG+YFJF+f8oJPwb9Z7/V9lfk+2g6yIBAQg5rdG6R67y22EZelVcXCfdPe3+ReQnZxBvj4fXlaTr1xFWcAGeoH+QJRKpvMruriE4cwZbIBvwG3/SklCfaI1035DtEomQIYI04Mg/EchW91lwXaTp1lCMX6IjK/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744652472; c=relaxed/simple;
-	bh=NJghDzVBAeow0Sd/MWaujRt628pUVE0NfgucctssCgQ=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=CQshK+trAyRArk2y9UHi9PaRvlC0sy5uPr7X4UqZXfLq3NqLxiQdD1TSAY3UOKCkkPrDXeO2nQhw9bCfNcYiOLxt9uVW0MZc3Fq9X3ABUJSbF2bfkDnhuKYS+DFRxYuWgAxAwZAnodwS5adhc5okX/8rNBiVFYyT1qxtSwwf7x4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vmxvv/nT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D79CEC4CEE2;
-	Mon, 14 Apr 2025 17:41:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744652471;
-	bh=NJghDzVBAeow0Sd/MWaujRt628pUVE0NfgucctssCgQ=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=Vmxvv/nTPdBaapAHkbYDj3+0m9cw1Wk8B1wSYpTUUD707+YXZkcB7t0YIAjWb/YH1
-	 ZXJBVkhFV6kxqxYu+zSgXbGdZg3t7be7zDUiMTPZsJL4NMT80axiPESccPdwkkpZY8
-	 WsfhRjiuhQGewrx6UYSmWqPQOLlNLGK+pyFjiTzDjEvBep8d52+eq9NloDKeC2nruD
-	 k9j/8MK4GfGA8x7NjccaCUuIn5XDRUCgYbVA2nl5gNha+PEsgAvIKk2BdKk71IkdOq
-	 n2HHku1CnxqVMAE3QIy/O39GLFQOiPxi6Hw9uKNfDCvBQew4zDefI4928mVNwSyK76
-	 LDtyxJiqXIsvg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB05D3822D1A;
-	Mon, 14 Apr 2025 17:41:50 +0000 (UTC)
-Subject: Re: [GIT PULL] perf-tools fixes for v6.15-rc2
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250413232538.4094456-1-namhyung@kernel.org>
-References: <20250413232538.4094456-1-namhyung@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250413232538.4094456-1-namhyung@kernel.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-fixes-for-v6.15-2025-04-13
-X-PR-Tracked-Commit-Id: 2b70702917337a8d6d07f03eed961e0119091647
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 10e66f29fad2bac7f44e99372398b39358daf6e3
-Message-Id: <174465250947.1985657.12810222329470726407.pr-tracker-bot@kernel.org>
-Date: Mon, 14 Apr 2025 17:41:49 +0000
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
+	s=arc-20240116; t=1744652549; c=relaxed/simple;
+	bh=r/oZLu7g97RF6TF9183rjWt7sdJ2elJ9pfcYGZQAci8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J5tB/rJ+chorez/+XOjOJYSpNQosqo2+poY+ayjiVmB9o+4ax7lPizyACY6yhhmVArtiS9GMSIK0pSwpauHK+JM+mO5HeJXLLbku3hrk98IBAOfzTobhpvwptWCy+tOgCOYivd0K66y0N63SDthzecrBEPQa6ZxevhJBacs9QB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BiSHoYa3; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aaecf50578eso840021566b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 10:42:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1744652546; x=1745257346; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S6dXpssTyEnXZw8Werw0Cfea5OuCpmeGi7WA4m5w0Kg=;
+        b=BiSHoYa3fgJSiqVoP3e0H+/FxsvaWZzno78abprQ7Dm0KE5tnvU1RN5Bv7EOMusnhZ
+         qlqJfPG8iitoFObxWWFMGys/INnO8lfSbVdTu3vxGXVO/BBbq7rwhxkeItMJ+RWTfo7X
+         ukGtkO898mKlTACCgY9X6Y0S7E2Z779/KSbzt5EeTW7bDaGADKo5qOAiXZumrWLIOkYj
+         UJgc2LKySaUQwezESr2fSxwXDUX73RBR4ZKBNvG4CkUNn1m1Y+UKOUfia3etcJGPHQ7v
+         JDm8wE60JaNl3Agqp0oWBH1uSM2WuExpguzaSeN8QXCRBOTb2uGSPTh8OYOucw8HXbwj
+         KN9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744652546; x=1745257346;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=S6dXpssTyEnXZw8Werw0Cfea5OuCpmeGi7WA4m5w0Kg=;
+        b=axD7X9X08N8BWDhMygLoz0muGPVpi1jqLxkXVB3RE+iQ67Yx5a3OGsYepgVbRb4HOQ
+         I6luDt3mJID0fgk3cmmeTXfy4nCvF56Menl1V62khmfkzBPTPexvV1dvR5tAHq5Cn6nn
+         AvNaxIS5xEo74AqZ8r6meIxtHeFLNrjDA+puxTpCfjvMKv38aYN4Q7iRDLnuJ/zwBVtT
+         R8BoE1eDZKg5rblb2FQRDs5fjChv6tVCKTRH3l8efWszMaiWd3uTGojqu0/8LEzWl3CH
+         SyScm7Fm+pnxkelpiF11LRKXpBDgxjSdhLJdmYce4NeKYj6dpXFgTD0diFSgto4olAuG
+         HjIg==
+X-Gm-Message-State: AOJu0Yx5/VN3Iow2FnD6l3b8gEqZEYoaU8IfXEq0Z5ZIf/Wt60hyswjW
+	/ct3Xu1wRchVob7YMlZDlaFhKEDGy+R8m1VIwqyJf3BvevvTeyA7ofpKH4JqFItT9sCHseIt3Bd
+	rKlOkNqNzCAZfeA4M//POilP4Y6fvofdZxKpM
+X-Gm-Gg: ASbGnctEuifovmNfufkKuJxmOtMhi7Y/Ffli0/OWz61NJ5xZrIGOo/emJz8KbfduG41
+	2Sg0+yKG3sDkgvg52vOuqN6hkkrBRPaXG2X9cHvPbRxiDTTmTFM6WvbcasZ3C6V9HH+5MlYJ1G8
+	S+FaUR3iW5OCFJ9m2pF8vAiY4w8qVMplmQ7maTY6DAKVSMbpIe
+X-Google-Smtp-Source: AGHT+IF0lVacdLNmQXyNIUxEHd+nTqR58C8tfUD29Jy3htQ250p/42LkgbUJpDeJ9P4uGPCW5RLhDiIuWo8Z2TF5ZBs=
+X-Received: by 2002:a17:907:7f23:b0:ac8:14ad:f3cf with SMTP id
+ a640c23a62f3a-acad349c379mr1122853466b.23.1744652545646; Mon, 14 Apr 2025
+ 10:42:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20250411174547.2208959-1-ctshao@google.com> <Z_mAxgbgVBqHDRfD@z2>
+In-Reply-To: <Z_mAxgbgVBqHDRfD@z2>
+From: Chun-Tse Shao <ctshao@google.com>
+Date: Mon, 14 Apr 2025 10:42:14 -0700
+X-Gm-Features: ATxdqUGmO6XE11TB5jTq_YVjbnQWRZYMA-7dZ_XSG_Wlq2Fx3_o8Rp8eMDvgThU
+Message-ID: <CAJpZYjXduAo1vHzfGzCXk+ZuGwo+Sy5CpZ-cohrooz9k0qwM4w@mail.gmail.com>
+Subject: Re: [PATCH v3] perf report: Skip unsupported new event types
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Arnaldo Carvalho de Melo <acme@kernel.org>, peterz@infradead.org, 
+	mingo@redhat.com, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com, 
+	kan.liang@linux.intel.com, dvyukov@google.com, ben.gainey@arm.com, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The pull request you sent on Sun, 13 Apr 2025 16:25:38 -0700:
+Sorry for my oversight, just sent out v4.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-fixes-for-v6.15-2025-04-13
+Thanks,
+CT
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/10e66f29fad2bac7f44e99372398b39358daf6e3
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+On Fri, Apr 11, 2025 at 1:51=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> On Fri, Apr 11, 2025 at 10:45:21AM -0700, Chun-Tse Shao wrote:
+> > `perf report` currently halts with an error when encountering
+> > unsupported new event types (`event.type >=3D PERF_RECORD_HEADER_MAX`).
+> > This patch modifies the behavior to skip these samples and continue
+> > processing the remaining events. Additionally, stops reporting if the
+> > new event size is not 8-byte aligned.
+> >
+> > Signed-off-by: Chun-Tse Shao <ctshao@google.com>
+> > Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
+> > Suggested-by: Namhyung Kim <namhyung@kernel.org>
+> > ---
+> >  tools/perf/util/session.c | 13 +++++++++++--
+> >  1 file changed, 11 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+> > index 60fb9997ea0d..f55b2ac4e103 100644
+> > --- a/tools/perf/util/session.c
+> > +++ b/tools/perf/util/session.c
+> > @@ -1639,8 +1639,17 @@ static s64 perf_session__process_event(struct pe=
+rf_session *session,
+> >       if (session->header.needs_swap)
+> >               event_swap(event, evlist__sample_id_all(evlist));
+> >
+> > -     if (event->header.type >=3D PERF_RECORD_HEADER_MAX)
+> > -             return -EINVAL;
+> > +     if (event->header.type >=3D PERF_RECORD_HEADER_MAX) {
+> > +             /* perf should not support unaligned event, stop here. */
+> > +             if (event->header.size % sizeof(u64))
+> > +                     return -EINVAL;
+> > +
+> > +             /* This perf is outdated and does not support the latest =
+event type. */
+> > +             ui__warning("Unsupported type %u, please considering upda=
+te perf.\n",
+> > +                         event->header.type);
+> > +             /* Skip unsupported/unaligned event by returning its size=
+. */
+>
+> This comment also needs update.  Other than that looks good to me.
+>
+> Thanks,
+> Namhyung
+>
+> > +             return event->header.size;
+> > +     }
+> >
+> >       events_stats__inc(&evlist->stats, event->header.type);
+> >
+> > --
+> > 2.49.0.604.gff1f9ca942-goog
+> >
 
