@@ -1,68 +1,73 @@
-Return-Path: <linux-kernel+bounces-602716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7576FA87E56
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:03:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22329A87E62
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:05:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EA833ABFF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:03:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BA41176261
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:05:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94BA127E1DF;
-	Mon, 14 Apr 2025 11:03:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB8D428C5BB;
+	Mon, 14 Apr 2025 11:04:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="foEEhtHb"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VV1AK1V5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52659280A42
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 11:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5C528135F;
+	Mon, 14 Apr 2025 11:04:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744628596; cv=none; b=FLs2FJEsKossenBnPskwRh1if7LuV0ip7C4SjIITyLyEhPDeS8C+/0rsJq1OQWhhLiR6YyEhnWCo10H0zNVY33uYo0W0y3T5AXHFhkooVOGQmP5caON3/iBtyPME9Nx5AkOmXf3nRu8ptvVEnqkfycq23qSK9MdVf9eYvuylNvg=
+	t=1744628695; cv=none; b=BByvUY5vp3iU5+/EPNUDyV4MT+iYIstak6V5WFfW9dblAL/xLvx+aYmDkM1mNcaA8F9gq5ruq30lKlIdDaDjOr5nfe11tTho4ZjqZRw/tP0WkNmJzaGYKJuFQoUeKI9pQvNyxxrqqXi/E+dGZTmw3gw5acnpCbFDjkMdwHbwcig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744628596; c=relaxed/simple;
-	bh=zYJKnl3PDwp5H0lIKmAxF7LW4fQ9/Nl+0aQEeHh2vcI=;
+	s=arc-20240116; t=1744628695; c=relaxed/simple;
+	bh=Xb+ZACY0NBbV0NNh0WCuT+XRv3B9nkGlGyr3iQ9+hJg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CTqNes2NT4ly/QcReiznVzhOaqLCwlPf/BCuu/MZloV7z2OF2PSumFCS4wv/MKGGGSm5QVIlH26deO5N2zJBSivo4FWxJjcAL3QVRLXrFT33TzkttP/MaItVSi5UtI4lhb3ef77Ca9dLAlmsN+QV0yhBiZmHXYosPBmWfDnTXAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=foEEhtHb; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=J51COviT85jkxZC45WlXUOb6zfUsYs6A6My0uyWu7Gw=; b=foEEhtHb1SJx/XuYekuXhZpSvN
-	gY+h57P+xOo1PYpLv/RGnu+gQdvjqIhFDrTdYKVk/BGQ0Zzokv1qiBTc28VYLo50OQ79RbP+UHTOF
-	8Q/BcLKkY9HaXm4hVcQm2R7fo7Fm84iZhT2Dj6o/d1eYJUsHRR9n2sRv7jkteob8RUH12wu5YtgdR
-	kP3UPx/DLCcG7do8CVkO9TlO9yeijcJ0CoL4HW80HsU/SxpsS8GVl/qWa2y4sD7TiX+RrTqI6y0Zc
-	ziadRRuAOU9TYnCqgqdxILp+GAxDrDtiUwlqXhFg6zZKuvWGbZXlgnR0cwBttLX/rMDf9KESL1AEu
-	yqvR8VZg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1u4Hae-00000009f8d-1u5R;
-	Mon, 14 Apr 2025 11:03:00 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id E6767300619; Mon, 14 Apr 2025 13:02:59 +0200 (CEST)
-Date: Mon, 14 Apr 2025 13:02:59 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Ankur Arora <ankur.a.arora@oracle.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, x86@kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, bp@alien8.de,
-	dave.hansen@linux.intel.com, hpa@zytor.com, mingo@redhat.com,
-	luto@kernel.org, paulmck@kernel.org, rostedt@goodmis.org,
-	tglx@linutronix.de, willy@infradead.org, jon.grimm@amd.com,
-	bharata@amd.com, raghavendra.kt@amd.com, boris.ostrovsky@oracle.com,
-	konrad.wilk@oracle.com
-Subject: Re: [PATCH v3 1/4] x86/clear_page: extend clear_page*() for
- multi-page clearing
-Message-ID: <20250414110259.GF5600@noisy.programming.kicks-ass.net>
-References: <20250414034607.762653-1-ankur.a.arora@oracle.com>
- <20250414034607.762653-2-ankur.a.arora@oracle.com>
- <Z_yr_cmXti4kXHaX@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ixGRGC1bxxYnVNc3hz9NpaNnpDqtU6+CCtyLCBiVPdz/di4PjVVwAUCkF80l8rNxhSZ+1uPTBsnbH1huHFS+rBruflnESr69L47boN2Biqq4retFywoDWAL6olyoW5vUw/Wvob6n4PdmKdTq7zLrB0eD70M841Knv0XiM7+002s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VV1AK1V5; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744628693; x=1776164693;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Xb+ZACY0NBbV0NNh0WCuT+XRv3B9nkGlGyr3iQ9+hJg=;
+  b=VV1AK1V5dHPqLTQMRCcbjP2GN9Vxfl9ALQ7NVZub2ce2CsTMxyp8G5cd
+   zek6aobknvVXh7B7Om0TSaW6qIgRHzOSFjJtyPhffe/wDSTDfdpxTE4ui
+   MFy/tVBB2OKpmXfHbJGG5VjblteMBXXl7SQGvHcAfetj3P4vf7ymnxKhR
+   4XJj2zeVsxxKsG31jKO9QJ8a7YvLQUf5XUlV5y/4MUWYHyFhP+vYU5KFo
+   OcCizLnXAV6ranPv1D+yUr/pjjFOqWYN/6M5sgHim1iNUI3Pt4L1kzQHj
+   byhM5yGgLtFrucq315v4SvWojF2e9oPhAFYMWJPNDqvwd51jTUuiiSejJ
+   Q==;
+X-CSE-ConnectionGUID: EY1hxaWoR1e3clZarB9STw==
+X-CSE-MsgGUID: olBH3KwsQduz10eJvQlGuw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11402"; a="45975300"
+X-IronPort-AV: E=Sophos;i="6.15,212,1739865600"; 
+   d="scan'208";a="45975300"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 04:04:52 -0700
+X-CSE-ConnectionGUID: r4FQGc8oSTibqdWydMwWnw==
+X-CSE-MsgGUID: Sjmp7A6rQsiPjn1mfahqwA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,212,1739865600"; 
+   d="scan'208";a="130328463"
+Received: from mev-dev.igk.intel.com ([10.237.112.144])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 04:04:50 -0700
+Date: Mon, 14 Apr 2025 13:04:32 +0200
+From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+To: Chenyuan Yang <chenyuan0y@gmail.com>
+Cc: sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
+	hkelam@marvell.com, bbhushan2@marvell.com, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] octeontx2-pf: handle otx2_mbox_get_rsp errors
+Message-ID: <Z/zrwJJhR1pDwfj/@mev-dev.igk.intel.com>
+References: <20250412183327.3550970-1-chenyuan0y@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,94 +76,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z_yr_cmXti4kXHaX@gmail.com>
+In-Reply-To: <20250412183327.3550970-1-chenyuan0y@gmail.com>
 
-On Mon, Apr 14, 2025 at 08:32:29AM +0200, Ingo Molnar wrote:
-
-> >  static inline void clear_page(void *page)
-> >  {
-> > +	unsigned int length = PAGE_SIZE;
-> >  	/*
-> > -	 * Clean up KMSAN metadata for the page being cleared. The assembly call
-> > +	 * Clean up KMSAN metadata for the pages being cleared. The assembly call
-> >  	 * below clobbers @page, so we perform unpoisoning before it.
+On Sat, Apr 12, 2025 at 01:33:27PM -0500, Chenyuan Yang wrote:
+> Adding error pointer check after calling otx2_mbox_get_rsp().
 > 
-> >  	 */
-> > -	kmsan_unpoison_memory(page, PAGE_SIZE);
-> > -	alternative_call_2(clear_page_orig,
-> > -			   clear_page_rep, X86_FEATURE_REP_GOOD,
-> > -			   clear_page_erms, X86_FEATURE_ERMS,
-> > +	kmsan_unpoison_memory(page, length);
-> > +
-> > +	alternative_call_2(clear_pages_orig,
-> > +			   clear_pages_rep, X86_FEATURE_REP_GOOD,
-> > +			   clear_pages_erms, X86_FEATURE_ERMS,
-> >  			   "=D" (page),
-> > -			   "D" (page),
-> > +			   ASM_INPUT("D" (page), "S" (length)),
-> >  			   "cc", "memory", "rax", "rcx");
-> >  }
-> >  
-> > diff --git a/arch/x86/lib/clear_page_64.S b/arch/x86/lib/clear_page_64.S
-> > index a508e4a8c66a..bce516263b69 100644
-> > --- a/arch/x86/lib/clear_page_64.S
-> > +++ b/arch/x86/lib/clear_page_64.S
-> > @@ -13,20 +13,35 @@
-> >   */
-> >  
-> >  /*
-> > - * Zero a page.
-> > - * %rdi	- page
-> > + * Zero kernel page aligned region.
-> > + *
-> > + * Input:
-> > + * %rdi	- destination
-> > + * %esi	- length
-> > + *
-> > + * Clobbers: %rax, %rcx
-> >   */
-> > -SYM_TYPED_FUNC_START(clear_page_rep)
-> > -	movl $4096/8,%ecx
-> > +SYM_TYPED_FUNC_START(clear_pages_rep)
-> > +	movl %esi, %ecx
-> >  	xorl %eax,%eax
-> > +	shrl $3,%ecx
-> >  	rep stosq
-> >  	RET
-> > -SYM_FUNC_END(clear_page_rep)
-> > -EXPORT_SYMBOL_GPL(clear_page_rep)
-> > +SYM_FUNC_END(clear_pages_rep)
-> > +EXPORT_SYMBOL_GPL(clear_pages_rep)
-> >  
-> > -SYM_TYPED_FUNC_START(clear_page_orig)
-> > +/*
-> > + * Original page zeroing loop.
-> > + * Input:
-> > + * %rdi	- destination
-> > + * %esi	- length
-> > + *
-> > + * Clobbers: %rax, %rcx, %rflags
-> > + */
-> > +SYM_TYPED_FUNC_START(clear_pages_orig)
-> > +	movl   %esi, %ecx
-> >  	xorl   %eax,%eax
-> > -	movl   $4096/64,%ecx
-> > +	shrl   $6,%ecx
+> This is similar to the commit bd3110bc102a
+> ("octeontx2-pf: handle otx2_mbox_get_rsp errors in otx2_flows.c").
 > 
-> So if the natural input parameter is RCX, why is this function using 
-> RSI as the input 'length' parameter? Causes unnecessary register 
-> shuffling.
+> Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
+> Fixes: 6c40ca957fe5 ("octeontx2-pf: Adds TC offload support")
+> ---
+>  drivers/net/ethernet/marvell/octeontx2/nic/rep.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/rep.c b/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
+> index 04e08e06f30f..7153a71dfc86 100644
+> --- a/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
+> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
+> @@ -67,6 +67,8 @@ static int rvu_rep_mcam_flow_init(struct rep_dev *rep)
+>  
+>  		rsp = (struct npc_mcam_alloc_entry_rsp *)otx2_mbox_get_rsp
+>  			(&priv->mbox.mbox, 0, &req->hdr);
+> +		if (IS_ERR(rsp))
+> +			goto exit;
 
-This symbol is written as a C function with C calling convention, even
-though it is only meant to be called from that clear_page() alternative.
+Changes looks fine:
+Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
 
-If we want to go change all this, then we should go do the same we do
-for __clear_user() and write it thusly:
+BTW, looks like now you can use break instead of goto exit, as exit
+label is just after the while loop.
 
-	asm volatile(ALTERNATIVE("rep stosb",
-				 "call rep_stos_alternative", ALT_NOT(X86_FEATURE_FSRS)
-				 : "+c" (size), "+D" (addr), ASM_CALL_CONSTRAINT
-				 : "a" (0))
-
-And forget about all those clear_page_*() thingies.
+>  
+>  		for (ent = 0; ent < rsp->count; ent++)
+>  			rep->flow_cfg->flow_ent[ent + allocated] = rsp->entry_list[ent];
+> -- 
+> 2.34.1
 
