@@ -1,143 +1,97 @@
-Return-Path: <linux-kernel+bounces-602701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40559A87E17
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 12:53:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21255A87E12
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 12:53:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A55E1163183
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:53:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C0B13AADA0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:53:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4597927E1B6;
-	Mon, 14 Apr 2025 10:53:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E8327C86C;
+	Mon, 14 Apr 2025 10:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kuVMIAAH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="BegFfWdY"
+Received: from mail-10629.protonmail.ch (mail-10629.protonmail.ch [79.135.106.29])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B8027D790
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 10:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C38226F45A;
+	Mon, 14 Apr 2025 10:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744627990; cv=none; b=NC50dLWzAhKFX9GF8QU7EvL5Fr2HQPiKZmPh5wg8/yMl8S6h29dXtCyJNbE5SkNxDMjM+UqF826xUTrV80gNJXjHpYnCZOYWRr6sCizFyecVSRBezyNRaN+Gp8OXowbPFB1rRBK/uwROWUpBXpNH5F5uQGwkIrRIYcz6s+k3z88=
+	t=1744627985; cv=none; b=skdeS685h4Jq5TajnOOUYNbKZ2DIy1p3mS7gLb3i35/FXMTjXGM3LNRAi5jWmRPkVm+0hivkJnWyqz75b+0A1366b9XuTCBHWd3TXKegPCmlas7rEhAzgzb5JCuTS0j/kQ8LQ+vmz4H30R/iclZ4zdCSHkeu2GPOtIbGEh2sz9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744627990; c=relaxed/simple;
-	bh=XJlZfQW1aybX0kMKYGtaAugSD+bmBNoAEbWNwMsoH2E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IHPesh/3YduN9WV8LzUeTaYJ2MJ6QeIVLGF8ykFUSqNzymMIxskKM2w85yAxdoRyjiZ1Z6+EYkUncDGhuLvNMUmXikk3PPOxjBtQtTpvJdMvjKfXBEbANjDnUnDZ4+9iFZUMhR6uEARblah6f4myooAVO6usmyEZFqnrgTHhXA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kuVMIAAH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52312C4CEE5;
-	Mon, 14 Apr 2025 10:53:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744627990;
-	bh=XJlZfQW1aybX0kMKYGtaAugSD+bmBNoAEbWNwMsoH2E=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kuVMIAAHd3Udrv0tceg5VNIgKRV9mU0g7FyAysdm0ComUD4peaghAVgMdMnSgLSnn
-	 50QPu3XPPDp2L8nOHIKWymBK8dlABV96vC94oaagBnq6w63LyKUDmP7dqzvVJP4Q3T
-	 db4vyDSdv3QGxlYLW5rg28mdU34Xz3XAo0JhM8GLAuiHZB5PQ6853P0vxmD3ZPL5ho
-	 8FMSqgl6Lm00zRtQ1wsnU2i2zSrGlnuJ91lnecOL6fxqHRNHiUr9xOG5yNJkL2y8GF
-	 szpo4bPo3Q5GX2cqSmcXlSODR8E4aGK674xI3G+Tle1Ua06R+50Zi8KbaEsm1bL3vm
-	 5PqDwwYM/OJVQ==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>,
-	Jan Prusakowski <jprusakowski@google.com>
-Subject: [PATCH 2/2] f2fs: fix to detect gcing page in f2fs_is_cp_guaranteed()
-Date: Mon, 14 Apr 2025 18:52:37 +0800
-Message-ID: <20250414105237.728522-2-chao@kernel.org>
-X-Mailer: git-send-email 2.49.0.604.gff1f9ca942-goog
-In-Reply-To: <20250414105237.728522-1-chao@kernel.org>
-References: <20250414105237.728522-1-chao@kernel.org>
+	s=arc-20240116; t=1744627985; c=relaxed/simple;
+	bh=hp/iT9vRY4WLbkXBJM0HMTKnmsgkT83gkCn0+xI8TDs=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eVSsLVle+Eqrwi2jkzqKu/Y264w1iWBuPS3FBaMrSu0osjmk50ZvzeSHdwcUOEQZNAYKql2VQZobq5Bh3Q7HrblB53MNtfp4PcVabXhz4C3Nlr1oH4jQydaF0WmDkrfHuLA45jIEnsqoozYRjzvI6KbxVULNUD5Xfl+83tHz6vQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=BegFfWdY; arc=none smtp.client-ip=79.135.106.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=xkpzb5yfxnf2jeuzp7tothlcbe.protonmail; t=1744627980; x=1744887180;
+	bh=cGneafMdb7E/5GcVD98UZZZtBXjzJsDf2In9bf3AS80=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=BegFfWdYH4OhAyD9Vvv7x2GV3KDqo1ZdIa4E1vDwLL1zYU+n0iu7x/BeBvqz8KItD
+	 GDOj/qovBvhDYAgxwurvOPV4B5kaKfgzdIJK90kxmeSI/vZ9nc4wMn2yrjl83TNmRV
+	 aUtOAtPUFwMQ4obXOllmUTSJ1Hb4ggZEdjnCh2xk3po2dfCSfYaV5Fyjns7UdfevHL
+	 TpQNAPlce1lLPOQTB7WtXA13fie3Bytsq41rfbB3b5pSrw6cFQMzsIoPAxgH4iCGnJ
+	 PiyPMQARv9EXxWlP0kBJ4X5NI1T61eWT7rjmyhWhDFsYvfDDkxZgDbb0NKHMbDUr0R
+	 j3CebiM1XQJVw==
+Date: Mon, 14 Apr 2025 10:52:54 +0000
+To: Tamir Duberstein <tamird@gmail.com>, Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, Abdiel Janulgue <abdiel.janulgue@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>, Robin Murphy <robin.murphy@arm.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, FUJITA Tomonori <fujita.tomonori@gmail.com>, Nicolas Schier <nicolas.schier@linux.dev>, Frederic Weisbecker <frederic@kernel.org>, Lyude Paul <lyude@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Anna-Maria Behnsen <anna-maria@linutronix.de>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, linux-pci@vger.kernel.org, linux-block@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v8 6/6] rust: enable `clippy::ref_as_ptr` lint
+Message-ID: <D96B00U9SS2Q.1YHLNBOIEWSNE@proton.me>
+In-Reply-To: <20250409-ptr-as-ptr-v8-6-3738061534ef@gmail.com>
+References: <20250409-ptr-as-ptr-v8-0-3738061534ef@gmail.com> <20250409-ptr-as-ptr-v8-6-3738061534ef@gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 192a33aecbd50a9b6c4225576203521e98318959
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Jan Prusakowski reported a f2fs bug as below:
+On Wed Apr 9, 2025 at 4:47 PM CEST, Tamir Duberstein wrote:
+> In Rust 1.78.0, Clippy introduced the `ref_as_ptr` lint [1]:
+>
+>> Using `as` casts may result in silently changing mutability or type.
+>
+> While this doesn't eliminate unchecked `as` conversions, it makes such
+> conversions easier to scrutinize.  It also has the slight benefit of
+> removing a degree of freedom on which to bikeshed. Thus apply the
+> changes and enable the lint -- no functional change intended.
+>
+> Link: https://rust-lang.github.io/rust-clippy/master/index.html#ref_as_pt=
+r [1]
+> Suggested-by: Benno Lossin <benno.lossin@proton.me>
+> Link: https://lore.kernel.org/all/D8PGG7NTWB6U.3SS3A5LN4XWMN@proton.me/
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 
-f2fs/007 will hang kernel during testing w/ below configs:
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
 
-kernel 6.12.18 (from pixel-kernel/android16-6.12)
-export MKFS_OPTIONS="-O encrypt -O extra_attr -O project_quota -O quota"
-export F2FS_MOUNT_OPTIONS="test_dummy_encryption,discard,fsync_mode=nobarrier,reserve_root=32768,checkpoint_merge,atgc"
-
-cat /proc/<umount_proc_id>/stack
-f2fs_wait_on_all_pages+0xa3/0x130
-do_checkpoint+0x40c/0x5d0
-f2fs_write_checkpoint+0x258/0x550
-kill_f2fs_super+0x14f/0x190
-deactivate_locked_super+0x30/0xb0
-cleanup_mnt+0xba/0x150
-task_work_run+0x59/0xa0
-syscall_exit_to_user_mode+0x12d/0x130
-do_syscall_64+0x57/0x110
-entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
-cat /sys/kernel/debug/f2fs/status
-
-  - IO_W (CP: -256, Data:  256, Flush: (   0    0    1), Discard: (   0    0)) cmd:    0 undiscard:   0
-
-CP IOs reference count becomes negative.
-
-The root cause is:
-
-After 4961acdd65c9 ("f2fs: fix to tag gcing flag on page during block
-migration"), we will tag page w/ gcing flag for raw page of cluster
-during its migration.
-
-However, if the inode is both encrypted and compressed, during
-ioc_decompress(), it will tag page w/ gcing flag, and it increase
-F2FS_WB_DATA reference count:
-- f2fs_write_multi_page
- - f2fs_write_raw_page
-  - f2fs_write_single_page
-   - do_write_page
-    - f2fs_submit_page_write
-     - WB_DATA_TYPE(bio_page, fio->compressed_page)
-     : bio_page is encrypted, so mapping is NULL, and fio->compressed_page
-       is NULL, it returns F2FS_WB_DATA
-     - inc_page_count(.., F2FS_WB_DATA)
-
-Then, during end_io(), it decrease F2FS_WB_CP_DATA reference count:
-- f2fs_write_end_io
- - f2fs_compress_write_end_io
-  - fscrypt_pagecache_folio
-  : get raw page from encrypted page
-  - WB_DATA_TYPE(&folio->page, false)
-  : raw page has gcing flag, it returns F2FS_WB_CP_DATA
-  - dec_page_count(.., F2FS_WB_CP_DATA)
-
-In order to fix this issue, we need to detect gcing flag in raw page
-in f2fs_is_cp_guaranteed().
-
-Fixes: 4961acdd65c9 ("f2fs: fix to tag gcing flag on page during block migration")
-Reported-by: Jan Prusakowski <jprusakowski@google.com>
-Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/data.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Cheers,
+Benno
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 4f70755c30cc..0df60c3ca533 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -54,7 +54,7 @@ bool f2fs_is_cp_guaranteed(struct page *page)
- 	struct f2fs_sb_info *sbi;
- 
- 	if (fscrypt_is_bounce_page(page))
--		return false;
-+		return page_private_gcing(fscrypt_pagecache_page(page));
- 
- 	inode = mapping->host;
- 	sbi = F2FS_I_SB(inode);
--- 
-2.49.0
+> ---
+>  Makefile                 |  1 +
+>  rust/bindings/lib.rs     |  1 +
+>  rust/kernel/device_id.rs |  3 ++-
+>  rust/kernel/fs/file.rs   |  3 ++-
+>  rust/kernel/str.rs       |  6 ++++--
+>  rust/kernel/uaccess.rs   | 10 ++++------
+>  rust/uapi/lib.rs         |  1 +
+>  7 files changed, 15 insertions(+), 10 deletions(-)
 
 
