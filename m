@@ -1,104 +1,129 @@
-Return-Path: <linux-kernel+bounces-603226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38C61A884BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:26:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2808EA884BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:26:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83A507A451B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:25:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5227168B6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:21:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7A4727FD63;
-	Mon, 14 Apr 2025 14:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87ACA29E04D;
+	Mon, 14 Apr 2025 13:56:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="t9pCPRQ2"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jf11uyuw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25AC727FD7D;
-	Mon, 14 Apr 2025 14:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF33729B79E;
+	Mon, 14 Apr 2025 13:56:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744639335; cv=none; b=F1+6XPkbiQr45XjqDchGSGUjQKZVaXu5Nsg1ueW+TnV6fF7capHEsQ3OvkUbcMhj7zBS0gxnideduSzlRtAtWzCA0xtguyjpevfQSHoAdnfewX1jEpRae0mDAfRpL60y4Ia3rOPWcZaPZ3F/cjIBhXont/MpWF+Wbhao0NzVyE8=
+	t=1744639014; cv=none; b=OsN9fi421Uv1Y02XX3s1+hv/K/4xIuLzGr3O/44MW6gFIFjFBIEfVLCovMWbtVTD/IPOJ2sZpAXq15sXGkJLppH82cIMf7bvF+DfzVrx3A5HCm7ggWwhmkGQyQ5rcVDq5r3e5RFW2lXDePn+OWzf7tk4Vdu1krulvrF1akx+cFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744639335; c=relaxed/simple;
-	bh=CndQFGuLnQ703+fOAOJDmmHIDhuS/2SEJT3iDiK/hvQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Xf9S0Ler6W4VNGoMqKB/f7064MxTKWW9aw49ET07mo//ikBfl1hLxe4mftJzpAelhwHxtpe+Cef4SY4GcxRQD/+uBJKlnQQSI8+xLzzPJ2ebnlGCjPLwPh6jG7tBrvDGi4sJuo19mp57KWSY+bYzijMnrJvCFnxoqddpyg9nVD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=t9pCPRQ2; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id B451CA0370;
-	Mon, 14 Apr 2025 15:56:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=8fUTt49ngH9LwQeutmpq
-	Atan+y77TmFvSLDx00ftJms=; b=t9pCPRQ2tmxUZmdzLFDzbVZeoRtXZjDfgQoU
-	JMJpuozYaayHGe5M8rtZeul0OU/+F9X4CpMRAVyMFQFkPO7wR8zzEFtkI74Ye0dI
-	ADOz7gwLOQPJeZujzuajq635AW7etk4of6jaKUDWUnjyUgcgFHA4wFSlBn/Wema8
-	h8PFPH2UyOzNqCyjL2KDQXPqbCYhed4NZ+0Rdyx3IVfp7MVupbKlIeo055aR5zyn
-	HiCcr96E4uWhI47L71f0twy8JsoxjMausdIw6mCa8yjWiEtCvWdk6CGx7J6CHx0T
-	3vuIVBNAzb4osY94mucmeauKFPNuFOfSdxzd9dJ8utOPILJ/OE8X5nPlPxMHeiMC
-	wVXUT1b961oG1BveaAZz2BIctqzdxleO5HU5r+7ayNSEvR5IdBqo6C18d17+1q/k
-	6OfkDYosROTg7TUakxHUyXJ8/R5NGwv3dJcEYDWEujln53H1zsGk5oI6J/J0KlkT
-	D6Sfd2ElQtNUWMqubsWtaD+9X51Ux5MhtelheK6OGoHUbcfr/RTY2UgGmTWZJrVd
-	zrgeq4F2WGqcvULyHEHgHmQqicc3w6dcEJqT07jV+Rc7UpvLaUahU8thqM5ebD+i
-	PQ0nPK8VdUJDejG2Hffd2qnwkKH5+R/XbwdIHNuP1hKpkDZkJbL0w8fkZJkLUI+F
-	Y3cED88=
-Message-ID: <832eb5e3-7e2d-4ed2-8571-eca9fe129013@prolan.hu>
-Date: Mon, 14 Apr 2025 15:56:47 +0200
+	s=arc-20240116; t=1744639014; c=relaxed/simple;
+	bh=ESCuQapauQmjDSGxrvdMiWpiZpAHRAJUwS3o5TN6AVY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=RRbMtvYUDxaBDq/iZOPb8G6YVXZNTKHNZ7iOUwjc73smenBOEG95rl/HVCwBnyFl94aBRT0ikF36Yee3Yi21+PyM6NjFaGcZLMBkkSvSlpK3PfTLNNk1zhwy7iiZu4Xtvq0VPwSsKtPbKWgR4gTRhL0qH+TLgP3e4MPC28SlCz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jf11uyuw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AB01C4CEE2;
+	Mon, 14 Apr 2025 13:56:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744639012;
+	bh=ESCuQapauQmjDSGxrvdMiWpiZpAHRAJUwS3o5TN6AVY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=jf11uyuwRiOn7OWxfW/FwmJbtmCrgx/l83Yo46x674XqBJTyKdt1//0T7iACWhMwC
+	 3gUe3I9cqTTiar1eVQttJp+r+Hx/18y06jqra+n1jqNyD67c72xH8EyJnqTAWmi8J/
+	 fGosgy0I2+4jIpBlWrpf/EIKgcjm5Lr1O3tE6mDYlcZStLxC+Gf7Wa5yoFxb0ffTE+
+	 ulW3T9ZcLpHxEBBlzX3h9R3Qh0syXzAyB3vlMZKnm0WF9/cFAoQV3hIORxiH+8FMQ5
+	 LzeFDWRqY4cJKKjm2iM6X8N11TidFRh+C5OklUx15JL2r2wjOkCPEk+nQPQ851zjQy
+	 WEJK3LnzMYwlQ==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Shenghao Ding <shenghao-ding@ti.com>, 
+ Kevin Lu <kevin-lu@ti.com>, Baojun Xu <baojun.xu@ti.com>, 
+ Dan Murphy <dmurphy@ti.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shi Fu <shifu0704@thundersoft.com>, 
+ Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+ James Calligeros <jcalligeros99@gmail.com>
+Cc: Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+ =?utf-8?q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>, 
+ Hector Martin <marcan@marcan.st>, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ asahi@lists.linux.dev, linux-hwmon@vger.kernel.org, 
+ Neal Gompa <neal@gompa.dev>
+In-Reply-To: <20250406-apple-codec-changes-v5-0-50a00ec850a3@gmail.com>
+References: <20250406-apple-codec-changes-v5-0-50a00ec850a3@gmail.com>
+Subject: Re: [PATCH v5 0/8] ASoC: tas27{64,70}: improve support for Apple
+ codec variants
+Message-Id: <174463900790.86688.4041479471029106682.b4-ty@kernel.org>
+Date: Mon, 14 Apr 2025 14:56:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/2] pm: runtime: Add new devm functions
-To: "Rafael J. Wysocki" <rafael@kernel.org>, Mark Brown <broonie@kernel.org>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Varshini
- Rajendran" <varshini.rajendran@microchip.com>, Tudor Ambarus
-	<tudor.ambarus@linaro.org>, <linux-spi@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, Len Brown <len.brown@intel.com>,
-	Pavel Machek <pavel@ucw.cz>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>, Alexander Dahl <ada@thorsis.com>,
-	"Nicolas Ferre" <nicolas.ferre@microchip.com>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Pavel Machek <pavel@kernel.org>
-References: <20250327195928.680771-2-csokas.bence@prolan.hu>
- <20250327195928.680771-3-csokas.bence@prolan.hu>
- <CAJZ5v0jmuzvo-xzGBDhGVBbY7svbrqEdi-SeJrx5BG=qtN6ZiQ@mail.gmail.com>
-Content-Language: en-US, hu-HU
-From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
-In-Reply-To: <CAJZ5v0jmuzvo-xzGBDhGVBbY7svbrqEdi-SeJrx5BG=qtN6ZiQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
- ATLAS.intranet.prolan.hu (10.254.0.229)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2980D94853647464
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-c25d1
 
-Hi,
-
-On 2025. 04. 09. 19:43, Rafael J. Wysocki wrote:
-> On Thu, Mar 27, 2025 at 8:59 PM Bence Csókás <csokas.bence@prolan.hu> wrote:
->>
->> Add `devm_pm_runtime_set_active_enabled()` and
->> `devm_pm_runtime_get_noresume()` for simplifying common cases in drivers.
->>
->> Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
+On Sun, 06 Apr 2025 09:15:04 +1000, James Calligeros wrote:
+> This series introduces a number of changes to the drivers for
+> the Texas Instruments TAS2764 and TAS2770 amplifiers in order to
+> introduce (and improve in the case of TAS2770) support for the
+> variants of these amps found in Apple Silicon Macs.
 > 
-> I can apply this one alone if you want me to do that, but I could also
-> apply the other patch in the series if it got an ACK from the driver
-> maintainer.
+> Apple's variant of TAS2764 is known as SN012776, and as always with
+> Apple is a subtly incompatible variant with a number of quirks. It
+> is not publicly available. The TAS2770 variant is known as TAS5770L,
+> and does not require incompatible handling.
+> 
+> [...]
 
-I think you can apply it and then Mark can apply the SPI part to his 
-tree. @broonie what do you think?
+Applied to
 
-Bence
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/8] ASoC: tas2770: Power cycle amp on ISENSE/VSENSE change
+      commit: f529c91be8a34ac12e7599bf87c65b6f4a2c9f5c
+[2/8] ASoC: tas2770: Support setting the PDM TX slot
+      commit: 7699892ad3cf3a9afc8c63886344f6e2b73166e2
+[3/8] ASoC: tas2764: Reinit cache on part reset
+      commit: 592ab3936b096da5deb64d4c906edbeb989174d6
+[4/8] ASoC: tas2764: Enable main IRQs
+      commit: dd50f0e38563f15819059c923bf142200453e003
+[5/8] ASoC: tas2764: Raise regmap range maximum
+      commit: f0aff451f399d09aaf2a23c4e2ef2077b9857ca5
+[6/8] ASoC: tas2764: Apply Apple quirks
+      commit: f33b01e0947d81c514bc8ff31ad28cae7ff6d91f
+[7/8] ASoC: tas2770: expose die temp to hwmon
+      commit: ff73e2780169a43617cc339686f5bd3d74fa8652
+[8/8] ASoC: tas2764: expose die temp to hwmon
+      commit: 186dfc85f9a824e3f8383322747ca75e988486e9
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
