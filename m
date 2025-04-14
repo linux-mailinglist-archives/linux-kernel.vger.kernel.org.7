@@ -1,86 +1,39 @@
-Return-Path: <linux-kernel+bounces-602548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EC35A87C52
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:50:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2DDEA87C5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:51:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60177189463C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:50:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06C927A9920
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:50:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D029266B7D;
-	Mon, 14 Apr 2025 09:49:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="h1evmA5s"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E98265CD3
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 09:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC6BF26B2CD;
+	Mon, 14 Apr 2025 09:50:13 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A40A126B092;
+	Mon, 14 Apr 2025 09:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744624197; cv=none; b=EiTeHBfdGjlLFtcNCZp6oTUekExwd7V8OBwRbns2+hsPNdt7YtdnPSjOKRDycN3dKrcPDQ3knoytb4z3EWgALhcxxfqYrcqvaCr399SdV5FnGPXEBM1C9edeX1zggw/l/IQYcRviH/ih4Tw5q0FqV6YUOw9DfZTSjpzN00Mx5dY=
+	t=1744624213; cv=none; b=o2iEkPTycqMzTduV3rTq/TbzcV1/BFFzgz8vVxqcAk0TfWmJJfXO5m5Ead6j6laLuyYyKSr6hs+SBayjQCEwrUb8ub17Yc4d+h3GElPw+qacrjd1VMNtvvA6G2I4kxQo41HDkh95e4mpMI9p4dh1K274HwkFXRNeqnwRhBxPc8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744624197; c=relaxed/simple;
-	bh=UpCWjbJlvqX+lZRx1GWi09bIQhROQ34WhK48kOtNG4Y=;
+	s=arc-20240116; t=1744624213; c=relaxed/simple;
+	bh=pzAVg/gEqz48XW9Y34vG1o5PUtXkZR8QjIF6M24lUqw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z0OS49mcHbuV1s1Po7sBH1XKOcsfKWggfd3TeRTjAsyN2yInKIUvXAhEeaur0vluj0SUOY0O57DayuYZNRnbfZateTuJS7NERQdG/QtGiOGQ/UEOGXT7+0XDg3VTBmxn4WLPxFYNmqKllvg5pHZ1fPYZwDhMb7R9xnPt61YCDL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=h1evmA5s; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53E99rYN016373
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 09:49:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	otwibO+B1RJWMfT84nQrsXKdELhQ7z3K4EdM/HQ4kbU=; b=h1evmA5sLBCjOty0
-	enCqC7PLiGv+sARxC9HV4xxZs5BSkX4K+HSbG5FmS+BtUv67m58dEvzC7Nfplz4r
-	P4Dw11xn7RQyIbleTY+Ywlpyul5RjNwiLRIZSb+lctLPN8xEqETpxNFnOU5VDELN
-	jXDEy1JyCkN+tJBZ5sMj+Z5ue4O6E7lXBfiuwACT0KZiCyW/DWEbiE7t841RSiUk
-	K+Y0vT4S6XkjOr3na2CM7nj4J6EhxuIUYqSzTtjyVKHwQOoTBe4Nz9wyCzFMC4sx
-	yRhkfveEd1oGUMSD7qzLOIF3b4ysZa4zuYq+4oqHCHz/dBtLIRcDxrnKxnkt1Ba1
-	hRXK8Q==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45yfgjc374-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 09:49:53 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c76062c513so109745185a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 02:49:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744624192; x=1745228992;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=otwibO+B1RJWMfT84nQrsXKdELhQ7z3K4EdM/HQ4kbU=;
-        b=B5fCTh8t1Ksl2yiMK+wz7RJgE2I/lP2nzlsPe3o6vCUsVWsYrkdQEJpVQZCDzKgWk8
-         xFyq6s0ODg+hbeGUyAC8zZsturBV4Y//klHHkwmmZ0JX47T595YX1es1rg9lqFGz7BVx
-         SxbLbcMSCTENRLnEeQOVPjvwuuYkS10j+XkkJY8IZkfjqJk7RR7/4xbXDpCDEE3nqZpG
-         2itFlRKF3QSEryVHfwZeN3NhikrXNWPbEhwYMxtJd5Q3Dl7n8eHLZkhV06iTuRVJ+MsO
-         j1pVmDYAVmyYtFxvBDCWuILcxwLv0nsVF5/HTVWACQ3kHp6i3Jc3COe3Ln05QFfR2gGF
-         GehA==
-X-Forwarded-Encrypted: i=1; AJvYcCX0VEspAsF5FaY6rUcMlKtr9Yr/zFj/toXC8X9KcI5Qpxmz/CO6RcGn7gODFWYveVZQ7jseHqgU6GASwo0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7/Zr/s6vDFPAMU4GleG9R0L59ILsauQrluU5Qwn2Ya+Vy9mRx
-	vpU2U2B3ucN5NbR/wtiJYQiPNgbiyNqjQwyw9gSAaHUpIgJQy5cjLyVoUAGOstplxLWRruyBw6V
-	BUMIY8kGPluCMvFqs0XMYvxb98xCDHbhUHVEMHsUSH362bbu/E+0AOk0dGu0pHhA=
-X-Gm-Gg: ASbGncuRNXoY6olqflqBXHNeLz8vtFkhSJR9Ipp7/94AteaJr6XbQ+WXqN+DvxzFRMh
-	3DVqW8MXiGWnD+N2pKN4BZWYDYwZL+jhS3soMA/0Difp1fwJ1TA6Uig5Vw8vtHojUx+ruYe2nhG
-	y+3crSH746RLLVz7LswijjAiTDaD6/8HuQ7mwU2/tZZUlhO7RB/Xcm9Mtz0+iVd8a6uR3f7r6al
-	orhav/ZLFSy9wxFX4w/Lr4+WDwTxaC+o4IYK6IzBm1VX+MqBI+NkBDN7Cxn/b99FMLASdebuoPa
-	ttZfFJ+5KYOqrvXUg5AJrl4NX8Ip7KGLdOUA87m96EcmLILXN3jlHbDT148mdXtZ9Q==
-X-Received: by 2002:a05:620a:2489:b0:7c3:c814:591d with SMTP id af79cd13be357-7c7af0f0403mr648276185a.1.1744624192548;
-        Mon, 14 Apr 2025 02:49:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF00odbGqpr+NrwU6tII/IQJplxH+w+y1CYdgLC0L7P41kv1mE5rKymC9sH3HYVqso2Q/R8NQ==
-X-Received: by 2002:a05:620a:2489:b0:7c3:c814:591d with SMTP id af79cd13be357-7c7af0f0403mr648275285a.1.1744624192033;
-        Mon, 14 Apr 2025 02:49:52 -0700 (PDT)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1bea593sm892427066b.62.2025.04.14.02.49.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Apr 2025 02:49:51 -0700 (PDT)
-Message-ID: <69fbfe29-f5ff-4a24-b270-289b2f160f38@oss.qualcomm.com>
-Date: Mon, 14 Apr 2025 11:49:49 +0200
+	 In-Reply-To:Content-Type; b=ZlO6JNRLTsf4CICViRgHh/tezsblrFxeIQQAbfh8l4L70fRHrMj/AUtQVaty3rVD8/Fxqokpsjcb/IL70DwnhTH7Yi/nutqLkNrzStYeUQ/3YaTHOO8Tgkj/1DlL4k49ZB7PiBQRTEQZIWtZpIXIhlVjoxGnwxfxbH94S8qc5wU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 491921007;
+	Mon, 14 Apr 2025 02:50:07 -0700 (PDT)
+Received: from [10.57.87.24] (unknown [10.57.87.24])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 098953F66E;
+	Mon, 14 Apr 2025 02:50:04 -0700 (PDT)
+Message-ID: <93a4ec41-3bd8-4485-a4fe-d0def3509b79@arm.com>
+Date: Mon, 14 Apr 2025 10:50:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,60 +41,157 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: msm8953: Add uart_5
-To: Luca Weiss <luca@lucaweiss.eu>, ~postmarketos/upstreaming@lists.sr.ht,
-        phone-devel@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Felix Kaechele <felix@kaechele.ca>
-References: <20250406-msm8953-uart_5-v1-1-7e4841674137@lucaweiss.eu>
- <e87220f1-bf8e-4014-834f-ae99c0b032ca@oss.qualcomm.com>
- <cc84ef26-6c33-42d0-a11f-4d6b31d8beee@lucaweiss.eu>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <cc84ef26-6c33-42d0-a11f-4d6b31d8beee@lucaweiss.eu>
+Subject: Re: [PATCH v7 1/4] drm/panthor: Introduce BO labeling
+To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>,
+ "To : Boris Brezillon" <boris.brezillon@collabora.com>,
+ Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linaro-mm-sig@lists.linaro.org
+References: <20250411150357.3308921-1-adrian.larumbe@collabora.com>
+ <20250411150357.3308921-2-adrian.larumbe@collabora.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250411150357.3308921-2-adrian.larumbe@collabora.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: 7SCO-I_45Tn2kCxvsizm_-4wV7v314la
-X-Proofpoint-ORIG-GUID: 7SCO-I_45Tn2kCxvsizm_-4wV7v314la
-X-Authority-Analysis: v=2.4 cv=Cve/cm4D c=1 sm=1 tr=0 ts=67fcda41 cx=c_pps a=qKBjSQ1v91RyAK45QCPf5w==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=TyM6OeZ_AAAA:8 a=dlmhaOwlAAAA:8 a=O41bOD_wkTG2M6k6xrUA:9 a=QEXdDO2ut3YA:10
- a=NFOGd7dJGGMPyQGDc5-O:22 a=RxdkCTCKa-xTImXFM8fo:22 a=y4cfut4LVr_MrANMpYTh:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-14_03,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
- malwarescore=0 lowpriorityscore=0 bulkscore=0 spamscore=0 phishscore=0
- suspectscore=0 impostorscore=0 mlxlogscore=999 mlxscore=0
- priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504140070
+Content-Transfer-Encoding: 8bit
 
-On 4/12/25 10:34 AM, Luca Weiss wrote:
-> On 4/10/25 6:45 PM, Konrad Dybcio wrote:
->> On 4/6/25 3:52 PM, Luca Weiss wrote:
->>> From: Felix Kaechele <felix@kaechele.ca>
->>>
->>> Add the node and pinctrl for uart_5 found on the MSM8953 SoC.
->>>
->>> Signed-off-by: Felix Kaechele <felix@kaechele.ca>
->>> [luca: Prepare patch for upstream submission]
->>> Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
->>> ---
+Hi Adrián,
 
-[...]
-
->>
->> It's more usual to send these together with a user, but I don't mind
+On 11/04/2025 16:03, Adrián Larumbe wrote:
+> Add a new character string Panthor BO field, and a function that allows
+> setting it from within the driver.
 > 
-> This seems to be used with the out-of-tree dts
-> apq8053-lenovo-cd-18781y.dts
+> Driver takes care of freeing the string when it's replaced or no longer
+> needed at object destruction time, but allocating it is the responsibility
+> of callers.
 > 
-> I'm just sometimes trying to reduce the out-of-tree diff of the
-> msm8953-mailine tree on GitHub
+> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+> Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+> ---
+>  drivers/gpu/drm/panthor/panthor_gem.c | 39 +++++++++++++++++++++++++++
+>  drivers/gpu/drm/panthor/panthor_gem.h | 17 ++++++++++++
+>  2 files changed, 56 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_gem.c b/drivers/gpu/drm/panthor/panthor_gem.c
+> index 8244a4e6c2a2..af0ac17f357f 100644
+> --- a/drivers/gpu/drm/panthor/panthor_gem.c
+> +++ b/drivers/gpu/drm/panthor/panthor_gem.c
+> @@ -2,6 +2,7 @@
+>  /* Copyright 2019 Linaro, Ltd, Rob Herring <robh@kernel.org> */
+>  /* Copyright 2023 Collabora ltd. */
+>  
+> +#include <linux/cleanup.h>
+>  #include <linux/dma-buf.h>
+>  #include <linux/dma-mapping.h>
+>  #include <linux/err.h>
+> @@ -18,6 +19,14 @@ static void panthor_gem_free_object(struct drm_gem_object *obj)
+>  	struct panthor_gem_object *bo = to_panthor_bo(obj);
+>  	struct drm_gem_object *vm_root_gem = bo->exclusive_vm_root_gem;
+>  
+> +	/*
+> +	 * Label might have been allocated with kstrdup_const(),
+> +	 * we need to take that into account when freeing the memory
+> +	 */
+> +	kfree_const(bo->label.str);
+> +
+> +	mutex_destroy(&bo->label.lock);
+> +
+>  	drm_gem_free_mmap_offset(&bo->base.base);
+>  	mutex_destroy(&bo->gpuva_list_lock);
+>  	drm_gem_shmem_free(&bo->base);
+> @@ -196,6 +205,7 @@ struct drm_gem_object *panthor_gem_create_object(struct drm_device *ddev, size_t
+>  	obj->base.map_wc = !ptdev->coherent;
+>  	mutex_init(&obj->gpuva_list_lock);
+>  	drm_gem_gpuva_set_lock(&obj->base.base, &obj->gpuva_list_lock);
+> +	mutex_init(&obj->label.lock);
+>  
+>  	return &obj->base.base;
+>  }
+> @@ -247,3 +257,32 @@ panthor_gem_create_with_handle(struct drm_file *file,
+>  
+>  	return ret;
+>  }
+> +
+> +void
+> +panthor_gem_bo_set_label(struct drm_gem_object *obj, const char *label)
+> +{
+> +	struct panthor_gem_object *bo = to_panthor_bo(obj);
+> +	const char *old_label;
+> +
+> +	scoped_guard(mutex, &bo->label.lock) {
+> +		old_label = bo->label.str;
+> +		bo->label.str = label;
+> +	}
+> +
+> +	kfree(old_label);
 
-Sure that's fine
+Shouldn't this be kfree_const()? I suspect as things stand we can't
+trigger this bug but it's inconsistent.
 
-Konrad
+> +}
+> +
+> +void
+> +panthor_gem_kernel_bo_set_label(struct panthor_kernel_bo *bo, const char *label)
+> +{
+> +	const char *str;
+> +
+> +	str = kstrdup_const(label, GFP_KERNEL);
+> +	if (!str) {
+
+In the next patch you permit user space to clear the label
+(args->size==0) which means label==NULL and AFAICT kstrdup_const() will
+return NULL in this case triggering this warning.
+
+Thanks,
+Steve
+
+> +		/* Failing to allocate memory for a label isn't a fatal condition */
+> +		drm_warn(bo->obj->dev, "Not enough memory to allocate BO label");
+> +		return;
+> +	}
+> +
+> +	panthor_gem_bo_set_label(bo->obj, str);
+> +}
+> diff --git a/drivers/gpu/drm/panthor/panthor_gem.h b/drivers/gpu/drm/panthor/panthor_gem.h
+> index 1a363bb814f4..af0d77338860 100644
+> --- a/drivers/gpu/drm/panthor/panthor_gem.h
+> +++ b/drivers/gpu/drm/panthor/panthor_gem.h
+> @@ -46,6 +46,20 @@ struct panthor_gem_object {
+>  
+>  	/** @flags: Combination of drm_panthor_bo_flags flags. */
+>  	u32 flags;
+> +
+> +	/**
+> +	 * @label: BO tagging fields. The label can be assigned within the
+> +	 * driver itself or through a specific IOCTL.
+> +	 */
+> +	struct {
+> +		/**
+> +		 * @label.str: Pointer to NULL-terminated string,
+> +		 */
+> +		const char *str;
+> +
+> +		/** @lock.str: Protects access to the @label.str field. */
+> +		struct mutex lock;
+> +	} label;
+>  };
+>  
+>  /**
+> @@ -91,6 +105,9 @@ panthor_gem_create_with_handle(struct drm_file *file,
+>  			       struct panthor_vm *exclusive_vm,
+>  			       u64 *size, u32 flags, uint32_t *handle);
+>  
+> +void panthor_gem_bo_set_label(struct drm_gem_object *obj, const char *label);
+> +void panthor_gem_kernel_bo_set_label(struct panthor_kernel_bo *bo, const char *label);
+> +
+>  static inline u64
+>  panthor_kernel_bo_gpuva(struct panthor_kernel_bo *bo)
+>  {
+
 
