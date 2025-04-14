@@ -1,133 +1,194 @@
-Return-Path: <linux-kernel+bounces-603346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56F52A88628
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:01:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C888A886CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:20:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B017E16B76C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:57:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5092565976
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152112472BB;
-	Mon, 14 Apr 2025 14:57:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838FD2522B7;
+	Mon, 14 Apr 2025 14:56:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aZylL5Cj"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="JaxqYAPb"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013022.outbound.protection.outlook.com [52.101.67.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C5C2472AF
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 14:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744642633; cv=none; b=onsxM1lbRZZ/mRZZUZ/UVI6QjBFuKer/JxCKPeqE49tPGjrk/ZGeWNOv6NccDFUaIfkMqMBlgFliIa/aIB5jbWjiZRDDXQRv70OdFrFGADJBeThNOV2vPiT6QgpCZuAamOlCK7a8iAT8tO46a28QS0k+KRjt6BwGAJ7asug23wE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744642633; c=relaxed/simple;
-	bh=nMVmu0mnqFnI/x465fiej4B8Xi495SXzz99LpPCafAc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bfoLWK12gjDjrZrtA/Jk/wKgoDXE/4VA0NTMp0LoXdpyIGi6KQUYFpct6d3I9Pcz6Saiyx58qLapx6aOnx/haJC9FyswYG6pxM10MwtjUDpqD9dXk4z1jM5X2pRY5jfvQKk+Ott8pU42GAYUUOj+peMdznHnSNaWGmY+UojDBAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aZylL5Cj; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-acacb8743a7so646073166b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 07:57:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744642627; x=1745247427; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jbPFUD03S5a+/mIPyYPIOOdYImmpF80z4OIO3LBNPQU=;
-        b=aZylL5Cjmy61riDpOt9dTJR3mQYg7+0K1EkuDqr3Of48S5J9mK+wQX4Js4eXThpfzQ
-         r60CSwxbJpRok2IV9dvs/AgBpPU0fOqQy+pJMkiBkGz/0ZzNY66jww5E2UX8+DLeCgtF
-         l1qd6vYvOwa2kVttOaOyXoMx3EWq68vM2yO4m06iaCiNCXCQI9noQzll9RWR+sb8uqVw
-         2ChXpLION5SG+lb8Uvfl6rC+kb+EgoBEmg1D7vuEJTv80MP57e+h+Nl6EYIB/naq3rI0
-         n6BXQgdosHV8W0OojCXGUdc4mttACfSwJRKi+ObhKY1+tAnyKEH5pkGG5yJQfqiqQKg9
-         W3sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744642627; x=1745247427;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jbPFUD03S5a+/mIPyYPIOOdYImmpF80z4OIO3LBNPQU=;
-        b=WIELhQnkT/mRUQVJYxnrNwAJst8J+w6CwQvSRwZAEmCnVhjr9DWi6RcYt6cLkoLblm
-         wYT3KZx5mguAAIzxwlkk3D1LBXscZVorfPDXEgxSTgngfyBQ+3ApcfhyLxYMcXaik7y7
-         H5fd9HzK2c8d9GipOHDKnlUBH25EY7OrU5SgOESi7sC3pJ/gtM4mliwtTh2y00rDUCmW
-         9/D1hMfzl+YmfQ7bhjiAJ5vEWx4TDjZx1JgiqX5ZLwEgUY81wHzWlIKRo26luMuVunok
-         GMh1O/bo4pC6Jwl9jTwWDMy+Wh39QvzUM1bSyir86WPgGeJ0Fz3cN/oCMn5ALskzdPvC
-         kUvg==
-X-Forwarded-Encrypted: i=1; AJvYcCX+g8dXNGMueKAljpiIobwzVbxr3sqXLbkrU4zwN84JlRN+VYkffFUgeE+swyrDFkG3ahknc0eSJOnaBhU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyV+2/rMeILFG2S06VTU1Mw0f/Zru3ajkTWFxVk6dgxXfREtfXU
-	6o428KWwa6Svd9uFlTAa+h5gyDI771j3ISu+QGywrVW/ctk/PWig
-X-Gm-Gg: ASbGnctes5/fLaxK7N43GZXAtYTbhQQE1SBA7DiZ1vqZGw7oxkCxcR8Hhy1jMUbp9oi
-	7r8ISoT4quoMszFxCQTbKJosYRws9e/E6nTB7hYeheymB074TSbqxKYFdudtQvtSur9Jcq8K/fL
-	8m5CppbXhJp5/RzFg5hF2sZVsbIvOAXCehYlL1JAQdsR557V4pQshZbgBRus8YU+BvJZaUBf6m7
-	slZf+2rbs1tuWogLC0cMF2n2BVFcmzaDOQjCTwQ5w6gUUspPs8T8/XoGNL8l712RzVPHC3/urL3
-	AOmAvJc8QDbjXSmdSegbCmAuWjxaBqAn5C3ZutEbTxD3ojygFg==
-X-Google-Smtp-Source: AGHT+IFQk+j582/Pz24BY7Hge7dbHQW7HWZ3XGap1nVfXL91YVs8Nc6fP876u076Lvogcj7kpax+Dw==
-X-Received: by 2002:a17:906:f1cf:b0:aca:c6d5:1dde with SMTP id a640c23a62f3a-acac6d51ebemr1063278166b.8.1744642627062;
-        Mon, 14 Apr 2025 07:57:07 -0700 (PDT)
-Received: from localhost.localdomain ([46.248.82.114])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1cb4142sm929983966b.101.2025.04.14.07.57.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Apr 2025 07:57:06 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: linux-um@lists.infradead.org,
-	x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH] um/asm: Replace "REP; NOP" with PAUSE mnemonic
-Date: Mon, 14 Apr 2025 16:55:57 +0200
-Message-ID: <20250414145650.10776-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.42.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D260539A;
+	Mon, 14 Apr 2025 14:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.22
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744642578; cv=fail; b=fQtYAwr6bMo1vU3A9qb1c2ShPg1KzauN0IMubah+hEh5lQ0OoCVkSVq4agKHJzhQucPVj5HWEdWjqo8l6FMSnNFEEDm9gavQc08/2usQcd9TvldCYuOF71E9/HxsVqiRtxvSjwboLJvWnn2waemQ3zuY7/VpPvay3AzlbrLGaas=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744642578; c=relaxed/simple;
+	bh=iLzn8ttjJugvFiE7V/ht2iTXHj2dPGdXHlPSklvHR/w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Kx6ZH9DjUZZS9mVfhrl58R0IYD10fW8Cvy4S5x3WRxnZypU2fITNBc7BzVB/Lp6tBgDWeVqbQciH8b3sdXUut9G+QSq0Gijh3ceFkHTF/9EENWdgGJ04L6QNBONhq8TxFRNmBvM11udA8K7iElwrsQJ8qqsIHt9cPQO9FlCjAiQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=JaxqYAPb; arc=fail smtp.client-ip=52.101.67.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lImUt1ZLgjoFg1YakYWbKgS/vB9G1vq63I+7C0u0lsYcSYjwSuIyGkH4ErTWyO7XdG+tnvsapCnvmT1kOcny0aGpxKVXVYtm7XK9jkZTgKN+PxpnlLXyOUb3lAnV1vwK75rEcnxi6NztO1dc0ez0B8vaVAoftaIdhdz1QdM+YMvNL2kDyA1fYxBV0KdjFbmiZm7+ABzucno2PDHrv62/+55F6dBctHU9xtX8Dz1gwp4S9ApWm6iZu1Tn9KUrez5wbqhSR7bpFIjfY6oGTByVAPiVXroq5Q3dKd0zsLVKF+wBcnDpwWjqe4hS8RLZrtt4m1kMNi1MQvbG24lPTph2IQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WGDzh7JRZ5F+Kjk1GInhB/j0vpCc4ack2sxFKapcwYw=;
+ b=zWuVTT0dIkhBjT2uKDcX9wiV40zohJW/MImpQ8DyjDHHAevPEwk2rYBLrPuqwh3JxMjLN/D+y5sgCmDtBJmt4ZTpiZsbcELBeyW5xfx2mG4FzUgtdfbDOCEk5M6GvIvhOM9l8yVkFox/HWmdZBzWeWQvSkIXAzpjpeaEKHaujBNbjXRksfjPm1F5EGCNXfg4WY0NuJcqxP22Mv0svbg5Ju8UqXVk5hBlkKwoAZ/BIRmObBI6I2fL0rrr9GLtDhi2SS9K/Etd3LqPPrP8KMgRqboB6wo8nQvPcK36CyZm9idu8ask+epK/R5RDyi6vvwiEy+Wkhiy54tB+HgmWkGreA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WGDzh7JRZ5F+Kjk1GInhB/j0vpCc4ack2sxFKapcwYw=;
+ b=JaxqYAPbmg/3eJX6lx5GPTvpb6ZTOUSwyZPp/O3bm7mLPlzQIpNPvrkv7sCfnVw72oeWxtZ/oyZ2txMsfor1AsxVNQ1boa3rhGKo2Ad1BLNSz86l6itjs0A9D3zoKWvHSOntG2PklXFd9kkZYTdH6QGfgnKSS3KyuGsViBZrdpV18c/kxyrh9QDlaGbmThGNInSfVUOnJgc5sWZt4ZfKFI+1v8ZLCAc0kodsGgLfGJa+fWzV3jztE40bfkPg5qPeI4WJ8q7DqqskEELD0zuiS4RaJmuHT2xOJ6OOehxRnN0+325XvJRN6AF/ClEt623ksD7FSiP5Ovm2uwkcGTfTsw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by DU4PR04MB10861.eurprd04.prod.outlook.com (2603:10a6:10:592::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.31; Mon, 14 Apr
+ 2025 14:56:13 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.8632.030; Mon, 14 Apr 2025
+ 14:56:13 +0000
+Date: Mon, 14 Apr 2025 10:56:03 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Patrick Havelange <patrick.havelange@essensium.com>,
+	devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] MAINTAINERS: adjust file entry in FLEXTIMER FTM-QUADDEC
+ DRIVER
+Message-ID: <Z/0iA9Et7MlviJTv@lizhi-Precision-Tower-5810>
+References: <20250414093124.19683-1-lukas.bulwahn@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250414093124.19683-1-lukas.bulwahn@redhat.com>
+X-ClientProxiedBy: SJ0PR13CA0162.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c7::17) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DU4PR04MB10861:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1075cf9c-fcb0-440a-189b-08dd7b648010
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|7416014|376014|52116014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?LFPYBAHK4VVQC/06cQdXYzvaC/H8+Fj4Ot04t1HMK1VHyMZLF2wVxZrOtjgd?=
+ =?us-ascii?Q?i4xeX2DT//zOJS6C4zNfP4p+OBwLebbmWczF6CafYbdNRLnzbHPPcrj56Y53?=
+ =?us-ascii?Q?P8eRz3FjWPDD3PN9gV8XHHjc9o1/8tLFYKEXBUNiy/OZu1U/5MYeVdY2dIsv?=
+ =?us-ascii?Q?1Y5jjLni/dGHIG/vUiO/gq6aoX87pn6/TNiT7f0Fgm2IFzcaEIiJ1453Bd1I?=
+ =?us-ascii?Q?U7iewPOjQJ5eZcEp+1j3elIVWmXHcv1BhMfWqXsoD0bSjFGp2bU2CwlGn8R5?=
+ =?us-ascii?Q?zBlFnRacXEr7FaQSDVOUEk6pNGrw4wgRGaOSD8OAsF//qVj+IDKO14vTVG5M?=
+ =?us-ascii?Q?1cDRrwjc1ipEi0aDQp/Sbfrp/loT2SQINqx59D2O9r/mucdpkWDPA3cu50NU?=
+ =?us-ascii?Q?f4hV0JvR//ko3xCGq/IR72iHGDH6lIbIPPf5DJcMpZFUObcFG+yLIHTZm/nX?=
+ =?us-ascii?Q?UuvvXoR0GpXWZgiJFvoxLQs/KXgIeuAcZqxvm5FKwYWbWdN790fQBOrgKWKq?=
+ =?us-ascii?Q?7TyY0EfVSNIdRphEH5iyQ7ML0QyPHL56PhhRhMHo2NqEY5o6h5BS9bzMYmJm?=
+ =?us-ascii?Q?ygkpq1voNE6ClIpnmr7EiV4gUpuu3vUr3dnLg7f/q7gDx7aM/mxsv51ptsv3?=
+ =?us-ascii?Q?v/2a9mAP4tD9K5uzD/wxh/W5VecESNqWNU4COX4rzNoYvq4HPfrCRrBcZM4j?=
+ =?us-ascii?Q?zzCTsbusMnrMWgemTqVHt5xWXQsHB34JBCLq3uWixyxu40C6nfEydteoDECW?=
+ =?us-ascii?Q?p9S3f9VUGRGgQ9T+HWSVdmcmPZ9E5CtwEV32Pp1nJQ4oJ1MNowtdlwqFVZDU?=
+ =?us-ascii?Q?QHhUoDC7YfaNjTPWGKIV+3d7pD7dcuhLB5ESl4nENLcQtA/M0s0mqIIU/kMc?=
+ =?us-ascii?Q?2uHRIyZW6f1FQ8QQpNDeiXgN00OXaS/BD2hZVIQrwfYCZfRRH6NVm5gy2Caf?=
+ =?us-ascii?Q?w+XhqbtXp8ey8aZN50dTJqsrTxPbZ203kVequHENjkwW7WGcaYiksuujklTj?=
+ =?us-ascii?Q?sWgaE53AXTB2l/TcRJR/qKQ+kCQ5ysDOpKYShzSK5AbOICjIzFXLW1UqVY/L?=
+ =?us-ascii?Q?ovXj2PKmhaHDkTWW5rDmHMIjj7R7tA3M5V4T4ip8N4PsgR1zFa71x0Eg0exA?=
+ =?us-ascii?Q?z0LVCQYFRpJZQeIWpqjEZsoHiYkDRggjKmEoWTQL7fGKy4c1YH1gJTwPdg9R?=
+ =?us-ascii?Q?EK1PBWFKzzUisjrZ+DuSjWkCE89efHtPnV4AzJ30hSf2BMMo/Tj9mpzTs0tB?=
+ =?us-ascii?Q?EUA5L8e1U2cSwfz0bag7AKj0N2zyqZ/x1VJivjiPgjdqFDk5J3qrpEkhX05m?=
+ =?us-ascii?Q?lmZgqMXIDo4witrDjLpYzNCJh3QAXszWrX5PX0fMAPFK/MRSlrphmmWjEenx?=
+ =?us-ascii?Q?Qz7JNGiaCQBUj6CbBi2Pe5R7+cwk17y1x4Ife1LxZaopYmR+qqQsXpWcyOdK?=
+ =?us-ascii?Q?DQa5viYRKcu25trGhgLN7mHf39u0gHP6Sz8KRtst466Y+PyNdDcNfw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?QYR1DULc+gd3ddOZZymjsqZM4iJfDFbGNQ7q0wFJIxk880OwxWhTkW8yiNdT?=
+ =?us-ascii?Q?hlLlWbKJpBufXlXrcO0X6Is4JVKwxFV7a2OSZPUB2JlaYNJ9Wj0Sh63xbZhz?=
+ =?us-ascii?Q?cU4t7oqAIpWl3/aU6mWkSSwwS4PyO+JS+e02oST2BiQoy6PzpdQ85guR1DJp?=
+ =?us-ascii?Q?cUYAMiCZQPd7L2T61jTHqbpNvBjjDJUWOUCo+LbO4+/YhBVXkkWtWfs+RUWc?=
+ =?us-ascii?Q?3AvxbvHPTfyI1rb34v1zq44XfDS6lLVyMcaxVwfaSMdNoRHvzxZZ4LzTzIjG?=
+ =?us-ascii?Q?xAq5Oaz8TaTP+sr58Zty5g6hwfSQJWOTCixT1oqJhSqVtvHyCHZH4/rorRj1?=
+ =?us-ascii?Q?64Hj/Sm4jy7u5o7c8kOArFJ82Buabwm+Wz5HnOyYOlJA3DJlOqQP1U4sw302?=
+ =?us-ascii?Q?RmpgrNO7I6wUODbqqlbyUnU9lhks16EFofItK5NjMlsDzz0YYT+dnAzkbaZM?=
+ =?us-ascii?Q?1krBvKFgjWMJST/sEa5+2IzcpRL2QM+lAvIbjddCyO7jPLCA3LnB43DK21zO?=
+ =?us-ascii?Q?uxWu5FUr3GD+P93UgKRckG9VqorovE0UjNexHq/DaV5b1RiOeTD6rG5GZhsF?=
+ =?us-ascii?Q?3Cq2h7fhBy5jfHZD8ciHx6S+UkesUufd+SV24yeECM8cXzZdL9xqArjw2XYt?=
+ =?us-ascii?Q?ECCSLGZIYGRbC6H4wufMC/suTapbD9wb95FODR4gzQwLnMy5X1vwf7XsltKT?=
+ =?us-ascii?Q?0y/+wPyqs/eWdVSs6H+XyM1RF7YbAn8CLx1TMCGZNc67OPR0E0pnZrLsezc+?=
+ =?us-ascii?Q?Z0I3i0lT0KD0Ag24y+mg0DzXajc3ntF7HSWc8iRXiDTtV3wLiqEEIgvoiY5a?=
+ =?us-ascii?Q?C5U/Os7aTpisJDuxjKq/QNvUiMZTh0lFYx5f/DetJFa3leFaGuga6YShWKQi?=
+ =?us-ascii?Q?QF5RoGvc0YRs2l2sHtiBiqWppHUjUBg7j9UXRwb41u65ijd9+ap893ZZ4I3r?=
+ =?us-ascii?Q?EZ1Ei9GqW0Nt4UzGo99K+9NCIMf22dl+B5sFKSfmuytdDJrEbC9RJuDomyef?=
+ =?us-ascii?Q?NoLzh/tnZG2pO4XVgy49IAlzytzuAfQhi84dmCr5HX1SfFbh+F61ShU7YNI7?=
+ =?us-ascii?Q?0xtoyoLDMNGygwbXofn8xHANvFdpC7m2N4OtxLs3o5WAD6Vj5mpIfGdI08mZ?=
+ =?us-ascii?Q?JzNfgLhheJFSgqJudLoi6CjGraSrRgNE31S5HlZnccUsiIAvrdsNfO0vQciz?=
+ =?us-ascii?Q?HQc40qrjp67qI3rAUNHPxwUE9Y/o7IoCad88Phmic+Yulskf8+cmDLEaC5oj?=
+ =?us-ascii?Q?V6iJS8xtS0o3SoIGvzig/h6oUDL50Zyrc0I75yhjsGbDl6Kln7bVVWpIf5cK?=
+ =?us-ascii?Q?izCKlZ8pAQJhL4vtrSsgrj2Fmx8l8cnv2prjppwpgmCsc4o+UJnq3BpfaCtV?=
+ =?us-ascii?Q?W2r4vlWUaFLQZ65F+5ldihkcH6jH+n3kTdqXb0qvwcAU3kGRgK9XVoq64SZi?=
+ =?us-ascii?Q?q5ypLbAsO/4s3WAzWM8WlpMjy87o0JyLyO8h3TanHkkI1ZZKQDB9kNi/J7n+?=
+ =?us-ascii?Q?pTGpU3aygF4N8Z2mHi7WeaHlX+ur2HUIJECBr1idmMSxPqY9RtRtpK9mJuQl?=
+ =?us-ascii?Q?NLcutWTFmzvIwAyqYdM=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1075cf9c-fcb0-440a-189b-08dd7b648010
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Apr 2025 14:56:13.5498
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: U4/oCMREk+yLlmPnipZNk0kZtvQbzNzlrN+YKuTtqYBr4ywjabYwcqHywayNcPLBAVuKS5wcGD/H1NEs8p8g8A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10861
 
-Current minimum required version of binutils is 2.25,
-which supports PAUSE instruction mnemonic.
+On Mon, Apr 14, 2025 at 11:31:24AM +0200, Lukas Bulwahn wrote:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+>
+> Commit b7549ed5edc6 ("dt-bindings: counter: Convert ftm-quaddec.txt to yaml
+> format") renames ftm-quaddec.txt to fsl,ftm-quaddec.yaml in
+> Documentation/devicetree/bindings/counter as part of this dt-binding
+> conversion, but misses to adjust the file entry in FLEXTIMER FTM-QUADDEC
+> DRIVER.
+>
+> Adjust the file entry after the conversion.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> ---
 
-Replace "REP; NOP" with this proper mnemonic.
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-No functional change intended.
-
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Richard Weinberger <richard@nod.at>
-Cc: Anton Ivanov <anton.ivanov@cambridgegreys.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
----
- arch/x86/um/asm/processor.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/um/asm/processor.h b/arch/x86/um/asm/processor.h
-index 478710384b34..233a7a0d29c9 100644
---- a/arch/x86/um/asm/processor.h
-+++ b/arch/x86/um/asm/processor.h
-@@ -24,7 +24,7 @@
- /* REP NOP (PAUSE) is a good thing to insert into busy-wait loops. */
- static __always_inline void rep_nop(void)
- {
--	__asm__ __volatile__("rep;nop": : :"memory");
-+	__asm__ __volatile__("pause": : :"memory");
- }
- 
- static __always_inline void cpu_relax(void)
--- 
-2.42.0
-
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index af3537005de3..661419d7c71b 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -9216,7 +9216,7 @@ FLEXTIMER FTM-QUADDEC DRIVER
+>  M:	Patrick Havelange <patrick.havelange@essensium.com>
+>  L:	linux-iio@vger.kernel.org
+>  S:	Maintained
+> -F:	Documentation/devicetree/bindings/counter/ftm-quaddec.txt
+> +F:	Documentation/devicetree/bindings/counter/fsl,ftm-quaddec.yaml
+>  F:	drivers/counter/ftm-quaddec.c
+>
+>  FLOPPY DRIVER
+> --
+> 2.49.0
+>
 
