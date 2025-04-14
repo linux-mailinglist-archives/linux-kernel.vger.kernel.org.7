@@ -1,45 +1,47 @@
-Return-Path: <linux-kernel+bounces-602050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 803DEA875D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 04:21:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DDC6A875D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 04:29:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0563E7A58C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 02:20:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EB1916E667
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 02:29:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFA5318B47D;
-	Mon, 14 Apr 2025 02:21:38 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72EA19258E;
+	Mon, 14 Apr 2025 02:29:32 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
 	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F1E26AD0
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 02:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A49DDD2;
+	Mon, 14 Apr 2025 02:29:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744597298; cv=none; b=cfvrRsYJL6dmNYEegX79YIQ8Br94Gm6va7+bwcL0SYkNIZRTsaxPgxyrnhmZ4/ZgqCTmlrImLMNRCM6iD4ppgEC+i45D9zMgVK9OnRT9oPklbDUXWwzCi9OyjxrOEkP0RkBG5OQzsSun9KmCZDo+0ldO+Qn+mbMSTPtgrfZjkcA=
+	t=1744597772; cv=none; b=RAN+HwI6O7l9ppqLf8WAOHzoygjC3nUZz1nKPgYn9Sw/A0zBAOEFnYEcGuDDuq11MGwPRrRvgdQUUE6tU5r5B7C/bPADAIFCeQmop85LqKPJ/hXRq6b/+ZIaTG36E5F4i/9Oygt0h+HXCd/3S9AeifEuiIuNzEFPKW+Qc6Ek9bI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744597298; c=relaxed/simple;
-	bh=Vu5WsQ+7J9lQduPSuEZf7+DnEiGD+PqAeVSVVK1h5+E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iZ1li6UFmsUuiolkw7tH6g3HRlMiAPMqq2fZn8V+5+cglg418Me/cX3vzgUV1/rkMPvmyhV5Q10uk6/PEFV00zoMsDbJFSI6pObW9j715iaYidIvjLSkT2kf5d+URYDHOOomlMG3+bDibdanF+GfC/YtOGVJ1k3DPiNQ82EtZXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+	s=arc-20240116; t=1744597772; c=relaxed/simple;
+	bh=8e43JfZtGPIrrAReIU0/vZ4SrcKs4H6mn59ZlV59EOc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LzVX70ZRie0+E1FPda2oSkVeU9LkVB1TtHn6k7rus0KFgXqt3aven1T/Aur2Eubf/dxaJvD6z5rxOM/y67kRmLCp9kqcgwCyFKY68M5clwB0XuY+9+VGbG/dPvR6NRG6qgMP2rDswMwJqczmPrMLwMk2EQEB0fIB6sIw8fb54G8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-01 (Coremail) with SMTP id qwCowAD3nf4kcfxnGYHACA--.37636S2;
-	Mon, 14 Apr 2025 10:21:24 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: alexisczezar.torreno@analog.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] regulator: adp5055: Remove unneeded semicolon
-Date: Mon, 14 Apr 2025 10:19:50 +0800
-Message-Id: <20250414021950.3755819-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+Received: from localhost.localdomain (unknown [124.16.141.245])
+	by APP-05 (Coremail) with SMTP id zQCowAAXUwv2cvxneIncCA--.64253S2;
+	Mon, 14 Apr 2025 10:29:15 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: arend.vanspriel@broadcom.com,
+	kvalo@kernel.org
+Cc: linux-wireless@vger.kernel.org,
+	brcm80211@lists.linux.dev,
+	brcm80211-dev-list.pdl@broadcom.com,
+	linux-kernel@vger.kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>
+Subject: [PATCH v2] brcm80211: fmac: Add error check for brcmf_usb_dlneeded()
+Date: Mon, 14 Apr 2025 10:28:53 +0800
+Message-ID: <20250414022853.1795-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,47 +49,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAD3nf4kcfxnGYHACA--.37636S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrZFWDuF4rXw4DWw47JrWfuFg_yoWfXrb_ur
-	nrAw4xJF4DZwsxGr1kAFsIvF9Ivw1qqanavr4UKa9xJ3srAF18Za43Zry7Z3yUAw4UWrnr
-	WanxWF48Ar42gjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbV8FF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26F
-	4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
-	7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r
-	1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AK
-	xVWUAVWUtwCY02Avz4vE14v_Gr1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
-	0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
-	17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
-	C0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
-	6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvj
-	DU0xZFpf9x0JU9XocUUUUU=
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+X-CM-TRANSID:zQCowAAXUwv2cvxneIncCA--.64253S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Cr4kAF43WrWUXr13Ww15Jwb_yoW8XF43pw
+	4xXFyUZr1kXr4rKw45JrZ3AFy5tan5ta1kCa10v3Z3WF4kCw10kr4YgFyI9r1DCF4Ikay7
+	XF45t3s8Jrs7WFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvm14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
+	1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+	6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v2
+	6r126r1DMxkIecxEwVAFwVW8JwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
+	W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
+	1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
+	IIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvE
+	x4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnU
+	UI43ZEXa7VUbvzutUUUUU==
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCREMA2f8Wy5sYQAAs0
 
-Remove unnecessary semicolons reported by Coccinelle/coccicheck and the
-semantic patch at scripts/coccinelle/misc/semicolon.cocci.
+The function brcmf_usb_dlneeded() calls the function brcmf_usb_dl_cmd()
+but dose not check its return value. Though there is an error log in the
+brcmf_usb_dl_cmd(), it is not clear enough to describe the error state.
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+Add error handling in brcmf_usb_dlneeded() to log the error message if
+the brcmf_usb_dl_cmd() fails.
+
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
 ---
- drivers/regulator/adp5055-regulator.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2: Remove redundant bailing out code.
 
-diff --git a/drivers/regulator/adp5055-regulator.c b/drivers/regulator/adp5055-regulator.c
-index ad8e42cb1f3f..97f77bc71256 100644
---- a/drivers/regulator/adp5055-regulator.c
-+++ b/drivers/regulator/adp5055-regulator.c
-@@ -165,7 +165,7 @@ static int adp5055_parse_fw(struct device *dev, struct  adp5055 *adp5055)
- 		ret = regmap_write(regmap, ADP5055_DVS_LIM0 + i, val);
- 		if (ret)
- 			return ret;
--	};
-+	}
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
+index 2821c27f317e..8e2b41cfe5cf 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
+@@ -790,6 +790,7 @@ brcmf_usb_dlneeded(struct brcmf_usbdev_info *devinfo)
+ {
+ 	struct bootrom_id_le id;
+ 	u32 chipid, chiprev;
++	int err;
  
- 	val = FIELD_PREP(ADP5055_MASK_EN_MODE, adp5055->en_mode_software);
- 	ret = regmap_write(regmap, ADP5055_CTRL_MODE1, val);
+ 	brcmf_dbg(USB, "Enter\n");
+ 
+@@ -798,7 +799,9 @@ brcmf_usb_dlneeded(struct brcmf_usbdev_info *devinfo)
+ 
+ 	/* Check if firmware downloaded already by querying runtime ID */
+ 	id.chip = cpu_to_le32(0xDEAD);
+-	brcmf_usb_dl_cmd(devinfo, DL_GETVER, &id, sizeof(id));
++	err = brcmf_usb_dl_cmd(devinfo, DL_GETVER, &id, sizeof(id));
++	if (err)
++		brcmf_err("DL_GETVER failed: err=%d\n", err);
+ 
+ 	chipid = le32_to_cpu(id.chip);
+ 	chiprev = le32_to_cpu(id.chiprev);
 -- 
-2.25.1
+2.42.0.windows.2
 
 
