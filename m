@@ -1,83 +1,123 @@
-Return-Path: <linux-kernel+bounces-602895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AC98A880A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:41:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08B25A880B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:43:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C03953B1277
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 12:41:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 441E917760E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 12:43:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278E02BEC2D;
-	Mon, 14 Apr 2025 12:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 776CD2BEC36;
+	Mon, 14 Apr 2025 12:42:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EKHWmdSy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a9PxZeac"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE252BE7B8;
-	Mon, 14 Apr 2025 12:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59D72BEC26
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 12:42:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744634507; cv=none; b=G3lKqpiVD97tjfDLNjzE1rwPFF3EpEaiB/a6wiqKdO1798iEfYGU9P7G3E664Sb1m3RYQ+4UJ70Y+DpKNlqMyJ8uBBeepGz9e36Q/WgAfS104I7Mo+iUf98CD3ntlbtzboE2IsEkCKU3t8HKI3Z9Lzr5ZLk+e0Aeh8BOfeOP/xg=
+	t=1744634570; cv=none; b=AqEzfotWvQTxBBIxBbfTrX7D+8lWLr0ZHtKsROBSLurIxd33L2KShvRERvMNhASo2qPCF8CyaMcFieg2F567zWjFcLsSgblVAV/dbkKyWsWpjNT7nqORReyU/ojl5vQhM2L/rpWnfh7oC5uF1ssdAoKuKJHFiE6QQX/+VGhcZOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744634507; c=relaxed/simple;
-	bh=3BlNmQpMp82xJdAZ0Bho2rJ8qJsNAxUz1OgSOw9idJE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KwWALlSlk4nZL1jnYizfCxSQyQZsmD/YngeikZiOL0V+AMWrVZGBhQ96ECFWOyrAqjWfBWOm8Qw0RFla9Nhncr4oOhm7Vv2qFnNXeAJv+MrpRgdpnexlL14HsBYr5dbJrRPKS6l5cYaHPkzK/iz7F754wDyX8Oq1BrT3irD5dY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EKHWmdSy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4082C4CEE2;
-	Mon, 14 Apr 2025 12:41:43 +0000 (UTC)
+	s=arc-20240116; t=1744634570; c=relaxed/simple;
+	bh=KvSjMUGPYaqnIntw3wU5bGMjVjj18qPkU+mxT6SOfe8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qRPMtcG5MrO83As7bTOjYlswa74wuXOi7WXDRsJ5T4430CZKv83KAepZuQXnfm+cIbV5NcYbzMs9goqiUhqolBGbJEC1ygC6NA7b9PMjff2j8ces7ywRdHnGn5AdR/c8bkOItswDp/wJh1S85y765CoKrUdoDJawG7mkLSPQnMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a9PxZeac; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46717C4CEE2;
+	Mon, 14 Apr 2025 12:42:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744634506;
-	bh=3BlNmQpMp82xJdAZ0Bho2rJ8qJsNAxUz1OgSOw9idJE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EKHWmdSyJPedYFPNxldVA2LFgAkClYqz35karquJkKls9Qicneob6E3Pxfl6Oa5oE
-	 Tg8CdWKsVnxCoiiA8994/hHfLGB1frgaaPr5fkTJnf8pIogEmq4v7Srb80rwFUmlBM
-	 TqSqWp1o3fCHP487pbfILQxw0iqWTwjLnWwx/+z0NlHK2yyy7lszo4dBsuiG2B7JrM
-	 +Z8QDyXNXN9ALILXlxZyNCGqmMTesHOyRfy6KM/ngHyIZCKgz7k1VMHwhApNf9fyno
-	 G8JsK0v2JC3N11qrF6EaSkEMNApyij81rz5Yaz8SzqtUO4AdXrri9DCWQ16YAPqw7i
-	 P5MjfMBm5yFsA==
-Date: Mon, 14 Apr 2025 14:41:41 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Christian Schrefl <chrisi.schrefl@gmail.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>,
-	Russ Weight <russ.weight@linux.dev>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v3] rust: Use `ffi::c_char` type in firmware abstraction
- `FwFunc`
-Message-ID: <Z_0ChQQkMtHoTo1C@cassiopeiae>
-References: <20250413-rust_arm_fix_fw_abstaction-v3-1-8dd7c0bbcd47@gmail.com>
+	s=k20201202; t=1744634570;
+	bh=KvSjMUGPYaqnIntw3wU5bGMjVjj18qPkU+mxT6SOfe8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=a9PxZeac5+4p4kEv5bE6vICAYRiMXUQ4Y1uF1ReST/BsI6kIJN3yKH9xEK2zf9cL/
+	 3ahsV4jSINawqKAbmDSbyY0lKW7B1UiSkG04M/DyjBUbvpjBcsS7M99QjllGUXAcer
+	 63IelloPZaK5nUeeLCHqrdD5ojcE/p7bs7LtJlxIMoUhsfSj6ABysvCFcvJNeFDxy+
+	 7qI8K+gkFqU/I9sQrspJix7dTYwETSIk+tJP/xp62iqGLTESKspr8te9y7bpCdlx6O
+	 9pd78zTGqkh/nDTsmrRHBYTJOKpAWHIeaVTgusr63sEgQ00hSKgpvCBWC6kuD6aIKP
+	 MLOw4Xgm90n/Q==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan+linaro@kernel.org>)
+	id 1u4J9C-000000007xj-0N88;
+	Mon, 14 Apr 2025 14:42:46 +0200
+From: Johan Hovold <johan+linaro@kernel.org>
+To: Peter Rosin <peda@axentia.se>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Mark Brown <broonie@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>
+Subject: [PATCH] mux: suppress lookup errors for mux controls
+Date: Mon, 14 Apr 2025 14:42:20 +0200
+Message-ID: <20250414124220.30578-1-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250413-rust_arm_fix_fw_abstaction-v3-1-8dd7c0bbcd47@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Apr 13, 2025 at 09:26:56PM +0200, Christian Schrefl wrote:
-> The `FwFunc` struct contains an function with a char pointer argument,
-> for which a `*const u8` pointer was used. This is not really the
-> "proper" type for this, so use a `*const kernel::ffi::c_char` pointer
-> instead.
+Since commit eec611d26f84 ("ASoC: codecs: wcd938x: add mux control
+support for hp audio mux") we have drivers looking up mux controls that
+are optional. This results in errors incorrectly being logged on
+machines like the Lenovo ThinkPad X13s where the mux is missing:
 
-With the following changes, applied to driver-core-linus, thanks!
+    wcd938x_codec audio-codec: /audio-codec: failed to get mux-control (0)
 
-  * add firmware prefix to commit subject
+Suppress the error message when lookup of mux controls fails and make
+sure to return -ENOENT consistently also when looking up controls by
+name so that consumer drivers can easily determine how to proceed.
 
-- Danilo
+Note that most current consumers already log mux lookup failures
+themselves.
+
+Fixes: eec611d26f84 ("ASoC: codecs: wcd938x: add mux control support for hp audio mux")
+Link: https://lore.kernel.org/lkml/Z-z_ZAyVBK5ui50k@hovoldconsulting.com/
+Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+---
+ drivers/mux/core.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/mux/core.c b/drivers/mux/core.c
+index 02be4ba37257..b95bc03e3d6b 100644
+--- a/drivers/mux/core.c
++++ b/drivers/mux/core.c
+@@ -544,8 +544,13 @@ static struct mux_control *mux_get(struct device *dev, const char *mux_name,
+ 			index = of_property_match_string(np, "mux-control-names",
+ 							 mux_name);
+ 		if (index < 0) {
+-			dev_err(dev, "mux controller '%s' not found\n",
+-				mux_name);
++			if (!state && index == -EINVAL)
++				index = -ENOENT;
++
++			if (index != -ENOENT) {
++				dev_err(dev, "mux controller '%s' not found\n",
++					mux_name);
++			}
+ 			return ERR_PTR(index);
+ 		}
+ 	}
+@@ -559,8 +564,11 @@ static struct mux_control *mux_get(struct device *dev, const char *mux_name,
+ 						 "mux-controls", "#mux-control-cells",
+ 						 index, &args);
+ 	if (ret) {
+-		dev_err(dev, "%pOF: failed to get mux-%s %s(%i)\n",
+-			np, state ? "state" : "control", mux_name ?: "", index);
++		if (state || ret != -ENOENT) {
++			dev_err(dev, "%pOF: failed to get mux-%s %s(%i)\n",
++				np, state ? "state" : "control",
++				mux_name ?: "", index);
++		}
+ 		return ERR_PTR(ret);
+ 	}
+ 
+-- 
+2.49.0
+
 
