@@ -1,79 +1,51 @@
-Return-Path: <linux-kernel+bounces-603676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62C8CA88ACA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 20:13:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8368CA88AD4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 20:14:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC5811898986
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 18:13:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 103AB7A7039
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 18:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA46128B4F0;
-	Mon, 14 Apr 2025 18:12:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597DF28E5F3;
+	Mon, 14 Apr 2025 18:13:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="k0alu5/t"
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dzSCGL7S"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B85A28B4FD
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 18:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6FA5288CB0;
+	Mon, 14 Apr 2025 18:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744654358; cv=none; b=cn8l75ldh6yyF8ZGxgpzZKbTqfJWFqM+NX77IC7Emyvo9utaD1k+Anb+qkRIlKEeYIQ1PrmT7aje3rU8oZx5RNlMZBQISMRWvzydSoNtK5ahUA6KoX+OwEHuyp7xgB3Xu2wLpm52hlJaZFiaXcZY+MzkYHPZQxFSFk4wjPbYzdM=
+	t=1744654383; cv=none; b=E2Ctk+Xp4eV0fiHmbeIL8qlp9YFjXWE8j/qqkPm2r/7YjzeXQTmxgLdKCY7Gx2gX5JHutcJwMjvTw02xJ5Gb2ZpiDUErgidIwKt2/CW+kFsZjtbRZ41eP4UoLQ6tXDSgmdHNWDCMeY0FPqp78iO3f3DTGbJNhHppZLcTsXiiawA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744654358; c=relaxed/simple;
-	bh=M88zxHxMuT5Hi+r12Pej1eNGbm2XjVO4O0bNQWtajxw=;
+	s=arc-20240116; t=1744654383; c=relaxed/simple;
+	bh=gY2+/IaOxZ9WI5uEFp9Ue+W+KfbiBOHIE2dibrrD68E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P98m5OpTOcHl77B/itsnEpbdZRYdjs4Wu1AkXdsrjsAKdxbuWuBOgkuuY9Cf0cjfCGKvAn8PSBxo569eib1a+L9XkfbufdhuFymrMWnFLk3D/NnAbni1s4tUEmw0AVhFa0Kxg826/iIv4yREdslLQVV3L+FcxIng4SLvPtWd4+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=k0alu5/t; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-85de3e8d0adso82683539f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 11:12:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1744654354; x=1745259154; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uo0iy7MAQ4hbf5+c4Te/phX/shJ7ZZ2Na/tgJWtoOGQ=;
-        b=k0alu5/tlamnZvfN2Ar7I9lIPbMJBJFhRfIhT74ju7BpbO7EDq8VZQGVQ5HH28ANaT
-         cyhVUFbGdyY4ceh2aDaMBAF8Dp4l3pXkAThBal6jXexOXLpKsIzj/6TmozNFJ9nR9GIv
-         3ixOvzVzAjlulrwANeQNLaRtft+loQoMrHN2f+B6Azz5+SiSS+zZ5V5Kxye8fiPoDI1Z
-         unMQyhP2PLPHoKa9m4noPNWTSSYVPClgFJLsQOfGhyQZkN6e0kvygARdxJav3AOdEqQW
-         c/77LLhV6fO6hw7W4BZ3Tz2OZpsk1DLrUFJnRD7XllW65MbAW2+w5J4z6ME70+Ee/ByL
-         oBIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744654354; x=1745259154;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uo0iy7MAQ4hbf5+c4Te/phX/shJ7ZZ2Na/tgJWtoOGQ=;
-        b=IknyKtS8lLPuHh9pZYmWsG0mYva+NLg+Uksxa9UUCXq6oBMcRWIyXEkgHjjcULkRJU
-         RVZR+u/rscTAaV5o16qWxOY5niYEODUyiYurB8P/C15x2mQTYUKLJJNXF4UsJi/DsoHM
-         xYgJFmyBU5H0AcffFlTfOixwOtq4x/IovL9011Xxf/Fra9QMJokF3F1vaItxtoiSCakR
-         NU/hqApaZ7+sY/bCNuboGOgWVdBNNyJwNFmvrp/dMisaHVt+fD2b0PbIADTTv/xLh5IW
-         /SoS+GTBunQFqmcbntgHShERv1GQbFCz9jFP4ADqh1ER6sPA6NGwJ4/vIiUXxGp5WeAh
-         TG3A==
-X-Forwarded-Encrypted: i=1; AJvYcCV5Hh+usp+havp8H1SoH3I/nIC4uRN+H5mDhZKF+COiiJ2/Y7HA7XMAaRlg0VCW7Z3+vJcpECNwE1lYfbk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIPol2xL2yEOkSe2Zaa7mCQsPIylBo2Tua5RfDBaoeuScM0YVu
-	uPWg4iUTfrxStHyCstB9ElqjiSc3CWjf//fsoHOvP1p9MgzC1AwZrgaTv0no4e0=
-X-Gm-Gg: ASbGncvtvXbCxPNHY79Az2B+jQw2+eodFAc2itisCcDiG9o2fUlpdZfXPCjV8FFHNI8
-	+Uqzc3g7BnD5IWOM25LLaKqktxy0TFKgA9MWMYkTmFbVh9dyIbGF8m18YietcusNh9vTth+7NhA
-	fxGpMEJB3MM3pEDRUezHjgYlbe2vCG9wbCZZSKhC41N3QVIyMb1uXFmbr4dvk/cH/Wucs65KkHN
-	bX9JoOMyIdnoqvzaLqk1eKkbBZCJZDmr9mQ2VR+6OVeMlikl2fIA0Db0S5SVV53ADAd5CQwN88H
-	UJpUQZNmgrK/XO0XnGbGeXWbu0UlF6mBslTjne1P8KRjiUyXMnDtEicjL9yqqj1cveWEdpFSVlm
-	neJkr
-X-Google-Smtp-Source: AGHT+IEPulg8UQUye+ERWDwcR54kMX3JF3oXHebpwxdb/gMTX99uIyKUf+GhSeeH3MJ9K8PzDd2i+A==
-X-Received: by 2002:a05:6602:3890:b0:85b:3e32:9afb with SMTP id ca18e2360f4ac-8617cc00bbamr1642828239f.14.1744654353950;
-        Mon, 14 Apr 2025 11:12:33 -0700 (PDT)
-Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-86165428af3sm219588339f.15.2025.04.14.11.12.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Apr 2025 11:12:33 -0700 (PDT)
-Message-ID: <eadb0ac9-f46b-4525-a198-0c6c289084f3@riscstar.com>
-Date: Mon, 14 Apr 2025 13:12:32 -0500
+	 In-Reply-To:Content-Type; b=jRKVpLKhFD14NGhMSiYgzm79JpW6XPRgqJdJJdrf1u6cCkYwNPfQCVeI2B7hqcS4CNmVgSc0InoXunq9Mf/tXE1Mmj+n3Ph684oro8njCx+3LqqpDuB3fsAwOnbDErfHFASki7h2w9HkT/anraEj98TgDlNChMi9Ju37UXEvaE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dzSCGL7S; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description;
+	bh=pJ/36NqTPbfU92mLQwOP/jkuDkZAtiM1YNatxAkLpzM=; b=dzSCGL7Szdc4KTgwrVRHBaxS1o
+	rmMPX72z2Ph1B/x7b58EZ8ngWIX7cDyHRa2SzdR6nC1hFOGQos/44y06FY15vd6wQOjgV3fxmkKGk
+	bYkr5YqOOi9ozHs+wO+ebA701S7p3okKaysfZNzy995LOWjl9Po3U5AEkQZbgsnxSDhL3lG2cjwRm
+	icivkRnnb3njIZfaOgCUPyqD9UVkMc+AmwUaJHXz3a2P+69LVF5Ms6c4TqTpWrZc+CK6U5qaKV1Ik
+	9dDL4QsuwH3bKJ1dDYJMXvBrJkyB4qotRKmYjTE+bE4Lj/zzr5ItI4sLJDnGBbNsy6QoRtJtsrVbj
+	GGRmHmDw==;
+Received: from [50.39.124.201] (helo=[192.168.254.17])
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1u4OIc-0000000DFZe-15DV;
+	Mon, 14 Apr 2025 18:12:51 +0000
+Message-ID: <8d70668e-fd0e-4cd5-b33f-16f3250b90b8@infradead.org>
+Date: Mon, 14 Apr 2025 11:12:36 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,60 +53,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 6/6] riscv: defconfig: spacemit: enable clock
- controller driver for SpacemiT K1
-To: Haylen Chu <heylenay@4d2.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Haylen Chu <heylenay@outlook.com>,
- Yixun Lan <dlan@gentoo.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- spacemit@lists.linux.dev, Inochi Amaoto <inochiama@outlook.com>,
- Chen Wang <unicornxdotw@foxmail.com>, Jisheng Zhang <jszhang@kernel.org>,
- Meng Zhang <zhangmeng.kevin@linux.spacemit.com>
-References: <20250412074423.38517-2-heylenay@4d2.org>
- <20250412074423.38517-8-heylenay@4d2.org>
+Subject: Re: linux-next: Tree for Apr 14 (UML [2])
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linux-um@lists.infradead.org
+References: <20250414171511.6c7c80af@canb.auug.org.au>
 Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <20250412074423.38517-8-heylenay@4d2.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250414171511.6c7c80af@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 4/12/25 2:44 AM, Haylen Chu wrote:
-> Clock controller unit, or CCU, generates various clocks frequency for
-> peripherals integrated in SpacemiT K1 SoC and is essential for normal
-> operation. Let's enable it as built-in driver in defconfig.
+
+
+On 4/14/25 12:15 AM, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Signed-off-by: Haylen Chu <heylenay@4d2.org>
-
-I know Inochi wanted this to be "m", but you can see that
-SOPHGO sets it to "y".  Meanwhile SIFIVE uses a default
-value for its CLK_SIFIVE and CLK_SIFIVE_PRCI config options.
-
-I'm not going to solve this, so I'll just say this looks good.
-
-Reviewed-by: Alex Elder <elder@riscstar.com>
-
-
-> ---
->   arch/riscv/configs/defconfig | 2 ++
->   1 file changed, 2 insertions(+)
+> Changes since 20250411:
 > 
-> diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-> index 3c8e16d71e17..4888529df1d8 100644
-> --- a/arch/riscv/configs/defconfig
-> +++ b/arch/riscv/configs/defconfig
-> @@ -250,6 +250,8 @@ CONFIG_CLK_SOPHGO_CV1800=y
->   CONFIG_CLK_SOPHGO_SG2042_PLL=y
->   CONFIG_CLK_SOPHGO_SG2042_CLKGEN=y
->   CONFIG_CLK_SOPHGO_SG2042_RPGATE=y
-> +CONFIG_SPACEMIT_CCU=y
-> +CONFIG_SPACEMIT_K1_CCU=y
->   CONFIG_SUN8I_DE2_CCU=m
->   CONFIG_SUN50I_IOMMU=y
->   CONFIG_RPMSG_CHAR=y
+
+
+on i386 defconfig:
+
+../arch/um/kernel/um_arch.c:480:6: warning: no previous prototype for 'text_poke_sync' [-Wmissing-prototypes]
+  480 | void text_poke_sync(void)
+      |      ^~~~~~~~~~~~~~
+
+
+on x86_64 defconfig:
+
+../arch/um/kernel/um_arch.c:480:6: warning: no previous prototype for 'text_poke_sync' [-Wmissing-prototypes]
+  480 | void text_poke_sync(void)
+      |      ^~~~~~~~~~~~~~
+/usr/lib64/gcc/x86_64-suse-linux/14/../../../../x86_64-suse-linux/bin/ld: arch/x86/kernel/module.o: in function `write_relocate_add':
+/home/rdunlap/lnx/next/linux-next-20250414/UM64/arch/x86/um/../kernel/module.c:209:(.text+0x1e7): undefined reference to `smp_text_poke_sync_each_cpu'
+
+
+-- 
+~Randy
 
 
