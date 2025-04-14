@@ -1,218 +1,140 @@
-Return-Path: <linux-kernel+bounces-603496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A87EA88893
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 18:29:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDE46A88898
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 18:29:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AC4B17A257
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:28:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41D9D1899472
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E9372820AE;
-	Mon, 14 Apr 2025 16:28:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02145279903;
+	Mon, 14 Apr 2025 16:28:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P31sX87L"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bP1lqaoc"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B0D279903
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 16:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25512820A1
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 16:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744648121; cv=none; b=Fk2Z2sf5GXxpVuqKbjDZZ7zHJ2EXTp7aiakYJuZ9l3gwaxMFuXGJDy6BCiDMmwFcNTDKQT7isANABefGhb/CXHYnslEN8WfP1qk/OYDZMbidoJin4MYM7E7HaNQPuC9TVbM6n0MkezS0gNdHPEncZp7lbKDfr82wV3FZnI9Swz4=
+	t=1744648135; cv=none; b=acHwnmGRg9dHaBUt3gZ40IlMMryBkASnznhPVd40xvzmK7SeG4WEINxNTGozaUP8zsEW1urZkUCy6qur2Aur+R3+20PajqWHhhSssvVPS2OUU5/N/mrjSwFOK+Z205SmfkXHNs74r8r6qWgy0dN4idsmenDfylvGSloBH+vFQHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744648121; c=relaxed/simple;
-	bh=EAvviy7NYDzPXrtTpDrit4MXQHLdNiBY+08kfb3anYo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FN+ZJY5nWrb924piMVNNydOpNJUb0CDOS49pd+SWdHAbzuLTQJprof2alnWkCIx081N1DnfdTYEz1VbZg5Wxm7LTDngFRgkQW7cq1fLoSuqSXK3xCC1fy/WU8ndwXsnem9c3YR/SYaL932Eib18PFuMpMr+t9LZfxCGp9r7TIhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P31sX87L; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cebe06e9eso34636965e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 09:28:39 -0700 (PDT)
+	s=arc-20240116; t=1744648135; c=relaxed/simple;
+	bh=bOVQ3FP5ypXMPfKDM06/0e3rBvJrdaxgXSa39Q6f0Dk=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=rVlMu7osggXunvFLssikVKN4r5jfeNQp2rC05k4M2qMubK8Fcm8d4IhfwCh6gDz8Mj3IM4oCNnkUzk06EpETU6J0yngwKDbJX/RzGvFG7mageBS87Rs5/+2dWgzis21FnJg+7sH7tCI77e9tyy6Nh51IgsBXe1b0muDn3mggU0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--tjmercier.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bP1lqaoc; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--tjmercier.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3055f2e1486so6834727a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 09:28:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744648118; x=1745252918; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qTKO9vAqmynoPPCZdzu4Se732LpKeln0OCtsTh96Cx8=;
-        b=P31sX87Lhoi8LdU+H8lkr14Ib1qIIlKAfsOFz6gdv8FmJg1IgsmPAfujxRCgK/hx4I
-         6N4ACyqyARY3Hf7jY0lvxyOuyJ9LPfeUTDAFsa2afFaBDsnqZSXhxhIRu7DHBfMQovM1
-         idLH/LN13q7DY3HjlHnX/pdMzzWdOFXTz8gd8bdKHz3GBwMY/Ng+J7/LdFGGzqcFcpTd
-         BI2rqUxrlGhaZk+tIz3WvGQpAgMYsUrveZg+rojaJLSXnP+G1HeuATIydxPcSXX37OlR
-         XoRUkhBzMJQCn/tMk5i6CsOCKPBmagdSJzNuHV0y+00zXb1KWNya3FFcpBVJb1a08i3g
-         t1tw==
+        d=google.com; s=20230601; t=1744648133; x=1745252933; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=iXLUJ61f1yTddrehctN7EiKQ8FoTlBs0L4ffrGV+118=;
+        b=bP1lqaocE/v6nohPUHzv8CnQGU97Vye2Lgr/BSVw5IKsV9mBHCKH8l1CljxnHX0xAu
+         jPAC2Rx2RlW4esqoxfJLTJwKrQ1hEAl/5B3CSlkKiTYC20dokNyGRuH37SpZ1b2k3DLF
+         PwjYrlRBiVnAp/vCvw63R+R+hNZ68jaYkHrGckq1g018Q7QsyyXXqCBNFBcXcn0mfU0O
+         R57eHcGmXAAYDJCIwTnOrlJA7tmBLqNFESTG2yOolU9KIYUhZYJGilQn7Mbw7555Hj9p
+         6qguGgy/EvC6xVqKb+W5uc1sggNrDbp+LVE+hv1O3ae68wJnN7lZ5pn05unQndLjsR6w
+         fyzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744648118; x=1745252918;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qTKO9vAqmynoPPCZdzu4Se732LpKeln0OCtsTh96Cx8=;
-        b=PFdkUFd8/9D0poXDH6wMAFhEtYrZZrLgGSfjN+ucc7072uCPMjJ5uruwQNuQokCqAn
-         RVF26XX6kX6PvNP5IusEqAXeKU8b2zJwdN20K6HsL+NyZBc4/1bCnqAyS5h7BQCaex9s
-         d7XWAhm1eIh0crGFYLsG3MMkdbglI6tbrH+RKXcJTpMt8IHeY3cDY5w0ickdEVGv5orF
-         KtX+AjTMksDpDt4frxRG2319ax+FIR3AgTzIcW4zo+Qx3f0LfkwvaAU1JGQAa/HOWFbU
-         CbYwNkdy3qz7PqS8RrCOsiXS8ZnGYXoVHRH8dbex+gI38aBgkNpF7/SfVgttEgnZCIEs
-         9OGw==
-X-Forwarded-Encrypted: i=1; AJvYcCXvuijsHOcd1CjzOZ5nRxKxy6RgKIx9mMaSlc8muM9U8rkMZ4J3L0OZX1wfbW1r1lnTruKW12HSU5/LBJI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBMESMKHtPnTElHLBxMFS+7yG8mbUXSex1WBMOCeYREcnH2gGj
-	YaO3ZjxE+CoE9uEply4Ou+e2UPaNfCACPDWYaCXNoTfqM6awuIT4Nrx31y/lMCc=
-X-Gm-Gg: ASbGnctzspzFv4Ay9Uosxi5OXArrUqP5jgcMdGWu7d6cZSXQKLv1F9UUBcFvTkUoY81
-	XMWlzi1MdwAmTg//IYmNgN1YP8o92w8mVW3eCXj1Pbzn4ohO8jyTAOHqSkDaPRYEiC4zTf8Ym74
-	LQNBgwTqBBgI/Y+XU98RnxTcpYnI4Ba/jAfW2Qr7zrucQ5v4Pe/arM2FKFkfIFuaK5zgT/uSGTj
-	L3FUczgHveOvP8S4PTUI0p+0e8UzdIveg0Rfby6h7Hv6kXXvlaUDePxiTwaE9QVjALfTWHkiZoV
-	4d+pvi9D53eEwhcV5wCYODGbH0oPespr3jqqpfCnflk=
-X-Google-Smtp-Source: AGHT+IHomYBkrfRArIbBujX/I3y2mxJugC6/rOr7PZ7x4MMpTarYPx/m2CKQvVHOZS3ocFeJW5iO+A==
-X-Received: by 2002:a05:600c:b90:b0:43d:fa58:8377 with SMTP id 5b1f17b1804b1-43f3a9afb11mr111404215e9.32.1744648117820;
-        Mon, 14 Apr 2025 09:28:37 -0700 (PDT)
-Received: from [192.168.1.3] ([77.81.75.81])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eaf43cdfdsm11702585f8f.61.2025.04.14.09.28.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Apr 2025 09:28:37 -0700 (PDT)
-Message-ID: <f950fe96-34d3-4631-b04d-4a1584f4c2f1@linaro.org>
-Date: Mon, 14 Apr 2025 17:28:36 +0100
+        d=1e100.net; s=20230601; t=1744648133; x=1745252933;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iXLUJ61f1yTddrehctN7EiKQ8FoTlBs0L4ffrGV+118=;
+        b=FTyVSjz8wEpnswSXyAWL/gkhJ/uTIJx0zjWBvO3Lcdh/DmxAQI8NT/uYOVLNV0GMWb
+         8cpxtlQFVkmPXdRzn/joM9MZbA94nmgDN6Ubsns7LJO1fwOZ7tIU9S5qnEOU+bX6etwA
+         4dc1ksSHlYblkQz/JUaq+Ou/BKNGFHQXDtebWjqhVij5TQfb39A4F9qb0O4q5ANsrnRw
+         En+LDUjnHRc5xkCbG0Xf2P0PeJMlNjx6qvvugCjHFGBwImjNiZiF1L26qvSBGMKL5eL5
+         +UxJejQ4S1dOCeECXWoJt+UDqNG3UYHntUs3xUV+O/kguEmX+vD1nsC+yKBrvXBQy3Sn
+         lebQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVzvjBtaQPdp+Lx/B9lZrCG85UX5KZdXyj/u7/zjCEgNWBml5iwiHqdz5YlquX9WmcBsM4iTlyhKnDDd30=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywnra++MrS9fphX0Uz0H7Ov4Xv7ak1fFH+puRn51/gLQn8yjvgM
+	QVilOdUH/Y/LZkYKi0HFiR1GJ+jNH6dzGKeNPkZHDHx40vdp6TWO+pmOnhjk7uh6bIozPNyjxx7
+	KzEbJOl4LqQ0X9Q==
+X-Google-Smtp-Source: AGHT+IFKAHwaGD+uH8j/e6PvAJIsPBttChl+k7IeBf3yzmFDQvIZDYfCqllIFg5WytmY833AwgULIReL/PLMlE0=
+X-Received: from pjbsi10.prod.google.com ([2002:a17:90b:528a:b0:2ef:7af4:5e8e])
+ (user=tjmercier job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:524c:b0:2ee:ad18:b309 with SMTP id 98e67ed59e1d1-30823633edemr18416835a91.3.1744648133130;
+ Mon, 14 Apr 2025 09:28:53 -0700 (PDT)
+Date: Mon, 14 Apr 2025 16:28:41 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/10] tools headers: Update the syscall table with the
- kernel sources
-To: Namhyung Kim <namhyung@kernel.org>, Arnd Bergmann <arnd@linaro.org>
-Cc: Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org,
- linux-arch@vger.kernel.org, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>
-References: <20250410001125.391820-1-namhyung@kernel.org>
- <20250410001125.391820-6-namhyung@kernel.org>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20250410001125.391820-6-namhyung@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.604.gff1f9ca942-goog
+Message-ID: <20250414162842.3407796-1-tjmercier@google.com>
+Subject: [PATCH] cgroup/cpuset-v1: Add missing support for cpuset_v2_mode
+From: "T.J. Mercier" <tjmercier@google.com>
+To: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	"=?UTF-8?q?Michal=20Koutn=C3=BD?=" <mkoutny@suse.com>, Waiman Long <longman@redhat.com>
+Cc: "T.J. Mercier" <tjmercier@google.com>, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Android has mounted the v1 cpuset controller using filesystem type
+"cpuset" (not "cgroup") since 2015 [1], and depends on the resulting
+behavior where the controller name is not added as a prefix for cgroupfs
+files. [2]
 
+Later, a problem was discovered where cpu hotplug onlining did not
+affect the cpuset/cpus files, which Android carried an out-of-tree patch
+to address for a while. An attempt was made to upstream this patch, but
+the recommendation was to use the "cpuset_v2_mode" mount option
+instead. [3]
 
-On 10/04/2025 1:11 am, Namhyung Kim wrote:
-> To pick up the changes in:
-> 
->    c4a16820d9019940 fs: add open_tree_attr()
->    2df1ad0d25803399 x86/arch_prctl: Simplify sys_arch_prctl()
->    e632bca07c8eef1d arm64: generate 64-bit syscall.tbl
-> 
-> This is basically to support the new open_tree_attr syscall.  But it
-> also needs to update asm-generic unistd.h header to get the new syscall
-> number.  And arm64 unistd.h header was converted to use the generic
-> 64-bit header.
-> 
-> Addressing this perf tools build warning:
-> 
->    Warning: Kernel ABI header differences:
->      diff -u tools/scripts/syscall.tbl scripts/syscall.tbl
->      diff -u tools/perf/arch/x86/entry/syscalls/syscall_32.tbl arch/x86/entry/syscalls/syscall_32.tbl
->      diff -u tools/perf/arch/x86/entry/syscalls/syscall_64.tbl arch/x86/entry/syscalls/syscall_64.tbl
->      diff -u tools/perf/arch/powerpc/entry/syscalls/syscall.tbl arch/powerpc/kernel/syscalls/syscall.tbl
->      diff -u tools/perf/arch/s390/entry/syscalls/syscall.tbl arch/s390/kernel/syscalls/syscall.tbl
->      diff -u tools/perf/arch/mips/entry/syscalls/syscall_n64.tbl arch/mips/kernel/syscalls/syscall_n64.tbl
->      diff -u tools/perf/arch/arm/entry/syscalls/syscall.tbl arch/arm/tools/syscall.tbl
->      diff -u tools/perf/arch/sh/entry/syscalls/syscall.tbl arch/sh/kernel/syscalls/syscall.tbl
->      diff -u tools/perf/arch/sparc/entry/syscalls/syscall.tbl arch/sparc/kernel/syscalls/syscall.tbl
->      diff -u tools/perf/arch/xtensa/entry/syscalls/syscall.tbl arch/xtensa/kernel/syscalls/syscall.tbl
->      diff -u tools/arch/arm64/include/uapi/asm/unistd.h arch/arm64/include/uapi/asm/unistd.h
->      diff -u tools/include/uapi/asm-generic/unistd.h include/uapi/asm-generic/unistd.h
-> 
-> Please see tools/include/uapi/README for further details.
-> 
-> Cc: linux-arch@vger.kernel.org
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> ---
->   tools/arch/arm64/include/uapi/asm/unistd.h    | 24 +------------------
->   tools/include/uapi/asm-generic/unistd.h       |  4 +++-
->   .../perf/arch/arm/entry/syscalls/syscall.tbl  |  1 +
->   .../arch/mips/entry/syscalls/syscall_n64.tbl  |  1 +
->   .../arch/powerpc/entry/syscalls/syscall.tbl   |  1 +
->   .../perf/arch/s390/entry/syscalls/syscall.tbl |  1 +
->   tools/perf/arch/sh/entry/syscalls/syscall.tbl |  1 +
->   .../arch/sparc/entry/syscalls/syscall.tbl     |  1 +
->   .../arch/x86/entry/syscalls/syscall_32.tbl    |  3 ++-
->   .../arch/x86/entry/syscalls/syscall_64.tbl    |  1 +
->   .../arch/xtensa/entry/syscalls/syscall.tbl    |  1 +
->   tools/scripts/syscall.tbl                     |  1 +
->   12 files changed, 15 insertions(+), 25 deletions(-)
-> 
-> diff --git a/tools/arch/arm64/include/uapi/asm/unistd.h b/tools/arch/arm64/include/uapi/asm/unistd.h
-> index 9306726337fe005e..df36f23876e863ff 100644
-> --- a/tools/arch/arm64/include/uapi/asm/unistd.h
-> +++ b/tools/arch/arm64/include/uapi/asm/unistd.h
-> @@ -1,24 +1,2 @@
->   /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> -/*
-> - * Copyright (C) 2012 ARM Ltd.
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
-> - *
-> - * This program is distributed in the hope that it will be useful,
-> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - * GNU General Public License for more details.
-> - *
-> - * You should have received a copy of the GNU General Public License
-> - * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-> - */
-> -
-> -#define __ARCH_WANT_RENAMEAT
-> -#define __ARCH_WANT_NEW_STAT
-> -#define __ARCH_WANT_SET_GET_RLIMIT
-> -#define __ARCH_WANT_TIME32_SYSCALLS
-> -#define __ARCH_WANT_MEMFD_SECRET
-> -
-> -#include <asm-generic/unistd.h>
-> +#include <asm/unistd_64.h>
+An effort was made to do so, but this fails with "cgroup: Unknown
+parameter 'cpuset_v2_mode'" because commit e1cba4b85daa ("cgroup: Add
+mount flag to enable cpuset to use v2 behavior in v1 cgroup") did not
+update the special cased cpuset_mount(), and only the cgroup (v1)
+filesystem type was updated.
 
-Hi Namhyung,
+Add cgroup v1 parameter parsing to the cpuset filesystem type so that it
+works like the cgroup filesystem type:
 
-Since we're not including the generic syscalls here anymore we now need 
-to generate the syscall header file for the Perf build to work (build 
-error pasted at the end for reference).
+$ mkdir /dev/cpuset
+$ mount -t cpuset -ocpuset_v2_mode none /dev/cpuset
+$ mount|grep cpuset
+none on /dev/cpuset type cgroup (rw,relatime,cpuset,noprefix,cpuset_v2_mode,release_agent=/sbin/cpuset_release_agent)
 
-I had a go at adding the rule for it, but I saw that we'd need to pull 
-in quite a bit from the kernel so it was blurring the lines about the 
-separation of the tools/ folder. For example this file has the arm64 defs:
+[1] https://cs.android.com/android/_/android/platform/system/core/+/b769c8d24fd7be96f8968aa4c80b669525b930d3
+[2] https://cs.android.com/android/platform/superproject/main/+/main:system/core/libprocessgroup/setup/cgroup_map_write.cpp;drc=2dac5d89a0f024a2d0cc46a80ba4ee13472f1681;l=192
+[3] https://lore.kernel.org/lkml/f795f8be-a184-408a-0b5a-553d26061385@redhat.com/T/
 
-  arch/arm64/kernel/Makefile.syscalls
-
-To make this common part of the makefile work:
-
-  scripts/Makefile.asm-headers
-
-Maybe we can just copy or reimplement Makefile.syscalls, but I'm not 
-even sure if Makefile.asm-headers will work with the tools/ build 
-structure so maybe that has to be re-implemented too. Adding Arnd to see 
-what he thinks.
-
-As far as I can tell this is a separate issue to the work that Charlie 
-and Ian did recently to build all arch's syscall numbers into Perf to 
-use for reporting, as this is requires a single header for the build.
-
-Thanks
-James
-
+Fixes: e1cba4b85daa ("cgroup: Add mount flag to enable cpuset to use v2 behavior in v1 cgroup")
+Signed-off-by: T.J. Mercier <tjmercier@google.com>
 ---
+ kernel/cgroup/cgroup.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-In file included from /usr/include/aarch64-linux-gnu/sys/syscall.h:24,
-                  from evsel.c:4:
-/home/jamcla02/workspace/linux/linux/tools/arch/arm64/include/uapi/asm/unistd.h:2:10: 
-fatal error: asm/unistd_64.h: No such file or directory
-     2 | #include <asm/unistd_64.h>
-       |          ^~~~~~~~~~~~~~~~~
-
-
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index 3caf2cd86e65..ceedaf47d494 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -2356,6 +2356,7 @@ static struct file_system_type cgroup2_fs_type = {
+ static const struct fs_context_operations cpuset_fs_context_ops = {
+ 	.get_tree	= cgroup1_get_tree,
+ 	.free		= cgroup_fs_context_free,
++	.parse_param	= cgroup1_parse_param,
+ };
+ 
+ /*
+@@ -2392,6 +2393,7 @@ static int cpuset_init_fs_context(struct fs_context *fc)
+ static struct file_system_type cpuset_fs_type = {
+ 	.name			= "cpuset",
+ 	.init_fs_context	= cpuset_init_fs_context,
++	.parameters		= cgroup1_fs_parameters,
+ 	.fs_flags		= FS_USERNS_MOUNT,
+ };
+ #endif
+-- 
+2.49.0.604.gff1f9ca942-goog
 
 
