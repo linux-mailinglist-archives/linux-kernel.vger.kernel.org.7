@@ -1,100 +1,119 @@
-Return-Path: <linux-kernel+bounces-602481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA04FA87B58
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:03:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDB41A87A2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:19:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 182021882079
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:04:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80B733B066B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:18:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D00125DCE3;
-	Mon, 14 Apr 2025 09:03:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D01E259C9C;
+	Mon, 14 Apr 2025 08:19:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="h2ibYs9n"
-Received: from mslow3.mail.gandi.net (mslow3.mail.gandi.net [217.70.178.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gj5Gr98C"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 046C71CD2C;
-	Mon, 14 Apr 2025 09:03:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289D619066D;
+	Mon, 14 Apr 2025 08:18:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744621431; cv=none; b=gaJawdg4VIsYhtSzvEC293ZZqrTY05KN9zbDJ4Z5j9/5vzlhAB3t5CyjgyiFgn3tPOJyrcPnEyf1f1uFgv8voJbRhWva8i+zxDRTibsu8uwThscmWMmqY41/FzhAdHDGapBdyzPEaOtKFxw14N5ZKIsccot6tFuDJppqssKFuY0=
+	t=1744618739; cv=none; b=JBI0UIBY8Vba7pl+ax/AkpoyZ+PZb1TWGX2HfVcfaDl6bHe/Jnfksx6/2IfOrwFpnJMgR0o09bzK+GDB/YlUpJB3em1zYXZ5poKfbI3wtADQg58iWyzTHm7cKaXJ0ADQeqTF7mjcaXB7boX+TcLKY6h+iSJYrmkNqQe2TcXhU7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744621431; c=relaxed/simple;
-	bh=TaJd3GfmIN1FF9Nfj5/3nKeIWUdNKoVByIZIbP92ZZs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RCIWI1VYIoBkCM93vQp/qjtl/s3Lzh5T/LBdzoN4amT6J3SGJA3JfcDuADEL+Di9paei3JuqgY8LnBC4F9/ay/xgcuWHWl4iNQuTovy0UFa6PlPYTeFO3KmKLNBQFBrkbdNN1ZJaw+IUH4tMj0bcZIwtW712+Pj5TPzw+j4JAuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=h2ibYs9n; arc=none smtp.client-ip=217.70.178.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-	by mslow3.mail.gandi.net (Postfix) with ESMTP id 025CF58392B;
-	Mon, 14 Apr 2025 08:17:38 +0000 (UTC)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 490B54314D;
-	Mon, 14 Apr 2025 08:17:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1744618651;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TaJd3GfmIN1FF9Nfj5/3nKeIWUdNKoVByIZIbP92ZZs=;
-	b=h2ibYs9nUqdmwXSfBkha5wwKX89e0Na2JsReubQd38M98wrSVDTX/1v18O9D0IcbkD7Iv2
-	VifJvoIxVm7C7tmQF2yeF7Wgtwn/b3JU9zuvcf5G+uh6U2PSbw0AO3Iv0DcJeMzdIDGDk/
-	5Z7ZiRu9YzVaDmeh/Z8+YQCFutv458m3+AuAb0xY+YX9vmG5cH43GwfyKIbt5s/jxfnAkv
-	+OrMIlZTEvrEIP9y1m8wUyyWwZ2iAiZBs/ahOy2+3ujAaZ+znrW6SRtYyCRrv9zp+8lV79
-	gxvpZn8Vueb7yhZIDxZ3lMMrjxkw4yP43zpdNcKf/bXgU2fUfUoHtM3x1aKDjg==
-Date: Mon, 14 Apr 2025 10:17:29 +0200
-From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-To: Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>
-Cc: Bastien Curutchet <bastien.curutchet@bootlin.com>, Sumit Semwal
- <sumit.semwal@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] uio/dma-buf: Give UIO users access to DMA
- addresses.
-Message-ID: <20250414101729.598c1422@windsurf>
-In-Reply-To: <45bbee88-0446-4773-a4b6-d19a1747c43f@amd.com>
-References: <20250410-uio-dma-v1-0-6468ace2c786@bootlin.com>
-	<09a5beeb-bae3-4a00-9aff-66adf68064e6@amd.com>
-	<20250410214307.361e373f@windsurf>
-	<b596c9af-c0e3-4557-b45a-462a33179235@amd.com>
-	<60e2d844-418a-4bde-b6ef-76d10448d5ec@bootlin.com>
-	<45bbee88-0446-4773-a4b6-d19a1747c43f@amd.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1744618739; c=relaxed/simple;
+	bh=NAUH6JxFCjUR5Kz8NJ0hgi+TtaaG3aiby7vc/ny+m90=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=i97WjwbMG81C2byKZEZosJwzJI3kC4Qjl0qLqS0GMMKsylyUsS2FSvhmMhcrSxBa6usz3PXGFpKvym+EGRvXboWSFLTFjvmdXZ5gfkZkSKb3nQmymcZDZ6Rgdes/Ia9PNSUrVUaZq2peFkgviRtxP4H2enYhRKyZPFPpjR25mX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gj5Gr98C; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-54298ec925bso2146079e87.3;
+        Mon, 14 Apr 2025 01:18:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744618736; x=1745223536; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NAUH6JxFCjUR5Kz8NJ0hgi+TtaaG3aiby7vc/ny+m90=;
+        b=Gj5Gr98Cn7rV8n/6kt6noKldgKYgwK96REW++N0tHtxmBp4lsGQDOoM3JMv5c2vJy1
+         Z9R9d/pmda4ezR0W+XTC5ZmG7zNQkNACUhqD/az8LEdvuSppbVJ2ItUfuvQRl+nzFogU
+         rOeeFjlV7GeG7I8iW2vGCRXItv23CAZEGmHw9PIQPtK+rYUpQroQj2Gndk+i+QKv7Udt
+         9G9iZLSZz0P8qVSB3Azi2sPOWOCValCMqdfJl49es9Lv6h18Ygke55NxJN0yuKYlQQcj
+         S28iMQ1Qk4O1H/KoIUEBFQG+qVwLQl9xrWl+xOcJHI8xLNYUEk8zTq3jBS3R9RXqcG5U
+         3Ing==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744618736; x=1745223536;
+        h=content-transfer-encoding:mime-version:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NAUH6JxFCjUR5Kz8NJ0hgi+TtaaG3aiby7vc/ny+m90=;
+        b=tMOc0WBuCoXZjcm3RRfE5CDRB9gDFpu4ADMbY+pPxvXx+GrynXdfyp1X8nJ848Xxnq
+         EkV8C/9ViAeESJZRqAhLzksH76gIClcDFdBhUKv8pXekdL5pdncQ3xfNire/1t3cbuOg
+         ubUOgvn8E43ZlnkHEC1Gl+fsKHqZXITpf5MUzTQhHVsKnR1mLabuiqU9qJ665jr+CTvX
+         xD2oMfpVl/F90jvjpBa12nK1DdRT9CL1p/HgORrgRMpIDx0+Oyn/zbuvNRJ+XFQ6eCyQ
+         cHZujZrTMPmt8EgnM1MfzLsZWZ960o3F4cS+T36aETRchG85ZNywJVAz3uOQXihRcSkh
+         2AXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUhDSDe1FwUaEbVoJgF++YFMDb7cYf3fKPrRSw6SAvhLllmfh95rkM1VIXwincBT/Y9fmB7EdJRA+Upx7E=@vger.kernel.org, AJvYcCX8GP98kNUCASuLmuK4DSARiP9vW5L7WwA7SpvOvWXb5IuNsiWNbS7jDC+BEuu3cuGSdXDvPlPH9E3S@vger.kernel.org
+X-Gm-Message-State: AOJu0YykoUOKDPYi+CybG5WPC/iOeSoL5yXwXnZrKNoQk7OGoQmAX8DD
+	opX2AKtUHo9TvffFf1ciuWu+0MCXY/F5ZhlVRzTVY32jr4aX/uPa
+X-Gm-Gg: ASbGncv8LmR5lBKZRAarKmICb0AN4MPT3N3g/ATRzG++29qYUBSvJ3P9eAovEgl5wpb
+	cM60In/D3f+8ErH6IYnj3s9e528tGTnRK51aVdsA1iM3SjDWGXoBaiHE+zsH8zqA36OPCu3C0uY
+	/BLvFmG1jjSzODLi1giZV+L7VOyyU8YtlQXo/OUxdVskbIxUmCitAvp6fEo46+TOIjtEVTnDr5R
+	m6CMnFKGwtHfL1god2JnDCWrpMFvbHuiPft5bkTWSN0azIYDs/ZrguEm8WNOZ4jvhw7CxgdzKAE
+	l+RHAPEKLiqPTEWOk0IzexYWRS2iumEkS4VxRNxq7T8cjGsCHetzsiALRw==
+X-Google-Smtp-Source: AGHT+IHiuwiPU4doHW/IUceu6jbhkBnNhnfwwEK7zwxkj4sXRDcqk5ADmX+myDIN3Uz2KmEOVP1IVA==
+X-Received: by 2002:a05:651c:2122:b0:30c:1441:9e84 with SMTP id 38308e7fff4ca-310499d61b4mr30689251fa.13.1744618735814;
+        Mon, 14 Apr 2025 01:18:55 -0700 (PDT)
+Received: from foxbook (adtk197.neoplus.adsl.tpnet.pl. [79.185.222.197])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30f4661dd3csm16194381fa.112.2025.04.14.01.18.54
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Mon, 14 Apr 2025 01:18:55 -0700 (PDT)
+Date: Mon, 14 Apr 2025 10:18:50 +0200
+From: Michal Pecio <michal.pecio@gmail.com>
+To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>
+Cc: Jonathan Bell <jonathan@raspberrypi.org>, Oliver Neukum
+ <oneukum@suse.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/1] usb: xhci: Don't trust the EP Context cycle bit when
+ moving HW dequeue
+Message-ID: <20250414101850.2d6becf2@foxbook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvddttdehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefvhhhomhgrshcurfgvthgriiiiohhnihcuoehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepheduteeufeekieevieegueegiefgvdevhefggfdutdeiuedvtdfgledvgeevleeinecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemkeegfeegmeelfhdtleemvdektddumeefsgelmeejsggtfhemheehleehmegvfhefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemkeegfeegmeelfhdtleemvdektddumeefsgelmeejsggtfhemheehleehmegvfhefvgdphhgvlhhopeifihhnughsuhhrfhdpmhgrihhlfhhrohhmpehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepkedprhgtphhtthhopegthhhrihhsthhirghnrdhkohgvnhhighesrghmugdrtghomhdprhgtphhtthhopegsrghsthhivghnrdgtuhhruhhttghhvghtsegsohhothhlihhnrdgtohhmpdhrt
- ghpthhtohepshhumhhithdrshgvmhifrghlsehlihhnrghrohdrohhrghdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmvgguihgrsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopehlihhnrghrohdqmhhmqdhsihhgsehlihhsthhsrdhlihhnrghrohdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-GND-Sasl: thomas.petazzoni@bootlin.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello Christian,
+Hi,
 
-On Fri, 11 Apr 2025 14:41:56 +0200
-Christian K=C3=B6nig <christian.koenig@amd.com> wrote:
+I ran into an annoying bug in VIA hardware, where Endpoint Context
+state is not updated when it's supposed to and Set TR Dequeue issued
+by the driver sets wrong cycle state and the endpoint stops working.
 
-> But anyway please note that when you want to create new UAPI you need
-> to provide an open source user of it. E.g. link to a repository or
-> something similar in the covert letter should do it.
+This can be triggered by stalls, which are relatively common:
+- some card readers without a card inserted
+- disk I/O errors
+- failing SMART commands, possibly issued by daemons like udisks2
 
-Could you clarify what is the "reference" user-space user of UIO that
-exists today?
+I knew immediately what to do, because it's a known bug and Raspberry
+Pi has a fix for it, which they submitted upstream but it got reverted
+later. The revert is puzzling, because it was a boot issue, happening
+before the changed code is supposed to run.
 
-Thomas
---=20
-Thomas Petazzoni, co-owner and CEO, Bootlin
-Embedded Linux and Kernel engineering and training
-https://bootlin.com
+If the problem wasn't misdiagnozed and blamed on a wrong patch, I can
+imagine the workaround could put the chip in a bad state which caused
+problems after rebooting. The commit surely had a blatant endian bug
+and VL805 is prone to locking up hard under some unclear conditions.
+
+This is my attempt at a simpler, and hopefully correct, solution.
+I tried to come up with something stable-friendly, but the patch is
+not marked for stable becasue it wouldn't compile anyway. If there
+is interest in having this in stable, we can trivially backport it
+(a matter of end_trb/last_trb rename) and submit later.
+
+Regards,
+Michal
 
