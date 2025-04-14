@@ -1,181 +1,139 @@
-Return-Path: <linux-kernel+bounces-602812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2F0FA87FAC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:50:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87C2DA87FA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:49:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F8C67AA41E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:49:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 990DF1756B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DCC82BE7A3;
-	Mon, 14 Apr 2025 11:49:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D11428368C;
+	Mon, 14 Apr 2025 11:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="LRzTG4QB"
-Received: from outbound.pv.icloud.com (p-west1-cluster3-host12-snip4-8.eps.apple.com [57.103.66.41])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="B5TZlic7"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 754992BE7B1
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 11:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.66.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E3C539A;
+	Mon, 14 Apr 2025 11:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744631369; cv=none; b=ah8YrX7Dk231sVq1LgC6QK+My3x76iyt/5wl5nnPX/NbdGwB/+XsEYPTkpyQIPmK3Y3b07rbIv5dzpItqyuxh+PH9R7b4Tr7mBZnaUFSSGOmVr6eeY4YFH52CLdpRDqlKwIkTj0G0tKrenttRLfikG9bSziC3Vp1gtnTQEjsTZU=
+	t=1744631358; cv=none; b=h5Zubvc92/fGhstdC2Ck0EZX2yqUHsCIsZGMwRxoakSnWs243M4XhpbDvi3yrXL4MP0eo6VI73BaA0hGB4hDE7fv4/nsESxW2YeF0ow6m9QjGWY29sbRIuTLOFoXTcbPEkHEdxt5DmsnrQgC0TbcH23EgqDBkXYk2kbBjQrMwqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744631369; c=relaxed/simple;
-	bh=oxeNg/3kTTYdWOP+m0MjbWQatWl1xtjweDH0uB/M8o0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=eMy8VrAfKW2KsyGDC4SNds1TPv9UYM3cbnitCQuFfCw9i+yMk/9cf62zzat7HohZPeDz38mA8IJDDmNAHn8YYTC+zEZBbLt6R8HWJaqK0z5xhSUgo4E+KFhtbrz2IAuEs2MfoXwYU5c09RfETd6rY1QPWeqGYT4XybEYhKAn9tU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=LRzTG4QB; arc=none smtp.client-ip=57.103.66.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; bh=tfkcqBi0ou5N+iPlIoNtZJvvEZ4xTbBbnOJsMG5xchk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:x-icloud-hme;
-	b=LRzTG4QBigC/jg3Qq9QBaxAlc/uPz9dJN9u75EqKXrnFvP5HgKR2/c4DGBAsxW61f
-	 BkfM6DUUhSBDWM6PQSJC3hdke8nZ5ivsA2UoPtFlvPAE1FyfTBVbmGOlP22X85hykY
-	 /4PTMejljC3OcnJ46HxhT6AxKcEwRQ2T9AP/F9hRdKwDZseC6YSdF5UepMN1Qh2KVf
-	 7VK+p71g6+SEBSW6ldE+W6M88GAXhSm5SXTslh1Z+o/pO3sbN8smZrV1U2vG1OVwvQ
-	 +8aI2/uQspQVQy2AufC0L3RfcDuqqRaGGguyDsxx+Fdq7nGxl36nzx2OCcIU/2lHGz
-	 Sq2/Rc7nT82cQ==
-Received: from outbound.pv.icloud.com (localhost [127.0.0.1])
-	by outbound.pv.icloud.com (Postfix) with ESMTPS id CA77218000B3;
-	Mon, 14 Apr 2025 11:49:24 +0000 (UTC)
-Received: from [192.168.1.26] (pv-asmtp-me-k8s.p00.prod.me.com [17.56.9.36])
-	by outbound.pv.icloud.com (Postfix) with ESMTPSA id A67D21800289;
-	Mon, 14 Apr 2025 11:49:21 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Mon, 14 Apr 2025 19:49:05 +0800
-Subject: [PATCH RESEND 2/2] phy: core: Remove API devm_phy_destroy()
+	s=arc-20240116; t=1744631358; c=relaxed/simple;
+	bh=ztxpMMJFLLvR1oZapArlbuf/s3HpqOv3E90SpnFpTec=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:References:
+	 In-Reply-To:Content-Type; b=JI9hh9P74WeJIOW4afS+As9M++V0HjU3doLP23juutbaz36HM1gwDDByU+37qQy7tcDCiJn5CfnPbXGxjoyan3N4y6WA63IaiNipqC5OlpN8iIRY2imXAwC1h7cAYdIk42jH+DQrISLfcNMYQP6wYB7UzPwh8YYSLLr6ufsRPcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=B5TZlic7; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1744631350; x=1745236150; i=wahrenst@gmx.net;
+	bh=ztxpMMJFLLvR1oZapArlbuf/s3HpqOv3E90SpnFpTec=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
+	 References:In-Reply-To:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=B5TZlic7IPw+iMxfK9Lw9WWs8SYX20bTSJlUcIxtp/PzT1ScTT/296LjM++pVwoH
+	 KsgGS0ZLHf0eFe2EwsWVPUxnVTAskcG+DUTb9PAEF8cYZtGHbGnp/RxbjDwusmlVg
+	 CyDfhnCH0QPJG5mGNy6kZdYtIpmuYEk5/nfAhZPYE1UmVpv8x8m02w95v4FsfVlJb
+	 eMRSoRZmNvVDsRnq1HL+maAKRE9qlj7VZ0H38bUx++udVrwMH2De8NuQ7XH6x8F4f
+	 VzpRSu70sfLuoLORrwVKXma7u4dsVEYk8Pkm04JTswtRxgcmWKhhGry/nCGqDa8CK
+	 8VEhHj+pUhiYeDjZYw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.107] ([37.4.251.153]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mof9P-1tFnGG3XYH-00ZWq1; Mon, 14
+ Apr 2025 13:49:10 +0200
+Message-ID: <a1133205-7dcd-4875-8a1f-a7f128140730@gmx.net>
+Date: Mon, 14 Apr 2025 13:49:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250414-remove-apis-v1-2-6fddc9a5a16d@quicinc.com>
-References: <20250414-remove-apis-v1-0-6fddc9a5a16d@quicinc.com>
-In-Reply-To: <20250414-remove-apis-v1-0-6fddc9a5a16d@quicinc.com>
-To: Jonathan Corbet <corbet@lwn.net>, Alex Shi <alexs@kernel.org>, 
- Yanteng Si <si.yanteng@linux.dev>, Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>
-Cc: Zijun Hu <zijun_hu@icloud.com>, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
- Zijun Hu <quic_zijuhu@quicinc.com>
-X-Mailer: b4 0.14.2
+User-Agent: Mozilla Thunderbird
+From: Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH v8 13/13] arm64: defconfig: Enable OF_OVERLAY option
+To: Andrea della Porta <andrea.porta@suse.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Krzysztof Wilczynski <kw@linux.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Linus Walleij
+ <linus.walleij@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
+ <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
+ Herve Codina <herve.codina@bootlin.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Lunn
+ <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, kernel-list@raspberrypi.com
+References: <cover.1742418429.git.andrea.porta@suse.com>
+ <9d5b41bf6d1565f0de96c7c1680bd404cba40189.1742418429.git.andrea.porta@suse.com>
+Content-Language: en-US
+In-Reply-To: <9d5b41bf6d1565f0de96c7c1680bd404cba40189.1742418429.git.andrea.porta@suse.com>
+Autocrypt: addr=wahrenst@gmx.net; keydata=
+ xjMEZ1dOJBYJKwYBBAHaRw8BAQdA7H2MMG3q8FV7kAPko5vOAeaa4UA1I0hMgga1j5iYTTvN
+ IFN0ZWZhbiBXYWhyZW4gPHdhaHJlbnN0QGdteC5uZXQ+wo8EExYIADcWIQT3FXg+ApsOhPDN
+ NNFuwvLLwiAwigUCZ1dOJAUJB4TOAAIbAwQLCQgHBRUICQoLBRYCAwEAAAoJEG7C8svCIDCK
+ JQ4BAP4Y9uuHAxbAhHSQf6UZ+hl5BDznsZVBJvH8cZe2dSZ6AQCNgoc1Lxw1tvPscuC1Jd1C
+ TZomrGfQI47OiiJ3vGktBc44BGdXTiQSCisGAQQBl1UBBQEBB0B5M0B2E2XxySUQhU6emMYx
+ f5QR/BrEK0hs3bLT6Hb9WgMBCAfCfgQYFggAJhYhBPcVeD4Cmw6E8M000W7C8svCIDCKBQJn
+ V04kBQkHhM4AAhsMAAoJEG7C8svCIDCKJxoA/i+kqD5bphZEucrJHw77ujnOQbiKY2rLb0pE
+ aHMQoiECAQDVbj827W1Yai/0XEABIr8Ci6a+/qZ8Vz6MZzL5GJosAA==
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:T0QNT8oJFH3Ns/oSx+yvOcldq/37PEeJZ8dWssGFEoeeUNJGOj8
+ KAfIXjvO1zKr1QEuPh7Eqjuqz2/z4zNabaGMxpSWbn1clCvFtqKNgYdhRGLS9tgQXUxW/se
+ Tfk4+QgRqvFMd4vCU928Nm/NcWEAy0TPBmjeOKyqxFpQXGP2n71irv4xUMvjL7SMvpqm/0c
+ M1XqzoKqO2/ChPsE+19rg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:jtrZ2GhFz9g=;d8d7oUs6bLbBoChY0c/bH2hp8ck
+ XGrKelH8fwQk/0LqxpwXocMb9CXERgTSgjBpcgv5kgMBSy0KCQjo5T+E2x8qUWlqS5Vaxzloc
+ pTYaVkPIQ2MLk5BsZvDYqHTpU/n50KPJJ5y/+XmXaLuvpQUK3MkpVuU8ulQoZs4d2djPLDx+v
+ VUfqWpUAX2lBrYLk+c3JRboMIZWoOQM6yl6C+bzkYvczoG8LwZYsOYslVH7iyTA5XF1h2lc5w
+ 9CFiY8SiiwDh3O7PtNhYH2ylGVLlnrJeKpcZCCyXrcEJt7bi4WLEN2jYTC6/fRXwgh11B+lfy
+ zyGzLPzD5L8xSP1UsaLh+7SNeOYFVDbosrVloNwzNEyJkW3F/Ddz7Gs6FDrgRVTp9rhTMw1wm
+ k1aOuTy72BYjctn3yJO/+c2A8PDCDnlxcQR7+Q0ZWTDc5xfO0ho2XYJ+E/PpymnS0k4XyFGAD
+ 8aHzJyPF43s0VrW01FG1bupTaV+ZLUrm45yMRIn6OWOxEbB4s/GZtoxCUr117QE4HmYmlU/im
+ 0wuFg96Vtqd16hmnorVDPs2Nj/uIfN5jkEJvRIIeufjVsYq5d8nRGrwFn8BF8JvFI/rwbLb52
+ MPZY0LjXueBPZvHK90N6riGUDA7hrbIFqAJ874CfvOg++n44CcS9VtWXBanfp+1amcIId0AAx
+ r8L69lfIabDc9qL8Vby9v2do6WTVykZJLqeEEJwbwlEJfbdWNSVF2WL/UCCRvFVbHccQLvcco
+ TFtUWQMk7GWxPR3OxDikizp2gQWCYrtQm9qi7C4eJ46rCx7fgpR1JWiCfcUOFvFdCfNXI+45m
+ o+8E09k1b2xWXUSnyWqmJIkG5tx3OINOz7odIwV6GRakKPaP+254OB2esGpBCZ+TM8+iIHFu4
+ zuZc8flXXe2LipHd2BQtvKUf1TJ3BAupIfRm3Kae1AqP4aL5mlAxKZ51dZxoUZnDG3RaJmJpQ
+ HlzVF8qQoGr+LVMkq1hu1I1zTGmtK5z5ZIPbqTEZqI9nCa0d9sHSEmd37svI7H7T/YOAWg0Pc
+ RNL6H18wXttv36KJ1jp0G6IuFeTNta7cnUaW0o2JzyWPApIDcLebHenkiemf+Hl9pToRgquzR
+ V2hC7F0r6JMP+vNEg+Ur7ZZgaRxe/uZ3Hg0zyW5GzJKo6Fry60qR/Vm7oPeqqjzxYF1iPqno3
+ 6sjfYYHLhb+NpZNhAakG/q3YVR4QaXW/De1Zba4zang5EzvpnWTBZ0nrYQy2dB26Mwl41V11V
+ V3bl2W41nR2JHbtGte4xy6po1IhfNqX7qEU56ZbrVHG3nt/aEW7A7Eh+Kfql/CwVkmA6VZS0x
+ fEsKSx3VMu5nZTzZCSeZOT4WlDZf9zyO0smlAmZxE9iMwh4lWkuM1AX15hKi4twaARRKYekwd
+ xnrZlNvZcMDl7LaTeT1hkNEhlqcHU5Tdl+zuPzGX7fiWqJiAZqM2fwoWAOcTywiCpeaM6sL03
+ 1CNkjD9+vq9JFcuda+xardD/PgYZP+avbY519DXAi/+fBr4LF
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
 
-API devm_phy_destroy() has not had callers since 2013-09-27
-when it was introduced.
+Am 19.03.25 um 22:52 schrieb Andrea della Porta:
+> The RP1 driver uses the infrastructure enabled by OF_OVERLAY config
+> option. Enable that option in defconfig in order to produce a kernel
+> usable on RaspberryPi5 avoiding to enable it separately.
+>
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
 
-Remove the API.
-
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
- Documentation/driver-api/phy/phy.rst                    |  6 ++----
- Documentation/translations/zh_CN/driver-api/phy/phy.rst |  7 ++-----
- drivers/phy/phy-core.c                                  | 17 -----------------
- include/linux/phy/phy.h                                 |  5 -----
- 4 files changed, 4 insertions(+), 31 deletions(-)
-
-diff --git a/Documentation/driver-api/phy/phy.rst b/Documentation/driver-api/phy/phy.rst
-index be3687a2a11bbf84e6e5561b11931ea6db984434..cae03d8a4812b3c4cfca64272cc6b8f83a81d1c8 100644
---- a/Documentation/driver-api/phy/phy.rst
-+++ b/Documentation/driver-api/phy/phy.rst
-@@ -173,13 +173,11 @@ Destroying the PHY
- ==================
- 
- When the driver that created the PHY is unloaded, it should destroy the PHY it
--created using one of the following 2 APIs::
-+created using the following API::
- 
- 	void phy_destroy(struct phy *phy);
--	void devm_phy_destroy(struct device *dev, struct phy *phy);
- 
--Both these APIs destroy the PHY and devm_phy_destroy destroys the devres
--associated with this PHY.
-+The API destroys the PHY.
- 
- PM Runtime
- ==========
-diff --git a/Documentation/translations/zh_CN/driver-api/phy/phy.rst b/Documentation/translations/zh_CN/driver-api/phy/phy.rst
-index 2d3f98deb92035c44fcb1ff0e3dc8543053140f6..37c23fcebf11f397d0dc502bbba11a74c525f085 100644
---- a/Documentation/translations/zh_CN/driver-api/phy/phy.rst
-+++ b/Documentation/translations/zh_CN/driver-api/phy/phy.rst
-@@ -164,14 +164,11 @@ PHY 关联的设备资源。
- 销毁 PHY
- ========
- 
--当创建 PHY 的驱动程序被卸载时，它应该使用以下 2 个 API 之一销毁其创
--建的 PHY::
-+当创建 PHY 的驱动程序被卸载时，它应该使用以下 API 销毁其创建的 PHY::
- 
- 	void phy_destroy(struct phy *phy);
--	void devm_phy_destroy(struct device *dev, struct phy *phy);
- 
--这两个 API 都会销毁 PHY，并且 devm_phy_destroy 会销毁与此 PHY 关
--联的 devres。
-+这个 API 会销毁 PHY。
- 
- PM Runtime
- ==========
-diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-index dd6302dfd14d2ec060857fc019268096c33e37a2..8e0e11553e369e06f5ee4cdbb111b4ddb1b34e74 100644
---- a/drivers/phy/phy-core.c
-+++ b/drivers/phy/phy-core.c
-@@ -1107,23 +1107,6 @@ void phy_destroy(struct phy *phy)
- }
- EXPORT_SYMBOL_GPL(phy_destroy);
- 
--/**
-- * devm_phy_destroy() - destroy the PHY
-- * @dev: device that wants to release this phy
-- * @phy: the phy returned by devm_phy_get()
-- *
-- * destroys the devres associated with this phy and invokes phy_destroy
-- * to destroy the phy.
-- */
--void devm_phy_destroy(struct device *dev, struct phy *phy)
--{
--	int r;
--
--	r = devres_release(dev, devm_phy_consume, devm_phy_match, phy);
--	dev_WARN_ONCE(dev, r, "couldn't find PHY resource\n");
--}
--EXPORT_SYMBOL_GPL(devm_phy_destroy);
--
- /**
-  * __of_phy_provider_register() - create/register phy provider with the framework
-  * @dev: struct device of the phy provider
-diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
-index 06037a7eefc4b0319008065d142c9f1caba2c74d..66eb664249ddaa6635bf80d8db115cb21473ceb8 100644
---- a/include/linux/phy/phy.h
-+++ b/include/linux/phy/phy.h
-@@ -278,7 +278,6 @@ struct phy *phy_create(struct device *dev, struct device_node *node,
- struct phy *devm_phy_create(struct device *dev, struct device_node *node,
- 			    const struct phy_ops *ops);
- void phy_destroy(struct phy *phy);
--void devm_phy_destroy(struct device *dev, struct phy *phy);
- struct phy_provider *__of_phy_provider_register(struct device *dev,
- 	struct device_node *children, struct module *owner,
- 	struct phy * (*of_xlate)(struct device *dev,
-@@ -521,10 +520,6 @@ static inline void phy_destroy(struct phy *phy)
- {
- }
- 
--static inline void devm_phy_destroy(struct device *dev, struct phy *phy)
--{
--}
--
- static inline struct phy_provider *__of_phy_provider_register(
- 	struct device *dev, struct device_node *children, struct module *owner,
- 	struct phy * (*of_xlate)(struct device *dev,
-
--- 
-2.34.1
+Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
 
 
