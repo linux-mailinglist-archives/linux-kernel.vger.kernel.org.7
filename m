@@ -1,173 +1,193 @@
-Return-Path: <linux-kernel+bounces-602909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9E38A880DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:54:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DAE0A880E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:57:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B55F61767A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 12:54:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F10633B72C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 12:56:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 976E22BE7BC;
-	Mon, 14 Apr 2025 12:54:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66BFA2BEC4D;
+	Mon, 14 Apr 2025 12:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AHdau/dz"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="iikD1J/q"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C897D528;
-	Mon, 14 Apr 2025 12:54:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744635289; cv=none; b=apcftnLaYMNSptZ1VLV8W1GN/sVThI1fOAwthme1jL4Hr9ZgXg4ohtsxhn78bVSOz5ufZhBLmRbXAiKi9xJI+MK9wZ9NWuZK3CqHS3t3TuSL+ScQqJhvCep/Vb6Lks115MAZ1SvNT0wzjf8dz9zGKHzSWdWH1d1phy623asAZzY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744635289; c=relaxed/simple;
-	bh=NY0tzV7UqUseL3iANR1N0E1X7gg+dX3pYys2GAnXB+s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HQk0LEDqGSF2V13fr02GQzCUHlRnq4bqMuDc2CfzddQxHlYQXVa/JzPntn7YGct4kiqCLOYEIyoU3mNx71++M5GWNpgF1OjsFxjAu20t7s0l87/YcggJqpqodU3iT2MNPfqR9aa4DFG7+FD6Ah5M8ZOio5GmWUXD3aZuUAzfbI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AHdau/dz; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744635287; x=1776171287;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=NY0tzV7UqUseL3iANR1N0E1X7gg+dX3pYys2GAnXB+s=;
-  b=AHdau/dzCBqPaOgWAvzLvMgsRN4POds9mxtcPBzJe0x+i1ordX2v9gfg
-   ei8MWq4p9iyEjBxOCe4TyCFYDs9GQXfNtZA+KGrD7uXgKlOKgOmcvGWKS
-   8ZAf5kB9e80e6Acp/Y964Koi8a6u3mATPvV73o/6J0nJWN4JAIrpGlpTd
-   y04XmXwYJNSehYTljwB2UFUUOiC919CBgTIpFP0brQxG/tETdJ9vTBBhK
-   W0a33nqgivdzGfc5HCUeNbyRZGuxNLooIhR2DpJiBwh58QOsiXFgaCSCt
-   kK+IZAY8ynrDB2nL/7LuwrV5rHFD0xWtE8RQh+Y3Z5Lnxu6VMgnGP2idy
-   A==;
-X-CSE-ConnectionGUID: Wd1Ig2NFRmSamSsyhxV/qw==
-X-CSE-MsgGUID: +8I5GPpzRwi/OabCxz92Ww==
-X-IronPort-AV: E=McAfee;i="6700,10204,11402"; a="45238557"
-X-IronPort-AV: E=Sophos;i="6.15,212,1739865600"; 
-   d="scan'208";a="45238557"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 05:54:46 -0700
-X-CSE-ConnectionGUID: srnfHlBySNevRxPLnO7tgw==
-X-CSE-MsgGUID: wLyVF0hlTi+k/zpt+XcuHw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,212,1739865600"; 
-   d="scan'208";a="134785955"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 05:54:43 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id E078C11F871;
-	Mon, 14 Apr 2025 15:54:40 +0300 (EEST)
-Date: Mon, 14 Apr 2025 12:54:40 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: "Yan, Dongcheng" <dongcheng.yan@intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	"Yan, Dongcheng" <dongcheng.yan@linux.intel.com>,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	hverkuil@xs4all.nl, u.kleine-koenig@baylibre.com,
-	ricardo.ribalda@gmail.com, bingbu.cao@linux.intel.com,
-	hao.yao@intel.com
-Subject: Re: [PATCH v1 1/2] platform/x86: int3472: add hpd pin support
-Message-ID: <Z_0FkADfsQLOdchI@kekkonen.localdomain>
-References: <Z_zDGYD1QXZYWwI9@smile.fi.intel.com>
- <d9cab351-4850-42c7-8fee-a9340d157ed9@linux.intel.com>
- <Z_zMMtUdJYpHuny7@smile.fi.intel.com>
- <f10f919e-7bdc-4a01-b131-41bdc9eb6573@intel.com>
- <01570d5d-0bdf-4192-a703-88854e9bcf78@redhat.com>
- <9dc86b0c-b63c-447d-aa2f-953fbccb1d27@redhat.com>
- <Z_z04jMiTg_xW-c2@kekkonen.localdomain>
- <518b1420-a356-4e4b-8422-c2689bc54794@redhat.com>
- <Z_0AX9sdwSAWhzTc@kekkonen.localdomain>
- <0e2306d7-3a07-45ad-958f-1039fb10a8cf@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E188029AAF8;
+	Mon, 14 Apr 2025 12:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744635421; cv=pass; b=DyQy+vaSfGCw75n1m7QPFCm3NgFf3aBwwL/xCfJTnd5mG2ZMYrP2Jow8/dNR+EtCPnwCHjLt9tTiWGbYEG2bsrLmLPVf33dAc2I2ucyQgALM+QL2fYNA6UyneD++NyOlkqYxz/k2Gh33td3JNx7r29/NE4n0j66vOTbfGrYh2Bg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744635421; c=relaxed/simple;
+	bh=VUOkR5sUA0G3NJTjmivVhKube3A6Xr80jMqBw3M0FqQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GwE1keLDJ/3HS9+2ohFRMOUTdsc4SkcTDifo8BwlDABJuMqQQ8uW9z0Yag34TJ/NTOTuFRtpRpHgn20oK08YXBXnOgWLZ5OTGPM96NmCLpyJqoZgG3sBSBX7+brzB2te/uMFHrDXbI030FqtRiEtBze3SVelccD/g81wg9v9cQM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=iikD1J/q; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1744635360; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=UI597fmXtOSb+2G6X3WD0BJck4aQlhdbIYlvgYtlZXCezM1758SpojGW84WEpgvuX0ojC/xbsq4CNRdQtzJGH6QkKu4RQboLOzMGuSDa2/lK7SoLUtnld06ZZwyjMhBcr8eMIc22i1JK6xAXGPyIFRd8QmLmyh2IKidXJWLkQJY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1744635360; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=2SFcmr+j/cQ+KV0XcTEr8Yx/IrB/lqPJKyq9x9rOqDM=; 
+	b=NFvJoVPLpyIq5+IsxJBnqaqAnd3hYw1FHYQeT4/QPQU2i1y8BCKnbs5CGony7cQ3dbq7EfNLPu9yEE/CdCO/fWuAXtyRvraV+q0cweE9UHMRghwqUOmDTSnHpWPJ/j3pkp/dJLmOsqmqXS2EJXatQEMVpHdM1xL22iWD3pz331o=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
+	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1744635360;
+	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=2SFcmr+j/cQ+KV0XcTEr8Yx/IrB/lqPJKyq9x9rOqDM=;
+	b=iikD1J/q/Qu4ulEKf6I2r8Lj+AlDwh0chOcNmvs50KLpDXFa38L159aDIAsTmmwg
+	82JkPYeLw5jHKGcFzjDJSvvULJseuD/PsTPYgGDe6J0B1LxSimhdHeoVhEf7R9gT6eD
+	kBUyloZGekInPd0NQdehOA7dy+AR43MEdgB4AtAM=
+Received: by mx.zohomail.com with SMTPS id 1744635356934791.9442392785247;
+	Mon, 14 Apr 2025 05:55:56 -0700 (PDT)
+Message-ID: <956d76b0-4f82-4f95-8f70-70896d488bd3@collabora.com>
+Date: Mon, 14 Apr 2025 09:55:45 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0e2306d7-3a07-45ad-958f-1039fb10a8cf@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 10/10] riscv: dts: eswin: add HiFive Premier P550 board
+ device tree
+To: Pinkesh Vaghela <pinkesh.vaghela@einfochips.com>,
+ Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+ Samuel Holland <samuel.holland@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Min Lin <linmin@eswincomputing.com>,
+ Pritesh Patel <pritesh.patel@einfochips.com>, Yangyu Chen
+ <cyy@cyyself.name>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Yu Chien Peter Lin <peterlin@andestech.com>,
+ Charlie Jenkins <charlie@rivosinc.com>,
+ Kanak Shilledar <kanakshilledar@gmail.com>,
+ Darshan Prajapati <darshan.prajapati@einfochips.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Heiko Stuebner
+ <heiko@sntech.de>, Aradhya Bhatia <a-bhatia1@ti.com>, rafal@milecki.pl,
+ Anup Patel <anup@brainfault.org>, devicetree@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250410152519.1358964-1-pinkesh.vaghela@einfochips.com>
+ <20250410152519.1358964-11-pinkesh.vaghela@einfochips.com>
+Content-Language: en-US
+From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+In-Reply-To: <20250410152519.1358964-11-pinkesh.vaghela@einfochips.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-Hi Hans,
+Hi Pinkesh,
 
-On Mon, Apr 14, 2025 at 02:37:36PM +0200, Hans de Goede wrote:
-> Hi,
+On 4/10/25 12:25 PM, Pinkesh Vaghela wrote:
+> From: Min Lin <linmin@eswincomputing.com>
 > 
-> On 14-Apr-25 14:32, Sakari Ailus wrote:
-> > Hi Hans,
-> > 
-> > On Mon, Apr 14, 2025 at 02:21:56PM +0200, Hans de Goede wrote:
-> >> Hi Sakari,
-> >>
-> >> On 14-Apr-25 13:43, Sakari Ailus wrote:
-> >>> Hans, Dongcheng,
-> >>>
-> >>> On Mon, Apr 14, 2025 at 01:09:47PM +0200, Hans de Goede wrote:
-> >>>> Hi,
-> >>>>
-> >>>> On 14-Apr-25 13:04, Hans de Goede wrote:
-> >>>>> Hi,
-> >>>>>
-> >>>>> On 14-Apr-25 11:59, Yan, Dongcheng wrote:
-> >>>>>> Hi Andy and Hans,
-> >>>>>>
-> >>>>>> I found the description of lt6911uxe's GPIO in the spec:
-> >>>>>> GPIO5 is used as the interrupt signal (50ms low level) to inform SOC
-> >>>>>> start reading registers from 6911UXE;
-> >>>>>>
-> >>>>>> So setting the polarity as GPIO_ACTIVE_LOW is acceptable?
-> >>>>>
-> >>>>> Yes that is acceptable, thank you for looking this up.
-> >>>>
-> >>>> p.s.
-> >>>>
-> >>>> Note that setting GPIO_ACTIVE_LOW will invert the values returned
-> >>>> by gpiod_get_value(), so if the driver uses that you will need
-> >>>> to fix this in the driver.
-> >>>>
-> >>>> Hmm, thinking more about this, I just realized that this is an
-> >>>> input pin to the CPU, not an output pin like all other pins
-> >>>> described by the INT3472 device. I missed that as first.
-> >>>>
-> >>>> In that case using GPIO_LOOKUP_FLAGS_DEFAULT as before probably
-> >>>> makes the most sense. Please add a comment that this is an input
-> >>>> pin to the INT3472 patch and keep GPIO_LOOKUP_FLAGS_DEFAULT for
-> >>>> the next version.
-> >>>
-> >>> The GPIO_LOOKUP_FLAGS_DEFAULT is the "Linux default", not the hardware or
-> >>> firmware default so I don't think it's relevant in this context. There's a
-> >>> single non-GPIO bank driver using it, probably mistakenly.
-> >>>
-> >>> I'd also use GPIO_ACTIVE_LOW, for the reason Dongcheng pointed to above.
-> >>
-> >> The GPIO being interpreted as active-low is a thing specific to
-> >> the chip used though. Where as in the future the HPD pin type
-> >> in the INT3472 device might be used with other chips...
-> >>
-> >> Anyways either way is fine with me bu, as mentioned, using GPIO_ACTIVE_LOW
-> >> will invert the values returned by gpiod_get_value(), for which the driver
-> >> likely needs to be adjusted.
-> > 
-> > The driver appears to ask for both IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING
-> > and it only uses the GPIO for an ISR so it doesn't seem to require driver
-> > changes IMO. Although this also seems to make the polarit irrelevant, at
-> > least for this driver.
+> Add initial board data for HiFive Premier P550 Development board
 > 
-> If the driver does not care about this I would prefer for the INT3472 code to
-> use GPIO_ACTIVE_HIGH to avoid the inverting behavior of GPIO_ACTIVE_LOW making 
-> things harder for other future drivers using the hpd pin through the INT3472
-> glue code.
+> Currently the data populated in this DT file describes the board
+> DRAM configuration, UART and GPIO.
+> 
+> Signed-off-by: Min Lin <linmin@eswincomputing.com>
+> Co-developed-by: Pinkesh Vaghela <pinkesh.vaghela@einfochips.com>
+> Signed-off-by: Pinkesh Vaghela <pinkesh.vaghela@einfochips.com>
+> Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
+> Tested-by: Samuel Holland <samuel.holland@sifive.com>
+> ---
+>   arch/riscv/boot/dts/Makefile                  |  1 +
+>   arch/riscv/boot/dts/eswin/Makefile            |  2 ++
+>   .../dts/eswin/eic7700-hifive-premier-p550.dts | 29 +++++++++++++++++++
+>   3 files changed, 32 insertions(+)
+>   create mode 100644 arch/riscv/boot/dts/eswin/Makefile
+>   create mode 100644 arch/riscv/boot/dts/eswin/eic7700-hifive-premier-p550.dts
+> 
+> diff --git a/arch/riscv/boot/dts/Makefile b/arch/riscv/boot/dts/Makefile
+> index 64a898da9aee..29a97a663ea2 100644
+> --- a/arch/riscv/boot/dts/Makefile
+> +++ b/arch/riscv/boot/dts/Makefile
+> @@ -1,6 +1,7 @@
+>   # SPDX-License-Identifier: GPL-2.0
+>   subdir-y += allwinner
+>   subdir-y += canaan
+> +subdir-y += eswin
+>   subdir-y += microchip
+>   subdir-y += renesas
+>   subdir-y += sifive
+> diff --git a/arch/riscv/boot/dts/eswin/Makefile b/arch/riscv/boot/dts/eswin/Makefile
+> new file mode 100644
+> index 000000000000..224101ae471e
+> --- /dev/null
+> +++ b/arch/riscv/boot/dts/eswin/Makefile
+> @@ -0,0 +1,2 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +dtb-$(CONFIG_ARCH_ESWIN) += eic7700-hifive-premier-p550.dtb
+> diff --git a/arch/riscv/boot/dts/eswin/eic7700-hifive-premier-p550.dts b/arch/riscv/boot/dts/eswin/eic7700-hifive-premier-p550.dts
+> new file mode 100644
+> index 000000000000..131ed1fc6b2e
+> --- /dev/null
+> +++ b/arch/riscv/boot/dts/eswin/eic7700-hifive-premier-p550.dts
+> @@ -0,0 +1,29 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +/*
+> + * Copyright (c) 2024, Beijing ESWIN Computing Technology Co., Ltd.
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include "eic7700.dtsi"
+> +
+> +/ {
+> +	compatible = "sifive,hifive-premier-p550", "eswin,eic7700";
+> +	model = "SiFive HiFive Premier P550";
+> +
+> +	aliases {
+> +		serial0 = &uart0;
+> +	};
+> +
+> +	chosen {
+> +		stdout-path = "serial0:115200n8";
+> +	};
+> +};
+> +
+> +&uart0 {
+> +	status = "okay";
+> +};
+> +
+> +&uart2 {
+> +	status = "okay";
+> +};
 
-I'm fine with that, too. (My main point was indeed
-GPIO_LOOKUP_FLAGS_DEFAULT doesn't seem to be a good fit here.)
+Although commit log says that this includes DRAM configuration, looks 
+like it's missing? In order to test this patchset, had to add this 
+following memory definition (picked from vendor kernel repository):
 
--- 
+     L50: memory@80000000 {
+             compatible = "sifive,axi4-mem-port", "sifive,axi4-port", 
+"sifive,mem-port";
+             device_type = "memory";
+             reg = <0x0 0x80000000 0x7f 0x80000000>;
+             sifive,port-width-bytes = <32>;
+     };
+
 Regards,
 
-Sakari Ailus
+-- 
+Ariel D'Alessandro
+Software Engineer
+
+Collabora Ltd.
+Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK 
+Registered in England & Wales, no. 5513718
+
 
