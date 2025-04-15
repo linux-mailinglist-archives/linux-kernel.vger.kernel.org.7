@@ -1,128 +1,155 @@
-Return-Path: <linux-kernel+bounces-605141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAD5AA89D38
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:12:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6046FA89D4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:14:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED1DD7AB35C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:11:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B69A41900975
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 088AF2951BB;
-	Tue, 15 Apr 2025 12:12:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0382957A3;
+	Tue, 15 Apr 2025 12:13:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a56sdakV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="he2ylS7W"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E23294A1D
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 12:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF6D2951C5
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 12:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744719123; cv=none; b=muYoRgDJrucZniIwQzUd2nFAw+HtnLsEkdo6XuS1QRKEMiIXceWHHKoG7Dgi2ndaToOpuGNh7Jq+MsHrTN9qVadfe+O52krVt1g2SJk/92LA0uT69X881L69Uyr06BbUVzqvaKby937xf6cb6KEts+Y/N1p7+r+VCyOpn2/R8XU=
+	t=1744719214; cv=none; b=jO719qAzmHsucMMuYAR1oemWOp5lekyDVFhX/zJCBAdc4WsXRC+rYQn8NP9cnYTh3kNtEdkP/An2hydIwMZRj30fN9+ayzaPO8wohhlixyvR0qT1bXb+zknvrFeJ+pZdid27UPdu5Z3JG9qdSzC3KgYchHVPgSE8j02jPqQTqV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744719123; c=relaxed/simple;
-	bh=0hYUve0xkE/hQHXWHLhI5xgSlQ8xtJMN237cyCHu2cw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X7+HH6r9fqv1uulBh69fe3NkF0Jti1hvx1Ved7AbfQKVUe+Z0EBunzkeuXKJL8mML3SAKGTkz5Dnk6cTa3SiEswAZSDFc37+FcDB9xzrKk+u1DXRx98nH7FotG81P5SVb6BJwq3m8GIQG19gGL0cIVAH8aOzJy+cUVc899iTNmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a56sdakV; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744719122; x=1776255122;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0hYUve0xkE/hQHXWHLhI5xgSlQ8xtJMN237cyCHu2cw=;
-  b=a56sdakVQ4i43fWkQ9/41W4VrTFVi9C6ZtweZbBFLSx3NfZkiJGKIVJu
-   brxa19368ltHxNAroikQpkj+OVOAf8gKpDVEymQ7/Fr1+pL5vD+BRz05G
-   5L3r7rmQ0ggLzGKSXWexKVP3rOUkXevHkkHnYzgZ1j3q8rbEd/Fa/B1w5
-   45wUZTqjP6c4zsY/Av87iYvsXejq16rw1203uYIsxmKzov4tBGtHgAh17
-   2kk9yna9WGQRXSYtB41TjHsY+bOIwPDtfA2jzFj1W77wRiqnc+k6+6nHJ
-   GNot1lhjgGAR4Zpb8ae1IH0BX4ouxgBz0+8koPQjnpkZGdv8tsbYRwJye
-   w==;
-X-CSE-ConnectionGUID: 2aWsOd8ATJGyghdebbdECA==
-X-CSE-MsgGUID: 2AM3B8nuTE6d+u/VL6SmvA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11403"; a="45458678"
-X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="45458678"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 05:12:01 -0700
-X-CSE-ConnectionGUID: si6E1ClKTem4PZIaad4ZSA==
-X-CSE-MsgGUID: u+ZNaiIjTsSSyRqFj1oGwQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="131001182"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 05:11:59 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1u4f8u-0000000CXRT-1mVG;
-	Tue, 15 Apr 2025 15:11:56 +0300
-Date: Tue, 15 Apr 2025 15:11:56 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Corey Minyard <corey@minyard.net>
-Cc: openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>
-Subject: Re: [PATCH v1 1/1] ipmi: si: Cast to smaller integer type without
- warning
-Message-ID: <Z_5NDNeDztC1-6vx@smile.fi.intel.com>
-References: <20250415085156.446430-1-andriy.shevchenko@linux.intel.com>
- <Z_5FV65cyIwiI9rs@mail.minyard.net>
- <Z_5L1J11W-ArXcUe@smile.fi.intel.com>
+	s=arc-20240116; t=1744719214; c=relaxed/simple;
+	bh=9P0sq5lPWcAoBaIYk95sPswAjVLzbQdvYtr0glNmM6o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DxacxxUc9nZJMexpnp3u3HqOLPkdWdhEdotQ1zN3fkUSdZbQq8fuMBcSfrqFCkZ/s8tKbq6jpsKqb/MJ5XrAH21Vjt6broreeMvAGUUKVLZTYYmK5/Mx0qEIhlEXhuYJZpY6vjiEsrtcd+3py2wQxPh33PVYwkHT4OnrYajM3/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=he2ylS7W; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744719210;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=dD2W5Gk6xEruvgXgKSmq+TLa2o05RV4NaRvMwK0HBHw=;
+	b=he2ylS7WJReo1Tb3BKr2gF5wMztGIQtI+Z2lcEfJW5OdgSgWCzKgjQE+DE0HfimsxKzIxf
+	QFbK14Fsgn8YsIPK50S61jruVol6siAVYgRhZrj/unHOOSB3ecnDXCKr8JMw7qPlHflMXZ
+	MS9L0vZnzEMpmSbt6/nN8K+7Qmc1jkE=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-237-Al-Lw_ToPhy0FpojSTZAVw-1; Tue,
+ 15 Apr 2025 08:13:27 -0400
+X-MC-Unique: Al-Lw_ToPhy0FpojSTZAVw-1
+X-Mimecast-MFC-AGG-ID: Al-Lw_ToPhy0FpojSTZAVw_1744719206
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D78E119560BB;
+	Tue, 15 Apr 2025 12:13:25 +0000 (UTC)
+Received: from f39.redhat.com (unknown [10.44.32.35])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C6289180B486;
+	Tue, 15 Apr 2025 12:13:23 +0000 (UTC)
+From: Eder Zulian <ezulian@redhat.com>
+To: nathan.lynch@amd.com,
+	Basavaraj.Natikar@amd.com,
+	vkoul@kernel.org,
+	dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Eder Zulian <ezulian@redhat.com>
+Subject: [PATCH v2] dmaengine: ptdma: Remove unused pointer dma_cmd_cache
+Date: Tue, 15 Apr 2025 14:13:12 +0200
+Message-ID: <20250415121312.870124-1-ezulian@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z_5L1J11W-ArXcUe@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Tue, Apr 15, 2025 at 03:06:45PM +0300, Andy Shevchenko wrote:
-> On Tue, Apr 15, 2025 at 06:39:03AM -0500, Corey Minyard wrote:
-> > On Tue, Apr 15, 2025 at 11:51:56AM +0300, Andy Shevchenko wrote:
-> > > Debian clang version 19.1.7 is not happy when compiled with
-> > > `make W=1` (note, CONFIG_WERROR=y is the default):
-> > > 
-> > > ipmi_si_platform.c:268:15: error: cast to smaller integer type 'enum si_type' from 'const void *' [-Werror,-Wvoid-pointer-to-enum-cast]
-> > >   268 |         io.si_type      = (enum si_type)device_get_match_data(&pdev->dev);
-> > > 
-> > > Fix this by intermediate cast to the uintptr_t, that makes compiler happy.
-> > 
-> > Unless things have changed recently, Linus prefers "unsigned long" per
-> > https://patchwork.kernel.org/project/linux-hardening/patch/20220616143617.449094-1-Jason@zx2c4.com/#24899749
-> 
-> I'm not sure I got your point. That discussion seems irrelevant to me.
-> They are talking about pointer-as-an-integer cases. Here we already know
-> that we are passing integer-as-a-pointer and this is the opposite
-> conversion.
-> 
-> > And it would match what is in the match table.
-> 
-> Match tables are tend to move to pointers, enum is usually goes to int.
-> 
-> > Is that change ok?
-> 
-> If you don't like my change, please do yours and consider this as
-> a bug report that needs to be addressed. I prefer more my solution
-> as we do that in many places for the exact scenario.
+The pointer 'struct kmem_cache *dma_cmd_cache' was introduced in commit
+'b0b4a6b10577 ("dmaengine: ptdma: register PTDMA controller as a DMA
+resource")' but it was never used.
 
-Note, the proper solution to the cases like this is to move to info-like
-structure and actually operate with the pointers instead of enums, longs, etc.
+Changes since v1:
+- Remove the 'err_cache' label and return -ENOMEM directly instead of
+  assigning -ENOMEM to 'ret' and jumping to the label, since there
+  are no unmanaged allocations to unwind. Based on suggestion from
+  Nathan Lynch.
+- Fix checkpatch.pl error: ERROR: Please use git commit description style
+  'commit <12+ chars of sha1> ("<title line>")'
 
-That's what's slowly moving on in IIO subsystem, for instance.
+Signed-off-by: Eder Zulian <ezulian@redhat.com>
+---
+V1 -> V2: Addressed review comments and fix error detected by
+checkpatch.pl.
 
+ drivers/dma/amd/ptdma/ptdma-dmaengine.c | 16 ++++------------
+ drivers/dma/amd/ptdma/ptdma.h           |  1 -
+ 2 files changed, 4 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/dma/amd/ptdma/ptdma-dmaengine.c b/drivers/dma/amd/ptdma/ptdma-dmaengine.c
+index 3a8014fb9cb4..aefb91c29bb5 100644
+--- a/drivers/dma/amd/ptdma/ptdma-dmaengine.c
++++ b/drivers/dma/amd/ptdma/ptdma-dmaengine.c
+@@ -583,18 +583,14 @@ int pt_dmaengine_register(struct pt_device *pt)
+ 	desc_cache_name = devm_kasprintf(pt->dev, GFP_KERNEL,
+ 					 "%s-dmaengine-desc-cache",
+ 					 dev_name(pt->dev));
+-	if (!desc_cache_name) {
+-		ret = -ENOMEM;
+-		goto err_cache;
+-	}
++	if (!desc_cache_name)
++		return -ENOMEM;
+ 
+ 	pt->dma_desc_cache = kmem_cache_create(desc_cache_name,
+ 					       sizeof(struct pt_dma_desc), 0,
+ 					       SLAB_HWCACHE_ALIGN, NULL);
+-	if (!pt->dma_desc_cache) {
+-		ret = -ENOMEM;
+-		goto err_cache;
+-	}
++	if (!pt->dma_desc_cache)
++		return -ENOMEM;
+ 
+ 	dma_dev->dev = pt->dev;
+ 	dma_dev->src_addr_widths = DMA_SLAVE_BUSWIDTH_64_BYTES;
+@@ -648,9 +644,6 @@ int pt_dmaengine_register(struct pt_device *pt)
+ err_reg:
+ 	kmem_cache_destroy(pt->dma_desc_cache);
+ 
+-err_cache:
+-	kmem_cache_destroy(pt->dma_cmd_cache);
+-
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(pt_dmaengine_register);
+@@ -662,5 +655,4 @@ void pt_dmaengine_unregister(struct pt_device *pt)
+ 	dma_async_device_unregister(dma_dev);
+ 
+ 	kmem_cache_destroy(pt->dma_desc_cache);
+-	kmem_cache_destroy(pt->dma_cmd_cache);
+ }
+diff --git a/drivers/dma/amd/ptdma/ptdma.h b/drivers/dma/amd/ptdma/ptdma.h
+index 0a7939105e51..ef3f55632107 100644
+--- a/drivers/dma/amd/ptdma/ptdma.h
++++ b/drivers/dma/amd/ptdma/ptdma.h
+@@ -254,7 +254,6 @@ struct pt_device {
+ 	/* Support for the DMA Engine capabilities */
+ 	struct dma_device dma_dev;
+ 	struct pt_dma_chan *pt_dma_chan;
+-	struct kmem_cache *dma_cmd_cache;
+ 	struct kmem_cache *dma_desc_cache;
+ 
+ 	wait_queue_head_t lsb_queue;
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.49.0
 
 
