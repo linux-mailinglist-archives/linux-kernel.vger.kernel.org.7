@@ -1,125 +1,131 @@
-Return-Path: <linux-kernel+bounces-605425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C7B3A8A109
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:26:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFE4CA8A10D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:27:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80E023A9B28
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:26:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51BBD3B1A2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:27:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E8562951D0;
-	Tue, 15 Apr 2025 14:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DA6E28F519;
+	Tue, 15 Apr 2025 14:27:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OY5walNG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HoeS8n8O"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B74B2274667;
-	Tue, 15 Apr 2025 14:26:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4DE289357
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 14:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744727206; cv=none; b=A4IveDAd22WXTYLfbSmPcAVlfOro11hhuyDTa7LM/1vYrX571KYBTWBCyLCpzc9fRm8Qd+2SL3Xkot7pX37ZYNUZaWVnQcFv1SP5jf4TjYqe+t84Du5hvb79sVgbA1bWE31BlNJ0af0QmNvb3iFAAEbmqcC5+p2VdpDdcUj9T8c=
+	t=1744727238; cv=none; b=ngFWpwQwc9yPnFAY5oQSobfPaxaaynZUK3w1g1izSsI7G8ryPsRRHa392Hpf1UwAhLe05AfrQJBE7rwE1thjhfy1D7tBzLdCWFVivp36NYFYvKzyqThaiVyfyLu0C0imN+iEgYqmtXPMjq8G94iGutoxt3FLCRejknvHylC24aI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744727206; c=relaxed/simple;
-	bh=Bq1aX/9x+bBl9UZHPWD8vQa736mPyduikCbWH/1mC4w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N3Bor0x8TFWJEQdscAX3AHRq3K6Cze/rv7x7PJp0ZOuRqH8CHDBSyCO7DgzePyp+aJwL2LLIEedAdO1upmOqSGgYPuqtTUpeJwQfHFCesFhZgA9HHt4Vw3ZEhCB4uvjHvuv7Zh22gXi/BMWSrgynUKcHPx4dHzSyvhAfxX9GfF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OY5walNG; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1744727238; c=relaxed/simple;
+	bh=z63JfSsHpIErknyiCFjXZ6ek1chC5/7Pr7BECXZasXY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sHgeYma5s9WxuRfeeqZD0HhlKfEhXUPeGoC4ighB11lKGnRccud71yLw/t7jp4g3H0Pi/uMt8BDRCsWzBf92lyuZkhyPTjooBNwheLxYodscJd9uZNidrnBqTbjBjX4sVhEc1BvY/VoRPWUtXx0s9PL5MhWjgsJ7cJ54j4qpPDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HoeS8n8O; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744727205; x=1776263205;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Bq1aX/9x+bBl9UZHPWD8vQa736mPyduikCbWH/1mC4w=;
-  b=OY5walNGD56w3syaZkQsYddMxP6Um64xRTiZ6e4aUGy0JjWwRUBdEEWS
-   79meGIsW6ychxoQq0tKxwYOlr0Uj8PX15CHXnE3WHFLXX0p0E1iqv99Vp
-   FrcaB2rNB02hxWeVsOzi9NeNbPEJ/c7wi/ySJ2JN47ETOGJEtz8DCaw6b
-   DCczxLmTubK3vfRlJ6Uv6EW/os1SjC7q8ATWcamwBsw/cBT76YKpXmYyy
-   ETZz653KuV1zhTnHLT3fApPTRpPj27+UlPfnK9esEsZyquwJUzoJaKxwi
-   fymw/vxkCd/nQmMELFSuPzVemh5ag6Di6Yp/77ghmLBdB5FiLl27estZ8
+  t=1744727237; x=1776263237;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=z63JfSsHpIErknyiCFjXZ6ek1chC5/7Pr7BECXZasXY=;
+  b=HoeS8n8OpaXqPmO9D8eNIkOveqBMBVjC9OiqWdsSuQsU297SmUizrw03
+   A9pvxUYBJC2RsiAHhnFqwNSChcsJZyvkFUHbf3kV+fCqXihen7aEUDfoG
+   7kdZ9mG35kJ/V+XpBcOXoxKcVOevaYrGEchDDwC80ZyGnWp0qAGB5X23K
+   ICuPSC/yovcXyMpKcp3MxYfPT1U+I8jtXdbI48HLXeWtiAYxilj/ynRkj
+   Gc/VwULb5WejK/WtMWNRDIXKxRMsGnb9aDgJAXk2fRDiwi+peh59zt+f3
+   WkRyeCgiAX1jy/JBjvLkZ5q1z60C1vQJvFZ6xatdBon3iRZQUzGkRJAw4
    g==;
-X-CSE-ConnectionGUID: Ze1FDUR+TGGp3w7bT/GHag==
-X-CSE-MsgGUID: SCF1EKDGS+m/STAFIsnvmQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="33854593"
+X-CSE-ConnectionGUID: 4QnNUCc0QAOI2I2QXkAUBQ==
+X-CSE-MsgGUID: iPklUTxITDi7EMPA2quBJw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="45473541"
 X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="33854593"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 07:25:37 -0700
-X-CSE-ConnectionGUID: k/m1UDE2T5WASAWSIOaJtA==
-X-CSE-MsgGUID: fxVpXjCZTpug097XbdwjeA==
+   d="scan'208";a="45473541"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 07:27:16 -0700
+X-CSE-ConnectionGUID: sacFQhjARimp6JlLoAQRFw==
+X-CSE-MsgGUID: Ay/bqOuZSU2GocGP1WfIkw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="153321991"
-Received: from iweiny-desk3.amr.corp.intel.com (HELO [10.124.222.150]) ([10.124.222.150])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 07:25:36 -0700
-Message-ID: <55df184b-ec0a-4274-b60b-37e8ba323cb8@linux.intel.com>
-Date: Tue, 15 Apr 2025 07:25:35 -0700
+   d="scan'208";a="129909049"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 15 Apr 2025 07:27:12 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u4hFk-000GHi-2X;
+	Tue, 15 Apr 2025 14:27:08 +0000
+Date: Tue, 15 Apr 2025 22:26:21 +0800
+From: kernel test robot <lkp@intel.com>
+To: Xin Ji <xji@analogixsemi.com>, Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: oe-kbuild-all@lists.linux.dev, bliang@analogixsemi.com,
+	qwen@analogixsemi.com, treapking@chromium.org,
+	Xin Ji <xji@analogixsemi.com>, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] drm/bridge:anx7625: Enable DSC feature
+Message-ID: <202504152230.BCIdpiru-lkp@intel.com>
+References: <20250414100502.1604717-3-xji@analogixsemi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/acpi: fix potential NULL deref in acpi_wakeup_cpu()
-To: Chenyuan Yang <chenyuan0y@gmail.com>, rafael@kernel.org, lenb@kernel.org,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, bhe@redhat.com,
- kai.huang@intel.com
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250411194820.3976363-1-chenyuan0y@gmail.com>
-Content-Language: en-US
-From: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
-In-Reply-To: <20250411194820.3976363-1-chenyuan0y@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250414100502.1604717-3-xji@analogixsemi.com>
 
+Hi Xin,
 
-On 4/11/25 12:48 PM, Chenyuan Yang wrote:
-> The result of memremap() may be NULL on failure, leading to a NULL
-> dereference. Add explicit checks after memremap() call: if the
-> MADT mailbox fails to map, return immediately.
->
-> This is similar to the commit 966d47e1f27c
-> ("efi: fix potential NULL deref in efi_mem_reserve_persistent").
->
-> This is found by our static analysis tool KNighter.
->
-> Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
-> Fixes: 2b5e22afae07 ("x86/acpi: Extract ACPI MADT wakeup code into a separate file")
-> ---
+kernel test robot noticed the following build errors:
 
-Looks fine to me
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.15-rc2 next-20250415]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Reviewed-by: Kuppuswamy Sathyanarayanan 
-<sathyanarayanan.kuppuswamy@linux.intel.com>
+url:    https://github.com/intel-lab-lkp/linux/commits/Xin-Ji/drm-mipi-dsi-Add-compression-supported-flag-in-drm_mipi_dsi/20250414-181005
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20250414100502.1604717-3-xji%40analogixsemi.com
+patch subject: [PATCH v3 3/3] drm/bridge:anx7625: Enable DSC feature
+config: arm64-randconfig-002-20250415 (https://download.01.org/0day-ci/archive/20250415/202504152230.BCIdpiru-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 7.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250415/202504152230.BCIdpiru-lkp@intel.com/reproduce)
 
->   arch/x86/kernel/acpi/madt_wakeup.c | 4 ++++
->   1 file changed, 4 insertions(+)
->
-> diff --git a/arch/x86/kernel/acpi/madt_wakeup.c b/arch/x86/kernel/acpi/madt_wakeup.c
-> index f36f28405dcc..b386ec4b87c2 100644
-> --- a/arch/x86/kernel/acpi/madt_wakeup.c
-> +++ b/arch/x86/kernel/acpi/madt_wakeup.c
-> @@ -143,6 +143,10 @@ static int acpi_wakeup_cpu(u32 apicid, unsigned long start_ip)
->   		acpi_mp_wake_mailbox = memremap(acpi_mp_wake_mailbox_paddr,
->   						sizeof(*acpi_mp_wake_mailbox),
->   						MEMREMAP_WB);
-> +		if (!acpi_mp_wake_mailbox) {
-> +			pr_err("Failed to remap MADT mailbox\n");
-> +			return -ENOMEM;
-> +		}
->   	}
->   
->   	/*
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504152230.BCIdpiru-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   aarch64-linux-ld: Unexpected GOT/PLT entries detected!
+   aarch64-linux-ld: Unexpected run-time procedure linkages detected!
+   aarch64-linux-ld: drivers/gpu/drm/bridge/analogix/anx7625.o: in function `anx7625_bridge_mode_set':
+>> anx7625.c:(.text+0x28d4): undefined reference to `drm_dsc_set_rc_buf_thresh'
+>> aarch64-linux-ld: anx7625.c:(.text+0x28dc): undefined reference to `drm_dsc_set_const_params'
+>> aarch64-linux-ld: anx7625.c:(.text+0x28e4): undefined reference to `drm_dsc_initial_scale_value'
+>> aarch64-linux-ld: anx7625.c:(.text+0x2900): undefined reference to `drm_dsc_setup_rc_params'
+>> aarch64-linux-ld: anx7625.c:(.text+0x290c): undefined reference to `drm_dsc_compute_rc_parameters'
+>> aarch64-linux-ld: anx7625.c:(.text+0x2930): undefined reference to `drm_dsc_pps_payload_pack'
 
 -- 
-Sathyanarayanan Kuppuswamy
-Linux Kernel Developer
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
