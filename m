@@ -1,55 +1,90 @@
-Return-Path: <linux-kernel+bounces-604253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13D9EA89285
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 05:26:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 705A9A8928A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 05:29:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DBFD189C469
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 03:26:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 690723B764A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 03:29:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C1B212FAB;
-	Tue, 15 Apr 2025 03:26:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3427E2185A6;
+	Tue, 15 Apr 2025 03:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="EziKt6um"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FVObfEaD"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8BD2DFA5C
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 03:26:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DDF1215F46;
+	Tue, 15 Apr 2025 03:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744687577; cv=none; b=Yn++VGAopDjMU0M3Sot1PyjOXux8bHcX6jszjbGVyhlyOw3+dlp2hht4UguifGOaXyMfEW1GRT3royQyhQymhFfGAugwww6uSvN1XSaAUyj/fSKPTB9vg6DdupWK5w0bC2OhTJPgObcBnXGhigtDnuMbzO0xV9VfTseNyHPBFAM=
+	t=1744687777; cv=none; b=Ni6lOCKKbi81TB6BweXSmv9Ytl8V5yU8ChhFjeJAHO8s5QYR1PxB1NeQKQdNFdwVzjAfdMGR3LTRHDBr8wDGpevQJmeF7H0/Qh5/J+G4OcUr/bdu7IW8fZV98VOgQQ4KXrhFiKeFSfpHd8NmEHdE76CuF1kbQKLPNGrIUHu1xxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744687577; c=relaxed/simple;
-	bh=ipvXwkSLgKG9eT+6Ar4t3cXkImZb3ZOztj1W14AFlaQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tAXH1/8IpV7t6brvvMVAbQksjdS5UHuZFMmwG/tGpMGpMDPw2rKn98y3cyn2rv13N0jJELO2lTWw7Qm2IgFeNqtdv9hmoK4bLPwDGUVMXVyUIhA3mR6HmNImloHJxiEmDJMDtGXiffzsORjZNvajuJvBiovfhVmhNe+POkGTe6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=EziKt6um; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1744687565; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=2h1Ulu7ziMCEKdHQqCt2h7p4RwUGmDgkuAyWL+LmEVc=;
-	b=EziKt6umfmgVf+W+FjWM3R14NwQYvvBahi++kuRkueUrP1W90fDWIcL16H383jiECoe5MrT4CMbovst9vH3msvnjfE+/Mf5XNgwmQ5yTThipdgHtSGU1dGRXk3xQSpWt5/tZeVCJolEovobL1MyOyWFjdT2lMG0AAsMBXtP2pVg=
-Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WX1khlJ_1744687564 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 15 Apr 2025 11:26:04 +0800
-From: Feng Tang <feng.tang@linux.alibaba.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	rostedt@goodmis.org
-Cc: linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Feng Tang <feng.tang@linux.alibaba.com>
-Subject: [PATCH v4] sched/debug: Dump end of stack when detected corrupted
-Date: Tue, 15 Apr 2025 11:26:04 +0800
-Message-Id: <20250415032604.98915-1-feng.tang@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1744687777; c=relaxed/simple;
+	bh=0VG5bn70u0nQJZvRQ+yaOiXGO7G1+Ib707da+D0PmAE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t1iDN6occoxzKtYcmhdJW1VQTcwMCq+DQxDBvDMYQuZdCznFX6w1OpT7f5/OAd1wo0Z6nGWqMXuQV2EwG5vjr/Ik8wbAYopjjAUKY0CUYz8kNO74jkR3xv4ov/fwcgqajzG5a/l+++L6JHquaUDuvcpZKJT1Oh1VFG1/SjONC8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FVObfEaD; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-736c1138ae5so4962489b3a.3;
+        Mon, 14 Apr 2025 20:29:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744687775; x=1745292575; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7GzGJomWWI+mN0n3zOE3rjXulORlFMfOTwUaPOipP9k=;
+        b=FVObfEaDpwVg2KUBxTP9tg9NYth0MmXjmha3PUKnxA2Yxj8WyvXd4SicjEJ5aAnuoh
+         dH0G9fsV6XLt+0TgaKePFe33aI9dKXedYorn2gEDCXAvusCEL+qf2rKj6DHSyAVCjY3F
+         dkbzYcdoubYrADChOvgl6G8R0n1Uz3YWeoahsTkwa4Se/Ht1ewl6p8QhpSgfA9DLOiO2
+         dB3O8VZh5DZbCPikBErwfZOnB8FHQEtydys+QEDHaym31Ma9FqqSWUTWsSexNtFzHVcf
+         FD0UgVW/Z1AyPzQChH8F4T3lePsJtkFcibJa+ALhOvsDNOtjonNP0xQvMck9NCmgYKLC
+         2iSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744687775; x=1745292575;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7GzGJomWWI+mN0n3zOE3rjXulORlFMfOTwUaPOipP9k=;
+        b=oMLRv8M6DkidbbNIg7bejstekfphw/mb3JCqubp/enYnsthVSUArZOWRjQ4bYsCeyp
+         iRTwhxFXlK+XtLOLOyh9dM9C0LhEZi202exu8Ro9j9Ud1w+cSikaHSB0P2AYnyxuWJVl
+         jALGNkChzku+p1EKWlvxWY4dpAzUZNxMKMRHmeEziEEGvsZQ1uFNCFx0yuk8ND0ua45y
+         O9u8efBNAzsBHs/+0Tg6H7SQW3H6pHBIxgBccF4Qa+7RsMuWz/boZI8F/Xja1mztPyPE
+         G7/ZISTj8bxSompgzQUHOTxRsOdCedemF/3V9qno8NH6xDBMwNwqgQs9H2/SHb0T5a6q
+         fpsw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJQJsB8M4Rd17ro6Q1b7277xmrpxKfSd/MSCoce7lPIvnjEjZi1+5g3G808s57bLcFSHsAZk89@vger.kernel.org, AJvYcCV9FeANZCJyJR2HEteDlHpFEhi6LLR9UD3xUbSsnS42n25yYNPmfCGi8ZhQe/GCHIrplJxPo4q4eS5Sf7I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7q7nMEIgYKiPnRtAVagwLQKslX3y0bppSFrAC6pl7oU7KxUnW
+	OT9rbinqXzMIg9blO2XbxFLxBfP+OP2Mo07CVXhh/rgjxZuMNr7u
+X-Gm-Gg: ASbGncuFQm6KkRm3zScqe+rcBHW+dLXEfqaWkA5IA6xyOpsmuVZmPUf+dZ+c1LFqTSa
+	4D/08wkkWQZ/JhxKSBERALq4udW0/VoWKnj/KrwYnET2EuUTH5CkZUeIkTUKpWHt0eA+klyDqIU
+	xS69mvlbnFkZ3gykROEXxcQ63JyXXD5iJN2bvJkrCiOhQWroqeI2oQX5Ml3RFZdRc4y76OXf6xh
+	q+w8VI3eDlmTkE2VBxw/tR8A0A5z+YzMcxyD2RG0Xw2A/SSKsVznoutENGcXRjovfBp5yI4yaCD
+	t9LRfxbpnLisCnGxrUh7NChgltIEBE8dsI9APLVPck9m/D3lrGQvOSDL
+X-Google-Smtp-Source: AGHT+IGMA6bSXQXXUGEj500KRja+sm30gW0Fj8LVo6wtEKRxGeUdia0LiKt6azBnUHblKVOOVUyA6A==
+X-Received: by 2002:aa7:888d:0:b0:736:ab1d:7ed5 with SMTP id d2e1a72fcca58-73bd0e989eamr17473188b3a.0.1744687775110;
+        Mon, 14 Apr 2025 20:29:35 -0700 (PDT)
+Received: from localhost.localdomain ([49.37.219.136])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-73bd22f1293sm7674716b3a.99.2025.04.14.20.29.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Apr 2025 20:29:33 -0700 (PDT)
+From: Abdun Nihaal <abdun.nihaal@gmail.com>
+To: jiawenwu@trustnetic.com
+Cc: Abdun Nihaal <abdun.nihaal@gmail.com>,
+	mengyuanlou@net-swift.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net] net: txgbe: fix memory leak in txgbe_probe() error path
+Date: Tue, 15 Apr 2025 08:59:09 +0530
+Message-ID: <20250415032910.13139-1-abdun.nihaal@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,80 +93,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When debugging a kernel hang during suspend/resume [1], there were random
-memory corruptions in different places like ACPI, file systems, network
-subsystems, and reported by slub_debug+KASAN or detected by scheduler with
-error message:
+When txgbe_sw_init() is called, memory is allocated for wx->rss_key
+in wx_init_rss_key(). However, in txgbe_probe() function, the subsequent
+error paths after txgbe_sw_init() don't free the rss_key. Fix that by
+freeing it in error path along with wx->mac_table.
 
-  "Kernel panic - not syncing: corrupted stack end detected inside scheduler"
+Also change the label to which execution jumps when txgbe_sw_init()
+fails, because otherwise, it could lead to a double free for rss_key,
+when the mac_table allocation fails in wx_sw_init().
 
-So dump the corrupted memory around the stack end to give more direct
-hints about how the memory is corrupted:
-
- "
- Corrupted Stack: ff11000122770000: ff ff ff ff ff ff 14 91 82 3b 78 e8 08 00 45 00  .........;x...E.
- Corrupted Stack: ff11000122770010: 00 1d 2a ff 40 00 40 11 98 c8 0a ef 30 2c 0a ef  ..*.@.@.....0,..
- Corrupted Stack: ff11000122770020: 30 ff a2 00 22 3d 00 09 9a 95 2a 00 00 00 00 00  0..."=....*.....
- ...
- Kernel panic - not syncing: corrupted stack end detected inside scheduler
- "
-
-And with it, the culprit was quickly identified to be ethernet driver
-that it frees RX related memory back to kernel in suspend hook, but
-its HW is not really stopped, and still send RX data to those old
-buffer through DMA.
-
-The intention is trying to find a common pattern by comparing the dumped
-memory of many different reproduced samples, for those hard-to-track
-random memory corruption cases.
-
-[1]. https://bugzilla.kernel.org/show_bug.cgi?id=217854
-
-Signed-off-by: Feng Tang <feng.tang@linux.alibaba.com>
-Reviewed-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Fixes: 937d46ecc5f9 ("net: wangxun: add ethtool_ops for channel number")
+Reported-by: Jiawen Wu <jiawenwu@trustnetic.com>
+Signed-off-by: Abdun Nihaal <abdun.nihaal@gmail.com>
 ---
-Changlog:
+ drivers/net/ethernet/wangxun/txgbe/txgbe_main.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-  since v3:
-      * Refine commit log and rebase to latest kernel 
-      * Update email address
-
-  since v2:
-      * Change code format (Adrian)
-      * Add Reviewed tag from Adrian
-      
-  since v1:
-      * Refine the commit log with more info, and rebase againt 6.8-rc3
-
- kernel/sched/core.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 87540217fc09..a894d402e576 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5929,8 +5929,19 @@ static noinline void __schedule_bug(struct task_struct *prev)
- static inline void schedule_debug(struct task_struct *prev, bool preempt)
- {
- #ifdef CONFIG_SCHED_STACK_END_CHECK
--	if (task_stack_end_corrupted(prev))
-+	if (task_stack_end_corrupted(prev)) {
-+		unsigned long *ptr = end_of_stack(prev);
-+
-+		/* Dump 16 ulong words around the corruption point */
-+#ifdef CONFIG_STACK_GROWSUP
-+		ptr -= 15;
-+#endif
-+		print_hex_dump(KERN_ERR, "Corrupted Stack: ",
-+			DUMP_PREFIX_ADDRESS, 16, 1, ptr,
-+			16 * sizeof(unsigned long), true);
-+
- 		panic("corrupted stack end detected inside scheduler\n");
-+	}
+diff --git a/drivers/net/ethernet/wangxun/txgbe/txgbe_main.c b/drivers/net/ethernet/wangxun/txgbe/txgbe_main.c
+index a2e245e3b016..38206a46693b 100644
+--- a/drivers/net/ethernet/wangxun/txgbe/txgbe_main.c
++++ b/drivers/net/ethernet/wangxun/txgbe/txgbe_main.c
+@@ -611,7 +611,7 @@ static int txgbe_probe(struct pci_dev *pdev,
+ 	/* setup the private structure */
+ 	err = txgbe_sw_init(wx);
+ 	if (err)
+-		goto err_free_mac_table;
++		goto err_pci_release_regions;
  
- 	if (task_scs_end_corrupted(prev))
- 		panic("corrupted shadow stack detected inside scheduler\n");
+ 	/* check if flash load is done after hw power up */
+ 	err = wx_check_flash_load(wx, TXGBE_SPI_ILDR_STATUS_PERST);
+@@ -769,6 +769,7 @@ static int txgbe_probe(struct pci_dev *pdev,
+ 	wx_clear_interrupt_scheme(wx);
+ 	wx_control_hw(wx, false);
+ err_free_mac_table:
++	kfree(wx->rss_key);
+ 	kfree(wx->mac_table);
+ err_pci_release_regions:
+ 	pci_release_selected_regions(pdev,
 -- 
-2.39.5 (Apple Git-154)
+2.47.2
 
 
