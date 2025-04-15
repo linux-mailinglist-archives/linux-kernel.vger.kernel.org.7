@@ -1,134 +1,104 @@
-Return-Path: <linux-kernel+bounces-604953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F4016A89B1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:52:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CE4AA89B20
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:53:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8D843AB6A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:51:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FD3A3B7EF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:52:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89819297A5C;
-	Tue, 15 Apr 2025 10:47:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E3B29E079;
+	Tue, 15 Apr 2025 10:47:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dGgV34N/"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Quz54wp4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4E02973DC
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 10:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EBE1297A74
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 10:47:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744714047; cv=none; b=UZ/mMp4ZvasoSLIFQppKu+HFHw0bfn6fBQj4tFnSlmNv7V5TSE0Ecn5F7TdGMzPB7RsCAorCx2JSVTLya/ZYfqD0yNH8YT/UXdEHGvtjsiztzSK1p1NFwvo6LYRpe90WolHMEMDs5sbDVJ1hiI8ZXGAq1/A273YLnzdwQuXcQxA=
+	t=1744714058; cv=none; b=o7oN1gd0gehyTv7kVygxH0MRL8PFyiQicjFutvZYPq2TykS/XEmJglyGsbe3xJEif27AuIRE6DYiQc2hlOwUlKI14ZX9vOjS9tSyMNL6eHmcbUl6U6I9iZ4tlfNn+i9koBokHvGCGU90sbMsAMQk1DMj4r+pDZtb7z49hIQOR+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744714047; c=relaxed/simple;
-	bh=PqtFIuf2PaqgdiInwLbpBw6+hS8F+gVD8HwKtn8pZqA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KW2LVzQwm/+U4HlCyjd8L/NMykHKnwOsipaLkKw3noYVrxQ2dujCJMgJ/JA4DaPdrtbd7infoFGwKulZf0O9fR28C1bubBzcONd/jvPj6LA/Jldbvpu74UQxkSTTTABmJEs4cXJLYJphr2fhKgcuCue3PDLwLP7lSmDLeIszaCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dGgV34N/; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53F8tEbK018863
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 10:47:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	i+0K8i6mH8nJR7NC8EwJps6/hl4dOeR4gugtJgCdwYo=; b=dGgV34N/vYBLV74h
-	hk0HHYzfGp+JC0LAuNgIXRTjh1PlJ2RD+9IL8di/G9J3wF4KKhg2USYVIwmszIsp
-	fJkkOzOTN9LKXpfdL0H7VdtVW6sTksB8UFHQKFXMfA4DOObf+Gr72H6WzHz+gQko
-	bHfL/YCfBLyahWxilggcOOyX19k57Mt+XDSEvOFSyw2EviOsdPv94j7Te77G7QZJ
-	Xb2RtaJQPoJc6ZZwfMUbiFgwS5/7NDhBLiudGP3Ip8V285QOSm4nKwrDN1a65bgM
-	G4XwvmjrZU52Z+sZJVROXfEdCaRiwqoedHWeurx00lGUGMTyy1sNnpyEMzuzlgHp
-	eF2m1Q==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45yfgjfpq3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 10:47:25 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c54be4b03aso103547685a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 03:47:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744714045; x=1745318845;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=i+0K8i6mH8nJR7NC8EwJps6/hl4dOeR4gugtJgCdwYo=;
-        b=rA/mTEgqdE3zij4Mq5Bu0hLXXxAv2e+yZj2Sv/JIxPEY+YIzKgjF3bgcdBlUUYGPrV
-         Vqn/UCGl6BJavDm8BUSKo11Xl6t2pm844y/f+i/ds4uz9jkYyPJfxQpJK2chKytuY8Mx
-         uQBh0uiD+tgeNOa2V2VQPcP3v5UAGVgdIPRuYAqQNVzB2hju9+k06vgVEd9R0DoKQSrO
-         S6B9IwuJuzKr8Xq7wVrTAGK1kObXsHpi/RjUZUBRIy4k3AvDsTstZ+9lBSvzWgCgsdkm
-         Tih4gJlHrgs6mNF2zlii7hgeAOEBgfqk1JjlzT/5paBZkdzSNl0m1wjXrjELjHs3Yn2l
-         L33g==
-X-Forwarded-Encrypted: i=1; AJvYcCW37lrl2lMF+PINPr4FbPK7fAYGeQOgzneyVUwU7k3Yekp+SfrWAFVqrBmVE197UoYQqlNKquA5sFgXEEg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzBDJZ3p2VMKKqRIodYr6yg0t+/o27vKTw88AxiBqDU56CK+/S
-	RIO+piUzYA+1h/4C/qjeymOB6uYns8uyKq9mULe2WRQ0bQtMieQOAp/rPgEaYI0FMRDSvOX2k+f
-	sQ4N5DqwZGmhW7m8+QCtGo2MUdMDP/yeDQTf9wkqktQdNs0sXh3JAuutJ+WaybtE=
-X-Gm-Gg: ASbGncthaJY7SG0NegVrg0NmRfos3jo2JqX7rra8W3C7sj7QbDwr1nFWZ/Iiv4SOhi/
-	Mcpzdryhq0eup0olDV2jEph7fNr2YEXMy9KCR2kgswSfalcwc4RBWogjEJjK8rjYEI/zHC5bU3/
-	3tuPiCqJIgdEZxCxIFvz5yPyfBkwVc4GogieZXdBl20M9WQMofAKu2w01pFtaqy2tBoSDGia53D
-	KbZEn4j178c37dhCIXY/QJgCsLaws5kjiVJpGYGPDXDEq8bOpJYvxKfKfu5PYFXrF69S2XpAj0t
-	et+GcqhlRG+70G4iYuj8J8Q80NUS9CuaLVNSSrnqmrQT9+bSWnZvYbzAba8bVsISpJ0=
-X-Received: by 2002:a05:620a:44c1:b0:7c0:9dc9:754b with SMTP id af79cd13be357-7c7d07be091mr164597285a.0.1744714044777;
-        Tue, 15 Apr 2025 03:47:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFR14+Twk5cFwlwSft3fvWINdHta4kge806Sqok0D/JeIzhe8ayLHbUc1jtjfLT5FrSvApq5A==
-X-Received: by 2002:a05:620a:44c1:b0:7c0:9dc9:754b with SMTP id af79cd13be357-7c7d07be091mr164595485a.0.1744714044447;
-        Tue, 15 Apr 2025 03:47:24 -0700 (PDT)
-Received: from [192.168.65.246] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1cb404asm1070349266b.87.2025.04.15.03.47.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Apr 2025 03:47:23 -0700 (PDT)
-Message-ID: <049d8520-5c66-4846-adfc-cb93f122ffba@oss.qualcomm.com>
-Date: Tue, 15 Apr 2025 12:47:21 +0200
+	s=arc-20240116; t=1744714058; c=relaxed/simple;
+	bh=T9slXBAR22xoLwO+KBOZQZ0eKk88bBGuj28lxMgau2E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HC+hk3npi1xTZBRdrp9p6u1WJayfMIeCjSB/mBfsnXw3rFwu/7xSHgprEatiHmQKu0+rVkx8u/BclWSvg94QcZdtyQ3309xvhY2FQpAj4Qfqz+Jy9XgMiR/RZwxzYeSVS1BqIU9fnJ9bjqcz8EG5va4ruAYWGlFA3fhtHIKnBs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Quz54wp4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C8BEC4CEDD;
+	Tue, 15 Apr 2025 10:47:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744714057;
+	bh=T9slXBAR22xoLwO+KBOZQZ0eKk88bBGuj28lxMgau2E=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Quz54wp4GprCiYbyM6RSe5ER+4yH5ehKTxFU0GE1sNr6B2+xbZ8fb/3CkbN6ib9Bj
+	 quV7RJ5qioZ+0O1LoNKjSLuq83TOKscFLkcEfwdDYNoro/gN1J9qaJ2FhtNpRmBexq
+	 wwkE4xr288Z/U/HgmuOmRcz1LV5KKVvfY7bvfuH/DuVWRQtCNAEZiZXJGARC/LRKY1
+	 8SIw+xC9VpNE/6Mr7qqBkVajTPG1lGR3hvoNUW3aBE6DCRlpvcp4e96S522lYIunLw
+	 fGjKMtdCXdajJsy7lhhxcm14FZezZCRBFJIALgpUMZvzDNnnM3qYVk718F6r1GNgfV
+	 4Uq6ZglVl9Zhg==
+From: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+To: nipun.gupta@amd.com
+Cc: tglx@linutronix.de,
+	maz@kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+	Nikhil Agarwal <nikhil.agarwal@amd.com>
+Subject: [PATCH] irqdomain: cdx: Switch to of_fwnode_handle()
+Date: Tue, 15 Apr 2025 12:47:34 +0200
+Message-ID: <20250415104734.106849-1-jirislaby@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 20/20] arm64: dts: qcom: sm8650: use correct size for VBIF
- regions
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        cros-qcom-dts-watchers@chromium.org,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20250415-drm-msm-dts-fixes-v1-0-90cd91bdd138@oss.qualcomm.com>
- <20250415-drm-msm-dts-fixes-v1-20-90cd91bdd138@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250415-drm-msm-dts-fixes-v1-20-90cd91bdd138@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: t5v2a4yz3sPdGxbGmS7vfOfhe0oYXB9L
-X-Proofpoint-ORIG-GUID: t5v2a4yz3sPdGxbGmS7vfOfhe0oYXB9L
-X-Authority-Analysis: v=2.4 cv=Cve/cm4D c=1 sm=1 tr=0 ts=67fe393d cx=c_pps a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=EUspDBNiAAAA:8 a=da4WsfccAxvekxWPt1gA:9 a=QEXdDO2ut3YA:10
- a=PEH46H7Ffwr30OY-TuGO:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-15_05,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
- malwarescore=0 lowpriorityscore=0 bulkscore=0 spamscore=0 phishscore=0
- suspectscore=0 impostorscore=0 mlxlogscore=633 mlxscore=0
- priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504150076
+Content-Transfer-Encoding: 8bit
 
-On 4/15/25 12:26 PM, Dmitry Baryshkov wrote:
-> Use allocated region size for VBIF regions as defined by the docs
-> (0x3000) instead of just using the last register address.
-> 
-> Suggested-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
+of_node_to_fwnode() is irqdomain's reimplementation of the "officially"
+defined of_fwnode_handle(). The former is in the process of being
+removed, so use the latter instead.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+Cc: Nipun Gupta <nipun.gupta@amd.com>
+Cc: Nikhil Agarwal <nikhil.agarwal@amd.com>
+---
+This is an indepent patch, please apply directly.
 
-Konrad
+The patch was previously a part of a large series [1], but I would like
+maintainers to feed the independent parts through their trees.
+
+[1] https://lore.kernel.org/all/20250319092951.37667-1-jirislaby@kernel.org/
+---
+ drivers/cdx/cdx_msi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/cdx/cdx_msi.c b/drivers/cdx/cdx_msi.c
+index 06d723978232..3388a5d1462c 100644
+--- a/drivers/cdx/cdx_msi.c
++++ b/drivers/cdx/cdx_msi.c
+@@ -165,7 +165,7 @@ struct irq_domain *cdx_msi_domain_init(struct device *dev)
+ 	struct device_node *parent_node;
+ 	struct irq_domain *parent;
+ 
+-	fwnode_handle = of_node_to_fwnode(np);
++	fwnode_handle = of_fwnode_handle(np);
+ 
+ 	parent_node = of_parse_phandle(np, "msi-map", 1);
+ 	if (!parent_node) {
+@@ -173,7 +173,7 @@ struct irq_domain *cdx_msi_domain_init(struct device *dev)
+ 		return NULL;
+ 	}
+ 
+-	parent = irq_find_matching_fwnode(of_node_to_fwnode(parent_node), DOMAIN_BUS_NEXUS);
++	parent = irq_find_matching_fwnode(of_fwnode_handle(parent_node), DOMAIN_BUS_NEXUS);
+ 	if (!parent || !msi_get_domain_info(parent)) {
+ 		dev_err(dev, "unable to locate ITS domain\n");
+ 		return NULL;
+-- 
+2.49.0
+
 
