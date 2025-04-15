@@ -1,272 +1,151 @@
-Return-Path: <linux-kernel+bounces-604194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6650CA891FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 04:46:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13837A8922F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 04:52:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 151A63B1F19
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 02:45:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22EF317D8E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 02:52:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6AAA20C487;
-	Tue, 15 Apr 2025 02:45:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 764D0233151;
+	Tue, 15 Apr 2025 02:47:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O9lkO4am"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="RpS6rVR3"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C43134CF;
-	Tue, 15 Apr 2025 02:45:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 721A4232792
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 02:47:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744685158; cv=none; b=XzLs5jmIaMy3aG/4KZSrzomqcL/sy5c3O41b5StPljgElnG3dpftflpuLnXswe5rHohqNI4StUWrua1f/LAEcqndDG6XqggV4RFA9Jsa8KhOhk1FGf9ab+UgQ9UIfZDrDX2NibadB5uzR9/qcGD7Ga+mJ/AzmsZZBbTL34KZBiA=
+	t=1744685266; cv=none; b=HzF3zZphIjKhs41HPUIKH2nF2PjxkvPMOCq7HXNVwfk7QlUbK9pwWVcJ06oYfWuD5K9aN863Tzw3qB/BVdw5jXdIa3FwHP7A340j/VCNTKFInuVWMzOzXoQtvf/7Rqi9XAzz472dDZrxDqhnbHv29N9XxmHaT/N1iIHVjDREenc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744685158; c=relaxed/simple;
-	bh=2x91J5sem5IP8gA0gECFNvOpz83ewu5oEZzUTMSLuJ4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=snM0IAdlWYilAriSZ3ctc1sqJgm0LfU1ATPhfxmeu5KUW0/XkRkrXkejelFaNdeKwFU7mV2mESG8witIUyO0QLm4Dl24yMXvFBZYmxijw5bPRy1X+7SgypEVQtHyZNpAoa/UPvvBgC5pf9yUurGD4hgwe4CWV1+XjbXka8K8+Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O9lkO4am; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C8BD8C4CEEC;
-	Tue, 15 Apr 2025 02:45:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744685157;
-	bh=2x91J5sem5IP8gA0gECFNvOpz83ewu5oEZzUTMSLuJ4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=O9lkO4ame3P0xGx9j6/HBR1vb2zUOAxfcz11sefe7z/DcwyPZWyuOUc/3TZcfy28Q
-	 OYWBwCkWTKLQ74qmRcrO4Nq+PPXthuSyMTfJwaaj/Qs837P86ifJs44CmdsX4zzTDY
-	 WndRi3uauNX27N6ATR75t32Iz/rFYSg6kDMUeDZUZtpbz8/Ib7lCYoh9jnCnaX0Iwg
-	 Qvhn7oQhuIYwKM8+CGlxXV0Kgsg6+j57V3mUHwpTjjtw+XlIwJvPAtTBc/EUnxsTTy
-	 2cMP3lmaMZ1kmySvKMdFJgHG5o/6egt2qUd6Njehr8WeG+xBn79taBJ36Ei0LsJ65x
-	 memFgHuO5gkOQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B29B6C369B8;
-	Tue, 15 Apr 2025 02:45:57 +0000 (UTC)
-From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+	s=arc-20240116; t=1744685266; c=relaxed/simple;
+	bh=MrXrXjTBYXLdLREsfYrjSTNotRmujCm0BhazHpTsW2w=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Mg1agWYhSkChplVTweX34dtjsy4ZKLig7CNJGBw9CRGg7prNtZGPpKg/oH6R/XN8LpbAApjq3tKELjZOfkBYlx04yhro1SQlxHXL80F9Z1TUnvsMAsKAVE2Sx0j7kdIvc6WYhRjCQXUdC7s8a44eKB7PhgqbpBlogRTZW3lxFD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=RpS6rVR3; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22423adf751so45813865ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 19:47:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1744685265; x=1745290065; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=63b5+F5fFo9uNyjbfST0FZ55aigVErZF90xX0QFU4a4=;
+        b=RpS6rVR3Kav0RuLYj5Hi8WHnWyG74tKTln+QeVE4hgeO1oZvihhy6UQC3eUTGfhfin
+         7Go+fHxQOr+rTpcdDZrwkUzdfDmIfPz0dfeMPEcdaw0EHodfp1VID0DEmlJBJY5DNc8F
+         zYz2P+Cea1TCqDwziLNcV3S/eNfuaGBbSxXvoumaIrX+LxyelIUk26/qNyhnkxKwXXLS
+         TGTX79vnfEbKKOz+0OL0mZ3VlMqTAbs9crJszuvY3NYuthu8ru3s886AdlCJrIWmVEXg
+         WMkJ18nFMSOSQGZX8vHANNX7mCtiHJyddQDQ5cpr77sOBjIWNAJxRTVcgrhnuAQU+H86
+         PDLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744685265; x=1745290065;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=63b5+F5fFo9uNyjbfST0FZ55aigVErZF90xX0QFU4a4=;
+        b=CLGRq/hIrEg/eyVNQArIm6aY24unmp91BIktBADqV9/wpna3y6v94/AvPwRE1QychP
+         oBPlFGnCr3N+eTZd6L+noOnYkPgn2j51/0SfZJRfPsNdW7cW2yjJxfVIpbRkMFiNdh/y
+         xK3nminsl7zu2BeDS6FdjoqVHVgVBQ5xpq5+5PC9BqExSo+Tj3ZGpqy4cJZwOEFYCY+j
+         iwMkGzsdamh2yiuPRW2sqxY2f+b5wMWc8GLgpGgUXbVtGYzhFH3HSkdgzJ+LceJ+6rsR
+         tiTZ1+AfFFlCczku29qzAyqREVBo9yLqBuzKspq2ppFFD35LzNjIoqCnQyMS8LQBaCDR
+         hp+A==
+X-Gm-Message-State: AOJu0YzW2gy+JhB4cOfbvfJpi1+/HvkySTkFOfmxYSaHnbiG7HgLuaAu
+	14uBB6yEVs4SwO0qpn13JUC/crZP6bLRdFoRlICHHUK3FCxSSAzS5OnQKedcX60=
+X-Gm-Gg: ASbGncuD5tWhJqYvTWUxqfk+nYo/YVf1ItC08WvRvQn+xsFBM3J3yuY4sfGEkF3DRG+
+	FRGHK+3hPWQhd0jjNsWgoxiQAp1EpCydg8yNdQHABFiH22wMYqvoHLe5x9bcbwDk1ajP5ZZ86Dt
+	lwXF0frba61sTRJ3G/zTeu8Ag6EZeAQT0lxyPOKNGnTxh13B51jQ4S/5ZHpAyH9sKSSY2RgqxsT
+	7DqjlmnUHLLRa76sWi5SXnezyCGLoI3K2elmPMsEJdob+EOPXhHBOrpRNbc7OA/Am8vgfZBhRmO
+	u84pcGJ0QuM8UpWQj+i9P+muC9ikBZ2ThqBRbT6XJH05ceYspQla71kdBtN9TPw/Q8wVdSUR
+X-Google-Smtp-Source: AGHT+IFmIkyy7FOoYDJmjbvJNymfdfM84C+MAEagetSFHxG3fte/Kh1b2EKbddjsXQhUKdg0bAYVCg==
+X-Received: by 2002:a17:902:da91:b0:220:f7bb:842 with SMTP id d9443c01a7336-22bea4efafamr182908255ad.42.1744685264764;
+        Mon, 14 Apr 2025 19:47:44 -0700 (PDT)
+Received: from PXLDJ45XCM.bytedance.net ([61.213.176.5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7ccac49sm106681185ad.217.2025.04.14.19.47.39
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 14 Apr 2025 19:47:44 -0700 (PDT)
+From: Muchun Song <songmuchun@bytedance.com>
+To: hannes@cmpxchg.org,
+	mhocko@kernel.org,
+	roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev,
+	muchun.song@linux.dev,
+	akpm@linux-foundation.org,
+	david@fromorbit.com,
+	zhengqi.arch@bytedance.com,
+	yosry.ahmed@linux.dev,
+	nphamcs@gmail.com,
+	chengming.zhou@linux.dev
+Cc: linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	linux-mm@kvack.org,
+	hamzamahfooz@linux.microsoft.com,
+	apais@linux.microsoft.com,
+	Muchun Song <songmuchun@bytedance.com>
+Subject: [PATCH RFC 20/28] mm: workingset: prevent lruvec release in workingset_refault()
 Date: Tue, 15 Apr 2025 10:45:24 +0800
-Subject: [PATCH v3 1/7] soc: amlogic: clk-measure: Define MSR_CLK's
- register offset separately
+Message-Id: <20250415024532.26632-21-songmuchun@bytedance.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20250415024532.26632-1-songmuchun@bytedance.com>
+References: <20250415024532.26632-1-songmuchun@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250415-clk-measure-v3-1-9b8551dd33b4@amlogic.com>
-References: <20250415-clk-measure-v3-0-9b8551dd33b4@amlogic.com>
-In-Reply-To: <20250415-clk-measure-v3-0-9b8551dd33b4@amlogic.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Chuan Liu <chuan.liu@amlogic.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744685155; l=5875;
- i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=0guFezE8LgXk4zTIDey8n/7AjPQ9HaO6/P9CKzBKwgU=;
- b=LH0Wu2xuiibSPuT7Nk/mM9O+YUHq27jKVIacku7LUFDJOsShPXDqWbYF+YqTgLXQF09mTRSp0
- QVupv191xPtCMG6JrwE29U4gOyvElxjCwGFXDU3ocI5eyZ09thS93vY
-X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
- pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
-X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
- auth_id=203
-X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
-Reply-To: chuan.liu@amlogic.com
+Content-Transfer-Encoding: 8bit
 
-From: Chuan Liu <chuan.liu@amlogic.com>
+In the near future, a folio will no longer pin its corresponding
+memory cgroup. So an lruvec returned by folio_lruvec() could be
+released without the rcu read lock or a reference to its memory
+cgroup.
 
-Since the MSR_CLK register offset differs between chip variants, we
-replace the macro-based definition with chip-specific assignments.
+In the current patch, the rcu read lock is employed to safeguard
+against the release of the lruvec in workingset_refault().
 
-Change the max_register in regmap_config to be retrieved from DTS.
+This serves as a preparatory measure for the reparenting of the
+LRU pages.
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+Signed-off-by: Muchun Song <songmuchun@bytedance.com>
 ---
- drivers/soc/amlogic/meson-clk-measure.c | 55 ++++++++++++++++++++++++---------
- 1 file changed, 40 insertions(+), 15 deletions(-)
+ mm/workingset.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/soc/amlogic/meson-clk-measure.c b/drivers/soc/amlogic/meson-clk-measure.c
-index 39638d6a593c..3594ef5b7ff0 100644
---- a/drivers/soc/amlogic/meson-clk-measure.c
-+++ b/drivers/soc/amlogic/meson-clk-measure.c
-@@ -14,11 +14,6 @@
+diff --git a/mm/workingset.c b/mm/workingset.c
+index e14b9e33f161..ef89d18cb8cf 100644
+--- a/mm/workingset.c
++++ b/mm/workingset.c
+@@ -560,11 +560,12 @@ void workingset_refault(struct folio *folio, void *shadow)
+ 	 * locked to guarantee folio_memcg() stability throughout.
+ 	 */
+ 	nr = folio_nr_pages(folio);
++	rcu_read_lock();
+ 	lruvec = folio_lruvec(folio);
+ 	mod_lruvec_state(lruvec, WORKINGSET_REFAULT_BASE + file, nr);
  
- static DEFINE_MUTEX(measure_lock);
+ 	if (!workingset_test_recent(shadow, file, &workingset, true))
+-		return;
++		goto out;
  
--#define MSR_CLK_DUTY		0x0
--#define MSR_CLK_REG0		0x4
--#define MSR_CLK_REG1		0x8
--#define MSR_CLK_REG2		0xc
--
- #define MSR_DURATION		GENMASK(15, 0)
- #define MSR_ENABLE		BIT(16)
- #define MSR_CONT		BIT(17) /* continuous measurement */
-@@ -39,9 +34,17 @@ struct meson_msr_id {
- 	const char *name;
- };
- 
-+struct msr_reg_offset {
-+	unsigned int duty_val;
-+	unsigned int freq_ctrl;
-+	unsigned int duty_ctrl;
-+	unsigned int freq_val;
-+};
-+
- struct meson_msr_data {
- 	struct meson_msr_id *msr_table;
- 	unsigned int msr_count;
-+	const struct msr_reg_offset *reg;
- };
- 
- struct meson_msr {
-@@ -495,6 +498,7 @@ static int meson_measure_id(struct meson_msr_id *clk_msr_id,
- 			    unsigned int duration)
- {
- 	struct meson_msr *priv = clk_msr_id->priv;
-+	const struct msr_reg_offset *reg = priv->data.reg;
- 	unsigned int val;
- 	int ret;
- 
-@@ -502,22 +506,22 @@ static int meson_measure_id(struct meson_msr_id *clk_msr_id,
- 	if (ret)
- 		return ret;
- 
--	regmap_write(priv->regmap, MSR_CLK_REG0, 0);
-+	regmap_write(priv->regmap, reg->freq_ctrl, 0);
- 
- 	/* Set measurement duration */
--	regmap_update_bits(priv->regmap, MSR_CLK_REG0, MSR_DURATION,
-+	regmap_update_bits(priv->regmap, reg->freq_ctrl, MSR_DURATION,
- 			   FIELD_PREP(MSR_DURATION, duration - 1));
- 
- 	/* Set ID */
--	regmap_update_bits(priv->regmap, MSR_CLK_REG0, MSR_CLK_SRC,
-+	regmap_update_bits(priv->regmap, reg->freq_ctrl, MSR_CLK_SRC,
- 			   FIELD_PREP(MSR_CLK_SRC, clk_msr_id->id));
- 
- 	/* Enable & Start */
--	regmap_update_bits(priv->regmap, MSR_CLK_REG0,
-+	regmap_update_bits(priv->regmap, reg->freq_ctrl,
- 			   MSR_RUN | MSR_ENABLE,
- 			   MSR_RUN | MSR_ENABLE);
- 
--	ret = regmap_read_poll_timeout(priv->regmap, MSR_CLK_REG0,
-+	ret = regmap_read_poll_timeout(priv->regmap, reg->freq_ctrl,
- 				       val, !(val & MSR_BUSY), 10, 10000);
- 	if (ret) {
- 		mutex_unlock(&measure_lock);
-@@ -525,10 +529,10 @@ static int meson_measure_id(struct meson_msr_id *clk_msr_id,
+ 	folio_set_active(folio);
+ 	workingset_age_nonresident(lruvec, nr);
+@@ -580,6 +581,8 @@ void workingset_refault(struct folio *folio, void *shadow)
+ 		lru_note_cost_refault(folio);
+ 		mod_lruvec_state(lruvec, WORKINGSET_RESTORE_BASE + file, nr);
  	}
- 
- 	/* Disable */
--	regmap_update_bits(priv->regmap, MSR_CLK_REG0, MSR_ENABLE, 0);
-+	regmap_update_bits(priv->regmap, reg->freq_ctrl, MSR_ENABLE, 0);
- 
- 	/* Get the value in multiple of gate time counts */
--	regmap_read(priv->regmap, MSR_CLK_REG2, &val);
-+	regmap_read(priv->regmap, reg->freq_val, &val);
- 
- 	mutex_unlock(&measure_lock);
- 
-@@ -599,11 +603,10 @@ static int clk_msr_summary_show(struct seq_file *s, void *data)
- }
- DEFINE_SHOW_ATTRIBUTE(clk_msr_summary);
- 
--static const struct regmap_config meson_clk_msr_regmap_config = {
-+static struct regmap_config meson_clk_msr_regmap_config = {
- 	.reg_bits = 32,
- 	.val_bits = 32,
- 	.reg_stride = 4,
--	.max_register = MSR_CLK_REG2,
- };
- 
- static int meson_msr_probe(struct platform_device *pdev)
-@@ -611,6 +614,7 @@ static int meson_msr_probe(struct platform_device *pdev)
- 	const struct meson_msr_data *match_data;
- 	struct meson_msr *priv;
- 	struct dentry *root, *clks;
-+	struct resource *res;
- 	void __iomem *base;
- 	int i;
- 
-@@ -636,15 +640,24 @@ static int meson_msr_probe(struct platform_device *pdev)
- 	       match_data->msr_count * sizeof(struct meson_msr_id));
- 	priv->data.msr_count = match_data->msr_count;
- 
--	base = devm_platform_ioremap_resource(pdev, 0);
-+	base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
- 
-+	meson_clk_msr_regmap_config.max_register = resource_size(res) - 4;
- 	priv->regmap = devm_regmap_init_mmio(&pdev->dev, base,
- 					     &meson_clk_msr_regmap_config);
- 	if (IS_ERR(priv->regmap))
- 		return PTR_ERR(priv->regmap);
- 
-+	priv->data.reg = devm_kzalloc(&pdev->dev, sizeof(struct msr_reg_offset),
-+				      GFP_KERNEL);
-+	if (!priv->data.reg)
-+		return -ENOMEM;
-+
-+	memcpy((void *)priv->data.reg, match_data->reg,
-+	       sizeof(struct msr_reg_offset));
-+
- 	root = debugfs_create_dir("meson-clk-msr", NULL);
- 	clks = debugfs_create_dir("clks", root);
- 
-@@ -664,29 +677,41 @@ static int meson_msr_probe(struct platform_device *pdev)
- 	return 0;
++out:
++	rcu_read_unlock();
  }
  
-+static const struct msr_reg_offset msr_reg_offset = {
-+	.duty_val = 0x0,
-+	.freq_ctrl = 0x4,
-+	.duty_ctrl = 0x8,
-+	.freq_val = 0xc,
-+};
-+
- static const struct meson_msr_data clk_msr_gx_data = {
- 	.msr_table = (void *)clk_msr_gx,
- 	.msr_count = ARRAY_SIZE(clk_msr_gx),
-+	.reg = &msr_reg_offset,
- };
- 
- static const struct meson_msr_data clk_msr_m8_data = {
- 	.msr_table = (void *)clk_msr_m8,
- 	.msr_count = ARRAY_SIZE(clk_msr_m8),
-+	.reg = &msr_reg_offset,
- };
- 
- static const struct meson_msr_data clk_msr_axg_data = {
- 	.msr_table = (void *)clk_msr_axg,
- 	.msr_count = ARRAY_SIZE(clk_msr_axg),
-+	.reg = &msr_reg_offset,
- };
- 
- static const struct meson_msr_data clk_msr_g12a_data = {
- 	.msr_table = (void *)clk_msr_g12a,
- 	.msr_count = ARRAY_SIZE(clk_msr_g12a),
-+	.reg = &msr_reg_offset,
- };
- 
- static const struct meson_msr_data clk_msr_sm1_data = {
- 	.msr_table = (void *)clk_msr_sm1,
- 	.msr_count = ARRAY_SIZE(clk_msr_sm1),
-+	.reg = &msr_reg_offset,
- };
- 
- static const struct of_device_id meson_msr_match_table[] = {
-
+ /**
 -- 
-2.42.0
-
+2.20.1
 
 
