@@ -1,567 +1,228 @@
-Return-Path: <linux-kernel+bounces-605737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B511A8A581
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 19:30:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8F14A8A562
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 19:28:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8526F3BC906
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 17:30:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF0477A2336
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 17:27:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F422253BB;
-	Tue, 15 Apr 2025 17:29:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G8JDgF5b"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912B3224243;
-	Tue, 15 Apr 2025 17:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE0D21D594;
+	Tue, 15 Apr 2025 17:28:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A267187FFA
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 17:28:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744738152; cv=none; b=HsOn7MtfenbN1Y5L/poipHJgCXzoLcfPFWZv9h3deJYLSq8qzcz/wn5IBSsnFdyTHmJ8TTO20cdKvAHBilAJhkcimq3Wk/w3NR6n4Icv9EBpPfRBeaBcegcEfaO+b60Haaa/gHy0vF5sZdzv9B5S/KBTgMwDhYKjgYSQtNbXkE4=
+	t=1744738110; cv=none; b=ezx6T5LVyEzyD262KcpfyZxaZwBtvy/T6HBKkz/gn0aBr4UAd/Z0aOjJD8t7coUdtE4kTnqneAFhoXgSNaTrA8K5osmcpGfICWjDA7XgOhBB9HAuKqw/Js65GQ+vKJeKpHKNMFPxMAaLavYJd+5NK3WJtxzLH43KIewn4+r8gXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744738152; c=relaxed/simple;
-	bh=K13b147mWFnfwD7/TXLuT2ouBWKQI99KzFIV/K87xNw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZCrC4y9YODakC8AdRxbKpRQmOShvpNsF00WhmhKvZ4nc7/tOIZiT7wslrPaSGvNpZP9E7Sbg3EIGFpoLn2C6gzpNxzGwOAq9g936+xLUPJ84cscIp3Xg1YEjEJXutXd4wGMe7Xy1VOrstmKjqxdkxxaA9ZzWxq1OkcDPRgUznjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G8JDgF5b; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744738151; x=1776274151;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=K13b147mWFnfwD7/TXLuT2ouBWKQI99KzFIV/K87xNw=;
-  b=G8JDgF5bxI9sDDOgPYPCjOxhikHL3ZkU2VGOAjKUdCP1QhdPwipXlhmI
-   M4B303s/VXnOCdQGGVOx7QyM3daBKZhb7vLx6IaKfkxXzjNMamrZiQOOa
-   MUnrqTvFQp9EEyCWWy78DynMuyGxnJzgSOCL+hCMamnbtUF076nFnPYwQ
-   xY8jXFbVSbo4i3H4oyxKk+YHuPTNYFmpDGHgeE9Mpjq/mAS17UpRGIpm9
-   j9GLWCKd+Vnc29ek/GTi3+YahhYxQaDJPZrOtzRU0HRaD8mc6KF2sQgZP
-   iVLBqa7NkR5Uaa27jdXAVH9FFFzXQibOmd/Xq/tpo/FK4K3YOE2FCZOHz
-   Q==;
-X-CSE-ConnectionGUID: 5q/UHRYoTNazskAv2nCaqA==
-X-CSE-MsgGUID: M5enw1LmR/Sm+5mpyILftQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="46275656"
-X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="46275656"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 10:29:10 -0700
-X-CSE-ConnectionGUID: urrxdxPbSZ+fqXLmHmNueA==
-X-CSE-MsgGUID: /b3KwhUhRfeJYvmmYObpiQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="130729643"
-Received: from newjersey.igk.intel.com ([10.102.20.203])
-  by fmviesa010.fm.intel.com with ESMTP; 15 Apr 2025 10:29:06 -0700
-From: Alexander Lobakin <aleksander.lobakin@intel.com>
-To: intel-wired-lan@lists.osuosl.org
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Michal Kubiak <michal.kubiak@intel.com>,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Simon Horman <horms@kernel.org>,
-	bpf@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH iwl-next 04/16] libeth: xdp: add .ndo_xdp_xmit() helpers
-Date: Tue, 15 Apr 2025 19:28:13 +0200
-Message-ID: <20250415172825.3731091-5-aleksander.lobakin@intel.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250415172825.3731091-1-aleksander.lobakin@intel.com>
-References: <20250415172825.3731091-1-aleksander.lobakin@intel.com>
+	s=arc-20240116; t=1744738110; c=relaxed/simple;
+	bh=AgXNR95/FkRg7nCY0Lj/aP24VMk2hSg+BqBqlDw7QZM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F4vyX+z0Kk03hhJLw6W10uzSZ+zrMGlRM8QFV5CMLBbQFXoAE2cftbObr8oTkjEyzuIGPl05Oadc+8okVwQm3wns/utyPlBknBDNEScbXGJWU/apNq8SAUMr8FVWxbUoB7vl8SjHdxkjc1da4Zc2f972gUlfvNZuFfzOgEzKhZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E85C115A1;
+	Tue, 15 Apr 2025 10:28:16 -0700 (PDT)
+Received: from [10.57.86.225] (unknown [10.57.86.225])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6D5E83F59E;
+	Tue, 15 Apr 2025 10:28:16 -0700 (PDT)
+Message-ID: <19d2b1c6-ef45-49f5-b11b-a57adc522852@arm.com>
+Date: Tue, 15 Apr 2025 18:28:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 11/11] arm64/mm: Batch barriers when updating kernel
+ mappings
+Content-Language: en-GB
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>, Pasha Tatashin
+ <pasha.tatashin@soleen.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>,
+ David Hildenbrand <david@redhat.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>,
+ Kevin Brodsky <kevin.brodsky@arm.com>, linux-arm-kernel@lists.infradead.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250304150444.3788920-1-ryan.roberts@arm.com>
+ <20250304150444.3788920-12-ryan.roberts@arm.com> <Z_1IC-_Fp-yGLRSc@arm.com>
+ <aabc9fb1-4e74-409a-b25b-8e844e65c502@arm.com> <Z_46QUFXVI69zRZR@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <Z_46QUFXVI69zRZR@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add helpers for implementing .ndo_xdp_xmit().
-Same as for XDP_TX, accumulate up to 16 DMA-mapped frames on the stack,
-then flush. If DMA mapping is failed for some reason, don't try mapping
-further frames, but still flush what was already prepared.
-DMA address of a head frame is stored in its headroom, assuming it
-has enough of it for an 8 (or 4) byte value.
-In addition to @prep and @xmit driver callbacks in XDP_TX, xmit also
-needs @finalize to kick the XDPSQ after filling.
+On 15/04/2025 11:51, Catalin Marinas wrote:
+> On Mon, Apr 14, 2025 at 07:28:46PM +0100, Ryan Roberts wrote:
+>> On 14/04/2025 18:38, Catalin Marinas wrote:
+>>> On Tue, Mar 04, 2025 at 03:04:41PM +0000, Ryan Roberts wrote:
+>>>> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+>>>> index 1898c3069c43..149df945c1ab 100644
+>>>> --- a/arch/arm64/include/asm/pgtable.h
+>>>> +++ b/arch/arm64/include/asm/pgtable.h
+>>>> @@ -40,6 +40,55 @@
+>>>>  #include <linux/sched.h>
+>>>>  #include <linux/page_table_check.h>
+>>>>  
+>>>> +static inline void emit_pte_barriers(void)
+>>>> +{
+>>>> +	/*
+>>>> +	 * These barriers are emitted under certain conditions after a pte entry
+>>>> +	 * was modified (see e.g. __set_pte_complete()). The dsb makes the store
+>>>> +	 * visible to the table walker. The isb ensures that any previous
+>>>> +	 * speculative "invalid translation" marker that is in the CPU's
+>>>> +	 * pipeline gets cleared, so that any access to that address after
+>>>> +	 * setting the pte to valid won't cause a spurious fault. If the thread
+>>>> +	 * gets preempted after storing to the pgtable but before emitting these
+>>>> +	 * barriers, __switch_to() emits a dsb which ensure the walker gets to
+>>>> +	 * see the store. There is no guarrantee of an isb being issued though.
+>>>> +	 * This is safe because it will still get issued (albeit on a
+>>>> +	 * potentially different CPU) when the thread starts running again,
+>>>> +	 * before any access to the address.
+>>>> +	 */
+>>>> +	dsb(ishst);
+>>>> +	isb();
+>>>> +}
+>>>> +
+>>>> +static inline void queue_pte_barriers(void)
+>>>> +{
+>>>> +	if (test_thread_flag(TIF_LAZY_MMU))
+>>>> +		set_thread_flag(TIF_LAZY_MMU_PENDING);
+>>>
+>>> As we can have lots of calls here, it might be slightly cheaper to test
+>>> TIF_LAZY_MMU_PENDING and avoid setting it unnecessarily.
+>>
+>> Yes, good point.
+>>
+>>> I haven't checked - does the compiler generate multiple mrs from sp_el0
+>>> for subsequent test_thread_flag()?
+>>
+>> It emits a single mrs but it loads from the pointer twice.
+> 
+> It's not that bad if only do the set_thread_flag() once.
+> 
+>> I think v3 is the version we want?
+>>
+>>
+>> void TEST_queue_pte_barriers_v1(void)
+>> {
+>> 	if (test_thread_flag(TIF_LAZY_MMU))
+>> 		set_thread_flag(TIF_LAZY_MMU_PENDING);
+>> 	else
+>> 		emit_pte_barriers();
+>> }
+>>
+>> void TEST_queue_pte_barriers_v2(void)
+>> {
+>> 	if (test_thread_flag(TIF_LAZY_MMU) &&
+>> 	    !test_thread_flag(TIF_LAZY_MMU_PENDING))
+>> 		set_thread_flag(TIF_LAZY_MMU_PENDING);
+>> 	else
+>> 		emit_pte_barriers();
+>> }
+>>
+>> void TEST_queue_pte_barriers_v3(void)
+>> {
+>> 	unsigned long flags = read_thread_flags();
+>>
+>> 	if ((flags & (_TIF_LAZY_MMU | _TIF_LAZY_MMU_PENDING)) == _TIF_LAZY_MMU)
+>> 		set_thread_flag(TIF_LAZY_MMU_PENDING);
+>> 	else
+>> 		emit_pte_barriers();
+>> }
+> 
+> Doesn't v3 emit barriers once _TIF_LAZY_MMU_PENDING has been set? We
+> need something like:
+> 
+> 	if (flags & _TIF_LAZY_MMU) {
+> 		if (!(flags & _TIF_LAZY_MMU_PENDING))
+> 			set_thread_flag(TIF_LAZY_MMU_PENDING);
+> 	} else {
+> 		emit_pte_barriers();
+> 	}
 
-Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
----
- include/net/libeth/tx.h                 |   6 +
- include/net/libeth/xdp.h                | 290 +++++++++++++++++++++++-
- drivers/net/ethernet/intel/libeth/xdp.c |  37 ++-
- 3 files changed, 328 insertions(+), 5 deletions(-)
+Gah, yeah sorry, going to quickly. v2 is also logicially incorrect.
 
-diff --git a/include/net/libeth/tx.h b/include/net/libeth/tx.h
-index 3e68d11914f7..e2b62a8b4c57 100644
---- a/include/net/libeth/tx.h
-+++ b/include/net/libeth/tx.h
-@@ -19,6 +19,8 @@
-  * @LIBETH_SQE_SKB: &sk_buff, unmap and napi_consume_skb(), update stats
-  * @__LIBETH_SQE_XDP_START: separator between skb and XDP types
-  * @LIBETH_SQE_XDP_TX: &skb_shared_info, libeth_xdp_return_buff_bulk(), stats
-+ * @LIBETH_SQE_XDP_XMIT: &xdp_frame, unmap and xdp_return_frame_bulk(), stats
-+ * @LIBETH_SQE_XDP_XMIT_FRAG: &xdp_frame frag, only unmap DMA
-  */
- enum libeth_sqe_type {
- 	LIBETH_SQE_EMPTY		= 0U,
-@@ -29,6 +31,8 @@ enum libeth_sqe_type {
- 
- 	__LIBETH_SQE_XDP_START,
- 	LIBETH_SQE_XDP_TX		= __LIBETH_SQE_XDP_START,
-+	LIBETH_SQE_XDP_XMIT,
-+	LIBETH_SQE_XDP_XMIT_FRAG,
- };
- 
- /**
-@@ -38,6 +42,7 @@ enum libeth_sqe_type {
-  * @raw: slab buffer to free via kfree()
-  * @skb: &sk_buff to consume
-  * @sinfo: skb shared info of an XDP_TX frame
-+ * @xdpf: XDP frame from ::ndo_xdp_xmit()
-  * @dma: DMA address to unmap
-  * @len: length of the mapped region to unmap
-  * @nr_frags: number of frags in the frame this buffer belongs to
-@@ -53,6 +58,7 @@ struct libeth_sqe {
- 		void				*raw;
- 		struct sk_buff			*skb;
- 		struct skb_shared_info		*sinfo;
-+		struct xdp_frame		*xdpf;
- 	};
- 
- 	DEFINE_DMA_UNMAP_ADDR(dma);
-diff --git a/include/net/libeth/xdp.h b/include/net/libeth/xdp.h
-index 946fc8081987..5438271662bd 100644
---- a/include/net/libeth/xdp.h
-+++ b/include/net/libeth/xdp.h
-@@ -11,6 +11,17 @@
- #include <net/libeth/tx.h>
- #include <net/xsk_buff_pool.h>
- 
-+/*
-+ * Defined as bits to be able to use them as a mask on Rx.
-+ * Also used as internal return values on Tx.
-+ */
-+enum {
-+	LIBETH_XDP_PASS			= 0U,
-+	LIBETH_XDP_DROP			= BIT(0),
-+	LIBETH_XDP_ABORTED		= BIT(1),
-+	LIBETH_XDP_TX			= BIT(2),
-+};
-+
- /*
-  * &xdp_buff_xsk is the largest structure &libeth_xdp_buff gets casted to,
-  * pick maximum pointer-compatible alignment.
-@@ -56,12 +67,14 @@ static_assert(IS_ALIGNED(sizeof(struct xdp_buff_xsk),
-  * @LIBETH_XDP_TX_BULK: one bulk size at which it will be flushed to the queue
-  * @LIBETH_XDP_TX_BATCH: batch size for which the queue fill loop is unrolled
-  * @LIBETH_XDP_TX_DROP: indicates the send function must drop frames not sent
-+ * @LIBETH_XDP_TX_NDO: whether the send function is called from .ndo_xdp_xmit()
-  */
- enum {
- 	LIBETH_XDP_TX_BULK		= DEV_MAP_BULK_SIZE,
- 	LIBETH_XDP_TX_BATCH		= 8,
- 
- 	LIBETH_XDP_TX_DROP		= BIT(0),
-+	LIBETH_XDP_TX_NDO		= BIT(1),
- };
- 
- /**
-@@ -88,6 +101,11 @@ enum {
-  * @len_fl: ``XDP_TX``, combined flags [31:16] and len [15:0] field for speed
-  * @soff: ``XDP_TX``, offset from @data to the start of &skb_shared_info
-  * @frag: one (non-head) frag for ``XDP_TX``
-+ * @xdpf: &xdp_frame for the head frag for .ndo_xdp_xmit()
-+ * @dma: DMA address of the non-head frag for .ndo_xdp_xmit()
-+ * @len: frag length for .ndo_xdp_xmit()
-+ * @flags: Tx flags for the above
-+ * @opts: combined @len + @flags for the above for speed
-  */
- struct libeth_xdp_tx_frame {
- 	union {
-@@ -100,6 +118,21 @@ struct libeth_xdp_tx_frame {
- 
- 		/* ``XDP_TX`` frag */
- 		skb_frag_t			frag;
-+
-+		/* .ndo_xdp_xmit() */
-+		struct {
-+			union {
-+				struct xdp_frame		*xdpf;
-+				dma_addr_t			dma;
-+			};
-+			union {
-+				struct {
-+					u32				len;
-+					u32				flags;
-+				};
-+				aligned_u64			opts;
-+			};
-+		};
- 	};
- } __aligned_largest;
- static_assert(offsetof(struct libeth_xdp_tx_frame, frag.len) ==
-@@ -107,7 +140,7 @@ static_assert(offsetof(struct libeth_xdp_tx_frame, frag.len) ==
- 
- /**
-  * struct libeth_xdp_tx_bulk - XDP Tx frame bulk for bulk sending
-- * @prog: corresponding active XDP program
-+ * @prog: corresponding active XDP program, %NULL for .ndo_xdp_xmit()
-  * @dev: &net_device which the frames are transmitted on
-  * @xdpsq: shortcut to the corresponding driver-specific XDPSQ structure
-  * @count: current number of frames in @bulk
-@@ -438,7 +471,7 @@ void libeth_xdp_tx_exception(struct libeth_xdp_tx_bulk *bq, u32 sent,
- /**
-  * __libeth_xdp_tx_flush_bulk - internal helper to flush one XDP Tx bulk
-  * @bq: bulk to flush
-- * @flags: XDP TX flags
-+ * @flags: XDP TX flags (.ndo_xdp_xmit() etc.)
-  * @prep: driver-specific callback to prepare the queue for sending
-  * @fill: libeth_xdp callback to fill &libeth_sqe and &libeth_xdp_tx_desc
-  * @xmit: driver callback to fill a HW descriptor
-@@ -488,6 +521,259 @@ __libeth_xdp_tx_flush_bulk(struct libeth_xdp_tx_bulk *bq, u32 flags,
- 	__libeth_xdp_tx_flush_bulk(bq, flags, prep, libeth_xdp_tx_fill_buf,   \
- 				   xmit)
- 
-+/* .ndo_xdp_xmit() implementation */
-+
-+/**
-+ * libeth_xdp_xmit_frame_dma - internal helper to access DMA of an &xdp_frame
-+ * @xf: pointer to the XDP frame
-+ *
-+ * There's no place in &libeth_xdp_tx_frame to store DMA address for an
-+ * &xdp_frame head. The headroom is used then, the address is placed right
-+ * after the frame struct, naturally aligned.
-+ *
-+ * Return: pointer to the DMA address to use.
-+ */
-+#define libeth_xdp_xmit_frame_dma(xf)					      \
-+	_Generic((xf),							      \
-+		 const struct xdp_frame *:				      \
-+			(const dma_addr_t *)__libeth_xdp_xmit_frame_dma(xf),  \
-+		 struct xdp_frame *:					      \
-+			(dma_addr_t *)__libeth_xdp_xmit_frame_dma(xf)	      \
-+	)
-+
-+static inline void *__libeth_xdp_xmit_frame_dma(const struct xdp_frame *xdpf)
-+{
-+	void *addr = (void *)(xdpf + 1);
-+
-+	if (!IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS) &&
-+	    __alignof(*xdpf) < sizeof(dma_addr_t))
-+		addr = PTR_ALIGN(addr, sizeof(dma_addr_t));
-+
-+	return addr;
-+}
-+
-+/**
-+ * libeth_xdp_xmit_queue_head - internal helper for queueing one XDP xmit head
-+ * @bq: XDP Tx bulk to queue the head frag to
-+ * @xdpf: XDP frame with the head to queue
-+ * @dev: device to perform DMA mapping
-+ *
-+ * Return: ``LIBETH_XDP_DROP`` on DMA mapping error,
-+ *	   ``LIBETH_XDP_PASS`` if it's the only frag in the frame,
-+ *	   ``LIBETH_XDP_TX`` if it's an S/G frame.
-+ */
-+static inline u32 libeth_xdp_xmit_queue_head(struct libeth_xdp_tx_bulk *bq,
-+					     struct xdp_frame *xdpf,
-+					     struct device *dev)
-+{
-+	dma_addr_t dma;
-+
-+	dma = dma_map_single(dev, xdpf->data, xdpf->len, DMA_TO_DEVICE);
-+	if (dma_mapping_error(dev, dma))
-+		return LIBETH_XDP_DROP;
-+
-+	*libeth_xdp_xmit_frame_dma(xdpf) = dma;
-+
-+	bq->bulk[bq->count++] = (typeof(*bq->bulk)){
-+		.xdpf	= xdpf,
-+		.len	= xdpf->len,
-+		.flags	= LIBETH_XDP_TX_FIRST,
-+	};
-+
-+	if (!xdp_frame_has_frags(xdpf))
-+		return LIBETH_XDP_PASS;
-+
-+	bq->bulk[bq->count - 1].flags |= LIBETH_XDP_TX_MULTI;
-+
-+	return LIBETH_XDP_TX;
-+}
-+
-+/**
-+ * libeth_xdp_xmit_queue_frag - internal helper for queueing one XDP xmit frag
-+ * @bq: XDP Tx bulk to queue the frag to
-+ * @frag: frag to queue
-+ * @dev: device to perform DMA mapping
-+ *
-+ * Return: true on success, false on DMA mapping error.
-+ */
-+static inline bool libeth_xdp_xmit_queue_frag(struct libeth_xdp_tx_bulk *bq,
-+					      const skb_frag_t *frag,
-+					      struct device *dev)
-+{
-+	dma_addr_t dma;
-+
-+	dma = skb_frag_dma_map(dev, frag);
-+	if (dma_mapping_error(dev, dma))
-+		return false;
-+
-+	bq->bulk[bq->count++] = (typeof(*bq->bulk)){
-+		.dma	= dma,
-+		.len	= skb_frag_size(frag),
-+	};
-+
-+	return true;
-+}
-+
-+/**
-+ * libeth_xdp_xmit_queue_bulk - internal helper for queueing one XDP xmit frame
-+ * @bq: XDP Tx bulk to queue the frame to
-+ * @xdpf: XDP frame to queue
-+ * @flush_bulk: driver callback to flush the bulk to the HW queue
-+ *
-+ * Return: ``LIBETH_XDP_TX`` on success,
-+ *	   ``LIBETH_XDP_DROP`` if the frame should be dropped by the stack,
-+ *	   ``LIBETH_XDP_ABORTED`` if the frame will be dropped by libeth_xdp.
-+ */
-+static __always_inline u32
-+libeth_xdp_xmit_queue_bulk(struct libeth_xdp_tx_bulk *bq,
-+			   struct xdp_frame *xdpf,
-+			   bool (*flush_bulk)(struct libeth_xdp_tx_bulk *bq,
-+					      u32 flags))
-+{
-+	u32 head, nr_frags, i, ret = LIBETH_XDP_TX;
-+	struct device *dev = bq->dev->dev.parent;
-+	const struct skb_shared_info *sinfo;
-+
-+	if (unlikely(bq->count == LIBETH_XDP_TX_BULK) &&
-+	    unlikely(!flush_bulk(bq, LIBETH_XDP_TX_NDO)))
-+		return LIBETH_XDP_DROP;
-+
-+	head = libeth_xdp_xmit_queue_head(bq, xdpf, dev);
-+	if (head == LIBETH_XDP_PASS)
-+		goto out;
-+	else if (head == LIBETH_XDP_DROP)
-+		return LIBETH_XDP_DROP;
-+
-+	sinfo = xdp_get_shared_info_from_frame(xdpf);
-+	nr_frags = sinfo->nr_frags;
-+
-+	for (i = 0; i < nr_frags; i++) {
-+		if (unlikely(bq->count == LIBETH_XDP_TX_BULK) &&
-+		    unlikely(!flush_bulk(bq, LIBETH_XDP_TX_NDO)))
-+			break;
-+
-+		if (!libeth_xdp_xmit_queue_frag(bq, &sinfo->frags[i], dev))
-+			break;
-+	}
-+
-+	if (unlikely(i < nr_frags))
-+		ret = LIBETH_XDP_ABORTED;
-+
-+out:
-+	bq->bulk[bq->count - 1].flags |= LIBETH_XDP_TX_LAST;
-+
-+	return ret;
-+}
-+
-+/**
-+ * libeth_xdp_xmit_fill_buf - internal helper to fill one XDP xmit &libeth_sqe
-+ * @frm: XDP Tx frame from the bulk
-+ * @i: index on the HW queue
-+ * @sq: XDPSQ abstraction for the queue
-+ * @priv: private data
-+ *
-+ * Return: XDP Tx descriptor with the mapped DMA and other info to pass to
-+ * the driver callback.
-+ */
-+static inline struct libeth_xdp_tx_desc
-+libeth_xdp_xmit_fill_buf(struct libeth_xdp_tx_frame frm, u32 i,
-+			 const struct libeth_xdpsq *sq, u64 priv)
-+{
-+	struct libeth_xdp_tx_desc desc;
-+	struct libeth_sqe *sqe;
-+	struct xdp_frame *xdpf;
-+
-+	if (frm.flags & LIBETH_XDP_TX_FIRST) {
-+		xdpf = frm.xdpf;
-+		desc.addr = *libeth_xdp_xmit_frame_dma(xdpf);
-+	} else {
-+		xdpf = NULL;
-+		desc.addr = frm.dma;
-+	}
-+	desc.opts = frm.opts;
-+
-+	sqe = &sq->sqes[i];
-+	dma_unmap_addr_set(sqe, dma, desc.addr);
-+	dma_unmap_len_set(sqe, len, desc.len);
-+
-+	if (!xdpf) {
-+		sqe->type = LIBETH_SQE_XDP_XMIT_FRAG;
-+		return desc;
-+	}
-+
-+	sqe->type = LIBETH_SQE_XDP_XMIT;
-+	sqe->xdpf = xdpf;
-+	libeth_xdp_tx_fill_stats(sqe, &desc,
-+				 xdp_get_shared_info_from_frame(xdpf));
-+
-+	return desc;
-+}
-+
-+/**
-+ * libeth_xdp_xmit_flush_bulk - wrapper to define flush of one XDP xmit bulk
-+ * @bq: bulk to flush
-+ * @flags: Tx flags, see __libeth_xdp_tx_flush_bulk()
-+ * @prep: driver callback to prepare the queue
-+ * @xmit: driver callback to fill a HW descriptor
-+ */
-+#define libeth_xdp_xmit_flush_bulk(bq, flags, prep, xmit)		      \
-+	__libeth_xdp_tx_flush_bulk(bq, (flags) | LIBETH_XDP_TX_NDO, prep,     \
-+				   libeth_xdp_xmit_fill_buf, xmit)
-+
-+u32 libeth_xdp_xmit_return_bulk(const struct libeth_xdp_tx_frame *bq,
-+				u32 count, const struct net_device *dev);
-+
-+/**
-+ * __libeth_xdp_xmit_do_bulk - internal function to implement .ndo_xdp_xmit()
-+ * @bq: XDP Tx bulk to queue frames to
-+ * @frames: XDP frames passed by the stack
-+ * @n: number of frames
-+ * @flags: flags passed by the stack
-+ * @flush_bulk: driver callback to flush an XDP xmit bulk
-+ * @finalize: driver callback to finalize sending XDP Tx frames on the queue
-+ *
-+ * Perform common checks, map the frags and queue them to the bulk, then flush
-+ * the bulk to the XDPSQ. If requested by the stack, finalize the queue.
-+ *
-+ * Return: number of frames send or -errno on error.
-+ */
-+static __always_inline int
-+__libeth_xdp_xmit_do_bulk(struct libeth_xdp_tx_bulk *bq,
-+			  struct xdp_frame **frames, u32 n, u32 flags,
-+			  bool (*flush_bulk)(struct libeth_xdp_tx_bulk *bq,
-+					     u32 flags),
-+			  void (*finalize)(void *xdpsq, bool sent, bool flush))
-+{
-+	u32 nxmit = 0;
-+
-+	if (unlikely(flags & ~XDP_XMIT_FLAGS_MASK))
-+		return -EINVAL;
-+
-+	for (u32 i = 0; likely(i < n); i++) {
-+		u32 ret;
-+
-+		ret = libeth_xdp_xmit_queue_bulk(bq, frames[i], flush_bulk);
-+		if (unlikely(ret != LIBETH_XDP_TX)) {
-+			nxmit += ret == LIBETH_XDP_ABORTED;
-+			break;
-+		}
-+
-+		nxmit++;
-+	}
-+
-+	if (bq->count) {
-+		flush_bulk(bq, LIBETH_XDP_TX_NDO);
-+		if (unlikely(bq->count))
-+			nxmit -= libeth_xdp_xmit_return_bulk(bq->bulk,
-+							     bq->count,
-+							     bq->dev);
-+	}
-+
-+	finalize(bq->xdpsq, nxmit, flags & XDP_XMIT_FLUSH);
-+
-+	return nxmit;
-+}
-+
- /* Rx polling path */
- 
- static inline void libeth_xdp_return_va(const void *data, bool napi)
-diff --git a/drivers/net/ethernet/intel/libeth/xdp.c b/drivers/net/ethernet/intel/libeth/xdp.c
-index 7fdb35d36f6f..0908520d1d38 100644
---- a/drivers/net/ethernet/intel/libeth/xdp.c
-+++ b/drivers/net/ethernet/intel/libeth/xdp.c
-@@ -40,7 +40,7 @@ static void __cold libeth_trace_xdp_exception(const struct net_device *dev,
-  * libeth_xdp_tx_exception - handle Tx exceptions of XDP frames
-  * @bq: XDP Tx frame bulk
-  * @sent: number of frames sent successfully (from this bulk)
-- * @flags: internal libeth_xdp flags
-+ * @flags: internal libeth_xdp flags (.ndo_xdp_xmit etc.)
-  *
-  * Cold helper used by __libeth_xdp_tx_flush_bulk(), do not call directly.
-  * Reports XDP Tx exceptions, frees the frames that won't be sent or adjust
-@@ -52,7 +52,8 @@ void __cold libeth_xdp_tx_exception(struct libeth_xdp_tx_bulk *bq, u32 sent,
- 	const struct libeth_xdp_tx_frame *pos = &bq->bulk[sent];
- 	u32 left = bq->count - sent;
- 
--	libeth_trace_xdp_exception(bq->dev, bq->prog, XDP_TX);
-+	if (!(flags & LIBETH_XDP_TX_NDO))
-+		libeth_trace_xdp_exception(bq->dev, bq->prog, XDP_TX);
- 
- 	if (!(flags & LIBETH_XDP_TX_DROP)) {
- 		memmove(bq->bulk, pos, left * sizeof(*bq->bulk));
-@@ -61,12 +62,42 @@ void __cold libeth_xdp_tx_exception(struct libeth_xdp_tx_bulk *bq, u32 sent,
- 		return;
- 	}
- 
--	libeth_xdp_tx_return_bulk(pos, left);
-+	if (!(flags & LIBETH_XDP_TX_NDO))
-+		libeth_xdp_tx_return_bulk(pos, left);
-+	else
-+		libeth_xdp_xmit_return_bulk(pos, left, bq->dev);
- 
- 	bq->count = 0;
- }
- EXPORT_SYMBOL_GPL(libeth_xdp_tx_exception);
- 
-+/* .ndo_xdp_xmit() implementation */
-+
-+u32 __cold libeth_xdp_xmit_return_bulk(const struct libeth_xdp_tx_frame *bq,
-+				       u32 count, const struct net_device *dev)
-+{
-+	u32 n = 0;
-+
-+	for (u32 i = 0; i < count; i++) {
-+		const struct libeth_xdp_tx_frame *frm = &bq[i];
-+		dma_addr_t dma;
-+
-+		if (frm->flags & LIBETH_XDP_TX_FIRST)
-+			dma = *libeth_xdp_xmit_frame_dma(frm->xdpf);
-+		else
-+			dma = dma_unmap_addr(frm, dma);
-+
-+		dma_unmap_page(dev->dev.parent, dma, dma_unmap_len(frm, len),
-+			       DMA_TO_DEVICE);
-+
-+		/* Actual xdp_frames are freed by the core */
-+		n += !!(frm->flags & LIBETH_XDP_TX_FIRST);
-+	}
-+
-+	return n;
-+}
-+EXPORT_SYMBOL_GPL(libeth_xdp_xmit_return_bulk);
-+
- /* Rx polling path */
- 
- /**
--- 
-2.49.0
+Fixed versions:
+
+void TEST_queue_pte_barriers_v2(void)
+{
+	if (test_thread_flag(TIF_LAZY_MMU)) {
+		if (!test_thread_flag(TIF_LAZY_MMU_PENDING))
+			set_thread_flag(TIF_LAZY_MMU_PENDING);
+	} else {
+		emit_pte_barriers();
+	}
+}
+
+void TEST_queue_pte_barriers_v3(void)
+{
+	unsigned long flags = read_thread_flags();
+
+	if (flags & BIT(TIF_LAZY_MMU)) {
+		if (!(flags & BIT(TIF_LAZY_MMU_PENDING)))
+			set_thread_flag(TIF_LAZY_MMU_PENDING);
+	} else {
+		emit_pte_barriers();
+	}
+}
+
+000000000000105c <TEST_queue_pte_barriers_v2>:
+    105c:	d5384100 	mrs	x0, sp_el0
+    1060:	f9400001 	ldr	x1, [x0]
+    1064:	37f80081 	tbnz	w1, #31, 1074 <TEST_queue_pte_barriers_v2+0x18>
+    1068:	d5033a9f 	dsb	ishst
+    106c:	d5033fdf 	isb
+    1070:	d65f03c0 	ret
+    1074:	f9400001 	ldr	x1, [x0]
+    1078:	b707ffc1 	tbnz	x1, #32, 1070 <TEST_queue_pte_barriers_v2+0x14>
+    107c:	14000004 	b	108c <TEST_queue_pte_barriers_v2+0x30>
+    1080:	d2c00021 	mov	x1, #0x100000000           	// #4294967296
+    1084:	f821301f 	stset	x1, [x0]
+    1088:	d65f03c0 	ret
+    108c:	f9800011 	prfm	pstl1strm, [x0]
+    1090:	c85f7c01 	ldxr	x1, [x0]
+    1094:	b2600021 	orr	x1, x1, #0x100000000
+    1098:	c8027c01 	stxr	w2, x1, [x0]
+    109c:	35ffffa2 	cbnz	w2, 1090 <TEST_queue_pte_barriers_v2+0x34>
+    10a0:	d65f03c0 	ret
+
+00000000000010a4 <TEST_queue_pte_barriers_v3>:
+    10a4:	d5384101 	mrs	x1, sp_el0
+    10a8:	f9400020 	ldr	x0, [x1]
+    10ac:	36f80060 	tbz	w0, #31, 10b8 <TEST_queue_pte_barriers_v3+0x14>
+    10b0:	b60000a0 	tbz	x0, #32, 10c4 <TEST_queue_pte_barriers_v3+0x20>
+    10b4:	d65f03c0 	ret
+    10b8:	d5033a9f 	dsb	ishst
+    10bc:	d5033fdf 	isb
+    10c0:	d65f03c0 	ret
+    10c4:	14000004 	b	10d4 <TEST_queue_pte_barriers_v3+0x30>
+    10c8:	d2c00020 	mov	x0, #0x100000000           	// #4294967296
+    10cc:	f820303f 	stset	x0, [x1]
+    10d0:	d65f03c0 	ret
+    10d4:	f9800031 	prfm	pstl1strm, [x1]
+    10d8:	c85f7c20 	ldxr	x0, [x1]
+    10dc:	b2600000 	orr	x0, x0, #0x100000000
+    10e0:	c8027c20 	stxr	w2, x0, [x1]
+    10e4:	35ffffa2 	cbnz	w2, 10d8 <TEST_queue_pte_barriers_v3+0x34>
+    10e8:	d65f03c0 	ret
+
+So v3 is the way to go, I think; it's a single mrs and a single ldr.
+
+I'll get this fixed up and posted early next week.
+
+Thanks,
+Ryan
 
 
