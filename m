@@ -1,58 +1,55 @@
-Return-Path: <linux-kernel+bounces-604260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1183EA89295
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 05:39:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13D9EA89285
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 05:26:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 000827A8E6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 03:37:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DBFD189C469
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 03:26:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAEC221858A;
-	Tue, 15 Apr 2025 03:38:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C1B212FAB;
+	Tue, 15 Apr 2025 03:26:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="jwIkThgE"
-Received: from mail-m3296.qiye.163.com (mail-m3296.qiye.163.com [220.197.32.96])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="EziKt6um"
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF70212FAB;
-	Tue, 15 Apr 2025 03:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.96
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8BD2DFA5C
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 03:26:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744688332; cv=none; b=mwc9z/eedQdf555Y/fnldlDsp7KuV0PPgx8xlBvUnUDAQBw5oC/F8Td90kD8qmNx/6OxAcUC8PfiQDXzaEQ6F2ckddGjuIXr3/t+AtqOuMWTEBYu+Mef8onIwLhbrU0+rSAvDU8T5VUpbNb5TIp4R44SHGD/LyDw3PvCEqMhBrM=
+	t=1744687577; cv=none; b=Yn++VGAopDjMU0M3Sot1PyjOXux8bHcX6jszjbGVyhlyOw3+dlp2hht4UguifGOaXyMfEW1GRT3royQyhQymhFfGAugwww6uSvN1XSaAUyj/fSKPTB9vg6DdupWK5w0bC2OhTJPgObcBnXGhigtDnuMbzO0xV9VfTseNyHPBFAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744688332; c=relaxed/simple;
-	bh=T/+3ypIzba5dTnF0UVr993kp7hY5HHFMl/pmmhXkREI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QclmcDfwcEM2Tyu5QqQ0n2B12xw6EJSpeIN5GRKdYM8vFXSvk1EhRPBGXBsl3C/gJq+5DzHr0jTOv2Cio+/DnsgDU4jRfyOa22tC7l3D2q9ngykKXOdU30q4sWISCWXhL/dGvDLITNROcf0a/GTIYqfvp1SdvY/6bXedx8+SH7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=jwIkThgE; arc=none smtp.client-ip=220.197.32.96
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from localhost.localdomain (unknown [103.29.142.67])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 11e30c138;
-	Tue, 15 Apr 2025 11:23:18 +0800 (GMT+08:00)
-From: Kever Yang <kever.yang@rock-chips.com>
-To: heiko@sntech.de
-Cc: linux-rockchip@lists.infradead.org,
-	Finley Xiao <finley.xiao@rock-chips.com>,
-	Kever Yang <kever.yang@rock-chips.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-pm@vger.kernel.org,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	linux-kernel@vger.kernel.org,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Peter Geis <pgwipeout@gmail.com>,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v4 2/2] soc: rockchip: power-domain: add power domain support for rk3562
-Date: Tue, 15 Apr 2025 11:23:14 +0800
-Message-Id: <20250415032314.44997-2-kever.yang@rock-chips.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250415032314.44997-1-kever.yang@rock-chips.com>
-References: <20250415032314.44997-1-kever.yang@rock-chips.com>
+	s=arc-20240116; t=1744687577; c=relaxed/simple;
+	bh=ipvXwkSLgKG9eT+6Ar4t3cXkImZb3ZOztj1W14AFlaQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tAXH1/8IpV7t6brvvMVAbQksjdS5UHuZFMmwG/tGpMGpMDPw2rKn98y3cyn2rv13N0jJELO2lTWw7Qm2IgFeNqtdv9hmoK4bLPwDGUVMXVyUIhA3mR6HmNImloHJxiEmDJMDtGXiffzsORjZNvajuJvBiovfhVmhNe+POkGTe6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=EziKt6um; arc=none smtp.client-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1744687565; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=2h1Ulu7ziMCEKdHQqCt2h7p4RwUGmDgkuAyWL+LmEVc=;
+	b=EziKt6umfmgVf+W+FjWM3R14NwQYvvBahi++kuRkueUrP1W90fDWIcL16H383jiECoe5MrT4CMbovst9vH3msvnjfE+/Mf5XNgwmQ5yTThipdgHtSGU1dGRXk3xQSpWt5/tZeVCJolEovobL1MyOyWFjdT2lMG0AAsMBXtP2pVg=
+Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WX1khlJ_1744687564 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 15 Apr 2025 11:26:04 +0800
+From: Feng Tang <feng.tang@linux.alibaba.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	rostedt@goodmis.org
+Cc: linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Feng Tang <feng.tang@linux.alibaba.com>
+Subject: [PATCH v4] sched/debug: Dump end of stack when detected corrupted
+Date: Tue, 15 Apr 2025 11:26:04 +0800
+Message-Id: <20250415032604.98915-1-feng.tang@linux.alibaba.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,144 +57,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCHUJJVk9JTkNDSx5ISk5DS1YVFAkWGhdVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlKS0hVSUJVSk9JVU1MWVdZFhoPEhUdFFlBWU9LSFVKS0lPT09IVUpLS1
-	VKQktLWQY+
-X-HM-Tid: 0a963779009103afkunm11e30c138
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NC46OSo6NjJDQxouETdPIxUq
-	Gg0aCTxVSlVKTE9PTUNMT0tKSk5MVTMWGhIXVRAeDR4JVQIaFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlKS0hVSUJVSk9JVU1MWVdZCAFZQU5NT0k3Bg++
-DKIM-Signature:a=rsa-sha256;
-	b=jwIkThgEmw8bMh2cJnQw7eNERc667wZ2ihwre1kJ5vztUODhE7tJSA0mriBmtXfJ7PXffqHNuyPXQ0o/IqjmHjDowVac6Nd+o8lo25TNHp3hqnL5Kx6H8wpO4sE3d8SbCxutvlK9CSytRBLgGlpHsiypWCpQTKE11C6I0RunkaE=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=GsX/OZ9Y6342jW3iRyyPEkR8Rozlsp5w9FxvAaI8OGU=;
-	h=date:mime-version:subject:message-id:from;
 
-From: Finley Xiao <finley.xiao@rock-chips.com>
+When debugging a kernel hang during suspend/resume [1], there were random
+memory corruptions in different places like ACPI, file systems, network
+subsystems, and reported by slub_debug+KASAN or detected by scheduler with
+error message:
 
-This driver is modified to support RK3562 SoC.
-Add support to ungate clk.
-Add support to shut down memory for rk3562.
+  "Kernel panic - not syncing: corrupted stack end detected inside scheduler"
 
-Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
-Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+So dump the corrupted memory around the stack end to give more direct
+hints about how the memory is corrupted:
+
+ "
+ Corrupted Stack: ff11000122770000: ff ff ff ff ff ff 14 91 82 3b 78 e8 08 00 45 00  .........;x...E.
+ Corrupted Stack: ff11000122770010: 00 1d 2a ff 40 00 40 11 98 c8 0a ef 30 2c 0a ef  ..*.@.@.....0,..
+ Corrupted Stack: ff11000122770020: 30 ff a2 00 22 3d 00 09 9a 95 2a 00 00 00 00 00  0..."=....*.....
+ ...
+ Kernel panic - not syncing: corrupted stack end detected inside scheduler
+ "
+
+And with it, the culprit was quickly identified to be ethernet driver
+that it frees RX related memory back to kernel in suspend hook, but
+its HW is not really stopped, and still send RX data to those old
+buffer through DMA.
+
+The intention is trying to find a common pattern by comparing the dumped
+memory of many different reproduced samples, for those hard-to-track
+random memory corruption cases.
+
+[1]. https://bugzilla.kernel.org/show_bug.cgi?id=217854
+
+Signed-off-by: Feng Tang <feng.tang@linux.alibaba.com>
+Reviewed-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
 ---
+Changlog:
 
-Changes in v4:
-- rebase to v6.15-rc1
-- update patch author and Collect review tag
+  since v3:
+      * Refine commit log and rebase to latest kernel 
+      * Update email address
 
-Changes in v3: None
-Changes in v2:
-- update the header after rename
+  since v2:
+      * Change code format (Adrian)
+      * Add Reviewed tag from Adrian
+      
+  since v1:
+      * Refine the commit log with more info, and rebase againt 6.8-rc3
 
- drivers/pmdomain/rockchip/pm-domains.c | 48 +++++++++++++++++++++++++-
- 1 file changed, 47 insertions(+), 1 deletion(-)
+ kernel/sched/core.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pmdomain/rockchip/pm-domains.c b/drivers/pmdomain/rockchip/pm-domains.c
-index 03bcf79a461f..4cce407bb1eb 100644
---- a/drivers/pmdomain/rockchip/pm-domains.c
-+++ b/drivers/pmdomain/rockchip/pm-domains.c
-@@ -2,7 +2,7 @@
- /*
-  * Rockchip Generic power domain support.
-  *
-- * Copyright (c) 2015 ROCKCHIP, Co. Ltd.
-+ * Copyright (c) 2015 Rockchip Electronics Co., Ltd.
-  */
- 
- #include <linux/arm-smccc.h>
-@@ -35,6 +35,7 @@
- #include <dt-bindings/power/rk3366-power.h>
- #include <dt-bindings/power/rk3368-power.h>
- #include <dt-bindings/power/rk3399-power.h>
-+#include <dt-bindings/power/rockchip,rk3562-power.h>
- #include <dt-bindings/power/rk3568-power.h>
- #include <dt-bindings/power/rockchip,rk3576-power.h>
- #include <dt-bindings/power/rk3588-power.h>
-@@ -135,6 +136,20 @@ struct rockchip_pmu {
- 	.active_wakeup = wakeup,			\
- }
- 
-+#define DOMAIN_M_G_SD(_name, pwr, status, req, idle, ack, g_mask, mem, wakeup, keepon)	\
-+{							\
-+	.name = _name,					\
-+	.pwr_w_mask = (pwr) << 16,			\
-+	.pwr_mask = (pwr),				\
-+	.status_mask = (status),			\
-+	.req_w_mask = (req) << 16,			\
-+	.req_mask = (req),				\
-+	.idle_mask = (idle),				\
-+	.ack_mask = (ack),				\
-+	.clk_ungate_mask = (g_mask),			\
-+	.active_wakeup = wakeup,			\
-+}
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 87540217fc09..a894d402e576 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -5929,8 +5929,19 @@ static noinline void __schedule_bug(struct task_struct *prev)
+ static inline void schedule_debug(struct task_struct *prev, bool preempt)
+ {
+ #ifdef CONFIG_SCHED_STACK_END_CHECK
+-	if (task_stack_end_corrupted(prev))
++	if (task_stack_end_corrupted(prev)) {
++		unsigned long *ptr = end_of_stack(prev);
 +
- #define DOMAIN_M_O_R(_name, p_offset, pwr, status, m_offset, m_status, r_status, r_offset, req, idle, ack, wakeup, regulator)	\
- {							\
- 	.name = _name,					\
-@@ -201,6 +216,9 @@ struct rockchip_pmu {
- #define DOMAIN_RK3399(name, pwr, status, req, wakeup)		\
- 	DOMAIN(name, pwr, status, req, req, req, wakeup)
- 
-+#define DOMAIN_RK3562(name, pwr, req, g_mask, mem, wakeup)		\
-+	DOMAIN_M_G_SD(name, pwr, pwr, req, req, req, g_mask, mem, wakeup, false)
++		/* Dump 16 ulong words around the corruption point */
++#ifdef CONFIG_STACK_GROWSUP
++		ptr -= 15;
++#endif
++		print_hex_dump(KERN_ERR, "Corrupted Stack: ",
++			DUMP_PREFIX_ADDRESS, 16, 1, ptr,
++			16 * sizeof(unsigned long), true);
 +
- #define DOMAIN_RK3568(name, pwr, req, wakeup)		\
- 	DOMAIN_M(name, pwr, pwr, req, req, req, wakeup)
+ 		panic("corrupted stack end detected inside scheduler\n");
++	}
  
-@@ -1197,6 +1215,18 @@ static const struct rockchip_domain_info rk3399_pm_domains[] = {
- 	[RK3399_PD_SDIOAUDIO]	= DOMAIN_RK3399("sdioaudio", BIT(31), BIT(31), BIT(29), true),
- };
- 
-+static const struct rockchip_domain_info rk3562_pm_domains[] = {
-+					     /* name           pwr     req     g_mask  mem wakeup */
-+	[RK3562_PD_GPU]		= DOMAIN_RK3562("gpu",         BIT(0), BIT(1), BIT(1), 0, false),
-+	[RK3562_PD_NPU]		= DOMAIN_RK3562("npu",         BIT(1), BIT(2), BIT(2), 0, false),
-+	[RK3562_PD_VDPU]	= DOMAIN_RK3562("vdpu",        BIT(2), BIT(6), BIT(6), 0, false),
-+	[RK3562_PD_VEPU]	= DOMAIN_RK3562("vepu",        BIT(3), BIT(7), BIT(7) | BIT(3), 0, false),
-+	[RK3562_PD_RGA]		= DOMAIN_RK3562("rga",         BIT(4), BIT(5), BIT(5) | BIT(4), 0, false),
-+	[RK3562_PD_VI]		= DOMAIN_RK3562("vi",          BIT(5), BIT(3), BIT(3), 0, false),
-+	[RK3562_PD_VO]		= DOMAIN_RK3562("vo",  BIT(6), BIT(4), BIT(4), 16, false),
-+	[RK3562_PD_PHP]		= DOMAIN_RK3562("php",         BIT(7), BIT(8), BIT(8), 0, false),
-+};
-+
- static const struct rockchip_domain_info rk3568_pm_domains[] = {
- 	[RK3568_PD_NPU]		= DOMAIN_RK3568("npu",  BIT(1), BIT(2),  false),
- 	[RK3568_PD_GPU]		= DOMAIN_RK3568("gpu",  BIT(0), BIT(1),  false),
-@@ -1398,6 +1428,18 @@ static const struct rockchip_pmu_info rk3399_pmu = {
- 	.domain_info = rk3399_pm_domains,
- };
- 
-+static const struct rockchip_pmu_info rk3562_pmu = {
-+	.pwr_offset = 0x210,
-+	.status_offset = 0x230,
-+	.req_offset = 0x110,
-+	.idle_offset = 0x128,
-+	.ack_offset = 0x120,
-+	.clk_ungate_offset = 0x140,
-+
-+	.num_domains = ARRAY_SIZE(rk3562_pm_domains),
-+	.domain_info = rk3562_pm_domains,
-+};
-+
- static const struct rockchip_pmu_info rk3568_pmu = {
- 	.pwr_offset = 0xa0,
- 	.status_offset = 0x98,
-@@ -1496,6 +1538,10 @@ static const struct of_device_id rockchip_pm_domain_dt_match[] = {
- 		.compatible = "rockchip,rk3399-power-controller",
- 		.data = (void *)&rk3399_pmu,
- 	},
-+	{
-+		.compatible = "rockchip,rk3562-power-controller",
-+		.data = (void *)&rk3562_pmu,
-+	},
- 	{
- 		.compatible = "rockchip,rk3568-power-controller",
- 		.data = (void *)&rk3568_pmu,
+ 	if (task_scs_end_corrupted(prev))
+ 		panic("corrupted shadow stack detected inside scheduler\n");
 -- 
-2.25.1
+2.39.5 (Apple Git-154)
 
 
