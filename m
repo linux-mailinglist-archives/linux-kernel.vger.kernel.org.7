@@ -1,199 +1,230 @@
-Return-Path: <linux-kernel+bounces-604842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCD88A899A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:18:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86998A89959
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:05:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8BE53AA4C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:17:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8562517A1AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:05:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A34C28BAA4;
-	Tue, 15 Apr 2025 10:17:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60AD1E5B73;
+	Tue, 15 Apr 2025 10:05:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="VpC8rBD1"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JG5IDBlF"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D7A1CAA6D;
-	Tue, 15 Apr 2025 10:17:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27BFA5A79B
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 10:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744712259; cv=none; b=pchg2b5jiuaKqIKxBNfxuyWPBC2fHECcWIjdhxK/w06XJc1V50+sukESBbr9jBTPUSesdKqWtAQ73yCzWg4r6FpBwoXAV1GLQ9IqJX+0rn5eUZbj9sxdrbkMEFoB3geNKbviixAVHEAoiKsFqNCqpwSOqF9cb3cRLOpsX7RtKss=
+	t=1744711500; cv=none; b=O6q+HBMBNYTMN+IHvwmYosOi5zJPxvJ+Dk2/Rl+YTbHxn90dNz/YF3TEFtzUmmSrx4PNQaqsoVRabbC+YOMevfGZ+OiG7Neb6rRwxDjMoHu0b8h1XkRj9B0uemJ0JuLGjXsh01+mID8IqAI8digyhcrMANn8HAOfoAj6YPO3a9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744712259; c=relaxed/simple;
-	bh=yfxZC1j8MoskcJ1HEXZgO0OGbDvcF6mnmjMlnsHGWp4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ijXDHOVu9inin73hpz7HnxlnQyQEf8NodbG+CTddo7FWhdDNKi7ew9fX2CAucdj91JyK6LiylelEw4tLUp9DNxIk+1Rrsi5XeJchQl8G7C9P/XhwnxHAgNFoDwCd1xrfFt05nka1aXv8gmyIJqNcPsHnkqqTu0J4mVS/73HADOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=VpC8rBD1; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id B67D9662668;
-	Tue, 15 Apr 2025 12:17:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1744712254;
-	bh=yfxZC1j8MoskcJ1HEXZgO0OGbDvcF6mnmjMlnsHGWp4=;
-	h=From:Subject:Date;
-	b=VpC8rBD12t96jhMkhy2V+uTSZ3rVq/tMV1xZgQNWQL90Y8KwqmgCGkLUUFyR6UEX5
-	 axUs2zOvvi3qzx83+OzXK3+QjqG3DFtMBS+uxsJl5yfvUaFwaHxTKt942eWOknexDQ
-	 WLus4fJSTe9zZTXSenrRAvuDuov/yIMeojCCaMogWfXk/z6qBIcJvVL7QcKTB8y6J5
-	 7mzPPHf1V5szZHp9c7GgXWEAt0nO3a6JWINpZsPvDg7ZWYYrDZeX4LlR9NAgKsZ/vN
-	 9HTvynGmYH1vYIxB0ruMeKC4KlR/7nzQ+9/Bq6qCif3H7XAwK0IqeDyE8yZ1Kyi6ma
-	 y9raQwC4SufEA==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Mario Limonciello <mario.limonciello@amd.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Christian Loehle <christian.loehle@arm.com>,
- Sultan Alsawaf <sultan@kerneltoast.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Valentin Schneider <vschneid@redhat.com>, Ingo Molnar <mingo@redhat.com>
-Subject:
- [PATCH v2 5/6] cpufreq: Avoid using inconsistent policy->min and policy->max
-Date: Tue, 15 Apr 2025 12:04:21 +0200
-Message-ID: <9458818.CDJkKcVGEf@rjwysocki.net>
-In-Reply-To: <6171293.lOV4Wx5bFT@rjwysocki.net>
-References: <6171293.lOV4Wx5bFT@rjwysocki.net>
+	s=arc-20240116; t=1744711500; c=relaxed/simple;
+	bh=NGhYsTjwsATZaQhVQYw5cUGs7iFJxoPhM5Obwi5oozM=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=gPx6pWq77owfZhoyKtS/UJRDqWmTm5o33PoQtDBV7WhNEzIhbDjgFJohaVP2kzOEf98TSD5lKjQ+RJUP7rmAG1bfswMHG3uQusVUYif6ioe0b/MkUrqg0vTiYfwwvZsOdOv0+LXkSVqPhG8l3yOVkMzhtb0ZZwzSZi0wKqhN/Ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JG5IDBlF; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5F62A439F4;
+	Tue, 15 Apr 2025 10:04:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1744711490;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=I6CuYOy4GYD9zvxjmy1AmmC0UZSDHwFw2g2dzby+uok=;
+	b=JG5IDBlFGFtDc0RDyZMChwk3/RLnHofyEUA1XksZ29g7VSG8Kq60SRuIqLE/Bcsny//IVl
+	63JQk2tD3ZOvZbyja+4ZokJJZ5e5OaBqDLDcYd5q+w17PAOZLXIfBzgpCUYfLXnIRUhpxa
+	YqBE8g8YqP84aWlsVdMzqTsPWw2yp1F2NHcwXQcvK+uorUffIxhkWMB68jJKExhd/PKh7K
+	zNSezpK+sfOYvCdTdXnJFlKJN2XqOByQOvYTY67frWqOhL/02FAfOmlqirHF3YSN4nLnRW
+	SRJVVUw8quCzwAVfYqAn2jeMI5SVavKm23ueXTmUzyvP9UeXLt2l5Az9IDWimw==
+Message-ID: <948a48a8-10c4-4440-b905-a1db669a31ba@bootlin.com>
+Date: Tue, 15 Apr 2025 12:04:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvdefvdefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepuddupdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvhhirhgvshhhrdhkuhhmrghrsehlihhnrghrohdrohhrghdprhgtphhtthhopehsrhhinhhivhgrshdrphgrnhgurhhuvhgruggrsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepmhgrrhhiohdrlhh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=11 Fuz1=11 Fuz2=11
+User-Agent: Mozilla Thunderbird
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Subject: Re: [PATCH v3 21/54] dyndbg-test: change do_prints testpoint to
+ accept a loopct
+To: Jim Cromie <jim.cromie@gmail.com>, jbaron@akamai.com,
+ gregkh@linuxfoundation.org, ukaszb@chromium.org, linux-kernel@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+ intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com,
+ jani.nikula@intel.com, ville.syrjala@linux.intel.com
+References: <20250402174156.1246171-1-jim.cromie@gmail.com>
+ <20250402174156.1246171-22-jim.cromie@gmail.com>
+Content-Language: en-US
+Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
+ 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
+In-Reply-To: <20250402174156.1246171-22-jim.cromie@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvdefudelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfhuffvvehfjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeetfffhtdeigfehffduuedvkeefgfdvuddugfffteetffdvteffgfejvedugffgffenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudefpdhrtghpthhtohepjhhimhdrtghrohhmihgvsehgmhgrihhlrdgtohhmpdhrtghpthhtohepjhgsrghrohhnsegrkhgrmhgrihdrtghomhdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehukhgrshiisgestghhrhhomhhiuhhmrdhorhhgpdhrtghpthhtoheplhhin
+ hhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegrmhguqdhgfhigsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepihhnthgvlhdqghhvthdquggvvheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrgh
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Since cpufreq_driver_resolve_freq() can run in parallel with
-cpufreq_set_policy() and there is no synchronization between them,
-the former may access policy->min and policy->max while the latter
-is updating them and it may see intermediate values of them due
-to the way the update is carried out.  Also the compiler is free
-to apply any optimizations it wants both to the stores in
-cpufreq_set_policy() and to the loads in cpufreq_driver_resolve_freq()
-which may result in additional inconsistencies.
 
-To address this, use WRITE_ONCE() when updating policy->min and
-policy->max in cpufreq_set_policy() and use READ_ONCE() for reading
-them in cpufreq_driver_resolve_freq().  Moreover, rearrange the update
-in cpufreq_set_policy() to avoid storing intermediate values in
-policy->min and policy->max with the help of the observation that
-their new values are expected to be properly ordered upfront.
+Le 02/04/2025 à 19:41, Jim Cromie a écrit :
+> echo 1000 > /sys/module/test_dynamic_debug/parameters/do_prints
+> 
+> This allows its use as a scriptable load generator, to generate
+> dynamic-prefix-emits for flag combinations vs undecorated messages.
+> This will make it easy to assess the cost of the prefixing.
+> 
+> Reading the ./do_prints node also prints messages (once) to the-log.
+> 
+> NB: the count is clamped to 10000, chosen to be notice able, but not
+> annoying, and not enough to accidentally flood the logs.
+> 
+> Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
 
-Also modify cpufreq_driver_resolve_freq() to take the possible reverse
-ordering of policy->min and policy->max, which may happen depending on
-the ordering of operations when this function and cpufreq_set_policy()
-run concurrently, into account by always honoring the max when it
-turns out to be less than the min (in case it comes from thermal
-throttling or similar).
+Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
 
-Fixes: 151717690694 ("cpufreq: Make policy min/max hard requirements")
-Cc: 5.16+ <stable@vger.kernel.org> # 5.16+
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
+I think this could be in a separate series / merged independently to 
+reduce the size of this series.
 
-v1 -> v2: Minor edit in the subject
+> ---
+>   lib/test_dynamic_debug.c | 37 ++++++++++++++++++++++++++-----------
+>   1 file changed, 26 insertions(+), 11 deletions(-)
+> 
+> diff --git a/lib/test_dynamic_debug.c b/lib/test_dynamic_debug.c
+> index 9f9e3fddd7e6..4a3d2612ef60 100644
+> --- a/lib/test_dynamic_debug.c
+> +++ b/lib/test_dynamic_debug.c
+> @@ -29,18 +29,30 @@
+>   
+>   #include <linux/module.h>
+>   
+> -/* re-gen output by reading or writing sysfs node: do_prints */
+> -
+> -static void do_prints(void); /* device under test */
+> +/* re-trigger debug output by reading or writing sysfs node: do_prints */
+> +#define PRINT_CLAMP 10000
+> +static void do_prints(unsigned int); /* device under test */
+>   static int param_set_do_prints(const char *instr, const struct kernel_param *kp)
+>   {
+> -	do_prints();
+> +	int rc;
+> +	unsigned int ct;
+> +
+> +	rc = kstrtouint(instr, 0, &ct);
+> +	if (rc) {
+> +		pr_err("expecting numeric input, using 1 instead\n");
+> +		ct = 1;
+> +	}
+> +	if (ct > PRINT_CLAMP) {
+> +		ct = PRINT_CLAMP;
+> +		pr_info("clamping print-count to %d\n", ct);
+> +	}
+> +	do_prints(ct);
+>   	return 0;
+>   }
+>   static int param_get_do_prints(char *buffer, const struct kernel_param *kp)
+>   {
+> -	do_prints();
+> -	return scnprintf(buffer, PAGE_SIZE, "did do_prints\n");
+> +	do_prints(1);
+> +	return scnprintf(buffer, PAGE_SIZE, "did 1 do_prints\n");
+>   }
+>   static const struct kernel_param_ops param_ops_do_prints = {
+>   	.set = param_set_do_prints,
+> @@ -191,17 +203,20 @@ static void do_levels(void)
+>   	prdbg(V7);
+>   }
+>   
+> -static void do_prints(void)
+> +static void do_prints(unsigned int ct)
+>   {
+> -	pr_debug("do_prints:\n");
+> -	do_cats();
+> -	do_levels();
+> +	/* maybe clamp this */
+> +	pr_debug("do-prints %d times:\n", ct);
+> +	for (; ct; ct--) {
+> +		do_cats();
+> +		do_levels();
+> +	}
+>   }
+>   
+>   static int __init test_dynamic_debug_init(void)
+>   {
+>   	pr_debug("init start\n");
+> -	do_prints();
+> +	do_prints(1);
+>   	pr_debug("init done\n");
+>   	return 0;
+>   }
 
----
- drivers/cpufreq/cpufreq.c |   46 ++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 36 insertions(+), 10 deletions(-)
-
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -490,14 +490,12 @@
- }
- EXPORT_SYMBOL_GPL(cpufreq_disable_fast_switch);
- 
--static unsigned int clamp_and_resolve_freq(struct cpufreq_policy *policy,
--					   unsigned int target_freq,
--					   unsigned int relation)
-+static unsigned int __resolve_freq(struct cpufreq_policy *policy,
-+				   unsigned int target_freq,
-+				   unsigned int relation)
- {
- 	unsigned int idx;
- 
--	target_freq = clamp_val(target_freq, policy->min, policy->max);
--
- 	if (!policy->freq_table)
- 		return target_freq;
- 
-@@ -507,6 +505,15 @@
- 	return policy->freq_table[idx].frequency;
- }
- 
-+static unsigned int clamp_and_resolve_freq(struct cpufreq_policy *policy,
-+					   unsigned int target_freq,
-+					   unsigned int relation)
-+{
-+	target_freq = clamp_val(target_freq, policy->min, policy->max);
-+
-+	return __resolve_freq(policy, target_freq, relation);
-+}
-+
- /**
-  * cpufreq_driver_resolve_freq - Map a target frequency to a driver-supported
-  * one.
-@@ -521,7 +528,22 @@
- unsigned int cpufreq_driver_resolve_freq(struct cpufreq_policy *policy,
- 					 unsigned int target_freq)
- {
--	return clamp_and_resolve_freq(policy, target_freq, CPUFREQ_RELATION_LE);
-+	unsigned int min = READ_ONCE(policy->min);
-+	unsigned int max = READ_ONCE(policy->max);
-+
-+	/*
-+	 * If this function runs in parallel with cpufreq_set_policy(), it may
-+	 * read policy->min before the update and policy->max after the update
-+	 * or the other way around, so there is no ordering guarantee.
-+	 *
-+	 * Resolve this by always honoring the max (in case it comes from
-+	 * thermal throttling or similar).
-+	 */
-+	if (unlikely(min > max))
-+		min = max;
-+
-+	return __resolve_freq(policy, clamp_val(target_freq, min, max),
-+			      CPUFREQ_RELATION_LE);
- }
- EXPORT_SYMBOL_GPL(cpufreq_driver_resolve_freq);
- 
-@@ -2632,11 +2654,15 @@
- 	 * Resolve policy min/max to available frequencies. It ensures
- 	 * no frequency resolution will neither overshoot the requested maximum
- 	 * nor undershoot the requested minimum.
-+	 *
-+	 * Avoid storing intermediate values in policy->max or policy->min and
-+	 * compiler optimizations around them because them may be accessed
-+	 * concurrently by cpufreq_driver_resolve_freq() during the update.
- 	 */
--	policy->min = new_data.min;
--	policy->max = new_data.max;
--	policy->min = clamp_and_resolve_freq(policy, policy->min, CPUFREQ_RELATION_L);
--	policy->max = clamp_and_resolve_freq(policy, policy->max, CPUFREQ_RELATION_H);
-+	WRITE_ONCE(policy->max, __resolve_freq(policy, new_data.max, CPUFREQ_RELATION_H));
-+	new_data.min = __resolve_freq(policy, new_data.min, CPUFREQ_RELATION_L);
-+	WRITE_ONCE(policy->min, new_data.min > policy->max ? policy->max : new_data.min);
-+
- 	trace_cpu_frequency_limits(policy);
- 
- 	cpufreq_update_pressure(policy);
-
+-- 
+Louis Chauvet, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
 
