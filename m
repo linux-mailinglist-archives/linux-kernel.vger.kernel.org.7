@@ -1,94 +1,105 @@
-Return-Path: <linux-kernel+bounces-605294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B453BA89F64
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:26:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03796A89F6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:28:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC42F7ACEAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:24:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CF8319030FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5EE29A3EB;
-	Tue, 15 Apr 2025 13:25:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6A352980AE;
+	Tue, 15 Apr 2025 13:28:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sudt9UFk"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="MpNTpxTH"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45D52DFA2F;
-	Tue, 15 Apr 2025 13:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C232820B0;
+	Tue, 15 Apr 2025 13:28:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744723543; cv=none; b=gQ6cdLxW4YlcNsDzXVO/7uBqG8N7eFUNIxQpLFZGsfBaimkKMnh7uxpWyTtOCv0e1c0/hil3o4e6uJBsPHIS+q862AQqhLeyA+tyNVY1gwF3mIJTbeDSm4yrd4AWvFrfv/kHX6ttCK2UoFgq9gHp4MBT3PhCrB30C1kF9IeHW00=
+	t=1744723701; cv=none; b=cHgvBGAIv3SmMjBR89mjIjHFGdJMrFOgcm5E0sW6qDYweeUJH3FX1j8EED6QLoP8KaZXosLTmsaGo+Uj4jVz8TN/A2Ep7D+57m5jajf0kVdMDPiS7c9NNquS6BQVRmXhaKyBgHSorOPyVkC58ZBfMi2iHAYvPMJoZZEC4CbvEq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744723543; c=relaxed/simple;
-	bh=UYUxPCQcFjA73UAxP9WXueMfGm86K1IfqKd8pR+K0JM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j2NtYJ8zZ+BQjqdM6BGlhbUN/8wvYx+F52/Lhw0Sp+7kv0qYtwNScl+HmZjtWtmhrzVd5sN0VXXLneOB37NTw31MNRCMRvT0XgSSX6qgiQSPVzjJxAVlm2A2dlod3pzgtNmsPzpG+/7WCU6KE1VgdgcZeSzGvMSd+8CHGWtcxAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sudt9UFk; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7c58974ed57so517868885a.2;
-        Tue, 15 Apr 2025 06:25:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744723540; x=1745328340; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=UYUxPCQcFjA73UAxP9WXueMfGm86K1IfqKd8pR+K0JM=;
-        b=Sudt9UFkwOm3iC6+0xFtcz5wyp1qXSzlMEe/5DOwGNUiTfdmjKVgRmPMaOicE0JgZf
-         qzUH/Mplas2/Pm2M+Gj7dB0ouRTOk6pxOqk87r9XjF4IXNWYWCauc3s+ilJAuSYLVv6m
-         DfceQ5jWRF5SgK64UrnGQXD3CTSgqCz1La9aO0oZqHdsS0Mgzvp55W5/YY9HLPQix+XQ
-         TjJeTsIZaZ+FhwFKYjxIC9rUX5I4v/v1Uah7ZyStIYk/ko1udApYMBaP2vz+v09MjP2Y
-         6JMzln2A53JHOlqHKsO4QtQCjSSyGl0PdwgL0p+F3cvp3v6AsANCqVYoUfBsRSDSvr3G
-         4Njw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744723540; x=1745328340;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UYUxPCQcFjA73UAxP9WXueMfGm86K1IfqKd8pR+K0JM=;
-        b=D7QDiNpkpUlOlHBByU4MeoCUzvyc+8BIvUGspYRVw6Ab5TV1rSFe+Whan7jix5pbqQ
-         QkpFgY2yghKR6BpY2uwrww9PY4vPJv+iBwLnsTqfwOcCNoU0DkrVw6sSv17XXECJxylE
-         6JTvc+t109k/+kUqhlMmhH5geqwFOHOE7jW68ELuxMeGg8M7EJnj7lj6z0VKlhjEWJEo
-         u5Yz6t5Ua5Z3ctVTNd684HoVg6Ocsjw00/aIp/RFlz7/cwTVySUQKHV2MpXaYG4kzo4A
-         zUFkNARRIIganKe6Nxukl4RMTyuR/bJNgmBaVvUFf5KQ4ekxfR7ebn8HRoz3no6koZNx
-         FtIw==
-X-Forwarded-Encrypted: i=1; AJvYcCUDWCoXp4FJpAY6i4wPOscGZe8kT1HLfJRO/cuuIC626F8DjFomtt/OnE5CXOIhNqH8kqzZcAh9@vger.kernel.org, AJvYcCX4MWdpsOy8Ic2GfnUTfHU/toIz45Km/6A1DeTBiKmBpLVV3x9cvGPvTmDqEJ3STa/kgIvwvvFYJLr8m0iL@vger.kernel.org, AJvYcCXV0PREWSz/wzT27adM+Q3KcGiiI9JiDWMbj47F/V5xXIYOEAijhP+u2W6dQgdBNH5tdAE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzu22IoYl54cHYd2SprVDKaiz5KJ++IDpLO6M3geN/uSo5eqEhH
-	rIRn5TIMshtb8hp62sBalzzQvtc4I/OtNtxu8hDgGbZ4NhphgFHUCTE7hNpoLfF1K0CtD9CY4bW
-	/YWw8cUHNNiXZAZpm80VgN5VTJHk=
-X-Gm-Gg: ASbGncvGs/0TuSts9Jtnrd1JRKLPZaH3D9owQyBQyzb8hmQHEJ1nzQyNP0gDczHrVBX
-	P4oid/aEMKhBmOjRBBMSP1TmoaUOYMLFeiWVWqxlupmbSVIaiC4eLmBgNIZQRNEm2YyPJ/8npq5
-	W4oUjLhW1sK6y+AFei0ZBy9QVuRBs6AFKvIvbpjCyE
-X-Google-Smtp-Source: AGHT+IENUN3q9zUEpgp0yO+rQb1K6OiXAS8mHfuVjSa2hIIBeaF+kQ/tbXuTPbB9DLJpwa+uw5WeJlKVWmA3cg4aR3k=
-X-Received: by 2002:a05:6214:23cd:b0:6e8:fb8c:e6dd with SMTP id
- 6a1803df08f44-6f230d55533mr226917916d6.5.1744723540626; Tue, 15 Apr 2025
- 06:25:40 -0700 (PDT)
+	s=arc-20240116; t=1744723701; c=relaxed/simple;
+	bh=V/BhDzTsrxt9PX5MhppqtTzNW6n2ZZrG7wF79nVHOyw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IhEsXPKSHI0iP1QzfC9EE+8iOSiSRy58IjMyq2JKqVdo6j/juZguaPjSj9GasHbdBvvyoPFWjK4jVWat1aaSEualgpTW7RmjfXvoui3zZmrf9sjtC6jIhaYM6FIqU9WjEtGDv0b6XOq0N9Iuab3WMwAHE2r7rr6evHiKwTCT3/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=MpNTpxTH; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1744723700; x=1776259700;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=V/BhDzTsrxt9PX5MhppqtTzNW6n2ZZrG7wF79nVHOyw=;
+  b=MpNTpxTH1GmcQE4HwAtLncRamzj72OYynaEMopohcBsz0eiKiZWauS6D
+   Y+PtU4o/kmkb3pwlHFSrpaa6v1R0qNi+UvMzoyIlsMKoqCW1LYFmerg9Q
+   XBL7WxgmCUVT+/i2eEHjph5UJNki4TP/73U3Fo6Cwt1byIiL9x1kT7Kpo
+   abT4VSiiUwTyrCdWHc59KsTG5d/oAFl3b0641mCP36CYeMuH8M8uhtoJW
+   OUs3t1rA/g1rYfNAHEhJnOPtrIMKBNCmPLeKIUPnKSZ+7NBXKrK90jTJP
+   PMw1KPxX11fgC9mMFMfQQE6+kReQvwzvPr7TVe2Xyt+da1H8puv7XK5xA
+   Q==;
+X-CSE-ConnectionGUID: Ib73720AQlOOLHXW61IHCA==
+X-CSE-MsgGUID: Xor4WrdwQIyy6khYgSDu9w==
+X-IronPort-AV: E=Sophos;i="6.15,213,1739862000"; 
+   d="scan'208";a="271861952"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 15 Apr 2025 06:27:12 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Tue, 15 Apr 2025 06:26:59 -0700
+Received: from vduicu-Virtual-Machine.mshome.net (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.44 via Frontend Transport; Tue, 15 Apr 2025 06:26:57 -0700
+From: <victor.duicu@microchip.com>
+To: <jic23@kernel.org>
+CC: <andy@kernel.org>, <dlechner@baylibre.com>, <nuno.sa@analog.com>,
+	<victor.duicu@microchip.com>, <marius.cristea@microchip.com>,
+	<linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v1 0/2] add support for MCP998X
+Date: Tue, 15 Apr 2025 16:26:21 +0300
+Message-ID: <20250415132623.14913-1-victor.duicu@microchip.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250415130910.2326537-1-devaanshk840@gmail.com> <2025041517-semicolon-aloft-9910@gregkh>
-In-Reply-To: <2025041517-semicolon-aloft-9910@gregkh>
-From: Devaansh Kumar <devaanshk840@gmail.com>
-Date: Tue, 15 Apr 2025 18:55:28 +0530
-X-Gm-Features: ATxdqUE4dS_DLldbw8HBu898mJglnFnspTU3D7RHe1XAP46zEEX3kVq6zmxadGs
-Message-ID: <CA+RTe_hfdgPTwVX_pizHVnsDDFJoEOQD=dH3KuBXuDbycU0yXQ@mail.gmail.com>
-Subject: Re: [PATCH] bpf: Remove tracing program restriction on map types
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: sashal@kernel.org, stable@vger.kernel.org, ast@kernel.org, 
-	daniel@iogearbox.net, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linuxfoundation.org, 
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>, Andrii Nakryiko <andrii@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Tue, 15 Apr 2025 at 18:49, Greg KH <gregkh@linuxfoundation.org> wrote:
-> what kernel tree(s) is this for?
+From: Victor Duicu <victor.duicu@microchip.com>
 
-This backport is for v5.15.y stable version. My bad, I should have
-mentioned it in the subject.
+Add support for Microchip MCP998X/33 and MCP998XD/33D
+Multichannel Automotive Temperature Monitor Family.
+
+The chip is capable of monitoring temperatures on four
+external channels and one internal.
+
+Victor Duicu (2):
+  dt-bindings: iio: temperature: add support for MCP998X
+  iio: temperature: add support for MCP998X
+
+ .../testing/sysfs-bus-iio-temperature-mcp9982 |  17 +
+ .../iio/temperature/microchip,mcp9982.yaml    | 182 ++++
+ MAINTAINERS                                   |   7 +
+ drivers/iio/temperature/Kconfig               |  10 +
+ drivers/iio/temperature/Makefile              |   1 +
+ drivers/iio/temperature/mcp9982.c             | 794 ++++++++++++++++++
+ 6 files changed, 1011 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-temperature-mcp9982
+ create mode 100644 Documentation/devicetree/bindings/iio/temperature/microchip,mcp9982.yaml
+ create mode 100644 drivers/iio/temperature/mcp9982.c
+
+
+base-commit: 31c52fe3b2efeebfc72cc5336653baaa9889b41e
+-- 
+2.45.2
+
 
