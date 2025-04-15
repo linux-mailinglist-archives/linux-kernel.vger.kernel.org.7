@@ -1,261 +1,362 @@
-Return-Path: <linux-kernel+bounces-605048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DCA9A89C4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:28:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDDF2A89C4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:28:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95A7A189068D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:26:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C02223BBA91
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:27:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D061296D0D;
-	Tue, 15 Apr 2025 11:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="gu4568tB"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E531E0E0C;
-	Tue, 15 Apr 2025 11:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7215928DEF5;
+	Tue, 15 Apr 2025 11:21:17 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9DB1E0E0C
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 11:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744715986; cv=none; b=MKADfIOgMSbDYNhGIr02KPiEVnI0ETFCe3FrHMBP6LqX+9oCCo9gVys+pu3J7fpug8AFlkDj+iZq952Yu4IC6pneGaRjck9/OvOTvd8OZwrfgsymivLppvdCR7Yy4IsDhLieBMEsXTu5YS4RbE/MF5XZkMpTkf7JSh4rzacOqHA=
+	t=1744716076; cv=none; b=Lmb8cvw0h6Sds2lRD2bZCc5fzFrWnULP3tRR5i728eqealkLaKzFfKyNAwz/kIkiUuYvNzmHKvdL9PU/ZsfhahHEoECaVe6HhaPiO4Jgfa9N8058IoMZHKqfnDhJtNhYLwg4jtig8MhDsfNeuBU0WGIUqVVX9+/iBgLjyyEDxOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744715986; c=relaxed/simple;
-	bh=fm8nBPd0osnUG6dqX12oQsoVPD0PFBn5UOMP1jMH0mM=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=I8bXc/mBn0OJHPdBisG0CLxqqFoSXjMJNYdS3SGGtDILXhxmsaUqy+RUFl97iUlILvunB8AAMVmNYsD4Qcji+nWzXZl4bFa81qd4m1zMtM+62UaynnlfsrMc70AIdAXiZz0JYLl2C0Sw0PryZvvD74DofCiaVwPO6D8VuMPpHiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=gu4568tB; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1134)
-	id 3609620BCAD2; Tue, 15 Apr 2025 04:19:39 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3609620BCAD2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1744715979;
-	bh=z0JDToXaxOj4YM1xG5O0anHRB/LqnT8FbQltl3n3bNE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=gu4568tBswLAGhTi89YoOKz5ULZDWS2wkjK0n4L2pObpW1lczkOEUOLKP2xpaqGHE
-	 9Mx/MXOPMRYU+RqiQGkx4PuJNxnOe98N0em6hRtbinxatYNk5ih9sZLZ8YNuDAR0Hv
-	 d3x0QB13Z+Z2wLj2F+0IdWPmlB2/SZS+UK0E/8G8=
-From: Shradha Gupta <shradhagupta@linux.microsoft.com>
-To: "K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	Naman Jain <namjain@linux.microsoft.com>,
-	linux-hyperv@vger.kernel.org,
+	s=arc-20240116; t=1744716076; c=relaxed/simple;
+	bh=nQewU6eE2aMHJec5/WENF67ctujooGWNcjsVjPcZcgk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M8zImyOIU8lnP+yaR7KSQUtXUG10eY1hWV10RE/F7y8tPlT4WXFV5DSu8uWFnuRkaj3Vs8TbY1x5GdJudV+yuh36Wi4MAxxDMnDxdkZL1Vm4k8m8Te98kWZO+VzcbUsokH+FQ2EgPCs8HKu5InsRa94cy9eiq1L/xha9Qy8zJW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7C54215A1
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 04:21:12 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id F3AF63F66E
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 04:21:13 -0700 (PDT)
+Date: Tue, 15 Apr 2025 12:21:01 +0100
+From: Liviu Dudau <liviu.dudau@arm.com>
+To: Karunika Choo <karunika.choo@arm.com>
+Cc: dri-devel@lists.freedesktop.org, nd@arm.com,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
 	linux-kernel@vger.kernel.org
-Cc: Shradha Gupta <shradhagupta@linux.microsoft.com>,
-	Shradha Gupta <shradhagupta@microsoft.com>
-Subject: [PATCH v4] hv/hv_kvp_daemon: Enable debug logs for hv_kvp_daemon
-Date: Tue, 15 Apr 2025 04:19:38 -0700
-Message-Id: <1744715978-8185-1-git-send-email-shradhagupta@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
+Subject: Re: [PATCH v3 2/2] drm/panthor: Clean up 64-bit register definitions
+Message-ID: <Z_5BHamrP6vQCRV-@e110455-lin.cambridge.arm.com>
+References: <20250411164805.2015088-1-karunika.choo@arm.com>
+ <20250411164805.2015088-3-karunika.choo@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250411164805.2015088-3-karunika.choo@arm.com>
 
-Allow the KVP daemon to log the KVP updates triggered in the VM
-with a new debug flag(-d).
-When the daemon is started with this flag, it logs updates and debug
-information in syslog with loglevel LOG_DEBUG. This information comes
-in handy for debugging issues where the key-value pairs for certain
-pools show mismatch/incorrect values.
-The distro-vendors can further consume these changes and modify the
-respective service files to redirect the logs to specific files as
-needed.
+On Fri, Apr 11, 2025 at 05:48:05PM +0100, Karunika Choo wrote:
+> With the introduction of 64-bit register accessors, the separate *_HI
+> definitions are no longer necessary. This change removes them and
+> renames the corresponding *_LO entries for cleaner and more consistent
+> register definitions.
+> 
+> Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+> Suggested-by: Boris Brezillon <boris.brezillon@collabora.com>
+> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
 
-Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
-Reviewed-by: Naman Jain <namjain@linux.microsoft.com>
-Reviewed-by: Dexuan Cui <decui@microsoft.com>
----
- Changes in v4:
- * renamed the debug option from "debug_enabled" to "debug"
- * shorten a debug message by removing unnecessary strings
----
- Changes in v3:
- * remove timestamp from raw message
- * use i+1 instead of i while printing record array
- * add debug logs in delete operation
----
- Changes in v2:
- * log the debug logs in syslog(debug) instead of a seperate file that
-   we will have to maintain.
- * fix the commit message to indicate the same.
----
- tools/hv/hv_kvp_daemon.c | 65 ++++++++++++++++++++++++++++++++++++----
- 1 file changed, 60 insertions(+), 5 deletions(-)
+Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
 
-diff --git a/tools/hv/hv_kvp_daemon.c b/tools/hv/hv_kvp_daemon.c
-index 04ba035d67e9..37ebe1cf0641 100644
---- a/tools/hv/hv_kvp_daemon.c
-+++ b/tools/hv/hv_kvp_daemon.c
-@@ -83,6 +83,7 @@ enum {
- };
- 
- static int in_hand_shake;
-+static int debug;
- 
- static char *os_name = "";
- static char *os_major = "";
-@@ -183,6 +184,20 @@ static void kvp_update_file(int pool)
- 	kvp_release_lock(pool);
- }
- 
-+static void kvp_dump_initial_pools(int pool)
-+{
-+	int i;
-+
-+	syslog(LOG_DEBUG, "===Start dumping the contents of pool %d ===\n",
-+	       pool);
-+
-+	for (i = 0; i < kvp_file_info[pool].num_records; i++)
-+		syslog(LOG_DEBUG, "pool: %d, %d/%d key=%s val=%s\n",
-+		       pool, i + 1, kvp_file_info[pool].num_records,
-+		       kvp_file_info[pool].records[i].key,
-+		       kvp_file_info[pool].records[i].value);
-+}
-+
- static void kvp_update_mem_state(int pool)
- {
- 	FILE *filep;
-@@ -270,6 +285,8 @@ static int kvp_file_init(void)
- 			return 1;
- 		kvp_file_info[i].num_records = 0;
- 		kvp_update_mem_state(i);
-+		if (debug)
-+			kvp_dump_initial_pools(i);
- 	}
- 
- 	return 0;
-@@ -297,6 +314,9 @@ static int kvp_key_delete(int pool, const __u8 *key, int key_size)
- 		 * Found a match; just move the remaining
- 		 * entries up.
- 		 */
-+		if (debug)
-+			syslog(LOG_DEBUG, "%s: deleting the KVP: pool=%d key=%s val=%s",
-+			       __func__, pool, record[i].key, record[i].value);
- 		if (i == (num_records - 1)) {
- 			kvp_file_info[pool].num_records--;
- 			kvp_update_file(pool);
-@@ -315,20 +335,36 @@ static int kvp_key_delete(int pool, const __u8 *key, int key_size)
- 		kvp_update_file(pool);
- 		return 0;
- 	}
-+
-+	if (debug)
-+		syslog(LOG_DEBUG, "%s: could not delete KVP: pool=%d key=%s. Record not found",
-+		       __func__, pool, key);
-+
- 	return 1;
- }
- 
- static int kvp_key_add_or_modify(int pool, const __u8 *key, int key_size,
- 				 const __u8 *value, int value_size)
- {
--	int i;
--	int num_records;
- 	struct kvp_record *record;
-+	int num_records;
- 	int num_blocks;
-+	int i;
-+
-+	if (debug)
-+		syslog(LOG_DEBUG, "%s: got a KVP: pool=%d key=%s val=%s",
-+		       __func__, pool, key, value);
- 
- 	if ((key_size > HV_KVP_EXCHANGE_MAX_KEY_SIZE) ||
--		(value_size > HV_KVP_EXCHANGE_MAX_VALUE_SIZE))
-+		(value_size > HV_KVP_EXCHANGE_MAX_VALUE_SIZE)) {
-+		syslog(LOG_ERR, "%s: Too long key or value: key=%s, val=%s",
-+		       __func__, key, value);
-+
-+		if (debug)
-+			syslog(LOG_DEBUG, "%s: Too long key or value: pool=%d, key=%s, val=%s",
-+			       __func__, pool, key, value);
- 		return 1;
-+	}
- 
- 	/*
- 	 * First update the in-memory state.
-@@ -348,6 +384,9 @@ static int kvp_key_add_or_modify(int pool, const __u8 *key, int key_size,
- 		 */
- 		memcpy(record[i].value, value, value_size);
- 		kvp_update_file(pool);
-+		if (debug)
-+			syslog(LOG_DEBUG, "%s: updated: pool=%d key=%s val=%s",
-+			       __func__, pool, key, value);
- 		return 0;
- 	}
- 
-@@ -359,8 +398,10 @@ static int kvp_key_add_or_modify(int pool, const __u8 *key, int key_size,
- 		record = realloc(record, sizeof(struct kvp_record) *
- 			 ENTRIES_PER_BLOCK * (num_blocks + 1));
- 
--		if (record == NULL)
-+		if (!record) {
-+			syslog(LOG_ERR, "%s: Memory alloc failure", __func__);
- 			return 1;
-+		}
- 		kvp_file_info[pool].num_blocks++;
- 
- 	}
-@@ -368,6 +409,11 @@ static int kvp_key_add_or_modify(int pool, const __u8 *key, int key_size,
- 	memcpy(record[i].key, key, key_size);
- 	kvp_file_info[pool].records = record;
- 	kvp_file_info[pool].num_records++;
-+
-+	if (debug)
-+		syslog(LOG_DEBUG, "%s: added: pool=%d key=%s val=%s",
-+		       __func__, pool, key, value);
-+
- 	kvp_update_file(pool);
- 	return 0;
- }
-@@ -1662,6 +1708,7 @@ void print_usage(char *argv[])
- 	fprintf(stderr, "Usage: %s [options]\n"
- 		"Options are:\n"
- 		"  -n, --no-daemon        stay in foreground, don't daemonize\n"
-+		"  -d, --debug            Enable debug logs(syslog debug by default)\n"
- 		"  -h, --help             print this help\n", argv[0]);
- }
- 
-@@ -1683,10 +1730,11 @@ int main(int argc, char *argv[])
- 	static struct option long_options[] = {
- 		{"help",	no_argument,	   0,  'h' },
- 		{"no-daemon",	no_argument,	   0,  'n' },
-+		{"debug",	no_argument,	   0,  'd' },
- 		{0,		0,		   0,  0   }
- 	};
- 
--	while ((opt = getopt_long(argc, argv, "hn", long_options,
-+	while ((opt = getopt_long(argc, argv, "hnd", long_options,
- 				  &long_index)) != -1) {
- 		switch (opt) {
- 		case 'n':
-@@ -1695,6 +1743,9 @@ int main(int argc, char *argv[])
- 		case 'h':
- 			print_usage(argv);
- 			exit(0);
-+		case 'd':
-+			debug = 1;
-+			break;
- 		default:
- 			print_usage(argv);
- 			exit(EXIT_FAILURE);
-@@ -1717,6 +1768,9 @@ int main(int argc, char *argv[])
- 	 */
- 	kvp_get_domain_name(full_domain_name, sizeof(full_domain_name));
- 
-+	if (debug)
-+		syslog(LOG_INFO, "Logging debug info in syslog(debug)");
-+
- 	if (kvp_file_init()) {
- 		syslog(LOG_ERR, "Failed to initialize the pools");
- 		exit(EXIT_FAILURE);
+Best regards,
+Liviu
+
+> ---
+>  drivers/gpu/drm/panthor/panthor_gpu.c  | 12 ++--
+>  drivers/gpu/drm/panthor/panthor_gpu.h  | 10 +--
+>  drivers/gpu/drm/panthor/panthor_mmu.c  | 16 ++---
+>  drivers/gpu/drm/panthor/panthor_regs.h | 94 +++++++++-----------------
+>  4 files changed, 52 insertions(+), 80 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_gpu.c b/drivers/gpu/drm/panthor/panthor_gpu.c
+> index fd09f0928019..5fc45284c712 100644
+> --- a/drivers/gpu/drm/panthor/panthor_gpu.c
+> +++ b/drivers/gpu/drm/panthor/panthor_gpu.c
+> @@ -108,9 +108,9 @@ static void panthor_gpu_init_info(struct panthor_device *ptdev)
+>  
+>  	ptdev->gpu_info.as_present = gpu_read(ptdev, GPU_AS_PRESENT);
+>  
+> -	ptdev->gpu_info.shader_present = gpu_read64(ptdev, GPU_SHADER_PRESENT_LO);
+> -	ptdev->gpu_info.tiler_present = gpu_read64(ptdev, GPU_TILER_PRESENT_LO);
+> -	ptdev->gpu_info.l2_present = gpu_read64(ptdev, GPU_L2_PRESENT_LO);
+> +	ptdev->gpu_info.shader_present = gpu_read64(ptdev, GPU_SHADER_PRESENT);
+> +	ptdev->gpu_info.tiler_present = gpu_read64(ptdev, GPU_TILER_PRESENT);
+> +	ptdev->gpu_info.l2_present = gpu_read64(ptdev, GPU_L2_PRESENT);
+>  
+>  	arch_major = GPU_ARCH_MAJOR(ptdev->gpu_info.gpu_id);
+>  	product_major = GPU_PROD_MAJOR(ptdev->gpu_info.gpu_id);
+> @@ -147,7 +147,7 @@ static void panthor_gpu_irq_handler(struct panthor_device *ptdev, u32 status)
+>  {
+>  	if (status & GPU_IRQ_FAULT) {
+>  		u32 fault_status = gpu_read(ptdev, GPU_FAULT_STATUS);
+> -		u64 address = gpu_read64(ptdev, GPU_FAULT_ADDR_LO);
+> +		u64 address = gpu_read64(ptdev, GPU_FAULT_ADDR);
+>  
+>  		drm_warn(&ptdev->base, "GPU Fault 0x%08x (%s) at 0x%016llx\n",
+>  			 fault_status, panthor_exception_name(ptdev, fault_status & 0xFF),
+> @@ -457,7 +457,7 @@ void panthor_gpu_resume(struct panthor_device *ptdev)
+>   */
+>  u64 panthor_gpu_read_timestamp(struct panthor_device *ptdev)
+>  {
+> -	return gpu_read64_counter(ptdev, GPU_TIMESTAMP_LO);
+> +	return gpu_read64_counter(ptdev, GPU_TIMESTAMP);
+>  }
+>  
+>  /**
+> @@ -468,5 +468,5 @@ u64 panthor_gpu_read_timestamp(struct panthor_device *ptdev)
+>   */
+>  u64 panthor_gpu_read_timestamp_offset(struct panthor_device *ptdev)
+>  {
+> -	return gpu_read64(ptdev, GPU_TIMESTAMP_OFFSET_LO);
+> +	return gpu_read64(ptdev, GPU_TIMESTAMP_OFFSET);
+>  }
+> diff --git a/drivers/gpu/drm/panthor/panthor_gpu.h b/drivers/gpu/drm/panthor/panthor_gpu.h
+> index 7f6133a66127..89a0bdb2fbc5 100644
+> --- a/drivers/gpu/drm/panthor/panthor_gpu.h
+> +++ b/drivers/gpu/drm/panthor/panthor_gpu.h
+> @@ -30,9 +30,9 @@ int panthor_gpu_block_power_off(struct panthor_device *ptdev,
+>   */
+>  #define panthor_gpu_power_on(ptdev, type, mask, timeout_us) \
+>  	panthor_gpu_block_power_on(ptdev, #type, \
+> -				  type ## _PWRON_LO, \
+> -				  type ## _PWRTRANS_LO, \
+> -				  type ## _READY_LO, \
+> +				  type ## _PWRON, \
+> +				  type ## _PWRTRANS, \
+> +				  type ## _READY, \
+>  				  mask, timeout_us)
+>  
+>  /**
+> @@ -42,8 +42,8 @@ int panthor_gpu_block_power_off(struct panthor_device *ptdev,
+>   */
+>  #define panthor_gpu_power_off(ptdev, type, mask, timeout_us) \
+>  	panthor_gpu_block_power_off(ptdev, #type, \
+> -				   type ## _PWROFF_LO, \
+> -				   type ## _PWRTRANS_LO, \
+> +				   type ## _PWROFF, \
+> +				   type ## _PWRTRANS, \
+>  				   mask, timeout_us)
+>  
+>  int panthor_gpu_l2_power_on(struct panthor_device *ptdev);
+> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
+> index a0a79f19bdea..1db4a46ddf98 100644
+> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
+> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+> @@ -564,7 +564,7 @@ static void lock_region(struct panthor_device *ptdev, u32 as_nr,
+>  	region = region_width | region_start;
+>  
+>  	/* Lock the region that needs to be updated */
+> -	gpu_write64(ptdev, AS_LOCKADDR_LO(as_nr), region);
+> +	gpu_write64(ptdev, AS_LOCKADDR(as_nr), region);
+>  	write_cmd(ptdev, as_nr, AS_COMMAND_LOCK);
+>  }
+>  
+> @@ -614,9 +614,9 @@ static int panthor_mmu_as_enable(struct panthor_device *ptdev, u32 as_nr,
+>  	if (ret)
+>  		return ret;
+>  
+> -	gpu_write64(ptdev, AS_TRANSTAB_LO(as_nr), transtab);
+> -	gpu_write64(ptdev, AS_MEMATTR_LO(as_nr), memattr);
+> -	gpu_write64(ptdev, AS_TRANSCFG_LO(as_nr), transcfg);
+> +	gpu_write64(ptdev, AS_TRANSTAB(as_nr), transtab);
+> +	gpu_write64(ptdev, AS_MEMATTR(as_nr), memattr);
+> +	gpu_write64(ptdev, AS_TRANSCFG(as_nr), transcfg);
+>  
+>  	return write_cmd(ptdev, as_nr, AS_COMMAND_UPDATE);
+>  }
+> @@ -629,9 +629,9 @@ static int panthor_mmu_as_disable(struct panthor_device *ptdev, u32 as_nr)
+>  	if (ret)
+>  		return ret;
+>  
+> -	gpu_write64(ptdev, AS_TRANSTAB_LO(as_nr), 0);
+> -	gpu_write64(ptdev, AS_MEMATTR_LO(as_nr), 0);
+> -	gpu_write64(ptdev, AS_TRANSCFG_LO(as_nr), AS_TRANSCFG_ADRMODE_UNMAPPED);
+> +	gpu_write64(ptdev, AS_TRANSTAB(as_nr), 0);
+> +	gpu_write64(ptdev, AS_MEMATTR(as_nr), 0);
+> +	gpu_write64(ptdev, AS_TRANSCFG(as_nr), AS_TRANSCFG_ADRMODE_UNMAPPED);
+>  
+>  	return write_cmd(ptdev, as_nr, AS_COMMAND_UPDATE);
+>  }
+> @@ -1669,7 +1669,7 @@ static void panthor_mmu_irq_handler(struct panthor_device *ptdev, u32 status)
+>  		u32 source_id;
+>  
+>  		fault_status = gpu_read(ptdev, AS_FAULTSTATUS(as));
+> -		addr = gpu_read64(ptdev, AS_FAULTADDRESS_LO(as));
+> +		addr = gpu_read64(ptdev, AS_FAULTADDRESS(as));
+>  
+>  		/* decode the fault status */
+>  		exception_type = fault_status & 0xFF;
+> diff --git a/drivers/gpu/drm/panthor/panthor_regs.h b/drivers/gpu/drm/panthor/panthor_regs.h
+> index 6fd39a52f887..7e21d6a25dc4 100644
+> --- a/drivers/gpu/drm/panthor/panthor_regs.h
+> +++ b/drivers/gpu/drm/panthor/panthor_regs.h
+> @@ -65,20 +65,16 @@
+>  #define   GPU_STATUS_DBG_ENABLED			BIT(8)
+>  
+>  #define GPU_FAULT_STATUS				0x3C
+> -#define GPU_FAULT_ADDR_LO				0x40
+> -#define GPU_FAULT_ADDR_HI				0x44
+> +#define GPU_FAULT_ADDR					0x40
+>  
+>  #define GPU_PWR_KEY					0x50
+>  #define  GPU_PWR_KEY_UNLOCK				0x2968A819
+>  #define GPU_PWR_OVERRIDE0				0x54
+>  #define GPU_PWR_OVERRIDE1				0x58
+>  
+> -#define GPU_TIMESTAMP_OFFSET_LO				0x88
+> -#define GPU_TIMESTAMP_OFFSET_HI				0x8C
+> -#define GPU_CYCLE_COUNT_LO				0x90
+> -#define GPU_CYCLE_COUNT_HI				0x94
+> -#define GPU_TIMESTAMP_LO				0x98
+> -#define GPU_TIMESTAMP_HI				0x9C
+> +#define GPU_TIMESTAMP_OFFSET				0x88
+> +#define GPU_CYCLE_COUNT					0x90
+> +#define GPU_TIMESTAMP					0x98
+>  
+>  #define GPU_THREAD_MAX_THREADS				0xA0
+>  #define GPU_THREAD_MAX_WORKGROUP_SIZE			0xA4
+> @@ -87,47 +83,29 @@
+>  
+>  #define GPU_TEXTURE_FEATURES(n)				(0xB0 + ((n) * 4))
+>  
+> -#define GPU_SHADER_PRESENT_LO				0x100
+> -#define GPU_SHADER_PRESENT_HI				0x104
+> -#define GPU_TILER_PRESENT_LO				0x110
+> -#define GPU_TILER_PRESENT_HI				0x114
+> -#define GPU_L2_PRESENT_LO				0x120
+> -#define GPU_L2_PRESENT_HI				0x124
+> -
+> -#define SHADER_READY_LO					0x140
+> -#define SHADER_READY_HI					0x144
+> -#define TILER_READY_LO					0x150
+> -#define TILER_READY_HI					0x154
+> -#define L2_READY_LO					0x160
+> -#define L2_READY_HI					0x164
+> -
+> -#define SHADER_PWRON_LO					0x180
+> -#define SHADER_PWRON_HI					0x184
+> -#define TILER_PWRON_LO					0x190
+> -#define TILER_PWRON_HI					0x194
+> -#define L2_PWRON_LO					0x1A0
+> -#define L2_PWRON_HI					0x1A4
+> -
+> -#define SHADER_PWROFF_LO				0x1C0
+> -#define SHADER_PWROFF_HI				0x1C4
+> -#define TILER_PWROFF_LO					0x1D0
+> -#define TILER_PWROFF_HI					0x1D4
+> -#define L2_PWROFF_LO					0x1E0
+> -#define L2_PWROFF_HI					0x1E4
+> -
+> -#define SHADER_PWRTRANS_LO				0x200
+> -#define SHADER_PWRTRANS_HI				0x204
+> -#define TILER_PWRTRANS_LO				0x210
+> -#define TILER_PWRTRANS_HI				0x214
+> -#define L2_PWRTRANS_LO					0x220
+> -#define L2_PWRTRANS_HI					0x224
+> -
+> -#define SHADER_PWRACTIVE_LO				0x240
+> -#define SHADER_PWRACTIVE_HI				0x244
+> -#define TILER_PWRACTIVE_LO				0x250
+> -#define TILER_PWRACTIVE_HI				0x254
+> -#define L2_PWRACTIVE_LO					0x260
+> -#define L2_PWRACTIVE_HI					0x264
+> +#define GPU_SHADER_PRESENT				0x100
+> +#define GPU_TILER_PRESENT				0x110
+> +#define GPU_L2_PRESENT					0x120
+> +
+> +#define SHADER_READY					0x140
+> +#define TILER_READY					0x150
+> +#define L2_READY					0x160
+> +
+> +#define SHADER_PWRON					0x180
+> +#define TILER_PWRON					0x190
+> +#define L2_PWRON					0x1A0
+> +
+> +#define SHADER_PWROFF					0x1C0
+> +#define TILER_PWROFF					0x1D0
+> +#define L2_PWROFF					0x1E0
+> +
+> +#define SHADER_PWRTRANS					0x200
+> +#define TILER_PWRTRANS					0x210
+> +#define L2_PWRTRANS					0x220
+> +
+> +#define SHADER_PWRACTIVE				0x240
+> +#define TILER_PWRACTIVE					0x250
+> +#define L2_PWRACTIVE					0x260
+>  
+>  #define GPU_REVID					0x280
+>  
+> @@ -170,10 +148,8 @@
+>  #define MMU_AS_SHIFT					6
+>  #define MMU_AS(as)					(MMU_BASE + ((as) << MMU_AS_SHIFT))
+>  
+> -#define AS_TRANSTAB_LO(as)				(MMU_AS(as) + 0x0)
+> -#define AS_TRANSTAB_HI(as)				(MMU_AS(as) + 0x4)
+> -#define AS_MEMATTR_LO(as)				(MMU_AS(as) + 0x8)
+> -#define AS_MEMATTR_HI(as)				(MMU_AS(as) + 0xC)
+> +#define AS_TRANSTAB(as)					(MMU_AS(as) + 0x0)
+> +#define AS_MEMATTR(as)					(MMU_AS(as) + 0x8)
+>  #define   AS_MEMATTR_AARCH64_INNER_ALLOC_IMPL		(2 << 2)
+>  #define   AS_MEMATTR_AARCH64_INNER_ALLOC_EXPL(w, r)	((3 << 2) | \
+>  							 ((w) ? BIT(0) : 0) | \
+> @@ -185,8 +161,7 @@
+>  #define   AS_MEMATTR_AARCH64_INNER_OUTER_NC		(1 << 6)
+>  #define   AS_MEMATTR_AARCH64_INNER_OUTER_WB		(2 << 6)
+>  #define   AS_MEMATTR_AARCH64_FAULT			(3 << 6)
+> -#define AS_LOCKADDR_LO(as)				(MMU_AS(as) + 0x10)
+> -#define AS_LOCKADDR_HI(as)				(MMU_AS(as) + 0x14)
+> +#define AS_LOCKADDR(as)					(MMU_AS(as) + 0x10)
+>  #define AS_COMMAND(as)					(MMU_AS(as) + 0x18)
+>  #define   AS_COMMAND_NOP				0
+>  #define   AS_COMMAND_UPDATE				1
+> @@ -201,12 +176,10 @@
+>  #define  AS_FAULTSTATUS_ACCESS_TYPE_EX			(0x1 << 8)
+>  #define  AS_FAULTSTATUS_ACCESS_TYPE_READ		(0x2 << 8)
+>  #define  AS_FAULTSTATUS_ACCESS_TYPE_WRITE		(0x3 << 8)
+> -#define AS_FAULTADDRESS_LO(as)				(MMU_AS(as) + 0x20)
+> -#define AS_FAULTADDRESS_HI(as)				(MMU_AS(as) + 0x24)
+> +#define AS_FAULTADDRESS(as)				(MMU_AS(as) + 0x20)
+>  #define AS_STATUS(as)					(MMU_AS(as) + 0x28)
+>  #define   AS_STATUS_AS_ACTIVE				BIT(0)
+> -#define AS_TRANSCFG_LO(as)				(MMU_AS(as) + 0x30)
+> -#define AS_TRANSCFG_HI(as)				(MMU_AS(as) + 0x34)
+> +#define AS_TRANSCFG(as)					(MMU_AS(as) + 0x30)
+>  #define   AS_TRANSCFG_ADRMODE_UNMAPPED			(1 << 0)
+>  #define   AS_TRANSCFG_ADRMODE_IDENTITY			(2 << 0)
+>  #define   AS_TRANSCFG_ADRMODE_AARCH64_4K		(6 << 0)
+> @@ -224,8 +197,7 @@
+>  #define   AS_TRANSCFG_DISABLE_AF_FAULT			BIT(34)
+>  #define   AS_TRANSCFG_WXN				BIT(35)
+>  #define   AS_TRANSCFG_XREADABLE				BIT(36)
+> -#define AS_FAULTEXTRA_LO(as)				(MMU_AS(as) + 0x38)
+> -#define AS_FAULTEXTRA_HI(as)				(MMU_AS(as) + 0x3C)
+> +#define AS_FAULTEXTRA(as)				(MMU_AS(as) + 0x38)
+>  
+>  #define CSF_GPU_LATEST_FLUSH_ID				0x10000
+>  
+> -- 
+> 2.47.1
+> 
+
 -- 
-2.34.1
-
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
 
