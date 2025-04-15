@@ -1,234 +1,198 @@
-Return-Path: <linux-kernel+bounces-605255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EDA4A89EE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:02:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F828A89EE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:02:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01BEB3ADBD3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:02:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBAF4188BFD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:03:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 429242957AE;
-	Tue, 15 Apr 2025 13:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F892036FE;
+	Tue, 15 Apr 2025 13:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K3wTlgZ1"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="huBBLv9A"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68A11B0412
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 13:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DC028DF06
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 13:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744722134; cv=none; b=DAdVqszBW5gQNgvp71u0d6qVLUSnRU/vOQp1w/4zyXM5vdHJPu7grjtO7IiWgG1xc1+HsEbBTscc10KqHAoHssl8y6a2+1xeIlVc+jpHyUZkz73PDTOG0IykvQfYMVvr8sOCetAWs2kZdWOJCWXHyQXxfm3CZRqiIyZMAVmC3hs=
+	t=1744722166; cv=none; b=mTdvRichKxHO2PpbfQLHKA78+HnkEB9huTOovV/+SMYR4QuaSubLjXhvs5TKDURnOZiw7TV2h9CZ7aHsEqLU4cbyHd6agHUDJdHp7rMnN4WiXa3IFi5kLQBzUAJhKLvZKQmMB9BkHBsgTRle/Xmh6FJBWnwitze3jyNXORqZB3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744722134; c=relaxed/simple;
-	bh=vTzJ35T7sydb3gQxTOCoWPhHci7tnNy3EJNTeNdeyLM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NjWAtJnbAi3uTK8VeRtVJCw99P6CKWTjYkfiKNbOV8+JfnGk+qZEBIq4dYuhCi1IMjnY9yGpmiOnKJOQXR8tmIMaDHowv20ISFVIX1OiBOexTI0uodUtvM4aaVa4XFEp0pyeae+BlNKIm5ntF9y+KB2EBIExHYuWbAkuJvRTpqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K3wTlgZ1; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1744722166; c=relaxed/simple;
+	bh=nKU7oXz7azT63GGaMuVJgMmk8Kg6aeC5OxGlUnIB/dw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uVYzlOnDnYZlihAqMANbllxc9wKKp1Iw9AhRL7/jzo1lDuQjn5Z2BhFW+6+lpIN0SjC7po4YbHrEncnj1U4LphqKkVU2rol6aS6EcGmf0+HBDJTYo2f9aNAgPo5Kxwr3w+ztmQQq0ojumbrvgJ0VgzdaXwfdNKlVDycgzM5IziA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=huBBLv9A; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744722131;
+	s=mimecast20190719; t=1744722164;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YdK7/3t3qmC0hoi9PTNkCXkTjE4wHT/cMRL3k38S/VI=;
-	b=K3wTlgZ1T/j8MA2jTfU9Y/SeIkQl0fENz930K6nd+G9Sl1dqVUtVrkFhRhcXRim0COGT6/
-	IW0UBjBK/kRV7EvbmwduXIEul1HEZJRFueH8cpi63UH2glglRCuNvh3qV+z0pBIsl2AFa2
-	0gZRKoD5Ue0qCM0C1M9B0m5foo6QVhA=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-630-Frv93qQoMdO-W_L7a_nk-Q-1; Tue,
- 15 Apr 2025 09:01:58 -0400
-X-MC-Unique: Frv93qQoMdO-W_L7a_nk-Q-1
-X-Mimecast-MFC-AGG-ID: Frv93qQoMdO-W_L7a_nk-Q_1744722116
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A69951953945;
-	Tue, 15 Apr 2025 13:01:56 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.38])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 794181955BC0;
-	Tue, 15 Apr 2025 13:01:55 +0000 (UTC)
-Date: Tue, 15 Apr 2025 21:01:51 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Shivank Garg <shivankg@amd.com>
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org, urezki@gmail.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/5] mm/vmalloc.c: return explicit error value in
- alloc_vmap_area()
-Message-ID: <Z/5Yv+iFmFPuFqvn@fedora>
-References: <20250415023952.27850-1-bhe@redhat.com>
- <20250415023952.27850-6-bhe@redhat.com>
- <134bd404-d741-40ec-a661-f897da5ca9ca@amd.com>
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fYgbR8kG7oTYqOmEg71iZruwDr8wOwjYkIu/IWO1XA0=;
+	b=huBBLv9Aj6bL/m/1aXj91jMdPesdNx2001bkgJJdeWlIUe4+4Bd7rj6HBQZOneO0AQDrKL
+	808ioD3+yiA0fjmZil74gcDlrV39TnPX1I0xbGfAIQFjzQM0hyGyzelwTP/XRfKN8lqjGx
+	sowsPIc9w3LLKYk1kCvrgtghuW8BBnQ=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-322-5vdGJGrxMfiSZNpjvjR4Fw-1; Tue, 15 Apr 2025 09:02:41 -0400
+X-MC-Unique: 5vdGJGrxMfiSZNpjvjR4Fw-1
+X-Mimecast-MFC-AGG-ID: 5vdGJGrxMfiSZNpjvjR4Fw_1744722160
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43d51bd9b41so43832485e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 06:02:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744722160; x=1745326960;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fYgbR8kG7oTYqOmEg71iZruwDr8wOwjYkIu/IWO1XA0=;
+        b=srQc2rokf1UuYQD6PB+AQN0sWwcoEWuzWfmH7qMqhy/N5F/Y9XDcMoSFOY20Wb8EMN
+         9rshPBsbebqDNNx3OgmzJ6upVK6pG8+6jPm15EI4TzZm4O8RhwxTN8ivfhcgdfG3jJDs
+         m5PHuZzatAHxNdCg4119YZyUTpkjv6lNDWqE3bfzs91vZNwfgCuaMXbrhaS1fn0YmaDG
+         khkPVpeKVy24DCNcloRQyihMWrVan2ROGTSe57rQ1AImnUsCkEb4NKVkuZuhB2mzjPfk
+         7j08vUGV/8OETHLGCXSLfCcnecMXoPGKL2c/JjYg80jAuESNd+el9Ri2Vk5qFe97YVjG
+         50MA==
+X-Forwarded-Encrypted: i=1; AJvYcCUvvh2/gDwDcj405VCYOId9akL84rrj5uCbT5oZFIiOqUl9qD7SBqeLV6sxNZ0yRdo7XfncbVyJ3ZF9iuk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzxz+ROkZK+xcsDaLdqsVjU1+gN6K1YiX3SJGSMT3yEcIRPD8KO
+	9F+QPKzxnXz/ZSMaTP1jdbJmujlGllut1VLcMiRZ+EEIh2VzLvd00BeRhP+hLVROD4Ow7PdD11P
+	9N7d18tBMd5Q4Kkt1pZw90HrMesjV/lTkTHYlL6ieajP9HdZMa7RMTjJiKm/cIrhQb+Ah4wnmvq
+	M=
+X-Gm-Gg: ASbGnctWBN3LvwlT/8i93pxQ83Mm71thE4P8v6lBP+FmL6Au5fGlQ56dc56MKbKYATC
+	+Ac9SVyCEQoe7jhrm2NBHqTiJ0BpD5Q2aA3JxLglyRz6Ylou5RXLq6L+CUcLyjeVWmVCvIqExMW
+	7mgYUtuDnPx3C9rLD+RRANKFhCtyhX3BeLlDg+mIEemG3PeREv6s0p86N67P5MlllCK+fzdtJNO
+	jeYJPG4RI8evExKQ6lojFMkxWidfGbTpAa2YuLLEgnviePJDc9aTbSB2y3l15PVSWL3+7/OAAj6
+	CoTUwrNcaRuteWTG4Tun9RNHsg4NQbvulAKYndwJ9/4D5Jpelsi1tjIon+HekPWeYtpGg8lQtmL
+	M0mH64hwCzZdamEh/GK+a+J+MyUWuINfl35jfgA==
+X-Received: by 2002:a05:600c:604e:b0:43c:f6b0:e807 with SMTP id 5b1f17b1804b1-43f3b055a80mr134422325e9.31.1744722159977;
+        Tue, 15 Apr 2025 06:02:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEFTb451dYiWPe1L9E1APjLev+PfHBH8BD8iJDyZJM9oEiG0tLYWmJ04OHy9N6pSiPuBjkGtA==
+X-Received: by 2002:a05:600c:604e:b0:43c:f6b0:e807 with SMTP id 5b1f17b1804b1-43f3b055a80mr134421885e9.31.1744722159509;
+        Tue, 15 Apr 2025 06:02:39 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f02:2900:f54f:bad7:c5f4:9404? (p200300d82f022900f54fbad7c5f49404.dip0.t-ipconnect.de. [2003:d8:2f02:2900:f54f:bad7:c5f4:9404])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f207cb88asm208403935e9.37.2025.04.15.06.02.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Apr 2025 06:02:38 -0700 (PDT)
+Message-ID: <d6c415ae-4d8e-4d6b-a22d-eb2b02b5bb67@redhat.com>
+Date: Tue, 15 Apr 2025 15:02:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <134bd404-d741-40ec-a661-f897da5ca9ca@amd.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm, hugetlb: Increment the number of pages to be reset on
+ HVO
+To: Oscar Salvador <osalvador@suse.de>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20250415111859.376302-1-osalvador@suse.de>
+Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250415111859.376302-1-osalvador@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 04/15/25 at 12:52pm, Shivank Garg wrote:
-> On 4/15/2025 8:09 AM, Baoquan He wrote:
-> > In codes of alloc_vmap_area(), it returns the upper bound 'vend' to
-> > indicate if the allocation is successful or failed. That is not very clear.
-> > 
-> > Here change to return explicit error values and check them to judge if
-> > allocation is successful.
-> > 
-> > IS_ERR_VALUE already uses unlikely() internally
-> > 
-> > Signed-off-by: Baoquan He <bhe@redhat.com>
-> > ---
-> >  mm/vmalloc.c | 34 +++++++++++++++++-----------------
-> >  1 file changed, 17 insertions(+), 17 deletions(-)
-> > 
-> > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > index 3f38a232663b..5b21cd09b2b4 100644
-> > --- a/mm/vmalloc.c
-> > +++ b/mm/vmalloc.c
-> > @@ -1715,7 +1715,7 @@ va_clip(struct rb_root *root, struct list_head *head,
-> >  			 */
-> >  			lva = kmem_cache_alloc(vmap_area_cachep, GFP_NOWAIT);
-> >  			if (!lva)
-> > -				return -1;
-> > +				return -ENOMEM;
-> >  		}
-> >  
-> >  		/*
-> > @@ -1729,7 +1729,7 @@ va_clip(struct rb_root *root, struct list_head *head,
-> >  		 */
-> >  		va->va_start = nva_start_addr + size;
-> >  	} else {
-> > -		return -1;
-> > +		return -EINVAL;
-> >  	}
-
-Thanks for reviewing.
-
+On 15.04.25 13:18, Oscar Salvador wrote:
+> commit 4eeec8c89a0c ("mm: move hugetlb specific things in folio to page[3]")
+> shifted hugetlb specific stuff, and now mapping overlaps _hugetlb_cgroup field.
 > 
-> Braces around return -EINVAL seem unnecessary.
-> They can be dropped.
-
-This complys with the codeing style required in 3) Placing Braces and
-Spaces of Documentation/process/coding-style.rst because other branches
-are multiple statements.
-
+> Upon restoring the vmemmap for HVO, only the first two tail pages are reset, and
+> this causes the check in free_tail_page_prepare() to fail as it finds
+> an unexpected mapping value in some tails.
 > 
-> >  
-> >  	if (type != FL_FIT_TYPE) {
-> > @@ -1758,19 +1758,19 @@ va_alloc(struct vmap_area *va,
-> >  
-> >  	/* Check the "vend" restriction. */
-> >  	if (nva_start_addr + size > vend)
-> > -		return vend;
-> > +		return -ERANGE;
-> >  
-> >  	/* Update the free vmap_area. */
-> >  	ret = va_clip(root, head, va, nva_start_addr, size);
-> > -	if (WARN_ON_ONCE(ret))
-> > -		return vend;
-> > +	if (ret)
-> > +		return ret;
+> Increment the number of pages to be reset to 4 (head + 3 tail pages)
 > 
-> Is it safe to remove the warning, or was it critical for debugging?
-
-This comes from a reported concern because va_clip() could be failed by 
-NOTHING_FIT or kmem_cache_alloc failure. The warning here could cause
-confusion misleading people to think vmap area management is failed.
-
+> Fixes: 4eeec8c89a0c ("mm: move hugetlb specific things in folio to page[3]")
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Oscar Salvador <osalvador@suse.de>
+> ---
+>   mm/hugetlb_vmemmap.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> >  
-> >  	return nva_start_addr;
-> >  }
-> >  
-> >  /*
-> >   * Returns a start address of the newly allocated area, if success.
-> > - * Otherwise a vend is returned that indicates failure.
-> > + * Otherwise an error value is returned that indicates failure.
-> >   */
-> >  static __always_inline unsigned long
-> >  __alloc_vmap_area(struct rb_root *root, struct list_head *head,
-> > @@ -1795,14 +1795,13 @@ __alloc_vmap_area(struct rb_root *root, struct list_head *head,
-> >  
-> >  	va = find_vmap_lowest_match(root, size, align, vstart, adjust_search_size);
-> >  	if (unlikely(!va))
-> > -		return vend;
-> > +		return -ENOENT;
-> >  
-> >  	nva_start_addr = va_alloc(va, root, head, size, align, vstart, vend);
-> > -	if (nva_start_addr == vend)
-> > -		return vend;
-> >  
-> >  #if DEBUG_AUGMENT_LOWEST_MATCH_CHECK
-> > -	find_vmap_lowest_match_check(root, head, size, align);
-> > +	if (!IS_ERR_VALUE(nva_start_addr))
-> > +		find_vmap_lowest_match_check(root, head, size, align);
-> >  #endif
-> >  
-> >  	return nva_start_addr;
-> > @@ -1932,7 +1931,7 @@ node_alloc(unsigned long size, unsigned long align,
-> >  	struct vmap_area *va;
-> >  
-> >  	*vn_id = 0;
-> > -	*addr = vend;
-> > +	*addr = -EINVAL;
-> >  
-> >  	/*
-> >  	 * Fallback to a global heap if not vmalloc or there
-> > @@ -2012,20 +2011,20 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
-> >  	}
-> >  
-> >  retry:
-> > -	if (addr == vend) {
-> > +	if (IS_ERR_VALUE(addr)) {
-> >  		preload_this_cpu_lock(&free_vmap_area_lock, gfp_mask, node);
-> >  		addr = __alloc_vmap_area(&free_vmap_area_root, &free_vmap_area_list,
-> >  			size, align, vstart, vend);
-> >  		spin_unlock(&free_vmap_area_lock);
-> >  	}
-> >  
-> > -	trace_alloc_vmap_area(addr, size, align, vstart, vend, addr == vend);
-> > +	trace_alloc_vmap_area(addr, size, align, vstart, vend, IS_ERR_VALUE(addr));
-> >  
-> >  	/*
-> > -	 * If an allocation fails, the "vend" address is
-> > +	 * If an allocation fails, the error value is
-> >  	 * returned. Therefore trigger the overflow path.
-> >  	 */
-> > -	if (unlikely(addr == vend))
-> > +	if (IS_ERR_VALUE(addr))
-> >  		goto overflow;
-> >  
-> >  	va->va_start = addr;
-> > @@ -4753,9 +4752,10 @@ struct vm_struct **pcpu_get_vm_areas(const unsigned long *offsets,
-> >  
-> >  		ret = va_clip(&free_vmap_area_root,
-> >  			&free_vmap_area_list, va, start, size);
-> > -		if (WARN_ON_ONCE(unlikely(ret)))
-> > -			/* It is a BUG(), but trigger recovery instead. */
-> > +		if ((unlikely(ret))) {
-> 		    ^^		   ^^
-> The extra parentheses are redundant and can be removed for clarity.
+> diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
+> index 9a99dfa3c495..27245e86df25 100644
+> --- a/mm/hugetlb_vmemmap.c
+> +++ b/mm/hugetlb_vmemmap.c
+> @@ -238,11 +238,11 @@ static void vmemmap_remap_pte(pte_t *pte, unsigned long addr,
+>    * struct page, the special metadata (e.g. page->flags or page->mapping)
+>    * cannot copy to the tail struct page structs. The invalid value will be
+>    * checked in the free_tail_page_prepare(). In order to avoid the message
+> - * of "corrupted mapping in tail page". We need to reset at least 3 (one
+> - * head struct page struct and two tail struct page structs) struct page
+> + * of "corrupted mapping in tail page". We need to reset at least 4 (one
+> + * head struct page struct and three tail struct page structs) struct page
+>    * structs.
+>    */
+> -#define NR_RESET_STRUCT_PAGE		3
+> +#define NR_RESET_STRUCT_PAGE		4
+>   
+>   static inline void reset_struct_pages(struct page *start)
+>   {
 
-You are right, I will remove it. Thanks.
+Thanks!
 
-> 
-> > +			WARN_ONCE(1, "%s error: errno (%d)\n", __func__, ret);
-> >  			goto recovery;
-> > +		}
-> >  
-> >  		/* Allocated area. */
-> >  		va = vas[area];
-> 
+Reviewed-by: David Hildenbrand <david@redhat.com>
+
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
