@@ -1,276 +1,228 @@
-Return-Path: <linux-kernel+bounces-605183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EC3EA89DFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:27:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88B0EA89E09
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:28:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A041444178
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:25:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF5E93AD405
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C6412957A8;
-	Tue, 15 Apr 2025 12:24:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 608D1296D36;
+	Tue, 15 Apr 2025 12:25:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gKHCSGrn"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="DR0HgK59"
+Received: from outbound.pv.icloud.com (p-west1-cluster5-host8-snip4-6.eps.apple.com [57.103.66.247])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8962951D9
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 12:24:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5FD228A1FE
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 12:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.66.247
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744719855; cv=none; b=RLOT68c0h+j1VA/9CAsZ0lFze2UjY2C+Qjal87gDKUuU105DwUA0ZCkFiBpQcmYB5j4Fkmx/8gsbU3Zy5ZtG6DyrT8zPDbUbtuJx5If5lqljE5OJfFB0EIxkYVNKDmhTof6eeN4erN0VyXAVQdV+4/IkeQ1Q+GaCu3gWQP7jS18=
+	t=1744719925; cv=none; b=rLvjweBsquA6kmdFbx6e1zyz0AeVslwDzxd0PfFB1bm/yL9GTYg3v7zeO8AeilzuMjJL9ydA+0rj7ms2MUvWw0qLu6VstKwMHwpDzxiPPjFeIVgnG5Nw4kpuZ1Rex7SD6LM9KDMMhO0SgZ3MtvCf7C56eD5pKXp9vLeu79mG3mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744719855; c=relaxed/simple;
-	bh=4SRa8Mpoc9AwwHskSZQvVKUeGLUFj+WzI76fQ2MhZAA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RbByF7hrgSbGHTF10YXC3hn1UNr1paL3NLVOTtproPgLJdB6i2AwbXMfSrCRkMwR/L9cGurkapXq7rZ67PiUcvPtf9jOK5Av5HtYW/klZnJ48FQaCjLBAcA2F1I5OLot+ngWYviPzCVPIjUiwJUt3ZAGeVzVTXNGrFKj7kBmbJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gKHCSGrn; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 259504390D;
-	Tue, 15 Apr 2025 12:24:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1744719850;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=JKWTr4r9wCjFtSd2B2VCTIscAppmbhHanfOeEHW9Nxk=;
-	b=gKHCSGrntzEnocHamgulbss+eDVBlcp1a3Cd9uoUObdti6gxJ54zwICUVNABhz/sCgv7wn
-	ofb3SiYrPZYPoQXzPaWJpbbwTp8XJfMTZDWyuGvy09Ycnow5JQFk6ZvXwQcIcMnn2zVh71
-	cn7nH28ZPf6U9Iu0s6Nb/nnlMGFORUlr4KAB1lmvWf6bfZ37UTIHAxxxVaCIz0MrpLT46Y
-	DyWrBw3mX20TjNpOsSDQGrt7/ECOyTZybFUkr/fNsLXHCazO4FHpORNSZuX+5Wlx4mWj86
-	6AnSM0lE29kFL/UyylKgs/UsVQhIi2c0WQueLTGIarNpbfECJSjE/jn47u5Aeg==
-Message-ID: <5ea615d0-8bd7-44eb-9fdb-146b8bbc736f@bootlin.com>
-Date: Tue, 15 Apr 2025 14:24:08 +0200
+	s=arc-20240116; t=1744719925; c=relaxed/simple;
+	bh=jltUQ38KRnxk/jmuA1LlxaWEFSm+NkVCPiXXnAdFpRE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Y9iy+YuLd/YJBvbHBj4i33OQs0g+oh5MJa8OMzWEG3FobZywYiU2gOB3NEHIt4gjmAWSlj4zShAlPSwZrAJ3YaeAtYo+a27yYCDq5mxZvnlt8TgtfgokZ2DEI8Td3A19Q8pmfn3OCC4k34oZJbT8EG1JVI9pNOs6l0xjmlJ3l9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=DR0HgK59; arc=none smtp.client-ip=57.103.66.247
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; bh=xgxhhlEqIkEJ2KCZO6AJq72n4YhBAvp3VflUxswOa9Y=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:x-icloud-hme;
+	b=DR0HgK59oXTDtZh8DRhbuvRwbhy/YziyrZCWNL0juh943oKjePC/NO7TeVXktMmmD
+	 YFdQ1/bVERHCkW2K1A+hwLC/MXcyVf7Zk7izcIgFIH0K4Fs4SdnjAoheOXFxCyWOOY
+	 sb7FuR3czkq5HGx+NSO+2s8d6oguvV6VrUn99Mq8Alih31juepXBUUMD7+2yr5zo7G
+	 5AlUHU4ILRimLn9lSdBLNvPTWk9We2vjTKwp8JZAc7gdBC/ySzofZ7IhcIyw4F9fY3
+	 pAM4fM67xdbCbxpoNJ97XlucZrnyzgEeLe+z3N9+7NmeA84INK48D/P7i3yhjwy9po
+	 y5//1S1R/CZkQ==
+Received: from [192.168.1.26] (pv-asmtp-me-k8s.p00.prod.me.com [17.56.9.36])
+	by outbound.pv.icloud.com (Postfix) with ESMTPSA id EE6F0180093E;
+	Tue, 15 Apr 2025 12:25:16 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Date: Tue, 15 Apr 2025 20:25:00 +0800
+Subject: [PATCH v4] fs/fs_parse: Remove unused and problematic
+ validate_constant_table()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 07/16] drm/vkms: Allow to attach planes and CRTCs via
- configfs
-To: =?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>
-Cc: hamohammed.sa@gmail.com, simona@ffwll.ch, melissa.srw@gmail.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250407081425.6420-1-jose.exposito89@gmail.com>
- <20250407081425.6420-8-jose.exposito89@gmail.com>
-Content-Language: en-US
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
- 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
-In-Reply-To: <20250407081425.6420-8-jose.exposito89@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvdefgeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeekieevtdefgedtkeehteehtddttdefhffhgeejleejjeeluddvhfdugedvkeehveenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddtpdhrtghpthhtohepjhhoshgvrdgvgihpohhsihhtohekleesghhmrghilhdrtghomhdprhgtphhtthhopehhrghmohhhrghmmhgvugdrshgrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopehmvghlihhsshgrrdhsrhifsehgmhgrihhlrdgtohhmpdhrtghpthhtohepm
- hgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehtiihimhhmvghrmhgrnhhnsehsuhhsvgdruggvpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomh
-X-GND-Sasl: louis.chauvet@bootlin.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250415-fix_fs-v4-1-5d575124a3ff@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIABtQ/mcC/2WMQQ6CMBBFr0JmbU1LWwFX3sMYU8dBZiHFVhsN4
+ e4WFkbj8s3890aIFJgibIsRAiWO7PsMZlUAdq6/kOBzZihlaaVRUrT8PLZRbEi6pkJDtmkhj4d
+ A+bOE9ofMHce7D6+lm9R8/UskJaSoUBlErOnk3O72YOQe1+ivMEeS/hbtR9Qiq6irGtEiafsrT
+ tP0BqZtyl7XAAAA
+X-Change-ID: 20250410-fix_fs-6e0a97c4e59f
+To: Jonathan Corbet <corbet@lwn.net>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: Zijun Hu <zijun_hu@icloud.com>, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ Zijun Hu <quic_zijuhu@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Proofpoint-ORIG-GUID: AA4KBPzgyiUMCvSca0xXIiMSyoYGS86k
+X-Proofpoint-GUID: AA4KBPzgyiUMCvSca0xXIiMSyoYGS86k
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-15_05,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0 phishscore=0
+ suspectscore=0 mlxscore=0 bulkscore=0 clxscore=1015 adultscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2504150088
 
+From: Zijun Hu <quic_zijuhu@quicinc.com>
 
+Remove validate_constant_table() since:
 
-Le 07/04/2025 à 10:14, José Expósito a écrit :
-> From: Louis Chauvet <louis.chauvet@bootlin.com>
-> 
-> Create a default subgroup at /config/vkms/planes/plane/possible_crtcs
-> that will contain symbolic links to the possible CRTCs for the plane.
+- It has no caller.
 
-Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+- It has below 3 bugs for good constant table array array[] which must
+  end with a empty entry, and take below invocation for explaination:
+  validate_constant_table(array, ARRAY_SIZE(array), ...)
 
-> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> Co-developed-by: José Expósito <jose.exposito89@gmail.com>
-> Signed-off-by: José Expósito <jose.exposito89@gmail.com>
-> ---
->   Documentation/gpu/vkms.rst           |  9 +++++
->   drivers/gpu/drm/vkms/vkms_configfs.c | 58 ++++++++++++++++++++++++++++
->   2 files changed, 67 insertions(+)
-> 
-> diff --git a/Documentation/gpu/vkms.rst b/Documentation/gpu/vkms.rst
-> index abe7a0f5a4ab..13b96837a266 100644
-> --- a/Documentation/gpu/vkms.rst
-> +++ b/Documentation/gpu/vkms.rst
-> @@ -98,6 +98,14 @@ CRTCs have 1 configurable attribute:
->   
->   - writeback: Enable or disable writeback connector support by writing 1 or 0
->   
-> +To finish the configuration, link the different pipeline items::
-> +
-> +  sudo ln -s /config/vkms/my-vkms/crtcs/crtc0 /config/vkms/my-vkms/planes/plane0/possible_crtcs
-> +
-> +Since at least one primary plane is required, make sure to set the right type::
-> +
-> +  echo "1" | sudo tee /config/vkms/my-vkms/planes/plane0/type
-> +
->   Once you are done configuring the VKMS instance, enable it::
->   
->     echo "1" | sudo tee /config/vkms/my-vkms/enabled
-> @@ -108,6 +116,7 @@ Finally, you can remove the VKMS instance disabling it::
->   
->   And removing the top level directory and its subdirectories::
->   
-> +  sudo rm /config/vkms/my-vkms/planes/*/possible_crtcs/*
->     sudo rmdir /config/vkms/my-vkms/planes/*
->     sudo rmdir /config/vkms/my-vkms/crtcs/*
->     sudo rmdir /config/vkms/my-vkms
-> diff --git a/drivers/gpu/drm/vkms/vkms_configfs.c b/drivers/gpu/drm/vkms/vkms_configfs.c
-> index e9f445043268..2cf97c2b6203 100644
-> --- a/drivers/gpu/drm/vkms/vkms_configfs.c
-> +++ b/drivers/gpu/drm/vkms/vkms_configfs.c
-> @@ -38,11 +38,13 @@ struct vkms_configfs_device {
->    *
->    * @group: Top level configuration group that represents a plane.
->    * Initialized when a new directory is created under "/config/vkms/planes"
-> + * @possible_crtcs_group: Default subgroup of @group at "plane/possible_crtcs"
->    * @dev: The vkms_configfs_device this plane belongs to
->    * @config: Configuration of the VKMS plane
->    */
->   struct vkms_configfs_plane {
->   	struct config_group group;
-> +	struct config_group possible_crtcs_group;
->   	struct vkms_configfs_device *dev;
->   	struct vkms_config_plane *config;
->   };
-> @@ -71,6 +73,10 @@ struct vkms_configfs_crtc {
->   #define plane_item_to_vkms_configfs_plane(item) \
->   	container_of(to_config_group((item)), struct vkms_configfs_plane, group)
->   
-> +#define plane_possible_crtcs_item_to_vkms_configfs_plane(item) \
-> +	container_of(to_config_group((item)), struct vkms_configfs_plane, \
-> +		     possible_crtcs_group)
-> +
->   #define crtc_item_to_vkms_configfs_crtc(item) \
->   	container_of(to_config_group((item)), struct vkms_configfs_crtc, group)
->   
-> @@ -178,6 +184,52 @@ static const struct config_item_type crtc_group_type = {
->   	.ct_owner	= THIS_MODULE,
->   };
->   
-> +static int plane_possible_crtcs_allow_link(struct config_item *src,
-> +					   struct config_item *target)
-> +{
-> +	struct vkms_configfs_plane *plane;
-> +	struct vkms_configfs_crtc *crtc;
-> +	int ret;
-> +
-> +	if (target->ci_type != &crtc_item_type)
-> +		return -EINVAL;
-> +
-> +	plane = plane_possible_crtcs_item_to_vkms_configfs_plane(src);
-> +	crtc = crtc_item_to_vkms_configfs_crtc(target);
-> +
-> +	scoped_guard(mutex, &plane->dev->lock) {
-> +		if (plane->dev->enabled)
-> +			return -EBUSY;
-> +
-> +		ret = vkms_config_plane_attach_crtc(plane->config, crtc->config);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static void plane_possible_crtcs_drop_link(struct config_item *src,
-> +					   struct config_item *target)
-> +{
-> +	struct vkms_configfs_plane *plane;
-> +	struct vkms_configfs_crtc *crtc;
-> +
-> +	plane = plane_possible_crtcs_item_to_vkms_configfs_plane(src);
-> +	crtc = crtc_item_to_vkms_configfs_crtc(target);
-> +
-> +	scoped_guard(mutex, &plane->dev->lock)
-> +		vkms_config_plane_detach_crtc(plane->config, crtc->config);
-> +}
-> +
-> +static struct configfs_item_operations plane_possible_crtcs_item_operations = {
-> +	.allow_link	= plane_possible_crtcs_allow_link,
-> +	.drop_link	= plane_possible_crtcs_drop_link,
-> +};
-> +
-> +static const struct config_item_type plane_possible_crtcs_group_type = {
-> +	.ct_item_ops	= &plane_possible_crtcs_item_operations,
-> +	.ct_owner	= THIS_MODULE,
-> +};
-> +
->   static ssize_t plane_type_show(struct config_item *item, char *page)
->   {
->   	struct vkms_configfs_plane *plane;
-> @@ -272,6 +324,12 @@ static struct config_group *make_plane_group(struct config_group *group,
->   		}
->   
->   		config_group_init_type_name(&plane->group, name, &plane_item_type);
-> +
-> +		config_group_init_type_name(&plane->possible_crtcs_group,
-> +					    "possible_crtcs",
-> +					    &plane_possible_crtcs_group_type);
-> +		configfs_add_default_group(&plane->possible_crtcs_group,
-> +					   &plane->group);
->   	}
->   
->   	return &plane->group;
+  - Always return wrong value due to the last empty entry.
+  - Imprecise error message for missorted case.
+  - Potential NULL pointer dereference since the last pr_err() may use
+    @tbl[i].name NULL pointer to print the last empty entry's name.
 
+Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+---
+Changes in v4:
+- Rebase on vfs-6.16.misc branch to fix merge conflict.
+- Link to v3: https://lore.kernel.org/r/20250415-fix_fs-v3-1-0c378cc5ce35@quicinc.com
+
+Changes in v3:
+- Remove validate_constant_table() instead of fixing it
+- Link to v2: https://lore.kernel.org/r/20250411-fix_fs-v2-2-5d3395c102e4@quicinc.com
+
+Changes in v2:
+- Remove fixes tag for remaining patches
+- Add more comment for the NULL pointer dereference issue
+- Link to v1: https://lore.kernel.org/r/20250410-fix_fs-v1-3-7c14ccc8ebaa@quicinc.com
+---
+ Documentation/filesystems/mount_api.rst | 15 ----------
+ fs/fs_parser.c                          | 49 ---------------------------------
+ include/linux/fs_parser.h               |  5 ----
+ 3 files changed, 69 deletions(-)
+
+diff --git a/Documentation/filesystems/mount_api.rst b/Documentation/filesystems/mount_api.rst
+index 47dafbb7427e6a829989a815e4d034e48fdbe7a2..e149b89118c885c377a17b95adcdbcb594b34e00 100644
+--- a/Documentation/filesystems/mount_api.rst
++++ b/Documentation/filesystems/mount_api.rst
+@@ -752,21 +752,6 @@ process the parameters it is given.
+      If a match is found, the corresponding value is returned.  If a match
+      isn't found, the not_found value is returned instead.
+ 
+-   * ::
+-
+-       bool validate_constant_table(const struct constant_table *tbl,
+-				    size_t tbl_size,
+-				    int low, int high, int special);
+-
+-     Validate a constant table.  Checks that all the elements are appropriately
+-     ordered, that there are no duplicates and that the values are between low
+-     and high inclusive, though provision is made for one allowable special
+-     value outside of that range.  If no special value is required, special
+-     should just be set to lie inside the low-to-high range.
+-
+-     If all is good, true is returned.  If the table is invalid, errors are
+-     logged to the kernel log buffer and false is returned.
+-
+    * ::
+ 
+        bool fs_validate_description(const char *name,
+diff --git a/fs/fs_parser.c b/fs/fs_parser.c
+index c5cb19788f74771a945801ceedeec69efed0e40a..c092a9f79e324bacbd950165a0eb66632cae9e03 100644
+--- a/fs/fs_parser.c
++++ b/fs/fs_parser.c
+@@ -379,55 +379,6 @@ int fs_param_is_path(struct p_log *log, const struct fs_parameter_spec *p,
+ EXPORT_SYMBOL(fs_param_is_path);
+ 
+ #ifdef CONFIG_VALIDATE_FS_PARSER
+-/**
+- * validate_constant_table - Validate a constant table
+- * @tbl: The constant table to validate.
+- * @tbl_size: The size of the table.
+- * @low: The lowest permissible value.
+- * @high: The highest permissible value.
+- * @special: One special permissible value outside of the range.
+- */
+-bool validate_constant_table(const struct constant_table *tbl, size_t tbl_size,
+-			     int low, int high, int special)
+-{
+-	size_t i;
+-	bool good = true;
+-
+-	if (tbl_size == 0) {
+-		pr_warn("VALIDATE C-TBL: Empty\n");
+-		return true;
+-	}
+-
+-	for (i = 0; i < tbl_size; i++) {
+-		if (!tbl[i].name) {
+-			pr_err("VALIDATE C-TBL[%zu]: Null\n", i);
+-			good = false;
+-		} else if (i > 0 && tbl[i - 1].name) {
+-			int c = strcmp(tbl[i-1].name, tbl[i].name);
+-
+-			if (c == 0) {
+-				pr_err("VALIDATE C-TBL[%zu]: Duplicate %s\n",
+-				       i, tbl[i].name);
+-				good = false;
+-			}
+-			if (c > 0) {
+-				pr_err("VALIDATE C-TBL[%zu]: Missorted %s>=%s\n",
+-				       i, tbl[i-1].name, tbl[i].name);
+-				good = false;
+-			}
+-		}
+-
+-		if (tbl[i].value != special &&
+-		    (tbl[i].value < low || tbl[i].value > high)) {
+-			pr_err("VALIDATE C-TBL[%zu]: %s->%d const out of range (%d-%d)\n",
+-			       i, tbl[i].name, tbl[i].value, low, high);
+-			good = false;
+-		}
+-	}
+-
+-	return good;
+-}
+-
+ /**
+  * fs_validate_description - Validate a parameter specification array
+  * @name: Owner name of the parameter specification array
+diff --git a/include/linux/fs_parser.h b/include/linux/fs_parser.h
+index 5057faf4f09182fa6e7ddd03fb17b066efd7e58b..5a0e897cae807bbf5472645735027883a6593e91 100644
+--- a/include/linux/fs_parser.h
++++ b/include/linux/fs_parser.h
+@@ -87,14 +87,9 @@ extern int lookup_constant(const struct constant_table tbl[], const char *name,
+ extern const struct constant_table bool_names[];
+ 
+ #ifdef CONFIG_VALIDATE_FS_PARSER
+-extern bool validate_constant_table(const struct constant_table *tbl, size_t tbl_size,
+-				    int low, int high, int special);
+ extern bool fs_validate_description(const char *name,
+ 				    const struct fs_parameter_spec *desc);
+ #else
+-static inline bool validate_constant_table(const struct constant_table *tbl, size_t tbl_size,
+-					   int low, int high, int special)
+-{ return true; }
+ static inline bool fs_validate_description(const char *name,
+ 					   const struct fs_parameter_spec *desc)
+ { return true; }
+
+---
+base-commit: 8cc42084abd926e3f005d7f5c23694c598b29cee
+change-id: 20250410-fix_fs-6e0a97c4e59f
+
+Best regards,
 -- 
-Louis Chauvet, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Zijun Hu <quic_zijuhu@quicinc.com>
 
 
