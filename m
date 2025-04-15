@@ -1,342 +1,238 @@
-Return-Path: <linux-kernel+bounces-604718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECD81A897B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:16:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C246A897B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:15:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B10FC7A4FE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:15:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 441583B81AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:15:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46DB227F75F;
-	Tue, 15 Apr 2025 09:16:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC7F27F74F;
+	Tue, 15 Apr 2025 09:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b="kF1GqHsT";
-	dkim=pass (1024-bit key) header.d=IMGTecCRM.onmicrosoft.com header.i=@IMGTecCRM.onmicrosoft.com header.b="YBEOLifl"
-Received: from mx07-00376f01.pphosted.com (mx07-00376f01.pphosted.com [185.132.180.163])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p4+61tZf"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B3311C8634;
-	Tue, 15 Apr 2025 09:16:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.132.180.163
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744708578; cv=fail; b=CXIMQRxQjrkhcXNADFNfRpfuwnScXmodoEd2/mWeYhCualtr5gYVt8ARnLQBH0kx28Ef5LPcCsz+YL+I0fE6VI2kPjmO7AQk2t+QN6pIMFdtOd3tG0BrnqB8nMQdYreSyRAnfLq8MkZHjmiB2alY02QJSQ5eBF28+EQ0h1xg4lY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744708578; c=relaxed/simple;
-	bh=WQyQMEefTdXvZTSmZ7iAunhr9X3LrT142oIm14kBuXY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=g3cI5pr4cap1aMeoGlVHtuo/QJAxS/0BBdqnv3ML/WTaKdNOSxOWUoalgi1JKtx8URsNmAMVp00uVz17DfuoWGE5r8XuTmJdn7ayjGNNEJ9Vxph1XcuE22qAGVCsQAM+hWpS+zeGHjmfIEAnc6HrZeyEsLK6G8SHc6AxkkdSN6s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com; spf=pass smtp.mailfrom=imgtec.com; dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b=kF1GqHsT; dkim=pass (1024-bit key) header.d=IMGTecCRM.onmicrosoft.com header.i=@IMGTecCRM.onmicrosoft.com header.b=YBEOLifl; arc=fail smtp.client-ip=185.132.180.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=imgtec.com
-Received: from pps.filterd (m0168889.ppops.net [127.0.0.1])
-	by mx07-00376f01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53F5YrMk014874;
-	Tue, 15 Apr 2025 10:15:27 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=imgtec.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=dk201812; bh=PGObreo/yEWaijscsYbYZHIpQ
-	qswJCw6mKw7pKuwNC4=; b=kF1GqHsT3u37juBTFQk+yUImT8L0e/QoaP2o5bgzA
-	uapghvF6P6bNonG29i66XEv6bMf6gKyw1nMDieVHl1MjuoeYje7/W7BVGPYVsoYM
-	7E6tlc6isDYGdVpHUe8V2X081nCAtMC4WFsQE2+I9YC/t9kFFERXhKS+kpjZHy/W
-	hfgZrEOZ++7Y/ClnTaApW1UNsNlvuHPZbUNM80geZOWWJEoqkiUolUqUFRx0HsLn
-	xYLFlJn2YdAFz+T9M91TafLNOK6xNUeMMOZBaK5DA41VbEW9HViBz7X1qGeB7Pat
-	EUpJ3CeF5WiTX5Oh0LE64ecRqphcfnfdXxdxrdevHsaaw==
-Received: from lo0p265cu003.outbound.protection.outlook.com (mail-uksouthazlp17012052.outbound.protection.outlook.com [40.93.67.52])
-	by mx07-00376f01.pphosted.com (PPS) with ESMTPS id 45yg8vt113-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Apr 2025 10:15:25 +0100 (BST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YANrASPEPkz5sbzF0NHiDKDxp1gQMPw1t8y0m4dIX9QOVsb8ynQJghzXdpqB03oA4h6fEtC44qipzENFHgUW7/rzRc9RMGueKrI/WDE6kEOM3ZIE+uGJUux2lFVDHnfBKRtzoeG07JHUjEi3pAB5LmL56AQ2ifBnOTEadx3/w4ZCBGAPrX7UuZUnVCncRyXqmVQlWpo1wM6WXeoy6z36TMHGjks+WGS8wotuF5RzC4Tq48mVKsNZhW7LGu5IV1+FzyhxWJ78fDZm1Bh8GQ+hBRBGZnCSKGn/rPZ0+r0XIxoEaLp0bCjjJqP53D4zaXpecEnyVo31CNQ/AChfOMEr6A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PGObreo/yEWaijscsYbYZHIpQqswJCw6mKw7pKuwNC4=;
- b=WLd0wMtbKRRHPZMJha+B16wCbJuIRfbLNS2X9+/78XVn3HiQ12zAMZmXgrD8WNTB769tf2wH/b96mUJJ6pNhk7L5NB3QCLpkwkR5KYbONBEpkwaN0MOjtPq4yjW4O/E2pB7Ilv4Hk8wptjnQYtrBdjwkofzUXHxWMzuqSBHQcw2ud9l4AoqVAMcMFRdb4gZ5y7+1V7RGUgc8ujRb65zI8+SOalQ4InddMK1wRP+eGbddiNdA95p7MMA3P/S9GyKiFtUUVF30ANVctgoby85CR9X8mHqCrqlLe4GQuRtS9200+I8wyytWe/LvfSbcVqnINCTYjzzEqtqKGxnwdisj+g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=imgtec.com; dmarc=pass action=none header.from=imgtec.com;
- dkim=pass header.d=imgtec.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1100C1C8634
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 09:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744708541; cv=none; b=Z7olBPQXK3UnNGa9ut3b5lp4KAIw4ecPFuxam4JjOmYvK5lmiP6+4Sf4bAVr2VaJUc/IAeTebuNTUU2Il7BORg7Ijy/pi++pTDfzGLdyD2Wko060iM8So8eTDCnmTmAHo32SSUXgUNn50PPPakGx2x6o3c7YYqO8iVUxTwAA5Rs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744708541; c=relaxed/simple;
+	bh=Xb56mDUhjw/Q1oLqLQeKgmtGUX5Xo/aS80fWKCCJGY4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lfauluCK2rhmxK2eCo4ZRn8rXJJ+LrLGKK3BeRVSPBIMpUml9EWWcRynyPgn723UOzJCHOqAZsOn2zky5de+ydIA7GVSgTGAREDr/mp5xBBHwovtQvJWm+VCCOdPZeCJlNLQmyEyIkTGP3qIsUVDOupOi/r+4ayjpk6fhFn0v4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p4+61tZf; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3912fdddf8fso4217630f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 02:15:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=IMGTecCRM.onmicrosoft.com; s=selector2-IMGTecCRM-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PGObreo/yEWaijscsYbYZHIpQqswJCw6mKw7pKuwNC4=;
- b=YBEOLiflywKLJ/K/LybT9WHafpjtXGv+R9rdPC6g4+uzEE5elysRRqbJjQ7R/CVb0m2hg4d38ZCa35ppNAIhfvpV/W6qVXgldKkNB/PuAVG+d+be0PWvODgBDUcLS7ghOiciC5gOvZeNGXjeSKlJCsO/ohGCz4yY0Gug3jKP5Oo=
-Received: from CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:e7::8) by
- LO8P265MB7597.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:3a7::17) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8655.19; Tue, 15 Apr 2025 09:15:23 +0000
-Received: from CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM
- ([fe80::8e9d:6b2f:9881:1e15]) by CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM
- ([fe80::8e9d:6b2f:9881:1e15%3]) with mapi id 15.20.8655.018; Tue, 15 Apr 2025
- 09:15:23 +0000
-From: Matt Coster <Matt.Coster@imgtec.com>
-To: Maxime Ripard <mripard@kernel.org>,
-        Michal Wilczynski
-	<m.wilczynski@samsung.com>
-CC: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Danilo Krummrich
-	<dakr@kernel.org>, Pavel Machek <pavel@kernel.org>,
-        Drew Fustini
-	<drew@pdp7.com>, Guo Ren <guoren@kernel.org>,
-        Fu Wei <wefu@redhat.com>, Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Philipp
- Zabel <p.zabel@pengutronix.de>,
-        Frank Binns <Frank.Binns@imgtec.com>,
-        Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann
-	<tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter
-	<simona@ffwll.ch>,
-        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH v2 4/4] drm/imagination: Skip clocks if platform PM
- manages resources
-Thread-Topic: [PATCH v2 4/4] drm/imagination: Skip clocks if platform PM
- manages resources
-Thread-Index: AQHbreQa3V8I6/6Uk0avpnwvKJG4OrOkcgwA
-Date: Tue, 15 Apr 2025 09:15:23 +0000
-Message-ID: <1226d261-247a-4a7c-a414-7db4a24fab9e@imgtec.com>
-References: <20250414-apr_14_for_sending-v2-0-70c5af2af96c@samsung.com>
- <CGME20250414185317eucas1p139284a38dc4418ac90bd081c2825142a@eucas1p1.samsung.com>
- <20250414-apr_14_for_sending-v2-4-70c5af2af96c@samsung.com>
- <20250415-poetic-magenta-cicada-9d1ee7@houat>
-In-Reply-To: <20250415-poetic-magenta-cicada-9d1ee7@houat>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CWXP265MB3397:EE_|LO8P265MB7597:EE_
-x-ms-office365-filtering-correlation-id: 2a38b341-5e78-47fa-37e1-08dd7bfe0d8d
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|7416014|1800799024|376014|38070700018|4053099003;
-x-microsoft-antispam-message-info:
- =?utf-8?B?bGRVWC9qVlllU3F5NSs3TkJlcncyMHBsaXh2RnhFM0ZCWGE4QThQYkFzMEsz?=
- =?utf-8?B?bzFnaVhmUGpMSjBjTUlmVDhXd1RYM3VhMUNqR1pUVVBvMDFSN1Z1Rk9FNys5?=
- =?utf-8?B?dmZ4ZisrcURhTmdraGNDaFArMExST0N0WUZ0b1hHNWNKMjR1amdKd2kya1BS?=
- =?utf-8?B?VTY5MENKS0pxcDB2QUs3VWhmVDBLSFlpdVRGWFY4b0piUVF6MFU1MkhtUnNX?=
- =?utf-8?B?OHIrbkFxbTFoL0tKTEpVUnNFNU9sQm51L1ZTZmFHTWEwR2VhaHcwUy9PcjFp?=
- =?utf-8?B?QWpWTGRqZEtVaCtxZkp0Y0UvUkhHRTBHWlJ2cElwTzlmcnVXeUplVHlKTFlY?=
- =?utf-8?B?QW1la2RqVHpGdDFydllMZkdwYTVBclVHVEk2SEVlMHNGSFlRa1hGNEp0Qjcx?=
- =?utf-8?B?M0ZiVjdPVFloR3dXTDg5b2pBVHBvLzg3d2xyeThrTzdESjRGY0tkLzRCanVX?=
- =?utf-8?B?MmdjZ3JZSS82YVVjRWxkVTdsYXNONEpUTkRXOWovanVPMi9VWUp3OTMyK1Z2?=
- =?utf-8?B?OTQ0aG9kYzBlVlNCQVFsL2NScDRLYVk3OVNNQUYyYXE3LzI3Mmx4UTk1NW1h?=
- =?utf-8?B?dTJTNkNncmVQVWtYamc0VGV0T1Z2ZjZWN3JseFZkYU1IYXFWTmZTRzdJS25T?=
- =?utf-8?B?bEZxVG9MYmRNL3d3NXZ3UndvaDdoNm9aM3lCam9LdmhKR25LK1ZzaFQrekNY?=
- =?utf-8?B?dFlCUkYrdzZvUU1mMHVjMkFZdzFVZEZsYk1SY1FhSjdhT09NUG1FQWRrMVNu?=
- =?utf-8?B?dWdmNXdTZVBFWlU3WUtPa3grMXFDTkF4czROTGFoMGlXQ2grWGV5UGppQzdY?=
- =?utf-8?B?OThSdXZhNW45NHcyRkhHWFcvbWVWOXpGYVVOK21qNnR2eWxNSy96Skw0SDhu?=
- =?utf-8?B?MHZaT1MxMVJ1eXhQTGo4STd4dTlkTGkvTGJFQnFMUHVIbC9BYS9zV2p0Rzls?=
- =?utf-8?B?ckRFSm4xNmRnMkl3ZlFVSDA3eC9vWTExRUJoZ1NhQzcxZjNENDZyVWFlKzVB?=
- =?utf-8?B?ZFR4ZE16RGJ3YzcyVyt4SVFZWXRYUEZzQ1FsNnY3M1pqdExQb2puVmJUcDZB?=
- =?utf-8?B?THZZR3pCZURVd3hOK0VTNVo2OW1IZE9nTTkrVFRJS2JMMm1zVlR1WWpJQS80?=
- =?utf-8?B?NmFIWVZZbk9jRldjK1BtSE1Vb05BM2thaEg2YzFXVEtTUmpjMFBJZDNETHNp?=
- =?utf-8?B?R0pWQ05VL2s5MlkwZFQxVmJSTzFUdWs3WThWblo3TVBUc0VUZjFIZDRmZXhF?=
- =?utf-8?B?SnF6d2htYm9Mdmh4Sk1XYTZkYkttYVMyZnpESWFSL3hNdUVIY1RWMDBDdzAv?=
- =?utf-8?B?SlVxV29Oa3lRUm8yVHBJQXB6MmpPa3FSVzJvWk8wRkkyeVlwM0lZdnVRa3Rm?=
- =?utf-8?B?WU9KeVkxTzUyOThnZFp2elZCeU1PNlpLRGU2d1FaSWNpeE1FR2lUTFJ3T0tk?=
- =?utf-8?B?TzBVcHVoQndpV2J1WE8rK0lVdWJRaVpFS2tlN1M5MXEwYlNjRFAwVFczRkxN?=
- =?utf-8?B?b0Q1K0tqcGNnMmZ3WnM0WUJ0b2tCQ0k1RDh4TXZuWDFxcWFyU1ZIdW85YzdG?=
- =?utf-8?B?d3hMU0ZPYzV5aEltdVc3MGJudEM2MHdmdGNNVVFHeXVwZWlobmV3V2NKZlBz?=
- =?utf-8?B?dzVHZGVacjB6VXJiZ2ZXSnc5enNDbWJxYXpNRUlZRGE1UzlHZnhoRFdOdDVn?=
- =?utf-8?B?b2Q0Nzg2dUxnajI5N0VCL2RnQWxISmdhVm5hMnNEYW5ONGg2VDdxcDZZUUxY?=
- =?utf-8?B?cXFJbU0vejFYZVlaVEtMY0pIbG9RKzdhVDlibE1FaHpDQWlkL2plWEtSb0RG?=
- =?utf-8?B?M0o0T25tNHA1R210djViVHFOZmxMZjJxVk9LclZHN2NDYlQ2OHZWSGpYejRZ?=
- =?utf-8?B?VmFYS0c4L1kzaER4YWNsb01Remd6d1kzbm5xZmN1aHl0M2VEdDVVNUpnV0RJ?=
- =?utf-8?B?eWM1cEp5Ty9WLy81TTk3Q05XR1lOdTNRTmFSZ0l6WlVGZ1V4RU1LVVVybHU0?=
- =?utf-8?B?SDlBZlVLVWVBPT0=?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(1800799024)(376014)(38070700018)(4053099003);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?R0N3S1BLYTgrbkxpd2JTZ2hIeHZEVlFPTkNseXdVelYyQzE4WnFGR0c1dDRB?=
- =?utf-8?B?SDloQUJCckF4ckxxZkZnTDMzRWJ4djBjdkJzTjY3ZWRHMng5MjU0djM0Y2pO?=
- =?utf-8?B?czVQRnVEeHR2MXhsM3NDYy9KTENCR0VGY0VLZXRtbHZITzlXc2trb0NuRHBH?=
- =?utf-8?B?NUFxdGh5L2NmNHBGTm5yaWR3TG5DQWJjTVp5RHdRZFM0TU9sRXVEaFMzV1lq?=
- =?utf-8?B?RnowWFp3cTBSdHNOYUpwMGdZMWo2OTZES3dpdWJFaDNmcUtqZ3I2UWhXM1RJ?=
- =?utf-8?B?RmduYUM0endydjNoOEc4NFpnSU9qYUN6Y3FPcVFFVWtIZndWVGVvVktwbmQ2?=
- =?utf-8?B?dFdHMGRva1c2ZTBTQkJPTnRMSlM1UVgrZzFEcU9jakZGMzQwd2N6ZGtFMDhC?=
- =?utf-8?B?cE9kRTNkdGhSZjVsMzJpcS8zaUFhSEFFYWQwWmxSWkhKSkRlVm91bHNOd0hN?=
- =?utf-8?B?aVFIY29ITFlaSjNabkc2YVhqaWx0ZUhQcDFHdk10Zml5YXI2bDJYMC9SZm1u?=
- =?utf-8?B?M2xsZE5hMFRnd1pFbHo2SXNJZkFmZXZkTWo4K202RVNmWVRBTUp5VU90a3BT?=
- =?utf-8?B?M3FNbDdiQVN0OXdHYTZkcGh6WWpSdC9PQmNTOUN4bWhyTlVFaUc2NkV5T1ZM?=
- =?utf-8?B?QVJ2bDFtVllOWHUyemg1UVhqTGNnM2pyMnFPVEZ1MmRGS2ZrMitQTmQydHJC?=
- =?utf-8?B?V2J2M0wrSFU1RUhCdUFZUVQ2MnRoazdsaEtRK3NJVkMwbEpMdWY5RDZ1ZDJT?=
- =?utf-8?B?QnFRQU5KdkQxZ1pzRGFvYlN3dzljcGJ6WVJlMWovOExaSFJlZ2VHM01vcDE0?=
- =?utf-8?B?dWxHNUVSSFhNTnhvcjFEU0pNSnY3b0FUaHBuWll1VzM1VDFKZUdTR0kxZEZH?=
- =?utf-8?B?cmNjVnVkY083SWZXcHlvUHROTjk2Mkw3UG5EbU1JQ3VoWFA4R3VrVHREdjFT?=
- =?utf-8?B?OHVJczUrQjJJazZSM0Zaa2FaZ1EwYktLSmtJMU9RcHpKbG1nbXZKSGp4V0NE?=
- =?utf-8?B?TVRMMEVMZGJaN1FQUDNwSkludjJRcHpQdStudzF4eE4yYlRIQkhjNHBqRjJr?=
- =?utf-8?B?alA2TEphSTNpRVhWRFAraDY4V0o0MzlLdVFPQUFVdHpVYjZPeGI3bTZiUUhJ?=
- =?utf-8?B?L2lIRUZSNFFEZittTk9LdmlsUG9UTGVwL2IwaEM2ZUh2dWxjUzI1Z3I3WE15?=
- =?utf-8?B?WXFUeHdTVGpsWi92clREb1ZFTSs0RC9MTnF5U2Z6eSt4SWRld2NibVJQeHdI?=
- =?utf-8?B?ejZoUXNGMktNYVN4eDhDZGxhSWZTcVozRnZ6NUNhZW1Td2tzUVRQK21xMmFm?=
- =?utf-8?B?NkFCSGd4OEZQRkhIayt5R3FrVVY1SG1pZE02NlRQVldkSXZtVkpQR0FPSjcw?=
- =?utf-8?B?eHlrNGk1SUkyRmo3Y0Nuc3B4aWRyQkxoQk1zN1pDWkh6T2VZZFYwWklpMkkz?=
- =?utf-8?B?c2lWUi9pSXNIU1k3ZTVtYjdzK3E2T2JxZDQwRWRpV3FvaVV0eXludnl0NlVP?=
- =?utf-8?B?bEI4emRvTlV3SHdFTmhJM1RhcmpuVk1ianpiVVI3Szh3TjFZaE9wWHpFOTli?=
- =?utf-8?B?ay9SM2FScGxOREt0eFE1WmRjUXZDeEQ1a2pLVFdTWUowME1DTFVoQ3RHbjhV?=
- =?utf-8?B?QmU5NHlaakhxc0JqL3NLb2xMTUdYZ0twNEVZblZmd0dhY01Vd3MxdStqbnI0?=
- =?utf-8?B?UHZOQjJMS3NRLzAzRUx0TXpmQmYzcWtVL3Rjb2dLMnZPR2FRd011T3R1NmlO?=
- =?utf-8?B?SERlVUVBck5MWG5sbHYvUkhNZXU5THdzMVlzQmlqc1hqcHQ5eHlaTmNzN0hM?=
- =?utf-8?B?OCtkaktuSC80UTErdCtheGovZDNZaTE1RVA1YXUzMnVYZGFBMEV4bHdaQi9Q?=
- =?utf-8?B?WkNzQlo4MC94dUZUdEhNRlZ6cUIxS2ZRVnYreXJlV1dBd0pjWHpKMFVac0Vz?=
- =?utf-8?B?U040VE5rRU0xZmJHQ0pjd2lGai9Yd2ROOE56enJ6WWxpUklFeVZRSWE0TmVx?=
- =?utf-8?B?cG1WUGkzaCtKOVk5VVNrd3dwcVBUQjQzQm1mY21RZjNCd2REWDFzTFJWMHhN?=
- =?utf-8?B?ZzFMZ3hhT2x5QkIvZzIxYUFyWXRNTjFvbDZVa3U2bkUzaHlVWVhyZzNJMG53?=
- =?utf-8?B?R2ZEdjArR3UvNFVmd2JDY3lubWF2OXJKQzZRdDRDcVF2QUIyUEcrY3EwTzJ6?=
- =?utf-8?B?VWc9PQ==?=
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="------------7eIK9eS3654lDBA7R0WfEFcK"
+        d=linaro.org; s=google; t=1744708538; x=1745313338; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=a5vJVCTJwtq6/DnoPIdPI95VzLb9KuC0ho+ih6r4jso=;
+        b=p4+61tZfZsRtLrQ5oB37BJMO/eOm3NYN/GGX0TK1gaFwTEzG4G5504m4qJcZRKljQw
+         3a35414jm03uVrhdE5YSOQmyd6J7PdHIjIb/qm31TRuULvZWYWVAxAatDKZets0dP1dR
+         h+vMrEEgq/qPRq5r/QPTQFWX0TIbJ4KwvVjDMq+mE77WPNuprKFQadF5re9zM3vmEbDC
+         gN+VJ7/EF8w9QwskePUs92+BzzQKhdR98W34Z6cXhGCn5HLsOu2yFGbX3V3q3TRDrlag
+         AsaXTepufABky3aHTLlUIEX4LCWO+N+HdK/1ouOvi6pqgbyeTOzNeN/6qYpKj/4rKzgz
+         r6rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744708538; x=1745313338;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=a5vJVCTJwtq6/DnoPIdPI95VzLb9KuC0ho+ih6r4jso=;
+        b=CCz0zPNsCyP89L69VY3wKyt44AVRRgItFO89GaAWMDc4O/MMCI84AFtbHjMyBBNYfU
+         kOswD0thw4tOKPbB/BaZGk978/ESwbCNWfYXKmLAqAsjOLyut558up6kanXsVR+QyqdC
+         MKiC7g9Elzb68VRy2zFZjpHrjikJ/oYubUeL3qlziZ+8gDAhBozfaKKkunMeodTWk8A7
+         Pp4b7pEe5cJNgFQ+Bb5h6H4iq3EowVll4IwDbED2uK2cDEdBiKLX0B7bBGPFKzq4sWVY
+         py2dM8ku1nvOkH18HH05TDFd2LXEtbICxSUXTMMv1quM7EYBJ2bS/KlbS7horU8OA6w1
+         ztXg==
+X-Forwarded-Encrypted: i=1; AJvYcCWg7VlgdP8oC6j8qSUFz5mxOndrMyS4R9GwfjIemZeM6U4PqLjMFa4TNF7EZRrhuvco6StzAF7Vnp55h8A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeCT3XeYZPIA/wQ0ox/K5yVugLEZei02utHKIQM+ZvNrVqIiOU
+	JYJ+k6GoNTkXcQzWyl3Im4p6Yas0eNegIExG5WfoaZl3GMkIqrVwZkOW78TYgTU=
+X-Gm-Gg: ASbGncvwq+WivByWTznb2dLbS4hG3W6FxLHDA9GEUPtI6BE5s/67UHTgi1rV7pZnFqM
+	iasB0ijcXV6ABOcYCvcrtLGWl9MlXY9otminokhegezuh6gF8l3kESsNccfhslXT9DezkCUZtzU
+	Mqxj8priOfyi/wHPrUmL2n1g6VanvAz3l1tqnMCxlEjxVYNxwgDJg5Xdne86C3XD5FvrVmwbE/2
+	B5C2HCA3rDqKePkVCt2q/QusoStRaQIaQLYdeRRPuSjaN6hvPrWAgWTlvZFlCn3G3KfPIFVjtka
+	mNl38n38KKePUIcspU+4zJImL2OVBnFfko0/qf0o3pk8c9D1G6kyxaoHwCHjkaqyLkpJyZc=
+X-Google-Smtp-Source: AGHT+IEfr/Hk5p9L21/uIcg8UOwfZhTDJAOMWzS89QUdqyXz4YBi2QMOGRnZPOYkn8+5CJxQQ8lFQQ==
+X-Received: by 2002:a5d:5989:0:b0:39c:11a1:21d6 with SMTP id ffacd0b85a97d-39edc30b4fdmr1951577f8f.17.1744708538062;
+        Tue, 15 Apr 2025 02:15:38 -0700 (PDT)
+Received: from [192.168.1.47] (i5E863ACE.versanet.de. [94.134.58.206])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f2338dc13sm209176705e9.3.2025.04.15.02.15.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Apr 2025 02:15:37 -0700 (PDT)
+Message-ID: <6275ada5-f7c4-42cd-8d47-f4cbf0a0d4cc@linaro.org>
+Date: Tue, 15 Apr 2025 11:15:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: imgtec.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2a38b341-5e78-47fa-37e1-08dd7bfe0d8d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Apr 2025 09:15:23.5219
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d5fd8bb-e8c2-4e0a-8dd5-2c264f7140fe
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: jclKssrQAtM26agJyrlFaVlIAoXl+C6b3olkYwMN4OG0thT23zFh0YCBaxjX2x6PUFbhCeN+MS9H5Dwu2gYDtA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO8P265MB7597
-X-Proofpoint-GUID: QMdwYOF3KSjUoWwJ0QoUg1R3ADa6VogM
-X-Authority-Analysis: v=2.4 cv=OMsn3TaB c=1 sm=1 tr=0 ts=67fe23ae cx=c_pps a=+8G7KV7MoNjfk4g9SO/OOg==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=XR8D0OoHHMoA:10
- a=NgoYpvdbvlAA:10 a=hD80L64hAAAA:8 a=r_1tXGB3AAAA:8 a=cg-36aUXAHM9IJLQJ2MA:9 a=QEXdDO2ut3YA:10 a=NGHoSze0NoZO2hb-OsAA:9 a=FfaGCDsud1wA:10 a=t8nPyN_e6usw4ciXM-Pk:22
-X-Proofpoint-ORIG-GUID: QMdwYOF3KSjUoWwJ0QoUg1R3ADa6VogM
-
---------------7eIK9eS3654lDBA7R0WfEFcK
-Content-Type: multipart/mixed; boundary="------------0T4pGmpUW4blsCVOiRdsA0ib";
- protected-headers="v1"
-From: Matt Coster <matt.coster@imgtec.com>
-To: Maxime Ripard <mripard@kernel.org>,
- Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
- Danilo Krummrich <dakr@kernel.org>, Pavel Machek <pavel@kernel.org>,
- Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,
- Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>,
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] arm64: qcom: sc7280: Move phy, perst to root port
+ node
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, Frank Binns
- <frank.binns@imgtec.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, m.szyprowski@samsung.com,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
- dri-devel@lists.freedesktop.org
-Message-ID: <1226d261-247a-4a7c-a414-7db4a24fab9e@imgtec.com>
-Subject: Re: [PATCH v2 4/4] drm/imagination: Skip clocks if platform PM
- manages resources
-References: <20250414-apr_14_for_sending-v2-0-70c5af2af96c@samsung.com>
- <CGME20250414185317eucas1p139284a38dc4418ac90bd081c2825142a@eucas1p1.samsung.com>
- <20250414-apr_14_for_sending-v2-4-70c5af2af96c@samsung.com>
- <20250415-poetic-magenta-cicada-9d1ee7@houat>
-In-Reply-To: <20250415-poetic-magenta-cicada-9d1ee7@houat>
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org,
+ linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ quic_vbadigan@quicinc.com, quic_mrana@quicinc.com
+References: <20250414-perst-v2-0-89247746d755@oss.qualcomm.com>
+ <20250414-perst-v2-2-89247746d755@oss.qualcomm.com>
+ <511f8414-bbb1-4069-a0a6-f7505190c1e0@linaro.org>
+ <7atbwco3htsrfzfb5hd36t3tprqdgcxbtvggdww7pabibbs44i@zncb2tznzzvc>
+Content-Language: en-US
+From: Caleb Connolly <caleb.connolly@linaro.org>
+In-Reply-To: <7atbwco3htsrfzfb5hd36t3tprqdgcxbtvggdww7pabibbs44i@zncb2tznzzvc>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---------------0T4pGmpUW4blsCVOiRdsA0ib
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
 
-On 15/04/2025 09:55, Maxime Ripard wrote:
-> On Mon, Apr 14, 2025 at 08:52:58PM +0200, Michal Wilczynski wrote:
->> Update the Imagination PVR driver to skip clock management during
->> initialization if the platform PM has indicated that it manages platfo=
-rm
->> resources.
+
+On 4/15/25 09:59, Dmitry Baryshkov wrote:
+> On Mon, Apr 14, 2025 at 02:49:00PM +0200, Caleb Connolly wrote:
 >>
->> This is necessary for platforms like the T-HEAD TH1520, where the GPU'=
-s
->> clocks and resets are managed via a PM domain, and should not be
->> manipulated directly by the GPU driver.
 >>
->> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
->> ---
->>  drivers/gpu/drm/imagination/pvr_device.c | 14 ++++++++++----
->>  1 file changed, 10 insertions(+), 4 deletions(-)
+>> On 4/14/25 07:39, Krishna Chaitanya Chundru wrote:
+>>> Move phy, perst, to root port from the controller node.
+>>>
+>>> Rename perst-gpios to reset-gpios to align with the expected naming
+>>> convention of pci-bus-common.yaml.
+>>>
+>>> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+>>> ---
+>>>    arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts   | 5 ++++-
+>>>    arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi | 5 ++++-
+>>>    arch/arm64/boot/dts/qcom/sc7280-idp.dtsi       | 5 ++++-
+>>>    arch/arm64/boot/dts/qcom/sc7280.dtsi           | 6 ++----
+>>>    4 files changed, 14 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+>>> index 7a36c90ad4ec8b52f30b22b1621404857d6ef336..3dd58986ad5da0f898537a51715bb5d0fecbe100 100644
+>>> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+>>> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+>>> @@ -709,8 +709,11 @@ &mdss_edp_phy {
+>>>    	status = "okay";
+>>>    };
+>>> +&pcie1_port0 {
+>>> +	reset-gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
+>>> +};
+>>> +
+>>>    &pcie1 {
+>>> -	perst-gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
+>>>    	pinctrl-0 = <&pcie1_reset_n>, <&pcie1_wake_n>;
+>>>    	pinctrl-names = "default";
+>>> diff --git a/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi b/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi
+>>> index 2ba4ea60cb14736c9cfbf9f4a9048f20a4c921f2..ff11d85d015bdab6a90bd8a0eb9113a339866953 100644
+>>> --- a/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi
+>>> +++ b/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi
+>>> @@ -472,10 +472,13 @@ &pcie1 {
+>>>    	pinctrl-names = "default";
+>>>    	pinctrl-0 = <&pcie1_clkreq_n>, <&ssd_rst_l>, <&pe_wake_odl>;
+>>> -	perst-gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
+>>>    	vddpe-3v3-supply = <&pp3300_ssd>;
+>>>    };
+>>> +&pcie1_port0 {
+>>> +	reset-gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
+>>> +};
+>>> +
+>>>    &pm8350c_pwm {
+>>>    	status = "okay";
+>>>    };
+>>> diff --git a/arch/arm64/boot/dts/qcom/sc7280-idp.dtsi b/arch/arm64/boot/dts/qcom/sc7280-idp.dtsi
+>>> index 7370aa0dbf0e3f9e7a3e38c3f00686e1d3dcbc9f..3209bb15dfec36299cabae07d34f3dc82db6de77 100644
+>>> --- a/arch/arm64/boot/dts/qcom/sc7280-idp.dtsi
+>>> +++ b/arch/arm64/boot/dts/qcom/sc7280-idp.dtsi
+>>> @@ -414,9 +414,12 @@ &lpass_va_macro {
+>>>    	vdd-micb-supply = <&vreg_bob>;
+>>>    };
+>>> +&pcie1_port0 {
+>>> +	reset-gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
+>>> +};
+>>> +
+>>>    &pcie1 {
+>>>    	status = "okay";
+>>> -	perst-gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
+>>>    	vddpe-3v3-supply = <&nvme_3v3_regulator>;
+>>> diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+>>> index 0f2caf36910b65c398c9e03800a8ce0a8a1f8fc7..376fabf3b4eac34d75bb79ef902c9d83490c45f7 100644
+>>> --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
+>>> +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+>>> @@ -2271,9 +2271,6 @@ pcie1: pcie@1c08000 {
+>>>    			power-domains = <&gcc GCC_PCIE_1_GDSC>;
+>>> -			phys = <&pcie1_phy>;
+>>> -			phy-names = "pciephy";
 >>
->> diff --git a/drivers/gpu/drm/imagination/pvr_device.c b/drivers/gpu/dr=
-m/imagination/pvr_device.c
->> index 1704c0268589bdeb65fa6535f9ec63182b0a3e94..f40468b99cf14da418aeec=
-de086f009695ff877c 100644
->> --- a/drivers/gpu/drm/imagination/pvr_device.c
->> +++ b/drivers/gpu/drm/imagination/pvr_device.c
->> @@ -504,10 +504,16 @@ pvr_device_init(struct pvr_device *pvr_dev)
->>  	if (err)
->>  		return err;
->> =20
->> -	/* Enable and initialize clocks required for the device to operate. =
-*/
->> -	err =3D pvr_device_clk_init(pvr_dev);
->> -	if (err)
->> -		return err;
->> +	/*
->> +	 * Only initialize clocks if they are not managed by the platform's
->> +	 * PM domain.
->> +	 */
->> +	if (!device_platform_resources_pm_managed(dev)) {
->> +		/* Enable and initialize clocks required for the device to operate.=
- */
->> +		err =3D pvr_device_clk_init(pvr_dev);
->> +		if (err)
->> +			return err;
->> +	}
->=20
-> So, how does that work for devfreq? I can understand the rationale for
-> resets and the sys clock, but the core clock at least should really be
-> handled by the driver.
+>> Isn't this a huge API breakage that will break using new DT with old
+>> kernels? It will also break U-boot which uses upstream DT.
+>>
+>> This is bad enough, but at least let's break it a clean break by changing
+>> all platforms at once.
+> 
+> Up to now as the kernel was the only and the main user, we allowed
+> forward breakage (new DT breaks with the old kernel), only backwards
+> compatibility was required (new kernels work with old DT).
+> 
+> Maybe, as this breaks external projects, we should allow a grace period
+> and list _both_ properties, dropping them after the LTS?
 
-I agree, this feels a bit "all or nothing" to me. There's only one clock
-on this platform that has issues, we can still control the other two
-just fine.
+This would be good, especially with some mechanism like below that would 
+allow us to collect and list all the ABI breakages in DT for a given 
+kernel release.
 
-I thought fixed clocks were the standard mechanism for exposing
-non-controllable clocks to device drivers?
+Thanks,>
+>>
+>> As I understand it, we seem to allow these breakages in DT for now (and this
+>> patch landing will confirm that), but perhaps we could at least track them
+>> somewhere or at acknowledge the breakage with a tag in the commit message
+>> pointing to the relevant dt-bindings patch.
+>>
+>> Breaks-dt: https://lore.kernel.org/linux-arm-msm/20250414-perst-v2-1-89247746d755@oss.qualcomm.com
+>>
+>> Kind regards,
+>>
+>>> -
+>>>    			pinctrl-names = "default";
+>>>    			pinctrl-0 = <&pcie1_clkreq_n>;
+>>> @@ -2284,7 +2281,7 @@ pcie1: pcie@1c08000 {
+>>>    			status = "disabled";
+>>> -			pcie@0 {
+>>> +			pcie1_port0: pcie@0 {
+>>>    				device_type = "pci";
+>>>    				reg = <0x0 0x0 0x0 0x0 0x0>;
+>>>    				bus-range = <0x01 0xff>;
+>>> @@ -2292,6 +2289,7 @@ pcie@0 {
+>>>    				#address-cells = <3>;
+>>>    				#size-cells = <2>;
+>>>    				ranges;
+>>> +				phys = <&pcie1_phy>;
+>>>    			};
+>>>    		};
+>>>
+>>
+>> -- 
+>> Caleb (they/them)
+>>
+> 
 
-Cheers,
-Matt
+-- 
+Caleb (they/them)
 
->=20
-> Maxime
-
-
---=20
-Matt Coster
-E: matt.coster@imgtec.com
-
---------------0T4pGmpUW4blsCVOiRdsA0ib--
-
---------------7eIK9eS3654lDBA7R0WfEFcK
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wnsEABYIACMWIQS4qDmoJvwmKhjY+nN5vBnz2d5qsAUCZ/4jqgUDAAAAAAAKCRB5vBnz2d5qsFy0
-AQD7qyOSrzvSOHUAM/T21E2D7ABo7J8ss23WclU9RHIAPAEAzjFTrQyLWtrOf9EwZkhvjuCekxRy
-hIy7j0ms2ZfItw4=
-=0hfU
------END PGP SIGNATURE-----
-
---------------7eIK9eS3654lDBA7R0WfEFcK--
 
