@@ -1,242 +1,182 @@
-Return-Path: <linux-kernel+bounces-605563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0C47A8A2F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 17:38:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B636DA8A2E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 17:37:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4B41443836
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:38:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 058F0189F219
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3BD829E065;
-	Tue, 15 Apr 2025 15:37:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C465D297A60;
+	Tue, 15 Apr 2025 15:37:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lvE2uZVv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BBdAsaLh"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3312973A2;
-	Tue, 15 Apr 2025 15:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A0D28466B
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 15:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744731437; cv=none; b=F1inNoF/DPXBKqVxeILZIJCLFnxvWm3WUs2APGFK434d12hzJqMGCFiJ5tHDhGGCVWmexgN7h2RZpK2D0upUT4zdTcUWxHPiRDqn/wU1kW7SvdC87qLMrXdMJCZ6KKNgSZHsoDtiqdr0dn3XMhjt9OYXBCt58utSmv6kvFGZlqs=
+	t=1744731427; cv=none; b=aSfHET3xJsjuf0ZtPnfcWWDc6PQQqObVLm5XQEQ0GX19F4fngwZq1hQ7LiyAdL61XWk+tER4yCXbcIwlAI+0D8rZD1r1hhLPzKjaTk52BUEe6UctMuoVed0pfacUY1sji5TmhGUa8us3zTi8E6IpiNejHW5X1zLB1X+23EEWN8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744731437; c=relaxed/simple;
-	bh=iLhQrLWil25q6mOdTJw9OuNJ8sG/2mmYC9fMfHYOxvM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WrxWDVg6ap0A6NMymJhM2hOQ7kNRngkHSCagZOmT10RfxMYqnWABeqGSicaEvcRnadUUk808Pqbi73yo4uDKW5SfHt6N7QiybcBhRpiJ6E/LT71QpAYhP2gZr9fSLpTSICGUz+zLqauy/UfaZ2LLM41IlzXEUE2s2VK1VEboJkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lvE2uZVv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 6C5C7C4CEF3;
-	Tue, 15 Apr 2025 15:37:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744731437;
-	bh=iLhQrLWil25q6mOdTJw9OuNJ8sG/2mmYC9fMfHYOxvM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=lvE2uZVvO+1OD/IRYzyhzUtgUpbpJg0fN00+skg3iFQYSsoO1hnnBwuvnWxyvWWcD
-	 uZzh5YFc+a4ZFo/wpYHH+IFhPI2w9udSmKPvfYpJpnzzXSvYCK6sYeKCtmmx5VVxmJ
-	 e/Qi19A4DARCrGoXYkg6ZTikbNZBiFF2If2Su57/RgiKAK+xLh1T4J+ZRdxKTUpVOi
-	 T9KXwbvsj4XSJbr7q40Mjfsixs2/qyqL2gAojajM7Tk+4NScuVzyhrBjTqVNaJ9RuY
-	 3OBe5Eme/wDmy0rCyDBWHaPDlxdPNV+zrNN9CIPlk+ykMKnP0TURN1xFlm7YCiQ7t9
-	 B7WpOUrEOI23Q==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C1DDC369AB;
-	Tue, 15 Apr 2025 15:37:17 +0000 (UTC)
-From: Sven Peter via B4 Relay <devnull+sven.svenpeter.dev@kernel.org>
-Date: Tue, 15 Apr 2025 15:36:58 +0000
-Subject: [PATCH v2 4/6] i2c: pasemi: Improve error recovery
+	s=arc-20240116; t=1744731427; c=relaxed/simple;
+	bh=Z0VDKI+lyzxqbYKLqxgloNLEeCjMa2vB+GmQsxeG0i8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Q3kbUtD6pvm6WNUEP3u9siGe7U6BamW7QrFTlqzww/DobtxDKdY3YROqZRtE8CraHPeGYOAYifM0/WrtzrGasU5s1WSVo14kKL9oqiteXXJGuUVpvbCip0GrSAtNvrEnudx1uD3FBE5vrvSp8Tl0PkEnGAnR8whOLE4bLZFXPmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BBdAsaLh; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22435603572so54723535ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 08:37:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744731425; x=1745336225; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZYqxO4DprOCfNzQ/7WnXe1FCwCF9stbfd3UHJM/ZoxE=;
+        b=BBdAsaLh2SCYPA1hyF9X2cHF7DNCDBUxSYrzCD9aAPyauvssEJuaabY2VApk8vZlkj
+         RNH4cKn6C+oAfmvKcHJlCOgxvxPFbIMIRpxKTb3/PSPqdCb7b/tVt5s287MwB34oV0KM
+         czWBCUcC8LoAkSlW4IWWAmx+xs54sHUD427K+G004MqyGWjWg4i+6vF0VASLYTdxgmA0
+         8CGiGk4K6+dnm/LFgAtufPFInmFnKo60JCAL/5UVxjitBM4lHV6wZB0hLbJwHj5ktQ1w
+         3UMk79ztmw1mDOOVvR8qWU21PXrJHyTX7kt13P0YFFJpzxKoRphTeAU2XXiglWZ1JG0Z
+         0H9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744731425; x=1745336225;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZYqxO4DprOCfNzQ/7WnXe1FCwCF9stbfd3UHJM/ZoxE=;
+        b=SNWen9rwytQyHQJOkFGNJk+WZuC7U7xIuJAXtR9HnOnsors+IbZjIF7NO79GSLNa5V
+         o2HZIMeojwjmRpOZrpM+U0r6z8Rfd/hAtG10xnpOWeJlM82iEPXbCMIcAzKMH+ul77W0
+         Ktttq1lBOclFbZmmHtNh4MrXs/PmjHOjBF21UZkOrKtuVVmfu8nY1qo6swDzfTdeOs7S
+         VYAHBa/9OYVnJ2fq7EYV+DW/RUCVndpH7wniQ2E1yg5H9nFVcz9czgDUIuhb2TAGaRH8
+         UMfp+bmCd5oZXDIXNnG40k/ZVIwVRUFhD16fTzYxaq3HyGPjbjX5AiK0ndUT89YdAShq
+         hfSg==
+X-Gm-Message-State: AOJu0YwDsnj8S9HDSPyGTG0d4QUTzGUII74WtrKqKFjs/D9J/YxCQFeE
+	kUVMNv4iscCgt8OyGaSpWQMX3UCgYoBMlPBvl+UxIrWm3JOVCwC7
+X-Gm-Gg: ASbGncudGLm0cptObcAZ2RDlZRwtDbJOA83gMXKkkIQRKESFMu09ToeRtWWZ4H6+URP
+	upZ7mmj6eZNlC/RMZmFh1L/xXPSNFeGBFZbAtaCDsrp8zKO2JGQO3ZUbiWY352T3lSbAyslLhSi
+	kpv3etHHCnIkXIfIx2toyjnMKZFy3zfyGlZsWuHqeX/lHVtsj+N2skTZX3EnNRGnDFlfcWqf61T
+	mSg6dazz2BtqltIaWTlG6rh96VVxJHICIxu7HiQRBzgjJuTKJgmfxTG+HsgozrO5FStgzyniEMG
+	EIJ9AbGE3t6dRGeZUQzKh6sEcdJpnUv0CE7VMmRsLjKG3PsQvYk=
+X-Google-Smtp-Source: AGHT+IHk23Xg0bkFNAcL5lltLUZmK04teJ4c6wBeaaL+Yj5dOcGvpscJT2psIOxUgWE4zgoj9kDBzw==
+X-Received: by 2002:a17:903:1447:b0:223:5c33:56a2 with SMTP id d9443c01a7336-22bea4bd57fmr280275475ad.28.1744731424875;
+        Tue, 15 Apr 2025 08:37:04 -0700 (PDT)
+Received: from VM-16-38-fedora.. ([43.135.149.86])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7ccca66sm119207245ad.252.2025.04.15.08.37.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Apr 2025 08:37:04 -0700 (PDT)
+From: alexjlzheng@gmail.com
+X-Google-Original-From: alexjlzheng@tencent.com
+To: gregkh@linuxfoundation.org,
+	tj@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Jinliang Zheng <alexjlzheng@tencent.com>
+Subject: [PATCH v2 1/2] kernfs: switch global kernfs_idr_lock to per-fs lock
+Date: Tue, 15 Apr 2025 23:36:58 +0800
+Message-ID: <20250415153659.14950-2-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250415153659.14950-1-alexjlzheng@tencent.com>
+References: <20250415153659.14950-1-alexjlzheng@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250415-pasemi-fixes-v2-4-c543bf53151a@svenpeter.dev>
-References: <20250415-pasemi-fixes-v2-0-c543bf53151a@svenpeter.dev>
-In-Reply-To: <20250415-pasemi-fixes-v2-0-c543bf53151a@svenpeter.dev>
-To: Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
- Madhavan Srinivasan <maddy@linux.ibm.com>, 
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
- Christophe Leroy <christophe.leroy@csgroup.eu>, 
- Naveen N Rao <naveen@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
- Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>
-Cc: linuxppc-dev@lists.ozlabs.org, asahi@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Sven Peter <sven@svenpeter.dev>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4795; i=sven@svenpeter.dev;
- h=from:subject:message-id;
- bh=UdXQ8SUtLivYr558egJosJKmHk91VYvtGnZh/V57dEs=;
- b=owGbwMvMwCHmIlirolUq95LxtFoSQ/q/Wo13a1P715ycGSTHyJd7p1dg2YusT38uru8S/HfoW
- 4udw9lfHaUsDGIcDLJiiizb99ubPnn4RnDppkvvYeawMoEMYeDiFICJ+NYz/HdNckyT5XKt4GsS
- MeSS/31mp7N65u8gs9C8i406n1JjOBn+cDUKp69mDp+WPaHu2f6rqzh4Tj052h0e43FXwmtpzT9
- dbgA=
-X-Developer-Key: i=sven@svenpeter.dev; a=openpgp;
- fpr=A1E3E34A2B3C820DBC4955E5993B08092F131F93
-X-Endpoint-Received: by B4 Relay for sven@svenpeter.dev/default with
- auth_id=167
-X-Original-From: Sven Peter <sven@svenpeter.dev>
-Reply-To: sven@svenpeter.dev
+Content-Transfer-Encoding: 8bit
 
-From: Hector Martin <marcan@marcan.st>
+From: Jinliang Zheng <alexjlzheng@tencent.com>
 
-The hardware (supposedly) has a 25ms timeout for clock stretching
-and the driver uses 100ms which should be plenty. The error
-reocvery itself is however lacking.
+The kernfs implementation has big lock granularity(kernfs_idr_lock) so
+every kernfs-based(e.g., sysfs, cgroup) fs are able to compete the lock.
 
-Add handling for all the missing error condition, and better recovery in
-pasemi_smb_clear(). Also move the timeout to a #define since it's used
-in multiple places now.
+This patch switches the global kernfs_idr_lock to per-fs lock, which
+put the spinlock into kernfs_root.
 
-Signed-off-by: Hector Martin <marcan@marcan.st>
-[sven: adjusted commit message after splitting the commit into two]
-Signed-off-by: Sven Peter <sven@svenpeter.dev>
+Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
 ---
- drivers/i2c/busses/i2c-pasemi-core.c | 75 +++++++++++++++++++++++++++++++-----
- 1 file changed, 65 insertions(+), 10 deletions(-)
+ fs/kernfs/dir.c             | 14 +++++++-------
+ fs/kernfs/kernfs-internal.h |  1 +
+ 2 files changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-pasemi-core.c b/drivers/i2c/busses/i2c-pasemi-core.c
-index 9b611dbdfef23e78a4ea75ac0311938d52b6ba96..2f31f039bedfd7f78d6572fe925125b1a6d0724b 100644
---- a/drivers/i2c/busses/i2c-pasemi-core.c
-+++ b/drivers/i2c/busses/i2c-pasemi-core.c
-@@ -9,6 +9,7 @@
- #include <linux/delay.h>
- #include <linux/i2c.h>
- #include <linux/io.h>
-+#include <linux/iopoll.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/pci.h>
-@@ -52,6 +53,12 @@
- #define CTL_UJM		BIT(8)
- #define CTL_CLK_M	GENMASK(7, 0)
+diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
+index fc70d72c3fe8..355d943ffe27 100644
+--- a/fs/kernfs/dir.c
++++ b/fs/kernfs/dir.c
+@@ -27,7 +27,6 @@ DEFINE_RWLOCK(kernfs_rename_lock);	/* kn->parent and ->name */
+  */
+ static DEFINE_SPINLOCK(kernfs_pr_cont_lock);
+ static char kernfs_pr_cont_buf[PATH_MAX];	/* protected by pr_cont_lock */
+-static DEFINE_SPINLOCK(kernfs_idr_lock);	/* root->ino_idr */
  
-+/*
-+ * The hardware (supposedly) has a 25ms timeout for clock stretching, thus
-+ * use 100ms here which should be plenty.
-+ */
-+#define TRANSFER_TIMEOUT_MS	100
-+
- static inline void reg_write(struct pasemi_smbus *smbus, int reg, int val)
- {
- 	dev_dbg(smbus->dev, "smbus write reg %x val %08x\n", reg, val);
-@@ -80,24 +87,44 @@ static void pasemi_reset(struct pasemi_smbus *smbus)
- 	reinit_completion(&smbus->irq_completion);
- }
+ #define rb_to_kn(X) rb_entry((X), struct kernfs_node, rb)
  
--static void pasemi_smb_clear(struct pasemi_smbus *smbus)
-+static int pasemi_smb_clear(struct pasemi_smbus *smbus)
- {
- 	unsigned int status;
-+	int ret;
+@@ -584,9 +583,9 @@ void kernfs_put(struct kernfs_node *kn)
+ 	if (kernfs_type(kn) == KERNFS_LINK)
+ 		kernfs_put(kn->symlink.target_kn);
  
--	status = reg_read(smbus, REG_SMSTA);
-+	/* First wait for the bus to go idle */
-+	ret = readx_poll_timeout(ioread32, smbus->ioaddr + REG_SMSTA,
-+				 status, !(status & (SMSTA_XIP | SMSTA_JAM)),
-+				 USEC_PER_MSEC, USEC_PER_MSEC * TRANSFER_TIMEOUT_MS);
-+
-+	if (ret < 0) {
-+		dev_err(smbus->dev, "Bus is still stuck (status 0x%08x)\n", status);
-+		return -EIO;
-+	}
-+
-+	/* If any badness happened or there is data in the FIFOs, reset the FIFOs */
-+	if ((status & (SMSTA_MRNE | SMSTA_JMD | SMSTA_MTO | SMSTA_TOM | SMSTA_MTN | SMSTA_MTA)) ||
-+	    !(status & SMSTA_MTE))
-+		pasemi_reset(smbus);
-+
-+	/* Clear the flags */
- 	reg_write(smbus, REG_SMSTA, status);
-+
-+	return 0;
- }
+-	spin_lock(&kernfs_idr_lock);
++	spin_lock(&root->kernfs_idr_lock);
+ 	idr_remove(&root->ino_idr, (u32)kernfs_ino(kn));
+-	spin_unlock(&kernfs_idr_lock);
++	spin_unlock(&root->kernfs_idr_lock);
  
- static int pasemi_smb_waitready(struct pasemi_smbus *smbus)
- {
--	int timeout = 100;
-+	int timeout = TRANSFER_TIMEOUT_MS;
- 	int ret;
- 	unsigned int status;
+ 	call_rcu(&kn->rcu, kernfs_free_rcu);
  
- 	if (smbus->use_irq) {
- 		reinit_completion(&smbus->irq_completion);
--		reg_write(smbus, REG_IMASK, SMSTA_XEN | SMSTA_MTN);
--		ret = wait_for_completion_timeout(&smbus->irq_completion, msecs_to_jiffies(100));
-+		/* XEN should be set when a transaction terminates, whether due to error or not */
-+		reg_write(smbus, REG_IMASK, SMSTA_XEN);
-+		ret = wait_for_completion_timeout(&smbus->irq_completion,
-+						  msecs_to_jiffies(timeout));
- 		reg_write(smbus, REG_IMASK, 0);
- 		status = reg_read(smbus, REG_SMSTA);
+@@ -639,13 +638,13 @@ static struct kernfs_node *__kernfs_new_node(struct kernfs_root *root,
+ 		goto err_out1;
  
-@@ -123,9 +150,35 @@ static int pasemi_smb_waitready(struct pasemi_smbus *smbus)
- 		}
- 	}
+ 	idr_preload(GFP_KERNEL);
+-	spin_lock(&kernfs_idr_lock);
++	spin_lock(&root->kernfs_idr_lock);
+ 	ret = idr_alloc_cyclic(&root->ino_idr, kn, 1, 0, GFP_ATOMIC);
+ 	if (ret >= 0 && ret < root->last_id_lowbits)
+ 		root->id_highbits++;
+ 	id_highbits = root->id_highbits;
+ 	root->last_id_lowbits = ret;
+-	spin_unlock(&kernfs_idr_lock);
++	spin_unlock(&root->kernfs_idr_lock);
+ 	idr_preload_end();
+ 	if (ret < 0)
+ 		goto err_out2;
+@@ -681,9 +680,9 @@ static struct kernfs_node *__kernfs_new_node(struct kernfs_root *root,
+ 	return kn;
  
-+	/* Controller timeout? */
-+	if (status & SMSTA_TOM) {
-+		dev_warn(smbus->dev, "Controller timeout, status 0x%08x\n", status);
-+		return -EIO;
-+	}
-+
-+	/* Peripheral timeout? */
-+	if (status & SMSTA_MTO) {
-+		dev_warn(smbus->dev, "Peripheral timeout, status 0x%08x\n", status);
-+		return -ETIME;
-+	}
-+
-+	/* Still stuck in a transaction? */
-+	if (status & SMSTA_XIP) {
-+		dev_warn(smbus->dev, "Bus stuck, status 0x%08x\n", status);
-+		return -EIO;
-+	}
-+
-+	/* Arbitration loss? */
-+	if (status & SMSTA_MTA) {
-+		dev_warn(smbus->dev, "Arbitration loss, status 0x%08x\n", status);
-+		return -EBUSY;
-+	}
-+
- 	/* Got NACK? */
--	if (status & SMSTA_MTN)
-+	if (status & SMSTA_MTN) {
-+		dev_warn(smbus->dev, "NACK, status 0x%08x\n", status);
- 		return -ENXIO;
-+	}
+  err_out3:
+-	spin_lock(&kernfs_idr_lock);
++	spin_lock(&root->kernfs_idr_lock);
+ 	idr_remove(&root->ino_idr, (u32)kernfs_ino(kn));
+-	spin_unlock(&kernfs_idr_lock);
++	spin_unlock(&root->kernfs_idr_lock);
+  err_out2:
+ 	kmem_cache_free(kernfs_node_cache, kn);
+  err_out1:
+@@ -989,6 +988,7 @@ struct kernfs_root *kernfs_create_root(struct kernfs_syscall_ops *scops,
+ 		return ERR_PTR(-ENOMEM);
  
- 	/* Clear XEN */
- 	reg_write(smbus, REG_SMSTA, SMSTA_XEN);
-@@ -187,9 +240,9 @@ static int pasemi_i2c_xfer(struct i2c_adapter *adapter,
- 	struct pasemi_smbus *smbus = adapter->algo_data;
- 	int ret, i;
+ 	idr_init(&root->ino_idr);
++	spin_lock_init(&root->kernfs_idr_lock);
+ 	init_rwsem(&root->kernfs_rwsem);
+ 	init_rwsem(&root->kernfs_iattr_rwsem);
+ 	init_rwsem(&root->kernfs_supers_rwsem);
+diff --git a/fs/kernfs/kernfs-internal.h b/fs/kernfs/kernfs-internal.h
+index 40a2a9cd819d..24e9514565ac 100644
+--- a/fs/kernfs/kernfs-internal.h
++++ b/fs/kernfs/kernfs-internal.h
+@@ -40,6 +40,7 @@ struct kernfs_root {
  
--	pasemi_smb_clear(smbus);
--
--	ret = 0;
-+	ret = pasemi_smb_clear(smbus);
-+	if (ret)
-+		return ret;
- 
- 	for (i = 0; i < num && !ret; i++)
- 		ret = pasemi_i2c_xfer_msg(adapter, &msgs[i], (i == (num - 1)));
-@@ -210,7 +263,9 @@ static int pasemi_smb_xfer(struct i2c_adapter *adapter,
- 	addr <<= 1;
- 	read_flag = read_write == I2C_SMBUS_READ;
- 
--	pasemi_smb_clear(smbus);
-+	err = pasemi_smb_clear(smbus);
-+	if (err)
-+		return err;
- 
- 	switch (size) {
- 	case I2C_SMBUS_QUICK:
-
+ 	/* private fields, do not use outside kernfs proper */
+ 	struct idr		ino_idr;
++	spinlock_t		kernfs_idr_lock;	/* root->ino_idr */
+ 	u32			last_id_lowbits;
+ 	u32			id_highbits;
+ 	struct kernfs_syscall_ops *syscall_ops;
 -- 
-2.34.1
-
+2.49.0
 
 
