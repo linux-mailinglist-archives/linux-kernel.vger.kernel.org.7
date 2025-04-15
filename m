@@ -1,128 +1,158 @@
-Return-Path: <linux-kernel+bounces-605309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E383A89F8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:35:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD8C2A89F77
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:32:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C6B81763DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:35:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5081D3A5BF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:32:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E887613DDAA;
-	Tue, 15 Apr 2025 13:35:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 275BC1A28D;
+	Tue, 15 Apr 2025 13:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YVc68VCC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Jwj71ZpT"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E66025776;
-	Tue, 15 Apr 2025 13:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1823233E4
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 13:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744724107; cv=none; b=uC09ivnc9MOyCvM8dOQE+XNtrJwHo0jotqxTPyAE5T6AfdEQI3Tm2LwmS+/wLn+VOzR7s1ePNxYqvhaOZATmZFCOYieFzueAJJwHdCVXTXqomRgnCbhEFt9Msbi8EFTpjXRDC5wYZ3vmHnjMnD1PwQz2YOJe7jqIC9gXxBPDza4=
+	t=1744723931; cv=none; b=SybkXHPxC+ggLk337rKrivZ3g80oXjGARMc9ds9lf2G3p4mhl8DuOdQ2xWY6Ljj8bBXlWz7wkPi96TiDc25x0wBcZdJIrrmJDtYsczRrfgjeBhN6QAwNInG2h78UZsq7WHq2HwbCgrvdJQRuEUEqhbpHfAd11ALNVPi2UR4FRUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744724107; c=relaxed/simple;
-	bh=pprMqPez/8Jyc3i4Z+10XDj1QJQemlqTj9hsKCg5+Rg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HXG/22P0HIF1EYcQWSaPrKH8XGmHUzf5yKaQL+2pe2A7FNHH5oPhkEbyf4fwXt82RehYkxXt0X5is8Q6k7gn4Tmi89l6PeSAVlQsg6LwImqVcE9vcT2I7KhJ0raqzwT+RberExb/w1gZrV7DtzWjbBCgWRHKBHBgiyueIKSRyiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YVc68VCC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE84BC4CEDD;
-	Tue, 15 Apr 2025 13:35:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744724106;
-	bh=pprMqPez/8Jyc3i4Z+10XDj1QJQemlqTj9hsKCg5+Rg=;
-	h=From:Date:Subject:To:Cc:From;
-	b=YVc68VCCp+TyKnlauoCVe1PpRTMQESUBG8TZpx7VSv8mXVUmBEcO0qYZ0m8oheo8S
-	 Jn3tkwEKRFhh8VYk1HM/h99RFLQW35qD4tsC88h4fl49QNhevp+ymRb4Jgc+81DTv4
-	 8H45pjfHG5Is55MHAhXFsj00GZCJqGflvzo2LUtaPaLK4jbl9nDAlGsh8LPKiZBu3g
-	 E8hus4bBa7w73VjslqgGZ9dywsU0GFU7yrOCxIEURw3+Nej91tKOOr1S0mSeekB2ie
-	 6ON6vxH5MjdFQbzCOhbZZDeGOeZ3D6PqiuLGhRw2J2rVjz+xxxFY9hQTUp27XW4xv3
-	 P/IL88RWQGmYw==
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 15 Apr 2025 14:31:51 +0100
-Subject: [PATCH] staging: bcm2835-audio: Validate values written to
- controls
+	s=arc-20240116; t=1744723931; c=relaxed/simple;
+	bh=mNmWI5a/NGto+Hyvm/KHAbdndoEXS5kAJAkq1uPI+6k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z/QuhPweHw0BiuMlyk80Z4Ffoa+z1iAQp+ws9W9Hf3gxXpKw/06KKWVLhDgF/E3kwSC0hZJO02ZHzApETUJWdlT7i/QIvER1ySbvDvMwiU0B6nD+/VsDozgkHrLJJxDQafFHixupXOV+y5k+yW10uH2y18OnGNFtoOIvoSHudO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Jwj71ZpT; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53F8u75O002933
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 13:32:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=tMo2J3XOclwxj1TWtY/6AjNf
+	tlM4bSlyekUBY7EeXPc=; b=Jwj71ZpTou+Ck1S5OZ9bi0o2aWsoNJXy0ZkkF6aZ
+	1WDVeyWlVD8UdWJTH2DuG8Levmhi/eKldN40YTdzMCuVmxRJ8GTlxp7+WETTsp9b
+	obGnwvYi9oQdJzqNa0v0i9k1KwQ9WRgq+UEIjcweRSkZ8bxThYGH6ZRHK95i6YNp
+	Vi7Rk3Zyws5vsUV/V8FG9RZRSac2WckgQZtt3kMoeqYQSp5I8z21ocmPQIUeG8Zy
+	GdxF+y6ChfdFYhmR4533SxhtOi6588oha5IleqdfwzJyJ/DAu2JvfLAco70usxXE
+	ZVWbmSGiqkm/BnFsOm3FSlva8fsNuQK98ESZnhdSf1vN+g==
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ygxk02b9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 13:32:09 +0000 (GMT)
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3d586b968cfso69664635ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 06:32:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744723928; x=1745328728;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tMo2J3XOclwxj1TWtY/6AjNftlM4bSlyekUBY7EeXPc=;
+        b=VO5dNcIF/IdaRSHVxGTwEWl/AFjNvyj4wPAN9mnOf5odSEMNEgCJ48DJqNSnEJ0Nd1
+         yOb0fizc4xWbbVyXBB76d1XBL4KxJDQCA8g1fAbv3GoIUEP0jS7/dkw3BFihsTCD9JD8
+         6jLOa3/F54LmVNft91oqDJYpWMayN3sKvQDEZ2y8VmpyKedSeNepgdpxKMGlbNudb3IS
+         lQ34BSU3BnNpkCZhniUXRioPGcp/c+zeUZV5iQYRNYWSaig8HmnsBckzT/EYq/g1G88n
+         gJkui2ZfYtUd/5M19TrVMWAzJfpXT4h2EzdF8+KsrJ6heGdguNV+UKkpQ2LZFcto0pNH
+         uLHA==
+X-Forwarded-Encrypted: i=1; AJvYcCXgxORjClqEelW2GKDO5WaCW2npNOUDtKbUmRYidgMYL9frczEeSLh4ooZLturKHbq64mwSAnmJPNxaeiQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgvsYgkCNSUNrCAQbyswfy3fBYXSmA0vtDBn8ewp11H76cdMjQ
+	khjd2SW5IO64Kcs/QagJshYwqRDRb8Ohu9ELFPqNfLPa6LsATNhl7g6gn/SccJopKIu5VKYMYU3
+	PzF2NJxcyjucY+eo1R4hjd0nNclv5W7MURQBFA6keVKW+xDHAZ+iUYhaONezelbFpW3MkrD+RxZ
+	4f
+X-Gm-Gg: ASbGncs+0a1gi2ybBNHbUXLOJVuVnryiPs0CJv9dcENKngMJShZr6OQEJ55zGskBbS7
+	kIzGgZcJBs9TDLowX0G3INT8Rh7zoZpcRwxZihwn311donMYi+HZNiGOjyT9hQlZOTkOv+ps5ty
+	tP/NlpMpT4DVXYhzUtH4wV5z6VVYIjtZEXQd3tEJJBxte4HD6ANjzmjZmgghCYXixIbVUmOMEHL
+	RSBIjpQzwUHgbQcrhkrdbZtGTTe433X9kgGWJfi+FzdI9HJlI1mRbB7TFLUICA7rHta+gNl1lFf
+	Kt2K8WACtuUwxdhqWdZZx6e0fHMmrifE/WM/NKX14VWpfRzjFX/ViY/2LXPD6tlMGULNUcUcmzg
+	=
+X-Received: by 2002:a05:6e02:1888:b0:3d4:244b:db20 with SMTP id e9e14a558f8ab-3d7ec265c11mr152477635ab.16.1744723928178;
+        Tue, 15 Apr 2025 06:32:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFjkRXsde0tZnrtNCiF/pKp2trQ13hfjPIvmR3Bsadnu+TSqlnAIYji1ttuBV+mHEymtp0pnA==
+X-Received: by 2002:a05:6e02:1888:b0:3d4:244b:db20 with SMTP id e9e14a558f8ab-3d7ec265c11mr152477395ab.16.1744723927899;
+        Tue, 15 Apr 2025 06:32:07 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30f465d48adsm20959401fa.74.2025.04.15.06.32.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Apr 2025 06:32:06 -0700 (PDT)
+Date: Tue, 15 Apr 2025 16:32:04 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Michael Grzeschik <mgr@pengutronix.de>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: Re: [PATCH] usb: typec: mux: fsa4480: add regulator support
+Message-ID: <j2ennvznqeihlfejwjqpxd3q76ifqm6djurvokbw6hrpeph7e3@pw3m4eohamxm>
+References: <20250404-ml-topic-typec-mux-fs4480-v1-1-475377ef22a3@pengutronix.de>
+ <aiechdq62mjgta5p5g3s33okgnp56fe5ing2va7vaaf74nerug@nvrwrgnoyp7g>
+ <Z_g-Hl-G9IwRZmqF@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250415-staging-bcm2835-alsa-limit-v1-1-4ed816e9c0fc@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAMZf/mcC/x3MQQqEMAwAwK9Izgba2oK7XxEPUWM3oF1pRATx7
- xaPc5kLlLOwwre6IPMhKv9UYOsKxh+lyChTMTjjgvHWo+4UJUUcxtW1TUBalHCRVXYM3k2W27k
- x9IESbJlnOd+86+/7AVfk2x9sAAAA
-X-Change-ID: 20250414-staging-bcm2835-alsa-limit-542d1e8f30a9
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Cc: linux-staging@lists.linux.dev, linux-rpi-kernel@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1678; i=broonie@kernel.org;
- h=from:subject:message-id; bh=pprMqPez/8Jyc3i4Z+10XDj1QJQemlqTj9hsKCg5+Rg=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBn/mCHheEaIqvepD8vxtfR73p/5HvsDsou0ZDAJWO6
- 8aqBGvGJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ/5ghwAKCRAk1otyXVSH0CzsB/
- 4ntr+ThqGT8N9GDKVtVmPH1MwfPfQMDniJEv+cyVMx1SuRo5mG2CIF0LL8Pq+y6QmIi5W7RU5XZfDQ
- Td/0SXcm5P4krn6P4PP8LgfgAb2qU4VrVHO2gSR+BuUAiqieuddKnPtom9DbKxdk+ZCFU1csZl29br
- MeCCcGv6beW2YD34b9pWHZoiKsTHi46GgWqu+CjPg5D6YkrsfWoZvBij5tiCFn1VRIBhu3SqlkFmiL
- LfZ8uFcU0kSzV/SD5IZ6JfL6PXp1HeMP41S3V0ogDR7RpY8RSJNtmLoRS+eba4AIZ5tLzDoo+QvPl6
- dFdMd3BepbcO/xDPIApMQIzAbZKCqQ
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z_g-Hl-G9IwRZmqF@pengutronix.de>
+X-Authority-Analysis: v=2.4 cv=WecMa1hX c=1 sm=1 tr=0 ts=67fe5fd9 cx=c_pps a=5fI0PjkolUL5rJELGcJ+0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=EUspDBNiAAAA:8 a=D91KrFGzpyoBZT2t0akA:9 a=CjuIK1q_8ugA:10 a=HaQ4K6lYObfyUnnIi04v:22
+X-Proofpoint-GUID: A4BmYYRX5WmlYPLRGAz_uiwk9yqZhV3n
+X-Proofpoint-ORIG-GUID: A4BmYYRX5WmlYPLRGAz_uiwk9yqZhV3n
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-15_06,2025-04-15_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ adultscore=0 clxscore=1015 lowpriorityscore=0 phishscore=0 mlxscore=0
+ impostorscore=0 mlxlogscore=785 spamscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504150096
 
-The bcm2835-audio driver makes no effort to validate the values it accepts
-from userspace, causing it to accept invalid values:
+On Thu, Apr 10, 2025 at 11:54:38PM +0200, Michael Grzeschik wrote:
+> On Tue, Apr 08, 2025 at 03:18:14PM +0300, Dmitry Baryshkov wrote:
+> > On Fri, Apr 04, 2025 at 01:02:20AM +0200, Michael Grzeschik wrote:
+> > > The fsa4480 vcc lane could be driven by some external regulator.
+> > > This patch is adding support to enable the regulator before probing.
+> > > 
+> > > Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
+> > > ---
+> > >  drivers/usb/typec/mux/fsa4480.c | 5 +++++
+> > >  1 file changed, 5 insertions(+)
+> > > 
+> > > diff --git a/drivers/usb/typec/mux/fsa4480.c b/drivers/usb/typec/mux/fsa4480.c
+> > > index f71dba8bf07c9..c54e42c7e6a16 100644
+> > > --- a/drivers/usb/typec/mux/fsa4480.c
+> > > +++ b/drivers/usb/typec/mux/fsa4480.c
+> > > @@ -12,6 +12,7 @@
+> > >  #include <linux/regmap.h>
+> > >  #include <linux/usb/typec_dp.h>
+> > >  #include <linux/usb/typec_mux.h>
+> > > +#include <linux/regulator/consumer.h>
+> > > 
+> > >  #define FSA4480_DEVICE_ID	0x00
+> > >   #define FSA4480_DEVICE_ID_VENDOR_ID	GENMASK(7, 6)
+> > > @@ -273,6 +274,10 @@ static int fsa4480_probe(struct i2c_client *client)
+> > >  	if (IS_ERR(fsa->regmap))
+> > >  		return dev_err_probe(dev, PTR_ERR(fsa->regmap), "failed to initialize regmap\n");
+> > > 
+> > > +	ret = devm_regulator_get_enable_optional(dev, "vcc");
+> > 
+> > Missing DT bindings update that describes this supply.
+> 
+> Looking into "Documentation/devicetree/bindings/usb/fcs,fsa4480.yaml" it
+> seems vcc-supply is alread documented. Is more needed?
+> 
 
-# # PCM Playback Switch.0 Invalid boolean value 2
-# not ok 5 write_invalid.Headphones.1
-# # PCM Playback Volume.0 value -10240 less than minimum -10239
-# # PCM Playback Volume.0 value 401 more than maximum 400
-# not ok 12 write_invalid.Headphones.0
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-Add validation.
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
-index 1c1f040122d7..7d0ddd5c8cce 100644
---- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
-+++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
-@@ -71,6 +71,7 @@ static int snd_bcm2835_ctl_put(struct snd_kcontrol *kcontrol,
- 			       struct snd_ctl_elem_value *ucontrol)
- {
- 	struct bcm2835_chip *chip = snd_kcontrol_chip(kcontrol);
-+	struct snd_ctl_elem_info info;
- 	int val, *valp;
- 	int changed = 0;
- 
-@@ -84,6 +85,11 @@ static int snd_bcm2835_ctl_put(struct snd_kcontrol *kcontrol,
- 		return -EINVAL;
- 
- 	val = ucontrol->value.integer.value[0];
-+
-+	snd_bcm2835_ctl_info(kcontrol, &info);
-+	if (val < info.value.integer.min || val > info.value.integer.max)
-+		return -EINVAL;
-+
- 	mutex_lock(&chip->audio_mutex);
- 	if (val != *valp) {
- 		*valp = val;
-
----
-base-commit: 8ffd015db85fea3e15a77027fda6c02ced4d2444
-change-id: 20250414-staging-bcm2835-alsa-limit-542d1e8f30a9
-
-Best regards,
 -- 
-Mark Brown <broonie@kernel.org>
-
+With best wishes
+Dmitry
 
