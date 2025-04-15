@@ -1,149 +1,119 @@
-Return-Path: <linux-kernel+bounces-605560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D8A9A8A2F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 17:38:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DE13A8A2E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 17:37:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 514917ACBE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:36:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FBDC1771A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:37:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75FA129E057;
-	Tue, 15 Apr 2025 15:37:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5DE828A1C8;
+	Tue, 15 Apr 2025 15:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rsTNqLfy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iiv0QQfA"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA58B2951D0;
-	Tue, 15 Apr 2025 15:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A0B1F09AF
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 15:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744731437; cv=none; b=gLns0qljovWzneguRiZSJRE/XWGY+HA0uXqsEg+VUuH9nCP7Z480ywQe17C3lsuEaxRpknzoF24krReHZx1iLA7FPPhra12foCr5m3FCn97+xVwhUFlsVpg1jx0ZIPayfLnVFntQBOTKS09u6OEXuWfWTmndnFhVJBObtvR637w=
+	t=1744731425; cv=none; b=hZlFE1KZj847JGzwwcgSTK29c+SN+QyQcSengmQnZoZTzgiZrFj/uGG5izgEimCWKI8teO6E6uNSTRSglxlzr7X9B8EdATvjnGiXxQICV40V72a64BeFAadhmgU7X9j/Z1JqDZq1t5plpFbjDYtD9e3E0SbcGL6lG6EEJTVVfA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744731437; c=relaxed/simple;
-	bh=tKCZ1U57MVrN0lerBtOC7DMLUFHO1/PGHr6C3AN/kw8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=crS9bMegWwtxWbrUDLtQWKH2C27BAv12DCsosmd24yRXCMeUlfbqi+02VNUZGo5LI6Dz42yer1m7AvgcAl5zjDWcCBRcjNh6r1lkuUl8ix5XyZKbv/+4wjJThHge8kfYwutpDc8glSZkfHp6wu75IyiHw+6jMK3Ilqy+W8EAQp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rsTNqLfy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 45DBBC4CEEC;
-	Tue, 15 Apr 2025 15:37:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744731437;
-	bh=tKCZ1U57MVrN0lerBtOC7DMLUFHO1/PGHr6C3AN/kw8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=rsTNqLfyi72SZ2jdirJeSjURBXX62aZ3L4pWjWLptiWpw2cfwZe/aRXiQoEaOh4g5
-	 RLBOosAfAdYQtJgmkQoTKYqqnhgD6zjHH2wtCPTV/YJltfh4aZs3h6P+ObW3x1zwWo
-	 CtLJFr08sd65Rrec7g9PTaXiGScXZa3ArJQla2WLBTVQTRskWfFcRoTTpACdHw0GZx
-	 /fbvokcvpvMPAZqSOZB9qn9hyf7MPRAYfpf92zozbk0aN42rIqjTfSw0J8WMc5sbjS
-	 GaICvSypnddmjlIYeLpm4LrLFSX44d7INNmiyQA1ngqw98f+TNdtdO5ZGweFn9rBIu
-	 qWr8fXD3ygmSA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30B65C369C1;
-	Tue, 15 Apr 2025 15:37:17 +0000 (UTC)
-From: Sven Peter via B4 Relay <devnull+sven.svenpeter.dev@kernel.org>
-Date: Tue, 15 Apr 2025 15:36:56 +0000
-Subject: [PATCH v2 2/6] i2c: pasemi: Sort includes alphabetically
+	s=arc-20240116; t=1744731425; c=relaxed/simple;
+	bh=9AN5YYkQWU9Cf/SG9P4lQZtbFH8ZH2xxEyueJWZ+KO0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d+G+tJ/epM/uRNXaAaOKVYyYrjAXB8XqzXlfnXw61FVQJmpKnrjYOGLf1VExzovdcGLXnZ9cAWFjnO9RI7jXSLau2Gv10wv1n+xIP0q+ePChN/apALEjgIlLruhRlChQtXcPlkwRUZIwxgXkWGW8FXD734mix77AoZKUI65f6iQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iiv0QQfA; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2260c91576aso48766315ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 08:37:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744731423; x=1745336223; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TWa/nloxSXR1s8/zMJw77Cy2Iro74J9jfm/KJ/Ag0ok=;
+        b=Iiv0QQfANRwDDHKKdMa+7gd10JhgVUz67klTnTvfSnM0Y4jollbu6ovaVpN25Yivaq
+         0I2TjuOU3M0HheFCKSyf+ySUiKzN0jQam0DqtAyp0vZvrMunhsJapNv4Qu/+xJpP19Hv
+         0Wb0NbZO7zCx7+Gf1bBoKGUfdPDplVTzIy3P5nk2OE8TwWb1e9x22WS0Bxtb7zf7s0iA
+         wvgZr9HvLdhSNgelG1bFNdE5cgFJ4Cy4y2u7Z5C0njxbQ3wN7l49rP9ksCsgv/YjulB4
+         L+j0bBRySvMukmqPFH/MgkFunmFkARlLHoZD+VKY/W2bbGfCPobAjBx0Mzo8HENMiy4t
+         bjOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744731423; x=1745336223;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TWa/nloxSXR1s8/zMJw77Cy2Iro74J9jfm/KJ/Ag0ok=;
+        b=maYEdXpGGKu5R6E4OzISq/yQ1j5+WIQbbKpHU3If402qO3cgBjDVwGUm3/UJKi0SIM
+         uAjs9e4EY0bAwjEeMDH1fSudaybo54QWMPlZrQltfXSzZcFnTY2cyj5T1PIAAjYZQ284
+         ClcyWQtBVgoNFWJOIyrrOaZhArBmHPEVreCDNitawIG7B41Bz+k5bx7goEXPKjWYflv6
+         NW65UESBT4QkO8iMufJ81sRMp3NVHDnJPOqBdbvAN3SoyJU/0cUfCWrMpfsaaF/L1p6t
+         YYi8oWqgdj/2sgne0ixLahiMIe1WaoRukWaialAArA8nMYRqGUH5+q1bQa9ADV7zliIx
+         w6Sg==
+X-Gm-Message-State: AOJu0YyHsHk4uawxqk122ht4dOWBQzzQ84G0CoWuvz7NHJn4bqef6smg
+	TH7d20+MBPHDwRTZZEDYMOy8LlF6wOj80x4vbwbDBP7ltrVYa0A/u9S6PRrf
+X-Gm-Gg: ASbGncsWkqxqrvpvoXlfUC5BVeFqzO/2h2QqJixCbDzrAXk5sF1O3KvpDeuvz+LkIrB
+	+lbGktOLuAXBiKyldez/o7TYX+5mXtoBG4hfgOwhilrjsLwS5lKqrGnjZVfxUsQEwRGVijW2hdh
+	rbUuWUvYIEz2xCgPudtyy3KC4dQiqZgSdgl8RiV8rebFzPrJpWM6Zrca/G0ImSkWWjo7TyKVKQJ
+	52GYQDgPoETxVDfNXJcXXwbiIS5rdpwfFZbGk5H+7D+rMIYYtyC+d2F39srKJzMXaPSa9XtbNfn
+	bpT0mRVIbs8Sc0l2XQuPYZ9yulDKOEudFH5yBptolNld5jap1bY=
+X-Google-Smtp-Source: AGHT+IFRlH2337Ek0bz/H7/KsKnA80RxDLNNrRMc4W6Bdbz+aOgbrh6ecRG7aBVQbppWMKTeuGA7FQ==
+X-Received: by 2002:a17:903:2b07:b0:227:e7c7:d451 with SMTP id d9443c01a7336-22bea4bf842mr267131125ad.29.1744731422834;
+        Tue, 15 Apr 2025 08:37:02 -0700 (PDT)
+Received: from VM-16-38-fedora.. ([43.135.149.86])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7ccca66sm119207245ad.252.2025.04.15.08.37.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Apr 2025 08:37:02 -0700 (PDT)
+From: alexjlzheng@gmail.com
+X-Google-Original-From: alexjlzheng@tencent.com
+To: gregkh@linuxfoundation.org,
+	tj@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Jinliang Zheng <alexjlzheng@tencent.com>
+Subject: [PATCH v2 0/2] kernfs: switch global locks to per-fs lock
+Date: Tue, 15 Apr 2025 23:36:57 +0800
+Message-ID: <20250415153659.14950-1-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250415-pasemi-fixes-v2-2-c543bf53151a@svenpeter.dev>
-References: <20250415-pasemi-fixes-v2-0-c543bf53151a@svenpeter.dev>
-In-Reply-To: <20250415-pasemi-fixes-v2-0-c543bf53151a@svenpeter.dev>
-To: Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
- Madhavan Srinivasan <maddy@linux.ibm.com>, 
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
- Christophe Leroy <christophe.leroy@csgroup.eu>, 
- Naveen N Rao <naveen@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
- Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>
-Cc: linuxppc-dev@lists.ozlabs.org, asahi@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Sven Peter <sven@svenpeter.dev>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1747; i=sven@svenpeter.dev;
- h=from:subject:message-id;
- bh=d4SrViBETCvEIVGrCu813u0fCI79k8TBuEJCcmGpDI0=;
- b=owGbwMvMwCHmIlirolUq95LxtFoSQ/q/WtWl7ddnLW1MubOp8d16cesWr2/7U2cXBHtceHk94
- Xb343vXOkpZGMQ4GGTFFFm277c3ffLwjeDSTZfew8xhZQIZwsDFKQATyZrO8D+9Oq6hSL4vb+s3
- aes9x67wXZ7ywlla4kKDZuwqy/eW7yMY/ik9+WNdy5A+zzfXXDRK0vDdoZPBj/T0lJ3n3axrt+s
- uZwUA
-X-Developer-Key: i=sven@svenpeter.dev; a=openpgp;
- fpr=A1E3E34A2B3C820DBC4955E5993B08092F131F93
-X-Endpoint-Received: by B4 Relay for sven@svenpeter.dev/default with
- auth_id=167
-X-Original-From: Sven Peter <sven@svenpeter.dev>
-Reply-To: sven@svenpeter.dev
+Content-Transfer-Encoding: 8bit
 
-From: Sven Peter <sven@svenpeter.dev>
+From: Jinliang Zheng <alexjlzheng@tencent.com>
 
-No functional changes.
+The kernfs implementation has big lock granularity so every kernfs-based
+(e.g., sysfs, cgroup) fs are able to compete the locks. This patchset
+switches the global locks to per-fs locks.
 
-Signed-off-by: Sven Peter <sven@svenpeter.dev>
----
- drivers/i2c/busses/i2c-pasemi-core.c | 10 +++++-----
- drivers/i2c/busses/i2c-pasemi-pci.c  | 10 +++++-----
- 2 files changed, 10 insertions(+), 10 deletions(-)
+In fact, the implementation of global locks has not yet introduced
+performance issues. But in the long run, more and more file systems will
+be implemented based on the kernfs framework, so this optimization is
+meaningful.
 
-diff --git a/drivers/i2c/busses/i2c-pasemi-core.c b/drivers/i2c/busses/i2c-pasemi-core.c
-index 71cc8cfc7c5cbf3924269f6217712d42008c03ff..df1b0087dcacb0a3b94196368137d5e20b0e6d7e 100644
---- a/drivers/i2c/busses/i2c-pasemi-core.c
-+++ b/drivers/i2c/busses/i2c-pasemi-core.c
-@@ -6,15 +6,15 @@
-  */
- 
- #include <linux/bits.h>
-+#include <linux/delay.h>
-+#include <linux/i2c.h>
-+#include <linux/io.h>
-+#include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/pci.h>
--#include <linux/kernel.h>
--#include <linux/stddef.h>
- #include <linux/sched.h>
--#include <linux/i2c.h>
--#include <linux/delay.h>
- #include <linux/slab.h>
--#include <linux/io.h>
-+#include <linux/stddef.h>
- 
- #include "i2c-pasemi-core.h"
- 
-diff --git a/drivers/i2c/busses/i2c-pasemi-pci.c b/drivers/i2c/busses/i2c-pasemi-pci.c
-index 77f90c7436eda2df16afd7f1cac79355fb005bfd..b9ccb54ec77e22bb1b77848c858e2e0cc51db7e3 100644
---- a/drivers/i2c/busses/i2c-pasemi-pci.c
-+++ b/drivers/i2c/busses/i2c-pasemi-pci.c
-@@ -5,15 +5,15 @@
-  * SMBus host driver for PA Semi PWRficient
-  */
- 
-+#include <linux/delay.h>
-+#include <linux/i2c.h>
-+#include <linux/io.h>
-+#include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/pci.h>
--#include <linux/kernel.h>
--#include <linux/stddef.h>
- #include <linux/sched.h>
--#include <linux/i2c.h>
--#include <linux/delay.h>
- #include <linux/slab.h>
--#include <linux/io.h>
-+#include <linux/stddef.h>
- 
- #include "i2c-pasemi-core.h"
- 
+There are three global locks now, kernfs_idr_lock, kernfs_rename_lock
+and kernfs_pr_cont_lock. We only switch kernfs_idr_lock and
+kernfs_rename_lock here, because kernfs_pr_cont_lock is on a cold path.
+
+Changelog:
+v2: Only switch kernfs_idr_lock and kernfs_rename_lock to per-fs
+v1: https://lore.kernel.org/all/20250411183109.6334-1-alexjlzheng@tencent.com/
+
+Jinliang Zheng (2):
+  kernfs: switch global kernfs_idr_lock to per-fs lock
+  kernfs: switch global kernfs_rename_lock to per-fs lock
+
+ fs/kernfs/dir.c             | 28 +++++++++++++++-------------
+ fs/kernfs/kernfs-internal.h | 16 ++++++++++++----
+ 2 files changed, 27 insertions(+), 17 deletions(-)
 
 -- 
-2.34.1
-
+2.49.0
 
 
