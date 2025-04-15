@@ -1,138 +1,205 @@
-Return-Path: <linux-kernel+bounces-606055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66EC2A8AA01
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 23:22:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 445A0A8AA13
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 23:25:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D692A189B2BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 21:22:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 498AA16BECD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 21:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073E92512E4;
-	Tue, 15 Apr 2025 21:22:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 671D825291B;
+	Tue, 15 Apr 2025 21:25:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="3D93o1mW"
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iCIksnsj"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603A12222C0
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 21:22:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A6E82505A9
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 21:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744752158; cv=none; b=mGi9rMNHL1jcBrwY2P33FJmeegTOMSYVyIW2F1F94KP8ofabFnGWg4dBGoZh6YQOP+6/pWNzwOLEESQIkNqL01by42XrG4hRYNxUL9WNJuLoRAB+/DSTYIFpKym2CZ/GSGmeoXCHQw8lCDq4tlHeMrLlLaxyY7d0oBj0SzDNrTw=
+	t=1744752349; cv=none; b=UpJbWvbwr9DmJsDMlOXFkBKpdsmDWbCM/OxBYr6g7h8zTms3TT1opBviwREnkQbtoMvLXH7/IU8nBZGRAj4t0q7t6yz3TLxCmgniMXm7I4XBLccao0fpjr2rDaz8ctQbry7q78zRmLi0c9M/P2cwY44tuZicvF72V2L2ruNNVGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744752158; c=relaxed/simple;
-	bh=sezKOxqdZwL0UPA9Nc1wZMu3XrcscN+StmeGN/bzCgE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LGXSsSeo0/1Nrf9KPeY4f5wN/V/AcHqi/jNVPu2+QF0BCE2oc3xa0R3V/bwsXN5d2FvbF3nvkmbRtVhfCI1FZo3oXBRqtpn43edHvmCPaS8wfpq8wR3Kj64y7ness0h5E/sHKJMZ5jLZBEV1tTbaXzgpJPncT9ggp1bP8rL8TTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=3D93o1mW; arc=none smtp.client-ip=209.85.160.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-2d071fcd89bso1753694fac.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 14:22:36 -0700 (PDT)
+	s=arc-20240116; t=1744752349; c=relaxed/simple;
+	bh=JwU8AHx8PeAN8AtgSHA3D7DJk5pbqTcZbLy8XxPRcck=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DB329EkBQweqXvQ/N+xNE1IwEyrDJkDnVpAjCZT4DnBKuoll/hXzyrrAYt3wUkg/+VIuL+CuAzLpegR9FHETBfHYn5wVBY8haGVDIqDH1vedonq/N8pEZaBBRoRr/89wDYknKF9Xz5z1CKB01Fqh2EFx7/EuedW+Pe5BIznozFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iCIksnsj; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2254e0b4b79so82805875ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 14:25:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1744752155; x=1745356955; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1lZucg4YTWzLc3CaeiVcocOFzBfkAYF6dSNq9mdvqrs=;
-        b=3D93o1mWLYHF2VT6GtJXPWSMViPK5hOF2xJWfJU9zvJmiFJQEtCYdP8thD9+b0JTtD
-         POmPlgi7+1/ODmgPv7LcDvr7qpkHzYRcMuhBSnDyuPyHS5kiL/igXrq7T3zqmhSGDqsv
-         dF0thHsW/dYoK1Ymnz6ldRPhfMrs+PVskqMD8WDNJ4gJWG4FaeOG1O+hyGxA9bvO0Z44
-         nZXnyX/Un80+wJsuwlfiM/e97YzHuARshYZfN6eg5NBCwERghUokihMAVPz/KHxnh4sb
-         hm206ARnaoPgIi5QZmZLMJXqHG4Mgusksx9BGyibQWQmmQaa0Dz3iAsjGDrLqdzL8NM/
-         QK7w==
+        d=google.com; s=20230601; t=1744752347; x=1745357147; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UwJG8J1iyTH8V+SfRmZi+ISFZpJOYpkT7vaEBR18O5k=;
+        b=iCIksnsjKqkhihQIYg19sKVmkq2e+Jia7Bpsluw2ZFQvTCM9GvurtEAF6sHTCQcofI
+         yDrKpBRuYYxFBnyeVi+2R3WvQtiXdqlrhE2so/t1sU6NC0wQW9xd7Xw8towIAWmyGdMq
+         H6B5AsLNwBu4iPDTvSJCJ6zDB5UlQeqd2H8cHy6qiS178s+fU3TAd0fOF6f1i29ZNTYP
+         KS6iGzAKr36q9cZGrx6uiUwA6dicdQu4ckd0ebtSmIzGJQzmuG0TFqiBpucAjst9gyWA
+         /q2GXEQYpBhlj+0hnHWGQ/psUG54gQtQplCpj36EMT8nmKkVhQItC9/HpdYREPeFF0BX
+         +vfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744752155; x=1745356955;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1lZucg4YTWzLc3CaeiVcocOFzBfkAYF6dSNq9mdvqrs=;
-        b=dMS2GSb3SrFT9aqsaw672Q7jwx3wiU4K8HO7jTx5fQvUSKEPJdY+SiJcGmJ2/SA/yf
-         DNLaG/9HZhLb5sTwoic9/qvhqf63jrS0T89O1qXbLUW4lhdpSaYRX0vuUU9DxY0u/j5a
-         JYHlwwrPOqgPxvbndKSBbLdmYDr/kyl8LYOBcahPgSazgdktI525K9B/U8HkO3zrsNYb
-         o0243By6eqB/JxTBjh5AvyTaH35qEsM+wjFspLV+YObrmPGs9xhGgUrLeyK0Mni4IU3M
-         4W+B5/tADSpGcSkCYt7HJTOu/nGuBpfP/9uyDt3Mgh3A7LIXNrHY6T5dZAKqE4yZD9VK
-         jujw==
-X-Forwarded-Encrypted: i=1; AJvYcCUX89YrwgTlgQCPBbl1E7QQvk4+6EQLyEgiXudiC4+KObXgL6SiPXuq2Jy73NN/EUM0rYkQIcDK8X5qxn0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJ5AZuoT2mDiVTwcgCEeEr0N3Mq7pWocBdsdY9QLp1VF3YozAg
-	NrzVc/2XXNvTkKw6Y/uEXoWWZymUlOfbxvDixXL3zQF1jDvEqBjVOH3eONKnifs=
-X-Gm-Gg: ASbGncuS3d3w5bezuewuJUaoQ5je1K+NF1LN+BP8CDQARoJuRXd30D2OE4MZMJHElTu
-	JnGpBqH3okjU6fnPWPjtywJLWDWGGnGUgU8A6Qn8AxCM/TTUHsnCWpR0e/sCEHK+IX7AmT+5KuL
-	0xFZFtzOnMdNS0sB2kKv2rr3IjMYaXFAVhdh+yzVDfBBBmApfvzDq0iQkGstYkJrtdJnZ3Wm0tN
-	Bqa7+9uGlQHYSaVDP56e1u0hBlvp0GQHsRhD422X+hWO0FCjMEUhQ6ojd75z2kqU8AgF1uLQBaP
-	+1C93zzZMykPGc9kk0VQY1fKCZDZdfxemVRGctY6BOq+GULeg1Bk/KCE1gzdv4wwZhhDEic5IEf
-	v/Vi7WsfV8mSL9Q/vsA==
-X-Google-Smtp-Source: AGHT+IFDG8Sk/beG6HmPnDcmjdM56e4d71cRvdogswXByTIOWxtYfPY6H8ZVH3v0VrqRfJawQavcTQ==
-X-Received: by 2002:a05:6870:ed86:b0:29e:3bea:7e67 with SMTP id 586e51a60fabf-2d4c3e2d482mr539150fac.38.1744752155259;
-        Tue, 15 Apr 2025 14:22:35 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:87d2:86ee:7312:f611? ([2600:8803:e7e4:1d00:87d2:86ee:7312:f611])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-72e73e4d7e2sm2573855a34.45.2025.04.15.14.22.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Apr 2025 14:22:34 -0700 (PDT)
-Message-ID: <22858e4f-db8e-4c97-8551-a1934a9f2fe7@baylibre.com>
-Date: Tue, 15 Apr 2025 16:22:34 -0500
+        d=1e100.net; s=20230601; t=1744752347; x=1745357147;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UwJG8J1iyTH8V+SfRmZi+ISFZpJOYpkT7vaEBR18O5k=;
+        b=Anwt5f/FMivSZrZcZlo8kuyG7Q78edxu1sZGBDg732hn5kT4ujKnH+RSeZW183vahL
+         qJQo7jiiCHWaQsJdzfPARpbMI1uhbsGqh6OXrHUObbMrxwQpqx19CmISANxpaUP/tV9k
+         XX8G7c/wULo0N+Pe0NGNp3w7AjriyAeacCM8LN/BgJTnmpTSTO0KII80QiXqZ2F6Ao1R
+         S8VO4uNJKahKoui7e+EGyWvRsmkU3uydRFXfXvhA0yS4ZW/ggPnTmyl5l/kNywnCooN0
+         BB/75/crdjWghH7GwztKq/cn4SzAcj3YZYNE3MMIbhBdyTF8CD9Ovqafyz7bitAzYQr1
+         ODig==
+X-Forwarded-Encrypted: i=1; AJvYcCUefIyiMQgmBkpDyIJdds+oDkexpBVF/TSSMoZhqipWQ3EIdSvTyD0HxgkkYkXDbOVLi9+lD8mfh76CpRs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhR61ubsz97jwhe+xk+ELQR72h7r3cRcZ+PIMySkp6dHHqqp/r
+	afwLLMr4/0BB7w+T/lvRWA1LBBGf7vr5kSDefhgcwvDXm94/WA0qFCW7fhL6Hw==
+X-Gm-Gg: ASbGncskqUQFdbdVkp+z3QYBHQLPs9obfGsqyZ7LZDKqxUU9H3yS2iLOl4kkE2ai6jX
+	ph9xZ/YdfLeoO5dam0mdJDLMeNPCLPkS8kBw1P38dhdY7b53FdN25tJlQGZJzUy45I1EbNEoON0
+	Ht4faxEdB2CFi+h5YFTypoQ6/djaPxlyxs/khccAWqBVVGqC8ghgQvtVHLbSLQYPreFGXSnCG8y
+	OUyixdfnH47IRBX+UfOfHwaiHVm+NoTfHqH2Ju7HrnSq/+mdUnTLzHL2kynXhyOLKqsWoRz6i/n
+	ysOg+phdV4wRJOpuzxdX3RIzffUHyNKGsSQ7B0Aq+6h1PsghY9LoVisCRfRnsdELj7sHtW8r2Mx
+	kCJYGug==
+X-Google-Smtp-Source: AGHT+IFbV5rZHgTJXmvY63NNUPHF83MLOSfyfSDJgneqMsKOmSCLVHVGlipkv2ZUH8ySI1osZFQGUA==
+X-Received: by 2002:a17:902:ef4c:b0:224:f12:3734 with SMTP id d9443c01a7336-22c319f7f6bmr11029435ad.30.1744752347289;
+        Tue, 15 Apr 2025 14:25:47 -0700 (PDT)
+Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd230e8b1sm9292900b3a.148.2025.04.15.14.25.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Apr 2025 14:25:46 -0700 (PDT)
+Date: Tue, 15 Apr 2025 14:25:43 -0700
+From: William McVicker <willmcvicker@google.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Saravana Kannan <saravanak@google.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Donghoon Yu <hoony.yu@samsung.com>,
+	Hosung Kim <hosung0.kim@samsung.com>, kernel-team@android.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Youngmin Nam <youngmin.nam@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 6/7] clocksource/drivers/exynos_mct: Add module support
+Message-ID: <Z_7O1xi2-ZGhJ1r_@google.com>
+References: <20250402233407.2452429-1-willmcvicker@google.com>
+ <20250402233407.2452429-7-willmcvicker@google.com>
+ <Z_6OZHYfC0bC5289@mai.linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iio: adc: ad4000: Avoid potential double data word read
-To: Andy Shevchenko <andy.shevchenko@gmail.com>,
- Marcelo Schmitt <marcelo.schmitt@analog.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- jic23@kernel.org, lars@metafoo.de, Michael.Hennerich@analog.com,
- nuno.sa@analog.com, andy@kernel.org, marcelo.schmitt1@gmail.com
-References: <8f765cfd6e93fad4e755dd95d709b7bea2a388e2.1744718916.git.marcelo.schmitt@analog.com>
- <CAHp75VendQGLdpggySS3mX6M2YSeS70bvE8yg7sp_LNGDS-Scg@mail.gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <CAHp75VendQGLdpggySS3mX6M2YSeS70bvE8yg7sp_LNGDS-Scg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z_6OZHYfC0bC5289@mai.linaro.org>
 
-On 4/15/25 1:02 PM, Andy Shevchenko wrote:
-> On Tue, Apr 15, 2025 at 3:21 PM Marcelo Schmitt
-> <marcelo.schmitt@analog.com> wrote:
->>
->> Currently, SPI-Engine offload module always sends 32-bit data elements to
->> DMA engine. Appropriately, when set for SPI offloading, the IIO driver uses
->> 32 storagebits for IIO ADC channel buffer elements. However, setting SPI
->> transfer length according to storagebits (32-bits in case of offload) can
->> lead to unnecessarily long transfers for ADCs that are 16-bit or less
->> precision. Adjust AD4000 single-shot read to run transfers of 2 bytes when
->> that is enough to get all ADC data bits.
+On 04/15/2025, Daniel Lezcano wrote:
+> Hi Will,
+
+Hi Daniel,
+
 > 
-> ...
+> On Wed, Apr 02, 2025 at 04:33:57PM -0700, Will McVicker wrote:
+> > From: Donghoon Yu <hoony.yu@samsung.com>
+> > 
+> > On Arm64 platforms the Exynos MCT driver can be built as a module. On
+> > boot (and even after boot) the arch_timer is used as the clocksource and
+> > tick timer. Once the MCT driver is loaded, it can be used as the wakeup
+> > source for the arch_timer.
 > 
->>         xfers[1].rx_buf = &st->scan.data;
->> -       xfers[1].len = BITS_TO_BYTES(chan->scan_type.storagebits);
->> +       xfers[1].len = chan->scan_type.realbits > 16 ? 4 : 2;
+> From a previous thread where there is no answer:
 > 
-> But wouldn't be logical to have
+> https://lore.kernel.org/all/c1e8abec-680c-451d-b5df-f687291aa413@linaro.org/
 > 
->        xfers[1].len = BITS_TO_BYTES(chan->scan_type.realbits);
+> I don't feel comfortable with changing the clocksource / clockevent drivers to
+> a module for the reasons explained in the aforementionned thread.
 > 
-> ?
-> 
+> Before this could be accepted, I really need a strong acked-by from Thomas
 
-No, SPI expects 1, 2 or 4 bytes, never 3. If realbits is 18, we
-need len = 4.
+Thanks for the response! I'll copy-and-paste your replies from that previous
+thread and try to address your concerns.
 
-It would have to be:
+>   * the GKI approach is to have an update for the 'mainline' kernel and
+> let the different SoC vendors deal with their drivers. I'm afraid this
+> will prevent driver fixes to be carry on upstream because they will stay
+> in the OoT kernels
 
-	xfers[1].len = roundup_pow_of_two(BITS_TO_BYTES(chan->scan_type.realbits));
+I can't speak for that specific thread or their intent, but I can speak to this
+thread and our intent.
 
-But that gets too long for 1 line, so I prefer what Marcelo wrote.
+This whole patch series is about upstreaming the downstream changes. So saying
+this will prevent others from upstreaming changes is punishing the folks who
+are actually trying to upstream changes. I don't think that's a fair way to
+handle this.
 
-Maybe an idea for another day:
+Also, rejecting this series will not prevent people from upstreaming their
+changes, it'll just make it more unlikely because they now have to deal with
+upstreaming more changes that were rejected in the past. That's daunting for
+someone who doesn't do upstreaming often. I'm telling this from experience
+dealing with SoC vendors and asking them to upstream stuff.
 
-#define SPI_LEN_FOR_BITS(bits) roundup_pow_of_two(BITS_TO_BYTES(bits))
+With that said, let me try to address some of your technical concerns.
 
-There are a couple of places in spi/ that could use this and several
-iio drivers.
+> * the core code may not be prepared for that, so loading / unloading
+> the modules with active timers may result into some issues
+
+We had the same concern for irqchip drivers. We can easily disable unloading
+for these clocksource modules just like we did for irqchip by making them
+permanent modules.
+
+> * it may end up with some interactions with cpuidle at boot time and
+> the broadcast timer
+
+If I'm understanding this correctly, no driver is guaranteed to probe at
+initialization time regardless of whether it is built-in or a module. Taking
+a look at the other clocksource drivers, I found that the following drivers are
+all calling `clocksource_register_hz()` and `clockevents_config_and_register()`
+at probe time.
+
+  timer-sun5i.c
+  sh_tmu.c
+  sh_cmt.c
+  timer-tegra186.c
+  timer-stm32-lp.c (only calls clockevents_config_and_register())
+
+So this concern is unrelated to building these drivers are modules. Please let
+me know if I'm missing something here.
+
+>  * the timekeeping may do jump in the past [if and] when switching the
+> clocksource
+
+Can you clarify how this relates to modules? IIUC, the clocksource can be
+changed anytime by writing to:
+
+ /sys/devices/system/clocksource/clocksource0/current_clocksource
+
+If there's a bug related to timekeeping and changing the clocksource, then that
+should be handled separately from the modularization code.
+
+For ARM64 in general, the recommendation is to use the ARM architected timer
+which is not a module and is used for scheduling and timekeeping. While the
+Exynos MCT driver can functionally be used as the primary clocksource, it's not
+recommended due to performance issues. So building the MCT driver as a kernel
+module really shouldn't be an issue and has been thoroughly testing on several
+generations of Pixel devices which is why we are trying to upstream our
+downstream technical debt (so we can directly using the upstream version of the
+Exynos MCT driver).
+
+Thanks,
+Will
+
+[...]
 
