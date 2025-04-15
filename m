@@ -1,135 +1,167 @@
-Return-Path: <linux-kernel+bounces-605396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4591A8A093
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:05:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3A29A8A0A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:06:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36B23189D883
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:05:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E14E3B2988
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:05:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70E6D1F462F;
-	Tue, 15 Apr 2025 14:04:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1419A2957A7;
+	Tue, 15 Apr 2025 14:04:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="vyhXM6Bf"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BKxb5ptz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A90A01B87D5;
-	Tue, 15 Apr 2025 14:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5959E28F520
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 14:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744725878; cv=none; b=pVZNvHU5x7OHzZWT6MyyRz7cjQpvSGhmLlVRPMoJ3c+7xrGV75/SGpXk42eIosJAGQ8QGedjoJRhnL/Jbd1zVr7gc0kjKyqR81f88MgnUSiwRy6MmcHD7xPIYpLtuCLyzq8+PI/sDMRkmrE4vZOGr3X6yoTQ5X9GzvfwiJyL0b0=
+	t=1744725894; cv=none; b=OyhTQymPuvPGLqKskKdMGrW8PgsGXP2pPbXdi3/hkh/s4o976gZTluwDE4tyigScx8kyObz0+6OjgXMQsuLSHHYFkbSwJkrq1atnxrwJR+ssjnUWHWgec99+AX6NkHKgFsOKefBwK0sf4UqcXiHnFLYm7qfpTB/QFiARTqqkNCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744725878; c=relaxed/simple;
-	bh=ea55Tu5A1Ityz28eMNQeDySsu5crZKFSigerdggVpnI=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=ivVbDv1xxicDe26+BQYx76u5sAckTi389xqlJZx+/YgeDd7L6CLTUIYUl/YJyDrBIRK9XHCkRMVP84CSnnqelZJtT2/RmcXRzj0QYWlu4+SIUvc7aBmXCecfODDWcweTkxM7Oe1axFBoZS1GAfFy6uBUOeUN+5/pB93ukc2/0Po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=vyhXM6Bf; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1744725867; x=1745330667; i=markus.elfring@web.de;
-	bh=ptDYtjkDBBg+5F9CH1aHCJjQZEHOlQKTSx5pXY1iPIo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=vyhXM6BfkddauOAkGfHvTIxBH2/ML3eFI/Z3ag+t0n9DuQ7Zop06TsADYuANWQkx
-	 DQJ83NvneCdIYZesjNH/jUmI6sxJNvXfMcWW2Uewt3ymdUx89NCBsdAHEB3vw01vC
-	 j0tuRTZgaFHn+NRXLEIfzbePpTMHdq8yF6lceZRJ3NFe9IRn69CJx48pyNj9203hW
-	 oNCNaDkiK1bnDieyTEDXtP6IIRCF6EgsEeC8kNXt6ljOVEcv1G2EXu2EhJGLJSOwm
-	 H+Zdn5j+A9JcfGbZCbJym2ptueVMdCbs5WNkG/1y1EzgONgrTxMolmYmMzSHcURfb
-	 zbfoE1rOSsdqeyibKw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.24]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mo6Jz-1tFwfY1FAR-00hWEC; Tue, 15
- Apr 2025 16:04:27 +0200
-Message-ID: <143fb11b-6e8d-4e70-b5fc-9d133e9be97b@web.de>
-Date: Tue, 15 Apr 2025 16:04:26 +0200
+	s=arc-20240116; t=1744725894; c=relaxed/simple;
+	bh=QXP9FxMrw7KNSGwJPkQN8Q4+F9sKVBVOP6V3LiUSFH4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sfNPJIeGEdLZrFVaq6LDfTtI59vKYrgelcyILG3Sj3f7BqBODHqd2p1eT5B1btbqyvuF2O8ISb7uq01TFg0B00q+uAbZV/PIp5wYHeKPOtdmQzi4XPhSo3mKqhaY/ov53/dU9lx8fr89rv70c5NByVeh6ZV5MqeIlnbkLK2WMOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BKxb5ptz; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744725890;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PJjI0lY/xyReq3ZmWkhvSF6/rYPEyl6oWq19qSKGU2Q=;
+	b=BKxb5ptzYCieGjbhUBpuISLlRTjvhxhXtdxZTgHmQf43cyAOnm2dRBLFH56ZhaI0kHb4g4
+	0ibdiTKEMUOfg2uleC+LGKTdP+pwH7cR56SZLE4afWiYEJMyLaD6xSIDLIrnAnpb0tE9Dk
+	0ZfvbVmcHe9jaHxZkfRqvCA3/TTQ0Rc=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-240-hdTwJxlxMrOa9Xnj1stElA-1; Tue, 15 Apr 2025 10:04:48 -0400
+X-MC-Unique: hdTwJxlxMrOa9Xnj1stElA-1
+X-Mimecast-MFC-AGG-ID: hdTwJxlxMrOa9Xnj1stElA_1744725887
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43d6c65dc52so44352485e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 07:04:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744725887; x=1745330687;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PJjI0lY/xyReq3ZmWkhvSF6/rYPEyl6oWq19qSKGU2Q=;
+        b=S6iH9EjgEuXHU+SkMnnP3AlX5mM2w8O+uJZx2PgZG/Koz5AyjAIUSK2Iecf2AS/xml
+         oW5Vuw5n8VBsN9TgAQqZ5ckF9lHNDvG9GEUqiFt5r3YNAFLJ+tStr1tWUw/2PNGl9NIg
+         GIVHUT1soLNFLbutzU9QPEgIZ5IXu1vRGWg4i8ukfYKAkKTqUGMQTs5fc65DMIPZeQzO
+         0Zpin4D3sO69gL9SJHN2258DfQaaeAYcZI02tW9c1dmqLaAsGuYz1bMd82i3ThZYGGMU
+         QuuuPenUWhpJlGUxzQuUcPcr5qrCmfs9xm6wkSa2OHoPel4UwRmPF3YillD2II5eGKV8
+         nSqg==
+X-Forwarded-Encrypted: i=1; AJvYcCXiV+lDGK9F68z25Q3EYhpYSG1i8EBREuVXcgcHdMaiSY2dpNMjDOmeQMQ2WieHWD4pHH2Ys9yRAkavCFE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZ55Yj6gOx9JUyUVEMhMHEUviVfT/qYFc0/tSYpFL31qW+RgiU
+	DsUNjfWN36YTH420PVIm9Bgtn2wClrksUj/pKYJcS2UA7t+2OPZC69u/r4Lid/L83IMj/IRA38e
+	S5RWl0L88Y8YfXeF97PXlrIzNU+Gi0IsIpaQXPaNBgIWqzWjzgth7ft7zbXeDFg==
+X-Gm-Gg: ASbGncvE+n4oXv8VXp/+3TK++e98rm6ruVumvfApoCcdMr9mZcs3oOeEWp17v5JJg5y
+	K0aF807ZvjO5QRROG42dI65B9KIzKPo6BSkCv/5pplCjST4Dtwsaw0eOaXTe2XyNFmos6M4lB/D
+	fXdS8Z449GmfN2X9mtAJDg4cjxdxui4uKZSp3OMjzA1KuBAa/1COmh26ygJHM29DeslGJxKvokD
+	IHbdMaO3FuP972DmpPMQkuR2Huf4SkDxscIWkyyEqN0ntDqu/AcM84oLCismFpFdGUvFH3b1agh
+	qLVLLw==
+X-Received: by 2002:a05:600c:3b93:b0:43c:f64c:44a4 with SMTP id 5b1f17b1804b1-43f3a93ce18mr130332805e9.8.1744725887395;
+        Tue, 15 Apr 2025 07:04:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHITYoM+E4rIVBkVC+Zy7bnyx80+fEMQuQMdwZhPsCxD1+xYR+TZ77Lv7xvd8u4v2RkPh0L7w==
+X-Received: by 2002:a05:600c:3b93:b0:43c:f64c:44a4 with SMTP id 5b1f17b1804b1-43f3a93ce18mr130331785e9.8.1744725886545;
+        Tue, 15 Apr 2025 07:04:46 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:1517:1000:ea83:8e5f:3302:3575])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f205ed041sm210253075e9.2.2025.04.15.07.04.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Apr 2025 07:04:45 -0700 (PDT)
+Date: Tue, 15 Apr 2025 10:04:41 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Bui Quang Minh <minhquangbui99@gmail.com>
+Cc: virtualization@lists.linux.dev, Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	"David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] virtio-net: disable delayed refill when pausing rx
+Message-ID: <20250415100425-mutt-send-email-mst@kernel.org>
+References: <20250415074341.12461-1-minhquangbui99@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Qasim Ijaz <qasdev00@gmail.com>, linux-input@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Benjamin Tissoires <bentiss@kernel.org>,
- Jason Gerecke <jason.gerecke@wacom.com>, Jiri Kosina <jikos@kernel.org>,
- Ping Cheng <ping.cheng@wacom.com>
-References: <20250414183309.11460-1-qasdev00@gmail.com>
-Subject: Re: [PATCH RESEND] HID: wacom: fix memory leak on size mismatch in
- wacom_wac_queue_flush()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250414183309.11460-1-qasdev00@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:2SHZEWwLaL4rc1bGqN7NG1uj+SnhxxhTNeddATv+5/fbPr/AYwO
- n7iUly+//hZgYtGS4hEMi5yVrLZuySOUyTvQcytXjPbQw2iUJxYd5LI8NRe7kJdS6cCdhG3
- jAY61vzxFzcKrF4BHZnprfwK5ZQNUwAU6hTk8HHnWvh4p+UIhoNbY6HOo8v05GtvTvVyV+h
- eUYot7AP58XUv6myitK5g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:NbO+guxmj0A=;ZctwgzcNHvvBnmSBVaGio9SI6TI
- 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
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250415074341.12461-1-minhquangbui99@gmail.com>
 
-=E2=80=A6
-> number of elements it has copied. The code checks if the number=20
-> of copied elements does not equal the size of the fifo record,=20
-=E2=80=A6
-                     is?
-
-Under which circumstances would you dare to use text lines
-which would be longer than 63 characters?
+On Tue, Apr 15, 2025 at 02:43:38PM +0700, Bui Quang Minh wrote:
+> Hi everyone,
+> 
+> This series tries to fix a deadlock in virtio-net when binding/unbinding
+> XDP program, XDP socket or resizing the rx queue.
+> 
+> When pausing rx (e.g. set up xdp, xsk pool, rx resize), we call
+> napi_disable() on the receive queue's napi. In delayed refill_work, it
+> also calls napi_disable() on the receive queue's napi. When
+> napi_disable() is called on an already disabled napi, it will sleep in
+> napi_disable_locked while still holding the netdev_lock. As a result,
+> later napi_enable gets stuck too as it cannot acquire the netdev_lock.
+> This leads to refill_work and the pause-then-resume tx are stuck
+> altogether.
+> 
+> This scenario can be reproducible by binding a XDP socket to virtio-net
+> interface without setting up the fill ring. As a result, try_fill_recv
+> will fail until the fill ring is set up and refill_work is scheduled.
+> 
+> This fix adds virtnet_rx_(pause/resume)_all helpers and fixes up the
+> virtnet_rx_resume to disable future and cancel all inflights delayed
+> refill_work before calling napi_disable() to pause the rx.
+> 
+> Version 3 changes:
+> - Patch 1: refactor to avoid code duplication
+> 
+> Version 2 changes:
+> - Add selftest for deadlock scenario
+> 
+> Thanks,
+> Quang Minh.
 
 
-Can a patch series be more appropriate for the affected software module?
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
 
-Regards,
-Markus
+> Bui Quang Minh (3):
+>   virtio-net: disable delayed refill when pausing rx
+>   selftests: net: move xdp_helper to net/lib
+>   selftests: net: add a virtio_net deadlock selftest
+> 
+>  drivers/net/virtio_net.c                      | 69 +++++++++++++++----
+>  tools/testing/selftests/Makefile              |  2 +-
+>  tools/testing/selftests/drivers/net/Makefile  |  2 -
+>  tools/testing/selftests/drivers/net/queues.py |  4 +-
+>  .../selftests/drivers/net/virtio_net/Makefile |  2 +
+>  .../selftests/drivers/net/virtio_net/config   |  1 +
+>  .../drivers/net/virtio_net/lib/py/__init__.py | 16 +++++
+>  .../drivers/net/virtio_net/xsk_pool.py        | 52 ++++++++++++++
+>  tools/testing/selftests/net/lib/.gitignore    |  1 +
+>  tools/testing/selftests/net/lib/Makefile      |  1 +
+>  .../{drivers/net => net/lib}/xdp_helper.c     |  0
+>  11 files changed, 133 insertions(+), 17 deletions(-)
+>  create mode 100644 tools/testing/selftests/drivers/net/virtio_net/lib/py/__init__.py
+>  create mode 100755 tools/testing/selftests/drivers/net/virtio_net/xsk_pool.py
+>  rename tools/testing/selftests/{drivers/net => net/lib}/xdp_helper.c (100%)
+> 
+> -- 
+> 2.43.0
+
 
