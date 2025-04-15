@@ -1,95 +1,54 @@
-Return-Path: <linux-kernel+bounces-604492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE624A89522
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:31:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3486A8952A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:32:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32CAC1882BC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:31:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87C5E3A6152
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7954250C08;
-	Tue, 15 Apr 2025 07:31:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C216427A10D;
+	Tue, 15 Apr 2025 07:32:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Pw+HfVcv";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jXx7qJIL";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ai4uKrr5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vzIxxA8n"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="esTZfuej"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0BA23AE84
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 07:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E951F200B99;
+	Tue, 15 Apr 2025 07:32:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744702300; cv=none; b=t/paIpzNBK6/iIBxKRR89xY1QvCHC7AmRUHSIbKFQN3mkxqxY7p6JjhM1zHWmtzjgkqxutE+aj79J8NApkn/KWbD3wojRmoq3+ZX2aMUDK69e3EDMYYboDRHWcL29Tftf1MASlPxJpuIrDe07p3rK6gMObeOdJbaT/83ovVx+ck=
+	t=1744702360; cv=none; b=MkjyP+KBiaJuDt/cBlnEIXULWA/UtzP522wfCMoYSLtNboiXxvGUhf4/iCWC2vHLI1vmfpnIdNpR/acB/0wo7Y1LXCvbVZzeHJHoOLSKybJfp6EfWqaTL2WpEDkk3z888fVPNS9ORpZ/Zq5JMtVUOjmLaQQG5zBzCB7EAT9/tfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744702300; c=relaxed/simple;
-	bh=FeboX94B0oMTsV97kXP6oDoUBSCS06FozQ4iBzK7mq8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F1GcenNlxaAKw3+WdzFr7NNk05UTwv6rTNjMaPYYGx/uUhwwQ/SeRFAdpLjVER1sQzD4+OG11RJCR0/zbCcDs3vg0jNON7OeEUvXpQmMpGluedq40hzQ3oNFFWELXmeJ3a8WLV530XtIzDqEqW/f3aCs5DpQOGSMqpu4B+wWyxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Pw+HfVcv; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jXx7qJIL; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ai4uKrr5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vzIxxA8n; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E72F521169;
-	Tue, 15 Apr 2025 07:31:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1744702297; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gNPnsm1kvkLtfdZ8E6p7ofQ2IOjvWRNrS9OTpnJbE0I=;
-	b=Pw+HfVcv2Vi3My9vu+79IJWEAWMxb9tfueduSn/oVnwhUpZH25hkd0fnU7nNWkvn0TM9Cq
-	uO7vpP4mSN3IPn4f5w+oKgtP7MsLWvqZS0G6DEFQxl4gN3+2cAC4MMFyQkigcE0joq1+Te
-	9VVJKggVd03j40LvBDZL022OO3fPrlQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1744702297;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gNPnsm1kvkLtfdZ8E6p7ofQ2IOjvWRNrS9OTpnJbE0I=;
-	b=jXx7qJILoALG+rtKcUOKadICGCRbUVxH1pw3l6LSPWiqAszaaC1yQK3aqTOWDOb4n33r03
-	YpbiH5vTGirjobBQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ai4uKrr5;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=vzIxxA8n
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1744702296; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gNPnsm1kvkLtfdZ8E6p7ofQ2IOjvWRNrS9OTpnJbE0I=;
-	b=ai4uKrr5qg5jwdd19FqriM709aZeB/IWHpNTbGUD0QuHhq4jhW7s2JqrQyvkXA5cttVDlp
-	obxlgXCoYutdtookKdz4yVl3m2lXYO8wymAYzDQUyefFc3A4ffOSK2sjyjGB/yLmJeRjI6
-	0vjUmCT651XTGnClAlZbCIIBfPuSFSk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1744702296;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gNPnsm1kvkLtfdZ8E6p7ofQ2IOjvWRNrS9OTpnJbE0I=;
-	b=vzIxxA8n0/b4Z8+/6yIELPKPr52WgUXv5Mjpd+z0UggQkvMDwucNCLukz7cZIPJ2a6btAa
-	suyHOWoU8JHjQmAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D3399139A1;
-	Tue, 15 Apr 2025 07:31:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +FWoMlgL/mduMQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 15 Apr 2025 07:31:36 +0000
-Message-ID: <56245588-640d-471a-9e72-ce1288b7b81e@suse.cz>
-Date: Tue, 15 Apr 2025 09:31:36 +0200
+	s=arc-20240116; t=1744702360; c=relaxed/simple;
+	bh=KYTW3eRKBGe8a7exnVkjZ0yTk1fcE+hKlVewCIxqYjc=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=sIvJxLNRsXhymZlF6n/vq8Zc1A9jG6AaBvCfuWMGO6i6LT1dAKzKIISlUUGCSbiW3PWZTCjOntv3DaQERXZnURkVGjU67onvG2PhmUukaQgu/wRHPI/m/rvwm9xHH8DARH9Rkbxq9Ayf/+q224pfk65YqfnED9GZdn0oS3EtbKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=esTZfuej; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1744702330; x=1745307130; i=markus.elfring@web.de;
+	bh=Y3hpFMbH2VqFPkSv+RSyZUNBufHp4grv4jlfXWwRjVg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=esTZfuej/4JfgdaNPozd5RAGY60D4UaT387c0TJjV5lBM73CrPZFu09oGmS5za6+
+	 aT+C6O3V9KRqFDzRZVEq3NCWNf17PoiM/vXSO2YtQBkpr5YgwO/O/qqul3OFVakdu
+	 PnDgFcE9R7Z1nuA3EXSynHx0+P3nXCq7JSLkSzy21Ik35LSzVGzzU9Xyv+iyCMzOk
+	 cmnjXXbloWNavyvwnOJP0Ye2eGtXoL3edUvk1P7AXLCtZ+RdrhXN/mFkB5oht6i+C
+	 E5TAet6rJZ17wbN/w2GpCqyXzTcVOkekB3eXVcvB+lR4o6snzcWmBCkwJM4DiFmq/
+	 zmJGjwXWU1fjgQoPdQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.24]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1My6pf-1t62Mf11SR-013iOd; Tue, 15
+ Apr 2025 09:32:10 +0200
+Message-ID: <777db8bb-89d2-46ac-b7b9-0b5f418cc716@web.de>
+Date: Tue, 15 Apr 2025 09:32:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,144 +56,82 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] mm: page_alloc: defrag_mode kswapd/kcompactd
- watermarks
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Mel Gorman <mgorman@techsingularity.net>, Zi Yan <ziy@nvidia.com>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250313210647.1314586-1-hannes@cmpxchg.org>
- <20250313210647.1314586-6-hannes@cmpxchg.org>
- <46f1b2ab-2903-4cde-9e68-e334a0d0df22@suse.cz>
- <20250411153906.GC366747@cmpxchg.org>
- <efa6eb69-cff3-421d-94c7-e37a9a1e26f8@suse.cz>
- <20250411182156.GE366747@cmpxchg.org> <20250413022058.GF366747@cmpxchg.org>
-Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <20250413022058.GF366747@cmpxchg.org>
+To: 990492108@qq.com, Abdun Nihaal <abdun.nihaal@gmail.com>,
+ netdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Bharat Bhushan <bbhushan2@marvell.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Geethasowjanya Akula <gakula@marvell.com>,
+ Hariprasad Kelam <hkelam@marvell.com>,
+ Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>,
+ Subbaraya Sundeep Bhatta <sbhatta@marvell.com>,
+ Sunil Goutham <sgoutham@marvell.com>
+References: <tzi64aergg2ibm622mk54mavjs6vbpdpfeazdbqoyuufa5ispj@wbygyurrsto5>
+Subject: Re: [Patch next] octeontx2-pf: fix potential double free in
+ rvu_rep_create()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <tzi64aergg2ibm622mk54mavjs6vbpdpfeazdbqoyuufa5ispj@wbygyurrsto5>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: E72F521169
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Cn3lN5yfy4QAQCRnUGWu6QbWruHRdZjJEumDRw/aCQiwvzl/oCf
+ IhLeeQiIHR3ZvOL5+XdXVVsPW0kEDlMyhr39IKjdxHPPrFUtcnJP6T7y9jJutrhzFoptrEl
+ mOVz6Vwsi9TuJS3pjpfbrbt1S0zAF78Ev5TqlDB1f+BjFusOBJbadLLpo/J1HIJpcude3rV
+ e1q3n3EYTfVLMPPabD/cQ==
 X-Spam-Flag: NO
-X-Spam-Level: 
+UI-OutboundReport: notjunk:1;M01:P0:+6t0dhHJyu0=;VpHcaffIKrlzhF12K6Jya9HChVp
+ 9uuCJlAyYrijuDHo/zsjMw+9vSk1Pt9Qbodna8kmecSsxSBzFwJNHIkWPwEo+EAKADTfrgs5u
+ 8d/JBpNWzm6EJt0v0whUg0B6OnPswCGvF9rhIpbgfHhjqQTznlUuUevCaoPHlh9X2rKptUpzX
+ RWHaHZX+Tg0eoS2Vo41043y4mWj7L0/ji7yIP72RhbkNZvPWxmqTXAR5YrfHxA2eZSIS90vx2
+ uSldA/yC9iKplg6oZCSZ9mrVP58yjg1BNPaQs4VmHrVsjJ2khe3a5Z4e7LWrIdtyfPhgN3rL8
+ 5ek3RJ5kAx3Y9Ch7E5INukQEHie63bt5lPcNyqb9S9bfN0JB+eMBu5Z7UvqkkHIKhAK8Q17Ev
+ uT8YbiIUbBVkvXh/VJUBMTl7Wpr2h2THTi3Li+PBCQo8sVW88R8JR4+peWkZP7brQvTa+Q936
+ /PXEpZXvm8oXrGqggV+kIzQ3Sf9xIikBVz9Mi3bFA39nyoIodlLzTN2E5CrB5dLMDy/UGLcZc
+ VQMVivL6HawaQ1kW3EFhXH2FSp/d8oJhfwuCWFk15YjBOFp3XgKRKgDOooysqboTCKLX1nXZo
+ LQpXul+algKzCgd9JqW0/eDSerdJEe5MFOQiq2W+IugzxwpRONF2S2XLYG1XcM5cSj8WsNF4U
+ Kp+uGIz9bX88vWzNJv1nEzI0i3hzLUBWd7uYrdlcBn6Ax43pmt+L3ddttqPf/hmcSIv56OTgj
+ PlBIApQ/njyL7d7k0sgxTsvRMgMGEIPhwtZDk7J6brB4LoF4Dd6aXwTYoktokQahVVntpkfo4
+ pJX3KpSc1SZXZQnC/sTXMVM090XV5B3rza63S9G+NZ1Lk5qQEDdfiZ3LB39Grs98W23bvqbF9
+ /Zm8uBl1x4DyzD2F1Fg2AUyb8FQM2caNty8NgjUd2rcIb6hylpiRq3MK2ZKTf5pvpmq7L03B1
+ g9ZkV2zLvguVeV/kOKWcvLJpW4nruc7Wg+/X6HdzhyJOoWlJThFtNSlRo8QVnHVbKMnTYm2iH
+ Wqu4kFNlbQAtwXTgX2lAdpFdvIz4nSKshgno2wFJxkRlKiL+TyR+1/JXPY5EcxQ1F79dh+mzT
+ Tr0wmCR53Bj+W/QVnp2J5sJYxkUKpp/CKalHNlEh+EXkzNq5oiOCNXf7p6LPRa0hn2g2Xm8LX
+ Z87OO5T9cDrKWh+tECrfTGmsVFbS+PIscyPa+uY4axEbNY1p2tKSUe8mBe4wHpVQI42bU8qmd
+ kNcZS60IsSzwvfOvAXo3w85IABAzGxF0GmPLAzrQIi+GvgfgNr7Kgf+G5BR81ZOGyKvQnBoxY
+ 4KwwxvPOFItr3/u0DMs9wvA4yAJbeCjLDoSWDrsV4LJt/owqY9PBLTrsm8CoEVWjgzjOcfn1S
+ gySFYxN9DuiiZ3c+EynLtE8MWFZLfWyeCgXO447DNc4U93LAMopN8sUGREyMpS5znh8QhiAv6
+ VcJCNIB+SXtNcxlzfrGUeqth+nBlc81RXPwe23C4PaPRej0WSoAPAgrz2jjBzoTlrP/swzw==
 
-On 4/13/25 04:20, Johannes Weiner wrote:
-> On Fri, Apr 11, 2025 at 02:21:58PM -0400, Johannes Weiner wrote:
->> On Fri, Apr 11, 2025 at 06:51:51PM +0200, Vlastimil Babka wrote:
->> > [*] now when checking the code between kswapd and kcompactd handover, I
->> > think I found a another problem?
->> > 
->> > we have:
->> > kswapd_try_to_sleep()
->> >   prepare_kswapd_sleep() - needs to succeed for wakeup_kcompactd()
->> >    pgdat_balanced() - needs to be true for prepare_kswapd_sleep() to be true
->> >     - with defrag_mode we want high watermark of NR_FREE_PAGES_BLOCKS, but
->> >       we were only reclaiming until now and didn't wake up kcompactd and
->> >       this actually prevents the wake up?
-> 
-> Coming back to this, there is indeed a defrag_mode issue. My
-> apologies, I misunderstood what you were pointing at.
-> 
-> Like I said, kswapd reverts to order-0 in some other place to go to
-> sleep and trigger the handoff. At that point, defrag_mode also needs
-> to revert to NR_FREE_PAGES.
+=E2=80=A6
+> > +++ b/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
+=E2=80=A6
+> > @@ -691,7 +690,6 @@ int rvu_rep_create(struct otx2_nic *priv, struct n=
+etlink_ext_ack *extack)
+> >  			NL_SET_ERR_MSG_MOD(extack,
+> >  					   "PFVF representor registration failed");
+> >  			rvu_rep_devlink_port_unregister(rep);
+> > -			free_netdev(ndev);
+> >  			goto exit;
+> >  		}
+>
+> There is no potential double free here. If you notice the loop at the
+=E2=80=A6
+> (De)allocations in loops are quite tricky.
+>
+> Nacked-by: Abdun Nihaal <abdun.nihaal@gmail.com>
 
-I missed that revert to order-0 and that without it the current code also
-wouldn't make sense. But I agree with the fix.
+Would you ever become interested to avoid a duplicate free_netdev(ndev) ca=
+ll
+by using an additional label instead?
 
-> It's curious that this didn't stand out in testing. On the contrary,
-> kcompactd was still doing the vast majority of the compaction work. It
-> looks like kswapd and direct workers on their own manage to balance
-> NR_FREE_PAGES_BLOCK every so often, and then kswapd hands off. Given
-> the low number of kcompactd wakeups, the consumers keep it going.
-> 
-> So testing with this:
-> 
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index cc422ad830d6..c2aa0a4b67de 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -6747,8 +6747,11 @@ static bool pgdat_balanced(pg_data_t *pgdat, int order, int highest_zoneidx)
->  		/*
->  		 * In defrag_mode, watermarks must be met in whole
->  		 * blocks to avoid polluting allocator fallbacks.
-> +		 *
-> +		 * When kswapd has compact gap, check regular
-> +		 * NR_FREE_PAGES and hand over to kcompactd.
->  		 */
-> -		if (defrag_mode)
-> +		if (defrag_mode && order)
->  			item = NR_FREE_PAGES_BLOCKS;
->  		else
->  			item = NR_FREE_PAGES;
-> 
-> I'm getting the following results:
-> 
->                                 fallbackspeed/STUPID-DEFRAGMODE fallbackspeed/DEFRAGMODE
-> Hugealloc Time mean                       79381.34 (    +0.00%)    88126.12 (   +11.02%)
-> Hugealloc Time stddev                     85852.16 (    +0.00%)   135366.75 (   +57.67%)
-> Kbuild Real time                            249.35 (    +0.00%)      226.71 (    -9.04%)
-> Kbuild User time                           1249.16 (    +0.00%)     1249.37 (    +0.02%)
-> Kbuild System time                          171.76 (    +0.00%)      166.93 (    -2.79%)
-> THP fault alloc                           51666.87 (    +0.00%)    52685.60 (    +1.97%)
-> THP fault fallback                        16970.00 (    +0.00%)    15951.87 (    -6.00%)
-> Direct compact fail                         166.53 (    +0.00%)      178.93 (    +7.40%)
-> Direct compact success                       17.13 (    +0.00%)        4.13 (   -71.69%)
-> Compact daemon scanned migrate          3095413.33 (    +0.00%)  9231239.53 (  +198.22%)
-> Compact daemon scanned free             2155966.53 (    +0.00%)  7053692.87 (  +227.17%)
-> Compact direct scanned migrate           265642.47 (    +0.00%)    68388.33 (   -74.26%)
-> Compact direct scanned free              130252.60 (    +0.00%)    55634.87 (   -57.29%)
-> Compact total migrate scanned           3361055.80 (    +0.00%)  9299627.87 (  +176.69%)
-> Compact total free scanned              2286219.13 (    +0.00%)  7109327.73 (  +210.96%)
-> Alloc stall                                1890.80 (    +0.00%)     6297.60 (  +232.94%)
-> Pages kswapd scanned                    9043558.80 (    +0.00%)  5952576.73 (   -34.18%)
-> Pages kswapd reclaimed                  1891708.67 (    +0.00%)  1030645.00 (   -45.52%)
-> Pages direct scanned                    1017090.60 (    +0.00%)  2688047.60 (  +164.29%)
-> Pages direct reclaimed                    92682.60 (    +0.00%)   309770.53 (  +234.22%)
-> Pages total scanned                    10060649.40 (    +0.00%)  8640624.33 (   -14.11%)
-> Pages total reclaimed                   1984391.27 (    +0.00%)  1340415.53 (   -32.45%)
-> Swap out                                 884585.73 (    +0.00%)   417781.93 (   -52.77%)
-> Swap in                                  287106.27 (    +0.00%)    95589.73 (   -66.71%)
-> File refaults                            551697.60 (    +0.00%)   426474.80 (   -22.70%)
-> 
-> Work has shifted from direct to kcompactd. In aggregate there is more
-> compaction happening. Meanwhile aggregate reclaim and swapping drops
-> quite substantially. %sys is down, so this is just more efficient.
-> 
-> Reclaim and swapping are down substantially, which is great. But the
-> reclaim work that remains has shifted somewhat to direct reclaim,
-> which is unfortunate. THP delivery is also a tad worse, but still much
-> better than !defrag_mode, so not too concerning. That part deserves a
-> bit more thought.
-> 
-> Overall, this looks good, though. I'll send a proper patch next week.
-> 
-> Thanks for the review, Vlastimil.
+See also:
+[PATCH net v2 1/2] octeontx2-pf: fix netdev memory leak in rvu_rep_create(=
+)
+https://lore.kernel.org/netdev/8d54b21b-7ca9-4126-ba13-bbd333d6ba0c@web.de=
+/
 
-NP!
-
+Regards,
+Markus
 
