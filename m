@@ -1,90 +1,331 @@
-Return-Path: <linux-kernel+bounces-605308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35750A89F8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:35:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FC89A89F8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:35:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3D2A3BEC2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:34:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A73E7AB82D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:34:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37CD714A0B7;
-	Tue, 15 Apr 2025 13:34:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B3D1537A7;
+	Tue, 15 Apr 2025 13:35:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="DDoY3gID"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ok1L0+c4"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A4A25771;
-	Tue, 15 Apr 2025 13:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26ED825771
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 13:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744724094; cv=none; b=kKAGQi6xyWSUYWnSnTtW3yRWge/HN+Dz43l1VEDybOMNma7Pzw2DEQbuk0IYHkNgrKJ3Ia0vRnn7Vvtg5QGH53PhN0l1kfQtilALh5F/cfXIelCrifxyFXma7/iiH7LevsNEX98ZEqUN06NA/fi8CyQxbSG+Tv6FnecIoX3GdCw=
+	t=1744724108; cv=none; b=dJ0VrzVaO9XNZa5q7ma/ehpFcPiZ37m7QV/yprsM+w0x8Y3umBJnyljP/bK3f+/WIZfK5F7/gFcma/OGXkLYWUc/KDNMuWC3fbjW/w5J6avq9Mq/ONHdAfE4v/POSCt1O6Km9Z2IHuvZeXEPKBMijUizV4RlyQnjqzGU8vIaXzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744724094; c=relaxed/simple;
-	bh=ZbvVGnkFnCTdW8MWHN32kqUIqhHk59XjTd85RXWZa7w=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kO8rRTZmRBKhgTvn0ZLh5dfBblaWbWHpv2sWp28EYMz9dz+2w93bzhlFhI+PWmqDvop6WCF9GOnARcy6uKvo05tJL8ioxjQ9D+DEDeZo8XOx78lGnSq5UC9TAheK+fVzqzByZyXbOCol1wUIUNYsAfMNSN3wQDZBMpE+YikRHco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=DDoY3gID; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net ED3CE41086
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1744724092; bh=qq2xMJBZXzE4K+QY6hdl58GPqersIi74JVHAVzQ7s9k=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=DDoY3gIDfJxPZpUxEk7czh4g4VPoH6KuBIk8B0Ubx62VEFY9V5X7ZIu49/Owiz12G
-	 7FUD59tpDgpWxTZHHzfRKYxzn49Gbm3g0LsnA+P60ctkx5SmjOeMxHWH2rWsIuNtKl
-	 SDow1+t2psIiOdAe7lt7SB18VPmJof+j5kN4w/SsITMRsIqmAfP543rPYuVjt7ObEG
-	 m+gYUfigYs2gKi298yRmgWP3kunGSNkP4PgFqnR5jfJWvg6g8BCC89QWlaEgzEx84z
-	 /ZMGQJYP/V/FGuyBXwL4HFQOkV8F2N3aXjoj0AWJHPrnthbA1R3DUqX1x0HUDg1G4F
-	 BdZrDoZQnrL+w==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id ED3CE41086;
-	Tue, 15 Apr 2025 13:34:51 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Andy Shevchenko
- <andriy.shevchenko@intel.com>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>, Linux Doc Mailing List
- <linux-doc@vger.kernel.org>, linux-kernel@vger.kernel.org, "Gustavo A. R.
- Silva" <gustavoars@kernel.org>, Kees Cook <kees@kernel.org>, Russell King
- <linux@armlinux.org.uk>, linux-hardening@vger.kernel.org,
- netdev@vger.kernel.org
-Subject: Re: [PATCH v3 00/33] Implement kernel-doc in Python
-In-Reply-To: <20250415180631.180e9a9f@sal.lan>
-References: <871pu1193r.fsf@trenco.lwn.net>
- <Z_zYXAJcTD-c3xTe@black.fi.intel.com> <87mscibwm8.fsf@trenco.lwn.net>
- <Z_4EL2bLm5Jva8Mq@smile.fi.intel.com>
- <Z_4E0y07kUdgrGQZ@smile.fi.intel.com> <87v7r5sw3a.fsf@intel.com>
- <Z_4WCDkAhfwF6WND@smile.fi.intel.com>
- <Z_4Wjv0hmORIwC_Z@smile.fi.intel.com> <20250415164014.575c0892@sal.lan>
- <Z_4sKaag1wZhME7B@smile.fi.intel.com>
- <Z_4sxCFvpqs7qmcN@smile.fi.intel.com> <20250415180631.180e9a9f@sal.lan>
-Date: Tue, 15 Apr 2025 07:34:51 -0600
-Message-ID: <87bjsxblac.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1744724108; c=relaxed/simple;
+	bh=m0xfAS8QK+GM0ddqcKkgH7JaMDCagUiMUdtp3obSN4I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NO1spdI2jF1I0wDmYc0gntzOre8o2SJGh/GOr9cB1K3MzhbR1LRLiugbnYSIZEyyFebsJsnc0Y19c78ePSDxjJ0dwnXh5eiPWbS3PJhdELce59mYswy9AREkhp0KMEnYmX1Q/6V/IC09Q4xronp4dwHzza9BFSQb4tDp6ysI0Xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ok1L0+c4; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e6ff035e9aso10346509a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 06:35:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744724104; x=1745328904; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PGZ9B42C0yWg7Qpk0chgVgDrU0joNg71F+OhP9lllNY=;
+        b=Ok1L0+c4LDhurErTMbt5LwXAnpZch32QF7h9gD5tkw6/AkbDG1gtTGLYtaq4lukbOH
+         NEai5EYSH2AtExNiVQC79KEl1dPTLssMjNNWSoaosyEEo95mJiaqz7KLdKS/JrDE7XDB
+         SX2Lgppf5XY4apEXwL/ayD9WlEDqLGfm8TxC3bL6ykfkJXBmH8kr3/Ereta/Th8TqTu+
+         V4dQv3aUn5y+89qgXufIzZuI1iYhnfPvNoN7+qGOP0cSH8bCmHQibq6Z4AXnubCZRoqF
+         l7uB2hpdCSjELygg3bOZmGRjKYwSbTaLlaWU6Ba9BkjauLz5yWLB+QjfDSEZZhMzRxbu
+         Q/BA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744724104; x=1745328904;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PGZ9B42C0yWg7Qpk0chgVgDrU0joNg71F+OhP9lllNY=;
+        b=HhTZ5HdEMOy847op6N4I9/zyWO2UwgJhpb+3XzTV1WgUE0RZDbKKbMHtXw17oVDnEO
+         VYpuHkd6i0tc/+UMElIj4K/JRY5Fs0tS7I8WThTcySDjjtsma1miQfYTeExy7HXBH1K9
+         RWr+jGEZHLTPjnwmH/4bl+fyA7X4qQrSxCbODGNka9any+wL4k3xQor8k4OM3nN4Sgl+
+         nBSTtbTvuNIF3K9bxwWG5NY5FgHkTQ85LNNLQysWv+iQgFkcSly6i3dIVhpy2Y2H25kC
+         IE4C/b4m0+yU9wRw1WF2IQi3QAaJsS9J7q58HitHch8HLpbK6JF7xqFw5IQdvAH2fMjO
+         DOXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUVPW3u3Gx1HrizjeOkSU8yeDPxRUJCwnOB52PRlj27Q8Fn/lxQzYXFMFZyG9TkUWJzENz0iGXCFNVlEas=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1ZBchjU/HXxqb5WJrfyPwJ3q0oHB6IyQB5BHg4bkaiBThOgC5
+	I1O5BsLvt+ZA7j6fK/nnF7Dw/d/kc8Eku8eQNyMtng2PDDOdTTrZC6gaNFjICg1l9dqfWdKnBHM
+	pNv0JukRZ17NXUj5D/dW8P/xqtl8oXjlPKke/FQ==
+X-Gm-Gg: ASbGncseHR/lVkROzFiCRgg/33LQz9kt66sLk8ZaP8PENoSwx1PcSztNTYfD9nLY2oo
+	wqr34F7pKGqqx+AGRsAwqiVfNFAutgkYX90mmvSb7i59fMVjjpcTLILlw4XbjxHoL/jeNO+sUp6
+	l0Iozo40KJQEKZJqFNiOk2s4JO59VnDKoI5X+1estJvucipVxqjf/cC72V
+X-Google-Smtp-Source: AGHT+IFeWYl7QrxdNMXm+KJ0xt4slhUexWmapLP1aBEJ5DfrmKAWMNsZFlYEzQq89QgGem5AgCQoBcOQpxhvkd68zAk=
+X-Received: by 2002:a05:6402:1e96:b0:5f0:9eb3:8e76 with SMTP id
+ 4fb4d7f45d1cf-5f3702b02eamr14469259a12.34.1744724103928; Tue, 15 Apr 2025
+ 06:35:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250409213030.3489481-1-iuliana.prodan@oss.nxp.com>
+ <Z_0snwzpkPTJqjWX@p14s> <8116ac27-4c2e-41a4-9e05-7d20a7c6a361@nxp.com>
+In-Reply-To: <8116ac27-4c2e-41a4-9e05-7d20a7c6a361@nxp.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Tue, 15 Apr 2025 07:34:52 -0600
+X-Gm-Features: ATxdqUGSQ5S_l_W8BKKUHjnxrDXxD3sYIeidnBz7Dp1f6y94_0PqsAy6EwgwgCw
+Message-ID: <CANLsYkzehT=ghX0XCNEp7Dod1Jc1YCm33B3ByDrfMoKvbssHag@mail.gmail.com>
+Subject: Re: [PATCH v4] remoteproc: imx_dsp_rproc: Add support for
+ DSP-specific features
+To: Iuliana Prodan <iuliana.prodan@nxp.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, "S.J. Wang" <shengjiu.wang@nxp.com>, 
+	Fabio Estevam <festevam@gmail.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
+	Mpuaudiosw <Mpuaudiosw@nxp.com>, imx@lists.linux.dev, linux-remoteproc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+On Tue, 15 Apr 2025 at 05:04, Iuliana Prodan <iuliana.prodan@nxp.com> wrote:
+>
+> On 4/14/2025 6:41 PM, Mathieu Poirier wrote:
+> > On Thu, Apr 10, 2025 at 12:30:30AM +0300, Iuliana Prodan (OSS) wrote:
+> >> From: Iuliana Prodan <iuliana.prodan@nxp.com>
+> >>
+> >> Some DSP firmware requires a FW_READY signal before proceeding, while
+> >> others do not.
+> >> Therefore, add support to handle i.MX DSP-specific features.
+> >>
+> >> Implement handle_rsc callback to handle resource table parsing and to
+> >> process DSP-specific resource, to determine if waiting is needed.
+> >>
+> >> Update imx_dsp_rproc_start() to handle this condition accordingly.
+> >>
+> >> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
+> >> ---
+> >> Changes in v4:
+> >> - Reviews from Mathieu Poirier:
+> >>    - Adjusted len to include the size of struct fw_rsc_imx_dsp.
+> >>    - Updated len validation checks.
+> >> - Review from Frank Li:
+> >>    - In imx_dsp_rproc_handle_rsc(), removed the goto ignored statement.
+> >> - In probe(), set flags to WAIT_FW_READY to ensure the host waits
+> >> for fw_ready when no vendor-specific resource is defined.
+> >> - Link to v3: https://lore.kernel.org/all/20250403100124.637889-1-iuliana.prodan@oss.nxp.com/
+> >>
+> >> Changes in v3:
+> >> - Reviews from Mathieu Poirier:
+> >>    - Added version and magic number to vendor-specific resource table entry.
+> >>    - Updated defines to maintain backward compatibility with a resource table that doesn't have a vendor-specific resource.
+> >>      - By default, wait for `fw_ready`, unless specified otherwise.
+> >> - Link to v2: https://lore.kernel.org/all/20250318215007.2109726-1-iuliana.prodan@oss.nxp.com
+> >>
+> >> Changes in v2:
+> >> - Reviews from Mathieu Poirier:
+> >>    - Use vendor-specific resource table entry.
+> >>    - Implement resource handler specific to the i.MX DSP.
+> >> - Revise commit message to include recent updates.
+> >> - Link to v1: https://lore.kernel.org/all/20250305123923.514386-1-iuliana.prodan@oss.nxp.com/
+> >>
+> >>   drivers/remoteproc/imx_dsp_rproc.c | 98 +++++++++++++++++++++++++++++-
+> >>   1 file changed, 96 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
+> >> index b9bb15970966..e4212e624a91 100644
+> >> --- a/drivers/remoteproc/imx_dsp_rproc.c
+> >> +++ b/drivers/remoteproc/imx_dsp_rproc.c
+> >> @@ -35,9 +35,18 @@ module_param_named(no_mailboxes, no_mailboxes, int, 0644);
+> >>   MODULE_PARM_DESC(no_mailboxes,
+> >>               "There is no mailbox between cores, so ignore remote proc reply after start, default is 0 (off).");
+> >>
+> >> +/* Flag indicating that the remote is up and running */
+> >>   #define REMOTE_IS_READY                            BIT(0)
+> >> +/* Flag indicating that the host should wait for a firmware-ready response */
+> >> +#define WAIT_FW_READY                               BIT(1)
+> >>   #define REMOTE_READY_WAIT_MAX_RETRIES              500
+> >>
+> >> +/*
+> >> + * This flag is set in the DSP resource table's features field to indicate
+> >> + * that the firmware requires the host NOT to wait for a FW_READY response.
+> >> + */
+> >> +#define FEATURE_DONT_WAIT_FW_READY          BIT(0)
+> >> +
+> >>   /* att flags */
+> >>   /* DSP own area */
+> >>   #define ATT_OWN                                    BIT(31)
+> >> @@ -72,6 +81,10 @@ MODULE_PARM_DESC(no_mailboxes,
+> >>
+> >>   #define IMX8ULP_SIP_HIFI_XRDC                      0xc200000e
+> >>
+> >> +#define FW_RSC_NXP_S_MAGIC                  ((uint32_t)'n' << 24 |  \
+> >> +                                             (uint32_t)'x' << 16 |  \
+> >> +                                             (uint32_t)'p' << 8 |   \
+> >> +                                             (uint32_t)'s')
+> >>   /*
+> >>    * enum - Predefined Mailbox Messages
+> >>    *
+> >> @@ -136,6 +149,24 @@ struct imx_dsp_rproc_dcfg {
+> >>      int (*reset)(struct imx_dsp_rproc *priv);
+> >>   };
+> >>
+> >> +/**
+> >> + * struct fw_rsc_imx_dsp - i.MX DSP specific info
+> >> + *
+> >> + * @len: length of the resource entry
+> >> + * @magic_num: 32-bit magic number
+> >> + * @version: version of data structure
+> >> + * @features: feature flags supported by the i.MX DSP firmware
+> >> + *
+> >> + * This represents a DSP-specific resource in the firmware's
+> >> + * resource table, providing information on supported features.
+> >> + */
+> >> +struct fw_rsc_imx_dsp {
+> >> +    uint32_t len;
+> >> +    uint32_t magic_num;
+> >> +    uint32_t version;
+> >> +    uint32_t features;
+> >> +} __packed;
+> >> +
+> >>   static const struct imx_rproc_att imx_dsp_rproc_att_imx8qm[] = {
+> >>      /* dev addr , sys addr  , size      , flags */
+> >>      { 0x596e8000, 0x556e8000, 0x00008000, ATT_OWN },
+> >> @@ -300,6 +331,66 @@ static int imx_dsp_rproc_ready(struct rproc *rproc)
+> >>      return -ETIMEDOUT;
+> >>   }
+> >>
+> >> +/**
+> >> + * imx_dsp_rproc_handle_rsc() - Handle DSP-specific resource table entries
+> >> + * @rproc: remote processor instance
+> >> + * @rsc_type: resource type identifier
+> >> + * @rsc: pointer to the resource entry
+> >> + * @offset: offset of the resource entry
+> >> + * @avail: available space in the resource table
+> >> + *
+> >> + * Parse the DSP-specific resource entry and update flags accordingly.
+> >> + * If the WAIT_FW_READY feature is set, the host must wait for the firmware
+> >> + * to signal readiness before proceeding with execution.
+> >> + *
+> >> + * Return: RSC_HANDLED if processed successfully, RSC_IGNORED otherwise.
+> >> + */
+> >> +static int imx_dsp_rproc_handle_rsc(struct rproc *rproc, u32 rsc_type,
+> >> +                                void *rsc, int offset, int avail)
+> >> +{
+> >> +    struct imx_dsp_rproc *priv = rproc->priv;
+> >> +    struct fw_rsc_imx_dsp *imx_dsp_rsc = rsc;
+> >> +    struct device *dev = rproc->dev.parent;
+> >> +
+> >> +    if (!imx_dsp_rsc) {
+> >> +            dev_dbg(dev, "Invalid fw_rsc_imx_dsp.\n");
+> >> +            return RSC_IGNORED;
+> >> +    }
+> >> +
+> >> +    /* Make sure resource isn't truncated */
+> >> +    if (sizeof(struct fw_rsc_imx_dsp) > avail ||
+> > We agree on that part.
+> >
+> >> +        sizeof(struct fw_rsc_imx_dsp) < imx_dsp_rsc->len) {
+> >  From the above, "sizeof(struct fw_rsc_imx_dsp) > imx_dsp_rsc->len" would be a
+> > valid condition when it clearly isn't.  I am still convinced the only
+> > valid option is:
+> >
+> >              sizeof(struct fw_rsc_imx_dsp) != imx_dsp_rsc->len)
+> >
+> > I am happy to change my mind but would need more information.
+>
+> You're right, it should be sizeof(struct fw_rsc_imx_dsp) > imx_dsp_rsc->len.
+> The ->len comes from the remote size, while in Linux we need to check if
+> the length is at least sizeof(struct fw_rsc_imx_dsp).
 
-> I'll try to craft a patch along the week to add
-> PYTHONDONTWRITEBYTECODE=1 to the places where kernel-doc
-> is called.
+To be clear, I think it should _not_ be sizeof(struct fw_rsc_imx_dsp)
+> imx_dsp_rsc->len, this is an error condition.
 
-This may really be all we need.  It will be interesting to do some
-build-time tests; I don't really see this as making much of a
-difference.
+> This is for backwards compatibility - if someone changes the structure
+> on the remote side and increases the length, in Linux we can still load
+> that firmware, but probably not all features will be checked.
 
-Thanks,
+And nothing good can come out of that situation.
 
-jon
+>
+> If you agree with this, I'll send a v5 with this fix - s/</>.
+
+To me, the only valid condition is:
+
+sizeof(struct fw_rsc_imx_dsp) != imx_dsp_rsc->len)
+
+>
+> Thanks,
+> Iulia
+>
+> > Thanks,
+> > Mathieu
+> >
+> >> +            dev_dbg(dev, "Resource fw_rsc_imx_dsp is truncated.\n");
+> >> +            return RSC_IGNORED;
+> >> +    }
+> >> +
+> >> +    /*
+> >> +     * If FW_RSC_NXP_S_MAGIC number is not found then
+> >> +     * wait for fw_ready reply (default work flow)
+> >> +     */
+> >> +    if (imx_dsp_rsc->magic_num != FW_RSC_NXP_S_MAGIC) {
+> >> +            dev_dbg(dev, "Invalid resource table magic number.\n");
+> >> +            return RSC_IGNORED;
+> >> +    }
+> >> +
+> >> +    /*
+> >> +     * For now, in struct fw_rsc_imx_dsp, version 0,
+> >> +     * only FEATURE_DONT_WAIT_FW_READY is valid.
+> >> +     *
+> >> +     * When adding new features, please upgrade version.
+> >> +     */
+> >> +    if (imx_dsp_rsc->version > 0) {
+> >> +            dev_warn(dev, "Unexpected fw_rsc_imx_dsp version %d.\n",
+> >> +                     imx_dsp_rsc->version);
+> >> +            return RSC_IGNORED;
+> >> +    }
+> >> +
+> >> +    if (imx_dsp_rsc->features & FEATURE_DONT_WAIT_FW_READY)
+> >> +            priv->flags &= ~WAIT_FW_READY;
+> >> +
+> >> +    return RSC_HANDLED;
+> >> +}
+> >> +
+> >>   /*
+> >>    * Start function for rproc_ops
+> >>    *
+> >> @@ -335,8 +426,8 @@ static int imx_dsp_rproc_start(struct rproc *rproc)
+> >>
+> >>      if (ret)
+> >>              dev_err(dev, "Failed to enable remote core!\n");
+> >> -    else
+> >> -            ret = imx_dsp_rproc_ready(rproc);
+> >> +    else if (priv->flags & WAIT_FW_READY)
+> >> +            return imx_dsp_rproc_ready(rproc);
+> >>
+> >>      return ret;
+> >>   }
+> >> @@ -936,6 +1027,7 @@ static const struct rproc_ops imx_dsp_rproc_ops = {
+> >>      .kick           = imx_dsp_rproc_kick,
+> >>      .load           = imx_dsp_rproc_elf_load_segments,
+> >>      .parse_fw       = imx_dsp_rproc_parse_fw,
+> >> +    .handle_rsc     = imx_dsp_rproc_handle_rsc,
+> >>      .find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
+> >>      .sanity_check   = rproc_elf_sanity_check,
+> >>      .get_boot_addr  = rproc_elf_get_boot_addr,
+> >> @@ -1053,6 +1145,8 @@ static int imx_dsp_rproc_probe(struct platform_device *pdev)
+> >>      priv = rproc->priv;
+> >>      priv->rproc = rproc;
+> >>      priv->dsp_dcfg = dsp_dcfg;
+> >> +    /* By default, host waits for fw_ready reply */
+> >> +    priv->flags |= WAIT_FW_READY;
+> >>
+> >>      if (no_mailboxes)
+> >>              imx_dsp_rproc_mbox_init = imx_dsp_rproc_mbox_no_alloc;
+> >> --
+> >> 2.25.1
+> >>
 
