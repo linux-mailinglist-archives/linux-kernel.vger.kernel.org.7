@@ -1,262 +1,90 @@
-Return-Path: <linux-kernel+bounces-604096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6338EA89089
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 02:28:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D2DDA89071
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 02:27:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07EB17A5868
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 00:27:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CAE37A56AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 00:26:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DCB817BB35;
-	Tue, 15 Apr 2025 00:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD6F713B5A0;
+	Tue, 15 Apr 2025 00:27:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kxUBHhRu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XTZMzOQA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2919A176ADB;
-	Tue, 15 Apr 2025 00:27:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09DCB22EE5;
+	Tue, 15 Apr 2025 00:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744676840; cv=none; b=MgEcf89IQ8g75IrhXj1CsUqNn65xEqlcrA0xnjJst5SOvHmm165euXUzf+SyKnmHuB9XywYVji+wIRgDhXvCjZAYAgzRi3izNGmP0pZyrzeONnJ3iftZ6rek6m1M2MIwNrFgaxaaUTurY9teqQd8gcUbH0xGD+BijOcM0B/Pvng=
+	t=1744676833; cv=none; b=iC4d2z8uf9jYwNeZSX+MwRCw4WwJKuahvKAesrgP3VMqGEn9cX1bNrxSp+81+WXCVNObvS4tu3v3YjVxMMQrFFbO8XHcBxj00nDcX2tbkOg88JMWS/ytuRQaTTod/FB0X1wiaVBTryTu3DuMpAB49Dy2Ju16Ul6mNTCsnttmHUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744676840; c=relaxed/simple;
-	bh=kqMU7kGHOah8Smsm3vfblSteI+QgRbx0dqIFMAGWhWg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ivz12EDnuJWUP7SNnNOVnPLYlPHesuUZcQWFrCiokvVay2B9dMjVKZNZE0kFt8a88jrgtwHyFB5N7Ts39K45ezH3PqsnXh6mKEt0iaXQ0VaHqYD6vFl087YgV/wQ2rKcEUqM20dtkqZb/iuKcUI7iaMNUknxA/eHiL/BmHqrdxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kxUBHhRu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C017C4CEE2;
-	Tue, 15 Apr 2025 00:27:18 +0000 (UTC)
+	s=arc-20240116; t=1744676833; c=relaxed/simple;
+	bh=p/7BiZ9Yzsgk30h25OyaW/iYOh0nxPPaqAteJXbR6bY=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=T9v+rFCzMcGPzxjNuAnzEDr6PzE2nybIe+CnTYGF/FSYVhBqkfa6nOBvvN2VODSP3HDCXxwiB+jNRy2J1HHj4Rdm3cGejqAYW0OL4SIKBOmLYqbr+4T7/lFoNrO/40yCzttrZhZRp0MUSEAwP2pxeUlotXwbslPHNT6CpAFCkIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XTZMzOQA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67FA4C4AF09;
+	Tue, 15 Apr 2025 00:27:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744676840;
-	bh=kqMU7kGHOah8Smsm3vfblSteI+QgRbx0dqIFMAGWhWg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kxUBHhRuu1Z+DN2A/bcFdh4BLuSfTN7MIZy1IJchqHZMeZ4wvMX/Nez3yLtpkO7Zk
-	 TzVDqo9RVicqPyY+DY+AJFxxwZ0uQNOxRTF+8zuEEqGmRewmT3SkYpsv7z0aVM+lFk
-	 BoUW0Uuml/PhheOvm6f8hoqRzX69jWqaP5pg5ratM8jw7ziKGutyrqoJFGZ4mw2xyG
-	 3z7YweVW2OkxXmGSOKnoITb+VW7rYcguroX7YbXOjOD8eYP6rin093jh1MUae8t1DF
-	 pFKXQ85XW+1P5PNFRtJedQMDqs8XLuHIFwJO9Ppyornflj/9RTRybB7gkAHCQPmm3h
-	 wxmDTsYAvkRPg==
-From: Mario Limonciello <superm1@kernel.org>
-To: Borislav Petkov <bp@alien8.de>,
-	Jean Delvare <jdelvare@suse.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Yazen Ghannam <yazen.ghannam@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	linux-doc@vger.kernel.org (open list:DOCUMENTATION),
-	linux-kernel@vger.kernel.org (open list),
-	linux-i2c@vger.kernel.org (open list:I2C/SMBUS CONTROLLER DRIVERS FOR PC),
-	platform-driver-x86@vger.kernel.org (open list:AMD PMC DRIVER)
-Subject: [PATCH v4 5/5] x86/CPU/AMD: Print the reason for the last reset
-Date: Mon, 14 Apr 2025 19:26:58 -0500
-Message-ID: <20250415002658.1320419-6-superm1@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250415002658.1320419-1-superm1@kernel.org>
-References: <20250415002658.1320419-1-superm1@kernel.org>
+	s=k20201202; t=1744676832;
+	bh=p/7BiZ9Yzsgk30h25OyaW/iYOh0nxPPaqAteJXbR6bY=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=XTZMzOQAUI7mP2pfZTh93/xCW2LAIw3Q1mVUiaCy1BhVWLOn7WSu5NH19L7r5VSBU
+	 PGMACMxYH1rmDBIDPfv3pb4Y5BwTMYgot2rvR+Uae+E5rSy22siZAM+ReHSOsLwrjI
+	 5xfd7VCx5k2LqLChVTk9fKRlgIHBoqBEKwl+8YBHYQfHe6VXg8Ihlqc+/zDqfLrzEm
+	 W4H/mFFq83PFZuXrIJhtPG6sWVSjc3UzoEuFhnEdrEA6z+cuwzDhmdV/qYzput4CkL
+	 yIRQnHaGVhMUoHiRM/HCZWfcE/NHz82GL2XJJz5wDh1cQcLwWHcuBo7kJ0xfyr8Y1j
+	 0K0ZOek4vO4Hw==
+Message-ID: <e4bd8e47aeab761e409121ac9bc19408@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250414-camouflaged-silver-dodo-d0c000-mkl@pengutronix.de>
+References: <20250414073646.1473157-1-ciprianmarian.costea@oss.nxp.com> <20250414-camouflaged-silver-dodo-d0c000-mkl@pengutronix.de>
+Subject: Re: [PATCH] can: flexcan: enable PER clock before obtaining its rate
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, NXP S32 Linux Team <s32@nxp.com>, imx@lists.linux.dev, Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>, Enric Balletbo <eballetb@redhat.com>, Eric Chanudet <echanude@redhat.com>, Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, kernel@pengutronix.de
+To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>, Marc Kleine-Budde <mkl@pengutronix.de>, Maxime Ripard <mripard@kernel.org>
+Date: Mon, 14 Apr 2025 17:27:10 -0700
+User-Agent: alot/0.12.dev8+g17a99a841c4b
 
-From: Yazen Ghannam <yazen.ghannam@amd.com>
+Quoting Marc Kleine-Budde (2025-04-14 02:55:34)
+> On 14.04.2025 10:36:46, Ciprian Costea wrote:
+> > From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+> >=20
+> > The FlexCan driver assumes that the frequency of the 'per' clock can be
+> > obtained even on disabled clocks, which is not always true.
+> >=20
+> > According to 'clk_get_rate' documentation, it is only valid once the cl=
+ock
+> > source has been enabled.
+>=20
+> In commit bde8870cd8c3 ("clk: Clarify clk_get_rate() expectations")
+> Maxime Ripard changed the documentation of the of the function in clk.c
+> to say it's allowed. However clk.h states "This is only valid once the
+> clock source has been enabled.".
+>=20
+> I've added the common clock maintainers to Cc.
+>=20
+> Which documentation is correct? Is the clk.h correct for archs not using
+> the common clock framework?
+>=20
 
-The following register contains bits that indicate the cause for the
-previous reset.
-
-        PMx000000C0 (FCH::PM::S5_RESET_STATUS)
-
-This is useful for debug. The reasons for reset are broken into 6 high
-level categories. Decode it by category and print during boot.
-
-Specifics within a category are split off into debugging documentation.
-
-The register is accessed indirectly through a "PM" port in the FCH. Use
-MMIO access in order to avoid restrictions with legacy port access.
-
-Use a late_initcall() to ensure that MMIO has been set up before trying
-to access the register.
-
-This register was introduced with AMD Family 17h, so avoid access on
-older families. There is no CPUID feature bit for this register.
-
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-Co-developed-by: Mario Limonciello <mario.limonciello@amd.com>
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
----
-v4:
- * Use loop that can output multiple reasons
- * Drop "Unknown" condition and have dedicated message
-v3:
- * Align strings in the CSV and code.
- * Switch to an array of strings
- * Switch to looking up bit of first value
- * Re-order message to have number first (makes grepping easier)
- * Add x86/amd prefix to message
-v2:
- * Add string for each reason, but still include value in case multiple
-   values are set.
----
- Documentation/arch/x86/amd-debugging.rst | 42 ++++++++++++++++
- arch/x86/include/asm/amd/fch.h           |  1 +
- arch/x86/kernel/cpu/amd.c                | 64 ++++++++++++++++++++++++
- 3 files changed, 107 insertions(+)
-
-diff --git a/Documentation/arch/x86/amd-debugging.rst b/Documentation/arch/x86/amd-debugging.rst
-index ba99d672a1f4d..48c03b04fc4ab 100644
---- a/Documentation/arch/x86/amd-debugging.rst
-+++ b/Documentation/arch/x86/amd-debugging.rst
-@@ -271,3 +271,45 @@ EPP Policy
- The ``energy_performance_preference`` sysfs file can be used to set a bias
- of efficiency or performance for a CPU.  This has a direct relationship on
- the battery life when more heavily biased towards performance.
-+
-+Random reboot issues
-+====================
-+When a random reboot occurs, the high-level reason for the reboot is stored
-+in a register that will persist onto the next boot.
-+
-+There are 6 classes of reasons for the reboot:
-+ * Software induced
-+ * Power state transition
-+ * Pin induced
-+ * Hardware induced
-+ * Remote reset
-+ * Internal CPU event
-+
-+.. csv-table::
-+   :header: "Bit", "Type", "Reason"
-+   :align: left
-+
-+   "0",  "Pin",      "thermal pin BP_THERMTRIP_L was tripped"
-+   "1",  "Pin",      "power button was pressed for 4 seconds"
-+   "2",  "Pin",      "shutdown pin was shorted"
-+   "4",  "Remote",   "remote ASF power off command was received"
-+   "9",  "Internal", "internal CPU thermal limit was tripped"
-+   "16", "Pin",      "system reset pin BP_SYS_RST_L was tripped"
-+   "17", "Software", "software issued PCI reset"
-+   "18", "Software", "software wrote 0x4 to reset control register 0xCF9"
-+   "19", "Software", "software wrote 0x6 to reset control register 0xCF9"
-+   "20", "Software", "software wrote 0xE to reset control register 0xCF9"
-+   "21", "Sleep",    "ACPI power state transition occurred"
-+   "22", "Pin",      "keyboard reset pin KB_RST_L was asserted"
-+   "23", "Internal", "internal CPU shutdown event occurred"
-+   "24", "Hardware", "system failed to boot before failed boot timer expired"
-+   "25", "Hardware", "hardware watchdog timer expired"
-+   "26", "Remote",   "remote ASF reset command was received"
-+   "27", "Internal", "an uncorrected error caused a data fabric sync flood event"
-+   "29", "Internal", "FCH and MP1 failed warm reset handshake"
-+   "30", "Internal", "a parity error occurred"
-+   "31", "Internal", "a software sync flood event occurred"
-+
-+This information is read by the kernel at bootup and is saved into the
-+kernel ring buffer. When a random reboot occurs this message can be helpful
-+to determine the next component to debug such an issue.
-diff --git a/arch/x86/include/asm/amd/fch.h b/arch/x86/include/asm/amd/fch.h
-index 9b32e8a03193e..4a6e1e3b685a4 100644
---- a/arch/x86/include/asm/amd/fch.h
-+++ b/arch/x86/include/asm/amd/fch.h
-@@ -9,5 +9,6 @@
- #define FCH_PM_DECODEEN			0x00
- #define FCH_PM_DECODEEN_SMBUS0SEL	GENMASK(20, 19)
- #define FCH_PM_SCRATCH			0x80
-+#define FCH_PM_S5_RESET_STATUS		0xC0
- 
- #endif
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index a839ff506f454..32ecb70cce5dc 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -9,6 +9,7 @@
- #include <linux/sched/clock.h>
- #include <linux/random.h>
- #include <linux/topology.h>
-+#include <asm/amd/fch.h>
- #include <asm/processor.h>
- #include <asm/apic.h>
- #include <asm/cacheinfo.h>
-@@ -1232,3 +1233,66 @@ void amd_check_microcode(void)
- 	if (cpu_feature_enabled(X86_FEATURE_ZEN2))
- 		on_each_cpu(zenbleed_check_cpu, NULL, 1);
- }
-+
-+static const char * const s5_reset_reason_txt[] = {
-+	[0] = "thermal pin BP_THERMTRIP_L was tripped",
-+	[1] = "power button was pressed for 4 seconds",
-+	[2] = "shutdown pin was shorted",
-+	[4] = "remote ASF power off command was received",
-+	[9] = "internal CPU thermal limit was tripped",
-+	[16] = "system reset pin BP_SYS_RST_L was tripped",
-+	[17] = "software issued PCI reset",
-+	[18] = "software wrote 0x4 to reset control register 0xCF9",
-+	[19] = "software wrote 0x6 to reset control register 0xCF9",
-+	[20] = "software wrote 0xE to reset control register 0xCF9",
-+	[21] = "ACPI power state transition occurred",
-+	[22] = "keyboard reset pin KB_RST_L was asserted",
-+	[23] = "internal CPU shutdown event occurred",
-+	[24] = "system failed to boot before failed boot timer expired",
-+	[25] = "hardware watchdog timer expired",
-+	[26] = "remote ASF reset command was received",
-+	[27] = "an uncorrected error caused a data fabric sync flood event",
-+	[29] = "FCH and MP1 failed warm reset handshake",
-+	[30] = "a parity error occurred",
-+	[31] = "a software sync flood event occurred",
-+};
-+
-+static __init int print_s5_reset_status_mmio(void)
-+{
-+	void __iomem *addr;
-+	unsigned long value;
-+	int nr_reasons = 0;
-+	int bit = -1;
-+
-+	if (!cpu_feature_enabled(X86_FEATURE_ZEN))
-+		return 0;
-+
-+	addr = ioremap(FCH_PM_BASE + FCH_PM_S5_RESET_STATUS, sizeof(value));
-+	if (!addr)
-+		return 0;
-+
-+	value = ioread32(addr);
-+	iounmap(addr);
-+
-+	/* Iterate on each bit in the 'value' mask: */
-+	while (true) {
-+		bit = find_next_bit(&value, BITS_PER_LONG, bit + 1);
-+
-+		/* Reached the end of the word, no more bits: */
-+		if (bit >= BITS_PER_LONG) {
-+			if (!nr_reasons)
-+				pr_info("x86/amd: Previous system reset reason [0x%08lx]: Unknown\n", value);
-+			break;
-+		}
-+
-+		if (!s5_reset_reason_txt[bit])
-+			continue;
-+
-+		nr_reasons++;
-+		pr_info("x86/amd: Previous system reset reason [0x%08lx]: %s\n",
-+			value, s5_reset_reason_txt[bit]);
-+	}
-+
-+	return 0;
-+}
-+late_initcall(print_s5_reset_status_mmio);
--- 
-2.43.0
-
+I don't know what arches not using the common clk framework (CCF) do so
+I can't comment there. If you want something to work on an architecture
+that doesn't use the CCF then follow the header file, but in all
+practical cases _some_ rate will be returned from clk_get_rate() and
+we're not going to BUG_ON() or crash the system in the CCF
+implementation for this case. Enabling the clk is good hygiene though,
+so is it really a problem to enable it here?
 
