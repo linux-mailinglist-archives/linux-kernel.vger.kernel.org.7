@@ -1,320 +1,251 @@
-Return-Path: <linux-kernel+bounces-604707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D9FBA8978D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:10:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46F3FA89792
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:10:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47B7D1733B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:10:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3045E1897E9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:10:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4CE2820D0;
-	Tue, 15 Apr 2025 09:09:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11AB0288C83;
+	Tue, 15 Apr 2025 09:10:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="DVF+1joy"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA2541624CE;
-	Tue, 15 Apr 2025 09:09:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H00daDs/"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70BF027F750;
+	Tue, 15 Apr 2025 09:10:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744708197; cv=none; b=gm91j3ZG3KilOA9OAE3cWn/hLLbomMQ8HFHP22i0338gbVsZX420z1mBlHxlhn2/7W37lsGdqGI6Krwol93+bDICk4vJCVCGwKVbL5sBYOGHmvYOLreL2QXcknEKZaiwAR0tEe/mkZZ1K57TLFra/Z5yIi+Xf0DV53jFhZkpsFE=
+	t=1744708213; cv=none; b=d9TyFCcSUi5PeJeYPa6WoAhrfGc46FaFD29uhY1ufeyY5qT8iFckgdLVK/7tCUDRngAACRV0FzEjTOx0whwO6m54gU0jkTULTa6LbMRVZDyP9ruiaBJi/8i9nJx04glbAWpyNqykiRW8AceVIWLJ+UQ9sLsaalGLrqGP777/6UE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744708197; c=relaxed/simple;
-	bh=+DN455WnonAB9C1766sHXcT9vaWq/MFRkyR6Od5Ne9o=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=m8FOPqwSIaKqm7rgg3rkcf/00ZdV2zbLoqXQOL3cKDvUnpuvbUteRyoz9KcDzPuzDO1faLmI1m26TUH+XNeTMUs24EkRM1/N6gcaLyQ/RnPXstxbHw6zI8OFb7c5VexDvtUJHQfQBlag3qP6z9qchaJHZMkGWzz11Y93FDG8qDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=DVF+1joy; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=y+ZpA
-	l7MliTj0FVdYv9+vvRQ2sbzJqKY2QgkzqHdZ0U=; b=DVF+1joyQZ5a60IDSDyKK
-	PZndTObbNjkKGUf3LwyDWjYTsoc9uAvbM6blN7+NbcZUbYneugC0+HEJoPNmYiD3
-	I3zy9D/FAtRzYbAC25kT9RPkJoj8xqUV+ze4PgmVWG6usIZmIF6uquWfD1rgKbLp
-	GJs4omD95dI5Rs4ko3oTw4=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id PCgvCgDHjy0WIv5n117eAQ--.55540S4;
-	Tue, 15 Apr 2025 17:08:39 +0800 (CST)
-From: lvxiafei <xiafei_xupt@163.com>
-To: xiafei_xupt@163.com
-Cc: coreteam@netfilter.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	horms@kernel.org,
-	kadlec@netfilter.org,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvxiafei@sensetime.com,
-	netdev@vger.kernel.org,
-	netfilter-devel@vger.kernel.org,
-	pabeni@redhat.com,
-	pablo@netfilter.org
-Subject: [PATCH V6] netfilter: netns nf_conntrack: per-netns net.netfilter.nf_conntrack_max sysctl
-Date: Tue, 15 Apr 2025 17:08:34 +0800
-Message-Id: <20250415090834.24882-1-xiafei_xupt@163.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20250407095052.49526-1-xiafei_xupt@163.com>
-References: <20250407095052.49526-1-xiafei_xupt@163.com>
+	s=arc-20240116; t=1744708213; c=relaxed/simple;
+	bh=khgj5i5EcfhZPpRQahIsUsU7sYQlGJ+uMgPiisqwNko=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=hlaUwWjYIJo+tKo6GqbqCJ7ubp5u/ZlV3DY6nO+oaDj0xkgst2+LgTp6xVEoLX9iyIvJ8HzELuIeSqUJFjkdOzRBronjr4WmNmiTmfFZ44kaHtseu/iIZVp54UPMwRCwpKguzSG4+NxiB2to3JqBE21F0NStP/qf0v6Jnwst4YE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H00daDs/; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-54b09cb06b0so5552485e87.1;
+        Tue, 15 Apr 2025 02:10:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744708208; x=1745313008; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UPsV5iinGiENslETqIUd2l9BsNLKvHs4wRNGXo8GaNM=;
+        b=H00daDs/BUi+9pYQZ1gZZOk9X2B4CBT+0X8sW/M4z1n1PHynyWIwM33jQ4ENOrv2JZ
+         tp3wyuP0v6hbr0qb8qvMbyHwhG99ppEcbAYXrrgybNqLd8DBcrvOGqF+lOCfmXrPcLbi
+         apNWzMappG6JCnKE/ljuSle77BCa3GqstCScmxnHA1JOh8XiXOLdwaEMgMiwSdHusR81
+         LJUbOo7sUIMQqjdFaeWY45iKxqFmQiaTnUblJJAyenzGuGPUPO6n81AdbyEn23j3wqFL
+         FcmTZIkc3FXxnRHUdDtUsTO4L1YRvl1BUI24osVfYa5ZKzAJKblpXW8rtTD9ij5/HDrx
+         PN0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744708208; x=1745313008;
+        h=content-transfer-encoding:mime-version:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UPsV5iinGiENslETqIUd2l9BsNLKvHs4wRNGXo8GaNM=;
+        b=u/V9m6Bfg70ShN/g8wG/lkSb2PUe4u2ysXMFJX6kKv1lbmuldcoXqIiNZ9gW4QO4LG
+         DG1BCyw2BHn4K14IWz/1fpO40hrzwVDx0YEYM87FZqOh2Qp44JMb7XHZQbF+XcHmqTy2
+         NPwCSewKaFxKz9Ib/2PwXjSQFSr59iuDMaMQrTzplyeMdmPPz//NRe487md9DXG6xSNx
+         jQQhN6SA83ZrRrENfNdklxN/0JKSAytM60LgQr6Hjre0rU7tljGsHyfHvT3TSAO5hp/r
+         CfqfoqEOaaWZTOZdHl1XtsHb0h/UiFU3zQGtScThf2cKeaNq9OuxXlP5St39QPE2bwbN
+         XgUw==
+X-Forwarded-Encrypted: i=1; AJvYcCVICQ5ZfUXuqDAdXLih7xWYX9YgJUeYuz0x3w/OJV97IvXT1DWM/r9xrRyP5za1Jch90O+0cxRrFHVILp4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoweXRvPUZR1a+YNx4j2+A9tqo+oxEZ6eX6f0YPTaONh9b2SuZ
+	yUSyrpTOeqpH3VUhvUcU+OYZxz7VuB66aHhf9Ox94nAuZDy5xUMsarvu7w==
+X-Gm-Gg: ASbGnctJ4E0ULa1468I6er5KXhfkM686XDnJf4sFF6ubMpT44UPS7/nJbicRy8V997M
+	xqK6b7DqD5zFc6KTmkC5JsRyKyQR4MrOPeBZbPn2UjkeqtrW0bJrWFhAxSgA9j0zVQEVq7uAMRc
+	qUzUiPQT26hQPbNgee1ICM38aa+raiIGlLhCPpg2DSddpP/CkNlGMOCNT3Lpuu85Z07qmhZDpdZ
+	vamlOCx6LmKYzqWLkntiNBwf5jYcE2GvCeycNvA43W5QraX0J2o6tlLog/vsFbGgCAQHDDjRN59
+	ZjLy4we2QHroY7XjkA01dMm/pOS6u2Ldpv0P06aDnnO0KlwbzrhY38um+A==
+X-Google-Smtp-Source: AGHT+IFs8TCoOr2T+cgD0P6BNaEygCftccZNyGN7iCP4JPdPyGb/jCtCN211Iv1XLe/QJ4iyHmietg==
+X-Received: by 2002:a05:6512:158f:b0:545:22ec:8b6c with SMTP id 2adb3069b0e04-54d452cc1d3mr4412312e87.35.1744708208111;
+        Tue, 15 Apr 2025 02:10:08 -0700 (PDT)
+Received: from foxbook (adtk197.neoplus.adsl.tpnet.pl. [79.185.222.197])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54d3d502549sm1391530e87.148.2025.04.15.02.10.06
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Tue, 15 Apr 2025 02:10:07 -0700 (PDT)
+Date: Tue, 15 Apr 2025 11:10:03 +0200
+From: Michal Pecio <michal.pecio@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mathias Nyman
+ <mathias.nyman@intel.com>, Minas Harutyunyan <hminas@synopsys.com>, Linus
+ Walleij <linus.walleij@linaro.org>, Alan Stern <stern@rowland.harvard.edu>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] usb: hcd: Add a usb_device argument to
+ hc_driver.endpoint_reset()
+Message-ID: <20250415111003.064e0ab8@foxbook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PCgvCgDHjy0WIv5n117eAQ--.55540S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW3tFy5ZryUWry5AFy7GF43GFg_yoWDWF1rp3
-	Wft347Jw17Jr4Yya1j93yDAFsxG393Ca4a9rn8CFyrCwsI9r15CF4rKFyxJF98Jry8AFy3
-	ZF4jvr1UAan5taDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRY2NtUUUUU=
-X-CM-SenderInfo: x0ldwvplb031rw6rljoofrz/1tbiKBYwU2f+GlDknwAAs1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: lvxiafei <lvxiafei@sensetime.com>
+xHCI needs usb_device here, so it stored it in host_endpoint.hcpriv,
+which proved problematic due to some unexpected call sequences from
+USB core, and generally made the code more complex than it has to be.
 
-Support net.netfilter.nf_conntrack_max settings per
-netns, net.netfilter.nf_conntrack_max is used to more
-flexibly limit the ct_count in different netns. The
-default value belongs to the init_net limit.
+Make USB core supply it directly and simplify xhci_endpoint_reset().
+Use the xhci_check_args() helper for preventing resets of emulated
+root hub endpoints and for argument validation.
 
-After net.netfilter.nf_conntrack_max is set in different
-netns, it is not allowed to be greater than the init_net
-limit when working.
+Update other drivers which also define such callback to accept the
+new argument and ignore it, as it seems to be of no use for them.
 
-Signed-off-by: lvxiafei <lvxiafei@sensetime.com>
+This fixes a 6.15-rc1 regression reported by Paul, which I was able
+to reproduce, where xhci_hcd doesn't handle endpoint_reset() after
+endpoint_disable() not followed by add_endpoint(). If a configured
+device is reset, stalling endpoints start to get stuck permanently.
+
+Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
+Closes: https://lore.kernel.org/linux-usb/c279bd85-3069-4841-b1be-20507ac9f2d7@molgen.mpg.de/
+Signed-off-by: Michal Pecio <michal.pecio@gmail.com>
 ---
- .../networking/nf_conntrack-sysctl.rst        | 29 +++++++++++++++----
- include/net/netfilter/nf_conntrack.h          | 12 +++++++-
- include/net/netns/conntrack.h                 |  1 +
- net/netfilter/nf_conntrack_core.c             | 19 ++++++------
- net/netfilter/nf_conntrack_netlink.c          |  2 +-
- net/netfilter/nf_conntrack_standalone.c       |  7 +++--
- 6 files changed, 50 insertions(+), 20 deletions(-)
 
-diff --git a/Documentation/networking/nf_conntrack-sysctl.rst b/Documentation/networking/nf_conntrack-sysctl.rst
-index 238b66d0e059..6e7f17f5959a 100644
---- a/Documentation/networking/nf_conntrack-sysctl.rst
-+++ b/Documentation/networking/nf_conntrack-sysctl.rst
-@@ -93,12 +93,29 @@ nf_conntrack_log_invalid - INTEGER
- 	Log invalid packets of a type specified by value.
+New in v2:
+Updated more HCDs after a kernel test robot build failure report.
+This time I searched the whole tree and no more HCDs should be left.
+
+ drivers/usb/core/hcd.c            |  2 +-
+ drivers/usb/dwc2/hcd.c            |  1 +
+ drivers/usb/fotg210/fotg210-hcd.c |  2 +-
+ drivers/usb/host/ehci-hcd.c       |  3 ++-
+ drivers/usb/host/xhci.c           | 27 ++++++++-------------------
+ include/linux/usb/hcd.h           |  2 +-
+ 6 files changed, 14 insertions(+), 23 deletions(-)
+
+diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
+index a63c793bac21..d2433807a397 100644
+--- a/drivers/usb/core/hcd.c
++++ b/drivers/usb/core/hcd.c
+@@ -1986,7 +1986,7 @@ void usb_hcd_reset_endpoint(struct usb_device *udev,
+ 	struct usb_hcd *hcd = bus_to_hcd(udev->bus);
  
- nf_conntrack_max - INTEGER
--        Maximum number of allowed connection tracking entries. This value is set
--        to nf_conntrack_buckets by default.
--        Note that connection tracking entries are added to the table twice -- once
--        for the original direction and once for the reply direction (i.e., with
--        the reversed address). This means that with default settings a maxed-out
--        table will have a average hash chain length of 2, not 1.
-+    - 0 - disabled (unlimited)
-+    - not 0 - enabled
-+
-+    Maximum number of allowed connection tracking entries per netns. This value
-+    is set to nf_conntrack_buckets by default.
-+
-+    Note that connection tracking entries are added to the table twice -- once
-+    for the original direction and once for the reply direction (i.e., with
-+    the reversed address). This means that with default settings a maxed-out
-+    table will have a average hash chain length of 2, not 1.
-+
-+    The limit of other netns cannot be greater than init_net netns.
-+    +----------------+-------------+----------------+
-+    | init_net netns | other netns | limit behavior |
-+    +----------------+-------------+----------------+
-+    | 0              | 0           | unlimited      |
-+    +----------------+-------------+----------------+
-+    | 0              | not 0       | other          |
-+    +----------------+-------------+----------------+
-+    | not 0          | 0           | init_net       |
-+    +----------------+-------------+----------------+
-+    | not 0          | not 0       | min            |
-+    +----------------+-------------+----------------+
- 
- nf_conntrack_tcp_be_liberal - BOOLEAN
- 	- 0 - disabled (default)
-diff --git a/include/net/netfilter/nf_conntrack.h b/include/net/netfilter/nf_conntrack.h
-index 3f02a45773e8..594439b2f5a1 100644
---- a/include/net/netfilter/nf_conntrack.h
-+++ b/include/net/netfilter/nf_conntrack.h
-@@ -320,7 +320,6 @@ int nf_conntrack_hash_resize(unsigned int hashsize);
- extern struct hlist_nulls_head *nf_conntrack_hash;
- extern unsigned int nf_conntrack_htable_size;
- extern seqcount_spinlock_t nf_conntrack_generation;
--extern unsigned int nf_conntrack_max;
- 
- /* must be called with rcu read lock held */
- static inline void
-@@ -360,6 +359,17 @@ static inline struct nf_conntrack_net *nf_ct_pernet(const struct net *net)
- 	return net_generic(net, nf_conntrack_net_id);
+ 	if (hcd->driver->endpoint_reset)
+-		hcd->driver->endpoint_reset(hcd, ep);
++		hcd->driver->endpoint_reset(hcd, udev, ep);
+ 	else {
+ 		int epnum = usb_endpoint_num(&ep->desc);
+ 		int is_out = usb_endpoint_dir_out(&ep->desc);
+diff --git a/drivers/usb/dwc2/hcd.c b/drivers/usb/dwc2/hcd.c
+index 60ef8092259a..914a35c34db3 100644
+--- a/drivers/usb/dwc2/hcd.c
++++ b/drivers/usb/dwc2/hcd.c
+@@ -4861,6 +4861,7 @@ static void _dwc2_hcd_endpoint_disable(struct usb_hcd *hcd,
+  * routine.
+  */
+ static void _dwc2_hcd_endpoint_reset(struct usb_hcd *hcd,
++				     struct usb_device *udev,
+ 				     struct usb_host_endpoint *ep)
+ {
+ 	struct dwc2_hsotg *hsotg = dwc2_hcd_to_hsotg(hcd);
+diff --git a/drivers/usb/fotg210/fotg210-hcd.c b/drivers/usb/fotg210/fotg210-hcd.c
+index 64c4965a160f..7163fce145fe 100644
+--- a/drivers/usb/fotg210/fotg210-hcd.c
++++ b/drivers/usb/fotg210/fotg210-hcd.c
+@@ -5426,7 +5426,7 @@ static void fotg210_endpoint_disable(struct usb_hcd *hcd,
+ 	spin_unlock_irqrestore(&fotg210->lock, flags);
  }
  
-+static inline unsigned int nf_conntrack_max(const struct net *net)
-+{
-+#if IS_ENABLED(CONFIG_NF_CONNTRACK)
-+	return likely(init_net.ct.sysctl_max && net->ct.sysctl_max) ?
-+	    min(init_net.ct.sysctl_max, net->ct.sysctl_max) :
-+	    max(init_net.ct.sysctl_max, net->ct.sysctl_max);
-+#else
-+	return 0;
-+#endif
-+}
-+
- int nf_ct_skb_network_trim(struct sk_buff *skb, int family);
- int nf_ct_handle_fragments(struct net *net, struct sk_buff *skb,
- 			   u16 zone, u8 family, u8 *proto, u16 *mru);
-diff --git a/include/net/netns/conntrack.h b/include/net/netns/conntrack.h
-index bae914815aa3..d3fcd0b92b2d 100644
---- a/include/net/netns/conntrack.h
-+++ b/include/net/netns/conntrack.h
-@@ -102,6 +102,7 @@ struct netns_ct {
- 	u8			sysctl_acct;
- 	u8			sysctl_tstamp;
- 	u8			sysctl_checksum;
-+	unsigned int		sysctl_max;
- 
- 	struct ip_conntrack_stat __percpu *stat;
- 	struct nf_ct_event_notifier __rcu *nf_conntrack_event_cb;
-diff --git a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.c
-index 7f8b245e287a..a738564923ec 100644
---- a/net/netfilter/nf_conntrack_core.c
-+++ b/net/netfilter/nf_conntrack_core.c
-@@ -202,8 +202,6 @@ static void nf_conntrack_all_unlock(void)
- unsigned int nf_conntrack_htable_size __read_mostly;
- EXPORT_SYMBOL_GPL(nf_conntrack_htable_size);
- 
--unsigned int nf_conntrack_max __read_mostly;
--EXPORT_SYMBOL_GPL(nf_conntrack_max);
- seqcount_spinlock_t nf_conntrack_generation __read_mostly;
- static siphash_aligned_key_t nf_conntrack_hash_rnd;
- 
-@@ -1498,7 +1496,7 @@ static bool gc_worker_can_early_drop(const struct nf_conn *ct)
- 
- static void gc_worker(struct work_struct *work)
+-static void fotg210_endpoint_reset(struct usb_hcd *hcd,
++static void fotg210_endpoint_reset(struct usb_hcd *hcd, struct usb_device *dev,
+ 		struct usb_host_endpoint *ep)
  {
--	unsigned int i, hashsz, nf_conntrack_max95 = 0;
-+	unsigned int i, hashsz;
- 	u32 end_time, start_time = nfct_time_stamp;
- 	struct conntrack_gc_work *gc_work;
- 	unsigned int expired_count = 0;
-@@ -1509,8 +1507,6 @@ static void gc_worker(struct work_struct *work)
- 	gc_work = container_of(work, struct conntrack_gc_work, dwork.work);
+ 	struct fotg210_hcd *fotg210 = hcd_to_fotg210(hcd);
+diff --git a/drivers/usb/host/ehci-hcd.c b/drivers/usb/host/ehci-hcd.c
+index 6d1d190c914d..813cdedb14ab 100644
+--- a/drivers/usb/host/ehci-hcd.c
++++ b/drivers/usb/host/ehci-hcd.c
+@@ -1044,7 +1044,8 @@ ehci_endpoint_disable (struct usb_hcd *hcd, struct usb_host_endpoint *ep)
+ }
  
- 	i = gc_work->next_bucket;
--	if (gc_work->early_drop)
--		nf_conntrack_max95 = nf_conntrack_max / 100u * 95u;
- 
- 	if (i == 0) {
- 		gc_work->avg_timeout = GC_SCAN_INTERVAL_INIT;
-@@ -1538,6 +1534,7 @@ static void gc_worker(struct work_struct *work)
- 		}
- 
- 		hlist_nulls_for_each_entry_rcu(h, n, &ct_hash[i], hnnode) {
-+			unsigned int nf_conntrack_max95 = 0;
- 			struct nf_conntrack_net *cnet;
- 			struct net *net;
- 			long expires;
-@@ -1567,11 +1564,14 @@ static void gc_worker(struct work_struct *work)
- 			expires = clamp(nf_ct_expires(tmp), GC_SCAN_INTERVAL_MIN, GC_SCAN_INTERVAL_CLAMP);
- 			expires = (expires - (long)next_run) / ++count;
- 			next_run += expires;
-+			net = nf_ct_net(tmp);
-+
-+			if (gc_work->early_drop)
-+				nf_conntrack_max95 = nf_conntrack_max(net) / 100u * 95u;
- 
- 			if (nf_conntrack_max95 == 0 || gc_worker_skip_ct(tmp))
- 				continue;
- 
--			net = nf_ct_net(tmp);
- 			cnet = nf_ct_pernet(net);
- 			if (atomic_read(&cnet->count) < nf_conntrack_max95)
- 				continue;
-@@ -1648,13 +1648,14 @@ __nf_conntrack_alloc(struct net *net,
- 		     gfp_t gfp, u32 hash)
+ static void
+-ehci_endpoint_reset(struct usb_hcd *hcd, struct usb_host_endpoint *ep)
++ehci_endpoint_reset(struct usb_hcd *hcd, struct usb_device *udev,
++		    struct usb_host_endpoint *ep)
  {
- 	struct nf_conntrack_net *cnet = nf_ct_pernet(net);
--	unsigned int ct_count;
-+	unsigned int ct_max, ct_count;
- 	struct nf_conn *ct;
+ 	struct ehci_hcd		*ehci = hcd_to_ehci(hcd);
+ 	struct ehci_qh		*qh;
+diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+index 52d1693f4c2e..f67cd7c6422b 100644
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -3161,11 +3161,10 @@ static void xhci_endpoint_disable(struct usb_hcd *hcd,
+  * resume. A new vdev will be allocated later by xhci_discover_or_reset_device()
+  */
  
- 	/* We don't want any race condition at early drop stage */
- 	ct_count = atomic_inc_return(&cnet->count);
-+	ct_max = nf_conntrack_max(net);
+-static void xhci_endpoint_reset(struct usb_hcd *hcd,
++static void xhci_endpoint_reset(struct usb_hcd *hcd, struct usb_device *udev,
+ 		struct usb_host_endpoint *host_ep)
+ {
+ 	struct xhci_hcd *xhci;
+-	struct usb_device *udev;
+ 	struct xhci_virt_device *vdev;
+ 	struct xhci_virt_ep *ep;
+ 	struct xhci_input_control_ctx *ctrl_ctx;
+@@ -3175,7 +3174,12 @@ static void xhci_endpoint_reset(struct usb_hcd *hcd,
+ 	u32 ep_flag;
+ 	int err;
  
--	if (nf_conntrack_max && unlikely(ct_count > nf_conntrack_max)) {
-+	if (ct_max && unlikely(ct_count > ct_max)) {
- 		if (!early_drop(net, hash)) {
- 			if (!conntrack_gc_work.early_drop)
- 				conntrack_gc_work.early_drop = true;
-@@ -2650,7 +2651,7 @@ int nf_conntrack_init_start(void)
- 	if (!nf_conntrack_hash)
- 		return -ENOMEM;
++	err = xhci_check_args(hcd, udev, host_ep, 1, true, __func__);
++	if (err <= 0)
++		return;
++
+ 	xhci = hcd_to_xhci(hcd);
++	vdev = xhci->devs[udev->slot_id];
+ 	ep_index = xhci_get_endpoint_index(&host_ep->desc);
  
--	nf_conntrack_max = max_factor * nf_conntrack_htable_size;
-+	init_net.ct.sysctl_max = max_factor * nf_conntrack_htable_size;
+ 	/*
+@@ -3185,28 +3189,13 @@ static void xhci_endpoint_reset(struct usb_hcd *hcd,
+ 	 */
+ 	if (usb_endpoint_xfer_control(&host_ep->desc) && ep_index == 0) {
  
- 	nf_conntrack_cachep = kmem_cache_create("nf_conntrack",
- 						sizeof(struct nf_conn),
-diff --git a/net/netfilter/nf_conntrack_netlink.c b/net/netfilter/nf_conntrack_netlink.c
-index 2cc0fde23344..73e6bb1e939b 100644
---- a/net/netfilter/nf_conntrack_netlink.c
-+++ b/net/netfilter/nf_conntrack_netlink.c
-@@ -2608,7 +2608,7 @@ ctnetlink_stat_ct_fill_info(struct sk_buff *skb, u32 portid, u32 seq, u32 type,
- 	if (nla_put_be32(skb, CTA_STATS_GLOBAL_ENTRIES, htonl(nr_conntracks)))
- 		goto nla_put_failure;
+-		udev = container_of(host_ep, struct usb_device, ep0);
+-		if (udev->speed != USB_SPEED_FULL || !udev->slot_id)
+-			return;
+-
+-		vdev = xhci->devs[udev->slot_id];
+-		if (!vdev || vdev->udev != udev)
+-			return;
+-
+-		xhci_check_ep0_maxpacket(xhci, vdev);
++		if (udev->speed == USB_SPEED_FULL)
++			xhci_check_ep0_maxpacket(xhci, vdev);
  
--	if (nla_put_be32(skb, CTA_STATS_GLOBAL_MAX_ENTRIES, htonl(nf_conntrack_max)))
-+	if (nla_put_be32(skb, CTA_STATS_GLOBAL_MAX_ENTRIES, htonl(nf_conntrack_max(net))))
- 		goto nla_put_failure;
- 
- 	nlmsg_end(skb, nlh);
-diff --git a/net/netfilter/nf_conntrack_standalone.c b/net/netfilter/nf_conntrack_standalone.c
-index 2f666751c7e7..5db6df0e4eb3 100644
---- a/net/netfilter/nf_conntrack_standalone.c
-+++ b/net/netfilter/nf_conntrack_standalone.c
-@@ -615,7 +615,7 @@ enum nf_ct_sysctl_index {
- static struct ctl_table nf_ct_sysctl_table[] = {
- 	[NF_SYSCTL_CT_MAX] = {
- 		.procname	= "nf_conntrack_max",
--		.data		= &nf_conntrack_max,
-+		.data		= &init_net.ct.sysctl_max,
- 		.maxlen		= sizeof(int),
- 		.mode		= 0644,
- 		.proc_handler	= proc_dointvec_minmax,
-@@ -948,7 +948,7 @@ static struct ctl_table nf_ct_sysctl_table[] = {
- static struct ctl_table nf_ct_netfilter_table[] = {
- 	{
- 		.procname	= "nf_conntrack_max",
--		.data		= &nf_conntrack_max,
-+		.data		= &init_net.ct.sysctl_max,
- 		.maxlen		= sizeof(int),
- 		.mode		= 0644,
- 		.proc_handler	= proc_dointvec_minmax,
-@@ -1063,6 +1063,7 @@ static int nf_conntrack_standalone_init_sysctl(struct net *net)
- 
- 	table[NF_SYSCTL_CT_COUNT].data = &cnet->count;
- 	table[NF_SYSCTL_CT_CHECKSUM].data = &net->ct.sysctl_checksum;
-+	table[NF_SYSCTL_CT_MAX].data = &net->ct.sysctl_max;
- 	table[NF_SYSCTL_CT_LOG_INVALID].data = &net->ct.sysctl_log_invalid;
- 	table[NF_SYSCTL_CT_ACCT].data = &net->ct.sysctl_acct;
- #ifdef CONFIG_NF_CONNTRACK_EVENTS
-@@ -1087,7 +1088,6 @@ static int nf_conntrack_standalone_init_sysctl(struct net *net)
- 
- 	/* Don't allow non-init_net ns to alter global sysctls */
- 	if (!net_eq(&init_net, net)) {
--		table[NF_SYSCTL_CT_MAX].mode = 0444;
- 		table[NF_SYSCTL_CT_EXPECT_MAX].mode = 0444;
- 		table[NF_SYSCTL_CT_BUCKETS].mode = 0444;
+ 		/* Nothing else should be done here for ep0 during ep reset */
+ 		return;
  	}
-@@ -1139,6 +1139,7 @@ static int nf_conntrack_pernet_init(struct net *net)
- 	int ret;
  
- 	net->ct.sysctl_checksum = 1;
-+	net->ct.sysctl_max = init_net.ct.sysctl_max;
+-	if (!host_ep->hcpriv)
+-		return;
+-	udev = (struct usb_device *) host_ep->hcpriv;
+-	vdev = xhci->devs[udev->slot_id];
+-
+-	if (!udev->slot_id || !vdev)
+-		return;
+-
+ 	ep = &vdev->eps[ep_index];
  
- 	ret = nf_conntrack_standalone_init_sysctl(net);
- 	if (ret < 0)
+ 	spin_lock_irqsave(&xhci->lock, flags);
+diff --git a/include/linux/usb/hcd.h b/include/linux/usb/hcd.h
+index ac95e7c89df5..179c85337eff 100644
+--- a/include/linux/usb/hcd.h
++++ b/include/linux/usb/hcd.h
+@@ -304,7 +304,7 @@ struct hc_driver {
+ 
+ 	/* (optional) reset any endpoint state such as sequence number
+ 	   and current window */
+-	void	(*endpoint_reset)(struct usb_hcd *hcd,
++	void	(*endpoint_reset)(struct usb_hcd *hcd, struct usb_device *udev,
+ 			struct usb_host_endpoint *ep);
+ 
+ 	/* root hub support */
 -- 
-2.40.1
-
+2.48.1
 
