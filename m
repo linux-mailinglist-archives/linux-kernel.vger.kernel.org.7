@@ -1,174 +1,182 @@
-Return-Path: <linux-kernel+bounces-605371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BF05A8A04B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:56:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03638A8A053
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:57:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB2FE1903F2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:56:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F9654459A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:56:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 544D71F4C82;
-	Tue, 15 Apr 2025 13:55:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC46A2918F1;
+	Tue, 15 Apr 2025 13:55:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Sth2R2Ly"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kX8Ch05Z"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEF6C19F422;
-	Tue, 15 Apr 2025 13:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39D419F47E;
+	Tue, 15 Apr 2025 13:55:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744725314; cv=none; b=IplZVKGSuJJzHpRFtGtANn1bORrJOVE2ciflgB3wysc6eJCPVILlvozBsImY/QSa0k1RkaFq7z3lh4SPRaUFcF47hsK/1gl0G+wFcoO75GTjMf5eN3Zr3mzs3N4S6rMmBt6jxKNic12Na9uwScWmX5ghzdnaJKv8S4OV3MidTFI=
+	t=1744725348; cv=none; b=rgH2SXIHQYFFMAqgtKeKPVjVnvMq7Rkukup5hxzBaeqcx5qL/LwKle73ZwZUNG1sFZR3ZGck0YShRZKVUkFEW+ngny89JWiCCkuNxSKOMXKqm/krLHhkFsJTwRgFaQ+N4/rC/yqb1qASf4SZgzvUXvxZaN7vX3vX7eKeankdiWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744725314; c=relaxed/simple;
-	bh=755NGgblQW9HkSMmzLZEBTgNnlFCcB7cI0M7GpYpsTQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a+SMf34SI7OzyQHYKjGTCual8MAyAzjtxQLrTYDwk52KTXZfWFqE83yAQJTC+D5QIzBpgOoH+NFKyhVe28y0ttKo1SS6YmLiIy5nb6Ig9OiTPtavbiLDooGj12qmmH77kNYf9VQwvGig3x+IGXC9plmhszDFvTJam/+LTW++chE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Sth2R2Ly; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744725312; x=1776261312;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=755NGgblQW9HkSMmzLZEBTgNnlFCcB7cI0M7GpYpsTQ=;
-  b=Sth2R2Lyivx2TL1+doXjCj4uW83pxPEGnxd7CUS6SB7cjFJ2XfQUGs5N
-   l9Ua2wZ1gWU1sMQMt6eCEnD0ZDRZTA5qeSjRwBG4v3bwCRK9dxyBvkpa6
-   z9wSiEcKG9oKDk45iigHmnNqDamTPi/eHWy2Wki02IwjlMXX0n44WbMH9
-   mUfENq/KWB8udiD82jL+KBZ0CLUKTCzWIiSHCmKv/v3ch6rQh0bU5g1uy
-   BgT2GrYxZLKsq1mzNnsYY8U1X59BBT0tW9yMd0cBum8khQxRr8OZSURbU
-   324lqfYkIOgyJMTc9asSbSvLs7z6M/hT4cuNFInwpeQkIHzASNBiX7qXL
-   g==;
-X-CSE-ConnectionGUID: BPryvVwPROqKAs35JpLsAQ==
-X-CSE-MsgGUID: ieyt3azQTXOxAGzs4utYHA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="46124380"
-X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="46124380"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 06:55:09 -0700
-X-CSE-ConnectionGUID: uxfaW6T8QYaTnAcbc4WFVQ==
-X-CSE-MsgGUID: FouCYPlFSgukV2pkoOZSUw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="135308407"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 15 Apr 2025 06:55:07 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u4gkj-000GFC-1S;
-	Tue, 15 Apr 2025 13:55:05 +0000
-Date: Tue, 15 Apr 2025 21:54:22 +0800
-From: kernel test robot <lkp@intel.com>
-To: Arthur Simchaev <arthur.simchaev@sandisk.com>
-Cc: oe-kbuild-all@lists.linux.dev, avri.altman@sandisk.com,
-	Avi.Shchislowski@sandisk.com, beanhuo@micron.com,
-	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bvanassche@acm.org
-Subject: Re: [PATCH v2] ufs: bsg: Add hibern8 enter/exit to
- ufshcd_send_bsg_uic_cmd
-Message-ID: <202504152111.1Huykiqb-lkp@intel.com>
-References: <20250414120257.247858-1-arthur.simchaev@sandisk.com>
+	s=arc-20240116; t=1744725348; c=relaxed/simple;
+	bh=Cca7E3l30b7Vj1oZWrk8xX21a6wsjicWXd9StviIAdE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=LSZIxkMFlFNOjUQnXDjoFo90v/ELXmTD41ZaMRt7UvI39piamhUJPr7gUNuYpxAVNi3GPnRy6wAoeUt9xsD75HM7Oh4nZZfuPxS+EKWc1bnagu42HFTegMg5CEmftmCoysgn017xcv/r/YX+Mpt6HW+4n7vs7y2eitXwEdPzjwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kX8Ch05Z; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5906843AD1;
+	Tue, 15 Apr 2025 13:55:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1744725339;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Cu9EMJfO9vfdZP93I3947Z+rnvq4H7D9JgRMmuafxvI=;
+	b=kX8Ch05Z6lTZ6OHie+GrhSHws9SUNPDU7pQBiNuZSN1cVbk2IvvpMDJZdXyk1CBzke5oDD
+	OfjAkkAU/78dvR7elO4v6luKExSF6EKUs8RjZ0Rz/FqQbyh7Mz4AjT8BFam6LMWgUAfXCT
+	s5JNgzkYJPIs7Pyo14g9YlpRn6Oss5crzR4HAqHH/NbPkZoG7anQ8+I5labm7gm4eQka/+
+	0SI3qvjbZy/zT3ZkiDW5KCSups8oPh4259VULNS8mwnG8RCqeROzXS+WvW0Lz/v4n2J3KV
+	CXTbZ9XIP3XTLv9nLeGM4y1FkQCwJ0P0G4XDBKnfALn2zJ7YZwRH/L/WxblNgw==
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Subject: [PATCH v18 0/8] drm/vkms: Add support for YUV and DRM_FORMAT_R*
+Date: Tue, 15 Apr 2025 15:55:31 +0200
+Message-Id: <20250415-yuv-v18-0-f2918f71ec4b@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250414120257.247858-1-arthur.simchaev@sandisk.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFNl/mcC/23US5KbMBAG4Ku4WIekuyW1pFnlHqks9IypsnECN
+ jVTU3P3iIcDE9iB6I8W+iXeqz51Teqrl9N71aWh6ZtbW27QfDlV4ezaX6luYhmoCEgCAdZvj6F
+ GIXS0EK3SXJVK7/pU+8614Vxq28flUgZ/dyk3r9O7f/ws9+emv9+6t6nVgOPo55cOWEMtghOaM
+ 2kW9N3fbvdL034Nt+vYZapWyHO1KdUhm8jZsBSQPlWP/Qba9CAxKyrKOfaJDGnv9V6JrVp6iaJ
+ yZqYM1sro90quSoCclSxKl1YumGS1FXulNgqXGaqiEiMEH0FkRXvFq5JgZ8VFxYRBaTI5atgrv
+ Sr17KXHFTeQbM4pKDjoZVdlgGZliwLjNDCzTch7hbBlyxSxqBqdDpolMueDtcfNtrACFjfuC+n
+ REfuQgz3qt0aNAHpxY9aAAV10XL7PHLg1bEQ0ixvTdgFilEhWHSWAcuNoWRaUU3IcjYhkIoQDt
+ waOJJ7bfkq8zNF7AWTS0ff9i1wB0tONmTvGbJUru1IczVOvjp7bEsfUbWASxkAE9988P+aj26U
+ /j/I3uM/ndz7h5fm1ub+cYnetr00fvj0v6ja93gv9+AukUNRoUAQAAA==
+X-Change-ID: 20240201-yuv-1337d90d9576
+To: Melissa Wen <melissa.srw@gmail.com>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>, 
+ Haneen Mohammed <hamohammed.sa@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, rdunlap@infradead.org, 
+ arthurgrillo@riseup.net, Jonathan Corbet <corbet@lwn.net>, 
+ pekka.paalanen@haloniitty.fi, Simona Vetter <simona@ffwll.ch>, 
+ Rodrigo Siqueira <siqueira@igalia.com>, 
+ Simona Vetter <simona.vetter@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com, 
+ thomas.petazzoni@bootlin.com, seanpaul@google.com, marcheu@google.com, 
+ nicolejadeyee@google.com, linux-doc@vger.kernel.org, 
+ Louis Chauvet <louis.chauvet@bootlin.com>, 
+ Pekka Paalanen <pekka.paalanen@collabora.com>, 
+ =?utf-8?q?Jos=C3=A9_Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2835;
+ i=louis.chauvet@bootlin.com; h=from:subject:message-id;
+ bh=Cca7E3l30b7Vj1oZWrk8xX21a6wsjicWXd9StviIAdE=;
+ b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBn/mVWpH/Ab0PBccxHCAljOGT2Cotvfrf8um9Ku
+ 57oeo/9vkiJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZ/5lVgAKCRAgrS7GWxAs
+ 4qYDD/wPgbMcg0OrOqnKaYvugT4Qf3Y3vWm4qVOqihduHRw2uSfxDwdWyYaYOVw5a4WedtgER1a
+ dlcYoPmMgGFrZ0TPvcc4Fqvy62hP9YmDPin+4i7xdv5ZtBgESvYuWBDMhFFsC6btlmjgMQNfeEJ
+ 6OTxqaVRarIiDjIBdlVvTkbg0B/AjHpStHtKAuuhSvX3aIE2/xp6FE7roiy03BbfQnSsG7c1UfM
+ T3KVegFePXAzk29YSpEu38SU2vV/Mq3uC+1C8WnsJNvk0Hu6xWn6awUiLX/hjddCyrtAI9SUvHg
+ 1tM3Kd0baUIEiyxIlqeobyPSCDGGCtLw3KklPaBRpCLdN9I4sRCaafZtxKVKZRNRqVGO2FEilRr
+ OAKUmgFWuZuJewGXX0aeZaWLBno8Xi8tbHaUdLk0fGqVoGSfxhCrFymufzCNjFmDU5yhsghHIHG
+ ldz8i1/nCN2fMJzEHRqACUR3GKU9DyB5z6UY5jP3U/Uy06UTLMb1rmlEh3mjFxS8AexqzEHUOrV
+ tkFz9eAX7ICPot0rhnu2FNzoRk0oBae2kxW/U+hD3aFaJMm5rgg34WYsRcif20rhsfx+7RBqIE1
+ vRPuW2G8vM4Y6Hq0915MZtrixOBpSJQWHLujdUOkSPgteSGdtkjrIiR/FnmUAOwEJFpa3vZjNYf
+ fmh4Hn94XLM05Cw==
+X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
+ fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvdefieejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhufffkfggtgfgvfevofesthejredtredtjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeejleduffeikeefkeejvdejffffueevfeeigefhiefhudegkefhjeejvefhvdefjeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludejvddrudekrddtrddungdpmhgrihhlfhhrohhmpehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedviedprhgtphhtthhopehsihhmohhnrgdrvhgvthhtvghrsehffhiflhhlrdgthhdprhgtphhtthhopegurhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepmhgrihhrrggtrghnrghlsehrihhsvghup
+ hdrnhgvthdprhgtphhtthhopehnihgtohhlvghjrgguvgihvggvsehgohhoghhlvgdrtghomhdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtohepmhgrrhgthhgvuhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepjhhoshgvrdgvgihpohhsihhtohekleesghhmrghilhdrtghomh
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-Hi Arthur,
+This patchset is extracted from [1]. The goal is to introduce the YUV
+support, thanks to Arthur's work.
 
-kernel test robot noticed the following build errors:
+- PATCH 2: Document pixel_arbg_u16
+- PATCH 3: Add the support of YUV formats
+- PATCH 4: Add some drm properties to expose more YUV features
+- PATCH 5: Cleanup the todo
+- PATCH 6..7: Add some kunit tests
+- PATCH 8: Add the support of DRM_FORMAT_R1/2/4/8
 
-[auto build test ERROR on jejb-scsi/for-next]
-[also build test ERROR on mkp-scsi/for-next linus/master v6.15-rc2 next-20250415]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+[1]: https://lore.kernel.org/r/20241007-yuv-v12-0-01c1ada6fec8@bootlin.com
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Arthur-Simchaev/ufs-bsg-Add-hibern8-enter-exit-to-ufshcd_send_bsg_uic_cmd/20250414-200404
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git for-next
-patch link:    https://lore.kernel.org/r/20250414120257.247858-1-arthur.simchaev%40sandisk.com
-patch subject: [PATCH v2] ufs: bsg: Add hibern8 enter/exit to ufshcd_send_bsg_uic_cmd
-config: s390-randconfig-002-20250415 (https://download.01.org/0day-ci/archive/20250415/202504152111.1Huykiqb-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 7.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250415/202504152111.1Huykiqb-lkp@intel.com/reproduce)
+Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+---
+Changes in v18:
+- Add PATCH 1
+- Add documentation around pixel_yuv_u8
+- Link to v17: https://lore.kernel.org/r/20250204-yuv-v17-0-9c623880d0ac@bootlin.com
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504152111.1Huykiqb-lkp@intel.com/
+Changes in v17:
+- Rebased on drm-msic-next
+- Updated comment in kunit test
+- Updated test count in kunit test
+- Link to v16: https://lore.kernel.org/r/20250121-yuv-v16-0-a61f95a99432@bootlin.com
 
-All errors (new ones prefixed by >>):
+Changes in v16:
+- Rebased on drm-misc-next
+- Updated comment and changed fail thresholds. 
+- Link to v15: https://lore.kernel.org/r/20241231-yuv-v15-0-eda6bb3028e6@bootlin.com
 
-   drivers/ufs/core/ufshcd.c: In function 'ufshcd_send_bsg_uic_cmd':
->> drivers/ufs/core/ufshcd.c:4360:9: error: too many arguments to function 'ufshcd_uic_hibern8_exit'
-      ret = ufshcd_uic_hibern8_exit(hba, uic_cmd);
-            ^~~~~~~~~~~~~~~~~~~~~~~
-   In file included from drivers/ufs/core/ufshcd-priv.h:7:0,
-                    from drivers/ufs/core/ufshcd.c:31:
-   include/ufs/ufshcd.h:1331:5: note: declared here
-    int ufshcd_uic_hibern8_exit(struct ufs_hba *hba);
-        ^~~~~~~~~~~~~~~~~~~~~~~
+Changes in v15:
+- Export drm_get_color_encoding_name only for kunit tests
+- Link to v14: https://lore.kernel.org/r/20241122-yuv-v14-0-e66d83d28d0c@bootlin.com
 
+Changes in v14:
+- Rebased on drm-misc-next
+- Link to v13: https://lore.kernel.org/r/20241118-yuv-v13-0-ac0dd4129552@bootlin.com
 
-vim +/ufshcd_uic_hibern8_exit +4360 drivers/ufs/core/ufshcd.c
+Changes since previous series:
+ - Fix build test as modules issue: https://lore.kernel.org/all/202410110407.EHvadSaF-lkp@intel.com/
+ - Export required symbols in DRM core to use them in kunit
+ - Update the kunit comments according to Maxime's feedback
+ - Link to original series: https://lore.kernel.org/r/20241007-yuv-v12-0-01c1ada6fec8@bootlin.com
 
-  4331	
-  4332	/**
-  4333	 * ufshcd_send_bsg_uic_cmd - Send UIC commands requested via BSG layer and retrieve the result
-  4334	 * @hba: per adapter instance
-  4335	 * @uic_cmd: UIC command
-  4336	 *
-  4337	 * Return: 0 only if success.
-  4338	 */
-  4339	int ufshcd_send_bsg_uic_cmd(struct ufs_hba *hba, struct uic_command *uic_cmd)
-  4340	{
-  4341		int ret;
-  4342	
-  4343		if (hba->quirks & UFSHCD_QUIRK_BROKEN_UIC_CMD)
-  4344			return 0;
-  4345	
-  4346		ufshcd_hold(hba);
-  4347	
-  4348		if (uic_cmd->argument1 == UIC_ARG_MIB(PA_PWRMODE) &&
-  4349		    uic_cmd->command == UIC_CMD_DME_SET) {
-  4350			ret = ufshcd_uic_pwr_ctrl(hba, uic_cmd);
-  4351			goto out;
-  4352		}
-  4353	
-  4354		if (uic_cmd->command == UIC_CMD_DME_HIBER_ENTER) {
-  4355			ret = ufshcd_uic_hibern8_enter(hba);
-  4356			goto out;
-  4357		}
-  4358	
-  4359		if (uic_cmd->command == UIC_CMD_DME_HIBER_EXIT) {
-> 4360			ret = ufshcd_uic_hibern8_exit(hba, uic_cmd);
-  4361			goto out;
-  4362		}
-  4363	
-  4364		mutex_lock(&hba->uic_cmd_mutex);
-  4365		ufshcd_add_delay_before_dme_cmd(hba);
-  4366	
-  4367		ret = __ufshcd_send_uic_cmd(hba, uic_cmd);
-  4368		if (!ret)
-  4369			ret = ufshcd_wait_for_uic_cmd(hba, uic_cmd);
-  4370	
-  4371		mutex_unlock(&hba->uic_cmd_mutex);
-  4372	
-  4373	out:
-  4374		ufshcd_release(hba);
-  4375		return ret;
-  4376	}
-  4377	
+---
+Arthur Grillo (5):
+      drm/vkms: Add YUV support
+      drm/vkms: Add range and encoding properties to the plane
+      drm/vkms: Drop YUV formats TODO
+      drm/vkms: Create KUnit tests for YUV conversions
+      drm/vkms: Add how to run the Kunit tests
 
+Louis Chauvet (3):
+      drm/vkms: Document pixel_argb_u16
+      drm: Export symbols to use in tests
+      drm/vkms: Add support for DRM_FORMAT_R*
+
+ Documentation/gpu/vkms.rst                    |  15 +-
+ drivers/gpu/drm/drm_color_mgmt.c              |   3 +
+ drivers/gpu/drm/vkms/tests/Makefile           |   1 +
+ drivers/gpu/drm/vkms/tests/vkms_format_test.c | 280 +++++++++++++++
+ drivers/gpu/drm/vkms/vkms_drv.h               |  35 ++
+ drivers/gpu/drm/vkms/vkms_formats.c           | 467 +++++++++++++++++++++++++-
+ drivers/gpu/drm/vkms/vkms_formats.h           |   9 +
+ drivers/gpu/drm/vkms/vkms_plane.c             |  29 +-
+ 8 files changed, 835 insertions(+), 4 deletions(-)
+---
+base-commit: 81f6e0e0f3505809dd78eab129106f1c0cf2baf1
+change-id: 20240201-yuv-1337d90d9576
+
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Louis Chauvet <louis.chauvet@bootlin.com>
+
 
