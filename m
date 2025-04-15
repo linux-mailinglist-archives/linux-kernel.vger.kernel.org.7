@@ -1,190 +1,93 @@
-Return-Path: <linux-kernel+bounces-604732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F074A897D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:25:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CED75A89764
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:04:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBF9018919EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:26:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E14AF1668B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A41ED2820C4;
-	Tue, 15 Apr 2025 09:25:42 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D822820BF;
+	Tue, 15 Apr 2025 09:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eiYli8W0";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/dyn91Jg"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE32A2820CA
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 09:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAC2A2820A0
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 09:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744709142; cv=none; b=nXBw5joVud1gI4uJzA+d/OVWftpa0rf8yyJec3vUFzw2j4PnO2yjFe7qgS4Kwa2s0J+vavQcWLnU6bipTc0Gk8+fyTJLgtUWoqXlM3tZ2rXjf3mSbUTjvkoEL6A8KjdPRDTV5nL0ei0qS/vyr5qgfeON73SCdrPfvRnTvgZmUqc=
+	t=1744707808; cv=none; b=gtAzT1qg2IqNTy80LwAjy3E7Wr3gF/orO/lsxOCL/4gZTJW6VDlXEwx39etGNUm298hoXXutmCwB0EZWS6ciu8vI6J2gZ00fLFSzReUdBqwgX1QWzHRg8prij0RMxSix42JzsKs5TC/kPZCpj9k1DpZmEnWPUTF6+Qd8lDf0b+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744709142; c=relaxed/simple;
-	bh=Js0OYHUDBggbN21MupHzDCzb95swyEh3y+c7AxltwS0=;
+	s=arc-20240116; t=1744707808; c=relaxed/simple;
+	bh=nYbA9kru2FXesVThtgdseMbe1b6S4ILp9Kf66UMmsE8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CiuyRilLq76p1c5/NSv/icFyknvfHtZAULPZqV5MvGrweT1NoTsDYChMv6+A2Kwt9TvIK8It83xdCQWMtbk0PrxXkT1T9YlnzNts01rIhqSGuqTsBCXtOt1PGQTdwGUTSwO8FABypS2SOBxrRbcwyB+xPhRjsysNL6VDV63rCPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1u4cXf-0003Vx-Gq; Tue, 15 Apr 2025 11:25:19 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1u4cXe-000OZz-20;
-	Tue, 15 Apr 2025 11:25:18 +0200
-Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id B93643F9ADA;
-	Tue, 15 Apr 2025 09:03:05 +0000 (UTC)
-Date: Tue, 15 Apr 2025 11:03:05 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>, 
-	Maxime Ripard <mripard@kernel.org>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, NXP S32 Linux Team <s32@nxp.com>, 
-	imx@lists.linux.dev, Christophe Lizzi <clizzi@redhat.com>, 
-	Alberto Ruiz <aruizrui@redhat.com>, Enric Balletbo <eballetb@redhat.com>, 
-	Eric Chanudet <echanude@redhat.com>, Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>, 
-	Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, kernel@pengutronix.de
-Subject: Re: [PATCH] can: flexcan: enable PER clock before obtaining its rate
-Message-ID: <20250415-olive-bulldog-of-acumen-f8ada3-mkl@pengutronix.de>
-References: <20250414073646.1473157-1-ciprianmarian.costea@oss.nxp.com>
- <20250414-camouflaged-silver-dodo-d0c000-mkl@pengutronix.de>
- <e4bd8e47aeab761e409121ac9bc19408@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=P0k1pNCDfe95aningYdtq9JfyFk3vb9PDxHElIlLZnLr3+1yT1JC62k5JSIeYduC/8eqVfrC6WNrZhjKlfwVPvYS1aUyuY/GBXsZ0htB8mRpAgTdThVuMS69tZ7b7VbJ8ZYi0XnvprxsHHUebZBJocxJlZaLIN4YXpGrufQJ/lQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eiYli8W0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/dyn91Jg; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 15 Apr 2025 11:03:23 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744707804;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7WemkJBzO+WM+dFn1ysFVN7oi+9pL4eKkCD+1tNWdiU=;
+	b=eiYli8W0ICcnFi/mrDV9t7MN9DnivU8sgmh55J0JUPUIsWNCjwgytI7hfNVyPAFU9GDXF3
+	OSvXUqtcqcGh9y3Kv5lSKQ+LMBJZ8wXnMUVFDHjYKJMnNgJ2fMBpbTkCCwVAmdhqNLmrWC
+	HhkQWdyeElWDrkn90rzyEs8WtA53thBv/dq9GrdV3x/2hrIkNoVHruLxWcVC7LbnvbueaZ
+	QYuHXUjmkRA7J0rzgj2Xxt8bOeNNanDLZDAR1I1vflljFr18/AV6H7sgZkLcpw8x5Knll8
+	mfiNrrjWZUuiaOrKaF/C5aJFNaqvukMKr1JvbG307ztIWjl7L2RNObbdGPt+PA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744707804;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7WemkJBzO+WM+dFn1ysFVN7oi+9pL4eKkCD+1tNWdiU=;
+	b=/dyn91JgZcbIozgxFi/Or5m/FXilcJi/mJpt1EgPEYwfs/w8Dl06T0NWqJudIFL+zFzrjS
+	OTyWUZ9KOL/VxNAA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Shrikanth Hegde <sshegde@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org,
+	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH v11 00/19] futex: Add support task local hash maps,
+ FUTEX2_NUMA and FUTEX2_MPOL
+Message-ID: <20250415090323.F21QhO3s@linutronix.de>
+References: <20250407155742.968816-1-bigeasy@linutronix.de>
+ <c2aa89d7-c3ab-40e2-bd65-443a75b04017@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ea3nv5gvbkpg3kof"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <e4bd8e47aeab761e409121ac9bc19408@kernel.org>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <c2aa89d7-c3ab-40e2-bd65-443a75b04017@linux.ibm.com>
 
+On 2025-04-10 23:21:49 [+0530], Shrikanth Hegde wrote:
+> >    - Updated kernel doc for __futex_hash().
+> 
+> 
+> I don't see any change in Documentation/*. Is it updated in some
+> other path?
 
---ea3nv5gvbkpg3kof
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] can: flexcan: enable PER clock before obtaining its rate
-MIME-Version: 1.0
+Look for "__futex_hash - Return" in
+	https://lore.kernel.org/all/20250407160007.vOk8ijom@linutronix.de/
 
-Hello Stephen,
+This is the change I refer to.
 
-thanks for your input.
-
-On 14.04.2025 17:27:10, Stephen Boyd wrote:
-> Quoting Marc Kleine-Budde (2025-04-14 02:55:34)
-> > On 14.04.2025 10:36:46, Ciprian Costea wrote:
-> > > From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-> > >=20
-> > > The FlexCan driver assumes that the frequency of the 'per' clock can =
-be
-> > > obtained even on disabled clocks, which is not always true.
-> > >=20
-> > > According to 'clk_get_rate' documentation, it is only valid once the =
-clock
-> > > source has been enabled.
-> >=20
-> > In commit bde8870cd8c3 ("clk: Clarify clk_get_rate() expectations")
-> > Maxime Ripard changed the documentation of the of the function in clk.c
-> > to say it's allowed. However clk.h states "This is only valid once the
-> > clock source has been enabled.".
-> >=20
-> > I've added the common clock maintainers to Cc.
-> >=20
-> > Which documentation is correct? Is the clk.h correct for archs not using
-> > the common clock framework?
-> >=20
->=20
-> I don't know what arches not using the common clk framework (CCF) do so
-> I can't comment there.
-
-The driver is used on Freescale/NXP SoCs: m68k (coldfire), arm, arm64.
-Coldfire provides us directly with the fixed clock rate, so no clk_*()
-functions are used there.
-
-> If you want something to work on an architecture
-> that doesn't use the CCF then follow the header file, but in all
-> practical cases _some_ rate will be returned from clk_get_rate() and
-> we're not going to BUG_ON() or crash the system in the CCF
-> implementation for this case. Enabling the clk is good hygiene though,
-> so is it really a problem to enable it here?
-
-It's not a problem to enable the clock. If it would stay enabled, it
-means a higher power consumption (I cannot quantify how much), as the
-clock is only needed if the CAN interface is up. But we have more things
-to cleanup:
-
-For CAN controllers, information about the clock is more important than
-for e.g. serial interfaces, so it's exported to user space. During probe
-a CAN driver typically queries the clock rate with clk_get_rate()
-(without enabling the clock) and stores the rate in a structure.
-
-If the user space configures the bit rate of the CAN bus, the stored
-clock rate is used to calculate the bit timing parameters. During ifup
-the clocks are enabled and the previously calculated bit timing
-parameters are programmed into the hardware.
-
-In the early days of the stm32mp1 this has previously caused problems
-because the frequency of the CAN clock changed between the initial
-clk_get_rate() and the ifup.
-
-For SoCs with CAN interfaces, the system designer usually configures the
-CAN clock to a specific rate, so this problem does currently not occur.
-
-What are our options?
-- enable the clock before clk_get_rate(), disable it afterwards?
-  -> This might be a bit more "hygienic", but doesn't solve the clock
-     rate changes problem.
-
-- clk_notifier_register() and update the saved rate
-  -or-
-- give our framework a pointer to the clock, so that it can do the
-  query every time needed, instead of using the value from probe time
-
-- delay the calculation of the bit timing parameter until ifup, do a
-  clk_rate_exclusive_get(), re-calculate the bit timing parameters and
-  program them into the HW
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---ea3nv5gvbkpg3kof
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmf+IMUACgkQDHRl3/mQ
-kZxK2Qf9HAn4ob3h6aUeP89LLoGXCIV0BwaTLfdq/FfE8cdPJFaNYPqKfAQR0hCX
-W09FS52Qo1YkODvj6fImAtavgZm6P3TCcJW8zORMyqI35BOVDYFz7oTkY1pUxx1N
-8dqrIzX3orDTum9tY6N/lfaqb87hiBeNB1r4cJljtVBr0B/yU8xdDRdDYriejITs
-WHbl5vkgTEIjuD6Tt26lf7Vm/8DPnsFok7+FCNlfwqGFaCsiiAxlKrmDhZbI1GVN
-x4gNJ4I3j6T/muZaIyyEPgMH6HJijXFDMfzwiOlSUsMMjYJ6C+HzrHJgOEFxBB3/
-1Fym0NSFmTKKNEqecO05pfEcccbDZg==
-=ABXE
------END PGP SIGNATURE-----
-
---ea3nv5gvbkpg3kof--
+Sebastian
 
