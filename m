@@ -1,176 +1,72 @@
-Return-Path: <linux-kernel+bounces-604612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55DF5A8968A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:29:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1288EA89CC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:45:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21876176C63
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:29:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FD35188413A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:45:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479F6294A01;
-	Tue, 15 Apr 2025 08:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CnPGop0P"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0A928E610;
+	Tue, 15 Apr 2025 11:45:02 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CCC1292929;
-	Tue, 15 Apr 2025 08:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C34D028DEF5;
+	Tue, 15 Apr 2025 11:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744705470; cv=none; b=lhb72jTOnAmosvwiDCJnqvSPdxcj/ffiDUxVm6x+Us46cxNSSWsHuQ1+UUOH2LxtUmIsu83lAP3dLarowOaTbz/O+OkDyfzXGKjz/opymFU7Krw2oCLHiDlrBfPVHkzGchfShRsJZ15HXxWa8Biz+17J5V9DvpQ8Eta3BIWErYA=
+	t=1744717501; cv=none; b=YjTXbBNKFArhx0VQL6ivhlsfiPwLjlC+2PW+LKiiesiZDpq9W9HO9TDRDKxN5GZ3u5yAJs0gpNt4+O8wuokbBwwXarjZ8yTrx7zdWmWyrq2HXUWmMzNdCW6mUfwVh8HhHaLf1UA45+9oJZvJQs77d5JfyRnjVQwdLiMwuTkN8mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744705470; c=relaxed/simple;
-	bh=K0PCFpqXR+BoZPRcggrk+ij0mfJByFEiMMV0vPkyapU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qfw0ajrMgg5vPpRBOcBitVYWyiobMsoSOrG8jvM0pQ8s7wfoBWJdc8kknsE6J726Ny2E8ZN6nK7xjlnbY1P9TDkEBKgsFRgPHtFlXcUSz3LLDSGIv/gRaA3vgpy51yKj1pKem3/MkrKaeYWn+EYa4N4tWpcBUCt0sZr1XlzReDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CnPGop0P; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744705470; x=1776241470;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=K0PCFpqXR+BoZPRcggrk+ij0mfJByFEiMMV0vPkyapU=;
-  b=CnPGop0PyLV5WMZ2JW31uRnxixmiB5KQZ9X0Ai/AKzBtxoZiNRuO8g9+
-   ez4tLwnPtxNPnGfQXiJsTxagYtkNIgA7/L+agE7uDG7P2dTCvQHWD/2iF
-   QO0JQrI8bo4a3bSGuN01eYeV3breAr3gKxxOiSG/HDxC+3M50PIVl0Ohp
-   kahINo1rTHqF6Kro9nR31qhGOY/fS+9122G66Y9roK2czW0IyViUc8Q0q
-   JlMzspxz7hnfymGprBQDcmVniahaZZI0osRuq/SaXoC74s1lYxfNsltr0
-   xbIwpwkuV2VmR4sz0ili9t3h8QXmEuTUnPVtt2WKHtd67IZ3YsUfk9jsv
-   A==;
-X-CSE-ConnectionGUID: UYyPPPsdRc+Rmc31Qyrt6w==
-X-CSE-MsgGUID: iwlnnQEYSp6EB5AZ84JPPQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11403"; a="46116255"
-X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="46116255"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 01:24:29 -0700
-X-CSE-ConnectionGUID: J+C/4w8mTbaacM+yta7nPw==
-X-CSE-MsgGUID: sChUOHhzTiqcxunNh4+LMQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="130055727"
-Received: from emr.sh.intel.com ([10.112.229.56])
-  by fmviesa007.fm.intel.com with ESMTP; 15 Apr 2025 01:24:25 -0700
-From: Dapeng Mi <dapeng1.mi@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Eranian Stephane <eranian@google.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Dapeng Mi <dapeng1.mi@intel.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: [Patch v3 22/22] perf tools/tests: Add vector registers PEBS sampling test
-Date: Tue, 15 Apr 2025 11:44:28 +0000
-Message-Id: <20250415114428.341182-23-dapeng1.mi@linux.intel.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20250415114428.341182-1-dapeng1.mi@linux.intel.com>
-References: <20250415114428.341182-1-dapeng1.mi@linux.intel.com>
+	s=arc-20240116; t=1744717501; c=relaxed/simple;
+	bh=7JPX+2GYolK1KRD+y0abQNSxtm1R8tnluqSvHjMuoyw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=okBEsNm0tsDKbCcHDbRT0+y6g6rxiKOh1ZvZdfo31JA47eCQb9hHVnqlc7VyMUkhpbph4RQOow9Tdmo3Fm3ZfX/hNlJh9z/5l+YLbGOkKOoxGjzff38SAPT+B539uECXknpzs0uM5bc2EwkNdY/DuSdNXFuzrwT/xIYXauqQSQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 616F4C4CEDD;
+	Tue, 15 Apr 2025 11:45:00 +0000 (UTC)
+Date: Tue, 15 Apr 2025 07:46:33 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jin Guo <menglong8.dong@gmail.com>
+Cc: mhiramat@kernel.org, mark.rutland@arm.com,
+ mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, Jin Guo <guoj17@chinatelecom.cn>
+Subject: Re: [PATCH] ftrace: make ftrace_location() more accurate
+Message-ID: <20250415074633.3cf7546d@gandalf.local.home>
+In-Reply-To: <20250415112750.1477339-1-guoj17@chinatelecom.cn>
+References: <20250415112750.1477339-1-guoj17@chinatelecom.cn>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Current adaptive PEBS supports to capture some vector registers like XMM
-register, and arch-PEBS supports to capture wider vector registers like
-YMM and ZMM registers. This patch adds a perf test case to verify these
-vector registers can be captured correctly.
+On Tue, 15 Apr 2025 19:27:50 +0800
+Jin Guo <menglong8.dong@gmail.com> wrote:
 
-Suggested-by: Kan Liang <kan.liang@linux.intel.com>
-Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
----
- tools/perf/tests/shell/record.sh | 55 ++++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
+> The function ftrace_location is used to lookup the ftrace location with an
+> ip. However, the result that it returns can be wrong in some case.
+> 
+> Let's image that we have the following kallsyms:
+> 
+>   ffffffff812c35f0 T sys_ni_syscall
+>   ffffffff812c38b0 W __pfx___x64_sys_io_pgetevents_time32
+>   ffffffff812c38c0 W __x64_sys_io_pgetevents_time32
 
-diff --git a/tools/perf/tests/shell/record.sh b/tools/perf/tests/shell/record.sh
-index ba8d873d3ca7..d85aab09902b 100755
---- a/tools/perf/tests/shell/record.sh
-+++ b/tools/perf/tests/shell/record.sh
-@@ -116,6 +116,60 @@ test_register_capture() {
-   echo "Register capture test [Success]"
- }
- 
-+test_vec_register_capture() {
-+  echo "Vector register capture test"
-+  if ! perf record -o /dev/null --quiet -e instructions:p true 2> /dev/null
-+  then
-+    echo "Vector register capture test [Skipped missing event]"
-+    return
-+  fi
-+  if ! perf record --intr-regs=\? 2>&1 | grep -q 'XMM0'
-+  then
-+    echo "Vector register capture test [Skipped missing XMM registers]"
-+    return
-+  fi
-+  if ! perf record -o - --intr-regs=xmm0 -e instructions:p \
-+    -c 100000 ${testprog} 2> /dev/null \
-+    | perf script -F ip,sym,iregs -i - 2> /dev/null \
-+    | grep -q "XMM0:"
-+  then
-+    echo "Vector register capture test [Failed missing XMM output]"
-+    err=1
-+    return
-+  fi
-+  echo "Vector registe (XMM) capture test [Success]"
-+  if ! perf record --intr-regs=\? 2>&1 | grep -q 'YMM0'
-+  then
-+    echo "Vector register capture test [Skipped missing YMM registers]"
-+    return
-+  fi
-+  if ! perf record -o - --intr-regs=ymm0 -e instructions:p \
-+    -c 100000 ${testprog} 2> /dev/null \
-+    | perf script -F ip,sym,iregs -i - 2> /dev/null \
-+    | grep -q "YMM0:"
-+  then
-+    echo "Vector register capture test [Failed missing YMM output]"
-+    err=1
-+    return
-+  fi
-+  echo "Vector registe (YMM) capture test [Success]"
-+  if ! perf record --intr-regs=\? 2>&1 | grep -q 'ZMM0'
-+  then
-+    echo "Vector register capture test [Skipped missing ZMM registers]"
-+    return
-+  fi
-+  if ! perf record -o - --intr-regs=zmm0 -e instructions:p \
-+    -c 100000 ${testprog} 2> /dev/null \
-+    | perf script -F ip,sym,iregs -i - 2> /dev/null \
-+    | grep -q "ZMM0:"
-+  then
-+    echo "Vector register capture test [Failed missing ZMM output]"
-+    err=1
-+    return
-+  fi
-+  echo "Vector register (ZMM) capture test [Success]"
-+}
-+
- test_system_wide() {
-   echo "Basic --system-wide mode test"
-   if ! perf record -aB --synth=no -o "${perfdata}" ${testprog} 2> /dev/null
-@@ -318,6 +372,7 @@ fi
- 
- test_per_thread
- test_register_capture
-+test_vec_register_capture
- test_system_wide
- test_workload
- test_branch_counter
--- 
-2.40.1
+Have you tried the latest kernel? because on x86, weak functions that are
+not used should no longer be in the ftrace table. That is, you should never
+see __ftrace_invalid_addres_* anymore.
 
+See https://lore.kernel.org/all/20250218195918.255228630@goodmis.org/
+
+That was just added this merge window, which would make your patch obsolete.
+
+-- Steve
 
