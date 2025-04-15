@@ -1,129 +1,137 @@
-Return-Path: <linux-kernel+bounces-605402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06C87A8A0AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:09:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63EA9A8A0C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:16:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA118179D21
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:09:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03AAE3B7B4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:16:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78E1A1C861D;
-	Tue, 15 Apr 2025 14:09:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21829205AA3;
+	Tue, 15 Apr 2025 14:16:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="AMLo3qd5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="YBOd96xh"
+Received: from out203-205-221-239.mail.qq.com (out203-205-221-239.mail.qq.com [203.205.221.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA715F9DA
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 14:09:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F5933DF;
+	Tue, 15 Apr 2025 14:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744726148; cv=none; b=ZoqSNQE2/cnIf3q7ClqRt8agaRu1SrbTCHxIab3BIiv81+IQ+docXZSb+Y9PHKtFk4WTAGDlUAdROK0N3UB+LhiCp21opmEBQrBwOoVlHP+OT5tD+M0IZbomBEKDSFQyTufEQC1whz7WWDbbuvnNQuygOTTqZcMf3s23Y054OC8=
+	t=1744726569; cv=none; b=JT/Dd1eX/HkQgz5Ou+5eRKeVtOzk4c3tJsTU1alo0+71s8VQySJRqT/g0OhxePS/1gQyk8I3ccKxOAUsSK57YP5Amy6Evg9SBITKRq3AXHYos+C0R3q66bpA/8+0rKFp2hjvIEq2qMyOyxd0fgzdBbFzglmnJoHVWWNj7dArs/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744726148; c=relaxed/simple;
-	bh=9O5wa5Rs0wo0+8sUHTgUxaPCY7KJc0sY05QQCfHijsY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jO1/k98gS7USG0abRKwnIDW527sV4pyDiUnGLDZcuJ+UKoFyioFf/jaJkbp+cPL/q/VFMzbXs3wGY4D5MhFCBQPUTeXm1L1UYfpuqMp/9ARmk8Mbd3O2pXkA69dNtMMlQmHKVTmrD7cIemlWYED7ur1tBjPaODGBKmUvHmZUelg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=AMLo3qd5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B754C4CEDD;
-	Tue, 15 Apr 2025 14:09:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1744726148;
-	bh=9O5wa5Rs0wo0+8sUHTgUxaPCY7KJc0sY05QQCfHijsY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AMLo3qd5SELRCapzPXnfBgTAZXUfEuwI+FN/uwO2ndARHZ//jZL7qxRW8K5Xdetjy
-	 JxTV/CTbenNxELSpGUNNx5z4mmZs5JWsTs+X3T3c7mDn3pQj0eOXQ0zvybyM3HSKhv
-	 1bTK8EBVsNe654f6uHwMFzs74HNVOWK1J6t+3prI=
-Date: Tue, 15 Apr 2025 16:09:05 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Andrey Tsygunka <aitsygunka@yandex.ru>
-Cc: markus.elfring@web.de, arnd@arndb.de, linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: Re: [PATCH v2] misc: sram: Fix NULL pointer dereference in sram_probe
-Message-ID: <2025041528-garment-senior-1c71@gregkh>
-References: <84969aba-67ba-4990-9065-6b55ce26ff92@web.de>
- <20250307143442.4125844-1-aitsygunka@yandex.ru>
+	s=arc-20240116; t=1744726569; c=relaxed/simple;
+	bh=YajqJaU+cdevNobpRRwoU0DM5ACvTlKj0Vk4kI7vuaA=;
+	h=Message-ID:From:Date:Subject:MIME-Version:Content-Type:To:Cc; b=ao7haT0xjqHV5GL4Nm0BvdbJHbHztV+i9C8DMbQTd8MjEs5YJ3xeMn3A5VHhNhVO982VQy8zeaxFssl8ysaSRSGKOFBjXI+igWyqQTV/EGc8altUqRljwXLo0E0bV+9hW3UJRQMswnTZUkJtGRbuGpg+JaTBrkjVrdbenmTYavc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=YBOd96xh; arc=none smtp.client-ip=203.205.221.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1744726255; bh=rBJo6st9z2yzfDHSl0qbQgIY7HkO12X5NQA4RWLYm1k=;
+	h=From:Date:Subject:To:Cc;
+	b=YBOd96xhqcLZgifby9dpZDOtoqCg3n8YVpgJyubx9zsqTNEka53N/Zjd4HKZwJdBQ
+	 ZT3IFIK8Ofm4pErd9uVCyR2wXsTBMRqerUGUhW2WurIzHbLV3RtctZJdYVeoN+T9aq
+	 oDVCNeH91Zu3oUqNNhTLEOJLyL9g6jtkP9q35WqA=
+Received: from [127.0.1.1] ([112.48.46.45])
+	by newxmesmtplogicsvrszc11-0.qq.com (NewEsmtp) with SMTP
+	id 2B59F4B2; Tue, 15 Apr 2025 22:10:53 +0800
+X-QQ-mid: xmsmtpt1744726253tc7gykvuz
+Message-ID: <tencent_FFC8E7A5A76050982D28F811C81F936D9205@qq.com>
+X-QQ-XMAILINFO: MqG4KXyEKpQynimtTjnsfWKU/iNyybHLWdjy5ge0jzsMhX/7Zzy40x5wTiOhtT
+	 kTbYc11mO6zcZj8MSuG7IG4HX7f8gJVDt8ndZWXXJBuGf3HdbLsROiEgoTdfQZ9yyZIXZ+OzjZot
+	 u4dNjWPrhODE2SmuowqgdLEXNX/Agv6UreQamdxIm9u0C7JHOL2qDMFN+NRRaY93lTENoRCXyaQ0
+	 o9BX39TKYMGRg9ehkbyyyK/LZBfLZut/SgNJvJT18MlwNbKc0PmzTXf+diOwQJZe7JSWAqCaOcZ3
+	 466VunPqAtCWHb5MzC4DoFgfKHLR2aRrNqXDeVTKb7Q7eAuaO0YUCmOXwZ3wh1hO9+DM5atZDfHR
+	 mcHslDEadDVzCoT7QgrpUq5gE1MgWyUx1QNukmKBghKH27gbGRj2jYCI4fUMsiqo6D/aylwZZ0TH
+	 Z1wkE7wg1RRi2qBDm2VFnYjO7Q9bUm8LpBXkqB5TKXWVgks38rA4DG+jzuScJBdtPiKoxugD1+Ip
+	 +xk41bCQWzEPh2tRm0VymZ3Piq06vRujXbFyacIZm/ELrr0Popj6KezrwlWUA+pDi3bZfkB6mGSQ
+	 B42EbFz0JXcra4bTnQO+68NAkEY8WWCHvxFlNl2ePPf4FhAHVRXGLBYBb3zfSxs0NwUGvQcwEGNF
+	 FRUQiEANupNMyjGxz+vWRULdAqLYowuvXlBsFWFmqH1CRAHI7UJnhs6eNaIlcWVdovZQVCjXydJk
+	 9VgQdNeTbF+C/viHmz1Y7z+FelOBaXr2/s/lZ0ERoDnkzEnV2LssDnCMkvubDNf3DlY+5oRkY0ak
+	 n5g1anG/de6tvbfLRdThLkJm0lhLJvUA0yWej/yMdHzwGufJi4Qg7EE6+hhsXSdhFOJu8MoF92T7
+	 1cgPIyoxSQVA5vshVc2o03RRuG7OFKphiPtyGtRNPzXF/nefbzjC5Atnny7AGcrD/4fEwVgjJT/+
+	 XQdBjf4RH47a3BV+b6bXv6hqTts3MKiV1ciPSX49eEsjpgOF1h8DA2iLtn7xNZcWWLKZwpvkrdSz
+	 lrMjOryS8TC4TG4oGV2Bl8mxXyqGb10u7bO9+EhkLZ44kYBdXJosEOUVeYEUGo2C05JNw35g==
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From: Liya Huang <1425075683@qq.com>
+Date: Tue, 15 Apr 2025 22:10:40 +0800
+Subject: [PATCH] of: reserved-mem: Warn for missing initfn in
+ __reservedmem_of_table
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250307143442.4125844-1-aitsygunka@yandex.ru>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-OQ-MSGID: <20250415-__reserved_mem_init_node-v1-1-2e48f58311b3@qq.com>
+X-B4-Tracking: v=1; b=H4sIAN9o/mcC/x3M0QpAMBSH8VfRubZCm/Aq0ontj3NhtElK3t1y+
+ V38vocigiBSlz0UcEmU3aco84zsOvoFSlxqqorKFLo0ijkgmQuON2wsXk72u4Oqm9ZOaJ3RVlP
+ iR8As97/uh/f9AJ+lNpRqAAAA
+X-Change-ID: 20250415-__reserved_mem_init_node-689cbe9d54c4
+To: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Liya Huang <1425075683@qq.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744726254; l=1774;
+ i=1425075683@qq.com; s=20250415; h=from:subject:message-id;
+ bh=YajqJaU+cdevNobpRRwoU0DM5ACvTlKj0Vk4kI7vuaA=;
+ b=9o2Fq5RQqe5zg02Foh10Qq5KYRisrT4mOL8ynZbzn5qaLFSMWjEk30XBTyUxSye8bd5lvg0u4
+ t2SFHQgPmF8AaDTn+A4/OOUFHnfN9MhiwSkdI5as6tV5bmqcrrk4JI0
+X-Developer-Key: i=1425075683@qq.com; a=ed25519;
+ pk=nSnzeGGcMXBimuyIWYIZpZRN8DboZqwr67IqWALwrGs=
 
-On Fri, Mar 07, 2025 at 05:34:42PM +0300, Andrey Tsygunka wrote:
-> Add a check for the return value from platform_get_resource() call
-> to be NULL.
-> 
-> If the passed device-tree contains a node for sram-device
-> without a specified '<reg>' property value, for example:
-> 
->     sram: sram@5c0000000 {
->         compatible = "nvidia,tegra186-sysram";
->     };
-> 
-> and the of_device_id[] '.data' element contains a sram_config*
-> with '.map_only_reserved = true' property, we get the error:
-> 
-> Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
-> Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-> CPU: 0 PID: 1 Comm: swapper/0 Not tainted 6.1.96 #1
-> Hardware name: linux,dummy-virt (DT)
-> Call trace:
->   sram_probe+0x134/0xd30
->   platform_probe+0x94/0x130
->   really_probe+0x124/0x580
->   __driver_probe_device+0xd0/0x1f0
->   driver_probe_device+0x50/0x1c0
->   __device_attach_driver+0x140/0x220
->   bus_for_each_drv+0xbc/0x130
->   __device_attach+0xec/0x2c0
->   device_initial_probe+0x24/0x40
->   bus_probe_device+0xd8/0xe0
->   device_add+0x67c/0xc80
->   of_device_add+0x58/0x80
->   of_platform_device_create_pdata+0xd0/0x1b0
->   of_platform_bus_create+0x27c/0x6f0
->   of_platform_populate+0xac/0x1d0
->   of_platform_default_populate_init+0x10c/0x130
->   do_one_initcall+0xdc/0x510
->   kernel_init_freeable+0x43c/0x4d8
->   kernel_init+0x2c/0x1e0
->   ret_from_fork+0x10/0x20
-> 
-> Fixes: 444b0111f3bc ("misc: sram: use devm_platform_ioremap_resource_wc()")
-> Signed-off-by: Andrey Tsygunka <aitsygunka@yandex.ru>
-> ---
-> v2: Description changed based on comments from Markus Elfring 
-> at https://lore.kernel.org/linux-kernel/84969aba-67ba-4990-9065-6b55ce26ff92@web.de/,
-> added tag 'Fixes', removed useless information from backtrace.
-> 
->  drivers/misc/sram.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/misc/sram.c b/drivers/misc/sram.c
-> index e5069882457e..c8ba8ebd4364 100644
-> --- a/drivers/misc/sram.c
-> +++ b/drivers/misc/sram.c
-> @@ -410,8 +410,13 @@ static int sram_probe(struct platform_device *pdev)
->  	if (IS_ERR(clk))
->  		return PTR_ERR(clk);
->  
-> -	ret = sram_reserve_regions(sram,
-> -			platform_get_resource(pdev, IORESOURCE_MEM, 0));
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	if (unlikely(res == NULL)) {
+For the data in __reservedmem_of_table, its function pointer initfn might
+be NULL. However, __reserved_mem_init_node() only considers non-NULL cases
+and ignores NULL function pointers.
 
-Only use likely/unlikely if you can actually benchmark the difference.
-For probe() callbacks, that is never the case, so just rely on the
-compiler and cpu to get it right (hint, it almost always will.)
+Therefore, a check for the possibility of initfn being NULL has been added
+here, along with skipping the initfn() and issuing a warning.
 
-thanks,
+To: Rob Herring <robh@kernel.org>
+To: Saravana Kannan <saravanak@google.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Liya Huang <1425075683@qq.com>
+---
+For the data in __reservedmem_of_table, its function pointer initfn might 
+be NULL. However, __reserved_mem_init_node() only considers non-NULL cases
+and ignores NULL function pointers.
 
-greg k-h
+Therefore, a check for the possibility of initfn being NULL has been added
+here, along with skipping the initfn() and issuing a warning.
+---
+ drivers/of/of_reserved_mem.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
+index ee2e31522d7ef69d816127a9003c423d5fb4023d..0a7cc599c0ca68001b2395759310f3585f247db9 100644
+--- a/drivers/of/of_reserved_mem.c
++++ b/drivers/of/of_reserved_mem.c
+@@ -496,6 +496,11 @@ static int __init __reserved_mem_init_node(struct reserved_mem *rmem)
+ 		if (!of_flat_dt_is_compatible(rmem->fdt_node, compat))
+ 			continue;
+ 
++		if (!initfn) {
++			pr_warn("no init function for %s\n", rmem->name);
++			continue;
++		}
++
+ 		ret = initfn(rmem);
+ 		if (ret == 0) {
+ 			pr_info("initialized node %s, compatible id %s\n",
+
+---
+base-commit: 8ffd015db85fea3e15a77027fda6c02ced4d2444
+change-id: 20250415-__reserved_mem_init_node-689cbe9d54c4
+
+Best regards,
+-- 
+Liya Huang <1425075683@qq.com>
+
 
