@@ -1,142 +1,119 @@
-Return-Path: <linux-kernel+bounces-604869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CEB7A899F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:26:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00DC2A89A39
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:32:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBE243B5685
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:26:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00D3517A904
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:32:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62956268FF4;
-	Tue, 15 Apr 2025 10:26:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0D228F51F;
+	Tue, 15 Apr 2025 10:28:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lwPR7RV0"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QDdh1x2G"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5525F27EC9A
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 10:26:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7608827FD68;
+	Tue, 15 Apr 2025 10:28:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744712798; cv=none; b=YrGpqejDZtY2sV0+CIl/eacXHI0TQ2RYVqoATh0UvuXrwqNmeIBzbUkMVS/2YYWmGC6R8l0nUCKzW21Veftg3gw0HktCIRWU2sIQUmTGFjaS6O6MF5fOcZL1jrUhYzq7bg9isiEvYHEMRSMekhZiQoNZi/xjFZGsH81tnKWNmIU=
+	t=1744712938; cv=none; b=OAMUdiLxRXqVJNp/nbs6TTMBy5VfrALDlKhNCJkUqXq9SV+6RAnOd7PjkXXA9ClCBD3jloqPCe4/CyDLasKUR0L8BxlLFt06sP/8ZemRkIMGairmLiQAdgLjOC0oGPWJCc7Qf+INrjb3J7D2mZ/1vCWjiZ0fPicJoicTDn9JBSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744712798; c=relaxed/simple;
-	bh=8Wk68rfSswMYXy4roNkEMzhagEBd/xVnpM63L5n14j8=;
+	s=arc-20240116; t=1744712938; c=relaxed/simple;
+	bh=TFPyhgsGRDnosn84OnM/M4JJ7OjbBdk0kl0ET0hNwlU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=otypikW/lA8HC+GM8f7eMU8ulBoIQhQ+jq5i+O28z49dcrvPUuG+YugymbTR090wn7LbdEldZLixRAHrSVyVq368uQxPTs926s9COnr1em/PYTSmY8EsWMAufE1BmdPS16mDnA15Ro7LYCQJ10fX8GRbS07s0h8/ZEVdXfPxyHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lwPR7RV0; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53F8tHd5013136
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 10:26:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=8KNMl+h+dY8TN+P2t92AbEQx
-	GBdTUq047ce2xAkYaWs=; b=lwPR7RV0H9w31lCgPQHCfO/3zAqgwzJ7FdTwzR3v
-	4Il6bqLaGqihXyXpEvf0aSrybbLT7DexWI63wE7NgP/Cb+59VY+9aJiqpEC+rVa7
-	Ho6k8xU5DS7m7jxOG1bQYMHlwi1wPtu/xKGK+EIWGiD7+EgvyS1AvyWaUGoY8Vzq
-	IBB/4qG2MZUckTGzJsmhMaUwNxTQGTGFivb0fahp1kWrM/jQreraGUAm0ndR4fdI
-	ITvf2Ij/H9Xsi/EYHs6FuXUCN4T3NMcH1u5LDXHL849C9kMWJl1sgYLJ98gDTAjh
-	5o5UlLrirTNLh9wHg2QtV+BWtPLUzEyEmE4ma87/gfNUgg==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ygd6fnft-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 10:26:36 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c5f876bfe0so858549285a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 03:26:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744712795; x=1745317595;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8KNMl+h+dY8TN+P2t92AbEQxGBdTUq047ce2xAkYaWs=;
-        b=g3VpZ35rB73XTvZwIapIhgWuWTKLCyDgCg2F8pTXEsIv1MXRntpygTvcFN0K2oj8TU
-         SKwHZ1j67gD4V8U1ImcIvYDVubfV9yUmZsIkwbl7o/XKl7cFgAK86AoBT3mRVkvkCgps
-         57vWbbrqP9t9V2Sth3Rzh0IySmbUH9gsQw3VIrjWEjnJTEjTPKVyho14+nqw6Q/yJNsH
-         GaUuen/R0mU+2PVFcmdOL9YmVipOBp4MdySu0zaaDbD12CJvESmzB1NTcGcKwjQRH46a
-         O90p9iX1Ecjcn513thZ2K8ZSCUzBO2maR3RWGMFE37Ixzy4vebK7Sm/fgRd2oHOkmuUA
-         so8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVC8fXnwgua3tFbrkCveqUglAvWliigNrw4ooMVQHl8fQ3inJyksAfNEi1NzisORHgGxjq68DEfqzi5gIQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzyaPS6SDWjU1jPHtF1QyTJx6kYidD62qalx4bNAzDkyUBuj3W
-	JiYQr98+ZY7GYWDukoGXd+Mv0CNh4yb0UceOE2sevlap9r796XWPXin9jiqHOdFTlMyiLQV2LFQ
-	U+UF2q7i4PdeXuHObMw7xIsiZrGhpcp1yU6y+2Ty6NYhePtoLtwz0Au0l+O2CLvo=
-X-Gm-Gg: ASbGncuAOZL3lX5hLsG902A24mkSEYZkfX4cyysBqXN1yxwh38vEafzARDy85MDFiav
-	QV9VqKeHLa+60kFa5BHItXJiYcnLAnWMsf6YodA24l6+YeO6Y1FVXsykS7aABk7Lxnahw7YSmpe
-	VD9unAl25zZ6uJWAqlKvgQYKrlNpcwtsFpu8p7xTGvfBrBzBSTYXNdUECKAyWTVmL6juAcqKw5P
-	V2QSWJ0mBjjl30rZbO3LwCSHKUwi9nr5dMUf0LkG6g511vqiZ+zXMhskIaC7ULc/DYexoOGQWFa
-	JX4lmPh9+MMCZ8A7vzkiTXrZewqJkqRXFovEKNt1Gr7zNmMnM3cd0t2CzICusLC4EaHWWondqfY
-	=
-X-Received: by 2002:a05:620a:28d5:b0:7c0:a3bd:a78a with SMTP id af79cd13be357-7c7af1f3d4emr2124438185a.41.1744712795100;
-        Tue, 15 Apr 2025 03:26:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHPAUNy95g+BxEoF3m9T+D1BmAcO0ZWmAE4FI2u67ljC8uUUpC++8Ix1n9dNmZZNjqqGE/GOw==
-X-Received: by 2002:a05:620a:28d5:b0:7c0:a3bd:a78a with SMTP id af79cd13be357-7c7af1f3d4emr2124435285a.41.1744712794773;
-        Tue, 15 Apr 2025 03:26:34 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54d3d123137sm1387306e87.40.2025.04.15.03.26.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Apr 2025 03:26:33 -0700 (PDT)
-Date: Tue, 15 Apr 2025 13:26:32 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Chenyuan Yang <chenyuan0y@gmail.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, lumag@kernel.org,
-        quic_kriskura@quicinc.com, manivannan.sadhasivam@linaro.org,
-        konrad.dybcio@oss.qualcomm.com, quic_varada@quicinc.com,
-        quic_kbajaj@quicinc.com, johan+linaro@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2] phy: qcom-qmp-usb: Fix an NULL vs IS_ERR() bug
-Message-ID: <x2hqk3yabe3ntp4b452tseyuuen76mtttievka7zgjajxxxobb@srrgiu7k6eyp>
-References: <20250414125050.2118619-1-chenyuan0y@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GIMyV6xH+8tX7hc983Gd+bhj7U6HUFruy6CtRKql059yKJR89W05AiQiTMuuWeszR6O9a/XARv1W6Ed60NDYrOpa1Yaz9X2FTvxhAo3mWxJZjtVgJLOQY+KIa7umhlwkjYrFY0iUa43ntBnRFwyxUDQkC3zk47RtnL9IiP0N8QM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QDdh1x2G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D60F5C4CEDD;
+	Tue, 15 Apr 2025 10:28:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744712937;
+	bh=TFPyhgsGRDnosn84OnM/M4JJ7OjbBdk0kl0ET0hNwlU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QDdh1x2GaXZcRWhfFUJgobXVRR91PkRv0JBrfzGNzef3yJQXWgy2Ku7hsv8Tvz3JQ
+	 dyB7GPPHuoy/ApxSZNNrBwpzYRVkUqJ0HWeiQBhfK01KtjYNG0JaoyhbJyHX0FTgp+
+	 uUxiBOEGoIUg+rdZZ68zHDNeVcERNyTOU0mfjSZrLMSzHD12dVlWY0+D6l6Hk9on0V
+	 qp4Po1G2TiUIozZUzy9xVYhClMNbkLl6QM9lpdemwio2UOxzPb3WUhzcaUhb/DMYSj
+	 qxY84kVjtoR7wm82cCcYSBYvxPvlROPsWgnLAaU4ZHm0ErpaZTG9oA9cyhGb4hhB9p
+	 yAAPjt9a7ovFw==
+Date: Tue, 15 Apr 2025 11:28:51 +0100
+From: Lee Jones <lee@kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Michal Schmidt <mschmidt@redhat.com>, Ivan Vecera <ivecera@redhat.com>,
+	netdev@vger.kernel.org, Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Prathosh Satish <Prathosh.Satish@microchip.com>,
+	Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2 00/14] Add Microchip ZL3073x support (part 1)
+Message-ID: <20250415102851.GW372032@google.com>
+References: <20250409144250.206590-1-ivecera@redhat.com>
+ <20250411072616.GU372032@google.com>
+ <CADEbmW1XBDT39Cs5WcAP_GHJ+4_CTdgFA4yoyiTTnJfC7M2YVQ@mail.gmail.com>
+ <20250411155816.GA3300495-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250414125050.2118619-1-chenyuan0y@gmail.com>
-X-Proofpoint-ORIG-GUID: 99SiUAQOEh4S2SbarfX3Bx5_IiHm9rfS
-X-Proofpoint-GUID: 99SiUAQOEh4S2SbarfX3Bx5_IiHm9rfS
-X-Authority-Analysis: v=2.4 cv=ANaQCy7k c=1 sm=1 tr=0 ts=67fe345c cx=c_pps a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=vPHRA5kXY3h_Fp5QcTsA:9 a=CjuIK1q_8ugA:10
- a=zgiPjhLxNE0A:10 a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-15_04,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
- mlxlogscore=901 suspectscore=0 clxscore=1015 lowpriorityscore=0
- phishscore=0 impostorscore=0 spamscore=0 priorityscore=1501 malwarescore=0
- bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504150073
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250411155816.GA3300495-robh@kernel.org>
 
-On Mon, Apr 14, 2025 at 07:50:50AM -0500, Chenyuan Yang wrote:
-> The qmp_usb_iomap() helper function currently returns the raw result of
-> devm_ioremap() for non-exclusive mappings. Since devm_ioremap() may return
-> a NULL pointer and the caller only checks error pointers with IS_ERR(),
-> NULL could bypass the check and lead to an invalid dereference.
-> 
-> Fix the issue by checking if devm_ioremap() returns NULL. When it does,
-> qmp_usb_iomap() now returns an error pointer via IOMEM_ERR_PTR(-ENOMEM),
-> ensuring safe and consistent error handling.
-> 
-> Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
-> Fixes: a5d6b1ac56cb ("phy: qcom-qmp-usb: fix memleak on probe deferral")
-> CC: Johan Hovold <johan@kernel.org>
-> CC: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  drivers/phy/qualcomm/phy-qcom-qmp-usb.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
+On Fri, 11 Apr 2025, Rob Herring wrote:
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> On Fri, Apr 11, 2025 at 04:27:08PM +0200, Michal Schmidt wrote:
+> > On Fri, Apr 11, 2025 at 9:26 AM Lee Jones <lee@kernel.org> wrote:
+> > > On Wed, 09 Apr 2025, Ivan Vecera wrote:
+> > > > Add support for Microchip Azurite DPLL/PTP/SyncE chip family that
+> > > > provides DPLL and PTP functionality. This series bring first part
+> > > > that adds the common MFD driver that provides an access to the bus
+> > > > that can be either I2C or SPI.
+> > > > [...]
+> > >
+> > > Not only are all of the added abstractions and ugly MACROs hard to read
+> > > and troublesome to maintain, they're also completely unnecessary at this
+> > > (driver) level.  Nicely authored, easy to read / maintain code wins over
+> > > clever code 95% of the time.
+> > 
+> > Hello Lee,
+> > 
+> > IMHO defining the registers with the ZL3073X_REG*_DEF macros is both
+> > clever and easy to read / maintain. On one line I can see the register
+> > name, size and address. For the indexed registers also their count and
+> > the stride. It's almost like looking at a datasheet. And the
+> > type-checking for accessing the registers using the correct size is
+> > nice. I even liked the paranoid WARN_ON for checking the index
+> > overflows.
+> 
+> If this is much better, define (and upstream) something for everyone to 
+> use rather than a one-off in some driver. It doesn't matter how great it 
+> is if it is different from everyone else. The last thing I want to do is 
+> figure out how register accesses work when looking at an unfamilar 
+> driver.
+
+Exactly right.  The issue isn't that defining register accesses using
+MACROs is a bad idea generally.  I've seen it done before in downstream
+BSPs and the like.  It's that this solution isn't following the
+conventions already in carved for such things in the Mainline kernel.
+To engineers already used to the current conventions, this is much
+harder to follow and interact with.
+
+As Rob says, if this is truly better, discuss the idea with a much
+wider audience and have it applied broadly across all areas.  We shall
+not be bucking the trend or trend setting here in MFD.
 
 -- 
-With best wishes
-Dmitry
+Lee Jones [李琼斯]
 
