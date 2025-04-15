@@ -1,389 +1,113 @@
-Return-Path: <linux-kernel+bounces-604227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C2CFA89236
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 04:52:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 424E4A89202
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 04:47:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2452517D982
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 02:52:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB2103B36DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 02:46:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7746F21E08B;
-	Tue, 15 Apr 2025 02:48:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01AC6219A7E;
+	Tue, 15 Apr 2025 02:46:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="fouCe7N9"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gTWnUizB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84812343C6
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 02:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED59157A48;
+	Tue, 15 Apr 2025 02:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744685288; cv=none; b=f6iawys6Vtn4IVp7pcfN9Gjl8JXP/QXOh0QmNbyRQ4yZFZiKao0mTsVJBTOtxnDniXF1+omxYaOvD75mArq2Sof5LpiSHq8vdHzkNSVxAjIGCP1SQJBzCj3mZkVTiBF/AokKKGIXR5GpJD+hk503ZNtKGCarlprwsJTCTjtRtDw=
+	t=1744685158; cv=none; b=eH4oU3+cCmTgJ6ZYk/5VT0fWc3jyUbWHw+q+km1F7EmKp62vhCdG/+dPkYpyzeMgb3HhSRX6aU9UzL6rHIM58SCDhPiUCROLwxNzISKUJlRrp8q6NJxLFr6+caXHf5/9bk/bDVo/Mj3j2vLwBkZ9aOAwT1OhEYCh0FPNN6ag9xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744685288; c=relaxed/simple;
-	bh=sTTiATuZuhDebCoRqHZETQjvP/LxD7C7zdqE+ikAVAI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QH6AmryqWGCH4lApSc9Dumrcr1Hnj5dD6HlCWBjhR2l8PHS82EAOXvbhU21MMTeU0zPn3vWsk/4u29yo/Rn3SgMFOoJ7pI0l3hgsQCpQvkyCnkCCeEJToWJuxtyhsoNM958h3iVwUeabt2tY/B/t10ieKLOlx397CLvON3u7888=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=fouCe7N9; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-225477548e1so48384885ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 19:48:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1744685286; x=1745290086; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CpSUB3YDfgeYGmfO/fpEZlFvo0fqwlF+YsT5eAHFtoQ=;
-        b=fouCe7N9Fz6S2r/9QDtKPmxM5j/H8o76UNwIAh43qVFeIbNUlI9zSEBT0Qke6SWmvi
-         y9ulJIYDhG2ZIkdxn1EURA/fmi3IQ+lGY3RoJmgU1bchVzvt8YP+S92z+O1Zu94rOkM0
-         1EDcYUyFu+tkZ6j3v2TLsJoJdkhycE+wkYj0dB5qqVp1dH6usqDA8zJLZsoyuDyS+Kgw
-         r5zjcV9dQr9JB2l4YzBI2xtAq6abontUycqAujCzsggEZ+2UTgOjtqfPmTK9SLNt6i4i
-         zPN2xo9e+rfjkxnwSP1SgMkHmVq/HUXgmQcqzzCqbxEEJ/phW0F5QEDaA8oueSyXhK6u
-         8N+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744685286; x=1745290086;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CpSUB3YDfgeYGmfO/fpEZlFvo0fqwlF+YsT5eAHFtoQ=;
-        b=qObGa0IX2wKz3TngAk6q+ugwsK8gZPbzivAMRIt7OocBHrttTtlQIXzVs5hHFi1UWa
-         hOf9THxcDv2d8pf4zPPjhj07CmQr1JQUpXSE7GDvvnwJpkS3yXkA8RphP972472pzP0T
-         fn+hehvl8TOgD1su+TN3GHLpxyuCl47f46WY5+6h6OAK98FML9NZqhUIIHAhtvn6B2N7
-         XFxEMCygeWHwbCxv9ZND0Ik/nu8JPayHdOgRy+BVGYHCyB4PjjQUTTjFZVea0v31/vfT
-         f1Im2YW8k5eDX+CXux3Cs+fCmqKckdncgqaSEtYEKtxyg0anfVTyngmub3WL3mLDCys3
-         yvSQ==
-X-Gm-Message-State: AOJu0YzH0jNb8Gs11YZgkfkohk+84wOO0ACcPf7eh9nMCH9umcyNN/yZ
-	cpzQFRlFdO5I478046AFOxxaMdI3xOe/Rb61tfNmFGxI6tqU/RqaiCp7O1gnQgE=
-X-Gm-Gg: ASbGnctmvWHoPMzEqoZclpxddLcpjECKLAZop/njssKMCildoVnDwAWlgq06rXUwKOQ
-	Jmr7aSgJJMguMwV96wZ9FAGn4UgzKeXStVS97BRKCQNq5lQ/OE0iwv84VUNQhtU7h5oL6WDxQzP
-	qFO5HSaix78dCW4yQyPd7FV/dp57Em92c5yl9vm2FSYYb1poIdZj9evSVLN1TY5A3j1kNn3ZUIW
-	EbZIXDgQsbDKA9X96Ya0oETClQ4YzstftYU8ecn6So0QVbWHs0EBRj/XKYVGUDDzW3wBN6uVqQd
-	f/+dyeqD0sDClVYHru51AllaN4BGbJv06wYPsU2Rrm502TbWR2Vw+OTe3Ghala31yuR9eRlIo2W
-	BbH386WU=
-X-Google-Smtp-Source: AGHT+IHgqNDuzvTzNM38ht/Apai59kRy7TIM0/jwQoLjF9IBxI/3XCoQow31pfiiq7WdKcqDsqh+0g==
-X-Received: by 2002:a17:902:f78a:b0:224:1eab:97b5 with SMTP id d9443c01a7336-22bea49530dmr219890795ad.1.1744685285756;
-        Mon, 14 Apr 2025 19:48:05 -0700 (PDT)
-Received: from PXLDJ45XCM.bytedance.net ([61.213.176.5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7ccac49sm106681185ad.217.2025.04.14.19.48.00
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 14 Apr 2025 19:48:05 -0700 (PDT)
-From: Muchun Song <songmuchun@bytedance.com>
-To: hannes@cmpxchg.org,
-	mhocko@kernel.org,
-	roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev,
-	muchun.song@linux.dev,
-	akpm@linux-foundation.org,
-	david@fromorbit.com,
-	zhengqi.arch@bytedance.com,
-	yosry.ahmed@linux.dev,
-	nphamcs@gmail.com,
-	chengming.zhou@linux.dev
-Cc: linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org,
-	linux-mm@kvack.org,
-	hamzamahfooz@linux.microsoft.com,
-	apais@linux.microsoft.com,
-	Muchun Song <songmuchun@bytedance.com>
-Subject: [PATCH RFC 24/28] mm: memcontrol: prepare for reparenting LRU pages for lruvec lock
-Date: Tue, 15 Apr 2025 10:45:28 +0800
-Message-Id: <20250415024532.26632-25-songmuchun@bytedance.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250415024532.26632-1-songmuchun@bytedance.com>
-References: <20250415024532.26632-1-songmuchun@bytedance.com>
+	s=arc-20240116; t=1744685158; c=relaxed/simple;
+	bh=EopiHNkPR1CFk53P+qfQdgoA0cAjgXrR1L67F8XEVbc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Pv6l0N7MsNFDIGwh3g+r6RToGJQCxEsqPd29DPjd1xl7rk6VpiqXzVa1vJo8wZdNs1yhLF1R5+VWC46kq+0xLJm4q8/xPyKB85tqE05wkmAOF6JzkRqrRnaPpuNRueeH9sRAMSNktp5QSra0i5/ZJWevdcmScTOTkPw6wFWjo+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gTWnUizB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2118DC4CEF9;
+	Tue, 15 Apr 2025 02:45:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744685158;
+	bh=EopiHNkPR1CFk53P+qfQdgoA0cAjgXrR1L67F8XEVbc=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=gTWnUizBefWJTKYR2DIYa8m2pLfxUFwjfh+8cUCyjfFRlczeTAciVl8rOe8jf7wMI
+	 /7xnjHnmdKrjT1PZVHsFSUj1RNB04jsqr6miHi2vuW/mHZxiCF79HjiqoqLFsCDPBd
+	 GVE6zIb3mH0z0rZLpXhwD0eGgerfEkOVamH7Kzqtc0mDbPH1CXzZlVlZq7rflAIjpf
+	 wIBlW8VxHEujTfYtsnt+WOl/yrbDLEn7vQdthZVb0ED+ttJaCI6o2WxylhW5VvCK6i
+	 GtvueIyE2DHmPCqXszPoo03B97URUj0Gl3xFoVJJ/rk75mnza/3q+DdFzq6IRA/pUA
+	 Q0b/ZzBLrOjFw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15963C369B4;
+	Tue, 15 Apr 2025 02:45:58 +0000 (UTC)
+From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Date: Tue, 15 Apr 2025 10:45:29 +0800
+Subject: [PATCH v3 6/7] arm64: dts: amlogic: C3: Add clk-measure controller
+ node
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250415-clk-measure-v3-6-9b8551dd33b4@amlogic.com>
+References: <20250415-clk-measure-v3-0-9b8551dd33b4@amlogic.com>
+In-Reply-To: <20250415-clk-measure-v3-0-9b8551dd33b4@amlogic.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Chuan Liu <chuan.liu@amlogic.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744685155; l=834;
+ i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
+ bh=AKlPTU8xGIGqlFdU3xVKc7rvyc2ZehKyhODovUNRMo8=;
+ b=xRl0UutH0q4YaOvedHCl+vBzUekFHFCb6eNZCJrSl64c0mIqDdsgPBF8Kya2VzubX1w0FPjju
+ IjvPZr1CYt8B7+UphyE2a8QFI2wcyifCiIg7WSXG3mLRe4mrYOk2BsO
+X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
+ pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
+X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
+ auth_id=203
+X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
+Reply-To: chuan.liu@amlogic.com
 
-The following diagram illustrates how to ensure the safety of the folio
-lruvec lock when LRU folios undergo reparenting.
+From: Chuan Liu <chuan.liu@amlogic.com>
 
-In the folio_lruvec_lock(folio) function:
-```
-    rcu_read_lock();
-retry:
-    lruvec = folio_lruvec(folio);
-    /* There is a possibility of folio reparenting at this point. */
-    spin_lock(&lruvec->lru_lock);
-    if (unlikely(lruvec_memcg(lruvec) != folio_memcg(folio))) {
-        /*
-         * The wrong lruvec lock was acquired, and a retry is required.
-         * This is because the folio resides on the parent memcg lruvec
-         * list.
-         */
-        spin_unlock(&lruvec->lru_lock);
-        goto retry;
-    }
+Add the clk-measure controller node for C3 SoC family.
 
-    /* Reaching here indicates that folio_memcg() is stable. */
-```
-
-In the memcg_reparent_objcgs(memcg) function:
-```
-    spin_lock(&lruvec->lru_lock);
-    spin_lock(&lruvec_parent->lru_lock);
-    /* Transfer folios from the lruvec list to the parent's. */
-    spin_unlock(&lruvec_parent->lru_lock);
-    spin_unlock(&lruvec->lru_lock);
-```
-
-After acquiring the lruvec lock, it is necessary to verify whether
-the folio has been reparented. If reparenting has occurred, the new
-lruvec lock must be reacquired. During the LRU folio reparenting
-process, the lruvec lock will also be acquired (this will be
-implemented in a subsequent patch). Therefore, folio_memcg() remains
-unchanged while the lruvec lock is held.
-
-Given that lruvec_memcg(lruvec) is always equal to folio_memcg(folio)
-after the lruvec lock is acquired, the lruvec_memcg_debug() check is
-redundant. Hence, it is removed.
-
-This patch serves as a preparation for the reparenting of LRU folios.
-
-Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
 ---
- include/linux/memcontrol.h | 23 ++++++-----------
- mm/compaction.c            | 29 ++++++++++++++++-----
- mm/memcontrol.c            | 53 +++++++++++++++++++-------------------
- 3 files changed, 58 insertions(+), 47 deletions(-)
+ arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 01239147eb11..27b23e464229 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -719,7 +719,11 @@ static inline struct lruvec *mem_cgroup_lruvec(struct mem_cgroup *memcg,
-  * folio_lruvec - return lruvec for isolating/putting an LRU folio
-  * @folio: Pointer to the folio.
-  *
-- * This function relies on folio->mem_cgroup being stable.
-+ * The user should hold an rcu read lock to protect lruvec associated with
-+ * the folio from being released. But it does not prevent binding stability
-+ * between the folio and the returned lruvec from being changed to its parent
-+ * or ancestor (e.g. like folio_lruvec_lock() does that holds LRU lock to
-+ * prevent the change).
-  */
- static inline struct lruvec *folio_lruvec(struct folio *folio)
- {
-@@ -742,15 +746,6 @@ struct lruvec *folio_lruvec_lock_irq(struct folio *folio);
- struct lruvec *folio_lruvec_lock_irqsave(struct folio *folio,
- 						unsigned long *flags);
+diff --git a/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
+index fd0e557eba06..cb9ea3ca6ee0 100644
+--- a/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
++++ b/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
+@@ -760,6 +760,11 @@ internal_ephy: ethernet_phy@8 {
+ 				};
+ 			};
  
--#ifdef CONFIG_DEBUG_VM
--void lruvec_memcg_debug(struct lruvec *lruvec, struct folio *folio);
--#else
--static inline
--void lruvec_memcg_debug(struct lruvec *lruvec, struct folio *folio)
--{
--}
--#endif
--
- static inline
- struct mem_cgroup *mem_cgroup_from_css(struct cgroup_subsys_state *css){
- 	return css ? container_of(css, struct mem_cgroup, css) : NULL;
-@@ -1211,11 +1206,6 @@ static inline struct lruvec *folio_lruvec(struct folio *folio)
- 	return &pgdat->__lruvec;
- }
- 
--static inline
--void lruvec_memcg_debug(struct lruvec *lruvec, struct folio *folio)
--{
--}
--
- static inline struct mem_cgroup *parent_mem_cgroup(struct mem_cgroup *memcg)
- {
- 	return NULL;
-@@ -1532,17 +1522,20 @@ static inline struct lruvec *parent_lruvec(struct lruvec *lruvec)
- static inline void lruvec_unlock(struct lruvec *lruvec)
- {
- 	spin_unlock(&lruvec->lru_lock);
-+	rcu_read_unlock();
- }
- 
- static inline void lruvec_unlock_irq(struct lruvec *lruvec)
- {
- 	spin_unlock_irq(&lruvec->lru_lock);
-+	rcu_read_unlock();
- }
- 
- static inline void lruvec_unlock_irqrestore(struct lruvec *lruvec,
- 		unsigned long flags)
- {
- 	spin_unlock_irqrestore(&lruvec->lru_lock, flags);
-+	rcu_read_unlock();
- }
- 
- /* Test requires a stable folio->memcg binding, see folio_memcg() */
-diff --git a/mm/compaction.c b/mm/compaction.c
-index ce45d633ddad..4abd1481d5de 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -551,6 +551,24 @@ static bool compact_lock_irqsave(spinlock_t *lock, unsigned long *flags,
- 	return true;
- }
- 
-+static struct lruvec *
-+compact_folio_lruvec_lock_irqsave(struct folio *folio, unsigned long *flags,
-+				  struct compact_control *cc)
-+{
-+	struct lruvec *lruvec;
++			clk_msr: clock-measure@48000 {
++				compatible = "amlogic,c3-clk-measure";
++				reg = <0x0 0x48000 0x0 0x1c>;
++			};
 +
-+	rcu_read_lock();
-+retry:
-+	lruvec = folio_lruvec(folio);
-+	compact_lock_irqsave(&lruvec->lru_lock, flags, cc);
-+	if (unlikely(lruvec_memcg(lruvec) != folio_memcg(folio))) {
-+		spin_unlock_irqrestore(&lruvec->lru_lock, *flags);
-+		goto retry;
-+	}
-+
-+	return lruvec;
-+}
-+
- /*
-  * Compaction requires the taking of some coarse locks that are potentially
-  * very heavily contended. The lock should be periodically unlocked to avoid
-@@ -872,7 +890,7 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
- {
- 	pg_data_t *pgdat = cc->zone->zone_pgdat;
- 	unsigned long nr_scanned = 0, nr_isolated = 0;
--	struct lruvec *lruvec;
-+	struct lruvec *lruvec = NULL;
- 	unsigned long flags = 0;
- 	struct lruvec *locked = NULL;
- 	struct folio *folio = NULL;
-@@ -1189,18 +1207,17 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
- 		if (!folio_test_clear_lru(folio))
- 			goto isolate_fail_put;
- 
--		lruvec = folio_lruvec(folio);
-+		if (locked)
-+			lruvec = folio_lruvec(folio);
- 
- 		/* If we already hold the lock, we can skip some rechecking */
--		if (lruvec != locked) {
-+		if (lruvec != locked || !locked) {
- 			if (locked)
- 				lruvec_unlock_irqrestore(locked, flags);
- 
--			compact_lock_irqsave(&lruvec->lru_lock, &flags, cc);
-+			lruvec = compact_folio_lruvec_lock_irqsave(folio, &flags, cc);
- 			locked = lruvec;
- 
--			lruvec_memcg_debug(lruvec, folio);
--
- 			/*
- 			 * Try get exclusive access under lock. If marked for
- 			 * skip, the scan is aborted unless the current context
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 694f19017699..1f0c6e7b69cc 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -1196,23 +1196,6 @@ void mem_cgroup_scan_tasks(struct mem_cgroup *memcg,
- 	}
- }
- 
--#ifdef CONFIG_DEBUG_VM
--void lruvec_memcg_debug(struct lruvec *lruvec, struct folio *folio)
--{
--	struct mem_cgroup *memcg;
--
--	if (mem_cgroup_disabled())
--		return;
--
--	memcg = folio_memcg(folio);
--
--	if (!memcg)
--		VM_BUG_ON_FOLIO(!mem_cgroup_is_root(lruvec_memcg(lruvec)), folio);
--	else
--		VM_BUG_ON_FOLIO(lruvec_memcg(lruvec) != memcg, folio);
--}
--#endif
--
- /**
-  * folio_lruvec_lock - Lock the lruvec for a folio.
-  * @folio: Pointer to the folio.
-@@ -1222,14 +1205,20 @@ void lruvec_memcg_debug(struct lruvec *lruvec, struct folio *folio)
-  * - folio_test_lru false
-  * - folio frozen (refcount of 0)
-  *
-- * Return: The lruvec this folio is on with its lock held.
-+ * Return: The lruvec this folio is on with its lock held and rcu read lock held.
-  */
- struct lruvec *folio_lruvec_lock(struct folio *folio)
- {
--	struct lruvec *lruvec = folio_lruvec(folio);
-+	struct lruvec *lruvec;
- 
-+	rcu_read_lock();
-+retry:
-+	lruvec = folio_lruvec(folio);
- 	spin_lock(&lruvec->lru_lock);
--	lruvec_memcg_debug(lruvec, folio);
-+	if (unlikely(lruvec_memcg(lruvec) != folio_memcg(folio))) {
-+		spin_unlock(&lruvec->lru_lock);
-+		goto retry;
-+	}
- 
- 	return lruvec;
- }
-@@ -1244,14 +1233,20 @@ struct lruvec *folio_lruvec_lock(struct folio *folio)
-  * - folio frozen (refcount of 0)
-  *
-  * Return: The lruvec this folio is on with its lock held and interrupts
-- * disabled.
-+ * disabled and rcu read lock held.
-  */
- struct lruvec *folio_lruvec_lock_irq(struct folio *folio)
- {
--	struct lruvec *lruvec = folio_lruvec(folio);
-+	struct lruvec *lruvec;
- 
-+	rcu_read_lock();
-+retry:
-+	lruvec = folio_lruvec(folio);
- 	spin_lock_irq(&lruvec->lru_lock);
--	lruvec_memcg_debug(lruvec, folio);
-+	if (unlikely(lruvec_memcg(lruvec) != folio_memcg(folio))) {
-+		spin_unlock_irq(&lruvec->lru_lock);
-+		goto retry;
-+	}
- 
- 	return lruvec;
- }
-@@ -1267,15 +1262,21 @@ struct lruvec *folio_lruvec_lock_irq(struct folio *folio)
-  * - folio frozen (refcount of 0)
-  *
-  * Return: The lruvec this folio is on with its lock held and interrupts
-- * disabled.
-+ * disabled and rcu read lock held.
-  */
- struct lruvec *folio_lruvec_lock_irqsave(struct folio *folio,
- 		unsigned long *flags)
- {
--	struct lruvec *lruvec = folio_lruvec(folio);
-+	struct lruvec *lruvec;
- 
-+	rcu_read_lock();
-+retry:
-+	lruvec = folio_lruvec(folio);
- 	spin_lock_irqsave(&lruvec->lru_lock, *flags);
--	lruvec_memcg_debug(lruvec, folio);
-+	if (unlikely(lruvec_memcg(lruvec) != folio_memcg(folio))) {
-+		spin_unlock_irqrestore(&lruvec->lru_lock, *flags);
-+		goto retry;
-+	}
- 
- 	return lruvec;
- }
+ 			spicc0: spi@50000 {
+ 				compatible = "amlogic,meson-g12a-spicc";
+ 				reg = <0x0 0x50000 0x0 0x44>;
+
 -- 
-2.20.1
+2.42.0
+
 
 
