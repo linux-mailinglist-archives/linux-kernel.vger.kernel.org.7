@@ -1,212 +1,191 @@
-Return-Path: <linux-kernel+bounces-604272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 612B3A892B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 06:08:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBAF4A892C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 06:18:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CAF4189983A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 04:08:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4473B3B6A23
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 04:18:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C29F51E9B04;
-	Tue, 15 Apr 2025 04:08:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A7E1DFD96;
+	Tue, 15 Apr 2025 04:18:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KTrcwBLl"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="wjs57W1t";
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="myfhKdLa"
+Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C84312A177
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 04:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E6212DFA51;
+	Tue, 15 Apr 2025 04:18:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744690100; cv=none; b=f15i6Tzs3KO5zlQQHg8jd55+yARG1SJdPlynposZfFNzp98crvYzVnGPGFqcJxPR4tzRSlA/rB4cAKFSs6sh4pB400FZmJNyjDc+73t5g/KShsWyAN2dx9mVrJM4QNoFuNo53bEKCb+UsgOetVTOn/rLsSi4yhTRNXpAaQ08WeM=
+	t=1744690718; cv=none; b=YQ9TuIwSUJIiTBLOK8TbtrQZmTJg4EFoEe1Si5LzPS1ZXDLzleCfl3px9vALVpzIhwtyk4O/4FduXuz45F4XMUHzLuQHvkk8+TfOFzmCKVAFGr72k9jm8wcaK+vi5W/d1MmIWCoOesK+hIXGALLTlJdd9KihhhZ2c+XbAvT+gFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744690100; c=relaxed/simple;
-	bh=WZRxP1TczlIric9hx2FfdJXAegNj8fLRQnlzcHQVEmM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ECn37iXiteHt2V4JhrUecL/FS3w8mfwKI9FwLUpepeN0f7+pCL7/PxwUM/eG/s6tXGHaqKAahlsv1L+JYDtLVTJeM3UqkKDaMo1QhLjs9TZJbuCuX2ahP+deRvD5dTsH32c8j8sQd5RmJe+Ajf4muF9jN40E+xT8oAAdnqFsWgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KTrcwBLl; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53F15N4s030982
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 04:08:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	OfAMw9FnKcM+bSbPo/M8N6K85i+KuWMDiGkgDeFsDm4=; b=KTrcwBLlnerVHkCy
-	Y8znUHrGW7YPEGSiB5Qa6ZulV+8sO6yjRcU/MADsx2xysJLIQ10tGXK4zyvPaTyw
-	MmbLBcbRYbkevghls6+X3RZb93yL+Jf2prF1JUPF4MkhxXUx/L71BauBVxM5qsQB
-	GbTAuCEmoy+2njd6F2VWLNBPDP1RMU/BsNWU90mdk8aSBi74GHWG9u5egUkLLsQp
-	yVSljiTqpm0e+43Bs23hddQiYubVOITBs/4EUQXB/ZNq3HyrL7xXNRbjF+411BQ1
-	zbKZgs3tybENFAmjTWA2bhAcxbiER2htGAWoet5D51+Dn0VyVzTF68lYsiFE8zMS
-	512EMQ==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ygxjxfdn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 04:08:17 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-227e2faab6dso42794285ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 21:08:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744690097; x=1745294897;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OfAMw9FnKcM+bSbPo/M8N6K85i+KuWMDiGkgDeFsDm4=;
-        b=Wp44BSB486/6GchWHgAI0ua75VhFVkXKB2oB+GWz2C/Px14d1rgZg05yjzKe4yY/Lw
-         KfRQuNIAC4nS9f+CQtcqvEgymSmlqiT+1q5vcGrJ6DljfDcW1KZMH3Cho6c45V8X5ygR
-         HD4rq8sk1gO7A/ouGFYEJwuBpQw0WgNVwBn442QJk0klOfc41W6N/exkXmcbXJEEB9jh
-         Aj1fp299x/12brtJh4cqH121KfxA8g4Yi0k7r6OTQ2I+RZPHyVTR3WfdERtdo1NVq6GZ
-         bSMMv41poGwB07dD83trTxlmvKkSUyyn+ROTUN6p7Ei6V9rCG0FVW+0KD/q+ruuotGNG
-         jW7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVOcFki+OdlS1N3CdOBi4qpqw3kQyu2wcEeMtZily3DPJFpRFRC8qKP/XP74Xzw1Su/w6Q1oU7d+7d4bns=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXI4KhvFL1K3rHU2d7WawhbspMhzn0Ue/aPxJiS+Wvx9CEsmzN
-	QUgghuhmdRW2kQoPinGdnZQNBd1qx7M4hZTMEkt7zginEewYRhLejkYkJOujnn4GCkvq+OAG5jv
-	L7aouHAV4XNx1qcDlmOYNTP6XFXfAqdi2W69TS/BS+ZwOGR1V1MzisIiOBtMPzIA=
-X-Gm-Gg: ASbGncv/xIhkGQuDwS7GdAjfNMiL8ChZtYnxxP2F5r9F5tfAadb4J9R87LdTUD5cPez
-	6qJTpJJQbown4mtEKMCD1xV0Akb0NOGevs0frmjmvVIRosNcYXx5fzco4o8tlzJGfmXOR68WbUb
-	DKusEtxfpVgpjgCM4D50bc4hSoekldLWNtC9CBX7+aILVzuuyDMqq8uaxsSuddZUioBn5/t2/Q6
-	GlsDLZN05Nv42VlTxYaTB21GJJvPrTH2SYwMlGPH5fAQCHYz1xqxjwedW1tkB6xjFycAZ9AffOW
-	O7TyptwznEQna6WcMW/wjjC6JJ/NugG2HhK/lVU7MtBQ0vG3PYu8
-X-Received: by 2002:a17:903:41c3:b0:223:60ce:2451 with SMTP id d9443c01a7336-22bea4adea2mr211411365ad.15.1744690096743;
-        Mon, 14 Apr 2025 21:08:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEfNMHFUTKafJCZ9yRtG1Wxb7uhLpzHR2LHcpwK114phBQV66RupNgJbHDc3SbkjNoZ0glg7w==
-X-Received: by 2002:a17:903:41c3:b0:223:60ce:2451 with SMTP id d9443c01a7336-22bea4adea2mr211411185ad.15.1744690096383;
-        Mon, 14 Apr 2025 21:08:16 -0700 (PDT)
-Received: from [10.151.37.217] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7cb5381sm106856735ad.192.2025.04.14.21.08.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Apr 2025 21:08:15 -0700 (PDT)
-Message-ID: <b850b468-f962-4ce4-a778-f1e47c017bbb@oss.qualcomm.com>
-Date: Tue, 15 Apr 2025 09:38:10 +0530
+	s=arc-20240116; t=1744690718; c=relaxed/simple;
+	bh=TDeHh2JSFt6MEQZxnJI2IRXRZvejReOK447qRDNW6iM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qtPBGEqodO/FbkUKmd0TK4yjLIwbfSwPYQxyr8sHTFDMllPpldUN69cOfq8hT4aE4NSvt1oRES2xmAF4VOIKlVU50LDMVlrJuwOIyJrrCStGDae+N2okMqRxB1varRgPK+FCRMm1W9HGr3++ND9jpYK1i9DQtcL7jnoS97pvljk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=wjs57W1t; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=myfhKdLa; arc=none smtp.client-ip=155.254.16.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
+Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
+	by bayard.4d2.org (Postfix) with ESMTP id 3C72912FB450;
+	Mon, 14 Apr 2025 21:18:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1744690708; bh=TDeHh2JSFt6MEQZxnJI2IRXRZvejReOK447qRDNW6iM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=wjs57W1tjaXVmsESwCjIK8NREbtHC/9TrdkRIbwE4mH79A8bdAsVzli1zBNdXkyE5
+	 Ta4R7pWX3tLHk7QRaTkJNhLGx0Qt/FXWROpk/R8LhIK4q4QNkl6ry9khuvbDv6Kcjf
+	 uzBUxghvQx458VKMexNT1JmO4UPbskk1V6r/xrWZ3sOKgEm/8JD/6b4IvawIgHJgpf
+	 NgqWvGlhSRBG4QrOtTA3N6JDrnJ08Ktdevx8lXAAmtRWf9//d+8Y3w0P+ow2G5kXWd
+	 o15WDmOXHsAmt4Wn/amsVxJutdtdnl32FYrwlvfm4G//tZnsWg7eZibXC/rhStL1mH
+	 C1WF1c+vsMt4g==
+X-Virus-Scanned: amavisd-new at 4d2.org
+Received: from bayard.4d2.org ([127.0.0.1])
+ by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
+ with ESMTP id g7BIZzpgvdqr; Mon, 14 Apr 2025 21:18:23 -0700 (PDT)
+Received: from ketchup (unknown [183.217.81.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: heylenay@4d2.org)
+	by bayard.4d2.org (Postfix) with ESMTPSA id 7475512FB435;
+	Mon, 14 Apr 2025 21:18:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1744690703; bh=TDeHh2JSFt6MEQZxnJI2IRXRZvejReOK447qRDNW6iM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=myfhKdLaoMsUau7EDgnyILiXRboxXeqVE6R3kjSTbGRL3L8TRaga3togeTnOtrySp
+	 YcZqRmwST0ku7jtqnrjGVW+VnvnUz+3t8fHXPypkxTIs/pFDakD0g0UG8YuvGMbw2J
+	 AxsSBxTTA7eERGNKB3zlxBTNq7g1G/xLt4yWsvwtBIFE3w1gl2J0TzY5ky1HSntTNn
+	 uHTRpSQamGepVW2zKtbaGV8X8BDPlkPa4hrwhHjT0cgVGMD+Pha6vS+tJG7VxTkX8+
+	 9BgiNdmTV8Wxmrwwn7X4Rs7+HorIyI61doDKOEuEoOOwl+WqO1AZJpxow1qiXfk2RY
+	 hEe2BfmlTiYVg==
+Date: Tue, 15 Apr 2025 04:18:16 +0000
+From: Haylen Chu <heylenay@4d2.org>
+To: Alex Elder <elder@riscstar.com>, mturquette@baylibre.com,
+	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: p.zabel@pengutronix.de, dlan@gentoo.org, guodong@riscstar.com,
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	spacemit@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/7] clk: spacemit: rename spacemit_ccu_data fields
+Message-ID: <Z_3eCDmh_vnkpcFC@ketchup>
+References: <20250414191715.2264758-1-elder@riscstar.com>
+ <20250414191715.2264758-3-elder@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] Revert "phy: qcom-qusb2: add QUSB2 support for
- IPQ5424"
-To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20250414-revert_hs_phy_settings-v2-0-25086e20a3a3@oss.qualcomm.com>
- <20250414-revert_hs_phy_settings-v2-1-25086e20a3a3@oss.qualcomm.com>
- <5ccf0252-c16c-44e6-bfac-7f94597c5493@quicinc.com>
-Content-Language: en-US
-From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-In-Reply-To: <5ccf0252-c16c-44e6-bfac-7f94597c5493@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=WecMa1hX c=1 sm=1 tr=0 ts=67fddbb1 cx=c_pps a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=EUspDBNiAAAA:8 a=p4y_1cVLeYHBzHAUBk4A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=GvdueXVYPmCkWapjIL-Q:22
-X-Proofpoint-GUID: 9N1G2kJEeeaV9ShnNXZ6e20fZt0kDirt
-X-Proofpoint-ORIG-GUID: 9N1G2kJEeeaV9ShnNXZ6e20fZt0kDirt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-15_01,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- adultscore=0 clxscore=1015 lowpriorityscore=0 phishscore=0 mlxscore=0
- impostorscore=0 mlxlogscore=999 spamscore=0 malwarescore=0
- priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504150025
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250414191715.2264758-3-elder@riscstar.com>
 
+On Mon, Apr 14, 2025 at 02:17:09PM -0500, Alex Elder wrote:
+> Add "clk_" to the names of the fields in the spacemit_ccu_data structure
+> type.  This prepares it for the addition of two similar fields dedicated
+> to resets.
+> 
+> Signed-off-by: Alex Elder <elder@riscstar.com>
 
-On 4/14/2025 7:03 PM, Mukesh Kumar Savaliya wrote:
->
->
-> On 4/14/2025 5:22 PM, Kathiravan Thirumoorthy wrote:
->> With the current settings, complaince tests especially eye diagram
-> compliance
+Reviewed-by: Haylen Chu <heylenay@4d2.org>
 
-
-Ack.
-
-
->> (Host High-speed Signal Quality) tests are failing. Design team
-> Write it as "recommended by Hardware design document/guide" instead of 
-> design team.
-
-
-Ack.
-
-
->> requested to reuse the IPQ6018 settings to overcome this issue.
->>
->> So revert the change which introduced the new settings and reuse the
->> IPQ6018 settings in the subsequent patch.
->>
->> Fixes: 9c56a1de296e ("phy: qcom-qusb2: add QUSB2 support for IPQ5424")
->> Signed-off-by: Kathiravan Thirumoorthy 
->> <kathiravan.thirumoorthy@oss.qualcomm.com>
->> ---
->>   drivers/phy/qualcomm/phy-qcom-qusb2.c | 28 
->> ----------------------------
->>   1 file changed, 28 deletions(-)
->>
->> diff --git a/drivers/phy/qualcomm/phy-qcom-qusb2.c 
->> b/drivers/phy/qualcomm/phy-qcom-qusb2.c
->> index 
->> 1f5f7df14d5a2ff041fe15aaeb6ec5ce52ab2a81..81b9e9349c3ebb4d303cb040b5c913336bb6b6d6 
->> 100644
->> --- a/drivers/phy/qualcomm/phy-qcom-qusb2.c
->> +++ b/drivers/phy/qualcomm/phy-qcom-qusb2.c
->> @@ -151,21 +151,6 @@ static const struct qusb2_phy_init_tbl 
->> ipq6018_init_tbl[] = {
->>       QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL_AUTOPGM_CTL1, 0x9F),
->>   };
->>   -static const struct qusb2_phy_init_tbl ipq5424_init_tbl[] = {
->> -    QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL, 0x14),
->> -    QUSB2_PHY_INIT_CFG_L(QUSB2PHY_PORT_TUNE1, 0x00),
->> -    QUSB2_PHY_INIT_CFG_L(QUSB2PHY_PORT_TUNE2, 0x53),
->> -    QUSB2_PHY_INIT_CFG_L(QUSB2PHY_PORT_TUNE4, 0xc3),
->> -    QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL_TUNE, 0x30),
->> -    QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL_USER_CTL1, 0x79),
->> -    QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL_USER_CTL2, 0x21),
->> -    QUSB2_PHY_INIT_CFG_L(QUSB2PHY_PORT_TUNE5, 0x00),
->> -    QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL_PWR_CTRL, 0x00),
->> -    QUSB2_PHY_INIT_CFG_L(QUSB2PHY_PORT_TEST2, 0x14),
->> -    QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL_TEST, 0x80),
->> -    QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL_AUTOPGM_CTL1, 0x9f),
->> -};
->> -
->>   static const struct qusb2_phy_init_tbl qcs615_init_tbl[] = {
->>       QUSB2_PHY_INIT_CFG_L(QUSB2PHY_PORT_TUNE1, 0xc8),
->>       QUSB2_PHY_INIT_CFG_L(QUSB2PHY_PORT_TUNE2, 0xb3),
->> @@ -359,16 +344,6 @@ static const struct qusb2_phy_cfg 
->> ipq6018_phy_cfg = {
->>       .autoresume_en   = BIT(0),
->>   };
->>   -static const struct qusb2_phy_cfg ipq5424_phy_cfg = {
->> -    .tbl            = ipq5424_init_tbl,
->> -    .tbl_num        = ARRAY_SIZE(ipq5424_init_tbl),
->> -    .regs           = ipq6018_regs_layout,
->> -
->> -    .disable_ctrl   = POWER_DOWN,
->> -    .mask_core_ready = PLL_LOCKED,
->> -    .autoresume_en   = BIT(0),
->> -};
->> -
->>   static const struct qusb2_phy_cfg qcs615_phy_cfg = {
->>       .tbl            = qcs615_init_tbl,
->>       .tbl_num        = ARRAY_SIZE(qcs615_init_tbl),
->> @@ -954,9 +929,6 @@ static const struct phy_ops qusb2_phy_gen_ops = {
->>     static const struct of_device_id qusb2_phy_of_match_table[] = {
->>       {
->> -        .compatible    = "qcom,ipq5424-qusb2-phy",
->> -        .data        = &ipq5424_phy_cfg,
->> -    }, {
->>           .compatible    = "qcom,ipq6018-qusb2-phy",
->>           .data        = &ipq6018_phy_cfg,
->>       }, {
->>
->
+> ---
+>  drivers/clk/spacemit/ccu-k1.c | 28 ++++++++++++++--------------
+>  1 file changed, 14 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
+> index a55957806db31..4db91c1b1d280 100644
+> --- a/drivers/clk/spacemit/ccu-k1.c
+> +++ b/drivers/clk/spacemit/ccu-k1.c
+> @@ -130,8 +130,8 @@
+>  #define APMU_EMAC1_CLK_RES_CTRL		0x3ec
+>  
+>  struct spacemit_ccu_data {
+> -	struct clk_hw **hws;
+> -	size_t num;
+> +	struct clk_hw **clk_hws;
+> +	size_t clk_num;
+>  };
+>  
+>  /* APBS clocks start, APBS region contains and only contains all PLL clocks */
+> @@ -819,8 +819,8 @@ static struct clk_hw *k1_ccu_pll_hws[] = {
+>  };
+>  
+>  static const struct spacemit_ccu_data k1_ccu_pll_data = {
+> -	.hws	= k1_ccu_pll_hws,
+> -	.num	= ARRAY_SIZE(k1_ccu_pll_hws),
+> +	.clk_hws	= k1_ccu_pll_hws,
+> +	.clk_num	= ARRAY_SIZE(k1_ccu_pll_hws),
+>  };
+>  
+>  static struct clk_hw *k1_ccu_mpmu_hws[] = {
+> @@ -860,8 +860,8 @@ static struct clk_hw *k1_ccu_mpmu_hws[] = {
+>  };
+>  
+>  static const struct spacemit_ccu_data k1_ccu_mpmu_data = {
+> -	.hws	= k1_ccu_mpmu_hws,
+> -	.num	= ARRAY_SIZE(k1_ccu_mpmu_hws),
+> +	.clk_hws	= k1_ccu_mpmu_hws,
+> +	.clk_num	= ARRAY_SIZE(k1_ccu_mpmu_hws),
+>  };
+>  
+>  static struct clk_hw *k1_ccu_apbc_hws[] = {
+> @@ -968,8 +968,8 @@ static struct clk_hw *k1_ccu_apbc_hws[] = {
+>  };
+>  
+>  static const struct spacemit_ccu_data k1_ccu_apbc_data = {
+> -	.hws	= k1_ccu_apbc_hws,
+> -	.num	= ARRAY_SIZE(k1_ccu_apbc_hws),
+> +	.clk_hws	= k1_ccu_apbc_hws,
+> +	.clk_num	= ARRAY_SIZE(k1_ccu_apbc_hws),
+>  };
+>  
+>  static struct clk_hw *k1_ccu_apmu_hws[] = {
+> @@ -1038,8 +1038,8 @@ static struct clk_hw *k1_ccu_apmu_hws[] = {
+>  };
+>  
+>  static const struct spacemit_ccu_data k1_ccu_apmu_data = {
+> -	.hws	= k1_ccu_apmu_hws,
+> -	.num	= ARRAY_SIZE(k1_ccu_apmu_hws),
+> +	.clk_hws	= k1_ccu_apmu_hws,
+> +	.clk_num	= ARRAY_SIZE(k1_ccu_apmu_hws),
+>  };
+>  
+>  static int spacemit_ccu_register(struct device *dev,
+> @@ -1050,13 +1050,13 @@ static int spacemit_ccu_register(struct device *dev,
+>  	struct clk_hw_onecell_data *clk_data;
+>  	int i, ret;
+>  
+> -	clk_data = devm_kzalloc(dev, struct_size(clk_data, hws, data->num),
+> +	clk_data = devm_kzalloc(dev, struct_size(clk_data, hws, data->clk_num),
+>  				GFP_KERNEL);
+>  	if (!clk_data)
+>  		return -ENOMEM;
+>  
+> -	for (i = 0; i < data->num; i++) {
+> -		struct clk_hw *hw = data->hws[i];
+> +	for (i = 0; i < data->clk_num; i++) {
+> +		struct clk_hw *hw = data->clk_hws[i];
+>  		struct ccu_common *common;
+>  		const char *name;
+>  
+> @@ -1081,7 +1081,7 @@ static int spacemit_ccu_register(struct device *dev,
+>  		clk_data->hws[i] = hw;
+>  	}
+>  
+> -	clk_data->num = data->num;
+> +	clk_data->num = data->clk_num;
+>  
+>  	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, clk_data);
+>  	if (ret)
+> -- 
+> 2.45.2
+> 
 
