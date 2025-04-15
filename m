@@ -1,261 +1,115 @@
-Return-Path: <linux-kernel+bounces-604424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 299D7A8943F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:56:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A1FBA89446
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:57:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94AE51885D10
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 06:56:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D61AF188C6CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 06:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D00F42797A3;
-	Tue, 15 Apr 2025 06:54:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB7027990A;
+	Tue, 15 Apr 2025 06:56:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OijRX4xz"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Bvxww/GV"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BECA27587B;
-	Tue, 15 Apr 2025 06:54:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1800E27511C;
+	Tue, 15 Apr 2025 06:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744700096; cv=none; b=m2RjvlI8dGRjrOgq2qo7pCm4PrypSB4agLOVtnmAhuIC4If4CXWsEYf4iAQCDvi5TNV/upkQxiTDMsXA0azjG7tBiKPJ+XbGCI+HugtADAP/NnHjIHlnFDNrLvltDg8Lf2uM9R/yb2m2B5cth2xjt+vkOmlyJMWaRVKLUzWT+sk=
+	t=1744700177; cv=none; b=Xb7op6o46AVnGWSvKnI+cXMj7I/UmL83B0IoXEV3C2czjeEzSuCzuDEV57C0Vbvjgd1rKAcb+xsWW8a+nb3LDktsdDTVJ1nofF6vjvjqEVbiQb/RxAjGAfGmrjHFBGLgk8n/g3/gGuoMuINq+66vsCHfJ0BhITnmurUlFR/qeF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744700096; c=relaxed/simple;
-	bh=otczYa1ghEak+qqgPZ6Ve17y269l2h98GsBiXGcj3Fs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VaXL9jVS3BRmY1AVquZoQSL2DDBdWL2fAMM+ddulork9JwVBHW/PXer3E8WPyfbGu9KE2LbiwlLdC0BBG3S7npCceiwMiNcRi0l3NVCxyh3fdA4diO3zUNPtYsKBPJ5mOuPUD+nLYTK694lcyZRvn117SU6y7bwM2CtszQFtoOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OijRX4xz; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30bf1d48843so44082721fa.2;
-        Mon, 14 Apr 2025 23:54:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744700092; x=1745304892; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2THuqnnjpaeGK3L+ZcHQ6pVri6WkM/B5U621pyeSAeA=;
-        b=OijRX4xzE1s3qQWGiR3kuncCF6vJvzW7KkGukIdcVDx0wHgj8RkEZEHmud3gc0pPr0
-         Sbmpi1ZJ69SuZELQvXWBO7W2nICHXOEv5kTOXEO4G9oN2IxEyR9EmA3VZxy0Kc1dAEu5
-         NV/83kr+1CmkU1jRJNhl2633zA6sVlkKNF/8iwogYICCKS2rUOj072ZKFJrHT8ITn+fB
-         9sKGYs+JBVAXZ1RSuA/3y6hVB+9cWYOQdAnqglsIgcZeDYzKvvrCd+SXGyVHF722WePd
-         Muul9ZLADoaOnE+UZkeH/cu92mSaZunmYCWallgGUaGmFDLudifU6ktqJmlrqUvJhed/
-         poGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744700092; x=1745304892;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2THuqnnjpaeGK3L+ZcHQ6pVri6WkM/B5U621pyeSAeA=;
-        b=QsA+cm1HkAQFpzyPNsMF0movAnACDa7JKORPvJy0k3hE0ywsdtgPi7Wj2aLAdsSfP6
-         VLxZgMuoUjocM9eDbHwRZJ9wdFEqnLOfYSPYC2VZRaXADzRaLwdrRnJPs5CwV/E+riSr
-         Wk4pDqeh0z4Z6m+On1bWGU55hfH/PkQJbvrS2xH9WwDz27Dic4au2N4TLB63Bihhqpu+
-         ydTNNpA6k/GLLljPKKNajrdRYMPzhTpJugWm/Te0FCRhg5uD8OkCY+EZsircfj8KfTdg
-         aL1cOvtwMcq4+sV2P2r7OZadj3r5bI6xIYtQSupSy6Vq5/fYYULZEsc/6EJ//+Z0AeaR
-         qk9A==
-X-Forwarded-Encrypted: i=1; AJvYcCVqIEJ5wfHSYAr/plNxz5NjSr/m06hXFXaazwjoiUPeqv1fDOkuv/+2ZSdUicJwjWnPHWljUbbReLbWumTXub+InHKBeQ==@vger.kernel.org, AJvYcCWoApVrhm0+UNgk9uYBq3L9cVOQ4hPi+Ppy3vMOgvC26krHCPIs19gTNICt78eEmCA6qke2cI1iYCGKQjQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyAP+LpQEw+66TrpxeyENDwWPobDKgk8G5WhOi+N3tsli9YDxX
-	NejCFSIKkk6FtAgCCDrtXE2dB0DiqDi7JfsJvAVZj9A3hmfwsAavjMYK8CKgY6ZH3uqTRKEYcKD
-	5ICRvIHKMjJTbvD+cqGY+Xx+FAgM=
-X-Gm-Gg: ASbGncu8y06UG22TAzejHC/SYhQUSV9MVVpmmYpe69tqgmX6ODMPQh2AOhjEBcmfyNA
-	TdRnd8mPoTGvAMnXbkgInxaKm5GGIQGmLkiJhNESNL13WwBcOEOD4d4CQAXKlb27ueuOBEMFnYh
-	4UH+1z/rCzOolcP84n/zmzJQ==
-X-Google-Smtp-Source: AGHT+IFAbvuR21DIztnhuL0l3222BeT4W2KZCRfgDNpf5QWXiSJQymbLDiT8gigzr/0cN+mDSfsulSKa5POqR3x76nI=
-X-Received: by 2002:a05:651c:1515:b0:307:9555:dc5e with SMTP id
- 38308e7fff4ca-310499d1599mr52119541fa.3.1744700091727; Mon, 14 Apr 2025
- 23:54:51 -0700 (PDT)
+	s=arc-20240116; t=1744700177; c=relaxed/simple;
+	bh=kY17k1KX7khNMb73gd5C1a3E1u6kiXwt9bs8wpFBoxY=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=FtyZAdPtgZKjctG7w/anO83Fr0FCo1ll4tYDio2xjudf2A7VO54WjBM1/3IiNYVN9LXgSl65yPsLLEQUngodGtKlQNfiHeCj+wrFD9UjEFyAE1eiBQxZ1s4XiEGqqGRuCRUm0jTe2ZVsMni/cOA9f49raCwVS/9w2FOHJLrfGPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Bvxww/GV; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1744700153; x=1745304953; i=markus.elfring@web.de;
+	bh=kY17k1KX7khNMb73gd5C1a3E1u6kiXwt9bs8wpFBoxY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Bvxww/GVUKfibmXtaYV55Yx3dRZQJgbiq/ANLgxXpwJaoZHKRWJYQLg0KaeXVxcM
+	 a0gqbcgOecmNfAAuDr3Z6ZAmGpRdq6U7mSSbVfu3KWqtMX/kc5AaiMnW2HWuZXwOg
+	 hja4lN0eKoWAEv3iDxB8uz2oK5kVsiU2QXTIjbFBadwGJ3xo0dKOOz6HDvK9KR4U5
+	 TpfUGUjwPFJEOlOhed5jYaUcafbUXgsN8+0VDUYPzmDQ4kaKuQJROcvlCAZTMyG33
+	 YeG9NS+wRcDTAmI4I7IceQDpBcCsjCk4fsLU0NkF/UEpc0PV9mYD+5jr1jYIGXd2n
+	 05L154a0HqibxXW9cg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.24]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MaHSb-1tZ5Lg065d-00QHar; Tue, 15
+ Apr 2025 08:55:53 +0200
+Message-ID: <4f1187eb-ba44-46e4-89db-56c305aa9a83@web.de>
+Date: Tue, 15 Apr 2025 08:55:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250414092132.40369-1-shouyeliu@gmail.com> <1feb5888-5ec8-67aa-9775-e1bea6b8b9fe@linux.intel.com>
- <f673452d7afc4419120f2cdb32e5033c35f22229.camel@linux.intel.com>
-In-Reply-To: <f673452d7afc4419120f2cdb32e5033c35f22229.camel@linux.intel.com>
-From: liu shouye <shouyeliu@gmail.com>
-Date: Tue, 15 Apr 2025 14:54:40 +0800
-X-Gm-Features: ATxdqUGj1yNhUoVoGrEdPQ1vFpN9Q44lqcabNjqRD9KtUy2IYKuMJLVrh98hNJw
-Message-ID: <CAAscG3W+QpD8xqo3qB_u2ViuUA6-_VsBT3GExU-DakDZJwtN8Q@mail.gmail.com>
-Subject: Re: [PATCH] platform/x86/intel-uncore-freq: fix inconsistent state on
- init failure
-To: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: 990492108@qq.com, netdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Abdun Nihaal
+ <abdun.nihaal@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Bharat Bhushan <bbhushan2@marvell.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Geethasowjanya Akula <gakula@marvell.com>,
+ Hariprasad Kelam <hkelam@marvell.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Subbaraya Sundeep Bhatta <sbhatta@marvell.com>,
+ Sunil Goutham <sgoutham@marvell.com>
+References: <tencent_20ED8A5A99ECCFE616B18F17D8056B5AF707@qq.com>
+Subject: Re: [Patch] octeontx2-pf: fix potential double free in
+ rvu_rep_create()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <tencent_20ED8A5A99ECCFE616B18F17D8056B5AF707@qq.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:xk/lPr3vTTyp/KZAxdyo8lBHYBHlHqHxLLMF9WOLqkN9m+pvoEf
+ /6ds4Ut+P/9tESOhkSPHQC7JNfyrthfb0NVyiYSys9Me5eGKpmSQf/OMc6DQHMswqlFo7xa
+ EQmparSXUrURBz9FmeJD+Nwk1+GuNw5r4Q5wymVJJDBzvh5KHGvmJKdtWgJj+kk3UZNvKY/
+ MO9HoZ+WRQSzAu+HtUP8w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:kKiQUx1c+e4=;GTUxDezLCMlbhahin7+Lx4vuvx7
+ K+Mj5PwXl3avDfh/UfvKVpd62DOfJyXDy67gLY0/ttORFezbXqsGuerXnW0sj4IB5AMqojvZF
+ WLsRWgM0R3oie8KQAwvbG958l5nIPlhZsUEiY4I52IS3+/cyjKjS4EdbZ+5T8iavW8nWEubQn
+ jQ4Saa61H+EF1nDLG9aULcFoCTusWul/9pz63JtgUjXaGVSvyPI2VjRIZwEI1/cFI7DE2cuOz
+ ZLnIZE3yblEHUTL6oMag3r0VilKFTjrJgvlQkT0cMTTZQ6a2ps9mhN8JRMgM9hQlRljKYs/wU
+ TiXrCQJSuDTGDdb/Si+uye1TMxd05zO0g2A0INNdgBmIhUjSb50jZVSrazYN7cCILY7mNnu4j
+ gvmOsh8XEqg4BF9X4PSAVV+emYn78R//zfMGMEOnehFXTPqBOAWbtw99Qg6lI43NuIYWXBF/3
+ vHspPPvX19JWtUGvpjs5TXj3NyertEJid0pS3ZXBLyDnhBfSQtep/UyOprmCbgO6zGl/1lZtG
+ bT36ox7/bkhutqa6ESboWmTTKn74gPix0vnZDOZjr0j5OW3OpjJb6HMPtohGHxTMNjSynAMV6
+ sfDFIrhYIVeSdW/inRrPGtxywmPa92O9y1cuupxxnmudr9UOpirJRGmvipCuZM5Icg3QkZZ8l
+ KQ6KvO6W/BdylhnYhQvQCT14FUw3jRSEp+gpC5LCpqpzjIiuEm+p9msOhzRt6galQ/4tGgWp+
+ 8hqTlrQwWfEnXXeJGRPGjdxHWHTKTY6fbc3UWocEyOZ+Qz49p4uJW/esIi9uw3Tu07/UscgI6
+ TLvq8kCIwpDxmO3G6L5waEoQlD0tcFLh171yNlvGI5M+COx8v5+9vpnJYV4AsYRoUSDATGrVA
+ UTmH/kXJsgs17x/DbmORjNygTLjqopv8At9x0DqtLhf24MSq+OtvpZDGyWMwkINOADgoLHZqU
+ 9NMBpJNe+bZw5jBdUUs0AUrXTq+HjgAXXhJK/wHY/W6JankV3LGjpyefrIdqmzyjfQCYVQQbs
+ XnhAU3LUXB4jI+vtYV5xO24erVmYUOlQDBKUuOKYe4628NJioK9J7t6Y9ZoswxjY/N7yX8M/a
+ +EIfMUISdtwkqh9nzkj/Azh/m8EnjzakufprcOGn20ohN2XIV4t+gwxyrV7PFTG1JbM7kI8KS
+ 60T29EE8bJtIN3jZk4gFE7LJink7MffQW+x5OQ7P8DztqOfiIRAyZ6Gv8DbqRt0YwgWEptGLj
+ zlSWIfXXd7wHzIQUvCiQQ6I7B4rpONPGUtGAKFiZFNwtP2LKv8EgdlXKcrLddkjR+7uHOvrN/
+ 9ndHtv6gLZ9n3Mhcn3DAfhEkDjLtjjiuupuX1BHcZSVjowYMQIYc6VaEnOb1flwdC8N+C0s39
+ jJUlXikFpKbVHya1GbTA35OEsr7B90UrWjrle4K5/JAUx68YUhskRieOVVMJrfwPW24jufaFe
+ s+e8FzVmMQQtuYejQ+N8ba6t6lBQdaqxNJ9+jM093AOZGi0fusdyrYZWMrTf3PnQIzWH2qw==
 
-srinivas pandruvada <srinivas.pandruvada@linux.intel.com> =E4=BA=8E2025=E5=
-=B9=B44=E6=9C=8815=E6=97=A5=E5=91=A8=E4=BA=8C 00:08=E5=86=99=E9=81=93=EF=BC=
-=9A
->
-> On Mon, 2025-04-14 at 13:41 +0300, Ilpo J=C3=A4rvinen wrote:
-> > On Mon, 14 Apr 2025, shouyeliu wrote:
-> >
-> > > When uncore_event_cpu_online() fails to initialize a control CPU
-> > > (e.g.,
-> > > due to memory allocation failure or uncore_freq_add_entry()
-> > > errors),
-> > > the code leaves stale entries in uncore_cpu_mask after that online
-> > > CPU
-> > > will not try to call uncore_freq_add_entry, resulting in no sys
-> > > interface.
-> >
-> > Please add () after any name that refers to a C function (you're not
-> > even
-> > being consistent here as you had it in some cases but not here).
-ok,I will modify it in the next version
-> >
-> > Please try to split the very long sentence a bit and make it more
-> > obvious
-> > what causes what as the current wording is a bit vague, did you mean:
-> > uncore_event_cpu_online() will not call uncore_freq_add_entry() for
-> > another CPU that is being onlined or something along those lines?
-> >
-> > Will this change work/matter? Documentation/core-api/cpu_hotplug.rst
-> > says
-> > about cpuhp_setup_state():
-> >
-> > "If a callback fails for CPU N then the teardown callback for CPU
-> >  0 .. N-1 is invoked to rollback the operation. The state setup
-> > fails,
-> >  the callbacks for the state are not installed and in case of dynamic
-> >  allocation the allocated state is freed."
-> >
->
-> Yes, cpuhp_setup_state() will fail and which will result in clean up.
-> So any fail of any fail uncore_event_cpu_online() will result in no sys
-> entries.
->
-> I think here the intention is to keep sys entries, which will not
-> happen with this patch.
->
-> For confirmation on 6.14 kernel, I forced failure on CPU 10:
->
-> [595799.696873] intel_uncore_init
-> [595799.700102] uncore_event_cpu_online cpu:0
-> [595799.704240] uncore_event_cpu_online cpu:1
-> [595799.708360] uncore_event_cpu_online cpu:2
-> [595799.712505] uncore_event_cpu_online cpu:3
-> [595799.716633] uncore_event_cpu_online cpu:4
-> [595799.720755] uncore_event_cpu_online cpu:5
-> [595799.724953] uncore_event_cpu_online cpu:6
-> [595799.729158] uncore_event_cpu_online cpu:7
-> [595799.733409] uncore_event_cpu_online cpu:8
-> [595799.737674] uncore_event_cpu_online cpu:9
-> [595799.741954] uncore_event_cpu_online cpu:10
-> [595799.746134] Force CPU 10 to fail online
-> [595799.750182] uncore_event_cpu_offline cpu:0
-> [595799.754508] uncore_event_cpu_offline cpu:1
-> [595799.758834] uncore_event_cpu_offline cpu:2
-> [595799.763238] uncore_event_cpu_offline cpu:3
-> [595799.767558] uncore_event_cpu_offline cpu:4
-> [595799.771832] uncore_event_cpu_offline cpu:5
-> [595799.776178] uncore_event_cpu_offline cpu:6
-> [595799.780506] uncore_event_cpu_offline cpu:7
-> [595799.784862] uncore_event_cpu_offline cpu:8
-> [595799.789247] uncore_event_cpu_offline cpu:9
-> [595799.793540] intel_uncore_init cpuhp_setup_state failed
-> [595799.798776] intel_uncore_init failed
->
->
-> Thanks,
-> Srinivas
-Registering the CPU hot-plug callback function during booting can be
-handled correctly. I think the problem occurs during runtime.
-The original code may have problems when the CPU hot-plug modifies the
-management CPU during runtime:
-Assume that the CPUs of package 1 are 8-15, and the uncore driver has
-been registered at boot time;
-1. Offline all CPU No.8-15
-2. Try online CPU No. 8, the code executes cpumask_set_cpu()
-successfully, but fails in the uncore_freq_add_entry() process. At
-this time, the mark of CPU No. 8 is added to uncore_cpu_mask, but no
-sys interface is generated,cpu No.8 online fails;
-3. Try online CPU No. 8 again, cpumask_any_and() judges success, and
-the CPU No.8 online is successful at this time;
-4. Assume that the attempt to online CPU No. 9-15 is successful at
-this time, but there is no sys interface =E2=80=94=E2=80=94=E2=80=94=E2=80=
-=94unexpected behavior 1.
-5. Offline CPU No. 9-15, and offline No.8, will eventually call
-uncore_freq_remove_die_entry()=E2=80=94=E2=80=94=E2=80=94=E2=80=94unexpecte=
-d behavior 2 is generated,
-which may cause a crash.
->
->
->
-> > >
-> >
-> > Fixes tag?
-> >
-> > > Signed-off-by: shouyeliu <shouyeliu@gmail.com>
-> >
-> > The correct format for tags is documented in
-> > Documentation/process/5.Posting.rst:
-> >
-> > tag: Full Name <email address>
-ok,I will modify it in the next version
-> >
-> > > ---
-> > >  .../x86/intel/uncore-frequency/uncore-frequency.c    | 12
-> > > ++++++++----
-> > >  1 file changed, 8 insertions(+), 4 deletions(-)
-> > >
-> > > diff --git a/drivers/platform/x86/intel/uncore-frequency/uncore-
-> > > frequency.c b/drivers/platform/x86/intel/uncore-frequency/uncore-
-> > > frequency.c
-> > > index 40bbf8e45fa4..1de0a4a9d6cd 100644
-> > > --- a/drivers/platform/x86/intel/uncore-frequency/uncore-
-> > > frequency.c
-> > > +++ b/drivers/platform/x86/intel/uncore-frequency/uncore-
-> > > frequency.c
-> > > @@ -146,15 +146,13 @@ static int uncore_event_cpu_online(unsigned
-> > > int cpu)
-> > >  {
-> > >     struct uncore_data *data;
-> > >     int target;
-> > > +   int ret;
-> > >
-> > >     /* Check if there is an online cpu in the package for
-> > > uncore MSR */
-> > >     target =3D cpumask_any_and(&uncore_cpu_mask,
-> > > topology_die_cpumask(cpu));
-> > >     if (target < nr_cpu_ids)
-> > >             return 0;
-> > >
-> > > -   /* Use this CPU on this die as a control CPU */
-> > > -   cpumask_set_cpu(cpu, &uncore_cpu_mask);
-> > > -
-> > >     data =3D uncore_get_instance(cpu);
-> > >     if (!data)
-> > >             return 0;
-> > > @@ -163,7 +161,13 @@ static int uncore_event_cpu_online(unsigned
-> > > int cpu)
-> > >     data->die_id =3D topology_die_id(cpu);
-> > >     data->domain_id =3D UNCORE_DOMAIN_ID_INVALID;
-> > >
-> > > -   return uncore_freq_add_entry(data, cpu);
-> > > +   ret =3D uncore_freq_add_entry(data, cpu);
-> > > +   if (!ret) {
-> > > +           /* Use this CPU on this die as a control CPU */
-> > > +           cpumask_set_cpu(cpu, &uncore_cpu_mask);
-> > > +   }
-> > > +
-> > > +   return ret;
-> >
-> > Please reverse to logic such that you return early on error, which is
-> > the
-> > usual error handling pattern.
-ok,I will modify it in the next version
-> >
-> > >  }
-> > >
-> > >  static int uncore_event_cpu_offline(unsigned int cpu)
-> > >
-> >
->
+=E2=80=A6
+> Signed-off-by: cxxz16 <990492108@qq.com>
+
+I guess that an other personal name would be more desirable according to
+the Developer's Certificate of Origin.
+https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
+e/Documentation/process/submitting-patches.rst?h=3Dv6.15-rc2#n436
+
+Regards,
+Markus
 
