@@ -1,171 +1,249 @@
-Return-Path: <linux-kernel+bounces-605603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58E04A8A37B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 17:56:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CE33A8A39B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 18:03:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AC1017F93C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:56:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1550B3BDB7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:03:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261E6214210;
-	Tue, 15 Apr 2025 15:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="e2i/TBdd";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="C2f+NnRO";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jWbIkYKG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="g7L6YSKO"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD0117583;
+	Tue, 15 Apr 2025 16:03:09 +0000 (UTC)
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E5E1F5434
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 15:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88482DFA2D;
+	Tue, 15 Apr 2025 16:03:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744732602; cv=none; b=q26sKFiZX5+UAo/X+7XniZFS03I6R7T8qzeYu99/xvUNY+lEKUDdNTG8wKdWIvPfuQCiFA+SY+lXokzNGy1UsShLegZhC8K/0XFUSMaSPC/FHct9vWJ8XbUEryPZIIcmO229Tz2jyD2SNQ0xzzGurrvIOcJu1IrdQuX97N9oQ2k=
+	t=1744732989; cv=none; b=CGC1Gcof32UxAPIny54TJuf55uinW0rx0zLcUDRkFsq4Skoz3ZM97jA8hOb3eumC8oVi6iG4U4/3xTElydS2Mgda+3YRGhbCPSHg5OAx/jKEb4btnPCjxHpsBmAtU90AGmtUOcg8P76L63/IWZyGosnc9UYdEkCvMLZ8oK8rpgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744732602; c=relaxed/simple;
-	bh=IZ+U8v9rh1hLgRUp5I0URlNU7myOqdEtMAr85kLKEKg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lm8RS/tLzIChxyOukE7raUVlSFa/j298EizuwCxzuH5OpviIfyFqugOA24bo0Xss0rNxuGDPEQKKQz0oUVGabJ24s3Mudi3a+htHMKYdEnOZx+u6g+Z8Kvy5PooPyxPNoDd2PmGp7mE0mbMDnksxdZMUvdQjo45a7w+KD/T/AmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=e2i/TBdd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=C2f+NnRO; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jWbIkYKG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=g7L6YSKO; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D3CDE21165;
-	Tue, 15 Apr 2025 15:56:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1744732599;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mGx2bdN5tK18FYIfsjgGTSlWmkMNkeVuZmn5qCwFEVg=;
-	b=e2i/TBddCK35wityNMN4yC45osvBCWkKX6qN+V9E22T7oTMecoZOxV1E34kUgXqnnRf7l0
-	S+C09oE82MgFOri5w6RmUgRt+3dk8Pzs/ZixSPyCjrNdkNBLmELpDST3mX5w3tOJINb0tE
-	UTqv8L9ahZmIBeKprrOIgGymCy6LdNU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1744732599;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mGx2bdN5tK18FYIfsjgGTSlWmkMNkeVuZmn5qCwFEVg=;
-	b=C2f+NnRO2nVnO6rky6FqTc5p4GDvnSD5T9jLstgW2xMuqamxFApu9puE0nul81JUH2X7Ki
-	nlCi/fTX4A9RDxAw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=jWbIkYKG;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=g7L6YSKO
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1744732598;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mGx2bdN5tK18FYIfsjgGTSlWmkMNkeVuZmn5qCwFEVg=;
-	b=jWbIkYKG95PS1zauBxcuaXWIjdKN97n/mHWbRXwXi1Q3lg2YsmxEj6uueMuuZ/kMhq5QEs
-	ZJtPBNnKraLAl37VsGLape7TgkYoVun3iBak6dubwZPIOoDFZG6aXfBd6zdELFkr+LHHd9
-	43CSjdWfTSn7kBMm55VcYoZEVtKPLQM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1744732598;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mGx2bdN5tK18FYIfsjgGTSlWmkMNkeVuZmn5qCwFEVg=;
-	b=g7L6YSKOpHRiQJ7ATmO6SMDupYNGzTEyKnmLtYTFKjiM1Xt0q+KFqzsA2pZjajA5AfU+Vx
-	ozcr9ZwuKBPGfiCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BBB46139A1;
-	Tue, 15 Apr 2025 15:56:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id nCieLbaB/me8WAAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Tue, 15 Apr 2025 15:56:38 +0000
-Date: Tue, 15 Apr 2025 17:56:37 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Sun YangKai <sunk67188@gmail.com>
-Cc: frank.li@vivo.com, clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	neelx@suse.com
-Subject: Re: [PATCH 1/3] btrfs: get rid of path allocation in
- btrfs_del_inode_extref()
-Message-ID: <20250415155637.GG16750@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <20250415033854.848776-1-frank.li@vivo.com>
- <3353953.aeNJFYEL58@saltykitkat>
+	s=arc-20240116; t=1744732989; c=relaxed/simple;
+	bh=Hzmc5byleNFyCDdpw7V0x8g7q/DvdasFY7cNHTnX7hY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MZ6eRhRX7lcI+iCockbolgvMAg19N9IlP8rp4+XUVfYU8u5TQAw02u4rW5EcTpedBcUeRsp773dAWJIq7f4cn5pOXnt6h4tHH/GCirzPK20QdEEwlYU19hxGszZkW77iGxT6ODtKUfygkVyPxZdd1+4OO8yui4Rkq84Ff9xjn2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-70576d2faa1so22148637b3.3;
+        Tue, 15 Apr 2025 09:03:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744732985; x=1745337785;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TuEbYlZMiJuO8E2YPXwmbMAltImu0P0byOBQlAv2mMo=;
+        b=DCOpTiSQxOgJUZ4TaDngHCBuPEu35Xvep5Xkp47hseyXbRzGZyJBqrdcyCr1qbjIK4
+         KvP1MvAcN0NUW9thVfKSJwLxVBPY2Ro0S4jOlNhU5nBh6O6WjY93+qFmjGqdZp6D2weV
+         nIowrTELWFiYiJUlgRKMdn15D3mzmlhmsw8bcdgRUtG4MjQHT6VlUtoyZwPlHo1N5XFv
+         atlNmwtr9bRilTf+UTh2BT6m9zEQNeJRYuUEqeyx2tefrq5iQ12DpWcrvLIoYfQ9yjnq
+         2rPR7j3rUJ3fHJYDpfwhP9V2akGja8iHha8h8AXl7DvyZjb1ctU11T2w+WI4bHQRqa+6
+         u/sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVcC/TtfqAZap6hidit/mEof9387fd6B5GcM5Ej7leW+wJKkM+BH/8+/SamypHXoU0h3TsPCwtvEBky@vger.kernel.org, AJvYcCVohkvj1d2K+pk3INd0lZBcNuTP5yatRWDcptAaa6g4MP8qFIZvt2aAunax+fiJ0eAIldCOcfw7Pf7d8bpt6QdW1Po=@vger.kernel.org, AJvYcCWR7OW7kaGNiP07aXO6uqsfh/Rdu8Ub6JAJUpZ3Gbf9578cO/qHxz5AEN6W/5zokK1eoNqA+xVCA+lL542K@vger.kernel.org, AJvYcCWv63EB0YtsmBeYzLbqm+gp17/9yMrWWmhfvFnPOVL05pcmyKTKBiQNENkEx4Awfnr6H1UVrhEZKjeH@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywz1xqRdn50pX9yia3OXVCKnKhRrPsRbCJQA9RiKPL8u7yLRdKd
+	TlP6Am2uxoNQQqmh+u1PVDxjNZZpT5Fvcn1fhTR9yM4N8r/yZSe0w7PqZ5Dg
+X-Gm-Gg: ASbGncuWIkUhZ1wqa8gXUPRIUM2BJ+lncWI6pmx5l5Pp46KHj/CWqvhRGVDMzORAIh9
+	N069b7g4INrWPXckLftSTRg9CmoRgn2S3AUHEm7swF0cvaX2YIzIdg7Uz3C2lkNKLQMhmIQJnVC
+	h8pfAagjOWGrGBDELUpQa2mO73OWqSdJ76Wy10qk+q9Qyj4QDGCfFMTUrwanU0Fwozv3TIn1J/I
+	Vttk2MKxJyU8RVZ67xI0fRTC+Lzork/8xhIW5NAuuoliQlU9h9KFGiZjyMbd9oIRaYiPKhNyER/
+	AxlZ407hTjiegoGw7WgukvOuAHGo7c5/LdMY3DXujDQL4QFnhZr2qu2YxoVi3TZ/iadh9QbIo37
+	+iFdXtYI=
+X-Google-Smtp-Source: AGHT+IEQjeguuj3kW49E0aLJcog5tbt6WB7qvI5MYHzzjd27grqxYE+yakeUXAde4gMhNxmDrMaHGQ==
+X-Received: by 2002:a05:690c:25c4:b0:6fd:42ed:c90 with SMTP id 00721157ae682-705599c9cc1mr273759707b3.16.1744732985109;
+        Tue, 15 Apr 2025 09:03:05 -0700 (PDT)
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com. [209.85.219.179])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-7053e372b6dsm36993467b3.88.2025.04.15.09.03.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Apr 2025 09:03:04 -0700 (PDT)
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e6582542952so4590660276.3;
+        Tue, 15 Apr 2025 09:03:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVhF9LbkD2oXNG+aWFcw9BEw/H1v6uoXe2b1OWcIUSSWQyTgvLLSEBiJb4W3YND15LDCf/AFxYP1dFp@vger.kernel.org, AJvYcCXSDtM4Fsr7Gr3b/HO/iSm8LPgFKHn+UvnVeMuMfRBEQ4mcSvKsA+AfZwb6Xrg2/Gnl7o7NHNXYgAoYWsK5@vger.kernel.org, AJvYcCXiCwv5tlRmvmln6oDwlnZNCSRgATtkMPLD0V4gflMkvmbi4Doo+V3o7W/sXprWonvZy4ts7jHAAhGUNHMSnzIC4mA=@vger.kernel.org, AJvYcCXvdaP77L/wwYSamDhKZJRNTROmdSZ4oEusXy1xEOBxQp/jeE9ekUn2y1A1SmffzFor1JpVcpMDl5l2@vger.kernel.org
+X-Received: by 2002:a05:6122:1d0a:b0:525:9dd5:d55a with SMTP id
+ 71dfb90a1353d-527c35e7a47mr11730397e0c.8.1744732671704; Tue, 15 Apr 2025
+ 08:57:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3353953.aeNJFYEL58@saltykitkat>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Queue-Id: D3CDE21165
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.21
-X-Spam-Flag: NO
+References: <20250408200916.93793-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250408200916.93793-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250408200916.93793-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 15 Apr 2025 17:57:38 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdW9WhKeMyKfdiLWmLC8mabNe-4ROW5uCZhx6z503GE0Ug@mail.gmail.com>
+X-Gm-Features: ATxdqUHtuz_A-xS1tTTRA3AiVheg582GK6_Rn09grQ8w2iOfDNKRllrwvo1MBQw
+Message-ID: <CAMuHMdW9WhKeMyKfdiLWmLC8mabNe-4ROW5uCZhx6z503GE0Ug@mail.gmail.com>
+Subject: Re: [PATCH v2 01/15] clk: renesas: rzv2h-cpg: Add support for DSI clocks
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Magnus Damm <magnus.damm@gmail.com>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Apr 15, 2025 at 10:45:06PM +0800, Sun YangKai wrote:
-> It seems a nice try to reduce path allocation and improve performance.
-> 
-> But it also seems make the code less maintainable. I would prefer to  have a 
-> comment saying something like the @path argument is just for reuse the 
-> btrfs_path allocation and only a released or empty btrfs_path should be used 
-> here.
+Hi Prabhakar,
 
-Yes, this should be there, though we use the pattern of passing existing
-path to functions so this within what'd consider OK.
+On Tue, 8 Apr 2025 at 22:09, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add support for PLLDSI and PLLDSI divider clocks.
+>
+> The `renesas-rzv2h-dsi.h` header file is added to share the PLL divider
+> algorithm between the CPG and DSI drivers.
+>
+> Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-> Also, although the path passed is released, it seems the bit flags are still 
-> passed, which makes the behavior of the functions a little different. But it 
-> seems fine since those bit flags are never set in this code path.
+Thanks for your patch!
 
-Also a good point, the path should be in a pristine state, as if it were
-just allocated. Releasing paths in other functions may want to keep the
-bits but in this case we're crossing a function boundary and the same
-assumptions may not be the same.
+> --- a/drivers/clk/renesas/rzv2h-cpg.c
+> +++ b/drivers/clk/renesas/rzv2h-cpg.c
+> @@ -196,6 +225,253 @@ static int rzv2h_cpg_pll_clk_enable(struct clk_hw *hw)
+>         return ret;
+>  }
+>
+> +static unsigned long rzv2h_cpg_plldsi_div_recalc_rate(struct clk_hw *hw,
+> +                                                     unsigned long parent_rate)
+> +{
+> +       struct rzv2h_plldsi_div_clk *dsi_div = to_plldsi_div_clk(hw);
+> +       struct rzv2h_cpg_priv *priv = dsi_div->priv;
+> +       struct ddiv ddiv = dsi_div->ddiv;
+> +       u32 div;
+> +
+> +       div = readl(priv->base + ddiv.offset);
+> +       div >>= ddiv.shift;
+> +       div &= ((2 << ddiv.width) - 1);
+> +
+> +       div = dsi_div->dtable[div].div;
+> +
+> +       return DIV_ROUND_CLOSEST_ULL(parent_rate, div);
+> +}
+> +
+> +static int rzv2h_cpg_plldsi_div_determine_rate(struct clk_hw *hw,
+> +                                              struct clk_rate_request *req)
+> +{
+> +       struct rzv2h_plldsi_div_clk *dsi_div = to_plldsi_div_clk(hw);
+> +       struct rzv2h_cpg_priv *priv = dsi_div->priv;
+> +       struct rzv2h_plldsi_parameters *dsi_dividers = &priv->plldsi_div_parameters;
+> +       unsigned long long rate_mhz;
+> +
+> +       /*
+> +        * Adjust the requested clock rate (`req->rate`) to ensure it falls within
+> +        * the supported range of 5.44 MHz to 187.5 MHz.
+> +        */
+> +       req->rate = clamp(req->rate, 5440000UL, 187500000UL);
+> +
+> +       rate_mhz = req->rate * MILLI * 1ULL;
 
-Release resets the ->nodes, so what's left is from ->slots until the the
-end of the structure. And a helper for that would be desirable rather
-than opencoding that.
+The first multiplication overflows on 32-bit systems.
+Probably you wanted to use mul_u32_u32() instead?
+
+More review later, I fell too deep in the wrong rabbit hole ("mhz !=
+megaHertz"), again...
+
+> --- /dev/null
+> +++ b/include/linux/clk/renesas-rzv2h-dsi.h
+> @@ -0,0 +1,207 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Renesas RZ/V2H(P) DSI CPG helper
+> + *
+> + * Copyright (C) 2025 Renesas Electronics Corp.
+> + */
+> +
+> +#include <linux/limits.h>
+> +#include <linux/math.h>
+> +#include <linux/math64.h>
+> +#include <linux/units.h>
+> +
+> +#define OSC_CLK_IN_MEGA                (24 * MEGA)
+> +
+> +struct rzv2h_plldsi_div_limits {
+> +       struct {
+> +               u64 min;
+> +               u64 max;
+
+u32 should be sufficient?
+
+> +       } fvco;
+> +
+> +       struct {
+> +               u16 min;
+> +               u16 max;
+> +       } m;
+> +
+> +       struct {
+> +               u8 min;
+> +               u8 max;
+> +       } p;
+> +
+> +       struct {
+> +               u8 min;
+> +               u8 max;
+> +       } s;
+> +
+> +       struct {
+> +               s16 min;
+> +               s16 max;
+> +       } k;
+> +
+> +       struct {
+> +               u8 min;
+> +               u8 max;
+> +       } csdiv;
+> +};
+> +
+> +struct rzv2h_plldsi_parameters {
+> +       u64 freq_mhz;
+> +       s64 error_mhz;
+> +       u16 m;
+> +       s16 k;
+> +       u8 csdiv;
+> +       u8 p;
+> +       u8 s;
+> +};
+> +
+> +#define RZV2H_CPG_PLL_DSI_LIMITS(name)                                 \
+> +       static const struct rzv2h_plldsi_div_limits (name) = {          \
+> +               .m = { .min = 64, .max = 533 },                         \
+> +               .p = { .min = 1, .max = 4 },                            \
+> +               .s = { .min = 0, .max = 6 },                            \
+> +               .k = { .min = -32768, .max = 32767 },                   \
+> +               .csdiv = { .min = 2, .max = 32 },                       \
+> +               .fvco = { .min = 1600 * MEGA, .max = 3200 * MEGA }      \
+
+Please initialize the members in declaration order.
+
+
+> +       }                                                               \
+> +
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
