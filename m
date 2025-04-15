@@ -1,117 +1,204 @@
-Return-Path: <linux-kernel+bounces-606185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE3F9A8AC45
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 01:35:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43367A8A34F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 17:47:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BAB919038F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 23:36:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D78A93B3A5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0772D291154;
-	Tue, 15 Apr 2025 23:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939541DED69;
+	Tue, 15 Apr 2025 15:47:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PtQf6y8+"
-Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="jO4Yf1d/"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2097.outbound.protection.outlook.com [40.107.237.97])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9A42DFA36;
-	Tue, 15 Apr 2025 23:35:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744760140; cv=none; b=o+pj/U3OfFyzBhUJM5pU8UnGA2SqU4q7s7doTbf0w6+x5LLMtf8zjy/BM5O0v3c41+qcfEOSEuPWvniY4HGjl7f3uOznvSBeQFTmc3k2vauYBsNOyPm8hj6FoTr1/no2jboiCj1SeB5NrJl23K4Rs1tn+4wRrV9qGfTlXLTq2VY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744760140; c=relaxed/simple;
-	bh=VifUAGqXrpve7MyJF1/JPgmu1YmdA3mVV7mluhkV/pg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type; b=nd4HZXEUIFgC68TezSG9J9tsOIx729XVeIoGiy+nTAz2B9GYfKdt3iypGWDCKDpkO59TP6a5I/67Djxo415VPm1MARfgySTRdG/j6fu5UulFMukP3KMvuEVTZgUAFFcZ4uY5b8NWmKdQ/Cs+GoOUx6D606botcGtB8RW+jged+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PtQf6y8+; arc=none smtp.client-ip=209.85.210.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-736c8cee603so331732b3a.1;
-        Tue, 15 Apr 2025 16:35:38 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA9214831E
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 15:47:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.97
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744732027; cv=fail; b=TiUUoLUsWxCrRtZRSvvRTc07WtqVOq1GgkdI5ZR7ObmXFXDF680CTkIEHQ8Xj+YNrwEQqhpDK9CAoZhRND9Zlnfg3pbz21ut1gtMBsMXJEzgT83U0qKcmoTTNFFOz/MKD4Qo0/6XCg6+fIA62jST7YT+IjTJZDyfhBhQWsENgR8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744732027; c=relaxed/simple;
+	bh=Agn1oRt56eyFkj/cv2y4NYCtgWLFPLPa1uOOFcmQfmU=;
+	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=ISKfhr0qKkr5px/vq9qZHBXiVWnPOW61pMILH058dzFwjcUeEw7dr8kiW0koNEjMU36uqvmE20h39b3dTU4iKEYx8kI6uXA+L6wOvKMZUoCwLBXb9c1OwVX3Upi03TY3yWtJ6FYb1CmS3PQTjEo3SGJTmb9vt6RfW0/MrXmpHok=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=jO4Yf1d/; arc=fail smtp.client-ip=40.107.237.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=E5Mlui/lIh71ziDI7etplN9yE+PzHh/RXLqOMrj1VOit5rk0e9gygNlJsX1AMjaagmaREN463vtilqX8dA0TH6qE6Efxq5/rOUtfXqOBAYYLi/2P1vX0qZ+5SZo2Uvp3z/z19YBwCkqq/VddwYG5BknTFmJUrTTImboAed997xKCgnNKjs8b4O301t0dHjfRk8LPxhWrP4kdw/GFnRsmnvwzwlmLUewAaQW6HkWkj8m8X7Jyxy1SelFNFLPlqcCgFgSLnqxBJ3U3P/bkEf5UIlL23NO611O75UMKZ32n+MdrJitEYm6gDT34LLw07YS5EKQuvO87rtk3pnUfHBnqFg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=K4SHDrEGkBGVKxY18NN/v8RHYOOS0aKcHFwDmx85btM=;
+ b=rIGrJN2KS4UC9DUVMDYHikoVheBaiQCe1TpQAOrS2MyDGvyqr+hbUxoalOnA2mUrc3ihN458ig9YFjjStYNi/zrX2s52xST3UhwMbnw3jE7dxDaNKM0okqLRTnN1ZHfZWB+kPN6+1JlSxCjQWFEYmDy+/GrkQ213CnWvohIhyU5SovpwxQYBGb/qKeznXlRe5YrS+uGp1mcRqUWZT09FFIwhND35HxTMI05e4nwRGd74tKHPxKyJdavvV/f3IgPpqxV4FjHf8txwU6sO1X9NWilKPxVrWVmtyHXA4ANe5qA2Ferw5EtFHX1dkidh6rYEypj8aZjWTScMPtms/Iv+5Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744760138; x=1745364938; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:in-reply-to:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=k9ng36k6+89lBeYxXggLCEbUf1f1fC/eR9HgAYWHI7o=;
-        b=PtQf6y8+JmXGTGy4ylmW6CCg4CH2npD+yuAQCH6+QuGxNxsZGOGB2wmVCZKojCLd3c
-         yFxFrh6Buld8xOHNfDHJ6EDgrzRr14QQlglA5YmfC/X+Be7uGM5CuiW74yPRSbZyeqqT
-         vGNUJkwoAUQYpEoftPLdEsPBWWgn12EzBoC0axFxApOO9Gt38FSVRZ8AarC7yQ3xNiHO
-         FL3AH7hKbA1Z3C8i8lOklC1ylYctYwEibzEKyMB1uHo02f8fn+q4lQuz3zxlKY2BWfUo
-         6pH51hmJWb3a38dAqnD042FizY9vRHU8q58SkHKrs+6zpI2Mg5+vfBL9XFY6bQtQ47/O
-         SuqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744760138; x=1745364938;
-        h=content-transfer-encoding:mime-version:in-reply-to:message-id:date
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k9ng36k6+89lBeYxXggLCEbUf1f1fC/eR9HgAYWHI7o=;
-        b=EXEasI5Y2iN8Q2pxTovGbRj6CQ4hMQpgaQv+sWcOy4iHm2WSrbi3zth32Ag9pbCLv5
-         mUveCDC1Yqq3XNhnHA5Nmgu3mq1wMxwGANHv+BX+AqTLEuV8sHC4+cxTKPirEtLzxn2D
-         v+hG+P0fEtlokVSgKxvgeRcbbwboXlm44o1GbcTmiO4V39lHph5bWWvEXyh822kofc9I
-         S0mD+48QTmR+5ptB1Czaot68FVrHsmhNc4sWDo78w11JVcuw085VBINvCBN1NoRIAfiq
-         k7Wwn3EEYYD0e9yvc8r9l9I+N23/w1pL2/91SX3u6iMeCRNVm84SLya8Xp5VjgIDotWC
-         rcHg==
-X-Forwarded-Encrypted: i=1; AJvYcCUYebKGQUvsfDmjCsbIoUjzyjySy7VfDaiT5WgIMvFXL/2tz4Bjd1qS+nJtWh+e5PfU9SEaannqAs5iJHCQ@vger.kernel.org, AJvYcCWUdnKrNHAiuNZhlsXWHFC/MbIosEdJdbJJxeXGpJ/SCVzDPyxZds6AaikEtCayU14wUz7e0yu1qmtmKg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoONT96DDXJh6P8QLCshsy2xhp8jbYWHGqwZEGc2NIv8mBENSI
-	34KemPWFfdEha0XNYjPxWIpOtTMF0cunvKW75XxhSkwYWeY7AnPy
-X-Gm-Gg: ASbGncvRgYV1I0Nj0xUJM6lHNigScn1OgL/IoTBnfbsES2MXorV18q9QBvUSsrIyMVb
-	gwnikDg3vpfKDC3xbN/pFzwp3SlKbmr5XXAF6sj0SKX54gaRDr0n3ALclpeB4fnt0yNx7s+Y0ar
-	SIZ1On4jvNlCR/zet4KgKPL+TLwZtPuSrHNIaXssJGr7JFNNC++DAx5o73QuB5Ej+5Qwyj5wlqX
-	xwX2/oEQdm5krFRPCsfxOh0h469sujVkvMeyexo3ysOGOQKuQ2tPOzLym758SuL0Gd641quaYoE
-	9GVH3e+ImFMyHZRO0XnnV/A9BL661K+p+5TLRmm7QQ0iQqh3uYg=
-X-Google-Smtp-Source: AGHT+IGSUk93ONxqBp1dzfwfyCWEi1dgTVpzffVT+KxtevWfkF4sr+4niImOf3F3T9QKwwByVsyv+w==
-X-Received: by 2002:a17:902:ea04:b0:223:659d:ac66 with SMTP id d9443c01a7336-22c31b01559mr6906725ad.12.1744760138248;
-        Tue, 15 Apr 2025 16:35:38 -0700 (PDT)
-Received: from saltykitkat.localnet ([154.31.114.49])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c33fc831csm1010995ad.181.2025.04.15.16.35.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Apr 2025 16:35:37 -0700 (PDT)
-From: Sun YangKai <sunk67188@gmail.com>
-To: quwenruo.btrfs@gmx.com
-Cc: clm@fb.com, dsterba@suse.com, frank.li@vivo.com, josef@toxicpanda.com,
- linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- sunk67188@gmail.com
-Subject: Re: [PATCH] btrfs: remove BTRFS_REF_LAST from btrfs_ref_type
-Date: Tue, 15 Apr 2025 23:46:15 +0800
-Message-ID: <9442545.CDJkKcVGEf@saltykitkat>
-In-Reply-To: <2e158208-4914-4bfb-984a-0d35e8b93225@gmx.com>
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=K4SHDrEGkBGVKxY18NN/v8RHYOOS0aKcHFwDmx85btM=;
+ b=jO4Yf1d/GmWQeds5LfO5mIdJM9xliSl4TfRo6yB4sDv5bJ2SWgzCgek31u9rqV0rFXE/qlzpPLwkh2qI/ynimdA7YFapm/XZE6u3hn9KN4OE1BHxn4CrEhUlwJp6fWb7Tse0JfbuiSIgfQkv3dCE8hJrYnLE9X3/5e4nKgNqdU0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from LV2PR01MB7792.prod.exchangelabs.com (2603:10b6:408:14f::10) by
+ BL3PR01MB7099.prod.exchangelabs.com (2603:10b6:208:33a::10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8632.35; Tue, 15 Apr 2025 15:47:02 +0000
+Received: from LV2PR01MB7792.prod.exchangelabs.com
+ ([fe80::2349:ebe6:2948:adb9]) by LV2PR01MB7792.prod.exchangelabs.com
+ ([fe80::2349:ebe6:2948:adb9%5]) with mapi id 15.20.8632.030; Tue, 15 Apr 2025
+ 15:47:01 +0000
+From: D Scott Phillips <scott@os.amperecomputing.com>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] KVM: arm64: fix config.hcr used uninitialized in __kvm_at_s1e01_fast
+Date: Tue, 15 Apr 2025 08:46:55 -0700
+Message-ID: <20250415154656.1698522-1-scott@os.amperecomputing.com>
+X-Mailer: git-send-email 2.48.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: CY5PR22CA0011.namprd22.prod.outlook.com
+ (2603:10b6:930:16::12) To LV2PR01MB7792.prod.exchangelabs.com
+ (2603:10b6:408:14f::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV2PR01MB7792:EE_|BL3PR01MB7099:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2d0f4995-75dd-414a-1a76-08dd7c34c35d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|52116014|366016|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?6hjLCTU86keVn0SeEdQzkPZVUD+3Rm+sHfwaXxIxaqdm4WTc0YvW3WcEpnf5?=
+ =?us-ascii?Q?x9q15/6cFgVjrF8UUKowU5Pkhp6YJjuKaqctPRWBGA8aiWeTqsozhwkyg+dK?=
+ =?us-ascii?Q?QkJgfa8XEm8kIVllTo8Q8hAys25CqLkMsmqunB1UCkq8GwPYkbgIbEnYLlem?=
+ =?us-ascii?Q?QR/znmbRRHQwfJZhMcJNx9gYYyamOgj7VM/EQjizJIGpIv8IDUbnf+0LgyPY?=
+ =?us-ascii?Q?VsVw4NBwpGv2VWf1kPlwWzpYubtLp1f9Ng/ehBnG8+SNpXXvobtAdv/PBIXR?=
+ =?us-ascii?Q?QbaBjZB5QL6XsATCvZzN13Ty9BAJH2OcjgtKIx+/JjFdx7GNmReyQqOlhnCJ?=
+ =?us-ascii?Q?lMQEF0c+qhoDZI7DJXMTZi0PgfFM8pD/kQTZJ8n+oZX6uxq+jaypcPHubTUy?=
+ =?us-ascii?Q?Em3tfla+pnAtm766DBPryiI1zLE4kDVTUrBu+nfyaGYvNDfqUm5rFZvkrcZM?=
+ =?us-ascii?Q?b71vI9NbDXX6YQOOVwyFwGuaqPJn7z/MJQDJZHU9AqKzaxkU/0P8kLz2MHZ2?=
+ =?us-ascii?Q?cxBa/LiSr9jK7CQ8iG49Ck94nYVwoDjA7gz0zQSBSqs1CNBfTtuAUE+NXLT5?=
+ =?us-ascii?Q?WWDdrnDPESKD8RLJc0PTpSkb3F0Ab0L2+7f3J5nfHH6LfVybWdI8qf91w7Tw?=
+ =?us-ascii?Q?gtE2aC+7oew8X5MEyKXSremekRNjQ8noaJ3Sa1STvNclcTBLXXg+9YdOIH/+?=
+ =?us-ascii?Q?00NJwJLPazsXOgdCzWXsdcioQ7zTDPWfopzPvgrZn92naFUHuNnDqpT2cfQF?=
+ =?us-ascii?Q?QbCZhJayEkPRQTaZBcxRhfYnMAQBQwlfJjmVlqkb5uY6oDA/7FYsPNQzIhR3?=
+ =?us-ascii?Q?OFe9cBNIpsdi5X9RwXuH4mV2/jUb9AIhZUUe8Vlvris5HyEhoilvDOJs/vI4?=
+ =?us-ascii?Q?hqRz2kE12c6ofJdR/CMVHRDB9YZt6+JTUEpwy9DtvhySRvWTk/kMaxDLkUox?=
+ =?us-ascii?Q?hySRTCFHb7hUwo+l/Rg6d9GQnk+7ha58AT0FJ1cwvXFb2O73ujd5mQ5kfMSr?=
+ =?us-ascii?Q?dOOAtlj1xIvZ360CMFyOC8uiz8dVgRPeZu7jxCLrpZ03y3Yw09XkjjpXZjVL?=
+ =?us-ascii?Q?jjYJEAwQq7P6oyVpntlGikdzwXRTBdiCcBMGu0vGV4/XpGxdREiC7gDvyOOH?=
+ =?us-ascii?Q?GPOhrEdeeWJKOM2ds4qI/aBuF56E46SKffjumCFscwHvQKuHl+wPqtDqQ0JS?=
+ =?us-ascii?Q?bs4uATXKsiesEo/sp8vf/gEWXQMuDvk7V5Uov+6rq2VLs67bLX7Mn2N7qaIc?=
+ =?us-ascii?Q?gC1ut/vmuwpw5RnPsl2zrFsHqFaJ2pPLkPw86qfblntgF3iVGHSr+PkyiAxf?=
+ =?us-ascii?Q?ZLn3nu5G7rE9djnU2tDajxB0AvpodRfwplxDhDs/0jZ4capOnVPgk1uD6SZ+?=
+ =?us-ascii?Q?kjOAVj9PzFnLtO/8xyKhXOv4M8p6yunD2wKSI8Q7Wc5nIOn+UWRGlT5l2E63?=
+ =?us-ascii?Q?jIjtsTZsnT/0LEk3vsZjE9ZIdr43efTUKlmGw0Apd/cQVGYE6cHeImWo+jjV?=
+ =?us-ascii?Q?7NmIhLG9f6bTQ2E=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR01MB7792.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(52116014)(366016)(921020)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?7HDZeKti7Ox48jhp0dBShmeeRE84rA+dBiIvTqgPo9riz58+4/UFULIGWsQ9?=
+ =?us-ascii?Q?Cpp63Q1zWiQqyOoVisnH669dyRdLqtxmChP0iS+dQ9/TmkoMuZPCHSMa0Tuk?=
+ =?us-ascii?Q?Wx0FIKzIGHeQze1Mhe1S17YXnJHrh+78eSWnwixTFpGLvBaH+ABP/gBQ9E/+?=
+ =?us-ascii?Q?UWiN7mrYUJf4PNyqIaI76p9wNf0HsEDBcElnjnJ1mRykOZKXy4q+hEcM8hGL?=
+ =?us-ascii?Q?KQ7Tfpe8AOhVgVJt6BYXNVdCV1LiGXpcWokkOMwUmAyWkHYgaSeoIGHx5RWh?=
+ =?us-ascii?Q?Cw7h30+59jn9Z/OOdSB2C1jxtvtFhSdDv9iBD3gzGShx3ANs13F8i96ve9Dp?=
+ =?us-ascii?Q?xPFwm5UWkKkcrF0J4C3hs97K4gYRWtEO4gTnmrpmSts1/zMRB6ZGz73AVmna?=
+ =?us-ascii?Q?k9tRA9v/r4XT9RbhcSg0z2ci+DswVu5aJh/uSx2Gd+vyZiTsfjBZ5VmYahaV?=
+ =?us-ascii?Q?1y19F1b43AHWBC7PBryTlvhwOJQSo3Ts4P8JMR+0CVPwXIZhmiAz7pWIIhyf?=
+ =?us-ascii?Q?WudwFkkde0I3zc25G89/8t7ySMZcamaC5kVpvLcfk2LMb1rU/RYoKX2grl+u?=
+ =?us-ascii?Q?YeVGBYpfZ7iBcKR+d3KUOEm3KNU6SUwVHfdwTrqwQGMI8HadBWs5onyn/V1F?=
+ =?us-ascii?Q?DqXmiKImDj1N0ZEtPtfVHGH3IFdeuRYVFyOQzJ8ecJqhWiLbbQPQjyTvNneG?=
+ =?us-ascii?Q?W5N6cBIW3pX84rbMeudtNlOZgehkhW7jW98GBe0PAVzlINvw6rfs/JftzbW7?=
+ =?us-ascii?Q?sMHglXrY2i5O3O75b0+Cjva1Ss/QTQOn6UuXXlKvsL5VHPMsAmMhwOEI8kOi?=
+ =?us-ascii?Q?21iFGitN8hEnLmHahuD/OT33dbQIQzyKjeUWA/PzYTs0VT2AaTgFsXTi2ayK?=
+ =?us-ascii?Q?xVIHQ3HfjltpGeumJMma3O6ImKJmutAQvcoCYBTN6VuPELEZBKIJyyKMIbfM?=
+ =?us-ascii?Q?mpnJbj2heoKNdqzM7r0AyZZCZOXiFE4ati2pJ4hCj2CgWpXYVGPU2jVAxdL2?=
+ =?us-ascii?Q?mBT/kJnl+yzWMIY2LBDImb5U8zA59b5yfUEvBI0i7ISaHawopFh9ImQe5iGj?=
+ =?us-ascii?Q?hYytFBZp21vcjI2DL/PGoPIu7VVRG6+6iPiRDplankePorT1cpAlNslAvttB?=
+ =?us-ascii?Q?pm2gwd24/4qd6zAqViIAMbQ3fGIF4z3tSUISXGTGxOeivk5I63xJdih+kk+j?=
+ =?us-ascii?Q?+d0g3YIzpWcKDzJDs5qw42DGwz4qYFu5xtlGQrwFLuyyK4CBLGwAlby//Dhn?=
+ =?us-ascii?Q?E3zOpaV8iGocFWAIAaYxJTspOOX62pWKbg0IUMF9vMIKy0sFrLmDLaMBJ/Ut?=
+ =?us-ascii?Q?M/kISQrE0K03f8+kZjftbyM1fPb5rJWrURmFnhnP74MFKKxWM1r01rOS3F3l?=
+ =?us-ascii?Q?iPm4TCrvqd2IfQ3iGjgcEb/QCyhPR1RzyIkmatD97bHjEvV9zn1dSd8lZ7uK?=
+ =?us-ascii?Q?mbwyu6zk3aBMZ4g9LX8SDwRSQbQNvq/i+7aDIXbMhza7gWymFS072bcqQNAZ?=
+ =?us-ascii?Q?bAexlbD49aklVc6R5xGl1pbHjQAEE1rRYhT9IFNcBuxBfdsWLScumWEbs9V7?=
+ =?us-ascii?Q?5amyoMIpRrlRBh4Gsmp6NvGjeXJuZUQKdsqmN43tloxcMYHxz4wJlxjckH5p?=
+ =?us-ascii?Q?0VBpYhtd4MLeaTmbIfjhZmI=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2d0f4995-75dd-414a-1a76-08dd7c34c35d
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR01MB7792.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Apr 2025 15:47:01.6630
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: KHy3bw3QdQlpNAgs6l7UMHqK4q6GIE4yO27KzhrPNPpqg4BQL+lo3e9+MX+2BC3j4YKbsWTB7LwNnvDjjGzNZ54/bEMN7DmKuDMAph8G5UFK29uEDfvHpIahSu2t0txc
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR01MB7099
 
-> >> History please.
-> > 
-> > Did you mean change commit msg to below?
-> > 
-> > 	Commit b28b1f0ce44c ("btrfs: delayed-ref: Introduce better documented
-> > 	delayed ref structures") introduce BTRFS_REF_LAST but never use it, So
-> > 	let's remove it.
-> 
-> It's the common practice to leave a last entry for sanity checks.
-> 
-> But since it's not utilized for anything, I'm fine to remove it.
-We can also add comments for all this kind of codes,
-so that further readers will understand this common practice better.
-> 
-> >> The _LAST or _NR suffix can be utilized to do sanity checks, and this is
-> >> not part of the on-disk format.> > 
-> > IIRC, delayed ref belongs to the extent tree memory kv cache.
-> > 
-> >> And if this exposed by some automatic tools, please also mention it.
-> > 
-> > I'm just looking at this code.
-> > 
-> > Thx,
-> > Yangtao
+In the skip_mmu_switch case, config.hcr was used uninitialized. On my
+machine that caused garbage to be written to HCR_EL2 and then the CPU
+got stuck at the synchronous exception handler. Also, the restore of
+HCR_EL2 was missing at the end of the function in the same case.
 
+In skip_mmu_switch case, initialize config.hcr with HCR_HOST_VHE_FLAGS.
+
+Signed-off-by: D Scott Phillips <scott@os.amperecomputing.com>
+---
+ arch/arm64/kvm/at.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/kvm/at.c b/arch/arm64/kvm/at.c
+index f74a66ce3064b..ff4b06ce661af 100644
+--- a/arch/arm64/kvm/at.c
++++ b/arch/arm64/kvm/at.c
+@@ -1233,8 +1233,10 @@ static u64 __kvm_at_s1e01_fast(struct kvm_vcpu *vcpu, u32 op, u64 vaddr)
+ 	 * the right one (as we trapped from vEL2). If not, save the
+ 	 * full MMU context.
+ 	 */
+-	if (vcpu_el2_e2h_is_set(vcpu) && vcpu_el2_tge_is_set(vcpu))
++	if (vcpu_el2_e2h_is_set(vcpu) && vcpu_el2_tge_is_set(vcpu)) {
++		config.hcr = read_sysreg(hcr_el2);
+ 		goto skip_mmu_switch;
++	}
+ 
+ 	/*
+ 	 * Obtaining the S2 MMU for a L2 is horribly racy, and we may not
+@@ -1299,7 +1301,9 @@ static u64 __kvm_at_s1e01_fast(struct kvm_vcpu *vcpu, u32 op, u64 vaddr)
+ 	if (!fail)
+ 		par = read_sysreg_par();
+ 
+-	if (!(vcpu_el2_e2h_is_set(vcpu) && vcpu_el2_tge_is_set(vcpu)))
++	if (vcpu_el2_e2h_is_set(vcpu) && vcpu_el2_tge_is_set(vcpu))
++		write_sysreg(config.hcr, hcr_el2);
++	else
+ 		__mmu_config_restore(&config);
+ 
+ 	return par;
+-- 
+2.48.1
 
 
