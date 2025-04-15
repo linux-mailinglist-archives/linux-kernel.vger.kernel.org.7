@@ -1,102 +1,249 @@
-Return-Path: <linux-kernel+bounces-604156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34653A8916E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 03:35:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6567A89171
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 03:36:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94758189BFFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 01:35:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E800517935A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 01:36:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3399C1A0B0E;
-	Tue, 15 Apr 2025 01:35:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7435E1A5BA2;
+	Tue, 15 Apr 2025 01:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="wWOCs9XA"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="aI2z3lL2"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB2760DCF;
-	Tue, 15 Apr 2025 01:35:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83375192D97
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 01:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744680916; cv=none; b=I8Fj3crJ8JqmfBoPYYANmbE5SO7ayR6CFKS8Lv8+BgjG7SwwjTGkMM9dmZZyRAcWuUN+R8XXhJyDTt8o/AHxDCekBDw+xdzM3AUpupqf4Sri6DOCcIJp9Xyyd66MtVrLCNjt4lnDWKGONRqNcLemQ4EPZP0qRqMNVoKF4G5Uq2s=
+	t=1744681007; cv=none; b=GR4SrGPaX1T0kGGrldzL3EKDerqVOwljMJzR/Vso7ZcPMyBQVFCdW2PfGFyeUD7djNBU5f81Ldw7tnOhor3UsD6ra18GvMQS1ccQYTTJt0BEhe49tPC/8Eq0mI6q3oEf/cVKwIsNOQlhbS1vEe7VUFm1RsHzrP5KJn+CpAZMi9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744680916; c=relaxed/simple;
-	bh=wRuP1NRSC1BsMmcqei+fx7IF60RxB+2Uj0kHYZWNjzo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bzu9I3gIFRyVLdpmGrkCuRfuZACGRpiviPiC469rBaul5fTjoDQD/TLFc23GHdB0ZMAOoW7XTjCVyNZXZHUdO8TcbmWOwMjWu8v/CWKfo1r/wEqO6069KhcSWbwSsfKwlgSJuYhpJH/+dGViteqGtF2za3/U8ap07dykkDvg/bU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=wWOCs9XA; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=I1cbI5+pkj/hOZGceZRN10hFZrE+QXRqS1+7QDiAZpM=; b=wWOCs9XAm2+fu3B0Zff96+yxRv
-	1QMlsJNG0BA84OOTnBwhzlNhW+VWeXbtZ4pJkaCN7vZuqaAO5//pkFnkglF///DL3EfBakAe0RuNb
-	9GObEBOZJjid/yc3p1Ohv2C5CldueEo+EkvRABgwK7CkQXrHW4AiEVN/YEStUcIDQaYk=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1u4VCd-009Ju8-Jg; Tue, 15 Apr 2025 03:35:07 +0200
-Date: Tue, 15 Apr 2025 03:35:07 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Qasim Ijaz <qasdev00@gmail.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	linux-usb@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+3361c2d6f78a3e0892f9@syzkaller.appspotmail.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 5/5] net: ch9200: avoid triggering NWay restart on
- non-zero PHY ID
-Message-ID: <b49e6c21-8e0a-4e54-86eb-c18f1446c430@lunn.ch>
-References: <20250412183829.41342-1-qasdev00@gmail.com>
- <20250412183829.41342-6-qasdev00@gmail.com>
+	s=arc-20240116; t=1744681007; c=relaxed/simple;
+	bh=s37VCGQ70TpVRZ/EdWj0zhN6LAyoGeJW4ovKbRw6jqM=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=OeAQ4ge2fzi8R8qFD8tfp2jeYomO9BMVdenOBASBHJa6L8FzqyadDcNuUl9CCP/qKSUzby7waEop7/Pl2sneXnLdKuPvB9QPaFfqAl6LJqnILCJRqjAEd2nqYyHzIeXEVMF9zZZtObb9dE3hoExxBjJBxq63K6PBBtNIw4PuOPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=aI2z3lL2; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53ELBn88032454;
+	Tue, 15 Apr 2025 01:36:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2023-11-20; bh=IQN6mVDrzf8aRU1P6EjOqd3AfVUYS
+	Y28XqT4042MPQk=; b=aI2z3lL2r99UlWIzFk9d5qVn0BmdD7VShg7h9cHkHbbXa
+	8ev9gQKU1/6z0cB+zWgajyYaOjW97ZNjLPjyRAmAOhfFVwNMRKjVYzi2/paGYbtJ
+	LIK/A8D3ZKWi+ShMszD6EbR3V/lnv7Qd8kA1gO3j5RMOlbPzB2dJosbHgXGUdduE
+	PwOQOr5Et8meApZrh8j+wPWjCtwT88CbRVVDslL7RUji5593fiLSX+lgBvXVaVQ+
+	OnvrB6WOwB1u89aalHaHODIHUFmtbJ3+oCuSy/HGCCxac3X2wOHbVIMVuVuJLY6K
+	5XvO9+TNGaZxJFrtQG/SmOPRtEsgEFw3LhBIAj4sA==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4617ju8k3a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 15 Apr 2025 01:36:29 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 53F07mVe005744;
+	Tue, 15 Apr 2025 01:36:27 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 460d5ugp7y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 15 Apr 2025 01:36:27 +0000
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 53F1aQht036019;
+	Tue, 15 Apr 2025 01:36:26 GMT
+Received: from chyser-vm6.osdevelopmeniad.oraclevcn.com (chyser-vm6.appad3iad.osdevelopmeniad.oraclevcn.com [100.100.242.35])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 460d5ugp7b-1;
+	Tue, 15 Apr 2025 01:36:26 +0000
+From: Chris Hyser <chris.hyser@oracle.com>
+To: "Chris Hyser" <chris.hyser@oracle.com>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Mel Gorman" <mgorman@techsingularity.net>, longman@redhat.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] sched/numa: Add ability to override task's numa_preferred_nid.
+Date: Mon, 14 Apr 2025 21:35:51 -0400
+Message-ID: <20250415013625.3922497-1-chris.hyser@oracle.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250412183829.41342-6-qasdev00@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-15_01,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxlogscore=999
+ suspectscore=0 spamscore=0 bulkscore=0 malwarescore=0 adultscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2502280000 definitions=main-2504150007
+X-Proofpoint-GUID: 80jg5SCNXB5i_IpxG9VTEqr6C3-yWga4
+X-Proofpoint-ORIG-GUID: 80jg5SCNXB5i_IpxG9VTEqr6C3-yWga4
 
-On Sat, Apr 12, 2025 at 07:38:29PM +0100, Qasim Ijaz wrote:
-> During ch9200_mdio_read if the phy_id is not 0 -ENODEV is returned.
-> 
-> In certain cases such as in mii_nway_restart returning a negative such
-> as -ENODEV triggers the "bmcr & BMCR_ANENABLE" check, we should avoid 
-> this on error and just end the function.
-> 
-> To address this just return 0.
-> 
-> Signed-off-by: Qasim Ijaz <qasdev00@gmail.com> 
-> ---
->  drivers/net/usb/ch9200.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/usb/ch9200.c b/drivers/net/usb/ch9200.c
-> index 187bbfc991f5..281800bb2ff2 100644
-> --- a/drivers/net/usb/ch9200.c
-> +++ b/drivers/net/usb/ch9200.c
-> @@ -182,7 +182,7 @@ static int ch9200_mdio_read(struct net_device *netdev, int phy_id, int loc)
->  		   __func__, phy_id, loc);
->  
->  	if (phy_id != 0)
-> -		return -ENODEV;
-> +		return 0;
+From: chris hyser <chris.hyser@oracle.com>
 
-An actually MDIO bus would return 0xffff is asked to read from a PHY
-which is not on the bus. But i've no idea how the ancient mii code
-handles this.
+This patch allows directly setting and subsequent overriding of a task's
+"Preferred Node Affinity" by setting the task's numa_preferred_nid and
+relying on the existing NUMA balancing infrastructure.
 
-If this code every gets updated to using phylib, many of the changes
-you are making will need reverting because phylib actually wants to
-see the errors. So i'm somewhat reluctant to make changes like this.
+NUMA balancing introduced the notion of tracking and using a task's
+preferred memory node for both migrating/consolidating the physical pages
+accessed by a task and to assist the scheduler in making NUMA aware
+placement and load balancing decisions.
 
-	Andrew
+The existing mechanism for determining this, Auto NUMA Balancing, relies
+on periodic removal of virtual mappings for blocks of a task's address
+space. The resulting faults can indicate a preference for an accessed
+node.
+
+This has two issues that this patch seeks to overcome:
+
+- there is a trade-off between faulting overhead and the ability to detect
+  dynamic access patterns. In cases where the task or user understand the
+  NUMA sensitivities, this patch can enable the benefits of setting a
+  preferred node used either in conjunction with Auto NUMA Balancing's
+  default parameters or adjusting the NUMA balance parameters to reduce the
+  faulting rate (potentially to 0).
+
+- memory pinned to nodes or to physical addresses such as RDMA cannot be
+  migrated and have thus far been excluded from the scanning. Not taking
+  those faults however can prevent Auto NUMA Balancing from reliably
+  detecting a node preference with the scheduler load balancer then
+  possibly operating with incorrect NUMA information.
+
+The following results were from TPCC runs on an Oracle Database. The system
+was a 2-node Intel machine with a database running on each node with local
+memory allocations. No tasks or memory were pinned.
+
+There are four scenarios of interest:
+
+- Auto NUMA Balancing OFF.
+    base value
+
+- Auto NUMA Balancing ON.
+    1.2% - ANB ON better than ANB OFF.
+
+- Use the prctl(), ANB ON, parameters set to prevent faulting.
+    2.4% - prctl() better then ANB OFF.
+    1.2% - prctl() better than ANB ON.
+
+- Use the prctl(), ANB parameters normal.
+    3.1% - prctl() and ANB ON better than ANB OFF.
+    1.9% - prctl() and ANB ON better than just ANB ON.
+    0.7% - prctl() and ANB ON better than prctl() and ANB ON/faulting off
+
+In benchmarks pinning large regions of heavily accessed memory, the
+advantages of the prctl() over Auto NUMA Balancing alone is significantly
+higher.
+
+Signed-off-by: Chris Hyser <chris.hyser@oracle.com>
+---
+ include/linux/sched.h |  1 +
+ init/init_task.c      |  1 +
+ kernel/sched/core.c   |  5 ++++-
+ kernel/sched/debug.c  |  1 +
+ kernel/sched/fair.c   | 15 +++++++++++++--
+ 5 files changed, 20 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index f96ac1982893..373046c82b35 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1350,6 +1350,7 @@ struct task_struct {
+ 	short				pref_node_fork;
+ #endif
+ #ifdef CONFIG_NUMA_BALANCING
++	int				numa_preferred_nid_force;
+ 	int				numa_scan_seq;
+ 	unsigned int			numa_scan_period;
+ 	unsigned int			numa_scan_period_max;
+diff --git a/init/init_task.c b/init/init_task.c
+index e557f622bd90..1921a87326db 100644
+--- a/init/init_task.c
++++ b/init/init_task.c
+@@ -184,6 +184,7 @@ struct task_struct init_task __aligned(L1_CACHE_BYTES) = {
+ 	.vtime.state	= VTIME_SYS,
+ #endif
+ #ifdef CONFIG_NUMA_BALANCING
++	.numa_preferred_nid_force = NUMA_NO_NODE,
+ 	.numa_preferred_nid = NUMA_NO_NODE,
+ 	.numa_group	= NULL,
+ 	.numa_faults	= NULL,
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 79692f85643f..7d1532f35d15 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -7980,7 +7980,10 @@ void sched_setnuma(struct task_struct *p, int nid)
+ 	if (running)
+ 		put_prev_task(rq, p);
+ 
+-	p->numa_preferred_nid = nid;
++	if (p->numa_preferred_nid_force != NUMA_NO_NODE)
++		p->numa_preferred_nid = p->numa_preferred_nid_force;
++	else
++		p->numa_preferred_nid = nid;
+ 
+ 	if (queued)
+ 		enqueue_task(rq, p, ENQUEUE_RESTORE | ENQUEUE_NOCLOCK);
+diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
+index 56ae54e0ce6a..4cba21f5d24d 100644
+--- a/kernel/sched/debug.c
++++ b/kernel/sched/debug.c
+@@ -1154,6 +1154,7 @@ static void sched_show_numa(struct task_struct *p, struct seq_file *m)
+ 		P(mm->numa_scan_seq);
+ 
+ 	P(numa_pages_migrated);
++	P(numa_preferred_nid_force);
+ 	P(numa_preferred_nid);
+ 	P(total_numa_faults);
+ 	SEQ_printf(m, "current_node=%d, numa_group_id=%d\n",
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 0c19459c8042..79d3d0840fb2 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -2642,9 +2642,15 @@ static void numa_migrate_preferred(struct task_struct *p)
+ 	unsigned long interval = HZ;
+ 
+ 	/* This task has no NUMA fault statistics yet */
+-	if (unlikely(p->numa_preferred_nid == NUMA_NO_NODE || !p->numa_faults))
++	if (unlikely(p->numa_preferred_nid == NUMA_NO_NODE))
+ 		return;
+ 
++	/* Execute rest of function if forced PNID */
++	if (p->numa_preferred_nid_force == NUMA_NO_NODE) {
++		if (unlikely(!p->numa_faults))
++			return;
++	}
++
+ 	/* Periodically retry migrating the task to the preferred node */
+ 	interval = min(interval, msecs_to_jiffies(p->numa_scan_period) / 16);
+ 	p->numa_migrate_retry = jiffies + interval;
+@@ -3578,6 +3584,7 @@ void init_numa_balancing(unsigned long clone_flags, struct task_struct *p)
+ 
+ 	/* New address space, reset the preferred nid */
+ 	if (!(clone_flags & CLONE_VM)) {
++		p->numa_preferred_nid_force = NUMA_NO_NODE;
+ 		p->numa_preferred_nid = NUMA_NO_NODE;
+ 		return;
+ 	}
+@@ -9301,7 +9308,11 @@ static long migrate_degrades_locality(struct task_struct *p, struct lb_env *env)
+ 	if (!static_branch_likely(&sched_numa_balancing))
+ 		return 0;
+ 
+-	if (!p->numa_faults || !(env->sd->flags & SD_NUMA))
++	/* Execute rest of function if forced PNID */
++	if (p->numa_preferred_nid_force == NUMA_NO_NODE && !p->numa_faults)
++		return 0;
++
++	if (!(env->sd->flags & SD_NUMA))
+ 		return 0;
+ 
+ 	src_nid = cpu_to_node(env->src_cpu);
+-- 
+2.43.5
+
 
