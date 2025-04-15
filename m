@@ -1,226 +1,151 @@
-Return-Path: <linux-kernel+bounces-606146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 195F1A8ABB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 01:01:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CD5EA8ABC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 01:03:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1485E7A74B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 23:00:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C06DB3BEFAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 23:03:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957E227F75B;
-	Tue, 15 Apr 2025 23:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96972D8DC6;
+	Tue, 15 Apr 2025 23:03:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="LNinphU2"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="XXT0xl+D"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0CBB2405E4;
-	Tue, 15 Apr 2025 23:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0CE32D8DA0
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 23:03:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744758089; cv=none; b=JjA4HEtKE5RYf831cNmX3GXqCAZvt8LXbP85RjkRrO1A59619RrNq83O94iNz9Z5T3iPkiQNdEtwlVvW+M+1VVYgRG0/QlrosLc6vu56GXTmjbzerhVeh/Sbve3koyWM4RFdGuKs8afK9rVHUOB2zqS1qAyD9pZflqBDvFIl3mE=
+	t=1744758191; cv=none; b=srQ6j8eIAZywEdMbILqi+Ss5ZAER8V+/NHJUF8n3tSOUd4qenM5u2TvMae8OjFXvFr++ko3ZTstb/fuf3Ia+JvazYgtxIv6jZrdjh9510/FPkYrASwaj2S1j8+dMga2fFylK4BaozVPVUcn7KC7e6x49tH96lNtnwUg/CzVMNac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744758089; c=relaxed/simple;
-	bh=reONu9DCX8yIdj7GLfXXkccHOkCnNJe0Ef9D9h6QGQk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C1ifjyJ51UhTty0Rn9oos38J/7Oqj7f5Bo4b+Du9ineY0/SC/dH8fGCJR8C4efna77tzHNKDa/ip3R9ju31vMGlIdgaL8hWJyRUI1rH/0sKRwVYDa60jYlfn16cPOrY/FJSa6BzOGJFq/12Veu6fnviwx0297X7WuRb5rDV24IE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=LNinphU2; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 16373353;
-	Wed, 16 Apr 2025 00:59:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1744757963;
-	bh=reONu9DCX8yIdj7GLfXXkccHOkCnNJe0Ef9D9h6QGQk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LNinphU21VM8OFnnSnZNbt5K+oDpNQ119G58IJinl3fPGKbpdtvWtuwTZNeC4uVwP
-	 zDUZYnkigre8k9BnHfz0utab+c0D7EoR7/Bq2dh/mlLw9pv+KOD0yWcF4k9fYySv4X
-	 g0VC6PFm+O/41wyVA4Q2yQinKO8r452Bwp7rsM8U=
-Date: Wed, 16 Apr 2025 02:01:24 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Marco Felsch <m.felsch@pengutronix.de>
-Cc: POPESCU Catalin <catalin.popescu@leica-geosystems.com>,
-	Jai Luthra <jai.luthra@ideasonboard.com>,
-	Shawn Guo <shawnguo2@yeah.net>, "robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>,
-	"festevam@gmail.com" <festevam@gmail.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	GEO-CHHER-bsp-development <bsp-development.geo@leica-geosystems.com>,
-	"stefan.klug@ideasonboard.com" <stefan.klug@ideasonboard.com>
-Subject: Re: [PATCH] arm64: dts: imx8mp: add cpuidle state "cpu-pd-wait"
-Message-ID: <20250415230124.GJ9439@pendragon.ideasonboard.com>
-References: <20241007134424.859467-1-catalin.popescu@leica-geosystems.com>
- <ZxYiCv6SpLq9uh08@dragon>
- <qqi2z7wutuy7e6o5fhpzsgfwkyn4quqmdeftl24meld72sudpg@lo3qpk4x7lbv>
- <d6852cf6-e8a0-49b8-a565-2d94eeef67d9@leica-geosystems.com>
- <20250415154724.GG9439@pendragon.ideasonboard.com>
- <20250415155239.GH9439@pendragon.ideasonboard.com>
- <20250415181423.qderfey4wpmp2bjm@pengutronix.de>
+	s=arc-20240116; t=1744758191; c=relaxed/simple;
+	bh=F5YcBZyIVCi665xnkBe2Uc/inuU/b6VJ4p5aoH7ixQ8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DsKDcAa2wVM4jq2pmmb0ye0ddHCf4U6cCanOwvSFob8ip8qvsCDWkZXn2KvE4BmeEZ1vaRMr/WNq5kh+cDrMCC7aaisG9NHyjaoY8Ry8iPymiU17uktyYA6Ipa4n9Iv/+ZjHdrvoXWsdpy+LsnDDw1Itaf029BDJHlYmX1eJag4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=XXT0xl+D; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43cf06eabdaso59457895e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 16:03:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1744758187; x=1745362987; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J/qDwZEzKD3yGMGg8Li/ADCxpZW4mGQ7aCfoPmv5avU=;
+        b=XXT0xl+DERyDRau4TMfxbCEJQ1PXOVgFSEIwU6EJRFQtE/rsQ/dutGwLd5dur8aGck
+         FB5lWRJdC9c+rMhdZ76h/IJ6BUBfz3pXlGx47HaArb0y+V1024tWxndDom3stZYe9hqg
+         LDF/UGdXYfKsw1OhHvAVOKhWJleIjyyRcFrDme8Tp7vHjOXOEg/PWHqIEKr9pi2LM6ay
+         2jWfXKDLa6vEZDWPAoI1vYNPDYmyhHAfqmIE/l7H2G5WjPywnmX/EgNrhi2Vj+JcRSHq
+         kse60yFR4QvGu6IErPNnT4RsqZUB3L2F2ZOQhOfUey563bvVSBaelCz2StAQgJvRzOgw
+         ACyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744758187; x=1745362987;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=J/qDwZEzKD3yGMGg8Li/ADCxpZW4mGQ7aCfoPmv5avU=;
+        b=rcdZ2HphKDBfCVdpKBEiWa1IHZX5g/GFJBkh+F7YYk3L65y8qe154qe8QLhhWNBt8W
+         GUz/XGQYQ3H+Ms0dZc3e+jtMw+blelmFPkNtGUp8YY9gPavPFpcTkzA3Ky9b6d49qyKC
+         RUyxn/t1OWC43LDTXWenABccZZla0sDWhghV+56YVBTWGWuzrO30f/ZoBkGyPjXibxCL
+         eiBRaGafrBfYYyhq2clWEoDVuCnJkVy9nS9frlCZuj0RjJ/04WUGomOys2zVf09y7Tie
+         fzjBX7Gf00s/q0W4SdmH/8NCjH4g9ylFw4x7s0hVeAAw7nVagN5JSJKEF/v1dHb7pdhI
+         5raw==
+X-Forwarded-Encrypted: i=1; AJvYcCXn+ScraWl8IMasqimup7rzaGdWeOJjAR2vK+TePxzGiHC50eHEwkXVrfyI3YVxMW2V9KiBuMFr+Hu94rY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuJaGsGTG3Jb5lPmOVqaYnZLBFI8Nzh1aca+snVs9p1ityhk+0
+	g3rooVVAkwr5jOuy4ZQuiAqCheUFBbloPyuww4psaShKsvQDjnx5smcTWEs50xufPJUrsulj+Hk
+	cqXj0Ncp3N2dVgLOeqfmT7vwy2RdQbFBOdJQNjA==
+X-Gm-Gg: ASbGnctqn3k9ZYvYnZwMfNwa/xWmetb/GC/uL48QrH059NE0rpJTGqAnxx+j19WWi4G
+	75WZdxok/t0mf/MqNXFxUhhvsaKl9gW5RRiy35j2mHMV4d/o7WRZ6zwOHfMLhFUcOKoEnGK26pD
+	gDwR52ilszCiykiRLJkLEZS9k=
+X-Google-Smtp-Source: AGHT+IGgTI0wLb4VWFIwFuesPYi0ujonBvBDjospI/0Zw+dekcu6dX8nRTileKCKtfQjeN8bQFkbj2voYAnHIZ/dDds=
+X-Received: by 2002:a05:600c:a378:b0:43c:fc0c:7f33 with SMTP id
+ 5b1f17b1804b1-4405a000eb5mr6479155e9.2.1744758187186; Tue, 15 Apr 2025
+ 16:03:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250415181423.qderfey4wpmp2bjm@pengutronix.de>
+References: <20250324-tp4129-v1-0-95a747b4c33b@kernel.org> <20250324-tp4129-v1-3-95a747b4c33b@kernel.org>
+ <20250410085137.GE1868505-mkhalfella@purestorage.com> <738a41ca-3e4a-48df-9424-2950e6efc082@grimberg.me>
+ <4cd2cbb4-95ff-4f3b-b33b-9c066147d12b@flourine.local> <4c334216-74d7-4a30-add1-67b6e023d8d2@grimberg.me>
+In-Reply-To: <4c334216-74d7-4a30-add1-67b6e023d8d2@grimberg.me>
+From: Randy Jennings <randyj@purestorage.com>
+Date: Tue, 15 Apr 2025 16:02:54 -0700
+X-Gm-Features: ATxdqUGMQRaR1PEqG2V00cjTZyyCExDD4ZQRBFB78xZj2EdjEnB5NJFcPmkTAVY
+Message-ID: <CAPpK+O0tmewK7pH458TOxjtimjO9on=4YDRFbS=FPTgM+KFTzQ@mail.gmail.com>
+Subject: Re: [PATCH RFC 3/3] nvme: delay failover by command quiesce timeout
+To: Sagi Grimberg <sagi@grimberg.me>
+Cc: Daniel Wagner <dwagner@suse.de>, Mohamed Khalfella <mkhalfella@purestorage.com>, 
+	Daniel Wagner <wagi@kernel.org>, Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>, 
+	Hannes Reinecke <hare@suse.de>, John Meneghini <jmeneghi@redhat.com>, linux-nvme@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Marco,
+On Tue, Apr 15, 2025 at 2:07=E2=80=AFPM Sagi Grimberg <sagi@grimberg.me> wr=
+ote:
+> On 15/04/2025 15:11, Daniel Wagner wrote:
+> > On Tue, Apr 15, 2025 at 01:28:15AM +0300, Sagi Grimberg wrote:
+> >>>> +void nvme_schedule_failover(struct nvme_ctrl *ctrl)
+> >>>> +{
+> >>>> +  unsigned long delay;
+> >>>> +
+> >>>> +  if (ctrl->cqt)
+> >>>> +          delay =3D msecs_to_jiffies(ctrl->cqt);
+> >>>> +  else
+> >>>> +          delay =3D ctrl->kato * HZ;
+> >>> I thought that delay =3D m * ctrl->kato + ctrl->cqt
+> >>> where m =3D ctrl->ctratt & NVME_CTRL_ATTR_TBKAS ? 3 : 2
+> >>> no?
+> >> This was said before, but if we are going to always start waiting for =
+kato
+> >> for failover purposes,
+> >> we first need a patch that prevent kato from being arbitrarily long.
+> > That should be addressed with the cross controller reset (CCR).
+>
+> CCR is a better solution as it is explicit, and faster.
+>
+> >   The KATO*n
+> > + CQT is the upper limit for the target recovery. As soon we have CCR,
+> > the recovery delay is reduced to the time the CCR exchange takes.
+>
+> What I meant was that the user can no longer set kato to be arbitrarily
+> long when we
+> now introduce failover dependency on it.
+>
+> We need to set a sane maximum value that will failover in a reasonable
+> timeframe.
+> In other words, kato cannot be allowed to be set by the user to 60
+> minutes. While we didn't
+> care about it before, now it means that failover may take 60+ minutes.
+>
+> Hence, my request to set kato to a max absolute value of seconds. My
+> vote was 10 (2x of the default),
+> but we can also go with 30.
+Adding a maximum value for KATO makes a lot of sense to me.  This will
+help keep us away from a hung task timeout when the full delay is
+taken into account.  30 makes sense to me from the perspective that
+the maximum should be long enough to handle non-ideal situations
+functionally, but not a value that you expect people to use regularly.
 
-On Tue, Apr 15, 2025 at 08:14:23PM +0200, Marco Felsch wrote:
-> On 25-04-15, Laurent Pinchart wrote:
-> > On Tue, Apr 15, 2025 at 06:47:26PM +0300, Laurent Pinchart wrote:
-> > > On Tue, Apr 15, 2025 at 03:42:22PM +0000, POPESCU Catalin wrote:
-> > > > Hi Jai,
-> > > > 
-> > > > This issue was already reported by Stefan. The problem is that I don't 
-> > > > have a Debix board to investigate.
-> > > > The main difference b/w WFI and cpu-pd-wait is that the first doesn't 
-> > > > call PSCI/TF-A. So, the issue looks to be related to some settings in 
-> > > > the TF-A.
-> > > 
-> > > Jai, are you using mainline U-Boot and TF-A, or a downstream version of
-> > > either (or both) ?
-> > 
-> > Actually, same question for Calatin :-)
-> > 
-> > I'm running mainline U-Boot 2025.01 and TF-A rel_imx_5.4.70_2.3.6 (from
-> > https://github.com/nxp-imx/imx-atf) and don't seem to experience the
-> > issue:
-> 
-> Interessting, can you share your imx-atf build-config please?
+I think CQT should have a maximum allowed value for similar reasons.
+If we do clamp down on the CQT, we could be opening ourselves to the
+target not completely cleaning up, but it keeps us from a hung task
+timeout, and _any_ delay will help most of the time.
 
-I've followed the instructions in the doc/board/nxp/imx8mp_evk.rst file
-(in the U-Boot source):
+CCR will not address arbitrarily long times for either because:
+1. It is optional.
+2. It may fail.
+3. We still need a ceiling on the recovery time we can handle.
 
-```
-Get and Build the ARM Trusted firmware
---------------------------------------
-
-Get ATF from: https://github.com/nxp-imx/imx-atf
-branch: imx_5.4.70_2.3.0
-
-.. code-block:: bash
-
-   $ make PLAT=imx8mp bl31
-```
-
-I had to patch the TF-A makefile as follows to fix errors with recent
-versions of gcc:
-
-```
-diff --git a/Makefile b/Makefile
-index 2ae12fda741a..46512993c6e0 100644
---- a/Makefile
-+++ b/Makefile
-@@ -285,7 +285,8 @@ ASFLAGS			+=	$(CPPFLAGS) $(ASFLAGS_$(ARCH))			\
- 				-ffreestanding -Wa,--fatal-warnings
- TF_CFLAGS		+=	$(CPPFLAGS) $(TF_CFLAGS_$(ARCH))		\
- 				-ffreestanding -fno-builtin -Wall -std=gnu99	\
--				-Os -ffunction-sections -fdata-sections
-+				-Os -ffunction-sections -fdata-sections		\
-+				-Wno-error=array-bounds
-
- ifeq (${SANITIZE_UB},on)
- TF_CFLAGS		+=	-fsanitize=undefined -fno-sanitize-recover
-@@ -300,9 +301,11 @@ GCC_V_OUTPUT		:=	$(shell $(CC) -v 2>&1)
- ifneq ($(findstring armlink,$(notdir $(LD))),)
- TF_LDFLAGS		+=	--diag_error=warning --lto_level=O1
- TF_LDFLAGS		+=	--remove --info=unused,unusedsymbols
-+TF_LDFLAGS		+=	-Wl,--no-warn-rwx-segment
- else
- TF_LDFLAGS		+=	--fatal-warnings -O1
- TF_LDFLAGS		+=	--gc-sections
-+TF_LDFLAGS		+=	--no-warn-rwx-segment
- endif
- TF_LDFLAGS		+=	$(TF_LDFLAGS_$(ARCH))
-
-```
-
-> I checked the code base and found a missing SLPCR_A53_FASTWUP_STOP_MODE
-> during the imx_set_sys_lpm() which is called during
-> .pwr_domain_suspend(). Can you check/trace if pwr_domain_suspend() was
-> entered?
-
-I'm no TF-A expert, can you tell me how to check/trace that ?
-
-> > # cat /sys/devices/system/cpu/cpu*/cpuidle/state1/disable
-> > 0
-> > 0
-> > 0
-> > 0
-> > 
-> > $ ping debix
-> > PING debix.farm.ideasonboard.com (192.168.2.230) 56(84) bytes of data.
-> > 64 bytes from debix.farm.ideasonboard.com (192.168.2.230): icmp_seq=1 ttl=64 time=1.03 ms
-> > 64 bytes from debix.farm.ideasonboard.com (192.168.2.230): icmp_seq=2 ttl=64 time=0.800 ms
-> > 64 bytes from debix.farm.ideasonboard.com (192.168.2.230): icmp_seq=3 ttl=64 time=0.935 ms
-> > 64 bytes from debix.farm.ideasonboard.com (192.168.2.230): icmp_seq=4 ttl=64 time=0.902 ms
-> > 64 bytes from debix.farm.ideasonboard.com (192.168.2.230): icmp_seq=5 ttl=64 time=0.738 ms
-> > 64 bytes from debix.farm.ideasonboard.com (192.168.2.230): icmp_seq=6 ttl=64 time=0.939 ms
-> > 
-> > > > What I don't get is why I don't see this issue neither on our IMX8MP 
-> > > > specific design nor on the EVK, which uses the same PHY as the Debix board.
-> > > >
-> > > > On 14/04/2025 14:07, Jai Luthra wrote:
-> > > > > On Oct 21, 2024 at 17:42:34 +0800, Shawn Guo wrote:
-> > > > >> On Mon, Oct 07, 2024 at 03:44:24PM +0200, Catalin Popescu wrote:
-> > > > >>> So far, only WFI is supported on i.MX8mp platform. Add support for
-> > > > >>> deeper cpuidle state "cpu-pd-wait" that would allow for better power
-> > > > >>> usage during runtime. This is a port from NXP downstream kernel.
-> > > > >>>
-> > > > > Since the introduction of this patch in mainline, I am facing sluggish
-> > > > > network performance with my Debix Model-A board with i.MX8mp SoC.
-> > > > >
-> > > > > The network latency jumps to >1s after almost every other packet:
-> > > > >
-> > > > > PING debix (10.0.42.5) 56(84) bytes of data.
-> > > > > 64 bytes from debix (10.0.42.5): icmp_seq=1 ttl=64 time=1008 ms
-> > > > > 64 bytes from debix (10.0.42.5): icmp_seq=2 ttl=64 time=0.488 ms
-> > > > > 64 bytes from debix (10.0.42.5): icmp_seq=3 ttl=64 time=1025 ms
-> > > > > 64 bytes from debix (10.0.42.5): icmp_seq=4 ttl=64 time=0.810 ms
-> > > > > 64 bytes from debix (10.0.42.5): icmp_seq=5 ttl=64 time=590 ms
-> > > > > 64 bytes from debix (10.0.42.5): icmp_seq=6 ttl=64 time=0.351 ms
-> > > > > ^C
-> > > > > --- debix ping statistics ---
-> > > > > 7 packets transmitted, 6 received, 14.2857% packet loss, time 6126ms
-> > > > > rtt min/avg/max/mdev = 0.351/437.416/1024.755/459.370 ms, pipe 2
-> > > > > darkapex at freya in ~
-> > > > >
-> > > > > If I revert the patch, or disable the deeper cpuidle state through
-> > > > > sysfs, the issue goes away.
-> > > > >
-> > > > > # echo 1 > /sys/devices/system/cpu/cpu$i/cpuidle/state1/disable
-> > > > >
-> > > > > PING debix (10.0.42.5) 56(84) bytes of data.
-> > > > > 64 bytes from debix (10.0.42.5): icmp_seq=1 ttl=64 time=0.482 ms
-> > > > > 64 bytes from debix (10.0.42.5): icmp_seq=2 ttl=64 time=2.28 ms
-> > > > > 64 bytes from debix (10.0.42.5): icmp_seq=3 ttl=64 time=2.26 ms
-> > > > > 64 bytes from debix (10.0.42.5): icmp_seq=4 ttl=64 time=0.848 ms
-> > > > > 64 bytes from debix (10.0.42.5): icmp_seq=5 ttl=64 time=0.406 ms
-> > > > > ^C
-> > > > > --- debix ping statistics ---
-> > > > > 5 packets transmitted, 5 received, 0% packet loss, time 4051ms
-> > > > > rtt min/avg/max/mdev = 0.406/1.255/2.280/0.842 ms
-> > > > >
-> > > > >>> Signed-off-by: Catalin Popescu <catalin.popescu@leica-geosystems.com>
-> > > > >>
-> > > > >> Applied, thanks!
-
--- 
-Regards,
-
-Laurent Pinchart
+Sincerely,
+Randy Jennings
 
