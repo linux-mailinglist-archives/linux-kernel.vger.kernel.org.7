@@ -1,138 +1,324 @@
-Return-Path: <linux-kernel+bounces-605488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3787A8A20F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:57:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4B9FA8A22E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:59:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 010FD441015
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:57:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 157E21900F4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3AD52BE0EE;
-	Tue, 15 Apr 2025 14:55:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF7642C257F;
+	Tue, 15 Apr 2025 14:55:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1Mvs+KGy"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="J2XO0sWF"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15E6429E047
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 14:55:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B56EF2C256B;
+	Tue, 15 Apr 2025 14:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744728923; cv=none; b=QAlmE6yJ2NUHsZJr1OkkYZpMXccFAxuuLhoFb88P9dU+osicq6Rro0jZKweV4jePWxD2v5MIzHX/BfLC18B7gjwIpDj9xfCdxL+PHpI+kagIH45UT4dKZhPLKqLZesJzQcNZc5jdpW09E4SI9VC9GuXi3lcH4yS5I+Z+ToQKCis=
+	t=1744728934; cv=none; b=K2nwE8LZ5bfUsntyF7SLP2L64m6Idcsi9AT6fC8Yl0P7S8Fjw+f4+DCltD8XYjPCrjv85cBUdKf7bjDEP/auDD0d96ULDtzf6EuTLGbEQ2D788GkGiJ6m4rX7LxZEaqYOz6gs0WexWmcQyhivvOelBGdbl06b9sFvEGXg0XIMHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744728923; c=relaxed/simple;
-	bh=Z25BFswi+RwDu8PUjbMKkshugsl78jlSI7Z+pvioYuw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Tar71aI4Efi8PLyOjP2yq1L7cNxGa7meYj7uNbs2ok2kF0Xyq+XjA9mT3hhHtcCUc776SNq5E+0f4KmYHi29JzKkEoVBG47Shp0BOnzaiB62FZVS0cDnfpWuegvfH8ccKxgUG5w1pEIkkIAyo2qbqlHjg7JH/E1hfugc/Y6IGXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1Mvs+KGy; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-22651aca434so45952085ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 07:55:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744728920; x=1745333720; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OuRBmgEllaRB5ZjobobNvVAEpYQN/37Jjkyiax0k//A=;
-        b=1Mvs+KGySCyCiakIyxepQ/tlcwnxflO1IOuKe2sYwwNF8Mwzi4ydXykI547h7M8ZFW
-         gxAnYPpT0Bc06swPzD0wmHdwuuHrSLZtHTLHq4/uzucyyGQErXX6ApWFERmfQTQGyYTG
-         qoo3QfqD5niNGerIu7zB5GU7bnieu3G0cMh3/CcaO9j1t3m0XDnBFqL8u5XDc/+fJSEV
-         i0EZ7Oq9ukuxCVTFqR6tmVHxFnkfVpnJ8otA44lqcd/5h5ZO5vJ8e5HHynu4SLvPejYO
-         ND2GIGXLJ41Kswdp5SaDQMAkL1ST985O3J94ivNhWPjU9048cZy63C7by4fepcj1c+zS
-         wVUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744728920; x=1745333720;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OuRBmgEllaRB5ZjobobNvVAEpYQN/37Jjkyiax0k//A=;
-        b=OXm//s2OPXyq7Kl6tIIsdfIpg3vfXHHSKaaVvhEu1YbxzDDbjKTUswyuDBNlbi2/uY
-         o6p2auRmLoxEpRBHJmwFtQkneANgwoIKBuhha6daQOyFODz8wpC460e0jzf/DEZEErUu
-         4eD93wu6DFND2sX903nK6neCOKw3YOKYTqdnY6PP9EDJfvEdEi4+uz0V0z22Nq7KUqeu
-         urG3szZzLlAFfjNhDtX1AihfCHHPX4CzQn8uRCSwCzrA2X5TP5jXBR+yBfCbx9nj129s
-         8K2UmhsT+56NoaNFGu7MwCSMyWQ8wTG6NyhN1cdERubWghEMMdwSnRVPN8O37Rf4p9nu
-         K2Fw==
-X-Forwarded-Encrypted: i=1; AJvYcCUrfQUcpjTDHqSstTuYsQSmgkqeprm/JDmwfaG6rNUNBextyGdafykL7JhZxgJU46PyD/55EWmQV0klqis=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyb5jx1FJZS3xd46igsHIn+Bm2vdH8hH/b7dKGmVygdO73kqav0
-	DwBzR5JTqNuaD7XYs5RpN7uUAwlECIx9LYhFtm4gEuzs9WAvLStFYtVjTYRfQFY1wm3YrX7I/KR
-	LBQ==
-X-Google-Smtp-Source: AGHT+IHH7mC1r9KS9+glc9Ei4mef4Tc//vYXWsg5yzy8MKjIFibb6b+8ibiq0JLHt6znMV7vWbcfa+6TwQ0=
-X-Received: from plev19.prod.google.com ([2002:a17:903:31d3:b0:224:efa:ef21])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:2345:b0:224:1af1:87ed
- with SMTP id d9443c01a7336-22bea4c71e9mr252498545ad.27.1744728920241; Tue, 15
- Apr 2025 07:55:20 -0700 (PDT)
-Date: Tue, 15 Apr 2025 07:55:19 -0700
-In-Reply-To: <d345b636-792f-4762-8c6c-2a7252294068@amd.com>
+	s=arc-20240116; t=1744728934; c=relaxed/simple;
+	bh=N/IC2RBvp5Cv/RWrRjB+DN53auEXsM/vkfWnZQPwIRw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bQWpFjmoFJ/cLZxAi1zW0K6XNSUv0EcqQ7Ci+gscYD6m7v0sXxGAUZQx5so9+eIThaNq4CiQcmwvr/ExHYsIewccRIRSLgTkn2hSUmxvAspL7IMxujtZV/Alp7r+AlYylaPVlY9DLhlZkmyknOIYwAHvnu4FbNu1CCBxDXyXq0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=J2XO0sWF; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (93-46-82-201.ip106.fastwebnet.it [93.46.82.201])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 46D8F594;
+	Tue, 15 Apr 2025 16:53:27 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1744728807;
+	bh=N/IC2RBvp5Cv/RWrRjB+DN53auEXsM/vkfWnZQPwIRw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=J2XO0sWFNgeNxO5AuoQcrXc19l5CjIWRvKQc0i1x1k5L6BDZ7mgmJ4oRIrK/gFlWa
+	 kU/0EzFJpnzOLYNWZG+CMlOGPXwp0P8gi38ul8gN1NHJtMtlyC0Vud2KDlwX7LfHaO
+	 D5bDXUE/sEMtE2juKda2uX56XDWPMevk/fvybUAU=
+Date: Tue, 15 Apr 2025 16:55:26 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: keke.li@amlogic.com
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kieran.bingham@ideasonboard.com, 
+	laurent.pinchart@ideasonboard.com, dan.scally@ideasonboard.com, jacopo.mondi@ideasonboard.com
+Subject: Re: [PATCH v8 10/10] Documentation: media: add documentation file
+ c3-isp.rst
+Message-ID: <3bordqs2ygaaj6d7yqs2cgvhc46szwf53ojsaz4aikvqmxxx3v@s5af6wtpzfxn>
+References: <20250414-c3isp-v8-0-9f89e537494e@amlogic.com>
+ <20250414-c3isp-v8-10-9f89e537494e@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250404193923.1413163-1-seanjc@google.com> <20250404193923.1413163-12-seanjc@google.com>
- <d345b636-792f-4762-8c6c-2a7252294068@amd.com>
-Message-ID: <Z_5zV_59D3a4ySW0@google.com>
-Subject: Re: [PATCH 11/67] KVM: SVM: Delete IRTE link from previous vCPU
- irrespective of new routing
-From: Sean Christopherson <seanjc@google.com>
-To: Sairaj Kodilkar <sarunkod@amd.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Joerg Roedel <joro@8bytes.org>, 
-	David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>, kvm@vger.kernel.org, 
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Maxim Levitsky <mlevitsk@redhat.com>, Joao Martins <joao.m.martins@oracle.com>, 
-	David Matlack <dmatlack@google.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250414-c3isp-v8-10-9f89e537494e@amlogic.com>
 
-On Tue, Apr 15, 2025, Sairaj Kodilkar wrote:
-> On 4/5/2025 1:08 AM, Sean Christopherson wrote:
-> > Delete the IRTE link from the previous vCPU irrespective of the new
-> > routing state.  This is a glorified nop (only the ordering changes), as
-> > both the "posting" and "remapped" mode paths pre-delete the link.
-> > 
-> > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > ---
-> >   arch/x86/kvm/svm/avic.c | 8 ++++++--
-> >   1 file changed, 6 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/arch/x86/kvm/svm/avic.c b/arch/x86/kvm/svm/avic.c
-> > index 02b6f0007436..e9ded2488a0b 100644
-> > --- a/arch/x86/kvm/svm/avic.c
-> > +++ b/arch/x86/kvm/svm/avic.c
-> > @@ -870,6 +870,12 @@ int avic_pi_update_irte(struct kvm_kernel_irqfd *irqfd, struct kvm *kvm,
-> >   	if (!kvm_arch_has_assigned_device(kvm) || !kvm_arch_has_irq_bypass())
-> >   		return 0;
-> > +	/*
-> > +	 * If the IRQ was affined to a different vCPU, remove the IRTE metadata
-> > +	 * from the *previous* vCPU's list.
-> > +	 */
-> > +	svm_ir_list_del(irqfd);
-> > +
-> >   	pr_debug("SVM: %s: host_irq=%#x, guest_irq=%#x, set=%#x\n",
-> >   		 __func__, host_irq, guest_irq, set);
-> > @@ -892,8 +898,6 @@ int avic_pi_update_irte(struct kvm_kernel_irqfd *irqfd, struct kvm *kvm,
-> >   		WARN_ON_ONCE(new && memcmp(e, new, sizeof(*new)));
-> > -		svm_ir_list_del(irqfd);
-> > -
-> >   		/**
-> >   		 * Here, we setup with legacy mode in the following cases:
-> >   		 * 1. When cannot target interrupt to a specific vcpu.
-> 
-> Hi sean,
-> Why not combine patch 10 and patch 11 ? Is there a reason to separate
-> the changes ?
+Hi Keke
+   sorry, I missed this patch in my previous reviews.
 
-To provide distinct bisection points if one (or both) changes introduces a bug.
+I think you're already at v8 and there's no need to resend the whole
+series. I would like to send a pull request and see this series merged
+soon.
 
-Patch 10, "Delete IRTE link from previous vCPU before setting new IRTE", is a
-non-trivial change in how KVM tracks per-vCPU IRTEs.
+I've run the series through CI (applying a few minors to patch titles
+to fix a few checkpatch warnings[1])
 
-This patch is also a somewhat non-trivial change, in that removes IRTEs from the
-per-vCPU list even when the new routing isn't an MSI.
+I can apply the below suggestions with your ack, re-run the series
+through CI and send a pull request. Or, if you prefer to resend I'll
+wait for a new version.
 
-Ah, but the changelog for this patch is wrong (I wrote a number of the changelogs
-several months after I wrote the code, ugh).  Either that or I've now confused
-myself.  I'll stare at this a bit more and rewrite the changelog unless current
-me is the one that's confused.
+What do you prefer ?
+
+See my comments below
+
+On Mon, Apr 14, 2025 at 03:35:23PM +0800, Keke Li via B4 Relay wrote:
+> From: Keke Li <keke.li@amlogic.com>
+>
+> Add the file 'c3-isp.rst' that documents the c3-isp driver.
+>
+> Signed-off-by: Keke Li <keke.li@amlogic.com>
+> ---
+>  Documentation/admin-guide/media/c3-isp.dot      |  26 ++++++
+>  Documentation/admin-guide/media/c3-isp.rst      | 109 ++++++++++++++++++++++++
+>  Documentation/admin-guide/media/v4l-drivers.rst |   1 +
+>  MAINTAINERS                                     |   2 +
+>  4 files changed, 138 insertions(+)
+>
+> diff --git a/Documentation/admin-guide/media/c3-isp.dot b/Documentation/admin-guide/media/c3-isp.dot
+> new file mode 100644
+> index 000000000000..42dc931ee84a
+> --- /dev/null
+> +++ b/Documentation/admin-guide/media/c3-isp.dot
+> @@ -0,0 +1,26 @@
+> +digraph board {
+> +	rankdir=TB
+> +	n00000001 [label="{{<port0> 0 | <port1> 1} | c3-isp-core\n/dev/v4l-subdev0 | {<port2> 2 | <port3> 3 | <port4> 4 | <port5> 5}}", shape=Mrecord, style=filled, fillcolor=green]
+> +	n00000001:port3 -> n00000008:port0
+> +	n00000001:port4 -> n0000000b:port0
+> +	n00000001:port5 -> n0000000e:port0
+> +	n00000001:port2 -> n00000027
+> +	n00000008 [label="{{<port0> 0} | c3-isp-resizer0\n/dev/v4l-subdev1 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
+> +	n00000008:port1 -> n00000016 [style=bold]
+> +	n0000000b [label="{{<port0> 0} | c3-isp-resizer1\n/dev/v4l-subdev2 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
+> +	n0000000b:port1 -> n0000001a [style=bold]
+> +	n0000000e [label="{{<port0> 0} | c3-isp-resizer2\n/dev/v4l-subdev3 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
+> +	n0000000e:port1 -> n00000023 [style=bold]
+> +	n00000011 [label="{{<port0> 0} | c3-mipi-adapter\n/dev/v4l-subdev4 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
+> +	n00000011:port1 -> n00000001:port0 [style=bold]
+> +	n00000016 [label="c3-isp-cap0\n/dev/video0", shape=box, style=filled, fillcolor=yellow]
+> +	n0000001a [label="c3-isp-cap1\n/dev/video1", shape=box, style=filled, fillcolor=yellow]
+> +	n0000001e [label="{{<port0> 0} | c3-mipi-csi2\n/dev/v4l-subdev5 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
+> +	n0000001e:port1 -> n00000011:port0 [style=bold]
+> +	n00000023 [label="c3-isp-cap2\n/dev/video2", shape=box, style=filled, fillcolor=yellow]
+> +	n00000027 [label="c3-isp-stats\n/dev/video3", shape=box, style=filled, fillcolor=yellow]
+> +	n0000002b [label="c3-isp-params\n/dev/video4", shape=box, style=filled, fillcolor=yellow]
+> +	n0000002b -> n00000001:port1
+> +	n0000003f [label="{{} | imx290 2-001a\n/dev/v4l-subdev6 | {<port0> 0}}", shape=Mrecord, style=filled, fillcolor=green]
+> +	n0000003f:port0 -> n0000001e:port0 [style=bold]
+> +}
+> diff --git a/Documentation/admin-guide/media/c3-isp.rst b/Documentation/admin-guide/media/c3-isp.rst
+> new file mode 100644
+> index 000000000000..8adac4605a6a
+> --- /dev/null
+> +++ b/Documentation/admin-guide/media/c3-isp.rst
+> @@ -0,0 +1,109 @@
+> +.. SPDX-License-Identifier: (GPL-2.0-only OR MIT)
+> +
+> +.. include:: <isonum.txt>
+> +
+> +=================================================
+> +Amlogic C3 Image Signal Processing (C3ISP) driver
+> +=================================================
+> +
+> +Introduction
+> +============
+> +
+> +This file documents the Amlogic C3ISP driver located under
+> +drivers/media/platform/amlogic/c3/isp.
+> +
+> +The current version of the driver supports the C3ISP found on
+> +Amlogic C308L processor.
+> +
+> +The driver implements V4L2, Media controller and V4L2 subdev interfaces.
+> +Camera sensor using V4L2 subdev interface in the kernel is supported.
+> +
+> +The driver has been tested on AW419-C308L-Socket platform.
+> +
+> +Anlogic Camera hardware
+
+s/Anlogic/Amlogic
+
+> +=======================
+> +
+> +The Camera hardware found on C308L processors and supported by
+> +the driver consists of:
+> +
+> +- 1 MIPI-CSI2 module. It handle the Physical layer of the CSI2 receivers and
+> +  receive MIPI data.
+> +  A separate camera sensor can be connected to MIPI-CSi2 module.
+
+Do not break lines when not necessary
+
+s/CSi2/CSI-2
+
+> +- 1 MIPI-ADAPTER module. Organize MIPI data to meet ISP input requirements and
+> +  send MIPI data to ISP
+> +- 1 ISP (Image Signal Processing) module. Contain a pipeline of image processing
+> +  hardware blocks.
+> +  The ISP pipeline contains three scalers at the end.
+> +  The ISP also contains the DMA interface which writes the output data to memory.
+
+Ditto
+
+> +
+> +A high level functional view of the C3 ISP is presented below. The ISP
+> +takes input from the sensor.::
+> +
+> +                                                                   +---------+    +-------+
+> +                                                                   | Scaler  |--->| WRMIF |
+> +  +---------+    +------------+    +--------------+    +-------+   |---------+    +-------+
+> +  | Sensor  |--->| MIPI CSI-2 |--->| MIPI ADAPTER |--->|  ISP  |---|---------+    +-------+
+> +  +---------+    +------------+    +--------------+    +-------+   | Scaler  |--->| WRMIF |
+> +                                                                   +---------+    +-------+
+> +                                                                   |---------+    +-------+
+> +                                                                   | Scaler  |--->| WRMIF |
+> +                                                                   +---------+    +-------+
+> +
+> +Supported functionality
+> +=======================
+> +
+> +The current version of the driver supports:
+> +
+> +- Input from camera sensor via MIPI-CSI2;
+
+s/;/.
+
+> +
+> +- Pixel output interface of ISP
+> +
+> +  - Scaling support. Configuration of the scaler module
+> +    for downscalling with ratio up to 8x.
+
+To be honest I would drop this paragraph.
+
+> +
+> +Driver Architecture and Design
+> +==============================
+> +
+> +The driver implements the V4L2 subdev interface. With the goal to model the
+
+The driver also implements the V4L2 video capture interface and the
+Media Controller interface.
+
+To be honest, I would drop this first phrase.
+
+
+> +hardware links between the modules and to expose a clean, logical and usable
+> +interface, the driver is split into V4L2 sub-devices as follows:
+
+s/is split into/registers the following/
+s/as follows//
+
+> +
+> +- 1 c3-mipi-csi2 sub-device - mipi-csi2 is represented by a single sub-device.
+> +- 1 c3-mipi-adapter sub-device - mipi-adapter is represented by a single sub-devices.
+> +- 1 c3-isp-core sub-device - isp-core is represented by a single sub-devices.
+> +- 3 c3-isp-resizer sub-devices - isp-resizer is represented by a number of sub-devices
+> +  equal to the number of capture device.
+> +
+> +c3-isp-core sub-device is linked to 2 separate video device nodes and
+> +3 c3-isp-resizer sub-devices nodes.
+> +
+> +- 1 capture statistics video device node.
+> +- 1 output parameters video device node.
+> +- 3 c3-isp-resizer sub-device nodes.
+> +
+> +c3-isp-resizer sub-device is linked to capture video device node.
+> +
+> +- c3-isp-resizer0 is linked to c3-isp-cap0
+> +- c3-isp-resizer1 is linked to c3-isp-cap1
+> +- c3-isp-resizer2 is linked to c3-isp-cap2
+> +
+> +The media controller pipeline graph is as follows (with connected a
+> +IMX290 camera sensor):
+> +
+> +.. _isp_topology_graph:
+> +
+> +.. kernel-figure:: c3-isp.dot
+> +    :alt:   c3-isp.dot
+> +    :align: center
+> +
+> +    Media pipeline topology
+> +
+> +Implementation
+> +==============
+> +
+> +Runtime configuration of the hardware via 'c3-isp-params' video device node.
+> +Acquiring statistics of ISP hardware via 'c3-isp-stats' video device node.
+> +Acquiring output image of ISP hardware via 'c3-isp-cap[0, 2]' video device node.
+> +
+> +The output size of the scaler module in the ISP is configured with
+> +the pixel format of 'c3-isp-cap[0, 2]' video device node.
+
+The output size.. configured with the pixel format ?
+
+I would say:
+
+The final picture size and format is configured using the V4L2 video
+capture interface on the 'c3-isp-cap[0, 2]' video device nodes.
+
+I would also mention the ISP is supported in libcamera (or better, on
+its way to be supported by libcamera).
+
+I can send an update to this patch for your review. Is this ok ?
+
+I'll check with maintainers on how to then moved forward and collect
+this series.
+
+For reference, the branch where I applied minor fixups to pass
+media-ci style checks and with this last patch updated is available
+here
+https://gitlab.freedesktop.org/linux-media/users/jmondi/-/pipelines/1406119
+
+> diff --git a/Documentation/admin-guide/media/v4l-drivers.rst b/Documentation/admin-guide/media/v4l-drivers.rst
+> index e8761561b2fe..3bac5165b134 100644
+> --- a/Documentation/admin-guide/media/v4l-drivers.rst
+> +++ b/Documentation/admin-guide/media/v4l-drivers.rst
+> @@ -10,6 +10,7 @@ Video4Linux (V4L) driver-specific documentation
+>  	:maxdepth: 2
+>
+>  	bttv
+> +	c3-isp
+>  	cafe_ccic
+>  	cx88
+>  	fimc
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index b2bf9c6cd194..4b06a798d30c 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1259,6 +1259,8 @@ AMLOGIC ISP DRIVER
+>  M:	Keke Li <keke.li@amlogic.com>
+>  L:	linux-media@vger.kernel.org
+>  S:	Maintained
+> +F:	Documentation/admin-guide/media/c3-isp.dot
+> +F:	Documentation/admin-guide/media/c3-isp.rst
+>  F:	Documentation/devicetree/bindings/media/amlogic,c3-isp.yaml
+>  F:	Documentation/userspace-api/media/v4l/metafmt-c3-isp.rst
+>  F:	drivers/media/platform/amlogic/c3/isp/
+>
+> --
+> 2.49.0
+>
+>
+>
 
