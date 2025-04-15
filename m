@@ -1,194 +1,208 @@
-Return-Path: <linux-kernel+bounces-606439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B36EA8AF41
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 06:45:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C743AA8A462
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 18:42:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 884CC441F1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 04:45:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15C013A88FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:42:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A67A22DF97;
-	Wed, 16 Apr 2025 04:44:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1722918E9;
+	Tue, 15 Apr 2025 16:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eeAJE8da"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sFtX3Hjl";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iMqvCkzi";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sFtX3Hjl";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iMqvCkzi"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F18A22A4E9
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 04:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C61D268C79
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 16:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744778651; cv=none; b=fyZXO7KNScmhHs+tdVwvzxY/W9IEJZpOduF38KXhYbP1/Ig39HW6C11+phPG4QAP88x05m3ufRvvb/NnbIsFl/0iJS0z68AdVravWuo1Uj5+v0O2ucmk5GuM6xK1ZSPI3cCFUSLmJ2/jvnQrq7UaMZAmKh0P1HGawauJcW1rlys=
+	t=1744735366; cv=none; b=dAO8wT6rhS6tr1cL9lNoIzXE7fzl6P1M/sYiI3qKWjsMe9NkwFwY8trn4cx4ko2iPDM6Qld05yFefTaKQ/R0LxmjjLo2FBW61Qv6ipwGpjJGWnnsY/UBfTBtFgAM8cTNpNe7aYPSDVit6lSYY6R2z3NOX/POmJbsG6WPKfpkQnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744778651; c=relaxed/simple;
-	bh=gEpbjOnr0CQ3qBxC6svMJI0TetrK6acVwdAzJ/+3Eso=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=I3hRgHAQG/3/FSZKfFSalHmeeoQLk7ftQKE9MhvFb0RmZ5emHwEAEmRZM7kBiu9KZRtboSe8Tq1TppD8LclzeIIWnhkIEOz44V57WaWWavxhSQUG0L+shfmP865HGB5ZSPm2zSBeTLBklrJ9urmJI4WR0E9YEQHFy2+fPrRWEv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eeAJE8da; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744778650; x=1776314650;
-  h=date:from:to:cc:subject:message-id;
-  bh=gEpbjOnr0CQ3qBxC6svMJI0TetrK6acVwdAzJ/+3Eso=;
-  b=eeAJE8daSSg7EOl/XpSnpkOO2EUo4mzfcAG4lKh2pMy4P+g3yQEos9sn
-   ELu4xp/jr4NW4S52JalE4Yy+ahGeZi4XKE+2Qv/8YveWuMK0I6lC3cpOK
-   7pdMGmtVbK9NsFU/fl8GBeYheJFRc2LoGj0T+ZJpxYSltJZvH7eber0Zu
-   ij3aTL8ZrRqMJtgE4RbFtopbv8DHmjFaQ2Urpqi1aTIrRoZ5G9r7bfu97
-   CDLmYXiBiKZEivNJkH2MNJUMU6HWkmevB9VZdJTJRFOinAXWd5iX3V6Jn
-   MLTG3gxG4WxSUDD5sLvcaE1aP5R/f09bwzWdTqoOVunc5g3e/a5/5ZXRc
-   w==;
-X-CSE-ConnectionGUID: MGwRhUGlSWOA7+puXTVtAg==
-X-CSE-MsgGUID: AnldCRCtRuCwd6jIDYsoRg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="46025590"
-X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
-   d="scan'208";a="46025590"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 21:44:07 -0700
-X-CSE-ConnectionGUID: VdRzONbSSXKTMyMfFNV5qg==
-X-CSE-MsgGUID: 5a5KManJTdeBnH+LI3aE+A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
-   d="scan'208";a="135313493"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 15 Apr 2025 21:44:07 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u4jN2-000GkU-2r;
-	Tue, 15 Apr 2025 16:42:48 +0000
-Date: Wed, 16 Apr 2025 00:42:24 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/cpu] BUILD SUCCESS
- dd86a1d013e0c94fedd060514b9e7be2988ef320
-Message-ID: <202504160018.31J522l2-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1744735366; c=relaxed/simple;
+	bh=7guA22Z/jVIhTId3TiU3XjIQwgyWBjZKeRgCg5KS4MA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aDLuoqw3MPF9PVl5wg83RT5jyDxMCUHpG5U1NECy32z4yptXy2vn1OXCN06tG+KO1UAkTsXR/sgHJbEWcmqlxDGJXCgPPhuAfPYR8F+JGJtw7itAFgCdIBkoh6BRFFnsjkmctQLR2DHOsbfq7IOUP7wnCC4KZHP5Ag9BeCCa60I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sFtX3Hjl; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iMqvCkzi; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sFtX3Hjl; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iMqvCkzi; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id C02BB1F461;
+	Tue, 15 Apr 2025 16:42:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744735362; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uYXbDnEVw6T3gFBR1xGBJ2FVAU/2FayUDTj0+2zKHis=;
+	b=sFtX3Hjlx1wOA1FTuoTIpaVVg+kPH1ZDX/PiG2f5KPK2R0WOWf3i0d+6ZGvERhAUFyTauW
+	sKpMtvqWfTWyQoC+C+tqyH8Sbl8yD5IgoJ+9mb8C6KOHW0nFnlgBn4o2Skrrlv1A3h25H9
+	5cxWdGxrV/h58/r7z7+ZDLGoYMXuG/Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744735362;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uYXbDnEVw6T3gFBR1xGBJ2FVAU/2FayUDTj0+2zKHis=;
+	b=iMqvCkziOv6yRDVxHSqu2D65vGD1SOJL+/mbf57m7xxMKydTRf63ng8sVgHtnhD6xbMf+W
+	avZl3LJdSRIvoQCQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744735362; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uYXbDnEVw6T3gFBR1xGBJ2FVAU/2FayUDTj0+2zKHis=;
+	b=sFtX3Hjlx1wOA1FTuoTIpaVVg+kPH1ZDX/PiG2f5KPK2R0WOWf3i0d+6ZGvERhAUFyTauW
+	sKpMtvqWfTWyQoC+C+tqyH8Sbl8yD5IgoJ+9mb8C6KOHW0nFnlgBn4o2Skrrlv1A3h25H9
+	5cxWdGxrV/h58/r7z7+ZDLGoYMXuG/Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744735362;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uYXbDnEVw6T3gFBR1xGBJ2FVAU/2FayUDTj0+2zKHis=;
+	b=iMqvCkziOv6yRDVxHSqu2D65vGD1SOJL+/mbf57m7xxMKydTRf63ng8sVgHtnhD6xbMf+W
+	avZl3LJdSRIvoQCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B1BBF137A5;
+	Tue, 15 Apr 2025 16:42:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id yqxZK4KM/mdeZgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 15 Apr 2025 16:42:42 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 3A5D5A0947; Tue, 15 Apr 2025 18:42:42 +0200 (CEST)
+Date: Tue, 15 Apr 2025 18:42:42 +0200
+From: Jan Kara <jack@suse.cz>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Martijn Coenen <maco@android.com>, 
+	Alyssa Ross <hi@alyssa.is>, Christoph Hellwig <hch@lst.de>, Greg KH <greg@kroah.com>, 
+	Jan Kara <jack@suse.cz>, John Ogness <john.ogness@linutronix.de>, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v3] loop: LOOP_SET_FD: send uevents for partitions
+Message-ID: <2wzcj4odajfsvubribqetasj26pp5u3wnusnowwwjiwy4lj5p5@vpa7vwwseyq2>
+References: <20250415-loop-uevent-changed-v3-1-60ff69ac6088@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250415-loop-uevent-changed-v3-1-60ff69ac6088@linutronix.de>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/cpu
-branch HEAD: dd86a1d013e0c94fedd060514b9e7be2988ef320  x86/bugs: Remove X86_BUG_MMIO_UNKNOWN
+On Tue 15-04-25 16:55:06, Thomas Weiﬂschuh wrote:
+> Remove the suppression of the uevents before scanning for partitions.
+> The partitions inherit their suppression settings from their parent device,
+> which lead to the uevents being dropped.
+> 
+> This is similar to the same changes for LOOP_CONFIGURE done in
+> commit bb430b694226 ("loop: LOOP_CONFIGURE: send uevents for partitions").
+> 
+> Fixes: 498ef5c777d9 ("loop: suppress uevents while reconfiguring the device")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
 
-elapsed time: 1455m
+Looks good. Feel free to add:
 
-configs tested: 102
-configs skipped: 5
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+								Honza
 
-tested configs:
-alpha                            allyesconfig    gcc-14.2.0
-arc                              allmodconfig    gcc-14.2.0
-arc                              allyesconfig    gcc-14.2.0
-arc                   randconfig-001-20250415    gcc-14.2.0
-arm                              allmodconfig    gcc-14.2.0
-arm                              allyesconfig    gcc-14.2.0
-arm                   randconfig-002-20250415    clang-21
-arm                   randconfig-003-20250415    gcc-10.5.0
-arm                   randconfig-004-20250415    gcc-6.5.0
-arm                         wpcm450_defconfig    gcc-14.2.0
-arm64                            allmodconfig    clang-19
-arm64                 randconfig-002-20250415    gcc-7.5.0
-arm64                 randconfig-003-20250415    gcc-9.5.0
-arm64                 randconfig-004-20250415    gcc-9.5.0
-csky                  randconfig-001-20250415    gcc-13.3.0
-csky                  randconfig-002-20250415    gcc-14.2.0
-hexagon                          allmodconfig    clang-17
-hexagon                          allyesconfig    clang-21
-hexagon               randconfig-001-20250415    clang-20
-hexagon               randconfig-002-20250415    clang-21
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250415    clang-20
-i386        buildonly-randconfig-002-20250415    clang-20
-i386        buildonly-randconfig-003-20250415    clang-20
-i386        buildonly-randconfig-004-20250415    clang-20
-i386        buildonly-randconfig-005-20250415    gcc-12
-i386        buildonly-randconfig-006-20250415    gcc-12
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    gcc-14.2.0
-loongarch             randconfig-001-20250415    gcc-14.2.0
-loongarch             randconfig-002-20250415    gcc-14.2.0
-m68k                             allmodconfig    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-m68k                             allyesconfig    gcc-14.2.0
-m68k                        m5272c3_defconfig    gcc-14.2.0
-microblaze                       allmodconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-microblaze                       allyesconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-nios2                             allnoconfig    gcc-14.2.0
-nios2                 randconfig-001-20250415    gcc-13.3.0
-nios2                 randconfig-002-20250415    gcc-7.5.0
-openrisc                          allnoconfig    gcc-14.2.0
-openrisc                         allyesconfig    gcc-14.2.0
-parisc                           allmodconfig    gcc-14.2.0
-parisc                            allnoconfig    gcc-14.2.0
-parisc                           allyesconfig    gcc-14.2.0
-parisc                randconfig-001-20250415    gcc-12.4.0
-parisc                randconfig-002-20250415    gcc-10.5.0
-powerpc                          allmodconfig    gcc-14.2.0
-powerpc                           allnoconfig    gcc-14.2.0
-powerpc                          allyesconfig    clang-21
-powerpc                        cell_defconfig    gcc-14.2.0
-powerpc               randconfig-001-20250415    gcc-5.5.0
-powerpc               randconfig-002-20250415    clang-17
-powerpc               randconfig-003-20250415    gcc-7.5.0
-powerpc64             randconfig-001-20250415    gcc-7.5.0
-powerpc64             randconfig-002-20250415    clang-17
-powerpc64             randconfig-003-20250415    gcc-10.5.0
-riscv                            allmodconfig    clang-21
-riscv                             allnoconfig    gcc-14.2.0
-riscv                            allyesconfig    clang-16
-riscv                 randconfig-001-20250415    gcc-14.2.0
-riscv                 randconfig-002-20250415    gcc-9.3.0
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-21
-s390                             allyesconfig    gcc-14.2.0
-s390                  randconfig-001-20250415    clang-21
-s390                  randconfig-002-20250415    gcc-7.5.0
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                          kfr2r09_defconfig    gcc-14.2.0
-sh                    randconfig-001-20250415    gcc-11.5.0
-sh                    randconfig-002-20250415    gcc-9.3.0
-sh                           se7712_defconfig    gcc-14.2.0
-sparc                            alldefconfig    gcc-14.2.0
-sparc                            allmodconfig    gcc-14.2.0
-sparc                             allnoconfig    gcc-14.2.0
-sparc                 randconfig-001-20250415    gcc-6.5.0
-sparc                 randconfig-002-20250415    gcc-12.4.0
-sparc64               randconfig-001-20250415    gcc-14.2.0
-sparc64               randconfig-002-20250415    gcc-12.4.0
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-21
-um                               allyesconfig    gcc-12
-um                    randconfig-001-20250415    clang-21
-um                    randconfig-002-20250415    clang-21
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250415    clang-20
-x86_64      buildonly-randconfig-002-20250415    gcc-11
-x86_64      buildonly-randconfig-003-20250415    gcc-12
-x86_64      buildonly-randconfig-004-20250415    clang-20
-x86_64      buildonly-randconfig-005-20250415    clang-20
-x86_64      buildonly-randconfig-006-20250415    gcc-12
-x86_64                              defconfig    gcc-11
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                randconfig-001-20250415    gcc-6.5.0
-xtensa                randconfig-002-20250415    gcc-10.5.0
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> ---
+> Changes in v3:
+> - Rebase onto block/block-6.15
+> - Drop already applied patch "loop: properly send KOBJ_CHANGED uevent for disk device"
+> - Add patch to fix partition uevents for LOOP_SET_FD
+> - Link to v2: https://lore.kernel.org/r/20250415-loop-uevent-changed-v2-1-0c4e6a923b2a@linutronix.de
+> 
+> Changes in v2:
+> - Use correct Fixes tag
+> - Rework commit message slightly
+> - Rebase onto v6.15-rc1
+> - Link to v1: https://lore.kernel.org/r/20250317-loop-uevent-changed-v1-1-cb29cb91b62d@linutronix.de
+> ---
+>  drivers/block/loop.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+> index 3be7f00e7fc740da2745ffbccfcebe53eef2ddaa..e9ec7a45f3f2d1dd2a82b3506f3740089a20ae05 100644
+> --- a/drivers/block/loop.c
+> +++ b/drivers/block/loop.c
+> @@ -662,12 +662,12 @@ static int loop_change_fd(struct loop_device *lo, struct block_device *bdev,
+>  	 * dependency.
+>  	 */
+>  	fput(old_file);
+> +	dev_set_uevent_suppress(disk_to_dev(lo->lo_disk), 0);
+>  	if (partscan)
+>  		loop_reread_partitions(lo);
+>  
+>  	error = 0;
+>  done:
+> -	dev_set_uevent_suppress(disk_to_dev(lo->lo_disk), 0);
+>  	kobject_uevent(&disk_to_dev(lo->lo_disk)->kobj, KOBJ_CHANGE);
+>  	return error;
+>  
+> @@ -675,6 +675,7 @@ static int loop_change_fd(struct loop_device *lo, struct block_device *bdev,
+>  	loop_global_unlock(lo, is_loop);
+>  out_putf:
+>  	fput(file);
+> +	dev_set_uevent_suppress(disk_to_dev(lo->lo_disk), 0);
+>  	goto done;
+>  }
+>  
+> 
+> ---
+> base-commit: 7ed2a771b5fb3edee9c4608181235c30b40bb042
+> change-id: 20250307-loop-uevent-changed-aa3690f43e03
+> 
+> Best regards,
+> -- 
+> Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
