@@ -1,196 +1,105 @@
-Return-Path: <linux-kernel+bounces-605173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93A1CA89DEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:25:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99B10A89D8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:18:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7404A3BB2AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:22:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 133C14405A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:17:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A8851FECA1;
-	Tue, 15 Apr 2025 12:20:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Lj1x0WL3";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="yZcjFgy/";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Lj1x0WL3";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="yZcjFgy/"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A930F28A1DE
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 12:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7462951D6;
+	Tue, 15 Apr 2025 12:16:36 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9047628469B;
+	Tue, 15 Apr 2025 12:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744719656; cv=none; b=jlXLaj27+g0PLi8Z73zw4qrMb0xJp6C6IspQ2S953UGCcwciclAEQiej90F6KY1y9hohIkIw2qFkZqHqSNRV3yIHa5E3+OHux9Wb7Ep79Hq7GwoBoeqA/vUqLj7dMGtdoJJBtrgSvQtSMRLCFYGvwDdw3O0euBpSPahnWvWEr4o=
+	t=1744719396; cv=none; b=uWnDbbF2pKBrBArPZFohStH9ilQ/fxicw54AFRATVwtvmEPcPNERIokbcsW/5k+o5uSr7KblrUUJ68xfJ0OAVbe0grqD6Cffr85HKjPyUNErvAzT79hjJhMMA7dxfHAxNjpW8BXBXRZHXLf7oVcR5MmZBj7unIOjLBr3qv3mCOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744719656; c=relaxed/simple;
-	bh=XjFSlnP3mZ7ucy8HCfasCICWH2BlmsJJDcC4GxYYFw4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uZduTLqOeDpD4x3L2OwE44zJpJaj0nzUZAxgfkHAs0xpqtNtTX7dyebT+LsBimeHJjm/cuUicKCTYODR5Wfc3TWJkKa00WSHyKwe2jNHcT6xYvKZUTXCIBJ4HNwG0xslqzu8bC3nxbgVkEPtnsEfTFHeJf1nKZL5AnAERezyxmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Lj1x0WL3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=yZcjFgy/; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Lj1x0WL3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=yZcjFgy/; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id AE76021164;
-	Tue, 15 Apr 2025 12:20:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744719652; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=ScWbKkMiyTdcG4zwvDzcd9drTM2WJl0dxMBhM6X1TEY=;
-	b=Lj1x0WL397POmKjNMVxqV1yjeYn6RWA1iR4Zbi28457S7S/9WQnWmgbwsSyFbnAOfmdK+H
-	J7rE8h8kgAOyKcyM44nFIpyURa5wUF4kePeLGK9LlCip0U7x8dis+PGsuy3Z7RiC30h2rw
-	gRfVzOr2EGLQHa/kvep8bDKSYWAscXI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744719652;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=ScWbKkMiyTdcG4zwvDzcd9drTM2WJl0dxMBhM6X1TEY=;
-	b=yZcjFgy/JoX8SFAHCxNf0a4HDHKNboFDzAMubaFgp3j63abYa6E2cYuDn+CW+lRVc57k5I
-	pxdTLmM2MQjJUcAA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Lj1x0WL3;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="yZcjFgy/"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744719652; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=ScWbKkMiyTdcG4zwvDzcd9drTM2WJl0dxMBhM6X1TEY=;
-	b=Lj1x0WL397POmKjNMVxqV1yjeYn6RWA1iR4Zbi28457S7S/9WQnWmgbwsSyFbnAOfmdK+H
-	J7rE8h8kgAOyKcyM44nFIpyURa5wUF4kePeLGK9LlCip0U7x8dis+PGsuy3Z7RiC30h2rw
-	gRfVzOr2EGLQHa/kvep8bDKSYWAscXI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744719652;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=ScWbKkMiyTdcG4zwvDzcd9drTM2WJl0dxMBhM6X1TEY=;
-	b=yZcjFgy/JoX8SFAHCxNf0a4HDHKNboFDzAMubaFgp3j63abYa6E2cYuDn+CW+lRVc57k5I
-	pxdTLmM2MQjJUcAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4411B139A1;
-	Tue, 15 Apr 2025 12:20:52 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id BRnvDSRP/mecEAAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Tue, 15 Apr 2025 12:20:52 +0000
-From: Oscar Salvador <osalvador@suse.de>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Muchun Song <muchun.song@linux.dev>,
-	David Hildenbrand <david@redhat.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH] mm, hugetlb: Avoid passing a null nodemask when there is mbind policy
-Date: Tue, 15 Apr 2025 14:15:03 +0200
-Message-ID: <20250415121503.376811-1-osalvador@suse.de>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1744719396; c=relaxed/simple;
+	bh=Jalx0jktLdqJ0meoKTF6WfsBEnJQ1W/zMyKteV/2hQM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KMrta1jM5czRbux7MlPFqqHEv5KA4tbLaXE3A+S1trw2t19W0kBNm+osouszP05UXoecG0CQVXmF1WG+e8Yvad3GgaA+0W84F6JhKZUxOnOclFAqac5gCYVq/uSOpVDT3F2R7RfoEOdwkiXP6feex+mVFUNjF0YbrXKX1IEPhbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [223.64.68.238])
+	by gateway (Coremail) with SMTP id _____8AxCGoZTv5n+wa+AA--.53053S3;
+	Tue, 15 Apr 2025 20:16:25 +0800 (CST)
+Received: from [127.0.0.1] (unknown [223.64.68.238])
+	by front1 (Coremail) with SMTP id qMiowMAxTsUVTv5nuiqDAA--.38838S2;
+	Tue, 15 Apr 2025 20:16:24 +0800 (CST)
+Message-ID: <5bf96932-330c-483c-9a09-e84b73cd14ca@loongson.cn>
+Date: Tue, 15 Apr 2025 20:16:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: AE76021164
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] pwm: loongson: Fix an error code in probe()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Huacai Chen <chenhuacai@kernel.org>, Juxin Gao <gaojuxin@loongson.cn>,
+ linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <6965a480-745c-426f-b17b-e96af532578f@stanley.mountain>
+From: Binbin Zhou <zhoubinbin@loongson.cn>
+In-Reply-To: <6965a480-745c-426f-b17b-e96af532578f@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:qMiowMAxTsUVTv5nuiqDAA--.38838S2
+X-CM-SenderInfo: p2kr3uplqex0o6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj9xXoW7Xr17uryfKFW8XFW5trWUAwc_yoWDKFb_uw
+	1I9rnrGr1DAr1qk34avFWfAFW2vFWUZw109wsrtw4Iqa4vg3Z5tFyrXrs2gFnrXr4fAF98
+	X39rJryIk34rAosvyTuYvTs0mTUanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUj1kv1TuYvT
+	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+	cSsGvfJTRUUUbz8YFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
+	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0
+	oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc02F4
+	0EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_
+	Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxAIw28IcxkI7VAKI48JMx
+	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
+	wI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
+	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v2
+	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
+	WUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUcDDGUUUUU
 
-Before trying to allocate a page, gather_surplus_pages() sets up a nodemask
-for the nodes we can allocate from, but instead of passing the nodemask
-down the road to the page allocator, it iterates over the nodes within that
-nodemask right there, meaning that the page allocator will receive a preferred_nid
-and a null nodemask.
+Hi Dan:
 
-This is a problem when using a memory policy, because it might be that
-the page allocator ends up using a node as a fallback which is not
-represented in the policy.
+Sorry for my late reply and thanks for fixing my cheap mistake.
 
-Avoid that by passing the nodemask directly to the page allocator, so it can
-filter out fallback nodes that are not part of the nodemask.
-
-Signed-off-by: Oscar Salvador <osalvador@suse.de>
----
- mm/hugetlb.c | 22 ++++++----------------
- 1 file changed, 6 insertions(+), 16 deletions(-)
-
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index ccc4f08f8481..5e1cba0f835f 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -2419,7 +2419,6 @@ static int gather_surplus_pages(struct hstate *h, long delta)
- 	long i;
- 	long needed, allocated;
- 	bool alloc_ok = true;
--	int node;
- 	nodemask_t *mbind_nodemask, alloc_nodemask;
- 
- 	mbind_nodemask = policy_mbind_nodemask(htlb_alloc_mask(h));
-@@ -2443,21 +2442,12 @@ static int gather_surplus_pages(struct hstate *h, long delta)
- 	for (i = 0; i < needed; i++) {
- 		folio = NULL;
- 
--		/* Prioritize current node */
--		if (node_isset(numa_mem_id(), alloc_nodemask))
--			folio = alloc_surplus_hugetlb_folio(h, htlb_alloc_mask(h),
--					numa_mem_id(), NULL);
--
--		if (!folio) {
--			for_each_node_mask(node, alloc_nodemask) {
--				if (node == numa_mem_id())
--					continue;
--				folio = alloc_surplus_hugetlb_folio(h, htlb_alloc_mask(h),
--						node, NULL);
--				if (folio)
--					break;
--			}
--		}
-+		/*
-+		 * It is okay to use NUMA_NO_NODE because we use numa_mem_id()
-+		 * down the road to pick the current node if that is the case.
-+		 */
-+		folio = alloc_surplus_hugetlb_folio(h, htlb_alloc_mask(h),
-+						    NUMA_NO_NODE, &alloc_nodemask);
- 		if (!folio) {
- 			alloc_ok = false;
- 			break;
--- 
-2.49.0
+On 2025/4/9 19:00, Dan Carpenter wrote:
+> There is a copy and paste bug so we accidentally returned
+> PTR_ERR(ddata->clk) instead of "ret".
+>
+> Fixes: 322fc380cea1 ("pwm: Add Loongson PWM controller support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Reviewed-by: Binbin Zhou <zhoubinbin@loongson.cn>
+> ---
+>   drivers/pwm/pwm-loongson.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/pwm/pwm-loongson.c b/drivers/pwm/pwm-loongson.c
+> index 412c67739ef9..e31afb11ddd7 100644
+> --- a/drivers/pwm/pwm-loongson.c
+> +++ b/drivers/pwm/pwm-loongson.c
+> @@ -211,7 +211,7 @@ static int pwm_loongson_probe(struct platform_device *pdev)
+>   	if (ddata->clk) {
+>   		ret = devm_clk_rate_exclusive_get(dev, ddata->clk);
+>   		if (ret)
+> -			return dev_err_probe(dev, PTR_ERR(ddata->clk),
+> +			return dev_err_probe(dev, ret,
+>   					     "Failed to get exclusive rate\n");
+>   
+>   		ddata->clk_rate = clk_get_rate(ddata->clk);
+Thanks.
+Binbin
 
 
