@@ -1,192 +1,250 @@
-Return-Path: <linux-kernel+bounces-605128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18DC1A89D17
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:03:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66178A89D1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:04:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA3263BABAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:03:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B087618967A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:04:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6505294A04;
-	Tue, 15 Apr 2025 12:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d1OIF979"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F1D2951B3;
+	Tue, 15 Apr 2025 12:04:05 +0000 (UTC)
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11DF22750F2;
-	Tue, 15 Apr 2025 12:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4055C28DF08;
+	Tue, 15 Apr 2025 12:04:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744718613; cv=none; b=hnsSDMrDsApcmcL+yoQFsiArHlucqFhDSQErtKHBfprBAbyHdU/zXrb63WtQLtyrXppISRjBSh5z7Sjj+4Ad/XSLomzubKUdp3R6T28aZAzecE9sw1zvkqtJJi8rN6D8al7viAHE0taTmkB4QNpnZ4+Wiahqak3spDtW60dkZp4=
+	t=1744718645; cv=none; b=HUBqgtNtTVwzRK354B4lql1CRgPihLz7dDXRrwFyhOqBxwkcn+9Pdvg/p5QT6yRYPnJrJO28MPtBt7EOXPKn7jv7+yFdLazJNz7AeW0eiV/WfAvn5H57VSc8V37z5IuQEpv6pFv2yNjkXZa8LOV3e3+HRv867eUAcAAG5uwEmkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744718613; c=relaxed/simple;
-	bh=hLHH1GH9RrzmD3Fhp2f/177HpgYsuGmU1wu62As+KKE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=oqMbqfgkhCp4njVBpOyZqYn43dYcnx8rnwvTskDRBtU4O+Dfi0w9jj3Hu+8HUzKyUq6QFU0ferxxxdX8ZO8EEA+5z7Ewv6mG0PTW6p4WmM6y8nHRKAGJU0oDNYh8i5rAxBDS0T1wYi3KSL5YFDlu3kCuCs0tf6WPnuHlZvY79Lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d1OIF979; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AE97C4CEDD;
-	Tue, 15 Apr 2025 12:03:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744718611;
-	bh=hLHH1GH9RrzmD3Fhp2f/177HpgYsuGmU1wu62As+KKE=;
-	h=Date:To:Cc:From:Subject:From;
-	b=d1OIF979gma51ugF1YMIEIctpbYCSpmrhd1Tkmdq1lXYZR4OS2aV6HldAMLaAYxyk
-	 9qHRygJMzz3pL4f5Ns60He+/xUpfdWyIZKy0/5kiKFEs6eA4wcHPYUoHqwLgGF7oPX
-	 M0YESr82P8itxX3OnE4oLLXp1oE1ww13XlomV2lbrLBZNz6IE1LaC9+ybodJJManDA
-	 dEF9r/iljGa+e//enkffDn4hyyRo8Jlax668inhjpV1Q1IjgCuJ7cvSGGokV9Z4r+P
-	 mgSshLDLgx0ncgHZPufAkTYWFfg/ke30kFZFLejK5scUtTp7GH/Wy38UyJMFd/Eebq
-	 lYd/oYM98nOww==
-Message-ID: <20c191d9-5f7a-4ec6-a663-dcc8d0b54c18@kernel.org>
-Date: Tue, 15 Apr 2025 14:03:26 +0200
+	s=arc-20240116; t=1744718645; c=relaxed/simple;
+	bh=loUPvVMNGiwJlE21jeP0tvM4KuSweofRWQ237qVAJkg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dxCjV5mIz0kDXNfgKiG9roKYtRfg0PQbgtFZKpZZdogybSxlj+3gUKxURZuKzg1Wh8pm5x2H9Nco9xavMy7+rpUuBzJLJfV3DkKnZrSlJfHtzJC2C/YeEajzMHenmLcaAdncAyxat3ECo8kFrVBxOV+BNppTpmLnQqAF3tDUK8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4768f90bf36so49362731cf.0;
+        Tue, 15 Apr 2025 05:04:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744718641; x=1745323441;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=44jbS69cKT35Gp4Aiz2OWrUPbtiSlX2R3KlB9msotSY=;
+        b=UmgrR8KowXoDl3bM/NysVfSPenzAL0XCEdhiszKSYMMD4gVQkhoV9iAHjCATf+t3c+
+         zaWa1MX6BJl6XZWkXY1Oe7hfQnj0Yy4P1V5sWHLkjiVKGA0E5KBHx1AYYM4FeAdkjytV
+         4xTEqibcgtcCECA7b524A7/eybVC/ankmZwSdd8rxUNtyLlq6QYQvhoUtlT95LUrJUuS
+         IZtQdWD/XcimRmZ73iks3gjvkxhcjtLYPqkrWoXEYa9a86iQuLnsZm1Usow007vvhROl
+         JEBaHvY2b1CHw73LZ1jQZozGU98Wf43FLFE9J+68PEV+T9JnmHR5soCgU3TaqtCd5/Lq
+         C4Ag==
+X-Forwarded-Encrypted: i=1; AJvYcCUYHy9XtE68IQjy50+ijE1epAy9vCRmx6E8fq6K4jJaYZJeEbTVR5ins7Y13BAzWGY9YSaXiAtaltvfUQ==@vger.kernel.org, AJvYcCVGlOGWQ199GwviH/Aw0OJQYOGm1rT4fCstLC8zXt48WVhw0NnWiyP/eGxxOjnAMYT9p6QlwCdyotdzLDeDygf3VxM=@vger.kernel.org, AJvYcCVQChwfLwrN8kJWaWuU7UbDS2jlMOc3yYP9AwyX0ATf/gRBH11XXRGp1RxBKZWVi2nqiFqVVTbaP9Mq@vger.kernel.org, AJvYcCW9GY+xYp1/D9zsRg8P08OQGTpaes0nspbM7cCd/WiXj00SUm1qJY/77gqntCRSOhO8ARfFKtp2PF3n@vger.kernel.org, AJvYcCX3F3Q5MyDNmUz+OZ8Cv4ojeaXd9EoeDyAAYf5S752NBGrw5CBxYp5Iqj/CflK1yBlDIpoiJKsdCqmRmpzo@vger.kernel.org, AJvYcCXGrm0BK5xB/cc/jO7laL2Jc+oFSuWfdK6BT/9GyvpQkQSOYvYcdHk1eMEaOpd2klmnibn4KLI2M+hMys8d@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkvWd0BP6FFDGqgc4ud0xoM/Et6dliRCUCbC7UgzBmmDBtxLlG
+	5vGxNCaFn82kjvDHLcv7WCDw7YrbLJOn1RRKMZPImBma2pDVB3X2Yf+pw037
+X-Gm-Gg: ASbGncvBUQCEdzk2I2ZXHNq1stwWJBxJbjpIqfNmgbM0CP3oeipCML1N1hKzp8GzzFo
+	8zMY0Bmewptao7WmmAR8FxFrlEN0eT20RMRgR26z47trPgBrs9lLV9utChS2oqYXvqpX1f/+8OY
+	0iOyZxo8i+XcFoA+QcL4ykqBmzp8lo2dlhj+whSo+ZTelDuicx3qvH2D5zxUcqfYKnuiWTwSkhi
+	PREUTbsaljyzSoVbY7iz6Nr8F+tlZTVVqsyhrUwVGRs/l5MFOvgaTP2Z8tpIvAjD96owTOUEOTr
+	2++XeaxAEdkl7NGhCrt/uNGHi5ntqJ8cQ0ulXzUgDDOBV3BftewuzU8Gexxxf9t8TH+njxKsWUh
+	AXCF+Tb8=
+X-Google-Smtp-Source: AGHT+IGaWlcXVHtddiVmvhbwkdxS/y1KAEPPoBrfx8AnRt5614HjJGYRDpBMfS0w8c3LE2TvY1vdcg==
+X-Received: by 2002:a05:622a:50d:b0:476:7ff5:cc27 with SMTP id d75a77b69052e-479775d637fmr201579011cf.51.1744718640802;
+        Tue, 15 Apr 2025 05:04:00 -0700 (PDT)
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com. [209.85.222.180])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4796ed9cce7sm92073521cf.59.2025.04.15.05.03.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Apr 2025 05:04:00 -0700 (PDT)
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7c5e39d1e0eso529805685a.1;
+        Tue, 15 Apr 2025 05:03:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVrUNgzJ3ZDmPbm+oCTmywK07fiIRP4ZjY8p9MAf/5FIoMpYsOqFBnxuf492qJKZLFgojijOybe6Nfoqy++@vger.kernel.org, AJvYcCVuZAsQTR0bZD5/4Qfv4NjEiEsVN8pRrcPGUiCRAT/o08VVOIVb2otGukl67bQfJ3CIxBKUbPIa9H6IAk/Uc4br8CM=@vger.kernel.org, AJvYcCWJiFrx0MSdIpPQSxyWQwixwUbhUIz2EZakrKzDbQQsiwIT4dEMT3QOJjnqkftpMv2Ak1Bq+lIvLDtbuqqs@vger.kernel.org, AJvYcCWuUmEdCnlpDyBU/2HbsjMQeYFweqQZT5ikT7GTctv+RXXYG2rAvaiHeIfA3dOZ7JGbVSKpsQQ396hqnQ==@vger.kernel.org, AJvYcCWzvUGXCVhLZR4J+YShUt0hakqSfFZkcbL7JwTVkyLcdJtrkhGvBAJXNMX9K2zU7WZZJPKd0EnZlZv+@vger.kernel.org, AJvYcCXzETkJOEdAYqj36Lg3ESSB6OXhGOR4kTf0kRl5rTe4TTCDf5QQZO0BDVQyk8JK0q+SmL+pFiXD8IC1@vger.kernel.org
+X-Received: by 2002:a05:620a:3944:b0:7c0:b523:e1b6 with SMTP id
+ af79cd13be357-7c7af118d54mr2235481685a.11.1744718637820; Tue, 15 Apr 2025
+ 05:03:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Luis Oliveira <lolivei@synopsys.com>,
- Jarkko Nikula <jarkko.nikula@linux.intel.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
- Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>,
- linux-i2c@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- kernel-team <kernel-team@cloudflare.com>
-From: Jesper Dangaard Brouer <hawk@kernel.org>
-Subject: Hitting WARN_ON_ONCE in i2c-designware-common.c
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250407191628.323613-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CA+V-a8useBh5m+MqGXQwQJhuemehm=bPidL6XydR-FOmVN9QNQ@mail.gmail.com>
+ <CAMuHMdU+U8D8iQdks72=Kki2HL+bo8tw9gA1S4D3c4hOphLTuA@mail.gmail.com> <CA+V-a8tH9BLjy5aG1qkRJnUFO_4VARu6rW4fQzHoSxvaMgo1Xg@mail.gmail.com>
+In-Reply-To: <CA+V-a8tH9BLjy5aG1qkRJnUFO_4VARu6rW4fQzHoSxvaMgo1Xg@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 15 Apr 2025 14:03:45 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVT0R_ypz7sLxLzYU+v-Cj94Pd4FaFJsdQq-c_Evx5neA@mail.gmail.com>
+X-Gm-Features: ATxdqUHZOQ_kXb78-Adsku78g9ckdafL4-bL26h3gggOf0fLadQBp1hSbjMhNWk
+Message-ID: <CAMuHMdVT0R_ypz7sLxLzYU+v-Cj94Pd4FaFJsdQq-c_Evx5neA@mail.gmail.com>
+Subject: Re: [PATCH v2 00/12] Add support for Renesas RZ/V2N SoC and EVK
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Jiri Slaby <jirislaby@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-serial@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Maintainers,
+Hi Prabhakar,
 
-I'm hitting a WARN_ON_ONCE in drivers/i2c/busses/i2c-designware-common.c
-when booting the kernel on our Gen12 hardware.
+On Tue, 15 Apr 2025 at 11:28, Lad, Prabhakar <prabhakar.csengg@gmail.com> w=
+rote:
+> On Mon, Apr 14, 2025 at 2:40=E2=80=AFPM Geert Uytterhoeven <geert@linux-m=
+68k.org> wrote:
+> > On Mon, 14 Apr 2025 at 13:19, Lad, Prabhakar <prabhakar.csengg@gmail.co=
+m> wrote:
+> > > On Mon, Apr 7, 2025 at 8:16=E2=80=AFPM Prabhakar <prabhakar.csengg@gm=
+ail.com> wrote:
+> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > >
+> > > > This patch series adds initial support for the Renesas RZ/V2N (R9A0=
+9G056)
+> > > > SoC and its evaluation board (EVK). The Renesas RZ/V2N is a vision =
+AI
+> > > > microprocessor (MPU) designed for power-efficient AI inference and
+> > > > real-time vision processing. It features Renesas' proprietary AI
+> > > > accelerator (DRP-AI3), delivering up to 15 TOPS AI performance, mak=
+ing
+> > > > it ideal for applications such as Driver Monitoring Systems (DMS),
+> > > > industrial monitoring cameras, and mobile robots.
+> > > >
+> > > > Key features of the RZ/V2N SoC:
+> > > >   Processing Power:
+> > > >     - Quad Arm Cortex-A55 cores at 1.8GHz for high-performance comp=
+uting
+> > > >     - Single Arm Cortex-M33 core at 200MHz for real-time processing
+> > > >     - 1.5MB on-chip SRAM for fast data access
+> > > >     - LPDDR4/LPDDR4X memory interface for high-speed RAM access
+> > > >
+> > > >   AI and Vision Processing:
+> > > >     - DRP-AI3 accelerator for low-power, high-efficiency AI inferen=
+ce
+> > > >     - Arm Mali-C55 ISP (optional) for image signal processing
+> > > >     - Dual MIPI CSI-2 camera interfaces for multi-camera support
+> > > >
+> > > >   High-Speed Interfaces:
+> > > >     - PCIe Gen3 (2-lane) 1ch for external device expansion
+> > > >     - USB 3.2 (Gen2) 1ch (Host-only) for high-speed data transfer
+> > > >     - USB 2.0 (Host/Function) 1ch for legacy connectivity
+> > > >     - Gigabit Ethernet (2 channels) for network communication
+> > > >
+> > > >   Industrial and Automotive Features:
+> > > >     - 6x CAN FD channels for automotive and industrial networking
+> > > >     - 24-channel ADC for sensor data acquisition
+> > > >
+> > > > LINK: https://tinyurl.com/renesas-rz-v2n-soc
+> > > >
+> > > > The series introduces:
+> > > > - Device tree bindings for various subsystems (SYS, SCIF, SDHI, CPG=
+, pinctrl).
+> > > > - RZ/V2N SoC identification support.
+> > > > - Clock and pinctrl driver updates for RZ/V2N.
+> > > > - Initial DTSI and device tree for the RZ/V2N SoC and EVK.
+> > > >
+> > > > These patches have been tested on the RZ/V2N EVK with v6.15-rc1 ker=
+nel,
+> > > > logs can be found here:
+> > > > https://gist.github.com/prabhakarlad/aa3da7558d007aab8a288550005565=
+d3
+> > > >
+> > > > @Geert, Ive rebased the patches on top of v6.15-rc1 + renesas-dts-f=
+or-v6.16
+> > > > + renesas-clk-for-v6.16 branches. Also these patches apply on top o=
+f the below
+> > > > series [1] and [2]. I had to sort the order in Makefile for patch [=
+3] to
+> > > > avoid conflicts.
+> > > > [1] https://lore.kernel.org/all/20250401090133.68146-1-prabhakar.ma=
+hadev-lad.rj@bp.renesas.com/
+> > > > [2] https://lore.kernel.org/all/20250403212919.1137670-1-thierry.bu=
+ltel.yh@bp.renesas.com/#t
+> > > > [3] https://lore.kernel.org/all/20250403212919.1137670-13-thierry.b=
+ultel.yh@bp.renesas.com/
+> > > >
+> > > > Note, dtbs_check will generate the below warnings this is due to mi=
+ssing
+> > > > ICU support as part of initial series. I will be sending a follow-u=
+p patch
+> > > > series to add ICU support which will fix these warnings.
+> > > > arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dtb: pinctrl@104=
+10000 (renesas,r9a09g056-pinctrl): 'interrupt-controller' is a required pro=
+perty
+> > > >         from schema $id: http://devicetree.org/schemas/pinctrl/rene=
+sas,rzg2l-pinctrl.yaml#
+> > > > arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dtb: pinctrl@104=
+10000 (renesas,r9a09g056-pinctrl): '#interrupt-cells' is a required propert=
+y
+> > > >         from schema $id: http://devicetree.org/schemas/pinctrl/rene=
+sas,rzg2l-pinctrl.yaml#
+> > > >
+> > > > v1->v2:
+> > > > - Added acks from Rob.
+> > > > - Squashed the RZ/V2N EVK and SoC variant documentation into a sing=
+le
+> > > >   commit.
+> > > > - Updated the commit messages.
+> > > > - Added RZV2N_Px, RZV2N_PORT_PINMUX, and RZV2N_GPIO macros in
+> > > >   SoC DTSI as we are re-using renesas,r9a09g057-pinctrl.h
+> > > >   in pictrl driver hence to keep the consistency with the
+> > > >   RZ/V2H(P) SoC these macros are added.
+> > > > - Dropped `renesas,r9a09g056-pinctrl.h` header file.
+> > > > - Followed DTS coding style guidelines
+> > > > - Dropped defconfig changes from the series.
+> > > > - Dropped SDHI dt-binding patch as its already applied to mmc -next=
+ tree.
+> > > >
+> > > > Cheers,
+> > > > Prabhakar
+> > > >
+> > > > Lad Prabhakar (12):
+> > > >   dt-bindings: soc: renesas: Document Renesas RZ/V2N SoC variants a=
+nd
+> > > >     EVK
+> > > >   soc: renesas: Add config option for RZ/V2N (R9A09G056) SoC
+> > > >   dt-bindings: soc: renesas: Document SYS for RZ/V2N SoC
+> > > >   soc: renesas: sysc: Add SoC identification for RZ/V2N SoC
+> > > >   dt-bindings: serial: renesas: Document RZ/V2N SCIF
+> > > >   dt-bindings: clock: renesas: Document RZ/V2N SoC CPG
+> > > >   clk: renesas: rzv2h-cpg: Sort compatible list based on SoC part n=
+umber
+> > > >   clk: renesas: rzv2h: Add support for RZ/V2N SoC
+> > > >   dt-bindings: pinctrl: renesas: Document RZ/V2N SoC
+> > > >   pinctrl: renesas: rzg2l: Add support for RZ/V2N SoC
+> > > >   arm64: dts: renesas: Add initial SoC DTSI for RZ/V2N
+> > > >   arm64: dts: renesas: Add initial device tree for RZ/V2N EVK
+> > > >
+> > > Would it be OK if I send version 3 containing only patches 4/12 and 1=
+0/12?
+> >
+> > For patch 4/12: yes, that is fine. Thx!
+> > For patch 10/12: I have already applied it.
+> >
+> For patch 10/12 ("pinctrl: renesas: rzg2l: Add support for RZ/V2N
+> SoC") will that be part of renesas-pinctrl-for-v6.16 branch (which is
+> yet to be pushed)?
 
-I'm using devel kernel net-next at commit 1a9239bb425 (merge tag 
-'net-next-6.15').
+Sorry, my bad; I misread the patch number. I have not applied 10/12 yet.
 
-I assume you want this report.
+Gr{oetje,eeting}s,
 
-Maybe it is not a critical error(?)
-... looking the comment in the function:
+                        Geert
 
-  u32 i2c_dw_clk_rate(struct dw_i2c_dev *dev)
-  {
-	/*
-	 * Clock is not necessary if we got LCNT/HCNT values directly from
-	 * the platform code.
-	 */
-	if (WARN_ON_ONCE(!dev->get_clk_rate_khz))
-		return 0;
-	return dev->get_clk_rate_khz(dev);
-  }
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
---Jesper
-
-Boot error:
-
-[   10.062651] i2c_designware AMDI0010:00: Unknown Synopsys component 
-type: 0xffffffff
-[   10.073312] pps_core: LinuxPPS API ver. 1 registered
-[   10.073372] piix4_smbus 0000:00:14.0: SMBus Host Controller at 0xb00, 
-revision 0
-[   10.075433] i2c_designware AMDI0010:01: Unknown Synopsys component 
-type: 0xffffffff
-[   10.077727] ------------[ cut here ]------------
-[   10.077728] WARNING: CPU: 15 PID: 1402 at 
-drivers/i2c/busses/i2c-designware-common.c:575 i2c_dw_clk_rate+0x13/0x20 
-[i2c_designware_core]
-[   10.077733] Modules linked in: i2c_piix4(+) pps_core(+) i2c_smbus 
-i2c_designware_platform(+) i2c_designware_core iosf_mbi i2c_core
-[   10.077739] CPU: 15 UID: 0 PID: 1402 Comm: (udev-worker) Not tainted 
-6.14.0-net-next2+ #24 PREEMPT(full)
-[   10.077742] Hardware name: Lenovo HR355M-V3-G12/HR355M_V3_HPM, BIOS 
-HR355M_V3.G.026 10/13/2023
-[   10.077743] RIP: 0010:i2c_dw_clk_rate+0x13/0x20 [i2c_designware_core]
-[   10.077745] Code: 5e 73 6f df 0f 1f 00 90 90 90 90 90 90 90 90 90 90 
-90 90 90 90 90 90 0f 1f 44 00 00 48 8b 47 68 48 85 c0 74 05 ff e0 cc 66 
-90 <0f> 0b 31 c0 e9 2f 73 6f df 0f 1f 40 00 90 90 90 90 90 90 90 90 90
-[   10.077747] RSP: 0018:ffffc90021ee7ba0 EFLAGS: 00010246
-[   10.077749] RAX: 0000000000000000 RBX: ffff88a056c00028 RCX: 
-0000000000ffffae
-[   10.077750] RDX: ffffc90021ee7bac RSI: ffffc900082490f4 RDI: 
-ffff88a056c00028
-[   10.077751] RBP: 000000000000012c R08: ffffffff825eb647 R09: 
-0000000000000008
-[   10.077752] R10: ffffc90021ee79b8 R11: 0000000000000001 R12: 
-000000000000012c
-[   10.077753] R13: ffff889852a61410 R14: ffff88a0532e6428 R15: 
-ffff8881006db020
-[   10.077754] FS:  00007f4d0f3d28c0(0000) GS:ffff88a8ac065000(0000) 
-knlGS:0000000000000000
-[   10.077755] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   10.077756] CR2: 00007f4d0fc75028 CR3: 0000002056f98003 CR4: 
-0000000000770ef0
-[   10.077757] PKRU: 55555554
-[   10.077757] Call Trace:
-[   10.077759]  <TASK>
-[   10.077761]  ? __warn+0x85/0x150
-[   10.077765]  ? i2c_dw_clk_rate+0x13/0x20 [i2c_designware_core]
-[   10.077768]  ? report_bug+0x160/0x190
-[   10.077772]  ? i2c_dw_clk_rate+0x13/0x20 [i2c_designware_core]
-[   10.077777]  ? i2c_dw_clk_rate+0x15/0x20 [i2c_designware_core]
-[   10.077779]  ? handle_bug+0x10d/0x160
-[   10.077783]  ? exc_invalid_op+0x13/0x60
-[   10.077785]  ? asm_exc_invalid_op+0x16/0x20
-[   10.077789]  ? i2c_dw_clk_rate+0x13/0x20 [i2c_designware_core]
-[   10.077791]  i2c_dw_set_timings_master+0x91/0x3c0 [i2c_designware_core]
-[   10.077794]  i2c_dw_probe_master+0x5e/0x330 [i2c_designware_core]
-[   10.077796]  ? pm_runtime_enable+0x59/0xe0
-[   10.077800]  dw_i2c_plat_probe+0x305/0x380 [i2c_designware_platform]
-[   10.077803]  platform_probe+0x3d/0x90
-[   10.077807]  really_probe+0xc1/0x390
-[   10.077811]  ? __pfx___driver_attach+0x10/0x10
-[   10.077812]  __driver_probe_device+0x78/0x150
-[   10.077814]  driver_probe_device+0x1f/0x90
-[   10.077816]  __driver_attach+0xce/0x1c0
-[   10.077818]  bus_for_each_dev+0x60/0xa0
-[   10.077821]  bus_add_driver+0x10e/0x240
-[   10.077824]  driver_register+0x55/0x100
-[   10.077826]  ? __pfx_dw_i2c_init_driver+0x10/0x10 
-[i2c_designware_platform]
-[   10.077829]  do_one_initcall+0x40/0x210
-[   10.077831]  ? security_kernel_post_read_file+0x2f/0x70
-[   10.077836]  do_init_module+0x60/0x260
-[   10.077840]  init_module_from_file+0x75/0xa0
-[   10.077845]  idempotent_init_module+0xed/0x2c0
-[   10.077848]  __x64_sys_finit_module+0x5d/0xc0
-[   10.077851]  do_syscall_64+0x47/0x110
-[   10.077853]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[   10.077855] RIP: 0033:0x7f4d0fae3799
-[   10.077857] Code: 08 89 e8 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 90 
-48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 
-05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 37 06 0d 00 f7 d8 64 89 01 48
-[   10.077858] RSP: 002b:00007ffc1f421918 EFLAGS: 00000246 ORIG_RAX: 
-0000000000000139
-[   10.077860] RAX: ffffffffffffffda RBX: 00005606c614bcf0 RCX: 
-00007f4d0fae3799
-[   10.077861] RDX: 0000000000000000 RSI: 00007f4d0fc76efd RDI: 
-000000000000000d
-[   10.077862] RBP: 00007f4d0fc76efd R08: 0000000000000000 R09: 
-00005606c6129bd0
-[   10.077863] R10: 000000000000000d R11: 0000000000000246 R12: 
-0000000000020000
-[   10.077863] R13: 0000000000000000 R14: 00005606c614c1c0 R15: 
-00007ffc1f421b50
-[   10.077867]  </TASK>
-[   10.077867] ---[ end trace 0000000000000000 ]---
-[   10.078850] pps_core: Software ver. 5.3.6 - Copyright 2005-2007 
-Rodolfo Giometti <giometti@linux.it>
-[   10.087132] workqueue: work_for_cpu_fn hogged CPU for >10000us 5 
-times, consider switching to WQ_UNBOUND
-[   10.099417] PTP clock support registered
-[   10.104491] piix4_smbus 0000:00:14.0: Using register 0x02 for SMBus 
-port selection
-[   10.711607] ice: Intel(R) Ethernet Connection E800 Series Linux Driver
-[   10.712839] piix4_smbus 0000:00:14.0: Auxiliary SMBus Host Controller 
-at 0xb20
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
