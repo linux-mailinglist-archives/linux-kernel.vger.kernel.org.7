@@ -1,84 +1,136 @@
-Return-Path: <linux-kernel+bounces-605383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 352F5A8A06F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:00:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EC7BA8A068
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:59:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43B8F188474C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:59:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BCE57A4F19
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:58:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA501AA1E0;
-	Tue, 15 Apr 2025 13:57:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A4052949EB;
+	Tue, 15 Apr 2025 13:57:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CAfllJvk"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Nm69fBJJ"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10CE145FE0;
-	Tue, 15 Apr 2025 13:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687211B6D11;
+	Tue, 15 Apr 2025 13:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744725428; cv=none; b=A6eHYqmIvdQ6mQRJlt+PDbDOv3mu/+MzzZr5iXMD0FrdsOoIR+qmSTGS48jpmYEZ2TRmqPNvYfJCUqn/1XGGln5ZoUCA2ZRJiymXyXlxLbg6WMEXURjM+25JMl6yZtkLUtWRL5z87OIGiiiPLGPa22EUmOAdhSgs3SZrwLyO5iE=
+	t=1744725439; cv=none; b=KEqyoA/4pUAgMTtUC1NQYLh2kVBamMlgFfkDbKKAcBYiYYxCmboJhtJy4WTIpFa1d2KcV9r34ajaRROLHXHe5PmcTUxo9wzRabs+JC/zv3DMwtfv75Cv2PyMhWkhMPoTvoiCwtAlz2N6d20wGoF0NxzWJNmD8DM+hJqpKlul6DA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744725428; c=relaxed/simple;
-	bh=0l8w+naLLR2m9/EluSyXqkppDcRiCHUv816MhV+FDbQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eac9D+JNLpRMcg+nYEP88IsZVt6IxHf2/SXYHpyyKiQOtr9m2t+ah8H4LG8fYF1Sb9xTL3F98mYUa9bum25il34bItblvRqOLBFkOI+M+Jw9OEVRbbt6Piv3NqJVxQlek//s7AjxfF6077YoX/cn5MWlQm4TMTpu0Guu35JT59A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CAfllJvk; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=0l8w+naLLR2m9/EluSyXqkppDcRiCHUv816MhV+FDbQ=; b=CAfllJvk000h2k9cx428yTFAJr
-	n3gYvMUBu3Wfscc3DQte0kLFJPHKr3NrTD67NsdZ1qyjoyQ3nENzM6UXS25qbRkAKdMwc+LBxxwqe
-	61levoJoAvaKZEgtwTCK5ZYg9RDHf1gidiXWIgMv8vZgLxak6kIBC27TN1Sr/wRivRtEHOmNmVFcG
-	vMa4V5/uYtZuRPsxPBsXA3dlCBrCO1pUts5Q0uGWsI+VebwqYE7IscJnWxsqqf+ZJ1mwINFVuptwA
-	IGxkix/yFGqRS1uRIyh7lwEX44qP89i5fYkyfwaub/Mv4kCUCZqaoWUKWwnvY3LfWRYql6QDbr8wD
-	L+4N4wOQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1u4gmb-00000009u8U-2P5h;
-	Tue, 15 Apr 2025 13:57:01 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 28C4730037D; Tue, 15 Apr 2025 15:57:01 +0200 (CEST)
-Date: Tue, 15 Apr 2025 15:57:00 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
-Subject: Re: [Patch v3 10/22] perf/x86/intel: Process arch-PEBS records or
- record fragments
-Message-ID: <20250415135700.GD4031@noisy.programming.kicks-ass.net>
-References: <20250415114428.341182-1-dapeng1.mi@linux.intel.com>
- <20250415114428.341182-11-dapeng1.mi@linux.intel.com>
+	s=arc-20240116; t=1744725439; c=relaxed/simple;
+	bh=jA34SFoEW+uxho+56Zd6kJfzpz7HWULQY+Aq6jEiNU4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CGJj/vVPtAlxdqp5HGEvypJp9x1AJ7z32Vnji0ZKlku1rD1eirrjY3bNfo/tgvo3X+Bj1x+ivD6+BsFxjdVydpPyJT/d65u7cf4Fv+VcCIBGIKYoFzILatAaZeixHxs+DZo5RZRRnRGj1YBWAnIUKjBap50f05UHOLQaQsfw//k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Nm69fBJJ; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1744725424; x=1745330224; i=markus.elfring@web.de;
+	bh=jA34SFoEW+uxho+56Zd6kJfzpz7HWULQY+Aq6jEiNU4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Nm69fBJJ4AthgYbYaM3Kz6aKIsujOnAucZlg7uu5qjgRx1Lw6mNqXrvGwst5+8hJ
+	 WR+Fh2cGHdKDiR6QSGD81DiG8SwVCIToyL9Orkev30AeLgxBskcGRXLquacnrAwaS
+	 8+E99UER1Fq+IbstPYDhK9jpOD4XIbLSorB+QUCj4w8Qm1UNCQXi3Ki5neX0VX4fm
+	 Gf+SZCeM6AM8FLTcJIgKmmxzyMWUuMHzftDdqaxVHbF202XjXHyshUzPPCLP0AqwT
+	 QoDVYkVtB99mxrpWn4BkXBjSzakTosIRKikkMOJcbvO3irO5ZIsn0krWiVP4nvQrN
+	 tk7u7YQIknYyqlQSEg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.24]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MpCmZ-1tEqI30kT1-00gQLF; Tue, 15
+ Apr 2025 15:57:04 +0200
+Message-ID: <5af56acb-7758-4641-8acc-b81e7c8de709@web.de>
+Date: Tue, 15 Apr 2025 15:57:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250415114428.341182-11-dapeng1.mi@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [1/2] ASoC: codecs: wcd938x: fix mux error handling
+To: Johan Hovold <johan@kernel.org>, linux-sound@vger.kernel.org
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Peter Rosin <peda@axentia.se>,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ Takashi Iwai <tiwai@suse.com>
+References: <20250415074145.7202-2-johan+linaro@kernel.org>
+ <18278ed3-fef0-400d-8cba-72f4c573d7ee@web.de>
+ <Z_5i6YUSGivzaOCb@hovoldconsulting.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <Z_5i6YUSGivzaOCb@hovoldconsulting.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:6Dl7wloY9i+9oKBZqeYjNRY8LjOR2Ttzlb8LrqTq8N21DRlK3mC
+ ayUBoB75f+F4zcB2C5doY1WunsIrKrtO2yshFhCjfNjX3kSCDENJwYcYp/CTkDRn7yAHfsD
+ NH9jwkoD5fx8XTsvqX/UNtlqE7eiXgBCiBwlClecXjCoOsxyLPgCMGOcO8SRB7iFDrN3V0a
+ mKDjFkIji1MQZAuBGa4dQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:sbG/KegFbB0=;rp/3TEgUpSXp+MryT/Y41oQD3sB
+ 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
+ g==
 
-On Tue, Apr 15, 2025 at 11:44:16AM +0000, Dapeng Mi wrote:
-> A significant difference with adaptive PEBS is that arch-PEBS record
-> supports fragments which means an arch-PEBS record could be split into
-> several independent fragments which have its own arch-PEBS header in
-> each fragment.
+>> May the error code assignment statement be omitted here together with e=
+xtra curly brackets
+>> (as such a case is demonstrated in a subsequent if branch)?
+>=20
+> I considered that, but I prefer using a temporary variable as it is more=
+ readable.
+Would your coding style preferences be inconsistent here?
 
-With the constraint that all fragments for a single event are
-contiguous, right?
+Regards,
+Markus
 
