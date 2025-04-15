@@ -1,174 +1,275 @@
-Return-Path: <linux-kernel+bounces-604698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 320C1A8976F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:06:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7779AA8977C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:07:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDE813AD957
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:05:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D08A3AF4FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:07:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A2F1EDA24;
-	Tue, 15 Apr 2025 09:05:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B2B28A1C3;
+	Tue, 15 Apr 2025 09:06:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MpwAHHON";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8dMuj+Hj";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MpwAHHON";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8dMuj+Hj"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Ub4eQxzW"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF1E275107
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 09:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC2A289357;
+	Tue, 15 Apr 2025 09:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744707947; cv=none; b=LXTid/yfuDvjr0M4ipVfrVc8tcmVfPP6W4WKE5lqLWlunz4tJW3oHg3krivTURg6hBjZhz3AF2tCGjL1al+QiFcm/o5bZlR9tcLzzE85HwurCbTqdMhgtNrIIEgHcILTRgPfb/BrscMXfnwtODHtaBF6jlRinU/WXNrrWpKj88g=
+	t=1744707991; cv=none; b=sP/sm/gq9zHDsuix2LFym018CLh6WCRaYgxn8sALxqgWhxULYo7ehHMT0iJI0MyISunByjVhjy+7Xb27NoPzpOtkjF8Rc14xRUOSeiL5qfNperjjLO0at9p7gMTMsdRCya6Wnd0PsCyLnXgyjgGUxBpMyehUHt4jSoC7qpqgKaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744707947; c=relaxed/simple;
-	bh=xbAWn0WSfoitO1KDMc0+QCcVSYyO/mBipbxolJ9HPJk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QElxGaMulr6vTVzsUZlh3Frm1r4RW+sVAZ3BqpYCiok3D5QNYbRIvS+HV3KILqj4cOR9f918lggbL6Wzt/EaRJqcN4WyiosFGqgnHVzhj3GykGEACyvpJ5iEt57i9p+vYgoFjmodwtKabZf6+/P1ba+uyI1mnQVEDa+A8H33CHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MpwAHHON; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8dMuj+Hj; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MpwAHHON; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8dMuj+Hj; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7A3C921164;
-	Tue, 15 Apr 2025 09:05:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1744707942; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iVoKDLF5pncIUIiH8TIsHzaAW0W0nHN55ljr4oVTt4M=;
-	b=MpwAHHONHUVv1EjrR5f1v0LcABnG+WymlxxV4WfboUKtUaGnsvvwrdoKUifhtrQHnk9f0I
-	FplYkA0tnTTh9RWo1zEC9UQAvcyhwNPRJXkY2a1RxtXYtL38fTwR5hpYfim0/08BBXtnCl
-	HQ3EB70JF/j3SiUlx6I/vSkTy7wGrL8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1744707942;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iVoKDLF5pncIUIiH8TIsHzaAW0W0nHN55ljr4oVTt4M=;
-	b=8dMuj+Hj1w7VX41un+Yx+MhN+P7E3bTubd35YA7IxAdxq7/WcyUw7u52hL9G7CW9ej2SB2
-	pc7ENqs+LZUHWfDQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=MpwAHHON;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=8dMuj+Hj
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1744707942; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iVoKDLF5pncIUIiH8TIsHzaAW0W0nHN55ljr4oVTt4M=;
-	b=MpwAHHONHUVv1EjrR5f1v0LcABnG+WymlxxV4WfboUKtUaGnsvvwrdoKUifhtrQHnk9f0I
-	FplYkA0tnTTh9RWo1zEC9UQAvcyhwNPRJXkY2a1RxtXYtL38fTwR5hpYfim0/08BBXtnCl
-	HQ3EB70JF/j3SiUlx6I/vSkTy7wGrL8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1744707942;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iVoKDLF5pncIUIiH8TIsHzaAW0W0nHN55ljr4oVTt4M=;
-	b=8dMuj+Hj1w7VX41un+Yx+MhN+P7E3bTubd35YA7IxAdxq7/WcyUw7u52hL9G7CW9ej2SB2
-	pc7ENqs+LZUHWfDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6569A13A89;
-	Tue, 15 Apr 2025 09:05:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id MJZrGGYh/mexUAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 15 Apr 2025 09:05:42 +0000
-Message-ID: <cbf5b354-48b4-4f25-97c3-7b76fd332c41@suse.cz>
-Date: Tue, 15 Apr 2025 11:05:42 +0200
+	s=arc-20240116; t=1744707991; c=relaxed/simple;
+	bh=SwqYHKdJdLoovSs29qeQIztDbSM1TuvqLAVPWM0G19Q=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Je5Hc9x26+ehFm484adAJCo/wXEyLWUv7avkLDrT1uzezWir9ll24haZ+M/XHs0OWTlYz32jZz4WVcd9v3CQt8TQhjWhGMcRFfkEgVEjlCxnBCEHZH/I8nNpN3n0TpTXhZB1JUuc7zPPMRnDDXBQo6aRNWVi5mmaNoINJWsUMmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Ub4eQxzW; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53F95wGH2996245
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 15 Apr 2025 04:05:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1744707958;
+	bh=zbbMws7/JHr51qmHgB5wtBPMnAvtKhFkR+q7a0rSNgo=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=Ub4eQxzWW27JJe6N0qadN8dFErC+Lhph4tzFUZi5nNBT8/Cwlw74266Y72rDSgjjj
+	 fzq9+wFEhh5JK9HFxuPL60pPI589jFMtfH60pstnROOeddhzyRM8zc4OrllXNMF8WU
+	 VWwl6ljMNLKy3tLW62AK6D3NRFeaocOWqwzOZpvw=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53F95wUn012296
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 15 Apr 2025 04:05:58 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 15
+ Apr 2025 04:05:57 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 15 Apr 2025 04:05:57 -0500
+Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53F95v1N029324;
+	Tue, 15 Apr 2025 04:05:57 -0500
+Received: from localhost (meghana-pc.dhcp.ti.com [10.24.69.13] (may be forged))
+	by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 53F95uu5010969;
+	Tue, 15 Apr 2025 04:05:57 -0500
+From: Meghana Malladi <m-malladi@ti.com>
+To: <dan.carpenter@linaro.org>, <javier.carrasco.cruz@gmail.com>,
+        <diogo.ivo@siemens.com>, <horms@kernel.org>,
+        <jacob.e.keller@intel.com>, <m-malladi@ti.com>,
+        <john.fastabend@gmail.com>, <hawk@kernel.org>, <daniel@iogearbox.net>,
+        <ast@kernel.org>, <richardcochran@gmail.com>, <pabeni@redhat.com>,
+        <kuba@kernel.org>, <edumazet@google.com>, <davem@davemloft.net>,
+        <andrew+netdev@lunn.ch>
+CC: <bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <srk@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Roger Quadros
+	<rogerq@kernel.org>, <danishanwar@ti.com>
+Subject: [PATCH net v4 3/3] net: ti: icss-iep: Fix possible NULL pointer dereference for perout request
+Date: Tue, 15 Apr 2025 14:35:43 +0530
+Message-ID: <20250415090543.717991-4-m-malladi@ti.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250415090543.717991-1-m-malladi@ti.com>
+References: <20250415090543.717991-1-m-malladi@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: Add mmap trace events to MEMORY MAPPING
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-References: <20250411173328.8172-1-Liam.Howlett@oracle.com>
-Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <20250411173328.8172-1-Liam.Howlett@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 7A3C921164
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim,suse.cz:mid,suse.cz:email];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 4/11/25 19:33, Liam R. Howlett wrote:
-> MEMORY MAPPING does not list the mmap.h trace point file, but does list
-> the mmap.c file.  Couple the trace points with the users and authors of
-> the trace points for notifications of updates.
-> 
-> Cc:Andrew Morton <akpm@linux-foundation.org>
-> Cc:Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Cc:Vlastimil Babka <vbabka@suse.cz>
-> Cc:Jann Horn <jannh@google.com>
-> Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+The ICSS IEP driver tracks perout and pps enable state with flags.
+Currently when disabling pps and perout signals during icss_iep_exit(),
+results in NULL pointer dereference for perout.
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+To fix the null pointer dereference issue, the icss_iep_perout_enable_hw
+function can be modified to directly clear the IEP CMP registers when
+disabling PPS or PEROUT, without referencing the ptp_perout_request
+structure, as its contents are irrelevant in this case.
 
-> ---
->  MAINTAINERS | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 4c7fdc41a6bfb..d8e9a10adc81d 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -15571,6 +15571,7 @@ L:	linux-mm@kvack.org
->  S:	Maintained
->  W:	http://www.linux-mm.org
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
-> +F:	include/trace/events/mmap.h
->  F:	mm/mlock.c
->  F:	mm/mmap.c
->  F:	mm/mprotect.c
+Fixes: 9b115361248d ("net: ti: icssg-prueth: Fix clearing of IEP_CMP_CFG registers during iep_init")
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/all/7b1c7c36-363a-4085-b26c-4f210bee1df6@stanley.mountain/
+Signed-off-by: Meghana Malladi <m-malladi@ti.com>
+---
+
+Changes from v3 (v4-v3):
+- Fix the logic in icss_iep_perout_enable_hw() to clear IEP registers
+  when disabling periodic signal
+
+ drivers/net/ethernet/ti/icssg/icss_iep.c | 121 +++++++++++------------
+ 1 file changed, 58 insertions(+), 63 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/icssg/icss_iep.c b/drivers/net/ethernet/ti/icssg/icss_iep.c
+index b4a34c57b7b4..2a1c43316f46 100644
+--- a/drivers/net/ethernet/ti/icssg/icss_iep.c
++++ b/drivers/net/ethernet/ti/icssg/icss_iep.c
+@@ -412,6 +412,22 @@ static int icss_iep_perout_enable_hw(struct icss_iep *iep,
+ 	int ret;
+ 	u64 cmp;
+ 
++	if (!on) {
++		/* Disable CMP 1 */
++		regmap_update_bits(iep->map, ICSS_IEP_CMP_CFG_REG,
++				   IEP_CMP_CFG_CMP_EN(1), 0);
++
++		/* clear CMP regs */
++		regmap_write(iep->map, ICSS_IEP_CMP1_REG0, 0);
++		if (iep->plat_data->flags & ICSS_IEP_64BIT_COUNTER_SUPPORT)
++			regmap_write(iep->map, ICSS_IEP_CMP1_REG1, 0);
++
++		/* Disable sync */
++		regmap_write(iep->map, ICSS_IEP_SYNC_CTRL_REG, 0);
++
++		return 0;
++	}
++
+ 	/* Calculate width of the signal for PPS/PEROUT handling */
+ 	ts.tv_sec = req->on.sec;
+ 	ts.tv_nsec = req->on.nsec;
+@@ -430,64 +446,39 @@ static int icss_iep_perout_enable_hw(struct icss_iep *iep,
+ 		if (ret)
+ 			return ret;
+ 
+-		if (on) {
+-			/* Configure CMP */
+-			regmap_write(iep->map, ICSS_IEP_CMP1_REG0, lower_32_bits(cmp));
+-			if (iep->plat_data->flags & ICSS_IEP_64BIT_COUNTER_SUPPORT)
+-				regmap_write(iep->map, ICSS_IEP_CMP1_REG1, upper_32_bits(cmp));
+-			/* Configure SYNC, based on req on width */
+-			regmap_write(iep->map, ICSS_IEP_SYNC_PWIDTH_REG,
+-				     div_u64(ns_width, iep->def_inc));
+-			regmap_write(iep->map, ICSS_IEP_SYNC0_PERIOD_REG, 0);
+-			regmap_write(iep->map, ICSS_IEP_SYNC_START_REG,
+-				     div_u64(ns_start, iep->def_inc));
+-			regmap_write(iep->map, ICSS_IEP_SYNC_CTRL_REG, 0); /* one-shot mode */
+-			/* Enable CMP 1 */
+-			regmap_update_bits(iep->map, ICSS_IEP_CMP_CFG_REG,
+-					   IEP_CMP_CFG_CMP_EN(1), IEP_CMP_CFG_CMP_EN(1));
+-		} else {
+-			/* Disable CMP 1 */
+-			regmap_update_bits(iep->map, ICSS_IEP_CMP_CFG_REG,
+-					   IEP_CMP_CFG_CMP_EN(1), 0);
+-
+-			/* clear regs */
+-			regmap_write(iep->map, ICSS_IEP_CMP1_REG0, 0);
+-			if (iep->plat_data->flags & ICSS_IEP_64BIT_COUNTER_SUPPORT)
+-				regmap_write(iep->map, ICSS_IEP_CMP1_REG1, 0);
+-		}
++		/* Configure CMP */
++		regmap_write(iep->map, ICSS_IEP_CMP1_REG0, lower_32_bits(cmp));
++		if (iep->plat_data->flags & ICSS_IEP_64BIT_COUNTER_SUPPORT)
++			regmap_write(iep->map, ICSS_IEP_CMP1_REG1, upper_32_bits(cmp));
++		/* Configure SYNC, based on req on width */
++		regmap_write(iep->map, ICSS_IEP_SYNC_PWIDTH_REG,
++			     div_u64(ns_width, iep->def_inc));
++		regmap_write(iep->map, ICSS_IEP_SYNC0_PERIOD_REG, 0);
++		regmap_write(iep->map, ICSS_IEP_SYNC_START_REG,
++			     div_u64(ns_start, iep->def_inc));
++		regmap_write(iep->map, ICSS_IEP_SYNC_CTRL_REG, 0); /* one-shot mode */
++		/* Enable CMP 1 */
++		regmap_update_bits(iep->map, ICSS_IEP_CMP_CFG_REG,
++				   IEP_CMP_CFG_CMP_EN(1), IEP_CMP_CFG_CMP_EN(1));
+ 	} else {
+-		if (on) {
+-			u64 start_ns;
+-
+-			iep->period = ((u64)req->period.sec * NSEC_PER_SEC) +
+-				      req->period.nsec;
+-			start_ns = ((u64)req->period.sec * NSEC_PER_SEC)
+-				   + req->period.nsec;
+-			icss_iep_update_to_next_boundary(iep, start_ns);
+-
+-			regmap_write(iep->map, ICSS_IEP_SYNC_PWIDTH_REG,
+-				     div_u64(ns_width, iep->def_inc));
+-			regmap_write(iep->map, ICSS_IEP_SYNC_START_REG,
+-				     div_u64(ns_start, iep->def_inc));
+-			/* Enable Sync in single shot mode  */
+-			regmap_write(iep->map, ICSS_IEP_SYNC_CTRL_REG,
+-				     IEP_SYNC_CTRL_SYNC_N_EN(0) | IEP_SYNC_CTRL_SYNC_EN);
+-			/* Enable CMP 1 */
+-			regmap_update_bits(iep->map, ICSS_IEP_CMP_CFG_REG,
+-					   IEP_CMP_CFG_CMP_EN(1), IEP_CMP_CFG_CMP_EN(1));
+-		} else {
+-			/* Disable CMP 1 */
+-			regmap_update_bits(iep->map, ICSS_IEP_CMP_CFG_REG,
+-					   IEP_CMP_CFG_CMP_EN(1), 0);
+-
+-			/* clear CMP regs */
+-			regmap_write(iep->map, ICSS_IEP_CMP1_REG0, 0);
+-			if (iep->plat_data->flags & ICSS_IEP_64BIT_COUNTER_SUPPORT)
+-				regmap_write(iep->map, ICSS_IEP_CMP1_REG1, 0);
+-
+-			/* Disable sync */
+-			regmap_write(iep->map, ICSS_IEP_SYNC_CTRL_REG, 0);
+-		}
++		u64 start_ns;
++
++		iep->period = ((u64)req->period.sec * NSEC_PER_SEC) +
++				req->period.nsec;
++		start_ns = ((u64)req->period.sec * NSEC_PER_SEC)
++				+ req->period.nsec;
++		icss_iep_update_to_next_boundary(iep, start_ns);
++
++		regmap_write(iep->map, ICSS_IEP_SYNC_PWIDTH_REG,
++			     div_u64(ns_width, iep->def_inc));
++		regmap_write(iep->map, ICSS_IEP_SYNC_START_REG,
++			     div_u64(ns_start, iep->def_inc));
++		/* Enable Sync in single shot mode  */
++		regmap_write(iep->map, ICSS_IEP_SYNC_CTRL_REG,
++			     IEP_SYNC_CTRL_SYNC_N_EN(0) | IEP_SYNC_CTRL_SYNC_EN);
++		/* Enable CMP 1 */
++		regmap_update_bits(iep->map, ICSS_IEP_CMP_CFG_REG,
++				   IEP_CMP_CFG_CMP_EN(1), IEP_CMP_CFG_CMP_EN(1));
+ 	}
+ 
+ 	return 0;
+@@ -498,11 +489,21 @@ static int icss_iep_perout_enable(struct icss_iep *iep,
+ {
+ 	int ret = 0;
+ 
++	if (!on)
++		goto disable;
++
+ 	/* Reject requests with unsupported flags */
+ 	if (req->flags & ~(PTP_PEROUT_DUTY_CYCLE |
+ 			  PTP_PEROUT_PHASE))
+ 		return -EOPNOTSUPP;
+ 
++	/* Set default "on" time (1ms) for the signal if not passed by the app */
++	if (!(req->flags & PTP_PEROUT_DUTY_CYCLE)) {
++		req->on.sec = 0;
++		req->on.nsec = NSEC_PER_MSEC;
++	}
++
++disable:
+ 	mutex_lock(&iep->ptp_clk_mutex);
+ 
+ 	if (iep->pps_enabled) {
+@@ -513,12 +514,6 @@ static int icss_iep_perout_enable(struct icss_iep *iep,
+ 	if (iep->perout_enabled == !!on)
+ 		goto exit;
+ 
+-	/* Set default "on" time (1ms) for the signal if not passed by the app */
+-	if (!(req->flags & PTP_PEROUT_DUTY_CYCLE)) {
+-		req->on.sec = 0;
+-		req->on.nsec = NSEC_PER_MSEC;
+-	}
+-
+ 	ret = icss_iep_perout_enable_hw(iep, req, on);
+ 	if (!ret)
+ 		iep->perout_enabled = !!on;
+-- 
+2.43.0
 
 
