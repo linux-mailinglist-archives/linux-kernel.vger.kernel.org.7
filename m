@@ -1,119 +1,178 @@
-Return-Path: <linux-kernel+bounces-605798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC07AA8A649
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 20:03:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8875A8A64B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 20:05:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61AA2189E0A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 18:03:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8845A3B8DC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 18:04:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8272222A4;
-	Tue, 15 Apr 2025 18:03:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F036F2222C6;
+	Tue, 15 Apr 2025 18:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lyi/3x9+"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="jhjgINil"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D732DFA3A;
-	Tue, 15 Apr 2025 18:03:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4119719CD17
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 18:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744740207; cv=none; b=Q59BRGQ4J15Ol/9zXLPfRq74gXY2pMYzQzBZ4fWn/qaKTXX5cukvy/wVvUg1VBTedpgIoEe/Ic8FNJJJKViv36Gcm+7stBVrvuRy8+zKQldbIJ2oHtt8s4MTK0FsGrJqEwJSoFuUT3IyoZZ54m9d0fHbQxJAEwMfXoAXXnJHOII=
+	t=1744740302; cv=none; b=ZDn2VGMgPc1YVjoLm/lCzYINNHvdjJjJHQcvNv/tDIdhpO9cAZoCKM3C7rLy8y8itEYyhJ0UpmhdplVdkp4r7ZBtapkPjApgdZlJEg2enFBlHIqAWR80nTG3hSP/Q+kdsHNnMjdLmXHP+QyqOi9Wl7hkyfWmV1MS2cysSJRAS3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744740207; c=relaxed/simple;
-	bh=+eghJ4x+Ds+Ccq/zvXc4mswzGPnjEx99kC6uBVTT3Ak=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=vFfB74uJo69E4YiW/f34Stdjklt5DsSropma0Zj4v5DYWZZ/7fukrHY7yTiqH+GTk9y2pLv9XoVo3nDucq7hUEgDKGHR8fi+uh9hziiHhCnnKZ/PyK6wMFL+7ta8J2qrnPNxGMBQ4r70+sditHTPUNWK42zxYUqTLiZQ+1TUGYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lyi/3x9+; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e61d91a087so8634834a12.0;
-        Tue, 15 Apr 2025 11:03:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744740204; x=1745345004; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wb9qKhu2k1IpUvme0BwFktjGiMrYNfcDlPf0UXzXUVI=;
-        b=Lyi/3x9+j9R0dqkv+ukxDE+U7rh0dnEHaQ/rfvCcmZO+aIHhNqDks+jdNCl+dpCGft
-         DzP/1PDaxkgqK17fgV01ha7UgRUOnS3rotA1VEiHeYnpET82bYv7c7j2R0PG7RuuodYg
-         2w0a4QE2jiuBIsRU/R83FiVbusue0/rIa3fpD9H3sr2jZAvp5bZBQecd8SVyVykhHnN4
-         rXji/Pnvu95h3j1/AfP1uWeQ+eH4yGz6xP8vmD+opEqeNs3FHkg8cwRQxyyKAt3Itpv1
-         UZBrFgPDftGuon3k/nRdhNpWbSYTyCPA3Ebcdiu5mtbGglEAjylpHJ5QxEMn0/NIt85q
-         ceOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744740204; x=1745345004;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wb9qKhu2k1IpUvme0BwFktjGiMrYNfcDlPf0UXzXUVI=;
-        b=V/7x1mXeuSk69MZN9aqSfrLs7viTurRxdhhgPMWJMUmxtzy7OugnHOTCTGzfPu5LyO
-         TbUZBRd6uO0LdKKEObNHGuCWvD3w6DNlW/d/92avTnBz9c65IA9cbuAiQF2j4AiYkk/5
-         1k5azzCApp+cp6Mzvz75iAn9V4Bm9Umd7Ri328i93Rl6VhsF0vtSHay3Zcb4b+8MgHSK
-         HZILeLeXgqBaVvwHzw+Ur+ZRDsiwzOyIFvB9JiFThmKEELLGWGhIUEfZhcauRSiV4LDb
-         5z852aK/QvPLrI9Lko6LsoavkA8l1Et8Uti2fMvpYVNOAlWkbM5PHkbojPBqMtTZKibL
-         LOww==
-X-Forwarded-Encrypted: i=1; AJvYcCUifHg9nosAQPEp0/inHe41+OKHizmW98U1iTnluRLJSEKIZemV+4JFYnF5pcvMmyrOvTEHzMPdLYVzTA0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtmE5Ty2qDVeufADs9E5CNJyCcU3B5C7CezHCGnbFJitzHDq+Q
-	ASfy9s7ZCTIusDNye/afxntTpBu1WnNR5Hx9kNqDnXT98VsCD5wzxbzp+tFjkiAqivG1KpCWN4I
-	D8lCBJUD16dHDUVcAeo838XHcGrE=
-X-Gm-Gg: ASbGncsimddXVbckJhyutBgrN04u9SOn9V9/nu1AJnUm8kTZsgTQ346Ywtwg4W/KYAf
-	eotkq/IDwMbsb4rUfyHV/HvNZCte1GiE4SR5zasA6YHr/7Z0i6uZHSaaFdZ/4i9ag8xlVNK6Y5Z
-	p/YY5joNAw+xof4HKhkXgyxw==
-X-Google-Smtp-Source: AGHT+IGyoaExq6lmduv0ioWZoFMPyQfOKlchXrfsCHKLALExxyE/uhXIbOVRgv4AlIM/ZVfNMa3oiOaBOBFwlsQ+6ko=
-X-Received: by 2002:a17:907:3ea6:b0:ac8:17a1:e42 with SMTP id
- a640c23a62f3a-acb38251b55mr1864866b.22.1744740204008; Tue, 15 Apr 2025
- 11:03:24 -0700 (PDT)
+	s=arc-20240116; t=1744740302; c=relaxed/simple;
+	bh=E1rWl2YoYmsGcXl8Vm+E/bjBaHOcGMh8w3W/dKHDJJU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=icrqFKuQof2Lld0dY+o3kmjAPkut+LTmgs5WZ4UR/dTJ7C79ZQcH//2zneeUl/cticmWDecNI2TU1Ly5IfcSV7o0irrKLqXqi7UV1JJSaXUu5jksvva7ik1Mp+i8Ia81fB+GX7hKM46HFDxRM4ZW1KTVu6VB7jUNVIXzgM/jdso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=jhjgINil; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id BD2EEA033A;
+	Tue, 15 Apr 2025 20:04:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=mail; bh=sPS8nj2wBTS7IxcXsWDBnWC5IdTmxtmClDTDfzz4lXs=; b=
+	jhjgINil9atXgMLsXfj/xug9qfrTEqP4k8IuuvkmvwH6R03Hc8XLh0p1BAIMjQ/l
+	Ey2x2bH8GAkvakXDj7Q69lNuYI04D+V1HB36pmzyFY6MMHVcllJkiw+ppwBzpA2A
+	JmOuWYgSj99eIk7n26pE8KUDR+Jhz2qbw4/K2NFf2r7nErYLlARbx3A5A0n+Akh6
+	mFrcDGuCf3VZqfDUaYR5h62zl00Ef49r/JuMSy7n46LDXj4rU+mu0exwwoyPSFlz
+	oqEMc78RE8N7e4QrGZ7Qsm/JOSmXT5mb6F0F1EXT3ET+g33lM+YuDXZX/eLiHjDT
+	D5+MBOW+gh9Y2DylR9biM+dIZNyGtjZ2cc9Z1ZlDgYtMUUbFsIoqYYmOp0wWM4mw
+	TlDj92NF63S+anebINtZUpexrGB9O8clFfqQws8viNtbgspdfok1OdXifYXoPn9e
+	Zg5xwf7W5rPWKoY2VVgHu1or7cU20RcK887/TI80nlX9nFW2gtPxWVcUUy3GimDc
+	BcmHOcxSpG2yesN49mfWLq90YgrHZu2FOglM1ItPS1HcAljgUG2VwQGSrBSTq3MA
+	NpAUWvhrGNDDcZJZAaNitflvdRwJ6b694dyEpgFLskzPsRjQuYGTNQUDZHk+vaFF
+	t5l8oFJ97Wpfo7c3aZidUBqRgigbOVKEbWDMGapnK9w=
+From: =?UTF-8?q?Bence=20Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>
+To: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>,
+	=?UTF-8?q?Szentendrei=2C=20Tam=C3=A1s?= <szentendrei.tamas@prolan.hu>, "Tudor
+ Ambarus" <tudor.ambarus@linaro.org>, Pratyush Yadav <pratyush@kernel.org>,
+	Michael Walle <mwalle@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>
+Subject: [PATCH] spi-nor: Verify written data in paranoid mode
+Date: Tue, 15 Apr 2025 20:04:32 +0200
+Message-ID: <20250415180434.513405-1-csokas.bence@prolan.hu>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <8f765cfd6e93fad4e755dd95d709b7bea2a388e2.1744718916.git.marcelo.schmitt@analog.com>
-In-Reply-To: <8f765cfd6e93fad4e755dd95d709b7bea2a388e2.1744718916.git.marcelo.schmitt@analog.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 15 Apr 2025 21:02:47 +0300
-X-Gm-Features: ATxdqUHo0j2G7HhInsD2Ea9yS3LAPGWvf8sSTVKbBAs4CuoCzvP5lAmVqkvszb0
-Message-ID: <CAHp75VendQGLdpggySS3mX6M2YSeS70bvE8yg7sp_LNGDS-Scg@mail.gmail.com>
-Subject: Re: [PATCH] iio: adc: ad4000: Avoid potential double data word read
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, jic23@kernel.org, 
-	lars@metafoo.de, Michael.Hennerich@analog.com, nuno.sa@analog.com, 
-	andy@kernel.org, marcelo.schmitt1@gmail.com, 
-	David Lechner <dlechner@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1744740288;VERSION=7989;MC=1442698083;ID=77153;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2980D94853647662
 
-On Tue, Apr 15, 2025 at 3:21=E2=80=AFPM Marcelo Schmitt
-<marcelo.schmitt@analog.com> wrote:
->
-> Currently, SPI-Engine offload module always sends 32-bit data elements to
-> DMA engine. Appropriately, when set for SPI offloading, the IIO driver us=
-es
-> 32 storagebits for IIO ADC channel buffer elements. However, setting SPI
-> transfer length according to storagebits (32-bits in case of offload) can
-> lead to unnecessarily long transfers for ADCs that are 16-bit or less
-> precision. Adjust AD4000 single-shot read to run transfers of 2 bytes whe=
-n
-> that is enough to get all ADC data bits.
+From: Csókás, Bence <csokas.bence@prolan.hu>
 
-...
+Add MTD_SPI_NOR_PARANOID config option for verifying all written data to
+prevent silent bit errors to be undetected, at the cost of halving SPI
+bandwidth.
 
->         xfers[1].rx_buf =3D &st->scan.data;
-> -       xfers[1].len =3D BITS_TO_BYTES(chan->scan_type.storagebits);
-> +       xfers[1].len =3D chan->scan_type.realbits > 16 ? 4 : 2;
+Co-developed-by: Szentendrei, Tamás <szentendrei.tamas@prolan.hu>
+Signed-off-by: Szentendrei, Tamás <szentendrei.tamas@prolan.hu>
+Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
+---
+ drivers/mtd/spi-nor/Kconfig | 10 ++++++++++
+ drivers/mtd/spi-nor/core.c  | 33 +++++++++++++++++++++++++++++++++
+ 2 files changed, 43 insertions(+)
 
-But wouldn't be logical to have
+diff --git a/drivers/mtd/spi-nor/Kconfig b/drivers/mtd/spi-nor/Kconfig
+index 24cd25de2b8b..425ea9a22424 100644
+--- a/drivers/mtd/spi-nor/Kconfig
++++ b/drivers/mtd/spi-nor/Kconfig
+@@ -68,6 +68,16 @@ config MTD_SPI_NOR_SWP_KEEP
+ 
+ endchoice
+ 
++config MTD_SPI_NOR_PARANOID
++	bool "Read back written data (paranoid mode)"
++	help
++	  This option makes the SPI NOR core read back all data on a write
++	  and report an error if it doesn't match the written data. This can
++	  safeguard against silent bit errors resulting from a faulty Flash,
++	  controller oddities, bus noise etc.
++
++	  If you are unsure, select 'n'.
++
+ source "drivers/mtd/spi-nor/controllers/Kconfig"
+ 
+ endif # MTD_SPI_NOR
+diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
+index ac4b960101cc..ca05a6ec8afe 100644
+--- a/drivers/mtd/spi-nor/core.c
++++ b/drivers/mtd/spi-nor/core.c
+@@ -2063,6 +2063,7 @@ static int spi_nor_write(struct mtd_info *mtd, loff_t to, size_t len,
+ 	size_t *retlen, const u_char *buf)
+ {
+ 	struct spi_nor *nor = mtd_to_spi_nor(mtd);
++	u_char *verify_buf = NULL;
+ 	size_t i;
+ 	ssize_t ret;
+ 	u32 page_size = nor->params->page_size;
+@@ -2073,6 +2074,14 @@ static int spi_nor_write(struct mtd_info *mtd, loff_t to, size_t len,
+ 	if (ret)
+ 		return ret;
+ 
++#if IS_ENABLED(CONFIG_MTD_SPI_NOR_PARANOID)
++	verify_buf = devm_kmalloc(nor->dev, page_size, GFP_KERNEL);
++	if (!verify_buf) {
++		ret = -ENOMEM;
++		goto write_err;
++	}
++#endif
++
+ 	for (i = 0; i < len; ) {
+ 		ssize_t written;
+ 		loff_t addr = to + i;
+@@ -2099,11 +2108,35 @@ static int spi_nor_write(struct mtd_info *mtd, loff_t to, size_t len,
+ 		ret = spi_nor_wait_till_ready(nor);
+ 		if (ret)
+ 			goto write_err;
++
++#if IS_ENABLED(CONFIG_MTD_SPI_NOR_PARANOID)
++		/* read back to make sure it's correct */
++		ret = spi_nor_read_data(nor, addr, written, verify_buf);
++		if (ret < 0)
++			goto write_err;
++		if (ret != written) {
++			/* We shouldn't see short reads */
++			dev_err(nor->dev, "Verify failed, written %zd but only read %zd",
++				written, ret);
++			ret = -EIO;
++			goto write_err;
++		}
++
++		if (memcmp(verify_buf, buf + i, written)) {
++			dev_err(nor->dev, "Verify failed, compare mismatch!");
++			ret = -EIO;
++			goto write_err;
++		}
++#endif
++
++		ret = 0;
++
+ 		*retlen += written;
+ 		i += written;
+ 	}
+ 
+ write_err:
++	devm_kfree(nor->dev, verify_buf);
+ 	spi_nor_unlock_and_unprep_pe(nor, to, len);
+ 
+ 	return ret;
 
-       xfers[1].len =3D BITS_TO_BYTES(chan->scan_type.realbits);
+base-commit: 834a4a689699090a406d1662b03affa8b155d025
+-- 
+2.49.0
 
-?
 
---=20
-With Best Regards,
-Andy Shevchenko
 
