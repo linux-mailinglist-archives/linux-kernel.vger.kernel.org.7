@@ -1,548 +1,221 @@
-Return-Path: <linux-kernel+bounces-604150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66DEFA89139
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 03:23:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B642A8913A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 03:24:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4401189BD79
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 01:23:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 291F27A5AFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 01:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06943218AB0;
-	Tue, 15 Apr 2025 01:22:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7971E2036E8;
+	Tue, 15 Apr 2025 01:23:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YtPP1+fX"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=cs.wisc.edu header.i=@cs.wisc.edu header.b="qhxWnFo8"
+Received: from mx0a-007b0c01.pphosted.com (mx0a-007b0c01.pphosted.com [205.220.165.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08CE720ADD8
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 01:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744680127; cv=none; b=EIlICX3zoiuIif9fFHecS/Rpz8/4JWW753+zCi/ZtkM3UuTVuDYSntPDBI0o5diH776z883/HxcQXAgpgsYMe9iRh6wITkYgy/FF36V3Bk5UoLsSCzlsmeUabLir6Bw4FWjBClNHrWrdo0enoji/cICGFhhp96fF26XRCl8G5S8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744680127; c=relaxed/simple;
-	bh=+5/A3HpALBqUAQtH4uLB07biQeduLnRFjvrsKfrOt7k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=o5+qhOWZb4FnZYdwtZ4DYElSi9ICEx6z0mj3TxNQiB8324QIgMN3IxveVAhSkjtfVJe3sV6qoJQEwcNDjSrvFdtAmKlakrERnPFY8OJcunxeffvnaYVzT3iBUJKw5/+JSMvZKG8fDknqCVEcNW9A1urS1uCo/nGRG5AXInNAxFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YtPP1+fX; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53F15bTl020966
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 01:22:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	V8hD0tWfGMXHgoXT9lMggKnO35G/qy70wvPbpWnT1Cg=; b=YtPP1+fXhpjHUZvI
-	KR2Y+MfSWGhL8u7hx1fLmEbNLR/MUzeUdCelhBsko2KEIEA4cH3K5cQxtfV/Uww8
-	xDLYYuduDWbphTuDZ7/+KrGQHu6KD+qR49NB90c0xYJCj9VZ4627lFA9mO7dW4Dk
-	zid7wyplTC/mbQFNyZvg1bgHlI0mw/nfiJF+vO0wpeMLiRfBDX/KO8ASegzBQlvD
-	nhXQklgIu6zXCEobndABd4eb3deXBeN0bUv2NYh6AAlbsNxSd+cwajFBzWncGqeZ
-	JhfrLx2N5Q/NFtkSjW9QD0KUTMJxqm5Pj9u8SwI3+x7eIzbin2sUzR9+lk/Y27gg
-	0uqeXA==
-Received: from mail-oa1-f69.google.com (mail-oa1-f69.google.com [209.85.160.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ygj967v4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 01:22:03 +0000 (GMT)
-Received: by mail-oa1-f69.google.com with SMTP id 586e51a60fabf-2c2fc98f199so3892516fac.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 18:22:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744680123; x=1745284923;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V8hD0tWfGMXHgoXT9lMggKnO35G/qy70wvPbpWnT1Cg=;
-        b=Ggy+D9jlLEi3TRrGYRz0k8ghwrJnmPh6I8AzMuLT1LF6yApZbXe84iaO/fJNay5oF5
-         xvvVozJHeBrdhjylJiq6x6KK5O7Ei9MUTOYpHnpOPC1oEfDpbiPxz+Y3NXl+GHZuCflh
-         IhqNk1Sa7CJlVTHU7ILRIwvRa8VUx2EWgqIT54BNVBl3yR6SNQHiNuWVy5imH4QxvW1K
-         mRqMgORteTgaZQ14I8cNLwoFncLfAPn7/QZROV8OuoqkdpOAB8MNtH1uS3dkimEDvpoq
-         6/u1fr4NI02gGY/pptyOvTbT1FCtFiDfDbmqSEfuSCP3yNDEOt9QTwxrGrBgju3qmR67
-         OkKw==
-X-Forwarded-Encrypted: i=1; AJvYcCWUaRFbW1ILtC8XYVeH89H426Sez45JUgVmA1l1Qvf3owzqO3DFDmHUbRs7I18mZ/cMwimE5eocwYb4ouQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrdIcN5JnjevYbzlsQYR9bfeDIzmR/Yb+BgDd3xRp7/IGDaZdY
-	xNQTF/VAn5pg6uMcVGK79hIWsvGwGzsMIOFCZMRw6F3Pt88pwj1348dgotIH9dQctDMgyPwaFnL
-	RC2T6991C6BusPGDp1DEskpIZhwnivbLw0IbK4+htHSFM+PAXM0RoHgrMxxvlHHA=
-X-Gm-Gg: ASbGncsrckf+h4f1PooB9sxWyl8p6iJTZm59RxkrWgbKN6yTkAf33hZsgX1EPbwdWop
-	zRB+FlwYcfq0CL4V+3agLWz7VSEwRttojHL2Gzz+H+d+z18tJT0VblAfyionGt/snPd7oDXO2Ku
-	hHno+fx5Soy0khMr+Z1ZMpLB5VAqtvISxfgkd4lgUokQD2Yit+i7yu4LICwVX+mr545jeCkx9Us
-	B5963C2BVkZAE2Msli2Mi1zFBr/3xWjkIF+MkMxwaeI/SolSUcink27o8RLEgeo5hl02itvbARt
-	I6vRQ0YeUyG3fG8GjfaLlOGBM/A1l26PQK0SKi/Z3GPwJe3oWCGJOvOEeJAy5NdeOYvUEVZi2QL
-	rCpYzeRQyRww=
-X-Received: by 2002:a05:6870:fe91:b0:2c2:27c8:5864 with SMTP id 586e51a60fabf-2d0d5cd3d12mr9204954fac.14.1744680122759;
-        Mon, 14 Apr 2025 18:22:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHt2OTe4yLk4/T2nST8NPOD1d6U+n5GJsu0PPBBDYnEgc1PKdGDKH+qmKiRE9MBUlNHR5+gaQ==
-X-Received: by 2002:a05:6870:fe91:b0:2c2:27c8:5864 with SMTP id 586e51a60fabf-2d0d5cd3d12mr9204937fac.14.1744680122380;
-        Mon, 14 Apr 2025 18:22:02 -0700 (PDT)
-Received: from [192.168.86.65] (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2d0968e090esm2652538fac.6.2025.04.14.18.22.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Apr 2025 18:22:01 -0700 (PDT)
-From: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-Date: Mon, 14 Apr 2025 20:21:55 -0500
-Subject: [PATCH v7 6/6] usb: dwc3: qcom: Transition to flattened model
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A76820010A;
+	Tue, 15 Apr 2025 01:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744680228; cv=fail; b=ibi8jovL0gyoxO1mxeQkvmpBFhJlylPM5gO57MTFEYW0JMIH4vF2HejUoH8wzOjMYriS4VGRUgz/GIWPBtLPBcGiYEFhtDHTZdRnrXd8b/qBEwBX54cZnE4nBbpkz6jhwKd5SfAxRzGwyQhCAE8aNDtnUjd7jx1BuwmpBOefr04=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744680228; c=relaxed/simple;
+	bh=RNBCFCJLcVX58hpeetOz6AMwsClnELTHwqFTvB9rhsw=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Ato/Hnma0H3EjAnf2/va8dF9S0PjSekMYjL2Pzo1EN0sq6+i1FZv3UPjD+gEy8CFEwzm1gDdBXMszEpYPIKi0fgYTSUXWy2HddthOBYfD+UCgFFdpFPfWRZfomuHynWqZNYF6O/iUf7L9iTuizMv+Q+2Jc5n+JE7MMfqCLyLVCQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cs.wisc.edu; spf=pass smtp.mailfrom=cs.wisc.edu; dkim=pass (2048-bit key) header.d=cs.wisc.edu header.i=@cs.wisc.edu header.b=qhxWnFo8; arc=fail smtp.client-ip=205.220.165.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cs.wisc.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cs.wisc.edu
+Received: from pps.filterd (m0316039.ppops.net [127.0.0.1])
+	by mx0a-007b0c01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53EIDBiJ013106;
+	Mon, 14 Apr 2025 20:23:21 -0500
+Received: from nam04-dm6-obe.outbound.protection.outlook.com (mail-dm6nam04lp2043.outbound.protection.outlook.com [104.47.73.43])
+	by mx0a-007b0c01.pphosted.com (PPS) with ESMTPS id 460a96ueu8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Apr 2025 20:23:21 -0500 (CDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lxZKh2C6BDwGSCPneEXS9YicAlEItu0MoXfP8xrrTvM9YSwKkNUb6p4ne2qGDIWfV/DFb07F9kmAt1Xht7CAvTu3qdx+2y4m3CeteMd2JNWHGEESSb9iafSZeiDT8y5mPxe3OsZKT6wU9pIjTL1D7FLxX5HkGQHuydyhvxLw545wvzt4AOKOqdCFTFBlvpOvZagxPmjMnd1b69wwUGSfOrRLWlwng+NoFkLGESn9ancE3++68ojHSGjyqbYau08SE3487nDQ6YVOgO0L9cNFvaLsQRUEFiO4lQF018qhTUOAcmv1Oy0fPudbTS0OHbb+q5Axu84Um1wbM4TYcw0wrA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KT2MyHWhSKD4tH6UDPT2TIQ2KzLn3Ten0vU8qD/D0mc=;
+ b=g4Eo/kzY9kpIQf+WXsS0iRgtWggtvahW8gH6B3vWg01+VUoL0p3tXp3MeG/bL7ddSxp5Ts+pzdeLWVM1vW0HSbBXHJqfDIppDU4ON0i3TEICsEtJ4HZXdsMPYmRfs0x4yNTC6pzXxlJBhroR/XYg8Gwmfi6UA//Y3wYWaDsMPCiXjKvlALMvkMUdGh/PkOmUG3K4jEqtTa+J+36bJ2ET2UKQ6yBlxEMFbj9KA6K1fdInfa7/W4bWgHGllQ2lYK0anEiAA/i1AkJ0AE4c3/MIH8eUvr3Htc2lEOu6Xu2qX7FJrnp77H2Fd3jhplCTUoAg9WHlhZ5IAUzdrgamfI8JdA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cs.wisc.edu; dmarc=pass action=none header.from=cs.wisc.edu;
+ dkim=pass header.d=cs.wisc.edu; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cs.wisc.edu;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KT2MyHWhSKD4tH6UDPT2TIQ2KzLn3Ten0vU8qD/D0mc=;
+ b=qhxWnFo8F9n1dFA+/hUe3IaMwOBmtPA3so90eDfD6/neoldKxhZBhmlqjXBrck40j6MR3ysOL/M5J3q8kbUy4YKLPSXD4R/M6b4EUQag3EnvSbf48KSqIE5a+z75E91fALDDW26Ro+N5w9JSwlyz82GCrqT2QDijXlfomg6n8LwU/2VB23dAc1OQ0PUfF2GfeWVY9lgRm+4wFqWepQGHtnf4EYhB97l6dWsxw6Rx1S8STiMI/uTg+QPmyGyohs/aIyNg7WFdYU75ZruYmRABgXrJXU3cyHtV/s0UyipSF2wB6A5lwo+cbrTnI5C6YxOdgbmtLvNDQdhBoisaFuztqg==
+Received: from DS7PR06MB6808.namprd06.prod.outlook.com (2603:10b6:5:2d2::10)
+ by IA3PR06MB10404.namprd06.prod.outlook.com (2603:10b6:208:511::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.34; Tue, 15 Apr
+ 2025 01:23:19 +0000
+Received: from DS7PR06MB6808.namprd06.prod.outlook.com
+ ([fe80::76b2:e1c8:9a15:7a1c]) by DS7PR06MB6808.namprd06.prod.outlook.com
+ ([fe80::76b2:e1c8:9a15:7a1c%5]) with mapi id 15.20.8632.030; Tue, 15 Apr 2025
+ 01:23:19 +0000
+Message-ID: <ce3acc00-6332-45b6-890d-d215488d8c46@cs.wisc.edu>
+Date: Mon, 14 Apr 2025 20:23:17 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/tracing: introduce enter/exit tracepoint pairs for
+ page faults
+To: Steven Rostedt <rostedt@goodmis.org>, Borislav Petkov <bp@alien8.de>
+Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>
+References: <e7d4cd81-c0a5-446c-95d2-6142d660c15b@cs.wisc.edu>
+ <20250414205441.GGZ_12Eew18bGcPTG0@fat_crate.local>
+ <20250414182050.213480aa@gandalf.local.home>
+Content-Language: en-US
+From: Junxuan Liao <ljx@cs.wisc.edu>
+In-Reply-To: <20250414182050.213480aa@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MN2PR07CA0025.namprd07.prod.outlook.com
+ (2603:10b6:208:1a0::35) To DS7PR06MB6808.namprd06.prod.outlook.com
+ (2603:10b6:5:2d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250414-dwc3-refactor-v7-6-f015b358722d@oss.qualcomm.com>
-References: <20250414-dwc3-refactor-v7-0-f015b358722d@oss.qualcomm.com>
-In-Reply-To: <20250414-dwc3-refactor-v7-0-f015b358722d@oss.qualcomm.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
-        Wesley Cheng <quic_wcheng@quicinc.com>,
-        Saravana Kannan <saravanak@google.com>,
-        Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Frank Li <Frank.li@nxp.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=12897;
- i=bjorn.andersson@oss.qualcomm.com; h=from:subject:message-id;
- bh=+5/A3HpALBqUAQtH4uLB07biQeduLnRFjvrsKfrOt7k=;
- b=owEBgwJ8/ZANAwAIAQsfOT8Nma3FAcsmYgBn/bSz5y5w1gPobsvKUJ40FnOw54slF2LYjUVSU
- drbh5xHMu2JAkkEAAEIADMWIQQF3gPMXzXqTwlm1SULHzk/DZmtxQUCZ/20sxUcYW5kZXJzc29u
- QGtlcm5lbC5vcmcACgkQCx85Pw2ZrcUEUg//bXM292MMxde0G9NuhMvzOkpJWOj2ISHYw7/CflP
- DqPIWya/5HUc1XKcIIbq6KH1Y7eC8ZSFQUJQWl5HbhlAjvAbZgFpvEuQ0RJpOHIxfxm4nTFYXaP
- v/BXmyTBDmRd7mn3o09D6/UKt/57bnLuXBToT5HtoeUaf6VU2S1n/LkaN+rEoRf922j5MCGIbKW
- mXfLxBtlWb/+tAehmCkqeLVrK/+eVW1zfIm+KrePybBJqerq7TH1izom8WlElL0mP9UP6ZTk0Of
- U/xtF9mdlb3/60aF0iPWKZEnUA1ePdBpXGRwRzUOHhM4Cc6cztG03hLJ1bfQUatMGk4cJX3tBM3
- OlF4i3ddOsipcRxqjScPXsOO8KgAKQVIbgIJ6Seob3n/K+K8AcPV1CNghGN8lEDq9/lPnf1W7vh
- yVHnnc7Mfu5/Y4DOkLidDuDwaFFzL2eyESG/CTS529D7rqg6JtfZYUr3QqxDsArRkyxcONgCmqO
- WzD+1Cyhz22EF1UUy86esTnZ4vsIkHP55+SUn4mMW/Gb5E+nwrkd3R72zd1fP39EgcjqGv0y6O1
- cW1XEpMVK+Psjsn4PjTv32LWo5Qw0lnADs08sboCBb5PNAblhEbDJtHpIxr0vHgsDRar71V6Gqs
- euLyqLvTizqOcr5Ihr95u3uwwk2RHTLdbrbUE1o6UuOg=
-X-Developer-Key: i=bjorn.andersson@oss.qualcomm.com; a=openpgp;
- fpr=05DE03CC5F35EA4F0966D5250B1F393F0D99ADC5
-X-Proofpoint-ORIG-GUID: 6i0Fj2nFHD8uytmF5a68Yk4vA6aCvNw5
-X-Authority-Analysis: v=2.4 cv=PruTbxM3 c=1 sm=1 tr=0 ts=67fdb4bb cx=c_pps a=zPxD6eHSjdtQ/OcAcrOFGw==:117 a=DaeiM5VmU20ml6RIjrOvYw==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=jIQo8A4GAAAA:8 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=oNyuIvTq0u59PHEm3sEA:9
- a=QEXdDO2ut3YA:10 a=y8BKWJGFn5sdPF1Y92-H:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: 6i0Fj2nFHD8uytmF5a68Yk4vA6aCvNw5
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR06MB6808:EE_|IA3PR06MB10404:EE_
+X-MS-Office365-Filtering-Correlation-Id: 55e6b441-b3de-486b-9c23-08dd7bbc1ad2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|41320700013|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?amdOSlhxajV4bDR4R2ptVElqaGlKSkd0TWluMDArWHZoQ2dyeWI5bmUvY0xP?=
+ =?utf-8?B?dUtDak5YUWZaVG1VQzh1QjR4L2xwVFJPY2k5ajkzV1gyOUNYY2lncjZRYm1i?=
+ =?utf-8?B?SGhuY3plcDcvR2FHWEFVclZmSmZENkRBQVNsOHlhZXlPajFZZ25QQVd0MG5t?=
+ =?utf-8?B?aDQ5enZ5NWp4SFA2SkpHQnNrdWs3QkMxeHhBbVBJUzAzTEI4RlpiQ3UwVDZp?=
+ =?utf-8?B?NFlxd0NENXZ1MSttZ3EySkgzYjl3WE5oZnJWSFlNTEtldnZaTzlXRDN0V0kw?=
+ =?utf-8?B?eEFLK1VWdDJWditFSlk3aFNMNy80K3FJSmRpN0J3ditVYm9ySCtsOHV3bi91?=
+ =?utf-8?B?NkRGZEVMWTVEUG1pNnRpcTh3VEpmY0lDTWhkSTJjaDhrZmVKOHFZZVFzZ1Zl?=
+ =?utf-8?B?RnRhaytsRGF1bTBNdGpSUWpVNEZLd1BRZlBoSzQ1b0lTajNaOXBZYW9idVRM?=
+ =?utf-8?B?cUE3TkZybWtSOHh5ZU5iSkhhS0dpU0kwQ043aUozZHVzNEhORVlnUEhMZEtY?=
+ =?utf-8?B?VnVCcmJZZnBXM0J1NE82YWhvQ2FyQ3RQSmgralR4cTBZRlYzVXhVUE40ZVhk?=
+ =?utf-8?B?T1FPdEplNytseDFoemQ1TUJtYUowREY2RWtzSWVvNVRhck9IdVhaMkhGUEsx?=
+ =?utf-8?B?ZWk2Rm5ud1JQbFdDNEJDUHdYUnB1dmY1YzJ1WVpiYVVFZWdMTmFpU1gvbnFm?=
+ =?utf-8?B?ZW1VRmMxMDhaa092bWJuUW92a2pKeld0OUpsOTU5cGNUTWdQR01lZGs2MjFU?=
+ =?utf-8?B?Mklia3ZwTnV6bG1nTkhSTTN1ZkNmQkNYdjdUaW9BVlFLZUVNTnovelkzSnRN?=
+ =?utf-8?B?VDJvbk9jckYveFZ6NStpRVp5eXFVWGtYczBTQVBrMDNQb3loVzhLelJ1VlZy?=
+ =?utf-8?B?dFdoeXZUQWdkOHRIb0ZRamZYTE9BNW4zSWtmRlFhMkJLYUtQMnQxL1pwS2FL?=
+ =?utf-8?B?U29Vd0V6aEdkbnBOMTBZbDZGTWtsOEN0N0FCb1grWE12VXRuR0ZQRzQrbTBI?=
+ =?utf-8?B?a0J5bkFBOWxseG1VSmVvSi82UHF0S256cnlTVFVMVFdLVzJtd3RvMEJXL0Nk?=
+ =?utf-8?B?ei9NS2J6LytBcWtsY3k2bHdDaHNyeGNPM0xxamRERnAzVEhlVFJrUDVGaWpK?=
+ =?utf-8?B?Ny9Ueko1QXNJYVhOcURCTjZ5VDMwemJxU3FyQ0d1TU5LdlU0R3lWVEdTcHp3?=
+ =?utf-8?B?U21iQzZKSHNJWnBFdUZnaENZaThtdW5SU3o3NGRKNmVrWVc0S2VtQ05Rb0JX?=
+ =?utf-8?B?dzk2T0xIOXFGeTVSMDhHM1QzR0ZIZ2NQK0llN1Y2dWNhZ1cxbk8waitnc1pu?=
+ =?utf-8?B?NFpSVXdENFBPRDZNbG1SRDN2YkM4WHg1WmpPZWdZQnpwNW91L1FWa1RlRFh5?=
+ =?utf-8?B?T3JQUFJjNFhLaHdDSkdRQVJaU1NkWnRDMWo4Wm9vSEpWRFB2QjFDMVpNODFv?=
+ =?utf-8?B?dUpDRmRDWlMxbjFUVk1TREtaZzlqSloranpvWndOblJsTFQ4SWdwR3lKcHNJ?=
+ =?utf-8?B?V1l0bk1vSlhjVHpwMkFrTXlQZE1Eak9XRy9pL0ZkV3ZiNlpSeVNsUm4wMlZ6?=
+ =?utf-8?B?SXMvaDJEaUg1OUMxOTNudkN1T0l3dHp6eEJKUXJGaEJFOGxUUlhxYzhmRzNC?=
+ =?utf-8?B?VGZzcGlOb240b0I4RW91OFg5eU51dDlMUEtlS3hteXJKYXBjWVoxNXRYc3Aw?=
+ =?utf-8?B?ejBIaXZuaW9jOUI2Nm42UjhxZktVbjZ0NlBua3IrSGpoQlBjYm4vOEkycXBN?=
+ =?utf-8?B?bDRXU1dndnpWVTU1eHZ1dkx1WkJLTGhwclpJWnQzYnJiYVZ4OWxuOGR4MDNx?=
+ =?utf-8?B?WHl4NXU1cGJ5Q0EwZCttWVdYY2Z0SnZrL29IcEVpbFJQcjM4eStPbmFvNlVC?=
+ =?utf-8?B?ZjRrM2ZBT2ZRQVJLNkYzWEV1Wk1oTUZ2b01oQ3JzTWhkU1E9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR06MB6808.namprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(41320700013)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Y3lxV0NXTm5xVHdkeWlGYkxoTEVpbUI0bldpT1duN3pwSW42QnpXTnlvcVNC?=
+ =?utf-8?B?Sm4vb1gvTGJ6bW02aDZwYjBReVRDYXkxamp5TEhEZHZFVmZZNC9yaTFVa2pw?=
+ =?utf-8?B?UERJdUZDcVNzUXZPazE5eVlRVFlCYnR0RDF4eTdwL25WV21wMGNBMnRoRXIw?=
+ =?utf-8?B?NGQ5ZHVDcUM2d3JFenhDWDU2aG8wRXZ1UzRDaDRLa3RqSDN1VFduOGU1N3FW?=
+ =?utf-8?B?WHEzbEZ6eU80TXpmMS91VmJMU2tZbEVDdVJIdjRqWDcraFVTSGpNQ0p3RXBI?=
+ =?utf-8?B?UUpPMTMyTTY3N1diRFV0TVhuYzVEa09QMUh3ZEJDY0MwREZxY1NtejRaUDR2?=
+ =?utf-8?B?S2xpUi9BQjNodUh2dWlxckJCY0pvMUplTDNsQ1l4ZGVnRE5pRHRKSm5lRkVV?=
+ =?utf-8?B?dnAxUmU1Yk96QlZsam5BOW5lOHFLTW9WbXBLeklRZC8xNGNOOHM3cVRGNnYw?=
+ =?utf-8?B?UmhGaFFuZEw1S0Y4VXFpVWg2ZUxpWittdlc0YkhRYTNLYm9tLzhZQ1NxYlZv?=
+ =?utf-8?B?L0tPUzJPWklrOUt2NDRtR0NPdjlwQWRPTEFKUEtZcU95YkdUeTFKOGZNOTVD?=
+ =?utf-8?B?R0dEMXErWm8zZVpUNTBSbDFFV3o3NjR0b25Jb1N5VXMwcmhReGVJZjU4MUdi?=
+ =?utf-8?B?aCswVlpKS2ZOZExFTE5wNStMQUNTRjZzQk1qL2JPR3dkZ2xQN2F3RFg5ZFQ2?=
+ =?utf-8?B?ODVWbXV2bGYyWjY3dStpN2hxekF2UjNEZG1mNmExNXFnbUpIcnZZVERmTVFx?=
+ =?utf-8?B?MndYdHlURjlYdC85QldEd3lvbkFqaXJxSGZWYUUyby9mZTVjeGQyWFRQODI1?=
+ =?utf-8?B?RHdobngrUWVKWDJGK0x3ZlY1UjBSc2tDOTdrOTlJUnFQZC9Ra3VPZXhwUDR2?=
+ =?utf-8?B?c1ljVklFN3VMRXF5cDN4bWxaeFZVQU5jUlVxYVMwSFlXWm51c0FBanUyMGpy?=
+ =?utf-8?B?THNPVUJnRUNST1JkMkNOYzlFcXVpaCt2Ui80aUhLYTNiSGp6VFV3QjJZMGxS?=
+ =?utf-8?B?SEZya2NCaFllNzNvYmtWUWpOejUxUE9WT1BJbkh0cndRRGpXTklDS3FwUEVM?=
+ =?utf-8?B?dmo0UGpQR2E2VFRNNFN1VTF5RnUwRUxsaC9aWWtsaSszVDZQdmNCZ2JhaTNI?=
+ =?utf-8?B?MDhHK3lNeWNEZlczT0dEaTVHQjRpZXhhRXJiZEM3NHJXd1ZJaC9nelNjRTdM?=
+ =?utf-8?B?Mk9pSFBjNkdxM3JsNGpGSmJJcmIxWHdPNDhuVG5jOGZLc0U5OWFtSG8ybEUy?=
+ =?utf-8?B?QTJtUExpQm5ZWXVFUWsvRkI4RzVLNnFxM1c0SGM0VkNZV3ZQSnUwbjZSaXJH?=
+ =?utf-8?B?cU9kTCt0aHhSb1ZDM1ljSGNIVmV4YmJtWW5zRlp5VDhQUGUrR0dRUHRVdE5W?=
+ =?utf-8?B?dlc4OEdENjJYT1ZYRHMvMFF1czRYeXRYL0wxakdLLy90cTVtMnYxTG1aNEhO?=
+ =?utf-8?B?VlJpTkFnTTZnUDJISW1nY3FBdER1NUdqZUxGaDc5UjA5TGZiZGxraGxiSm5z?=
+ =?utf-8?B?NVRvRDlicW85Um9YVEJkNlJYSnB6UUF1aC8xUmpwZGtKOS9GYkUvcXRja09a?=
+ =?utf-8?B?eEpGRFM5Tm55U2lISTZMcG1ZRUlmdDRkb1NhbzFuWTRueGh4SGx1RHkzNlFC?=
+ =?utf-8?B?aHNLa3pZYlJPQkdLcWt2bnVFV1ZqMEFFWGVwNXpXK0h5dWRXVVl4ZXd4OUlH?=
+ =?utf-8?B?dFpPcUgraFdmaE9GeDh1NktWUU54eXlnWHB3OHlvYXVaVXowdjVXSXhkTzc0?=
+ =?utf-8?B?bVp6RTFyZ2g0N1ArTk9zSE1nOTduUHJLOFNBZStEaFFKR2JEZXNZTlNYb0RQ?=
+ =?utf-8?B?OERmak94TnZXbXdYLzZmVzM2SzErb1FVbUJ2NDBwbFpZbDU4Qk1sc0RQN0Y3?=
+ =?utf-8?B?TUtjblVVVVB6aW41ZlYwd3NkSExidnVUZkFaK0hnZmNObmRZdmxSWnZzRWN5?=
+ =?utf-8?B?dHdQRTlueHpHbkFXS3ljakg0dGlHZ1VFRkJYK1Z6U3c3bzVjL25oY2dLSE5H?=
+ =?utf-8?B?ZVB0V1d1TUhKZ3pDWkZObm5CVUlXRzVSb3ZKekhleVkxaUhJNGJ1R1FxZ1h5?=
+ =?utf-8?B?QmNJNlNVcnRxOTczdG9ZWlhKUmFqeEJQMG5QQ0dEWTB1M2JweTBVRmFYMDFU?=
+ =?utf-8?Q?hjsM=3D?=
+X-OriginatorOrg: cs.wisc.edu
+X-MS-Exchange-CrossTenant-Network-Message-Id: 55e6b441-b3de-486b-9c23-08dd7bbc1ad2
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR06MB6808.namprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Apr 2025 01:23:19.6492
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 2ca68321-0eda-4908-88b2-424a8cb4b0f9
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: M4GAL+sz8aLN5SZ94YH7wwlnrw04FrpGoGgAV4+TjnOdY2kCAoPbhTGI4rz1FDXxEA8u9S3lYsDyHc6HzNaBzw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR06MB10404
+X-Proofpoint-ORIG-GUID: aBwjXTkxGvtc0k2L-e4Z6euNpp_daSOa
+X-Authority-Analysis: v=2.4 cv=CM4qXQrD c=1 sm=1 tr=0 ts=67fdb509 cx=c_pps a=YmitjTGdGiwdiEq1Q8pHfg==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=XR8D0OoHHMoA:10 a=3-xYBkHg-QkA:10 a=WEzg3AYU7VnzdkWqtLAA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: aBwjXTkxGvtc0k2L-e4Z6euNpp_daSOa
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-04-15_01,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
- priorityscore=1501 malwarescore=0 adultscore=0 lowpriorityscore=0
- impostorscore=0 clxscore=1015 spamscore=0 mlxscore=0 mlxlogscore=999
- phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
+ spamscore=0 bulkscore=0 mlxscore=0 priorityscore=1501 adultscore=0
+ mlxlogscore=558 malwarescore=0 clxscore=1015 suspectscore=0
+ lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
  definitions=main-2504150005
 
-The USB IP-block found in most Qualcomm platforms is modelled in the
-Linux kernel as 3 different independent device drivers, but as shown by
-the already existing layering violations in the Qualcomm glue driver
-they can not be operated independently.
+On 4/14/25 5:20 PM, Steven Rostedt wrote:
+> It's useful for me ;-)
+> The above shows a histogram in microseconds where the buckets increase in a
+> power of two. The biggest bucket is between 2^4 (16) and 2^5 (32) microseconds
+> with 108790 hits.
 
-With the current implementation, the glue driver registers the core and
-has no way to know when this is done. As a result, e.g. the suspend
-callbacks needs to guard against NULL pointer dereferences when trying
-to peek into the struct dwc3 found in the drvdata of the child.
-Even with these checks, there are no way to fully protect ourselves from
-the race conditions that occur if the DWC3 is unbound.
+With patch v2, I can do something similar in bpftrace too. :)
 
-Missing from the upstream Qualcomm USB support is handling of role
-switching, in which the glue needs to be notified upon DRD mode changes.
-Several attempts has been made through the years to register callbacks
-etc, but they always fall short when it comes to handling of the core's
-probe deferral on resources etc.
+tracepoint:exceptions:page_fault_enter
+/ args.user_mode == true /
+{
+    @start[tid] = nsecs;
+}
 
-Moving to a model where the DWC3 core is instantiated in a synchronous
-fashion avoids above described race conditions.
+tracepoint:exceptions:page_fault_exit
+/ args.user_mode == true /
+{
+    @lat[tid] = hist(nsecs - @start[tid]);
+}
 
-It is however not feasible to do so without also flattening the
-DeviceTree binding, as assumptions are made in the DWC3 core and
-frameworks used that the device's associated of_node will the that of
-the core. Furthermore, the DeviceTree binding is a direct
-representation of the Linux driver model, and doesn't necessarily
-describe "the USB IP-block".
-
-The Qualcomm DWC3 glue driver is therefor transitioned to initialize and
-operate the DWC3 within the one device context, in synchronous fashion.
-
-To provide a limited time backwards compatibility, a snapshot of the
-driver is retained in a previous commit. As such no care is taken in the
-dwc3-qcom driver for the qcom,dwc3 backwards compatibility.
-
-Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
-Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
----
- drivers/usb/dwc3/dwc3-qcom.c | 177 ++++++++++++++++++++++++-------------------
- 1 file changed, 99 insertions(+), 78 deletions(-)
-
-diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
-index 9d04c2457433bd6bcd96c445f59d7f2a3c6fdf24..d512002e1e88da9523ff82454e653bac55c1409d 100644
---- a/drivers/usb/dwc3/dwc3-qcom.c
-+++ b/drivers/usb/dwc3/dwc3-qcom.c
-@@ -4,7 +4,6 @@
-  * Inspired by dwc3-of-simple.c
-  */
- 
--#include <linux/cleanup.h>
- #include <linux/io.h>
- #include <linux/of.h>
- #include <linux/clk.h>
-@@ -14,7 +13,6 @@
- #include <linux/kernel.h>
- #include <linux/extcon.h>
- #include <linux/interconnect.h>
--#include <linux/of_platform.h>
- #include <linux/platform_device.h>
- #include <linux/phy/phy.h>
- #include <linux/usb/of.h>
-@@ -23,6 +21,7 @@
- #include <linux/usb/hcd.h>
- #include <linux/usb.h>
- #include "core.h"
-+#include "glue.h"
- 
- /* USB QSCRATCH Hardware registers */
- #define QSCRATCH_HS_PHY_CTRL			0x10
-@@ -73,7 +72,7 @@ struct dwc3_qcom_port {
- struct dwc3_qcom {
- 	struct device		*dev;
- 	void __iomem		*qscratch_base;
--	struct platform_device	*dwc3;
-+	struct dwc3		dwc;
- 	struct clk		**clks;
- 	int			num_clocks;
- 	struct reset_control	*resets;
-@@ -92,6 +91,8 @@ struct dwc3_qcom {
- 	struct icc_path		*icc_path_apps;
- };
- 
-+#define to_dwc3_qcom(d) container_of((d), struct dwc3_qcom, dwc)
-+
- static inline void dwc3_qcom_setbits(void __iomem *base, u32 offset, u32 val)
- {
- 	u32 reg;
-@@ -116,6 +117,11 @@ static inline void dwc3_qcom_clrbits(void __iomem *base, u32 offset, u32 val)
- 	readl(base + offset);
- }
- 
-+/*
-+ * TODO: Make the in-core role switching code invoke dwc3_qcom_vbus_override_enable(),
-+ * validate that the in-core extcon support is functional, and drop extcon
-+ * handling from the glue
-+ */
- static void dwc3_qcom_vbus_override_enable(struct dwc3_qcom *qcom, bool enable)
- {
- 	if (enable) {
-@@ -260,7 +266,7 @@ static int dwc3_qcom_interconnect_init(struct dwc3_qcom *qcom)
- 		goto put_path_ddr;
- 	}
- 
--	max_speed = usb_get_maximum_speed(&qcom->dwc3->dev);
-+	max_speed = usb_get_maximum_speed(qcom->dwc.dev);
- 	if (max_speed >= USB_SPEED_SUPER || max_speed == USB_SPEED_UNKNOWN) {
- 		ret = icc_set_bw(qcom->icc_path_ddr,
- 				USB_MEMORY_AVG_SS_BW, USB_MEMORY_PEAK_SS_BW);
-@@ -303,25 +309,14 @@ static void dwc3_qcom_interconnect_exit(struct dwc3_qcom *qcom)
- /* Only usable in contexts where the role can not change. */
- static bool dwc3_qcom_is_host(struct dwc3_qcom *qcom)
- {
--	struct dwc3 *dwc;
--
--	/*
--	 * FIXME: Fix this layering violation.
--	 */
--	dwc = platform_get_drvdata(qcom->dwc3);
--
--	/* Core driver may not have probed yet. */
--	if (!dwc)
--		return false;
--
--	return dwc->xhci;
-+	return qcom->dwc.xhci;
- }
- 
- static enum usb_device_speed dwc3_qcom_read_usb2_speed(struct dwc3_qcom *qcom, int port_index)
- {
--	struct dwc3 *dwc = platform_get_drvdata(qcom->dwc3);
- 	struct usb_device *udev;
- 	struct usb_hcd __maybe_unused *hcd;
-+	struct dwc3 *dwc = &qcom->dwc;
- 
- 	/*
- 	 * FIXME: Fix this layering violation.
-@@ -498,7 +493,7 @@ static int dwc3_qcom_resume(struct dwc3_qcom *qcom, bool wakeup)
- static irqreturn_t qcom_dwc3_resume_irq(int irq, void *data)
- {
- 	struct dwc3_qcom *qcom = data;
--	struct dwc3	*dwc = platform_get_drvdata(qcom->dwc3);
-+	struct dwc3 *dwc = &qcom->dwc;
- 
- 	/* If pm_suspended then let pm_resume take care of resuming h/w */
- 	if (qcom->pm_suspended)
-@@ -700,40 +695,14 @@ static int dwc3_qcom_clk_init(struct dwc3_qcom *qcom, int count)
- 	return 0;
- }
- 
--static int dwc3_qcom_of_register_core(struct dwc3_qcom *qcom, struct platform_device *pdev)
--{
--	struct device_node	*np = pdev->dev.of_node;
--	struct device		*dev = &pdev->dev;
--	int			ret;
--
--	struct device_node *dwc3_np __free(device_node) = of_get_compatible_child(np,
--										  "snps,dwc3");
--	if (!dwc3_np) {
--		dev_err(dev, "failed to find dwc3 core child\n");
--		return -ENODEV;
--	}
--
--	ret = of_platform_populate(np, NULL, NULL, dev);
--	if (ret) {
--		dev_err(dev, "failed to register dwc3 core - %d\n", ret);
--		return ret;
--	}
--
--	qcom->dwc3 = of_find_device_by_node(dwc3_np);
--	if (!qcom->dwc3) {
--		ret = -ENODEV;
--		dev_err(dev, "failed to get dwc3 platform device\n");
--		of_platform_depopulate(dev);
--	}
--
--	return ret;
--}
--
- static int dwc3_qcom_probe(struct platform_device *pdev)
- {
-+	struct dwc3_probe_data	probe_data = {};
- 	struct device_node	*np = pdev->dev.of_node;
- 	struct device		*dev = &pdev->dev;
- 	struct dwc3_qcom	*qcom;
-+	struct resource		res;
-+	struct resource		*r;
- 	int			ret, i;
- 	bool			ignore_pipe_clk;
- 	bool			wakeup_source;
-@@ -742,7 +711,6 @@ static int dwc3_qcom_probe(struct platform_device *pdev)
- 	if (!qcom)
- 		return -ENOMEM;
- 
--	platform_set_drvdata(pdev, qcom);
- 	qcom->dev = &pdev->dev;
- 
- 	qcom->resets = devm_reset_control_array_get_optional_exclusive(dev);
-@@ -771,8 +739,15 @@ static int dwc3_qcom_probe(struct platform_device *pdev)
- 		goto reset_assert;
- 	}
- 
--	qcom->qscratch_base = devm_platform_ioremap_resource(pdev, 0);
-+	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!r)
-+		goto clk_disable;
-+	res = *r;
-+	res.end = res.start + SDM845_QSCRATCH_BASE_OFFSET;
-+
-+	qcom->qscratch_base = devm_ioremap(dev, res.end, SDM845_QSCRATCH_SIZE);
- 	if (IS_ERR(qcom->qscratch_base)) {
-+		dev_err(dev, "failed to map qscratch region: %pe\n", qcom->qscratch_base);
- 		ret = PTR_ERR(qcom->qscratch_base);
- 		goto clk_disable;
- 	}
-@@ -792,17 +767,21 @@ static int dwc3_qcom_probe(struct platform_device *pdev)
- 	if (ignore_pipe_clk)
- 		dwc3_qcom_select_utmi_clk(qcom);
- 
--	ret = dwc3_qcom_of_register_core(qcom, pdev);
--	if (ret) {
--		dev_err(dev, "failed to register DWC3 Core, err=%d\n", ret);
-+	qcom->dwc.dev = dev;
-+	probe_data.dwc = &qcom->dwc;
-+	probe_data.res = &res;
-+	probe_data.ignore_clocks_and_resets = true;
-+	ret = dwc3_core_probe(&probe_data);
-+	if (ret)  {
-+		ret = dev_err_probe(dev, ret, "failed to register DWC3 Core\n");
- 		goto clk_disable;
- 	}
- 
- 	ret = dwc3_qcom_interconnect_init(qcom);
- 	if (ret)
--		goto depopulate;
-+		goto remove_core;
- 
--	qcom->mode = usb_get_dr_mode(&qcom->dwc3->dev);
-+	qcom->mode = usb_get_dr_mode(dev);
- 
- 	/* enable vbus override for device mode */
- 	if (qcom->mode != USB_DR_MODE_HOST)
-@@ -815,20 +794,15 @@ static int dwc3_qcom_probe(struct platform_device *pdev)
- 
- 	wakeup_source = of_property_read_bool(dev->of_node, "wakeup-source");
- 	device_init_wakeup(&pdev->dev, wakeup_source);
--	device_init_wakeup(&qcom->dwc3->dev, wakeup_source);
- 
- 	qcom->is_suspended = false;
--	pm_runtime_set_active(dev);
--	pm_runtime_enable(dev);
--	pm_runtime_forbid(dev);
- 
- 	return 0;
- 
- interconnect_exit:
- 	dwc3_qcom_interconnect_exit(qcom);
--depopulate:
--	of_platform_depopulate(&pdev->dev);
--	platform_device_put(qcom->dwc3);
-+remove_core:
-+	dwc3_core_remove(&qcom->dwc);
- clk_disable:
- 	for (i = qcom->num_clocks - 1; i >= 0; i--) {
- 		clk_disable_unprepare(qcom->clks[i]);
-@@ -842,12 +816,11 @@ static int dwc3_qcom_probe(struct platform_device *pdev)
- 
- static void dwc3_qcom_remove(struct platform_device *pdev)
- {
--	struct dwc3_qcom *qcom = platform_get_drvdata(pdev);
--	struct device *dev = &pdev->dev;
-+	struct dwc3 *dwc = platform_get_drvdata(pdev);
-+	struct dwc3_qcom *qcom = to_dwc3_qcom(dwc);
- 	int i;
- 
--	of_platform_depopulate(&pdev->dev);
--	platform_device_put(qcom->dwc3);
-+	dwc3_core_remove(&qcom->dwc);
- 
- 	for (i = qcom->num_clocks - 1; i >= 0; i--) {
- 		clk_disable_unprepare(qcom->clks[i]);
-@@ -857,17 +830,20 @@ static void dwc3_qcom_remove(struct platform_device *pdev)
- 
- 	dwc3_qcom_interconnect_exit(qcom);
- 	reset_control_assert(qcom->resets);
--
--	pm_runtime_allow(dev);
--	pm_runtime_disable(dev);
- }
- 
--static int __maybe_unused dwc3_qcom_pm_suspend(struct device *dev)
-+#ifdef CONFIG_PM_SLEEP
-+static int dwc3_qcom_pm_suspend(struct device *dev)
- {
--	struct dwc3_qcom *qcom = dev_get_drvdata(dev);
-+	struct dwc3 *dwc = dev_get_drvdata(dev);
-+	struct dwc3_qcom *qcom = to_dwc3_qcom(dwc);
- 	bool wakeup = device_may_wakeup(dev);
- 	int ret;
- 
-+	ret = dwc3_pm_suspend(&qcom->dwc);
-+	if (ret)
-+		return ret;
-+
- 	ret = dwc3_qcom_suspend(qcom, wakeup);
- 	if (ret)
- 		return ret;
-@@ -877,9 +853,10 @@ static int __maybe_unused dwc3_qcom_pm_suspend(struct device *dev)
- 	return 0;
- }
- 
--static int __maybe_unused dwc3_qcom_pm_resume(struct device *dev)
-+static int dwc3_qcom_pm_resume(struct device *dev)
- {
--	struct dwc3_qcom *qcom = dev_get_drvdata(dev);
-+	struct dwc3 *dwc = dev_get_drvdata(dev);
-+	struct dwc3_qcom *qcom = to_dwc3_qcom(dwc);
- 	bool wakeup = device_may_wakeup(dev);
- 	int ret;
- 
-@@ -889,30 +866,74 @@ static int __maybe_unused dwc3_qcom_pm_resume(struct device *dev)
- 
- 	qcom->pm_suspended = false;
- 
-+	ret = dwc3_pm_resume(&qcom->dwc);
-+	if (ret)
-+		return ret;
-+
- 	return 0;
- }
- 
--static int __maybe_unused dwc3_qcom_runtime_suspend(struct device *dev)
-+static void dwc3_qcom_complete(struct device *dev)
- {
--	struct dwc3_qcom *qcom = dev_get_drvdata(dev);
-+	struct dwc3 *dwc = dev_get_drvdata(dev);
-+
-+	dwc3_pm_complete(dwc);
-+}
-+
-+static int dwc3_qcom_prepare(struct device *dev)
-+{
-+	struct dwc3 *dwc = dev_get_drvdata(dev);
-+
-+	return dwc3_pm_prepare(dwc);
-+}
-+#else
-+#define dwc3_qcom_complete NULL
-+#define dwc3_qcom_prepare NULL
-+#endif /* CONFIG_PM_SLEEP */
-+
-+#ifdef CONFIG_PM
-+static int dwc3_qcom_runtime_suspend(struct device *dev)
-+{
-+	struct dwc3 *dwc = dev_get_drvdata(dev);
-+	struct dwc3_qcom *qcom = to_dwc3_qcom(dwc);
-+	int ret;
-+
-+	ret = dwc3_runtime_suspend(&qcom->dwc);
-+	if (ret)
-+		return ret;
- 
- 	return dwc3_qcom_suspend(qcom, true);
- }
- 
--static int __maybe_unused dwc3_qcom_runtime_resume(struct device *dev)
-+static int dwc3_qcom_runtime_resume(struct device *dev)
- {
--	struct dwc3_qcom *qcom = dev_get_drvdata(dev);
-+	struct dwc3 *dwc = dev_get_drvdata(dev);
-+	struct dwc3_qcom *qcom = to_dwc3_qcom(dwc);
-+	int ret;
- 
--	return dwc3_qcom_resume(qcom, true);
-+	ret = dwc3_qcom_resume(qcom, true);
-+	if (ret)
-+		return ret;
-+
-+	return dwc3_runtime_resume(&qcom->dwc);
-+}
-+
-+static int dwc3_qcom_runtime_idle(struct device *dev)
-+{
-+	return dwc3_runtime_idle(dev_get_drvdata(dev));
- }
-+#endif /* CONFIG_PM */
- 
- static const struct dev_pm_ops dwc3_qcom_dev_pm_ops = {
- 	SET_SYSTEM_SLEEP_PM_OPS(dwc3_qcom_pm_suspend, dwc3_qcom_pm_resume)
- 	SET_RUNTIME_PM_OPS(dwc3_qcom_runtime_suspend, dwc3_qcom_runtime_resume,
--			   NULL)
-+			   dwc3_qcom_runtime_idle)
-+	.complete = dwc3_qcom_complete,
-+	.prepare = dwc3_qcom_prepare,
- };
- 
- static const struct of_device_id dwc3_qcom_of_match[] = {
-+	{ .compatible = "qcom,snps-dwc3" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, dwc3_qcom_of_match);
-
--- 
-2.49.0
-
+Junxuan
 
