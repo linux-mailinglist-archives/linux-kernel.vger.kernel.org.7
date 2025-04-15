@@ -1,228 +1,85 @@
-Return-Path: <linux-kernel+bounces-605186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88B0EA89E09
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:28:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94F52A89E00
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:27:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF5E93AD405
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:25:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7850216A52D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 608D1296D36;
-	Tue, 15 Apr 2025 12:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="DR0HgK59"
-Received: from outbound.pv.icloud.com (p-west1-cluster5-host8-snip4-6.eps.apple.com [57.103.66.247])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5FD228A1FE
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 12:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.66.247
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99B42750F2;
+	Tue, 15 Apr 2025 12:25:15 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F3318DF8D
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 12:25:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744719925; cv=none; b=rLvjweBsquA6kmdFbx6e1zyz0AeVslwDzxd0PfFB1bm/yL9GTYg3v7zeO8AeilzuMjJL9ydA+0rj7ms2MUvWw0qLu6VstKwMHwpDzxiPPjFeIVgnG5Nw4kpuZ1Rex7SD6LM9KDMMhO0SgZ3MtvCf7C56eD5pKXp9vLeu79mG3mk=
+	t=1744719915; cv=none; b=haLW7uk4ZyN9G4ojqmPznJe2QMU+p+tW41sahCmXgOj1De7oFtJneNbKb09vJzacVrxyKQmw5bJUFHBxjK4WY1jS4l37/ti3AS1F/5KT8LE+VOUwLQ6eaLU0TwuIWnq09Zs4poRObuJvP1JQ8lljjB31O6NffXS+QLVRiV+9hgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744719925; c=relaxed/simple;
-	bh=jltUQ38KRnxk/jmuA1LlxaWEFSm+NkVCPiXXnAdFpRE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Y9iy+YuLd/YJBvbHBj4i33OQs0g+oh5MJa8OMzWEG3FobZywYiU2gOB3NEHIt4gjmAWSlj4zShAlPSwZrAJ3YaeAtYo+a27yYCDq5mxZvnlt8TgtfgokZ2DEI8Td3A19Q8pmfn3OCC4k34oZJbT8EG1JVI9pNOs6l0xjmlJ3l9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=DR0HgK59; arc=none smtp.client-ip=57.103.66.247
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; bh=xgxhhlEqIkEJ2KCZO6AJq72n4YhBAvp3VflUxswOa9Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:x-icloud-hme;
-	b=DR0HgK59oXTDtZh8DRhbuvRwbhy/YziyrZCWNL0juh943oKjePC/NO7TeVXktMmmD
-	 YFdQ1/bVERHCkW2K1A+hwLC/MXcyVf7Zk7izcIgFIH0K4Fs4SdnjAoheOXFxCyWOOY
-	 sb7FuR3czkq5HGx+NSO+2s8d6oguvV6VrUn99Mq8Alih31juepXBUUMD7+2yr5zo7G
-	 5AlUHU4ILRimLn9lSdBLNvPTWk9We2vjTKwp8JZAc7gdBC/ySzofZ7IhcIyw4F9fY3
-	 pAM4fM67xdbCbxpoNJ97XlucZrnyzgEeLe+z3N9+7NmeA84INK48D/P7i3yhjwy9po
-	 y5//1S1R/CZkQ==
-Received: from [192.168.1.26] (pv-asmtp-me-k8s.p00.prod.me.com [17.56.9.36])
-	by outbound.pv.icloud.com (Postfix) with ESMTPSA id EE6F0180093E;
-	Tue, 15 Apr 2025 12:25:16 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Tue, 15 Apr 2025 20:25:00 +0800
-Subject: [PATCH v4] fs/fs_parse: Remove unused and problematic
- validate_constant_table()
+	s=arc-20240116; t=1744719915; c=relaxed/simple;
+	bh=nvD/RBUBBcuPgjMDJktDVfnMQnmTiSae3+NuDW2paEk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hF9hkMg/gY3VU1fyb/AYIWZWIaL4RHBoVBPQS9s1V9g4JfICxaRgr9gkd0LV0T9at4kpx260tbH8jffyK1EzHP7BW3MIX/adyrHlMfPQ4hdmEEqrolFcWTwh5IHKqdXnNQ+zkNdrTgHIFeabZ60RK/M/HAwiRDCOiIwhvEpPM10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A2C0615A1;
+	Tue, 15 Apr 2025 05:25:10 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A7FCC3F694;
+	Tue, 15 Apr 2025 05:25:11 -0700 (PDT)
+Date: Tue, 15 Apr 2025 13:25:08 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH v2 1/8] driver core: add helper macro for
+ module_faux_driver() boilerplate
+Message-ID: <20250415-unyielding-aboriginal-labradoodle-28fef4@sudeepholla>
+References: <20250318-plat2faux_dev-v2-0-e6cc73f78478@arm.com>
+ <20250318-plat2faux_dev-v2-1-e6cc73f78478@arm.com>
+ <2025041510-virtual-flagstone-8b3f@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250415-fix_fs-v4-1-5d575124a3ff@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIABtQ/mcC/2WMQQ6CMBBFr0JmbU1LWwFX3sMYU8dBZiHFVhsN4
- e4WFkbj8s3890aIFJgibIsRAiWO7PsMZlUAdq6/kOBzZihlaaVRUrT8PLZRbEi6pkJDtmkhj4d
- A+bOE9ofMHce7D6+lm9R8/UskJaSoUBlErOnk3O72YOQe1+ivMEeS/hbtR9Qiq6irGtEiafsrT
- tP0BqZtyl7XAAAA
-X-Change-ID: 20250410-fix_fs-6e0a97c4e59f
-To: Jonathan Corbet <corbet@lwn.net>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: Zijun Hu <zijun_hu@icloud.com>, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- Zijun Hu <quic_zijuhu@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Proofpoint-ORIG-GUID: AA4KBPzgyiUMCvSca0xXIiMSyoYGS86k
-X-Proofpoint-GUID: AA4KBPzgyiUMCvSca0xXIiMSyoYGS86k
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-15_05,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0 phishscore=0
- suspectscore=0 mlxscore=0 bulkscore=0 clxscore=1015 adultscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2504150088
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025041510-virtual-flagstone-8b3f@gregkh>
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+On Tue, Apr 15, 2025 at 02:21:10PM +0200, Greg Kroah-Hartman wrote:
+> On Tue, Mar 18, 2025 at 05:01:39PM +0000, Sudeep Holla wrote:
+> > For simple modules that needs to create a faux device without any
+> > additional setup code ends up being a block of duplicated boilerplate.
+> > 
+> > Add a new macro, module_faux_driver(), which help to replaces the
+> > those duplicated boilerplate.
+> > 
+> > This macro use the same idea of module_platform_driver() but adds this
+> > initial condition to avoid creation of faux device if not necessary.
+> 
+> What is this "condition" for?
+> 
+> Every time you put "true" or "false" in the function call, someone will
+> have to look it up to see what is going on, that's going to be a pain.
+> 
+> Making apis is hard, let's not making using them even harder.
+> 
 
-Remove validate_constant_table() since:
+Agreed and also since the number of users the would use reduced due to
+their autoload dependency, I dropped the idea of having the macro. All the
+ones that can be moved to use faux_device have now moved(I mean queued)
+without this macro as it was in v1 of the series.
 
-- It has no caller.
+Thanks for the time and review. Sorry I should have provided update on this
+after I had to drop all the efi related patches for the above reason.
 
-- It has below 3 bugs for good constant table array array[] which must
-  end with a empty entry, and take below invocation for explaination:
-  validate_constant_table(array, ARRAY_SIZE(array), ...)
-
-  - Always return wrong value due to the last empty entry.
-  - Imprecise error message for missorted case.
-  - Potential NULL pointer dereference since the last pr_err() may use
-    @tbl[i].name NULL pointer to print the last empty entry's name.
-
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
-Changes in v4:
-- Rebase on vfs-6.16.misc branch to fix merge conflict.
-- Link to v3: https://lore.kernel.org/r/20250415-fix_fs-v3-1-0c378cc5ce35@quicinc.com
-
-Changes in v3:
-- Remove validate_constant_table() instead of fixing it
-- Link to v2: https://lore.kernel.org/r/20250411-fix_fs-v2-2-5d3395c102e4@quicinc.com
-
-Changes in v2:
-- Remove fixes tag for remaining patches
-- Add more comment for the NULL pointer dereference issue
-- Link to v1: https://lore.kernel.org/r/20250410-fix_fs-v1-3-7c14ccc8ebaa@quicinc.com
----
- Documentation/filesystems/mount_api.rst | 15 ----------
- fs/fs_parser.c                          | 49 ---------------------------------
- include/linux/fs_parser.h               |  5 ----
- 3 files changed, 69 deletions(-)
-
-diff --git a/Documentation/filesystems/mount_api.rst b/Documentation/filesystems/mount_api.rst
-index 47dafbb7427e6a829989a815e4d034e48fdbe7a2..e149b89118c885c377a17b95adcdbcb594b34e00 100644
---- a/Documentation/filesystems/mount_api.rst
-+++ b/Documentation/filesystems/mount_api.rst
-@@ -752,21 +752,6 @@ process the parameters it is given.
-      If a match is found, the corresponding value is returned.  If a match
-      isn't found, the not_found value is returned instead.
- 
--   * ::
--
--       bool validate_constant_table(const struct constant_table *tbl,
--				    size_t tbl_size,
--				    int low, int high, int special);
--
--     Validate a constant table.  Checks that all the elements are appropriately
--     ordered, that there are no duplicates and that the values are between low
--     and high inclusive, though provision is made for one allowable special
--     value outside of that range.  If no special value is required, special
--     should just be set to lie inside the low-to-high range.
--
--     If all is good, true is returned.  If the table is invalid, errors are
--     logged to the kernel log buffer and false is returned.
--
-    * ::
- 
-        bool fs_validate_description(const char *name,
-diff --git a/fs/fs_parser.c b/fs/fs_parser.c
-index c5cb19788f74771a945801ceedeec69efed0e40a..c092a9f79e324bacbd950165a0eb66632cae9e03 100644
---- a/fs/fs_parser.c
-+++ b/fs/fs_parser.c
-@@ -379,55 +379,6 @@ int fs_param_is_path(struct p_log *log, const struct fs_parameter_spec *p,
- EXPORT_SYMBOL(fs_param_is_path);
- 
- #ifdef CONFIG_VALIDATE_FS_PARSER
--/**
-- * validate_constant_table - Validate a constant table
-- * @tbl: The constant table to validate.
-- * @tbl_size: The size of the table.
-- * @low: The lowest permissible value.
-- * @high: The highest permissible value.
-- * @special: One special permissible value outside of the range.
-- */
--bool validate_constant_table(const struct constant_table *tbl, size_t tbl_size,
--			     int low, int high, int special)
--{
--	size_t i;
--	bool good = true;
--
--	if (tbl_size == 0) {
--		pr_warn("VALIDATE C-TBL: Empty\n");
--		return true;
--	}
--
--	for (i = 0; i < tbl_size; i++) {
--		if (!tbl[i].name) {
--			pr_err("VALIDATE C-TBL[%zu]: Null\n", i);
--			good = false;
--		} else if (i > 0 && tbl[i - 1].name) {
--			int c = strcmp(tbl[i-1].name, tbl[i].name);
--
--			if (c == 0) {
--				pr_err("VALIDATE C-TBL[%zu]: Duplicate %s\n",
--				       i, tbl[i].name);
--				good = false;
--			}
--			if (c > 0) {
--				pr_err("VALIDATE C-TBL[%zu]: Missorted %s>=%s\n",
--				       i, tbl[i-1].name, tbl[i].name);
--				good = false;
--			}
--		}
--
--		if (tbl[i].value != special &&
--		    (tbl[i].value < low || tbl[i].value > high)) {
--			pr_err("VALIDATE C-TBL[%zu]: %s->%d const out of range (%d-%d)\n",
--			       i, tbl[i].name, tbl[i].value, low, high);
--			good = false;
--		}
--	}
--
--	return good;
--}
--
- /**
-  * fs_validate_description - Validate a parameter specification array
-  * @name: Owner name of the parameter specification array
-diff --git a/include/linux/fs_parser.h b/include/linux/fs_parser.h
-index 5057faf4f09182fa6e7ddd03fb17b066efd7e58b..5a0e897cae807bbf5472645735027883a6593e91 100644
---- a/include/linux/fs_parser.h
-+++ b/include/linux/fs_parser.h
-@@ -87,14 +87,9 @@ extern int lookup_constant(const struct constant_table tbl[], const char *name,
- extern const struct constant_table bool_names[];
- 
- #ifdef CONFIG_VALIDATE_FS_PARSER
--extern bool validate_constant_table(const struct constant_table *tbl, size_t tbl_size,
--				    int low, int high, int special);
- extern bool fs_validate_description(const char *name,
- 				    const struct fs_parameter_spec *desc);
- #else
--static inline bool validate_constant_table(const struct constant_table *tbl, size_t tbl_size,
--					   int low, int high, int special)
--{ return true; }
- static inline bool fs_validate_description(const char *name,
- 					   const struct fs_parameter_spec *desc)
- { return true; }
-
----
-base-commit: 8cc42084abd926e3f005d7f5c23694c598b29cee
-change-id: 20250410-fix_fs-6e0a97c4e59f
-
-Best regards,
 -- 
-Zijun Hu <quic_zijuhu@quicinc.com>
-
+Regards,
+Sudeep
 
