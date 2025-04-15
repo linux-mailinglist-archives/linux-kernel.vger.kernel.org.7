@@ -1,103 +1,113 @@
-Return-Path: <linux-kernel+bounces-604257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7703CA8928E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 05:34:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67F46A89293
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 05:35:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B1CD1756FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 03:33:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E7DF175622
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 03:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 048B6212FB3;
-	Tue, 15 Apr 2025 03:33:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FFCC217F24;
+	Tue, 15 Apr 2025 03:35:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kHyIbpgw"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VxHEaHJn"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1509C78F59;
-	Tue, 15 Apr 2025 03:33:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCA8F8460;
+	Tue, 15 Apr 2025 03:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744688029; cv=none; b=gi88DVUl/I+bItK0Sm455r5Pl9NVdsmDJEgr23EzE3D5fIUvldP/vjk26NYm4nhPOt8eC8H+f2GIVpfuUTuhw6QbwVGF3gbJmNp57jpXUUEAt+fTHEpX29IQZ5xpDqr/22+Y6myqLUhO+20wT66ObRpiGQxaKZ+Lf7uWoNHN3Iw=
+	t=1744688128; cv=none; b=F+9QGEAi04kZGN17gOxWxgnO3sfqWFeCfKBcwdJ0vDcZ8ifANoSo0l4HJ1bkyLQBOwJzxajFoZkhe4UIJ8eJAQ13Y83LRKsCPvl9DWgelVMoA6cUEzsRcxpNXs0zQn+VYIQ7cawSNvCBdasa9hO2Jan4QFlsuvzz4vXSGW3rxW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744688029; c=relaxed/simple;
-	bh=PD4IETagEYw9szCMDtrwf/DURPDv6bR2qwauiy9/ewg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qbweHOotuj7g+F2l2c9cIyZp3qoEfVIloTEArWofqSbfPOd2HmPrAO1oVUKbdf8q6QO3t4cgfm/RPfPOVwxMN6WsBWKjMtWVCmCNHnfUwuX7iPvrpSyN8eSDJ+Ud6xqfPArvhJ6Es7WPrhIPB+z+CvTCT7bSihk4BoL6aEODjEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kHyIbpgw; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-223fd89d036so60852035ad.1;
-        Mon, 14 Apr 2025 20:33:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744688027; x=1745292827; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WGR66RJGijWfsj/Wy3cJYHe1Qxgq0Xxw8JFWHJyYQBo=;
-        b=kHyIbpgwp9Husjvf5Oveqbtp51i8axVRhXMc2rOJv9qphaPj3x+J9bi1Gj79ut3CQs
-         5j9mqprgP9D0CTRur0kc8rVB/bBqpbN1YU/qWaGRRC1CvpQwgL6WopiLpkkxU7JLUXgb
-         1+yOUqs92KM0eyfIeSOScxfTYv9GE1hB3MZC+DGqWlgkb6GXCJC8TZTzQpXT/F/Qh2hB
-         AX7cP6y1aH9bFuQXf7fSaG5qkq4jPxYUiBvLHr2RDloLeZumB1KhG4J+oOFJujZvbmZE
-         eEGRslssZO3l+aSZcxpD6Q0NNM9cTkK3UHKggTT0L0mS2N88J0TzDp2XlWnNwkKhNhl8
-         EjgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744688027; x=1745292827;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WGR66RJGijWfsj/Wy3cJYHe1Qxgq0Xxw8JFWHJyYQBo=;
-        b=rPLjC1jJdhHIVHuqvY9RY0Jc5uAZGff5TW296ic+ic/mnaqCwYKj818U1lCQaa0tsN
-         bLgYvKFBTX3SlRKGvXcX9sKqSCl2pzQuWA/Q0+C44wdnSXgXMr2VSN17YwGJ1rzlo+I2
-         rv0phe9IswR3/4I7IAR/Jk1Ea/wPbj1iRcAoDtxbmwiG9iZ8+qnCcJ5VMAsxRTq5SWES
-         oZnMymKdWzcDE/xID8WUcD6HuGQD4QqzKTnDZ8EYC88AAxVxe+gop2FGNIaWo8ephF0E
-         6rxaYRmOxSqdZx79F9QM4RrHkYucuN0Krse1MCVjHTbLzwZt8U0Lavz5qkFF6/Od0DSY
-         KQNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWqUTXbqxSoJffN01CPyR5jxShW73DtEY5+J1KaRz90ZSEid1oKZgnNWapykqWq7xzUEbK+dax/@vger.kernel.org, AJvYcCX91+77CNBAJu5HV42gaVho949MBYLfqwBv5f/Bs13f9lL7lqnvXwyUIJFPvOSLCCSeADqS4Grgj3HAO80=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkD3NP3iK4rTvqCgTUfnpbr/z/0UGvU+XHFlWe2aO1D6XMqh4G
-	z++NuXNq+6mec9PRVbLdCqDIBfEN+KXXzmXFnXOR+5/UsHxWuNdS
-X-Gm-Gg: ASbGncv2xXo9Lxfqm+dtQsptDFyXVXlKDWQqXEi0q0X98MfXXXjCtUgaQ/LttGnEMkQ
-	VNl/Yg8ynBUpDOTyoPk/X2ypH7x4JTxQcYllMyjs6er+reRKdiZfQswUEnEmprBrhELuDB+tVYp
-	aXDhRKPks2lgKOS4ykzO+Q4wVZ38AQmcvShbBJyzIOdfwKwlWaCgW2qbzglj1TnwsvFNC+aVNNv
-	9CI8U1+S0I1Ah2Gd15d6nAWU8prYUcU8alB48gARAQ60GKP/AmRMOhz+GP8hcRvZMLSv2QjG65s
-	i0cc61gUpqrOv5mI2rlQGRU4rkmaHIXe1A==
-X-Google-Smtp-Source: AGHT+IFEtT49JwxKT//1+ehfZkXG08nxRxAg/8YIC+mKqaNvAhLGr7ZaYZFdomZXBvzqrB1kbaIDwA==
-X-Received: by 2002:a17:903:17ce:b0:223:f408:c3f8 with SMTP id d9443c01a7336-22bea4b34a7mr208771025ad.14.1744688027296;
-        Mon, 14 Apr 2025 20:33:47 -0700 (PDT)
-Received: from nsys ([49.37.219.136])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7b9042dsm107193645ad.104.2025.04.14.20.33.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Apr 2025 20:33:46 -0700 (PDT)
-Date: Tue, 15 Apr 2025 09:03:39 +0530
-From: Abdun Nihaal <abdun.nihaal@gmail.com>
-To: Jiawen Wu <jiawenwu@trustnetic.com>
-Cc: Markus.Elfring@web.de, mengyuanlou@net-swift.com, 
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, saikrishnag@marvell.com, przemyslaw.kitszel@intel.com, 
-	ecree.xilinx@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 net] net: ngbe: fix memory leak in ngbe_probe() error
- path
-Message-ID: <ko45l6sl6eo4pfvac4q5ounmjzhebpyhhzr23ohqphncikcprf@mjhrpukcdww3>
-References: <20250412154927.25908-1-abdun.nihaal@gmail.com>
- <00b401dbadac$7b36f120$71a4d360$@trustnetic.com>
+	s=arc-20240116; t=1744688128; c=relaxed/simple;
+	bh=rS1xIEqZiprr7MmvqMcRQf9Fqwve12yo2C37rcMBfdQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=B9n5XPxk5qxzSGAw9j1YYk/Yc4/Ry8LbvBBOqA70fV2kDt9jEEjteFGopsu0lSkij1Wan3VTmiwiqeb823milBI5ywDjn5PEvSTXl0r3ifq79uR3V43LgEdiYCaalunLLqenqwa/Tu85rBFjBvo/iKbtFAd07Lp8Xa3U48zqldg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=VxHEaHJn; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1744688120;
+	bh=8vi4vgdSRJfJO/CaqWhgLQTeETdRh/cQnZ9cDp6bWXw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=VxHEaHJnvaA3pkBquYxWV9zzFBhUw9gII8gBQJEq/+z97MhAd8joDQMo00P1Q9bjP
+	 LNjrSCIbPRyC8bHV5jyvcgBe5N7e4g3L/PoYsNbDwtYu7hdzbwau6KMp6QyH4PqA0b
+	 Bhi0rDyIUHvyoluCFl6eWNo0mQsHpruampkenXZK9TSND08OJZYvWqC0iEOx6/XzqH
+	 Wc1eoiIWnfBDOeZbNd9iJgvfl73JnP0k9DZJgIYWeWq+ZwdmnBap2Blqi6PQnvUN8n
+	 aVvvu/X4atwgr9ZmOmM0TlzOgBGNF4sZS4cc+W/GjTOcGfQtblbykGdUWftYSijQTh
+	 O1H43jO5BAR+w==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Zc8tb6L9Gz4wy6;
+	Tue, 15 Apr 2025 13:35:19 +1000 (AEST)
+Date: Tue, 15 Apr 2025 13:35:18 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the tip tree
+Message-ID: <20250415133518.2c8d4325@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00b401dbadac$7b36f120$71a4d360$@trustnetic.com>
+Content-Type: multipart/signed; boundary="Sig_/LMS94S4B4M9ULS=xh1N7B68";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Tue, Apr 15, 2025 at 10:17:04AM +0800, Jiawen Wu wrote:
-> I think this release bug is also present in txgbe driver.
+--Sig_/LMS94S4B4M9ULS=xh1N7B68
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the info. I just sent a patch to fix that here : 
-https://patchwork.kernel.org/project/netdevbpf/patch/20250415032910.13139-1-abdun.nihaal@gmail.com/
+Hi all,
 
-Regards,
-Nihaal
+After merging the tip tree, today's linux-next build (native perf)
+failed like this:
+
+diff: tools/arch/x86/include/asm/amd/ibs.h: No such file or directory
+In file included from util/amd-sample-raw.c:12:
+tools/include/../../arch/x86/include/asm/amd/ibs.h:10:10: fatal error: asm/=
+msr-index.h: No such file or directory
+   10 | #include <asm/msr-index.h>
+      |          ^~~~~~~~~~~~~~~~~
+compilation terminated.
+
+Maybe caused by commit
+
+  3846389c03a8 ("x86/platform/amd: Move the <asm/amd-ibs.h> header to <asm/=
+amd/ibs.h>")
+or associated commits?
+
+This a native ppc build of perf.
+
+I have used the tip tree from next-20250414 for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/LMS94S4B4M9ULS=xh1N7B68
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmf90/YACgkQAVBC80lX
+0GwyCgf/YMYuultE1nuuBDMehCvq8yS7dPUAeIy8MfBADgHkeorGbID/voz/96kq
+4S/egEKPo8BB1EaZ493B65l8grUoYeXTT/cr56FqpPnZv+q2eCg3PPv/O8LyPNsC
+yaCxAH/PGth5nlLFSeZIWEonjULOmNFAvb5BZl+xSZANHrCy7mqiRV+M0iJe+oer
+W91cLWHjTcme522TGQqLSIGTDLRB31J9e3+xuJFVCPe/EVGoZ6GDa/vqpiPHiBeg
+KCXdFC2NzRCqllG+7XJu0u1dXgXZO66dNmCnUtQ6VxtN5ZCpLbCGDxcKOmIqHEpX
+Jbd7QzgnY5fTbFc5Qn7tT0+zXr724A==
+=JKd9
+-----END PGP SIGNATURE-----
+
+--Sig_/LMS94S4B4M9ULS=xh1N7B68--
 
