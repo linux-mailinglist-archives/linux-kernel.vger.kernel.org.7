@@ -1,227 +1,230 @@
-Return-Path: <linux-kernel+bounces-605096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26FA5A89CC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:47:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8FC0A89C98
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:38:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29D6D1650ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:47:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59E623BE974
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:36:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ED5028BA92;
-	Tue, 15 Apr 2025 11:47:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4669291167;
+	Tue, 15 Apr 2025 11:36:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="sLZClKJq"
-Received: from smtp117.iad3b.emailsrvr.com (smtp117.iad3b.emailsrvr.com [146.20.161.117])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="huCG0Owu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CDC91EBFF0
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 11:47:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=146.20.161.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DA7B28DEE2
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 11:36:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744717631; cv=none; b=preHevnHcec7M5zBM8FMvoD3kFWM8UTMaqL2Xf42GXGOp7vBiQennQajaNO8n9RVNqoEiXbQ8iuSOWlug2f2fZhRgWnvuyO0aSKEwhO+udVP8s+YgFG9Be2zspoa9BhL5K0n7Zo1FV+UupDLhrcGWyXJslAllt5GTl2AgGWNZG8=
+	t=1744716972; cv=none; b=d8R8CxEA4pzVq5C7KQwU2VmS0TsS5YUy0Rw539sDpWZNjBwfDg8NaDCsAHk7F0ghAY7izRcjn49ORnLTwBW34ZZm0tloxbElrgwtBsB+6+y5tDg7+APQUEjY5vsDk1nGiow914je7ZTnYEmOkV3W29Q84lEzoMSz3ieZDyPjOE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744717631; c=relaxed/simple;
-	bh=3XiA9Jo1cTtKj6ZYQ9r0yPn+Uqy5Q+V6czZhQJzNfR4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=coub3C9LUKnXrMFKIi4lYR1FiB+Su7eaJVglCzEzFyPA0OtX6NOQINxLSsU6GBJEA6v/kOJCWnU6rD7Ilu8a0yTmrwLePBzDrRRB55jBHSNuZv1aMNNxof+C9sEqaMV1MVGRT8OFIX6jZdSSFDsEA4poau58XZu2VfBe2/1I+GU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=sLZClKJq; arc=none smtp.client-ip=146.20.161.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
-	s=20221208-6x11dpa4; t=1744717228;
-	bh=3XiA9Jo1cTtKj6ZYQ9r0yPn+Uqy5Q+V6czZhQJzNfR4=;
-	h=From:To:Subject:Date:From;
-	b=sLZClKJq62fu4SXZx1J3XZxvCIgdXFVHjgUNyQU78p7t5x3dxx6rxjUaMNypuoKXc
-	 2e2VOn6XBO1gpN6MOH2oPYOB1lT24hjGjre8IRDBuXGwwIGMuUPdZ7Xv1qMc3sJVGV
-	 VgiBRBOZEe+xGl7whf+pNYimndGNchhttPUNsbvQ=
-X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp15.relay.iad3b.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id D79BAC0358;
-	Tue, 15 Apr 2025 07:40:27 -0400 (EDT)
-From: Ian Abbott <abbotti@mev.co.uk>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ian Abbott <abbotti@mev.co.uk>,
-	H Hartley Sweeten <hsweeten@visionengravers.com>,
-	Christoph Hellwig <hch@lst.de>
-Subject: [PATCH 4/4] comedi: allocate DMA coherent buffer as individual pages
-Date: Tue, 15 Apr 2025 12:35:59 +0100
-Message-ID: <20250415114008.5977-5-abbotti@mev.co.uk>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250415114008.5977-1-abbotti@mev.co.uk>
-References: <20250415114008.5977-1-abbotti@mev.co.uk>
+	s=arc-20240116; t=1744716972; c=relaxed/simple;
+	bh=ecxh0DIByMnHf6ygrYZHPedHniG1Gc17UjqLlCDNNks=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C5ksRkh6yfWJCqtSvC6NBENQXsKzWiE0tH8zFQy4/uTBbM0ExkaxGu5xenB3uuxuwKBjDpz+KrJ5Ar9OnNI5y/Lkk8Cw0B7wZHsdBldnpT8fkpzCxmY4IMbR50InnbMAW59LpRzGGt6U4FMmS+rwx/fkfVD8Gqc2CUBjp4yndtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=huCG0Owu; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744716969;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=lXumDY4xCMKyDj7D8VQa+feWOdO7T/uIrMyU2wfkHqQ=;
+	b=huCG0Owuxu1rsuWNK336525M3QZbkfkE4QFWYrJ+2auqXZF0xcHP3UXrtDrHUcrKiGnB5T
+	U8hBeOMMaS0frz9vK2Ev010xMJroJBatVGi69TWfJcKzuMkeLpnJkSKJH9SnOwQP4d1wfN
+	xNEHmK1lNavhd2+mL0B2c9aVxAr/al0=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-76-brveIaBdMMGdMe70KWjXNw-1; Tue, 15 Apr 2025 07:36:06 -0400
+X-MC-Unique: brveIaBdMMGdMe70KWjXNw-1
+X-Mimecast-MFC-AGG-ID: brveIaBdMMGdMe70KWjXNw_1744716966
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43d08915f61so32380365e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 04:36:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744716965; x=1745321765;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lXumDY4xCMKyDj7D8VQa+feWOdO7T/uIrMyU2wfkHqQ=;
+        b=os75dneaoGAizYXKyY/FFHOa521OgZ2izXCnidNESj/8iHjGxLe5JmF/Co+LSQEPmP
+         kBb7po+7cCocmkQ3T3IcAVcyUip4ez2Dkoe+S6g2QY9nK6U4ANXTP2gvjClu6t/PbbkW
+         U7LoRCWO5Y/KW8hwhhaWW69JRHTzwuwoZf5WekQW6NvcVr7s2mSd1IyVdpcYpmxqUdLt
+         81td0wlX0uikelWH9rymsW0hEV4Y+XCEO94AGZ3DJOv2CBy3JnJdLjCVgIql1a/4/Wx2
+         usdi61s72ffAX8sLYKuUN9E80vR91qcdOyl9LWtK1BhoulYIaDADXEcwAv5Tv4Oef8Gv
+         +vOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUPWHf/U2XE07X91tzqVUZrWiVDsxoW1ErsrHOXD7IvKagyFInSGUBc0MQW1/yFyV26NWrnKVYhyl6ugWI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlB/kb2tpAjYI8bjVsnwXYJuuZGH38/qPxgvxLSXcpla+1HzIn
+	tYSe4klXXLk4R4XwyE+0RaIj6SIRXlBHlk+RFXMKpPjF3KuZyMihMGbOJu/TfwnRYAB3+aoZRyM
+	vlk6yC0XgugL3WhVuPo9bETs6SeLLiu/DNpeaf+F16LAgjKJUN4dfFS6IbUbn2g==
+X-Gm-Gg: ASbGncsx3B9HUKOg8sfGt0zfdpdM4g+dBV9J++Go8kat+z3L8MxmWx5P3fy3K253JEF
+	A3KQrkUYmAn3w2ajwODNoGD2xP1crvG+YsUHlcfBx2AZvfTlo7ptYgpGtft0jqrueoJGSUgtr1O
+	reJEbKvkB420ztUB6FN4hDT+Le66wndu5b9sd2FCWisf1lzhkmVE8I/U17aBL/ZLnA8fEEDL5HH
+	6iFyHoLoTgFM5Hke6+QtDb7bucSYbhxnX0gMvD4KvvwESSzb+BKusXrL7YG0WjVVZ6T5Eh1/EVZ
+	x8BEF22GT17dJilV
+X-Received: by 2002:a05:600c:1e18:b0:43d:160:cd97 with SMTP id 5b1f17b1804b1-43f3a9aad9dmr116295565e9.25.1744716965522;
+        Tue, 15 Apr 2025 04:36:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IENkTE6bgF5Rb9zhuxM/+FO7GOrmCPiOvR+9BRMeJxMAeIAq7zucZTzAlJuAYb8wTmelGeqiw==
+X-Received: by 2002:a05:600c:1e18:b0:43d:160:cd97 with SMTP id 5b1f17b1804b1-43f3a9aad9dmr116295435e9.25.1744716965159;
+        Tue, 15 Apr 2025 04:36:05 -0700 (PDT)
+Received: from [192.168.10.48] ([176.206.109.83])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43f2338dc13sm213154095e9.3.2025.04.15.04.36.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Apr 2025 04:36:04 -0700 (PDT)
+Message-ID: <e6606b04-6154-4823-80a3-dc47392dcc59@redhat.com>
+Date: Tue, 15 Apr 2025 13:36:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Classification-ID: 8a53f2c5-5989-413b-be2c-df2839710a9a-5-1
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/67] KVM: x86: Reset IRTE to host control if *new* route
+ isn't postable
+To: Sean Christopherson <seanjc@google.com>,
+ Sairaj Kodilkar <sarunkod@amd.com>
+Cc: Joerg Roedel <joro@8bytes.org>, David Woodhouse <dwmw2@infradead.org>,
+ Lu Baolu <baolu.lu@linux.intel.com>, kvm@vger.kernel.org,
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Maxim Levitsky <mlevitsk@redhat.com>,
+ Joao Martins <joao.m.martins@oracle.com>, David Matlack
+ <dmatlack@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
+ Naveen N Rao <naveen.rao@amd.com>
+References: <20250404193923.1413163-1-seanjc@google.com>
+ <20250404193923.1413163-3-seanjc@google.com>
+ <ad53c9fe-a874-4554-bce5-a5bcfefe627a@amd.com> <Z_kkTlpqEEWRAk3g@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <Z_kkTlpqEEWRAk3g@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Depending on the driver, the acquisition buffer is allocated either from
-normal memory, or from DMA coherent memory.  For normal memory, the
-buffer is allocated as individual pages, but for DMA coherent memory, it
-is allocated as a single block.  Prior to commit e36472145aa7 ("staging:
-comedi: use dma_mmap_coherent for DMA-able buffer mmap"), the buffer was
-allocated as individual pages for DMA coherent memory too, but that was
-changed to allocate it as a single block to allow `dma_mmap_coherent()`
-to be used to mmap it, because that requires the pages being mmap'ed to
-be contiguous.
+On 4/11/25 16:16, Sean Christopherson wrote:
+> On Fri, Apr 11, 2025, Sairaj Kodilkar wrote:
+>> On 4/5/2025 1:08 AM, Sean Christopherson wrote:
+>>> @@ -991,7 +967,36 @@ int avic_pi_update_irte(struct kvm *kvm, unsigned int host_irq,
+>>>    		}
+>>>    	}
+>>> -	ret = 0;
+>>> +	if (enable_remapped_mode) {
+>>> +		/* Use legacy mode in IRTE */
+>>> +		struct amd_iommu_pi_data pi;
+>>> +
+>>> +		/**
+>>> +		 * Here, pi is used to:
+>>> +		 * - Tell IOMMU to use legacy mode for this interrupt.
+>>> +		 * - Retrieve ga_tag of prior interrupt remapping data.
+>>> +		 */
+>>> +		pi.prev_ga_tag = 0;
+>>> +		pi.is_guest_mode = false;
+>>> +		ret = irq_set_vcpu_affinity(host_irq, &pi);
+>>> +
+>>> +		/**
+>>> +		 * Check if the posted interrupt was previously
+>>> +		 * setup with the guest_mode by checking if the ga_tag
+>>> +		 * was cached. If so, we need to clean up the per-vcpu
+>>> +		 * ir_list.
+>>> +		 */
+>>> +		if (!ret && pi.prev_ga_tag) {
+>>> +			int id = AVIC_GATAG_TO_VCPUID(pi.prev_ga_tag);
+>>> +			struct kvm_vcpu *vcpu;
+>>> +
+>>> +			vcpu = kvm_get_vcpu_by_id(kvm, id);
+>>> +			if (vcpu)
+>>> +				svm_ir_list_del(to_svm(vcpu), &pi);
+>>> +		}
+>>> +	} else {
+>>> +		ret = 0;
+>>> +	}
+>>
+>> Hi Sean,
+>> I think you can remove this else and "ret = 0". Because Code will come to
+>> this point when irq_set_vcpu_affinity() is successful, ensuring that ret is
+>> 0.
+> 
+> Ah, nice, because of this:
+> 
+> 		if (ret < 0) {
+> 			pr_err("%s: failed to update PI IRTE\n", __func__);
+> 			goto out;
+> 		}
+> 
+> However, looking at this again, I'm very tempted to simply leave the "ret = 0;"
+> that's already there so as to minimize the change.  It'll get cleaned up later on
+> no matter what, so safety for LTS kernels is the driving factor as of this patch.
+> 
+> Paolo, any preference?
 
-This patch allocates the buffer from DMA coherent memory a page at a
-time again, and works around the limitation of `dma_mmap_coherent()` by
-calling it in a loop for each page, with temporarily modified `vm_start`
-and `vm_end` values in the VMA.  (The `vm_pgoff` value is 0.)
+If you mean squashing this in:
 
-Cc: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
----
- drivers/comedi/comedi_buf.c  | 43 ++++++++++++------------------------
- drivers/comedi/comedi_fops.c | 43 +++++++++++++++++++++++-------------
- 2 files changed, 42 insertions(+), 44 deletions(-)
+diff --git a/arch/x86/kvm/svm/avic.c b/arch/x86/kvm/svm/avic.c
+index ef08356fdb1c..8e09f6ae98fd 100644
+--- a/arch/x86/kvm/svm/avic.c
++++ b/arch/x86/kvm/svm/avic.c
+@@ -967,6 +967,7 @@ int avic_pi_update_irte(struct kvm *kvm, unsigned int host_irq,
+                 }
+         }
+  
++       ret = 0;
+         if (enable_remapped_mode) {
+                 /* Use legacy mode in IRTE */
+                 struct amd_iommu_pi_data pi;
+@@ -994,8 +995,6 @@ int avic_pi_update_irte(struct kvm *kvm, unsigned int host_irq,
+                         if (vcpu)
+                                 svm_ir_list_del(to_svm(vcpu), &pi);
+                 }
+-       } else {
+-               ret = 0;
+         }
+  out:
+         srcu_read_unlock(&kvm->irq_srcu, idx);
 
-diff --git a/drivers/comedi/comedi_buf.c b/drivers/comedi/comedi_buf.c
-index 5807007bb3dd..002c0e76baff 100644
---- a/drivers/comedi/comedi_buf.c
-+++ b/drivers/comedi/comedi_buf.c
-@@ -27,14 +27,12 @@ static void comedi_buf_map_kref_release(struct kref *kref)
- 
- 	if (bm->page_list) {
- 		if (bm->dma_dir != DMA_NONE) {
--			/*
--			 * DMA buffer was allocated as a single block.
--			 * Address is in page_list[0].
--			 */
--			buf = &bm->page_list[0];
--			dma_free_coherent(bm->dma_hw_dev,
--					  PAGE_SIZE * bm->n_pages,
--					  buf->virt_addr, buf->dma_addr);
-+			for (i = 0; i < bm->n_pages; i++) {
-+				buf = &bm->page_list[i];
-+				dma_free_coherent(bm->dma_hw_dev, PAGE_SIZE,
-+						  buf->virt_addr,
-+						  buf->dma_addr);
-+			}
- 		} else {
- 			for (i = 0; i < bm->n_pages; i++) {
- 				buf = &bm->page_list[i];
-@@ -88,26 +86,14 @@ comedi_buf_map_alloc(struct comedi_device *dev, enum dma_data_direction dma_dir,
- 		goto err;
- 
- 	if (bm->dma_dir != DMA_NONE) {
--		void *virt_addr;
--		dma_addr_t dma_addr;
--
--		/*
--		 * Currently, the DMA buffer needs to be allocated as a
--		 * single block so that it can be mmap()'ed.
--		 */
--		virt_addr = dma_alloc_coherent(bm->dma_hw_dev,
--					       PAGE_SIZE * n_pages, &dma_addr,
--					       GFP_KERNEL);
--		if (!virt_addr)
--			goto err;
--
- 		for (i = 0; i < n_pages; i++) {
- 			buf = &bm->page_list[i];
--			buf->virt_addr = virt_addr + (i << PAGE_SHIFT);
--			buf->dma_addr = dma_addr + (i << PAGE_SHIFT);
-+			buf->virt_addr =
-+			    dma_alloc_coherent(bm->dma_hw_dev, PAGE_SIZE,
-+					       &buf->dma_addr, GFP_KERNEL);
-+			if (!buf->virt_addr)
-+				break;
- 		}
--
--		bm->n_pages = i;
- 	} else {
- 		for (i = 0; i < n_pages; i++) {
- 			buf = &bm->page_list[i];
-@@ -117,11 +103,10 @@ comedi_buf_map_alloc(struct comedi_device *dev, enum dma_data_direction dma_dir,
- 
- 			SetPageReserved(virt_to_page(buf->virt_addr));
- 		}
--
--		bm->n_pages = i;
--		if (i < n_pages)
--			goto err;
- 	}
-+	bm->n_pages = i;
-+	if (i < n_pages)
-+		goto err;
- 
- 	return bm;
- 
-diff --git a/drivers/comedi/comedi_fops.c b/drivers/comedi/comedi_fops.c
-index 37cfef36c1ad..3383a7ce27ff 100644
---- a/drivers/comedi/comedi_fops.c
-+++ b/drivers/comedi/comedi_fops.c
-@@ -2387,13 +2387,27 @@ static int comedi_mmap(struct file *file, struct vm_area_struct *vma)
- 		goto done;
- 	}
- 	if (bm->dma_dir != DMA_NONE) {
-+		unsigned long vm_start = vma->vm_start;
-+		unsigned long vm_end = vma->vm_end;
-+
- 		/*
--		 * DMA buffer was allocated as a single block.
--		 * Address is in page_list[0].
-+		 * Buffer pages are not contiguous, so temporarily modify VMA
-+		 * start and end addresses for each buffer page.
- 		 */
--		buf = &bm->page_list[0];
--		retval = dma_mmap_coherent(bm->dma_hw_dev, vma, buf->virt_addr,
--					   buf->dma_addr, n_pages * PAGE_SIZE);
-+		for (i = 0; i < n_pages; ++i) {
-+			buf = &bm->page_list[i];
-+			vma->vm_start = start;
-+			vma->vm_end = start + PAGE_SIZE;
-+			retval = dma_mmap_coherent(bm->dma_hw_dev, vma,
-+						   buf->virt_addr,
-+						   buf->dma_addr, PAGE_SIZE);
-+			if (retval)
-+				break;
-+
-+			start += PAGE_SIZE;
-+		}
-+		vma->vm_start = vm_start;
-+		vma->vm_end = vm_end;
- 	} else {
- 		for (i = 0; i < n_pages; ++i) {
- 			unsigned long pfn;
-@@ -2407,19 +2421,18 @@ static int comedi_mmap(struct file *file, struct vm_area_struct *vma)
- 
- 			start += PAGE_SIZE;
- 		}
-+	}
- 
- #ifdef CONFIG_MMU
--		/*
--		 * Leaving behind a partial mapping of a buffer we're about to
--		 * drop is unsafe, see remap_pfn_range_notrack().
--		 * We need to zap the range here ourselves instead of relying
--		 * on the automatic zapping in remap_pfn_range() because we call
--		 * remap_pfn_range() in a loop.
--		 */
--		if (retval)
--			zap_vma_ptes(vma, vma->vm_start, size);
-+	/*
-+	 * Leaving behind a partial mapping of a buffer we're about to drop is
-+	 * unsafe, see remap_pfn_range_notrack().  We need to zap the range
-+	 * here ourselves instead of relying on the automatic zapping in
-+	 * remap_pfn_range() because we call remap_pfn_range() in a loop.
-+	 */
-+	if (retval)
-+		zap_vma_ptes(vma, vma->vm_start, size);
- #endif
--	}
- 
- 	if (retval == 0) {
- 		vma->vm_ops = &comedi_vm_ops;
--- 
-2.47.2
+to undo the moving of "ret = 0", that's a good idea yes.
+
+Paolo
 
 
