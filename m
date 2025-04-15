@@ -1,72 +1,174 @@
-Return-Path: <linux-kernel+bounces-605095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1288EA89CC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:45:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9079DA89CC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:47:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FD35188413A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:45:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EA5D166F56
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:47:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0A928E610;
-	Tue, 15 Apr 2025 11:45:02 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C34D028DEF5;
-	Tue, 15 Apr 2025 11:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D02222918E5;
+	Tue, 15 Apr 2025 11:47:30 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8842C28E5EE
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 11:47:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744717501; cv=none; b=YjTXbBNKFArhx0VQL6ivhlsfiPwLjlC+2PW+LKiiesiZDpq9W9HO9TDRDKxN5GZ3u5yAJs0gpNt4+O8wuokbBwwXarjZ8yTrx7zdWmWyrq2HXUWmMzNdCW6mUfwVh8HhHaLf1UA45+9oJZvJQs77d5JfyRnjVQwdLiMwuTkN8mw=
+	t=1744717650; cv=none; b=iGeUSZJHf01TFMWX/q3dZIoJZGp9U/JJrhNf8XW9LBXiRTBEYcFfzdulLS05NFp1G3os9/foiBohtnmaxwa1s//BabxSxLX89nvWesEHdXrxr2BUWVAviVQVrn3ATMw+UWs8ANrUNEqvW9R0Ic9pDOQJdH259ZIZtYUCH081gZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744717501; c=relaxed/simple;
-	bh=7JPX+2GYolK1KRD+y0abQNSxtm1R8tnluqSvHjMuoyw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=okBEsNm0tsDKbCcHDbRT0+y6g6rxiKOh1ZvZdfo31JA47eCQb9hHVnqlc7VyMUkhpbph4RQOow9Tdmo3Fm3ZfX/hNlJh9z/5l+YLbGOkKOoxGjzff38SAPT+B539uECXknpzs0uM5bc2EwkNdY/DuSdNXFuzrwT/xIYXauqQSQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 616F4C4CEDD;
-	Tue, 15 Apr 2025 11:45:00 +0000 (UTC)
-Date: Tue, 15 Apr 2025 07:46:33 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Jin Guo <menglong8.dong@gmail.com>
-Cc: mhiramat@kernel.org, mark.rutland@arm.com,
- mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, Jin Guo <guoj17@chinatelecom.cn>
-Subject: Re: [PATCH] ftrace: make ftrace_location() more accurate
-Message-ID: <20250415074633.3cf7546d@gandalf.local.home>
-In-Reply-To: <20250415112750.1477339-1-guoj17@chinatelecom.cn>
-References: <20250415112750.1477339-1-guoj17@chinatelecom.cn>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1744717650; c=relaxed/simple;
+	bh=nfixIavryDpQZxlRHE3LbTrPtjkGKEIV76RKdS1Rs/A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J1ge0WpDvL54fpRx1/fk73f8JAceZ4QOHxJDv7YP81ZRxFvxisg5yVu9NhQpvxYEJ3Z2VSA/pwtxJIDOIitL7/zHIbwzmZqMMWmzlqJ3JhMksP9PsBU1YsWHsq9LrMiYrkQXA+Mm/DMX+jMj9WEr6AVZvxzKBh9cH5ZBSBVHQ8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F1E7115A1;
+	Tue, 15 Apr 2025 04:47:25 -0700 (PDT)
+Received: from [10.163.73.130] (unknown [10.163.73.130])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CD8F63F66E;
+	Tue, 15 Apr 2025 04:47:23 -0700 (PDT)
+Message-ID: <9ed4c113-37eb-4e3d-98a1-f46f786aaea9@arm.com>
+Date: Tue, 15 Apr 2025 17:17:19 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mempolicy: Optimize queue_folios_pte_range by PTE
+ batching
+To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org
+Cc: ryan.roberts@arm.com, willy@infradead.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, hughd@google.com, vishal.moola@gmail.com,
+ yang@os.amperecomputing.com, ziy@nvidia.com
+References: <20250411081301.8533-1-dev.jain@arm.com>
+ <09c77ab5-65fc-4bca-a7e5-2b11bba9330d@redhat.com>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <09c77ab5-65fc-4bca-a7e5-2b11bba9330d@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, 15 Apr 2025 19:27:50 +0800
-Jin Guo <menglong8.dong@gmail.com> wrote:
 
-> The function ftrace_location is used to lookup the ftrace location with an
-> ip. However, the result that it returns can be wrong in some case.
+
+On 15/04/25 3:47 pm, David Hildenbrand wrote:
+> On 11.04.25 10:13, Dev Jain wrote:
+>> After the check for queue_folio_required(), the code only cares about the
+>> folio in the for loop, i.e the PTEs are redundant. Therefore, optimize 
+>> this
+>> loop by skipping over a PTE batch mapping the same folio.
+>>
+>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+>> ---
+>> Unfortunately I have only build tested this since my test environment is
+>> broken.
+>>
+>>   mm/mempolicy.c | 12 +++++++++++-
+>>   1 file changed, 11 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+>> index b28a1e6ae096..b019524da8a2 100644
+>> --- a/mm/mempolicy.c
+>> +++ b/mm/mempolicy.c
+>> @@ -573,6 +573,9 @@ static int queue_folios_pte_range(pmd_t *pmd, 
+>> unsigned long addr,
+>>       pte_t *pte, *mapped_pte;
+>>       pte_t ptent;
+>>       spinlock_t *ptl;
+>> +    int max_nr;
+>> +    const fpb_t fpb_flags = FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIRTY;
+>> +    int nr = 1;
 > 
-> Let's image that we have the following kallsyms:
+> Try sticking to reverse xmas tree, please. (not completely the case 
+> here, but fpb_flags can easily be moved all he way to the top)
+
+I thought that the initializations were to be kept at the bottom.
+Asking for future patches, should I put all declarations in reverse-xmas 
+fashion (even those which I don't intend to touch w.r.t the patch 
+logic), or do I do that for only my additions?
+
 > 
->   ffffffff812c35f0 T sys_ni_syscall
->   ffffffff812c38b0 W __pfx___x64_sys_io_pgetevents_time32
->   ffffffff812c38c0 W __x64_sys_io_pgetevents_time32
+> Also, why are you initializing nr to 1 here if you reinitialize it below?
 
-Have you tried the latest kernel? because on x86, weak functions that are
-not used should no longer be in the ftrace table. That is, you should never
-see __ftrace_invalid_addres_* anymore.
+Yup no need, I thought pte += nr will blow up due to nr not being 
+initialized, but it won't because it gets executed just before the start 
+of the second iteration.
 
-See https://lore.kernel.org/all/20250218195918.255228630@goodmis.org/
+> 
+>  >       ptl = pmd_trans_huge_lock(pmd, vma);>       if (ptl) {
+>> @@ -586,7 +589,8 @@ static int queue_folios_pte_range(pmd_t *pmd, 
+>> unsigned long addr,
+>>           walk->action = ACTION_AGAIN;
+>>           return 0;
+>>       }
+>  > -    for (; addr != end; pte++, addr += PAGE_SIZE) {> +    for (; 
+> addr != end; pte += nr, addr += nr * PAGE_SIZE) {
+>> +        nr = 1;
+>>           ptent = ptep_get(pte);
+>>           if (pte_none(ptent))
+>>               continue;
+>> @@ -607,6 +611,11 @@ static int queue_folios_pte_range(pmd_t *pmd, 
+>> unsigned long addr,
+>>           if (!queue_folio_required(folio, qp))
+>>               continue;
+>>           if (folio_test_large(folio)) {
+>> +            max_nr = (end - addr) >> PAGE_SHIFT;
+>> +            if (max_nr != 1)
+>> +                nr = folio_pte_batch(folio, addr, pte, ptent,
+>> +                             max_nr, fpb_flags,
+>> +                             NULL, NULL, NULL);
+> 
+> We should probably do that immediately after we verified that 
+> vm_normal_folio() have us something reasonable.
 
-That was just added this merge window, which would make your patch obsolete.
+But shouldn't we keep the small folio case separate to avoid the 
+overhead of folio_pte_batch()?
 
--- Steve
+> 
+>>               /*
+>>                * A large folio can only be isolated from LRU once,
+>>                * but may be mapped by many PTEs (and Copy-On-Write may
+>> @@ -633,6 +642,7 @@ static int queue_folios_pte_range(pmd_t *pmd, 
+>> unsigned long addr,
+>>               qp->nr_failed++;
+>>               if (strictly_unmovable(flags))
+>>                   break;
+>> +            qp->nr_failed += nr - 1;
+> 
+> Can't we do qp->nr_failed += nr; above?
+
+I did not dive deep into the significance of nr_failed, but I did that
+to keep the code, before and after the change, equivalent:
+
+Claim: if we reach qp->nr_failed++ for a single pte, we will reach here 
+for all ptes belonging to the same batch.
+
+Proof: We reach here => the if condition is true. Now, !(flags & 
+(MPOL_MF_MOVE | MPOL_MF_MOVE_ALL)) and !vma_migratable(vma) do not 
+depend on the ptes. So the other case is that !migrate_folio_add() is 
+true => !folio_isolate_lru() is true, which depends on the folio and not 
+the PTEs; if isolation fails for one PTE, it will definitely fail for 
+the PTE batch.
+
+So, before the change, if we iterate on a pte mapping a large folio, and 
+strictly_unmovable(flags) is true, then nr_failed += 1 only. If not, 
+then nr_failed++ will happen nr times for sure (because of the claim) 
+and we can safely do qp->nr_failed += nr - 1.
+
+> 
+> Weird enough, queue_folios_pmd() also only does qp->nr_failed++, but 
+> queue_pages_range() documents it that way.
+> 
+>>           }
+>>       }
+>>       pte_unmap_unlock(mapped_pte, ptl);
+> 
+> 
+
 
