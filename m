@@ -1,49 +1,75 @@
-Return-Path: <linux-kernel+bounces-604173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3120A891AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 03:56:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 129EBA891A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 03:56:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D96E17CFB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 01:56:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AB0D3B209B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 01:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7AD2209F5D;
-	Tue, 15 Apr 2025 01:56:04 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABBBB209F56;
+	Tue, 15 Apr 2025 01:55:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b="pvpKKiLn"
+Received: from bg4.exmail.qq.com (bg4.exmail.qq.com [43.155.65.254])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167442036E8
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 01:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE37019F133;
+	Tue, 15 Apr 2025 01:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.155.65.254
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744682164; cv=none; b=of5vELNF8b9BHraX945r/PQhwVz8DY3iw0Z78NtmTufHHDvJXpkDX9SJEOQdodN6ymGCEwUrx2hIghfO1BTmoBgsK8zM/c17I5QxoBmCRJgWL7sRLxTCAg6alcGf+lRaadOsr1OmDEL413Ye84iE48nr0+rRZa2l0BK4pYFephw=
+	t=1744682140; cv=none; b=LanjK9NLIXOHk9pdw1IJbSF6HCgtFqbWoBzKFW1yn0/6b9VYJe56ZFPkTbzicpq/1R42p/7Pumfe+5Z0+oT4NA4sJlt8xl88MWnuMic1yNJF4P4Kdse7EfKLqgLpcnRsB4I8U2tDbxs5SCMEY1kGSelm9nKU5VxGbH41LbkCo6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744682164; c=relaxed/simple;
-	bh=yMMexKHaP35ncA/UtPAuHzx232WGQY6JiFigxlioZqc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZEPNtLue+DM+BRE0BQVKHDs67xLqMke0sq9eoS1p05+ZpWEByeTrFVJSDp5TYbhpFgMbetkevToFIGqLY+h9KSdvE/mUyyDH9rL1FyzxJ+L96Jcd0S54SJdctNmIBdQw7mnsZwREaKEZPclugzEt2wbkGUc6EjVGZJ1YJYsVcCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-01 (Coremail) with SMTP id qwCowAAXvf2ivP1nhmvrCA--.42931S2;
-	Tue, 15 Apr 2025 09:55:47 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: suijingfeng@loongson.cn,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] drm/loongson: Fix return value check for kzalloc
-Date: Tue, 15 Apr 2025 09:54:14 +0800
-Message-Id: <20250415015414.4150082-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1744682140; c=relaxed/simple;
+	bh=mmlFdSrZIvUW02iX5eikNG9SIqXXY+rcuo4Mu16wSY4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S/Y5xNmmhV8yErzFfDdBM/oO1A1n7eB7NHmEO8+xWB0gPOUMtas7spfJgfxCcAqygHfp/u1xPOGR5NzWlx9WIQ/vskQtj44RfqKiFQVOU6FtUntAG6AaOVNUIRsFStBZ6GbYEXFWKgJGBKoJ3ER6+yTWRg1oPNKFnxDQN6xX498=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com; spf=pass smtp.mailfrom=airkyi.com; dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b=pvpKKiLn; arc=none smtp.client-ip=43.155.65.254
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=airkyi.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=airkyi.com;
+	s=altu2504; t=1744682090;
+	bh=wnkPaXEk6qnYCo+vvtWUioDSPxFUMrg19yw3XdC2wC4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=pvpKKiLnzxT2FnGg12YQopnGAxFS6dDaf45OAClNaQ+2LqcdaeSQUmZnQ4PU74Usi
+	 kg2nCVJZHqp9/lmbfx44wFbD5vv9eh/4MQeyFSojUpk0xwRvCZKQKNb3JqFM2rhDVI
+	 fPthn3g6EnW6fXKlTGG2dvZ53SetVcRhfdXc2g7Q=
+X-QQ-mid: izesmtp87t1744682086tba17c408
+X-QQ-Originating-IP: fKMTSp+kc+w90RdYckDRM+y8DxFPMNasfY7wqVQrQR0=
+Received: from localhost.localdomain ( [58.22.7.114])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 15 Apr 2025 09:54:44 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 17149853333597941837
+EX-QQ-RecipientCnt: 20
+From: Chaoyi Chen <kernel@airkyi.com>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Jianfeng Liu <liujianfeng1994@gmail.com>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Jimmy Hon <honyuenkwun@gmail.com>,
+	Quentin Schulz <quentin.schulz@cherry.de>,
+	FUKAUMI Naoki <naoki@radxa.com>,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	Alexey Charkov <alchark@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Chaoyi Chen <chaoyi.chen@rock-chips.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] Add support for RK3588 EVB2 board
+Date: Tue, 15 Apr 2025 01:54:39 +0000
+Message-ID: <3B59B383C82BCCCA+20250415015441.371214-1-kernel@airkyi.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,46 +77,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAAXvf2ivP1nhmvrCA--.42931S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Gw4kZF45XrWkuFykKr17ZFb_yoWxurg_Ca
-	yavrs3WFyDJFnrZw17Cw4jyFyavFyruan3Za17t3saq347Xr18Za43ur15Xa43urW7XF90
-	ya18uryfZrs7KjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb4xFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJV
-	WxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
-	Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUU
-	UU=
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+X-QQ-SENDSIZE: 520
+Feedback-ID: izesmtp:airkyi.com:qybglogicsvrsz:qybglogicsvrsz4a-0
+X-QQ-XMAILINFO: OCFGt05vYz7YvWpe1uePm5eULD9aSIb3h30C2kLwI6I8RuW9oQyu/npC
+	P10Yi0xxJzADchGsRXCTk7XYog1tUQJVmgeMReY45F2X3ZcCEzFHERJBwERZGZiy8H7qMNv
+	GoOyB+xWO70+LwoZ98Dk0Bv1YK5rioJ9/X1sLbIBNUiplTfOkjYKSrKjm5pomDdUb/V2Eb2
+	lrM2EcRYQu3r1WIvpDiUij2U+7XhXfXjNKuNtZruvm2mc3J/1D3cb6G5/RmzaIf3BLhV/a7
+	UqihwMHe1ZEcK9TfQRstJ5Bk9oatQ1q16B/WH99YWYHgkKfB1mhKSUpE3xrfCCCNStIl3Xd
+	rJ/VucsF7cXflqBiOiQPKHTKkvI3zc5ic1Dfa4bOOK+l6am0rrEL6uAjgYFPsikJPwCGjZk
+	5LrJiezijk5cz5zLP+josrXYf1J3O+6c1nbQU9kH8lVXyVSj4wYcDNY9klQtyl6pmBLGj9e
+	vdp6G7s1MfFKaJWOGWK3rYC2y27CwoHKUHVh4Z4PnGPbYXsyxs1EgaRzntIG4vnYPBKq5Ef
+	jF7FDwQe0t8FDyhb3ORT0s0LKpsNlrInkhzu7YQwhWcx6uH158GgJDU70jJaZaPnB4A5nv0
+	OjjYMEag52v6hOnZv46Njoph+qQvQMWGFHWZmyIzskkMCNNVnBriulHWQ1S3QADeiPghMfG
+	2ddmYa7UKDmZHZ4MCSlQ85i8j1B7EIxPsaW+Wn0QCr7KGVmhjhJ6yUYQ+9Ns7zQQtuF5lYx
+	Tco81aa10T/u+Pff/FM1UqHU0WO1sp+nFMKbQWsUWCN20qLDENnFJxB9Fcmz7lIBrzwtgAG
+	i0p4dS9Xok/gJyB4ES9Qc//mr5UBVX1KTjwEBGaVxR4d69nl5z8Vt0WN7kAKyEhpA9z6U3y
+	+ofewRHTbSS1rh98mDIzssfmBjt/OsmqbsPPA4yFnYmTPWmXvki8lHjJ//2MhY6mw3KjJWQ
+	aLkfbguE+SmNhv29MI2SWQzMd0/4qq3vbxsMjrvytk9wptklcEzDh3+4P
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-RECHKSPAM: 0
 
-kzalloc doesn't return ERR_PTR, delete unneeded IS_ERR test.
+From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- drivers/gpu/drm/loongson/lsdc_gfxpll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+General features for rk3588 evb2 board:
+- Rockchip RK3588
+- LPDDR4/4X
+- eMMC5.1
+- RK806-2x2pcs + DiscretePower
+- 1x HDMI2.1 TX / HDMI2.0 RX
+- 1x full size DisplayPort
+- 3x USB3.0 Host
+- 1x USB2.0 Host
+- WIFI/BT
 
-diff --git a/drivers/gpu/drm/loongson/lsdc_gfxpll.c b/drivers/gpu/drm/loongson/lsdc_gfxpll.c
-index 249c09d703ad..50b9f45db5b0 100644
---- a/drivers/gpu/drm/loongson/lsdc_gfxpll.c
-+++ b/drivers/gpu/drm/loongson/lsdc_gfxpll.c
-@@ -179,7 +179,7 @@ int loongson_gfxpll_create(struct drm_device *ddev,
- 	int ret;
- 
- 	this = kzalloc(sizeof(*this), GFP_KERNEL);
--	if (IS_ERR_OR_NULL(this))
-+	if (!this)
- 		return -ENOMEM;
- 
- 	this->ddev = ddev;
--- 
-2.25.1
+Chaoyi Chen (2):
+  dt-bindings: arm: rockchip: Add rk3588 evb2 board
+  arm64: dts: rockchip: Add rk3588 evb2 board
+
+ .../devicetree/bindings/arm/rockchip.yaml     |   4 +-
+ arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+ .../boot/dts/rockchip/rk3588-evb2-v10.dts     | 931 ++++++++++++++++++
+ 3 files changed, 935 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3588-evb2-v10.dts
+
+--
+2.49.0
 
 
