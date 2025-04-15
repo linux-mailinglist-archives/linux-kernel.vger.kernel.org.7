@@ -1,154 +1,174 @@
-Return-Path: <linux-kernel+bounces-605568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FC10A8A308
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 17:40:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91067A8A323
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 17:42:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB2621902171
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:40:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1500318889BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:41:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4FD29B792;
-	Tue, 15 Apr 2025 15:39:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E2C297A60;
+	Tue, 15 Apr 2025 15:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FQeDZ3/A"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="jbEOTKdB"
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089672973A2;
-	Tue, 15 Apr 2025 15:39:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2589329E062;
+	Tue, 15 Apr 2025 15:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744731548; cv=none; b=p1xPS+cFurwr/a3Js27HmeVbXxBRYoOnBxN8GzG2JpNbFVBznwZ1IIoyT0P9bHJMwM6ex/Lgm/Nzr9AfeX2nGGKuuFtNpr04JUCs5RStOqXU72fGEeHPp+f7yV/3EjMt8Dxle714lkF0EWe3noRr2eg1sSgCwjkKWGegtoh5mUA=
+	t=1744731617; cv=none; b=HkQd7GEU6MpDpsTz7CjTb7V3BzaZBKo3aG51ELv83voRl2M2yuZZvJrRBcLwF6WjcyoxcLf7laq73L9U3zxN3BskYDHDQcTT8EGyvKBHYsh2m79WHeSt1tUPjgSfuDFnXugVmO3qY76vWbcuo/DsmGxySbODuVDrlZtpNoU+cTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744731548; c=relaxed/simple;
-	bh=dDWZGTWArKLiIUijlIgxDuLMl/Hhc0MZKDfBUpLSrtk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mLm3frx1eZU04RvtvEQe8ALoYpdZEYQDWW4qFXHfpbEdhHOGtRwgSmxFOYUVr0rKK/0vvTnfbFqNEFkJqAezI/GCcTBN3Dp8GrtfaXdHIAHWO6G4AxyqZKYUwdjFWupO8n2hmuWuWGbpFixIVkwZKH9aXrKWlFSo2BaPMXj9yBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FQeDZ3/A; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-227e29b6c55so6015725ad.1;
-        Tue, 15 Apr 2025 08:39:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744731546; x=1745336346; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l9Hgf71bbKZfJ9ujOKELACCuf2RGtWUNokQop0Z+buA=;
-        b=FQeDZ3/Ao0jwAsPykzjtJPzb56ILteJ/xtOpB1NLSQE8XDUloOZtaFLuSuY9seoDmC
-         mk8tY6fgkfYrYHRLPui79kfqMCS7qxnFl2q9ikd0TjBkP7pIuFC1q2uYNsD9FKSvD36Q
-         oNYh6DALFTUWtTVybQm+ZklMuhe8SNJ0mWQjmtEdXAoGu2SWfm9tos9S3A1/ilIOQmX8
-         RV1xKQnk6VhF9VttcbkjJW8ni1bg4Zm/1RtHSUmgz5vH1nwOv0eEk/pXS9XpHTsPBtpg
-         s1Xtx5Msd8h97nfs+LqCVSZQ5DxmAr79nbgNOkFOtz95kKjPXBHXuhHwPFBkaWdCVzSq
-         7nqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744731546; x=1745336346;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l9Hgf71bbKZfJ9ujOKELACCuf2RGtWUNokQop0Z+buA=;
-        b=rwypa2PqKhCnyykZ9OZjmtYRAzwxSYb6oyFEEIUfEozVWCfxMTilSISW1gl3fGPoEJ
-         8nbOW2YMBFkluI0f/kvmv11uKsL3qmRVTD682cR/3dyfTtruJ5wWzrxFbE2HWUZX/cm3
-         6aQd27z3DUP9PliCSg6d2d9S3jJenjBwYhN/ILzslMzcDcGMfCMzANiQtv0AOorJd2z7
-         CIS8qXZES2JkRWBzPOOD8e+i/CADQYrxSkCo6QHQnryJP2v8srRYAAQbVlOb1g/J8xpQ
-         x0ywYcLnusdgL/yPF9aExVd13VG3VCEzUhCIUvS8ZNZqGud6i95k+2l1oBxV5rJycwKA
-         jouA==
-X-Forwarded-Encrypted: i=1; AJvYcCVh2JrPz9CO1uW2S+aWaUUPNKzyA0uNLAPkEk/FZW+SGTTTsWwTeOWJNgHIzG2Apob6BmnsgLN0PJaBmF0=@vger.kernel.org, AJvYcCWBI10Zn5CA1Xma94GYq6r0RRgvR/RragAx0T4pOVWiXv2mXMbfHE578HS+wAeJ8PUYdIXSzNcDazNyTjmm014=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhzzrqDzACBXln2Yse4G1fbFl67CbbQTycNFuLN8MbMb7Vk1U0
-	WADQUACWWm27Xn9QlncDpjeoD8xcMbLooDQ/V89P1GU97ss+Su6zyKdvSeENW1edcTqiV3Po9ze
-	HTdkJ9GeP3QofD/3sBv18FuOg60LySkjoYT0=
-X-Gm-Gg: ASbGncsR3ksl/Ci+KGhs7wcSwjgkSMPZWXCiFExZeVPgn64ZiZIXliIKJOAQ3XHxh22
-	X5VgQCGOSEyoHE04pyvN+rsP6eZ5ildOQhKCx8UwGn831OlbbDhUY1i1uD1D/KdP309EeS9KQAB
-	pZUVZz8B7/1gIddKZNB741xg==
-X-Google-Smtp-Source: AGHT+IGpan7ylJ+lGUJcAR9q3eXLCXTE+QbOlu5CF4icAGO8qCXWu4gBBhuVLjtf/D8BJT4SfUQVRqxMcusLpCW3mi8=
-X-Received: by 2002:a17:903:3c65:b0:21f:1365:8bcf with SMTP id
- d9443c01a7336-22bea4f1830mr102714135ad.10.1744731546102; Tue, 15 Apr 2025
- 08:39:06 -0700 (PDT)
+	s=arc-20240116; t=1744731617; c=relaxed/simple;
+	bh=RIMQprOaMirEBmq4bYXyJwMPbqjDbfmXocX7YVUUhR8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cbhOvs9OUUNNJKwb5DrsNfNjhH+arMTaW/dcxrPAbGJyJnAX/J9XToUuJ2oCyRRVaT79o1uLiYj8g+MHDYCTpunfxFN0vAKo6sJEzHmpIwHFXa7PgciaJG6BvQcnC8bEtHxilWRmcuH3kiLedsziCPKPikG+lJ3udGI8cNJhsHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=jbEOTKdB; arc=none smtp.client-ip=54.207.19.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1744731593;
+	bh=8Qch/x4RnWWISFX7nV0atXYll7WBRrT6V0RcYu2bHFI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=jbEOTKdB9RQTtTD3piVPBuD/+XDC28HcRI64VDn0KNsbfV69TeMKpeA0FcG5C0juS
+	 lkgx2ZbLzi05mKT7VznkE4dnNks197AwxOnOktxq7DIS/tPRZ/N6PiZTcRGQ3+Tumk
+	 I5M7OypIyVJRLtPMBugXgzEQGCit85WfaE8UBi6g=
+X-QQ-mid: zesmtpip4t1744731550tba7ca3b8
+X-QQ-Originating-IP: DIdrXajWP1mMaGitCCLmZtEqYHzin5MEP0I+17gZ9tk=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 15 Apr 2025 23:39:07 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 7574434672748888084
+EX-QQ-RecipientCnt: 20
+From: WangYuli <wangyuli@uniontech.com>
+To: corbet@lwn.net,
+	chenhuacai@kernel.org,
+	kernel@xen0n.name
+Cc: akpm@linux-foundation.org,
+	jeffxu@chromium.org,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	kees@kernel.org,
+	wangyuli@uniontech.com,
+	hca@linux.ibm.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	xry111@xry111.site,
+	tglx@linutronix.de,
+	thomas.weissschuh@linutronix.de,
+	Jason@zx2c4.com,
+	zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	guanwentao@uniontech.com
+Subject: [PATCH v2] mseal sysmap: enable LoongArch
+Date: Tue, 15 Apr 2025 23:39:03 +0800
+Message-ID: <648AB3031B5618C0+20250415153903.570662-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYvOanQBYXKSg7C6EU30k8sTRC0JRPJXYu7wWK51w38QUQ@mail.gmail.com>
- <20250407183716.796891-1-ojeda@kernel.org> <CA+G9fYt4otQK4pHv8pJBW9e28yHSGCDncKquwuJiJ_1ou0pq0w@mail.gmail.com>
-In-Reply-To: <CA+G9fYt4otQK4pHv8pJBW9e28yHSGCDncKquwuJiJ_1ou0pq0w@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 15 Apr 2025 17:38:54 +0200
-X-Gm-Features: ATxdqUELU5btSgHGptRAiOx15wUhRNJ8mFAscobppbwbL3KXHSRC65REzivTL5I
-Message-ID: <CANiq72napRCGp3Z-xZJaA9zcgREe3Xy5efW8VW=NEZ13DAy+Xw@mail.gmail.com>
-Subject: Re: Build: arm rustgcc unknown argument '-mno-fdpic'
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Christian Schrrefl <chrisi.schrefl@gmail.com>, 
-	Russell King <rmk+kernel@armlinux.org.uk>, Rudraksha Gupta <guptarud@gmail.com>, 
-	Alice Ryhl <aliceryhl@google.com>, Ard Biesheuvel <ardb@kernel.org>, anders.roxell@linaro.org, 
-	arnd@arndb.de, dan.carpenter@linaro.org, laura.nao@collabora.com, 
-	linux-kernel@vger.kernel.org, lkft-triage@lists.linaro.org, 
-	regressions@lists.linux.dev, rust-for-linux@vger.kernel.org, 
-	torvalds@linux-foundation.org, Ben Wolsieffer <ben.wolsieffer@hefring.com>, 
-	Nick Clifton <nickc@redhat.com>, Richard Earnshaw <richard.earnshaw@arm.com>, 
-	Ramana Radhakrishnan <ramanara@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: OHE6ytWwrzSc0hMbO10H3Xx6MW8ZeVXmNvphD48xNC7/Igpj0Qlme5Q7
+	OIXT4EaHXGu7ogJu85azphhxJgI98J8F9VxdXi+42FkgL/q4PzI8K5EFQBp7Xf4/43HrBKW
+	yGiySLAXCAkiivl1MGFoHHpquVdC0Ye7cb/rrpjXKWYsPHMPJSmUHkd59lFmpcLkT+62Mlp
+	vu4O6g5MWfRE8AQ8tQSndG1IyWeygCUDcii7t/7yRU7dIqA1OZmVsdm/VQmo+LaEyD1H5zO
+	fv9rl8XX1j2ScIy7FPi6JWJXojmh/Kvu7IVX25QI3v+5EibiuzbIZ20gauvTUzc5iVYTSCf
+	4gszXx36q+OCCYTnqgPVu7WBisoYaf8fu7K9PDGELMmGXLjfJe3ukr7GizOQkpZ+potPM5f
+	O5H4512TmiNqhYxSQqUptx6iH4FEjpf9kMAh/wYVRtADqjXUigOtVFsrGmllUz63BJ5zlBG
+	htGV2Xq9+yAa6LwVl9x41kleUevrkqa/wvndq9pioCrmbTYq2Yd0cr6RhYvxbAjH9NCsmE5
+	vlTEtWcLYlWQYSacwl59ct7MdZ2Uj14PdCYHbsDir+LuBjXpZPFxqD/fVa1AvZliUecCeHB
+	LzSxZg6K6KkivMepmfOU0UAkdVTIhYQU5+kyYmNc07A3009Ts8UPwTkoA/i4Sz46edaHtiA
+	e4YpEUcFyIhqeDkIt8+XOi0iGNnU+OX4zPUH8dzQNMrD34+p/nJX9fzqr53jO/RlKP80+M0
+	N/fb9vTNF+zDbwHkx08+zp1++5r5DvopKotM17hna7ZAkFagzDEXJvWLDyyiKkvjrYlFBGi
+	2dsmMGFOQ+neTqpk+S4KsMMIJaOU0x9HRF54Xt1nnWhl3Rw128wxQfA6mXA2GLaPCXosLDM
+	sdewN3iTFsV25z5BAGYPsN+yiKCZHHaUJWNC+7x4dwH07dUXARFKzn/xY7nwBi4B0ugCKb+
+	1rOQbQKYtg2tu7ot++FUnshZ7gTyA+KQ9RcG8GgC2bGug1GfnUevXQ65NWXRxMHwFd4XfTE
+	Sn6CEy2uqD3I/b1w3iNcnvUdyjyS5h2cE8vpo2kTbwnDV0+Lw+apKPvTzoyvQRbzr/jp7uS
+	A==
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-RECHKSPAM: 0
 
-On Tue, Apr 15, 2025 at 1:40=E2=80=AFPM Naresh Kamboju
-<naresh.kamboju@linaro.org> wrote:
->
-> On Tue, 8 Apr 2025 at 00:07, Miguel Ojeda <ojeda@kernel.org> wrote:
-> >
-> > On Mon, 07 Apr 2025 22:58:02 +0530 Naresh Kamboju <naresh.kamboju@linar=
-o.org> wrote:
-> > >
-> > > Regressions on arm build with config rustgcc-lkftconfig-kselftest on =
-the
-> > > Linux mainline and next failed with CONFIG_RUST=3Dy enabled.
-> >
-> > > Bad: next-20250327
-> > > Good: next-20250326
-> >
-> > > Unable to generate bindings: clang diagnosed error: error: unknown
-> > > argument: '-mno-fdpic'
-> >
-> > I assume this is the arm support, i.e. commit ccb8ce526807 ("ARM: 9441/=
-1:
-> > rust: Enable Rust support for ARMv7").
-> >
-> > Clang does not seem to support `-mno-fdpic`, thus you probably need to =
-add it to
-> > `bindgen_skip_c_flags` in `rust/Makefile` so that it gets skipped when =
-the C
-> > compiler is GCC.
-> >
-> > If you do so, please double-check if the flag could potentially alter t=
-he ABI in
-> > a way that `bindgen` would generate the wrong bindings.
->
-> I tested this idea and it works but I don't know enough about
-> rust to double-check if the flag could potentially alter the
-> ABI in a way that `bindgen` would generate the wrong bindings.
+Provide support for CONFIG_MSEAL_SYSTEM_MAPPINGS on LoongArch,
+covering the vdso.
 
-Yeah, it would be nice to have someone knowledgeable about the
-arch/GCC/flag confirm or not -- I don't think Rust knowledge is
-needed, i.e. it is mostly about how GCC behaves with/without the flag
-and vs. Clang (since `bindgen` uses libclang to parse code).
+Link: https://lore.kernel.org/all/25bad37f-273e-4626-999c-e1890be96182@lucifer.local/
+Tested-by: Yuli Wang <wangyuli@uniontech.com>
+Signed-off-by: Yuli Wang <wangyuli@uniontech.com>
+---
+Changelog:
+ *v1->v2: Modify mseal_sys_mappings/arch-support.txt.
+---
+ .../features/core/mseal_sys_mappings/arch-support.txt         | 2 +-
+ Documentation/userspace-api/mseal.rst                         | 2 +-
+ arch/loongarch/Kconfig                                        | 1 +
+ arch/loongarch/kernel/vdso.c                                  | 4 +++-
+ 4 files changed, 6 insertions(+), 3 deletions(-)
 
-The original commit adding it to arm (and similar ones for sh and xtensa) s=
-ays:
+diff --git a/Documentation/features/core/mseal_sys_mappings/arch-support.txt b/Documentation/features/core/mseal_sys_mappings/arch-support.txt
+index c6cab9760d57..a3c24233eb9b 100644
+--- a/Documentation/features/core/mseal_sys_mappings/arch-support.txt
++++ b/Documentation/features/core/mseal_sys_mappings/arch-support.txt
+@@ -12,7 +12,7 @@
+     |       arm64: |  ok  |
+     |        csky: |  N/A |
+     |     hexagon: |  N/A |
+-    |   loongarch: | TODO |
++    |   loongarch: |  ok  |
+     |        m68k: |  N/A |
+     |  microblaze: |  N/A |
+     |        mips: | TODO |
+diff --git a/Documentation/userspace-api/mseal.rst b/Documentation/userspace-api/mseal.rst
+index 1dabfc29be0d..ef733f69003d 100644
+--- a/Documentation/userspace-api/mseal.rst
++++ b/Documentation/userspace-api/mseal.rst
+@@ -144,7 +144,7 @@ Use cases
+   architecture.
+ 
+   The following architectures currently support this feature: x86-64, arm64,
+-  and s390.
++  loongarch and s390.
+ 
+   WARNING: This feature breaks programs which rely on relocating
+   or unmapping system mappings. Known broken software at the time
+diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+index 067c0b994648..54ed5b59a690 100644
+--- a/arch/loongarch/Kconfig
++++ b/arch/loongarch/Kconfig
+@@ -69,6 +69,7 @@ config LOONGARCH
+ 	select ARCH_SUPPORTS_INT128 if CC_HAS_INT128
+ 	select ARCH_SUPPORTS_LTO_CLANG
+ 	select ARCH_SUPPORTS_LTO_CLANG_THIN
++	select ARCH_SUPPORTS_MSEAL_SYSTEM_MAPPINGS
+ 	select ARCH_SUPPORTS_NUMA_BALANCING
+ 	select ARCH_SUPPORTS_RT
+ 	select ARCH_USE_BUILTIN_BSWAP
+diff --git a/arch/loongarch/kernel/vdso.c b/arch/loongarch/kernel/vdso.c
+index 10cf1608c7b3..7b888d9085a0 100644
+--- a/arch/loongarch/kernel/vdso.c
++++ b/arch/loongarch/kernel/vdso.c
+@@ -105,7 +105,9 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
+ 
+ 	vdso_addr = data_addr + VVAR_SIZE;
+ 	vma = _install_special_mapping(mm, vdso_addr, info->size,
+-				       VM_READ | VM_EXEC | VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC,
++				       VM_READ | VM_EXEC |
++				       VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC |
++				       VM_SEALED_SYSMAP,
+ 				       &info->code_mapping);
+ 	if (IS_ERR(vma)) {
+ 		ret = PTR_ERR(vma);
+-- 
+2.49.0
 
-    When building with an arm-*-uclinuxfdpiceabi toolchain, the FDPIC ABI i=
-s
-    enabled by default but should not be used to build the kernel.
-
-So it sounds like it is only an issue for particular toolchains/targets any=
-way?
-
-Cc'ing Ben who introduced it, and the arm port GCC maintainers in case
-they may be able to tell us more -- thanks in advance, and sorry for
-any potential noise!
-
-Cheers,
-Miguel
 
