@@ -1,178 +1,146 @@
-Return-Path: <linux-kernel+bounces-606009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 118A4A8A949
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 22:27:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35E75A8A93B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 22:26:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A9BE7A4FD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 20:26:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DF49190081B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 20:26:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E58025522E;
-	Tue, 15 Apr 2025 20:26:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E69253346;
+	Tue, 15 Apr 2025 20:26:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zxqJDxuC";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GgbF0KK7"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="XLDo79tU"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0A082528EE;
-	Tue, 15 Apr 2025 20:26:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEEA1251790
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 20:26:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744748805; cv=none; b=LK2gdSC9yt4L5+gPvvgJvLQ+9aS0GVc0Ml3cNzbsDQYqNTX2kHZNvScSWpe4iAfzRTNBYCXAz4FWj3DeTNhYiV9i//pidCcPdtNwKFsTS5w8oWSVlRrUrmL5pde6QyFPkcKRc/XUISFG2u0/vmxF+fQMC8NUPmXLY6wiAlf8SpA=
+	t=1744748797; cv=none; b=Di2QGeRrig8c4W2vCR8zddkWVOmgbaibg1ojq8tIDR5egEnTlE1OCWXNmAxg9L4hbnzrO5PYAdyr1GkDZISUXszPQirNCiNyYVWm0icyIv7LDOpphsFjPDEWjGeMa8QuPHNYG3kgzsqpXbyeA9Jaww/sVwJa9sfxvEp3yJxJJc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744748805; c=relaxed/simple;
-	bh=8hhnhmUT3VkW1ZuweC+yMPUQlXjb/fX0u2z4h3KAHD8=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=sfpYqNGtJxH0valTjS61iMfmOYVAaoQsfMLH9d/FpgTAR3PqaqbhnTiL9fhHaX5vRdIcnKIr67yzR5U1JSnkGz5gdyCOh0p78ou9/qZEXmC+3jTOh3cFWHmfOzhwy83YD4I5pyhmq1kj0tZ6arQZFRVlCq1Yr/ebUzNoxJfyHLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zxqJDxuC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GgbF0KK7; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 15 Apr 2025 20:26:34 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744748795;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rDJyT+VYsu4Djwx5OQ8zNfMOfolJI2hQhRcGZZxlaic=;
-	b=zxqJDxuCXk3CVCk9uXoSkfzvNDqMiBfFgNrUjl17/qcIu31y2N8px4M4Dvax4gohLHqXp7
-	yzoWflxyBc7eWotI66/1ilE1QQ3o2I60WUI/Jcy+nCnHi/GReIyN1uhH1I8+QE6OWegHEM
-	Da/pBJSqREOGqqz5v9mOO7iYLzbnlnxwu9x6LckXVXfnhHY49KCJw0Z14Gv76CErWj8Igr
-	fwTxN9OilrvcaFmTy+Xxc2HQhTSspNvar7Az2NIxMMF3MuFr6zJWFGjR6pj0ftu7Ov1prV
-	eQKIRuceeeN2Dv+IK4cECe3nRyoYgEKoUXcmQRBEOGPRBDl9N1rswnJSZEhHEw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744748795;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rDJyT+VYsu4Djwx5OQ8zNfMOfolJI2hQhRcGZZxlaic=;
-	b=GgbF0KK7H3QWx5bTG0sNu/yJpXjkIdV3Vjb3fWlH8+khq+Rl7xsKcqMo9GfAleOZ6AWBIg
-	FoQEt3wUdJys2HAw==
-From: "tip-bot2 for Borislav Petkov (AMD)" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cpu] x86/cpufeatures: Clean up formatting
-Cc: "Borislav Petkov (AMD)" <bp@alien8.de>, "Xin Li (Intel)" <xin@zytor.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250415175410.2944032-2-xin@zytor.com>
-References: <20250415175410.2944032-2-xin@zytor.com>
+	s=arc-20240116; t=1744748797; c=relaxed/simple;
+	bh=pvhdq1iT6xGsvgus+UKN3OsBlAAH0DtpK3RlifG8BJM=;
+	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
+	 Content-Type; b=jRm2RK0+TOcnJ7cePTG4xkiVULTgW/WGEoepBJxxcfXcFym1mJim7SgsBZEMHLuzesa4c8s5hqUjdclN6GaoTzmFxPJSxNh8zCfIyPXcXCEW6LQb0whWjcu3NvPY+nTGOYjYpXMhG4CA008RXoEvBZGSsepfV0kulxldoKU6TQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=XLDo79tU; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-22403cbb47fso64729035ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 13:26:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1744748795; x=1745353595; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=75O+xckdYXwHr1AtIxgXc+6DXaHjIxC/DyVy3zDpIz0=;
+        b=XLDo79tUWtsSyOg3xIXO22NF80KF+kIkz56BKthwC91b4eFF7bJO0jyzCHuTI262xE
+         SGBooLKeSiFXReSSauJuw0Bqedg/QneFBy5IpgixbWcYzF/E4kgFlhshdVgaUe6aWUMi
+         vJx+bgEA9kQ23l4FtxT9Z/PXaFZNURfI1kQW08KruJp1maHDt6x2fTyKZ7GYzc6okJvY
+         kiP/IhTjuDDuQLS6lp+BxCYaoKxNQekkNdOVb+60IfUdRCZbFUOeKkMSWDKS0kB8bm32
+         UGxMxfXzN3SSB++/LG2qlT6dyhle6Go0XLRAyz3IiiVWrjZh8LajjCztPmwhvlN8o0jb
+         exIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744748795; x=1745353595;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=75O+xckdYXwHr1AtIxgXc+6DXaHjIxC/DyVy3zDpIz0=;
+        b=Rn2NaXIePUhK+/OBNluWUJlZnOCzXLSKfx46rQ6qYqwdQtVR7eHBqVoHgs77RTbcW0
+         PpN9p0theoLHnkhApd/iFUQhgXPPqfKi4Zd3XnRTnDKXHhd6z7taKiAMuxZTljxpggWa
+         kuScETKDXE+pkp4tY01GUBvAiejyQY9nM04Rhoj/jS2H3r4Xjc8UTW3oDNnIKQiImwsq
+         nm1xhTf9TQI7iu6ghL0Yl3J6fJrp3fDb/1dYW/1hEuWpH9v/i0lk11ezx46+0tmgHzWw
+         CUUZBgoJ2Fhx2KDM+W3xTxgxp2uW5cqqmwX/mKtT7ZsD19AcYBP3fZxTdttf5vxvfIzO
+         NInA==
+X-Forwarded-Encrypted: i=1; AJvYcCUEUQnzM8frwNK9y5mvg/JXCtjR0vTSfKUvW4hYMs0SBMoAWZBJOKG1/Dv1XNl2mn/kanHssbIoEqf8Wq8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVYlFDiceP4sV16ncJ8kYnzwKi74h+1c3xzY8NZSJDu1m/FO8Q
+	GT3T1WUCr+kjqMZcthWP87V651oC0PzsS95RVWTHkcUXRfT0W9eEwbQkwqDCO8U=
+X-Gm-Gg: ASbGnctvl37VV7U25jJ7SfCLXUdXReeHeEWw496s8O4iNV3F5rPzUE9tBhtC7ZbcDlz
+	EM1urDgUpvD9X2Dx0DXBkFf7oFWEnUW3DdaBil/TUjGaoNs6rbsWQyk2G/saSwVvzGSRZm7kRFC
+	bUOx2IGjmGgmR9kpZpCtrPcJimj3aw77XnPJQP3hXNvBE/a2Sleb/568kPGS7dFse400hisrUQT
+	j6arUsz9kQlEyxjat11MeGxXR9a7q8MWIzcblUnawNAnvBT+uw5nh+88jjqJ5cavVB6IQyNdxUY
+	c/pXP17FB6Q0025QLuDJ2xSdeoNXfu2gHg==
+X-Google-Smtp-Source: AGHT+IGZO5UAvPkrrKwYYPSXRVF2GgYYFWa7uULNbD4bFXFpfMPqMwk2vBYgwS4j3xl5itHBc4XrIg==
+X-Received: by 2002:a17:902:cec9:b0:216:2bd7:1c2f with SMTP id d9443c01a7336-22c318bd3a5mr7320125ad.18.1744748794919;
+        Tue, 15 Apr 2025 13:26:34 -0700 (PDT)
+Received: from localhost ([50.145.13.30])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7c93ad2sm122460825ad.115.2025.04.15.13.26.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Apr 2025 13:26:34 -0700 (PDT)
+Date: Tue, 15 Apr 2025 13:26:34 -0700 (PDT)
+X-Google-Original-Date: Tue, 15 Apr 2025 13:26:31 PDT (-0700)
+Subject:     Re: [PATCH] gcc-plugins: Disable GCC plugins for compile test builds
+In-Reply-To: <20250407-kbuild-disable-gcc-plugins-v1-1-5d46ae583f5e@kernel.org>
+CC: Linus Torvalds <torvalds@linux-foundation.org>, kees@kernel.org, mic@digikod.net,
+  gnoack@google.com, Arnd Bergmann <arnd@arndb.de>, linux-hardening@vger.kernel.org,
+  linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, broonie@kernel.org
+From: Palmer Dabbelt <palmer@dabbelt.com>
+To: broonie@kernel.org
+Message-ID: <mhng-812ee330-2f86-4561-8b88-cbb6a51f8515@palmer-ri-x1c9a>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <174474879492.31282.7345473435238058953.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the x86/cpu branch of tip:
+On Mon, 07 Apr 2025 13:57:32 PDT (-0700), broonie@kernel.org wrote:
+> In current mainline x86_64 allmodconfig builds done with tuxmake GCC 13
+> and GCC 14 toolchains (which are Debian ones packaged up into containers)
+> generate ICEs in landlock:
+>
+> Event                            | Plugins
+> PLUGIN_FINISH_TYPE               | randomize_layout_plugin
+> PLUGIN_FINISH_DECL               | randomize_layout_plugin
+> PLUGIN_ATTRIBUTES                | latent_entropy_plugin randomize_layout_plugin
+> PLUGIN_START_UNIT                | latent_entropy_plugin stackleak_plugin
+> PLUGIN_ALL_IPA_PASSES_START      | randomize_layout_plugin
+> /build/stage/linux/security/landlock/fs.c: In function ‘hook_file_ioctl_common’:
+> /build/stage/linux/security/landlock/fs.c:1745:61: internal compiler error: in c
+> ount_type_elements, at expr.cc:7075
+>  1745 |                         .u.op = &(struct lsm_ioctlop_audit) {
+>       |                                                             ^
+>
+> Arnd bisected this to c56f649646ec ("landlock: Log mount-related
+> denials") but that commit is fairly obviously not really at fault here,
+> most likely this is an issue in the plugin.  Given how disruptive having
+> key configs like this failing let's disable the plugins for compile test
+> builds until a fix is found.
+>
+> Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+>  scripts/gcc-plugins/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/scripts/gcc-plugins/Kconfig b/scripts/gcc-plugins/Kconfig
+> index e383cda05367..29b03c136165 100644
+> --- a/scripts/gcc-plugins/Kconfig
+> +++ b/scripts/gcc-plugins/Kconfig
+> @@ -7,6 +7,7 @@ config HAVE_GCC_PLUGINS
+>
+>  menuconfig GCC_PLUGINS
+>  	bool "GCC plugins"
+> +	depends on !COMPILE_TEST
+>  	depends on HAVE_GCC_PLUGINS
+>  	depends on CC_IS_GCC
+>  	depends on $(success,test -e $(shell,$(CC) -print-file-name=plugin)/include/plugin-version.h)
+>
+> ---
+> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+> change-id: 20250407-kbuild-disable-gcc-plugins-8701aa609cb3
+>
+> Best regards,
 
-Commit-ID:     282cc5b6762310a73255c6dd1d79de1609042eeb
-Gitweb:        https://git.kernel.org/tip/282cc5b6762310a73255c6dd1d79de1609042eeb
-Author:        Borislav Petkov (AMD) <bp@alien8.de>
-AuthorDate:    Tue, 15 Apr 2025 10:54:08 -07:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Tue, 15 Apr 2025 21:44:27 +02:00
+This one's been biting me too.  It manifests for me on gcc-12 and gcc-13 
+(both locally built toolchains off the release branches, cross compiling 
+for RISC-V).
 
-x86/cpufeatures: Clean up formatting
-
-It is a special file with special formatting so remove one whitespace
-damage and format newer defines like the rest.
-
-No functional changes.
-
- [ Xin: Do the same to tools/arch/x86/include/asm/cpufeatures.h. ]
-
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Signed-off-by: Xin Li (Intel) <xin@zytor.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lore.kernel.org/20250415175410.2944032-2-xin@zytor.com
----
- arch/x86/include/asm/cpufeatures.h       | 20 ++++++++++----------
- tools/arch/x86/include/asm/cpufeatures.h | 18 ++++++++++--------
- 2 files changed, 20 insertions(+), 18 deletions(-)
-
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index e8f8d43..60b4a4c 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -477,10 +477,10 @@
- #define X86_FEATURE_BHI_CTRL		(21*32+ 2) /* BHI_DIS_S HW control available */
- #define X86_FEATURE_CLEAR_BHB_HW	(21*32+ 3) /* BHI_DIS_S HW control enabled */
- #define X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT (21*32+ 4) /* Clear branch history at vmexit using SW loop */
--#define X86_FEATURE_AMD_FAST_CPPC	(21*32 + 5) /* Fast CPPC */
--#define X86_FEATURE_AMD_HETEROGENEOUS_CORES (21*32 + 6) /* Heterogeneous Core Topology */
--#define X86_FEATURE_AMD_WORKLOAD_CLASS	(21*32 + 7) /* Workload Classification */
--#define X86_FEATURE_PREFER_YMM		(21*32 + 8) /* Avoid ZMM registers due to downclocking */
-+#define X86_FEATURE_AMD_FAST_CPPC	(21*32+ 5) /* Fast CPPC */
-+#define X86_FEATURE_AMD_HETEROGENEOUS_CORES (21*32+ 6) /* Heterogeneous Core Topology */
-+#define X86_FEATURE_AMD_WORKLOAD_CLASS	(21*32+ 7) /* Workload Classification */
-+#define X86_FEATURE_PREFER_YMM		(21*32+ 8) /* Avoid ZMM registers due to downclocking */
- 
- /*
-  * BUG word(s)
-@@ -527,10 +527,10 @@
- #define X86_BUG_TDX_PW_MCE		X86_BUG(31) /* "tdx_pw_mce" CPU may incur #MC if non-TD software does partial write to TDX private memory */
- 
- /* BUG word 2 */
--#define X86_BUG_SRSO			X86_BUG(1*32 + 0) /* "srso" AMD SRSO bug */
--#define X86_BUG_DIV0			X86_BUG(1*32 + 1) /* "div0" AMD DIV0 speculation bug */
--#define X86_BUG_RFDS			X86_BUG(1*32 + 2) /* "rfds" CPU is vulnerable to Register File Data Sampling */
--#define X86_BUG_BHI			X86_BUG(1*32 + 3) /* "bhi" CPU is affected by Branch History Injection */
--#define X86_BUG_IBPB_NO_RET	   	X86_BUG(1*32 + 4) /* "ibpb_no_ret" IBPB omits return target predictions */
--#define X86_BUG_SPECTRE_V2_USER		X86_BUG(1*32 + 5) /* "spectre_v2_user" CPU is affected by Spectre variant 2 attack between user processes */
-+#define X86_BUG_SRSO			X86_BUG( 1*32+ 0) /* "srso" AMD SRSO bug */
-+#define X86_BUG_DIV0			X86_BUG( 1*32+ 1) /* "div0" AMD DIV0 speculation bug */
-+#define X86_BUG_RFDS			X86_BUG( 1*32+ 2) /* "rfds" CPU is vulnerable to Register File Data Sampling */
-+#define X86_BUG_BHI			X86_BUG( 1*32+ 3) /* "bhi" CPU is affected by Branch History Injection */
-+#define X86_BUG_IBPB_NO_RET		X86_BUG( 1*32+ 4) /* "ibpb_no_ret" IBPB omits return target predictions */
-+#define X86_BUG_SPECTRE_V2_USER		X86_BUG( 1*32+ 5) /* "spectre_v2_user" CPU is affected by Spectre variant 2 attack between user processes */
- #endif /* _ASM_X86_CPUFEATURES_H */
-diff --git a/tools/arch/x86/include/asm/cpufeatures.h b/tools/arch/x86/include/asm/cpufeatures.h
-index e88500d..2e219be 100644
---- a/tools/arch/x86/include/asm/cpufeatures.h
-+++ b/tools/arch/x86/include/asm/cpufeatures.h
-@@ -467,9 +467,10 @@
- #define X86_FEATURE_BHI_CTRL		(21*32+ 2) /* BHI_DIS_S HW control available */
- #define X86_FEATURE_CLEAR_BHB_HW	(21*32+ 3) /* BHI_DIS_S HW control enabled */
- #define X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT (21*32+ 4) /* Clear branch history at vmexit using SW loop */
--#define X86_FEATURE_AMD_FAST_CPPC	(21*32 + 5) /* Fast CPPC */
--#define X86_FEATURE_AMD_HETEROGENEOUS_CORES (21*32 + 6) /* Heterogeneous Core Topology */
--#define X86_FEATURE_AMD_WORKLOAD_CLASS	(21*32 + 7) /* Workload Classification */
-+#define X86_FEATURE_AMD_FAST_CPPC	(21*32+ 5) /* Fast CPPC */
-+#define X86_FEATURE_AMD_HETEROGENEOUS_CORES (21*32+ 6) /* Heterogeneous Core Topology */
-+#define X86_FEATURE_AMD_WORKLOAD_CLASS	(21*32+ 7) /* Workload Classification */
-+#define X86_FEATURE_PREFER_YMM		(21*32+ 8) /* Avoid ZMM registers due to downclocking */
- 
- /*
-  * BUG word(s)
-@@ -516,9 +517,10 @@
- #define X86_BUG_TDX_PW_MCE		X86_BUG(31) /* "tdx_pw_mce" CPU may incur #MC if non-TD software does partial write to TDX private memory */
- 
- /* BUG word 2 */
--#define X86_BUG_SRSO			X86_BUG(1*32 + 0) /* "srso" AMD SRSO bug */
--#define X86_BUG_DIV0			X86_BUG(1*32 + 1) /* "div0" AMD DIV0 speculation bug */
--#define X86_BUG_RFDS			X86_BUG(1*32 + 2) /* "rfds" CPU is vulnerable to Register File Data Sampling */
--#define X86_BUG_BHI			X86_BUG(1*32 + 3) /* "bhi" CPU is affected by Branch History Injection */
--#define X86_BUG_IBPB_NO_RET	   	X86_BUG(1*32 + 4) /* "ibpb_no_ret" IBPB omits return target predictions */
-+#define X86_BUG_SRSO			X86_BUG( 1*32+ 0) /* "srso" AMD SRSO bug */
-+#define X86_BUG_DIV0			X86_BUG( 1*32+ 1) /* "div0" AMD DIV0 speculation bug */
-+#define X86_BUG_RFDS			X86_BUG( 1*32+ 2) /* "rfds" CPU is vulnerable to Register File Data Sampling */
-+#define X86_BUG_BHI			X86_BUG( 1*32+ 3) /* "bhi" CPU is affected by Branch History Injection */
-+#define X86_BUG_IBPB_NO_RET		X86_BUG( 1*32+ 4) /* "ibpb_no_ret" IBPB omits return target predictions */
-+#define X86_BUG_SPECTRE_V2_USER		X86_BUG( 1*32+ 5) /* "spectre_v2_user" CPU is affected by Spectre variant 2 attack between user processes */
- #endif /* _ASM_X86_CPUFEATURES_H */
+Tested-by: Palmer Dabbelt <palmer@rivosinc.com>
 
