@@ -1,143 +1,174 @@
-Return-Path: <linux-kernel+bounces-604700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9C25A89776
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:06:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 320C1A8976F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:06:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEF72189D5D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:06:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDE813AD957
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:05:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49BE27FD6D;
-	Tue, 15 Apr 2025 09:06:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A2F1EDA24;
+	Tue, 15 Apr 2025 09:05:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="PwQcfiOm"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MpwAHHON";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8dMuj+Hj";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MpwAHHON";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8dMuj+Hj"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A7D275101;
-	Tue, 15 Apr 2025 09:06:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF1E275107
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 09:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744707984; cv=none; b=SCR2/wdUCfC84iBfBRz9gnahArkKaOTnQMAzpkZjQXBuug4Kn8CWC8uXTXDSsZ4CVPqP6lt+wjqqqETz2ArgRkz8DJgBhw00VRCepErk8mLXUU4t9Cu44kHdKJIHWjgXAIuiPoShpcb5CDVV8CxiSDEtEvhIVOqsR7Lnc9PuYr8=
+	t=1744707947; cv=none; b=LXTid/yfuDvjr0M4ipVfrVc8tcmVfPP6W4WKE5lqLWlunz4tJW3oHg3krivTURg6hBjZhz3AF2tCGjL1al+QiFcm/o5bZlR9tcLzzE85HwurCbTqdMhgtNrIIEgHcILTRgPfb/BrscMXfnwtODHtaBF6jlRinU/WXNrrWpKj88g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744707984; c=relaxed/simple;
-	bh=zff7jOxkONSsnLH2GSDVjIYio3MRfnsgdJCnZXqZNSM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K1FNgKcyVP22c6zeGL0UYellWuUebjuF7BZfjYCqKLulxv7XlXWKKfmgsp90/HE5McKRxKOgR3lFVSZhiPhRqajZdQdbNmMbNRCtx3NkcEdTDAw48SpqeHht1iPeDz3/5uiZHe14fvTpjQ2uhv6tJy5LYpgxUmJHXWATSPb5MHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=PwQcfiOm; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53F95tdu2436554
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 15 Apr 2025 04:05:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1744707955;
-	bh=NvqRn26wZctD+qgQJMKuzd+RSyeLXp69lVTwvYULYds=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=PwQcfiOmM8U7Mhb0hmFJ7WVJcjVjLOOhNLlDRB1rwl0yS+0RtR72GtayocvoNXAp5
-	 bF/IrRafelecP+/phsJp6IVGBE3bDqibkn5TVHv2j1LXtIIpGvMWI6w4uTrLFYKt5b
-	 Yy2D4o8phSRQMLgkM4OUKHSzWQaHDdZ/gg+soT5o=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53F95tUM102179
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 15 Apr 2025 04:05:55 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 15
- Apr 2025 04:05:54 -0500
-Received: from fllvsmtp8.itg.ti.com (10.64.41.158) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 15 Apr 2025 04:05:54 -0500
-Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
-	by fllvsmtp8.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53F95sdV072057;
-	Tue, 15 Apr 2025 04:05:54 -0500
-Received: from localhost (meghana-pc.dhcp.ti.com [10.24.69.13] (may be forged))
-	by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 53F95rH5010963;
-	Tue, 15 Apr 2025 04:05:54 -0500
-From: Meghana Malladi <m-malladi@ti.com>
-To: <dan.carpenter@linaro.org>, <javier.carrasco.cruz@gmail.com>,
-        <diogo.ivo@siemens.com>, <horms@kernel.org>,
-        <jacob.e.keller@intel.com>, <m-malladi@ti.com>,
-        <john.fastabend@gmail.com>, <hawk@kernel.org>, <daniel@iogearbox.net>,
-        <ast@kernel.org>, <richardcochran@gmail.com>, <pabeni@redhat.com>,
-        <kuba@kernel.org>, <edumazet@google.com>, <davem@davemloft.net>,
-        <andrew+netdev@lunn.ch>
-CC: <bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <srk@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Roger Quadros
-	<rogerq@kernel.org>, <danishanwar@ti.com>
-Subject: [PATCH net v4 2/3] net: ti: icssg-prueth: Fix possible NULL pointer dereference inside emac_xmit_xdp_frame()
-Date: Tue, 15 Apr 2025 14:35:42 +0530
-Message-ID: <20250415090543.717991-3-m-malladi@ti.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250415090543.717991-1-m-malladi@ti.com>
-References: <20250415090543.717991-1-m-malladi@ti.com>
+	s=arc-20240116; t=1744707947; c=relaxed/simple;
+	bh=xbAWn0WSfoitO1KDMc0+QCcVSYyO/mBipbxolJ9HPJk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QElxGaMulr6vTVzsUZlh3Frm1r4RW+sVAZ3BqpYCiok3D5QNYbRIvS+HV3KILqj4cOR9f918lggbL6Wzt/EaRJqcN4WyiosFGqgnHVzhj3GykGEACyvpJ5iEt57i9p+vYgoFjmodwtKabZf6+/P1ba+uyI1mnQVEDa+A8H33CHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MpwAHHON; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8dMuj+Hj; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MpwAHHON; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8dMuj+Hj; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 7A3C921164;
+	Tue, 15 Apr 2025 09:05:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744707942; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iVoKDLF5pncIUIiH8TIsHzaAW0W0nHN55ljr4oVTt4M=;
+	b=MpwAHHONHUVv1EjrR5f1v0LcABnG+WymlxxV4WfboUKtUaGnsvvwrdoKUifhtrQHnk9f0I
+	FplYkA0tnTTh9RWo1zEC9UQAvcyhwNPRJXkY2a1RxtXYtL38fTwR5hpYfim0/08BBXtnCl
+	HQ3EB70JF/j3SiUlx6I/vSkTy7wGrL8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744707942;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iVoKDLF5pncIUIiH8TIsHzaAW0W0nHN55ljr4oVTt4M=;
+	b=8dMuj+Hj1w7VX41un+Yx+MhN+P7E3bTubd35YA7IxAdxq7/WcyUw7u52hL9G7CW9ej2SB2
+	pc7ENqs+LZUHWfDQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=MpwAHHON;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=8dMuj+Hj
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744707942; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iVoKDLF5pncIUIiH8TIsHzaAW0W0nHN55ljr4oVTt4M=;
+	b=MpwAHHONHUVv1EjrR5f1v0LcABnG+WymlxxV4WfboUKtUaGnsvvwrdoKUifhtrQHnk9f0I
+	FplYkA0tnTTh9RWo1zEC9UQAvcyhwNPRJXkY2a1RxtXYtL38fTwR5hpYfim0/08BBXtnCl
+	HQ3EB70JF/j3SiUlx6I/vSkTy7wGrL8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744707942;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iVoKDLF5pncIUIiH8TIsHzaAW0W0nHN55ljr4oVTt4M=;
+	b=8dMuj+Hj1w7VX41un+Yx+MhN+P7E3bTubd35YA7IxAdxq7/WcyUw7u52hL9G7CW9ej2SB2
+	pc7ENqs+LZUHWfDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6569A13A89;
+	Tue, 15 Apr 2025 09:05:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id MJZrGGYh/mexUAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 15 Apr 2025 09:05:42 +0000
+Message-ID: <cbf5b354-48b4-4f25-97c3-7b76fd332c41@suse.cz>
+Date: Tue, 15 Apr 2025 11:05:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] MAINTAINERS: Add mmap trace events to MEMORY MAPPING
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+References: <20250411173328.8172-1-Liam.Howlett@oracle.com>
+Content-Language: en-US
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <20250411173328.8172-1-Liam.Howlett@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 7A3C921164
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim,suse.cz:mid,suse.cz:email];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-There is an error check inside emac_xmit_xdp_frame() function which
-is called when the driver wants to transmit XDP frame, to check if
-the allocated tx descriptor is NULL, if true to exit and return
-ICSSG_XDP_CONSUMED implying failure in transmission.
+On 4/11/25 19:33, Liam R. Howlett wrote:
+> MEMORY MAPPING does not list the mmap.h trace point file, but does list
+> the mmap.c file.  Couple the trace points with the users and authors of
+> the trace points for notifications of updates.
+> 
+> Cc:Andrew Morton <akpm@linux-foundation.org>
+> Cc:Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Cc:Vlastimil Babka <vbabka@suse.cz>
+> Cc:Jann Horn <jannh@google.com>
+> Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
 
-In this case trying to free a descriptor which is NULL will result
-in kernel crash due to NULL pointer dereference. Fix this error handling
-and increase netdev tx_dropped stats in the caller of this function
-if the function returns ICSSG_XDP_CONSUMED.
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-Fixes: 62aa3246f462 ("net: ti: icssg-prueth: Add XDP support")
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/all/70d8dd76-0c76-42fc-8611-9884937c82f5@stanley.mountain/
-Signed-off-by: Meghana Malladi <m-malladi@ti.com>
-Reviewed-by: Simon Horman <horms@kernel.org>
-Reviewed-by: Roger Quadros <rogerq@kernel.org>
----
-
-Changes from v3 (v4-v3):
-- Collected RB tag from Roger Quadros <rogerq@kernel.org>
-
- drivers/net/ethernet/ti/icssg/icssg_common.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_common.c b/drivers/net/ethernet/ti/icssg/icssg_common.c
-index ec643fb69d30..b4be76e13a2f 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_common.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_common.c
-@@ -583,7 +583,7 @@ u32 emac_xmit_xdp_frame(struct prueth_emac *emac,
- 	first_desc = k3_cppi_desc_pool_alloc(tx_chn->desc_pool);
- 	if (!first_desc) {
- 		netdev_dbg(ndev, "xdp tx: failed to allocate descriptor\n");
--		goto drop_free_descs;	/* drop */
-+		return ICSSG_XDP_CONSUMED;	/* drop */
- 	}
- 
- 	if (page) { /* already DMA mapped by page_pool */
-@@ -671,8 +671,10 @@ static u32 emac_run_xdp(struct prueth_emac *emac, struct xdp_buff *xdp,
- 
- 		q_idx = smp_processor_id() % emac->tx_ch_num;
- 		result = emac_xmit_xdp_frame(emac, xdpf, page, q_idx);
--		if (result == ICSSG_XDP_CONSUMED)
-+		if (result == ICSSG_XDP_CONSUMED) {
-+			ndev->stats.tx_dropped++;
- 			goto drop;
-+		}
- 
- 		dev_sw_netstats_rx_add(ndev, xdpf->len);
- 		return result;
--- 
-2.43.0
+> ---
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 4c7fdc41a6bfb..d8e9a10adc81d 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -15571,6 +15571,7 @@ L:	linux-mm@kvack.org
+>  S:	Maintained
+>  W:	http://www.linux-mm.org
+>  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
+> +F:	include/trace/events/mmap.h
+>  F:	mm/mlock.c
+>  F:	mm/mmap.c
+>  F:	mm/mprotect.c
 
 
