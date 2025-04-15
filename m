@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-604195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3E37A891FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 04:46:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3E33A891FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 04:46:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CFA7189882A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 02:46:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EC5117C699
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 02:46:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140A820FA81;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FABC20F08E;
 	Tue, 15 Apr 2025 02:45:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mmJVinlg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SR00pwcp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD682DFA32;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CDB42DFA3C;
 	Tue, 15 Apr 2025 02:45:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744685158; cv=none; b=VuhaJdn0QjwK+Mfe1UiU7mURUHaWWciWwptf69e0uW9HQd5At03GjOvwKl2KrbcDQo7LXZUlVUXlKYrNeZGngcC6q4iXInVAEDgeI5y7iuVVx55X4+uRNcqhUhl/QdmoTX5CG2QKIYiNzXAANL17/w5ualDolHKUIlndi0nltP0=
+	t=1744685158; cv=none; b=GYQakk/hFto4aSOB1j1xMU88oPbmiI6LXl6/65tz5mKulW5F0v2dSwD4G9N0nAcmSGlWbNQ0+9xX2K7LK9LmtP7VoVAizZHmHJYvWZ7mCg3iVmRhnhhVdu2sjKJN2Cx3fItTOpwhuMe8cEAVCRuMGV1b5yXQvta7LXCwmmrsqYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1744685158; c=relaxed/simple;
-	bh=uMxf6PyjUiBPhkaKa+YXG1JpcOgoPD6r+dpLZyFYDyU=;
+	bh=75keAXRMnoUm3nWjp9JCjWhNFcUePI50VoUETtE1kCQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OuEfgwxtbuA+J/mahr38EBfIgYN00gfVDKZZReL5yqGIA5lEF5/U8fXdG/mrYnqpitpYwqS53iOziebOHI2mXAqGyeuVDatCDWJ5NbAtvdlmvhTHlAWxoGB8uNfkG8eenEiXnLadJm7ILm5WCLoVE8oIBINYAwn08wQ+aRrN7x8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mmJVinlg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DE3C5C4CEEB;
+	 In-Reply-To:To:Cc; b=p/BIioPWQzTb9MklzZKUYiLJ2uTqp/sn7xmZfw5v1MYxGyxTG/Ct14J4imHKtLpF62pY8CzzAv8tl5eOUjqQZbKDiZAMX58g5vcDqdD+DC8QtUXxQYqZjznJmEVeDcdWcFqYQAPc+mHNXhD3B7fucOh+/rlOeMjD4aRcFlwDjoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SR00pwcp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E64ABC4CEF1;
 	Tue, 15 Apr 2025 02:45:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744685157;
-	bh=uMxf6PyjUiBPhkaKa+YXG1JpcOgoPD6r+dpLZyFYDyU=;
+	s=k20201202; t=1744685158;
+	bh=75keAXRMnoUm3nWjp9JCjWhNFcUePI50VoUETtE1kCQ=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=mmJVinlg+Yvcj+cvNnDyPnPCW2jXJlX3cuJcDCioPLiF3Ts/3lQAaX5EDNwD1H3fT
-	 DRDG69vBR9ZVAn3QLwB1cek/y2aqyTxzroE2U8xPlvedzQJc1cHK5npC8qM2ERCZdP
-	 0NBhE3e52ZQYGE3UE5EwbnJILGfraXM8VM0Tu1V7AHpYSZFu3GSOxqLmhT27dfNBQS
-	 fU1t9HnVCGcVN3yBbEKw/7tkRxCVkvy8CgLngFHJjWJLKRdlVGjH6wZYb6IT41Eka7
-	 4jpg0aHodqzwBRTz+bvtOohXwd7fQp9TSUYRUgsHTo/g/2IX3rLPPwKI7Q/HvbkzRY
-	 2aTL3eBdocHlA==
+	b=SR00pwcp9LgUcNzvz+70649JT5PGeuPxs6DQLzpijiL4Lg8/zQIia3Pie1JAlyXiw
+	 s59u5r43Lmn7xqhd45woDdbz2wC+A7nmprW3hhpeOWZzwCcyJ6gKCFpQ/9FzSvFQnr
+	 sLAK+EzqiPoLywnO1EYAlfhN+IaUlAYp/J8mHsaLQIbZa3hxmITW8WXJT5DPMCzwbj
+	 gQaQuRTAaeBo6DMGMr6bZZWt4t6c43MD4lR3eJnnU0eqrqNKbYRIVycEpr9BmDJGY/
+	 ZvZs6a0G4xL8sP3g1rBxO4swriaLPTG5kktXZe5SpFea+vzBUYkctXeiwY1WtnzVJv
+	 Ds5zomc1aP0pw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5817C369B9;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D79A9C369B4;
 	Tue, 15 Apr 2025 02:45:57 +0000 (UTC)
 From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Date: Tue, 15 Apr 2025 10:45:25 +0800
-Subject: [PATCH v3 2/7] dt-bindings: soc: amlogic: C3 supports clk-measure
+Date: Tue, 15 Apr 2025 10:45:26 +0800
+Subject: [PATCH v3 3/7] dt-bindings: soc: amlogic: S4 supports clk-measure
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,7 +54,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250415-clk-measure-v3-2-9b8551dd33b4@amlogic.com>
+Message-Id: <20250415-clk-measure-v3-3-9b8551dd33b4@amlogic.com>
 References: <20250415-clk-measure-v3-0-9b8551dd33b4@amlogic.com>
 In-Reply-To: <20250415-clk-measure-v3-0-9b8551dd33b4@amlogic.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>, 
@@ -66,11 +66,11 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
  linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
  Chuan Liu <chuan.liu@amlogic.com>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744685155; l=875;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744685155; l=868;
  i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=P5KRner9ELHl3o409yiGCGnkva5HFExJ3rMn3+oG1ko=;
- b=uMAB9xx7E431TayRAue3yuobamxsychqlDaQKgfjp5C+LsrdIFynUExHqnWcAPkJpRnP507/S
- HB0rtVEChGQDNMWcDPOC9X3c6YJfRKLOPTDsY6lQyP593/Uzqy/mSWQ
+ bh=Bv5Y4DpbmiEYh7fjv0Fc7kk2ovIc05XnT6FwbcehZ6c=;
+ b=w88IzP6gAbA3az1au7kmY/Stty3NwkvdEmCsgj+oCuRXQV+ilieQMwlv4fHg53IaJrtql/vwN
+ uxHZQHA18F9Bf5GYJ98y7H7f6sRAwslBL3LgZFkKiG9INGoVDtaDc2I
 X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
  pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
 X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
@@ -80,7 +80,7 @@ Reply-To: chuan.liu@amlogic.com
 
 From: Chuan Liu <chuan.liu@amlogic.com>
 
-C3 adds support for clk-measure.
+S4 adds support for clk-measure.
 
 Acked-by: Rob Herring (Arm) <robh@kernel.org>
 Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
@@ -89,14 +89,14 @@ Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
  1 file changed, 1 insertion(+)
 
 diff --git a/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-clk-measure.yaml b/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-clk-measure.yaml
-index 77c281153010..275afe7fe374 100644
+index 275afe7fe374..39d4637c2d08 100644
 --- a/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-clk-measure.yaml
 +++ b/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-clk-measure.yaml
-@@ -22,6 +22,7 @@ properties:
-       - amlogic,meson-axg-clk-measure
+@@ -23,6 +23,7 @@ properties:
        - amlogic,meson-g12a-clk-measure
        - amlogic,meson-sm1-clk-measure
-+      - amlogic,c3-clk-measure
+       - amlogic,c3-clk-measure
++      - amlogic,s4-clk-measure
  
    reg:
      maxItems: 1
