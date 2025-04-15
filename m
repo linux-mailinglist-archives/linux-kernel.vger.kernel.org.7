@@ -1,101 +1,107 @@
-Return-Path: <linux-kernel+bounces-604960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46F4BA89B21
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:53:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B99D9A89B2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:54:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 290AF7A6B3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:52:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96C9016D1BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:54:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EB732989A9;
-	Tue, 15 Apr 2025 10:48:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F3E2918E2;
+	Tue, 15 Apr 2025 10:49:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oha9wvhF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KYJXxMSB"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7BFC2820C3
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 10:48:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA7461AB6C8;
+	Tue, 15 Apr 2025 10:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744714099; cv=none; b=LRN+vU+3k1Cdp/VVzODtRjx8opDvoRjFc1UzdIdcc2remVFQTmqPWexpXwq1Jh/+bCfCB6Q42WHicebbBnTrLBteBHim/QnS2YocSNGbSDzMw0AFWFy06xQbG64XGiktFZUzc+B4qjK3xSNjh/GUuR+P38r6Y0EbRlzkG6W9AUI=
+	t=1744714168; cv=none; b=TNUyJRErcHQ0siYc9niHEkinRwWBDWDVrfqK7jq7g57lQJC23CMvFZohglTfVKQEgD2UP7IHgLMFNUhcvlk3YQBzMGii0OOViMIQCUOUOprj+PFw1yYyDqCkOcuBdbN+MsYXPfIqQ2XSeUrB2lM/DhLdbe9oUVomV251JmW4lLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744714099; c=relaxed/simple;
-	bh=3ilXhPmbEz4ZrAZSeC/9Y+xhdKwK/8ZkVS7tDoedNWc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k3Bb/NXEg6jFoGDrZYxXPzqlGZ+8bcpVbxVRiyvdisaOINHtGEBSE+L3HapGPlLnmlnGN/mkrDxWiyHzgacuZmJGP9Sw/Vjgc6mtL9s3R8DcMEghNZ9Svd41xYgccUnjcCgOiX0G/fec61KpEeQaK33/zsHbdxAJ2TtbPiWwn8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oha9wvhF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BA13C4CEE7;
-	Tue, 15 Apr 2025 10:48:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744714099;
-	bh=3ilXhPmbEz4ZrAZSeC/9Y+xhdKwK/8ZkVS7tDoedNWc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Oha9wvhFH9njyGwiXkBsZYEuTK80RSzoMjvA5V729/ojxTAvJpGb4WCFiXYgw7tJX
-	 ioGmGqso/kYA8GDPriDAoa0peKU7nYVsZ+QGLWhEsCwjSTkfCmqEjvHfcu63bJtmlf
-	 f6KmRY7Qpc5UwV3xO8AodhEiUOCoLK1SE3q+sJFkSxsP8l6x+9ooco6JO/8bt7B0AA
-	 cF37X1VeZZw8BF5H2ZLA3fHOUwk1Jx0727xsIquBb+gwpzJANwhprG24hedHzWBI6Y
-	 xP4zVMmiUOJNrK161J34jj+5OKGqqtt5MRTlIcLktUNiYDsIagaLT3ign/vETzhFzQ
-	 U/hv1oXg0mNCQ==
-From: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
-To: mingo@redhat.com
-Cc: tglx@linutronix.de,
-	maz@kernel.org,
+	s=arc-20240116; t=1744714168; c=relaxed/simple;
+	bh=WDYEc4Tb9IEBFj4Iu3TZbc2Wv9rHYMydvooPb1yfFqk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EGxuAGgjEBCbt5Hy2o2wjyGdfjaQ8csmFI3AG7JHSkGnbijjpJ/BNP/Lhi6GwRjIjwi9Qd99EGnNJH9pVh6JCLrBUZ/LZkX7MFLfZbrClhzDZOQD58hYPk/ykaYTq4vqwHDJgJCGtdCp3lAgHJdGr2UT75nVFyYrJYRreaE02yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KYJXxMSB; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744714167; x=1776250167;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=WDYEc4Tb9IEBFj4Iu3TZbc2Wv9rHYMydvooPb1yfFqk=;
+  b=KYJXxMSBHrBGH0q5VPpMMu+1cZh1y99TLaRTExH+LMj+9HIhD3/UHO2H
+   InbhYMF1BFW3ujXh8lbzhl4RGupHSndT/y/jDi9amk7NsQO1bBRiJ3t0G
+   dSyi1dSC36c/Q3XVsZhU3YLu6HUoJhQDHxoMTm3LWHxgivvLWgE6hSZfA
+   OlAqSFVINX/r3sicWsYaLqGqDtiGrLtaiHtos9JjnajMOaP0+HKUBu6Xb
+   S1XrAD9cOdhC6KIbfcPtzNjs0d8lJyak845X0fwiykEH1GYl1+j5sS2Yg
+   cIG4BGL/2yikz2AAiQIdCZ9Wj/ESOxAA70UI3zVttbBO1v31hkQmXdiMt
+   Q==;
+X-CSE-ConnectionGUID: fWXUbIxNTSuHWsQ4HF6HpQ==
+X-CSE-MsgGUID: gh2zmkKDQ0CaMGP6KcFFiQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11403"; a="46132891"
+X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
+   d="scan'208";a="46132891"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 03:48:44 -0700
+X-CSE-ConnectionGUID: fXaDgnDyTqyf9u/aXkFZbw==
+X-CSE-MsgGUID: MXM7NXJdRRKNvxEDSTYbqA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
+   d="scan'208";a="167254348"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO ahunter-VirtualBox.ger.corp.intel.com) ([10.245.254.135])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 03:48:40 -0700
+From: Adrian Hunter <adrian.hunter@intel.com>
+To: pbonzini@redhat.com,
+	seanjc@google.com
+Cc: kvm@vger.kernel.org,
+	rick.p.edgecombe@intel.com,
+	kirill.shutemov@linux.intel.com,
+	kai.huang@intel.com,
+	reinette.chatre@intel.com,
+	xiaoyao.li@intel.com,
+	tony.lindgren@linux.intel.com,
+	binbin.wu@linux.intel.com,
+	isaku.yamahata@intel.com,
 	linux-kernel@vger.kernel.org,
-	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH] irqdomain: x86: Switch to of_fwnode_handle()
-Date: Tue, 15 Apr 2025 12:48:15 +0200
-Message-ID: <20250415104815.106920-1-jirislaby@kernel.org>
-X-Mailer: git-send-email 2.49.0
+	yan.y.zhao@intel.com,
+	chao.gao@intel.com
+Subject: [PATCH 0/2] KVM: x86: Correct use of kvm_rip_read()
+Date: Tue, 15 Apr 2025 13:48:19 +0300
+Message-ID: <20250415104821.247234-1-adrian.hunter@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
 Content-Transfer-Encoding: 8bit
 
-of_node_to_fwnode() is irqdomain's reimplementation of the "officially"
-defined of_fwnode_handle(). The former is in the process of being
-removed, so use the latter instead.
+Hi
 
-Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: x86@kernel.org
-Cc: "H. Peter Anvin" <hpa@zytor.com>
----
-This is an indepent patch, please apply directly.
+Here are a couple of tweaks to dodge kvm_rip_read() in tracepoints and
+KVM_PROFILING when guest_state_protected.
 
-The patch was previously a part of a large series [1], but I would like
-maintainers to feed the independent parts through their trees.
+This avoids, for example, hitting WARN_ON_ONCE in vt_cache_reg() for
+TDX VMs.
 
-[1] https://lore.kernel.org/all/20250319092951.37667-1-jirislaby@kernel.org/
----
- arch/x86/kernel/apic/io_apic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/apic/io_apic.c b/arch/x86/kernel/apic/io_apic.c
-index eebc360ed1bb..487992cb0836 100644
---- a/arch/x86/kernel/apic/io_apic.c
-+++ b/arch/x86/kernel/apic/io_apic.c
-@@ -2225,7 +2225,7 @@ static int mp_irqdomain_create(int ioapic)
- 
- 	/* Handle device tree enumerated APICs proper */
- 	if (cfg->dev) {
--		fn = of_node_to_fwnode(cfg->dev);
-+		fn = of_fwnode_handle(cfg->dev);
- 	} else {
- 		fn = irq_domain_alloc_named_id_fwnode("IO-APIC", mpc_ioapic_id(ioapic));
- 		if (!fn)
--- 
-2.49.0
+Adrian Hunter (2):
+      KVM: x86: Do not use kvm_rip_read() unconditionally in KVM tracepoints
+      KVM: x86: Do not use kvm_rip_read() unconditionally for KVM_PROFILING
 
+ arch/x86/kvm/trace.h | 13 ++++++++++---
+ arch/x86/kvm/x86.c   |  3 ++-
+ 2 files changed, 12 insertions(+), 4 deletions(-)
+
+
+Regards
+Adrian
 
