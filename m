@@ -1,314 +1,142 @@
-Return-Path: <linux-kernel+bounces-605357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE33AA8A01B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:53:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 081CAA8A025
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9376442BCA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:53:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F179E19034D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:54:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65551B4227;
-	Tue, 15 Apr 2025 13:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD4D1F3BBE;
+	Tue, 15 Apr 2025 13:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jur1qnLB"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ySUlPsEB"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6371ACEDE
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 13:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3F21B4227
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 13:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744725182; cv=none; b=Hzjp+TwNXR4AQeMaEbMXOWt4zXHay9aPCXKJr3c7KXEh4DtAs5kX7Ky9XuW93VxA3uiPnopq+K0Qn9PXiXhz0ceG/H+L/Z5mPeL+K9AG9f+Gu79Knj5b35yDGY61xzZBpvfBKi2wB56t+WzzkVHaV5t7Odc/y7Bu2dlpQUcQ+Gg=
+	t=1744725205; cv=none; b=WP/H7ylUUhhAkvEsIxT0+7SZYREl38lLyjGy/AHLTED6Kp/9c8oxbJ5OKyh+wGFqDwoggIpPmomW75qwEt5doN85M0C4pcLq63JNuTK4GM8ocui/CeoixE9ZYgIvigr9HWT6e7mSXIGrZbhOg2PV8C71/s9XSudFfYu8+C7NPsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744725182; c=relaxed/simple;
-	bh=q/DmaL+PqLmLjvBYhmlgOORoSNjDoeQfL2FWnmXJ/5k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IOHfECEdxWaUedCcPG9CFEjCd/8MGIQUYguoCWZswqwzRdTSLc7d/qyFgjqRfifV8bidc72qvm+PztzYMnHnjX/h4MIuygg0VlTD0HHUi+b7ELADJzq+qRNkuBVCkajTwvZS/vDilulDdt4SaHOrhdq1W5Y3ZDZwkDMtYP3qNQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jur1qnLB; arc=none smtp.client-ip=209.85.218.50
+	s=arc-20240116; t=1744725205; c=relaxed/simple;
+	bh=JWwoxEMK2A5kDbhJ080c6MdZJuqktgRFVi8Ef7ShjQk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=hETeE4bH6CIWqR8VxqHM1cqftzJGZLnAYMRGqaHlLDSMMzq3zwb2SXjSVLQbOz7tkNF1ys2iDaym0S9wV97WOZCJQgjebxBLaKxL/YqDbv0rJ0tBKy41QANHFJD+4z9bOvXyNGqsrFhVCMOUBA9WCu24cHNqw7NcNIcDEvQLGzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ySUlPsEB; arc=none smtp.client-ip=209.85.208.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-abec8b750ebso945535766b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 06:52:59 -0700 (PDT)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e5e63162a0so9151341a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 06:53:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744725178; x=1745329978; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ooSny9XUJhxzZTQ7SphFkbtSCGNbzJtlyoCGrcjm0uI=;
-        b=Jur1qnLBVJ9J0i+KbNR4cqt04XE884GK/fDof0HROA4vW9N4azemkf+jFe7Vmf0bh4
-         dpxrfa/noqHwjr/Qa3k1R9N1/kH0qMD5/zEvl/IB6EYcQpq8g17upCwKBP7EZrfoN/Fd
-         5huHCjnvS/utQGYGg4q9YtdpE3FWKEMmivpYPrAyt1t27IGd01Co0BQEUV1yXRwgqs/P
-         ArjmcRgjrV81O26rEjvIsosFPARk1gd3CQZHu0F64kVPln6ABhXitcyofcYdfLI8vSXV
-         M7JPX2a52rWgiXCeuP/Lb9X/oU7CysEmRyqq+/aqNNX6WQMvDvktH2SCFPG8vdjxp1K7
-         WUGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744725178; x=1745329978;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1744725201; x=1745330001; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ooSny9XUJhxzZTQ7SphFkbtSCGNbzJtlyoCGrcjm0uI=;
-        b=gAY7KNdpNhUNnjBY6u1DYDIb7ogfsNpdgG3pJKBlnWZSDDcvCpZtE2d4OSL4Nrvk8Y
-         mUJSeyl8iNv5tb2PP3vh23p6uC7f8OYx48H0bAUDrlQ+PDgOMBn36RHBCsj9avuMYuUf
-         +hWGOLgCosDg7WfklK/ErqWno2nGgsowQnYt0o7GQPiBm2Re7rkmKmZghDcIE2MjslB2
-         TecfhOx43m3tm5Ma7FphAtPWI7zFY+yuSB7K7Jr4s/2sUIZGKqyRNTo0XATJgYMzl2FS
-         /vkm1mQ5M69bBQ2ahAXUSNF2HmFkasJJy3uLe4fbJ7WFv7wbXPIRdCONIfUkGCCMOu+R
-         S7Ig==
-X-Forwarded-Encrypted: i=1; AJvYcCU9c7D00DQ2wMia25XNInNnpF01lWDZYCFCkhV6mRunPGfeVzAFHZKGz63P0xwetGiiwa3AOK6YzBTG6MY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy33uLfkpAGR5Z+WBR78OH8Qv2LvdQ0vhiFkE+NtN60v/oh6GPn
-	3PvHfMQefjXpNfL53heSzD+7KisNRaoNtow+18TOG9bkMv0M/qdjChdanUT4s580AD8z7DZBxSa
-	9XC8DBYAPn1UFUAwxm36QaLWKt4z8IZVQCyrLrQ==
-X-Gm-Gg: ASbGnct7HuVPbvihSoLFekzqYtNj3Cdnut6TL8INoZzRuHcefICJWqAcKX12PqSMy66
-	ZAdunMc39s8ANlqP3pAjkdJjoQqbu3jGZaSn8xf3VYVmxQIstGpuL6crCfEzzWO4fi9KmJXYjsW
-	HqL+nAHDNSL4lfor02u7QPbdUDBT3EKNmQTOdrGF5zNl9W725G2+GPYZkgGGBCWw==
-X-Google-Smtp-Source: AGHT+IEol4piqZI6Yl4KkOyrpWJDQ0NRxpz331ba806EziKe1YlyaBlEBwXC/EDk8zCKPGhNab6fbJKybT0eQUA9ilQ=
-X-Received: by 2002:a17:907:948e:b0:ac7:66fb:6a07 with SMTP id
- a640c23a62f3a-acad3439f1fmr1418866966b.6.1744725178174; Tue, 15 Apr 2025
- 06:52:58 -0700 (PDT)
+        bh=IzowgvGIaxdQmiDRDdrZTttLqfGAIGHXMByDo47trxw=;
+        b=ySUlPsEB3vYBsGS1xVnFdaphSHt7LRYeQAyYfwPYNT9teyB71pHVb9/KQhP9rl9w16
+         0yzbXnHY7LKNYG/z+WaL94p1ljxIDOo1KWJt3jWkLfwQAfZ+QdwU+jcUhZS2SaQeCOP2
+         GsXTNfetQElNS8j96kZZG+MyllcNvhQK8srYh4PbOXCaRmCj27Fv+/lDzAtntww2omiA
+         WaJECwzXpMK78Lb20cT9+f+/nAVSqVkWGJLm7MeZ0qwKQXuPKBIKTx8LhFND998yuLn5
+         dS1NQfYfHG8vyNeiZhNHoCRizAUkNr2kyV/lFfWVwNxyoQ66cBQIdW8a2n2RxsW5bDYq
+         XSBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744725201; x=1745330001;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IzowgvGIaxdQmiDRDdrZTttLqfGAIGHXMByDo47trxw=;
+        b=uPC32f4xH8vCAZr0Vx3IS8j5hXe05UuLZl/AbBEnoWU3rPjLLLFZLovkF5JHBJM4kU
+         uJDW8AhFyENw87bzL2Iqy6ct1vPhHyJp5C9Lkmt58DPUsNa6OYbcJlaep88GdvQwtQyy
+         opxyxmlUkpaMu9xCPfBxTl/aO+BjWxePjQl27UIedzTRNgp2xpK3Z/m/CFXl+qmQlszj
+         pocqIf4DR5AJfReVhIYlpD8k5aAr1yhpCSqmFzmA/IZKe07IXh41W6hwQrDcZM1KFWDP
+         Y4f7/PbO45wtLOb0M14bKP3HhRaCr/xEzPrX0Qx2fGSr0IlZ+2OezTDJIEto9uewjuzf
+         2BSw==
+X-Forwarded-Encrypted: i=1; AJvYcCXOBmBOdARYn9ZqN0M7fp8BWOa4GOBagv1dAdnQxlfK0CjObt2Xr9JUMbfnG3vl2yqHHH58lNG3rjqWLOs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycJam0lcAEp3Dt41klI2zMItdXw9pRtm9hcWVKycNq5gVHxnPu
+	ODw8foetdZvRxQ1a0JNBz+sl9PH5WCqhjs+bO8kO1ZVT0LFJYWj9lmA1lXX/pYgyE7HTSo3JuEg
+	M
+X-Gm-Gg: ASbGncusapBiR5zWltKEn4rwa9NFzioe/gAlHCMZHhlsx+zI/4EIjr4Fk04WXHXH255
+	imQxRNy19xZvms7Yz68xS04cqKg3DL80IYGTOO1jHJ9knGfTUd+W3uNBG1ww0tZoZmcwlzC/QC7
+	batPcY6i/uvAuSo+dg3+ATIBped5Cvt5unqKNjKhzzg9q31NB9eCs8eBTRff5EXtppUHhoexPkS
+	Hrb7Ku14xjHsKY2ddU51V0upo7V/8B4l7yWKzg62EUbh6KR5oHz0dv73i7kiHPZZYFzAqfP9V7S
+	axWnGSZkM0bQOzMF8ZkNPUDobtZxot1ohZYtkcbVtGD8JWB4ZsImgYk=
+X-Google-Smtp-Source: AGHT+IE675xAbbKMbD4WeLidcu5LWshKzXZX5noo05D93crI/D9lMfCT+vddCc2faeoXBgbbVScKiw==
+X-Received: by 2002:a17:907:972a:b0:ac6:f4c1:b797 with SMTP id a640c23a62f3a-acad349c39cmr1352690966b.19.1744725201472;
+        Tue, 15 Apr 2025 06:53:21 -0700 (PDT)
+Received: from [127.0.0.2] ([2a02:2454:ff21:ef41:7b18:2529:5ce1:343d])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acadcc21a44sm681379166b.177.2025.04.15.06.53.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Apr 2025 06:53:21 -0700 (PDT)
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+Date: Tue, 15 Apr 2025 15:52:47 +0200
+Subject: [PATCH 4/8] arm64: dts: qcom: msm8916-motorola: Use UART1 console
+ pinctrl
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250302210539.1563190-1-vincent.guittot@linaro.org>
- <20250302210539.1563190-6-vincent.guittot@linaro.org> <b19a857c-4c01-471b-94be-c465de636cd9@arm.com>
-In-Reply-To: <b19a857c-4c01-471b-94be-c465de636cd9@arm.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Tue, 15 Apr 2025 15:52:46 +0200
-X-Gm-Features: ATxdqUERmn6EDtKU2V_wprhveLltLu_mmBdhtZ7lcobIXZT62Zkij7ds-nVnK14
-Message-ID: <CAKfTPtCr0BRFwc2z0EGVNSyKSfKWqrOfeiZLNigzxEY2W6Bocw@mail.gmail.com>
-Subject: Re: [PATCH 5/7 v5] sched/fair: Add push task mechanism for EAS
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	mgorman@suse.de, vschneid@redhat.com, lukasz.luba@arm.com, 
-	rafael.j.wysocki@intel.com, pierre.gondois@arm.com, 
-	linux-kernel@vger.kernel.org, qyousef@layalina.io, hongyan.xia2@arm.com, 
-	luis.machado@arm.com, qperret@google.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250415-msm8916-console-pinctrl-v1-4-a1d33ea994b9@linaro.org>
+References: <20250415-msm8916-console-pinctrl-v1-0-a1d33ea994b9@linaro.org>
+In-Reply-To: <20250415-msm8916-console-pinctrl-v1-0-a1d33ea994b9@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Sam Day <me@samcday.com>, Casey Connolly <caleb.connolly@linaro.org>
+X-Mailer: b4 0.14.2
 
-On Tue, 25 Mar 2025 at 12:16, Christian Loehle <christian.loehle@arm.com> wrote:
->
-> On 3/2/25 21:05, Vincent Guittot wrote:
-> > EAS is based on wakeup events to efficiently place tasks on the system, but
-> > there are cases where a task doesn't have wakeup events anymore or at a far
-> > too low pace. For such situation, we can take advantage of the task being
-> > put back in the enqueued list to check if it should be pushed on another
-> > CPU. When the task is alone on the CPU, it's never put back in the enqueued
-> > list; In this special case, we use the tick to run the check.
-> >
-> > Wake up events remain the main way to migrate tasks but we now detect
-> > situation where a task is stuck on a CPU by checking that its utilization
-> > is larger than the max available compute capacity (max cpu capacity or
-> > uclamp max setting)
-> >
-> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > ---
-> >  kernel/sched/fair.c  | 220 +++++++++++++++++++++++++++++++++++++++++++
-> >  kernel/sched/sched.h |   2 +
-> >  2 files changed, 222 insertions(+)
-> >
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index a9b97bbc085f..c3e383b86808 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -7051,6 +7051,7 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
-> >       hrtick_update(rq);
-> >  }
-> >
-> > +static void fair_remove_pushable_task(struct rq *rq, struct task_struct *p);
-> >  static void set_next_buddy(struct sched_entity *se);
-> >
-> >  /*
-> > @@ -7081,6 +7082,8 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
-> >               h_nr_idle = task_has_idle_policy(p);
-> >               if (task_sleep || task_delayed || !se->sched_delayed)
-> >                       h_nr_runnable = 1;
-> > +
-> > +             fair_remove_pushable_task(rq, p);
-> >       } else {
-> >               cfs_rq = group_cfs_rq(se);
-> >               slice = cfs_rq_min_slice(cfs_rq);
-> > @@ -8589,6 +8592,197 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
-> >       return target;
-> >  }
-> >
-> > +static inline bool task_stuck_on_cpu(struct task_struct *p, int cpu)
-> > +{
-> > +     unsigned long max_capa, util;
-> > +
-> > +     max_capa = min(get_actual_cpu_capacity(cpu),
-> > +                    uclamp_eff_value(p, UCLAMP_MAX));
-> > +     util = max(task_util_est(p), task_runnable(p));
-> > +
-> > +     /*
-> > +      * Return true only if the task might not sleep/wakeup because of a low
-> > +      * compute capacity. Tasks, which wake up regularly, will be handled by
-> > +      * feec().
-> > +      */
-> > +     return (util > max_capa);
-> > +}
-> > +
-> > +static inline bool sched_energy_push_task(struct task_struct *p, struct rq *rq)
-> > +{
-> > +     if (p->nr_cpus_allowed == 1)
-> > +             return false;
-> > +
-> > +     if (is_rd_overutilized(rq->rd))
-> > +             return false;
-> > +
-> > +     if (task_stuck_on_cpu(p, cpu_of(rq)))
-> > +             return true;
-> > +
-> > +     return false;
-> > +}
-> > +
-> > +static int active_load_balance_cpu_stop(void *data);
-> > +
-> > +static inline void check_pushable_task(struct task_struct *p, struct rq *rq)
-> > +{
-> > +     int new_cpu, cpu = cpu_of(rq);
-> > +
-> > +     if (!sched_energy_enabled())
-> > +             return;
-> > +
-> > +     if (WARN_ON(!p))
-> > +             return;
-> > +
-> > +     if (WARN_ON(!task_current(rq, p)))
-> > +             return;
-> > +
-> > +     if (is_migration_disabled(p))
-> > +             return;
-> > +
-> > +     /* If there are several task, wait for being put back */
-> > +     if (rq->nr_running > 1)
-> > +             return;
-> > +
-> > +     if (!sched_energy_push_task(p, rq))
-> > +             return;
-> > +
-> > +     new_cpu = find_energy_efficient_cpu(p, cpu);
-> > +
-> > +     if (new_cpu == cpu)
-> > +             return;
-> > +
-> > +     /*
-> > +      * ->active_balance synchronizes accesses to
-> > +      * ->active_balance_work.  Once set, it's cleared
-> > +      * only after active load balance is finished.
-> > +      */
-> > +     if (!rq->active_balance) {
-> > +             rq->active_balance = 1;
-> > +             rq->push_cpu = new_cpu;
-> > +     } else
-> > +             return;
-> > +
-> > +     raw_spin_rq_unlock(rq);
-> > +     stop_one_cpu_nowait(cpu,
-> > +             active_load_balance_cpu_stop, rq,
-> > +             &rq->active_balance_work);
-> > +     raw_spin_rq_lock(rq);
-> > +}
-> > +
-> > +static inline int has_pushable_tasks(struct rq *rq)
-> > +{
-> > +     return !plist_head_empty(&rq->cfs.pushable_tasks);
-> > +}
-> > +
-> > +static struct task_struct *pick_next_pushable_fair_task(struct rq *rq)
-> > +{
-> > +     struct task_struct *p;
-> > +
-> > +     if (!has_pushable_tasks(rq))
-> > +             return NULL;
-> > +
-> > +     p = plist_first_entry(&rq->cfs.pushable_tasks,
-> > +                           struct task_struct, pushable_tasks);
-> > +
-> > +     WARN_ON_ONCE(rq->cpu != task_cpu(p));
-> > +     WARN_ON_ONCE(task_current(rq, p));
-> > +     WARN_ON_ONCE(p->nr_cpus_allowed <= 1);
-> > +     WARN_ON_ONCE(!task_on_rq_queued(p));
-> > +
-> > +     /*
-> > +      * Remove task from the pushable list as we try only once after that
-> > +      * the task has been put back in enqueued list.
-> > +      */
-> > +     plist_del(&p->pushable_tasks, &rq->cfs.pushable_tasks);
-> > +
-> > +     return p;
-> > +}
-> > +
-> > +/*
-> > + * See if the non running fair tasks on this rq can be sent on other CPUs
-> > + * that fits better with their profile.
-> > + */
-> > +static bool push_fair_task(struct rq *rq)
-> > +{
-> > +     struct task_struct *next_task;
-> > +     int prev_cpu, new_cpu;
-> > +     struct rq *new_rq;
-> > +
-> > +     next_task = pick_next_pushable_fair_task(rq);
-> > +     if (!next_task)
-> > +             return false;
-> > +
-> > +     if (is_migration_disabled(next_task))
-> > +             return true;
-> > +
-> > +     /* We might release rq lock */
-> > +     get_task_struct(next_task);
-> > +
-> > +     prev_cpu = rq->cpu;
-> > +
-> > +     new_cpu = find_energy_efficient_cpu(next_task, prev_cpu);
->
-> We aren't gating this on a overutilized check for both call sites of this patch
+The Motorola MSM8916-based smartphones all use UART1 with 2 pins (TX, RX)
+as debug UART console, so make use of the new &blsp_uart1_console_default
+template. This applies the needed bias-pull-up to avoid garbage input,
+bootph-all for U-Boot and avoids having to override the UART pins.
 
-The overutilized check has been done when adding the task to the list.
+Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/msm8916-motorola-common.dtsi | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
+diff --git a/arch/arm64/boot/dts/qcom/msm8916-motorola-common.dtsi b/arch/arm64/boot/dts/qcom/msm8916-motorola-common.dtsi
+index 48134e5ff524fd5708db7b9c3a567ec3f751868c..4e202e7ed7db1921f347ca8b4a01ccec593a8d8e 100644
+--- a/arch/arm64/boot/dts/qcom/msm8916-motorola-common.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8916-motorola-common.dtsi
+@@ -69,8 +69,8 @@ rmi4-f11@11 {
+ };
+ 
+ &blsp_uart1 {
+-	pinctrl-0 = <&blsp_uart1_default>;
+-	pinctrl-1 = <&blsp_uart1_sleep>;
++	pinctrl-0 = <&blsp_uart1_console_default>;
++	pinctrl-1 = <&blsp_uart1_console_sleep>;
+ 	pinctrl-names = "default", "sleep";
+ 	status = "okay";
+ };
+@@ -132,14 +132,6 @@ &wcnss_mem {
+ 	status = "okay";
+ };
+ 
+-/* CTS/RTX are not used */
+-&blsp_uart1_default {
+-	pins = "gpio0", "gpio1";
+-};
+-&blsp_uart1_sleep {
+-	pins = "gpio0", "gpio1";
+-};
+-
+ &tlmm {
+ 	gpio_keys_default: gpio-keys-default-state {
+ 		pins = "gpio107";
 
-> like the other feec() call and testing shows that this calls feec when OU
-> relatively often.
-> Why would it be OK to call feec() here when it isn't on task placement?
->
-> > +
-> > +     if (new_cpu == prev_cpu)
-> > +             goto out;
-> > +
-> > +     new_rq = cpu_rq(new_cpu);
-> > +
-> > +     if (double_lock_balance(rq, new_rq)) {
-> > +             /* The task has already migrated in between */
-> > +             if (task_cpu(next_task) != rq->cpu) {
-> > +                     double_unlock_balance(rq, new_rq);
-> > +                     goto out;
-> > +             }
-> > +
-> > +             deactivate_task(rq, next_task, 0);
-> > +             set_task_cpu(next_task, new_cpu);
-> > +             activate_task(new_rq, next_task, 0);
-> > +
-> > +             resched_curr(new_rq);
-> > +
-> > +             double_unlock_balance(rq, new_rq);
-> > +     }
-> > +
-> > +out:
-> > +     put_task_struct(next_task);
-> > +
-> > +     return true;
-> > +}
-> > +
-> > +static void push_fair_tasks(struct rq *rq)
-> > +{
-> > +     /* push_fair_task() will return true if it moved a fair task */
->
-> This isn't technically true, a bit of a nit, push_fair_task() also
-> will return true when the task found wasn't moveable.
->
-> [snip]
+-- 
+2.47.2
+
 
