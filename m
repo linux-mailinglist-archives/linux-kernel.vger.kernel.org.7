@@ -1,204 +1,132 @@
-Return-Path: <linux-kernel+bounces-605582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D10F0A8A340
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 17:45:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E5EDA8A34C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 17:46:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D46EB178384
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:45:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1A0A17A00D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:46:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63B5619993D;
-	Tue, 15 Apr 2025 15:45:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A836720F09A;
+	Tue, 15 Apr 2025 15:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="kE40J6JA";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BaxYHqh5";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="kE40J6JA";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BaxYHqh5"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fUfBTTAg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C7C14831E
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 15:45:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD25158858;
+	Tue, 15 Apr 2025 15:45:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744731930; cv=none; b=GidE0oxyJuVLmsR1tPlMWNYOOdVSInQR0Kcn63++GO+4jHKDQ47I1qakDsnL4/UtLLL248sMfnivp3p+J1W71Fys4bpPY9HkdswnJi1G7M8Ca1WdKS6tGPJAj4NCeVLw3sLIqtPNAeMn1yR6K1ST1O9RRw+CScyHWDcwXB/DUbQ=
+	t=1744731952; cv=none; b=uB+hO1n+UaH26RrtZTqMAAzORBU9sj6iivOA8NwkGqrJHL7QuJ/P0pkgmRtNE1sHB7gO4MQDuFYVNi+icvNCF9e97zQngdAE8cOd/ISDqSm024u084dFEwWksQjyAoJmbQcaSW1Uk8/lkYsYCLzZxsnDvqUwpQWyN1zLRQ8MKdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744731930; c=relaxed/simple;
-	bh=m2fkGEVlnFm00Qqtt5fPt1VDtYCjKxwgcWjUSlP57Pw=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SxQagvGw2zR+1Nix7O+xDA6FwdXQFPUVnQaZ6no/rPcbd67R3BBnhpfSR80nJtoFaf7+WLBPlcvPTfdKqsK0/O7NgTWQxYjmbDS+VY6FKJ+rdcBsFwCAxj9zz++9XjyzyDCIhC1JB2n4cXfLmia/pV5HbFYr/x27xCg6mrDM6aM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=kE40J6JA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BaxYHqh5; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=kE40J6JA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BaxYHqh5; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3A85121160;
-	Tue, 15 Apr 2025 15:45:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744731927; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fwQm7pdIvsfiQ1wOvubvUNZJmn1HQbe3h8/K+LEFo3o=;
-	b=kE40J6JAIiMkYm431w+zz2CE1kSs19tGjN6bU/mKmVI2bLA1F2UUI6Kn3Taxc7wqGXSH3H
-	rThFm+s+qVVW0H7fAp924U86BHBnnAqRYqVyS0cny0wIBm9ubWistL4Cl0M4iNxuBprwO5
-	85aReM7YEKd+EOOLatvWxyeuGCSDMTs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744731927;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fwQm7pdIvsfiQ1wOvubvUNZJmn1HQbe3h8/K+LEFo3o=;
-	b=BaxYHqh5GNZSiZKxmQUm4b3c4pYlDe3pGoSnezBOaAoQ7nGLwYBuGVY7FL1dkvLvvsKpOR
-	ELlX6y/hc3uchsDg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=kE40J6JA;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=BaxYHqh5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744731927; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fwQm7pdIvsfiQ1wOvubvUNZJmn1HQbe3h8/K+LEFo3o=;
-	b=kE40J6JAIiMkYm431w+zz2CE1kSs19tGjN6bU/mKmVI2bLA1F2UUI6Kn3Taxc7wqGXSH3H
-	rThFm+s+qVVW0H7fAp924U86BHBnnAqRYqVyS0cny0wIBm9ubWistL4Cl0M4iNxuBprwO5
-	85aReM7YEKd+EOOLatvWxyeuGCSDMTs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744731927;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fwQm7pdIvsfiQ1wOvubvUNZJmn1HQbe3h8/K+LEFo3o=;
-	b=BaxYHqh5GNZSiZKxmQUm4b3c4pYlDe3pGoSnezBOaAoQ7nGLwYBuGVY7FL1dkvLvvsKpOR
-	ELlX6y/hc3uchsDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C52A1139A1;
-	Tue, 15 Apr 2025 15:45:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id AoLJLhZ//mcVVQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 15 Apr 2025 15:45:26 +0000
-Date: Tue, 15 Apr 2025 17:45:26 +0200
-Message-ID: <87wmblxwbt.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: WangYuli <wangyuli@uniontech.com>
-Cc: Philipp Stanner <pstanner@redhat.com>,
-	akpm@linux-foundation.org,
-	guanwentao@uniontech.com,
-	linux-kernel@vger.kernel.org,
-	mingo@kernel.org,
-	niecheng1@uniontech.com,
-	tglx@linutronix.de,
-	zhanjun@uniontech.com,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	SOUND <linux-sound@vger.kernel.org>
-Subject: Re: [PATCH v2 5/5] ALSA: korg1212: snd_korg1212_prepare: Rename del_timer in comment
-In-Reply-To: <1F0B4039A1EC1361+e24aa199-17e5-4cb3-9218-52412a60924e@uniontech.com>
-References: <37A1CE32D2AEA134+20250414042251.61846-1-wangyuli@uniontech.com>
-	<590769506CF46967+20250414042629.63019-5-wangyuli@uniontech.com>
-	<70bb676764099754d10c4be2f095e0fb829f233a.camel@redhat.com>
-	<1F0B4039A1EC1361+e24aa199-17e5-4cb3-9218-52412a60924e@uniontech.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1744731952; c=relaxed/simple;
+	bh=zRSldPCJVlqhnsEjv+yhTbeJeFfRQcqt1STmF8DRZQk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=deJuK7ais9yAvnrxRq/OLvGXflHWAIPWrm/VqqHZbmBNR38sCcNuZa0zCQyUSL9FTreAJ5z4I61NBBAZgvLLlG2IJQPT3FjHZp32vi3hPz2iqT7xXihaMZCJLvju/8hHYJwU2Jy3NCU94YIhxtg7Hh8n3StdZjS11W47cbGNvQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fUfBTTAg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90150C4CEEB;
+	Tue, 15 Apr 2025 15:45:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744731951;
+	bh=zRSldPCJVlqhnsEjv+yhTbeJeFfRQcqt1STmF8DRZQk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fUfBTTAgeEWD5ZjJ0g+9PmXUsSFF3EeYefydlKIVVoq+i/ut9Dc+yb9Zlb5ofQQDS
+	 REuyuovU68FGwZYmKsaXYUxyXRsqWkvKvjYnvCQSjB98Dqf/fChuXyz5E+iJglZl40
+	 Y5YFQpUSpgc54OV4+UyHUR7UZbQ2ihpq1eDll2GEyfbRYl7q01oVPGIJ/EdzErXuDk
+	 FpBw7o1llWXNbG1t7tasmzeFfnTE4QrcB5JtXZtF8pBZKbYj1gpJ8yu9HtujGMR5j2
+	 yY3xif9pHG3CtmxMc6bRrQpHcF2E54WjxNOWuQBKhld+LICY2EHKn5y3ckFsNLvVdd
+	 r7gMuZYVyYR1Q==
+Message-ID: <c8d3c4c0-4ca4-4576-b38a-727d1803ee77@kernel.org>
+Date: Tue, 15 Apr 2025 10:45:48 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 3A85121160
-X-Spam-Score: -3.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:dkim];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:dkim];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/5] platform/x86/amd: pmc: use FCH_PM_BASE definition
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: Borislav Petkov <bp@alien8.de>, Jean Delvare <jdelvare@suse.com>,
+ Andi Shyti <andi.shyti@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+ "H . Peter Anvin" <hpa@zytor.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:I2C/SMBUS CONTROLLER DRIVERS FOR PC" <linux-i2c@vger.kernel.org>,
+ "open list:AMD PMC DRIVER" <platform-driver-x86@vger.kernel.org>
+References: <20250415002658.1320419-1-superm1@kernel.org>
+ <20250415002658.1320419-5-superm1@kernel.org>
+ <20250415151326.GA624550@yaz-khff2.amd.com>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <20250415151326.GA624550@yaz-khff2.amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, 14 Apr 2025 13:10:39 +0200,
-WangYuli wrote:
+On 4/15/2025 10:13 AM, Yazen Ghannam wrote:
+> On Mon, Apr 14, 2025 at 07:26:57PM -0500, Mario Limonciello wrote:
+>> From: Mario Limonciello <mario.limonciello@amd.com>
+>>
+>> The s2idle mmio quirk uses a scratch register in the FCH.
+>> Adjust the code to clarify that.
+>>
+>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>> ---
+>> v4:
+>>   * Use fch.h instead
+>> ---
+>>   arch/x86/include/asm/amd/fch.h            | 1 +
+>>   drivers/platform/x86/amd/pmc/pmc-quirks.c | 3 ++-
+>>   2 files changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/x86/include/asm/amd/fch.h b/arch/x86/include/asm/amd/fch.h
+>> index a5fd91ff92df3..9b32e8a03193e 100644
+>> --- a/arch/x86/include/asm/amd/fch.h
+>> +++ b/arch/x86/include/asm/amd/fch.h
+>> @@ -8,5 +8,6 @@
+>>   /* register offsets from PM base */
+>>   #define FCH_PM_DECODEEN			0x00
+>>   #define FCH_PM_DECODEEN_SMBUS0SEL	GENMASK(20, 19)
+>> +#define FCH_PM_SCRATCH			0x80
+>>   
+>>   #endif
+>> diff --git a/drivers/platform/x86/amd/pmc/pmc-quirks.c b/drivers/platform/x86/amd/pmc/pmc-quirks.c
+>> index b4f49720c87f6..3c680d2029f62 100644
+>> --- a/drivers/platform/x86/amd/pmc/pmc-quirks.c
+>> +++ b/drivers/platform/x86/amd/pmc/pmc-quirks.c
+>> @@ -8,6 +8,7 @@
+>>    * Author: Mario Limonciello <mario.limonciello@amd.com>
+>>    */
+>>   
+>> +#include <asm/amd/fch.h>
 > 
-> Hi Philipp Stanner,
+> Arch headers should go after linux headers, I think.
 > 
-> On 2025/4/14 16:34, Philipp Stanner wrote:
-> > Wouldn't it be better to just remove all that? Or at least document
-> > what it is good for?
+> So that arch stuff can override generic stuff.
 > 
-> This code comes from commit 4d6dcf60b9 ("ALSA update   - documentation
->   - control API - added multi-elements to reduce memory usage   -
-> improved preallocation of DMA buffers   - CS46xx driver - added
-> support for secondary codec   - HDSP driver - big update     -
-> firmware is loaded with hdsptool now   - pmac driver updates (fixed
-> oops and beep stuff)   - VIA82xx driver updated   - ymfpci driver
-> updated   - drivers updated to new PnP layer     - wavefront, ad1816a,
-> cs423x, es18xx, interwave, opl3sa2, cmi8330") in the history tree [1]
-> as part of a huge patch.
-> 
-> I couldn't find any useful information about this specific code within
-> that commit.
-> 
-> Since I'm uncertain if we truly don't need it (this code is marked
-> with "FIXME" above), I've kept this comment.
-> 
-> Furthermore, this driver has other sections of commented-out code as
-> well, so a more comprehensive cleanup of this driver might be a better
-> approach in the future.
-> 
-> If possible, I'd also be happy to contribute to that effort.
-> 
-> However, this commit isn't intended for that purpose.
-> 
-> Its sole aim is to clean up the comment that were missed by commit
-> 8fa7292fee5c ("treewide: Switch/rename to timer_delete_sync") and
-> should have been updated.
-> 
-> 
-> [1]. https://web.git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git/commit/?id=4d6dcf60b98000c204b309b529c10b2a3884789e
 
-Yeah, the code is quite old and dirty, and this timer stuff can be
-omitted completely by introducing the proper sync_stop PCM ops.
-Let me rewrite the code instead.
+Thanks - that's the same problem for the previous patch (i2c: piix4: 
+Move SB800_PIIX4_FCH_PM_ADDR definition to amd/fch.) too then.
 
+I'll fix it in the next spin.
 
-thanks,
+>>   #include <linux/dmi.h>
+>>   #include <linux/io.h>
+>>   #include <linux/ioport.h>
+> 
+> Thanks,
+> Yazen
 
-Takashi
 
