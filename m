@@ -1,156 +1,142 @@
-Return-Path: <linux-kernel+bounces-604653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DC45A896F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:42:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95E16A896FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:43:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7210188C316
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:42:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3024189DDBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:43:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 257501D959B;
-	Tue, 15 Apr 2025 08:42:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F55527F741;
+	Tue, 15 Apr 2025 08:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b4NPZIYV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PYlsRpYi"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19DF186295
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 08:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB37F1AF0AE;
+	Tue, 15 Apr 2025 08:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744706522; cv=none; b=QlBnN9nuNFnIuVeyuLE+SVwQez9Zs3o2r1m3nHXe9KZgWm+if7qgQskHGWyBtXeGWtApmaJQtNI+CjNMCjOQ39wjjv2njb5FWZ7oVrKc1HJF92PHkuZbX5pzVndlC09DKZnznlUxz2pPxpokjMuD/7lHkBOW2Fd+YcmDcmdga7Y=
+	t=1744706609; cv=none; b=h778TppLzjMw9gJxDuRjwYa1VBhgvxkjCYZKeiDkMP+LY22Pnj+Pxt5riOgEGfZKDqwGF27RZs/oIGztWgX0mr63A6z9zXol5nhAQ+YyMiIeww2gdtQa/TAhJidayMZZDSOVSTqeHH/rELz81MJZGb19AbdPyQ+buJt01MNdoH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744706522; c=relaxed/simple;
-	bh=MHKkf2eTQKJSDUVgrB+fzpXdXVMv5f/0cBZlNz363RY=;
+	s=arc-20240116; t=1744706609; c=relaxed/simple;
+	bh=bqVy4cE5Zj6YhNLsiG6Ni3/flTkFOehuJyaTktuTw8U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hKmf82JIufvxfyx1r3Zs8qLckUqhlRUDAGPlbb0THnEG71sRnoY/a6okXmKccs8NAbAJ/oKnvkrMK1Q8eLghHq71yZw6L+wmI2mvX3QkHwwZWLzAfjCGVNtGOCZ9VE4ABdax3QosjTuAycV6xiiGwk3FkSFjAtYd+7k4GqHZXBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b4NPZIYV; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744706519;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rQgMM1c/L1dY1ZPWx+Tr6nBOMEoSGXdQFR50SH8ffA8=;
-	b=b4NPZIYVPZ10zhOb/l54eSZOPvh8AXeq/JxjeBLijqRkyLGWdwegeJ/QwcrVZmr1OulqqA
-	W2VYL1LAEvCdcCXH/rKNaKa6A7xr2x2lN6e6caiN2FhBTLYv644iw2z8FxQZagQh/MFFtd
-	gWsEInnCpaPNpmvLwsH+Oy1oXMKuSHw=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-457-T7KBvU2hOa6hGLdjVeqlwA-1; Tue, 15 Apr 2025 04:41:58 -0400
-X-MC-Unique: T7KBvU2hOa6hGLdjVeqlwA-1
-X-Mimecast-MFC-AGG-ID: T7KBvU2hOa6hGLdjVeqlwA_1744706517
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43efa869b19so36520115e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 01:41:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744706517; x=1745311317;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rQgMM1c/L1dY1ZPWx+Tr6nBOMEoSGXdQFR50SH8ffA8=;
-        b=MVgsoFgooP4APOPRHRfDnk/hAXKW+/DUiuVtYAN0jcEqZExgedprhKDiBlJswbedKA
-         kBBUIgZZPbgAXKpx4o7l2Ip/wig3dqrOTeN040AozfRWF1dGw+eWCkZPDjo09Ju4An8m
-         JlIdyRIasO/mxYliF9s0jXICV4680XMf02lmmgCWh/+PFv7hkWAsftX/qvhu9DZ36R7w
-         dWnomPpBv8Vdw3ytl0VV8gG0/e8rB7JHRzejUldT9f4R/1fcyRu6FxSLDfPXN89si7/z
-         e0veIMbQcDEjTQOCQx4/8jIdDvGZU53rC9us0wzJMHD7bgCdxkPrzsODieVa9H7YR2tv
-         m7cQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXb8+Zm7vjiQebkGN6PBHjblv6LP+T0M4Gv+kfQx3aGsd9WusaSHILPdgUeo3hHKBEpW9UgTCxDXd+4/RU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXtTAzXeRUFlCJB8E6J32vdE65AJzmzaiLd991gxbIbAy0yz3E
-	EGKJT2vCUsU+TmV70sZXgaN8tUe+Qzs0kdv/4pmcttgM1KVcLWEKwQJydg/QME7aRojg8hEXCRN
-	Rqy6nWONiWr2I8US4EpbbEAmn7jt+mVLE74Pbz1GsvAHB1LzxJHOs/ncg74qj7M6D4TrBgQ==
-X-Gm-Gg: ASbGncupTLRaatMFP/VD1j61rPVbj6gEvR3FLC1++K+0cLIWm+9770UyWmR+RqoyOsg
-	94OFVkW0Sk4iiEeSx8XrIOFnFh8XcMbMpd+QZwoAIYof4qrGNJ0WvdUCukCirkhvkbVhFn4ZVzw
-	e+mGpKBywnuCdGzV8EWidFx+5Mx2YYHd+zirhZirtnrHyK02MLp+80hvnPHx8puM6yxoqIGiAwE
-	B/owx2NgT23veHBhDJyOtS/8WspvHPregdVA0Eq+X8GVtzBIAeq1i8wqBsLiIUhk8T38wGnWpK2
-	ieeqld2twSWl92m+jw==
-X-Received: by 2002:a05:600c:1d08:b0:43c:fe9f:ab90 with SMTP id 5b1f17b1804b1-43f3a9aefc4mr100464865e9.28.1744706516962;
-        Tue, 15 Apr 2025 01:41:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF/OMyHwno+9Cfn8yM66f8zcKW4KPSM63TW50jawT4VK4YHrLWm5KRsF4/mSRxZf7hHDZfrvA==
-X-Received: by 2002:a05:600c:1d08:b0:43c:fe9f:ab90 with SMTP id 5b1f17b1804b1-43f3a9aefc4mr100464635e9.28.1744706516527;
-        Tue, 15 Apr 2025 01:41:56 -0700 (PDT)
-Received: from sgarzare-redhat ([193.207.162.137])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eaf43cdfdsm13750153f8f.61.2025.04.15.01.41.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Apr 2025 01:41:55 -0700 (PDT)
-Date: Tue, 15 Apr 2025 10:41:49 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca, 
-	sudeep.holla@arm.com, stuart.yoder@arm.com, linux-integrity@vger.kernel.org, 
+	 Content-Type:Content-Disposition:In-Reply-To; b=HiwFpu7nQrORWuTWn/aW/uAEbIwoJbEtU5RzwoWM9UXsp109JHAD/4IneVngughTYg4veaUyL26dNlIrMhwgcoZoifHQ9w/ZIC9faXo8gZc7gogCIIUraSBHwzETGSBGFH6IR0CVF2gJyp0jsWMHVOLS3F0cTRM0kLfDf3Yiwh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PYlsRpYi; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744706607; x=1776242607;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=bqVy4cE5Zj6YhNLsiG6Ni3/flTkFOehuJyaTktuTw8U=;
+  b=PYlsRpYiSNNdOgkKJ0Y2RaKkE0SSWeMxxSNcLtIEykO0m57Asl7iiJjZ
+   jLGxrUPc/nTX5ybHo5Hdq5vVtwbIXb0aEfT4Slm+T9LPOBwgOSXX3x/BB
+   HOG3pswZOMUNqFcbDF7i+FKWPHVE3WZuq37k2+GsZsAiLlnFiRdnITv1b
+   sTNpE6vdzte7hGgqZFwy1Uj2BbyYmJzORa6+CAILU2CNM1SL/gmduqTTk
+   9eNKDnDlvjGfbVyzskBQMo1fKCS0GzkNbaIvHTlsFmarsEtP8uRieAy+K
+   +mptbK9SdT7ayiwcCfCI9MK/hxD1tUD5jAPlD6gs2sLus+sDdhO+5OGhf
+   g==;
+X-CSE-ConnectionGUID: 78cmM3JyTte1z+ahX+cECg==
+X-CSE-MsgGUID: XtPQZG5VTw2PYc1X/7+bBg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11403"; a="46333922"
+X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
+   d="scan'208";a="46333922"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 01:42:20 -0700
+X-CSE-ConnectionGUID: HnqHzjShTlKUyNcLOiNO1g==
+X-CSE-MsgGUID: mBmnoFvZTgaMt8H91teEdA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
+   d="scan'208";a="129827887"
+Received: from mev-dev.igk.intel.com ([10.237.112.144])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 01:42:16 -0700
+Date: Tue, 15 Apr 2025 10:41:58 +0200
+From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+To: Henry Martin <bsdhenrymartin@gmail.com>
+Cc: saeedm@nvidia.com, leon@kernel.org, tariqt@nvidia.com,
+	netdev@vger.kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	amirtz@nvidia.com, ayal@nvidia.com, linux-rdma@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] tpm_crb_ffa: use dev_xx() macro to print log
-Message-ID: <yglnqdykvvof7iwviaacqnmmoanhhoefgmaulw7nrlf6zotbgj@obuqtycczzm7>
-References: <20250415075712.2157073-1-yeoreum.yun@arm.com>
- <20250415075712.2157073-3-yeoreum.yun@arm.com>
+Subject: Re: [PATCH v4 1/1] net/mlx5: Fix null-ptr-deref in
+ mlx5_create_{inner_,}ttc_table()
+Message-ID: <Z/4b1hUpp6FMjfR9@mev-dev.igk.intel.com>
+References: <20250411131431.46537-1-bsdhenrymartin@gmail.com>
+ <20250411131431.46537-2-bsdhenrymartin@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250415075712.2157073-3-yeoreum.yun@arm.com>
+In-Reply-To: <20250411131431.46537-2-bsdhenrymartin@gmail.com>
 
-On Tue, Apr 15, 2025 at 08:57:12AM +0100, Yeoreum Yun wrote:
->Instread of pr_xxx() macro, use dev_xxx() to print log.
->
->Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
->---
-> drivers/char/tpm/tpm_crb_ffa.c | 8 ++++----
-> 1 file changed, 4 insertions(+), 4 deletions(-)
->
->diff --git a/drivers/char/tpm/tpm_crb_ffa.c b/drivers/char/tpm/tpm_crb_ffa.c
->index fed775cf53ab..0bb8098e93ae 100644
->--- a/drivers/char/tpm/tpm_crb_ffa.c
->+++ b/drivers/char/tpm/tpm_crb_ffa.c
->@@ -303,7 +303,7 @@ static int tpm_crb_ffa_probe(struct ffa_device *ffa_dev)
->
-> 	if (!ffa_partition_supports_direct_recv(ffa_dev) &&
-> 	    !ffa_partition_supports_direct_req2_recv(ffa_dev)) {
->-		pr_err("TPM partition doesn't support direct message receive.\n");
->+		dev_warn(&ffa_dev->dev, "partition doesn't support direct message receive.\n");
+On Fri, Apr 11, 2025 at 09:14:31PM +0800, Henry Martin wrote:
+> Add NULL check for mlx5_get_flow_namespace() returns in
+> mlx5_create_inner_ttc_table() and mlx5_create_ttc_table() to prevent
+> NULL pointer dereference.
+> 
+> Fixes: 137f3d50ad2a ("net/mlx5: Support matching on l4_type for ttc_table")
+> Signed-off-by: Henry Martin <bsdhenrymartin@gmail.com>
+> ---
+> V3 -> V4: Fix potential memory leak.
+> V2 -> V3: No functional changes, just gathering the patches in a series.
+> V1 -> V2: Add a empty line after the return statement.
+> 
+>  drivers/net/ethernet/mellanox/mlx5/core/lib/fs_ttc.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_ttc.c b/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_ttc.c
+> index eb3bd9c7f66e..077fe908bf86 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_ttc.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_ttc.c
+> @@ -651,10 +651,16 @@ struct mlx5_ttc_table *mlx5_create_inner_ttc_table(struct mlx5_core_dev *dev,
+>  			MLX5_CAP_NIC_RX_FT_FIELD_SUPPORT_2(dev, inner_l4_type);
+>  		break;
+>  	default:
+> +		kvfree(ttc);
+>  		return ERR_PTR(-EINVAL);
+>  	}
+>  
+>  	ns = mlx5_get_flow_namespace(dev, params->ns_type);
+> +	if (!ns) {
+> +		kvfree(ttc);
+> +		return ERR_PTR(-EOPNOTSUPP);
+> +	}
+> +
+>  	groups = use_l4_type ? &inner_ttc_groups[TTC_GROUPS_USE_L4_TYPE] :
+>  			       &inner_ttc_groups[TTC_GROUPS_DEFAULT];
+>  
+> @@ -724,10 +730,16 @@ struct mlx5_ttc_table *mlx5_create_ttc_table(struct mlx5_core_dev *dev,
+>  			MLX5_CAP_NIC_RX_FT_FIELD_SUPPORT_2(dev, outer_l4_type);
+>  		break;
+>  	default:
+> +		kvfree(ttc);
+>  		return ERR_PTR(-EINVAL);
+>  	}
+>  
+>  	ns = mlx5_get_flow_namespace(dev, params->ns_type);
+> +	if (!ns){
+> +		kvfree(ttc);
+> +		return ERR_PTR(-EOPNOTSUPP);
+> +	}
+> +
+>  	groups = use_l4_type ? &ttc_groups[TTC_GROUPS_USE_L4_TYPE] :
+>  			       &ttc_groups[TTC_GROUPS_DEFAULT];
 
-It's pre-existent, but since we are here, should we put \n also in the 
-other messages besides this one?
+Thanks for addressing leak
+Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
 
-That said, maybe I'd mention in the commit message that we changed some 
-errors to warnings and why.
-
-Thanks,
-Stefano
-
-> 		return -EINVAL;
-> 	}
->
->@@ -324,17 +324,17 @@ static int tpm_crb_ffa_probe(struct ffa_device *ffa_dev)
-> 	rc = tpm_crb_ffa_get_interface_version(&tpm_crb_ffa->major_version,
-> 					       &tpm_crb_ffa->minor_version);
-> 	if (rc) {
->-		pr_err("failed to get crb interface version. rc:%d", rc);
->+		dev_err(&ffa_dev->dev, "failed to get crb interface version. rc:%d", rc);
-> 		goto out;
-> 	}
->
->-	pr_info("ABI version %u.%u", tpm_crb_ffa->major_version,
->+	dev_info(&ffa_dev->dev, "ABI version %u.%u", tpm_crb_ffa->major_version,
-> 		tpm_crb_ffa->minor_version);
->
-> 	if (tpm_crb_ffa->major_version != CRB_FFA_VERSION_MAJOR ||
-> 	    (tpm_crb_ffa->minor_version > 0 &&
-> 	    tpm_crb_ffa->minor_version < CRB_FFA_VERSION_MINOR)) {
->-		pr_err("Incompatible ABI version");
->+		dev_warn(&ffa_dev->dev, "Incompatible ABI version");
-> 		goto out;
-> 	}
->
->-- 
->LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
->
-
+>  
+> -- 
+> 2.34.1
 
