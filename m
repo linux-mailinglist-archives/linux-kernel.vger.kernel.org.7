@@ -1,204 +1,134 @@
-Return-Path: <linux-kernel+bounces-604691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B3C9A89762
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:03:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A029FA89756
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:02:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 572A0441646
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:03:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46F3A3B9D2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:02:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2629727F726;
-	Tue, 15 Apr 2025 09:03:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE5427A939;
+	Tue, 15 Apr 2025 09:02:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X4YhJ4Nq"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZZgU+Y4A"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE4C027FD68
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 09:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 867171D9A5D;
+	Tue, 15 Apr 2025 09:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744707804; cv=none; b=f2c/ieoTVKjJ3/ARQHr7YcJGjEkoBnLxOHjbycL2Qww2vigrkTnN/BsHmHKnI2DTga5VKyTMJcCQQ5UJAefZE9V18kIJotUqXx7AXeU8STh8x/sIycV9WgsxhJjeNI1BlVorwm9uNfcXhGqtICW+jWEf5SDYRFUu3UoaH48vnpE=
+	t=1744707758; cv=none; b=LG8eCGZga8UXrIQYQs57bTX2zSrunUJvQyKfx3Ipb3I21XtrjkjcHbs3jQ2sMPCCyWUREEVKiwhCSGX4TAOBQ/RRbQl2BvX9UPcC+CIYmOLgVkWf5A3Zc9n7Gu0RO56n3cJgFVcHSnlQwPmavKmX+AR6N4owufDvVi2sk0avgjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744707804; c=relaxed/simple;
-	bh=YIscRPW9sF4loXc/ssspvQlrdEiukJwIUPkxHLE5ZBY=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=MfLMxvXlVBU+r26EwxHQ6AyN0ib5aGngXwMghyjzBn+s9zqS9d+qVIEwcu7pNX2DPNd/aT8SPKcqLamhd4VZho/bmN+ODldRZv+PKw9r1vCRAky057dFhkRk8hkuk2WHlFeT6bKCoqCwGS+fh7I8cp0bSLKX72DbGgW9MHOR99c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X4YhJ4Nq; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744707802; x=1776243802;
-  h=date:from:to:cc:subject:message-id;
-  bh=YIscRPW9sF4loXc/ssspvQlrdEiukJwIUPkxHLE5ZBY=;
-  b=X4YhJ4Nqcdq+g0YmS+sNqForRFKfxHvgz+oU8BtkgrJUBicCPjqomy/E
-   xw0O/9V5clRxGp00jXms1A0y7sanCJULMIAugQpyDfuUi7LKjucEzgkNp
-   4imFrv3EGmH5Mto44mLDTYIkLMlYQurOJBPfgdWZhAI2VvLIegPg5iHIH
-   faScQzkqn5c/jXQ/P/8zonoyTbQoB////ua2JBR+iU3vKg53PgZb0pbvG
-   aqVWDiQpanOLiTz6XLpH3uzVnGsfZM6ozxb6yDTCxHDG/jTcH46NWbvRQ
-   70yoQgGs9QzGzcK/0om3c71Bx0TXkpc8Fm5Wt5vxLZsgcdwuYSqwShfi2
-   w==;
-X-CSE-ConnectionGUID: pTTM/jO+QS23CRUPkrtIXA==
-X-CSE-MsgGUID: cQcOO8XKQueOh7ZeP8YsGg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11403"; a="48904936"
-X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="48904936"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 02:03:21 -0700
-X-CSE-ConnectionGUID: DxBINavYRI2giYwp2XxFGw==
-X-CSE-MsgGUID: jKP/FrPxR/2YUw+j5RH3Dw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="153260389"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 15 Apr 2025 02:03:20 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u4cCM-000FSy-0T;
-	Tue, 15 Apr 2025 09:03:18 +0000
-Date: Tue, 15 Apr 2025 17:02:24 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/merge] BUILD SUCCESS
- e6090e017e4b1e2a1e461750b7281a05f4e07a76
-Message-ID: <202504151718.0ciJ08Gj-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1744707758; c=relaxed/simple;
+	bh=caGUz9Z8pMCIDjkF3v8pjmkkhq4UL43aYLIpbMAOENU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UAa4MYlXRZ13Jk6dg6dLcMxZot03beCVLfNUHUkWL9c/pNSDHzdvB2DaDBC8mcha7ThT3p3mdaXEOf0sgQv5Zwb/juKmwhBoOM9LCYcaN2hcTkBEiTAMtwjXP68YyoKb0CwQ6Mr5NdzixPUWaG8YuZsbRpmK0IWRla5u/eBRooo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZZgU+Y4A; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b074d908e56so1637169a12.2;
+        Tue, 15 Apr 2025 02:02:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744707756; x=1745312556; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dJDZbBMdv2ZAA+6dcm0km5N4IHnAcIL7BZj1NiKeJs8=;
+        b=ZZgU+Y4A9vhtEpgp1A6YxvRSCR6A8UeVQFtJbOpq+Gbz3zR0wI3zoq118/8gbL/+hX
+         AAroQb5uxKwswIh6aZU0fqLAGw+Rhi6zWF0d6vo4wHoif3Z95DnSRrt0ZbxpD9WvQimf
+         PHPlG2FyX/of35y/JXBIUi422DYYFSrqR+y9WEmEc7RrLCCw/PBQn+1vWRUpXGAD1NIY
+         FbhQclHUJjs1zy0PnTTdzaL61q96De7RJfgP29wPEyvdCB0r8Ls3Fw21yZyS1Ujl8jUj
+         0tSlUXNWe+dMkgOqG7zkBR6V7YxghUceFE/d7zbU9shz3lwY9BDo3GAa7UihEIyjd4ZR
+         DU+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744707756; x=1745312556;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dJDZbBMdv2ZAA+6dcm0km5N4IHnAcIL7BZj1NiKeJs8=;
+        b=hHwe6LMordJZHTyO+t7NiRagqwHdnFqNhGlx5lTsiEZ274IyWVwhNHUCV39YLJWL9J
+         aImAOMbsT7q1xBsSgJM6EhEvI8SDjWpzw2B7dOMwu0j0qefXTru6D9ECa/SzfNJyxxay
+         cPCJNcZ4mwoaFntEuoMxrFu2Ne/lpZDtZo0poXnUUDQHHsbFisQTIocsYPZGaIGOE0AH
+         ORS4v4oD76sslT7+kGasNzo0KQJf3cx3VCxrVVAriYq+oq8jPE3DoNJUR5vs0ABvs7SY
+         1g6JI54hE+7XBI3djM+gdRBP4b6wOAwZzJ42xL7Y65OlZJQj7fIMYHdxEsGC2rGEhpit
+         lZlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWJAZ1w0CggwGMZyC+eFsn1we5O7Fie7ipukddwC17JL5+kI7Lmfd4eg1fpZABBEGy9Ptl1DL5D@vger.kernel.org, AJvYcCX18F/zSpR1MwzMGzooZ3/okU/y6PfkxWySRFaEC0qoi1S/2wiTYy7RzowQg0uxK0QOs+VAIa0ryWN3YGY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsPCVF+HxmP1FtKFa/66nY+cD+6COeN/1SXLiZ2gSbosc2VZ9H
+	16an6ZU8eWy2BbUID3462YE5AUHIb4FZr5ONPzaRYE1Pi8lth+Vc
+X-Gm-Gg: ASbGnct9dspIeTcBPkbrJE5gu1TTa189swwHqbTFQe4fpyXz1eMTtgRok9vU9eOrKrR
+	XqfmRvv6F4CydpWEer765qBliLrmsaA0yWDXqxlsprJ8Mkl6Y/urGrldkiATsUeih6o2USZOmJ+
+	AeO1SQH+pdvPDrEYokG0va2eJQSVYxJaa75kHeV/dNhu2I+yrRcyPknXyiAvqQ4QRIGZfYDpk56
+	kfAd9gFsxd8Tqd/YoWDdoGtyXz4KXh/jnImzoMKRvjbEhbmpM5cd58L8GEL6eYLumvk0VvR1QAp
+	cH8oCpu/BMbQsQd79/JBlIcwrnq3Ud/ONeIA/6UjYV39Fa8W3e4=
+X-Google-Smtp-Source: AGHT+IEYjhNLxP37l8aYl1C4a7w6JsueacI5kZw35bhUqMjZzpBVZqyJDMJHUDXI3VVXAEqDHa7Rmg==
+X-Received: by 2002:a17:90b:5190:b0:2ee:f22a:61dd with SMTP id 98e67ed59e1d1-30823680c10mr18676118a91.32.1744707755652;
+        Tue, 15 Apr 2025 02:02:35 -0700 (PDT)
+Received: from VM-16-38-fedora.. ([43.135.149.86])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7ccc98csm112424215ad.253.2025.04.15.02.02.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Apr 2025 02:02:35 -0700 (PDT)
+From: alexjlzheng@gmail.com
+X-Google-Original-From: alexjlzheng@tencent.com
+To: willy@infradead.org,
+	akpm@linux-foundation.org,
+	andrea@betterlinux.com,
+	fengguang.wu@intel.com
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	mengensun@tencent.com,
+	Jinliang Zheng <alexjlzheng@tencent.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] mm: fix ratelimit_pages update error in dirty_ratio_handler()
+Date: Tue, 15 Apr 2025 17:02:32 +0800
+Message-ID: <20250415090232.7544-1-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/merge
-branch HEAD: e6090e017e4b1e2a1e461750b7281a05f4e07a76  Merge branch 'x86/cpu' into x86/merge, to resolve conflict
+From: Jinliang Zheng <alexjlzheng@tencent.com>
 
-elapsed time: 1452m
+In the dirty_ratio_handler() function, vm_dirty_bytes must be set to
+zero before calling writeback_set_ratelimit(), as global_dirty_limits()
+always prioritizes the value of vm_dirty_bytes.
 
-configs tested: 112
-configs skipped: 3
+That causes ratelimit_pages to still use the value calculated based on
+vm_dirty_bytes, which is wrong now.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Fixes: 9d823e8f6b1b ("writeback: per task dirty rate limit")
+Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
+Reviewed-by: MengEn Sun <mengensun@tencent.com>
+Cc: stable@vger.kernel.org
+---
+Changelog:
+v2: A more detailed description
+v1: https://lore.kernel.org/linux-fsdevel/20250415083542.6946-1-alexjlzheng@tencent.com/T/#u
+---
+ mm/page-writeback.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-tested configs:
-alpha                             allnoconfig    gcc-14.2.0
-alpha                            allyesconfig    gcc-14.2.0
-arc                              allmodconfig    gcc-14.2.0
-arc                               allnoconfig    gcc-14.2.0
-arc                              allyesconfig    gcc-14.2.0
-arc                         haps_hs_defconfig    gcc-14.2.0
-arc                   randconfig-001-20250414    gcc-14.2.0
-arc                   randconfig-002-20250414    gcc-14.2.0
-arm                              allmodconfig    gcc-14.2.0
-arm                               allnoconfig    clang-21
-arm                              allyesconfig    gcc-14.2.0
-arm                     am200epdkit_defconfig    gcc-14.2.0
-arm                        neponset_defconfig    gcc-14.2.0
-arm                   randconfig-001-20250414    clang-18
-arm                   randconfig-002-20250414    gcc-7.5.0
-arm                   randconfig-003-20250414    gcc-7.5.0
-arm                   randconfig-004-20250414    gcc-8.5.0
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-14.2.0
-arm64                 randconfig-002-20250414    clang-19
-arm64                 randconfig-003-20250414    gcc-8.5.0
-arm64                 randconfig-004-20250414    gcc-6.5.0
-csky                             alldefconfig    gcc-14.2.0
-csky                              allnoconfig    gcc-14.2.0
-csky                  randconfig-001-20250414    gcc-14.2.0
-csky                  randconfig-002-20250414    gcc-10.5.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-21
-hexagon                          allyesconfig    clang-21
-hexagon               randconfig-001-20250414    clang-18
-hexagon               randconfig-002-20250414    clang-21
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250414    gcc-12
-i386        buildonly-randconfig-002-20250414    clang-20
-i386        buildonly-randconfig-003-20250414    clang-20
-i386        buildonly-randconfig-004-20250414    gcc-12
-i386        buildonly-randconfig-005-20250414    gcc-12
-i386        buildonly-randconfig-006-20250414    gcc-12
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    gcc-14.2.0
-loongarch                         allnoconfig    gcc-14.2.0
-loongarch             randconfig-001-20250414    gcc-12.4.0
-loongarch             randconfig-002-20250414    gcc-14.2.0
-m68k                             allmodconfig    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-m68k                             allyesconfig    gcc-14.2.0
-microblaze                       allmodconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-microblaze                       allyesconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-nios2                             allnoconfig    gcc-14.2.0
-nios2                 randconfig-001-20250414    gcc-12.4.0
-nios2                 randconfig-002-20250414    gcc-12.4.0
-openrisc                          allnoconfig    gcc-14.2.0
-openrisc                         allyesconfig    gcc-14.2.0
-parisc                           allmodconfig    gcc-14.2.0
-parisc                            allnoconfig    gcc-14.2.0
-parisc                           allyesconfig    gcc-14.2.0
-parisc                randconfig-001-20250414    gcc-5.5.0
-parisc                randconfig-002-20250414    gcc-7.5.0
-powerpc                          allmodconfig    gcc-14.2.0
-powerpc                           allnoconfig    gcc-14.2.0
-powerpc                          allyesconfig    clang-21
-powerpc                        icon_defconfig    gcc-14.2.0
-powerpc                 mpc834x_itx_defconfig    clang-16
-powerpc               randconfig-001-20250414    gcc-8.5.0
-powerpc               randconfig-002-20250414    clang-21
-powerpc               randconfig-003-20250414    gcc-6.5.0
-powerpc64             randconfig-001-20250414    clang-17
-powerpc64             randconfig-002-20250414    clang-21
-powerpc64             randconfig-003-20250414    gcc-6.5.0
-riscv                            allmodconfig    clang-21
-riscv                             allnoconfig    gcc-14.2.0
-riscv                            allyesconfig    clang-16
-riscv                 randconfig-001-20250414    gcc-8.5.0
-riscv                 randconfig-002-20250414    clang-21
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-21
-s390                             allyesconfig    gcc-14.2.0
-s390                  randconfig-001-20250414    clang-20
-s390                  randconfig-002-20250414    gcc-9.3.0
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                    randconfig-001-20250414    gcc-6.5.0
-sh                    randconfig-002-20250414    gcc-10.5.0
-sh                             sh03_defconfig    gcc-14.2.0
-sparc                            allmodconfig    gcc-14.2.0
-sparc                             allnoconfig    gcc-14.2.0
-sparc                 randconfig-001-20250414    gcc-11.5.0
-sparc                 randconfig-002-20250414    gcc-13.3.0
-sparc64               randconfig-001-20250414    gcc-5.5.0
-sparc64               randconfig-002-20250414    gcc-9.3.0
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-21
-um                               allyesconfig    gcc-12
-um                    randconfig-001-20250414    clang-21
-um                    randconfig-002-20250414    clang-21
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250414    clang-20
-x86_64      buildonly-randconfig-002-20250414    clang-20
-x86_64      buildonly-randconfig-003-20250414    clang-20
-x86_64      buildonly-randconfig-004-20250414    clang-20
-x86_64      buildonly-randconfig-005-20250414    clang-20
-x86_64      buildonly-randconfig-006-20250414    gcc-12
-x86_64                              defconfig    gcc-11
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                randconfig-001-20250414    gcc-7.5.0
-xtensa                randconfig-002-20250414    gcc-14.2.0
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index c81624bc3969..20e1d76f1eba 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -520,8 +520,8 @@ static int dirty_ratio_handler(const struct ctl_table *table, int write, void *b
+ 
+ 	ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
+ 	if (ret == 0 && write && vm_dirty_ratio != old_ratio) {
+-		writeback_set_ratelimit();
+ 		vm_dirty_bytes = 0;
++		writeback_set_ratelimit();
+ 	}
+ 	return ret;
+ }
+-- 
+2.49.0
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
