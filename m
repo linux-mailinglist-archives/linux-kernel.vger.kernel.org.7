@@ -1,183 +1,158 @@
-Return-Path: <linux-kernel+bounces-604515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9E04A89568
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:43:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01916A89577
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:45:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02E8C3AF333
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:42:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17CAA3AEE7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:45:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3307427A936;
-	Tue, 15 Apr 2025 07:42:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ABC227B4FC;
+	Tue, 15 Apr 2025 07:44:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mandelbit.com header.i=@mandelbit.com header.b="RoQKc07K"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vswq4AgA"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A223127F74B
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 07:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C9C327A90E;
+	Tue, 15 Apr 2025 07:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744702944; cv=none; b=f/1yfpuI0M7B0ehcgTilbdfqPg1uvHgtPavivfNLlUMYJ76SXeWgRAdGNrVywaQ/SC8FdnkRDM6z7UQIgTs9PP/JeNTeD3/lZgRdw5q5vt7Vq1ARjLVJUDgkrx6kENg5I0IkKHTLNFgE1I1LQrfH1KUR9pMyyiemhfxUT5b+9Bg=
+	t=1744703090; cv=none; b=q/xDHW+DmkZsYhaFfqhdPSHlnnUowHTatTUeQ8APVOh6JElflgfLBA7w451pBMogmww8uIdYnz3AFkGvmirBsj4p8XRPOeMtfAJffuGtk+pcgvXevM/pHUd2sbiyE3gwlsjdWhqAJQEu+SOLe3S1W5coy8cV2s5Kl42V9Mw91rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744702944; c=relaxed/simple;
-	bh=uK2/Dxz411mr86DPhoimn0/NYOMMuBpqlFIDU660bk8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pgLZPQkB1FbR0yRSSO6hP3gvgCLvM40m9alsja0stdWlxFKjGQhvqZWfMKQgRc9ywfgEwvBv7zuFg4xyaogMZ2zRLuCk6omi/qSadmNLMAPwg4bSyhBE0ZVZDXZahNacDaykzfkkPI5FnatdIi8D7W/JWm3e47Am0TQBd02jsIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mandelbit.com; spf=pass smtp.mailfrom=mandelbit.com; dkim=pass (2048-bit key) header.d=mandelbit.com header.i=@mandelbit.com header.b=RoQKc07K; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mandelbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mandelbit.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ac2dfdf3c38so1008394566b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 00:42:22 -0700 (PDT)
+	s=arc-20240116; t=1744703090; c=relaxed/simple;
+	bh=/FMiH6f5AUMprgPLBbbPPAw7emqARXWFCdmaOPkb+7g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uNQz2lEUFX/fmDwMHVehbUoeR/VmGTS6tnjf7dmMDk2XfVGLGLpt9b8E8US8POcpv5Pthk6WEKCTbtRxMTMiok403cBBKD7l4x1h1cYRwp0o5YvbpcFcVHuSLg+b2WGmgmWuOzeGB02nzvCRmDPOGTB3slRMV2M0ce+idF5EreI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vswq4AgA; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-af59c920d32so3828490a12.0;
+        Tue, 15 Apr 2025 00:44:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mandelbit.com; s=google; t=1744702941; x=1745307741; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=z6aIxFI0Ol1WOfMYVyYLmlgjphiUFu7Rh53Xz6QKHBQ=;
-        b=RoQKc07K+3U6TXhYAVa7M4aG0SXwVgGV467pslv//wggfo5Vnhhjnw+5lhaicpdmWh
-         sJ6w7WgDXXhkntC1nIikdYiI1jYx+DwUkbKSmG/GI/wPG1dF8bMVabi/8L/ohsURcv7H
-         wDNyrRVD5CSeddIAhZz6Ay0SnwzXKD6Z/rYx8Qo9z9EQ9e9Z1fD29R0lkJWPCfuegwmd
-         NDQEUx+++vyXR+GOfJ5nqrLPuhxh3FtGH4eIIb+J56g7tsDywaf4qvDzpKzdm7jUtCKU
-         eFIPRtdHyg4ZsI8RPlFL4Ic5mXeHeJuNSKzc/jFg8iwpoKTQHPkUi7v8VryS9RaCz5o/
-         1x+w==
+        d=gmail.com; s=20230601; t=1744703088; x=1745307888; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=INveNnza9CWIqZPyYaWqCh5Ba9wSoB725eCjLaHauL4=;
+        b=Vswq4AgASRbtXJtavdVePOF8b4KDoxaUTsix7WlNBmLIFCV5wQ30ZKwABG2o6nqBc4
+         i/Fo8zhMllX1T/8Hd/HPpSY5TQszFkMvnBBTrLsuVurSTyDyakWom3gc89eKAe2M09kh
+         hC5Q6QhnR94NYTBBJjlik61axqsTbkBfglPqS3/B2NAl/JEsbkXu11HbV+aftnPkXvRl
+         CKBL5yCsxjHtORj7EiNfUds2izPrgmrComjuzHj9dEpve+SKoMSlf+ATyZGyymuorYht
+         oUKL3qYWoCWvxRTn3OFLC1F3xOT2LRbUPgNydACMRsmCnFExmLcIjl68TUHsUmcRAuHi
+         HcCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744702941; x=1745307741;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z6aIxFI0Ol1WOfMYVyYLmlgjphiUFu7Rh53Xz6QKHBQ=;
-        b=hYCI3lULaXxJkXZNfROe3xnaFrJpXZupl1oUvA0QsC67m9wjXl+mF3aaH4RS9dLMXu
-         BBjLDdDcfZLEdelvvcvxDvVuoRwiYM7jxOBya6il/D3df4FW3tUXDz/BV6P7jeWRE2mx
-         +jrHYamFHRF4RlALH/sdLJchd4AUthKguIlFXDkVLJFBBPqrHC4/HrfPm+CO52RmUjYE
-         TkaCAxoY6qPYZkmsu7DvdtX8WQgei2XBEnvtG/SaHRRHYZgqSQ+ggeKQ6gUjxCcuPc02
-         cbb4f/dTz1eaJxbJyN5dhsx+LOqbybnluCiV5+u40UEhYFOBcPsAyuj21v9T3XdPKBZs
-         t0uw==
-X-Gm-Message-State: AOJu0YwvMycmGpzq0xB8dUYEK55gD/HZ6Aljy5V/4qPi8HHj5k8R0L4Y
-	gbwkN6D1JZ/RP34SQGVByZb2CXfKkEwW6vMnjEPj2rzHpnVm7VEO3R4RiTOaW88=
-X-Gm-Gg: ASbGnctOCmetvgFH8XGd2cvPNsledad8x4Gf/VtAKpfb4MIOIl5JRKtF4Rdi479s0yR
-	z0Ocgtha4b1955Kxs0pDyF/pA+JM1hB4eGI2slycpG+2Czhl6n7dt3J6EaA8NnW24VsGPKhQyyG
-	+JpamOdNCXuzIMisM6b2AnnpWCxWw76nyM/w86/g3DtE4/wWJXHRc4Lryj8j+DSvwLK9h7Vid/+
-	JsEUjd+8RsqcahAkBzqcd2ty9QhEOI49f/12ZwKxs8vOTBZT04ghoittGrF2EA9rcsV5qF4bC2M
-	JqzJr/trlqaFIaFB/JfV0or9Tg86+wh+fAAL8D+9fTe7ooxjj0SyWs/cQ5DloNvF2hooZFreCAU
-	JNQ6lRQ==
-X-Google-Smtp-Source: AGHT+IHWuUmjwnhSNam4loWc9ZSrLB56k66TTcvhhaYiN2BAECONe1UrVOovbVL6pOGwZ0wV2SidVg==
-X-Received: by 2002:a17:906:4fcd:b0:abf:641a:5727 with SMTP id a640c23a62f3a-acad3456dbemr1531749366b.7.1744702940732;
-        Tue, 15 Apr 2025 00:42:20 -0700 (PDT)
-Received: from ?IPV6:2001:67c:2fbc:1:83ac:73b4:720f:dc99? ([2001:67c:2fbc:1:83ac:73b4:720f:dc99])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1bb312bsm1056251366b.15.2025.04.15.00.42.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Apr 2025 00:42:20 -0700 (PDT)
-Message-ID: <6ec928b7-6980-4e9a-bab5-654c91db4a95@mandelbit.com>
-Date: Tue, 15 Apr 2025 09:42:18 +0200
+        d=1e100.net; s=20230601; t=1744703088; x=1745307888;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=INveNnza9CWIqZPyYaWqCh5Ba9wSoB725eCjLaHauL4=;
+        b=jsvYIA8Z0/+Vbf1a0wc0bPCz4tH+7O1JssZMmAmxOqZ4azo4S9SUwB9yiZExp9f41d
+         n1tLAmBkd4wltCfHnrzCieeaiTpR7E0DhGuIjabeBupy0w3AfZr2YE6LFVzKHHLIdQwt
+         4t82D+KryrwasLHC7Mmd1LqsAKxr3uYDoLWaVkdKreaWAOmS1OJL57pX7ZhZqmTGH5Q/
+         5G//vdRXXn9cLpD0FRHjcDWa6zHThSLzuZ5pC6ZazcnAn26nqsbUuEXpJkaMPDgj1PVO
+         5Fjj8V2hDBKOKocK/Zm/vAXB/YR7NIILVh3E9P1lacjhdy+mo7IBeIOBdt+w3vSa3mgY
+         +3GQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUaWKP/JUVWu/TA4yM5+ET9aGXfk54tKc6v+DK/wWiCy2BInm6l9kjK/78uEGRRrKWOSAQ=@vger.kernel.org, AJvYcCVx+m11jtilEFDiGNuFyYrq50ZkziSp+ik7YjAsqtxbJF0CLPe4aWkBk6UC+F6TKIL4gKDmCX66@vger.kernel.org, AJvYcCXk2NUNnyHee2ApsCXWFLdYbAuGHIE3MBVIqlRdrDSQfGiZp6VvSZnHStDfu2XhzwGJEEj/ykyly3aK3uLq@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyaz6d2nsaAkohP5BD+ti8zZ62fAsjMFLfUyW/h5pRKv5bXfnGV
+	RLBckLgxPJt36G5i1zDebr73VVvbnnLhGrdbVolfsExWiGk1yO3b
+X-Gm-Gg: ASbGncsK+AO9Xp2bVxf05ztj089MRITCPZNpZ5IgLirDJc9pb/yL1T1PetzKYdJV12l
+	FA4sHFqQfhwNmlB61ZYItpTDdIUYiErui3TKZZ8tZ39e3vl8OTQ4qc3F8vgbahSq1yCp8r+P34Z
+	U/GHG4nIIorNgVcKFclqzNr3W3sSIc9qsw9mKklZlvyI0xPCGE3D6Uf7xgTWm9lkbhGXzeFdoXP
+	ltqeaiEdP4XpSxUtHDNC8vZzJG3PIlANNfK0lJXfcE+AgWy9aILVxWoufis9sOqfY2fjZNsgsis
+	f7vZTPrDaFPXjRGrdLMYabLovNohoo2cl3mLNTKwaqp12cVAhIzkzEcM
+X-Google-Smtp-Source: AGHT+IFe3WANt4aQPrZWoKBiNglIghBIABqDLjBb7Rl9R3Vj+PTaviPvNoVUhpOXPz+mqNiZrIE0qw==
+X-Received: by 2002:a17:90b:51c3:b0:2ee:f076:20f1 with SMTP id 98e67ed59e1d1-308235db6f0mr26769695a91.0.1744703088365;
+        Tue, 15 Apr 2025 00:44:48 -0700 (PDT)
+Received: from minh.192.168.1.1 ([2001:ee0:4f0e:fb30:2e0b:88f9:a491:c18a])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-306df401ac8sm12299767a91.45.2025.04.15.00.44.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Apr 2025 00:44:47 -0700 (PDT)
+From: Bui Quang Minh <minhquangbui99@gmail.com>
+To: virtualization@lists.linux.dev
+Cc: "Michael S . Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	Bui Quang Minh <minhquangbui99@gmail.com>
+Subject: [PATCH v3 0/3] virtio-net: disable delayed refill when pausing rx
+Date: Tue, 15 Apr 2025 14:43:38 +0700
+Message-ID: <20250415074341.12461-1-minhquangbui99@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tracing: fprobe: Fix RCU warning message in list
- traversal
-To: Breno Leitao <leitao@debian.org>, Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- kernel-team@meta.com
-References: <20250410-fprobe-v1-1-068ef5f41436@debian.org>
-Content-Language: en-US
-From: Antonio Quartulli <antonio@mandelbit.com>
-Autocrypt: addr=antonio@mandelbit.com; keydata=
- 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
-Organization: Mandelbit SRL
-In-Reply-To: <20250410-fprobe-v1-1-068ef5f41436@debian.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Hi everyone,
 
+This series tries to fix a deadlock in virtio-net when binding/unbinding
+XDP program, XDP socket or resizing the rx queue.
 
-On 10/04/2025 14:22, Breno Leitao wrote:
-> When CONFIG_PROVE_RCU_LIST is enabled, fprobe triggers the following
-> warning:
-> 
->      WARNING: suspicious RCU usage
->      kernel/trace/fprobe.c:457 RCU-list traversed in non-reader section!!
-> 
->      other info that might help us debug this:
-> 	#1: ffffffff863c4e08 (fprobe_mutex){+.+.}-{4:4}, at: fprobe_module_callback+0x7b/0x8c0
-> 
->      Call Trace:
-> 	fprobe_module_callback
-> 	notifier_call_chain
-> 	blocking_notifier_call_chain
-> 
-> This warning occurs because fprobe_remove_node_in_module() traverses an
-> RCU list using RCU primitives without holding an RCU read lock. However,
-> the function is only called from fprobe_module_callback(), which holds
-> the fprobe_mutex lock that provides sufficient protection for safely
-> traversing the list.
-> 
-> Fix the warning by specifying the locking design to the
-> CONFIG_PROVE_RCU_LIST mechanism. Add the lockdep_is_held() argument to
-> hlist_for_each_entry_rcu() to inform the RCU checker that fprobe_mutex
-> provides the required protection.
-> 
-> Fixes: a3dc2983ca7b90 ("tracing: fprobe: Cleanup fprobe hash when module unloading")
-> Signed-off-by: Breno Leitao <leitao@debian.org>
+When pausing rx (e.g. set up xdp, xsk pool, rx resize), we call
+napi_disable() on the receive queue's napi. In delayed refill_work, it
+also calls napi_disable() on the receive queue's napi. When
+napi_disable() is called on an already disabled napi, it will sleep in
+napi_disable_locked while still holding the netdev_lock. As a result,
+later napi_enable gets stuck too as it cannot acquire the netdev_lock.
+This leads to refill_work and the pause-then-resume tx are stuck
+altogether.
 
-I just hit this issue and I verified that the patch actually solves it 
-without causing side effects.
+This scenario can be reproducible by binding a XDP socket to virtio-net
+interface without setting up the fill ring. As a result, try_fill_recv
+will fail until the fill ring is set up and refill_work is scheduled.
 
-FWIW
+This fix adds virtnet_rx_(pause/resume)_all helpers and fixes up the
+virtnet_rx_resume to disable future and cancel all inflights delayed
+refill_work before calling napi_disable() to pause the rx.
 
-Tested-by: Antonio Quartulli <antonio@mandelbit.com>
+Version 3 changes:
+- Patch 1: refactor to avoid code duplication
+
+Version 2 changes:
+- Add selftest for deadlock scenario
+
+Thanks,
+Quang Minh.
+
+Bui Quang Minh (3):
+  virtio-net: disable delayed refill when pausing rx
+  selftests: net: move xdp_helper to net/lib
+  selftests: net: add a virtio_net deadlock selftest
+
+ drivers/net/virtio_net.c                      | 69 +++++++++++++++----
+ tools/testing/selftests/Makefile              |  2 +-
+ tools/testing/selftests/drivers/net/Makefile  |  2 -
+ tools/testing/selftests/drivers/net/queues.py |  4 +-
+ .../selftests/drivers/net/virtio_net/Makefile |  2 +
+ .../selftests/drivers/net/virtio_net/config   |  1 +
+ .../drivers/net/virtio_net/lib/py/__init__.py | 16 +++++
+ .../drivers/net/virtio_net/xsk_pool.py        | 52 ++++++++++++++
+ tools/testing/selftests/net/lib/.gitignore    |  1 +
+ tools/testing/selftests/net/lib/Makefile      |  1 +
+ .../{drivers/net => net/lib}/xdp_helper.c     |  0
+ 11 files changed, 133 insertions(+), 17 deletions(-)
+ create mode 100644 tools/testing/selftests/drivers/net/virtio_net/lib/py/__init__.py
+ create mode 100755 tools/testing/selftests/drivers/net/virtio_net/xsk_pool.py
+ rename tools/testing/selftests/{drivers/net => net/lib}/xdp_helper.c (100%)
 
 -- 
-Antonio Quartulli
-
-CEO and Co-Founder
-Mandelbit Srl
-https://www.mandelbit.com
+2.43.0
 
 
