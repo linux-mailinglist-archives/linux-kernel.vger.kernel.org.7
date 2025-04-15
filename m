@@ -1,96 +1,122 @@
-Return-Path: <linux-kernel+bounces-604962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1278A89B28
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:53:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 435B1A89B31
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:55:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5468C1891F1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:54:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E0F3174F29
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:54:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33406291160;
-	Tue, 15 Apr 2025 10:48:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2BF28DF0F;
+	Tue, 15 Apr 2025 10:50:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g95mg/3g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="NLrVg/EP"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E49F2749D5;
-	Tue, 15 Apr 2025 10:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECCA142E86;
+	Tue, 15 Apr 2025 10:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744714134; cv=none; b=X5kMm/LudIvb42XCnGAjzyzQ3o4OcAy1zmFk/sz5kGygef3Cjqf5rENxAtID+CvA4IC9edZ3c+7GF50ycxfsx3ctnZFW3qV9BShUWMvKXPW4IahzoYhtJIen2S+ZgQBSNx+C5YPSebS+vZJxV1G9b83GeywDdP7ivQEFRXSVn9A=
+	t=1744714213; cv=none; b=iCh3LzzVQu/suMMpevvdwpbXrq+gf48LQqCs0DgBnq2G1XVCnvVf1IvA3bAkXB/AKvGN6segjI00L7UJ+9mlxIgRY+R2taOP1LTl1zfnC76YTkam0sfivI3BPrsWZu1OW3I/R98K8o9+wR3WxRwa6GIv8FLKY5UUnLZmcI8uKdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744714134; c=relaxed/simple;
-	bh=N8sByQ+5iyPna0XPswyBM24sOwsZtpVZsMOmx4nx2Tk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QeG/0an2ViUqjfURdRpJzRKPqLuSRfebyNzA2ihsfLpWRl1W19u1nx8pDzEcRJB/VtMg6jL6376apcu6lkZR+GBK70HiLdjYR860LK3Nr8p2Yor1dlfJVnaIJh6edLYg2DckA5o5LrKVR9IabRjVhYFaDGtujyckMihsb5ulAeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g95mg/3g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C912C4CEDD;
-	Tue, 15 Apr 2025 10:48:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744714134;
-	bh=N8sByQ+5iyPna0XPswyBM24sOwsZtpVZsMOmx4nx2Tk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g95mg/3gAHnytZDuToatmQzwuRXNCxFSHQMCJvrVGpIj0sXkGOnzAgbsf/HFP13Pd
-	 t9CFxsOUmSt5E0kEPr9SIl0UVxFXE1469SDg+/qbtASlXhN6w8AhoBelfOV92EOk0Y
-	 sRTTQM4AEVzMAy+3egUWtcIXJYLZ7RMXwGD606v0HvhJ05t5d0MlUd8LMVyvTucbKu
-	 jHDItGSku44xAIyysRwmy7NKCHC3G4f3OVZ0P9G6Gurrpsr1PaI4G7Tv5+eYBP+5j5
-	 7XquHtwaj4LJQ430JH8NYh1Z2G3epO97t1H777w9cVNFnCujbH0EtZxW/+Oy4nIJGD
-	 QMvp9KWPsyZCg==
-Date: Tue, 15 Apr 2025 12:48:48 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Tejun Heo <tj@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Tamir Duberstein <tamird@gmail.com>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] workqueue: rust: add creation of workqueues
-Message-ID: <Z_45kDv_wAHIBNpI@cassiopeiae>
-References: <20250411-create-workqueue-v1-1-f7dbe7f1e05f@google.com>
- <Z_1QzTdV8mHJYdQ6@cassiopeiae>
- <Z_4gb8ZAlbfhobgW@google.com>
+	s=arc-20240116; t=1744714213; c=relaxed/simple;
+	bh=p+ghg0mGnX6/WXjLsCM9dHbnAKJOL5jmZb5HqDoFwDc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=kFd/shjJhI4F+8bHxmR8k6VC97XkVgrLZgpB0ovhH8LEJymFq7bClA2bHb1dK7k2f+QpickohxVImAfmkABf1at5kA3xKJUEeO+9wsM2cQf/xIKaYOPoUbcR59lClvs0dhudr3Mpyrdk+51JIOn5A0gniIxBBhhHhC2wtyztzZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=NLrVg/EP; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=tLiyVJjlMxJiVbJ5LPtuPyytkXo0xWM6xLD7i8YBp/g=; b=NLrVg/EPAd0QGZ00vPjIQaIfr1
+	1ZgJ31J7V5kZvhL/X9A0LoIxP8bvZyEgFh7IQtnn7kaRMBVYab4GD+JmbW39pNAvxRGonlrFZMTr0
+	mhSNSsB0JQNmE0tCsj4Hvbk8dWIUUvdR2OxOyfsw93fiSjpB/7QJAXmdGRZEGLWqKbCIsyKYbQ/0j
+	AcLIeuo2XHxHfONOAnXocGzPu1stkW/7040/Dmu7tgpKz8WWPXJ7WJogZjkZh66wO+zJwfXOutcMi
+	ClprXfu6uplRDAHSFN1kVC0F8JxPv/ntWRuRTbBGr/r+7TvhJ5ByuMp3mC0oQQ+J1vfgOF/URJkW6
+	hOoZHMJQ==;
+Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1u4drb-00Gu6S-Le; Tue, 15 Apr 2025 12:49:59 +0200
+From: Luis Henriques <luis@igalia.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Laura Promberger <laura.promberger@cern.ch>,  Bernd Schubert
+ <bschubert@ddn.com>,  Dave Chinner <david@fromorbit.com>,  Matt Harvey
+ <mharvey@jumptrading.com>,  "linux-fsdevel@vger.kernel.org"
+ <linux-fsdevel@vger.kernel.org>,  "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v8] fuse: add more control over cache invalidation
+ behaviour
+In-Reply-To: <CAJfpegu-x88d+DGa=x_EfvWWCjnkZYjO8MwjAc4bGQky8kBi3g@mail.gmail.com>
+	(Miklos Szeredi's message of "Tue, 15 Apr 2025 12:41:40 +0200")
+References: <20250226091451.11899-1-luis@igalia.com>
+	<87msdwrh72.fsf@igalia.com>
+	<CAJfpegvcEgJtmRkvHm+WuPQgdyeCQZggyExayc5J9bdxWwOm4w@mail.gmail.com>
+	<875xk7zyjm.fsf@igalia.com>
+	<GV0P278MB07182F4A1BDFD2506E2F58AC85B62@GV0P278MB0718.CHEP278.PROD.OUTLOOK.COM>
+	<87r01tn269.fsf@igalia.com>
+	<CAJfpegu-x88d+DGa=x_EfvWWCjnkZYjO8MwjAc4bGQky8kBi3g@mail.gmail.com>
+Date: Tue, 15 Apr 2025 11:49:54 +0100
+Message-ID: <87mschn1gt.fsf@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z_4gb8ZAlbfhobgW@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 15, 2025 at 09:01:35AM +0000, Alice Ryhl wrote:
-> On Mon, Apr 14, 2025 at 08:15:41PM +0200, Danilo Krummrich wrote:
-> > On Fri, Apr 11, 2025 at 03:34:24PM +0000, Alice Ryhl wrote:
-> > > 
-> > > +/// An owned kernel work queue.
-> > 
-> > I'd suggest to document that dropping an OwnedQueue will wait for pending work.
-> > 
-> > Additionally, given that you're about to implement delayed work as well, we
-> > should also mention that destroy_workqueue() currently does not cover waiting
-> > for delayed work *before* it is scheduled and hence may cause WARN() splats or
-> > even UAF bugs.
-> 
-> Ah, that's a problem :(
-> 
-> Can we make destroy_workqueue() wait for delayed items too? And/or have
-> a variant of it that does so? I'm not sure what is best to do here...
+On Tue, Apr 15 2025, Miklos Szeredi wrote:
 
-I think the problem is that the workq is not aware of all the timers in flight
-and simply queues the work in the timer callback. See also [1].
+> On Tue, 15 Apr 2025 at 12:34, Luis Henriques <luis@igalia.com> wrote:
+>>
+>> Hi Laura,
+>>
+>> On Fri, Apr 11 2025, Laura Promberger wrote:
+>>
+>> > Hello Miklos, Luis,
+>> >
+>> > I tested Luis NOTIFY_INC_EPOCH patch (kernel, libfuse, cvmfs) on RHEL9=
+ and can
+>> > confirm that in combination with your fix to the symlink truncate it s=
+olves all
+>> > the problem we had with cvmfs when applying a new revision and at the =
+same time
+>> > hammering a symlink with readlink() that would change its target. (
+>> > https://github.com/cvmfs/cvmfs/issues/3626 )
+>> >
+>> > With those two patches we no longer end up with corrupted symlinks or =
+get stuck on an old revision.
+>> > (old revision was possible because the kernel started caching the old =
+one again during the update due to the high access rate and the asynchronou=
+s evict of inodes)
+>> >
+>> > As such we would be very happy if this patch could be accepted.
+>>
+>> Even though this patch and the one that fixed the symlinks corruption [1]
+>> aren't really related, it's always good to have extra testing.  Thanks a
+>> lot for your help, Laura.
+>>
+>> In the meantime, I hope to send a refreshed v9 of this patch soon (maybe
+>> today) as it doesn't apply cleanly to current master anymore.  And I also
+>> plan to send v2 of the (RFC) patch that adds the workqueue to clean-up
+>> expired cache entries.
+>
+> Don't bother, I just applied the patch with the conflicts fixed up.
 
-I'm not sure there's an easy solution to that, without adding extra overhead,
-such as keeping a list of timers in flight in the workqueue end. :(
+Oh, awesome!  Thanks a lot, Miklos.  I'll focus on the other patch and try
+to send v2 later today.
 
-[1] https://elixir.bootlin.com/linux/v6.13.7/source/kernel/workqueue.c#L2489
+Cheers,
+--=20
+Lu=C3=ADs
 
