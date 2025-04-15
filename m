@@ -1,54 +1,57 @@
-Return-Path: <linux-kernel+bounces-605098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C25C7A89CC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:47:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF8B7A89CFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:57:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D39371654AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:47:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE4A71892DD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:57:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B8A4294A1E;
-	Tue, 15 Apr 2025 11:47:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34C92951D0;
+	Tue, 15 Apr 2025 11:57:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="t3iUAozm"
-Received: from smtp117.iad3b.emailsrvr.com (smtp117.iad3b.emailsrvr.com [146.20.161.117])
+	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="WQnDvJfl"
+Received: from smtp113.iad3b.emailsrvr.com (smtp113.iad3b.emailsrvr.com [146.20.161.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B858B1FC7E7
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 11:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=146.20.161.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D2B2951B2
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 11:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=146.20.161.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744717634; cv=none; b=L2y9sf7agzMl6XG/GqdiS8+HukPTb5PJo3nyxuaNOiSrt8V21NeuQNxuAJ+n4WmrxZcnD9ZGlv4LuKt/LNJ/ApGhCUjKNg6+9JbClgwKyqv+giD0/WA/RLlwGVdg5zx/JD2PKTk3HrimqC8Qu0FGGhN7i8QwBuXV9G9+NrwCG3s=
+	t=1744718224; cv=none; b=IxyHy+k+XMPQnO2ttZQnzkf6AZAYSJgT6ccKzT6IepVHMA7zVAmXL+SUnWnbXL7yML9hgN2hDIdhydEZis7IYH9Lrapm9Rmu9XzJ6KLF01OmyhEpnPztK2fQls8hwZhaZig4Yld81hNTVSq2fDaqrJ/BWV5Gcgj+9UR8kF7w7b4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744717634; c=relaxed/simple;
-	bh=sNzCTTISaQe9wLvcNLQZC11fZP369QH8cXNYy/4+Pew=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t/cla0N1gk51/59kccZdmlZj1fD6RehmX/wTuSYtof1Kr/P/WEKrZpMHB7N5kSsDD2Szhjh2qwsoEOcfqUznBzuLwUggl5YDt7J5xLO0fDlqLlUTuMzQqlAjM/5fokOSqYM0kVa/ANkjdNEZ5Yxdffz3xzYCl5s7oldtx3c7sAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=t3iUAozm; arc=none smtp.client-ip=146.20.161.117
+	s=arc-20240116; t=1744718224; c=relaxed/simple;
+	bh=/D1SoD2BbzdR3rFVdil+XzeMl7EfIP2+LAtsJUKDewA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=OCjHhd3L8LHquI+niAGGwzCOKA8CDa8e7hfuPtbyeNX2xE+kcxqyOjTVEXCwJy1IwpafOSzb/JZ0kWp24sEmK4knDRQ37BaFvZFnAC2SphHm6ntUzz1f7QZUf/CHVQsymguQjChSFNovHdLzEnMMeuzyh4ipFTNulckDMTRJfas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=WQnDvJfl; arc=none smtp.client-ip=146.20.161.113
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
-	s=20221208-6x11dpa4; t=1744717224;
-	bh=sNzCTTISaQe9wLvcNLQZC11fZP369QH8cXNYy/4+Pew=;
+	s=20221208-6x11dpa4; t=1744717225;
+	bh=/D1SoD2BbzdR3rFVdil+XzeMl7EfIP2+LAtsJUKDewA=;
 	h=From:To:Subject:Date:From;
-	b=t3iUAozmPUemsPjxNneyq2ANYJden324JHv47DVk5nAn+r8JfiQDZrjH/JHW44kdn
-	 vHf7Teu46hZaFDOh1MpWbvOmtclnkC6G3kIkIi7vb9ENzpxMLCYGRxF3xpq6/nkA3v
-	 Lptusp8LTSmT5XxOdX/Uxi5y/PIpYhkBq7x/4D3A=
+	b=WQnDvJflYaNy6TH/SRnQJe/Nau1YNulSU7wxo/gh9nNt5f6hpnR/WPZtEpjy3DfZM
+	 kgDhJAg/lV4J1SOGH+nertflMfMF2GYPx4cgPZ9lByeqjVvTDLRWkUm7PEdm4i1F1e
+	 5uJIOvAZlMPOs5o894A4VfvcTQcXTOHgd13KEJTI=
 X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp15.relay.iad3b.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id D64CBC0354;
-	Tue, 15 Apr 2025 07:40:23 -0400 (EDT)
+Received: by smtp15.relay.iad3b.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id D62EFC034F;
+	Tue, 15 Apr 2025 07:40:24 -0400 (EDT)
 From: Ian Abbott <abbotti@mev.co.uk>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Ian Abbott <abbotti@mev.co.uk>,
 	H Hartley Sweeten <hsweeten@visionengravers.com>,
 	Christoph Hellwig <hch@lst.de>
-Subject: [PATCH 0/4] comedi: non-contiguous buffer pages changes
-Date: Tue, 15 Apr 2025 12:35:55 +0100
-Message-ID: <20250415114008.5977-1-abbotti@mev.co.uk>
+Subject: [PATCH 1/4] comedi: ni_pcidio: Do not bother filling buffer with 0xaa byte values
+Date: Tue, 15 Apr 2025 12:35:56 +0100
+Message-ID: <20250415114008.5977-2-abbotti@mev.co.uk>
 X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250415114008.5977-1-abbotti@mev.co.uk>
+References: <20250415114008.5977-1-abbotti@mev.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,53 +59,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Classification-ID: 8a53f2c5-5989-413b-be2c-df2839710a9a-1-1
+X-Classification-ID: 8a53f2c5-5989-413b-be2c-df2839710a9a-2-1
 
-This patch series changes the way the Comedi core code accesses the
-acquisition buffer contents, so that rather than use an overall, linear
-mapping of the whole buffer, it uses existing per-buffer-page pointers.
+On buffer change, the driver informs the mite module about the buffer
+change and then it fills the buffer with byte value `0xaa` using
+`memset()`.  Do not bother filling the buffer.  None of the other Comedi
+drivers do this.
 
-(@Christoph, I'm mostly interested in your take on calling
-`dma_mmap_coherent()` in a loop, as described in the final(-ish)
-paragraph, and in patch 4.)
+The aim is to get rid of the `prealloc_buf` member of `struct
+comedi_async` (which is from a `vmap()` covering the whole buffer in
+those Comedi drivers that do not use DMA), and use the per-buffer-page
+addresses from the `virt_addr` member of `struct comedi_buf_page` to
+access the buffer contents instead.
 
-Currently, the buffer is either allocated a page at a time from normal
-kernel memory, which is then vmap'ed to a linear address range for
-convenience, or it is allocated as a single block from DMA coherent
-memory.  (The low-level Comedi driver indicates the type of memory to be
-used.)  In either case, an array of `struct comedi_buf_page` is filled
-in with the underlying (non-vmap'ed) addresses of each page (and the
-corresponding DMA addresses, and the `prealloc_buf` member of `struct
-comedi_async` is set to the overall linear address (from `vmap` or
-`dma_alloc_coherent` as appropriate).
+(If necessary, we could add a `comedi_buf_memset()` function to fill the
+buffer with a byte value, but it's not worth it in this case.)
 
-For buffers in normal kernel memory, this patch series removes the
-vmap'ing of the buffer pages.
+Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
+---
+ drivers/comedi/drivers/ni_pcidio.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-For buffers in DMA coherent memory, patch 4 splits the allocation into
-page-sized allocations.  We used to do that before commit e36472145aa7
-("staging: comedi: use dma_mmap_coherent for DMA-able buffer mmap"), but
-there was the problem of how to mmap a buffer consisting of
-non-contiguous pages of DMA coherent memory.  At the time, I considered
-calling `dma_mmap_coherent()` in a loop with manipulated `vm_start` and
-`vm_end` values (see <https://lkml.org/lkml/2019/6/17/534>), and that is
-what patch 4 does.  It seems to work (although I've only tested in on
-x86_64 so far), and I'm not the only person in the wild to discover this
-trick (see <https://stackoverflow.com/a/67220955/5264491>), although I
-am not aware of any other use of this trick in the kernel source.  The
-closest equivalent is the manipulation of the VMA's `vm_pgoff` value
-before calling `dma_mmap_coherent()`, for example in the UIO driver.
+diff --git a/drivers/comedi/drivers/ni_pcidio.c b/drivers/comedi/drivers/ni_pcidio.c
+index 2d58e83420e8..2c7bb9c1ea5b 100644
+--- a/drivers/comedi/drivers/ni_pcidio.c
++++ b/drivers/comedi/drivers/ni_pcidio.c
+@@ -747,8 +747,6 @@ static int ni_pcidio_change(struct comedi_device *dev,
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	memset(s->async->prealloc_buf, 0xaa, s->async->prealloc_bufsz);
+-
+ 	return 0;
+ }
+ 
+-- 
+2.47.2
 
-Patch list:
-
-1) comedi: ni_pcidio: Do not bother filling buffer with 0xaa byte values
-2) comedi: access buffer data page-by-page
-3) comedi: remove the mapping of the Comedi buffer in vmalloc address space
-4) comedi: allocate DMA coherent buffer as individual pages
-
- drivers/comedi/comedi_buf.c        | 155 ++++++++++++++-----------------------
- drivers/comedi/comedi_fops.c       | 120 ++++++++++++++++++++--------
- drivers/comedi/drivers/ni_pcidio.c |   2 -
- include/linux/comedi/comedidev.h   |  10 +--
- 4 files changed, 144 insertions(+), 143 deletions(-)
 
