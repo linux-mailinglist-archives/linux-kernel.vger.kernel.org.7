@@ -1,194 +1,412 @@
-Return-Path: <linux-kernel+bounces-604461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FA29A894C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:21:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF3F9A894CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:21:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEF223B7B72
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:20:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1E3017434C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:21:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2613727990F;
-	Tue, 15 Apr 2025 07:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qrlNFjZ9"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 706FB3A1BA
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 07:21:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A736279908;
+	Tue, 15 Apr 2025 07:21:40 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E71CD2749D3
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 07:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744701663; cv=none; b=j22wzwR4KEyh6b//Q65r2tbzxQLteGiOEfADTMiOUM6ChdjxysLcJMlYjpso00JjsudAoHK7K1uzR86sI7meZNBW1olq5sShfhH6jYMgRPiBHRWpRzERVtpc/ZVA8duWbl2D+/XJFCT9V+2B+KHiett46TRNBuANtdhWY6Znqf4=
+	t=1744701699; cv=none; b=u6TdgzdE08OPkhrCneGqSs2SCHTakERuyopLdDze9/92A+np+EawlZudSPJSwXcLfR3zvHiddTGemLLCOycMnsWjqcYVJFxmIFfR17mmyIlTRIKLO+Q5rM7E08GJrmea/8U99T7/XBvG5+CItERfI0F9iWT9CXoLUXi90NbEUwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744701663; c=relaxed/simple;
-	bh=GEfBOA45QlWfcWHD5yzJuDstvply4eSmwqKjrGpmXUw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iE3CoHvQP80sDWnRMB8Q4Yp1Fv71DSU64DefzfhYU0lu4pEB5F7efqUcimIe/mh0+hhwBKzKFLARgVnUx89ILYzYtP6UYZWFEqzYbDagyJz+jgqUr0vtNAEDPohPKWufmmBK8Ys4coyByHeRRjYU/ReDkSx8GR2D5c0PpVBhQAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qrlNFjZ9; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-223fd89d036so62568645ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 00:21:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744701660; x=1745306460; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=XCNk9Rod1k+bgkwurUtIjlivzVvS2RJvCje5WjdRCTk=;
-        b=qrlNFjZ9sCrJXI5cTQdCR+/laEgXYSV2r1Oauzx4cOKoNxLJMdG2zoZQRY3WMjlDQ3
-         g4b9Br9o2of0QLOj/83VooUXEWSw4C1Bd19kf27waStgRxki4DAS68TJ7qEGpZqbPEBz
-         GHloJdpnRVFRhjIkYQyoE+A2zLatJqk4bdrd1i2Z93bosZyc6Cu9RhcsenaW70Zo//oV
-         dh9ovl+BxInOQwagNk5bQ5ORACw01eAplZAJ+wIE8ybIGlakUIQTaa37sTwEu3BP49vC
-         7mASa1tSyi+mGGRRSVTqriPEJcBX3xJSbYlxthqY2FmVAxb1RdHBdli37bP2NeeGAZDx
-         PxkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744701660; x=1745306460;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XCNk9Rod1k+bgkwurUtIjlivzVvS2RJvCje5WjdRCTk=;
-        b=uGFDgAV9U/7WmWyQMzo93dbY7tVabXKnS6wUQOLlQ580jNvYO/LmOnUEgq13po+CVQ
-         wmoT3kMbJODN31PQ2/7XMQi7yWS2hLR2fpgURDU0I6KGLStO3XQWbXmkjfFnAlmssOI0
-         FJePyBVqHv1h9Tfcz+/e1apFSTVIRhzIVUm/gcCoIaXd9Oy7IzFQzfdfyL+y6EE3Vyes
-         9XvIGY7vPyBXEfmQjbLv+qVf/LXyBaqZAdT3rl+owVBwvDoX0JcKTGr0Srph1QU4COWP
-         Ndv5FBZrD0vPsgNSNdrmkQciQKTFb32sowFgeE9i+HPvwQsltO5dW4quzU/rJ+TLkbf1
-         4snA==
-X-Forwarded-Encrypted: i=1; AJvYcCXNF7a/4kHlRja4QEPqfApbEgM3dVz+h3adXxnPW38ze5l/hCjWg4T+8pcct6x2pp3BKmEWjSi8dbKkxeQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8uhTIg2NCG5yviTxbB2z1v7fqLKL+4zqwOMjlAlcxSqnQWfp/
-	lQV9+P4G0ITKke917wQLHHS4XyJC1cehxl1eLZHClZTxGMtIIfHAudPHWYeOZA==
-X-Gm-Gg: ASbGnctNcm9nnobBgr2MD05f2JrUDpC89SIXNQmEZROx9nEs2w4McqtTrPvaAP8YeN+
-	n/0/IisqyfH5GoBZk1D/PTR92lbFuVh+ebrN8nT8v1VWXg+46uIDvO5/0EDpgX6wnGBw9n59C5E
-	Y45naGwi+n7Ep5WAg1Av8S9NA128Odvjqn3vpWmOY/QFcuPzx6gKfX62W+GM2LZewv7ZQ2dhn9G
-	U1yFAkjISJSLiyPr5BVxj9Giflj6kbirTf7suF+NSTn08heisoXE92EIPS2cJkRY6xrbVykzEEz
-	Do3LIFP42bRSVQGDmUSChXesLwQcT952Kvrxi3BFbZkDyGnuHrcLKQCBZ58O
-X-Google-Smtp-Source: AGHT+IHwx8NytA4HfmHYqY+ucueZxWfnA77QXqfaKsQqKRz4c9hbWsTrqA2PwtFUSZmcoIQDMTuTwQ==
-X-Received: by 2002:a17:903:1b6f:b0:224:c47:cb7 with SMTP id d9443c01a7336-22bea3f02aemr222574665ad.0.1744701659806;
-        Tue, 15 Apr 2025 00:20:59 -0700 (PDT)
-Received: from thinkpad ([120.60.71.35])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7cddfaesm111157005ad.257.2025.04.15.00.20.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Apr 2025 00:20:59 -0700 (PDT)
-Date: Tue, 15 Apr 2025 12:50:53 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Hongxing Zhu <hongxing.zhu@nxp.com>
-Cc: Frank Li <frank.li@nxp.com>, 
-	"l.stach@pengutronix.de" <l.stach@pengutronix.de>, "lpieralisi@kernel.org" <lpieralisi@kernel.org>, 
-	"kw@linux.com" <kw@linux.com>, "robh@kernel.org" <robh@kernel.org>, 
-	"bhelgaas@google.com" <bhelgaas@google.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, 
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "kernel@pengutronix.de" <kernel@pengutronix.de>, 
-	"festevam@gmail.com" <festevam@gmail.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 6/7] PCI: imx6: Add PLL clock lock check for i.MX95
- PCIe
-Message-ID: <3wmkjmutepc2s2ookc3ces4eyxe6morhhwxzlpup4mkkoy5ocx@py6h36upgl75>
-References: <20250408025930.1863551-1-hongxing.zhu@nxp.com>
- <20250408025930.1863551-7-hongxing.zhu@nxp.com>
- <uqrhqkmtp4yudmt4ys635vg3gh5sibhevu7gjtbbbizuheuk45@lhxywqhtbpak>
- <AS8PR04MB867619A464E923655EDEF4878CB32@AS8PR04MB8676.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1744701699; c=relaxed/simple;
+	bh=RsQCaFvgcwZRaW8RJuvNkxNwJma63Jxod+DUeoQ2AZ0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jDiladvpAnnIPYM0QEYQnEz5suHsitDwQ02FZyA/YIc1fI/9SSfb2Uxt6cAPqWb53QDxwQbF4yFOFGbygwdQm09LRK62imzpqPcUX+t5VKkiTDMmnH/7lfIPYLsnbB192lFO1jQTz4B30nNgqhBVRqNFtCJhQJKDnt4VCmKMkvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [223.64.68.238])
+	by gateway (Coremail) with SMTP id _____8CxbWv9CP5nxY69AA--.52466S3;
+	Tue, 15 Apr 2025 15:21:33 +0800 (CST)
+Received: from localhost.localdomain (unknown [223.64.68.238])
+	by front1 (Coremail) with SMTP id qMiowMBxHBv2CP5nAXuCAA--.2089S2;
+	Tue, 15 Apr 2025 15:21:32 +0800 (CST)
+From: Huacai Chen <chenhuacai@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev,
+	Mike Rapoport <rppt@kernel.org>,
+	Xuefeng Li <lixuefeng@loongson.cn>,
+	Guo Ren <guoren@kernel.org>,
+	Xuerui Wang <kernel@xen0n.name>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	linux-kernel@vger.kernel.org,
+	Huacai Chen <chenhuacai@loongson.cn>,
+	Binbin Zhou <zhoubinbin@loongson.cn>,
+	Yuquan Wang <wangyuquan1236@phytium.com.cn>
+Subject: [PATCH V2] LoongArch: Introduce the numa_memblks conversion
+Date: Tue, 15 Apr 2025 15:21:18 +0800
+Message-ID: <20250415072118.3774454-1-chenhuacai@loongson.cn>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <AS8PR04MB867619A464E923655EDEF4878CB32@AS8PR04MB8676.eurprd04.prod.outlook.com>
+X-CM-TRANSID:qMiowMBxHBv2CP5nAXuCAA--.2089S2
+X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoW3KryUur4rCF1DGw47Ar1fAFc_yoWDKFyfpr
+	Wqkrs5Gr45Gr1kWa4xt348uryDGwn7Wa9Iqa42kF9IvF12vrykZr48trsIvF98K3ykZF10
+	van5G3W3WF48J3XCm3ZEXasCq-sJn29KB7ZKAUJUUUU7529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUBFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6rxl6s0DM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
+	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWrXVW3
+	AwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI4
+	8JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j
+	6r4UMxCIbckI1I0E14v26r1Y6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
+	AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
+	0xvE14v26F1j6w1UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1lIxAIcVCF04k26c
+	xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAF
+	wI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jqRRiUUUUU=
 
-On Mon, Apr 14, 2025 at 03:16:46AM +0000, Hongxing Zhu wrote:
-> > -----Original Message-----
-> > From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > Sent: 2025年4月13日 23:33
-> > To: Hongxing Zhu <hongxing.zhu@nxp.com>
-> > Cc: Frank Li <frank.li@nxp.com>; l.stach@pengutronix.de;
-> > lpieralisi@kernel.org; kw@linux.com; robh@kernel.org;
-> > bhelgaas@google.com; shawnguo@kernel.org; s.hauer@pengutronix.de;
-> > kernel@pengutronix.de; festevam@gmail.com; linux-pci@vger.kernel.org;
-> > linux-arm-kernel@lists.infradead.org; imx@lists.linux.dev;
-> > linux-kernel@vger.kernel.org
-> > Subject: Re: [PATCH v5 6/7] PCI: imx6: Add PLL clock lock check for i.MX95
-> > PCIe
-> > 
-> > On Tue, Apr 08, 2025 at 10:59:29AM +0800, Richard Zhu wrote:
-> > > Add PLL clock lock check for i.MX95 PCIe.
-> > >
-> > > Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> > > Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> > > ---
-> > >  drivers/pci/controller/dwc/pci-imx6.c | 28
-> > > +++++++++++++++++++++++++--
-> > >  1 file changed, 26 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/pci/controller/dwc/pci-imx6.c
-> > > b/drivers/pci/controller/dwc/pci-imx6.c
-> > > index 7dcc9d88740d..c1d128ec255d 100644
-> > > --- a/drivers/pci/controller/dwc/pci-imx6.c
-> > > +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> > > @@ -45,6 +45,9 @@
-> > >  #define IMX95_PCIE_PHY_GEN_CTRL			0x0
-> > >  #define IMX95_PCIE_REF_USE_PAD			BIT(17)
-> > >
-> > > +#define IMX95_PCIE_PHY_MPLLA_CTRL		0x10
-> > > +#define IMX95_PCIE_PHY_MPLL_STATE		BIT(30)
-> > > +
-> > >  #define IMX95_PCIE_SS_RW_REG_0			0xf0
-> > >  #define IMX95_PCIE_REF_CLKEN			BIT(23)
-> > >  #define IMX95_PCIE_PHY_CR_PARA_SEL		BIT(9)
-> > > @@ -479,6 +482,23 @@ static void
-> > imx7d_pcie_wait_for_phy_pll_lock(struct imx_pcie *imx_pcie)
-> > >  		dev_err(dev, "PCIe PLL lock timeout\n");  }
-> > >
-> > > +static int imx95_pcie_wait_for_phy_pll_lock(struct imx_pcie
-> > > +*imx_pcie) {
-> > > +	u32 val;
-> > > +	struct device *dev = imx_pcie->pci->dev;
-> > > +
-> > > +	if (regmap_read_poll_timeout(imx_pcie->iomuxc_gpr,
-> > > +				     IMX95_PCIE_PHY_MPLLA_CTRL, val,
-> > > +				     val & IMX95_PCIE_PHY_MPLL_STATE,
-> > > +				     PHY_PLL_LOCK_WAIT_USLEEP_MAX,
-> > > +				     PHY_PLL_LOCK_WAIT_TIMEOUT)) {
-> > > +		dev_err(dev, "PCIe PLL lock timeout\n");
-> > > +		return -ETIMEDOUT;
-> > > +	}
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > >  static int imx_setup_phy_mpll(struct imx_pcie *imx_pcie)  {
-> > >  	unsigned long phy_rate = 0;
-> > > @@ -824,6 +844,8 @@ static int imx95_pcie_core_reset(struct imx_pcie
-> > *imx_pcie, bool assert)
-> > >  		regmap_read_bypassed(imx_pcie->iomuxc_gpr,
-> > IMX95_PCIE_RST_CTRL,
-> > >  				     &val);
-> > >  		udelay(10);
-> > > +	} else {
-> > > +		return imx95_pcie_wait_for_phy_pll_lock(imx_pcie);
-> > 
-> > Is this PLL lock related to COLD_RESET? It doesn't look like it. If unrelated, it
-> > should be called wherever required. imx95_pcie_core_reset() is supposed to
-> > only assert/deassert the COLD_RESET.
-> > 
-> > If related, please explain how.
-> Thanks for your kindly review.
-> To make sure the HW state is correct to continue the sequential initializations.
-> The PLL lock or not check would be kicked off after the COLD_RESET is
->  de-asserted for i.MX95 PCIe.
-> So, the PLL lock check is added at the end of de-assertion in
->  imx95_pcie_core_reset() function.
-> 
+Commit 87482708210ff3333a ("mm: introduce numa_memblks") has moved
+numa_memblks from x86 to the generic code, but LoongArch was left out
+of this conversion.
 
-But imx95_pcie_core_reset() is not doing anything for deassert other than
-waiting for PLL lock. Hence my question.
+This patch introduces the generic numa_memblks for LoongArch.
 
-- Mani
+In detail:
+1. Enable NUMA_MEMBLKS (but disable NUMA_EMU) in Kconfig;
+2. Use generic definition for numa_memblk and numa_meminfo;
+3. Use generic implementation for numa_add_memblk() and its friends;
+4. Use generic implementation for numa_set_distance() and its friends;
+5. Use generic implementation for memory_add_physaddr_to_nid() and its
+   friends.
 
+Note: Disable NUMA_EMU because it needs more efforts and no obvious
+demand now.
+
+Tested-by: Binbin Zhou <zhoubinbin@loongson.cn>
+Signed-off-by: Yuquan Wang <wangyuquan1236@phytium.com.cn>
+Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+---
+ arch/loongarch/Kconfig                 |   1 +
+ arch/loongarch/include/asm/numa.h      |  14 ----
+ arch/loongarch/include/asm/sparsemem.h |   5 --
+ arch/loongarch/include/asm/topology.h  |   7 +-
+ arch/loongarch/kernel/acpi.c           |  11 ---
+ arch/loongarch/kernel/numa.c           | 108 +++----------------------
+ arch/loongarch/mm/init.c               |   8 --
+ mm/Kconfig                             |   1 +
+ 8 files changed, 16 insertions(+), 139 deletions(-)
+
+diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+index 067c0b994648..fff3621b2eb1 100644
+--- a/arch/loongarch/Kconfig
++++ b/arch/loongarch/Kconfig
+@@ -186,6 +186,7 @@ config LOONGARCH
+ 	select MODULES_USE_ELF_RELA if MODULES
+ 	select NEED_PER_CPU_EMBED_FIRST_CHUNK
+ 	select NEED_PER_CPU_PAGE_FIRST_CHUNK
++	select NUMA_MEMBLKS if NUMA
+ 	select OF
+ 	select OF_EARLY_FLATTREE
+ 	select PCI
+diff --git a/arch/loongarch/include/asm/numa.h b/arch/loongarch/include/asm/numa.h
+index b5f9de9f102e..bbf9f70bd25f 100644
+--- a/arch/loongarch/include/asm/numa.h
++++ b/arch/loongarch/include/asm/numa.h
+@@ -22,20 +22,6 @@ extern int numa_off;
+ extern s16 __cpuid_to_node[CONFIG_NR_CPUS];
+ extern nodemask_t numa_nodes_parsed __initdata;
+ 
+-struct numa_memblk {
+-	u64			start;
+-	u64			end;
+-	int			nid;
+-};
+-
+-#define NR_NODE_MEMBLKS		(MAX_NUMNODES*2)
+-struct numa_meminfo {
+-	int			nr_blks;
+-	struct numa_memblk	blk[NR_NODE_MEMBLKS];
+-};
+-
+-extern int __init numa_add_memblk(int nodeid, u64 start, u64 end);
+-
+ extern void __init early_numa_add_cpu(int cpuid, s16 node);
+ extern void numa_add_cpu(unsigned int cpu);
+ extern void numa_remove_cpu(unsigned int cpu);
+diff --git a/arch/loongarch/include/asm/sparsemem.h b/arch/loongarch/include/asm/sparsemem.h
+index 8d4af6aff8a8..4501efac1a87 100644
+--- a/arch/loongarch/include/asm/sparsemem.h
++++ b/arch/loongarch/include/asm/sparsemem.h
+@@ -21,11 +21,6 @@
+ #define VMEMMAP_SIZE	0	/* 1, For FLATMEM; 2, For SPARSEMEM without VMEMMAP. */
+ #endif
+ 
+-#ifdef CONFIG_MEMORY_HOTPLUG
+-int memory_add_physaddr_to_nid(u64 addr);
+-#define memory_add_physaddr_to_nid memory_add_physaddr_to_nid
+-#endif
+-
+ #define INIT_MEMBLOCK_RESERVED_REGIONS	(INIT_MEMBLOCK_REGIONS + NR_CPUS)
+ 
+ #endif /* _LOONGARCH_SPARSEMEM_H */
+diff --git a/arch/loongarch/include/asm/topology.h b/arch/loongarch/include/asm/topology.h
+index 50273c9187d0..8d2efd7f7c43 100644
+--- a/arch/loongarch/include/asm/topology.h
++++ b/arch/loongarch/include/asm/topology.h
+@@ -19,11 +19,8 @@ extern int pcibus_to_node(struct pci_bus *);
+ 
+ #define cpumask_of_pcibus(bus)	(cpu_online_mask)
+ 
+-extern unsigned char node_distances[MAX_NUMNODES][MAX_NUMNODES];
+-
+-void numa_set_distance(int from, int to, int distance);
+-
+-#define node_distance(from, to)	(node_distances[(from)][(to)])
++int __node_distance(int from, int to);
++#define node_distance(from, to) __node_distance(from, to)
+ 
+ #else
+ #define pcibus_to_node(bus)	0
+diff --git a/arch/loongarch/kernel/acpi.c b/arch/loongarch/kernel/acpi.c
+index 1120ac2824f6..49112b77da46 100644
+--- a/arch/loongarch/kernel/acpi.c
++++ b/arch/loongarch/kernel/acpi.c
+@@ -249,17 +249,6 @@ static __init int setup_node(int pxm)
+ 	return acpi_map_pxm_to_node(pxm);
+ }
+ 
+-void __init numa_set_distance(int from, int to, int distance)
+-{
+-	if ((u8)distance != distance || (from == to && distance != LOCAL_DISTANCE)) {
+-		pr_warn_once("Warning: invalid distance parameter, from=%d to=%d distance=%d\n",
+-				from, to, distance);
+-		return;
+-	}
+-
+-	node_distances[from][to] = distance;
+-}
+-
+ /* Callback for Proximity Domain -> CPUID mapping */
+ void __init
+ acpi_numa_processor_affinity_init(struct acpi_srat_cpu_affinity *pa)
+diff --git a/arch/loongarch/kernel/numa.c b/arch/loongarch/kernel/numa.c
+index 30a72fd528c0..d6e73e8f9c0b 100644
+--- a/arch/loongarch/kernel/numa.c
++++ b/arch/loongarch/kernel/numa.c
+@@ -11,6 +11,7 @@
+ #include <linux/mmzone.h>
+ #include <linux/export.h>
+ #include <linux/nodemask.h>
++#include <linux/numa_memblks.h>
+ #include <linux/swap.h>
+ #include <linux/memblock.h>
+ #include <linux/pfn.h>
+@@ -27,10 +28,6 @@
+ #include <asm/time.h>
+ 
+ int numa_off;
+-unsigned char node_distances[MAX_NUMNODES][MAX_NUMNODES];
+-EXPORT_SYMBOL(node_distances);
+-
+-static struct numa_meminfo numa_meminfo;
+ cpumask_t cpus_on_node[MAX_NUMNODES];
+ cpumask_t phys_cpus_on_node[MAX_NUMNODES];
+ EXPORT_SYMBOL(cpus_on_node);
+@@ -43,8 +40,6 @@ s16 __cpuid_to_node[CONFIG_NR_CPUS] = {
+ };
+ EXPORT_SYMBOL(__cpuid_to_node);
+ 
+-nodemask_t numa_nodes_parsed __initdata;
+-
+ #ifdef CONFIG_HAVE_SETUP_PER_CPU_AREA
+ unsigned long __per_cpu_offset[NR_CPUS] __read_mostly;
+ EXPORT_SYMBOL(__per_cpu_offset);
+@@ -145,48 +140,6 @@ void numa_remove_cpu(unsigned int cpu)
+ 	cpumask_clear_cpu(cpu, &cpus_on_node[nid]);
+ }
+ 
+-static int __init numa_add_memblk_to(int nid, u64 start, u64 end,
+-				     struct numa_meminfo *mi)
+-{
+-	/* ignore zero length blks */
+-	if (start == end)
+-		return 0;
+-
+-	/* whine about and ignore invalid blks */
+-	if (start > end || nid < 0 || nid >= MAX_NUMNODES) {
+-		pr_warn("NUMA: Warning: invalid memblk node %d [mem %#010Lx-%#010Lx]\n",
+-			   nid, start, end - 1);
+-		return 0;
+-	}
+-
+-	if (mi->nr_blks >= NR_NODE_MEMBLKS) {
+-		pr_err("NUMA: too many memblk ranges\n");
+-		return -EINVAL;
+-	}
+-
+-	mi->blk[mi->nr_blks].start = PFN_ALIGN(start);
+-	mi->blk[mi->nr_blks].end = PFN_ALIGN(end - PAGE_SIZE + 1);
+-	mi->blk[mi->nr_blks].nid = nid;
+-	mi->nr_blks++;
+-	return 0;
+-}
+-
+-/**
+- * numa_add_memblk - Add one numa_memblk to numa_meminfo
+- * @nid: NUMA node ID of the new memblk
+- * @start: Start address of the new memblk
+- * @end: End address of the new memblk
+- *
+- * Add a new memblk to the default numa_meminfo.
+- *
+- * RETURNS:
+- * 0 on success, -errno on failure.
+- */
+-int __init numa_add_memblk(int nid, u64 start, u64 end)
+-{
+-	return numa_add_memblk_to(nid, start, end, &numa_meminfo);
+-}
+-
+ static void __init node_mem_init(unsigned int node)
+ {
+ 	unsigned long start_pfn, end_pfn;
+@@ -205,18 +158,6 @@ static void __init node_mem_init(unsigned int node)
+ 
+ #ifdef CONFIG_ACPI_NUMA
+ 
+-static void __init add_node_intersection(u32 node, u64 start, u64 size, u32 type)
+-{
+-	static unsigned long num_physpages;
+-
+-	num_physpages += (size >> PAGE_SHIFT);
+-	pr_info("Node%d: mem_type:%d, mem_start:0x%llx, mem_size:0x%llx Bytes\n",
+-		node, type, start, size);
+-	pr_info("       start_pfn:0x%llx, end_pfn:0x%llx, num_physpages:0x%lx\n",
+-		start >> PAGE_SHIFT, (start + size) >> PAGE_SHIFT, num_physpages);
+-	memblock_set_node(start, size, &memblock.memory, node);
+-}
+-
+ /*
+  * add_numamem_region
+  *
+@@ -228,28 +169,21 @@ static void __init add_node_intersection(u32 node, u64 start, u64 size, u32 type
+  */
+ static void __init add_numamem_region(u64 start, u64 end, u32 type)
+ {
+-	u32 i;
+-	u64 ofs = start;
++	u32 node = pa_to_nid(start);
++	u64 size = end - start;
++	static unsigned long num_physpages;
+ 
+ 	if (start >= end) {
+ 		pr_debug("Invalid region: %016llx-%016llx\n", start, end);
+ 		return;
+ 	}
+ 
+-	for (i = 0; i < numa_meminfo.nr_blks; i++) {
+-		struct numa_memblk *mb = &numa_meminfo.blk[i];
+-
+-		if (ofs > mb->end)
+-			continue;
+-
+-		if (end > mb->end) {
+-			add_node_intersection(mb->nid, ofs, mb->end - ofs, type);
+-			ofs = mb->end;
+-		} else {
+-			add_node_intersection(mb->nid, ofs, end - ofs, type);
+-			break;
+-		}
+-	}
++	num_physpages += (size >> PAGE_SHIFT);
++	pr_info("Node%d: mem_type:%d, mem_start:0x%llx, mem_size:0x%llx Bytes\n",
++		node, type, start, size);
++	pr_info("       start_pfn:0x%llx, end_pfn:0x%llx, num_physpages:0x%lx\n",
++		start >> PAGE_SHIFT, end >> PAGE_SHIFT, num_physpages);
++	memblock_set_node(start, size, &memblock.memory, node);
+ }
+ 
+ static void __init init_node_memblock(void)
+@@ -291,24 +225,6 @@ static void __init init_node_memblock(void)
+ 	}
+ }
+ 
+-static void __init numa_default_distance(void)
+-{
+-	int row, col;
+-
+-	for (row = 0; row < MAX_NUMNODES; row++)
+-		for (col = 0; col < MAX_NUMNODES; col++) {
+-			if (col == row)
+-				node_distances[row][col] = LOCAL_DISTANCE;
+-			else
+-				/* We assume that one node per package here!
+-				 *
+-				 * A SLIT should be used for multiple nodes
+-				 * per package to override default setting.
+-				 */
+-				node_distances[row][col] = REMOTE_DISTANCE;
+-	}
+-}
+-
+ /*
+  * fake_numa_init() - For Non-ACPI systems
+  * Return: 0 on success, -errno on failure.
+@@ -333,11 +249,11 @@ int __init init_numa_memory(void)
+ 	for (i = 0; i < NR_CPUS; i++)
+ 		set_cpuid_to_node(i, NUMA_NO_NODE);
+ 
+-	numa_default_distance();
++	numa_reset_distance();
+ 	nodes_clear(numa_nodes_parsed);
+ 	nodes_clear(node_possible_map);
+ 	nodes_clear(node_online_map);
+-	memset(&numa_meminfo, 0, sizeof(numa_meminfo));
++	WARN_ON(memblock_clear_hotplug(0, PHYS_ADDR_MAX));
+ 
+ 	/* Parse SRAT and SLIT if provided by firmware. */
+ 	ret = acpi_disabled ? fake_numa_init() : acpi_numa_init();
+diff --git a/arch/loongarch/mm/init.c b/arch/loongarch/mm/init.c
+index 06f11d9e4ec1..c3e4586a7975 100644
+--- a/arch/loongarch/mm/init.c
++++ b/arch/loongarch/mm/init.c
+@@ -106,14 +106,6 @@ void arch_remove_memory(u64 start, u64 size, struct vmem_altmap *altmap)
+ 		page += vmem_altmap_offset(altmap);
+ 	__remove_pages(start_pfn, nr_pages, altmap);
+ }
+-
+-#ifdef CONFIG_NUMA
+-int memory_add_physaddr_to_nid(u64 start)
+-{
+-	return pa_to_nid(start);
+-}
+-EXPORT_SYMBOL_GPL(memory_add_physaddr_to_nid);
+-#endif
+ #endif
+ 
+ #ifdef CONFIG_SPARSEMEM_VMEMMAP
+diff --git a/mm/Kconfig b/mm/Kconfig
+index e113f713b493..1472ce8a8784 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -1317,6 +1317,7 @@ config NUMA_MEMBLKS
+ config NUMA_EMU
+ 	bool "NUMA emulation"
+ 	depends on NUMA_MEMBLKS
++	depends on X86 || GENERIC_ARCH_NUMA
+ 	help
+ 	  Enable NUMA emulation. A flat machine will be split
+ 	  into virtual nodes when booted with "numa=fake=N", where N is the
 -- 
-மணிவண்ணன் சதாசிவம்
+2.47.1
+
 
