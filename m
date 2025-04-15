@@ -1,115 +1,109 @@
-Return-Path: <linux-kernel+bounces-605401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23A4FA8A0AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:07:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 899F6A8A0B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:13:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FC3018882D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:08:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BD8E17AB1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:13:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C998B1CAA85;
-	Tue, 15 Apr 2025 14:07:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EE891F4614;
+	Tue, 15 Apr 2025 14:12:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NtWr2gf2"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eHgBPy63"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D816E18E1A;
-	Tue, 15 Apr 2025 14:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3262413AA53;
+	Tue, 15 Apr 2025 14:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744726071; cv=none; b=GjhoraHF05I7ygxqBgnXP1Em5NFyg1hpsOXVwKqdevM3/k7RhUPwvdGD5rtF2d0BwQbFoGSX0oGZ8QHfZsnR+rTfs04LL9+WkLl5shpyYB1WPs6xgLKo8Sm4YikAlX49auVm5IxN4dE+Wgu4t3jDe+agBD86NNvhXKkT/vDF8b8=
+	t=1744726375; cv=none; b=OBviH2To+vAfzdyiOrKawCP2Ian1A6/9xKRCOzeAGIswf0nYGp6q+VkzXA/u94ORBFtp0xQ/DoRjfG2ciqtUMK6ZzjRRDOp/FEoZ5XdC05r1EchH3zQFSoF+7RzEoUSBGlPdYEviEtGFcB1OYAwIf8sj7eAK219yrdVZUscQB/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744726071; c=relaxed/simple;
-	bh=D5XakogxV37TAHJXYCgHLmI6mETHhT7YD6oacyBbVgk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jxFl1Ue1tRWCqX6OHJWBXpAaO6vnnPXm5jgCEhsqMLhdszZ6A4nfAGlG9jYFkoC91bh98jn82Lry/c4MReBnndGSKrYLBmjcyB+K0SEGOWXqzlA9meMLCZzvreU00IDinyDqHeSFaFzkgXkADSPV1gOxxh+gth2bPM+CqEaZ/ZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NtWr2gf2; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=EOzlHo3nOGWAuEjEI2KtHNOFWKa2sq/OO1E6O8ecYn4=; b=NtWr2gf2w3MmBJX5ZeWhAd2jwT
-	OQJarIJihKqXFbfv3cF9p+Llc8Me1yAfdCpQka7Jv4ETGIZtT9SbDeZuDONo1eF8brI9fyzpqq4g9
-	Dkp02eg+IXZkW6lrbDYOgNYp7cRoTRK9nmaVNrswohzqbWS6oV+pse64LxMBimvoEu3m08PaF/L4D
-	102Gp4KPDJdkOVmk98YnV2WGCKMOo3wLmkiFPV2KK5XnitnOW6LT6wDXpbihb9s5K4krMvQX2ydof
-	OryGrL7DaVBrU+yXylWeQqKEIOIw0qQ14Cl3+dxJtTsCbhEnjnJoXrVazhfmJppqigGCl90bV44mZ
-	WmD9dyDQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1u4gwo-00000008exI-3JwL;
-	Tue, 15 Apr 2025 14:07:35 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id A3ED0300619; Tue, 15 Apr 2025 16:07:34 +0200 (CEST)
-Date: Tue, 15 Apr 2025 16:07:34 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
-Subject: Re: [Patch v3 15/22] perf/x86/intel: Support SSP register capturing
- for arch-PEBS
-Message-ID: <20250415140734.GE4031@noisy.programming.kicks-ass.net>
-References: <20250415114428.341182-1-dapeng1.mi@linux.intel.com>
- <20250415114428.341182-16-dapeng1.mi@linux.intel.com>
+	s=arc-20240116; t=1744726375; c=relaxed/simple;
+	bh=tPsF5KmvU8YLuirrBM+XJ6P5LFS3RlhTuzc6LYXAh6E=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=VprsxCiZGzYMERyj3eUb6v/i4bGP4P4xi+mvrmX1T9shAGPXs4O7O/LPP4OOIscpY0PTAZeYXbjj8jIDGodSGYhAY5eRc4AWDsJVy5B4SPLikCPL/0kXvRQnWXwdSSu7EMFQoBgZeL7SfruSKiRBhm8kpLfauy+Xhb/LFT8uppY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eHgBPy63; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744726374; x=1776262374;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=tPsF5KmvU8YLuirrBM+XJ6P5LFS3RlhTuzc6LYXAh6E=;
+  b=eHgBPy63c6YkOMaX2GCamIgVBOFDiKfLPuqOCnrZKfup+0BDUQSA4NDI
+   CWReIpvD6+Vi8xXxDdKFW/u6s9FRMyWf7/8H9v8vKgLiOzOqQKkSZGl3p
+   9TNyetljXa6ppsFVQn4ZmEa0YYdUUcMGXrvNJNFC1+EF3aBM6AiKPFpiW
+   yBxGjTLhCWUFBwUiNhfu8n0hTl76pQuVuxCbf4aUkbEY7x6STMeqT4P7b
+   IeSCEtanjJF0sPeargjVx+QX8yrGlzSgT0fWHJT5DX4+m3X9id+VCmEoB
+   xuURaTGr8iW8wsdkW+e/z4VpByvQ4yffEfA9BXXnFcH04AFhNvN2dhVJS
+   A==;
+X-CSE-ConnectionGUID: 1YFjE3jXSGygYEMFtaVi/A==
+X-CSE-MsgGUID: BHvqSi3aT92LAAVLcc1xkw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="45950321"
+X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
+   d="scan'208";a="45950321"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 07:08:49 -0700
+X-CSE-ConnectionGUID: GMRC9y8OTLW/T6cjFAE8dQ==
+X-CSE-MsgGUID: 87LF8UZRRJOt69b1SMku4w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
+   d="scan'208";a="130156434"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.140])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 07:08:46 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Hans de Goede <hdegoede@redhat.com>, Armin Wolf <W_Armin@gmx.de>, 
+ Kurt Borja <kuurtb@gmail.com>
+Cc: platform-driver-x86@vger.kernel.org, Dell.Client.Kernel@dell.com, 
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+In-Reply-To: <20250411-awcc-support-v1-0-09a130ec4560@gmail.com>
+References: <20250411-awcc-support-v1-0-09a130ec4560@gmail.com>
+Subject: Re: [PATCH 0/2] platform/x86: alienware-wmi-wmax: Extend support
+ to more laptops
+Message-Id: <174472612155.1885.731492109641946522.b4-ty@linux.intel.com>
+Date: Tue, 15 Apr 2025 17:08:41 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250415114428.341182-16-dapeng1.mi@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-On Tue, Apr 15, 2025 at 11:44:21AM +0000, Dapeng Mi wrote:
-> Arch-PEBS supports to capture shadow stack pointer (SSP) register in GPR
-> group. This patch supports to capture and output SSP register at
-> interrupt or user space, but capturing SSP at user space requires
-> 'exclude_kernel' attribute must be set. That avoids kernel space SSP
-> register is captured unintentionally.
+On Fri, 11 Apr 2025 11:14:34 -0300, Kurt Borja wrote:
+
+> This two patches are based on the pdx86/fixes branch.
 > 
-> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-> ---
->  arch/x86/events/core.c                | 15 +++++++++++++++
->  arch/x86/events/intel/core.c          |  3 ++-
->  arch/x86/events/intel/ds.c            |  9 +++++++--
->  arch/x86/events/perf_event.h          |  4 ++++
->  arch/x86/include/asm/perf_event.h     |  1 +
->  arch/x86/include/uapi/asm/perf_regs.h |  4 +++-
->  arch/x86/kernel/perf_regs.c           |  7 +++++++
->  7 files changed, 39 insertions(+), 4 deletions(-)
+> To: Hans de Goede <hdegoede@redhat.com>
+> To: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> To: Armin Wolf <W_Armin@gmx.de>
+> Cc: platform-driver-x86@vger.kernel.org
+> Cc: Dell.Client.Kernel@dell.com
+> Cc: linux-kernel@vger.kernel.org
 > 
-> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-> index 9c205a8a4fa6..0ccbe8385c7f 100644
-> --- a/arch/x86/events/core.c
-> +++ b/arch/x86/events/core.c
-> @@ -650,6 +650,21 @@ int x86_pmu_hw_config(struct perf_event *event)
->  			return -EINVAL;
->  	}
->  
-> +	if (unlikely(event->attr.sample_regs_user & BIT_ULL(PERF_REG_X86_SSP))) {
-> +		/* Only arch-PEBS supports to capture SSP register. */
-> +		if (!x86_pmu.arch_pebs || !event->attr.precise_ip)
-> +			return -EINVAL;
-> +		/* Only user space is allowed to capture. */
-> +		if (!event->attr.exclude_kernel)
-> +			return -EINVAL;
-> +	}
+> [...]
 
-We should be able to support this for !PEBS samples by reading the MSR
-just fine, no?
 
-ISTR making a similar comment last time.
+Thank you for your contribution, it has been applied to my local
+review-ilpo-fixes branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
+local branch there, which might take a while.
+
+The list of commits applied:
+[1/2] platform/x86: alienware-wmi-wmax: Add G-Mode support to Alienware m16 R1
+      commit: 5ff79cabb23a2f14d2ed29e9596aec908905a0e6
+[2/2] platform/x86: alienware-wmi-wmax: Extend support to more laptops
+      commit: 202a861205905629c5f10ce0a8358623485e1ae9
+
+--
+ i.
+
 
