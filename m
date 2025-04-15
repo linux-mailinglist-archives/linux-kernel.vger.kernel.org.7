@@ -1,39 +1,62 @@
-Return-Path: <linux-kernel+bounces-605099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9079DA89CC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:47:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA969A89CD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:49:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EA5D166F56
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:47:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BAB41886ACF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:49:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D02222918E5;
-	Tue, 15 Apr 2025 11:47:30 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8842C28E5EE
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 11:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE1B29290B;
+	Tue, 15 Apr 2025 11:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="D8L00DBx"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29CB127586B;
+	Tue, 15 Apr 2025 11:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744717650; cv=none; b=iGeUSZJHf01TFMWX/q3dZIoJZGp9U/JJrhNf8XW9LBXiRTBEYcFfzdulLS05NFp1G3os9/foiBohtnmaxwa1s//BabxSxLX89nvWesEHdXrxr2BUWVAviVQVrn3ATMw+UWs8ANrUNEqvW9R0Ic9pDOQJdH259ZIZtYUCH081gZM=
+	t=1744717733; cv=none; b=q1enRmqj/CMYNn0Bx+5CU/2Z8EjUW+R5EG9nJIsetw/IZes04vVK3S4kBk0DuhUm1Er49jUCZv7IXF4Cwp4kn3kK4SwulzI4ct5CWJ+/tKdnAc7olnUoxzNC7H4vojDZfQgalVk5ickOPvRPmR3gcMNZJiacinqPK4vFuYdvAdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744717650; c=relaxed/simple;
-	bh=nfixIavryDpQZxlRHE3LbTrPtjkGKEIV76RKdS1Rs/A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J1ge0WpDvL54fpRx1/fk73f8JAceZ4QOHxJDv7YP81ZRxFvxisg5yVu9NhQpvxYEJ3Z2VSA/pwtxJIDOIitL7/zHIbwzmZqMMWmzlqJ3JhMksP9PsBU1YsWHsq9LrMiYrkQXA+Mm/DMX+jMj9WEr6AVZvxzKBh9cH5ZBSBVHQ8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F1E7115A1;
-	Tue, 15 Apr 2025 04:47:25 -0700 (PDT)
-Received: from [10.163.73.130] (unknown [10.163.73.130])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CD8F63F66E;
-	Tue, 15 Apr 2025 04:47:23 -0700 (PDT)
-Message-ID: <9ed4c113-37eb-4e3d-98a1-f46f786aaea9@arm.com>
-Date: Tue, 15 Apr 2025 17:17:19 +0530
+	s=arc-20240116; t=1744717733; c=relaxed/simple;
+	bh=uxPhOzxY14pVCHZGfJbw2h3p6ZWpthGrzWp7eAolL2c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=eDTwEBI9V1l609jMOsBrQNCl/73FQdsAniZk/Ft3bzKOaoyUh9aTcAgqmiTITbM0dW1QJowK9iJ0q1S+CC0fattXSBPMpn1pOZTgd1Bz4PhbdRxvQEI/YOhXZ8w3iG8AcYLSNTlKHxCS/vgp0G2wSWzf4R9VxLwp8y65eNPm728=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=D8L00DBx; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53F8tNPc002462;
+	Tue, 15 Apr 2025 11:48:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	WPx0blElfQsDzlplnsNASavPopVyU/xxzlA7I369vRc=; b=D8L00DBxD6XIws3E
+	pKwaBK34gh6NnOaJB2Ghd6AX3puoBBsVFJV09h4ayjUjTsR8IVKZ5XiCQIR/u0jD
+	FLFIGq8YbO7EjKbTUlFWpc/UzciygLVSMHaYHg66K7fEjqk83YqCsuxIPnxewb17
+	Jmcfo84ZDdJtbM1uhLja2++55Xwgk09PyV1VKwhzOtz9BX5mDrcmv184Y3F+6iz+
+	J5i3XvEJLS8ngu4nR80+B9p+B0+2qV/WgSPAnsRgKRhdzht9PmceOZ0v+t6K9i+i
+	WO+OQR4y4rKhsGfJzPt8MxAmloLbVbTjetVq6Ar1/WE+tqQU5Sa9HpEMGcrcwwtC
+	9S9qpQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ygxjyrvn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Apr 2025 11:48:25 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53FBmP4p025518
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Apr 2025 11:48:25 GMT
+Received: from [10.217.219.207] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 15 Apr
+ 2025 04:48:21 -0700
+Message-ID: <3204f619-61a5-41b9-b9a5-c72397b21d11@quicinc.com>
+Date: Tue, 15 Apr 2025 17:18:18 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,134 +64,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mempolicy: Optimize queue_folios_pte_range by PTE
- batching
-To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org
-Cc: ryan.roberts@arm.com, willy@infradead.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, hughd@google.com, vishal.moola@gmail.com,
- yang@os.amperecomputing.com, ziy@nvidia.com
-References: <20250411081301.8533-1-dev.jain@arm.com>
- <09c77ab5-65fc-4bca-a7e5-2b11bba9330d@redhat.com>
+Subject: Re: [PATCH] i2c: omap: fix deprecated of_property_read_bool() use
+To: Johan Hovold <johan+linaro@kernel.org>, Vignesh R <vigneshr@ti.com>,
+        Andi
+ Shyti <andi.shyti@kernel.org>
+CC: Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Andreas Kemnade
+	<andreas@kemnade.info>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Roger Quadros
+	<rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
+        Janusz Krzysztofik
+	<jmkrzyszt@gmail.com>,
+        <linux-omap@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Jayesh Choudhary
+	<j-choudhary@ti.com>
+References: <20250415075230.16235-1-johan+linaro@kernel.org>
 Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <09c77ab5-65fc-4bca-a7e5-2b11bba9330d@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+In-Reply-To: <20250415075230.16235-1-johan+linaro@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=WecMa1hX c=1 sm=1 tr=0 ts=67fe4789 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=sozttTNsAAAA:8 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=CDmJc5vrhkyB_-nfjVoA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: PnkJCtQy-JYDDiG_fx88-OnPln3Z4BRm
+X-Proofpoint-ORIG-GUID: PnkJCtQy-JYDDiG_fx88-OnPln3Z4BRm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-15_05,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ adultscore=0 clxscore=1011 lowpriorityscore=0 phishscore=0 mlxscore=0
+ impostorscore=0 mlxlogscore=999 spamscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504150083
 
 
 
-On 15/04/25 3:47 pm, David Hildenbrand wrote:
-> On 11.04.25 10:13, Dev Jain wrote:
->> After the check for queue_folio_required(), the code only cares about the
->> folio in the for loop, i.e the PTEs are redundant. Therefore, optimize 
->> this
->> loop by skipping over a PTE batch mapping the same folio.
->>
->> Signed-off-by: Dev Jain <dev.jain@arm.com>
->> ---
->> Unfortunately I have only build tested this since my test environment is
->> broken.
->>
->>   mm/mempolicy.c | 12 +++++++++++-
->>   1 file changed, 11 insertions(+), 1 deletion(-)
->>
->> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
->> index b28a1e6ae096..b019524da8a2 100644
->> --- a/mm/mempolicy.c
->> +++ b/mm/mempolicy.c
->> @@ -573,6 +573,9 @@ static int queue_folios_pte_range(pmd_t *pmd, 
->> unsigned long addr,
->>       pte_t *pte, *mapped_pte;
->>       pte_t ptent;
->>       spinlock_t *ptl;
->> +    int max_nr;
->> +    const fpb_t fpb_flags = FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIRTY;
->> +    int nr = 1;
+On 4/15/2025 1:22 PM, Johan Hovold wrote:
+> Using of_property_read_bool() for non-boolean properties is deprecated
+> and results in a warning during runtime since commit c141ecc3cecd ("of:
+> Warn when of_property_read_bool() is used on non-boolean properties").
 > 
-> Try sticking to reverse xmas tree, please. (not completely the case 
-> here, but fpb_flags can easily be moved all he way to the top)
-
-I thought that the initializations were to be kept at the bottom.
-Asking for future patches, should I put all declarations in reverse-xmas 
-fashion (even those which I don't intend to touch w.r.t the patch 
-logic), or do I do that for only my additions?
-
+> Fixes: b6ef830c60b6 ("i2c: omap: Add support for setting mux")
+> Cc: Jayesh Choudhary <j-choudhary@ti.com>
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> ---
+>   drivers/i2c/busses/i2c-omap.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Also, why are you initializing nr to 1 here if you reinitialize it below?
-
-Yup no need, I thought pte += nr will blow up due to nr not being 
-initialized, but it won't because it gets executed just before the start 
-of the second iteration.
-
-> 
->  >       ptl = pmd_trans_huge_lock(pmd, vma);>       if (ptl) {
->> @@ -586,7 +589,8 @@ static int queue_folios_pte_range(pmd_t *pmd, 
->> unsigned long addr,
->>           walk->action = ACTION_AGAIN;
->>           return 0;
->>       }
->  > -    for (; addr != end; pte++, addr += PAGE_SIZE) {> +    for (; 
-> addr != end; pte += nr, addr += nr * PAGE_SIZE) {
->> +        nr = 1;
->>           ptent = ptep_get(pte);
->>           if (pte_none(ptent))
->>               continue;
->> @@ -607,6 +611,11 @@ static int queue_folios_pte_range(pmd_t *pmd, 
->> unsigned long addr,
->>           if (!queue_folio_required(folio, qp))
->>               continue;
->>           if (folio_test_large(folio)) {
->> +            max_nr = (end - addr) >> PAGE_SHIFT;
->> +            if (max_nr != 1)
->> +                nr = folio_pte_batch(folio, addr, pte, ptent,
->> +                             max_nr, fpb_flags,
->> +                             NULL, NULL, NULL);
-> 
-> We should probably do that immediately after we verified that 
-> vm_normal_folio() have us something reasonable.
-
-But shouldn't we keep the small folio case separate to avoid the 
-overhead of folio_pte_batch()?
-
-> 
->>               /*
->>                * A large folio can only be isolated from LRU once,
->>                * but may be mapped by many PTEs (and Copy-On-Write may
->> @@ -633,6 +642,7 @@ static int queue_folios_pte_range(pmd_t *pmd, 
->> unsigned long addr,
->>               qp->nr_failed++;
->>               if (strictly_unmovable(flags))
->>                   break;
->> +            qp->nr_failed += nr - 1;
-> 
-> Can't we do qp->nr_failed += nr; above?
-
-I did not dive deep into the significance of nr_failed, but I did that
-to keep the code, before and after the change, equivalent:
-
-Claim: if we reach qp->nr_failed++ for a single pte, we will reach here 
-for all ptes belonging to the same batch.
-
-Proof: We reach here => the if condition is true. Now, !(flags & 
-(MPOL_MF_MOVE | MPOL_MF_MOVE_ALL)) and !vma_migratable(vma) do not 
-depend on the ptes. So the other case is that !migrate_folio_add() is 
-true => !folio_isolate_lru() is true, which depends on the folio and not 
-the PTEs; if isolation fails for one PTE, it will definitely fail for 
-the PTE batch.
-
-So, before the change, if we iterate on a pte mapping a large folio, and 
-strictly_unmovable(flags) is true, then nr_failed += 1 only. If not, 
-then nr_failed++ will happen nr times for sure (because of the claim) 
-and we can safely do qp->nr_failed += nr - 1.
-
-> 
-> Weird enough, queue_folios_pmd() also only does qp->nr_failed++, but 
-> queue_pages_range() documents it that way.
-> 
->>           }
->>       }
->>       pte_unmap_unlock(mapped_pte, ptl);
-> 
-> 
-
+> diff --git a/drivers/i2c/busses/i2c-omap.c b/drivers/i2c/busses/i2c-omap.c
+> index 16afb9ca19bb..876791d20ed5 100644
+> --- a/drivers/i2c/busses/i2c-omap.c
+> +++ b/drivers/i2c/busses/i2c-omap.c
+> @@ -1454,7 +1454,7 @@ omap_i2c_probe(struct platform_device *pdev)
+>   				       (1000 * omap->speed / 8);
+>   	}
+>   
+> -	if (of_property_read_bool(node, "mux-states")) {
+> +	if (of_property_present(node, "mux-states")) {
+>   		struct mux_state *mux_state;
+>   
+>   		mux_state = devm_mux_state_get(&pdev->dev, NULL);
+Acked-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
 
