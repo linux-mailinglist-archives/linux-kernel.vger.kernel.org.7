@@ -1,145 +1,130 @@
-Return-Path: <linux-kernel+bounces-604358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FD2BA89387
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:54:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5B7BA8938E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:57:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FD28170921
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 05:54:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F5C03B27D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 05:57:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F05F274FCB;
-	Tue, 15 Apr 2025 05:54:13 +0000 (UTC)
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 801A22750E6;
+	Tue, 15 Apr 2025 05:57:04 +0000 (UTC)
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011F7205ADB
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 05:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8471B6CEF;
+	Tue, 15 Apr 2025 05:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744696452; cv=none; b=MXBA2MFMzS32jSJWP/lzblklOrOloTO8uhnB2c51HN8hDCNxaGC6zimVWwLEKUoOr89ZokKxgJICDazPs6oSHkCaBSJVmVQVBzlMPepzz4eGzTKMYrZsRUTFklSCPYzxiwqmSKgjPdos8/UKYZMdCIDRQ8ppGrauTgTP1l5VWPo=
+	t=1744696624; cv=none; b=hD9SToSbsn96ATGRiicZ8l9C1MzcJ6kAuIaVPf1oxHQ5fe+yEVjaExjYlHqOPVQ8TLgJXucTn18SZ9RU1u+bvgjNpDyl/G+pzVdl8pqXMVp+qoOPVzU3o7JadLPPNgu26hMTovJeVUzn8tomUeTzhmc8xR+Hy3NTsPxeI7K3tO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744696452; c=relaxed/simple;
-	bh=VDKvhMa9a50oojknzBu63d8dM9RR6/Pw8yphqlF1nAs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZpJN3mHoTdzYtHo/8+LNLMuVYqqiBBqBlUiKM2pC42Kj/jAS6+LR2xOJXeU9ZvdyGTefR2C/BcEnxtpkIKT+1zL6SOk7pk5BM+1BAvKtVoXpaCyzSAKdDZ4gsmbsc9kPyry9NQaUUdrQfnW8eTzipenrCmlvakpxQ2p3HcK1Cfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9B43B43A3B;
-	Tue, 15 Apr 2025 05:54:05 +0000 (UTC)
-Message-ID: <4a0dc950-cda6-4bb4-a4e9-460bc56b5bb1@ghiti.fr>
-Date: Tue, 15 Apr 2025 07:54:04 +0200
+	s=arc-20240116; t=1744696624; c=relaxed/simple;
+	bh=O+NBj4j3iQU7jiJviRGpSHLKS7C8evzhpxJmsJ8nUn8=;
+	h=From:To:Cc:References:In-Reply-To:Subject:Date:Message-ID:
+	 MIME-Version:Content-Type; b=OrYQp6ccJxAjhz5wjBdWnZjmnx4C3gXN25MZxEnm3Tr1Ggyz9RJP3libHT8l05VXDaD726G2eKkCWBezBt2u1adiccYG01qYrMNziZxHD1BKlAouqXOQgfHY8vdTWiqQAwaEWIjqtbBQfmwXAJM0tykHmZhKI1/IgpVkX6v0AIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trustnetic.com; spf=pass smtp.mailfrom=trustnetic.com; arc=none smtp.client-ip=54.92.39.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trustnetic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trustnetic.com
+X-QQ-mid:Yeas9t1744696533t013t26505
+Received: from 3DB253DBDE8942B29385B9DFB0B7E889 (jiawenwu@trustnetic.com [36.20.107.143])
+X-QQ-SSF:0000000000000000000000000000000
+From: =?utf-8?b?Smlhd2VuIFd1?= <jiawenwu@trustnetic.com>
+X-BIZMAIL-ID: 2050150904681905092
+To: "'Abdun Nihaal'" <abdun.nihaal@gmail.com>
+Cc: <mengyuanlou@net-swift.com>,
+	<andrew+netdev@lunn.ch>,
+	<davem@davemloft.net>,
+	<edumazet@google.com>,
+	<kuba@kernel.org>,
+	<pabeni@redhat.com>,
+	<horms@kernel.org>,
+	<netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20250415032910.13139-1-abdun.nihaal@gmail.com>
+In-Reply-To: <20250415032910.13139-1-abdun.nihaal@gmail.com>
+Subject: RE: [PATCH net] net: txgbe: fix memory leak in txgbe_probe() error path
+Date: Tue, 15 Apr 2025 13:55:31 +0800
+Message-ID: <00b701dbadca$ffa3de50$feeb9af0$@trustnetic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] riscv: Avoid fortify warning in syscall_get_arguments()
-To: Nathan Chancellor <nathan@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Charlie Jenkins <charlie@rivosinc.com>
-Cc: "Dmitry V. Levin" <ldv@strace.io>, Kees Cook <kees@kernel.org>,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250409-riscv-avoid-fortify-warning-syscall_get_arguments-v1-1-7853436d4755@kernel.org>
-Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250409-riscv-avoid-fortify-warning-syscall_get_arguments-v1-1-7853436d4755@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain;
+	charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvddvieejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpefhhfdutdevgeelgeegfeeltdduhfduledvteduhfegffffiefggfektefhjedujeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemsgefgegtmeefjedvugemrggsrggtmegstgdtkeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemsgefgegtmeefjedvugemrggsrggtmegstgdtkedphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemsgefgegtmeefjedvugemrggsrggtmegstgdtkegnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepledprhgtphhtthhopehnrghthhgrnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtohepphgrl
- hhmvghrsegurggssggvlhhtrdgtohhmpdhrtghpthhtoheprghouhesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopegthhgrrhhlihgvsehrihhvohhsihhntgdrtghomhdprhgtphhtthhopehlughvsehsthhrrggtvgdrihhopdhrtghpthhtohepkhgvvghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhrihhstghvsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhg
-X-GND-Sasl: alex@ghiti.fr
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQGw4ep9NYQY3hr1lQ/YBs2b0q+BSrP50eSw
+Content-Language: zh-cn
+X-QQ-SENDSIZE: 520
+Feedback-ID: Yeas:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NYaClDVrQHFLyLKUkR75c38Ry+138fLCVf1amXOAY07nXqx50xFUcNR7
+	ZBHaTeMAwONC+rski3oyaZRjiZozB0HLl72/hHl/mPg0rF4NBNuMr3+o+jU9/vKpGIsP+sk
+	05V9tcRAE4Hw2N1e+f5g2V4WpbgH6ePv7oQAcO3kRD180A2biCvNsRNTjExpi6ipihVsx/Y
+	v/ltxJWRUzg7xwrf8mH7VCp4z7JtnND8RYOQxwxv/FxZjVKAEEQ9Es62CBB6YDPM/781Uak
+	2uOEsI75M27xRuqXsPx9bVl2K1H/frawwtfCoi4oNcqvm/+RV4P2BZ4KRT0as6zLx1MdE1I
+	iMah5Ka0BUefjQ0cykjljD7QhqSLb1iiCBj0+GiChOCbA5gYX9r5owyPdcHKbN25bXJk701
+	xbJbjE3oZsGzuaHglqD0O+CtHiH7b83zP+VLV+1QreNeLwZlB13+l7L1CKTcuCo+YHmS3Sb
+	YOanZxLKv2w2E5QNS3a1B17FBBZfD7jyyXuXv/+j2hX8XKkqMJoGuIiWLmNmOJkaZF2ftyX
+	3cwci8zxWCCW6Tjua+B2y+QQQljV8jKGmi5RPpeTr4+CCY/ZGG+6JaRgVmEe2tKeyoZBd46
+	L6/F4wRgdDqdOcjl69DVKCHUTrxOboM87Lk+/p1oBEjy+HMurVtlOJYP1kE0g1+74QF5mEJ
+	odLYmYx9lzjo0yYHacgdWbfXhN5/OwiS4FtaGdlmBcgTkldwF26milH+WzVkDi3MeXi+KJr
+	zpHkuBpx6JLBM0OiiGzfPIPm0O7kVBjdWCeelTsOd7F+LONUKQ/LehKdu8tOpH/Yc3AaWA5
+	9eYhj1xUDpoRRrzrV6ZlqMFGS3xdmpSyHfPXWohAyb5o0k4CVEHXnWDtvqI1cJaeBC34ew6
+	BmVktpdGHBLFhDvGeJcWqNvcmnxHTQUgeslJcq330FJQailf7ZRn8zXlD8S6Or/3+SqPJiL
+	9r1HdFOYKnRv/PI9/UvTwrFqYsHei4x1P3iQ0EOcFUixTEkCT6rGtdqUHNGRvtji+MZ03ZA
+	cyyapCNg==
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-RECHKSPAM: 0
 
-Hi Nathan,
-
-On 09/04/2025 23:24, Nathan Chancellor wrote:
-> When building with CONFIG_FORTIFY_SOURCE=y and W=1, there is a warning
-> because of the memcpy() in syscall_get_arguments():
->
->    In file included from include/linux/string.h:392,
->                     from include/linux/bitmap.h:13,
->                     from include/linux/cpumask.h:12,
->                     from arch/riscv/include/asm/processor.h:55,
->                     from include/linux/sched.h:13,
->                     from kernel/ptrace.c:13:
->    In function 'fortify_memcpy_chk',
->        inlined from 'syscall_get_arguments.isra' at arch/riscv/include/asm/syscall.h:66:2:
->    include/linux/fortify-string.h:580:25: error: call to '__read_overflow2_field' declared with attribute warning: detected read beyond size of field (2nd parameter); maybe use struct_group()? [-Werror=attribute-warning]
->      580 |                         __read_overflow2_field(q_size_field, size);
->          |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->    cc1: all warnings being treated as errors
->
-> The fortified memcpy() routine enforces that the source is not overread
-> and the destination is not overwritten if the size of either field and
-> the size of the copy are known at compile time. The memcpy() in
-> syscall_get_arguments() intentionally overreads from a1 to a5 in
-> 'struct pt_regs' but this is bigger than the size of a1.
->
-> Normally, this could be solved by wrapping a1 through a5 with
-> struct_group() but there was already a struct_group() applied to these
-> members in commit bba547810c66 ("riscv: tracing: Fix
-> __write_overflow_field in ftrace_partial_regs()").
->
-> Just avoid memcpy() altogether and write the copying of args from regs
-> manually, which clears up the warning at the expense of three extra
-> lines of code.
->
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+On Tue, Apr 15, 2025 11:29 AM, Abdun Nihaal wrote:
+> When txgbe_sw_init() is called, memory is allocated for wx->rss_key
+> in wx_init_rss_key(). However, in txgbe_probe() function, the subsequent
+> error paths after txgbe_sw_init() don't free the rss_key. Fix that by
+> freeing it in error path along with wx->mac_table.
+> 
+> Also change the label to which execution jumps when txgbe_sw_init()
+> fails, because otherwise, it could lead to a double free for rss_key,
+> when the mac_table allocation fails in wx_sw_init().
+> 
+> Fixes: 937d46ecc5f9 ("net: wangxun: add ethtool_ops for channel number")
+> Reported-by: Jiawen Wu <jiawenwu@trustnetic.com>
+> Signed-off-by: Abdun Nihaal <abdun.nihaal@gmail.com>
 > ---
-> I omitted a Fixes tag because I think this has always been an overread
-> if I understand correctly but it is only the addition of the checks from
-> commit f68f2ff91512 ("fortify: Detect struct member overflows in
-> memcpy() at compile-time") that it becomes a noticeable issue.
->
-> This came out of a discussion from the addition of
-> syscall_set_arguments(), where the same logic causes a more noticeable
-> fortify warning because it happens without W=1, as it is an overwrite:
-> https://lore.kernel.org/20250408213131.GA2872426@ax162/
-> ---
->   arch/riscv/include/asm/syscall.h | 7 +++++--
->   1 file changed, 5 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/riscv/include/asm/syscall.h b/arch/riscv/include/asm/syscall.h
-> index 121fff429dce66b31fe79b691b8edd816c8019e9..eceabf59ae482aa1832b09371ddb3ba8cd65f91d 100644
-> --- a/arch/riscv/include/asm/syscall.h
-> +++ b/arch/riscv/include/asm/syscall.h
-> @@ -62,8 +62,11 @@ static inline void syscall_get_arguments(struct task_struct *task,
->   					 unsigned long *args)
->   {
->   	args[0] = regs->orig_a0;
-> -	args++;
-> -	memcpy(args, &regs->a1, 5 * sizeof(args[0]));
-> +	args[1] = regs->a1;
-> +	args[2] = regs->a2;
-> +	args[3] = regs->a3;
-> +	args[4] = regs->a4;
-> +	args[5] = regs->a5;
->   }
->   
->   static inline int syscall_get_arch(struct task_struct *task)
->
-> ---
-> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
-> change-id: 20250409-riscv-avoid-fortify-warning-syscall_get_arguments-19c0495d4ed7
->
-> Best regards,
+>  drivers/net/ethernet/wangxun/txgbe/txgbe_main.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/wangxun/txgbe/txgbe_main.c b/drivers/net/ethernet/wangxun/txgbe/txgbe_main.c
+> index a2e245e3b016..38206a46693b 100644
+> --- a/drivers/net/ethernet/wangxun/txgbe/txgbe_main.c
+> +++ b/drivers/net/ethernet/wangxun/txgbe/txgbe_main.c
+> @@ -611,7 +611,7 @@ static int txgbe_probe(struct pci_dev *pdev,
+>  	/* setup the private structure */
+>  	err = txgbe_sw_init(wx);
+>  	if (err)
+> -		goto err_free_mac_table;
+> +		goto err_pci_release_regions;
+> 
+>  	/* check if flash load is done after hw power up */
+>  	err = wx_check_flash_load(wx, TXGBE_SPI_ILDR_STATUS_PERST);
+> @@ -769,6 +769,7 @@ static int txgbe_probe(struct pci_dev *pdev,
+>  	wx_clear_interrupt_scheme(wx);
+>  	wx_control_hw(wx, false);
+>  err_free_mac_table:
+> +	kfree(wx->rss_key);
+>  	kfree(wx->mac_table);
+>  err_pci_release_regions:
+>  	pci_release_selected_regions(pdev,
+> --
+> 2.47.2
+> 
 
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+Thanks.
 
-IIUC, Andrew took this patch, if that changes, please let me know and 
-I'll merge it through the riscv tree.
-
-Thanks,
-
-Alex
-
+Reviewed-by: Jiawen Wu <jiawenwu@trustnetic.com>
 
 
