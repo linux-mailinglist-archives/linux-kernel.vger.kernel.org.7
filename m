@@ -1,108 +1,128 @@
-Return-Path: <linux-kernel+bounces-605171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4EA7A89DD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:22:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72A14A89DDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:23:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48835189907E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:22:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B38AB188D3B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:23:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51C9207641;
-	Tue, 15 Apr 2025 12:20:00 +0000 (UTC)
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F5E29C33A;
+	Tue, 15 Apr 2025 12:21:15 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9697127B509;
-	Tue, 15 Apr 2025 12:19:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06FD28A1DE;
+	Tue, 15 Apr 2025 12:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744719600; cv=none; b=RYjVgN5K5boNAMgLio8P+qE1xlo2T5TX24C2y8Kyvne914041ubneOYYO0wDfuU8x0/+7RfBlWqCXnpGrsuSzteihk6+2CfcB8ZGeYu4YdpolujT5DERBlcGPqs/olCzfnOd/arvwjDrB9b9ZbwK2FAv1A/vfySlgMvWq1eSxSo=
+	t=1744719675; cv=none; b=WwRaJKc2ZNQK58sGdMwzl509W+DRixaU/vhEcYkRusWEJ+ogElMX7YzC8vLM+404S6F+8uRtSY8g9DA7RRUuBQ2N5RACRCh7aF9nJix7wQbVZM0e3kCVxL+Jwqa48LNMzy/hc1QlmtJ+niqdCytmR7RVfhw0JiauxC+i4d28eaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744719600; c=relaxed/simple;
-	bh=rHyvAHy87o8YK32YTDCQoPojU/LLd83jT+O2Lb0lMyw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PNUsfAEdkcC5UVnNykcXNsDSb3EjCvW/ANUKUviJD+TyUp7+KtyTkl3huKPDr3kNR5os56nlD6pNLnnWHAJqu7ZD6Ud4AAZlQlox4kFCD4Hp/ewMp3OZBuF5fUrR5YRIDgyueBewtP3NAK5KtlnLhj0x2j+ycEmyI+/2XjDzHhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4c315dd9252so259486137.1;
-        Tue, 15 Apr 2025 05:19:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744719597; x=1745324397;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=no/Eok31sk2EZ2vY4EXOj+z7BfV0O6ffw0mIU9CJuLc=;
-        b=XczjM6PmNN0sPtP7lIeTILF/+he/kw867yVUE1hqd4/lHVPTWVg+B+08sEjnXcViq1
-         RhWDBZMzXncxXxPUl5UYdNNZ9r1Fbgj61GcBmZwHmQm5eUj6YtwyEjTQGtIA2Dwoh6/L
-         EQmUe9R7/pR90MFKALmjZwcA3TZ3OCXS+iSsmJJau6WyP73RWC44V33U5/swq0ESjdBQ
-         XZ1kfFLVfqOlv1gXU7Zp8+3zRNT+PwVl47NHVrDjRAIOPfLU/kzEvxiuN3WefpO8+D3f
-         Y+qRZPV6ORNjAnoJqyZkyDG3agxHLPweGbb3xUFkUChneNOqRxu7LN6ikWVYlhCeWITI
-         jYGg==
-X-Forwarded-Encrypted: i=1; AJvYcCW3Zw7NpSjsUYtKv0Ux0HCZn/emzi5cSgvnNu2gw8H0yiXwYEJWygaVrVX9oRwx7CUTY87xD6ST5lKsNd6CZ7W8ePc=@vger.kernel.org, AJvYcCXlbYPcrfi7DQxY8YRlsUm/4wBScPTfsKzD0FPNrK2uHn1sNyCHGDDJwMJPubnu78vWEWAQaTS0VLxCMe5e@vger.kernel.org, AJvYcCXtN0rZz4i1M1VZaAjsp3jxEmcPalA5wTsbcRMG2YyzAXiopLSlWK4YrFegTBrdm51D88dRAgmEYWFd@vger.kernel.org
-X-Gm-Message-State: AOJu0YxW35wt3F579nMeVF4GuXSae0l/d1jPsJEx4Cp4//NinNo1KpPQ
-	ewS2cAyDHrnuLkJkbn10NmR0jWGxHeWpa4g1YbaPdIblrfpMu+UgpBMUIjWB
-X-Gm-Gg: ASbGncvhWAtwABTX8HtXhG9oDlNa3bz9uJCzAnY0ZdB1a0cTOIGbiTRuprjFDVR5Lh1
-	Q/gaADkbXHPsD4fD/zBBMBsSuN+PNm1HL/Ym1vCuK80ypyBqXXkR1WWdOC7RJT7Wrg4WCv+JI4B
-	OPhkIFnwomPdgmLD8dIR9g6VrJwr+JApZKCVe0uhs1FnvUDf1evn4lBf39gUVn0E+6z57gip6kY
-	R9P0vtAFYXI+Ct7NOw1tiNjMkzr2zVAUAUqVMfEzXhEtbGTIcf89l4W4qETQSohgLvowzv6idCS
-	vZC9NNhiLvzPFi0HrO+KizUXMM+LZ4e8B+BXCJlk2Eh0zt6tws5n5oMJRr0Yhvcv7rQ+CXrvDlx
-	/P5U=
-X-Google-Smtp-Source: AGHT+IGzEgX6yU3eYd7NEIdIrfCyIOYSCQDY2XSlVbWyRsRYskfDcMmueeK1f6pOGNlzZzWjMNt9MQ==
-X-Received: by 2002:a05:6102:32cc:b0:4bb:dfd8:4195 with SMTP id ada2fe7eead31-4cb42d3ede7mr2100655137.3.1744719597190;
-        Tue, 15 Apr 2025 05:19:57 -0700 (PDT)
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4c9c9738490sm2661893137.1.2025.04.15.05.19.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Apr 2025 05:19:56 -0700 (PDT)
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-4c315dd9252so259480137.1;
-        Tue, 15 Apr 2025 05:19:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVogE36qwc3gTuUGkBQ1TowFdBUDWT2LKQOFeK/gVxbt0PgG5L5gUJe+M4OX+d5q3aXPjoE3ljZO+AXOeUl@vger.kernel.org, AJvYcCWPhJKKF4lNUR3yd6YAen9VwjgP0KFDL3yF3ocnJ2CAVX0Oo+zCzB3yt/7cRKZxRBbYYzfcQg7thTTl@vger.kernel.org, AJvYcCWs7HK6SQwtiOrn2bHzY+Un1UHUazKahJsTOJI3QiDkMcuNhCy3XKA5yrCXZSH4Gyolg1qpeqx4E3y09AUmUP+vHR8=@vger.kernel.org
-X-Received: by 2002:a05:6102:4a08:b0:4c3:69f:5be with SMTP id
- ada2fe7eead31-4cb42e70f68mr1520007137.7.1744719596714; Tue, 15 Apr 2025
- 05:19:56 -0700 (PDT)
+	s=arc-20240116; t=1744719675; c=relaxed/simple;
+	bh=SarEd5mR20idHoJNvSbnPeVnnEjWVIZIGYfMWjf11Fw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z/fbdSC+nm/PFrp/N9naQPICRD9Q3nmQqh4Ly7C0X/z/wqAi5uzgbswAeN11DHppOb8Af2JP4lUzSQANHfJTp1gPL0Ewl8YxNipLvKkm43Vlp0FDGdWrkMU1I9kVKdL4dqkV4hFU/OE3vWZR8nIHOV2HhI7Sk7qRk4hmqbJBuIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [124.16.141.245])
+	by APP-03 (Coremail) with SMTP id rQCowAD3oD0vT_5n_OEBCQ--.19632S2;
+	Tue, 15 Apr 2025 20:21:04 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: arend.vanspriel@broadcom.com,
+	kvalo@kernel.org
+Cc: linux-wireless@vger.kernel.org,
+	brcm80211@lists.linux.dev,
+	brcm80211-dev-list.pdl@broadcom.com,
+	linux-kernel@vger.kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>
+Subject: [PATCH v4] brcm80211: fmac: Add error log in brcmf_usb_dl_cmd()
+Date: Tue, 15 Apr 2025 20:20:01 +0800
+Message-ID: <20250415122001.3325-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250329121258.172099-1-john.madieu.xa@bp.renesas.com> <20250329121258.172099-2-john.madieu.xa@bp.renesas.com>
-In-Reply-To: <20250329121258.172099-2-john.madieu.xa@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 15 Apr 2025 14:19:43 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXKXbsy25c4287aOCtiJ8PzMu7xqPhfrSu+_UGaxLiWPQ@mail.gmail.com>
-X-Gm-Features: ATxdqUExH8rYrWVwACLU5pkYzEfWeUqbdV3fTVfBtp2jaIn_s3Yrc7HUmpuWcBA
-Message-ID: <CAMuHMdXKXbsy25c4287aOCtiJ8PzMu7xqPhfrSu+_UGaxLiWPQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] arm64: dts: renesas: rzg3e-smarc-som: Add I2C2 device pincontrol
-To: John Madieu <john.madieu.xa@bp.renesas.com>
-Cc: conor+dt@kernel.org, krzk+dt@kernel.org, magnus.damm@gmail.com, 
-	robh@kernel.org, biju.das.jz@bp.renesas.com, devicetree@vger.kernel.org, 
-	john.madieu@gmail.com, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAD3oD0vT_5n_OEBCQ--.19632S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7tr4kuFWkAw1UCFWrJryUGFg_yoW8AFW8pr
+	4xXa90yFy8Wr1SganayrZxG3Z8K3Wktayvkay293s7ur4kCw10gr4rKFy09r4kCrWxC347
+	XFWUtF1DXr17GFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvv14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j
+	6r4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
+	AVWUtwCY02Avz4vE14v_Xr1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
+	1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
+	14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7
+	IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E
+	87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73Uj
+	IFyTuYvjfUnhL0DUUUU
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCRANA2f+IlKYJQACsB
 
-On Sat, 29 Mar 2025 at 13:13, John Madieu <john.madieu.xa@bp.renesas.com> wrote:
-> Add device node for i2c2 pincontrol. Also enable i2c2 device node on dtsi
-> with 1MHz clock frequency as it is connected to PMIC raa215300 on RZ/G3E
-> SoM.
->
-> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+In brcmf_usb_dl_cmd(), the error logging is not enough to describe
+the error state. And some caller of the brcmf_usb_dl_cmd() does not
+handle its error. An error log in brcmf_usb_dl_cmd() is needed to
+prevent silent failure.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.16.
+Add error handling in brcmf_usb_dl_cmd() to log the command id and
+error code in the brcmf_usb_dl_cmd() fails. In this way, every
+invocation of the function logs a message upon failure.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+---
+v4: Fix spelling problem.
+v3: Change patch name and comment. Move error log into brcmf_usb_dl_cmd().
+v2: Remove redundant bailing out code.
 
-                        Geert
+ .../wireless/broadcom/brcm80211/brcmfmac/usb.c   | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
+index d06c724f63d9..a11a6d9f3c2b 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
+@@ -744,12 +744,16 @@ static int brcmf_usb_dl_cmd(struct brcmf_usbdev_info *devinfo, u8 cmd,
+ 	char *tmpbuf;
+ 	u16 size;
+ 
+-	if ((!devinfo) || (devinfo->ctl_urb == NULL))
+-		return -EINVAL;
++	if (!devinfo || !devinfo->ctl_urb) {
++		ret = -EINVAL;
++		goto err;
++	}
+ 
+ 	tmpbuf = kmalloc(buflen, GFP_ATOMIC);
+-	if (!tmpbuf)
+-		return -ENOMEM;
++	if (!tmpbuf) {
++		ret = -ENOMEM;
++		goto err;
++	}
+ 
+ 	size = buflen;
+ 	devinfo->ctl_urb->transfer_buffer_length = size;
+@@ -783,6 +787,10 @@ static int brcmf_usb_dl_cmd(struct brcmf_usbdev_info *devinfo, u8 cmd,
+ finalize:
+ 	kfree(tmpbuf);
+ 	return ret;
++
++err:
++	brcmf_err("dl cmd %u failed: err=%d\n", cmd, ret);
++	return ret;
+ }
+ 
+ static bool
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.42.0.windows.2
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
