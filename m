@@ -1,159 +1,167 @@
-Return-Path: <linux-kernel+bounces-604504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BBA0A8954B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:38:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5F2DA8955D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:41:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 104BD7A36FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:37:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 385BA1898A34
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:42:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A1A24EAB1;
-	Tue, 15 Apr 2025 07:38:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A9D827A90E;
+	Tue, 15 Apr 2025 07:41:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lHFVEcDj"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ON63hOS+"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D1C72405F2;
-	Tue, 15 Apr 2025 07:38:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35DBAA48
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 07:41:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744702729; cv=none; b=l/m+N7hZ2TymF9BIVkvxpJHGwFaV3UrPDEKpYnZumyTMasqv7pvLE7cIHsmn+ycl+kWrqV25yCod6RGyWMu3hyLOKek3KsiRBJ61W5kFZp2OQuVQsJs5hQCELvfuuVcQCUGR3wvIK6thJ6sR5TKgvpF6AmN062AERnXRCerLv1Q=
+	t=1744702905; cv=none; b=bou+P07ArV/FQ23b2i1VuTZ8n4t8mo42hKldhPbnMrbLz6xgHbB7mhc9wj/zCnlBHdg77mkaSbOZa11xzFevExYxNV3B50pFKwRbmCgTamcQbBda9U39+01jtUxv1W8j/A6XzqhXFkgJJs1xRvSBR5R4yuB++OfSnXkGy03RkoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744702729; c=relaxed/simple;
-	bh=jEhRmyM7xjK7MwkhrtbB2WCd9TBaFxjOFcI9QJeE3qQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uXkhXqTwMJ3RJB89Zagfs+H+onbF6DC2OXT1VvdhZiObGImDEFOFHhSrAIZtt3Jb8KswB0OynkZY7zfNg6u4KQrnzx6Se123QmWhDgfe0slS+BH2xrNBpEpsdAF7bTlZxyQmBEwdUDJnGSDSlCIbK7JdYpAoVdqNMoLLdEQfer8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lHFVEcDj; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-afc857702d1so4593382a12.3;
-        Tue, 15 Apr 2025 00:38:47 -0700 (PDT)
+	s=arc-20240116; t=1744702905; c=relaxed/simple;
+	bh=YL5QJ110xB5bIstZFqLfAhe6+k8X5YNSR1kmNf8Sb/k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tuv8zx8hznDhXiK+VJTfKv1b7nqk7DTQfoO+0i/R0MZzqBMg4OnCTzkeriEM7SM334p4NQBiGWxQWewtiODgyOJK0aJsXMynvR6s5M8U2o0iaAs/joZqHBM4QYix+++P5wqBWjdNZa2Pu7OYgWy5Q5W3CDJuV4Y6Xh0IZ+muq48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ON63hOS+; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-301918a4e3bso5268369a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 00:41:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744702727; x=1745307527; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mvzVunjooJkOd76fbmWLggolhiDrqhzGzGsPDBPnwNY=;
-        b=lHFVEcDjZR1YV4awp/XyHMNNsXiHjlQIQulgVO2g1LYONEDQCbfo/TemfBScX6VtY9
-         1PLajpq5vcF06rcJSVqD2nB1CAPebpzkgbjAPXIFXnEM8+yCM60VsDJSiHB1Cu9WHIas
-         Sgl7ngEPlj++2B9xn6EGcUOimGGm86Ye7ksJa7cI6p/JTIOySr16eJOtnoiSVgZA4FXm
-         ZR3aRPdW9P7H72YZyG+fMddoNMIX3VvxuDGuyJFqwpC19GMc9TROFaSLKerH4dUllUbq
-         LwVJYcsSL+D2XpTFR2jH5bpjSj2nO/YHXYumxqpKQ3yLo74jT2gfhtYUF1Z1yKgRX2cd
-         joTA==
+        d=linaro.org; s=google; t=1744702903; x=1745307703; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=OAto5TMsyfm0PnIWFCrMK2YomypnAVk8abWD+aRoNLw=;
+        b=ON63hOS+eyH/EAiaIay06G0QAqs1s7XB2LSLl146SotkR8kx2/1kiPqpSTDQ09O+HD
+         31UsPWK5kFrGN9oDrf1vGOp9jLCmBS8Xlw8oNXEhN359r1SPKnR/zdyD9cbf+PTGBx3h
+         y+B/VGkjmEXPxvtxIBscNff90XFueT7F9VFXA6Qli+tO02nGPkWCMg0JAgXG4dSGd6Fq
+         3mOKt0a/D9yi4roHx3gyVkIdycl1TQGdfMSOX0oQMcaguRITDi8+uzh+9zdHJqfXfsiD
+         98vRuRt2gF6JtToY+iTer4r0tdEKeYeu3E7H9RZ53jeWyd6rhAfUlEMkA6t0KsIyMHfY
+         kFuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744702727; x=1745307527;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mvzVunjooJkOd76fbmWLggolhiDrqhzGzGsPDBPnwNY=;
-        b=h7gM78vmGLmTPy/XE+ZQ9Gdfc6hSeD9ZPNu9BpLd5raX74L+F19HeQJmC2gvLjT+mt
-         RwFAxEOjwyJ34/nOJ/1XjzKdnvk6dQYnJ2MRsnP+G5zTM4/NTU4cv48OwsINTnY9xXDa
-         RxFarDqGDPmkMLwZAvTNiGyROGc3dDwS6qlaNc32+dSy/wlSGvysvdzOpluylPaxwec6
-         nPcvdMREszoH90xPGqUsdTvzHjYjV6UV+xA2X6oOnV+oswNWyxmM9p+lDPOkHOKCMPfo
-         CerqwmDv46IcYX7g/qkT+xfo3285PdmY0TuBdJtyCKa15wuaOYwx6dC2/Y8mjBtcfpye
-         AZCg==
-X-Forwarded-Encrypted: i=1; AJvYcCWg/I6cpEPzt4GUYE7XfxnTS9sir//3FuwJKstdmDqGAFhSvqeUa/Fi0mSzqMpbw3+1I6zCFDDCr8yLG7Vh@vger.kernel.org, AJvYcCXZf7F3/+WJl71rmcBjo7tUfPfjo0CHDmrT+jW69F3PxLHbf/43G0pC0bjn0ikb9/HB+zbJSW9J+1ZC@vger.kernel.org, AJvYcCXer2pDcqVPhKP1Be73YidYjKVhEjZVF0GtHRlWVRcpjSTAWuWiJIUbXs53TK/7lmdl8dBuvL3rmtt6nxPBiMq+ew==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw25pglqucyx8M5/IZC33wHarRAaZVkkxV3jbUjpJc9bfU36k/+
-	MekFq6UqlVJLiZ4CWNtbTMG0x5BM6tMgtjc4CsGxkbh2XnCHRiDWx+cdx52cp7XNu+FsPmD6DPo
-	13GuH7qh9g2vQM/0Umu1IIO33jDVDnNVprp77OQ==
-X-Gm-Gg: ASbGncvVIR2sIMy/QwVIB4mzSxnixy4+Ty26DZWx1mA2i+1e2Ds80tfKkWNSxtIz1dD
-	qyY2uE9MNwoemhtWrzfRXICI4Z2kRhiGb2OWnH3ddkwO6L8jp/eUeV7UrSXjMJs1eH3dcqQTiNm
-	9zK/WEdlatCcpyypVIIw==
-X-Google-Smtp-Source: AGHT+IEaQw1fMF+aLm6pFlRnZGVkYepFCANlU8kbPs9GBkc7bc76oOvq8qIgGhVqNudolyAIqZhr3iUCEwZKISUsLJM=
-X-Received: by 2002:a17:90b:524f:b0:2ee:d024:e4fc with SMTP id
- 98e67ed59e1d1-3082367f7b5mr25807985a91.33.1744702727316; Tue, 15 Apr 2025
- 00:38:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744702903; x=1745307703;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OAto5TMsyfm0PnIWFCrMK2YomypnAVk8abWD+aRoNLw=;
+        b=lxGCbd5UHF3R8WRyVirTOhOMMU96sPi+8jDKO0LdxMB/plAIDw5xLQoGYVGHFEqYIA
+         aH8eYXUlDczFlwdbGQoFXYI3asdzKjFu0kbcX+Tx/71urTmZXE3oERnjZ1le05Z00MEo
+         I+8OzDJogBlkKMYaD9f/kyK1RlNDSl5fQU7Agf+FYMx1RPmAjgNM7CZEPu1A7p727PZj
+         cfu7FB7TXwy2J68nrZ/OziEhuMi9/YXtCXn9CIEXmbiygNw8aaPuExBIVGwOgaqqLQZ3
+         zRy6dgb1AYlofnhx22Gjf7cL60aHwvKGl+VL+l57cd5TK1aruXDQOx+FB0jKQuDUti1i
+         GSFg==
+X-Forwarded-Encrypted: i=1; AJvYcCUaw9PsMocPRZMj0JKIvPHjDFK6JJOEyWegTwQzWw8gHcUJ1yOQ+DzJhStSdt+LB6wOoApPkbegLTDIDTs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIzklATltTBKztDyYZoG/KwOCt4oomA1RgRpSebeAUYg8+Sm79
+	GNqdcHYnMkEsl3Bmot5Tdfcwc7NIJoPCP7FsuiacGR7+qMH4UYvJfE2u7nVl+A==
+X-Gm-Gg: ASbGncuDza/+rBiGJhHcNX4EWkO19WmSdZT6ppsGpqsteTrCT/9I5DQ2MBu8xcUMlSt
+	sdF7FzJYo/RMVbdQouu37LwELhwRFMtCL26IsKsDgHZ8YDaLD0vq/Bxl8GTSdBRuIYwHFkQ2Ljk
+	fkh+dvPr+lWgw/wlpbVBtZjNFMhwZve9JRfFKP9HbJinh7xyKkRtlbecoPFsf+JFS4DDuXbmEXs
+	HqPcgknJl9xf4t6npYTT5/Ocatl6QnLgUxjZS9r9ZMs+lQZG9dbVH2snG+ePvsH7txAUxB/l7TH
+	/aaCIqVsm7wCqmSWEl4nKhi5HWJ1jMOaNa0sRJLWvE2TBTC1gg==
+X-Google-Smtp-Source: AGHT+IGKE+4zKM94UuTJQK/vyjfN6oxik3zVIACkmE5DFSJGrhrXSedhBxQ3pi+f1PJx7Y4YJ1fP+g==
+X-Received: by 2002:a17:90b:17ca:b0:301:6343:1626 with SMTP id 98e67ed59e1d1-308236281f7mr19205173a91.1.1744702903554;
+        Tue, 15 Apr 2025 00:41:43 -0700 (PDT)
+Received: from thinkpad ([120.60.71.35])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-306dd11e6c8sm12572515a91.14.2025.04.15.00.41.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Apr 2025 00:41:43 -0700 (PDT)
+Date: Tue, 15 Apr 2025 13:11:35 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Caleb Connolly <caleb.connolly@linaro.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Rob Herring <robh@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, quic_vbadigan@quicinc.com, quic_mrana@quicinc.com
+Subject: Re: [PATCH v2 1/3] dt-bindings: PCI: qcom: Move phy, wake & reset
+ gpio's to root port
+Message-ID: <tsnvoy2spr2dtqt3q2cnvl7rxobjgcgxntxb6rjtjdeej625i5@35je7sp3xqea>
+References: <20250414-perst-v2-0-89247746d755@oss.qualcomm.com>
+ <20250414-perst-v2-1-89247746d755@oss.qualcomm.com>
+ <ody5tbmdcmxxzovubac4aeiuxvrjjmwujqmo6uz7kczktefcxz@b6i5bkwpvmzl>
+ <6db146b9-ad63-42c7-9f33-83ecf64ed344@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320121004.2542314-1-daniel.baluta@nxp.com>
-In-Reply-To: <20250320121004.2542314-1-daniel.baluta@nxp.com>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Tue, 15 Apr 2025 10:40:32 +0300
-X-Gm-Features: ATxdqUHIjcegsRqkaCNjdC-btbkENgkxvRanbyOKxKHVbD_D9EvsKEww42I_CYM
-Message-ID: <CAEnQRZBFoZuiFJtzs0wCjrHJro3c=fWshRogNBnfGmkeyh-LtA@mail.gmail.com>
-Subject: Re: [PATCH v7 0/5] Configure imx8mp dsp node for rproc usage
-To: Daniel Baluta <daniel.baluta@nxp.com>
-Cc: shawnguo@kernel.org, robh@kernel.org, s.hauer@pengutronix.de, 
-	kernel@pengutronix.de, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	festevam@gmail.com, devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	frank.li@nxp.com, aisheng.dong@nxp.com, laurentiu.mihalcea@nxp.com, 
-	shengjiu.wang@nxp.com, iuliana.prodan@nxp.com, a.fatoum@pengutronix.de, 
-	mathieu.poirier@linaro.org, linux-remoteproc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6db146b9-ad63-42c7-9f33-83ecf64ed344@linaro.org>
 
-Hi Shawn,
+On Mon, Apr 14, 2025 at 02:50:19PM +0200, Caleb Connolly wrote:
+> 
+> 
+> On 4/14/25 10:04, Dmitry Baryshkov wrote:
+> > On Mon, Apr 14, 2025 at 11:09:12AM +0530, Krishna Chaitanya Chundru wrote:
+> > > Move the phy, phy-names, wake-gpio's to the pcie root port node instead of
+> > > the bridge node, as agreed upon in multiple places one instance is[1].
+> > > 
+> > > Update the qcom,pcie-common.yaml to include the phy, phy-names, and
+> > > wake-gpios properties in the root port node. There is already reset-gpio
+> > > defined for PERST# in pci-bus-common.yaml, start using that property
+> > > instead of perst-gpio.
+> > > 
+> > > For backward compatibility, do not remove any existing properties in the
+> > > bridge node.
+> > > 
+> > > [1] https://lore.kernel.org/linux-pci/20241211192014.GA3302752@bhelgaas/
+> > > 
+> > > Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> > > ---
+> > >   .../devicetree/bindings/pci/qcom,pcie-common.yaml      | 18 ++++++++++++++++++
+> > >   .../devicetree/bindings/pci/qcom,pcie-sc7280.yaml      | 17 +++++++++++++----
+> > >   2 files changed, 31 insertions(+), 4 deletions(-)
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml
+> > > index 0480c58f7d998adbac4c6de20cdaec945b3bab21..16e9acba1559b457da8a8a9dda4a22b226808f86 100644
+> > > --- a/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml
+> > > +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml
+> > > @@ -85,6 +85,24 @@ properties:
+> > >     opp-table:
+> > >       type: object
+> > > +patternProperties:
+> > > +  "^pcie@":
+> > > +    type: object
+> > > +    $ref: /schemas/pci/pci-pci-bridge.yaml#
+> > > +
+> > > +    properties:
+> > > +      reg:
+> > > +        maxItems: 1
+> > > +
+> > > +      phys:
+> > > +        maxItems: 1
+> > > +
+> > > +      wake-gpios:
+> > > +        description: GPIO controlled connection to WAKE# signal
+> > > +        maxItems: 1
+> > > +
+> > > +    unevaluatedProperties: false
+> > 
+> > Please mark old properties as deprecated.
+> 
+> Since this is a trivial change, just moving two properties, I don't see why
+> it makes sense to deprecate -- just remove the old properties, and move over
+> all the platforms at once.
+> 
 
-Gentle ping.
+This will be an ABI break. You should not remove properties all of a sudden
+without first deprecating them (even if you convert all upstream DTS at once).
+ABI is for older DTS also.
 
+- Mani
 
-On Thu, Mar 20, 2025 at 2:08=E2=80=AFPM Daniel Baluta <daniel.baluta@nxp.co=
-m> wrote:
->
-> DSP found in i.MX8MP SOC can be used by multiple frameworks in order to
-> enable various applications:
->         - rproc/rpmsg framework, used to load for example Zephyr samples
->         - Sound Open Firmware, used to enable various audio processing
->           pipelines.
->
-> Current dsp node was configured with SOF in mind but it doesn't work
-> well with imx8mp-evk dts. SOF controls audio IPs from firmware side
-> while imx8mp-evk.dts preffers to control audio IPs from Linux side.
->
-> So, configure 'dsp' node to be used with rproc scenario and later will
-> add a separate dts or an overlay to configure the node for SOF.
->
-> This patch series configures and enables dsp node to be used with rproc.
->
-> Changes since v6:
->         - addressed Alexander Stein comments
->         - enable mu2 separately in patch 5/5
->         - put "status" always as the last in node definition
->
-> Changes since v5:
->        - do not enable mu2 node by default
->        - fix dt_bindings errors
->
-> Changes since v4:
-> (https://lore.kernel.org/linux-arm-kernel/Z6zGLn3B6SVXhTV1@lizhi-Precisio=
-n-Tower-5810/T/)=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=
-=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=
-=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=
-=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=
-=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=
-=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=
-=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=
-=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7=C2=B7
->        - after comments received on v4, we implemented the run/stall
->          bits using reset controller API (changes merged ->
-> https://patchwork.kernel.org/project/linux-arm-kernel/cover/2025031108581=
-2.1296243-1-daniel.baluta@nxp.com/)
->         - drop patches related to DSP run/stall/reset via syscon
->        - picked up patch related to using run_stall via reset
->          controller API.
->
->
-> Daniel Baluta (5):
->   arm64: dts: imx8mp: Use resets property
->   arm64: dts: imx8mp: Add mu2 root clock
->   arm64: dts: imx8mp: Configure dsp node for rproc usage
->   arm64: dts: imx8mp: Add DSP clocks
->   arm64: dts: Enable DSP node for remoteproc usage
->
->  arch/arm64/boot/dts/freescale/imx8mp-evk.dts | 14 +++++++++++++
->  arch/arm64/boot/dts/freescale/imx8mp.dtsi    | 22 +++++++++++++-------
->  2 files changed, 29 insertions(+), 7 deletions(-)
->
-> --
-> 2.43.0
->
+-- 
+மணிவண்ணன் சதாசிவம்
 
