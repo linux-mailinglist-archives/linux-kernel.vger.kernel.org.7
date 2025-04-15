@@ -1,113 +1,259 @@
-Return-Path: <linux-kernel+bounces-604201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA859A89203
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 04:47:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46125A8923A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 04:53:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 425301898A40
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 02:47:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4714317DAE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 02:53:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12725219A95;
-	Tue, 15 Apr 2025 02:46:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 037B8235361;
+	Tue, 15 Apr 2025 02:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="caNP6SHe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Eym07reE"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD78205ADB;
-	Tue, 15 Apr 2025 02:45:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE66714830F
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 02:48:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744685158; cv=none; b=e+8q5o2wTz6zp2BpVdtmTnM7XAfsK6orkPskjOUyi8t0LNDd0wkqJK9cgrp1sSI6EatRbwk17ik7lcsk0qkPbd74ICx/ak1mRVAScL8B5sKpRnb2AOyyb1s29nRDOxdrp9qsg9zD/KWxVNyGNjmhhrC0aaGv+GExN6YEjN/PIi0=
+	t=1744685299; cv=none; b=rP2u6C/LjNEp72/NToIDsUp5YSzBN5NbnYiV8Vfc+KsHw5kpxv9ADtomzaCK0B6NhkRSZxuvj78mUfPHA7nAbm54hyoNxn8naCx0lrghdoydYkOTwGW0XDyC1Q65oD3MI2JM9qRRC9zRnmYF8O1DWllH/jM++mCUVVa2YeJoLDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744685158; c=relaxed/simple;
-	bh=eNT2DnaFtau75otXvoSolGN5m1XSsI2mM3CYJJA0yaE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hzA2cNBCTYUZe65JhSryIRS2GnO6JDMLlSvM3mxEk6QcaIGxoG5xg8iUGC0EW4sTu6KKIgPSUO3nlR4Fvo8WTPLhVjevyjD0lV0RmOUjINdzCYyTUbICaDPfe3xNlj/E4GJxK2Rpp279JpMe9akmtOEDuYsRqcAe+ClrAjvgPVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=caNP6SHe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3364BC4CEFD;
-	Tue, 15 Apr 2025 02:45:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744685158;
-	bh=eNT2DnaFtau75otXvoSolGN5m1XSsI2mM3CYJJA0yaE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=caNP6SHesjBv9W8pk7XtNpw0ohOioGZ+mdNkqa4qtGPF9db3jjJKrm49BQU7qjqDS
-	 cvkBrQS9NcBf45axdnFHKcLBL83dx8qJuG+3NzLsWbB5aSym7JsCyOfnDv7voSNbP3
-	 YU6eZiqkJpwk11T3yfK+JpdI7T25GTWrwOWYWpMJiwQrMwCwDYimjyP1KQFbTtLlli
-	 G/Dio0DVgBi4NREH6fwHR55G750UpRW6JWI4U/t7QhQ54KCY9E32BADfwQ3er3sMk2
-	 ZPQbiwD+22rv/jjb3R2yrCM4PisAE57F3pGFq2VF3KK5oNdSfF5UEJ4gu8RtD7tDYo
-	 syuxRO6PsFdCA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25514C369BC;
-	Tue, 15 Apr 2025 02:45:58 +0000 (UTC)
-From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+	s=arc-20240116; t=1744685299; c=relaxed/simple;
+	bh=fGt3vwXzojBpwJ5OPFRNuUOpmtvk4WgFiUPe9G5ZOto=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=SPB7qQldRVMjhBZ8B3xiYbi3mdlDZZMJ37TrAyyXopJO9VgQ74qb068Kdsn098cKLmZCaC3EOXkPBS0mxHxoEzKfs028UsozpsqydgneyrxzIgbLhkNx8Z5Qd8kY5hyXxofEL4BvfBBzULXzHXbBgeCDFXRUHzOc3b5KGo5Zzps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Eym07reE; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-225df540edcso59350615ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 19:48:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1744685296; x=1745290096; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=chHLX5G0loxHSohYhxyRHh7WVRRPsaZ78MDusal3hIs=;
+        b=Eym07reEy2An2zdgKEO46ZR05K09ZnxkS0OjAKkBhzf6zxDEKDa9zQtmqAFjSLgn55
+         nIGEpTSNqgAdWyL9sPkCE8UqrWMGel5iBICE/Tx2TGA4JN5sX8uXToExhEsKIgdbb8pP
+         Je00YfR3G/qUdSJnOAQoVbikc970FT6PENU0p0RtKnrYXrZpOI2IVhUZEcOTZb7K9KPH
+         8jF7RhIB+zzWNlpbeXaQgK8+CNCcrGQRYiPUMNO7uIxTr/zmwaJbedKu/kj3d9pqETZj
+         JrBfm/U3zLrZdyfectktdZKdZzNGCJ3jN10DY/U922Op7bDL4Q8Vo6mcRg50WydkwiLQ
+         fxgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744685296; x=1745290096;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=chHLX5G0loxHSohYhxyRHh7WVRRPsaZ78MDusal3hIs=;
+        b=DWgLhRwgQwcoodu9H2rJn8+mz6OlT6hFrdAO4qVDU4swOH2w9Fsfz3SK9YoyvgHE4d
+         uV76S3zEwEXO4uTliJDYW5kubdiIzi+7XZwyMMpI1zjbGG/MtAQvhqjs6iA+RNwnWwfX
+         Vt8XjX6o1XwupnKNfJZRZ3q2PjqTeWlFZEfAUJyrSyzQytxXwsmEA+kSHDrk4QN5RWY0
+         GacPQ0djh4z94xAnR2nrpY701VkhSGMSijb40Q+mX1+aNG1VC1y+Af4qtiP5LIpmRw0J
+         Nwt755kCawW4xlNXe+0B2r1sqmcSbU479usrwzfcTvQxT0dZ7FFw36fdYgVgBFMofPTG
+         kzJw==
+X-Gm-Message-State: AOJu0YzgrK0xsG8+pStNLZh1qYoJ3iuZ+iUUwt50c4AyaaIU2XX5xNwq
+	WQZQjujLPOdLOhoHe5sK+29R50k9pOWfbrlkqQSizFWcuL9QuC7aK4N+2vLszog=
+X-Gm-Gg: ASbGncuqTYhJhZzDC6fJSnIfPZBWBfr8sYpW7MpChWTzufTa7hl4Ix38Pyu3kY7nNlI
+	bUKv/Ut70c1+YMdI4EinGnlMfxKaq1k9VQCoSaLW9HHNxYoOZ1yn1NYyoNFndiOLRcH1vEpD2kZ
+	SZfw1dQHjjlBzvLtYzFOpX7iBgefZCdQqA+2Oo7x/vWLKNHW09ahnVCAmAqTl10vYnYkElUhsW+
+	VRLpA3m3sCcLsaBzKaVX0/oJtF0WO92fsrVcDdu82hAc4ZbilVAnJyd86kSNLg5yUgFZZ75NL00
+	0JVR1ufkcQUEp0YWIOy+dmczmKKnzf4p/u+np+5EpVS2CJ8TFS1CygpQGRotuirI7efaCGBo
+X-Google-Smtp-Source: AGHT+IHfdYPb0mTyQBEggcIEtJXMdJHS98DVkuG5qNfvvUIjwBW9edwqUb5MNEzj4f0Vk/I+xU8TBA==
+X-Received: by 2002:a17:903:3203:b0:215:58be:3349 with SMTP id d9443c01a7336-22c24987312mr27942235ad.14.1744685296075;
+        Mon, 14 Apr 2025 19:48:16 -0700 (PDT)
+Received: from PXLDJ45XCM.bytedance.net ([61.213.176.5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7ccac49sm106681185ad.217.2025.04.14.19.48.11
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 14 Apr 2025 19:48:15 -0700 (PDT)
+From: Muchun Song <songmuchun@bytedance.com>
+To: hannes@cmpxchg.org,
+	mhocko@kernel.org,
+	roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev,
+	muchun.song@linux.dev,
+	akpm@linux-foundation.org,
+	david@fromorbit.com,
+	zhengqi.arch@bytedance.com,
+	yosry.ahmed@linux.dev,
+	nphamcs@gmail.com,
+	chengming.zhou@linux.dev
+Cc: linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	linux-mm@kvack.org,
+	hamzamahfooz@linux.microsoft.com,
+	apais@linux.microsoft.com,
+	Muchun Song <songmuchun@bytedance.com>
+Subject: [PATCH RFC 26/28] mm: memcontrol: introduce memcg_reparent_ops
 Date: Tue, 15 Apr 2025 10:45:30 +0800
-Subject: [PATCH v3 7/7] arm64: dts: amlogic: S4: Add clk-measure controller
- node
+Message-Id: <20250415024532.26632-27-songmuchun@bytedance.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20250415024532.26632-1-songmuchun@bytedance.com>
+References: <20250415024532.26632-1-songmuchun@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250415-clk-measure-v3-7-9b8551dd33b4@amlogic.com>
-References: <20250415-clk-measure-v3-0-9b8551dd33b4@amlogic.com>
-In-Reply-To: <20250415-clk-measure-v3-0-9b8551dd33b4@amlogic.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Chuan Liu <chuan.liu@amlogic.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744685155; l=824;
- i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=A6JIk28+NZPU2Eh+mMPRGxQPj1l3aQ0UYp+1TpAudD4=;
- b=X1Y5uuDxGW5jE7qTJI6N3V35nAflYKrcp+V2LQetx3I7xN7FJz/iQVMpKRESAiGNPuMPSeQhJ
- YEBjd2Ixq4YCik4Xi8I0Xk8zBt94QEqzZ7a6GdEQDu993zCLwiOYDS5
-X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
- pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
-X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
- auth_id=203
-X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
-Reply-To: chuan.liu@amlogic.com
+Content-Transfer-Encoding: 8bit
 
-From: Chuan Liu <chuan.liu@amlogic.com>
+In the previous patch, we established a method to ensure the safety of the
+lruvec lock and the split queue lock during the reparenting of LRU folios.
+The process involves the following steps:
 
-Add the clk-measure controller node for S4 SoC family.
+    memcg_reparent_objcgs(memcg)
+        1) lock
+        // lruvec belongs to memcg and lruvec_parent belongs to parent memcg.
+        spin_lock(&lruvec->lru_lock);
+        spin_lock(&lruvec_parent->lru_lock);
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+        2) relocate from current memcg to its parent
+        // Move all the pages from the lruvec list to the parent lruvec list.
+
+        3) unlock
+        spin_unlock(&lruvec_parent->lru_lock);
+        spin_unlock(&lruvec->lru_lock);
+
+In addition to the folio lruvec lock, the deferred split queue lock
+(specific to THP) also requires a similar approach. Therefore, we abstract
+the three essential steps from the memcg_reparent_objcgs() function.
+
+    memcg_reparent_objcgs(memcg)
+        1) lock
+        memcg_reparent_ops->lock(memcg, parent);
+
+        2) relocate
+        memcg_reparent_ops->relocate(memcg, reparent);
+
+        3) unlock
+        memcg_reparent_ops->unlock(memcg, reparent);
+
+Currently, two distinct locks (such as the lruvec lock and the deferred
+split queue lock) need to utilize this infrastructure. In the subsequent
+patch, we will employ these APIs to ensure the safety of these locks
+during the reparenting of LRU folios.
+
+Signed-off-by: Muchun Song <songmuchun@bytedance.com>
 ---
- arch/arm64/boot/dts/amlogic/meson-s4.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+ include/linux/memcontrol.h | 20 ++++++++++++
+ mm/memcontrol.c            | 62 ++++++++++++++++++++++++++++++--------
+ 2 files changed, 69 insertions(+), 13 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
-index 957577d986c0..9d99ed2994df 100644
---- a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
-@@ -629,6 +629,11 @@ internal_ephy: ethernet-phy@8 {
- 				};
- 			};
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 27b23e464229..0e450623f8fa 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -311,6 +311,26 @@ struct mem_cgroup {
+ 	struct mem_cgroup_per_node *nodeinfo[];
+ };
  
-+			clk_msr: clock-measure@48000 {
-+				compatible = "amlogic,s4-clk-measure";
-+				reg = <0x0 0x48000 0x0 0x1c>;
-+			};
++struct memcg_reparent_ops {
++	/*
++	 * Note that interrupt is disabled before calling those callbacks,
++	 * so the interrupt should remain disabled when leaving those callbacks.
++	 */
++	void (*lock)(struct mem_cgroup *src, struct mem_cgroup *dst);
++	void (*relocate)(struct mem_cgroup *src, struct mem_cgroup *dst);
++	void (*unlock)(struct mem_cgroup *src, struct mem_cgroup *dst);
++};
 +
- 			spicc0: spi@50000 {
- 				compatible = "amlogic,meson-g12a-spicc";
- 				reg = <0x0 0x50000 0x0 0x44>;
-
++#define DEFINE_MEMCG_REPARENT_OPS(name)					\
++	const struct memcg_reparent_ops memcg_##name##_reparent_ops = {	\
++		.lock		= name##_reparent_lock,			\
++		.relocate	= name##_reparent_relocate,		\
++		.unlock		= name##_reparent_unlock,		\
++	}
++
++#define DECLARE_MEMCG_REPARENT_OPS(name)				\
++	extern const struct memcg_reparent_ops memcg_##name##_reparent_ops
++
+ /*
+  * size of first charge trial.
+  * TODO: maybe necessary to use big numbers in big irons or dynamic based of the
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 1f0c6e7b69cc..3fac51179186 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -194,24 +194,60 @@ static struct obj_cgroup *obj_cgroup_alloc(void)
+ 	return objcg;
+ }
+ 
+-static void memcg_reparent_objcgs(struct mem_cgroup *memcg)
++static void objcg_reparent_lock(struct mem_cgroup *src, struct mem_cgroup *dst)
++{
++	spin_lock(&objcg_lock);
++}
++
++static void objcg_reparent_relocate(struct mem_cgroup *src, struct mem_cgroup *dst)
+ {
+ 	struct obj_cgroup *objcg, *iter;
+-	struct mem_cgroup *parent = parent_mem_cgroup(memcg);
+ 
+-	objcg = rcu_replace_pointer(memcg->objcg, NULL, true);
++	objcg = rcu_replace_pointer(src->objcg, NULL, true);
++	/* 1) Ready to reparent active objcg. */
++	list_add(&objcg->list, &src->objcg_list);
++	/* 2) Reparent active objcg and already reparented objcgs to dst. */
++	list_for_each_entry(iter, &src->objcg_list, list)
++		WRITE_ONCE(iter->memcg, dst);
++	/* 3) Move already reparented objcgs to the dst's list */
++	list_splice(&src->objcg_list, &dst->objcg_list);
++}
+ 
+-	spin_lock_irq(&objcg_lock);
++static void objcg_reparent_unlock(struct mem_cgroup *src, struct mem_cgroup *dst)
++{
++	spin_unlock(&objcg_lock);
++}
+ 
+-	/* 1) Ready to reparent active objcg. */
+-	list_add(&objcg->list, &memcg->objcg_list);
+-	/* 2) Reparent active objcg and already reparented objcgs to parent. */
+-	list_for_each_entry(iter, &memcg->objcg_list, list)
+-		WRITE_ONCE(iter->memcg, parent);
+-	/* 3) Move already reparented objcgs to the parent's list */
+-	list_splice(&memcg->objcg_list, &parent->objcg_list);
+-
+-	spin_unlock_irq(&objcg_lock);
++static DEFINE_MEMCG_REPARENT_OPS(objcg);
++
++static const struct memcg_reparent_ops *memcg_reparent_ops[] = {
++	&memcg_objcg_reparent_ops,
++};
++
++#define DEFINE_MEMCG_REPARENT_FUNC(phase)				\
++	static void memcg_reparent_##phase(struct mem_cgroup *src,	\
++					   struct mem_cgroup *dst)	\
++	{								\
++		int i;							\
++									\
++		for (i = 0; i < ARRAY_SIZE(memcg_reparent_ops); i++)	\
++			memcg_reparent_ops[i]->phase(src, dst);		\
++	}
++
++DEFINE_MEMCG_REPARENT_FUNC(lock)
++DEFINE_MEMCG_REPARENT_FUNC(relocate)
++DEFINE_MEMCG_REPARENT_FUNC(unlock)
++
++static void memcg_reparent_objcgs(struct mem_cgroup *src)
++{
++	struct mem_cgroup *dst = parent_mem_cgroup(src);
++	struct obj_cgroup *objcg = rcu_dereference_protected(src->objcg, true);
++
++	local_irq_disable();
++	memcg_reparent_lock(src, dst);
++	memcg_reparent_relocate(src, dst);
++	memcg_reparent_unlock(src, dst);
++	local_irq_enable();
+ 
+ 	percpu_ref_kill(&objcg->refcnt);
+ }
 -- 
-2.42.0
-
+2.20.1
 
 
