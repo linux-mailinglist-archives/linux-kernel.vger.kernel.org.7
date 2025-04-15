@@ -1,135 +1,210 @@
-Return-Path: <linux-kernel+bounces-605981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FD59A8A888
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 21:53:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D605A8A890
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 21:54:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73FCC3BD714
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 19:53:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53A937AC629
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 19:53:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45EFD253B41;
-	Tue, 15 Apr 2025 19:51:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CAA32505A9;
+	Tue, 15 Apr 2025 19:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hbhJS7k3"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JTorOXx/"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C052550DE;
-	Tue, 15 Apr 2025 19:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F82124169E
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 19:54:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744746705; cv=none; b=an/IjJC3WjODFd2mqI+IJKSLnQYT1FLVAozDqSwnU7xYe04PSNSrVHFeSqqnG/yFajP2a4rjtnQ8kXqEjMmHurTVx61b3dVcT4gJ/A5apbhHORGVWUB4n4Kh7FOE7lNvvstejEnLWGkhjctbsuZ7SxMJGHtVJQ3kO9K65eO1afI=
+	t=1744746877; cv=none; b=bSS5vXik14yaeWoLcDYd0q4HMznAECb9HkQNt9DEp/czYd30Pw6q6jiPTkZgfezcG0ZbY+8ckZPvweUcyThKb8D01RhglYak8gkYOW9nN29INJenjw6sW19YTP3GldpDqHAZ9pMWRF9vpXTUhS4btMYSY7ono4F8CzxIwzhDu5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744746705; c=relaxed/simple;
-	bh=slZmxp++QhIB/d1vWbc5Di4/dmlQ7NU7kBrPsD0giv8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=p5cQgosYNMpPOAZiKXRawSuu+XdDs0xNf+P7SkKLccm7x/E2nz8rcTtY5vjJHAyJPr6MaH74RWl2Bu93Ki8oRFqoIQ5EOdKYkCtlMVKMgoESaRHbGqwrNQGSlN8tY8a24GyzGc3ARaz5KldE3Ga8QwqQKGKuchoJaC0tA04n2jM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hbhJS7k3; arc=none smtp.client-ip=209.85.128.51
+	s=arc-20240116; t=1744746877; c=relaxed/simple;
+	bh=Zaepws7nExyxvpluQDywwkg0I9h0UUo2vpZOf2K/GoM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=roL5HObXKAm/cbNicwL5jKdNzt3qLu+D5sUyKeEjf46u60NqElTKfFOfYBDK1nrpiOfZQMornR+7Xw2fiGrySUfDHkGsRNvEEGggZGp681n4jtlYvcRSPrvcvXgUgPOV36vQaZRajkDwfMZFaoRqr/36E9mU7CAY9RdyKWMSCP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JTorOXx/; arc=none smtp.client-ip=209.85.128.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43d0618746bso47124435e9.2;
-        Tue, 15 Apr 2025 12:51:42 -0700 (PDT)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6fece18b3c8so58823277b3.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 12:54:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744746701; x=1745351501; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1744746874; x=1745351674; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NQPAcNlalkLy8oJ9CIcK6WyWW0X8sA33xHew3+Clh4E=;
-        b=hbhJS7k33FfOoVDY7ACb8jK7QRxHaplKZ7kdL7uIsYWXeUPLRLPw9mPDinaCb0j1W7
-         GbKbgfQmWVHJwMAu62ln81beGCZQ+KmhQejrqIeo+5VgBXQCZIrELJL12aWKBj+tL4mK
-         y2mabz2XbkkbxW4NWaDNjQMqhYHO6ebnhH0kZkJejQaWl6GvMazthikyT5ri3veLgtvf
-         7GzpwJVfD2t5Ow1kHyKsCrUdy+pNAjmoO9GQX/UFj4iVM4V+zpXcHf5yf7h9LcBBCD+c
-         6Bf3VXxG3ewte0fOZurw0bSKffMhtQJWTYDNfu+ze/8sPRTTlxWIYrmi57XUAnobWeLw
-         8BQA==
+        bh=yAi1HpDyCH5qHMnYK7rZqJqXCXRMxpW4p8owZruiAAY=;
+        b=JTorOXx/jQ/nPNCYECwIpQR0Dog14SOlD5PjYba3YUnGWOVhVHocvAbWT7mt5gsP1S
+         /Ff5DYL57cChHoBwFNn9On0CQdzFWTdmIVFSSCy6G9d6opa3v7RugYviro9fNTTGFupO
+         ohaYmN5qlsCWbMmKt4FKfYFbqKaEvaW45Sulro+0xZw3hdwOxnMeJKJOKijYQNbHe30h
+         X6Es555KPKNtv9hHowOxJBOY4rTPYQ/E/b/QmDk6A2AtVsR4096ArUnAGxbOZ4LLU6F/
+         BfS4v4D8/3wLywlfeZlG0tnYq1uwJxD5F1CcARG4w9hXPymwibp3ZGwjddJqoTxs2XW0
+         TpHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744746701; x=1745351501;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1744746874; x=1745351674;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NQPAcNlalkLy8oJ9CIcK6WyWW0X8sA33xHew3+Clh4E=;
-        b=AXSBQwH54bVNaTEiDu5bEcNj6i/p+tl4kneu0K0bignwVXC3QMUU6BPQOAHaI8b81H
-         FAZ6JbnPDGkfuF3aKuYkN/g+Wkq+bU6fc+JGZWUvlBW/yoVRO4aGzsYVkNahCnCrdbFs
-         kvd4m7+V4N+nY67ticVjZCElZEGFfRZDrgDmz2/F2Kh1HxbNmu/2HFLICrw6KByEcv6B
-         04caObgokYvIFE/CLHzwSVIhMHseThi+RrySEfJC4k0AYqOf97IsaZ/bQoGp7Yp6IKbf
-         lnmh4HaQAl3z+N15zcPHLaPacXra2WkgzuA2315SDm0HZnKndZgy8kT1zxQO5hDPvnwi
-         LyAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUZpfrq4qWNBfGomg/81qqpUloo9oeiRNnG/talR7QICV9ojmpWsDUXWwHE34QGNdncRfyxjm6e+5sn@vger.kernel.org, AJvYcCVIMXr1KUGeeTIyT0hyGsw2gxEB8QSQ/mtKPm7uNZBhy0Auwzn56zbEW1WxAyhwd9aQsYA4EN5dyV2wGnCy@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGn2kBBcoos4w3ZVHI6tJmMjCgpovXNQYLiK0InxSzrJ8vdxww
-	lALhaf2tv9c/NbJ563aUCei4G9dOuFl3icY/PWwflD8gVZKSqmK9
-X-Gm-Gg: ASbGncvRiAWL10dTswiaWljS63RzzmWDAH4IOeVpuzpq5NEJPFfSOiZwhMXgcwslLbb
-	/V87oz/G4PKbopWi7Mz/UkYaHBayqoylTxhvyRiMrat4k70rIbJOMGtbArrjHkDhB28KEY6z87W
-	+mSuNHEF1c4ZEQ09NboCWgaIqTUR8cutOaU96i6f7uY8Z+rw4/p6B72iFdgVExrU9buj7GxFpOr
-	M7zXZs8DpaKd+87r+ovFmVxGPj4pDI/BHO/rUAVmoDBsAQypxKQ6Bn59IkW0cYblSDpO51TAYyv
-	aWBuSkfjpQeiDKZfL6uxm1b7RtIpI94GKcnrG/0lbwyF5wlyntB4mG4elY99UnXO
-X-Google-Smtp-Source: AGHT+IE4rAkHboQ7//hlbqk4UZSW6zTq1/RUlX9NCL5z1569iJqvd/G+oaZH/PDtiCoKzjHRBjKUVA==
-X-Received: by 2002:a05:600c:1c88:b0:43c:f597:d584 with SMTP id 5b1f17b1804b1-4405a104ba9mr2691095e9.29.1744746700723;
-        Tue, 15 Apr 2025 12:51:40 -0700 (PDT)
-Received: from iku.Home ([2a06:5906:61b:2d00:1883:aa4:a265:bc12])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4404451c67dsm14169335e9.3.2025.04.15.12.51.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Apr 2025 12:51:39 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v5 3/3] MAINTAINERS: Add entry for Renesas RZ/V2H(P) USB2PHY Port Reset driver
-Date: Tue, 15 Apr 2025 20:51:31 +0100
-Message-ID: <20250415195131.281060-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250415195131.281060-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250415195131.281060-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        bh=yAi1HpDyCH5qHMnYK7rZqJqXCXRMxpW4p8owZruiAAY=;
+        b=S+NyXsibTfffotsdAkmXhJtDFmV/6i9soW0atvVR9gLNa3eWoiWdIax74f0rcNBZid
+         NU41ET2s9eBS/fCYmVr1ZZt0lSXSI7suBND/X+cLageiXVHW9bYHBmO34l57lP91dXKt
+         4RMSv2yE/zgbuSs25xw/rDpd+HQob7whXTbQbyAWi0d4kg0UMJtb3aHXX/cwvii65/RT
+         ywO2ufGuFc+edyrW9/1dMoTrefra7PUyDoFqwr5Vau+3wjbbvalK0bJ6PkqEMJDeCxu8
+         6WHVDQ7+0TYo/wjdTIPeBsZE43CTxV6bK2/UdTSwWGd30Nbf0f75tXjMYk3VPy6yx1V2
+         +6Wg==
+X-Forwarded-Encrypted: i=1; AJvYcCXzlyF02TOMuSDXn362bbaTwZjQNVzTQa3z0/RBcKA2LLqJajQkC/3WcL07bYM0lYqitucjKY+XPkbhWYo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdzccPVkui/oFRl+0gp+MXZwORkX0isneJpVWZGP7gRh6B7AfH
+	qskyjmZGC+O5FREwxRRubSYh19xOn9CGpSsDcgjWIjIXJZ6JkUUXSpECv/kKPR1kIgH9a29PM48
+	uBNbMzEO7/8X+C527rkFaVJC9Lhk=
+X-Gm-Gg: ASbGncvrjRRum4btYNKkFrYPedCt0ZzpkanGuNF3sLZw8tu+2xm+7po/xuZw/WeMDiO
+	Q2AFRamtSc09x7sFJlb5i9+2oadEleHAB6JYjF0pHWEdjqGtn4SriIlREYF5BrzL/gwCDGJmuSq
+	3EuVqhBttDfbX5j2bT7TSo
+X-Google-Smtp-Source: AGHT+IGlvmJGXcVyW5hA9lpQC3pfTq/acR7QSuaZFT2Z/sDAbRX4tOnqvIe3e5bH4LTdduM75/dvdMi1J0a8Fv71kwk=
+X-Received: by 2002:a05:690c:23ca:b0:700:b389:9246 with SMTP id
+ 00721157ae682-706ad1c6361mr9042927b3.38.1744746874177; Tue, 15 Apr 2025
+ 12:54:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250402174156.1246171-1-jim.cromie@gmail.com>
+ <20250402174156.1246171-21-jim.cromie@gmail.com> <428d9ffb-70bb-42f3-bf4e-416cfd90f88c@bootlin.com>
+In-Reply-To: <428d9ffb-70bb-42f3-bf4e-416cfd90f88c@bootlin.com>
+From: jim.cromie@gmail.com
+Date: Tue, 15 Apr 2025 13:54:08 -0600
+X-Gm-Features: ATxdqUFKxNW9JmpIZE3lLHmW8mlHITUJ88JoVc4NFn6_RoSSyM2vkFzfaonZR-I
+Message-ID: <CAJfuBxx17bgvP5PyP25yKoLXGp-3q1jdaNYKvJkE+8+BL9Akaw@mail.gmail.com>
+Subject: Re: [PATCH v3 20/54] dyndbg: check DYNAMIC_DEBUG_CLASSMAP_DEFINE args
+ at compile-time
+To: Louis Chauvet <louis.chauvet@bootlin.com>
+Cc: jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	amd-gfx@lists.freedesktop.org, intel-gvt-dev@lists.freedesktop.org, 
+	intel-gfx@lists.freedesktop.org, daniel.vetter@ffwll.ch, 
+	tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com, 
+	ville.syrjala@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Tue, Apr 15, 2025 at 4:04=E2=80=AFAM Louis Chauvet <louis.chauvet@bootli=
+n.com> wrote:
+>
+>
+>
+> Le 02/04/2025 =C3=A0 19:41, Jim Cromie a =C3=A9crit :
+> > Add __DYNAMIC_DEBUG_CLASSMAP_CHECK to implement the following
+> > arg-checks at compile-time:
+> >
+> >       0 <=3D _base < 63
+> >       class_names is not empty
+> >       class_names[0] is a string
+>
+> I don't see where this is checked, did I miss something?
 
-Add a new MAINTAINERS entry for the Renesas RZ/V2H(P) USB2PHY Port Reset
-driver.
+kinda/sorta ?   theres no explicit check for "string".
+BUT
+this would fail, cuz 1 doesnt fit into a char* arr[0]
+> > +DYNDBG_CLASSMAP_DEFINE(fail_str_type, 0, 0, 1 /* not a string */);
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Im perhaps over-simplifying the description
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b5acf50fc6af..a8d8eabf9ecf 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20684,6 +20684,14 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/usb/renesas,rzn1-usbf.yaml
- F:	drivers/usb/gadget/udc/renesas_usbf.c
- 
-+RENESAS RZ/V2H(P) USB2PHY PORT RESET DRIVER
-+M:	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-+M:	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-+L:	linux-renesas-soc@vger.kernel.org
-+S:	Supported
-+F:	Documentation/devicetree/bindings/reset/renesas,rzv2h-usb2phy-reset.yaml
-+F:	drivers/reset/reset-rzv2h-usb2phy.c
-+
- RENESAS RZ/V2M I2C DRIVER
- M:	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
- L:	linux-i2c@vger.kernel.org
--- 
-2.49.0
-
+>
+> >       (class_names.length + _base) < 63
+> >
+> > These compile-time checks will prevent several misuses; 4 such
+> > examples are added to test_dynamic_debug_submod.ko, and will fail
+> > compilation if -DDD_MACRO_ARGCHECK is added to cflags.  This wouldn't
+> > be a useful CONFIG_ item, since it breaks the build.
+> >
+> > Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
+> > ---
+> > v3- $macro_name =3D~ s/DYNDBG/DYNAMIC_DEBUG/
+> >
+> > prev-
+> > - split static-asserts to __DYNDBG_CLASSMAP_CHECK
+> > - move __DYNDBG_CLASSMAP_CHECK above kdoc for DYNDBG_CLASSMAP_DEFINE
+> >    silences kernel-doc warnings
+> > ---
+> >   include/linux/dynamic_debug.h |  9 +++++++++
+> >   lib/test_dynamic_debug.c      | 11 +++++++++++
+> >   2 files changed, 20 insertions(+)
+> >
+> > diff --git a/include/linux/dynamic_debug.h b/include/linux/dynamic_debu=
+g.h
+> > index 9af825c84e70..4941ef2adb46 100644
+> > --- a/include/linux/dynamic_debug.h
+> > +++ b/include/linux/dynamic_debug.h
+> > @@ -99,6 +99,14 @@ struct _ddebug_class_map {
+> >       enum ddebug_class_map_type map_type;
+> >   };
+> >
+> > +#define __DYNAMIC_DEBUG_CLASSMAP_CHECK(_clnames, _base)               =
+       \
+> > +     static_assert(((_base) >=3D 0 && (_base) < _DPRINTK_CLASS_DFLT), =
+ \
+> > +                   "_base must be in 0..62");                        \
+> > +     static_assert(ARRAY_SIZE(_clnames) > 0,                         \
+> > +                   "classnames array size must be > 0");             \
+> > +     static_assert((ARRAY_SIZE(_clnames) + (_base)) < _DPRINTK_CLASS_D=
+FLT, \
+> > +                   "_base + classnames.length exceeds range")
+> > +
+> >   /**
+> >    * DYNAMIC_DEBUG_CLASSMAP_DEFINE - define debug classes used by a mod=
+ule.
+> >    * @_var:   name of the classmap, exported for other modules coordina=
+ted use.
+> > @@ -112,6 +120,7 @@ struct _ddebug_class_map {
+> >    */
+> >   #define DYNAMIC_DEBUG_CLASSMAP_DEFINE(_var, _mapty, _base, ...)      =
+       \
+> >       static const char *_var##_classnames[] =3D { __VA_ARGS__ };      =
+ \
+>
+> Or maybe it was already enforced by this, but in this case the commit
+> message contains too much checks.
+>
+> > +     __DYNAMIC_DEBUG_CLASSMAP_CHECK(_var##_classnames, (_base));     \
+> >       extern struct _ddebug_class_map _var;                           \
+> >       struct _ddebug_class_map __aligned(8) __used                    \
+> >               __section("__dyndbg_class_maps") _var =3D {              =
+ \
+> > diff --git a/lib/test_dynamic_debug.c b/lib/test_dynamic_debug.c
+> > index e42916b08fd4..9f9e3fddd7e6 100644
+> > --- a/lib/test_dynamic_debug.c
+> > +++ b/lib/test_dynamic_debug.c
+> > @@ -146,8 +146,19 @@ DYNDBG_CLASSMAP_DEFINE(classid_range_conflict, 0, =
+D2_CORE + 1, "D3_CORE");
+> >   DYNAMIC_DEBUG_CLASSMAP_USE(map_disjoint_bits);
+> >   DYNAMIC_DEBUG_CLASSMAP_USE(map_level_num);
+> >
+> > +#if defined(DD_MACRO_ARGCHECK)
+> > +/*
+> > + * Exersize compile-time arg-checks in DYNDBG_CLASSMAP_DEFINE.
+> > + * These will break compilation.
+> > + */
+> > +DYNDBG_CLASSMAP_DEFINE(fail_base_neg, 0, -1, "NEGATIVE_BASE_ARG");
+> > +DYNDBG_CLASSMAP_DEFINE(fail_base_big, 0, 100, "TOOBIG_BASE_ARG");
+> > +DYNDBG_CLASSMAP_DEFINE(fail_str_type, 0, 0, 1 /* not a string */);
+> > +DYNDBG_CLASSMAP_DEFINE(fail_emptyclass, 0, 0 /* ,empty */);
+> >   #endif
+> >
+> > +#endif /* TEST_DYNAMIC_DEBUG_SUBMOD */
+> > +
+> >   /* stand-in for all pr_debug etc */
+> >   #define prdbg(SYM) __pr_debug_cls(SYM, #SYM " msg\n")
+> >
+>
+> --
+> Louis Chauvet, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
+>
+>
 
