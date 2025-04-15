@@ -1,90 +1,145 @@
-Return-Path: <linux-kernel+bounces-604091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D2DDA89071
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 02:27:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FD47A8908D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 02:28:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CAE37A56AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 00:26:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DA8B7A8C4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 00:27:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD6F713B5A0;
-	Tue, 15 Apr 2025 00:27:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AAA213C8EA;
+	Tue, 15 Apr 2025 00:27:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XTZMzOQA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eDWwCTKC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09DCB22EE5;
-	Tue, 15 Apr 2025 00:27:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEEB6136349
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 00:27:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744676833; cv=none; b=iC4d2z8uf9jYwNeZSX+MwRCw4WwJKuahvKAesrgP3VMqGEn9cX1bNrxSp+81+WXCVNObvS4tu3v3YjVxMMQrFFbO8XHcBxj00nDcX2tbkOg88JMWS/ytuRQaTTod/FB0X1wiaVBTryTu3DuMpAB49Dy2Ju16Ul6mNTCsnttmHUQ=
+	t=1744676874; cv=none; b=GdUF3yxlJlkzpcKn8TWR2dkrEVogeHMShSUTYKQSFjmEfPKqO7TMeumYHUsPJCv1lv/ZIikywdjtgArZuaGec1usuDgjLNOS/OGyKAAUcM+I9uC7740lFLyYg/A+ZsjkbECgAJxqlTRe+K+vfMvMAJ03dxcz3V1ue21qjfBsUm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744676833; c=relaxed/simple;
-	bh=p/7BiZ9Yzsgk30h25OyaW/iYOh0nxPPaqAteJXbR6bY=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=T9v+rFCzMcGPzxjNuAnzEDr6PzE2nybIe+CnTYGF/FSYVhBqkfa6nOBvvN2VODSP3HDCXxwiB+jNRy2J1HHj4Rdm3cGejqAYW0OL4SIKBOmLYqbr+4T7/lFoNrO/40yCzttrZhZRp0MUSEAwP2pxeUlotXwbslPHNT6CpAFCkIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XTZMzOQA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67FA4C4AF09;
-	Tue, 15 Apr 2025 00:27:12 +0000 (UTC)
+	s=arc-20240116; t=1744676874; c=relaxed/simple;
+	bh=XWLkhco6umLuH8PzFShaC/DeyU9+7tRVfN0zupNCKZ4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gKjUe/PDcDWgV/sncc0EVmQ5GhrzxnX/QaOceyZADjqEdFTgAXOcT6u+wk4GdrQ/U+1QURX2s190sYFhlQGIBGQKLExIxQKZaKpUfsUD5cUe+ibqb19QnqfzSWexjHjTD5UbkjqAKvZzOg+tyhJG7y/IEiJwSJ6XvRe2gVfTc/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eDWwCTKC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 660A1C4CEE2;
+	Tue, 15 Apr 2025 00:27:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744676832;
-	bh=p/7BiZ9Yzsgk30h25OyaW/iYOh0nxPPaqAteJXbR6bY=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=XTZMzOQAUI7mP2pfZTh93/xCW2LAIw3Q1mVUiaCy1BhVWLOn7WSu5NH19L7r5VSBU
-	 PGMACMxYH1rmDBIDPfv3pb4Y5BwTMYgot2rvR+Uae+E5rSy22siZAM+ReHSOsLwrjI
-	 5xfd7VCx5k2LqLChVTk9fKRlgIHBoqBEKwl+8YBHYQfHe6VXg8Ihlqc+/zDqfLrzEm
-	 W4H/mFFq83PFZuXrIJhtPG6sWVSjc3UzoEuFhnEdrEA6z+cuwzDhmdV/qYzput4CkL
-	 yIRQnHaGVhMUoHiRM/HCZWfcE/NHz82GL2XJJz5wDh1cQcLwWHcuBo7kJ0xfyr8Y1j
-	 0K0ZOek4vO4Hw==
-Message-ID: <e4bd8e47aeab761e409121ac9bc19408@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1744676874;
+	bh=XWLkhco6umLuH8PzFShaC/DeyU9+7tRVfN0zupNCKZ4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=eDWwCTKCI6QBe/Fd1CJklcTS5G2yi0VcbPdmUJIuoU5xJ+09Jyhum5DR5WLqHDZui
+	 CQX+Zh4+NW4MJr6Nvtp3cB+pLKZej5gXEF88SQ44T9ZPt/T3LqlpOmsu8i2ECNRUon
+	 ta5c7LCtKC5gFXrqcCK8sRpfvnQ4VxFTr2de0g2mDyhgnxS2YUmUBQsjl6JNt8VwuY
+	 lbNGYbNzR5/AP3kQGKXbQKvFfRjUC0bjXcDWvecDguHTIoko636KIi7KZV58trQjxA
+	 RKkTUHIWIH93wO5HXGLMEVwsoPlc+l7g4crcb+nUKo0Oa05ao6pRWL9xfgw7uE0r4l
+	 +NqOdLqkwO89A==
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Ingo Molnar <mingo@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Uros Bizjak <ubizjak@gmail.com>
+Subject: [PATCH v2] noinstr: Use asm_inline() in instrumentation_{begin,end}()
+Date: Mon, 14 Apr 2025 17:27:11 -0700
+Message-ID: <165d2a0b882050f3f6cc0315af66cd2d16e5925b.1744676674.git.jpoimboe@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250414-camouflaged-silver-dodo-d0c000-mkl@pengutronix.de>
-References: <20250414073646.1473157-1-ciprianmarian.costea@oss.nxp.com> <20250414-camouflaged-silver-dodo-d0c000-mkl@pengutronix.de>
-Subject: Re: [PATCH] can: flexcan: enable PER clock before obtaining its rate
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, NXP S32 Linux Team <s32@nxp.com>, imx@lists.linux.dev, Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>, Enric Balletbo <eballetb@redhat.com>, Eric Chanudet <echanude@redhat.com>, Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, kernel@pengutronix.de
-To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>, Marc Kleine-Budde <mkl@pengutronix.de>, Maxime Ripard <mripard@kernel.org>
-Date: Mon, 14 Apr 2025 17:27:10 -0700
-User-Agent: alot/0.12.dev8+g17a99a841c4b
+Content-Transfer-Encoding: 8bit
 
-Quoting Marc Kleine-Budde (2025-04-14 02:55:34)
-> On 14.04.2025 10:36:46, Ciprian Costea wrote:
-> > From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-> >=20
-> > The FlexCan driver assumes that the frequency of the 'per' clock can be
-> > obtained even on disabled clocks, which is not always true.
-> >=20
-> > According to 'clk_get_rate' documentation, it is only valid once the cl=
-ock
-> > source has been enabled.
->=20
-> In commit bde8870cd8c3 ("clk: Clarify clk_get_rate() expectations")
-> Maxime Ripard changed the documentation of the of the function in clk.c
-> to say it's allowed. However clk.h states "This is only valid once the
-> clock source has been enabled.".
->=20
-> I've added the common clock maintainers to Cc.
->=20
-> Which documentation is correct? Is the clk.h correct for archs not using
-> the common clock framework?
->=20
+Use asm_inline() in the instrumentation begin/end macros to prevent the
+compiler from making poor inlining decisions based on the length of the
+objtool annotations.
 
-I don't know what arches not using the common clk framework (CCF) do so
-I can't comment there. If you want something to work on an architecture
-that doesn't use the CCF then follow the header file, but in all
-practical cases _some_ rate will be returned from clk_get_rate() and
-we're not going to BUG_ON() or crash the system in the CCF
-implementation for this case. Enabling the clk is good hygiene though,
-so is it really a problem to enable it here?
+Without the objtool annotations, each macro resolves to a single NOP.
+Using inline_asm() seems obviously correct here as it accurately
+communicates the actual code size to the compiler.
+
+These macros are used by WARN() and lockdep, so this change can affect a
+lot of functions.
+
+For a defconfig kernel built with GCC 14.2.1, bloat-o-meter reports a
+0.17% increase in text size:
+
+  add/remove: 74/352 grow/shrink: 914/353 up/down: 80747/-47120 (33627)
+  Total: Before=19460272, After=19493899, chg +0.17%
+
+The text growth is presumably due to increased inlining.  A net total of
+278 functions were removed (+74 / -352).  Each of the removed functions
+is likely inlined at multiple sites which explains the somewhat
+significant code growth.
+
+One example from Uros:
+
+    $ grep "<encode_string>"  objdump.old
+   
+    00000000004506e0 <encode_string>:
+     45113c:       e8 9f f5 ff ff          call   4506e0 <encode_string>
+     452bcb:       e9 10 db ff ff          jmp    4506e0 <encode_string>
+     453d33:       e8 a8 c9 ff ff          call   4506e0 <encode_string>
+     453ef7:       e8 e4 c7 ff ff          call   4506e0 <encode_string>
+     45549f:       e8 3c b2 ff ff          call   4506e0 <encode_string>
+     455843:       e8 98 ae ff ff          call   4506e0 <encode_string>
+     455b37:       e8 a4 ab ff ff          call   4506e0 <encode_string>
+     455b47:       e8 94 ab ff ff          call   4506e0 <encode_string>
+     4564fa:       e8 e1 a1 ff ff          call   4506e0 <encode_string>
+     456669:       e8 72 a0 ff ff          call   4506e0 <encode_string>
+     456691:       e8 4a a0 ff ff          call   4506e0 <encode_string>
+     4566a0:       e8 3b a0 ff ff          call   4506e0 <encode_string>
+     4569aa:       e8 31 9d ff ff          call   4506e0 <encode_string>
+     456e79:       e9 62 98 ff ff          jmp    4506e0 <encode_string>
+     456efe:       e9 dd 97 ff ff          jmp    4506e0 <encode_string>
+   
+    All these are calls now inline:
+   
+    encode_string                                 58       -     -58
+   
+    ... where for example encode_putfh() grows by:
+   
+    encode_putfh                                  70     118     +48
+
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+---
+v2:
+- improve patch description
+- extract from https://lore.kernel.org/cover.1744098446.git.jpoimboe@kernel.org
+
+ include/linux/instrumentation.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/instrumentation.h b/include/linux/instrumentation.h
+index bf675a8aef8a..b1007407d272 100644
+--- a/include/linux/instrumentation.h
++++ b/include/linux/instrumentation.h
+@@ -9,7 +9,7 @@
+ 
+ /* Begin/end of an instrumentation safe region */
+ #define __instrumentation_begin(c) ({					\
+-	asm volatile(__stringify(c) ": nop\n\t"				\
++	asm_inline volatile(__stringify(c) ": nop\n\t"			\
+ 		     ANNOTATE_INSTR_BEGIN(__ASM_BREF(c))		\
+ 		     : : "i" (c));					\
+ })
+@@ -47,7 +47,7 @@
+  * part of the condition block and does not escape.
+  */
+ #define __instrumentation_end(c) ({					\
+-	asm volatile(__stringify(c) ": nop\n\t"				\
++	asm_inline volatile(__stringify(c) ": nop\n\t"			\
+ 		     ANNOTATE_INSTR_END(__ASM_BREF(c))			\
+ 		     : : "i" (c));					\
+ })
+-- 
+2.49.0
+
 
