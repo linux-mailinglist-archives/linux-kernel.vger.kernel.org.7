@@ -1,168 +1,166 @@
-Return-Path: <linux-kernel+bounces-604283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C753A892E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 06:31:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84B04A892EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 06:35:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EAFD189415A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 04:31:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCFA7164942
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 04:33:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A202192E3;
-	Tue, 15 Apr 2025 04:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LdCbjBjU"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C1921CC7B;
+	Tue, 15 Apr 2025 04:33:18 +0000 (UTC)
+Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB15714B945;
-	Tue, 15 Apr 2025 04:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48562DFA5B;
+	Tue, 15 Apr 2025 04:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744691497; cv=none; b=WBVFK6+gxg2b6tmtph0WZ+hj93Ss9Hxj9T1OPmvCGT6vUUVnjEVBzRXOhg3fMlWgeC8t1qhyJlMqxPERw/NF5RPGPuPWyJb8346EjhtSvt2zNDr90DWACJxieIpwPhuySJ2qOGtfn3YsqQ/oHlsRy6UHyidKmNy9fyODDUH7+IA=
+	t=1744691598; cv=none; b=KGfdeTOL3jP4g6wkrY+iG3OW4GldkfKvpWAt7rjBvgBSvZG0hW9GBwPRDW2brAIOhz+izB7GP3wDdLFxJ2mXlTg87YnBd8p8YFyMNMC24+flYu2kyL4c0zAJg1zbhAqfnXMGUyOytIEUOV2hHs3jtXB1l3I2VoUh+Sa1lwvHl8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744691497; c=relaxed/simple;
-	bh=aCRjpDq3+ND2KM7I8yi9ZkKhhnvnhglU2cxJu7K7NXM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=DOpbdH/MvlnrXhpy4YLhDiPrcysEcJoM5w5M8RY/aO3OE033FufVg+G0EiHtdGYi+hrD2Bo169DjoRJ5K3CZHYZOy5HhSfap+4GGSt7LLmY82//SaBJQzCMHwVm1IqGdGRM2xuzQ9VxQbNxMskquE2eBrzQIK/wmyrwbpWzKDvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LdCbjBjU; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53F15Pkh020421;
-	Tue, 15 Apr 2025 04:31:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	QmOzbxWmY/uCMMaKk5U24eGShqG2fiQcxMUcfehvYJY=; b=LdCbjBjUgSuhTG56
-	l/iSP2uRAI/Q7T7OIFSXlVQ9RW359oZ3sovunxzrRZaUMW+NvB+HihHzI1ZtbyxE
-	Tm7QTWBNk0iYY5qk8kjq/91Nco/iGleUnb6ey1vbbjjNeJZgUMOYgYe8d5OThsHT
-	h8LkbiRT9rb1bDMLY8+Tq8jy8oio46uubZKRSExEdQON6k5BlBKns54qTiW5Ft8n
-	+v+TeJtTxbeOGFQZCi4gACnt66knMiT0fY6MbDbHC8+oy7/6Vk1N8HBzYQfzMrAc
-	mdjMEGdyzQbKY7/0FiReH4xrqO1tbU6AUkU/KElWIlz4R8E7Y8zNaOe3XlH8hjJq
-	kOQ25w==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ygj96m45-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Apr 2025 04:31:31 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53F4VU3o028689
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Apr 2025 04:31:30 GMT
-Received: from [10.50.52.225] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 14 Apr
- 2025 21:31:24 -0700
-Message-ID: <0241cee0-c121-3f30-57a2-f1d15b5e0839@quicinc.com>
-Date: Tue, 15 Apr 2025 10:01:20 +0530
+	s=arc-20240116; t=1744691598; c=relaxed/simple;
+	bh=Ka9uiHCrZuJOKyLB39qARQnmC3pH9Lj0iGiRIvDRGQM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pIaP8T1D2A7HEMNGJhMduZj4NDb+zpCJxaY1FALEjaBIsqhlO9GeWr0EzlRvIAvjRkOFKDCw0SCtzR4MrF4kgTBdHj2lVj6OIwjp8945rfRaxGbKm/S/ylnyQwgW+K/y93A5/cc2xsyKyA/S1iqAKZ+99HNVEcoJCEQPHYIIaHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; arc=none smtp.client-ip=46.19.9.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
+Received: from [89.212.21.243] (port=52324 helo=localhost.localdomain)
+	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <primoz.fiser@norik.com>)
+	id 1u4Xyz-00Gb4I-25;
+	Tue, 15 Apr 2025 06:33:12 +0200
+From: Primoz Fiser <primoz.fiser@norik.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	upstream@lists.phytec.de
+Subject: [PATCH v2 00/15] Update PHYTEC i.MX93 DTS
+Date: Tue, 15 Apr 2025 06:32:56 +0200
+Message-Id: <20250415043311.3385835-1-primoz.fiser@norik.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 05/20] media: iris: Send V4L2_BUF_FLAG_ERROR for buffers
- with 0 filled length
-Content-Language: en-US
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Vikash Garodia
-	<quic_vgarodia@quicinc.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
-        Stefan Schmidt
-	<stefan.schmidt@linaro.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        "Bjorn
- Andersson" <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Rob Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor Dooley" <conor+dt@kernel.org>
-CC: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Neil Armstrong
-	<neil.armstrong@linaro.org>,
-        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <20250408-iris-dec-hevc-vp9-v1-0-acd258778bd6@quicinc.com>
- <20250408-iris-dec-hevc-vp9-v1-5-acd258778bd6@quicinc.com>
- <b857d1dc-2b21-4b93-89db-808c5dd4035a@linaro.org>
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-In-Reply-To: <b857d1dc-2b21-4b93-89db-808c5dd4035a@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: YivqHSIH5wbCJK_wUuwV14lNg9i-ULfK
-X-Authority-Analysis: v=2.4 cv=PruTbxM3 c=1 sm=1 tr=0 ts=67fde123 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=NbXVrnjj69dCY6q0HAkA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: YivqHSIH5wbCJK_wUuwV14lNg9i-ULfK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-15_01,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
- priorityscore=1501 malwarescore=0 adultscore=0 lowpriorityscore=0
- impostorscore=0 clxscore=1015 spamscore=0 mlxscore=0 mlxlogscore=961
- phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504150028
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cpanel.siel.si
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - norik.com
+X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: primoz.fiser@norik.com
+X-Authenticated-Sender: cpanel.siel.si: primoz.fiser@norik.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
+Update i.MX93 device-tree sources in mainline for phyCORE-i.MX93 SoM and
+phyBOARD-Segin-i.MX93 board with changes from the downstream kernel.
 
+New SoM features:
+ - PMIC support
+ - EEPROM support
+ - enhanced eMMC support
+ - fix eMMC for ERR052021
 
-On 4/11/2025 6:21 PM, Bryan O'Donoghue wrote:
-> On 08/04/2025 16:54, Dikshita Agarwal wrote:
->> Firmware sends buffers with 0 filled length which needs to be dropped,
->> to achieve the same, add V4L2_BUF_FLAG_ERROR to such buffers.
->> Also make sure:
->> - These 0 length buffers are not returned as result of flush.
->> - Its not a buffer with LAST flag enabled which will also have 0 filled
->>    length.
-> 
-> Any buffer with a zero length must be flagged as LAST, else that buffer
-> should be discarded.
-> 
-> Is this another bugfix ? Feels like one, processing redundant packets.
-> 
->> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
->> ---
->>   drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c | 6 ++++++
->>   1 file changed, 6 insertions(+)
->>
->> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c
->> b/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c
->> index b75a01641d5d..91c5f04dd926 100644
->> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c
->> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c
->> @@ -377,6 +377,12 @@ static int iris_hfi_gen2_handle_output_buffer(struct
->> iris_inst *inst,
->>         buf->flags = iris_hfi_gen2_get_driver_buffer_flags(inst,
->> hfi_buffer->flags);
->>   +    if (!buf->data_size && inst->state == IRIS_INST_STREAMING &&
->> +        !(hfi_buffer->flags & HFI_BUF_FW_FLAG_LAST) &&
->> +        !(inst->sub_state & IRIS_INST_SUB_DRC)) {
->> +        buf->flags |= V4L2_BUF_FLAG_ERROR;
->> +    }
->> +
-> 
-> Is this hypothetical or does it happen in real life ?
-Yes, it does. As part of flush, firmware returns the buffers with 0 filled
-length but those shouldn't be marked as ERROR, same applies for buffer with
-LAST flag.
-This conditional check make sure the ERROR flag is associated with only
-frames which are supposed to be dropped/discarded.
+New board features:
+ - RTC support
+ - CAN support
+ - USB support
+ - I2S audio support
+ - 2nd Ethernet (EQOS interface)
+ - enhanced SD-card support
+ - fix SD-card for ERR052021
 
-Thanks,
-Dikshita
-> 
->>       return 0;
->>   }
->>  
-> 
-> ---
-> bod
+Link to v1: https://lore.kernel.org/all/20250410090251.1103979-1-primoz.fiser@norik.com/
+
+Changes in v2:
+
+Patch #1:
+- add Reviewed-by tag
+
+Patch #2:
+- move reg property ahead of pagesize
+
+Patch #3:
+- add Reviewed-by tag
+
+Patch #4:
+- no changes
+
+Patch #5:
+- reword commit message (add more info)
+
+Patch #6:
+- add Reviewed-by tag
+
+Patch #7:
+- reword commit message
+
+Patch #8:
+- reword commit msg
+- split errata changes into separate patch
+
+Patch #9:
+- new patch in v2 (split from #8)
+
+Patch #10:
+- reword commit message
+
+Patch #11:
+- drop CAN regulator hack in favor or "can-transceiver-phy" mechanism
+- reword commit message
+
+Patch #12:
+- reword commit message
+
+Patch #13:
+- add Reviewed-by tag
+- remove empty line
+
+Patch #14:
+- add Reviewed-by tag
+
+Patch #15:
+- new patch in v2
+
+Primoz Fiser (15):
+  arm64: dts: freescale: imx93-phycore-som: Add PMIC support
+  arm64: dts: freescale: imx93-phycore-som: Add EEPROM support
+  arm64: dts: freescale: imx93-phycore-som: Disable LED pull-up
+  arm64: dts: freescale: imx93-phycore-som: Enhance eMMC pinctrl
+  arm64: dts: freescale: imx93-phycore-som: Add eMMC no-1-8-v by default
+  arm64: dts: freescale: imx93-phyboard-segin: Drop eMMC no-1-8-v flag
+  arm64: dts: freescale: imx93-phyboard-segin: Disable SD-card
+    write-protect
+  arm64: dts: freescale: imx93-phyboard-segin: Fix SD-card pinctrl
+  arm64: dts: freescale: imx93-phyboard-segin: Fix for ERR052021 errata
+  arm64: dts: freescale: imx93-phyboard-segin: Add RTC support
+  arm64: dts: freescale: imx93-phyboard-segin: Add CAN support
+  arm64: dts: freescale: imx93-phyboard-segin: Add USB support
+  arm64: dts: freescale: imx93-phyboard-segin: Add I2S audio
+  arm64: dts: freescale: imx93-phyboard-segin: Add EQOS Ethernet
+  arm64: dts: freescale: imx93-phyboard-segin: Order node alphabetically
+
+ .../dts/freescale/imx93-phyboard-segin.dts    | 243 ++++++++++++++++--
+ .../boot/dts/freescale/imx93-phycore-som.dtsi | 165 +++++++++++-
+ 2 files changed, 369 insertions(+), 39 deletions(-)
+
+-- 
+2.34.1
+
 
