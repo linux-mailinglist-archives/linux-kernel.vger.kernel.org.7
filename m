@@ -1,102 +1,109 @@
-Return-Path: <linux-kernel+bounces-606054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D288A8A9F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 23:15:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 916D2A8AA05
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 23:23:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9C967A655B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 21:14:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B911189B5E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 21:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 333C026E16A;
-	Tue, 15 Apr 2025 21:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CD3221DA7;
+	Tue, 15 Apr 2025 21:22:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j1S9855O"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FwKwS4Py"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A8825DCE6;
-	Tue, 15 Apr 2025 21:15:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6189023370C;
+	Tue, 15 Apr 2025 21:22:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744751718; cv=none; b=RHiL38v//K5u74tV+z9xby8fznnKC7O2PtxuevqmFwIoEcQYoFDmML/AbyCEWy7r9S9Y4Fkh5Qnq66D8aD8M1L+lSRKq54HHO6V+9Kasr2XPhkrWiUMRYyhmMhiJPtmPCc64gfK4h4LTzjiiQYY4lWCc39d/6Nxwb9naI9FJOaY=
+	t=1744752166; cv=none; b=DgZikzC+P0HJBpSqvEhO4WbgoUZR+hg+37CfZ75otNGETHmdunrSBESd8zIBkY1cXxc/fhwvyj4AJOfqrptG+LMbSa2mZ8rI4mr36sBzViUnbniNY2erVCOu9wAko4jwXeWIwxJg7jqU6UR6Hb0oQ27Gfzm+583sRb6zxDvJ6ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744751718; c=relaxed/simple;
-	bh=tlkahzfdxTrBctXrZv1z/g+G+WCTBEE+T1vImdfReCA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BpA6rpkGmn1UK4FUDRqOTeQ3ZxUgyjV5R6NfT2TyffmmtKRwLC9es/76bHct/4JEH6yFgg2O2qIfI1ynRUO29z3oZgsOaAIBkqnQRfqo/Q61mcq9Xg79/zEd8oaco5NsFOR1Osx58KvnUp9sc6gA1BffHg+BCRnqK7Zh1Eva5JM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j1S9855O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DA29C4CEE7;
-	Tue, 15 Apr 2025 21:15:15 +0000 (UTC)
+	s=arc-20240116; t=1744752166; c=relaxed/simple;
+	bh=7zVUtljGidorOLsS4uAD2nmE4ANyfK0eCdDp8g5uebQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Z30pkwjWt2lvZHZfL6BHerEwBKdGI4yqtZoFBoAT3a7rnRArYnxJUjjYxa6NOO/5pAGDHRlEOC/ubvlwN14kuf/5Ss+cs9cSvPYI99ZeRo7idJwnt2ltgSGQuroUQcLjnHD+gsX0Ku/4c63Qi9WMHzzteAHqKFgwdNW59QmYXyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FwKwS4Py; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9F3ABC4CEE7;
+	Tue, 15 Apr 2025 21:22:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744751715;
-	bh=tlkahzfdxTrBctXrZv1z/g+G+WCTBEE+T1vImdfReCA=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=j1S9855O3I6d5rK8H377b/RWT2Ho21hOyDVMWk3yX+zr2xHeN+JtvomuplD0uXJsn
-	 QgxUpuoW5qhGIX1dlD6pZNAZ5CY0pTZykSnUt2N68udEbibaSAB+7Xl0aDtVT6F9KO
-	 CIRfZy/1NP2TEslBYt0XkMFNMaB3918uYRitIAI7/hGU+r2wdZJcdrusRgoc3mG+Pw
-	 0KXTcDBI3ZJ8PXCGxfLJ+GjWE91opAK4lpC2oeCiJ4skQsJHtjknaJvq1mzZUM3qW5
-	 jcT0z23bz/A10WD97V+bCWKICt91DRzX25je5Mam2EqDSA9BrDE5wmXxo+5F/z6q9j
-	 iVlKjFmoimTRA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 1448DCE0592; Tue, 15 Apr 2025 14:15:15 -0700 (PDT)
-Date: Tue, 15 Apr 2025 14:15:15 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org
-Subject: Re: [PATCH v2 05/12] rcutorture: Add tests for SRCU up/down reader
- primitives
-Message-ID: <1d60ee60-2924-433d-a9b7-726f82f0e546@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <eea8d42f-6d2d-485b-9bb9-4eb77a0e1f95@paulmck-laptop>
- <20250331210314.590622-5-paulmck@kernel.org>
- <d40885a0-b0e3-4f13-a2b3-41ee2defbde0@nvidia.com>
- <37400faf-8d31-44ef-b9d1-6c91fa19b4f3@paulmck-laptop>
+	s=k20201202; t=1744752165;
+	bh=7zVUtljGidorOLsS4uAD2nmE4ANyfK0eCdDp8g5uebQ=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=FwKwS4PyPVBz+If0leU/yq4hg2VIgpFOb5WJLAnTzxQY8TWLH3k3KnFbu7KLKbIZ7
+	 yMRY6fcTXiN+yFRsbvQmmLWUj23b3y32jTpYC98Q/gLRCkvIJ3bkowYzcp3QpQ/OGX
+	 ReKJujbB5ugnElDpKAQ2N0vbQ4emqtjmEK5gT+hCM79ljaiMBynUfHEm+/1ttnQcYZ
+	 5FwOAjzJQcQmym4CuCCWVQPCVAlcC8bCrchdXriJjD9eGpNDhy8aNQhYrwned6Ok8H
+	 j7LOhLzqaGlAUSkQZ+VVlfbwW9YPzgZn5MNIq/riUzXmukm6J1r1yO/3fnEg3etobV
+	 cpxZ2oV2udEIQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58BF8C369C1;
+	Tue, 15 Apr 2025 21:22:45 +0000 (UTC)
+From: =?utf-8?q?Andr=C3=A9_Apitzsch_via_B4_Relay?= <devnull+git.apitzsch.eu@kernel.org>
+Subject: [PATCH 0/4] media: i2c: imx214: Add support for more clock
+ frequencies
+Date: Tue, 15 Apr 2025 23:22:14 +0200
+Message-Id: <20250415-imx214_ccs_pll-v1-0-d3d7748e5fbd@apitzsch.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <37400faf-8d31-44ef-b9d1-6c91fa19b4f3@paulmck-laptop>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAAbO/mcC/x3MSwqAIBRG4a3EHSeoWVBbiQjRv7pgDxRCiPaeN
+ PwG5zyUEBmJhuqhiJsTn0eBqitymz1WCPbFpKVupZGd4D1rZWbn0nyFIGAsvESPttFUoiti4fw
+ Px+l9Pw8JVeRgAAAA
+X-Change-ID: 20250406-imx214_ccs_pll-e4aed0e9e532
+To: Ricardo Ribalda <ribalda@kernel.org>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744752164; l=1042;
+ i=git@apitzsch.eu; s=20240325; h=from:subject:message-id;
+ bh=7zVUtljGidorOLsS4uAD2nmE4ANyfK0eCdDp8g5uebQ=;
+ b=jSZ1gTTw4HzCRtRKEtmcDRQuWRaTCEle2bfWQZPN7igj2mH2SxaRIwrdEIS+LddecuwT57f59
+ rIruLG1rcd0Br+V8X8DIPOIdO+HgJItymEf8qZd5PFaH7PX0vIv6mA3
+X-Developer-Key: i=git@apitzsch.eu; a=ed25519;
+ pk=wxovcZRfvNYBMcTw4QFFtNEP4qv39gnBfnfyImXZxiU=
+X-Endpoint-Received: by B4 Relay for git@apitzsch.eu/20240325 with
+ auth_id=142
+X-Original-From: =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
+Reply-To: git@apitzsch.eu
 
-On Tue, Apr 15, 2025 at 10:59:36AM -0700, Paul E. McKenney wrote:
-> On Tue, Apr 15, 2025 at 01:16:15PM -0400, Joel Fernandes wrote:
-> > 
-> > 
-> > On 3/31/2025 5:03 PM, Paul E. McKenney wrote:
-> > > This commit adds a new rcutorture.n_up_down kernel boot parameter
-> > > that specifies the number of outstanding SRCU up/down readers, which
-> > > begin in kthread context and end in an hrtimer handler.  There is a new
-> > > kthread ("rcu_torture_updown") that scans an per-reader array looking
-> > > for elements whose readers have ended.  This kthread sleeps between one
-> > > and two milliseconds between consecutive scans.
-> > > 
-> > > [ paulmck: Apply kernel test robot feedback. ]
-> > > [ paulmck: Apply Z qiang feedback. ]
-> > > 
-> > > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > 
-> > For completeness, posting our discussion for the archives, an issue exists in
-> > this patch causing the following errors on an ARM64 machine with 288 CPUs:
-> > 
-> > When running SRCU-P test, we intermittently see:
-> > 
-> > [ 9500.806108] ??? Writer stall state RTWS_SYNC(21) g18446744073709551218 f0x0
-> > ->state 0x2 cpu 4
-> > [ 9515.833356] ??? Writer stall state RTWS_SYNC(21) g18446744073709551218 f0x0
-> > ->state 0x2 cpu 4
-> > 
-> > It bisected to just this patch.
-> 
-> Looks like your getting rcutorture running on ARM was well timed!
+The imx214 driver currently supports only a 24 MHz external clock. But
+there are devices, like Qualcomm-MSM8916-based phones, which cannot
+provide this frequency. To make the sensor usable by those devices, add
+support for additional clock frequencies.
 
-And could you please send along your dmesg and .config files?
+This series supersedes
+https://lore.kernel.org/linux-media/20250308-imx214_clk_freq-v1-0-467a4c083c35@apitzsch.eu/
 
-							Thanx, Paul
+Signed-off-by: André Apitzsch <git@apitzsch.eu>
+---
+André Apitzsch (4):
+      media: i2c: imx214: Reorder imx214_parse_fwnode call
+      media: i2c: imx214: Prepare for variable clock frequency
+      media: i2c: imx214: Make use of CCS PLL calculator
+      media: i2c: imx214: Read clock frequency from device tree
+
+ drivers/media/i2c/Kconfig  |   1 +
+ drivers/media/i2c/imx214.c | 262 +++++++++++++++++++++++++++++++++++----------
+ 2 files changed, 205 insertions(+), 58 deletions(-)
+---
+base-commit: 5b37f7bfff3b1582c34be8fb23968b226db71ebd
+change-id: 20250406-imx214_ccs_pll-e4aed0e9e532
+
+Best regards,
+-- 
+André Apitzsch <git@apitzsch.eu>
+
+
 
