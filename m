@@ -1,134 +1,204 @@
-Return-Path: <linux-kernel+bounces-605101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA969A89CD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:49:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39F04A89CD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:50:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BAB41886ACF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:49:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32B471886BB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:51:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE1B29290B;
-	Tue, 15 Apr 2025 11:48:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92908292920;
+	Tue, 15 Apr 2025 11:50:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="D8L00DBx"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="i+xzdMIh";
+	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="wJuIVKw1"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29CB127586B;
-	Tue, 15 Apr 2025 11:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744717733; cv=none; b=q1enRmqj/CMYNn0Bx+5CU/2Z8EjUW+R5EG9nJIsetw/IZes04vVK3S4kBk0DuhUm1Er49jUCZv7IXF4Cwp4kn3kK4SwulzI4ct5CWJ+/tKdnAc7olnUoxzNC7H4vojDZfQgalVk5ickOPvRPmR3gcMNZJiacinqPK4vFuYdvAdg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744717733; c=relaxed/simple;
-	bh=uxPhOzxY14pVCHZGfJbw2h3p6ZWpthGrzWp7eAolL2c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=eDTwEBI9V1l609jMOsBrQNCl/73FQdsAniZk/Ft3bzKOaoyUh9aTcAgqmiTITbM0dW1QJowK9iJ0q1S+CC0fattXSBPMpn1pOZTgd1Bz4PhbdRxvQEI/YOhXZ8w3iG8AcYLSNTlKHxCS/vgp0G2wSWzf4R9VxLwp8y65eNPm728=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=D8L00DBx; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53F8tNPc002462;
-	Tue, 15 Apr 2025 11:48:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	WPx0blElfQsDzlplnsNASavPopVyU/xxzlA7I369vRc=; b=D8L00DBxD6XIws3E
-	pKwaBK34gh6NnOaJB2Ghd6AX3puoBBsVFJV09h4ayjUjTsR8IVKZ5XiCQIR/u0jD
-	FLFIGq8YbO7EjKbTUlFWpc/UzciygLVSMHaYHg66K7fEjqk83YqCsuxIPnxewb17
-	Jmcfo84ZDdJtbM1uhLja2++55Xwgk09PyV1VKwhzOtz9BX5mDrcmv184Y3F+6iz+
-	J5i3XvEJLS8ngu4nR80+B9p+B0+2qV/WgSPAnsRgKRhdzht9PmceOZ0v+t6K9i+i
-	WO+OQR4y4rKhsGfJzPt8MxAmloLbVbTjetVq6Ar1/WE+tqQU5Sa9HpEMGcrcwwtC
-	9S9qpQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ygxjyrvn-1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFE5528E5EE;
+	Tue, 15 Apr 2025 11:50:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.149.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744717840; cv=fail; b=slRT9yayqn2rZqFDYwlXfU4JZCS8+FeJkezbO6y0gZeFs9cspHrlZHf5+4IgRBOrWobwWYDhoxKD7mGYtgeyvRtdsCOCEMG+leATT9xlk7KB8DvgYsIA/AzzYKdOSuHwzH7v4ZnIfVKqo0cPtYi92ddmNqu70dLrouVyHT6CWjY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744717840; c=relaxed/simple;
+	bh=j1QQTnOwVXW3kLsSiJrqbYtHGgMQm1v55HEE0LIJgT8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ImG3msDCuTMRN6Uu/5nGosC1cD7PIbXxdX75lwABgHrPwuF2iiyMabvjSyZLktnuKoDCYxfFgDTzNr+6WovSul8ccIxAuqsAC4t/CP7/R5j7AYsRDc/dErxuD2/hropE533a+f3IyUD/ICXTL8P7npnYymEk1Yt0u29twk8gNfs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=i+xzdMIh; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=wJuIVKw1; arc=fail smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53F5AGTT001361;
+	Tue, 15 Apr 2025 06:50:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PODMain02222019; bh=zV0fPrDgPSyrxXib
+	7pedeThfeQOlGilKTcWQJA8YnjQ=; b=i+xzdMIhEB7ohUAxsGFcBmmhF1qAwmfk
+	p5NM9OU+mtkVPvxsCHtzThCqXEwMD4LtxRS8g9zlgF7FXTS/n4DDQC1xKXzGe+1p
+	gkSrIGK6XLqEcPSD2a/DtVohfpKcB6NiffFmbBPMw70j8t7Ih+crlaAo4aI4edIW
+	Hw2iJSGzuo7skggFeJjGGJg8kilkZuG1HUyGmZHM6j8B6ciba00M+Xujn47apsgI
+	1M3hAacCdJGvMdx7lvfzo5FjFGTvuiS25WEKUAlqlKosMJPf+ope+REfIWvu8xUz
+	Dcrg2wUMJlTHe/jvekXULlQGI8f1lcQIAd78arZhSXhscDBGobesDg==
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2170.outbound.protection.outlook.com [104.47.56.170])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 4615wt10rm-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Apr 2025 11:48:25 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53FBmP4p025518
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Apr 2025 11:48:25 GMT
-Received: from [10.217.219.207] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 15 Apr
- 2025 04:48:21 -0700
-Message-ID: <3204f619-61a5-41b9-b9a5-c72397b21d11@quicinc.com>
-Date: Tue, 15 Apr 2025 17:18:18 +0530
+	Tue, 15 Apr 2025 06:50:23 -0500 (CDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xOeo1tSMpHmR6YCoDsOSB/87CZZQ6ijxGyP/6lMTyG2SVai/wvJbYEz4cQauk0AKz51akZcIz/tWBdz5iq2YpEsTEhGuoMWuH/G25LW9m+VcnPZSQLzxVn3LKhbfQNeULv1PwFzlxRR7WIoxyTgaCSiJfjAczPUTqGbeRKaT4NwIOebjsHxJbVb0QyDNXS4qDuaYvCRD7roe6F8MhIOVYXHFrY7MKbvsXHZypnp66jTcjfxe3rFisXUo7uUpexP1Qa7TNGy+X3Jh6YaCqf44cDgm522Qh6Co4aJUeeXSy2OId95sYZLLfOb5jP99STzVlsNIVorW77T4wJta0kjy3Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zV0fPrDgPSyrxXib7pedeThfeQOlGilKTcWQJA8YnjQ=;
+ b=g3/mGKSi2Q3Ri0tAsti4xS9Z5qSHISv5VXpeC2x7lJO3DXPCNBT3CVB33ZwP94ENClVivrxpNm1/36+rsiln9/ugyjWsltOkPXcdjk84Jra3aGa0lctTlTu449d6UbZSf9MVFIH3/frT2NyBupOMuCVYydr/BltrSk7ySzw7KffzQV3LI+N8/FqpPFeTy29KmdP0ggeCHVKL1qQS16bZ20PtQKsPe6fjET1GgdQr7r0Au++2SYZcJ+fOgLo93iNE3p7E/lgkxqHS/xLeVltnaJJ9LtQ7d9bwa1wM4Lg+CRDpaTMnjfqxrHQVNLQM6i8cMF5zE1RuBaOPjWeicXlbKQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 84.19.233.75) smtp.rcpttodomain=cirrus.com smtp.mailfrom=cirrus.com;
+ dmarc=fail (p=reject sp=reject pct=100) action=oreject
+ header.from=opensource.cirrus.com; dkim=none (message not signed); arc=none
+ (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zV0fPrDgPSyrxXib7pedeThfeQOlGilKTcWQJA8YnjQ=;
+ b=wJuIVKw1Q3+SRl8jmNfKWGlBeSqiX+C7BeM4w15J2ihNYXHSlvhO5cj16EUa3Dpj06D1V6SzMuI0ttRAenn5Mh0mdcn5LzQf0FQ+MFdNn/F9sUbE9d3mIBPgTPDKwj3dNgU1IEGu86cCHA57dnuptM/XIhU/DSRdtaE2u8FzRkY=
+Received: from SJ0PR03CA0288.namprd03.prod.outlook.com (2603:10b6:a03:39e::23)
+ by CO1PR19MB5221.namprd19.prod.outlook.com (2603:10b6:303:f1::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.36; Tue, 15 Apr
+ 2025 11:50:19 +0000
+Received: from CO1PEPF000044F3.namprd05.prod.outlook.com
+ (2603:10b6:a03:39e:cafe::90) by SJ0PR03CA0288.outlook.office365.com
+ (2603:10b6:a03:39e::23) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8632.34 via Frontend Transport; Tue,
+ 15 Apr 2025 11:50:18 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 84.19.233.75)
+ smtp.mailfrom=cirrus.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=oreject header.from=opensource.cirrus.com;
+Received-SPF: Fail (protection.outlook.com: domain of cirrus.com does not
+ designate 84.19.233.75 as permitted sender) receiver=protection.outlook.com;
+ client-ip=84.19.233.75; helo=edirelay1.ad.cirrus.com;
+Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
+ CO1PEPF000044F3.mail.protection.outlook.com (10.167.241.73) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.12
+ via Frontend Transport; Tue, 15 Apr 2025 11:50:17 +0000
+Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id 2E383406541;
+	Tue, 15 Apr 2025 11:50:16 +0000 (UTC)
+Received: from ediswws06.ad.cirrus.com (ediswws06.ad.cirrus.com [198.90.208.23])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 12AF2820259;
+	Tue, 15 Apr 2025 11:50:16 +0000 (UTC)
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+To: broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org
+Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
+Subject: [PATCH v4 0/2] ASoC: Add codec driver for Cirrus Logic CS48L32 DSP
+Date: Tue, 15 Apr 2025 12:50:14 +0100
+Message-Id: <20250415115016.505777-1-rf@opensource.cirrus.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] i2c: omap: fix deprecated of_property_read_bool() use
-To: Johan Hovold <johan+linaro@kernel.org>, Vignesh R <vigneshr@ti.com>,
-        Andi
- Shyti <andi.shyti@kernel.org>
-CC: Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Andreas Kemnade
-	<andreas@kemnade.info>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Roger Quadros
-	<rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
-        Janusz Krzysztofik
-	<jmkrzyszt@gmail.com>,
-        <linux-omap@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Jayesh Choudhary
-	<j-choudhary@ti.com>
-References: <20250415075230.16235-1-johan+linaro@kernel.org>
-Content-Language: en-US
-From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-In-Reply-To: <20250415075230.16235-1-johan+linaro@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=WecMa1hX c=1 sm=1 tr=0 ts=67fe4789 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=sozttTNsAAAA:8 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
- a=CDmJc5vrhkyB_-nfjVoA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: PnkJCtQy-JYDDiG_fx88-OnPln3Z4BRm
-X-Proofpoint-ORIG-GUID: PnkJCtQy-JYDDiG_fx88-OnPln3Z4BRm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-15_05,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- adultscore=0 clxscore=1011 lowpriorityscore=0 phishscore=0 mlxscore=0
- impostorscore=0 mlxlogscore=999 spamscore=0 malwarescore=0
- priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504150083
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044F3:EE_|CO1PR19MB5221:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: ab16eae9-bd48-44c6-fc89-08dd7c13b188
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|61400799027|376014|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?a3Vf70gKHEx5Yt7GfiqXoJglxNpMRSe39ePo0S8BSx+awhCUk89hI+Sm+qMm?=
+ =?us-ascii?Q?L5gk9OR5cFpv9Ul7a+G1S2gXm1KxrgXL9D6kXGLIlBStqYQM6R+9iY4kmugw?=
+ =?us-ascii?Q?tjhWijvzm2hsUSwm35yk9EhUa0Qm9meQZQOzvOtOrcjFLn+O/p9RX+aEqyQs?=
+ =?us-ascii?Q?LWCumCHELnDxpykt0FJEmy4x7oJ3bzU0UjxxTpExRiOWoP6jvyNaI3m0jXxv?=
+ =?us-ascii?Q?GN3qoIlbIW28RsUFIsg83qMenXpyv9BxONMk5Gob2mgQVgD1gsneg4wixLIB?=
+ =?us-ascii?Q?mDBhJeZySgZKjquX1gsvDiFoyQiIct0hG+R4gPkdybdNxPCGzf3c3VQi6V6v?=
+ =?us-ascii?Q?1+vMJgDCF4VXvjjpFMKl/4vngWdvy4HgsdB6mrZqp5A/cTLrBiVM9FdhpWwJ?=
+ =?us-ascii?Q?1Ak1NAZdaLvD6TKfJ7oaLr7OcAC/Txy3dn/MIM3nqNWTIkeqKD2j/vNKbSim?=
+ =?us-ascii?Q?Aq+pS601qBfdWLBWhd+/18Yw0NLRkh35HFrTOMjN8LI80RooNEUmh3/wkl6I?=
+ =?us-ascii?Q?wb33ikMsHqnM1XV52ti4P3iRDSyNA2VWD32exwMK953cHd4Zc7FQAHADlBl4?=
+ =?us-ascii?Q?a0kKgKBLK+6CDWjuVsEoJdxcVUnVZvY5XhoGG6w+x7uZfb9ZjXotYDCbmFlG?=
+ =?us-ascii?Q?kuW/Fbxa+PFk+7CQZRvTtsvYAiScgJtcA24QCZPhFV1c+ZbWJ8vKj+VbqZ/L?=
+ =?us-ascii?Q?6zI1qSpDEeiinwWZbHj1ZetS0i57hCYwHqszakHTWOO1QTS5YSlf8udFNt1v?=
+ =?us-ascii?Q?XiwQvd4vkEyg1ydQLiD7vmVvIUonGmLb6Sif+OMRPilR0/Ir2jDQ5ZErTMYW?=
+ =?us-ascii?Q?lIpH6jUF5++BPnYh0FVG71lsiQeGwE9lqiC43eLyEP0iEaPcdsuDX8rM28NC?=
+ =?us-ascii?Q?9EdGKcii0+23UKF2W9lwfjBG3iRIqSPqVA8LUQYJghE29BjPv9pLkelvSBZi?=
+ =?us-ascii?Q?Sn/x8NBtcbIa3iErNCYuHHkTb0MBZFWgqAYGi511cZ3gldJ+VqRhd84vbNFh?=
+ =?us-ascii?Q?oehTs05yxg9sxPAL7svL293Ln9FfqqPGjGjYdS+Z/Snl9I+6BDLzOjejvAVQ?=
+ =?us-ascii?Q?ykedwl1Pj6qpV/R746oEmjU29qBfi6NlGW/vS5gC2c8DYwGW4gIth7EdarT/?=
+ =?us-ascii?Q?FyXt6UW8fHfZM6XmfgxqzNVU3SU+B1+CZ6pe3z8LluNiTFk9hBvQOz/+l47z?=
+ =?us-ascii?Q?MD4qknNy/7gmQgo9eoOasxy5313U+9bHlZ/0p7t5s2FW64hKd69ePDr5+6n1?=
+ =?us-ascii?Q?DjMdi6h4HaZc8A73uXMKZ/D9Vm81s2hLE7K9oj+zsYA8G6J8owJ0EWmaeaCW?=
+ =?us-ascii?Q?SgMSrFfGFmLIg1mnL/AhzL1xhu7llNG6kFg6V5AW6C0/ugJlDKuYJ5zX2bkV?=
+ =?us-ascii?Q?JYfeCiwSk78o2FQX7G0a2F4M3ucPOmfWkEmKoV8iv1wsDqeZV3uIg9d2ZVAR?=
+ =?us-ascii?Q?LgUkfW8HfJUe6MLo10LmoSQyM4CZbQqxFkDivuMQ5jXsTIYlBbFj4JqiE379?=
+ =?us-ascii?Q?Rb2DpRVxnWLORfk3SuctH1PT8Mlwt+TvQSPD?=
+X-Forefront-Antispam-Report:
+	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(61400799027)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1102;
+X-OriginatorOrg: opensource.cirrus.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Apr 2025 11:50:17.7964
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ab16eae9-bd48-44c6-fc89-08dd7c13b188
+X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000044F3.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR19MB5221
+X-Proofpoint-GUID: d1nW8nJ6J-YC0KVMJdUhBGZmYrqALWdU
+X-Proofpoint-ORIG-GUID: d1nW8nJ6J-YC0KVMJdUhBGZmYrqALWdU
+X-Authority-Analysis: v=2.4 cv=OeuYDgTY c=1 sm=1 tr=0 ts=67fe4800 cx=c_pps a=o9WQ8H7iXVZ6wSn1fOU0uA==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=XR8D0OoHHMoA:10 a=s63m1ICgrNkA:10
+ a=RWc_ulEos4gA:10 a=TDA31o14s-3B4xYcogsA:9 a=BGLuxUZjE2igh1l4FkT-:22
+X-Proofpoint-Spam-Reason: safe
 
+formance low-power audio DSP with analog and
+PDM digital inputs and support for low-power always-on voice-trigger
+functionality.
 
+This series adds the devicetree bindings and the ASoC codec driver.
 
-On 4/15/2025 1:22 PM, Johan Hovold wrote:
-> Using of_property_read_bool() for non-boolean properties is deprecated
-> and results in a warning during runtime since commit c141ecc3cecd ("of:
-> Warn when of_property_read_bool() is used on non-boolean properties").
-> 
-> Fixes: b6ef830c60b6 ("i2c: omap: Add support for setting mux")
-> Cc: Jayesh Choudhary <j-choudhary@ti.com>
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> ---
->   drivers/i2c/busses/i2c-omap.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-omap.c b/drivers/i2c/busses/i2c-omap.c
-> index 16afb9ca19bb..876791d20ed5 100644
-> --- a/drivers/i2c/busses/i2c-omap.c
-> +++ b/drivers/i2c/busses/i2c-omap.c
-> @@ -1454,7 +1454,7 @@ omap_i2c_probe(struct platform_device *pdev)
->   				       (1000 * omap->speed / 8);
->   	}
->   
-> -	if (of_property_read_bool(node, "mux-states")) {
-> +	if (of_property_present(node, "mux-states")) {
->   		struct mux_state *mux_state;
->   
->   		mux_state = devm_mux_state_get(&pdev->dev, NULL);
-Acked-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+Changes in V4:
+- Removed bogus updates to MAINTAINERS that were leftover from an
+  older version of this code that had other files that are now deleted.
+
+Changes in V3:
+- Remove reference in yaml to obsolete gpio.txt.
+
+Changes in V2:
+- Remove bogus use of 'i' local variable in dev_dbg() statement in
+  cs48l32_init_inputs()
+
+Richard Fitzgerald (2):
+  ASoC: dt-bindings: Add Cirrus Logic CS48L32 audio DSP
+  ASoC: cs48l32: Add driver for Cirrus Logic CS48L32 audio DSP
+
+ .../bindings/sound/cirrus,cs48l32.yaml        |  195 +
+ include/dt-bindings/sound/cs48l32.h           |   20 +
+ include/sound/cs48l32.h                       |   47 +
+ include/sound/cs48l32_registers.h             |  530 +++
+ sound/soc/codecs/Kconfig                      |   10 +
+ sound/soc/codecs/Makefile                     |    2 +
+ sound/soc/codecs/cs48l32-tables.c             |  540 +++
+ sound/soc/codecs/cs48l32.c                    | 4073 +++++++++++++++++
+ sound/soc/codecs/cs48l32.h                    |  403 ++
+ 9 files changed, 5820 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/cirrus,cs48l32.yaml
+ create mode 100644 include/dt-bindings/sound/cs48l32.h
+ create mode 100644 include/sound/cs48l32.h
+ create mode 100644 include/sound/cs48l32_registers.h
+ create mode 100644 sound/soc/codecs/cs48l32-tables.c
+ create mode 100644 sound/soc/codecs/cs48l32.c
+ create mode 100644 sound/soc/codecs/cs48l32.h
+
+-- 
+2.39.5
+
 
