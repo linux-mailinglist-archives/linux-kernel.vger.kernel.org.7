@@ -1,127 +1,139 @@
-Return-Path: <linux-kernel+bounces-605012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC85EA89BBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:16:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A213EA89BAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:15:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 960C53BB92D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:16:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C0B13BB491
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742C828F514;
-	Tue, 15 Apr 2025 11:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2203829290A;
+	Tue, 15 Apr 2025 11:14:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FQabwCd0"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IdItgkMr"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C312957A1;
-	Tue, 15 Apr 2025 11:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A8C2918FE
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 11:14:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744715693; cv=none; b=P7R52OcTC5QXaidjMg/dEcePQyocbzG9+XA7RiZQt3XVgAKkOnG5uh66qXMkZ88RrkwAtu/5sh41/Zro3u76jjK8qW0dXwMhWpe9TiJfkhVm0LkOe8uuUNmNPwznEFbPeWNR8vRq/IS74Nd7ih1+73IfHUZBXnlO7X0FpL2k2hY=
+	t=1744715672; cv=none; b=OBKvZ6yd5Gl36mR0P8CcZYefADl5Qh5udikaVE1EBBLRy9DUqytYo+DXW6NMiUp1guhG2u/6DwmHPx0d0JqxeOSJG5OeZyeyh1fEdCrBLoF+85fYO72xpHu2edays5Edwcr6YKY/MerbY1AUwFIroJ2qrF/5IwHdN2B2j3nmBRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744715693; c=relaxed/simple;
-	bh=eNIcSBZQVNw/KKf1Vw49N8gKD+OmysqrdbVpiImP62I=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L4WVhrc9+GEGxEoAJPP789KpbjR+Z7hu5EmQtvh8E6uCef3IY1yuDWO1GXriTpUqkBAHISOJiV29UFx1FWEVutsMzJPkYue+7xbIRzyu87UBmMU/N720yM1xmUEpPY1VvSqZhUSvEI1LAdlH43fB2KgDdCVOAJshBHTU7Z5Ij0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FQabwCd0; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53FBEe9d2458138
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 15 Apr 2025 06:14:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1744715680;
-	bh=XPMxJ40frsXOuFqUO5rZ6SQtIL9Nh2U8XEG0aMai8MU=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=FQabwCd0UrEoZias5D+lULwTGZqtPlD1AyoMu1DD6O6UEBx7Ml76gZu/q2jA1MaSA
-	 4nSFOKTzZzuJ048e89cjDzGXzpb1rK7KxAg3OziIEoPMMM9RTm5huzESBGRuLl0Q1G
-	 KhDiaYI9DHpS/mJquDd/Pew9SNef7bc/OEfLckSg=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53FBEePX001003
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 15 Apr 2025 06:14:40 -0500
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 15
- Apr 2025 06:14:40 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 15 Apr 2025 06:14:40 -0500
-Received: from abhilash-HP.dhcp.ti.com (abhilash-hp.dhcp.ti.com [172.24.227.115])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53FBDqIC051431;
-	Tue, 15 Apr 2025 06:14:36 -0500
-From: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>
-CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <vaishnav.a@ti.com>, <jai.luthra@linux.dev>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <imx@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-        <u-kumar1@ti.com>, Yemike Abhilash Chandra <y-abhilashchandra@ti.com>,
-        <stable@vger.kernel.org>, Neha Malcom Francis <n-francis@ti.com>
-Subject: [PATCH v3 7/7] arm64: dts: ti: k3-am62x: Rename I2C switch to I2C mux in OV5640 overlay
-Date: Tue, 15 Apr 2025 16:43:28 +0530
-Message-ID: <20250415111328.3847502-8-y-abhilashchandra@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250415111328.3847502-1-y-abhilashchandra@ti.com>
-References: <20250415111328.3847502-1-y-abhilashchandra@ti.com>
+	s=arc-20240116; t=1744715672; c=relaxed/simple;
+	bh=zf6S7BwxmjRGPEbtBn8SAQUbmMfRLV8FnIH9oSAWU0I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mEnGQ5ubJAuAdgw7yrH+wNE7hKurjjI7jkqTtjTyncP4v8LMYosb3iXpbcdp2zdLqSV74IEu9mvNtTLXfN0wopHrg8tzcsKb6Er5+PkobJEn8+F41KyOeGORVOSqc9oxfsoti9ydJlGS5TVcmWyKnlFRPiBBsPvtz78ZBir6q6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IdItgkMr; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43cf05f0c3eso38172255e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 04:14:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744715669; x=1745320469; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bY45fV9JtsFm8hS8+PJ4taV+G95NrPm0cwhPaiVS9H8=;
+        b=IdItgkMrSt96BXtHyl7jbXD7dh+f16U9FSPYCDBYDVMkcXzlBGMXMzO6yPi7jeljf5
+         tUY20pRQAdasyBUZu9MQNOwXo0NScpFzttej+f4oJbCVVu8EFcp/L1NKroZ/giwdCh9I
+         r3Zh5Qmb6KERFoIYTNXJlzh9A34RL0cfUe6w5VmWN6Wzm4vMOrXxohTHMY+1OYeFChV5
+         do+55xe8B5ueKVCe97l+dBQyrXqtyLrElIThqeJpqbTPRpimPS1sM8N0CQ35FSLPK4IF
+         wj7ERscjcNr2Jxtlly8d7BPQLfn+xfw99CdJp7M0dT8/sToBhC5HS3tZLjut1pcnjmfE
+         JpoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744715669; x=1745320469;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bY45fV9JtsFm8hS8+PJ4taV+G95NrPm0cwhPaiVS9H8=;
+        b=O2fx9Yths6dc4dacZFV6o8JmouNf+k0isvFVtiFhoqJLMGPF0RNGR0vs0bKsQR4Zmp
+         cWXw0gJW/ztw7Y+mW1JwNfaJzO+FnpJ0TKZr5B1WVv+5sbQkWidnYa5DOGwQ4mgN6MLN
+         S4ciBFQDJSCG41AWLDLRZ3lf0Aqu0pWP36PSh/z86Cz9q+1LvVUQzu6sL5vSFSXKIEdj
+         hUd2sJCqIsj+wnIrIt4YokBamnM4jXShP7FdnD0r3nE4cuhKF0ekQ9YcIol2JnAeaQ0d
+         LS4l3NxTcHLOFa5no+sHuBSkY75wYz0JGG4xM9WS5czaaG6p7POmp3deQo7rIBdHarqk
+         Yl5A==
+X-Forwarded-Encrypted: i=1; AJvYcCVhOqdCBi7xDlKEjP1wIeeIRqV0s3+JoJ9mvXDssENQIWjudgrKT0K+QviukgkAfiN/apX0tHgNTp40MIc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1/rFe18cU4JfuJuFqCs/bPCQ3bJo6ll8hXPGV6Kzd+og2cdbk
+	hfJCVs8Z7mhUG9cVjjhH5g2/JVANQ4SG2aYqWMW4I5O+5ZQXT1b+
+X-Gm-Gg: ASbGncuaN2RtISmYR6hC9GP/Iskr4ioaP+aq02Rns0qneymrkd796oQDLJCav0wUMfB
+	5MVrYsceOYRB0p/ys5Akq5zw/PCNdpQY9kY9xqb8GXSZ82qbtcuzPFJaQr8ud+XtOzf/Fjvun96
+	fnqgS/OSxEB7c5+EiBN3kiBqQPhDyBcMzo72C1oIz/c7TbPxIIrJsKuPi3dDS4dwTaQsy+aZPTt
+	fXgCGfMO/jBytg67+xzFK24P4Gnhyuw6RWB+CSfsSc+Cu7GTl1H5PVm9j31XhI4df8cnuo5+3Ox
+	dCYRSO8V0QPuSi+plnvUwViO/4HttwN4Vme1HbpCemCHibU=
+X-Google-Smtp-Source: AGHT+IGueDp3RVJwV56+mggSDaAppr5UT6eQvxQ7iCWwQLXBu204Paq6HN+Cpe1tHMJqLp37X05/0A==
+X-Received: by 2002:a05:600c:3501:b0:43c:fa3f:8e5d with SMTP id 5b1f17b1804b1-43f3a926d56mr158614435e9.2.1744715668267;
+        Tue, 15 Apr 2025 04:14:28 -0700 (PDT)
+Received: from noctura.suse.cz ([103.210.134.105])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-39eae96c614sm14106636f8f.27.2025.04.15.04.14.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Apr 2025 04:14:28 -0700 (PDT)
+From: Brahmajit Das <brahmajit.xyz@gmail.com>
+X-Google-Original-From: Brahmajit Das <listout@listout.xyz>
+To: 
+Cc: "Borislav Petkov (AMD)" <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Tony Luck <tony.luck@intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] regulator: hi6421v530: fix building with GCC 15
+Date: Tue, 15 Apr 2025 16:44:04 +0530
+Message-ID: <20250415111411.6331-1-listout@listout.xyz>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The OV5640 device tree overlay incorrectly defined an I2C switch instead
-of an I2C mux. According to the DT bindings, the correct terminology and
-node definition should use "i2c-mux" instead of "i2c-switch". Hence,
-update the same to avoid dtbs_check warnings.
+Since the Linux kernel initializes many non-C-string char arrays with
+literals. While it would be possible to convert initializers from:
+   { "BOOP", ... }
+to something like:
+   { { 'B', 'O', 'O', 'P' }, ... }
+that is annoying.
+Making -Wunterminated-string-initialization stay silent about char
+arrays marked with nonstring would be much better.
 
-Fixes: 635ed9715194 ("arm64: dts: ti: k3-am62x: Add overlays for OV5640")
-Cc: stable@vger.kernel.org
-Signed-off-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
-Reviewed-by: Neha Malcom Francis <n-francis@ti.com>
-Reviewed-by: Jai Luthra <jai.luthra@linux.dev>
+Without the __attribute__((nonstring)) we would get the following build
+error:
+drivers/regulator/hi6421v530-regulator.c:189:19: error: initializer-string for array of ‘char’ truncates NUL terminator but destination lacks ‘nonstring’ attribute (21 chars into 20 available) [-Werror=unterminated-string-initialization]
+  189 |         { .name = "hi6421v530-regulator" },
+      |                   ^~~~~~~~~~~~~~~~~~~~~~
+cc1: all warnings being treated as errors
+
+Upstream GCC has added this commit
+622968990beee7499e951590258363545b4a3b57[0][1] which silences warning
+about truncating NUL char when initializing nonstring arrays.
+
+[0]: https://gcc.gnu.org/cgit/gcc/commit/?id=622968990beee7499e951590258363545b4a3b57
+[1]: https://gcc.gnu.org/cgit/gcc/commit/?id=afb46540d3921e96c4cd7ba8fa2c8b0901759455
+
+Thanks to Jakub Jelinek <jakub@gcc.gnu.org> for the gcc patch.
+
+Signed-off-by: Brahmajit Das <listout@listout.xyz>
 ---
- arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-ov5640.dtso      | 2 +-
- arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-tevi-ov5640.dtso | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ include/linux/mod_devicetable.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-ov5640.dtso b/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-ov5640.dtso
-index ccc7f5e43184..7fc7c95f5cd5 100644
---- a/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-ov5640.dtso
-+++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-ov5640.dtso
-@@ -22,7 +22,7 @@ &main_i2c2 {
- 	#size-cells = <0>;
- 	status = "okay";
+diff --git a/include/linux/mod_devicetable.h b/include/linux/mod_devicetable.h
+index bd7e60c0b72f..f9bb623d0949 100644
+--- a/include/linux/mod_devicetable.h
++++ b/include/linux/mod_devicetable.h
+@@ -605,7 +605,7 @@ struct dmi_system_id {
+ #define PLATFORM_MODULE_PREFIX	"platform:"
  
--	i2c-switch@71 {
-+	i2c-mux@71 {
- 		compatible = "nxp,pca9543";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-tevi-ov5640.dtso b/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-tevi-ov5640.dtso
-index 4eaf9d757dd0..b6bfdfbbdd98 100644
---- a/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-tevi-ov5640.dtso
-+++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-tevi-ov5640.dtso
-@@ -22,7 +22,7 @@ &main_i2c2 {
- 	#size-cells = <0>;
- 	status = "okay";
+ struct platform_device_id {
+-	char name[PLATFORM_NAME_SIZE];
++	char name[PLATFORM_NAME_SIZE] __attribute__((nonstring));
+ 	kernel_ulong_t driver_data;
+ };
  
--	i2c-switch@71 {
-+	i2c-mux@71 {
- 		compatible = "nxp,pca9543";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
 -- 
-2.34.1
+2.49.0
 
 
