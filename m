@@ -1,55 +1,85 @@
-Return-Path: <linux-kernel+bounces-605536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 083D0A8A2AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 17:30:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23F59A8A2B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 17:30:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B62A7A6B05
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:28:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2ED427AC33D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:29:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 918A621A437;
-	Tue, 15 Apr 2025 15:29:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3A0292911;
+	Tue, 15 Apr 2025 15:30:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ZQdgT24c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mG1Kj98G"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5BBD145FE0;
-	Tue, 15 Apr 2025 15:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C6B21E092
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 15:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744730990; cv=none; b=S+1XrXOcKcslfUseqt8q401r4q1HwOSO058mABVjZeLRJP1rvefUsUNvfjurquS1PhX/2PdqYbEi8q+u+QMb/Uudd7ZYGZO7CilBQkgGTwDHLXf6u7tbWFUGZgJTe3LfrVy9fgloXYW9OL3edwWdYZogKRqV/SZguJSb3CZRh0Y=
+	t=1744731014; cv=none; b=amuwb8oOf02ZTIluq9wwMEmCSp0tLKAD6ipL9yOcbkF5JKvV4Nnk+SCdWbuBaOu/GqMI3u1HFujszYlXfX9BPSdYtVROrbBqARSmcgqOUkxtj1rXzyNxHR2btrbdxa8+PBrtjeO1bIkpjqVhNvGWcwmyrEzCxxn6Ln6TzaMTz50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744730990; c=relaxed/simple;
-	bh=dPGucQf30xfK8uBOtJ0iEsLmxYFmROsJSFUyouZE5zo=;
+	s=arc-20240116; t=1744731014; c=relaxed/simple;
+	bh=p7zSZ32zjyr49H77bZ3TIqUbm2mFIW1PT0ujVl+2Kkw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nykIOKk6UpbM90F9NqlbIp4ege/y3N2TkKsgtji7DqVqnH3BPlUO91fI7iSPfOvSgpQlPlLojhsGb/c6wravONKuHJAEChz4HU+/fNgmPzaCwCWd17njlklM8+x8mR5b+hn73acToPhU6te//poLZtff38BrnaMyhGyMvKWzfps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ZQdgT24c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACC80C4CEEB;
-	Tue, 15 Apr 2025 15:29:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1744730989;
-	bh=dPGucQf30xfK8uBOtJ0iEsLmxYFmROsJSFUyouZE5zo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZQdgT24c5icprcudK/z9ESiXZffsqiHZGp7KM/Bpezy2s4C1K1ma8lJS2qayFrNOP
-	 HeaTPJYb4np35A3ZimG/VnX36KzePj3+X5blukibFCHYo9McmMXF+g1mzP5HMHxqnb
-	 /AnjCguRUORU9T+irLxQSggFQoIUrykWa3/cfpJg=
-Date: Tue, 15 Apr 2025 17:29:46 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Shyam Saini <shyamsaini@linux.microsoft.com>
-Cc: linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
-	petr.pavlu@suse.com, code@tyhicks.com, linux@rasmusvillemoes.dk,
-	christophe.leroy@csgroup.eu, hch@infradead.org, mcgrof@kernel.org,
-	frkaya@linux.microsoft.com, vijayb@linux.microsoft.com,
-	linux@weissschuh.net, samitolvanen@google.com, da.gomez@samsung.com,
-	rafael@kernel.org, dakr@kernel.org, stable@kernel.org
-Subject: Re: [PATCH v4 4/4] drivers: base: handle module_kobject creation
-Message-ID: <2025041538-coming-busload-3813@gregkh>
-References: <20250227184930.34163-1-shyamsaini@linux.microsoft.com>
- <20250227184930.34163-5-shyamsaini@linux.microsoft.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dwsnN/cu2LMzcesFQOxGuMkIzIsKvgqCTApq4ziX5ot8nqTV1lfrP+VpR5WMMaVdb/HPKaeta0w9Qrsvl2siTExLUBm0Cle6gqBWmQuoX3ae+asL1eHSPiG5YUie23pZtb3cN/k/hev9wEncw8/HBdjVpssWjUNNW1IOWGgiKJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mG1Kj98G; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-39129fc51f8so4992752f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 08:30:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744731011; x=1745335811; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vC4AXr6vHEfMxs8nlfti/TDYKJrFEovi0WF9Ac+HAcI=;
+        b=mG1Kj98GXexx5LpH83KERRVQQcMzirk45pO4p2pInOpi6VZF3Ad/ito2M1Tm7VQt28
+         G8ePYEAjOjmkzTqURfoBpSkNSDMDL8mMHwkPCDlm23Ro2Py+DVLs3Ej41obHpCviEWFx
+         NiK3RKd3IUA+vwLQLl/AgSeS2cke4rTxWaE7M0/tWgogXYfc8DgNpDzkpohg9nRrRWgu
+         Br033ujMWyCQ3N+/Nu0dH8SN2wwYnu/JZzVVKcvW1jvJFTkU9Y8K2/erJelv2MVzc/mA
+         fZgP4SrOHmTG7jxtJ46Wsrd9CzStCupVF8PbzGQF++gAErUK9Y/19MRlfbQICCOXNy0i
+         QfEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744731011; x=1745335811;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vC4AXr6vHEfMxs8nlfti/TDYKJrFEovi0WF9Ac+HAcI=;
+        b=gtQa1LKRuVBQQ4PCKeybRP4p5mR2SLvl44op9tT5lc2wRW/AvIYf0w/bmOUTbjuBpe
+         F7+O/pHKdyxuFdbIo3q2Z29jUaqiXTYBPWnurUGeqBdAiwqzPBicvYCxEibRjPsXmmG2
+         Rl5LIIQTZ8ukOR7TTsPF+GS+HJkbIQCjHElP2XOaZdEFELK7IY71xpFM8W0+PKuu1V2x
+         uiI33DwXw+0cpXbubG71CfoIXVPv3ZfDkt51cEkl5YzT4PBvjIeoh8zO97IIRHKowsSY
+         yf+1gPcyrgZYpXsiAUnK0Vky+gILXgnLIfKl2o/98j/y56eYBAWP9IneY9mZO7KSwq0g
+         fN+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV3Gbg25vKVOxCLWXIukGHXPdWKhnFq5T59cQG7gKXhZOMUlgtSEfH0FFxtBb2f5zy8TbA0j1sDMFTgLjI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUbiF8ZnfKOqq2BeeBmtWiQmGET3haPKktV2n5QtBjBEWk8Stv
+	bVkNIcJiOz+SnImI82fZ8Jf6kX+xS1KkP08zszj5ouq5Wf/9OGp8
+X-Gm-Gg: ASbGncvUcvi3t1MooyYUAXdT8M50XAT6s4Y3P++5uHOMt+4WHulADT4ET8yUqM3vok6
+	3H2iyBnUo08AJHu8Qrc6xCVRsxHSYS5q6J8s/LBILflQob4Jy6mIueEuitPPaZJPPOdlOD9nTgC
+	FOFF/YMO3jMfD6kdkd8eyPGIENcHWJukc6tvGIHzUHEXciYvoEMv1o16S+FejWr36zud1iX/sqz
+	km3iYM7dIEOqiAmQwCi93js9j2f3Dg93HdML+pIbcNrcdEArJkUrQpgLFIEVzmWAUlxS5g56dx4
+	iTPQ/UfFNK8KQv13UNidJIZ8/GkQwcjM/MIo0lXN
+X-Google-Smtp-Source: AGHT+IEKLeOfQG6JWb92OMinJq21OOv3PSwq/Miz2ytD+kWgtp3qJ9InJjXBkLNllsDQun5Xb8nF7w==
+X-Received: by 2002:a05:6000:2911:b0:39c:30fc:20 with SMTP id ffacd0b85a97d-39eaaebe985mr12685914f8f.37.1744731010861;
+        Tue, 15 Apr 2025 08:30:10 -0700 (PDT)
+Received: from pc ([165.51.55.171])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eae96c102sm14712585f8f.35.2025.04.15.08.30.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Apr 2025 08:30:10 -0700 (PDT)
+Date: Tue, 15 Apr 2025 16:30:08 +0100
+From: Salah Triki <salah.triki@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jim Cromie <jim.cromie@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drivers: char: scx200_gpio: check return value of
+ cdev_add()
+Message-ID: <Z_57gC8Vb0nPrjO0@pc>
+References: <Z_QDrlkYnmsVRe5w@pc>
+ <2025041527-festivity-monitor-6413@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,60 +88,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250227184930.34163-5-shyamsaini@linux.microsoft.com>
+In-Reply-To: <2025041527-festivity-monitor-6413@gregkh>
 
-On Thu, Feb 27, 2025 at 10:49:30AM -0800, Shyam Saini wrote:
-> module_add_driver() relies on module_kset list for
-> /sys/module/<built-in-module>/drivers directory creation.
+On Tue, Apr 15, 2025 at 04:54:38PM +0200, Greg Kroah-Hartman wrote:
+> On Mon, Apr 07, 2025 at 05:56:14PM +0100, Salah Triki wrote:
+> > Check return value of cdev_add() and in case of error unregister the
+> > range of device numbers.
+> > 
+> > Signed-off-by: Salah Triki <salah.triki@gmail.com>
+> > ---
+> >  drivers/char/scx200_gpio.c | 6 +++++-
+> >  1 file changed, 5 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/char/scx200_gpio.c b/drivers/char/scx200_gpio.c
+> > index 700e6affea6f..36efcc828e8e 100644
+> > --- a/drivers/char/scx200_gpio.c
+> > +++ b/drivers/char/scx200_gpio.c
+> > @@ -107,10 +107,14 @@ static int __init scx200_gpio_init(void)
+> >  	}
+> >  
+> >  	cdev_init(&scx200_gpio_cdev, &scx200_gpio_fileops);
+> > -	cdev_add(&scx200_gpio_cdev, devid, MAX_PINS);
+> > +	rc = cdev_add(&scx200_gpio_cdev, devid, MAX_PINS);
+> > +	if (rc)
+> > +		goto unregister_chrdev_region;
+> >  
+> >  	return 0; /* succeed */
+> >  
+> > +unregister_chrdev_region:
+> > +	unregister_chrdev_region(devid, MAX_PINS);
+> >  undo_platform_device_add:
+> >  	platform_device_del(pdev);
+> >  undo_malloc:
+> > -- 
+> > 2.43.0
+> > 
 > 
-> Since,
-> commit 96a1a2412acba ("kernel/params.c: defer most of param_sysfs_init() to late_initcall time")
-> drivers which are initialized from subsys_initcall() or any other
-> higher precedence initcall couldn't find the related kobject entry
-> in the module_kset list because module_kset is not fully populated
-> by the time module_add_driver() refers it. As a consequence,
-> module_add_driver() returns early without calling make_driver_name().
-> Therefore, /sys/module/<built-in-module>/drivers is never created.
+> How was this tested?
 > 
-> Fix this issue by letting module_add_driver() handle module_kobject
-> creation itself.
-> 
-> Fixes: 96a1a2412acb ("kernel/params.c: defer most of param_sysfs_init() to late_initcall time")
-> Cc: stable@kernel.org
-> Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> Signed-off-by: Shyam Saini <shyamsaini@linux.microsoft.com>
-> ---
->  drivers/base/module.c | 13 +++++--------
->  1 file changed, 5 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/base/module.c b/drivers/base/module.c
-> index 5bc71bea883a..218aaa096455 100644
-> --- a/drivers/base/module.c
-> +++ b/drivers/base/module.c
-> @@ -42,16 +42,13 @@ int module_add_driver(struct module *mod, const struct device_driver *drv)
->  	if (mod)
->  		mk = &mod->mkobj;
->  	else if (drv->mod_name) {
-> -		struct kobject *mkobj;
-> -
-> -		/* Lookup built-in module entry in /sys/modules */
-> -		mkobj = kset_find_obj(module_kset, drv->mod_name);
-> -		if (mkobj) {
-> -			mk = container_of(mkobj, struct module_kobject, kobj);
-> +		/* Lookup or create built-in module entry in /sys/modules */
-> +		mk = lookup_or_create_module_kobject(drv->mod_name);
-> +		if (mk) {
->  			/* remember our module structure */
->  			drv->p->mkobj = mk;
-> -			/* kset_find_obj took a reference */
-> -			kobject_put(mkobj);
-> +			/* lookup_or_create_module_kobject took a reference */
-> +			kobject_put(&mk->kobj);
->  		}
->  	}
->  
-> -- 
-> 2.34.1
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+I only compiled it.
+
+ST 
+
+> thanks,
+> 
+> greg k-h
 
