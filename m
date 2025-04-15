@@ -1,131 +1,188 @@
-Return-Path: <linux-kernel+bounces-605427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFE4CA8A10D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:27:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31DACA8A112
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:29:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51BBD3B1A2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:27:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32A5B16DA8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DA6E28F519;
-	Tue, 15 Apr 2025 14:27:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4667C29615B;
+	Tue, 15 Apr 2025 14:28:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HoeS8n8O"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="buhJcz4R"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4DE289357
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 14:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2EA72951CA;
+	Tue, 15 Apr 2025 14:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744727238; cv=none; b=ngFWpwQwc9yPnFAY5oQSobfPaxaaynZUK3w1g1izSsI7G8ryPsRRHa392Hpf1UwAhLe05AfrQJBE7rwE1thjhfy1D7tBzLdCWFVivp36NYFYvKzyqThaiVyfyLu0C0imN+iEgYqmtXPMjq8G94iGutoxt3FLCRejknvHylC24aI=
+	t=1744727319; cv=none; b=pOfdWVUCS+mFGIwXNGnBj1vRw9Yey/TyFPfrQ6+urou92ARstJemsA+vmAWEXPYe/Sz6WQj/ErdxIkpoeqN2RY1q4NP7d1JmKSADbkNkuvRV4PyLq4LO4Blt9Cmxmr9PivK9kH9BhYEdpkweUeEO9nbielD8o9WnGZBM0P2Hzw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744727238; c=relaxed/simple;
-	bh=z63JfSsHpIErknyiCFjXZ6ek1chC5/7Pr7BECXZasXY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sHgeYma5s9WxuRfeeqZD0HhlKfEhXUPeGoC4ighB11lKGnRccud71yLw/t7jp4g3H0Pi/uMt8BDRCsWzBf92lyuZkhyPTjooBNwheLxYodscJd9uZNidrnBqTbjBjX4sVhEc1BvY/VoRPWUtXx0s9PL5MhWjgsJ7cJ54j4qpPDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HoeS8n8O; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744727237; x=1776263237;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=z63JfSsHpIErknyiCFjXZ6ek1chC5/7Pr7BECXZasXY=;
-  b=HoeS8n8OpaXqPmO9D8eNIkOveqBMBVjC9OiqWdsSuQsU297SmUizrw03
-   A9pvxUYBJC2RsiAHhnFqwNSChcsJZyvkFUHbf3kV+fCqXihen7aEUDfoG
-   7kdZ9mG35kJ/V+XpBcOXoxKcVOevaYrGEchDDwC80ZyGnWp0qAGB5X23K
-   ICuPSC/yovcXyMpKcp3MxYfPT1U+I8jtXdbI48HLXeWtiAYxilj/ynRkj
-   Gc/VwULb5WejK/WtMWNRDIXKxRMsGnb9aDgJAXk2fRDiwi+peh59zt+f3
-   WkRyeCgiAX1jy/JBjvLkZ5q1z60C1vQJvFZ6xatdBon3iRZQUzGkRJAw4
-   g==;
-X-CSE-ConnectionGUID: 4QnNUCc0QAOI2I2QXkAUBQ==
-X-CSE-MsgGUID: iPklUTxITDi7EMPA2quBJw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="45473541"
-X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="45473541"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 07:27:16 -0700
-X-CSE-ConnectionGUID: sacFQhjARimp6JlLoAQRFw==
-X-CSE-MsgGUID: Ay/bqOuZSU2GocGP1WfIkw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="129909049"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 15 Apr 2025 07:27:12 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u4hFk-000GHi-2X;
-	Tue, 15 Apr 2025 14:27:08 +0000
-Date: Tue, 15 Apr 2025 22:26:21 +0800
-From: kernel test robot <lkp@intel.com>
-To: Xin Ji <xji@analogixsemi.com>, Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: oe-kbuild-all@lists.linux.dev, bliang@analogixsemi.com,
-	qwen@analogixsemi.com, treapking@chromium.org,
-	Xin Ji <xji@analogixsemi.com>, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] drm/bridge:anx7625: Enable DSC feature
-Message-ID: <202504152230.BCIdpiru-lkp@intel.com>
-References: <20250414100502.1604717-3-xji@analogixsemi.com>
+	s=arc-20240116; t=1744727319; c=relaxed/simple;
+	bh=Nkbz8I6W9s0fe4POcz9WeNADwri4Cubq6W3JoYlcRdU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pE5ib8L0co+wUKFq0Js7w7dus/A9YzCwoTrq8tuI5rimjfHTd1aiXIm/lBziTuB/CWSMxNoOCeOlOM6CHg2p2riy6NzyA9J3Nx/LG2MzUeYxOPblsMT98/ZBfWyvGRE/JKIU4CbpCp4WMeUgmAP9fRLMJDsG6+OGDhCVhtbeABs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=buhJcz4R; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6ff0c9d1761so51388477b3.1;
+        Tue, 15 Apr 2025 07:28:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1744727317; x=1745332117; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f3GaTQevx58U9DGgsfKcqKULSlMrRRxS1oTxlpS773o=;
+        b=buhJcz4RGHpoUGBlVBIxP7WWJXVzHkW4JDYhVjwM4x1ccA6lrAtXb9xAoMEnXHk8oQ
+         4jTYhxDs17yG+C0U2EAZsOqiUBocZ99frcFHmvmwn84ygzZPLidDuIXYmwl8sS2mIO4x
+         zbczvMnygjaSJ78hO8uI/ybHbOss1naFcktP9i1ihlExILAyDHDfcJz8Ia3c70aQoPzU
+         JGGWHhibs9P7adqt0saCEe+gWW6nS4WrFRWAyu3MbcDrVA9C81g5wdc5B5gPBcn/X1nD
+         ae3I5HvB5IfGUSTDHkPOPaHOl2MTd/dPKMkXCL8HCgUIc7XPO0rLd64joFZmTG8g/MsX
+         MDAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744727317; x=1745332117;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=f3GaTQevx58U9DGgsfKcqKULSlMrRRxS1oTxlpS773o=;
+        b=o+R+nZdpsqpBQnjO7KT8cLX5TbdSJjWBL5bxjw6DYcmyQfAHHblOu01MjTriL5Kyy9
+         iJYNVMu/3hcSMj1SJjqUGQPtH/jjCrwXPYu9AMezVJ6vGhXzmEYr/BnN8XrzCncVtGNc
+         T/Dg0Z5DcdKdSVca4w7s5uVFU1O/teydhsU5wXpO3icAd4oBKjqJNJa4Jf6AnkuiJ9Kq
+         hYfoQ8qpauLJkSmVlxuCBxGYokzC95g6Ku1LG3dJucDjgnfnaDn6KhpPH9cMuBawrKoa
+         zhy3FxCvvtZYWbNKmiAgccS7P4hiHZhAOuxS0I2MdnWa6tOz+ExiR7Q2k379W/2Q5lWQ
+         S/Qg==
+X-Forwarded-Encrypted: i=1; AJvYcCV6+3oNu7QwovGg2jczWSCuIdf8+1E8puAF/umZdSB+GAqn26T3Lh6iE2gDO6neu81KCATa6a5/9jhqers=@vger.kernel.org, AJvYcCVfn7KcXngjT/ils/KJvT+/YCLJzwQTopuCef7opQQHObaM+9S1NPPSwvA48OQatrUgPNnD2eSUHw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFUBeSWFX+fZdwDWjXSIRDy2X6cVQIaTI91pb78UDMVU+RaT45
+	EpjZUwWGjHI9WpmN1SWRgzSyq/94LXviv/hv/QZkvuzQJQU7G2zWi64zdMTbHS3yyRb8sP7L/iC
+	I6ABVkjeuRyu3J0uP4NCNsvhkxzLlP6CGlTYTDw==
+X-Gm-Gg: ASbGncsyzAPBP1uIw/niK7pUSlsgH2RNul/TtkKhdNffaBoz8F9gPZ13u3xGkRBugFT
+	P38uaTAWktkRida63BCXr1VFQZ99NgnevwQ4nkrEX/100xsEuOmGGP6FFyzBleFw3DN1KFqoOPA
+	uH5ceYh8WqwcqtlsvusTxRTrA=
+X-Google-Smtp-Source: AGHT+IEdJ4GIuqGp01q/uHvN80UDXN4gJ5THFbaGoh9a14Z9DISddODyuSHABLYyH9avhVDwnguLexU6O3TXZy2WSEY=
+X-Received: by 2002:a05:690c:b82:b0:705:a92d:cb7c with SMTP id
+ 00721157ae682-705a92dcca1mr26682587b3.24.1744727316663; Tue, 15 Apr 2025
+ 07:28:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250414100502.1604717-3-xji@analogixsemi.com>
+References: <20250318083422.21489-3-cgoettsche@seltendoof.de> <7ed70f417b10ae1510dbbea501da892c@paul-moore.com>
+In-Reply-To: <7ed70f417b10ae1510dbbea501da892c@paul-moore.com>
+From: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
+Date: Tue, 15 Apr 2025 16:28:25 +0200
+X-Gm-Features: ATxdqUH0R5szJN1xaJgrhonl519hXYeU63q8D04b7XegQ4pUvT8F0v7rrWs1uW0
+Message-ID: <CAJ2a_DfvxT=49fDsXw1Rt3TMmQ6uzeDdRaqQj3zaJc+vpPPFWA@mail.gmail.com>
+Subject: Re: [PATCH RFC 4/6] selinux: improve network lookup failure warnings
+To: Paul Moore <paul@paul-moore.com>
+Cc: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgoettsche@seltendoof.de>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+	=?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>, 
+	=?UTF-8?Q?Bram_Bonn=C3=A9?= <brambonne@google.com>, 
+	Casey Schaufler <casey@schaufler-ca.com>, GUO Zihua <guozihua@huawei.com>, 
+	Canfeng Guo <guocanfeng@uniontech.com>, selinux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Xin,
+On Fri, 11 Apr 2025 at 22:29, Paul Moore <paul@paul-moore.com> wrote:
+>
+> On Mar 18, 2025 =3D?UTF-8?q?Christian=3D20G=3DC3=3DB6ttsche?=3D <cgoettsc=
+he@seltendoof.de> wrote:
+> >
+> > Rate limit the warnings and include additional available information.
+> >
+> > Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
+> > ---
+> >  security/selinux/netif.c   | 8 ++++----
+> >  security/selinux/netnode.c | 4 ++--
+> >  security/selinux/netport.c | 4 ++--
+> >  3 files changed, 8 insertions(+), 8 deletions(-)
+>
+> How many of these messages were you seeing that rate limiting was a
+> concern?  Also, what were you doing that was causing this?
 
-kernel test robot noticed the following build errors:
+I did not actually encounter any of these warnings, it just seemed
+likely if they would ever get hit they would so repeatedly and clutter
+the logs.
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v6.15-rc2 next-20250415]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Xin-Ji/drm-mipi-dsi-Add-compression-supported-flag-in-drm_mipi_dsi/20250414-181005
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20250414100502.1604717-3-xji%40analogixsemi.com
-patch subject: [PATCH v3 3/3] drm/bridge:anx7625: Enable DSC feature
-config: arm64-randconfig-002-20250415 (https://download.01.org/0day-ci/archive/20250415/202504152230.BCIdpiru-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 7.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250415/202504152230.BCIdpiru-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504152230.BCIdpiru-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   aarch64-linux-ld: Unexpected GOT/PLT entries detected!
-   aarch64-linux-ld: Unexpected run-time procedure linkages detected!
-   aarch64-linux-ld: drivers/gpu/drm/bridge/analogix/anx7625.o: in function `anx7625_bridge_mode_set':
->> anx7625.c:(.text+0x28d4): undefined reference to `drm_dsc_set_rc_buf_thresh'
->> aarch64-linux-ld: anx7625.c:(.text+0x28dc): undefined reference to `drm_dsc_set_const_params'
->> aarch64-linux-ld: anx7625.c:(.text+0x28e4): undefined reference to `drm_dsc_initial_scale_value'
->> aarch64-linux-ld: anx7625.c:(.text+0x2900): undefined reference to `drm_dsc_setup_rc_params'
->> aarch64-linux-ld: anx7625.c:(.text+0x290c): undefined reference to `drm_dsc_compute_rc_parameters'
->> aarch64-linux-ld: anx7625.c:(.text+0x2930): undefined reference to `drm_dsc_pps_payload_pack'
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> > diff --git a/security/selinux/netif.c b/security/selinux/netif.c
+> > index 43a0d3594b72..38fdba1e64bf 100644
+> > --- a/security/selinux/netif.c
+> > +++ b/security/selinux/netif.c
+> > @@ -141,8 +141,8 @@ static int sel_netif_sid_slow(struct net *ns, int i=
+findex, u32 *sid)
+> >
+> >       dev =3D dev_get_by_index(ns, ifindex);
+> >       if (unlikely(dev =3D=3D NULL)) {
+> > -             pr_warn("SELinux: failure in %s(), invalid network interf=
+ace (%d)\n",
+> > -                     __func__, ifindex);
+> > +             pr_warn_ratelimited("SELinux: failure in %s(), invalid ne=
+twork interface (%d)\n",
+> > +                                 __func__, ifindex);
+> >               return -ENOENT;
+> >       }
+> >
+> > @@ -169,8 +169,8 @@ static int sel_netif_sid_slow(struct net *ns, int i=
+findex, u32 *sid)
+> >       spin_unlock_bh(&sel_netif_lock);
+> >       dev_put(dev);
+> >       if (unlikely(ret))
+> > -             pr_warn("SELinux: failure in %s(), unable to determine ne=
+twork interface label (%d)\n",
+> > -                     __func__, ifindex);
+> > +             pr_warn_ratelimited("SELinux: failure in %s(), unable to =
+determine network interface label (%d):  %d\n",
+> > +                                 __func__, ifindex, ret);
+> >       return ret;
+> >  }
+> >
+> > diff --git a/security/selinux/netnode.c b/security/selinux/netnode.c
+> > index 8bb456d80dd5..76cf531af110 100644
+> > --- a/security/selinux/netnode.c
+> > +++ b/security/selinux/netnode.c
+> > @@ -228,8 +228,8 @@ static int sel_netnode_sid_slow(const void *addr, u=
+16 family, u32 *sid)
+> >
+> >       spin_unlock_bh(&sel_netnode_lock);
+> >       if (unlikely(ret))
+> > -             pr_warn("SELinux: failure in %s(), unable to determine ne=
+twork node label\n",
+> > -                     __func__);
+> > +             pr_warn_ratelimited("SELinux: failure in %s(), unable to =
+determine network node label (%d):  %d\n",
+> > +                                 __func__, family, ret);
+> >       return ret;
+> >  }
+> >
+> > diff --git a/security/selinux/netport.c b/security/selinux/netport.c
+> > index 7d2207384d40..dadf14984fb4 100644
+> > --- a/security/selinux/netport.c
+> > +++ b/security/selinux/netport.c
+> > @@ -162,8 +162,8 @@ static int sel_netport_sid_slow(u8 protocol, u16 pn=
+um, u32 *sid)
+> >  out:
+> >       spin_unlock_bh(&sel_netport_lock);
+> >       if (unlikely(ret))
+> > -             pr_warn("SELinux: failure in %s(), unable to determine ne=
+twork port label\n",
+> > -                     __func__);
+> > +             pr_warn_ratelimited("SELinux: failure in %s(), unable to =
+determine network port label (%d:%d):  %d\n",
+> > +                                 __func__, protocol, pnum, ret);
+> >       return ret;
+> >  }
+> >
+> > --
+> > 2.49.0
+>
+> --
+> paul-moore.com
 
