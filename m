@@ -1,123 +1,155 @@
-Return-Path: <linux-kernel+bounces-605350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DE72A8A008
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:50:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07B0FA8A015
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:52:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30AE21903A19
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:51:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A6F4441CAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:52:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A1C1DE3C4;
-	Tue, 15 Apr 2025 13:48:51 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22E2719F11E;
-	Tue, 15 Apr 2025 13:48:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7075813C8EA;
+	Tue, 15 Apr 2025 13:52:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="B9PM2vdU"
+Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A937C4315C;
+	Tue, 15 Apr 2025 13:52:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744724931; cv=none; b=qnjBdbc6+7XdaWLB/aNi9VZ1cNhph52sEC9vKj9MSPImWZHrzrwc5+doC9Ch45I/i5WeVpCrvVTOcxnwk2Sp4MJtNtSLAatmUZ0etDKToQbbiZRq/mp88oDdLBk5t4ihnmL3q4iH440k5R8lA2O1I+h5MsouALS3so3QyOVjnhA=
+	t=1744725143; cv=none; b=s5ladFQZHDFPOlxbKh/5ZSZs2E1vNTZOpgGySuYteyNwhbGp4vOmrGzPChMtrdcX40KqqfQ3NwadjwjHMdtyZlGNo6BaFH73CLG8HhitdpB6/0lRa+Dnd06XpF/cZHzOIcN8K1cgadjXy7SgX/b+4V1/NqFhajtbyqzd466FmFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744724931; c=relaxed/simple;
-	bh=f+I+70mvDeUxlvE287MehxIaRGNimM4VHnTJL/puwjU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XpDk52w5FdVwkaajwH8yHpbQnVZAjILX+Ph6sDrLm34zLu1nzhh+J7DmOXdSBC0JCqlF8anrBh9Pmpa5rKGpegz/MeGMt5GkYX/r2xf2cJOurYMj56se00bHhymDqhQ4OkGgO25W3pAjX3oK2Gf5QYtXhgUBk1G3nYwi8C661x8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6344015A1;
-	Tue, 15 Apr 2025 06:48:45 -0700 (PDT)
-Received: from gentoo-vm (unknown [10.57.44.57])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7B2B13F59E;
-	Tue, 15 Apr 2025 06:48:44 -0700 (PDT)
-Date: Tue, 15 Apr 2025 13:48:38 +0000
-From: Kajetan Puchalski <kajetan.puchalski@arm.com>
-To: Peter Chen <peter.chen@cixtech.com>
-Cc: soc@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, 
-	jassisinghbrar@gmail.com, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, cix-kernel-upstream@cixtech.com, maz@kernel.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Fugang Duan <fugang.duan@cixtech.com>, 
-	Guomin Chen <Guomin.Chen@cixtech.com>, Gary Yang <gary.yang@cixtech.com>
-Subject: Re: [PATCH v6 09/10] arm64: dts: cix: add initial CIX P1(SKY1) dts
- support
-Message-ID: <7cnhezft5jzvtdjx6m2vjmtaxgla33j4fynd6ef4c6b7dh5pvo@4cbxewawilqp>
-References: <20250415072724.3565533-1-peter.chen@cixtech.com>
- <20250415072724.3565533-10-peter.chen@cixtech.com>
+	s=arc-20240116; t=1744725143; c=relaxed/simple;
+	bh=SYP5aUx854LZI3QqpRFhskAvPk/sjt33YUGhDwyPD5s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Zk5oKsY5ZWbIaP7rFQ7sOXDWHteveWgWcwOavr0exme3mkBShRjLQFAbIW6DnJQLGK2VZW3BifEbfhlRQX5PAojE6FR8jX64sbb06UQfhSIepNqv0J/lsT09zb7B7uPjtPgaMz1UGQi6hwD2aNN9UIIeyYmSRs7/ewk+bO1KRCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=B9PM2vdU; arc=none smtp.client-ip=54.204.34.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1744725124;
+	bh=Ixi9pWKBiDS6VBaREd11yEf72/je33uvlluDQogeMxo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=B9PM2vdUmuR/bxGkikTEJBimk53M+mGGfQtJ4GarF64T+C59b2uVfMTV+s7HpyuMx
+	 jCuB+dn8eZS75htEIvVlrUwZZFNpXNIvQ5I3JXNhSkZCd2NBYReZPTccCiIHbP9HiE
+	 7MvPZtJ94GCJb4y99s0PKDNDElPAiypIuOI/oeV4=
+X-QQ-mid: zesmtpip3t1744724985t838566ab
+X-QQ-Originating-IP: IvxrBklCfHMUcYXSFD7ASed4Rg4FD9KV6HpuJrAKVqQ=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 15 Apr 2025 21:49:43 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 17750832799163754876
+EX-QQ-RecipientCnt: 20
+From: WangYuli <wangyuli@uniontech.com>
+To: corbet@lwn.net,
+	chenhuacai@kernel.org,
+	kernel@xen0n.name
+Cc: akpm@linux-foundation.org,
+	jeffxu@chromium.org,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	kees@kernel.org,
+	wangyuli@uniontech.com,
+	hca@linux.ibm.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	xry111@xry111.site,
+	tglx@linutronix.de,
+	thomas.weissschuh@linutronix.de,
+	Jason@zx2c4.com,
+	zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	guanwentao@uniontech.com
+Subject: [PATCH] mseal sysmap: enable LoongArch
+Date: Tue, 15 Apr 2025 21:49:33 +0800
+Message-ID: <433B5132A1535C98+20250415134933.531084-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250415072724.3565533-10-peter.chen@cixtech.com>
-User-Agent: NeoMutt/20250109-134-7b7c50
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NV9lVvsB36Op1yEGLqX6VyH6IMMjPPSHflDax0yHqTYUExZlnvTyKMTF
+	RUFh4YGevHLcNupZVHEoRUisMQLbAifW7/nXLxnyeyVwYIshagyEn7LrVi84guxdutPZfSh
+	ULrPELeI4WI+uhXnCLSKVsqNfWyNSfd6n3orRR8ekhVxsHmZ0wHFK8WuuuBW8evqmO5TJwe
+	32NwMRr1WITwdkEoE5oa6sWKBA+9Mu3sgOYe5/eIz61Nb/dOP/4QA56IMpG0ag9ST0rJY/q
+	0mF0gpnGE+9X36w4l0hah1rT62FkHOLyQE5RJngepX92WCbYyWcArgTRPYkpoJDfiQ8fcCn
+	MI+kqPNc7ukDXuNe4572FMBT7+l6tUqCzaapbHEE8CWcuRjhAY/ang3MkiOVA1yDdxd6lIy
+	s8S1wPvC6d8DF10wl+claEj9tVJbOzY6dgFiMegMyyGLrzkFKlFpjG0GrZYMSR2na7CSYJg
+	wD+XXYwP8RIrr/HexDD1PAhXIxPHkVDQP1MEXVXTyBYpBfP5yKBT98eNaEr3yQcSeSFnfeA
+	ZHEGwvjKMcScOIoDP6iXbG0BmQ4yW7gHnGta7jBp5d1RHw2Pp9ipVj2HhgBBgghTN21H6c+
+	A9fp1HG3rhEW3PTP4rqxHbR8ALFaIp65EeyZA8FXsexnhIfAd4ObLGRnKkYX/O9gLWru/We
+	8UtjAJ/zDyJFrFjVtraZo+VKuFPVJw2Znmi3JFGhATier5hHfEBLigKtKtqgDajIXB8e2fx
+	vDOourSPMK5mvu8pnVsdUUR/Rm3uez/zTaC+oBc9S42jj/cPpYR5JClxRe243fG7c7rJ0Ic
+	LNUq780H0hpV2zwE252ojLnPJetASkt1UMlKnY50dlEXkQGP8Z8iQg5QeRdGJqblzPuleYZ
+	j2jdcYn1A1GkfTANUMogjfM51i4OJgG7M2AiV50Fa6+Y5IQODnLt0Y+iWq4bfr2dVkE5it4
+	NtatJYhKl6wkIZYG0sd7KDBGP0FI2lZ1R77B76B+uJPUDKNVvv+qCb5pedOFXv2mW3EHyEV
+	CXSLUewQcaE4Ahu4yMiBEMTlaeMw5k9iMrkAEHNg==
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-RECHKSPAM: 0
 
-On Tue, Apr 15, 2025 at 03:27:23PM +0800, Peter Chen wrote:
-> CIX SKY1 SoC is high performance Armv9 SoC designed by Cixtech,
-> and Orion O6 is the motherboard launched by Radxa. See below for
-> detail:
-> https://docs.radxa.com/en/orion/o6/getting-started/introduction
-> In this commit, it adds sky1 base, mailbox, clock (scmi firmware baseed)
-> and uart, and the kernel could boot up to console.
+Provide support for CONFIG_MSEAL_SYSTEM_MAPPINGS on LoongArch,
+covering the vdso.
 
-The commit message style is supposed to be in imperative tone, i.e. "Add sky1 base".
+Tested-by: Yuli Wang <wangyuli@uniontech.com>
+Signed-off-by: Yuli Wang <wangyuli@uniontech.com>
+---
+ Documentation/userspace-api/mseal.rst | 2 +-
+ arch/loongarch/Kconfig                | 1 +
+ arch/loongarch/kernel/vdso.c          | 4 +++-
+ 3 files changed, 5 insertions(+), 2 deletions(-)
 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Acked-by: Fugang Duan <fugang.duan@cixtech.com>
-> Signed-off-by: Guomin Chen <Guomin.Chen@cixtech.com>
-> Signed-off-by: Gary Yang <gary.yang@cixtech.com>
-> Signed-off-by: Peter Chen <peter.chen@cixtech.com>
-> ---
+diff --git a/Documentation/userspace-api/mseal.rst b/Documentation/userspace-api/mseal.rst
+index 1dabfc29be0d..ef733f69003d 100644
+--- a/Documentation/userspace-api/mseal.rst
++++ b/Documentation/userspace-api/mseal.rst
+@@ -144,7 +144,7 @@ Use cases
+   architecture.
+ 
+   The following architectures currently support this feature: x86-64, arm64,
+-  and s390.
++  loongarch and s390.
+ 
+   WARNING: This feature breaks programs which rely on relocating
+   or unmapping system mappings. Known broken software at the time
+diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+index 067c0b994648..54ed5b59a690 100644
+--- a/arch/loongarch/Kconfig
++++ b/arch/loongarch/Kconfig
+@@ -69,6 +69,7 @@ config LOONGARCH
+ 	select ARCH_SUPPORTS_INT128 if CC_HAS_INT128
+ 	select ARCH_SUPPORTS_LTO_CLANG
+ 	select ARCH_SUPPORTS_LTO_CLANG_THIN
++	select ARCH_SUPPORTS_MSEAL_SYSTEM_MAPPINGS
+ 	select ARCH_SUPPORTS_NUMA_BALANCING
+ 	select ARCH_SUPPORTS_RT
+ 	select ARCH_USE_BUILTIN_BSWAP
+diff --git a/arch/loongarch/kernel/vdso.c b/arch/loongarch/kernel/vdso.c
+index 10cf1608c7b3..7b888d9085a0 100644
+--- a/arch/loongarch/kernel/vdso.c
++++ b/arch/loongarch/kernel/vdso.c
+@@ -105,7 +105,9 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
+ 
+ 	vdso_addr = data_addr + VVAR_SIZE;
+ 	vma = _install_special_mapping(mm, vdso_addr, info->size,
+-				       VM_READ | VM_EXEC | VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC,
++				       VM_READ | VM_EXEC |
++				       VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC |
++				       VM_SEALED_SYSMAP,
+ 				       &info->code_mapping);
+ 	if (IS_ERR(vma)) {
+ 		ret = PTR_ERR(vma);
+-- 
+2.49.0
 
-I've tested this on my own Orion O6 with 6.15-rc2, the UART does work and the kernel
-does boot up to the expected point. Feel free to add the tag if you'd like.
-
-Tested-by: Kajetan Puchalski <kajetan.puchalski@arm.com>
-
-> +++ b/arch/arm64/boot/dts/cix/sky1-orion-o6.dts
-> @@ -0,0 +1,39 @@
-> +// SPDX-License-Identifier: BSD-3-Clause
-> +/*
-> + * Copyright 2025 Cix Technology Group Co., Ltd.
-> + *
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "sky1.dtsi"
-> +/ {
-> +	model = "Radxa Orion O6";
-> +	compatible = "radxa,orion-o6", "cix,sky1";
-> +
-> +	aliases {
-> +		serial2 = &uart2;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = &uart2;
-> +	};
-> +
-> +	reserved-memory {
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +
-> +		linux,cma {
-> +			compatible = "shared-dma-pool";
-> +			reusable;
-> +			size = <0x0 0x28000000>;
-> +			linux,cma-default;
-> +		};
-> +	};
-> +
-> +};
-> +
-> +&uart2 {
-> +	status = "okay";
-> +};
 
