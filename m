@@ -1,270 +1,206 @@
-Return-Path: <linux-kernel+bounces-604222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 696E5A8922D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 04:51:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FE56A8924D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 04:54:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AE4E17D8E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 02:51:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 957557A9111
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 02:53:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C3F23236F;
-	Tue, 15 Apr 2025 02:47:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EE8C20AF62;
+	Tue, 15 Apr 2025 02:53:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iQNbOBEu"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3CF421CFF6;
-	Tue, 15 Apr 2025 02:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="dXeHb6PQ"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74CD549659;
+	Tue, 15 Apr 2025 02:53:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744685263; cv=none; b=Nckh+uxZ7ylN0BlzCotmWZP1QHC5+s+zEj1rEBISHm1RDeR5Ty+LXi+E0FCGbJ8Ur3HfoGWvBgjiUfcyaR7TOlTAgfvQlNE5HgpCME6dnhWlfSo8A1ZfbaKt6oDM8voPtYJajcruM7ovk9SOTXvnLfDYUaChA/NQWcZxs4cU7As=
+	t=1744685634; cv=none; b=UGKYEz4eEWdwpJAIhT5w4UD7dYAE3QpRitD5a8d5VD43410X2/QalBFngowUeGGIeiyDSntikHuTU2K/U6mQjpNRoYqtC+rhlryf8sq1Un8Jbp5J/hFe/Kio6+3VW8jo8vduT75Fq6ywuGzqdziF8cIShE5HavQxCLJSYvShus0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744685263; c=relaxed/simple;
-	bh=nGGYa/bok5qJ8KVw7OSMgHlxCvXTiVuD2OOmgM0FeYU=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sGCEZGppQw01ljIMsIz86wv71HMCFU9qnvb9gWrf9xnz/juC878NWYSTmpw2T1ggXZX+eb2R4uRPA2qqrCImcF1fhtdjp8MC0HR2YMbwxTc2bhNvdq1u6PjHHJCsqaZCyjRIM7yEzxJD5Hn0UY846m8ByZV4JOuZvJneudFWeVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iQNbOBEu; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22423adf751so45813615ad.2;
-        Mon, 14 Apr 2025 19:47:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744685261; x=1745290061; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cWvpma1dORIiySs5jF5nA8uB3wDE1U9RthmOs2kPK+Y=;
-        b=iQNbOBEu/iza0ZlmCXA7y44eZDZuyZNH5+dm3/0MZb5Vsbfg6RdL+KC5/YdCtpganO
-         zr8/kAYh9M7VDCqtE99FvnTf5FZkD5D2XnuLSmnmYXA9WEF655+zJ5zjPzITMhjyAzQA
-         g7CPPf7vgma/Pb24U8mtBuzxc5UFo3rKM5JtOGf7Yy0jKLRx7I9DdK/rt4Fgjh45ht0s
-         npWzu97OHw/zAIHXe/WSCDb6HAwFdFSrVDIKcHqZUNOuzGw3VfFj3JyWrfTeC4rGtqDl
-         ItnsXXwpd4QmJNNQizopv5ERkUT6dfW5vqLd1H44U/uySmT51S0BoxozScI5SRkzFMJC
-         3PoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744685261; x=1745290061;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cWvpma1dORIiySs5jF5nA8uB3wDE1U9RthmOs2kPK+Y=;
-        b=l7IiyevBGdo5pcM2CxP64i4Bf9aWSU/GqjA0UpY2DVk3DRZyaQPXmJK/J0QFD8m/Eu
-         Ay/AcweBRuAN/51gfLk1yHPxAWRvZ13q2HTkJFgXRzN76kaExomRKQV3JDgufPROb77H
-         LC75XjL2MNWjRegwfrmi/gRVR9GreWZzQnPvHeOYKqXhH3z+tkwgnbJT/clTGPkl4RXM
-         hsj/jAcY7EjMRabAP5IdWx3HBFQgzgVv5Hs0H9E3Wzju/KW6FkQqh7AHPpEuqA6NvzlR
-         kzqT+ls/7vZ+NKRzyQTlFz+FSwJG5avMd36esKqxx/+ddbN/z+pTSeQOjba9feh44L8r
-         G1Nw==
-X-Forwarded-Encrypted: i=1; AJvYcCUYK3J9Tu2ORQOHp93PJZbZRsYjF9YQ7uKC4SDfEkalTfNwdyVHYa+JoxW2vXAkTx2Y4uPFelbN5fa8A2Oy@vger.kernel.org, AJvYcCXW23Rap0eGt6grGhm1b+7Zv7C/5HcKtj7OcCx9VRame8FfBOTccGmEzMNP29SxQ+gVIxRbeUHZEUs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3JNBhofyiMBUi/hJFS1q4vtFACCarB/skLwIHqVkx8V2AeMI8
-	JrB/8H9kJ34kEJm4MrEyluK0w9yF2YIDZX2oahytog7b5kkWT9GM
-X-Gm-Gg: ASbGncs3CmWqHXsyPSEYpxYAwfDCtuagiAIrH90oeQt1VPJ8nAJDzUL1majeZ3lujcI
-	5Le4luBMW83UrUOkAlMb8fUuQ2modvqZsnOgnRlLUOSh4E/13vKWlLNZJDgMYm9nNKMOUBQvnVn
-	gA8j8AAGCXOz3KQArPUQfqwTuNRrwr5Clz70tcK4OdMRqD9uqY8wLgDMCnPOkTl9OwX6+hmZfUk
-	u9Mzkmi5QCVlfNGD+mykSMoRkVd6K6onOLzMekRI7HVymfOMRN73gLpgKEAFRe41RrgUgzOnDAf
-	s7Ax/fYVwWfXniwnKN9ARo7x9c4p3QV1S2pm
-X-Google-Smtp-Source: AGHT+IHBix5KPP3nRhmwiVvvlwa79tN2lYjB87B7Yo6JZ4XsMjjb6cCLThbByHf08kY8KD0bEF4xHQ==
-X-Received: by 2002:a17:903:3c44:b0:223:517c:bfa1 with SMTP id d9443c01a7336-22bea4efa84mr222013945ad.38.1744685261112;
-        Mon, 14 Apr 2025 19:47:41 -0700 (PDT)
-Received: from debian ([2601:646:8f03:9fee:5e33:e006:dcd5:852d])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7c97298sm106915325ad.138.2025.04.14.19.47.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Apr 2025 19:47:40 -0700 (PDT)
-From: Fan Ni <nifan.cxl@gmail.com>
-X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
-Date: Mon, 14 Apr 2025 19:47:38 -0700
-To: Ira Weiny <ira.weiny@intel.com>
-Cc: Fan Ni <nifan.cxl@gmail.com>, Dave Jiang <dave.jiang@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>, linux-cxl@vger.kernel.org,
-	nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Li Ming <ming.li@zohomail.com>
-Subject: Re: [PATCH v9 00/19] DCD: Add support for Dynamic Capacity Devices
- (DCD)
-Message-ID: <Z_3Iyk7oj-EiJWgX@debian>
-References: <20250413-dcd-type2-upstream-v9-0-1d4911a0b365@intel.com>
- <Z_0v-iFQpWlgG7oT@debian>
- <67fdc64e3fa03_15df832946e@iweiny-mobl.notmuch>
+	s=arc-20240116; t=1744685634; c=relaxed/simple;
+	bh=Akoo9jqkEcWSXg3tee0G2D4BiWk0o+iDka8f4zLXeJA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=QyEJ5Ub4mt/c4aln+lzihj2zHV95DxWJhbdnHofUuX402oubOHyKgdu6XMJAS8GmLKGkIfuYwIlZnY4NdgWB/ikE5Yx/MND6k4CJqSz26l//r9qFg64sHqaPV92tdc7Fs3x2LRpmMsw56nPKdr1/mFxf0oWfUAIBexbGRb2DFZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=dXeHb6PQ; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=NHKWS
+	zLsBAbsyzeKkgznnnIP2bOgjZf3BsRST3FJzLs=; b=dXeHb6PQiUhO6v42Dg937
+	J8Jc8v1qCS8Um9lRDAFraRCYmw9z1oFbrmA4rs9diQf29AH8FCDh2It52gLfGdXS
+	oGVewM4NsNeuiUCOZr7fPw33xoXLwNMKJrRNbEDTEQqjemZQQNhBq76a4/e9wgv3
+	s55fHy52adF1qmNJYIjSdc=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wAH8p8Iyv1nVOGLGQ--.29463S2;
+	Tue, 15 Apr 2025 10:52:58 +0800 (CST)
+From: Feng Yang <yangfeng59949@163.com>
+To: olsajiri@gmail.com
+Cc: andrii@kernel.org,
+	ast@kernel.org,
+	bpf@vger.kernel.org,
+	daniel@iogearbox.net,
+	eddyz87@gmail.com,
+	haoluo@google.com,
+	hengqi.chen@gmail.com,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	linux-kernel@vger.kernel.org,
+	martin.lau@linux.dev,
+	sdf@fomichev.me,
+	song@kernel.org,
+	yangfeng59949@163.com,
+	yonghong.song@linux.dev
+Subject: Re: [PATCH v3 bpf-next 3/3] selftests/bpf: Add test for attaching kprobe with long event names
+Date: Tue, 15 Apr 2025 10:52:26 +0800
+Message-Id: <20250415025226.49891-1-yangfeng59949@163.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <Z_z161cpsaR2uQm3@krava>
+References: <Z_z161cpsaR2uQm3@krava>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <67fdc64e3fa03_15df832946e@iweiny-mobl.notmuch>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wAH8p8Iyv1nVOGLGQ--.29463S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3Xw4fXr1xZrykXw4fXr1DWrg_yoW7CFW5pa
+	yDZr1YkFs5X3W7XFy7J3y5Zr4Fvrn3Zr17CF1DtF98ZF4kZw18XF1xtF4avwn5GrZav3W3
+	Zw40qr9xu34xXFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JUDxhQUUUUU=
+X-CM-SenderInfo: p1dqww5hqjkmqzuzqiywtou0bp/1tbiThIweGf9xgaragAAsP
 
-On Mon, Apr 14, 2025 at 09:37:02PM -0500, Ira Weiny wrote:
-> Fan Ni wrote:
-> > On Sun, Apr 13, 2025 at 05:52:08PM -0500, Ira Weiny wrote:
-> > > A git tree of this series can be found here:
-> > > 
-> > > 	https://github.com/weiny2/linux-kernel/tree/dcd-v6-2025-04-13
-> > > 
-> > > This is now based on 6.15-rc2.
-> > > 
-> > > Due to the stagnation of solid requirements for users of DCD I do not
-> > > plan to rev this work in Q2 of 2025 and possibly beyond.
-> > > 
-> > > It is anticipated that this will support at least the initial
-> > > implementation of DCD devices, if and when they appear in the ecosystem.
-> > > The patch set should be reviewed with the limited set of functionality in
-> > > mind.  Additional functionality can be added as devices support them.
-> > > 
-> > > It is strongly encouraged for individuals or companies wishing to bring
-> > > DCD devices to market review this set with the customer use cases they
-> > > have in mind.
+On Mon, 14 Apr 2025 13:47:55 +0200, Jiri Olsa <olsajiri@gmail.com> wrote:
+
+> On Mon, Apr 14, 2025 at 05:34:02PM +0800, Feng Yang wrote:
+> > From: Feng Yang <yangfeng@kylinos.cn>
 > > 
-> > Hi Ira,
-> > thanks for sending it out.
+> > This test verifies that attaching kprobe/kretprobe with long event names
+> > does not trigger EINVAL errors.
 > > 
-> > I have not got a chance to check the code or test it extensively.
+> > Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
+> > ---
+> >  .../selftests/bpf/prog_tests/attach_probe.c   | 35 +++++++++++++++++++
+> >  .../selftests/bpf/test_kmods/bpf_testmod.c    |  5 +++
+> >  .../bpf/test_kmods/bpf_testmod_kfunc.h        |  2 ++
+> >  3 files changed, 42 insertions(+)
 > > 
-> > I tried to test one specific case and hit issue.
-> > 
-> > I tried to add some DC extents to the extent list on the device when the
-> > VM is launched by hacking qemu like below,
-> > 
-> > diff --git a/hw/mem/cxl_type3.c b/hw/mem/cxl_type3.c
-> > index 87fa308495..4049fc8dd9 100644
-> > --- a/hw/mem/cxl_type3.c
-> > +++ b/hw/mem/cxl_type3.c
-> > @@ -826,6 +826,11 @@ static bool cxl_create_dc_regions(CXLType3Dev *ct3d, Error **errp)
-> >      QTAILQ_INIT(&ct3d->dc.extents);
-> >      QTAILQ_INIT(&ct3d->dc.extents_pending);
-> >  
-> > +    cxl_insert_extent_to_extent_list(&ct3d->dc.extents, 0,
-> > +                                     CXL_CAPACITY_MULTIPLIER, NULL, 0);
-> > +    ct3d->dc.total_extent_count = 1;
-> > +    ct3_set_region_block_backed(ct3d, 0, CXL_CAPACITY_MULTIPLIER);
-> > +
-> >      return true;
+> > diff --git a/tools/testing/selftests/bpf/prog_tests/attach_probe.c b/tools/testing/selftests/bpf/prog_tests/attach_probe.c
+> > index 9b7f36f39c32..633b5eb4379b 100644
+> > --- a/tools/testing/selftests/bpf/prog_tests/attach_probe.c
+> > +++ b/tools/testing/selftests/bpf/prog_tests/attach_probe.c
+> > @@ -168,6 +168,39 @@ static void test_attach_uprobe_long_event_name(void)
+> >  	test_attach_probe_manual__destroy(skel);
 > >  }
-> > 
-> > 
-> > Then after the VM is launched, I tried to create a DC region with
-> > commmand: cxl create-region -m mem0 -d decoder0.0 -s 1G -t
-> > dynamic_ram_a.
-> > 
-> > It works fine. As you can see below, the region is created and the
-> > extent is showing correctly.
-> > 
-> > root@debian:~# cxl list -r region0 -N
-> > [
-> >   {
-> >     "region":"region0",
-> >     "resource":79725330432,
-> >     "size":1073741824,
-> >     "interleave_ways":1,
-> >     "interleave_granularity":256,
-> >     "decode_state":"commit",
-> >     "extents":[
-> >       {
-> >         "offset":0,
-> >         "length":268435456,
-> >         "uuid":"00000000-0000-0000-0000-000000000000"
-> >       }
-> >     ]
-> >   }
-> > ]
-> > 
-> > 
-> > However, after that, I tried to create a dax device as below, it failed.
-> > 
-> > root@debian:~# daxctl create-device -r region0 -v
-> > libdaxctl: __dax_regions_init: no dax regions found via: /sys/class/dax
-> > error creating devices: No such device or address
-> > created 0 devices
-> > root@debian:~# 
-> > 
-> > root@debian:~# ls /sys/class/dax 
-> > ls: cannot access '/sys/class/dax': No such file or directory
+> >  
+> > +/* attach kprobe/kretprobe long event name testings */
+> > +static void test_attach_kprobe_long_event_name(void)
+> > +{
+> > +	DECLARE_LIBBPF_OPTS(bpf_kprobe_opts, kprobe_opts);
+> > +	struct bpf_link *kprobe_link, *kretprobe_link;
+> > +	struct test_attach_probe_manual *skel;
+> > +
+> > +	skel = test_attach_probe_manual__open_and_load();
+> > +	if (!ASSERT_OK_PTR(skel, "skel_kprobe_manual_open_and_load"))
+> > +		return;
+> > +
+> > +	/* manual-attach kprobe/kretprobe */
+> > +	kprobe_opts.attach_mode = PROBE_ATTACH_MODE_LEGACY;
+> > +	kprobe_opts.retprobe = false;
+> > +	kprobe_link = bpf_program__attach_kprobe_opts(skel->progs.handle_kprobe,
+> > +						      "bpf_kfunc_looooooooooooooooooooooooooooooong_name",
+> > +						      &kprobe_opts);
+> > +	if (!ASSERT_OK_PTR(kprobe_link, "attach_kprobe_long_event_name"))
+> > +		goto cleanup;
+> > +	skel->links.handle_kprobe = kprobe_link;
+> > +
+> > +	kprobe_opts.retprobe = true;
+> > +	kretprobe_link = bpf_program__attach_kprobe_opts(skel->progs.handle_kretprobe,
+> > +							 "bpf_kfunc_looooooooooooooooooooooooooooooong_name",
+> > +							 &kprobe_opts);
+> > +	if (!ASSERT_OK_PTR(kretprobe_link, "attach_kretprobe_long_event_name"))
+> > +		goto cleanup;
+> > +	skel->links.handle_kretprobe = kretprobe_link;
+> > +
+> > +cleanup:
+> > +	test_attach_probe_manual__destroy(skel);
+> > +}
+> > +
+> >  static void test_attach_probe_auto(struct test_attach_probe *skel)
+> >  {
+> >  	struct bpf_link *uprobe_err_link;
+> > @@ -371,6 +404,8 @@ void test_attach_probe(void)
+> >  
+> >  	if (test__start_subtest("uprobe-long_name"))
+> >  		test_attach_uprobe_long_event_name();
+> > +	if (test__start_subtest("kprobe-long_name"))
+> > +		test_attach_kprobe_long_event_name();
+> >  
+> >  cleanup:
+> >  	test_attach_probe__destroy(skel);
+> > diff --git a/tools/testing/selftests/bpf/test_kmods/bpf_testmod.c b/tools/testing/selftests/bpf/test_kmods/bpf_testmod.c
+> > index f38eaf0d35ef..439f6c2b2456 100644
+> > --- a/tools/testing/selftests/bpf/test_kmods/bpf_testmod.c
+> > +++ b/tools/testing/selftests/bpf/test_kmods/bpf_testmod.c
+> > @@ -1053,6 +1053,10 @@ __bpf_kfunc int bpf_kfunc_st_ops_inc10(struct st_ops_args *args)
+> >  	return args->a;
+> >  }
+> >  
+> > +__bpf_kfunc void bpf_kfunc_looooooooooooooooooooooooooooooong_name(void)
+> > +{
+> > +}
 > 
-> Have you update daxctl with cxl-cli?
+> does it need to be a kfunc? IIUC it just needs to be a normal kernel/module function
 > 
-> I was confused by this lack of /sys/class/dax and checked with Vishal.  He
-> says this is legacy.
+> jirka
 > 
-> I have /sys/bus/dax and that works fine for me with the latest daxctl
-> built from the ndctl code I sent out:
-> 
-> https://github.com/weiny2/ndctl/tree/dcd-region3-2025-04-13
-> 
-> Could you build and use the executables from that version?
-> 
-> Ira
 
-That is my setup.
+Indeed, so is it okay if I make the following modifications:
 
-root@debian:~# cxl list -r region0 -N
-[
-  {
-    "region":"region0",
-    "resource":79725330432,
-    "size":2147483648,
-    "interleave_ways":1,
-    "interleave_granularity":256,
-    "decode_state":"commit",
-    "extents":[
-      {
-        "offset":0,
-        "length":268435456,
-        "uuid":"00000000-0000-0000-0000-000000000000"
-      }
-    ]
-  }
-]
-root@debian:~# cd ndctl/
-root@debian:~/ndctl# git branch
-* dcd-region3-2025-04-13
-root@debian:~/ndctl# ./build/daxctl/daxctl create-device -r region0 -v
-libdaxctl: __dax_regions_init: no dax regions found via: /sys/class/dax
-error creating devices: No such device or address
-created 0 devices
+--- a/tools/testing/selftests/bpf/test_kmods/bpf_testmod.c
++++ b/tools/testing/selftests/bpf/test_kmods/bpf_testmod.c
+@@ -134,6 +134,10 @@ bpf_testmod_test_arg_ptr_to_struct(struct bpf_testmod_struct_arg_1 *a) {
+ 	return bpf_testmod_test_struct_arg_result;
+ }
+ 
++noinline void bpf_testmod_looooooooooooooooooooooooooooooong_name(void)
++{
++}
++
+ __bpf_kfunc void
+ bpf_testmod_test_mod_kfunc(int i)
 
-root@debian:~/ndctl# cat .git/config 
-[core]
-	repositoryformatversion = 0
-	filemode = true
-	bare = false
-	logallrefupdates = true
-[remote "origin"]
-	url = https://github.com/weiny2/ndctl.git
-	fetch = +refs/heads/dcd-region3-2025-04-13:refs/remotes/origin/dcd-region3-2025-04-13
-[branch "dcd-region3-2025-04-13"]
-	remote = origin
-	merge = refs/heads/dcd-region3-2025-04-13
+Thanks.
 
+> > +
+> >  BTF_KFUNCS_START(bpf_testmod_check_kfunc_ids)
+> >  BTF_ID_FLAGS(func, bpf_testmod_test_mod_kfunc)
+> >  BTF_ID_FLAGS(func, bpf_kfunc_call_test1)
+> > @@ -1093,6 +1097,7 @@ BTF_ID_FLAGS(func, bpf_kfunc_st_ops_test_prologue, KF_TRUSTED_ARGS | KF_SLEEPABL
+> >  BTF_ID_FLAGS(func, bpf_kfunc_st_ops_test_epilogue, KF_TRUSTED_ARGS | KF_SLEEPABLE)
+> >  BTF_ID_FLAGS(func, bpf_kfunc_st_ops_test_pro_epilogue, KF_TRUSTED_ARGS | KF_SLEEPABLE)
+> >  BTF_ID_FLAGS(func, bpf_kfunc_st_ops_inc10, KF_TRUSTED_ARGS)
+> > +BTF_ID_FLAGS(func, bpf_kfunc_looooooooooooooooooooooooooooooong_name)
+> >  BTF_KFUNCS_END(bpf_testmod_check_kfunc_ids)
+> >  
+> >  static int bpf_testmod_ops_init(struct btf *btf)
+> > diff --git a/tools/testing/selftests/bpf/test_kmods/bpf_testmod_kfunc.h b/tools/testing/selftests/bpf/test_kmods/bpf_testmod_kfunc.h
+> > index b58817938deb..e5b833140418 100644
+> > --- a/tools/testing/selftests/bpf/test_kmods/bpf_testmod_kfunc.h
+> > +++ b/tools/testing/selftests/bpf/test_kmods/bpf_testmod_kfunc.h
+> > @@ -159,4 +159,6 @@ void bpf_kfunc_trusted_task_test(struct task_struct *ptr) __ksym;
+> >  void bpf_kfunc_trusted_num_test(int *ptr) __ksym;
+> >  void bpf_kfunc_rcu_task_test(struct task_struct *ptr) __ksym;
+> >  
+> > +void bpf_kfunc_looooooooooooooooooooooooooooooong_name(void) __ksym;
+> > +
+> >  #endif /* _BPF_TESTMOD_KFUNC_H */
+> > -- 
+> > 2.43.0
+> > 
 
-Fan
-
-> 
-> > 
-> > The dmesg shows the really_probe function returns early as resource
-> > presents before probe as below,
-> > 
-> > [ 1745.505068] cxl_core:devm_cxl_add_dax_region:3251: cxl_region region0: region0: register dax_region0
-> > [ 1745.506063] cxl_pci:__cxl_pci_mbox_send_cmd:263: cxl_pci 0000:0d:00.0: Sending command: 0x4801
-> > [ 1745.506953] cxl_pci:cxl_pci_mbox_wait_for_doorbell:74: cxl_pci 0000:0d:00.0: Doorbell wait took 0ms
-> > [ 1745.507911] cxl_core:__cxl_process_extent_list:1802: cxl_pci 0000:0d:00.0: Got extent list 0-0 of 1 generation Num:0
-> > [ 1745.508958] cxl_core:__cxl_process_extent_list:1815: cxl_pci 0000:0d:00.0: Processing extent 0/1
-> > [ 1745.509843] cxl_core:cxl_validate_extent:975: cxl_pci 0000:0d:00.0: DC extent DPA [range 0x0000000000000000-0x000000000fffffff] (DCR:[range 0x0000000000000000-0x000000007fffffff])(00000000-0000-0000-0000-000000000000)
-> > [ 1745.511748] cxl_core:__cxl_dpa_to_region:2869: cxl decoder2.0: dpa:0x0 mapped in region:region0
-> > [ 1745.512626] cxl_core:cxl_add_extent:460: cxl decoder2.0: Checking ED ([mem 0x00000000-0x3fffffff flags 0x80000200]) for extent [range 0x0000000000000000-0x000000000fffffff]
-> > [ 1745.514143] cxl_core:cxl_add_extent:492: cxl decoder2.0: Add extent [range 0x0000000000000000-0x000000000fffffff] (00000000-0000-0000-0000-000000000000)
-> > [ 1745.515485] cxl_core:online_region_extent:176:  extent0.0: region extent HPA [range 0x0000000000000000-0x000000000fffffff]
-> > [ 1745.516576] cxl_core:cxlr_notify_extent:285: cxl dax_region0: Trying notify: type 0 HPA [range 0x0000000000000000-0x000000000fffffff]
-> > [ 1745.517768] cxl_core:cxl_bus_probe:2087: cxl_region region0: probe: 0
-> > [ 1745.524984] cxl dax_region0: Resources present before probing
-> > 
-> > 
-> > btw, I hit the same issue with the previous verson also.
-> > 
-> > Fan
-> 
-> [snip]
 
