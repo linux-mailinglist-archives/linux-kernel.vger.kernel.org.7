@@ -1,48 +1,86 @@
-Return-Path: <linux-kernel+bounces-604352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF55BA8937A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:45:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6197FA89380
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:47:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0A8F7AA79B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 05:44:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C4C117BA22
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 05:47:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEDB823E338;
-	Tue, 15 Apr 2025 05:45:18 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63892274663
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 05:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7BC6248882;
+	Tue, 15 Apr 2025 05:46:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WefWCqlF"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9031E5B70
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 05:46:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744695918; cv=none; b=tNgpgjIxiA2juZ2axNeTLFrDhhCK/WBiaBsRE5xfG9hND1QApaEssfcIHk4qeSVrlGqDjZm9kvqZNeYDdW3TfaiPU0yH/aWl4XTEbjnZfAkBMbiysz1OLwjejV3VDygG695ZysQeIsDJNkHO5CLE5txEbNY+zgxQOH8zWx/nOZU=
+	t=1744696019; cv=none; b=OSgrPn2xtRN+d4otOHM29Ru/TFhALk9dnT+JRioVp1bQlYNCuNwQqctzDDOIXDX0XXtf96lpTQ+XuP18mo5i+scnQKaNP++7BkxOxkJy6nbpuLU4OXPcHrS0vFpHfh0qLnNllk3lgswh3f9YyHasZXGPHRkyQNFyJIwHOp+qW4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744695918; c=relaxed/simple;
-	bh=FDnB9voEkiJNDZy8LRUnYY/6P86aa7l3pmQpvvQiwoI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CJj0ANmW6mdWQvfTr2R/f8fThqx3aVPueC0Ma+7ImftNklP6QLq2mySLs/gUPO7llL1e9IC8dDMOKqPfT92ebUNCx8gD7I+Cw7StzkoMMwXlArb0IuL0apXRWw6NlYaGCFTwEEzLEaVPKgMg+ZPWHUdke/YYelPeR+kVAEAJuJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EE23315A1;
-	Mon, 14 Apr 2025 22:45:12 -0700 (PDT)
-Received: from a077893.arm.com (unknown [10.163.49.104])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B630F3F66E;
-	Mon, 14 Apr 2025 22:45:11 -0700 (PDT)
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Ryan Roberts <ryan.roberts@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Marc Zyngier <maz@kernel.org>,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Anshuman Khandual <anshuman.khandual@arm.com>
-Subject: [PATCH V2] arm64/mm: Implement pte_po_index() for permission overlay index
-Date: Tue, 15 Apr 2025 11:14:42 +0530
-Message-Id: <20250415054442.2287891-1-anshuman.khandual@arm.com>
+	s=arc-20240116; t=1744696019; c=relaxed/simple;
+	bh=CuimUCxABVpqq10GHMJ0bxV0GGCA4zQouC4cjyd/m/Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oMjlbajE3qYAD3d8jfvrOvkCVB5qd2pYwZB5Wcj0MTz3syn+OeyCpHXYe/u7+XltbKyrwSoJBglRyn0Bt813SRc/d7wFGGdPGcsYV1Ncaj4SSXTHIsqUROpkakSAqppL5AeGoOW56r91MbHby2DN2hAM6/ZGFRvrJhmwxKEbOK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WefWCqlF; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2ff85fec403so5770333a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 22:46:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744696017; x=1745300817; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=k4cZxTtVMJDaaa7hDwJgmoHujDnPmGdlQIS/4rZGmLk=;
+        b=WefWCqlFFq+k/DuWKwNrnTGobHyrIhemm7WBxA3vl8Vlnx/Tv7AB4dcdL74LAl+oRS
+         1G1lpEI4myUcxQIJ7PRpXE5TDBjgqLl3DO4rTtfkzztWdDMtEEutW17nS95yAKvBYLZz
+         5tbXxN8/Y2nc3vID2grZRZK9djr4rhWWN7926p6Gr1t13XnsWVuel+dNF10elkNDgxin
+         5nMK5YCNej1202zQgp0vril6yZ5PyEJl4QVcIDTzqZ4LrYz6tQBhfb9PeklKVKi7ZyF3
+         gMeJXcFNxtUEF+9xDYMdT3CGDtlMSXQn4a1p/axzCt3+1pji0SMpTUaafcJ7zySCCU6V
+         g+7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744696017; x=1745300817;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=k4cZxTtVMJDaaa7hDwJgmoHujDnPmGdlQIS/4rZGmLk=;
+        b=cy74grY4V42FPgb5dMoyp2kAfWWU3gj81T+Xq0LJcE6b6bq5OyNT+mWXKarJR4WHVL
+         w3AUFM2nfPhQIZDGtAor2GMe96VzZ/hwOuRr8RlKFUheUHI864tJXRVMrHmPLSi2DRnl
+         iuE7abH+3DP1ip7OJ3x14i50DtlLp5YxuUB20DEaPj4KfS6b4bQlq21mzTQqiD9xs//1
+         asoUoHNtUZhA1UfMlXqdDDsePL71MomlDkePHQ/g1GHV7zzsb3hXQ/sRINld1cjFTV1R
+         LtOGXDdZ944AZWSfxDrIeWKriDTJ5RL86qlngxQeBxVtZ50eHlRImqqwRJUTGJMBqolS
+         UF4g==
+X-Gm-Message-State: AOJu0YxL1pll6d4x2AByzR50BMX0D6jm/VsNne8BRrhtt+lD2N+bnGlI
+	xJbAOClz+606bNBQc2IEGe2Pl4AyGTa+K/wGhiPnvim4tdjMVLCY
+X-Gm-Gg: ASbGncsyrURDEbmzRwE779mH/m91QXn8MGCeayPWKNOY2Z+Ms7+JjP8TL0zTnw1AA5J
+	3cthb9eKBXenWy8+1pHO/XT+Yv3JB9jB7WyJMZ7NVcXKLzbS2ZeKU6FXeHCAbn+9bMdZbUZySJz
+	ZBdWwxw08z7xZhSL3oP5xs+wZWJxSHqkUQLiOjFhTR7A2VjKy1oss32H/vqwiJLg9n9TeFZewbZ
+	hOoyRIONBrBYwZGml+rkcBq6PlvbXdzp5Rlkox4sYFbqwWZ7LmIeiQUe4a+qAtWquNIbyp499C7
+	916dR9pLVH/fR77H4hwOk1YU1ikH21OsW+42VMi2zMV107BS4jcookhWubfaKXCg6GUE4VBLjJQ
+	=
+X-Google-Smtp-Source: AGHT+IF7s2hYBEEX/opgVv7QoPu8Lk1EsNQ/k37JSlTMw64+HMx36CxdT602jm30YOrpkzyAK6ryUg==
+X-Received: by 2002:a17:90b:5210:b0:2fa:3b6b:3370 with SMTP id 98e67ed59e1d1-3084f3d3391mr2689675a91.16.1744696016765;
+        Mon, 14 Apr 2025 22:46:56 -0700 (PDT)
+Received: from PC-YLX47FB9.company.local ([210.184.73.204])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7b9042dsm109219185ad.104.2025.04.14.22.46.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Apr 2025 22:46:56 -0700 (PDT)
+From: yangsonghua <jluyangsonghua@gmail.com>
+X-Google-Original-From: yangsonghua <yangsonghua@lixiang.com>
+To: tj@kernel.org,
+	void@manifault.com,
+	arighi@nvidia.com,
+	changwoo@igalia.com
+Cc: linux-kernel@vger.kernel.org,
+	sched-ext@meta.com,
+	yangsonghua <yangsonghua@lixiang.com>
+Subject: [PATCH v2] tools/sched_ext: Improve cross-compilation support in Makefile
+Date: Tue, 15 Apr 2025 13:46:42 +0800
+Message-Id: <20250415054642.3878839-1-yangsonghua@lixiang.com>
 X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -52,90 +90,84 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Ryan Roberts <ryan.roberts@arm.com>
+Modify the tools/sched_ext/Makefile to better handle cross-compilation
+environments by:
 
-Previously pte_access_permitted() used FIELD_GET() directly to retrieve
-the permission overlay index from the pte. However, FIELD_GET() doesn't
-work for 128 bit quanitites. Since we are about to add support for D128
-pgtables, let's create a specific helper, pte_po_index() which can do
-the required mask and shift regardless of the data type width.
+1. Adjusted `HOST_OUTPUT_DIR` to be relative to `$(OBJ_DIR)`, ensuring
+   correct path handling during host tool building when cross-compile
+   (HOST_OUTPUT_DIR now points to $(OBJ_DIR)/host-tools)
+2. Properly propagate CROSS_COMPILE to libbpf sub-make invocation
+3. Add missing $(HOST_BPFOBJ) build rule with proper host toolchain flags
+   (ARCH=, CROSS_COMPILE=, explicit HOSTCC/HOSTLD)
+4. Consistently quote $(HOSTCC) in bpftool build rule
 
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Marc Zyngier <maz@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: kvmarm@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+The changes ensure proper cross-compilation behavior while maintaining
+backward compatibility with native builds. Host tools are now correctly
+built with the host toolchain while target binaries use the cross-toolchain.
+
+Signed-off-by: yangsonghua <yangsonghua@lixiang.com>
+
+------
+v2:
+  - keep HOST_BUILD_DIR and LDFLAGS unchanged
+  - change the title prefix "sched_ext" to "tools/sched_ext"
+
+v1:
+  - https://lore.kernel.org/lkml/20250414081436.2574882-1-yangsonghua@lixiang.com/
 ---
-This patch applies on v6.15-rc2
+ tools/sched_ext/Makefile | 19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
 
-Changes in V2:
-
-- Replaced FIELD_GET() in compute_s1_overlay_permissions() per Ryan
-
-Changes in V1:
-
-https://lore.kernel.org/linux-arm-kernel/20250410052021.1533180-1-anshuman.khandual@arm.com/
-
- arch/arm64/include/asm/pgtable-hwdef.h | 1 +
- arch/arm64/include/asm/pgtable-prot.h  | 2 ++
- arch/arm64/include/asm/pgtable.h       | 2 +-
- arch/arm64/kvm/at.c                    | 2 +-
- 4 files changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
-index f3b77deedfa2..028a164924df 100644
---- a/arch/arm64/include/asm/pgtable-hwdef.h
-+++ b/arch/arm64/include/asm/pgtable-hwdef.h
-@@ -211,6 +211,7 @@
- #define PTE_PO_IDX_2	(_AT(pteval_t, 1) << 62)
+diff --git a/tools/sched_ext/Makefile b/tools/sched_ext/Makefile
+index ca3815e572d8..eb85f3762a1f 100644
+--- a/tools/sched_ext/Makefile
++++ b/tools/sched_ext/Makefile
+@@ -62,7 +62,7 @@ BINDIR := $(OUTPUT_DIR)/bin
+ BPFOBJ := $(BPFOBJ_DIR)/libbpf.a
+ ifneq ($(CROSS_COMPILE),)
+ HOST_BUILD_DIR		:= $(OBJ_DIR)/host
+-HOST_OUTPUT_DIR	:= host-tools
++HOST_OUTPUT_DIR	:= $(OBJ_DIR)/host-tools
+ HOST_INCLUDE_DIR	:= $(HOST_OUTPUT_DIR)/include
+ else
+ HOST_BUILD_DIR		:= $(OBJ_DIR)
+@@ -136,14 +136,25 @@ $(MAKE_DIRS):
+ $(BPFOBJ): $(wildcard $(BPFDIR)/*.[ch] $(BPFDIR)/Makefile)			\
+ 	   $(APIDIR)/linux/bpf.h						\
+ 	   | $(OBJ_DIR)/libbpf
+-	$(Q)$(MAKE) $(submake_extras) -C $(BPFDIR) OUTPUT=$(OBJ_DIR)/libbpf/	\
++	$(Q)$(MAKE) $(submake_extras) CROSS_COMPILE=$(CROSS_COMPILE) 		\
++		    -C $(BPFDIR) OUTPUT=$(OBJ_DIR)/libbpf/			\
+ 		    EXTRA_CFLAGS='-g -O0 -fPIC'					\
++		    LDFLAGS="$(LDFLAGS)"					\
+ 		    DESTDIR=$(OUTPUT_DIR) prefix= all install_headers
  
- #define PTE_PO_IDX_MASK		GENMASK_ULL(62, 60)
-+#define PTE_PO_IDX_SHIFT	60
- 
- 
- /*
-diff --git a/arch/arm64/include/asm/pgtable-prot.h b/arch/arm64/include/asm/pgtable-prot.h
-index 7830d031742e..b53bc241e4e7 100644
---- a/arch/arm64/include/asm/pgtable-prot.h
-+++ b/arch/arm64/include/asm/pgtable-prot.h
-@@ -136,6 +136,8 @@ static inline bool __pure lpa2_is_enabled(void)
- 	((pte & BIT(PTE_PI_IDX_1)) >> (PTE_PI_IDX_1 - 1)) | \
- 	((pte & BIT(PTE_PI_IDX_0)) >> (PTE_PI_IDX_0 - 0)))
- 
-+#define pte_po_index(pte)	((pte_val(pte) & PTE_PO_IDX_MASK) >> PTE_PO_IDX_SHIFT)
++$(HOST_BPFOBJ): $(wildcard $(BPFDIR)/*.[ch] $(BPFDIR)/Makefile)		\
++	   $(APIDIR)/linux/bpf.h						\
++	   | $(HOST_BUILD_DIR)/libbpf
++	$(Q)$(MAKE) $(submake_extras) -C $(BPFDIR) 				\
++		    OUTPUT=$(HOST_BUILD_DIR)/libbpf/				\
++		    ARCH= CROSS_COMPILE= CC="$(HOSTCC)" LD=$(HOSTLD)		\
++		    EXTRA_CFLAGS='-g -O0 -fPIC'					\
++		    DESTDIR=$(HOST_OUTPUT_DIR) prefix= all install_headers
 +
- /*
-  * Page types used via Permission Indirection Extension (PIE). PIE uses
-  * the USER, DBM, PXN and UXN bits to to generate an index which is used
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index d3b538be1500..41979c0e6c21 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -182,7 +182,7 @@ static inline bool por_el0_allows_pkey(u8 pkey, bool write, bool execute)
- 	(((pte_val(pte) & (PTE_VALID | PTE_USER)) == (PTE_VALID | PTE_USER)) && (!(write) || pte_write(pte)))
- #define pte_access_permitted(pte, write) \
- 	(pte_access_permitted_no_overlay(pte, write) && \
--	por_el0_allows_pkey(FIELD_GET(PTE_PO_IDX_MASK, pte_val(pte)), write, false))
-+	por_el0_allows_pkey(pte_po_index(pte), write, false))
- #define pmd_access_permitted(pmd, write) \
- 	(pte_access_permitted(pmd_pte(pmd), (write)))
- #define pud_access_permitted(pud, write) \
-diff --git a/arch/arm64/kvm/at.c b/arch/arm64/kvm/at.c
-index f74a66ce3064..66bee3f2d7c2 100644
---- a/arch/arm64/kvm/at.c
-+++ b/arch/arm64/kvm/at.c
-@@ -1073,7 +1073,7 @@ static void compute_s1_overlay_permissions(struct kvm_vcpu *vcpu,
- {
- 	u8 idx, pov_perms, uov_perms;
+ $(DEFAULT_BPFTOOL): $(wildcard $(BPFTOOLDIR)/*.[ch] $(BPFTOOLDIR)/Makefile)	\
+ 		    $(HOST_BPFOBJ) | $(HOST_BUILD_DIR)/bpftool
+ 	$(Q)$(MAKE) $(submake_extras)  -C $(BPFTOOLDIR)				\
+-		    ARCH= CROSS_COMPILE= CC=$(HOSTCC) LD=$(HOSTLD)		\
++		    ARCH= CROSS_COMPILE= CC="$(HOSTCC)" LD=$(HOSTLD)		\
+ 		    EXTRA_CFLAGS='-g -O0'					\
+ 		    OUTPUT=$(HOST_BUILD_DIR)/bpftool/				\
+ 		    LIBBPF_OUTPUT=$(HOST_BUILD_DIR)/libbpf/			\
+@@ -185,7 +196,7 @@ $(addprefix $(BINDIR)/,$(c-sched-targets)): \
+ 		$(SCX_COMMON_DEPS)
+ 	$(eval sched=$(notdir $@))
+ 	$(CC) $(CFLAGS) -c $(sched).c -o $(SCXOBJ_DIR)/$(sched).o
+-	$(CC) -o $@ $(SCXOBJ_DIR)/$(sched).o $(HOST_BPFOBJ) $(LDFLAGS)
++	$(CC) -o $@ $(SCXOBJ_DIR)/$(sched).o $(BPFOBJ) $(LDFLAGS)
  
--	idx = FIELD_GET(PTE_PO_IDX_MASK, wr->desc);
-+	idx = pte_po_index(__pte(wr->desc));
+ $(c-sched-targets): %: $(BINDIR)/%
  
- 	switch (wi->regime) {
- 	case TR_EL10:
 -- 
 2.25.1
 
