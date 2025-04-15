@@ -1,163 +1,167 @@
-Return-Path: <linux-kernel+bounces-605062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26E69A89C57
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:30:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76572A89C64
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:31:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A6597A69E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:29:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 810197A997E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:30:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1D94296D0D;
-	Tue, 15 Apr 2025 11:27:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B89A0291167;
+	Tue, 15 Apr 2025 11:28:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mLrpNKzV"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iCTEsJ8o"
+Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900842951DD;
-	Tue, 15 Apr 2025 11:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8290288C88;
+	Tue, 15 Apr 2025 11:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744716424; cv=none; b=tKj1MGICgPONBItZKRTs8y1McgSxS/CPRBHZqzgBTylbz4YxUMjz/h92JSdEX2XHBxN4gwAxqNqWScskcKLou9hmGvob3yLNr2ZdcDcz1ik4rQWoKDKtZMvLffd246x1wSBBe9BFs9ojdyRiPqzueMMivBLPrmJ2t8yh7e9TNeA=
+	t=1744716507; cv=none; b=UADVPHBMJzm7rP0Mw/vFBP95oXrRyeXTXm7JcHCRRfXLCP0ogx4Ldo7Ozq3Cl9/y1yySNtW3OrW5+YgYyotMutNK0m27nhMhbCphnCV2AecQtHck3h5Edp2hPoIowD0fWhrO33qECuRu+wM8cyeGRyMMVL+rgr6VtHjQ4iknDB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744716424; c=relaxed/simple;
-	bh=FaCD1PkoKrxS9v1U5rFWElyeE6LW8xfKfPTFbahvHaY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bxEkr8sefGcr+BAK8BVLeZQJ5ezUTGbFg/UPGEEt9Nx7yZPwMNyShB4HjC+HrIELtAPahlj3FcwoRPm7kZcmBSV2l1uDUtxeNR+lvIWkOcjQggsI1lpKii9FIryWJcCjOm8Ro22K4Smw4iiQYYCk/NsOYzJ01BwTzWgc9ULvEwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mLrpNKzV; arc=none smtp.client-ip=209.85.221.47
+	s=arc-20240116; t=1744716507; c=relaxed/simple;
+	bh=zjo+6QiCbQI7Wkdf1JLfiryh8Y4sey5HoOLlYs3E73w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AWPrQo89HgTpZGhTLEfH0pml91vQJFFjGpGx3mJtCDy84GdLfRRgNn+FnJqtUjl7Kuglk56H6Z/M+WcJbL1QiPhkrzoynjO9Q2Fyv1fQ/OVpYF9KBYmsFdczKlLu9mJiGsaY7S1KYLpiX5rLNha3Oa1wwjj4rUNj/04cnQYd1qA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iCTEsJ8o; arc=none smtp.client-ip=209.85.214.193
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-399749152b4so3049802f8f.3;
-        Tue, 15 Apr 2025 04:27:02 -0700 (PDT)
+Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-2264aefc45dso79516315ad.0;
+        Tue, 15 Apr 2025 04:28:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744716421; x=1745321221; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5iNvyUJ84OrchQt/uudTnU275/tZN5oX4rI5S/XVpaE=;
-        b=mLrpNKzVGLP9uvOkWH5kFsk1EOvIvB1O9AUR/qQ40X+fYa6qJhblhcyLwnQlxOjltz
-         ZwOn4ffPpYhSFIDm/Ljwr8NpfjS2Jl7UXblm0QqNC8NCFRz3V727D1D1OcOIVG+zgbGR
-         p+0lcDzHNd8PMuTwZU1a10gnp87jrTD9QL+9tqh47w9bkHouAlhCuBLV1Kzp/xiRj39Z
-         6BbMwL2GD/tKQi9WmFmzbjtqthZ84X5hciktmA8urYX+141GduJqdbuN7PGYCSoLpdbo
-         r+wGbn3QMmGMsBi88sIpEfjbIAaNYr5j9zR3hUhTy7ZuqQMbyxSrdVO33oy3bZX+X1oY
-         n/4A==
+        d=gmail.com; s=20230601; t=1744716505; x=1745321305; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DztHw6xaBRM0pi7U2Teie2x2Tea4xhzgq5VCzCNtwYg=;
+        b=iCTEsJ8oOv/eKhsymlpSuqQUEfyLW35qZ8uyaSpJsBiAzKw4GtSoWxffe1cmgPP5+Q
+         0wU8zoFbeepqujZXQf5V58rQMVlo2DgxO2AFcM7YLbSoQa09E//0YsSMIKeczzcuVO4S
+         N5ljnGidehE55P3YOcXkUIVmvIdLWdsoma2QzGpFZBh3bUP0FqEKkiv2l8nJ9o6LOQ3q
+         ZltFyyP/ckbLqUiDYuqZHLqtanMijvDLTJth+VXDJtgi+2WoX7zBWjMATjvp+uy3whUY
+         e1SYx72nVI5IdgBPzgVnK9MMutqWxDzN+cMSgBJJolile9U2U4gy20Ocq2fx1CPaaOA9
+         hhcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744716421; x=1745321221;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5iNvyUJ84OrchQt/uudTnU275/tZN5oX4rI5S/XVpaE=;
-        b=Vyei5mR7TyMBO+A7iSowU09RtUZdyEsR/adZnZWxBUU+GwqDGK9Z6UQEwwHjusyM+k
-         1sYzlqol1D7cZjj8BByF0tJgmxeSo5HzTk69yPK1GE41DniCCkLo4NAsshBK2W0dKMXM
-         /egvzE/TtJEzfdYsb8X6DB/qa5G7PVUHXRqiftBHDQG82Kv7l0jn3AiP34q8xl131ArN
-         ztNuIhTsV9Ze1Al9l/SpXthi4UPSdFejbq+ebCwHdUXhbEtu//PeotQnxJPhdhZK3NvU
-         7rsgOFyZHt6JGVpbBMQzjptTWxaLiqRs+jGbnRwuDu4204rK6iXwhN2e/A12f1Kneez5
-         wRGA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUb4ZWsXy/e1mR25LiCaiLZq2YqSI0Oa5rvzhdTWKkXPgOdN7J5lxZESmG2qe3f7dICnwhYwpX@vger.kernel.org, AJvYcCVByzcNXt+LicCRqZB13g4gNhh8c+HjrOiw3ied5BQOFkHPytJ64NrwPTDf+K1cvbFo7Hc9KoBVJxxv84Q=@vger.kernel.org, AJvYcCXFSsax7knxxLAfm25ArkBs7il90gJxcd1uB/MQzxJSB4lKiufm3Syy3Yg54esDMvphM9rKA3qiqrfJHg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeRGz799KePKRf5ovnFpoJ/YXU/mnOBcK3Gm+1WaFKnawcPSpr
-	UaMYd6BXaL2dBhLMf6nKx4vf4ppfJxxrybbaFdshTVFvFAyA5zMi
-X-Gm-Gg: ASbGncte0srJ8tn0fiR6jIN6ap+qlUQEA58FeRtGjVLSYIyfTiv2RofGQlBgvKN5Iju
-	c/olKjYLkLalLgorQ0Q6XfCjoG2q5zT/MNOrtqljpkPYb97XJTbKBE3xrog8JBKibdI/HYo1RnL
-	OK2DkEtcfx4Tnce8CG0ubfZOHMmJlb7Fq5UcoGxuXmOcSFmRYk84I5chdN5fujmaerxySRYJvSB
-	iUWlxDWzIdIxq0aJ84G2/a49upaG8s1aZF1i2BACgbxRaMg1ZYdAHLEeYPPzdAYjE2izzuNMDNW
-	F+UppQ+o7EGtmKjCzZwuwVLrN9yv7A0ptmFdKGp3UskOSYyy7sH+jif6R7YZOw==
-X-Google-Smtp-Source: AGHT+IGMq12De2oewFtOUPkn4B9s8mMPlc1IAgczwnQeYBI/+GnxWt2tkhjormePlZdXHT1UTfHavw==
-X-Received: by 2002:a05:6000:40dd:b0:391:13ef:1b1b with SMTP id ffacd0b85a97d-39eaaea8457mr11165434f8f.30.1744716420525;
-        Tue, 15 Apr 2025 04:27:00 -0700 (PDT)
-Received: from [172.27.58.151] ([193.47.165.251])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eae979615sm14294303f8f.54.2025.04.15.04.26.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Apr 2025 04:27:00 -0700 (PDT)
-Message-ID: <c909292b-68ae-4396-8494-aaa555604168@gmail.com>
-Date: Tue, 15 Apr 2025 14:26:57 +0300
+        d=1e100.net; s=20230601; t=1744716505; x=1745321305;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DztHw6xaBRM0pi7U2Teie2x2Tea4xhzgq5VCzCNtwYg=;
+        b=eLq0Yep2V6aasW+doCbQ6PwGLz/a+Wzxr0+MeS2GRjNidjkuUXxL67lpu1eOT5Mkr+
+         XefGz4sr81qLR9zCOSdwCDR9yq67MKmnHFssxDDeG3M3f6pJq2ARQpqMvGJ3KT+lLq33
+         q9OHWhs57SSkQ3lr5FSYIm/v7hPUdiyxNhOizEDWsL0VNqMCohsJ1BEWBYk/vrTCqe0j
+         IIMs9kEk0cEknuI0RQ8XQ9weleA8zUwN4Ubxft+DyIqoE14bURXAOoZsY3Ujmho9SmeX
+         fjPIK1UHq322j5p3V2Vsf5Am4JNMgZ0zGPxm45/HUXVDEWK7wD+LaA8xyIB4LDWSfRcE
+         hFRA==
+X-Forwarded-Encrypted: i=1; AJvYcCVF2k3OPlIhXxE7GZggGBykl/MBPY1vmupb+gRIRASAvifQCQ2bw3uDOkbW9vFZYwkA8auH7+BE962RULWOK9ZBz9Bq@vger.kernel.org, AJvYcCVT0+Y2opYweYzHyDdvjNAUkInIXFmE9FJoZqPMuI4JD88gbDCUOvXy9YzMNby8xQKTKH3p6SIcnvwlF+w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywc+ucnMLEchY79ctHyy2wkxsDSGtHyR71pDim3BLtSpbf2nfHs
+	Q4+YpAU8d8ToodIbpKgIBI2PNV8QjSFE0IBOW6ege1ouTofXFOu1
+X-Gm-Gg: ASbGnctR07CaHmqVFs2zA6Od3H7INvoV0xQ+8rwMF49ZJoDRYHpEIlBk9QpdvHjSp/T
+	8SrqOJUaSrbB1ezQXfSo/hBZDnA7cpXobdPwshecIoiDpzpISsMbbPDBqJG5oHOVLbPXCXjkZbC
+	Qssndyg9sJ7ul3Wt9M62yXCxX0GqgX7lhUmuXXNumlmIXFhD6jflZHFkeIhPl9jqgpitzw+hiBd
+	KPXNIsquQuvg6er4Z9bpGDfs+9flLrK7QYVapm3QUS7Xx0dwFGkxOFtlxd7iVt6K/dQ14JPy7UK
+	jl1FvLf1azQjZulDoA6qUSQVydgL0/nTF+r0FoFwdSwUTcF6wT+MfIl/
+X-Google-Smtp-Source: AGHT+IHY9Bs1VQ391f8Z/Js9FKuUCUYZYk8EDJjf4B4MK8pBuEjQk4Wn3P6pKuv58EC/ylCxOsXniw==
+X-Received: by 2002:a17:903:1c7:b0:220:e5be:29c7 with SMTP id d9443c01a7336-22bea4f180fmr244295615ad.39.1744716504736;
+        Tue, 15 Apr 2025 04:28:24 -0700 (PDT)
+Received: from localhost.localdomain ([43.129.244.20])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd22f0fb7sm8444627b3a.109.2025.04.15.04.28.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Apr 2025 04:28:24 -0700 (PDT)
+From: Jin Guo <menglong8.dong@gmail.com>
+X-Google-Original-From: Jin Guo <guoj17@chinatelecom.cn>
+To: rostedt@goodmis.org
+Cc: mhiramat@kernel.org,
+	mark.rutland@arm.com,
+	mathieu.desnoyers@efficios.com,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Jin Guo <guoj17@chinatelecom.cn>
+Subject: [PATCH] ftrace: make ftrace_location() more accurate
+Date: Tue, 15 Apr 2025 19:27:50 +0800
+Message-Id: <20250415112750.1477339-1-guoj17@chinatelecom.cn>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/1] net/mlx5: Fix null-ptr-deref in
- mlx5_create_{inner_,}ttc_table()
-To: Henry Martin <bsdhenrymartin@gmail.com>, saeedm@nvidia.com,
- leon@kernel.org, tariqt@nvidia.com, netdev@vger.kernel.org
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, amirtz@nvidia.com, ayal@nvidia.com,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- Tariq Toukan <tariqt@nvidia.com>
-References: <20250411131431.46537-1-bsdhenrymartin@gmail.com>
- <20250411131431.46537-2-bsdhenrymartin@gmail.com>
-Content-Language: en-US
-From: Tariq Toukan <ttoukan.linux@gmail.com>
-In-Reply-To: <20250411131431.46537-2-bsdhenrymartin@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+The function ftrace_location is used to lookup the ftrace location with an
+ip. However, the result that it returns can be wrong in some case.
 
+Let's image that we have the following kallsyms:
 
-On 11/04/2025 16:14, Henry Martin wrote:
-> Add NULL check for mlx5_get_flow_namespace() returns in
-> mlx5_create_inner_ttc_table() and mlx5_create_ttc_table() to prevent
-> NULL pointer dereference.
-> 
-> Fixes: 137f3d50ad2a ("net/mlx5: Support matching on l4_type for ttc_table")
-> Signed-off-by: Henry Martin <bsdhenrymartin@gmail.com>
-> ---
-> V3 -> V4: Fix potential memory leak.
-> V2 -> V3: No functional changes, just gathering the patches in a series.
-> V1 -> V2: Add a empty line after the return statement.
-> 
->   drivers/net/ethernet/mellanox/mlx5/core/lib/fs_ttc.c | 12 ++++++++++++
->   1 file changed, 12 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_ttc.c b/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_ttc.c
-> index eb3bd9c7f66e..077fe908bf86 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_ttc.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_ttc.c
-> @@ -651,10 +651,16 @@ struct mlx5_ttc_table *mlx5_create_inner_ttc_table(struct mlx5_core_dev *dev,
->   			MLX5_CAP_NIC_RX_FT_FIELD_SUPPORT_2(dev, inner_l4_type);
->   		break;
->   	default:
-> +		kvfree(ttc);
+  ffffffff812c35f0 T sys_ni_syscall
+  ffffffff812c38b0 W __pfx___x64_sys_io_pgetevents_time32
+  ffffffff812c38c0 W __x64_sys_io_pgetevents_time32
 
-Unrelated change.
-Not described in patch subject or commit message.
-Please introduce in a separate patch.
+And the symbol has corresponding ftrace location like this:
 
->   		return ERR_PTR(-EINVAL);
->   	}
->   
->   	ns = mlx5_get_flow_namespace(dev, params->ns_type);
-> +	if (!ns) {
-> +		kvfree(ttc);
-> +		return ERR_PTR(-EOPNOTSUPP);
-> +	}
-> +
->   	groups = use_l4_type ? &inner_ttc_groups[TTC_GROUPS_USE_L4_TYPE] :
->   			       &inner_ttc_groups[TTC_GROUPS_DEFAULT];
->   
-> @@ -724,10 +730,16 @@ struct mlx5_ttc_table *mlx5_create_ttc_table(struct mlx5_core_dev *dev,
->   			MLX5_CAP_NIC_RX_FT_FIELD_SUPPORT_2(dev, outer_l4_type);
->   		break;
->   	default:
-> +		kvfree(ttc);
+  ffffffff812c35f4 sys_ni_syscall
+  ffffffff812c3624 __ftrace_invalid_address___52
+  ffffffff812c3654 __ftrace_invalid_address___100
+  ffffffff812c3684 __ftrace_invalid_address___148
+  ffffffff812c36b4 __ftrace_invalid_address___196
+  ffffffff812c36e4 __ftrace_invalid_address___244
+  ffffffff812c3714 __ftrace_invalid_address___292
+  ffffffff812c3744 __ftrace_invalid_address___340
+  ffffffff812c3774 __ftrace_invalid_address___388
+  ffffffff812c37a4 __ftrace_invalid_address___436
+  ffffffff812c37d4 __ftrace_invalid_address___484
+  ffffffff812c3804 __ftrace_invalid_address___532
+  ffffffff812c3834 __ftrace_invalid_address___580
+  ffffffff812c3864 __ftrace_invalid_address___628
+  ffffffff812c3894 __ftrace_invalid_address___676
+  ffffffff812c38c4 __x64_sys_io_pgetevents_time32
+  ffffffff812c38f4 __ia32_sys_io_pgetevents_time32
 
-Same.
+When we want to lookup the ftrace location for sys_ni_syscall, the ftrace
+location "ffffffff812c3894" can be returned, which is totally wrong.
 
->   		return ERR_PTR(-EINVAL);
->   	}
->   
->   	ns = mlx5_get_flow_namespace(dev, params->ns_type);
-> +	if (!ns){
-> +		kvfree(ttc);
-> +		return ERR_PTR(-EOPNOTSUPP);
-> +	}
-> +
->   	groups = use_l4_type ? &ttc_groups[TTC_GROUPS_USE_L4_TYPE] :
->   			       &ttc_groups[TTC_GROUPS_DEFAULT];
->   
+The reason is that we get a wrong function size from
+kallsyms_lookup_size_offset(), because of the existing of weak functions.
+And when we lookup with ftrace_location_range(), it will return the first
+matched location between 0xffffffff812c35f0 and ffffffff812c38c0, as it
+searches by binary on a page.
+
+When the macro "FTRACE_MCOUNT_MAX_OFFSET" exists, we can limit the lookup
+size no more than FTRACE_MCOUNT_MAX_OFFSET to avoid such error.
+
+The victim of this problem can be BPF_PROG_TYPE_TRACING. When we want to
+hook the function sys_ni_syscall with BPF_FENTRY, it will attach
+to __ftrace_invalid_address___676(0xffffffff812c3894) successfully
+instead, and the user totally can't aware it, which is dangerous.
+
+Signed-off-by: Jin Guo <guoj17@chinatelecom.cn>
+---
+ kernel/trace/ftrace.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index 1a48aedb5255..8c9a4009c997 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -1658,8 +1658,13 @@ unsigned long ftrace_location(unsigned long ip)
+ 			return 0;
+ 
+ 		/* map sym+0 to __fentry__ */
+-		if (!offset)
+-			loc = ftrace_location_range(ip, ip + size - 1);
++		if (!offset) {
++			size -= 1;
++#ifdef FTRACE_MCOUNT_MAX_OFFSET
++			size = min(size, FTRACE_MCOUNT_MAX_OFFSET);
++#endif
++			loc = ftrace_location_range(ip, ip + size);
++		}
+ 	}
+ 	return loc;
+ }
+-- 
+2.39.5
 
 
