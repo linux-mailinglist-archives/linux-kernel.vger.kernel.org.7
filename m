@@ -1,105 +1,120 @@
-Return-Path: <linux-kernel+bounces-604427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5DECA8944A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:58:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C59FEA89458
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:59:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEE1F188EE4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 06:57:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E71D1889123
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:00:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 465C527A118;
-	Tue, 15 Apr 2025 06:56:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B96279795;
+	Tue, 15 Apr 2025 06:59:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iIvNmK+a"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vuYrOTc8";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NvPKiU/N"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4335A27991F;
-	Tue, 15 Apr 2025 06:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 903D22DFA34;
+	Tue, 15 Apr 2025 06:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744700180; cv=none; b=VhPrv9RQbvteTfcPPUC089IOMbeltHcio4ebgOh1DMYmNtvfi87d6u3UaZwWOYRl/R5G4wFWMZG0HuS1Kid0crn3pRf8Zt7LqL8ewPPy9fwTeSHnGHttB/Wp77/FalFH01BGlDixAoMaqWWWpJDDIlNjwTBOPjGyAXb/ryOuSog=
+	t=1744700388; cv=none; b=GJZkaJhFPtAPswMm5C39TpDforvNYWGnAkGFdnlxOM+3t3nrmLbDqgIRgtBO68CJl0alzEwHOZFNXMloinyC/eG79C4gYcf7RYB/WzhiA7uFXitrtRhZQWLbnyh/J36kSNtgpuD/C4/iY9sIet23Vh9A7B8hW72LpTMBaHYQoBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744700180; c=relaxed/simple;
-	bh=uv7i/A+xKRCxebwBNDHz/b4HBL+FjuvQmgw0J3Ek2tk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P3DTxE1zqRi3hdWSzKnDls6bWOuozEWq/EeI2iF1OgRHa1eEuUfFyrLyK9Fo+eoty+A451bpkp/fjpMfB75zHwWyIMoS6XfF/+FaF37f3yROd2LjC9cOuwmy8b/nu3C1YsYGnR8MdqGoONh0izXf0LmtWFANO0j94IZPt9P1nIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iIvNmK+a; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-af52a624283so4220916a12.0;
-        Mon, 14 Apr 2025 23:56:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744700178; x=1745304978; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uv7i/A+xKRCxebwBNDHz/b4HBL+FjuvQmgw0J3Ek2tk=;
-        b=iIvNmK+amHP8X2BWEdsHyloSvaXVDHTB9qMz+unekO2ZGXoe4LxAkgwJjn7APsnHKc
-         Y9V5XBlMEn7nYnRgXiERl+JKAfOKxw4WvexUUQwEME5+N+pzFadMC/PmNkK2UN400wro
-         Ly2ChiCRP8jLgK7w538NU/C/rsWvL/huaEMoueJZWkQo3+5zQFk/30fdN+yuFqjFwEIV
-         ncs6egLf8q59v1IzlaHHyVvaJ2SPB7bQl/DA+zMeXAXc8izdTK3e8K/Sb8qgF7TQHKrJ
-         VgS/ySAfv1sVs2J6DHm6lmK4vOrGIUgcEB19wxup9sIFLgO0PFfGGYbZEkB3sLUo36G9
-         fKtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744700178; x=1745304978;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uv7i/A+xKRCxebwBNDHz/b4HBL+FjuvQmgw0J3Ek2tk=;
-        b=Z6UmKoUyZi46QKwRmr4ECaoFcR9UxJK6QiWJnhuYT5isLglzi6CDAOTUnnKoZCvrAZ
-         arSdSRJjE03bjomaRAbGu2GWoaj4f5lFgapiePSZHghKwzrCF59pFI5zpg06Euj0Bgxx
-         9dsGsVwvoF1qqK1zLDJDfj/ldHDvKAlq8IrQM8HJwUkXAVDKRAMZUJ38P8XWMUmqc2T5
-         71qWnJ+WKGo2SfWLeztZ513dB4WUpF3lO5UaI9KtareqTMsgZ2/Y90vUqMgHatXiuw2E
-         l+VqBlOiZhZLzKy00awEj3wSJUukViH9SXeQJYzzubYynE7SrRb/v9rK+zdIu77Dl/N8
-         aFOg==
-X-Forwarded-Encrypted: i=1; AJvYcCU55qWE51Q9qoBkQFX1jKLZLRey61FGV47pPkkCvsL2FyUuzst+8c5Nc1wI+gMcSznWBUGFbRWFYY16@vger.kernel.org, AJvYcCWKpK09Hw3EsJIYi2aEUhXL47bGiP1c9CUfChmI1PlF5eyOIQLvxf+7zktS5L6IHgaBchQ2WpSWfoydaTVT@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmmvtJ/L4xfQdlZ1TGETOI6lcBDhF9UpsX8M1tjK7f+FXHwdoA
-	iHYotU+MIJ+eoYPEDqh9XdcNMtDq0ktjXXgZYHsH7ysP4SQ2f162Fa7gnFiEkRWjgww8G1bBK1p
-	ORkgA2lffpv3n9H7khg60aIAVpOi4bwR/qcNcOQ==
-X-Gm-Gg: ASbGncvR3qzkoOB4ohkPHWotAc6Iq7kHggdxSebjm48ZJevkJmADBsgy38/7wf32YOg
-	WQiaHVD9D1JnG9wOACwx+efDRBAasChuF8BFpqPZwkgAqVoOGI92nQ2kLoDsp2HrrJK2hxjDf3A
-	2iAJp/31ij1KbKZsOIaQ==
-X-Google-Smtp-Source: AGHT+IG6NnOFJlKScP+Wamh79XovR7K0CPgG97m4Wp+PToKHbCYOR7nSiLCr5HD0lc3ekUswv3GSc/IBDvySxyjSaD4=
-X-Received: by 2002:a17:90b:58c5:b0:2fc:aaf:74d3 with SMTP id
- 98e67ed59e1d1-3084f2fbb88mr3226588a91.4.1744700178357; Mon, 14 Apr 2025
- 23:56:18 -0700 (PDT)
+	s=arc-20240116; t=1744700388; c=relaxed/simple;
+	bh=IexuHdflXNWNzZq5Hnzg9R61RzOTLbWrRYR7y7HFMfk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jyaMkoUrAEpBjwbpTBTBb+BmGb4R0734yK6DFuiCkIEa0gVq7Smv9oa1a6iof7eYUhqZA/RixURKmvNaYDu3GvL8tjSQps1WKxp0O2FwQzhA26/us8tNKQ/Bnz8GOj695MtqMR8RhfjdvcPMbL1hDUwXPj99cWTHmQ6XVQ61NeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vuYrOTc8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NvPKiU/N; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 15 Apr 2025 08:59:41 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744700384;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/4DddnPVge9/03hGcVhj2b0OGOQ590RpyA8OzYtklTQ=;
+	b=vuYrOTc8QKwZILdPxE6nlighse8j5czreAU0NRRwXH1YPWLjdY3d2rgnmIBklwUTnZbJ4i
+	mW3R7pbaGwblKuKhbYK+OyBN9orQD41H6M9HZkoPc4O2ZMShfJnMzwW56/2sxT762VPUye
+	aoqHwtWY4NDMT4NWwcxAQZfSIloQ9K2b2iIiWhS2I1RGuC5Lz+VELCRHaU/4HJqS1JI5MQ
+	yu/N9j8P9SKznAzYMKnOQeS03+PcDgn9hh7n5XkvDCVBT6vagGsuYB6cWn4m+MemWbcuQW
+	AJiGvabKv5fvy2QuNIpq1ErGhlQhvivTDiAW0SW6YixSCrVD6XPUsVBEftmjyA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744700384;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/4DddnPVge9/03hGcVhj2b0OGOQ590RpyA8OzYtklTQ=;
+	b=NvPKiU/NFg6b2GvIsSSHtwZXG+jiIVYcV6xItmZvYPFCDeSuQXxyHYGrI0ugX2vU2lvaot
+	V1nhHULnntqIsxDw==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Brian Norris <briannorris@chromium.org>
+Cc: Jeff Johnson <jjohnson@kernel.org>, 
+	Loic Poulain <loic.poulain@linaro.org>, Francesco Dolcini <francesco@dolcini.it>, 
+	Tony Nguyen <anthony.l.nguyen@intel.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Saeed Mahameed <saeedm@nvidia.com>, 
+	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, ath10k@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, ath11k@lists.infradead.org, ath12k@lists.infradead.org, 
+	wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org, intel-wired-lan@lists.osuosl.org, 
+	netdev@vger.kernel.org, linux-rdma@vger.kernel.org
+Subject: Re: [PATCH net-next 0/7] net: Don't use %pK through printk
+Message-ID: <20250415084250-8f385935-6e23-447d-8e94-3170d0d3ec9f@linutronix.de>
+References: <20250414-restricted-pointers-net-v1-0-12af0ce46cdd@linutronix.de>
+ <Z_1XiNY2ujreEo69@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250415043311.3385835-1-primoz.fiser@norik.com> <20250415043311.3385835-14-primoz.fiser@norik.com>
-In-Reply-To: <20250415043311.3385835-14-primoz.fiser@norik.com>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Tue, 15 Apr 2025 09:58:04 +0300
-X-Gm-Features: ATxdqUFzmx2uRpXUocIpbqqLeApK-nJ7IdkiHEJrpoo6ZYi5WSR7a6jQ2PJwfmo
-Message-ID: <CAEnQRZDtHWTEHMkhd6BqtqYXCkOcAEj1eNYDdkQ2FV3a4QDbvg@mail.gmail.com>
-Subject: Re: [PATCH v2 13/15] arm64: dts: freescale: imx93-phyboard-segin: Add
- I2S audio
-To: Primoz Fiser <primoz.fiser@norik.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	upstream@lists.phytec.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z_1XiNY2ujreEo69@google.com>
 
-On Tue, Apr 15, 2025 at 7:37=E2=80=AFAM Primoz Fiser <primoz.fiser@norik.co=
-m> wrote:
->
-> Add support for I2S audio found on phyBOARD-Segin-i.MX93. Audio codec
-> TLV320AIC3007 is connected to SAI1 interface as a DAI master. MCLK is
-> provided from the SAI's internal audio PLL (19.2 MHz).
->
-> Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+On Mon, Apr 14, 2025 at 11:44:24AM -0700, Brian Norris wrote:
+> On Mon, Apr 14, 2025 at 10:26:01AM +0200, Thomas Weißschuh wrote:
+> > Furthermore, restricted pointers ("%pK") were never meant to be used
+> > through printk().
+> 
+> Is this really true? Documentation/admin-guide/sysctl/kernel.rst still
+> has a section on kptr_restrict which talks about dmesg, CAP_SYSLOG, and
+> %pK, which sounds like it's intended. But I'm not highly familiar with
+> this space, so maybe I'm misreading something.
 
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+The wording about dmesg, etc was added in
+commit 312b4e226951 ("vsprintf: check real user/group id for %pK").
+
+Its commit message also notes:
+
+    This is a only temporary solution to the issue.  The correct solution is
+    to do the permission check at open() time on files, and to replace %pK
+    with a function which checks the open() time permission.  %pK uses in
+    printk should be removed since no sane permission check can be done, and
+    instead protected by using dmesg_restrict.
+
+Doing this is my goal. One of the later steps is to replace %pK completely.
+Probably with a function similar to kallsyms_show_value().
+
+> (I do see that commit a48849e2358e ("printk: clarify the documentation
+> for plain pointer printing") updated
+> Documentation/core-api/printk-formats.rst.)
+> 
+> In any case, even if the advice has changed, it seems (again, to an
+> outsider) a bit much to say it was "never" meant to be used through
+> printk().
+
+IMO "never" is correct. Using %pK through printk() was only ever a bandaid to
+get at least some of the security benefits of hashed pointers.
+
+
+Thomas
 
