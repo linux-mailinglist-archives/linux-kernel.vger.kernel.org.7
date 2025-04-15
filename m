@@ -1,89 +1,159 @@
-Return-Path: <linux-kernel+bounces-604336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAE72A8934F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:24:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ED02A8935F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:28:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BF0E3A8FAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 05:23:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2F913B1722
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 05:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED437268FF4;
-	Tue, 15 Apr 2025 05:24:07 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74BF42741C2;
+	Tue, 15 Apr 2025 05:27:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Aap5Z13x"
+Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 314812AEF1
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 05:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB2924C67A;
+	Tue, 15 Apr 2025 05:27:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.59.177.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744694647; cv=none; b=DbNmDwHqxIDOkw4QG7egKxKn/3r5XWho9CNqQQ2h7DbGtQ3Khn2/f+tcay1py78SJOkPttq2q80LrHf91TyzRgj2t8ughBWbPnLI82D6msYACgXBGjmtFkSRW486Ea8xfCmelxPdJY7gIgggmc5dlnNvgVMC+vCzt+tgfNF/ZkU=
+	t=1744694877; cv=none; b=UJnwgJGdoWobdWnt7E+1p5xPlwA1hoBYf43xr2iWQA8S4dEe0bsF/W2ALpB3yORLlqS0KZiB8J3Ph/X9IS4jJi3Rgv6ldAebKFaf79wtvC3sq2dKlQjLseYd400UKjS2CfnQ5gkwiooyF4Dck4XJuvIuq6GbCIUjsrQs7/OgtzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744694647; c=relaxed/simple;
-	bh=cM/D2sFv07JzANozRWSqB6lNVtd78AhPK+CglyTxCDs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=WBSgeoIOR5Tq/IiKCBM7F72x8xeF3DYpddVxbsP6w6NWxQIINSCWGf8ccM2zZVHlB2UU/AM3crj74zAM0IYUaq5L0oFGse30UaDUYV3WAIMHl/ET/fuNHwx1BUPZzQoPbrbObxyFt8FXsiKC8/7BKg/ZQLWMzguXKmxHq9Av7PM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-85b5e46a526so582737539f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 22:24:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744694645; x=1745299445;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JygxYQSn5S5PkFXpEtblNoqUiwTfAnSS1oE1AlV7IDU=;
-        b=D8gS8Zg+7dtXV6FBzJwXGRXpbpGEk+kEPQU9AHBI9FjiDxNg5984KS1SnKgaZ2fD9g
-         BNNLvAmlCKI5Re/EOkozoWJsVgUPo2d7L+gl4tB8Rr3kLt5/rEVYrAURPDtSyj3rtj5D
-         zArHTMhGvzH0botJ5d4S8TlA4ACTWw/RqZROZKEO8B7LVLfr/TRccpjllvv+Z419+025
-         rm4o7mvt8ViPzOFXUYE4733vR3VDoSyRCISg2TWrg8lh/is98Vw0kuEOmbzvavXzxYfM
-         X0NlJGWICiHkaxYngdLQJeaGdY9BhjQ70psSjgFhQjAjOfcOQy/Cb8jCWDNshtgN4ZWb
-         TrQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUp+3S3Gtuk/ye2E38tMOsDlOjxNGyU6ffEMcO/HiQhzWTVPiELawnRHn9RDdf5W2h3Is3JBVQksSpRVYk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1X+AHqT5PmMKx5NxrFJwUUN+mV1o+E1A2ZGlJIHwBce5JCfwC
-	cOK8wvAq1c+cAIr26NjOps7pFbq8LTnM5CVANjvaWf7T/BY+be+1/wBhYpigW8M3UOeQRi7OAXv
-	lkRhbBsWm8v6iQNT8uLqGStm/SNg0NRyLxApKNNFYZDCcBL0iPvAvOsE=
-X-Google-Smtp-Source: AGHT+IHkGF/DNEiT+aLRvJrtGD3TMmt6g+VZAgo4IOdzTge5lAzF0wNs5SstRvp3aDM3SdsK6ersYe+ZTd/PT3Cr9d7sn5DYrimQ
+	s=arc-20240116; t=1744694877; c=relaxed/simple;
+	bh=GmWBW+f/luY62YqPGnQis1uDV16nDrQ2m3plRoAVeCU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=odpqrKLQD5b7iXzlC6Kea/W5g38Ys8RknaZ56+ouQOVW3zS8Q0ZWBbnvUypAidnz1gPy2/hxE9D8bchnmbsaFE7oWTXxVpz+/6+pEVtzvedVaO52H4X2jxFUvDOLq1Dpd3fXM4D0n891h0/2OIHI5bmsfdKo3zWyomV2jobE14U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Aap5Z13x; arc=none smtp.client-ip=52.59.177.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1744694734;
+	bh=ExqqTddKbfRBKLynAmSixO1VnWzyolDH80X+MNF3H6k=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Aap5Z13xSbySM3E79BWeiHV73w2H9bvogefelHFZ1D17TaS5Qj5m/98WfIKDItLWr
+	 l03uUnMf4lA11dXBxGvaU/32fYsQDwRJNF9x2W4Q8zEHF3/q+MEfCnwEtb91E3Lt/Z
+	 NM5XnMnEwA3sc2LA6l7RUNS3orYLcUhYB0S/CB6Y=
+X-QQ-mid: zesmtpip4t1744694721tad383a9a
+X-QQ-Originating-IP: p4OQ8CJQP7O7PKTJSiyj2RGbhiBJ7XJmTAkr/7zSvI8=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 15 Apr 2025 13:25:19 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 17417611640228889567
+EX-QQ-RecipientCnt: 11
+From: WangYuli <wangyuli@uniontech.com>
+To: dmitry.torokhov@gmail.com
+Cc: javier.carrasco.cruz@gmail.com,
+	wens@csie.org,
+	wangyuli@uniontech.com,
+	u.kleine-koenig@baylibre.com,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	davem@nuts.ninka.net,
+	zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	guanwentao@uniontech.com
+Subject: [PATCH] Input: sparcspkr - Avoid unannotated fall-through
+Date: Tue, 15 Apr 2025 13:24:39 +0800
+Message-ID: <6730E40353C76908+20250415052439.155051-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:16c9:b0:3d4:6f9d:c0d0 with SMTP id
- e9e14a558f8ab-3d7ec1f389cmr133822645ab.8.1744694645312; Mon, 14 Apr 2025
- 22:24:05 -0700 (PDT)
-Date: Mon, 14 Apr 2025 22:24:05 -0700
-In-Reply-To: <cbbffb90-c342-4738-b7cd-76db8fd44556@amd.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67fded75.050a0220.3483fc.0045.GAE@google.com>
-Subject: Re: [syzbot] [mm?] WARNING in move_to_new_folio
-From: syzbot <syzbot+8bb6fd945af4e0ad9299@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, brauner@kernel.org, 
-	jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, shaggy@kernel.org, shivankg@amd.com, 
-	syzkaller-bugs@googlegroups.com, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NHsHeYamdwz3/jAh2vjTsrVz1ks9Xf3RXwHFa5dp/SVCt1FiY+6VUpqf
+	MOyRlPSfM7WnbFPgUXypm0lfDk//epW3iqaWJxKKDWAHtUtU9I42p9k7c0rlJfpwNt0JUfw
+	Wfi66wMyVBzCaLtxN5304L43dmDZJd+zAGad9L0Ypf3oghJWQI6cXs0CSCq1YhMuHC5OCTK
+	fr+dxHIFSuF+rrVppugaPMBXKwBY/tRmvBDyaC8dK/sG7a1/K3gg7L1s9UfnGUdNiVrR7HV
+	Tz9lwH6fgYaSHyV8hMRGm7kGVlK9I0PX/LvQDEeH3FU2id6R7ll6SAA5cgVIV5oMZUTRqQL
+	AtdrCyRfreMC+Gk+KwqNfDr4P01qYNsuh7y23FwlmiKlT6w0+r8+zb+giFIWK4G0Ml0gvNF
+	ni7jvgqc453/TTRZdK2UDDbicoVzfTR3PYuqh7RzMsNeVUBexSoErPGAyGkeHDyI4QGMY+U
+	0JzLVQdrFUJ59vVMdcTcOLivslItuw1DuNED0pLEKoEqM218vYhHWYGPv4woAGhjOmCWUz5
+	kfoqkXN6SeUidwEW25q5bRBsXfem1WEXxtRoJjjmG7/TF6Y7+LAUe5eeoDPRX+q3EYh3l8j
+	E70bVTlM3txEGlwy3gmvBZp2c4NJtQYWD3tdC/G7as8+iQiCiq5r40uQI8AOp4sRVX2DDDN
+	vwk+bDMP1C3Ozh8VfhUsarlUxMmoiYyEhM/uCCMW1XH6/O26Szb5zNMVBUzRGq0eEciMmuT
+	mZUiUz3nl1vh+YCzx1nBtQPzL3//aVr51nPaBfPNYX/HMN1ze+BOjpY03T78SUWOGlKd+jl
+	gB0yqzEc1o5E5PNqtUyRH9+G1XuxubI2uNbAr+MnxW0iTjP7uE/SYJx/2gS9i/PnyJvTuXW
+	E1kvUiQ+BAir7FM5qxaKrr26lI5aOQLOCZCqXKdv+NnxN7b52ez0CIGVb4temITjKFF7DY2
+	3a4eTu4zhFeCuRCHmL/dGtYlSKWNjMJmd4GmHd8PUb+tyqati8QCgtviHkpEpEX7wir2M5V
+	zaFqC1Pwt/oDVw3dYtpUsSMSTIAtOZN5vPn+xRZiS5OgjtDc4F
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-RECHKSPAM: 0
 
-Hello,
+1. Fix follow warnings with clang-21:
+  drivers/input/misc/sparcspkr.c:78:3: warning: unannotated fall-through between switch labels [-Wimplicit-fallthrough]
+     78 |                 case SND_TONE: break;
+        |                 ^
+  drivers/input/misc/sparcspkr.c:78:3: note: insert 'break;' to avoid fall-through
+     78 |                 case SND_TONE: break;
+        |                 ^
+        |                 break;
+  drivers/input/misc/sparcspkr.c:113:3: warning: unannotated fall-through between switch labels [-Wimplicit-fallthrough]
+    113 |                 case SND_TONE: break;
+        |                 ^
+  drivers/input/misc/sparcspkr.c:113:3: note: insert 'break;' to avoid fall-through
+    113 |                 case SND_TONE: break;
+        |                 ^
+        |                 break;
+  2 warnings generated.
+2. Reformat this code block to enhance readability.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-unregister_netdevice: waiting for DEV to become free
+Fixes: 215ea853a9 ("[INPUT]: Add EBUS/ISA speaker input driver for Sparc.")  #In history tree
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ drivers/input/misc/sparcspkr.c | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
 
-unregister_netdevice: waiting for batadv0 to become free. Usage count = 3
-
-
-Tested on:
-
-commit:         01c6df60 Add linux-next specific files for 20250411
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=1142f0cc580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=db03cefa26ecf825
-dashboard link: https://syzkaller.appspot.com/bug?extid=8bb6fd945af4e0ad9299
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=107a60cc580000
+diff --git a/drivers/input/misc/sparcspkr.c b/drivers/input/misc/sparcspkr.c
+index 8d7303fc13bc..1cfadd73829f 100644
+--- a/drivers/input/misc/sparcspkr.c
++++ b/drivers/input/misc/sparcspkr.c
+@@ -74,9 +74,14 @@ static int bbc_spkr_event(struct input_dev *dev, unsigned int type, unsigned int
+ 		return -1;
+ 
+ 	switch (code) {
+-		case SND_BELL: if (value) value = 1000;
+-		case SND_TONE: break;
+-		default: return -1;
++	case SND_BELL:
++		if (value)
++			value = 1000;
++		break;
++	case SND_TONE:
++		break;
++	default:
++		return -1;
+ 	}
+ 
+ 	if (value > 20 && value < 32767)
+@@ -109,9 +114,14 @@ static int grover_spkr_event(struct input_dev *dev, unsigned int type, unsigned
+ 		return -1;
+ 
+ 	switch (code) {
+-		case SND_BELL: if (value) value = 1000;
+-		case SND_TONE: break;
+-		default: return -1;
++	case SND_BELL:
++		if (value)
++			value = 1000;
++		break;
++	case SND_TONE:
++		break;
++	default:
++		return -1;
+ 	}
+ 
+ 	if (value > 20 && value < 32767)
+-- 
+2.49.0
 
 
