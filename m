@@ -1,332 +1,223 @@
-Return-Path: <linux-kernel+bounces-604741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF1D8A897FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:29:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1D05A89889
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:46:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29CA6188FF3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:29:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33C0B189E8C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A1F284660;
-	Tue, 15 Apr 2025 09:29:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95371288CB7;
+	Tue, 15 Apr 2025 09:45:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HaJ9E2iI"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="CReVAz9Q"
+Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765312820DA
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 09:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D014228E5EE
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 09:45:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744709371; cv=none; b=j76qbBa6WSZPSYjo9XohJN8QKnsnrHad+gJzWGyqzKFyUi6Texodivbw9O4/I/1BwC3ri6yWANTAHnGRWxShq72G7aQ5EdiCIkCNhIo3FgdcIMxa2wNZRB+86jqvo6Tkd3+cQGmE6ja7n/ZPg7ccYlrvwJF4bwT4ze5ABWXoCFE=
+	t=1744710320; cv=none; b=fsh66/ikeR4lGUjwJZ/2+NLnYGyYHqb2H/rp6h9Cm+7XMjIfVYoaMfqAtUm2OM+DijjN2F8Q9nntwC92Geo9KUXGGV0BkwhxTrIUtL1+DyC3ZScXXcLSffdw14fakeLPbh/ESaRBrfjxvmgHHXx7DvL8FcVM/QgCmZj6pbDwJSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744709371; c=relaxed/simple;
-	bh=NC5DCaREdjauFdpQNc0ev1qolVFUfP5OhphwHgwEVKc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Po0EccKCZ6wawWyom+mhD5Dkm7sR/6I1WyqSmXyblgpiGsXh5plXg31L8/r1xD4btnO0YbGi8YzYGTy0V2rXdE41zvgzV04AJVJYjlgiScDZIvJZsUJ0ONCASz8ncnNXUw5PJwh9SMUmuey2xNBTU46gshJmViuic3aHEcLbmUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HaJ9E2iI; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53F8tCWS022962
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 09:29:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+DQx+6nDYoMWkFAXLYdIlJNZxYtgpOoe+Wc439AsM1s=; b=HaJ9E2iItwmtVZb7
-	hnM/qvXYEnujd45SmZ55VlJ4IF81QQcrspbgH4yuSz7tZoBe9u6y948xZr7vjbZx
-	sUP7SNptYAW2RAsIRDuDR6S5wrQhyqbjWoUn9WyCqK82CZcYyl9YYEo5aCO7por3
-	N0uBfw0ARjEIlrZox9D1//df7jBQP4VzViZ1NgZ8/+vauZJmvahTTaaSI2Qa5ZcJ
-	1KXpeMc9o1b2ITDJ+JPfbAy7JmEZ3dHPJDWKVzNjoecfRz8JJtpBgBj5GpAYG+/0
-	ynGW17OczbIwxYwualJ/8ljarFfi+xblNcVlKQ3FDYDWXLLpm5A0OTI03Dp4w0NE
-	XK0OYg==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ygj97fg7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 09:29:28 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c548e16909so477848485a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 02:29:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744709367; x=1745314167;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+DQx+6nDYoMWkFAXLYdIlJNZxYtgpOoe+Wc439AsM1s=;
-        b=S9X3XThY1+OiF8ddCOqdsP6q41mm9sz+pV6DFJPr/bneqKT5ClyqpgH0uTi/B8LSSX
-         xvGHboGIXxgQGclF/aoAjB4H0QA/XzTwpSB5bZOqlOERAPprJOFNn42GIze8OVJlcXWI
-         dXLlNmVn06qTRvHtSfSOnUp6572EiCx+OcWeUj9UWiQFyzHN47uPRjkNvgvIx5uZ6ezT
-         PM96sX3+CNw5k+QTVFxczQS6VWD3Uk2AU2B8vh84pV3R/Ff1C2C4Ceh/Wrm01k6YzIt7
-         H6adhTxY6rhwGythNpyIX2rrk+VSDv4CQ4NFVInwTVfu+LX/wKOWIlqq6BrkhigtaNtZ
-         sa2w==
-X-Forwarded-Encrypted: i=1; AJvYcCVY1PGJMrY/3oBIw+sYh8D2D78YfgqsSR2ritCXUZecrWlRbnyiUQWp4OOft+xBj7jyXkRMcabunxT1B4M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJO9+MA+agnC/rkw7StgQZjyfyoO9HcPYsY//rEjdMR727TIr5
-	EBwZqIaL0vhchAOqzGq2LXJCAEDIX6ILSUcT6gAmnrTPE7Bh/IcpGDeBqatJdCaFuyuClDsWdEv
-	kKpvuY6+guVL+lCY1mZQP1gWmzfi7Vd/03GvlIF4PeywAj4vxRxs/aWHg43ZEAVE=
-X-Gm-Gg: ASbGncsL7hZv2Yirj6BHPiinBE57W5+AMctSpOWbDSzbs2RgzJ1mmh7fOh9cSqUqaTZ
-	RAaLoJv9L+j6yeDtRmRXqJlk+QyMVUdOILnGRBUWuAOYNmuwOgpojeJrvybm+xmOH4XE+NVnICg
-	HDUHdlPYSbcg9OHnn82vjUH/BXp1m0hmjPhekew62d8DEJZsvxg5xZCwPgxXYZKGQZhef9t2yyQ
-	23RvZ/9vmlt/KOi6lBdVWuy46/9qM5Lg6tIJ6huS4DX0+sTOVwbfxng4akYEj0QbTT/ndS1As45
-	yd41XYDVvZioA4npkbpxZaBeTLuwmh6qhBJa1EoPIXLkmeax4JfCIpmAyYyH+WK68WNdM5BhoXr
-	BMaPRcSM/Ua96AlpktR2u5ckw76ZqoirLH23GQE6CtoFpiNF+/7y/kNuA9Pau
-X-Received: by 2002:a05:620a:4316:b0:7c5:60c7:346 with SMTP id af79cd13be357-7c7af0b97c3mr2006009685a.10.1744709367189;
-        Tue, 15 Apr 2025 02:29:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFujg27qdYNPJcN55cZ+HIN0mfrHoNU47hlImWynWN+yTG5SH9uM9PPLNNq6/CYxgOEVjDfag==
-X-Received: by 2002:a05:620a:4316:b0:7c5:60c7:346 with SMTP id af79cd13be357-7c7af0b97c3mr2006006985a.10.1744709366781;
-        Tue, 15 Apr 2025 02:29:26 -0700 (PDT)
-Received: from ?IPV6:2001:14bb:aa:77bc:64e0:30e4:f6ff:5bd? (2001-14bb-aa-77bc-64e0-30e4-f6ff-5bd.rev.dnainternet.fi. [2001:14bb:aa:77bc:64e0:30e4:f6ff:5bd])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54d3d50270csm1387967e87.114.2025.04.15.02.29.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Apr 2025 02:29:25 -0700 (PDT)
-Message-ID: <c2ec6b7c-421d-43c3-8c0a-de4f7bdd867c@oss.qualcomm.com>
-Date: Tue, 15 Apr 2025 12:29:23 +0300
+	s=arc-20240116; t=1744710320; c=relaxed/simple;
+	bh=28UsXXE8f6JRjCoy1GJYsta2nK9fbaJ05h8GUvK8dSA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m/FXXTfwpPk1iUTuYZ3hvz/WaA9g039X06Dlg5o/C/dTrfrrdlBbUkDsbQdwnDM3HYWlbubMmO1og6knWFYe3Vwtw7Wy8lYFFtRNzKkTx1bT6KuGmVjgJiiLEqZ3LZZAjGnwRzIukpcnzk1yvekfFeArTk14vfso+zoSx55e4dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=CReVAz9Q; arc=none smtp.client-ip=84.16.66.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZcJlS14QNzF0Y;
+	Tue, 15 Apr 2025 11:29:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1744709380;
+	bh=w122IkwKpIFchvBGmJYVkBlhuud7xib14rHOWPuOBeU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CReVAz9QmeMt6VWs6yrVjd11gGpMGlnPk5sxckRYh+Es6+AAi4jlw7z5eZ2M6EFjj
+	 aJz+crKM5FfCBX/J5BMBUehYfOeNwFWzcaa9LD9K4HluhHfG8df+K0LXj4ZkZrIlH4
+	 Qgxf5RcqPcllnq+RMaFeIcXEHrDWJAy8wWwyEfVk=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZcJlQ5hXSzJSG;
+	Tue, 15 Apr 2025 11:29:38 +0200 (CEST)
+Date: Tue, 15 Apr 2025 11:29:38 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Jon Kohler <jon@nutanix.com>, Sean Christopherson <seanjc@google.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Alexander Grest <Alexander.Grest@microsoft.com>, 
+	Nicolas Saenz Julienne <nsaenz@amazon.es>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
+	Tao Su <tao1.su@linux.intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	Zhao Liu <zhao1.liu@intel.com>
+Subject: Re: [RFC PATCH 00/18] KVM: VMX: Introduce Intel Mode-Based Execute
+ Control (MBEC)
+Message-ID: <20250415.AegioKi3ioda@digikod.net>
+References: <20250313203702.575156-1-jon@nutanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 4/9] phy: qcom-qmp-ufs: Refactor UFS PHY reset
-To: Nitin Rawat <quic_nitirawa@quicinc.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, manivannan.sadhasivam@linaro.org,
-        James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
-        bvanassche@acm.org, bjorande@quicinc.com, neil.armstrong@linaro.org,
-        konrad.dybcio@oss.qualcomm.com, quic_rdwivedi@quicinc.com,
-        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
-References: <20250410090102.20781-1-quic_nitirawa@quicinc.com>
- <20250410090102.20781-5-quic_nitirawa@quicinc.com>
- <pur4y63xhfmqlyymg4pehk37ry4gg22h24zceoqjbsxp3hj4yf@4kptase3c4qp>
- <317faeaa-3130-4e28-8c5d-441a76aa79b4@quicinc.com>
- <CAO9ioeXnnbNzriVOYPUeBiWdrPfYUcMk+pVWYv0vZpJbFeByoQ@mail.gmail.com>
- <2820908b-4548-4e0a-94b2-6065cb5ff1f3@quicinc.com>
-Content-Language: en-US
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-In-Reply-To: <2820908b-4548-4e0a-94b2-6065cb5ff1f3@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: KRH9ytbmN2ea3wDA8WSrGThuJrdVn0-0
-X-Authority-Analysis: v=2.4 cv=PruTbxM3 c=1 sm=1 tr=0 ts=67fe26f8 cx=c_pps a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=BcQP8Xzm53tihf4Fw6EA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=PEH46H7Ffwr30OY-TuGO:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: KRH9ytbmN2ea3wDA8WSrGThuJrdVn0-0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-15_04,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
- priorityscore=1501 malwarescore=0 adultscore=0 lowpriorityscore=0
- impostorscore=0 clxscore=1015 spamscore=0 mlxscore=0 mlxlogscore=999
- phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504150065
+In-Reply-To: <20250313203702.575156-1-jon@nutanix.com>
+X-Infomaniak-Routing: alpha
 
-On 14/04/2025 23:34, Nitin Rawat wrote:
-> 
-> 
-> On 4/11/2025 4:38 PM, Dmitry Baryshkov wrote:
->> On Fri, 11 Apr 2025 at 13:50, Nitin Rawat <quic_nitirawa@quicinc.com> 
->> wrote:
->>>
->>>
->>>
->>> On 4/11/2025 1:38 AM, Dmitry Baryshkov wrote:
->>>> On Thu, Apr 10, 2025 at 02:30:57PM +0530, Nitin Rawat wrote:
->>>>> Refactor the UFS PHY reset handling to parse the reset logic only once
->>>>> during probe, instead of every resume.
->>>>>
->>>>> Move the UFS PHY reset parsing logic from qmp_phy_power_on to
->>>>> qmp_ufs_probe to avoid unnecessary parsing during resume.
->>>>
->>>> How did you solve the circular dependency issue being noted below?
->>>
->>> Hi Dmitry,
->>> As part of my patch, I moved the parsing logic from qmp_phy_power_on to
->>> qmp_ufs_probe to avoid unnecessary parsing during resume. I'm uncertain
->>> about the circular dependency issue and whether if it still exists.
->>
->> It surely does. The reset controller is registered in the beginning of
->> ufs_qcom_init() and the PHY is acquired only a few lines below. It
->> creates a very small window for PHY driver to probe.
->> Which means, NAK, this patch doesn't look acceptable.
-> 
-> Hi Dmitry,
-> 
-> Thanks for pointing this out. I agree that it leaves very little time 
-> for the PHY to probe, which may cause issues with targets where 
-> no_pcs_sw_reset is set to true.
-> 
-> As an experiment, I kept no_pcs_sw_reset set to true for the SM8750, and 
-> it caused bootup probe issues in some of the iterations I ran.
-> 
-> To address this, I propose updating the patch to move the 
-> qmp_ufs_get_phy_reset call to phy_calibrate, just before the 
-> reset_control_assert call.
+Hi,
 
-Will it cause an issue if we move it to phy_init() instead of 
-phy_calibrate()?
+This series looks good, just some inlined questions.
 
-> 
-> This change will delay the UFS PHY reset as much as possible in the 
-> code. Additionally, moving it from phy_power_on to calibrate will ensure 
-> that qmp_ufs_get_phy_reset is called only once during boot, rather than 
-> during each phy_power_on call.
-> 
-> Please let me know your thoughts.
-> =====================================================================================================
->   static int qmp_ufs_phy_calibrate(struct phy *phy)
->   {
->          struct qmp_ufs *qmp = phy_get_drvdata(phy);
-> @@ -1793,6 +1826,12 @@ static int qmp_ufs_phy_calibrate(struct phy *phy)
->          unsigned int val;
->          int ret;
-> 
-> +       pr_err("%s %d\n", __func__, __LINE__);
-> +
-> +       ret = qmp_ufs_get_phy_reset(qmp);
-> +        if (ret)
-> +                return ret;
-> +
->          ret = reset_control_assert(qmp->ufs_reset);
->          if (ret)
->                  return ret;
-> @@ -1817,7 +1856,7 @@ static int qmp_ufs_phy_calibrate(struct phy *phy)
->                  dev_err(qmp->dev, "phy initialization timed-out\n");
->                  return ret;
-> =====================================================================================================
-> 
-> 
-> Regards.
-> Nitin
->>
->>>
->>> Regards,
->>> Nitin
->>>
->>>
->>>>
->>>>>
->>>>> Co-developed-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
->>>>> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
->>>>> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
->>>>> ---
->>>>>    drivers/phy/qualcomm/phy-qcom-qmp-ufs.c | 61 ++++++++++++ 
->>>>> +------------
->>>>>    1 file changed, 33 insertions(+), 28 deletions(-)
->>>>>
->>>>> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c b/drivers/phy/ 
->>>>> qualcomm/phy-qcom-qmp-ufs.c
->>>>> index 636dc3dc3ea8..12dad28cc1bd 100644
->>>>> --- a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
->>>>> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
->>>>> @@ -1799,38 +1799,11 @@ static int qmp_ufs_com_exit(struct qmp_ufs 
->>>>> *qmp)
->>>>>    static int qmp_ufs_power_on(struct phy *phy)
->>>>>    {
->>>>>       struct qmp_ufs *qmp = phy_get_drvdata(phy);
->>>>> -    const struct qmp_phy_cfg *cfg = qmp->cfg;
->>>>>       int ret;
->>>>>       dev_vdbg(qmp->dev, "Initializing QMP phy\n");
->>>>>
->>>>> -    if (cfg->no_pcs_sw_reset) {
->>>>> -            /*
->>>>> -             * Get UFS reset, which is delayed until now to avoid a
->>>>> -             * circular dependency where UFS needs its PHY, but 
->>>>> the PHY
->>>>> -             * needs this UFS reset.
->>>>> -             */
->>>>> -            if (!qmp->ufs_reset) {
->>>>> -                    qmp->ufs_reset =
->>>>> -                            devm_reset_control_get_exclusive(qmp- 
->>>>> >dev,
->>>>> -                                                             
->>>>> "ufsphy");
->>>>> -
->>>>> -                    if (IS_ERR(qmp->ufs_reset)) {
->>>>> -                            ret = PTR_ERR(qmp->ufs_reset);
->>>>> -                            dev_err(qmp->dev,
->>>>> -                                    "failed to get UFS reset: %d\n",
->>>>> -                                    ret);
->>>>> -
->>>>> -                            qmp->ufs_reset = NULL;
->>>>> -                            return ret;
->>>>> -                    }
->>>>> -            }
->>>>> -    }
->>>>> -
->>>>>       ret = qmp_ufs_com_init(qmp);
->>>>> -    if (ret)
->>>>> -            return ret;
->>>>> -
->>>>> -    return 0;
->>>>> +    return ret;
->>>>>    }
->>>>>
->>>>>    static int qmp_ufs_phy_calibrate(struct phy *phy)
->>>>> @@ -2088,6 +2061,34 @@ static int qmp_ufs_parse_dt(struct qmp_ufs 
->>>>> *qmp)
->>>>>       return 0;
->>>>>    }
->>>>>
->>>>> +static int qmp_ufs_get_phy_reset(struct qmp_ufs *qmp)
->>>>> +{
->>>>> +    const struct qmp_phy_cfg *cfg = qmp->cfg;
->>>>> +    int ret;
->>>>> +
->>>>> +    if (!cfg->no_pcs_sw_reset)
->>>>> +            return 0;
->>>>> +
->>>>> +    /*
->>>>> +     * Get UFS reset, which is delayed until now to avoid a
->>>>> +     * circular dependency where UFS needs its PHY, but the PHY
->>>>> +     * needs this UFS reset.
->>>>> +     */
->>>>> +    if (!qmp->ufs_reset) {
->>>>> +            qmp->ufs_reset =
->>>>> +            devm_reset_control_get_exclusive(qmp->dev, "ufsphy");
->>>>
->>>> Strange indentation.
->>>>
->>>>> +
->>>>> +            if (IS_ERR(qmp->ufs_reset)) {
->>>>> +                    ret = PTR_ERR(qmp->ufs_reset);
->>>>> +                    dev_err(qmp->dev, "failed to get PHY reset: 
->>>>> %d\n", ret);
->>>>> +                    qmp->ufs_reset = NULL;
->>>>> +                    return ret;
->>>>> +            }
->>>>> +    }
->>>>> +
->>>>> +    return 0;
->>>>> +}
->>>>> +
->>>>>    static int qmp_ufs_probe(struct platform_device *pdev)
->>>>>    {
->>>>>       struct device *dev = &pdev->dev;
->>>>> @@ -2114,6 +2115,10 @@ static int qmp_ufs_probe(struct 
->>>>> platform_device *pdev)
->>>>>       if (ret)
->>>>>               return ret;
->>>>>
->>>>> +    ret = qmp_ufs_get_phy_reset(qmp);
->>>>> +    if (ret)
->>>>> +            return ret;
->>>>> +
->>>>>       /* Check for legacy binding with child node. */
->>>>>       np = of_get_next_available_child(dev->of_node, NULL);
->>>>>       if (np) {
->>>>> -- 
->>>>> 2.48.1
->>>>>
->>>>
->>>
->>
->>
-> 
+Sean, Paolo, what do you think?
 
+Jon, what is the status of the QEMU patches?
 
--- 
-With best wishes
-Dmitry
+Regards,
+ Mickaël
+
+On Thu, Mar 13, 2025 at 01:36:39PM -0700, Jon Kohler wrote:
+> ## Summary
+> This series introduces support for Intel Mode-Based Execute Control
+> (MBEC) to KVM and nested VMX virtualization, aiming to significantly
+> reduce VMexits and improve performance for Windows guests running with
+> Hypervisor-Protected Code Integrity (HVCI).
+> 
+> ## What?
+> Intel MBEC is a hardware feature, introduced in the Kabylake
+> generation, that allows for more granular control over execution
+> permissions. MBEC enables the separation and tracking of execution
+> permissions for supervisor (kernel) and user-mode code. It is used as
+> an accelerator for Microsoft's Memory Integrity [1] (also known as
+> hypervisor-protected code integrity or HVCI).
+> 
+> ## Why?
+> The primary reason for this feature is performance.
+> 
+> Without hardware-level MBEC, enabling Windows HVCI runs a 'software
+> MBEC' known as Restricted User Mode, which imposes a runtime overhead
+> due to increased state transitions between the guest's L2 root
+> partition and the L2 secure partition for running kernel mode code
+> integrity operations.
+> 
+> In practice, this results in a significant number of exits. For
+> example, playing a YouTube video within the Edge Browser produces
+> roughly 1.2 million VMexits/second across an 8 vCPU Windows 11 guest.
+> 
+> Most of these exits are VMREAD/VMWRITE operations, which can be
+> emulated with Enlightened VMCS (eVMCS). However, even with eVMCS, this
+> configuration still produces around 200,000 VMexits/second.
+> 
+> With MBEC exposed to the L1 Windows Hypervisor, the same scenario
+> results in approximately 50,000 VMexits/second, a *24x* reduction from
+> the baseline.
+> 
+> Not a typo, 24x reduction in VMexits.
+> 
+> ## How?
+> This series implements core KVM support for exposing the MBEC bit in
+> secondary execution controls (bit 22) to L1 and L2, based on
+> configuration from user space and a module parameter
+> 'enable_pt_guest_exec_control'. The inspiration for this series
+> started with Mickaël's series for Heki [3], where we've extracted,
+> refactored, and extended the MBEC-specific use case to be
+> general-purpose.
+> 
+> MBEC, which appears in Linux /proc/cpuinfo as ept_mode_based_exec,
+> splits the EPT exec bit (bit 2 in PTE) into two bits. When secondary
+> execution control bit 22 is set, PTE bit 2 reflects supervisor mode
+> executable, and PTE bit 10 reflects user mode executable.
+> 
+> The semantics for EPT violation qualifications also change when MBEC
+> is enabled, with bit 5 reflecting supervisor/kernel mode execute
+> permissions and bit 6 reflecting user mode execute permissions.
+> This ultimately serves to expose this feature to the L1 hypervisor,
+> which consumes MBEC and informs the L2 partitions not to use the
+> software MBEC by removing bit 14 in 0x40000004 EAX [4].
+> 
+> ## Where?
+> Enablement spans both VMX code and MMU code to teach the shadow MMU
+> about the different execution modes, as well as user space VMM to pass
+> secondary execution control bit 22. A patch for QEMU enablement is
+> available [5].
+> 
+> ## Testing
+> Initial testing has been on done on 6.12-based code with:
+>   Guests
+>     - Windows 11 24H2 26100.2894
+>     - Windows Server 2025 24H2 26100.2894
+>     - Windows Server 2022 W1H2 20348.825
+>   Processors:
+>     - Intel Skylake 6154
+>     - Intel Sapphire Rapids 6444Y
+> 
+> ## Acknowledgements
+> Special thanks to all contributors and reviewers who have provided
+> valuable feedback and support for this patch series.
+> 
+> [1] https://learn.microsoft.com/en-us/windows/security/hardware-security/enable-virtualization-based-protection-of-code-integrity
+> [2] https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/tlfs/nested-virtualization#enlightened-vmcs-intel
+> [3] https://patchwork.kernel.org/project/kvm/patch/20231113022326.24388-6-mic@digikod.net/
+> [4] https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/tlfs/feature-discovery#implementation-recommendations---0x40000004
+> [5] https://github.com/JonKohler/qemu/tree/mbec-rfc-v1
+> 
+> Cc: Alexander Grest <Alexander.Grest@microsoft.com>
+> Cc: Nicolas Saenz Julienne <nsaenz@amazon.es>
+> Cc: Madhavan T. Venkataraman <madvenka@linux.microsoft.com>
+> Cc: Mickaël Salaün <mic@digikod.net>
+> Cc: Tao Su <tao1.su@linux.intel.com>
+> Cc: Xiaoyao Li <xiaoyao.li@intel.com>
+> Cc: Zhao Liu <zhao1.liu@intel.com>
+> 
+> Jon Kohler (11):
+>   KVM: x86: Add module parameter for Intel MBEC
+>   KVM: x86: Add pt_guest_exec_control to kvm_vcpu_arch
+>   KVM: VMX: Wire up Intel MBEC enable/disable logic
+>   KVM: x86/mmu: Remove SPTE_PERM_MASK
+>   KVM: VMX: Extend EPT Violation protection bits
+>   KVM: x86/mmu: Introduce shadow_ux_mask
+>   KVM: x86/mmu: Adjust SPTE_MMIO_ALLOWED_MASK to understand MBEC
+>   KVM: x86/mmu: Extend make_spte to understand MBEC
+>   KVM: nVMX: Setup Intel MBEC in nested secondary controls
+>   KVM: VMX: Allow MBEC with EVMCS
+>   KVM: x86: Enable module parameter for MBEC
+> 
+> Mickaël Salaün (5):
+>   KVM: VMX: add cpu_has_vmx_mbec helper
+>   KVM: VMX: Define VMX_EPT_USER_EXECUTABLE_MASK
+>   KVM: x86/mmu: Extend access bitfield in kvm_mmu_page_role
+>   KVM: VMX: Enhance EPT violation handler for PROT_USER_EXEC
+>   KVM: x86/mmu: Extend is_executable_pte to understand MBEC
+> 
+> Nikolay Borisov (1):
+>   KVM: VMX: Remove EPT_VIOLATIONS_ACC_*_BIT defines
+> 
+> Sean Christopherson (1):
+>   KVM: nVMX: Decouple EPT RWX bits from EPT Violation protection bits
+> 
+>  arch/x86/include/asm/kvm_host.h | 13 +++++----
+>  arch/x86/include/asm/vmx.h      | 45 ++++++++++++++++++++---------
+>  arch/x86/kvm/mmu.h              |  3 +-
+>  arch/x86/kvm/mmu/mmu.c          | 13 +++++----
+>  arch/x86/kvm/mmu/mmutrace.h     | 23 ++++++++++-----
+>  arch/x86/kvm/mmu/paging_tmpl.h  | 19 +++++++++---
+>  arch/x86/kvm/mmu/spte.c         | 51 ++++++++++++++++++++++++++++-----
+>  arch/x86/kvm/mmu/spte.h         | 36 +++++++++++++++--------
+>  arch/x86/kvm/mmu/tdp_mmu.c      |  2 +-
+>  arch/x86/kvm/vmx/capabilities.h |  6 ++++
+>  arch/x86/kvm/vmx/hyperv.c       |  5 +++-
+>  arch/x86/kvm/vmx/hyperv_evmcs.h |  1 +
+>  arch/x86/kvm/vmx/nested.c       |  4 +++
+>  arch/x86/kvm/vmx/vmx.c          | 21 ++++++++++++--
+>  arch/x86/kvm/vmx/vmx.h          |  7 +++++
+>  arch/x86/kvm/x86.c              |  4 +++
+>  16 files changed, 192 insertions(+), 61 deletions(-)
+> 
+> -- 
+> 2.43.0
+> 
+> 
 
