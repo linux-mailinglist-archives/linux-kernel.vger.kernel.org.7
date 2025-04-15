@@ -1,115 +1,102 @@
-Return-Path: <linux-kernel+bounces-604896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CE7BA89A44
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:33:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F5B2A89B15
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:52:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CD9117ACE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:33:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FD8E170E9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C3EA28B505;
-	Tue, 15 Apr 2025 10:31:22 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F002129E060;
+	Tue, 15 Apr 2025 10:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="gN8ATPk/"
+Received: from mail-m32109.qiye.163.com (mail-m32109.qiye.163.com [220.197.32.109])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC2D27A127
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 10:31:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F884297A43;
+	Tue, 15 Apr 2025 10:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.109
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744713081; cv=none; b=jrM6qxfUre8YT/9hVYimjloIRYQ8vtSwxTLQPmjlW0x67jOUxPFa4IzPmdMePJ2i4860FF+YiebQYD6uR1Hn5aN9zihHmNs7hQWNKHuKnbvI1nDEBxexOZpIgMGopVEdgeRzQw7ocjVQunnc7iGV1kNyB915/AS9lkmSWhtN9FU=
+	t=1744714050; cv=none; b=TK1rcb1Lb0fYBJi/i4oY6htymemZ766Oof3yordgrdFhnxvoU6bKMBkYJQrNSuTIUtS9DcC8c7s91KEmPOz4Xlx+SLTLNRvQOepCPEf3X9UUpPyBtqTjccMfcpTFcg2wCIAVrVNelsAgX6iqyvYUF6cc7yccyBzBH9cTg6/JMxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744713081; c=relaxed/simple;
-	bh=FLZYQl/9prDX0eLEC/XoYXKAHhhffs0dRY+G5p5tNjw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m/C14oxXIfYLWdyh5Tb+D7N6Oa+dvh66CuOXYpeo6J49wxUJD/HGVSxV7u7DyNdoO0odotsaU6Ovgw013ZheRrirvw6JfPBeYRV9mh5YUO4IJ5KzTPNWe+3dXtfkgR+HBmALNbVxfRd8jX1dB4h7j9retdxcqAUgdp5p6O7Xl14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1u4dZP-0005vb-7M; Tue, 15 Apr 2025 12:31:11 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1u4dZO-000P3u-1l;
-	Tue, 15 Apr 2025 12:31:10 +0200
-Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 45B213F9BCA;
-	Tue, 15 Apr 2025 10:31:10 +0000 (UTC)
-Date: Tue, 15 Apr 2025 12:31:10 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Weizhao Ouyang <o451686892@gmail.com>
-Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	Heiko Stuebner <heiko@sntech.de>, kernel@pengutronix.de, linux-can@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] can: rockchip_canfd: fix broken quirks checks
-Message-ID: <20250415-glorious-spider-of-imagination-2c084f-mkl@pengutronix.de>
-References: <20250324114416.10160-1-o451686892@gmail.com>
+	s=arc-20240116; t=1744714050; c=relaxed/simple;
+	bh=aaQUjMGk42jHXjNNVpVtEuV975jxk1/5cvsq42UaQMM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=u2yp+dP69WvFTtJj7Z9ulspTlw1YvFbIZwaJ1yXaq4VF7o6BFCb2NeXf5Xp9a7AJAlOE4/m5QspQG3nyFNulU4FAvnVfWoQLqLkRh3DXfvDFvCAjZUoAmmTcZ8SaUr5xy2oM83USdz4VrhWww3cfS2q93QUP3p5Z8kCqc8z6+Cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=gN8ATPk/; arc=none smtp.client-ip=220.197.32.109
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from localhost.localdomain (unknown [103.29.142.67])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 11f2f6006;
+	Tue, 15 Apr 2025 18:32:05 +0800 (GMT+08:00)
+From: Kever Yang <kever.yang@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	Kever Yang <kever.yang@rock-chips.com>,
+	devicetree@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 0/3] rockchip,otp: Add support for rk3562 and rk3568
+Date: Tue, 15 Apr 2025 18:32:00 +0800
+Message-Id: <20250415103203.82972-1-kever.yang@rock-chips.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="5niwputommw5d6bc"
-Content-Disposition: inline
-In-Reply-To: <20250324114416.10160-1-o451686892@gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCS05LVh1MQhlNTE9OQ01KHVYVFAkWGhdVEwETFh
+	oSFyQUDg9ZV1kYEgtZQVlKS0hVSUJVSk9JVU1MWVdZFhoPEhUdFFlBWU9LSFVKS0lPT09IVUpLS1
+	VKQktLWQY+
+X-HM-Tid: 0a9639018e8903afkunm11f2f6006
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Mk06ETo*CzJPChgwFBgfIh0a
+	KgkKCUNVSlVKTE9PTEpISklMS09IVTMWGhIXVRAeDR4JVQIaFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlKS0hVSUJVSk9JVU1MWVdZCAFZQUpNQk43Bg++
+DKIM-Signature:a=rsa-sha256;
+	b=gN8ATPk/Qk7NuJZSb99RyAosTa0SNhsPLVPDO94KcjR0p67UdnUyCcw5Um9Fqb/ifZjh0wuVLrfTv8PF/mtZpFC+OcHh5GeVtjnstvopOHtdSx2RFvbz7ZkEs5R53swR9diw6dFjV6FpD+SNdgh73OM7kSEmDNi3qLDqvYijvGw=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=Z8C3TOj5YRTsNIZ01Pq49wCWG7FBy3BSOQXn7JlMxQ8=;
+	h=date:mime-version:subject:message-id:from;
 
 
---5niwputommw5d6bc
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] can: rockchip_canfd: fix broken quirks checks
-MIME-Version: 1.0
+Rockchip rk3562 and rk3568 has the same otp controller, which is
+different with those already support in the driver, add support for it.
 
-On 24.03.2025 19:44:16, Weizhao Ouyang wrote:
-> First get the devtype_data then check quirks.
->=20
-> Fixes: bbdffb341498 ("can: rockchip_canfd: add quirk for broken CAN-FD su=
-pport")
-> Signed-off-by: Weizhao Ouyang <o451686892@gmail.com>
+This patch set depends on Jonas's change[1].
 
-Applied to linux-can.
+[1] https://lore.kernel.org/r/20250316191900.1858944-1-jonas@kwiboo.se
 
-Thanks,
-Marc
+Changes in v3:
+- update the clock name from "usr" to "otp" and re-order to sync with
+ other soc.
+- rebase on rk3576 and rk3528, changes suggest by Jonas
+- Use rk3568 data structure for rk3562
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+Changes in v2:
+- Update the commit message and add maxItems in schema.
 
---5niwputommw5d6bc
-Content-Type: application/pgp-signature; name="signature.asc"
+Finley Xiao (2):
+  nvmem: rockchip-otp: Add support for rk3568-otp
+  nvmem: rockchip-otp: Add support for rk3562
 
------BEGIN PGP SIGNATURE-----
+Kever Yang (1):
+  dt-bindings: nvmem: rockchip,otp: Add support for rk3562 and rk3568
 
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmf+NWsACgkQDHRl3/mQ
-kZwmzgf9EQR3QqPh+Se+JjLbC/f3lT2pfHqQCqOiObr7flwz+27gHXmsQHjMfYt8
-P8r00Km0qdMN37hnSWlrde5POFa+ubE2SQXyCILdcOUZc4fTs4Ehi8kX9nbuN76w
-K39/SgcfCMTib4VGhzuB2ZBOpmIljZkKlfYkjolYMBmjoJXANe2P+D3eP2tM4HKu
-pLXWLS0flXatk2Jt2q86d1ObggIFTakkog1AM3XKBX7DnE2si1vfc4AXFxx3SHGG
-vpT9OD2snz91AMWweE9142o2ny1AVTSszTI8Z861/V6zZZ13EexTU6BvCXUjBabV
-fHMRDSBSy4xFAaci/e3DJD8SRNNrFQ==
-=/XME
------END PGP SIGNATURE-----
+ .../bindings/nvmem/rockchip,otp.yaml          | 53 ++++++++++++--
+ drivers/nvmem/rockchip-otp.c                  | 73 +++++++++++++++++++
+ 2 files changed, 119 insertions(+), 7 deletions(-)
 
---5niwputommw5d6bc--
+-- 
+2.25.1
+
 
