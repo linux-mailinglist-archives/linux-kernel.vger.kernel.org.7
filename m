@@ -1,121 +1,277 @@
-Return-Path: <linux-kernel+bounces-605989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91ADCA8A8D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 22:06:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AD0FA8A8EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 22:10:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96CDC4440D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 20:06:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77FB71898DE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 20:11:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F63B25334D;
-	Tue, 15 Apr 2025 20:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2CC23A9BC;
+	Tue, 15 Apr 2025 20:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E80ppLH0"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jp01jsw5"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79EBE24A05A
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 20:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A815F1F542A;
+	Tue, 15 Apr 2025 20:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744747604; cv=none; b=MBm1C1zRwE1hryhMZgOYX8B0Wnjmpmmgg2zEwKwm0l+TB/SErFOdlhPqG+OxUQr87VFZuqmlIpXu/wxxuYkgJfkuuvPgcQVoCT658O5ORfNf3l47vQRXB0NEMOzlQ7MO/Pjj/XFbUoDogLFdRvcQ+YZdCb5Kg0tVV5eh5OcEW+g=
+	t=1744747841; cv=none; b=mVM7U5qETjh7+W+cofHrPkDfhwnKYnSFtO4FpR2eZ6FuTPJ2iy3dbFoguEM3rFdSvZ5jgEMVPI6qKJDkATpZV6dX4Jd8IoMZ9yoKrhOzgUw6vQdY0oslGCmOpGxKS2TLltJ3Uy80+CQu+Qdzo2gR6+ahmVb6rVdaAIw29eXc0xY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744747604; c=relaxed/simple;
-	bh=dgoGJIl+kDZZs+vuhPvPzFpoBbJLbWi7bg0+VMxJ7i8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ip5BXSj8yVw5W1ZCEH3bOPOJVEf2iezwsiy48o48p+CBKSr8oGV6rBbebtnfz+xhMgVsUTBIaj9bSUe6ZcPNmB7WA9XZw9qZDoNEA6JdU9CgY27nkipvQpi6YCyqRvZt1d6lUypdehx7hwlWDmh1mazRzT+FUjmRemmuQLp9uuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=E80ppLH0; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2242ac37caeso7725ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 13:06:42 -0700 (PDT)
+	s=arc-20240116; t=1744747841; c=relaxed/simple;
+	bh=dJMTmdqQ72cO70qaEEev0EvSkDUVmn1Nod8NeWRbBw8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ah9s3+bp29Dd7gRTTmNQsOLwRgIZ2TRMvXNtUvf609FstczoBdRHQlldz2Xbrt2awiGKwQqbCf/jXKyuMJsGZJNchjaeDh2eocmLKk8hgADvUXgZdNj7zrtcZAQarTWXwblYUqaGQ66M1mHa6Bjgult0v3ofkPS9pMGfmPwSHJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jp01jsw5; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30bf3f3539dso379431fa.1;
+        Tue, 15 Apr 2025 13:10:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744747602; x=1745352402; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=D3HaMUmTHz0CCTDWNltKWF71+xXQyeA8j8iLjK2r2fA=;
-        b=E80ppLH0iz0ldOXcEPzVnesbmYdv/BPwKPMUDm+tgi1qQba9KG7g0DY9DOkNb7Cjip
-         FPKH8bmbo7vWp67QUseTLqUz0tYyGOBlt58y2PQ3roMItcor+QMbNhakZAgogt/uYJwd
-         bMmWSvTMDhTVqu7p29iTZbEHj2y6gEl2aCSDu8nA9MI9DV+VydRyotFp5254FiolUOAs
-         gYLZG/QLhti78ia39/LFR1tzemWarkMj+3BgyCH72TH3e2rD5pxaMJigtxOQ6W6KseM9
-         +x9nMcs8F4s4c1sykPa2HnWsACOZu5lRThkBbRenq7cEERx+j/94l/L3xjUenkbmFcoz
-         aiQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744747602; x=1745352402;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1744747838; x=1745352638; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=D3HaMUmTHz0CCTDWNltKWF71+xXQyeA8j8iLjK2r2fA=;
-        b=JIqwkhwXSoJewiJJ0t2at2UDrglZ5oLuDrMcf/3RgxE5Xk4e53X98SBtBr5tQ58025
-         5ZzGRnJ/8gTWi/4oFAnrSA55TalHtwOiRiEIKaf2lhGkgcGNFlOwjIO3LpVEPSMhHlj6
-         cVdjrHWJX1T7RmgI/LlWcv3Q4DVk11Ue8J5Dph2C9WQgTGva/vBbIqskMSq/d8Q6c0kd
-         oIEwzccxL+wMun1lBObhJ1ORi5WZIiZ/LefuRMse31xSXVtwP0tG48hFlkQ3yIWtujlk
-         /FuwnmHuPfYrMtmVvB/fOs3P7c4YW+he/vHPo/RlyvgyKUEWnFhjm93qTYsRV8gtX3c4
-         cptQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUIO3KA4zfbw5cbqkjiWU1s4Y0SL6ug7W19fzztelyvhmyQckYhkr3Yq8d5I9JdaO0yj1fYuEo08h8bDLg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3Pw6/CFTBO5w6D3mzR6Bs71WvUzFqX/FJCNIVxQRwrSXBrdfG
-	YR0SvOJ5SSHMAwLNPdMXWxhCRdKj6cvoucpkBCFc58qjpoKJVHttE3bUw2uGZNB3ioQ/8jpjqjm
-	W4Q==
-X-Gm-Gg: ASbGncuMTNWOV2uAigQ2dPbHNtvv7xV2JS+C6jXTWHvKT3v/qVKhzF8vCM5S1isZlJa
-	7/YXNm6KrhYmECsVQ7FGToTbRT5RZe+f5IPbezc2c/tniiE6n+18iX+Pokm9ZSQbahCK7cK3DAi
-	BPPehs5YDWQUn8pKGpqrMwFvdNXPScTKRSY94aExkokI/ZjdvBnDCwApzl18Eo7laAjXMose+Ft
-	A2z1xj8pBaVrZjNAM+h8lOgitYR8VZZ5dT1ACyucwAG1lOPqPQhqtbqQXeyyM/aSF+u/r9Gm42E
-	DNJFj2wcT/4KU8Oo/uEarymDzhfVMmeKjx1BVcLhQE+5J4CUNlQ8d/YFAKHwsZ1eKKQQmY9zZJv
-	PVnQgqE380jTX
-X-Google-Smtp-Source: AGHT+IFDl2oce5DnOwllJhmUftKGTx0b849xp6MecE8YT2xG1nKWZIjIRct1geHzZgP+NzxFXOQN0Q==
-X-Received: by 2002:a17:902:ef48:b0:215:7ced:9d67 with SMTP id d9443c01a7336-22c318a9ddemr627965ad.24.1744747601407;
-        Tue, 15 Apr 2025 13:06:41 -0700 (PDT)
-Received: from google.com (176.13.105.34.bc.googleusercontent.com. [34.105.13.176])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7ccb79esm121945215ad.243.2025.04.15.13.06.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Apr 2025 13:06:40 -0700 (PDT)
-Date: Tue, 15 Apr 2025 13:06:35 -0700
-From: Vipin Sharma <vipinsh@google.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] KVM: x86/mmu: Defer allocation of shadow MMU's
- hashed page list
-Message-ID: <20250415200635.GA210309.vipinsh@google.com>
-References: <20250401155714.838398-1-seanjc@google.com>
- <20250401155714.838398-4-seanjc@google.com>
+        bh=SHELFzxVVmsy2zgSKA6PLaix5nlp2CFpgVoQsmmD40s=;
+        b=jp01jsw59l/kh6RdDKzVHKkegIuegYNJz8zFNvW5quyo57XpcwAOMr/w1prWDIUNLw
+         plnpT2Yvc4i/bgTZhqTsKNehIJQrefPIMkfWOkMyEaY6D3Uw2k5n+yGgvzhXNB/raKMc
+         1l/oBiB6/ky68q2PJ/SmGBJr8N7pDr8u44SYolgRtrOmxBgIBHC1cEJMg50CvryDm8E/
+         lW+ugeksfo7IGkqg5jLVEewRqT0qpQ7a4PQmiRSlGNalQueGMVlExK+kgXg/eFZbrMEu
+         NKc+wKy3y2fX9QuKPr7arN1NffxorUg5/HT7xwVwCVp7uralRBC22E+fdMi9pFqXpylz
+         ufZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744747838; x=1745352638;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SHELFzxVVmsy2zgSKA6PLaix5nlp2CFpgVoQsmmD40s=;
+        b=Y7tYVTImAGBpKcYUKxt2Fq3OCN+c04i2XI92kAzmvKTQ+0cDQzIZ7iJrZjmFXHbTQA
+         fi3dfAkjcNfh+olp9VfwEPKpqSUd49r6Vj+ukfrv2rlt3k5AkZEbfuyROgcMtR+Ri9rc
+         yhu1Surl4NQIxx24Ra6vJnY1tExBDi9tEroXf992Na+2ZL29Owjj0t5lzsmP0NyrvRlR
+         WXLNTjZK4TbEC8oWy5qjdFW5e/k9c3OfJ6C0DyLa2Gr6sOsFJBsDGy2dSRQIxnvxkmV2
+         0ENVzZmXm5HCFIX5k0yIOykJ3y50A557iHJSyHc5nZQhJGHVlNRiV0QsPT1G6I4SwWnl
+         JmPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUd01zr//KmGabdArWADRcGKkDEaSDYfQpM84sSF07PA9Os21YCZ9nuA7tNg47LwTcuIEfI+JW/8HMPevk=@vger.kernel.org, AJvYcCUpjO2LCLCMN5v7Uus15Q5j6UjG4ru65z9seMnToHgr6SBgffSehsAQ+iBh2bnyLjZW6k0bsRhhbPwy@vger.kernel.org, AJvYcCVPwX/TpjIxIp+klDQsSxa9FTbwFHYsOt5oJLY7bcuxlROOC5ZSZdTNbCbIWxqE7+FOONC0udi1@vger.kernel.org, AJvYcCW5Blj2urWF+XyILI4rCSJ2xN1J1wIdaO0EFUqAvg+1v7s2qF5cuFG0Z2xqtRPnFXxeBWUy0uOVT7e2RJ0J@vger.kernel.org, AJvYcCWp1BFUEkMYlqnFKGH29qirUKcMot9oSa8Z8j7YT48A4A/Er0CXNITGmhjNplKb9zI+ogq3fCdAr7w/@vger.kernel.org, AJvYcCX9+xF9KHwp3yPERXv8S5R3z7KTYbRQ92ZJtO1dldqR/7GbNFaInYEaogHeLGDZUfWJXuqKw1bT7N8w7aPr@vger.kernel.org, AJvYcCXPB31KAREkHQXMyoUbARiZ8v4vTNCX+HG1Fi0AJ/GS9bfDMT/5fzTbdB3oKGtK/RgvzAGElFWcIeZws599nmdt@vger.kernel.org, AJvYcCXYyrC57v9osBS8g5Raq/6ldP4VL5dso/jKwsxKD7PBlzYXoWTp/t9oZhKcRl4lGUtmEwq5b4dN79We7G3J6ik=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxG4DoccEFagINo/RkLpZxByPY2TeMescus6xMY3MWTtoYzMcbk
+	l6bzEwg0XGsv0og0DF5qREjpojyL2RocDY322290rZz78Z2i5zGYAgY8+9saGA+sfG/rcG37OC8
+	w6p0WRY9A0rzJMQnB7MtLO20DORg=
+X-Gm-Gg: ASbGncsTpzyWxrIKkDaEjuyzyxAaYR6qLPLhD4iTgyuHVeO0zycqlmdsxFL8nGRhS3F
+	3pIfndt2XBUsPjlkDup2WClSLT137dBgdiGjjNsqKH35KACDMCHobaqpiBYgBYtY0gqQcwajPNx
+	RB/MGk28YVWmlAU2NkAgNQhk1A25ipZI4uE6CVIQ==
+X-Google-Smtp-Source: AGHT+IHHpITksB955oQm5ARBuGAcVFAjDyvUs2PTCTEghg3Tq3v8kUReDzyNimxph/3Sw67RckF5NDVyJKnzu5cOggg=
+X-Received: by 2002:a2e:e09:0:b0:30b:9f7b:c186 with SMTP id
+ 38308e7fff4ca-31071be6a50mr16553061fa.1.1744747837350; Tue, 15 Apr 2025
+ 13:10:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250401155714.838398-4-seanjc@google.com>
+References: <20250409-ptr-as-ptr-v8-0-3738061534ef@gmail.com>
+ <20250409-ptr-as-ptr-v8-6-3738061534ef@gmail.com> <67fe9975.c80a0220.1b5785.66e7@mx.google.com>
+ <CAJ-ks9mzyfvsxkyud_wLXfhLD_zP95bivCQ9i2aC-3ea=Y7+0A@mail.gmail.com> <67fea2d6.050a0220.8fa7f.6690@mx.google.com>
+In-Reply-To: <67fea2d6.050a0220.8fa7f.6690@mx.google.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Tue, 15 Apr 2025 16:10:01 -0400
+X-Gm-Features: ATxdqUH2AXGR5D179vLUcxKCqAiKWiqv74mYwXiMQpvC31RtT7QM1E9QIgjYVQU
+Message-ID: <CAJ-ks9=G1ajyT8gwLHyvHW09Z2gG=Geg7LDS6iyRyqx_wyp5Sg@mail.gmail.com>
+Subject: Re: [PATCH v8 6/6] rust: enable `clippy::ref_as_ptr` lint
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, 
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Abdiel Janulgue <abdiel.janulgue@gmail.com>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, Robin Murphy <robin.murphy@arm.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	FUJITA Tomonori <fujita.tomonori@gmail.com>, Nicolas Schier <nicolas.schier@linux.dev>, 
+	Frederic Weisbecker <frederic@kernel.org>, Lyude Paul <lyude@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, linux-pci@vger.kernel.org, 
+	linux-block@vger.kernel.org, devicetree@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-04-01 08:57:14, Sean Christopherson wrote:
-> +static __ro_after_init HLIST_HEAD(empty_page_hash);
-> +
-> +static struct hlist_head *kvm_get_mmu_page_hash(struct kvm *kvm, gfn_t gfn)
-> +{
-> +	struct hlist_head *page_hash = READ_ONCE(kvm->arch.mmu_page_hash);
-> +
-> +	if (!page_hash)
-> +		return &empty_page_hash;
-> +
-> +	return &page_hash[kvm_page_table_hashfn(gfn)];
-> +}
-> +
->  
-> @@ -2357,6 +2368,7 @@ static struct kvm_mmu_page *__kvm_mmu_get_shadow_page(struct kvm *kvm,
->  	struct kvm_mmu_page *sp;
->  	bool created = false;
->  
-> +	BUG_ON(!kvm->arch.mmu_page_hash);
->  	sp_list = &kvm->arch.mmu_page_hash[kvm_page_table_hashfn(gfn)];
+On Tue, Apr 15, 2025 at 2:18=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
+rote:
+>
+> On Tue, Apr 15, 2025 at 01:58:41PM -0400, Tamir Duberstein wrote:
+> > Hi Boqun, thanks for having a look!
+> >
+> > On Tue, Apr 15, 2025 at 1:37=E2=80=AFPM Boqun Feng <boqun.feng@gmail.co=
+m> wrote:
+> > >
+> > > On Wed, Apr 09, 2025 at 10:47:23AM -0400, Tamir Duberstein wrote:
+> > > > In Rust 1.78.0, Clippy introduced the `ref_as_ptr` lint [1]:
+> > > >
+> > > > > Using `as` casts may result in silently changing mutability or ty=
+pe.
+> > > >
+> > > > While this doesn't eliminate unchecked `as` conversions, it makes s=
+uch
+> > > > conversions easier to scrutinize.  It also has the slight benefit o=
+f
+> > > > removing a degree of freedom on which to bikeshed. Thus apply the
+> > > > changes and enable the lint -- no functional change intended.
+> > > >
+> > > > Link: https://rust-lang.github.io/rust-clippy/master/index.html#ref=
+_as_ptr [1]
+> > > > Suggested-by: Benno Lossin <benno.lossin@proton.me>
+> > > > Link: https://lore.kernel.org/all/D8PGG7NTWB6U.3SS3A5LN4XWMN@proton=
+.me/
+> > > > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+> > > > ---
+> > > >  Makefile                 |  1 +
+> > > >  rust/bindings/lib.rs     |  1 +
+> > > >  rust/kernel/device_id.rs |  3 ++-
+> > > >  rust/kernel/fs/file.rs   |  3 ++-
+> > > >  rust/kernel/str.rs       |  6 ++++--
+> > > >  rust/kernel/uaccess.rs   | 10 ++++------
+> > > >  rust/uapi/lib.rs         |  1 +
+> > > >  7 files changed, 15 insertions(+), 10 deletions(-)
+> > > >
+> > > > diff --git a/Makefile b/Makefile
+> > > > index eb5a942241a2..2a16e02f26db 100644
+> > > > --- a/Makefile
+> > > > +++ b/Makefile
+> > > > @@ -485,6 +485,7 @@ export rust_common_flags :=3D --edition=3D2021 =
+\
+> > > >                           -Wclippy::no_mangle_with_rust_abi \
+> > > >                           -Wclippy::ptr_as_ptr \
+> > > >                           -Wclippy::ptr_cast_constness \
+> > > > +                         -Wclippy::ref_as_ptr \
+> > > >                           -Wclippy::undocumented_unsafe_blocks \
+> > > >                           -Wclippy::unnecessary_safety_comment \
+> > > >                           -Wclippy::unnecessary_safety_doc \
+> > > > diff --git a/rust/bindings/lib.rs b/rust/bindings/lib.rs
+> > > > index b105a0d899cc..2b69016070c6 100644
+> > > > --- a/rust/bindings/lib.rs
+> > > > +++ b/rust/bindings/lib.rs
+> > > > @@ -27,6 +27,7 @@
+> > > >  #[allow(dead_code)]
+> > > >  #[allow(clippy::cast_lossless)]
+> > > >  #[allow(clippy::ptr_as_ptr)]
+> > > > +#[allow(clippy::ref_as_ptr)]
+> > > >  #[allow(clippy::undocumented_unsafe_blocks)]
+> > > >  mod bindings_raw {
+> > > >      // Manual definition for blocklisted types.
+> > > > diff --git a/rust/kernel/device_id.rs b/rust/kernel/device_id.rs
+> > > > index 4063f09d76d9..37cc03d1df4c 100644
+> > > > --- a/rust/kernel/device_id.rs
+> > > > +++ b/rust/kernel/device_id.rs
+> > > > @@ -136,7 +136,8 @@ impl<T: RawDeviceId, U, const N: usize> IdTable=
+<T, U> for IdArray<T, U, N> {
+> > > >      fn as_ptr(&self) -> *const T::RawType {
+> > > >          // This cannot be `self.ids.as_ptr()`, as the return point=
+er must have correct provenance
+> > > >          // to access the sentinel.
+> > > > -        (self as *const Self).cast()
+> > > > +        let this: *const Self =3D self;
+> > >
+> > > Hmm.. so this lint usually just requires to use a let statement inste=
+ad
+> > > of as expression when casting a reference to a pointer? Not 100%
+> > > convinced this results into better code TBH..
+> >
+> > The rationale is in the lint description and quoted in the commit
+> > message: "Using `as` casts may result in silently changing mutability
+> > or type.".
+> >
+>
+> Could you show me how you can silently change the mutability or type? A
+> simple try like below doesn't compile:
+>
+>         let x =3D &42;
+>         let ptr =3D x as *mut i32; // <- error
+>         let another_ptr =3D x as *const i64; // <- error
 
-Why do we need READ_ONCE() at kvm_get_mmu_page_hash() but not here? My
-understanding is that it is in kvm_get_mmu_page_hash() to avoid compiler
-doing any read tear. If yes, then the same condition is valid here,
-isn't it?
+I think the point is that the meaning of an `as` cast can change when
+the type of `x` changes, which can happen at a distance. The example
+shown in the clippy docs uses `as _`, which is where you get into real
+trouble.
 
+> also from the link document you shared, looks like the suggestion is to
+> use core::ptr::from_{ref,mut}(), was this ever considered?
+
+I considered it, but I thought it was ugly. We don't have a linter to
+enforce it, so I'd be surprised if people reached for it.
+
+>
+> > >
+> > > > +        this.cast()
+> > > >      }
+> > > >
+> > > >      fn id(&self, index: usize) -> &T::RawType {
+> > > > diff --git a/rust/kernel/fs/file.rs b/rust/kernel/fs/file.rs
+> > > > index 791f493ada10..559a4bfa123f 100644
+> > > > --- a/rust/kernel/fs/file.rs
+> > > > +++ b/rust/kernel/fs/file.rs
+> > > > @@ -359,12 +359,13 @@ impl core::ops::Deref for File {
+> > > >      type Target =3D LocalFile;
+> > > >      #[inline]
+> > > >      fn deref(&self) -> &LocalFile {
+> > > > +        let this: *const Self =3D self;
+> > > >          // SAFETY: The caller provides a `&File`, and since it is =
+a reference, it must point at a
+> > > >          // valid file for the desired duration.
+> > > >          //
+> > > >          // By the type invariants, there are no `fdget_pos` calls =
+that did not take the
+> > > >          // `f_pos_lock` mutex.
+> > > > -        unsafe { LocalFile::from_raw_file((self as *const Self).ca=
+st()) }
+> > > > +        unsafe { LocalFile::from_raw_file(this.cast()) }
+> > > >      }
+> > > >  }
+> > > >
+> > > > diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
+> > > > index 40034f77fc2f..75b4a18c67c4 100644
+> > > > --- a/rust/kernel/str.rs
+> > > > +++ b/rust/kernel/str.rs
+> > > > @@ -28,8 +28,9 @@ pub const fn is_empty(&self) -> bool {
+> > > >      /// Creates a [`BStr`] from a `[u8]`.
+> > > >      #[inline]
+> > > >      pub const fn from_bytes(bytes: &[u8]) -> &Self {
+> > > > +        let bytes: *const [u8] =3D bytes;
+> > > >          // SAFETY: `BStr` is transparent to `[u8]`.
+> > > > -        unsafe { &*(bytes as *const [u8] as *const BStr) }
+> > > > +        unsafe { &*(bytes as *const BStr) }
+> > >
+> > >         unsafe { &*(bytes.cast::<BStr>()) }
+> > >
+> > > ? I'm curious why this dodged the other lint (ptr_as_ptr).
+> >
+> > The reason it has to be written this way is that BStr is !Sized, and
+> > `pointer::cast` has an implicit Sized bound.
+> >
+> > Perhaps the lint is smart enough to avoid the suggestion in that case?
+> > Seems like yes:
+> > https://github.com/rust-lang/rust-clippy/blob/d3267e9230940757fde2fcb60=
+8605bf8dbfd85e1/clippy_lints/src/casts/ptr_as_ptr.rs#L36.
+> >
+>
+> Oh, I see, so fat pointers get their way from this check? Hmm... however
+> fat pointers also suffer the same problem that ptr_as_ptr prevents,
+> right? How should we avoid that?
+
+Probably the proper solution is to remove the `Sized` bound from
+`pointer::cast`. Short of that, I'm not sure how -- but I don't think
+this deficiency should prevent us from the benefits of this change,
+even if they are a bit limited.
 
