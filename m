@@ -1,78 +1,57 @@
-Return-Path: <linux-kernel+bounces-605495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF52FA8A21C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:58:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB3E5A8A210
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:57:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2FB6441F87
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:58:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84DC418978A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:57:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17AA02C108C;
-	Tue, 15 Apr 2025 14:55:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7852BE0F9;
+	Tue, 15 Apr 2025 14:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="MW1l22+q"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2068.outbound.protection.outlook.com [40.107.220.68])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="K8+bYXci";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nMroUl67"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300132BCF57;
-	Tue, 15 Apr 2025 14:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744728925; cv=fail; b=T5VKSTpt3SogSSABXvdMvm8tJIoEhCwcvZKkUdbu91Zo+05hw8a4cqXBCV4b0dzCQfJiucqmjmzqXpyHb8ab3yRf7zqSNYZymA5MRlGWjEEpbBgmBNTmEi+x6mRkpW9ySDyh1Y97sA8VEpe5eh32WuDdMmwWnapyBoHu5iVYCoI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744728925; c=relaxed/simple;
-	bh=TB+7xFvJSGEj9GAnfL5PU2SQpxWIZzAj0SdJ4HZ+2N0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=c5ckvsp95er/7+RAyQutU4w9AnNfMp2JDkcVagQRS1xyNnfiR1fjhILYkb5zbNwsNmADn1eSNFG7pBMTeo5wcr0PiqtiiRulrbgHMtNx7indre7wwcd08uymIu9S7yn/+/JvL2JUKrK2ewZ2HIVeFTkMNkVtkRWyz5rT9LIqKKY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=MW1l22+q; arc=fail smtp.client-ip=40.107.220.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cRrVJ96t39AJQOlJvGdJSq22g2b2wGo1DFHNbs9RhqzJYZj+mxa1U68hhTP4IyvaA94WZq2Q8DII6B96yaW3AhwyiYdjr9tShE5mtSGlIb7RclaDxydqHm+ywEdlBLL+DnIjfwxsX//b8+SBA2H/w80JljJZK5dYJIV2e7lsFyCfQQ+/ZypKN5Fq0JnFPRelrT3U9bZPsaMFvcBPwfxvoIQJjNb/GNzAg9mEyBzy3j4/KLhk9G8NxuVhmVx88b4FODZSS8fBx95pctl46CuDcanWQSdjFbIxsjASk4xg9ukV/hlp7qrFjeFC9iOlPT6g3TQ3nJp5oWwrZOZKkKZBYg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Fh8r7vTI+We4qhHkcFJ1x1pyLz8R7QWvzB5xrzGa6f8=;
- b=MdV1QN3cDrsakYYbISdW7Ez6D5oi6RYAqfVAT3mw7auy5DuEPLN1rrS6JcGrxRK9FTLTXZNsWKxV/UOjIWPPvMtTqoWEwUznkGTcnX9EYj1Hcd/xoZLNj40SCq8nX4KcfVtiHEwuh06z82VK3T73SU6LXIE/ihzjxx2NrdXfuZMsQ7cMPYLWm7DFM0UR9fPaWWp4E3Fvjbl8AcTHEYd5JpIoQUjEtL/CtUa2udSwwCyPjy+7M/wxoSXoeJUc/qp1iGSWdBMJsJTlhubXEwV78zGR4aM+x/48/kDfM/GlHlGAnLSREa8ItyOqJTPvenXX8wkPtmUTtLpklDs3tshkBw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Fh8r7vTI+We4qhHkcFJ1x1pyLz8R7QWvzB5xrzGa6f8=;
- b=MW1l22+qlfK6vLEpRtT191+f07aPuTseO2xg0ylzsY3OY2LxbRCJTQezh//Xr73rQ2ncKJZZX3Z8b69GsqUn6XB8a4eEKUs95rMHZbwkcBrv0UrlMsjX85ZEV9u8YjSxFjrmDqhKfZnFTei0AGXv5t+DBCLLV8YCxx6idMgMBU4=
-Received: from CH0PR04CA0093.namprd04.prod.outlook.com (2603:10b6:610:75::8)
- by MN0PR12MB6343.namprd12.prod.outlook.com (2603:10b6:208:3c0::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.35; Tue, 15 Apr
- 2025 14:55:17 +0000
-Received: from CH2PEPF0000014A.namprd02.prod.outlook.com
- (2603:10b6:610:75:cafe::91) by CH0PR04CA0093.outlook.office365.com
- (2603:10b6:610:75::8) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8632.36 via Frontend Transport; Tue,
- 15 Apr 2025 14:55:17 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CH2PEPF0000014A.mail.protection.outlook.com (10.167.244.107) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8655.12 via Frontend Transport; Tue, 15 Apr 2025 14:55:17 +0000
-Received: from [127.0.1.1] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 15 Apr
- 2025 09:55:15 -0500
-From: Yazen Ghannam <yazen.ghannam@amd.com>
-Date: Tue, 15 Apr 2025 14:55:06 +0000
-Subject: [PATCH v3 11/17] x86/mce: Move machine_check_poll() status checks
- to helper functions
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F052D29E042;
+	Tue, 15 Apr 2025 14:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744728923; cv=none; b=MKkhsz5dHWjS44GKR1nNXqaGQcScrrCG5Uldl1SwHoRTzmnVwb7A/GA9kxxPkRVHKNCV9t62ATraSIoR4g7yF8CpE+13z8WQcnoIwpCZ5rcuj3g7t/lnS1Gi56jZS5p9fbuOENJieybiuK8lOVR5I4ZGRUa1BC3+HZnLWS1D7JQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744728923; c=relaxed/simple;
+	bh=/4fQKNG7ZThRdPS8W+NDfn4K1XtNr/N3er3BGwyb5c4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=leGP9UvuENSzAP+i+BX6LVUajNI2FILgoqj5591jsD1nb+p1ThFz5aAeAqkGhFpSGrFkfb9DW0q6FP0Opb3fQeXTKvnpXpE8pUitDuhmatOSu+o6oH0jumHK2Z8zn3wDvnJIw++YaoUWCOCsA3SmJn1FRf+tqZKhj2Va6i2OVRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=K8+bYXci; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nMroUl67; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744728918;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=sORXXgGo11q0HFoO8JqYEm1slEujioCF3YjA6xNqDKM=;
+	b=K8+bYXciJEz5Iw/bePoOe/OIy3GPJB3CQy2dpV5LNTiDQvghqJEjxi8mpoIH9V9KaVwfkd
+	g6Uu0VPwNMggC/JKjsDt97BB5nk5YTqmSxBa+GHM9N/nDhxkDQ7O0v6SvVaThsvjsCwtpt
+	YQOiGiLkoL+POAAxByOhH8FSRrwBSrmZqiWWFKYSH3SM8ko4kqR24/cjHoAbYlUvdK10GG
+	M8pINRIhammQ8LUmvM+DG/5ImX3OAFK3LOCw2Sp1V7jgzejWI3+uCuGelg3dCGcWT/AU6g
+	g61d663tT9uyAQHsa+1NvwxaTQwMBExMKr5ajUaoEmIEWkQFWPVk3UHWpXTcsA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744728918;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=sORXXgGo11q0HFoO8JqYEm1slEujioCF3YjA6xNqDKM=;
+	b=nMroUl67uXF1Ps8M0XqyNxolTM3e2/EIzmcH2SJ4Wh1xWVyVp5JPyV7B9FBVJljVK5obfE
+	j/cmk+ypky4txQBQ==
+Date: Tue, 15 Apr 2025 16:55:06 +0200
+Subject: [PATCH v3] loop: LOOP_SET_FD: send uevents for partitions
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,211 +59,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250415-wip-mca-updates-v3-11-8ffd9eb4aa56@amd.com>
-References: <20250415-wip-mca-updates-v3-0-8ffd9eb4aa56@amd.com>
-In-Reply-To: <20250415-wip-mca-updates-v3-0-8ffd9eb4aa56@amd.com>
-To: <x86@kernel.org>, Tony Luck <tony.luck@intel.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-edac@vger.kernel.org>,
-	<Smita.KoralahalliChannabasappa@amd.com>, Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-X-Mailer: b4 0.15-dev-9b767
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF0000014A:EE_|MN0PR12MB6343:EE_
-X-MS-Office365-Filtering-Correlation-Id: 445c9528-b5c9-411b-7eba-08dd7c2d8950
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dVVLdUFTc3N0UWZ1ay80RnZaVDJudjc3a0twZHQ1MlY5ZXlwckNBZGJWN21l?=
- =?utf-8?B?MHpndnEvRkI2QlZUeHQvNHJNOEZUWHdxblhrUVFIa2dQNzRHWWZhVWd4T2tm?=
- =?utf-8?B?NGx6Qis4NHAwbmpiditKVm5wV1NEWGliN2F6SGVodHhDRlMxbko3Y0cycDcw?=
- =?utf-8?B?RERVbTNvbitHSGJMblNzcFBMZU9VUEthNGZlR0ZLVFBEaWgrZjNudXorR3Vu?=
- =?utf-8?B?MjNzb09QcGNFQkpaU3dVTHRNbHZ6TjIwNUJmK2tTS1YyT1BuNnBqTXEzMWVt?=
- =?utf-8?B?WmhkbEE0OWRNeDR4Ynl2NFB4a25tQ2wwWHF1aEJ1SG1iU1pyLzRlRWFXM3Fu?=
- =?utf-8?B?cFFsZVI4M1Z2REVRWHZxYi9WSDF1WnJTcE1MKyszek5HKzZTNldWb2RUblFk?=
- =?utf-8?B?bUYyRE1NWXBmMmxFdkhld3N5V2c5TG1VdUtlRkUrUWxzcnpEcnJsYjN4TkhE?=
- =?utf-8?B?RzVua2thcFdHK2QwaDRpSHMxY2xzdHpNaUl5QkZFcVNtVDhDUm5Nc1BpYXd0?=
- =?utf-8?B?dEdjUEFkNWpyakJ3QVBOYThRYTNxanduMUFXU0M3eUdvUXc1NUdkZzN6RVBB?=
- =?utf-8?B?S2V3Vm1oMVpYT0VCNkZyVEhJN2FZaktwUUNXTFFaeHF5V2QrZzR4b0k1cHRK?=
- =?utf-8?B?T3AxZ2o4VmZYdktBZ3ZQQUFCNDdZTjFRRkY4cUZMQ3hoeStCYmZndVVUb3h6?=
- =?utf-8?B?TTN1TGoraUNucG5KWjJWOExWMjNZanJIVnpzY1JtRWNzTGpodk52NmxaN2Z1?=
- =?utf-8?B?ZzBhUytoSS8reWtWSkFsWlJPYVFJWlloRzhDTHZYR2tpQ1VSc0hqbGxaY2ZE?=
- =?utf-8?B?TFFkYmZTbjI0MERiZWJZVURaclVLZTVQTC9mWHl0WXN5UUVqOVMzdHpWektt?=
- =?utf-8?B?ZDFqclppeXltaVlwZE95MWtlMVoyZDVadUV4WitEcEhmNHBleG9ZMzVyODhO?=
- =?utf-8?B?aEs5RTVQR1dSSENkd3BwSnJJK2F4WjVwd2dUMTE1dGNrVnY0OUVCelAyN0VN?=
- =?utf-8?B?cnBqNXc2Q3dGZmgxZGs0dEVneGJUQ2xXNGc5VzhhN1pCMXMrQlpqWmp0WkI4?=
- =?utf-8?B?eVpRaUVMMm9rUUE0S1ZnMjQrTWRQYWhHY0FKWUhtZGxrd1cyYXdnNk9oSXdH?=
- =?utf-8?B?azBWVGhBRS9FZDNtVmFzVyt3MW5sdGFiT3Rlb005VjlPUGFxL3U1elpxWHNn?=
- =?utf-8?B?Z2FGVFV6UGZXb3JjQTZ6MzhNcmNaZXRNcU9ybnJNZ2JHZ3pCRHpJclFBNk5o?=
- =?utf-8?B?MzkwaXJ3WFJOSURBZXNPVzlOMGw5QSsrM2dvdk5UdGVoWGdaTUs0WnhjNXN2?=
- =?utf-8?B?MjBxMXd6NFNlNDBNUklmb0RUdmVqN2c0bDRUVXMyNFo1bUZ2U0JkSW5ha2dm?=
- =?utf-8?B?eEJseHZ5T1hkMDNLZ2RMeC9hWlhGOW1oOVoramdlNE5IL3dkM0pkWFE1NDRq?=
- =?utf-8?B?L3l0RVdtdWVhNUZ6ekhsa0ZMemJKcHBuRlF2djFlY2FaUE9sVEhLK0Zuem9G?=
- =?utf-8?B?OGxYblA5Mzd0MEYyNTJXaldYZmR0cWU0S0hIS2dHL05EZ3hJZHBaUkMxOUtk?=
- =?utf-8?B?S2tpOURMOTZwcWQ2OWlwZWFuZlQ3T3AyekIwaEJTVGtMY1FZNHZSTlRBdjNU?=
- =?utf-8?B?QkxXRzFlZFRSL0kybFhraTIyU1lHNU12cjcvcm5aZ2hDaGVrUmhSMHg3OTI4?=
- =?utf-8?B?VWQzUk1NU3JTUWRqSkptVUd5NXdwRnJOUS81eHhmTk9XMWl3MThRSHd1R1Js?=
- =?utf-8?B?WlI1c2t4anB6ck5SQjNOZFZSajI4V29ydDNOVmxIeHZ6dWFCQUhqWUhyczF2?=
- =?utf-8?B?czFpT2F4QjNIYmFjMlhBUERvSnEvUDlSTFBhTUpzQ3IxZzdkejhobTd5RG00?=
- =?utf-8?B?TmNVKzVXakxGQU1NYnBQY211NGZRRDNHVmZOTEVXREpIMG16eWd1cUdxdEtK?=
- =?utf-8?B?VXc3L3RlaGNzU2o3SmthYlEvS1g1YTUwOXZ4eWd6WXJ6VUlkUkNRckJzbGdv?=
- =?utf-8?B?aE9HZE11UGxPblBLTHdhdEE4aXhFZnJ5M3BDYitXOVRwN2xXYTV0V2JtaE9Q?=
- =?utf-8?B?czZnaHBWaVlubERBS0ErU3lNc3FPSlY1RkNNUT09?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Apr 2025 14:55:17.4511
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 445c9528-b5c9-411b-7eba-08dd7c2d8950
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF0000014A.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6343
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250415-loop-uevent-changed-v3-1-60ff69ac6088@linutronix.de>
+X-B4-Tracking: v=1; b=H4sIAElz/mcC/32OQQqDMBBFryJZNyWZGEu66j1KF1HHGpBEEg0W8
+ e6NuihIkVn9Yd6bP5OA3mAg92wmHqMJxtkUxCUjVavtG6mpUybAQDLBbrRzrqcjRrQD3S9qqrU
+ oFGtygUyQRPYeGzNt1ucr5daEwfnP9iTydXvui5ymQSWlBqFykI/O2HHwzprpWuP6Yuf5CV+Vo
+ KpS8bKA+sCvnSL8euRc/vdA8rAqx0IrECXoo2dZli8SSwIjQgEAAA==
+X-Change-ID: 20250307-loop-uevent-changed-aa3690f43e03
+To: Jens Axboe <axboe@kernel.dk>, Martijn Coenen <maco@android.com>, 
+ Alyssa Ross <hi@alyssa.is>, Christoph Hellwig <hch@lst.de>, 
+ Greg KH <greg@kroah.com>, Jan Kara <jack@suse.cz>
+Cc: John Ogness <john.ogness@linutronix.de>, linux-block@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744728915; l=2155;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=/4fQKNG7ZThRdPS8W+NDfn4K1XtNr/N3er3BGwyb5c4=;
+ b=HmkGcARamVEmalVkorOr2+8ny2ewAEsxjZcDfIp1Z0eg/XCmgnnIlCRgoHeIMVz7WYsMbOhvJ
+ Nnl14SRj1o3ApFT1TZ0C07+AHyfDowD7rMaHaMKa36rrk3O6vkReG3H
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-There are a number of generic and vendor-specific status checks in
-machine_check_poll(). These are used to determine if an error should be
-skipped.
+Remove the suppression of the uevents before scanning for partitions.
+The partitions inherit their suppression settings from their parent device,
+which lead to the uevents being dropped.
 
-Move these into helper functions. Future vendor-specific checks will be
-added to the helpers.
+This is similar to the same changes for LOOP_CONFIGURE done in
+commit bb430b694226 ("loop: LOOP_CONFIGURE: send uevents for partitions").
 
-Reviewed-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-Tested-by: Tony Luck <tony.luck@intel.com>
-Reviewed-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+Fixes: 498ef5c777d9 ("loop: suppress uevents while reconfiguring the device")
+Cc: stable@vger.kernel.org
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 ---
+Changes in v3:
+- Rebase onto block/block-6.15
+- Drop already applied patch "loop: properly send KOBJ_CHANGED uevent for disk device"
+- Add patch to fix partition uevents for LOOP_SET_FD
+- Link to v2: https://lore.kernel.org/r/20250415-loop-uevent-changed-v2-1-0c4e6a923b2a@linutronix.de
 
-Notes:
-    Link:
-    https://lore.kernel.org/r/20250213-wip-mca-updates-v2-11-3636547fe05f@amd.com
-    
-    v2->v3:
-    * Add tags from Qiuxu and Tony.
-    
-    v1->v2:
-    * Change log_poll_error() to should_log_poll_error().
-    * Keep code comment.
+Changes in v2:
+- Use correct Fixes tag
+- Rework commit message slightly
+- Rebase onto v6.15-rc1
+- Link to v1: https://lore.kernel.org/r/20250317-loop-uevent-changed-v1-1-cb29cb91b62d@linutronix.de
+---
+ drivers/block/loop.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
- arch/x86/kernel/cpu/mce/core.c | 88 +++++++++++++++++++++++-------------------
- 1 file changed, 48 insertions(+), 40 deletions(-)
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index 3be7f00e7fc740da2745ffbccfcebe53eef2ddaa..e9ec7a45f3f2d1dd2a82b3506f3740089a20ae05 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -662,12 +662,12 @@ static int loop_change_fd(struct loop_device *lo, struct block_device *bdev,
+ 	 * dependency.
+ 	 */
+ 	fput(old_file);
++	dev_set_uevent_suppress(disk_to_dev(lo->lo_disk), 0);
+ 	if (partscan)
+ 		loop_reread_partitions(lo);
+ 
+ 	error = 0;
+ done:
+-	dev_set_uevent_suppress(disk_to_dev(lo->lo_disk), 0);
+ 	kobject_uevent(&disk_to_dev(lo->lo_disk)->kobj, KOBJ_CHANGE);
+ 	return error;
+ 
+@@ -675,6 +675,7 @@ static int loop_change_fd(struct loop_device *lo, struct block_device *bdev,
+ 	loop_global_unlock(lo, is_loop);
+ out_putf:
+ 	fput(file);
++	dev_set_uevent_suppress(disk_to_dev(lo->lo_disk), 0);
+ 	goto done;
+ }
+ 
 
-diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-index 413c68f18084..c82c9e435066 100644
---- a/arch/x86/kernel/cpu/mce/core.c
-+++ b/arch/x86/kernel/cpu/mce/core.c
-@@ -714,6 +714,52 @@ static noinstr void mce_read_aux(struct mce_hw_err *err, int i)
- 
- DEFINE_PER_CPU(unsigned, mce_poll_count);
- 
-+/*
-+ * Newer Intel systems that support software error
-+ * recovery need to make additional checks. Other
-+ * CPUs should skip over uncorrected errors, but log
-+ * everything else.
-+ */
-+static bool ser_should_log_poll_error(struct mce *m)
-+{
-+	/* Log "not enabled" (speculative) errors */
-+	if (!(m->status & MCI_STATUS_EN))
-+		return true;
-+
-+	/*
-+	 * Log UCNA (SDM: 15.6.3 "UCR Error Classification")
-+	 * UC == 1 && PCC == 0 && S == 0
-+	 */
-+	if (!(m->status & MCI_STATUS_PCC) && !(m->status & MCI_STATUS_S))
-+		return true;
-+
-+	return false;
-+}
-+
-+static bool should_log_poll_error(enum mcp_flags flags, struct mce_hw_err *err)
-+{
-+	struct mce *m = &err->m;
-+
-+	/* If this entry is not valid, ignore it. */
-+	if (!(m->status & MCI_STATUS_VAL))
-+		return false;
-+
-+	/*
-+	 * If we are logging everything (at CPU online) or this
-+	 * is a corrected error, then we must log it.
-+	 */
-+	if ((flags & MCP_UC) || !(m->status & MCI_STATUS_UC))
-+		return true;
-+
-+	if (mca_cfg.ser)
-+		return ser_should_log_poll_error(m);
-+
-+	if (m->status & MCI_STATUS_UC)
-+		return false;
-+
-+	return true;
-+}
-+
- /*
-  * Poll for corrected events or events that happened before reset.
-  * Those are just logged through /dev/mcelog.
-@@ -765,48 +811,10 @@ void machine_check_poll(enum mcp_flags flags, mce_banks_t *b)
- 		if (!mca_cfg.cmci_disabled)
- 			mce_track_storm(m);
- 
--		/* If this entry is not valid, ignore it */
--		if (!(m->status & MCI_STATUS_VAL))
-+		/* Verify that the error should be logged based on hardware conditions. */
-+		if (!should_log_poll_error(flags, &err))
- 			continue;
- 
--		/*
--		 * If we are logging everything (at CPU online) or this
--		 * is a corrected error, then we must log it.
--		 */
--		if ((flags & MCP_UC) || !(m->status & MCI_STATUS_UC))
--			goto log_it;
--
--		/*
--		 * Newer Intel systems that support software error
--		 * recovery need to make additional checks. Other
--		 * CPUs should skip over uncorrected errors, but log
--		 * everything else.
--		 */
--		if (!mca_cfg.ser) {
--			if (m->status & MCI_STATUS_UC)
--				continue;
--			goto log_it;
--		}
--
--		/* Log "not enabled" (speculative) errors */
--		if (!(m->status & MCI_STATUS_EN))
--			goto log_it;
--
--		/*
--		 * Log UCNA (SDM: 15.6.3 "UCR Error Classification")
--		 * UC == 1 && PCC == 0 && S == 0
--		 */
--		if (!(m->status & MCI_STATUS_PCC) && !(m->status & MCI_STATUS_S))
--			goto log_it;
--
--		/*
--		 * Skip anything else. Presumption is that our read of this
--		 * bank is racing with a machine check. Leave the log alone
--		 * for do_machine_check() to deal with it.
--		 */
--		continue;
--
--log_it:
- 		mce_read_aux(&err, i);
- 		m->severity = mce_severity(m, NULL, NULL, false);
- 		/*
+---
+base-commit: 7ed2a771b5fb3edee9c4608181235c30b40bb042
+change-id: 20250307-loop-uevent-changed-aa3690f43e03
 
+Best regards,
 -- 
-2.49.0
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
 
