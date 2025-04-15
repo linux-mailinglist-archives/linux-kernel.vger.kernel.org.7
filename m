@@ -1,130 +1,154 @@
-Return-Path: <linux-kernel+bounces-606184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F30ACA8AC44
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 01:35:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 855FEA8AC49
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 01:41:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13BEF168637
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 23:35:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4985F17EF32
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 23:41:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A592D28E5E5;
-	Tue, 15 Apr 2025 23:35:07 +0000 (UTC)
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1259928F51B;
+	Tue, 15 Apr 2025 23:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NN2jNwkr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990E92DFA36
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 23:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94B6C2DFA36
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 23:41:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744760107; cv=none; b=p/w4l02V2gx0MLYb53C+/pEQgBnJp+5miuD1SNQxac5UzJvIg9z/rV/2ooj8gDuC3y2SNRTQ4ApMbhv9p9ZoQJbeGLpGoFBsOheoEX10x7qyVdrOr0yrfwjUXMyLWwk1C8VbKJ5XZxaMszI508c5kvsMN/JydEcrJLfwj4yI/Xc=
+	t=1744760508; cv=none; b=cefzIqLdn1+kOs2MTxtt8SAF2D73pShBfTMMpLh7F8VGZ/Lh/ydeuoS4o+jcCAYhjnZO3z7FBjBwbexB6wIUX1GR9AlekqrdwpmuuDscsrrFK+rUk59z8OMHCNx+/slO1sFZHWCE8WJPj96isYfbnj52SOx3p3U82ZmwOnmgnsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744760107; c=relaxed/simple;
-	bh=pbmWK4r//BEuTIyzV4jvJ66bZE4MnnJ30YMPf3eztU4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G1mN6V0AdmbUo7R8b9BQ4Do8oJFhEM/Js7jB3zmWOjrTgk3uKguZJf4INUx0gN4dsy1W8YjAJUjxo1dixI0934OLMqPk682Tk5Ax2YokGzsXecxqaATwxI/8ycoU1p5gS9tw9P/CSHWvvPmic97MHnmr4s0Phs9a8tWXiJrckxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-39c14016868so5665892f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 16:35:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744760104; x=1745364904;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TBcr9WsbeIKsnAkSQ/F3sSiJdnnZotvh+jmpVWwHeMQ=;
-        b=q6tdaIlRZSmuZUQKKe18oaN/jbgQaSyi4MZzZayLzSFnv6qKwtBJBg2y/J52unWPdY
-         m+SPQHSQgnP6BPTdRouFIAf4zNYepQmsCeOUHIRBKXBkH5GHMWigCjbqmNw3zY3nMQYO
-         8IP2w0zCy90rg4mh+BzvOAWRVYNyWDUW5FSyWzbLa9ziRI3ewKUxNh4LjxOnrQz5FE15
-         CnNrLQn/JIbxuls/woxegfjaEIpVwpaaFHUfiLpIsyDaV/AB7vho9IrSvlYwnnngoiGW
-         wb/Acj2T5bMoTn8ZO5/l8oEZIq6ARY9An7ir3cYvOHAbTJm9eAYkAY5rfjUG3u1uwYyN
-         hatQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWVPqRb7ARvNwEU13u4+hnVl7Z1pW+yNzxvLdJbi+6qlOK+fXzvYj9PH1RP7GAK6EiZ3BRBoQXWgjDgLsg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWK8VAhVCJJp4VOtkwVMWcFO2HXaWs0JGV2SqWJXSuY/XJTQG6
-	I6QryCWAdISy9ECkGE3w/uAVCJjNJ+QYMC0guDgTB+wl6ODup20p
-X-Gm-Gg: ASbGncuTkRMunOClYvh5Oou+2rUiry8dbFNg+uDiq1g1DIgAb/+QfdXptJy2+Fd9wOv
-	HDH/rD480EkpSnpLO07CnevL/EIDkM+7WMMcFoQ/ozcaYpGdyF3rnptlS9OfHWQZtEhajyVooo8
-	6qgURCZC+qx2Mg9yg5b8afZmWfxb2SLPLELt/+xk/J+J9lcOyfM68nzggwDwiuJAV70p7Lw6di8
-	Q3BhLBzYJzUFB9MHpTc2goz6Lk9Gy6SChc8ROwZxbV8t8a3cVZfEODPfjJjDGaanxdhMuTe2cSn
-	gH9sywm6GvfyvUUpkRrUjQOm/uYUCBnv3WqY9px6suh0e16XkpW7bbB/VbGrfJwyPtIfnnss
-X-Google-Smtp-Source: AGHT+IGFQoDsrhXlcR5Lo9INVTlZxYBloFpMd7lmfTTWayLAqAGElo+qaSjvY0LXPXIoy97Vsmyhcg==
-X-Received: by 2002:a05:6000:250f:b0:390:eb50:37c3 with SMTP id ffacd0b85a97d-39ee27561bbmr970069f8f.27.1744760103585;
-        Tue, 15 Apr 2025 16:35:03 -0700 (PDT)
-Received: from [10.10.9.121] (u-1j-178-175-199.4bone.mynet.it. [178.175.199.47])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eaf445270sm15341737f8f.81.2025.04.15.16.35.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Apr 2025 16:35:02 -0700 (PDT)
-Message-ID: <8ac6cc96-8877-4ddc-b57a-2a096f446a4c@grimberg.me>
-Date: Wed, 16 Apr 2025 02:35:02 +0300
+	s=arc-20240116; t=1744760508; c=relaxed/simple;
+	bh=8iOaybz4lh7CVjrLSWP1+6uN1uHn2rPfgrnJm+wuOgU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c1nk88IGzwj3YR/PeybFWzkDPrLENQ9u8arsdFqwNAsLOWBXPcgME5sxX9QpoSxytN0dNIQeiHZZSKwjEOWt5krvM9Zr2qwGQqR0hwEPbdLNjxmx7TQfogAXnjowNIrIXwjodC23CN9DUxrEZke1jZF8zH3J3o5u017jyWZxuR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NN2jNwkr; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744760505;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cvgzNHXZT50bJulk6uZmAkTyNeKXSSJ3KJw3yi6lkN4=;
+	b=NN2jNwkr476WyzGtSKmiUve3T0pwjrgPo32E8DPfqqlMyP9JDRaHGc1JpVIm2TWSNhTFbj
+	YxyOX8gFX7IVFwHNjSw9ZBjQJDm9TXymum622x5nkTbVwgtjicH6+nGNJdFmLf0OrgzGN4
+	PtDHOC9hDMD933UIBvHSUQIJVAHagNA=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-556-BGEJE8S6ON2Vm8eN0hLumg-1; Tue,
+ 15 Apr 2025 19:41:39 -0400
+X-MC-Unique: BGEJE8S6ON2Vm8eN0hLumg-1
+X-Mimecast-MFC-AGG-ID: BGEJE8S6ON2Vm8eN0hLumg_1744760499
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D410F19560B8;
+	Tue, 15 Apr 2025 23:41:38 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.38])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A2DA2180B489;
+	Tue, 15 Apr 2025 23:41:37 +0000 (UTC)
+Date: Wed, 16 Apr 2025 07:41:33 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Uladzislau Rezki <urezki@gmail.com>
+Cc: linux-mm@kvack.org, akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/5] mm/vmalloc.c: find the vmap of vmap_nodes in reverse
+ order
+Message-ID: <Z/7urXUwO0sY3RQw@MiWiFi-R3L-srv>
+References: <20250415023952.27850-1-bhe@redhat.com>
+ <20250415023952.27850-3-bhe@redhat.com>
+ <Z_56cxJLgnfYK9yY@pc636>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 3/3] nvme: delay failover by command quiesce timeout
-To: Randy Jennings <randyj@purestorage.com>
-Cc: Daniel Wagner <dwagner@suse.de>,
- Mohamed Khalfella <mkhalfella@purestorage.com>,
- Daniel Wagner <wagi@kernel.org>, Christoph Hellwig <hch@lst.de>,
- Keith Busch <kbusch@kernel.org>, Hannes Reinecke <hare@suse.de>,
- John Meneghini <jmeneghi@redhat.com>, linux-nvme@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250324-tp4129-v1-0-95a747b4c33b@kernel.org>
- <20250324-tp4129-v1-3-95a747b4c33b@kernel.org>
- <20250410085137.GE1868505-mkhalfella@purestorage.com>
- <738a41ca-3e4a-48df-9424-2950e6efc082@grimberg.me>
- <4cd2cbb4-95ff-4f3b-b33b-9c066147d12b@flourine.local>
- <4c334216-74d7-4a30-add1-67b6e023d8d2@grimberg.me>
- <CAPpK+O0tmewK7pH458TOxjtimjO9on=4YDRFbS=FPTgM+KFTzQ@mail.gmail.com>
-Content-Language: en-US
-From: Sagi Grimberg <sagi@grimberg.me>
-In-Reply-To: <CAPpK+O0tmewK7pH458TOxjtimjO9on=4YDRFbS=FPTgM+KFTzQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z_56cxJLgnfYK9yY@pc636>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
+On 04/15/25 at 05:25pm, Uladzislau Rezki wrote:
+> On Tue, Apr 15, 2025 at 10:39:49AM +0800, Baoquan He wrote:
+> > When finding VA in vn->busy, if VA spans several zones and the passed
+> > addr is not the same as va->va_start, we should scan the vn in reverse
+> > odrdr because the starting address of VA must be smaller than the passed
+> > addr if it really resides in the VA.
+> > 
+> > E.g on a system nr_vmap_nodes=100,
+> > 
+> >      <----va---->
+> >  -|-----|-----|-----|-----|-----|-----|-----|-----|-----|-
+> >     ...   n-1   n    n+1   n+2   ...   100     0     1
+> > 
+> > VA resides in node 'n' whereas it spans 'n', 'n+1' and 'n+2'. If passed
+> > addr is within 'n+2', we should try nodes backwards on 'n+1' and 'n',
+> > then succeed very soon.
+> > 
+> > Meanwhile we still need loop around because VA could spans node from 'n'
+> > to node 100, node 0, node 1.
+> > 
+> > Anyway, changing to find in reverse order can improve efficiency on
+> > many CPUs system.
+> > 
+> > Signed-off-by: Baoquan He <bhe@redhat.com>
+> > ---
+> >  mm/vmalloc.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > index aca1905d3397..488d69b56765 100644
+> > --- a/mm/vmalloc.c
+> > +++ b/mm/vmalloc.c
+> > @@ -2436,7 +2436,7 @@ struct vmap_area *find_vmap_area(unsigned long addr)
+> >  
+> >  		if (va)
+> >  			return va;
+> > -	} while ((i = (i + 1) % nr_vmap_nodes) != j);
+> > +	} while ((i = (i + nr_vmap_nodes - 1) % nr_vmap_nodes) != j);
+> >  
+> >  	return NULL;
+> >  }
+> > @@ -2462,7 +2462,7 @@ static struct vmap_area *find_unlink_vmap_area(unsigned long addr)
+> >  
+> >  		if (va)
+> >  			return va;
+> > -	} while ((i = (i + 1) % nr_vmap_nodes) != j);
+> > +	} while ((i = (i + nr_vmap_nodes - 1) % nr_vmap_nodes) != j);
+> >  
+> >  	return NULL;
+> >  }
+> > -- 
+> > 2.41.0
+> > 
+> It depends. Consider a below situation:
+> 
+>              addr
+>               |
+>         VA    V
+>   <------------>
+> <---|---|---|---|---|---|---|--->
+>   0   1   2   3   0   1   2   3
+> 
+> basically it matters how big VA and how many nodes it spans. But i
+> agree that an assumption to reverse back is more convinced in most
+> cases.
 
->> What I meant was that the user can no longer set kato to be arbitrarily
->> long when we
->> now introduce failover dependency on it.
->>
->> We need to set a sane maximum value that will failover in a reasonable
->> timeframe.
->> In other words, kato cannot be allowed to be set by the user to 60
->> minutes. While we didn't
->> care about it before, now it means that failover may take 60+ minutes.
->>
->> Hence, my request to set kato to a max absolute value of seconds. My
->> vote was 10 (2x of the default),
->> but we can also go with 30.
-> Adding a maximum value for KATO makes a lot of sense to me.  This will
-> help keep us away from a hung task timeout when the full delay is
-> taken into account.  30 makes sense to me from the perspective that
-> the maximum should be long enough to handle non-ideal situations
-> functionally, but not a value that you expect people to use regularly.
->
-> I think CQT should have a maximum allowed value for similar reasons.
-> If we do clamp down on the CQT, we could be opening ourselves to the
-> target not completely cleaning up, but it keeps us from a hung task
-> timeout, and _any_ delay will help most of the time.
+Agree, on small system with few CPUs and big VA case, the advantage is
+not apparent.
 
-CQT comes from the controller, and if it is high, it effectively means 
-that the
-controller cannot handle faster failover reliably. So I think we should 
-leave it
-as is. It is the vendor problem.
+> 
+> Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
 
->
-> CCR will not address arbitrarily long times for either because:
-> 1. It is optional.
-> 2. It may fail.
-> 3. We still need a ceiling on the recovery time we can handle.
+Thanks.
 
-Yes, makes sense. if it fails, we need to wait until something expires, 
-which would
-be CQT.
 
