@@ -1,66 +1,68 @@
-Return-Path: <linux-kernel+bounces-605464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AE66A8A186
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:48:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A222CA8A18D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:49:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54984440EAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:48:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3AD516A1FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:49:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 818162973BC;
-	Tue, 15 Apr 2025 14:48:25 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8735027F749;
-	Tue, 15 Apr 2025 14:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E291E5B75;
+	Tue, 15 Apr 2025 14:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WsmZ/g5E"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1036817A317
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 14:49:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744728505; cv=none; b=DVKuPnPfV6e16PhOns0wLdA2QpQPY9xAVhkHF2HxsBbcf5mticJLTdeLzIrGD6AygsCGKdmatsYPxu2dTR8qX5PE/0YaacVcTu5+SJ8bBzstrki7vAxl/SKvcrlPso3gZWjUJiJ1Ubi9LJjKPby52y/l6YWwMvRgje329302YIs=
+	t=1744728548; cv=none; b=ooEqYJqH+Bvbgzk33bOFsvGXDs8AWF9FuMpOboY2/IdIEr0f9u7NVDYbBHyAH6TzpG2ZfK7WfQABTpHW2oj3+spZJKjY5JbBmVe048KxLrg5Rl91QMNi5Vu1e2GbOD6fPWgCdWOdAUaiEY10x1nTpM7HtTf0U7biTyuyN4cQyL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744728505; c=relaxed/simple;
-	bh=dL3GBIFDMlroIuYc/uiPg97dQ44gPEpRL5p9zMC4w/A=;
+	s=arc-20240116; t=1744728548; c=relaxed/simple;
+	bh=zub2iEdzPRv/a4C2MehFMsAWUA/E8tJ2htu/opwciYQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sTTTPm7bW5gy0yXG7TZVLeva8TMrKVen7ERsCCRCXcwwZxuBpgGHJsdAYtYeKAWgaF5BDz60K3/nfMG/XPh8HKZhLqPuvZb0qJ6GKZhLp5JGabnQyU4IxRRDBkYgJvhP7k1aSaD57vnf6icZKjiBfTTgGRzsfMQDbWdf8RojaHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0DB9C15A1;
-	Tue, 15 Apr 2025 07:48:21 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0F45B3F694;
-	Tue, 15 Apr 2025 07:48:19 -0700 (PDT)
-Date: Tue, 15 Apr 2025 15:48:17 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Peng Fan <peng.fan@nxp.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=jtHtBOT1U3t58zDqk1qyLkR0RzKbqt0nIJn3blRfFXs+D5ezgmW5/pEB8zXulII/K+j2/b+xT78mHmO5+Ho51S45G16xrDDD6PRyATdfXI2hvO/92MEstatpQJ09Hf50oATWPLfMwnf/xkLQt+pFy0TnEedw0zmKB/1yWdBRNuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WsmZ/g5E; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Z6zqpjvrpHaEuoOIAvXqb+IXZCwa5Y1OzBBKDHbviBE=; b=WsmZ/g5E8Ve0mMFJqgN9hR9FX/
+	zOt7HOpjok6vlr/dhjqp4XTHq9/CWDJRqwZPahbUQYUq91oAPQUm9xWaEo9N8IG/gVTHQXSeTjNb2
+	ZDnz4h6QI/EiGQ8y5tUxQ5Jl42ZVe16GlybHzdIEzkCu7+LGGe7WNvNEleO3Hb5ZFEnH14kjNDTTy
+	ETWT1BXCmc14NkSFfA2VBff9ENclv45FacfOurawvlCiVcCsb5ZryAruOMYBPK26h0eKG9Pvwug16
+	7EkwldAkkLS2orTtsjQMT8wqOXGQ/6u21fmNaSTlminNZsBYp3AR4wc90AEh1YG9sLUT6Svp2+Qz1
+	3h3BQ4Cw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1u4hau-00000008hNT-3vc4;
+	Tue, 15 Apr 2025 14:49:00 +0000
+Date: Tue, 15 Apr 2025 15:49:00 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: gaoxu <gaoxu2@honor.com>
+Cc: Barry Song <21cnbao@gmail.com>, Mike Rapoport <rppt@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"surenb@google.com" <surenb@google.com>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v4 5/7] firmware: imx: Add i.MX95 SCMI LMM driver
-Message-ID: <20250415-exotic-scarlet-seriema-c0e223@sudeepholla>
-References: <20250408-imx-lmm-cpu-v4-0-4c5f4a456e49@nxp.com>
- <20250408-imx-lmm-cpu-v4-5-4c5f4a456e49@nxp.com>
- <20250414-wonderful-cute-bandicoot-accb6b@sudeepholla>
- <PAXPR04MB8459195AAF65D38AFA1D4F9688B32@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <20250414-tiny-classic-barnacle-5f8c8f@sudeepholla>
- <PAXPR04MB84593BB91063D13BB05BEB5988B32@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <PAXPR04MB84598733FA39A7402E91DA1988B32@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <20250414-ebony-slug-of-felicity-421b0f@sudeepholla>
- <20250415091016.GB10243@nxa18884-linux>
+	yipengxiang <yipengxiang@honor.com>
+Subject: Re: [PATCH] mm: simplify zone_idx()
+Message-ID: <Z_5x3AwzTWeBXoZB@casper.infradead.org>
+References: <2d42decac5194c2c8d897b0424f0dcf3@honor.com>
+ <Z_fYsyEA9hSEOoxp@kernel.org>
+ <CAGsJ_4wACEvWe-Fcx9fShkF8okEVb3srGDVCn0v0QjALq7nneg@mail.gmail.com>
+ <bdf6988006d546d498ccb2b7c14c6fe0@honor.com>
+ <CAGsJ_4xDc_5q8dBYVq-Ga0iKJD9pTQdYSHrKw8R=1RHNb4+r7Q@mail.gmail.com>
+ <c915776e308f49e7867ecb50afa44d36@honor.com>
+ <CAGsJ_4x+5Pm6r655k+H9A67-d9AchD9qgsEKgU5oY6N1=JbTRA@mail.gmail.com>
+ <Z_xGzAx13diuCdvv@casper.infradead.org>
+ <b2bde1ca046949599d74cb9e88c21ba3@honor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,39 +71,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250415091016.GB10243@nxa18884-linux>
+In-Reply-To: <b2bde1ca046949599d74cb9e88c21ba3@honor.com>
 
-On Tue, Apr 15, 2025 at 05:10:16PM +0800, Peng Fan wrote:
-> On Mon, Apr 14, 2025 at 12:17:34PM +0100, Sudeep Holla wrote:
-> >On Mon, Apr 14, 2025 at 11:00:20AM +0000, Peng Fan wrote:
-> >> 
-> >> Oops, I just checked wrong Kconfig under drivers/firmware/arm_scmi/
-> >> vendors/imx
-> >> 
-> >> Build this for ARM32 i.MX is ok, I just think no need. So add
-> >> a ARM64 dependency.
-> >> 
-> >
-> >OK, I will drop the ARM64 dependency when applying. I also don't understand
+On Tue, Apr 15, 2025 at 12:34:27PM +0000, gaoxu wrote:
+> > Growing it doesn't feel like a big deal.  Although "saves two assembly
+> > instructions" is also not exactly a big win.  If it saved a cacheline reference,
+> > that might be more interesting, but it seems like it's more likely to introduce a
+> > cacheline reference than save one.  Maybe just not worth doing?
 > 
-> Thanks for helping on this.
-> 
-> >the dependency on i.MX firmware LMM and CPU drivers in the scmi vendor
-> >protocol as the dependency should be other way around. But I see Arnd had
-> >fixed it so I will keep it as you have posted to keep them all aligned.
-> Not dig into much on this.
-> I just followed what Arnd did when I prepared the patchset to avoid
-> potential build issue as reported before.
-> 
+> Zone, zone_pgdat, and node_zones are all considered hot data; most of the time,
+> they reside in the cache. In contrast, zone_idx in the patch is not hot data,
+> and executing ((zone)->zone_idx) will add a new cache line.
+> Am I understanding this correctly?
 
-Yes, I am keeping it based on those changes. I need to spend sometime to
-understand why it was done so and see if anything can be improved. It is
-not straightforward to understand that dependency, for me looks like it
-is in reverse direction.
+CPUs are not limited in the number of instructions they can execute today.
+For example the ARM X4 can execute 8 instructions per clock.  Most of
+the time most of the CPU is idle, waiting on cache misses.  A cache
+miss (all the way to memory) is about 100ns, so if said CPU is clocked
+at 3.4GHz, that's 2700 instructions that could be executed instead of
+waiting for that cacheline.  Other top-end CPUs have similar numbers;
+you can find weak CPUs out there which have smaller ratios, but we don't
+tend to optimise for low-end CPUs.
 
-Anyway I have pushed it tentatively, will let you know once it is finalised.
-
--- 
-Regards,
-Sudeep
+Therefore it is more important to avoid cacheline misses than it is to
+reduce the number of instructions executed.  You haven't measured any
+improvement from your patch, so I think we should defaut to not
+changing anything.
 
