@@ -1,86 +1,177 @@
-Return-Path: <linux-kernel+bounces-604432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00D2CA8945B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:00:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10197A8945F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:01:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4E043A6939
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 06:59:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74682188D9FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:01:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA002797A9;
-	Tue, 15 Apr 2025 07:00:11 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61B06275112;
+	Tue, 15 Apr 2025 07:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KM18OPyt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B6C92DFA34
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 07:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A66CD2DFA34;
+	Tue, 15 Apr 2025 07:01:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744700411; cv=none; b=jbcqQhx8NhoGflFLsJWovl6ZO7n5ytrrMzRKizJ3iMPNQT8m8RcN7OtKRChnxZ2533jJBysviuQsm892/wwQKymZB6ypiNKXmEl8IWZ/Ov6DsCwmBhQAxGzCryVGIfccEHTUu31UzXp8gUN1qxhyX8n4lJxaDklG1XQfBVsjo3Q=
+	t=1744700473; cv=none; b=byB5AGN24aa+PO1VFDc9pWKfepFzr9xj743ZNcomygD0hGv/CPM1Kl2UE41+V0LWE/nf8EpRUMbGMffsdmwj8UDo/+rB9rjK1dROWuP32dFMSeWO0xXTsP5IKtgDGKEyvNxOLE8paOoahh15ZpDzFh6XZKtDHGajdZc0F+jQhco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744700411; c=relaxed/simple;
-	bh=gq+phSkihUwXvObYCdgmWbj7fw9c2Fm+kZJFOElZVy8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=nRubzMOmPlRAYitmLw05O6Wu/2UCkTTdY30wF/MFp/PNQQJ3Sw7yacNXxpUJ8gEy6q+5t32sjtiXdUJomqzSkhIf8GtV8Y8zY66anjHj2o0VaYktDC9UdeG5xTbUcEXDyoSGdlLS1trvIlM46aE6zl3OLhCRtA0FSqMZ9oYh0V4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3d5da4fb5e0so50577115ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 00:00:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744700402; x=1745305202;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z49npPDVJcoYR8QVvdvdqVpd4WlK4Gx1afo3n21Bw8k=;
-        b=CkVul4uHumzjTs2aYikwq/dFV/QwhwCunAzkthDsYZxB2HKsj955WuvHBJ8uLw9wz4
-         JNBKjuLD2qMm5Z4jKNaDoztIcfaeHSQcnBKn9Vy3dcBqPQKfmrwgMAjfUynbW4euryaw
-         1mo3AxqtdE6mAWzZIKoHdDMgyO/0Ftf2phz+cNaXjLGgXFAZ0nFgHDcqMA8UaX4uUEg2
-         hCGcFC0tPc7vA6BZbulBzr5W+Tw6YbroSDTbpbHWm8Itl5tUOjTkygkJXgeeJLj/9/JV
-         TqRTyygxE5NnEdRZW3ckFO39HklbxmY8CR//4qIHbu64mhm/1yx5vIZ4NgTfIf28m5vc
-         KnMw==
-X-Gm-Message-State: AOJu0YymnQQpd/yf3OUa6ucu1nucuFeUVGYFzlLj8o0x51LrXYT83OJb
-	Ido6obzvEwXRmij2Tsn9R7TuOsjBxCkkQmtSqtQA67dRrY5nOcPnuGz97hDrlLaDVT2zROiY7Qx
-	ZXin8RIllkTQCoRROMnehr94vsK8oQ2LR2WsXz36iLm9o4oG0N/1zn4Y=
-X-Google-Smtp-Source: AGHT+IEGshKwwwOsZNljXOkQecSSf1AbtGyIQlrMSUXKG1XKUbJyYXhCVtKeFFa6N8F8sUlFCWKRL7Hp87zBogUSgWF+MG3+tG4u
+	s=arc-20240116; t=1744700473; c=relaxed/simple;
+	bh=tP1nLNEOryZ2Rfki3LWUs8Eu0CqMBbLY8xZy7cXBm1M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qkf/lOSOyTBFmzjXZmz+U7xBq44JTFS37ib3JvAewk26CyZSDlUOfR3iAoM9WLvecfJCVNUOGjWWQulgzdVpOvi93tzJ/ZzyTklKRqHC7gVj9qq6Afx4gan7C6PfBWZSozwcxrcoKiqn+s2u2rfOhhkV/vup9OanmHlgE7QTE6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KM18OPyt; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744700471; x=1776236471;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tP1nLNEOryZ2Rfki3LWUs8Eu0CqMBbLY8xZy7cXBm1M=;
+  b=KM18OPytoj12OMm8L7QAJ8kgYc8yLznReoS8MSs+G5sRmABv8xGrNTSk
+   KJnColaZQvQ5VUj4SuWFzyuNmu/8OX2FE/FD5JBrbJ7ILU/lGexHninDr
+   +AVoLVy/tbCmYA3Kgx6jdLNAccOZBZwtEgGwn3wmX0+c5KjPLDq2XCJ6I
+   o3A4zlRPK5+SVzEPxCCKIPkAZgGD7Jc+zxadfPWqBe0fV3o6auRJE+TQH
+   WS41PuXsSL9b/6/81StljZxqy+it8t/o+ZPnRdpa/1y+1GPB+jwWu5bFs
+   096jdz7qkGwpjLuXzpG/uaibaWHwPTxQOPxOApHFhJ2lQZQXxnCKwLKMm
+   A==;
+X-CSE-ConnectionGUID: L8W0ygYzRlGp1Gf/wHN25A==
+X-CSE-MsgGUID: JIRDwf/oRBunTN4nGlb4lA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11403"; a="49845957"
+X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
+   d="scan'208";a="49845957"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 00:01:10 -0700
+X-CSE-ConnectionGUID: pMPcLX8ESJ22RSF9di3EvQ==
+X-CSE-MsgGUID: MoBCwUo+Tl+cMeqTJnpNSw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
+   d="scan'208";a="129999895"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 00:01:07 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1u4aI4-0000000CT86-0em2;
+	Tue, 15 Apr 2025 10:01:04 +0300
+Date: Tue, 15 Apr 2025 10:01:03 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+	linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Kees Cook <kees@kernel.org>, Russell King <linux@armlinux.org.uk>,
+	linux-hardening@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v3 00/33] Implement kernel-doc in Python
+Message-ID: <Z_4EL2bLm5Jva8Mq@smile.fi.intel.com>
+References: <cover.1744106241.git.mchehab+huawei@kernel.org>
+ <871pu1193r.fsf@trenco.lwn.net>
+ <Z_zYXAJcTD-c3xTe@black.fi.intel.com>
+ <87mscibwm8.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3f05:b0:3a7:820c:180a with SMTP id
- e9e14a558f8ab-3d7ec27ceebmr150520165ab.19.1744700402270; Tue, 15 Apr 2025
- 00:00:02 -0700 (PDT)
-Date: Tue, 15 Apr 2025 00:00:02 -0700
-In-Reply-To: <da6db2de-0f48-490b-8f91-a94e80d0567f@amd.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67fe03f2.050a0220.3483fc.0048.GAE@google.com>
-Subject: Re: [syzbot] [mm?] WARNING in move_to_new_folio
-From: syzbot <syzbot+8bb6fd945af4e0ad9299@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, shivankg@amd.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87mscibwm8.fsf@trenco.lwn.net>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hello,
+On Mon, Apr 14, 2025 at 09:17:51AM -0600, Jonathan Corbet wrote:
+> Andy Shevchenko <andriy.shevchenko@intel.com> writes:
+> > On Wed, Apr 09, 2025 at 12:30:00PM -0600, Jonathan Corbet wrote:
+> >> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+> >> 
+> >> > This changeset contains the kernel-doc.py script to replace the verable
+> >> > kernel-doc originally written in Perl. It replaces the first version and the
+> >> > second series I sent on the top of it.
+> >> 
+> >> OK, I've applied it, looked at the (minimal) changes in output, and
+> >> concluded that it's good - all this stuff is now in docs-next.  Many
+> >> thanks for doing this!
+> >> 
+> >> I'm going to hold off on other documentation patches for a day or two
+> >> just in case anything turns up.  But it looks awfully good.
+> >
+> > This started well, until it becomes a scripts/lib/kdoc.
+> > So, it makes the `make O=...` builds dirty *). Please make sure this doesn't leave
+> > "disgusting turd" )as said by Linus) in the clean tree.
+> >
+> > *) it creates that __pycache__ disaster. And no, .gitignore IS NOT a solution.
+> 
+> If nothing else, "make cleandocs" should clean it up, certainly.
+> 
+> We can also tell CPython to not create that directory at all.  I'll run
+> some tests to see what the effect is on the documentation build times;
+> I'm guessing it will not be huge...
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+I do not build documentation at all, it's just a regular code build that leaves
+tree dirty.
 
-Reported-by: syzbot+8bb6fd945af4e0ad9299@syzkaller.appspotmail.com
-Tested-by: syzbot+8bb6fd945af4e0ad9299@syzkaller.appspotmail.com
+$ python3 --version
+Python 3.13.2
 
-Tested on:
+It's standard Debian testing distribution, no customisation in the code.
 
-commit:         01c6df60 Add linux-next specific files for 20250411
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=166f7c04580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=db03cefa26ecf825
-dashboard link: https://syzkaller.appspot.com/bug?extid=8bb6fd945af4e0ad9299
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10d6c470580000
+To reproduce.
+1) I have just done a new build to reduce the churn, so, running make again does nothing;
+2) The following snippet in shell shows the issue
 
-Note: testing is done by a robot and is best-effort only.
+$ git clean -xdf
+$ git status --ignored
+On branch ...
+nothing to commit, working tree clean
+
+$ make LLVM=-19 O=.../out W=1 C=1 CF=-D__CHECK_ENDIAN__ -j64
+make[1]: Entering directory '...'
+  GEN     Makefile
+  DESCEND objtool
+  CALL    .../scripts/checksyscalls.sh
+  INSTALL libsubcmd_headers
+.pylintrc: warning: ignored by one of the .gitignore files
+Kernel: arch/x86/boot/bzImage is ready  (#23)
+make[1]: Leaving directory '...'
+
+$ touch drivers/gpio/gpiolib-acpi.c
+
+$ make LLVM=-19 O=.../out W=1 C=1 CF=-D__CHECK_ENDIAN__ -j64
+make[1]: Entering directory '...'
+  GEN     Makefile
+  DESCEND objtool
+  CALL    .../scripts/checksyscalls.sh
+  INSTALL libsubcmd_headers
+...
+  OBJCOPY arch/x86/boot/setup.bin
+  BUILD   arch/x86/boot/bzImage
+Kernel: arch/x86/boot/bzImage is ready  (#24)
+make[1]: Leaving directory '...'
+
+$ git status --ignored
+On branch ...
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	scripts/lib/kdoc/__pycache__/
+
+nothing added to commit but untracked files present (use "git add" to track)
+
+It's 100% reproducible on my side. I am happy to test any patches to fix this.
+It's really annoying "feature" for `make O=...` builds. Also note that
+theoretically the Git worktree may be located on read-only storage / media
+and this can induce subtle issues.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
