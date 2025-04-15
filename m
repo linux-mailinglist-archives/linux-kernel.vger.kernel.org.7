@@ -1,344 +1,302 @@
-Return-Path: <linux-kernel+bounces-605788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACEAFA8A629
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 19:58:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE584A8A60B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 19:52:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3743B7A4115
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 17:57:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 012A5189C38B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 17:52:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9C722E3E3;
-	Tue, 15 Apr 2025 17:57:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6D9221549;
+	Tue, 15 Apr 2025 17:52:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="STP4jYuu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tr/R4gwl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8EC2222C7;
-	Tue, 15 Apr 2025 17:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22556136E37;
+	Tue, 15 Apr 2025 17:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744739847; cv=none; b=peVx0TAJ9DB3PmhY6lvcPyfff9u0b38k8907MQUuSWe6TaWBiqG9QydN3frw2cIK1sK005rJhZUNGqPz9af5NJYpxcGTa0OjKvxVuQKyenawOhM6T2AxcPFIA1Z8szvgR0wGS/QiK/iaGKGfRiTXxofz13Bwg/ciV5Of/GIOYw8=
+	t=1744739529; cv=none; b=ca5chjHG5N54pJZOTrnuXEkJuQJUlzHyIZ8HQOQ/oHK8Rpoh6RVtYSqj4SSkln1XpGxt/6GXzbMgBC5xw2Vcnt8+9YeXEPLPASZX8bas6JQ+G8nQieu3xMTikysaI0k+53pW3T8WGwOxJkITYntChcsa7GItngDZSTUmFes+2Vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744739847; c=relaxed/simple;
-	bh=XBZyg/2gFjt2bpHl5yqebkaYjp1ITJaPpN98iSU8P8A=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Q9no3eqIaO8eaCqeUTFfxDUdA9HjT1B5cq4Jyw4ISr0aWGpKdnoXq0nPtwAkyc5yH+YPZ9ZzP+7gx2KNzKfzC9VE2bZgr0toaQ/UJ8129ETaxciJHeufFopZRD7STNUisAA2d24t8I2qnp7oAbi7qZCd0LYWnpwDBwSh36TQXe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=STP4jYuu; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744739845; x=1776275845;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=XBZyg/2gFjt2bpHl5yqebkaYjp1ITJaPpN98iSU8P8A=;
-  b=STP4jYuuNkfG9ddDaj+6nSxRoXI20VqRSDuxhRTh+AdnRd06YdMgjaut
-   UX67GUGxlr9D0Gm6rTjRKiiBhYRlPamZ5RrLFIbUZDPf5VnRh3QeW9BBU
-   D7fhcn7ql2xysLwdhlPju6sCuNWU4+UeVjIaGmlnJisxYV6L0BMyVsPJs
-   oD8B6rF6AGOpLUmeH289RZlxGwa9P/J32m7URf5vIO7ybBj7CnXyGOsnZ
-   t87ydnFNZF0QpXzqnef1LiaCJ3wveGe70H1FS5Mrdi4ouhf/BW/0YEjL0
-   0cobUI2dR4BJ3Bcxipvgp6sbgW3sCC2KV3pnHiJtw9GNGraY9Tep8Bppn
-   Q==;
-X-CSE-ConnectionGUID: rv8U7f1IQn2CDQlkh66W4A==
-X-CSE-MsgGUID: ZIwgGAqtQbCuv9HwAAEH/w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="57650459"
-X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="57650459"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 10:57:25 -0700
-X-CSE-ConnectionGUID: EDzO9cNLSg6HsNWH8wZJ4Q==
-X-CSE-MsgGUID: +yt1I4cfRhyrFCB1dAG9gw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="167364104"
-Received: from amlin-018-114.igk.intel.com ([10.102.18.114])
-  by orviesa001.jf.intel.com with ESMTP; 15 Apr 2025 10:57:21 -0700
-From: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
-To: donald.hunter@gmail.com,
-	kuba@kernel.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	vadim.fedorenko@linux.dev,
-	jiri@resnulli.us,
-	anthony.l.nguyen@intel.com,
-	przemyslaw.kitszel@intel.com,
-	andrew+netdev@lunn.ch,
-	aleksandr.loktionov@intel.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	intel-wired-lan@lists.osuosl.org,
-	linux-rdma@vger.kernel.org,
-	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-	Milena Olech <milena.olech@intel.com>
-Subject: [PATCH net-next v1 3/3] ice: add ref-sync dpll pins
-Date: Tue, 15 Apr 2025 19:51:15 +0200
-Message-Id: <20250415175115.1066641-4-arkadiusz.kubalewski@intel.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20250415175115.1066641-1-arkadiusz.kubalewski@intel.com>
-References: <20250415175115.1066641-1-arkadiusz.kubalewski@intel.com>
+	s=arc-20240116; t=1744739529; c=relaxed/simple;
+	bh=RQoQseg/+U+g9e30dznS6KwLoPKb1ll48CUVIcQsrNg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nx1EwOi8IKtRmkxHPRD+kJus17EoF4XSbEhNffPgVLA4jpwGlrjynQPBx5/FrB1S+XdWCkQ+txfuzX4rUu5EvlnSFmuoc9sNe9X1TV/QEsKuflbJByQxtqLrJuKXaoGrtxTv2K5Iw3eQaSVIo6XE8DXo/xYJoNljmeRf5NRWE0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tr/R4gwl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B03F7C4CEE9;
+	Tue, 15 Apr 2025 17:52:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744739528;
+	bh=RQoQseg/+U+g9e30dznS6KwLoPKb1ll48CUVIcQsrNg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Tr/R4gwlaEgaBLaOhu8IiEn/dTQPHsbZJxH2R6e/pO1s5GDf/Fyfm0CVziIemq9Gu
+	 dXtWedaPrk2P9WJPctRRSpZJVZgk6I7+3/1hBgdvGiLTFQBZjSYwEbmmOzPC7QTOs5
+	 wvn8DMpJUDPwUj+WYruME3FYFW74567g/p9WWvqXiRHS+Og8zKalK1TX5eMywze/Qq
+	 tZ/W2UaTDO66uEnLtJNcnDPXCW7+Gl3mMAl3ORnO7vCySscYzrpmCeePWnaNTP/sTE
+	 jIZVZBR8o5/jznAWErAmllxHb/O6UydhIOXtmQPetpnpOZ93aVMXgE14AuKGTvYHyf
+	 AEZ4NtfzSL6Tw==
+Date: Tue, 15 Apr 2025 18:52:00 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: <victor.duicu@microchip.com>
+Cc: <andy@kernel.org>, <dlechner@baylibre.com>, <nuno.sa@analog.com>,
+ <marius.cristea@microchip.com>, <linux-iio@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 1/2] dt-bindings: iio: temperature: add support for
+ MCP998X
+Message-ID: <20250415185200.396d6356@jic23-huawei>
+In-Reply-To: <20250415132623.14913-2-victor.duicu@microchip.com>
+References: <20250415132623.14913-1-victor.duicu@microchip.com>
+	<20250415132623.14913-2-victor.duicu@microchip.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Implement reference sync input pin get/set callbacks, allow user space
-control over dpll pin pairs capable of reference sync support.
+On Tue, 15 Apr 2025 16:26:22 +0300
+<victor.duicu@microchip.com> wrote:
 
-Reviewed-by: Milena Olech <milena.olech@intel.com>
-Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
----
- .../net/ethernet/intel/ice/ice_adminq_cmd.h   |   2 +
- drivers/net/ethernet/intel/ice/ice_dpll.c     | 186 ++++++++++++++++++
- 2 files changed, 188 insertions(+)
+> From: Victor Duicu <victor.duicu@microchip.com>
+> 
+> This is the devicetree schema for Microchip MCP998X/33 and
+> MCP998XD/33D Multichannel Automotive Temperature Monitor Family.
+Hi Victor,
 
-diff --git a/drivers/net/ethernet/intel/ice/ice_adminq_cmd.h b/drivers/net/ethernet/intel/ice/ice_adminq_cmd.h
-index bdee499f991a..7fd0f0091d36 100644
---- a/drivers/net/ethernet/intel/ice/ice_adminq_cmd.h
-+++ b/drivers/net/ethernet/intel/ice/ice_adminq_cmd.h
-@@ -2288,6 +2288,8 @@ struct ice_aqc_get_cgu_abilities {
- 	u8 rsvd[3];
- };
- 
-+#define ICE_AQC_CGU_IN_CFG_FLG2_REFSYNC_EN		BIT(7)
-+
- /* Set CGU input config (direct 0x0C62) */
- struct ice_aqc_set_cgu_input_config {
- 	u8 input_idx;
-diff --git a/drivers/net/ethernet/intel/ice/ice_dpll.c b/drivers/net/ethernet/intel/ice/ice_dpll.c
-index bce3ad6ca2a6..98f0c86f41fc 100644
---- a/drivers/net/ethernet/intel/ice/ice_dpll.c
-+++ b/drivers/net/ethernet/intel/ice/ice_dpll.c
-@@ -12,6 +12,19 @@
- #define ICE_DPLL_PIN_ESYNC_PULSE_HIGH_PERCENT	25
- #define ICE_DPLL_PIN_GEN_RCLK_FREQ		1953125
- 
-+#define ICE_SR_PFA_DPLL_DEFAULTS		0x152
-+#define ICE_DPLL_PFA_REF_SYNC_TYPE		0x2420
-+#define ICE_DPLL_PFA_REF_SYNC_TYPE2		0x2424
-+#define ICE_DPLL_PFA_END			0xFFFF
-+#define ICE_DPLL_PFA_HEADER_LEN			4
-+#define ICE_DPLL_PFA_ENTRY_LEN			3
-+#define ICE_DPLL_PFA_MAILBOX_REF_SYNC_PIN_S	4
-+#define ICE_DPLL_PFA_MASK_OFFSET		1
-+#define ICE_DPLL_PFA_VALUE_OFFSET		2
-+
-+#define ICE_DPLL_E810C_SFP_NC_PINS		2
-+#define ICE_DPLL_E810C_SFP_NC_START		4
-+
- /**
-  * enum ice_dpll_pin_type - enumerate ice pin types:
-  * @ICE_DPLL_PIN_INVALID: invalid pin type
-@@ -1314,6 +1327,89 @@ ice_dpll_input_esync_get(const struct dpll_pin *pin, void *pin_priv,
- 	return 0;
- }
- 
-+/**
-+ * ice_dpll_input_ref_sync_set - callback for setting reference sync feature
-+ * @pin: pointer to a pin
-+ * @pin_priv: private data pointer passed on pin registration
-+ * @ref_pin: pin pointer for reference sync pair
-+ * @ref_pin_priv: private data pointer of ref_pin
-+ * @state: requested state for reference sync for pin pair
-+ * @extack: error reporting
-+ *
-+ * Dpll subsystem callback. Handler for setting reference sync frequency
-+ * feature for input pin.
-+ *
-+ * Context: Acquires and releases pf->dplls.lock
-+ * Return:
-+ * * 0 - success
-+ * * negative - error
-+ */
-+static int
-+ice_dpll_input_ref_sync_set(const struct dpll_pin *pin, void *pin_priv,
-+			    const struct dpll_pin *ref_pin, void *ref_pin_priv,
-+			    const enum dpll_pin_state state,
-+			    struct netlink_ext_ack *extack)
-+{
-+	struct ice_dpll_pin *p = pin_priv;
-+	struct ice_pf *pf = p->pf;
-+	u8 flags_en = 0;
-+	int ret;
-+
-+	if (ice_dpll_is_reset(pf, extack))
-+		return -EBUSY;
-+	mutex_lock(&pf->dplls.lock);
-+
-+	if (p->flags[0] & ICE_AQC_GET_CGU_IN_CFG_FLG2_INPUT_EN)
-+		flags_en = ICE_AQC_SET_CGU_IN_CFG_FLG2_INPUT_EN;
-+	if (state == DPLL_PIN_STATE_CONNECTED)
-+		flags_en |= ICE_AQC_CGU_IN_CFG_FLG2_REFSYNC_EN;
-+	ret = ice_aq_set_input_pin_cfg(&pf->hw, p->idx, 0, flags_en, 0, 0);
-+	if (!ret)
-+		ret = ice_dpll_pin_state_update(pf, p, ICE_DPLL_PIN_TYPE_INPUT,
-+						extack);
-+	mutex_unlock(&pf->dplls.lock);
-+
-+	return ret;
-+}
-+
-+/**
-+ * ice_dpll_input_ref_sync_get - callback for getting reference sync config
-+ * @pin: pointer to a pin
-+ * @pin_priv: private data pointer passed on pin registration
-+ * @ref_pin: pin pointer for reference sync pair
-+ * @ref_pin_priv: private data pointer of ref_pin
-+ * @state: on success holds reference sync state for pin pair
-+ * @extack: error reporting
-+ *
-+ * Dpll subsystem callback. Handler for setting reference sync frequency
-+ * feature for input pin.
-+ *
-+ * Context: Acquires and releases pf->dplls.lock
-+ * Return:
-+ * * 0 - success
-+ * * negative - error
-+ */
-+static int
-+ice_dpll_input_ref_sync_get(const struct dpll_pin *pin, void *pin_priv,
-+			    const struct dpll_pin *ref_pin, void *ref_pin_priv,
-+			    enum dpll_pin_state *state,
-+			    struct netlink_ext_ack *extack)
-+{
-+	struct ice_dpll_pin *p = pin_priv;
-+	struct ice_pf *pf = p->pf;
-+
-+	if (ice_dpll_is_reset(pf, extack))
-+		return -EBUSY;
-+	mutex_lock(&pf->dplls.lock);
-+	if (p->flags[0] & ICE_AQC_CGU_IN_CFG_FLG2_REFSYNC_EN)
-+		*state = DPLL_PIN_STATE_CONNECTED;
-+	else
-+		*state = DPLL_PIN_STATE_DISCONNECTED;
-+	mutex_unlock(&pf->dplls.lock);
-+
-+	return 0;
-+}
-+
- /**
-  * ice_dpll_rclk_state_on_pin_set - set a state on rclk pin
-  * @pin: pointer to a pin
-@@ -1440,6 +1536,8 @@ static const struct dpll_pin_ops ice_dpll_input_ops = {
- 	.phase_offset_get = ice_dpll_phase_offset_get,
- 	.esync_set = ice_dpll_input_esync_set,
- 	.esync_get = ice_dpll_input_esync_get,
-+	.ref_sync_set = ice_dpll_input_ref_sync_set,
-+	.ref_sync_get = ice_dpll_input_ref_sync_get,
- };
- 
- static const struct dpll_pin_ops ice_dpll_output_ops = {
-@@ -1619,6 +1717,91 @@ static void ice_dpll_periodic_work(struct kthread_work *work)
- 				   msecs_to_jiffies(500));
- }
- 
-+/**
-+ * ice_dpll_init_ref_sync_inputs - initialize reference sync pin pairs
-+ * @pf: pf private structure
-+ *
-+ * Read DPLL TLV capabilities and initialize reference sync pin pairs in
-+ * dpll subsystem.
-+ *
-+ * Return:
-+ * * 0 - success or nothing to do (no ref-sync tlv are present)
-+ * * negative - AQ failure
-+ */
-+static int ice_dpll_init_ref_sync_inputs(struct ice_pf *pf)
-+{
-+	struct ice_dpll_pin *inputs = pf->dplls.inputs;
-+	struct ice_hw *hw = &pf->hw;
-+	u16 addr, len, end, hdr;
-+	int ret;
-+
-+	ret = ice_get_pfa_module_tlv(hw, &hdr, &len, ICE_SR_PFA_DPLL_DEFAULTS);
-+	if (ret) {
-+		dev_err(ice_pf_to_dev(pf),
-+			"Failed to read PFA dpll defaults TLV ret=%d\n", ret);
-+		return ret;
-+	}
-+	end = hdr + len;
-+
-+	for (addr = hdr + ICE_DPLL_PFA_HEADER_LEN; addr < end;
-+	     addr += ICE_DPLL_PFA_ENTRY_LEN) {
-+		unsigned long bit, ul_mask, offset;
-+		u16 pin, mask, buf;
-+		bool valid = false;
-+
-+		ret = ice_read_sr_word(hw, addr, &buf);
-+		if (ret)
-+			return ret;
-+
-+		switch (buf) {
-+		case ICE_DPLL_PFA_REF_SYNC_TYPE:
-+		case ICE_DPLL_PFA_REF_SYNC_TYPE2:
-+		{
-+			u16 mask_addr = addr + ICE_DPLL_PFA_MASK_OFFSET;
-+			u16 val_addr = addr + ICE_DPLL_PFA_VALUE_OFFSET;
-+
-+			ret = ice_read_sr_word(hw, mask_addr, &mask);
-+			if (ret)
-+				return ret;
-+			ret = ice_read_sr_word(hw, val_addr, &pin);
-+			if (ret)
-+				return ret;
-+			if (buf == ICE_DPLL_PFA_REF_SYNC_TYPE)
-+				pin >>= ICE_DPLL_PFA_MAILBOX_REF_SYNC_PIN_S;
-+			valid = true;
-+			break;
-+		}
-+		case ICE_DPLL_PFA_END:
-+			addr = end;
-+			break;
-+		default:
-+			continue;
-+		}
-+		if (!valid)
-+			continue;
-+
-+		ul_mask = mask;
-+		offset = 0;
-+		for_each_set_bit(bit, &ul_mask, BITS_PER_TYPE(u16)) {
-+			int i, j;
-+
-+			if (hw->device_id == ICE_DEV_ID_E810C_SFP &&
-+			    pin > ICE_DPLL_E810C_SFP_NC_START)
-+				offset = -ICE_DPLL_E810C_SFP_NC_PINS;
-+			i = pin + offset;
-+			j = bit + offset;
-+			if (i < 0 || j < 0)
-+				return -ERANGE;
-+			ret = dpll_pin_ref_sync_pair_add(inputs[i].pin,
-+							 inputs[j].pin);
-+			if (ret)
-+				return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- /**
-  * ice_dpll_release_pins - release pins resources from dpll subsystem
-  * @pins: pointer to pins array
-@@ -1936,6 +2119,9 @@ static int ice_dpll_init_pins(struct ice_pf *pf, bool cgu)
- 	if (ret)
- 		return ret;
- 	if (cgu) {
-+		ret = ice_dpll_init_ref_sync_inputs(pf);
-+		if (ret)
-+			goto deinit_inputs;
- 		ret = ice_dpll_init_direct_pins(pf, cgu, pf->dplls.outputs,
- 						pf->dplls.num_inputs,
- 						pf->dplls.num_outputs,
--- 
-2.38.1
+Please state briefly here in what way the parts are incompatible
+as a justification for no fallback compatibles.  Quite a bit
+of that will become apparent when you enforce validity of parameters
+as suggested below.
+
+Various comments inline.
+> 
+> Signed-off-by: Victor Duicu <victor.duicu@microchip.com>
+> ---
+>  .../iio/temperature/microchip,mcp9982.yaml    | 182 ++++++++++++++++++
+>  1 file changed, 182 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/temperature/microchip,mcp9982.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/temperature/microchip,mcp9982.yaml b/Documentation/devicetree/bindings/iio/temperature/microchip,mcp9982.yaml
+> new file mode 100644
+> index 000000000000..8cbf897d1278
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/temperature/microchip,mcp9982.yaml
+> @@ -0,0 +1,182 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/temperature/microchip,mcp9982.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Microchip MCP998X/33 and MCP998XD/33D Multichannel Automotive Temperature Monitor Family
+> +
+> +maintainers:
+> +  - Victor Duicu <victor.duicu@microchip.com>
+> +
+> +description: |
+> +  The MCP998X/33 and MCP998XD/33D family is a high-accuracy 2-wire multichannel
+> +  automotive temperature monitor.
+> +  The datasheet can be found here:
+> +    https://ww1.microchip.com/downloads/aemDocuments/documents/MSLD/ProductDocuments/DataSheets/MCP998X-Family-Data-Sheet-DS20006827.pdf
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - microchip,mcp9933
+> +      - microchip,mcp9933D
+> +      - microchip,mcp9982
+> +      - microchip,mcp9982D
+> +      - microchip,mcp9983
+> +      - microchip,mcp9983D
+> +      - microchip,mcp9984
+> +      - microchip,mcp9984D
+> +      - microchip,mcp9985
+> +      - microchip,mcp9985D
+> +
+> +  reg:
+> +    maxItems: 1
+> +    
+> +  interrupts:
+> +    maxItems: 2
+> +    
+> +  interrupt-names:
+> +    description: |
+> +      ALERT1 indicates a HIGH or LOW limit was exceeded.
+> +      ALERT2 indicates a THERM limit was exceeded.
+> +    items:
+> +      - const: ALERT1
+> +      - const: ALERT2
+> +    
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 0
+> +
+> +  microchip,temp-hysteresis:
+> +    description: |
+> +      Value of temperature limit hysteresis.
+> +      Omit this tag to set the default value.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+
+Can we just make this a userspace thing using appropriate _hysteresis ABI element?
+
+
+> +    
+> +  microchip,extended-temp-range:
+> +    description: |
+> +      Set the chip to work in the extended temperature range -64 degrees C to 191.875 degrees C.
+> +      Omit this tag to set the default range 0 degrees C to 127.875 degrees C
+> +    type: boolean
+
+I'm curious.  Why does this belong in the DT binding?
+
+> +    
+> +  microchip,beta-channel1:
+> +    description: |
+> +      The beta compensation factor for external channel 1 can be set
+> +      by the user, or can be set automatically by the chip.
+> +      If one wants to enable beta autodetection, omit this tag.
+> +      Please consult the documentation if one wants to set a specific beta.
+> +      If anti-parallel diode operation is enabled, the default value is set
+> +      and can't be changed.
+> +    type: boolean
+
+Why is this a hardware thing that belongs in dt?  Enforce the constraint
+in the schema rather than text.
+
+> +    
+> +  microchip,beta-channel2:
+> +    description: |
+> +      The beta compensation factor for external channel 2 can be set
+> +      by the user, or can be set automatically by the chip.
+> +      If one wants to enable beta autodetection, omit this tag.
+> +      Please consult the documentation if one wants to set a specific beta.
+> +      If anti-parallel diode operation is enabled, the default value is set
+> +      and can't be changed.
+> +    type: boolean
+> +    
+> +  microchip,apdd-state:
+> +    description: |
+> +      Enable anti-parallel diode mode operation.
+> +      Omit this tag to disable anti-parallel diode mode by default.
+
+This one is unusual.  Maybe a little more description (I looked it up
+and am fine with why this is in DT)
+
+> +    type: boolean
+> +    
+> +  microchip,recd12:
+> +    description: |
+
+No need for | on paragraphs where formatting doesn't need to be maintained.
+
+> +      Enable resistance error correction for external channels 1 and 2.
+> +      Not all chips support resistance error correction on external
+> +      channels 1 and 2, please consult the documentation.
+
+Enforce it in the schema, no need to say that chips don't support it
+in text. Look at the various allOf statements with compatible matches
+in other bindings for how to do that.
+
+> +      Omit this tag to disable REC for channels 1 and 2 by default.
+> +    type: boolean
+> +    
+> +  microchip,recd34:
+> +    description: |
+> +      Enable resistance error correction for external channels 3 and 4.
+> +      Not all chips support resistance error correction on external
+> +      channels 3 and 4, please consult the documentation.
+> +      Omit this tag to disable REC for channels 3 and 4 by default.
+> +    type: boolean
+> +    
+> +  label:
+> +    description: Unique name to identify which device this is.
+> +    
+> +  vdd-supply: true
+> + 
+> +patternProperties:
+> +  "^channel@[1-4]+$":
+> +    description: |
+> +      Represents the external temperature channels to which a remote diode is
+> +      connected.
+> +    type: object
+> +
+> +    properties:
+> +      reg:
+> +        items:
+> +          minimum: 1
+> +          maximum: 4
+> +      
+> +      microchip,ideality-factor:
+> +        description: |
+> +          Each channel has an ideality factor.
+> +          Beta compensation and resistance error correction automatically correct
+> +          for most ideality error. So ideality factor does not need to be adjusted in general.
+
+wrap at 80 chars. Also try to avoid explicit formatting where it isn't needed.
+
+> +          Omit this tag in order to set the default value.
+> +          Please consult the documentation if one wants to set a specific ideality value.
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +      
+> +      label:
+> +        description: Unique name to identify which channel this is.
+> +    
+> +    required:
+> +      - reg
+> +    
+> +    unevaluatedProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - vdd-supply
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +        
+> +        temperature-sensor@4c {
+> +            compatible = "microchip,mcp9985";
+> +            reg = <0x4c>;
+> +            
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +
+> +            label = "temperature-sensor";
+> +            
+> +            microchip,temp-hysteresis = <10>;
+> +            microchip,extended-temp-range;
+> +            microchip,apdd-state;
+> +            microchip,recd12;
+> +            microchip,recd34;
+> +            vdd-supply = <&vdd>;
+> +            
+> +            channel@1{
+> +                reg = <0x1>;
+> +                label = "CPU Temperature";
+> +            };
+> +            
+> +            channel@2{
+> +                reg = <0x2>;
+> +                label = "GPU Temperature";
+> +            };
+> +        };
+> +    };
+> +
+> +...
 
 
