@@ -1,105 +1,180 @@
-Return-Path: <linux-kernel+bounces-605446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EF90A8A14E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:37:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5D4CA8A156
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:38:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E34A93BCE3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:37:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FEC4190253C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:38:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD09297A6B;
-	Tue, 15 Apr 2025 14:37:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 474082957C3;
+	Tue, 15 Apr 2025 14:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dn07Cnu/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gs2ht0Z1"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A434B28BA8D;
-	Tue, 15 Apr 2025 14:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 109932949EB;
+	Tue, 15 Apr 2025 14:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744727822; cv=none; b=ssXnhkM7N85fZx11yNOAlGeFs9zGOQLg677vmCrayhrgyd2NJKtNy4WxfLaY+k6SELH4SJqW2Gi3Jb34sFSz3syyNlrRV4BbZO+y5WrRsQlpNh904t5YUn4gopIe331dqzZpfQnwKX+ZhT9fgao1WPSoLqLgctz1wQf+yikh5vI=
+	t=1744727876; cv=none; b=re+2L6Vjbvk3hn9kZsbN33kPr8udp5PMuq3jAO/IgpjROzZcqUfEtIeBcNBft6xHWe0tMbsPyM+k4Jz7yH/FewMLUOazmY7qARAkr4IwXSdXvi+Qc18qAvMxSEmwVuBR1+EoI1zPG4tP5VXN1ZyuXgLsE3wzP/kn5ooNkqDJf5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744727822; c=relaxed/simple;
-	bh=TvQnWFwdFpnb9SYNTlS+cB5AlPbPdOfp9gzg8DWDZWw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=pPcnV57JMS0z0X0t5e3XIQCK6bAzh7a5ATy+LVbNhjc+OJV6lnDIf916kylOQD6Dr9Pc1aSvFoAoKpEZndYip5YBCm5CaYos22RgBXeLMlhWBsLrJ9BU5vjWSvy/+B8DluNYDzGP+8yskRhjWLKEk28FLZbzEuUWPJO3DxFN6Xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dn07Cnu/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 195B3C4CEDD;
-	Tue, 15 Apr 2025 14:36:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744727822;
-	bh=TvQnWFwdFpnb9SYNTlS+cB5AlPbPdOfp9gzg8DWDZWw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Dn07Cnu/kFBVXv1Hr2tWaO28RVeoLvd4Fil9vomPeVAg5bMrmE7mR1SVX2XhyX9iO
-	 6VtAuaklZf9XVZpWUge9CpluAaK9gXzZYVG0IJrWKuk4w4koupzqLa6950XbGFGm6L
-	 2btuLdnnaLAcOTNaPCKykNKwulHlhm814Snyt0Au2cY/s3iO8PobHdC0TzDFrriML3
-	 S36Bd881s5cEQH0mLdjJXcBVAUpsTBOMdQAyOg6hvclOFVKjx7L1N5k7qxZ1Eqxg2U
-	 zEB7lV7JODSsMDNRQMQUhwTbL25z2JfZ/Ip9QiPz3M3Dgxk4YVtT/TvgziiaKfPpU/
-	 rH2c556UD42eg==
-From: Mark Brown <broonie@kernel.org>
-To: David Rhodes <david.rhodes@cirrus.com>, 
- Richard Fitzgerald <rf@opensource.cirrus.com>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
- Thorsten Blum <thorsten.blum@linux.dev>
-Cc: linux-sound@vger.kernel.org, patches@opensource.cirrus.com, 
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-In-Reply-To: <20250415090354.92211-2-thorsten.blum@linux.dev>
-References: <20250415090354.92211-2-thorsten.blum@linux.dev>
-Subject: Re: [PATCH] ASoC: cs-amp-lib: Annotate struct cirrus_amp_efi_data
- with __counted_by()
-Message-Id: <174472781982.130155.12727122291223637995.b4-ty@kernel.org>
-Date: Tue, 15 Apr 2025 15:36:59 +0100
+	s=arc-20240116; t=1744727876; c=relaxed/simple;
+	bh=V/a25hNDB5z+WSFk0T0WLV9zb5V5Bm1HJTIXWRoF3Aw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pJiYoi5CuHMyTbYkaP1tvnQdR16CCww5VvetHT+Lratx1tGYsG9j2RCLIzwmqx/Mi1hL1mFFfnkT0US4GxFu4IQwlgqlDFvNbayN2/p+9TTrGg6D3dj5dH21+azbmGghTNzwQ0O0P+1owp2EG+SX0bTp4IlKCAz1W9fTL0xENj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gs2ht0Z1; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6febf391132so53012517b3.1;
+        Tue, 15 Apr 2025 07:37:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744727874; x=1745332674; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SwIcbrCFSkjJ99K0oqnE440Z8NS7MO6dY71VBSoxwu4=;
+        b=gs2ht0Z1D7HKJsnKwjsguX87p00wVQOXeIBr10Tsm8xLfiPrxeFc0cT1ckxP6LhtJo
+         vmEYzj08zyQXj/OxsbMQ7h0+OkL5iQJql8XWsiM7SWPHo5M2y9gPy3z6Gy89E2OJYnrw
+         sQ8BZR87KSPQDuAzcH2KcUTA9ZBSFQISvOtMZK+FyhFpyijw0QXBoC88zcoMf1M3npOX
+         wK6peapQiz5MvMPXSxnUkc2/BYpgTJvKETdoHmTweRHMbTB8LlhdKAED9iZdQPaHtQeT
+         g2/dimH8T47MZo2266BbaejYupjRf/UEcV4nPWTENCK8c4dDNEemNsGlda5pWEK879DE
+         u+rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744727874; x=1745332674;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SwIcbrCFSkjJ99K0oqnE440Z8NS7MO6dY71VBSoxwu4=;
+        b=KQWGS1rJPs5epi+z9zCYm0+Q+V59qr4IvWEBsoXKphgm5zyUX5eQfhankMnOHmomgT
+         7mF7JGff37aqiYhkOgPjB0oLEojSHj+A9spSrboSaPUWcy5lKR6bFnNWUoBS7phQ++Z9
+         R/zxwdAztyU31u82+0w6JF53SP0Q/OYd6fJHIgyEprqzpu3e0RKpKleqs6DeDoUweHaM
+         krlT42xTyRn3f3li+Iz9KpxY04dkAWZ/N7qYtIzl3sNFBMZK6b2X0EKKlc6FaZw+8/M8
+         loS1DZQSqeHmlenR6y4DkjMQFdhYF210QrcCuQuDmJyFDZZBD3NdMFwY/GNEjSo9Camq
+         m+rQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUNHRuhpGQ57friAEfCwbpLUAkG226iK+hf26/4QTX1BBkYxVi0dxWKlqjixFgiuks/iYajeCoMKqpZFIP2@vger.kernel.org, AJvYcCVDjydCm41IMlLScYB2/gqJHtfmZeMSDCg8462GSVpMJ/1rvUf80P8ghtA1X5liSI/dP6Y7BqXCRo9nor7QAde2@vger.kernel.org, AJvYcCWEYbtBq5/ltax2vkIgsDaqRASPicfKQoPo8+zKJ9iiSXsn3qnZi7U4VGH0aGjo5MoQBWQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRxnK7NxXW9hUkg47sRNa1hWXXeiJMtPBQ1xmgU8IF5iBeGKHC
+	M2MnjZlMGEZP70pEWzSboy3mSuaXRp3+K4lpMyBllsTcT4qjgPSUfx54lM8NcbQnlbPlyKuYhN6
+	tONIKhuwSakO7Dy45MzrVaaX84TI=
+X-Gm-Gg: ASbGncvGQCGnNinLAXO9sA8Ztvvf6Xqw+v1tR+/hHNbsLN18opGmldSDrsSsBhFtK6Z
+	cDm0B2clpTFrMPQjUm1YmrE4M8XKNZ7H5bLeenrFp1kfqhDbTE6aCyMOnnpCJpZ6E9at+5GXlL7
+	572eYcwUEUiCvmdNFnvzsjsg==
+X-Google-Smtp-Source: AGHT+IHUMxvu/aOeLKk2k5l1s/fZpbZMV26GOgsy8sNTFTBpovDHd4DLx4JmGn+hEKfCP1n08IvUdhwvV3xwn980+GM=
+X-Received: by 2002:a05:690c:38b:b0:6ff:1fac:c502 with SMTP id
+ 00721157ae682-705599819femr253641937b3.6.1744727873793; Tue, 15 Apr 2025
+ 07:37:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-c25d1
+References: <20250412170626.3638516-1-kafai.wan@hotmail.com>
+ <20250412170626.3638516-2-kafai.wan@hotmail.com> <Z_zk2ZaG5fRRFQio@krava>
+In-Reply-To: <Z_zk2ZaG5fRRFQio@krava>
+From: Kafai Wan <mannkafai@gmail.com>
+Date: Tue, 15 Apr 2025 22:37:42 +0800
+X-Gm-Features: ATxdqUFfDAA6h_yahdP12xKT_OlDfjXjxWcEGnJt25PijmtECR6HpfsyjMNRKAw
+Message-ID: <CALqUS-76D5ywRC6EUnd2O=L5VLuQBaOJOgnJeOLZxJpArqomtQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 1/2] bpf: Allow access to const void pointer
+ arguments in tracing programs
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: martin.lau@linux.dev, ast@kernel.org, daniel@iogearbox.net, 
+	andrii@kernel.org, eddyz87@gmail.com, song@kernel.org, 
+	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
+	sdf@fomichev.me, haoluo@google.com, mykolal@fb.com, shuah@kernel.org, 
+	memxor@gmail.com, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kafai.wan@hotmail.com, leon.hwang@linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 15 Apr 2025 11:03:55 +0200, Thorsten Blum wrote:
-> Add the __counted_by() compiler attribute to the flexible array member
-> 'data' to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-> CONFIG_FORTIFY_SOURCE.
-> 
-> No functional changes intended.
-> 
-> 
-> [...]
+On Mon, Apr 14, 2025 at 6:35=E2=80=AFPM Jiri Olsa <olsajiri@gmail.com> wrot=
+e:
+>
+> On Sun, Apr 13, 2025 at 01:06:25AM +0800, KaFai Wan wrote:
+> > Adding support to access arguments with const void pointer arguments
+> > in tracing programs.
+> >
+> > Currently we allow tracing programs to access void pointers. If we try =
+to
+> > access argument which is pointer to const void like 2nd argument in kfr=
+ee,
+> > verifier will fail to load the program with;
+> >
+> > 0: R1=3Dctx() R10=3Dfp0
+> > ; asm volatile ("r2 =3D *(u64 *)(r1 + 8); ");
+> > 0: (79) r2 =3D *(u64 *)(r1 +8)
+> > func 'kfree' arg1 type UNKNOWN is not a struct
+> >
+> > Adding is_void_ptr to generic void  pointer check.
+> >
+> > Cc: Leon Hwang <leon.hwang@linux.dev>
+> > Signed-off-by: KaFai Wan <kafai.wan@hotmail.com>
+> > ---
+> >  kernel/bpf/btf.c | 10 +++++++++-
+> >  1 file changed, 9 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+> > index 16ba36f34dfa..e11d3afd0562 100644
+> > --- a/kernel/bpf/btf.c
+> > +++ b/kernel/bpf/btf.c
+> > @@ -6383,6 +6383,14 @@ struct btf *bpf_prog_get_target_btf(const struct=
+ bpf_prog *prog)
+> >               return prog->aux->attach_btf;
+> >  }
+> >
+> > +static bool is_void_ptr(struct btf *btf, const struct btf_type *t)
+> > +{
+> > +     /* skip modifiers */
+> > +     t =3D btf_type_skip_modifiers(btf, t->type, NULL);
+> > +
+> > +     return t->type =3D=3D 0;
+>
+> I think you can use btf_type_is_void in here
+>
 
-Applied to
+Yes, I will use btf_type_is_void.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+> > +}
+> > +
+> >  static bool is_int_ptr(struct btf *btf, const struct btf_type *t)
+> >  {
+> >       /* skip modifiers */
+> > @@ -6776,7 +6784,7 @@ bool btf_ctx_access(int off, int size, enum bpf_a=
+ccess_type type,
+> >               }
+> >       }
+> >
+> > -     if (t->type =3D=3D 0)
+> > +     if (is_void_ptr(btf, t))
+>
+> lgtm,
+>
+> nit, the is_void_ptr name suggest there's also ptr check in the helper fu=
+nction,
+> which is not the case. I understand it follows is_int_ptr name, but perha=
+ps we
+> could rename both helpers to is_void and is_int ... feel free to ignore ;=
+-)
 
-Thanks!
+you are right, I will rename it. but I'm not sure if it's possible to merge
+these two functions into one like is_void_or_int, they both skip modifiers.
 
-[1/1] ASoC: cs-amp-lib: Annotate struct cirrus_amp_efi_data with __counted_by()
-      commit: fcdf212fd9b36c299d90229e9546c077db2215ce
+>
+> jirka
+>
+>
+> >               /* This is a pointer to void.
+> >                * It is the same as scalar from the verifier safety pov.
+> >                * No further pointer walking is allowed.
+> > --
+> > 2.43.0
+> >
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+thanks,
+kafai
 
