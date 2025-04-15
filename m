@@ -1,120 +1,151 @@
-Return-Path: <linux-kernel+bounces-605216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32D87A89E4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:38:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F163A89E53
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:40:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30A357A4477
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:37:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50432190226A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:40:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9B828B4EF;
-	Tue, 15 Apr 2025 12:38:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C09C4294A05;
+	Tue, 15 Apr 2025 12:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ejf15B0G";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uXHBILYw"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eLOp8zQX"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D996A22F01;
-	Tue, 15 Apr 2025 12:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F59D22F01;
+	Tue, 15 Apr 2025 12:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744720694; cv=none; b=XzeeVz50Jwhds0f6rbzaO1o54jbPTaqJ8Tkz6ZU/rhiJHIZIuM73Y+YfYsun43L4Ta0xD4NzZvm9Rr0ZOBXWOgoW4eQzJ3qwZF4EmdC3F1kVHPBwiPPdphfBHtIVgdkG6KpZUERKhsZ1gplaQRYOljoeiyahpR/U+YvwM0TLxqs=
+	t=1744720800; cv=none; b=Yz/v5myjtyt84jnPWejjKHxzGu3AQtgD7ct5vpfvUi9Xl3DxhfVUaNGkww0Fl5YOWAJDmDOPX90iWgqtQ2UEjtBae4ug5/VKFirAEmfttXY3HAtmqAdQ/msix/4jJa35jn24aCLP0zrADFyFCbakm30tN4HKAsrtYR1mWNXQBd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744720694; c=relaxed/simple;
-	bh=zL1jWmoE1Xg/EnZtmsy/sYnq64rgv0mlAeMkBTHwOAY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GWc/L7E0f2C5n4ZHVy9tpQxnB3scPOABi8k/KVwgJ3RbqQ1bZOk1wkdrMAZJvZ1gAB5N7p0kJAB2xtBQZj01Ls76rChNmQcPohVlsLlRPVuoeEXfSpZ0tuGbzb+nLhUGuh5tpREb4nZPd16p6lFbo3cPHS0uzEJJUQ73O5BdQSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ejf15B0G; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uXHBILYw; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 15 Apr 2025 14:38:07 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744720690;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nzawNatPbq1ZNSb9ZVxi6008X2uDX4ctY3uXm4ZDLKc=;
-	b=Ejf15B0G6V/V4b0G5v0K7G9W/9PynAnMz3ByOriTZzIq8uLtTwq/TztJPm7gIviwMkz3Kf
-	n+SAP8ZLJmyRV4ouj/H8QqBot3o0aMi9V62ibzRBZeqYQNt9ouocjl5uL2ME39YppXevRm
-	G+wBc3EWYtn29qYJ1fzP/Wmm8gtqH5SWS7kcaOUl2JGCN5TQilRLROj+NKi2XjHwtSvD+Y
-	3NBL+oppuHwSju1FksExSQsk5xOTKagBDpX8Xfp5DA4wuUgeD99x+ITsWklHKRKdiY2P2K
-	df+fVysMmQJa8BtbWzr86y5i0Yp1xh7BFjend7Z4zqMUVxuk8KhEBJXosw8rDg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744720690;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nzawNatPbq1ZNSb9ZVxi6008X2uDX4ctY3uXm4ZDLKc=;
-	b=uXHBILYw21rrPrwmTaF++U0ZD1onpTceW7OBoUTuHRM0SLb3jzBEUCaGIaT9v6RAqz0WIp
-	NxpopC2Q8LmvviAQ==
-From: Nam Cao <namcao@linutronix.de>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	john.ogness@linutronix.de,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 19/22] rv: Add rtapp_pagefault monitor
-Message-ID: <20250415123807.2MahJd60@linutronix.de>
-References: <cover.1744355018.git.namcao@linutronix.de>
- <f57547af5e8c836f5c548f624e61f3e0002ce0b4.1744355018.git.namcao@linutronix.de>
- <4d5dd1b919aada32ddf4dbce895f19e558343ee9.camel@redhat.com>
+	s=arc-20240116; t=1744720800; c=relaxed/simple;
+	bh=t1kou4M8X297Aad+caa6GBhyKnczwsX+gDFBhuB55m4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pTzQl/vKIMOgyKWJypgWZxptQUQT3pPexZKtX+ArmL48m+qWB/kyzkSgxk95Nw6KZM2F8asNgtdPx+3Niz0t0fzYlJs7OgVz6X135p8dmllAyOLSghoHjwP6M5dxx5/0k5Dik0hylKRWJx7fFf8ZReZa78wcxf6rXZpyYr0kODo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eLOp8zQX; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-39d83782ef6so4213266f8f.0;
+        Tue, 15 Apr 2025 05:39:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744720797; x=1745325597; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=A9hVPDb1RM67wHiurj3uzHcX5sDObVhpjzOPgy4uCpM=;
+        b=eLOp8zQXtLgEDVA8f/UjsKvxT28iqgV3CKJDV1nG4Hzp+0YMn52mVLsqtCmH+tf+nC
+         1gefJyHu4iLJXMNvII4lpEVKX86Agz9uH8TQrsBitNUxK+xm0/R42Bm8UrLoPzze4Dt4
+         POoRQOBX3eRuKSStYCnZAi1L8CbB75GMf7uODBELMQNZ86dEzWUeEl1f6WyO662cBBJ6
+         P173HKcoKE4gq6/QTdM/ZOTg4jY8zoTTJ/UIT4V8OHjITgGhGW2Y8l+fJluthmq+Mudz
+         UJK9GEwveozJSI27i0FQVvlFxepGncudNMw1AKS7ScTUnSWGrb23ARnznKOsoKvmS5nV
+         x1+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744720797; x=1745325597;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=A9hVPDb1RM67wHiurj3uzHcX5sDObVhpjzOPgy4uCpM=;
+        b=EL8ECfq8wgBwLEWLlaMVe1gQ+Tu9tMQzzy20lmVC+V6O/1R3bKdCYvoTGcw3asog/w
+         mj+SAQcO01mYiS0UTHMzyOwzj3nQDAncPX2CrWzSuxNNXY3d28163YENOUS1+HtFP/7U
+         P9v0qbMNI3K4J8lc4S/Bm/calkdkFs31zYzpT+jF4MGXUNLrWlFPRv7JsKVHdp5pmNZv
+         grbkl4F6PDzBIPhArximbsxOwqlD4YVYU9wVpuMAv3t4WM/FYtBdn74sZ71eMXPwsPjk
+         FpTNXhD3kn2LvomRAFTP8Bn2nWzssvGHZ0yu7XCe37i5CpgWkKrIZ4a1zIqFhnOksCzM
+         jjcA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKhOwXUtbVr/Vp57VFggLcOCQAUAfyWwUsI4QhZVKm3RdxK5iARyn2YdSBBdb9BHJPA2q+Sbp2qrW8hWdS@vger.kernel.org, AJvYcCXhE39mvXDD+U2Lqpp3BL5MznLiFrXv7dirExAhkMm9ODyNldyThgGvg9gclz7mYSzH78v1dRdA+VJHshYty0E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxV+4ov5TZ765dCWgYaF4NONV7yspBoXWjZUDrLn+TxVDAaiRMR
+	8GRIZutyx3XUWB/ffsSohVVNhK8KIME2zK88xPpfiwOG9FpIrfxl
+X-Gm-Gg: ASbGncs1EF5OEdVWoiPxYKGVzkmMFgdAU0LQ1RiJqZTjvnbh5pmqQD0QPNDYk3z81no
+	lEqr6JV93LoVeNIXQ74zH/uAphDtTUInsJaHnR+NQAT/wrGN9FSt6qdEBE5ESBXG3xxGuwTlHel
+	u74hsX8BdL/XJWzTHA2VsWAyFQQ5Hs7d78vm3wii8Qwqrc/fLE++56R1L4ODQz89Os95P+3UJke
+	lD9RkMlygBJ7/5SGCzynG763trxB15Fbg1pPts1oVWgWCGwEc85zOYN+bs1u6t/ZwPYFRxIk2dG
+	gQUsulg5C0QDGrGCTwCFJZ9XBn5s7uSXDcSInAS3zi9kurUdukrKeOU=
+X-Google-Smtp-Source: AGHT+IHYSdt9pTasjIPhxubmU/E7a5prFsj10ow1xBwQi1o756hKjk73AI9GctSNBy9NpEjOxkAqtw==
+X-Received: by 2002:a05:6000:2582:b0:39c:e0e:b7ea with SMTP id ffacd0b85a97d-39edc311dabmr2526257f8f.20.1744720796513;
+        Tue, 15 Apr 2025 05:39:56 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:a041:e0ba:3a00:c718:382c:d2c:5124])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eae979663sm14547128f8f.51.2025.04.15.05.39.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Apr 2025 05:39:56 -0700 (PDT)
+From: Andrew Kreimer <algonell@gmail.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Ricardo Ribalda <ribalda@chromium.org>,
+	"Dr . David Alan Gilbert" <linux@treblig.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Andrew Kreimer <algonell@gmail.com>
+Subject: [PATCH] media: dvb: Fix typos bloc -> block
+Date: Tue, 15 Apr 2025 15:38:55 +0300
+Message-ID: <20250415123952.16802-1-algonell@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4d5dd1b919aada32ddf4dbce895f19e558343ee9.camel@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 15, 2025 at 02:31:43PM +0200, Gabriele Monaco wrote:
-> On Fri, 2025-04-11 at 09:37 +0200, Nam Cao wrote:
-> > +static int __init register_pagefault(void)
-> > +{
-> > +	rv_register_monitor(&rv_pagefault, &rv_rtapp);
-> > +	return 0;
-> 
-> Any reason why you aren't returning the error value from the monitor
-> registration?
+There are some typos in comments / dprintk messages: bloc -> block.
 
-Copy-paste from dot2k :P
+Fix them via codespell.
 
-> Other than that, the monitor seems neat and reasonably easy to
-> generate.
-> 
-> May not be necessary in this series, but try to keep compatibility with
-> the userspace RV tool as well, you need to have some special case in
-> its tracing components because fields are not matching:
->  # rv mon sleep -t
->          rcuc/11-108      [011] event <CANT FIND FIELD final_state>   
-> (null) x (null)                   -> (null)                   Y
->          rcuc/11-108      [011] event <CANT FIND FIELD final_state>   
-> (null) x (null)                   -> (null)                   Y
->       ktimers/11-109      [011] event <CANT FIND FIELD final_state>   
-> (null) x (null)                   -> (null)                   Y
+Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+---
+ drivers/media/dvb-frontends/dib7000p.c | 4 ++--
+ drivers/media/dvb-frontends/dib8000.c  | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-I have this userspace RV tool in my "later" TODO list, if that's okay.
+diff --git a/drivers/media/dvb-frontends/dib7000p.c b/drivers/media/dvb-frontends/dib7000p.c
+index c5582d4fa5be..b40daf242046 100644
+--- a/drivers/media/dvb-frontends/dib7000p.c
++++ b/drivers/media/dvb-frontends/dib7000p.c
+@@ -2630,7 +2630,7 @@ static int dib7090_set_output_mode(struct dvb_frontend *fe, int mode)
+ 			dib7090_configMpegMux(state, 3, 1, 1);
+ 			dib7090_setHostBusMux(state, MPEG_ON_HOSTBUS);
+ 		} else {/* Use Smooth block */
+-			dprintk("setting output mode TS_SERIAL using Smooth bloc\n");
++			dprintk("setting output mode TS_SERIAL using Smooth block\n");
+ 			dib7090_setHostBusMux(state, DEMOUT_ON_HOSTBUS);
+ 			outreg |= (2<<6) | (0 << 1);
+ 		}
+@@ -2654,7 +2654,7 @@ static int dib7090_set_output_mode(struct dvb_frontend *fe, int mode)
+ 		outreg |= (1<<6);
+ 		break;
+ 
+-	case OUTMODE_MPEG2_FIFO:	/* Using Smooth block because not supported by new Mpeg Mux bloc */
++	case OUTMODE_MPEG2_FIFO:	/* Using Smooth block because not supported by new Mpeg Mux block */
+ 		dprintk("setting output mode TS_FIFO using Smooth block\n");
+ 		dib7090_setHostBusMux(state, DEMOUT_ON_HOSTBUS);
+ 		outreg |= (5<<6);
+diff --git a/drivers/media/dvb-frontends/dib8000.c b/drivers/media/dvb-frontends/dib8000.c
+index cfe59c3255f7..ae438bd80317 100644
+--- a/drivers/media/dvb-frontends/dib8000.c
++++ b/drivers/media/dvb-frontends/dib8000.c
+@@ -1584,7 +1584,7 @@ static int dib8096p_set_output_mode(struct dvb_frontend *fe, int mode)
+ 				dib8096p_configMpegMux(state, 3, 1, 1);
+ 				dib8096p_setHostBusMux(state, MPEG_ON_HOSTBUS);
+ 			} else {/* Use Smooth block */
+-				dprintk("dib8096P setting output mode TS_SERIAL using Smooth bloc\n");
++				dprintk("dib8096P setting output mode TS_SERIAL using Smooth block\n");
+ 				dib8096p_setHostBusMux(state,
+ 						DEMOUT_ON_HOSTBUS);
+ 				outreg |= (2 << 6) | (0 << 1);
+@@ -1612,7 +1612,7 @@ static int dib8096p_set_output_mode(struct dvb_frontend *fe, int mode)
+ 
+ 	case OUTMODE_MPEG2_FIFO:
+ 			/* Using Smooth block because not supported
+-			   by new Mpeg Mux bloc */
++			   by new Mpeg Mux block */
+ 			dprintk("dib8096P setting output mode TS_FIFO using Smooth block\n");
+ 			dib8096p_setHostBusMux(state, DEMOUT_ON_HOSTBUS);
+ 			outreg |= (5 << 6);
+-- 
+2.49.0
 
-Honestly, I haven't looked at what it does yet. perf already does what I
-need.
-
-Best regards,
-Nam
 
