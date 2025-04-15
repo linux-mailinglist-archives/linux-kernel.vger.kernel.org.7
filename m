@@ -1,97 +1,140 @@
-Return-Path: <linux-kernel+bounces-604399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F0EAA89401
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:37:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF8B5A893FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:36:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D0EB178D40
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 06:37:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE4C0178DBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 06:36:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3AC62797B1;
-	Tue, 15 Apr 2025 06:36:42 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45CC7279799
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 06:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA0EB27511C;
+	Tue, 15 Apr 2025 06:36:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NYpdtCQz";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="75WBXRH5"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 925BD19E7F9;
+	Tue, 15 Apr 2025 06:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744699002; cv=none; b=Vrj30zOj0qn4iD6yQuKpg6JyUVOPapef7HebRC8IcU8Y4ymQEl4B1vf5Ai1dx2OoIN8T2yB33GF7FW/NN0tV40hVZ9bt0Qh06GkguiJWx+rlMM8k48FEZZhKRUuH6cTmCMKCSlYLLQbu0Eh9QvfxEjCvMsFLDAowHSSC10mY7w8=
+	t=1744698998; cv=none; b=kd+6PoF651tU9BP6BBF05DGs/QSbE3Clc27Sj8Y+PkT8BgIoX+SzHYgfhQZW6WOd0HEISeoOq3niHrRrqdb5KYRF1lsOkvmfdlmpH9eplgFiPOx130VlZsewAIcgyydrp3qmpDdzBKakUhMpcknSTMzHfcximREt5CEJlR9y0yY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744699002; c=relaxed/simple;
-	bh=0w1mAf0KNTYZjdmbTaPxEL5sNssyvZfwmOjdvquXwJU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nBZlScEa0ntDpH8YX5ICYymP7RAyxqrVK9bBvwe4IMLdplowhHe4zTawxOyfYqFNn/Rw3uplpsikoXAoBTqtyiqG3ac/MXzmUTYxFapwbAZOnIfYAMt1juYoIrPxOx0L+zuon0IWm2u7w7gvvA6zssA8DKteFctgwN+UoEoSgk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CEFA415A1;
-	Mon, 14 Apr 2025 23:36:37 -0700 (PDT)
-Received: from [10.163.49.104] (unknown [10.163.49.104])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 00C033F694;
-	Mon, 14 Apr 2025 23:36:34 -0700 (PDT)
-Message-ID: <f998cbba-bda0-472b-8f4a-a972a29f21ef@arm.com>
-Date: Tue, 15 Apr 2025 12:06:31 +0530
+	s=arc-20240116; t=1744698998; c=relaxed/simple;
+	bh=DHUV3MAYnLx14usRygDI5XOlCbsTZ4F018P9Ye7MW1c=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=a6gEc6W1vHpgN1CmxNxJkjUxB7j1hOylNPKN5gSVC/SZmXHu6xaX4nhB0TSjmdh3Q8vnp7MkWccv8te/RKp3Cl2Eyp6RcDVcaYAWH/Nfh+ML1IRuAeigh1Q/3O1ufJw/1G4dPoTwMHn6SQHQ/9hQmqiXTGfJs7Xo88kfsLxsP6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NYpdtCQz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=75WBXRH5; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 15 Apr 2025 06:36:34 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744698995;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NfUDejjWqOqJXYAaBs/4aO76M02EaPR8YrF/co/oIII=;
+	b=NYpdtCQz/IvahgJwfZL5R5u1j9i4cE4DtPMa94HYERYoMjJwgC876p3iFEH71sqdJCjIp8
+	lrj/3dgTVKbfhgKGKPc3f6iHMeRw6b98i7uN172P1ejWGes2dR3XUHr652XlZ3lElBeJw1
+	YtzcOyPthyn1ey2aq379MsqaffEg2ijPLjfgrIPfv9eHNyG8tQB4oyEQLyKJgNWArk6QwT
+	c9m904o0QDe8QdsDX4je1nYqTNk73chKt00SLSAGmnD77mmkEJ296Cp8FU2mTij54QudEJ
+	BCe2BeAL/2R/mSU/6lyMNwK3xn9qr6kl9DsoSlKxW8zXgttIfXA5ANB1JMcDTw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744698995;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NfUDejjWqOqJXYAaBs/4aO76M02EaPR8YrF/co/oIII=;
+	b=75WBXRH55nanlf0kuF2uY/2vnV0bv+l/dsrjc4M4h3MDa12NRT7DxYHc8B6GIgHc3BUWWf
+	/5X6ZBEawtuVUuAw==
+From: "tip-bot2 for Jonathan Currier" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/urgent] PCI/MSI: Add an option to write MSIX ENTRY_DATA
+ before any reads
+Cc: Jonathan Currier <dullfire@yahoo.com>,
+ Thomas Gleixner <tglx@linutronix.de>, stable@vger.kernel.org, x86@kernel.org,
+ linux-kernel@vger.kernel.org, maz@kernel.org
+In-Reply-To: <20241117234843.19236-2-dullfire@yahoo.com>
+References: <20241117234843.19236-2-dullfire@yahoo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: kvm: Replace ternary flags with str_on_off()
- helper
-To: Seongsu Park <sgsu.park@samsung.com>, will@kernel.org,
- catalin.marinas@arm.com, yuzenghui@huawei.com, suzuki.poulose@arm.com,
- joey.gouly@arm.com, oliver.upton@linux.dev, maz@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
- linux-kernel@vger.kernel.org, cpgs@samsung.com
-References: <CGME20250415012410epcas1p42b48977934c21b5db0b19f4185f7a63c@epcas1p4.samsung.com>
- <1891546521.01744691102904.JavaMail.epsvc@epcpadp1new>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <1891546521.01744691102904.JavaMail.epsvc@epcpadp1new>
-Content-Type: text/plain; charset=UTF-8
+Message-ID: <174469899423.31282.16890035810253105875.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the irq/urgent branch of tip:
 
+Commit-ID:     cf761e3dacc6ad5f65a4886d00da1f9681e6805a
+Gitweb:        https://git.kernel.org/tip/cf761e3dacc6ad5f65a4886d00da1f9681e6805a
+Author:        Jonathan Currier <dullfire@yahoo.com>
+AuthorDate:    Sun, 17 Nov 2024 17:48:42 -06:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Tue, 15 Apr 2025 08:32:18 +02:00
 
-On 4/15/25 06:54, Seongsu Park wrote:
-> Replace repetitive ternary expressions with the str_on_off() helper
-> function. This change improves code readability and ensures consistency
-> in tracepoint string formatting
-> 
-> Signed-off-by: Seongsu Park <sgsu.park@samsung.com>
-> ---
->  arch/arm64/kvm/trace_arm.h | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm64/kvm/trace_arm.h b/arch/arm64/kvm/trace_arm.h
-> index c18c1a95831e..9c60f6465c78 100644
-> --- a/arch/arm64/kvm/trace_arm.h
-> +++ b/arch/arm64/kvm/trace_arm.h
-> @@ -176,7 +176,7 @@ TRACE_EVENT(kvm_set_way_flush,
->  	    ),
->  
->  	    TP_printk("S/W flush at 0x%016lx (cache %s)",
-> -		      __entry->vcpu_pc, __entry->cache ? "on" : "off")
-> +		      __entry->vcpu_pc, str_on_off(__entry->cache))
->  );
->  
->  TRACE_EVENT(kvm_toggle_cache,
-> @@ -196,8 +196,8 @@ TRACE_EVENT(kvm_toggle_cache,
->  	    ),
->  
->  	    TP_printk("VM op at 0x%016lx (cache was %s, now %s)",
-> -		      __entry->vcpu_pc, __entry->was ? "on" : "off",
-> -		      __entry->now ? "on" : "off")
-> +		      __entry->vcpu_pc, str_on_off(__entry->was),
-> +		      str_on_off(__entry->now))
->  );
->  
->  /*
+PCI/MSI: Add an option to write MSIX ENTRY_DATA before any reads
 
-Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+Commit 7d5ec3d36123 ("PCI/MSI: Mask all unused MSI-X entries") introduced a
+readl() from ENTRY_VECTOR_CTRL before the writel() to ENTRY_DATA.
+
+This is correct, however some hardware, like the Sun Neptune chips, the NIU
+module, will cause an error and/or fatal trap if any MSIX table entry is
+read before the corresponding ENTRY_DATA field is written to.
+
+Add an optional early writel() in msix_prepare_msi_desc().
+
+Fixes: 7d5ec3d36123 ("PCI/MSI: Mask all unused MSI-X entries")
+Signed-off-by: Jonathan Currier <dullfire@yahoo.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/all/20241117234843.19236-2-dullfire@yahoo.com
+---
+ drivers/pci/msi/msi.c | 3 +++
+ include/linux/pci.h   | 2 ++
+ 2 files changed, 5 insertions(+)
+
+diff --git a/drivers/pci/msi/msi.c b/drivers/pci/msi/msi.c
+index 6569ba3..8b88487 100644
+--- a/drivers/pci/msi/msi.c
++++ b/drivers/pci/msi/msi.c
+@@ -615,6 +615,9 @@ void msix_prepare_msi_desc(struct pci_dev *dev, struct msi_desc *desc)
+ 		void __iomem *addr = pci_msix_desc_addr(desc);
+ 
+ 		desc->pci.msi_attrib.can_mask = 1;
++		/* Workaround for SUN NIU insanity, which requires write before read */
++		if (dev->dev_flags & PCI_DEV_FLAGS_MSIX_TOUCH_ENTRY_DATA_FIRST)
++			writel(0, addr + PCI_MSIX_ENTRY_DATA);
+ 		desc->pci.msix_ctrl = readl(addr + PCI_MSIX_ENTRY_VECTOR_CTRL);
+ 	}
+ }
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 0e8e3fd..51e2bd6 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -245,6 +245,8 @@ enum pci_dev_flags {
+ 	PCI_DEV_FLAGS_NO_RELAXED_ORDERING = (__force pci_dev_flags_t) (1 << 11),
+ 	/* Device does honor MSI masking despite saying otherwise */
+ 	PCI_DEV_FLAGS_HAS_MSI_MASKING = (__force pci_dev_flags_t) (1 << 12),
++	/* Device requires write to PCI_MSIX_ENTRY_DATA before any MSIX reads */
++	PCI_DEV_FLAGS_MSIX_TOUCH_ENTRY_DATA_FIRST = (__force pci_dev_flags_t) (1 << 13),
+ };
+ 
+ enum pci_irq_reroute_variant {
 
