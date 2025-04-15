@@ -1,258 +1,307 @@
-Return-Path: <linux-kernel+bounces-604457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2661DA894BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:19:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1FE4A894C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:20:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64E951894379
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:19:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1D177A94F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:19:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B541921171C;
-	Tue, 15 Apr 2025 07:18:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5CCA27A105;
+	Tue, 15 Apr 2025 07:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nDScuucj"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l926/ykz"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A4110F2
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 07:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65082750FA;
+	Tue, 15 Apr 2025 07:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744701525; cv=none; b=fa1dCZ+aukWhJnkq0Ydsz7tZTcxZ/j4KjP0DaJcTOtLTjwxvpWllZRKzwGiR3FVYNikO6OK8+jTwRTZ0Mx0EtTtw4N9ZOJucmLXojmv95hu97i1MBTqfyrfRU9Mm7EUOMc7rgsDXhH+9eX6WS8mTAmVmyzsfoOmw1p/0mXIfRJg=
+	t=1744701629; cv=none; b=IyIh7+8H5xoHuAgNoIZXETYFRASCbwkxVu4Uuyq23L69UKZkXIvzsmV2TmrlsEPHuvB2jGmY9sLOKOX9InvvrLyiwcrKjUyGBqWf62bXT5pRpprQ/xga88FCMpEdSMrOiI6rzwabaMvrJVCt7wgcESjpLiJNaPSUDcNOyyhn/r8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744701525; c=relaxed/simple;
-	bh=jjxXLOtaUU5zGI7uHmJIeqVNnv25Zreg+4XVdIUySb0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q1LMukMIqFMPlMXnVbc12mD1cQP2Fgsttw8frxiKfJQ+Ut0yrwnzY/jSp7fOynB+S81yiYwAGXFFiVdjwD1bDqmIN5PfKTw77gZXnZ+vmcOm9vS/DIa6Kux3skuA7+VZHJ/uhQXDd+WE2psaiOLa7zbPzGXGRWPFrgpdQ39867o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nDScuucj; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-227b650504fso49963545ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 00:18:42 -0700 (PDT)
+	s=arc-20240116; t=1744701629; c=relaxed/simple;
+	bh=J8YPYvP36v77bLaXgHvQ+esm3mH2SEYCO8QCqTRTyK0=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TevCYU2LsPMxMYnKcPbtbWSjdMlbvh1M5y68wVwUTa4wRs0MkL+yexiL48KxAcex83FvevIUW7rJVOylDpRuyizoBWGH0Vx7P4C+Gwjtl3fZnXkqFPJzVx3ksa8u5CCayzJt2am9CAKWdDlkj5kT3ZJhxEh6WhyDFTXhqtFmWbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l926/ykz; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-39c0dfba946so3704063f8f.3;
+        Tue, 15 Apr 2025 00:20:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744701521; x=1745306321; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=MjVkJWHmX8v3mt1102Wpc+/VjkT959RAvTZUx+eidcw=;
-        b=nDScuucj0e9im4kMj2cY5iKH9UbjaKlKhm+gghi1Yo3+rmKcBwKWb4IGhbrrNsFSRE
-         NsTLXD+OmDEE0IQpcv54wONsNYjkjHNf3FIub1xXxIZllISjH77c3rYYNzjhoKqfQZXj
-         7N3LU7Mg8LrL6PWFASklw9KOrgBGK6StL4GH/Zcu1AU8CenC/jVGk8BZ2AGOv2nJZkfT
-         B1FU/npNbvFCvm+QT04pQpZ91Y3deWeU29Y8D0Q+vuw2yt92jnp7B78plm//YvrGqHnj
-         YrPPQ3joKdZiR49IS2hrM3aLDE+4jvrUAcfL7QtCoZinhOsLciVqHs1V+HlvkByoqcGG
-         ijhg==
+        d=gmail.com; s=20230601; t=1744701626; x=1745306426; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=U4QG/01zstO6eevpGSLQRgfwXCiCDzuqT7ZdvEe+JuI=;
+        b=l926/ykzzmLt8JKkgPCfiszVa1Tf2e8XtlE7fTvJfeb5mXNvKCSvF3wacJIaN8t8Pq
+         k3lMj84zD1k5WgfNFU/W//5FvwSU76uICLe4xKCUpgEi/tody+8RUPwvEGTTrXlszGae
+         sfS61mqL8q6fFl/A0TwJKaOftHtsfO+/IIzDXPUj/gk61+YH/H2FxGdiq4CfSRRYPdMW
+         OyqjLacprpXdRpLTbV+riVRjYJOXGghQN61cWrmrh9CKyA78kIglPxs5gFAbyjrzUmZE
+         cJ9SXIS4OMwcqI5iT1KlH0YGKzF3J7EtrR5RBE2n1x13o9REianlhIotLrBcmhmr29Jn
+         aBUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744701521; x=1745306321;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MjVkJWHmX8v3mt1102Wpc+/VjkT959RAvTZUx+eidcw=;
-        b=XXmisKmSGbiHm0aY8VDfKMWr3K60P6yfo/gH+pMasrK7nsX1pFdORh88jilHOgWo9w
-         xmTX3FAHa/bKI5INXxykZkGwiiNngBn+fvHlmV/9VIEbamaEWCiwTHrAHA/kkQAWFNJU
-         XqmU94oDR0d7CB0bxXw3GhUe6FGRcWfITB/c5IUzw9pGiOiQmiYoNe/ZLQc/EF8SGS+M
-         f9xpOOl/+1bpqDSJmYrNYVqf55dgwVMXc/eufydWU6tmi+dlncYK0YvbToyakBTBa/aA
-         q5ehbOx41PWXLu3DRlSjqNthX49U1tjqgvPkujDt1nZ7m/XXuBvF32LVwVRhPuWHOi49
-         5cAA==
-X-Forwarded-Encrypted: i=1; AJvYcCXMhD2/AFxmo3p7QGxyGQGT0uVugW19/0N8dxf+SyNnEAR9spGZ9cqQjKr8lBn3rjwd25lOkSKUJI04M5A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxidA7rC94iVapjRu5+EKPrmzZ+ISuCOPJo/UfsYTGsVDi2otsh
-	qLuNHJvbiqTuctc5+K0r9ITHXBPT5eTfPVix6LMZsPC0DpXdmQdfFFQp2h7rYQ==
-X-Gm-Gg: ASbGncs6OveCNteLuRWz2Xd7X/80DUpqgOdJNS4Th8HX1ccOXU2s9/2vfie/VqOxAMw
-	GqyLJhtoH4v5A6IdndDzUW7eO3pPiCB+B1PXiiajeLTBvfUdsfb8Zk5zpP4LMCNabQcfc5oybTn
-	n+f4bLFBEdPJwbhp6qjPQbW3Z4dalh0Gifpy3z0T/0r3y3ovo2E2+Gb3A+ReJ4e1gFtr+RQtakq
-	WKRVuFDrpKPViLuZY4EnFZ1nK7JsOpR6rhnvfkRL7nQUcDfMsaTRzs59K6QZYzqg8CNWpWEKpVZ
-	d/QorkrQORYB4jOE32uNM8H1TzyRpBeVAqdKZi8JVlRH25Hlou3CplNneFV/
-X-Google-Smtp-Source: AGHT+IElyXCOb4OPYmCjdN/6HrTiolToBMZfQbUehYU59w0I4aTlufDp7vFNPzJ0Nd7+qwAQOi33Xw==
-X-Received: by 2002:a17:902:d4c8:b0:223:6657:5008 with SMTP id d9443c01a7336-22bea4bd865mr185866395ad.24.1744701521616;
-        Tue, 15 Apr 2025 00:18:41 -0700 (PDT)
-Received: from thinkpad ([120.60.71.35])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7b8b18esm110805445ad.82.2025.04.15.00.18.37
+        d=1e100.net; s=20230601; t=1744701626; x=1745306426;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U4QG/01zstO6eevpGSLQRgfwXCiCDzuqT7ZdvEe+JuI=;
+        b=BR8Yz6w2O0Ehppbe/JOfuHd/853aUi5vxjKWFSjbxnoKKGdTDWHkIJQ4IAuNtecaoG
+         o4Uw9RGe9AoaWA/FT1mhReqZeA0sRoH8e37f4Hcp3RDkwc/uor56abfTZ5UBkFAUGP7v
+         gkoeWTp3RzPdomJvGZmGWvqk+Qy0NZOGvlcLTe+wXvUXpN1Ga4TXcINJr44/o2TaA7kM
+         lr59XICg5USmX10lHcp24P0fTxUA/l8t/1svGkDy+ayTcIz7q3sA5gmRGbmKLPDE9yTc
+         eXGFYsUKjNV1tDlSSpqI0vkrBJTA2mrI0AgNmcMXgxvkoFqyVE/742iFNCWX+l0FbK5o
+         fcCg==
+X-Forwarded-Encrypted: i=1; AJvYcCWl7pnZJFZyliK11bHhoSuM2bNmLn/138sXzrPOV4alNuoYqfcTDPMScAXPGLX22zygpdWfoYcubAYUTbhY@vger.kernel.org, AJvYcCXUJxl7RStkj8xxtm53foIKsjLBsTIqlBc3sYh096n4WYGbnQC1EhIJ2OwlECfHF1gsgv4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHqmijAazsbE4HeZZHJDUktpXIm/TKtxm2HOTv63zw9CPGAA7k
+	K4TXQpTAtswC2mMYQggOa946tTmuJBCrs9gOHHGOPFCy9hA+yAOT
+X-Gm-Gg: ASbGnct2JF+ohF3NtyJJu3VEr7JIfl2SXLt0+m0KJ3ThVzcAW13jYzabpQO5d9/j6to
+	77MgJ7EFi/PqoTlSsrTFzhv3mKnaWR5dK/OAhLuy3Sshrz/SCXSO4B3rfD/0Ec8B4XRagiCUOa5
+	OB8sP5vDbJS9SFNVn7nsK07ev5kcp0mJmVtp+OZuUXGYgRuX5DxGkIfNvLgVmeHCokqMmD7Az7C
+	7nV7ViNali/D6d3qL6TmsPiR2aAcaTg6hYdFZH/p8n8pOF484921xyXNig7RySynLN8M3XBlErL
+	VM1B0S6xeZT3aZ324xvXV5jgRnfnTHxc
+X-Google-Smtp-Source: AGHT+IGXCVr7yO7ZMbLc/fUL/TDFBLuAMMxEfIFNm2wq93JgrNW/jErA+gpk2+Mc+WaBJSAqUM0Weg==
+X-Received: by 2002:a05:6000:4313:b0:39c:1257:c96f with SMTP id ffacd0b85a97d-39eaaecdc09mr13306254f8f.59.1744701625879;
+        Tue, 15 Apr 2025 00:20:25 -0700 (PDT)
+Received: from krava ([2a00:102a:4000:cc7a:6dc3:41c:f241:1598])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eaf445708sm13433737f8f.96.2025.04.15.00.20.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Apr 2025 00:18:41 -0700 (PDT)
-Date: Tue, 15 Apr 2025 12:48:34 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Sai Krishna Musham <sai.krishna.musham@amd.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, cassel@kernel.org, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	michal.simek@amd.com, bharat.kumar.gogada@amd.com, thippeswamy.havalige@amd.com
-Subject: Re: [LINUX PATCH v7 2/2] PCI: xilinx-cpm: Add support for PCIe RP
- PERST# signal
-Message-ID: <lopqatqgd4ql5qdtlph2irw2b4ed6dbnjsgncd7idlsz2tjlhn@rdvfj2ma2wx5>
-References: <20250414030842.857176-1-sai.krishna.musham@amd.com>
- <20250414030842.857176-3-sai.krishna.musham@amd.com>
+        Tue, 15 Apr 2025 00:20:25 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Tue, 15 Apr 2025 09:20:22 +0200
+To: Feng Yang <yangfeng59949@163.com>
+Cc: olsajiri@gmail.com, andrii@kernel.org, ast@kernel.org,
+	bpf@vger.kernel.org, daniel@iogearbox.net, eddyz87@gmail.com,
+	haoluo@google.com, hengqi.chen@gmail.com, john.fastabend@gmail.com,
+	kpsingh@kernel.org, linux-kernel@vger.kernel.org,
+	martin.lau@linux.dev, sdf@fomichev.me, song@kernel.org,
+	yonghong.song@linux.dev
+Subject: Re: [PATCH v3 bpf-next 1/3] libbpf: Fix event name too long error
+Message-ID: <Z_4Itg5H7-410o4d@krava>
+References: <Z_z06uND92kzrXfJ@krava>
+ <20250415020115.35450-1-yangfeng59949@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250414030842.857176-3-sai.krishna.musham@amd.com>
+In-Reply-To: <20250415020115.35450-1-yangfeng59949@163.com>
 
-On Mon, Apr 14, 2025 at 08:38:42AM +0530, Sai Krishna Musham wrote:
-> Add support for handling the PCIe Root Port (RP) PERST# signal using
-> the GPIO framework, along with the PCIe IP reset. This reset is
-> managed by the driver and occurs after the Initial Power Up sequence
-> (PCIe CEM r6.0, 2.2.1) is handled in hardware before the driver's probe
-> function is called.
+On Tue, Apr 15, 2025 at 10:01:15AM +0800, Feng Yang wrote:
+> On Mon, 14 Apr 2025 13:43:38 +0200 Jiri Olsa <olsajiri@gmail.com> wrote:
+> > On Mon, Apr 14, 2025 at 05:34:00PM +0800, Feng Yang wrote:
+> > > From: Feng Yang <yangfeng@kylinos.cn>
+> > > 
+> > > When the binary path is excessively long, the generated probe_name in libbpf
+> > > exceeds the kernel's MAX_EVENT_NAME_LEN limit (64 bytes).
+> > > This causes legacy uprobe event attachment to fail with error code -22.
+> > > 
+> > > Before Fix:
+> > > 	./test_progs -t attach_probe/kprobe-long_name
+> > > 	......
+> > > 	libbpf: failed to add legacy kprobe event for 'bpf_kfunc_looooooooooooooooooooooooooooooong_name+0x0': -EINVAL
+> > > 	libbpf: prog 'handle_kprobe': failed to create kprobe 'bpf_kfunc_looooooooooooooooooooooooooooooong_name+0x0' perf event: -EINVAL
+> > > 	test_attach_kprobe_long_event_name:FAIL:attach_kprobe_long_event_name unexpected error: -22
+> > > 	test_attach_probe:PASS:uprobe_ref_ctr_cleanup 0 nsec
+> > > 	#13/11   attach_probe/kprobe-long_name:FAIL
+> > > 	#13      attach_probe:FAIL
+> > > 
+> > > 	./test_progs -t attach_probe/uprobe-long_name
+> > > 	......
+> > > 	libbpf: failed to add legacy uprobe event for /root/linux-bpf/bpf-next/tools/testing/selftests/bpf/test_progs:0x13efd9: -EINVAL
+> > > 	libbpf: prog 'handle_uprobe': failed to create uprobe '/root/linux-bpf/bpf-next/tools/testing/selftests/bpf/test_progs:0x13efd9' perf event: -EINVAL
+> > > 	test_attach_uprobe_long_event_name:FAIL:attach_uprobe_long_event_name unexpected error: -22
+> > > 	#13/10   attach_probe/uprobe-long_name:FAIL
+> > > 	#13      attach_probe:FAIL
+> > > After Fix:
+> > > 	./test_progs -t attach_probe/uprobe-long_name
+> > > 	#13/10   attach_probe/uprobe-long_name:OK
+> > > 	#13      attach_probe:OK
+> > > 	Summary: 1/1 PASSED, 0 SKIPPED, 0 FAILED
+> > > 
+> > > 	./test_progs -t attach_probe/kprobe-long_name
+> > > 	#13/11   attach_probe/kprobe-long_name:OK
+> > > 	#13      attach_probe:OK
+> > > 	Summary: 1/1 PASSED, 0 SKIPPED, 0 FAILED
+> > > 
+> > > Fixes: 46ed5fc33db9 ("libbpf: Refactor and simplify legacy kprobe code")
+> > > Fixes: cc10623c6810 ("libbpf: Add legacy uprobe attaching support")
+> > > Signed-off-by: Hengqi Chen <hengqi.chen@gmail.com>
+> > > Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
+> > > ---
+> > >  tools/lib/bpf/libbpf.c | 19 ++++++++++++-------
+> > >  1 file changed, 12 insertions(+), 7 deletions(-)
+> > > 
+> > > diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+> > > index b2591f5cab65..9e047641e001 100644
+> > > --- a/tools/lib/bpf/libbpf.c
+> > > +++ b/tools/lib/bpf/libbpf.c
+> > > @@ -60,6 +60,8 @@
+> > >  #define BPF_FS_MAGIC		0xcafe4a11
+> > >  #endif
+> > >  
+> > > +#define MAX_EVENT_NAME_LEN	64
+> > > +
+> > >  #define BPF_FS_DEFAULT_PATH "/sys/fs/bpf"
+> > >  
+> > >  #define BPF_INSN_SZ (sizeof(struct bpf_insn))
+> > > @@ -11142,10 +11144,10 @@ static void gen_kprobe_legacy_event_name(char *buf, size_t buf_sz,
+> > >  	static int index = 0;
+> > >  	int i;
+> > >  
+> > > -	snprintf(buf, buf_sz, "libbpf_%u_%s_0x%zx_%d", getpid(), kfunc_name, offset,
+> > > -		 __sync_fetch_and_add(&index, 1));
+> > > +	snprintf(buf, buf_sz, "libbpf_%u_%d_%s_0x%zx", getpid(),
+> > > +		 __sync_fetch_and_add(&index, 1), kfunc_name, offset);
+> > 
+> > so the fix is to move unique id before kfunc_name to make sure it gets
+> > to the event name right? would be great to have it in changelog
+> > 
 > 
-> This reset mechanism is particularly useful in warm reset scenarios,
-> where the power rails remain stable and only PERST# signal is toggled
-> through the driver. Applying both the PCIe IP reset and the PERST#
-> improves the reliability of the reset process by ensuring that both
-> the Root Port controller and the Endpoint are reset synchronously
-> and avoid lane errors.
-> 
-> Adapt the implementation to use the GPIO framework for reset signal
-> handling and make this reset handling optional, along with the
-> `cpm_crx` property, to maintain backward compatibility with existing
-> device tree binaries (DTBs).
-> 
-> Additionally, clear Firewall after the link reset for CPM5NC to allow
-> further PCIe transactions.
-> 
-> Signed-off-by: Sai Krishna Musham <sai.krishna.musham@amd.com>
-> ---
-> Changes for v7:
-> - Use platform_get_resource_byname() to make cpm_crx and cpm5nc_fw_attr
->   optional
-> - Use 100us delay T_PERST as per PCIe spec before PERST# deassert.
-> 
-> Changes for v6:
-> - Correct version check condition of CPM5NC_HOST.
-> 
-> Changes for v5:
-> - Handle probe defer for reset_gpio.
-> - Resolve ABI break.
-> 
-> Changes for v4:
-> - Add PCIe PERST# support for CPM5NC.
-> - Add PCIe IP reset along with PERST# to avoid Link Training Errors.
-> - Remove PCIE_T_PVPERL_MS define and PCIE_T_RRS_READY_MS after
->   PERST# deassert.
-> - Move PCIe PERST# assert and deassert logic to
->   xilinx_cpm_pcie_init_port() before cpm_pcie_link_up(), since
->   Interrupts enable and PCIe RP bridge enable should be done after
->   Link up.
-> - Update commit message.
-> 
-> Changes for v3:
-> - Use PCIE_T_PVPERL_MS define.
-> 
-> Changes for v2:
-> - Make the request GPIO optional.
-> - Correct the reset sequence as per PERST#
-> - Update commit message
-> ---
->  drivers/pci/controller/pcie-xilinx-cpm.c | 97 +++++++++++++++++++++++-
->  1 file changed, 94 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pcie-xilinx-cpm.c b/drivers/pci/controller/pcie-xilinx-cpm.c
-> index 13ca493d22bd..c46642417d52 100644
-> --- a/drivers/pci/controller/pcie-xilinx-cpm.c
-> +++ b/drivers/pci/controller/pcie-xilinx-cpm.c
-> @@ -6,6 +6,8 @@
->   */
->  
->  #include <linux/bitfield.h>
-> +#include <linux/delay.h>
-> +#include <linux/gpio/consumer.h>
->  #include <linux/interrupt.h>
->  #include <linux/irq.h>
->  #include <linux/irqchip.h>
-> @@ -21,6 +23,13 @@
->  #include "pcie-xilinx-common.h"
->  
->  /* Register definitions */
-> +#define XILINX_CPM_PCIE0_RST		0x00000308
-> +#define XILINX_CPM5_PCIE0_RST		0x00000318
-> +#define XILINX_CPM5_PCIE1_RST		0x0000031C
-> +#define XILINX_CPM5NC_PCIE0_RST		0x00000324
-> +
-> +#define XILINX_CPM5NC_PCIE0_FRWALL	0x00000140
-> +
->  #define XILINX_CPM_PCIE_REG_IDR		0x00000E10
->  #define XILINX_CPM_PCIE_REG_IMR		0x00000E14
->  #define XILINX_CPM_PCIE_REG_PSCR	0x00000E1C
-> @@ -93,12 +102,16 @@ enum xilinx_cpm_version {
->   * @ir_status: Offset for the error interrupt status register
->   * @ir_enable: Offset for the CPM5 local error interrupt enable register
->   * @ir_misc_value: A bitmask for the miscellaneous interrupt status
-> + * @cpm_pcie_rst: Offset for the PCIe IP reset
-> + * @cpm5nc_fw_rst: Offset for the CPM5NC Firewall
->   */
->  struct xilinx_cpm_variant {
->  	enum xilinx_cpm_version version;
->  	u32 ir_status;
->  	u32 ir_enable;
->  	u32 ir_misc_value;
-> +	u32 cpm_pcie_rst;
-> +	u32 cpm5nc_fw_rst;
->  };
->  
->  /**
-> @@ -106,6 +119,8 @@ struct xilinx_cpm_variant {
->   * @dev: Device pointer
->   * @reg_base: Bridge Register Base
->   * @cpm_base: CPM System Level Control and Status Register(SLCR) Base
-> + * @crx_base: CPM Clock and Reset Control Registers Base
-> + * @cpm5nc_fw_base: CPM5NC Firewall Attribute Base
->   * @intx_domain: Legacy IRQ domain pointer
->   * @cpm_domain: CPM IRQ domain pointer
->   * @cfg: Holds mappings of config space window
-> @@ -118,6 +133,8 @@ struct xilinx_cpm_pcie {
->  	struct device			*dev;
->  	void __iomem			*reg_base;
->  	void __iomem			*cpm_base;
-> +	void __iomem			*crx_base;
-> +	void __iomem			*cpm5nc_fw_base;
->  	struct irq_domain		*intx_domain;
->  	struct irq_domain		*cpm_domain;
->  	struct pci_config_window	*cfg;
-> @@ -475,12 +492,57 @@ static int xilinx_cpm_setup_irq(struct xilinx_cpm_pcie *port)
->   * xilinx_cpm_pcie_init_port - Initialize hardware
->   * @port: PCIe port information
->   */
-> -static void xilinx_cpm_pcie_init_port(struct xilinx_cpm_pcie *port)
-> +static int xilinx_cpm_pcie_init_port(struct xilinx_cpm_pcie *port)
->  {
->  	const struct xilinx_cpm_variant *variant = port->variant;
-> +	struct device *dev = port->dev;
-> +	struct gpio_desc *reset_gpio;
-> +	bool do_reset = false;
-> +
-> +	if (port->crx_base && (variant->version < CPM5NC_HOST ||
-> +			       (variant->version == CPM5NC_HOST &&
-> +				port->cpm5nc_fw_base))) {
-> +		/* Request the GPIO for PCIe reset signal and assert */
-> +		reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
-> +		if (IS_ERR(reset_gpio))
-> +			return dev_err_probe(dev, PTR_ERR(reset_gpio),
-> +					     "Failed to request reset GPIO\n");
-> +		if (reset_gpio)
-> +			do_reset = true;
-> +	}
-> +
-> +	if (do_reset) {
-> +		/* Assert the PCIe IP reset */
-> +		writel_relaxed(0x1, port->crx_base + variant->cpm_pcie_rst);
-> +
-> +		/*
-> +		 * "PERST# active time", as per Table 2-10: Power Sequencing
-> +		 * and Reset Signal Timings of the PCIe Electromechanical
-> +		 * Specification, Revision 6.0, symbol "T_PERST".
-> +		 */
-> +		udelay(100);
+> Yes, defining MAX_EVENT_NAME_LEN ensures event names are truncated via snprintf
+> to prevent exceeding the maximum length limit.
+> Moving the unique id before kfunc_name avoids truncating the id.
+> Regarding the changelog: Should this information go into the commit message of the patch, or somewhere else?
 
-You don't need this delay unless the above 'cpm_pcie_rst' controls refclk.
+having this in changelog would help
 
-- Mani
+> 
+> > 
+> > >  
+> > > -	/* sanitize binary_path in the probe name */
+> > > +	/* sanitize kfunc_name in the probe name */
+> > >  	for (i = 0; buf[i]; i++) {
+> > >  		if (!isalnum(buf[i]))
+> > >  			buf[i] = '_';
+> > > @@ -11270,7 +11272,7 @@ int probe_kern_syscall_wrapper(int token_fd)
+> > >  
+> > >  		return pfd >= 0 ? 1 : 0;
+> > >  	} else { /* legacy mode */
+> > > -		char probe_name[128];
+> > > +		char probe_name[MAX_EVENT_NAME_LEN];
+> > >  
+> > >  		gen_kprobe_legacy_event_name(probe_name, sizeof(probe_name), syscall_name, 0);
+> > >  		if (add_kprobe_event_legacy(probe_name, false, syscall_name, 0) < 0)
+> > > @@ -11328,7 +11330,7 @@ bpf_program__attach_kprobe_opts(const struct bpf_program *prog,
+> > >  					    func_name, offset,
+> > >  					    -1 /* pid */, 0 /* ref_ctr_off */);
+> > >  	} else {
+> > > -		char probe_name[256];
+> > > +		char probe_name[MAX_EVENT_NAME_LEN];
+> > >  
+> > >  		gen_kprobe_legacy_event_name(probe_name, sizeof(probe_name),
+> > >  					     func_name, offset);
+> > > @@ -11878,9 +11880,12 @@ static int attach_uprobe_multi(const struct bpf_program *prog, long cookie, stru
+> > >  static void gen_uprobe_legacy_event_name(char *buf, size_t buf_sz,
+> > >  					 const char *binary_path, uint64_t offset)
+> > >  {
+> > > +	static int index = 0;
+> > >  	int i;
+> > >  
+> > > -	snprintf(buf, buf_sz, "libbpf_%u_%s_0x%zx", getpid(), binary_path, (size_t)offset);
+> > > +	snprintf(buf, buf_sz, "libbpf_%u_%d_%s_0x%zx", getpid(),
+> > > +		 __sync_fetch_and_add(&index, 1),
+> > > +		 basename((void *)binary_path), (size_t)offset);
+> > 
+> > gen_kprobe_legacy_event_name and gen_uprobe_legacy_event_name seem to
+> > be identical now, maybe we can have just one ?
+> > 
+> > thanks,
+> > jirka
+> > 
+> 
+> The gen_uprobe_legacy_event_name function includes an extra basename compared to gen_kprobe_legacy_event_name,
+> as the prefixes of binary_path are often too similar to distinguish easily.
+> When merging these two into a single function, is it acceptable to pass basename((void *)binary_path)
+> directly during the uprobe invocation, or should we remove the addition of basename? Thank you!
 
--- 
-மணிவண்ணன் சதாசிவம்
+I think basename is fine, perhaps just pass it as argument
+like below (on top of your change, untested)
+
+jirka
+
+
+---
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index 9e047641e001..93e804b25da1 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -11138,14 +11138,13 @@ static const char *tracefs_available_filter_functions_addrs(void)
+ 			     : TRACEFS"/available_filter_functions_addrs";
+ }
+ 
+-static void gen_kprobe_legacy_event_name(char *buf, size_t buf_sz,
+-					 const char *kfunc_name, size_t offset)
++static void gen_legacy_event_name(char *buf, size_t buf_sz, const char *name, size_t offset)
+ {
+ 	static int index = 0;
+ 	int i;
+ 
+ 	snprintf(buf, buf_sz, "libbpf_%u_%d_%s_0x%zx", getpid(),
+-		 __sync_fetch_and_add(&index, 1), kfunc_name, offset);
++		 __sync_fetch_and_add(&index, 1), name, offset);
+ 
+ 	/* sanitize kfunc_name in the probe name */
+ 	for (i = 0; buf[i]; i++) {
+@@ -11274,7 +11273,7 @@ int probe_kern_syscall_wrapper(int token_fd)
+ 	} else { /* legacy mode */
+ 		char probe_name[MAX_EVENT_NAME_LEN];
+ 
+-		gen_kprobe_legacy_event_name(probe_name, sizeof(probe_name), syscall_name, 0);
++		gen_legacy_event_name(probe_name, sizeof(probe_name), syscall_name, 0);
+ 		if (add_kprobe_event_legacy(probe_name, false, syscall_name, 0) < 0)
+ 			return 0;
+ 
+@@ -11332,8 +11331,7 @@ bpf_program__attach_kprobe_opts(const struct bpf_program *prog,
+ 	} else {
+ 		char probe_name[MAX_EVENT_NAME_LEN];
+ 
+-		gen_kprobe_legacy_event_name(probe_name, sizeof(probe_name),
+-					     func_name, offset);
++		gen_legacy_event_name(probe_name, sizeof(probe_name), func_name, offset);
+ 
+ 		legacy_probe = strdup(probe_name);
+ 		if (!legacy_probe)
+@@ -11877,23 +11875,6 @@ static int attach_uprobe_multi(const struct bpf_program *prog, long cookie, stru
+ 	return ret;
+ }
+ 
+-static void gen_uprobe_legacy_event_name(char *buf, size_t buf_sz,
+-					 const char *binary_path, uint64_t offset)
+-{
+-	static int index = 0;
+-	int i;
+-
+-	snprintf(buf, buf_sz, "libbpf_%u_%d_%s_0x%zx", getpid(),
+-		 __sync_fetch_and_add(&index, 1),
+-		 basename((void *)binary_path), (size_t)offset);
+-
+-	/* sanitize binary_path in the probe name */
+-	for (i = 0; buf[i]; i++) {
+-		if (!isalnum(buf[i]))
+-			buf[i] = '_';
+-	}
+-}
+-
+ static inline int add_uprobe_event_legacy(const char *probe_name, bool retprobe,
+ 					  const char *binary_path, size_t offset)
+ {
+@@ -12322,8 +12303,8 @@ bpf_program__attach_uprobe_opts(const struct bpf_program *prog, pid_t pid,
+ 		if (ref_ctr_off)
+ 			return libbpf_err_ptr(-EINVAL);
+ 
+-		gen_uprobe_legacy_event_name(probe_name, sizeof(probe_name),
+-					     binary_path, func_offset);
++		gen_legacy_event_name(probe_name, sizeof(probe_name),
++				      basename((char *) binary_path), func_offset);
+ 
+ 		legacy_probe = strdup(probe_name);
+ 		if (!legacy_probe)
 
