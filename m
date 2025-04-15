@@ -1,174 +1,269 @@
-Return-Path: <linux-kernel+bounces-604295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4356CA89300
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 06:36:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B319A892E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 06:33:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0542017EC5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 04:35:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 512CC189BA05
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 04:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D90182248BF;
-	Tue, 15 Apr 2025 04:33:27 +0000 (UTC)
-Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FDBF137775;
+	Tue, 15 Apr 2025 04:33:10 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F923222561;
-	Tue, 15 Apr 2025 04:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1932DFA5B
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 04:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744691607; cv=none; b=G1hUx3rvwZHSfgh+zQSCkxaX93UNLMOu93foSk+VAcK5/nTm2+eGIijntGvzllnkn04WZlYhfv8nOqTa5kMvGNqPJPG5Q2FrzgeTkqMDZAgCbhqUO4BUWV/vDDyV1a6nerfgNN3/Tj+BJFqdU9XpFRGTJzrDBwSBoJLu2TaKR9A=
+	t=1744691590; cv=none; b=iUln+1bRbwoYrPQH2MorYtqWznMJoU4Wcqu6OAC/UG1r85f5SCuSLy8CYjwZPdL9AZ/XWs/oVj5+BQCawPXGA5jRW5oU9tEpJCgA/pBVrvkKjwmYcb5DbLt5J11WxewGjjZXb4xwvNmrzGUhrxaKagrb5jwroP0OgYrnXQdV0Jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744691607; c=relaxed/simple;
-	bh=GObybgq2SParQEdkDFxMmMMifFPI8joswA4wj/MCANQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MC6Cp6UedjC2tdH/LEJC6ciBA9vUiOnUpZ9UN2fedRBgpciekY791jJEuhLQRAxn6VDI9KkDNlBqiRBuzHwpH/WDiZLwEpucJkFCp82zhOvqgIG9zZezPhWaTo/UeuNXDrRoWCeM4zTiWesdLQQ2k3zLQrt1s9Affd30Bpdt7F4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; arc=none smtp.client-ip=46.19.9.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
-Received: from [89.212.21.243] (port=52324 helo=localhost.localdomain)
-	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <primoz.fiser@norik.com>)
-	id 1u4XzA-00Gb4I-1r;
-	Tue, 15 Apr 2025 06:33:23 +0200
-From: Primoz Fiser <primoz.fiser@norik.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	upstream@lists.phytec.de
-Subject: [PATCH v2 09/15] arm64: dts: freescale: imx93-phyboard-segin: Fix for ERR052021 errata
-Date: Tue, 15 Apr 2025 06:33:05 +0200
-Message-Id: <20250415043311.3385835-10-primoz.fiser@norik.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250415043311.3385835-1-primoz.fiser@norik.com>
-References: <20250415043311.3385835-1-primoz.fiser@norik.com>
+	s=arc-20240116; t=1744691590; c=relaxed/simple;
+	bh=h3JrnIbUN2GzP+gFuNtYrMvncTxo28Sp9Dn+b6Tr+/Q=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=FDjAeTzXsSABBXCgTt/3uqQxO4iEHY8pwhE2VDGMzGjj4hS+W4FMiVz0F59PxRgcnHwgkrUsudVM23lOHYoQ6UpJ99TREdSOXX1KKn7h1RVY7mO36yHzpt/88BRsRJi3xeu1cC1dpVepVvd68YtPugD0Q2FARSnLNgszB115anY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3d443811ed2so86285565ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 21:33:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744691587; x=1745296387;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gnIas0lcaKzbGOUEoy0vR8XY16WUU+nYVHcgY8rOES8=;
+        b=OxcC/1xBWqOY8idTCHiF+MIagJO/Ot/yoACsLG6xxx+haZKCZEAEYCswjj4WEKD1YW
+         aBR/UcKF7uSsWIW5kPHSeSzOCJk7YyIMcvcbeZmwHdvygam9+h7Osc8TkDXJhmfos72o
+         cPVVf3w+yuGy4uJmcN5gRXg1RaFVmCwiSSMNmYi26l9aPEVbKL4VqTVSmg5AIXc3/yfT
+         7bQTWUgO0aJvTXd0FtjGSkRS4eAHnmAcVxyx2nyvFwqREsm+EIjtVnAr3sSeyjE4kdwt
+         GqUZxHEeE9r4iuma7jlIBTQTiGiLESSK7N/xUU1MdAGbqknQQPiVneBiYGUaL0b1KEjl
+         SXzw==
+X-Gm-Message-State: AOJu0Yz0vTNMDzogQIuontMEVbiI5rOWOWSmGNxQ8Zjit/gQV4PlR6dd
+	gQ3nTvbKs65mVwdQrlOkaYu5WE0hb19a1ymOFjvCb1W3WNKUP8Oeni8Ck7j58eymDiwnYEYg9wd
+	7M/Tb8VDJa6tEVN+K0WwSZVciGW9Elo5JztlIVMe9vjoc+ugvsocJcMc=
+X-Google-Smtp-Source: AGHT+IGM3NVpIRAjJYqdaBZ2yO+WupxJq4cDM/xk3bdVhD/F7j+idtkU1iaCmbMlByKPkRTD36LAReSHPkX/kOFwsUT1HmWCcQV4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cpanel.siel.si
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - norik.com
-X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: primoz.fiser@norik.com
-X-Authenticated-Sender: cpanel.siel.si: primoz.fiser@norik.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+X-Received: by 2002:a05:6e02:198e:b0:3d3:e296:1c1c with SMTP id
+ e9e14a558f8ab-3d7ec1f4189mr135514495ab.9.1744691586995; Mon, 14 Apr 2025
+ 21:33:06 -0700 (PDT)
+Date: Mon, 14 Apr 2025 21:33:06 -0700
+In-Reply-To: <67faff52.050a0220.379d84.001b.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67fde182.050a0220.3483fc.0043.GAE@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [mm?] WARNING in move_to_new_folio
+From: syzbot <syzbot+8bb6fd945af4e0ad9299@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Implement fix for i.MX 93 silicon errata ERR052021:
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-ERR052021 uSDHC: Sometimes uSDHC does not work under VDD_SOC low
-		 drive mode and nominal mode
-Description:
-uSDHC PADs have one integration issue.
-When CMD/DATA lines direction change from output to input, uSDHC
-controller begin sampling, the integration issue will make input
-enable signal from uSDHC propagated to the PAD with a long delay,
-thus the new input value on the pad comes to uSDHC lately. The
-uSDHC sampled the old input value and the sampling result is wrong.
+***
 
-Workaround:
-Set uSDHC CMD/DATA PADs iomux register SION bit to 1, then PADs will
-propagate input to uSDHC with no delay, so correct value is sampled.
+Subject: Re: [syzbot] [mm?] WARNING in move_to_new_folio
+Author: shivankg@amd.com
 
-This issue will wrongly trigger the start bit when sample the USDHC
-command response, cause the USDHC trigger command CRC/index/endbit
-error, which will finally impact the tuning pass window, espically
-will impact the standard tuning logic, and can't find a correct delay
-cell to get the best timing.
+On 4/14/2025 3:14 AM, syzbot wrote:
+> syzbot has bisected this issue to:
+> 
+> commit 7ee3647243e5c4a9d74d4c7ec621eac75c6d37ea
+> Author: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Date:   Wed Apr 2 14:59:57 2025 +0000
+> 
+>     migrate: Remove call to ->writepage
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15be8fe4580000
+> start commit:   01c6df60d5d4 Add linux-next specific files for 20250411
+> git tree:       linux-next
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=17be8fe4580000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=13be8fe4580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=db03cefa26ecf825
+> dashboard link: https://syzkaller.appspot.com/bug?extid=8bb6fd945af4e0ad9299
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10afca3f980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=116f5c04580000
+> 
+> Reported-by: syzbot+8bb6fd945af4e0ad9299@syzkaller.appspotmail.com
+> Fixes: 7ee3647243e5 ("migrate: Remove call to ->writepage")
+> 
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-Based on commit bb89601282fc ("arm64: dts: imx93-11x11-evk: set SION for
-cmd and data pad of USDHC").
+#syz test
 
-Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
----
-Changes in v2:
-- new patch in v2 (split from #8)
-
- .../dts/freescale/imx93-phyboard-segin.dts    | 37 ++++++++++---------
- 1 file changed, 20 insertions(+), 17 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts b/arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts
-index 541297052b62..525f52789f8b 100644
---- a/arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts
-+++ b/arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts
-@@ -75,39 +75,42 @@ MX93_PAD_SD2_CD_B__GPIO3_IO00		0x31e
- 		>;
- 	};
+diff --git a/fs/jfs/jfs_metapage.c b/fs/jfs/jfs_metapage.c
+index df575a873ec6..50759a846e22 100644
+--- a/fs/jfs/jfs_metapage.c
++++ b/fs/jfs/jfs_metapage.c
+@@ -15,6 +15,7 @@
+ #include <linux/mempool.h>
+ #include <linux/seq_file.h>
+ #include <linux/writeback.h>
++#include <linux/migrate.h>
+ #include "jfs_incore.h"
+ #include "jfs_superblock.h"
+ #include "jfs_filsys.h"
+@@ -151,6 +152,54 @@ static inline void dec_io(struct folio *folio, blk_status_t status,
+ 		handler(folio, anchor->status);
+ }
  
-+	/* need to config the SION for data and cmd pad, refer to ERR052021 */
- 	pinctrl_usdhc2_default: usdhc2grp {
- 		fsl,pins = <
- 			MX93_PAD_SD2_CLK__USDHC2_CLK		0x159e
--			MX93_PAD_SD2_CMD__USDHC2_CMD		0x139e
--			MX93_PAD_SD2_DATA0__USDHC2_DATA0	0x138e
--			MX93_PAD_SD2_DATA1__USDHC2_DATA1	0x138e
--			MX93_PAD_SD2_DATA2__USDHC2_DATA2	0x138e
--			MX93_PAD_SD2_DATA3__USDHC2_DATA3	0x139e
-+			MX93_PAD_SD2_CMD__USDHC2_CMD		0x4000139e
-+			MX93_PAD_SD2_DATA0__USDHC2_DATA0	0x4000138e
-+			MX93_PAD_SD2_DATA1__USDHC2_DATA1	0x4000138e
-+			MX93_PAD_SD2_DATA2__USDHC2_DATA2	0x4000138e
-+			MX93_PAD_SD2_DATA3__USDHC2_DATA3	0x4000139e
- 			MX93_PAD_SD2_VSELECT__USDHC2_VSELECT	0x51e
- 		>;
- 	};
++static int __metapage_migrate_folio(struct address_space *mapping, struct folio *dst,
++				    struct folio *src, enum migrate_mode mode)
++{
++	struct meta_anchor *src_anchor = src->private;
++	struct metapage *mps[MPS_PER_PAGE] = {0};
++	struct metapage *mp;
++	int i, rc;
++
++	for (i = 0; i < MPS_PER_PAGE; i++) {
++		mp = src_anchor->mp[i];
++		if (mp && metapage_locked(mp))
++			return -EAGAIN;
++	}
++
++	rc = filemap_migrate_folio(mapping, dst, src, mode);
++	if (rc != MIGRATEPAGE_SUCCESS)
++		return rc;
++
++	for (i = 0; i < MPS_PER_PAGE; i++) {
++		mp = src_anchor->mp[i];
++		if (!mp)
++			continue;
++		if (unlikely(insert_metapage(dst, mp))) {
++			/* If error, roll-back previosly inserted pages */
++			for (int j = 0 ; j < i; j++) {
++				if (mps[j])
++					remove_metapage(dst, mps[j]);
++			}
++			return -EAGAIN;
++		}
++		mps[i] = mp;
++	}
++
++	/* Update the metapage and remove it from src */
++	for (int i = 0; i < MPS_PER_PAGE; i++) {
++		mp = mps[i];
++		if (mp) {
++			int page_offset = mp->data - folio_address(src);
++
++			mp->data = folio_address(dst) + page_offset;
++			mp->folio = dst;
++			remove_metapage(src, mp);
++		}
++	}
++
++	return MIGRATEPAGE_SUCCESS;
++}
++
+ #else
+ static inline struct metapage *folio_to_mp(struct folio *folio, int offset)
+ {
+@@ -175,6 +224,32 @@ static inline void remove_metapage(struct folio *folio, struct metapage *mp)
+ #define inc_io(folio) do {} while(0)
+ #define dec_io(folio, status, handler) handler(folio, status)
  
-+	/* need to config the SION for data and cmd pad, refer to ERR052021 */
- 	pinctrl_usdhc2_100mhz: usdhc2-100mhzgrp {
- 		fsl,pins = <
- 			MX93_PAD_SD2_CLK__USDHC2_CLK		0x159e
--			MX93_PAD_SD2_CMD__USDHC2_CMD            0x139e
--			MX93_PAD_SD2_DATA0__USDHC2_DATA0        0x138e
--			MX93_PAD_SD2_DATA1__USDHC2_DATA1        0x138e
--			MX93_PAD_SD2_DATA2__USDHC2_DATA2        0x139e
--			MX93_PAD_SD2_DATA3__USDHC2_DATA3        0x139e
--			MX93_PAD_SD2_VSELECT__USDHC2_VSELECT    0x51e
-+			MX93_PAD_SD2_CMD__USDHC2_CMD		0x4000139e
-+			MX93_PAD_SD2_DATA0__USDHC2_DATA0	0x4000138e
-+			MX93_PAD_SD2_DATA1__USDHC2_DATA1	0x4000138e
-+			MX93_PAD_SD2_DATA2__USDHC2_DATA2	0x4000139e
-+			MX93_PAD_SD2_DATA3__USDHC2_DATA3	0x4000139e
-+			MX93_PAD_SD2_VSELECT__USDHC2_VSELECT	0x51e
- 		>;
- 	};
++static int __metapage_migrate_folio(struct address_space *mapping, struct folio *dst,
++				    struct folio *src, enum migrate_mode mode)
++{
++	struct metapage *mp;
++	int page_offset;
++	int rc;
++
++	mp = folio_to_mp(src, 0);
++	if (mp && metapage_locked(mp))
++		return -EAGAIN;
++
++	rc = filemap_migrate_folio(mapping, dst, src, mode);
++	if (rc != MIGRATEPAGE_SUCCESS)
++		return rc;
++
++	if (unlikely(insert_metapage(src, mp)))
++		return -EAGAIN;
++
++	page_offset = mp->data - folio_address(src);
++	mp->data = folio_address(dst) + page_offset;
++	mp->folio = dst;
++	remove_metapage(src, mp);
++
++	return MIGRATEPAGE_SUCCESS;
++}
++
+ #endif
  
-+	/* need to config the SION for data and cmd pad, refer to ERR052021 */
- 	pinctrl_usdhc2_200mhz: usdhc2-200mhzgrp {
- 		fsl,pins = <
- 			MX93_PAD_SD2_CLK__USDHC2_CLK		0x158e
--			MX93_PAD_SD2_CMD__USDHC2_CMD            0x139e
--			MX93_PAD_SD2_DATA0__USDHC2_DATA0        0x139e
--			MX93_PAD_SD2_DATA1__USDHC2_DATA1        0x139e
--			MX93_PAD_SD2_DATA2__USDHC2_DATA2        0x139e
--			MX93_PAD_SD2_DATA3__USDHC2_DATA3        0x139e
--			MX93_PAD_SD2_VSELECT__USDHC2_VSELECT    0x51e
-+			MX93_PAD_SD2_CMD__USDHC2_CMD		0x4000139e
-+			MX93_PAD_SD2_DATA0__USDHC2_DATA0	0x4000139e
-+			MX93_PAD_SD2_DATA1__USDHC2_DATA1	0x4000139e
-+			MX93_PAD_SD2_DATA2__USDHC2_DATA2	0x4000139e
-+			MX93_PAD_SD2_DATA3__USDHC2_DATA3	0x4000139e
-+			MX93_PAD_SD2_VSELECT__USDHC2_VSELECT	0x51e
- 		>;
- 	};
+ static inline struct metapage *alloc_metapage(gfp_t gfp_mask)
+@@ -554,6 +629,24 @@ static bool metapage_release_folio(struct folio *folio, gfp_t gfp_mask)
+ 	return ret;
+ }
+ 
++/**
++ * metapage_migrate_folio - Migration function for JFS metapages
++ */
++static int metapage_migrate_folio(struct address_space *mapping, struct folio *dst,
++				  struct folio *src, enum migrate_mode mode)
++{
++	int expected_count;
++
++	if (!src->private)
++		return filemap_migrate_folio(mapping, dst, src, mode);
++
++	/* Check whether page does not have extra refs before we do more work */
++	expected_count = folio_expected_refs(mapping, src);
++	if (folio_ref_count(src) != expected_count)
++		return -EAGAIN;
++	return __metapage_migrate_folio(mapping, dst, src, mode);
++}
++
+ static void metapage_invalidate_folio(struct folio *folio, size_t offset,
+ 				    size_t length)
+ {
+@@ -570,6 +663,7 @@ const struct address_space_operations jfs_metapage_aops = {
+ 	.release_folio	= metapage_release_folio,
+ 	.invalidate_folio = metapage_invalidate_folio,
+ 	.dirty_folio	= filemap_dirty_folio,
++	.migrate_folio	= metapage_migrate_folio,
  };
+ 
+ struct metapage *__get_metapage(struct inode *inode, unsigned long lblock,
+diff --git a/include/linux/migrate.h b/include/linux/migrate.h
+index aaa2114498d6..cb31c5b1eb6a 100644
+--- a/include/linux/migrate.h
++++ b/include/linux/migrate.h
+@@ -60,6 +60,7 @@ struct movable_operations {
+ /* Defined in mm/debug.c: */
+ extern const char *migrate_reason_names[MR_TYPES];
+ 
++int folio_expected_refs(struct address_space *mapping, struct folio *folio);
+ #ifdef CONFIG_MIGRATION
+ 
+ void putback_movable_pages(struct list_head *l);
+diff --git a/mm/migrate.c b/mm/migrate.c
+index 6e2488e5dbe4..0f01b8a87dec 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -445,7 +445,7 @@ void pmd_migration_entry_wait(struct mm_struct *mm, pmd_t *pmd)
+ }
+ #endif
+ 
+-static int folio_expected_refs(struct address_space *mapping,
++int folio_expected_refs(struct address_space *mapping,
+ 		struct folio *folio)
+ {
+ 	int refs = 1;
+@@ -458,6 +458,7 @@ static int folio_expected_refs(struct address_space *mapping,
+ 
+ 	return refs;
+ }
++EXPORT_SYMBOL_GPL(folio_expected_refs);
+ 
+ /*
+  * Replace the folio in the mapping.
 -- 
 2.34.1
-
 
