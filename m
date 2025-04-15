@@ -1,126 +1,85 @@
-Return-Path: <linux-kernel+bounces-605471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D06ECA8A1DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:51:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E015A8A1E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:52:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47F431900A8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:51:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B0623ADF46
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:52:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCC2929B78B;
-	Tue, 15 Apr 2025 14:50:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1A1297A74;
+	Tue, 15 Apr 2025 14:52:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LROeOJTe"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uf5NBddi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9365EEA9;
-	Tue, 15 Apr 2025 14:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44819535D8;
+	Tue, 15 Apr 2025 14:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744728629; cv=none; b=aw5C3fJUHN8Rt1LrDk6YPNE+IuqwsuFmA5pGo3NB9+tZpNve/sfHHpvlLfm9/kYAq2rVlI3CBJUXWsqdT+1sE1x9XTEynXRH8OFvi5qB2NJRmxfRY13NlEPN1BK+L92hGEPoYFwEdcdeO68vDRfiNAmbepzSk6f4iPj7MeqPQuQ=
+	t=1744728733; cv=none; b=uuqB8mWF7vFKRWc1YwCJeTQePYf50zSqBew7I5S82mEnzYcBAIOzkEk6STF76RgNvvuJm7vrRl05o+fK2BIVzGqQOvOm2NuVsAbU4a5yoroKMuMwA1DUzzSctipVgf5Es4voI/8sM0nwyALdqFtX12tJ675zRvEFCnHayT9UBeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744728629; c=relaxed/simple;
-	bh=TgVnK1mfcJDMMm/R6mEsvkmzd0WapfMrWxTP12UUUOw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=UQPYt8HDS6cAVHN4jgdLzjshfFrlco8LfWh4VXSLTEh0UL4ZataCJJqmKfIoydprAAd3uhCXbPkJcoRVC4XGyDAB2HbjKlmWUMAZwFBQLh9KAZ2PTEcjHHjm4kDDNPqfIl04aMhpH3iKwnlBPD/abXUIc11Olg32VopW4/sob+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LROeOJTe; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7390d21bb1cso5577351b3a.2;
-        Tue, 15 Apr 2025 07:50:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744728626; x=1745333426; darn=vger.kernel.org;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TgVnK1mfcJDMMm/R6mEsvkmzd0WapfMrWxTP12UUUOw=;
-        b=LROeOJTe7976OCDmbfKm0ZCbxPwecVo2XWkc7EVES0k1zS/l2ESRFEzuVRQvvos85K
-         RU4EmxfbhIVD+8zxAaUZcBzRY2I6Z3PlD5oohaLcFXONlVq+jCXF9uQydqjBLVh20TCw
-         kHn2Ata4lD5uYfAFUZ3NaweaKdKgOznc4pYQD2kD2N5mP3eUOoGpE3IGp4bxfWHI1F+L
-         9IBIkdmTqXE6VaSz0bX44qFT+Ql5onXPF4LEAIa2TWrk/9FbqtIYRRCYVc7vNsrUFmNp
-         lA3HT7BvI86K7vvTawdK9wkHAUmqJy/ibrrMbVYc3j2OpEIJssdWaP4sxGkeweSJDI5A
-         j68w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744728626; x=1745333426;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=TgVnK1mfcJDMMm/R6mEsvkmzd0WapfMrWxTP12UUUOw=;
-        b=HF1a3msYC1+DQE0TdqOwpekgx82vCuHYbFEgMGSUFzlj3755RkqsbQYsbTqHpxpnDa
-         FAu9krxven70HNTkz8kbg1eJ0CCu8U8/Qzm4VHo3SAXVgZpGaaVzqRo+kdrvkiEoX5Mm
-         +nSmO8C6nqWxNXwVPitv4MuAnO4WILkx1PeZ5qOkoo8o6hYAONKyleJ+OL2887C4AeoC
-         GeRUC/6hhCfIVWPkzNb4KXSAO5EwuhzbUrUCmVwa8ay7Vh/0x9XH+7OVuoh86M4fFyZG
-         5xHZXgSiHMge9hQdb/4/YIhIYG5o3E5Bthx1oW0ga8P8RF3JmtB/mByzMw+mQ3SfomF/
-         V/Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCWBNIMnpYjggEXhr0j5eJKVqMG7f1bUcKHyr5stFYXTFMTMb733h8S8x/vcufGWrCC7hqAPaUobeZURT/4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4/76UmU0eXJBJx/KtMbBetEb97s5/GzZBd7XclJPvet79h271
-	mmg5TQO9p4xwT4YoMSuMjU+IlB5YbvEjDSzwsRrt2KZyfTHE2ePM
-X-Gm-Gg: ASbGnctV783cKmCqVQ69S2RJEr5myu8kzxK6atfzXgZavU4pJfZO4N3Gz/W9q/lLvKD
-	FbvwjsumwpIPrFXbPD7oguOO1EPJDKgVhlxt74URXf0WSTbhlLuk0pJXWtE8YpXPbXQMFDuST9V
-	VERhHXyhYn30NtUfJOU8H0BHB1CNM1pHNFifsOhSY2W7rB68I7LJKXqedSZIz4/nZFo93ybahlL
-	kXvS80yaKBLjXFxz8inL2BJGTTg8S6ByG97nWe5OxJG8FIgTQJffph6gy4GkYSXBBP3ddCvboVc
-	WNh1qpNXLRl+dIhPyNqIVG9T80/8CFOuKg==
-X-Google-Smtp-Source: AGHT+IF9/LIfGrQ54PzKU58/NNVjQCJGGAC3bvO5/IgMe8qIjhSBWovSWhdeTI6GWgiIziHLtNdu1g==
-X-Received: by 2002:a05:6a00:1907:b0:736:a82a:58ad with SMTP id d2e1a72fcca58-73bd126b882mr17248346b3a.15.1744728626000;
-        Tue, 15 Apr 2025 07:50:26 -0700 (PDT)
-Received: from localhost ([181.91.133.137])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd2198926sm8578584b3a.20.2025.04.15.07.50.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Apr 2025 07:50:25 -0700 (PDT)
+	s=arc-20240116; t=1744728733; c=relaxed/simple;
+	bh=snCmSC3+XllzjenNJuiYQQLOeMF1tUGdj1sBr7T4mIQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HKcxCfNwn40rpiQ8mokhTxGfFkDHfPQqWeWP6py3zcGDaPxO9C2P0qq5yfXEZgaW4xr6fAvxWoQSVWQbRZ8PwOIotM2UwfoUFO8enqqHlGz5bWc80vDUILpSyp3Nc1eQaaCZSjqIs5UVGJxuTJwDlZey39tyBZIcZCf2Y4J14f0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uf5NBddi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B893CC4CEEE;
+	Tue, 15 Apr 2025 14:52:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744728732;
+	bh=snCmSC3+XllzjenNJuiYQQLOeMF1tUGdj1sBr7T4mIQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Uf5NBddiATB3RryAFZESQswmTpJLcveWI1tafe6mo8n5v44sRHJIVPg9AJL2rSpWe
+	 uO3Xjg0NLjXQ9eR1QAkwV3hpkI3TNZO3gzvZwTc1ZZWqf2D0KUJNoJ8OByN/PYG1Hm
+	 q5/lZl0aNgH4dqFYVGsp7Pudi3GU2iGLYmyD7Vay09MmQs4Ojb9kPqGvpj384rmT1S
+	 JUfpt+jcK7CjIGx3Y9f2gpc/TcCongTNvF7CqHsXLv871FPBT0SltXp3u+b1i5Z7wn
+	 NZZmFem0s6HuFfwrQdGW6Sci6ZkiG1I0kxtbIFqv4uXD+2IN/W+9aNLtyykjFb28cd
+	 MHZBATTF4o75A==
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e5deb6482cso12404179a12.1;
+        Tue, 15 Apr 2025 07:52:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV74UHwbZfckA5/N05HacBCreBkO0XsBm5ENkye2Ss03i1IFMVq/iuYBoPbJaa4K0De7ODWFlu34DeMU5UP@vger.kernel.org, AJvYcCVeYknn6UIRy8UjN8WQWrw0rXhf8d/W7aPoVYQtGPWMACBw6NORYoEUgJbeFopakLxt2T94xhWVFYuZ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+kYnGPBJf5MKpdO8aCPW4zfXKwhZEgNRZXBNlRmzi6XAZECAu
+	D91ZqZa9tUoEYUQrCdyfK6+qohQGDsrlUBQHy4LTTnEXAleHmGiezuCG766GWCCweJ5e8qpu2s8
+	xGcTkhjXc3QEYTu3acu4dDAG4lw==
+X-Google-Smtp-Source: AGHT+IElNRejW7H0MvMKqVJd83SYHEviVdbU4tEY6r816KeYkX6joN56eHCYOKnpTL5DFaiKBdwIU12luYEJVqfMFTA=
+X-Received: by 2002:a05:6402:210f:b0:5ec:8aeb:812a with SMTP id
+ 4fb4d7f45d1cf-5f45dff3335mr3104516a12.14.1744728731365; Tue, 15 Apr 2025
+ 07:52:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <tencent_FFC8E7A5A76050982D28F811C81F936D9205@qq.com>
+In-Reply-To: <tencent_FFC8E7A5A76050982D28F811C81F936D9205@qq.com>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 15 Apr 2025 09:51:59 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq++MbY=s5t1hmE0AhcmFA14t3fxLM1xPFZAA0ETX_ee-g@mail.gmail.com>
+X-Gm-Features: ATxdqUG4c4EClp3gS0m6AEGJjtYgevxH2MgIUqsCDzJiOk0kU1YmnC23zzTKW2c
+Message-ID: <CAL_Jsq++MbY=s5t1hmE0AhcmFA14t3fxLM1xPFZAA0ETX_ee-g@mail.gmail.com>
+Subject: Re: [PATCH] of: reserved-mem: Warn for missing initfn in __reservedmem_of_table
+To: Liya Huang <1425075683@qq.com>
+Cc: Saravana Kannan <saravanak@google.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 15 Apr 2025 11:50:23 -0300
-Message-Id: <D97AOGEOKCRX.2LAIZUEPNX2E@gmail.com>
-Subject: Re: [PATCH] wifi: iwlwifi: Fix iwl_pci_probe() regression
-From: "Kurt Borja" <kuurtb@gmail.com>
-To: "Kurt Borja" <kuurtb@gmail.com>, "Miri Korenblit"
- <miriam.rachel.korenblit@intel.com>, "Johannes Berg"
- <johannes.berg@intel.com>, "Emmanuel Grumbach"
- <emmanuel.grumbach@intel.com>
-Cc: <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250329-wifi-fix-v1-1-d6360e78f091@gmail.com>
-In-Reply-To: <20250329-wifi-fix-v1-1-d6360e78f091@gmail.com>
 
-On Sat Mar 29, 2025 at 1:48 AM -03, Kurt Borja wrote:
-> Fix the following probing error:
+On Tue, Apr 15, 2025 at 9:16=E2=80=AFAM Liya Huang <1425075683@qq.com> wrot=
+e:
 >
-> iwlwifi: No config found for PCI dev 2725/1674, rev=3D0x420, rfid=3D0x10d=
-000
-> iwlwifi 0000:3b:00.0: probe with driver iwlwifi failed with error -22
->
-> Which happens, as the comment suggests, due to an extra `!` when
-> comparing the device bandwidth with the no_160 subsystem flag.
->
-> Fixes: 75a3313f52b7 ("wifi: iwlwifi: make no_160 more generic")
-> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
-> ---
-> Hi all,
->
-> After compiling and testing the latest commit on Linus's tree, I found
-> that my wifi wasn't working. After bisecting I found:
->
-> first bad commit: [75a3313f52b7e08e7e73746f69a68c2b7c28bb2b] wifi: iwlwif=
-i: make no_160 more generic
->
-> And the culprit was an extra `!` when getting the device info.
->
-> This patch is based on the latest commit of Linus's tree.
+> For the data in __reservedmem_of_table, its function pointer initfn might
+> be NULL. However, __reserved_mem_init_node() only considers non-NULL case=
+s
+> and ignores NULL function pointers.
 
-Hi all,
+If initfn is NULL, there's no point to the entry and that's a bug.
+Unless you have a build time check, there's no point to add this.
 
-Any updates on this?
-
---=20
- ~ Kurt
+Rob
 
