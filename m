@@ -1,108 +1,139 @@
-Return-Path: <linux-kernel+bounces-605172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 141EDA89DD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:22:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FC3EA89DE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:24:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 392857A63F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:21:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD9821884924
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BDF02951D0;
-	Tue, 15 Apr 2025 12:20:28 +0000 (UTC)
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF98296D1F;
+	Tue, 15 Apr 2025 12:21:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="xROH9WJJ"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AEC82036FE;
-	Tue, 15 Apr 2025 12:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B54296D12;
+	Tue, 15 Apr 2025 12:21:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744719628; cv=none; b=PIOCwtI8UMlRdQVkcdD1xYdNj9NFfOB5cteik+2RIBk5AOF+qfE7ShBTFNMraRHDH/+6UG7hgz91+4kogn/Vf3WzTnskdRV0EmskSxbmefCvX75a2dmrzPeAxouaBgm47UcS4E4A4W82A3Lk5XLK88ai0CI/ntJcGMuFGop1IwY=
+	t=1744719717; cv=none; b=TKSPig+7ajbEfNlihADgp5jJoitQDpRos2zZbJLtMt3EVGESzUSScMH5AQFnyiZcKt4KVuTA/iyRheEt6eUslJ3IGfhTtnZrYJMyYdWb3DS1yQzGyoE+6a5uDrr2jMZMfwUpyKBxP+KAL6acz3YaMFvtG2YTwo1U1daDDqJ7918=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744719628; c=relaxed/simple;
-	bh=LPHeTTp9A63WCZtMuf+AbObGxwNJcKR7y3LrWcGuKik=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qw64He2f6lg5yjrBYPbLxAtKm6Lflf1LMOb7TPxHsxb8BlWZhUXY3MD3aAKCchjKi8FfSvniGw+RW9ycx6PhwgaDbqm5xR/UKIpSfCJ2kxTum2+WHY5X1CwQ4XbdtQHhpbs7EEDoTRYo9ZSsiRhpfGQdzaipYAma0aWUc/M1Sok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-4c4d8638e07so134333137.3;
-        Tue, 15 Apr 2025 05:20:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744719625; x=1745324425;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QC/bVSTrTLDwyrH3Kp+UMVUSLaX/RiyydBGd8b6z7K0=;
-        b=xUAL31J3IrQ0lCHkWCS4W1mCawemyofz4J3HDcgbY6T/aeMqI6JlLKVl8ZQtZ52bP5
-         IsD1p0sC0UYxaj/yV308V/5ICZ9vzGA+QOwo6EstQiolq0kj0E5mWv2u4aHUjQ8+IQJK
-         xXfE4SQfpNACcTfTUHK0CR21i9KbVVL7OcpZgh+WaYNRBhYKgDUPLV0pTQxTFdGEDFbt
-         noqrFUToiDAAEg6x8lFqn0zoi3AuXIfRZUU9nMp5ux6jTgW6s3V2RIGsBHNlg9ptrUV5
-         JttZy0okcBem/xhAoFsBA72hiFicSrmr8lrM+Dyl43sAhOAf5Z6fvbcI+vwUE7XeUcTV
-         F0TQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU4B5jmGtOseHI88a9Y1HxhXrjXQA3/1t4VWH1kc9WpFi5ONJXIyc5tZSGGrHqK0wHFVl0q3Yh/CrG2vkzh5SZykxw=@vger.kernel.org, AJvYcCU93fFw0PvzyvpPZJGgCNXnvPvQChHtONJZdqzgTt+aqvDLhqnwOPkGGF/OaipQFV86ZUECiaB0DazB@vger.kernel.org, AJvYcCXu6Is2RRoU3eeLnmjLocf3bIBjAgaEFz2RDRCzD5Hj3DwkaL/Msnxh0EH9tdK07ufE3V4IMPlS+7rEUiYn@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+OREnVW9B/vXiE1G9jSEYv9QaDQMhNUyWZv3DdvPyn6dhZ6CV
-	SZOkV/JKvR4QEG31G+PLwrfBMSxt40UJqdkd/jFz75Z1vZ87GYEQkNd36a0J
-X-Gm-Gg: ASbGncuor1/cU7HW7092er2WBEXnqE5cVllVLfwXbhG7wwle+cOHYdYo2OjvqXmV9gp
-	Bv99Uv5BdyOC1cnkFRVZVDntUNeR3o0IGk6o55Vq8ZyA++bAZzURuIVo+kxN5b4JyNs+blzsarx
-	jWc23jxenyJhx6nZNN6MJ0xqUNdDrA7yzgOde4eu7zQLYvHeUesjEFjlS7vlmElPVIf5kyF5o3I
-	61GavB1QF0XXsQDQhA56wHTctXLz+ft5LQ+co2EbUc1d9L7RLOuXz1Ac37Rqc7iejvHTB88M27n
-	Ync11WJlUeEXzDLJbs5VDKUbJk1MKo1Z903kw6KMspMIw/Gq+lN6LzA7fZ3kdLqy/YmQL9mo8yi
-	s6Jg=
-X-Google-Smtp-Source: AGHT+IGQrk84wSBco0kjZKc8NqugR4b1UrC0xtv15LJZZWvQnmlErM6oHNrJfKe/e+5TYuXkJiWpJw==
-X-Received: by 2002:a05:6102:3308:b0:4ba:95f1:cc83 with SMTP id ada2fe7eead31-4c9e4fffa56mr10377528137.16.1744719624717;
-        Tue, 15 Apr 2025 05:20:24 -0700 (PDT)
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com. [209.85.217.51])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-875572b30a1sm2621568241.31.2025.04.15.05.20.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Apr 2025 05:20:24 -0700 (PDT)
-Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-4c300c82ca8so202442137.2;
-        Tue, 15 Apr 2025 05:20:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU8MIhlsOmwpF/v9mGhdc5Rczsebc2b60u/1Vpvp6UsQvWIavBV/6cbCrYZu8yITnrO5H/v4sFHOxNg@vger.kernel.org, AJvYcCW37p3epRHvCxgtJOPDbwxLLCCjhhi4imz6qW3zCYx7zClpUzGZpQeprBzjLwpJnwcZ/Kg9nctSRatbKYlB@vger.kernel.org, AJvYcCWsOrXz9UQAyt6nE1R6SwlnufKwatPMRPHP2pw4iwv4jiZEVbt/vxu3KnGKowWnBMPjsVKnN2xqv3TiIcynx1KIl3A=@vger.kernel.org
-X-Received: by 2002:a05:6102:4407:b0:4c8:55b8:6fad with SMTP id
- ada2fe7eead31-4c9e5003037mr10374057137.17.1744719623874; Tue, 15 Apr 2025
- 05:20:23 -0700 (PDT)
+	s=arc-20240116; t=1744719717; c=relaxed/simple;
+	bh=IELIMLjBjaGBaSjoaaPlcfY2mtZY+fdV73O+G80GU4I=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=j/vI919acNYmcUOB+AQO6i8bWdHJmnAvxjwE+WL7HlBVdqguQamMCgV99MG6kRKyPMqVE/aqVBdRi/6uYwXKYcORKP9bcqHw0S/JFRgm2i9E0S4dkDfpeN5OYIZ0p7SNyF5IPOXFAVxmcDL94+vNm9/FXYThZJKRgTyQ7pjB/eI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=fail smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=xROH9WJJ; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53FBXnUu007590;
+	Tue, 15 Apr 2025 08:21:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=pVJOZFhDVjnDo6D1R6xX4H51lpe
+	3Ag2BzfnILzseXcg=; b=xROH9WJJYCBKVVXqSxvsP22Jxcv0F2bTEWpjoHCnlZh
+	tRslK62sgy7SxvkAp12NUZUc7o4dLfZcl0TK6uLwNUvfCbnQFpNxN0RSMD3h6iJ0
+	1lM9rUBuIEwpXibV5B//y6pBH4sUq6knwYrFe5+UJT4Hiv4MLDN6qvQCwIWmII9D
+	WZQfkycspkttEQoe3Pnow1VwJpHKW00p7TlP+E589+Qwa4YBt5dMGsU7D7Gi7/m1
+	Z5wXTBIGRle8dMErVeishw3UHMdX55Gxcgm3K4HlrhpNVAhXPBmab//GFN0BKYH/
+	FmZD0YBwabfxLM2E7gYJ8xQdk8fdcLlgn2+JvKWkBhA==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 45yn37es15-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Apr 2025 08:21:32 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 53FCLVLY003466
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 15 Apr 2025 08:21:31 -0400
+Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
+ ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Tue, 15 Apr 2025 08:21:31 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
+ ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Tue, 15 Apr 2025 08:21:31 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Tue, 15 Apr 2025 08:21:31 -0400
+Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.9])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 53FCLG4e013198;
+	Tue, 15 Apr 2025 08:21:18 -0400
+From: Marcelo Schmitt <marcelo.schmitt@analog.com>
+To: <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <jic23@kernel.org>, <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
+        <nuno.sa@analog.com>, <andy@kernel.org>, <marcelo.schmitt@analog.com>,
+        <marcelo.schmitt1@gmail.com>, David Lechner <dlechner@baylibre.com>
+Subject: [PATCH] iio: adc: ad4000: Avoid potential double data word read
+Date: Tue, 15 Apr 2025 09:21:10 -0300
+Message-ID: <8f765cfd6e93fad4e755dd95d709b7bea2a388e2.1744718916.git.marcelo.schmitt@analog.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250329121258.172099-1-john.madieu.xa@bp.renesas.com> <20250329121258.172099-3-john.madieu.xa@bp.renesas.com>
-In-Reply-To: <20250329121258.172099-3-john.madieu.xa@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 15 Apr 2025 14:20:11 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWTU_=WS4Z2eczA8BSZjio6cAMKrzrOHZ-O9sfxX6+byQ@mail.gmail.com>
-X-Gm-Features: ATxdqUGWVaybAEbIQyupuLn0ffcz3brcbnux64U0tWfBCvQZqrPYP3p0tpJR0YU
-Message-ID: <CAMuHMdWTU_=WS4Z2eczA8BSZjio6cAMKrzrOHZ-O9sfxX6+byQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arm64: dts: renesas: rzg3e-smarc-som: add raa215300
- pmic support
-To: John Madieu <john.madieu.xa@bp.renesas.com>
-Cc: conor+dt@kernel.org, krzk+dt@kernel.org, magnus.damm@gmail.com, 
-	robh@kernel.org, biju.das.jz@bp.renesas.com, devicetree@vger.kernel.org, 
-	john.madieu@gmail.com, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Authority-Analysis: v=2.4 cv=FogF/3rq c=1 sm=1 tr=0 ts=67fe4f4c cx=c_pps a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17 a=XR8D0OoHHMoA:10 a=IpJZQVW2AAAA:8 a=gAnH3GRIAAAA:8 a=XKF0PoAx1WVWLetZYlMA:9 a=IawgGOuG5U0WyFbmm1f5:22
+X-Proofpoint-GUID: IuknmNQqfNYk8iVCtX9hxO0Zb92r1m5T
+X-Proofpoint-ORIG-GUID: IuknmNQqfNYk8iVCtX9hxO0Zb92r1m5T
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-15_05,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ malwarescore=0 priorityscore=1501 lowpriorityscore=0 clxscore=1015
+ spamscore=0 mlxlogscore=999 phishscore=0 suspectscore=0 adultscore=0
+ mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504150087
 
-On Sat, 29 Mar 2025 at 13:13, John Madieu <john.madieu.xa@bp.renesas.com> wrote:
-> Enable raa215300 pmic and built-in rtc support on RZ/G3E SoM module
-> Also add related clock and interrupt signals.
->
-> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+Currently, SPI-Engine offload module always sends 32-bit data elements to
+DMA engine. Appropriately, when set for SPI offloading, the IIO driver uses
+32 storagebits for IIO ADC channel buffer elements. However, setting SPI
+transfer length according to storagebits (32-bits in case of offload) can
+lead to unnecessarily long transfers for ADCs that are 16-bit or less
+precision. Adjust AD4000 single-shot read to run transfers of 2 bytes when
+that is enough to get all ADC data bits.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.16.
+Fixes: d0dba3df842f ("iio: adc: ad4000: Add support for SPI offload")
+Suggested-by: David Lechner <dlechner@baylibre.com>
+Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+---
+After enough sleep and some time not looking at this driver I finally realize
+the potential issue David was talking about. Although I didn't see any clearly
+wrong reading when testing it last week, I'm adding the fixes tag since it's
+probably easier to drop the tag than to go fetch the commit log.
+Also adding a suggested-by tag.
 
-Gr{oetje,eeting}s,
+Thanks,
+Marcelo
 
-                        Geert
+ drivers/iio/adc/ad4000.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/iio/adc/ad4000.c b/drivers/iio/adc/ad4000.c
+index e69a9d2a3e8c..5813db28510d 100644
+--- a/drivers/iio/adc/ad4000.c
++++ b/drivers/iio/adc/ad4000.c
+@@ -941,7 +941,7 @@ static int ad4000_prepare_3wire_mode_message(struct ad4000_state *st,
+ 	xfers[0].cs_change_delay.unit = SPI_DELAY_UNIT_NSECS;
+ 
+ 	xfers[1].rx_buf = &st->scan.data;
+-	xfers[1].len = BITS_TO_BYTES(chan->scan_type.storagebits);
++	xfers[1].len = chan->scan_type.realbits > 16 ? 4 : 2;
+ 
+ 	/*
+ 	 * If the device is set up for SPI offloading, IIO channel scan_type is
+
+base-commit: 1c2409fe38d5c19015d69851d15ba543d1911932
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.47.2
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
