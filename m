@@ -1,165 +1,106 @@
-Return-Path: <linux-kernel+bounces-605794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1041BA8A63F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 20:01:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F8E2A8A644
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 20:02:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FF94189DAA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 18:01:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 523933ADF5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 18:01:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C38214211;
-	Tue, 15 Apr 2025 18:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55076221540;
+	Tue, 15 Apr 2025 18:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="id7uEHpB";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="z9mD24ut";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="id7uEHpB";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="z9mD24ut"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ajwELetX"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE9D2DFA3A
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 18:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53DD22DFA58
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 18:01:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744740063; cv=none; b=e/V305dq5suxeIinla1rOTC8mnXak3GmjE9jETCdbZ14ypIs7LMdRC21DmGCOX2yXhUO8XQhvHXwgy9m97CGYpmit/iRbdJlJM38yt+W2wqzZF13pxP3+/l5XwDPF+pgmzB2jvWnGVplF8S83IFi6MUIVrfJv6tbFnj66nV6ybE=
+	t=1744740115; cv=none; b=iL8ZPCTGlrvdznISb9sBZa6VeaL4hVm8IKIVzJ6nwMvNdDmiE+9jc8nVfbxfKPb45MwexYbISh3MVcgl7SXeHg6zYB0FA9FADHDYcU4g6YgCZM7a8kPzbgc93U1OPzAZk3HwDOgtRme9tHptQzaNQFHB7GBjaKkAYlBvYJsAX4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744740063; c=relaxed/simple;
-	bh=VIU3YOiY98/f9r8pgYFEwVekiGO4a/6jeSkcROssuaM=;
+	s=arc-20240116; t=1744740115; c=relaxed/simple;
+	bh=EZkcBzEwklFYHdA30Mkd9gwwJhwN+Uhz+aWzVBgHtOs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=duOJ+sKZdF+QS0ILJMxOQx3Km74GFAKRgENP0XPaBvlQz4GHJTK6vzN3eZHF17lltgf/IpSXxfEwkCx3rKeD0bd+yvvtR4cIATl/sbzFwGqMi5j02HEJWSfMkib1O1HAz9tDY32HPZj8PTiffgUVH1g2V4NPYe0/J0z4fPmbGJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=id7uEHpB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=z9mD24ut; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=id7uEHpB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=z9mD24ut; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	 Content-Type:Content-Disposition:In-Reply-To; b=RrRnRVr+LkQFUtyrKXtrtmWT5f9Fb8lJnE6fo9bx7Cet9gH1xthO0+Y1KgP3oYmR6IjvLZQqXX+h70WmOkMSz2K9eUpZrsDc52jA2YQIKKPC6PCwSrxePNR2CdZSQ/1yv/PLlI2LZm+btggm+HUc50wlSZOznk7qJczbrK+k3Pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ajwELetX; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 708EE40E0242;
+	Tue, 15 Apr 2025 18:01:49 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id TeArVCvk0sca; Tue, 15 Apr 2025 18:01:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1744740104; bh=iWWIR36544IPsAfZOkt4jW4spzPhPRLmPKIHd6pLcNs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ajwELetXOjJ+J4On6fZN6WsNzNE6y/rt36kjidyh5ffA/xS/CArfWBwnS0/d2d6ns
+	 ep2w+IUdhSiFK2VROdsFsLNlqo2uOzmyg90Qa57qik8QB1sl8r31VvdH05kt2RJWPo
+	 Y5t/F7feb5f9eumIFDCpg6qfq3SNMBUfSz2CgzpVLAd2FN3DXUHVkGGrO3VLzbX20W
+	 Ze38YgAA/0XzyKwU7QU5XAOY2Rt0ACIdDc6bVAH5U+Pd3wNWyw8o9sH2Pe24eABMJl
+	 UfxuP6eBb8B8o2xJwfLMhLWrzWq7F09M/4UiB+07r5P5QIlD+3S8lfz18R2+hOO21U
+	 K7UPcCMrfIMxZ1gJtDLUWjnpuZfcJE9orLWg8t21XmPSZbQ9ktlZcvnUOxBurW2X0V
+	 bbHe91oaooTE2csskWibNIpWxN+SZa8zTuYHUiaaWdZE9AqUZSZv0JSxEE7TKAdxZL
+	 6eOygf4ebYruIz1gzfxZIPzrmGWZENC704j0ePUJ/9OWqKn+L+H/rONg2lVD7/56Bk
+	 UWQX1YJehKVKHnh2jMj+oI5q2/kkQI89ESEuH4q/q8d+200yf0Y+7TYOAgOEkEh4NV
+	 oBUnva1D/AP8fYE8oWElyPMjaqqKazO+sQ+yxX4WuMToq9Jo3oxO5wMw/x7vFIxbjn
+	 4Ifzea7Kr2om3gvD0CdK4qq8=
+Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id AD69C1F461;
-	Tue, 15 Apr 2025 18:00:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1744740059;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tqDzUeAHeeGUgPBZz4cnwRo1kx8yqknbBXRcS6TgjCE=;
-	b=id7uEHpBccTvHsZak3MoZNMnxFC7UG4xA4s+XbSQ78U2OmS6u+DTKVgToDLQ9G68QZ+MMg
-	M2Z+lMuJt3FkltuZjTvfLH/HKqVZjAjQGeDMmvh/pjQs4Nj6ALUXm9f7Lbun88FCVscdwV
-	48mv55AVF+1uiysxyKm+026sTAuwSV4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1744740059;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tqDzUeAHeeGUgPBZz4cnwRo1kx8yqknbBXRcS6TgjCE=;
-	b=z9mD24ut1cSunXEq2zrT/NyTgiRunihmTBMmIrQzlD/mU9ExEvTufClOQNeyYUs66ZXmqq
-	zBjdL8vQQLtGyUCw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=id7uEHpB;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=z9mD24ut
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1744740059;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tqDzUeAHeeGUgPBZz4cnwRo1kx8yqknbBXRcS6TgjCE=;
-	b=id7uEHpBccTvHsZak3MoZNMnxFC7UG4xA4s+XbSQ78U2OmS6u+DTKVgToDLQ9G68QZ+MMg
-	M2Z+lMuJt3FkltuZjTvfLH/HKqVZjAjQGeDMmvh/pjQs4Nj6ALUXm9f7Lbun88FCVscdwV
-	48mv55AVF+1uiysxyKm+026sTAuwSV4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1744740059;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tqDzUeAHeeGUgPBZz4cnwRo1kx8yqknbBXRcS6TgjCE=;
-	b=z9mD24ut1cSunXEq2zrT/NyTgiRunihmTBMmIrQzlD/mU9ExEvTufClOQNeyYUs66ZXmqq
-	zBjdL8vQQLtGyUCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8BF1E137A5;
-	Tue, 15 Apr 2025 18:00:59 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id zhCrIdue/md4fAAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Tue, 15 Apr 2025 18:00:59 +0000
-Date: Tue, 15 Apr 2025 20:00:58 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Charles Han <hanchunchao@inspur.com>
-Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] btrfs: Fix the incorrect description in comments.
-Message-ID: <20250415180058.GM16750@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20250410090723.10166-1-hanchunchao@inspur.com>
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4464D40E015E;
+	Tue, 15 Apr 2025 18:01:36 +0000 (UTC)
+Date: Tue, 15 Apr 2025 20:01:28 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: thomas.lendacky@amd.com, David Gow <davidgow@google.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>
+Subject: Re: sev_es_trampoline_start undefined symbol referenced errors
+ during kunit run
+Message-ID: <20250415180128.GJZ_6e-B3yFuwmqWWS@fat_crate.local>
+References: <7c5f9e2a-2e9d-46f2-89b2-83e0d68d3113@linuxfoundation.org>
+ <20250414230047.GHZ_2Tnysv9zCD6-tX@fat_crate.local>
+ <995cfca8-c261-4cf0-96f6-b33ca5403ee5@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250410090723.10166-1-hanchunchao@inspur.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Queue-Id: AD69C1F461
-X-Spam-Score: -4.21
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,twin.jikos.cz:mid,suse.cz:replyto,suse.cz:dkim]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <995cfca8-c261-4cf0-96f6-b33ca5403ee5@linuxfoundation.org>
 
-On Thu, Apr 10, 2025 at 05:07:22PM +0800, Charles Han wrote:
-> Replace PTR_ERR(-ENOMEM) to ERR_PTR(-ENOMEM) in comments.
+On Tue, Apr 15, 2025 at 08:25:09AM -0600, Shuah Khan wrote:
+> ./tools/testing/kunit/kunit.py run --arch x86_64
+> or
+> ./tools/testing/kunit/kunit.py run --alltests --arch x86_64
 > 
-> Signed-off-by: Charles Han <hanchunchao@inspur.com>
-> ---
->  fs/btrfs/delayed-inode.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/btrfs/delayed-inode.c b/fs/btrfs/delayed-inode.c
-> index 3f1551d8a5c6..e35626270f2b 100644
-> --- a/fs/btrfs/delayed-inode.c
-> +++ b/fs/btrfs/delayed-inode.c
-> @@ -119,7 +119,7 @@ static struct btrfs_delayed_node *btrfs_get_delayed_node(
->  	return NULL;
->  }
->  
-> -/* Will return either the node or PTR_ERR(-ENOMEM) */
-> +/* Will return either the node or ERR_PTR(-ENOMEM) */
+> The tree I see this every single time I do my tree testing.
 
-Thanks, while this is correct it would be better to update the whole
-function comment so it's more descriptive. I'll write someting when
-adding the patch to for-next, thanks.
+Doesn't reproduce here:
+
+# ./tools/testing/kunit/kunit.py run --arch x86_64 > log.00 2>&1
+# ./tools/testing/kunit/kunit.py run --alltests --arch x86_64 > log.01 2>&1
+# grep -i error log.*
+log.00:[19:04:52] [PASSED] error_pointer
+log.01:[19:44:06] [PASSED] error_pointer
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
