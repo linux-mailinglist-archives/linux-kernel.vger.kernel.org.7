@@ -1,68 +1,80 @@
-Return-Path: <linux-kernel+bounces-604567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 373E8A8960B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:08:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51688A89621
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:10:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9306188EF25
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:08:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58BB817DAC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88938279907;
-	Tue, 15 Apr 2025 08:08:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417B227B51B;
+	Tue, 15 Apr 2025 08:10:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e2xyBPUq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CF39gLfm"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E17BF13D539;
-	Tue, 15 Apr 2025 08:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F97D2309B6;
+	Tue, 15 Apr 2025 08:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744704502; cv=none; b=GIeuliAtejE8lp/LGjBsvp4KMLOtTe6NLFB3jOTzTfK/qQ7tdKOAf+LqHSB26tBD0pJ6mkKIUgYN1otmbmtqzq5+evgmD4TaO0uLrl35IjMTU2We9VkQFmUF2Qi9cOw5Qe2yTDpN+X/1OVsD9n+9B7v664AJK1hqWea8JaV9+O4=
+	t=1744704627; cv=none; b=oiGsVX8JRMouV75Kg7M0pq8bZn99VYiaxmYnYViZopI+Xby3kkdH1KAtRBcRZOvgdDE7PeIIr06lIdPEX1SYtQmONq6KoYQrouoY6GocJAECFhrPTAVCLRzpzwy1vm4nf5hUjr8G32prm3ixavnY9RTMe4y3jZ04dy2pxxO6YI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744704502; c=relaxed/simple;
-	bh=VY+BI83+U62fNIjSJ7wZ0e9O8YlwQ1ENtS67jWwGC38=;
+	s=arc-20240116; t=1744704627; c=relaxed/simple;
+	bh=zDIPSWHHd2CBUilACS5l+ZTN79OAHuDpka07FpjaGKQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d5HUhE+3erMSwAgrfHJVJH3VHnMXJiNDsSu6qNcRZSChzDCAYyFFDchn3gpCsc4rvt28LYCJ4ed0iXytn0ffIsCehopnI9gwxKYy/NWv1s4l33j63d2qO12GozLEIygAyPoPe9WKBJaHGsqmBIw4CTxxAZycIu+J3rYZx0kBUdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e2xyBPUq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C43F3C4CEDD;
-	Tue, 15 Apr 2025 08:08:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744704501;
-	bh=VY+BI83+U62fNIjSJ7wZ0e9O8YlwQ1ENtS67jWwGC38=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e2xyBPUqMNLhOrAXNHcjWw0mRb6xsy8l2AiEhAO6HouM3bkxEj/JAgFDAKtQSlrs4
-	 m93VH51bjGPzXvSEpII7CwhjYF/fGEDg8YYgiipRQBWlL4OXQxfa0mgLKSRMqHBnZL
-	 T++QP26VRKNKwV4CbHFmvtAhGxF5kOteSdkZ5y4Ufzdjs8FW0BDDbhYrZs7OL4MOmR
-	 VOyjclC5MFc9iwFRmUJ7teMM9Tqei4+e4iTVxaEpTe281mcc2QpksEp4bPhj5tIRvC
-	 XvfU5vy3x9RSB0lfuCjM9N6J4a2FCW4BniGR7nR+YsGlAIcQeBJroWOE4stIFDqTOo
-	 pT8CZt5Agg1gw==
-Date: Tue, 15 Apr 2025 10:08:14 +0200
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <maz@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Sascha Bischoff <sascha.bischoff@arm.com>,
-	Timothy Hayes <timothy.hayes@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, ast@kernel.org
-Subject: Re: [PATCH 20/24] irqchip/gic-v5: Add GICv5 LPI/IPI support
-Message-ID: <Z/4T7lpXSFgomIai@lpieralisi>
-References: <20250408-gicv5-host-v1-0-1f26db465f8d@kernel.org>
- <20250408-gicv5-host-v1-20-1f26db465f8d@kernel.org>
- <Z/jgL52ZVdcxTEkP@lpieralisi>
- <87plhjrpit.ffs@tglx>
- <Z/kM/+uBsD9DAGjF@lpieralisi>
- <mcyioyevok6tixna2xwk5q3d6x5b5spyucc4fiiy3h4v5jwxbj@bw6ewonqm2ks>
- <Z/zGzjyrEMYMd8cI@lpieralisi>
- <4vtbkgtp5c7vdfdzof46l3fjwwsd66j3tynxub4png57zcau7h@k2treu5vgn42>
+	 Content-Type:Content-Disposition:In-Reply-To; b=W3MXdFuS13onPoAK4MxnaibCRdXp3xbQ7h+DcK+PjYPLeGmfVqGHiIIWRnSRMDE6+0lE/oeT5+G8k6a2jS8YLgDs441QxzLIgn6kSs3RL88p1LSpakABspFmUi76OnlSo0tfABKZYwfqNA4eHaadoFn4SLW6rE2FFkU3mkDVlTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CF39gLfm; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744704626; x=1776240626;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zDIPSWHHd2CBUilACS5l+ZTN79OAHuDpka07FpjaGKQ=;
+  b=CF39gLfmysltDfXmlooynp2e/LWoTk9DAhhcSJkUBFGrauEfqpXEjOrA
+   B61NBvcYobqTp9tMshbVd5R+l2Fo6lmkoj6Wuuxl7e1MAqBx1RiLLOYQB
+   ijyYmW+BvHCYHJ/mqghyhov4fvAnhIWXXPjefy+gYGjFSIIgqEJoU/BAZ
+   24r2NE/ud/wuse9hVr5sfFeWBBhExFN7G5+4B9cWoEcOFsCf0JY+kp8Ni
+   7dYUIugufotvM6uw0KgCLH7vxsaOEH6o6Mc0TIKnk9j3uEjdcNihCj/DN
+   aeZMhw4t/TGeFfE88ZssZCcacDVlUJqNJ++ZbSEZOzgoAgi86WSFp0TKO
+   A==;
+X-CSE-ConnectionGUID: 5wCmYrxMSv6T6IlBZD8oPQ==
+X-CSE-MsgGUID: wEFXOojnRJKHZ4yC0TaYRw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11403"; a="49853088"
+X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
+   d="scan'208";a="49853088"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 01:09:17 -0700
+X-CSE-ConnectionGUID: fii+49GORGWCqr0JQOhU5w==
+X-CSE-MsgGUID: PlttizJ2RoW9iLE+2lcA6Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
+   d="scan'208";a="167219741"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 15 Apr 2025 01:09:15 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u4bM0-000FOg-05;
+	Tue, 15 Apr 2025 08:09:12 +0000
+Date: Tue, 15 Apr 2025 16:08:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dzmitry Sankouski <dsankouski@gmail.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-hwmon@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Dzmitry Sankouski <dsankouski@gmail.com>
+Subject: Re: [PATCH v4] hwmon: (max77705) add initial support
+Message-ID: <202504151506.IwAzrT7r-lkp@intel.com>
+References: <20250412-initial-support-for-max77705-sensors-v4-1-2e4cf268a3d0@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,59 +83,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4vtbkgtp5c7vdfdzof46l3fjwwsd66j3tynxub4png57zcau7h@k2treu5vgn42>
+In-Reply-To: <20250412-initial-support-for-max77705-sensors-v4-1-2e4cf268a3d0@gmail.com>
 
-On Mon, Apr 14, 2025 at 10:37:57AM -0400, Liam R. Howlett wrote:
+Hi Dzmitry,
 
-[...]
+kernel test robot noticed the following build warnings:
 
-> > I can go for an IDA unless someone see a point in pursuing the current
-> > approach - that I would update according to feedback, at least with
-> > this thread you get the full picture.
-> 
-> Eventually, we plan to swap out the backing of the IDA to use the maple
-> tree.  I think we could add range support as part of this change.
-> 
-> If you were to add an interface to contiguous allocate a number of IDAs
-> by putting your loop in the IDA interface, we'd be able to switch that
-> to a range store during the conversion and keep the use case visible
-> during the planning stages.
-> 
-> Having that interface would make it obvious the change is necessary and
-> wouldn't be missed.
+[auto build test WARNING on a4cda136f021ad44b8b52286aafd613030a6db5f]
 
-Yep understood but on the other hand it would force me to allocate a set
-of contiguous IDs, which is a bit cumbersome with the current IDA
-(alloc them one by one - if any fails to be contiguous restart, rince,
-repeat - it is a double whammy).
+url:    https://github.com/intel-lab-lkp/linux/commits/Dzmitry-Sankouski/hwmon-max77705-add-initial-support/20250414-123556
+base:   a4cda136f021ad44b8b52286aafd613030a6db5f
+patch link:    https://lore.kernel.org/r/20250412-initial-support-for-max77705-sensors-v4-1-2e4cf268a3d0%40gmail.com
+patch subject: [PATCH v4] hwmon: (max77705) add initial support
+config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20250415/202504151506.IwAzrT7r-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250415/202504151506.IwAzrT7r-lkp@intel.com/reproduce)
 
-I allocate a range because I know the maple tree handle them efficiently
-and to be honest, a range allocator is all I need, there isn't any in
-the core kernel (there are plenty - on purpose - range allocators, BPF
-range tree and GICv3 ITS LPIs allocator are good examples, I could reuse
-them instead of reinventing the wheel).
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504151506.IwAzrT7r-lkp@intel.com/
 
-FWIW, when Alexei implemented the BPF arena he vetted other examples.
+All warnings (new ones prefixed by >>):
 
-https://lore.kernel.org/bpf/20241105212001.38980-1-alexei.starovoitov@gmail.com/
+>> drivers/hwmon/max77705-hwmon.c:59:41: warning: 'max77705_hwmon_readable_table' defined but not used [-Wunused-const-variable=]
+      59 | static const struct regmap_access_table max77705_hwmon_readable_table = {
+         |                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-I don't think the code I wrote is that complex either and it minimizes
-entry storage waste - probably you don't want to see it in the kernel
-because it is not a MT usage you'd expect - storage wise, I need to
-measure it but I think it definitely requires fewer bytes than a
-preallocated bitmap - when the IDA range API is in I would be glad
-to swap to it.
 
-> Unfortunately, I don't really have a timeline on changing the IDA to the
-> maple tree.
+vim +/max77705_hwmon_readable_table +59 drivers/hwmon/max77705-hwmon.c
 
-I understand, it is a chicken and egg situation, see above.
+    58	
+  > 59	static const struct regmap_access_table max77705_hwmon_readable_table = {
+    60		.yes_ranges = max77705_hwmon_readable_ranges,
+    61		.n_yes_ranges = ARRAY_SIZE(max77705_hwmon_readable_ranges),
+    62	};
+    63	
 
-> Please keep me Cc'ed on whatever you decide.
-
-I'd need something promptly, so I will go for a simple solution (bitmap
-or IDA 1-by-1) if the current MT one has to be scrapped.
-
-Thank you,
-Lorenzo
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
