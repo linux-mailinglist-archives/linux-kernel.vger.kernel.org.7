@@ -1,88 +1,184 @@
-Return-Path: <linux-kernel+bounces-604528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9567CA89598
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:49:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D13EA895A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:50:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5215177FF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:49:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DBBC3B7E68
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E779724C67A;
-	Tue, 15 Apr 2025 07:48:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF7E279907;
+	Tue, 15 Apr 2025 07:50:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Xoq6gYmA"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="exI9TlEL"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF63BA48
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 07:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ADBD194C86;
+	Tue, 15 Apr 2025 07:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744703334; cv=none; b=rT5BRzbgq9jTR3kQd1L0X1qqTsc8KjrtQMdf/OiWLAVvY9bo/Ro4EWxEDn7wiQLD10j6FBdJYFz42x3DZILtKKTiD/FvZGm4Y3Smy4ODtf6m9D6OI9knwBCbkkDyyfgOC4oBI9IKeebu5p6zkTHjdjlHkQC5Fh6dtINzmVFkAlE=
+	t=1744703447; cv=none; b=kfIB8VW5ZunMcQdXw8lkP7/LQB1XA9u/8WTZwnTSXrudhvXTlc2MsRmuQ7xbe95YAT74Z/yIUqNuD3kNC+mo0rEbGwnLEJmB1I802Syfxs7ftfiHrLvPbAKRnt3BYdYfDvWyA6l3lr6X9vFPoX5lhLhqcDc2oXPkVCzaz9JPQ5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744703334; c=relaxed/simple;
-	bh=vw2tbzVqkHXbv4l4xY+MOdvBNk2prrvQAjLsKues81o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=glNvd/WCEc3OvA7lzv/n0WL7oQsYhuzYV8F14mB60RQim45SZCh0RDJCjOwueJKFjsR/gtFHULudUTPQC9T7sQRfe+EHX+qx22udkwdBK6M6HpCmJmc/IhdW8XHJxqbpPCok7RkULuBwHsXZIrb4gEMJleS+HrOnKNX4d5p3iW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Xoq6gYmA; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=aE+a9b08qt+UJaWgNcbO7KYDvQE21VYD/npNfE6tcJo=; b=Xoq6gYmAJZWY2zWMxkmaF9BNoi
-	Jzq3gvHUVF2k/1j7D92TYVwf/LVNrV2RyyWjFZDzXEVGSijKNUT8k56zJVWnmgDB9+HlI1U5131pw
-	hIVpnAyiQ70QX7ATxHIIzQGvDroyNXsZ4GzZQdFdAMNMpwnc/7kYz9DNRedNAADyMQxwEKDOrhq9Z
-	DrKfIToGpzeC/9g8BjP4bW2LrPV6KKtc0LseZDu/4Ygx7Ha9jDAZHu5ESHjuB1wL3IH2MbfO7vx0S
-	PUv8Kgbl5UZxouY0Dv4YZgqOYSzDT6FUcc5TAVPrgEn/PGJSWAz8hDtHKh0CicsiDYVFvcbQmnz8o
-	MSw/Vmgw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1u4b2H-00000009pf4-2p26;
-	Tue, 15 Apr 2025 07:48:50 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 3FC7E30037D; Tue, 15 Apr 2025 09:48:49 +0200 (CEST)
-Date: Tue, 15 Apr 2025 09:48:49 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	Ingo Molnar <mingo@kernel.org>, Uros Bizjak <ubizjak@gmail.com>
-Subject: Re: [PATCH v2] noinstr: Use asm_inline() in
- instrumentation_{begin,end}()
-Message-ID: <20250415074849.GJ5600@noisy.programming.kicks-ass.net>
-References: <165d2a0b882050f3f6cc0315af66cd2d16e5925b.1744676674.git.jpoimboe@kernel.org>
+	s=arc-20240116; t=1744703447; c=relaxed/simple;
+	bh=qC/0FXLpOvgrDoBUcYckTUw8tEHEKThRr/hZUIioUQo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GLVriRAhq1Mh70+rtrvcqBl4Kt2gtCpTGhIRyiKqOERiHDIVpJXFrpQUXZHBngtcSnj6gKj0m0pUu1ya6IXWtb/u4ulc+OiBV3Ff5WL+W/7cnfPX0Vn+VPaNg+eER95z1jM8v+DDW5J/kM4zyBRrtUnfbxn/2Gb3Dgaql6637+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=exI9TlEL; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744703445; x=1776239445;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=qC/0FXLpOvgrDoBUcYckTUw8tEHEKThRr/hZUIioUQo=;
+  b=exI9TlELx6s/q0eLIsBv5uVr3cgUt+CS9COZU2ZllhO9wxbhCUjhCpDH
+   ONPRdo8LQ7bhLRKasn2X2cDGAuwsDjaZcOm/H5sbVYyQWnjkMVwKqrRqW
+   lGDh6LF7YNNT1QA+bNJA/jxiM6dY//YlY5yQZWf7uXBmAIUtrgUJZ2KJM
+   nyRwrwicg+zaGqXkI4u6f6mTyfKp+M/zcbMM/BcUP7Du4SWfcgTfLnsTu
+   3N4A/zH+QITqEpCC/LJxBFw1aEjDYYFAkUGzJB+Es8KCrgJDjTRRk+Bop
+   eO9xiooL7+Al67ySyH99j0Xo5p4LY+2T663Eoq6t1Fw+ZpIxMi37fLdyW
+   w==;
+X-CSE-ConnectionGUID: qVRgBJCqTVWEF0XLioWV2w==
+X-CSE-MsgGUID: iYF0jDjMQCqwM9qd0WsXIg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11403"; a="46329978"
+X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
+   d="scan'208";a="46329978"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 00:49:36 -0700
+X-CSE-ConnectionGUID: rQ4ZqfbXTIuwZv8Nk1Ab8Q==
+X-CSE-MsgGUID: ecXfQhzOSzu0xo52qs9ShA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
+   d="scan'208";a="129809381"
+Received: from ncintean-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.249])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 00:49:32 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>, Jonathan Corbet
+ <corbet@lwn.net>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Linux Doc Mailing
+ List <linux-doc@vger.kernel.org>, linux-kernel@vger.kernel.org, "Gustavo
+ A. R. Silva" <gustavoars@kernel.org>, Kees Cook <kees@kernel.org>, Russell
+ King <linux@armlinux.org.uk>, linux-hardening@vger.kernel.org,
+ netdev@vger.kernel.org
+Subject: Re: [PATCH v3 00/33] Implement kernel-doc in Python
+In-Reply-To: <Z_4E0y07kUdgrGQZ@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <cover.1744106241.git.mchehab+huawei@kernel.org>
+ <871pu1193r.fsf@trenco.lwn.net> <Z_zYXAJcTD-c3xTe@black.fi.intel.com>
+ <87mscibwm8.fsf@trenco.lwn.net> <Z_4EL2bLm5Jva8Mq@smile.fi.intel.com>
+ <Z_4E0y07kUdgrGQZ@smile.fi.intel.com>
+Date: Tue, 15 Apr 2025 10:49:29 +0300
+Message-ID: <87v7r5sw3a.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <165d2a0b882050f3f6cc0315af66cd2d16e5925b.1744676674.git.jpoimboe@kernel.org>
+Content-Type: text/plain
 
-On Mon, Apr 14, 2025 at 05:27:11PM -0700, Josh Poimboeuf wrote:
-> Use asm_inline() in the instrumentation begin/end macros to prevent the
-> compiler from making poor inlining decisions based on the length of the
-> objtool annotations.
-> 
-> Without the objtool annotations, each macro resolves to a single NOP.
-> Using inline_asm() seems obviously correct here as it accurately
-> communicates the actual code size to the compiler.
-> 
-> These macros are used by WARN() and lockdep, so this change can affect a
-> lot of functions.
-> 
-> For a defconfig kernel built with GCC 14.2.1, bloat-o-meter reports a
-> 0.17% increase in text size:
-> 
->   add/remove: 74/352 grow/shrink: 914/353 up/down: 80747/-47120 (33627)
->   Total: Before=19460272, After=19493899, chg +0.17%
+On Tue, 15 Apr 2025, Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
+> On Tue, Apr 15, 2025 at 10:01:04AM +0300, Andy Shevchenko wrote:
+>> On Mon, Apr 14, 2025 at 09:17:51AM -0600, Jonathan Corbet wrote:
+>> > Andy Shevchenko <andriy.shevchenko@intel.com> writes:
+>> > > On Wed, Apr 09, 2025 at 12:30:00PM -0600, Jonathan Corbet wrote:
+>> > >> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+>> > >> 
+>> > >> > This changeset contains the kernel-doc.py script to replace the verable
+>> > >> > kernel-doc originally written in Perl. It replaces the first version and the
+>> > >> > second series I sent on the top of it.
+>> > >> 
+>> > >> OK, I've applied it, looked at the (minimal) changes in output, and
+>> > >> concluded that it's good - all this stuff is now in docs-next.  Many
+>> > >> thanks for doing this!
+>> > >> 
+>> > >> I'm going to hold off on other documentation patches for a day or two
+>> > >> just in case anything turns up.  But it looks awfully good.
+>> > >
+>> > > This started well, until it becomes a scripts/lib/kdoc.
+>> > > So, it makes the `make O=...` builds dirty *). Please make sure this doesn't leave
+>> > > "disgusting turd" )as said by Linus) in the clean tree.
+>> > >
+>> > > *) it creates that __pycache__ disaster. And no, .gitignore IS NOT a solution.
+>> > 
+>> > If nothing else, "make cleandocs" should clean it up, certainly.
+>> > 
+>> > We can also tell CPython to not create that directory at all.  I'll run
+>> > some tests to see what the effect is on the documentation build times;
+>> > I'm guessing it will not be huge...
+>> 
+>> I do not build documentation at all, it's just a regular code build that leaves
+>> tree dirty.
+>> 
+>> $ python3 --version
+>> Python 3.13.2
+>> 
+>> It's standard Debian testing distribution, no customisation in the code.
+>> 
+>> To reproduce.
+>> 1) I have just done a new build to reduce the churn, so, running make again does nothing;
+>> 2) The following snippet in shell shows the issue
+>> 
+>> $ git clean -xdf
+>> $ git status --ignored
+>> On branch ...
+>> nothing to commit, working tree clean
+>> 
+>> $ make LLVM=-19 O=.../out W=1 C=1 CF=-D__CHECK_ENDIAN__ -j64
+>> make[1]: Entering directory '...'
+>>   GEN     Makefile
+>>   DESCEND objtool
+>>   CALL    .../scripts/checksyscalls.sh
+>>   INSTALL libsubcmd_headers
+>> .pylintrc: warning: ignored by one of the .gitignore files
+>> Kernel: arch/x86/boot/bzImage is ready  (#23)
+>> make[1]: Leaving directory '...'
+>> 
+>> $ touch drivers/gpio/gpiolib-acpi.c
+>> 
+>> $ make LLVM=-19 O=.../out W=1 C=1 CF=-D__CHECK_ENDIAN__ -j64
+>> make[1]: Entering directory '...'
+>>   GEN     Makefile
+>>   DESCEND objtool
+>>   CALL    .../scripts/checksyscalls.sh
+>>   INSTALL libsubcmd_headers
+>> ...
+>>   OBJCOPY arch/x86/boot/setup.bin
+>>   BUILD   arch/x86/boot/bzImage
+>> Kernel: arch/x86/boot/bzImage is ready  (#24)
+>> make[1]: Leaving directory '...'
+>> 
+>> $ git status --ignored
+>> On branch ...
+>> Untracked files:
+>>   (use "git add <file>..." to include in what will be committed)
+>> 	scripts/lib/kdoc/__pycache__/
+>> 
+>> nothing added to commit but untracked files present (use "git add" to track)
+>
+> FWIW, I repeated this with removing the O=.../out folder completely, so it's
+> fully clean build. Still the same issue.
+>
+> And it appears at the very beginning of the build. You don't need to wait to
+> have the kernel to be built actually.
 
-Hmm, I was surprised that defconfig was affected at all. Why does
-defconfig have DEBUG_ENTRY on?
+kernel-doc gets run on source files for W=1 builds. See Makefile.build.
+
+BR,
+Jani.
+
+
+>
+>> It's 100% reproducible on my side. I am happy to test any patches to fix this.
+>> It's really annoying "feature" for `make O=...` builds. Also note that
+>> theoretically the Git worktree may be located on read-only storage / media
+>> and this can induce subtle issues.
+
+-- 
+Jani Nikula, Intel
 
