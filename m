@@ -1,99 +1,105 @@
-Return-Path: <linux-kernel+bounces-604429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D01DA89443
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:57:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5DECA8944A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:58:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 125F63B7739
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 06:57:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEE1F188EE4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 06:57:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84CD267701;
-	Tue, 15 Apr 2025 06:57:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 465C527A118;
+	Tue, 15 Apr 2025 06:56:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HtvPIYJG"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iIvNmK+a"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DCB52750FF;
-	Tue, 15 Apr 2025 06:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4335A27991F;
+	Tue, 15 Apr 2025 06:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744700254; cv=none; b=mVP8/byNZJtcRpfm9ffUntCW9X+9k2AuemALLDlIjpJRc1lE8pCa7XMHdY69JkbS6eWMkBu9/djuvH969Fv58bj+A/j0jh5D2/CbXBMsAFPyw5vVaeGbB6BljAmx18i3MOhVWnU0x1SN4Xb8yj1Ijhpa+eaSWw7w8ZQnN0mgsfI=
+	t=1744700180; cv=none; b=VhPrv9RQbvteTfcPPUC089IOMbeltHcio4ebgOh1DMYmNtvfi87d6u3UaZwWOYRl/R5G4wFWMZG0HuS1Kid0crn3pRf8Zt7LqL8ewPPy9fwTeSHnGHttB/Wp77/FalFH01BGlDixAoMaqWWWpJDDIlNjwTBOPjGyAXb/ryOuSog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744700254; c=relaxed/simple;
-	bh=/863X5z7UyLpFIgUBEjoP86nAAFdlQ3SXoEtjwX59z8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=RbF2W7IGjw1MTPaRaoI/Yimtt2UJLZ6+0tkiUia68s+E9X989xWQs+7AH4UD5j/M7WQfC93NzYrVYcpOAI2GC+hxTtU7xeB3xUykrGlZ4qnhthVDDWDnzcrh2xUurphJ+MtvcP/D3zSaFoOkaruxFC2Lj9yNR6nVwaYD70kH+S4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=HtvPIYJG; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1744700248;
-	bh=7CRlzrA+7PmFXM8Vvw3HdGg0d1TjClHXNm5KjIRiLVA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=HtvPIYJGdT4fkjiAKOsJFmLOG0gW2J946HKxJyTugrak8R+CPdz7zr+VoZEv3yNR9
-	 Xpu+VlPrbuzlJ5eM2K1Ede8i7FQfh+VnFfy6jBQLNdEpqqoDkq4nv2lanxsBQPcrwq
-	 Wm97oKkPLCBQZKgiz/uA0i37iVo8CcnOAEV1fdYekSxUDjEu+p2uFNMY0Rc9zWk+Ur
-	 bL5FkK4z0pXHGcWDxLQJG3cpGMwSlPUwSR81rMor1D/z9W+PVqOkSnsqyZmWEYcHgi
-	 xitkrnpnELxNCfsgpzvqtxIpIfCd7TCOYhbn3rhxsAuxHF4/GBLsoyqHIl3WGI+lT6
-	 0/idqJRHAcTVw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZcFMr2Wdmz4xG8;
-	Tue, 15 Apr 2025 16:57:28 +1000 (AEST)
-Date: Tue, 15 Apr 2025 16:57:27 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the mm-unstable
- tree
-Message-ID: <20250415165727.76edbe24@canb.auug.org.au>
+	s=arc-20240116; t=1744700180; c=relaxed/simple;
+	bh=uv7i/A+xKRCxebwBNDHz/b4HBL+FjuvQmgw0J3Ek2tk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P3DTxE1zqRi3hdWSzKnDls6bWOuozEWq/EeI2iF1OgRHa1eEuUfFyrLyK9Fo+eoty+A451bpkp/fjpMfB75zHwWyIMoS6XfF/+FaF37f3yROd2LjC9cOuwmy8b/nu3C1YsYGnR8MdqGoONh0izXf0LmtWFANO0j94IZPt9P1nIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iIvNmK+a; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-af52a624283so4220916a12.0;
+        Mon, 14 Apr 2025 23:56:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744700178; x=1745304978; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uv7i/A+xKRCxebwBNDHz/b4HBL+FjuvQmgw0J3Ek2tk=;
+        b=iIvNmK+amHP8X2BWEdsHyloSvaXVDHTB9qMz+unekO2ZGXoe4LxAkgwJjn7APsnHKc
+         Y9V5XBlMEn7nYnRgXiERl+JKAfOKxw4WvexUUQwEME5+N+pzFadMC/PmNkK2UN400wro
+         Ly2ChiCRP8jLgK7w538NU/C/rsWvL/huaEMoueJZWkQo3+5zQFk/30fdN+yuFqjFwEIV
+         ncs6egLf8q59v1IzlaHHyVvaJ2SPB7bQl/DA+zMeXAXc8izdTK3e8K/Sb8qgF7TQHKrJ
+         VgS/ySAfv1sVs2J6DHm6lmK4vOrGIUgcEB19wxup9sIFLgO0PFfGGYbZEkB3sLUo36G9
+         fKtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744700178; x=1745304978;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uv7i/A+xKRCxebwBNDHz/b4HBL+FjuvQmgw0J3Ek2tk=;
+        b=Z6UmKoUyZi46QKwRmr4ECaoFcR9UxJK6QiWJnhuYT5isLglzi6CDAOTUnnKoZCvrAZ
+         arSdSRJjE03bjomaRAbGu2GWoaj4f5lFgapiePSZHghKwzrCF59pFI5zpg06Euj0Bgxx
+         9dsGsVwvoF1qqK1zLDJDfj/ldHDvKAlq8IrQM8HJwUkXAVDKRAMZUJ38P8XWMUmqc2T5
+         71qWnJ+WKGo2SfWLeztZ513dB4WUpF3lO5UaI9KtareqTMsgZ2/Y90vUqMgHatXiuw2E
+         l+VqBlOiZhZLzKy00awEj3wSJUukViH9SXeQJYzzubYynE7SrRb/v9rK+zdIu77Dl/N8
+         aFOg==
+X-Forwarded-Encrypted: i=1; AJvYcCU55qWE51Q9qoBkQFX1jKLZLRey61FGV47pPkkCvsL2FyUuzst+8c5Nc1wI+gMcSznWBUGFbRWFYY16@vger.kernel.org, AJvYcCWKpK09Hw3EsJIYi2aEUhXL47bGiP1c9CUfChmI1PlF5eyOIQLvxf+7zktS5L6IHgaBchQ2WpSWfoydaTVT@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmmvtJ/L4xfQdlZ1TGETOI6lcBDhF9UpsX8M1tjK7f+FXHwdoA
+	iHYotU+MIJ+eoYPEDqh9XdcNMtDq0ktjXXgZYHsH7ysP4SQ2f162Fa7gnFiEkRWjgww8G1bBK1p
+	ORkgA2lffpv3n9H7khg60aIAVpOi4bwR/qcNcOQ==
+X-Gm-Gg: ASbGncvR3qzkoOB4ohkPHWotAc6Iq7kHggdxSebjm48ZJevkJmADBsgy38/7wf32YOg
+	WQiaHVD9D1JnG9wOACwx+efDRBAasChuF8BFpqPZwkgAqVoOGI92nQ2kLoDsp2HrrJK2hxjDf3A
+	2iAJp/31ij1KbKZsOIaQ==
+X-Google-Smtp-Source: AGHT+IG6NnOFJlKScP+Wamh79XovR7K0CPgG97m4Wp+PToKHbCYOR7nSiLCr5HD0lc3ekUswv3GSc/IBDvySxyjSaD4=
+X-Received: by 2002:a17:90b:58c5:b0:2fc:aaf:74d3 with SMTP id
+ 98e67ed59e1d1-3084f2fbb88mr3226588a91.4.1744700178357; Mon, 14 Apr 2025
+ 23:56:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/IU1dt0ce8+gwgk=d=FaZj1r";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/IU1dt0ce8+gwgk=d=FaZj1r
-Content-Type: text/plain; charset=US-ASCII
+References: <20250415043311.3385835-1-primoz.fiser@norik.com> <20250415043311.3385835-14-primoz.fiser@norik.com>
+In-Reply-To: <20250415043311.3385835-14-primoz.fiser@norik.com>
+From: Daniel Baluta <daniel.baluta@gmail.com>
+Date: Tue, 15 Apr 2025 09:58:04 +0300
+X-Gm-Features: ATxdqUFzmx2uRpXUocIpbqqLeApK-nJ7IdkiHEJrpoo6ZYi5WSR7a6jQ2PJwfmo
+Message-ID: <CAEnQRZDtHWTEHMkhd6BqtqYXCkOcAEj1eNYDdkQ2FV3a4QDbvg@mail.gmail.com>
+Subject: Re: [PATCH v2 13/15] arm64: dts: freescale: imx93-phyboard-segin: Add
+ I2S audio
+To: Primoz Fiser <primoz.fiser@norik.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	upstream@lists.phytec.de
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Tue, Apr 15, 2025 at 7:37=E2=80=AFAM Primoz Fiser <primoz.fiser@norik.co=
+m> wrote:
+>
+> Add support for I2S audio found on phyBOARD-Segin-i.MX93. Audio codec
+> TLV320AIC3007 is connected to SAI1 interface as a DAI master. MCLK is
+> provided from the SAI's internal audio PLL (19.2 MHz).
+>
+> Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-Commit
-
-  0a8fd1930f74 ("mm-huge_memory-add-folio_mark_accessed-when-zapping-file-t=
-hp-fix.txt")
-
-is missing a Signed-off-by from its author.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/IU1dt0ce8+gwgk=d=FaZj1r
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmf+A1cACgkQAVBC80lX
-0GxUDAf/XjuKYWBgnmPTeEm51sQQVggDOP+lcXx5oGvJjuFidMy85lv+mIHCllQs
-uMul1uWx+wvflpA8LALMZ/MtsTHC0dzhDtne3e6KumCHERF1MIvvKx9r1pDkJFcY
-rsWywG0nIp2mpjHUaJ2gsH2kIAz4KMAQBB2f7bEF91VwWKQHawQc502b8deotoQx
-79SZynubEGUeIxND2TXFEYgBP3EkpiyTIucP5Sc8BYKPrMIT4h83HuWTsy2VWslD
-ehdst63aZXtRdKopGvfqbEoghLZK/w5qQDnMsa3erHMvV8Fdx/OWS4rNWItuz6O1
-oKz0J3ayF1ggRf84CHVF0CIOHJ0x5A==
-=7s44
------END PGP SIGNATURE-----
-
---Sig_/IU1dt0ce8+gwgk=d=FaZj1r--
+Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
 
