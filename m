@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-605295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28350A89F66
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:26:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13EFCA89F70
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:28:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 396064448A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:26:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 023741903783
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:29:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E23C297A55;
-	Tue, 15 Apr 2025 13:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB7AE298CBE;
+	Tue, 15 Apr 2025 13:28:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x84K+9JZ"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q7S220q6"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393D1297A42
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 13:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5124D297A7A
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 13:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744723613; cv=none; b=BwLCuF5P1Um3jJiyrih/YGGbx5GMlKECyrGm5sMl0XNLcQ0KeNY0Bv5YN25HyMZIGZVNzO9GygGJ7B+fvfrVsESKPEiY8BzsyyGLW0Qz31H048JJ5cR5mw6pdc1GwOusCBEcG33kmB2DnNiJpHEWEjirIWqKw4QoAlh14MFKNos=
+	t=1744723709; cv=none; b=Z7r/FFvdF/lCT8jBKqNd63GeR/m0BMbzhxSkWw5Cb1MYIBRVqLiI6jg9qxYdzkC4AO6Nwbj5e4ozM6mD0CYeLrbk7JtrMt8a/XxdDjsQ32QFzy6eDOr++kV2gZiNxh1ygr0ONWgHaA3+5oqP9vGzQE7+03nQhmT++OiIb+GCq2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744723613; c=relaxed/simple;
-	bh=lVXdbLNZc5AGCI/m+WH0+vrOmz260sal1dEBRrG4Lac=;
+	s=arc-20240116; t=1744723709; c=relaxed/simple;
+	bh=9Lbh+7hzgAiAiJ/8SkSVwB2DuQWmaK9EPtpUj2ZKxuQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RHknmL4kQYqLM8WclYrbLmKWKbWS1pQqQeUL5F7MM3n03W0VQ0rRGys425DcCttCA15ufu36StK7QzwekW6YxaeToO0oq8KJ1WV8lEcW3vVjvQjtgU1R3hC1MICJZ2b7u3qibb+Hh/TN5o4dfe0rgdvEw7hk83cj3+ESLvwXci4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x84K+9JZ; arc=none smtp.client-ip=209.85.208.173
+	 To:Cc:Content-Type; b=GuWLaka0+dOE2QGMkMAm5N2tzd1jPdOv7b+S2zjI/aXjNHEJ3Vw904YFyjdZ5x04v1haMSttq07PkP3LxN/pX6Q0ar56evhubO1bXuV56+eXWGqdtvBw203ayim70AuEsPEPFkUnziIUmooAn76F/IPKwXCDaEHLot0Uyjo8sM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q7S220q6; arc=none smtp.client-ip=209.85.167.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30bfb6ab47cso51177371fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 06:26:50 -0700 (PDT)
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-54954fa61c9so6789585e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 06:28:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744723609; x=1745328409; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1744723705; x=1745328505; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5mnIUnyte0JjCrqPlk/shKFeBEN1cfamo5EuUJhYbWQ=;
-        b=x84K+9JZ940rR+ZAqCTMQC8kYH8VKUBGulQTc5MaoMQlIdau5hMsOtxcMRkcJHv92g
-         NK3LDYhtkPF19j6EMZGqEfSGxpy45vJ3Qi2aoIe9JQCbsSo+sXlyEQ+A2Mbv/FKtq6qI
-         O+qdupf1eE5HPuYihO3dBl6uZGIO5bh4C3LW40sfjqVcGODvbl4ejOIFkvLv5G8GYLoV
-         fYg5HTpHue80XuMTsEpK0SOPOE6GnRJzZhj55NNj8G1cch7YiHF6fjAlMZVzS3sZbR8v
-         bhOeDLgODQHsLK2iIHMsO+c1dnh4e1zmK1zfqKYc9+jevR1+ps2FEFRlzSMbuFw87jiQ
-         K8hg==
+        bh=a2G8Vl/X8cwgzlmMTGpt4sUnpxcefqO0e/GD3wsd/Rw=;
+        b=q7S220q6m67XnNdaaCr1O9ZY7n7yAsNdpy9SKXvC/FwgNa8oB7SnzWtDllvMlDRann
+         jyzC1YQzEB5wvZgqlA48XbSa1/s7ETAMQj3XUqQZUofCNEA4Rgd/P/WElFQXJYTcPfMq
+         2k5c6acMArW7NS8VHT/lPaA6zojuW/Y28fSA4KH05pSWhKqF2u407/or+ECD0L0aEJL5
+         To5WNgIqnwE1vlr0p623AC4N1qabS7BeKjEC5TtxTBtaysV8LC1PMVZoV1NHRAwcJGW5
+         kk5hVwEjfA1m81SzdqsLWPNRKylsGALF1DiYTPLpM2DQfxvsJxCqn2D6vfHQfqfmqbrv
+         lhWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744723609; x=1745328409;
+        d=1e100.net; s=20230601; t=1744723705; x=1745328505;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5mnIUnyte0JjCrqPlk/shKFeBEN1cfamo5EuUJhYbWQ=;
-        b=mBtom2jfAOCkzjK/4JuVZkpK56iwJP/GZcuxm5+jJXyT8pXl90gS8E4pdpNs/p9Vkd
-         Sd4QNB6/kAirL+gX4I46SXbjy8w1W5yiP9/Cs2vfNxSpr8MpwrXcNZwyapXMNCb6b36k
-         t7k9QrFBNYxCwnYlaE5HDlhB0zkYbme19DVfPlm+/KOVnJCIQ+eAH1C7xjr54pC6K9Ug
-         yrKy0c9ZvtbgjFRTqkPqfd7tB0MijB6/LIudk5ZqYjrTPCi35uPAgQbmZXG7NlViu3I8
-         CjnyZpcfxhNd6oznoI0p1IJv6pMML9gH0AYVsAXRRZ97Grkk28YdwYcLMDpLM54Wl3iL
-         ZMiw==
-X-Forwarded-Encrypted: i=1; AJvYcCWmtLSTd2t65A9bkphXSMD8zddkI8nvmENXuA4O1euZ7OLGNQua5Pi0Z42vgr0oTaN/h9M6hb5dy4RTQaM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy546X/6D54EPu/oHRyOHqxKlLwb3CgLHKQShTbI9iHr7YhUNm0
-	Y/mBC/rxIGSg38ART5i4oQnH9bChpjEWDmnN5yWttIRi63Qp/2393Urw5p2FZXZavvYgsWIW2Zy
-	eVw4MyZWkuFFlCzhQnz91J5hwRTM2ePp2RX+MNA==
-X-Gm-Gg: ASbGncvUt2MAusUa9JcRtAwPvKPwAYzLUbwnKol0h8xPtJvB0a+E9j7bdyUWy1Z6bTe
-	dRwiOH0QXUfZS70Vwpxs89I6iRMQTaLU5ELOg52HAxiBG1qtwnezYkY497vLzR0LIGW3tapehkT
-	IDR1S3b8u9WKRsI/DpFFIhhA==
-X-Google-Smtp-Source: AGHT+IGaqMdDORoDk0oIpmVA9qaXULvhBDGAq3POpJ1BzdO1XxYTT5N0Ria/f7LYgIqZ49z5yfw6KL+iKeZIN3qeueM=
-X-Received: by 2002:a2e:ad07:0:b0:30b:a187:44ad with SMTP id
- 38308e7fff4ca-31049a80842mr57070551fa.26.1744723609211; Tue, 15 Apr 2025
- 06:26:49 -0700 (PDT)
+        bh=a2G8Vl/X8cwgzlmMTGpt4sUnpxcefqO0e/GD3wsd/Rw=;
+        b=MATKQEMkunDtxmeGy3/pYCYZEGuE8blPj5oUkWXQy7hKcfugT+5qUfzqf7ZDmpBYLr
+         mPEpVCtv0TAqFL53Vu5ZaHCFcF6OsaJSFFJlMw1VWxJdgKjqYG02HynAnTHA+YPYmRLa
+         4bpA4laTBX+1QUZ/McZHA1pI+9/GuZlYn/p2u0uGyNQqDyGQ7h8a+OOprTamME1mPpIn
+         9W16KWLhNR56cntUWlcCtOhwhwtr+YmB8b/XeQrG5sTAdV10nA7+FXqJROh+cMtlawvn
+         uMBk33B5HPJvaiAu6pdqpf13pVBgMCsaiohPbCbXfVwAlEf4vbcEEvUbIzPROQ8Yyhsb
+         Y4iA==
+X-Forwarded-Encrypted: i=1; AJvYcCUbETHa32hVdtv5b1lfLwBtA+ZAOEngyWLU+ghKPd9v6Bg0uoURqkbZWH/TekhecAScb4/5/S29X+8IsfA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5O5HA+OuT6cxuBT7YZbncEB/6H40cuvkBImVZhVh60L7ZFsxB
+	5GYTI0I2lojFMjlQDB7IRBJ4bWNaFNce9AW+aknnyNUdh0SH15a/+b+PmdSWoAaafkLZfm6UK8T
+	mcJ+zeQS/Xja7aBS8C/2njnNaS/AIC5dbhFY4Gg==
+X-Gm-Gg: ASbGncsPUSt1RGIcDR/zvNtJU4O15mg09GLjv8jHB3TN8hUNAnCqtoF0uk6X6m1MJKD
+	ltEtO3NlKXv0bhRk/O6nkzEVA5I9Lb7sxeZM0k1Xx0t37eoCAjSxCwoKgaVMdvNLnTNzZtHRYp+
+	TcUdN9FYz/JNK9gyiWcHv8ow==
+X-Google-Smtp-Source: AGHT+IHmMXF3I6f2qsaz3mct+UMDjiXPBMrGobd2YBejGWLNmLWUOe8eFZ98Uz9qIivZ8WHIIdQPC53i97kmYyMrqXc=
+X-Received: by 2002:a05:6512:ac1:b0:545:5a5:b69f with SMTP id
+ 2adb3069b0e04-54d4528bc63mr5049718e87.9.1744723705280; Tue, 15 Apr 2025
+ 06:28:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250408-asoc-gpio-v1-0-c0db9d3fd6e9@nxp.com> <20250408-asoc-gpio-v1-2-c0db9d3fd6e9@nxp.com>
-In-Reply-To: <20250408-asoc-gpio-v1-2-c0db9d3fd6e9@nxp.com>
+References: <20250408-asoc-gpio-v1-0-c0db9d3fd6e9@nxp.com> <20250408-asoc-gpio-v1-3-c0db9d3fd6e9@nxp.com>
+In-Reply-To: <20250408-asoc-gpio-v1-3-c0db9d3fd6e9@nxp.com>
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 15 Apr 2025 15:26:38 +0200
-X-Gm-Features: ATxdqUFtZb5w1hNZ9E0eX8yQcoRtW5MfxsP225UqiyweepZUJaPgIck-w3NPl28
-Message-ID: <CACRpkda=LhY0XCdA+YW=1J=YSpBtB7rxViz-3OBzXhkdxmxWLA@mail.gmail.com>
-Subject: Re: [PATCH 2/7] ASoC: codec: tlv320aic32x4: Convert to GPIO descriptors
+Date: Tue, 15 Apr 2025 15:28:14 +0200
+X-Gm-Features: ATxdqUGReCdFD3en2lnWCizJiHE9r1iSq8BAJ8EIcKsEdsmuhiE73Y3SOpYj5h4
+Message-ID: <CACRpkdaeUs3Yfa8b8=Rhy+Qw4GMcNuEWXmKsK60qOpYB4oHG6g@mail.gmail.com>
+Subject: Re: [PATCH 3/7] ASoC: codec: twl4030: Convert to GPIO descriptors
 To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
 Cc: Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, Baojun Xu <baojun.xu@ti.com>, 
 	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, 
@@ -88,8 +88,7 @@ Cc: Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, Baojun Xu 
 	Richard Fitzgerald <rf@opensource.cirrus.com>, linux-sound@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
 	patches@opensource.cirrus.com, Peng Fan <peng.fan@nxp.com>, 
-	Markus Niebel <Markus.Niebel@ew.tq-group.com>, 
-	Alexander Stein <alexander.stein@ew.tq-group.com>
+	Tony Lindgren <tony@atomide.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
@@ -99,20 +98,22 @@ On Tue, Apr 8, 2025 at 3:41=E2=80=AFAM Peng Fan (OSS) <peng.fan@oss.nxp.com=
 > From: Peng Fan <peng.fan@nxp.com>
 >
 > of_gpio.h is deprecated, update the driver to use GPIO descriptors.
->  - Use devm_gpiod_get_optional to get GPIO descriptor, and set consumer
->    name.
+>  - Use of_property_present to check "ti,hs_extmute_gpio" to set hs_extmut=
+e
+>  - if returned value is true.
+>  - Use devm_gpiod_get_optional to get GPIO descriptor, set consumer name.
 >  - Use gpiod_set_value to configure output value.
 >
-> reset pin is active low, so when request the gpio, set GPIOD_OUT_HIGH to
-> assert reset and later deassert reset with value set to 0.
+> While at here
+>  - reorder the included headers.
+>  - drop remove hook after switching to use devm_gpiod_get_optional
+>  - Add return value for twl4030_init_chip to propagate value to parent
+>    in case defer probe happens
 >
-> While at here, reorder the included headers.
+> Checking the only user logicpd-som-lv.dtsi that uses polarity
+> GPIO_ACTIVE_HIGH, so all should work as expected.
 >
-> Checking the DTS that use the device, all are using GPIOD_ACTIVE_LOW
-> polarity for reset-gpios, so all should work as expected with this patch.
->
-> Cc: Markus Niebel <Markus.Niebel@ew.tq-group.com>
-> Cc: Alexander Stein <alexander.stein@ew.tq-group.com>
+> Cc: Tony Lindgren <tony@atomide.com>
 > Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
 Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
