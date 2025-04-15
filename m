@@ -1,90 +1,108 @@
-Return-Path: <linux-kernel+bounces-604632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A2F9A896C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:33:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB1D1A896CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:35:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA029189D9C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:33:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5997A3A7D4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:34:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7512F289376;
-	Tue, 15 Apr 2025 08:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC85B28DEE7;
+	Tue, 15 Apr 2025 08:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fcgLEDHo"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L9Gz4YtM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F22289356
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 08:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964AC28BAA4
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 08:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744705890; cv=none; b=qTza51mod/6ZXeYv5t+149mkfgt/bphcCMFI4HTLet8qDUGVzXifm7qmVHORXT3vPRA6tVweF+dYVZfNaRWjQgxjFtdsSbwan2d1Bf476eX2kt7z044SrzrhNMdh/Iz4iI2FR/ELNO8YrU7rhNv4E+Am/KrmMUlbdjqRcUQNGAI=
+	t=1744705924; cv=none; b=Y7hI8sX+b8GGJQbcPUPOEpI/2byABOvDk6mc0i/uFGRKtydv1d8JuH7UkZd1PoDmhBfqtZYuRWOGGOYvR5RGEivjBGi9x2oTPkl11whUzctlxTryKVFdcAf8+tC/HVLzxziGg3jkyyP1BdfsC0O76mdYMqt8MBKreOPabPjdydw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744705890; c=relaxed/simple;
-	bh=zApQ/h/ifXVpaxbQ0Lq2U9+GzIOiFfhFE17Y6vm24kw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=mh/RnjkUa4t4qeX4nbv7kPWEp7/qmZdILaS0YPtnkZ5tPA4E2/YDq9idEsZyUlTlPtO5d+EVOEJ99WNkQwxHunGM5JhBMRWDJC+KX03v+DyjQDG9IX8UiO3Jlt5IPlaeP6i4W8aiOX4ypsrY64gLqRd/f70+u8rbmKtvxt/S+8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fcgLEDHo; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9315D4316E;
-	Tue, 15 Apr 2025 08:31:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1744705881;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zApQ/h/ifXVpaxbQ0Lq2U9+GzIOiFfhFE17Y6vm24kw=;
-	b=fcgLEDHowr4rpUgyD/yam9KVG6ynlVv7xA+0IJuxrxHJBrzuTZt71kxGIn8F6nk9YPIsTr
-	dF0Fr6iFRnh+Sn7ywcteVU1GTDjsT5LFcGPUrce8jFOdzYNBMRffSyIIQqgfhGQF6c+Y+9
-	g4Qx+azXtxoEMi6601iP3vlyXo5rRYJ1xMMYCNLnCTR5JmNak7hZsukzfNQCWsGkc+DU9l
-	Z+D86z8m69OlgOZ2bcYdwiNNpUh29qGc095luhhuIDgNAAUPBb5AXnFqMJKthZihQtQ9Iy
-	MffuEjEDqM0wdzAiHuiaEUQezqCHabHKscYDALxXZ+2Icm8Nxghq3cttqkMj0w==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Stanley Chu <stanley.chuys@gmail.com>
-Cc: frank.li@nxp.com,  alexandre.belloni@bootlin.com,
-  linux-i3c@lists.infradead.org,  linux-kernel@vger.kernel.org,
-  tomer.maimon@nuvoton.com,  kwliu@nuvoton.com,  yschu@nuvoton.com
-Subject: Re: [PATCH v1 0/2] svc-i3c-master: Reduce IBI transaction time
-In-Reply-To: <20250415051808.88091-1-yschu@nuvoton.com> (Stanley Chu's message
-	of "Tue, 15 Apr 2025 13:18:06 +0800")
-References: <20250415051808.88091-1-yschu@nuvoton.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Tue, 15 Apr 2025 10:31:18 +0200
-Message-ID: <87ikn5ygfd.fsf@bootlin.com>
+	s=arc-20240116; t=1744705924; c=relaxed/simple;
+	bh=7LI90iSQnwahUgZE4Es+XwW1c0a7RrKd3W0O4i6EtTU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=skdKpVp1YSFM9714Ce2pa8S/8gJ7M2Sx7pm2wPIQKFpZ1/Wiu6Xp0yM4MmSH/tAUEvi9Ol3utLT78lfS9PzuYLFqaiMoz/zN5YP5cjTusSQjA1bhosN9NxScom2m1i77jmFyVKLFaMXfqgx2fLkbHirYizOzmNhNjN0zAPHsKWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L9Gz4YtM; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744705922; x=1776241922;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=7LI90iSQnwahUgZE4Es+XwW1c0a7RrKd3W0O4i6EtTU=;
+  b=L9Gz4YtMTmXDlkHKeDvlvsdUxUN0vRjvk3sR83JH3oAoY4H1rBWynxp5
+   T8NlHR8oOysFJsalAPsGg/3xfwdWOR4ZsySyzJA6OqtrTa5h2yWRvpyIA
+   tDQRqEHEOxqq42o+b87dzHkqDVdiJaJNExxdxC6FKOpF6zr/7+1X5WNyy
+   I7TwIpfi4iO3OgbTa2TFOPl7JeI9LwfEcjrjMczVaEIUxeJdhbD40Ac5L
+   VcqqlcZcgvj8vK0UoniREkI3ZiArxL/V+n6V61fqJetAyEAKOaNtPe3Fz
+   D09juztv8QoVtl6WzWWRLmgGezG4TbUNI0v0PQR346Af7GvsGqLzs6QFL
+   Q==;
+X-CSE-ConnectionGUID: Agm/F8Q8Sxy9q7aEeoOeyg==
+X-CSE-MsgGUID: TfihOqhcTkqXgF1Tg+GJ8g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11403"; a="49855679"
+X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
+   d="scan'208";a="49855679"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 01:32:01 -0700
+X-CSE-ConnectionGUID: EAFJFarMTEO5wCzxKJQcPg==
+X-CSE-MsgGUID: tDba95M0QhGcr14bleRU+A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
+   d="scan'208";a="167224157"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa001.jf.intel.com with ESMTP; 15 Apr 2025 01:31:59 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 958EF8D1; Tue, 15 Apr 2025 11:31:58 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: linux-kernel@vger.kernel.org
+Cc: Yury Norov <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/2] bitmap-str: Get rid of extern
+Date: Tue, 15 Apr 2025 11:31:19 +0300
+Message-ID: <20250415083156.303914-2-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250415083156.303914-1-andriy.shevchenko@linux.intel.com>
+References: <20250415083156.303914-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: 0
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvdeftdduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecunecujfgurhephffvvefujghffgffkfggtgfgsehtqhertddtreejnecuhfhrohhmpefoihhquhgvlhcutfgrhihnrghluceomhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepffeghfejtdefieeguddukedujeektdeihfelleeuieeuveehkedvleduheeivdefnecukfhppeelvddrudekgedruddtkedrvdeftdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeelvddrudekgedruddtkedrvdeftddphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepkedprhgtphhtthhopehsthgrnhhlvgihrdgthhhuhihssehgmhgrihhlrdgtohhmpdhrtghpthhtohepfhhrrghnkhdrlhhisehngihprdgtohhmpdhrtghpthhtoheprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopehlihhnuhigqdhifegtsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrt
- ghpthhtohepthhomhgvrhdrmhgrihhmohhnsehnuhhvohhtohhnrdgtohhmpdhrtghpthhtohepkhiflhhiuhesnhhuvhhothhonhdrtghomhdprhgtphhtthhopeihshgthhhusehnuhhvohhtohhnrdgtohhm
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-On 15/04/2025 at 13:18:06 +08, Stanley Chu <stanley.chuys@gmail.com> wrote:
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ include/linux/bitmap-str.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-> This patchset reduces the IBI transaction time by the following
-> improvements.
-> 1. Receive the request in interrupt context.
+diff --git a/include/linux/bitmap-str.h b/include/linux/bitmap-str.h
+index 17caeca94cab..d758b4809a3a 100644
+--- a/include/linux/bitmap-str.h
++++ b/include/linux/bitmap-str.h
+@@ -4,10 +4,10 @@
+ 
+ int bitmap_parse_user(const char __user *ubuf, unsigned int ulen, unsigned long *dst, int nbits);
+ int bitmap_print_to_pagebuf(bool list, char *buf, const unsigned long *maskp, int nmaskbits);
+-extern int bitmap_print_bitmask_to_buf(char *buf, const unsigned long *maskp,
+-					int nmaskbits, loff_t off, size_t count);
+-extern int bitmap_print_list_to_buf(char *buf, const unsigned long *maskp,
+-					int nmaskbits, loff_t off, size_t count);
++int bitmap_print_bitmask_to_buf(char *buf, const unsigned long *maskp, int nmaskbits,
++				loff_t off, size_t count);
++int bitmap_print_list_to_buf(char *buf, const unsigned long *maskp, int nmaskbits,
++			     loff_t off, size_t count);
+ int bitmap_parse(const char *buf, unsigned int buflen, unsigned long *dst, int nbits);
+ int bitmap_parselist(const char *buf, unsigned long *maskp, int nmaskbits);
+ int bitmap_parselist_user(const char __user *ubuf, unsigned int ulen,
+-- 
+2.47.2
 
-I initially had a few concerns about that, especially since the wait
-periods were bounded to 1s, but actually we are already in the irqsave
-situation when running this code, so your series might not have
-such a huge system-wide performance impact in the end.
-
-> 2. Emit the STOP as soon as possible.
-
-Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
-
-Thanks,
-Miqu=C3=A8l
 
