@@ -1,123 +1,138 @@
-Return-Path: <linux-kernel+bounces-606060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6385BA8AA0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 23:23:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66EC2A8AA01
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 23:22:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76D9944301E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 21:23:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D692A189B2BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 21:22:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A312741A9;
-	Tue, 15 Apr 2025 21:22:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073E92512E4;
+	Tue, 15 Apr 2025 21:22:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gJNlWykG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="3D93o1mW"
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6ECA257AC2;
-	Tue, 15 Apr 2025 21:22:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603A12222C0
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 21:22:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744752166; cv=none; b=tmxiyOlHWVeBXsZUE1BXPA/7a+kmjZ8Zpwn6qmbayibrDbYIM0YboJJZ6cpkgeqnGYcNzfeVpnq9DcaSh4GHEsEQW/2FmfXkP7BUGIV9HM7fe9zsg4DhIHPxjojIX5QJqJkMShEpf1GH7edI7+Av+wEJChIwBoFeu5cOiNVYKyE=
+	t=1744752158; cv=none; b=mGi9rMNHL1jcBrwY2P33FJmeegTOMSYVyIW2F1F94KP8ofabFnGWg4dBGoZh6YQOP+6/pWNzwOLEESQIkNqL01by42XrG4hRYNxUL9WNJuLoRAB+/DSTYIFpKym2CZ/GSGmeoXCHQw8lCDq4tlHeMrLlLaxyY7d0oBj0SzDNrTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744752166; c=relaxed/simple;
-	bh=9ceFInsAIiTtrHOXTl+jwDg4XN1U65DdpuEC6bRsLBk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JjBVQDwctmH7F/Mwjn5YkMxtrC0PMcrQj/FUsrj8uGgHeVeEIn9XedXajpBE1hLFSL9RR5xyp6/RjOi4vrGG2yNjfUqu/6TM3zBFnZL2+qjNuyQg/6PKAR0OASjZOT3ZW46skS3vStCi2ANk0rkPE1fyYhTATGfD38w/RbcVpWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gJNlWykG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C9182C4CEF4;
-	Tue, 15 Apr 2025 21:22:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744752166;
-	bh=9ceFInsAIiTtrHOXTl+jwDg4XN1U65DdpuEC6bRsLBk=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=gJNlWykG9vEO3EfBKK8UKMx9x2t1qhHeb7tMTusjxVluoIaCHyGafmeyfCU9nvbH+
-	 JRkW9EqcUgBYFMCi5FdX7yTc+5ae4f3Kd1VloTglzgD/oRzEucJFTJHOTN4FrgpxX5
-	 Ulop4rV7J2MoK9Vg9rMzJ6Q+XTUm259aLm9Y3iZ6z4IyzYUzEzvYlK7PnvV9XP7u+w
-	 OYIyqxoyIW0aphmvQ1W7efyx9ShYlqESnEm0sDvPJj927lRg0KdLiUYPbmy4/HbC16
-	 /e1vaYBfLp8/Trw0qy+zciSl+MpJGeXIRrhtAzmY3q6UM/BMtuGRNF+9ZzVwxYGr4C
-	 nshBHrsIatT7A==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EC93C369C7;
-	Tue, 15 Apr 2025 21:22:45 +0000 (UTC)
-From: =?utf-8?q?Andr=C3=A9_Apitzsch_via_B4_Relay?= <devnull+git.apitzsch.eu@kernel.org>
-Date: Tue, 15 Apr 2025 23:22:18 +0200
-Subject: [PATCH 4/4] media: i2c: imx214: Read clock frequency from device
- tree
+	s=arc-20240116; t=1744752158; c=relaxed/simple;
+	bh=sezKOxqdZwL0UPA9Nc1wZMu3XrcscN+StmeGN/bzCgE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LGXSsSeo0/1Nrf9KPeY4f5wN/V/AcHqi/jNVPu2+QF0BCE2oc3xa0R3V/bwsXN5d2FvbF3nvkmbRtVhfCI1FZo3oXBRqtpn43edHvmCPaS8wfpq8wR3Kj64y7ness0h5E/sHKJMZ5jLZBEV1tTbaXzgpJPncT9ggp1bP8rL8TTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=3D93o1mW; arc=none smtp.client-ip=209.85.160.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-2d071fcd89bso1753694fac.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 14:22:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1744752155; x=1745356955; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1lZucg4YTWzLc3CaeiVcocOFzBfkAYF6dSNq9mdvqrs=;
+        b=3D93o1mWLYHF2VT6GtJXPWSMViPK5hOF2xJWfJU9zvJmiFJQEtCYdP8thD9+b0JTtD
+         POmPlgi7+1/ODmgPv7LcDvr7qpkHzYRcMuhBSnDyuPyHS5kiL/igXrq7T3zqmhSGDqsv
+         dF0thHsW/dYoK1Ymnz6ldRPhfMrs+PVskqMD8WDNJ4gJWG4FaeOG1O+hyGxA9bvO0Z44
+         nZXnyX/Un80+wJsuwlfiM/e97YzHuARshYZfN6eg5NBCwERghUokihMAVPz/KHxnh4sb
+         hm206ARnaoPgIi5QZmZLMJXqHG4Mgusksx9BGyibQWQmmQaa0Dz3iAsjGDrLqdzL8NM/
+         QK7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744752155; x=1745356955;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1lZucg4YTWzLc3CaeiVcocOFzBfkAYF6dSNq9mdvqrs=;
+        b=dMS2GSb3SrFT9aqsaw672Q7jwx3wiU4K8HO7jTx5fQvUSKEPJdY+SiJcGmJ2/SA/yf
+         DNLaG/9HZhLb5sTwoic9/qvhqf63jrS0T89O1qXbLUW4lhdpSaYRX0vuUU9DxY0u/j5a
+         JYHlwwrPOqgPxvbndKSBbLdmYDr/kyl8LYOBcahPgSazgdktI525K9B/U8HkO3zrsNYb
+         o0243By6eqB/JxTBjh5AvyTaH35qEsM+wjFspLV+YObrmPGs9xhGgUrLeyK0Mni4IU3M
+         4W+B5/tADSpGcSkCYt7HJTOu/nGuBpfP/9uyDt3Mgh3A7LIXNrHY6T5dZAKqE4yZD9VK
+         jujw==
+X-Forwarded-Encrypted: i=1; AJvYcCUX89YrwgTlgQCPBbl1E7QQvk4+6EQLyEgiXudiC4+KObXgL6SiPXuq2Jy73NN/EUM0rYkQIcDK8X5qxn0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJ5AZuoT2mDiVTwcgCEeEr0N3Mq7pWocBdsdY9QLp1VF3YozAg
+	NrzVc/2XXNvTkKw6Y/uEXoWWZymUlOfbxvDixXL3zQF1jDvEqBjVOH3eONKnifs=
+X-Gm-Gg: ASbGncuS3d3w5bezuewuJUaoQ5je1K+NF1LN+BP8CDQARoJuRXd30D2OE4MZMJHElTu
+	JnGpBqH3okjU6fnPWPjtywJLWDWGGnGUgU8A6Qn8AxCM/TTUHsnCWpR0e/sCEHK+IX7AmT+5KuL
+	0xFZFtzOnMdNS0sB2kKv2rr3IjMYaXFAVhdh+yzVDfBBBmApfvzDq0iQkGstYkJrtdJnZ3Wm0tN
+	Bqa7+9uGlQHYSaVDP56e1u0hBlvp0GQHsRhD422X+hWO0FCjMEUhQ6ojd75z2kqU8AgF1uLQBaP
+	+1C93zzZMykPGc9kk0VQY1fKCZDZdfxemVRGctY6BOq+GULeg1Bk/KCE1gzdv4wwZhhDEic5IEf
+	v/Vi7WsfV8mSL9Q/vsA==
+X-Google-Smtp-Source: AGHT+IFDG8Sk/beG6HmPnDcmjdM56e4d71cRvdogswXByTIOWxtYfPY6H8ZVH3v0VrqRfJawQavcTQ==
+X-Received: by 2002:a05:6870:ed86:b0:29e:3bea:7e67 with SMTP id 586e51a60fabf-2d4c3e2d482mr539150fac.38.1744752155259;
+        Tue, 15 Apr 2025 14:22:35 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:87d2:86ee:7312:f611? ([2600:8803:e7e4:1d00:87d2:86ee:7312:f611])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-72e73e4d7e2sm2573855a34.45.2025.04.15.14.22.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Apr 2025 14:22:34 -0700 (PDT)
+Message-ID: <22858e4f-db8e-4c97-8551-a1934a9f2fe7@baylibre.com>
+Date: Tue, 15 Apr 2025 16:22:34 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iio: adc: ad4000: Avoid potential double data word read
+To: Andy Shevchenko <andy.shevchenko@gmail.com>,
+ Marcelo Schmitt <marcelo.schmitt@analog.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ jic23@kernel.org, lars@metafoo.de, Michael.Hennerich@analog.com,
+ nuno.sa@analog.com, andy@kernel.org, marcelo.schmitt1@gmail.com
+References: <8f765cfd6e93fad4e755dd95d709b7bea2a388e2.1744718916.git.marcelo.schmitt@analog.com>
+ <CAHp75VendQGLdpggySS3mX6M2YSeS70bvE8yg7sp_LNGDS-Scg@mail.gmail.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <CAHp75VendQGLdpggySS3mX6M2YSeS70bvE8yg7sp_LNGDS-Scg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250415-imx214_ccs_pll-v1-4-d3d7748e5fbd@apitzsch.eu>
-References: <20250415-imx214_ccs_pll-v1-0-d3d7748e5fbd@apitzsch.eu>
-In-Reply-To: <20250415-imx214_ccs_pll-v1-0-d3d7748e5fbd@apitzsch.eu>
-To: Ricardo Ribalda <ribalda@kernel.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744752164; l=1324;
- i=git@apitzsch.eu; s=20240325; h=from:subject:message-id;
- bh=W4XT5Lp9JWmAz4BFUvUl0L/Hk6LPKxssT64tgrm1IVY=;
- b=GICm5MM8ywi46qLCUp5JA6cgoyQUX3Pu9McqjhMq3TcdkoyyVgkBVnbue9lgEO9gf46KBHe22
- F8EoLxh9UZ6DU4PGEpYVJ4Uvo45CyYXH7RPFHpGg3TC29Fdw+dEj/+Z
-X-Developer-Key: i=git@apitzsch.eu; a=ed25519;
- pk=wxovcZRfvNYBMcTw4QFFtNEP4qv39gnBfnfyImXZxiU=
-X-Endpoint-Received: by B4 Relay for git@apitzsch.eu/20240325 with
- auth_id=142
-X-Original-From: =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
-Reply-To: git@apitzsch.eu
 
-From: André Apitzsch <git@apitzsch.eu>
+On 4/15/25 1:02 PM, Andy Shevchenko wrote:
+> On Tue, Apr 15, 2025 at 3:21 PM Marcelo Schmitt
+> <marcelo.schmitt@analog.com> wrote:
+>>
+>> Currently, SPI-Engine offload module always sends 32-bit data elements to
+>> DMA engine. Appropriately, when set for SPI offloading, the IIO driver uses
+>> 32 storagebits for IIO ADC channel buffer elements. However, setting SPI
+>> transfer length according to storagebits (32-bits in case of offload) can
+>> lead to unnecessarily long transfers for ADCs that are 16-bit or less
+>> precision. Adjust AD4000 single-shot read to run transfers of 2 bytes when
+>> that is enough to get all ADC data bits.
+> 
+> ...
+> 
+>>         xfers[1].rx_buf = &st->scan.data;
+>> -       xfers[1].len = BITS_TO_BYTES(chan->scan_type.storagebits);
+>> +       xfers[1].len = chan->scan_type.realbits > 16 ? 4 : 2;
+> 
+> But wouldn't be logical to have
+> 
+>        xfers[1].len = BITS_TO_BYTES(chan->scan_type.realbits);
+> 
+> ?
+> 
 
-Replace the hard coded external clock frequency by the one read from
-device tree.
+No, SPI expects 1, 2 or 4 bytes, never 3. If realbits is 18, we
+need len = 4.
 
-Signed-off-by: André Apitzsch <git@apitzsch.eu>
----
- drivers/media/i2c/imx214.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+It would have to be:
 
-diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-index 5589228d2b44417c0dbf15a6a17fd8f954f1a2bc..6d7f05073aa9ffb054d454771ce22e3141af60e8 100644
---- a/drivers/media/i2c/imx214.c
-+++ b/drivers/media/i2c/imx214.c
-@@ -1388,6 +1388,7 @@ static int imx214_probe(struct i2c_client *client)
- {
- 	struct device *dev = &client->dev;
- 	struct imx214 *imx214;
-+	u32 xclk_freq;
- 	int ret;
- 
- 	imx214 = devm_kzalloc(dev, sizeof(*imx214), GFP_KERNEL);
-@@ -1401,7 +1402,14 @@ static int imx214_probe(struct i2c_client *client)
- 		return dev_err_probe(dev, PTR_ERR(imx214->xclk),
- 				     "failed to get xclk\n");
- 
--	ret = clk_set_rate(imx214->xclk, IMX214_DEFAULT_CLK_FREQ);
-+	ret = device_property_read_u32(dev, "clock-frequency", &xclk_freq);
-+	if (ret) {
-+		dev_warn(dev,
-+			 "clock-frequency not set, please review your DT. Fallback to default\n");
-+		xclk_freq = IMX214_DEFAULT_CLK_FREQ;
-+	}
-+
-+	ret = clk_set_rate(imx214->xclk, xclk_freq);
- 	if (ret)
- 		return dev_err_probe(dev, ret,
- 				     "failed to set xclk frequency\n");
+	xfers[1].len = roundup_pow_of_two(BITS_TO_BYTES(chan->scan_type.realbits));
 
--- 
-2.49.0
+But that gets too long for 1 line, so I prefer what Marcelo wrote.
 
+Maybe an idea for another day:
 
+#define SPI_LEN_FOR_BITS(bits) roundup_pow_of_two(BITS_TO_BYTES(bits))
+
+There are a couple of places in spi/ that could use this and several
+iio drivers.
 
