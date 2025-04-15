@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-604196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F6DAA891FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 04:46:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6650CA891FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 04:46:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6AA93B1E1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 02:46:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 151A63B1F19
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 02:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183D620FA86;
-	Tue, 15 Apr 2025 02:45:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6AAA20C487;
+	Tue, 15 Apr 2025 02:45:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JeSYPZSv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O9lkO4am"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD884C9F;
-	Tue, 15 Apr 2025 02:45:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C43134CF;
+	Tue, 15 Apr 2025 02:45:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744685158; cv=none; b=dOpdWy2HMR4kvOE+1LcV0GYPylsOUAEjA/StMWt5z6OyUKw8xaoOYGAWjPiufG4K/yLis3mfiiJtd2rwyL8iAwocqzMQCwBdUyqejX41SynsXmr7S+5SGLLbqqzWlY3TVsRmJj1X35GntC0XFbwhAjFON8N8SFqeaaFmKx8OmNg=
+	t=1744685158; cv=none; b=XzLs5jmIaMy3aG/4KZSrzomqcL/sy5c3O41b5StPljgElnG3dpftflpuLnXswe5rHohqNI4StUWrua1f/LAEcqndDG6XqggV4RFA9Jsa8KhOhk1FGf9ab+UgQ9UIfZDrDX2NibadB5uzR9/qcGD7Ga+mJ/AzmsZZBbTL34KZBiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1744685158; c=relaxed/simple;
-	bh=oEyawwJ67t4F2O0m4uUa8lz1QQdbkKkB8kGfM2EgBQw=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kRC/EoKuhoARVXmmftJ/E9TZ20ch3NQ6aJbzc/Uk4WHt6HnTNaOOAwr1HCH/Yb+6QjVT+NXPqg+EV8XQy81u90o1gwIvLoz+dWeJQp2NAaZmJFpoXQRphAGtyMJBLq7+Fiox96WX1bBdqQvNQsl/2Jgkr6jlggu/CcYLEfaVmC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JeSYPZSv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B5A92C4CEEA;
+	bh=2x91J5sem5IP8gA0gECFNvOpz83ewu5oEZzUTMSLuJ4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=snM0IAdlWYilAriSZ3ctc1sqJgm0LfU1ATPhfxmeu5KUW0/XkRkrXkejelFaNdeKwFU7mV2mESG8witIUyO0QLm4Dl24yMXvFBZYmxijw5bPRy1X+7SgypEVQtHyZNpAoa/UPvvBgC5pf9yUurGD4hgwe4CWV1+XjbXka8K8+Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O9lkO4am; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C8BD8C4CEEC;
 	Tue, 15 Apr 2025 02:45:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1744685157;
-	bh=oEyawwJ67t4F2O0m4uUa8lz1QQdbkKkB8kGfM2EgBQw=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=JeSYPZSvuUz2kVFu+Nt8tVZjEwB1lkOlnAyqgDHf7OuEGkrCyJZxXvzl+vg6JFLKn
-	 7Btcx0LpplxhYmGyETdt6uYy9wGPP/MVzWOxA2uOSUypgaruNw4JmUHrvFPVNRopMR
-	 ZFt6BPOPrhiePHg3QfrOUEx7bz5PaCy2wB1jl0E7tWttAcCSBSnQss0wRpW44xCm1C
-	 0bN0UNXX3HxCDrF1nTxigXKgs+NNlw5WKJ6Q3O5185r+HWw5iyQ6Q/jWaLpn2/Tuu1
-	 wP2+dcdqg55guaizXek9YGeAjIJi7Orkyk97pgl/HgeOPxN8YM1ltZ63KOfKGAzwuy
-	 y5UIvpuKM8WcA==
+	bh=2x91J5sem5IP8gA0gECFNvOpz83ewu5oEZzUTMSLuJ4=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=O9lkO4ame3P0xGx9j6/HBR1vb2zUOAxfcz11sefe7z/DcwyPZWyuOUc/3TZcfy28Q
+	 OYWBwCkWTKLQ74qmRcrO4Nq+PPXthuSyMTfJwaaj/Qs837P86ifJs44CmdsX4zzTDY
+	 WndRi3uauNX27N6ATR75t32Iz/rFYSg6kDMUeDZUZtpbz8/Ib7lCYoh9jnCnaX0Iwg
+	 Qvhn7oQhuIYwKM8+CGlxXV0Kgsg6+j57V3mUHwpTjjtw+XlIwJvPAtTBc/EUnxsTTy
+	 2cMP3lmaMZ1kmySvKMdFJgHG5o/6egt2qUd6Njehr8WeG+xBn79taBJ36Ei0LsJ65x
+	 memFgHuO5gkOQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F917C369B2;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B29B6C369B8;
 	Tue, 15 Apr 2025 02:45:57 +0000 (UTC)
 From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Subject: [PATCH v3 0/7] soc: amlogic: clk-measure: Add clk-measure support
- for C3 and S4
-Date: Tue, 15 Apr 2025 10:45:23 +0800
-Message-Id: <20250415-clk-measure-v3-0-9b8551dd33b4@amlogic.com>
+Date: Tue, 15 Apr 2025 10:45:24 +0800
+Subject: [PATCH v3 1/7] soc: amlogic: clk-measure: Define MSR_CLK's
+ register offset separately
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,10 +55,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAEPI/WcC/23MQQ7CIBCF4as0rMUMUKh15T2MC0rHdqItBpRom
- t5d2pUal+8l3z+xiIEwsn0xsYCJIvkxD7UpmOvt2CGnNm8mQWooheDueuED2vgIyFulnLaNkcb
- ULItbwDM919rxlHdP8e7Da40nsbz/O0lw4K4pja12LYjaHuxw9R25rfMDW0pJfuryW8usjYaqM
- jWAVj96nuc3PBEy3eYAAAA=
+Message-Id: <20250415-clk-measure-v3-1-9b8551dd33b4@amlogic.com>
+References: <20250415-clk-measure-v3-0-9b8551dd33b4@amlogic.com>
+In-Reply-To: <20250415-clk-measure-v3-0-9b8551dd33b4@amlogic.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>, 
  Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
  Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
@@ -68,11 +67,11 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
  linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
  Chuan Liu <chuan.liu@amlogic.com>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744685155; l=1405;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744685155; l=5875;
  i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=oEyawwJ67t4F2O0m4uUa8lz1QQdbkKkB8kGfM2EgBQw=;
- b=IoVhOIKXt2iTmxOh8pMHEPW25r6XKeC7qPnpkj89JQVoY9Iv7zua6Kz2dvzktcyZba3m4ohNl
- wK1EXJZO4nRAfTbS+nbRG3/xqfa4dLrjR3BB29J2HPj+eDgcliXGYGY
+ bh=0guFezE8LgXk4zTIDey8n/7AjPQ9HaO6/P9CKzBKwgU=;
+ b=LH0Wu2xuiibSPuT7Nk/mM9O+YUHq27jKVIacku7LUFDJOsShPXDqWbYF+YqTgLXQF09mTRSp0
+ QVupv191xPtCMG6JrwE29U4gOyvElxjCwGFXDU3ocI5eyZ09thS93vY
 X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
  pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
 X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
@@ -80,42 +79,194 @@ X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
 X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
 Reply-To: chuan.liu@amlogic.com
 
-Add clk-measure support for C3/S4 SoCs.
+From: Chuan Liu <chuan.liu@amlogic.com>
 
+Since the MSR_CLK register offset differs between chip variants, we
+replace the macro-based definition with chip-specific assignments.
+
+Change the max_register in regmap_config to be retrieved from DTS.
+
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
 ---
-Changes in v3:
-- Change struct msr_reg_offset to const.
-- Link to v2: https://lore.kernel.org/r/20250414-clk-measure-v2-0-65077690053a@amlogic.com
+ drivers/soc/amlogic/meson-clk-measure.c | 55 ++++++++++++++++++++++++---------
+ 1 file changed, 40 insertions(+), 15 deletions(-)
 
-Changes in v2:
-- 1 Rename the clk-measure register.
-- 2 Remove unused registers.
-- 3 Share reg_offset across multiple chips.
-- Link to v1: https://lore.kernel.org/r/20250411-clk-measure-v1-0-cb46a78d019a@amlogic.com
+diff --git a/drivers/soc/amlogic/meson-clk-measure.c b/drivers/soc/amlogic/meson-clk-measure.c
+index 39638d6a593c..3594ef5b7ff0 100644
+--- a/drivers/soc/amlogic/meson-clk-measure.c
++++ b/drivers/soc/amlogic/meson-clk-measure.c
+@@ -14,11 +14,6 @@
+ 
+ static DEFINE_MUTEX(measure_lock);
+ 
+-#define MSR_CLK_DUTY		0x0
+-#define MSR_CLK_REG0		0x4
+-#define MSR_CLK_REG1		0x8
+-#define MSR_CLK_REG2		0xc
+-
+ #define MSR_DURATION		GENMASK(15, 0)
+ #define MSR_ENABLE		BIT(16)
+ #define MSR_CONT		BIT(17) /* continuous measurement */
+@@ -39,9 +34,17 @@ struct meson_msr_id {
+ 	const char *name;
+ };
+ 
++struct msr_reg_offset {
++	unsigned int duty_val;
++	unsigned int freq_ctrl;
++	unsigned int duty_ctrl;
++	unsigned int freq_val;
++};
++
+ struct meson_msr_data {
+ 	struct meson_msr_id *msr_table;
+ 	unsigned int msr_count;
++	const struct msr_reg_offset *reg;
+ };
+ 
+ struct meson_msr {
+@@ -495,6 +498,7 @@ static int meson_measure_id(struct meson_msr_id *clk_msr_id,
+ 			    unsigned int duration)
+ {
+ 	struct meson_msr *priv = clk_msr_id->priv;
++	const struct msr_reg_offset *reg = priv->data.reg;
+ 	unsigned int val;
+ 	int ret;
+ 
+@@ -502,22 +506,22 @@ static int meson_measure_id(struct meson_msr_id *clk_msr_id,
+ 	if (ret)
+ 		return ret;
+ 
+-	regmap_write(priv->regmap, MSR_CLK_REG0, 0);
++	regmap_write(priv->regmap, reg->freq_ctrl, 0);
+ 
+ 	/* Set measurement duration */
+-	regmap_update_bits(priv->regmap, MSR_CLK_REG0, MSR_DURATION,
++	regmap_update_bits(priv->regmap, reg->freq_ctrl, MSR_DURATION,
+ 			   FIELD_PREP(MSR_DURATION, duration - 1));
+ 
+ 	/* Set ID */
+-	regmap_update_bits(priv->regmap, MSR_CLK_REG0, MSR_CLK_SRC,
++	regmap_update_bits(priv->regmap, reg->freq_ctrl, MSR_CLK_SRC,
+ 			   FIELD_PREP(MSR_CLK_SRC, clk_msr_id->id));
+ 
+ 	/* Enable & Start */
+-	regmap_update_bits(priv->regmap, MSR_CLK_REG0,
++	regmap_update_bits(priv->regmap, reg->freq_ctrl,
+ 			   MSR_RUN | MSR_ENABLE,
+ 			   MSR_RUN | MSR_ENABLE);
+ 
+-	ret = regmap_read_poll_timeout(priv->regmap, MSR_CLK_REG0,
++	ret = regmap_read_poll_timeout(priv->regmap, reg->freq_ctrl,
+ 				       val, !(val & MSR_BUSY), 10, 10000);
+ 	if (ret) {
+ 		mutex_unlock(&measure_lock);
+@@ -525,10 +529,10 @@ static int meson_measure_id(struct meson_msr_id *clk_msr_id,
+ 	}
+ 
+ 	/* Disable */
+-	regmap_update_bits(priv->regmap, MSR_CLK_REG0, MSR_ENABLE, 0);
++	regmap_update_bits(priv->regmap, reg->freq_ctrl, MSR_ENABLE, 0);
+ 
+ 	/* Get the value in multiple of gate time counts */
+-	regmap_read(priv->regmap, MSR_CLK_REG2, &val);
++	regmap_read(priv->regmap, reg->freq_val, &val);
+ 
+ 	mutex_unlock(&measure_lock);
+ 
+@@ -599,11 +603,10 @@ static int clk_msr_summary_show(struct seq_file *s, void *data)
+ }
+ DEFINE_SHOW_ATTRIBUTE(clk_msr_summary);
+ 
+-static const struct regmap_config meson_clk_msr_regmap_config = {
++static struct regmap_config meson_clk_msr_regmap_config = {
+ 	.reg_bits = 32,
+ 	.val_bits = 32,
+ 	.reg_stride = 4,
+-	.max_register = MSR_CLK_REG2,
+ };
+ 
+ static int meson_msr_probe(struct platform_device *pdev)
+@@ -611,6 +614,7 @@ static int meson_msr_probe(struct platform_device *pdev)
+ 	const struct meson_msr_data *match_data;
+ 	struct meson_msr *priv;
+ 	struct dentry *root, *clks;
++	struct resource *res;
+ 	void __iomem *base;
+ 	int i;
+ 
+@@ -636,15 +640,24 @@ static int meson_msr_probe(struct platform_device *pdev)
+ 	       match_data->msr_count * sizeof(struct meson_msr_id));
+ 	priv->data.msr_count = match_data->msr_count;
+ 
+-	base = devm_platform_ioremap_resource(pdev, 0);
++	base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
+ 
++	meson_clk_msr_regmap_config.max_register = resource_size(res) - 4;
+ 	priv->regmap = devm_regmap_init_mmio(&pdev->dev, base,
+ 					     &meson_clk_msr_regmap_config);
+ 	if (IS_ERR(priv->regmap))
+ 		return PTR_ERR(priv->regmap);
+ 
++	priv->data.reg = devm_kzalloc(&pdev->dev, sizeof(struct msr_reg_offset),
++				      GFP_KERNEL);
++	if (!priv->data.reg)
++		return -ENOMEM;
++
++	memcpy((void *)priv->data.reg, match_data->reg,
++	       sizeof(struct msr_reg_offset));
++
+ 	root = debugfs_create_dir("meson-clk-msr", NULL);
+ 	clks = debugfs_create_dir("clks", root);
+ 
+@@ -664,29 +677,41 @@ static int meson_msr_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static const struct msr_reg_offset msr_reg_offset = {
++	.duty_val = 0x0,
++	.freq_ctrl = 0x4,
++	.duty_ctrl = 0x8,
++	.freq_val = 0xc,
++};
++
+ static const struct meson_msr_data clk_msr_gx_data = {
+ 	.msr_table = (void *)clk_msr_gx,
+ 	.msr_count = ARRAY_SIZE(clk_msr_gx),
++	.reg = &msr_reg_offset,
+ };
+ 
+ static const struct meson_msr_data clk_msr_m8_data = {
+ 	.msr_table = (void *)clk_msr_m8,
+ 	.msr_count = ARRAY_SIZE(clk_msr_m8),
++	.reg = &msr_reg_offset,
+ };
+ 
+ static const struct meson_msr_data clk_msr_axg_data = {
+ 	.msr_table = (void *)clk_msr_axg,
+ 	.msr_count = ARRAY_SIZE(clk_msr_axg),
++	.reg = &msr_reg_offset,
+ };
+ 
+ static const struct meson_msr_data clk_msr_g12a_data = {
+ 	.msr_table = (void *)clk_msr_g12a,
+ 	.msr_count = ARRAY_SIZE(clk_msr_g12a),
++	.reg = &msr_reg_offset,
+ };
+ 
+ static const struct meson_msr_data clk_msr_sm1_data = {
+ 	.msr_table = (void *)clk_msr_sm1,
+ 	.msr_count = ARRAY_SIZE(clk_msr_sm1),
++	.reg = &msr_reg_offset,
+ };
+ 
+ static const struct of_device_id meson_msr_match_table[] = {
 
----
-Chuan Liu (7):
-      soc: amlogic: clk-measure: Define MSR_CLK's register offset separately
-      dt-bindings: soc: amlogic: C3 supports clk-measure
-      dt-bindings: soc: amlogic: S4 supports clk-measure
-      soc: amlogic: clk-measure: Add support for C3
-      soc: amlogic: clk-measure: Add support for S4
-      arm64: dts: amlogic: C3: Add clk-measure controller node
-      arm64: dts: amlogic: S4: Add clk-measure controller node
-
- .../soc/amlogic/amlogic,meson-gx-clk-measure.yaml  |   2 +
- arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi        |   5 +
- arch/arm64/boot/dts/amlogic/meson-s4.dtsi          |   5 +
- drivers/soc/amlogic/meson-clk-measure.c            | 375 ++++++++++++++++++++-
- 4 files changed, 372 insertions(+), 15 deletions(-)
----
-base-commit: 37021be47d02d2913d6767795a6f4c72b4e63a4f
-change-id: 20250411-clk-measure-d33c5ab62669
-
-Best regards,
 -- 
-Chuan Liu <chuan.liu@amlogic.com>
+2.42.0
 
 
 
