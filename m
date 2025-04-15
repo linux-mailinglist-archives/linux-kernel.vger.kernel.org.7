@@ -1,96 +1,132 @@
-Return-Path: <linux-kernel+bounces-605673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7ED3A8A47C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 18:48:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A186A8A47F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 18:49:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D73E544187C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:48:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91D15179D8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:49:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93977268C79;
-	Tue, 15 Apr 2025 16:47:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF6F70814;
+	Tue, 15 Apr 2025 16:48:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KyQBodap"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RSAQYNHv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021432DFA41
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 16:47:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2427C268C79;
+	Tue, 15 Apr 2025 16:48:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744735675; cv=none; b=bLOAM8x9CdbH6dMlMOATMv69KuxBiKFC/kcNDnayK3haG7KXtciJTcQ5iiqDpi/R6/adk4RuPOaSGw9juUWtzmeRfumvBtxEqyu+BNySGQOB3DNZvU3PwglQ3QhqYoNkGwcrfRG/9cP4vr9HViOrNd6KzcN0XH8rc+MGV+kJmog=
+	t=1744735733; cv=none; b=O7PR9njQv4bozLGuqbb4t6Oz/NyJp9YKzKf7An+qinli0kaWrBq9hXmLTzL9WWvrZN9BP4BUDzysIopKTUQ4tZSJLtmLdp5kir5zWTIGsXuQOFpeZZAZvTvRZkIrhhldItOEiL93+YY2HxE/LLucj16mqN74jP9OLl6shQbdC/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744735675; c=relaxed/simple;
-	bh=mmBxGfDtfaRQt5Cn82njWc21jVL+/1sKkFTs4xcGThE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mt3xlB2oVZ+fg7m0D11nEe2uvTQvmp9m3vVgWBWcbBmhuKPj4ietJ9B4BoRVHgRzUH0O/XvOdVHhnEfPGcnUEuO28ejs+SlUma6L7H3YQxhVRfnpx9ccH7TjtzH/CSxAb5mL6CW+f7t2rG0GGkEJY8L6IIvMkYNpBJOCD7lLEt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KyQBodap; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE022C4CEEC;
-	Tue, 15 Apr 2025 16:47:52 +0000 (UTC)
+	s=arc-20240116; t=1744735733; c=relaxed/simple;
+	bh=/9nhXGXJv852MhlHqoqJkQKSHzHQRAK0UJorlnT2/UQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HDvO+iwYW4GnggYp6mfG3RuOKciDCEYt0llhOconEyaqsqh7TeJUt7Dqt1iBIWRoNq2bujBJZHGStpXq2hI5saIeAhFufipqKotEtc2C3fn1wa0sVk3T/IPzL0YtgUM2f9XZrCKDF8TODgwyajZIp2tf2ayF5bCPpxFK7iBiJUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RSAQYNHv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9125BC4CEE9;
+	Tue, 15 Apr 2025 16:48:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744735674;
-	bh=mmBxGfDtfaRQt5Cn82njWc21jVL+/1sKkFTs4xcGThE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KyQBodap42h2R90ylgvW8QOplEyGHutIBElPQ++1M9tfe+VuOHZxSSEAeJ0B6Hn3b
-	 zSsesVTb9wjrIrYMRZzzqFU/BX3vfWVUvdyFheYC/zlhmBnFnv3TyeLXFNYCaP6q0g
-	 4hvij9RATlDEs5CZlmj0i2FtYHJpQ9Eb5jZg0pGWsyf/rADuCijB9Fy2Xv04/B6RUV
-	 rwfb2w3/6+inJ/2nGDMvqli5F9Y8FbPUPNLfxUTry0isyZQt6IjfPChBjpSkIdNwv4
-	 poflae9obpuqx701352nrEP4g9Sh3oA11+pWsrolg0Tl3tWp2tuBBuKzh2DjG56Js0
-	 S+VDOzUxblqGQ==
-Date: Tue, 15 Apr 2025 09:47:51 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: "Kaplan, David" <David.Kaplan@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
-	Peter Zijlstra <peterz@infradead.org>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
-	Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	"x86@kernel.org" <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Brendan Jackman <jackmanb@google.com>, 
-	Derek Manwaring <derekmn@amazon.com>
-Subject: Re: [PATCH v4 17/36] Documentation/x86: Document the new attack
- vector controls
-Message-ID: <l3b2rwwwwtrxr5fyya3xnxtzlmvkmiwobxy363cvmxgegg56fv@wpxgyc3ymtxe>
-References: <20250310164023.779191-1-david.kaplan@amd.com>
- <20250310164023.779191-18-david.kaplan@amd.com>
- <fkl2b3ymatulazt2xjegubqcejx5bgaraktztpkitodrbbsozw@xrskej3fg3jf>
- <LV3PR12MB92654563086027BB944A117594B32@LV3PR12MB9265.namprd12.prod.outlook.com>
- <mybnv24fbz5nsxmz2yihzctnbv7ab7sznyotupp6mbpzfdvy2e@r2oantiw4wmo>
- <LV3PR12MB9265B84234C24D42E7CB42EC94B22@LV3PR12MB9265.namprd12.prod.outlook.com>
- <wuryibff35vau3vvo5gj3d6fzvfedlhcnlyc5zlwlzvfdr2dro@lkwwglmgac7c>
- <LV3PR12MB9265BA06BBDBFCEB868CFF0694B22@LV3PR12MB9265.namprd12.prod.outlook.com>
+	s=k20201202; t=1744735732;
+	bh=/9nhXGXJv852MhlHqoqJkQKSHzHQRAK0UJorlnT2/UQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=RSAQYNHvP7Uv6HkmcX0hw3NFHt17BmFgYaRiBL9NhrkHrTBtPMG/vTfBYq91QQjp9
+	 h0aUx6a4SeLKdqtTLmulQwQ5NBu37HostJhPEXsKb8G7hVVxHz0Z5Ln0j0taSxVMCA
+	 E9gwbN1c4UnnK4TcZ2/QXTOTmc5CEfni4oE82z5mt39DWCc75esWErelLkDJMMnycn
+	 xJr+8zCXTZPAavP4sJxuGhGnm8pDWuVsrffZZjbENcsoClZxaO93qywfhOj1s17zvc
+	 XR8onmsKsmRKuVc0JY3XDGTA4MgTk8UomA/dMLMG38OdQxqXip9tc3ASxjbtIFZ8hp
+	 6P7G442AQ121g==
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-72bb97260ceso1930027a34.1;
+        Tue, 15 Apr 2025 09:48:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWCn/0QaojzREIgXP6iIUzCDxyKdkk46CJ9PPEqphUMMCkXOopJafmyjPULo+6LU2wP6x8CPY3ErGI=@vger.kernel.org, AJvYcCWJfZLTHTsRhYTZ/m9p0ijaEy/bBGvYtmRNTFdw/DblE3vP64CJzpO8+gfHUki23p/HTlmtnMYPgG5Ni4c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUoYrJ31Pffs2eo+KQhlTzlLrxyZI9llShG/BEqOOz37roa61e
+	cLYbmZKlUrDFP74bGneFrQfygxSywIWnPXGbXGGOSP+zfuSM0wGCuhYXtmZDtVDvhrhqRYXDwDM
+	C+hxzQTvfQ8bx0uEE2e/ctMHZDyU=
+X-Google-Smtp-Source: AGHT+IGk1BCAKcF9cN0xOrhNg7N8hoRLwkz1GOQB08ZZFetkBi4oYfuAshfIg6qnRd8gKUopNI1MeON0sds8BpxRYSk=
+X-Received: by 2002:a05:6830:6615:b0:727:3f3e:53ba with SMTP id
+ 46e09a7af769-72e8653e630mr10438911a34.26.1744735731864; Tue, 15 Apr 2025
+ 09:48:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <LV3PR12MB9265BA06BBDBFCEB868CFF0694B22@LV3PR12MB9265.namprd12.prod.outlook.com>
+References: <20250410172943.577913-1-srinivas.pandruvada@linux.intel.com>
+In-Reply-To: <20250410172943.577913-1-srinivas.pandruvada@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 15 Apr 2025 18:48:40 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0i_SNb+stFH4-Pv87Jrb-2J0F1MEzUKK0e44dFDWwRSJA@mail.gmail.com>
+X-Gm-Features: ATxdqUFdVoOgICEg1hOf6ZnDcJ4bH3MCki9Vtfra9d4eR1qpHIg3lKelPoGzN1s
+Message-ID: <CAJZ5v0i_SNb+stFH4-Pv87Jrb-2J0F1MEzUKK0e44dFDWwRSJA@mail.gmail.com>
+Subject: Re: [PATCH] thermal: intel: int340x: Add missing DVFS support
+To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: rafael@kernel.org, daniel.lezcano@linaro.org, rui.zhang@intel.com, 
+	lukasz.luba@arm.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 15, 2025 at 04:10:49PM +0000, Kaplan, David wrote:
-> > I think the note is helpful, it attempts to explain why there are no X's.  I was just
-> > thinking that it seems more logical to put it in the same column as the others.  And
-> > that would also help make it more clear that yes, the X's are missing.  Which is
-> > indeed odd, but it's also the reality.
-> >
-> 
-> Right, except that the last column is about the cross-thread vector,
-> which is irrelevant for SSB.  All the other notes specifically pertain
-> to SMT leakage.
+On Thu, Apr 10, 2025 at 7:29=E2=80=AFPM Srinivas Pandruvada
+<srinivas.pandruvada@linux.intel.com> wrote:
+>
+> DVFS (Dynamic Voltage Frequency Scaling) is still supported for DDR
+> memories on Lunar Lake and Panther Lake.
+>
+> Add the missing flag PROC_THERMAL_FEATURE_DVFS.
+>
+> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 
-Ah.  Can we give the column a broader heading like "Notes"?
+Applied as 6.15-rc material, thanks!
 
-> I could put the '(Note 4)' text in every column, but that might be
-> even weirder.  I could also remove SSB entirely from the table since
-> it isn't technically relevant for any of the attack vector controls?
-
-I'm thinking the table should list all the mitigations, regardless of
-whether they're affected by these controls, so the controls are
-well-defined without any ambiguity.
-
--- 
-Josh
+> ---
+>  .../intel/int340x_thermal/processor_thermal_device_pci.c   | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/thermal/intel/int340x_thermal/processor_thermal_devi=
+ce_pci.c b/drivers/thermal/intel/int340x_thermal/processor_thermal_device_p=
+ci.c
+> index a55aaa8cef42..2097aae39946 100644
+> --- a/drivers/thermal/intel/int340x_thermal/processor_thermal_device_pci.=
+c
+> +++ b/drivers/thermal/intel/int340x_thermal/processor_thermal_device_pci.=
+c
+> @@ -485,7 +485,7 @@ static const struct pci_device_id proc_thermal_pci_id=
+s[] =3D {
+>         { PCI_DEVICE_DATA(INTEL, ADL_THERMAL, PROC_THERMAL_FEATURE_RAPL |
+>           PROC_THERMAL_FEATURE_FIVR | PROC_THERMAL_FEATURE_DVFS | PROC_TH=
+ERMAL_FEATURE_WT_REQ) },
+>         { PCI_DEVICE_DATA(INTEL, LNLM_THERMAL, PROC_THERMAL_FEATURE_MSI_S=
+UPPORT |
+> -         PROC_THERMAL_FEATURE_RAPL | PROC_THERMAL_FEATURE_DLVR |
+> +         PROC_THERMAL_FEATURE_RAPL | PROC_THERMAL_FEATURE_DLVR | PROC_TH=
+ERMAL_FEATURE_DVFS |
+>           PROC_THERMAL_FEATURE_WT_HINT | PROC_THERMAL_FEATURE_POWER_FLOOR=
+) },
+>         { PCI_DEVICE_DATA(INTEL, MTLP_THERMAL, PROC_THERMAL_FEATURE_RAPL =
+|
+>           PROC_THERMAL_FEATURE_FIVR | PROC_THERMAL_FEATURE_DVFS | PROC_TH=
+ERMAL_FEATURE_DLVR |
+> @@ -495,8 +495,9 @@ static const struct pci_device_id proc_thermal_pci_id=
+s[] =3D {
+>         { PCI_DEVICE_DATA(INTEL, RPL_THERMAL, PROC_THERMAL_FEATURE_RAPL |
+>           PROC_THERMAL_FEATURE_FIVR | PROC_THERMAL_FEATURE_DVFS | PROC_TH=
+ERMAL_FEATURE_WT_REQ) },
+>         { PCI_DEVICE_DATA(INTEL, PTL_THERMAL, PROC_THERMAL_FEATURE_RAPL |
+> -         PROC_THERMAL_FEATURE_DLVR | PROC_THERMAL_FEATURE_MSI_SUPPORT |
+> -         PROC_THERMAL_FEATURE_WT_HINT | PROC_THERMAL_FEATURE_POWER_FLOOR=
+) },
+> +         PROC_THERMAL_FEATURE_DLVR | PROC_THERMAL_FEATURE_DVFS |
+> +         PROC_THERMAL_FEATURE_MSI_SUPPORT | PROC_THERMAL_FEATURE_WT_HINT=
+ |
+> +         PROC_THERMAL_FEATURE_POWER_FLOOR) },
+>         { },
+>  };
+>
+> --
+> 2.49.0
+>
 
