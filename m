@@ -1,119 +1,114 @@
-Return-Path: <linux-kernel+bounces-604965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E110A89B2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:54:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69AEDA89B26
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:53:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0045F189D33F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:54:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 953A917B4A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15C7229A3FF;
-	Tue, 15 Apr 2025 10:49:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA942BCF5D;
+	Tue, 15 Apr 2025 10:48:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jgRn4nIc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Z1Z5ubms"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C162918C4;
-	Tue, 15 Apr 2025 10:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1E6291160;
+	Tue, 15 Apr 2025 10:48:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744714171; cv=none; b=Y4FST2/6cIUcEsmVHaUdb3WFmk5FFSBuvTxBT3kvBu1a5W3Yn4ENLEm9adwiNvO3LZfyXpdG6nb8PCMd2nO2m1m20Pw/0sZHsgMoesGMoFSSdh8ddGH3I1B2vnM6z1MBTPecUzlwQ6+tUZHL8AZnd7jE/oL5JsKVPfYpL9o7Qq8=
+	t=1744714111; cv=none; b=T2cJlb+tTK6cbZ6I9I22EKfZqv0J3rzXq+kM7xoPZNxBdJx5oAcV27aW8uUXu95B1kEFK+Su/TJLkGFb96EeEWY0LAeWaDKRcWy3wbhBJzxtWnplgGLFibe/o2FElFsgAWTcgXlITliHbX87Avyq8stIL7kEoFaXGyaiOSu6vB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744714171; c=relaxed/simple;
-	bh=Q3J1jPJUTQQiEZJQ1xvnq9l36A903ZDy8U5bkIVHr24=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=C2x9/QilQHmeYeRdYEiY27bcSkhunUhkWpOlUIcN8Nt7MxbGQDrBNoEIvb/KhQ7bCLy9c5mt/2yDxv16OeW2AsJz9TT4RvWUoQ1WXEgpWgvL3fDY6BflRWlKq3HLIoydIoUYQHxxQfqQ2N2y81aD2rPpjwBa3wuee8qhBmRutrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jgRn4nIc; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744714170; x=1776250170;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Q3J1jPJUTQQiEZJQ1xvnq9l36A903ZDy8U5bkIVHr24=;
-  b=jgRn4nIcFepKLmGpfpNwnxu/0JTBA56qR1mRfjlEZNGZjTuvBEnwPi+r
-   JFC4f6P2n/UmXm3PMokzEup2NJZLTiqEOKS2C8jkoWL9t2naEQik/WX+H
-   IkF1cBdk3yhpX3aC3mR98jch6Htuu5ULhZAcG+PehmT3t8fGBAy+Qvqu9
-   HeCbBp5RPSf2C2JdsJoAKv1ECKOlDWVe1eH4bq0Tt9Bq68mCRQ0hOguSH
-   lfzYXg0wdALafaoshKFTgBkRIZStrpQWmvJuSS8Fr6RHWNsXOdNug5+Vt
-   4wc0HrnilU1HHesOmyUiVdnHDQsi8xYI4tqHYidNdoxSMttSovJQcciqG
-   A==;
-X-CSE-ConnectionGUID: bsJw0eJHSwmHkv23TdB+RA==
-X-CSE-MsgGUID: kjIfrwi7SzOaodvS/PbS9g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11403"; a="46132905"
-X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="46132905"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 03:48:53 -0700
-X-CSE-ConnectionGUID: 00BXP8pcTAWJ1BnXXXbAFQ==
-X-CSE-MsgGUID: 2fX4EaCISRaVrFIwWEOptQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="167254360"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO ahunter-VirtualBox.ger.corp.intel.com) ([10.245.254.135])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 03:48:49 -0700
-From: Adrian Hunter <adrian.hunter@intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com
-Cc: kvm@vger.kernel.org,
-	rick.p.edgecombe@intel.com,
-	kirill.shutemov@linux.intel.com,
-	kai.huang@intel.com,
-	reinette.chatre@intel.com,
-	xiaoyao.li@intel.com,
-	tony.lindgren@linux.intel.com,
-	binbin.wu@linux.intel.com,
-	isaku.yamahata@intel.com,
-	linux-kernel@vger.kernel.org,
-	yan.y.zhao@intel.com,
-	chao.gao@intel.com
-Subject: [PATCH 2/2] KVM: x86: Do not use kvm_rip_read() unconditionally for KVM_PROFILING
-Date: Tue, 15 Apr 2025 13:48:21 +0300
-Message-ID: <20250415104821.247234-3-adrian.hunter@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250415104821.247234-1-adrian.hunter@intel.com>
-References: <20250415104821.247234-1-adrian.hunter@intel.com>
+	s=arc-20240116; t=1744714111; c=relaxed/simple;
+	bh=CgTZtSnpeBEZpCMbBFIaZGn3QwWWlHR/mJgp6BEyfeI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CgFWSIewiDZqfHqi0/QPqK4bUlN+8ouqaWHkN74aK4BpkdY4oUBl4ObFIZvPI9yS+grDqdFssSWK3/lfkVJadnkqU+W4N1hg8GIRuXxJByh1o8nU6dUb7iNRWkrtv3DTDIVRmKiOminLieF+w9oZukQU/Y6JV5zKwSLha+ALDtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Z1Z5ubms; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1744714107;
+	bh=CgTZtSnpeBEZpCMbBFIaZGn3QwWWlHR/mJgp6BEyfeI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Z1Z5ubmsLjUbXF45H/YDyate0WEabrgAxtWqnITNe4AZe8+b4Ke3aUNvnzNa6M+jf
+	 0Lr/j/xOs8miKATlJEsQCnnDINXtXLJPhvpR3iV4k2noMV7X3Ii9t0LRLZeCsenJrZ
+	 X0fg1LRNTAUDCzundGbkKCLQGV6lmAYvFrfvahKBiBKkfBd+Yjq3MKUsCg5oOCXAFL
+	 BHdDaXENi6hf1QoTYs6jtpoBO4WdPUNgN/J2G51nv8ggueii5kTBhzJKYwd5GYcBLG
+	 hiwjeMpuSpUgbuSnvJNrmcakF5nAoHSGwE0ovGdp2qw3UPs0YcfGIbk6LRNrj2nzI8
+	 spay6QgJ9m8sQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 40E9917E09B5;
+	Tue, 15 Apr 2025 12:48:26 +0200 (CEST)
+Message-ID: <bc094a07-2a4c-4048-8c15-b096db62f142@collabora.com>
+Date: Tue, 15 Apr 2025 12:48:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 17/23] drm/mediatek: mtk_hdmi: Split driver and add
+ common probe function
+To: chunkuang.hu@kernel.org
+Cc: p.zabel@pengutronix.de, airlied@gmail.com, simona@ffwll.ch,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ matthias.bgg@gmail.com, ck.hu@mediatek.com, jitao.shi@mediatek.com,
+ jie.qiu@mediatek.com, junzhi.zhao@mediatek.com,
+ dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, kernel@collabora.com,
+ dmitry.baryshkov@linaro.org, lewis.liao@mediatek.com,
+ ives.chenjh@mediatek.com, tommyyl.chen@mediatek.com,
+ jason-jh.lin@mediatek.com
+References: <20250415104321.51149-1-angelogioacchino.delregno@collabora.com>
+ <20250415104321.51149-18-angelogioacchino.delregno@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250415104321.51149-18-angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Not all VMs allow access to RIP.  Check guest_state_protected before
-calling kvm_rip_read().
+Il 15/04/25 12:43, AngeloGioacchino Del Regno ha scritto:
+> In preparation for adding a new driver for the HDMI TX v2 IP,
+> split out the functions that will be common between the already
+> present mtk_hdmi (v1) driver and the new one.
+> 
+> Since the probe flow for both drivers is 90% similar, add a common
+> probe function that will be called from each driver's .probe()
+> callback, avoiding lots of code duplication.
+> 
+> Reviewed-by: CK Hu <ck.hu@mediatek.com>
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> ---
+>   drivers/gpu/drm/mediatek/Kconfig           |   11 +-
+>   drivers/gpu/drm/mediatek/Makefile          |    1 +
+>   drivers/gpu/drm/mediatek/mtk_hdmi.c        |  538 +-----
+>   drivers/gpu/drm/mediatek/mtk_hdmi.c.orig   | 1769 ++++++++++++++++++++
+>   drivers/gpu/drm/mediatek/mtk_hdmi_common.c |  422 +++++
+>   drivers/gpu/drm/mediatek/mtk_hdmi_common.h |  188 +++
+>   6 files changed, 2398 insertions(+), 531 deletions(-)
+>   create mode 100644 drivers/gpu/drm/mediatek/mtk_hdmi.c.orig
 
-This avoids, for example, hitting WARN_ON_ONCE in vt_cache_reg() for
-TDX VMs.
+CK, I just acknowledged that a .orig file slipped through and got sent out with
+this patch....
 
-Fixes: 81bf912b2c15 ("KVM: TDX: Implement TDX vcpu enter/exit path")
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
----
- arch/x86/kvm/x86.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Truly sorry for that, can you please fix that up while applying without having me
+send another patchbomb?
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 844e81ee1d96..8758f8cba488 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -11130,7 +11130,8 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
- 	/*
- 	 * Profile KVM exit RIPs:
- 	 */
--	if (unlikely(prof_on == KVM_PROFILING)) {
-+	if (unlikely(prof_on == KVM_PROFILING &&
-+		     !vcpu->arch.guest_state_protected)) {
- 		unsigned long rip = kvm_rip_read(vcpu);
- 		profile_hit(KVM_PROFILING, (void *)rip);
- 	}
--- 
-2.43.0
+Many thanks,
+Angelo
 
+>   create mode 100644 drivers/gpu/drm/mediatek/mtk_hdmi_common.c
+>   create mode 100644 drivers/gpu/drm/mediatek/mtk_hdmi_common.h
+> 
 
