@@ -1,496 +1,314 @@
-Return-Path: <linux-kernel+bounces-605362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91C48A8A035
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:54:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE33AA8A01B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:53:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC462581727
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:53:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9376442BCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:53:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3886D1F5425;
-	Tue, 15 Apr 2025 13:53:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65551B4227;
+	Tue, 15 Apr 2025 13:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E22lVqLC"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jur1qnLB"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 697A91ACEC8
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 13:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6371ACEDE
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 13:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744725205; cv=none; b=Uy2e+J6Q6RL1ukXfQ9Eakv+tUovdPZBm2c4ts8SQ/BcKcvQRsw3H5Z9OpxlxAdM0Ex9AYhqWCon7WpiNRY3F/7fXKrgcl4q6kLCZVqhKA2ERvgmjMWWYfrCBnDIg9ttjcEv5sJWEpCJxF+g5srW9S8bK0r9WOsHsKID0fX5YgIg=
+	t=1744725182; cv=none; b=Hzjp+TwNXR4AQeMaEbMXOWt4zXHay9aPCXKJr3c7KXEh4DtAs5kX7Ky9XuW93VxA3uiPnopq+K0Qn9PXiXhz0ceG/H+L/Z5mPeL+K9AG9f+Gu79Knj5b35yDGY61xzZBpvfBKi2wB56t+WzzkVHaV5t7Odc/y7Bu2dlpQUcQ+Gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744725205; c=relaxed/simple;
-	bh=90veFZYkI7tOsSfYhPXPr8MTVtRlDMrsdewxWsLlM80=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kUSil39NfejSIOjwCLfC/DwCzYNpGRXErm1vVcj1Fqu1TDrR6WWATWDZwXCL9BeP/9O2iwI04enDAvVAEIesJRi0lR/9gOCWdZfz3kw4I83ZlHl0oAAFflMWU4+UO34qXVdcV3ZRM6aY3zBIQteIX/rtk4cKJZJRAY5LG9Yj/5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E22lVqLC; arc=none smtp.client-ip=209.85.218.42
+	s=arc-20240116; t=1744725182; c=relaxed/simple;
+	bh=q/DmaL+PqLmLjvBYhmlgOORoSNjDoeQfL2FWnmXJ/5k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IOHfECEdxWaUedCcPG9CFEjCd/8MGIQUYguoCWZswqwzRdTSLc7d/qyFgjqRfifV8bidc72qvm+PztzYMnHnjX/h4MIuygg0VlTD0HHUi+b7ELADJzq+qRNkuBVCkajTwvZS/vDilulDdt4SaHOrhdq1W5Y3ZDZwkDMtYP3qNQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jur1qnLB; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ac339f53df9so1113701666b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 06:53:22 -0700 (PDT)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-abec8b750ebso945535766b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 06:52:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744725201; x=1745330001; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=F+VemoH6JbPZfntDzSZfUEE9eySHn4jqOWYpmcA1Ep4=;
-        b=E22lVqLCWgIyMQhFIuvRgrk+20nIID2RaFGBhhv2CNbURJwiQSVYU1RnWT/j1vMBKf
-         4rdN7ty57EEKEqyTB2oTJuWQOzuxlFHLDVGqRM4/mHzsMnsTfWVCvIBpvG5ScSVeF0TK
-         ytWWgbncjBdlGNLGJgrfOTJ+NJdw4XtHWN1MGqQeh4PRmJvCoY/2b905Y6Nlctr7XNBz
-         W5zxcBH3JcrC28e1XVU3nKqcy1KRijsFCnZ5JCu1K7i53S8rBPzvM94qhlaFO/n8oPl9
-         2mL10gXSsh2c8NZRnpCs34LNBPkqAjH+w7fN+5BrQ6ERpd3Z/w8P3L608wrINTYSAz6e
-         8/eQ==
+        d=linaro.org; s=google; t=1744725178; x=1745329978; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ooSny9XUJhxzZTQ7SphFkbtSCGNbzJtlyoCGrcjm0uI=;
+        b=Jur1qnLBVJ9J0i+KbNR4cqt04XE884GK/fDof0HROA4vW9N4azemkf+jFe7Vmf0bh4
+         dpxrfa/noqHwjr/Qa3k1R9N1/kH0qMD5/zEvl/IB6EYcQpq8g17upCwKBP7EZrfoN/Fd
+         5huHCjnvS/utQGYGg4q9YtdpE3FWKEMmivpYPrAyt1t27IGd01Co0BQEUV1yXRwgqs/P
+         ArjmcRgjrV81O26rEjvIsosFPARk1gd3CQZHu0F64kVPln6ABhXitcyofcYdfLI8vSXV
+         M7JPX2a52rWgiXCeuP/Lb9X/oU7CysEmRyqq+/aqNNX6WQMvDvktH2SCFPG8vdjxp1K7
+         WUGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744725201; x=1745330001;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F+VemoH6JbPZfntDzSZfUEE9eySHn4jqOWYpmcA1Ep4=;
-        b=O6flzGr21UL0AWjfSNml+HRuWtcBRivu90NDJeg2Gm6356IN4i435QLVnMiRdRqOBp
-         pSeiMafeBzB0Gxg09efgcxQl+WHFA28xyr5mgCFtZq6/h5D1ivBAFoGR8PdiR3u7D12J
-         mmVLNx0OGGgy3o59ehHWUFUVmR/8f6OPfw9w15GP0b9JAKVz1mJFsCdaaoieM0K34Q/q
-         ZFWoQ+erphPB7nFaMfUanr2frTL1R9sZbdvdjLKDDgDdNFhqZ80v2JXeRM4yI3qA39kr
-         /IKyqC/pDr0c9WVojttJijR9g1yJMB1Z64UQ4qdqbBMAX27jQ2Ko3C6wKTBMjr6qL6iZ
-         5vPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXvwSMqnf4LPmuKt77o4NdAkyMl708cmJZImqwXQf0hv4m/Sa7WJBzIFgD6QdAVgpZ9qK8gImyzXO6iHog=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPnZVE61OySd5z/7DC0C/lt+GtTTbbE3AMk6Usp7g14Eesymg/
-	YUJDxDklpair4Ey9MZLVYzD892wQUSNEdCpcARhKuFrhQ5kb8zs5T7JkpshKpuU=
-X-Gm-Gg: ASbGnctCA8POGUPI3PPdX6xVIFgTDaZojV+oG/tOyUDEH5yr2AzgYp50hWdElUSW/Zo
-	KKLl/yzgN/YRtp2e7lpdrDLRn9Wqix9A/9ghISF5FBYJMaCumkqMi5BCNI5oiJO9hSg9QXf1XhY
-	uwk3YA1p+OXnmnHUtDHEbDMOcL0pWXBhW9hMnaAtXpQFs5oUtG6LNiiC/csGhRas/SFnBzjUCrl
-	W5celgOY71yuXBIKHVhyM4cAQfiVp/X+iK6GNDZGy7OAg3tIdKi1XknOH30Rugy1unAKV+cSXhC
-	IRn/YhwnepynvDoFEjQXLvVXk5WAnb54Zlgb15NrbaiKmcXI6h2Ay0A=
-X-Google-Smtp-Source: AGHT+IHCes0G+xk/lOar09FklsVADVO86cU+eaDfU0dbj2bA77b5QNHnjabmqTqpe+Ix/13ytNhHTw==
-X-Received: by 2002:a17:907:1b1e:b0:ac7:4f1:65c5 with SMTP id a640c23a62f3a-acad36d7ac0mr1453544966b.54.1744725200534;
-        Tue, 15 Apr 2025 06:53:20 -0700 (PDT)
-Received: from [127.0.0.2] ([2a02:2454:ff21:ef41:7b18:2529:5ce1:343d])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acadcc21a44sm681379166b.177.2025.04.15.06.53.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Apr 2025 06:53:20 -0700 (PDT)
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-Date: Tue, 15 Apr 2025 15:52:46 +0200
-Subject: [PATCH 3/8] arm64: dts: qcom: msm8919/39: Use UART2 console
- pinctrl where appropriate
+        d=1e100.net; s=20230601; t=1744725178; x=1745329978;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ooSny9XUJhxzZTQ7SphFkbtSCGNbzJtlyoCGrcjm0uI=;
+        b=gAY7KNdpNhUNnjBY6u1DYDIb7ogfsNpdgG3pJKBlnWZSDDcvCpZtE2d4OSL4Nrvk8Y
+         mUJSeyl8iNv5tb2PP3vh23p6uC7f8OYx48H0bAUDrlQ+PDgOMBn36RHBCsj9avuMYuUf
+         +hWGOLgCosDg7WfklK/ErqWno2nGgsowQnYt0o7GQPiBm2Re7rkmKmZghDcIE2MjslB2
+         TecfhOx43m3tm5Ma7FphAtPWI7zFY+yuSB7K7Jr4s/2sUIZGKqyRNTo0XATJgYMzl2FS
+         /vkm1mQ5M69bBQ2ahAXUSNF2HmFkasJJy3uLe4fbJ7WFv7wbXPIRdCONIfUkGCCMOu+R
+         S7Ig==
+X-Forwarded-Encrypted: i=1; AJvYcCU9c7D00DQ2wMia25XNInNnpF01lWDZYCFCkhV6mRunPGfeVzAFHZKGz63P0xwetGiiwa3AOK6YzBTG6MY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy33uLfkpAGR5Z+WBR78OH8Qv2LvdQ0vhiFkE+NtN60v/oh6GPn
+	3PvHfMQefjXpNfL53heSzD+7KisNRaoNtow+18TOG9bkMv0M/qdjChdanUT4s580AD8z7DZBxSa
+	9XC8DBYAPn1UFUAwxm36QaLWKt4z8IZVQCyrLrQ==
+X-Gm-Gg: ASbGnct7HuVPbvihSoLFekzqYtNj3Cdnut6TL8INoZzRuHcefICJWqAcKX12PqSMy66
+	ZAdunMc39s8ANlqP3pAjkdJjoQqbu3jGZaSn8xf3VYVmxQIstGpuL6crCfEzzWO4fi9KmJXYjsW
+	HqL+nAHDNSL4lfor02u7QPbdUDBT3EKNmQTOdrGF5zNl9W725G2+GPYZkgGGBCWw==
+X-Google-Smtp-Source: AGHT+IEol4piqZI6Yl4KkOyrpWJDQ0NRxpz331ba806EziKe1YlyaBlEBwXC/EDk8zCKPGhNab6fbJKybT0eQUA9ilQ=
+X-Received: by 2002:a17:907:948e:b0:ac7:66fb:6a07 with SMTP id
+ a640c23a62f3a-acad3439f1fmr1418866966b.6.1744725178174; Tue, 15 Apr 2025
+ 06:52:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250415-msm8916-console-pinctrl-v1-3-a1d33ea994b9@linaro.org>
-References: <20250415-msm8916-console-pinctrl-v1-0-a1d33ea994b9@linaro.org>
-In-Reply-To: <20250415-msm8916-console-pinctrl-v1-0-a1d33ea994b9@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Sam Day <me@samcday.com>, Casey Connolly <caleb.connolly@linaro.org>
-X-Mailer: b4 0.14.2
+References: <20250302210539.1563190-1-vincent.guittot@linaro.org>
+ <20250302210539.1563190-6-vincent.guittot@linaro.org> <b19a857c-4c01-471b-94be-c465de636cd9@arm.com>
+In-Reply-To: <b19a857c-4c01-471b-94be-c465de636cd9@arm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Tue, 15 Apr 2025 15:52:46 +0200
+X-Gm-Features: ATxdqUERmn6EDtKU2V_wprhveLltLu_mmBdhtZ7lcobIXZT62Zkij7ds-nVnK14
+Message-ID: <CAKfTPtCr0BRFwc2z0EGVNSyKSfKWqrOfeiZLNigzxEY2W6Bocw@mail.gmail.com>
+Subject: Re: [PATCH 5/7 v5] sched/fair: Add push task mechanism for EAS
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
+	mgorman@suse.de, vschneid@redhat.com, lukasz.luba@arm.com, 
+	rafael.j.wysocki@intel.com, pierre.gondois@arm.com, 
+	linux-kernel@vger.kernel.org, qyousef@layalina.io, hongyan.xia2@arm.com, 
+	luis.machado@arm.com, qperret@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-Convert the majority of MSM8916/39-based boards, which use UART2 with 2
-pins (TX, RX) for the debug UART console. This adds the needed bias-pull-up
-and bootph-all properties to avoid garbage input when UART is disconnected.
+On Tue, 25 Mar 2025 at 12:16, Christian Loehle <christian.loehle@arm.com> wrote:
+>
+> On 3/2/25 21:05, Vincent Guittot wrote:
+> > EAS is based on wakeup events to efficiently place tasks on the system, but
+> > there are cases where a task doesn't have wakeup events anymore or at a far
+> > too low pace. For such situation, we can take advantage of the task being
+> > put back in the enqueued list to check if it should be pushed on another
+> > CPU. When the task is alone on the CPU, it's never put back in the enqueued
+> > list; In this special case, we use the tick to run the check.
+> >
+> > Wake up events remain the main way to migrate tasks but we now detect
+> > situation where a task is stuck on a CPU by checking that its utilization
+> > is larger than the max available compute capacity (max cpu capacity or
+> > uclamp max setting)
+> >
+> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > ---
+> >  kernel/sched/fair.c  | 220 +++++++++++++++++++++++++++++++++++++++++++
+> >  kernel/sched/sched.h |   2 +
+> >  2 files changed, 222 insertions(+)
+> >
+> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > index a9b97bbc085f..c3e383b86808 100644
+> > --- a/kernel/sched/fair.c
+> > +++ b/kernel/sched/fair.c
+> > @@ -7051,6 +7051,7 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+> >       hrtick_update(rq);
+> >  }
+> >
+> > +static void fair_remove_pushable_task(struct rq *rq, struct task_struct *p);
+> >  static void set_next_buddy(struct sched_entity *se);
+> >
+> >  /*
+> > @@ -7081,6 +7082,8 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
+> >               h_nr_idle = task_has_idle_policy(p);
+> >               if (task_sleep || task_delayed || !se->sched_delayed)
+> >                       h_nr_runnable = 1;
+> > +
+> > +             fair_remove_pushable_task(rq, p);
+> >       } else {
+> >               cfs_rq = group_cfs_rq(se);
+> >               slice = cfs_rq_min_slice(cfs_rq);
+> > @@ -8589,6 +8592,197 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
+> >       return target;
+> >  }
+> >
+> > +static inline bool task_stuck_on_cpu(struct task_struct *p, int cpu)
+> > +{
+> > +     unsigned long max_capa, util;
+> > +
+> > +     max_capa = min(get_actual_cpu_capacity(cpu),
+> > +                    uclamp_eff_value(p, UCLAMP_MAX));
+> > +     util = max(task_util_est(p), task_runnable(p));
+> > +
+> > +     /*
+> > +      * Return true only if the task might not sleep/wakeup because of a low
+> > +      * compute capacity. Tasks, which wake up regularly, will be handled by
+> > +      * feec().
+> > +      */
+> > +     return (util > max_capa);
+> > +}
+> > +
+> > +static inline bool sched_energy_push_task(struct task_struct *p, struct rq *rq)
+> > +{
+> > +     if (p->nr_cpus_allowed == 1)
+> > +             return false;
+> > +
+> > +     if (is_rd_overutilized(rq->rd))
+> > +             return false;
+> > +
+> > +     if (task_stuck_on_cpu(p, cpu_of(rq)))
+> > +             return true;
+> > +
+> > +     return false;
+> > +}
+> > +
+> > +static int active_load_balance_cpu_stop(void *data);
+> > +
+> > +static inline void check_pushable_task(struct task_struct *p, struct rq *rq)
+> > +{
+> > +     int new_cpu, cpu = cpu_of(rq);
+> > +
+> > +     if (!sched_energy_enabled())
+> > +             return;
+> > +
+> > +     if (WARN_ON(!p))
+> > +             return;
+> > +
+> > +     if (WARN_ON(!task_current(rq, p)))
+> > +             return;
+> > +
+> > +     if (is_migration_disabled(p))
+> > +             return;
+> > +
+> > +     /* If there are several task, wait for being put back */
+> > +     if (rq->nr_running > 1)
+> > +             return;
+> > +
+> > +     if (!sched_energy_push_task(p, rq))
+> > +             return;
+> > +
+> > +     new_cpu = find_energy_efficient_cpu(p, cpu);
+> > +
+> > +     if (new_cpu == cpu)
+> > +             return;
+> > +
+> > +     /*
+> > +      * ->active_balance synchronizes accesses to
+> > +      * ->active_balance_work.  Once set, it's cleared
+> > +      * only after active load balance is finished.
+> > +      */
+> > +     if (!rq->active_balance) {
+> > +             rq->active_balance = 1;
+> > +             rq->push_cpu = new_cpu;
+> > +     } else
+> > +             return;
+> > +
+> > +     raw_spin_rq_unlock(rq);
+> > +     stop_one_cpu_nowait(cpu,
+> > +             active_load_balance_cpu_stop, rq,
+> > +             &rq->active_balance_work);
+> > +     raw_spin_rq_lock(rq);
+> > +}
+> > +
+> > +static inline int has_pushable_tasks(struct rq *rq)
+> > +{
+> > +     return !plist_head_empty(&rq->cfs.pushable_tasks);
+> > +}
+> > +
+> > +static struct task_struct *pick_next_pushable_fair_task(struct rq *rq)
+> > +{
+> > +     struct task_struct *p;
+> > +
+> > +     if (!has_pushable_tasks(rq))
+> > +             return NULL;
+> > +
+> > +     p = plist_first_entry(&rq->cfs.pushable_tasks,
+> > +                           struct task_struct, pushable_tasks);
+> > +
+> > +     WARN_ON_ONCE(rq->cpu != task_cpu(p));
+> > +     WARN_ON_ONCE(task_current(rq, p));
+> > +     WARN_ON_ONCE(p->nr_cpus_allowed <= 1);
+> > +     WARN_ON_ONCE(!task_on_rq_queued(p));
+> > +
+> > +     /*
+> > +      * Remove task from the pushable list as we try only once after that
+> > +      * the task has been put back in enqueued list.
+> > +      */
+> > +     plist_del(&p->pushable_tasks, &rq->cfs.pushable_tasks);
+> > +
+> > +     return p;
+> > +}
+> > +
+> > +/*
+> > + * See if the non running fair tasks on this rq can be sent on other CPUs
+> > + * that fits better with their profile.
+> > + */
+> > +static bool push_fair_task(struct rq *rq)
+> > +{
+> > +     struct task_struct *next_task;
+> > +     int prev_cpu, new_cpu;
+> > +     struct rq *new_rq;
+> > +
+> > +     next_task = pick_next_pushable_fair_task(rq);
+> > +     if (!next_task)
+> > +             return false;
+> > +
+> > +     if (is_migration_disabled(next_task))
+> > +             return true;
+> > +
+> > +     /* We might release rq lock */
+> > +     get_task_struct(next_task);
+> > +
+> > +     prev_cpu = rq->cpu;
+> > +
+> > +     new_cpu = find_energy_efficient_cpu(next_task, prev_cpu);
+>
+> We aren't gating this on a overutilized check for both call sites of this patch
 
-apq8016-schneider-hmibsc.dts does not use UART2 as a debug console, so it's
-left as-is in this commit.
+The overutilized check has been done when adding the task to the list.
 
-Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
----
- arch/arm64/boot/dts/qcom/apq8016-sbc.dts                     | 4 ++--
- arch/arm64/boot/dts/qcom/apq8039-t2.dts                      | 4 ++--
- arch/arm64/boot/dts/qcom/msm8916-acer-a1-724.dts             | 4 ++--
- arch/arm64/boot/dts/qcom/msm8916-alcatel-idol347.dts         | 4 ++--
- arch/arm64/boot/dts/qcom/msm8916-asus-z00l.dts               | 4 ++--
- arch/arm64/boot/dts/qcom/msm8916-gplus-fl8005a.dts           | 4 ++--
- arch/arm64/boot/dts/qcom/msm8916-huawei-g7.dts               | 4 ++--
- arch/arm64/boot/dts/qcom/msm8916-lg-c50.dts                  | 4 ++--
- arch/arm64/boot/dts/qcom/msm8916-lg-m216.dts                 | 4 ++--
- arch/arm64/boot/dts/qcom/msm8916-longcheer-l8150.dts         | 4 ++--
- arch/arm64/boot/dts/qcom/msm8916-longcheer-l8910.dts         | 4 ++--
- arch/arm64/boot/dts/qcom/msm8916-mtp.dts                     | 4 ++--
- arch/arm64/boot/dts/qcom/msm8916-samsung-a2015-common.dtsi   | 4 ++--
- arch/arm64/boot/dts/qcom/msm8916-samsung-fortuna-common.dtsi | 4 ++--
- arch/arm64/boot/dts/qcom/msm8916-samsung-gt5-common.dtsi     | 4 ++--
- arch/arm64/boot/dts/qcom/msm8916-samsung-j5-common.dtsi      | 4 ++--
- arch/arm64/boot/dts/qcom/msm8916-samsung-serranove.dts       | 4 ++--
- arch/arm64/boot/dts/qcom/msm8916-ufi.dtsi                    | 4 ++--
- arch/arm64/boot/dts/qcom/msm8916-wingtech-wt865x8.dtsi       | 4 ++--
- arch/arm64/boot/dts/qcom/msm8916-wingtech-wt88047.dts        | 4 ++--
- arch/arm64/boot/dts/qcom/msm8939-huawei-kiwi.dts             | 4 ++--
- arch/arm64/boot/dts/qcom/msm8939-longcheer-l9100.dts         | 4 ++--
- arch/arm64/boot/dts/qcom/msm8939-samsung-a7.dts              | 4 ++--
- arch/arm64/boot/dts/qcom/msm8939-wingtech-wt82918.dtsi       | 4 ++--
- 24 files changed, 48 insertions(+), 48 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/apq8016-sbc.dts b/arch/arm64/boot/dts/qcom/apq8016-sbc.dts
-index 6175b1b9d7c6e82ef8ed3b6198b4b8cef81514d8..f12a5e2b1e8c2cce6e85b8444c97a7e0d7b7c58f 100644
---- a/arch/arm64/boot/dts/qcom/apq8016-sbc.dts
-+++ b/arch/arm64/boot/dts/qcom/apq8016-sbc.dts
-@@ -230,8 +230,8 @@ &blsp_uart1 {
- &blsp_uart2 {
- 	status = "okay";
- 	label = "LS-UART1";
--	pinctrl-0 = <&blsp_uart2_default>;
--	pinctrl-1 = <&blsp_uart2_sleep>;
-+	pinctrl-0 = <&blsp_uart2_console_default>;
-+	pinctrl-1 = <&blsp_uart2_console_sleep>;
- 	pinctrl-names = "default", "sleep";
- };
- 
-diff --git a/arch/arm64/boot/dts/qcom/apq8039-t2.dts b/arch/arm64/boot/dts/qcom/apq8039-t2.dts
-index f656eca59ee23a6d19450b4d3fee7a661b002709..4aa0ad19bc0f7fde6f5f3a93cdb6be19fb4f1f65 100644
---- a/arch/arm64/boot/dts/qcom/apq8039-t2.dts
-+++ b/arch/arm64/boot/dts/qcom/apq8039-t2.dts
-@@ -131,8 +131,8 @@ &blsp_uart1_sleep {
- };
- 
- &blsp_uart2 {
--	pinctrl-0 = <&blsp_uart2_default>;
--	pinctrl-1 = <&blsp_uart2_sleep>;
-+	pinctrl-0 = <&blsp_uart2_console_default>;
-+	pinctrl-1 = <&blsp_uart2_console_sleep>;
- 	pinctrl-names = "default", "sleep";
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/qcom/msm8916-acer-a1-724.dts b/arch/arm64/boot/dts/qcom/msm8916-acer-a1-724.dts
-index 9b82468ace3edfe8d808492b83e7753d3314e7af..3a6eba904641c65ee8e982774f4122ef9ddb3704 100644
---- a/arch/arm64/boot/dts/qcom/msm8916-acer-a1-724.dts
-+++ b/arch/arm64/boot/dts/qcom/msm8916-acer-a1-724.dts
-@@ -133,8 +133,8 @@ touchscreen@38 {
- };
- 
- &blsp_uart2 {
--	pinctrl-0 = <&blsp_uart2_default>;
--	pinctrl-1 = <&blsp_uart2_sleep>;
-+	pinctrl-0 = <&blsp_uart2_console_default>;
-+	pinctrl-1 = <&blsp_uart2_console_sleep>;
- 	pinctrl-names = "default", "sleep";
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/qcom/msm8916-alcatel-idol347.dts b/arch/arm64/boot/dts/qcom/msm8916-alcatel-idol347.dts
-index 1c2f8e8f9b263b024cc7c239447e7158262b0c1c..2de8b6f9531b25f1ee745c5e298d1cab806f0391 100644
---- a/arch/arm64/boot/dts/qcom/msm8916-alcatel-idol347.dts
-+++ b/arch/arm64/boot/dts/qcom/msm8916-alcatel-idol347.dts
-@@ -214,8 +214,8 @@ led@1 {
- 
- &blsp_uart2 {
- 	status = "okay";
--	pinctrl-0 = <&blsp_uart2_default>;
--	pinctrl-1 = <&blsp_uart2_sleep>;
-+	pinctrl-0 = <&blsp_uart2_console_default>;
-+	pinctrl-1 = <&blsp_uart2_console_sleep>;
- 	pinctrl-names = "default", "sleep";
- };
- 
-diff --git a/arch/arm64/boot/dts/qcom/msm8916-asus-z00l.dts b/arch/arm64/boot/dts/qcom/msm8916-asus-z00l.dts
-index f7a9ee0dba09eef83e9b4149856cdefa0ae3fd4b..29d61f8d5dc9c8099524ecbfdb80ab7afaa811c4 100644
---- a/arch/arm64/boot/dts/qcom/msm8916-asus-z00l.dts
-+++ b/arch/arm64/boot/dts/qcom/msm8916-asus-z00l.dts
-@@ -130,8 +130,8 @@ touchscreen@38 {
- 
- &blsp_uart2 {
- 	status = "okay";
--	pinctrl-0 = <&blsp_uart2_default>;
--	pinctrl-1 = <&blsp_uart2_sleep>;
-+	pinctrl-0 = <&blsp_uart2_console_default>;
-+	pinctrl-1 = <&blsp_uart2_console_sleep>;
- 	pinctrl-names = "default", "sleep";
- };
- 
-diff --git a/arch/arm64/boot/dts/qcom/msm8916-gplus-fl8005a.dts b/arch/arm64/boot/dts/qcom/msm8916-gplus-fl8005a.dts
-index e5ca1ca0d9976a0d36af5359e705ca7b2070122b..742a325245c5c09dcb6227ae262865b17ee5ef46 100644
---- a/arch/arm64/boot/dts/qcom/msm8916-gplus-fl8005a.dts
-+++ b/arch/arm64/boot/dts/qcom/msm8916-gplus-fl8005a.dts
-@@ -131,8 +131,8 @@ touchscreen@38 {
- };
- 
- &blsp_uart2 {
--	pinctrl-0 = <&blsp_uart2_default>;
--	pinctrl-1 = <&blsp_uart2_sleep>;
-+	pinctrl-0 = <&blsp_uart2_console_default>;
-+	pinctrl-1 = <&blsp_uart2_console_sleep>;
- 	pinctrl-names = "default", "sleep";
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/qcom/msm8916-huawei-g7.dts b/arch/arm64/boot/dts/qcom/msm8916-huawei-g7.dts
-index f75e60b5d1b3b40673cb0639a3f8d0056d037a02..aa414b5d7ee47a0e20ca2341c9a3250503184a69 100644
---- a/arch/arm64/boot/dts/qcom/msm8916-huawei-g7.dts
-+++ b/arch/arm64/boot/dts/qcom/msm8916-huawei-g7.dts
-@@ -214,8 +214,8 @@ nfc@28 {
- 
- &blsp_uart2 {
- 	status = "okay";
--	pinctrl-0 = <&blsp_uart2_default>;
--	pinctrl-1 = <&blsp_uart2_sleep>;
-+	pinctrl-0 = <&blsp_uart2_console_default>;
-+	pinctrl-1 = <&blsp_uart2_console_sleep>;
- 	pinctrl-names = "default", "sleep";
- };
- 
-diff --git a/arch/arm64/boot/dts/qcom/msm8916-lg-c50.dts b/arch/arm64/boot/dts/qcom/msm8916-lg-c50.dts
-index 7c49b4cb27cb5a9914b38865596eb27541f390fd..22bc73b94344aff42f560304c99cbb7b8995fdfd 100644
---- a/arch/arm64/boot/dts/qcom/msm8916-lg-c50.dts
-+++ b/arch/arm64/boot/dts/qcom/msm8916-lg-c50.dts
-@@ -59,8 +59,8 @@ reg_sd_vmmc: regulator-sdcard-vmmc {
- };
- 
- &blsp_uart2 {
--	pinctrl-0 = <&blsp_uart2_default>;
--	pinctrl-1 = <&blsp_uart2_sleep>;
-+	pinctrl-0 = <&blsp_uart2_console_default>;
-+	pinctrl-1 = <&blsp_uart2_console_sleep>;
- 	pinctrl-names = "default", "sleep";
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/qcom/msm8916-lg-m216.dts b/arch/arm64/boot/dts/qcom/msm8916-lg-m216.dts
-index 6e55d37f588c9b829bb594ff156cda6cb8b6caf2..c50374979939c26186e97d19047de77356a9c3c1 100644
---- a/arch/arm64/boot/dts/qcom/msm8916-lg-m216.dts
-+++ b/arch/arm64/boot/dts/qcom/msm8916-lg-m216.dts
-@@ -112,8 +112,8 @@ touchscreen@34 {
- };
- 
- &blsp_uart2 {
--	pinctrl-0 = <&blsp_uart2_default>;
--	pinctrl-1 = <&blsp_uart2_sleep>;
-+	pinctrl-0 = <&blsp_uart2_console_default>;
-+	pinctrl-1 = <&blsp_uart2_console_sleep>;
- 	pinctrl-names = "default", "sleep";
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/qcom/msm8916-longcheer-l8150.dts b/arch/arm64/boot/dts/qcom/msm8916-longcheer-l8150.dts
-index 4576178cc9b0936a7356b9852fc003fe949ed903..eb449112a22684492e6b6f9705389d44f2cec379 100644
---- a/arch/arm64/boot/dts/qcom/msm8916-longcheer-l8150.dts
-+++ b/arch/arm64/boot/dts/qcom/msm8916-longcheer-l8150.dts
-@@ -254,8 +254,8 @@ rmi4-f12@12 {
- 
- &blsp_uart2 {
- 	status = "okay";
--	pinctrl-0 = <&blsp_uart2_default>;
--	pinctrl-1 = <&blsp_uart2_sleep>;
-+	pinctrl-0 = <&blsp_uart2_console_default>;
-+	pinctrl-1 = <&blsp_uart2_console_sleep>;
- 	pinctrl-names = "default", "sleep";
- };
- 
-diff --git a/arch/arm64/boot/dts/qcom/msm8916-longcheer-l8910.dts b/arch/arm64/boot/dts/qcom/msm8916-longcheer-l8910.dts
-index e0dacdf552452a36cbdb041b37d68eb4d661e6c8..887764dc55b21a5892510f822004b054eb65fa0a 100644
---- a/arch/arm64/boot/dts/qcom/msm8916-longcheer-l8910.dts
-+++ b/arch/arm64/boot/dts/qcom/msm8916-longcheer-l8910.dts
-@@ -178,8 +178,8 @@ imu@68 {
- 
- &blsp_uart2 {
- 	status = "okay";
--	pinctrl-0 = <&blsp_uart2_default>;
--	pinctrl-1 = <&blsp_uart2_sleep>;
-+	pinctrl-0 = <&blsp_uart2_console_default>;
-+	pinctrl-1 = <&blsp_uart2_console_sleep>;
- 	pinctrl-names = "default", "sleep";
- };
- 
-diff --git a/arch/arm64/boot/dts/qcom/msm8916-mtp.dts b/arch/arm64/boot/dts/qcom/msm8916-mtp.dts
-index c115142df364e99a4f566775d4d1679e6a8920e2..63d476523544babc9213e34e227870a447410eca 100644
---- a/arch/arm64/boot/dts/qcom/msm8916-mtp.dts
-+++ b/arch/arm64/boot/dts/qcom/msm8916-mtp.dts
-@@ -23,8 +23,8 @@ chosen {
- };
- 
- &blsp_uart2 {
--	pinctrl-0 = <&blsp_uart2_default>;
--	pinctrl-1 = <&blsp_uart2_sleep>;
-+	pinctrl-0 = <&blsp_uart2_console_default>;
-+	pinctrl-1 = <&blsp_uart2_console_sleep>;
- 	pinctrl-names = "default", "sleep";
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/qcom/msm8916-samsung-a2015-common.dtsi b/arch/arm64/boot/dts/qcom/msm8916-samsung-a2015-common.dtsi
-index 58a548d220a485e9a92c012c1529e3fe838d6c9f..6f75707b6f9b4707cbed7e12ab60fa888d6a1f06 100644
---- a/arch/arm64/boot/dts/qcom/msm8916-samsung-a2015-common.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8916-samsung-a2015-common.dtsi
-@@ -302,8 +302,8 @@ charger: charger {
- 
- &blsp_uart2 {
- 	status = "okay";
--	pinctrl-0 = <&blsp_uart2_default>;
--	pinctrl-1 = <&blsp_uart2_sleep>;
-+	pinctrl-0 = <&blsp_uart2_console_default>;
-+	pinctrl-1 = <&blsp_uart2_console_sleep>;
- 	pinctrl-names = "default", "sleep";
- };
- 
-diff --git a/arch/arm64/boot/dts/qcom/msm8916-samsung-fortuna-common.dtsi b/arch/arm64/boot/dts/qcom/msm8916-samsung-fortuna-common.dtsi
-index 4290ae7782d659eb0d2594825717ffaf4c84076b..fb790b02736acff017d12318de1c01100a33c808 100644
---- a/arch/arm64/boot/dts/qcom/msm8916-samsung-fortuna-common.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8916-samsung-fortuna-common.dtsi
-@@ -304,8 +304,8 @@ charger: charger {
- };
- 
- &blsp_uart2 {
--	pinctrl-0 = <&blsp_uart2_default>;
--	pinctrl-1 = <&blsp_uart2_sleep>;
-+	pinctrl-0 = <&blsp_uart2_console_default>;
-+	pinctrl-1 = <&blsp_uart2_console_sleep>;
- 	pinctrl-names = "default", "sleep";
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/qcom/msm8916-samsung-gt5-common.dtsi b/arch/arm64/boot/dts/qcom/msm8916-samsung-gt5-common.dtsi
-index 30e34574999c52f7ea99c9bd7af41101e5d4d4d0..ff9679d3f664cbb203ff42b4cf27468622cc5cf3 100644
---- a/arch/arm64/boot/dts/qcom/msm8916-samsung-gt5-common.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8916-samsung-gt5-common.dtsi
-@@ -116,8 +116,8 @@ fuelgauge@36 {
- };
- 
- &blsp_uart2 {
--	pinctrl-0 = <&blsp_uart2_default>;
--	pinctrl-1 = <&blsp_uart2_sleep>;
-+	pinctrl-0 = <&blsp_uart2_console_default>;
-+	pinctrl-1 = <&blsp_uart2_console_sleep>;
- 	pinctrl-names = "default", "sleep";
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/qcom/msm8916-samsung-j5-common.dtsi b/arch/arm64/boot/dts/qcom/msm8916-samsung-j5-common.dtsi
-index d4af7856f5f3a70160774d1637e39e19d163725d..697f25d51d9d05087500231f4d9ad77fe81ea3b3 100644
---- a/arch/arm64/boot/dts/qcom/msm8916-samsung-j5-common.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8916-samsung-j5-common.dtsi
-@@ -135,8 +135,8 @@ touchscreen: touchscreen@50 {
- 
- &blsp_uart2 {
- 	status = "okay";
--	pinctrl-0 = <&blsp_uart2_default>;
--	pinctrl-1 = <&blsp_uart2_sleep>;
-+	pinctrl-0 = <&blsp_uart2_console_default>;
-+	pinctrl-1 = <&blsp_uart2_console_sleep>;
- 	pinctrl-names = "default", "sleep";
- };
- 
-diff --git a/arch/arm64/boot/dts/qcom/msm8916-samsung-serranove.dts b/arch/arm64/boot/dts/qcom/msm8916-samsung-serranove.dts
-index 45c3b3387b52030a6475ae0da2a2c89ea98ca6c1..71b5c98458ff475e101a0a40d3601b5ca144ec92 100644
---- a/arch/arm64/boot/dts/qcom/msm8916-samsung-serranove.dts
-+++ b/arch/arm64/boot/dts/qcom/msm8916-samsung-serranove.dts
-@@ -319,8 +319,8 @@ rt5033_charger: charger {
- 
- &blsp_uart2 {
- 	status = "okay";
--	pinctrl-0 = <&blsp_uart2_default>;
--	pinctrl-1 = <&blsp_uart2_sleep>;
-+	pinctrl-0 = <&blsp_uart2_console_default>;
-+	pinctrl-1 = <&blsp_uart2_console_sleep>;
- 	pinctrl-names = "default", "sleep";
- };
- 
-diff --git a/arch/arm64/boot/dts/qcom/msm8916-ufi.dtsi b/arch/arm64/boot/dts/qcom/msm8916-ufi.dtsi
-index 2bfe56da8f6c624ed97d8a5750d12c59c039c874..5719933fa8e01b0b90ef7477c0bf181af379a524 100644
---- a/arch/arm64/boot/dts/qcom/msm8916-ufi.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8916-ufi.dtsi
-@@ -72,8 +72,8 @@ &bam_dmux_dma {
- };
- 
- &blsp_uart2 {
--	pinctrl-0 = <&blsp_uart2_default>;
--	pinctrl-1 = <&blsp_uart2_sleep>;
-+	pinctrl-0 = <&blsp_uart2_console_default>;
-+	pinctrl-1 = <&blsp_uart2_console_sleep>;
- 	pinctrl-names = "default", "sleep";
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/qcom/msm8916-wingtech-wt865x8.dtsi b/arch/arm64/boot/dts/qcom/msm8916-wingtech-wt865x8.dtsi
-index f5caac42bbad106f86448c217aa1472a32fbeaa6..ebe85cd85ddf30b9905975318746403e0cecf7ee 100644
---- a/arch/arm64/boot/dts/qcom/msm8916-wingtech-wt865x8.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8916-wingtech-wt865x8.dtsi
-@@ -93,8 +93,8 @@ touchscreen@38 {
- };
- 
- &blsp_uart2 {
--	pinctrl-0 = <&blsp_uart2_default>;
--	pinctrl-1 = <&blsp_uart2_sleep>;
-+	pinctrl-0 = <&blsp_uart2_console_default>;
-+	pinctrl-1 = <&blsp_uart2_console_sleep>;
- 	pinctrl-names = "default", "sleep";
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/qcom/msm8916-wingtech-wt88047.dts b/arch/arm64/boot/dts/qcom/msm8916-wingtech-wt88047.dts
-index 10d0974334abf0e501ec97e2de487f40c1507f82..68c8856d4c2ed22370822eb295c0000fd80226f5 100644
---- a/arch/arm64/boot/dts/qcom/msm8916-wingtech-wt88047.dts
-+++ b/arch/arm64/boot/dts/qcom/msm8916-wingtech-wt88047.dts
-@@ -169,8 +169,8 @@ led@2 {
- 
- &blsp_uart2 {
- 	status = "okay";
--	pinctrl-0 = <&blsp_uart2_default>;
--	pinctrl-1 = <&blsp_uart2_sleep>;
-+	pinctrl-0 = <&blsp_uart2_console_default>;
-+	pinctrl-1 = <&blsp_uart2_console_sleep>;
- 	pinctrl-names = "default", "sleep";
- };
- 
-diff --git a/arch/arm64/boot/dts/qcom/msm8939-huawei-kiwi.dts b/arch/arm64/boot/dts/qcom/msm8939-huawei-kiwi.dts
-index 9f647027d082864ccaa240f7118f20a8d19f6a4a..18381a66daef8642da27b3ea8c48964c1ccf121b 100644
---- a/arch/arm64/boot/dts/qcom/msm8939-huawei-kiwi.dts
-+++ b/arch/arm64/boot/dts/qcom/msm8939-huawei-kiwi.dts
-@@ -126,8 +126,8 @@ touchscreen@1c {
- };
- 
- &blsp_uart2 {
--	pinctrl-0 = <&blsp_uart2_default>;
--	pinctrl-1 = <&blsp_uart2_sleep>;
-+	pinctrl-0 = <&blsp_uart2_console_default>;
-+	pinctrl-1 = <&blsp_uart2_console_sleep>;
- 	pinctrl-names = "default", "sleep";
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/qcom/msm8939-longcheer-l9100.dts b/arch/arm64/boot/dts/qcom/msm8939-longcheer-l9100.dts
-index f59647b5b7dfdd7bf630f9d180bb56a10a3ea0a3..13422a19c26a15812657e92ab0b52d6f53f5c944 100644
---- a/arch/arm64/boot/dts/qcom/msm8939-longcheer-l9100.dts
-+++ b/arch/arm64/boot/dts/qcom/msm8939-longcheer-l9100.dts
-@@ -243,8 +243,8 @@ touchscreen@4a {
- };
- 
- &blsp_uart2 {
--	pinctrl-0 = <&blsp_uart2_default>;
--	pinctrl-1 = <&blsp_uart2_sleep>;
-+	pinctrl-0 = <&blsp_uart2_console_default>;
-+	pinctrl-1 = <&blsp_uart2_console_sleep>;
- 	pinctrl-names = "default", "sleep";
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/qcom/msm8939-samsung-a7.dts b/arch/arm64/boot/dts/qcom/msm8939-samsung-a7.dts
-index 3d9cbe7fdad8808968190d7a744bab29eeb0e827..07613080e79e9bfb21493a0b61c85bc172d5e3f6 100644
---- a/arch/arm64/boot/dts/qcom/msm8939-samsung-a7.dts
-+++ b/arch/arm64/boot/dts/qcom/msm8939-samsung-a7.dts
-@@ -373,8 +373,8 @@ charger: charger {
- };
- 
- &blsp_uart2 {
--	pinctrl-0 = <&blsp_uart2_default>;
--	pinctrl-1 = <&blsp_uart2_sleep>;
-+	pinctrl-0 = <&blsp_uart2_console_default>;
-+	pinctrl-1 = <&blsp_uart2_console_sleep>;
- 	pinctrl-names = "default", "sleep";
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/qcom/msm8939-wingtech-wt82918.dtsi b/arch/arm64/boot/dts/qcom/msm8939-wingtech-wt82918.dtsi
-index cbefe34327ba7b04ea57032c68dd69642e6d1685..a5187355f9fa09148b9f04970da6855a49cdd059 100644
---- a/arch/arm64/boot/dts/qcom/msm8939-wingtech-wt82918.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8939-wingtech-wt82918.dtsi
-@@ -126,8 +126,8 @@ touchscreen: touchscreen@38 {
- };
- 
- &blsp_uart2 {
--	pinctrl-0 = <&blsp_uart2_default>;
--	pinctrl-1 = <&blsp_uart2_sleep>;
-+	pinctrl-0 = <&blsp_uart2_console_default>;
-+	pinctrl-1 = <&blsp_uart2_console_sleep>;
- 	pinctrl-names = "default", "sleep";
- 	status = "okay";
- };
-
--- 
-2.47.2
-
+> like the other feec() call and testing shows that this calls feec when OU
+> relatively often.
+> Why would it be OK to call feec() here when it isn't on task placement?
+>
+> > +
+> > +     if (new_cpu == prev_cpu)
+> > +             goto out;
+> > +
+> > +     new_rq = cpu_rq(new_cpu);
+> > +
+> > +     if (double_lock_balance(rq, new_rq)) {
+> > +             /* The task has already migrated in between */
+> > +             if (task_cpu(next_task) != rq->cpu) {
+> > +                     double_unlock_balance(rq, new_rq);
+> > +                     goto out;
+> > +             }
+> > +
+> > +             deactivate_task(rq, next_task, 0);
+> > +             set_task_cpu(next_task, new_cpu);
+> > +             activate_task(new_rq, next_task, 0);
+> > +
+> > +             resched_curr(new_rq);
+> > +
+> > +             double_unlock_balance(rq, new_rq);
+> > +     }
+> > +
+> > +out:
+> > +     put_task_struct(next_task);
+> > +
+> > +     return true;
+> > +}
+> > +
+> > +static void push_fair_tasks(struct rq *rq)
+> > +{
+> > +     /* push_fair_task() will return true if it moved a fair task */
+>
+> This isn't technically true, a bit of a nit, push_fair_task() also
+> will return true when the task found wasn't moveable.
+>
+> [snip]
 
