@@ -1,118 +1,85 @@
-Return-Path: <linux-kernel+bounces-605914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60713A8A79B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 21:16:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86F8CA8A7AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 21:17:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6F6B1901D1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 19:16:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE5CB7ADF3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 19:16:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 681FA2417E4;
-	Tue, 15 Apr 2025 19:16:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BC9324169B;
+	Tue, 15 Apr 2025 19:16:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="hQM8uGmf"
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qxs4CJph"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EF82356B9
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 19:16:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8FE9535D8;
+	Tue, 15 Apr 2025 19:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744744563; cv=none; b=qCZWV6v/VjZXFvTg6Q/Hgon8E9QBZB9z+fRKMQjw99RPDja6tHrRvWym/LORlz2YnwQlJclQrB32Lg5Dom6EXVKByXihKFpNch9x+IE/NbRSijzxHbBHnEVbn/HjUV6c4PREVmE8tgkK372kDtiOry3FPZpgvaganIX2vlJs/Fk=
+	t=1744744590; cv=none; b=rzdeG8Db8devIEXYOUTAMQBzXsJC0GXXxjqLjV1tP2MzrRMh8Qg5TK5wGwoZiZma74nD0oLGRswN20oXZLvra9LK/eiVJeAwG5JmTwMNVnAHH4L8mitLBPqu7vYilxN1N4iFd14gKJcsj7AjxsclL5HECeAuC2xMgRz3LAcg14g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744744563; c=relaxed/simple;
-	bh=9LhhQK7SYYoB04N4KaGT0jYG3IqgAZMjCvvz8yGafZQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ZOEw9WiTYhInCWhphj12JxvwvWYyBeyWT6ncA7lr95weE5xAOsjdynX8C431N6kLM6F66ERnGKcT1PMuIHlarZFXZkP8sdV98ABaLgNydnPJXEWGb5jFaopVkWtWXL/Eillnt/v9GKSXZc3ZmYXR0KfxTa0FASV5ollD3dwi82I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=hQM8uGmf; arc=none smtp.client-ip=209.85.166.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3d8020ba858so17415595ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 12:16:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1744744560; x=1745349360; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=asgUBCNF1/3nLCqRhE9iKUJT9+CZgW2jKMxY6rpof5I=;
-        b=hQM8uGmfyz4swHbASYgN+i4lx/0vQUFmxTVp9Xhtx5IkAKkj/ND1pauID0cwBnZLkB
-         jGVHvwX76whYhJ8NKHlIg1yYYq0N+f9X1zu2uxkvWMYTGE5m+jkIL++iFUzcAcLBl+2x
-         7xQksbzZpbJllk23ktXAJJaq06GcqMTxAyG+FeOz+hxfsm8+4r5KJOjUtDtgzqCyM4Hh
-         g0BsrtMxmE/fOgTXrO9EhVCH8nMHZAy5zBqq4KHKQvs8qHClK/Sg/5pYS4aJIdqZiRZ6
-         +69iBbcThAo3u9qbh/DIHZEdYdYHcyJeUVUXMvF5P0F+uDGPnxyXIn97C2rCHhKgg1VE
-         qyvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744744560; x=1745349360;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=asgUBCNF1/3nLCqRhE9iKUJT9+CZgW2jKMxY6rpof5I=;
-        b=Pu8O/4LS74MxT9TtTHsmiWQOwUGIDgeMSJMoyyFJudc4qhikQWfNY+uRwMlHqLtmxC
-         odWdY4mGRXS9I8QCJ0EuR+41tS/+TJ2gpy9j7UbceWmg+M4KSBLAIHVDhYDv6LvnWCg5
-         C67EP0/x5Lcu1woUyAhHR82viKdvgeDQ7DEkXOxMUFsWpbsAX5mbkTO2Q+s4Jkovl3Gt
-         OZBQlCYCSdcdKPVPpKustXrt/GV/fk1x0XLDe7ywacPPgSvOAIn70alTSMpBtn9+Fioj
-         jxzeZIPiK2h61hFdUZJNIZFc7L0YsaqY+mLfqR+cVRwq2sYgnmOQZPE1zPR6Cynsvsd7
-         QxQA==
-X-Forwarded-Encrypted: i=1; AJvYcCUA27XD/fWhQbD5GwdYWPDwLJxrmfLHyUBJClac+gd46C7GdmqGcp0ZzfSURGtuK416odS6ng4qIrJWxa0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAD3PGBQxEBmxdnX5ZKljrjAtv7Ckf6J/7mizd69r5aTVHMtYh
-	o/8MkJ5qCjxZVPlklPYM08AkqJ4Atat23sDX6fMkvmI6b5gXWabZdvwGry+qLLw=
-X-Gm-Gg: ASbGncvlms4DFVm5FI1YTm38F/mILvcrSIL/sZ/DpBokARE0obApzP4g/Mp4XnWSd4c
-	7Ala/b90AnZiUA89V0ROCwsnsqicBSwfkMaZAFZuLYGEENFCjUblWagOmZJ//xrAJgKKt1KbENO
-	HwRHKY0fb3S2qL1pTxYzptb2UJOOUsrUtUqjvTkVy1RRSdG7unotn74p8/mBqp0kXKZSNBwoqpJ
-	MDYGwxLD8sFpJ+g5zqTQrLG+exIAtL1GUmd5C0fqb3nA/1BVWruoi+WxnJrfLdS0jlTK88lIFJO
-	DoJehNdrs6tZjrj9qeAHz0/W0vDqRVYccX2LGLaUTeA=
-X-Google-Smtp-Source: AGHT+IFJPt64kBMbP+3d+i4X9X/L5HM104ENBBE+s5Z3gjU9DWZ68WPXVZk2YmxhXWiQnU/bD44xZQ==
-X-Received: by 2002:a05:6e02:339e:b0:3d6:d145:3002 with SMTP id e9e14a558f8ab-3d8125a9e0amr7085535ab.20.1744744559647;
-        Tue, 15 Apr 2025 12:15:59 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d80b6b0392sm4898535ab.63.2025.04.15.12.15.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Apr 2025 12:15:59 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Martijn Coenen <maco@android.com>, Alyssa Ross <hi@alyssa.is>, 
- Christoph Hellwig <hch@lst.de>, Greg KH <greg@kroah.com>, 
- Jan Kara <jack@suse.cz>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: John Ogness <john.ogness@linutronix.de>, linux-block@vger.kernel.org, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-In-Reply-To: <20250415-loop-uevent-changed-v3-1-60ff69ac6088@linutronix.de>
-References: <20250415-loop-uevent-changed-v3-1-60ff69ac6088@linutronix.de>
-Subject: Re: [PATCH v3] loop: LOOP_SET_FD: send uevents for partitions
-Message-Id: <174474455866.197229.13564340998714651621.b4-ty@kernel.dk>
-Date: Tue, 15 Apr 2025 13:15:58 -0600
+	s=arc-20240116; t=1744744590; c=relaxed/simple;
+	bh=q7ozO8AZtsyES6546d6+JPlRvMPy6bWzEQ9v3E+B2Jg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dkXYiXD+jlkOFdbpMHVjdFI+7bjFb5GaAjaRPWYBDNgpYjl73RC589wxfk8T107jscMZL3kPHkiMkGOGD1ntJ40INuUOt6Jm7F+AQvYTdxIPd/E0GUKhvqThp7fMNifjyThVcKJsreRceiYPKDpHmWGMXRXsVscTObTZ1L7KRU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qxs4CJph; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E235BC4CEE7;
+	Tue, 15 Apr 2025 19:16:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744744589;
+	bh=q7ozO8AZtsyES6546d6+JPlRvMPy6bWzEQ9v3E+B2Jg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Qxs4CJph4YyB1BLqyCZ8SCCCqAsp+7bXOKj2nJbUy1AXOzyuvfbcVDY4ZvgMZqeAz
+	 U2QN80CU47LSQTzPk7ofkvpDucTEUj5elTFPuoa19Huw9ghWfWwIEFDjNfVgkJUcBj
+	 DgSemh4ysSbCpzwEtkpUne7Llsos0P/boaFcAU6qjN/dofVQIKBZxq3d7s3ZENqnub
+	 0CCnNrQ1DXLuvuLwNgsVI82ic7QyH9bF9NTtwrtAzMBulGu8W0y6+sL+Lh9ILG16T3
+	 /jYT3WPsUgWd8XNb8CrTfsW8rRkfm7HeEwerxU3WujAR0O3b1JIryLiTI7xnWFZooC
+	 cW1mHxoRd/tqA==
+Date: Tue, 15 Apr 2025 14:16:27 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: krzk+dt@kernel.org, mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, sboyd@kernel.org,
+	magnus.damm@gmail.com, linux-renesas-soc@vger.kernel.org,
+	conor+dt@kernel.org, geert+renesas@glider.be
+Subject: Re: [PATCH 6/7] dt-bindings: clock: rzg2l-cpg: Drop power domain IDs
+Message-ID: <174474458585.827869.1606862651418663689.robh@kernel.org>
+References: <20250410140628.4124896-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250410140628.4124896-7-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.14.3-dev-7b9b9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250410140628.4124896-7-claudiu.beznea.uj@bp.renesas.com>
 
 
-On Tue, 15 Apr 2025 16:55:06 +0200, Thomas Weißschuh wrote:
-> Remove the suppression of the uevents before scanning for partitions.
-> The partitions inherit their suppression settings from their parent device,
-> which lead to the uevents being dropped.
+On Thu, 10 Apr 2025 17:06:27 +0300, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > 
-> This is similar to the same changes for LOOP_CONFIGURE done in
-> commit bb430b694226 ("loop: LOOP_CONFIGURE: send uevents for partitions").
+> Since the configuration order between the individual MSTOP and CLKON bits
+> cannot be preserved with the power domain abstraction, drop the power
+> domain IDs. The corresponding code has also been removed. Currently, there
+> are no device tree users for these IDs.
 > 
-> [...]
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+>  include/dt-bindings/clock/r9a07g043-cpg.h | 53 -----------------
+>  include/dt-bindings/clock/r9a07g044-cpg.h | 58 ------------------
+>  include/dt-bindings/clock/r9a07g054-cpg.h | 58 ------------------
+>  include/dt-bindings/clock/r9a08g045-cpg.h | 71 -----------------------
+>  4 files changed, 240 deletions(-)
+> 
 
-Applied, thanks!
-
-[1/1] loop: LOOP_SET_FD: send uevents for partitions
-      commit: 0dba7a05b9e47d8b546399117b0ddf2426dc6042
-
-Best regards,
--- 
-Jens Axboe
-
-
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
