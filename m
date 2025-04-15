@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-604339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC923A8935D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:26:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D2FBA89361
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:28:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D713189987C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 05:26:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCD741899DD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 05:28:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5481E2741D5;
-	Tue, 15 Apr 2025 05:26:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BF0E2741C4;
+	Tue, 15 Apr 2025 05:28:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qbEMKHue"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p1cDkLLk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5A0270EBF;
-	Tue, 15 Apr 2025 05:26:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7723424C67A;
+	Tue, 15 Apr 2025 05:28:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744694787; cv=none; b=I+IjOJGzPY6ErDUgEoQgGROP00/ecAcsrkLOaOEyzrKAK+KVevCFa/vnIh0mXHusxMN0+/T2lwrKNho1Ln5ijkZcbdB72mFQvuMNOhO7RdPjwJa+S6/Ge8H450Pm1h0xTp2fnBbbHb3RcyCamttkW60UtBHZAhhdHZwrPL5MA+E=
+	t=1744694916; cv=none; b=usK6Zpt1k8zlB3o9JLoXl+UbfBEcKjv+4ConsgpUO8BuAT9n2bNxDF9u+A6PU13tpWj9P3v+6WrtNU2i3/BDvjHGeQnqXBjXTMLWudM/mvBhJBtbwIxDLzWJ4JS6GMxPwFSvq5mv7kwLG2fxCnYPrqaAlFmwfutql3rN6I+aiAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744694787; c=relaxed/simple;
-	bh=b9M9qpWbtsCwxohRow865SANgXGc/E5AsCrqscWGaVk=;
+	s=arc-20240116; t=1744694916; c=relaxed/simple;
+	bh=4YUY3Q0KwhuNRg5IXnl3ohiC9TIhP/hPPob/XU3qvNw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VvI/uR4aSpzsRDrP4b2SlO8UvmDTq+iiZs1tvNVqjskoJY/M5sf+p4LP3F9IFFTii5A7uB2C4H+tSPKjx16axqF3ooIq9qv96ddTpmP90ESGs2HDFiO9ZcX7cJSgvPAFt89uzACHfsDNSdSxkbO6mK+4qMjh1CXFolyK1kgmvVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qbEMKHue; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 842DFC4CEDD;
-	Tue, 15 Apr 2025 05:26:23 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=gKjPP6eJnq9sHTFLZB8TTUgT/DHiSLjlNBsLhToD2LXRR+2c/mvJ/i/4KOqgDjg9beCZMt9E+9lGFp8DYtPWTO12f9TLPGR3iv04aH1YWzxDWaVsHiOpB1TPs12HDfpnqCYFkRHRTk2q+4s+KMTEPZTyHiXU9Rls8GOR7pGm4RA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p1cDkLLk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1197DC4CEDD;
+	Tue, 15 Apr 2025 05:28:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744694787;
-	bh=b9M9qpWbtsCwxohRow865SANgXGc/E5AsCrqscWGaVk=;
+	s=k20201202; t=1744694915;
+	bh=4YUY3Q0KwhuNRg5IXnl3ohiC9TIhP/hPPob/XU3qvNw=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qbEMKHueJ+Ozeqm/ewb8EHV2oNqhB6OJnN3n8ZXr7EQN/6w17CwRtAaRJPIqABJxy
-	 J0mhQiVz2LlSab/oFWlToj6LLpDkoa6K1P4RcUTzZ6DHJcx1Kf0jkubqNOWXtxGr5a
-	 Hws6ymtsF8x6gTtldnUG3N7qZJoR917fy3ID7yyjLpAfHcw+NnSgI7kq2DrzcyZqxC
-	 +08Pczlafr2I9B/rEWDOHDKf2H833RMopWA2V2jAjQuQe4H3JXWVPkWj4e/5zrkbb0
-	 /Sjq2iLCyvWO8BJfeZlupzzrh4G5D/jMtwI9A9s3owNrDeE+y/aTnLzUbh5EBl/Snx
-	 4OsYri8O0LsCw==
-Message-ID: <d6b1d072-0dbe-4eeb-88ab-d290b7190178@kernel.org>
-Date: Tue, 15 Apr 2025 07:26:21 +0200
+	b=p1cDkLLk+9aHsiQyq4hUVt3Lr8S/onWYeUrC2r4qC6KFwErfe1PsZZeNJpooq3ZCA
+	 6ajwsGRWCksf07VIaOcY8EVV/I4QXwrh0BR3QquWYAZDuKIQ6qhZdo5t7yQRoreNhd
+	 UkjhaSfBOUeMtHYHVVocNRXNolQZ6F5ChrgBzQhESZutC0YFg/qx+Ow1pemK9RDawU
+	 +dXb2EvHy0laVvCM69XZV359mZ8pwNNGyEYZP/R/dLOcgsKOnvwkKDK9kOC59rilVd
+	 7aFaIXBfVNZeqKs8zAc+cQueWtEdnrsUXSfM+ayVLxIr3miAN4eQ04MEGxXSfueIfp
+	 zhdnfB/dyJ3XQ==
+Message-ID: <bf9c11bf-332d-4a67-9ba9-c5b3bd1caae4@kernel.org>
+Date: Tue, 15 Apr 2025 07:28:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,21 +49,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 08/10] dt-bindings: clock: Add Qualcomm QCS615 Video
- clock controller
-To: Taniya Das <quic_tdas@quicinc.com>, Bjorn Andersson
- <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>
-Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>,
- Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20250414-qcs615-mm-v7-clock-controllers-v7-0-ebab8e3a96e9@quicinc.com>
- <20250414-qcs615-mm-v7-clock-controllers-v7-8-ebab8e3a96e9@quicinc.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: phy: rockchip,inno-usb2phy: add
+ rk3562
+To: Kever Yang <kever.yang@rock-chips.com>, heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+ Conor Dooley <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Vinod Koul <vkoul@kernel.org>, linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-phy@lists.infradead.org,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ linux-arm-kernel@lists.infradead.org
+References: <20250415050005.52773-1-kever.yang@rock-chips.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -109,35 +104,18 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250414-qcs615-mm-v7-clock-controllers-v7-8-ebab8e3a96e9@quicinc.com>
+In-Reply-To: <20250415050005.52773-1-kever.yang@rock-chips.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 14/04/2025 10:42, Taniya Das wrote:
-> +  clocks:
-> +    items:
-> +      - description: Board XO source
-> +      - description: Sleep clock source
-> +
-> +required:
-> +  - compatible
-> +  - reg
+On 15/04/2025 07:00, Kever Yang wrote:
+> Add compatible for the USB2 phy in the Rockchip RK3562 SoC.
+> 
+> Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
+> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> ---
 
-Drop
-
-> +  - clocks
-> +  - '#clock-cells'
-
-Drop
-
-> +  - '#reset-cells'
-
-Drop
-
-> +  - '#power-domain-cells'
-> +
-> +allOf:
-> +  - $ref: qcom,gcc.yaml#
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
