@@ -1,156 +1,121 @@
-Return-Path: <linux-kernel+bounces-604221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 877D8A8922B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 04:51:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F6DAA891FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 04:46:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9738917D6FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 02:51:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6AA93B1E1C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 02:46:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 457FF230BF9;
-	Tue, 15 Apr 2025 02:47:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183D620FA86;
+	Tue, 15 Apr 2025 02:45:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ehc7iTpC"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JeSYPZSv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B793230BCF
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 02:47:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD884C9F;
+	Tue, 15 Apr 2025 02:45:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744685261; cv=none; b=rzsg4BMZcoZIAtWlCNeOuFGoJg6gpTbWPn1N4yu11fb5K4CTsXZURLM1CK330bK0VM2IDqScUyxVw46Ej63OdtMsyw1GCfx5I+XdCLKjeE26+FXYtEWR9qOzAn+kQI7nvK/VmZxm2unCUYQvD5r9dpO2zGkLy1R2fW8C/FqqmIQ=
+	t=1744685158; cv=none; b=dOpdWy2HMR4kvOE+1LcV0GYPylsOUAEjA/StMWt5z6OyUKw8xaoOYGAWjPiufG4K/yLis3mfiiJtd2rwyL8iAwocqzMQCwBdUyqejX41SynsXmr7S+5SGLLbqqzWlY3TVsRmJj1X35GntC0XFbwhAjFON8N8SFqeaaFmKx8OmNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744685261; c=relaxed/simple;
-	bh=Zzgrk1/+DtDOPybbX6ZvBHcnSmm0kFUZaAuQTqVa+nM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bCfFhIxLdwKRPAk/kkXkzXOLqt4hea0rt/AKyBqBgSGDyHpnS+WjpQzahIaymmPKOHDnrSC90fImH6WOhZEwRuuA+u97noUi1xrnVrW9VADco1YgZKDguppHwOanRx0mImFVlG7p4GK1hDuZ3St20G2gjHpRJdFe5Wp9ZBeb6rQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ehc7iTpC; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-22622ddcc35so66467735ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 19:47:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1744685259; x=1745290059; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=il+WlAu7ECEYeHNnJ6w5CmqDQz43sJSf6crApj5k5Jc=;
-        b=ehc7iTpC2DdckSPuuWMaY1Wqb5WQbwFv4Xx7W3kU3v3/bUWcyHJu0jQ7AKvT+tkjgv
-         UqCS8DJxBmmpKmIL5d9102+Cl/JHy+d047GmFARRPiomaspG4pjs62O09mytSw5UCrNi
-         t4BMebti0+VvnSLf/OjbqHsO4KN2XEEUCTgcTX13spdUSaPYw/vOi0zBHVMHOD2jrVET
-         WSm3/qUoWafT3cahRZlj3/U7MM5Gst2UcEaOp+B8QRcQy7XqyrP8v1xqFWbxWQ0+S6n4
-         uFXCcn7qUv7sYEGhv9Z1FX1jYR5HFP5eEYXclRQSZ1EDSsZt8YGeqBKYxIwHvuII8ruP
-         E2sA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744685259; x=1745290059;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=il+WlAu7ECEYeHNnJ6w5CmqDQz43sJSf6crApj5k5Jc=;
-        b=vmXwxPaNKvE5bNlRROhS7PIxg10FRSidb+1lKEwwzism3YnFJqCMFP+YhXr4aEtb6F
-         +QdRd0EQArwRmZvipzVPkIFsnsTKKwWrrT9+8DjjtBmxTS0JgzcrztFLq/PdQ09ga4wy
-         XpyNRcUORlMykOKgjtVqjyLKiUyTiV/JkzgpPhB8O2qv9me82DDXvwE+C5C0+BpT3Wux
-         Z4WvOJOaRVmtGWytwIutTzHiaBiQ4/RlLqRYDFj+wMMTGzdSWpMV7njNHrJh2wj1l04k
-         e/XgyzrP/op3PCK69VTBciND6R7d7vWw3d5whnPuf+C7RL3Uv/oOF2bl41LuQGj0rLbI
-         6Afw==
-X-Gm-Message-State: AOJu0YwPBzTkIDmMeVG0+BoBDF3kwBfBMV1uiLifWdvROArMwzE+HUQO
-	mc1skmWJHSwhePn+1QGsAUxnCLgdCy9LhAGFgYr8OPc853NTgxq6lVQexcY2dh8=
-X-Gm-Gg: ASbGnctOKK79a4+hz4BMASaDAep9UtYN4UDlzt9jfpjHVj/QIzEEChy9EG1Djvd0x/m
-	uYuMjSmZJeOutlRWwZ9stbJRb5le8OpIaY5jEnleJnRycSj9Do2d00CQNBRh0yqJGk4qhxSXI2B
-	MQquD/GiQfLYuh2paWam6IJP75nouSrE58efqt7o4NPkTFd4KMM7PKnjvuHcSBPpxKGh52EPxJ3
-	n30f3IYyZsaX2A3spEcXcjoLROwq8ZXC3u6zQHKh5w/z7vJxzN8TuC9nQZ+GHcTLvNYdL3GCMey
-	Mbqpsjpzo6AiPj9rUQdsQJyG0WenBMTB5T+aHyeY5G6bGS1MI4tCW22LAKlULtrH0vm2PcX6
-X-Google-Smtp-Source: AGHT+IELTjYsxK3e4qqX4T5H1yTy2Tq0r1FbaCUPQTdjd2lEOKiB73ooWS5EpMEZdecB9fJL4bZ8Lg==
-X-Received: by 2002:a17:902:d591:b0:224:c76:5e57 with SMTP id d9443c01a7336-22bea4ef9e9mr221732775ad.39.1744685259610;
-        Mon, 14 Apr 2025 19:47:39 -0700 (PDT)
-Received: from PXLDJ45XCM.bytedance.net ([61.213.176.5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7ccac49sm106681185ad.217.2025.04.14.19.47.34
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 14 Apr 2025 19:47:39 -0700 (PDT)
-From: Muchun Song <songmuchun@bytedance.com>
-To: hannes@cmpxchg.org,
-	mhocko@kernel.org,
-	roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev,
-	muchun.song@linux.dev,
-	akpm@linux-foundation.org,
-	david@fromorbit.com,
-	zhengqi.arch@bytedance.com,
-	yosry.ahmed@linux.dev,
-	nphamcs@gmail.com,
-	chengming.zhou@linux.dev
-Cc: linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org,
-	linux-mm@kvack.org,
-	hamzamahfooz@linux.microsoft.com,
-	apais@linux.microsoft.com,
-	Muchun Song <songmuchun@bytedance.com>
-Subject: [PATCH RFC 19/28] mm: workingset: prevent memory cgroup release in lru_gen_eviction()
+	s=arc-20240116; t=1744685158; c=relaxed/simple;
+	bh=oEyawwJ67t4F2O0m4uUa8lz1QQdbkKkB8kGfM2EgBQw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kRC/EoKuhoARVXmmftJ/E9TZ20ch3NQ6aJbzc/Uk4WHt6HnTNaOOAwr1HCH/Yb+6QjVT+NXPqg+EV8XQy81u90o1gwIvLoz+dWeJQp2NAaZmJFpoXQRphAGtyMJBLq7+Fiox96WX1bBdqQvNQsl/2Jgkr6jlggu/CcYLEfaVmC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JeSYPZSv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B5A92C4CEEA;
+	Tue, 15 Apr 2025 02:45:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744685157;
+	bh=oEyawwJ67t4F2O0m4uUa8lz1QQdbkKkB8kGfM2EgBQw=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=JeSYPZSvuUz2kVFu+Nt8tVZjEwB1lkOlnAyqgDHf7OuEGkrCyJZxXvzl+vg6JFLKn
+	 7Btcx0LpplxhYmGyETdt6uYy9wGPP/MVzWOxA2uOSUypgaruNw4JmUHrvFPVNRopMR
+	 ZFt6BPOPrhiePHg3QfrOUEx7bz5PaCy2wB1jl0E7tWttAcCSBSnQss0wRpW44xCm1C
+	 0bN0UNXX3HxCDrF1nTxigXKgs+NNlw5WKJ6Q3O5185r+HWw5iyQ6Q/jWaLpn2/Tuu1
+	 wP2+dcdqg55guaizXek9YGeAjIJi7Orkyk97pgl/HgeOPxN8YM1ltZ63KOfKGAzwuy
+	 y5UIvpuKM8WcA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F917C369B2;
+	Tue, 15 Apr 2025 02:45:57 +0000 (UTC)
+From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Subject: [PATCH v3 0/7] soc: amlogic: clk-measure: Add clk-measure support
+ for C3 and S4
 Date: Tue, 15 Apr 2025 10:45:23 +0800
-Message-Id: <20250415024532.26632-20-songmuchun@bytedance.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250415024532.26632-1-songmuchun@bytedance.com>
-References: <20250415024532.26632-1-songmuchun@bytedance.com>
+Message-Id: <20250415-clk-measure-v3-0-9b8551dd33b4@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEPI/WcC/23MQQ7CIBCF4as0rMUMUKh15T2MC0rHdqItBpRom
+ t5d2pUal+8l3z+xiIEwsn0xsYCJIvkxD7UpmOvt2CGnNm8mQWooheDueuED2vgIyFulnLaNkcb
+ ULItbwDM919rxlHdP8e7Da40nsbz/O0lw4K4pja12LYjaHuxw9R25rfMDW0pJfuryW8usjYaqM
+ jWAVj96nuc3PBEy3eYAAAA=
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Chuan Liu <chuan.liu@amlogic.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744685155; l=1405;
+ i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
+ bh=oEyawwJ67t4F2O0m4uUa8lz1QQdbkKkB8kGfM2EgBQw=;
+ b=IoVhOIKXt2iTmxOh8pMHEPW25r6XKeC7qPnpkj89JQVoY9Iv7zua6Kz2dvzktcyZba3m4ohNl
+ wK1EXJZO4nRAfTbS+nbRG3/xqfa4dLrjR3BB29J2HPj+eDgcliXGYGY
+X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
+ pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
+X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
+ auth_id=203
+X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
+Reply-To: chuan.liu@amlogic.com
 
-In the near future, a folio will no longer pin its corresponding
-memory cgroup. To ensure safety, it will only be appropriate to
-hold the rcu read lock or acquire a reference to the memory cgroup
-returned by folio_memcg(), thereby preventing it from being released.
+Add clk-measure support for C3/S4 SoCs.
 
-In the current patch, the rcu read lock is employed to safeguard
-against the release of the memory cgroup in lru_gen_eviction().
-
-This serves as a preparatory measure for the reparenting of the
-LRU pages.
-
-Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
 ---
- mm/workingset.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+Changes in v3:
+- Change struct msr_reg_offset to const.
+- Link to v2: https://lore.kernel.org/r/20250414-clk-measure-v2-0-65077690053a@amlogic.com
 
-diff --git a/mm/workingset.c b/mm/workingset.c
-index ebafc0eaafba..e14b9e33f161 100644
---- a/mm/workingset.c
-+++ b/mm/workingset.c
-@@ -241,11 +241,14 @@ static void *lru_gen_eviction(struct folio *folio)
- 	int refs = folio_lru_refs(folio);
- 	bool workingset = folio_test_workingset(folio);
- 	int tier = lru_tier_from_refs(refs, workingset);
--	struct mem_cgroup *memcg = folio_memcg(folio);
-+	struct mem_cgroup *memcg;
- 	struct pglist_data *pgdat = folio_pgdat(folio);
-+	unsigned short memcg_id;
- 
- 	BUILD_BUG_ON(LRU_GEN_WIDTH + LRU_REFS_WIDTH > BITS_PER_LONG - EVICTION_SHIFT);
- 
-+	rcu_read_lock();
-+	memcg = folio_memcg(folio);
- 	lruvec = mem_cgroup_lruvec(memcg, pgdat);
- 	lrugen = &lruvec->lrugen;
- 	min_seq = READ_ONCE(lrugen->min_seq[type]);
-@@ -253,8 +256,10 @@ static void *lru_gen_eviction(struct folio *folio)
- 
- 	hist = lru_hist_from_seq(min_seq);
- 	atomic_long_add(delta, &lrugen->evicted[hist][type][tier]);
-+	memcg_id = mem_cgroup_id(memcg);
-+	rcu_read_unlock();
- 
--	return pack_shadow(mem_cgroup_id(memcg), pgdat, token, workingset);
-+	return pack_shadow(memcg_id, pgdat, token, workingset);
- }
- 
- /*
+Changes in v2:
+- 1 Rename the clk-measure register.
+- 2 Remove unused registers.
+- 3 Share reg_offset across multiple chips.
+- Link to v1: https://lore.kernel.org/r/20250411-clk-measure-v1-0-cb46a78d019a@amlogic.com
+
+---
+Chuan Liu (7):
+      soc: amlogic: clk-measure: Define MSR_CLK's register offset separately
+      dt-bindings: soc: amlogic: C3 supports clk-measure
+      dt-bindings: soc: amlogic: S4 supports clk-measure
+      soc: amlogic: clk-measure: Add support for C3
+      soc: amlogic: clk-measure: Add support for S4
+      arm64: dts: amlogic: C3: Add clk-measure controller node
+      arm64: dts: amlogic: S4: Add clk-measure controller node
+
+ .../soc/amlogic/amlogic,meson-gx-clk-measure.yaml  |   2 +
+ arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi        |   5 +
+ arch/arm64/boot/dts/amlogic/meson-s4.dtsi          |   5 +
+ drivers/soc/amlogic/meson-clk-measure.c            | 375 ++++++++++++++++++++-
+ 4 files changed, 372 insertions(+), 15 deletions(-)
+---
+base-commit: 37021be47d02d2913d6767795a6f4c72b4e63a4f
+change-id: 20250411-clk-measure-d33c5ab62669
+
+Best regards,
 -- 
-2.20.1
+Chuan Liu <chuan.liu@amlogic.com>
+
 
 
