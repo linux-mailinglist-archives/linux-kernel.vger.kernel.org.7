@@ -1,110 +1,132 @@
-Return-Path: <linux-kernel+bounces-604713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DF69A8979D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:13:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49DAAA89797
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:12:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D109189CD97
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:13:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A1B47A39B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:11:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E761C27EC89;
-	Tue, 15 Apr 2025 09:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2AE827F4F8;
+	Tue, 15 Apr 2025 09:12:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="YG3av/x+"
-Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uwCWIXWO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF4BC13E02A;
-	Tue, 15 Apr 2025 09:13:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044B68633F;
+	Tue, 15 Apr 2025 09:12:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744708411; cv=none; b=htW8MAOeGmqUMsbypczYIouGw5athKZqNTCIbhBdYplcTRaN0GMsrdYW0gBda1F+rWrprdOT6HSPahDkIE+H2P3CKt2qVVEcJDrtPpmcvCR97TPnbvprXVIJgisYVBf+6A+WNsn3NZhwrXYkkqKRgof9ouNgzZX/pFx7cYzG8yc=
+	t=1744708353; cv=none; b=Q75H3R/B/4wVji2VPGfu5SWzRl0srid6w+08jcYwU6dd6xoIDFgVd/wwsz1LAt892DxiFd4wStoTEF7Kofe/mOB++Y3Kif4ZKHFY+U5A2/gUvselV+kJbeWj7g2qoFW1aiHCgwBkwyV3ZeV0Qw7inucEmUWAPHdEZmZvxtiYa8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744708411; c=relaxed/simple;
-	bh=owyLMd8hX1as4LmAee3vfHdMVtC6rPHCe4jax9TXDog=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rK2tvf1vjbhbEGj1QcirdAZEdTz4eVizUil3iceUxFZwKQBkVU99OJXeoqoEfSmOu7LJcpmb/sjPFo+38Ara+FLCeSOR+N3Keu38f+0HmY4uIzQWUGq5CrENmnd7UJnU3zh0xjSWED4boQT/BBUT+i7iPv2x9Lnp9uqAKzSDQsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=YG3av/x+; arc=none smtp.client-ip=18.169.211.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1744708375;
-	bh=YFMp6fwp6umPvxQeSd6J+Ddieu7ttoj12+2zhkifFpg=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=YG3av/x+ZEYlXv5iDRrTGiuXoUQK4QtZjFlZGkxnpBDPvyvTyAkzS4WXPaHIRf4It
-	 FL/6uk68vXCd7JCy+0BMJqeEH4Ts80t1Jg5JyDY3QN5L7eeYwZKkt1gvG0ZNNTBypk
-	 zo+A0nMVs8znMnEhvJDMBKfIdB/h3alMvwRjfulw=
-X-QQ-mid: zesmtpip2t1744708334t7dbe64a7
-X-QQ-Originating-IP: SksWeuet9ma3TlVLc6EhOgqSB/dqiOPYlIiBpQRQC48=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 15 Apr 2025 17:12:13 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 4657074941084990627
-EX-QQ-RecipientCnt: 8
-From: WangYuli <wangyuli@uniontech.com>
-To: richard.henderson@linaro.org,
-	mattst88@gmail.com,
-	wangyuli@uniontech.com
-Cc: linux-alpha@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zhanjun@uniontech.com,
-	niecheng1@uniontech.com,
-	guanwentao@uniontech.com
-Subject: [PATCH] alpha/boot: Ignore vmlinux
-Date: Tue, 15 Apr 2025 17:12:06 +0800
-Message-ID: <90A2E6E70A68DD1E+20250415091206.413647-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1744708353; c=relaxed/simple;
+	bh=1GPdp0yF1LxXZR2PHbVhmstt8gYYNiu8Be9hukxMSKg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p4QoUE3cP+LOZywyrSupHVpU4lF25SJ8KZqxdYpiLunLX+Pz3mwPiF0pTKXRLvYGm9WpzaAKWNJlD9qfZjvZpYVi/WzI9TJPPO3fL7oA63++2kg+f1pOn/swRxD9rTobmrzCuWPhow2Y+0riix2LswU4YtPhnlNkt99Cm3dtoN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uwCWIXWO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69EC4C4CEE9;
+	Tue, 15 Apr 2025 09:12:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744708352;
+	bh=1GPdp0yF1LxXZR2PHbVhmstt8gYYNiu8Be9hukxMSKg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=uwCWIXWOjs4ZUB2sl812nBkFDj5xJ5vtkezRCrfMst7XMGarouLL2tQyX+2LXZSLC
+	 yIMOPEznBq3OBevBKvZnj+wpJ+HpVAfNHPHo8m2VVemN7Yl9J3XLoo1HHmM7NFEkCB
+	 Vueh6uFD+qq2X8hUElD/NdeVUVfUO1y1d5Fgz+MJ3hpDITtga03UP2xmccwaz7wLi3
+	 5/rcVarwn+SjJowQbT5pcs2wyLSbkmMWbLetH/dXVFo92yUksI3wbkXdqKgDUaGKBf
+	 z4JVuZEKb77iGDhj3R9bHZveTMucORDqGBS8yz3bEmARCEQ2QcQHbTnJFjRHCHTY+W
+	 iEdYqHTdCq8cw==
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-2cca475546fso2542037fac.1;
+        Tue, 15 Apr 2025 02:12:32 -0700 (PDT)
+X-Gm-Message-State: AOJu0Yy8NOEct9713y8Tu0feOiZcIUp6NeFtEAcCprLQDDr4irdEr8XB
+	+PE1zM+OCuZN32Ror9vaV0EmI+1Ym8rU5TNvhqgzOy4PnGvqGpw7PLmXY44Ql/94jokUtKdH39M
+	BK7tNKa8m2Ylyp9PMr+s04IdYeqI=
+X-Google-Smtp-Source: AGHT+IHd6zT4M76Tkq99+iZ/V1LqHgTjfCOEic8maVILN3RMZaCDCPkYCIDpgaGK0+eePA5xmH+78+9WsSmN60/2cjo=
+X-Received: by 2002:a05:6871:a582:b0:2a3:832e:5492 with SMTP id
+ 586e51a60fabf-2d0d5efba95mr8488238fac.25.1744708351716; Tue, 15 Apr 2025
+ 02:12:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: N8Jy6PtD39R8dhcbrMXwyI1knY8Wo74eIFI0kBUrTG6hEv2MF1GN3wXW
-	IO95KXnoosekbSDXn3B9yFMYnJIH956Fz8gIWPwaoSGpjsagigCWVgrRjLAMUGE8Qd+mxWE
-	LnpHXLDBM+03w7q+BWMrfYMKz6EOHyEb7pOSn9bNWQpLhYQoOzWp+3CF8IF5Kyz22t7Jtd6
-	gJAqsjcCmTTi8oq9bxGQSWSzFoL+IYcYhcxov8FskjJhy8bnse6XMBU+D1qcb4MBpqdm7ec
-	BYH6yRIOMsRRj7n2ydvPyDrLWzqPoGwqL4Vs5treSTCgjH8jegVN0NVoGMXTDOp6XaUwcOw
-	6+wvevPORhMQtWIb4z91H4u1sCd/J5LbG5hUdRzjfLKMhY3MqNDQ72Fbq0JRu4muAZXjfZb
-	JkVCFj60o61YbTaTgR+G9XWEB9hzQkY5tiQW81kVJk16GG188RywsJuuQAiXJxoup3e5jr5
-	CTC7UF5qevhOkYMmv0Xf4LkGMbw4PHLBIzD8ggVv6w3HlahGpdbQkkNIu2/O5lUOhPhz85j
-	Hi6EvUaS50GOYuYTmiOWBj0YW0cuYtMYN+EIi58ivW66xak/silQcEqX8q7o+h+BjVC2JNz
-	pqDdTEv3e2wtStgCm7bg38aJhisTRXCrpAmKGXoa5a+GGS4Zy+B9j5PzLh7xDjiMUPNTbZb
-	5/hekaknvC3Cwb1RoC163sHQKBx8o/Fqyedf9c+ataQnUOgtILr4J+8ZG6YFWEznOTDxTyE
-	zqzEJlGildY68Jw+5shHFZFEg0frUxk54eqJx2MwXoYk3rBl9gTL5kttUzBRnXS/AqqZPkt
-	87JG73GUNi8Kb95imRLH470fkdyv9aoaaQoZIUtY0JXjLPEMyclO3CamGnHT2nmHogfPpry
-	vjMnpAioHj36zSnfCU26/GHjoWlmf3d0asAErSOXAbxVVqNNFf+bVpeJMlxFrE/8AgRI0Zp
-	XocThzksHisOZT60tLOq6Wq9AO+PrAsGyzv4/CR2JycuOHVpIBnQPuHsIumsh/b4m5S2YjI
-	bMYV3oM2HSrO6ZrLmBzLVZ/vPpiHk=
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
+References: <3364921.aeNJFYEL58@rjwysocki.net> <8533207.T7Z3S40VBb@rjwysocki.net>
+In-Reply-To: <8533207.T7Z3S40VBb@rjwysocki.net>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 15 Apr 2025 11:12:19 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hwBA=EkE8aV5Gyn2R3JxsgSzg_F9pNMSkNgwzPUBKLow@mail.gmail.com>
+X-Gm-Features: ATxdqUFxCYrrQbp2Dc0mDJWKB-pIhJh3_KXY5hQFXWXSYs6lax73wZnI9gBRquA
+Message-ID: <CAJZ5v0hwBA=EkE8aV5Gyn2R3JxsgSzg_F9pNMSkNgwzPUBKLow@mail.gmail.com>
+Subject: Re: [PATCH v1 1/5] cpufreq/sched: Check fast_switch_enabled when
+ setting need_freq_update
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
+	Mario Limonciello <mario.limonciello@amd.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Christian Loehle <christian.loehle@arm.com>, Sultan Alsawaf <sultan@kerneltoast.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Valentin Schneider <vschneid@redhat.com>, 
+	Ingo Molnar <mingo@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The vmlinux file would be generated when building kernel.
+On Mon, Apr 14, 2025 at 10:52=E2=80=AFPM Rafael J. Wysocki <rjw@rjwysocki.n=
+et> wrote:
+>
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> Commit 8e461a1cb43d ("cpufreq: schedutil: Fix superfluous updates caused
+> by need_freq_update") overlooked the fact that when fast swtching is
+> enabled, it is the only way to pick up new policy limits and so
+> need_freq_update needs to be set in that case when limits_changed is
+> set.
+>
+> This causes policy limits updates to be missed in some cases, so
+> make sugov_should_update_freq() also set need_freq_update when the
+> fast_switch_enabled policy flag is set.
 
-Add it to .gitignore to ensure Git does not track it.
+Earlier today I realized that this patch would not be sufficient
+because if the policy limits change, schedutil needed to invoke the
+driver callback for the new limits to take effect regardless of
+whether or not fast switching had been enabled.
 
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- arch/alpha/boot/.gitignore | 2 ++
- 1 file changed, 2 insertions(+)
- create mode 100644 arch/alpha/boot/.gitignore
+After making this observation I've realized that there's a better fix
+that covers all of the relevant cases, but it requires patch [2/5] to
+be rebased and one more can be made between the new fix and patch
+[2/5].
 
-diff --git a/arch/alpha/boot/.gitignore b/arch/alpha/boot/.gitignore
-new file mode 100644
-index 000000000000..c85710c597e7
---- /dev/null
-+++ b/arch/alpha/boot/.gitignore
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+vmlinux
--- 
-2.49.0
+So there will be a v2.
 
+> Fixes: 8e461a1cb43d ("cpufreq: schedutil: Fix superfluous updates caused =
+by need_freq_update")
+> Closes: https://lore.kernel.org/lkml/Z_Tlc6Qs-tYpxWYb@linaro.org/
+> Reported-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+>  kernel/sched/cpufreq_schedutil.c |    4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> --- a/kernel/sched/cpufreq_schedutil.c
+> +++ b/kernel/sched/cpufreq_schedutil.c
+> @@ -83,7 +83,9 @@
+>
+>         if (unlikely(sg_policy->limits_changed)) {
+>                 sg_policy->limits_changed =3D false;
+> -               sg_policy->need_freq_update =3D cpufreq_driver_test_flags=
+(CPUFREQ_NEED_UPDATE_LIMITS);
+> +               sg_policy->need_freq_update =3D
+> +                       sg_policy->policy->fast_switch_enabled ||
+> +                       cpufreq_driver_test_flags(CPUFREQ_NEED_UPDATE_LIM=
+ITS);
+>                 return true;
+>         }
+>
+>
+>
+>
+>
 
