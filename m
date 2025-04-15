@@ -1,137 +1,195 @@
-Return-Path: <linux-kernel+bounces-605412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63EA9A8A0C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:16:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EA57A8A0B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:11:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03AAE3B7B4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:16:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B23103A6FDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:10:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21829205AA3;
-	Tue, 15 Apr 2025 14:16:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C99D1F30B3;
+	Tue, 15 Apr 2025 14:10:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="YBOd96xh"
-Received: from out203-205-221-239.mail.qq.com (out203-205-221-239.mail.qq.com [203.205.221.239])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GtT1iWru"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F5933DF;
-	Tue, 15 Apr 2025 14:16:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86CD81E5B75
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 14:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744726569; cv=none; b=JT/Dd1eX/HkQgz5Ou+5eRKeVtOzk4c3tJsTU1alo0+71s8VQySJRqT/g0OhxePS/1gQyk8I3ccKxOAUsSK57YP5Amy6Evg9SBITKRq3AXHYos+C0R3q66bpA/8+0rKFp2hjvIEq2qMyOyxd0fgzdBbFzglmnJoHVWWNj7dArs/s=
+	t=1744726255; cv=none; b=mcOwNPOrVrd1wkMzpVDRrOow122tFK+32HvxNyziLpiV7CpENkyAspyo1w8Bs6Yjptjuv7/IicbQj/oHPj6S43Yk2jg9bCw7dY7rlfBX/7O7SXclFAvI2YxTCOslEzAO+wTAJKDkuPZgqP8Z2BBIdg4eUJG6UQ+vXIkf9KUl/is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744726569; c=relaxed/simple;
-	bh=YajqJaU+cdevNobpRRwoU0DM5ACvTlKj0Vk4kI7vuaA=;
-	h=Message-ID:From:Date:Subject:MIME-Version:Content-Type:To:Cc; b=ao7haT0xjqHV5GL4Nm0BvdbJHbHztV+i9C8DMbQTd8MjEs5YJ3xeMn3A5VHhNhVO982VQy8zeaxFssl8ysaSRSGKOFBjXI+igWyqQTV/EGc8altUqRljwXLo0E0bV+9hW3UJRQMswnTZUkJtGRbuGpg+JaTBrkjVrdbenmTYavc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=YBOd96xh; arc=none smtp.client-ip=203.205.221.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1744726255; bh=rBJo6st9z2yzfDHSl0qbQgIY7HkO12X5NQA4RWLYm1k=;
-	h=From:Date:Subject:To:Cc;
-	b=YBOd96xhqcLZgifby9dpZDOtoqCg3n8YVpgJyubx9zsqTNEka53N/Zjd4HKZwJdBQ
-	 ZT3IFIK8Ofm4pErd9uVCyR2wXsTBMRqerUGUhW2WurIzHbLV3RtctZJdYVeoN+T9aq
-	 oDVCNeH91Zu3oUqNNhTLEOJLyL9g6jtkP9q35WqA=
-Received: from [127.0.1.1] ([112.48.46.45])
-	by newxmesmtplogicsvrszc11-0.qq.com (NewEsmtp) with SMTP
-	id 2B59F4B2; Tue, 15 Apr 2025 22:10:53 +0800
-X-QQ-mid: xmsmtpt1744726253tc7gykvuz
-Message-ID: <tencent_FFC8E7A5A76050982D28F811C81F936D9205@qq.com>
-X-QQ-XMAILINFO: MqG4KXyEKpQynimtTjnsfWKU/iNyybHLWdjy5ge0jzsMhX/7Zzy40x5wTiOhtT
-	 kTbYc11mO6zcZj8MSuG7IG4HX7f8gJVDt8ndZWXXJBuGf3HdbLsROiEgoTdfQZ9yyZIXZ+OzjZot
-	 u4dNjWPrhODE2SmuowqgdLEXNX/Agv6UreQamdxIm9u0C7JHOL2qDMFN+NRRaY93lTENoRCXyaQ0
-	 o9BX39TKYMGRg9ehkbyyyK/LZBfLZut/SgNJvJT18MlwNbKc0PmzTXf+diOwQJZe7JSWAqCaOcZ3
-	 466VunPqAtCWHb5MzC4DoFgfKHLR2aRrNqXDeVTKb7Q7eAuaO0YUCmOXwZ3wh1hO9+DM5atZDfHR
-	 mcHslDEadDVzCoT7QgrpUq5gE1MgWyUx1QNukmKBghKH27gbGRj2jYCI4fUMsiqo6D/aylwZZ0TH
-	 Z1wkE7wg1RRi2qBDm2VFnYjO7Q9bUm8LpBXkqB5TKXWVgks38rA4DG+jzuScJBdtPiKoxugD1+Ip
-	 +xk41bCQWzEPh2tRm0VymZ3Piq06vRujXbFyacIZm/ELrr0Popj6KezrwlWUA+pDi3bZfkB6mGSQ
-	 B42EbFz0JXcra4bTnQO+68NAkEY8WWCHvxFlNl2ePPf4FhAHVRXGLBYBb3zfSxs0NwUGvQcwEGNF
-	 FRUQiEANupNMyjGxz+vWRULdAqLYowuvXlBsFWFmqH1CRAHI7UJnhs6eNaIlcWVdovZQVCjXydJk
-	 9VgQdNeTbF+C/viHmz1Y7z+FelOBaXr2/s/lZ0ERoDnkzEnV2LssDnCMkvubDNf3DlY+5oRkY0ak
-	 n5g1anG/de6tvbfLRdThLkJm0lhLJvUA0yWej/yMdHzwGufJi4Qg7EE6+hhsXSdhFOJu8MoF92T7
-	 1cgPIyoxSQVA5vshVc2o03RRuG7OFKphiPtyGtRNPzXF/nefbzjC5Atnny7AGcrD/4fEwVgjJT/+
-	 XQdBjf4RH47a3BV+b6bXv6hqTts3MKiV1ciPSX49eEsjpgOF1h8DA2iLtn7xNZcWWLKZwpvkrdSz
-	 lrMjOryS8TC4TG4oGV2Bl8mxXyqGb10u7bO9+EhkLZ44kYBdXJosEOUVeYEUGo2C05JNw35g==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: Liya Huang <1425075683@qq.com>
-Date: Tue, 15 Apr 2025 22:10:40 +0800
-Subject: [PATCH] of: reserved-mem: Warn for missing initfn in
- __reservedmem_of_table
+	s=arc-20240116; t=1744726255; c=relaxed/simple;
+	bh=kM2JA+RWhzzict8XBtvdRvB5soS9wg7TOOfMUHS12Cc=;
+	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To; b=BSYT6uiKDTaMMvIsI/Sxaju/DuGA0Dkwts9TflC3/yxRwnKz+X6gUdJUHlKtUB+5YyGrYkimkBqxCNN5Z2d7gx32YN168xdRHNY42R1qU1c3s6unx/ML/c0Y2XmsohJhZzKk4xaV3StYjh0EAyOBVq/km4lNnbcqWzVIHbtsVk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GtT1iWru; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744726254; x=1776262254;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to;
+  bh=kM2JA+RWhzzict8XBtvdRvB5soS9wg7TOOfMUHS12Cc=;
+  b=GtT1iWrud5ccFP7f6HZnjrP/ePpFFk1lyUfolHF7N4KSxC9qn2BC29IN
+   NAo6YIdxW2MjPZ7REa+7O3hFH3YI624a5t3wMQjiBBc+fkEcheW1U3GTq
+   ruMGRITu4MZCKhaZ5hTDNnzguZlCpNyusfOIosYmE0iOO6akPrcEXdNiU
+   NWM1yXP1EE+d6ilY1/NzlJOeLRBrYwLoEJWAkTJdA5q9ULg34pd9jUvZ2
+   zoTjOsPhONFfrvGmqAgz62tPkl5QCHyNLsJkNWttJMIrzrwFScGqp3zYJ
+   NyOzxbeKnbmpVaCLcHrnJ8yPfPNJY/LG2jDYgWRJCfshhOA2h0L1FpgM6
+   A==;
+X-CSE-ConnectionGUID: xIaie3ueTWyu/sLEZqsFnQ==
+X-CSE-MsgGUID: nzJHVPtIQvaFQH6New6Tcg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="56873855"
+X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
+   d="scan'208";a="56873855"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 07:10:49 -0700
+X-CSE-ConnectionGUID: L6qIV0qTT0GhxxSv/OHmTA==
+X-CSE-MsgGUID: REn++4aDS7a6Rye+Clfnwg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
+   d="scan'208";a="130684603"
+Received: from bkammerd-mobl.amr.corp.intel.com (HELO [10.124.222.124]) ([10.124.222.124])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 07:10:48 -0700
+Content-Type: multipart/mixed; boundary="------------iqGLr0HYMuisKgpweN9Z9kuH"
+Message-ID: <b6c614d4-fa97-4db1-b980-47a789a9374b@intel.com>
+Date: Tue, 15 Apr 2025 07:10:47 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/8] x86/mm: Always "broadcast" PMD setting operations
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
+ bp@alien8.de, joro@8bytes.org, luto@kernel.org, peterz@infradead.org,
+ rick.p.edgecombe@intel.com, jgross@suse.com
+References: <20250414173232.32444FF6@davehans-spike.ostc.intel.com>
+ <20250414173235.F63F50D1@davehans-spike.ostc.intel.com>
+ <abvsbz4yqc6xe5izuqw25hwj6y7zjhok4tdpp3kqshkuaomhn5@qnykmira2mik>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <abvsbz4yqc6xe5izuqw25hwj6y7zjhok4tdpp3kqshkuaomhn5@qnykmira2mik>
+
+This is a multi-part message in MIME format.
+--------------iqGLr0HYMuisKgpweN9Z9kuH
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-OQ-MSGID: <20250415-__reserved_mem_init_node-v1-1-2e48f58311b3@qq.com>
-X-B4-Tracking: v=1; b=H4sIAN9o/mcC/x3M0QpAMBSH8VfRubZCm/Aq0ontj3NhtElK3t1y+
- V38vocigiBSlz0UcEmU3aco84zsOvoFSlxqqorKFLo0ijkgmQuON2wsXk72u4Oqm9ZOaJ3RVlP
- iR8As97/uh/f9AJ+lNpRqAAAA
-X-Change-ID: 20250415-__reserved_mem_init_node-689cbe9d54c4
-To: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Liya Huang <1425075683@qq.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744726254; l=1774;
- i=1425075683@qq.com; s=20250415; h=from:subject:message-id;
- bh=YajqJaU+cdevNobpRRwoU0DM5ACvTlKj0Vk4kI7vuaA=;
- b=9o2Fq5RQqe5zg02Foh10Qq5KYRisrT4mOL8ynZbzn5qaLFSMWjEk30XBTyUxSye8bd5lvg0u4
- t2SFHQgPmF8AaDTn+A4/OOUFHnfN9MhiwSkdI5as6tV5bmqcrrk4JI0
-X-Developer-Key: i=1425075683@qq.com; a=ed25519;
- pk=nSnzeGGcMXBimuyIWYIZpZRN8DboZqwr67IqWALwrGs=
 
-For the data in __reservedmem_of_table, its function pointer initfn might
-be NULL. However, __reserved_mem_init_node() only considers non-NULL cases
-and ignores NULL function pointers.
+On 4/15/25 01:25, Kirill A. Shutemov wrote:
+>>  #ifdef CONFIG_X86_32
+>> -	if (!SHARED_KERNEL_PMD) {
+>> +	{
+>>  		struct page *page;
+>>  
+>>  		list_for_each_entry(page, &pgd_list, lru) {
+> Removing the condition, but leaving the block looks sloppy.
+> 
+> Maybe convert #ifdef to IS_ENABLED() while you are there, so it would
+> justify the block?
 
-Therefore, a check for the possibility of initfn being NULL has been added
-here, along with skipping the initfn() and issuing a warning.
+It does, and it's right at the beginning of the function. Simplifying
+the code here also made it _less_ self-documenting so it needs a better
+comment too.
 
-To: Rob Herring <robh@kernel.org>
-To: Saravana Kannan <saravanak@google.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Liya Huang <1425075683@qq.com>
----
-For the data in __reservedmem_of_table, its function pointer initfn might 
-be NULL. However, __reserved_mem_init_node() only considers non-NULL cases
-and ignores NULL function pointers.
+I'll tack the attached patch on to the end of the series.
+--------------iqGLr0HYMuisKgpweN9Z9kuH
+Content-Type: text/x-patch; charset=UTF-8;
+ name="kill-CONFIG_X86_32-ifdef.patch"
+Content-Disposition: attachment; filename="kill-CONFIG_X86_32-ifdef.patch"
+Content-Transfer-Encoding: base64
 
-Therefore, a check for the possibility of initfn being NULL has been added
-here, along with skipping the initfn() and issuing a warning.
----
- drivers/of/of_reserved_mem.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ClRoaXMgYmxvY2sgb2YgY29kZSB1c2VkIHRvIGJlOgoKCWlmIChTSEFSRURfS0VSTkVMX1BN
+RCkKCkJ1dCBpdCB3YXMgemFwcGVkIHdoZW4gMzItYml0IGtlcm5lbHMgdHJhbnNpdGlvbmVk
+IHRvIHByaXZhdGUKKG5vbi1zaGFyZWQpIFBNRHMuIEl0IGFsc28gbWFkZSBpdCByYXRoZXIg
+dW5jbGVhciB3aGF0IHRoZSBibG9jawpvZiBjb2RlIGlzIGRvaW5nIGluIHRoZSBmaXJzdCBw
+bGFjZS4KClJlbW92ZSB0aGUgI2lmZGVmIGFuZCByZXBsYWNlIGl0IHdpdGggSVNfRU5BQkxF
+RCgpLiBVbmluZGVudCB0aGUKY29kZSBibG9jayBhbmQgYWRkIGFuIGFjdHVhbGx5IHVzZWZ1
+bCBjb21tZW50IGFib3V0IHdoYXQgaXQgaXMKZG9pbmcuCgpTdWdnZXN0ZWQtYnk6IEtpcmls
+bCBBLiBTaHV0ZW1vdiA8a2lyaWxsLnNodXRlbW92QGxpbnV4LmludGVsLmNvbT4KCi0tLQoK
+IGIvYXJjaC94ODYvbW0vcGF0L3NldF9tZW1vcnkuYyB8ICAgNDEgKysrKysrKysrKysrKysr
+KysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCAyMSBpbnNlcnRp
+b25zKCspLCAyMCBkZWxldGlvbnMoLSkKCmRpZmYgLXB1TiBhcmNoL3g4Ni9tbS9wYXQvc2V0
+X21lbW9yeS5jfmtpbGwtQ09ORklHX1g4Nl8zMi1pZmRlZiBhcmNoL3g4Ni9tbS9wYXQvc2V0
+X21lbW9yeS5jCi0tLSBhL2FyY2gveDg2L21tL3BhdC9zZXRfbWVtb3J5LmN+a2lsbC1DT05G
+SUdfWDg2XzMyLWlmZGVmCTIwMjUtMDQtMTUgMDY6NDU6MTcuNTc5NzE3MDQ3IC0wNzAwCisr
+KyBiL2FyY2gveDg2L21tL3BhdC9zZXRfbWVtb3J5LmMJMjAyNS0wNC0xNSAwNjo1MzoyNy44
+OTA3MDk0MjIgLTA3MDAKQEAgLTg4MSwzMSArODgxLDMyIEBAIHBoeXNfYWRkcl90IHNsb3df
+dmlydF90b19waHlzKHZvaWQgKl9fdmkKIH0KIEVYUE9SVF9TWU1CT0xfR1BMKHNsb3dfdmly
+dF90b19waHlzKTsKIAotLyoKLSAqIFNldCB0aGUgbmV3IHBtZCBpbiBhbGwgdGhlIHBnZHMg
+d2Uga25vdyBhYm91dDoKLSAqLwogc3RhdGljIHZvaWQgX19zZXRfcG1kX3B0ZShwdGVfdCAq
+a3B0ZSwgdW5zaWduZWQgbG9uZyBhZGRyZXNzLCBwdGVfdCBwdGUpCiB7CisJc3RydWN0IHBh
+Z2UgKnBhZ2U7CisKIAkvKiBjaGFuZ2UgaW5pdF9tbSAqLwogCXNldF9wdGVfYXRvbWljKGtw
+dGUsIHB0ZSk7Ci0jaWZkZWYgQ09ORklHX1g4Nl8zMgotCXsKLQkJc3RydWN0IHBhZ2UgKnBh
+Z2U7Ci0KLQkJbGlzdF9mb3JfZWFjaF9lbnRyeShwYWdlLCAmcGdkX2xpc3QsIGxydSkgewot
+CQkJcGdkX3QgKnBnZDsKLQkJCXA0ZF90ICpwNGQ7Ci0JCQlwdWRfdCAqcHVkOwotCQkJcG1k
+X3QgKnBtZDsKLQotCQkJcGdkID0gKHBnZF90ICopcGFnZV9hZGRyZXNzKHBhZ2UpICsgcGdk
+X2luZGV4KGFkZHJlc3MpOwotCQkJcDRkID0gcDRkX29mZnNldChwZ2QsIGFkZHJlc3MpOwot
+CQkJcHVkID0gcHVkX29mZnNldChwNGQsIGFkZHJlc3MpOwotCQkJcG1kID0gcG1kX29mZnNl
+dChwdWQsIGFkZHJlc3MpOwotCQkJc2V0X3B0ZV9hdG9taWMoKHB0ZV90ICopcG1kLCBwdGUp
+OwotCQl9CisKKwlpZiAoSVNfRU5BQkxFRChDT05GSUdfWDg2XzY0KSkKKwkJcmV0dXJuOwor
+CisJLyoKKwkgKiAzMi1iaXQgbW1fc3RydWN0cyBkb24ndCBzaGFyZSBrZXJuZWwgUE1EIHBh
+Z2VzLgorCSAqIFByb3BhZ2F0ZSB0aGUgY2hhbmdlIHRvIGVhY2ggcmVsZXZhbnQgUE1EIGVu
+dHJ5OgorCSAqLworCWxpc3RfZm9yX2VhY2hfZW50cnkocGFnZSwgJnBnZF9saXN0LCBscnUp
+IHsKKwkJcGdkX3QgKnBnZDsKKwkJcDRkX3QgKnA0ZDsKKwkJcHVkX3QgKnB1ZDsKKwkJcG1k
+X3QgKnBtZDsKKworCQlwZ2QgPSAocGdkX3QgKilwYWdlX2FkZHJlc3MocGFnZSkgKyBwZ2Rf
+aW5kZXgoYWRkcmVzcyk7CisJCXA0ZCA9IHA0ZF9vZmZzZXQocGdkLCBhZGRyZXNzKTsKKwkJ
+cHVkID0gcHVkX29mZnNldChwNGQsIGFkZHJlc3MpOworCQlwbWQgPSBwbWRfb2Zmc2V0KHB1
+ZCwgYWRkcmVzcyk7CisJCXNldF9wdGVfYXRvbWljKChwdGVfdCAqKXBtZCwgcHRlKTsKIAl9
+Ci0jZW5kaWYKIH0KIAogc3RhdGljIHBncHJvdF90IHBncHJvdF9jbGVhcl9wcm90bm9uZV9i
+aXRzKHBncHJvdF90IHByb3QpCl8K
 
-diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
-index ee2e31522d7ef69d816127a9003c423d5fb4023d..0a7cc599c0ca68001b2395759310f3585f247db9 100644
---- a/drivers/of/of_reserved_mem.c
-+++ b/drivers/of/of_reserved_mem.c
-@@ -496,6 +496,11 @@ static int __init __reserved_mem_init_node(struct reserved_mem *rmem)
- 		if (!of_flat_dt_is_compatible(rmem->fdt_node, compat))
- 			continue;
- 
-+		if (!initfn) {
-+			pr_warn("no init function for %s\n", rmem->name);
-+			continue;
-+		}
-+
- 		ret = initfn(rmem);
- 		if (ret == 0) {
- 			pr_info("initialized node %s, compatible id %s\n",
-
----
-base-commit: 8ffd015db85fea3e15a77027fda6c02ced4d2444
-change-id: 20250415-__reserved_mem_init_node-689cbe9d54c4
-
-Best regards,
--- 
-Liya Huang <1425075683@qq.com>
-
+--------------iqGLr0HYMuisKgpweN9Z9kuH--
 
