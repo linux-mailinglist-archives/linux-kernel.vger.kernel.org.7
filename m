@@ -1,64 +1,54 @@
-Return-Path: <linux-kernel+bounces-605405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B899BA8A0B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:12:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AD19A8A0BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:13:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C25F3AEC4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:12:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CB35189E1E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:13:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063CA1F30B3;
-	Tue, 15 Apr 2025 14:12:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E936728469B;
+	Tue, 15 Apr 2025 14:13:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="coruZKuR"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="p/RHqChc"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91268158535
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 14:12:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C0D1FC7F1;
+	Tue, 15 Apr 2025 14:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744726341; cv=none; b=fhkkOjhJjFNtS2wZv9BD44kKEhCRDqUtgNm6UZBX/ZqVLaLd6VEZ4cYKfhKe7OotCNKqAScuLYJQmYe8fo2RUJe+rlJ9SSzo7/xoUiv5WKavFjblfBSUYVEdHLjtbk4hEJFMVJP8mvjDqp8W/H9NolMOWL20tHn41atfx85HWYQ=
+	t=1744726380; cv=none; b=eFvokx/NwEkQhfXi2w5SM4q+cX6aR3ipz3BEyuXEM9QlNoY7jJozK/rj2ocuXOyGElwkBl9X+8OBUdbvoiia3u6xbGvlhtDIyvqgtHBIhoKg+aveuun9d0K5iszs3HI/HU8JGWkNymLCKWv32iHTMPiXNYwcvBCGaV9CKDD0oLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744726341; c=relaxed/simple;
-	bh=B2qorgSUL6yA7kHkspWn8UbgXwkT3Y7bxdGvW5w+2tc=;
+	s=arc-20240116; t=1744726380; c=relaxed/simple;
+	bh=xK2LkYSeBxb14Vlfe6VfU2/wPR+W/1fTwZEbUWZJGgQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bpKI3mCckThlbgFoNJzYTKhO/Yl2pVdsFeExO0Ug2DwIbXoezgUkce6RMOamByYZ0+Jeotka/CrrnN5lgTnOCBclZGJlPBqca/uD8bj2n+1NLjNXknD9oDpfcxEsPMpweqXe7H6DRlnbPqnjrP33i1986P7Z/ZCuqmfgUFABfDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=coruZKuR; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744726340; x=1776262340;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=B2qorgSUL6yA7kHkspWn8UbgXwkT3Y7bxdGvW5w+2tc=;
-  b=coruZKuREuceLCwGKYHEIa1o1A7hleYHba1Bt0763PctXWGd20cdmLtT
-   DlGj9CZiceKzk1sDEbBwDDe2VC2zXvdeLoPc/JWt8LbvwTbq2Q2cwu7nR
-   pkct4lFgQ+m3WEmWYgjdM/evNi63Y58J/depgddRkVVikkJVatxnp9hTA
-   W+CCmMpot9Dbvqn2XvFL/fPbdzPk3jyyGUu+ZTVhlyQxPjR5MCdfvEOeP
-   tLtoz4XL9ju+HDxVgHXWq6I1lLQF7BcHyJ9P8v68YQii7zyZzVbB+RAQ5
-   CpSe20ToMztSn9A27xcQNcmx6ZQEOlP9/YIkomL79VhVtw13wmLcTa5nB
-   g==;
-X-CSE-ConnectionGUID: w9CB9S35SnmVC2PoYBS8Pw==
-X-CSE-MsgGUID: 8y2rCjPHTbuaqPlMtgMPCw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="56874079"
-X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="56874079"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 07:12:19 -0700
-X-CSE-ConnectionGUID: VtRqDlrBQkSRjs8he8tyRw==
-X-CSE-MsgGUID: AqQPCVHWTfS19wQZtfClVA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="130684855"
-Received: from bkammerd-mobl.amr.corp.intel.com (HELO [10.124.222.124]) ([10.124.222.124])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 07:12:18 -0700
-Message-ID: <a271720b-1d49-4dd4-b3d2-c69879561698@intel.com>
-Date: Tue, 15 Apr 2025 07:12:17 -0700
+	 In-Reply-To:Content-Type; b=iiaFxDbktfoIEQ5DSw84/R2KjfG/VxCpIfXmeBE6sgo/SmtUmB2V1zb7yRJAqQt1+9HIJFKGqCnSLEFtpq6WqvIllew0ZFNhvmOqD8vIW3F2FqxK0vkzcAGK+ifF29XCrUuoe06+zPOr1Y96TG8cK8dMA2SErww5zrla951uwQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=p/RHqChc; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1744726376;
+	bh=xK2LkYSeBxb14Vlfe6VfU2/wPR+W/1fTwZEbUWZJGgQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=p/RHqChcX4FNsKxL65WMJUOImMkYAxDiG2sjW2jRGBIQnljNhwumM9hPGIAvUSQsl
+	 ZpjWDbWXvHF77gwRXMojrW/SLXsXL9HUy56HwnIhFUM2xgHTu6UKm0Ka6ujtvvlar7
+	 6vCxYVBVQ2WCnHth+gaxfU8jWdOkI65nQ61+oI+3nsdhmN6lQE9eUiw+/EsGJ8ElC6
+	 b9sWs9DiWIiLKLDOUv0k3f34cLIeVlVd19Ctz72DDQQw78V1R1CTz0uHaJ2z8ILlsc
+	 /Rb7aIetv28NRvFcni0JE2kUipCZGZT7MVElmEljSBp5AJK31XS6dJqEV3apQeUhbK
+	 3hzpS0Kzx5OdQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2948A17E017D;
+	Tue, 15 Apr 2025 16:12:55 +0200 (CEST)
+Message-ID: <95b965c2-1f03-423b-86a1-cd22784b480d@collabora.com>
+Date: Tue, 15 Apr 2025 16:12:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,73 +56,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/8] x86/mm: Always tell core mm to sync kernel mappings
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
- bp@alien8.de, joro@8bytes.org, luto@kernel.org, peterz@infradead.org,
- rick.p.edgecombe@intel.com, jgross@suse.com
-References: <20250414173232.32444FF6@davehans-spike.ostc.intel.com>
- <20250414173237.EC790E95@davehans-spike.ostc.intel.com>
- <bqinzxzoiz5pbtgcufgi6o4zfmvyj3q7i7mjtwp2b4x5cek3ca@v5qn4mv2y6ay>
-From: Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [RFC 3/5] dt-bindings: power: Add binding for MediaTek MT7988
+ topmisc power controller
+To: frank-w@public-files.de, Frank Wunderlich <linux@fw-web.de>,
+ Chunfeng Yun <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Daniel Golle <daniel@makrotopia.org>, Sam Shih <sam.shih@mediatek.com>,
+ MandyJH Liu <mandyjh.liu@mediatek.com>,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250413085806.8544-1-linux@fw-web.de>
+ <20250413085806.8544-4-linux@fw-web.de>
+ <700af1ab-f43e-4583-8f0e-27e5d4424338@collabora.com>
+ <2EA2BDB0-E1C9-49BC-98FC-5048905AA036@public-files.de>
+ <bbb81e79-95da-4cf9-9eef-7cbaea191ebb@collabora.com>
+ <AC7CF61A-A8A0-40B7-B5B5-51C56A1D3E81@public-files.de>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <bqinzxzoiz5pbtgcufgi6o4zfmvyj3q7i7mjtwp2b4x5cek3ca@v5qn4mv2y6ay>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <AC7CF61A-A8A0-40B7-B5B5-51C56A1D3E81@public-files.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 4/15/25 01:28, Kirill A. Shutemov wrote:
->>  #define SHARED_KERNEL_PMD	(!static_cpu_has(X86_FEATURE_PTI))
->>  
->> -#define ARCH_PAGE_TABLE_SYNC_MASK	(SHARED_KERNEL_PMD ? 0 : PGTBL_PMD_MODIFIED)
->> +#define ARCH_PAGE_TABLE_SYNC_MASK	PGTBL_PMD_MODIFIED
-> The new definition is the same between pgtable-2level_types.h and
-> pgtable-3level_types.h.
+Il 15/04/25 16:03, Frank Wunderlich ha scritto:
+> Am 15. April 2025 11:59:06 MESZ schrieb AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>:
+>> Il 15/04/25 11:52, Frank Wunderlich ha scritto:
+>>> Hi Angelo,
+>>>
+>>> Am 14. April 2025 12:25:23 MESZ schrieb AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>:
+>>>> Il 13/04/25 10:58, Frank Wunderlich ha scritto:
+>>>>> From: Frank Wunderlich <frank-w@public-files.de>
+>>>>>
+>>>>> Topmisc is a systemcontroller used for xs-phy and ethernet on  mt7988.
+>>>>> Add binding for it.
+>>>>
+>>>> That's the wrong binding... check mfd/syscon.yaml :-)
+>>>>
+>>>> P.S.: Is there any reset controller in topmisc? Any clock?
+>>>>        If yes, syscon.yaml is also wrong, and you need a driver for that.
+>>>>        Remember: If it turns out *later* that this has clk/resets and the
+>>>>        bindings are already set for just a syscon, it's gonna be way harder!
+>>>>
+>>>> Cheers,
+>>>> Angelo
+>>>
+>>> Ok based on the power-domain-cells property i guessed powercontroller is the right place.
+>>
+>> power-domain-cells, but without any power domain assignment, so that was wrong :)))
+>>
+>>>
+>>> But based on your suggestion i tried moving compatible to syscon binding and made dtbs_check here.
+>>>
+>>> I can confirm dropping the unexpected properties reported by syscon binding (power-domain-cells,clock-cells,adress-cells and size-cells) are not needed for function (xsphy and ethernet).
+>>>
+>>> For verifying that there are really no clocks/resets in topmisc (have not found it in public available register documents) i asked mtk (waiting for answer).
+>>>
+>>> Also got it working without the syscon compatible by changing ethernet driver too (after this change xsphy was also working).
+>>
+>> Perfect, a bit of a cleanup and you're done, then!
+>>
+>> Cheers!
+>>
+>>>
+>>> Eth:
+>>> https://github.com/frank-w/BPI-Router-Linux/commit/d866e648717800b6f6395ad36c38f9effcf0498d
+>>> Xsphy:
+>>> <https://github.com/frank-w/BPI-Router-Linux/commit/0121a94df99700487704ca056b210b13db07e90c>
+>>>
+>>> regards Frank
+>>
+>>
+>>
 > 
-> Move it to the common pgtable_32_types.h.
+> Got response from MTK and basicly topmisc contains a powercontroller (for cpu and internal 2g5) but currently not needed because ATF already switch this on. The second part is the pcs/phy muxing and 3rd some unneeded switches (where i have no detailed information). But no clocks or resets as these are handled in the connected platform driver (xsphy/ethernet).
+> 
+> So my original binding imho made more sense.
+> 
+> The syscon binding seems to need syscon fallback and shows error about unexpected "compatible" property. The binding itself does not contain any properties but references syscon-common where iiuc compatible property must have at least 2 items and requires the "syscon" fallback.
+> 
+> Mtk suggests splitting topmisc into the 2 blocks by only using the mux part as syscon with splitting the reg. If powerdomain really is needed then a second topmisc node could be added and bound to a new driver.
+> 
 
-Good catch, thanks. I'll add another patch to clean this up.
+I agree with MediaTek's suggestion. Split it, that just makes more sense.
+
+Besides, if the first part (the power controller in topmisc) is managed by ATF it's
+a good idea to avoid touching anything in there from the kernel :-)
+
+
+> But this would need a bit more of testing.
+> regards Frank
+
+
 
