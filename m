@@ -1,255 +1,200 @@
-Return-Path: <linux-kernel+bounces-604266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45510A892A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 05:46:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D72C8A89288
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 05:29:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38C653B2A72
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 03:46:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CC27189608C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 03:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E169721930B;
-	Tue, 15 Apr 2025 03:46:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E5F2147EF;
+	Tue, 15 Apr 2025 03:29:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nd2eWiZ4"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="baqE9/pk"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2043.outbound.protection.outlook.com [40.107.117.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B470D20F08E;
-	Tue, 15 Apr 2025 03:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744688785; cv=none; b=qMY6OEJbCDbWstIBZ27ffeD8tUGR8t7U8moUUMGm13GhYGJYbr7CJubkh/r6Z0IeGeq44hwy50vuQD6R/OZpnB3NQHdhKqkrtqapWUea2mS8btS4FXxCO3lC9cU7XVWoYz3TvHdppJU3p5fruGXqisCN1eFIoCIZXOkVjqzx/fM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744688785; c=relaxed/simple;
-	bh=B+5NV7MLzPQD79AJGUxwB62Ga81xkJ+lY6i3X7fLvz0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZC//UVEDGywPE1AduRt+NEJKHV/J5aPSNlIrSk0BxX8S1bls+Uc5Wl+133dHQ5nlyVwbyW+4G+EOevGVGfCMNfnr7IAbxyfZN4QkY0qRA6gFm23ftD0vZrILLyVURZ5q4DdApqKccneu1ifPRxLpUbR9scKtjkLQFKVmska9luU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nd2eWiZ4; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2240b4de12bso68578335ad.2;
-        Mon, 14 Apr 2025 20:46:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744688783; x=1745293583; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P7Rj0eg/IgiCUmBzVG1wlUC8QfjOMeak+7Og18vfRA0=;
-        b=Nd2eWiZ4wb6QVTOXOX71+gic0XOULy4LkALDRTVSie4+fNUsXpvOqxwKfybocX57rC
-         XedUKtDZyvVP/6Ej/6viWyKFWeN1HS8D7iVTVyeXd5ZbGiGM0NvsqGIalk27duGfB3hR
-         OSV0/eVpyu0B0wmNr8rqK+j0RtGe6LueaeqQVaYpX8c5yjmy+OqEPdnX3AJ/H7DSodkI
-         d3f3/+kgqkgHbubD1V4NpK3cP/zf05chY29ZzYGQhNqP8eAIrxZDyh0LO+WKyVeci0OX
-         M+TXkU8lv7j1yt8attLqP52/3MIOA9IWIs3nHdVUVp2jMM10k8I55t+rARmz9KtYxQpG
-         AhXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744688783; x=1745293583;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P7Rj0eg/IgiCUmBzVG1wlUC8QfjOMeak+7Og18vfRA0=;
-        b=H85U0V41J3KazU/zlN2B3nMdt0yzK0GSAs8W1L3klrGXBp3uoRoPVSQ6en2093IHHJ
-         p8fOTKM9/QsVQ3f/7Y8UAobyZuedJ70qvpW8yKa8R5XOn/ERZXTWTDxU8Rw+sOpfOujb
-         9cqdyBAZxiFLeK6siOeE8VmejRZFlSUCBTdSKjZ/J2RKVuErXq/7n7A21lw30gRLxUwh
-         49jFHKvw11W1xZHZ0aFZsjcrXFYbrklOVwPBh1ImjZhH2zz8By/xKbdQgJYDsK8KoimI
-         eoVIhlFZME8YihvPyX/EuOev/m1xDRXv1rRwpp2LklTQZkaRpxCTi0myTXniodPdeiR1
-         VMTw==
-X-Forwarded-Encrypted: i=1; AJvYcCUcbyam9JSE9CxoxsezfTSlr60BX1yprM7MqVTxB3qZLZL/t603IiXBA/6G1wTyacnlkMsmLo8/twg8jCIH0poo93O8@vger.kernel.org, AJvYcCUvPp5aFOOEDtvaFdYcD0hOc/RLkFCojGKxJGLdQO+hkD1vh1G4RLNV0jqHptaoR3/FcmG/7GjixuI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxykX1J80Z+xNFhII2aScg9TbqpWzlKxydUXDqNnGrORGYgloXW
-	CWuc+AUgXGpt7ZEzDjO5qWCae0umcdVDnsk9lajKJd1asGvwCrED
-X-Gm-Gg: ASbGnctas+KSef+kplrMfMVCJ8g2g/U+zc+esiCJtyVD9wX9tPlUF0Auycdm7sXc7PT
-	3+uifewy/Aym2OcnTLlgfwqgMysMVKZHGy8xjvbN9n4YYnGWlq9uPnP4Z6vflUbM5m9QAV0TAsH
-	Ahjc5SIfDheQ+BXip7pRBtKhW9Mh8yWRUhaEBHIrqJRyF+jsUhD5cHF5tqArTj72JmA5gGR+jdT
-	gj3Qzd9+Zg1TrpwdaglmGBi9SWZSdkh3ttR9q0JMruMFznnp0tvgJ0wVLcStDugIxvQsWxU9UFe
-	a04IMPKgySyT2MpA54N21vXlnIymr5LHp6KhJAQn
-X-Google-Smtp-Source: AGHT+IGRzKH8R1ktNZ7aJ4RIT/GnrqFfl05RBO/gEqNLT/JrgTdwbkIvf3bLtdfdepI9Q2Drtd04lw==
-X-Received: by 2002:a17:902:c947:b0:223:517a:d2e2 with SMTP id d9443c01a7336-22bea50e2edmr230723345ad.53.1744688782676;
-        Mon, 14 Apr 2025 20:46:22 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7b8c7d9sm107517435ad.96.2025.04.14.20.46.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Apr 2025 20:46:21 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id D45F14209E49; Tue, 15 Apr 2025 10:46:19 +0700 (WIB)
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Kernel Tracing <linux-trace-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Bagas Sanjaya <bagasdotme@gmail.com>,
-	Purva Yeshi <purvayeshi550@gmail.com>
-Subject: [PATCH 2/2] Documentation: trace: Refactor toctree
-Date: Tue, 15 Apr 2025 10:46:13 +0700
-Message-ID: <20250415034613.21305-3-bagasdotme@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250415034613.21305-1-bagasdotme@gmail.com>
-References: <20250415034613.21305-1-bagasdotme@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137AC20F08E;
+	Tue, 15 Apr 2025 03:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744687773; cv=fail; b=lXyxy6ekZRzudp8vBojLDAalNeIePCFzVKvKs5JmTw6P9aHZoDyHwFL+7avgnDm7qi9Jo8FEx/gnqrONF/gqmwcy/AgfU91xjnGwfjpndrSymepOPj59RJZ5RVWvi/xI1/frqU15KNjvtRrw4vn3ruWDK7Q01pzYhCpJ2l7hRvw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744687773; c=relaxed/simple;
+	bh=TI0CPQ9XQDVNGFTFrK+eJAqAK+v50HOdioN3n8+YGl0=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Y05booq4Kdp0zaWU97BsSsWv1ETwzrhOfn4G30duVmrWJ1v6doywMo5x9ta92tNqoD5hTBVeO23InxQeutvtNH3+qdlwI04WjY4RVxPouRTiE3A50ZbizHCRtru49lhBepfStyAqQ7jk5qyaPCWy5YQkTccfR9oRlg6OZ8wFhuU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=baqE9/pk; arc=fail smtp.client-ip=40.107.117.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=O282CmctQsfI3sFc0fQQLdzYpylYdeClt02LGOt0PekOemoM1D5WLwmjQiPmwdoQOJHD4Ux5xhYRpS+Et7/HqWlIJ23PtSGle4ACSHHOcxsmFXe79/aL3rirds6j6I9GReXy7VIrBAt64fVdxud2vcyHttG3Xrhvcu4H4nQuoq6RBlbLu2Yct8Uj4n63/T1bmmPDQFkjJNmuWDvQxCn9MYlSQYwv/fYaH6qsaC9N/Y8M1gV2SFNc2VmoYtMwLCGJpES+HDv/9yOnyeka9mdf7zKD/PUgiTz0SK/08j2IF3CbvR90MiE2wUGfPHF0fdrxFJHuyBPD7M9q3DLQhl7ZcA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IxSohK3a1wI4XPZsDOrWbXv/+3vPp9uP+CJbVjX5Mlk=;
+ b=l0jIhsNFGyl/hhekuBWDGCtj4QmimOdtwDCsRE8Y6cW+SbxSqwBG73azyAUk5JU5Ax0es6nU6Q9GXxrWzKIuz6lholL29hAXpLXgyzns7jetIXNYFzbR2YvPF9n+ua4Grsjekkco5MnSeH+5HLQIK6OyNw4kacmzi3FyctsTCDO2tVXW8LLftvO81zjcEGVLCBIheMSsMapfV8GrBuV80YJX6diFylIUlOilmB67JXI7fPIWndPHpLaFK/yJ5rOf2in5/XwS+eRcGUq0AnxqlCD7mnioB6dnXFAO0yZlylx8ywJCKqbPtQ3aVqwnkoUOAbtmIJyPmQzTZXmlxIuUyw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IxSohK3a1wI4XPZsDOrWbXv/+3vPp9uP+CJbVjX5Mlk=;
+ b=baqE9/pkOLyibYwcmaShm3vHH88udmDFfhHZ0vnoHylxmmct7H4gtJz5VFh9X9DwZZFW942v6cuz3Yaw7+NhglyASV7WzsjBpDbsZBOy8qYoRjKkrG1QHWBWXjLDs2glAEnSSQR0a2Tir9vprRQ2Sftn/KrvNECPefp2YBjQBwJGzGT4jfOZQqNA/kbAFRSL5VzVIAd9RyaPC2XJbO3ALOvgozoJh0cM9EJml2qdVQ4SIc8tbRzH8OP46Osaeav10UD+b/66wxKJqJkt0FI6nPnKEnacpGkHGema9KcDsf14VtFBuYK6jGxyzLIfdktqt64l/x8RS947L3d/8zvDYA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
+ by SEYPR06MB5961.apcprd06.prod.outlook.com (2603:1096:101:d6::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.30; Tue, 15 Apr
+ 2025 03:29:29 +0000
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::8c74:6703:81f7:9535]) by SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::8c74:6703:81f7:9535%6]) with mapi id 15.20.8632.030; Tue, 15 Apr 2025
+ 03:29:29 +0000
+From: Yangtao Li <frank.li@vivo.com>
+To: clm@fb.com,
+	josef@toxicpanda.com,
+	dsterba@suse.com
+Cc: linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yangtao Li <frank.li@vivo.com>
+Subject: [PATCH v2] btrfs: reuse exit helper in btrfs_bioset_init()
+Date: Mon, 14 Apr 2025 21:49:07 -0600
+Message-Id: <20250415034908.850609-1-frank.li@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR01CA0151.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:8f::31) To SEZPR06MB5269.apcprd06.prod.outlook.com
+ (2603:1096:101:78::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3467; i=bagasdotme@gmail.com; h=from:subject; bh=y8R0W3TqNDOBpqsuxx1xK6yOe3uKwGDrA0WnFxOhRXc=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDOl/r7FtXjnJNfGkbOTUvyLMCqLB531vd5t4aArYeYiIX jxy5J5pRykLgxgXg6yYIsukRL6m07uMRC60r3WEmcPKBDKEgYtTACZiVsnwv0rCdOHxxStSRS7o bFu8rJR1vXhniOi7I6xLQrZPjuq14WBkuCces3IN+wt/tm/6u+9uEtu2bJkSo8oDu7Pz+6bvn5f gygAA
-X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|SEYPR06MB5961:EE_
+X-MS-Office365-Filtering-Correlation-Id: d5393c72-03f2-4ca6-b2c4-08dd7bcdba9d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|52116014|1800799024|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?E4ojkJtitxBP4zwA/K+8ySW1kw/t2VpIadJoxbZrwdfYLPh2ETjs3HnsPlrW?=
+ =?us-ascii?Q?JzEO66QVwf4PoJsmd/PA2tlcajkbRIV7OMQ1gRLBEOPcWGljxSGW/gyQ+XdO?=
+ =?us-ascii?Q?YY7sZSTgXlHUGtQOWQK/ic6+j6ko+s1hGwQAXta5cr1IIrv5XEZ5SN3iUbI6?=
+ =?us-ascii?Q?M5xwIBpymYcLpbbjnDx1KBdJUHfY7xdloy4oERJuQPjAB5zIp/fxeS7Kn/QV?=
+ =?us-ascii?Q?vBpNvRRz9hFxye2uGfSvAJWWGiyhj1d5ErGx2FdDE7AHqMWJfptkr6ymrRVg?=
+ =?us-ascii?Q?Pb9+h5qs1HMhbgfefJ5XqCMISULQkxpQOhGSDkBDTQmfAO+bn+YIA70gn3zu?=
+ =?us-ascii?Q?cdiH1apPwtNcjdAuPKEOuzEqmSKiO5h5TGFuI/UwHgbYKqQTMX/sBx3gGQCw?=
+ =?us-ascii?Q?C81qqBYSAY8hf87PhN3yaOUm8iU4Va3XZgti8hOfKrK2GqGKbtuoMnDN0LqQ?=
+ =?us-ascii?Q?lKI7gqD0XJmlxmI6cdjVcEfqbBvxp91k1x8dsHvizyYf+DSsrYhX+B5/kuKS?=
+ =?us-ascii?Q?A/+Cb5SWYFyK0wjVghmDuHaYTdL8h4hjZc0j1HHxwRlCEqrPS+w6V3nF098Q?=
+ =?us-ascii?Q?8JDK+zXvn5ZfhRr5/ubsfpIw9Br7B2DaQr7zotJD2MsYHlWtQ4qBs1gTW1t7?=
+ =?us-ascii?Q?oK+Furtf9xQqPb5iK6fv3bVqnDWnwZBXoi6OPUTbyID0DE9yrE0/kA7lW39I?=
+ =?us-ascii?Q?tyLbuPwjrxjvGwn7eacOlZnMTZztf+V7pIm7Aq8Du5Y2/CX1S6sljWArcG3r?=
+ =?us-ascii?Q?GARFAcI9fmUUqYMiP52l1cD5GHygUpjvJv3jWddpTh0YPc943BZw/AoPIA4a?=
+ =?us-ascii?Q?tUwOh6HRaQk82lfo79v6LJSkkuwQC+/EbHwPVIx3BMNkkiQ/2OXIEcbjClNC?=
+ =?us-ascii?Q?KMuShR6SQQ94X4tbx/axshKfFqvm+LcJWP3hv7ckdS3Xd1gy4O6NC8rSNAB0?=
+ =?us-ascii?Q?LFWbKuCkqMvLPxUQEB0pseaVApwCu1B+bTORU6C6tGJ/TvzjIeErMy4rV4Qa?=
+ =?us-ascii?Q?JrSq79MOCShiYJ0rp1TwfS+mFnea4C5YtauDkbUEjrrA1qQgEbjsnPb0bWm7?=
+ =?us-ascii?Q?twohlU6fLdU8B6R6g15BCoTFzscHdqnXknmg1cMTU0yGQs/2Armz61S7CksM?=
+ =?us-ascii?Q?vP3w2TE7HZhu+/Xls5exVZQ5yGOFOwuLc+Mkgiy/S8KRlcLIZzEuzRjRQNTm?=
+ =?us-ascii?Q?CjNLfUNWAgP04Zry/hPJ9FWOkdboXaoGKkjvzGt10LoKrZG6mYl2oQrEnO+i?=
+ =?us-ascii?Q?fdYd1GIhyRVb873L/6ztwptLCwDNR8/UmjJh30QtpOEF7noO+mqVSr2N2IjZ?=
+ =?us-ascii?Q?g/zUQ9DhO4DYv1CI+PHUvwl5ext4XBKBQuEiyHa7yiKvKCNoAjoqcPBmEl71?=
+ =?us-ascii?Q?LhFdaAoqfoI4KVagQVlGPfiePg0zsvGVxmkPyGUWH/m9M1fPjKipybVdbChi?=
+ =?us-ascii?Q?RvI0EKgWPPnSBEWy4xauxPVVBqFIYEms96tAPMgJtfY697dzbW5R1Q=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(1800799024)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?pSAJ+fQqQbu+BjYlmUe1OeQbMJDo3h1bTpc9iDuppNu9fDf7LEYrFTMRcs/R?=
+ =?us-ascii?Q?zJTrIJIx4nRGAS8sz1hL4mModl+iE0mAmNc94Ozu3lYlibGACH75DZzyXcAS?=
+ =?us-ascii?Q?BQDZ9DPTFWc86f7C1JR5PIwamw6xbI7MdFGV6gqVCvuKIhAPJaWzapYiJP8g?=
+ =?us-ascii?Q?Tr9cRfs+soFSMdbEfKvUkxxrPBGBIsoVDvG6hbSIqLJGczPohyDhO+UvsiBP?=
+ =?us-ascii?Q?cSFssodcChxUzCKkKdWoMfkk+9BRMPZb1/DMdunvFt6C3ZApDOtJJ0r5wHdr?=
+ =?us-ascii?Q?BIWX1uk8T82Fb5AKoRr19OuFIW4jcDQeZ61Yv6V1OAE8nkK5KLhLE9efnjaF?=
+ =?us-ascii?Q?39pJLnfA/JM+Lt+sc6X31uJidUlsDsJABvDBUgP/Otw8jRKWUUu+diUZIfni?=
+ =?us-ascii?Q?6bFQY8+yxFbnmC+p3oYyVAT38+YQDB7Mb/Dkl8CTx32igjzGdcA5SmDCzqrr?=
+ =?us-ascii?Q?PfFcsi3rApvhNcaBzGhvVg9IKsN/mi/0NqQFwAbKO+00JEq7itnIqv/LD/vI?=
+ =?us-ascii?Q?EEaEO5HWe4qiRt2edv1pjt+9XQCPMD+9EnwcRsfAVLM30YadoyVTGoiFFQTx?=
+ =?us-ascii?Q?5eEdvvn/24K8uI0AxLB8RzT+E4CKK4cIkiEDDji+lHsF52We4PpotWmyOhRZ?=
+ =?us-ascii?Q?F2gSBeeF2LH1ZWuMJDZi+AmNc/2oZClqxXIT8bdBbp/iSODMzDkC0Fw9dEe5?=
+ =?us-ascii?Q?ezcqavXpwNuxs6TKrD+Y3iTyfce0ePKmwK/fNyU6Ew9QWF1kveLZlMQGnwZY?=
+ =?us-ascii?Q?kUJgqmaCZsTBrmW2kkbtXPhoaR7P8F577vRvgyC+OnDjmAYYpkMzOaPTLQUP?=
+ =?us-ascii?Q?4lGRqV4kHvH6v3+wOlmIn7Yk/EpCBv1jKQapDIJIvTGRbtd10Bj5ly2GJev9?=
+ =?us-ascii?Q?ED3xF6KUbTC2nkphnMMctSmp+YhcEXjh2jp7y8Pqz5WixcIbf+W9EQSj+272?=
+ =?us-ascii?Q?RTDJUOyDtDk1dbPT305gcX0s3TB3szHvvVQ3AyVGDxvcqJw9BBun0Clb90p9?=
+ =?us-ascii?Q?4m9FkSKuXQdPiMZDZS8eP7aQCyM//4cwQkKXk4LuGadSQlSOuHP1Yhg8u53v?=
+ =?us-ascii?Q?cdCjnVauUKtIU/yuaCivs/057+5IEBTvVRsciK/hmWOUGlh78iHIBcUm+wrh?=
+ =?us-ascii?Q?SG7Np9QjTppuaMlPqRWbQ5qASm9yF5AQJrqLLNn6NlB/wdzydgZQTXTDuRns?=
+ =?us-ascii?Q?muSvMu8u6Zfyc8z4V00tw6Sk5sRPxTWTLv9tWAjbAo1rafwcS/oKEiAbxk7+?=
+ =?us-ascii?Q?ghZAFtr0l3aM28T1tntPDQc4mEBkCkes0FNyYpsrHa7TShyXTZLQYNeF7uci?=
+ =?us-ascii?Q?WFVofWx/Apqka4HpZibWzqxMbYrrjT67NJh8dVPMKqCXT9L6Tpmox7YxTiwn?=
+ =?us-ascii?Q?INyMcChguoKX+t8Drrz4Goembb7r/U4fg3J86AwXt414YFim1p4UBKaQJNov?=
+ =?us-ascii?Q?wOGxWU7MP0cO7rjieRtCLOJtkDl4sDxNm/si4hCUuzhSsaCmcBZvK5frpMAK?=
+ =?us-ascii?Q?hhrRjJW8+SksOCMIaTPbWZ8dLV2yARjWmEsQBKFIwDFVcFrAM1fpsIRSIvtW?=
+ =?us-ascii?Q?pQLU9JSqSZffOpcU/o8LTxIYDtVPVnWz3UFEbjJH?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d5393c72-03f2-4ca6-b2c4-08dd7bcdba9d
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Apr 2025 03:29:28.9142
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cD5uOR9msbbjjNIOTWCdrQvvgEtNSe6e6tX9yJDWFTa7kiA/pywdLCNx/1168nhzPvIF8abOf3UJxJlnwBDmoA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB5961
 
-From: Purva Yeshi <purvayeshi550@gmail.com>
+Use btrfs_bioset_exit() instead, which is the preferred patttern in btrfs.
 
-Refactor table of contents of kernel tracing subsystem docs to improve
-clarity, structure, and organization:
-
-- Reformat sections and add appropriate headings
-- Improve section grouping and refine descriptions for each group
-- Add docs intro paragraph
-
-Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
-Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
-Link: https://lore.kernel.org/r/20250318113230.24950-2-purvayeshi550@gmail.com
-[Bagas: massage commit message]
-Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+Signed-off-by: Yangtao Li <frank.li@vivo.com>
 ---
+v2:
+-update commit msg
+-cancel reorder btrfs_bioset_exit()
+ fs/btrfs/bio.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-Hi Steven,
-
-I remove your Acked-by: since I massage the patch description. Would you mind
-to re-add yours?
-
-Thanks.
-
- Documentation/trace/index.rst | 94 +++++++++++++++++++++++++++++------
- 1 file changed, 79 insertions(+), 15 deletions(-)
-
-diff --git a/Documentation/trace/index.rst b/Documentation/trace/index.rst
-index fecc4adf70a830..5ddd47ee781211 100644
---- a/Documentation/trace/index.rst
-+++ b/Documentation/trace/index.rst
-@@ -1,39 +1,103 @@
--==========================
--Linux Tracing Technologies
--==========================
-+================================
-+Linux Tracing Technologies Guide
-+================================
-+
-+Tracing in the Linux kernel is a powerful mechanism that allows
-+developers and system administrators to analyze and debug system
-+behavior. This guide provides documentation on various tracing
-+frameworks and tools available in the Linux kernel.
-+
-+Introduction to Tracing
-+-----------------------
-+
-+This section provides an overview of Linux tracing mechanisms
-+and debugging approaches.
+diff --git a/fs/btrfs/bio.c b/fs/btrfs/bio.c
+index 8c2eee1f1878..f602dda99af0 100644
+--- a/fs/btrfs/bio.c
++++ b/fs/btrfs/bio.c
+@@ -900,22 +900,18 @@ int __init btrfs_bioset_init(void)
+ 		return -ENOMEM;
+ 	if (bioset_init(&btrfs_clone_bioset, BIO_POOL_SIZE,
+ 			offsetof(struct btrfs_bio, bio), 0))
+-		goto out_free_bioset;
++		goto out;
+ 	if (bioset_init(&btrfs_repair_bioset, BIO_POOL_SIZE,
+ 			offsetof(struct btrfs_bio, bio),
+ 			BIOSET_NEED_BVECS))
+-		goto out_free_clone_bioset;
++		goto out;
+ 	if (mempool_init_kmalloc_pool(&btrfs_failed_bio_pool, BIO_POOL_SIZE,
+ 				      sizeof(struct btrfs_failed_bio)))
+-		goto out_free_repair_bioset;
++		goto out;
+ 	return 0;
  
- .. toctree::
-    :maxdepth: 1
+-out_free_repair_bioset:
+-	bioset_exit(&btrfs_repair_bioset);
+-out_free_clone_bioset:
+-	bioset_exit(&btrfs_clone_bioset);
+-out_free_bioset:
+-	bioset_exit(&btrfs_bioset);
++out:
++	btrfs_bioset_exit();
+ 	return -ENOMEM;
+ }
  
--   ftrace-design
-+   debugging
-+   tracepoints
-    tracepoint-analysis
-+   ring-buffer-map
-+
-+Core Tracing Frameworks
-+-----------------------
-+
-+The following are the primary tracing frameworks integrated into
-+the Linux kernel.
-+
-+.. toctree::
-+   :maxdepth: 1
-+
-    ftrace
-+   ftrace-design
-    ftrace-uses
--   fprobe
-    kprobes
-    kprobetrace
-    uprobetracer
-    fprobetrace
--   tracepoints
-+   fprobe
-+   ring-buffer-design
-+
-+Event Tracing and Analysis
-+--------------------------
-+
-+A detailed explanation of event tracing mechanisms and their
-+applications.
-+
-+.. toctree::
-+   :maxdepth: 1
-+
-    events
-    events-kmem
-    events-power
-    events-nmi
-    events-msr
--   mmiotrace
-+   boottime-trace
-    histogram
-    histogram-design
--   boottime-trace
--   debugging
--   hwlat_detector
--   osnoise-tracer
--   timerlat-tracer
-+
-+Hardware and Performance Tracing
-+--------------------------------
-+
-+This section covers tracing features that monitor hardware
-+interactions and system performance.
-+
-+.. toctree::
-+   :maxdepth: 1
-+
-    intel_th
--   ring-buffer-design
--   ring-buffer-map
-    stm
-    sys-t
-    coresight/index
--   user_events
-    rv/index
-    hisi-ptt
-+   mmiotrace
-+   hwlat_detector
-+   osnoise-tracer
-+   timerlat-tracer
-+
-+User-Space Tracing
-+------------------
-+
-+These tools allow tracing user-space applications and
-+interactions.
-+
-+.. toctree::
-+   :maxdepth: 1
-+
-+   user_events
-+
-+Additional Resources
-+--------------------
-+
-+For more details, refer to the respective documentation of each
-+tracing tool and framework.
-+
-+.. only:: subproject and html
-+
-+   Indices
-+   =======
-+
-+   * :ref:`genindex`
-\ No newline at end of file
 -- 
-An old man doll... just what I always wanted! - Clara
+2.39.0
 
 
