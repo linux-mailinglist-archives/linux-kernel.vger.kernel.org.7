@@ -1,59 +1,95 @@
-Return-Path: <linux-kernel+bounces-605963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9835AA8A83C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 21:39:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E289CA8A83E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 21:39:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADE8617F48F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 19:39:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D0CB1721A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 19:39:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 083502512D2;
-	Tue, 15 Apr 2025 19:38:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D7FC24E4B2;
+	Tue, 15 Apr 2025 19:39:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QwXmHwmr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="rjooBMZZ"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51ECC250BE1;
-	Tue, 15 Apr 2025 19:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D83250C0F
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 19:39:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744745934; cv=none; b=MRWlCj2NgRCpij9CUuxaRQ0zOy+/cA/3uqgAT8D028qcHngTeOYksBkZZoaeCBNX+QbDApxEhLYHxG2IFdbyZKuBBrBsAJ51HZlcmCkmG9SIXy6qoqJ4jJDwk3fzgNTB0SetUnBIdsMcYkaeFjd3QqTrY5AOr+nAkzez2J5T+sg=
+	t=1744745961; cv=none; b=gQyKI9BAtCrD3sSgIGw9xsZninKbK4hWmq9TrBZGKZFR4wW300rprEJy7XZvjRagu29Fmo+I27p8mDvGg2WPdom4IsKwDevaJxM04/KAtLiVi8gwkTBSWptqur8OXzTxi/V/DNQynk1B3Lnfp2UxxLbIEY9lNL6h4YgP2Zt39Gw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744745934; c=relaxed/simple;
-	bh=+X8PZp7ZJAtaPIiDYEIFalIVsT/0lgcDfgcWZzUFk0s=;
+	s=arc-20240116; t=1744745961; c=relaxed/simple;
+	bh=zsGUpj5GZ2h7Vwe6HLZ5jH16wOzMfXpoGpvHr2cGzUw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bi/lIPaFhFHWbapyshCUhY5XUO2mxXNY9u3pc8UYHqLXJ/910xwgxbAUuPIZHJDfOnAsHepRv7kOFplJPRSw1/HGhSNfAFPNcacNtBKCnSKPNNPRAwmEtfMahoOMdlsrBNT4lhVBHDQBS8+0jlCTXsX9gDr/T8omVD8n2PN4SdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QwXmHwmr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 996C0C4CEF1;
-	Tue, 15 Apr 2025 19:38:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744745933;
-	bh=+X8PZp7ZJAtaPIiDYEIFalIVsT/0lgcDfgcWZzUFk0s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QwXmHwmr9n+SApeHzUas+OtoRZJMrhoeh0R81kyW0D+KMv7H0dYo6A0zVAIE14s6l
-	 9OioSxFrNEzCZqkR/ZPwAP8Mt7QfkHTwZXdB9+TeUcGUXgwRDHGnHg0CyH6VskKTM8
-	 bCDj7haedPkBA+8xnkLnjIfr0vcYnTTdaBRXNz6RbgCJFX2bVULWtPtwJmkIVdEGxn
-	 BxaHnstuq1TeVO5g3PiMSCbHCzIfMgZmxH7n4wX3SZ6F9kBOA7Kh6yk5l23wyzruAy
-	 6M/5t2SIRmRgrcIU7QC0aIODXbZZEbfY75ctd2n+299mrucX5kX9JVaJdIoGd+c1be
-	 wHoAGPF3Wu57g==
-Date: Tue, 15 Apr 2025 14:38:51 -0500
-From: Rob Herring <robh@kernel.org>
-To: Yixun Lan <dlan@gentoo.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] pinctrl: spacemit: add clock support for K1 SoC
-Message-ID: <20250415193851.GA846160-robh@kernel.org>
-References: <20250412-02-k1-pinctrl-clk-v1-0-e39734419a2d@gentoo.org>
- <20250412-02-k1-pinctrl-clk-v1-2-e39734419a2d@gentoo.org>
- <20250412182737.GA1425287-robh@kernel.org>
- <20250412223431-GYA25375@gentoo>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aovKeoST4yMbcdNvtaaNoylU1uKfXDbvGyZV6m3ADf5LdUQHE1c2NPj7aIruK6d/C3UHIIX8tVNWtLtJZu1oS0XSmxA2WFhFZBprCv9OriDyDhs1ehXhLOsZ7vuzsn/q6/hx27Kr9fAdcQpaI5fbdCnAcAT+mVXsJYSPXmoCXkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=rjooBMZZ; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-223f4c06e9fso63295ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 12:39:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1744745954; x=1745350754; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DgQZzwQ+VnFV+EQ4EbE4rQMrLWAC5dU5oyUSlaBvU/E=;
+        b=rjooBMZZxr8ctxbFgUZ6zMte2wRpHtFKCMjMdl8aFdETZKAO47yAuHg/e8HkwktfS0
+         JqVZOyhj8/PNqKb5fUR6JPIIociPJUJ2D3L9oheooceuT5rprXYlBZRbNi5avCXrIR7j
+         eg4tX/QUipsQn0B9LBe8xVGTUioIeyG2M+2F8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744745954; x=1745350754;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DgQZzwQ+VnFV+EQ4EbE4rQMrLWAC5dU5oyUSlaBvU/E=;
+        b=Fr5AW2B319eJRcx0mT9xOusEtuhaQ2Xf5POgE5iXkL49gmosxuAXXMjY59daTYoPO8
+         FudCCOI2j9X0OwoS6gstYkFebCEErK0X+Hws8RVdPjzoUVd6y8kFkDVDaEYaNWPtdtjW
+         XhH/6u9Dzg3rU+L9BRmEUwUuJRc/233QaAWQtO5SGModoaAqQZ/K4UVNV91JfKJ4unQf
+         lAKl/QyxFcnkw1WmYUqH09TF54iXQXblVPKZfOJon0M9pOu6DvyilQhq3dododE/0A3j
+         Yo4ZRDbPvRu7EdfeCEh8ga4MWONo5YcN+9W+5q/kT7gPxdgQoBbVpXcwF4EXlyiy7xD+
+         i/8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVp+aSlampptdwprpdTFLbEoGKMxAvWQWQzeo0SyKeMcBYiUhWYcSW9ZsQVbmI2QgVTEPY95H1cxbhPdfo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwC5SOUYtyDQCe0RCF0xcBnrKKl6IpHNnxEzSGD48uhNTAS+WsB
+	QGnP/zyMdPFhnGZ0rtDz/JdAeLLplYcxdTqwfC3cBwIy+2Bjt7RrLnmSHKVu2bw=
+X-Gm-Gg: ASbGncs+WwjlXlBlM9aMV54q3soXGGvnJr4DymRqTQndMet8Vmv4zgzw0Vmh9uywZxq
+	eKQ2FIpbB49E+NgZBiXZYJ2kpHRXgID2Q6d/GSdQZD/7dS3Yy4zD4fgBghZN0cSBo2a0HcEuOWE
+	oNCVy1Q2+KJNekCflEC9MJggEv6R52Z4+LaZ9xYUAqRVUx9MjiaLQy4oep0zYW3JTBZdEHRZNnp
+	n5va7Uzr57rXOeT58nbyIyDAtcWtPXGT0RHjwBMeTEs+IghJoIMdMqZZRmFSX1RwkK92bCQpBM0
+	nqi/QNurjQGoMW23NvF9F5A5mUxEfJqR+u3TExXqYaq1t6q8rCx7ZypONZibEAqCePVD27yaAxU
+	RO4djL/t/FcKdaPQQ4jUdFCs=
+X-Google-Smtp-Source: AGHT+IEFrQQ8/YtODsnqpjV4NtRefMJrarn7BkrW5JrjlicGqatxKSAubw3f+uJGVSd2TJ0bQnqNgQ==
+X-Received: by 2002:a17:903:1ce:b0:223:3eed:f680 with SMTP id d9443c01a7336-22c24a1440dmr72537785ad.18.1744745954611;
+        Tue, 15 Apr 2025 12:39:14 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7cb5304sm121524045ad.189.2025.04.15.12.39.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Apr 2025 12:39:14 -0700 (PDT)
+Date: Tue, 15 Apr 2025 12:39:11 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>, David Wei <dw@davidwei.uk>,
+	Eric Dumazet <edumazet@google.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Subject: Re: [RFC net 0/1] Fix netdevim to correctly mark NAPI IDs
+Message-ID: <Z_613wmrKRu4R-IP@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>, David Wei <dw@davidwei.uk>,
+	Eric Dumazet <edumazet@google.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+References: <20250329000030.39543-1-jdamato@fastly.com>
+ <20250331133615.32bd59b8@kernel.org>
+ <Z-sX6cNBb-mFMhBx@LQ3V64L9R2>
+ <20250331163917.4204f85d@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,84 +98,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250412223431-GYA25375@gentoo>
+In-Reply-To: <20250331163917.4204f85d@kernel.org>
 
-On Sat, Apr 12, 2025 at 10:34:31PM +0000, Yixun Lan wrote:
-> Hi Rob,
-> 
-> On 13:27 Sat 12 Apr     , Rob Herring wrote:
-> > On Sat, Apr 12, 2025 at 02:58:11PM +0800, Yixun Lan wrote:
-> > > For SpacemiT K1 SoC's pinctrl, explicitly acquiring clocks in
-> > > the driver instead of relying on bootloader or default hardware
-> > > settings to enable it.
-> > > 
-> > > Signed-off-by: Yixun Lan <dlan@gentoo.org>
-> > > ---
-> > >  drivers/pinctrl/spacemit/pinctrl-k1.c | 10 ++++++++++
-> > >  1 file changed, 10 insertions(+)
-> > > 
-> > > diff --git a/drivers/pinctrl/spacemit/pinctrl-k1.c b/drivers/pinctrl/spacemit/pinctrl-k1.c
-> > > index 67e867b04a02ea1887d93aedfdea5bda037f88b1..3805fb09c1bc3b8cf2ccfc22dd25367292b397b9 100644
-> > > --- a/drivers/pinctrl/spacemit/pinctrl-k1.c
-> > > +++ b/drivers/pinctrl/spacemit/pinctrl-k1.c
-> > > @@ -2,6 +2,7 @@
-> > >  /* Copyright (c) 2024 Yixun Lan <dlan@gentoo.org> */
-> > >  
-> > >  #include <linux/bits.h>
-> > > +#include <linux/clk.h>
-> > >  #include <linux/cleanup.h>
-> > >  #include <linux/io.h>
-> > >  #include <linux/of.h>
-> > > @@ -721,6 +722,7 @@ static int spacemit_pinctrl_probe(struct platform_device *pdev)
-> > >  {
-> > >  	struct device *dev = &pdev->dev;
-> > >  	struct spacemit_pinctrl *pctrl;
-> > > +	struct clk *func_clk, *bus_clk;
-> > >  	const struct spacemit_pinctrl_data *pctrl_data;
-> > >  	int ret;
-> > >  
-> > > @@ -739,6 +741,14 @@ static int spacemit_pinctrl_probe(struct platform_device *pdev)
-> > >  	if (IS_ERR(pctrl->regs))
-> > >  		return PTR_ERR(pctrl->regs);
-> > >  
-> > > +	func_clk = devm_clk_get_optional_enabled(dev, "func");
-> > > +	if (IS_ERR(func_clk))
-> > > +		return dev_err_probe(dev, PTR_ERR(func_clk), "failed to get func clock\n");
-> > > +
-> > > +	bus_clk = devm_clk_get_optional_enabled(dev, "bus");
-> > > +	if (IS_ERR(bus_clk))
-> > > +		return dev_err_probe(dev, PTR_ERR(bus_clk), "failed to get bus clock\n");
+On Mon, Mar 31, 2025 at 04:39:17PM -0700, Jakub Kicinski wrote:
+> On Mon, 31 Mar 2025 15:32:09 -0700 Joe Damato wrote:
+> > > Would it be possible / make sense to convert the test to Python
+> > > and move it to drivers/net ?  
 > > 
-> > Do you really need these to be optional? Yes, it maintains 
-> >
-> Yes, the motivation here to make it optional is maintaining the 
-> compatibility, to not break the case of using old dtb with new kernel,
-> since the serial console device (uart0) is activated now [1]
-> 
-> IIUC, from the DT perspective, it's mandatory to keep this compatibility?
-
-It's up to the platform. It's only mandatory to understand you are 
-breaking compatibility when you do.
-
-> 
-> In dt-binding of patch [1/2], the clocks/clock-names has been described as 
-> required property, so it's sort of mandatory from DT's view.
-> 
-> One lesson I learned is that the pinctrl dt node shouldn't be activated
-> untill all prerequisite dependencies meet.. it's ok to push the driver,
-> but should postpone the DT part..
-> 
-> > compatibility, but if this platform isn't stable, then do you really 
-> > need that?
+> > Hmm. We could; I think originally the busy_poller.c test was added
+> > because it was requested by Paolo for IRQ suspension and netdevsim
+> > was the only option that I could find that supported NAPI IDs at the
+> > time.
 > > 
-> I don't get what's your meaning of "isn't stable" here, the fact won't
-> change for K1 SoC: the pinctrl controller requires two clocks
+> > busy_poller.c itself seems more like a selftests/net thing since
+> > it's testing some functionality of the core networking code.
+> 
+> I guess in my mind busy polling is tied to having IRQ-capable device.
+> Even if bulk of the logic resides in the core.
+> 
+> > Maybe mixing the napi_id != 0 test into busy_poller.c is the wrong
+> > way to go at a higher level. Maybe there should be a test for
+> > netdevsim itself that checks napi_id != 0 and that test would make
+> > more sense under drivers/net vs mixing a check into busy_poller.c?
+> 
+> Up to you. The patch make me wonder how many other corner cases / bugs
+> we may be missing in drivers. And therefore if we shouldn't flesh out
+> more device-related tests. But exercising the core code makes sense
+> in itself so no strong feelings.
 
-You required 1 clock and now you require 2. That's not stable. 
-Generally, early on with platforms, their DT is not complete enough to 
-maintain compatibility. There's also likely not many users or h/w 
-availability for compatibility to be an issue. So requiring the DT to be 
-in-sync with the kernel is not a problem.
+Sorry to revive this old thread, but I have a bit of time to get
+this fixed now. I have a patch for netdevsim but am trying to figure
+out what the best way to write a test for this is.
 
-Rob
+Locally, I've hacked up a tools/testing/selftests/drivers/net/napi_id.py
+
+I'm using NetDrvEpEnv, but am not sure: is there an easy way in
+Python to run stuff in a network namespace? Is there an example I
+can look at?
+
+In my Python code, I was thinking that I'd call fork and have each
+python process (client and server) set their network namespace
+according to the NetDrvEpEnv cfg... but wasn't sure if there was a
+better/easier way ?
+
+It looks like tools/testing/selftests/net/rds/test.py uses
+LoadLibrary to call setns before creating a socket.
+
+Should I go in that direction too?
 
