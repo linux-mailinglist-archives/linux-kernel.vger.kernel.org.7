@@ -1,244 +1,279 @@
-Return-Path: <linux-kernel+bounces-604720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52F44A897BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:17:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56EC6A897BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:19:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44BDB7AB714
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:16:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5954317AD01
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:19:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5E327FD4F;
-	Tue, 15 Apr 2025 09:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="hkmF9EjE";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="Q6FBxT6A"
-Received: from esa1.hgst.iphmx.com (esa1.hgst.iphmx.com [68.232.141.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB31275105;
-	Tue, 15 Apr 2025 09:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.141.245
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744708627; cv=fail; b=fZDDmnM73WDg3SeLTV+MvnCnauWhQ/ee7LzbGFssK17RAIpB3MfTAhwVXSGh600anJL23EWx3M2P1wFP2bj9BPZtPU1gw0d9p12IQjapTlaYohojdlPAjEQ9rfBq6zf1sYFgncyvWMYRYptdKtaQTEaVbBlhQStJFQoAWRVheno=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744708627; c=relaxed/simple;
-	bh=xBoXmTFRgtNum24f9AiJNcRqRhJBD0131gaIDVspxl0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=AgZtciylwOi3nN4zazNGYUHeOD7bAI/0VIfUOowm1QWzDqC5wvULNr+QD5FHeKOXMa6fFx0eVeV9V0EvV84ClerhLH+DTm0lGc4/j+aitWUFWMN+eAo9tbk4VcrL/4jLrNwG0cBVyqmEgn4wVICyXr42s2fhRjPVst/9h/iTNdM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=hkmF9EjE; dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b=Q6FBxT6A; arc=fail smtp.client-ip=68.232.141.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1744708625; x=1776244625;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=xBoXmTFRgtNum24f9AiJNcRqRhJBD0131gaIDVspxl0=;
-  b=hkmF9EjE9UEW+MWSuQ89jQQI7PFju9K0X6rIf99bnOgj7QoM9EGIUEzS
-   cS/mIOUN2E/dXYr5QQl7M+c8w4HMufk20n2Xt60SUcfiFXhhLbQrkKJjQ
-   f1jrIYp5Q3tK8Gai/G2X1+IPq8avHYik6gFCn8asgW3GyqcEdjfFgMMXN
-   wWyyHtMt3Gf27E45HZ5ykP+Dfuk41Cp5Nn1PdLHTWcBfEp3VCp5ET7sJu
-   DHwbczQACoESpEABOjVM+DsIWzl2VWorKlKDLne7gD+atYUVgOBtN+3dP
-   f1z7x1p0+7MVgK9wbqt0XKsDvCUaC4tt93ZFxw7dhraorz88WKsinalQp
-   A==;
-X-CSE-ConnectionGUID: 1alnotyYRsWL6lsBnszkcQ==
-X-CSE-MsgGUID: KMe+f15KR6KR8uE/B68FNg==
-X-IronPort-AV: E=Sophos;i="6.15,213,1739808000"; 
-   d="scan'208";a="75498741"
-Received: from mail-mw2nam12lp2045.outbound.protection.outlook.com (HELO NAM12-MW2-obe.outbound.protection.outlook.com) ([104.47.66.45])
-  by ob1.hgst.iphmx.com with ESMTP; 15 Apr 2025 17:17:03 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vMjbFbnZ39uxDUxtZTQB/a3nF6Vdxb6jrM806RJ8cYkotiIcDJFZo9JEjU9E9wt3J4PrcEYBPHwSRCi5I9vL12TujDAN6xCpy+iOhQwK79/x11d9o7XpZo7egh7c2l5VYiecoUdYfRY319cPKo29lZdIP2WMjiBw9NWrR9H4X0l6nWZNDsHDkx6iaFthGU8Vm7AJWdnxWVLpzA9Skg0ewLeEk0ygqPF2BLMVrNo7WZ0cNQrBXHXbpsYJUp8c3LBjPqHziAsGyS5OLzpShLWa8dnqgMrbrHKH1ijSnco1YEtQY/kOrHcQrDYACQ5KV3nOkqYYj1aNhlEMj7m0CwV1Ww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xBoXmTFRgtNum24f9AiJNcRqRhJBD0131gaIDVspxl0=;
- b=fQe7dQBkVCTtiJuJy4nM7VckVP3rF5+gkmIUUQI1spc2btNKlR28b0UlJatuZ1FGxRiqTquAPPAnP06a0MD/d2pxZf0q9GILhLiMu/vQ9ugzt8jGnuVOzQkqmohe7YkDakbsKpl9gHDF/XLiCeNbWzgUsOcoU718D0DNRraFbIZc6SY4AYsgoNJGirFrLCKa8iEcMx9nfceecDwaTbXeG9BVix1PTincDMWEZgFg8atKxeA6RFr5I7MQm9xsNqMzsaBrnhAhSg3YdK4S4P4WF+QkmMJssOtvXusApPzRCbb6MhF80xerVrNcTyBf4rOYgjtPLnkyn1qpgZT7pFsM3g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xBoXmTFRgtNum24f9AiJNcRqRhJBD0131gaIDVspxl0=;
- b=Q6FBxT6A2hHeKg1vGQAFxTShgQnoGWEYPr4HnSOvVV38sWsYDVFUlVgs3/fqUsFdMrVy4RmTxtbLKH46AOnWh8k0HgXuBEZ/IGxSQWfTmI7WfUJfzU9YHCMauzhFeKlBg4YglkxngDBy9mvhNQM7EUhQxj6O8MLNi03/UGCJSBg=
-Received: from PH0PR04MB7416.namprd04.prod.outlook.com (2603:10b6:510:12::17)
- by CH4PR04MB9363.namprd04.prod.outlook.com (2603:10b6:610:23a::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.32; Tue, 15 Apr
- 2025 09:16:59 +0000
-Received: from PH0PR04MB7416.namprd04.prod.outlook.com
- ([fe80::ee22:5d81:bfcf:7969]) by PH0PR04MB7416.namprd04.prod.outlook.com
- ([fe80::ee22:5d81:bfcf:7969%5]) with mapi id 15.20.8632.035; Tue, 15 Apr 2025
- 09:16:58 +0000
-From: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-To: Christian Brauner <brauner@kernel.org>, David Sterba <dsterba@suse.cz>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-CC: Matthew Wilcox <willy@infradead.org>, now4yreal <now4yreal@foxmail.com>,
-	Jan Kara <jack@suse.com>, Viro <viro@zeniv.linux.org.uk>, Bacik
-	<josef@toxicpanda.com>, Stone <leocstone@gmail.com>, Sandeen
-	<sandeen@redhat.com>, Johnson <jeff.johnson@oss.qualcomm.com>, linux-fsdevel
-	<linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [Bug Report] OOB-read BUG in HFS+ filesystem
-Thread-Topic: [Bug Report] OOB-read BUG in HFS+ filesystem
-Thread-Index: AQHbrUhNty3+fdMAPUuyNCJ0QAeZCLOjPRqvgAAbcACAAQOfgIAAF40A
-Date: Tue, 15 Apr 2025 09:16:58 +0000
-Message-ID: <786f0a0e-8cea-4007-bbae-2225fcca95b4@wdc.com>
-References: <tencent_B730B2241BE4152C9D6AA80789EEE1DEE30A@qq.com>
- <20250414-behielt-erholen-e0cd10a4f7af@brauner>
- <Z_0aBN-20w20-UiD@casper.infradead.org>
- <20250414162328.GD16750@twin.jikos.cz>
- <20250415-wohin-anfragen-90b2df73295b@brauner>
-In-Reply-To: <20250415-wohin-anfragen-90b2df73295b@brauner>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wdc.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH0PR04MB7416:EE_|CH4PR04MB9363:EE_
-x-ms-office365-filtering-correlation-id: f5ffe597-45b2-4aaa-7cc1-08dd7bfe464e
-wdcipoutbound: EOP-TRUE
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|7416014|376014|1800799024|10070799003|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?ZWdsSHFXNmFueXNkcGpub3gvTWt5K3ZkeGhDZEdkQXpUVFZUTDBDbGN3YTNM?=
- =?utf-8?B?N1FjaVRMcWMzemxrbjBpcmpBSzNHN21iaHhiRjlvN0VvWExHSkwzQzZGS243?=
- =?utf-8?B?N0wydUZRREVsZ3BaNTlVTVlhenMvbU82TXR6TVd0VWdyS2FtM1R1Z2lJSHJp?=
- =?utf-8?B?Vk81NVNEQmwrWC9vRnVPOXZpeFlteWNEK0dDaHMycnpXTUNYbk5WQXE1Ynoz?=
- =?utf-8?B?Q05BQXhqNGp5Rm5LYS9jN1c5UVJKaUFsZ2J0Q0pPVWFOUzZ4QzZOZ1ZlMlVC?=
- =?utf-8?B?dzBHclpqcDFhZXIrUnRsSjBodW9nRnBqSENpYUREcGZwVlhxM0NRZzFQejRp?=
- =?utf-8?B?elluMjJVQTNIL2pEYXBaY0ZvSy9oZjVIRURJR2kwdkVCOU9XZGlvYjBLWXJZ?=
- =?utf-8?B?dVExRllzM1FaYWZnTzRORlRpZ0VIWnJhVXQzczRhMDgwQi9wUnpHc1Zkb2RZ?=
- =?utf-8?B?N0VFbEphNFVYNEZxcytxVGtFNTR0K3l2WGtDelp6YUdUdlI4NzcrcENtN09I?=
- =?utf-8?B?ZE5nWHphaUJSaC9TTlpOZ3lHd2hUVHJUTFgvc0xzK3ZSb2tiVmRUVW5xeWc2?=
- =?utf-8?B?eDdpMFZwREZTbW5jTE4xOWh5WUpuclF6WU95N0RjalNJZHY4UlZXNVdGLytj?=
- =?utf-8?B?VlJwdEtFT0VLNWtWNU5WdG5DWkx2T1M1ekNuRzVqRFQ0RDhVWFJxaWNURTBz?=
- =?utf-8?B?OWlLdVpEREpKeVovMEhXUnFKa3NuR25SOTM4aWR1Ymo5dENUQ29FbWxuaXRY?=
- =?utf-8?B?U1ovTUdka1ZTb3hsdGxEUHdTWTZGelltSngySTliZEpQcFJ4M2xOL1FiVlkz?=
- =?utf-8?B?cnJJUzNTM2t2elNVQUwxNXlSNVlpT2dMUGxNTHdkYkJWUmpka0ZVeFpsL3kx?=
- =?utf-8?B?c0IzUkxZRjA0cnRZTk5nSmNOTWpUWWRYSUpEcm0rWk5VdW9URnBpcXBGTm9I?=
- =?utf-8?B?MjVTb1hhejZidFZyYm85VThzTkw4eWFLenlFOVd6bnlnamVVMFkrcUx6K0Iw?=
- =?utf-8?B?OWZldkU4VDN4UXBlYktFaDlDcjJDOHN3WjZFdGdVRmJYWTlLbktqbXV3TzBv?=
- =?utf-8?B?V2VUUG1Hdk80NEVkUTJtalRlbmlSNis5TnAyNWU2TmpMMzVWdFlqckhmNXNm?=
- =?utf-8?B?dWRvQmVZUmE0YlV1eGNHZTNCTEZsUG1IU2hiWmJOeHNuZTdPdmNyNHRHWDRn?=
- =?utf-8?B?VzJOSmFVcTUzU2hBTkplKzdCRXlMckUzUHRxUFRWZ0NpWEl1c1d0TUFsdEZS?=
- =?utf-8?B?KzYxaTk0bkg3U2ZtTU1leFp4YjFsRjZBVXBSbi92WUc0ejViSExTUGNmZXBQ?=
- =?utf-8?B?UmppYnhLdHhSbHNSamhadFp3UlNLcGU3c25YMjdpeXN2R2VUcDJITFZLc2NH?=
- =?utf-8?B?RDUrRlZUQ2ZLQ1FGc0VicmRGU2RLeXZPcTR2MUoydXQxcGhQYlh0SFVJNmdn?=
- =?utf-8?B?WS91dmt1bkYrNy9zRE90SXNIT3VjMG9yaHZhLytGVUE0dkRZTmRkczdSSU5P?=
- =?utf-8?B?bHRMWjRPNStpRXRmaFVKbHFZR0xoUVNJbk15STZxR1ZFNCtTY3lFUi9SS1Rh?=
- =?utf-8?B?c054N0FJdDJwSTFYSEF0WWhMWGlvR0V3eXpicUlRY0cwY0RpSHFSWUM3azZq?=
- =?utf-8?B?M3R6c2hHT1lkZktRSHNOdlp1Mi9IbzFjd0d2dHAzQVR4ZDd3aUpQR3R0RkNl?=
- =?utf-8?B?d1d0L2Y5SUM0Q2h1bUNCajd1SjNYUldxdCt4TW0xa1NPSk00Qkl4UURrRkhv?=
- =?utf-8?B?aFA1cm0xWGY4RklHOWJrbUZIR3NqQ3puMFZwSUo5Y1ZVamdmK0UzK2tmc3hr?=
- =?utf-8?B?ei9tbUVhVzF1Zm9IM21KNldwQVRyVHR2M3JpQlZDajUvMkNjU3cvU0JTQW5n?=
- =?utf-8?B?Y042enV5d3g0SUoyb2F0RHBWbHNkcFVQQ3ZmdmVTcGlzTG9oQmlnTm1xWTNi?=
- =?utf-8?B?eUVsSjdadXkzK1FyTUo0ZWVaVnVMN0MxZHExYWtmMFFIMDQyZ1A3STR0Vnhx?=
- =?utf-8?Q?heuZM+93G9ix2IlaWS8iKmRVezc0f0=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR04MB7416.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(10070799003)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?YS9kTzI1bmpFbFJaTXRkUlUrcHByekJQNjYrR1BQeVNrK05BTUtSaVk2eHR6?=
- =?utf-8?B?eWNCd1o5bVByaVNRRjJYSWYwTkdubjEvL29GTWxZMklobnZzcDMvaEJCT2dp?=
- =?utf-8?B?K0RNVjh2M0hBMU00ZmF4U1RIQ1NoTUtRMmYvNzNNTXVObEdDRlF6dFdCTDBa?=
- =?utf-8?B?bEYyUVdqbVhCYXBaVlZIdkk0OEtVeTlIN21hZlYvd0lqZ2ZwQzYvdTgybUtV?=
- =?utf-8?B?dVNPaFdrSXovampQay9oNmRDdTRKWmpUS2JJVC80TUp5QU5TMEZmMGZaVDRW?=
- =?utf-8?B?aGRoZEtqUWpiWFduOGdrYThsZUtwTk5pNmlENW9ZbTIvcEtSNGF2LzM1UTR1?=
- =?utf-8?B?bUFzMjBqV2VEWTkwY0NKOWN5SmpjWnI5TGdOMy80V29LTGltTTdudUUweDBw?=
- =?utf-8?B?Vy9JWFBNaTB4WjN5QWNPZHRQU1J1ampPWFByMlEwa1BLeHJGOHJWT1FVZ3Fw?=
- =?utf-8?B?bytNZnUxSEtnN2p5MG0yNE1Wc1JkMHd4SW80Q3g2MXpTOTJKcnpZcXRETitZ?=
- =?utf-8?B?eXhHRjA4Z1RoU2ZnVjNyYjFkZGNUNElqYndtc003ZGxadHlzbnROZEkrRHFo?=
- =?utf-8?B?ZkxtWXBUcm1tdXE4aXdhT1lZN0hxb2xISmoycDlMQWVwaWRINVlDUFoyYkFY?=
- =?utf-8?B?OHRZbFkzTk5qQTJiSFBsNFA2cXhPQzRUWmVVMnpLR2pjYXVMRm1TWUQ5NHBX?=
- =?utf-8?B?c2NQa2hwNzJKUDhiZVhKTjI5MFFER09xM21FYkMxeXdZeTJIdjdhRWlXaFB1?=
- =?utf-8?B?aDJlZlE5SzBjcHh4RUR6VUtOU2c0dmtXV243NWlhZUV3bkFJb2hCamxTMDhs?=
- =?utf-8?B?YXBVSWRQSFhLeDU2R0ZQdWxCNkllME01azl5bXFTSFJqbmk0WEEwcHFUa3RF?=
- =?utf-8?B?cTZxSHlwcVR3dzFOWjJ2d0JlbEVnZWZMbEdMZFhrdERsS2hJN0dnVVk3d0Rn?=
- =?utf-8?B?MG1jNS9jdkk4UmFQeDN6enptcURXQVRoM0w4L0F5NnVLMHduWCttSDAzeEJi?=
- =?utf-8?B?RHZHdFhubU44QUpwVFpwNVgrbVoycEsxeElycUYwblFhK0U0YWRxbklIK3NY?=
- =?utf-8?B?VE10R05RbGlNSEh3MXR4UnNOY1E0eHZMdGw1N21Yc1BYTWdhY3Jkc1k0TXkw?=
- =?utf-8?B?TXJHTlFmaC9CVWZmTTdlbkxTRThkNkZGV3BRYWtIYlUzdWhLZTRERVkyMEF3?=
- =?utf-8?B?cDhpK2V0Vmp1MW9veGdtZ1hxOFhyQ29lY3pEN0VPRW80bGRQc0d2N29ramRB?=
- =?utf-8?B?amdEVE0vMW1zUk1kYVd5dnNKWjVTOXJKRmdIYkVCeVU3YmF0LytjL0pwNVNs?=
- =?utf-8?B?T2wzbmNGM2VlYW1RcmVXWVBlUEpvY0dqUmV3NE9qYWt5R3ZCVnhRbzdxc3VN?=
- =?utf-8?B?R3dDMnVISzFTT25UQlVLRTJHUW9XZ0I2eVB2bkJ2Y2ZwV3FTaDIwMWd0ZElT?=
- =?utf-8?B?cllCcGc3RnVTd3U0VUtNTDJ6K3dRTC9KSHdTU3JMM3pmSmdxWmlSUDlJVnlS?=
- =?utf-8?B?MkdQTnRsbk9XZzdBSUpnT2VScVh2Zks1aTcrMGgzYS9xM0xReGF6aWJ5MU5B?=
- =?utf-8?B?UHBqMldlZHhoS25jZ0JkcXJXeTZQRGFMUGhTRGhBcm1qLzlZWE9BeWpnS1Y0?=
- =?utf-8?B?eko4dndrczIrNlpMOVBZcllzczl5VUZjTk1pTjBVUERLMjQ2V1VLWW5yN2p2?=
- =?utf-8?B?V096Z1dBRi9OeXRSRmhHcGQyTTh0bGR3RERERmFTRG5RV1VuSEVvMy9LRnRz?=
- =?utf-8?B?WUdaaWRaMlY0N3k3QmFnS1d0QnJMaFhhMzBGWFBJd0RJSzVQNUdRak4rU0Q2?=
- =?utf-8?B?Z1pldzFoZngzN0FkS2RXaEY2M2FZTkg3bXRLeVFLOURlTEc0b250VzZ6U0ta?=
- =?utf-8?B?VkFzeTYvZFZkQVpPWWdDVmVrK1EzU2xIaWgrS1VEaldzd1NUR2l6TXhnVVJu?=
- =?utf-8?B?d3RSNmlxSWtWUEFneDFVb2d1c2RJdUxGdUN2MWo4VHZUcVc4ZVB4emZVUE1m?=
- =?utf-8?B?ZTdyUEpia1NoeEhIWUx3K1BFZzZPREtSaTB2RzVCcDVyRmNpNytZNlpnV3pj?=
- =?utf-8?B?WTk2Y05UMERjK3d5NC96QjVvcWNPNE5SVHVUMkJ2Znk2eGtsMXdhWitiWUl0?=
- =?utf-8?B?UGphTTBqUmMxcFpxYk1NSW5Ba3VVdTZtUTFPTEdFSFI2T1JqbE1VcGw3NjUv?=
- =?utf-8?B?MDVMdG53WTR0UWNaaVBrKzRTMXRTV3U5c0hFZVVMUEE4TW5lcUphKzdYTGZM?=
- =?utf-8?B?TGVYeXBMd2tYVldPRDlMMWNFK0hnPT0=?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <793BCBAEB0BF3041828B7A05506C2E37@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6415D27FD5D;
+	Tue, 15 Apr 2025 09:19:47 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11970250C08
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 09:19:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744708786; cv=none; b=CSjHGfsvCjNKPi2NqgfAQDpMhpzYDdVfENV9/Rg2Q3Y+Pqh/vOE91xSj7gSRSBS5bD+QqvnTJ4dtOkfIbsKwckzoFVt0hnwXzXAOW/UBnqLuKBEvHydb4ncYKy1fGC+7+ygsnobxOulNCbRM0/+GfQ3GcMyiEk48yb1j9hA+64Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744708786; c=relaxed/simple;
+	bh=LUmlEpZ4Ez9LtPfiPkGnfU5PRDp3fu5I4ZGM8vvkSnM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GFH9ZSWA1u/zeQXm08krFLWplh+SvN3iYVf4xBwfwPaymywiFw+xxvtmOrKVZGxXYbb2Z8z6zfjuE224u3dU47JjKouRLJLWWfN1G3wLWVFw994kjfS+2ZJgWyNIbp50fxqWts/4ljyMxZyuKtqOsRfs4zsLZszz/gfeG/3drKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8BxIK+sJP5n38u9AA--.50120S3;
+	Tue, 15 Apr 2025 17:19:40 +0800 (CST)
+Received: from linux.localdomain (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowMCx7xukJP5nHMyCAA--.57263S2;
+	Tue, 15 Apr 2025 17:19:34 +0800 (CST)
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] LoongArch: Handle fp, lsx, lasx and lbt assembly symbols
+Date: Tue, 15 Apr 2025 17:19:30 +0800
+Message-ID: <20250415091930.19529-1-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	nyooLNkwRr8j3tDldYOEMZTkOXoDZ8hS1+v0/MnSjrE+4fPxhy+w1Mk+u3t9/PPKgyAaBfBCWn1UB6xq09smZkTMTVJMuas5w7zPwC0XYlYwJRbxy4ZRQVVvTofex6JcDzfJ3qmiRINJVgZ8hCEgYzd27nzGzGKUu59raaD5o0c8ls6TXpLMmZvBSHm4msZsgUGDG9w9lkygUJ4MG6hA7GcJ9eK/DQc53F200c1x1E64dcgKlIi0NbqSJhjan9/9K9dM3LLXtxrSG1XFUOyPyIPn1XuWbduj2riPysL5auRQbemdvw5Ec448SmQlKNQg3aZh3hvK93HORQQyK871ax90aqKy0mC21eOOzHhgw5YGpOl/CxDq3HO5IDdMH2QwBDM9y6FRHWPzgIQgvqBHqBbaiu+UIL44PATmjv3zE8TX1XsdDJskneU0zWeqwHW3nhjR8kKHA8SbMS0/OO1Ey69vUyViE+ohqBYS3qMB5MxTGpFoUtlqPBp56zfLlSs6koq5fCbMoSvk4Jy9b027lAjrpJmi82nCw8D8gbvuF96sbXmtaMwTiTbVgIkPR7ucZ3vf5Yu2GcGfOcUEIPROV4M6j/n+RRXh2ImaEjSCIfxN3ZlcF+H15zG3Aitf4XD9
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR04MB7416.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f5ffe597-45b2-4aaa-7cc1-08dd7bfe464e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Apr 2025 09:16:58.7469
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: +ZUqQ8Eoqg03xqKGfDO8tLJaA3eCKKHOMZ7GM+0KOAOBguBfsOyLqUEg0KzVxw+k+iThZoT/PnNbYcC5MkOWYToIRrWBy9iGveFj1bq0G68=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH4PR04MB9363
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMCx7xukJP5nHMyCAA--.57263S2
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW3JF4rtw48CFy3JFW3Wr4fXrc_yoW3Zr47pr
+	nrArn5Cw48GFnav34DJ34jvFZ8Xas5Ga1S93Zrt34fCr1jkr9rurn7Ga1DZFy8Ka48Ar1F
+	9r4avF1Sy3WUC3cCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
+	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v2
+	6r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x0EwI
+	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
+	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vIr41lIxAIcVC0I7
+	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k2
+	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
+	AFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8r9N3UUUUU==
 
-T24gMTUuMDQuMjUgMDk6NTIsIENocmlzdGlhbiBCcmF1bmVyIHdyb3RlOg0KPiBPbiBNb24sIEFw
-ciAxNCwgMjAyNSBhdCAwNjoyMzoyOFBNICswMjAwLCBEYXZpZCBTdGVyYmEgd3JvdGU6DQo+PiBP
-biBNb24sIEFwciAxNCwgMjAyNSBhdCAwMzoyMTo1NlBNICswMTAwLCBNYXR0aGV3IFdpbGNveCB3
-cm90ZToNCj4+PiBPbiBNb24sIEFwciAxNCwgMjAyNSBhdCAwNDoxODoyN1BNICswMjAwLCBDaHJp
-c3RpYW4gQnJhdW5lciB3cm90ZToNCj4+Pj4gT24gTW9uLCBBcHIgMTQsIDIwMjUgYXQgMDk6NDU6
-MjVQTSArMDgwMCwgbm93NHlyZWFsIHdyb3RlOg0KPj4+Pj4gRGVhciBMaW51eCBTZWN1cml0eSBN
-YWludGFpbmVycywNCj4+Pj4+IEkgd291bGQgbGlrZSB0byByZXBvcnQgYSBPT0ItcmVhZCB2dWxu
-ZXJhYmlsaXR5IGluIHRoZSBIRlMrIGZpbGUNCj4+Pj4+IHN5c3RlbSwgd2hpY2ggSSBkaXNjb3Zl
-cmVkIHVzaW5nIG91ciBpbi1ob3VzZSBkZXZlbG9wZWQga2VybmVsIGZ1enplciwNCj4+Pj4+IFN5
-bXN5ei4NCj4+Pj4NCj4+Pj4gQnVnIHJlcG9ydHMgZnJvbSBub24tb2ZmaWNpYWwgc3l6Ym90IGlu
-c3RhbmNlcyBhcmUgZ2VuZXJhbGx5IG5vdA0KPj4+PiBhY2NlcHRlZC4NCj4+Pj4NCj4+Pj4gaGZz
-IGFuZCBoZnNwbHVzIGFyZSBvcnBoYW5lZCBmaWxlc3lzdGVtcyBzaW5jZSBhdCBsZWFzdCAyMDE0
-LiBCdWcNCj4+Pj4gcmVwb3J0cyBmb3Igc3VjaCBmaWxlc3lzdGVtcyB3b24ndCByZWNlaXZlIG11
-Y2ggYXR0ZW50aW9uIGZyb20gdGhlIGNvcmUNCj4+Pj4gbWFpbnRhaW5lcnMuDQo+Pj4+DQo+Pj4+
-IEknbSB2ZXJ5IHZlcnkgY2xvc2UgdG8gcHV0dGluZyB0aGVtIG9uIHRoZSBjaG9wcGluZyBibG9j
-ayBhcyB0aGV5J3JlDQo+Pj4+IHNsb3dseSB0dXJuaW5nIGludG8gcG9pbnRsZXNzIGJ1cmRlbnMu
-DQo+Pj4NCj4+PiBJJ3ZlIHRyaWVkIGFza2luZyBzb21lIHBlb3BsZSB3aG8gYXJlIGxvbmcgdGVy
-bSBBcHBsZSAmIExpbnV4IHBlb3BsZSwNCj4+PiBidXQgaGF2ZW4ndCBiZWVuIGFibGUgdG8gZmlu
-ZCBhbnlvbmUgaW50ZXJlc3RlZCBpbiBiZWNvbWluZyBtYWludGFpbmVyLg0KPj4+IExldCdzIGRy
-b3AgYm90aCBoZnMgJiBoZnNwbHVzLiAgVGVuIHllYXJzIG9mIGJlaW5nIHVubWFpbnRhaW5lZCBp
-cw0KPj4+IGxvbmcgZW5vdWdoLg0KPj4NCj4+IEFncmVlZC4gSWYgbmVlZGVkIHRoZXJlIGFyZSBG
-VVNFIGltcGxlbWVudGF0aW9ucyB0byBhY2Nlc3MgLmRtZyBmaWxlcw0KPj4gd2l0aCBIRlMvSEZT
-KyBvciBvdGhlciBzdGFuZGFsb25lIHRvb2xzLg0KPj4NCj4+IGh0dHBzOi8vZ2l0aHViLmNvbS8w
-eDA5L2hmc2Z1c2UNCj4+IGh0dHBzOi8vZ2l0aHViLmNvbS9kYXJsaW5naHEvZGFybGluZy1kbWcN
-Cj4gDQo+IE9rLCBJJ20gb3BlbiB0byB0cnlpbmcuIEknbSBhZGRpbmcgYSBkZXByZWNhdGlvbiBt
-ZXNzYWdlIHdoZW4gaW5pdGF0aW5nDQo+IGEgbmV3IGhmc3twbHVzfSBjb250ZXh0IGxvZ2dlZCB0
-byBkbWVzZyBhbmQgdGhlbiB3ZSBjYW4gdHJ5IGFuZCByZW1vdmUNCj4gaXQgYnkgdGhlIGVuZCBv
-ZiB0aGUgeWVhci4NCj4gDQo+IA0KDQpKdXN0IGEgd29yZCBvZiBjYXV0aW9uIHRob3VnaCwgKGF0
-IGxlYXN0IEludGVsKSBNYWNzIGhhdmUgdGhlaXIgRUZJIEVTUCANCnBhcnRpdGlvbiBvbiBIRlMr
-IGluc3RlYWQgb2YgRkFULiBJIGRvbid0IG93biBhbiBBcHBsZSBTaWxpY29uIE1hYyBzbyBJIA0K
-Y2FuJ3QgY2hlY2sgaWYgaXQncyB0aGVyZSBhcyB3ZWxsLg0K
+Like the other relevant symbols, export some fp, lsx, lasx and lbt
+assembly symbols and put the function declarations in header files
+rather than source files.
+
+While at it, use "asmlinkage" for the other existing C prototypes
+of assembly functions and also do not use the "extern" keyword with
+function declarations according to the document coding-style.rst.
+
+Cc: stable@vger.kernel.org # 6.6+
+Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+---
+ arch/loongarch/include/asm/fpu.h | 38 ++++++++++++++++++--------------
+ arch/loongarch/include/asm/lbt.h | 10 ++++++---
+ arch/loongarch/kernel/fpu.S      |  6 +++++
+ arch/loongarch/kernel/lbt.S      |  4 ++++
+ arch/loongarch/kernel/signal.c   | 21 ------------------
+ 5 files changed, 39 insertions(+), 40 deletions(-)
+
+diff --git a/arch/loongarch/include/asm/fpu.h b/arch/loongarch/include/asm/fpu.h
+index 3177674228f8..23f5a4b9c32d 100644
+--- a/arch/loongarch/include/asm/fpu.h
++++ b/arch/loongarch/include/asm/fpu.h
+@@ -22,22 +22,28 @@
+ struct sigcontext;
+ 
+ #define kernel_fpu_available() cpu_has_fpu
+-extern void kernel_fpu_begin(void);
+-extern void kernel_fpu_end(void);
+-
+-extern void _init_fpu(unsigned int);
+-extern void _save_fp(struct loongarch_fpu *);
+-extern void _restore_fp(struct loongarch_fpu *);
+-
+-extern void _save_lsx(struct loongarch_fpu *fpu);
+-extern void _restore_lsx(struct loongarch_fpu *fpu);
+-extern void _init_lsx_upper(void);
+-extern void _restore_lsx_upper(struct loongarch_fpu *fpu);
+-
+-extern void _save_lasx(struct loongarch_fpu *fpu);
+-extern void _restore_lasx(struct loongarch_fpu *fpu);
+-extern void _init_lasx_upper(void);
+-extern void _restore_lasx_upper(struct loongarch_fpu *fpu);
++void kernel_fpu_begin(void);
++void kernel_fpu_end(void);
++
++asmlinkage void _init_fpu(unsigned int);
++asmlinkage void _save_fp(struct loongarch_fpu *);
++asmlinkage void _restore_fp(struct loongarch_fpu *);
++asmlinkage int _save_fp_context(void __user *fpregs, void __user *fcc, void __user *csr);
++asmlinkage int _restore_fp_context(void __user *fpregs, void __user *fcc, void __user *csr);
++
++asmlinkage void _save_lsx(struct loongarch_fpu *fpu);
++asmlinkage void _restore_lsx(struct loongarch_fpu *fpu);
++asmlinkage void _init_lsx_upper(void);
++asmlinkage void _restore_lsx_upper(struct loongarch_fpu *fpu);
++asmlinkage int _save_lsx_context(void __user *fpregs, void __user *fcc, void __user *fcsr);
++asmlinkage int _restore_lsx_context(void __user *fpregs, void __user *fcc, void __user *fcsr);
++
++asmlinkage void _save_lasx(struct loongarch_fpu *fpu);
++asmlinkage void _restore_lasx(struct loongarch_fpu *fpu);
++asmlinkage void _init_lasx_upper(void);
++asmlinkage void _restore_lasx_upper(struct loongarch_fpu *fpu);
++asmlinkage int _save_lasx_context(void __user *fpregs, void __user *fcc, void __user *fcsr);
++asmlinkage int _restore_lasx_context(void __user *fpregs, void __user *fcc, void __user *fcsr);
+ 
+ static inline void enable_lsx(void);
+ static inline void disable_lsx(void);
+diff --git a/arch/loongarch/include/asm/lbt.h b/arch/loongarch/include/asm/lbt.h
+index e671978bf552..38566574e562 100644
+--- a/arch/loongarch/include/asm/lbt.h
++++ b/arch/loongarch/include/asm/lbt.h
+@@ -12,9 +12,13 @@
+ #include <asm/loongarch.h>
+ #include <asm/processor.h>
+ 
+-extern void _init_lbt(void);
+-extern void _save_lbt(struct loongarch_lbt *);
+-extern void _restore_lbt(struct loongarch_lbt *);
++asmlinkage void _init_lbt(void);
++asmlinkage void _save_lbt(struct loongarch_lbt *);
++asmlinkage void _restore_lbt(struct loongarch_lbt *);
++asmlinkage int _save_lbt_context(void __user *regs, void __user *eflags);
++asmlinkage int _restore_lbt_context(void __user *regs, void __user *eflags);
++asmlinkage int _save_ftop_context(void __user *ftop);
++asmlinkage int _restore_ftop_context(void __user *ftop);
+ 
+ static inline int is_lbt_enabled(void)
+ {
+diff --git a/arch/loongarch/kernel/fpu.S b/arch/loongarch/kernel/fpu.S
+index 6ab640101457..28caf416ae36 100644
+--- a/arch/loongarch/kernel/fpu.S
++++ b/arch/loongarch/kernel/fpu.S
+@@ -458,6 +458,7 @@ SYM_FUNC_START(_save_fp_context)
+ 	li.w		a0, 0				# success
+ 	jr		ra
+ SYM_FUNC_END(_save_fp_context)
++EXPORT_SYMBOL_GPL(_save_fp_context)
+ 
+ /*
+  * a0: fpregs
+@@ -471,6 +472,7 @@ SYM_FUNC_START(_restore_fp_context)
+ 	li.w		a0, 0				# success
+ 	jr		ra
+ SYM_FUNC_END(_restore_fp_context)
++EXPORT_SYMBOL_GPL(_restore_fp_context)
+ 
+ /*
+  * a0: fpregs
+@@ -484,6 +486,7 @@ SYM_FUNC_START(_save_lsx_context)
+ 	li.w	a0, 0					# success
+ 	jr	ra
+ SYM_FUNC_END(_save_lsx_context)
++EXPORT_SYMBOL_GPL(_save_lsx_context)
+ 
+ /*
+  * a0: fpregs
+@@ -497,6 +500,7 @@ SYM_FUNC_START(_restore_lsx_context)
+ 	li.w	a0, 0					# success
+ 	jr	ra
+ SYM_FUNC_END(_restore_lsx_context)
++EXPORT_SYMBOL_GPL(_restore_lsx_context)
+ 
+ /*
+  * a0: fpregs
+@@ -510,6 +514,7 @@ SYM_FUNC_START(_save_lasx_context)
+ 	li.w	a0, 0					# success
+ 	jr	ra
+ SYM_FUNC_END(_save_lasx_context)
++EXPORT_SYMBOL_GPL(_save_lasx_context)
+ 
+ /*
+  * a0: fpregs
+@@ -523,6 +528,7 @@ SYM_FUNC_START(_restore_lasx_context)
+ 	li.w	a0, 0					# success
+ 	jr	ra
+ SYM_FUNC_END(_restore_lasx_context)
++EXPORT_SYMBOL_GPL(_restore_lasx_context)
+ 
+ .L_fpu_fault:
+ 	li.w	a0, -EFAULT				# failure
+diff --git a/arch/loongarch/kernel/lbt.S b/arch/loongarch/kernel/lbt.S
+index 001f061d226a..71678912d24c 100644
+--- a/arch/loongarch/kernel/lbt.S
++++ b/arch/loongarch/kernel/lbt.S
+@@ -90,6 +90,7 @@ SYM_FUNC_START(_save_lbt_context)
+ 	li.w		a0, 0			# success
+ 	jr		ra
+ SYM_FUNC_END(_save_lbt_context)
++EXPORT_SYMBOL_GPL(_save_lbt_context)
+ 
+ /*
+  * a0: scr
+@@ -110,6 +111,7 @@ SYM_FUNC_START(_restore_lbt_context)
+ 	li.w		a0, 0			# success
+ 	jr		ra
+ SYM_FUNC_END(_restore_lbt_context)
++EXPORT_SYMBOL_GPL(_restore_lbt_context)
+ 
+ /*
+  * a0: ftop
+@@ -120,6 +122,7 @@ SYM_FUNC_START(_save_ftop_context)
+ 	li.w		a0, 0			# success
+ 	jr		ra
+ SYM_FUNC_END(_save_ftop_context)
++EXPORT_SYMBOL_GPL(_save_ftop_context)
+ 
+ /*
+  * a0: ftop
+@@ -150,6 +153,7 @@ SYM_FUNC_START(_restore_ftop_context)
+ 	li.w		a0, 0			# success
+ 	jr		ra
+ SYM_FUNC_END(_restore_ftop_context)
++EXPORT_SYMBOL_GPL(_restore_ftop_context)
+ 
+ .L_lbt_fault:
+ 	li.w		a0, -EFAULT		# failure
+diff --git a/arch/loongarch/kernel/signal.c b/arch/loongarch/kernel/signal.c
+index 7a555b600171..4740cb5b2388 100644
+--- a/arch/loongarch/kernel/signal.c
++++ b/arch/loongarch/kernel/signal.c
+@@ -51,27 +51,6 @@
+ #define lock_lbt_owner()	({ preempt_disable(); pagefault_disable(); })
+ #define unlock_lbt_owner()	({ pagefault_enable(); preempt_enable(); })
+ 
+-/* Assembly functions to move context to/from the FPU */
+-extern asmlinkage int
+-_save_fp_context(void __user *fpregs, void __user *fcc, void __user *csr);
+-extern asmlinkage int
+-_restore_fp_context(void __user *fpregs, void __user *fcc, void __user *csr);
+-extern asmlinkage int
+-_save_lsx_context(void __user *fpregs, void __user *fcc, void __user *fcsr);
+-extern asmlinkage int
+-_restore_lsx_context(void __user *fpregs, void __user *fcc, void __user *fcsr);
+-extern asmlinkage int
+-_save_lasx_context(void __user *fpregs, void __user *fcc, void __user *fcsr);
+-extern asmlinkage int
+-_restore_lasx_context(void __user *fpregs, void __user *fcc, void __user *fcsr);
+-
+-#ifdef CONFIG_CPU_HAS_LBT
+-extern asmlinkage int _save_lbt_context(void __user *regs, void __user *eflags);
+-extern asmlinkage int _restore_lbt_context(void __user *regs, void __user *eflags);
+-extern asmlinkage int _save_ftop_context(void __user *ftop);
+-extern asmlinkage int _restore_ftop_context(void __user *ftop);
+-#endif
+-
+ struct rt_sigframe {
+ 	struct siginfo rs_info;
+ 	struct ucontext rs_uctx;
+-- 
+2.42.0
+
 
