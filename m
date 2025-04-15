@@ -1,192 +1,161 @@
-Return-Path: <linux-kernel+bounces-604730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69E2CA897D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:25:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2532DA897E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:26:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E44B7A3272
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:24:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C06243AB181
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:26:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1CC12820C4;
-	Tue, 15 Apr 2025 09:25:15 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4264F2820B7;
+	Tue, 15 Apr 2025 09:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="k+dzLShd"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B40205AA3;
-	Tue, 15 Apr 2025 09:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F332D27A932;
+	Tue, 15 Apr 2025 09:26:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744709115; cv=none; b=N5chTOBx/wCV+hPQpyXcciG+zUSYYEZ+YbC2oRoYVSThYpqBd7JKhhu7NMxc4qpKoIDCu2TTUr3OwSB0BJra+gyHKSl9ClA1Dykiq92CylUojQh1GKXBV5Iq4wEMLVggbY1Qk4JwGVQVxbEVXegQGkdjfteiyn4NDQgKvjWnroE=
+	t=1744709196; cv=none; b=Q2dv+iklr7UFVH5S4XxfZjmoGIcO06y9qRnRpZ7sCrKBDF1Yyiign3yrYHR46R1Hr0XLuodFRQlgDxbHYFfEKxJmvNm+LpXSfrhjhfASyyfZfcISe8eAKWcUebrXObHiwwjWrNJxeDZF6nofO78eYTzTX7zUq84+4MU6NTB0tVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744709115; c=relaxed/simple;
-	bh=STTgkUZueXTcQfp5TF055dGrFMr6LZZxoaECsIO7+w8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=l940ufOKh9pf8ziE+lgf6oGyeE2P4HiXpp/vKgo5btww+oB6hyEtwFeYjoal4Z9ezg5z6nF65+ajvdVVY9zTyUhuf7MvN22fPCZ/vL8ERTFwq42Vcz+sO7XZ9c4SMGUjn8LIaDpGr5aGsF5ZMq1QJy8I7NO0VPfv1DcKY8XOhC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZcJcl5Vhqz6L58S;
-	Tue, 15 Apr 2025 17:23:51 +0800 (CST)
-Received: from frapeml500007.china.huawei.com (unknown [7.182.85.172])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4098F1407DB;
-	Tue, 15 Apr 2025 17:25:09 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (7.182.85.71) by
- frapeml500007.china.huawei.com (7.182.85.172) with Microsoft SMTP Server
+	s=arc-20240116; t=1744709196; c=relaxed/simple;
+	bh=UTwpbbngg84fuy2zUb2xDQozibZQbR5SveTQ8xVJlNU=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=p0RTV/b0j4zY1+r74PG8igEawFbw0MrqA9qRdpFM97z97jK2V3hx86S24dhpCnJyEcKJLRLiMbMreDj8srNCDuCC9PUlxLOOj3bPt2sIHXnqTeey1BzNNygqDaYP4bRVMzKPCI9gCvZr7++GnkdUE14ezRBW47kAyY+X85rbycw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=k+dzLShd; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53F8tH9t005263;
+	Tue, 15 Apr 2025 09:26:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=ZqwRMi8M1IUtIS6VXtjKJq
+	uub+so3nVVibWZGQx2TpA=; b=k+dzLShd7NITl7CfdS09rV8Qd+OuKmnnqtlXUM
+	ig8urptOfhFL9f5gl1J8f0ufyBEalWfzkEnSCCvflSnrOkF8qremtP1aZIIXSb/F
+	yZLlU+DmwZsoetKR0CThu4rVJ4mDNhL0/VfPc8E4KXU5poUojIdlts1bBxIx6AcO
+	fXqas7YvSmATER/iEiDEEQtGrsjW764yHgYt4sRzDhT5vXi6OhAKZ7cBsOuc1rxe
+	4Mh78uBZRSsrUDAruqKFjqtX1xiRtbPc+dpZUOU672BxSuN6UX3kY7djmgDJfm+L
+	tEOd0C5OdGTTlgXjDQ72gPNcz+5jOFHopEv6sEmLknTJ+xwQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45yhbpqa06-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Apr 2025 09:26:22 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53F9QLrW006213
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Apr 2025 09:26:21 GMT
+Received: from yuanfang4-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 15 Apr 2025 11:25:08 +0200
-Received: from frapeml500008.china.huawei.com ([7.182.85.71]) by
- frapeml500008.china.huawei.com ([7.182.85.71]) with mapi id 15.01.2507.039;
- Tue, 15 Apr 2025 11:25:08 +0200
-From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To: liulongfang <liulongfang@huawei.com>, "alex.williamson@redhat.com"
-	<alex.williamson@redhat.com>, "jgg@nvidia.com" <jgg@nvidia.com>, "Jonathan
- Cameron" <jonathan.cameron@huawei.com>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linuxarm@openeuler.org" <linuxarm@openeuler.org>
-Subject: RE: [PATCH v7 6/6] hisi_acc_vfio_pci: update function return values.
-Thread-Topic: [PATCH v7 6/6] hisi_acc_vfio_pci: update function return values.
-Thread-Index: AQHbqpZ//2t0kcEhp0OCOF/DXXF6prOkeeyQ
-Date: Tue, 15 Apr 2025 09:25:08 +0000
-Message-ID: <ed4f09039ffb45f3a3d5b418c92ae6ad@huawei.com>
-References: <20250411035907.57488-1-liulongfang@huawei.com>
- <20250411035907.57488-7-liulongfang@huawei.com>
-In-Reply-To: <20250411035907.57488-7-liulongfang@huawei.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ 15.2.1544.9; Tue, 15 Apr 2025 02:26:18 -0700
+From: Yuanfang Zhang <quic_yuanfang@quicinc.com>
+Subject: [PATCH v4 0/2] coresight: Add Coresight Trace Network On Chip
+ driver
+Date: Tue, 15 Apr 2025 17:25:38 +0800
+Message-ID: <20250415-trace-noc-v4-0-979938fedfd8@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABIm/mcC/3XPy07DMBAF0F+pvK6RHxM/WPEfqAs/ZqgXJOCUq
+ KjKv+NEIKVEXc7I5871jY1YC47s+XBjFacylqFvAxwPLJ1D/4a85DYzJVQnQGh+qSEh74fEySl
+ nom5bh6y9/6hI5bpmvZ7afC7jZajfa/Qkly0DY0AL53l0LnPwOfGIouM2kohRSXJgXz6/Sip9e
+ krDO1tyJr3a3wZ202DSXPAOoqesQg7k7+zxr7WU/40k6XMma7yP+3vw8B40652BQEmDjW5vu4e
+ 2a1ZbslomAoy4t2Zr3daa5Z/KJCODEpbMvZ3n+QeqJ7N5yAEAAA==
+X-Change-ID: 20250403-trace-noc-f8286b30408e
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+	<mike.leach@linaro.org>,
+        James Clark <james.clark@linaro.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Alexander Shishkin
+	<alexander.shishkin@linux.intel.com>
+CC: <kernel@oss.qualcomm.com>, <linux-arm-msm@vger.kernel.org>,
+        <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Yuanfang Zhang
+	<quic_yuanfang@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744709177; l=1710;
+ i=quic_yuanfang@quicinc.com; s=20241209; h=from:subject:message-id;
+ bh=UTwpbbngg84fuy2zUb2xDQozibZQbR5SveTQ8xVJlNU=;
+ b=QqN88X/vzOI7YeLmoIHxWhivRSa/lrfSS2xycn/rGoayOrunSkrPf7d4pWqbKnYhUmjWsWKzO
+ 2ILEyqHPcSlBQ0w1PlO6P0lLFiIBDKiebD5isCi9/n4abiQJXZ4xwcS
+X-Developer-Key: i=quic_yuanfang@quicinc.com; a=ed25519;
+ pk=ZrIjRVq9LN8/zCQGbDEwrZK/sfnVjwQ2elyEZAOaV1Q=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: XfsPSoorrSd5FiA-etJlvgXxWZ5k1sba
+X-Proofpoint-GUID: XfsPSoorrSd5FiA-etJlvgXxWZ5k1sba
+X-Authority-Analysis: v=2.4 cv=I+plRMgg c=1 sm=1 tr=0 ts=67fe263e cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=wQFbxXTkjMarF-hqfQ4A:9
+ a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-15_04,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
+ phishscore=0 adultscore=0 priorityscore=1501 mlxscore=0 lowpriorityscore=0
+ bulkscore=0 mlxlogscore=999 clxscore=1015 impostorscore=0 malwarescore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504150065
 
+The Trace Network On Chip (TNOC) is an integration hierarchy which is a
+hardware component that integrates the functionalities of TPDA and
+funnels. It collects trace form subsystems and transfers to coresight
+sink.
 
+Signed-off-by: Yuanfang Zhang <quic_yuanfang@quicinc.com>
+---
+Changes in v4:
+- Fix dt_binding warning.
+- update mask of trace_noc amba_id.
+- Modify driver comments.
+- rename TRACE_NOC_SYN_VAL to TRACE_NOC_SYNC_INTERVAL.
+- Link to v3: https://lore.kernel.org/r/20250411-trace-noc-v3-0-1f19ddf7699b@quicinc.com
 
-> -----Original Message-----
-> From: liulongfang <liulongfang@huawei.com>
-> Sent: Friday, April 11, 2025 4:59 AM
-> To: alex.williamson@redhat.com; jgg@nvidia.com; Shameerali Kolothum
-> Thodi <shameerali.kolothum.thodi@huawei.com>; Jonathan Cameron
-> <jonathan.cameron@huawei.com>
-> Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linuxarm@openeuler.org; liulongfang <liulongfang@huawei.com>
-> Subject: [PATCH v7 6/6] hisi_acc_vfio_pci: update function return values.
->=20
-> In this driver file, many functions call sub-functions and use ret
-> to store the error code of the sub-functions.
-> However, instead of directly returning ret to the caller, they use a
-> converted error code, which prevents the end-user from clearly
-> understanding the root cause of the error.
-> Therefore, the code needs to be modified to directly return the error
-> code from the sub-functions.
->=20
-> Signed-off-by: Longfang Liu <liulongfang@huawei.com>
-> ---
->  drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
->=20
-> diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> index d12a350440d3..c63e302ac092 100644
-> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> @@ -392,7 +392,7 @@ static int vf_qm_check_match(struct
-> hisi_acc_vf_core_device *hisi_acc_vdev,
->  	ret =3D vf_qm_version_check(vf_data, dev);
->  	if (ret) {
->  		dev_err(dev, "failed to match ACC_DEV_MAGIC\n");
-> -		return -EINVAL;
-> +		return ret;
->  	}
->=20
->  	if (vf_data->dev_id !=3D hisi_acc_vdev->vf_dev->device) {
-> @@ -404,7 +404,7 @@ static int vf_qm_check_match(struct
-> hisi_acc_vf_core_device *hisi_acc_vdev,
->  	ret =3D qm_get_vft(vf_qm, &vf_qm->qp_base);
->  	if (ret <=3D 0) {
->  		dev_err(dev, "failed to get vft qp nums\n");
-> -		return -EINVAL;
-> +		return ret;
->  	}
->=20
->  	if (ret !=3D vf_data->qp_num) {
-> @@ -501,7 +501,7 @@ static int vf_qm_load_data(struct
-> hisi_acc_vf_core_device *hisi_acc_vdev,
->  	ret =3D qm_write_regs(qm, QM_VF_STATE, &vf_data->vf_qm_state, 1);
->  	if (ret) {
->  		dev_err(dev, "failed to write QM_VF_STATE\n");
-> -		return -EINVAL;
-> +		return ret;
->  	}
->  	hisi_acc_vdev->vf_qm_state =3D vf_data->vf_qm_state;
->=20
-> @@ -542,7 +542,7 @@ static int vf_qm_read_data(struct hisi_qm *vf_qm,
-> struct acc_vf_data *vf_data)
->=20
->  	ret =3D qm_get_regs(vf_qm, vf_data);
->  	if (ret)
-> -		return -EINVAL;
-> +		return ret;
->=20
->  	/* Every reg is 32 bit, the dma address is 64 bit. */
->  	vf_data->eqe_dma =3D vf_data->qm_eqc_dw[QM_XQC_ADDR_HIGH];
-> @@ -556,13 +556,13 @@ static int vf_qm_read_data(struct hisi_qm
-> *vf_qm, struct acc_vf_data *vf_data)
->  	ret =3D qm_get_sqc(vf_qm, &vf_data->sqc_dma);
->  	if (ret) {
->  		dev_err(dev, "failed to read SQC addr!\n");
-> -		return -EINVAL;
-> +		return ret;
->  	}
->=20
->  	ret =3D qm_get_cqc(vf_qm, &vf_data->cqc_dma);
->  	if (ret) {
->  		dev_err(dev, "failed to read CQC addr!\n");
-> -		return -EINVAL;
-> +		return ret;
->  	}
->=20
->  	return 0;
-> @@ -588,7 +588,7 @@ static int vf_qm_state_save(struct
-> hisi_acc_vf_core_device *hisi_acc_vdev,
->=20
->  	ret =3D vf_qm_read_data(vf_qm, vf_data);
->  	if (ret)
-> -		return -EINVAL;
-> +		return ret;
->=20
->  	migf->total_length =3D sizeof(struct acc_vf_data);
->  	/* Save eqc and aeqc interrupt information */
-> @@ -1379,7 +1379,7 @@ static int hisi_acc_vf_debug_check(struct seq_file
-> *seq, struct vfio_device *vde
->  	ret =3D qm_wait_dev_not_ready(vf_qm);
->  	if (ret) {
->  		seq_puts(seq, "VF device not ready!\n");
-> -		return -EBUSY;
-> +		return ret;
->  	}
->=20
->  	return 0;
+Changes in v3:
+- Remove unnecessary sysfs nodes.
+- update commit messages.
+- Use 'writel' instead of 'write_relaxed' when writing to the register for the last time.
+- Add trace_id ops.
+- Link to v2: https://lore.kernel.org/r/20250226-trace-noc-driver-v2-0-8afc6584afc5@quicinc.com
 
-Any reason you avoided few other instances here?
+Changes in v2:
+- Modified the format of DT binging file.
+- Fix compile warnings.
+- Link to v1: https://lore.kernel.org/r/46643089-b88d-49dc-be05-7bf0bb21f847@quicinc.com
 
-1. qemu_set_regs() --> hisi_qm_wait_mb_ready() -->ret -EBUSY;
-2. vf_qm_cache_wb() ret -EINVAL on -ETIMEOUT.
+---
+Yuanfang Zhang (2):
+      dt-bindings: arm: Add device Trace Network On Chip definition
+      coresight: add coresight Trace Network On Chip driver
 
-With the above addressed,
+ .../bindings/arm/qcom,coresight-tnoc.yaml          | 111 ++++++++++++
+ drivers/hwtracing/coresight/Kconfig                |  13 ++
+ drivers/hwtracing/coresight/Makefile               |   1 +
+ drivers/hwtracing/coresight/coresight-tnoc.c       | 191 +++++++++++++++++++++
+ drivers/hwtracing/coresight/coresight-tnoc.h       |  34 ++++
+ 5 files changed, 350 insertions(+)
+---
+base-commit: a2cc6ff5ec8f91bc463fd3b0c26b61166a07eb11
+change-id: 20250403-trace-noc-f8286b30408e
 
-Reviewed-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-
-Thanks,
-Shameer
+Best regards,
+-- 
+Yuanfang Zhang <quic_yuanfang@quicinc.com>
 
 
