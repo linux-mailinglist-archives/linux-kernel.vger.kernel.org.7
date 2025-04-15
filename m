@@ -1,173 +1,141 @@
-Return-Path: <linux-kernel+bounces-604128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAB82A890F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 03:00:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33261A890F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 03:01:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C93B4172B24
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 01:00:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B742189BBCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 01:01:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88DE5133987;
-	Tue, 15 Apr 2025 01:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71BA84E1C;
+	Tue, 15 Apr 2025 01:01:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sJNiQ3Lc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NsiQEVla"
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD13D517;
-	Tue, 15 Apr 2025 01:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9165A927;
+	Tue, 15 Apr 2025 01:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744678818; cv=none; b=ZS9bQQ+fS54Nd7quKMy6IPOobMB+n2jJ9NW/osBpW77MYIg5J8Gw5OtSYYz1CpAotCXBQAbqr9BU5ouQpksGWif7FUaGMazKgAvvYjNgX5P4UWzyGY+Tae13yQ/j7hqnu2/HUKwOsllJ9hOMjo94bKk7ABjqSZuTXyF8A0JkBfk=
+	t=1744678871; cv=none; b=Lv/EciC7mUfyCPJbQFiT+tm5DFCKzxRwISmPlB1AYgpVhEYXVVOiKGa6H60KbpSEtkaBuolO+lxM28YcFVEnyfjjWI0h1NCWm8dliHHv9SfFzhJsqBgmHhWEOh+xiIwN6KQe07n823I6LA+EMj9lXqlEnYQeAZRCrOoNLMzJxak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744678818; c=relaxed/simple;
-	bh=gVMfDkSLIjS/7XO3F4F881n6QNhkLoD49wbo+z8Lw6U=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=KhMtK78prXECxC51nXcrymwGWlhPKDAB355nl2KHWBnseW6SM/djq65UfyrLJVG9dYuTRbbB42A0m6KcP/52b9mN6b6DptV4XzJTEmzSSuBH5VW42KSWcV9Hbze5rVGWOjTwW9ESrpa2NgOBFHb4mAFfKA1tP6/IwZ+4u6j0K6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sJNiQ3Lc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 183D9C4CEE2;
-	Tue, 15 Apr 2025 01:00:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744678817;
-	bh=gVMfDkSLIjS/7XO3F4F881n6QNhkLoD49wbo+z8Lw6U=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=sJNiQ3LcU9fyzS3vZwO557svh1+HYjSsqEyGrDhgrZxwI3w2ZIFtVcJF9jL2pmloF
-	 CIkf2jD5s38JFhEy+nqMHvDXNgQaNGVeb1sJBkH9RPwL3FG/yZU8tPEUACnHfCguZO
-	 M+lez58bapBw2Q1nDvkCKGq2llW3PgmxGCm26qqFNbwaeZ667pN26oXv2OEWAJZyc2
-	 9SjdoPmBX6mhbNjfRw9wYqZ9brjEw2LY1I9TQOcxrgqOb0sXPjUbPfP3v3UtmAqVZd
-	 V00uze1+WdvVX2SZTmp5SAVrB524DDLyZhgmcKCmunYWuItEU/FythuFioK0cTVIqS
-	 W4dmvqiBoIQdA==
-Message-ID: <8dfe4bfff1256c1ceffeab81cd587d0d@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1744678871; c=relaxed/simple;
+	bh=v4w5DfE/sYNT5ehoSrvg4/ugdIQziaDkEkahrOSBX+4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fjzYw70uiuPN5H0v/1AWG5UKxAHDVomSLUn4CFtFYzOnzOtaoRES65KwBS+xzUOHiu/DZ63BnrHkacljkzqFL8t9mDApsQI6/ah10c1jWHvIJUhJt0b2JtARkbkCI2Nnlg2xyGp0xY6ry3DboI7w2OAL61272ibtq0A206lgBT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NsiQEVla; arc=none smtp.client-ip=209.85.222.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-86c29c0acdfso1829632241.3;
+        Mon, 14 Apr 2025 18:01:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744678867; x=1745283667; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uy7YAJZKOai1D7ABZjjN+bQn5zDwS2Ij5HcVijKw7Bs=;
+        b=NsiQEVlarlggrztHhxjByXNwNK2nHTq/k1cvNk5bWSinxehFyY38lgw5iwJEV3JoJm
+         pEnSiSV/TtgH8ZfYeNuSSACmRiG+GJr/yugCdr/nLDc4tBsS65FLYfgwKKsjoeavTmYa
+         GaI0sDJ9yZMVrt6m6lqEG0TTT8W5kHmUPTAgrFD013hwfLBcbLs1PuEjWM7oXPAlACHu
+         7qKhOug4QO1bK6Dh8gHlM5Q688Rs73z7wdsC6RLaobOoTKFrM99E5cMDk497843l6+l+
+         8GapjYJXFXX4pCQKsDTSuqPAF3f/cW3QrJpO6PCMfI+++O4kIPqfOIUVwFuy0dvKtDTA
+         Sghg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744678867; x=1745283667;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uy7YAJZKOai1D7ABZjjN+bQn5zDwS2Ij5HcVijKw7Bs=;
+        b=QQ7yaYNBxfS6FpnN/WvMJaqloFyEFEX8ti6GffOQKg6JlPXc6mThbfCvbFhGlzfv99
+         H/6Fzize50VqkMKj+3ICYxe6wr5NavtYyg2AQQAbvuACEaLuGOk/gwA5F59k6ubkUs5t
+         fFdwe2joTWIZg8dOPq4lqmDUv9PjhiVJlMBa0GTme0tk4tMoXPHC/YdGSfqCDF7VTZ9k
+         w9CiimlK51651WZJ3zD5ZB4pfwIskIH1G+T3orajzStjemI6bUqKs972GC4hYuFW4xXC
+         yKB4XizLE+2E9gVVL6r5/XZClCALjfxFWSdrlvEsz6dMdvqheyoThSACAh0xST4nAefb
+         yc1A==
+X-Forwarded-Encrypted: i=1; AJvYcCUOHHsEU8AgNwV3NcnrdQ/6uNoS7rdr5o0/uAIMJHLguNSoKo8E+WYnwLlWPE0c0S+/Q5wkCodNaqfb@vger.kernel.org, AJvYcCX0J0NAjNEboUl/pIhYIFNotK0aY7vcAlkgKrDrhZtpxgt3SyQXGIzfHOCmjExT7eyGTSd85pp9Hz9G1GEM@vger.kernel.org, AJvYcCXTaMZtcxuronaHt719o3xufSPJ8dnX9sv4zKWQPHGDSnIVnUHVDy4fR9pnsH0j5oIMBbTxbjnxJzie@vger.kernel.org
+X-Gm-Message-State: AOJu0YylD7DWC7QfK0iZoBp+HvUigm9Vqj1NG7MXSVa+u2yYafoJwzY6
+	QrZYSBFtzfQH1S5T4xt7FWMG1kmfq4LH8asocaltkuI3KsIGwlNW
+X-Gm-Gg: ASbGncuklF7ZDVjJPbyyvblZDCfENwcQEunyC0YjMDA5VO+ZvoDSg6gHo35VI5hcV4M
+	6sImfG57E7sdJFMngsbRyCsbT5CeyUhy4WEAIkrMesEvpfflKpU4lBlflsB2XIHax7pfZ0+0s0c
+	RKueAYWfCd52+NORxCP/4S2g3kOVGxnsQr9Lzemvwq37kpVq6etjUXDEg6OA8Cl4M+jCDmUXhzz
+	PJqNemPLWec7W5A5hd8nxxHo1lwTM779+VYE8WLKcWqYk/mfAKusIePvx/HnwSdZ5ovxXJ8gwsV
+	bLuhyGHUsyvBgen/
+X-Google-Smtp-Source: AGHT+IEg5WHo6qDq3mTM3+gnVU2hOs9hdPqiMDeyWKuT5X6RpeIxFCETbXntue45FyG12HX43MWGmQ==
+X-Received: by 2002:a05:6102:5489:b0:4c1:924e:1a2a with SMTP id ada2fe7eead31-4c9e504c3aemr10457091137.25.1744678866709;
+        Mon, 14 Apr 2025 18:01:06 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6f0de970badsm92754026d6.26.2025.04.14.18.01.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Apr 2025 18:01:06 -0700 (PDT)
+Date: Tue, 15 Apr 2025 09:00:24 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Haylen Chu <heylenay@4d2.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Haylen Chu <heylenay@outlook.com>, Yixun Lan <dlan@gentoo.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, spacemit@lists.linux.dev, 
+	Inochi Amaoto <inochiama@outlook.com>, Chen Wang <unicornxdotw@foxmail.com>, 
+	Jisheng Zhang <jszhang@kernel.org>, Meng Zhang <zhangmeng.kevin@linux.spacemit.com>, 
+	Inochi Amaoto <inochiama@gmail.com>
+Subject: Re: [PATCH v7 3/6] clk: spacemit: Add clock support for SpacemiT K1
+ SoC
+Message-ID: <smgd2dymwnxkuvi4nevukt2fxcz3b5vuqt6wnuc2cf2bqaxisf@vtj7qnd5ws4t>
+References: <20250412074423.38517-2-heylenay@4d2.org>
+ <20250412074423.38517-5-heylenay@4d2.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250326-cross-lock-dep-v1-0-3199e49e8652@bootlin.com>
-References: <20250326-cross-lock-dep-v1-0-3199e49e8652@bootlin.com>
-Subject: Re: [PATCH RFC 00/10] Fix the ABBA locking situation between clk and runtime PM
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Chen-Yu Tsai <wenst@chromium.org>, Lucas Stach <l.stach@pengutronix.de>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Marek Vasut <marex@denx.de>, Ulf Hansson <ulf.hansson@linaro.org>, Kevin Hilman <khilman@kernel.org>, Fabio Estevam <festevam@denx.de>, Jacky Bai <ping.bai@nxp.com>, Peng Fan <peng.fan@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Shengjiu Wang <shengjiu.wang@nxp.com>, linux-imx@nxp.com, Ian Ray <ian.ray@gehealthcare.com>, =?utf-8?q?Herv=C3=A9?= Codina <herve.codina@bootlin.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, Saravana Kannan <saravanak@google.com>, Miquel Raynal <miquel.raynal@bootlin.com>
-To: Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Len Brown <len.brown@intel.com>, Michael Turquette <mturquette@baylibre.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Pavel Machek <pavel@ucw.cz>, Rafael J. Wysocki <rafael@kernel.org>
-Date: Mon, 14 Apr 2025 18:00:15 -0700
-User-Agent: alot/0.12.dev8+g17a99a841c4b
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250412074423.38517-5-heylenay@4d2.org>
 
-Quoting Miquel Raynal (2025-03-26 11:26:15)
-> As explained in the following thread, there is a known ABBA locking
-> dependency between clk and runtime PM.
-> Link: https://lore.kernel.org/linux-clk/20240527181928.4fc6b5f0@xps-13/
->=20
-> The problem is that the clk subsystem uses a mutex to protect concurrent
-> accesses to its tree structure, and so do other subsystems such as
-> generic power domains. While it holds its own mutex, the clk subsystem
-> performs runtime PM calls which end up executing callbacks from other
-> subsystems (again, gen PD is in the loop). But typically power domains
-> may also need to perform clock related operations, and thus the
-> following two situations may happen:
->=20
-> mutex_lock(clk);
-> mutex_lock(genpd);
->=20
-> or
->=20
-> mutex_lock(genpd);
-> mutex_lock(clk);
->=20
-> As of today I know that at least NXP i.MX8MP and MediaTek MT8183 SoCs
-> are complex enough to face this kind of issues.
->=20
-> There's been a first workaround to "silence" lockdep with the most
-> obvious case triggering the warning: making sure all clocks are RPM
-> enabled before running the clk_disable_unused() work, but this is just
-> addressing one situation among many other potentially problematic
-> situations. In the past, both Laurent Pinchart and Marek Vasut have
-> experienced these issues when enabling HDMI and audio support,
-> respectively.
->=20
-> Following a discussion we had at last Plumbers with Steven, I am
-> proposing to decouple both locks by changing a bit the clk approach:
-> let's always runtime resume all clocks that we *might* need before
-> taking the clock lock. But how do we know the list? Well, depending on
-> the situation we may either need to wake up:
-> - the upper part of the tree during prepare/unprepare operations.
-> - the lower part of the tree during (read) rate operations.
-> - the upper part and the lower part of the tree otherwise (especially
->   during rate changes which may involve reparenting).
+On Sat, Apr 12, 2025 at 07:44:21AM +0000, Haylen Chu wrote:
+> The clock tree of K1 SoC contains three main types of clock hardware
+> (PLL/DDN/MIX) and has control registers split into several multifunction
+> devices: APBS (PLLs), MPMU, APBC and APMU.
+> 
+> All register operations are done through regmap to ensure atomiciy
+> between concurrent operations of clock driver and reset,
+> power-domain driver that will be introduced in the future.
+> 
+> Signed-off-by: Haylen Chu <heylenay@4d2.org>
+> ---
+>  drivers/clk/Kconfig               |    1 +
+>  drivers/clk/Makefile              |    1 +
+>  drivers/clk/spacemit/Kconfig      |   18 +
+>  drivers/clk/spacemit/Makefile     |    5 +
+>  drivers/clk/spacemit/ccu-k1.c     | 1154 +++++++++++++++++++++++++++++
+>  drivers/clk/spacemit/ccu_common.h |   48 ++
+>  drivers/clk/spacemit/ccu_ddn.c    |   83 +++
+>  drivers/clk/spacemit/ccu_ddn.h    |   47 ++
+>  drivers/clk/spacemit/ccu_mix.c    |  268 +++++++
+>  drivers/clk/spacemit/ccu_mix.h    |  218 ++++++
+>  drivers/clk/spacemit/ccu_pll.c    |  157 ++++
+>  drivers/clk/spacemit/ccu_pll.h    |   86 +++
+>  12 files changed, 2086 insertions(+)
+>  create mode 100644 drivers/clk/spacemit/Kconfig
+>  create mode 100644 drivers/clk/spacemit/Makefile
+>  create mode 100644 drivers/clk/spacemit/ccu-k1.c
+>  create mode 100644 drivers/clk/spacemit/ccu_common.h
+>  create mode 100644 drivers/clk/spacemit/ccu_ddn.c
+>  create mode 100644 drivers/clk/spacemit/ccu_ddn.h
+>  create mode 100644 drivers/clk/spacemit/ccu_mix.c
+>  create mode 100644 drivers/clk/spacemit/ccu_mix.h
+>  create mode 100644 drivers/clk/spacemit/ccu_pll.c
+>  create mode 100644 drivers/clk/spacemit/ccu_pll.h
+> 
 
-Thanks for taking on this work. This problem is coming up more and more
-often.
+If possible, split the patch into multiple one by the compatible
+so others can review easily. Otherwise, it is LGTM.
 
->=20
-> Luckily, we do not need to do that by hand, are more importantly we do
-> not need to use the clock tree for that because thanks to the work from
-> Saravana, we already have device links describing exhaustively the
-> consumer/supplier relationships. The clock topology (from a runtime PM
-> perspective) is reflected in these links. In practice, we do not care
-> about all consumers, but the few clock operations that will actually
-> trigger runtime PM operations are probably not impacting enough to
-> justify something more complex.
-
-This won't always work, for a couple reasons. First because clk drivers
-aren't required to describe their parent clks that are outside the clk
-controller by using DT with a 'clocks' property in the clk controller
-node. Second because there can be a many to one relationship between a
-struct device and struct device_node. We're trying to push drivers to be
-written in a way that the binding has the 'clocks' property, but that
-isn't always the case, so we still need a solution that works in all
-cases so as to not regress old (legacy?) implementations or ones that
-divide a platform device into some number of auxiliary devices and
-drivers.
-
-One idea to do that would be to implement the device links between clk
-controller devices based on all possible parents of the clk. We support
-lazily registering clks though, meaning a parent could be registered at
-any time, so we would have to explore the clk tree each time a clk is
-registered to see if any new clks need to be found and device links made
-between devices. The general algorithm is probably something like:
-
-  clk_register()
-   make_links_for_node()
-    if device node missing 'clocks' property
-     for each parent string
-      pclk =3D find parent clk
-      pdev =3D pclk->dev
-      link pdev to dev node
-    else
-     for each clk in clocks property
-      pclk =3D find parent clk
-      pdev =3D pclk->dev
-      link pdev to dev node
-
-We have to get the parent clk in all cases because we don't know which
-device it may be registered for (the platform device or auxiliary
-device). If we optimize here, I'd prefer we optimize for the case where
-the 'clocks' property is present to encourage migration. Maybe what we
-can do is make some structure for a clk controller and have a linked
-list of those that we look up when a new clk is registered. We actually
-have that already with 'struct clock_provider' so maybe we need to
-extend that.
-
-Stash the device pointer in there and some variable sized array of the
-clk_core pointers to the external clks. In the 'clocks' DT property
-case, we can size this immediately and map the array index to the
-property but in the non-property case we'll have to grow this array each
-time a new clk is found to be a parent of the device. Maybe for that we
-should just have some other sort of linked list of clk_core pointers
-that we continue to stack clks onto.
-
-  struct clock_provider {
-    void (*clk_init_cb)(struct device_node *);
-    struct device *dev;
-    struct device_node *np;
-    struct list_head node;
-    struct clk_core *legacy_clks; // Or struct list_head legacy?
-    size_t len_clocks;
-    struct clk_core clocks_property[];
- };
+Reviewed-by: Inochi Amaoto <inochiama@outlook.com>
 
