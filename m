@@ -1,320 +1,253 @@
-Return-Path: <linux-kernel+bounces-604894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69DE7A89A3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:32:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA6EEA899D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:23:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B48C7A41C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:31:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9A0A16ACB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:23:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 333351E9B06;
-	Tue, 15 Apr 2025 10:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD7E28B4E0;
+	Tue, 15 Apr 2025 10:23:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="tPwRU9Hd"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2041.outbound.protection.outlook.com [40.107.212.41])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i8MwxKKl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5991027A13C;
-	Tue, 15 Apr 2025 10:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744713005; cv=fail; b=ibXeAvivheMhMRCfQy75HHnTVXkZTWrky7D78Oid8lemgWkNEZFU3j9vn7Hr51y6VI6VGCxMw+crLQXkFJBv9MQTddowhV5l5utGimsKcSkAV5Lk6Fp+XRKYTEs364T+J/9jdDOnhgJftS2RL5KWmxJwCFRkxU58FXyVL1+4Vr4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744713005; c=relaxed/simple;
-	bh=R4eU63THEgrlF2VMGXTVzJ6+zYHIYWEAXvXmzahKio0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sRnLU08NckyP6mQgBbKYJlsW21jiAf1raqPNOnfEF9Ru2hgaeVcypuLuJHMan6pXbZalW9AAhXW9VCoIuG+1N3JNOIDuGxtsTUD37lP/lQqIDAma9U/ddSkq1i3Dn7qHGaoUHssmGvAOKCbWdEBn9Br21I6Gee6yE6/SgcDPfik=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=tPwRU9Hd; arc=fail smtp.client-ip=40.107.212.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ov0mnlfQ8545vPEhL8dJActih/9tWp/BWXvq10Eql86yDc5YGNCDeVsuf1DOJDsLVHma697tEFY+649xmvCO7yXbH3kYTbEkOmlhb1WxgGYocpyp6T5pUpLIoh4UAxwxk42Ws+Gur2RKOBPlrTveajmxVFs7HyjXNgP/loof/d1pUPHc604q5tP0UWe/Pw9eVbj9M+YEi3cq/pe2H6jk+wVN4Og4dyY1xBiwKa7wwuVfLGkWFRztob7w2gEXn/4OyAceH56VSljNt0p1Fm6LJRX/M+T6Q07llwSXMLETITJiBO34cc/SVovp9pA3jU4PJ1vI0j2stKc3FwCchk6tkA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ErxX5SkbAsebA8T3Sl8QDv1CS1CirEMuUKvUSj+03kU=;
- b=riHYraIHKwXTDCQ/J+omQanVcwyZdudLosw7yiRC4j63tRb4GUBa07A5oxD0qfyFkSZlJ19OYJ33vpMHs2ROWnlfNFIIUNf5Y+bhv87oeS6EhRvC27hB1tZb+GcfKVXLGRKoQzVw54dbB/a9RGGQaYOfq2d/YFCoT1ZjzDVMgfpx+FrHi4gq7UFvcxVKS8o7o2CUrqb1XbBi7HnODijsbZ5+2tmnblBWEPuSIsGIOo7ce22H63QTitYFa7JuU4T7+lsdPJ2WOfhMBEMaj5W65Yw1fBF319c8XrDdCUQLPm1iRzafvZMGgvyQ5rvxaPQ9ObpmcksGlRwqM9SB3r+tJw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ErxX5SkbAsebA8T3Sl8QDv1CS1CirEMuUKvUSj+03kU=;
- b=tPwRU9HdGaM97/Q1RpN+ILbsXtv8kU9yUVDbrdZgBRT7YVsc26paRUngFkZR65bLFfCV9WMXPcLHLvPjOUCLSf2IoLIwGGvU7fHBCn2v8CR/wyvNvG2kKPOb93ZqP1zoqjK6skr/IVyDsEJIugQeOjKAWdw/LLPp+TPZ+74Gp38=
-Received: from DM6PR02CA0081.namprd02.prod.outlook.com (2603:10b6:5:1f4::22)
- by DS7PR12MB5960.namprd12.prod.outlook.com (2603:10b6:8:7f::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.33; Tue, 15 Apr
- 2025 10:29:59 +0000
-Received: from DS2PEPF0000343C.namprd02.prod.outlook.com
- (2603:10b6:5:1f4:cafe::d) by DM6PR02CA0081.outlook.office365.com
- (2603:10b6:5:1f4::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8632.32 via Frontend Transport; Tue,
- 15 Apr 2025 10:29:59 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DS2PEPF0000343C.mail.protection.outlook.com (10.167.18.39) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8655.12 via Frontend Transport; Tue, 15 Apr 2025 10:29:59 +0000
-Received: from shatadru.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 15 Apr
- 2025 05:29:56 -0500
-From: Dhananjay Ugwekar <dhananjay.ugwekar@amd.com>
-To: <gautham.shenoy@amd.com>, <mario.limonciello@amd.com>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Dhananjay
- Ugwekar" <dhananjay.ugwekar@amd.com>
-Subject: [PATCH 2/2] cpufreq/amd-pstate: Add support for the "Requested CPU Min frequency" BIOS option
-Date: Tue, 15 Apr 2025 10:21:21 +0000
-Message-ID: <20250415102118.694999-3-dhananjay.ugwekar@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250415102118.694999-1-dhananjay.ugwekar@amd.com>
-References: <20250415102118.694999-1-dhananjay.ugwekar@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E001A2632;
+	Tue, 15 Apr 2025 10:23:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744712593; cv=none; b=nGQsn1hlrJg0frlGlsrTpOL0P9SQFeJZIMQvs9EGZxQDPbCCUHTrwgFVrfMaTkm/KjPMF2d54ZwEmf7psqxT8o3lXpIFBmlh4rvddQqjcat6aPvgbAWGeEn/FoQdGMq3Ua40Lz3ul+UOcOBQ+w8rLeDq3OQdtB7UawkMIUx6pIQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744712593; c=relaxed/simple;
+	bh=klDN7uanomzpPG7T/DWheax52c37vyO3EtaOg7Qv0N0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DT/LfiZ8uR15jjxbiNWm4IyN4eYTUvRo6XeDwXsit9JWX0/AVAp7ALy35UzZAf7Q90VWIk3qKHW162Qm+VV7KKUhhavICE+zcOAp4j+dmckLHDIDHDDHe+h3+KaSnki9DtFv2MD/BUS9y9gXiebY++s25SbeaEEeGnRs6cgFyMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i8MwxKKl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CDDEC4CEDD;
+	Tue, 15 Apr 2025 10:23:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744712593;
+	bh=klDN7uanomzpPG7T/DWheax52c37vyO3EtaOg7Qv0N0=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=i8MwxKKlcjgP4yY11TzYkm8R/gD9M/auuZxoyjOlm5O8kUldnm7SSTJxG3xog/eHj
+	 Ffc5PJ4T+0Y4cKNjqfmrtBXzrVO5by82wXa7e4Dqivi3wz5UcnQIQGOATnajifactX
+	 hbOv98T3mshh7BiRw7/qNLdzrrxACqOe4nDIipYkyVBYb6kFjOAX0jWpb3FS7MdNoV
+	 CBPDklubxlMX/aYo1SHi83WdUGNYy/AhFpwzFm288kIrbgs4yqf42XNT9PZy5bf+LH
+	 rDNmot0zZiNPeVe9a2X6YDd0dV8N8twm5g69pv7DBiBAgvGyxw24TYF+jIttchFHk8
+	 Egc1gHUUuwR1g==
+Message-ID: <b697c51c0788e4e462e45a5cc78d3b5c2d01d496.camel@kernel.org>
+Subject: Re: [PATCH 2/4] ref_tracker: add ability to register a file in
+ debugfs for a ref_tracker_dir
+From: Jeff Layton <jlayton@kernel.org>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "David S. Miller"
+	 <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	 <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+	 <horms@kernel.org>, Qasim Ijaz <qasdev00@gmail.com>, Nathan Chancellor
+	 <nathan@kernel.org>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Date: Tue, 15 Apr 2025 06:23:10 -0400
+In-Reply-To: <a86aab21-c539-48f5-bad1-25db9b8f3ced@lunn.ch>
+References: <20250414-reftrack-dbgfs-v1-0-f03585832203@kernel.org>
+	 <20250414-reftrack-dbgfs-v1-2-f03585832203@kernel.org>
+	 <a86aab21-c539-48f5-bad1-25db9b8f3ced@lunn.ch>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PEPF0000343C:EE_|DS7PR12MB5960:EE_
-X-MS-Office365-Filtering-Correlation-Id: c76677d1-47ba-4df3-2cb2-08dd7c087937
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?yZc9fRY91p3V11C1mHtd/9xX8icR2Agyctqww7uLeZ/f01Q/cwwLVvGyTCo6?=
- =?us-ascii?Q?qnLA/3ODZnVWZctKsf7tCn13dFhU+tT5oVWkRSiSMlCdg73Ha3BsDI0QVNCz?=
- =?us-ascii?Q?B3dbBuoxLLujd/P92Ga2k2A5T/j8YfYtRYrJ808dGaQ/nZphoqhDJzyiL/zw?=
- =?us-ascii?Q?aF2gvk2AYqTNz90EzN/aD9f8b1DBjkcu5M9uBa41ikVYOrjlXigtm5j5DKXY?=
- =?us-ascii?Q?ZD0/j7j/mFzbvuq+WMyXUWRpYJGMis/h1CQREc/BglXPjq2f+eyGg4JRbSNJ?=
- =?us-ascii?Q?69MpfyGlLm+eamCglvZj5uP8RPNhS2x8P+Z1tCHNNwEbvNTDvqzG3wLziHe9?=
- =?us-ascii?Q?Qr4xAiteRUpNH4PZC9dk6ryWa40jOLnjHDlkXHvJJ295V9dubs2XE9sfugxI?=
- =?us-ascii?Q?ZkT0ekcelJ7yzXfq7WGGut7T1h6tVAenL0JUBsxQZY2mf5IFXOZj/L9Cw1tD?=
- =?us-ascii?Q?txthocifHj39RufA/XHiClgUytK+ZtM5dDoSQvJxP4uMydq7Evl1tz7zs57e?=
- =?us-ascii?Q?55N2WXdY3x8TuipcdZZZNp3cAR6KUSpY4Y8wzOEqaWvUJAvCYHrlCE6RpSV9?=
- =?us-ascii?Q?cRJQqVnTsA7CjbZb/77zyLIiQJO92oFv8wEuwHCShg7aT/3J7FJfqjLu9DgU?=
- =?us-ascii?Q?yHG4kO4ii1wTP5mM0xf5CcIBCdZu1Xc2Knkk/Fy07EVuYwolAIBj50adjRKV?=
- =?us-ascii?Q?TuvJ7tlNsWVsmJO/wRb0jJH/qWJU6tbl9WWiBIU6d+nGYFpODjesmCkW4STY?=
- =?us-ascii?Q?ogG269b0kowejCoMJ3sI5YXpxc1WNBcP4ZgLW9GXXwuxQy15Yrcn1HqzAWPV?=
- =?us-ascii?Q?CfpIWzWbnJh5z3E87vvaJ+x7vb4NY6+zId9pDVwCG3RIfzYv/jNhx7n1adB/?=
- =?us-ascii?Q?YLIzXy2YoawT4zykgo7brCGWOg/n9STnjX6pHkqsZPnvFhxpc8bavomZvEpi?=
- =?us-ascii?Q?ng6C3be0Kv5nBNOvhzwgz2q/LBwn7mZBNb2NU8dKvBxyxTuXAjxRGcOUM81Y?=
- =?us-ascii?Q?PeU3CgVGBFqLXiqCVN5Js4kyOg8LMQNDhLp4QbhN4um5sn+7u9fQqwJjbmuu?=
- =?us-ascii?Q?GgOcc7pImonTYALL37t4fE95afxlh+T/Koe1OK5edPHdIN84iHKqgchJdo1/?=
- =?us-ascii?Q?im0lFNH0vIXMUcNlVqQjOnXmADXnH0yDIXiNo4o6y7RPGaWbaG+DfT2D3SWZ?=
- =?us-ascii?Q?992CuyTpFb75AyC4EiYBUW2HEScntDSVul9mGd0rMLd7Q6as2OyQMp71lHoC?=
- =?us-ascii?Q?dvIBlGe7ATo4g/z1XA6+69PT1FGwVar6/k01wzujfesQtXErOLpSLDQisESa?=
- =?us-ascii?Q?IyWI+J86XgRRCd6jnOyXfgJ3JDrInZ/rhZQAXzUxERC2WMt6R0jbFf6CYqTX?=
- =?us-ascii?Q?ukwMV3tn91jTlH97YRDgPjp/klBGDNCcUrZlxI/GnE1e1QoW387Y1r9GjCAo?=
- =?us-ascii?Q?qwKTGaOzpRjegsK8PQq+AqPN9Y8OYN2EQAfrvgCidSGHntb2iZXqfx1eWP6h?=
- =?us-ascii?Q?2ClrtSPUzkt+jgYde/H3jdBawOrfXWN6YtMD?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Apr 2025 10:29:59.0782
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c76677d1-47ba-4df3-2cb2-08dd7c087937
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS2PEPF0000343C.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5960
 
-Initialize lower frequency limit to the "Requested CPU Min frequency"
-BIOS option (if it is set) value as part of the driver->init()
-callback. The BIOS specified value is passed by the PMFW as min_perf in 
-CPPC_REQ MSR. To ensure that we don't mistake a stale min_perf value in 
-CPPC_REQ value as the "Requested CPU Min frequency" during a kexec wakeup, 
-reset the CPPC_REQ.min_perf value back to the BIOS specified one in the 
-offline, exit and suspend callbacks.
+On Tue, 2025-04-15 at 01:08 +0200, Andrew Lunn wrote:
+> On Mon, Apr 14, 2025 at 10:45:47AM -0400, Jeff Layton wrote:
+> > Currently, there is no convenient way to see the info that the
+> > ref_tracking infrastructure collects. Add a new function that other
+> > subsystems can optionally call to update the name field in the
+> > ref_tracker_dir and register a corresponding seq_file for it in the
+> > top-level ref_tracker directory.
+> >=20
+> > Also, alter the pr_ostream infrastructure to allow the caller to specif=
+y
+> > a seq_file to which the output should go instead of printing to an
+> > arbitrary buffer or the kernel's ring buffer.
+>=20
+> When i see an Also, or And, or a list in a commit message, i always
+> think, should this be multiple patches?
+>=20
 
-amd_pstate_target() and amd_pstate_epp_update_limit() which are invoked
-as part of the resume() and online() callbacks will take care of restoring
-the CPPC_REQ back to the latest sane values.
+Sure. I actually had this part in a separate patch earlier, but I don't
+usually like adding functions with no callers and this patch was pretty
+small. I can break it up though.
 
-Signed-off-by: Dhananjay Ugwekar <dhananjay.ugwekar@amd.com>
----
- drivers/cpufreq/amd-pstate.c | 62 ++++++++++++++++++++++++++++--------
- drivers/cpufreq/amd-pstate.h |  2 ++
- 2 files changed, 51 insertions(+), 13 deletions(-)
+> >  struct ostream {
+> >  	char *buf;
+> > +	struct seq_file *seq;
+> >  	int size, used;
+> >  };
+> > =20
+> > @@ -73,7 +83,9 @@ struct ostream {
+> >  ({ \
+> >  	struct ostream *_s =3D (stream); \
+> >  \
+> > -	if (!_s->buf) { \
+> > +	if (_s->seq) { \
+> > +		seq_printf(_s->seq, fmt, ##args); \
+> > +	} else if (!_s->buf) { \
+> >  		pr_err(fmt, ##args); \
+> >  	} else { \
+> >  		int ret, len =3D _s->size - _s->used; \
+>=20
+> The pr_ostream() macro is getting pretty convoluted. It currently
+> supports two user cases:
+>=20
+> struct ostream os =3D {}; which means just use pr_err().
+>=20
+> And os.buf points to an allocated buffer and the output should be
+> dumped there.
+>=20
+> You are about to add a third.
+>=20
+> Is it about time this got split up into three helper functions, and
+> you pass one to __ref_tracker_dir_pr_ostream()? Your choice.
+>=20
 
-diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-index 02de51001eba..d94fd2a38990 100644
---- a/drivers/cpufreq/amd-pstate.c
-+++ b/drivers/cpufreq/amd-pstate.c
-@@ -389,7 +389,8 @@ static inline int amd_pstate_cppc_enable(struct cpufreq_policy *policy)
- static int msr_init_perf(struct amd_cpudata *cpudata)
- {
- 	union perf_cached perf = READ_ONCE(cpudata->perf);
--	u64 cap1, numerator;
-+	u64 cap1, numerator, cppc_req;
-+	u8 min_perf;
- 
- 	int ret = rdmsrl_safe_on_cpu(cpudata->cpu, MSR_AMD_CPPC_CAP1,
- 				     &cap1);
-@@ -400,6 +401,22 @@ static int msr_init_perf(struct amd_cpudata *cpudata)
- 	if (ret)
- 		return ret;
- 
-+	ret = rdmsrl_on_cpu(cpudata->cpu, MSR_AMD_CPPC_REQ, &cppc_req);
-+	if (ret)
-+		return ret;
-+
-+	WRITE_ONCE(cpudata->cppc_req_cached, cppc_req);
-+	min_perf = FIELD_GET(AMD_CPPC_MIN_PERF_MASK, cppc_req);
-+
-+	/*
-+	 * Clear out the min_perf part to check if the rest of the MSR is 0, if yes, this is an
-+	 * indication that the min_perf value is the one specified through the BIOS option
-+	 */
-+	cppc_req &= ~(AMD_CPPC_MIN_PERF_MASK);
-+
-+	if (!cppc_req && min_perf)
-+		perf.bios_min_perf = min_perf;
-+
- 	perf.highest_perf = numerator;
- 	perf.max_limit_perf = numerator;
- 	perf.min_limit_perf = FIELD_GET(AMD_CPPC_LOWEST_PERF_MASK, cap1);
-@@ -580,20 +597,26 @@ static int amd_pstate_verify(struct cpufreq_policy_data *policy_data)
- {
- 	/*
- 	 * Initialize lower frequency limit (i.e.policy->min) with
--	 * lowest_nonlinear_frequency which is the most energy efficient
--	 * frequency. Override the initial value set by cpufreq core and
--	 * amd-pstate qos_requests.
-+	 * lowest_nonlinear_frequency or the min frequency (if) specified in BIOS,
-+	 * Override the initial value set by cpufreq core and amd-pstate qos_requests.
- 	 */
- 	if (policy_data->min == FREQ_QOS_MIN_DEFAULT_VALUE) {
- 		struct cpufreq_policy *policy __free(put_cpufreq_policy) =
- 					      cpufreq_cpu_get(policy_data->cpu);
- 		struct amd_cpudata *cpudata;
-+		union perf_cached perf;
- 
- 		if (!policy)
- 			return -EINVAL;
- 
- 		cpudata = policy->driver_data;
--		policy_data->min = cpudata->lowest_nonlinear_freq;
-+		perf = READ_ONCE(cpudata->perf);
-+
-+		if (perf.bios_min_perf)
-+			policy_data->min = perf_to_freq(perf, cpudata->nominal_freq,
-+							perf.bios_min_perf);
-+		else
-+			policy_data->min = cpudata->lowest_nonlinear_freq;
- 	}
- 
- 	cpufreq_verify_within_cpu_limits(policy_data);
-@@ -1041,6 +1064,9 @@ static void amd_pstate_cpu_exit(struct cpufreq_policy *policy)
- {
- 	struct amd_cpudata *cpudata = policy->driver_data;
- 
-+	/* Reset CPPC_REQ MSR to the BIOS value */
-+	amd_pstate_update_perf(policy, cpudata->perf.bios_min_perf, 0U, 0U, 0U, false);
-+
- 	freq_qos_remove_request(&cpudata->req[1]);
- 	freq_qos_remove_request(&cpudata->req[0]);
- 	policy->fast_switch_possible = false;
-@@ -1428,7 +1454,6 @@ static int amd_pstate_epp_cpu_init(struct cpufreq_policy *policy)
- 	struct amd_cpudata *cpudata;
- 	union perf_cached perf;
- 	struct device *dev;
--	u64 value;
- 	int ret;
- 
- 	/*
-@@ -1493,12 +1518,6 @@ static int amd_pstate_epp_cpu_init(struct cpufreq_policy *policy)
- 		cpudata->epp_default = AMD_CPPC_EPP_BALANCE_PERFORMANCE;
- 	}
- 
--	if (cpu_feature_enabled(X86_FEATURE_CPPC)) {
--		ret = rdmsrl_on_cpu(cpudata->cpu, MSR_AMD_CPPC_REQ, &value);
--		if (ret)
--			return ret;
--		WRITE_ONCE(cpudata->cppc_req_cached, value);
--	}
- 	ret = amd_pstate_set_epp(policy, cpudata->epp_default);
- 	if (ret)
- 		return ret;
-@@ -1518,6 +1537,9 @@ static void amd_pstate_epp_cpu_exit(struct cpufreq_policy *policy)
- 	struct amd_cpudata *cpudata = policy->driver_data;
- 
- 	if (cpudata) {
-+		/* Reset CPPC_REQ MSR to the BIOS value */
-+		amd_pstate_update_perf(policy, cpudata->perf.bios_min_perf, 0U, 0U, 0U, false);
-+
- 		kfree(cpudata);
- 		policy->driver_data = NULL;
- 	}
-@@ -1575,13 +1597,27 @@ static int amd_pstate_cpu_online(struct cpufreq_policy *policy)
- 
- static int amd_pstate_cpu_offline(struct cpufreq_policy *policy)
- {
--	return 0;
-+	struct amd_cpudata *cpudata = policy->driver_data;
-+
-+	/*
-+	 * Reset CPPC_REQ MSR to the BIOS value, this will allow us to retain the BIOS specified
-+	 * min_perf value across kexec reboots. If this CPU is just onlined normally after this, the
-+	 * limits, epp and desired perf will get reset to the cached values in cpudata struct
-+	 */
-+	return amd_pstate_update_perf(policy, cpudata->perf.bios_min_perf, 0U, 0U, 0U, false);
- }
- 
- static int amd_pstate_suspend(struct cpufreq_policy *policy)
- {
- 	struct amd_cpudata *cpudata = policy->driver_data;
- 
-+	/*
-+	 * Reset CPPC_REQ MSR to the BIOS value, this will allow us to retain the BIOS specified
-+	 * min_perf value across kexec reboots. If this CPU is just resumed back without kexec,
-+	 * the limits, epp and desired perf will get reset to the cached values in cpudata struct
-+	 */
-+	amd_pstate_update_perf(policy, cpudata->perf.bios_min_perf, 0U, 0U, 0U, false);
-+
- 	/* invalidate to ensure it's rewritten during resume */
- 	cpudata->cppc_req_cached = 0;
- 
-diff --git a/drivers/cpufreq/amd-pstate.h b/drivers/cpufreq/amd-pstate.h
-index fbe1c08d3f06..2f7ae364d331 100644
---- a/drivers/cpufreq/amd-pstate.h
-+++ b/drivers/cpufreq/amd-pstate.h
-@@ -30,6 +30,7 @@
-  * @lowest_perf: the absolute lowest performance level of the processor
-  * @min_limit_perf: Cached value of the performance corresponding to policy->min
-  * @max_limit_perf: Cached value of the performance corresponding to policy->max
-+ * @bios_min_perf: Cached perf value corresponding to the "Requested CPU Min Frequency" BIOS option
-  */
- union perf_cached {
- 	struct {
-@@ -39,6 +40,7 @@ union perf_cached {
- 		u8	lowest_perf;
- 		u8	min_limit_perf;
- 		u8	max_limit_perf;
-+		u8	bios_min_perf;
- 	};
- 	u64	val;
- };
--- 
-2.34.1
+Maybe? It doesn't seem worth it for this, but I'll take a look.
 
+> > +/**
+> > + * ref_tracker_dir_debugfs - create debugfs file for ref_tracker_dir
+> > + * @dir: ref_tracker_dir to finalize
+> > + * @name: updated name of the ref_tracker_dir
+> > + *
+> > + * In some cases, the name given to a ref_tracker_dir is based on inco=
+mplete information,
+> > + * and may not be unique. Call this to finalize the name of @dir, and =
+create a debugfs
+> > + * file for it.
+>=20
+> Maybe extend the documentation with a comment that is name is not
+> unique within debugfs directory, a warning will be emitted but it is
+> not fatal to the tracker.
+>=20
+
+Ok.
+
+> > + */
+> > +void ref_tracker_dir_debugfs(struct ref_tracker_dir *dir, const char *=
+name)
+> > +{
+> > +	strscpy(dir->name, name, sizeof(dir->name));
+>=20
+> I don't know about this. Should we really overwrite the name passed
+> earlier? Would it be better to treat the name here only as the debugfs
+> filename?
+>=20
+
+I think it's safe. The only thing that currently uses ->name is
+pr_ostream(), AFAICT.
+
+> > +	if (ref_tracker_debug_dir) {
+>=20
+> Not needed
+>=20
+
+If we call debugfs_create_file() and pass in NULL as the parent, it
+will try to create the entry at the root of debugfs. We can get rid of
+this though if we initialize ref_tracker_debug_dir to an ERR_PTR value.
+I'll see about doing that.
+
+> > +		dir->dentry =3D debugfs_create_file(dir->name, S_IFREG | 0400,
+> > +						  ref_tracker_debug_dir, dir,
+> > +						  &ref_tracker_debugfs_fops);
+> > +		if (IS_ERR(dir->dentry)) {
+> > +			pr_warn("ref_tracker: unable to create debugfs file for %s: %pe\n",
+> > +				dir->name, dir->dentry);
+> > +			dir->dentry =3D NULL;
+>=20
+> this last statement should also be unneeded.
+>=20
+
+Only if ref_tracker_debug_dir is initialized to an ERR_PTR.
+--=20
+Jeff Layton <jlayton@kernel.org>
 
