@@ -1,92 +1,125 @@
-Return-Path: <linux-kernel+bounces-605689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D466A8A4D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 19:00:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46773A8A4DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 19:02:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 663FC3BCA8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 17:00:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 637F7188A743
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 17:02:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4DBF84FAD;
-	Tue, 15 Apr 2025 17:00:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B541F18FDA5;
+	Tue, 15 Apr 2025 17:01:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b="P3RtSJ+k"
-Received: from ale.deltatee.com (ale.deltatee.com [204.191.154.188])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="amK3F2zp"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C142710E9;
-	Tue, 15 Apr 2025 17:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=204.191.154.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF98F17BBF;
+	Tue, 15 Apr 2025 17:01:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744736422; cv=none; b=nb4WXazMsOE11ehQ8VxYp5Zjg5jP5JQt0iBaO+50jGSoWicgcapJl1Ieql98VqThhgL4eubve2HsWFD0TfJIE6t623XBkfNYXriw4dZRVxMBhLkTeB3CiUt5axf6s0LS+YD5cvWXrjqElgKsL39BhXTq6GWIKjxLm69p/mHiBNU=
+	t=1744736499; cv=none; b=fBh1zYVW+mQ56zIktV7kUXDS8W8ZtB5IM6VwCLQyFqkEmwAp2+rXMYXZxy7SuMWkVXDN8nVO6pYbVdqKGGknA+7MsWzhBFNfAcTZ41uuMw9E0UcbZ676u43u0cM64CRQRhGdiYiqTBiI9C2I+Srqtej4HVdsfRU312c4BEzxtpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744736422; c=relaxed/simple;
-	bh=KsPCEMVc2LMLTS4j1lUJZrful794O99DydUdMIngm8A=;
-	h=Message-ID:Date:MIME-Version:To:References:From:In-Reply-To:
-	 Content-Type:Subject; b=OO/1HlEoJ9rViMKa+Dw/nDZeQF2us4nK8BajhBkWKWVsyHK8zMDVgKrNFcRqUNhxmMXK1z9FGfgIS2LDaFWweBMcYwo2mx6x29ROJm6g0EsDmlX6oRXo7yB2ENT2dVHb5GBR5HiRwnyziE3pRpaLa3RL79Cy1dakUa0Wwo0D17I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deltatee.com; spf=pass smtp.mailfrom=deltatee.com; dkim=pass (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b=P3RtSJ+k; arc=none smtp.client-ip=204.191.154.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deltatee.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=deltatee.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=deltatee.com; s=20200525; h=Subject:In-Reply-To:From:References:To:
-	MIME-Version:Date:Message-ID:cc:content-disposition;
-	bh=KsPCEMVc2LMLTS4j1lUJZrful794O99DydUdMIngm8A=; b=P3RtSJ+kk9OJ5LuMQzZga8rlKU
-	lwj6oFYa7EtD7N+rEKwDyzNt8XfjFLRuIHwZOchBOA71z9i2CZjmKmW4t06/+LKOdaewTrVnxhHCs
-	AxaOXIxquT/r/b6Y3ZjsIXNtsYBw+U/LtVWR5eOldEBRU03n1F6I0nq8u8nNPWf0CAT1ijVsgocPX
-	zUS8oYl1s82QpX9yylOxZWHhHg2qySHGgBU9uIX5eU1tdc8WXq3FN54a/U2EcpzPS+tlgDg9wnEQq
-	hH0T4z2w1KjwkswMhwFoYDLEakw3amD0T/Cl5m86x7nWSDLp7obeEh+qyC0Hz9hu19JJNm4RanAnQ
-	UnsLJESg==;
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-	by ale.deltatee.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96)
-	(envelope-from <logang@deltatee.com>)
-	id 1u4jdt-000rei-0Q;
-	Tue, 15 Apr 2025 11:00:12 -0600
-Message-ID: <dbb07d97-433b-4792-bbd7-74033c838d29@deltatee.com>
-Date: Tue, 15 Apr 2025 11:00:11 -0600
+	s=arc-20240116; t=1744736499; c=relaxed/simple;
+	bh=pnuDVtTHYv5Kzi5ocf3oiv0Vqm8eA3qJ9oq3Ou9Lm8M=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=UW+Q++AdOpZvmIPg3LLqT+z87Nhjx7sXjqMJyFO4eKhSXVqr1OGm9S+ILdILalRTmBJoPU88uNodHGoe0u1Hjp5EZr97XkBhYU0lKx7ZWg42LRHs++t7bJzdblp7tDH4g5RAEeOh81+YQ6Pb5uW/6YL0YKCvxBSQCmnvK9iMYug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=amK3F2zp; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 53FH0EfF2921211
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Tue, 15 Apr 2025 10:00:55 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 53FH0EfF2921211
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025032001; t=1744736456;
+	bh=2PGO/bjarbzWZFKbGFC0nWFI3jUy9vtqZch+4ZGunNc=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=amK3F2zp25ISKDxffxJnlTAQhUERMhDlrWLENN+wwHPHgyTB0Nvlj1JEEGjc2WO1J
+	 pW9LOokB4bRhxTf9KR0+JTlnYcwpq2ObamGqL5dhPzDiH8R5rjVKTlNfzk0v6Kh5L+
+	 75Bfn7yJx/1MA4/w0QgB5wuv87NQmyBNIe/lJ57QD6zhcM5biq1OPjWk9rZPU4QEWP
+	 ikynoRY9YeFgFbZLWTiovNBSOYdrL6wdbX1tchuCQ0iDKaqUWf67CQajftjxSHeuC3
+	 rDrLFJimbvBPkv5MCMWE6W8U/MdWKk0t/5b3A0I2jrTCQxvaNjyCUtGctwSjIZmsM4
+	 DeYJFwMgoHVRw==
+Date: Tue, 15 Apr 2025 10:00:11 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Ard Biesheuvel <ardb@kernel.org>, Borislav Petkov <bp@alien8.de>
+CC: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>, Ian Campbell <ijc@hellion.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5Btip=3A_x86/build=5D_x86/boot=3A_Add_bac?=
+ =?US-ASCII?Q?k_some_padding_for_the_CRC-32_checksum?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CAMj1kXEWerW9A7t0njN7hM7Ms48+mE94p3CTv_LP9P-CotOtPg@mail.gmail.com>
+References: <20250312081204.521411-2-ardb+git@google.com> <174178137443.14745.10057090473999621829.tip-bot2@tip-bot2> <20250414135625.GDZ_0UCcIQ-fg8DKZL@fat_crate.local> <CAMj1kXEWerW9A7t0njN7hM7Ms48+mE94p3CTv_LP9P-CotOtPg@mail.gmail.com>
+Message-ID: <89CE5702-6C52-4E02-9A18-31E4161CA677@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Stephen Bates <sbates@raithlin.com>, bhelgaas@google.com,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <Z_2nIRgPqp2JlT9m@MKMSTEBATES01.amd.com>
-Content-Language: en-CA
-From: Logan Gunthorpe <logang@deltatee.com>
-In-Reply-To: <Z_2nIRgPqp2JlT9m@MKMSTEBATES01.amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: sbates@raithlin.com, bhelgaas@google.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Level: 
-Subject: Re: [PATCH] p2pdma: Whitelist the QEMU host bridge for x86_64
-X-SA-Exim-Version: 4.2.1 (built Wed, 06 Jul 2022 17:57:39 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Stephen,
+On April 14, 2025 7:07:53 AM PDT, Ard Biesheuvel <ardb@kernel=2Eorg> wrote:
+>On Mon, 14 Apr 2025 at 15:56, Borislav Petkov <bp@alien8=2Ede> wrote:
+>>
+>> On Wed, Mar 12, 2025 at 12:09:34PM -0000, tip-bot2 for Ard Biesheuvel w=
+rote:
+>> > The following commit has been merged into the x86/build branch of tip=
+:
+>> >
+>> > Commit-ID:     e471a86a8c523eccdfd1c4745ed7ac7cbdcc1f3f
+>> > Gitweb:        https://git=2Ekernel=2Eorg/tip/e471a86a8c523eccdfd1c47=
+45ed7ac7cbdcc1f3f
+>> > Author:        Ard Biesheuvel <ardb@kernel=2Eorg>
+>> > AuthorDate:    Wed, 12 Mar 2025 09:12:05 +01:00
+>> > Committer:     Ingo Molnar <mingo@kernel=2Eorg>
+>> > CommitterDate: Wed, 12 Mar 2025 13:04:52 +01:00
+>> >
+>> > x86/boot: Add back some padding for the CRC-32 checksum
+>> >
+>> > Even though no uses of the bzImage CRC-32 checksum are known, ensure
+>> > that the last 4 bytes of the image are unused zero bytes, so that the
+>> > checksum can be generated post-build if needed=2E
+>>
+>> Sounds like it is not needed and sounds like we should whack this thing=
+ no?
+>>
+>> Or are we doing a grace period and then whack it when that grace period
+>> expires?
+>>
+>
+>This was done on hpa's request - maybe he has a duration in mind for
+>this grace period?
 
-On 2025-04-14 18:24, Stephen Bates wrote:
-> It is useful to be able to develop and test p2pdma applications in
-> virtualized environments. Whitelist the QEMU PCI host bridge emulated
-> by the default QEMU system for x86_64.
+I would prefer to leave it indefinitely, because an all zero pattern is fa=
+r easier to detect than what would look like a false checksum=2E
 
-The host bridge is also in real hardware. 82G33 motherboards from c.
-2007. Given it's age the real hardware probably doesn't support P2P
-transactions, but at the same time it's probably pretty rare and I
-wouldn't expect there to be much risk of someone trying and failing a
-P2P transaction on such a machine. These things are probably worth
-noting in the commit message.
+So I remembered eventually who wanted it: it was a direct from flash boot =
+loader who wanted to detect a partial flash failure before invoking the ker=
+nel, so that it can redirect to a secondary kernel=2E
 
-Other than that:
+That would obviously not be an UEFI environment, so the signing issue is n=
+ot applicable=2E
 
-Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+An all zero end field actually works for that purpose (although requires a=
+ boot loader patch), because an unprogrammed flash sector contains FFFFFFFF=
+ not 00000000=2E
 
-Logan
+We have kept the bzImage format backwards compatible =E2=80=93 sometimes a=
+t considerable effort =E2=80=93 and the cost of reasonably continuing to do=
+ so is absolutely minimal=2E This is an incompatible change, so at least it=
+ is appropriate to give unambiguous indication thereof=2E
+
+In other words: it ain't broken, don't try to fix it=2E It is all downside=
+, no upside=2E
+
 
