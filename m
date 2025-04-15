@@ -1,127 +1,171 @@
-Return-Path: <linux-kernel+bounces-604808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B2A0A89907
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:59:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB525A899A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:18:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C2373B8FC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:59:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC16B189D49C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:18:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A230B28B513;
-	Tue, 15 Apr 2025 09:59:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB035289343;
+	Tue, 15 Apr 2025 10:17:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="TE82IOSv"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="qin2wJru"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39286289343;
-	Tue, 15 Apr 2025 09:59:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1219F28DF14;
+	Tue, 15 Apr 2025 10:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744711152; cv=none; b=mTwifieDHJWj6sZTS3Th7+8pQ6gwxSmcSI7JIIw7VM+Tr3yUTgPLfPYcglrWOO2+c9f+kxXxVRne3V64A1qudzOzxMqmJOJOxquD+6dVWuRr1C47p91m1NcsTnVzISz68gyA9YJFa3lCKcWmU8PE1JqzdQnXmbpjlDU92YCFkgc=
+	t=1744712264; cv=none; b=l8BVNOMwb7mSCmKqbPuAmnOpq1ST85blUKbZ3Kp6UtXqbE8VVYAeRaOKgsFiD6AytBVhw2V4QG7Xr43RAHTTm+eww0zBqAy8w1qFvkNNnlJvki9AjY/lJc5zm/9YwBgRBQIQzfY4TKUpMkRL4YIgfjjqHZvwZ3gne7TfAyassY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744711152; c=relaxed/simple;
-	bh=vymqsKww4x6vksA8VtZI/fKOGW2FY+7jrdaZBFUWKnU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Uh8mZMsaAMX2BRdxq5smAV3Hx+Cgub4ZfTFlo13YaXZqMGhh77gxfqfI/D+yZ9PzwvfobX4tGHVgEvKbTlLJph+Wl4D0OrtF700rvwvxNpydBHykI0lMQ28aFeYuv/aNId0Znk1YKr6pnaWo8/UlQ9oLhtRWlVDtvRJep5x9sTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=TE82IOSv; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1744711148;
-	bh=vymqsKww4x6vksA8VtZI/fKOGW2FY+7jrdaZBFUWKnU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TE82IOSvUEmzPXbMQJ2EoP851YmhYFzTC5zQPgwfF33E0+gAcUdGwbEJFP8OXBQXd
-	 yGBZJI+CeWbXAgkEYhpr74oLj5KPjK9P9yvMRhfMaf7NFBcLdcaSI0au0WXYUNyaxQ
-	 v3zkD7kVVnjWm858jX9dLieI0WPu87ky3ykYHWSrvWI5pDTdpGv10JBeFTOGRTMhUz
-	 wnds/V/dmY+o/xfDll9c5NQHS5KAe1ylm/sdNZyjkdPPw6CvH6v3mCDLWvtiRZhO5n
-	 KtRsNpdn2nGSJz4lF/HchbJd1h/rDGn1e7pwH5YkPuma+lXZWT49l/b4lRYYrIXW5V
-	 UX1enncHHBECg==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	s=arc-20240116; t=1744712264; c=relaxed/simple;
+	bh=OblOeeP2J+XD6Bwadli1Fx0x3GrdHKJhYb8cr0j/ohQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MlwplJaJGdk6Ng17uQBc8o0jyAThVOMXr4hnUBhmPNQSQeI1kGmHojUP9YQFASf0ARagoweswFM+/mdjsiRqN2hAijq2YPA1FB1Cr/IFaqN+4Yfzb4Daalm5t/1qhjlpRAyiWg2YZLQh6KrWcV5mgzG39BwZ/3++0sa7T/ku2wQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=qin2wJru; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 53DF517E0FA7;
-	Tue, 15 Apr 2025 11:59:07 +0200 (CEST)
-Message-ID: <bbb81e79-95da-4cf9-9eef-7cbaea191ebb@collabora.com>
-Date: Tue, 15 Apr 2025 11:59:06 +0200
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id CB42F66266B;
+	Tue, 15 Apr 2025 12:17:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1744712257;
+	bh=OblOeeP2J+XD6Bwadli1Fx0x3GrdHKJhYb8cr0j/ohQ=;
+	h=From:Subject:Date;
+	b=qin2wJruoS/mHMufsjJpphRcplxPhpwQXF3pdy0RyWY3mu8pH5TR6Ycrse1ojDGV3
+	 DDxWGyUYBmghrBM409WU8V3y0s9QQgO8yD7pcVHE5HCjZMuQFdsEYUypBPPDyOAOl0
+	 gATDyruW8Q1HCyixoDIBHHW2powp4HNW9U3TbqYezXHI0L9AlgWjW7ck/Vc1GI7lId
+	 gHvUChHYvJPpALNsGvyI1KeEbY5PTjaOjlWzFE6AhK33vDBgRialtKoxZsbYIisY6h
+	 6VTSWJ7g9V6l6nmcsBkrTZeYY++t8xKhuX+KRz3RnLUoIj/3HJWzFkIxb3qQA0LUql
+	 8uU/iTUHIpG9A==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Christian Loehle <christian.loehle@arm.com>,
+ Sultan Alsawaf <sultan@kerneltoast.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Valentin Schneider <vschneid@redhat.com>, Ingo Molnar <mingo@redhat.com>
+Subject:
+ [PATCH v2 2/6] cpufreq/sched: Explicitly synchronize limits_changed flag
+ handling
+Date: Tue, 15 Apr 2025 11:59:15 +0200
+Message-ID: <3376719.44csPzL39Z@rjwysocki.net>
+In-Reply-To: <6171293.lOV4Wx5bFT@rjwysocki.net>
+References: <6171293.lOV4Wx5bFT@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 3/5] dt-bindings: power: Add binding for MediaTek MT7988
- topmisc power controller
-To: frank-w@public-files.de, Frank Wunderlich <linux@fw-web.de>,
- Chunfeng Yun <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Daniel Golle <daniel@makrotopia.org>, Sam Shih <sam.shih@mediatek.com>,
- MandyJH Liu <mandyjh.liu@mediatek.com>,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250413085806.8544-1-linux@fw-web.de>
- <20250413085806.8544-4-linux@fw-web.de>
- <700af1ab-f43e-4583-8f0e-27e5d4424338@collabora.com>
- <2EA2BDB0-E1C9-49BC-98FC-5048905AA036@public-files.de>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <2EA2BDB0-E1C9-49BC-98FC-5048905AA036@public-files.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvdefvddvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepuddupdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvhhirhgvshhhrdhkuhhmrghrsehlihhnrghrohdrohhrghdprhgtphhtthhopehsrhhinhhivhgrshdrphgrnhgurhhuvhgruggrsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepmhgrrhhiohdrlhh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=11 Fuz1=11 Fuz2=11
 
-Il 15/04/25 11:52, Frank Wunderlich ha scritto:
-> Hi Angelo,
-> 
-> Am 14. April 2025 12:25:23 MESZ schrieb AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>:
->> Il 13/04/25 10:58, Frank Wunderlich ha scritto:
->>> From: Frank Wunderlich <frank-w@public-files.de>
->>>
->>> Topmisc is a systemcontroller used for xs-phy and ethernet on  mt7988.
->>> Add binding for it.
->>
->> That's the wrong binding... check mfd/syscon.yaml :-)
->>
->> P.S.: Is there any reset controller in topmisc? Any clock?
->>       If yes, syscon.yaml is also wrong, and you need a driver for that.
->>       Remember: If it turns out *later* that this has clk/resets and the
->>       bindings are already set for just a syscon, it's gonna be way harder!
->>
->> Cheers,
->> Angelo
-> 
-> Ok based on the power-domain-cells property i guessed powercontroller is the right place.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-power-domain-cells, but without any power domain assignment, so that was wrong :)))
+The handling of the limits_changed flag in struct sugov_policy needs to
+be explicitly synchronized to ensure that cpufreq policy limits updates
+will not be missed in some cases.
 
-> 
-> But based on your suggestion i tried moving compatible to syscon binding and made dtbs_check here.
-> 
-> I can confirm dropping the unexpected properties reported by syscon binding (power-domain-cells,clock-cells,adress-cells and size-cells) are not needed for function (xsphy and ethernet).
-> 
-> For verifying that there are really no clocks/resets in topmisc (have not found it in public available register documents) i asked mtk (waiting for answer).
-> 
-> Also got it working without the syscon compatible by changing ethernet driver too (after this change xsphy was also working).
+Without that synchronization it is theoretically possible that
+the limits_changed update in sugov_should_update_freq() will be
+reordered with respect to the reads of the policy limits in
+cpufreq_driver_resolve_freq() and in that case, if the limits_changed
+update in sugov_limits() clobbers the one in sugov_should_update_freq(),
+the new policy limits may not take effect for a long time.
 
-Perfect, a bit of a cleanup and you're done, then!
+Likewise, the limits_changed update in sugov_limits() may theoretically
+get reordered with respect to the updates of the policy limits in
+cpufreq_set_policy() and if sugov_should_update_freq() runs between
+them, the policy limits change may be missed.
 
-Cheers!
+To ensure that the above situations will not take place, add memory
+barriers preventing the reordering in question from taking place and
+add READ_ONCE() and WRITE_ONCE() annotations around all of the
+limits_changed flag updates to prevent the compiler from messing up
+with that code.
 
-> 
-> Eth:
-> https://github.com/frank-w/BPI-Router-Linux/commit/d866e648717800b6f6395ad36c38f9effcf0498d
-> Xsphy:
-> <https://github.com/frank-w/BPI-Router-Linux/commit/0121a94df99700487704ca056b210b13db07e90c>
-> 
-> regards Frank
+Fixes: 600f5badb78c ("cpufreq: schedutil: Don't skip freq update when limits change")
+Cc: 5.3+ <stable@vger.nernel.org> # 5.3+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+
+v1 -> v2:
+   * Rebase on top of the new [1/6].
+
+---
+ kernel/sched/cpufreq_schedutil.c |   28 ++++++++++++++++++++++++----
+ 1 file changed, 24 insertions(+), 4 deletions(-)
+
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -81,9 +81,20 @@
+ 	if (!cpufreq_this_cpu_can_update(sg_policy->policy))
+ 		return false;
+ 
+-	if (unlikely(sg_policy->limits_changed)) {
+-		sg_policy->limits_changed = false;
++	if (unlikely(READ_ONCE(sg_policy->limits_changed))) {
++		WRITE_ONCE(sg_policy->limits_changed, false);
+ 		sg_policy->need_freq_update = true;
++
++		/*
++		 * The above limits_changed update must occur before the reads
++		 * of policy limits in cpufreq_driver_resolve_freq() or a policy
++		 * limits update might be missed, so use a memory barrier to
++		 * ensure it.
++		 *
++		 * This pairs with the write memory barrier in sugov_limits().
++		 */
++		smp_mb();
++
+ 		return true;
+ 	}
+ 
+@@ -377,7 +388,7 @@
+ static inline void ignore_dl_rate_limit(struct sugov_cpu *sg_cpu)
+ {
+ 	if (cpu_bw_dl(cpu_rq(sg_cpu->cpu)) > sg_cpu->bw_min)
+-		sg_cpu->sg_policy->limits_changed = true;
++		WRITE_ONCE(sg_cpu->sg_policy->limits_changed, true);
+ }
+ 
+ static inline bool sugov_update_single_common(struct sugov_cpu *sg_cpu,
+@@ -883,7 +894,16 @@
+ 		mutex_unlock(&sg_policy->work_lock);
+ 	}
+ 
+-	sg_policy->limits_changed = true;
++	/*
++	 * The limits_changed update below must take place before the updates
++	 * of policy limits in cpufreq_set_policy() or a policy limits update
++	 * might be missed, so use a memory barrier to ensure it.
++	 *
++	 * This pairs with the memory barrier in sugov_should_update_freq().
++	 */
++	smp_wmb();
++
++	WRITE_ONCE(sg_policy->limits_changed, true);
+ }
+ 
+ struct cpufreq_governor schedutil_gov = {
 
 
 
