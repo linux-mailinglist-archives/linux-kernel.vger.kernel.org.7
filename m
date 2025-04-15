@@ -1,140 +1,149 @@
-Return-Path: <linux-kernel+bounces-605784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED61AA8A617
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 19:56:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2B43A8A62C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 19:58:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BCB4177D86
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 17:56:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F1683BC67D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 17:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1643C221713;
-	Tue, 15 Apr 2025 17:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49549224243;
+	Tue, 15 Apr 2025 17:57:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FscDal+g"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WxCBuKky";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="nZSy6xsL";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WxCBuKky";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="nZSy6xsL"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B852E20DF4
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 17:56:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A411B0430
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 17:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744739764; cv=none; b=SQJvS4rsA/1r0Uu5EAyblpDSTyNq8+yY3GjWqdblL0R/x8DFe5/PUWeslcfvyfMKICGcPTiivDL1I91QwoyR3myCOMOu3W3fY4C07uOi2yITuL1y8FTLdgz/J2akqAgMIPpCvkP3lFiV0E6nER4eWgg2ewP2ogVNSHGoUZ/DUMw=
+	t=1744739867; cv=none; b=HwHHO4KuKy6uTOUx+jdXEV8qCqSt9QJCfzz5qde3sFAOAhyHtUGVvNxRwlnkPwM4Ectn0xdSQT/epBlURsAMfCMqpHiQyquD4arPtnts8tUw3VDvlZXqVoYeIYHz82tnVVihhoJMdcExNHfGxG4MUB1SdFnIIOb/xvM+2+nTIsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744739764; c=relaxed/simple;
-	bh=c86fNt+ApUHvVvZcEbUJVjVRreBXvM73091hrP4qKdA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ex2SqQt5SRfEPSc5FFnazpblCmWvHR6VcBq78NMF600A4TKr71tCS3rr/QOJ5WEJxSMSUJ6NAlb1JyC60+GkXWWCU2uubob9xqTm7/9LZngAX2h/HcQiKDPwrRoXVt3pIEl2ztETtPR61z8pErs2+Fu4bFT+Vl4vFYYOH77o8Oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FscDal+g; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43cfe63c592so64105805e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 10:56:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744739761; x=1745344561; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3dii88vxy+0kWYHHaG5dKqAQf7HwnhiHLf0E63iO/PI=;
-        b=FscDal+gBVAsIc7PKqe4zEohMeameRYvG19PTSvxH9raAoSZCyfPZXK4KBUGki4az3
-         VLV27CQ8wwQjijMk59u3SfN5DH1vmEfLnYg9XffRUXNznO/q1DcwLYsj4374cjyawmw9
-         8iW1fpYzW8/y1aMaiC0nEYgIG0p3N9NKzQ8+hjdsd3N+aDike6HGF113ZTvqYmSqANrm
-         5JOowfQUJPF/Y07BsBssJyfYvsD8r6YLlmwwoMb1cYAeHNcGsK7Ypf/3AFSlS5W2ir+5
-         mcMC33fSteuqsWP38kvu8GEN34AQwYqsuyBzOc6lzaihN3x9KycAE0XhWzhlmS9eu4f1
-         dPAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744739761; x=1745344561;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3dii88vxy+0kWYHHaG5dKqAQf7HwnhiHLf0E63iO/PI=;
-        b=MfN4Me/qe25MT5/KZEgZiJTANgMmZeSOXsB4FVZF5XuDOMVMbAU0LvZyXCoxHUblb0
-         khQuTptIZFL2hY2gyRh7os+UBIWDKCfzIOSMhd9ICNZmj3CyUF5CY7zNfEWNiPxpn9x8
-         y2gMz8qFxOyUWEbeCyKyLcgldzIOEqPzOcgrGNbdttNuxAs52+vjRBXN+2zHOwvF7oru
-         wwMPnZBcuExhrogkdhX9x1dXMMdcsRru3DsUYQPNokQiGEf8zVjgp8mJthpJoFinKQle
-         3YMkK0uTuuRNGS8+J75qAdIKySSkdqSjU5JbqgAPiVwS5Ixn1R1ed3uCf5ObL8om6BBw
-         RgAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXU0DBjq9iyho80guvRynSpRFNH7ApIxFje5Zfv/cJWSiGfDvZHcKe4T2QHFB1B2kG4MMJUUzgnbtBgyxY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3TJKnTfdGvu0u9eAhXJbf+3MDsSidy7HKLXnSD4vCjxD3I6Bk
-	AcQEfqJh2E4W0cmzhPCtQV1mAC2u9gnRyZzP21Z6gqXYCD8WPOZm
-X-Gm-Gg: ASbGncsn/wWGEZFxw4QhEsBYYU658htiS6Rm96nrexHaGd8mXOzXzrctzG0bKH5JxLj
-	fIKUKX8e6FUjlx4oSfPoG+w5Aq72k8xfgDL0EMSldWKaP+V80UrQlE/WYr9eZhBzrxIaEbU4VPI
-	01Ivydb4yaOuaBK74ecFJm7eiAFqvkLo1/9GQtdkuNeHeXE+YNnq7xM+f5grk7Ej+HeUm8HFKQP
-	aQ95F0KJw0/HXTx6eAG4gksjG9s4eVzT639J467NxTORnrJVLATWCLQ1wc6Av6pPvv/l3N0bhr4
-	U7UGAgX0i/XfnTOJ3ZfJPduFwS6+Bh6tFG1SEkFDE/Cc0TqR0wW90i9XE3dyp3gxc02Zb7dW68I
-	MrsOk7Nr8f6SsEg==
-X-Google-Smtp-Source: AGHT+IGptWUhUPghhzbUlnMiXUjXKLkOLTWNhwNQRBrnxW8Pmu0xPEUxkmF80iqK/Ldomew+G/oa5A==
-X-Received: by 2002:a05:600c:a42:b0:43c:fdbe:4398 with SMTP id 5b1f17b1804b1-4405a001461mr524545e9.6.1744739760718;
-        Tue, 15 Apr 2025 10:56:00 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f2066d069sm221245635e9.17.2025.04.15.10.55.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Apr 2025 10:56:00 -0700 (PDT)
-Date: Tue, 15 Apr 2025 18:55:58 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: linux-um@lists.infradead.org, x86@kernel.org,
- linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>, Anton
- Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg
- <johannes@sipsolutions.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo
- Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH] um/asm: Replace "REP; NOP" with PAUSE mnemonic
-Message-ID: <20250415185558.112621df@pumpkin>
-In-Reply-To: <20250414145650.10776-1-ubizjak@gmail.com>
-References: <20250414145650.10776-1-ubizjak@gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1744739867; c=relaxed/simple;
+	bh=8k5nnCyjBOPXgC1yMZROWiz9WN77XzffTzHWi+0+CTw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QTNzOKvQY+iESJDF6KoJCWgv2rS8aZOiJixbDLS099NgMI5qkw/qVHc3+wfmJt+5YbP93F0bQI/gboWVQHQWhlcSqTaXo6BNutRzrR8V1XPikGAYXOpfD0EomfKIiQOQJrRqSgVMvdYvPPGMrZk+gFXY6P9lRkIBa2vsNvv45Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WxCBuKky; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=nZSy6xsL; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WxCBuKky; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=nZSy6xsL; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 7BF01210F2;
+	Tue, 15 Apr 2025 17:57:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744739863;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GJiZc4e+Qu9WUTWSFOJjDc5ZlZEIcijcedgOYaR2cqA=;
+	b=WxCBuKkyk95SBqEv4oMwfi3XcWopIhvSTiy3gasDL5/bhq/ma2VlA9eMjVrKjbJtrsQIhL
+	QRrqf6TN+v4YIVS1D/EpEYgMbcgmZgWdJsI/jY7NjO8eEwloi28fllhOTrQJ8G/Ven//GK
+	2NDuS8yttAKLNntQAB7fRhiSOABBMio=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744739863;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GJiZc4e+Qu9WUTWSFOJjDc5ZlZEIcijcedgOYaR2cqA=;
+	b=nZSy6xsL1UYAaf2NscULGqF0gKJnPehHamo+B5mExRxdbXRYL7gc/NQ0xm76l7Lp1NrC7M
+	+ZtZGWnQygTiG+DQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=WxCBuKky;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=nZSy6xsL
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744739863;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GJiZc4e+Qu9WUTWSFOJjDc5ZlZEIcijcedgOYaR2cqA=;
+	b=WxCBuKkyk95SBqEv4oMwfi3XcWopIhvSTiy3gasDL5/bhq/ma2VlA9eMjVrKjbJtrsQIhL
+	QRrqf6TN+v4YIVS1D/EpEYgMbcgmZgWdJsI/jY7NjO8eEwloi28fllhOTrQJ8G/Ven//GK
+	2NDuS8yttAKLNntQAB7fRhiSOABBMio=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744739863;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GJiZc4e+Qu9WUTWSFOJjDc5ZlZEIcijcedgOYaR2cqA=;
+	b=nZSy6xsL1UYAaf2NscULGqF0gKJnPehHamo+B5mExRxdbXRYL7gc/NQ0xm76l7Lp1NrC7M
+	+ZtZGWnQygTiG+DQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 663F6137A5;
+	Tue, 15 Apr 2025 17:57:43 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id r2fHGBee/meMewAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Tue, 15 Apr 2025 17:57:43 +0000
+Date: Tue, 15 Apr 2025 19:57:34 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Yangtao Li <frank.li@vivo.com>
+Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] btrfs: simplify return logic from
+ btrfs_delayed_ref_init()
+Message-ID: <20250415175734.GL16750@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20250414125231.740999-1-frank.li@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250414125231.740999-1-frank.li@vivo.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Rspamd-Queue-Id: 7BF01210F2
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.21 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:replyto,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.21
+X-Spam-Flag: NO
 
-On Mon, 14 Apr 2025 16:55:57 +0200
-Uros Bizjak <ubizjak@gmail.com> wrote:
-
-> Current minimum required version of binutils is 2.25,
-> which supports PAUSE instruction mnemonic.
+On Mon, Apr 14, 2025 at 06:52:31AM -0600, Yangtao Li wrote:
+> Make this simpler by returning directly.
 > 
-> Replace "REP; NOP" with this proper mnemonic.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> Cc: Richard Weinberger <richard@nod.at>
-> Cc: Anton Ivanov <anton.ivanov@cambridgegreys.com>
-> Cc: Johannes Berg <johannes@sipsolutions.net>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> ---
->  arch/x86/um/asm/processor.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/um/asm/processor.h b/arch/x86/um/asm/processor.h
-> index 478710384b34..233a7a0d29c9 100644
-> --- a/arch/x86/um/asm/processor.h
-> +++ b/arch/x86/um/asm/processor.h
-> @@ -24,7 +24,7 @@
->  /* REP NOP (PAUSE) is a good thing to insert into busy-wait loops. */
->  static __always_inline void rep_nop(void)
->  {
-> -	__asm__ __volatile__("rep;nop": : :"memory");
-> +	__asm__ __volatile__("pause": : :"memory");
->  }
->  
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
 
-That only makes sense if you also change the function name.
-
-	David
-
->  static __always_inline void cpu_relax(void)
-
+Added to for-next, thanks.
 
