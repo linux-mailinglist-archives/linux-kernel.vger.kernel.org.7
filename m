@@ -1,102 +1,81 @@
-Return-Path: <linux-kernel+bounces-605282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B75BEA89F44
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:20:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3229A89F3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:19:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CFD91901D41
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:20:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA87E3BDDFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:19:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FD22297A60;
-	Tue, 15 Apr 2025 13:19:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2359E297A6C;
+	Tue, 15 Apr 2025 13:19:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JOm+tc7l"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bsa+x95C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53AB12973D2
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 13:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BFB22973A0;
+	Tue, 15 Apr 2025 13:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744723190; cv=none; b=SsSR8YR3MfVLa0Q2Km1jL7UBdtjAvOiyCkawjWWzWMqNjcZrqdhU7SGCbJK4IvFDe10dUndYvJKqwPWHIVyuGlEE9+qZYXllaNic2lyxBCc/4yjE2Ftc0oQLfi0pjEBHXDjlAm6A/XBd13EwLi2owP9EP6AE3e1w/n+0WniPjx0=
+	t=1744723169; cv=none; b=WnhZnks6lEZsgwkCcO9tHBJz6k+xzULuuV5R3jthrHvGG0NnRoTBq44IgsQ0ocKVScZwVbeYxCve0x+wMQNAvFUhof1OtcL+3gyYP69FOPyJw46ooLudOwhLh49SkLHSYLwvR706WlOO2J0aw8lTtiJM3n8m0XM1nGI2vuEugRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744723190; c=relaxed/simple;
-	bh=jHpDjEbRR/e0hfSMox+5LrnIlZIkGZMycfuhgzIizrs=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=EjrY6qKsx/p43GI2HgVqq3Xmglm77s0Y5WL4Az647TnBdo94j3lHO2XkKBEDzrH2stJjPsW4muzvRcgUAY3R4de/fp4kQVCFndtsGquvV9AUxCrdUOB3El1rGKpR+FGP0uLOzaYfnFZeB0GOxXfYQbbs7mJn7aEa8/xxz+7N1rU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JOm+tc7l; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <8f72b42e-c38d-45fd-b04d-c2b48a809d0c@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1744723187;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZLSozCorBBEWbCogUwnoTzrWlqCaGFlvu0gweRfCrow=;
-	b=JOm+tc7lz9LZ6iM6+e0XfHi2diggzB6r/LJPLb2Vt1uEcdtUrE69EkRmCJ+YcRCLDgnK1p
-	kc7Pv9xnaosXzQdCamVpC6X4D9V2Pqk9tqVvrydTJqxWUv5SXOB7Zx2XlzHG1cfbLs5EiK
-	oxafoQuowdcOlbUBj+8PkuwJAqTs3Ag=
-Date: Tue, 15 Apr 2025 18:48:53 +0530
+	s=arc-20240116; t=1744723169; c=relaxed/simple;
+	bh=dUTm412+K/VmHkyZw+CmlWzv4zckQvZAia5fbSEQNn4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=apSLqOO2TcpOftTe7biOp3Lf373d5DgkqKNBtv51ypqbfCoT6WumqgwsCnG8ZaTFL5Q5u37tRijxWX4aMoirAU+xUmxtYewgg6UlM1K9ixoiL0JO6JHRrAHNaDCfn5i8Axi2NI9JJkBcrsAxyVy4bRqW5bU4trJZZOPMbY6P998=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bsa+x95C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B29EC4CEDD;
+	Tue, 15 Apr 2025 13:19:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1744723168;
+	bh=dUTm412+K/VmHkyZw+CmlWzv4zckQvZAia5fbSEQNn4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bsa+x95CEBNUO6b4gx8SCg5V/g6rbLU/TUMfQaDLQ1SXJZlNiLTN85TIQw4vtBxyu
+	 KqXMXtvGZ67Laj0y/0BHqw1DGEoVAGsGvMwAvXwnIDQYkoOTqX8TtVH4g9nSbV3iy7
+	 lsA5r+Z56NYTEmNzQMCEOUs/mfIrK9MtKcQMWYbw=
+Date: Tue, 15 Apr 2025 15:19:25 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Devaansh Kumar <devaanshk840@gmail.com>
+Cc: sashal@kernel.org, stable@vger.kernel.org, ast@kernel.org,
+	daniel@iogearbox.net, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>
+Subject: Re: [PATCH] bpf: Remove tracing program restriction on map types
+Message-ID: <2025041517-semicolon-aloft-9910@gregkh>
+References: <20250415130910.2326537-1-devaanshk840@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Aradhya Bhatia <aradhya.bhatia@linux.dev>
-Subject: Re: [PATCH v3 09/17] drm/bridge: cdns-dsi: Drop checks that shouldn't
- be in .mode_valid()
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Jyri Sarha <jyri.sarha@iki.fi>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Jayesh Choudhary <j-choudhary@ti.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org, Francesco Dolcini <francesco@dolcini.it>,
- Devarsh Thakkar <devarsht@ti.com>
-References: <20250414-cdns-dsi-impro-v3-0-4e52551d4f07@ideasonboard.com>
- <20250414-cdns-dsi-impro-v3-9-4e52551d4f07@ideasonboard.com>
-Content-Language: en-US
-In-Reply-To: <20250414-cdns-dsi-impro-v3-9-4e52551d4f07@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250415130910.2326537-1-devaanshk840@gmail.com>
 
-
-On 14/04/25 16:41, Tomi Valkeinen wrote:
-> The docs say about mode_valid():
+On Tue, Apr 15, 2025 at 06:39:07PM +0530, Devaansh Kumar wrote:
+> [ Upstream commit 96da3f7d489d11b43e7c1af90d876b9a2492cca8 ]
 > 
-> "it is not allowed to look at anything else but the passed-in mode, and
-> validate it against configuration-invariant hardware constraints"
+> The hash map is now fully converted to bpf_mem_alloc. Its implementation is not
+> allocating synchronously and not calling call_rcu() directly. It's now safe to
+> use non-preallocated hash maps in all types of tracing programs including
+> BPF_PROG_TYPE_PERF_EVENT that runs out of NMI context.
 > 
-> We're doing a lot more than just looking at the mode. The main issue
-> here is that we're doing checks based on the pixel clock, before we know
-> what the pixel clock from the crtc actually is.
-> 
-> So, drop the cdns_dsi_check_conf() call from .mode_valid().
-> 
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+> Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+> Acked-by: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+> Acked-by: Andrii Nakryiko <andrii@kernel.org>
+> Link: https://lore.kernel.org/bpf/20220902211058.60789-13-alexei.starovoitov@gmail.com
+> Signed-off-by: Devaansh Kumar <devaanshk840@gmail.com>
 > ---
->  drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c | 7 +------
->  1 file changed, 1 insertion(+), 6 deletions(-)
-> 
+>  kernel/bpf/verifier.c | 29 -----------------------------
+>  1 file changed, 29 deletions(-)
 
-Reviewed-by: Aradhya Bhatia <aradhya.bhatia@linux.dev>
-
---
-Regards
-Aradhya
-
+what kernel tree(s) is this for?
 
