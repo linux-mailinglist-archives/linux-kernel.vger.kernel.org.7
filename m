@@ -1,61 +1,62 @@
-Return-Path: <linux-kernel+bounces-604603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88C42A8967D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:27:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AD07A8967E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:27:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17F7417F44C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:27:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BD25189CE8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9EF28F529;
-	Tue, 15 Apr 2025 08:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FB4D192D97;
+	Tue, 15 Apr 2025 08:24:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LNVx8cBM"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SBbaDQr5"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA9628E60C;
-	Tue, 15 Apr 2025 08:24:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084B027B4FC;
+	Tue, 15 Apr 2025 08:24:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744705458; cv=none; b=FkvomuuRxgm+IJrLHAs7FOIYKDVzqaPbcaSbjGaEiNOiomSCbdcQxKTkKQoU9Dl53eBpTsLGSZSDK3LeMRYeAZn+0ee5hjjJ7NTqTNxbNQqBdzwCID35MsJx+/72jj3yLRx/l8hSRxhgT0wG9cUSNRzmaM/NNKUYxly+vUEguf0=
+	t=1744705460; cv=none; b=M6CoCVrFF66k1IxN47rKpsyR1T2ViIwxYuL6jjG2/HyXtcWVDyXxfd2a6dIswaRM9oUk2xBjpGYm0ORmMuRrLNE2Bh0DIxmBcAL70GAZyQBbZtG3pelK9a++Am5pVzmkAfpNx+LepdypVzvTd6Vf0sLQdgJNKqqigGsrPWpAaOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744705458; c=relaxed/simple;
-	bh=pBhWXc8rqfT0+Y6kdjF2rQr8y5smxBwEr7Z92OjWLag=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rLTbbGmMDUFuqGN+ktqQpJ91ARg5DbwQwVmUp5Oz32EI1LifcK1CewYcWff/D1vbOOQgDxVm2eZxDM3rkCVgLVoGLUQW0VBe4fGNWdh7kcWIYApbiZcSlWSDm1xVMESZ7qFHigs/gmz+FP/kAA/fRYlgcIQ6Hosw771M/mrrdVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LNVx8cBM; arc=none smtp.client-ip=198.175.65.21
+	s=arc-20240116; t=1744705460; c=relaxed/simple;
+	bh=9d+mLsCAasTLdGJgc6ffxudPE/jqvpz6Ci0AKO2oPrU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=LNBsqTa6YE/EFBcHbXWUV+Wb5YqYgOnmdLlDkdSrsNdVHK8rdU/9t/FWUUt4YA59zrEZJRpRgucOXpJt8n9PAZ2rq7JXDpw58chu+OVUP1uRd5pgfNDvCiKWkf/+2dMF6d4cpdbsYxD/0vY90OGNTLUb1aN5asUYKWa2VrmwmdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SBbaDQr5; arc=none smtp.client-ip=198.175.65.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744705457; x=1776241457;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=pBhWXc8rqfT0+Y6kdjF2rQr8y5smxBwEr7Z92OjWLag=;
-  b=LNVx8cBMrCXq/vOxesJWl4YHYSKMPTLe2mP/D9zbgIhv+5hEe+/lP13X
-   I3hmzPv178NlFQd82vM7zi7VDCRn46FYaq9Ayn6Eo9v4Es/ss76CKBBnc
-   1qZw1G2KWq23CpUKgxuxCZ3d73FvScdzVp5QnA9t8P6pPH7QOaD7WfHN1
-   xqTejQYIkTh/yWIjwZgd44Dzh0uvDpJQhXGGhg74Thx3XtxbQ919dGcGb
-   hQ8tguUAITE5Q7ztO//m7vyGQWGAY0LKhSiFoWFEIc9mctzz598BX2Rtt
-   Nj+kPhKjS8s4nVdqjZwr2Zxblk3umKo74ObhWdqqjhRK7fKsd36M4dxH/
-   A==;
-X-CSE-ConnectionGUID: xwMp30B5TtWQl7yuW1CDfA==
-X-CSE-MsgGUID: ho6iOBqATSSWrP6/uC3uLA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11403"; a="46115821"
+  t=1744705459; x=1776241459;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=9d+mLsCAasTLdGJgc6ffxudPE/jqvpz6Ci0AKO2oPrU=;
+  b=SBbaDQr5mlfQ4jM1JmtaDFVtOZwrv6Jw8SXZBnjxK221KZNoeuXZb6jv
+   Z9UmEsgOfvENg2MmqO2BLkFJQCdW8qrrE+MpgFIif1qvyPp6fa1hDLLdL
+   vEN+tf3I64IoklRXx/w6Yju1WKx/KtI0p/jl6cYi0AvjJd5iAUEqWngVd
+   E0L7RnXjbi+paptUpJhZEdFWKjjpRcK50cEtefTgAoQ1/fFPShCVXPx51
+   AInzQEi5k+Jafrw3DbmwbHDqMJpyPOR0xAMwCBa04ENL4ZXJmpLL3bcJR
+   A/B2/5pFhR0SOS9d4cZGTX3XY1AUmz6r7tVNTgj4GEeXfiOiKHCn4Ur0X
+   Q==;
+X-CSE-ConnectionGUID: o6d8ZIfRSm2lLIe/4VTL1A==
+X-CSE-MsgGUID: auVmlU7sTu+RPmX8R8lyzg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11403"; a="46115838"
 X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="46115821"
+   d="scan'208";a="46115838"
 Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 01:23:10 -0700
-X-CSE-ConnectionGUID: VvLQcEqCRbexOhsQ4Jx9zg==
-X-CSE-MsgGUID: xjuiu0dLTX+lnVkAShbqPw==
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 01:23:13 -0700
+X-CSE-ConnectionGUID: JgW/NYlFTCi9x/B26gFmEw==
+X-CSE-MsgGUID: Jt9HAbVjQoe8G6j9rkNDHA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="130055379"
+   d="scan'208";a="130055391"
 Received: from emr.sh.intel.com ([10.112.229.56])
-  by fmviesa007.fm.intel.com with ESMTP; 15 Apr 2025 01:23:05 -0700
+  by fmviesa007.fm.intel.com with ESMTP; 15 Apr 2025 01:23:09 -0700
 From: Dapeng Mi <dapeng1.mi@linux.intel.com>
 To: Peter Zijlstra <peterz@infradead.org>,
 	Ingo Molnar <mingo@redhat.com>,
@@ -69,12 +70,13 @@ To: Peter Zijlstra <peterz@infradead.org>,
 	Eranian Stephane <eranian@google.com>
 Cc: linux-kernel@vger.kernel.org,
 	linux-perf-users@vger.kernel.org,
-	Dapeng Mi <dapeng1.mi@intel.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: [Patch v3 00/22] Arch-PEBS and PMU supports for Clearwater Forest and Panther Lake
-Date: Tue, 15 Apr 2025 11:44:06 +0000
-Message-Id: <20250415114428.341182-1-dapeng1.mi@linux.intel.com>
+	Dapeng Mi <dapeng1.mi@intel.com>
+Subject: [Patch v3 01/22] perf/x86/intel: Add Panther Lake support
+Date: Tue, 15 Apr 2025 11:44:07 +0000
+Message-Id: <20250415114428.341182-2-dapeng1.mi@linux.intel.com>
 X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20250415114428.341182-1-dapeng1.mi@linux.intel.com>
+References: <20250415114428.341182-1-dapeng1.mi@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,135 +85,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This v3 patch serires is based on latest perf/core tree "5c3627b6f059
- perf/x86/intel/bts: Replace offsetof() with struct_size()" plus extra 2
-patches in patchset "perf/x86/intel: Don't clear perf metrics overflow
- bit unconditionally"[1].
+From: Kan Liang <kan.liang@linux.intel.com>
 
-Changes:
-  v2 -> v3:
-  * Rebase patches to 6.15-rc1 code base.
-  * Refactor arch-PEBS buffer allocation/release code, decouple with
-    legacy PEBS buffer allocation/release code.
-  * Support to capture SSP/XMM/YMM/ZMM registers for user space registers
-    sampling (--user-regs options) with PEBS events.
-  * Fix incorrect sampling frequency issue in frequency sampling mode.
-  * Misc changes to address other v2 comments.
+From PMU's perspective, Panther Lake is similar to the previous
+generation Lunar Lake. Both are hybrid platforms, with e-core and
+p-core.
 
-Tests:
-  Run below tests on Clearwater Forest and Pantherlake, no issue is
-  found.
-  
-  1. Basic perf counting case.
-    perf stat -e '{branches,branches,branches,branches,branches,branches,branches,branches,cycles,instructions,ref-cycles}' sleep 1
+The key differences are the ARCH PEBS feature and several new events.
+The ARCH PEBS is supported in the following patches.
+The new events will be supported later in perf tool.
 
-  2. Basic PMI based perf sampling case.
-    perf record -e '{branches,branches,branches,branches,branches,branches,branches,branches,cycles,instructions,ref-cycles}' sleep 1
+Share the code path with the Lunar Lake. Only update the name.
 
-  3. Basic PEBS based perf sampling case.
-    perf record -e '{branches,branches,branches,branches,branches,branches,branches,branches,cycles,instructions,ref-cycles}:p' sleep 1
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+ arch/x86/events/intel/core.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-  4. PEBS sampling case with basic, GPRs, vector-registers and LBR groups
-    perf record -e branches:p -Iax,bx,ip,ssp,xmm0,ymm0 -b -c 10000 sleep 1
-
-  5. User space PEBS sampling case with basic, GPRs, vector-registers and LBR groups
-    perf record -e branches:pu --user-regs=ax,bx,ip,ssp,xmm0,ymm0 -b -c 10000 sleep 1
-
-  6 PEBS sampling case with auxiliary (memory info) group
-    perf mem record sleep 1
-
-  7. PEBS sampling case with counter group
-    perf record -e '{branches:p,branches,cycles}:S' -c 10000 sleep 1
-
-  8. Perf stat and record test
-    perf test 92; perf test 120
-
-  9. perf-fuzzer test
-
-
-History:
-  v2: https://lore.kernel.org/all/20250218152818.158614-1-dapeng1.mi@linux.intel.com/
-  v1: https://lore.kernel.org/all/20250123140721.2496639-1-dapeng1.mi@linux.intel.com/
-
-Ref:
-  [1]: https://lore.kernel.org/all/20250415104135.318169-1-dapeng1.mi@linux.intel.com/
-
-
-Dapeng Mi (21):
-  perf/x86/intel: Add PMU support for Clearwater Forest
-  perf/x86/intel: Parse CPUID archPerfmonExt leaves for non-hybrid CPUs
-  perf/x86/intel: Decouple BTS initialization from PEBS initialization
-  perf/x86/intel: Rename x86_pmu.pebs to x86_pmu.ds_pebs
-  perf/x86/intel: Introduce pairs of PEBS static calls
-  perf/x86/intel: Initialize architectural PEBS
-  perf/x86/intel/ds: Factor out PEBS record processing code to functions
-  perf/x86/intel/ds: Factor out PEBS group processing code to functions
-  perf/x86/intel: Process arch-PEBS records or record fragments
-  perf/x86/intel: Allocate arch-PEBS buffer and initialize PEBS_BASE MSR
-  perf/x86/intel: Update dyn_constranit base on PEBS event precise level
-  perf/x86/intel: Setup PEBS data configuration and enable legacy groups
-  perf/x86/intel: Add counter group support for arch-PEBS
-  perf/x86/intel: Support SSP register capturing for arch-PEBS
-  perf/core: Support to capture higher width vector registers
-  perf/x86/intel: Support arch-PEBS vector registers group capturing
-  perf tools: Support to show SSP register
-  perf tools: Enhance arch__intr/user_reg_mask() helpers
-  perf tools: Enhance sample_regs_user/intr to capture more registers
-  perf tools: Support to capture more vector registers (x86/Intel)
-  perf tools/tests: Add vector registers PEBS sampling test
-
-Kan Liang (1):
-  perf/x86/intel: Add Panther Lake support
-
- arch/arm/kernel/perf_regs.c                   |   6 +
- arch/arm64/kernel/perf_regs.c                 |   6 +
- arch/csky/kernel/perf_regs.c                  |   5 +
- arch/loongarch/kernel/perf_regs.c             |   5 +
- arch/mips/kernel/perf_regs.c                  |   5 +
- arch/powerpc/perf/perf_regs.c                 |   5 +
- arch/riscv/kernel/perf_regs.c                 |   5 +
- arch/s390/kernel/perf_regs.c                  |   5 +
- arch/x86/events/core.c                        | 136 +++-
- arch/x86/events/intel/bts.c                   |   6 +-
- arch/x86/events/intel/core.c                  | 329 +++++++-
- arch/x86/events/intel/ds.c                    | 714 ++++++++++++++----
- arch/x86/events/perf_event.h                  |  60 +-
- arch/x86/include/asm/intel_ds.h               |  10 +-
- arch/x86/include/asm/msr-index.h              |  26 +
- arch/x86/include/asm/perf_event.h             | 145 +++-
- arch/x86/include/uapi/asm/perf_regs.h         |  83 +-
- arch/x86/kernel/perf_regs.c                   |  71 +-
- include/linux/perf_event.h                    |   4 +
- include/linux/perf_regs.h                     |  10 +
- include/uapi/linux/perf_event.h               |  11 +
- kernel/events/core.c                          |  98 ++-
- tools/arch/x86/include/uapi/asm/perf_regs.h   |  86 ++-
- tools/include/uapi/linux/perf_event.h         |  14 +
- tools/perf/arch/arm/util/perf_regs.c          |   8 +-
- tools/perf/arch/arm64/util/perf_regs.c        |  11 +-
- tools/perf/arch/csky/util/perf_regs.c         |   8 +-
- tools/perf/arch/loongarch/util/perf_regs.c    |   8 +-
- tools/perf/arch/mips/util/perf_regs.c         |   8 +-
- tools/perf/arch/powerpc/util/perf_regs.c      |  17 +-
- tools/perf/arch/riscv/util/perf_regs.c        |   8 +-
- tools/perf/arch/s390/util/perf_regs.c         |   8 +-
- tools/perf/arch/x86/util/perf_regs.c          | 138 +++-
- tools/perf/builtin-script.c                   |  23 +-
- tools/perf/tests/shell/record.sh              |  55 ++
- tools/perf/util/evsel.c                       |  36 +-
- tools/perf/util/intel-pt.c                    |   2 +-
- tools/perf/util/parse-regs-options.c          |  23 +-
- .../perf/util/perf-regs-arch/perf_regs_x86.c  |  84 +++
- tools/perf/util/perf_regs.c                   |   8 +-
- tools/perf/util/perf_regs.h                   |  20 +-
- tools/perf/util/record.h                      |   4 +-
- tools/perf/util/sample.h                      |   6 +-
- tools/perf/util/session.c                     |  29 +-
- tools/perf/util/synthetic-events.c            |  12 +-
- 45 files changed, 2075 insertions(+), 286 deletions(-)
-
-
-base-commit: 538f1f04b5bfeaff4cd681b2567a0fde2335be38
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index c6f69ce3b2b3..f107dd826c11 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -7572,8 +7572,17 @@ __init int intel_pmu_init(void)
+ 		name = "meteorlake_hybrid";
+ 		break;
+ 
++	case INTEL_PANTHERLAKE_L:
++		pr_cont("Pantherlake Hybrid events, ");
++		name = "pantherlake_hybrid";
++		goto lnl_common;
++
+ 	case INTEL_LUNARLAKE_M:
+ 	case INTEL_ARROWLAKE:
++		pr_cont("Lunarlake Hybrid events, ");
++		name = "lunarlake_hybrid";
++
++	lnl_common:
+ 		intel_pmu_init_hybrid(hybrid_big_small);
+ 
+ 		x86_pmu.pebs_latency_data = lnl_latency_data;
+@@ -7595,8 +7604,6 @@ __init int intel_pmu_init(void)
+ 		intel_pmu_init_skt(&pmu->pmu);
+ 
+ 		intel_pmu_pebs_data_source_lnl();
+-		pr_cont("Lunarlake Hybrid events, ");
+-		name = "lunarlake_hybrid";
+ 		break;
+ 
+ 	case INTEL_ARROWLAKE_H:
 -- 
 2.40.1
 
