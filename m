@@ -1,284 +1,350 @@
-Return-Path: <linux-kernel+bounces-604590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 432B6A89671
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:25:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99C74A89688
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:29:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21D011742F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:24:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA946189D77A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:29:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B8F2820D5;
-	Tue, 15 Apr 2025 08:23:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E882949FC;
+	Tue, 15 Apr 2025 08:24:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i23S9FCt"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R8NKmdIE"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 046CE27FD76
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 08:23:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B9529290B
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 08:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744705421; cv=none; b=khRy74DXJyJ1djIoSU70K9y51fp3KcideLuG1++5S0nHmlUWKPorVg7OOPRvrc1c2hDsRnQvrFLoga1LFjPCqlcsXPNnKhen5ZeCjZNUW/kw85YN069WQVD2ouUetngT0Qpo1oQr9HllARju5SpSRkBE8+S7Zf9lJr5O9m4/dJA=
+	t=1744705470; cv=none; b=Am2s6ybIPX/aolja6UjjkrLSFODel3JpeJi9enErsXKzBEybejGHCjxC1mB2FJPWJfLiXso0SPw1DBl3JBC0JJPnwV/B7OVIsx0XyPL5v8eB21Vtfiryc7m034d+9MC2JhC01a5fLg7nWn1ZgqwuAzv7l04Upmf/rcBo0hFH9f4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744705421; c=relaxed/simple;
-	bh=DmXCMITJCxaSpopuVqUvE61l1mTkXNzodEyQdT8pAow=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=exweoN3Zyst6S2QLY0JkzeqgmU0uV9wu+0SVjVT6dT7ZHAc4sQabAR5gk8frP+1rHwhLNg1gSgLy+x0ghcz5E3SuVkA/5WRl9qL67tqdcsVHN0+Uq2qr9gOdkcTWpCppkTYlkMF8Djb7fuG9q1sZ5qhVAORkFFw3kkrIMQlSAi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i23S9FCt; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7c55500d08cso467833185a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 01:23:39 -0700 (PDT)
+	s=arc-20240116; t=1744705470; c=relaxed/simple;
+	bh=Toe/MgEkUwQhqibB4avUzGEz/yS779oZa4EZXvqTX9Q=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=m4EGVbLtHIDsMp58CSzlDNcqI5n1eN4Lqw3KIy5HCupkx2JjtXHPipa6XFPNXqJFK16HOAcpxv8YZkCrU8uYFwA52+3rkiN1r9yObc2C/S7tdkvFPW5syd3u2RBfR+dpnnAS5nhBrhAbOYMgzAUSgM1d83EtCijrBxP0bM48wt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R8NKmdIE; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-39ac56756f6so4530262f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 01:24:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744705419; x=1745310219; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=r/TcH8tYmlAARq9vp+sOb8rehCePjSU3RaW898xxSiw=;
-        b=i23S9FCtkkOPgSYLxdTb+e/In+FBR2OXJOuBTZ6YhdtRzZrkegiW0aMsBU2FMRinkK
-         4DplHR7TBWqbJSXstWK/xANJJF4TVrjCEOR1EUKfTuvzsRc0Sb+IDj16kWVp4OqctVTz
-         Uuv5fZ/R3tdsZN+RDJogdZKq0aUlrKdKeHLyjGIutZxIB93gt0l3shrnNPT94+ZLPpUW
-         /awH3HLcRGoQXQkusHt3ehVQ1KmpnEOBKImToO2lYnt6WzRTf1DEXbzAVxiG0L1JBrV6
-         a03uEf3NcQfo7BBzkJlBfAhJ3vOTgZCoQbkjOG1vOKG8CSOkZZ1iqSADSjOXGFq8UTBJ
-         hkbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744705419; x=1745310219;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1744705466; x=1745310266; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=r/TcH8tYmlAARq9vp+sOb8rehCePjSU3RaW898xxSiw=;
-        b=o1EKa5T1gcLN6aMUfA19uCwgc+pxlKWpQ8W4GHpLF9OLC63s1GPCEAk68Lmqan5t3b
-         PW8MYgOWvrkSBt0N3cwBz6a5SxgWr/FeJ4ZVbxD+3j9mUApeIzg5qMjy+WBas+Kc4F25
-         Mt/JxBT0O1lnY5IeZX2U6le4+m4JcoPCYk4M4371Kl8p97Wa2W6BtqZCIzz46TmOLgwL
-         0WIxqWuyjnn4yW0X7HGW26gqfR86Op2iUIkjMf2Nr7a9kiBdlVDvOVOQMU7RX7cgZ7Ax
-         +PFDpKr4T6JzXG9R83d1J8W09Aa+oI+mjSE6hQvVYcilbP5wdjS1yA5ADzGGjw1jz/Q0
-         YDoA==
-X-Forwarded-Encrypted: i=1; AJvYcCX/WETvjQjAGX28yY/kP6xqsWs86f6nfpkul35DXzjfjWvrtHmStEUM5B5fid+AAOMwK4NtdR5GL9O+2KE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsE3pCMjMSK2JrGBucNFFSzzcJdMz9K7L2slHYr2Qor8CwvzZ7
-	pqCm1u8/DIxLO1c1ECrPzINgJs2zNclNG+/P8XoOwUkwyK+JwkI6e7wusJ9GKBCbxIhiFqnwJlm
-	hVkAb0Lwt2NGml+aj6dvSSgURXAPFbLiRYm/t
-X-Gm-Gg: ASbGnctISr6vLWQETXQXYPeWTCA1IOjTlcjQgn2yaO5SHd12SV5cjlUPQ+5G9KlFZe4
-	SJ4I/Fc12MVymhs056MM96JcNCIjQOJmE3mnCP94coQtGHyPDlgT095A35FT39g5B5z9mQj6u+X
-	WFo0yP3tkh4sGW8mEfhQ4LLb1jEWdSeDWpSQ==
-X-Google-Smtp-Source: AGHT+IF8kzK2TPSd8QIa8k5KLu9f76UXdyV95amiOuma7O06Du+QtPZ5+Bt7KazpOrH+3vMOdsCyotwgS+lw6VekJdc=
-X-Received: by 2002:a05:620a:4549:b0:7c5:5d4b:e62f with SMTP id
- af79cd13be357-7c7af1f32e9mr2303856785a.43.1744705418608; Tue, 15 Apr 2025
- 01:23:38 -0700 (PDT)
+        bh=JSpzlKU1nIREVlNsrNu96tgGduluBR66UGak+c0tdBY=;
+        b=R8NKmdIE22KFgUWl+2A2F/0WLrdOyJamliRPqqykGa9PMwMxv6ohg5/B1iXtNrSUVP
+         Vt65GZUJ5bgQ3ZT2hJ0ks1jL7ocTwbnSs0pPgFi+YEFmL5fPrjnAz6Ne2Uhxz+iaGGkb
+         g7Y2OxS1XRn6fAu0qtu+Ft5AOpJWlgnqrzFFaxrSlmk+Ls4wCiI3Ot+ihKmk3VbBuXaH
+         PY28gp//3JGBQ9dGkKubvr8S8Wi3AtfRtm+4vCLlBW0kVKaRB8ENhJgQlICYMSueX3WN
+         B4qNvpueEBIwHi1v5Md2e6K3echxbhG05prH4lCBnsZNyXNtf33+82BpKRftkN+49riu
+         adLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744705466; x=1745310266;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=JSpzlKU1nIREVlNsrNu96tgGduluBR66UGak+c0tdBY=;
+        b=prMfa/n67MUA5zOs/wQnzcfAMiPTq8n2W+TjVo8rb8DbNmrGKwaxwXTyOHoZ8Y11/z
+         TboADSvKdniEg/+P7cJlRFrcGoqRps7I9dy2QFe81IqM/CA8IqiYupiQ4jSFLC+b4Oy/
+         epCndzRammG2dVJkAEhKmL8SO7kT/SKQwSCYWDCy949FZaevKQ+GoJlCj1dh/cFwS4Jf
+         YqZZQ1fNcn3oHx8ddg3VM99ZDSDp0oevzl5d8rfaEOEao1NIPBTl/WyUpN/dtQdDP/xT
+         cpvyEDGIYvKHUX2qcs5bZm5HrmyVoODZv5SjgFGgpc1hGfBevdjSsMCm075+K3W9S9Bn
+         u7+A==
+X-Gm-Message-State: AOJu0YzW926JRENF1V5LV1SXQAD7vTHDMqXhoCTimzR+ygt2paPFMNFg
+	U2CTULpXzrYBAGiSkc0qXnHRk52KyOCLzaIVLbIqpzbdRJyk0osu4V6LWBL/KdM=
+X-Gm-Gg: ASbGnctONOfWmQplutobNmMkCCAJKtII5ktp89WBJjiBlAwuKfh25UfEG6Gu4npU6o3
+	vRL6QyOOFpuwH9AAYea3se5ZQHZueyowa9KC94xz2VVLCJr1CJQrRLqe/hYyghXIkexKC2F5nJY
+	jHwUbrxBvOwhMqHyKdE1S/yOIf53iW+DmRKcceQ1CeSPM7XLuvGtiYWOdWRSc8w0/hQkFL2YVE0
+	BEgXR3TH9K4yBVRPkreuISs4fOZ5P326iL3uDc3XVwYwUAyTSMGESytqHKhuXjN8hT5hvjbqYyf
+	dv3cpQn6kt+lxzbES6A9gtEU1PZ43p1JgboL+hC+I+ZeCMAFu6/JP7JgVvBoKnIkNvwNc5XDBy5
+	i0elRldh6ZlqVjZbakA==
+X-Google-Smtp-Source: AGHT+IFm+L30iLixeyBlQxYooSK2h2BfOdRzKzGjdzVFNUUVHWw3HgHSntRbFZguV94g5Y239kmccw==
+X-Received: by 2002:a05:6000:2507:b0:39c:1257:cc25 with SMTP id ffacd0b85a97d-39eaaed2d1cmr13410344f8f.56.1744705465757;
+        Tue, 15 Apr 2025 01:24:25 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:ac71:de35:af4b:b8fb? ([2a01:e0a:3d9:2080:ac71:de35:af4b:b8fb])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eae96c5f2sm13592403f8f.34.2025.04.15.01.24.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Apr 2025 01:24:25 -0700 (PDT)
+Message-ID: <0c4fcd81-8e1f-4b4b-a345-c08caeb599c8@linaro.org>
+Date: Tue, 15 Apr 2025 10:24:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250415-kunit-list-v2-1-aa452cd317ae@linutronix.de>
-In-Reply-To: <20250415-kunit-list-v2-1-aa452cd317ae@linutronix.de>
-From: David Gow <davidgow@google.com>
-Date: Tue, 15 Apr 2025 16:23:25 +0800
-X-Gm-Features: ATxdqUEitbyH8oFdJCsHtYAfj2-azWauKaLLHNbe8B6LS78jOZMH7Go0lVCsHgE
-Message-ID: <CABVgOSmHWh5hMhGmhod-NDwxi3iBP_dSZQY0DJEn=5Six1HRvg@mail.gmail.com>
-Subject: Re: [PATCH v2] kunit: tool: Implement listing of available architectures
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
-	workflows@vger.kernel.org, linux-doc@vger.kernel.org
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000be71a50632cce22e"
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH RFC v5 0/8] media: qcom: iris: re-organize catalog & add
+ support for SM8650
+To: Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+References: <20250410-topic-sm8x50-upstream-iris-catalog-v5-0-44a431574c25@linaro.org>
+ <2740b178-34cc-4b95-a8da-7e6862cabc92@linaro.org>
+ <96953447-cff5-98d4-053e-8cc31778849c@quicinc.com>
+ <eb469388-d2f9-447a-aa80-41795991a4ad@linaro.org>
+ <5b50ad93-0885-d908-fd13-3a597966115c@quicinc.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <5b50ad93-0885-d908-fd13-3a597966115c@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
---000000000000be71a50632cce22e
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-On Tue, 15 Apr 2025 at 15:03, Thomas Wei=C3=9Fschuh
-<thomas.weissschuh@linutronix.de> wrote:
->
-> To implement custom scripting around kunit.py it is useful to get a list =
-of
-> available architectures. While it is possible to manually inspect
-> tools/testing/kunit/qemu_configs/, this is annoying to implement and
-> introduces a dependency on a kunit.py implementation detail.
->
-> Introduce 'kunit.py run --arch help' which lists all known architectures
-> in an easy to parse list. This is equivalent on how QEMU implements
-> listing of possible argument values.
->
-> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-> Reviewed-by: Rae Moar <rmoar@google.com>
-> ---
-> Changes in v2:
-> - Pick up review from Rae
-> - Link to v1: https://lore.kernel.org/r/20250220-kunit-list-v1-1-40b9d564=
-17ee@linutronix.de
-> ---
+On 14/04/2025 21:48, Vikash Garodia wrote:
+> 
+> On 4/14/2025 5:39 PM, neil.armstrong@linaro.org wrote:
+>> Hi,
+>>
+>> On 14/04/2025 12:54, Vikash Garodia wrote:
+>>> Hi Neil,
+>>>
+>>> On 4/14/2025 1:05 PM, Neil Armstrong wrote:
+>>>> Hi Vikash, Dikshita,
+>>>>
+>>>> On 10/04/2025 18:29, Neil Armstrong wrote:
+>>>>> Re-organize the platform support core into a gen1 catalog C file
+>>>>> declaring common platform structure and include platform headers
+>>>>> containing platform specific entries and iris_platform_data
+>>>>> structure.
+>>>>>
+>>>>> The goal is to share most of the structure while having
+>>>>> clear and separate per-SoC catalog files.
+>>>>>
+>>>>> The organization is based on the curent drm/msm dpu1 catalog
+>>>>> entries.
+>>>>
+>>>> Any feedback on this patchset ?
+>>> Myself and Dikshita went through the approach you are bringing here, let me
+>>> update some context here:
+>>> - sm8550, sm8650, sm8775p, qcs8300 are all irisv3, while qcs8300 is the scaled
+>>> down variant i.e have 2 PIPE vs others having 4. Similarly there are other
+>>> irisv3 having 1 pipe as well.
+>>> - With above variations, firmware and instance caps would change for the variant
+>>> SOCs.
+>>> - Above these, few(less) bindings/connections specific delta would be there,
+>>> like there is reset delta in sm8550 and sm8650.
+>>>
+>>> Given above, xxx_gen1.c and xxx_gen2.c can have all binding specific tables and
+>>> SOC platform data, i.e sm8650_data (for sm8650). On top of this, individual SOC
+>>> specific .c file can have any delta, from xxx_gen1/2.c) like reset table or
+>>> preset register table, etc and export these delta structs in xxx_gen1.c or
+>>> xxx_gen2.c.
+>>>
+>>> Going with above approach, sm8650.c would have only one reset table for now.
+>>> Later if any delta is identified, the same can be added in it. All other common
+>>> structs, can reside in xxx_gen2.c for now.
+>>
+>> Thanks for reviewing, but...
+>> Sorry I don't understand what you and Dmitry are asking me...
+>>
+>> If I try really hard, you would like to have:
+>>
+>> iris_catalog_sm8550.c
+>> - iris_set_sm8550_preset_registers
+>> - sm8550_icc_table
+>> - sm8550_clk_reset_table
+>> - sm8550_bw_table_dec
+>> - sm8550_pmdomain_table
+>> - sm8550_opp_pd_table
+>> - sm8550_clk_table
+> Move or rename existing 8550.c as xxx_gen2.c. This is with the existing
+> assumption that everything under 8550.c is common for all gen2 to come in future.
+>>
+>> iris_catalog_sm8650.c
+>> - sm8650_clk_reset_table
+>> - sm8650_controller_reset_table
+> yes, since reset is the only delta.
+>>
+>> iris_catalog_gen2.c
+>> - iris_hfi_gen2_command_ops_init
+>> - iris_hfi_gen2_response_ops_init
+>> ...
+>> - sm8550_dec_op_int_buf_tbl
+>>
+>> and:
+>> - struct iris_platform_data sm8550_data
+>> - struct iris_platform_data sm8650_data
+> all this goes to xxx_gen2.c as well.
 
-Thanks!
+Yeah so this is exactly my current approach, except it use .h files
+for each SoC for simplicity.
 
-Reviewed-by: David Gow <davidgow@google.com>
+> 
+>> using data from iris_catalog_sm8550.c & iris_catalog_sm8550.c
+>>
+>> So this is basically what I _already_ propose except
+>> you move data in separate .c files for no reasons,
+>> please explain why you absolutely want distinct .c
+>> files per SoC. We are no more in the 1990's and we camn
+>> defintely have big .c files.
+> Its not about the size of file alone, it is easy to understand later what would
+> be the delta in the SOCs and what would common. For ex, just navigating through
+> sm8650.c, anyone can comment that reset is the delta.
 
-Cheers,
--- David
+What's the problem with the current approach with .h file for each SoC ?
 
+>>
+>> And we still have a big issue, how to get the:
+>> - ARRAY_SIZE(sm8550_clk_reset_table)
+>> - ARRAY_SIZE(sm8550_bw_table_dec)
+>> - ARRAY_SIZE(sm8550_pmdomain_table)
+>> ...
+>>
+>> since they are declared in a separate .c file and you
+>> need a compile-time const value to fill all the _size
+>> attribute in iris_platform_data.
+> I have not tries this, but isn't extern-ing the soc structs (in your case reset
+> tables) into xxx_gen2.c enough here ? Also i think the tables you are pointing
+> here, lies in the xxx_gen2.c only, so i am sure above ones would not be an issue
+> at all. The only delta struct is reset table, lets see if extern helps.
 
->  Documentation/dev-tools/kunit/run_wrapper.rst | 2 ++
->  tools/testing/kunit/kunit_kernel.py           | 8 ++++++++
->  2 files changed, 10 insertions(+)
->
-> diff --git a/Documentation/dev-tools/kunit/run_wrapper.rst b/Documentatio=
-n/dev-tools/kunit/run_wrapper.rst
-> index 19ddf5e07013314c608b570e297a8ff79a8efe7f..6697c71ee8ca020b8ac7e91b4=
-6e29ab082d9dea0 100644
-> --- a/Documentation/dev-tools/kunit/run_wrapper.rst
-> +++ b/Documentation/dev-tools/kunit/run_wrapper.rst
-> @@ -182,6 +182,8 @@ via UML. To run tests on qemu, by default it requires=
- two flags:
->    is ignored), the tests will run via UML. Non-UML architectures,
->    for example: i386, x86_64, arm and so on; run on qemu.
->
-> +  ``--arch help`` lists all valid ``--arch`` values.
-> +
->  - ``--cross_compile``: Specifies the Kbuild toolchain. It passes the
->    same argument as passed to the ``CROSS_COMPILE`` variable used by
->    Kbuild. As a reminder, this will be the prefix for the toolchain
-> diff --git a/tools/testing/kunit/kunit_kernel.py b/tools/testing/kunit/ku=
-nit_kernel.py
-> index d3f39bc1ceec7eab23925ff1b852e996a715f3d5..260d8d9aa1db4ac3c04fa755f=
-b738dd834b976db 100644
-> --- a/tools/testing/kunit/kunit_kernel.py
-> +++ b/tools/testing/kunit/kunit_kernel.py
-> @@ -14,6 +14,7 @@ import os
->  import shlex
->  import shutil
->  import signal
-> +import sys
->  import threading
->  from typing import Iterator, List, Optional, Tuple
->  from types import FrameType
-> @@ -201,6 +202,13 @@ def _default_qemu_config_path(arch: str) -> str:
->                 return config_path
->
->         options =3D [f[:-3] for f in os.listdir(QEMU_CONFIGS_DIR) if f.en=
-dswith('.py')]
-> +
-> +       if arch =3D=3D 'help':
-> +               print('um')
-> +               for option in options:
-> +                       print(option)
-> +               sys.exit()
-> +
->         raise ConfigError(arch + ' is not a valid arch, options are ' + s=
-tr(sorted(options)))
->
->  def _get_qemu_ops(config_path: str,
->
-> ---
-> base-commit: 8ffd015db85fea3e15a77027fda6c02ced4d2444
-> change-id: 20250220-kunit-list-552a8cdc011e
->
-> Best regards,
-> --
-> Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
->
+No it doesn't, because I wrote C for the last 25 years, and I tried it already,
+I also tried to export a const int with the table size, and it also doesn't work.
 
---000000000000be71a50632cce22e
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+The 3 only ways are:
+1) add defines with sizes for each table
+2) add a NULL entry at the end of each table, and update all code using those tables
+3) declare in the same scope, which is my current proposal
 
-MIIUnQYJKoZIhvcNAQcCoIIUjjCCFIoCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
-ghIEMIIGkTCCBHmgAwIBAgIQfofDAVIq0iZG5Ok+mZCT2TANBgkqhkiG9w0BAQwFADBMMSAwHgYD
-VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSNjETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
-AxMKR2xvYmFsU2lnbjAeFw0yMzA0MTkwMzUzNDdaFw0zMjA0MTkwMDAwMDBaMFQxCzAJBgNVBAYT
-AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
-IFI2IFNNSU1FIENBIDIwMjMwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDYydcdmKyg
-4IBqVjT4XMf6SR2Ix+1ChW2efX6LpapgGIl63csmTdJQw8EcbwU9C691spkltzTASK2Ayi4aeosB
-mk63SPrdVjJNNTkSbTowej3xVVGnYwAjZ6/qcrIgRUNtd/mbtG7j9W80JoP6o2Szu6/mdjb/yxRM
-KaCDlloE9vID2jSNB5qOGkKKvN0x6I5e/B1Y6tidYDHemkW4Qv9mfE3xtDAoe5ygUvKA4KHQTOIy
-VQEFpd/ZAu1yvrEeA/egkcmdJs6o47sxfo9p/fGNsLm/TOOZg5aj5RHJbZlc0zQ3yZt1wh+NEe3x
-ewU5ZoFnETCjjTKz16eJ5RE21EmnCtLb3kU1s+t/L0RUU3XUAzMeBVYBEsEmNnbo1UiiuwUZBWiJ
-vMBxd9LeIodDzz3ULIN5Q84oYBOeWGI2ILvplRe9Fx/WBjHhl9rJgAXs2h9dAMVeEYIYkvW+9mpt
-BIU9cXUiO0bky1lumSRRg11fOgRzIJQsphStaOq5OPTb3pBiNpwWvYpvv5kCG2X58GfdR8SWA+fm
-OLXHcb5lRljrS4rT9MROG/QkZgNtoFLBo/r7qANrtlyAwPx5zPsQSwG9r8SFdgMTHnA2eWCZPOmN
-1Tt4xU4v9mQIHNqQBuNJLjlxvalUOdTRgw21OJAFt6Ncx5j/20Qw9FECnP+B3EPVmQIDAQABo4IB
-ZTCCAWEwDgYDVR0PAQH/BAQDAgGGMDMGA1UdJQQsMCoGCCsGAQUFBwMCBggrBgEFBQcDBAYJKwYB
-BAGCNxUGBgkrBgEEAYI3FQUwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUM7q+o9Q5TSoZ
-18hmkmiB/cHGycYwHwYDVR0jBBgwFoAUrmwFo5MT4qLn4tcc1sfwf8hnU6AwewYIKwYBBQUHAQEE
-bzBtMC4GCCsGAQUFBzABhiJodHRwOi8vb2NzcDIuZ2xvYmFsc2lnbi5jb20vcm9vdHI2MDsGCCsG
-AQUFBzAChi9odHRwOi8vc2VjdXJlLmdsb2JhbHNpZ24uY29tL2NhY2VydC9yb290LXI2LmNydDA2
-BgNVHR8ELzAtMCugKaAnhiVodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL3Jvb3QtcjYuY3JsMBEG
-A1UdIAQKMAgwBgYEVR0gADANBgkqhkiG9w0BAQwFAAOCAgEAVc4mpSLg9A6QpSq1JNO6tURZ4rBI
-MkwhqdLrEsKs8z40RyxMURo+B2ZljZmFLcEVxyNt7zwpZ2IDfk4URESmfDTiy95jf856Hcwzdxfy
-jdwx0k7n4/0WK9ElybN4J95sgeGRcqd4pji6171bREVt0UlHrIRkftIMFK1bzU0dgpgLMu+ykJSE
-0Bog41D9T6Swl2RTuKYYO4UAl9nSjWN6CVP8rZQotJv8Kl2llpe83n6ULzNfe2QT67IB5sJdsrNk
-jIxSwaWjOUNddWvCk/b5qsVUROOuctPyYnAFTU5KY5qhyuiFTvvVlOMArFkStNlVKIufop5EQh6p
-jqDGT6rp4ANDoEWbHKd4mwrMtvrh51/8UzaJrLzj3GjdkJ/sPWkDbn+AIt6lrO8hbYSD8L7RQDqK
-C28FheVr4ynpkrWkT7Rl6npWhyumaCbjR+8bo9gs7rto9SPDhWhgPSR9R1//WF3mdHt8SKERhvtd
-NFkE3zf36V9Vnu0EO1ay2n5imrOfLkOVF3vtAjleJnesM/R7v5tMS0tWoIr39KaQNURwI//WVuR+
-zjqIQVx5s7Ta1GgEL56z0C5GJoNE1LvGXnQDyvDO6QeJVThFNgwkossyvmMAaPOJYnYCrYXiXXle
-A6TpL63Gu8foNftUO0T83JbV/e6J8iCOnGZwZDrubOtYn1QwggWDMIIDa6ADAgECAg5F5rsDgzPD
-hWVI5v9FUTANBgkqhkiG9w0BAQwFADBMMSAwHgYDVQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBS
-NjETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UEAxMKR2xvYmFsU2lnbjAeFw0xNDEyMTAwMDAw
-MDBaFw0zNDEyMTAwMDAwMDBaMEwxIDAeBgNVBAsTF0dsb2JhbFNpZ24gUm9vdCBDQSAtIFI2MRMw
-EQYDVQQKEwpHbG9iYWxTaWduMRMwEQYDVQQDEwpHbG9iYWxTaWduMIICIjANBgkqhkiG9w0BAQEF
-AAOCAg8AMIICCgKCAgEAlQfoc8pm+ewUyns89w0I8bRFCyyCtEjG61s8roO4QZIzFKRvf+kqzMaw
-iGvFtonRxrL/FM5RFCHsSt0bWsbWh+5NOhUG7WRmC5KAykTec5RO86eJf094YwjIElBtQmYvTbl5
-KE1SGooagLcZgQ5+xIq8ZEwhHENo1z08isWyZtWQmrcxBsW+4m0yBqYe+bnrqqO4v76CY1DQ8BiJ
-3+QPefXqoh8q0nAue+e8k7ttU+JIfIwQBzj/ZrJ3YX7g6ow8qrSk9vOVShIHbf2MsonP0KBhd8hY
-dLDUIzr3XTrKotudCd5dRC2Q8YHNV5L6frxQBGM032uTGL5rNrI55KwkNrfw77YcE1eTtt6y+OKF
-t3OiuDWqRfLgnTahb1SK8XJWbi6IxVFCRBWU7qPFOJabTk5aC0fzBjZJdzC8cTflpuwhCHX85mEW
-P3fV2ZGXhAps1AJNdMAU7f05+4PyXhShBLAL6f7uj+FuC7IIs2FmCWqxBjplllnA8DX9ydoojRoR
-h3CBCqiadR2eOoYFAJ7bgNYl+dwFnidZTHY5W+r5paHYgw/R/98wEfmFzzNI9cptZBQselhP00sI
-ScWVZBpjDnk99bOMylitnEJFeW4OhxlcVLFltr+Mm9wT6Q1vuC7cZ27JixG1hBSKABlwg3mRl5HU
-Gie/Nx4yB9gUYzwoTK8CAwEAAaNjMGEwDgYDVR0PAQH/BAQDAgEGMA8GA1UdEwEB/wQFMAMBAf8w
-HQYDVR0OBBYEFK5sBaOTE+Ki5+LXHNbH8H/IZ1OgMB8GA1UdIwQYMBaAFK5sBaOTE+Ki5+LXHNbH
-8H/IZ1OgMA0GCSqGSIb3DQEBDAUAA4ICAQCDJe3o0f2VUs2ewASgkWnmXNCE3tytok/oR3jWZZip
-W6g8h3wCitFutxZz5l/AVJjVdL7BzeIRka0jGD3d4XJElrSVXsB7jpl4FkMTVlezorM7tXfcQHKs
-o+ubNT6xCCGh58RDN3kyvrXnnCxMvEMpmY4w06wh4OMd+tgHM3ZUACIquU0gLnBo2uVT/INc053y
-/0QMRGby0uO9RgAabQK6JV2NoTFR3VRGHE3bmZbvGhwEXKYV73jgef5d2z6qTFX9mhWpb+Gm+99w
-MOnD7kJG7cKTBYn6fWN7P9BxgXwA6JiuDng0wyX7rwqfIGvdOxOPEoziQRpIenOgd2nHtlx/gsge
-/lgbKCuobK1ebcAF0nu364D+JTf+AptorEJdw+71zNzwUHXSNmmc5nsE324GabbeCglIWYfrexRg
-emSqaUPvkcdM7BjdbO9TLYyZ4V7ycj7PVMi9Z+ykD0xF/9O5MCMHTI8Qv4aW2ZlatJlXHKTMuxWJ
-U7osBQ/kxJ4ZsRg01Uyduu33H68klQR4qAO77oHl2l98i0qhkHQlp7M+S8gsVr3HyO844lyS8Hn3
-nIS6dC1hASB+ftHyTwdZX4stQ1LrRgyU4fVmR3l31VRbH60kN8tFWk6gREjI2LCZxRWECfbWSUnA
-ZbjmGnFuoKjxguhFPmzWAtcKZ4MFWsmkEDCCBeQwggPMoAMCAQICEAHAzCnLVtRkCgyqhFEoeKYw
-DQYJKoZIhvcNAQELBQAwVDELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2Ex
-KjAoBgNVBAMTIUdsb2JhbFNpZ24gQXRsYXMgUjYgU01JTUUgQ0EgMjAyMzAeFw0yNTAxMTAxODI1
-MTFaFw0yNTA3MDkxODI1MTFaMCQxIjAgBgkqhkiG9w0BCQEWE2RhdmlkZ293QGdvb2dsZS5jb20w
-ggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCoH0MspP58MiGTPha+mn1WzCI23OgX5wLB
-sXU0Br/FkQPM9EXOhArvxMOyFi0Sfz0HX20qlaIHxviaVNYpVMgmQO8x3Ww9zBVF9wpTnF6HSZ8s
-ZK7KHZhg43rwOEmRoA+3JXcgbmZqmZvLQwkGMld+HnQzJrvuFwXPlQt38yzNtRjWR2JmNn19OnEH
-uBaFE7b0Pl93kJE60o561TAoFS8AoP4rZFUSqtCL7LD2JseW1+SaJcUhJzLxStodIIc6hQbzOQ/f
-EvWDWbXF7nZWcQ5RDe7KgHIqwT8/8zsdCNiB2WW7SyjRRVL1CuoqCbhtervvgZmB3EXbLpXyNsoW
-YE9NAgMBAAGjggHgMIIB3DAeBgNVHREEFzAVgRNkYXZpZGdvd0Bnb29nbGUuY29tMA4GA1UdDwEB
-/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIwHQYDVR0OBBYEFHgsCGkO2Hex
-N6ybc+GeQEb6790qMFgGA1UdIARRME8wCQYHZ4EMAQUBAjBCBgorBgEEAaAyCgMDMDQwMgYIKwYB
-BQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAwGA1UdEwEB/wQC
-MAAwgZoGCCsGAQUFBwEBBIGNMIGKMD4GCCsGAQUFBzABhjJodHRwOi8vb2NzcC5nbG9iYWxzaWdu
-LmNvbS9jYS9nc2F0bGFzcjZzbWltZWNhMjAyMzBIBggrBgEFBQcwAoY8aHR0cDovL3NlY3VyZS5n
-bG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3J0MB8GA1UdIwQYMBaA
-FDO6vqPUOU0qGdfIZpJogf3BxsnGMEYGA1UdHwQ/MD0wO6A5oDeGNWh0dHA6Ly9jcmwuZ2xvYmFs
-c2lnbi5jb20vY2EvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3JsMA0GCSqGSIb3DQEBCwUAA4ICAQAs
-exV05yVDmPhHRqOq9lAbfWOUvEf8zydxabZUHna6bayb83jD2eb9nMGGEprfuNBRmFg35sgF1TyN
-+ieuQakvQYmY8tzK49hhHa2Y3qhGCTqYTHO3ypHvhHsZiGbL0gmdgB9P8ssVIws//34ae99GUOxo
-XKTxPwwsQ5Arq42besv3/HXAW+4nRAT8d3ht5ZWCHc5rjL/vdGzu7PaYo3u0da69AZ8Sh4Gf5yoc
-QANr2ZkMrxXbLmSmnRvbkQrzlZp2YbTFnczx46429D6q75/FNFOL1vAjxtRAPzkyACvW0eKvchza
-TMvvD3IWERLlcBL5yXpENc3rI8/wVjqgAWYxlFg1b/4b/TCgYe2MZC0rx4Uh3zTIbmPNiHdN6QZ9
-oDiYzWUcqWZ5jCO4bMKNlVJXeCvdANLHuhcC8FONj5VzNgYXs6gWkp9/Wt6XnQPX4dF4JBa8JdL/
-cT46RJIzoiJHEx/8syO5FparZHIKbkunoq6niPsRaQUGeqWc56H4Z1sQXuBJN9fhqkIkG0Ywfrwt
-uFrCoYIRlx4rSVHpBIKgnsgdm0SFQK72MPmIkfhfq9Fh0h8AjhF73sLO7K5BfwWkx1gwMySyNY0e
-PCRYr6WEVOkUJS0a0fui693ymMPFLQAimmz8EpyFok4Ju066StkYO1dIgUIla4x61auxkWHwnzGC
-Al0wggJZAgEBMGgwVDELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExKjAo
-BgNVBAMTIUdsb2JhbFNpZ24gQXRsYXMgUjYgU01JTUUgQ0EgMjAyMwIQAcDMKctW1GQKDKqEUSh4
-pjANBglghkgBZQMEAgEFAKCBxzAvBgkqhkiG9w0BCQQxIgQg/L1rSg51brPTGvhDFeTZGeeLuaxF
-ppeeCY+tIL1KQ+MwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjUw
-NDE1MDgyMzM5WjBcBgkqhkiG9w0BCQ8xTzBNMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJ
-YIZIAWUDBAECMAoGCCqGSIb3DQMHMAsGCSqGSIb3DQEBBzALBglghkgBZQMEAgEwDQYJKoZIhvcN
-AQEBBQAEggEAOtzXrSBv6ru/fK8jnT/HuyHgX9vMlDbRCRvHfv06wCbKBw2Bge3PZ4Ysd5U2+C+x
-2wVy3fm6M9aT3N7Iy6VqidMHEwddWZ6w6tVB6gYNxo9TDR9WrMDh9baCwhV+bR7b9EtcWNjWqZyo
-xAYeeXdT0h0VNhCTK8LoJd9ZvvBl4K+4DIbG3hxPs4LkbiVnHrseTA1SYqepGnTN8gGrvRd+9jaZ
-Vyv+QfWK9/K0xd4s2fbHu60C/VHTlu6f9uhtMUX4ElatjtGU1y2y4HlBojAaYrMTleeV8Iq2F7yw
-77MYWtGCrfgP7S0rTQiJuGfownn//zU6RmdfLZ1YcFdyZu+gkQ==
---000000000000be71a50632cce22e--
+Neil
+
+> 
+> Regards,
+> Vikash
+>>
+>> So I recall my goal, I just want to add sm8650 support,
+>> and I'm not the owner of this driver, and I'm really happy
+>> to help, but giving me random ideas to solve your problem
+>> doesn't help us at all going forward.
+>>
+>> Neil
+>>
+>>>
+>>> Regards,
+>>> Vikash
+>>>>
+>>>> Thanks,
+>>>> Neil
+>>>>
+>>>>>
+>>>>> Add support for the IRIS accelerator for the SM8650
+>>>>> platform, which uses the iris33 hardware.
+>>>>>
+>>>>> The vpu33 requires a different reset & poweroff sequence
+>>>>> in order to properly get out of runtime suspend.
+>>>>>
+>>>>> Follow-up of [1]:
+>>>>> https://lore.kernel.org/all/20250409-topic-sm8x50-iris-v10-v4-0-40e411594285@linaro.org/
+>>>>>
+>>>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>>>>> ---
+>>>>> Changes in v4:
+>>>>> - Reorganized into catalog, rebased sm8650 support on top
+>>>>> - Link to v4:
+>>>>> https://lore.kernel.org/all/20250409-topic-sm8x50-iris-v10-v4-0-40e411594285@linaro.org
+>>>>>
+>>>>> Changes in v4:
+>>>>> - collected tags
+>>>>> - un-split power_off in vpu3x
+>>>>> - removed useless function defines
+>>>>> - added back vpu3x disappeared rename commit
+>>>>> - Link to v3:
+>>>>> https://lore.kernel.org/r/20250407-topic-sm8x50-iris-v10-v3-0-63569f6d04aa@linaro.org
+>>>>>
+>>>>> Changes in v3:
+>>>>> - Collected review tags
+>>>>> - Removed bulky reset_controller ops
+>>>>> - Removed iris_vpu_power_off_controller split
+>>>>> - Link to v2:
+>>>>> https://lore.kernel.org/r/20250305-topic-sm8x50-iris-v10-v2-0-bd65a3fc099e@linaro.org
+>>>>>
+>>>>> Changes in v2:
+>>>>> - Collected bindings review
+>>>>> - Reworked rest handling by adding a secondary optional table to be used by
+>>>>> controller poweroff
+>>>>> - Reworked power_off_controller to be reused and extended by vpu33 support
+>>>>> - Removed useless and unneeded vpu33 init
+>>>>> - Moved vpu33 into vpu3x files to reuse code from vpu3
+>>>>> - Moved sm8650 data table into sm8550
+>>>>> - Link to v1:
+>>>>> https://lore.kernel.org/r/20250225-topic-sm8x50-iris-v10-v1-0-128ef05d9665@linaro.org
+>>>>>
+>>>>> ---
+>>>>> Neil Armstrong (8):
+>>>>>          media: qcom: iris: move sm8250 to gen1 catalog
+>>>>>          media: qcom: iris: move sm8550 to gen2 catalog
+>>>>>          dt-bindings: media: qcom,sm8550-iris: document SM8650 IRIS accelerator
+>>>>>          media: platform: qcom/iris: add power_off_controller to vpu_ops
+>>>>>          media: platform: qcom/iris: introduce optional controller_rst_tbl
+>>>>>          media: platform: qcom/iris: rename iris_vpu3 to iris_vpu3x
+>>>>>          media: platform: qcom/iris: add support for vpu33
+>>>>>          media: platform: qcom/iris: add sm8650 support
+>>>>>
+>>>>>     .../bindings/media/qcom,sm8550-iris.yaml           |  33 ++-
+>>>>>     drivers/media/platform/qcom/iris/Makefile          |   6 +-
+>>>>>     .../media/platform/qcom/iris/iris_catalog_gen1.c   |  83 +++++++
+>>>>>     ...{iris_platform_sm8550.c => iris_catalog_gen2.c} |  85 +------
+>>>>>     ...ris_platform_sm8250.c => iris_catalog_sm8250.h} |  80 +-----
+>>>>>     .../media/platform/qcom/iris/iris_catalog_sm8550.h |  91 +++++++
+>>>>>     .../media/platform/qcom/iris/iris_catalog_sm8650.h |  68 +++++
+>>>>>     drivers/media/platform/qcom/iris/iris_core.h       |   1 +
+>>>>>     .../platform/qcom/iris/iris_platform_common.h      |   3 +
+>>>>>     drivers/media/platform/qcom/iris/iris_probe.c      |  43 +++-
+>>>>>     drivers/media/platform/qcom/iris/iris_vpu2.c       |   1 +
+>>>>>     drivers/media/platform/qcom/iris/iris_vpu3.c       | 122 ---------
+>>>>>     drivers/media/platform/qcom/iris/iris_vpu3x.c      | 275
+>>>>> +++++++++++++++++++++
+>>>>>     drivers/media/platform/qcom/iris/iris_vpu_common.c |   4 +-
+>>>>>     drivers/media/platform/qcom/iris/iris_vpu_common.h |   3 +
+>>>>>     15 files changed, 598 insertions(+), 300 deletions(-)
+>>>>> ---
+>>>>> base-commit: 2bdde620f7f2bff2ff1cb7dc166859eaa0c78a7c
+>>>>> change-id: 20250410-topic-sm8x50-upstream-iris-catalog-3e2e4a033d6f
+>>>>>
+>>>>> Best regards,
+>>>>
+>>
+
 
