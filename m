@@ -1,126 +1,177 @@
-Return-Path: <linux-kernel+bounces-605898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9948CA8A76E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 21:06:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE588A8A773
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 21:08:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC3BF16BAF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 19:06:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1F383B337D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 19:08:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925AF23BCF9;
-	Tue, 15 Apr 2025 19:06:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1717123D299;
+	Tue, 15 Apr 2025 19:08:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="EYYRpgGr"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="jB0Rttd4"
+Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2E723A989
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 19:06:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C4423C8AE;
+	Tue, 15 Apr 2025 19:08:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744744014; cv=none; b=D4Q/ORHlh3hvPdWw9fWu6pxhYP458NICMWuV1jEsOc5OgE2mHoWl3CnHZkvdHi5Z7Sp4kkOXtxWMlxxteF2bkswh8VLAeaE0MstId/pdqlg1i+gI00i4hSotf/H6dIZnbAU3rua0yPva7apRbUZDrOmblurU4fZvbrxa9VAmSVY=
+	t=1744744109; cv=none; b=tSwj7wDM/fDrGpKcw+UGw9L1FDL4uGkY22aom19uzLjBLX1vDGnlNHJr5vPc9/iSnR7MSB9Z4qYySxgf2VSsB5kbsgxB+OdbEJ6+CgpNrXCFOWhQqFVOQZUnXuSjHHG+p5yfwuw1rLDUnGm1fJMRItII9tv5uTwxbG/bSPbTEiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744744014; c=relaxed/simple;
-	bh=13I2404BzKHhPEJydORbKcuW5YccPum1bSMgFINHRHA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qD1Jii8qVlki/UxawnjOQrj3tc6mRU+WQZEvrN/xSuKPknrBrSe8iFyhReF/EtYmi4plCTmzpXOlgZ5/C8XlnuheivjsgOCljksMEIgJqyJxaxDm1NyIIRLiHGWCz+pAafrpYawv5Mr9dCSO29yJNvQf86e0LQ8Zi9GLPGQWUAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=EYYRpgGr; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3d5ebc2459fso43076945ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 12:06:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1744744011; x=1745348811; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0ERGq6YuBDS29hcYRsuSz+aBmyZGJcBatRoKJuQbnY4=;
-        b=EYYRpgGrAduEBbUT5eXbRvTk3iQa2zMFL3haaNn/cL7CQzhKDF6I64qnVjW+LrILis
-         7XFAHN/SvzXYheG43b7IPhOhftbfKvJBbtzmczARD+mVYjU8ckCVYntmpzmAhJTwsRlM
-         5yQDaC//bom62iQZLWSwAzD1Rza/8AP5L4NrA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744744011; x=1745348811;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0ERGq6YuBDS29hcYRsuSz+aBmyZGJcBatRoKJuQbnY4=;
-        b=RRdrJsrLNo0vb0l1UfQ6MdtFYJ113xkvzpNZeoMClKoDZscLsjVWL9um9Y44FIwQsu
-         Q+jS2DWeMyH1rRxOYRse6YJSqB2EPDKn2Pq8apk17cMk+4VaSRArr6KDwrCOMqXAP5H+
-         E05EgkHpDFWRyUcTqxUWtacRaVRgDJl3MYZa35v4C0w5/EcE2oQl4mrHQq0pktf5/Xdr
-         7heO+jojYtp4LQwBFX4FRHeCTjv1tyk5nta2VLhQz5+CuSODZeRab8fJ7iZYlBlf9pvS
-         ZOfgd9N64ls91UWBQdIGOFJdUFJKV0pgvrgbjJQ7UuySY9hHVWhyxOPNQ+d5x5pdt0xj
-         PEag==
-X-Forwarded-Encrypted: i=1; AJvYcCXyq2TuNBhTIVZrloQ82fDzuBwFqJO85hfX+k370zYL7WbDYUoqqaxpvIl0W5XOIsgNN+/ImvJMB8sYHLE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxht/Jia4AeD6grYcyPhzr3nAsESkB3PT1D4KI19PbnXP395zxh
-	Jj1qrQhlfqRb6HEAhJ6uMR7eH1MITeVzoBlsvRIAFF6zK/7SH2RUCLyO3v0omx8=
-X-Gm-Gg: ASbGncvXdIY7/cUXUu1SoAcD2mSKQvNG4zovu9GUW1Dp5B5MAyNnORpYlabCJZoqUdB
-	603qRBdK6RnBKEh8JO1TRG81J80rN/ZUabF/AsP/E3muYVDvy6GpGnugNHntN3GOVjXtORDqJUv
-	VSzTgoFBTGIBFfVBJ5J6MZR2HAMAifYdluqZf5gk0ZZnReGbJaYdPi1ogmHbCvBJyGlJBZDDDtB
-	4eVGl2O312SnofwG8oceCPBstaHlkNtussMDLuTBK0vpsCjBXLhxWVuMZ4uIe8Aztg/rpDm1xz5
-	EjCHM/GbwVhi4VHeXN/c8O6VLlZHpGee6g5z+D78uoXkyyZdzGI=
-X-Google-Smtp-Source: AGHT+IEZipM7QC1EHYIRIhOieDhVki8xopVXE4QiLT5S3OJh1tLgwVlDNMTHckiO2ZxjnNZbnUw9bg==
-X-Received: by 2002:a05:6e02:3a01:b0:3d3:dfc2:912f with SMTP id e9e14a558f8ab-3d81250c891mr5952445ab.7.1744744011111;
-        Tue, 15 Apr 2025 12:06:51 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d7dc5827ecsm33514785ab.51.2025.04.15.12.06.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Apr 2025 12:06:50 -0700 (PDT)
-Message-ID: <8b08e040-fee7-4344-8ba6-bbbd4f73e318@linuxfoundation.org>
-Date: Tue, 15 Apr 2025 13:06:49 -0600
+	s=arc-20240116; t=1744744109; c=relaxed/simple;
+	bh=uQg0J23GmUp0Ec4YiSpIXFRZPvwUmduTRyP5990SQVo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I7ZsZpRi1Fm7ZOnLnffGfzqdm6qBpZYKaCOQ0m+31Ythkyf8xGNZbXRduLhWZJhj8oLeWtlAeN0akdiYLZSYzKjWd/aVCOgTHYSCVP2k7djdqtjAqw8cIMBM4TB43X0xQCJX04x9fcSfC91UdOW6Sbtwu/rB25UBurut+TZGecU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=jB0Rttd4; arc=none smtp.client-ip=82.195.75.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
+	s=smtpauto.stravinsky; h=X-Debian-User:In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=FCCLR5AQbfuKec16T4Z93Z+tygMuvFkccFhZdHp8QIQ=; b=jB0Rttd4vsFJvqMQ4UO+lemXYR
+	w+edNdq8Xza6S/skam4hFAl4CXl1COOhZOqPqv0JgNlQQp68xLjgILf3FVz9EU28luEVwGjO6Lwfv
+	lS5qlCNHqn9WMTjTlhRpmUqLCg9izRXOTMSBJIH6jeDStUwYDY1hzdpEpsc+8gYCLMW/mzcQ56CwL
+	TcNf20XGOxylrY+pvzPG9Bc3BlSfxrchxsWvX1zmdVywn6D6awLMcNRs/a3d1mrjj8FXJ+Zx84xzq
+	Nr08JdmdMw3ZcXZ3lMWfqDbtQG22MMGq14roEIL8zhj9Ov4Wn2MhHprTBE37/VsbV9YHPPPlIhtt2
+	OcC4p97g==;
+Received: from authenticated user
+	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.94.2)
+	(envelope-from <carnil@debian.org>)
+	id 1u4ldN-0046eE-U3; Tue, 15 Apr 2025 19:07:50 +0000
+Received: by eldamar.lan (Postfix, from userid 1000)
+	id ABFF8BE2DE0; Tue, 15 Apr 2025 21:07:48 +0200 (CEST)
+Date: Tue, 15 Apr 2025 21:07:48 +0200
+From: Salvatore Bonaccorso <carnil@debian.org>
+To: David Howells <dhowells@redhat.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lstoakes@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+	Jeff Layton <jlayton@kernel.org>, Jason Gunthorpe <jgg@nvidia.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Hillf Danton <hdanton@sina.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Sasha Levin <sashal@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	regressions@lists.linux.dev, stable@vger.kernel.org,
+	Bernd Rinn <bb@rinn.ch>,
+	Karri =?iso-8859-1?Q?H=E4m=E4l=E4inen?= <kh.bugreport@outlook.com>,
+	Milan Broz <gmazyland@gmail.com>,
+	Cameron Davidson <bugs@davidsoncj.id.au>, Markus <markus@fritz.box>
+Subject: Re: [regression 6.1.y] Regression from 476c1dfefab8 ("mm: Don't pin
+ ZERO_PAGE in pin_user_pages()") with pci-passthrough for both KVM VMs and
+ booting in xen DomU
+Message-ID: <Z_6uhLQjJ7SSzI13@eldamar.lan>
+References: <Z_6sh7Byddqdk1Z-@eldamar.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: sev_es_trampoline_start undefined symbol referenced errors during
- kunit run
-To: Borislav Petkov <bp@alien8.de>
-Cc: thomas.lendacky@amd.com, David Gow <davidgow@google.com>,
- "x86@kernel.org" <x86@kernel.org>,
- Brendan Higgins <brendan.higgins@linux.dev>, linux-kernel@vger.kernel.org,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <7c5f9e2a-2e9d-46f2-89b2-83e0d68d3113@linuxfoundation.org>
- <20250414230047.GHZ_2Tnysv9zCD6-tX@fat_crate.local>
- <995cfca8-c261-4cf0-96f6-b33ca5403ee5@linuxfoundation.org>
- <20250415180128.GJZ_6e-B3yFuwmqWWS@fat_crate.local>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20250415180128.GJZ_6e-B3yFuwmqWWS@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z_6sh7Byddqdk1Z-@eldamar.lan>
+X-Debian-User: carnil
 
-On 4/15/25 12:01, Borislav Petkov wrote:
-> On Tue, Apr 15, 2025 at 08:25:09AM -0600, Shuah Khan wrote:
->> ./tools/testing/kunit/kunit.py run --arch x86_64
->> or
->> ./tools/testing/kunit/kunit.py run --alltests --arch x86_64
->>
->> The tree I see this every single time I do my tree testing.
+[resent with correct stable@vger.kernel.org list]
+
+On Tue, Apr 15, 2025 at 08:59:19PM +0200, Salvatore Bonaccorso wrote:
+> Hi
 > 
-> Doesn't reproduce here:
+> [Apologies if this has been reported already but I have not found an
+> already filled corresponding report]
 > 
-> # ./tools/testing/kunit/kunit.py run --arch x86_64 > log.00 2>&1
-> # ./tools/testing/kunit/kunit.py run --alltests --arch x86_64 > log.01 2>&1
-> # grep -i error log.*
-> log.00:[19:04:52] [PASSED] error_pointer
-> log.01:[19:44:06] [PASSED] error_pointer
+> After updating from the 6.1.129 based version to 6.1.133, various
+> users have reported that their VMs do not boot anymore up (both KVM
+> and under Xen) if pci-passthrough is involved. The reports are at:
 > 
-
-Does your arch/x86/realmode/rm/pasyms.h has reference to sev_es_trampoline_start?
-
-The one in my tree has it.
-
-arch/x86/realmode/rm/pasyms.h:pa_sev_es_trampoline_start = sev_es_trampoline_start
-
-thanks,
--- Shuah
-
-
-
+> https://bugs.debian.org/1102889
+> https://bugs.debian.org/1102914
+> https://bugs.debian.org/1103153
+> 
+> Milan Broz bisected the issues and found that the commit introducing
+> the problems can be tracked down to backport of c8070b787519 ("mm:
+> Don't pin ZERO_PAGE in pin_user_pages()") from 6.5-rc1 which got
+> backported as 476c1dfefab8 ("mm: Don't pin ZERO_PAGE in
+> pin_user_pages()") in 6.1.130. See https://bugs.debian.org/1102914#60
+> 
+> #regzbot introduced: 476c1dfefab8b98ae9c3e3ad283c2ac10d30c774
+> 
+> 476c1dfefab8b98ae9c3e3ad283c2ac10d30c774 is the first bad commit
+> commit 476c1dfefab8b98ae9c3e3ad283c2ac10d30c774
+> Author: David Howells <dhowells@redhat.com>
+> Date:   Fri May 26 22:41:40 2023 +0100
+> 
+>     mm: Don't pin ZERO_PAGE in pin_user_pages()
+> 
+>     [ Upstream commit c8070b78751955e59b42457b974bea4a4fe00187 ]
+> 
+>     Make pin_user_pages*() leave a ZERO_PAGE unpinned if it extracts a pointer
+>     to it from the page tables and make unpin_user_page*() correspondingly
+>     ignore a ZERO_PAGE when unpinning.  We don't want to risk overrunning a
+>     zero page's refcount as we're only allowed ~2 million pins on it -
+>     something that userspace can conceivably trigger.
+> 
+>     Add a pair of functions to test whether a page or a folio is a ZERO_PAGE.
+> 
+>     Signed-off-by: David Howells <dhowells@redhat.com>
+>     cc: Christoph Hellwig <hch@infradead.org>
+>     cc: David Hildenbrand <david@redhat.com>
+>     cc: Lorenzo Stoakes <lstoakes@gmail.com>
+>     cc: Andrew Morton <akpm@linux-foundation.org>
+>     cc: Jens Axboe <axboe@kernel.dk>
+>     cc: Al Viro <viro@zeniv.linux.org.uk>
+>     cc: Matthew Wilcox <willy@infradead.org>
+>     cc: Jan Kara <jack@suse.cz>
+>     cc: Jeff Layton <jlayton@kernel.org>
+>     cc: Jason Gunthorpe <jgg@nvidia.com>
+>     cc: Logan Gunthorpe <logang@deltatee.com>
+>     cc: Hillf Danton <hdanton@sina.com>
+>     cc: Christian Brauner <brauner@kernel.org>
+>     cc: Linus Torvalds <torvalds@linux-foundation.org>
+>     cc: linux-fsdevel@vger.kernel.org
+>     cc: linux-block@vger.kernel.org
+>     cc: linux-kernel@vger.kernel.org
+>     cc: linux-mm@kvack.org
+>     Reviewed-by: Lorenzo Stoakes <lstoakes@gmail.com>
+>     Reviewed-by: Christoph Hellwig <hch@lst.de>
+>     Acked-by: David Hildenbrand <david@redhat.com>
+>     Link: https://lore.kernel.org/r/20230526214142.958751-2-dhowells@redhat.com
+>     Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>     Stable-dep-of: bddf10d26e6e ("uprobes: Reject the shared zeropage in uprobe_write_opcode()")
+>     Signed-off-by: Sasha Levin <sashal@kernel.org>
+> 
+>  Documentation/core-api/pin_user_pages.rst |  6 ++++++
+>  include/linux/mm.h                        | 26 ++++++++++++++++++++++++--
+>  mm/gup.c                                  | 31 ++++++++++++++++++++++++++++++-
+>  3 files changed, 60 insertions(+), 3 deletions(-)
+> 
+> Milan verified that the issue persists in 6.1.134 so far and the patch
+> itself cannot be just reverted.
+> 
+> The failures all have a similar pattern, when pci-passthrough is used
+> for a pci devide, for instance under qemu the bootup will fail with:
+> 
+> qemu-system-x86_64: -device {"driver":"vfio-pci","host":"0000:03:00.0","id":"hostdev0","bus":"pci.3","addr":"0x0"}: VFIO_MAP_DMA failed: Cannot allocate memory
+> qemu-system-x86_64: -device {"driver":"vfio-pci","host":"0000:03:00.0","id":"hostdev0","bus":"pci.3","addr":"0x0"}: vfio 0000:03:00.0: failed to setup container
+> 
+> (in the case as reported by Milan).
+> 
+> Any ideas here?
+> 
+> Regards,
+> Salvatore
 
