@@ -1,144 +1,130 @@
-Return-Path: <linux-kernel+bounces-604759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 390AFA8985C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:42:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55A80A8986B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:44:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F2CB189D442
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:42:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 574257AA18B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:43:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64FE29292E;
-	Tue, 15 Apr 2025 09:40:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B47D2820D0;
+	Tue, 15 Apr 2025 09:42:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="CQYaDWGk"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QPSqwTMl"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C7929291F
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 09:40:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0698F28B4E5
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 09:42:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744710005; cv=none; b=HCpXgVXacyMahy8KbIH27Hdgbf8CiXDwNSZRPSYWbmpqlLr51ysKGy6U/Y03p09nEqru9P7LUHk3OrHiHqyWJntORGmGLYiyOsYI6fWU/spEn4BXwEfnFbYSaN3amOm/lTSIQwulcFG/I62wwNlZC81E4j49gcYRqPnebWuCpfk=
+	t=1744710158; cv=none; b=jgN7a7lW3GkH0P9mhB19PodH7CGeSm43Qe19cywF2HbScU5S3ysZi3/8jv8Q6nDsRCG/D9AhExwqgINOHLgA49Jzv8TTsUaLpQE7Jp+tvxiGxkFJ0jWhVkC9ELUENwwp7qtFT/g4QLw5eyxhOLA32satc3ORh7mx5Jd9IKrRh9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744710005; c=relaxed/simple;
-	bh=zuT+UrwO92mBo3PFOJ4dtbbO5SqyhaBWwQA8C7tLxqM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SuJOH+IsIWw+THwow4U/1i0mrsxQo2uZw6CY3Js1gsj5lRruzZnMFHBIr85j8MXG2VnMsfeBnuNpths/QpOQFldbLOX3IfokOBbJmdPZj+9+y0OU5FZtCRMHti/bln9AI6BhG25U2shDyTnnbxW6+3iJ7MUPzZIAac/omDA4j5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=CQYaDWGk; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43cfebc343dso40344155e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 02:40:02 -0700 (PDT)
+	s=arc-20240116; t=1744710158; c=relaxed/simple;
+	bh=rvPK/Dg5T2im/RIHeiod+rLhyhXLcDICeW5UPJLeBGc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uqmFO05H28IG0Iss9daGrGZX6mql0Daxe5VULXL8uz5+g7t4glqJGKgFuSC0cM0Lp3A0uw0srORm/vlLuqxdpMKte4TJiNA9FtQP3QdZQ5vMVfWtq3l59cy0h+JVYqN/hXYCYyOuOHaEirdBrxQJjk4L+1fSg6pypbi++gQA6F8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=QPSqwTMl; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2254e0b4b79so71694165ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 02:42:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1744710000; x=1745314800; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OmZOs8Rz2SRsBXQDEu0M9cDNyzZUv/bQ4RbErsr9sHY=;
-        b=CQYaDWGk0VsIbYhEmAi5V9VV8xZx7IeeGlp8e/CtX6HQ7J66bx7Ruh1NRez722nNXj
-         jMkmQuO0ZBO94+otRSuv8lkdI4ePNG1BajoLLTVUcBLLa2gRgMJLyRGI/9Spz3m4Ig9T
-         Dd0l5jPhQVsRAHJDXLqVS6E776Fw6JqdobUtLlJBh6ZoZisXihY59bSz+nokvXFzRBUb
-         3+/X7GcMEu+mSEDqUvoXUEE9yXo/LGnwee2QZreQho3ssy+tDlzOsPE8ol1+6hdI4cut
-         kycw6HrfzMVJlUqjaXdlrtKQiWHpDOnNcAYM+SU2Kvg2WseHZZCrC3mQsxv91SnaGomh
-         c4Ow==
+        d=chromium.org; s=google; t=1744710156; x=1745314956; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cBaoORDclgJIxRjLsgxp6IQxhEhL0T0NDAX9n9Trx5U=;
+        b=QPSqwTMlDFRxts7YsVmvtlCYyL+FG21cZwk9QQjNa4t0acDmb9K7+z3LKF4O0waP5F
+         +I+jQjdiPNtuD7dMOdxp6N/jgThFN+AGECXxYOtc0xqPnTYWAM6gezu1le95d9B6Mb6P
+         +NAdHqFJaWO0irvmasbaQhn0tGuLNl0xV+9C8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744710000; x=1745314800;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OmZOs8Rz2SRsBXQDEu0M9cDNyzZUv/bQ4RbErsr9sHY=;
-        b=LVWrUWSt0ro4DVkHGdsM0Ytz8ilz8JBuhKoxB9qZfhd3wuyES+O7pLHKfi/zS9fRJV
-         rLp1Ftla1BEzq0HnpO1OikUVzK2lpCcYx1cUuRWjVJG/PKyuMCJDJHoFpzejKTYRuYST
-         0wZZjyUfOYw/BWm5TcJkmUTTfxdsgHy3KOrnaAdcekD1MKR0CIWkr2inURy587SA+Zqy
-         Kb6pr4V9uG+LcpYArAIz/l+uFrKhk19G6nJT/tbKrWqMhS41u7H0wXDtIrvbnG6g3nLX
-         kihT/snXFU41LlECfu8nYaUiQMR4SrMTN9pBfdASb5sbHmcaV9OqPpLSoChNcimZhrNv
-         FMUA==
-X-Forwarded-Encrypted: i=1; AJvYcCUj0REqT2L2qN73NDCkeqt5M3IXQsWy1KNWtbeae0gbSw7biI7em4ddR7ABxXzk444fimCq4HtTDfxzWmo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdZq6EVBUv0tFN/axB0Ax5ip0XjsNQfBdv2+ldxEiQXOMT+76v
-	cNDwJnSPmsHNcO3mIms2MAQ5AKnByBf6IBn016HhFwRfqIW1MWjk0RKdbt7YOnk=
-X-Gm-Gg: ASbGncv287wpcLH91xPnbi1gsj6FIHrSOt2fJQWZL1zF06ip9ejhxjJHvEX0kZgbJn8
-	fjwkkhlRBYe834kTH7akW+Yc7OmKxgK8rm7coS218VuOu0AKCm2sktHrVNrTnBHoZq37j3H73K4
-	vvPgF9AzgSjQGlJwFCpmP7D5Ye5N5QToPGvC+r3iUoSHAhSjAjEk+LJr0Xd9/BidMiNmbwTq2eQ
-	JOFLf1nT+4dKtEy4+nnxB3lhfUltLdWEWcMV69u16X9onTm5nmCjycoajESRnAMxmBmTd6+dilI
-	jPk3Fm7J+QQbLBSfAqxZLYdTMInKPou1QGcSxtKKaGTzRY8TtHXAc4rwp2EUFHr0Tm/gsOQJqwf
-	3JKSP66k=
-X-Google-Smtp-Source: AGHT+IHF2FagMNaFNbqP/pP/Mm5s2FMwRszKIuGZ4NXlyxggm0m0+ymsT1EDLfxfWhc/bLYDwM86og==
-X-Received: by 2002:a05:600c:1f94:b0:43c:fe90:1282 with SMTP id 5b1f17b1804b1-43f3a925eb1mr132089105e9.7.1744710000434;
-        Tue, 15 Apr 2025 02:40:00 -0700 (PDT)
-Received: from [192.168.0.205] (78-154-15-142.ip.btc-net.bg. [78.154.15.142])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f2066d109sm207839905e9.20.2025.04.15.02.39.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Apr 2025 02:39:59 -0700 (PDT)
-Message-ID: <8b338c8b-9514-43e4-b1b8-3240b3bde798@blackwall.org>
-Date: Tue, 15 Apr 2025 12:39:58 +0300
+        d=1e100.net; s=20230601; t=1744710156; x=1745314956;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cBaoORDclgJIxRjLsgxp6IQxhEhL0T0NDAX9n9Trx5U=;
+        b=EJ6H8s/V7ja8OUgGi15q6uyoY5WWoR0aOgTuKZGi6m6kTZiSByb3wOhKavo1PKTZ2G
+         ihJKiNV6DmvtuE96e1QyRNYLrvzDJiTOTvBehICyT1l4QV6syUlga8PqPO2Cpvfw5o74
+         9c00I8zdOeXntRMaE6i7FD5QCL8Gyg+r13pABaRoEnyE9lm3f5hpqT4EbkfEyZLfaeid
+         S6Y9rQekh5n4b5FwofATkWVu56ILqBw+AXp/tekTrsXtOzLhovj1nbw/9zhPfhRteHt3
+         sif3z3tLS56ME7Cjw0AhXei3k1Ie0yP1pN+r5qEBJKfzakr63bB5fBU/91/mRSzTX5uR
+         V10g==
+X-Forwarded-Encrypted: i=1; AJvYcCUNAK9yVld/AQ60oeJ99/b3rNGXHp+t60QHk4vrgajW45xA9fClkRgvneAESVidytqxWLGpae67qQzyv6g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTj0T5BUjaN8DSssQSGKiuSi2T2BWBtWOEpSBh93WOP/UJ6sNA
+	9QvDXRExzB/YYslSBlyzvw015XUXUuOuuu2GCyBjHqlYouOSxRV9Zvs9YgUwdA==
+X-Gm-Gg: ASbGnctpkQZq8wZDP0QD/8vRM5K79z5DxiKIGrcNwMjRRNBWWZmaN4osKVzvjjMESR9
+	v2dBZNNLHZBQAOQdi7iRDZ5/5F43TSWXY7dNewUwYnvEAYt9kNn6gBzWCJlzIRFhW9XvdhWfWTz
+	Qpn/7biARY86HARmSMx5O+Wc4XU42qpqW8Kk/UuqB33/axZLQ4NMGEfMOzhs8UL91Jma09XPhyq
+	l5kwxIaFIr0TYgB0PQjQslYjCABXLJXO7KBvWhntPu8mmB1iqtqd/qDJbJwhjIzCefEDWNT7vAS
+	EakiDODhx4/RGVciUuWa59hALZj61bCJRWTndSfisRleq4dnAzb0QE2iILhKihuo
+X-Google-Smtp-Source: AGHT+IHVvAZ1ygtLt+QZlSxzIJDMWWSa3m/mDTZEHZmrVvlbbotGb9BvVB2zRgsynJ3aC8i0qEwfeQ==
+X-Received: by 2002:a17:902:dac3:b0:224:f12:3734 with SMTP id d9443c01a7336-22bea4bd79bmr179704025ad.30.1744710156249;
+        Tue, 15 Apr 2025 02:42:36 -0700 (PDT)
+Received: from treapking.tpe.corp.google.com ([2401:fa00:1:10:7d0d:86ea:ee84:cd08])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7ccca5asm113135215ad.254.2025.04.15.02.42.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Apr 2025 02:42:35 -0700 (PDT)
+From: Pin-yen Lin <treapking@chromium.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Kaehlcke <mka@chromium.org>
+Cc: Stephen Boyd <swboyd@chromium.org>,
+	linux-kernel@vger.kernel.org,
+	Pin-yen Lin <treapking@chromium.org>,
+	devicetree@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: [PATCH v2 0/4] Introduce usb-hub.yaml binding and add support for Parade PS5511
+Date: Tue, 15 Apr 2025 17:41:57 +0800
+Message-ID: <20250415094227.3629916-1-treapking@chromium.org>
+X-Mailer: git-send-email 2.49.0.777.g153de2bbd5-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3] net: bridge: locally receive all multicast
- packets if IFF_ALLMULTI is set
-To: Shengyu Qu <wiagn233@outlook.com>, idosch@nvidia.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, bridge@lists.linux.dev,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Felix Fietkau <nbd@nbd.name>
-References: <OSZPR01MB8434308370ACAFA90A22980798B32@OSZPR01MB8434.jpnprd01.prod.outlook.com>
-Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <OSZPR01MB8434308370ACAFA90A22980798B32@OSZPR01MB8434.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 4/14/25 13:56, Shengyu Qu wrote:
-> If multicast snooping is enabled, multicast packets may not always end up
-> on the local bridge interface, if the host is not a member of the multicast
-> group. Similar to how IFF_PROMISC allows all packets to be received
-> locally, let IFF_ALLMULTI allow all multicast packets to be received.
-> 
-> OpenWrt uses a user space daemon for DHCPv6/RA/NDP handling, and in relay
-> mode it sets the ALLMULTI flag in order to receive all relevant queries on
-> the network.
-> 
-> This works for normal network interfaces and non-snooping bridges, but not
-> snooping bridges (unless multicast routing is enabled).
-> 
-> Reported-by: Felix Fietkau <nbd@nbd.name>
-> Closes:https://github.com/openwrt/openwrt/issues/15857#issuecomment-2662851243
-> Signed-off-by: Shengyu Qu <wiagn233@outlook.com>
-> ---
-> Changes since v1:
->  - Move to net-next
->  - Changed code according to Nikolay's advice
-> 
-> Changes since v2:
->  - Fix alignment
->  - Remove redundant parenthesis
->  - Add more infomation in commit message
-> ---
->  net/bridge/br_input.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/net/bridge/br_input.c b/net/bridge/br_input.c
-> index 232133a0fd21..5f6ac9bf1527 100644
-> --- a/net/bridge/br_input.c
-> +++ b/net/bridge/br_input.c
-> @@ -189,7 +189,8 @@ int br_handle_frame_finish(struct net *net, struct sock *sk, struct sk_buff *skb
->  		if ((mdst || BR_INPUT_SKB_CB_MROUTERS_ONLY(skb)) &&
->  		    br_multicast_querier_exists(brmctx, eth_hdr(skb), mdst)) {
->  			if ((mdst && mdst->host_joined) ||
-> -			    br_multicast_is_router(brmctx, skb)) {
-> +			    br_multicast_is_router(brmctx, skb) ||
-> +			    br->dev->flags & IFF_ALLMULTI) {
->  				local_rcv = true;
->  				DEV_STATS_INC(br->dev, multicast);
->  			}
 
-Thanks,
-Acked-by: Nikolay Aleksandrov <razor@blackwall.org>
+This series introduces usb-hub.yaml for on-board USB hubs, and use it for
+the newly-added Parade PS5511 binding and the existing Realtek RTS5411
+hub controller.
+
+Also add support for Parade PS5511 in onboard_usb_dev.c
+
+Patch 1 introduces usb-hub.yaml as the bindings for on-board USB hubs
+Patch 2 adds the binding for Parade PS5511
+Patch 3 modifies realtek,rts5411.yaml to adapt usb-hub.yaml
+Patch 4 adds the support for Parade PS5511 in onboard_usb_dev.c
+
+Link to v1: https://lore.kernel.org/all/20250328082950.1473406-1-treapking@chromium.org/
+
+
+Changes in v2:
+- Introduce usb-hub.yaml
+- Modify parade,ps5511 and realtek,rts5411 to use usb-hub.yaml
+- Minor fixes on parade,ps5511.yaml
+
+Pin-yen Lin (4):
+  dt-bindings: usb: Introduce usb-hub.yaml
+  dt-bindings: usb: Add binding for PS5511 hub controller
+  dt-bindings: usb: realtek,rts5411: Adapt usb-hub.yaml
+  usb: misc: onboard_usb_dev: Add Parade PS5511 hub support
+
+ .../bindings/usb/parade,ps5511.yaml           | 115 ++++++++++++++++++
+ .../bindings/usb/realtek,rts5411.yaml         |  47 ++-----
+ .../devicetree/bindings/usb/usb-hub.yaml      |  91 ++++++++++++++
+ drivers/usb/misc/onboard_usb_dev.c            |   3 +
+ drivers/usb/misc/onboard_usb_dev.h            |   9 ++
+ 5 files changed, 231 insertions(+), 34 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/usb/parade,ps5511.yaml
+ create mode 100644 Documentation/devicetree/bindings/usb/usb-hub.yaml
+
+-- 
+2.49.0.777.g153de2bbd5-goog
+
 
