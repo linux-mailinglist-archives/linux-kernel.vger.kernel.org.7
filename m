@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-604285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94887A892E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 06:33:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4222A892E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 06:33:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFCFD7A2327
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 04:32:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23BB4189B914
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 04:33:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4389F21ABA2;
-	Tue, 15 Apr 2025 04:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39D2221B9DE;
+	Tue, 15 Apr 2025 04:33:18 +0000 (UTC)
 Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B19219307;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48806FC5;
 	Tue, 15 Apr 2025 04:33:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744691596; cv=none; b=IeLw/cO4OZzN9iYUbK/z1pit3e4mbdDjOTLbDGSejbi/A7fAXepSxivJGS6md/6NhIHJMa0yCKEzW3020y8L/5AffmeOACPza0VCrnc7d365nZAcFxr/BtEArekgreYNKASypvrA9umU+Yl3gC+ZRKof5piQc4LejwkxOCufPEI=
+	t=1744691597; cv=none; b=nq35X0lMxjKFilsB9HKVEojqNSjGhoxm3DJ+36vIq9gyLo+DFSuDKdsUBq8jTWjYiLHVgsy91K0Qy4XAfHzj5crXrrXckyfPaPAdqBK6nyrwGOY/j8hGbGUONfHt1Lz9kift+CqUM7F3ROXmtckPLaPERPFjRcQpamDLQ+kv6lY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744691596; c=relaxed/simple;
-	bh=o1UC/CUCU4iL+fAOMQ5zd+yNz9FBdQ4/TB7BbrG0fq4=;
+	s=arc-20240116; t=1744691597; c=relaxed/simple;
+	bh=V1LTNqJoWIs8T5BcNV1csv6Cu4E7kmVn/rB17I4/jKc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=q8cG2GHUHOkoAbgSwA0Net/78TJkIdIEcSFx+EOFY5oWqI3fJrbceQRAcsdbQbR1i2U5lHfZsJ6cEXsncC685Rj37VNsGNvVWciKC3K6vxB05iydHl5fSq/AhAekDk4bTFgEFN2BMb2/9HwClthhBzEpIWQoGaIEnmEvUdahXXU=
+	 MIME-Version; b=DvP+aWV+zcUTNOC9q/KUM41CT4nyZ9A2IC1/9XBsFTT2uWCKwIKxREsMJg/XavAMICsa7guy/7RgoirNlaOk9Wdl/R1asRPpuYvzj6o3eEYojLvgIZYfX2u+Iao8pAclSBBRH1GXheb8N31OcjU83ghA1M/bnAjUU3j3U8dj7eM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; arc=none smtp.client-ip=46.19.9.99
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
@@ -32,7 +32,7 @@ Received: from [89.212.21.243] (port=52324 helo=localhost.localdomain)
 	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <primoz.fiser@norik.com>)
-	id 1u4Xyz-00Gb4I-2l;
+	id 1u4Xyz-00Gb4I-31;
 	Tue, 15 Apr 2025 06:33:13 +0200
 From: Primoz Fiser <primoz.fiser@norik.com>
 To: Rob Herring <robh@kernel.org>,
@@ -47,9 +47,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	upstream@lists.phytec.de
-Subject: [PATCH v2 02/15] arm64: dts: freescale: imx93-phycore-som: Add EEPROM support
-Date: Tue, 15 Apr 2025 06:32:58 +0200
-Message-Id: <20250415043311.3385835-3-primoz.fiser@norik.com>
+Subject: [PATCH v2 03/15] arm64: dts: freescale: imx93-phycore-som: Disable LED pull-up
+Date: Tue, 15 Apr 2025 06:32:59 +0200
+Message-Id: <20250415043311.3385835-4-primoz.fiser@norik.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250415043311.3385835-1-primoz.fiser@norik.com>
 References: <20250415043311.3385835-1-primoz.fiser@norik.com>
@@ -71,36 +71,32 @@ X-Source:
 X-Source-Args: 
 X-Source-Dir: 
 
-Add support for the EEPROM chip available on I2C3 bus (address 0x50),
-used for the PHYTEC SOM detection.
+There is already an external pull-down resistor on the LED output line.
+It makes no sense to have both pull-down and pull-up resistors enabled
+at the same time. Thus disable the internal pull-down.
 
 Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 ---
 Changes in v2:
-- move reg property ahead of pagesize
+- add Reviewed-by tag
 
- arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi b/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi
-index 507a71f9294b..0528e293c03d 100644
+index 0528e293c03d..06a9e674e338 100644
 --- a/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi
 +++ b/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi
-@@ -154,6 +154,14 @@ ldo5: LDO5 {
- 			};
- 		};
- 	};
-+
-+	/* EEPROM */
-+	eeprom@50 {
-+		compatible = "atmel,24c32";
-+		reg = <0x50>;
-+		pagesize = <32>;
-+		vcc-supply = <&buck4>;
-+	};
- };
+@@ -196,7 +196,7 @@ MX93_PAD_ENET2_TD2__ENET1_TX_CLK		0x4000050e
  
- /* eMMC */
+ 	pinctrl_leds: ledsgrp {
+ 		fsl,pins = <
+-			MX93_PAD_I2C1_SDA__GPIO1_IO01		0x31e
++			MX93_PAD_I2C1_SDA__GPIO1_IO01		0x11e
+ 		>;
+ 	};
+ 
 -- 
 2.34.1
 
