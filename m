@@ -1,125 +1,86 @@
-Return-Path: <linux-kernel+bounces-605692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46773A8A4DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 19:02:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DCADA8A4D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 19:01:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 637F7188A743
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 17:02:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FC4C179573
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 17:01:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B541F18FDA5;
-	Tue, 15 Apr 2025 17:01:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6130A19E819;
+	Tue, 15 Apr 2025 17:01:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="amK3F2zp"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="iy/SSM2A"
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF98F17BBF;
-	Tue, 15 Apr 2025 17:01:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25391176AC5
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 17:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744736499; cv=none; b=fBh1zYVW+mQ56zIktV7kUXDS8W8ZtB5IM6VwCLQyFqkEmwAp2+rXMYXZxy7SuMWkVXDN8nVO6pYbVdqKGGknA+7MsWzhBFNfAcTZ41uuMw9E0UcbZ676u43u0cM64CRQRhGdiYiqTBiI9C2I+Srqtej4HVdsfRU312c4BEzxtpo=
+	t=1744736476; cv=none; b=JvzjM9qb+j0Osa9l9GLIeJi7SvRYoKyqbNS6CxRAwjiout3hsCZ+/kDhozuVw8kp/bZOjcb7T5nF7D1kNcovn+U/+fcG/cHPfdhuMuO4PGG/nNXt3SR+wew9GkvT6XFEIqtDgq5IQDDgv92pyxBSG8yrKHl3alpADatRJw8tNrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744736499; c=relaxed/simple;
-	bh=pnuDVtTHYv5Kzi5ocf3oiv0Vqm8eA3qJ9oq3Ou9Lm8M=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=UW+Q++AdOpZvmIPg3LLqT+z87Nhjx7sXjqMJyFO4eKhSXVqr1OGm9S+ILdILalRTmBJoPU88uNodHGoe0u1Hjp5EZr97XkBhYU0lKx7ZWg42LRHs++t7bJzdblp7tDH4g5RAEeOh81+YQ6Pb5uW/6YL0YKCvxBSQCmnvK9iMYug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=amK3F2zp; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 53FH0EfF2921211
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Tue, 15 Apr 2025 10:00:55 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 53FH0EfF2921211
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025032001; t=1744736456;
-	bh=2PGO/bjarbzWZFKbGFC0nWFI3jUy9vtqZch+4ZGunNc=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=amK3F2zp25ISKDxffxJnlTAQhUERMhDlrWLENN+wwHPHgyTB0Nvlj1JEEGjc2WO1J
-	 pW9LOokB4bRhxTf9KR0+JTlnYcwpq2ObamGqL5dhPzDiH8R5rjVKTlNfzk0v6Kh5L+
-	 75Bfn7yJx/1MA4/w0QgB5wuv87NQmyBNIe/lJ57QD6zhcM5biq1OPjWk9rZPU4QEWP
-	 ikynoRY9YeFgFbZLWTiovNBSOYdrL6wdbX1tchuCQ0iDKaqUWf67CQajftjxSHeuC3
-	 rDrLFJimbvBPkv5MCMWE6W8U/MdWKk0t/5b3A0I2jrTCQxvaNjyCUtGctwSjIZmsM4
-	 DeYJFwMgoHVRw==
-Date: Tue, 15 Apr 2025 10:00:11 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Ard Biesheuvel <ardb@kernel.org>, Borislav Petkov <bp@alien8.de>
-CC: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>, Ian Campbell <ijc@hellion.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5Btip=3A_x86/build=5D_x86/boot=3A_Add_bac?=
- =?US-ASCII?Q?k_some_padding_for_the_CRC-32_checksum?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <CAMj1kXEWerW9A7t0njN7hM7Ms48+mE94p3CTv_LP9P-CotOtPg@mail.gmail.com>
-References: <20250312081204.521411-2-ardb+git@google.com> <174178137443.14745.10057090473999621829.tip-bot2@tip-bot2> <20250414135625.GDZ_0UCcIQ-fg8DKZL@fat_crate.local> <CAMj1kXEWerW9A7t0njN7hM7Ms48+mE94p3CTv_LP9P-CotOtPg@mail.gmail.com>
-Message-ID: <89CE5702-6C52-4E02-9A18-31E4161CA677@zytor.com>
+	s=arc-20240116; t=1744736476; c=relaxed/simple;
+	bh=SpmS5NI6cI27DpZ8jk6vBMjCGQ+6ydg3ZrQIOhSjac8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iypkJ3oSbA4QutwTz39m5tWCggMHXYRiLUd9ziaorGpmw1pnOD/eAnNKq9kOuwJ8L+P+O6eu2C/ELn2uCqPh8FBpEWIyRa0FZmwRwXAAJ7X2XJ4KFDf0lfka1hp/8aDTDPS8mT39+yPxAdR7eQhtuof68SIrOaYTskJQXMoNJRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=iy/SSM2A; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 15 Apr 2025 10:01:07 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1744736473;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CmWFqdKuu4gt5mYfCAK/YlboynoixgjtC+GEXND4eKA=;
+	b=iy/SSM2AD+vdcsUwN0V0ojVN6nJYo3xxM8bxqQvsuPlcjPZOm6vcI+v0Cd0DxgLUzNJNMS
+	kimr4OBLSps6BnK2fR6sUaKjFHVPPDPs/SW5Cm6lSaoLsXuq8+bs6dUjJl1qrRGi+QQhp+
+	2PTzD1X5CTfFDc7UKa+MKgQ9BDiEZlA=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Vlastimil Babka <vbabka@suse.cz>, 
+	Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, Yosry Ahmed <yosry.ahmed@linux.dev>, 
+	Waiman Long <llong@redhat.com>, linux-mm@kvack.org, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>
+Subject: Re: [PATCH] memcg: decouple memcg_hotplug_cpu_dead from stock_lock
+Message-ID: <lw5d66yoesg2z57brkdkqbh4xqbv5kssgr2htzzhpe3pobwm6i@vr3dufhjquje>
+References: <20250410210623.1016767-1-shakeel.butt@linux.dev>
+ <0e9e2d5d-ec64-4ad4-a184-0c53832ff565@suse.cz>
+ <CAGj-7pUxYUDdRGaiFon=V2EG+3Ex5s9i7VvWbDH5T0v-7SE-CQ@mail.gmail.com>
+ <8cce9a28-3b02-4126-a150-532e92c0e7f8@suse.cz>
+ <CAGj-7pXRmG2D+5=yj-5uuciiNccWws6erBg_hSm9S6coEhN+3Q@mail.gmail.com>
+ <esdt7fygdyzxxlb7ql6qzwqydzokmfi4uxkfwvxiqedff5wnxl@n34muduktzou>
+ <20250415063054.jerbqGF8@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250415063054.jerbqGF8@linutronix.de>
+X-Migadu-Flow: FLOW_OUT
 
-On April 14, 2025 7:07:53 AM PDT, Ard Biesheuvel <ardb@kernel=2Eorg> wrote:
->On Mon, 14 Apr 2025 at 15:56, Borislav Petkov <bp@alien8=2Ede> wrote:
->>
->> On Wed, Mar 12, 2025 at 12:09:34PM -0000, tip-bot2 for Ard Biesheuvel w=
-rote:
->> > The following commit has been merged into the x86/build branch of tip=
-:
->> >
->> > Commit-ID:     e471a86a8c523eccdfd1c4745ed7ac7cbdcc1f3f
->> > Gitweb:        https://git=2Ekernel=2Eorg/tip/e471a86a8c523eccdfd1c47=
-45ed7ac7cbdcc1f3f
->> > Author:        Ard Biesheuvel <ardb@kernel=2Eorg>
->> > AuthorDate:    Wed, 12 Mar 2025 09:12:05 +01:00
->> > Committer:     Ingo Molnar <mingo@kernel=2Eorg>
->> > CommitterDate: Wed, 12 Mar 2025 13:04:52 +01:00
->> >
->> > x86/boot: Add back some padding for the CRC-32 checksum
->> >
->> > Even though no uses of the bzImage CRC-32 checksum are known, ensure
->> > that the last 4 bytes of the image are unused zero bytes, so that the
->> > checksum can be generated post-build if needed=2E
->>
->> Sounds like it is not needed and sounds like we should whack this thing=
- no?
->>
->> Or are we doing a grace period and then whack it when that grace period
->> expires?
->>
->
->This was done on hpa's request - maybe he has a duration in mind for
->this grace period?
+On Tue, Apr 15, 2025 at 08:30:54AM +0200, Sebastian Andrzej Siewior wrote:
+> On 2025-04-14 10:55:31 [-0700], Shakeel Butt wrote:
+> > Vlastimil & Sebastian, if you don't have a strong opinion/push-back on
+> > this patch then I will keep it as is. However I am planning to rework
+> > the memcg stats (& vmstats) to see if I can use dedicated local_lock for
+> > them and able to modify them in any context.
+> 
+> Please don't use local_irq_save().
 
-I would prefer to leave it indefinitely, because an all zero pattern is fa=
-r easier to detect than what would look like a false checksum=2E
+Sounds good. Andrew, can you please drop this patch (I think it was
+picked into mm-new).
 
-So I remembered eventually who wanted it: it was a direct from flash boot =
-loader who wanted to detect a partial flash failure before invoking the ker=
-nel, so that it can redirect to a secondary kernel=2E
-
-That would obviously not be an UEFI environment, so the signing issue is n=
-ot applicable=2E
-
-An all zero end field actually works for that purpose (although requires a=
- boot loader patch), because an unprogrammed flash sector contains FFFFFFFF=
- not 00000000=2E
-
-We have kept the bzImage format backwards compatible =E2=80=93 sometimes a=
-t considerable effort =E2=80=93 and the cost of reasonably continuing to do=
- so is absolutely minimal=2E This is an incompatible change, so at least it=
- is appropriate to give unambiguous indication thereof=2E
-
-In other words: it ain't broken, don't try to fix it=2E It is all downside=
-, no upside=2E
-
+BTW I think using local_irq_save() is not wrong and just not preferred
+for RT kernel, is that correct?
 
