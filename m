@@ -1,216 +1,138 @@
-Return-Path: <linux-kernel+bounces-605496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E923A8A21E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:58:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3787A8A20F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:57:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A2803AC212
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:57:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 010FD441015
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:57:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678182C109C;
-	Tue, 15 Apr 2025 14:55:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3AD52BE0EE;
+	Tue, 15 Apr 2025 14:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2wXvromW"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2076.outbound.protection.outlook.com [40.107.244.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1Mvs+KGy"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D872E2BCF76;
-	Tue, 15 Apr 2025 14:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744728926; cv=fail; b=Rls2PmGcwUCbrTXtBvCsZ9g7h3vBqFrkNBrzq1Md2gnqRG+mCp5dFqmLT6D8ZkCXBB4zcJJWo/bpBPWFH4M7jiMHmmTjyZ3MrLXLd9L12pfsdSkfNp+0hmdq8mt8DfNQFzWpNS+kDmKR5IZkkcolakgPHMT5BzWHVkYmt/A/Zmg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744728926; c=relaxed/simple;
-	bh=HH+HieUGphtXOKMxLaDvnZM6uV9tZ9+zsJgOjgAwT1A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=CSUW3KcE3dYjlZfs1OF16ZZuW8MAUq6R7Zg4hAojeJHGh03xZQnmZYQwok8v18XQwZxI4YzlHyldC9TBJfGXAIU9LhwFv2eGOx9SLw88o+LR3lEiEJT3Mr363up7FEkNlCLs8M2GJyk0kTSspgOmaMJV5HSWEbm+XvTtkp2171E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2wXvromW; arc=fail smtp.client-ip=40.107.244.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LPeAt2MA8CBdDLT87Vud97tK+XXMSPRlJyFmpq8Mr2su1n4lNu2vuG8XCWcm6nBwDlzZUN3eOEet7VE9rvCDg/UwnN0hT+TZ9q3NrNEkzpwUNM5TT1653ILkpZz/DuGucFTaPeVdLF2WoVZwnVZpDT306eADjovpH+IxVTAJPXE+Vq9bK9e+qUYjuR/o/PqRJcYjy0ih57cxlatmA2arRDkz2rptBKpq86KUfWpFrmbBLzz2TMpFGdhXWetBkqPrnYduDf/y8FczteflzVjbO5hh+TqXifkSYbHybexiyhbpqAvzpr6zfCzLOkIpf6bXGp8VGRK7I1dadL9MCi1M6w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+6RdGLIc5gGkKXVgXueNVPgAJrV0DH9s7oAtFW4oa3E=;
- b=H4BkilEbyPrwcZL/BMpztM+fKQKQUK4J+b2PSkYf+CG6czOeRScfBjhMKMutEi6O/MalkmOdK2kJDCzn6iV8Yru9EECX4KEayox3gCPABzZ6HA0FR0Xtr9vNgNR2U974C0bBamJfdq6A86M36G/v6uCHTaaX2/nUbIEUf0ycPcc4aB49SqzDCtkDQLrj1GkCYy3pwqnsns9m0lwhlCEXSkZ7KvH0f233dhnkBG5XxYAMN9YWsKXw/BtR2+vr9UmAAEjcb9AItjr45KheDtvmPWQSmiV0TQrtf5scn5u06KwW5nO4gT6VkJ0LUAD8DR2lFecEdiueFZGBYqooxhdgmQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+6RdGLIc5gGkKXVgXueNVPgAJrV0DH9s7oAtFW4oa3E=;
- b=2wXvromWvvBzyx89F9FbhK1GZKFxxa0OI1z+j0zF1NMIRfLb18EvUCWZ0vbQ4BL/YsM9A3Gbaz74+rk6J4yJWp7Q6mJB2HkZhMiJ3GN3wrOBTnWj2OPBOfPQPTnPz0bzXC6vEux5alAnAhVZJTx1khZTgwWVesN3RLHxr3BJ7I4=
-Received: from CH0PR13CA0031.namprd13.prod.outlook.com (2603:10b6:610:b2::6)
- by LV3PR12MB9142.namprd12.prod.outlook.com (2603:10b6:408:198::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.34; Tue, 15 Apr
- 2025 14:55:19 +0000
-Received: from CH2PEPF00000146.namprd02.prod.outlook.com
- (2603:10b6:610:b2:cafe::34) by CH0PR13CA0031.outlook.office365.com
- (2603:10b6:610:b2::6) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.15 via Frontend Transport; Tue,
- 15 Apr 2025 14:55:19 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CH2PEPF00000146.mail.protection.outlook.com (10.167.244.103) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8655.12 via Frontend Transport; Tue, 15 Apr 2025 14:55:19 +0000
-Received: from [127.0.1.1] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 15 Apr
- 2025 09:55:18 -0500
-From: Yazen Ghannam <yazen.ghannam@amd.com>
-Date: Tue, 15 Apr 2025 14:55:12 +0000
-Subject: [PATCH v3 17/17] x86/mce: Restore poll settings after storm
- subsides
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15E6429E047
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 14:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744728923; cv=none; b=QAlmE6yJ2NUHsZJr1OkkYZpMXccFAxuuLhoFb88P9dU+osicq6Rro0jZKweV4jePWxD2v5MIzHX/BfLC18B7gjwIpDj9xfCdxL+PHpI+kagIH45UT4dKZhPLKqLZesJzQcNZc5jdpW09E4SI9VC9GuXi3lcH4yS5I+Z+ToQKCis=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744728923; c=relaxed/simple;
+	bh=Z25BFswi+RwDu8PUjbMKkshugsl78jlSI7Z+pvioYuw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Tar71aI4Efi8PLyOjP2yq1L7cNxGa7meYj7uNbs2ok2kF0Xyq+XjA9mT3hhHtcCUc776SNq5E+0f4KmYHi29JzKkEoVBG47Shp0BOnzaiB62FZVS0cDnfpWuegvfH8ccKxgUG5w1pEIkkIAyo2qbqlHjg7JH/E1hfugc/Y6IGXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1Mvs+KGy; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-22651aca434so45952085ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 07:55:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1744728920; x=1745333720; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OuRBmgEllaRB5ZjobobNvVAEpYQN/37Jjkyiax0k//A=;
+        b=1Mvs+KGySCyCiakIyxepQ/tlcwnxflO1IOuKe2sYwwNF8Mwzi4ydXykI547h7M8ZFW
+         gxAnYPpT0Bc06swPzD0wmHdwuuHrSLZtHTLHq4/uzucyyGQErXX6ApWFERmfQTQGyYTG
+         qoo3QfqD5niNGerIu7zB5GU7bnieu3G0cMh3/CcaO9j1t3m0XDnBFqL8u5XDc/+fJSEV
+         i0EZ7Oq9ukuxCVTFqR6tmVHxFnkfVpnJ8otA44lqcd/5h5ZO5vJ8e5HHynu4SLvPejYO
+         ND2GIGXLJ41Kswdp5SaDQMAkL1ST985O3J94ivNhWPjU9048cZy63C7by4fepcj1c+zS
+         wVUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744728920; x=1745333720;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OuRBmgEllaRB5ZjobobNvVAEpYQN/37Jjkyiax0k//A=;
+        b=OXm//s2OPXyq7Kl6tIIsdfIpg3vfXHHSKaaVvhEu1YbxzDDbjKTUswyuDBNlbi2/uY
+         o6p2auRmLoxEpRBHJmwFtQkneANgwoIKBuhha6daQOyFODz8wpC460e0jzf/DEZEErUu
+         4eD93wu6DFND2sX903nK6neCOKw3YOKYTqdnY6PP9EDJfvEdEi4+uz0V0z22Nq7KUqeu
+         urG3szZzLlAFfjNhDtX1AihfCHHPX4CzQn8uRCSwCzrA2X5TP5jXBR+yBfCbx9nj129s
+         8K2UmhsT+56NoaNFGu7MwCSMyWQ8wTG6NyhN1cdERubWghEMMdwSnRVPN8O37Rf4p9nu
+         K2Fw==
+X-Forwarded-Encrypted: i=1; AJvYcCUrfQUcpjTDHqSstTuYsQSmgkqeprm/JDmwfaG6rNUNBextyGdafykL7JhZxgJU46PyD/55EWmQV0klqis=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyb5jx1FJZS3xd46igsHIn+Bm2vdH8hH/b7dKGmVygdO73kqav0
+	DwBzR5JTqNuaD7XYs5RpN7uUAwlECIx9LYhFtm4gEuzs9WAvLStFYtVjTYRfQFY1wm3YrX7I/KR
+	LBQ==
+X-Google-Smtp-Source: AGHT+IHH7mC1r9KS9+glc9Ei4mef4Tc//vYXWsg5yzy8MKjIFibb6b+8ibiq0JLHt6znMV7vWbcfa+6TwQ0=
+X-Received: from plev19.prod.google.com ([2002:a17:903:31d3:b0:224:efa:ef21])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:2345:b0:224:1af1:87ed
+ with SMTP id d9443c01a7336-22bea4c71e9mr252498545ad.27.1744728920241; Tue, 15
+ Apr 2025 07:55:20 -0700 (PDT)
+Date: Tue, 15 Apr 2025 07:55:19 -0700
+In-Reply-To: <d345b636-792f-4762-8c6c-2a7252294068@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250415-wip-mca-updates-v3-17-8ffd9eb4aa56@amd.com>
-References: <20250415-wip-mca-updates-v3-0-8ffd9eb4aa56@amd.com>
-In-Reply-To: <20250415-wip-mca-updates-v3-0-8ffd9eb4aa56@amd.com>
-To: <x86@kernel.org>, Tony Luck <tony.luck@intel.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-edac@vger.kernel.org>,
-	<Smita.KoralahalliChannabasappa@amd.com>, Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-X-Mailer: b4 0.15-dev-9b767
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF00000146:EE_|LV3PR12MB9142:EE_
-X-MS-Office365-Filtering-Correlation-Id: f42f6581-8ae0-4500-0c8d-08dd7c2d8a64
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?N3ozbnlxSUZtS0JxaHhGWmU1MHBYaVo1K2lZTWJac21lbjMwaVQ5RlB1b2FS?=
- =?utf-8?B?RUN5T3dMK2FqVnFmQllhZzVrMURVZWFOa1dNSk9HOUxCWkRqS3AvZm1IbXAz?=
- =?utf-8?B?VTBEaUpLUDd6STNsam1ZWGdmbVQ0NGZKL2VSemxSOUFwbnIzZG5FZGNFN2hP?=
- =?utf-8?B?cnJLOEducFVyc21tcG9tVGd2OUlrNzNDLytXZVV3aFE0T0RSVFVBaG1tSkt4?=
- =?utf-8?B?QnNxRW5yTW1qYjNuZWJXODhNSDFzRXZGYVMzbFRkZitZdXpjRHkwTUYvS1pt?=
- =?utf-8?B?SUVZOGRkbHQyckF1TjFUWlNnMDU5enU3NzFRdE9vSURWejRpcnBpNzBYZjlD?=
- =?utf-8?B?UXNGWjBkdG1nQ1NaMUdVU01iRjFxaXk1T3FLWEFBL2FEaVJVL0xKYzN5YURk?=
- =?utf-8?B?Ukg5eTNmbVVXTUEvS254aXFtYlBPSGtBeEFhMnpBUENoamhJYmE5bmVxaWpn?=
- =?utf-8?B?aTdNbXFpWGtPQ3FpT1dpMHdwVHJNei9RT1J5TUVYVXVaVmpRUmJNV2xCVm9u?=
- =?utf-8?B?QzJlUCtNeDZxU0MyZ0w3UEsrOG5nNzlLSkkxSnMyRi8wL29yRzdHQ2F5OEY0?=
- =?utf-8?B?UEQrWTgvb2pEVnY3Um1ndXBpNnAvdUxXSnNnSWMrNUxCOWw1eVVUOTJMUFpB?=
- =?utf-8?B?SzFrZzM3eWVIWU1tMjJ1UnRteEd2SjhPVDNQWG9WVmtRbFV6MEh2Qng4dGFa?=
- =?utf-8?B?bmdLVEhET1cvSjM2akFyQTdkMUdRMHpWVzV6elJFSWYwZEUydmR4RXp6cEM2?=
- =?utf-8?B?ekNYMG9KUXNiM2swZldLbjVlM1lTMFpDaUo0NTZBWm53TTJ5bnUrUzdFL3FL?=
- =?utf-8?B?U05hbVdVQnVCRTgvMU1ML3MvWGkycWJhZ0dIaGhtenJsem8zL3dTeUxsZWdK?=
- =?utf-8?B?YWlwTzRIL2Uxd2JFNDNucWlqSVJkczJHZm1iZWo5N2gvUWptVDdqUi9LaVIx?=
- =?utf-8?B?Q0w1Rmx4TXl4WlRLWDZmVTk1Y2NwdVJTb1lxSXdEYi9oL0Nyc3p1VjhBWE5V?=
- =?utf-8?B?MGg3MWlSc0psOHlVTWxyZE4yaFUrY0E0aWxWYnBPeHBHa2xveWpXU052QkVD?=
- =?utf-8?B?VGNBN1BwSitWNDRuUGZybmQ4NUJJOVFuNjZjczBLOHUrblcwNk1JTjE4MTc4?=
- =?utf-8?B?Q3FOQ3NrL3plc0dFQUR5WUdIY2pPUDBZTHRQZTEvTWFYTXpGSmpPRFFBT2ZZ?=
- =?utf-8?B?V2FuVlVtbkozeU1WcCsxVUNwbGMxMHZDdWVCQnNDK25nZjZMTVZDamdGWkd0?=
- =?utf-8?B?RXlDWE55UWdUZ3phek1HWVBlZkNQMEdZM2xZS3RqSlFNL1d0c2xkNm11VXRP?=
- =?utf-8?B?dTlTakI0MTlQZlVqMU41Smdwa01uUUxta21OWW9MYlY2eUFkNFVVOW8rRDdO?=
- =?utf-8?B?MlB0Zk9sOGFHV1A4aHpTb2pBVkRob3JTTnBXQkU2Q09Qdktmc2F2dWtJR3R5?=
- =?utf-8?B?VUEwbzJsTWlkMlJHeG15bU5rOE9yb0cvVFZ2NEJyK1hlS0M2aXlvLzBkbWJm?=
- =?utf-8?B?LzVyNmZSa1NGbm02eEZkZUNPcGp2ZHFVcnlqTGlzeEZGcWxsR2ZIb1F0RWZP?=
- =?utf-8?B?UEx2VTh1WERVUnU2U2dBejROOG5QQm5tRjdYTDl3dG5GQm90dkY4K3VpZWZm?=
- =?utf-8?B?a1FOeldqbHpSWm5nT2RJdDh5bTkyZ3c2My8vRzFaQkdpdlpFc1VhOTRpTDRV?=
- =?utf-8?B?alhJTGx3U2NHTC9mMXRleFRPaVZiYUx4eVhQQWsya0VaQkFMNTZxTmY1N3kz?=
- =?utf-8?B?VjdwYkEyYnN6NGJXVk5peTlEYUNZZUMwR01LOWdNcXpiTnNZSDBRRDI2Q1J1?=
- =?utf-8?B?Q24vbC9MRXBLcGFhaGhGWTFoQ0QrSGxzbnhPNmRCdUtaVDBIdzJBK3JQdFc2?=
- =?utf-8?B?Yk9UOUJvU3BLczBKWStHNVNBNXdIRHY4OFdwcTFidGQxMVhPOE5SRk5OUHVv?=
- =?utf-8?B?Y1JkY1lmSnJZM1QvL3dsQkpORmxnN1NCUlR5NlRtQ1dnbThCa0VRVy9ZTTRr?=
- =?utf-8?B?cm9KcmNOVGNkZS9qNXhjeHZYRFdLTTdWa2RJVUgzT05aejFCTENCUDFVNnFM?=
- =?utf-8?Q?H5ZGly?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Apr 2025 14:55:19.3039
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f42f6581-8ae0-4500-0c8d-08dd7c2d8a64
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF00000146.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9142
+Mime-Version: 1.0
+References: <20250404193923.1413163-1-seanjc@google.com> <20250404193923.1413163-12-seanjc@google.com>
+ <d345b636-792f-4762-8c6c-2a7252294068@amd.com>
+Message-ID: <Z_5zV_59D3a4ySW0@google.com>
+Subject: Re: [PATCH 11/67] KVM: SVM: Delete IRTE link from previous vCPU
+ irrespective of new routing
+From: Sean Christopherson <seanjc@google.com>
+To: Sairaj Kodilkar <sarunkod@amd.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Joerg Roedel <joro@8bytes.org>, 
+	David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>, kvm@vger.kernel.org, 
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Maxim Levitsky <mlevitsk@redhat.com>, Joao Martins <joao.m.martins@oracle.com>, 
+	David Matlack <dmatlack@google.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Users can disable MCA polling by setting the "ignore_ce" parameter or by
-setting "check_interval=0". This tells the kernel to *not* start the MCE
-timer on a CPU.
+On Tue, Apr 15, 2025, Sairaj Kodilkar wrote:
+> On 4/5/2025 1:08 AM, Sean Christopherson wrote:
+> > Delete the IRTE link from the previous vCPU irrespective of the new
+> > routing state.  This is a glorified nop (only the ordering changes), as
+> > both the "posting" and "remapped" mode paths pre-delete the link.
+> > 
+> > Signed-off-by: Sean Christopherson <seanjc@google.com>
+> > ---
+> >   arch/x86/kvm/svm/avic.c | 8 ++++++--
+> >   1 file changed, 6 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/arch/x86/kvm/svm/avic.c b/arch/x86/kvm/svm/avic.c
+> > index 02b6f0007436..e9ded2488a0b 100644
+> > --- a/arch/x86/kvm/svm/avic.c
+> > +++ b/arch/x86/kvm/svm/avic.c
+> > @@ -870,6 +870,12 @@ int avic_pi_update_irte(struct kvm_kernel_irqfd *irqfd, struct kvm *kvm,
+> >   	if (!kvm_arch_has_assigned_device(kvm) || !kvm_arch_has_irq_bypass())
+> >   		return 0;
+> > +	/*
+> > +	 * If the IRQ was affined to a different vCPU, remove the IRTE metadata
+> > +	 * from the *previous* vCPU's list.
+> > +	 */
+> > +	svm_ir_list_del(irqfd);
+> > +
+> >   	pr_debug("SVM: %s: host_irq=%#x, guest_irq=%#x, set=%#x\n",
+> >   		 __func__, host_irq, guest_irq, set);
+> > @@ -892,8 +898,6 @@ int avic_pi_update_irte(struct kvm_kernel_irqfd *irqfd, struct kvm *kvm,
+> >   		WARN_ON_ONCE(new && memcmp(e, new, sizeof(*new)));
+> > -		svm_ir_list_del(irqfd);
+> > -
+> >   		/**
+> >   		 * Here, we setup with legacy mode in the following cases:
+> >   		 * 1. When cannot target interrupt to a specific vcpu.
+> 
+> Hi sean,
+> Why not combine patch 10 and patch 11 ? Is there a reason to separate
+> the changes ?
 
-During a CMCI storm, the MCE timer will be started with a fixed
-interval. After the storm subsides, the timer's next interval is set to
-check_interval.
+To provide distinct bisection points if one (or both) changes introduces a bug.
 
-This disregards the user's input through "ignore_ce" and
-"check_interval". Furthermore, if "check_interval=0", then the new timer
-will run faster than expected.
+Patch 10, "Delete IRTE link from previous vCPU before setting new IRTE", is a
+non-trivial change in how KVM tracks per-vCPU IRTEs.
 
-Create a new helper to check these conditions and use it when a CMCI
-storm ends.
+This patch is also a somewhat non-trivial change, in that removes IRTEs from the
+per-vCPU list even when the new routing isn't an MSI.
 
-Fixes: 7eae17c4add5 ("x86/mce: Add per-bank CMCI storm mitigation")
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: stable@vger.kernel.org
----
-
-Notes:
-    v2->v3:
-    * New in v3.
-
- arch/x86/kernel/cpu/mce/core.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-index 0a2a97681266..131015f5eadc 100644
---- a/arch/x86/kernel/cpu/mce/core.c
-+++ b/arch/x86/kernel/cpu/mce/core.c
-@@ -1806,6 +1806,11 @@ static void mc_poll_banks_default(void)
- 
- void (*mc_poll_banks)(void) = mc_poll_banks_default;
- 
-+static bool should_enable_timer(unsigned long iv)
-+{
-+	return !mca_cfg.ignore_ce && iv;
-+}
-+
- static void mce_timer_fn(struct timer_list *t)
- {
- 	struct timer_list *cpu_t = this_cpu_ptr(&mce_timer);
-@@ -1829,7 +1834,7 @@ static void mce_timer_fn(struct timer_list *t)
- 
- 	if (mce_get_storm_mode()) {
- 		__start_timer(t, HZ);
--	} else {
-+	} else if (should_enable_timer(iv)) {
- 		__this_cpu_write(mce_next_interval, iv);
- 		__start_timer(t, iv);
- 	}
-@@ -2142,7 +2147,7 @@ static void mce_start_timer(struct timer_list *t)
- {
- 	unsigned long iv = check_interval * HZ;
- 
--	if (mca_cfg.ignore_ce || !iv)
-+	if (!should_enable_timer(iv))
- 		return;
- 
- 	this_cpu_write(mce_next_interval, iv);
-
--- 
-2.49.0
-
+Ah, but the changelog for this patch is wrong (I wrote a number of the changelogs
+several months after I wrote the code, ugh).  Either that or I've now confused
+myself.  I'll stare at this a bit more and rewrite the changelog unless current
+me is the one that's confused.
 
