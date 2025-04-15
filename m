@@ -1,206 +1,84 @@
-Return-Path: <linux-kernel+bounces-604236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FE56A8924D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 04:54:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EA2EA89247
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 04:54:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 957557A9111
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 02:53:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39D9616DE2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 02:53:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EE8C20AF62;
-	Tue, 15 Apr 2025 02:53:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9822E213E8B;
+	Tue, 15 Apr 2025 02:52:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="dXeHb6PQ"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74CD549659;
-	Tue, 15 Apr 2025 02:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ohCLHh1Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0FD02DFA26;
+	Tue, 15 Apr 2025 02:52:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744685634; cv=none; b=UGKYEz4eEWdwpJAIhT5w4UD7dYAE3QpRitD5a8d5VD43410X2/QalBFngowUeGGIeiyDSntikHuTU2K/U6mQjpNRoYqtC+rhlryf8sq1Un8Jbp5J/hFe/Kio6+3VW8jo8vduT75Fq6ywuGzqdziF8cIShE5HavQxCLJSYvShus0=
+	t=1744685566; cv=none; b=UZmfVbYL7KO5r9gSvmyOage/N6dpqy7oDIadb2PdVfF48GtSEUQUP5dwMcQRhq6beqRiJlnZvQHs3Fh48wD0LxUC/SW2bhrCZJuD7YljsJahZrCOlMb1GfVZBj0NDQrw/cIsLUPSAdgW10BPqWDYpIhwUzLWcsxh1sKZLXjNYkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744685634; c=relaxed/simple;
-	bh=Akoo9jqkEcWSXg3tee0G2D4BiWk0o+iDka8f4zLXeJA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QyEJ5Ub4mt/c4aln+lzihj2zHV95DxWJhbdnHofUuX402oubOHyKgdu6XMJAS8GmLKGkIfuYwIlZnY4NdgWB/ikE5Yx/MND6k4CJqSz26l//r9qFg64sHqaPV92tdc7Fs3x2LRpmMsw56nPKdr1/mFxf0oWfUAIBexbGRb2DFZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=dXeHb6PQ; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=NHKWS
-	zLsBAbsyzeKkgznnnIP2bOgjZf3BsRST3FJzLs=; b=dXeHb6PQiUhO6v42Dg937
-	J8Jc8v1qCS8Um9lRDAFraRCYmw9z1oFbrmA4rs9diQf29AH8FCDh2It52gLfGdXS
-	oGVewM4NsNeuiUCOZr7fPw33xoXLwNMKJrRNbEDTEQqjemZQQNhBq76a4/e9wgv3
-	s55fHy52adF1qmNJYIjSdc=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wAH8p8Iyv1nVOGLGQ--.29463S2;
-	Tue, 15 Apr 2025 10:52:58 +0800 (CST)
-From: Feng Yang <yangfeng59949@163.com>
-To: olsajiri@gmail.com
-Cc: andrii@kernel.org,
-	ast@kernel.org,
-	bpf@vger.kernel.org,
-	daniel@iogearbox.net,
-	eddyz87@gmail.com,
-	haoluo@google.com,
-	hengqi.chen@gmail.com,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
+	s=arc-20240116; t=1744685566; c=relaxed/simple;
+	bh=D3fHJzips5mW3Ekv3PXGxBas7u/4KPS9mKPQsZ87I3c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hycwtjbOZircQpvft+nyi9SaIejsyzZX7KF8g7xES7aJopTLER3lmhFR33RV0HQhfakxoyyAzavOfv6uDS1wFBGAu9+//PGVbHPfLEAv7QV3KL423WvWqIX7TvijDpYoqnzoFLMXoxuubTXlCdK2/jVcDsA9rk5tJ/SRSsNtNQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ohCLHh1Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BA0FC4CEE2;
+	Tue, 15 Apr 2025 02:52:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744685564;
+	bh=D3fHJzips5mW3Ekv3PXGxBas7u/4KPS9mKPQsZ87I3c=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ohCLHh1Yma0e41b/axzEao6RgMe6NgeCuBW/g3nAEAZbno22OjGlxldjikPK74MRs
+	 AK10ciWi3BodwOGiYmRx/KaxOGkjFX3Gcb5zvvxXrFE40fzNuz/gsnMy6w1U1RD2m5
+	 zIG0ES2Mfuryq6VikIKyHt2e0dMbSqiigNzOnbKfhz/I44Chmp9DAfxxD433gwfKLd
+	 0tbbpaFtIOtSNJ+IPITE4CBCqXzMRTsZa86/4j0GoXyb+vAwM8/4qnBXGQk7PlrpAA
+	 trqv3GEYkzjADGo2xoMsOKs9UPziWrZ5W7PkdmTEXvVcpJIml6rb8UYdy8YUt8iW5G
+	 af5EVzscgvccw==
+From: Bjorn Andersson <andersson@kernel.org>
+To: linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	martin.lau@linux.dev,
-	sdf@fomichev.me,
-	song@kernel.org,
-	yangfeng59949@163.com,
-	yonghong.song@linux.dev
-Subject: Re: [PATCH v3 bpf-next 3/3] selftests/bpf: Add test for attaching kprobe with long event names
-Date: Tue, 15 Apr 2025 10:52:26 +0800
-Message-Id: <20250415025226.49891-1-yangfeng59949@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <Z_z161cpsaR2uQm3@krava>
-References: <Z_z161cpsaR2uQm3@krava>
+	Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+Cc: Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: Re: (subset) [PATCH v2 1/1] arm64: dts: qcom: x1e80100-lenovo-yoga-slim7x: enable MICs LDO
+Date: Mon, 14 Apr 2025 21:52:37 -0500
+Message-ID: <174468553409.331095.207120209579526273.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250412124956.20562-1-alex.vinarskis@gmail.com>
+References: <20250412124956.20562-1-alex.vinarskis@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wAH8p8Iyv1nVOGLGQ--.29463S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3Xw4fXr1xZrykXw4fXr1DWrg_yoW7CFW5pa
-	yDZr1YkFs5X3W7XFy7J3y5Zr4Fvrn3Zr17CF1DtF98ZF4kZw18XF1xtF4avwn5GrZav3W3
-	Zw40qr9xu34xXFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JUDxhQUUUUU=
-X-CM-SenderInfo: p1dqww5hqjkmqzuzqiywtou0bp/1tbiThIweGf9xgaragAAsP
 
-On Mon, 14 Apr 2025 13:47:55 +0200, Jiri Olsa <olsajiri@gmail.com> wrote:
 
-> On Mon, Apr 14, 2025 at 05:34:02PM +0800, Feng Yang wrote:
-> > From: Feng Yang <yangfeng@kylinos.cn>
-> > 
-> > This test verifies that attaching kprobe/kretprobe with long event names
-> > does not trigger EINVAL errors.
-> > 
-> > Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
-> > ---
-> >  .../selftests/bpf/prog_tests/attach_probe.c   | 35 +++++++++++++++++++
-> >  .../selftests/bpf/test_kmods/bpf_testmod.c    |  5 +++
-> >  .../bpf/test_kmods/bpf_testmod_kfunc.h        |  2 ++
-> >  3 files changed, 42 insertions(+)
-> > 
-> > diff --git a/tools/testing/selftests/bpf/prog_tests/attach_probe.c b/tools/testing/selftests/bpf/prog_tests/attach_probe.c
-> > index 9b7f36f39c32..633b5eb4379b 100644
-> > --- a/tools/testing/selftests/bpf/prog_tests/attach_probe.c
-> > +++ b/tools/testing/selftests/bpf/prog_tests/attach_probe.c
-> > @@ -168,6 +168,39 @@ static void test_attach_uprobe_long_event_name(void)
-> >  	test_attach_probe_manual__destroy(skel);
-> >  }
-> >  
-> > +/* attach kprobe/kretprobe long event name testings */
-> > +static void test_attach_kprobe_long_event_name(void)
-> > +{
-> > +	DECLARE_LIBBPF_OPTS(bpf_kprobe_opts, kprobe_opts);
-> > +	struct bpf_link *kprobe_link, *kretprobe_link;
-> > +	struct test_attach_probe_manual *skel;
-> > +
-> > +	skel = test_attach_probe_manual__open_and_load();
-> > +	if (!ASSERT_OK_PTR(skel, "skel_kprobe_manual_open_and_load"))
-> > +		return;
-> > +
-> > +	/* manual-attach kprobe/kretprobe */
-> > +	kprobe_opts.attach_mode = PROBE_ATTACH_MODE_LEGACY;
-> > +	kprobe_opts.retprobe = false;
-> > +	kprobe_link = bpf_program__attach_kprobe_opts(skel->progs.handle_kprobe,
-> > +						      "bpf_kfunc_looooooooooooooooooooooooooooooong_name",
-> > +						      &kprobe_opts);
-> > +	if (!ASSERT_OK_PTR(kprobe_link, "attach_kprobe_long_event_name"))
-> > +		goto cleanup;
-> > +	skel->links.handle_kprobe = kprobe_link;
-> > +
-> > +	kprobe_opts.retprobe = true;
-> > +	kretprobe_link = bpf_program__attach_kprobe_opts(skel->progs.handle_kretprobe,
-> > +							 "bpf_kfunc_looooooooooooooooooooooooooooooong_name",
-> > +							 &kprobe_opts);
-> > +	if (!ASSERT_OK_PTR(kretprobe_link, "attach_kretprobe_long_event_name"))
-> > +		goto cleanup;
-> > +	skel->links.handle_kretprobe = kretprobe_link;
-> > +
-> > +cleanup:
-> > +	test_attach_probe_manual__destroy(skel);
-> > +}
-> > +
-> >  static void test_attach_probe_auto(struct test_attach_probe *skel)
-> >  {
-> >  	struct bpf_link *uprobe_err_link;
-> > @@ -371,6 +404,8 @@ void test_attach_probe(void)
-> >  
-> >  	if (test__start_subtest("uprobe-long_name"))
-> >  		test_attach_uprobe_long_event_name();
-> > +	if (test__start_subtest("kprobe-long_name"))
-> > +		test_attach_kprobe_long_event_name();
-> >  
-> >  cleanup:
-> >  	test_attach_probe__destroy(skel);
-> > diff --git a/tools/testing/selftests/bpf/test_kmods/bpf_testmod.c b/tools/testing/selftests/bpf/test_kmods/bpf_testmod.c
-> > index f38eaf0d35ef..439f6c2b2456 100644
-> > --- a/tools/testing/selftests/bpf/test_kmods/bpf_testmod.c
-> > +++ b/tools/testing/selftests/bpf/test_kmods/bpf_testmod.c
-> > @@ -1053,6 +1053,10 @@ __bpf_kfunc int bpf_kfunc_st_ops_inc10(struct st_ops_args *args)
-> >  	return args->a;
-> >  }
-> >  
-> > +__bpf_kfunc void bpf_kfunc_looooooooooooooooooooooooooooooong_name(void)
-> > +{
-> > +}
+On Sat, 12 Apr 2025 14:49:18 +0200, Aleksandrs Vinarskis wrote:
+> Particular device comes without headset combo jack, hence does not
+> feature wcd codec IC. In such cases, DMICs are powered from vreg_l1b.
+> Describe all 4 microphones in the audio routing. vdd-micb is defined
+> for lpass-macro already.
 > 
-> does it need to be a kfunc? IIUC it just needs to be a normal kernel/module function
-> 
-> jirka
 > 
 
-Indeed, so is it okay if I make the following modifications:
+Applied, thanks!
 
---- a/tools/testing/selftests/bpf/test_kmods/bpf_testmod.c
-+++ b/tools/testing/selftests/bpf/test_kmods/bpf_testmod.c
-@@ -134,6 +134,10 @@ bpf_testmod_test_arg_ptr_to_struct(struct bpf_testmod_struct_arg_1 *a) {
- 	return bpf_testmod_test_struct_arg_result;
- }
- 
-+noinline void bpf_testmod_looooooooooooooooooooooooooooooong_name(void)
-+{
-+}
-+
- __bpf_kfunc void
- bpf_testmod_test_mod_kfunc(int i)
+[1/1] arm64: dts: qcom: x1e80100-lenovo-yoga-slim7x: enable MICs LDO
+      commit: 337921764e31907ea46df02c1d8dd1ae8f2802f5
 
-Thanks.
-
-> > +
-> >  BTF_KFUNCS_START(bpf_testmod_check_kfunc_ids)
-> >  BTF_ID_FLAGS(func, bpf_testmod_test_mod_kfunc)
-> >  BTF_ID_FLAGS(func, bpf_kfunc_call_test1)
-> > @@ -1093,6 +1097,7 @@ BTF_ID_FLAGS(func, bpf_kfunc_st_ops_test_prologue, KF_TRUSTED_ARGS | KF_SLEEPABL
-> >  BTF_ID_FLAGS(func, bpf_kfunc_st_ops_test_epilogue, KF_TRUSTED_ARGS | KF_SLEEPABLE)
-> >  BTF_ID_FLAGS(func, bpf_kfunc_st_ops_test_pro_epilogue, KF_TRUSTED_ARGS | KF_SLEEPABLE)
-> >  BTF_ID_FLAGS(func, bpf_kfunc_st_ops_inc10, KF_TRUSTED_ARGS)
-> > +BTF_ID_FLAGS(func, bpf_kfunc_looooooooooooooooooooooooooooooong_name)
-> >  BTF_KFUNCS_END(bpf_testmod_check_kfunc_ids)
-> >  
-> >  static int bpf_testmod_ops_init(struct btf *btf)
-> > diff --git a/tools/testing/selftests/bpf/test_kmods/bpf_testmod_kfunc.h b/tools/testing/selftests/bpf/test_kmods/bpf_testmod_kfunc.h
-> > index b58817938deb..e5b833140418 100644
-> > --- a/tools/testing/selftests/bpf/test_kmods/bpf_testmod_kfunc.h
-> > +++ b/tools/testing/selftests/bpf/test_kmods/bpf_testmod_kfunc.h
-> > @@ -159,4 +159,6 @@ void bpf_kfunc_trusted_task_test(struct task_struct *ptr) __ksym;
-> >  void bpf_kfunc_trusted_num_test(int *ptr) __ksym;
-> >  void bpf_kfunc_rcu_task_test(struct task_struct *ptr) __ksym;
-> >  
-> > +void bpf_kfunc_looooooooooooooooooooooooooooooong_name(void) __ksym;
-> > +
-> >  #endif /* _BPF_TESTMOD_KFUNC_H */
-> > -- 
-> > 2.43.0
-> > 
-
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
 
