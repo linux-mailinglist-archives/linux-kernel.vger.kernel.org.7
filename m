@@ -1,167 +1,113 @@
-Return-Path: <linux-kernel+bounces-604228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49912A89239
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 04:53:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA859A89203
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 04:47:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AAF3189C489
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 02:53:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 425301898A40
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 02:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A798235360;
-	Tue, 15 Apr 2025 02:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12725219A95;
+	Tue, 15 Apr 2025 02:46:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="iPMPiQYU"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="caNP6SHe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95505235340
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 02:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD78205ADB;
+	Tue, 15 Apr 2025 02:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744685293; cv=none; b=SGf112IKbbRG6vc16B7pcHj+KwJslOpqT0IwHDLMlovCPUonmd8ni0NWuyQ0Ehf1xC5UP8LM/FUOeFvTfntXHQ/98qYgezF7iRQho1UFLJ643Uh13cAevQN8/v0JO9XlMUT+ihE44kBsLt9hajf+N6XXLJzjlo0MWR2eDlZ54YI=
+	t=1744685158; cv=none; b=e+8q5o2wTz6zp2BpVdtmTnM7XAfsK6orkPskjOUyi8t0LNDd0wkqJK9cgrp1sSI6EatRbwk17ik7lcsk0qkPbd74ICx/ak1mRVAScL8B5sKpRnb2AOyyb1s29nRDOxdrp9qsg9zD/KWxVNyGNjmhhrC0aaGv+GExN6YEjN/PIi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744685293; c=relaxed/simple;
-	bh=b6WgT5AaIyycVV1DlaIxlbeB9KrtvSXL+2l330r8XW4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Aqz6HPyZ+0K0G1TsLi+SXMktWCOKAqUdJU6ob6c6Mv5FSQi0PZlT6MJF3BS4mB/cLzcQFSsxYRImFU9uuvdR0K9qsrCORBJe4GdhIixiWZp3At2W4xnNvGhK2xCN4S8HMa3S/pqyq6QRapq+V/Ukn5wWsowR27KylYtvX8UwgDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=iPMPiQYU; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b09c090c97eso838938a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 19:48:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1744685291; x=1745290091; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vzey8goXEog+ZffEsOrcu6z/kqiEK8l86D0gwmtPc7Q=;
-        b=iPMPiQYUKy0rh8fGJ73HTK8N8RjpFAX/nGm9ovu690ajo+aQyVkKd39wsEVWKum1Fe
-         lc4kjWq2aN7cDDV9FEbs0AT2/dkgz09I/9nOhSdObb5OxYfHRGUsj7TC1L6FLTtSEUJ9
-         FO03ofZIgWYDHSs9vdOmk6GZccUo7v/p8jRcyfuuOvvty9LgHMGi7XUxy+ZZ2SZziYqj
-         jxyIQFrvlRtT7MlgTZbpIE49zGmEdx2WBpMo/JbeOr2M7xPdEoW3ECPLdPL5+aToRfYn
-         SiUBlV4B9bfo4imXtCJ1dicbs17gh0tQ4a0y1qZUGj80D6aB6XOAeMAA317LXGZ9Biwg
-         AyYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744685291; x=1745290091;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vzey8goXEog+ZffEsOrcu6z/kqiEK8l86D0gwmtPc7Q=;
-        b=L+Wtmj9CDuV+DxjfxqeOGnBKmPL++punUREfcG4SbNbtD8zrXcB+XJZ/cX7wMKu0qc
-         PmbpNjC4wiW3j93yICBMsbYShj+/6lbsdzsfMBHzx86dfKxbf0/UqnF23obZ1i/LvK1R
-         5SYYo+KVjmMiLWdrlsqACkHlg2glvj4phVXoBjbZp9g8vuj/660ACexEt8Tr0tyQW/xa
-         xaj/RiyI2OZA1W6dNwYZvubpeVc6QbiecZ1v0DcvbjAkFzq2s58pFuWnF08qrhgVFWlx
-         5s+OZcJbwh7kCcshwu48MWakLI41oLK133inppeuCmpgu1n26Gs6d/mZzmacKd8NbYeJ
-         Vd1Q==
-X-Gm-Message-State: AOJu0YzUfL2IJOfddlnx6i2Cmb50EGa3b+RBug3d4To1UVHwnzF26Fy2
-	RdhuL4IthSxPSw2/WWIqz7AdZdVAg3YvChmurlipjf7UyE0uMkfR7p/LY/uWBj0=
-X-Gm-Gg: ASbGncvBGlNJneLa9rW2fwQERNPl74JTdmC9lp6dPHDS1p39p57JZESiyZsWEMLzxcW
-	4E3FDURIfOCRdS3Bh7mAsqymDdsGHNJQPvM4LAm1/wNRq2d79jRhvA36VIzwOJIzf8MClbrJaop
-	kEYuoSXUu8ApveZsGsaN9dAIH0ieQNCmsPl7kN3Ym2R/nXn1INUtRVRlUJWfFev5CbDCSTj2QRq
-	2VZVvWq8MyIkJnzqh08XlkuXBvfiWZc+wjrH2A2+3XBdDRoaw2dLCbCK3hza1pnS0HwgArhKssr
-	Tz55iEEcGT1zrNHZM26atoPAdJrmhAAaHvDpSVxkkB7NehIF6czwEhL7xk2WF6nTqQANZvmFQtl
-	3kTWHe30=
-X-Google-Smtp-Source: AGHT+IGKYbRxT9nU7SMJ0Zxzh0coEyzVb1MW3k+CSg2YANyZzMz0FPRUg+d3lPphVCyM8bkhwJIXdw==
-X-Received: by 2002:a17:902:eb8a:b0:220:c813:dfce with SMTP id d9443c01a7336-22bea4f273amr208688465ad.39.1744685290927;
-        Mon, 14 Apr 2025 19:48:10 -0700 (PDT)
-Received: from PXLDJ45XCM.bytedance.net ([61.213.176.5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7ccac49sm106681185ad.217.2025.04.14.19.48.06
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 14 Apr 2025 19:48:10 -0700 (PDT)
-From: Muchun Song <songmuchun@bytedance.com>
-To: hannes@cmpxchg.org,
-	mhocko@kernel.org,
-	roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev,
-	muchun.song@linux.dev,
-	akpm@linux-foundation.org,
-	david@fromorbit.com,
-	zhengqi.arch@bytedance.com,
-	yosry.ahmed@linux.dev,
-	nphamcs@gmail.com,
-	chengming.zhou@linux.dev
-Cc: linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org,
-	linux-mm@kvack.org,
-	hamzamahfooz@linux.microsoft.com,
-	apais@linux.microsoft.com,
-	Muchun Song <songmuchun@bytedance.com>
-Subject: [PATCH RFC 25/28] mm: thp: prepare for reparenting LRU pages for split queue lock
-Date: Tue, 15 Apr 2025 10:45:29 +0800
-Message-Id: <20250415024532.26632-26-songmuchun@bytedance.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250415024532.26632-1-songmuchun@bytedance.com>
-References: <20250415024532.26632-1-songmuchun@bytedance.com>
+	s=arc-20240116; t=1744685158; c=relaxed/simple;
+	bh=eNT2DnaFtau75otXvoSolGN5m1XSsI2mM3CYJJA0yaE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=hzA2cNBCTYUZe65JhSryIRS2GnO6JDMLlSvM3mxEk6QcaIGxoG5xg8iUGC0EW4sTu6KKIgPSUO3nlR4Fvo8WTPLhVjevyjD0lV0RmOUjINdzCYyTUbICaDPfe3xNlj/E4GJxK2Rpp279JpMe9akmtOEDuYsRqcAe+ClrAjvgPVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=caNP6SHe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3364BC4CEFD;
+	Tue, 15 Apr 2025 02:45:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744685158;
+	bh=eNT2DnaFtau75otXvoSolGN5m1XSsI2mM3CYJJA0yaE=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=caNP6SHesjBv9W8pk7XtNpw0ohOioGZ+mdNkqa4qtGPF9db3jjJKrm49BQU7qjqDS
+	 cvkBrQS9NcBf45axdnFHKcLBL83dx8qJuG+3NzLsWbB5aSym7JsCyOfnDv7voSNbP3
+	 YU6eZiqkJpwk11T3yfK+JpdI7T25GTWrwOWYWpMJiwQrMwCwDYimjyP1KQFbTtLlli
+	 G/Dio0DVgBi4NREH6fwHR55G750UpRW6JWI4U/t7QhQ54KCY9E32BADfwQ3er3sMk2
+	 ZPQbiwD+22rv/jjb3R2yrCM4PisAE57F3pGFq2VF3KK5oNdSfF5UEJ4gu8RtD7tDYo
+	 syuxRO6PsFdCA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25514C369BC;
+	Tue, 15 Apr 2025 02:45:58 +0000 (UTC)
+From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Date: Tue, 15 Apr 2025 10:45:30 +0800
+Subject: [PATCH v3 7/7] arm64: dts: amlogic: S4: Add clk-measure controller
+ node
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250415-clk-measure-v3-7-9b8551dd33b4@amlogic.com>
+References: <20250415-clk-measure-v3-0-9b8551dd33b4@amlogic.com>
+In-Reply-To: <20250415-clk-measure-v3-0-9b8551dd33b4@amlogic.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Chuan Liu <chuan.liu@amlogic.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744685155; l=824;
+ i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
+ bh=A6JIk28+NZPU2Eh+mMPRGxQPj1l3aQ0UYp+1TpAudD4=;
+ b=X1Y5uuDxGW5jE7qTJI6N3V35nAflYKrcp+V2LQetx3I7xN7FJz/iQVMpKRESAiGNPuMPSeQhJ
+ YEBjd2Ixq4YCik4Xi8I0Xk8zBt94QEqzZ7a6GdEQDu993zCLwiOYDS5
+X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
+ pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
+X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
+ auth_id=203
+X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
+Reply-To: chuan.liu@amlogic.com
 
-Analogous to the mechanism employed for the lruvec lock, we adopt
-an identical strategy to ensure the safety of the split queue lock
-during the reparenting process of LRU folios.
+From: Chuan Liu <chuan.liu@amlogic.com>
 
-Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+Add the clk-measure controller node for S4 SoC family.
+
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
 ---
- mm/huge_memory.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ arch/arm64/boot/dts/amlogic/meson-s4.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index d2bc943a40e8..813334994f84 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1100,8 +1100,14 @@ static struct deferred_split *folio_split_queue_lock(struct folio *folio)
- {
- 	struct deferred_split *queue;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
+index 957577d986c0..9d99ed2994df 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
+@@ -629,6 +629,11 @@ internal_ephy: ethernet-phy@8 {
+ 				};
+ 			};
  
-+	rcu_read_lock();
-+retry:
- 	queue = folio_split_queue(folio);
- 	spin_lock(&queue->split_queue_lock);
-+	if (unlikely(folio_split_queue_memcg(folio, queue) != folio_memcg(folio))) {
-+		spin_unlock(&queue->split_queue_lock);
-+		goto retry;
-+	}
- 
- 	return queue;
- }
-@@ -1111,8 +1117,14 @@ folio_split_queue_lock_irqsave(struct folio *folio, unsigned long *flags)
- {
- 	struct deferred_split *queue;
- 
-+	rcu_read_lock();
-+retry:
- 	queue = folio_split_queue(folio);
- 	spin_lock_irqsave(&queue->split_queue_lock, *flags);
-+	if (unlikely(folio_split_queue_memcg(folio, queue) != folio_memcg(folio))) {
-+		spin_unlock_irqrestore(&queue->split_queue_lock, *flags);
-+		goto retry;
-+	}
- 
- 	return queue;
- }
-@@ -1120,12 +1132,14 @@ folio_split_queue_lock_irqsave(struct folio *folio, unsigned long *flags)
- static inline void split_queue_unlock(struct deferred_split *queue)
- {
- 	spin_unlock(&queue->split_queue_lock);
-+	rcu_read_unlock();
- }
- 
- static inline void split_queue_unlock_irqrestore(struct deferred_split *queue,
- 						 unsigned long flags)
- {
- 	spin_unlock_irqrestore(&queue->split_queue_lock, flags);
-+	rcu_read_unlock();
- }
- 
- static inline bool is_transparent_hugepage(const struct folio *folio)
++			clk_msr: clock-measure@48000 {
++				compatible = "amlogic,s4-clk-measure";
++				reg = <0x0 0x48000 0x0 0x1c>;
++			};
++
+ 			spicc0: spi@50000 {
+ 				compatible = "amlogic,meson-g12a-spicc";
+ 				reg = <0x0 0x50000 0x0 0x44>;
+
 -- 
-2.20.1
+2.42.0
+
 
 
