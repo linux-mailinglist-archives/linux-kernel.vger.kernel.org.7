@@ -1,291 +1,112 @@
-Return-Path: <linux-kernel+bounces-606108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CD87A8AAF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 00:11:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44727A8AAFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 00:13:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4571C7A36C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 22:10:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 555F1177EFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 22:13:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D23302571DD;
-	Tue, 15 Apr 2025 22:11:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAB8A27466A;
+	Tue, 15 Apr 2025 22:12:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fCi4KMRX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="bqYYG2xL"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C857F23D299;
-	Tue, 15 Apr 2025 22:11:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B0CB221FCD;
+	Tue, 15 Apr 2025 22:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744755064; cv=none; b=nBdi4jXVT4qReV9I8HJYiqrFYrYrXSZ0qXi8kGI08SV5Fx17ukyvqkLuouRd4QgrxtDQkGialbxfVYEzVCwVbde52t5vSYE96HD2pfigi3VixekPdzp5u5raGuv553PcOPksUwq+OhvB0BwcTVF13MpBLMSLRI4+iBjQticPoz4=
+	t=1744755175; cv=none; b=C/G7KWOZZon3cRpYxzi/Sxbd14A5SDfTAhA5aeDyPXIWzpwW8YSwLo1rJdeiZVeVna0aSpRD5wvCS5QWRd6pjDidjzJZIzsT1tfOoou91lsrfaj6Bb+BubsPPnx5xNOV5MdzlnystDttUuWA4dFCUpqrMGWrbQvUk0+nz2+1FL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744755064; c=relaxed/simple;
-	bh=dt8XI7DCFfm7NOj00QHltD7p1Eeh/MijT536gPJBCxw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sVLauI4GKwlTg3KGqHpdn2kL8vzUAQ3WuSzWbQ5lK4mDfO+TyLULSOtDLrJcc8YCQG/rMU5C4YKgtfOZ0nmtpuyY5PmseOKrfHndgwa5ac1VXiwTbjY3jgIgX3Nq6b5OybxfYnAhkt0CC7KanyKrHdoVA9j1AGLFyW7+TYc6R0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fCi4KMRX; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744755062; x=1776291062;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=dt8XI7DCFfm7NOj00QHltD7p1Eeh/MijT536gPJBCxw=;
-  b=fCi4KMRX7UayWBZNGasnZwE7X3bs4X5hLtP/uwSkdaFa1GZ7xj9vCR6d
-   DO3jPaLV1dYS8q2QN2ZCNPmV3wgQdTxi8Sa45XtDSjrFXD4DolWrjNmAD
-   BHyDntct7u1fifSOFpgVclS8/nze8mkVVr39Sl/s0daHVPa6765YMHLQ6
-   HIRmHxCB96LJlSg0F5U4xBgmKZMt8H4+UFIc8wUEdrp1q/REM4TWX+Ofn
-   b4fs4jg73GOwE9HEpj+hlyhs3Too89o27ND4mT3bU9T2/yXlmjUHEssIo
-   ar6SQigJ4TX62LpXvNud0M+3qV99uodRZsrdhB39jC5EjKRnZ8Xn43t3V
-   Q==;
-X-CSE-ConnectionGUID: 3NMUIIrgQjO8T70x3NKyjg==
-X-CSE-MsgGUID: OAlDQzJXTSa3KQV8U5cskg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="63823276"
-X-IronPort-AV: E=Sophos;i="6.15,214,1739865600"; 
-   d="scan'208";a="63823276"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 15:11:01 -0700
-X-CSE-ConnectionGUID: hU378wh8TMOjCAuN4A9bUw==
-X-CSE-MsgGUID: hjQL1h3xTP+OycAg9HO6WA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,214,1739865600"; 
-   d="scan'208";a="134363789"
-Received: from spandruv-desk1.amr.corp.intel.com ([10.125.109.108])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 15:11:01 -0700
-Message-ID: <4d1ecb87636ce1398cf8a2282e5497f6a92334bd.camel@linux.intel.com>
-Subject: Re: [PATCH] platform/x86/intel-uncore-freq: fix inconsistent state
- on init failure
-From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-To: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: liu shouye <shouyeliu@gmail.com>, Hans de Goede <hdegoede@redhat.com>, 
-	platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Date: Tue, 15 Apr 2025 15:11:00 -0700
-In-Reply-To: <6bf14a69-5a92-a9cc-b02f-e92de0296321@linux.intel.com>
-References: <20250414092132.40369-1-shouyeliu@gmail.com>
-	  <1feb5888-5ec8-67aa-9775-e1bea6b8b9fe@linux.intel.com>
-	  <f673452d7afc4419120f2cdb32e5033c35f22229.camel@linux.intel.com>
-	  <CAAscG3VHVdNDQGfsdBs_ht5H-WUtCBksMYPXLKW2D6Uqu3yeAA@mail.gmail.com>
-	 <331a55fe7334cf425ddb8826160b64a5af37c805.camel@linux.intel.com>
-	 <6bf14a69-5a92-a9cc-b02f-e92de0296321@linux.intel.com>
-Autocrypt: addr=srinivas.pandruvada@linux.intel.com; prefer-encrypt=mutual;
- keydata=mQGNBGYHNAsBDAC7tv5u9cIsSDvdgBBEDG0/a/nTaC1GXOx5MFNEDL0LWia2p8Asl7igx
- YrB68fyfPNLSIgtCmps0EbRUkPtoN5/HTbAEZeJUTL8Xdoe6sTywf8/6/DMheEUzprE4Qyjt0HheW
- y1JGvdOA0f1lkxCnPXeiiDY4FUqQHr3U6X4FPqfrfGlrMmGvntpKzOTutlQl8eSAprtgZ+zm0Jiwq
- NSiSBOt2SlbkGu9bBYx7mTsrGv+x7x4Ca6/BO9o5dIvwJOcfK/cXC/yxEkr1ajbIUYZFEzQyZQXrT
- GUGn8j3/cXQgVvMYxrh3pGCq9Q0Q6PAwQYhm97ipXa86GcTpP5B2ip9xclPtDW99sihiL8euTWRfS
- TUsEI+1YzCyz5DU32w3WiXr3ITicaMV090tMg9phIZsjfFbnR8hY03n0kRNWWFXi/ch2MsZCCqXIB
- oY/SruNH9Y6mnFKW8HSH762C7On8GXBYJzH6giLGeSsbvis2ZmV/r+LmswwZ6ACcOKLlvvIukAEQE
- AAbQ5U3Jpbml2YXMgUGFuZHJ1dmFkYSA8c3Jpbml2YXMucGFuZHJ1dmFkYUBsaW51eC5pbnRlbC5j
- b20+iQHRBBMBCAA7FiEEdki2SeUi0wlk2xcjOqtdDMJyisMFAmYHNAsCGwMFCwkIBwICIgIGFQoJC
- AsCBBYCAwECHgcCF4AACgkQOqtdDMJyisMobAv+LLYUSKNuWhRN3wS7WocRPCi3tWeBml+qivCwyv
- oZbmE2LcxYFnkcj6YNoS4N1CHJCr7vwefWTzoKTTDYqz3Ma0D0SbR1p/dH0nDgN34y41HpIHf0tx0
- UxGMgOWJAInq3A7/mNkoLQQ3D5siG39X3bh9Ecg0LhMpYwP/AYsd8X1ypCWgo8SE0J/6XX/HXop2a
- ivimve15VklMhyuu2dNWDIyF2cWz6urHV4jmxT/wUGBdq5j87vrJhLXeosueRjGJb8/xzl34iYv08
- wOB0fP+Ox5m0t9N5yZCbcaQug3hSlgp9hittYRgIK4GwZtNO11bOzeCEMk+xFYUoa5V8JWK9/vxrx
- NZEn58vMJ/nxoJzkb++iV7KBtsqErbs5iDwFln/TRJAQDYrtHJKLLFB9BGUDuaBOmFummR70Rbo55
- J9fvUHc2O70qteKOt5A0zv7G8uUdIaaUHrT+VOS7o+MrbPQcSk+bl81L2R7TfWViCmKQ60sD3M90Y
- oOfCQxricddC
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1744755175; c=relaxed/simple;
+	bh=+8ZH4dyesfEDlCxvuZsfrLqzkBxH9er2xIZXcqbGW6s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iDdya/hSJOByYRfjwBGiSB/wULan41LWSaqQqMFOjJ8fCx4+FEePFUCduojzEviabuqym6ECGGjO9/ZYQ4kyfCiYQAEL2sjkvpa2iHjKWhjLb/0VSBb25TpW0VvVP2LL1wQ+Oh9qv62BzVgZ8HXAaxp3w5rwaDuEHO/8wiE3nuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=bqYYG2xL; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 53FMCJVT3054423
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Tue, 15 Apr 2025 15:12:20 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 53FMCJVT3054423
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025032001; t=1744755140;
+	bh=+8ZH4dyesfEDlCxvuZsfrLqzkBxH9er2xIZXcqbGW6s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bqYYG2xLWS5o8GMg1hNH6YNNm/fkCBGljZDLd2tQnHDkWQOA4kTClx7EMNdFix1Nj
+	 LYmHIYd1X+wuuhgDa8Ls4bhU4KNLFf9hzI3bN66PU6EuuQBjgu1HvjEgrBV8oXEQxp
+	 NMrc1VsO/1xRtjVBcpssvcLJXpmR53hDEBUxlT3YST4uNcFrMMZYhIfBKzvO+vVcjx
+	 T6gnWZN22i7m3v6+pwNEZNHrWQrD8pcqfxh/vc3CyPLmOTnfPTj45vsDsJ3PksTX2n
+	 zaDBU3+r71fZCoRYNBccrPKykcqo1S2Bsnx+MTJaDuTGPoeOhgZD+kHnVpBiEI6MXX
+	 JPVueQw40eyVg==
+Message-ID: <ab76b447-383d-4267-88a3-725a56eb5da6@zytor.com>
+Date: Tue, 15 Apr 2025 15:12:19 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/3] x86/cpufeatures: Shorten
+ X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT to X86_FEATURE_CLEAR_BHB_LOV
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, x86@kernel.org,
+        tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+        hpa@zytor.com, peterz@infradead.org, jpoimboe@kernel.org,
+        pawan.kumar.gupta@linux.intel.com, rafael@kernel.org, lenb@kernel.org
+References: <20250415175410.2944032-1-xin@zytor.com>
+ <20250415175410.2944032-3-xin@zytor.com>
+ <20250415200529.GKZ_68Cb_jaUblKmTS@fat_crate.local>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <20250415200529.GKZ_68Cb_jaUblKmTS@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 2025-04-15 at 18:10 +0300, Ilpo J=C3=A4rvinen wrote:
-> On Tue, 15 Apr 2025, srinivas pandruvada wrote:
->=20
-> > On Tue, 2025-04-15 at 14:39 +0800, liu shouye wrote:
-> >=20
-> >=20
-> > srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-> > =E4=BA=8E2025=E5=B9=B44=E6=9C=8815=E6=97=A5=E5=91=A8=E4=BA=8C
-> > 00:08=E5=86=99=E9=81=93=EF=BC=9A
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 On Mon, 2025-04-14 at 13:41 +0300, Ilpo =
-J=C3=A4rvinen wrote:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 > On Mon, 14 Apr 2025, shouyeliu wrote:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 >
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 > > When uncore_event_cpu_online() fails=
- to initialize a
-> > control
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CPU
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 > > (e.g.,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 > > due to memory allocation failure or
-> > uncore_freq_add_entry()
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 > > errors),
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 > > the code leaves stale entries in unc=
-ore_cpu_mask after
-> > that
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 online
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 > > CPU
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 > > will not try to call uncore_freq_add=
-_entry, resulting in
-> > no sys
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 > > interface.
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 >
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 > Please add () after any name that refe=
-rs to a C function
-> > (you're
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 not
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 > even
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 > being consistent here as you had it in=
- some cases but not
-> > here).
-> >=20
-> > ok,I will modify it in the next version
-> >=20
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 >
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 > Please try to split the very long sent=
-ence a bit and make
-> > it more
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 > obvious
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 > what causes what as the current wordin=
-g is a bit vague, did
-> > you
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mean:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 > uncore_event_cpu_online() will not cal=
-l
-> > uncore_freq_add_entry()
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 > another CPU that is being onlined or s=
-omething along those
-> > lines?
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 >
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 > Will this change work/matter?
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Documentation/core-api/cpu_hotplug.rst
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 > says
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 > about cpuhp_setup_state():
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 >
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 > "If a callback fails for CPU N then th=
-e teardown callback
-> > for CPU
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 > =C2=A00 .. N-1 is invoked to rollback =
-the operation. The state
-> > setup
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 > fails,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 > =C2=A0the callbacks for the state are =
-not installed and in case
-> > of
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dynamic
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 > =C2=A0allocation the allocated state i=
-s freed."
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 >
-> >=20
-> > Yes, cpuhp_setup_state() will fail and which will result in clean
-> > up.
-> > So any fail of any fail uncore_event_cpu_online() will result in no
-> > sys
-> > entries.
-> >=20
-> > I think here the intention is to keep sys entries, which will not
-> > happen with this patch.
-> >=20
-> > For confirmation on 6.14 kernel, I forced failure on CPU 10:
-> >=20
-> > [595799.696873] intel_uncore_init
-> > [595799.700102] uncore_event_cpu_online cpu:0
-> > [595799.704240] uncore_event_cpu_online cpu:1
-> > [595799.708360] uncore_event_cpu_online cpu:2
-> > [595799.712505] uncore_event_cpu_online cpu:3
-> > [595799.716633] uncore_event_cpu_online cpu:4
-> > [595799.720755] uncore_event_cpu_online cpu:5
-> > [595799.724953] uncore_event_cpu_online cpu:6
-> > [595799.729158] uncore_event_cpu_online cpu:7
-> > [595799.733409] uncore_event_cpu_online cpu:8
-> > [595799.737674] uncore_event_cpu_online cpu:9
-> > [595799.741954] uncore_event_cpu_online cpu:10
-> > [595799.746134] Force CPU 10 to fail online
-> > [595799.750182] uncore_event_cpu_offline cpu:0
-> > [595799.754508] uncore_event_cpu_offline cpu:1
-> > [595799.758834] uncore_event_cpu_offline cpu:2
-> > [595799.763238] uncore_event_cpu_offline cpu:3
-> > [595799.767558] uncore_event_cpu_offline cpu:4
-> > [595799.771832] uncore_event_cpu_offline cpu:5
-> > [595799.776178] uncore_event_cpu_offline cpu:6
-> > [595799.780506] uncore_event_cpu_offline cpu:7
-> > [595799.784862] uncore_event_cpu_offline cpu:8
-> > [595799.789247] uncore_event_cpu_offline cpu:9
-> > [595799.793540] intel_uncore_init cpuhp_setup_state failed
-> > [595799.798776] intel_uncore_init failed
-> >=20
-> >=20
-> > Thanks,
-> > Srinivas
-> >=20
-> >=20
-> >=20
-> > Registering the CPU hot-plug callback function during booting can
-> > be handled
-> > correctly. I think the problem occurs during runtime.
-> > The original code may have problems when the CPU hot-plug modifies
-> > the
-> > management CPU during runtime:
-> > Assume that the CPUs of package 1 are 8-15, and the uncore driver
-> > has been
-> > registered at boot time;
-> > 1. Offline all CPU No.8-15
-> > 2. Try online CPU No. 8, the code executes cpumask_set_cpu()
-> > successfully, but
-> > fails in the uncore_freq_add_entry() process. At this time, the
-> > mark of CPU No.
-> > 8 is added to uncore_cpu_mask, but no sys interface is
-> > generated,cpu No.8
-> > online fails;
-> > 3. Try online CPU No. 8 again, cpumask_any_and() judges success,
-> > and the CPU
-> > No.8 online is successful at this time;
-> > 4. Assume that the attempt to online CPU No. 9-15 is successful at
-> > this time,
-> > but there is no sys interface =E2=80=94=E2=80=94=E2=80=94=E2=80=94unexp=
-ected behavior 1.
-> > 5. Offline CPU No. 9-15, and offline No.8, will eventually call
-> > uncore_freq_remove_die_entry()=E2=80=94=E2=80=94=E2=80=94=E2=80=94unexp=
-ected behavior 2 is
-> > generated, which may
-> > cause a crash.
-> >=20
-> >=20
-> >=20
-> > I see the case in 2 socket server. So good to fix. Thanks for this.
->=20
-> All this extra information that this discussion has brought into
-> light=20
-> should be included into the changelog (including the fact that this
-> can=20
-> only occur after they were first setup without errors as the it would
-> have rolled back otherwise).
->=20
+On 4/15/2025 1:05 PM, Borislav Petkov wrote:
+> Yeah _LOV is too cryptic. I've called the flag X86_FEATURE_CLEAR_BHB_VMEXIT.
 
-May be something like this:
-
-"
-Fix missing uncore sysfs during CPU hotplug
-
-In certain situations, the sysfs for uncore may not be present when all
-CPUs in a package are offlined and then brought back online after boot.
-
-This issue can occur if there is an error in adding the sysfs entry due
-to a memory allocation failure. Retrying to bring the CPUs online will
-not resolve the issue, as the uncore_cpu_mask is already set for the
-package before the failure condition occurs.
-
-This issue does not occur if the failure happens during module
-initialization, as the module will fail to load in the event of any
-error.
-
-To address this, ensure that the uncore_cpu_mask is not set until the
-successful return of uncore_freq_add_entry().
-"
-
-Thanks,
-Srinivas
-
+Yeah, it is better.
 
