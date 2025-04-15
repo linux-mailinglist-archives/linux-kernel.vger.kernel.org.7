@@ -1,126 +1,118 @@
-Return-Path: <linux-kernel+bounces-605217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 369DAA89E4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:39:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F520A89E5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:41:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D0E57A543A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:38:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B41E19027F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40CCC28DEF4;
-	Tue, 15 Apr 2025 12:39:24 +0000 (UTC)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64932951A9;
+	Tue, 15 Apr 2025 12:41:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gr0TYgLm"
+Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF6022F01;
-	Tue, 15 Apr 2025 12:39:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBBB62750F2;
+	Tue, 15 Apr 2025 12:41:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744720763; cv=none; b=JvB5aXFOke9m96+aKPJ+7PBdCm2qrYH5DVCN/JAQHFWv74O9ZFzlp7stTIi//gQQv1X4o2EPfB2flPAkQtpoEcNDnh4aZ4d3xEg2qKnORgUhoeElmBw8z2kABm8M4cWaazldkDv7e3pTFGk4QhXRg5XOFf2tcqDlGTNQOwDJnzM=
+	t=1744720907; cv=none; b=uFI4olU8tkDJGXwtgRA3ScrnYtNtgLTLyEt+h0ZKef1IYhK1Y4bsvdYbQ0I1ovwvO9swrx7wQYFH5HpDa/PMnYSjg+CnaYWsXLwAZ3KUoXymqn38b6nOOEAApKm7dqfQ/v3zXD7SWygDEE7L7xnr6I/Gac1NLU3JtpOoapyPU0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744720763; c=relaxed/simple;
-	bh=yQ1UtJRnybgfKFu1lbiywS8+z9O8a+HPbwUWAZqD9Is=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tEOgebOtZZ+dQ6qlEHbkkYEP4FueyhmtWzc8PGOIBEWxLMeYHlF0Afh0ZsmnVouBfCfmSxAqfhdNEU/a2M17hhpyfe9x4u87SldTJD2Rv1tvskvIKpMEZgT5gWK3LeVC2v5tSmjqDxSDT85LD4PdLr1JW1Wth2MoRS2hqNYNhAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1744720907; c=relaxed/simple;
+	bh=fDxE4wSAq/YY1DyMcYsiL5IWBx7nIAkShrFFTjARGdg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CV4s3fPliID5tQ7WhN57QyD0NCNz8x2ZoOKbtSkEP6Z7zFimI/EwQ9rpJKpBo0PRtHegKukCjM9Z+mvtmslxaUfrEYjLTY3J5xQ3qWxoZCX+p6QImoR6YyvJagOZr64emnlr6b5HWWjGwt6tVVk1+kn7psbc+yLvqslcp1YBx54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gr0TYgLm; arc=none smtp.client-ip=209.85.210.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-4c32190386eso295535137.1;
-        Tue, 15 Apr 2025 05:39:21 -0700 (PDT)
+Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-7399838db7fso5235104b3a.0;
+        Tue, 15 Apr 2025 05:41:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744720905; x=1745325705; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ikl99qE5tjOJg27716w7wKHeCynXZLbB4yh926R2k+8=;
+        b=Gr0TYgLmOtJoPdkDALcrQZEt2/f6SJWsQU8LBHJAN0Wv+V3ClXsEiXGNpCm0AJl743
+         ZiEjBDRmam+uBFg3SlGK1ByjpI5ix/nTi5/YLzfovmIfi1CKQiv8BTc5EkGqoJFnZQWe
+         KRimyBeUd1moQtd+RL4xyXkiKz632+c0WvVuEX60PzkRLm9+NqNqBvmH0myj8H55yufU
+         mLgZotkl6Ypsvo6s10xON8iRqc6RaIbvTMhzRH7ZqFzbn2KdhJJw4e5Ipw6OfTHoD9Sj
+         FvxDP5hsR+Grh03nun8rvUSY/Nhj5j9GzXrbU64ERsK2eo/KSOUEyMsPJV62wPjxNLYw
+         jGmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744720759; x=1745325559;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1744720905; x=1745325705;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=CljMwcmhWhPYHMXEqE3O9FpJH7LvXojW22x3A73BLzM=;
-        b=uwYZTu1NGkBlFGJnWMZmvp6WlIUj95AKdM98qoULOAB2ctnJYmDpxBgvuQeZGND8L3
-         1czL20F/USQYEhXLTF1tr0ZXqP249+e/P76Leap3u/e0I6MPw4R+JL19FVg7rZUDmdDr
-         yt2eIetn6/mkOvNyC3v7M8hd9yGiz2T/7XyzO9ywDCNihC1A8Ebcp4CpKDavKJ1XEboW
-         fXluPsDGROUoJUdgJwfJvRLfj8xi1gOa6m2KuaN5f9GlsgdZgQbVQr+kPehUOfW+pfxG
-         pnpMgJeTJyNRSQDNrPCbrdTMGYO5OPOvy9hwgXEmLHfsZ7hiGX/1W+rCbyGYNiK7ts60
-         OkbA==
-X-Forwarded-Encrypted: i=1; AJvYcCVQBrlOIG356P9zknuMA1RiETmfll+1HZgeU/2O62eE+Cpi/mSagpZRv+34J5qgIuy2f5CD6Ojf/Oc=@vger.kernel.org, AJvYcCVf1vUTYGacDT2kFXUVom6C1yXw1c0kHIOnPgerglyUClHu0Js4tZFkIEz3MoBWPoxMAR20pGPNVvSd3jeW@vger.kernel.org, AJvYcCXuC/e4VYDhFevpMVDEgvoDjtraeJaDBxEzFi36OxmUFw+LYzCGnyoFJmzMnDMFKrIHNp1tP029R21/9rPqOihDn8A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6Gheyk+epJrmkfKPcLqBKl05yQEYbubu0QXGho6ulvbjV4dt/
-	uIJpmAQh/Ckn44K1IkX9IRNwWLxOujuemhxJKTze4ZjJcwzxmoz4755YvrAk
-X-Gm-Gg: ASbGncvwCkifJoUDHPzuC6q9SV5YQCLt2Mnnamuuj95TfxaNCMkEBfTY8sCUxH/+/vP
-	4/NWBzpmvCUCgVVPCJNXOfoqMmMK2q0GcmvUHi9qH/elNJo1y0D58/D7CbIeQ85r7S46ZPpMns0
-	bEWgBR8yypA+WHZkg8H4IjnkzvH43keUl+vFcJ4VPQhz+a0QSFBzDv2cwwgsQl9V7s5NMguhgen
-	D/+MFnVg0JaKFaZrMCDWZjkiI3A25RUtsZUBiwCy14mqSqwY/uT98Hv6aGQ5BueensYYGA2poLN
-	07tSoYVsDuT6trTgP5DSy2x4Y13M6CKodFQhPe+eHYqfLN2leg4m4RGns+0L20xD67jVI5gUsbB
-	GrIk=
-X-Google-Smtp-Source: AGHT+IG01/OJU8PvNtPf3a5+lWVVQjuSFrm8iJsWuZtp2z8/7LnZCQEd7041C1maQQX66N4RzueLmw==
-X-Received: by 2002:a05:6102:5794:b0:4c2:ff6c:6043 with SMTP id ada2fe7eead31-4cb429eef20mr2163336137.0.1744720758938;
-        Tue, 15 Apr 2025 05:39:18 -0700 (PDT)
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com. [209.85.222.46])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4c9c9738083sm2624572137.4.2025.04.15.05.39.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Apr 2025 05:39:18 -0700 (PDT)
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-86d587dbc15so633363241.1;
-        Tue, 15 Apr 2025 05:39:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWcmP782F8WS0nc3oTR2tA52auvt1bw7hqe6R5/iaP0xVKOznfS/pFmk5ATBjiObilS9cQ/Ew3xE+c=@vger.kernel.org, AJvYcCXBinYofVDhCJ1w9BNRCmMV9rXJctDzJj7nfWgrtrEaB9OnrxR59ZLkvL6e8XgVmAhptokOYOjyYDfD4WBv@vger.kernel.org, AJvYcCXhWC4qpZLyfXsVHCm+WhutS0hokQrmCcvgg8jkxByXETvFU/B6k/ZzM7V3XsfE3UZTd75BnyG7jQ0MsSWhLD8OHls=@vger.kernel.org
-X-Received: by 2002:a05:6102:8007:b0:4c2:fccb:a647 with SMTP id
- ada2fe7eead31-4cb42d4813cmr2476627137.5.1744720758022; Tue, 15 Apr 2025
- 05:39:18 -0700 (PDT)
+        bh=Ikl99qE5tjOJg27716w7wKHeCynXZLbB4yh926R2k+8=;
+        b=MIBcRJQ/g3lVrEcyWCgi/7tZh67iV+bVRXgVTHW3/k9oH41DA9Xcc9n8duEe0y4+5A
+         XrdSluibkLOpgLM29dAynXKl1y7B4N3/9JIiY8Q90Uvua0KMtxOV8qP2kUx+Afg+6wuq
+         YQ7TAxKAjXIusMWaL2UAYAnW5RknQh3CAKlkQpTee9DyZLZ9VETGSxS9owBsySBsk9EQ
+         dBc8eAYq3eEC1oMStHmwFldfEGGqqB/Sc1SAOn+foBPUem8XAR6Nf9BrEtPxLKNe6mUN
+         gzmpTG0KRAFk8KNcZc7ujVVhh8CrAG01BpLmMYeM0Fc916xtkoyhYNrwX7aBNgnwtb5L
+         5ZSg==
+X-Forwarded-Encrypted: i=1; AJvYcCVkgngXb3oi7HI6IE3Jry9xwE1o7oRM164rFwGIf3uA2KqvQ16uB+xdzvnjh0/v150XAEEc6MTWu9BmXg==@vger.kernel.org, AJvYcCWYFT5ymhnpuPrwgR2bVQtFqoYwd37xOaVPITu9NpKGhu0X+0NIhnaEFREfBaRN/iyL5xYnS3zAmNanoag=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTKErewryKhTFc/0l1Mi4LQ4zu4s4TwtgcUkUnwaR7//spmbFE
+	Vo7Iaeg0nQT7ZbFtXQ/GpguHnS3KddFC/0Hfo3Jryc0iP+QQ+UdC
+X-Gm-Gg: ASbGncuAw/+UKEp0dCzdtt0CCE0c329hz8ixfQEL0hCTPWEMv9HLUvl3bUcpno33blK
+	HWFtR2qAvgefLYRnsZY99ti4XwddYBmVtBk7wH7qVrotDSn1h7m6KGQRZHNx+vb9RdOXYZxhNzY
+	1XqM42C2YgCeccSlSgrlA9qyUq0Z+auh0vjX1u4d2yoDJ4R95RhNSbNIRYKmhGvl+touDYy05Vj
+	cP3h4Jju5m+9uFqsNYvhZQWkQRzy7vm/4YXaMLFWR6Akj79Jc7Q7c20niXZ2uK1jzmxjTiErbfg
+	gNTonsqdPKuHB0dXXmhtJMcI9+wgwsgz2PNItmejZ2NhxaaIye4LtiOg+rcEzPemKQ==
+X-Google-Smtp-Source: AGHT+IGLNl7gk0+/I/KVjgm96hI7uQLjfjSuTp2jZidGRgz5R6WhImd/hPBssuJ/4vflX8mgELOeTA==
+X-Received: by 2002:a05:6a00:1c84:b0:736:4c3d:2cba with SMTP id d2e1a72fcca58-73c0c9b352dmr5276155b3a.9.1744720904882;
+        Tue, 15 Apr 2025 05:41:44 -0700 (PDT)
+Received: from henry.localdomain ([111.202.148.49])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd230e5ccsm8339526b3a.152.2025.04.15.05.41.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Apr 2025 05:41:44 -0700 (PDT)
+From: Henry Martin <bsdhenrymartin@gmail.com>
+To: saeedm@nvidia.com,
+	leon@kernel.org,
+	tariqt@nvidia.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bsdhenrymartin@gmail.com,
+	amirtz@nvidia.com,
+	ayal@nvidia.com
+Subject: [PATCH v5 0/2] net/mlx5: Fix NULL dereference and memory leak in ttc_table creation
+Date: Tue, 15 Apr 2025 20:41:26 +0800
+Message-Id: <20250415124128.59198-1-bsdhenrymartin@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250305002112.5289-1-fabrizio.castro.jz@renesas.com> <20250305002112.5289-6-fabrizio.castro.jz@renesas.com>
-In-Reply-To: <20250305002112.5289-6-fabrizio.castro.jz@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 15 Apr 2025 14:39:04 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXTnuMf-RryuKgLfSUPxrZ9uBzQE9R9hDzLaM473WQQyQ@mail.gmail.com>
-X-Gm-Features: ATxdqUGBdUlLRT6Eh2ITmZMz_m8C31FbsLC4WyTipZXXWWUeaE5uxWGqxfq8dlw
-Message-ID: <CAMuHMdXTnuMf-RryuKgLfSUPxrZ9uBzQE9R9hDzLaM473WQQyQ@mail.gmail.com>
-Subject: Re: [PATCH v5 5/6] dmaengine: sh: rz-dmac: Add RZ/V2H(P) support
-To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, 5 Mar 2025 at 01:21, Fabrizio Castro
-<fabrizio.castro.jz@renesas.com> wrote:
-> The DMAC IP found on the Renesas RZ/V2H(P) family of SoCs is
-> similar to the version found on the Renesas RZ/G2L family of
-> SoCs, but there are some differences:
-> * It only uses one register area
-> * It only uses one clock
-> * It only uses one reset
-> * Instead of using MID/IRD it uses REQ No
-> * It is connected to the Interrupt Control Unit (ICU)
-> * On the RZ/G2L there is only 1 DMAC, on the RZ/V2H(P) there are 5
->
-> Add specific support for the Renesas RZ/V2H(P) family of SoC by
-> tackling the aforementioned differences.
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> ---
-> v4->v5:
-> * Reused RZ/G2L cell specification (with REQ No in place of MID/RID).
-> * Dropped ACK No.
-> * Removed mid_rid/req_no/ack_no union and reused mid_rid for REQ No.
-> * Other small improvements.
+This patch series addresses two issues in the
+mlx5_create_inner_ttc_table() and mlx5_create_ttc_table() functions:
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+1. A potential NULL pointer dereference if mlx5_get_flow_namespace()
+returns NULL.
 
-Gr{oetje,eeting}s,
+2. A memory leak in the error path when ttc_type is invalid (default:
+switch case).
 
-                        Geert
+Henry Martin (2):
+  net/mlx5: Fix null-ptr-deref in mlx5_create_{inner_,}ttc_table()
+  net/mlx5: Fix memory leak in error path of ttc creation
+
+ drivers/net/ethernet/mellanox/mlx5/core/lib/fs_ttc.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.34.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
