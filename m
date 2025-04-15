@@ -1,124 +1,177 @@
-Return-Path: <linux-kernel+bounces-604647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B373FA896E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:37:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E662EA89655
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:18:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 443513B2D49
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:36:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E7813AA610
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C557427A917;
-	Tue, 15 Apr 2025 08:37:04 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C411D618A;
-	Tue, 15 Apr 2025 08:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744706224; cv=none; b=NVsnQs8wC+cwJogAd5P/+LeUrn3g25EjtzqNAhby2oAXbARWVsJmlG4x2SMlMpxmo2sEUKNxvwkfDfOlDw/yCe6DjcEsjix8FrPWu9O6yX72msom0tFU+8kogfehWJLWbjcBcVn65+Bw3oOQ1nBSTzIUiuMt/p625ojfsmJTMC8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744706224; c=relaxed/simple;
-	bh=R/ubAIoevAV3mGWYv95flteGTRaTDejxRF0LQgRjdpc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=WuGPL+mTE+rDfSHt9C8/h6ppC4A9v5edG+L5JnpjuJz1CsV72Zfs8I91Z1a3yscwe7MrGuBUqnseIZOypJkvt0nqdWGFzvvwoqZdk1+Q9fqmISl8pR674KzhCMWn5lTCeOvUu+j1P1WGKDPbHMFczzdQe9sCMSW2NWciMvGmi00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 95EBF339;
-	Tue, 15 Apr 2025 01:37:00 -0700 (PDT)
-Received: from [10.57.68.100] (unknown [10.57.68.100])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 58BBB3F694;
-	Tue, 15 Apr 2025 01:36:59 -0700 (PDT)
-Message-ID: <6abf897b-bbde-4586-941d-9915f15f1934@arm.com>
-Date: Tue, 15 Apr 2025 09:36:56 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55BDA20E6E4;
+	Tue, 15 Apr 2025 08:18:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="f7R5GxdV"
+Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11011053.outbound.protection.outlook.com [52.101.129.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800AA241CA2;
+	Tue, 15 Apr 2025 08:18:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.129.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744705119; cv=fail; b=PuO8WQce3yo8Co00RAMNhdGTrAA1Z1240uLawVlaUTme9Rw/Z25Y8QfM+DFXsVzljIHbXtdOlkvTN4LzawYqOhno3vVu6XG4q8DATEZRiGxjsnozZ3eSQUDi1QpkWvXh9E3++cYkQIhm1fwf5tAsOGqtRmWV6I2dwK91VFQYn8A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744705119; c=relaxed/simple;
+	bh=tdNFGp4MdNQE3cZ8WxZYAqytSSp8HUHt+dYQwN2G3Vk=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ZK/r2tUZrITibBp2tWxRlLzqWffE1lx8gxVa+cFBeHqk0uz2uNhS3yyFM05/qVdNDz4+HdrltWaoTcPoYEBwQOnipiRSQjNlLcngBU7M7vCfPryucj3eY3Xq98R2vYxlc7pUS1XqH0hOz688yXK+UGIxKhqwsDSw+abY4Yq+INo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=f7R5GxdV; arc=fail smtp.client-ip=52.101.129.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=elFzw08q1pTHy0+s3OWVXW4470ZZirdn44Ij98hjxj5VglymZ9mPzSuY6c100IVpXQiTtTX0lAE0nCcwZWEqMOBmB98wKLIuoAT1PnXdoc3PvCDx5MDhIFCEItjQV7eipn0jGUs7Le92TrrJQgfC8W9MthN2070pm5TViQ3L+sMnzrhctkpAW//tspm/p9hTm/Qt4+Hai70MXmEDyo4qAProGuZthGzB2SD19E12XbOIUd9WulqBCZsF55afRDg0wt1BTPhkTkCJ3dESc7kIIs3giaoWY/eBgi+Jst034CLrMlLalro/U+GwCyW1UVl8Y/V5ADsd+mCOJIsDkg43zg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wnXvMxZy3YQsBt8iiFhZFi2C9qo8Y5vR8mTQ29fei/s=;
+ b=GocpCWEdOanRQfTkCXkPaRTPeOeXQWfEzDrNCNXAn0gpUQd/w9xbfyol0kP6CQ2UhAiMcEpOKoVOKVqAfx+xr31GOMMcQ1JB0YfbfAz/rZ/+SZasEzi6lp6kgHB9fsIjR50nA34SYPLCRxF0KGr17IzBWjQYUpGL3IE1MIcGjXj6ewcFKqhEeeO2QvccB+VYHW+HWT5qt04sXv5KFsXE7fIV74hFD+FdQ+I7fPwkupc7VGFpJQnDtyzdcRU8AXsRdtztpetyKFjYBNdKxGR4T77ctKb+b5RozDbRMVYSHu8Jzjo3JDoGHoLcximwAQslwhqDasoRPuli7tvmy4B1Fw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wnXvMxZy3YQsBt8iiFhZFi2C9qo8Y5vR8mTQ29fei/s=;
+ b=f7R5GxdV0DPCdjClIGMrJ0sci3oEmNAf/A/txT0Y6dgwd9cKW+nQADyFbSVS9Egu0kfTzj62ZCYqov4cj13XekzQow7uEtpvA22miVZlurEKJPUvkc9yOl0gLE/q27Aq+lClTQr34z0YQ6r/TyQ+NE+oG7domoKaUCBeMvJftQiQNvinXBB+Mpd/7QGPR5sPLupwd5Ddh6Lb/+IZGO+A9bURRqBYYlp3Ytno9qglzOkXkqU3TWB8eLQKTE2uPH0pqh0OEQABn6rmWj8wEQS+X6+p4UYJ26tsG5QHSbLUcR9HDj9N0UsGalW1oVZIqq/cqzNhix5JKlkh5j6S0nO9rw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
+ by SEZPR06MB6841.apcprd06.prod.outlook.com (2603:1096:101:191::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.35; Tue, 15 Apr
+ 2025 08:18:30 +0000
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::8c74:6703:81f7:9535]) by SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::8c74:6703:81f7:9535%6]) with mapi id 15.20.8632.030; Tue, 15 Apr 2025
+ 08:18:29 +0000
+From: Yangtao Li <frank.li@vivo.com>
+To: clm@fb.com,
+	josef@toxicpanda.com,
+	dsterba@suse.com
+Cc: linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yangtao Li <frank.li@vivo.com>
+Subject: [PATCH] btrfs: remove BTRFS_REF_LAST from btrfs_ref_type
+Date: Tue, 15 Apr 2025 02:38:07 -0600
+Message-Id: <20250415083808.893050-1-frank.li@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP286CA0366.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:405:79::6) To SEZPR06MB5269.apcprd06.prod.outlook.com
+ (2603:1096:101:78::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/3] drivers/thermal/exymos: Fixed the efuse min max
- value for exynos5422
-To: Anand Moon <linux.amoon@gmail.com>
-References: <20250410063754.5483-1-linux.amoon@gmail.com>
- <20250410063754.5483-4-linux.amoon@gmail.com>
-Content-Language: en-US
-Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
- "open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>,
- Justin Stitt <justinstitt@google.com>, Bill Wendling <morbo@google.com>,
- Zhang Rui <rui.zhang@intel.com>, Daniel Lezcano <daniel.lezcano@linaro.org>,
- open list <linux-kernel@vger.kernel.org>,
- "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
- <linux-arm-kernel@lists.infradead.org>,
- "open list:CLANG/LLVM BUILD SUPPORT:Keyword:b(?i:clang|llvm)b"
- <llvm@lists.linux.dev>,
- "open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Nathan Chancellor <nathan@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <20250410063754.5483-4-linux.amoon@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|SEZPR06MB6841:EE_
+X-MS-Office365-Filtering-Correlation-Id: fdfd2a5d-46dd-44cb-d34b-08dd7bf61a24
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?pw7BYwTl6WYSjlVg0fVGl4UFm0zwrhT3pM27KIguJsM/nKdVU5xtuRwn93BD?=
+ =?us-ascii?Q?riG6+nRgvBzYDWwFX8umk173KHHS+0A9PdPOoW/ipnJGtKd1hbNOxqXoy8UV?=
+ =?us-ascii?Q?8hs8wCHXkNikVCTsF/mo75dkAU5f2NpafLVgwfRWrakHmvhTRN2gyOSaaM8V?=
+ =?us-ascii?Q?6LzH3Cjai3HGnLOuK1JosgKfy4kr5CL9oSLWOTDbifiKxFR7c5vXg7zEtaIf?=
+ =?us-ascii?Q?dLCavKs5n+M9b6azGXcmogjSrW4zXcHwBDyddxJFk7TE3fp7Q/Q/yxO+L84z?=
+ =?us-ascii?Q?k59Ux5rCj3yP7bobGnDe8LmG5BnP4HpzEXniiQNIDlK52LjDJhXbrI9rZtfR?=
+ =?us-ascii?Q?ltQoTfrJIqV9mHRqzMnsJik/Gg9eqtqQ8yEsbcjl+h3W0MXKE0bHhfueWZ/n?=
+ =?us-ascii?Q?2rkAndfEykzp5Gcz5eAwqLnLbC7+3yJkxQSbkhEqvLjZkGkhOUNi055l3XHx?=
+ =?us-ascii?Q?K+zoDi5xaAPdZjxEpOdG7TXEtpV4k184o7cfRd2/N7QdYU8TlsFtJqF7oJUK?=
+ =?us-ascii?Q?d1rzoE00RXYilxPNOBsdz6O2TpSh2CcrZ78GVcCflnP+r8vyEXGlVQAGam/4?=
+ =?us-ascii?Q?oDkv05NlUemfOXmsrmG9GqL044uUibShmn6ckn+lOqc2FCD0nhhTBP+lJKOf?=
+ =?us-ascii?Q?d0Q6dN8BtbQfjzckARA/xUhiYLR5KEThFruotEzfgbq1zfuTZXNEUxKJb/Wa?=
+ =?us-ascii?Q?v8/6os+N7FGQ2WD+ecoHHXDuISMm1Pl7DnK8qk0yftXQhoiECI4c1KmEyOHT?=
+ =?us-ascii?Q?cMhK0OrZsfRr9fryo1j4duPfKG+pYCsAfyHyrYGWc0foByDVeyKGMbsJfWQC?=
+ =?us-ascii?Q?aqkQQ59JigL2nOPvi8DUK/AKGxll+4jpcT1VQSXKqkyZQfcLkGQss2u7iBMv?=
+ =?us-ascii?Q?MIHYqqMm3CGR3/ohVnSDCCjPOYyKwc3mrTunCcDzuRCKV4oZ0AMacoL+yQhi?=
+ =?us-ascii?Q?NpG4G4wUCUoE26Q4YyUaj2sCHK5GAbZSTsELkAu3fW+eFXhoH8V9gGnw4HNG?=
+ =?us-ascii?Q?gP9JLfbXNTgIjp7wKdgNqCtywzmpHeKHLqR8IHk0ZQboPA8FuAbftzX/kRuZ?=
+ =?us-ascii?Q?skvOMrqqojPrCkyN6rmjDiyGsNXQB6F8ekq3CWphpfebcCZdpUgMDTuzNY58?=
+ =?us-ascii?Q?OP3iJhERZIyDQ2R9ulxFNiNhY5UVp+BtIMbdSilvUoPJcSlmV74KyFF4JwpS?=
+ =?us-ascii?Q?NgpNNCqX7OIgFJ4/u0YOPsIlTFRk2VBRxfNdo0vfkkDAvVZqn5wE4BuJ5i5/?=
+ =?us-ascii?Q?82eSjQqH0vJx5eB+qtSTPwIhgyK4jJko2Qj5QdNOAFyGJr1zhn9dQ/DcKp2X?=
+ =?us-ascii?Q?q9nDKvs+xHhfcQ1YbbDh8/OTE7SrmLRMomWJi7grAOSj9Rv60tavjea1DHPc?=
+ =?us-ascii?Q?VI5mxCizAL0Q8CJgXWykzEr+R0EQfNgHHPhvyKR0hKFC1mMdLh+1707ifHsp?=
+ =?us-ascii?Q?WU6UJw7MXS+Fw9P+ncsZDvodmRyClwqptCAd/atS5+UT3nuUkLXLdw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?hS/etpII1+ZeJUM0euPbd134O4Jfdoe3s4TFuUD+kLzW6xDQkphUJ/TqD4J4?=
+ =?us-ascii?Q?k52QiJna3hnFsYpxnO2hMApVBW56Z4Woo+EQ3LO5HWYWhn5cpH5h3rSfKcAA?=
+ =?us-ascii?Q?wY0aFPx/9gyToyUoBQG6Vx/1lYzW5kqOPqZGT0prBn2metm/mm90yDoPkR+a?=
+ =?us-ascii?Q?LLuFANqR2KETXGJQEVxFxFVP2komxfw70+GFwGDN6WTcymNOhzv9y0fs3KYT?=
+ =?us-ascii?Q?QheKlPSPOJksN1xHQjRN/s6cnEpw7+XF5VnSBtIS7+Ll5FXKvtdPqCy8LLsj?=
+ =?us-ascii?Q?Bl+0o6VH5A33dWvHu0mGLqEL8UEEs1/Xy31KKSslMijI1IEViYeYc/V5gWnX?=
+ =?us-ascii?Q?eLT2MgsNjNGiXebQ5eF3cWeYNRUKNzR90Fv0KewG1IF/D8j5dJVVqdU9+Sqw?=
+ =?us-ascii?Q?cGbXh+4xrHoJz93RDHZMXip3kg6Tp+Khqgh5rf6QVZY7/0xbV0Gks3yYNhC0?=
+ =?us-ascii?Q?+kR/VrWdDOMxQW0MgNeuoUtrJTiR8LvC2L/SXt159i+PcpX8xAyPn+WiDSJ7?=
+ =?us-ascii?Q?C9zFMrqOWg9eEY511w7ZvQE3FNyNoYO5GmIMdk8VZ/0U6g0g7qPq8rkTa+9u?=
+ =?us-ascii?Q?O6NvcoILsnfeUFPwhG8bnVi+vTLzJdg4Hyh1lEVdDTO8STdZPvdcyNQ0Hk++?=
+ =?us-ascii?Q?RgnsVYzVCLHV0p2iUvk8mtD4/9pJcc9syVAnHpvIFk/G2IZo4U5x6CYbxiFu?=
+ =?us-ascii?Q?H/kW70vfTuVxqbctDZrVBJvlMVsa8QsqT7NAlJ7lZ+uNGykM+zuHHfADvqyO?=
+ =?us-ascii?Q?eTKvJLz8HZtLow+xEjrIlTuSrfbbIhbLZNDEoygU7v4v2v09ISxXO6czIn0g?=
+ =?us-ascii?Q?D/msMOlwijYb+sgtYV6o+66MlrWIN4jZalWyKD9lnrVAuALNb5UxrPCT+0Bi?=
+ =?us-ascii?Q?LxbvTVc+8ulou0jEsbJZE8rcpNLLa0nNVsA4xB/gnHyOMAgFhjRj/ebaOU2n?=
+ =?us-ascii?Q?WJ1rb6Ym2c783rwlDKw3Xs+BzegaIKlNTu07X6VMFCIBLdZm+dx8iWUpbysH?=
+ =?us-ascii?Q?RmMT5UcnB10WGeWRxqgle2YKMbKM/PRIVnwhqvRjKbcXUKBklhe2aHzJV3Ds?=
+ =?us-ascii?Q?wPxAVDNpnbaC2aFWMdwDCnBv/5oTCoASRiTzHq7s2RALNkMp/CwBNNW/+xKM?=
+ =?us-ascii?Q?IOqL/Zv12HLEzaEnUitCfraqCMxjUiN7htdbIupZUUZeRL/4lIGJPYiy0JoI?=
+ =?us-ascii?Q?A1CYcZGO5zYqwrHNIFeHPhO6woat0/zOviN6jqtIA6N84QWb+37uqV/CVdu9?=
+ =?us-ascii?Q?REJ5o4FFrFWRGXb1kiNjOMj41LWmkPTsr4lRDi/Fp4rM1FVMOByJ6B9vfiXY?=
+ =?us-ascii?Q?18VqIWU65RgGZ9f7G7fKKcW74AWg0MVlwJs621x/v37wskleoX95QCDsL9pP?=
+ =?us-ascii?Q?t1tP6mgtzyl/zdrrAYA8Iu/uozINiAWtLolqYR8wHH/vjOnr9kiyo2yJTx3y?=
+ =?us-ascii?Q?GUk18U4q0wNSSFfNjaa4tKntKq2BsrkDr0cwjul+fiBP159am0cvTz3jfwWX?=
+ =?us-ascii?Q?if120QGrvBBESjQ5l/cxAGHKR9HJzGWX30qXhFTD9w1VSYtc3QtewtYJBqGf?=
+ =?us-ascii?Q?I7N++PWtm7hHKtm2ZQYZnZsiZHiE2VeT+zsRJA5P?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fdfd2a5d-46dd-44cb-d34b-08dd7bf61a24
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Apr 2025 08:18:29.1485
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9xedo6hjCzMNYbVH3zXtjoFayzgo2mVoFQwbtNMQeJFa1FQMOKUE8yL60pMJa5VktiRqfYXSbjtJnvJ5PC0+Pw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB6841
 
+It seems that it has never been used, so remove it.
 
+Signed-off-by: Yangtao Li <frank.li@vivo.com>
+---
+ fs/btrfs/delayed-ref.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-On 4/10/25 07:37, Anand Moon wrote:
-> As per Exynos5422 user manual e-Fuse range min~max range is 16~76.
-> if e-Fuse value is out of this range, then thermal sensor may not
-> sense thermal data properly. Refactors the efuse value
-> initialization logic within exynos_map_dt_data function by
-> replacing the nested if-else statements with a switch statement.
-> Ensures proper initialization of efuse values based on the SOC type.
-> 
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> ---
-> v5: None
-> v4: None
-> v3: Improve the logic to convert if/else to switch
-> ---
->   drivers/thermal/samsung/exynos_tmu.c | 19 +++++++++++++++----
->   1 file changed, 15 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-> index ac3b9d2c900c..a71cde0a4b17 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -899,12 +899,23 @@ static int exynos_map_dt_data(struct platform_device *pdev)
->   		data->gain = 8;
->   		data->reference_voltage = 16;
->   		data->efuse_value = 55;
-> -		if (data->soc != SOC_ARCH_EXYNOS5420 &&
-> -		    data->soc != SOC_ARCH_EXYNOS5420_TRIMINFO)
-> +		data->max_efuse_value = 100;
-> +		switch (data->soc) {
-> +		case SOC_ARCH_EXYNOS3250:
-> +		case SOC_ARCH_EXYNOS4412:
-> +		case SOC_ARCH_EXYNOS5250:
-> +		case SOC_ARCH_EXYNOS5260:
->   			data->min_efuse_value = 40;
-> -		else
-> +			break;
-> +		case SOC_ARCH_EXYNOS5420:
-> +		case SOC_ARCH_EXYNOS5420_TRIMINFO:
-> +			data->min_efuse_value = 16;
-> +			data->max_efuse_value = 76;
-> +			break;
-> +		default:
->   			data->min_efuse_value = 0;
-> -		data->max_efuse_value = 100;
-> +			break;
-> +		}
->   		break;
->   	case SOC_ARCH_EXYNOS5433:
->   		data->tmu_set_low_temp = exynos5433_tmu_set_low_temp;
+diff --git a/fs/btrfs/delayed-ref.h b/fs/btrfs/delayed-ref.h
+index f5ae880308d3..78cc23837610 100644
+--- a/fs/btrfs/delayed-ref.h
++++ b/fs/btrfs/delayed-ref.h
+@@ -262,7 +262,6 @@ enum btrfs_ref_type {
+ 	BTRFS_REF_NOT_SET,
+ 	BTRFS_REF_DATA,
+ 	BTRFS_REF_METADATA,
+-	BTRFS_REF_LAST,
+ } __packed;
+ 
+ struct btrfs_ref {
+-- 
+2.39.0
 
-I should have added that in earlier version: LGTM,
-
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
 
