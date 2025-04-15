@@ -1,107 +1,99 @@
-Return-Path: <linux-kernel+bounces-604535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5A45A895AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:52:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6161A895B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:53:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C64E617D985
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:52:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B604B1789E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:53:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A76F2798F8;
-	Tue, 15 Apr 2025 07:51:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB08924C67A;
+	Tue, 15 Apr 2025 07:53:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tDhncvfE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EK+yQOjB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B371FA85A;
-	Tue, 15 Apr 2025 07:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DBDB24169D;
+	Tue, 15 Apr 2025 07:53:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744703518; cv=none; b=i8QRcaJfxlxUZF7NMv0ZcSKPhKXoYSyFdMLzqMygdnf+j+CFJwamqXGVfOqoH8PK6kGrSrwgUUfqhIC/zg6D5dm/fSp/BHd2TJt7xSdn1Msn0Md5m2/BQcwYdyb7vmh6CcQ0WUs6Yo457CNipOi8agx5CvE3w60GuJwzichtl8w=
+	t=1744703597; cv=none; b=svEQzrLm0Mp/dOZ+lbq5IMnx/5N6w1WQ3gNaRjaeSoEJCRFjZIYYBPU9k//ScR0DkrmSPiYZngJFfXjBtcJ8hddpm+nNuiDn5Jq38tlExrn2sZOcp5zfKV/0n+gIiELEskBZQN1q19z7Fkf9f2lvlvakNTeRhyaCvd+HQwIF4og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744703518; c=relaxed/simple;
-	bh=Fno2NHX5KShUIfXw+iyuKE1mn5wmdQf+cfhOcyeOjlc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ifOi7wYUwNH4o7DfpMXIP0yL8iI8AbundXTIeqJLeEpz8903yAfDmVz8DkFw70rbtzMjDzOyzuDcg8zuvJNobctEs/s4YfIIzIQrtZoIiIvcAQNhDIW30jvG/G+NrdzzPvHGO9xP0+OCsE/Gw5fHNfH7x4SI734iLmTlHkKDFcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tDhncvfE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1165C4CEDD;
-	Tue, 15 Apr 2025 07:51:55 +0000 (UTC)
+	s=arc-20240116; t=1744703597; c=relaxed/simple;
+	bh=fj87Ge4+Z4L8TW3BbiLnnTXesT/+hsNjN1y3z7e+Mkg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gbB/nKkRZ5OVUvI57qxsG0WPdpCAjCBBxYd3WPw0nUK5mRDcxP+gwGsCcxrAILk3rWpLxVeO8AkIYVKagXzoxFoqoewv/ZIpIehULCryyPYF7dv0mAEPCLOisMcVaHgcvjTQOFSIJBJiKTa0Dqc+3liXVyVrzH46mLIbs9A6m8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EK+yQOjB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF2ABC4CEDD;
+	Tue, 15 Apr 2025 07:53:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744703518;
-	bh=Fno2NHX5KShUIfXw+iyuKE1mn5wmdQf+cfhOcyeOjlc=;
+	s=k20201202; t=1744703596;
+	bh=fj87Ge4+Z4L8TW3BbiLnnTXesT/+hsNjN1y3z7e+Mkg=;
 	h=From:To:Cc:Subject:Date:From;
-	b=tDhncvfEiXN8JFjpy8hkD0kP/9Ai38y/8aM8BiDwlBzhLm6s+Dztk/4U2/44FABf4
-	 tvNWXJk4RZoUy8mQFxLetYG9Mnh5oiNVRv4yr6H40ZFblj6cGKWNFj9fqISU6JejjZ
-	 ttrXGbw/QS7hhuF45AFtOjPpHXuAL/yRAinzCp8GnCmAKY79dKn/BMkPuXVCaSUNNQ
-	 YSD4ABf9BDuFuoNmvfCD+A6I1QG1wHnpzRJ5dEnpuiKmBEoMzPJPsjyp3M/mHbwzg1
-	 iFqTFchu7Vpz9lsiPOiaGWoUNX+NDbMZW7mfdA6N0mpDU+59KUwUB7c67jdT+paY2z
-	 ypErbadFPDnJQ==
-From: Christian Brauner <brauner@kernel.org>
-To: linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	David Sterba <dsterba@suse.cz>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Jan Kara <jack@suse.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Sandeen <sandeen@redhat.com>,
-	linux-kernel <linux-kernel@vger.kernel.org>
-Subject: [PATCH] hfs{plus}: add deprecation warning
-Date: Tue, 15 Apr 2025 09:51:37 +0200
-Message-ID: <20250415-orchester-robben-2be52e119ee4@brauner>
-X-Mailer: git-send-email 2.47.2
+	b=EK+yQOjBOmd1XzZmqH7iP2Xe3e3aND27IbJfvw8ZYNElItdtNokMw7lNo74YbaFhG
+	 v6USctTyL8CB7JDBfT0RPEHH+1PckBdZw17dp9r8C4pC4ZPka3r1X0Z2G0sB2oiGoE
+	 gHt9hZeYXpEzRVDh1vM7r5WiUmiaActjbPERtoeAYE4s9JlRxMiBlXdQgNZmDi79c3
+	 2ypjm1SCHU04YgGiglJTNlDUgoOtCCIfkF5FvedMP/2oZR5FrBJ42yi2nNqJzQGd4g
+	 EBgG+o2tXr0xS9QNHMWVIPWtwnl64lKpVbChBtH8EKsk8aRNnL4KM2SIGdpOq5nkwo
+	 TW6lShjOzf8Dg==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan+linaro@kernel.org>)
+	id 1u4b6X-000000004Eq-1Ib1;
+	Tue, 15 Apr 2025 09:53:13 +0200
+From: Johan Hovold <johan+linaro@kernel.org>
+To: Vignesh R <vigneshr@ti.com>,
+	Andi Shyti <andi.shyti@kernel.org>
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Roger Quadros <rogerq@kernel.org>,
+	Tony Lindgren <tony@atomide.com>,
+	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+	linux-omap@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Jayesh Choudhary <j-choudhary@ti.com>
+Subject: [PATCH] i2c: omap: fix deprecated of_property_read_bool() use
+Date: Tue, 15 Apr 2025 09:52:30 +0200
+Message-ID: <20250415075230.16235-1-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1301; i=brauner@kernel.org; h=from:subject:message-id; bh=Fno2NHX5KShUIfXw+iyuKE1mn5wmdQf+cfhOcyeOjlc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT/ExBwjBT6/K9nx9P4jMexSbNfC84v53d9kp3Ud3Gre Mc+piM3O0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZyV43hr9QRleTtS+OefXru ozGr9x+vcxTXZOPqmuZKzuq/NyZ0PWL4nyfYOf+HVE/S/RD2ilvVT13WraiLlNR3ZJYVvKY7myO BGwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-Both the hfs and hfsplus filesystem have been orphaned since at least
-2014, i.e., over 10 years. It's time to remove them from the kernel as
-they're exhibiting more and more issues and no one is stepping up to
-fixing them.
+Using of_property_read_bool() for non-boolean properties is deprecated
+and results in a warning during runtime since commit c141ecc3cecd ("of:
+Warn when of_property_read_bool() is used on non-boolean properties").
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
+Fixes: b6ef830c60b6 ("i2c: omap: Add support for setting mux")
+Cc: Jayesh Choudhary <j-choudhary@ti.com>
+Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 ---
- fs/hfs/super.c     | 2 ++
- fs/hfsplus/super.c | 2 ++
- 2 files changed, 4 insertions(+)
+ drivers/i2c/busses/i2c-omap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/hfs/super.c b/fs/hfs/super.c
-index fe09c2093a93..4413cd8feb9e 100644
---- a/fs/hfs/super.c
-+++ b/fs/hfs/super.c
-@@ -404,6 +404,8 @@ static int hfs_init_fs_context(struct fs_context *fc)
- {
- 	struct hfs_sb_info *hsb;
+diff --git a/drivers/i2c/busses/i2c-omap.c b/drivers/i2c/busses/i2c-omap.c
+index 16afb9ca19bb..876791d20ed5 100644
+--- a/drivers/i2c/busses/i2c-omap.c
++++ b/drivers/i2c/busses/i2c-omap.c
+@@ -1454,7 +1454,7 @@ omap_i2c_probe(struct platform_device *pdev)
+ 				       (1000 * omap->speed / 8);
+ 	}
  
-+	pr_warn("The hfs filesystem is deprecated and scheduled to be removed from the kernel in 2025\n");
-+
- 	hsb = kzalloc(sizeof(struct hfs_sb_info), GFP_KERNEL);
- 	if (!hsb)
- 		return -ENOMEM;
-diff --git a/fs/hfsplus/super.c b/fs/hfsplus/super.c
-index 948b8aaee33e..58cff4b2a3b4 100644
---- a/fs/hfsplus/super.c
-+++ b/fs/hfsplus/super.c
-@@ -656,6 +656,8 @@ static int hfsplus_init_fs_context(struct fs_context *fc)
- {
- 	struct hfsplus_sb_info *sbi;
+-	if (of_property_read_bool(node, "mux-states")) {
++	if (of_property_present(node, "mux-states")) {
+ 		struct mux_state *mux_state;
  
-+	pr_warn("The hfsplus filesystem is deprecated and scheduled to be removed from the kernel in 2025\n");
-+
- 	sbi = kzalloc(sizeof(struct hfsplus_sb_info), GFP_KERNEL);
- 	if (!sbi)
- 		return -ENOMEM;
+ 		mux_state = devm_mux_state_get(&pdev->dev, NULL);
 -- 
-2.47.2
+2.49.0
 
 
