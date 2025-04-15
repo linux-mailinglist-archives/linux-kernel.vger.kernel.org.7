@@ -1,49 +1,63 @@
-Return-Path: <linux-kernel+bounces-604706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 223D7A89789
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:10:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DF69A8979D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:13:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 325B616E63F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:10:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D109189CD97
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:13:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D4627F74A;
-	Tue, 15 Apr 2025 09:09:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E761C27EC89;
+	Tue, 15 Apr 2025 09:13:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VGKynCSL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="YG3av/x+"
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC971C5F30;
-	Tue, 15 Apr 2025 09:09:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF4BC13E02A;
+	Tue, 15 Apr 2025 09:13:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744708195; cv=none; b=gyrT/DaCuRqXDej2shN+6JT56Git5Fym4KgFKAqJdMr40hYz1kIhbFBkMgIMOStURr77KH0HVh4taPHg2sHFOlCU2oNNRj7CUFG2MTwppXgZ31plS+RVRjOVVWLyRo2Ero7Bat3AECNqwoyfuelSRT9NkcqyprU/cyg2aItXeNA=
+	t=1744708411; cv=none; b=htW8MAOeGmqUMsbypczYIouGw5athKZqNTCIbhBdYplcTRaN0GMsrdYW0gBda1F+rWrprdOT6HSPahDkIE+H2P3CKt2qVVEcJDrtPpmcvCR97TPnbvprXVIJgisYVBf+6A+WNsn3NZhwrXYkkqKRgof9ouNgzZX/pFx7cYzG8yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744708195; c=relaxed/simple;
-	bh=QU0TDnCmOlC5at4GqseuNIx4V0NQRoTnucsnlynPrd4=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=pZVOdnCYS8AYIYpXIOBmYuo5jytoIkWNvGn/Cn/JeE6x4Sp5Z3NmunRw0L19Q4uwOlAbTnS+oGhteIYLUlkBFfEbWi1KBW76pUDVCLFqKPG0HUKUig33p3tTWRtnezR1q/f9IM4wZPuAQKRIheAbgbPi+AA7Eb0z0YXPD6hLNcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VGKynCSL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49863C4CEDD;
-	Tue, 15 Apr 2025 09:09:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744708195;
-	bh=QU0TDnCmOlC5at4GqseuNIx4V0NQRoTnucsnlynPrd4=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=VGKynCSL+JOplh35QC6l9uJ9gP/F4OXbsJ+sHvpKT5bSGhOyD/1PkQcfib47Lp3QX
-	 +c4Glv9MbLc+WYYznoYQP6jCS5tvn79tYisMDac962cQRKhTjhhuJASJZWWw8BzE4d
-	 oH7DGxbyH64qqW7rCNUi3ndP/dlHI3u4opc6jvVfW71E5ATqIE7rnw53nQz2WDRE40
-	 zwqCQ79qiW35HC17RrPbtWr9sUyh7t/Htb/9KtoN0+DFlFclPilpLjCe+BEuES5y49
-	 /5Mrt5s66oYJwPx5vSKkI1M9cgpCug0/PN/09hhFvjKVRRudZ22R9wYgxFET6FjiRA
-	 Zvw2J5ilXUuWQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D7D3822D55;
-	Tue, 15 Apr 2025 09:10:34 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1744708411; c=relaxed/simple;
+	bh=owyLMd8hX1as4LmAee3vfHdMVtC6rPHCe4jax9TXDog=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rK2tvf1vjbhbEGj1QcirdAZEdTz4eVizUil3iceUxFZwKQBkVU99OJXeoqoEfSmOu7LJcpmb/sjPFo+38Ara+FLCeSOR+N3Keu38f+0HmY4uIzQWUGq5CrENmnd7UJnU3zh0xjSWED4boQT/BBUT+i7iPv2x9Lnp9uqAKzSDQsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=YG3av/x+; arc=none smtp.client-ip=18.169.211.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1744708375;
+	bh=YFMp6fwp6umPvxQeSd6J+Ddieu7ttoj12+2zhkifFpg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=YG3av/x+ZEYlXv5iDRrTGiuXoUQK4QtZjFlZGkxnpBDPvyvTyAkzS4WXPaHIRf4It
+	 FL/6uk68vXCd7JCy+0BMJqeEH4Ts80t1Jg5JyDY3QN5L7eeYwZKkt1gvG0ZNNTBypk
+	 zo+A0nMVs8znMnEhvJDMBKfIdB/h3alMvwRjfulw=
+X-QQ-mid: zesmtpip2t1744708334t7dbe64a7
+X-QQ-Originating-IP: SksWeuet9ma3TlVLc6EhOgqSB/dqiOPYlIiBpQRQC48=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 15 Apr 2025 17:12:13 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 4657074941084990627
+EX-QQ-RecipientCnt: 8
+From: WangYuli <wangyuli@uniontech.com>
+To: richard.henderson@linaro.org,
+	mattst88@gmail.com,
+	wangyuli@uniontech.com
+Cc: linux-alpha@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	guanwentao@uniontech.com
+Subject: [PATCH] alpha/boot: Ignore vmlinux
+Date: Tue, 15 Apr 2025 17:12:06 +0800
+Message-ID: <90A2E6E70A68DD1E+20250415091206.413647-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,42 +65,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: mdio: Add RTL9300 MDIO driver
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174470823327.2548774.7369464602426912158.git-patchwork-notify@kernel.org>
-Date: Tue, 15 Apr 2025 09:10:33 +0000
-References: <20250409231554.3943115-1-chris.packham@alliedtelesis.co.nz>
-In-Reply-To: <20250409231554.3943115-1-chris.packham@alliedtelesis.co.nz>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- sander@svanheule.net, markus.stockhausen@gmx.de,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: N8Jy6PtD39R8dhcbrMXwyI1knY8Wo74eIFI0kBUrTG6hEv2MF1GN3wXW
+	IO95KXnoosekbSDXn3B9yFMYnJIH956Fz8gIWPwaoSGpjsagigCWVgrRjLAMUGE8Qd+mxWE
+	LnpHXLDBM+03w7q+BWMrfYMKz6EOHyEb7pOSn9bNWQpLhYQoOzWp+3CF8IF5Kyz22t7Jtd6
+	gJAqsjcCmTTi8oq9bxGQSWSzFoL+IYcYhcxov8FskjJhy8bnse6XMBU+D1qcb4MBpqdm7ec
+	BYH6yRIOMsRRj7n2ydvPyDrLWzqPoGwqL4Vs5treSTCgjH8jegVN0NVoGMXTDOp6XaUwcOw
+	6+wvevPORhMQtWIb4z91H4u1sCd/J5LbG5hUdRzjfLKMhY3MqNDQ72Fbq0JRu4muAZXjfZb
+	JkVCFj60o61YbTaTgR+G9XWEB9hzQkY5tiQW81kVJk16GG188RywsJuuQAiXJxoup3e5jr5
+	CTC7UF5qevhOkYMmv0Xf4LkGMbw4PHLBIzD8ggVv6w3HlahGpdbQkkNIu2/O5lUOhPhz85j
+	Hi6EvUaS50GOYuYTmiOWBj0YW0cuYtMYN+EIi58ivW66xak/silQcEqX8q7o+h+BjVC2JNz
+	pqDdTEv3e2wtStgCm7bg38aJhisTRXCrpAmKGXoa5a+GGS4Zy+B9j5PzLh7xDjiMUPNTbZb
+	5/hekaknvC3Cwb1RoC163sHQKBx8o/Fqyedf9c+ataQnUOgtILr4J+8ZG6YFWEznOTDxTyE
+	zqzEJlGildY68Jw+5shHFZFEg0frUxk54eqJx2MwXoYk3rBl9gTL5kttUzBRnXS/AqqZPkt
+	87JG73GUNi8Kb95imRLH470fkdyv9aoaaQoZIUtY0JXjLPEMyclO3CamGnHT2nmHogfPpry
+	vjMnpAioHj36zSnfCU26/GHjoWlmf3d0asAErSOXAbxVVqNNFf+bVpeJMlxFrE/8AgRI0Zp
+	XocThzksHisOZT60tLOq6Wq9AO+PrAsGyzv4/CR2JycuOHVpIBnQPuHsIumsh/b4m5S2YjI
+	bMYV3oM2HSrO6ZrLmBzLVZ/vPpiHk=
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-RECHKSPAM: 0
 
-Hello:
+The vmlinux file would be generated when building kernel.
 
-This patch was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+Add it to .gitignore to ensure Git does not track it.
 
-On Thu, 10 Apr 2025 11:15:54 +1200 you wrote:
-> Add a driver for the MDIO controller on the RTL9300 family of Ethernet
-> switches with integrated SoC. There are 4 physical SMI interfaces on the
-> RTL9300 however access is done using the switch ports. The driver takes
-> the MDIO bus hierarchy from the DTS and uses this to configure the
-> switch ports so they are associated with the correct PHY. This mapping
-> is also used when dealing with software requests from phylib.
-> 
-> [...]
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ arch/alpha/boot/.gitignore | 2 ++
+ 1 file changed, 2 insertions(+)
+ create mode 100644 arch/alpha/boot/.gitignore
 
-Here is the summary with links:
-  - [net-next] net: mdio: Add RTL9300 MDIO driver
-    https://git.kernel.org/netdev/net-next/c/24e31e474769
-
-You are awesome, thank you!
+diff --git a/arch/alpha/boot/.gitignore b/arch/alpha/boot/.gitignore
+new file mode 100644
+index 000000000000..c85710c597e7
+--- /dev/null
++++ b/arch/alpha/boot/.gitignore
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0-or-later
++vmlinux
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.49.0
 
 
