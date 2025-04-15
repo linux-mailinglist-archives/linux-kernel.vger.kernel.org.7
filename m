@@ -1,106 +1,96 @@
-Return-Path: <linux-kernel+bounces-604569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C240A89619
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:10:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7438A89627
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:12:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE63B188F5F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:10:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E173517D8C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:12:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F05E027B50A;
-	Tue, 15 Apr 2025 08:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LkBrx0Mk"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E8127B506;
+	Tue, 15 Apr 2025 08:12:51 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A9127A90B
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 08:09:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48CD62367A7
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 08:12:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744704597; cv=none; b=Y0RnUmVGN4w1hm6yd0Z0Zr86vqnq2uIjYbuEtRHEPo32NZsEsceuowvEc9BIOSqHCd1fLVxL+P5CEXknx3fI7OwM+K6bYGtEJFHFwgD9hRbr27Df5+HDd9pNJ53KHATyZizNVLb8og/ADSuF/EM2SEwAbzhteYkQlFK8UO8QRHQ=
+	t=1744704770; cv=none; b=RhmJz+L6s1iUBZdMq3lqBTKjf3x/roxIdVpmit+mXaM5DLBb3BATvboBWcGk/s4f8XYr3B1U9lfX1+RubIDSoVDHUvLYsQeDWpvLKxf4pfRxFFv9rq6AqMkWXohZ6ahhFCD/hA1GyasVewvrM4WjcfVPslfEZe/xI3mmChZLL1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744704597; c=relaxed/simple;
-	bh=tLEWsOGdQhM0Zjsf3h6/8bfBGD6fRYml+UveW8GvJwE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Xlf68K/RoDmpXFdEZjlqZqti0zecN5sX2vI7BhaOCUQPq5VFTlrVRAOHwyFqeEf52F5AiAeZxsDOEWIifGpMbPYRiysnhgoHzOI0uL9znveXIcqofOgmy4md6qHKw/ExMDV0q1czQ/A/Q7wQoPLgtQnSwB5gWbNw9EkYDCwkA6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LkBrx0Mk; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30bfb6ab47cso48444871fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 01:09:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744704594; x=1745309394; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tLEWsOGdQhM0Zjsf3h6/8bfBGD6fRYml+UveW8GvJwE=;
-        b=LkBrx0Mk+N6nGorcTlMQNKhYWvmiAZvigVLyo51ogtVx9APzBCjOjiT/BIzG7NK2Ur
-         t5I6SACfBdKpdzM3WWO4ofcKf+QVtgR3YTubGuHDY3U6zZrUyAbgUEPZav7QBe6LEF0V
-         RXtX8C3ybnsc8b8vmHgMdfHEq9VSYV2rx4xEuhi5smhmhrh3u01HtWYbQoXkZx+AkTEC
-         x4cWgigPtt+jaLh4qpU3UjQHU2WoV3XFpHkXZjGstPXFO+U+bW/PBF4MqPUzIj/PER9H
-         K8AVi+a8r9R+vJqREAJ69ufC0Ev8jnW1vezKUf9eJqZGyz3jZpGCLtt0YR8C2Nr987y8
-         USzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744704594; x=1745309394;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tLEWsOGdQhM0Zjsf3h6/8bfBGD6fRYml+UveW8GvJwE=;
-        b=I8V8AGUVrR9Sg+V8fNrzb73rI+WddCT2PSl9ArM+ryfap96+1DIFpXe/GIwVhC6JVq
-         5VpdTi5PmEaU9G7BAofX7sa/+8T2D3FnULy3VQD2u4QNLa1w6a7bon20JApL1+xZYXrO
-         M6rMKK8HeXcEAYZXF1KxzD29VNDXmIldPcFwteYRWLzYDAeRHIgrvMd/A5YO67Mz5kTP
-         +c0+7jXVM4Hl6JCRuS5NbwkuaOWAnOta5UY+/yIrpyvgC79CywaQONgk/hkfsCGwbTd+
-         nmLIN5eMSLxb5kV3EuNCkdAX76AJ0f2B/OrabBi/5mRjgStC+qBh0ZiOko4k7mEyTWaa
-         8HNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWCXp5Z+kyE+PVe63FnV91pJtMDB2ZTDLZJJE6CsNXzrGw3vSB6gFmMIt2ZaEdS/ze4wcHFTOIvJNldpwA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxcfIMrDY/2MlpR+7W6IyEyYMPPvAtpKjy05oKvOVDrMHYZrrY
-	1RRQW/7w2uI8/zSp9k2kG1D0RdxEizjnvTbOhjDhEYGmM8h6vEPcrVmv05OpH6nrQ+cuN4ZL036
-	Lvdw6D7aqJ58Cv8CFl6tioZWpzk/pyuJf+xFzrg==
-X-Gm-Gg: ASbGncu3ANuysf8CFzsgvDvMSphLOM2nMOECikW3uuzwCxE8Z3wjNwh6Qb6pdY6/UF0
-	LQKExCrfhjSBrYKoywSxhkgU6jsKe4mDdgUlyl/T9AheE0lVIl0qH+Q+flzwW5PvvdBj7kzM6E9
-	K2UC4iP34VxsRffg8Dkx08qQ==
-X-Google-Smtp-Source: AGHT+IEMlMqsPAGJBzvZT2lPJQosRhpvoETScw1sCKukc31T9fTkGic2VsMp5FRUxyJuWIZeSw3pyLssyZGpIRA+vOE=
-X-Received: by 2002:a2e:ad07:0:b0:30b:a187:44ad with SMTP id
- 38308e7fff4ca-31049a80842mr52529351fa.26.1744704593653; Tue, 15 Apr 2025
- 01:09:53 -0700 (PDT)
+	s=arc-20240116; t=1744704770; c=relaxed/simple;
+	bh=oMQ66CbHQJJBtHLgDZmcsDHGaqtdPcskr+CKZx1O8+s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ft6EK3OydLNxkCtaUFug+ASivZ/FTsnn2YuD2EXjWE6fLwY/U26eDTcFmX8FmaeOEPQyQbTum+vRohczf38NxbcByafjUxGZprxixx3c1Bvjam6b892lXpsstf/vm79ncwaaKtAi2fz2N5ePw+9K0zjsu9tPunG3oaiiBgxiVk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-05 (Coremail) with SMTP id zQCowAAnYgr1FP5nL84SCQ--.28067S2;
+	Tue, 15 Apr 2025 16:12:37 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: vkoul@kernel.org,
+	kishon@kernel.org,
+	heiko@sntech.de
+Cc: linux-phy@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] phy: rockchip: samsung-hdptx: Remove unneeded semicolon
+Date: Tue, 15 Apr 2025 16:12:00 +0800
+Message-Id: <20250415081200.349939-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250404115719.309999-1-krzysztof.kozlowski@linaro.org> <20250404115719.309999-2-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20250404115719.309999-2-krzysztof.kozlowski@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 15 Apr 2025 10:09:42 +0200
-X-Gm-Features: ATxdqUEiPhEWajxjZ0u616Ca2IYOkRClv6g0V-9rh2iDXiM0Iv0_Uzdx0X_IW4c
-Message-ID: <CACRpkdYJNLwKFyzjzOeuZofBzoHci39UH-0H5cEM=97koyW1FQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] pinctrl: uniphier: Do not enable by default during
- compile testing
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAAnYgr1FP5nL84SCQ--.28067S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrZFWDuF4rXw4DWw1xKF1UAwb_yoW3AFb_C3
+	4xWw47Xw1kJF95Kw1DJ3yxu34qyw1UWw1ruaySvFy5Aa1DXw1Fqa4fZr43Ja4UZrsruFWx
+	G34qvFyfCry3tjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbsAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
+	0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
+	Jw0_GFylc2xSY4AK67AK6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r
+	4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF
+	67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
+	x0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2
+	z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnU
+	UI43ZEXa7VUjWSotUUUUU==
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On Fri, Apr 4, 2025 at 1:57=E2=80=AFPM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
+Remove unnecessary semicolons reported by Coccinelle/coccicheck and the
+semantic patch at scripts/coccinelle/misc/semicolon.cocci.
 
-> Enabling the compile test should not cause automatic enabling of all
-> drivers.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-No comments, but the patch makes perfect sense to me, so applied.
+diff --git a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
+index fc289ed8d915..bb49d69a6f17 100644
+--- a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
++++ b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
+@@ -1507,7 +1507,7 @@ static int rk_hdptx_phy_verify_hdmi_config(struct rk_hdptx_phy *hdptx,
+ 		break;
+ 	default:
+ 		return -EINVAL;
+-	};
++	}
+ 
+ 	return 0;
+ }
+-- 
+2.25.1
 
-Yours,
-Linus Walleij
 
