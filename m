@@ -1,179 +1,190 @@
-Return-Path: <linux-kernel+bounces-604682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DCC4A89744
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:57:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7636A8973D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:56:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68C0B1895D69
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:57:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8F6D17FCB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 573FB27C858;
-	Tue, 15 Apr 2025 08:57:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4520027A936;
+	Tue, 15 Apr 2025 08:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JCNG06Zg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="U/XRTSHu"
+Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11011026.outbound.protection.outlook.com [52.101.129.26])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB8C427587B;
-	Tue, 15 Apr 2025 08:57:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744707454; cv=none; b=rQquDOXlYNT5BO+7lN9pIJh4seDVFBOwyZ4aZ3cMcU4wkOf91/3x2SMe/bOTvOSGvrYOzshItjAkZEeufb2uTcbkFt7V2aWXz6/9haKlIrZkEoobyyyxdozUSPUmrOBvORLPXNIu17Km1lQa5Fen+xqGYiY7PI301mVamGtDngk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744707454; c=relaxed/simple;
-	bh=eMyCf7JgTaYNzOO8bQT/94aK8xIHbnRnd+ieVFJguP0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NA+v8Iy40ZUqPZW/CBFkEM3W8z82I7RliaTpQYZCh9FNLtV8M7QGNNugB5TWf0Yd+AGF1IGurBenhvPqt8SjdPU8+U4o1gsAUFNGDg/L0VrbF3W3inWem09uKYpwtujSazatkoq41VYXuTaYQbllgell689hRgtCbxnCH7s3ttw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JCNG06Zg; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744707453; x=1776243453;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=eMyCf7JgTaYNzOO8bQT/94aK8xIHbnRnd+ieVFJguP0=;
-  b=JCNG06Zghq3J9Wyvd+38ShIcwlbg6e/brJXVYFiunC0iF7c0W7bCj/m4
-   EcZgAUVLMh2clNnyibtIxhQR69vZmTobsRTTcvxSDYn/R/h9+aNOK4ISl
-   888eua3gsakUfZlfkoGaGAIQEoIJa/WjX2ZEAbxk89gZbdcEmV8COEWal
-   LKJMMAmAQyzUBXeLL8CHabKWSDG4+sXFdIHOTS14KaIy/1lhJztr+GAJR
-   wTlBtKom8qdPRITV8zCveEIv4JRpWdfhd5DLwmj5/PfODcUw/lfFwXTHR
-   ML9y5YeeKT0XTVhhPLqqOPf3PXNhIbM/vXecLGneOOJu5L7YJPovTTmsc
-   A==;
-X-CSE-ConnectionGUID: O7UF0gGBSPGmAkc/Jzixzg==
-X-CSE-MsgGUID: MRjtePyaQc+v53qrh1+itQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11403"; a="56865428"
-X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="56865428"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 01:56:25 -0700
-X-CSE-ConnectionGUID: 1qM+DGONSr21Dv5eCUNEng==
-X-CSE-MsgGUID: tEM4dnMdQlG2I38t2Bo5iQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="135242196"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 15 Apr 2025 01:56:19 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u4c5Z-000FSI-0u;
-	Tue, 15 Apr 2025 08:56:17 +0000
-Date: Tue, 15 Apr 2025 16:55:47 +0800
-From: kernel test robot <lkp@intel.com>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-	Bjorn Helgaas <helgaas@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	chaitanya chundru <quic_krichai@quicinc.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	cros-qcom-dts-watchers@chromium.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: oe-kbuild-all@lists.linux.dev, quic_vbadigan@quicnic.com,
-	amitk@kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, jorge.ramirez@oss.qualcomm.com,
-	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-	Dmitry Baryshkov <lumag@kernel.org>
-Subject: Re: [PATCH v5 8/9] PCI: pwrctrl: Add power control driver for tc9563
-Message-ID: <202504151624.8fF601aD-lkp@intel.com>
-References: <20250412-qps615_v4_1-v5-8-5b6a06132fec@oss.qualcomm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CAE51DDC2C;
+	Tue, 15 Apr 2025 08:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.129.26
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744707372; cv=fail; b=cThfw6GyxFgP5FFVEe7uIgCklGb3N1X6VkyXiOj4O76vFN14f2MTNg/sdjlfVYVoit2Iaa7S00xJQJiEGMcy732WC0ns00BDQrGXQOG5vDD9KeJxxqFxVGL8mDxTMGY2z2DDeUBBQY4jSn6yepbBhZJwp/HYWndEYk+pmBzKNKQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744707372; c=relaxed/simple;
+	bh=sc749Y9GQA1p+XIiUGU5IKV4rwoRCnj6kU20ZF0SEHY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=atRReGCJ+PtiB4AxV96UJyAS6IvPmcZ92ZW8/LSchELB23nr3C8EpQ8BQI3nVvZXgEMlObx66zhfiTnTLdfRy/RbZ6xY072nmxK3ctgddfQKpg7k+kOLxTrEK1mk5uJ1PZX5ms1jnfeWGSmL1DK/lq8KztByt12Fh5hC29cmZY0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=U/XRTSHu; arc=fail smtp.client-ip=52.101.129.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lWgzKsj2ZI6KLqoY4YfSLGHHwaBd1gNxkzH7meEZyKl6YEsUyTJ+XXf4TBWeI3PZU2CZkrgQ9BwIU8vi487MObrg2i/wiqYGJXJxlF5rKUPK33aIKJXz1CNKHjiEbR9ELhsgtuE80nZeu4sFEjj/Haw7zOmJTZ3JWGRTr68ooyssRjthKoNSe0s+4DIKn+1Q+9ygXslOyVrmqcXXrS8Hds4NsHWhfEo918AVZFDov8GZ/B7lAU5g6nO7oqq1UiQzZ+heRIGzLg0plfyiut91AFbjZXuGA9PmIf6NfiVKf9jr5yGl+x/di694cyp5YPCbKSMyIjSN78Nr7h+hs0RfPg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=sc749Y9GQA1p+XIiUGU5IKV4rwoRCnj6kU20ZF0SEHY=;
+ b=WQhpflGwJmuxcAXNEnJE7zf2IzQP9gIwSWSnN8fp9K8B3p8+5AGNxWHCaqKgxr+H9LeVm/qO94DzNTclwSds578kdKB37RB6sxLqSlTcZc4KQH0J1/PhBs+Vknzn4i+y4Xh65zjAbkGFl4wE8RJeQqoVNSRy46gpKyAPfKp/43klX+7Awmr4ZCl8l29b20TACEhjl+ZpxX6QxkN5VPB3OfQ45tWbvkw6NfgAA/zD1Ch9sRG5+5KuSRHg3krReZQxb9VyrOmuapEJqux/1txxiVEAxy4/16zt2T3MTZxPGUa9FyqMF2mtmvt3UKXCJ3/UcpDHDNLTwFhmRPDf9bHUQw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sc749Y9GQA1p+XIiUGU5IKV4rwoRCnj6kU20ZF0SEHY=;
+ b=U/XRTSHuhc0fbjRyWFszVMfdUaBkW4/zwMjJJ18LjNX2Dsrw1CrSKytPcNaYUwHBn755Pf19A/xsvWrNDHt93FqRUPqUeosc+rdQedeAlXellEmYlETVcLNZHLf2xoRCb1GE039yMDYOj63mkoipGHNzLJaLBa4g3jHDWZ1BCyXJsr90DlqGXrAmaEgpAd50xeZZju7G7wMm5X9MejvbyEvW1egrVOMf8H0adnQ8aOWwnRstDDgLX6jL618Rct6W1GmeorWudwuL0ZSrQPtVPv2c+oXLHZ/mdeb0RY4Jzs5uAv116BtZMyMbrNyP/YV1GmSUFX4qFJ4+c7teHVSUwA==
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
+ by PUZPR06MB5571.apcprd06.prod.outlook.com (2603:1096:301:ea::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.34; Tue, 15 Apr
+ 2025 08:56:03 +0000
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::8c74:6703:81f7:9535]) by SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::8c74:6703:81f7:9535%6]) with mapi id 15.20.8632.030; Tue, 15 Apr 2025
+ 08:56:03 +0000
+From: =?gb2312?B?wO7R7+i6?= <frank.li@vivo.com>
+To: Qu Wenruo <quwenruo.btrfs@gmx.com>, "clm@fb.com" <clm@fb.com>,
+	"josef@toxicpanda.com" <josef@toxicpanda.com>, "dsterba@suse.com"
+	<dsterba@suse.com>
+CC: "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject:
+ =?gb2312?B?u9i4tDogW1BBVENIXSBidHJmczogcmVtb3ZlIEJUUkZTX1JFRl9MQVNUIGZy?=
+ =?gb2312?B?b20gYnRyZnNfcmVmX3R5cGU=?=
+Thread-Topic: [PATCH] btrfs: remove BTRFS_REF_LAST from btrfs_ref_type
+Thread-Index: AQHbrd73jkcBLdMm7Uid+r2d6yAy4LOkaR4AgAAB9UA=
+Date: Tue, 15 Apr 2025 08:56:03 +0000
+Message-ID:
+ <SEZPR06MB52691756B32BA90DBE82BDFDE8B22@SEZPR06MB5269.apcprd06.prod.outlook.com>
+References: <20250415083808.893050-1-frank.li@vivo.com>
+ <472ae717-5494-44ae-973a-85249a65d289@gmx.com>
+In-Reply-To: <472ae717-5494-44ae-973a-85249a65d289@gmx.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SEZPR06MB5269:EE_|PUZPR06MB5571:EE_
+x-ms-office365-filtering-correlation-id: 8ec3eb2c-7bba-475c-8f87-08dd7bfb5a04
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?gb2312?B?VC9veHkyN2hMcndHYWNJMjJqZzBMK0JERjJnRzJJOHhZRkJlckE2WDJ5M2hC?=
+ =?gb2312?B?TTZDWitnQkljOGxvK1RwOUtlaEJNSVdTZlJiS1hDTE9aQmJaU3RBYmViZXcr?=
+ =?gb2312?B?S1Mwd0poUzBSVDlDQVBrTXFpVXZqalluN1dhL2ErdTVvWGZCTkNLQlNyRG84?=
+ =?gb2312?B?ODlhYnZRNFc0aVlWWHczb0M4a3h2T2NEUkpoVmF3UE5RS1R3VnF1cUpXYmdT?=
+ =?gb2312?B?MDVzSFZ6UHRCSlA3Q3FPVjd1YzhQUVkrQm9xSFJaaUQrZ3VZNWhLdGI4bUF4?=
+ =?gb2312?B?YXMyVkluQ3piblZOR1pSOTdIN3ZSeHFPbUFQZ2pya3dMM1MzTE0zQ1FXUDdx?=
+ =?gb2312?B?YWJxR0JDKzlnb0Jjc0hoV2RjKzV3bW80WVE0RXYxZnI1WldrbU1HSDZNN3Nt?=
+ =?gb2312?B?eEwvSlVUa0dvbXdMaEVxdkJaSW02YVRzOFRhWVJTb2JNTGxka3dlYWh2UVZC?=
+ =?gb2312?B?by9TNHRXNWE1ZXRsQ1p2VGE5dXl6cTZWU3RmRHYxWHlhb04zOFNkWkNOdDNo?=
+ =?gb2312?B?YVF1bHJsaG5iVG90ZE0yUlo3NHd5eW9yQ0o5VGwyZTJwa1Y0NTZVZFFoNElR?=
+ =?gb2312?B?RGN4WEZYTXdqUHJ4UmMwS2w1c1c2SURVNmhwSFdjU1ovYTJpZDlUM21rYTU1?=
+ =?gb2312?B?U2F0ajRlcEgzckF2cWgzd1JWdUR6ZGduNHVUVzNFOGRqMStnZDFMQ2ZQS1dp?=
+ =?gb2312?B?ZWtpWlh1cE83SnFnYzljYVZIQU9EL1gyNUZLQndGOUdQVXR4VXk1dEZGMDM3?=
+ =?gb2312?B?TkJtVUh4aEpnd0RIUVUrTElHRTR2MWNvZlJiZGFtL05Yc0VIMmlIVFRXWkV6?=
+ =?gb2312?B?a2tLZkl3Nm0ydjlVY3U4RlU1cGMxR0VhT3k4T3kzbEhkVDJSbUJQT2xDVFdH?=
+ =?gb2312?B?Wm9iS0pWbHNqRG9JV0RKTFVGQ0ZXQ2NNekQ1WEdiMjRXNTJSN1F0dlhWLzhY?=
+ =?gb2312?B?a1J6czJhcU5aUFMrY25DVzhsUnhFamFNMitJS2poc2s2dHo2QnIzR2FzSkxj?=
+ =?gb2312?B?THIvZXE3RWlEU3F1enlOUExMVG1BTnVaZURpNzBQSUpXdFZpekJmNUMvQ0lQ?=
+ =?gb2312?B?cUYya0xwNWNKaHIxd2c3b0xwbWxrTUh3QUw5UlU1YzQxZ1VvWWFCazJCeGxa?=
+ =?gb2312?B?V2cvSFNzVjMvMVErK2wzakxDbG9ZNjZ5ajVCZFBXNjlwVVVFU3ArQnpJOUpT?=
+ =?gb2312?B?VmlMcHZ2MXNXN1VlK0JKbFl4VWNLUDRObHFnV05MRkkwN20xaEJwVVd2U0pi?=
+ =?gb2312?B?d0lTVWVtd081Ri9SVjVwUWY0dXFweFBuMDI0Mk1jRUZ5L3htdEdlR2xPS1Ir?=
+ =?gb2312?B?ajRXMmFRMmdPK05FU0RPUElGS21aRVErN2thYkZEZ1NoK1lFN2lzOU54by8v?=
+ =?gb2312?B?OURieVdNSE5OQUxJc293d1preEc4VTRpS21nKy9wOFFUL0MzUnpZNWkxVXRs?=
+ =?gb2312?B?Wko5RkZlSzdLZnNYWjl0Slp4eTc0RXhCMnRWang2TUZ0N0xDUnJjZWk5ektO?=
+ =?gb2312?B?UkhiNjZzUzBONktWeUV4Q0dRODlaaU9RTXRPSmo0WWV1cTFHL3lZYnRma0Rt?=
+ =?gb2312?B?SHVmQmhOU25NUUc2UG5pM0lQNVFUU2JoUTJVYXFiVlVXc2Ruam94U1FBUlFC?=
+ =?gb2312?B?dmNoL2Q1MXMwT3lhRVl5NzBNSGJpYUlLUDl6QXpqaFBsRitwY1JyU2ZmWlVF?=
+ =?gb2312?B?QVFNT2NiY3Uwc1BEWmhCWUVseGRsbG45UlpJemxJMVNLTTkzeXgwelFKOUFi?=
+ =?gb2312?B?eFRTMnRKS0d0WldsUytLd2Q1SFJqTlhzZDhvMHNkajNZRldGaVNUQjQ5bEc0?=
+ =?gb2312?B?c1VnbkVMUUJMMndSa00xNVdOUDRuaEk3WXMxd2pMM0E1Q0wxbkJSRkg0WVhO?=
+ =?gb2312?B?a1RDaFkxdlkwdVpsSWgvWGs3N1hBNHlvc0xDbmF1RDdGQkpGcWNKc2hjSkl3?=
+ =?gb2312?B?NkFUMGdjQ1c5SVhpMHVFUVRRRDNzaFpJR0NLWWRFRUdCTEM2SThLaEFDaC9T?=
+ =?gb2312?B?dlk0UC9yMnNnPT0=?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?gb2312?B?djloVlZNbks4Ly9XaXgwSGxQb2FqcGZPWm95UTJXNzdlU1hRUlg4bTk5emRS?=
+ =?gb2312?B?SnNwd1ZvVGc4ZGNXNHdacmEzcUN5MUR4SGFXRk1kS3RUalplV0xNT0MrMFY0?=
+ =?gb2312?B?d0xrbDUxc1NMQ0FLelRjRERWM0phVlR6cHhmZ2U4dGJjWUF3aHZBT3BrN0FB?=
+ =?gb2312?B?RWx3dU1hQWlWRzNDMENJRjhZSHhHTVg4VVpvWHpHQ1pGR1labHlwVjRpRTR5?=
+ =?gb2312?B?THh1OEtTMU5iSlA2VVA1MXFmVlpXNEc0aGhsWkk1aUlxRDRrdnlxMXZaTStM?=
+ =?gb2312?B?Qm45bjliR2JBWkN5bkhzRjh6R3dqVXdpaWVWZWYzY2J1Q3JqS2NrWlJrcTNI?=
+ =?gb2312?B?YnpDWVB5dmk0bG5vQSsvMWdEcE9DNzRvV0xXY0lVTHRaTnZyMURDZzhIcXVR?=
+ =?gb2312?B?SU0wck9MY0QrRFZWcEt0OTVYeEhpN0Z0NmEreUZBdzE1ODNMd2RqN2VybmNZ?=
+ =?gb2312?B?NzJCUUttYzdhTlRLMnlFeFpvWStqZWVFdnVoK0xLVnJZM2ZqYVlhcWhZbFg1?=
+ =?gb2312?B?L0hmL1UvNURJSGFIcTlCM25IKzk0SUY5em9xOGs2K0dEZE54TDBXb0d6c2VF?=
+ =?gb2312?B?cEd1VGhMVm9nRmtBajkwc0FOYjMvVFZGa1NmYlA2NGc5ek5kc2ZwR0hzQVpG?=
+ =?gb2312?B?K2RvUHhvdUNsR29hczZnbFRGRWdmZmlDRVpMMlFTN2ZmaTJWVU4vaXRQTHBv?=
+ =?gb2312?B?NzI1SUVnUWdpLzNhZkdwN2FiM3V4d2JvMmVMdkVnVTI2aEJHSzVQL29uM3VD?=
+ =?gb2312?B?SXFsWTRIdzMzOTZmcDhNNUYwdDBUdVlXNUpkZUF2eVZrVG05RkFPR0JOYm1F?=
+ =?gb2312?B?SW5yZXF6TEUzUkFJb05FZTJuYnJvN0FrWHk5YWtOQXkxNXpWMDNadEUwUVNL?=
+ =?gb2312?B?Q3ljdHJrY0hnQXFPZHhwRklwQXBmai9TbEhtVkx1djMvZ1d0NmdDcDlYSktN?=
+ =?gb2312?B?ZStBajJ5M2RmUHlRNmVxQjVJK2JrUngxeDdUb3BYUEtUajF6Wi9wdjlFejNM?=
+ =?gb2312?B?NytSQ24wS2lQSTl5LytKNEswNS9yTmViZzdDc3VnUjJQNktMTGpiNXpXckVq?=
+ =?gb2312?B?blMwMk42RERURG5TTzFLc3VpQWxscURNNnpjQndqNFAwdGQ3dTBNbVg0ZG1a?=
+ =?gb2312?B?ZEE0bDE1K08zTDBLb3BNMXVvV2FDaEx6ZDJuQmF0U2ZwU3FXU0pRUzNPMEVF?=
+ =?gb2312?B?OW5VdXhMWjRZVTFyb2lYMXFKTHl1NkI5dEVTYk51bzJrRHRacnlmbEVsVDdH?=
+ =?gb2312?B?U0UvZ3hwamxrQzNpSkxHaEl6QVRIaFYwNkl4T2FIdkViemZBWTNlak1wR0J1?=
+ =?gb2312?B?YTZRVW8vV3Ixay9tcnJBNUl5aXY1bDNNNEIrSmNmWnplQ0xMc0NoK3M4YnJ3?=
+ =?gb2312?B?WlF4ZDh0Y1o2VldLcGtXM1p1NmROcG1lRDNXdkVGOVFQakhpWDZnMlgwNGU3?=
+ =?gb2312?B?Vi9Pa2NyT3R2K2psdDNmZW1BS1BzOHkzYk1CbTJxL3Y5YURjbFNxQkpYSm1v?=
+ =?gb2312?B?WU9uQ3JXdWtSU1UzWUtINCswQUt4eFU0TU9QUnJySmVnOTZlMlJFMExGSEcy?=
+ =?gb2312?B?OW9UaVlJdlA1ZXdmTG5tTDJxMzNGcDdhc2k5ZGpHMFhzT1N0ekhzQm40VzJm?=
+ =?gb2312?B?VDZjaUY3aDc3OXNPd0MxRGViSkl0ajJ6NVFwMWozYWk4UEJhZmZrUnlqUkp6?=
+ =?gb2312?B?YnAySGJwcjFuQi9kZGttOE9zeEZDdXNpSXRjS2lybEM4WENTMmlPM1dlNXpP?=
+ =?gb2312?B?akVzOUkyM1ZXT2t6RlkzdmY0RWNJNWs2amFDYTdMTjdhNTdubm9JYVJNTmRk?=
+ =?gb2312?B?THJYUzQ0NFZ2NFJqOXl0bUJoemV3MTFxaDRSb1pROFhBUTJzalJDWWF0YWFR?=
+ =?gb2312?B?aUJPSXBYQjMydnB5RUhjRGhseVUvOHJiWEF0b3NwZCtXaEcrZ1JGbFJ6ckl4?=
+ =?gb2312?B?QytETjRKQk43UE9uM0xkTml1bUZmbmVKaVEyN1NYL2k1ekRjOXBJVHJ2RHZE?=
+ =?gb2312?B?NlN2ZG03akdZaXB0b0dpdTJFNmpkMkVNN1ArbCt1SVZiZjRzQzQzbGcvSVAv?=
+ =?gb2312?B?Z3FCTitCWFVVdFJPVHNyOXY3L3oyR1VvMGRPK21RZVBZNHlEdCtZcWwvT3JN?=
+ =?gb2312?Q?FndI=3D?=
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250412-qps615_v4_1-v5-8-5b6a06132fec@oss.qualcomm.com>
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8ec3eb2c-7bba-475c-8f87-08dd7bfb5a04
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Apr 2025 08:56:03.3223
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: kmfFXw+4aDSU3h5n7cQhMcFx9/jQt76d4g1+kFd3iGT2Gg/JjAtQLdO+81u49PeGdytuiZJQX7Q1g+9k5kGRCw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB5571
 
-Hi Krishna,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on f4d2ef48250ad057e4f00087967b5ff366da9f39]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Krishna-Chaitanya-Chundru/dt-bindings-PCI-Add-binding-for-Toshiba-TC9563-PCIe-switch/20250414-123816
-base:   f4d2ef48250ad057e4f00087967b5ff366da9f39
-patch link:    https://lore.kernel.org/r/20250412-qps615_v4_1-v5-8-5b6a06132fec%40oss.qualcomm.com
-patch subject: [PATCH v5 8/9] PCI: pwrctrl: Add power control driver for tc9563
-config: sparc-allmodconfig (https://download.01.org/0day-ci/archive/20250415/202504151624.8fF601aD-lkp@intel.com/config)
-compiler: sparc64-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250415/202504151624.8fF601aD-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504151624.8fF601aD-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c: In function 'tc9563_pwrctrl_set_l0s_l1_entry_delay':
->> drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c:257:34: error: implicit declaration of function 'u32_replace_bits' [-Wimplicit-function-declaration]
-     257 |                         rd_val = u32_replace_bits(rd_val, units, TC9563_ETH_L1_DELAY_MASK);
-         |                                  ^~~~~~~~~~~~~~~~
-   drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c: In function 'tc9563_pwrctrl_power_off':
-   drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c:419:9: error: implicit declaration of function 'gpiod_set_value' [-Wimplicit-function-declaration]
-     419 |         gpiod_set_value(ctx->reset_gpio, 1);
-         |         ^~~~~~~~~~~~~~~
-   drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c: In function 'tc9563_pwrctrl_probe':
-   drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c:535:27: error: implicit declaration of function 'devm_gpiod_get'; did you mean 'em_pd_get'? [-Wimplicit-function-declaration]
-     535 |         ctx->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
-         |                           ^~~~~~~~~~~~~~
-         |                           em_pd_get
-   drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c:535:56: error: 'GPIOD_OUT_HIGH' undeclared (first use in this function)
-     535 |         ctx->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
-         |                                                        ^~~~~~~~~~~~~~
-   drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c:535:56: note: each undeclared identifier is reported only once for each function it appears in
-
-
-vim +/u32_replace_bits +257 drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c
-
-   238	
-   239	static int tc9563_pwrctrl_set_l0s_l1_entry_delay(struct tc9563_pwrctrl_ctx *ctx,
-   240							 enum tc9563_pwrctrl_ports port, bool is_l1, u32 ns)
-   241	{
-   242		u32 rd_val, units;
-   243		int ret;
-   244	
-   245		if (ns < 256)
-   246			return 0;
-   247	
-   248		/* convert to units of 256ns */
-   249		units = ns / 256;
-   250	
-   251		if (port == TC9563_ETHERNET) {
-   252			ret = tc9563_pwrctrl_i2c_read(ctx->client, TC9563_EMBEDDED_ETH_DELAY, &rd_val);
-   253			if (ret)
-   254				return ret;
-   255	
-   256			if (is_l1)
- > 257				rd_val = u32_replace_bits(rd_val, units, TC9563_ETH_L1_DELAY_MASK);
-   258			else
-   259				rd_val = u32_replace_bits(rd_val, units, TC9563_ETH_L0S_DELAY_MASK);
-   260	
-   261			return tc9563_pwrctrl_i2c_write(ctx->client, TC9563_EMBEDDED_ETH_DELAY, rd_val);
-   262		}
-   263	
-   264		ret = tc9563_pwrctrl_i2c_write(ctx->client, TC9563_PORT_SELECT, BIT(port));
-   265		if (ret)
-   266			return ret;
-   267	
-   268		return tc9563_pwrctrl_i2c_write(ctx->client,
-   269					       is_l1 ? TC9563_PORT_L1_DELAY : TC9563_PORT_L0S_DELAY, units);
-   270	}
-   271	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+PiBIaXN0b3J5IHBsZWFzZS4NCg0KRGlkIHlvdSBtZWFuIGNoYW5nZSBjb21taXQgbXNnIHRvIGJl
+bG93Pw0KDQoJQ29tbWl0IGIyOGIxZjBjZTQ0YyAoImJ0cmZzOiBkZWxheWVkLXJlZjogSW50cm9k
+dWNlIGJldHRlciBkb2N1bWVudGVkIGRlbGF5ZWQgcmVmIHN0cnVjdHVyZXMiKSBpbnRyb2R1Y2Ug
+QlRSRlNfUkVGX0xBU1QgYnV0IG5ldmVyIHVzZSBpdCwNCglTbyBsZXQncyByZW1vdmUgaXQuDQoN
+Cj4gVGhlIF9MQVNUIG9yIF9OUiBzdWZmaXggY2FuIGJlIHV0aWxpemVkIHRvIGRvIHNhbml0eSBj
+aGVja3MsIGFuZCB0aGlzIGlzIG5vdCBwYXJ0IG9mIHRoZSBvbi1kaXNrIGZvcm1hdC4NCg0KSUlS
+QywgZGVsYXllZCByZWYgYmVsb25ncyB0byB0aGUgZXh0ZW50IHRyZWUgbWVtb3J5IGt2IGNhY2hl
+Lg0KDQo+IEFuZCBpZiB0aGlzIGV4cG9zZWQgYnkgc29tZSBhdXRvbWF0aWMgdG9vbHMsIHBsZWFz
+ZSBhbHNvIG1lbnRpb24gaXQuDQoNCkknbSBqdXN0IGxvb2tpbmcgYXQgdGhpcyBjb2RlLg0KDQpU
+aHgsDQpZYW5ndGFvDQo=
 
