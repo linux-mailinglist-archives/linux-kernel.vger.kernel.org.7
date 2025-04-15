@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-605927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74FBEA8A7C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 21:22:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A578AA8A7CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 21:23:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 117BA3A848D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 19:22:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F7AA1901DB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 19:24:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08A3248862;
-	Tue, 15 Apr 2025 19:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB0024C069;
+	Tue, 15 Apr 2025 19:22:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="nWzMEJ6G";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="AR7syuZC"
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
+	dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="LPQIT3UP";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="da7z92YM"
+Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D63E823D2A4;
-	Tue, 15 Apr 2025 19:22:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E1202459F2;
+	Tue, 15 Apr 2025 19:22:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744744942; cv=none; b=lmndI9s9lYGMf4Cu/bYD/Z7xnAeX0eDga0vk/Co4ifKOW8vXQvhDiBlpwlxaSI7FBPqQCKVjesTSexis4oJYIXJR//FvQasbKcQE8t+JCs03YZWdXPipvI7IsDodGY/xnY8caZuyy/WhXajwuAhAY2Jb8vXkMJQRWpBcto0UmRk=
+	t=1744744945; cv=none; b=XdE+JXl6ik/dPVPn0Lg4430iTLoJRo5Cv5/DpoQKn38x9WqIHxIQXueKNPkabYsRs41rst/xpCLkTE5ftX9IlgR0tNUyPHQlIGh3Blx+5Fh+TIb8xvuEEVe8s0EklFkauiEpSxsviy1jitUDSkUGSdMs75CrsUd+FQhT3mo/pxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744744942; c=relaxed/simple;
-	bh=nm1E1FEVMIfYg7pbvLYIfRTfxicisS5FpQYS0urX5/Y=;
+	s=arc-20240116; t=1744744945; c=relaxed/simple;
+	bh=+kpwGVPI0KH9D5YJh9PcK+QwDScwKiJ3yKe2ok/lfw4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NqE0rhvTJz+vHML9OnVebKWGzVAJPfCXRTCGlop74yrhXF4n5VaNvBZG0qquz/Vl6noQXpDmbbt50n54UERd0O0DgcqWWc1AZ7g3BsofRxb2nHrUcqnu0wflNFoWZPoWS76RdQdHCcobV1it5qgY+d47f6V73H4Pdp6uT4Ew67Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=nWzMEJ6G; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=AR7syuZC; arc=none smtp.client-ip=103.168.172.145
+	 MIME-Version; b=hn2f/7Bc3yckeCl9s48thoqQnc1S4SwJqOjgCW/Vmh/AuNFspoDyhkaJdecc5uTsS1XAs579fR+cHy3OGYvyiCpKbkK8Ie4okxR6Dvf6m8CvOKTZEjE7d9+U6UlMvUMiYhElm7qJ+yD/Z19WZeCrqz9T9MvsVkUhv3r5/AGfbpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=LPQIT3UP; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=da7z92YM; arc=none smtp.client-ip=103.168.172.156
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fluxnic.net
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfout.phl.internal (Postfix) with ESMTP id B982813801DB;
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id E664D11401FE;
 	Tue, 15 Apr 2025 15:22:19 -0400 (EDT)
 Received: from phl-frontend-02 ([10.202.2.161])
-  by phl-compute-06.internal (MEProxy); Tue, 15 Apr 2025 15:22:19 -0400
+  by phl-compute-10.internal (MEProxy); Tue, 15 Apr 2025 15:22:19 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fluxnic.net; h=
 	cc:cc:content-transfer-encoding:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to; s=fm2; t=1744744939; x=
-	1744831339; bh=clBP/AOC+t0fTcP1nwoYlcZ2Ogk0dwhdHt+FVl4HuhU=; b=n
-	WzMEJ6GIq/0jujeV4cf14lB0cWoVTk8AQighnIQHd6T0Boy2U5bNtmhhXqRyU6aI
-	zRvN/R1d3Kg4EnZZIyK/GZoBB+0WxKnOxcE7MDCjq77mNuCPsJVUtJpwASd1ol3F
-	B586GgRPuMX7BL2FQwHjlqAA3G5T4Nm/H4VE3ni66dgskLCBdjwBzcS6bkWn5Y3t
-	8ch3GMv+4hMRVqFVClJeuPCsyTfOdZLibkI6HbUFW97KyR/gcsndqKGRGiOi2xJe
-	MSJCyILCn+tA4ivLLBF7mm7/0F9Pcb9UVg2RlGte/GphXZZhriI4xlsDQf9DZD84
-	w8UEIeD6L72ACsXjr0dZg==
+	1744831339; bh=Pxfdmu6a1Rq5FX2/mG+2d7QtU5Ii4ZEqu82w8ijjsho=; b=L
+	PQIT3UPDjy0/gEyMYxtYyrgy2vQ/h4qwIRu1GOSngPWZ7t3tLK5GHORHcPyBpfJl
+	f5vrROeJrV4j0q/qjzurBUzRwvQEJ1GUidWExJtb1M2TEOz4rTxdFNlJS+X4BHSY
+	TEloI8xWy7p426QUef/rbdFMvomk+c+ri/x7/qne9aevJnykTrAARpVjpsYxhuCm
+	BroA1tp0JwapLA40YCJ3QEVE5/HuHwS6MVGAHFvS2MCDjdwWCq/TjBf4oH/Ve8RA
+	hkLZldjUCHFBkwIx3ny7kOd56nb67RmWp/aMoEQhl5XkGo3MXig237FbZJEThEdp
+	CppLBZiNQy2O1sbGLT9aw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm2; t=1744744939; x=1744831339; bh=c
-	lBP/AOC+t0fTcP1nwoYlcZ2Ogk0dwhdHt+FVl4HuhU=; b=AR7syuZCE24ugIg7r
-	crDGxFKTsUm/D/vUY9qkvlC4GRIKipROXgfkL1/HtAOvuXjH0ZEeuArL8b6DhrwG
-	cG4gAdCd6eik/E7GxIY5J5O7g2KGPRERS0YCI3hAMsEU0WCNtH4zZAhVhC7Gs+cA
-	KCCNoSOO5RdbCOXfLBL+Pl9Y4WhceaA7EKHaUhhUBqw6JhjkWx63LYIzaVYMPDTT
-	yprQPbvUM2br2ow5r/hGcfZBghTWOaTPL7s2yCDVZYcX2r+L9VWmjH5DDLgrxIxr
-	TZlvcGYeLJdo9aqwUsBB4PTKcDn5/xgs75/6tvS3mxkg+EW/MTnxpC5oxZj8Pjip
-	Jo9JQ==
-X-ME-Sender: <xms:67H-Z1VT8ZmZiI9wrc0m5J0s3nQiAURotj2Sh3Aw9Xu0k05QzEy6Fw>
-    <xme:67H-Z1n18Cx0tWkT7sEYwzqLHEGcRZt6YzrWMYRvw9i1kAp2H5FCUKAAFuTDiXXGj
-    zfxQjwzcZTK07DPGRc>
-X-ME-Received: <xmr:67H-ZxbFcvKNG70zWxreToJ_V1coybWfhOXSN0QZrMOqHxGjJn7dvRv4omXy4dEgYF0atM4oTV_ACcjMH6946hpLjdbzVDZU8RcsDUl53tIZRQF3bQ>
+	:x-me-sender:x-sasl-enc; s=fm2; t=1744744939; x=1744831339; bh=P
+	xfdmu6a1Rq5FX2/mG+2d7QtU5Ii4ZEqu82w8ijjsho=; b=da7z92YMAB4v5nGNg
+	QCkQ+60fFNb50VU7EaQYKDPYsJStMVUoM1l7dVfwEPqXF8vPfUoaR+7o4qfJHMI4
+	wOH70OZ5vkdFO+pylIsXomjY9soye+mpeUhXphYJGiDv81aix6nxM+Vmt9TgFXKq
+	St9WZ4JfDPWrBYDoEKSYILoUvWccvyGiWVQ2LaOCmRuQOUyDROKA4/NqVV9eFbnm
+	38rIukXhv8kqr20bbzkAcunvBZsOmg/F4AatMuGIb0jYBtoG1HYwwMwiofUF54e6
+	itAIDWlwFg6/RkQQ+be79Bx6A4B3SSv+3puPHIgeUuViTlmwYrMfJL7e7qwkarSh
+	wJ8kw==
+X-ME-Sender: <xms:67H-Z7AVyXhPgA6mvfg0laZpwi2wGLBAKgps8k93OHEFNe-xecMPCw>
+    <xme:67H-Zxh4UP2sPE6CqJ1RzsDu5F9Tdbq-3KanlJ7RsTV-VkqKZnnF6zov_ShplFQsa
+    9Oy1Zcz0PWU25ijaAE>
+X-ME-Received: <xmr:67H-Z2kKqaRTZQmNbb2STU_G5kazxnk7RuzY_sV2BjUHWmqVzDUeS79ha-wh06mvssN-ZFOEZdfZK_9QnlUsEU_-p5E_c-HpknZ9uCf1UhLsrWIJqA>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvdegfedvucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
     pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
@@ -78,16 +78,16 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvdegfedvucetufdote
     hgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdho
     rhhgpdhrtghpthhtoheplhhinhhugidqshgvrhhirghlsehvghgvrhdrkhgvrhhnvghlrd
     horhhg
-X-ME-Proxy: <xmx:67H-Z4UaG2Hss25npzAFfwfidEdkGlMA22yaegLWxI8vHUsF9VK_ig>
-    <xmx:67H-Z_mMPbceuwvDqE2uxsAyrrRhUnpxwnnhA4tGtq-HGBD_matAdg>
-    <xmx:67H-Z1dYT7bwIvqtvKRmysUTOKlfSbqnigupF15KpiHCfSnPpV1RWg>
-    <xmx:67H-Z5FY-D3nY7EjrLFZLV_dD7zp0Jwe3pYXPRn0j0usBtTwCa2ahQ>
-    <xmx:67H-ZyH20worOBLGeWgsDk_EuG5QC_A-AJis2s_7ceOwWc2qoZU_6Alu>
+X-ME-Proxy: <xmx:67H-Z9wwA-e2I3JC4CugS8zVL5RrPSTiBOvCzeCN8j8WNkLQl6xW9w>
+    <xmx:67H-ZwQ6VUmyga5zmCK0GerJBwXPwXmhq2_Lcp7CTk0f_8fE2HH1sA>
+    <xmx:67H-Zwbo_z_Hs_KcNMOhpZOdCgIgOK9YOSOZc9ZH8_4KHK138Ipzgw>
+    <xmx:67H-ZxTAkLbZzn-6fbHYvywx7vQazKee_leAIK6rDrR8Kou5pkGTQQ>
+    <xmx:67H-Z1BQCT1SH1CpgEOUtM4duKF0ZNf9xwsHHHAYGd4AxdsQxHjmiUou>
 Feedback-ID: i58514971:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
  15 Apr 2025 15:22:19 -0400 (EDT)
 Received: from xanadu.lan (OpenWrt.lan [192.168.1.1])
-	by yoda.fluxnic.net (Postfix) with ESMTPSA id 0F7801116613;
+	by yoda.fluxnic.net (Postfix) with ESMTPSA id 1E1361116617;
 	Tue, 15 Apr 2025 15:22:19 -0400 (EDT)
 From: Nicolas Pitre <nico@fluxnic.net>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -95,9 +95,9 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 Cc: Nicolas Pitre <npitre@baylibre.com>,
 	linux-serial@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 10/13] vt: pad double-width code points with a zero-width space
-Date: Tue, 15 Apr 2025 15:17:59 -0400
-Message-ID: <20250415192212.33949-11-nico@fluxnic.net>
+Subject: [PATCH v2 11/13] vt: remove zero-width-space handling from conv_uni_to_pc()
+Date: Tue, 15 Apr 2025 15:18:00 -0400
+Message-ID: <20250415192212.33949-12-nico@fluxnic.net>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250415192212.33949-1-nico@fluxnic.net>
 References: <20250415192212.33949-1-nico@fluxnic.net>
@@ -111,55 +111,40 @@ Content-Transfer-Encoding: 8bit
 
 From: Nicolas Pitre <npitre@baylibre.com>
 
-In the Unicode screen buffer, we follow double-width code points with a
-space to maintain proper column alignment. This, however, creates
-semantic problems when e.g. using cut and paste.
-
-Let's use a better code point for the column padding's purpose i.e. a
-zero-width space rather than a full space. This way the combination
-remains with a width of 2.
+This is now taken care of by ucs_is_zero_width().
 
 Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
 ---
- drivers/tty/vt/vt.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/tty/vt/consolemap.c | 2 --
+ drivers/tty/vt/vt.c         | 2 +-
+ 2 files changed, 1 insertion(+), 3 deletions(-)
 
+diff --git a/drivers/tty/vt/consolemap.c b/drivers/tty/vt/consolemap.c
+index 82d70083fe..bb4bb272eb 100644
+--- a/drivers/tty/vt/consolemap.c
++++ b/drivers/tty/vt/consolemap.c
+@@ -870,8 +870,6 @@ int conv_uni_to_pc(struct vc_data *conp, long ucs)
+ 		return -4;		/* Not found */
+ 	else if (ucs < 0x20)
+ 		return -1;		/* Not a printable character */
+-	else if (ucs == 0xfeff || (ucs >= 0x200b && ucs <= 0x200f))
+-		return -2;			/* Zero-width space */
+ 	/*
+ 	 * UNI_DIRECT_BASE indicates the start of the region in the User Zone
+ 	 * which always has a 1:1 mapping to the currently loaded font.  The
 diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
-index 76554c2040..1bd1878094 100644
+index 1bd1878094..24c6cd2eed 100644
 --- a/drivers/tty/vt/vt.c
 +++ b/drivers/tty/vt/vt.c
-@@ -2923,6 +2923,7 @@ static void vc_con_rewind(struct vc_data *vc)
- 	vc->vc_need_wrap = 0;
- }
+@@ -2995,7 +2995,7 @@ static int vc_con_write_normal(struct vc_data *vc, int tc, int c,
+ 	/* Now try to find out how to display it */
+ 	tc = conv_uni_to_pc(vc, tc);
+ 	if (tc & ~charmask) {
+-		if (tc == -1 || tc == -2)
++		if (tc == -1)
+ 			return -1; /* nothing to display */
  
-+#define UCS_ZWS		0x200b	/* Zero Width Space */
- #define UCS_VS16	0xfe0f	/* Variation Selector 16 */
- 
- static int vc_process_ucs(struct vc_data *vc, int *c, int *tc)
-@@ -2941,8 +2942,8 @@ static int vc_process_ucs(struct vc_data *vc, int *c, int *tc)
- 		/*
- 		 * Let's merge this zero-width code point with the preceding
- 		 * double-width code point by replacing the existing
--		 * whitespace padding. To do so we rewind one column and
--		 * pretend this has a width of 1.
-+		 * zero-width space padding. To do so we rewind one column
-+		 * and pretend this has a width of 1.
- 		 * We give the legacy display the same initial space padding.
- 		 */
- 		vc_con_rewind(vc);
-@@ -3065,7 +3066,11 @@ static int vc_con_write_normal(struct vc_data *vc, int tc, int c,
- 		tc = conv_uni_to_pc(vc, ' ');
- 		if (tc < 0)
- 			tc = ' ';
--		next_c = ' ';
-+		/*
-+		 * Store a zero-width space in the Unicode screen given that
-+		 * the previous code point is semantically double width.
-+		 */
-+		next_c = UCS_ZWS;
- 	}
- 
- out:
+ 		/* Glyph not found */
 -- 
 2.49.0
 
