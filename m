@@ -1,188 +1,180 @@
-Return-Path: <linux-kernel+bounces-605817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79113A8A690
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 20:14:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5302A8A6AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 20:22:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CE3316FD8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 18:14:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A953B19015DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 18:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01F59224896;
-	Tue, 15 Apr 2025 18:14:51 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA9C22CBC6;
+	Tue, 15 Apr 2025 18:22:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I/Ftay8O"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782B8220694
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 18:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4F9224B15;
+	Tue, 15 Apr 2025 18:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744740890; cv=none; b=RfzzwH7ZLfbEoxShl1jZw8fW7N2FzCUpCAzr2UwmUILxNi/HiZHpuOMxhD583To4e+SvmV+Es5PsCAUys6LKufWMwaQHarMP66Uk6FZ41qyZpA2F2cBSicFd2VB89tWE65X5+FRPdGoBxIEkZdR2fX0yKFHd3CLrN5LU5CusZa0=
+	t=1744741353; cv=none; b=rSCTtUuSqmtuOqHFexp6IoSHsbRGwH7zFZQ8Yo+1ccUUKfDBpIBVVFUaANhGRxMzoXKu4gGiWRz6UPdxv/IMZpgNTyibpdRNxWvb1I6+azekkEokS4RVtPnUJEtiAjvTlAzaXpYF/L7DHVzp60DiR4JTS0kQFpSG49+qDLSAuCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744740890; c=relaxed/simple;
-	bh=suRdQ8oXsaVY2by3Z5KklOy/pBkYGfnc2NUcm12XVkg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ou+b5gHmpsNoF+Dw1bMgcEY/uDVvmqcQUUBg+p2rX3h/Z2dFE5n3wXdAbSuc3KDUgmAESnJJhHePjQiydXsgmihjFEEMc18xy1JmbvUMLz6CNQ0JvdE+ZKdLZrDA5/+pYKwObfd7J7SwU+5mbjuF1fzMMbe5bjg1GPrpaFV48Ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1u4knh-0005IM-7K; Tue, 15 Apr 2025 20:14:25 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1u4knf-000Sd0-2o;
-	Tue, 15 Apr 2025 20:14:23 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1u4knf-002Fnx-2L;
-	Tue, 15 Apr 2025 20:14:23 +0200
-Date: Tue, 15 Apr 2025 20:14:23 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: POPESCU Catalin <catalin.popescu@leica-geosystems.com>,
-	Jai Luthra <jai.luthra@ideasonboard.com>,
-	Shawn Guo <shawnguo2@yeah.net>, "robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>,
-	"festevam@gmail.com" <festevam@gmail.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	GEO-CHHER-bsp-development <bsp-development.geo@leica-geosystems.com>,
-	"stefan.klug@ideasonboard.com" <stefan.klug@ideasonboard.com>
-Subject: Re: [PATCH] arm64: dts: imx8mp: add cpuidle state "cpu-pd-wait"
-Message-ID: <20250415181423.qderfey4wpmp2bjm@pengutronix.de>
-References: <20241007134424.859467-1-catalin.popescu@leica-geosystems.com>
- <ZxYiCv6SpLq9uh08@dragon>
- <qqi2z7wutuy7e6o5fhpzsgfwkyn4quqmdeftl24meld72sudpg@lo3qpk4x7lbv>
- <d6852cf6-e8a0-49b8-a565-2d94eeef67d9@leica-geosystems.com>
- <20250415154724.GG9439@pendragon.ideasonboard.com>
- <20250415155239.GH9439@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1744741353; c=relaxed/simple;
+	bh=ACsz5+px0bR6kQmYG2+nzuzYCELnwAOWmMaj7t8P0E0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lR6QF9xRJ1TToHTjNnU6qq4CQTcHMyvTErNxXQaVmSRed8xw54eY8AJl4vjmdV6fSwe7barXeb1n3MkTJ16b5WISJj2I6qGd8seQhzmk+DJjIoethK2GAEz8kDi1VereuiRp3+WOn2H1aV5zaaE7+RjHcnGnYfO77id4k9cUUvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I/Ftay8O; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744741349; x=1776277349;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ACsz5+px0bR6kQmYG2+nzuzYCELnwAOWmMaj7t8P0E0=;
+  b=I/Ftay8OOtQwjqnzYfC3gEdI74mKQOUKa5HgyCfovxGQVsRblIAkK2iE
+   7hOTANX1B7dlhyLHIk92xMnxFbbGU3SsKtSeMiYFhgQTpvOndbZKL4BKy
+   SMUJ2V9B2oVib9R3ekfjwwujRqHltnzvjoWAldhPae7yiM9hHyoQ1bxYg
+   rAbJos1hXOsHgsQLWnvN7Hh1Zr11heh401YLqE2dmUeUU3w50kSpU0JmA
+   XIUQJcTlp4hcTcA+jC2DVrEslS59tbLIVK6ei1KgP78SEYA+S9nlqc/xZ
+   0u/xN/L4ByizafEtgk6EIuBiG7z4QDXU6qoj8yICIWmOjRepIO7Iqtpr6
+   g==;
+X-CSE-ConnectionGUID: hWSyUXedTsit/yY6e4hLsg==
+X-CSE-MsgGUID: fZ/c78scTOWQzpn8/rJGmg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="45981182"
+X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
+   d="scan'208";a="45981182"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 11:22:29 -0700
+X-CSE-ConnectionGUID: +z+arMk5Sjei11MzrSuWfQ==
+X-CSE-MsgGUID: MD5N2tu/Q7SjEDDr4ACyUg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
+   d="scan'208";a="130512705"
+Received: from amlin-018-114.igk.intel.com ([10.102.18.114])
+  by fmviesa008.fm.intel.com with ESMTP; 15 Apr 2025 11:21:25 -0700
+From: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+To: donald.hunter@gmail.com,
+	kuba@kernel.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	vadim.fedorenko@linux.dev,
+	jiri@resnulli.us,
+	anthony.l.nguyen@intel.com,
+	przemyslaw.kitszel@intel.com,
+	andrew+netdev@lunn.ch,
+	saeedm@nvidia.com,
+	leon@kernel.org,
+	tariqt@nvidia.com,
+	jonathan.lemon@gmail.com,
+	richardcochran@gmail.com,
+	aleksandr.loktionov@intel.com,
+	milena.olech@intel.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	intel-wired-lan@lists.osuosl.org,
+	linux-rdma@vger.kernel.org,
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+Subject: [PATCH net-next v2 0/4] dpll: add all inputs phase offset monitor
+Date: Tue, 15 Apr 2025 20:15:39 +0200
+Message-Id: <20250415181543.1072342-1-arkadiusz.kubalewski@intel.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250415155239.GH9439@pendragon.ideasonboard.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
-Hi Laurent,
+Add simple dpll device level feature and capabilties infrastructure over
+netlink dpll interface.
+Using new infrastructure add new feature: ALL_INPUTS_PHASE_OFFSET_MONITOR.
+Allow users control with two new attributes:
+- DPLL_A_CAPABILITIES - for checking if dpll device is capable,
+- DPLL_A_FEATURES - for enable/disable a features.
+Implement feature in ice driver for dpll-enabled devices.
 
-On 25-04-15, Laurent Pinchart wrote:
-> On Tue, Apr 15, 2025 at 06:47:26PM +0300, Laurent Pinchart wrote:
-> > Hi Catalin,
-> > 
-> > On Tue, Apr 15, 2025 at 03:42:22PM +0000, POPESCU Catalin wrote:
-> > > Hi Jai,
-> > > 
-> > > This issue was already reported by Stefan. The problem is that I don't 
-> > > have a Debix board to investigate.
-> > > The main difference b/w WFI and cpu-pd-wait is that the first doesn't 
-> > > call PSCI/TF-A. So, the issue looks to be related to some settings in 
-> > > the TF-A.
-> > 
-> > Jai, are you using mainline U-Boot and TF-A, or a downstream version of
-> > either (or both) ?
-> 
-> Actually, same question for Calatin :-)
-> 
-> I'm running mainline U-Boot 2025.01 and TF-A rel_imx_5.4.70_2.3.6 (from
-> https://github.com/nxp-imx/imx-atf) and don't seem to experience the
-> issue:
+Verify capability:
+$ ./tools/net/ynl/pyynl/cli.py \
+ --spec Documentation/netlink/specs/dpll.yaml \
+ --dump device-get
+[{'capabilities': set(),
+  'clock-id': 4658613174691613800,
+  'features': set(),
+  'id': 0,
+  'lock-status': 'locked-ho-acq',
+  'mode': 'automatic',
+  'mode-supported': ['automatic'],
+  'module-name': 'ice',
+  'type': 'eec'},
+ {'capabilities': {'all-inputs-phase-offset-monitor'},
+  'clock-id': 4658613174691613800,
+  'features': set(),
+  'id': 1,
+  'lock-status': 'locked-ho-acq',
+  'mode': 'automatic',
+  'mode-supported': ['automatic'],
+  'module-name': 'ice',
+  'type': 'pps'}]
 
-Interessting, can you share your imx-atf build-config please?
+Enable the feature:
+$ ./tools/net/ynl/pyynl/cli.py \
+ --spec Documentation/netlink/specs/dpll.yaml \
+ --do device-set --json '{"id":1, \
+ "features":"all-inputs-phase-offset-monitor"}'
 
-I checked the code base and found a missing SLPCR_A53_FASTWUP_STOP_MODE
-during the imx_set_sys_lpm() which is called during
-.pwr_domain_suspend(). Can you check/trace if pwr_domain_suspend() was
-entered?
+Verify feature is enabled:
+$ ./tools/net/ynl/pyynl/cli.py \
+ --spec Documentation/netlink/specs/dpll.yaml \
+ --dump device-get
+[
+ [...]
+ {'capabilities': {'all-inputs-phase-offset-monitor'},
+  'clock-id': 4658613174691613800,
+  'features': {'all-inputs-phase-offset-monitor'},
+  'id': 1,
+ [...]
+]
 
-Regards,
-  Marco
+Disable the feature:
+$ ./tools/net/ynl/pyynl/cli.py \
+ --spec Documentation/netlink/specs/dpll.yaml \
+ --do device-set --json '{"id":1, \
+ "features":0}'
 
-> # cat /sys/devices/system/cpu/cpu*/cpuidle/state1/disable
-> 0
-> 0
-> 0
-> 0
-> 
-> $ ping debix
-> PING debix.farm.ideasonboard.com (192.168.2.230) 56(84) bytes of data.
-> 64 bytes from debix.farm.ideasonboard.com (192.168.2.230): icmp_seq=1 ttl=64 time=1.03 ms
-> 64 bytes from debix.farm.ideasonboard.com (192.168.2.230): icmp_seq=2 ttl=64 time=0.800 ms
-> 64 bytes from debix.farm.ideasonboard.com (192.168.2.230): icmp_seq=3 ttl=64 time=0.935 ms
-> 64 bytes from debix.farm.ideasonboard.com (192.168.2.230): icmp_seq=4 ttl=64 time=0.902 ms
-> 64 bytes from debix.farm.ideasonboard.com (192.168.2.230): icmp_seq=5 ttl=64 time=0.738 ms
-> 64 bytes from debix.farm.ideasonboard.com (192.168.2.230): icmp_seq=6 ttl=64 time=0.939 ms
-> 
-> > > What I don't get is why I don't see this issue neither on our IMX8MP 
-> > > specific design nor on the EVK, which uses the same PHY as the Debix board.
-> > >
-> > > On 14/04/2025 14:07, Jai Luthra wrote:
-> > > > On Oct 21, 2024 at 17:42:34 +0800, Shawn Guo wrote:
-> > > >> On Mon, Oct 07, 2024 at 03:44:24PM +0200, Catalin Popescu wrote:
-> > > >>> So far, only WFI is supported on i.MX8mp platform. Add support for
-> > > >>> deeper cpuidle state "cpu-pd-wait" that would allow for better power
-> > > >>> usage during runtime. This is a port from NXP downstream kernel.
-> > > >>>
-> > > > Since the introduction of this patch in mainline, I am facing sluggish
-> > > > network performance with my Debix Model-A board with i.MX8mp SoC.
-> > > >
-> > > > The network latency jumps to >1s after almost every other packet:
-> > > >
-> > > > PING debix (10.0.42.5) 56(84) bytes of data.
-> > > > 64 bytes from debix (10.0.42.5): icmp_seq=1 ttl=64 time=1008 ms
-> > > > 64 bytes from debix (10.0.42.5): icmp_seq=2 ttl=64 time=0.488 ms
-> > > > 64 bytes from debix (10.0.42.5): icmp_seq=3 ttl=64 time=1025 ms
-> > > > 64 bytes from debix (10.0.42.5): icmp_seq=4 ttl=64 time=0.810 ms
-> > > > 64 bytes from debix (10.0.42.5): icmp_seq=5 ttl=64 time=590 ms
-> > > > 64 bytes from debix (10.0.42.5): icmp_seq=6 ttl=64 time=0.351 ms
-> > > > ^C
-> > > > --- debix ping statistics ---
-> > > > 7 packets transmitted, 6 received, 14.2857% packet loss, time 6126ms
-> > > > rtt min/avg/max/mdev = 0.351/437.416/1024.755/459.370 ms, pipe 2
-> > > > darkapex at freya in ~
-> > > >
-> > > > If I revert the patch, or disable the deeper cpuidle state through
-> > > > sysfs, the issue goes away.
-> > > >
-> > > > # echo 1 > /sys/devices/system/cpu/cpu$i/cpuidle/state1/disable
-> > > >
-> > > > PING debix (10.0.42.5) 56(84) bytes of data.
-> > > > 64 bytes from debix (10.0.42.5): icmp_seq=1 ttl=64 time=0.482 ms
-> > > > 64 bytes from debix (10.0.42.5): icmp_seq=2 ttl=64 time=2.28 ms
-> > > > 64 bytes from debix (10.0.42.5): icmp_seq=3 ttl=64 time=2.26 ms
-> > > > 64 bytes from debix (10.0.42.5): icmp_seq=4 ttl=64 time=0.848 ms
-> > > > 64 bytes from debix (10.0.42.5): icmp_seq=5 ttl=64 time=0.406 ms
-> > > > ^C
-> > > > --- debix ping statistics ---
-> > > > 5 packets transmitted, 5 received, 0% packet loss, time 4051ms
-> > > > rtt min/avg/max/mdev = 0.406/1.255/2.280/0.842 ms
-> > > >
-> > > >>> Signed-off-by: Catalin Popescu <catalin.popescu@leica-geosystems.com>
-> > > >>
-> > > >> Applied, thanks!
-> 
-> -- 
-> Regards,
-> 
-> Laurent Pinchart
-> 
+
+Arkadiusz Kubalewski (4):
+  dpll: use struct dpll_device_info for dpll registration
+  dpll: add features and capabilities to dpll device spec
+  dpll: features_get/set callbacks
+  ice: add phase offset monitor for all PPS dpll inputs
+
+ Documentation/netlink/specs/dpll.yaml         |  25 +++
+ drivers/dpll/dpll_core.c                      |  34 +--
+ drivers/dpll/dpll_core.h                      |   2 +-
+ drivers/dpll/dpll_netlink.c                   |  86 +++++++-
+ drivers/dpll/dpll_nl.c                        |   5 +-
+ .../net/ethernet/intel/ice/ice_adminq_cmd.h   |  20 ++
+ drivers/net/ethernet/intel/ice/ice_common.c   |  26 +++
+ drivers/net/ethernet/intel/ice/ice_common.h   |   3 +
+ drivers/net/ethernet/intel/ice/ice_dpll.c     | 195 +++++++++++++++++-
+ drivers/net/ethernet/intel/ice/ice_dpll.h     |   7 +
+ drivers/net/ethernet/intel/ice/ice_main.c     |   4 +
+ .../net/ethernet/mellanox/mlx5/core/dpll.c    |  10 +-
+ drivers/ptp/ptp_ocp.c                         |   7 +-
+ include/linux/dpll.h                          |  16 +-
+ include/uapi/linux/dpll.h                     |  13 ++
+ 15 files changed, 417 insertions(+), 36 deletions(-)
+
+
+base-commit: bbfc077d457272bcea4f14b3a28247ade99b196d
+-- 
+2.38.1
+
 
