@@ -1,130 +1,106 @@
-Return-Path: <linux-kernel+bounces-604108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EE7AA890A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 02:31:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59457A890A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 02:31:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 246587AB083
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 00:30:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 886CC1897C85
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 00:31:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 943F5144304;
-	Tue, 15 Apr 2025 00:29:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E199C1581EE;
+	Tue, 15 Apr 2025 00:30:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N386l60s"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LMKbyZl7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20FB83CC7
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 00:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4650217A306;
+	Tue, 15 Apr 2025 00:30:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744676971; cv=none; b=JzwTM4x6iQAZrMNgwp4mzFAkKUHygR3w0/9gXFLMEpN/rflO9aGrgpJlVs0v7U4xk5FBjZxPGhN3UMK5uP8Z3zegXKtebq9XwrQeNIq5RdJOCpycaH4LqNMBa8KsKZMukfihWO/QY3mYo0EHi/dV5Zrp8CXG0lcCODmJsWaO0hI=
+	t=1744677004; cv=none; b=ZFZ12ac5p0qVkyUbH1kDuqpsh3X0d8JNGYP9olFtd70SoG8jdB5Men6Q3DLu/S6q8VSfMZy06kc/W9YyjkYuTdzRupHqvfdIuAUGv2wKMrg9dragt+d3jEZy+5M1OmZ64KESMEa+fMcqKl89kStRIXsuDz/xlDQo/siHp9aVXtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744676971; c=relaxed/simple;
-	bh=8EzOJB+pXPABf5NsMoXXvwMFlpkARh2+jj1gygApY8s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pl9kya5a79pPeydR2OiJpve/eaOoGg0EG0YOoyc0UM7NODCt9QHWY69Mz12dQHGNCoNoY4TUCKwOj/tDTy/IxefQKa8Ssg4jHGhx4qYcqeYlpLyBgeh9FDOxsOZYeUVPrlHEHcM3OkwP6z7OcDBDXITFEJjRbz1O7RR8dIsWQEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N386l60s; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744676969; x=1776212969;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8EzOJB+pXPABf5NsMoXXvwMFlpkARh2+jj1gygApY8s=;
-  b=N386l60siIZdxhy0344Jx0gQNESeXr8+3H9Yoo6qmL+2qZjY8nFZA14H
-   I0JT/HQ3fektYCRGsOBVrUAhz9KNAUT2+e5zVXH++tvyyWAC4aD90X3Bj
-   kUDk+ZK6nO3du73xDc7RSmZxXIBM91NLw5JcoKi4CNFYn3o6nDUu808cu
-   op7hbmyQEmgEJbKkPUxOf37Vnwlu9vVkkWWxrAklz5TBpHY2IOZhcv+wD
-   XY5GbRKFXl6Wn9Q2GpR2n7MXZPxtRk1YHxlD51BEUVWI/oSrCbVPfmsAy
-   183lif/OP3H4d+yn2xmlyuppZnN5TOf1bynDpd/O9ZEVvE+lggd8A8IPV
-   g==;
-X-CSE-ConnectionGUID: ciKcJLtGQki8cBYHbUOI+w==
-X-CSE-MsgGUID: E3+tPvVRTvORu5uyYTCHtQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11403"; a="46047086"
-X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="46047086"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 17:29:28 -0700
-X-CSE-ConnectionGUID: 5/a/u3FwTnurGGcR2qnqTg==
-X-CSE-MsgGUID: GFI7FPUbQLiCEXbQKB0pmg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="129921798"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 14 Apr 2025 17:29:24 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u4UAz-000Er8-1e;
-	Tue, 15 Apr 2025 00:29:21 +0000
-Date: Tue, 15 Apr 2025 08:29:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: Cedric Xing <cedric.xing@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-coco@lists.linux.dev,
-	Dionna Amalie Glaze <dionnaglaze@google.com>,
-	Guorui Yu <guorui.yu@linux.alibaba.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Dan Middleton <dan.middleton@linux.intel.com>,
-	Mikko Ylinen <mikko.ylinen@linux.intel.com>,
-	Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Cedric Xing <cedric.xing@intel.com>
-Subject: Re: [PATCH v4 5/5] virt: tdx-guest: Expose TDX MRs as sysfs
- attributes
-Message-ID: <202504151006.wDRcAJS7-lkp@intel.com>
-References: <20250414-tdx-rtmr-v4-5-7edfa8d98716@intel.com>
+	s=arc-20240116; t=1744677004; c=relaxed/simple;
+	bh=I813wV1g/WIA6BY+EHdHQRWe4RgiC2zmO2F7GmKy+nE=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=kaU9fK/5T2SuK8PgJNeZCV7Tp/fGqeLydlR/u8g1Ou2bVjHf5NpraMGIWHglOxSbCO55CA257GG1d4bUyRofG3nDbtqvyz1PVYJutgAQvi+hKdh/4mvPo5HxVfMwW6hbKoAUbGVv51QNfl1+rnvDzSCD7LIuZ4by+Z7hzGNEpWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LMKbyZl7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 941DEC4CEED;
+	Tue, 15 Apr 2025 00:30:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744677003;
+	bh=I813wV1g/WIA6BY+EHdHQRWe4RgiC2zmO2F7GmKy+nE=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=LMKbyZl7mEsiaIPEtIdqbWP4H1Ipny5a/CZFjuYKI7RI1ix3URXs43Bu0GZIvXiLW
+	 ZhI6WPM+sjPJQrWYke2oGagT3ChhzR5KaGiPVCLa8QxQsIx9lvb5I5LTywPAAjQY/l
+	 lZTLq2bB5Xhw1Ju+MPLs216vXWhIi+JgGjuR/5JlRsKTnNf6V1ppSshQY4tzuQOp3O
+	 CyOGIAMRSuG9pnw3Ktade0T1nR2t08CAPcajYvp515BxHHUQqXY58AxxLVee6XTqcU
+	 kNzOPiyADnnpCGYqPhBvmhMImfG9HEQvf4C1/rD72XOR+J4EWWR6iXTYVZ72Y6r2W7
+	 Qj69ckNJtBt/Q==
+Date: Mon, 14 Apr 2025 19:30:01 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250414-tdx-rtmr-v4-5-7edfa8d98716@intel.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ devicetree@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, linux-phy@lists.infradead.org, 
+ Conor Dooley <conor+dt@kernel.org>, linux-rockchip@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, Vinod Koul <vkoul@kernel.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+In-Reply-To: <20250414225311.1913480-1-robh@kernel.org>
+References: <20250414225311.1913480-1-robh@kernel.org>
+Message-Id: <174467700194.2177524.2394978588221841695.robh@kernel.org>
+Subject: Re: [PATCH] dt-bindings: phy: rockchip: Convert RK3399 PCIe PHY to
+ schema
 
-Hi Cedric,
 
-kernel test robot noticed the following build warnings:
+On Mon, 14 Apr 2025 17:53:09 -0500, Rob Herring (Arm) wrote:
+> Convert the Rockchip RK3399 PCIe PHY to DT schema format. Move the
+> example to the GRF binding as that has the complete block.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  .../bindings/phy/rockchip-pcie-phy.txt        | 36 -------------------
+>  .../devicetree/bindings/soc/rockchip/grf.yaml | 13 +++++--
+>  2 files changed, 11 insertions(+), 38 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/phy/rockchip-pcie-phy.txt
+> 
 
-[auto build test WARNING on 8ffd015db85fea3e15a77027fda6c02ced4d2444]
+My bot found errors running 'make dt_binding_check' on your patch:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Cedric-Xing/tsm-mr-Add-TVM-Measurement-Register-support/20250415-060059
-base:   8ffd015db85fea3e15a77027fda6c02ced4d2444
-patch link:    https://lore.kernel.org/r/20250414-tdx-rtmr-v4-5-7edfa8d98716%40intel.com
-patch subject: [PATCH v4 5/5] virt: tdx-guest: Expose TDX MRs as sysfs attributes
-reproduce: (https://download.01.org/0day-ci/archive/20250415/202504151006.wDRcAJS7-lkp@intel.com/reproduce)
+yamllint warnings/errors:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504151006.wDRcAJS7-lkp@intel.com/
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/rockchip/grf.example.dtb: syscon@ff770000 (rockchip,rk3399-grf): pcie-phy: False schema does not allow {'compatible': ['rockchip,rk3399-pcie-phy'], '#phy-cells': 1, 'clocks': [[4294967295, 138]], 'clock-names': ['refclk'], 'resets': [[4294967295, 135]], 'reset-names': ['phy']}
+	from schema $id: http://devicetree.org/schemas/soc/rockchip/grf.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/rockchip/grf.example.dtb: syscon@ff770000 (rockchip,rk3399-grf): pcie-phy: Unevaluated properties are not allowed ('#phy-cells', 'clock-names', 'clocks', 'compatible', 'reset-names', 'resets' were unexpected)
+	from schema $id: http://devicetree.org/schemas/soc/rockchip/grf.yaml#
+Documentation/devicetree/bindings/soc/rockchip/grf.example.dtb: /example-0/syscon@ff770000/pcie-phy: failed to match any schema with compatible: ['rockchip,rk3399-pcie-phy']
 
-All warnings (new ones prefixed by >>):
+doc reference errors (make refcheckdocs):
 
-   Warning: Documentation/translations/zh_TW/admin-guide/README.rst references a file that doesn't exist: Documentation/dev-tools/kgdb.rst
-   Warning: Documentation/translations/zh_TW/dev-tools/gdb-kernel-debugging.rst references a file that doesn't exist: Documentation/dev-tools/gdb-kernel-debugging.rst
-   Warning: Documentation/userspace-api/netlink/index.rst references a file that doesn't exist: Documentation/networking/netlink_spec/index.rst
-   Warning: Documentation/userspace-api/netlink/specs.rst references a file that doesn't exist: Documentation/networking/netlink_spec/index.rst
-   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/leds/backlight/ti,lp8864.yaml
->> Warning: MAINTAINERS references a file that doesn't exist: Documentation/ABI/testing/sysfs-devices-virtual-misc-tdx_guest-mr
-   Can't build as 1 mandatory dependency is missing at ./scripts/sphinx-pre-install line 984.
-   make[2]: *** [Documentation/Makefile:121: htmldocs] Error 255
-   make[1]: *** [Makefile:1804: htmldocs] Error 2
-   make: *** [Makefile:248: __sub-make] Error 2
-   make: Target 'htmldocs' not remade because of errors.
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250414225311.1913480-1-robh@kernel.org
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
