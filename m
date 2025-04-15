@@ -1,122 +1,251 @@
-Return-Path: <linux-kernel+bounces-604386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8B0AA893E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:25:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64217A893ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:27:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBAE27A3D14
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 06:24:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64A681897F30
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 06:27:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 566C02750EF;
-	Tue, 15 Apr 2025 06:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="alc5URBg";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OTzimcXr"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E15275870;
+	Tue, 15 Apr 2025 06:26:55 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416361C6FEC
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 06:25:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63646275848
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 06:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744698340; cv=none; b=qLXas+fbob+JmbxkR/+jl+Of877DNOOtJ0OmoRVNqwe3uwYfxh6DqU0B/r3V6XbQs61sdCSu6bN2uLOXI3JRAYqud/oJCFngMIS75BScqUgJHfvsgCcPzycSbwNxyceZy9OFlTjgc43lrOE/VfFSHXVQbQSczNVp5j1J5thuY70=
+	t=1744698414; cv=none; b=O+10AGe219sEmmPz4+ZjDHfFHQiUhAtdby54nkYBJbYsy0bdpd5//P7xnSCir2vsD930lHIDdsbc0x+N6Sumjb15zZKFzw2nrP5hzr61u7GKI1muDAHT5dTWMkmDOVtHEe6ruUrxFbCsBVnBgA/LKW6iP8SdxJgCsIrYO1e2VAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744698340; c=relaxed/simple;
-	bh=dh5FhgAhU8QzQEcMHBR2nna5AVFACjEqIBTgqHGYQBA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ca8lgVzZTBqCX0004nKDTncwc3S+KZp0M4xmdiNjNcS+ZKSwDQUkkxgxmjCWVj8t5nIR2/60SjwB0mrtAASm2XIkjz3aDJxnN3QZhrqujHUH2oSrSjsH80EJR4AY6NxTl2S6mEkzqdgCKbDqjmIlE5catWxJRtjKQ9i1Zav+7wQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=alc5URBg; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OTzimcXr; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 15 Apr 2025 08:25:36 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744698337;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VcPw+x42bijeD1N1uyjV3n6thrcv749kYyckCWzN074=;
-	b=alc5URBgJpTS+lZWdamyLP7p8bwwAs4nS58oUHQEXnWNvxkYwVL4gMrTevw/JPfoDm9kM5
-	wSuhguRfMWC7VK5GGbMsmem1J2BZGjCFGrynyipeMoOi9WdRzYGexZ2nXQnpubB9gyuPCd
-	ORsGUbCPkEo/stctuxIbGSwCIDqLnw2hTW81G2C6sZJ1aa+Mj5hoaGV6sxu5ooQO+hhKe1
-	Ww5IIdX9Z5Q47J59scq6tGdaZHGkIK48l4ZGSJ8cEvTBQG9ZU/1QyedHABOKgSKnU88AjC
-	ab+YxTE4+IBeww+YUy+K0sRbfwUq+ahniogemfeAev4RYb+/PRJjzbCmhBRCxw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744698337;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VcPw+x42bijeD1N1uyjV3n6thrcv749kYyckCWzN074=;
-	b=OTzimcXrUlUGf0nyGY1w0qCcxgJ09y4H0ft42ENVZoPVpPdKgtx4YD38uwcmrXzKJCkIFH
-	zzUPBtoXhnXktzBw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Prakash Sangappa <prakash.sangappa@oracle.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>
-Subject: Re: [PATCH 0/2] Scheduler time extension
-Message-ID: <20250415062536.7tvr17qv@linutronix.de>
-References: <20250215005414.224409-1-prakash.sangappa@oracle.com>
- <20250217120000.5ae1201a@gandalf.local.home>
- <821926D8-ABED-4B66-9E2D-39594DB82FA1@oracle.com>
- <20250322061422.2b24f021@batman.local.home>
- <1142C71C-32B8-4C34-BA3F-4D061BA25620@oracle.com>
- <20250414124149.2543d6c0@gandalf.local.home>
+	s=arc-20240116; t=1744698414; c=relaxed/simple;
+	bh=QMdsbBuSqaiEU8wZ9LGUMGkMAyPzQsIyTO6GaI59KUQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:CC:From:
+	 In-Reply-To:Content-Type; b=NBDQoC3uRdz0+IVGiAo/bceH+rB6lNC3pwQqSR3FeePBCaKWMqTE3I4+drn2bIadvDbXhcPzw5YX9UUiCUHtKQp8gfSZksUcN8cils3+CsMO+hmbkHYMGUBNdgJZgN8KoukS+n/N/qmhvDA5EsMQ4OPLp7u6Z1xGGYWzN0W9G5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4ZcDf70Brkz1R7dv;
+	Tue, 15 Apr 2025 14:24:47 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+	by mail.maildlp.com (Postfix) with ESMTPS id 263B91402A5;
+	Tue, 15 Apr 2025 14:26:43 +0800 (CST)
+Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 15 Apr 2025 14:26:41 +0800
+Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
+ (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 15 Apr
+ 2025 14:26:40 +0800
+Message-ID: <0e34d68f-c5fb-4fdb-90bf-2ce005c7cf66@huawei.com>
+Date: Tue, 15 Apr 2025 14:26:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250414124149.2543d6c0@gandalf.local.home>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] soc: hisilicon: kunpeng_hccs: Simplify PCC shared memory
+ region handling
+To: Sudeep Holla <sudeep.holla@arm.com>
+References: <20250411112539.1149863-1-sudeep.holla@arm.com>
+CC: <xuwei5@huawei.com>, <linux-kernel@vger.kernel.org>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <20250411112539.1149863-1-sudeep.holla@arm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemn100009.china.huawei.com (7.202.194.112)
 
-On 2025-04-14 12:41:49 [-0400], Steven Rostedt wrote:
-> On Fri, 11 Apr 2025 20:54:14 +0000
-> Prakash Sangappa <prakash.sangappa@oracle.com> wrote:
->=20
-> > > On Mar 22, 2025, at 3:14=E2=80=AFAM, Steven Rostedt <rostedt@goodmis.=
-org> wrote:
-> > >=20
-> > > On Tue, 18 Mar 2025 16:10:09 +0000
-> > > Prakash Sangappa <prakash.sangappa@oracle.com> wrote:
-> > >  =20
-> > >> How do we proceed on this feature?=20
-> > >> Are we leaning towards enabling this feature for SCHED_OTHER only un=
-der PREEMPT_LAZY? =20
-> > >=20
-> > > The merge window is about to open and I'm way behind in what needs to=
- go in.
-> > >=20
-> > > Let's continue this discussion after rc1 comes out. =20
-> >=20
-> > Can the API be finalized? We have an use case which will benefit from i=
-t. So like to see this feature
-> > merged.=20
->=20
-> I'm still not for SCHED_OTHER tasks being allowed to delay RT or deadline
-> tasks, even for 5us. But if that's what Peter wants, I'm not going to nack
-> it.
++Wei who is Hisilicon SoC maintainer.
 
-I tried to explain in
-	https://lore.kernel.org/all/20250206150152.-5Fauhtm@linutronix.de
-
-that I don't see how this delay could work for PREEMPT_RT.
-
-> Just keep it configurable so that it can be easily disabled, as I have no
-> intentions of using it.
-
-same here.
-
-> -- Steve
-
-Sebastian
+在 2025/4/11 19:25, Sudeep Holla 写道:
+> The PCC driver now handles mapping and unmapping of shared memory
+> areas as part of pcc_mbox_{request,free}_channel(). Without these before,
+> this Kunpeng HCCS driver did handling of those mappings like several
+> other PCC mailbox client drivers.
+>
+> There were redundant operations, leading to unnecessary code. Maintaining
+> the consistency across these driver was harder due to scattered handling
+> of shmem.
+>
+> Just use the mapped shmem and remove all redundant operations from this
+> driver.
+>
+> Cc: Huisong Li <lihuisong@huawei.com>
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Reviewed-by: Huisong Li <lihuisong@huawei.com>
+> ---
+>   drivers/soc/hisilicon/kunpeng_hccs.c | 42 ++++++++++------------------
+>   drivers/soc/hisilicon/kunpeng_hccs.h |  2 --
+>   2 files changed, 15 insertions(+), 29 deletions(-)
+>
+> Hi,
+>
+> This is just resend of the same patch that was part of a series [1].
+> Only core PCC mailbox changes were merged during v6.15 merge window.
+> So dropping all the maintainer acks and reposting it so that it can
+> be picked up for v6.16 via maintainers tree.
+>
+> Regards,
+> Sudeep
+>
+> [1] https://lore.kernel.org/all/20250313-pcc_fixes_updates-v3-9-019a4aa74d0f@arm.com/
+>
+> diff --git a/drivers/soc/hisilicon/kunpeng_hccs.c b/drivers/soc/hisilicon/kunpeng_hccs.c
+> index 444a8f59b7da..7fc353732d55 100644
+> --- a/drivers/soc/hisilicon/kunpeng_hccs.c
+> +++ b/drivers/soc/hisilicon/kunpeng_hccs.c
+> @@ -167,10 +167,6 @@ static void hccs_pcc_rx_callback(struct mbox_client *cl, void *mssg)
+>   
+>   static void hccs_unregister_pcc_channel(struct hccs_dev *hdev)
+>   {
+> -	struct hccs_mbox_client_info *cl_info = &hdev->cl_info;
+> -
+> -	if (cl_info->pcc_comm_addr)
+> -		iounmap(cl_info->pcc_comm_addr);
+>   	pcc_mbox_free_channel(hdev->cl_info.pcc_chan);
+>   }
+>   
+> @@ -179,6 +175,7 @@ static int hccs_register_pcc_channel(struct hccs_dev *hdev)
+>   	struct hccs_mbox_client_info *cl_info = &hdev->cl_info;
+>   	struct mbox_client *cl = &cl_info->client;
+>   	struct pcc_mbox_chan *pcc_chan;
+> +	struct mbox_chan *mbox_chan;
+>   	struct device *dev = hdev->dev;
+>   	int rc;
+>   
+> @@ -196,7 +193,7 @@ static int hccs_register_pcc_channel(struct hccs_dev *hdev)
+>   		goto out;
+>   	}
+>   	cl_info->pcc_chan = pcc_chan;
+> -	cl_info->mbox_chan = pcc_chan->mchan;
+> +	mbox_chan = pcc_chan->mchan;
+>   
+>   	/*
+>   	 * pcc_chan->latency is just a nominal value. In reality the remote
+> @@ -206,34 +203,24 @@ static int hccs_register_pcc_channel(struct hccs_dev *hdev)
+>   	cl_info->deadline_us =
+>   			HCCS_PCC_CMD_WAIT_RETRIES_NUM * pcc_chan->latency;
+>   	if (!hdev->verspec_data->has_txdone_irq &&
+> -	    cl_info->mbox_chan->mbox->txdone_irq) {
+> +	    mbox_chan->mbox->txdone_irq) {
+>   		dev_err(dev, "PCC IRQ in PCCT is enabled.\n");
+>   		rc = -EINVAL;
+>   		goto err_mbx_channel_free;
+>   	} else if (hdev->verspec_data->has_txdone_irq &&
+> -		   !cl_info->mbox_chan->mbox->txdone_irq) {
+> +		   !mbox_chan->mbox->txdone_irq) {
+>   		dev_err(dev, "PCC IRQ in PCCT isn't supported.\n");
+>   		rc = -EINVAL;
+>   		goto err_mbx_channel_free;
+>   	}
+>   
+> -	if (!pcc_chan->shmem_base_addr ||
+> -	    pcc_chan->shmem_size != HCCS_PCC_SHARE_MEM_BYTES) {
+> -		dev_err(dev, "The base address or size (%llu) of PCC communication region is invalid.\n",
+> -			pcc_chan->shmem_size);
+> +	if (pcc_chan->shmem_size != HCCS_PCC_SHARE_MEM_BYTES) {
+> +		dev_err(dev, "Base size (%llu) of PCC communication region must be %d bytes.\n",
+> +			pcc_chan->shmem_size, HCCS_PCC_SHARE_MEM_BYTES);
+>   		rc = -EINVAL;
+>   		goto err_mbx_channel_free;
+>   	}
+>   
+> -	cl_info->pcc_comm_addr = ioremap(pcc_chan->shmem_base_addr,
+> -					 pcc_chan->shmem_size);
+> -	if (!cl_info->pcc_comm_addr) {
+> -		dev_err(dev, "Failed to ioremap PCC communication region for channel-%u.\n",
+> -			hdev->chan_id);
+> -		rc = -ENOMEM;
+> -		goto err_mbx_channel_free;
+> -	}
+> -
+>   	return 0;
+>   
+>   err_mbx_channel_free:
+> @@ -246,7 +233,7 @@ static int hccs_wait_cmd_complete_by_poll(struct hccs_dev *hdev)
+>   {
+>   	struct hccs_mbox_client_info *cl_info = &hdev->cl_info;
+>   	struct acpi_pcct_shared_memory __iomem *comm_base =
+> -							cl_info->pcc_comm_addr;
+> +							cl_info->pcc_chan->shmem;
+>   	u16 status;
+>   	int ret;
+>   
+> @@ -289,7 +276,7 @@ static inline void hccs_fill_pcc_shared_mem_region(struct hccs_dev *hdev,
+>   		.status = 0,
+>   	};
+>   
+> -	memcpy_toio(hdev->cl_info.pcc_comm_addr, (void *)&tmp,
+> +	memcpy_toio(hdev->cl_info.pcc_chan->shmem, (void *)&tmp,
+>   		    sizeof(struct acpi_pcct_shared_memory));
+>   
+>   	/* Copy the message to the PCC comm space */
+> @@ -309,7 +296,7 @@ static inline void hccs_fill_ext_pcc_shared_mem_region(struct hccs_dev *hdev,
+>   		.command = cmd,
+>   	};
+>   
+> -	memcpy_toio(hdev->cl_info.pcc_comm_addr, (void *)&tmp,
+> +	memcpy_toio(hdev->cl_info.pcc_chan->shmem, (void *)&tmp,
+>   		    sizeof(struct acpi_pcct_ext_pcc_shared_memory));
+>   
+>   	/* Copy the message to the PCC comm space */
+> @@ -321,12 +308,13 @@ static int hccs_pcc_cmd_send(struct hccs_dev *hdev, u8 cmd,
+>   {
+>   	const struct hccs_verspecific_data *verspec_data = hdev->verspec_data;
+>   	struct hccs_mbox_client_info *cl_info = &hdev->cl_info;
+> +	struct mbox_chan *mbox_chan = cl_info->pcc_chan->mchan;
+>   	struct hccs_fw_inner_head *fw_inner_head;
+>   	void __iomem *comm_space;
+>   	u16 space_size;
+>   	int ret;
+>   
+> -	comm_space = cl_info->pcc_comm_addr + verspec_data->shared_mem_size;
+> +	comm_space = cl_info->pcc_chan->shmem + verspec_data->shared_mem_size;
+>   	space_size = HCCS_PCC_SHARE_MEM_BYTES - verspec_data->shared_mem_size;
+>   	verspec_data->fill_pcc_shared_mem(hdev, cmd, desc,
+>   					  comm_space, space_size);
+> @@ -334,7 +322,7 @@ static int hccs_pcc_cmd_send(struct hccs_dev *hdev, u8 cmd,
+>   		reinit_completion(&cl_info->done);
+>   
+>   	/* Ring doorbell */
+> -	ret = mbox_send_message(cl_info->mbox_chan, &cmd);
+> +	ret = mbox_send_message(mbox_chan, &cmd);
+>   	if (ret < 0) {
+>   		dev_err(hdev->dev, "Send PCC mbox message failed, ret = %d.\n",
+>   			ret);
+> @@ -356,9 +344,9 @@ static int hccs_pcc_cmd_send(struct hccs_dev *hdev, u8 cmd,
+>   
+>   end:
+>   	if (verspec_data->has_txdone_irq)
+> -		mbox_chan_txdone(cl_info->mbox_chan, ret);
+> +		mbox_chan_txdone(mbox_chan, ret);
+>   	else
+> -		mbox_client_txdone(cl_info->mbox_chan, ret);
+> +		mbox_client_txdone(mbox_chan, ret);
+>   	return ret;
+>   }
+>   
+> diff --git a/drivers/soc/hisilicon/kunpeng_hccs.h b/drivers/soc/hisilicon/kunpeng_hccs.h
+> index dc267136919b..f0a9a5618d97 100644
+> --- a/drivers/soc/hisilicon/kunpeng_hccs.h
+> +++ b/drivers/soc/hisilicon/kunpeng_hccs.h
+> @@ -60,10 +60,8 @@ struct hccs_chip_info {
+>   
+>   struct hccs_mbox_client_info {
+>   	struct mbox_client client;
+> -	struct mbox_chan *mbox_chan;
+>   	struct pcc_mbox_chan *pcc_chan;
+>   	u64 deadline_us;
+> -	void __iomem *pcc_comm_addr;
+>   	struct completion done;
+>   };
+>   
 
