@@ -1,101 +1,194 @@
-Return-Path: <linux-kernel+bounces-604536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0BBAA895AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:52:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11B2CA895B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:53:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 327CD18986E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:53:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18F323B8118
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940BA2798F8;
-	Tue, 15 Apr 2025 07:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m3CdO1Oe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE0E824C67A;
-	Tue, 15 Apr 2025 07:52:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E182027A924;
+	Tue, 15 Apr 2025 07:53:20 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95403274FE6
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 07:53:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744703567; cv=none; b=Z+FGqcEPPcxGWH1vlDHw9pxmAf5t7Nzp5WzXbSTgCyeL3h8khyiPAm7pS7N6/n7gTggEOUa/ASJkqCwogN5Eep7JjW4yevKkZ/uiiX5wkG3ubm94DBbTvgV7ovT1Pyzwu0kpw2mn2GnBrEcrPPR8AD3+wQwl0GLg9yH2F5P0OWk=
+	t=1744703600; cv=none; b=gHcap6hImilTrd+kmvllUtXEVexc8dJr9dAw1gs2wtioN0MTiVxboDO/hbVQkGkn61nMi/Sp6sMfle95lQqm0cpXQNwBaGqHnWDydSCBjeLbpBBuePncTZqttYko7A4z0fCeK36xLjiyKzjiQAeu5aK2NaKJ7e0j4k4+jkkr45w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744703567; c=relaxed/simple;
-	bh=F1+z5QDEOA6VH1pZErpvrrad7ZYMutqq0ODAhFb3cXk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aa/i3kFugSCLZdjerlkKxMDtQx8MNH5wHdBvcyrls2+YtlYj6mZ8UuU6Yv/rfrixiiR7gVIOlYO+Nuh6n0+vyCo/0gaYuM8viw7jKID0itr9IpFYw5hdGf7PLuam3MBOK49vum8I69PCoP8BU3bw/2zIO4KWQ1FuG3T9rQ9qcmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m3CdO1Oe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A908DC4CEE9;
-	Tue, 15 Apr 2025 07:52:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744703566;
-	bh=F1+z5QDEOA6VH1pZErpvrrad7ZYMutqq0ODAhFb3cXk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m3CdO1OeyDYKhuD0nV5JR+nrAaBbxY5V0WnfqLLyG67QCBrDa6eiINNnQ5Bxi8nOS
-	 rcr6IDNjM04R14U3rP356s6GiTY/kfd/DLzrulyw5ZjBkR3z4TG+EgUzMcmIdXm3gn
-	 PUPxUiXGm1d7+LUcGiiN1ulOodFp5vsJ4RpkzH2/aHhimDWfEartUnQzNTVy+LXYEy
-	 hK/aNCvMYJoBuKuGZvbJK5WrdAnpe/vGVB1JJUBLWObYoACC6w/EYbX0kqXSZ3MmjC
-	 fIrCJq08lQImjtiJSNrBzkyv21VgEKfbRB+MaUtDwivBsrWTlG3PVQm2gusnmtv5c+
-	 RkLk+vl0niWSQ==
-Date: Tue, 15 Apr 2025 09:52:41 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: David Sterba <dsterba@suse.cz>, 
-	Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>, 
-	now4yreal <now4yreal@foxmail.com>, Jan Kara <jack@suse.com>, Viro <viro@zeniv.linux.org.uk>, 
-	Bacik <josef@toxicpanda.com>, Stone <leocstone@gmail.com>, Sandeen <sandeen@redhat.com>, 
-	Johnson <jeff.johnson@oss.qualcomm.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [Bug Report] OOB-read BUG in HFS+ filesystem
-Message-ID: <20250415-wohin-anfragen-90b2df73295b@brauner>
-References: <tencent_B730B2241BE4152C9D6AA80789EEE1DEE30A@qq.com>
- <20250414-behielt-erholen-e0cd10a4f7af@brauner>
- <Z_0aBN-20w20-UiD@casper.infradead.org>
- <20250414162328.GD16750@twin.jikos.cz>
+	s=arc-20240116; t=1744703600; c=relaxed/simple;
+	bh=8i2hu7231wtzANo987HrMFI6xJZnDJIyM33YwlNFRek=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ups5jDX11Inbi1EmoTwDOsiBj0QMdCwBxm1KyofAg3oPxK2cCt1kSwB5RSKk0xIvtHXR0l1kJIEnpbknDwCs8jXndpa9/KKueXpp0qBkaypQldNqEh8vu7JRJFYl42jdQjWn3hUI4w9lJzp6ZONuXL1LJE5AbIW0+zq2VLkCCgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E7CED15A1;
+	Tue, 15 Apr 2025 00:53:14 -0700 (PDT)
+Received: from [10.57.86.225] (unknown [10.57.86.225])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6AA573F694;
+	Tue, 15 Apr 2025 00:53:15 -0700 (PDT)
+Message-ID: <7b26c6e4-5483-4ac3-a084-bb0769768006@arm.com>
+Date: Tue, 15 Apr 2025 08:53:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250414162328.GD16750@twin.jikos.cz>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64/mm: Re-organise setting up FEAT_S1PIE registers
+ PIRE0_EL1 and PIR_EL1
+Content-Language: en-GB
+To: Anshuman Khandual <anshuman.khandual@arm.com>,
+ Ard Biesheuvel <ardb@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org
+References: <20250410074024.1545768-1-anshuman.khandual@arm.com>
+ <6e6305fd-3b93-43ec-8114-e81b2926adfc@arm.com>
+ <CAMj1kXG5R1jVWLQ-XEcqF9U365T18pTW8u3DgC7OY4N53hchOA@mail.gmail.com>
+ <16602b97-2f49-4612-9e9a-d6d0ed964fd3@arm.com>
+ <CAMj1kXEnmpu3Dc5zZz1aQJGVwEFwx=JdYisSFkDNjUJ44FjX9Q@mail.gmail.com>
+ <5d975762-7678-419f-8e2f-40547c079276@arm.com>
+ <0eabad93-26ef-4452-bd89-17c153f483f3@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <0eabad93-26ef-4452-bd89-17c153f483f3@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Apr 14, 2025 at 06:23:28PM +0200, David Sterba wrote:
-> On Mon, Apr 14, 2025 at 03:21:56PM +0100, Matthew Wilcox wrote:
-> > On Mon, Apr 14, 2025 at 04:18:27PM +0200, Christian Brauner wrote:
-> > > On Mon, Apr 14, 2025 at 09:45:25PM +0800, now4yreal wrote:
-> > > > Dear Linux Security Maintainers,
-> > > > I would like to report a OOB-read vulnerability in the HFS+ file
-> > > > system, which I discovered using our in-house developed kernel fuzzer,
-> > > > Symsyz.
-> > > 
-> > > Bug reports from non-official syzbot instances are generally not
-> > > accepted.
-> > > 
-> > > hfs and hfsplus are orphaned filesystems since at least 2014. Bug
-> > > reports for such filesystems won't receive much attention from the core
-> > > maintainers.
-> > > 
-> > > I'm very very close to putting them on the chopping block as they're
-> > > slowly turning into pointless burdens.
-> > 
-> > I've tried asking some people who are long term Apple & Linux people,
-> > but haven't been able to find anyone interested in becoming maintainer.
-> > Let's drop both hfs & hfsplus.  Ten years of being unmaintained is
-> > long enough.
+On 15/04/2025 07:27, Anshuman Khandual wrote:
 > 
-> Agreed. If needed there are FUSE implementations to access .dmg files
-> with HFS/HFS+ or other standalone tools.
 > 
-> https://github.com/0x09/hfsfuse
-> https://github.com/darlinghq/darling-dmg
+> On 4/14/25 18:01, Ryan Roberts wrote:
+>> On 14/04/2025 13:28, Ard Biesheuvel wrote:
+>>> On Mon, 14 Apr 2025 at 14:04, Ryan Roberts <ryan.roberts@arm.com> wrote:
+>>>>
+>>>> On 14/04/2025 10:41, Ard Biesheuvel wrote:
+>>>>> On Mon, 14 Apr 2025 at 09:52, Ryan Roberts <ryan.roberts@arm.com> wrote:
+>>>>>>
+>>>>>> On 10/04/2025 08:40, Anshuman Khandual wrote:
+>>>>>>> mov_q cannot really move PIE_E[0|1] macros into a general purpose register
+>>>>>>> as expected if those macro constants contain some 128 bit layout elements,
+>>>>>>> required for D128 page tables. Fix this problem via first loading up these
+>>>>>>> macro constants into a given memory location and then subsequently setting
+>>>>>>> up registers PIRE0_EL1 and PIR_EL1 by retrieving the memory stored values.
+>>>>>>
+>>>>>> From memory, the primary issue is that for D128, PIE_E[0|1] are defined in terms
+>>>>>> of 128-bit types with shifting and masking, which the assembler can't do? It
+>>>>>> would be good to spell this out.
+>>>>>>
+>>>>>>>
+>>>>>>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>>>>>>> Cc: Will Deacon <will@kernel.org>
+>>>>>>> Cc: Mark Rutland <mark.rutland@arm.com>
+>>>>>>> Cc: Ard Biesheuvel <ardb@kernel.org>
+>>>>>>> Cc: Ryan Roberts <ryan.roberts@arm.com>
+>>>>>>> Cc: linux-arm-kernel@lists.infradead.org
+>>>>>>> Cc: linux-kernel@vger.kernel.org
+>>>>>>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>>>>>>> ---
+>>>>>>> This patch applies on v6.15-rc1
+>>>>>>>
+>>>>>>>  arch/arm64/kernel/head.S         | 3 +++
+>>>>>>>  arch/arm64/kernel/pi/map_range.c | 6 ++++++
+>>>>>>>  arch/arm64/kernel/pi/pi.h        | 1 +
+>>>>>>>  arch/arm64/mm/mmu.c              | 1 +
+>>>>>>>  arch/arm64/mm/proc.S             | 5 +++--
+>>>>>>>  5 files changed, 14 insertions(+), 2 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
+>>>>>>> index 2ce73525de2c..4950d9cc638a 100644
+>>>>>>> --- a/arch/arm64/kernel/head.S
+>>>>>>> +++ b/arch/arm64/kernel/head.S
+>>>>>>> @@ -126,6 +126,9 @@ SYM_CODE_START(primary_entry)
+>>>>>>>        * On return, the CPU will be ready for the MMU to be turned on and
+>>>>>>>        * the TCR will have been set.
+>>>>>>>        */
+>>>>>>> +     adr_l   x0, pir_data
+>>>>>>> +     bl      __pi_load_pir_data
+>>>>>>
+>>>>>> Using C code to pre-calculate the values into global variables that the assembly
+>>>>>> code then loads and stuffs into the PIR registers feels hacky. I wonder if we
+>>>>>> can instead pre-calculate into asm-offsets.h? e.g. add the following to
+>>>>>> asm-offsets.c:
+>>>>>>
+>>>>>> DEFINE(PIE_E0_ASM, PIE_E0);
+>>>>>> DEFINE(PIE_E1_ASM, PIE_E1);
+>>>>>>
+>>>>>> Which will generate the asm-offsets.h header with PIE_E[0|1]_ASM with the
+>>>>>> pre-calculated values that you can then use in proc.S?
+>>>>>>
+>>>>>
+>>>>> There is another issue, which is that mov_q tries to be smart, and
+>>>>> emit fewer than 4 MOVZ/MOVK instructions if possible. So the .if
+>>>>> directive evaluates the argument, which does not work with symbolic
+>>>>> constants.
+>>>>
+>>>> I'm not quite understanding the detail here; what do you mean by "symbolic
+>>>> constants"? asm-offsets.h will provide something like:
+>>>>
+>>>> #define PIE_E0_ASM 1234567890
+>>>>
+>>>> The current code is using a hash-define and that's working fine:
+>>>>
+>>>> mov_q   x0, PIE_E0
+>>>>
+>>>>
+>>>> Won't the C preprocessor just substitute and everything will work out?
+>>>>
+>>>
+>>> Yeah, you're right. I was experimenting with something like
+>>>
+>>> .set .Lpie_e0, PIE_E0_ASM
+>>> mov_q xN, .Lpie_e0
+>>>
+>>> where this problem does exist, but we can just use PIE_E0_ASM directly
+>>> and things should work as expected.
+>>
+>> Ahh great, sounds like this should be pretty simple then!
+> 
+> Following change works both on current and with D128 page tables.
+> 
+> --- a/arch/arm64/kernel/asm-offsets.c
+> +++ b/arch/arm64/kernel/asm-offsets.c
+> @@ -182,5 +182,7 @@ int main(void)
+>  #ifdef CONFIG_DYNAMIC_FTRACE_WITH_DIRECT_CALLS
+>    DEFINE(FTRACE_OPS_DIRECT_CALL,       offsetof(struct ftrace_ops, direct_call));
+>  #endif
+> +  DEFINE(PIE_E0_ASM, PIE_E0);
+> +  DEFINE(PIE_E1_ASM, PIE_E1);
+>    return 0;
+>  }
+> diff --git a/arch/arm64/mm/proc.S b/arch/arm64/mm/proc.S
+> index 737c99d79833..f45494425d09 100644
+> --- a/arch/arm64/mm/proc.S
+> +++ b/arch/arm64/mm/proc.S
+> @@ -536,9 +536,9 @@ alternative_else_nop_endif
+>  #define PTE_MAYBE_NG           0
+>  #define PTE_MAYBE_SHARED       0
 
-Ok, I'm open to trying. I'm adding a deprecation message when initating
-a new hfs{plus} context logged to dmesg and then we can try and remove
-it by the end of the year.
+I think at minimum, you can remove this PTE_MAYBE_* hack from proc.S. But as Ard
+says, you may need to add it to asm-offsets.c? I'm surprised asm-offsets.c even
+compiles without this hack since surely it doesn't have arm64_use_ng_mappings or
+is_realm_world() available?
+
+Thanks,
+Ryan
+
+>  
+> -       mov_q   x0, PIE_E0
+> +       mov_q   x0, PIE_E0_ASM
+>         msr     REG_PIRE0_EL1, x0
+> -       mov_q   x0, PIE_E1
+> +       mov_q   x0, PIE_E1_ASM
+>         msr     REG_PIR_EL1, x0
+>  
+>  #undef PTE_MAYBE_NG
+> 
+
 
