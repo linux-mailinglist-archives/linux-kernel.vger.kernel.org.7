@@ -1,101 +1,67 @@
-Return-Path: <linux-kernel+bounces-604558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08462A895EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:02:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1445A895F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:03:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4738A18988B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:02:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C42473AE06C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B530C27C879;
-	Tue, 15 Apr 2025 08:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C47027A124;
+	Tue, 15 Apr 2025 08:03:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yRpZxSbI";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="x2WZbhdR";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yRpZxSbI";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="x2WZbhdR"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Oy3/b4yO"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7015A27A124
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 08:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6332F24395C
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 08:02:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744704136; cv=none; b=g5YduppdvPvhJj3knaooF8TPgprcWHRfoVshvRp+jl1anXWC0Awec1VB2x2uBbb/pdJqk2E2MFXBqv0wKOs9NXE8GgG7SoXZo/FEjncDi7Zimd1dKHKNMfRahvac16XMALe8kHG2hI8KxpZcZqyxwWYikLcbKlBSt0lmArG9o8I=
+	t=1744704179; cv=none; b=CUcZR+iXJFSXH0DEroIjlyOIFyIw2CF55VhuOnZ5aZr4Z3w7vtGoAiz2zhlgFAi5jOmCGLWMjsvaZQ1oCNwc9GoAKHaWUpxelTnuLkfKSvY99a+mogVRepJgZpw/PkodJ2TOGPeHbVNf6WSiIm0g2qBoZIj8Mraoz3DFBDFb+QM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744704136; c=relaxed/simple;
-	bh=ptIX0DTgA3RYibD3bO08qm0+082Je4Ii265f7nbrMoY=;
+	s=arc-20240116; t=1744704179; c=relaxed/simple;
+	bh=bB9v90uUXLJMSGTtBA+KWYPBjUb8sJFHAsNnD4zAvYA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T7Gjt4VFKVsZWcrKJLNgQe/eyBVJ6Rn1gpP9zJbI9uNG7dpxaGqCxkfDrb961mPdOIPuAUD3L9awU21vdXYknUvplBFNiYJQRFRRdnOa0xgu54eoitSYI5UssFWaeOf/oh4/NgUMoc9qnJRT8As0b1KCyj5ChA7UZPid/QYBh5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yRpZxSbI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=x2WZbhdR; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yRpZxSbI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=x2WZbhdR; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 6DD4E21171;
-	Tue, 15 Apr 2025 08:02:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744704127; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NdzThH7M/YnTsAvim5QLRl99y0NkF3bxcEaXgdfj7lY=;
-	b=yRpZxSbI9BCiUPMoJ4MY0ghR4cyb1mNQVo4xHMXdoXw4VNMGiSkrCZF4pSu4r0pb+FL1Zg
-	KZdWbth0wWjgD1DRTovusBIQWPQgQQbZaQWXaKoqjSGI4cDVS8/CEqy2kPGS7obQ83PXD4
-	3RxXx8r/FV6WZpMhtO6xttCz89r1RxY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744704127;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NdzThH7M/YnTsAvim5QLRl99y0NkF3bxcEaXgdfj7lY=;
-	b=x2WZbhdRrXXWvwliaKjo0j6dA2phX0bR0HLci0oGB7a6rk5RQ1Bmua7TPWzrqHsqupyIoV
-	JgZ3vJ4n0mvkppCA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744704127; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NdzThH7M/YnTsAvim5QLRl99y0NkF3bxcEaXgdfj7lY=;
-	b=yRpZxSbI9BCiUPMoJ4MY0ghR4cyb1mNQVo4xHMXdoXw4VNMGiSkrCZF4pSu4r0pb+FL1Zg
-	KZdWbth0wWjgD1DRTovusBIQWPQgQQbZaQWXaKoqjSGI4cDVS8/CEqy2kPGS7obQ83PXD4
-	3RxXx8r/FV6WZpMhtO6xttCz89r1RxY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744704127;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NdzThH7M/YnTsAvim5QLRl99y0NkF3bxcEaXgdfj7lY=;
-	b=x2WZbhdRrXXWvwliaKjo0j6dA2phX0bR0HLci0oGB7a6rk5RQ1Bmua7TPWzrqHsqupyIoV
-	JgZ3vJ4n0mvkppCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 036BB139A1;
-	Tue, 15 Apr 2025 08:02:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id //2eOX4S/mfNOgAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Tue, 15 Apr 2025 08:02:06 +0000
-Date: Tue, 15 Apr 2025 10:02:01 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH] mm, hugetlb: Reset mapping to TAIL_MAPPING before
- restoring vmemmap
-Message-ID: <Z_4SeTicO-QuaGvc@localhost.localdomain>
-References: <20250415054705.370412-1-osalvador@suse.de>
- <ab6d9bc7-4e6a-4604-9dca-44b13ce409b6@redhat.com>
- <a2447027-bc5f-461e-8fd8-93704dd543e4@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JOcq95iw0KVsx+kgBjaP9qTum+/BaE2k1/rUukt5olnkUZ+FXwwYI36HJzMGD/pBj66CFeisvHccbGPGb7N9ENCMwb7hZ39WnxExUmexWiJlsQjq8YaJKhcHIkdpqSeJtSjjNOqOVzrREF/T8jEg/V/FvhQlkSYRxhSGT4zvry0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Oy3/b4yO; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=TTmEwawP5Z2mJepsUH2z9F7/mt/Xfpdj1VKxTKYIjjs=; b=Oy3/b4yOh/s/DyIXd+tdGKvCmJ
+	x634Z0gn+6UqI4Y+OB2GkyoPtK872FtFkufxSUVW0NTGxNCp9iL58yIKsTAlK1jvQbhuQ4byOktXT
+	wd81lXSb3uAsjRgXyyWZGa6E9YWolj1gNCqh+XdkQ6eDYkFZORnVKpB2b/usDHhCd3v3gnNxPNR2e
+	zSEKxEfo4xnO4qsSEINankaHE6VBMgR66pFdZdxFtZHX1cR+ZF+JzWl+Gxi6luO0OZ/nP/8XEOi1P
+	5uPgYKV2GY9KU+rcll2/bNVq8AYlUBhUYhWQXaRdaE0PqE2nGS1nSIMtqaYs2T2KUOT9uFf2ZT6PJ
+	qbsWxYpw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1u4bFc-00000008EH8-24FD;
+	Tue, 15 Apr 2025 08:02:37 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 3D91030037D; Tue, 15 Apr 2025 10:02:35 +0200 (CEST)
+Date: Tue, 15 Apr 2025 10:02:35 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Rik van Riel <riel@surriel.com>
+Cc: Chris Mason <clm@meta.com>, Pat Cody <pat@patcody.io>, mingo@redhat.com,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	patcody@meta.com, kernel-team@meta.com,
+	Breno Leitao <leitao@debian.org>
+Subject: Re: [PATCH] sched/fair: Add null pointer check to pick_next_entity()
+Message-ID: <20250415080235.GK5600@noisy.programming.kicks-ass.net>
+References: <20250320205310.779888-1-pat@patcody.io>
+ <20250324115613.GD14944@noisy.programming.kicks-ass.net>
+ <7B2CFC16-1ADE-4565-B555-7525A50494C2@surriel.com>
+ <20250402082221.GT5880@noisy.programming.kicks-ass.net>
+ <b378f48593ca7449257a1bb55e78b186d88cd9f1.camel@surriel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,43 +70,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a2447027-bc5f-461e-8fd8-93704dd543e4@redhat.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+In-Reply-To: <b378f48593ca7449257a1bb55e78b186d88cd9f1.camel@surriel.com>
 
-On Tue, Apr 15, 2025 at 09:32:40AM +0200, David Hildenbrand wrote:
-> Ah, reading about the HVO hackery in the comment above NR_RESET_STRUCT_PAGE, might the following fix it?
+On Mon, Apr 14, 2025 at 03:57:42PM -0400, Rik van Riel wrote:
+> On Wed, 2025-04-02 at 10:22 +0200, Peter Zijlstra wrote:
+> > 
+> > Please confirm what the reason for overflow is.
+> > 
+> Running a large enough sample size has its benefits.
+> 
+> We have hit 3 out of the 4 warnings below.
+> 
+> The only one we did not hit is the cfs_rq->avg_load != avg_load
+> warning.
 
-Yap, I was experimenting in parallel with that after sending the patch
-and it also fixes the issue, and I think is nicer indeed.
+Fair enough, that one really isn't hard.
 
-I do not want to step on someone else's fet, so do you want me to send
-the patch or will you?
+> Most of the time we seem to hit the warnings from the
+> code that removes tasks from the runqueue, 
 
-thanks!
+*blink*..
 
+> but we are
+> occasionally seeing it when adding tasks to the runqueue,
+> as well.
 
--- 
-Oscar Salvador
-SUSE Labs
+OK, let me try and get my head around that.
 
