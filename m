@@ -1,152 +1,121 @@
-Return-Path: <linux-kernel+bounces-604846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99BA5A899AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:18:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E85D1A89903
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:59:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D035189D59E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:18:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE2B317839D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88B5D28F52F;
-	Tue, 15 Apr 2025 10:17:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74BD28B4F2;
+	Tue, 15 Apr 2025 09:58:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="nDRtK2vw"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="h5hpauwE"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 039E028E614;
-	Tue, 15 Apr 2025 10:17:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05109289343
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 09:58:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744712266; cv=none; b=H/iLjq8H4R8PZchNSDFq2d2VScKyr+7Gb9fzUf4luSvRPWrs9ZvbU+qJ2RoWP2VjH1ROhXffU12EsY9WSoBmfudWFf0dyXbUhG1z4hiGHnRLZJrCz0ayD5cIlb5NLUSty7dJzAbgANHmzfx2CTmnneOkAtCpd2RRrLct7FCuwmI=
+	t=1744711123; cv=none; b=PloC7NYBxw2w4dkySf02M7hqQT0D+yrKO8kzYGDAPc+RhxFzRUifZAQczs7kPc7Uk8k7iobhbX2NqQ4YqjeOrdmVijrrsCvD73WyFcP6KODb8OBv1+IAbums0BlpV1Z3/A8klV/09qfBXsVdnbmdle2qwtHo/eOJt/kioTMz/Bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744712266; c=relaxed/simple;
-	bh=2exky6TpNJmCLb/70+qqtFeNC9qkVf1vIRZV7J1dmfk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y/sXRo+TbzxEM+90Ty5v8e5/56YI9EtmtDTafxwfZd/B+Fz1QUh/TmBSsm8F8jkd8bRHbZvo+boqjJ02jFDR+zYxpDUqYq4hmNiYgCLWgSjbvjXO2thSs6kSQ6PEFrJwo5aBFoTfAagpGI160C0UsANgHmrqz+/kd9fpQ1NquoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=nDRtK2vw; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id B60F066266C;
-	Tue, 15 Apr 2025 12:17:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1744712258;
-	bh=2exky6TpNJmCLb/70+qqtFeNC9qkVf1vIRZV7J1dmfk=;
-	h=From:Subject:Date;
-	b=nDRtK2vwcj3AT6VQk3u0CALZ2q8GF5zyptE73PgvppblNA9kGlL/rk3TyENqRAgnW
-	 HzxLu1G35UImbEo+NfozHS7PT+IVCxHzmB9/Z//4CRyeU6RoSD6YVulBvtXA5OAlih
-	 Igp8HbOQr5nU44sxM+dwudkLuw20qQJnNZh+r7egBySy/Uffn1Z0TATwBjvKwom6hj
-	 PJHIQnAo22XQnetI3tq7DS26gwrlSCgMKMu9YsnuoEvsLXGHdk+VP/YQ+IYK4mFJVd
-	 lto0OsSAbMwrvmFXOIbxw8diw9I4J9vuyothn0dmypea633Zkcc31SDeINu6rGYhbo
-	 Q/rv/rRfnQe1Q==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Mario Limonciello <mario.limonciello@amd.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Christian Loehle <christian.loehle@arm.com>,
- Sultan Alsawaf <sultan@kerneltoast.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Valentin Schneider <vschneid@redhat.com>, Ingo Molnar <mingo@redhat.com>
-Subject:
- [PATCH v2 1/6] cpufreq/sched: Fix the usage of CPUFREQ_NEED_UPDATE_LIMITS
-Date: Tue, 15 Apr 2025 11:58:08 +0200
-Message-ID: <3010358.e9J7NaK4W3@rjwysocki.net>
-In-Reply-To: <6171293.lOV4Wx5bFT@rjwysocki.net>
-References: <6171293.lOV4Wx5bFT@rjwysocki.net>
+	s=arc-20240116; t=1744711123; c=relaxed/simple;
+	bh=t522ZdOrbY2ZzovrulLMA5ZAKzP04a7a16qPCLeS7bI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K38DAG4rGev4nI87voMDfHnF8KqAzRIprZhAjot3YlGCV1WK7WCSmvkaR+/Jgt2+2unYWrLWpj05+UfXOtGEikfizaeL+5WIpviaz0EApS2Shvh0SzbCelsgiyUzbtO4X7Z9w+DI8O2utAGmfeoLS42IS0TC9Z6etkZudLySaSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=h5hpauwE; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <e369b3ac-c1ba-4188-bd12-391a9932ce6e@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1744711107;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ijSP6cH4W0DMqPROu5BuHryT4DrUURvg7wkNbGI6o1w=;
+	b=h5hpauwE8T3zEjK60PAzXal0LfDdgFyoIg4akb0JW2WFVIsC/1s6PHVnXhYFjXLpJy+FmC
+	3pU7uLzbyUMjrGk8NknSjo0y/klhf0Mq6SkcOT1U1+YLwwskI2Hzo1gM7uXvBPwnHpckrG
+	eYtOFGVnE+WOlP0mpbFcaoeLgade9Ds=
+Date: Tue, 15 Apr 2025 10:58:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvdefvddvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepfeduudeutdeugfelffduieegiedtueefledvjeegffdttefhhffhtefhleejgfetnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeduuddprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehvihhrvghshhdrkhhumhgrrheslhhinhgrrhhordhorhhgpdhrtghpthhtohepshhrihhnihhvrghsrdhprghnughruhhvrggurgeslhhinhhugidrihhnthgvlhd
-X-DCC--Metrics: v370.home.net.pl 1024; Body=11 Fuz1=11 Fuz2=11
+Subject: Re: [PATCH v2] ptp: ocp: fix NULL deref in __handle_s for irig/dcf
+To: Sagi Maimon <maimon.sagi@gmail.com>, jonathan.lemon@gmail.com,
+ richardcochran@gmail.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+References: <20250415064638.130453-1-maimon.sagi@gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20250415064638.130453-1-maimon.sagi@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On 15/04/2025 07:46, Sagi Maimon wrote:
+> SMA store/get operations via sysfs can call __handle_signal_outputs
+> or __handle_signal_inputs while irig and dcf pointers remain
+> uninitialized. This leads to a NULL pointer dereference in
+> __handle_s. Add NULL checks for irig and dcf to prevent crashes.
 
-Commit 8e461a1cb43d ("cpufreq: schedutil: Fix superfluous updates caused
-by need_freq_update") modified sugov_should_update_freq() to set the
-need_freq_update flag only for drivers with CPUFREQ_NEED_UPDATE_LIMITS
-set, but that flag generally needs to be set when the policy limits
-change because the driver callback may need to be invoked for the new
-limits to take effect.
+Ok, looks like I misread the patch previously. IRIG and DCF registers
+are mapped unconditionally for OCP TimeCard. The functions you are
+trying to fix are HW-specific functions which you decided to reuse for
+your hardware. If your hardware doesn't support this function, you have
+to implement your own HW-specific callbacks used in ocp_adva_sma_op
+structure. I have to take back my Rb tag, and for this patch it's
+definitely NAck.
 
-However, if the return value of cpufreq_driver_resolve_freq() after
-applying the new limits is still equal to the previously selected
-frequency, the driver callback needs to be invoked only in the case
-when CPUFREQ_NEED_UPDATE_LIMITS is set (which means that the driver
-specifically wants its callback to be invoked every time the policy
-limits change).
-
-Update the code accordingly to avoid missing policy limits changes for
-drivers without CPUFREQ_NEED_UPDATE_LIMITS.
-
-Fixes: 8e461a1cb43d ("cpufreq: schedutil: Fix superfluous updates caused by need_freq_update")
-Closes: https://lore.kernel.org/lkml/Z_Tlc6Qs-tYpxWYb@linaro.org/
-Reported-by: Stephan Gerhold <stephan.gerhold@linaro.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
-v1 -> v2:
-   * Always set need_freq_update when limits_changed is set.
-   * Take CPUFREQ_NEED_UPDATE_LIMITS into account in sugov_update_next_freq().
-
----
- kernel/sched/cpufreq_schedutil.c |   18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
-
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@ -83,7 +83,7 @@
- 
- 	if (unlikely(sg_policy->limits_changed)) {
- 		sg_policy->limits_changed = false;
--		sg_policy->need_freq_update = cpufreq_driver_test_flags(CPUFREQ_NEED_UPDATE_LIMITS);
-+		sg_policy->need_freq_update = true;
- 		return true;
- 	}
- 
-@@ -95,10 +95,22 @@
- static bool sugov_update_next_freq(struct sugov_policy *sg_policy, u64 time,
- 				   unsigned int next_freq)
- {
--	if (sg_policy->need_freq_update)
-+	if (sg_policy->need_freq_update) {
- 		sg_policy->need_freq_update = false;
--	else if (sg_policy->next_freq == next_freq)
-+		/*
-+		 * The policy limits have changed, but if the return value of
-+		 * cpufreq_driver_resolve_freq() after applying the new limits
-+		 * is still equal to the previously selected frequency, the
-+		 * driver callback need not be invoked unless the driver
-+		 * specifically wants that to happen on every update of the
-+		 * policy limits.
-+		 */
-+		if (sg_policy->next_freq == next_freq &&
-+		    !cpufreq_driver_test_flags(CPUFREQ_NEED_UPDATE_LIMITS))
-+			return false;
-+	} else if (sg_policy->next_freq == next_freq) {
- 		return false;
-+	}
- 
- 	sg_policy->next_freq = next_freq;
- 	sg_policy->last_freq_update_time = time;
-
-
+> 
+> Fixes: b286f4e87e32 ("serial: core: Move tty and serdev to be children of serial core port device")
+> Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+> Signed-off-by: Sagi Maimon <maimon.sagi@gmail.com>
+> ---
+> Addressed comments from Paolo Abeni:
+>   - https://www.spinics.net/lists/netdev/msg1082406.html
+> Changes since v1:
+>   - Expanded commit message to clarify the NULL dereference scenario.
+> ---
+>   drivers/ptp/ptp_ocp.c | 12 ++++++++----
+>   1 file changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/ptp/ptp_ocp.c b/drivers/ptp/ptp_ocp.c
+> index 7945c6be1f7c..4e4a6f465b01 100644
+> --- a/drivers/ptp/ptp_ocp.c
+> +++ b/drivers/ptp/ptp_ocp.c
+> @@ -2434,15 +2434,19 @@ ptp_ocp_dcf_in(struct ptp_ocp *bp, bool enable)
+>   static void
+>   __handle_signal_outputs(struct ptp_ocp *bp, u32 val)
+>   {
+> -	ptp_ocp_irig_out(bp, val & 0x00100010);
+> -	ptp_ocp_dcf_out(bp, val & 0x00200020);
+> +	if (bp->irig_out)
+> +		ptp_ocp_irig_out(bp, val & 0x00100010);
+> +	if (bp->dcf_out)
+> +		ptp_ocp_dcf_out(bp, val & 0x00200020);
+>   }
+>   
+>   static void
+>   __handle_signal_inputs(struct ptp_ocp *bp, u32 val)
+>   {
+> -	ptp_ocp_irig_in(bp, val & 0x00100010);
+> -	ptp_ocp_dcf_in(bp, val & 0x00200020);
+> +	if (bp->irig_out)
+> +		ptp_ocp_irig_in(bp, val & 0x00100010);
+> +	if (bp->dcf_out)
+> +		ptp_ocp_dcf_in(bp, val & 0x00200020);
+>   }
+>   
+>   static u32
 
 
