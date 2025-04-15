@@ -1,183 +1,249 @@
-Return-Path: <linux-kernel+bounces-604546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 415B6A895CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:58:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A9BAA895D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:59:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E25D3B4FEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:57:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32F573A24CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:59:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9BD127A129;
-	Tue, 15 Apr 2025 07:57:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9959627510F;
+	Tue, 15 Apr 2025 07:59:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZJ0ntHaB"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ldtaxlMm"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7336C27466A;
-	Tue, 15 Apr 2025 07:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2080C13CA9C
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 07:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744703852; cv=none; b=nyBwcvicNRGYvggt2WF0ZBDY5vxJE7gZxt16IfbRBiKToG4hTD9gzqdF4M+v3B+LXQsCpyWc60fwLvpDUYDkOTO3LdR7wooiB3HhoLBbm57kFEmvj3t4QoDhT8KJG4OByrawqG39NuYesUq6d7vZsIQ6qSnhZw8O38ycwB7EpFQ=
+	t=1744703957; cv=none; b=oKS+EFjJRMNmO8CCoNB/1LxGzeOvijYVeW+uPX+MiiCjefItmnYO/G02aoH4v4LuTB7e0kAnrVzs3Q9DBEDSl8r4amL5T72nV6Um+4SAYeBwBnSgiFiMKutnhgztoNY2TsvDGXFUiHMzw5uN2tZrK2ZdYOVBqYB1YsiprliLLp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744703852; c=relaxed/simple;
-	bh=+eHEt0h9JroIcM1xqkRnd39ju397O6yPjglOaIRJdqw=;
+	s=arc-20240116; t=1744703957; c=relaxed/simple;
+	bh=boHVewLcUVwk8OcxfGDlSqU3OdAm2WH67dN09KEWyfA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SRmvSA2L1vuLl7/vTQOOll3NFKsJFkcvWS6pzfOfdhcKW9fU0ZYbcWRc9iZroGA4h+bfL7cjeV705i9ShFtqwyPSZozW5xHe8chqLbyMInRlAcdRsKyMXzlbKyOTJ9rMvXdvYnPKOuYmpRCX4LIokZsAZjcKMu7bM/2nhwcUuz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZJ0ntHaB; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5499e3ec54dso6361324e87.0;
-        Tue, 15 Apr 2025 00:57:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744703848; x=1745308648; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9gBlWb6559YGHiqiH+9G6nK+InkFDugG59lEaU3YDbk=;
-        b=ZJ0ntHaBtq3cT+WUH7Dqf93hXFtvLWe8xLztnQy+pqGOeT2kaeL9GTnKHvqutMwvrI
-         0sC+Pbk1FvaWJoSkH8yGEc5Rjeyh862mPIUa2Q4cobntuypuNq6ojh+cI8dVgIyZoiUN
-         mqg891SACzQXnw7xTnZ7U3etXGiT3FeOoPJxEkqiq2UsLDr7o0xMc2xM632FVMsFc+cZ
-         DuxB52KchY994Ir008/qNzuUcm8eNMc4gPYGOALf9euYY9pfJfk3YuEdQXuMWj5TYvUO
-         2L3D75W2AGAqT/ksanGKmmXWRavw/zKihagpoGx90Dra+Pwq5qtQLTZs482wlrYaYAJ1
-         Zbng==
+	 Content-Type:Content-Disposition:In-Reply-To; b=CdCThyj99X7PAphzgTQdKxyTHQqOIkfcGaWAkYqA9GeatZy+f/qjvLSw04Nl1uCUhC/1IZAJvS6ta4stm6OWaDAmwb8yA2YVyN95d2yNtdzjq/wD8/Jf58LD9RtjMqmZr9f1BxwGEYJpsAOGAGezTbMNmwDnEDtl0xrgiJzDkpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ldtaxlMm; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53F15eLd018673
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 07:59:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=3j6KYH15ovUFvVsFYdqAOBYg
+	Ek3lkuLkExeea+uu8MY=; b=ldtaxlMmuvrnS+rQf+jJJoV4/wUoj6NOuyufXavw
+	AGIu3thOJ4Xd76Cw/yiLaFVl3Tvos8T1TOyYJZsc9yjkKLAAar82BQgDXaGPL4Tq
+	647HNVT07g2X2he33gbbzC+BiSjguRcY1kOG/NREpCD1UUHiEZ+TpJHmw48Qu3o6
+	DKeruNz0k4HFeM58R6TVU60DaldFmQKXNzW5hBwIXrbAA2ulqXVu3dXdTPsjXLzi
+	zo4I8zdppbwUCu7YmQPCKT19fDoKP28fKoQyVmH3iccnyUaX397C+ZxcBSjiZXzg
+	89bMjQKYFBjUvBhool7MoymzHVFeLpHbXrWsx5ip4l2/8A==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45yg8wf48k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 07:59:14 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c791987cf6so1045550185a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 00:59:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744703848; x=1745308648;
+        d=1e100.net; s=20230601; t=1744703954; x=1745308754;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9gBlWb6559YGHiqiH+9G6nK+InkFDugG59lEaU3YDbk=;
-        b=fRl7ItsdYbgoJOwypL/QGg0HNl/0XW9jgh2ysvY277VYcW1EO0WeGTgItjY3j/y6G2
-         H+VVNGaEqIzPLcQj8p8ZSaEC3MkHnnQX/cyFteSk6Z46b+gJdCO07fWeAuiEtuB6/PCu
-         ouLVzLrryhvGuWufnWvgx6xFHtgJhHZLig4yEfEBS8UXVAWqs0oOeQ3WpZS1BBmWsevt
-         G3JH8vCbNdvijl/OR5gQ1lUJp15UKQ15CkN8kxpcG5iY6hCR8z3OzZpijlp1q/SGShnM
-         S/RRyuQSVG/A2e/feqV/gqJgfINUnX4vlp+qHgHQ99I1w5cAZMVivlesnXTCqjSbf4Pu
-         On2A==
-X-Forwarded-Encrypted: i=1; AJvYcCWFmR4vNiq5hv+nJTIKrhBLUHWxpto9N9Sq3tJQQKJrV9xX2fPEOu9kUax370UcJxfxSZM4SWiF9qMoW8ZM@vger.kernel.org, AJvYcCX6WeFjccEvXenh30Motxv7XwMW2eEs7W6sqkWPL7ozv4ppEMQiVsZtZu1lf7dyNH3bNEgedUHm2CDu@vger.kernel.org
-X-Gm-Message-State: AOJu0YwE0zW9FB4X8kpFE0nJYiTmVrf+M/vD1fLpyCEhPABPctceCvj6
-	IIs4R7hONRPM72Rjb38NGxtWk4a4a30uKloQqxz0HSEGjVK5C0Wk
-X-Gm-Gg: ASbGncuYxwL1761nl3GCJ5c+Vdiu30JPCt55HQ9EShE2/3qMqcWw8ox0A3Drovr0xjE
-	6DwGdUdV78T2/1Yx0p6+QPeytMjz730HJBwduK1G/nV/pfSUkdX7dsZxXpPn/v73EfyBZpXo9p6
-	/SypSAumYmC+rzdW6V5zN8Lxvm7ysF5MIcgG/oL7UuVIUHCoMWVxC3EmQxPX/HOJWyri6wukBux
-	JopZrhoyO4kAu3UHUKbj2ZK1wg/Dy8fMEKjQvAxNRwqf1cFfXYFC+OlxTYm6tfesXVNFnWcdFof
-	lIH3231UHYARB8g/3KDYOHcORrSA/wpDQ/IYW6wtEIS9usqSPBfOY8QjgzC7niimAotAJ0o7u6h
-	kkw==
-X-Google-Smtp-Source: AGHT+IGjjm4pg8koEpOg3Wt7gjyKmE0ps383FEzG1/M+bp1nFX3gl1QVl7IJM7lw6mxGcRX6KRHuLw==
-X-Received: by 2002:a05:6512:2397:b0:549:8fd2:f7d5 with SMTP id 2adb3069b0e04-54d452cc1c8mr3890661e87.38.1744703848106;
-        Tue, 15 Apr 2025 00:57:28 -0700 (PDT)
-Received: from gmail.com (83-233-6-197.cust.bredband2.com. [83.233.6.197])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54d3d12357csm1353654e87.32.2025.04.15.00.57.26
+        bh=3j6KYH15ovUFvVsFYdqAOBYgEk3lkuLkExeea+uu8MY=;
+        b=Vc4t2td+zvncAbfTRsS7lWSsBsHcBS7ly/fZPZOftZJXDd6+mjCAuFavx2u3/eBWln
+         6bDHvig2GqCG2l6O7VTFwZTce/m6m3GnHLYYskiZIRVVq22Kk9DNgzUNnTdSJCnIY/kd
+         EtJQrYHqB//XZCaUl5GpVj3dhh9+Vx9Egyb57s7mBHMXdSFhqC65lhrci4MnKyFCPbf2
+         C5BEVyzmX0Fqg9nhOP3/1rNj5OqBTonFQV8Eai/sb2fYNup8Cz/e95y422fBNI5vwSgN
+         4Hu0nMASFYV68yWLMuaPOt6fi6yPFsZnIOsAkrh1qZ9mbjXT64Sq9Aecq5A1V6TC+dpD
+         pmfw==
+X-Forwarded-Encrypted: i=1; AJvYcCUtw1bykunfvzO+UZWnhgv+/jYsv+SrbOpU4dcz45a8lC3aCIBh0nEyJL5OV2YJVi8QqRqv6y8GjvxqK8c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzt7LO2oFbAPs81ExJ0XRMkHWfBfhttdQB7s2OYJz6Vh8CNdvgO
+	CM+6oMHRcC0cRq+muRGlP4jW8sHoPUuUxCztZLYsI1Q2TlSr2210VULjWBLiopCYSvsKLYtLwVC
+	jWlpkj9o6kVZiUvE70XmwbZl68mP+FPX7ofOZo4lwXAf6u1f1TjJ+vCOEUDewMwQ=
+X-Gm-Gg: ASbGncvpDt2nqNXOCBAsUkC6ZLbMmjrRtzAEG6PQ+J79JB+pHt4JhpeBVVWFehQ0aLC
+	VjrwPXxoPn/PeapBRJLP5X6QwABhAAMJ93m30GzrveGw5QfpDcQbWV4VJ3jbHXefi3SocnCu3FN
+	9l6VL4LEHm2APUJbgOdSZ49zg9qLj+4H04PoHlt3F8d7JEjxyAykfkSkl/ikwqk5BXH7O7LZFcQ
+	fMn7RrmXOk6qca5u3f0hv23pDf4ravvkonMIw3Agx3DZ7fqmA9donj1DBnvqatoUdo6EVx8qhAI
+	E1JyQ6Y7t/Hf5ErlQf8WuOYE7CKvo+HGBaHCOIY72OGBN2LsHs09fsL9KLSuNY5OkPtsQZtbSTg
+	=
+X-Received: by 2002:a05:620a:40c4:b0:7c5:61b2:b7c with SMTP id af79cd13be357-7c7af1da861mr2436449085a.47.1744703953916;
+        Tue, 15 Apr 2025 00:59:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFDYCUC3+4LjUcrOqe6/dnikoIRTp3CVd6J05XP6LoZ+cCcbGdp7CeMDc15ptW70OCMcojZ6g==
+X-Received: by 2002:a05:620a:40c4:b0:7c5:61b2:b7c with SMTP id af79cd13be357-7c7af1da861mr2436447885a.47.1744703953585;
+        Tue, 15 Apr 2025 00:59:13 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54d3d5201d9sm1356006e87.250.2025.04.15.00.59.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Apr 2025 00:57:27 -0700 (PDT)
-Date: Tue, 15 Apr 2025 09:57:25 +0200
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] dt-bindings: display: Add Sitronix ST7571 LCD
- Controller
-Message-ID: <Z_4RZdlV_OV1qLRj@gmail.com>
-References: <20250415-st7571-v4-0-8b5c9be8bae7@gmail.com>
- <20250415-st7571-v4-1-8b5c9be8bae7@gmail.com>
- <c82085a7-c725-4a26-82c1-817dac508916@kernel.org>
+        Tue, 15 Apr 2025 00:59:12 -0700 (PDT)
+Date: Tue, 15 Apr 2025 10:59:10 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Caleb Connolly <caleb.connolly@linaro.org>
+Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_vbadigan@quicinc.com,
+        quic_mrana@quicinc.com
+Subject: Re: [PATCH v2 2/3] arm64: qcom: sc7280: Move phy, perst to root port
+ node
+Message-ID: <7atbwco3htsrfzfb5hd36t3tprqdgcxbtvggdww7pabibbs44i@zncb2tznzzvc>
+References: <20250414-perst-v2-0-89247746d755@oss.qualcomm.com>
+ <20250414-perst-v2-2-89247746d755@oss.qualcomm.com>
+ <511f8414-bbb1-4069-a0a6-f7505190c1e0@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="PYgLrlyTIbn/KEQ5"
-Content-Disposition: inline
-In-Reply-To: <c82085a7-c725-4a26-82c1-817dac508916@kernel.org>
-
-
---PYgLrlyTIbn/KEQ5
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <511f8414-bbb1-4069-a0a6-f7505190c1e0@linaro.org>
+X-Authority-Analysis: v=2.4 cv=E9TNpbdl c=1 sm=1 tr=0 ts=67fe11d2 cx=c_pps a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=Dek1A57C0JLo4Y6e2rEA:9 a=CjuIK1q_8ugA:10
+ a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-ORIG-GUID: qKtVeBBnVp_38rJjLa4EPwerlr0kptYd
+X-Proofpoint-GUID: qKtVeBBnVp_38rJjLa4EPwerlr0kptYd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-15_03,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ mlxscore=0 bulkscore=0 clxscore=1015 phishscore=0 lowpriorityscore=0
+ suspectscore=0 mlxlogscore=999 spamscore=0 priorityscore=1501
+ impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504150054
 
-Hi Krzysztof,
-
-On Tue, Apr 15, 2025 at 09:22:30AM +0200, Krzysztof Kozlowski wrote:
-> On 15/04/2025 07:58, Marcus Folkesson wrote:
-> > +title: Sitronix ST7571 Display Controller
+On Mon, Apr 14, 2025 at 02:49:00PM +0200, Caleb Connolly wrote:
+> 
+> 
+> On 4/14/25 07:39, Krishna Chaitanya Chundru wrote:
+> > Move phy, perst, to root port from the controller node.
+> > 
+> > Rename perst-gpios to reset-gpios to align with the expected naming
+> > convention of pci-bus-common.yaml.
+> > 
+> > Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> > ---
+> >   arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts   | 5 ++++-
+> >   arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi | 5 ++++-
+> >   arch/arm64/boot/dts/qcom/sc7280-idp.dtsi       | 5 ++++-
+> >   arch/arm64/boot/dts/qcom/sc7280.dtsi           | 6 ++----
+> >   4 files changed, 14 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> > index 7a36c90ad4ec8b52f30b22b1621404857d6ef336..3dd58986ad5da0f898537a51715bb5d0fecbe100 100644
+> > --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> > +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> > @@ -709,8 +709,11 @@ &mdss_edp_phy {
+> >   	status = "okay";
+> >   };
+> > +&pcie1_port0 {
+> > +	reset-gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
+> > +};
 > > +
-> > +maintainers:
-> > +  - Marcus Folkesson <marcus.folkesson@gmail.com>
+> >   &pcie1 {
+> > -	perst-gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
+> >   	pinctrl-0 = <&pcie1_reset_n>, <&pcie1_wake_n>;
+> >   	pinctrl-names = "default";
+> > diff --git a/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi b/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi
+> > index 2ba4ea60cb14736c9cfbf9f4a9048f20a4c921f2..ff11d85d015bdab6a90bd8a0eb9113a339866953 100644
+> > --- a/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi
+> > +++ b/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi
+> > @@ -472,10 +472,13 @@ &pcie1 {
+> >   	pinctrl-names = "default";
+> >   	pinctrl-0 = <&pcie1_clkreq_n>, <&ssd_rst_l>, <&pe_wake_odl>;
+> > -	perst-gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
+> >   	vddpe-3v3-supply = <&pp3300_ssd>;
+> >   };
+> > +&pcie1_port0 {
+> > +	reset-gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
+> > +};
 > > +
-> > +description:
-> > +  Sitronix ST7571 is a driver and controller for 4-level gray
-> > +  scale and monochrome dot matrix LCD panels.
+> >   &pm8350c_pwm {
+> >   	status = "okay";
+> >   };
+> > diff --git a/arch/arm64/boot/dts/qcom/sc7280-idp.dtsi b/arch/arm64/boot/dts/qcom/sc7280-idp.dtsi
+> > index 7370aa0dbf0e3f9e7a3e38c3f00686e1d3dcbc9f..3209bb15dfec36299cabae07d34f3dc82db6de77 100644
+> > --- a/arch/arm64/boot/dts/qcom/sc7280-idp.dtsi
+> > +++ b/arch/arm64/boot/dts/qcom/sc7280-idp.dtsi
+> > @@ -414,9 +414,12 @@ &lpass_va_macro {
+> >   	vdd-micb-supply = <&vreg_bob>;
+> >   };
+> > +&pcie1_port0 {
+> > +	reset-gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
+> > +};
 > > +
-> > +allOf:
-> > +  - $ref: panel/panel-common.yaml#
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: sitronix,st7571
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  sitronix,grayscale:
-> > +    type: boolean
-> > +    description:
-> > +      Display supports 4-level grayscale.
->=20
-> That's fully deducible from compatible, no? Or does it depend on actual
-> panel, but then what else depends on the panel?
+> >   &pcie1 {
+> >   	status = "okay";
+> > -	perst-gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
+> >   	vddpe-3v3-supply = <&nvme_3v3_regulator>;
+> > diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> > index 0f2caf36910b65c398c9e03800a8ce0a8a1f8fc7..376fabf3b4eac34d75bb79ef902c9d83490c45f7 100644
+> > --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> > +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> > @@ -2271,9 +2271,6 @@ pcie1: pcie@1c08000 {
+> >   			power-domains = <&gcc GCC_PCIE_1_GDSC>;
+> > -			phys = <&pcie1_phy>;
+> > -			phy-names = "pciephy";
+> 
+> Isn't this a huge API breakage that will break using new DT with old
+> kernels? It will also break U-boot which uses upstream DT.
+> 
+> This is bad enough, but at least let's break it a clean break by changing
+> all platforms at once.
 
-No it is not, the ST7571 is only the controller and some properties
-depends on the connected LCD.
+Up to now as the kernel was the only and the main user, we allowed
+forward breakage (new DT breaks with the old kernel), only backwards
+compatibility was required (new kernels work with old DT).
 
-ST7571 supports both grayscale and monochrome LCDs but has no way to
-know what is connected.
+Maybe, as this breaks external projects, we should allow a grace period
+and list _both_ properties, dropping them after the LTS?
 
-Other properties that depends on the LCD are:
-panel-timing.hactive
-panel-timing.vactive
-panel-timing.vfront-porch
+> 
+> As I understand it, we seem to allow these breakages in DT for now (and this
+> patch landing will confirm that), but perhaps we could at least track them
+> somewhere or at acknowledge the breakage with a tag in the commit message
+> pointing to the relevant dt-bindings patch.
+> 
+> Breaks-dt: https://lore.kernel.org/linux-arm-msm/20250414-perst-v2-1-89247746d755@oss.qualcomm.com
+> 
+> Kind regards,
+> 
+> > -
+> >   			pinctrl-names = "default";
+> >   			pinctrl-0 = <&pcie1_clkreq_n>;
+> > @@ -2284,7 +2281,7 @@ pcie1: pcie@1c08000 {
+> >   			status = "disabled";
+> > -			pcie@0 {
+> > +			pcie1_port0: pcie@0 {
+> >   				device_type = "pci";
+> >   				reg = <0x0 0x0 0x0 0x0 0x0>;
+> >   				bus-range = <0x01 0xff>;
+> > @@ -2292,6 +2289,7 @@ pcie@0 {
+> >   				#address-cells = <3>;
+> >   				#size-cells = <2>;
+> >   				ranges;
+> > +				phys = <&pcie1_phy>;
+> >   			};
+> >   		};
+> > 
+> 
+> -- 
+> Caleb (they/them)
+> 
 
-In the first revisons of the driver, I thought I could let the
-grayscale and monochrome setting depends on which pixel format that
-where used, but that was not the case.
-
->=20
-> Best regards,
-> Krzysztof
-
-
-Best regards,
-Marcus Folkesson
-
---PYgLrlyTIbn/KEQ5
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEBVGi6LZstU1kwSxliIBOb1ldUjIFAmf+EWAACgkQiIBOb1ld
-UjLLOw//WG2bV9xFCnP3a9f5fnoJFj0raNigAXMxMp8tsoI6LxlREytKUA3m+OwA
-jf1uys1VFfrnklHtOWe/Hy/LLNzXmNws/1lsPR2UHpWbnqPT9LLCjrWhgf/TGUno
-pR0Vkm5t50wNi4XqDkTS0MEvWMM1xJc4iE37DH38b91OrkE8g+38cVH3BryuO4WK
-zlSznROUSLqpegSWBfvUtHAmqSI6eCoKLJXGPlCz3ZAVRn+kXmFSSfaxNR46BzCn
-PxSYe57JQcOWH/Vxue7pAHOPlb058haer4kQvjN1RG+hQgJqUN4HWBwWYiyO4mhb
-GFqiqYz9exR4XDD3gLAJjmq3ZoGiaaNTDdkoJN/eTiMrSjMpBQs3aBn0or+3VOo8
-W6QJEh9a9jKls4TxrSXJBg4WN6rHq8Rf5BNnllXfwKB84asCywG2hjP0beHKWQJf
-MDq8NbiBC137+wxwBYYr6/O8VYptjs27C6628A0f6IoZis/ufdVE3bXUYobubwVW
-gzIdqHN2qIeYv062BscRxexCElnm3tvxWhNkWIdxYlr9c3KEwaBXp2Wf5w7YdFCN
-eLlsxlxZSoDVySfh5SHTaws6yS77PN6hSwR9ZCAjltFjtZEe2LJUfQCXDozLA9zf
-ZHhhDRyEjE2Z6K3hLDAwu9U70nr4O+oxzME69mNbWHj9iM1EUwU=
-=BMEH
------END PGP SIGNATURE-----
-
---PYgLrlyTIbn/KEQ5--
+-- 
+With best wishes
+Dmitry
 
