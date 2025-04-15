@@ -1,118 +1,161 @@
-Return-Path: <linux-kernel+bounces-604505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 290AFA8954E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:39:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B352CA89556
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:40:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E361117897B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:39:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A33718978FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E9B2741A0;
-	Tue, 15 Apr 2025 07:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7ED27A126;
+	Tue, 15 Apr 2025 07:40:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g1FxBRCg"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sjoerd@collabora.com header.b="EVuhjwAw"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79289245014
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 07:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744702750; cv=none; b=sNXnhmzCXagk0+0G7YOrFc2fB4jSc7o5SsJRs2PiOylveXnlLRDeVktWQVp8rZgV94CELYgnNWQCkWHT2UKZDdC7Sqlf/r0Vsiay/b7agM/CQSicyJ48mPZA//fQo3cNjIDs+ricGYZT9cAbjrFwcbmZr9tTrsZBYa/wfnUqU2M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744702750; c=relaxed/simple;
-	bh=coA5grQd3y/jbhzcHeYZ+ZELLUFIBztOc/cGelyrWGk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CnetZlTh2p/cqzlucmsiybmHRNni2exRLVMYuTBnxweK0Ue4V6GVeofKURLkV72IGnCTyFGkfRymp2dWOYx7lTfkWlI6DxVBOSBcXqT0z7fDybjhFYBSRJZWgC0iPQpk8Rh3PVHcbOI6yYZSMyNHZagJZ1o0JMZT6emA3XNnRp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g1FxBRCg; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2260c91576aso43866295ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 00:39:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744702747; x=1745307547; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=KMVqxq4kdB7NkpAdRlpNvoRHAP7rIXsRI0v6UU1I0eg=;
-        b=g1FxBRCgqIYkEZToU/fBsZXyjiTvjFtxCa6X/SsPMF5Zu82At0HSbXMZVdOxyIgcFM
-         rYVhtlS3js4PCzWYRVTRcPc5nWvpSd3Ncz8q6pTyVgSyQF16MXJkkaNdBod4FR0Xo6Q5
-         s+Z4/zkIe1G+jDuK5gi/YzKVPxBvBT6+fhrpc3Um+S2Is/U+fMyq/MixfPSLkThCSRu1
-         JRo81pfPYGA0Tg/nf9Uoy4YMbsmEHSvDchfrbPRVOyRmfWLoqz8ENPBjKgXbLrR/XxdX
-         B5frW+poLxDox+NXgg+EzwFFHiGFEeKPSpxPyrs3Na5/wJyujCoVU8WCSLDLclaEk0eB
-         Eb5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744702747; x=1745307547;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KMVqxq4kdB7NkpAdRlpNvoRHAP7rIXsRI0v6UU1I0eg=;
-        b=TGD1d2JHLTE3I6kkGJsoG38G4b1Mw7ftURwPcMfOMwgwQYozeQ51vqoRw65R2FUXJx
-         yCfi+f4u0jIYUZ65lMA42BSLJ6oO/Fydj5EJqqUBW3nrdcfIpOZNMZMjSnOPRUWjMZiS
-         xD/ZCpl0TaIzQKWEZ7gcn/o1UVb1nxB9sZLDL20C8C4uVYHPV/AHwnyHQbmlIpXJzbbb
-         ARXjxdxvb3wJLJVGe8ysxWLwBOVzI9Q0MCo7Nrz+rp6Us2T+CZFZn55pjxoAgCJmqnn7
-         NBblm8vwSq7ZRvzQnjKjZ1ZO+LkpYNyGKKbLJUa+OvcS8C/nGsTRR7q6WP0XrD6HkLiO
-         qmlw==
-X-Forwarded-Encrypted: i=1; AJvYcCX7Dh8mXyhheiRu+uWrQ1HVLu3LdDOh9GSwsDrs3V22+PqAm5UEhQIDgtWA57ms2Vbf8NA6eeXE1FCp1eg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAqNqkTTCOgyoe5h5IPfqbK4turrRVEBLhUO2YLnfP/v9mh+Vw
-	xViDN41WYF2oXFmIhGvgPKqrpCSrpvG6GPgGaRCpraAPe60HqpNCyd/x6B8XGQ==
-X-Gm-Gg: ASbGncu+kdP1FFdSYp/zQrBc5gnkpziq7jWd6f8wQZ2U0ApitsI04PdFWXpXBO9Y+yG
-	N2updUiNK/5VEMv2FTeWJftS4b3y8t9ADS6pLe27Jf2DbJFPP8Pcgo8YqlnIbficAv37qnSK5R2
-	7RISmcVc3jT0Vom1XidYEKAtHOsq5losEc/9p76tDB6iDLM4si6Rnx+CyttSWsNwhOc2YfNq7Xh
-	NqAWhshjHnPFy5gmUOTl60BQ1rE0doGJ/YW8VyI+VCKho9tnv1HNR0iDFoBQe1W3ioBF4GnjBkP
-	N/+GlnQHgfseCJ9rTm6PSFZmQanLyHD5NB8VIr313m4fvRGqhA==
-X-Google-Smtp-Source: AGHT+IEHpiLa1qxpwWSUDM89uSChUDBqXG6QHK/dkH6ohvACOVduUY35hpQk6VZSxSq6hdZmbeAjVA==
-X-Received: by 2002:a17:902:c952:b0:224:912:153 with SMTP id d9443c01a7336-22bea49590cmr237075775ad.5.1744702746719;
-        Tue, 15 Apr 2025 00:39:06 -0700 (PDT)
-Received: from thinkpad ([120.60.71.35])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7b8b18esm111163075ad.82.2025.04.15.00.39.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Apr 2025 00:39:06 -0700 (PDT)
-Date: Tue, 15 Apr 2025 13:09:00 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Rob Herring <robh@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, quic_mrana@quicinc.com, quic_vbadigan@quicinc.com, 
-	quic_ramkri@quicinc.com, quic_vpernami@quicinc.com
-Subject: Re: [PATCH] PCI: qcom: Implement shutdown() callback
-Message-ID: <tb6kkyfgpemzacfwbg45otgcrg5ltj323y6ufjy3bw3rgri7uf@vrmmtueyg7su>
-References: <20250401-shutdown-v1-1-f699859403ae@oss.qualcomm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD6624B28;
+	Tue, 15 Apr 2025 07:40:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744702848; cv=pass; b=DBXHTtn6LPZpZ5xWBIUNcSnQWs+ciHeTbfueKPt/iaJECSLKhhCoZagl86AzRD6XBrxnPY2E3E/nkiKpE8HV24rErQXXCIfEUIqHvO7xI1Kfq8S9QvJVx7S9Xa3xo1OKpQNuAhrXdCd0Vlhug6+FMTfiNV16AF3zOd6pgkDNfGc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744702848; c=relaxed/simple;
+	bh=yU0uVlGtDXeaxlwOodUHke+tqbdX1S3tQgjMGMTi7t8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=buzCz3kLhFI4cEd1IjqNbIXGAYkOrOthRcp3fr5K1c0SSANbeJA2MY2h99jpw23VxoHqVWCYAbkXnNzxnVheG2f+58vBUAXxUMvbd4aoGzgDW5319/MgO0+FaJK2ECj49+Rf7gHO44k7P11HOW7uV9fIeM7dj0Yi9slxXRqVXLg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sjoerd@collabora.com header.b=EVuhjwAw; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1744702774; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=NkU8spe0vKT08V1fXVABu5/53/gQbYk4BNMrFwDPZsuuvccHpPHSsVbcfjrjR/bQGLUg9Ta0Mg02gUixO06nxIxeTPQSKi3jUFH83n25ZCq62lGhw4Led0V0GjA7GTAh5rgreZW4JKllVNYa6Gz6Hs8LKWCS6YZEq7z7qodE7DA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1744702774; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=yU0uVlGtDXeaxlwOodUHke+tqbdX1S3tQgjMGMTi7t8=; 
+	b=Y7ZPpfE+id/ntFmKRy7y2NAhV1gzFzurNoW0ZjmrU75LSbbfQn2BVs//6r53AB1Bc+Zy8jQLy9PGjv6Zd7vZU1xDRpoS9RRqtDyBbLlyN7wHOp8Zza+oiI2lDUSLuPtk0CznX7rat0ZZG8MMvtHwNZw/MT/1D1OGX7JAJCl0QQE=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sjoerd@collabora.com;
+	dmarc=pass header.from=<sjoerd@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1744702774;
+	s=zohomail; d=collabora.com; i=sjoerd@collabora.com;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=yU0uVlGtDXeaxlwOodUHke+tqbdX1S3tQgjMGMTi7t8=;
+	b=EVuhjwAwRYM7/0zcg7r0GCMTJSTlVHZMZxkNQFQxVzGr6goyPp8DbT7Ng4UWe5VX
+	H2iA36/QNHPm/XrnD6QsdJzrkrACjX0HSj5+gX+Z81sYUllypQmYHKKqpqVtfvF/o4l
+	v0qUEpQ/qmRJ6tFUcmenLs0EYQHBlQJSv8Yvo/n4=
+Received: by mx.zohomail.com with SMTPS id 17447027670091011.7454237538764;
+	Tue, 15 Apr 2025 00:39:27 -0700 (PDT)
+Message-ID: <096a8318629dea9073ad6c4807a2f1dedc6b0cd6.camel@collabora.com>
+Subject: Re: [PATCH v3 10/10] riscv: dts: eswin: add HiFive Premier P550
+ board device tree
+From: Sjoerd Simons <sjoerd@collabora.com>
+To: Samuel Holland <samuel.holland@sifive.com>, Ariel D'Alessandro	
+ <ariel.dalessandro@collabora.com>, Pinkesh Vaghela	
+ <pinkesh.vaghela@einfochips.com>, Conor Dooley <conor@kernel.org>, Rob
+ Herring	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Thomas Gleixner	 <tglx@linutronix.de>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt	
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Daniel Lezcano	
+ <daniel.lezcano@linaro.org>, Min Lin <linmin@eswincomputing.com>, Pritesh
+ Patel	 <pritesh.patel@einfochips.com>, Yangyu Chen <cyy@cyyself.name>, Lad
+ Prabhakar	 <prabhakar.mahadev-lad.rj@bp.renesas.com>, Yu Chien Peter Lin	
+ <peterlin@andestech.com>, Charlie Jenkins <charlie@rivosinc.com>, Kanak
+ Shilledar <kanakshilledar@gmail.com>, Darshan Prajapati
+ <darshan.prajapati@einfochips.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Aradhya
+ Bhatia	 <a-bhatia1@ti.com>, rafal@milecki.pl, Anup Patel
+ <anup@brainfault.org>, 	devicetree@vger.kernel.org,
+ linux-riscv@lists.infradead.org, 	linux-kernel@vger.kernel.org,
+ "kernel@collabora.com" <kernel@collabora.com>
+Date: Tue, 15 Apr 2025 09:39:21 +0200
+In-Reply-To: <0dc3bb03-3708-4134-96bf-d5f95187e8bb@sifive.com>
+References: <20250410152519.1358964-1-pinkesh.vaghela@einfochips.com>
+	 <20250410152519.1358964-11-pinkesh.vaghela@einfochips.com>
+	 <956d76b0-4f82-4f95-8f70-70896d488bd3@collabora.com>
+	 <0dc3bb03-3708-4134-96bf-d5f95187e8bb@sifive.com>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.0-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250401-shutdown-v1-1-f699859403ae@oss.qualcomm.com>
+X-ZohoMailClient: External
 
-On Tue, Apr 01, 2025 at 04:51:37PM +0530, Krishna Chaitanya Chundru wrote:
-> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> 
-> PCIe host controller drivers are supposed to properly remove the
-> endpoint drivers and release the resources during host shutdown/reboot
-> to avoid issues like smmu errors, NOC errors, etc.
-> 
-> So, stop and remove the root bus and its associated devices and release
-> its resources during system shutdown to ensure a clean shutdown/reboot.
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-> ---
+Hey,
 
-While reposting a patch, you should include what has changed in-between in the
-changelog. Even if there are no changes, you should mention that and express
-your intent to get this patch merged.
+On Mon, 2025-04-14 at 11:00 -0500, Samuel Holland wrote:
+> Hi Ariel,
+>=20
+> On 2025-04-14 7:55 AM, Ariel D'Alessandro wrote:
+> > Hi Pinkesh,
+> >=20
+> > On 4/10/25 12:25 PM, Pinkesh Vaghela wrote:
+> > > From: Min Lin <linmin@eswincomputing.com>
+> >=20
+<snip>
 
-- Mani
+> > Although commit log says that this includes DRAM configuration, looks l=
+ike
+> > it's
+> > missing? In order to test this patchset, had to add this following memo=
+ry
+> > definition (picked from vendor kernel repository):
+> >=20
+> > =C2=A0=C2=A0=C2=A0 L50: memory@80000000 {
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 comp=
+atible =3D "sifive,axi4-mem-port", "sifive,axi4-port",
+> > "sifive,mem-port";
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 devi=
+ce_type =3D "memory";
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg =
+=3D <0x0 0x80000000 0x7f 0x80000000>;
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sifi=
+ve,port-width-bytes =3D <32>;
+> > =C2=A0=C2=A0=C2=A0 };
+>=20
+> That is a misstatement in the commit message. The memory node is not incl=
+uded
+> in
+> the static devicetree because the amount of RAM installed on the board is
+> variable. It is the responsibility of firmware to provide the memory map,
+> either
+> through EFI or by patching the memory node into the DT at runtime. I beli=
+eve
+> the
+> current BSP U-Boot does the former but not the latter.
 
--- 
-மணிவண்ணன் சதாசிவம்
+Amount of RAM being variable is pretty common on devices using FDT these da=
+ys;
+Typically the dts still gets a memory node that's a reasonable default, wit=
+h the
+expectation that e.g. u-boot will fix it up. If you look at other risc-v
+devicetrees in upstream they (almost?) all come with a pre-defined memory n=
+ode.
+For the P550 board a default memory node for 16G ram seems reasonable (as t=
+hat
+seems the minimal SKU?)
+
+That all being said. Indeed the sifive BSP u-boot doesn't seem to call the
+relevant `fdt_fixup_memory` to fixup the memory node, hence us having issue=
+s
+booting with u-boot directly (without going through EFI). Honestly this was=
+ a
+bit of a surprise to me as only most other architectures that's just done b=
+y
+common code, but that doesn't seem to be the case for risc-v (either upstre=
+am or
+downstream)
+
+--=20
+Sjoerd Simons
+Collabora
 
