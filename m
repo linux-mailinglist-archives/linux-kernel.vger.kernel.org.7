@@ -1,166 +1,112 @@
-Return-Path: <linux-kernel+bounces-604280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22647A892D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 06:28:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62D4DA892DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 06:31:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA45E7A31D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 04:27:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9325189B7A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 04:31:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FCDC217F24;
-	Tue, 15 Apr 2025 04:28:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16BFF129A78;
+	Tue, 15 Apr 2025 04:31:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="RfztJYjC";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RRnISE4n"
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Frp36u5+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 441AE2DFA24;
-	Tue, 15 Apr 2025 04:28:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68215634;
+	Tue, 15 Apr 2025 04:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744691307; cv=none; b=tJXQ3iA5KM+bIcNBjyNPN4LZDViVThu0MxrAMoQcCTQvewdtb4oZOHE9LEwXQjd0L4VGejczxrk0a6k7hZIyIq6GAD1fALoav01GwmnhwDdPrIKZzCjsCX2WbCUMGWtoCYwlDZR9kVO4+f8JwhdbMC0yXbKUFKyI2BONx87fIy0=
+	t=1744691473; cv=none; b=jETU+WGk1fTLjFAH7QrE3SOP+yXAlJSA0Zznt/SOWmqNvo7Zq4daPK7epJGTGBTTQFZgFS4kMg1atn5yIl7F8A0eZkZsRUb1L8MmRVW68xLippxSgkWKmlOUt6tbHOaRXowprXhS2Z9zjTGpX4e8q11BcLXShBykbUX2MhJPyy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744691307; c=relaxed/simple;
-	bh=BLI3YfnWAHJOUhbBY3e6np91yu0rO7qc94WPcdthOJg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NvdZSvLSpkEsmh2ur5fdj36q4Sk15ek0VKfVl6XyKRRTb0IXV2ePX/Uw503VjEdhBgRx4O8+pLLMSyHffx2czHTyi6EWfP2Z7zTIm80gH3vg0ZqtJnhJQbg1BH1RN9EoPxyHMejG/PktVjJaFI2QtT1rcXoHn1/5DOu95cznIXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=RfztJYjC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RRnISE4n; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 30E721140331;
-	Tue, 15 Apr 2025 00:28:24 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Tue, 15 Apr 2025 00:28:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1744691304; x=1744777704; bh=TraBLcZP/W
-	kRwFzc/HDxXsASf124ua7scK+cLVWMvrA=; b=RfztJYjCu3eKdbZEmUyz4yB3Nj
-	xMBVNRb8Fjv05nWTyvyVUPAQdl5aZkPPMoF0zncJXJ6ZWfibN5JfGI8NntpKwBh2
-	2zk4lcdWFJuDmhPQbq/2dRc8qbpVCFdKt3athIndIzBAExD6j11BFnsLHqXLm8aT
-	cLEBao6qwHPToEN/O+IDGPPGChcYYsedNWkAyGHINYwSPHLTw2G/2uNFLTxfqOjv
-	lN7TLi8oEQGcNQQGAHI4TXtvcwYxc8sUuV1Q9LEGGgPcoPwxnbNXI/zaUTO0dKgS
-	xwZAhQXosWucFqqdslLSruIzNXvzhD3Oflg6A19QJpf0d3edKOU6hDzbmSug==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1744691304; x=1744777704; bh=TraBLcZP/WkRwFzc/HDxXsASf124ua7scK+
-	cLVWMvrA=; b=RRnISE4n4nAxaiKc30R5JARuB7bFDco+guWvSx3zpALqmVM8Z8y
-	zng4ogSMCa54Z9FiMsl9nXRvgnEGMwZsDVSh8b0BmhWtq52lIBNvSwnr7yrFpdw0
-	llDK5SdxLe7bryhyeMSouQ0y30JxI+hJaDoWmgexEXCo6yzcZilPc5oRBVgOPziP
-	lEJOdMtStRpuUtFadUiCINjoTuJRX/gMnh6lMMM+Oa5TvI8Wz3cf8+iZHRDSctXx
-	GYftxcbzW9IZPFhyi7AX0dog4E2PdImf0tdTSzyylDo8gi9BsvFdKv3dBZMGeg4e
-	cv+vVBIkARgcxnqjN2x6Z021NI6cbEJqQyA==
-X-ME-Sender: <xms:Z-D9Z_lmfbutonPx8xQ0CALldOt-ek1kR-Kt6WZK3eLmmPjrpxtc2A>
-    <xme:Z-D9Zy2qaqJ5mK1FbHsB6TiowKzG9U16bEhZZvDfxyAb_0OCXrisn4liQXmzRVw6Q
-    eLraM3mYPz6tviYbA>
-X-ME-Received: <xmr:Z-D9Z1o7K9v9MBVS2cpBpIAzvVH8tN8NZy1tjEgHZdRNMW1Hw1KgbCAFpNWTImQYyc7W9Ktw56IJW2pUZszc7jVaYwAkwgnW5kSI9DyZgsJJMA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvddvhedtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnegfrhhlucfvnfffucdljedtmdenucfjughrpeffhffvvefu
-    kfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpeffrghnihgvlhcuighuuceougiguh
-    esugiguhhuuhdrgiihiieqnecuggftrfgrthhtvghrnhepvdefkeetuddufeeigedtheef
-    ffekuedukeehudffudfffffggeeitdetgfdvhfdvnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomhepugiguhesugiguhhuuhdrgiihiidpnhgspghr
-    tghpthhtohepudehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehsthhfohhmih
-    gthhgvvhesghhmrghilhdrtghomhdprhgtphhtthhopegrnhgurhhiiheskhgvrhhnvghl
-    rdhorhhgpdhrtghpthhtoheprghstheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepug
-    grnhhivghlsehiohhgvggrrhgsohigrdhnvghtpdhrtghpthhtohepjhhohhhnrdhfrghs
-    thgrsggvnhgusehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrrhhtihhnrdhlrghuse
-    hlihhnuhigrdguvghvpdhrtghpthhtohepvgguugihiiekjeesghhmrghilhdrtghomhdp
-    rhgtphhtthhopehsohhngheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohephihonhhghh
-    honhhgrdhsohhngheslhhinhhugidruggvvh
-X-ME-Proxy: <xmx:Z-D9Z3mNljDIj_X3GO9RTIscU3PPsSwk_k3ehrGxuhihun8ytdANQw>
-    <xmx:Z-D9Z922BIle5eSB5V7364xPS1sa8bVETOPKbUWH_K1m4mFEyGT4LQ>
-    <xmx:Z-D9Z2sG702wjCpfEi_koYAhvrSEdm87OXsfAM8e02k_MnWAcDqEkA>
-    <xmx:Z-D9ZxVvyxXO4swyWo1qKtGIVtRLHAgZ5eiI3J1kmF-6whd2RqCRlw>
-    <xmx:aOD9Z93h1EKqDKIEL5SG6M5Is8otipT5-G5PIZw62bHDk4DWs6v5z7js>
-Feedback-ID: i6a694271:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 15 Apr 2025 00:28:21 -0400 (EDT)
-Date: Mon, 14 Apr 2025 22:28:20 -0600
-From: Daniel Xu <dxu@dxuuu.xyz>
-To: Stanislav Fomichev <stfomichev@gmail.com>
-Cc: andrii@kernel.org, ast@kernel.org, daniel@iogearbox.net, 
-	john.fastabend@gmail.com, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
-	yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, 
-	jolsa@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC bpf-next 10/13] bpf: verifier: Add indirection to
- kallsyms_lookup_name()
-Message-ID: <qesoniwddyi2qrjxavxlfvmy5lq6fmenrp5zvz347dnknuf7yb@wi3agqebvgqm>
-References: <cover.1744169424.git.dxu@dxuuu.xyz>
- <7540678e9a46c13f680f2aacab28bb88446583f5.1744169424.git.dxu@dxuuu.xyz>
- <Z_aDSipnuvNAhHbE@mini-arch>
+	s=arc-20240116; t=1744691473; c=relaxed/simple;
+	bh=QPgVVKuU1xj//lpxR3vKuQSHeE3ZGj5RVnWlnXSdGpM=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=crLXzLm4mhttz+SmVEwKmg+G5XtiNl5W7INxxvN1K+Paq/l0REapf1HXx5W0a6VwUkV0OBieXcDybZuHGkCA5TeJ/9mz2durTUf31mLj8jWsv/b8vJDCmcnSBcd410Eo4sJwA3YyPfkT42+XYCA6wMH1RREz9gmVWooAvh1EYmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Frp36u5+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD9C5C4CEDD;
+	Tue, 15 Apr 2025 04:31:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744691472;
+	bh=QPgVVKuU1xj//lpxR3vKuQSHeE3ZGj5RVnWlnXSdGpM=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=Frp36u5+K94T2+XAXJtNTV0SuENecU+W9JPeS0AqcLevLFtMEFhZ3nL//VYEPV2AM
+	 TMph+9J3LseE8S/djkN2cVjPZPJ2M1dQJ3C+p8AgzS88F4/sJJi/ArOqaS056dVnQ9
+	 JsrYvfgzetQ0IgFJKA7vwstnzf5xfMULKjFgeWxFGj0FQ7u77qTqQBh8Pwo9cdGEnR
+	 Hsuq7wlbwiEDZNVjtzuKcpUNY9WhPEP7mxeyD688pOViQRom4ROlzcJ3+ptHere9kS
+	 i4IEKO5aYEEe8A2vzMOkjfUa5BERhpkGfgjBXKDGKfGkLJ2H9biPfCfYsDz32Dv02S
+	 8CllWWqY9PuRQ==
+Date: Mon, 14 Apr 2025 23:31:11 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z_aDSipnuvNAhHbE@mini-arch>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, linux-amlogic@lists.infradead.org, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>
+To: Chuan Liu <chuan.liu@amlogic.com>
+In-Reply-To: <20250415-clk-measure-v3-2-9b8551dd33b4@amlogic.com>
+References: <20250415-clk-measure-v3-0-9b8551dd33b4@amlogic.com>
+ <20250415-clk-measure-v3-2-9b8551dd33b4@amlogic.com>
+Message-Id: <174469147098.2812651.9702380390890809479.robh@kernel.org>
+Subject: Re: [PATCH v3 2/7] dt-bindings: soc: amlogic: C3 supports
+ clk-measure
 
-On Wed, Apr 09, 2025 at 07:25:14AM -0700, Stanislav Fomichev wrote:
-> On 04/08, Daniel Xu wrote:
-> > kallsyms_lookup_name() cannot be exported from the kernel for policy
-> > reasons, so add this layer of indirection to allow the verifier to still
-> > do kfunc and global variable relocations.
-> > 
-> > Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
-> > ---
-> >  include/linux/bpf.h   |  2 ++
-> >  kernel/bpf/core.c     | 14 ++++++++++++++
-> >  kernel/bpf/verifier.c | 13 +++++--------
-> >  3 files changed, 21 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-> > index 44133727820d..a5806a7b31d3 100644
-> > --- a/include/linux/bpf.h
-> > +++ b/include/linux/bpf.h
-> > @@ -2797,6 +2797,8 @@ static inline int kfunc_desc_cmp_by_id_off(const void *a, const void *b)
-> >  }
-> >  const struct bpf_kfunc_desc *
-> >  find_kfunc_desc(const struct bpf_prog *prog, u32 func_id, u16 offset);
-> > +unsigned long bpf_lookup_type_addr(struct btf *btf, const struct btf_type *func,
-> > +				   const char **name);
-> >  int bpf_get_kfunc_addr(const struct bpf_prog *prog, u32 func_id,
-> >  		       u16 btf_fd_idx, u8 **func_addr);
-> >  
-> > diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
-> > index e892e469061e..13301a668fe0 100644
-> > --- a/kernel/bpf/core.c
-> > +++ b/kernel/bpf/core.c
-> > @@ -1639,6 +1639,20 @@ find_kfunc_desc(const struct bpf_prog *prog, u32 func_id, u16 offset)
-> >  }
-> >  EXPORT_SYMBOL_GPL(find_kfunc_desc);
-> >  
-> > +unsigned long bpf_lookup_type_addr(struct btf *btf, const struct btf_type *t,
-> > +				   const char **name)
-> > +{
-> > +	unsigned long addr;
-> > +
-> > +	*name = btf_name_by_offset(btf, t->name_off);
-> > +	addr = kallsyms_lookup_name(*name);
-> > +	if (!addr)
-> > +		return -ENOENT;
-> > +
-> > +	return addr;
-> > +}
-> > +EXPORT_SYMBOL_GPL(bpf_lookup_type_addr);
+
+On Tue, 15 Apr 2025 10:45:25 +0800, Chuan Liu wrote:
+> C3 adds support for clk-measure.
 > 
-> Let's namespecify all these new exports? EXPORT_SYMBOL_NS_GPL
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+> ---
+>  .../devicetree/bindings/soc/amlogic/amlogic,meson-gx-clk-measure.yaml    | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-Ah didn't know about this. Makes sense - will do.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Thanks,
-Daniel
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/fsl/fsl,ls1028a-reset.yaml: maintainers:0: 'Frank Li' does not match '@'
+	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
+
+doc reference errors (make refcheckdocs):
+Documentation/userspace-api/netlink/netlink-raw.rst: :doc:`rt_link<../../networking/netlink_spec/rt_link>`
+Warning: Documentation/arch/powerpc/cxl.rst references a file that doesn't exist: Documentation/ABI/testing/sysfs-class-cxl
+Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
+Warning: lib/Kconfig.debug references a file that doesn't exist: Documentation/dev-tools/fault-injection/fault-injection.rst
+Documentation/userspace-api/netlink/netlink-raw.rst: :doc:`rt_link<../../networking/netlink_spec/rt_link>`
+Documentation/arch/powerpc/cxl.rst: Documentation/ABI/testing/sysfs-class-cxl
+MAINTAINERS: Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
+lib/Kconfig.debug: Documentation/dev-tools/fault-injection/fault-injection.rst
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250415-clk-measure-v3-2-9b8551dd33b4@amlogic.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
