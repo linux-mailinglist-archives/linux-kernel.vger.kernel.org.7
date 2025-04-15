@@ -1,102 +1,111 @@
-Return-Path: <linux-kernel+bounces-605658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48FC6A8A43C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 18:35:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19E26A8AF40
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 06:45:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C013F189DA1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:35:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3B9B7AD65E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 04:44:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4908828B4F0;
-	Tue, 15 Apr 2025 16:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F9DC1A3144;
+	Wed, 16 Apr 2025 04:44:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yi2BxjzI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e7QaxmfA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F1B015F306;
-	Tue, 15 Apr 2025 16:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A9122D78F
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 04:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744734940; cv=none; b=lY2/n8XGqg7s+qiU47rne+VVHlcdKGnyvKHZTz1aaLJEkKxew/aB5MfY80y1sizke4D/5E2pelrbNKNno3dYo7vjJHEyBre9yvtL/62dIjODW66Sk/XvdQK9OJnM/SZepeFe02HzNJyQnX3vt7+4PLy2CCG/XT5upwYuTiROsbg=
+	t=1744778649; cv=none; b=moFDvTRe8ewGWkCV6WOXhIq4k0+ft4RZ7oI6hnIwGWRSOnFhEK51lA8+p7w3Tlny0Rmsvf9OyIG22Ft1w9z9WVqO0cnedZTAf42AuSeYrCOZjGEfrU7B9Zs6VD8ylx2fehPrUogdP4279NPnYNxnp38JzUs3KLfg7X66jhG8c2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744734940; c=relaxed/simple;
-	bh=qQPlLCaHQYe+gqLPm35pHARjmiBk4+PpLo1qXkmjFPQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lOMg1ZY2wezGXnEEmDVbl4VHqyZZX4HFVH0xDnSVUqUjr+8OoCxCe8mWwg2s8PXAJO0qdqLSS7Czkt+U/5y4sh37yyUclRmh5HnFYXwVUD241EqhM5nkyGZOK26fZY0txGo1gbs9VZkhC/BXuJelWb7h4BoOvCv2uyTrNKxpcjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yi2BxjzI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 221B2C4CEEB;
-	Tue, 15 Apr 2025 16:35:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744734940;
-	bh=qQPlLCaHQYe+gqLPm35pHARjmiBk4+PpLo1qXkmjFPQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Yi2BxjzI5SS9GasqB1mrG7VGqf/qr3KLNsPj6olTEq/xwEyFuBJ/CoHDkRfZLCJKl
-	 1wNR0NvBf4CfKpluiko2DxFirtrllqs8Asr7/HLZp/3dCUKp+nTK7MXVjpZmhiRGTA
-	 P8NdCQrfk1p/5EZhfWR/zR3r1OPELisyF6ml5geKUA+1VDQiVWsDQBk14UGhn4/oWB
-	 oovpgwl2GWP7vKpebsgnTLlXUNdCdHsKL6N7AxtUZ3NEyCdxi+E0w9p1L7OZYhMNv1
-	 z01ek110ohyc/yRuFklq1r4sVF+k8Q4AH0lKTb40dQN9n5J3qzSsUx1xocd7ch3iC+
-	 I4hGyaRgW5CpA==
-Date: Tue, 15 Apr 2025 17:35:36 +0100
-From: Simon Horman <horms@kernel.org>
-To: Pranav Tyagi <pranav.tyagi03@gmail.com>
-Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, skhan@linuxfoundation.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH net-next] net: ipconfig: replace strncpy with strscpy
-Message-ID: <20250415163536.GA395307@horms.kernel.org>
-References: <20250412160623.9625-1-pranav.tyagi03@gmail.com>
+	s=arc-20240116; t=1744778649; c=relaxed/simple;
+	bh=dpZZMdx5FbY7QwD4nb9lzPhZAryD+kC8ybpY+M3GD+I=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=ZRsnBYISKSnbts9YmVvFhjIrZARSAHw0Ic7kSesZTnvZP9/bOzpDsIgeHEm/jphPWHqOswhEIk18hT8rtlJSv1YJS9t9q99MERJMAl6civT49HDFR4bptF/bFjU2HYRPKTZ4mb/qYpZpyl+deR5VtKwvjW/Vt8fMRTzQg6rsksw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e7QaxmfA; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744778648; x=1776314648;
+  h=date:from:to:cc:subject:message-id;
+  bh=dpZZMdx5FbY7QwD4nb9lzPhZAryD+kC8ybpY+M3GD+I=;
+  b=e7QaxmfAg+vgiWBqpYZnUKCvt0YUhGzsklHecWJn09nVvp0tBhDRmkNT
+   4a2nmURPXU7RFdQwlkDISNTyNPMbV96FX90vwzrBW9EqDW1Glrwey8e0H
+   wUuBP0wMT5e1RVyxawL+P0cSHRoS2W1eEWvwhUWWqNUBd14Ctc9Dm2bjP
+   N1zKM6CWyLPhEIe/UwFo8wyWSo6p9M6YDFVPhixW1o0yc7FiIrrHcixs6
+   Ku2zPeeY+Nl5w3j6XwTm3+6u5nv4mY6qpBY1cs/dpUp6CruZqmBU5L9gq
+   aUPxZKq24IaIyHE3o3H+4lHzTaCTat2unaAUy0eOW/yuHoNEgQn3dnNPr
+   A==;
+X-CSE-ConnectionGUID: mRTRVnCGTUe42poJ0rG2wQ==
+X-CSE-MsgGUID: a/75tLNfRryKa0qMFwYWpA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="46025588"
+X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
+   d="scan'208";a="46025588"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 21:44:07 -0700
+X-CSE-ConnectionGUID: RUmTV55/R4GeFgmVbrxSEw==
+X-CSE-MsgGUID: wz6Alh1TSg6qT0dah2iVrQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
+   d="scan'208";a="135313495"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 15 Apr 2025 21:44:07 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u4jIC-000Gk0-18;
+	Tue, 15 Apr 2025 16:37:48 +0000
+Date: Wed, 16 Apr 2025 00:37:47 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/urgent] BUILD SUCCESS
+ 45842b59ec93a5c8f24b4e62f3a5759d3857c08e
+Message-ID: <202504160041.Ez2fGjjU-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250412160623.9625-1-pranav.tyagi03@gmail.com>
 
-On Sat, Apr 12, 2025 at 09:36:23PM +0530, Pranav Tyagi wrote:
-> Replace the deprecated strncpy() with strscpy() as the destination
-> buffer is NUL-terminated and does not require any
-> trailing NUL-padding.
-> 
-> Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
+branch HEAD: 45842b59ec93a5c8f24b4e62f3a5759d3857c08e  x86/cpu: Add CPU model number for Bartlett Lake CPUs with Raptor Cove cores
 
-Thanks,
+elapsed time: 1451m
 
-I agree that strscpy() is the correct choice here for
-the reasons you give above.
+configs tested: 19
+configs skipped: 126
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-> ---
->  net/ipv4/ipconfig.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/net/ipv4/ipconfig.c b/net/ipv4/ipconfig.c
-> index c56b6fe6f0d7..eb9b32214e60 100644
-> --- a/net/ipv4/ipconfig.c
-> +++ b/net/ipv4/ipconfig.c
-> @@ -1690,7 +1690,7 @@ static int __init ic_proto_name(char *name)
->  			*v = 0;
->  			if (kstrtou8(client_id, 0, dhcp_client_identifier))
->  				pr_debug("DHCP: Invalid client identifier type\n");
-> -			strncpy(dhcp_client_identifier + 1, v + 1, 251);
-> +			strscpy(dhcp_client_identifier + 1, v + 1, 251);
+tested configs:
+i386                         allmodconfig    gcc-12
+i386                          allnoconfig    gcc-12
+i386                         allyesconfig    gcc-12
+i386    buildonly-randconfig-001-20250415    clang-20
+i386    buildonly-randconfig-002-20250415    clang-20
+i386    buildonly-randconfig-003-20250415    clang-20
+i386    buildonly-randconfig-004-20250415    clang-20
+i386    buildonly-randconfig-005-20250415    gcc-12
+i386    buildonly-randconfig-006-20250415    gcc-12
+i386                            defconfig    clang-20
+x86_64                        allnoconfig    clang-20
+x86_64                       allyesconfig    clang-20
+x86_64  buildonly-randconfig-001-20250415    clang-20
+x86_64  buildonly-randconfig-002-20250415    gcc-11
+x86_64  buildonly-randconfig-003-20250415    gcc-12
+x86_64  buildonly-randconfig-004-20250415    clang-20
+x86_64  buildonly-randconfig-005-20250415    clang-20
+x86_64  buildonly-randconfig-006-20250415    gcc-12
+x86_64                          defconfig    gcc-11
 
-As an aside, I'm curious to know why the length is 251
-rather than 252 (sizeof(dhcp_client_identifier) -1).
-But that isn't strictly related to this patch.
-
->  			*v = ',';
->  		}
->  		return 1;
-> -- 
-> 2.49.0
-> 
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
