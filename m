@@ -1,146 +1,178 @@
-Return-Path: <linux-kernel+bounces-605330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE6C3A89FC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:44:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86C66A89FD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:45:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECEEE7A3F4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:42:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42EE97AD18C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93F718FC86;
-	Tue, 15 Apr 2025 13:43:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0C719D890;
+	Tue, 15 Apr 2025 13:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S7TJoq4O"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nbhlPhsf"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5728F15666D;
-	Tue, 15 Apr 2025 13:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49D119F422;
+	Tue, 15 Apr 2025 13:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744724608; cv=none; b=mM+0gENJZLWxOju+LPSQsFTBC5O4k67hu9FIHBQgAiICN8bUxjci0DBQhMf4Jk0W5I5VUXIIWvXxBb1obtC8HrGajSF9KFTK1cjYMTM+BUu5GxuQ/UQ+QeHn4ZIeWpWuqai3B2B0aeJZeUAMek6IGb+AEUmWTPVZ3eBr/XTFSEA=
+	t=1744724710; cv=none; b=ptqfojCL9c/y6qpSVpDWcclc3Dk+XUCrs4vHaajGYWSwiG0XU7ewWD1UhGUdNEvUtQzpWohLuziVzAbfLArCVFysSkc7+gbPqOsuDdthbGtZHBVYEuBczt0ifIUM6A3sgIK/7pmYmZugUzK+gdkkm0RB1RMu0QZzKvjjrqL2scc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744724608; c=relaxed/simple;
-	bh=IxWkArW0k2U67F6F9RHjTgtE9suHMDOBlSeq3YOrG44=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mzG9KJW4Z4xPCdVHIZDFS5T5iqblhKHf4H6+0rjFfGS8L7CX/UEen/2oK2hAmxAmerSn4yqk2P/EuoJ9+dKS7VksBpdy7Q7owgWtxfeEfpNk+OeG+NQTBer2C3HEBsspawBOdUMnMqM1l5BxJgQ2zjereSp6y0asg5IU7jBzGTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S7TJoq4O; arc=none smtp.client-ip=192.198.163.9
+	s=arc-20240116; t=1744724710; c=relaxed/simple;
+	bh=HYnPp9jHyi+2/ewnjYN1T/Y1OTx4xyzm9rXfzeGvPtI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s85b1mcZ8hku44DYWnlw/7Z/UqMDl4EiNikWVxSaBF6L4R3CbicKwUe6vwtAvGTcIN2HvFE+h1MX2rpZSNMLH/dyXWwbu9wfJHypQjVVE2BfEq01+l8vACp5Ryu9bl+zB/s/GggcWTf2/L+DSzZCtipof+sbKCxh7uYENe16INY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nbhlPhsf; arc=none smtp.client-ip=198.175.65.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744724603; x=1776260603;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=IxWkArW0k2U67F6F9RHjTgtE9suHMDOBlSeq3YOrG44=;
-  b=S7TJoq4OIqN/PdsHgd/5jpkCv87NHXNlp+hB692gXzDbqwPZX0bFp/Kx
-   XbcS/zrQGULH8APS39OpRZriBRbWy5+maJFauyO3nPVUvo+Nuq6gaMcK4
-   ZomJH377Tv7Shd/NX4nwf4Pcaa0qTIwhO0oyE2u6pbxLU6EtzfWMUU81O
-   EzytkVsoKhrf1p+g0vvnTgF8bcDKaJ3jZWafL8rfIUFHcLb4hFkHP2/0q
-   oML32YRqsEZVD8IVp2tUf/S57Lms/dAmoDHNWjAhIRfHyB3beXnw5AQKA
-   YiQavI61YO5+G+7HucfSqucqaZhWp11dCYVASWlDLxVtMS+9NnbQoVF41
-   g==;
-X-CSE-ConnectionGUID: av/2kEzBRZe662hsJU3QmA==
-X-CSE-MsgGUID: Qp9b4TqxS9q+s30r8mozAA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="56869510"
+  t=1744724709; x=1776260709;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=HYnPp9jHyi+2/ewnjYN1T/Y1OTx4xyzm9rXfzeGvPtI=;
+  b=nbhlPhsfz0EvEiNa0muvngZOH6D4VekI2owWukYlBTHZIIMo4O/wZiHx
+   G/K9CvJE3PV3ZNeS8o05Q80DS33aoNelR0Fo/wjPaG7ZRkfJsfzgnsCvR
+   q75agY5qWXrKosSrK+fVsZBUqTk9b1B/i3wxwboiUItkhTQ1EhVnR3jCq
+   PLb8ciurrhY2ytPZpI3BFM0Ah8DxWfYdp2l0mUMEqTauYiWr+DYlxeEp/
+   2CYCr11gqXN5EUtBC9JoZZJ1x00lHUV73mMY2K4Apj19c1yJ1P0e5tpfH
+   GUJqrRhmWyoYFyZnBPHEPcZF61qxzJQTBYYV38+MIWj53PkbvV7sIJ78G
+   A==;
+X-CSE-ConnectionGUID: H/CrkQhSS7qez6BONQFr+w==
+X-CSE-MsgGUID: ESHOoTrcReq4usu44j5FaQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="46322448"
 X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="56869510"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 06:43:22 -0700
-X-CSE-ConnectionGUID: Q/dFA589ScmIDLjzPOyWbg==
-X-CSE-MsgGUID: bKJ6CkQGSYGkv1pEIGbucg==
+   d="scan'208";a="46322448"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 06:45:08 -0700
+X-CSE-ConnectionGUID: /8g+SDTdSl+uUaIFfQ+6yw==
+X-CSE-MsgGUID: Lzu676qCSDaZGLuzYhhL2w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="130096768"
-Received: from bkammerd-mobl.amr.corp.intel.com (HELO [10.124.222.124]) ([10.124.222.124])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 06:43:22 -0700
-Message-ID: <c811f662-79fd-4db1-b4e1-74a869d9a4f1@intel.com>
-Date: Tue, 15 Apr 2025 06:43:20 -0700
+   d="scan'208";a="130659369"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 15 Apr 2025 06:45:06 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u4gb1-000GEA-26;
+	Tue, 15 Apr 2025 13:45:03 +0000
+Date: Tue, 15 Apr 2025 21:44:06 +0800
+From: kernel test robot <lkp@intel.com>
+To: Arthur Simchaev <arthur.simchaev@sandisk.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	avri.altman@sandisk.com, Avi.Shchislowski@sandisk.com,
+	beanhuo@micron.com, linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bvanassche@acm.org
+Subject: Re: [PATCH v2] ufs: bsg: Add hibern8 enter/exit to
+ ufshcd_send_bsg_uic_cmd
+Message-ID: <202504152109.JOmreWGE-lkp@intel.com>
+References: <20250414120257.247858-1-arthur.simchaev@sandisk.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [tip: x86/urgent] x86/e820: Discard high memory that can't be
- addressed by 32-bit systems
-To: Mike Rapoport <rppt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
- Arnd Bergmann <arnd@kernel.org>, Ingo Molnar <mingo@kernel.org>,
- Andy Shevchenko <andy@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- Davide Ciminaghi <ciminaghi@gnudd.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Matthew Wilcox <willy@infradead.org>, Paolo Bonzini <pbonzini@redhat.com>,
- Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org, x86@kernel.org
-References: <20250413080858.743221-1-rppt@kernel.org>
- <174453620439.31282.5525507256376485910.tip-bot2@tip-bot2>
- <a641e123-be70-41ab-b0ce-6710d7fd0c2d@intel.com>
- <Z_4ISTuGo8VmZt9X@kernel.org>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <Z_4ISTuGo8VmZt9X@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250414120257.247858-1-arthur.simchaev@sandisk.com>
 
-On 4/15/25 00:18, Mike Rapoport wrote:
->> How about we reuse 'MAX_NONPAE_PFN' like this:
->>
->> 	if (IS_ENABLED(CONFIG_X86_32))
->> 		memblock_remove(PFN_PHYS(MAX_NONPAE_PFN), -1);
->>
->> Would that make the connection more obvious?
-> Yes, that's better. Here's the updated patch:
+Hi Arthur,
 
-Looks, great. Thanks for the update and the quick turnaround on the
-first one after the bug report!
+kernel test robot noticed the following build errors:
 
-Tested-by: Dave Hansen <dave.hansen@intel.com>
-Acked-by: Dave Hansen <dave.hansen@intel.com>
+[auto build test ERROR on jejb-scsi/for-next]
+[also build test ERROR on mkp-scsi/for-next linus/master v6.15-rc2 next-20250415]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Arthur-Simchaev/ufs-bsg-Add-hibern8-enter-exit-to-ufshcd_send_bsg_uic_cmd/20250414-200404
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git for-next
+patch link:    https://lore.kernel.org/r/20250414120257.247858-1-arthur.simchaev%40sandisk.com
+patch subject: [PATCH v2] ufs: bsg: Add hibern8 enter/exit to ufshcd_send_bsg_uic_cmd
+config: i386-buildonly-randconfig-004-20250415 (https://download.01.org/0day-ci/archive/20250415/202504152109.JOmreWGE-lkp@intel.com/config)
+compiler: clang version 20.1.2 (https://github.com/llvm/llvm-project 58df0ef89dd64126512e4ee27b4ac3fd8ddf6247)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250415/202504152109.JOmreWGE-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504152109.JOmreWGE-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/ufs/core/ufshcd.c:4360:38: error: too many arguments to function call, expected single argument 'hba', have 2 arguments
+    4360 |                 ret = ufshcd_uic_hibern8_exit(hba, uic_cmd);
+         |                       ~~~~~~~~~~~~~~~~~~~~~~~      ^~~~~~~
+   include/ufs/ufshcd.h:1331:5: note: 'ufshcd_uic_hibern8_exit' declared here
+    1331 | int ufshcd_uic_hibern8_exit(struct ufs_hba *hba);
+         |     ^                       ~~~~~~~~~~~~~~~~~~~
+   drivers/ufs/core/ufshcd.c:10342:44: warning: shift count >= width of type [-Wshift-count-overflow]
+    10342 |                 if (!dma_set_mask_and_coherent(hba->dev, DMA_BIT_MASK(64)))
+          |                                                          ^~~~~~~~~~~~~~~~
+   include/linux/dma-mapping.h:73:54: note: expanded from macro 'DMA_BIT_MASK'
+      73 | #define DMA_BIT_MASK(n) (((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
+         |                                                      ^ ~~~
+   1 warning and 1 error generated.
+
+
+vim +/hba +4360 drivers/ufs/core/ufshcd.c
+
+  4331	
+  4332	/**
+  4333	 * ufshcd_send_bsg_uic_cmd - Send UIC commands requested via BSG layer and retrieve the result
+  4334	 * @hba: per adapter instance
+  4335	 * @uic_cmd: UIC command
+  4336	 *
+  4337	 * Return: 0 only if success.
+  4338	 */
+  4339	int ufshcd_send_bsg_uic_cmd(struct ufs_hba *hba, struct uic_command *uic_cmd)
+  4340	{
+  4341		int ret;
+  4342	
+  4343		if (hba->quirks & UFSHCD_QUIRK_BROKEN_UIC_CMD)
+  4344			return 0;
+  4345	
+  4346		ufshcd_hold(hba);
+  4347	
+  4348		if (uic_cmd->argument1 == UIC_ARG_MIB(PA_PWRMODE) &&
+  4349		    uic_cmd->command == UIC_CMD_DME_SET) {
+  4350			ret = ufshcd_uic_pwr_ctrl(hba, uic_cmd);
+  4351			goto out;
+  4352		}
+  4353	
+  4354		if (uic_cmd->command == UIC_CMD_DME_HIBER_ENTER) {
+  4355			ret = ufshcd_uic_hibern8_enter(hba);
+  4356			goto out;
+  4357		}
+  4358	
+  4359		if (uic_cmd->command == UIC_CMD_DME_HIBER_EXIT) {
+> 4360			ret = ufshcd_uic_hibern8_exit(hba, uic_cmd);
+  4361			goto out;
+  4362		}
+  4363	
+  4364		mutex_lock(&hba->uic_cmd_mutex);
+  4365		ufshcd_add_delay_before_dme_cmd(hba);
+  4366	
+  4367		ret = __ufshcd_send_uic_cmd(hba, uic_cmd);
+  4368		if (!ret)
+  4369			ret = ufshcd_wait_for_uic_cmd(hba, uic_cmd);
+  4370	
+  4371		mutex_unlock(&hba->uic_cmd_mutex);
+  4372	
+  4373	out:
+  4374		ufshcd_release(hba);
+  4375		return ret;
+  4376	}
+  4377	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
