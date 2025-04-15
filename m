@@ -1,205 +1,305 @@
-Return-Path: <linux-kernel+bounces-606061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 445A0A8AA13
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 23:25:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C005A8AA25
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 23:32:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 498AA16BECD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 21:25:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 815FD17F5F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 21:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 671D825291B;
-	Tue, 15 Apr 2025 21:25:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90BC221FCD;
+	Tue, 15 Apr 2025 21:32:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iCIksnsj"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="CSvCFAZY"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2053.outbound.protection.outlook.com [40.107.94.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A6E82505A9
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 21:25:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744752349; cv=none; b=UpJbWvbwr9DmJsDMlOXFkBKpdsmDWbCM/OxBYr6g7h8zTms3TT1opBviwREnkQbtoMvLXH7/IU8nBZGRAj4t0q7t6yz3TLxCmgniMXm7I4XBLccao0fpjr2rDaz8ctQbry7q78zRmLi0c9M/P2cwY44tuZicvF72V2L2ruNNVGo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744752349; c=relaxed/simple;
-	bh=JwU8AHx8PeAN8AtgSHA3D7DJk5pbqTcZbLy8XxPRcck=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DB329EkBQweqXvQ/N+xNE1IwEyrDJkDnVpAjCZT4DnBKuoll/hXzyrrAYt3wUkg/+VIuL+CuAzLpegR9FHETBfHYn5wVBY8haGVDIqDH1vedonq/N8pEZaBBRoRr/89wDYknKF9Xz5z1CKB01Fqh2EFx7/EuedW+Pe5BIznozFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iCIksnsj; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2254e0b4b79so82805875ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 14:25:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744752347; x=1745357147; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UwJG8J1iyTH8V+SfRmZi+ISFZpJOYpkT7vaEBR18O5k=;
-        b=iCIksnsjKqkhihQIYg19sKVmkq2e+Jia7Bpsluw2ZFQvTCM9GvurtEAF6sHTCQcofI
-         yDrKpBRuYYxFBnyeVi+2R3WvQtiXdqlrhE2so/t1sU6NC0wQW9xd7Xw8towIAWmyGdMq
-         H6B5AsLNwBu4iPDTvSJCJ6zDB5UlQeqd2H8cHy6qiS178s+fU3TAd0fOF6f1i29ZNTYP
-         KS6iGzAKr36q9cZGrx6uiUwA6dicdQu4ckd0ebtSmIzGJQzmuG0TFqiBpucAjst9gyWA
-         /q2GXEQYpBhlj+0hnHWGQ/psUG54gQtQplCpj36EMT8nmKkVhQItC9/HpdYREPeFF0BX
-         +vfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744752347; x=1745357147;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UwJG8J1iyTH8V+SfRmZi+ISFZpJOYpkT7vaEBR18O5k=;
-        b=Anwt5f/FMivSZrZcZlo8kuyG7Q78edxu1sZGBDg732hn5kT4ujKnH+RSeZW183vahL
-         qJQo7jiiCHWaQsJdzfPARpbMI1uhbsGqh6OXrHUObbMrxwQpqx19CmISANxpaUP/tV9k
-         XX8G7c/wULo0N+Pe0NGNp3w7AjriyAeacCM8LN/BgJTnmpTSTO0KII80QiXqZ2F6Ao1R
-         S8VO4uNJKahKoui7e+EGyWvRsmkU3uydRFXfXvhA0yS4ZW/ggPnTmyl5l/kNywnCooN0
-         BB/75/crdjWghH7GwztKq/cn4SzAcj3YZYNE3MMIbhBdyTF8CD9Ovqafyz7bitAzYQr1
-         ODig==
-X-Forwarded-Encrypted: i=1; AJvYcCUefIyiMQgmBkpDyIJdds+oDkexpBVF/TSSMoZhqipWQ3EIdSvTyD0HxgkkYkXDbOVLi9+lD8mfh76CpRs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhR61ubsz97jwhe+xk+ELQR72h7r3cRcZ+PIMySkp6dHHqqp/r
-	afwLLMr4/0BB7w+T/lvRWA1LBBGf7vr5kSDefhgcwvDXm94/WA0qFCW7fhL6Hw==
-X-Gm-Gg: ASbGncskqUQFdbdVkp+z3QYBHQLPs9obfGsqyZ7LZDKqxUU9H3yS2iLOl4kkE2ai6jX
-	ph9xZ/YdfLeoO5dam0mdJDLMeNPCLPkS8kBw1P38dhdY7b53FdN25tJlQGZJzUy45I1EbNEoON0
-	Ht4faxEdB2CFi+h5YFTypoQ6/djaPxlyxs/khccAWqBVVGqC8ghgQvtVHLbSLQYPreFGXSnCG8y
-	OUyixdfnH47IRBX+UfOfHwaiHVm+NoTfHqH2Ju7HrnSq/+mdUnTLzHL2kynXhyOLKqsWoRz6i/n
-	ysOg+phdV4wRJOpuzxdX3RIzffUHyNKGsSQ7B0Aq+6h1PsghY9LoVisCRfRnsdELj7sHtW8r2Mx
-	kCJYGug==
-X-Google-Smtp-Source: AGHT+IFbV5rZHgTJXmvY63NNUPHF83MLOSfyfSDJgneqMsKOmSCLVHVGlipkv2ZUH8ySI1osZFQGUA==
-X-Received: by 2002:a17:902:ef4c:b0:224:f12:3734 with SMTP id d9443c01a7336-22c319f7f6bmr11029435ad.30.1744752347289;
-        Tue, 15 Apr 2025 14:25:47 -0700 (PDT)
-Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd230e8b1sm9292900b3a.148.2025.04.15.14.25.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Apr 2025 14:25:46 -0700 (PDT)
-Date: Tue, 15 Apr 2025 14:25:43 -0700
-From: William McVicker <willmcvicker@google.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Saravana Kannan <saravanak@google.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Donghoon Yu <hoony.yu@samsung.com>,
-	Hosung Kim <hosung0.kim@samsung.com>, kernel-team@android.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Youngmin Nam <youngmin.nam@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 6/7] clocksource/drivers/exynos_mct: Add module support
-Message-ID: <Z_7O1xi2-ZGhJ1r_@google.com>
-References: <20250402233407.2452429-1-willmcvicker@google.com>
- <20250402233407.2452429-7-willmcvicker@google.com>
- <Z_6OZHYfC0bC5289@mai.linaro.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2445710F2;
+	Tue, 15 Apr 2025 21:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744752734; cv=fail; b=Uf7I0ilfpOVrUogcWumXYAemaWRAQR3OtDTfSE34fd3Zq1IM9dUEju261+AiLW9d51dcqH2dVgoFo0EgH4PP3XT2HdFLDmuRbDSTuTfn5JN0SQ+K0k3tDdW2QLXyzJnnzfKIrs1Xb+ZO52krOTK7upL7bK0IWx20qxsOQ+Iv2Cc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744752734; c=relaxed/simple;
+	bh=YkThshmrJxUB1jKv4sVST0iAe3E5LMHFNHdiyx0QXUA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=X6ScL+nr/hlBkZ/dPfBHqKvwhx55kNW3TQvOVQ4oqCfjjKgZ76qCVd5FAmyy1eyB8SIPKppa3mR5+eyOnftMLm2A0ZZMt+xM1g/iEfgQzdbjkIBnvGxAbOH340/FPHbYio5gX+sbaznl6CAo2h6l0qyIrJ6MggdRMoI86dveKSM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=CSvCFAZY; arc=fail smtp.client-ip=40.107.94.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fGFGGWADPcGWbWyeN3hMBpRWYYq3p5DV0GgbVjtvzDhIhf76aHfXZrFu9f9LrpjSfb0da+YbJRbg9p81fvYpg6GNyFPv6Ks9WbCN59bCC5Czsnchgc6KGb0OKgoqhFeE3JS5dlLT06PZFETNgfhL4afylqIAYCD7AoPb9ik2uxmLKLxYGhiGsfAkmFBJtggZmAwEBf2UNuZV82UBN9uKm5gmrp93wWGJU2J3Zpz/EUZrNW43KFRpYLs7RKYgIDlYrrbSvmr2pZHw5SXetR+xjy6UvPmbuYubByjOIEiLTn5eEAcmn907ZmD7dUbBO6mTjliadWhBNv2eyswQZr7fmg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HWPuM2gyNQFQRqAQ7QcASjySm0StJdfrVXOW7F7SfF8=;
+ b=aaAk7A22w94dvDWbyBqaYWIO2zUhWPRY4d7sfLBId/GU3AsAI03hVXANz+wpKBOCcaeXzHJb5oym3zEFGfWYex4mdnn3HdkarW1jXizQNL9e1CQssgjuVRc1o3EPu5Q5SEmxvbJzzdsBa1NEJJfJfk835Eiir4MAbm2z3hre0blmcQgeyPok6EQgoEuALpUDnAMSLO0inPucNm067ZvjFPIscdRYxHSqyabxuXL9GyRfbqKG4+7OslhURXqX8TtBY+pj5p0nyVdmUQaskFuHyirmL4Y2g8qit84QQB6rb/vhY4h5+HmDlxqVucwl0TddTil1VDSDkUNeP/NdUFH5uA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HWPuM2gyNQFQRqAQ7QcASjySm0StJdfrVXOW7F7SfF8=;
+ b=CSvCFAZY8eZ8D7ES6hWzciUzilHkeNXj3JibsPpMMsEpH/UmckpFy0gOi9zexLOgj2t1y/dHJi7uOmTWJXoORw8fRcBFMNhlAbnPLnflMxwjLXWKM0yzuYuvcHRn/yjeFZgdNUfQ8UW1+Da+3v0X9gi7XT8VyIuT9F1piuujc44=
+Received: from SJ0PR03CA0081.namprd03.prod.outlook.com (2603:10b6:a03:331::26)
+ by PH8PR12MB8429.namprd12.prod.outlook.com (2603:10b6:510:258::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.32; Tue, 15 Apr
+ 2025 21:32:07 +0000
+Received: from SJ5PEPF000001CF.namprd05.prod.outlook.com
+ (2603:10b6:a03:331:cafe::ce) by SJ0PR03CA0081.outlook.office365.com
+ (2603:10b6:a03:331::26) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8632.32 via Frontend Transport; Tue,
+ 15 Apr 2025 21:32:07 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ5PEPF000001CF.mail.protection.outlook.com (10.167.242.43) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8655.12 via Frontend Transport; Tue, 15 Apr 2025 21:32:07 +0000
+Received: from titanite-d354host.amd.com (10.180.168.240) by
+ SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 15 Apr 2025 16:31:55 -0500
+From: Avadhut Naik <avadhut.naik@amd.com>
+To: <linux-edac@vger.kernel.org>
+CC: <bp@alien8.de>, <yazen.ghannam@amd.com>, <linux-kernel@vger.kernel.org>,
+	<avadhut.naik@amd.com>, =?UTF-8?q?=C5=BDilvinas=20=C5=BDaltiena?=
+	<zilvinas@natrix.lt>
+Subject: [PATCH v2] EDAC/amd64: Fix size calculation for Non-Power-of-Two DIMMs
+Date: Tue, 15 Apr 2025 21:25:58 +0000
+Message-ID: <20250415213150.755255-1-avadhut.naik@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z_6OZHYfC0bC5289@mai.linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001CF:EE_|PH8PR12MB8429:EE_
+X-MS-Office365-Filtering-Correlation-Id: c40ae18c-fd8b-45be-17f3-08dd7c64f8f0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|376014|36860700013|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Z2RidmNDaGN6bFpJNzFJZnNJOEZ6dlMrczFRcU1JZWFiTXB3V3lJcytRSGRl?=
+ =?utf-8?B?SE90eWxGMi9vUXZqbzZpNThCTllaZm1WaG11TnZOZ09rS3NldExyNm5VaWdr?=
+ =?utf-8?B?ME5YVERyVkQ3aXB6QkUxVXBFV09DOGVoUGI5ZTc4bXZ3VmRpcXFYQmgrbUI0?=
+ =?utf-8?B?amliZGxHcnl4U0FUZDRIamdWYkdNRHVqQXF0RjdrWXk3djRud2lBMDNqaVpN?=
+ =?utf-8?B?aXZuRDRtclpLVGdXVkRnUE9Ec2EzcThPVFhvbzlTUG1rYk5YaXorbkNZeHNX?=
+ =?utf-8?B?cDhFdldWU2FXRFJjdHRYYWJScHFzT0ZDYkU2MDNDcDAzVFVhdnovWmpqSnUy?=
+ =?utf-8?B?S1ZxZG8raUdzUWlIOHc4aDRhTXI4WWRlUlU0UHVGTi9WS2U3R1ZVVGFRWFlC?=
+ =?utf-8?B?YiszTGJaTUlTZlk2WE9zMmlyRTk2QnhlZ21UbEs4TFNoZVE2Z3I5bVJQWGRx?=
+ =?utf-8?B?di9ZNkFUajNBY2NUdGI1Nlo4bG04TDE1cklOODJkUWtUVUxrU1Znbm1YZitY?=
+ =?utf-8?B?Wmk1ZkFpNEtObk5kTzM3SFBENjFXU1FnU01CQkFKVFJjbjZKQ09kQlBDR3pk?=
+ =?utf-8?B?TTk2SC9ZNElFcU9ia2diQXFjU0wvczRCRFlpZXRkY0dKWkpsb0ZxZXQwQ3lF?=
+ =?utf-8?B?dll2ak41Mk1GL1JlSUh0dU1QTzEwVmszZzlmdUMvbk5JUkN0d1ovcGQySVds?=
+ =?utf-8?B?MHZwQlkvaHV5UWQ5VCtxZEFOVzlqV0xxSUhuVDJ5cUp0QnhIV0FiSTF2MC9p?=
+ =?utf-8?B?T1J0WDd5d0xRakhHWnFydGRFZ3dudjdmaS9ubXRFd3hnZldhbEN5eG1RbFdm?=
+ =?utf-8?B?dWZ3SGczUW9ma3JnMWh3MThlK3RMODFtcFFML1cybS9iV0tjY1g2WkhSMjNN?=
+ =?utf-8?B?akpSZlZyTSt0TDBaSjJZSmxJK2IzRXdUOGxGalNCWmJhbmd2S01uMmFIWWVO?=
+ =?utf-8?B?dGp0ZmxRTTJxMDNpK0ZqOTZMbStDZmpMakd1ZGw5NmI0N01MazduODYyd3pG?=
+ =?utf-8?B?RmxaNDdGTm9jZ2FXZjJ0QlA0b2RsWDhsaTdVdTJXNitTME9JTkZpTWcrOCti?=
+ =?utf-8?B?bnVhZmxXSGwwU0FaenFUT2Q5OXBRc0NUVldLVVQ0M1l0OW5RUVFkaVNRUnFT?=
+ =?utf-8?B?Ny96dFUzWitaTE9YdGMwOWowZTNEWXJoVkpYYzR0V2VONzBhdk95dzltNmdR?=
+ =?utf-8?B?UkZHM0FtUDNJUVl6c3FlRk9sT0YvYmhwcDl5SlkrTG1WcCtoVUpjU2N4Q0dn?=
+ =?utf-8?B?bTF3MDFrdHFvWW9MT1MyLzQzY2ZHOHRHSm81RkFrNjlJcDh5RkRDYlA2ekZH?=
+ =?utf-8?B?NGNRd0tIZEFrNksyTVRGSnVWbjhiT1E0dWUwL2lYRDlVYXlHQUxvNEM5bTdN?=
+ =?utf-8?B?VER6eVR5a3ZLa0tTbjM4bnFuZEYrdmZZWDNYSkxXZHFWZXU5dVZ5RzJ2bHdW?=
+ =?utf-8?B?aXkrWGVVNUozV2FkUlZFcEdtUUp1eHhMTEt4SDZPeEJ0SUxHUTkvWFdKSnVZ?=
+ =?utf-8?B?bkpMQmJpNkJ6eWVOeHFoYUVic0x2SWY2TnhFeU9PZDM2cU1QNjlZWkRLMzQv?=
+ =?utf-8?B?VXEzU1pwZG84SExlMjZDbUxpc3N0dlRoUEpRRU9MdnlGMmNLUGJ1b0FsS2U0?=
+ =?utf-8?B?anpENndhT0Q0TFI2RnRIZjZOR0ExY2NHR3JRL1ZZL1d4OGcycXhnYjVQRDRP?=
+ =?utf-8?B?MGlTU2NSemZOcGQ5TnBGK3lNcWNMemhsbEliV1JkOFBJNU9SVnh6RnJ3aXZV?=
+ =?utf-8?B?akViZ0w5SVFNWjJ4Sm9hUE5BUWdKOWM2NkFvNWxRN1VnRGNMU3cyNXF6ZURz?=
+ =?utf-8?B?d2VJWGJMbWhaczg3dFhubVcycTlnRzhORjR5OW9TWDlnKzVwSjAzUnJ6cVo5?=
+ =?utf-8?B?TElqTnRPK1FxQktpQmxDVm9jMkpBRVZtcHk0R28rMHY2bWVZUGMzV0hmTFNW?=
+ =?utf-8?B?bGJMRDJCaU03THdsT0E1eVRjWUhGRnBKY3FKeThXR3h2V0FpRTNwV0YrSTdr?=
+ =?utf-8?B?Tm9ySkdRL3JnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(36860700013)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Apr 2025 21:32:07.0286
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c40ae18c-fd8b-45be-17f3-08dd7c64f8f0
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001CF.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB8429
 
-On 04/15/2025, Daniel Lezcano wrote:
-> Hi Will,
+Each Chip-Select (CS) of a Unified Memory Controller (UMC) on AMD EPYC
+SOCs has an Address Mask and a Secondary Address Mask register associated
+with it. The amd64_edac module logs DIMM sizes on a per-UMC per-CS
+granularity during init using these two registers.
 
-Hi Daniel,
+Currently, the module primarily considers only the Address Mask register
+for computing DIMM sizes. The Secondary Address Mask register is only
+considered for odd CS. Additionally, if it has been considered, the
+Address Mask register is ignored altogether for that CS. For
+power-of-two DIMMs, this is not an issue since only the Address Mask
+register is used.
 
-> 
-> On Wed, Apr 02, 2025 at 04:33:57PM -0700, Will McVicker wrote:
-> > From: Donghoon Yu <hoony.yu@samsung.com>
-> > 
-> > On Arm64 platforms the Exynos MCT driver can be built as a module. On
-> > boot (and even after boot) the arch_timer is used as the clocksource and
-> > tick timer. Once the MCT driver is loaded, it can be used as the wakeup
-> > source for the arch_timer.
-> 
-> From a previous thread where there is no answer:
-> 
-> https://lore.kernel.org/all/c1e8abec-680c-451d-b5df-f687291aa413@linaro.org/
-> 
-> I don't feel comfortable with changing the clocksource / clockevent drivers to
-> a module for the reasons explained in the aforementionned thread.
-> 
-> Before this could be accepted, I really need a strong acked-by from Thomas
+For non-power-of-two DIMMs, however, the Secondary Address Mask register
+is used in conjunction with the Address Mask register. However, since the
+module only considers either of the two registers for a CS, the size
+computed by the module is incorrect. The Secondary Address Mask register
+is not considered for even CS, and the Address Mask register is not
+considered for odd CS.
 
-Thanks for the response! I'll copy-and-paste your replies from that previous
-thread and try to address your concerns.
+Introduce a new helper function so that both Address Mask and Secondary
+Address Mask registers are considered, when valid, for computing DIMM
+sizes. Furthermore, also rename some variables for greater clarity.
 
->   * the GKI approach is to have an update for the 'mainline' kernel and
-> let the different SoC vendors deal with their drivers. I'm afraid this
-> will prevent driver fixes to be carry on upstream because they will stay
-> in the OoT kernels
+Fixes: 81f5090db843 ("EDAC/amd64: Support asymmetric dual-rank DIMMs")
+Reported-by: Žilvinas Žaltiena <zilvinas@natrix.lt>
+Tested-by: Žilvinas Žaltiena <zilvinas@natrix.lt>
+Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
+Cc: stable@vger.kernel.org
+```
+Changes in v2:
+1. Avoid unnecessary variable initialization.
+2. Modify commit message to accurately reflect the changes.
+3. Move check for non-zero Address Mask register into the new helper.
 
-I can't speak for that specific thread or their intent, but I can speak to this
-thread and our intent.
+Links:
+v1: https://lore.kernel.org/linux-edac/9a33b6ff-9ce8-4abd-8629-3c9f6a546514@amd.com/T/#mc0b1101055f12ccb06e5a251d16f186597ed4133
+---
+ drivers/edac/amd64_edac.c | 57 ++++++++++++++++++++++++---------------
+ 1 file changed, 36 insertions(+), 21 deletions(-)
 
-This whole patch series is about upstreaming the downstream changes. So saying
-this will prevent others from upstreaming changes is punishing the folks who
-are actually trying to upstream changes. I don't think that's a fair way to
-handle this.
+diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
+index 58b1482a0fbb..91d22e63bdb1 100644
+--- a/drivers/edac/amd64_edac.c
++++ b/drivers/edac/amd64_edac.c
+@@ -1209,7 +1209,9 @@ static int umc_get_cs_mode(int dimm, u8 ctrl, struct amd64_pvt *pvt)
+ 	if (csrow_enabled(2 * dimm + 1, ctrl, pvt))
+ 		cs_mode |= CS_ODD_PRIMARY;
+ 
+-	/* Asymmetric dual-rank DIMM support. */
++	if (csrow_sec_enabled(2 * dimm, ctrl, pvt))
++		cs_mode |= CS_EVEN_SECONDARY;
++
+ 	if (csrow_sec_enabled(2 * dimm + 1, ctrl, pvt))
+ 		cs_mode |= CS_ODD_SECONDARY;
+ 
+@@ -1230,12 +1232,13 @@ static int umc_get_cs_mode(int dimm, u8 ctrl, struct amd64_pvt *pvt)
+ 	return cs_mode;
+ }
+ 
+-static int __addr_mask_to_cs_size(u32 addr_mask_orig, unsigned int cs_mode,
+-				  int csrow_nr, int dimm)
++static int calculate_cs_size(u32 mask, unsigned int cs_mode)
+ {
+-	u32 msb, weight, num_zero_bits;
+-	u32 addr_mask_deinterleaved;
+-	int size = 0;
++	int msb, weight, num_zero_bits;
++	u32 deinterleaved_mask;
++
++	if (!mask)
++		return 0;
+ 
+ 	/*
+ 	 * The number of zero bits in the mask is equal to the number of bits
+@@ -1248,19 +1251,30 @@ static int __addr_mask_to_cs_size(u32 addr_mask_orig, unsigned int cs_mode,
+ 	 * without swapping with the most significant bit. This can be handled
+ 	 * by keeping the MSB where it is and ignoring the single zero bit.
+ 	 */
+-	msb = fls(addr_mask_orig) - 1;
+-	weight = hweight_long(addr_mask_orig);
++	msb = fls(mask) - 1;
++	weight = hweight_long(mask);
+ 	num_zero_bits = msb - weight - !!(cs_mode & CS_3R_INTERLEAVE);
+ 
+ 	/* Take the number of zero bits off from the top of the mask. */
+-	addr_mask_deinterleaved = GENMASK_ULL(msb - num_zero_bits, 1);
++	deinterleaved_mask = GENMASK(msb - num_zero_bits, 1);
++	edac_dbg(1, "  Deinterleaved AddrMask: 0x%x\n", deinterleaved_mask);
++
++	return (deinterleaved_mask >> 2) + 1;
++}
++
++static int __addr_mask_to_cs_size(u32 addr_mask, u32 addr_mask_sec,
++				  unsigned int cs_mode, int csrow_nr, int dimm)
++{
++	int size;
+ 
+ 	edac_dbg(1, "CS%d DIMM%d AddrMasks:\n", csrow_nr, dimm);
+-	edac_dbg(1, "  Original AddrMask: 0x%x\n", addr_mask_orig);
+-	edac_dbg(1, "  Deinterleaved AddrMask: 0x%x\n", addr_mask_deinterleaved);
++	edac_dbg(1, "  Primary AddrMask: 0x%x\n", addr_mask);
+ 
+ 	/* Register [31:1] = Address [39:9]. Size is in kBs here. */
+-	size = (addr_mask_deinterleaved >> 2) + 1;
++	size = calculate_cs_size(addr_mask, cs_mode);
++
++	edac_dbg(1, "  Secondary AddrMask: 0x%x\n", addr_mask_sec);
++	size += calculate_cs_size(addr_mask_sec, cs_mode);
+ 
+ 	/* Return size in MBs. */
+ 	return size >> 10;
+@@ -1270,7 +1284,7 @@ static int umc_addr_mask_to_cs_size(struct amd64_pvt *pvt, u8 umc,
+ 				    unsigned int cs_mode, int csrow_nr)
+ {
+ 	int cs_mask_nr = csrow_nr;
+-	u32 addr_mask_orig;
++	u32 addr_mask = 0, addr_mask_sec = 0;
+ 	int dimm, size = 0;
+ 
+ 	/* No Chip Selects are enabled. */
+@@ -1308,13 +1322,13 @@ static int umc_addr_mask_to_cs_size(struct amd64_pvt *pvt, u8 umc,
+ 	if (!pvt->flags.zn_regs_v2)
+ 		cs_mask_nr >>= 1;
+ 
+-	/* Asymmetric dual-rank DIMM support. */
+-	if ((csrow_nr & 1) && (cs_mode & CS_ODD_SECONDARY))
+-		addr_mask_orig = pvt->csels[umc].csmasks_sec[cs_mask_nr];
+-	else
+-		addr_mask_orig = pvt->csels[umc].csmasks[cs_mask_nr];
++	if (cs_mode & (CS_EVEN_PRIMARY | CS_ODD_PRIMARY))
++		addr_mask = pvt->csels[umc].csmasks[cs_mask_nr];
++
++	if (cs_mode & (CS_EVEN_SECONDARY | CS_ODD_SECONDARY))
++		addr_mask_sec = pvt->csels[umc].csmasks_sec[cs_mask_nr];
+ 
+-	return __addr_mask_to_cs_size(addr_mask_orig, cs_mode, csrow_nr, dimm);
++	return __addr_mask_to_cs_size(addr_mask, addr_mask_sec, cs_mode, csrow_nr, dimm);
+ }
+ 
+ static void umc_debug_display_dimm_sizes(struct amd64_pvt *pvt, u8 ctrl)
+@@ -3512,9 +3526,10 @@ static void gpu_get_err_info(struct mce *m, struct err_info *err)
+ static int gpu_addr_mask_to_cs_size(struct amd64_pvt *pvt, u8 umc,
+ 				    unsigned int cs_mode, int csrow_nr)
+ {
+-	u32 addr_mask_orig = pvt->csels[umc].csmasks[csrow_nr];
++	u32 addr_mask		= pvt->csels[umc].csmasks[csrow_nr];
++	u32 addr_mask_sec	= pvt->csels[umc].csmasks_sec[csrow_nr];
+ 
+-	return __addr_mask_to_cs_size(addr_mask_orig, cs_mode, csrow_nr, csrow_nr >> 1);
++	return __addr_mask_to_cs_size(addr_mask, addr_mask_sec, cs_mode, csrow_nr, csrow_nr >> 1);
+ }
+ 
+ static void gpu_debug_display_dimm_sizes(struct amd64_pvt *pvt, u8 ctrl)
 
-Also, rejecting this series will not prevent people from upstreaming their
-changes, it'll just make it more unlikely because they now have to deal with
-upstreaming more changes that were rejected in the past. That's daunting for
-someone who doesn't do upstreaming often. I'm telling this from experience
-dealing with SoC vendors and asking them to upstream stuff.
+base-commit: b4d2bada09b17fcd68a0f00811ca7f900ec988e6
+-- 
+2.43.0
 
-With that said, let me try to address some of your technical concerns.
-
-> * the core code may not be prepared for that, so loading / unloading
-> the modules with active timers may result into some issues
-
-We had the same concern for irqchip drivers. We can easily disable unloading
-for these clocksource modules just like we did for irqchip by making them
-permanent modules.
-
-> * it may end up with some interactions with cpuidle at boot time and
-> the broadcast timer
-
-If I'm understanding this correctly, no driver is guaranteed to probe at
-initialization time regardless of whether it is built-in or a module. Taking
-a look at the other clocksource drivers, I found that the following drivers are
-all calling `clocksource_register_hz()` and `clockevents_config_and_register()`
-at probe time.
-
-  timer-sun5i.c
-  sh_tmu.c
-  sh_cmt.c
-  timer-tegra186.c
-  timer-stm32-lp.c (only calls clockevents_config_and_register())
-
-So this concern is unrelated to building these drivers are modules. Please let
-me know if I'm missing something here.
-
->  * the timekeeping may do jump in the past [if and] when switching the
-> clocksource
-
-Can you clarify how this relates to modules? IIUC, the clocksource can be
-changed anytime by writing to:
-
- /sys/devices/system/clocksource/clocksource0/current_clocksource
-
-If there's a bug related to timekeeping and changing the clocksource, then that
-should be handled separately from the modularization code.
-
-For ARM64 in general, the recommendation is to use the ARM architected timer
-which is not a module and is used for scheduling and timekeeping. While the
-Exynos MCT driver can functionally be used as the primary clocksource, it's not
-recommended due to performance issues. So building the MCT driver as a kernel
-module really shouldn't be an issue and has been thoroughly testing on several
-generations of Pixel devices which is why we are trying to upstream our
-downstream technical debt (so we can directly using the upstream version of the
-Exynos MCT driver).
-
-Thanks,
-Will
-
-[...]
 
