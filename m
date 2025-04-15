@@ -1,132 +1,113 @@
-Return-Path: <linux-kernel+bounces-604462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9A0CA894CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:21:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D44EA894D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:22:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 318191895836
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:21:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E60A174E33
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F6E279907;
-	Tue, 15 Apr 2025 07:21:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59361E7C24;
+	Tue, 15 Apr 2025 07:21:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uuEtssGh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QAOzSlQD"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132C21F0E47;
-	Tue, 15 Apr 2025 07:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F9A27584E
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 07:21:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744701692; cv=none; b=MTcpS29UDVXrr6x33cn+7o1/oEKFj/a+9mdWhpQCjgavuMn4XW/HBiF5pDavNA0wGSuJ7p+7QDzSw8xUYAG1dUYn8PYwBLPiBhOTr5j7AsUuQ/wBlHFaj42UduIzw2VQ8j53JnIjZu6GCAF6Kfei0kLELMPgtWZxa/xonZmNCQM=
+	t=1744701717; cv=none; b=bx8rMp+Ek81CqZk3GwA4wPEh7yhdpwDuxqxaNAt/1lQBzu6S8OOvuvKBWxcYxvwbjUwdxcHIAo0Y6IsudhBZWLPN4T+pxrXoRvHtMAc4JuS+kLviKK+L//yRneaOZVyIzJ/3As40a0BQcHYHLfr9D4zSix+vQ2sTJyg1dR9uthM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744701692; c=relaxed/simple;
-	bh=ppCh1rXKzyooyLzB8X2IQ2Oju9H3qJQ74QV/enWha4E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b0LUwBFnxlFsD4lPsEPw7NK//Zaft5cMNtBloAyf3+fFSv+FsPTvGMLrpMsas2cDNvKPGQBdfdXjTdHVyM801uVEvGvJXHkWNcIDEzy0nZIpMhIfd3mKLG+rcgz6OxwdJCm8YKqeBswYt+kt3+94MeYMzaKQPsydQrRVQtR/0qQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uuEtssGh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94DDDC4CEE9;
-	Tue, 15 Apr 2025 07:21:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744701691;
-	bh=ppCh1rXKzyooyLzB8X2IQ2Oju9H3qJQ74QV/enWha4E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uuEtssGhD3d79YbN1rycbVffJyVi1oCudolVNpDRqTH2EoaHV+W4jC0ApwH/N8cmP
-	 1pyR/yBu94ec4p4W3AVE56vhOdEdeBf2/Qxae0Ar7kriY13Bl3qwtaAmLgBQWbtCf6
-	 5G3rQT6Bc7fIRuZSQ7gba9bnaLBnbycriCXOHCf/hLSdxcIYCgfC2PFb/SpGJc6jkK
-	 yYR9rmaE6AtHXBRAU2IpyweaefZs8oHQZBZmTSFIvnN7grYrHvmIurVBnASRaWUy2+
-	 ekcfm7NeJGuueJuqxC7xftkO8uBAuctu99UAlMdrENm3sWGvBu+ChMshO3CB4hvHL0
-	 Rhn9Rkx4zV6LQ==
-Message-ID: <b64511fa-a8e3-450e-aa4c-f47181314f76@kernel.org>
-Date: Tue, 15 Apr 2025 09:21:24 +0200
+	s=arc-20240116; t=1744701717; c=relaxed/simple;
+	bh=eFsTWyuxYY/YuxE/bwNDIbnXBjWIwIeYCmpXbUubXmE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Hp7R4YELChzBrf50WeKG60vVH44OReeWVsifFr3vpRgBTc9psEBrqZCG3Y3YsEmO7EJtF5xIWomQel31+Y8ogLKnBypo5tR1EQhVOv5EEX7qWJE4Hg1wesGSvJCWJhI0XoYW10HeTsxvInbFP/V+0BI/BvF7nA0k9Ucq+mS/eNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QAOzSlQD; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-54d42884842so402817e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 00:21:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744701713; x=1745306513; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eFsTWyuxYY/YuxE/bwNDIbnXBjWIwIeYCmpXbUubXmE=;
+        b=QAOzSlQDqzYo67M8m9edNPe6vccMaKB1g6ksymGQJ3FTE1+kEmYXPNO3eQOc9yBS6a
+         CXu1MD5OZFy1b7gcdedNE81uwqhj3ZbLdT4uS0+XOoAsRP0ZZlPkwS3DetcNTk2GLfuX
+         KzY0sweVqJceSqvnRGs3CUOKdBDCIu9E2zZB84OfNcg0YbNcS9NbTE0CQNjzJcCG8Y5X
+         9gaTlkQyocHZWoSmIak0rvs7wlRr4063mncdnCI1PBrpxdXqVWMvLIggANOHiMFPhNiK
+         Y9sqaYYwVcdjQRqww5YlG76YKL3e6fmqGAgZ+tsXyfIB8ldIA86i0c9ZitOMzJ84yPIf
+         +gfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744701713; x=1745306513;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eFsTWyuxYY/YuxE/bwNDIbnXBjWIwIeYCmpXbUubXmE=;
+        b=REEdbNKlxl8kIdfdlaOr/zx8IFfE+WdzdbVcbJ9m2J+Zo+T2GICV0agrpQUy/qEjBV
+         waPeJFS41GfZcNLpi7uQAkpSutRaCPIL8cipyYDHD/GwOLunGIWEJ4JyUwR7daTgONyf
+         UmOOavT1dtcW5iiEDfNt6upy8GSC7Ilffy+WF873tVvogk/YnsuK1dOgl/eJ7b5DzEvF
+         BYQD1HM/Jsa0c408iR+wI4io5UKvB0cerfv3WjIrgYT1diCcTGgOf5dgYaRyErDkobG9
+         fpa6K2KEv41p4UvnRrqByfzWqKX9s850N2ZQXJWBszEex58p4AoeBgqWfb8YPSaPxzW+
+         frgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5LqqLkVc3FS/XfezdHzyeANwYcXsJreAm6ZI4OAO0yN8Zu0O3r+gPdMX6NCvsibiKraJtfmIpiZCKnx8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/0IoZfC9zd+O+ZyHGlwHJa6lf5L8M8aeEs2LC4v8c+g+VFQIf
+	+/dw72lNqmSVs0MoiipFZ8CAwRcwvsNNWPAuCNHNdwAQJ0j6WwCk4yVXjmAsiWwTsDbMSQhlnsg
+	jP1giFdHJAVrnX6Bai5Mr4vtZ37URwZGIuO4fGQ==
+X-Gm-Gg: ASbGnctOSDVYozqHPGs7y2L9ct9kdT6LniLued1vxRFi8qyFuWgseNlfJOH1wVqnA05
+	j8ki8O+6+HHgQuWPjsbWexG11+MTQ82g9qntaMpTZy6QSaHKJRHPJwfj3xaRKUCq0ryZzNy/VOT
+	HygXX6GWQJk4+TOPGs0XpmFg==
+X-Google-Smtp-Source: AGHT+IFw6QC29o6y83Ew4gV1rrLV7OzOu0H71UYaa/kxGSsVv/o9K3r8vj3ssSpN67/x7bdfuOhN2dAXxRaPJ5uBNbA=
+X-Received: by 2002:a2e:bc01:0:b0:30b:fd7a:22e9 with SMTP id
+ 38308e7fff4ca-310499fb07amr37295851fa.13.1744701713410; Tue, 15 Apr 2025
+ 00:21:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/3] Add support for Sitronix ST7571 LCD controller
-To: Marcus Folkesson <marcus.folkesson@gmail.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Thomas Zimmermann <tzimmrmann@suse.de>
-References: <20250415-st7571-v4-0-8b5c9be8bae7@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250415-st7571-v4-0-8b5c9be8bae7@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.8cb9c8b1-3ce2-4a2a-93ba-a38ee66a1643@emailsignatures365.codetwo.com>
+ <20250314151803.28903-1-mike.looijmans@topic.nl>
+In-Reply-To: <20250314151803.28903-1-mike.looijmans@topic.nl>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 15 Apr 2025 09:21:42 +0200
+X-Gm-Features: ATxdqUGQOzCo07rUGS7fbuGaKRtUvt7ykk_FyjbaWn1yBc1ggDHONN9md_suB58
+Message-ID: <CACRpkdYLDLM603DHJvkMbDRo8pVZZfB6DT+ck4070zVAB4SCBQ@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl-mcp23s08: Reset all pins to input at probe
+To: Mike Looijmans <mike.looijmans@topic.nl>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Dmitry Mastykin <mastichi@gmail.com>, Evgenii Shatokhin <e.shatokhin@yadro.com>, 
+	Arturas Moskvinas <arturas.moskvinas@gmail.com>, Andreas Kaessens <akaessens@gmail.com>, 
+	Radim Pavlik <radim.pavlik@tbs-biometrics.com>, 
+	Thomas Preston <thomas.preston@codethink.co.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 15/04/2025 07:58, Marcus Folkesson wrote:
-> This series add support for the ST7571 LCD Controller.
-> It is a 4 gray scale dot matrix LCD controller that supports several
-> interfaces such as SPI, I2C and a 8bit parallell port.
-> The controlelr supports both monochrome and grayscale displays.
-> 
-> This driver only supports the I2C interface, but all common parts could
-> easily be put into a common file to be used with other interfaces.
-> I only have I2C to test with.
-> 
-> The device is a little defiant, it tends to NAK some commands, but all
-> commands takes effect, hence the I2C_M_IGNORE_NAK flag.
-> 
-> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-> ---
-> Changes in v4:
-> - (dt-binding) Add sitronix,grayscale property
-Mention that this is the reason of dropping Review.
+On Fri, Mar 14, 2025 at 4:18=E2=80=AFPM Mike Looijmans <mike.looijmans@topi=
+c.nl> wrote:
 
-Best regards,
-Krzysztof
+
+> At startup, the driver just assumes that all registers have their
+> default values. But after a soft reset, the chip will just be in the
+> state it was, and some pins may have been configured as outputs. Any
+> modification of the output register will cause these pins to be driven
+> low, which leads to unexpected/unwanted effects. To prevent this from
+> happening, set the chip's IO configuration register to a known safe
+> mode (all inputs) before toggling any other bits.
+>
+> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+
+Patch tentatively applied for v6.16.
+
+CC to some mcp23s08 users so they can check it out.
+
+Yours,
+Linus Walleij
 
