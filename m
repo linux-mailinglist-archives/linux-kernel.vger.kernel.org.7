@@ -1,251 +1,205 @@
-Return-Path: <linux-kernel+bounces-604795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1687AA898D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:56:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72ED6A898BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:54:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 660991786EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:55:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F0AF3B2AAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:54:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD6828F500;
-	Tue, 15 Apr 2025 09:54:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C80289353;
+	Tue, 15 Apr 2025 09:54:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XcwIkZAM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bF9zp40+"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0140A1DF994;
-	Tue, 15 Apr 2025 09:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A1127B4EC;
+	Tue, 15 Apr 2025 09:54:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744710874; cv=none; b=EnmKdTH2cNctl9FSt16ZYnP+c8md/SvcwY/LIBnCDFH6Y4VljbXvco8nVvl0WDoE18X3DrwsviGes/OGy59+tJMMJDlI3erRIeWPbvNGoAKKmAegHj2fSa++RyHpWrqwmEp8WPV40LQaYhYV3cfFCQNW/b2xVxlcUgtnAbwRkuQ=
+	t=1744710850; cv=none; b=Wjz2rrNE07f1stnsbXPYkJ8bbXv3JRzPIxai1wRWT3Rbz0vDhP140XFLvd/hde9LhapWwFSFKqJa5OKNkjzAFL8TjpIvJewsCJ4fMlP3xN0GhQ6Ec5nrfqYbMXkuQsOONPs2tcz+O1GbEgXxUOsBy6Wc5uu968/z5kC3UcGUHFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744710874; c=relaxed/simple;
-	bh=L6ZBp9B5ub+vR6BAf7feLXCkVJt33r176fqAi+yE76o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G5VAYa+TgbwGBqHjjT8mEuzff2dfSQFkSDcrtMuWOma28QQ/z18Eob+G8xX8o0vY1/LVEXuRn7NRLJ1i+UAtOzornhCdOu6H/csEs9Zd0nTfl7Ivi0luS6Z0vM4uZ4oS6+0IzgKOoUtHRwhY02Jr6jNfRseuYjOQeJ+7nqfVJnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XcwIkZAM; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744710873; x=1776246873;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=L6ZBp9B5ub+vR6BAf7feLXCkVJt33r176fqAi+yE76o=;
-  b=XcwIkZAMkiI603RHjAyxII9TBV15NQeM7uTJYnfScAPeIZnbhWgb9zI8
-   2kC7pFspRgUMw+xaAKFyTpqRpHTXfM8NHuK829W/0eD3meG9Vzs8tYe08
-   2PktSr2xp+Ot8N8tGODfU3h30xxhn0txukkSmoePdmRoGkgiTvztQ//77
-   CO19bG7FFW9lWhUsJAlix+lq14Cv9vFEF19OYI5bUIyILmszR4WbRk1J9
-   5KiWvx9wIn0Rt8JGHY86W3yvzF/Wj/2Jh17TmcjEneAnN2fgm+CEpGo1n
-   WoC/qpn0xZOiFl5et/LkhiHXpdb/oPYggGzzOFglhIogDTQsWS40n1pd/
-   w==;
-X-CSE-ConnectionGUID: m0gbZTTUR1O6c6/5sXKJcQ==
-X-CSE-MsgGUID: E8f1mHLdQV+uum7k6eRfQQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11403"; a="63613698"
-X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="63613698"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 02:53:26 -0700
-X-CSE-ConnectionGUID: t9YJsE8KQGCAlc11/WLcEQ==
-X-CSE-MsgGUID: aSNYI1kSTlSjvvGelplNCg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="131053763"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 02:53:23 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1u4cym-0000000CVcP-2KCZ;
-	Tue, 15 Apr 2025 12:53:20 +0300
-Date: Tue, 15 Apr 2025 12:53:20 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-	linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Kees Cook <kees@kernel.org>, Russell King <linux@armlinux.org.uk>,
-	linux-hardening@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v3 00/33] Implement kernel-doc in Python
-Message-ID: <Z_4skKaqR6NuwOx-@smile.fi.intel.com>
-References: <871pu1193r.fsf@trenco.lwn.net>
- <Z_zYXAJcTD-c3xTe@black.fi.intel.com>
- <87mscibwm8.fsf@trenco.lwn.net>
- <Z_4EL2bLm5Jva8Mq@smile.fi.intel.com>
- <Z_4E0y07kUdgrGQZ@smile.fi.intel.com>
- <87v7r5sw3a.fsf@intel.com>
- <Z_4WCDkAhfwF6WND@smile.fi.intel.com>
- <Z_4Wjv0hmORIwC_Z@smile.fi.intel.com>
- <20250415164014.575c0892@sal.lan>
- <20250415165102.44551ada@sal.lan>
+	s=arc-20240116; t=1744710850; c=relaxed/simple;
+	bh=xdmie71s/WBuPHF4jb2cdN0iPDuCW5wvFXijYnRL8jY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aF0SBwXYdsFgNIw5CChc55osgeRdqZ0eTgBVdUu5lLL2dILq/x2gGNMfiHNdgrVRwpwPW0JBvH0eUbXjKtw4JTTydZ5TllzwesT6DfwjL7sInGCApP0W1v7/VwlTm81GLK3pBflEf7MqqWQ6dy4mGu88G3zOoxrHXjO7ow5Zqd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bF9zp40+; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53F8tKCi013240;
+	Tue, 15 Apr 2025 09:54:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=ADwsq1lx75/NyzkIU7QS5j
+	uV6WLbhk6dWewX5zna2qs=; b=bF9zp40+5Lart2E8mOvBy7FfVme8QsBE+cxSO2
+	WXaYK8yI1mVApjU2Ix5bu5fZeAw3aIPLXO+SMML8SrW4P+kdJ5SRQ1ph/uH1rikM
+	pfF0/F1p26L4GLjCrlqYALFqaPbjhsqrPA166a8Rht/9xB985EepLfDxQ7xOkZfR
+	nSeeiidvDd2xaVYF1cYfkH93ISKdWXnhNWxSVOQygW/Bus93AMUTSy5i6lpzBdVs
+	++ccpyTTWejlHmD0zramnAEuFJNYq1pMwin+T1SFI2JyBSi23b/66a22zFryuH8K
+	j+HBkwNomudPOFhsNXEzmZzMZEp7H3yINF0WrgHAeQdMnigA==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ygd6fjbr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Apr 2025 09:54:05 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53F9s5f5012859
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Apr 2025 09:54:05 GMT
+Received: from 087e9057f447.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 15 Apr 2025 02:54:00 -0700
+From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+To: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>
+CC: Odelu Kukatla <quic_okukatla@quicinc.com>,
+        Jeff Johnson
+	<jeff.johnson@oss.qualcomm.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@oss.qualcomm.com>,
+        Mike Tipton <mdtipton@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        "Raviteja
+ Laggyshetty" <quic_rlaggysh@quicinc.com>
+Subject: [PATCH V11 0/7] Add EPSS L3 provider support on SA8775P SoC
+Date: Tue, 15 Apr 2025 09:53:36 +0000
+Message-ID: <20250415095343.32125-1-quic_rlaggysh@quicinc.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250415165102.44551ada@sal.lan>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: FEzHkgNgRhzOZFQ7bPJsgvNIT88IcW5f
+X-Proofpoint-GUID: FEzHkgNgRhzOZFQ7bPJsgvNIT88IcW5f
+X-Authority-Analysis: v=2.4 cv=ANaQCy7k c=1 sm=1 tr=0 ts=67fe2cbe cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=MOw52E1g2SAjk1dFLq8A:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-15_04,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
+ mlxlogscore=999 suspectscore=0 clxscore=1015 lowpriorityscore=0
+ phishscore=0 impostorscore=0 spamscore=0 priorityscore=1501 malwarescore=0
+ bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504150069
 
-On Tue, Apr 15, 2025 at 04:51:02PM +0800, Mauro Carvalho Chehab wrote:
-> Em Tue, 15 Apr 2025 16:40:34 +0800
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> escreveu:
-> > Em Tue, 15 Apr 2025 11:19:26 +0300
-> > Andy Shevchenko <andriy.shevchenko@intel.com> escreveu:
-> > > On Tue, Apr 15, 2025 at 11:17:12AM +0300, Andy Shevchenko wrote:  
-> > > > On Tue, Apr 15, 2025 at 10:49:29AM +0300, Jani Nikula wrote:    
-> > > > > On Tue, 15 Apr 2025, Andy Shevchenko <andriy.shevchenko@intel.com> wrote:    
-> > > > > > On Tue, Apr 15, 2025 at 10:01:04AM +0300, Andy Shevchenko wrote:    
-> > > > > >> On Mon, Apr 14, 2025 at 09:17:51AM -0600, Jonathan Corbet wrote:    
-> > > > > >> > Andy Shevchenko <andriy.shevchenko@intel.com> writes:    
-> > > > > >> > > On Wed, Apr 09, 2025 at 12:30:00PM -0600, Jonathan Corbet wrote:    
-> > > > > >> > >> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
-> > > > > >> > >>     
-> > > > > >> > >> > This changeset contains the kernel-doc.py script to replace the verable
-> > > > > >> > >> > kernel-doc originally written in Perl. It replaces the first version and the
-> > > > > >> > >> > second series I sent on the top of it.    
-> > > > > >> > >> 
-> > > > > >> > >> OK, I've applied it, looked at the (minimal) changes in output, and
-> > > > > >> > >> concluded that it's good - all this stuff is now in docs-next.  Many
-> > > > > >> > >> thanks for doing this!
-> > > > > >> > >> 
-> > > > > >> > >> I'm going to hold off on other documentation patches for a day or two
-> > > > > >> > >> just in case anything turns up.  But it looks awfully good.    
-> > > > > >> > >
-> > > > > >> > > This started well, until it becomes a scripts/lib/kdoc.
-> > > > > >> > > So, it makes the `make O=...` builds dirty *). Please make sure this doesn't leave
-> > > > > >> > > "disgusting turd" )as said by Linus) in the clean tree.
-> > > > > >> > >
-> > > > > >> > > *) it creates that __pycache__ disaster. And no, .gitignore IS NOT a solution.    
-> > > > > >> > 
-> > > > > >> > If nothing else, "make cleandocs" should clean it up, certainly.
-> > > > > >> > 
-> > > > > >> > We can also tell CPython to not create that directory at all.  I'll run
-> > > > > >> > some tests to see what the effect is on the documentation build times;
-> > > > > >> > I'm guessing it will not be huge...    
-> > > > > >> 
-> > > > > >> I do not build documentation at all, it's just a regular code build that leaves
-> > > > > >> tree dirty.
-> > > > > >> 
-> > > > > >> $ python3 --version
-> > > > > >> Python 3.13.2
-> > > > > >> 
-> > > > > >> It's standard Debian testing distribution, no customisation in the code.
-> > > > > >> 
-> > > > > >> To reproduce.
-> > > > > >> 1) I have just done a new build to reduce the churn, so, running make again does nothing;
-> > > > > >> 2) The following snippet in shell shows the issue
-> > > > > >> 
-> > > > > >> $ git clean -xdf
-> > > > > >> $ git status --ignored
-> > > > > >> On branch ...
-> > > > > >> nothing to commit, working tree clean
-> > > > > >> 
-> > > > > >> $ make LLVM=-19 O=.../out W=1 C=1 CF=-D__CHECK_ENDIAN__ -j64
-> > > > > >> make[1]: Entering directory '...'
-> > > > > >>   GEN     Makefile
-> > > > > >>   DESCEND objtool
-> > > > > >>   CALL    .../scripts/checksyscalls.sh
-> > > > > >>   INSTALL libsubcmd_headers
-> > > > > >> .pylintrc: warning: ignored by one of the .gitignore files
-> > > > > >> Kernel: arch/x86/boot/bzImage is ready  (#23)
-> > > > > >> make[1]: Leaving directory '...'
-> > > > > >> 
-> > > > > >> $ touch drivers/gpio/gpiolib-acpi.c
-> > > > > >> 
-> > > > > >> $ make LLVM=-19 O=.../out W=1 C=1 CF=-D__CHECK_ENDIAN__ -j64
-> > > > > >> make[1]: Entering directory '...'
-> > > > > >>   GEN     Makefile
-> > > > > >>   DESCEND objtool
-> > > > > >>   CALL    .../scripts/checksyscalls.sh
-> > > > > >>   INSTALL libsubcmd_headers
-> > > > > >> ...
-> > > > > >>   OBJCOPY arch/x86/boot/setup.bin
-> > > > > >>   BUILD   arch/x86/boot/bzImage
-> > > > > >> Kernel: arch/x86/boot/bzImage is ready  (#24)
-> > > > > >> make[1]: Leaving directory '...'
-> > > > > >> 
-> > > > > >> $ git status --ignored
-> > > > > >> On branch ...
-> > > > > >> Untracked files:
-> > > > > >>   (use "git add <file>..." to include in what will be committed)
-> > > > > >> 	scripts/lib/kdoc/__pycache__/
-> > > > > >> 
-> > > > > >> nothing added to commit but untracked files present (use "git add" to track)    
-> > > > > >
-> > > > > > FWIW, I repeated this with removing the O=.../out folder completely, so it's
-> > > > > > fully clean build. Still the same issue.
-> > > > > >
-> > > > > > And it appears at the very beginning of the build. You don't need to wait to
-> > > > > > have the kernel to be built actually.    
-> > > > > 
-> > > > > kernel-doc gets run on source files for W=1 builds. See Makefile.build.    
-> > > > 
-> > > > Thanks for the clarification, so we know that it runs and we know that it has
-> > > > an issue.    
-> > > 
-> > > Ideal solution what would I expect is that the cache folder should respect
-> > > the given O=... argument, or disabled at all (but I don't think the latter
-> > > is what we want as it may slow down the build).  
-> > 
-> > From:
-> > 	https://github.com/python/cpython/commit/b193fa996a746111252156f11fb14c12fd6267e6
-> > and:
-> > 	https://peps.python.org/pep-3147/
-> > 
-> > It sounds that Python 3.8 and above have a way to specify the cache
-> > location, via PYTHONPYCACHEPREFIX env var, and via "-X pycache_prefix=path".
-> > 
-> > As the current minimal Python version is 3.9, we can safely use it.
-> > 
-> > So, maybe this would work:
-> > 
-> > 	make O="../out" PYTHONPYCACHEPREFIX="../out"
-> > 
-> > or a variant of it:
-> > 
-> > 	PYTHONPYCACHEPREFIX="../out" make O="../out" 
-> > 
-> > If this works, we can adjust the building system to fill PYTHONPYCACHEPREFIX
-> > env var when O= is used.
-> 
-> That's interesting... Sphinx is already called with PYTHONDONTWRITEBYTECODE.
-> From Documentation/Makefile:
-> 
-> 	quiet_cmd_sphinx = SPHINX  $@ --> file://$(abspath $(BUILDDIR)/$3/$4)
-> 	      cmd_sphinx = $(MAKE) BUILDDIR=$(abspath $(BUILDDIR)) $(build)=Documentation/userspace-api/media $2 && \
-> 	        PYTHONDONTWRITEBYTECODE=1 \
-> 	...
-> 
-> It seems that the issue happens only when W=1 is used and kernel-doc
-> is called outside Sphinx.
-> 
-> Anyway, IMHO, the best would be to change the above to:
-> 
-> 	PYTHONPYCACHEPREFIX=$(abspath $(BUILDDIR))
-> 
-> And do the same for the other places where kernel-doc is called:
-> 
-> 	include/drm/Makefile:           $(srctree)/scripts/kernel-doc -none $(if $(CONFIG_WERROR)$(CONFIG_DRM_WERROR),-Werror) $<; \
-> 	scripts/Makefile.build:  cmd_checkdoc = $(srctree)/scripts/kernel-doc -none $(KDOCFLAGS) \
-> 	scripts/find-unused-docs.sh:    str=$(scripts/kernel-doc -export "$file" 2>/dev/null)
-> 
-> Comments?
+Add Epoch Subsystem (EPSS) L3 provider support on SA8775P SoCs.
 
-I would like that, but it should be properly formed, because somewhere we drop
-the path in the source tree and if $O is used as is, it becomes _the_ pycache
-folder!
+Current interconnect framework is based on static IDs for creating node
+and registering with framework. This becomes a limitation for topologies
+where there are multiple instances of same interconnect provider.
+Modified interconnect framework APIs to create and link icc node with
+dynamic IDs, this will help to overcome the dependency on static IDs.
+
+Change since v10:
+ - Removed unused macro OSM_L3_MAX_LINKS
+ - Removed unused arguments from icc_node_create_dyn() function comments
+
+Change since v9:
+ - Renamed macro ALLOC_DYN_ID to ICC_ALLOC_DYN_ID.
+ - Added APIs icc_node_create_dyn() and icc_link_nodes() for node 
+   creation with dynamic ID allocation and linking.
+ - To optimize the memory, declared the link nodes as double pointer
+   "struct qcom_icc_node **link_nodes" instead of array of pointers 
+   "struct qcom_icc_node *link_nodes[MAX_LINKS]".
+ - Added struct icc_node as member in struct qcom_icc_node to help in
+   tracking the node creation and avoid duplicates.
+
+Change since v8:
+ - Moved the macro ALLOC_DYN_ID to interconnect.h header.
+ - Declared back the array of pointers and global structs as const in
+   L3 driver.
+ - Separated node creation and node linking in EPSS L3 driver probe, 
+   cleaned up unused variables id, links and num_links.
+ - Dropped the opp labels for CPU OPP entries and used 
+   (clockrate * buswidth) convention as per review comments.
+
+Change since v7:
+ - Updated interconnect framework APIs icc_node_create() and
+   icc_link_create() to dynamically allocate IDs for interconnect nodes
+   during creation.
+ - Moved naming conventions to the framework and replaced snprintf() with
+   devm_kasprintf() as suggested.
+ - Updated the icc-rpmh driver and SA8775P SoC provider driver to support
+   dynamic ID allocation.
+ - Revised commit text to explain the use of the existing generic 
+   compatible "qcom,epss-l3".
+ - Addressed other comments regarding the alphabetical ordering of 
+   compatible properties.
+
+Change since v6:
+ - Added icc_node_create_alloc_id() API to dynamically allocate ID while
+   creating the node. Replaced the IDA (ID allocator) with
+   icc_node_create_alloc_id() API to allocate node IDs dynamically.
+ - Removed qcom,epss-l3-perf generic compatible as per the comment.
+ - Added L3 ICC handles for CPU0 and CPU4 in DT, as per Bjorn comment.
+   Link to comment:
+   https://lore.kernel.org/lkml/ww3t3tu7p36qzlhcetaxif2xzrpgslydmuqo3fqvisbuar4bjh@qc2u43dck3qi/
+
+Change since v5:
+ - Reused qcom,sm8250-epss-l3 compatible for sa8775p SoC.
+ - Rearranged the patches, moved dt changes to end of series.
+ - Updated the commit text.
+
+Changes since v4:
+ - Added generic compatible "qcom,epss-l3-perf" and split the driver
+   changes accordingly.
+
+Changes since v3:
+ - Removed epss-l3-perf generic compatible changes. These will be posted
+   as separate patch until then SoC specific compatible will be used for
+   probing.
+
+Changes since v2:
+ - Updated the commit text to reflect the reason for code change.
+ - Added SoC-specific and generic compatible to driver match table.
+
+Changes since v1:
+ - Removed the usage of static IDs and implemented dynamic ID assignment
+   for icc nodes using IDA.
+ - Removed separate compatibles for cl0 and cl1. Both cl0 and cl1
+   devices use the same compatible.
+ - Added new generic compatible for epss-l3-perf.
+
+Jagadeesh Kona (1):
+  arm64: dts: qcom: sa8775p: Add CPU OPP tables to scale DDR/L3
+
+Raviteja Laggyshetty (6):
+  dt-bindings: interconnect: Add EPSS L3 compatible for SA8775P
+  interconnect: core: Add dynamic id allocation support
+  interconnect: qcom: Add multidev EPSS L3 support
+  interconnect: qcom: icc-rpmh: Add dynamic icc node id support
+  interconnect: qcom: sa8775p: Add dynamic icc node id support
+  arm64: dts: qcom: sa8775p: add EPSS l3 interconnect provider
+
+ .../bindings/interconnect/qcom,osm-l3.yaml    |   1 +
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi         | 229 +++++
+ drivers/interconnect/core.c                   |  82 +-
+ drivers/interconnect/qcom/icc-rpmh.c          |  17 +-
+ drivers/interconnect/qcom/icc-rpmh.h          |   5 +
+ drivers/interconnect/qcom/osm-l3.c            |  38 +-
+ drivers/interconnect/qcom/sa8775p.c           | 952 +++++++-----------
+ include/linux/interconnect-provider.h         |  12 +
+ include/linux/interconnect.h                  |   3 +
+ 9 files changed, 704 insertions(+), 635 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.43.0
 
 
