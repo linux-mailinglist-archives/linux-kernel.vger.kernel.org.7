@@ -1,172 +1,257 @@
-Return-Path: <linux-kernel+bounces-605660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 900CFA8A449
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 18:38:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 673FEA8A455
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 18:40:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13E601897232
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:38:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0D7F3B6867
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:39:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81718297A40;
-	Tue, 15 Apr 2025 16:38:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26627292933;
+	Tue, 15 Apr 2025 16:39:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iTvZU0Bq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U5LYHP4Z"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46C0946F;
-	Tue, 15 Apr 2025 16:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744735120; cv=none; b=ecOknNh2cSd4cpxl68mrPSbo1/DmYHIZgYpWi8j4ornoaCqlFpCqGSnSSmgjbn2PTsDF+6JQiVNFBnbi38BHqlG+/ptR92hjx5LusxT5Jg/3oPYoPy/die83XG4gU0IiTLXYmsbCKnAM8Wk7cNfwG9mOMj+0CW7qldzswVtuw2U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744735120; c=relaxed/simple;
-	bh=0o7WgPMPfYd1M0lo6UxGC5WgKFAvsFlwbf9fWHZjo9w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I7/XkOBM4daE6qqbW+W/Q1KTehShwmC3MR5cm6Iq2itW/o18k2npNqpOJsB/Z4ZNVZ9ASXqRQw/ZHOPqHEqwGHX2cKpLeMdOf5r9c2mK3B/rMz550dt7QP+OA39EBSafUTDDIF5Ds+Z9GoXuwalSvMesitkeFiUTryV47iKa2kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iTvZU0Bq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33EF6C4CEEB;
-	Tue, 15 Apr 2025 16:38:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744735119;
-	bh=0o7WgPMPfYd1M0lo6UxGC5WgKFAvsFlwbf9fWHZjo9w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iTvZU0BqP6qpK6DcIv2U+8b6I2t7T39DXhYrMioqJ8nk2ouDeGKjxoKAoa3s0FXgS
-	 UF3sQ4W+Bp1BVpeyeu9RO2uIh6VZoYHrEbag5zahGtqawWffwbyDR5Ud2Trv7akIja
-	 KRbOlLP1u4hBwnVTMD95sxZVXOtAuhR+7p5TepQySBKdYrQ3KtH2xQAt2+7ZlywKhD
-	 YkQm7b2lQemIo/RHlqtI5ZRPQ5WEtxAMt8YEmQJDFJ7I7/bU2R26KJC5FV9m2lTd15
-	 MfKSv66ipbJ1NebxdXDELJg/yD/1PYJkJiwUGk/kU9jDegydIU71qcrQgoQKLQTRzg
-	 QnwzLg9l0YvOQ==
-Date: Tue, 15 Apr 2025 17:38:32 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Frank Binns <frank.binns@imgtec.com>,
-	Matt Coster <matt.coster@imgtec.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	m.szyprowski@samsung.com, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2 2/4] dt-bindings: firmware: thead,th1520: Add resets
- for GPU clkgen
-Message-ID: <20250415-tycoon-naming-20ba5a55c469@spud>
-References: <20250414-apr_14_for_sending-v2-0-70c5af2af96c@samsung.com>
- <CGME20250414185315eucas1p1fae2d6250bfd30b12bb084e197c02948@eucas1p1.samsung.com>
- <20250414-apr_14_for_sending-v2-2-70c5af2af96c@samsung.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6538D17A2F8;
+	Tue, 15 Apr 2025 16:39:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744735189; cv=fail; b=QxjatcxJTqXjDcHz4Cu9MiV6oMbRblsBm5fvyRdzdHQYFA9VXz7+NG657J4m7Sw9eXplF0XVx3zmP/wKmBSBJLVbVFNGNf/TXz8MdifhAVm5OPMkkrYxBdEK/a7wQa5r3MKzFwXZLFkZ0BgHj4Lmo74m5iaE6tbGta3ESi26Kxw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744735189; c=relaxed/simple;
+	bh=3EhcEONC4dOowRf38yn875WCGUqGJvBYU1k1+hyX/As=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=sqV7xj6qMHLytjO5yl4kChxjWt5egG/Y+cFjwVheaSmTAOg0j4iVk1qj+8x6VVPU2ilDO3b8MPdaAKRbLfk2DZZ/r5fVjqhmECElGcpdeYciH+rHg7vNrmtRzJhb/ZfMXXbP3ZpBauaPwYuOqPt4mU/46yAjbyH0Nq+8fCtRX90=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U5LYHP4Z; arc=fail smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744735188; x=1776271188;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=3EhcEONC4dOowRf38yn875WCGUqGJvBYU1k1+hyX/As=;
+  b=U5LYHP4ZXafVfq4jV7HIcL1uDt1Hx9OMeLw2xG7nA6IRoSHetTNJBhzH
+   dPaB4nPIdg0tAxqBgC0jTSa1Oxw8hPMLRjeI5p+3LB0bFsJ8GU2Dmb7kq
+   SShPWc8xtxw1lo9J441F3Tm7o7XW8n8PVREKkuoMfDCej8YmSk5uUziQp
+   YgGD78hudpzWafpszatxmBe8dmrMYUvUL1kmyB0mTzhtEdd5+qsIxF0AU
+   I8fbcmrht6PvMrfnLsaCnKAl9rPGSQ3w+C36SSJmQ4m5vlnLmbG5d3QTD
+   1FlwtqHjdAwAuwBiaZe9f+DdMf35UEai1h0mKm0ObcE0RQ//4lRY3MHq3
+   w==;
+X-CSE-ConnectionGUID: BDLzdPlUR0axKxvyghgFJw==
+X-CSE-MsgGUID: 0wvtN20dQFmw+htffcKNGQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="46135994"
+X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
+   d="scan'208";a="46135994"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 09:39:43 -0700
+X-CSE-ConnectionGUID: +fo0WcMCQZe50WMfBmvCVA==
+X-CSE-MsgGUID: 4ITLitC3Tm2a/Kwg+S6OYg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
+   d="scan'208";a="161200598"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 09:39:37 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Tue, 15 Apr 2025 09:39:33 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Tue, 15 Apr 2025 09:39:33 -0700
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.42) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Tue, 15 Apr 2025 09:39:31 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ETuGIoMCrIwk/C4BGgCUxo/sQfogPRcdGGtdHl5mlGKMJncVIx0Q5i37FKlKRrQnTtFw9sHq7e42PLXKSDzCAjKLJL+2+SLwpWQvrqu7OTrQ1eijpYUIBRQA1y/0W26wtkCcYJo4OffKjRTqZ/tJ13bi5YSVHIHHxh317yDEIbs67z5sJom5dieYXsywqIWn6AoCIFw4FlFJ+P1MuvF7xoD4m0RG8oU1S1/LRebQd2zJL3OrmtT9IdSeD9z2FN+gIFV1wYs4zxDU0zqMcxzwvs+7CTi482M1XLvYn41cDGICK7VWc2mfNPQnHYIXbh5bDnUz0UTnYT7VINP9xENc8Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YkR2CxMjjVpxjrY8KknRHxLPFKMGm+B0P7MPYM0f7HU=;
+ b=v6Y38EDiLfad/QcGfm9OP5EgiZT7P2VmhTmUV+HO8y2JmTTDyJ3kdBdzgcnLdNTpJlUSPaairP7f8sgjYnKE9z89ciTBSPFzqUB2oVfzHkJvJrRjkocGmzaOiDk9EcxCIK+/J94U+w4CZVPGcKQYpC0iVF8BMpZBM4YrMAgV4MVYCETmwNP4knfEqtV4WJlQq7LkUCfbllTnYoyWgERls0YI7/sd3SUVTxGFGDLWrOrM754AJkQkPWc9f/j/WjHCZGt73j9z9YDGfkZF6fnGCr0ac02/kmXrUdCARjD7MrO6s7OAgjlqL3pPZfAtxkOncVB4uQpbH5w+TGHnE7NMRQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by PH0PR11MB5047.namprd11.prod.outlook.com (2603:10b6:510:3c::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.34; Tue, 15 Apr
+ 2025 16:38:59 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.8632.030; Tue, 15 Apr 2025
+ 16:38:59 +0000
+Message-ID: <456839d0-031c-448d-9f54-5e65a29ebf9d@intel.com>
+Date: Tue, 15 Apr 2025 09:38:56 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 13/26] x86/resctrl: Implement
+ resctrl_arch_config_cntr() to assign a counter with ABMC
+To: <babu.moger@amd.com>, <tony.luck@intel.com>, <peternewman@google.com>
+CC: <corbet@lwn.net>, <tglx@linutronix.de>, <mingo@redhat.com>,
+	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <x86@kernel.org>,
+	<hpa@zytor.com>, <paulmck@kernel.org>, <akpm@linux-foundation.org>,
+	<thuth@redhat.com>, <rostedt@goodmis.org>, <ardb@kernel.org>,
+	<gregkh@linuxfoundation.org>, <daniel.sneddon@linux.intel.com>,
+	<jpoimboe@kernel.org>, <alexandre.chartre@oracle.com>,
+	<pawan.kumar.gupta@linux.intel.com>, <thomas.lendacky@amd.com>,
+	<perry.yuan@amd.com>, <seanjc@google.com>, <kai.huang@intel.com>,
+	<xiaoyao.li@intel.com>, <kan.liang@linux.intel.com>, <xin3.li@intel.com>,
+	<ebiggers@google.com>, <xin@zytor.com>, <sohil.mehta@intel.com>,
+	<andrew.cooper3@citrix.com>, <mario.limonciello@amd.com>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<maciej.wieczor-retman@intel.com>, <eranian@google.com>
+References: <cover.1743725907.git.babu.moger@amd.com>
+ <187d14b81db5f9a2f19657dd3af07e8555d68261.1743725907.git.babu.moger@amd.com>
+ <ef0fc176-ce2e-4ad5-b752-f1d018ae985e@intel.com>
+ <a05b3226-b341-4003-a0d3-8e1594d95052@amd.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <a05b3226-b341-4003-a0d3-8e1594d95052@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR03CA0059.namprd03.prod.outlook.com
+ (2603:10b6:303:8e::34) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="FhDPjeA6XL6WHJ2b"
-Content-Disposition: inline
-In-Reply-To: <20250414-apr_14_for_sending-v2-2-70c5af2af96c@samsung.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|PH0PR11MB5047:EE_
+X-MS-Office365-Filtering-Correlation-Id: 933a53dd-2759-4f53-5a86-08dd7c3c05f7
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?Zm5HTTJ2elZYZUxsanpGMzd1V0FoNkZJVGJSVGdaa3pHMy9ydGFHZzVyRmZD?=
+ =?utf-8?B?WjNadzAvSVI3RXNRZnBVMk1Pc1RMMVF3aVdvYStpN3lvRmNkektIMllzTG9K?=
+ =?utf-8?B?SXFjY3BNczlsb1R6SWRWVDZzUmkzcFdzcWJ4cjhsbTQ4Zk41SUowRmVnek4x?=
+ =?utf-8?B?SmpGUEN0Vk5pK1Q5ME56bk95elkyY29HQiszeENla2hhdU9YSmhUZVNvL2pH?=
+ =?utf-8?B?c21hcFdBN2VxQk10U0JzbHNIczI0bFA2b3lsM2RBN0V5dVdtdVdlMU53VEdW?=
+ =?utf-8?B?Si91N2hXeEVJYXJqaWtNN3pVd3NRRVRSQktMRFNXTlNMOWRFdDJ0eFhsdTd2?=
+ =?utf-8?B?MjNNYXd0eURHdUxoTUJqWkdzNDdvZXVZTEJvVmhvYkxYVDhmR2p4OWhzRzJ0?=
+ =?utf-8?B?YnM3TkVza1lUY0hGMmx5Q2pQeXYzbWU5blBwRk5Fd2VOSXlBOG9maHQwWWtH?=
+ =?utf-8?B?ZHFQUkF1QmFpK0xMR2p3djljaHVMV0NiWG1BZkhscTJPdENVQTlYeDZac1RV?=
+ =?utf-8?B?bm05NTk0T1pHdktRUzNBR2RCRW5Bd3NIZGJOaWdxekhwMWxxQzRPVUIyanFW?=
+ =?utf-8?B?azk3b29GMkpwaDhjU2JqQ0pCSkdTMm1HT05JdFFsVVAwK2ZkQ0s0RCtSV0Vo?=
+ =?utf-8?B?cXRqTTZDNVhleGhGOStlUXZ3MmhsVmFmZzA2NlZoL0dYS0lja2MvUHJPSXht?=
+ =?utf-8?B?Q3NOQnk4M2F0WmhDRUlIWHRwbmhEQ25oQUNaY0R2NDc5dXJmajJrSzBiSkZv?=
+ =?utf-8?B?VnZDWm55SkxvbVBNcStyZW5oMVdZMGpSTHh4czJBRUJLUm54RWR5VFBmdGlO?=
+ =?utf-8?B?SktkTGl5RDVFd2lvY0hvdUxkRVpiMzA1OGVpeTdHQW5WNzAxS3R3Sm4wWG00?=
+ =?utf-8?B?YlJ1bGJ4bCtHaDdPL1FhNmpBUjJKY2ZYZUEzZHoyUUxUQjJpSUFTYVR3YlVw?=
+ =?utf-8?B?WUFjWlAyV1d4Z3lJbDAwdXNEd0NYL3h6RnAvYWtsK3pjQ2V0c2hJWlRWcThk?=
+ =?utf-8?B?OVQrM2VNMnFLK2xMT0Q3MGpmT29mSnlkZDdDV3VyRGFpRmZWcXJmSmtNUzE5?=
+ =?utf-8?B?S2RsQXMvL2F6V3FGdDl6RGtpUmcvQW9hYUFvc3VzaVY0NlRKU1RVajI1d0Nj?=
+ =?utf-8?B?OGs1Mkx5bW5rYlQ4aDZHa05zdzFCWDhkYmN1Njdwcm5iNmFiazFreG5uV1Ro?=
+ =?utf-8?B?NXJGZzNweCsvbytmWGVURWZ3N01ZSm1KOXNuWTBHLzE1Q2FDK05UK2VMdFZ1?=
+ =?utf-8?B?akN3TmFZMUhvK2d4d3ZEWHJGWjhTSitOS3BPTEVkSXFra0dHTXAyTFN3NmNo?=
+ =?utf-8?B?ZzBrSDkrWlM3R3F2Ui8rQWlrbW5sRWlOYnhDampxTEdBOWk4MC80anZqT1My?=
+ =?utf-8?B?SVphalRDS1lPWHpSdTRtc1JPd1VObnZWRlpSWjNJMTFpYTBTUGpyUEJ2Z1ov?=
+ =?utf-8?B?a0hockRUS1RxMitUVkVSMiswMUJqODNCaVZ0RjRESk9Hbm1KNkFwenZsdVJJ?=
+ =?utf-8?B?ekh2YldUM3Vqc3gvRWNTb3ZZYVQyS21ObEpiUEZvVWFTTXZkMGhvU0lVTzVB?=
+ =?utf-8?B?eFViR0JnbktpOHVvWWc0WUxVc1AvZ0dJdmVVUkxzQzdkcThwWVg4MkpVelVU?=
+ =?utf-8?B?R2JrRkdXamhUeHo2OEgwVmwvWHd2dm1UeTVHTm5BWFdMSXJMSlVWYWhQWGZG?=
+ =?utf-8?B?REw5T3Y3eURHWEJUd3B1YmI5VVBJWHVHWFdqYlFHWjVESUZwdjVXeHZMMi9s?=
+ =?utf-8?B?SkcxQnRTWUF2MVZMcThXZ3o3TXlOM0pobGxHZWtoTUF1Q25BSWVndDE2TWZh?=
+ =?utf-8?B?ak5pZk5CdDBDVzU4R09sRnBDa1FDV09rc2grWTRHSE9RV2JBVlJ1RkdhREVF?=
+ =?utf-8?B?VzBzeVprUHFKTWxVWVhWRGxHTXlualhDZmUzeVNSUnNPZkJOVzFEclpnSmVo?=
+ =?utf-8?Q?X7Low7QDGzM=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TmowWWQ4SmRpcmtEdVdJR1hCN0REcnlHVi82Nmo0SkcvT2ZxTnY4QnFNVER0?=
+ =?utf-8?B?S1dRNkdFYTRzOUZwSGR6WnIvbWtzQ0dwMHNzMGpyejVmVEM1K1M0eFlTZWZF?=
+ =?utf-8?B?YVVERm9aY2IzMm1FK1hQK2FMdEtncW5rdFJvYTJZeVdkMGRwOVMyR1RuOUMv?=
+ =?utf-8?B?Z25nUkJiaUYxVmN1b1c3MHFhQk9GNENBeVh5U0wyeFlyVmNrcEdkRHlhYk0x?=
+ =?utf-8?B?TTV3RDE2eGNpQngwQkVIQlVZb2xkYSttdk4rd2phRzQxWEx0Q1JnaDRWM0Zx?=
+ =?utf-8?B?U1JTTFFkSTlpVmxZdElDM1JKS29EVmp5cktVd2I1allkZGRhbXlPY1JnNHV6?=
+ =?utf-8?B?NDJOdW81T3hvdzlJMHFDTFpWSkdYM3Y1d3pBMGZlVHRLdHpBMXNiS21adHpI?=
+ =?utf-8?B?QWU2bHpQS29RdU1PUnllTThnQi9BWk9sN0JUamVPaHFpeVNrbEZaOWpteGh2?=
+ =?utf-8?B?Z1JsVkEvN1NZb0FzN1l4aFdOWkdJM0xyKzc3VE5jRDZ4WUR3NFBzS1pOcGZ5?=
+ =?utf-8?B?dDdkVDlMOEx3TkFwcGMrYklvaGlVbGd2d3lLREpEVHo2Yit2V0d0dENWUFM4?=
+ =?utf-8?B?VENRR0J1Q09WNGtLUVdnYitJMWZzVzVKSHk0Ni91Zm9WV3FWSjRKYXE1Wm9U?=
+ =?utf-8?B?YndRb2NpdTV5d0Urb1BFWUV1TFVMNml6S0pQMmR6Y200OTFPRThBSWc1Q3c4?=
+ =?utf-8?B?VEtyRUlZQ0lrcDNNMjBaOG9SUENITVhkRkRyUFJObUI0aFlTbm54ZGtmbXJa?=
+ =?utf-8?B?cjFaNTJicWw2ekE0T1NZekFNWThzN3BEWW5Ud2Qza0E4YTIzNmRQVHcwYVc0?=
+ =?utf-8?B?ZzFaRGNHbCtLVjRmNzFrK3h0VThheC94QUp6V2tnZzlDN2s5TkFOZWl4TzB0?=
+ =?utf-8?B?YjlNcTgydUpxaUxMUkFUeGEwcDFaWVRidkovdERoSnBtQTVQKzBYNUZhQWNG?=
+ =?utf-8?B?Y05sa2dobnJFS2dGUGI3NnZ3YUF3WHgrdm9zT3ZaWTMzNllTWGtNK3JWVkwr?=
+ =?utf-8?B?M3YrQ01lemVJdXBHZjc5UTdya0lJakY1NVBrb0p6OWFOcE45V3JZb2VraGF3?=
+ =?utf-8?B?MDV1eFhoQU5GMTNVRlNuR29iS1BWTGhmUm5JaWdMS05SWjhlaGVFTUhtajZC?=
+ =?utf-8?B?UGl3ZXRrdDhLdkQweVFhOWlwQW5lWnZpNURjbDNuTE14WGdIL05PTEJacVhX?=
+ =?utf-8?B?VEdTem9kNDllT3lDam1FSTFONVF4dndZeVlKVVJrc3lHRjRMYjh4MTl6YTZO?=
+ =?utf-8?B?Z1BqK3FZS3JYbjNMMHd3WmxkRFJGTmdJaGFvTEpVeGhhcmZ5STZmSTZoSFB1?=
+ =?utf-8?B?a0puai9URWh1cWhZc2N5ZHRGdzVJb0dNYkM1STIvclp5YlNtR2V3OFc4YzBi?=
+ =?utf-8?B?ckhFQ0lTN2x2ejJMb0FGMmtBbWR1ZkZaeUlPTUovakJSVENHYkpHNGdxU0NV?=
+ =?utf-8?B?SVBMTmlQQlRVeW1UK05yblA4OTlNUXliaGlCbkVUK3lncjlXTTU0QzBtbGRy?=
+ =?utf-8?B?OUo3Z05LY09MV1h4Uzd6RFVwQkNqNnlqNFlvWkhOZjBzekRGbGhwbjhYV2lC?=
+ =?utf-8?B?bHpuYjNKUUZtN0hLZE95NldHMytxVlRTY2x0MzFyTjZXNWFGSHZJOWVtUUpQ?=
+ =?utf-8?B?MTdRc1gxMGhjRnVFNDJjd01hNHlyK2xNdGlxZzJpNzRqWmd0cEFKclNONTlH?=
+ =?utf-8?B?Wmxsdis3MnRTUWpGTU9OVkFZR0RuL3dJTGl2UldkL1IrdlYwZ2hJc3haTStG?=
+ =?utf-8?B?S21hZ2hrUWxSdUJzYURLeitJNGVMV0RzNGxQR1NySWlnQmpEdUlHSGJNUjZR?=
+ =?utf-8?B?R1VpdlAyVnlxa25LeWlLNE10aHc2R1hrdVVrejBsV2Q2UDdUUnBiaWFXY0hh?=
+ =?utf-8?B?UHVXc3YxV21DcmxEZjREUm9EaWMzdEczSndqMklackwvZURuVHBOdDc3SHJq?=
+ =?utf-8?B?SW1XTFZBemltM3ZXcFVFaElTa2hwMFF6UlRTbnZwcDRWdDByQy9CVmFZK2Uv?=
+ =?utf-8?B?OFJGWkpGNFBqM3FERThEQWpKQ28ydHBaMVZ5cnY5SFlvWWF1OEw0bVhxVXZu?=
+ =?utf-8?B?SjE0K1orc0JYdDZSM1JxaDQ2N0NyUU5TVzlBQng4Z3I5R3B6SjZVZitla2Rz?=
+ =?utf-8?B?c3AzbTNEcEswOG5jOUs1aHVrVVdVeDZGQmhTaGEvZDZ0RkZJaFRtY1IvTlNu?=
+ =?utf-8?B?MXc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 933a53dd-2759-4f53-5a86-08dd7c3c05f7
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Apr 2025 16:38:59.7909
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Z4GmrMi5c4cGbq1nKzsM5LQssnd0VVxfG0yyj5M1zPq6v6H+ZC9CJtCgLEpzSwAH3XdgK9u2PC9x56YdD0N3dkN5xMkkaxDQ9LTe04hV4e0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5047
+X-OriginatorOrg: intel.com
 
+Hi Babu,
 
---FhDPjeA6XL6WHJ2b
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 4/14/25 1:51 PM, Moger, Babu wrote:
+> Hi Reinette,
+> 
+> On 4/11/25 16:02, Reinette Chatre wrote:
+>> Hi Babu,
+>>
+>> On 4/3/25 5:18 PM, Babu Moger wrote:
 
-On Mon, Apr 14, 2025 at 08:52:56PM +0200, Michal Wilczynski wrote:
-> Extend the TH1520 AON firmware bindings to describe the GPU clkgen reset
-> line, required for proper GPU clock and reset sequencing.
->=20
-> The T-HEAD TH1520 GPU requires coordinated management of two clocks
-> (core and sys) and two resets (GPU core reset and GPU clkgen
-> reset).  Only the clkgen reset is exposed at the AON level, to support
-> SoC-specific initialization handled through a generic PM domain. The GPU
-> core reset remains described in the GPU device node, as from the GPU
-> driver's perspective, there is only a single reset line [1].
->=20
-> This follows upstream maintainers' recommendations [2] to abstract
-> SoC specific details into the PM domain layer rather than exposing them
-> to drivers directly.
->=20
-> [1] - https://lore.kernel.org/all/816db99d-7088-4c1a-af03-b9a825ac09dc@im=
-gtec.com/
-> [2] - https://lore.kernel.org/all/38d9650fc11a674c8b689d6bab937acf@kernel=
-=2Eorg/
->=20
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
->  .../devicetree/bindings/firmware/thead,th1520-aon.yaml        | 11 +++++=
-++++++
->  1 file changed, 11 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/firmware/thead,th1520-aon.=
-yaml b/Documentation/devicetree/bindings/firmware/thead,th1520-aon.yaml
-> index bbc183200400de7aadbb21fea21911f6f4227b09..6ea3029c222df9ba6ea7d423b=
-92ba248cfb02cc0 100644
-> --- a/Documentation/devicetree/bindings/firmware/thead,th1520-aon.yaml
-> +++ b/Documentation/devicetree/bindings/firmware/thead,th1520-aon.yaml
-> @@ -32,6 +32,13 @@ properties:
->      items:
->        - const: aon
-> =20
-> +  resets:
-> +    maxItems: 1
-> +
-> +  reset-names:
-> +    items:
-> +      - const: gpu-clkgen
-> +
->    "#power-domain-cells":
->      const: 1
-> =20
-> @@ -39,6 +46,8 @@ required:
->    - compatible
->    - mboxes
->    - mbox-names
-> +  - resets
-> +  - reset-names
+>>> @@ -394,6 +394,21 @@ void resctrl_arch_mon_event_config_set(void *config_info);
+>>>  u32 resctrl_arch_mon_event_config_get(struct rdt_mon_domain *d,
+>>>  				      enum resctrl_event_id eventid);
+>>>  
+>>> +/**
+>>> + * resctrl_arch_config_cntr() - Configure the counter on the domain
+>>> + * @r:			resource that the counter should be read from.
+>>> + * @d:			domain that the counter should be read from.
+>>> + * @evtid:		event type to assign
+>>> + * @rmid:		rmid of the counter to read.
+>>> + * @closid:		closid that matches the rmid.
+>>> + * @cntr_id:		Counter ID to configure
+>>> + * @evt_cfg:		event configuration
+>>
+>> "event configuration" is simply an expansion of member name and does not help to
+>> understand what the value represents.
+> 
+> How about?
+> 
+> "MBM Event configuration value representing reads, writes etc.."
 
-Given these are new required properties, have you made sure in the
-driver that their absence will not cause problems with older
-devicetrees? I took a brief look at the driver, and it _looked_ like you
-were failing if they were not there? It was a brief look though, tbf.
+This is more helpful (note Event -> event). When data structures are decided it
+will also be helpful to include reference of where this data is maintained and
+how it is formatted.
 
->    - "#power-domain-cells"
-> =20
->  additionalProperties: false
-> @@ -49,5 +58,7 @@ examples:
->          compatible =3D "thead,th1520-aon";
->          mboxes =3D <&mbox_910t 1>;
->          mbox-names =3D "aon";
-> +        resets =3D <&rst 0>;
-> +        reset-names =3D "gpu-clkgen";
->          #power-domain-cells =3D <1>;
->      };
->=20
-> --=20
-> 2.34.1
->=20
-
---FhDPjeA6XL6WHJ2b
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ/6LiAAKCRB4tDGHoIJi
-0lZuAQCABS+eFSdx3kXhK23lYrr3kZQ87Y4bNEqSHSKXfVbSNwD+LpI2rl8eyDPG
-+EnkNfmTOSNRo+kDYlSKMLijsV19qQI=
-=yRlm
------END PGP SIGNATURE-----
-
---FhDPjeA6XL6WHJ2b--
+Reinette
 
