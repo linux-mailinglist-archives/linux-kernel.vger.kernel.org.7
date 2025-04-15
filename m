@@ -1,233 +1,137 @@
-Return-Path: <linux-kernel+bounces-604801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF50FA898F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:57:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88338A898EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:57:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0F93189D387
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:57:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 663DA189F143
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:57:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E8F228E605;
-	Tue, 15 Apr 2025 09:55:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 352BC2918FB;
+	Tue, 15 Apr 2025 09:55:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QmhtAbm0"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="NvdEg70P"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D655289353;
-	Tue, 15 Apr 2025 09:55:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A0728DF13
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 09:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744710928; cv=none; b=M7AY643wG1ziO0Hi18hRo4pjLCD+hepIN5M2lUKl4/tgdKEEPQEDIQHAy4IgZugDH4Uxgxffil67+bhtuIXDa56MzOvhtUGjlfIb+EvslmkbkcFVOBN6c14uR6Kk9Hr4Q33fvApFf3eZ+XtfsZqnlzJF0EggDrYEBqX06gEO2MY=
+	t=1744710908; cv=none; b=jcdCSKAqIHgnLWeABgWwYyKUa4VhvpJvNK7Abpdek12DQUKWvxfDU7kFp7T5bTYul4h5ukZPhDpiSg64e/4thEZlDpZB338nIXzFJe0ifqaTI6rjurCkPZZiddPgMphvY5M+Ahxg0AlRGW2ermTCXoJQy05slnbytcETzkAFzig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744710928; c=relaxed/simple;
-	bh=ZnF3b2liXOIjwbQ2uq2Ja54W0JiZUa4Fk4ppFleWBL8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W0UWdQyqnpG+rR9YvEJ2bqH5EXZmOX1aQPVicB6LEELWuqxX4BJwu7dQaR2bJaknOCQDEbJ6EPmSqGXCFEczXWGAGsH2ONhFumLRVlxpzkFtwpCgQnDPow314QbBvF4+90ZP570D2ik2h2AF16BRQ1/V/ioiP8xWGSEhXHUac94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QmhtAbm0; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744710927; x=1776246927;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ZnF3b2liXOIjwbQ2uq2Ja54W0JiZUa4Fk4ppFleWBL8=;
-  b=QmhtAbm0ktG4ZoxwxCE4pObE625khkBLeM/YNFzYVgesMgyQodaW7XaC
-   ULg8pCHE9CVJMvz5t3oi1RjxxrxwkCq1IuiAyClwv04Sw4CDHBhLadzgq
-   DK2h8ALnXADMGN2JhAe2GBpx4ufCpGYQC6Ja6XXK0DK0z4nE8fBR9XzmG
-   XF1WLt4zqeHNOQ4dPnwt5rrtfezbTVwNADPWmCy2OPu/Nsd7BoxWfwrTN
-   VMOh9Ctj4qXCMc72jpB8pEdXdSSmiekuw6c/q1sG3lxZZFPPp+dtBxEQf
-   ZDtQTxxJIA2RPavqUfokw40+KVXT10AqcRaFQ2pXRSXW3bR6T7jhQaF6O
-   w==;
-X-CSE-ConnectionGUID: TE8cwfB2Sh2vxYXioa5MtA==
-X-CSE-MsgGUID: 48qIGxheS/G89zI4RWPlFA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11403"; a="46093697"
-X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="46093697"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 02:54:18 -0700
-X-CSE-ConnectionGUID: jR62VZZXS/60WKSyHWz82g==
-X-CSE-MsgGUID: 25cUjWMuTIGR1UAtBNOBCA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="161054267"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 02:54:15 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1u4czc-0000000CVd3-3Lhs;
-	Tue, 15 Apr 2025 12:54:12 +0300
-Date: Tue, 15 Apr 2025 12:54:12 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-	linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Kees Cook <kees@kernel.org>, Russell King <linux@armlinux.org.uk>,
-	linux-hardening@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v3 00/33] Implement kernel-doc in Python
-Message-ID: <Z_4sxCFvpqs7qmcN@smile.fi.intel.com>
-References: <871pu1193r.fsf@trenco.lwn.net>
- <Z_zYXAJcTD-c3xTe@black.fi.intel.com>
- <87mscibwm8.fsf@trenco.lwn.net>
- <Z_4EL2bLm5Jva8Mq@smile.fi.intel.com>
- <Z_4E0y07kUdgrGQZ@smile.fi.intel.com>
- <87v7r5sw3a.fsf@intel.com>
- <Z_4WCDkAhfwF6WND@smile.fi.intel.com>
- <Z_4Wjv0hmORIwC_Z@smile.fi.intel.com>
- <20250415164014.575c0892@sal.lan>
- <Z_4sKaag1wZhME7B@smile.fi.intel.com>
+	s=arc-20240116; t=1744710908; c=relaxed/simple;
+	bh=L0R8xGjLChjgStq7fgUrJ09AFQFLRTNk5cUsHXiRm/c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IER0hPf7IytUJZuqA5uPD1NXnXkqMduN1qvheVSCFo0ZHZU3SXxeVcvS9aOHNq3/RJsAp+QTj8pQrM3F/DipJW8nixqNhZSe5a/lfzzPxs0iTSAd6R6htEO79TDmQgXUVnNRDxIYTgsCzilF9tyEzT/WKV7/qyYl8GXV6hCHAxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=NvdEg70P; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac34257295dso1003047766b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 02:55:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1744710904; x=1745315704; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6Sd6Yg3rC21jnGehy22uUVz7lDVf6VWqh6Q2Fhe7kCA=;
+        b=NvdEg70PipU0O6XlqoRNzzBLAKA/q2ZenLdVSng2WxCmNNZCqRt8rmlFTkPLytc9Kc
+         c0P0xV93/XSYTZjwAwPiWT/QB26WxQquxSDzBnu0sHt2Oic5vZ9PU2upeFDmrDOdpYPI
+         G2J7fLW6oUQpjpdwvs57PxqFUkln7KlajAUJ96N89Uo2IHAPuguzF+jElnOFiM7/r8sY
+         8wP3aCr0KMvvj5B9dMMy6rMYc68T2cArgoW4rSCYhmiiOmaOfUOh8PKQl2tj2zQXIF+k
+         vU8iWHtgiUBS+ol+MIjFesX3nNEGQRegXTQdX81/njwlCL4qH5VjXTAOy9v+vSFZEv0D
+         3LRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744710904; x=1745315704;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6Sd6Yg3rC21jnGehy22uUVz7lDVf6VWqh6Q2Fhe7kCA=;
+        b=GPP226brmoemyuzYnVnssrtVnD53dfQ6LFrzJQ6VNJaQWWUJIg5wvKOWAAD/VwF98p
+         2puP/tNqhTxMduOfML8YzZRKnbriiHdDneOgX8EST2xxSnr6Fm0EeAIyc2jmh5kuFEZY
+         HxPQqABijBhE5AaxVDEEI2PxEP6X8bqq4+obcnjGlXIYwmNww/DAVX/UxbRoVYH0Y47K
+         5gJYPL5AMcTOoBVrWWZtLUXucoFdh5y05tr2+V4JsPzvAaS0fYkYCMZlBqUgaWqFDEXq
+         v1z1R9T6sMQohswcZ/c95ODuGlHAcH47kxbLWSSQcXZQnChbZ+gDV9wiFFBlQu24/tS/
+         LzTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUusg214CtB7I05wBrbfh0nTmZf9g4c24Tq12zW5TZshE8VRHZnObwaHm9dbO5WNnstx40+x8wDwccE4os=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYYAy+iH7eo01DYotamKsy+/DR6JtznF9Hjyh8KJLdL50LIemo
+	LCUpz4DYzop+kZkqTb8V7CA3F57jdyYMOF+N1BaSdyEx8Zjqwl4ZfNLO0CfXpc+0FHA9Cq1uAYy
+	GttnUp2RYNRYAmE9anOwuBkP4NnkoLDAPJ7Dlemy1LWExeIytDZvNKA==
+X-Gm-Gg: ASbGnct4QSxNu8ReN0DVF5ehvKVrsKwDM2rmBR3p+e3j53mi+hfIioavozypveGynMc
+	MFOunS0nxZ35wK0HJ46nmddiIvivnOW795B1xY71mAF/LrfrbQceMbRZDolDkxke0SRTjWpdSnj
+	7wEU731BnAxQxf4/8/GED5nrr5BA==
+X-Google-Smtp-Source: AGHT+IHAU8wJfJDF4eNSdv0Zm5P/kiq6Yogbh7eiqNmQ6osroOUsaiP2v1/BjbNJSKe15J8jBc9YnfV5U+5wxjTv07U=
+X-Received: by 2002:a17:906:7154:b0:aca:dd0c:cfc8 with SMTP id
+ a640c23a62f3a-acadd0cd3bamr1109850866b.10.1744710904488; Tue, 15 Apr 2025
+ 02:55:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z_4sKaag1wZhME7B@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250411131423.3802611-1-guodong@riscstar.com>
+ <20250411131423.3802611-2-guodong@riscstar.com> <20250411-confider-spinster-35f23040d188@spud>
+ <89b6142bacecd4a7742341b88dc1e28c4454527a.camel@pengutronix.de>
+In-Reply-To: <89b6142bacecd4a7742341b88dc1e28c4454527a.camel@pengutronix.de>
+From: Guodong Xu <guodong@riscstar.com>
+Date: Tue, 15 Apr 2025 17:54:52 +0800
+X-Gm-Features: ATxdqUGYHln9nntZsdf9jj-vYb0_3U3ad99wI0oBwmwTA_WUeFe5BkvwdaXHs0w
+Message-ID: <CAH1PCMZnJDcYKJR35WirQT95hte0NWvGBe4fjDuyZEgagvunAA@mail.gmail.com>
+Subject: Re: [PATCH 1/9] dt-bindings: pwm: marvell,pxa: add optional property resets
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Conor Dooley <conor@kernel.org>, ukleinek@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, paul.walmsley@sifive.com, 
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, dlan@gentoo.org, 
+	drew@pdp7.com, inochiama@gmail.com, geert+renesas@glider.be, heylenay@4d2.org, 
+	tglx@linutronix.de, hal.feng@starfivetech.com, unicorn_wang@outlook.com, 
+	duje.mihanovic@skole.hr, elder@riscstar.com, linux-pwm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 15, 2025 at 12:51:38PM +0300, Andy Shevchenko wrote:
-> On Tue, Apr 15, 2025 at 04:40:34PM +0800, Mauro Carvalho Chehab wrote:
-> > Em Tue, 15 Apr 2025 11:19:26 +0300
-> > Andy Shevchenko <andriy.shevchenko@intel.com> escreveu:
-> > > On Tue, Apr 15, 2025 at 11:17:12AM +0300, Andy Shevchenko wrote:
-> > > > On Tue, Apr 15, 2025 at 10:49:29AM +0300, Jani Nikula wrote:  
-> > > > > On Tue, 15 Apr 2025, Andy Shevchenko <andriy.shevchenko@intel.com> wrote:  
-> > > > > > On Tue, Apr 15, 2025 at 10:01:04AM +0300, Andy Shevchenko wrote:  
-> > > > > >> On Mon, Apr 14, 2025 at 09:17:51AM -0600, Jonathan Corbet wrote:  
-> > > > > >> > Andy Shevchenko <andriy.shevchenko@intel.com> writes:  
-> > > > > >> > > On Wed, Apr 09, 2025 at 12:30:00PM -0600, Jonathan Corbet wrote:  
-> > > > > >> > >> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
-> > > > > >> > >>   
-> > > > > >> > >> > This changeset contains the kernel-doc.py script to replace the verable
-> > > > > >> > >> > kernel-doc originally written in Perl. It replaces the first version and the
-> > > > > >> > >> > second series I sent on the top of it.  
-> > > > > >> > >> 
-> > > > > >> > >> OK, I've applied it, looked at the (minimal) changes in output, and
-> > > > > >> > >> concluded that it's good - all this stuff is now in docs-next.  Many
-> > > > > >> > >> thanks for doing this!
-> > > > > >> > >> 
-> > > > > >> > >> I'm going to hold off on other documentation patches for a day or two
-> > > > > >> > >> just in case anything turns up.  But it looks awfully good.  
-> > > > > >> > >
-> > > > > >> > > This started well, until it becomes a scripts/lib/kdoc.
-> > > > > >> > > So, it makes the `make O=...` builds dirty *). Please make sure this doesn't leave
-> > > > > >> > > "disgusting turd" )as said by Linus) in the clean tree.
-> > > > > >> > >
-> > > > > >> > > *) it creates that __pycache__ disaster. And no, .gitignore IS NOT a solution.  
-> > > > > >> > 
-> > > > > >> > If nothing else, "make cleandocs" should clean it up, certainly.
-> > > > > >> > 
-> > > > > >> > We can also tell CPython to not create that directory at all.  I'll run
-> > > > > >> > some tests to see what the effect is on the documentation build times;
-> > > > > >> > I'm guessing it will not be huge...  
-> > > > > >> 
-> > > > > >> I do not build documentation at all, it's just a regular code build that leaves
-> > > > > >> tree dirty.
-> > > > > >> 
-> > > > > >> $ python3 --version
-> > > > > >> Python 3.13.2
-> > > > > >> 
-> > > > > >> It's standard Debian testing distribution, no customisation in the code.
-> > > > > >> 
-> > > > > >> To reproduce.
-> > > > > >> 1) I have just done a new build to reduce the churn, so, running make again does nothing;
-> > > > > >> 2) The following snippet in shell shows the issue
-> > > > > >> 
-> > > > > >> $ git clean -xdf
-> > > > > >> $ git status --ignored
-> > > > > >> On branch ...
-> > > > > >> nothing to commit, working tree clean
-> > > > > >> 
-> > > > > >> $ make LLVM=-19 O=.../out W=1 C=1 CF=-D__CHECK_ENDIAN__ -j64
-> > > > > >> make[1]: Entering directory '...'
-> > > > > >>   GEN     Makefile
-> > > > > >>   DESCEND objtool
-> > > > > >>   CALL    .../scripts/checksyscalls.sh
-> > > > > >>   INSTALL libsubcmd_headers
-> > > > > >> .pylintrc: warning: ignored by one of the .gitignore files
-> > > > > >> Kernel: arch/x86/boot/bzImage is ready  (#23)
-> > > > > >> make[1]: Leaving directory '...'
-> > > > > >> 
-> > > > > >> $ touch drivers/gpio/gpiolib-acpi.c
-> > > > > >> 
-> > > > > >> $ make LLVM=-19 O=.../out W=1 C=1 CF=-D__CHECK_ENDIAN__ -j64
-> > > > > >> make[1]: Entering directory '...'
-> > > > > >>   GEN     Makefile
-> > > > > >>   DESCEND objtool
-> > > > > >>   CALL    .../scripts/checksyscalls.sh
-> > > > > >>   INSTALL libsubcmd_headers
-> > > > > >> ...
-> > > > > >>   OBJCOPY arch/x86/boot/setup.bin
-> > > > > >>   BUILD   arch/x86/boot/bzImage
-> > > > > >> Kernel: arch/x86/boot/bzImage is ready  (#24)
-> > > > > >> make[1]: Leaving directory '...'
-> > > > > >> 
-> > > > > >> $ git status --ignored
-> > > > > >> On branch ...
-> > > > > >> Untracked files:
-> > > > > >>   (use "git add <file>..." to include in what will be committed)
-> > > > > >> 	scripts/lib/kdoc/__pycache__/
-> > > > > >> 
-> > > > > >> nothing added to commit but untracked files present (use "git add" to track)  
-> > > > > >
-> > > > > > FWIW, I repeated this with removing the O=.../out folder completely, so it's
-> > > > > > fully clean build. Still the same issue.
-> > > > > >
-> > > > > > And it appears at the very beginning of the build. You don't need to wait to
-> > > > > > have the kernel to be built actually.  
-> > > > > 
-> > > > > kernel-doc gets run on source files for W=1 builds. See Makefile.build.  
-> > > > 
-> > > > Thanks for the clarification, so we know that it runs and we know that it has
-> > > > an issue.  
-> > > 
-> > > Ideal solution what would I expect is that the cache folder should respect
-> > > the given O=... argument, or disabled at all (but I don't think the latter
-> > > is what we want as it may slow down the build).
-> > 
-> > From:
-> > 	https://github.com/python/cpython/commit/b193fa996a746111252156f11fb14c12fd6267e6
-> > and:
-> > 	https://peps.python.org/pep-3147/
-> > 
-> > It sounds that Python 3.8 and above have a way to specify the cache
-> > location, via PYTHONPYCACHEPREFIX env var, and via "-X pycache_prefix=path".
-> > 
-> > As the current minimal Python version is 3.9, we can safely use it.
-> > 
-> > So, maybe this would work:
-> > 
-> > 	make O="../out" PYTHONPYCACHEPREFIX="../out"
-> > 
-> > or a variant of it:
-> > 
-> > 	PYTHONPYCACHEPREFIX="../out" make O="../out" 
-> > 
-> > If this works, we can adjust the building system to fill PYTHONPYCACHEPREFIX
-> > env var when O= is used.
-> 
-> It works, the problem is that it should be automatically assigned to the
-> respective folder, so when compiling kdoc, it should be actually
-> 
-> $O/scripts/lib/kdoc/__pycache__
-> 
-> and so on for _each_ of the python code.
+On Tue, Apr 15, 2025 at 4:53=E2=80=AFPM Philipp Zabel <p.zabel@pengutronix.=
+de> wrote:
+>
+> On Fr, 2025-04-11 at 17:44 +0100, Conor Dooley wrote:
+> > On Fri, Apr 11, 2025 at 09:14:15PM +0800, Guodong Xu wrote:
+> > > Add an optional resets property for the Marvell PWM PXA binding.
+> > >
+> > > Signed-off-by: Guodong Xu <guodong@riscstar.com>
+> > > ---
+> > >  Documentation/devicetree/bindings/pwm/marvell,pxa-pwm.yaml | 3 +++
+> > >  1 file changed, 3 insertions(+)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/pwm/marvell,pxa-pwm.ya=
+ml b/Documentation/devicetree/bindings/pwm/marvell,pxa-pwm.yaml
+> > > index 9ee1946dc2e1..9640d4b627c2 100644
+> > > --- a/Documentation/devicetree/bindings/pwm/marvell,pxa-pwm.yaml
+> > > +++ b/Documentation/devicetree/bindings/pwm/marvell,pxa-pwm.yaml
+> > > @@ -31,6 +31,9 @@ properties:
+> > >    clocks:
+> > >      maxItems: 1
+> > >
+> > > +  resets:
+> > > +    maxItems: 1
+> >
+> > Do any of the currently supported devices use a reset? If not, then add
+> > this in tandem with the new compatible and only allow it there please.
+>
+> Also, if spacemit,k1-pwm can not work without the reset being
+> deasserted, mark it as required.
+>
 
-So, the bottom line, can we just disable it for a quick fix and when a proper
-solution comes, it will redo that?
+Thank you Philipp. spacemit,k1-pwm can not work without the reset.
+I will add that in the next version.
 
--- 
-With Best Regards,
-Andy Shevchenko
+-Guodong
 
-
+> The driver can still use reset_control_get_optional.
+>
+> regards
+> Philipp
 
