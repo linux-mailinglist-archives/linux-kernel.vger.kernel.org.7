@@ -1,168 +1,107 @@
-Return-Path: <linux-kernel+bounces-605860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F320A8A718
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 20:48:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79958A8A71D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 20:48:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79AF07A267B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 18:46:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DEBA443B27
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 18:48:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A6222D799;
-	Tue, 15 Apr 2025 18:47:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66A6231C9C;
+	Tue, 15 Apr 2025 18:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zukc0bSq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HIiVbQtB"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69872DFA5C;
-	Tue, 15 Apr 2025 18:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF5522DFB1;
+	Tue, 15 Apr 2025 18:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744742877; cv=none; b=sDn/Dz8/qBXh9zhs3T9JaJsYEMPl6ZgTJ1OGaLw+PjLzxXP+gjJERluhmCEBsctLod3v6JAJsURXxVe32i0LrF1bUk3VD+/7sP/uw+1V34C4f1NR4k2opoa5pc71gs1Jph6bHACv43hoJqx8b9rtMNKTZEHwNWqa9kpsWcSxlJE=
+	t=1744742894; cv=none; b=Wu4Kikt3c5IiSPn+bvXK1ZsR/DzYG+BUb0QBfUMFk72FN1Jyzva1HGEhGYEbb4EjYGLQJlxoeKIZv0cULzA3Ng30MCB1sj54sPlj8UWQFG6J7i4AkLn/pYhPut1xexBqfcJjpnpdYhN1jSdoyB2tXZjKSZ47sgc5Gh2cJOhTcTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744742877; c=relaxed/simple;
-	bh=YRPucbupLv7L5SQpYXNvK++dZcGdDzry0G1tMgy83bY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TF9VGRAyNHElrAb7mNeEgKcp8AvRi65Gurnz3eNIRcrwJyjYE4ip2v1+v4OGxBvnxP7YskKSQZM+eHZsDf14HhZvQoU2N7z2PoVkY+y8stUeed5/nfpz8lsUYVHQWGxuoA/JapagxB8jiC1NL5furx+EQR0MibeekOseK1hjQBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zukc0bSq; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744742876; x=1776278876;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=YRPucbupLv7L5SQpYXNvK++dZcGdDzry0G1tMgy83bY=;
-  b=Zukc0bSqf5jwjzqiRe837zmYmH0SVZ6HV3LphOcGTlR7v8DpOi2xAnW9
-   ID7Pnl95gtgbJ79kpPjU7Sp/OmvhlgycdMxTC7MUX49BRiJ75CE/huQ5V
-   /t7epEyuvIXWZQnJKkFEMFjovpusUs5GRzkwToJw4tF6hN/b5G40jYzgN
-   cXhJ9oyK9YM6n7Cf5W5tsmZZE2khCyqaWbS/JcCgQlC645RgpdOCKhel7
-   Vyit0oj2Fo7R9tuVCF550FMunB6YzCZytJkVksSx0dp/DVSb4/rr2KINZ
-   uXu9l6uLNWplFvqz0S4HyiITGUuep589NMMtmnk0hGt4gwuLSS3byZaZu
-   A==;
-X-CSE-ConnectionGUID: V/4b/0T8R8mlrKyGzaceTg==
-X-CSE-MsgGUID: E9mLeemkRieIJVIisTsjWw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="50068837"
-X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="50068837"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 11:47:55 -0700
-X-CSE-ConnectionGUID: 6fKp7qaMQ16foLRw6GfU6Q==
-X-CSE-MsgGUID: 8kiuUIteQvqhDtaAUM8dHw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,214,1739865600"; 
-   d="scan'208";a="161162047"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 11:47:55 -0700
-Received: from [10.246.136.14] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.14])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 380A320B5736;
-	Tue, 15 Apr 2025 11:47:53 -0700 (PDT)
-Message-ID: <7666eeaf-930c-4c4b-bcb8-9767feff10f6@linux.intel.com>
-Date: Tue, 15 Apr 2025 14:47:51 -0400
+	s=arc-20240116; t=1744742894; c=relaxed/simple;
+	bh=2Kpm6GWhgo8Q/IOC4ec8PNWFZP8KUbljZZldwykeRhg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mjPiUDDQrhQwekJtN32h9sKp3pLU3leYf+rCbdmmQomdOQTzOjKsrt/THuI7xtkeCkESC5d3DpMNaP6fNm6ROZBtobq3rGtAULdfijilGnZNNPltfpMd3E3eZzHXUh2m0q4QC6tR0JjN7NBxlegN9UmeNyvDDKHndks2TTu2z/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HIiVbQtB; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-301b4f97cc1so1063099a91.2;
+        Tue, 15 Apr 2025 11:48:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744742892; x=1745347692; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2Kpm6GWhgo8Q/IOC4ec8PNWFZP8KUbljZZldwykeRhg=;
+        b=HIiVbQtBB7qJ2st0SdiPbyIZEPsnaHPWFxUrqWfJfkedVFiDGO8FMspMkjBMJQQ3Iv
+         m1pNTHXDobarqPQlimbRVeY+wk3tJmevILg78wsLOvgTCmMxHtH4uzBJhZhHb3IwTy5W
+         lrE7ZVSMUQI1Tw5xPkO2Mw3zKv+grITgi3A+Sv3ztKP0rakytR0dbTVmLgxK1j8xFboV
+         Im5GQsBi58CwwooHCR/KzUj8jlxYUgFp6FuMO+SqOjqpGeh0WFO360Hof0iXiffJUVvL
+         czN+D6/CuAcO0NRqDSSY7gTfHhthLxBMhhZ0Xr4t4S0kU4bEwQ5WzKgBmpTylL1Qldte
+         ulfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744742892; x=1745347692;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2Kpm6GWhgo8Q/IOC4ec8PNWFZP8KUbljZZldwykeRhg=;
+        b=ArBEQ1T1FW1CBnAZdaUfHx5ox3OTP6FPMXoju9IhLpqBQId4IWLI+F+giwScT+5gmS
+         Yniw360n7X/wyiGyW04ppJZxZoijgFUxkTNCteE6SbrhFX+SLKXklGipsKYxdF2aOvpB
+         kQBiFEimjudY+BLtvd4a8TMOMSXCQGyWzJ7iM5GKlxBbJ2sa99cg1thdKGHxKYoFSau2
+         ZXgL+MhDVfbZzLmKmQZIDfgo6gOuYMI2UtVW+fVXlP5XPjf9CBo7TUvBZdEQRn/fmGb7
+         tPHE/dQQ09+88l+RX+rnlau0buC16oBxDUPmnIAoE7A84RVmVoc4CmfE25qKmG2Zmw6y
+         enXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMYs99lRV/BR7hA0eKowGeV16yAWFmxFuQP4EgX/t/Bdb9GpGbULTzCEx1waPcmaQmpaMUEviAmFNVN25pV8c=@vger.kernel.org, AJvYcCV1oOEsz8N/PAyqW0G1F3KLPZtrSTEA9Gu56b7CePBXGZzMy+cyHt4v5MsOOcHNfUQYV9R0e0ai@vger.kernel.org, AJvYcCW8Qyo73XnajweX0GiSdecrdh9nx97B5Z+0t/E5aA3e0iU+6w3vFAEPaSxIgknQ4h6QdLx2sg3cpP8luRA=@vger.kernel.org, AJvYcCXxkbdeHvHHg/p/X6pfOtxz5MXGNGcITZHDuVcjQQxyn3ktIBbNpo5DiO+fvmFKV5yd9C3BCNtv4ez5PWHq@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6+7+cs76AgMWIqPiNS05Wbb8+aJrfdmvC6OtT4KyiS99T/gNm
+	A6AULizDzc+yoK1bvUu9WUoFE/5sKzegS8I8WGc1L34lePbUpC/YOJbWA6QFpF2URvfpFFMtUDk
+	m29WZ0nUf9rnAEXSBkQMGRLeF3uo=
+X-Gm-Gg: ASbGncttFrE+DYkEZumAO3cjQ7Nysqb+oTNmqdV/cFSgkq2rRVM8htgp//bWy7zBg5Z
+	BK/PgMBBWE3OfwDu+3F1W7O6p7ng043kwxBHx1OX9+LLtBuXeQiammnzA3xFTBy8JmH+EEmbhg8
+	1J2WPPTvo6nHhfW9EgG9Qplg==
+X-Google-Smtp-Source: AGHT+IGL8QPPlQgTyuSsG4JtvKe3+bJVrcOq2MMMB3IlnsadEDXTmZNsLahV3jTtf451YqR9z6dcky4RKUZe/0LTBTA=
+X-Received: by 2002:a17:90b:1d8f:b0:2fe:b879:b68c with SMTP id
+ 98e67ed59e1d1-3085ef97db8mr121803a91.6.1744742891943; Tue, 15 Apr 2025
+ 11:48:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] perf/x86/intel: Don't clear perf metrics overflow bit
- unconditionally
-To: Dapeng Mi <dapeng1.mi@linux.intel.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Andi Kleen <ak@linux.intel.com>, Eranian Stephane <eranian@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- Dapeng Mi <dapeng1.mi@intel.com>
-References: <20250415104135.318169-1-dapeng1.mi@linux.intel.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20250415104135.318169-1-dapeng1.mi@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250414171241.2126137-1-ojeda@kernel.org>
+In-Reply-To: <20250414171241.2126137-1-ojeda@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 15 Apr 2025 20:47:59 +0200
+X-Gm-Features: ATxdqUHTA9TZry6P0hmW1nNr51e7jiPnolW0gnctSwGdT8fOOpZMfrf6lSkmxuI
+Message-ID: <CANiq72=TjjW+L20su+N_7-FGMvhGZDTUEHnwk-Kz+XWUWyQVUw@mail.gmail.com>
+Subject: Re: [PATCH] rust: kbuild: use `pound` to support GNU Make < 4.3
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Apr 14, 2025 at 7:13=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
+te:
+>
+> Thus use the existing variable to fix it.
 
+Applied to `rust-fixes` -- thanks everyone!
 
-On 2025-04-15 6:41 a.m., Dapeng Mi wrote:
-> The below code would always unconditionally clear other status bits like
-> perf metrics overflow bit once PEBS buffer overflows.
-> 
->         status &= intel_ctrl | GLOBAL_STATUS_TRACE_TOPAPMI;
-> 
-> This is incorrect. Perf metrics overflow bit should be cleared only when
-> fixed counter 3 in PEBS counter group. Otherwise perf metrics overflow
-> could be missed to handle.
-> 
-> Closes: https://lore.kernel.org/all/20250225110012.GK31462@noisy.programming.kicks-ass.net/
-> Fixes: 7b2c05a15d29 ("perf/x86/intel: Generic support for hardware TopDown metrics")
-> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+If Kbuild wants to pick it up instead, please let me know and I will drop i=
+t.
 
-For the two patches,
-
-Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
-
-Thanks,
-Kan
-
-> ---
->  arch/x86/events/intel/core.c | 13 +++++++++++--
->  1 file changed, 11 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-> index 0ceaa1b07019..c6f69ce3b2b3 100644
-> --- a/arch/x86/events/intel/core.c
-> +++ b/arch/x86/events/intel/core.c
-> @@ -3140,7 +3140,6 @@ static int handle_pmi_common(struct pt_regs *regs, u64 status)
->  	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
->  	int bit;
->  	int handled = 0;
-> -	u64 intel_ctrl = hybrid(cpuc->pmu, intel_ctrl);
->  
->  	inc_irq_stat(apic_perf_irqs);
->  
-> @@ -3184,7 +3183,6 @@ static int handle_pmi_common(struct pt_regs *regs, u64 status)
->  		handled++;
->  		x86_pmu_handle_guest_pebs(regs, &data);
->  		static_call(x86_pmu_drain_pebs)(regs, &data);
-> -		status &= intel_ctrl | GLOBAL_STATUS_TRACE_TOPAPMI;
->  
->  		/*
->  		 * PMI throttle may be triggered, which stops the PEBS event.
-> @@ -3195,6 +3193,15 @@ static int handle_pmi_common(struct pt_regs *regs, u64 status)
->  		 */
->  		if (pebs_enabled != cpuc->pebs_enabled)
->  			wrmsrl(MSR_IA32_PEBS_ENABLE, cpuc->pebs_enabled);
-> +
-> +		/*
-> +		 * Above PEBS handler (PEBS counters snapshotting) has updated fixed
-> +		 * counter 3 and perf metrics counts if they are in counter group,
-> +		 * unnecessary to update again.
-> +		 */
-> +		if (cpuc->events[INTEL_PMC_IDX_FIXED_SLOTS] &&
-> +		    is_pebs_counter_event_group(cpuc->events[INTEL_PMC_IDX_FIXED_SLOTS]))
-> +			status &= ~GLOBAL_STATUS_PERF_METRICS_OVF_BIT;
->  	}
->  
->  	/*
-> @@ -3214,6 +3221,8 @@ static int handle_pmi_common(struct pt_regs *regs, u64 status)
->  		static_call(intel_pmu_update_topdown_event)(NULL, NULL);
->  	}
->  
-> +	status &= hybrid(cpuc->pmu, intel_ctrl);
-> +
->  	/*
->  	 * Checkpointed counters can lead to 'spurious' PMIs because the
->  	 * rollback caused by the PMI will have cleared the overflow status
-> 
-> base-commit: 5c3627b6f0595f1ec27e6f5df903bd072e9b9136
-
+Cheers,
+Miguel
 
