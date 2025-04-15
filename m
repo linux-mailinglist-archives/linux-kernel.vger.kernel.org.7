@@ -1,137 +1,94 @@
-Return-Path: <linux-kernel+bounces-604800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88338A898EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:57:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BA8CA898F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:57:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 663DA189F143
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:57:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78C1D1898889
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:57:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 352BC2918FB;
-	Tue, 15 Apr 2025 09:55:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A2F528B4E8;
+	Tue, 15 Apr 2025 09:56:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="NvdEg70P"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="nUR07SN6"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A0728DF13
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 09:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E6E2063D2;
+	Tue, 15 Apr 2025 09:56:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744710908; cv=none; b=jcdCSKAqIHgnLWeABgWwYyKUa4VhvpJvNK7Abpdek12DQUKWvxfDU7kFp7T5bTYul4h5ukZPhDpiSg64e/4thEZlDpZB338nIXzFJe0ifqaTI6rjurCkPZZiddPgMphvY5M+Ahxg0AlRGW2ermTCXoJQy05slnbytcETzkAFzig=
+	t=1744710985; cv=none; b=M+pzhgMlp7HbrLS34RH8/ze7XthjGq5Gxvd4LedQ2bCILOylgQj9ljLh11B9S12m3uQ6ayFzWC7IwXYcPHs3WXlN/5GbO+TpIdj2uzSWQAb+8uKrG9rh7WXb7QIt6kx0HuQxeyPT/GudGtIsfUVOC7ZrRbrzZvw3rDiblkEij9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744710908; c=relaxed/simple;
-	bh=L0R8xGjLChjgStq7fgUrJ09AFQFLRTNk5cUsHXiRm/c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IER0hPf7IytUJZuqA5uPD1NXnXkqMduN1qvheVSCFo0ZHZU3SXxeVcvS9aOHNq3/RJsAp+QTj8pQrM3F/DipJW8nixqNhZSe5a/lfzzPxs0iTSAd6R6htEO79TDmQgXUVnNRDxIYTgsCzilF9tyEzT/WKV7/qyYl8GXV6hCHAxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=NvdEg70P; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac34257295dso1003047766b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 02:55:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1744710904; x=1745315704; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6Sd6Yg3rC21jnGehy22uUVz7lDVf6VWqh6Q2Fhe7kCA=;
-        b=NvdEg70PipU0O6XlqoRNzzBLAKA/q2ZenLdVSng2WxCmNNZCqRt8rmlFTkPLytc9Kc
-         c0P0xV93/XSYTZjwAwPiWT/QB26WxQquxSDzBnu0sHt2Oic5vZ9PU2upeFDmrDOdpYPI
-         G2J7fLW6oUQpjpdwvs57PxqFUkln7KlajAUJ96N89Uo2IHAPuguzF+jElnOFiM7/r8sY
-         8wP3aCr0KMvvj5B9dMMy6rMYc68T2cArgoW4rSCYhmiiOmaOfUOh8PKQl2tj2zQXIF+k
-         vU8iWHtgiUBS+ol+MIjFesX3nNEGQRegXTQdX81/njwlCL4qH5VjXTAOy9v+vSFZEv0D
-         3LRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744710904; x=1745315704;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6Sd6Yg3rC21jnGehy22uUVz7lDVf6VWqh6Q2Fhe7kCA=;
-        b=GPP226brmoemyuzYnVnssrtVnD53dfQ6LFrzJQ6VNJaQWWUJIg5wvKOWAAD/VwF98p
-         2puP/tNqhTxMduOfML8YzZRKnbriiHdDneOgX8EST2xxSnr6Fm0EeAIyc2jmh5kuFEZY
-         HxPQqABijBhE5AaxVDEEI2PxEP6X8bqq4+obcnjGlXIYwmNww/DAVX/UxbRoVYH0Y47K
-         5gJYPL5AMcTOoBVrWWZtLUXucoFdh5y05tr2+V4JsPzvAaS0fYkYCMZlBqUgaWqFDEXq
-         v1z1R9T6sMQohswcZ/c95ODuGlHAcH47kxbLWSSQcXZQnChbZ+gDV9wiFFBlQu24/tS/
-         LzTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUusg214CtB7I05wBrbfh0nTmZf9g4c24Tq12zW5TZshE8VRHZnObwaHm9dbO5WNnstx40+x8wDwccE4os=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYYAy+iH7eo01DYotamKsy+/DR6JtznF9Hjyh8KJLdL50LIemo
-	LCUpz4DYzop+kZkqTb8V7CA3F57jdyYMOF+N1BaSdyEx8Zjqwl4ZfNLO0CfXpc+0FHA9Cq1uAYy
-	GttnUp2RYNRYAmE9anOwuBkP4NnkoLDAPJ7Dlemy1LWExeIytDZvNKA==
-X-Gm-Gg: ASbGnct4QSxNu8ReN0DVF5ehvKVrsKwDM2rmBR3p+e3j53mi+hfIioavozypveGynMc
-	MFOunS0nxZ35wK0HJ46nmddiIvivnOW795B1xY71mAF/LrfrbQceMbRZDolDkxke0SRTjWpdSnj
-	7wEU731BnAxQxf4/8/GED5nrr5BA==
-X-Google-Smtp-Source: AGHT+IHAU8wJfJDF4eNSdv0Zm5P/kiq6Yogbh7eiqNmQ6osroOUsaiP2v1/BjbNJSKe15J8jBc9YnfV5U+5wxjTv07U=
-X-Received: by 2002:a17:906:7154:b0:aca:dd0c:cfc8 with SMTP id
- a640c23a62f3a-acadd0cd3bamr1109850866b.10.1744710904488; Tue, 15 Apr 2025
- 02:55:04 -0700 (PDT)
+	s=arc-20240116; t=1744710985; c=relaxed/simple;
+	bh=SXeouNsIw4orkoUYHILjA3mkuPoRVA/RbzH4YSM0Omw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h9gRoBcwBB67NUxdZBKj3gAgkMPV/cyQveuGkKnSJOBwzrPIEwysK5lO42l/3iGuxuMfmE22hgskSf5zqHUye7zNiHNJcBHBSGskNTmjQOXDPUQVX93URgWb21NkGePx4AaBnfY3b0tYSgo3UwgFwMrKNP+y1bMz9SO9U4N9j9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=nUR07SN6; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=fLZUFFVfeIkqc65hMxdnYv2FI9bh1Nh+k7hk46nVFFg=; b=nUR07SN6IlOmG++RioA4KGRcwc
+	rlCcZ12Zg9P5SjKD64C9uHaFqnrtQ2aHrPSN3Fbzs81vybT0vJ3CHCCuS818sb7voVQyCQuvvuyVu
+	8jtH71h4dOMuz9m1arI2F5mgJph68tYCOYj3OLF1VvQ+nyWVCNlFGD31iwsj/Siyum0zV/5EHhoj9
+	S1iHBJzIe2JC3p+TfnOBeuVyYno9/Wm9yykSjMsN/kpKKLaCV+aIVaE3Mz31QitXFTyVAYn9skS0f
+	edClkFVjtYNXi/IRhBXUVylQqaw5Yg4nyxQCyEw4UGk1A96SPMRKhe9oVxXn+55vB4ob7VTrFFFW2
+	pJ8qb7kA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:58270)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1u4d1R-0007tE-3D;
+	Tue, 15 Apr 2025 10:56:06 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1u4d1P-0000GR-08;
+	Tue, 15 Apr 2025 10:56:03 +0100
+Date: Tue, 15 Apr 2025 10:56:02 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	Andrei Botila <andrei.botila@oss.nxp.com>,
+	Sabrina Dubroca <sd@queasysnail.net>,
+	Eric Woudstra <ericwouds@gmail.com>,
+	Daniel Golle <daniel@makrotopia.org>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [net-next PATCH v7 0/6] net: phy: Add support for new Aeonsemi
+ PHYs
+Message-ID: <Z_4tMirsQNl3qE0Y@shell.armlinux.org.uk>
+References: <20250410095443.30848-1-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250411131423.3802611-1-guodong@riscstar.com>
- <20250411131423.3802611-2-guodong@riscstar.com> <20250411-confider-spinster-35f23040d188@spud>
- <89b6142bacecd4a7742341b88dc1e28c4454527a.camel@pengutronix.de>
-In-Reply-To: <89b6142bacecd4a7742341b88dc1e28c4454527a.camel@pengutronix.de>
-From: Guodong Xu <guodong@riscstar.com>
-Date: Tue, 15 Apr 2025 17:54:52 +0800
-X-Gm-Features: ATxdqUGYHln9nntZsdf9jj-vYb0_3U3ad99wI0oBwmwTA_WUeFe5BkvwdaXHs0w
-Message-ID: <CAH1PCMZnJDcYKJR35WirQT95hte0NWvGBe4fjDuyZEgagvunAA@mail.gmail.com>
-Subject: Re: [PATCH 1/9] dt-bindings: pwm: marvell,pxa: add optional property resets
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Conor Dooley <conor@kernel.org>, ukleinek@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, paul.walmsley@sifive.com, 
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, dlan@gentoo.org, 
-	drew@pdp7.com, inochiama@gmail.com, geert+renesas@glider.be, heylenay@4d2.org, 
-	tglx@linutronix.de, hal.feng@starfivetech.com, unicorn_wang@outlook.com, 
-	duje.mihanovic@skole.hr, elder@riscstar.com, linux-pwm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250410095443.30848-1-ansuelsmth@gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Tue, Apr 15, 2025 at 4:53=E2=80=AFPM Philipp Zabel <p.zabel@pengutronix.=
-de> wrote:
->
-> On Fr, 2025-04-11 at 17:44 +0100, Conor Dooley wrote:
-> > On Fri, Apr 11, 2025 at 09:14:15PM +0800, Guodong Xu wrote:
-> > > Add an optional resets property for the Marvell PWM PXA binding.
-> > >
-> > > Signed-off-by: Guodong Xu <guodong@riscstar.com>
-> > > ---
-> > >  Documentation/devicetree/bindings/pwm/marvell,pxa-pwm.yaml | 3 +++
-> > >  1 file changed, 3 insertions(+)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/pwm/marvell,pxa-pwm.ya=
-ml b/Documentation/devicetree/bindings/pwm/marvell,pxa-pwm.yaml
-> > > index 9ee1946dc2e1..9640d4b627c2 100644
-> > > --- a/Documentation/devicetree/bindings/pwm/marvell,pxa-pwm.yaml
-> > > +++ b/Documentation/devicetree/bindings/pwm/marvell,pxa-pwm.yaml
-> > > @@ -31,6 +31,9 @@ properties:
-> > >    clocks:
-> > >      maxItems: 1
-> > >
-> > > +  resets:
-> > > +    maxItems: 1
-> >
-> > Do any of the currently supported devices use a reset? If not, then add
-> > this in tandem with the new compatible and only allow it there please.
->
-> Also, if spacemit,k1-pwm can not work without the reset being
-> deasserted, mark it as required.
->
+I'm sure you know, but your email address for linux-kernel is wrong.
 
-Thank you Philipp. spacemit,k1-pwm can not work without the reset.
-I will add that in the next version.
-
--Guodong
-
-> The driver can still use reset_control_get_optional.
->
-> regards
-> Philipp
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
