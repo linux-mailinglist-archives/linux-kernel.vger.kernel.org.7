@@ -1,122 +1,194 @@
-Return-Path: <linux-kernel+bounces-604464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8B02A894D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:22:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FA29A894C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:21:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4442E3B7B36
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:21:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEF223B7B72
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFAD927A134;
-	Tue, 15 Apr 2025 07:21:43 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2613727990F;
+	Tue, 15 Apr 2025 07:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qrlNFjZ9"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CEBE20DF4;
-	Tue, 15 Apr 2025 07:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 706FB3A1BA
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 07:21:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744701703; cv=none; b=dYeFsz7qmK8FTBfe5bOEIk0Uj67hFuWIr+yJ1Wb3wA1i8NEvXeGNaOVQyC6A27bwKf/1NhrxCv+OZ/xOtzA7hGBiSe5y1ZgsTp3o42JhU8SWh8QOAX2sBVdDTbuEC6QAM7VomLcTOcDScTsPXtFq2hqmvwNMA8V/IoIrZOJan+Q=
+	t=1744701663; cv=none; b=j22wzwR4KEyh6b//Q65r2tbzxQLteGiOEfADTMiOUM6ChdjxysLcJMlYjpso00JjsudAoHK7K1uzR86sI7meZNBW1olq5sShfhH6jYMgRPiBHRWpRzERVtpc/ZVA8duWbl2D+/XJFCT9V+2B+KHiett46TRNBuANtdhWY6Znqf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744701703; c=relaxed/simple;
-	bh=2o6j5omeEkA4JCWhDM9N80NVkPESG6qQso4cQHUzBdk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LAj38dxEWZ7cFgLS9Dc+spEaGktn5QJu/lXunnPuTpTLY8lFm8aie45tHPfgI77e4okv4xR4L7MakjIgcfnZQsBOSjgsYpcDZek61nlohFcK8ABbvPZsXJERpnjXrapojf0bz2Jmkrf44JdfIVW18MR7ujfuSWTc2PcdKKLhRLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [124.16.141.245])
-	by APP-01 (Coremail) with SMTP id qwCowAAn0gLoCP5nVCb1CA--.103S2;
-	Tue, 15 Apr 2025 15:21:18 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: arend.vanspriel@broadcom.com,
-	kvalo@kernel.org
-Cc: jacobe.zang@wesion.com,
-	sebastian.reichel@collabora.com,
-	christophe.jaillet@wanadoo.fr,
-	erick.archer@outlook.com,
-	linux-wireless@vger.kernel.org,
-	brcm80211@lists.linux.dev,
-	brcm80211-dev-list.pdl@broadcom.com,
-	linux-kernel@vger.kernel.org,
-	Wentao Liang <vulab@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] brcm80211: fmac: Add error handling forbrcmf_usb_dl_writeimage()
-Date: Tue, 15 Apr 2025 15:20:48 +0800
-Message-ID: <20250415072048.2629-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.42.0.windows.2
+	s=arc-20240116; t=1744701663; c=relaxed/simple;
+	bh=GEfBOA45QlWfcWHD5yzJuDstvply4eSmwqKjrGpmXUw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iE3CoHvQP80sDWnRMB8Q4Yp1Fv71DSU64DefzfhYU0lu4pEB5F7efqUcimIe/mh0+hhwBKzKFLARgVnUx89ILYzYtP6UYZWFEqzYbDagyJz+jgqUr0vtNAEDPohPKWufmmBK8Ys4coyByHeRRjYU/ReDkSx8GR2D5c0PpVBhQAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qrlNFjZ9; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-223fd89d036so62568645ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 00:21:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744701660; x=1745306460; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=XCNk9Rod1k+bgkwurUtIjlivzVvS2RJvCje5WjdRCTk=;
+        b=qrlNFjZ9sCrJXI5cTQdCR+/laEgXYSV2r1Oauzx4cOKoNxLJMdG2zoZQRY3WMjlDQ3
+         g4b9Br9o2of0QLOj/83VooUXEWSw4C1Bd19kf27waStgRxki4DAS68TJ7qEGpZqbPEBz
+         GHloJdpnRVFRhjIkYQyoE+A2zLatJqk4bdrd1i2Z93bosZyc6Cu9RhcsenaW70Zo//oV
+         dh9ovl+BxInOQwagNk5bQ5ORACw01eAplZAJ+wIE8ybIGlakUIQTaa37sTwEu3BP49vC
+         7mASa1tSyi+mGGRRSVTqriPEJcBX3xJSbYlxthqY2FmVAxb1RdHBdli37bP2NeeGAZDx
+         PxkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744701660; x=1745306460;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XCNk9Rod1k+bgkwurUtIjlivzVvS2RJvCje5WjdRCTk=;
+        b=uGFDgAV9U/7WmWyQMzo93dbY7tVabXKnS6wUQOLlQ580jNvYO/LmOnUEgq13po+CVQ
+         wmoT3kMbJODN31PQ2/7XMQi7yWS2hLR2fpgURDU0I6KGLStO3XQWbXmkjfFnAlmssOI0
+         FJePyBVqHv1h9Tfcz+/e1apFSTVIRhzIVUm/gcCoIaXd9Oy7IzFQzfdfyL+y6EE3Vyes
+         9XvIGY7vPyBXEfmQjbLv+qVf/LXyBaqZAdT3rl+owVBwvDoX0JcKTGr0Srph1QU4COWP
+         Ndv5FBZrD0vPsgNSNdrmkQciQKTFb32sowFgeE9i+HPvwQsltO5dW4quzU/rJ+TLkbf1
+         4snA==
+X-Forwarded-Encrypted: i=1; AJvYcCXNF7a/4kHlRja4QEPqfApbEgM3dVz+h3adXxnPW38ze5l/hCjWg4T+8pcct6x2pp3BKmEWjSi8dbKkxeQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8uhTIg2NCG5yviTxbB2z1v7fqLKL+4zqwOMjlAlcxSqnQWfp/
+	lQV9+P4G0ITKke917wQLHHS4XyJC1cehxl1eLZHClZTxGMtIIfHAudPHWYeOZA==
+X-Gm-Gg: ASbGnctNcm9nnobBgr2MD05f2JrUDpC89SIXNQmEZROx9nEs2w4McqtTrPvaAP8YeN+
+	n/0/IisqyfH5GoBZk1D/PTR92lbFuVh+ebrN8nT8v1VWXg+46uIDvO5/0EDpgX6wnGBw9n59C5E
+	Y45naGwi+n7Ep5WAg1Av8S9NA128Odvjqn3vpWmOY/QFcuPzx6gKfX62W+GM2LZewv7ZQ2dhn9G
+	U1yFAkjISJSLiyPr5BVxj9Giflj6kbirTf7suF+NSTn08heisoXE92EIPS2cJkRY6xrbVykzEEz
+	Do3LIFP42bRSVQGDmUSChXesLwQcT952Kvrxi3BFbZkDyGnuHrcLKQCBZ58O
+X-Google-Smtp-Source: AGHT+IHwx8NytA4HfmHYqY+ucueZxWfnA77QXqfaKsQqKRz4c9hbWsTrqA2PwtFUSZmcoIQDMTuTwQ==
+X-Received: by 2002:a17:903:1b6f:b0:224:c47:cb7 with SMTP id d9443c01a7336-22bea3f02aemr222574665ad.0.1744701659806;
+        Tue, 15 Apr 2025 00:20:59 -0700 (PDT)
+Received: from thinkpad ([120.60.71.35])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7cddfaesm111157005ad.257.2025.04.15.00.20.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Apr 2025 00:20:59 -0700 (PDT)
+Date: Tue, 15 Apr 2025 12:50:53 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Hongxing Zhu <hongxing.zhu@nxp.com>
+Cc: Frank Li <frank.li@nxp.com>, 
+	"l.stach@pengutronix.de" <l.stach@pengutronix.de>, "lpieralisi@kernel.org" <lpieralisi@kernel.org>, 
+	"kw@linux.com" <kw@linux.com>, "robh@kernel.org" <robh@kernel.org>, 
+	"bhelgaas@google.com" <bhelgaas@google.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, 
+	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "kernel@pengutronix.de" <kernel@pengutronix.de>, 
+	"festevam@gmail.com" <festevam@gmail.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 6/7] PCI: imx6: Add PLL clock lock check for i.MX95
+ PCIe
+Message-ID: <3wmkjmutepc2s2ookc3ces4eyxe6morhhwxzlpup4mkkoy5ocx@py6h36upgl75>
+References: <20250408025930.1863551-1-hongxing.zhu@nxp.com>
+ <20250408025930.1863551-7-hongxing.zhu@nxp.com>
+ <uqrhqkmtp4yudmt4ys635vg3gh5sibhevu7gjtbbbizuheuk45@lhxywqhtbpak>
+ <AS8PR04MB867619A464E923655EDEF4878CB32@AS8PR04MB8676.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAAn0gLoCP5nVCb1CA--.103S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxJryfCw43Aw4DWw43uF18Grg_yoW8Aw1fp3
-	Z7XasrurykW3yakw47JFs7AFykKa4rta4kCFW8ZwnxXF4kCw1vkrs8KFyFkw4DCFWxAa47
-	JFs8Ary7Jrs8KFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBj14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
-	1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
-	8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxkIecxEwVAFwVW8CwCF04k20xvY0x0EwI
-	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
-	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7
-	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k2
-	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUGFAJUUUUU=
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCQ4NA2f95GqL6QAAs-
+In-Reply-To: <AS8PR04MB867619A464E923655EDEF4878CB32@AS8PR04MB8676.eurprd04.prod.outlook.com>
 
-The function brcmf_usb_dl_writeimage() calls the function
-brcmf_usb_dl_cmd() but dose not check its return value. The
-'state.state' and the 'state.bytes' are uninitialized if the
-function brcmf_usb_dl_cmd() fails. It is dangerous to use
-uninitialized variables in the conditions.
+On Mon, Apr 14, 2025 at 03:16:46AM +0000, Hongxing Zhu wrote:
+> > -----Original Message-----
+> > From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > Sent: 2025年4月13日 23:33
+> > To: Hongxing Zhu <hongxing.zhu@nxp.com>
+> > Cc: Frank Li <frank.li@nxp.com>; l.stach@pengutronix.de;
+> > lpieralisi@kernel.org; kw@linux.com; robh@kernel.org;
+> > bhelgaas@google.com; shawnguo@kernel.org; s.hauer@pengutronix.de;
+> > kernel@pengutronix.de; festevam@gmail.com; linux-pci@vger.kernel.org;
+> > linux-arm-kernel@lists.infradead.org; imx@lists.linux.dev;
+> > linux-kernel@vger.kernel.org
+> > Subject: Re: [PATCH v5 6/7] PCI: imx6: Add PLL clock lock check for i.MX95
+> > PCIe
+> > 
+> > On Tue, Apr 08, 2025 at 10:59:29AM +0800, Richard Zhu wrote:
+> > > Add PLL clock lock check for i.MX95 PCIe.
+> > >
+> > > Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> > > Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> > > ---
+> > >  drivers/pci/controller/dwc/pci-imx6.c | 28
+> > > +++++++++++++++++++++++++--
+> > >  1 file changed, 26 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/pci/controller/dwc/pci-imx6.c
+> > > b/drivers/pci/controller/dwc/pci-imx6.c
+> > > index 7dcc9d88740d..c1d128ec255d 100644
+> > > --- a/drivers/pci/controller/dwc/pci-imx6.c
+> > > +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> > > @@ -45,6 +45,9 @@
+> > >  #define IMX95_PCIE_PHY_GEN_CTRL			0x0
+> > >  #define IMX95_PCIE_REF_USE_PAD			BIT(17)
+> > >
+> > > +#define IMX95_PCIE_PHY_MPLLA_CTRL		0x10
+> > > +#define IMX95_PCIE_PHY_MPLL_STATE		BIT(30)
+> > > +
+> > >  #define IMX95_PCIE_SS_RW_REG_0			0xf0
+> > >  #define IMX95_PCIE_REF_CLKEN			BIT(23)
+> > >  #define IMX95_PCIE_PHY_CR_PARA_SEL		BIT(9)
+> > > @@ -479,6 +482,23 @@ static void
+> > imx7d_pcie_wait_for_phy_pll_lock(struct imx_pcie *imx_pcie)
+> > >  		dev_err(dev, "PCIe PLL lock timeout\n");  }
+> > >
+> > > +static int imx95_pcie_wait_for_phy_pll_lock(struct imx_pcie
+> > > +*imx_pcie) {
+> > > +	u32 val;
+> > > +	struct device *dev = imx_pcie->pci->dev;
+> > > +
+> > > +	if (regmap_read_poll_timeout(imx_pcie->iomuxc_gpr,
+> > > +				     IMX95_PCIE_PHY_MPLLA_CTRL, val,
+> > > +				     val & IMX95_PCIE_PHY_MPLL_STATE,
+> > > +				     PHY_PLL_LOCK_WAIT_USLEEP_MAX,
+> > > +				     PHY_PLL_LOCK_WAIT_TIMEOUT)) {
+> > > +		dev_err(dev, "PCIe PLL lock timeout\n");
+> > > +		return -ETIMEDOUT;
+> > > +	}
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > >  static int imx_setup_phy_mpll(struct imx_pcie *imx_pcie)  {
+> > >  	unsigned long phy_rate = 0;
+> > > @@ -824,6 +844,8 @@ static int imx95_pcie_core_reset(struct imx_pcie
+> > *imx_pcie, bool assert)
+> > >  		regmap_read_bypassed(imx_pcie->iomuxc_gpr,
+> > IMX95_PCIE_RST_CTRL,
+> > >  				     &val);
+> > >  		udelay(10);
+> > > +	} else {
+> > > +		return imx95_pcie_wait_for_phy_pll_lock(imx_pcie);
+> > 
+> > Is this PLL lock related to COLD_RESET? It doesn't look like it. If unrelated, it
+> > should be called wherever required. imx95_pcie_core_reset() is supposed to
+> > only assert/deassert the COLD_RESET.
+> > 
+> > If related, please explain how.
+> Thanks for your kindly review.
+> To make sure the HW state is correct to continue the sequential initializations.
+> The PLL lock or not check would be kicked off after the COLD_RESET is
+>  de-asserted for i.MX95 PCIe.
+> So, the PLL lock check is added at the end of de-assertion in
+>  imx95_pcie_core_reset() function.
+> 
 
-Add error handling for brcmf_usb_dl_cmd() to jump to error
-handling path if the brcmf_usb_dl_cmd() fails and the
-'state.state' and the 'state.bytes' are uninitialized.
+But imx95_pcie_core_reset() is not doing anything for deassert other than
+waiting for PLL lock. Hence my question.
 
-Improve the error message to report more detailed error
-information.
+- Mani
 
-Fixes: 71bb244ba2fd ("brcm80211: fmac: add USB support for bcm43235/6/8 chipsets")
-Cc: stable@vger.kernel.org # v3.4+
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
----
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
-index 2821c27f317e..d06c724f63d9 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
-@@ -896,14 +896,16 @@ brcmf_usb_dl_writeimage(struct brcmf_usbdev_info *devinfo, u8 *fw, int fwlen)
- 	}
- 
- 	/* 1) Prepare USB boot loader for runtime image */
--	brcmf_usb_dl_cmd(devinfo, DL_START, &state, sizeof(state));
-+	err = brcmf_usb_dl_cmd(devinfo, DL_START, &state, sizeof(state));
-+	if (err)
-+		goto fail;
- 
- 	rdlstate = le32_to_cpu(state.state);
- 	rdlbytes = le32_to_cpu(state.bytes);
- 
- 	/* 2) Check we are in the Waiting state */
- 	if (rdlstate != DL_WAITING) {
--		brcmf_err("Failed to DL_START\n");
-+		brcmf_err("Invalid DL state: %u\n", rdlstate);
- 		err = -EINVAL;
- 		goto fail;
- 	}
 -- 
-2.42.0.windows.2
-
+மணிவண்ணன் சதாசிவம்
 
