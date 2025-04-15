@@ -1,115 +1,121 @@
-Return-Path: <linux-kernel+bounces-605321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3075CA89FA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:38:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47AC6A89FB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:39:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 900061896FD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:38:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B02F1189D0BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:39:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A6E190462;
-	Tue, 15 Apr 2025 13:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEFC8171092;
+	Tue, 15 Apr 2025 13:39:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="W3Bkeu7C";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ydmg8Rwh"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="v1X6VO4i"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB115183CA6;
-	Tue, 15 Apr 2025 13:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DCDD1527B1;
+	Tue, 15 Apr 2025 13:39:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744724297; cv=none; b=qYJBFv0mhxDC5PpgcJ6xUEIjdRPUtOJ5NuLObANzL8Fg7Veo4opQwGHRYIKIViHn0/pjea5rLqI8742IotLXuy9E7a07ioUyEIfAufD/iEVdeiCZ+6Ssy4arLPkolSzLth1fndv3SN+H1OqgudwCMIGVIam8PU4PyEPwiWEL9e0=
+	t=1744724365; cv=none; b=K2stE/N0akI0d9ApcY+k/5G6AcEDuuhsWa/4vMjXykFoF7En8BfruXeuD8ML8ENaVFGgVice+bokVnpgMR1cbBl3JzWc1pfC7mte29cVfsP3MDOSw0ycJEHDlTOC8jLZiMBT5bhmOcSiPUyWkXr+puKtblI9FitnNaj3mGEJq2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744724297; c=relaxed/simple;
-	bh=8Nw99pvz6dERF5uadTuhGHfV7Lz+32HtJ8fnKFGggWg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=u8FHjc/dug2DD23KwxPcXILamgGdlD4VSOpjypJe8IZyhofDlDa1yU+leZTQ5XRqkpllbUVykIAGgUnaLk/2hpLGcAM1xls5N0gpGed9wRm41W3iYFcfapKYMIeZxEsmcZMTYC9Tj/uwfyVpo/Hsn5RqcLSN871RxrHklGzp+kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=W3Bkeu7C; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ydmg8Rwh; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744724293;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4hRFvNpWqj6nUWyPtn59a6PmgMLEAD4yPt5akiJAYv4=;
-	b=W3Bkeu7C8jnqYzH5wztyfFHaxHYzsvzSg1rXASH2O/HST1FfG4R9IsjmAr4LdHvt6aHxDJ
-	U5H7CymmktdA8nF5CmqZ/LQ6ya6jStpyejQinZW8SEXpWOHWnmmBxx8XBIEJ/mI6LD+5Fj
-	ANtK0EqXgsOltY+g7+lJIgqpoiHy7xMuHTmaYT027T05slABLeaGRojB+oWm1cXsxUcddj
-	DW5qBtnRxD1hj0rMB4ACU+u3vMX9BOVD1/2KPsipw+iSipHjKgRApsFF/qd3FFGMWu7ynf
-	mPNUalyY3LQELiR5Kxz0VwsT0ZQyY2K9u3pNpivQQKcmO2BDMvxpfJYlItt4RQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744724293;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4hRFvNpWqj6nUWyPtn59a6PmgMLEAD4yPt5akiJAYv4=;
-	b=ydmg8RwhjpVq2QumLUSU74RYASJBEaDAvDv2b4lhRV28Ipn00FFKg0DCDANwiLI7EOHMYG
-	76dH2KYQj0eYuBBQ==
-Date: Tue, 15 Apr 2025 15:38:06 +0200
-Subject: [PATCH 2/2] kunit: qemu_configs: Add 64-bit SPARC configuration
+	s=arc-20240116; t=1744724365; c=relaxed/simple;
+	bh=vF9s+eKKrzm2PVY8rjFr8lb+4O6o58gC8oTdQLEAgkk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=szF58rTAQNoML5CRYBEPqE67RDngeQ0pgmFcbx2/2+3v9Q0AgqOU+dDlpSAv47poaXD96nESdS27nkxpL1wuvkQnfvgtc9Bis/0TtUAZe7QBfsl0G5Mh9MznDZLtnbwgih2Ol+Wbo9+bLmj5auKchFvVgWFkfQ15cTj1gyrUl/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=v1X6VO4i; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=A+3jtqXU4vmgll+2WkVE5wbB1NFuZVYYqMzchyGrBWo=; b=v1X6VO4iU7zcYdg4rSH2c0sKbK
+	QbfCKdEbDRBl9y/S6Y7lrbNLbDy4+WCFufssyXqxyg9+WEVvXKlYhNtjURwLkDoycDOWBXMLNbw5l
+	QndoO/EQN425aBitIdAGwoD3FoH3NyurEEXyNkY0HMebSa+GU6eDfQj0ZespMa8DwnSsM0qXkYYpe
+	ra0fEpRk8dBNozM/vN/5pNwYzKvz6JzvrwkR3v3B+MQHC9dUQGhW1UGJ8DOYjCC8pKOSpbE1mxlsU
+	cDSsEsMnLxsxZ6LZq70ZaxISuMlNI50lSKK+K9AK99vk7u6BASiBiD1L78yVr37NIy8kftKKUL8zb
+	mVJ5Tl3w==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:37272)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1u4gVF-0008G3-0z;
+	Tue, 15 Apr 2025 14:39:05 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1u4gV9-0000PK-1O;
+	Tue, 15 Apr 2025 14:38:59 +0100
+Date: Tue, 15 Apr 2025 14:38:59 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Jose Abreu <joabreu@synopsys.com>, netdev@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH net-next v6 3/4] net: stmmac: Add DWMAC glue layer for
+ Renesas GBETH
+Message-ID: <Z_5hc151mud_UM1C@shell.armlinux.org.uk>
+References: <20250415125642.241427-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250415125642.241427-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250415-kunit-qemu-sparc64-v1-2-253906f61102@linutronix.de>
-References: <20250415-kunit-qemu-sparc64-v1-0-253906f61102@linutronix.de>
-In-Reply-To: <20250415-kunit-qemu-sparc64-v1-0-253906f61102@linutronix.de>
-To: Brendan Higgins <brendan.higgins@linux.dev>, 
- David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>
-Cc: linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744724292; l=993;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=8Nw99pvz6dERF5uadTuhGHfV7Lz+32HtJ8fnKFGggWg=;
- b=ngS5iuZKYGbLgqNtluVDdtx3AmNvrU1EG1qP/kp1BcI+UtybHHGHsysDVPaKyn59BiCrIiXZa
- Doi6Mf7FHeIDAvKWmiTbt0z120P1qzbnsF7e6x2U8GfLudCT1ecK7WS
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250415125642.241427-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Add a basic config to run kunit tests on 64-bit SPARC.
+On Tue, Apr 15, 2025 at 01:56:41PM +0100, Prabhakar wrote:
+> Add the DWMAC glue layer for the GBETH IP found in the Renesas RZ/V2H(P)
+> SoC.
 
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- tools/testing/kunit/qemu_configs/sparc64.py | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+I think we're almost there, but now that the trees have parted, we can
+start seeing other bits of wood :)
 
-diff --git a/tools/testing/kunit/qemu_configs/sparc64.py b/tools/testing/kunit/qemu_configs/sparc64.py
-new file mode 100644
-index 0000000000000000000000000000000000000000..53d4e5a8c972b96efc72f6b69fe83463499ef847
---- /dev/null
-+++ b/tools/testing/kunit/qemu_configs/sparc64.py
-@@ -0,0 +1,16 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+from ..qemu_config import QemuArchParams
-+
-+QEMU_ARCH = QemuArchParams(linux_arch='sparc',
-+			   kconfig='''
-+CONFIG_64BIT=y
-+CONFIG_SPARC64=y
-+CONFIG_PCI=y
-+CONFIG_SERIAL_SUNSU=y
-+CONFIG_SERIAL_SUNSU_CONSOLE=y
-+''',
-+			   qemu_arch='sparc64',
-+			   kernel_path='arch/sparc/boot/image',
-+			   kernel_command_line='console=ttyS0 kunit_shutdown=poweroff',
-+			   extra_qemu_params=[])
+> +struct renesas_gbeth {
+> +	struct plat_stmmacenet_data *plat_dat;
+> +	struct reset_control *rstc;
+> +	struct device *dev;
+> +	void __iomem *regs;
+
+This appears to be only written, never read. Do you need it?
+
+I think that's the last thing I can spot in this driver, so with that
+fixed, please add:
+
+Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+
+Thanks!
 
 -- 
-2.49.0
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
