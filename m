@@ -1,180 +1,151 @@
-Return-Path: <linux-kernel+bounces-606008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A8AFA8A946
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 22:27:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D7456A8A954
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 22:29:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C848E3BA895
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 20:26:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BA483BABE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 20:29:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED13253346;
-	Tue, 15 Apr 2025 20:26:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D44C725393B;
+	Tue, 15 Apr 2025 20:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yxAn/d20";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0nvV4T/W"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SWyx3Amm"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98DA2251790;
-	Tue, 15 Apr 2025 20:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35B62522BD;
+	Tue, 15 Apr 2025 20:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744748804; cv=none; b=cIja7BdiKIybrKSG4cT54xqyMq41dvRS6OkYy+q3X6dmnRb55GGkDyxtAAV8/fSgUMWMSPqvwvicyMda9wpe2k190Q6838RhCaKluDgO7g+qKWZ+fjw8bGWM7ZnjTfv94eNelbkI3SF2EQYFQyYtRta1UajFptvcN7kSGkJp92c=
+	t=1744748970; cv=none; b=nutMBQse05QCx2PXTd4o/ObLXNB2bwLlQyb5Dq1LnbEzViwJz8/QYoxofYkx4763AMBnVG/bCfUtYU4JYckEebNfZXMjWAtYk0g7+hyEL5XZGZ9ru/lie0WdK2czLMm6ZDyv5deCeK+FWLTHwsCngdZouOfKabwoRTMEZFkRPb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744748804; c=relaxed/simple;
-	bh=3zSv6tt/8UWvGb3NyynfypH3Nubv1KM3HCgDQjGpZpM=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=M+tjXkU5ZIQ3HOucZ17wG+nvSmdgLa5jlkVF7RCxXJiWqBNwKr9widVMpSnmeQLb/joUhYIok+QknlSHNjNcL18hv3eWKs7PmsxH7gFChF/y49b6pYWcpyFFA541u8qvWd5h1xCdl5zEj6s9oijdbqueMIEemyxfjYQdAva5O8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yxAn/d20; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0nvV4T/W; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 15 Apr 2025 20:26:34 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744748795;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RBRjhv9ePgPQmnVnwWtoD5ZqcJe8IVtsg6FHj+Sup2s=;
-	b=yxAn/d208OtgaB0PHHg2vq9m4cgTf47NLp5PBzIxA8DmuTd6CVRjPROOqD3EqKk2F0Hl+Y
-	6liRGvih3YvydZup8j4l/PwyUqnZd6MMQa0SRoLZxXc3gTrbBxRo+bKOWzZUguoxUTtHI5
-	AHPpJ5JWC+SDekF6bv4EJxM0t7uHrTHrOAFVlk13FGN24LiN0xJv4ZckLJtyyoPC7HMPMa
-	H7X0wnGo0pvjuaBib30Mg399COyEX5cVTeaKTLvHf2NsBxCOJ+1Ht3ROn9y30kIf9eqDB2
-	DXzJ8lcGRRr4Gk1E1iibjwXs8JN+1lS4zXrHLIAze6BWOMXbA7RIzmwMxcFKEQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744748795;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RBRjhv9ePgPQmnVnwWtoD5ZqcJe8IVtsg6FHj+Sup2s=;
-	b=0nvV4T/WFYBVo1PuPiazke1SzD+hTBGFEHtFQsI6+kYw3e8l3tkpjv+0uo6ofsNFD1Bnnz
-	KbEAP6c2mzmYMJAQ==
-From: "tip-bot2 for Xin Li (Intel)" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/cpu] x86/cpufeatures: Shorten X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT
-Cc: "Borislav Petkov (AMD)" <bp@alien8.de>, "Xin Li (Intel)" <xin@zytor.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250415175410.2944032-3-xin@zytor.com>
-References: <20250415175410.2944032-3-xin@zytor.com>
+	s=arc-20240116; t=1744748970; c=relaxed/simple;
+	bh=qBksyT2EfEsYqVSinfpjzL262zVYFpes9aCrLNSN+TM=;
+	h=MIME-Version:Content-Type:Date:Message-ID:CC:Subject:From:To:
+	 References:In-Reply-To; b=WY3oE/FjAreXp0HAFYY1g58CQ1IbLRxXRS7CM9gSmYk+pd+D0xei7186PBAmE0VGql1k6RhUo2hHswMumiXtb5TJhfjht1bnxZCSToEnL1s7+OFv8/12LhuRUSxvQYP2qt651/30k+7/mqAO6k6N0/wTgRr8nnvL6CnQ6t+HHsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=SWyx3Amm; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53FKTFuw132148
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 15 Apr 2025 15:29:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1744748956;
+	bh=Dt+F+4fNm1LcRSmr3GDnsB8MmFE+gO5sTMiOLjM3yRc=;
+	h=Date:CC:Subject:From:To:References:In-Reply-To;
+	b=SWyx3AmmMrIv43dKfd22i8mv2lb3nCKBH3U3heM1QXblBqpY+yjOCxmO7aCLeTyck
+	 /H2xqXDtbR4fC2OU0l0RS27XAH0QjRnrkG/w1BCDSE3Chaq7MCtRJ15FDSZexNJuNk
+	 z/V+smRVugU9LYk9G1cR78ofjwrIYnsavFZ0bheY=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53FKTF79043236
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 15 Apr 2025 15:29:15 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 15
+ Apr 2025 15:29:13 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 15 Apr 2025 15:29:13 -0500
+Received: from localhost (rs-desk.dhcp.ti.com [128.247.81.144])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53FKTD9C078755;
+	Tue, 15 Apr 2025 15:29:13 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174474879408.31282.1332107078743444126.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+Date: Tue, 15 Apr 2025 15:29:13 -0500
+Message-ID: <D97HVW413ESX.1EEP5D4O6HMOG@ti.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Frank Binns <frank.binns@imgtec.com>,
+        Alessio
+ Belle <alessio.belle@imgtec.com>,
+        Alexandru Dadu <alexandru.dadu@imgtec.com>,
+        Luigi Santivetti <luigi.santivetti@imgtec.com>,
+        Darren Etheridge
+	<detheridge@ti.com>
+Subject: Re: [PATCH 2/2] arm64: dts: ti: k3-j721s2: Add GPU node
+From: Randolph Sapp <rs@ti.com>
+To: Matt Coster <matt.coster@imgtec.com>, Nishanth Menon <nm@ti.com>,
+        Vignesh
+ Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250415-bxs-4-64-dts-v1-0-f7d3fa06625d@imgtec.com>
+ <20250415-bxs-4-64-dts-v1-2-f7d3fa06625d@imgtec.com>
+In-Reply-To: <20250415-bxs-4-64-dts-v1-2-f7d3fa06625d@imgtec.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The following commit has been merged into the x86/cpu branch of tip:
+On Tue Apr 15, 2025 at 11:20 AM CDT, Matt Coster wrote:
+> The J721S2 binding is based on the TI downstream binding in commit
+> 54b0f2a00d92 ("arm64: dts: ti: k3-j721s2-main: add gpu node") from [1]
+> but with updated compatible strings.
+>
+> The clock[2] and power[3] indices were verified from docs, but the
+> source of the interrupt index remains elusive.
+>
 
-Commit-ID:     13327fada7ff0ae858e28b9515cd7d6ccb5fccc7
-Gitweb:        https://git.kernel.org/tip/13327fada7ff0ae858e28b9515cd7d6ccb5fccc7
-Author:        Xin Li (Intel) <xin@zytor.com>
-AuthorDate:    Tue, 15 Apr 2025 10:54:09 -07:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Tue, 15 Apr 2025 22:09:16 +02:00
+For future reference, interrupt maps are present in the TRM. "Table 6-89. G=
+PU0
+Hardware Requests" explicitly calls it out "GPU0 | GPU0_MISC_0_IRQ_0 |
+GIC500_SPI_IN_56 | COMPUTE_CLUSTER0 | GPU0 interrupt request". Subtract 32 =
+from
+that pin number to get the DT number.
 
-x86/cpufeatures: Shorten X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT
+That comment aside, this series seems fine to me.
+Reviewed-by: Randolph Sapp <rs@ti.com>
 
-Shorten X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT to
-X86_FEATURE_CLEAR_BHB_VMEXIT to make the last column aligned
-consistently in the whole file.
+> [1]: https://git.ti.com/cgit/ti-linux-kernel/ti-linux-kernel
+> [2]: https://downloads.ti.com/tisci/esd/latest/5_soc_doc/j721s2/clocks.ht=
+ml
+> [3]: https://downloads.ti.com/tisci/esd/latest/5_soc_doc/j721s2/devices.h=
+tml
+>
+> Signed-off-by: Matt Coster <matt.coster@imgtec.com>
+> ---
+> This patch was previously sent as [DO NOT MERGE]:
+> https://lore.kernel.org/r/20250410-sets-bxs-4-64-patch-v1-v6-18-eda620c58=
+65f@imgtec.com
+> ---
+>  arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi b/arch/arm64/boot=
+/dts/ti/k3-j721s2-main.dtsi
+> index 92bf48fdbeba45ecca8c854db5f72fd3666239c5..a79ac41b2c1f51b7193e61338=
+64428bd35a5e835 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
+> @@ -2048,4 +2048,16 @@ watchdog8: watchdog@23f0000 {
+>  		/* reserved for MAIN_R5F1_1 */
+>  		status =3D "reserved";
+>  	};
+> +
+> +	gpu: gpu@4e20000000 {
+> +		compatible =3D "ti,j721s2-gpu", "img,img-bxs-4-64", "img,img-rogue";
+> +		reg =3D <0x4e 0x20000000 0x00 0x80000>;
+> +		clocks =3D <&k3_clks 130 1>;
+> +		clock-names =3D "core";
+> +		interrupts =3D <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
+> +		power-domains =3D <&k3_pds 130 TI_SCI_PD_EXCLUSIVE>,
+> +				<&k3_pds 373 TI_SCI_PD_EXCLUSIVE>;
+> +		power-domain-names =3D "a", "b";
+> +		dma-coherent;
+> +	};
+>  };
 
-There's no need to explain in the name what the mitigation does.
-
-No functional changes.
-
-Suggested-by: Borislav Petkov (AMD) <bp@alien8.de>
-Signed-off-by: Xin Li (Intel) <xin@zytor.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lore.kernel.org/20250415175410.2944032-3-xin@zytor.com
----
- arch/x86/include/asm/cpufeatures.h       | 2 +-
- arch/x86/include/asm/nospec-branch.h     | 2 +-
- arch/x86/kernel/cpu/bugs.c               | 6 +++---
- tools/arch/x86/include/asm/cpufeatures.h | 2 +-
- 4 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 60b4a4c..bd27a1d 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -476,7 +476,7 @@
- #define X86_FEATURE_CLEAR_BHB_LOOP	(21*32+ 1) /* Clear branch history at syscall entry using SW loop */
- #define X86_FEATURE_BHI_CTRL		(21*32+ 2) /* BHI_DIS_S HW control available */
- #define X86_FEATURE_CLEAR_BHB_HW	(21*32+ 3) /* BHI_DIS_S HW control enabled */
--#define X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT (21*32+ 4) /* Clear branch history at vmexit using SW loop */
-+#define X86_FEATURE_CLEAR_BHB_VMEXIT	(21*32+ 4) /* Clear branch history at vmexit using SW loop */
- #define X86_FEATURE_AMD_FAST_CPPC	(21*32+ 5) /* Fast CPPC */
- #define X86_FEATURE_AMD_HETEROGENEOUS_CORES (21*32+ 6) /* Heterogeneous Core Topology */
- #define X86_FEATURE_AMD_WORKLOAD_CLASS	(21*32+ 7) /* Workload Classification */
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index 8a5cc8e..707ee52 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -327,7 +327,7 @@
- .endm
- 
- .macro CLEAR_BRANCH_HISTORY_VMEXIT
--	ALTERNATIVE "", "call clear_bhb_loop", X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT
-+	ALTERNATIVE "", "call clear_bhb_loop", X86_FEATURE_CLEAR_BHB_VMEXIT
- .endm
- #else
- #define CLEAR_BRANCH_HISTORY
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index a91a1ca..3228f5d 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -1701,13 +1701,13 @@ static void __init bhi_select_mitigation(void)
- 
- 	if (bhi_mitigation == BHI_MITIGATION_VMEXIT_ONLY) {
- 		pr_info("Spectre BHI mitigation: SW BHB clearing on VM exit only\n");
--		setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT);
-+		setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_VMEXIT);
- 		return;
- 	}
- 
- 	pr_info("Spectre BHI mitigation: SW BHB clearing on syscall and VM exit\n");
- 	setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_LOOP);
--	setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT);
-+	setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_VMEXIT);
- }
- 
- static void __init spectre_v2_select_mitigation(void)
-@@ -2891,7 +2891,7 @@ static const char *spectre_bhi_state(void)
- 		 !boot_cpu_has(X86_FEATURE_RETPOLINE_LFENCE) &&
- 		 rrsba_disabled)
- 		return "; BHI: Retpoline";
--	else if (boot_cpu_has(X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT))
-+	else if (boot_cpu_has(X86_FEATURE_CLEAR_BHB_VMEXIT))
- 		return "; BHI: Vulnerable, KVM: SW loop";
- 
- 	return "; BHI: Vulnerable";
-diff --git a/tools/arch/x86/include/asm/cpufeatures.h b/tools/arch/x86/include/asm/cpufeatures.h
-index 2e219be..e10c3f4 100644
---- a/tools/arch/x86/include/asm/cpufeatures.h
-+++ b/tools/arch/x86/include/asm/cpufeatures.h
-@@ -466,7 +466,7 @@
- #define X86_FEATURE_CLEAR_BHB_LOOP	(21*32+ 1) /* Clear branch history at syscall entry using SW loop */
- #define X86_FEATURE_BHI_CTRL		(21*32+ 2) /* BHI_DIS_S HW control available */
- #define X86_FEATURE_CLEAR_BHB_HW	(21*32+ 3) /* BHI_DIS_S HW control enabled */
--#define X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT (21*32+ 4) /* Clear branch history at vmexit using SW loop */
-+#define X86_FEATURE_CLEAR_BHB_VMEXIT	(21*32+ 4) /* Clear branch history at vmexit using SW loop */
- #define X86_FEATURE_AMD_FAST_CPPC	(21*32+ 5) /* Fast CPPC */
- #define X86_FEATURE_AMD_HETEROGENEOUS_CORES (21*32+ 6) /* Heterogeneous Core Topology */
- #define X86_FEATURE_AMD_WORKLOAD_CLASS	(21*32+ 7) /* Workload Classification */
 
