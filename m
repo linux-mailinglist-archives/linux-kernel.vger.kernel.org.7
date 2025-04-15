@@ -1,162 +1,196 @@
-Return-Path: <linux-kernel+bounces-604893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15CE2A89A42
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:33:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 229BEA89A4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:34:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A04B93B3C1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:32:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46F743A3ED8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:32:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FF0029116B;
-	Tue, 15 Apr 2025 10:29:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5E3C28E5E7;
+	Tue, 15 Apr 2025 10:30:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rb7Qeah8"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="KBKRB/+h"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD98F291155
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 10:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82ED124C67A;
+	Tue, 15 Apr 2025 10:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744712966; cv=none; b=cG2ZH97WT8/cGbUE5K63Ufzb76CoveZaWf5UJGCUj2qw7AoSuFn8fMTED4tkxU2jGYfB/Yt0lxEtgdphV4HkesuMwJemapGCxbcI6clAYtx5hyy0gwbgF1JAWcHckI89QW+0Ih0xieZyXvEd/spyhSSUXlXes5WufDGIS+HUiBM=
+	t=1744713055; cv=none; b=ZA8MtadYGVPLRLs9ehjL1Jg3i9GojfLSaQPmyE9MiPfSNfP1IBGs8AGIAkt29gzxUxL8QbuJDk48P31Y6B7UjOq1BWRjRhasysUkH8l0hGZx70rjiCqBDS7Kpw4TLqowiom2GfiHMkjymrmM0KMFnI32B4n2STrh9CD+tyOg/28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744712966; c=relaxed/simple;
-	bh=WAJr82FrsHYXu+5YGyk9NIhyBQaipAptPFKzmt+imbM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f+hL6KIUen9vEZUg/80oaUE1WuY9boVvbR9oHWCTSjB9GPjrCMPanBCU91vM8upnPc1PXxTkEcE7cqO9QqpM19g6VGdT053zlD2+V9nWcP5ZDwPeMC/jp8NWELeZLxOFpN8Y3IL623Fx20vOJjs5vc1IVyVbXqebMk4EAAN5FtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rb7Qeah8; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-72d3b48d2ffso5101901b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 03:29:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744712963; x=1745317763; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=w8WIm7JBhiWCi7fBzix5XYwTayAnxjcDkZHAFyWo6KQ=;
-        b=rb7Qeah88j5+c5NjxmMDSqTk0uHshnMD8PdWXA5npeNw3WeAhErUpcYP6r9ANv16wP
-         g88SZtupb8KBju8TrPgR6eJfVO0mSPjJQw4UCCJQt9Px/DS10hWmttuhaY7EzB8Uv/Ei
-         JHnKglfbZshQ9CNrJcpAKA4UEEAyziYd+kVFdUBXnSo9w6NbXVAVcPUrQuRugPHSEmpx
-         pKo7ThO1rBgEon1o98Dnehyhv7QoGMKMpgnV58x5yGH4aPKY9V0uj+7PDnP/AAFvfRBF
-         iIqDj25l+pc1CvMPIorxYyxQzUr6F9HLo8GxBcOg7p4d1k44l/T6smt/2j48SAOoMIqy
-         t6nA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744712963; x=1745317763;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w8WIm7JBhiWCi7fBzix5XYwTayAnxjcDkZHAFyWo6KQ=;
-        b=eGBpNlXK7stctFmDWk4BWxB7+9eZJYoeOcFuNuDPz7ZloIv8MtUMOF/r99OWbWtntQ
-         27YxOeIRipgs420Cz/a5zysdo572Sx1nB2hKBLBtvaNZr+10FnVuo2DlHuan5mMde5OT
-         qcO1E71xN4DaTxa4OodTmiU0m2AJsHKVkLrNbVxC1kjusgSezFbUOWatffsy9w1yUcww
-         uUnZoJy7J1TMkv63oiXrRwea/9jpEv+lN97kO3V+MA5DhW2//BJld8/rDAWZIn0LUeY+
-         /jP5yvyi5s+VV/l9yY3083bafq9AMM4AyYSHPzEfjB58LqzVqZBt/fM5q1GnvFX9ASPD
-         1SYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW2J/gZ5xVwOHycqt/zUStn0ROHRcuWweYKtj5F7ZbqDH3U1dqPAUJfAGOwl/U/rqQuefe8BB05lXE/BQE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypPNen69N3VjNKOkiQF6V04xZ6/0BD2y0J/2SQ2HZjcRYGGtym
-	DBa2lXCqRzDQKWD1PT6MXfqorT2p2zmeZT1Zsjd0pSyMRYBcL1WyBKfQreWTjBWfKNcQPCotugV
-	H
-X-Gm-Gg: ASbGnct1cAtLlMJ+3qfmGu3/vZvYUVf92lpETy/R7XuAnuhUzk4Pg4QnXZhlnI/COZs
-	dgp64x62j0NnEd6V7e8sR/as8m5OAnPL+yeon8+ykzRNPcmkTWxqoq1h19zcOPsAB1PaMEfrW4+
-	A6r0UXrtGXTTx409Ryqio31zuh9UuAC+exTa5d55nByHZSN0+aqTiTvfDxI4vsJCGsVtWVTZ2Dn
-	ZrRt+BmK+MlyYFS1mMxrN9haeG1ftmZR4h7o8YZDpyrIK2JhGWQKzJWU5TuGsO89MEyfFfPeZ/5
-	+JrpPBxYtX2fMZ6+lB15VNyxtXBFJ/xQhCtUzIVoig==
-X-Google-Smtp-Source: AGHT+IEf7wZiquoN/jvqZOk9knw/TvnbgoeeZknmIHERtvY4tqspbW0S/OlAAtvz+bGNryP8Hb453g==
-X-Received: by 2002:a05:6a00:a91:b0:736:62a8:e52d with SMTP id d2e1a72fcca58-73bd11fe733mr21565120b3a.12.1744712962726;
-        Tue, 15 Apr 2025 03:29:22 -0700 (PDT)
-Received: from localhost ([122.172.83.32])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd21c78a8sm8164229b3a.70.2025.04.15.03.29.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Apr 2025 03:29:21 -0700 (PDT)
-Date: Tue, 15 Apr 2025 15:59:19 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Lifeng Zheng <zhenglifeng1@huawei.com>, nic.c3.14@gmail.com
-Cc: rafael@kernel.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linuxarm@huawei.com,
-	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com,
-	lihuisong@huawei.com, fanghao11@huawei.com
-Subject: Re: [PATCH v2 4/4] cpufreq: ACPI: Remove set_boost in
- acpi_cpufreq_cpu_init()
-Message-ID: <20250415102919.rqvukeycue6rmiku@vireshk-i7>
-References: <20250117101457.1530653-1-zhenglifeng1@huawei.com>
- <20250117101457.1530653-5-zhenglifeng1@huawei.com>
+	s=arc-20240116; t=1744713055; c=relaxed/simple;
+	bh=Q54juk+v31PrpOLCs3PzMZAzlsgDwULR2WsC5y+MfCQ=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=qoK0pnlownSDnGLPNNK+KyJUJNnf/RkYbP4FZ1q1IuWRhIdx1KAdCkJvXJR+ev0ngoRGRwu87kTaV9Ig+O6QLryip3ksxvNEQf4vpwywhBR5LyLeDQZaA0sFFXX8CBoih6WotYOyfIxNIited+rlhXUgZSXKhCs0bDZfhbd2wNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=KBKRB/+h; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
+	s=s31663417; t=1744713033; x=1745317833; i=frank-w@public-files.de;
+	bh=WgqIUu9ojr7beR3hG5sdV5nNo9HnDoiSsjOcC+kJudY=;
+	h=X-UI-Sender-Class:Date:From:To:CC:Subject:Reply-to:In-Reply-To:
+	 References:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=KBKRB/+hV4VwsG13/u+SDHwxEdTIc5MWNOTLfsAfmiAiNisKI8u2qYTwxuFKDrao
+	 uGrl8cjZPYN4epfmln5w1JjkV1R7ikHrz18h2HRljODfQR7RS4qhfBPcuxg9JkD7L
+	 Skc3m+Qb35/kbDbzvEdLippNpkeS9J7K0uM/f00RIPcAOwxo7/UF3skIXcCugbYEm
+	 bOQPNAqrdmz8G/BNq76ohSfeZjIksLA0WjqkojRDK3bqVbj+NnfcOvIKjcJhwf8cL
+	 HQgyxpOg9ExgGvS1YY8MV7jYBU/Dzj6zNiokB306hs274Rs0Ltji+HPxbKFobOTBu
+	 YdPRRjMDtQcP2e0/Qw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [127.0.0.1] ([217.61.148.30]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MPogF-1tiPqk3DHP-00P9pF; Tue, 15
+ Apr 2025 12:30:33 +0200
+Date: Tue, 15 Apr 2025 12:30:34 +0200
+From: Frank Wunderlich <frank-w@public-files.de>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Daniel Golle <daniel@makrotopia.org>
+CC: Frank Wunderlich <linux@fw-web.de>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ devicetree@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v2=5D_arm64=3A_dts=3A_mediatek=3A_mt7?=
+ =?US-ASCII?Q?988a-bpi-r4=3A_allow_hw_variants_of_bpi-r4?=
+User-Agent: K-9 Mail for Android
+Reply-to: frank-w@public-files.de
+In-Reply-To: <8fe762e3-a9eb-4a9c-81a2-b7a10539b615@collabora.com>
+References: <20250412102109.101094-1-linux@fw-web.de> <c8f9f019-a238-47c8-a900-9ca48ce09503@collabora.com> <Z_0AdtyvehR9SHnU@pidgin.makrotopia.org> <36fe0778-399a-4406-8516-54b968cd9073@collabora.com> <D7682B25-5BEF-46D1-A5FD-32D2AAF84EFF@public-files.de> <8fe762e3-a9eb-4a9c-81a2-b7a10539b615@collabora.com>
+Message-ID: <48DEC6CC-A81B-4DD7-9F55-CA1179FBA2F2@public-files.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250117101457.1530653-5-zhenglifeng1@huawei.com>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:lLJIj65VGXw+6G0LOY49tgPACHjwE3VmkBrGn+7shtl1EW3b2pG
+ 87M+pcoS5dfrkhJV1oEnCSXo883Gg8iJB2t6prExwVn2sOM3ym2YdLBEYKOI5iEwjOakmPD
+ Jiuflz9K6fxopQjHYtG4qCcgMKu4raqvuQX5r0l4Zllzf0MSihg2UOE1sScINe55K1NQX1w
+ sok0WiGqjFLEmC4tC77lg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:/3vDsJWtv0o=;QGAKzf3I6xXFSnXdXYw9JtixUZR
+ v/Jr3O2zcgq4wWSgbg4j7rPEJCpMei+48d83imI29JgDOWg9lz6V0i5tC19RalvNnijHfk6rl
+ NDW4jtZRx9QEsTUC7hi4xXaxedKIuCE859QJltFtOIV0J7hmL5N2KPlbD0QJVUevkC889cNRt
+ og15QY5/wcG6ch1JonLkOAXPdcqndUoll/z8AVVFAqwR5DwU4MZhFhM34BrXxzJgAm0kFL8JF
+ 0so6of1X+oJ2QBRx/Es7x/pm07/WqK9SJt/bs8SH7LtLgOjlAjXzeEOPIFGm1pZnEV42+CI8U
+ Rcs0cj86+H3P42qZj6Yz1k909PHeWNonkZl4h6Dk5qJhgtIirqmbEjhwgpROjJhKYQGkU2GCN
+ vk+E+Nvg+BSEJplTExpi2Oy12Q7gMcEi5MotIiGkelR1xITAlMKwoX1cy2QYo+djgmkq8d1xN
+ 35znS0oLfjAbB18q6ive0ToCOEBeMV7MbaddZrO9wOtYCMLP6m5DK7lfcovO8iYk55U2FfASD
+ sZs4UhadMLYNehBEhEmqFDPkq2b7Erl5K1uaGFD01dC/yCpiLCgnmktTRkKwKKAchR1MCiXnl
+ g8B/fuN1XDlLFt7D/wbQ51NfO0vN8NbB5qimULGNSv6EzU1oacQ4zyVIlyi6YeLO5FCvFrchk
+ pLLLWQLMMmkIK4CgsbUdjFu3rlCxC1dxw5rfUhX5Nla1yZgQmcsUttwViseLP/PLPvIxrakUj
+ Fwdvh9/mQBdSKblK4rDYKT5j2F5wgoiRnQI5jAD3i0K4RdfOqZvWwzEFBK5STLotoGVvqvrW+
+ VlSJJkkO6KqFZ/T+saf3jXPdGEF4JD+DEbdUgQ7Qyt+8/kEJlQpM0bjBpoCQkixi732vl4ojO
+ fROZQ11i3MRv2ldocIREGhbEgytuHDMkmWWj5P3ny+9HX07+K77JOkD73DA8dsaQNNx4ahl8N
+ v7g1ugZ1Ku/ybZhZgFlFfJ6YBVPa6daB4/o9NbkxMgA0wwJ62SIoZKXXsViWPXg/cVz9XISYp
+ TV52ckCzlEdPk1ClGjqwVrqxZkzM3U9+jNhKyx1MO8gnHzbVQJrhdMWAxnHD15ZJrRBZvSBPM
+ 6BRodsAokbbMx8UVFZWcSbu1F8ZaSD7knRomIVZNLcIVxs+JHAGmmE1mJOUQUATynKJNl+Hq1
+ iK58dagAlTZe6rAmD4iruqKkiRd7uAm3x0C1719njucipZUwASy4yU+KH9LuOTKnFgTAAwbqQ
+ k0Zo68MIyg5YSzNnc1XUr5Zi040LFFC+qtFK6OOy7Ra2ojz2zKFrQevatMAim7Gje9XRAVGPM
+ sjN1UozOIs1ydU63P9H9+6sauUJHn3ObOT+3l1czMTL87fT3YHBa/UbM99wqQsPbuKFMWt7N3
+ V0QW1p3QBWVVnNDWyNq20Hk5ZLNx2SF7qP7i2Qe0vICZMUy/A9kJayzcSQBG00TOCncczpaNv
+ WSjEKuEdR8yRUPQukvhe8prWqaQ2tZ2MnuG/2n2UJRMwAaUcj
 
-On 17-01-25, 18:14, Lifeng Zheng wrote:
-> At the end of cpufreq_online() in cpufreq.c, set_boost is executed and the
-> per-policy boost flag is set to mirror the cpufreq_driver boost. So it is
-> not necessary to run set_boost in acpi_cpufreq_cpu_init().
-> 
-> Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
-> ---
->  drivers/cpufreq/acpi-cpufreq.c | 5 -----
->  1 file changed, 5 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/acpi-cpufreq.c b/drivers/cpufreq/acpi-cpufreq.c
-> index c9ebacf5c88e..f4b5e455f173 100644
-> --- a/drivers/cpufreq/acpi-cpufreq.c
-> +++ b/drivers/cpufreq/acpi-cpufreq.c
-> @@ -891,11 +891,6 @@ static int acpi_cpufreq_cpu_init(struct cpufreq_policy *policy)
->  	if (perf->states[0].core_frequency * 1000 != freq_table[0].frequency)
->  		pr_warn(FW_WARN "P-state 0 is not max freq\n");
->  
-> -	if (acpi_cpufreq_driver.set_boost) {
-> -		set_boost(policy, acpi_cpufreq_driver.boost_enabled);
-> -		policy->boost_enabled = acpi_cpufreq_driver.boost_enabled;
-> -	}
-> -
->  	return result;
->  
->  err_unreg:
+Am 15=2E April 2025 11:56:37 MESZ schrieb AngeloGioacchino Del Regno <angel=
+ogioacchino=2Edelregno@collabora=2Ecom>:
+>Il 15/04/25 10:07, Frank Wunderlich ha scritto:
+>> Am 15=2E April 2025 09:36:43 MESZ schrieb AngeloGioacchino Del Regno <a=
+ngelogioacchino=2Edelregno@collabora=2Ecom>:
+>>> Il 14/04/25 14:32, Daniel Golle ha scritto:
+>>>> On Mon, Apr 14, 2025 at 11:27:23AM +0200, AngeloGioacchino Del Regno =
+wrote:
+>>>>> Il 12/04/25 12:21, Frank Wunderlich ha scritto:
+>>>>>> From: Frank Wunderlich <frank-w@public-files=2Ede>
+>>>>>>=20
+>>>>>> Sinovoip has released other variants of Bananapi-R4 board=2E
+>>>>>> The known changes affecting only the LAN SFP+ slot which is replace=
+d
+>>>>>> by a 2=2E5G phy with optional PoE=2E
+>>>>>>=20
+>>>>>> Just move the common parts to a new dtsi and keep differences (only
+>>>>>> i2c for lan-sfp) in dts=2E
+>>=20
+>>>>> This should at least have some different compatible, if not probably=
+ also a
+>>>>> different model string - as it's a different device=2E
+>>>>>=20
+>>>>> 	compatible =3D "bananapi,bpi-r4-2g5", "bananapi,bpi-r4", "mediatek,=
+mt7988a";
+>>>>=20
+>>>> Imho it doesn't make sense to declare compatibility with the
+>>>> "bananapi,bpi-r4" as the "bananapi,bpi-r4-2g5" is NOT compatible with=
+ the
+>>>> "bananapi,bpi-r4"=2E It's a different board and using firmware meant =
+for the
+>>>> "bananapi,bpi-r4-2g5" on the "bananapi,bpi-r4" (or vice versa) will r=
+esult
+>>>> in a non-working Ethernet port=2E
+>>>>=20
+>>>=20
+>>> Is this device a BananaPi R4 variant, or is it a completely different =
+device?
+>>=20
+>> The only difference is that sfp-lan is replaced by RJ45 socket with mt7=
+988 internal phy=2E
+>>=20
+>
+>Perfect, then:
+> - The only difference is one routing
+>   - The base board is the same
+>   - Same hw project
+>     - The two machines are compatible with each other
+>       =2E=2E=2Ebar one difference
+>
+>=2E=2E=2Ethen the compatibles shall be as I said before :-)
+>
+>>> If this is a completely different device, then it's not even a BananaP=
+i R4,
+>>> otherwise this is compatible with BananaPi R4, with a small variation =
+:-)
+>>=20
+>> Sinovoip now announces a R4Pro with some more changes (e=2Eg=2E an exte=
+rnal 2=2E5g switch),but we have no detailed shematic yet=2E It looks they a=
+lso plan a R4lite which is based on different SoC (afair mt7987),but this i=
+s for sure different device (and so not using this bpi-r4=2Edtsi)=2E
+>
+>In that case, R4Lite shall not be compatible with R4, as the name may be =
+the
+>same, but in practice it's a different machine=2E
+>
+>>=20
+>> But basicly all are named BPi-R4=2E I guess R4Pro will also get own dts=
+ as too much changed=2E
+>
+>If R4pro is a redesign of the R4 board, that would not be compatible, as =
+it
+>would not be the same base design; otherwise, I'm sure you have well unde=
+rstood
+>how it works for the compatibles, anyway :D
 
-https://bugzilla.kernel.org/show_bug.cgi?id=220013
+Yes, should i use 3 const in the binding (as i do not expect another hw va=
+riant of current R4) or still enum for the first compatible?
 
-"
-On kernel 6.13.8, disabling boost by setting
-/sys/devices/system/cpu/cpufreq/boost to 0 would persist after
-resuming from suspend. After updating to 6.14.2, the system is able to
-enter boost states after resuming from suspend despite the boost flag
-still being set to 0. Toggling it to 1 and then back to 0 in this
-state re-disables boost. My system uses the acpi-cpufreq driver.
-"
+>Cheers!
+>
+>>=20
+>>> Cheers,
+>>> Angelo
+>>=20
+>>=20
+>> regards Frank
+>
+>
 
-This bug report is filed and git bisect points to this commit.
 
-Rafael, I think the commit in question did the right thing and there
-is something else in the driver that is causing the issue here.
-
-I think the problem here is cpufreq_boost_down_prep(), which gets
-called during suspend path and enables the boost.
-
-But since the boost was never enabled from flag's point of view, it
-never gets disabled again on resume.
-
-I have suggested following for now to check if this is the case or
-not:
-
-diff --git a/drivers/cpufreq/acpi-cpufreq.c b/drivers/cpufreq/acpi-cpufreq.c
-index 924314cdeebc..d8599ae7922f 100644
---- a/drivers/cpufreq/acpi-cpufreq.c
-+++ b/drivers/cpufreq/acpi-cpufreq.c
-@@ -538,6 +538,7 @@ static int cpufreq_boost_down_prep(unsigned int cpu)
-         * Clear the boost-disable bit on the CPU_DOWN path so that
-         * this cpu cannot block the remaining ones from boosting.
-         */
-+       policy->boost_enabled = true;
-        return boost_set_msr(1);
- }
-
--- 
-viresh
+regards Frank
 
