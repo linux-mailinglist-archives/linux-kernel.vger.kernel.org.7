@@ -1,415 +1,131 @@
-Return-Path: <linux-kernel+bounces-604799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16E21A898E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:56:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B40C7A898B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:54:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0F893B85E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:56:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAE3E189EAC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:54:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC4A2918EA;
-	Tue, 15 Apr 2025 09:55:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3578A2820A5;
+	Tue, 15 Apr 2025 09:53:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dmkMqFP9"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="o7Rsj/zA"
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D22289378;
-	Tue, 15 Apr 2025 09:54:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343271DF994
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 09:53:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744710899; cv=none; b=HexKhaAMl5L9l44rTTLBM9hw2A1W0NUkAzkL2xpail4AzZXrmk2AiYi5gwBLquRBJ8OEWsFhbHdZeZizjSFSO5CnkMPVIjL6W0jxwaSbFn9hwwUvJHhTBkaJv9S+HFYEXQ89/SiJzVEvL2OtDmgyx3QPSmrX9eB33crb7FgfbR4=
+	t=1744710837; cv=none; b=WsimwjgUWxrIr5DWxnSigPdBvEdXFroLnV7ZF3m56kpMdVg8b/Kv5CzqFpWRRDN7/rUjphSw/eExM5PXSkDwMmmClI2JOGrp6x1PxpZTo2B0QfqS7XeiefD6da41162rUcLYClKiv8M6//SMxTBxKNfZ/7DP0l+d0wetDTDubco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744710899; c=relaxed/simple;
-	bh=oft/czXky69Xv0iO8VrI2Sy/LNFEbBn7p344AYprK34=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bz21WeLROc/Cq1MMzO6YZL13kdfxqnK5u5Ffbpro4vP7LWKoTN1TTG55+tP+t9HIqheVMWsWOd0naD0lqOz1He9+Md1QCS1E5Pt6hvoCh7/ogYXadA507qqYtlnqI/+5ZYAf0TcDFjwjw1LwE6mXYO2yFLU0u2UVilpxdyFPlW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dmkMqFP9; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53F8tIr0024987;
-	Tue, 15 Apr 2025 09:54:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	s=arc-20240116; t=1744710837; c=relaxed/simple;
+	bh=nfB4gqLyqc0cGgmDvW8mT61CF98kw+LFnPgIxUoqozQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BHSGNeT6vMXAtkLxOanLm1QhIGpx+0Rggj7yvLVBOKWIarvLxn7GUCO703S62f6fMREA7GBI05suCFsVW/5DrRD4eNxuzZ1IN9v2fp0VgnTaIiskRD/iOfeSWDfokCqS5QxEGWc+SXmR/+I5tS+mkJR5+HRcxq3262gGroX1sUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=o7Rsj/zA; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53F8tB8d025046
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 09:53:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	eWHuwaQFKhLT6SZD7u+l/HAPLbaNWkQbD4fNH9+FM0c=; b=dmkMqFP9FQw0WJbs
-	BJ4pCgFQHrd/MQBqI3vt5hlT5CFkoq6527ul+guYcXrHDrGrAb2tRwflPXW+n0ir
-	eVacCjIR0CgSkzu3qjUbF/xysekqSKUp1cDvPondiQpYWLWj5lz38qmMfeMqV5oq
-	QPvsPCgrlLSSMbP24qXWMab6/1BjpERbT/cpYberNnAEjguAOtmu+/xFxmSGGodG
-	T1WD9pJlNKBFZMEULH34m2Foaa7F0nkN/hrfr+PPE8C9lVdtRZjT/gHjv6uYV8UL
-	JXj2LgfhMTYBOc8vAYye6FKYLiXOYWHeid12h3Vwjk0ApTulFOwYTL8bGEAzZx0D
-	04THbg==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45yf69qmby-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Apr 2025 09:54:53 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53F9sq7F021600
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Apr 2025 09:54:52 GMT
-Received: from 087e9057f447.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 15 Apr 2025 02:54:47 -0700
-From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-To: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>
-CC: Odelu Kukatla <quic_okukatla@quicinc.com>,
-        Jeff Johnson
-	<jeff.johnson@oss.qualcomm.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@oss.qualcomm.com>,
-        Mike Tipton <mdtipton@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Jagadeesh Kona
-	<quic_jkona@quicinc.com>,
-        Shivnandan Kumar <quic_kshivnan@quicinc.com>,
-        Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-Subject: [PATCH V11 7/7] arm64: dts: qcom: sa8775p: Add CPU OPP tables to scale DDR/L3
-Date: Tue, 15 Apr 2025 09:53:43 +0000
-Message-ID: <20250415095343.32125-8-quic_rlaggysh@quicinc.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250415095343.32125-1-quic_rlaggysh@quicinc.com>
-References: <20250415095343.32125-1-quic_rlaggysh@quicinc.com>
+	qxeuE2eVL5Eoo29xjyLgJecbYqVi8+nNdiHJPQLgII4=; b=o7Rsj/zAPhupkj9v
+	IGCH94/ff7yFpwjI2gpAfE8QGpx3kwHZDwAS5MXs/SXf0DpFAxaTjzM0oLBVgMq2
+	ptXqv4ku56/vrPfk0xRA1LH/NSdEA7Un30R1sBs1dHdLBAcIPE2zP9faNY+7zvG7
+	lFOsezFz5NG7J6fXs9lrLhtTpDRcArRxfPfekByzCw9k1md2DlkA0DL76H2E7Qhz
+	YAkZLxDWldSx0HdYEYp9GP+upHc14UTKK+DpX5BrEHqddo4NpTJckqO938Dv4CSl
+	gB0ussQi7u3O9XF6NJJpEytyWt4U42J/btVyx3tXhGY1I/EmdnZVDmIInlqa3uS9
+	G/MLCw==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45yg8wfjwm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 09:53:55 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6eeb8a269a7so16614756d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 02:53:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744710834; x=1745315634;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qxeuE2eVL5Eoo29xjyLgJecbYqVi8+nNdiHJPQLgII4=;
+        b=HMRKy2C7axBXkWFUDFkk+OijdKcwpVGQ2yIJcntcKmSxzgCYK1iUmekOPpqd86dJoP
+         Rg1L7QEg9Q63Ia4MM+QGG90ePDSMPisUh5gGKrWBaMg8h/1SF20Q7an9E1Xt4AcbczjF
+         Olc3CeRzNzJdZOynUuwnxgMPlLtI8omocWWGKdrgLg5JMCdO6S3mTyjgomFvI5928e+L
+         9/93SlhW0JRTEvKVolzqYbA8eCc1AgZfb2gEONSWd6isL+ASsnE+WQxk7EP8/QajH8aV
+         8mJaz4WgIdUgnRDkS89tH/UuIatP8IAQVYpMrTn9S1cNlgk7GssEHiKIzSZBFZz8V9VL
+         8fRw==
+X-Forwarded-Encrypted: i=1; AJvYcCUVqw3ocpKrWDHKAOHiBw/xy8tG0sbegdntZsGWIcsyk4nA9SCuSNJbvsUP8aeeYbd6bffQXSQ18HGrYt0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDhJO6JKnhxYCECw0yPng/0/bn6I1aJNzYrSbyIxuMBrg2H0kN
+	7k0dssRqb+C7KngcB1oHIzcymP9ENA2eG0WMnfnqgV1dZdlP7oWxXtZxt5WyeKNdcqFGY88hOuz
+	MolNl1Vd0FdHpSDC/QWvwgTrJKgx+52vnZr790qAw0S8SlKj4VqCvs722EKyhFHc=
+X-Gm-Gg: ASbGncuq5g5W0+OotiwK6LDUzQlgHbSdn5HWkZJZjpVunyKJMfPKtBN/W27p9X0qx4B
+	aAvhjPXal47yznPZCjVq5sUr6Z4MZBBzaDZNFXXt9Yl/eyxgVB/kvcC2dD8gU4EvBV0XOj+6QUv
+	w20TN0dzABVyiBSoRQFhd6xeuZhE7AbJ8TyByWNZVzM7IKyp6wD1rxa5YxYnlvI/Vd01SDcGHaa
+	Ie1hI+ZmlwWy0mkemh3fkpfSGQs+rGuos8mtHdpR8iR13OSFzLyVv+ZnvHwmtacuF0V69lJVwFf
+	72XO8T61j00+QI+Jk71XgGoiMjXW7eMegd9r8y1xtaOWyUqT+Tw5czi2ZfkgFVu8Ps0=
+X-Received: by 2002:a05:6214:20cc:b0:6e8:f019:af59 with SMTP id 6a1803df08f44-6f230cb9754mr96287846d6.1.1744710834373;
+        Tue, 15 Apr 2025 02:53:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGgaJX2J+7JlHuueBHmISXlo1aK9U92F4gsipjLZi1j7TSnpCxzm7LQz4Rmzpb9J06CEF1Qug==
+X-Received: by 2002:a05:6214:20cc:b0:6e8:f019:af59 with SMTP id 6a1803df08f44-6f230cb9754mr96287716d6.1.1744710834041;
+        Tue, 15 Apr 2025 02:53:54 -0700 (PDT)
+Received: from [192.168.65.246] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1bb3120sm1049550566b.1.2025.04.15.02.53.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Apr 2025 02:53:53 -0700 (PDT)
+Message-ID: <4c57a98f-045f-4487-8354-807b647b2040@oss.qualcomm.com>
+Date: Tue, 15 Apr 2025 11:53:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Ped9WythIuF88UFv9hjJgUP4V1P65BRN
-X-Authority-Analysis: v=2.4 cv=JNc7s9Kb c=1 sm=1 tr=0 ts=67fe2ced cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=UERuPk7d7HPuaWx_DlYA:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: Ped9WythIuF88UFv9hjJgUP4V1P65BRN
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/5] arm64: dts: qcom: sdx75: Add QPIC NAND support
+To: Kaushal Kumar <quic_kaushalk@quicinc.com>, vkoul@kernel.org,
+        robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+        manivannan.sadhasivam@linaro.org, miquel.raynal@bootlin.com,
+        richard@nod.at, vigneshr@ti.com, andersson@kernel.org,
+        konradybcio@kernel.org, agross@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org
+References: <20250415072756.20046-1-quic_kaushalk@quicinc.com>
+ <20250415072756.20046-5-quic_kaushalk@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250415072756.20046-5-quic_kaushalk@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=E9TNpbdl c=1 sm=1 tr=0 ts=67fe2cb3 cx=c_pps a=oc9J++0uMp73DTRD5QyR2A==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=HfTDXfZYWx141HAPJAYA:9 a=QEXdDO2ut3YA:10
+ a=-9l76b1btMQA:10 a=iYH6xdkBrDN1Jqds4HTS:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: sheAA_-WcBGrESxhs6f9CRuzfn_-9izo
+X-Proofpoint-GUID: sheAA_-WcBGrESxhs6f9CRuzfn_-9izo
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-04-15_04,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- suspectscore=0 mlxlogscore=999 lowpriorityscore=0 bulkscore=0
- impostorscore=0 clxscore=1015 phishscore=0 adultscore=0 priorityscore=1501
- spamscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ mlxscore=0 bulkscore=0 clxscore=1015 phishscore=0 lowpriorityscore=0
+ suspectscore=0 mlxlogscore=763 spamscore=0 priorityscore=1501
+ impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
  definitions=main-2504150069
 
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
+On 4/15/25 9:27 AM, Kaushal Kumar wrote:
+> Add devicetree node to enable support for QPIC NAND controller on Qualcomm
+> SDX75 platform.
+> 
+> Signed-off-by: Kaushal Kumar <quic_kaushalk@quicinc.com>
+> ---
 
-Add OPP tables required to scale DDR and L3 per freq-domain
-on SA8775P platform.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-If a single OPP table is used for both CPU domains, then
-_allocate_opp_table() won't be invoked for CPU4 but instead
-CPU4 will be added as device under the CPU0 OPP table. Due
-to this, dev_pm_opp_of_find_icc_paths() won't be invoked for
-CPU4 device and hence CPU4 won't be able to independently scale
-it's interconnects. Both CPU0 and CPU4 devices will scale the
-same ICC path which can lead to one device overwriting the BW
-vote placed by other device. Hence CPU0 and CPU4 require separate
-OPP tables to allow independent scaling of DDR and L3 frequencies
-for each CPU domain, with the final DDR and L3 frequencies being
-an aggregate of both.
-
-Co-developed-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
-Signed-off-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
-Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/sa8775p.dtsi | 210 ++++++++++++++++++++++++++
- 1 file changed, 210 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-index fac5dfb147fd..800db236a1e0 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-@@ -52,6 +52,11 @@ cpu0: cpu@0 {
- 			next-level-cache = <&l2_0>;
- 			capacity-dmips-mhz = <1024>;
- 			dynamic-power-coefficient = <100>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ACTIVE_ONLY>,
-+					<&epss_l3_cl0 MASTER_EPSS_L3_APPS
-+					 &epss_l3_cl0 SLAVE_EPSS_L3_SHARED>;
- 			l2_0: l2-cache {
- 				compatible = "cache";
- 				cache-level = <2>;
-@@ -76,6 +81,11 @@ cpu1: cpu@100 {
- 			next-level-cache = <&l2_1>;
- 			capacity-dmips-mhz = <1024>;
- 			dynamic-power-coefficient = <100>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ACTIVE_ONLY>,
-+					<&epss_l3_cl0 MASTER_EPSS_L3_APPS
-+					 &epss_l3_cl0 SLAVE_EPSS_L3_SHARED>;
- 			l2_1: l2-cache {
- 				compatible = "cache";
- 				cache-level = <2>;
-@@ -95,6 +105,11 @@ cpu2: cpu@200 {
- 			next-level-cache = <&l2_2>;
- 			capacity-dmips-mhz = <1024>;
- 			dynamic-power-coefficient = <100>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ACTIVE_ONLY>,
-+					<&epss_l3_cl0 MASTER_EPSS_L3_APPS
-+					 &epss_l3_cl0 SLAVE_EPSS_L3_SHARED>;
- 			l2_2: l2-cache {
- 				compatible = "cache";
- 				cache-level = <2>;
-@@ -114,6 +129,11 @@ cpu3: cpu@300 {
- 			next-level-cache = <&l2_3>;
- 			capacity-dmips-mhz = <1024>;
- 			dynamic-power-coefficient = <100>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ACTIVE_ONLY>,
-+					<&epss_l3_cl0 MASTER_EPSS_L3_APPS
-+					 &epss_l3_cl0 SLAVE_EPSS_L3_SHARED>;
- 			l2_3: l2-cache {
- 				compatible = "cache";
- 				cache-level = <2>;
-@@ -133,6 +153,11 @@ cpu4: cpu@10000 {
- 			next-level-cache = <&l2_4>;
- 			capacity-dmips-mhz = <1024>;
- 			dynamic-power-coefficient = <100>;
-+			operating-points-v2 = <&cpu4_opp_table>;
-+			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ACTIVE_ONLY>,
-+					<&epss_l3_cl1 MASTER_EPSS_L3_APPS
-+					 &epss_l3_cl1 SLAVE_EPSS_L3_SHARED>;
- 			l2_4: l2-cache {
- 				compatible = "cache";
- 				cache-level = <2>;
-@@ -158,6 +183,11 @@ cpu5: cpu@10100 {
- 			next-level-cache = <&l2_5>;
- 			capacity-dmips-mhz = <1024>;
- 			dynamic-power-coefficient = <100>;
-+			operating-points-v2 = <&cpu4_opp_table>;
-+			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ACTIVE_ONLY>,
-+					<&epss_l3_cl1 MASTER_EPSS_L3_APPS
-+					 &epss_l3_cl1 SLAVE_EPSS_L3_SHARED>;
- 			l2_5: l2-cache {
- 				compatible = "cache";
- 				cache-level = <2>;
-@@ -177,6 +207,11 @@ cpu6: cpu@10200 {
- 			next-level-cache = <&l2_6>;
- 			capacity-dmips-mhz = <1024>;
- 			dynamic-power-coefficient = <100>;
-+			operating-points-v2 = <&cpu4_opp_table>;
-+			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ACTIVE_ONLY>,
-+					<&epss_l3_cl1 MASTER_EPSS_L3_APPS
-+					 &epss_l3_cl1 SLAVE_EPSS_L3_SHARED>;
- 			l2_6: l2-cache {
- 				compatible = "cache";
- 				cache-level = <2>;
-@@ -196,6 +231,11 @@ cpu7: cpu@10300 {
- 			next-level-cache = <&l2_7>;
- 			capacity-dmips-mhz = <1024>;
- 			dynamic-power-coefficient = <100>;
-+			operating-points-v2 = <&cpu4_opp_table>;
-+			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ACTIVE_ONLY>,
-+					<&epss_l3_cl1 MASTER_EPSS_L3_APPS
-+					 &epss_l3_cl1 SLAVE_EPSS_L3_SHARED>;
- 			l2_7: l2-cache {
- 				compatible = "cache";
- 				cache-level = <2>;
-@@ -285,6 +325,176 @@ cluster_sleep_apss_rsc_pc: cluster-sleep-1 {
- 		};
- 	};
- 
-+	cpu0_opp_table: opp-table-cpu0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp-1267200000 {
-+			opp-hz = /bits/ 64 <1267200000>;
-+			opp-peak-kBps = <(1555200 * 4) (921600 * 32)>;
-+		};
-+
-+		opp-1363200000 {
-+			opp-hz = /bits/ 64 <1363200000>;
-+			opp-peak-kBps = <(1555200 * 4) (921600 * 32)>;
-+		};
-+
-+		opp-1459200000 {
-+			opp-hz = /bits/ 64 <1459200000>;
-+			opp-peak-kBps = <(1555200 * 4) (921600 * 32)>;
-+		};
-+
-+		opp-1536000000 {
-+			opp-hz = /bits/ 64 <1536000000>;
-+			opp-peak-kBps = <(1555200 * 4) (921600 * 32)>;
-+		};
-+
-+		opp-1632000000 {
-+			opp-hz = /bits/ 64 <1632000000>;
-+			opp-peak-kBps = <(1708800 * 4) (1228800 * 32)>;
-+		};
-+
-+		opp-1708800000 {
-+			opp-hz = /bits/ 64 <1708800000>;
-+			opp-peak-kBps = <(1708800 * 4) (1228800 * 32)>;
-+		};
-+
-+		opp-1785600000 {
-+			opp-hz = /bits/ 64 <1785600000>;
-+			opp-peak-kBps = <(1708800 * 4) (1228800 * 32)>;
-+		};
-+
-+		opp-1862400000 {
-+			opp-hz = /bits/ 64 <1862400000>;
-+			opp-peak-kBps = <(1708800 * 4) (1228800 * 32)>;
-+		};
-+
-+		opp-1939200000 {
-+			opp-hz = /bits/ 64 <1939200000>;
-+			opp-peak-kBps = <(1708800 * 4) (1228800 * 32)>;
-+		};
-+
-+		opp-2016000000 {
-+			opp-hz = /bits/ 64 <2016000000>;
-+			opp-peak-kBps = <(1708800 * 4) (1228800 * 32)>;
-+		};
-+
-+		opp-2112000000 {
-+			opp-hz = /bits/ 64 <2112000000>;
-+			opp-peak-kBps = <(2092800 * 4) (1555200 * 32)>;
-+		};
-+
-+		opp-2188800000 {
-+			opp-hz = /bits/ 64 <2188800000>;
-+			opp-peak-kBps = <(2092800 * 4) (1555200 * 32)>;
-+		};
-+
-+		opp-2265600000 {
-+			opp-hz = /bits/ 64 <2265600000>;
-+			opp-peak-kBps = <(2092800 * 4) (1555200 * 32)>;
-+		};
-+
-+		opp-2361600000 {
-+			opp-hz = /bits/ 64 <2361600000>;
-+			opp-peak-kBps = <(3196800 * 4) (1612800 * 32)>;
-+		};
-+
-+		opp-2457600000 {
-+			opp-hz = /bits/ 64 <2457600000>;
-+			opp-peak-kBps = <(3196800 * 4) (1612800 * 32)>;
-+		};
-+
-+		opp-2553600000 {
-+			opp-hz = /bits/ 64 <2553600000>;
-+			opp-peak-kBps = <(3196800 * 4) (1708800 * 32)>;
-+		};
-+	};
-+
-+	cpu4_opp_table: opp-table-cpu4 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp-1267200000 {
-+			opp-hz = /bits/ 64 <1267200000>;
-+			opp-peak-kBps = <(1555200 * 4) (921600 * 32)>;
-+		};
-+
-+		opp-1363200000 {
-+			opp-hz = /bits/ 64 <1363200000>;
-+			opp-peak-kBps = <(1555200 * 4) (921600 * 32)>;
-+		};
-+
-+		opp-1459200000 {
-+			opp-hz = /bits/ 64 <1459200000>;
-+			opp-peak-kBps = <(1555200 * 4) (921600 * 32)>;
-+		};
-+
-+		opp-1536000000 {
-+			opp-hz = /bits/ 64 <1536000000>;
-+			opp-peak-kBps = <(1555200 * 4) (921600 * 32)>;
-+		};
-+
-+		opp-1632000000 {
-+			opp-hz = /bits/ 64 <1632000000>;
-+			opp-peak-kBps = <(1708800 * 4) (1228800 * 32)>;
-+		};
-+
-+		opp-1708800000 {
-+			opp-hz = /bits/ 64 <1708800000>;
-+			opp-peak-kBps = <(1708800 * 4) (1228800 * 32)>;
-+		};
-+
-+		opp-1785600000 {
-+			opp-hz = /bits/ 64 <1785600000>;
-+			opp-peak-kBps = <(1708800 * 4) (1228800 * 32)>;
-+		};
-+
-+		opp-1862400000 {
-+			opp-hz = /bits/ 64 <1862400000>;
-+			opp-peak-kBps = <(1708800 * 4) (1228800 * 32)>;
-+		};
-+
-+		opp-1939200000 {
-+			opp-hz = /bits/ 64 <1939200000>;
-+			opp-peak-kBps = <(1708800 * 4) (1228800 * 32)>;
-+		};
-+
-+		opp-2016000000 {
-+			opp-hz = /bits/ 64 <2016000000>;
-+			opp-peak-kBps = <(1708800 * 4) (1228800 * 32)>;
-+		};
-+
-+		opp-2112000000 {
-+			opp-hz = /bits/ 64 <2112000000>;
-+			opp-peak-kBps = <(2092800 * 4) (1555200 * 32)>;
-+		};
-+
-+		opp-2188800000 {
-+			opp-hz = /bits/ 64 <2188800000>;
-+			opp-peak-kBps = <(2092800 * 4) (1555200 * 32)>;
-+		};
-+
-+		opp-2265600000 {
-+			opp-hz = /bits/ 64 <2265600000>;
-+			opp-peak-kBps = <(2092800 * 4) (1555200 * 32)>;
-+		};
-+
-+		opp-2361600000 {
-+			opp-hz = /bits/ 64 <2361600000>;
-+			opp-peak-kBps = <(3196800 * 4) (1612800 * 32)>;
-+		};
-+
-+		opp-2457600000 {
-+			opp-hz = /bits/ 64 <2457600000>;
-+			opp-peak-kBps = <(3196800 * 4) (1612800 * 32)>;
-+		};
-+
-+		opp-2553600000 {
-+			opp-hz = /bits/ 64 <2553600000>;
-+			opp-peak-kBps = <(3196800 * 4) (1708800 * 32)>;
-+		};
-+	};
-+
- 	dummy-sink {
- 		compatible = "arm,coresight-dummy-sink";
- 
--- 
-2.43.0
-
+Konrad
 
