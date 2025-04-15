@@ -1,162 +1,97 @@
-Return-Path: <linux-kernel+bounces-605397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AE5BA8A095
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:05:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D9C4A8A0A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 16:07:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 133F8189DF50
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:05:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 794CE189D84D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 14:07:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9234227FD70;
-	Tue, 15 Apr 2025 14:04:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11C3D1DC9A8;
+	Tue, 15 Apr 2025 14:06:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="qC3uhRPI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25AEF13AA31;
-	Tue, 15 Apr 2025 14:04:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E0619F11E;
+	Tue, 15 Apr 2025 14:06:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744725886; cv=none; b=gjVBuDMMaoFFe9fpUXNNaWxypkbMe9VovXKlAu3uJfM2lheyD8vSeHrsFuqWwc9AoQYx4n0GNEi7FKXyf5PeCbEh+KHTXG3nJVC/iLVom5zX0JVfQJzs6BZLCGUk8l//L3PswZQzomQ1xhJK5LzCkaJP5uBSz7SLVqrt5q6PO34=
+	t=1744726007; cv=none; b=sUWD0RH6TmIa0D2BMbYuhcEEadQ+1x/Al66HmTzScQxdmKPfLkzK5GZZ9JOyjZO81DI6GvRdDPKaSZA9pcxfzgtjXe5RSc/JzTkQSClAGHYQH9TzXULy1N7i6DjR+NR57y3GOJA6q8C3IwdBXnhN1bwIYvIucnXRhY0Hh8nllkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744725886; c=relaxed/simple;
-	bh=w/KuN1+/jkmXSCmG+Tl62jjuPvibvKiLVxTIWZQPbEE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NUE+dRezUaYy3FYmke9MrGRGYQLAIvEaZnn/cmNgvQBNufVdOk37LhcGs0bpXWVdJ1tMAmcr+QYBZ2y8p5Be5RejpwxxJpRAsjrmHgPLHXJhor8OU4tRwJ1OnC5AGf5lKtQ7K3G9sSydShVxT1i5pliofwsNN8OeV72W8JGz9KA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7128C4CEDD;
-	Tue, 15 Apr 2025 14:04:43 +0000 (UTC)
-Date: Tue, 15 Apr 2025 10:06:17 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Kernel
- Tracing <linux-trace-kernel@vger.kernel.org>, Linux Documentation
- <linux-doc@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Jonathan Corbet
- <corbet@lwn.net>, Purva Yeshi <purvayeshi550@gmail.com>
-Subject: Re: [PATCH 2/2] Documentation: trace: Refactor toctree
-Message-ID: <20250415100617.08ab9e08@gandalf.local.home>
-In-Reply-To: <20250415034613.21305-3-bagasdotme@gmail.com>
-References: <20250415034613.21305-1-bagasdotme@gmail.com>
-	<20250415034613.21305-3-bagasdotme@gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1744726007; c=relaxed/simple;
+	bh=5R+P+61yjWCLyWO0f2cqLH+Fy16+sPPkuyyk/+Zka7E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jY2VeCNKJAi03zj9HPGaOEfC0etEQVYQI8l6ht3aML4dxlR1fvqyNO0ekfxa2hG5eI1Ul5f1vuOCAbagggNuVRqcgWDxcbmEaYwSNZ6MOBb/he004yW9CQkfxCn6/nVrxC2f9OnhdrNvQmg6gQSV47oZ3xGHwQ/2b32vc8KzX4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=qC3uhRPI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41828C4CEDD;
+	Tue, 15 Apr 2025 14:06:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1744726006;
+	bh=5R+P+61yjWCLyWO0f2cqLH+Fy16+sPPkuyyk/+Zka7E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qC3uhRPIbslUm77+PFbJfUe1oz9Yirkx+P3gHQs8yggrozy3dyq0lwIapRGl+Pkuk
+	 E6Z/mvUUOsCrcQVMxJHzankie4kUbzO0H4mckhNAxcLeyxQsk0nzKxfourC0cKKTel
+	 bHO4hTQ6obreVqxYyF80bqtCbyQPgEXDno/n9Mk0=
+Date: Tue, 15 Apr 2025 16:06:43 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	kernel-list@raspberrypi.com
+Subject: Re: [PATCH v8 08/13] misc: rp1: RaspberryPi RP1 misc driver
+Message-ID: <2025041557-masculine-abrasive-c372@gregkh>
+References: <cover.1742418429.git.andrea.porta@suse.com>
+ <3fbc487bc0e4b855ffbee8ed62cfb6bf3b0592e8.1742418429.git.andrea.porta@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3fbc487bc0e4b855ffbee8ed62cfb6bf3b0592e8.1742418429.git.andrea.porta@suse.com>
 
-On Tue, 15 Apr 2025 10:46:13 +0700
-Bagas Sanjaya <bagasdotme@gmail.com> wrote:
-> 
-> Hi Steven,
-> 
-> I remove your Acked-by: since I massage the patch description. Would you mind
-> to re-add yours?
+On Wed, Mar 19, 2025 at 10:52:29PM +0100, Andrea della Porta wrote:
+> The RaspberryPi RP1 is a PCI multi function device containing
+> peripherals ranging from Ethernet to USB controller, I2C, SPI
+> and others.
 
-Sure, I do have one comment below.
+So shouldn't this be using the auxbus code?  That's designed to "split
+up" PCI devices such that you can share them this way.
 
-> 
-> Thanks.
-> 
->  Documentation/trace/index.rst | 94 +++++++++++++++++++++++++++++------
->  1 file changed, 79 insertions(+), 15 deletions(-)
-> 
-> diff --git a/Documentation/trace/index.rst b/Documentation/trace/index.rst
-> index fecc4adf70a830..5ddd47ee781211 100644
-> --- a/Documentation/trace/index.rst
-> +++ b/Documentation/trace/index.rst
-> @@ -1,39 +1,103 @@
-> -==========================
-> -Linux Tracing Technologies
-> -==========================
-> +================================
-> +Linux Tracing Technologies Guide
-> +================================
-> +
-> +Tracing in the Linux kernel is a powerful mechanism that allows
-> +developers and system administrators to analyze and debug system
-> +behavior. This guide provides documentation on various tracing
-> +frameworks and tools available in the Linux kernel.
-> +
-> +Introduction to Tracing
-> +-----------------------
-> +
-> +This section provides an overview of Linux tracing mechanisms
-> +and debugging approaches.
->  
->  .. toctree::
->     :maxdepth: 1
->  
-> -   ftrace-design
-> +   debugging
-> +   tracepoints
->     tracepoint-analysis
-> +   ring-buffer-map
-> +
-> +Core Tracing Frameworks
-> +-----------------------
-> +
-> +The following are the primary tracing frameworks integrated into
-> +the Linux kernel.
-> +
-> +.. toctree::
-> +   :maxdepth: 1
-> +
->     ftrace
-> +   ftrace-design
->     ftrace-uses
-> -   fprobe
->     kprobes
->     kprobetrace
->     uprobetracer
+Or did that get rejected somewhere previously?
 
-I think the uprobetracer can go into the user space tracing below.
-As uprobes attaches to user space programs.
+thanks,
 
->     fprobetrace
-> -   tracepoints
-> +   fprobe
-> +   ring-buffer-design
-> +
-
-[..]
-
-> +
-> +User-Space Tracing
-> +------------------
-> +
-> +These tools allow tracing user-space applications and
-> +interactions.
-> +
-> +.. toctree::
-> +   :maxdepth: 1
-> +
-> +   user_events
-
-      uprobetracer
-
--- Steve
-
-
-> +
-> +Additional Resources
-> +--------------------
-> +
-> +For more details, refer to the respective documentation of each
-> +tracing tool and framework.
-> +
-> +.. only:: subproject and html
-> +
-> +   Indices
-> +   =======
-> +
-> +   * :ref:`genindex`
-> \ No newline at end of file
-
+greg k-h
 
