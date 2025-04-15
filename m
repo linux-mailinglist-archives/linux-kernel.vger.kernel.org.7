@@ -1,345 +1,127 @@
-Return-Path: <linux-kernel+bounces-604620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 029EEA896A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:31:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05C16A896B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:32:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78B733B9704
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:30:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B9033B959A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 155B128DEE3;
-	Tue, 15 Apr 2025 08:28:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99ED128468A;
+	Tue, 15 Apr 2025 08:29:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U2KXtqb3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LrRTnva5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C9128BAB0;
-	Tue, 15 Apr 2025 08:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C06F28467B
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 08:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744705683; cv=none; b=PT3YHjzFAeYRBm+unsbSs+a5JM9IlURbzM9YPanGQ+Pic6xPhjLlFW6s6LK9625QEoPOxNexffN4ntEDF10fMFLE7wsg49Uw2PEUcQcB+phQG24VZcyop8kNy2VaqI6iFIfAQsZ3v9gUGth2znQ8HarnqjGWC36Q0menguSbtCQ=
+	t=1744705780; cv=none; b=OCeIYN9o2adK4d3N5nMJNT/cIdx0mibP1cbk7lWo+CiuDkfIyvbI8yOxweXZ2n5vHDX59hwKiuF7lgakvSke4ew4bEuxJr/li+/hYaFlk4jT1VYp+FnsrB5wSiEeIJ0B48Ch3IBp4m6B/nWyr3a/3Sf480sDyYcjJCqciahzhAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744705683; c=relaxed/simple;
-	bh=bJ7ZPUThSUnefT1KsfBYGvnQ6e2CeijPhdt/RibAHwM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S3bORvji5xmDSqulPau67rvQyR0E3XS1XdRSkF8TajOwvF/xNtnclkXyuAFHJCZ5LF9TNuGbGeWHg6WlRneTjFOJS2TlJ5a8Wu7ladLSoOz3/t9ljvfvdkrQC+Tlwl3Nvlgn37kBmrW3Uk28eC6goRYDuU3mN+P3S9Gps0BGKYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U2KXtqb3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7143EC4CEDD;
-	Tue, 15 Apr 2025 08:28:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744705682;
-	bh=bJ7ZPUThSUnefT1KsfBYGvnQ6e2CeijPhdt/RibAHwM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=U2KXtqb3X8Sj4NOHcaB0jB/39OR8RnneTpvE9qkMnlxDNYSEY0Xy8QHQ0b/i/RGjr
-	 GxSfW9wiusROd+zLSDJNprWvntdBrsZ4yN+mJqrbXVEDAY5rDqAHucIPBvHXWF3RBD
-	 l00i8I+CqoOn6PI57gFXdVrl/aiwj1ctef0+vW0Q36Zry+u4tEGycAAuzVr4p4ZBgW
-	 /oFuRNcpIfepK46d2YK2B3ODSHb6YrpkjTWul0PQt+/0NICyrZ5RIY3ANFUVe1iqOR
-	 UhIDFLpQHr1HPb5hXP7hgouSTMI/OSaUCts0fcz+S361EM/PscBPutwJCgl3ylLOjZ
-	 RMfotyZJTZknw==
-From: Christian Brauner <brauner@kernel.org>
-To: linux-fsdevel@vger.kernel.org
-Cc: Christian Brauner <brauner@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Kees Cook <kees@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] fs: remove uselib() system call
-Date: Tue, 15 Apr 2025 10:27:50 +0200
-Message-ID: <20250415-kanufahren-besten-02ac00e6becd@brauner>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1744705780; c=relaxed/simple;
+	bh=KdjIB358yfPQ3UYxdodcRhuR5+7kpsBZ3kVJ8/0yltE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=purnp3uqMHOGDwyVWhQEeHpAM+oLxE7xQvJXPGwCf0Qldn20g/Vz3AcwKA/BCUTx0/Q4wtnp4W4KGr2K0CSUPHZ/HDLGSDDZdKUzdAn+JOrOHbf/FXbCZNtxf4Rra06z05VchtaBmqOozNwN4zLjhYATOhVGADSHevNMTTX/Ns8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LrRTnva5; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744705779; x=1776241779;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=KdjIB358yfPQ3UYxdodcRhuR5+7kpsBZ3kVJ8/0yltE=;
+  b=LrRTnva5E2ugDWotUA5MbgxZIYNlASYYXM/0A3LrAm7HkAflEtlvUQ8o
+   yiRBybre0uNDWy2JEckREf4WDW8klpke1/LvUjFTJ1MrgTrxmo1ifSrXW
+   TcCaUlSVt74DnCazx557y6MXerPh+2Sd+iuEPjBH2EwxGq7t5ns3iAdZ9
+   V8Vdr2ypGsfOEK9j9yK7Cbg3q9ORTnkH5N1aahFTmVzpx94+0NR/e7pzi
+   tsNnrseFbowp7ugxt3dzogEk/PaMC6sCX7xd4QUB9a/IEa/ELCzADNYSa
+   WXm252Y2zwBGOaolOnT43cFdwZvtegLBbqR1oaquwrknrci7YL3ieDgQI
+   g==;
+X-CSE-ConnectionGUID: 85cqcqrNQRaJ2fw0p6q7Jg==
+X-CSE-MsgGUID: 6C4NAoFyS/iv2RDBATzHtw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11403"; a="71592445"
+X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
+   d="scan'208";a="71592445"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 01:28:31 -0700
+X-CSE-ConnectionGUID: WUpVH4t1STe2QA3yf0MIIw==
+X-CSE-MsgGUID: oh9+A1W3RoyrE+YyspRykA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
+   d="scan'208";a="134914793"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa003.jf.intel.com with ESMTP; 15 Apr 2025 01:28:28 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 456F617B; Tue, 15 Apr 2025 11:28:27 +0300 (EEST)
+Date: Tue, 15 Apr 2025 11:28:27 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de, 
+	bp@alien8.de, joro@8bytes.org, luto@kernel.org, peterz@infradead.org, 
+	rick.p.edgecombe@intel.com, jgross@suse.com
+Subject: Re: [PATCH 3/8] x86/mm: Always tell core mm to sync kernel mappings
+Message-ID: <bqinzxzoiz5pbtgcufgi6o4zfmvyj3q7i7mjtwp2b4x5cek3ca@v5qn4mv2y6ay>
+References: <20250414173232.32444FF6@davehans-spike.ostc.intel.com>
+ <20250414173237.EC790E95@davehans-spike.ostc.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8390; i=brauner@kernel.org; h=from:subject:message-id; bh=bJ7ZPUThSUnefT1KsfBYGvnQ6e2CeijPhdt/RibAHwM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT/k+jKqri+95XfjR+eWidNb05iWhacquLxIo6H45aS9 c1Xi+azd5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEwkqISRYUZhhfz7gqjCXw0+ b10LjgsqP17E7b0wiKvilomKbeSFTkaGyXf4GI9sV42sUH7uHbmIpewg/yz2q5Ebz7+7OHvvokx dbgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250414173237.EC790E95@davehans-spike.ostc.intel.com>
 
-This system call has been deprecated for quite a while now.
-Let's try and remove it from the kernel completely.
+On Mon, Apr 14, 2025 at 10:32:37AM -0700, Dave Hansen wrote:
+> 
+> From: Dave Hansen <dave.hansen@linux.intel.com>
+> 
+> Each mm_struct has its own copy of the page tables. When core mm code
+> makes changes to a copy of the page tables those changes sometimes
+> need to be synchronized with other mms' copies of the page tables. But
+> when this synchronization actually needs to happen is highly
+> architecture and configuration specific.
+> 
+> In cases where kernel PMDs are shared across processes
+> (SHARED_KERNEL_PMD) the core mm does not itself need to do that
+> synchronization for kernel PMD changes. The x86 code communicates
+> this by clearing the PGTBL_PMD_MODIFIED bit cleared in those
+> configs to avoid expensive synchronization.
+> 
+> The kernel is moving toward never sharing kernel PMDs on 32-bit.
+> Prepare for that and make 32-bit PAE always set PGTBL_PMD_MODIFIED,
+> even if there is no modification to synchronize. This obviously adds
+> some synchronization overhead in cases where the kernel page tables
+> are being changed.
+> 
+> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+> ---
+> 
+>  b/arch/x86/include/asm/pgtable-3level_types.h |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff -puN arch/x86/include/asm/pgtable-3level_types.h~always-set-ARCH_PAGE_TABLE_SYNC_MASK arch/x86/include/asm/pgtable-3level_types.h
+> --- a/arch/x86/include/asm/pgtable-3level_types.h~always-set-ARCH_PAGE_TABLE_SYNC_MASK	2025-04-09 11:49:40.552916845 -0700
+> +++ b/arch/x86/include/asm/pgtable-3level_types.h	2025-04-09 11:49:40.555916955 -0700
+> @@ -29,7 +29,7 @@ typedef union {
+>  
+>  #define SHARED_KERNEL_PMD	(!static_cpu_has(X86_FEATURE_PTI))
+>  
+> -#define ARCH_PAGE_TABLE_SYNC_MASK	(SHARED_KERNEL_PMD ? 0 : PGTBL_PMD_MODIFIED)
+> +#define ARCH_PAGE_TABLE_SYNC_MASK	PGTBL_PMD_MODIFIED
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- arch/m68k/configs/amcore_defconfig         |  1 -
- arch/x86/configs/i386_defconfig            |  1 -
- arch/xtensa/configs/cadence_csp_defconfig  |  1 -
- fs/binfmt_elf.c                            | 76 ----------------------
- fs/exec.c                                  | 60 -----------------
- include/linux/binfmts.h                    |  1 -
- init/Kconfig                               | 10 ---
- tools/testing/selftests/bpf/config.aarch64 |  1 -
- tools/testing/selftests/bpf/config.s390x   |  1 -
- 9 files changed, 152 deletions(-)
+The new definition is the same between pgtable-2level_types.h and
+pgtable-3level_types.h.
 
-diff --git a/arch/m68k/configs/amcore_defconfig b/arch/m68k/configs/amcore_defconfig
-index 110279a64aa4..60767811e34a 100644
---- a/arch/m68k/configs/amcore_defconfig
-+++ b/arch/m68k/configs/amcore_defconfig
-@@ -2,7 +2,6 @@ CONFIG_LOCALVERSION="amcore-002"
- CONFIG_DEFAULT_HOSTNAME="amcore"
- CONFIG_SYSVIPC=y
- # CONFIG_FHANDLE is not set
--# CONFIG_USELIB is not set
- CONFIG_LOG_BUF_SHIFT=14
- CONFIG_CC_OPTIMIZE_FOR_SIZE=y
- # CONFIG_AIO is not set
-diff --git a/arch/x86/configs/i386_defconfig b/arch/x86/configs/i386_defconfig
-index 91801138b10b..7cd2f395f301 100644
---- a/arch/x86/configs/i386_defconfig
-+++ b/arch/x86/configs/i386_defconfig
-@@ -1,7 +1,6 @@
- CONFIG_WERROR=y
- CONFIG_SYSVIPC=y
- CONFIG_POSIX_MQUEUE=y
--CONFIG_USELIB=y
- CONFIG_AUDIT=y
- CONFIG_NO_HZ=y
- CONFIG_HIGH_RES_TIMERS=y
-diff --git a/arch/xtensa/configs/cadence_csp_defconfig b/arch/xtensa/configs/cadence_csp_defconfig
-index 91c4c4cae8a7..49f50d1bd724 100644
---- a/arch/xtensa/configs/cadence_csp_defconfig
-+++ b/arch/xtensa/configs/cadence_csp_defconfig
-@@ -1,6 +1,5 @@
- CONFIG_SYSVIPC=y
- CONFIG_POSIX_MQUEUE=y
--CONFIG_USELIB=y
- CONFIG_NO_HZ_IDLE=y
- CONFIG_HIGH_RES_TIMERS=y
- CONFIG_IRQ_TIME_ACCOUNTING=y
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index 584fa89bc877..7e2afe3220f7 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -68,12 +68,6 @@
- 
- static int load_elf_binary(struct linux_binprm *bprm);
- 
--#ifdef CONFIG_USELIB
--static int load_elf_library(struct file *);
--#else
--#define load_elf_library NULL
--#endif
--
- /*
-  * If we don't support core dumping, then supply a NULL so we
-  * don't even try.
-@@ -101,7 +95,6 @@ static int elf_core_dump(struct coredump_params *cprm);
- static struct linux_binfmt elf_format = {
- 	.module		= THIS_MODULE,
- 	.load_binary	= load_elf_binary,
--	.load_shlib	= load_elf_library,
- #ifdef CONFIG_COREDUMP
- 	.core_dump	= elf_core_dump,
- 	.min_coredump	= ELF_EXEC_PAGESIZE,
-@@ -1361,75 +1354,6 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 	goto out;
- }
- 
--#ifdef CONFIG_USELIB
--/* This is really simpleminded and specialized - we are loading an
--   a.out library that is given an ELF header. */
--static int load_elf_library(struct file *file)
--{
--	struct elf_phdr *elf_phdata;
--	struct elf_phdr *eppnt;
--	int retval, error, i, j;
--	struct elfhdr elf_ex;
--
--	error = -ENOEXEC;
--	retval = elf_read(file, &elf_ex, sizeof(elf_ex), 0);
--	if (retval < 0)
--		goto out;
--
--	if (memcmp(elf_ex.e_ident, ELFMAG, SELFMAG) != 0)
--		goto out;
--
--	/* First of all, some simple consistency checks */
--	if (elf_ex.e_type != ET_EXEC || elf_ex.e_phnum > 2 ||
--	    !elf_check_arch(&elf_ex) || !file->f_op->mmap)
--		goto out;
--	if (elf_check_fdpic(&elf_ex))
--		goto out;
--
--	/* Now read in all of the header information */
--
--	j = sizeof(struct elf_phdr) * elf_ex.e_phnum;
--	/* j < ELF_MIN_ALIGN because elf_ex.e_phnum <= 2 */
--
--	error = -ENOMEM;
--	elf_phdata = kmalloc(j, GFP_KERNEL);
--	if (!elf_phdata)
--		goto out;
--
--	eppnt = elf_phdata;
--	error = -ENOEXEC;
--	retval = elf_read(file, eppnt, j, elf_ex.e_phoff);
--	if (retval < 0)
--		goto out_free_ph;
--
--	for (j = 0, i = 0; i<elf_ex.e_phnum; i++)
--		if ((eppnt + i)->p_type == PT_LOAD)
--			j++;
--	if (j != 1)
--		goto out_free_ph;
--
--	while (eppnt->p_type != PT_LOAD)
--		eppnt++;
--
--	/* Now use mmap to map the library into memory. */
--	error = elf_load(file, ELF_PAGESTART(eppnt->p_vaddr),
--			eppnt,
--			PROT_READ | PROT_WRITE | PROT_EXEC,
--			MAP_FIXED_NOREPLACE | MAP_PRIVATE,
--			0);
--
--	if (error != ELF_PAGESTART(eppnt->p_vaddr))
--		goto out_free_ph;
--
--	error = 0;
--
--out_free_ph:
--	kfree(elf_phdata);
--out:
--	return error;
--}
--#endif /* #ifdef CONFIG_USELIB */
--
- #ifdef CONFIG_ELF_CORE
- /*
-  * ELF core dumper
-diff --git a/fs/exec.c b/fs/exec.c
-index 8e4ea5f1e64c..cfbb2b9ee3c9 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -115,66 +115,6 @@ bool path_noexec(const struct path *path)
- 	       (path->mnt->mnt_sb->s_iflags & SB_I_NOEXEC);
- }
- 
--#ifdef CONFIG_USELIB
--/*
-- * Note that a shared library must be both readable and executable due to
-- * security reasons.
-- *
-- * Also note that we take the address to load from the file itself.
-- */
--SYSCALL_DEFINE1(uselib, const char __user *, library)
--{
--	struct linux_binfmt *fmt;
--	struct file *file;
--	struct filename *tmp = getname(library);
--	int error = PTR_ERR(tmp);
--	static const struct open_flags uselib_flags = {
--		.open_flag = O_LARGEFILE | O_RDONLY,
--		.acc_mode = MAY_READ | MAY_EXEC,
--		.intent = LOOKUP_OPEN,
--		.lookup_flags = LOOKUP_FOLLOW,
--	};
--
--	if (IS_ERR(tmp))
--		goto out;
--
--	file = do_filp_open(AT_FDCWD, tmp, &uselib_flags);
--	putname(tmp);
--	error = PTR_ERR(file);
--	if (IS_ERR(file))
--		goto out;
--
--	/*
--	 * Check do_open_execat() for an explanation.
--	 */
--	error = -EACCES;
--	if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode)) ||
--	    path_noexec(&file->f_path))
--		goto exit;
--
--	error = -ENOEXEC;
--
--	read_lock(&binfmt_lock);
--	list_for_each_entry(fmt, &formats, lh) {
--		if (!fmt->load_shlib)
--			continue;
--		if (!try_module_get(fmt->module))
--			continue;
--		read_unlock(&binfmt_lock);
--		error = fmt->load_shlib(file);
--		read_lock(&binfmt_lock);
--		put_binfmt(fmt);
--		if (error != -ENOEXEC)
--			break;
--	}
--	read_unlock(&binfmt_lock);
--exit:
--	fput(file);
--out:
--	return error;
--}
--#endif /* #ifdef CONFIG_USELIB */
--
- #ifdef CONFIG_MMU
- /*
-  * The nascent bprm->mm is not visible until exec_mmap() but it can
-diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-index 1625c8529e70..65abd5ab8836 100644
---- a/include/linux/binfmts.h
-+++ b/include/linux/binfmts.h
-@@ -90,7 +90,6 @@ struct linux_binfmt {
- 	struct list_head lh;
- 	struct module *module;
- 	int (*load_binary)(struct linux_binprm *);
--	int (*load_shlib)(struct file *);
- #ifdef CONFIG_COREDUMP
- 	int (*core_dump)(struct coredump_params *cprm);
- 	unsigned long min_coredump;	/* minimal dump size */
-diff --git a/init/Kconfig b/init/Kconfig
-index 63f5974b9fa6..b7cc7f5b2595 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -479,16 +479,6 @@ config CROSS_MEMORY_ATTACH
- 	  to directly read from or write to another process' address space.
- 	  See the man page for more details.
- 
--config USELIB
--	bool "uselib syscall (for libc5 and earlier)"
--	default ALPHA || M68K || SPARC
--	help
--	  This option enables the uselib syscall, a system call used in the
--	  dynamic linker from libc5 and earlier.  glibc does not use this
--	  system call.  If you intend to run programs built on libc5 or
--	  earlier, you may need to enable this syscall.  Current systems
--	  running glibc can safely disable this.
--
- config AUDIT
- 	bool "Auditing support"
- 	depends on NET
-diff --git a/tools/testing/selftests/bpf/config.aarch64 b/tools/testing/selftests/bpf/config.aarch64
-index 3720b7611523..e1495a4bbc99 100644
---- a/tools/testing/selftests/bpf/config.aarch64
-+++ b/tools/testing/selftests/bpf/config.aarch64
-@@ -158,7 +158,6 @@ CONFIG_TRANSPARENT_HUGEPAGE=y
- CONFIG_TUN=y
- CONFIG_UNIX=y
- CONFIG_UPROBES=y
--CONFIG_USELIB=y
- CONFIG_USER_NS=y
- CONFIG_VETH=y
- CONFIG_VLAN_8021Q=y
-diff --git a/tools/testing/selftests/bpf/config.s390x b/tools/testing/selftests/bpf/config.s390x
-index 706931a8c2c6..26c3bc2ce11d 100644
---- a/tools/testing/selftests/bpf/config.s390x
-+++ b/tools/testing/selftests/bpf/config.s390x
-@@ -128,7 +128,6 @@ CONFIG_TRANSPARENT_HUGEPAGE=y
- CONFIG_TUN=y
- CONFIG_UNIX=y
- CONFIG_UPROBES=y
--CONFIG_USELIB=y
- CONFIG_USER_NS=y
- CONFIG_VETH=y
- CONFIG_VLAN_8021Q=y
+Move it to the common pgtable_32_types.h.
+
 -- 
-2.47.2
-
+  Kiryl Shutsemau / Kirill A. Shutemov
 
