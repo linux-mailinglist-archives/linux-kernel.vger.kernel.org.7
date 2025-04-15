@@ -1,38 +1,38 @@
-Return-Path: <linux-kernel+bounces-604359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C08FA89389
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:54:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C3FFA89370
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 07:34:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F1941895056
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 05:54:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 473AE3B675F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 05:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 781BB274FDE;
-	Tue, 15 Apr 2025 05:54:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 471D4274FC0;
+	Tue, 15 Apr 2025 05:34:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="jtGENCM+"
-Received: from mail-m49243.qiye.163.com (mail-m49243.qiye.163.com [45.254.49.243])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="jhxPUgo9"
+Received: from mail-m49236.qiye.163.com (mail-m49236.qiye.163.com [45.254.49.236])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2119C274FCB;
-	Tue, 15 Apr 2025 05:54:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.243
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D64E274663;
+	Tue, 15 Apr 2025 05:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.236
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744696479; cv=none; b=jZrRs+AL62KPp6P/K0ySadQ3RnkY6YD8yddCL8xwIPojcB5lV4OMIT9Qvj/sHkGcmcuNh3RUjeAUKCiZId/B3NtQ11uo6rwe3cPf4OyWZZtzLJ8TFV1OqRMiq6wZpNw9Lt50Yq8tuI5FVWn/R6V3SUe/eF8yjwwv2OBB5MLT8/I=
+	t=1744695272; cv=none; b=cRJaWdzXTvmW7Kr6boFp6QZ0aBxHuYlvAvgnMXrgnbakxSM9a+6yjyYmqB93AceOPDVOLim7fJJ4TIhsswg+Cn62lU+DzuS6uaOrUKYqZ3SsxatAj+fi8XecnPtY2dh7QhP0qSVVlqCh3exTSegYYhttu3GGfvwg+ujaohpMExQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744696479; c=relaxed/simple;
-	bh=hrUYP5CdehdjGTXKv9LKCof4H8DlhEJfkYve2U/AWG0=;
+	s=arc-20240116; t=1744695272; c=relaxed/simple;
+	bh=3NQOnCQ1l5tkOsd0f8fnNB7pmsNbABrDB4nuWss80eQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gjYevJsF47u7Bi7impIOUbYWqWexY35YnHkvCSjEYIHghZOZbHcX/Gh4lqca2esO+dnbx1052njEWrxeEii5fESYJqYp6Avx+rF7dsFyQC9sEnjgOkMgJG/kvftWHydcKjz2j8rWoTFVttrepYKTH+z+wp59gBvXFreLffLPIY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=jtGENCM+; arc=none smtp.client-ip=45.254.49.243
+	 MIME-Version; b=J7u6eKgbG0DBPkALDpUf/gDXQ6dvoVsLDRnsLHaYUfLcg3MHGN9+2q2SEL1dA9QcJFDtnhPVrH/u7GLYKTuntIVk/741SRwbhPUoGwfzdvDq/EJ0z0rb6zb4gbpBn21+IiM+GIsXMzB141CDGwP8cV+ab+ZvCCEdg+sybMiKb+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=jhxPUgo9; arc=none smtp.client-ip=45.254.49.236
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Received: from localhost.localdomain (unknown [103.29.142.67])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 11e6d966d;
-	Tue, 15 Apr 2025 13:19:06 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 11e6d9674;
+	Tue, 15 Apr 2025 13:19:08 +0800 (GMT+08:00)
 From: Kever Yang <kever.yang@rock-chips.com>
 To: heiko@sntech.de
 Cc: linux-rockchip@lists.infradead.org,
@@ -40,14 +40,18 @@ Cc: linux-rockchip@lists.infradead.org,
 	Rob Herring <robh@kernel.org>,
 	devicetree@vger.kernel.org,
 	Conor Dooley <conor+dt@kernel.org>,
+	Frank Wang <frank.wang@rock-chips.com>,
 	Detlev Casanova <detlev.casanova@collabora.com>,
+	Yao Zi <ziyao@disroot.org>,
 	linux-kernel@vger.kernel.org,
+	Shresth Prasad <shresthprasad7@gmail.com>,
+	Andy Yan <andy.yan@rock-chips.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Elaine Zhang <zhangqing@rock-chips.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 3/7] dt-bindings: rockchip: pmu: Add rk3562 compatible
-Date: Tue, 15 Apr 2025 13:18:51 +0800
-Message-Id: <20250415051855.59740-4-kever.yang@rock-chips.com>
+	linux-arm-kernel@lists.infradead.org,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Subject: [PATCH v4 4/7] dt-bindings: soc: rockchip: Add rk3562 syscon compatibles
+Date: Tue, 15 Apr 2025 13:18:52 +0800
+Message-Id: <20250415051855.59740-5-kever.yang@rock-chips.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250415051855.59740-1-kever.yang@rock-chips.com>
 References: <20250415051855.59740-1-kever.yang@rock-chips.com>
@@ -59,20 +63,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZTEIdVkIeTh9CSEpDQ0hMTFYVFAkWGhdVEwETFh
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaGBpCVksYSxlJSk5JSUlMQlYVFAkWGhdVEwETFh
 	oSFyQUDg9ZV1kYEgtZQVlKS0hVSUJVSk9JVU1MWVdZFhoPEhUdFFlBWU9LSFVKS0hKTkxOVUpLS1
 	VKQktLWQY+
-X-HM-Tid: 0a9637e304a703afkunm11e6d966d
+X-HM-Tid: 0a9637e30c5b03afkunm11e6d9674
 X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PCo6Cww6SjJKNBo0TwIRCi4U
-	IT4aCSxVSlVKTE9PTUJPSE9DTkxOVTMWGhIXVRAeDR4JVQIaFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlKS0hVSUJVSk9JVU1MWVdZCAFZQUlLTUg3Bg++
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PhA6Hyo6EDJPQxovCgwUCiIu
+	DUMKCgFVSlVKTE9PTUJPSE5KS09NVTMWGhIXVRAeDR4JVQIaFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlKS0hVSUJVSk9JVU1MWVdZCAFZQUlOTUI3Bg++
 DKIM-Signature:a=rsa-sha256;
-	b=jtGENCM+ktq9G0tOxqmN118wdD1TdJcDd0UqC0149qCp5Pg/KTYsnAV/b5MpAP8qH+63VwauZaQuaTthR5Alf3NbWFg+gaYj6L1NgjSnjFQgkiiK3zrw56P3yzCdYIHSAbzUfHakNFaWLzC2DLCJJDOUKFsntLDA3HrxBH7y2g4=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=8S7bpP8L+83uDnLeLHDjhzH/u+pvrl1W2ywecgY5JP4=;
+	b=jhxPUgo9Pa7/KfoOhXGWoh/uIXnW6w7QCxcIC1XLDGxHqexVAUsd46MUd4YUZmYYk6HV534I+owdAuznWqF6Sknku+BdqKqiTe1w3bYQL8oy9iihBw8emECbqAHMO7q50aXihmJ58SOHce9XMWkRvceSfeFCksIaUhxhJtA56DA=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=++Sz5n1hontH0goNn0EnD9AxxcYqzo7gOqQkURmwZVk=;
 	h=date:mime-version:subject:message-id:from;
 
-Add the compatible for the pmu mfd on rk3562.
+Add all syscon compatibles for rk3562.
 
 Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
 Acked-by: Rob Herring (Arm) <robh@kernel.org>
@@ -84,29 +88,34 @@ Changes in v4:
 Changes in v3: None
 Changes in v2: None
 
- Documentation/devicetree/bindings/arm/rockchip/pmu.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ Documentation/devicetree/bindings/soc/rockchip/grf.yaml | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/rockchip/pmu.yaml b/Documentation/devicetree/bindings/arm/rockchip/pmu.yaml
-index 52016a141227..46c1af851be7 100644
---- a/Documentation/devicetree/bindings/arm/rockchip/pmu.yaml
-+++ b/Documentation/devicetree/bindings/arm/rockchip/pmu.yaml
-@@ -25,6 +25,7 @@ select:
-           - rockchip,rk3288-pmu
-           - rockchip,rk3368-pmu
-           - rockchip,rk3399-pmu
-+          - rockchip,rk3562-pmu
-           - rockchip,rk3568-pmu
-           - rockchip,rk3576-pmu
-           - rockchip,rk3588-pmu
-@@ -43,6 +44,7 @@ properties:
-           - rockchip,rk3288-pmu
-           - rockchip,rk3368-pmu
-           - rockchip,rk3399-pmu
-+          - rockchip,rk3562-pmu
-           - rockchip,rk3568-pmu
-           - rockchip,rk3576-pmu
-           - rockchip,rk3588-pmu
+diff --git a/Documentation/devicetree/bindings/soc/rockchip/grf.yaml b/Documentation/devicetree/bindings/soc/rockchip/grf.yaml
+index 2f61c1b95fea..8cbf5b6772dd 100644
+--- a/Documentation/devicetree/bindings/soc/rockchip/grf.yaml
++++ b/Documentation/devicetree/bindings/soc/rockchip/grf.yaml
+@@ -18,6 +18,12 @@ properties:
+               - rockchip,rk3528-ioc-grf
+               - rockchip,rk3528-vo-grf
+               - rockchip,rk3528-vpu-grf
++              - rockchip,rk3562-ioc-grf
++              - rockchip,rk3562-peri-grf
++              - rockchip,rk3562-pipephy-grf
++              - rockchip,rk3562-pmu-grf
++              - rockchip,rk3562-sys-grf
++              - rockchip,rk3562-usbphy-grf
+               - rockchip,rk3566-pipe-grf
+               - rockchip,rk3568-pcie3-phy-grf
+               - rockchip,rk3568-pipe-grf
+@@ -82,6 +88,7 @@ properties:
+               - rockchip,rk3368-pmugrf
+               - rockchip,rk3399-grf
+               - rockchip,rk3399-pmugrf
++              - rockchip,rk3562-pmu-grf
+               - rockchip,rk3568-grf
+               - rockchip,rk3568-pmugrf
+               - rockchip,rk3576-ioc-grf
 -- 
 2.25.1
 
