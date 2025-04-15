@@ -1,244 +1,112 @@
-Return-Path: <linux-kernel+bounces-604425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0567BA89441
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:57:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A430A89436
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:55:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A291D18888DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 06:56:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69B27189CA49
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 06:55:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32AC82798EB;
-	Tue, 15 Apr 2025 06:55:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA9C827A92C;
+	Tue, 15 Apr 2025 06:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PpWK9UBj"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YeAcuRnD"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DDCF275847
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 06:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E062798F1;
+	Tue, 15 Apr 2025 06:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744700143; cv=none; b=SY4N4BGz83+saQQdxrPrvvLYx4Zy2HMDUQoj70kb4lOJo97icjtPfLRmXUZOfR0p9EBA493TnQfaxlxy8xtRbwMRAkiXJOyYqP3QoXGHRfUDwK24XIS6phyalQsKVea7CdIjB3vFND45dzii/M+VXgyzOS8ALq1Sc8pZFP0PSww=
+	t=1744700070; cv=none; b=hCI/8lpNDXVTvC/xlqCcsfbhyNbrE2CSu51EkrK1sdFvfw46jmmyolEy4TZ2jdn9C5mas2+3JJQ/5fiEiYjCD0V8nOlAH6wnMGIEzy9dXRGiQyFmqGlH2RyZY3MjV/eizR/6+EKTLu1+h1SGVI5hycYUJPvgZ1wh3fbSXa/2IrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744700143; c=relaxed/simple;
-	bh=mH1iHo0oVHEl3wNf7M0lyymD0sny8Au9BwF+SaQ+0yY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=lwgfJFHkSvWLUvzsdD3USOmbjiQ3W+IQXvVPIWhW5D5dfbVfPp5g1kr3d/T9fepbeY3fp5EAfIZrf4CbnQgf1Q0XEqmBhPELyUwkSpHhO5BWx/DRwugq3z5kbT5TsSSDZjM7D271QTnGy7oHoVXyYoMJRmrFvKpssmQRtLKAQoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PpWK9UBj; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aaee2c5ee6eso799930766b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 23:55:40 -0700 (PDT)
+	s=arc-20240116; t=1744700070; c=relaxed/simple;
+	bh=k9OqEDY3JEcssGMHTHMMKW2DIA2hSwtYUS+Auc8BG6o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gTu9JKTKqm++BC0bnTFgy9jEpb30VDYua6ScdHK744Tnuvrm8h65StY+AneTzeEsgLzUaMuRQGfW1S25UvcrYRro94AwOS8pVuJ7+lxbcZlCL/L/xNM687UplSXNen5IH3vB6vSFdc6zCnCe7d9I844uKDyiLc/Gg9ByjFYKA/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YeAcuRnD; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-301cda78d48so4758292a91.0;
+        Mon, 14 Apr 2025 23:54:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1744700139; x=1745304939; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:content-language:references:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1744700068; x=1745304868; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mH1iHo0oVHEl3wNf7M0lyymD0sny8Au9BwF+SaQ+0yY=;
-        b=PpWK9UBjhYQjwAwxGI+p1ic+8S30wBXR0t/5TOWrIO6d3GLZuphBHsB3ArrI2IMabQ
-         0+645ouCW5+SJn13BPCGtxIuWHUPkXfItW/0b6tQ1yLFo6g8sz/HAzgdvnkSR6d9RPCH
-         Th3AUGb++lLLMH3r+rS6clYJ3q6NlRMhGqVGulIyHbTcfFXyBCu8+aFqGqWTHKG884X9
-         4gYa9rdGgOYKWxWILvWMpf5ztMn86ZOCga8Mj2bmcPN8lZY44w/ZSlWxla8t9b+6fYv2
-         lsn1240v2LQ4SEjIcJVzubYabbun8BGAt6nHwPlWWrCAFZcygiug3wsAvloU5eZSM7Pd
-         FXvA==
+        bh=k9OqEDY3JEcssGMHTHMMKW2DIA2hSwtYUS+Auc8BG6o=;
+        b=YeAcuRnDeuqTfqDHy7y9FkPQheLIJEGKQS8j98CJ1BPZfU2KqG0gBod7R1xCgilx2G
+         2dM9G6PxPHifdrSII+lS+JcAu15c2uzBgRWD5zfQf/m0m+DuFDE6CjZ8QsZxhfwslg+J
+         iSWKLLK1KDOO0VXHbJnsF4yI4tz+3fGLlQBZ7CqNabDbW+7xuybj48ZE+HvUwc8gOD6U
+         IANmDiyQz+fViWJAMl1OqtfD1K3IKqZW2d6TA1M2jkFd7MssSOkOmUx3EO2PyOSANE3Q
+         HAKs9r3G1fIlNGrT8klw5vgrrzXYIrlMPkLmNgYkSPIJGNOKci00Ptv3kbVI7ca2cDh4
+         o7sA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744700139; x=1745304939;
-        h=in-reply-to:autocrypt:from:content-language:references:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=mH1iHo0oVHEl3wNf7M0lyymD0sny8Au9BwF+SaQ+0yY=;
-        b=X9DoCqK2NgBq3UQ+CMi25v4g97VjD6yA52EwTgafg8hgntYxHFLwQw6sTB5jABim65
-         OCAIUHILHNcrcjbyH6VlI6+iLYsP7BRokrxhGV2+oKCU5yiwG4ev0Sp8z/5dgjUFJ7xu
-         tDYwAqGBDuOgxbrDVhUkVGZfONaWdy/sTBlWJuwlfrk14hgHQosAQP4nXUbtKcQb2MDq
-         klj4vadCM7NH0Py9Dp+tA7ap8LPOdnf6hY89hboMJhIdUHiGA1wMxpMWZ0HM63gDDIXX
-         G9Xvp2F0KH3nxcOtLoozU5OyBGuIgM5fVgswVN+F3g4cYEElbMWUVA8MbiXEOxk+X8dt
-         e5VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2FCK1se3EO/u/QdUMKpJW5Q79quGer2ulMiLxkZxf7ltVpAwOyE+UZjUPeJyX85Ce2n3urHdQlmrLVsI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXHdBE+wQeyhxf8xfpfoniuImapKwVtOccE/AjJu6vzmwLIy18
-	2yDC4iyqXLlHU8w5aM6jvXgRp/ys0xg/PyIY7j1wY33DHlQba6K4Dehsbd/Uzbk=
-X-Gm-Gg: ASbGncvkP1EovyV07QtarC+qE8bXqOLG3I99DSRVURPa4bYEZNzVcgp3azifazdE5Uv
-	ULeumt9iCCVUFP0qLR7TQgN8L4oQHHYdkon1MgcVVuNJMtlNotrUbwRUE/GsUK+/74wWXka8hvF
-	EGnRvRM6BTKjmtNue9inRd402app8psJlyqOXC5vMdUC16w9X8UF4zJuJcS79hxGoCvIy/MAlPL
-	mKKcAe0OAINE0jIFRFCivpqXPq/N3cpaPisgpUqrrT2ursKF6e3YqRMKWttSTKTEbZKWrPF4ETQ
-	CfBhqmIvjCAE45exG9wHbEJUFzRwJAhCb1nmPl2Ed5tBKn+FxKJvnV6y80UzMceOJSvps8yA/Ak
-	ue47oDx4dkXf7r0NNJVOJt3DRwNMr+COC7la5ORMn5mJ0Iwe90K8LxCURf+bN/Az6NA==
-X-Google-Smtp-Source: AGHT+IHfwJashPa+nqtOMRp7LD73ka/YQaxjrS0ijQc96PctD+DEkKhFe9nYhZU4EUJUkHAUKH06Sw==
-X-Received: by 2002:a17:907:60d4:b0:ac8:16fb:a291 with SMTP id a640c23a62f3a-acad34869edmr1535103466b.18.1744700139191;
-        Mon, 14 Apr 2025 23:55:39 -0700 (PDT)
-Received: from ?IPV6:2003:e5:873d:1a00:8e99:ce06:aa4a:2e7b? (p200300e5873d1a008e99ce06aa4a2e7b.dip0.t-ipconnect.de. [2003:e5:873d:1a00:8e99:ce06:aa4a:2e7b])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1999d96sm1025891866b.0.2025.04.14.23.55.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Apr 2025 23:55:38 -0700 (PDT)
-Message-ID: <49dc22ee-ad72-4c01-bab9-37f405e947d6@suse.com>
-Date: Tue, 15 Apr 2025 08:55:38 +0200
+        d=1e100.net; s=20230601; t=1744700068; x=1745304868;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=k9OqEDY3JEcssGMHTHMMKW2DIA2hSwtYUS+Auc8BG6o=;
+        b=PTG833+8M2EWXpW8Ewd6vG1rG2YGrujxrbMuatF/9+iES5aLzFwhu9Y5pYOVlLoWvo
+         a89+/H/2j4kZMYeQwq4P1sWHUFKRrby0xHyz93TAABHvMJ04P/Ma3HmDXeq5nf85vex1
+         yJgJUyMHTZbswkjbw2+gCnyb/hd79CHjzPxqatNjFNonJZBKSJAAArYh2Vp7BBf05kQX
+         7kR0wFbWYvN0qOlYzLwsii+3JcHs5fUKqsZ2wOFWDm83kHLuhwJEA5ZoDizVIeoGFaXa
+         /7wCAvFApDOH8KeUiN7st35Rgn8qltF+Q8iivuXCmevCJdumfrRmUsV7keNfg/rA17Xb
+         Lcug==
+X-Forwarded-Encrypted: i=1; AJvYcCVzs1ku5CKVu5XyrUrAC7aImaTZwbnk3IKil55946Y/DjXPBL6FBBtM0S5GGtI0x/kHVT6AcFvrxwKOSmrT@vger.kernel.org, AJvYcCXTIBZHJveIUji0nzwqzjDhneCON06e99vAd5AX0BItdDzovVcQLMMdboBdHR6u5R/yP1b5AGmYTJao@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPCV5a38xP1PpHlE3sh6dxs9NQBjh7irFNJ/2yS48847Vc8ZJo
+	dC0xuiKqwCdORLjb79pyi78+IvBtOu3F1bHjbs9iLal9Y/j4I6uMtQM9hY6lm8D+U6ONtJnaS5p
+	H19LafQwcGLCXyEj+6K58tjNY2rtzivFYVhHotQ==
+X-Gm-Gg: ASbGnctTtvglAvOCSIT2ADG2w0oYxASXlozLn3Wz5Hvjcs2405Hb8nSEvuKeveQIQPf
+	3iU2vdfR12OYKNI4Hn27JkcQC8+uGlYNAUvvJ0thk2o2i7z+YwZbTJaMV0FT+PaGk0fCyKWduS1
+	1D5C3+mFoeCueCLfavkA==
+X-Google-Smtp-Source: AGHT+IGsWWhYe9e4mWSJsic/j7kKIeW7DfXwjL4Jb4i7m9zXmuDIJPuuX3HEnkVvhnsbqUdqK2dIfJphOjrZOmuAgmI=
+X-Received: by 2002:a17:90b:2811:b0:2ee:c291:765a with SMTP id
+ 98e67ed59e1d1-30823639c94mr21764256a91.8.1744700068456; Mon, 14 Apr 2025
+ 23:54:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-6.15-rc2/drivers/xen/balloon.c:346: Possible int/long mixup
-To: David Binderman <dcb314@hotmail.com>,
- "sstabellini@kernel.org" <sstabellini@kernel.org>,
- "oleksandr_tyshchenko@epam.com" <oleksandr_tyshchenko@epam.com>,
- "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <AS8PR02MB1021776B93FEF6D425C7223389CB32@AS8PR02MB10217.eurprd02.prod.outlook.com>
-Content-Language: en-US
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Autocrypt: addr=jgross@suse.com; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
- mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
- G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
- kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
- Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
- RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
- vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
- sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
- aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
- w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
- auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
- 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
- fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
- HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
- QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
- ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
-In-Reply-To: <AS8PR02MB1021776B93FEF6D425C7223389CB32@AS8PR02MB10217.eurprd02.prod.outlook.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------wY5A2zixIF1bIvSO7tvogJP6"
-
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------wY5A2zixIF1bIvSO7tvogJP6
-Content-Type: multipart/mixed; boundary="------------L80Zs1i0UKD0f1eNCgIODbzW";
- protected-headers="v1"
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-To: David Binderman <dcb314@hotmail.com>,
- "sstabellini@kernel.org" <sstabellini@kernel.org>,
- "oleksandr_tyshchenko@epam.com" <oleksandr_tyshchenko@epam.com>,
- "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Message-ID: <49dc22ee-ad72-4c01-bab9-37f405e947d6@suse.com>
-Subject: Re: linux-6.15-rc2/drivers/xen/balloon.c:346: Possible int/long mixup
-References: <AS8PR02MB1021776B93FEF6D425C7223389CB32@AS8PR02MB10217.eurprd02.prod.outlook.com>
-In-Reply-To: <AS8PR02MB1021776B93FEF6D425C7223389CB32@AS8PR02MB10217.eurprd02.prod.outlook.com>
-
---------------L80Zs1i0UKD0f1eNCgIODbzW
-Content-Type: multipart/mixed; boundary="------------rNOgDUQkUSyo2kvvHmbYIPcQ"
-
---------------rNOgDUQkUSyo2kvvHmbYIPcQ
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
-
-T24gMTQuMDQuMjUgMTk6NTcsIERhdmlkIEJpbmRlcm1hbiB3cm90ZToNCj4gSGVsbG8gdGhl
-cmUsDQo+IA0KPiBTdGF0aWMgYW5hbHlzZXIgY3BwY2hlY2sgc2F5czoNCj4gDQo+IGxpbnV4
-LTYuMTUtcmMyL2RyaXZlcnMveGVuL2JhbGxvb24uYzozNDY6MjQ6IHN0eWxlOiBpbnQgcmVz
-dWx0IGlzIGFzc2lnbmVkIHRvIGxvbmcgdmFyaWFibGUuIElmIHRoZSB2YXJpYWJsZSBpcyBs
-b25nIHRvIGF2b2lkIGxvc3Mgb2YgaW5mb3JtYXRpb24sIHRoZW4geW91IGhhdmUgbG9zcyBv
-ZiBpbmZvcm1hdGlvbi4gW3RydW5jTG9uZ0Nhc3RBc3NpZ25tZW50XQ0KPiANCj4gU291cmNl
-IGNvZGUgaXMNCj4gDQo+ICAgICAgdW5zaWduZWQgbG9uZyBpLCBzaXplID0gKDEgPDwgb3Jk
-ZXIpOw0KPiANCj4gTWF5YmUgYmV0dGVyIGNvZGU6DQo+IA0KPiAgICAgIHVuc2lnbmVkIGxv
-bmcgaSwgc2l6ZSA9ICgxVUwgPDwgb3JkZXIpOw0KPiANCg0KV2hpbGUgSSBhZ3JlZSB0aGlz
-IHdvdWxkIGJlIGJldHRlciwgdGhlcmUgaXMgbm8gcmVhbCBmYWlsdXJlIHBvc3NpYmxlDQpo
-ZXJlLiBGb3IgdGhpcyB0byBjYXVzZSBwcm9ibGVtcyB5b3UnZCBuZWVkIHRvIGhvdHBsdWcg
-MTZUQiBvZiBtZW1vcnkNCmluIG9uZSBzaW5nbGUgYmxvY2suDQoNCk5ldmVydGhlbGVzcyB0
-aGFua3MgZm9yIHRoZSBub3RpY2UuDQoNCg0KSnVlcmdlbg0K
---------------rNOgDUQkUSyo2kvvHmbYIPcQ
-Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Description: OpenPGP public key
+References: <20250414123827.428339-1-ivitro@gmail.com> <20250414123827.428339-3-ivitro@gmail.com>
+In-Reply-To: <20250414123827.428339-3-ivitro@gmail.com>
+From: Daniel Baluta <daniel.baluta@gmail.com>
+Date: Tue, 15 Apr 2025 09:56:14 +0300
+X-Gm-Features: ATxdqUGxqJNdcd-JZaoJQzqSGgpBMKry2SLqzTD77e0YfcWpcDRWqQ9RF6-oALY
+Message-ID: <CAEnQRZBt7mgi2ep8j5U=8DWA+KfO_nGfczXrSxAy_HaSeGNTMA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] arm64: dts: freescale: add Toradex SMARC iMX8MP
+To: Vitor Soares <ivitro@gmail.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Vitor Soares <vitor.soares@toradex.com>, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Hiago De Franco <hiago.franco@toradex.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+On Mon, Apr 14, 2025 at 3:39=E2=80=AFPM Vitor Soares <ivitro@gmail.com> wro=
+te:
+>
+> From: Vitor Soares <vitor.soares@toradex.com>
+>
+> Add DT support for Toradex SMARC iMX8MP SoM and Toradex SMARC Development
+> carrier board.
+>
+> Link: https://www.toradex.com/computer-on-modules/smarc-arm-family/nxp-im=
+x-8m-plus
+> Link: https://www.toradex.com/products/carrier-board/smarc-development-bo=
+ard-kit
+> Co-developed-by: Hiago De Franco <hiago.franco@toradex.com>
+> Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
+> Signed-off-by: Vitor Soares <vitor.soares@toradex.com>
 
-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
-kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
-=3DeeAB
------END PGP PUBLIC KEY BLOCK-----
+Audio part looks good to me.
 
---------------rNOgDUQkUSyo2kvvHmbYIPcQ--
-
---------------L80Zs1i0UKD0f1eNCgIODbzW--
-
---------------wY5A2zixIF1bIvSO7tvogJP6
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmf+AuoFAwAAAAAACgkQsN6d1ii/Ey/n
-kQf/ZtJmR+LeWcIyGU04l61IaqpD67A1ASh+lM+EKBzUAzhmQ1zp2W3s3OPlg/altaQuRys/XNX9
-J7R0fhFKlHT8ihOiIIF4uIcaqICAKKiivrxH6yFyWnn1dPyPiz1Xe4C/GmFjagfj/xcCVkymIwgx
-6gL51sENPyqbLNzK+sOHDgZOBXfqAaiAl+B1RYtu1HXh9tk8YWbEXkAXXye15VHkYG9urOkZY4f6
-oanrsUNR3844AB1SJQ73cKRzv+v/EVXsgqPRTmdII4Ei6jMs2HCiHPKhko1v12yxz1r44JiTjJ4v
-eOhfStPjwByvrCJ3+QPg9G/d0fsEXkpc82MZ5sUR+g==
-=KJKF
------END PGP SIGNATURE-----
-
---------------wY5A2zixIF1bIvSO7tvogJP6--
+Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
 
