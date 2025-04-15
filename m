@@ -1,322 +1,251 @@
-Return-Path: <linux-kernel+bounces-604787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6DCAA898B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:53:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1687AA898D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:56:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B1CA3AC71A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:53:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 660991786EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39307288CA8;
-	Tue, 15 Apr 2025 09:53:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD6828F500;
+	Tue, 15 Apr 2025 09:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MLiGagr9"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XcwIkZAM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7143E27FD50;
-	Tue, 15 Apr 2025 09:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0140A1DF994;
+	Tue, 15 Apr 2025 09:54:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744710799; cv=none; b=ff1j8KvSwqecQo1tCiAeJ3ZZHK520Ok7VQs9UODopxCrEo1WWQhfpSJi1PR/EdnPEDMQxFAhGdNMMtJU4q151xEQSqXfYINNsTb0Kuclq897Cwkf9fpFB/Nh1xRChOWLerai/GG0SIsyPUp5YhyssfFeYbufa/yDYQyZ6bQK8gA=
+	t=1744710874; cv=none; b=EnmKdTH2cNctl9FSt16ZYnP+c8md/SvcwY/LIBnCDFH6Y4VljbXvco8nVvl0WDoE18X3DrwsviGes/OGy59+tJMMJDlI3erRIeWPbvNGoAKKmAegHj2fSa++RyHpWrqwmEp8WPV40LQaYhYV3cfFCQNW/b2xVxlcUgtnAbwRkuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744710799; c=relaxed/simple;
-	bh=GBqrW1cGkXPJI63EZko5TaBTiLL36RjqzQEXIH0CkPM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=eoTO38h7hCl0yvg1Jp5tn9PBuwTQtbVH4xTYL0RujLVG20qdzwRzM7hC3RRm8Y0UzW/ArRAtvmFOXog3DW1q7Tus0ZUDWYs2zqqJ9ohxrY2na4iTsShrY945Nu2KGEy2kB0iJ0w8QoDrZTOKWkOanPBumv67oDVFvLMs4/mfLoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MLiGagr9; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53F8tCuO025061;
-	Tue, 15 Apr 2025 09:52:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	u7ktH7RchoLSd4+j3e7VfuxneDgbBb4+i1jD70cLUZM=; b=MLiGagr9Wg60UcUh
-	QLlqWWMS0Cf4qO+23XARBWk2ZMiqmkzdxOiudf3cELMTTtsOq56gH1144kAwruWR
-	osHCjzR71VvAFr21J2X3vqaEbXH2LS4Xmic9M1DYCj2eWRM0M14+a7q9dvHWh6Fw
-	dPlWMzf9WKphAm83PzR5NtTYZ4fmNlPSilA8DuqpGlT4sLKyOqg0bkJcjscYJHOz
-	bWaFpaC79HuBKXxjeFzdg3rwBR0YvH/2IQGwq7ZolIAvFVOd0to+q9M8jt9mPM2X
-	t+u/D8nZpDlW5DfeRN+d0Bk8ok/zMOQo/gSI9PlwhCb9T9nmthOWteID1S2ltRW2
-	09Qylg==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45yg8wfju0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Apr 2025 09:52:51 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53F9qoRG019542
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Apr 2025 09:52:50 GMT
-Received: from [10.206.97.61] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 15 Apr
- 2025 02:52:43 -0700
-Message-ID: <e291fe72-bec0-48b9-9384-7d1d9469a8e7@quicinc.com>
-Date: Tue, 15 Apr 2025 15:22:40 +0530
+	s=arc-20240116; t=1744710874; c=relaxed/simple;
+	bh=L6ZBp9B5ub+vR6BAf7feLXCkVJt33r176fqAi+yE76o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G5VAYa+TgbwGBqHjjT8mEuzff2dfSQFkSDcrtMuWOma28QQ/z18Eob+G8xX8o0vY1/LVEXuRn7NRLJ1i+UAtOzornhCdOu6H/csEs9Zd0nTfl7Ivi0luS6Z0vM4uZ4oS6+0IzgKOoUtHRwhY02Jr6jNfRseuYjOQeJ+7nqfVJnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XcwIkZAM; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744710873; x=1776246873;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=L6ZBp9B5ub+vR6BAf7feLXCkVJt33r176fqAi+yE76o=;
+  b=XcwIkZAMkiI603RHjAyxII9TBV15NQeM7uTJYnfScAPeIZnbhWgb9zI8
+   2kC7pFspRgUMw+xaAKFyTpqRpHTXfM8NHuK829W/0eD3meG9Vzs8tYe08
+   2PktSr2xp+Ot8N8tGODfU3h30xxhn0txukkSmoePdmRoGkgiTvztQ//77
+   CO19bG7FFW9lWhUsJAlix+lq14Cv9vFEF19OYI5bUIyILmszR4WbRk1J9
+   5KiWvx9wIn0Rt8JGHY86W3yvzF/Wj/2Jh17TmcjEneAnN2fgm+CEpGo1n
+   WoC/qpn0xZOiFl5et/LkhiHXpdb/oPYggGzzOFglhIogDTQsWS40n1pd/
+   w==;
+X-CSE-ConnectionGUID: m0gbZTTUR1O6c6/5sXKJcQ==
+X-CSE-MsgGUID: E8f1mHLdQV+uum7k6eRfQQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11403"; a="63613698"
+X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
+   d="scan'208";a="63613698"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 02:53:26 -0700
+X-CSE-ConnectionGUID: t9YJsE8KQGCAlc11/WLcEQ==
+X-CSE-MsgGUID: aSNYI1kSTlSjvvGelplNCg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
+   d="scan'208";a="131053763"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 02:53:23 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1u4cym-0000000CVcP-2KCZ;
+	Tue, 15 Apr 2025 12:53:20 +0300
+Date: Tue, 15 Apr 2025 12:53:20 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+	linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Kees Cook <kees@kernel.org>, Russell King <linux@armlinux.org.uk>,
+	linux-hardening@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v3 00/33] Implement kernel-doc in Python
+Message-ID: <Z_4skKaqR6NuwOx-@smile.fi.intel.com>
+References: <871pu1193r.fsf@trenco.lwn.net>
+ <Z_zYXAJcTD-c3xTe@black.fi.intel.com>
+ <87mscibwm8.fsf@trenco.lwn.net>
+ <Z_4EL2bLm5Jva8Mq@smile.fi.intel.com>
+ <Z_4E0y07kUdgrGQZ@smile.fi.intel.com>
+ <87v7r5sw3a.fsf@intel.com>
+ <Z_4WCDkAhfwF6WND@smile.fi.intel.com>
+ <Z_4Wjv0hmORIwC_Z@smile.fi.intel.com>
+ <20250415164014.575c0892@sal.lan>
+ <20250415165102.44551ada@sal.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 07/10] arm64: dts: qcom: sa8775p-ride: add anx7625 DSI
- to DP bridge nodes
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-CC: <konradybcio@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <robdclark@gmail.com>, <dmitry.baryshkov@linaro.org>,
-        <sean@poorly.run>, <marijn.suijten@somainline.org>,
-        <andersson@kernel.org>, <robh@kernel.org>, <robh+dt@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andrzej.hajda@intel.com>,
-        <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
-        <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
-        <jernej.skrabec@gmail.com>, <quic_abhinavk@quicinc.com>,
-        <quic_rajeevny@quicinc.com>, <quic_vproddut@quicinc.com>,
-        <quic_jesszhan@quicinc.com>
-References: <20250404115539.1151201-1-quic_amakhija@quicinc.com>
- <20250404115539.1151201-8-quic_amakhija@quicinc.com>
- <nxnqwh2mzvnxv5ytwjsyulxr6ct6mhv3z3v6q4ojrjhhclwv2i@55nb56hnwi3y>
- <0f4eca6c-67df-4730-88b3-a277903deabc@quicinc.com>
- <wzqct2y67h6bkazxv3se77slsheaw5rspgcrcfjm7ngr5t4alw@nktpqrt5woky>
- <bb277124-a225-450b-acfe-0acd0f94b263@quicinc.com>
- <7b876428-6f54-4c40-a234-57443eb97ecb@oss.qualcomm.com>
- <a2b44f41-bb54-4d88-bba0-f5b86b8186b5@quicinc.com>
- <ebfbc145-eb8f-4354-b6b6-ad7ecec5856b@oss.qualcomm.com>
-Content-Language: en-US
-From: Ayushi Makhija <quic_amakhija@quicinc.com>
-In-Reply-To: <ebfbc145-eb8f-4354-b6b6-ad7ecec5856b@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=E9TNpbdl c=1 sm=1 tr=0 ts=67fe2c73 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=gEfo2CItAAAA:8 a=COk6AnOGAAAA:8 a=-Qs8Zf1C4SQ5IM_3ssQA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=sptkURWiP4Gy88Gu7hUp:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: 4eRD5Ev1FvMZWzWep9voiF4hm-LYudRw
-X-Proofpoint-GUID: 4eRD5Ev1FvMZWzWep9voiF4hm-LYudRw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-15_04,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- mlxscore=0 bulkscore=0 clxscore=1015 phishscore=0 lowpriorityscore=0
- suspectscore=0 mlxlogscore=999 spamscore=0 priorityscore=1501
- impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504150069
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250415165102.44551ada@sal.lan>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 4/15/2025 3:00 PM, Dmitry Baryshkov wrote:
-> On 14/04/2025 16:54, Ayushi Makhija wrote:
->> On 4/14/2025 3:37 PM, Dmitry Baryshkov wrote:
->>> On 14/04/2025 12:56, Ayushi Makhija wrote:
->>>> Hi Dmitry,
->>>>
->>>> On 4/11/2025 1:31 AM, Dmitry Baryshkov wrote:
->>>>> On Thu, Apr 10, 2025 at 06:37:54PM +0530, Ayushi Makhija wrote:
->>>>>> Hi Dmirity/Konard
->>>>>>
->>>>>> On 4/7/2025 1:42 AM, Dmitry Baryshkov wrote:
->>>>>>> On Fri, Apr 04, 2025 at 05:25:36PM +0530, Ayushi Makhija wrote:
->>>>>>>> Add anx7625 DSI to DP bridge device nodes.
->>>>>>>>
->>>>>>>> Signed-off-by: Ayushi Makhija <quic_amakhija@quicinc.com>
->>>>>>>> ---
->>>>>>>>    arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 208 ++++++++++++++++++++-
->>>>>>>>    1 file changed, 207 insertions(+), 1 deletion(-)
->>>>>>>>
->>>>>>>> diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
->>>>>>>> index 175f8b1e3b2d..8e784ccf4138 100644
->>>>>>>> --- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
->>>>>>>> +++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
->>>>>>>> @@ -28,6 +28,13 @@ chosen {
->>>>>>>>            stdout-path = "serial0:115200n8";
->>>>>>>>        };
->>>>>>>>    +    vph_pwr: vph-pwr-regulator {
->>>>>>>> +        compatible = "regulator-fixed";
->>>>>>>> +        regulator-name = "vph_pwr";
->>>>>>>> +        regulator-always-on;
->>>>>>>> +        regulator-boot-on;
->>>>>>>> +    };
->>>>>>>> +
->>>>>>>>        vreg_conn_1p8: vreg_conn_1p8 {
->>>>>>>>            compatible = "regulator-fixed";
->>>>>>>>            regulator-name = "vreg_conn_1p8";
->>>>>>>> @@ -128,6 +135,30 @@ dp1_connector_in: endpoint {
->>>>>>>>                };
->>>>>>>>            };
->>>>>>>>        };
->>>>>>>> +
->>>>>>>> +    dp-dsi0-connector {
->>>>>>>> +        compatible = "dp-connector";
->>>>>>>> +        label = "DSI0";
->>>>>>>> +        type = "full-size";
->>>>>>>> +
->>>>>>>> +        port {
->>>>>>>> +            dp_dsi0_connector_in: endpoint {
->>>>>>>> +                remote-endpoint = <&dsi2dp_bridge0_out>;
->>>>>>>> +            };
->>>>>>>> +        };
->>>>>>>> +    };
->>>>>>>> +
->>>>>>>> +    dp-dsi1-connector {
->>>>>>>> +        compatible = "dp-connector";
->>>>>>>> +        label = "DSI1";
->>>>>>>> +        type = "full-size";
->>>>>>>> +
->>>>>>>> +        port {
->>>>>>>> +            dp_dsi1_connector_in: endpoint {
->>>>>>>> +                remote-endpoint = <&dsi2dp_bridge1_out>;
->>>>>>>> +            };
->>>>>>>> +        };
->>>>>>>> +    };
->>>>>>>>    };
->>>>>>>>      &apps_rsc {
->>>>>>>> @@ -517,9 +548,135 @@ &i2c11 {
->>>>>>>>      &i2c18 {
->>>>>>>>        clock-frequency = <400000>;
->>>>>>>> -    pinctrl-0 = <&qup_i2c18_default>;
->>>>>>>> +    pinctrl-0 = <&qup_i2c18_default>,
->>>>>>>> +            <&io_expander_intr_active>,
->>>>>>>> +            <&io_expander_reset_active>;
->>>>>>>
->>>>>>> These pinctrl entries should go to the IO expander itself.
->>>>>>>
->>>>>>>>        pinctrl-names = "default";
->>>>>>>> +
->>>>>>>>        status = "okay";
->>>>>>>> +
->>>>>>>> +    io_expander: gpio@74 {
->>>>>>>> +        compatible = "ti,tca9539";
->>>>>>>> +        reg = <0x74>;
->>>>>>>> +        interrupts-extended = <&tlmm 98 IRQ_TYPE_EDGE_BOTH>;
->>>>>>>> +        gpio-controller;
->>>>>>>> +        #gpio-cells = <2>;
->>>>>>>> +        interrupt-controller;
->>>>>>>> +        #interrupt-cells = <2>;
->>>>>>>> +
->>>>>>>> +        gpio2-hog {
->>>>>>>
->>>>>>> This needs a huuge explanation in the commit message. Otherwise I'd say
->>>>>>> these pins should likely be used by the corresponding anx bridges.
->>>>>>
->>>>>> Thanks, for the review.
->>>>>>
->>>>>> Previously, I was referring to the downstream DT and misunderstood the use of gpio-hog.
->>>>>> After reading the schematic, I realized that gpio2, gpio3, gpio10, and gpio11 are all input pins
->>>>>> to the IO expander TC9539. We have already configured gpio2 and gpio10 as interrupts in the
->>>>>> ANX7625 bridges, so the gpio-hog is not required. It is working without the gpio-hog configuration.
->>>>>
->>>>> Please make sure that there are pinctrl entries for all pins.
->>>>>
->>>>
->>>> Thanks, for the review.
->>>>
->>>> While declaring the pinctrl entries inside the io_expander node, I am getting below error while checking the DTBS check against DT-binding.
->>>>
->>>> Error : /local/mnt/workspace/amakhija/linux_next_11042025/linux/arch/arm64/boot/dts/qcom/sa8775p-ride.dtb: gpio@74: 'dsi0-int-pin-state', 'dsi1-int-pin-state' do not match any of the regexes:
->>>>           '^(hog-[0-9]+|.+-hog(-[0-9]+)?)$', 'pinctrl-[0-9]+' from schema $id: http://devicetree.org/schemas/gpio/gpio-pca95xx.yaml#
->>>
->>> TCA9539 is a GPIO controller rather than a pinctrl device, so it doesn't use pinctrl functions. You don't need to describe properties of the pins that it provides. However, it can use some pins on its own (like reset-gpios). In such a case corresponding pin should have a pinctrl configuration under its pinctrl device.
->>>
->>
->> Hi Dmitry,
->>
->> Thanks, for the review.
->>
->>   ______________                  _____________________                       ___________________
->> |              |                |                     |                     |                   |
->> |       GPIO 98|---ioexp_intr-->|              GPIO 0 |------Reset--------->|RESET_N            |
->> |       GPIO 97|<--ioexp_reset--|              GPIO 1 |----power-enable---->|POWER_EN           |
->> |              |                |                     |                     |                   |
->> |    SOC       |                |  tca9539            |                     |    anx7625 bridge |
->> |  LeMans      |                |  io_expander        |                     |                   |
->> |              |                |              GPIO 2 |<----DSI0_INT_1P8_N--|ALERT_N/INTP       |
->> |______________|                |_____________________|                     |___________________|
->>
->>
->> Based on the above connection diagram, I have already configured the reset(gpio0), power-enable(gpio1) and interrupt (ALERT_N/INTP) (gpio2) for first instance of anx7625 bridge. Similarly I have configured the reset(gpio8), power-enable(gpio9) and interrupt (gpio10) for the second instance of the anx7625 bridge.
->>
->> bridge@58 {
->>               compatible = "analogix,anx7625";
->>               reg = <0x58>;
->>               interrupts-extended = <&io_expander 2 IRQ_TYPE_EDGE_FALLING>;
->>               enable-gpios = <&io_expander 1 GPIO_ACTIVE_HIGH>;
->>               reset-gpios = <&io_expander 0 GPIO_ACTIVE_HIGH>;
->>
->>
->> I think above configuration should be fine, we don't need any pinctrl for io expander's gpios going to anx7625 bridge.
->>
->> Other two RESET (gpio97) and INTR (gpio98) gpios, which is connecting SOC to io expander (tca9539), I have already declared them under tlmm node.
->>
->> io_expander_intr_active: io-expander-intr-active-state {
->>          pins = "gpio98";
->>          function = "gpio";
->>          drive-strength = <2>;
->>          bias-disable;
->> };
->>
->> io_expander_reset_active: io-expander-reset-active-state {
->>          pins = "gpio97";
->>          function = "gpio";
->>          drive-strength = <2>;
->>          bias-disable;
->>          output-high;
+On Tue, Apr 15, 2025 at 04:51:02PM +0800, Mauro Carvalho Chehab wrote:
+> Em Tue, 15 Apr 2025 16:40:34 +0800
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> escreveu:
+> > Em Tue, 15 Apr 2025 11:19:26 +0300
+> > Andy Shevchenko <andriy.shevchenko@intel.com> escreveu:
+> > > On Tue, Apr 15, 2025 at 11:17:12AM +0300, Andy Shevchenko wrote:  
+> > > > On Tue, Apr 15, 2025 at 10:49:29AM +0300, Jani Nikula wrote:    
+> > > > > On Tue, 15 Apr 2025, Andy Shevchenko <andriy.shevchenko@intel.com> wrote:    
+> > > > > > On Tue, Apr 15, 2025 at 10:01:04AM +0300, Andy Shevchenko wrote:    
+> > > > > >> On Mon, Apr 14, 2025 at 09:17:51AM -0600, Jonathan Corbet wrote:    
+> > > > > >> > Andy Shevchenko <andriy.shevchenko@intel.com> writes:    
+> > > > > >> > > On Wed, Apr 09, 2025 at 12:30:00PM -0600, Jonathan Corbet wrote:    
+> > > > > >> > >> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+> > > > > >> > >>     
+> > > > > >> > >> > This changeset contains the kernel-doc.py script to replace the verable
+> > > > > >> > >> > kernel-doc originally written in Perl. It replaces the first version and the
+> > > > > >> > >> > second series I sent on the top of it.    
+> > > > > >> > >> 
+> > > > > >> > >> OK, I've applied it, looked at the (minimal) changes in output, and
+> > > > > >> > >> concluded that it's good - all this stuff is now in docs-next.  Many
+> > > > > >> > >> thanks for doing this!
+> > > > > >> > >> 
+> > > > > >> > >> I'm going to hold off on other documentation patches for a day or two
+> > > > > >> > >> just in case anything turns up.  But it looks awfully good.    
+> > > > > >> > >
+> > > > > >> > > This started well, until it becomes a scripts/lib/kdoc.
+> > > > > >> > > So, it makes the `make O=...` builds dirty *). Please make sure this doesn't leave
+> > > > > >> > > "disgusting turd" )as said by Linus) in the clean tree.
+> > > > > >> > >
+> > > > > >> > > *) it creates that __pycache__ disaster. And no, .gitignore IS NOT a solution.    
+> > > > > >> > 
+> > > > > >> > If nothing else, "make cleandocs" should clean it up, certainly.
+> > > > > >> > 
+> > > > > >> > We can also tell CPython to not create that directory at all.  I'll run
+> > > > > >> > some tests to see what the effect is on the documentation build times;
+> > > > > >> > I'm guessing it will not be huge...    
+> > > > > >> 
+> > > > > >> I do not build documentation at all, it's just a regular code build that leaves
+> > > > > >> tree dirty.
+> > > > > >> 
+> > > > > >> $ python3 --version
+> > > > > >> Python 3.13.2
+> > > > > >> 
+> > > > > >> It's standard Debian testing distribution, no customisation in the code.
+> > > > > >> 
+> > > > > >> To reproduce.
+> > > > > >> 1) I have just done a new build to reduce the churn, so, running make again does nothing;
+> > > > > >> 2) The following snippet in shell shows the issue
+> > > > > >> 
+> > > > > >> $ git clean -xdf
+> > > > > >> $ git status --ignored
+> > > > > >> On branch ...
+> > > > > >> nothing to commit, working tree clean
+> > > > > >> 
+> > > > > >> $ make LLVM=-19 O=.../out W=1 C=1 CF=-D__CHECK_ENDIAN__ -j64
+> > > > > >> make[1]: Entering directory '...'
+> > > > > >>   GEN     Makefile
+> > > > > >>   DESCEND objtool
+> > > > > >>   CALL    .../scripts/checksyscalls.sh
+> > > > > >>   INSTALL libsubcmd_headers
+> > > > > >> .pylintrc: warning: ignored by one of the .gitignore files
+> > > > > >> Kernel: arch/x86/boot/bzImage is ready  (#23)
+> > > > > >> make[1]: Leaving directory '...'
+> > > > > >> 
+> > > > > >> $ touch drivers/gpio/gpiolib-acpi.c
+> > > > > >> 
+> > > > > >> $ make LLVM=-19 O=.../out W=1 C=1 CF=-D__CHECK_ENDIAN__ -j64
+> > > > > >> make[1]: Entering directory '...'
+> > > > > >>   GEN     Makefile
+> > > > > >>   DESCEND objtool
+> > > > > >>   CALL    .../scripts/checksyscalls.sh
+> > > > > >>   INSTALL libsubcmd_headers
+> > > > > >> ...
+> > > > > >>   OBJCOPY arch/x86/boot/setup.bin
+> > > > > >>   BUILD   arch/x86/boot/bzImage
+> > > > > >> Kernel: arch/x86/boot/bzImage is ready  (#24)
+> > > > > >> make[1]: Leaving directory '...'
+> > > > > >> 
+> > > > > >> $ git status --ignored
+> > > > > >> On branch ...
+> > > > > >> Untracked files:
+> > > > > >>   (use "git add <file>..." to include in what will be committed)
+> > > > > >> 	scripts/lib/kdoc/__pycache__/
+> > > > > >> 
+> > > > > >> nothing added to commit but untracked files present (use "git add" to track)    
+> > > > > >
+> > > > > > FWIW, I repeated this with removing the O=.../out folder completely, so it's
+> > > > > > fully clean build. Still the same issue.
+> > > > > >
+> > > > > > And it appears at the very beginning of the build. You don't need to wait to
+> > > > > > have the kernel to be built actually.    
+> > > > > 
+> > > > > kernel-doc gets run on source files for W=1 builds. See Makefile.build.    
+> > > > 
+> > > > Thanks for the clarification, so we know that it runs and we know that it has
+> > > > an issue.    
+> > > 
+> > > Ideal solution what would I expect is that the cache folder should respect
+> > > the given O=... argument, or disabled at all (but I don't think the latter
+> > > is what we want as it may slow down the build).  
+> > 
+> > From:
+> > 	https://github.com/python/cpython/commit/b193fa996a746111252156f11fb14c12fd6267e6
+> > and:
+> > 	https://peps.python.org/pep-3147/
+> > 
+> > It sounds that Python 3.8 and above have a way to specify the cache
+> > location, via PYTHONPYCACHEPREFIX env var, and via "-X pycache_prefix=path".
+> > 
+> > As the current minimal Python version is 3.9, we can safely use it.
+> > 
+> > So, maybe this would work:
+> > 
+> > 	make O="../out" PYTHONPYCACHEPREFIX="../out"
+> > 
+> > or a variant of it:
+> > 
+> > 	PYTHONPYCACHEPREFIX="../out" make O="../out" 
+> > 
+> > If this works, we can adjust the building system to fill PYTHONPYCACHEPREFIX
+> > env var when O= is used.
 > 
-> Yes, this this was I was looking for, thank you.
+> That's interesting... Sphinx is already called with PYTHONDONTWRITEBYTECODE.
+> From Documentation/Makefile:
 > 
-Hi Dmitry,
+> 	quiet_cmd_sphinx = SPHINX  $@ --> file://$(abspath $(BUILDDIR)/$3/$4)
+> 	      cmd_sphinx = $(MAKE) BUILDDIR=$(abspath $(BUILDDIR)) $(build)=Documentation/userspace-api/media $2 && \
+> 	        PYTHONDONTWRITEBYTECODE=1 \
+> 	...
+> 
+> It seems that the issue happens only when W=1 is used and kernel-doc
+> is called outside Sphinx.
+> 
+> Anyway, IMHO, the best would be to change the above to:
+> 
+> 	PYTHONPYCACHEPREFIX=$(abspath $(BUILDDIR))
+> 
+> And do the same for the other places where kernel-doc is called:
+> 
+> 	include/drm/Makefile:           $(srctree)/scripts/kernel-doc -none $(if $(CONFIG_WERROR)$(CONFIG_DRM_WERROR),-Werror) $<; \
+> 	scripts/Makefile.build:  cmd_checkdoc = $(srctree)/scripts/kernel-doc -none $(KDOCFLAGS) \
+> 	scripts/find-unused-docs.sh:    str=$(scripts/kernel-doc -export "$file" 2>/dev/null)
+> 
+> Comments?
 
-Thanks for the clarification.
+I would like that, but it should be properly formed, because somewhere we drop
+the path in the source tree and if $O is used as is, it becomes _the_ pycache
+folder!
 
-Thanks,
-Ayushi
->> };
->>
->> Thanks,
->> Ayushi
->>
->>>>
->>>>           io_expander: gpio@74 {
->>>>                   compatible = "ti,tca9539";
->>>>                   reg = <0x74>;
->>>>                   interrupts-extended = <&tlmm 98 IRQ_TYPE_EDGE_BOTH>;
->>>>                   gpio-controller;
->>>>                   #gpio-cells = <2>;
->>>>                   interrupt-controller;
->>>>                   #interrupt-cells = <2>;
->>>>
->>>>                   pinctrl-0 = <&io_expander_intr_active>,
->>>>                               <&io_expander_reset_active>;
->>>>                   pinctrl-names = "default";
->>>>
->>>>                   dsi0_int_pin: dsi0-int-pin-state {
->>>>                           pins = "gpio2";
->>>>                           input-enable;
->>>>                           bias-disable;
->>>>                   };
->>>>
->>>>                   dsi1_int_pin: dsi1-int-pin-state {
->>>>                           pins = "gpio10";
->>>>                           input-enable;
->>>>                           bias-disable;
->>>>                   };
->>>>
->>>>           };
->>>>
->>>> I couldn't find any devicetree example of tca9539 which is using pinctrl. The gpio-pca95xx.yaml DT binding does not match with any regex of the patterns properties.
->>>>
->>>> Thanks,
->>>> Ayushi
->>>
->>>
->>
-> 
-> 
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
