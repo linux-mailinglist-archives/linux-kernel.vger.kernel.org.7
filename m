@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-604289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DCE9A892F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 06:35:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D4E2A892E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 06:34:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E25416A891
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 04:34:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EE687AAED1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 04:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0D2822068B;
-	Tue, 15 Apr 2025 04:33:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73BFE2185A6;
+	Tue, 15 Apr 2025 04:33:22 +0000 (UTC)
 Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078BF2DFA5B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B1621E0B2;
 	Tue, 15 Apr 2025 04:33:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744691601; cv=none; b=njXFl0fyH8wIWIB0R+0xvoQL3hyYbdFOvA0XQPNI0EYYsk6sOEGk8C43IsUIy0P8Rw77/Ovvxg5ztxUgz8G+l554X9l2lb1fVezIh83WZ9T4Z3mGA8bRosSCqAkf0pQtg7/JkEhpJ0MPIh3K6QZJKBU8yvcRLg6STwJBcLB+0SM=
+	t=1744691602; cv=none; b=QDH71k+R0rCYklhoD0hHqIkuVjdst5SJOxPyNDSfHEYTKG1RBL0b33D0ImGMpLkKXyzfoe9aaqtig8Hk6+On647aCFOkseq7a9MhWZdyUAxK5kjsTYiLwUY4SozwupdWslbe4OLGafGGU25Kyp2zPoNNwhksXQwE4RH/2vqtjx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744691601; c=relaxed/simple;
-	bh=H9Nb43qmQ3mw+5fGuwmmyNo4+b3wuzjboNLWIALFDsU=;
+	s=arc-20240116; t=1744691602; c=relaxed/simple;
+	bh=5NiuUZyPNNRHGS09OfMi5gXlbyn66vSovJPHVv2RxHg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=s40shbDtm5TE55CwTwublSk+27TgJJSHf3wn1iha2DWDHMMOUPNtxhKWmO9e2X2uLNwSXf4+rObDoGNGzMmSEXzgMg1anHZB2psxbQqF/Ulx59Xjac7qFTSSoQspsoIaHE1hrJVMxQFJcVZUPa82IdR32h/joFVnzoHi/NLdK+U=
+	 MIME-Version; b=MqzSbc7X+g9PsYLalvPrgv9KZ5pvcPl6zY47Zqbjed9elMBkj1fQvDYP6GSKAPiOzXyjn2WRsjhsHiOac5o/zzzUnunlu8gDJjmSWtojX4GkoRuZ3RScxIYJsMRpcb8vDMd+dQkISiUTMbfBKqpryEtcRgugDWGKvMooeRdzDzE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; arc=none smtp.client-ip=46.19.9.99
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
@@ -32,7 +32,7 @@ Received: from [89.212.21.243] (port=52324 helo=localhost.localdomain)
 	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <primoz.fiser@norik.com>)
-	id 1u4Xz5-00Gb4I-0p;
+	id 1u4Xz5-00Gb4I-16;
 	Tue, 15 Apr 2025 06:33:18 +0200
 From: Primoz Fiser <primoz.fiser@norik.com>
 To: Rob Herring <robh@kernel.org>,
@@ -47,9 +47,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	upstream@lists.phytec.de
-Subject: [PATCH v2 06/15] arm64: dts: freescale: imx93-phyboard-segin: Drop eMMC no-1-8-v flag
-Date: Tue, 15 Apr 2025 06:33:02 +0200
-Message-Id: <20250415043311.3385835-7-primoz.fiser@norik.com>
+Subject: [PATCH v2 07/15] arm64: dts: freescale: imx93-phyboard-segin: Disable SD-card write-protect
+Date: Tue, 15 Apr 2025 06:33:03 +0200
+Message-Id: <20250415043311.3385835-8-primoz.fiser@norik.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250415043311.3385835-1-primoz.fiser@norik.com>
 References: <20250415043311.3385835-1-primoz.fiser@norik.com>
@@ -71,34 +71,34 @@ X-Source:
 X-Source-Args: 
 X-Source-Dir: 
 
-Drop redundant 'no-1-8-v' flag from usdhc1 (eMMC) node. Flag is now set
-by default in the SOM include file (imx93-phycore-som.dtsi).
+Add disable-wp flag (write-protect) to usdhc2 node (SD-card) to get rid
+of the following kernel boot warning:
+
+  host does not support reading read-only switch, assuming write-enable
+
+Micro SD cards can't be physically write-protected like full-sized
+cards anyways.
 
 Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
 ---
 Changes in v2:
-- add Reviewed-by tag 
+- reword commit message
 
- arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts | 5 -----
- 1 file changed, 5 deletions(-)
+ arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts b/arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts
-index 85fb188b057f..902b523fc92c 100644
+index 902b523fc92c..3d5cd0561362 100644
 --- a/arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts
 +++ b/arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts
-@@ -40,11 +40,6 @@ &lpuart1 {
- 	status = "okay";
- };
- 
--/* eMMC */
--&usdhc1 {
--	no-1-8-v;
--};
--
- /* SD-Card */
- &usdhc2 {
- 	pinctrl-names = "default", "state_100mhz", "state_200mhz";
+@@ -48,6 +48,7 @@ &usdhc2 {
+ 	pinctrl-2 = <&pinctrl_usdhc2_200mhz>, <&pinctrl_usdhc2_cd>;
+ 	bus-width = <4>;
+ 	cd-gpios = <&gpio3 0 GPIO_ACTIVE_LOW>;
++	disable-wp;
+ 	no-mmc;
+ 	no-sdio;
+ 	vmmc-supply = <&reg_usdhc2_vmmc>;
 -- 
 2.34.1
 
