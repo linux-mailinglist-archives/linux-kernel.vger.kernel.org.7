@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-605545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63205A8A2C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 17:33:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D22E9A8A2B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 17:32:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6F71189F6B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:33:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3DFF17F8D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:32:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6F629E069;
-	Tue, 15 Apr 2025 15:32:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 502D1292911;
+	Tue, 15 Apr 2025 15:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lWBd9N2W"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NL0UBBK2"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B8A29B78E;
-	Tue, 15 Apr 2025 15:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6C11E51D;
+	Tue, 15 Apr 2025 15:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744731125; cv=none; b=EF/KZyixq3hNch7a0SgMRAsRNhNStx4NmYhEX57sNV8wn+sZdMVna3J9F9gKdC03ucxF7sbX/xIk7i0vwSqdkH8uh1hFWtRMGzg2IXUTtGJCxS7wDF1dB0IDRHpge31PdgV4XTekrJ3rBJ71tyw5Eo+rLQEVm7cEoKRCU7eKKh4=
+	t=1744731119; cv=none; b=iXbx1PzmyRXVLy47WECJOyLV4VsUHW9mYylPSnfpeUwJLvor4u8juFuGXHj8d4zqWDRgF0jzncDBPnDnlOEohH44ZGRMuzW8nbOcfwUyqAsWdyc4vTaNKjfsZGw/RSfockCoIOooBrPVPs6WU7UDzLSHlAnDEFTXrcjDBacLnvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744731125; c=relaxed/simple;
-	bh=bwYTBuvzOhLMAMSvjeTqAcNEmRlazQOCEzKMKTxaAo8=;
+	s=arc-20240116; t=1744731119; c=relaxed/simple;
+	bh=/p+JcqYdl+pxBRTDVPhHxtCmteePsCsNY6VSwVydgE4=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oCgYtaKrkDm6HMnug85YJZh6Pm8I6BXsHtDhMb+DrfjsxlF0weNLeCdVK5uZg4bkhMXGpDX7QG8Ly//my3cht2eYCv7sjNt+JI1qVYgn5cStUPU1F/mevOMITqeDx88iSoxokvo4f4kxCdRBgNZq5b7rfRqXEIwnE1WwAefpgSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=lWBd9N2W; arc=none smtp.client-ip=198.47.23.235
+	 MIME-Version:Content-Type; b=VwY1I6hWDjVqgYFZFpi8+n9eLyL+S0ev6SB/d72i6S7XovINSHH2+kBzGxEh/ApWahPdO5xVXIz5JAHD6Tz0Q+gZ8rPBjzinlHnx4gOjb5Sb/zmGaf8uP8jKbh53JB3gCxf7IfN93EXgQBpDBsx0i5D8zFGKS63O2kfBSED6A5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=NL0UBBK2; arc=none smtp.client-ip=198.47.23.234
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53FFVmLf067493
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53FFVm6q2507799
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Tue, 15 Apr 2025 10:31:48 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
 	s=ti-com-17Q1; t=1744731108;
-	bh=0x4HYCG6udDh+zdPSfjRlPnIjrs/dPAOW/52VBr2Zg8=;
+	bh=XCjg4i8ZgYjakhLTUPL8nLS4OnMWrlnHzBvMA0FiVAQ=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=lWBd9N2WsD/48djntRd9+nArzQLBGRFZhyQaskQT0yDU9rOHRs+29/tgTxGjQWAU/
-	 jmuPzMIuUPiQylKP3MB/+3xwAh3VZS8UQPIqtgsPeB6DOZLLa8ZT5IyA6HmcPlkxtX
-	 WhVcFITUO/7UhWY+6UpFjCnNX7g75uhTrKvMyKgg=
+	b=NL0UBBK2PAgvu3EbtWBx0xwjuZMYIXuIHYcu25JwlQCZ1elDCNP8pyjaKbHcDPE/P
+	 vM1pjMYUUg8SmpKsrKSMx0ryFNGOipzoRs/yLRecM2vIBkwxbWU7FbS/Sl4QlVUuGH
+	 RQDmJEAouLTQK/FvkYOxcCSmVOM83XkwylU0Yi6s=
 Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53FFVm2L030234
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53FFVmsL040449
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
 	Tue, 15 Apr 2025 10:31:48 -0500
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE114.ent.ti.com
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE114.ent.ti.com
  (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 15
  Apr 2025 10:31:47 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
  Frontend Transport; Tue, 15 Apr 2025 10:31:47 -0500
 Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53FFVlZt109804;
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53FFVlZu109804;
 	Tue, 15 Apr 2025 10:31:47 -0500
 From: Judith Mendez <jm@ti.com>
 To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
@@ -69,9 +69,9 @@ CC: Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
         Markus Schneider-Pargmann
 	<msp@baylibre.com>,
         Devarsh Thakkar <devarsht@lewv0571a.ent.ti.com>
-Subject: [PATCH v7 03/11] arm64: dts: ti: k3-am62a-mcu: Add R5F remote proc node
-Date: Tue, 15 Apr 2025 10:31:39 -0500
-Message-ID: <20250415153147.1844076-4-jm@ti.com>
+Subject: [PATCH v7 04/11] arm64: dts: ti: k3-am62a-wakeup: Add R5F device node
+Date: Tue, 15 Apr 2025 10:31:40 -0500
+Message-ID: <20250415153147.1844076-5-jm@ti.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250415153147.1844076-1-jm@ti.com>
 References: <20250415153147.1844076-1-jm@ti.com>
@@ -85,53 +85,55 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-From: Hari Nagalla <hnagalla@ti.com>
+From: Devarsh Thakkar <devarsht@ti.com>
 
-AM62A SoCs have a single R5F core in the MCU voltage domain.
-Add the R5FSS node with the child node for core0 in MCU voltage
-domain .dtsi file.
+AM62A SoCs have a single R5F core in wakeup domain. This core is
+also used as a device manager for the SoC.
 
+Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
 Signed-off-by: Hari Nagalla <hnagalla@ti.com>
 Signed-off-by: Judith Mendez <jm@ti.com>
 Acked-by: Andrew Davis <afd@ti.com>
 ---
- arch/arm64/boot/dts/ti/k3-am62a-mcu.dtsi | 25 ++++++++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi | 25 +++++++++++++++++++++
  1 file changed, 25 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62a-mcu.dtsi b/arch/arm64/boot/dts/ti/k3-am62a-mcu.dtsi
-index 9ed9d703ff24d..ee961ced7208f 100644
---- a/arch/arm64/boot/dts/ti/k3-am62a-mcu.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62a-mcu.dtsi
-@@ -174,4 +174,29 @@ mcu_mcan1: can@4e18000 {
- 		bosch,mram-cfg = <0x0 128 64 64 64 64 32 32>;
- 		status = "disabled";
+diff --git a/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi
+index b2c8f53517438..259ae6ebbfb5a 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi
+@@ -103,6 +103,31 @@ wkup_rti0: watchdog@2b000000 {
+ 		status = "reserved";
  	};
-+
-+	mcu_r5fss0: r5fss@79000000 {
+ 
++	wkup_r5fss0: r5fss@78000000 {
 +		compatible = "ti,am62-r5fss";
 +		#address-cells = <1>;
 +		#size-cells = <1>;
-+		ranges = <0x79000000 0x00 0x79000000 0x8000>,
-+			 <0x79020000 0x00 0x79020000 0x8000>;
-+		power-domains = <&k3_pds 7 TI_SCI_PD_EXCLUSIVE>;
++		ranges = <0x78000000 0x00 0x78000000 0x8000>,
++			 <0x78100000 0x00 0x78100000 0x8000>;
++		power-domains = <&k3_pds 119 TI_SCI_PD_EXCLUSIVE>;
 +		status = "disabled";
 +
-+		mcu_r5fss0_core0: r5f@79000000 {
++		wkup_r5fss0_core0: r5f@78000000 {
 +			compatible = "ti,am62-r5f";
-+			reg = <0x79000000 0x00008000>,
-+			      <0x79020000 0x00008000>;
++			reg = <0x78000000 0x00008000>,
++			      <0x78100000 0x00008000>;
 +			reg-names = "atcm", "btcm";
-+			resets = <&k3_reset 9 1>;
-+			firmware-name = "am62a-mcu-r5f0_0-fw";
-+			ti,atcm-enable = <0>;
++			resets = <&k3_reset 121 1>;
++			firmware-name = "am62a-wkup-r5f0_0-fw";
++			ti,atcm-enable = <1>;
 +			ti,btcm-enable = <1>;
-+			ti,loczrama = <0>;
++			ti,loczrama = <1>;
 +			ti,sci = <&dmsc>;
-+			ti,sci-dev-id = <9>;
-+			ti,sci-proc-ids = <0x03 0xff>;
++			ti,sci-dev-id = <121>;
++			ti,sci-proc-ids = <0x01 0xff>;
 +		};
 +	};
- };
++
+ 	wkup_vtm0: temperature-sensor@b00000 {
+ 		compatible = "ti,j7200-vtm";
+ 		reg = <0x00 0xb00000 0x00 0x400>,
 -- 
 2.49.0
 
