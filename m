@@ -1,98 +1,120 @@
-Return-Path: <linux-kernel+bounces-604734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA658A897DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:26:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 517E6A897EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:27:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45A6A188CE96
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:26:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FF1F18944D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 09:27:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E317F288CA3;
-	Tue, 15 Apr 2025 09:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tPQxrmf+"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C946284680;
+	Tue, 15 Apr 2025 09:27:17 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADAE5288C88
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 09:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247632820B0;
+	Tue, 15 Apr 2025 09:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744709170; cv=none; b=EKycipfpjDzWQ2JNuvHnSmfB4W/2ymEJ8JfTOhN/vUrG4CUoq9JSfKqW2SZ8P5KGg0gnEjbgbdyQiccT7T1nUi+t0dCh+h5f+ITnGhKE8LRnBEK1EG8B/7Fi6oPrAhajKtB7Be23IHW9k3JGhtYu1vtDSbpOSzVm/HRHL7aNTsg=
+	t=1744709236; cv=none; b=AY7ETay/B0v7yu54jxXKoqnkKOBp15osUhghTtKUim0gkZEcrbwL2sBCeO1Kto/u5f57+8Fi299+1n1i9ne0qqYpXoWyJ8Jf0QtnPs/iv100WHJ/2YW9QgxNaNv0ChiMI2vyaK6kUa3yqkrHlOb+W5phcHWaJEKpMyLC8PupMdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744709170; c=relaxed/simple;
-	bh=/u5Oni1B7nlk9985eSb6XttI0rp4egr161AKqYs7Iqw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hAmMz2a1T2U7Qt7SHYciV+HLKHwEa5GJpvg/TOmCc7XVfv+ttNsP0yguqe4VzHuiGye5MJf9UEzw6kZ/dzL7ck8rQcokjs7iGSavr56ANx3eBfVk5OoxE33yIuoobkMUpz+VfTx48QSLB1e0HEeyc50mI9EtIztXy+i6HrDObSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tPQxrmf+; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43d6c65dc52so41806015e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 02:26:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744709167; x=1745313967; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kFv4zzeDVFt2wFNfc+l1QeY2z3r5rZGCAIJcj5O71+o=;
-        b=tPQxrmf+ZVjSu+cK4pwn+KgCUy1sWtXdltEtqNlEeiEZZ/5y9oudAUSxVRonip62Jf
-         pExsTxKZb1kEjZxFy8cLKlP6praF11spaDZQ7blt9iceCL28gva8mudUKfERcmmDLfUJ
-         BxM3kPv1LXeS5sCSupjShcfzoC37UWRhlt4x2VYbP2B9jevDB/QqxhK3MMS/8dweu7E4
-         ivnnlyA3TkV1bx1x2+/auO/5w7VZgeh8ns/TJw7K1zZRmYgU8ogEJz+6BLzgoF6x28EY
-         XWSclsPKX97hX4tnuPxcuI3V/KFmOVqDw+Vlx5duTidtx4PZKbD4dIg+yyp0ntFmveFH
-         UcBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744709167; x=1745313967;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kFv4zzeDVFt2wFNfc+l1QeY2z3r5rZGCAIJcj5O71+o=;
-        b=KLMff7nmxPBRRo9l2bkHJxne0yfQjDuab2WSWujzZ3CypBSGJbAHONKF/U/mRYXu30
-         IT6dv1XGLGUaPVfAwmQikFfb7LhXTKUb2Ch7pZiPyK+VF+M8qkMg5sr4vYzJWOCIoAXX
-         CwLBY9VRzSCzdX8XptyZ9PxAikAD9Z6lix2BiirocRagsfEANLj6lCed+n7gExV1eYbH
-         KHHv8if5PtFok4XuVr5cGy4bEszh8iUjc5NF7mpOsW/c2/1NOiJ1cvI8WkSdIg7vuAYH
-         L03ly5Lttilf1z70oX92q9oZ+riMGG3tk/2TtvoNzMDQJRg87v3PNNW3k9OZX9sDbJ7O
-         U/EA==
-X-Forwarded-Encrypted: i=1; AJvYcCXBVJJyPSnuSdqyPYQP0fq+Ee3GkUb9GPnO0xtk6pKEIZp0UsoDb9w5ATgh8h96oXioQB5meM9nLPw8WpQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXCq0yxFyUWhWVtc40eEUrzCF/A/prh33DcZVDynHvFKSgPcuw
-	njLyhMtUu4wbhopDa3YSGYw2Qu1A5KOehBcctzosz7J7j0BMESrtzzM4vaayhZeqzn/Uww2Qwnb
-	yCD+CoxdcyQtP3w==
-X-Google-Smtp-Source: AGHT+IFeSEt4wIOY01EI6T4xsz1Ma5642UUs6D/RIhqS/zc7ZZbyi0t98TnaKTF3Edu8clmB7G4YeK1q3rLrMu0=
-X-Received: from wrxn4.prod.google.com ([2002:a5d:6b84:0:b0:397:c98b:1537])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:1887:b0:390:f9d0:5df with SMTP id ffacd0b85a97d-39eaaec7a7bmr11167075f8f.52.1744709167073;
- Tue, 15 Apr 2025 02:26:07 -0700 (PDT)
-Date: Tue, 15 Apr 2025 09:26:05 +0000
-In-Reply-To: <20250414195928.129040-3-benno.lossin@proton.me>
+	s=arc-20240116; t=1744709236; c=relaxed/simple;
+	bh=LP2dtJdyJA35myFiGrNHz8KbwDPs7k7TIUhuQIUB7U8=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=i6gxDjaMtaLIowz0x/5bVbJIusynr10gS0z/F2TlLVZRakiycmKCmtv+RzepiktExoHBTMviom/a4aO5/TsgfqLjiPaQ4S0sfou3JPuhmcZFeb07GLs6QvS1SQhD72a7n/FjH5oLe5ch6wlO6QBnPPt0xIbLfF2LR9jfPvHLzV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53F6JK5V008571;
+	Tue, 15 Apr 2025 09:26:42 GMT
+Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 45ydd1k67t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Tue, 15 Apr 2025 09:26:41 +0000 (GMT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Tue, 15 Apr 2025 02:26:40 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Tue, 15 Apr 2025 02:26:37 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <jack@suse.cz>
+CC: <almaz.alexandrovich@paragon-software.com>, <brauner@kernel.org>,
+        <hch@infradead.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
+        <ntfs3@lists.linux.dev>,
+        <syzbot+e36cc3297bd3afd25e19@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>, <viro@zeniv.linux.org.uk>
+Subject: [PATCH V2] fs/ntfs3: Add missing direct_IO in ntfs_aops_cmpr
+Date: Tue, 15 Apr 2025 17:26:37 +0800
+Message-ID: <20250415092637.251786-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <q5zbucxhdxsso7r3ydtnsz7jjkohc2zevz5swfbzwjizceqicp@32vssyaakhqo>
+References: <q5zbucxhdxsso7r3ydtnsz7jjkohc2zevz5swfbzwjizceqicp@32vssyaakhqo>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250414195928.129040-1-benno.lossin@proton.me> <20250414195928.129040-3-benno.lossin@proton.me>
-Message-ID: <Z_4mLRn-piSzuuf6@google.com>
-Subject: Re: [PATCH 2/3] rust: pin-init: examples: conditionally enable `feature(lint_reasons)`
-From: Alice Ryhl <aliceryhl@google.com>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Fiona Behrens <me@kloenk.dev>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: ajtiTctVFHTci5pOX7J_hLlgq0UvoyFH
+X-Proofpoint-GUID: ajtiTctVFHTci5pOX7J_hLlgq0UvoyFH
+X-Authority-Analysis: v=2.4 cv=HecUTjE8 c=1 sm=1 tr=0 ts=67fe2651 cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=XR8D0OoHHMoA:10 a=edf1wS77AAAA:8 a=hSkVLCK3AAAA:8 a=t7CeM3EgAAAA:8 a=wy8MQQXfsJFEdZ-aUNQA:9 a=DcSpbTIhAlouE1Uv7lRv:22
+ a=cQPPKAXgyycSBL8etih5:22 a=FdTzh2GWekK77mhwV6Dw:22
+X-Sensitive_Customer_Information: Yes
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-15_04,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ phishscore=0 malwarescore=0 priorityscore=1501 spamscore=0 bulkscore=0
+ adultscore=0 mlxlogscore=921 impostorscore=0 suspectscore=0 clxscore=1015
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.21.0-2502280000
+ definitions=main-2504150065
 
-On Mon, Apr 14, 2025 at 08:00:20PM +0000, Benno Lossin wrote:
-> `lint_reasons` is unstable in Rust 1.80 and earlier, enable it
-> conditionally in the examples to allow compiling them with older
-> compilers.
-> 
-> Link: https://github.com/Rust-for-Linux/pin-init/pull/33/commits/ec494fe686b0a97d5b59b5be5a42d3858038ea6a
-> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
+The ntfs3 can use the page cache directly, so its address_space_operations
+need direct_IO. Exit ntfs_direct_IO() if it is a compressed file.
 
-Why not just always use #![feature] together with -Astable_features like
-the kernel does?
+Fixes: b432163ebd15 ("fs/ntfs3: Update inode->i_mapping->a_ops on compression state")
+Reported-by: syzbot+e36cc3297bd3afd25e19@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=e36cc3297bd3afd25e19
+Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+---
+V1 -> V2: exit direct io if it is a compressed file.
 
-Alice
+ fs/ntfs3/inode.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
+index 3e2957a1e360..0f0d27d4644a 100644
+--- a/fs/ntfs3/inode.c
++++ b/fs/ntfs3/inode.c
+@@ -805,6 +805,10 @@ static ssize_t ntfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 		ret = 0;
+ 		goto out;
+ 	}
++	if (is_compressed(ni)) {
++		ret = 0;
++		goto out;
++	}
+ 
+ 	ret = blockdev_direct_IO(iocb, inode, iter,
+ 				 wr ? ntfs_get_block_direct_IO_W :
+@@ -2068,5 +2072,6 @@ const struct address_space_operations ntfs_aops_cmpr = {
+ 	.read_folio	= ntfs_read_folio,
+ 	.readahead	= ntfs_readahead,
+ 	.dirty_folio	= block_dirty_folio,
++	.direct_IO	= ntfs_direct_IO,
+ };
+ // clang-format on
+-- 
+2.43.0
+
 
