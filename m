@@ -1,85 +1,86 @@
-Return-Path: <linux-kernel+bounces-604937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B26DA89ADC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:48:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5B25A89AE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 12:48:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DCCB16EC49
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:48:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 359631894576
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18A129A3E1;
-	Tue, 15 Apr 2025 10:44:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B2892918CC;
+	Tue, 15 Apr 2025 10:44:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fyqywR19"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XK8QoqY/"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183C628F538
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 10:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCC2E2820D0
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 10:44:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744713854; cv=none; b=VSAumaPA2N1rEfoUj75x8cLFyGbQUkqbGogHlJTZJEg5JfPn04xpbqdLSTMzQBdETMHjw40P5mTYxRdUUBaZ9avE+pJztPaoO04WyYK/7XVW6qsPCOq4AFSa9Yy4UPj/5pzzs86VkwknE+A+xzNgCkaMuUUhbtOQ9dg3iWeztTk=
+	t=1744713897; cv=none; b=A8KebHDWP9zp8JlmhXaUVbOIAIty+I0EQS9NIdHWyYFERBP88S+p3jXOjksM0jmHsHQOcCpxhCnfvyxuGxnEO+2NvVr6ajM6SpMQRG8FzKkGb1mSSTKt7T66s53e/gRv7maufBd0YKWvUYq8cgZpESxDeeBUcXHq+b4RvuUd2P8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744713854; c=relaxed/simple;
-	bh=AcnrBHHdCeMTP+XyRkMFzaV10++l5FRsKlYChijICJo=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UXU2H8JolfUsiezxgm2uXIskscoq2DxDcnfRbuS14gaHqfduXsUDA2oE+dl3z8aJD3SiDD3a8MhunSHbJeIzFoD2HjpLAPzq0F8R5eSFP9chqqp5VInjrqKjRP1YR+EiDzTzI7uERbmnCBcCFoKtL5wbdH/q9zWUQO8Tcb0v4+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fyqywR19; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-30bfc8faef9so50473771fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 03:44:11 -0700 (PDT)
+	s=arc-20240116; t=1744713897; c=relaxed/simple;
+	bh=SSVPDq/BXaFrhLTbxEzi3l66eOM0a6vm/T2BPj4C/tE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ooy5YQsoi56Tp/V5ZC2GjuMFOHCtQaxsAKfinqA7pE4/qXe1FKKGvDZAN9G07L2bctMYbUxKc2SVN2Z06ofRnmocMAjrr9W3NUgB8WMaugKmUs/rUAQSaCtfYMb2p9HY7TGkxz3ezlVNDkXM2fD88kEZF2woFAR70XJ3qOxrfmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XK8QoqY/; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-39149bccb69so5272383f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 03:44:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744713850; x=1745318650; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VrLvFpuHTSAZbRxj4a3Ca45pKQLXAVqNxC9uOeGwapU=;
-        b=fyqywR194/ljQI2EsRUFzmggVpD5fRsv3DO0fPLrEDw4A0mfbziN6tsgqnHJhKdB8h
-         U3rYO29cYVvgJ/N3Wdl2GRxfeUglaQGEu7YkugGkDCGf1BJUXgUoFqrVMSEAyPiBf1cB
-         wyuBoW6uT1cY/NMAh6M/R6bkygUIyJNA3MIMQLUBWbdIhujN2PGMHLI071hC7OYUIKbU
-         ZeoNMAn83hwshgZybdRb7cP+sdsRMbA/DKfPid9pLQu5Aphm8wvxuxcODPl2kWLI58TR
-         yL72LlRXXXUBv3DWSIKbUcap3CwfXkzNNRSohyxqpmZ86Xan4plxDYp99S0ScLJl19jj
-         x4mA==
+        d=linaro.org; s=google; t=1744713894; x=1745318694; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fdo8dneaizrUoQYs0r04kTs5qLNomw+odVlo3gYg1Fw=;
+        b=XK8QoqY/MfMNuamODGUJFPtKToHVvyJTt2WL+hUCTXOV85dG8T8H8AJdYQkaijQGvb
+         yHO2qZ+bBH5hnX9+m1Ra+6EjRrEAEVhCFjZexHOIfgSXR801V+IAmHj2yBDVPRP7yO5d
+         hXQXIl2TLUIF5afE+Xezi3wuu/ZpQN0Z6J+cKFdbmjOJWh5BuU5LDQ8CJ+Msk4mOfDEh
+         olr8JLDJwb94styb9VQi6KxpRcKP7Idep9tnhHEKbWoAqoG+ly+lv6LD9jyHEzw9/oFL
+         6AGX4MUWONkoBW0pV2ml/bbVV5nLn5pGQAyi04RPMT7ReTDVK7WNS1myWueBCQ8PFGSH
+         viAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744713850; x=1745318650;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VrLvFpuHTSAZbRxj4a3Ca45pKQLXAVqNxC9uOeGwapU=;
-        b=b9p6nxFZ301rtVXOC1Gru6L6PLfHF3SS8R+02/+iSQnfZ4N/qBz9WVm7xCXQUYhTDp
-         qnwErMXekX0mxwBSh1usFMQJjsB1lTQcKCfldIJYEq+Mf6yWV5l9F9+xKc6QjNopEFdI
-         MvQI/mI29rnCN1KfKsuoIvGwa9v4iEzBCwgsJ8b0V/Bv1zDFaF0Pjkjb0RqQxb/gx9b5
-         X0dT+4xy0yUzsVNKdge1SGkQLFgKpofg5z2n/0+tbN5X/90Vod+XxvFeygl4K/JoOyZu
-         Dh77sq523sD5ycgW2b9ru/A4GVIV67bzCzJ9vFeC9k7oBfNBH9vI+Kmim76l9qdEhB4m
-         uREA==
-X-Forwarded-Encrypted: i=1; AJvYcCUijdGmP6sL8iohHljMdQRiCm/AwZyD5d8zxXBFTgZoXTT9N7lg5Bwg3xE/dMEg6wLdnLsgfTCCjMJUsbg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLDCIHE6D6QZ7Jff++we2zi1V9JBrXzcY5GuL1w/XWL3+KEWdQ
-	JQnk6sqtJFTVCuDO/+zB5nc9A/TnvBq6R5Yv/AiitKWvgbsedIeS
-X-Gm-Gg: ASbGnctr93GUqbYAQKEZl3inwDX4qAK7J8pBwYsz0uh3bMfNJ1ynl/bI1IK28OYNp2m
-	C7w/IWlsWjx3o0aNf3nDdVceFj2HiCwtKoqNZ/keU3foxcVJcGu/0+ETm94rILG5kIHtaqkFbvs
-	UbnVs3wLYhorg/J7A+sMyuzUku5WmYKd0d3q1AY1KrHbbBUoPccdjarPAWaFGTi8XckmgPc66BM
-	yWRmifm91WLMA93wyU7oLiTl2qfPM6CeHZC5ehWf1n/8+c7xZIPTZwBeAV53rj7qenYnZkvuznV
-	pez+pwkYDYfOyuHVtuSAfnvFKykmdL1p3XU9fixShtHXUwOTicPQJLywrF7hszTAbykq
-X-Google-Smtp-Source: AGHT+IEq/npw1FKWrK84Hcg467AIj49xSaKauOvtLI8LfcqRE1zz7NBCC2GkNPBmA5sg5WHHTC0CfA==
-X-Received: by 2002:a05:651c:210d:b0:30a:4428:dea9 with SMTP id 38308e7fff4ca-31049a807e3mr51421781fa.30.1744713849631;
-        Tue, 15 Apr 2025 03:44:09 -0700 (PDT)
-Received: from pc636 (host-90-233-217-52.mobileonline.telia.com. [90.233.217.52])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30f465f84f1sm20090601fa.102.2025.04.15.03.44.08
+        d=1e100.net; s=20230601; t=1744713894; x=1745318694;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fdo8dneaizrUoQYs0r04kTs5qLNomw+odVlo3gYg1Fw=;
+        b=vBB0nbFUV1UaanUpx2sY0mX8Iv6S8VWOIaKR1Fk5vKXS2+h4e2uiv1U6x+kpcythy/
+         LAMH/bEBb8rsiVnSQEj9BOo7IIQtU2IcySOLxGk8/dO4kWM2q34wUCDX5il/aKkl1UQM
+         LE06fKFyzOcXd/Hsll91w2f/ff6v3qgjRbS5+iMhUpdwH5Rh5TuqhDZ7tL2ePLKDDmOi
+         jPXPMD3BQhHz20qa0XOuIKFBzsCelzuA/JxaBqbkXZppXcbRoH0bM5LxMkjGRyzUIPDV
+         ImJ0R9uhyeqb1/4R8yppt8fPlUAZZmfV/T3KOKS1pBSvbTAQFlZMs0Staa0smtfsxKMl
+         Y4fw==
+X-Forwarded-Encrypted: i=1; AJvYcCXvRVWelsRyjdM/E49IGauqMMT1vE4n7u1LAJ8Sdf68xCdKXOFJ7Do62I/1beEWdSG3tJpiKizC4WbK3IQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1gXAJSA3diWgfVVFK+imsqruTGbVdXIjOp3M3sUN0SFltn4rk
+	h7Qgn8gHkIWz6MypV1t8n920X4OibuKkxobiv0DBFOvHBnYoYMZA/gZHPst+S7M=
+X-Gm-Gg: ASbGnct2XvB8iRZbtR+J4ybgf0OUmQRCI1ISFg0zyl0gMR0fv58R6+26r75g0s2zYMU
+	3lRMi5xnQ+8o9JCHJZTfKoRwsJFF9V9c74V7FPSfNMFG0uhkxLkCZBYpg+7HDTg6d4gl7w3maV8
+	3xSce1k2sfstOS5GXq/xzrarMixIs4kEKJB6R0b4AdGixRbFzKTqOF3UPmUFpibaEuGJSJ45MUa
+	TKdZu9PNcIF3iicYuUhe5VhOyUCLDoEKJRmIsUCnPuNKX/AeQCZGr6x+C79kjp8Tz9iduAsF7Qi
+	D7FmB7bc4Tk6fnzl4ToaQBtjqkkawJ8hnCnjXhTahCEodNXF0XdMSIIo
+X-Google-Smtp-Source: AGHT+IGc9RW10knIr3MFj1Pzt4vKOq0H3enobQU/zlnoeN7SKpLX1yrOkCKkuW4z4l4oMeg39rDQgQ==
+X-Received: by 2002:a05:6000:2403:b0:39c:30fd:ca7 with SMTP id ffacd0b85a97d-39ea51d10a1mr13006863f8f.7.1744713894209;
+        Tue, 15 Apr 2025 03:44:54 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39eae977a7fsm13703803f8f.45.2025.04.15.03.44.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Apr 2025 03:44:09 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Tue, 15 Apr 2025 12:44:06 +0200
-To: Baoquan He <bhe@redhat.com>
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org, urezki@gmail.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/5] mm/vmalloc: optimize function vm_unmap_aliases()
-Message-ID: <Z_44dmh7zGKzAdsb@pc636>
-References: <20250415023952.27850-1-bhe@redhat.com>
- <20250415023952.27850-5-bhe@redhat.com>
+        Tue, 15 Apr 2025 03:44:53 -0700 (PDT)
+Date: Tue, 15 Apr 2025 13:44:50 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Eric Huang <jinhuieric.huang@amd.com>
+Cc: Felix Kuehling <Felix.Kuehling@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Kent Russell <kent.russell@amd.com>, amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] drm/amdkfd: Fix kfd_smi_event_process()
+Message-ID: <Z_44oq-aSZOsvxTN@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,39 +89,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250415023952.27850-5-bhe@redhat.com>
+X-Mailer: git-send-email haha only kidding
 
-On Tue, Apr 15, 2025 at 10:39:51AM +0800, Baoquan He wrote:
-> Remove unneeded local variables and replace them with values.
-> 
-> Signed-off-by: Baoquan He <bhe@redhat.com>
-> ---
->  mm/vmalloc.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index bf735c890878..3f38a232663b 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -2930,10 +2930,7 @@ static void _vm_unmap_aliases(unsigned long start, unsigned long end, int flush)
->   */
->  void vm_unmap_aliases(void)
->  {
-> -	unsigned long start = ULONG_MAX, end = 0;
-> -	int flush = 0;
-> -
-> -	_vm_unmap_aliases(start, end, flush);
-> +	_vm_unmap_aliases(ULONG_MAX, 0, 0);
->  }
->  EXPORT_SYMBOL_GPL(vm_unmap_aliases);
->  
-> -- 
-> 2.41.0
-> 
-Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+The "pdd->drm_priv" NULL check is reversed so it will lead to a NULL
+dereference on the next line.
 
-Makes sense!
+Fixes: 4172b556fd5b ("drm/amdkfd: add smi events for process start and end")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/gpu/drm/amd/amdkfd/kfd_smi_events.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---
-Uladzislau Rezki
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_smi_events.c b/drivers/gpu/drm/amd/amdkfd/kfd_smi_events.c
+index 727a4ce29fe6..c27fd7aec1c3 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_smi_events.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_smi_events.c
+@@ -350,7 +350,7 @@ void kfd_smi_event_process(struct kfd_process_device *pdd, bool start)
+ 	struct amdgpu_task_info *task_info;
+ 	struct amdgpu_vm *avm;
+ 
+-	if (pdd->drm_priv)
++	if (!pdd->drm_priv)
+ 		return;
+ 
+ 	avm = drm_priv_to_vm(pdd->drm_priv);
+-- 
+2.47.2
+
 
