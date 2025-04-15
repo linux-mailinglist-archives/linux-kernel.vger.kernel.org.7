@@ -1,166 +1,117 @@
-Return-Path: <linux-kernel+bounces-605548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 752B5A8A2C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 17:33:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8CCDA8A2D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 17:34:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D29C1641AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:33:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB251171FAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:34:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1EA92BD5BC;
-	Tue, 15 Apr 2025 15:32:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A2E297A4A;
+	Tue, 15 Apr 2025 15:32:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="DZTBSGFr"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jF6bQkfg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A01902BCF48;
-	Tue, 15 Apr 2025 15:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A7F2973A2
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 15:32:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744731128; cv=none; b=Ga8DgWkHm0V9ArxIVSshldCXhel3JJTJ5VBLAdBeg7s8euM4ZdC6ovOu0fF3DLGtOCoiGUr99gIEwNSQJuRXZNmUKM4SGaXEeCtSUfKjqalnI+mtesHE9VB5KlJu6fUdSmMpkLaLiXtycw8iLXNIKMJIKkLx1be3ZYxhJYBR3GI=
+	t=1744731153; cv=none; b=ZPUTqdXmeIgf4WVp2gm2GOcdr+Ki0iEL6HxTP3NF7nBmvjN0hylIgGz4pABaylB/BItkux2MbXd7qRRCJXrjamOZWqHY/qaTDCFu0WGbjqAtM7yGAb2RudlBC0Xh5rKWIVNCYb+4d7dGvkrObZzQq3Bf4ZzSwVKlaPk2NObOEU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744731128; c=relaxed/simple;
-	bh=uqnQ6iQfwoTKyx+UAVviMlNC66JIEOEeY3SmhfJwsKU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CN6ZwMVtaX1SHca8kvpC2FX8jT90LS93XDFStb8tb1gpUh9ALoT2G1PgFCXdl6hvUceejftZGz2BJZUB0vpFLFcY8R1maMidt2Vv+o6QO6lKXsyEej5TLCBR1bJXDf41orImUqBslAv5PyM2ebreVEAArgXWEz+wP7UQZ6sx5SA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=DZTBSGFr; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53FFVmDA2394455
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 15 Apr 2025 10:31:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1744731108;
-	bh=z1WpXqEl1iERpryNUd4cUuG7eXXEHYFWJ4BFIY8KG2g=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=DZTBSGFrEiEa81UJPMplqTY7iBnhyayouA6p69Ac6tcNHZwYpNN2lPLNzGv1uyRz9
-	 ZVqSByNxfucTnhZ4V+pqqq58JbU2otLWCtX0xiMaZ9IFX+92HUqzvQhNJV2dMk0pp6
-	 KJ4SOCtw9gLtzAPUjuBk1PHWn9mAnbb0LPWLHNWg=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53FFVmIO018874
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 15 Apr 2025 10:31:48 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 15
- Apr 2025 10:31:48 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 15 Apr 2025 10:31:48 -0500
-Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53FFVla3109804;
-	Tue, 15 Apr 2025 10:31:48 -0500
-From: Judith Mendez <jm@ti.com>
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
-CC: Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Hari Nagalla <hnagalla@ti.com>,
-        Beleswar
- Prasad <b-padhi@ti.com>, Andrew Davis <afd@ti.com>,
-        Markus Schneider-Pargmann
-	<msp@baylibre.com>,
-        Devarsh Thakkar <devarsht@lewv0571a.ent.ti.com>
-Subject: [PATCH v7 11/11] arm64: dts: ti: k3-am64: Reserve timers used by MCU FW
-Date: Tue, 15 Apr 2025 10:31:47 -0500
-Message-ID: <20250415153147.1844076-12-jm@ti.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250415153147.1844076-1-jm@ti.com>
-References: <20250415153147.1844076-1-jm@ti.com>
+	s=arc-20240116; t=1744731153; c=relaxed/simple;
+	bh=MryQRg4mxc7mp/DKCiZYhG+Yw7K8aefw+wH8sohSJco=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A/2sPrh1U6m4qtx9u+DPAuuTH4GBhCJQb8m0NtXPdRnKk+8eKQBCcTJG+qHmNmT1F1YppbKeSo4lI0Ce2i9Tblgj7xbMh2wqNUaOXdmR1Nr6dBqchIVTk4UmrCnGFab2l0P+lf69MnwphljPuzfVVdEO4MiZ+95RqLn+Yc1ubv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jF6bQkfg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84C97C4CEEB;
+	Tue, 15 Apr 2025 15:32:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744731153;
+	bh=MryQRg4mxc7mp/DKCiZYhG+Yw7K8aefw+wH8sohSJco=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jF6bQkfgqleLrGlk0kRy0AxYfnJGnjSWGaE+DYpr52dDb3sVnLMVLDpupnxpmji4O
+	 smH5+FtxM+vs3kno1Za/uyOorrYrPOKIGR06MtU1BwROPqkGKm4zCXdCi086weeXEs
+	 JTYfxN0U9iekw5J1brE341Ctt7n/04ibpfLaQISsQQz+/slAfOVMb5rgWEIYU7Tr1K
+	 nhft+ao7Pym74AirWRfd3gyidrFZd5XkyHTeZR0G48uRHcLBu4gHBFNXzgWSLLa82A
+	 /1tDQbQzOba2sR3i+H+FwaLWAB0GJHkdmEopnzj9ErxGY+8O45/wtzxnu8F5/wDfYJ
+	 KXpCUQpwmpUEA==
+Date: Tue, 15 Apr 2025 08:32:29 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: "Kaplan, David" <David.Kaplan@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
+	Peter Zijlstra <peterz@infradead.org>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
+	Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	"x86@kernel.org" <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Brendan Jackman <jackmanb@google.com>, 
+	Derek Manwaring <derekmn@amazon.com>
+Subject: Re: [PATCH v4 17/36] Documentation/x86: Document the new attack
+ vector controls
+Message-ID: <wuryibff35vau3vvo5gj3d6fzvfedlhcnlyc5zlwlzvfdr2dro@lkwwglmgac7c>
+References: <20250310164023.779191-1-david.kaplan@amd.com>
+ <20250310164023.779191-18-david.kaplan@amd.com>
+ <fkl2b3ymatulazt2xjegubqcejx5bgaraktztpkitodrbbsozw@xrskej3fg3jf>
+ <LV3PR12MB92654563086027BB944A117594B32@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <mybnv24fbz5nsxmz2yihzctnbv7ab7sznyotupp6mbpzfdvy2e@r2oantiw4wmo>
+ <LV3PR12MB9265B84234C24D42E7CB42EC94B22@LV3PR12MB9265.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <LV3PR12MB9265B84234C24D42E7CB42EC94B22@LV3PR12MB9265.namprd12.prod.outlook.com>
 
-From: Hari Nagalla <hnagalla@ti.com>
+On Tue, Apr 15, 2025 at 02:59:32PM +0000, Kaplan, David wrote:
+> > > > > +BHI                   X                           X
+> > > > > +GDS                   X              X            X              X        (Note 1)
+> > > > > +L1TF                  X                           X                       (Note 2)
+> > > > > +MDS                   X              X            X              X        (Note 2)
+> > > > > +MMIO                  X              X            X              X        (Note 2)
+> > > > > +Meltdown              X
+> > > > > +Retbleed              X                           X                       (Note 3)
+> > > > > +RFDS                  X              X            X              X
+> > > > > +Spectre_v1            X
+> > > > > +Spectre_v2            X                           X
+> > > > > +Spectre_v2_user                      X                           X        (Note 1)
+> > > > > +SRBDS                 X              X            X              X
+> > > > > +SRSO                  X                           X
+> > > > > +SSB (Note 4)
+> > > >
+> > > > Any reason not to put the "Note 4" in the same column as the others?
+> > > >
+> > >
+> > > The other notes are about cross-thread mitigation specifically and those notes
+> > refer to the SMT aspects of those issues.
+> > >
+> > > Note 4 in this case is about the SSB vulnerability itself, explaining
+> > > that by default there is no mitigation for any case.  I was concerned
+> > > that including SSB but without any X's in any of the columns would be
+> > > confusing, so the note attempted to explain that there were no default
+> > > mitigations for SSB under any attack vector.
+> >
+> > Putting the note there makes it a lot harder to see it.  And I think the lack of X's is
+> > accurate, no?
+> >
+> 
+> It is, it's just rather unique compared to the other bugs.  I could
+> remove the note entirely, but I was concerned that might look odd
+> because it'd be the only bug that isn't mitigated under any of the
+> attack vectors.  And that's really just because the current default is
+> not to mitigate that one.
 
-AM64x device has 4 R5F cores in the main domain. TI MCU firmware uses
-main domain timers as tick timers in these firmwares. Hence keep them
-as reserved in the Linux device tree.
+I think the note is helpful, it attempts to explain why there are no
+X's.  I was just thinking that it seems more logical to put it in the
+same column as the others.  And that would also help make it more clear
+that yes, the X's are missing.  Which is indeed odd, but it's also the
+reality.
 
-Signed-off-by: Hari Nagalla <hnagalla@ti.com>
-Signed-off-by: Judith Mendez <jm@ti.com>
----
- arch/arm64/boot/dts/ti/k3-am642-evm.dts | 20 ++++++++++++++++++++
- arch/arm64/boot/dts/ti/k3-am642-sk.dts  | 20 ++++++++++++++++++++
- 2 files changed, 40 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/ti/k3-am642-evm.dts b/arch/arm64/boot/dts/ti/k3-am642-evm.dts
-index f8ec40523254b..5623ab354a1d5 100644
---- a/arch/arm64/boot/dts/ti/k3-am642-evm.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am642-evm.dts
-@@ -796,6 +796,26 @@ &mcu_m4fss {
- 	status = "okay";
- };
- 
-+/* main_timer8 is used by r5f0-0 */
-+&main_timer8 {
-+	status = "reserved";
-+};
-+
-+/* main_timer9 is used by r5f0-1 */
-+&main_timer9 {
-+	status = "reserved";
-+};
-+
-+/* main_timer10 is used by r5f1-0 */
-+&main_timer10 {
-+	status = "reserved";
-+};
-+
-+/* main_timer11 is used by r5f1-1 */
-+&main_timer11 {
-+	status = "reserved";
-+};
-+
- &serdes_ln_ctrl {
- 	idle-states = <AM64_SERDES0_LANE0_PCIE0>;
- };
-diff --git a/arch/arm64/boot/dts/ti/k3-am642-sk.dts b/arch/arm64/boot/dts/ti/k3-am642-sk.dts
-index 33e421ec18abb..1deaa0be0085c 100644
---- a/arch/arm64/boot/dts/ti/k3-am642-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am642-sk.dts
-@@ -710,6 +710,26 @@ &mcu_m4fss {
- 	status = "okay";
- };
- 
-+/* main_timer8 is used by r5f0-0 */
-+&main_timer8 {
-+	status = "reserved";
-+};
-+
-+/* main_timer9 is used by r5f0-1 */
-+&main_timer9 {
-+	status = "reserved";
-+};
-+
-+/* main_timer10 is used by r5f1-0 */
-+&main_timer10 {
-+	status = "reserved";
-+};
-+
-+/* main_timer11 is used by r5f1-1 */
-+&main_timer11 {
-+	status = "reserved";
-+};
-+
- &ecap0 {
- 	status = "okay";
- 	/* PWM is available on Pin 1 of header J3 */
 -- 
-2.49.0
-
+Josh
 
