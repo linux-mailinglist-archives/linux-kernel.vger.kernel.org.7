@@ -1,155 +1,241 @@
-Return-Path: <linux-kernel+bounces-605355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07B0FA8A015
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:52:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4725A8A00B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 15:51:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A6F4441CAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:52:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF2D3580BF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7075813C8EA;
-	Tue, 15 Apr 2025 13:52:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8B3175D47;
+	Tue, 15 Apr 2025 13:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="B9PM2vdU"
-Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HmM4VXg3"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A937C4315C;
-	Tue, 15 Apr 2025 13:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68EA91A0712
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 13:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744725143; cv=none; b=s5ladFQZHDFPOlxbKh/5ZSZs2E1vNTZOpgGySuYteyNwhbGp4vOmrGzPChMtrdcX40KqqfQ3NwadjwjHMdtyZlGNo6BaFH73CLG8HhitdpB6/0lRa+Dnd06XpF/cZHzOIcN8K1cgadjXy7SgX/b+4V1/NqFhajtbyqzd466FmFU=
+	t=1744725012; cv=none; b=W4w1GfhBPVpRI8t4zX3/uCgfR1+uDv028wqu/2FBgBBDyf13Os9F+mLnmrPVi0Y1BWxSGeRFhqWbA7pcYXUwILjmD67oXV0pSX24ItEpGf0j5xYpaYkD/qBNEop2zXy61B3WBu7vTpjaOjdQy1nhNA+ebSgC8LQ5ndQWGDznNLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744725143; c=relaxed/simple;
-	bh=SYP5aUx854LZI3QqpRFhskAvPk/sjt33YUGhDwyPD5s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Zk5oKsY5ZWbIaP7rFQ7sOXDWHteveWgWcwOavr0exme3mkBShRjLQFAbIW6DnJQLGK2VZW3BifEbfhlRQX5PAojE6FR8jX64sbb06UQfhSIepNqv0J/lsT09zb7B7uPjtPgaMz1UGQi6hwD2aNN9UIIeyYmSRs7/ewk+bO1KRCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=B9PM2vdU; arc=none smtp.client-ip=54.204.34.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1744725124;
-	bh=Ixi9pWKBiDS6VBaREd11yEf72/je33uvlluDQogeMxo=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=B9PM2vdUmuR/bxGkikTEJBimk53M+mGGfQtJ4GarF64T+C59b2uVfMTV+s7HpyuMx
-	 jCuB+dn8eZS75htEIvVlrUwZZFNpXNIvQ5I3JXNhSkZCd2NBYReZPTccCiIHbP9HiE
-	 7MvPZtJ94GCJb4y99s0PKDNDElPAiypIuOI/oeV4=
-X-QQ-mid: zesmtpip3t1744724985t838566ab
-X-QQ-Originating-IP: IvxrBklCfHMUcYXSFD7ASed4Rg4FD9KV6HpuJrAKVqQ=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 15 Apr 2025 21:49:43 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 17750832799163754876
-EX-QQ-RecipientCnt: 20
-From: WangYuli <wangyuli@uniontech.com>
-To: corbet@lwn.net,
-	chenhuacai@kernel.org,
-	kernel@xen0n.name
-Cc: akpm@linux-foundation.org,
-	jeffxu@chromium.org,
-	lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com,
-	kees@kernel.org,
-	wangyuli@uniontech.com,
-	hca@linux.ibm.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	xry111@xry111.site,
-	tglx@linutronix.de,
-	thomas.weissschuh@linutronix.de,
-	Jason@zx2c4.com,
-	zhanjun@uniontech.com,
-	niecheng1@uniontech.com,
-	guanwentao@uniontech.com
-Subject: [PATCH] mseal sysmap: enable LoongArch
-Date: Tue, 15 Apr 2025 21:49:33 +0800
-Message-ID: <433B5132A1535C98+20250415134933.531084-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1744725012; c=relaxed/simple;
+	bh=hq1Y+ojJ2GF1Hc6zjkQxIT1B/mADl1/vaLggL8GTPCg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r7RsQmPc5UXLNxP2ip6dzogKe2CLiI6/yUFSycSdtJ1scao0JlO0wDx/W60oVazAyXVsucjZ7QKKT2Hkzi6Wj642D0Ye3WCX+dQuZF1VcHGME6teuUjFFRs/w1NSTPq1oje1h0REpsVnMMkncP7JENqgqkxo4tduTtUF3Jlqnag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HmM4VXg3; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ac6e8cf9132so1053095166b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 06:50:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744725009; x=1745329809; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=wrEPCwM2Bn/9hyG3bxO2C+bn7awqv6ln6+mt63Z/QUM=;
+        b=HmM4VXg3xvDmYzXq5wECTz9QliX8JFwlfuZYVtbKADaZY0emDuQET9jkrczL/rC6is
+         8tfsJIxz5cDAPrbfuM+3FoPolKLiG9YIdx6iFNgt6Yv1rWaG6fMRFPtB0d0NPUP/6PSC
+         R7r8im1priw+F5u3BglbyUX9AD7i81VnndU7rK52m9Q4eaAywoGXDkvnOy1A6krZSzB7
+         rU7bIjAR4v4DSALH68Ms64XLihdksfZ/Bmyp2Mai/Oq4l9MRd4TuLqpeubCUo5EVDTsu
+         koXAIIYw9LDizzDU8c82rDC4WTbyalhJJVCmrIRp4W/UA0uOL4hdgwB0kmOxHtX3wfAc
+         RJXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744725009; x=1745329809;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wrEPCwM2Bn/9hyG3bxO2C+bn7awqv6ln6+mt63Z/QUM=;
+        b=ZpewDNADr+Sn5E4c2tiyGyBt3WDoUUeTgxFlt8vgJS68Ypv8moLX7Njp0TWMf4/6nM
+         xB8LqBfB7p0o5ne+5Z6G82GL4qDq/v9dolEMtX801lKkKNR5K+8CDmD6bzjStfBexiRh
+         WF+MuGKlldLXANB/QbbiahLxJu/LMm23VKeK3r7rRZ7zCu3JoGYSeH6XYMdoxz5GnZ1t
+         wKB5rOaQB/eaMw9GuK5c1FfqvZRJVk39JoVwPyM4e4HLkX/K315LO4Y+2rXzYaQ1kGbn
+         gmY06PXuKXYR0yQcnsplZvBLAsDEwCSYc/kQjmQUHItUtuPlNFzd/F9Or7neG34KXZ7R
+         w5eA==
+X-Forwarded-Encrypted: i=1; AJvYcCUcr6l2jfsobT6CKOjp+kSeAi51qnTVM+423YGwU4z8exRxCIMLB5LWFgmWzN1WvA8BXZkSsagvxOoPQC8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBs1+SXEKw+lzzUIJsD5iSdjAxydTIG2OY8kCRPaEO+TQu9QaW
+	TJpE1P/N4uRcjcA61f44lduYahFkQstd2L9bmEMBw7oimEuUwcXD5ScxoVZISIGo9OGcBi7orud
+	FQbx+H+eCmrqC6x9USN1+51tq2ExcyXsKgvD63A==
+X-Gm-Gg: ASbGncupv7ZPvIKTjTMIzhLX05Sz0kxa2JAcvkXL51cVDN5WJfoQoISAOswDEZX5sbv
+	zUvdI4IOPUM4xkLIu5cVe39nFz+T2jEFqm0k/+l16WNq2AHxx5Ax5TTr3iDYgE7G7YswDY4Dfno
+	ul1Fb6rr7lslF63OEyUwzu4j/6gks/+DaBkqcSrFiAaFoJNxOGN3o3Gj+dIsuxMA==
+X-Google-Smtp-Source: AGHT+IGE+x07DdfblSi+FWyAZkA+qhUSf/7rY82sSBtgrgM7EU+PcZzpRi8/EDgcbUuwjrVTPMsNW1QtieYKwrO+K6o=
+X-Received: by 2002:a17:907:2ce6:b0:aca:a162:67bb with SMTP id
+ a640c23a62f3a-acad345867emr1364373566b.4.1744725008643; Tue, 15 Apr 2025
+ 06:50:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NV9lVvsB36Op1yEGLqX6VyH6IMMjPPSHflDax0yHqTYUExZlnvTyKMTF
-	RUFh4YGevHLcNupZVHEoRUisMQLbAifW7/nXLxnyeyVwYIshagyEn7LrVi84guxdutPZfSh
-	ULrPELeI4WI+uhXnCLSKVsqNfWyNSfd6n3orRR8ekhVxsHmZ0wHFK8WuuuBW8evqmO5TJwe
-	32NwMRr1WITwdkEoE5oa6sWKBA+9Mu3sgOYe5/eIz61Nb/dOP/4QA56IMpG0ag9ST0rJY/q
-	0mF0gpnGE+9X36w4l0hah1rT62FkHOLyQE5RJngepX92WCbYyWcArgTRPYkpoJDfiQ8fcCn
-	MI+kqPNc7ukDXuNe4572FMBT7+l6tUqCzaapbHEE8CWcuRjhAY/ang3MkiOVA1yDdxd6lIy
-	s8S1wPvC6d8DF10wl+claEj9tVJbOzY6dgFiMegMyyGLrzkFKlFpjG0GrZYMSR2na7CSYJg
-	wD+XXYwP8RIrr/HexDD1PAhXIxPHkVDQP1MEXVXTyBYpBfP5yKBT98eNaEr3yQcSeSFnfeA
-	ZHEGwvjKMcScOIoDP6iXbG0BmQ4yW7gHnGta7jBp5d1RHw2Pp9ipVj2HhgBBgghTN21H6c+
-	A9fp1HG3rhEW3PTP4rqxHbR8ALFaIp65EeyZA8FXsexnhIfAd4ObLGRnKkYX/O9gLWru/We
-	8UtjAJ/zDyJFrFjVtraZo+VKuFPVJw2Znmi3JFGhATier5hHfEBLigKtKtqgDajIXB8e2fx
-	vDOourSPMK5mvu8pnVsdUUR/Rm3uez/zTaC+oBc9S42jj/cPpYR5JClxRe243fG7c7rJ0Ic
-	LNUq780H0hpV2zwE252ojLnPJetASkt1UMlKnY50dlEXkQGP8Z8iQg5QeRdGJqblzPuleYZ
-	j2jdcYn1A1GkfTANUMogjfM51i4OJgG7M2AiV50Fa6+Y5IQODnLt0Y+iWq4bfr2dVkE5it4
-	NtatJYhKl6wkIZYG0sd7KDBGP0FI2lZ1R77B76B+uJPUDKNVvv+qCb5pedOFXv2mW3EHyEV
-	CXSLUewQcaE4Ahu4yMiBEMTlaeMw5k9iMrkAEHNg==
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-X-QQ-RECHKSPAM: 0
+References: <20250302210539.1563190-1-vincent.guittot@linaro.org> <54919a25-b898-407c-a4d7-4ce53907cf75@arm.com>
+In-Reply-To: <54919a25-b898-407c-a4d7-4ce53907cf75@arm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Tue, 15 Apr 2025 15:49:56 +0200
+X-Gm-Features: ATxdqUF0Ipfqj6hgvNz5HJqKVS2C8aqtbu1RDGBJ-S_MZSlxC9H8y49n4jsqVM8
+Message-ID: <CAKfTPtAL+jomuj7nuoOkoGCDPURiKmmL51uZqj-wwY4hBuanOQ@mail.gmail.com>
+Subject: Re: [PATCH 0/7 v5] sched/fair: Rework EAS to handle more cases
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
+	mgorman@suse.de, vschneid@redhat.com, lukasz.luba@arm.com, 
+	rafael.j.wysocki@intel.com, pierre.gondois@arm.com, 
+	linux-kernel@vger.kernel.org, qyousef@layalina.io, hongyan.xia2@arm.com, 
+	luis.machado@arm.com, qperret@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-Provide support for CONFIG_MSEAL_SYSTEM_MAPPINGS on LoongArch,
-covering the vdso.
+Hi Christian,
 
-Tested-by: Yuli Wang <wangyuli@uniontech.com>
-Signed-off-by: Yuli Wang <wangyuli@uniontech.com>
----
- Documentation/userspace-api/mseal.rst | 2 +-
- arch/loongarch/Kconfig                | 1 +
- arch/loongarch/kernel/vdso.c          | 4 +++-
- 3 files changed, 5 insertions(+), 2 deletions(-)
+On Thu, 3 Apr 2025 at 14:37, Christian Loehle <christian.loehle@arm.com> wrote:
+>
+> On 3/2/25 21:05, Vincent Guittot wrote:
+> > The current Energy Aware Scheduler has some known limitations which have
+> > became more and more visible with features like uclamp as an example. This
+> > serie tries to fix some of those issues:
+> > - tasks stacked on the same CPU of a PD
+> > - tasks stuck on the wrong CPU.
+> >
 
-diff --git a/Documentation/userspace-api/mseal.rst b/Documentation/userspace-api/mseal.rst
-index 1dabfc29be0d..ef733f69003d 100644
---- a/Documentation/userspace-api/mseal.rst
-+++ b/Documentation/userspace-api/mseal.rst
-@@ -144,7 +144,7 @@ Use cases
-   architecture.
- 
-   The following architectures currently support this feature: x86-64, arm64,
--  and s390.
-+  loongarch and s390.
- 
-   WARNING: This feature breaks programs which rely on relocating
-   or unmapping system mappings. Known broken software at the time
-diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-index 067c0b994648..54ed5b59a690 100644
---- a/arch/loongarch/Kconfig
-+++ b/arch/loongarch/Kconfig
-@@ -69,6 +69,7 @@ config LOONGARCH
- 	select ARCH_SUPPORTS_INT128 if CC_HAS_INT128
- 	select ARCH_SUPPORTS_LTO_CLANG
- 	select ARCH_SUPPORTS_LTO_CLANG_THIN
-+	select ARCH_SUPPORTS_MSEAL_SYSTEM_MAPPINGS
- 	select ARCH_SUPPORTS_NUMA_BALANCING
- 	select ARCH_SUPPORTS_RT
- 	select ARCH_USE_BUILTIN_BSWAP
-diff --git a/arch/loongarch/kernel/vdso.c b/arch/loongarch/kernel/vdso.c
-index 10cf1608c7b3..7b888d9085a0 100644
---- a/arch/loongarch/kernel/vdso.c
-+++ b/arch/loongarch/kernel/vdso.c
-@@ -105,7 +105,9 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
- 
- 	vdso_addr = data_addr + VVAR_SIZE;
- 	vma = _install_special_mapping(mm, vdso_addr, info->size,
--				       VM_READ | VM_EXEC | VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC,
-+				       VM_READ | VM_EXEC |
-+				       VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC |
-+				       VM_SEALED_SYSMAP,
- 				       &info->code_mapping);
- 	if (IS_ERR(vma)) {
- 		ret = PTR_ERR(vma);
--- 
-2.49.0
+...
 
+> >
+> >  include/linux/energy_model.h | 111 ++----
+> >  kernel/sched/fair.c          | 721 ++++++++++++++++++++++++-----------
+> >  kernel/sched/sched.h         |   2 +
+> >  3 files changed, 518 insertions(+), 316 deletions(-)
+> >
+>
+> Hi Vincent,
+> so I've invested some time into running tests with the series.
+> To further narrow down which patch we can attribute a change in
+> behavior I've compared the following:
+> - Patches 1 to 3 applied, comparing your proposed feec() (B)
+> only to the baseline feec() (A).
+> - All patches applied, using a static branch to enable (C) and
+> disable (D) push mechanism for misfit tasks (if disabled only
+> the 'tasks stuck on CPU' mechanism triggers here).
+>
+> I've looked at
+> 1) YouTube 4K video playback
+> 2) Dr.Arm (in-house ARM game)
+> 3) VideoScroller which loads a new video every 3s
+> 4) Idle screen on
+> 5) Speedometer2.0 in Chromium
+>
+> The device tested is the Pixel6 with 6.12 kernel + backported
+> scheduler patches.
+
+What do you mean by "6.12 kernel + backported scheduler patches" ? Do
+you mean android mainline v6.12 ?
+
+I run my test with android mainline v6.13 + scheduler patches for
+v6.14 and v6.15-rc1. Do you mean the same ? v6.12 misses a number of
+important patches in regards to threads accounting
+
+> For power measurements the onboard energy-meter is used [1].
+
+same for me
+
+>
+> Mainline feec() A is the baseline for all. All workloads are run for
+> 10mins with the exception of Speedometer 2.0
+> (one iteration each for 5 iterations with cooldowns).
+
+What do you mean exactly by (one iteration each for 5 iterations with
+cooldowns) ?
+
+>
+> 1) YouTube 4K video
+
+I'd like to reproduce this use case because my test with 4k video
+playback shows similar or slightly better power consumption (2%) with
+this patch.
+
+Do you have details about this use case that you can share ?
+
+
+> +4.5% power with all other tested (the regression already shows with B,
+> no further change with C & D).
+> (cf. +18.5% power with CAS).
+> The power regression comes from increased average frequency on all
+> 3 clusters.
+
+I'm interested to understand why the average frequency increases as
+the OPP remains the 1st level of selection and in case of light loaded
+use cases we should not see much difference. That's what I see on my
+4k video playback use case
+
+And I will also look at why the CAS is better in your case
+
+> No dropped frames in all tested A to D.
+>
+> 2)  Dr.Arm (in-house ARM game)
+> +9.9% power with all other tested (the regression already shows with B,
+> no further change with C & D).
+> (cf. +3.7% power with CAS, new feec() performs worse than CAS here.)
+> The power regression comes from increased average frequency on all
+> 3 clusters.
+
+I supposed that I won't be able to reproduce this one
+
+>
+> 3) VideoScroller
+> No difference in terms of power for A to D.
+> Specifically even the push mechanism with misfit enabled/disabled
+> doesn't make a noticeable difference in per-cluster energy numbers.
+>
+> 4) Idle screen on
+> No difference in power for all for A to D.
+
+I see a difference here mainly for DDR power consumption with 7%
+saving compared to mainline and 2% on the CPU clusters
+
+>
+> 5) Speedometer2.0 in Chromium
+> Both power and score comparable for A to D.
+>
+> As mentioned in the thread already the push mechanism
+> (without misfit tasks) (D) triggers only once every 2-20 minutes,
+> depending on the workload (all tested here were without any
+> UCLAMP_MAX tasks).
+> I also used the device manually just to check if I'm not missing
+> anything here, I wasn't.
+> This push task mechanism shouldn't make any difference without
+> UCLAMP_MAX.
+
+On the push mechanism side, I'm surprised that you don't get more push
+than once every 2-20 minutes. On the speedometer, I've got around 170
+push fair and 600 check pushable which ends with a task migration
+during the 75 seconds of the test and much more calls that ends with
+the same cpu. This also needs to be compared with the 70% of
+overutilized state during the 75 seconds of the time during which we
+don't push. On light loaded case, the condition is currently to
+conservative to trigger push task mechanism but that's also expected
+in order to be conservative
+
+The fact that OU triggers too quickly limits the impact of push and feec rework
+
+uclamp_max sees a difference with the push mechanism which is another
+argument for using it.
+
+And this is 1st step is quite conservative before extending the cases
+which can benefit from push and feec rework as explained  at OSPM
+
+>
+> The increased average frequency in 1) and 2) is caused by the
+> deviation from max-spare-cap in feec(), which previously ensured
+> as much headroom as possible until we have to raise the OPP of the
+> cluster.
+>
+> So all in all this regresses power on some crucial EAS workloads.
+> I couldn't find a real-world workload where the
+> 'less co-scheduling/contention' strategy of feec() showed a benefit.
+> Did you have a specific workload for this in mind?
+>
+> [1]
+> https://tooling.sites.arm.com/lisa/latest/sections/api/generated/lisa.analysis.pixel6.Pixel6Analysis.html#lisa.analysis.pixel6.Pixel6Analysis.df_power_meter
 
