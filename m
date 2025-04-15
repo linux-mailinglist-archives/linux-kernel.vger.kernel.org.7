@@ -1,276 +1,205 @@
-Return-Path: <linux-kernel+bounces-605811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6CC9A8A675
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 20:10:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4B17A8AF3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 06:45:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2FE37AD01F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 18:09:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20AA4190057C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 04:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DDBC224243;
-	Tue, 15 Apr 2025 18:09:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DADC22CBD7;
+	Wed, 16 Apr 2025 04:44:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DXTqFd2u"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JMymSafZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D017322B5A5;
-	Tue, 15 Apr 2025 18:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36EB22C322
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 04:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744740591; cv=none; b=jmor1luRWzhHZmivL054kujZBoBKxw9KsE92w2nAPlmh4kGZbgiW4YubyQwDH8nHrd7ZHBS5PknRUPFc8jsAfuQId1rXF9XmpPUzct6JHP+I0JioScnLTTmCn/2qw0sBdbQ78x3BO7iNhezhlQdd2az8WuFCkA5C3a6SK6+jCs4=
+	t=1744778642; cv=none; b=hpQENTQRAdDgbEA1N1jx5YETSNFWEFQbsPiUr+YntHXNLBnkdnTuUTe1IkXQOedsMjjnfhwjv9TWbALZdO7E4lCPatq7h47p83123kZFzcxFzO5MON6BcD4M1jO0w2iM2nNR1JAG9N2YVQXZ0QpbttmmU+0nKuKlpt6TAXhkS7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744740591; c=relaxed/simple;
-	bh=o6+Eil4uX9ctgJoAE45DqBGTx/za3XLcV45WCQQqpCA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=N1DoR9peVk2XXm2uQF3Ss+hdgHSyvdXcwB9xNmvt8A5xKAe/pqJa2xkr6EZ8eRXHGhuIw7YAAVJ222JSXpqrav7ivF+gW4OoOmtDOcbO9tXtgjBDpjGrJxLc9MMTYou0q2QlJ+eYbqavkWeaBIwG50RzVZaFLiwHLqEI07t/IX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DXTqFd2u; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2264aefc45dso87849545ad.0;
-        Tue, 15 Apr 2025 11:09:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744740589; x=1745345389; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AhohEOEKrvFoqIHtTXX76tezRnIlwWn51kNhrjU6ztA=;
-        b=DXTqFd2uZJH2fWRbdy3OTp46SM2M7m+XLxYmICgedvQVzjIPz9GF+8w+70Wg86jvyn
-         RC2NS3VGnGNqxuIGZVYZwMUA88dN978JFTgUZDHs6ErCkrpVgzt3d3yJCvp8Oouia1jr
-         GWDS0lB1NWuQXfhjgnZ6mBYHywjKSwJpUZLLnF1euIQDe7Vj0Z8loM9Az50Vg6d3m9to
-         HyXHH3hYeRfMoi9oZmeJKB6FladuHdbtFF0MtN8E8GFsqxsOaU0D8i39RPv49tbF3Iwj
-         QMFjzCoWUscdvI4loSkUi+vi5je7zqkgqctVfOBNfc+53oKzg4fmugwfUx0wzAAOcGvr
-         43yQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744740589; x=1745345389;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AhohEOEKrvFoqIHtTXX76tezRnIlwWn51kNhrjU6ztA=;
-        b=MMYSJdSFurGgrS+CFSaazonD03UaF/J+E1hwAYZeXTW4Edl2h+vMPlwu85r6vRfg74
-         KPS7wXNElSp05dTxinJX0hR1EGUm5Pi59g3poVOwo2UpJZNzwq61rFY/7DCJUCyHU6SD
-         Lyv9jyFqDKYjBmoM44jM9/HMexy7X8yk+fymd2D0Ikcvhak8cH3KU5D7dvwASML1mEF5
-         mcC81kZ2OQZbKNALtRi884hied8LdSGB7CGPyZI9dDCgu4cLB1RYCrM3F8+R9rvkKlo4
-         E2vbmqyKfrDGkMJmhgiLGI9ZJPI/+zvkGbQM1nhMEkPr+fbZv9RPRNJqpNWBVXUucEXj
-         loBg==
-X-Forwarded-Encrypted: i=1; AJvYcCVQ4ByGMuIAg22XdL+5La3x2SUWrbYVNlqa0QR2lh17h4BRaQjxmMY5ERskRyDK57X69nqifWAMgVP8Eig=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKT/5FllPESeq234347bBKXW2Csz+GwXtq3b7C3JiPcBcTUkhS
-	8Wiac+HBkp2bcLUg75C42X+FCsWwMUqZkh8Akq2as1yHC6HcaCNtTfQN5h2+6J0=
-X-Gm-Gg: ASbGncuQiDZW4E57g+k1QQfGFW4mVCrr1MA0MNgZPUO+wCUwuucsZTaeBJPrZ/JxksB
-	v+QmA7sKZrepiXG80AWg5WYxJveOP1vgO1ou42v9E5yFD7xyCC/W5cf6t1sN6Nr+4/iArtmcj71
-	fa6Ta4p7lzU6j6+ZPrxyMZb8shydTUzUTAY8SLtcTLuASy5UiDj8PD0z2H/Yu1y7sfPw8L+K9sG
-	D8QkhfMj1EffdwaR6Xp/yDJjAVOy6g+NIrDOwFvqxjtCHcyMeZMzzvhT4R1YWDRzDPT6EvwJgz4
-	QES0Wuai0MfzpatdDhGrA04gPdm/mA5hY5pueBgM
-X-Google-Smtp-Source: AGHT+IGiRMMl8214vmhYKtUPPVdgzosHGYwcFCwg1bkiGePvWyjnabZQ2NgIzRK4WcmyyBNxgGSYXw==
-X-Received: by 2002:a17:903:3c4f:b0:224:a96:e39 with SMTP id d9443c01a7336-22c318a932bmr1761615ad.9.1744740588905;
-        Tue, 15 Apr 2025 11:09:48 -0700 (PDT)
-Received: from pop-os.. ([49.207.215.199])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7b62859sm120475695ad.40.2025.04.15.11.09.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Apr 2025 11:09:48 -0700 (PDT)
-From: Aditya Dutt <duttaditya18@gmail.com>
-To: stable@vger.kernel.org
-Cc: Dave Kleikamp <dave.kleikamp@oracle.com>,
-	Dave Kleikamp <shaggy@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	jfs-discussion@lists.sourceforge.net,
-	skhan@linuxfoundation.org,
-	Manas Ghandat <ghandatmanas@gmail.com>,
-	Aditya Dutt <duttaditya18@gmail.com>
-Subject: [PATCH 5.15.y] jfs: define xtree root and page independently
-Date: Tue, 15 Apr 2025 23:39:39 +0530
-Message-Id: <20250415180939.397586-1-duttaditya18@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1744778642; c=relaxed/simple;
+	bh=jTyJML6ihTQRT+ad4rMpOUabYcYRP2xi4wobRhfPy+k=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=rSLYjaSCfCHnS7O9dvY0xQU2wQI9xm4L+Dy6DaZY+gG457T4sUY8jKCegpMgIcstf6Oad9F+N8/yIOZDFkhm6wmWaRUbzRL1nnLPuRVVuK7TBlI4c98vh1VoZzy6cbU+/AT0/hY4Ozo7qFiRwD85hVkTZbacS500oilc+DOIz7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JMymSafZ; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744778640; x=1776314640;
+  h=date:from:to:cc:subject:message-id;
+  bh=jTyJML6ihTQRT+ad4rMpOUabYcYRP2xi4wobRhfPy+k=;
+  b=JMymSafZ+7TrZS2F44+AhAbc8jp7Wo+fbJwws7XkBISKxQHj02ZqOHDV
+   OsJW77UfITVB7tT0TXnIINvqB/pwVS+Kg9bicGVu+B5D66UVvlErkQ+sD
+   UxepGcVjRycxBtfjOO8fLMG6KUzHSahslPOqELKHYmaGWRxai3J2VItuK
+   HEXzQ7QxfaZkIteqgX8p9wE27fjWzJwDf9/AfBjKuMq7pcWSzdKHYnt3W
+   3LwIADO+EHpmzrE03fBXMxuPVg5n42BArc1BMt1A8OkvxWebl0LNNL+Sa
+   a3Hrn0dTqOxzbmCdQck+7zjOwWtbK4STKswnRy2FaIrya7i7qU6h9xIRT
+   A==;
+X-CSE-ConnectionGUID: 3KvD6bfFRCaRAYPy5xgg8g==
+X-CSE-MsgGUID: sPMpYyHWTT2O3AkqgpJp/A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="56487274"
+X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
+   d="scan'208";a="56487274"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 21:44:00 -0700
+X-CSE-ConnectionGUID: A0kgyDubSumryDXOO3U41w==
+X-CSE-MsgGUID: jw63/pZcS1G7Fndw6zZo9w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
+   d="scan'208";a="131286527"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 15 Apr 2025 21:43:59 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u4kkK-000GpO-2E;
+	Tue, 15 Apr 2025 18:10:56 +0000
+Date: Wed, 16 Apr 2025 02:10:24 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:irq/drivers] BUILD SUCCESS
+ e96b93a97c90181627cef6e70a0dbc8dbdae4adc
+Message-ID: <202504160218.02emiRCi-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Dave Kleikamp <dave.kleikamp@oracle.com>
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/drivers
+branch HEAD: e96b93a97c90181627cef6e70a0dbc8dbdae4adc  irqchip/sg2042-msi: Add the Sophgo SG2044 MSI interrupt controller
 
-[ Upstream commit a779ed754e52d582b8c0e17959df063108bd0656 ]
+elapsed time: 1454m
 
-In order to make array bounds checking sane, provide a separate
-definition of the in-inode xtree root and the external xtree page.
+configs tested: 113
+configs skipped: 2
 
-Signed-off-by: Dave Kleikamp <dave.kleikamp@oracle.com>
-Tested-by: Manas Ghandat <ghandatmanas@gmail.com>
-(cherry picked from commit a779ed754e52d582b8c0e17959df063108bd0656)
-Closes: https://syzkaller.appspot.com/bug?extid=ccb458b6679845ee0bae
-Signed-off-by: Aditya Dutt <duttaditya18@gmail.com>
----
-Tested using C reproducer here: https://syzkaller.appspot.com/x/repro.c?x=113bb250e80000
-(given in the dashboard link above
-UBSAN is not triggered when this commit is there.
-It is triggered when it is not.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
- fs/jfs/jfs_dinode.h |  2 +-
- fs/jfs/jfs_imap.c   |  6 +++---
- fs/jfs/jfs_incore.h |  2 +-
- fs/jfs/jfs_txnmgr.c |  4 ++--
- fs/jfs/jfs_xtree.c  |  4 ++--
- fs/jfs/jfs_xtree.h  | 37 +++++++++++++++++++++++--------------
- 6 files changed, 32 insertions(+), 23 deletions(-)
+tested configs:
+alpha                             allnoconfig    gcc-14.2.0
+alpha                            allyesconfig    gcc-14.2.0
+arc                              allmodconfig    gcc-14.2.0
+arc                               allnoconfig    gcc-14.2.0
+arc                              allyesconfig    gcc-14.2.0
+arc                   randconfig-001-20250415    gcc-14.2.0
+arc                   randconfig-002-20250415    gcc-14.2.0
+arc                        vdk_hs38_defconfig    gcc-14.2.0
+arm                              allmodconfig    gcc-14.2.0
+arm                               allnoconfig    clang-21
+arm                              allyesconfig    gcc-14.2.0
+arm                   randconfig-001-20250415    clang-21
+arm                   randconfig-002-20250415    clang-21
+arm                   randconfig-003-20250415    gcc-10.5.0
+arm                   randconfig-004-20250415    gcc-6.5.0
+arm64                            allmodconfig    clang-19
+arm64                             allnoconfig    gcc-14.2.0
+arm64                 randconfig-001-20250415    clang-16
+arm64                 randconfig-002-20250415    gcc-7.5.0
+arm64                 randconfig-003-20250415    gcc-9.5.0
+arm64                 randconfig-004-20250415    gcc-9.5.0
+csky                              allnoconfig    gcc-14.2.0
+csky                  randconfig-001-20250415    gcc-13.3.0
+csky                  randconfig-002-20250415    gcc-14.2.0
+hexagon                          allmodconfig    clang-17
+hexagon                           allnoconfig    clang-21
+hexagon                          allyesconfig    clang-21
+hexagon               randconfig-001-20250415    clang-20
+hexagon               randconfig-002-20250415    clang-21
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20250415    clang-20
+i386        buildonly-randconfig-002-20250415    clang-20
+i386        buildonly-randconfig-003-20250415    clang-20
+i386        buildonly-randconfig-004-20250415    clang-20
+i386        buildonly-randconfig-005-20250415    gcc-12
+i386        buildonly-randconfig-006-20250415    gcc-12
+i386                                defconfig    clang-20
+loongarch                        allmodconfig    gcc-14.2.0
+loongarch                         allnoconfig    gcc-14.2.0
+loongarch             randconfig-001-20250415    gcc-14.2.0
+loongarch             randconfig-002-20250415    gcc-14.2.0
+m68k                             allmodconfig    gcc-14.2.0
+m68k                              allnoconfig    gcc-14.2.0
+m68k                             allyesconfig    gcc-14.2.0
+m68k                       m5275evb_defconfig    gcc-14.2.0
+microblaze                       allmodconfig    gcc-14.2.0
+microblaze                        allnoconfig    gcc-14.2.0
+microblaze                       allyesconfig    gcc-14.2.0
+mips                              allnoconfig    gcc-14.2.0
+mips                           ip30_defconfig    gcc-14.2.0
+nios2                             allnoconfig    gcc-14.2.0
+nios2                 randconfig-001-20250415    gcc-13.3.0
+nios2                 randconfig-002-20250415    gcc-7.5.0
+openrisc                          allnoconfig    gcc-14.2.0
+openrisc                         allyesconfig    gcc-14.2.0
+parisc                           allmodconfig    gcc-14.2.0
+parisc                            allnoconfig    gcc-14.2.0
+parisc                           allyesconfig    gcc-14.2.0
+parisc                randconfig-001-20250415    gcc-12.4.0
+parisc                randconfig-002-20250415    gcc-10.5.0
+powerpc                          allmodconfig    gcc-14.2.0
+powerpc                           allnoconfig    gcc-14.2.0
+powerpc                          allyesconfig    clang-21
+powerpc               mpc834x_itxgp_defconfig    clang-21
+powerpc                  mpc885_ads_defconfig    clang-21
+powerpc               randconfig-001-20250415    gcc-5.5.0
+powerpc               randconfig-002-20250415    clang-17
+powerpc               randconfig-003-20250415    gcc-7.5.0
+powerpc                     redwood_defconfig    clang-21
+powerpc                  storcenter_defconfig    gcc-14.2.0
+powerpc64             randconfig-001-20250415    gcc-7.5.0
+powerpc64             randconfig-002-20250415    clang-17
+powerpc64             randconfig-003-20250415    gcc-10.5.0
+riscv                            allmodconfig    clang-21
+riscv                             allnoconfig    gcc-14.2.0
+riscv                 randconfig-001-20250415    gcc-14.2.0
+riscv                 randconfig-002-20250415    gcc-9.3.0
+s390                             allmodconfig    clang-18
+s390                              allnoconfig    clang-21
+s390                             allyesconfig    gcc-14.2.0
+s390                  randconfig-001-20250415    clang-21
+s390                  randconfig-002-20250415    gcc-7.5.0
+sh                               allmodconfig    gcc-14.2.0
+sh                                allnoconfig    gcc-14.2.0
+sh                               allyesconfig    gcc-14.2.0
+sh                    randconfig-001-20250415    gcc-11.5.0
+sh                    randconfig-002-20250415    gcc-9.3.0
+sparc                            allmodconfig    gcc-14.2.0
+sparc                             allnoconfig    gcc-14.2.0
+sparc                 randconfig-001-20250415    gcc-6.5.0
+sparc                 randconfig-002-20250415    gcc-12.4.0
+sparc64               randconfig-001-20250415    gcc-14.2.0
+sparc64               randconfig-002-20250415    gcc-12.4.0
+um                               alldefconfig    clang-21
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-21
+um                               allyesconfig    gcc-12
+um                    randconfig-001-20250415    clang-21
+um                    randconfig-002-20250415    clang-21
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20250415    clang-20
+x86_64      buildonly-randconfig-002-20250415    gcc-11
+x86_64      buildonly-randconfig-003-20250415    gcc-12
+x86_64      buildonly-randconfig-004-20250415    clang-20
+x86_64      buildonly-randconfig-005-20250415    clang-20
+x86_64      buildonly-randconfig-006-20250415    gcc-12
+x86_64                              defconfig    gcc-11
+xtensa                            allnoconfig    gcc-14.2.0
+xtensa                randconfig-001-20250415    gcc-6.5.0
+xtensa                randconfig-002-20250415    gcc-10.5.0
 
-diff --git a/fs/jfs/jfs_dinode.h b/fs/jfs/jfs_dinode.h
-index 5fa9fd594115..e630810a48c6 100644
---- a/fs/jfs/jfs_dinode.h
-+++ b/fs/jfs/jfs_dinode.h
-@@ -96,7 +96,7 @@ struct dinode {
- #define di_gengen	u._file._u1._imap._gengen
- 
- 			union {
--				xtpage_t _xtroot;
-+				xtroot_t _xtroot;
- 				struct {
- 					u8 unused[16];	/* 16: */
- 					dxd_t _dxd;	/* 16: */
-diff --git a/fs/jfs/jfs_imap.c b/fs/jfs/jfs_imap.c
-index 937ca07b58b1..5a360cd54098 100644
---- a/fs/jfs/jfs_imap.c
-+++ b/fs/jfs/jfs_imap.c
-@@ -671,7 +671,7 @@ int diWrite(tid_t tid, struct inode *ip)
- 		 * This is the special xtree inside the directory for storing
- 		 * the directory table
- 		 */
--		xtpage_t *p, *xp;
-+		xtroot_t *p, *xp;
- 		xad_t *xad;
- 
- 		jfs_ip->xtlid = 0;
-@@ -685,7 +685,7 @@ int diWrite(tid_t tid, struct inode *ip)
- 		 * copy xtree root from inode to dinode:
- 		 */
- 		p = &jfs_ip->i_xtroot;
--		xp = (xtpage_t *) &dp->di_dirtable;
-+		xp = (xtroot_t *) &dp->di_dirtable;
- 		lv = ilinelock->lv;
- 		for (n = 0; n < ilinelock->index; n++, lv++) {
- 			memcpy(&xp->xad[lv->offset], &p->xad[lv->offset],
-@@ -714,7 +714,7 @@ int diWrite(tid_t tid, struct inode *ip)
- 	 *	regular file: 16 byte (XAD slot) granularity
- 	 */
- 	if (type & tlckXTREE) {
--		xtpage_t *p, *xp;
-+		xtroot_t *p, *xp;
- 		xad_t *xad;
- 
- 		/*
-diff --git a/fs/jfs/jfs_incore.h b/fs/jfs/jfs_incore.h
-index a466ec41cfbb..852f4c1f2946 100644
---- a/fs/jfs/jfs_incore.h
-+++ b/fs/jfs/jfs_incore.h
-@@ -66,7 +66,7 @@ struct jfs_inode_info {
- 	lid_t	xtlid;		/* lid of xtree lock on directory */
- 	union {
- 		struct {
--			xtpage_t _xtroot;	/* 288: xtree root */
-+			xtroot_t _xtroot;	/* 288: xtree root */
- 			struct inomap *_imap;	/* 4: inode map header	*/
- 		} file;
- 		struct {
-diff --git a/fs/jfs/jfs_txnmgr.c b/fs/jfs/jfs_txnmgr.c
-index dca8edd2378c..7d19324f5a83 100644
---- a/fs/jfs/jfs_txnmgr.c
-+++ b/fs/jfs/jfs_txnmgr.c
-@@ -778,7 +778,7 @@ struct tlock *txLock(tid_t tid, struct inode *ip, struct metapage * mp,
- 			if (mp->xflag & COMMIT_PAGE)
- 				p = (xtpage_t *) mp->data;
- 			else
--				p = &jfs_ip->i_xtroot;
-+				p = (xtpage_t *) &jfs_ip->i_xtroot;
- 			xtlck->lwm.offset =
- 			    le16_to_cpu(p->header.nextindex);
- 		}
-@@ -1708,7 +1708,7 @@ static void xtLog(struct jfs_log * log, struct tblock * tblk, struct lrd * lrd,
- 
- 	if (tlck->type & tlckBTROOT) {
- 		lrd->log.redopage.type |= cpu_to_le16(LOG_BTROOT);
--		p = &JFS_IP(ip)->i_xtroot;
-+		p = (xtpage_t *) &JFS_IP(ip)->i_xtroot;
- 		if (S_ISDIR(ip->i_mode))
- 			lrd->log.redopage.type |=
- 			    cpu_to_le16(LOG_DIR_XTREE);
-diff --git a/fs/jfs/jfs_xtree.c b/fs/jfs/jfs_xtree.c
-index 3148e9b35f3b..34db519933b4 100644
---- a/fs/jfs/jfs_xtree.c
-+++ b/fs/jfs/jfs_xtree.c
-@@ -1224,7 +1224,7 @@ xtSplitRoot(tid_t tid,
- 	struct xtlock *xtlck;
- 	int rc;
- 
--	sp = &JFS_IP(ip)->i_xtroot;
-+	sp = (xtpage_t *) &JFS_IP(ip)->i_xtroot;
- 
- 	INCREMENT(xtStat.split);
- 
-@@ -3059,7 +3059,7 @@ static int xtRelink(tid_t tid, struct inode *ip, xtpage_t * p)
-  */
- void xtInitRoot(tid_t tid, struct inode *ip)
- {
--	xtpage_t *p;
-+	xtroot_t *p;
- 
- 	/*
- 	 * acquire a transaction lock on the root
-diff --git a/fs/jfs/jfs_xtree.h b/fs/jfs/jfs_xtree.h
-index 5f51be8596b3..dc9b5f8d6385 100644
---- a/fs/jfs/jfs_xtree.h
-+++ b/fs/jfs/jfs_xtree.h
-@@ -65,24 +65,33 @@ struct xadlist {
- #define XTPAGEMAXSLOT	256
- #define XTENTRYSTART	2
- 
--/*
-- *	xtree page:
-- */
--typedef union {
--	struct xtheader {
--		__le64 next;	/* 8: */
--		__le64 prev;	/* 8: */
-+struct xtheader {
-+	__le64 next;	/* 8: */
-+	__le64 prev;	/* 8: */
- 
--		u8 flag;	/* 1: */
--		u8 rsrvd1;	/* 1: */
--		__le16 nextindex;	/* 2: next index = number of entries */
--		__le16 maxentry;	/* 2: max number of entries */
--		__le16 rsrvd2;	/* 2: */
-+	u8 flag;	/* 1: */
-+	u8 rsrvd1;	/* 1: */
-+	__le16 nextindex;	/* 2: next index = number of entries */
-+	__le16 maxentry;	/* 2: max number of entries */
-+	__le16 rsrvd2;	/* 2: */
- 
--		pxd_t self;	/* 8: self */
--	} header;		/* (32) */
-+	pxd_t self;	/* 8: self */
-+};
- 
-+/*
-+ *	xtree root (in inode):
-+ */
-+typedef union {
-+	struct xtheader header;
- 	xad_t xad[XTROOTMAXSLOT];	/* 16 * maxentry: xad array */
-+} xtroot_t;
-+
-+/*
-+ *	xtree page:
-+ */
-+typedef union {
-+	struct xtheader header;
-+	xad_t xad[XTPAGEMAXSLOT];	/* 16 * maxentry: xad array */
- } xtpage_t;
- 
- /*
--- 
-2.34.1
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
