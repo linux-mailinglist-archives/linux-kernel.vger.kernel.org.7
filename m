@@ -1,99 +1,108 @@
-Return-Path: <linux-kernel+bounces-605016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 218D0A89BCC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:17:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA5C9A89C3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 13:27:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8FF018949F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:17:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0E0E19013D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 11:25:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAAE828DEF5;
-	Tue, 15 Apr 2025 11:16:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2638D2951B8;
+	Tue, 15 Apr 2025 11:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jHM3S/7g"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="qWLvaPMA"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915F2289357
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 11:16:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D84292926;
+	Tue, 15 Apr 2025 11:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744715804; cv=none; b=pB+NRJlQTIP5guXGKCnjW1kNwbtISmevtTMLXmvd7WWwuJRRLFzWevmEVYCcawWe+IxFImAmK0lAv1VOZphfQD25VnsqWv/ksgxl+Q2uscDiirH0OocU5GNM+GzDhfZZbjza2pi7VBv010lSk4Zy8415Xmy9bmWzKIH2RojYV64=
+	t=1744715951; cv=none; b=sdniiZGRcrrv6holtQwJN4sK97GhQgiQkl1HumZU24TVlagF/1UvJoeqG0sX/oToxp+GAQOFkX2qAmIS9jub1hrX4FZovVewZUEIuid2IoM/iLfkx6rgYZ5aL2a46W/VYimVZsAT1qnmo/Zy/hPyuWlzjqYKhYHLQ0nlsPoL/xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744715804; c=relaxed/simple;
-	bh=qZDMXZPxBqWPeatleASSs0jexzsJHncPnYtk73uQ+dQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IavSLdulK9nSNt+v0mQGmkYWt5qSzz7/cNdLj6vr0J0dt5f4EVPjzadLoPUf8tt1NczH+N9ygaKuEz2tLEZyYtMQOSe+siZm54rs6O3UiUvN5aWXjouhelBf/Y75t4u9jxlrNSujJFV1QuB9uiO6cbnVjmqStcKEITyaQJeaOCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jHM3S/7g; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744715801;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kXgMou/l/Hcg5M+ECqP6mWwiyHOFu0lEK+Kiw7ZYzGM=;
-	b=jHM3S/7g4HtRHyGUBc/y7PioUfRWaTxBivQdVxip8sLF9M+FjIJ4RhlHsTRFIvimp+uauQ
-	VN7U2RkA8DGt/F1GYUIA91aDLJudGJQy01MIrZ7UWif+zOyhrx0xldzKHSjQ6ukpciX58Z
-	vqbVyubz1K3C7x9/Qlzdd6BKWOfXcfI=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-97-_YdZTtXoNc-uIJIP4uXnbw-1; Tue,
- 15 Apr 2025 07:16:38 -0400
-X-MC-Unique: _YdZTtXoNc-uIJIP4uXnbw-1
-X-Mimecast-MFC-AGG-ID: _YdZTtXoNc-uIJIP4uXnbw_1744715796
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 01192180025F;
-	Tue, 15 Apr 2025 11:16:36 +0000 (UTC)
-Received: from sirius.home.kraxel.org (unknown [10.44.32.216])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CC78B1801766;
-	Tue, 15 Apr 2025 11:16:34 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-	id 3B22D18000A3; Tue, 15 Apr 2025 13:16:32 +0200 (CEST)
-Date: Tue, 15 Apr 2025 13:16:32 +0200
-From: Gerd Hoffmann <kraxel@redhat.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Eric Auger <eric.auger@redhat.com>, 
-	Eric Auger <eauger@redhat.com>, Jocelyn Falempe <jfalempe@redhat.com>, 
-	David Airlie <airlied@redhat.com>, Gurchetan Singh <gurchetansingh@chromium.org>, 
-	Chia-I Wu <olvaffe@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Simona Vetter <simona@ffwll.ch>, Jason Wang <jasowang@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, 
-	dri-devel@lists.freedesktop.org, virtualization@lists.linux.dev
-Subject: Re: [PATCH v2] virtgpu: don't reset on shutdown
-Message-ID: <ge6675q3ahypfncrwbiodtcjnoftuza6ele5fhre3jmdeifsez@yy53fbwoulgo>
-References: <8490dbeb6f79ed039e6c11d121002618972538a3.1744293540.git.mst@redhat.com>
+	s=arc-20240116; t=1744715951; c=relaxed/simple;
+	bh=3FEQn9pdx3rTfTXp4lu8m61whoJlpJ2IYTpRR5tSsso=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Y/T9qzwgVR7cZcj6niqWQohRcdhcQ/lxWuTHcZEKkAUYvsSxq2oStyuR0d2VW4+/HpBYqWxWLLb7kIAyycQ2kt82WgUCozt72YFBNS359jHvuvToeKCEc8zvh1/TvA1fZVoOiGAflwBG4SMndSEGImhbRIMGAeN+sTSG7ajv/hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=qWLvaPMA; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53F7RY1A002730;
+	Tue, 15 Apr 2025 13:18:43 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=hVtqs8Vv0HUnb0Ez+Qkit5
+	ofDEeHme3L4CqxhioE4KQ=; b=qWLvaPMASIBb6v52ZYZUcHFERdRS5LH/je/muW
+	XUFNmbk9ZnPCw89gAYB/wwPEr3j2lWBGzO2xuEfK2ssQI39syGPDJtkzjk2jO7B9
+	kmgc2S1+6l/dCI74xoApm5TOBXhSbsCnr75MUyDr433ygwPrvjTwzhJ9ezn1Cx/8
+	eaD1iEZRsQMHXm5kCAR3xNMAb/F6EBpXlmSbG3vE3muq4mgiD8/ajRuhkW/9DFms
+	wngLUDLSyYaWgzGKgF8CvMltgBPqy5Onf8B/Ing49w1me/YyvIhxoRgJrnAJ1lZb
+	ZWvtLuRVgDXf675AhQJ/KSJ3dkq/Sjodh2JXfLi1OZNmAtUQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45yfh1vvwe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Apr 2025 13:18:43 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 0715040049;
+	Tue, 15 Apr 2025 13:17:46 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A08D96F1F27;
+	Tue, 15 Apr 2025 13:17:07 +0200 (CEST)
+Received: from localhost (10.130.77.120) by SHFDAG1NODE3.st.com (10.75.129.71)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 15 Apr
+ 2025 13:17:07 +0200
+From: Christian Bruel <christian.bruel@foss.st.com>
+To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>
+CC: <devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <maz@kernel.org>, Christian Bruel <christian.bruel@foss.st.com>
+Subject: [PATCH v2 0/6] Fix interrupt controller node for STM32MP2 SoCs
+Date: Tue, 15 Apr 2025 13:16:48 +0200
+Message-ID: <20250415111654.2103767-1-christian.bruel@foss.st.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8490dbeb6f79ed039e6c11d121002618972538a3.1744293540.git.mst@redhat.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-15_05,2025-04-10_01,2024-11-22_01
 
-  Hi,
+Fix GIC compatible and register access for STM32MP2
+This serie replaces the original stm32mp25 patch:
+ "arm64: dts: st: Adjust interrupt-controller for aarch64"
 
-> +static void virtio_gpu_shutdown(struct virtio_device *vdev)
-> +{
-> +	/*
-> +	 * drm does its own synchronization on shutdown.
-> +	 * Do nothing here, opt out of device reset.
-> +	 */
+Changes in v2:
+   - Apply fixes to stm32mp21 and stm32mp23 SoCs family
 
-I think a call to 'drm_dev_unplug()' is what you need here.
+Christian Bruel (6):
+  arm64: dts: st: Adjust interrupt-controller for stm32mp25 SoCs
+  arm64: dts: st: Use 128kB size for aliased GIC400 register access on
+    stm32mp25 SoCs
+  arm64: dts: st: Adjust interrupt-controller for stm32mp21 SoCs
+  arm64: dts: st: Use 128kB size for aliased GIC400 register access on
+    stm32mp21 SoCs
+  arm64: dts: st: Adjust interrupt-controller for stm32mp23 SoCs
+  arm64: dts: st: Use 128kB size for aliased GIC400 register access on
+    stm32mp23 SoCs
 
-take care,
-  Gerd
+ arch/arm64/boot/dts/st/stm32mp211.dtsi | 8 ++++----
+ arch/arm64/boot/dts/st/stm32mp231.dtsi | 9 ++++-----
+ arch/arm64/boot/dts/st/stm32mp251.dtsi | 9 ++++-----
+ 3 files changed, 12 insertions(+), 14 deletions(-)
+
+-- 
+2.34.1
 
 
