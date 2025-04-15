@@ -1,123 +1,128 @@
-Return-Path: <linux-kernel+bounces-605721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA733A8A537
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 19:21:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C604A8A549
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 19:22:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCF384424AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 17:21:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11F59442F30
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 17:22:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA99E21C9EB;
-	Tue, 15 Apr 2025 17:20:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92EFB21D3FE;
+	Tue, 15 Apr 2025 17:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wFiFHoyO"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a2pxtO5L"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E2119E819
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 17:20:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F1F21B9D8;
+	Tue, 15 Apr 2025 17:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744737655; cv=none; b=stI9RKD5JhID9CYzfYAOUwKIcYZlVDaEYszUnP5Q2GoFEgLMJcJyP+9s7uBCIryvpisQhwqrGy6Uz+qkzt9BYPylnsD8PzW8WRlG8qylxpci/+7tXvUQQLAbgqccrZkDeJG7m3sO/K9HakCHVJlweGO+kiwELz2PLNdxd6Muvag=
+	t=1744737740; cv=none; b=RpGxojyQFuoJqjkZqxHC2xA8XaTZEHzW/YvNJM17Gs/2xRibL83Q41WmoWEwY2EcQxRPF+wOqu6m0blkr59wo9EsSrD7tjQZDU3pxXlrniNUI+naCG8ovascjhVBbeJzMbllBOuYTlBk6sRuUy/TLZ3U1mVETV/ljwSmi5SXbPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744737655; c=relaxed/simple;
-	bh=/IJKFtHh06K+r6fw9+YnmvZdUdj2qCNjcOk8l8INVIQ=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=EegZYT4P5g1FRmSHYQSWfgO6fgV+bfGChQPUqjY5oeHEIvBhqUOyqVFjpX0u7IoHHELd5a04dcpnRwXldUcMZM0vxBfTk04IgtE+D703niwTKTlyyjsdSJAWgJJkbr9u0wSNVv2ZIEphOr7RqtZCk6IINkVWb4ex9B+XGmeOq2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jyescas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wFiFHoyO; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jyescas.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7395d07a3dcso4240267b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 10:20:53 -0700 (PDT)
+	s=arc-20240116; t=1744737740; c=relaxed/simple;
+	bh=VyZNJRydtqRP4tIJFtKk5xpXTG5rj7MnfC8y7oF8ZiA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pFtAOz8vjznjVaL9oVWbZav4oU4U60HCAUcwVHOHrANw96Qlrz+tDcKZNABIoMnpBGLmjW/BTFP7lpFAWP7XbEdg28Y6mhRL7Eqg9xLo3CSe+VCR3hSA8ywFKThGwYLjPUVIf8zMczdCwAoxqdptYxLduwYR3aAj9D2yW9J5CR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a2pxtO5L; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-227914acd20so54703585ad.1;
+        Tue, 15 Apr 2025 10:22:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744737653; x=1745342453; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ZZKTzytUJ5gvm1rD+Ux7dnbHm6H7yF/Qpc+vR+tifvc=;
-        b=wFiFHoyONavQQMToHC1E4DwlCsuPNLvHmGUWEH+zVeVDAycz0PUwvCe3nAAi2PgUdZ
-         7bFqqzJLQwcsKtyOMZr2sVmLcmJxzpjO62HaO0dlttfHnelUwqCh3XmBIqszxgKxZdyf
-         XHu1hUsWjuZ1FO21xSBNi2ii88P9uKGqTwiyprQlYsA2IUG2vEo+ZS7VqOA0awC8l8yb
-         G4QmJyj6Y8WPP/i17EI/r6dsxAk3jjQQZlYOj+oRl6JpQd9ma3cOhVPLfokpplQFvBSt
-         qMpiV0wGFbkrl9Is0nMD9tDSzMXG9/OMbXJ2BCIOsEMJf5oHQCWf5j1+nRosJbDmLwPA
-         tUWg==
+        d=gmail.com; s=20230601; t=1744737738; x=1745342538; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FwKXjChYz6Is/rS9aNK0pEeqdCKV3joL7n7XCoKDlvE=;
+        b=a2pxtO5LdRb5todPF/Xchy4m9qLC9a4LL6QHrj08iHIdDtLHK7Hab60aVW1h6yZIja
+         ZDsGlPrtC8Ti8h1fE3ErzbR0Qncn+UutDLpfoLF5ePUQXKa/6HuO9wo8qFouQLgpVYEx
+         KXSnEHyCTjVh+40P8POQdcDcvsfbksQ42qvS4NhCh9GA4lwtJGargpByZq37SqwMTAcB
+         nSXGnCVm6tCYkxnNsVS0faewloapDSkBrul+boF/WyDOYW5BSe8brtCZSFq7UitffWtM
+         vxaU/A5v2S4x39rllRLtH/dDWvkdOlxKwDf3RpjdKFXIJ5EPWG5TtkRkFJkIfypucQ8F
+         OlHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744737653; x=1745342453;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZZKTzytUJ5gvm1rD+Ux7dnbHm6H7yF/Qpc+vR+tifvc=;
-        b=hVmdIzJTKpmz81CZ5K2szr7Z9qwzZKsREdwZ3m0hYxkAjBS9IO1EowBsDB642XRVnH
-         UEyBLONZZ7ICJHdykxkjgAKhFztIMqISeHlmAMIcewMrCOJZX7lZWyQKrwLPZUNhnI3j
-         8lbW4JIQhrbs8M4z3Q08v85jzFwJDrKqnB9UumAz8fLxpzfJcUz2M5oPz5UwuBIJkDd5
-         kMbBML9v7JVcULX/W802q6uOS9w1w+kx68yCY9ngQHFUgulTGJkGhL7skxmG388JvFG4
-         8DK6UfijcquLR2k4MaP/vZkuxTxC323N09MgTGl4ZTlHfRlZuadbbLdxABQQ8//nxKU3
-         85Pw==
-X-Forwarded-Encrypted: i=1; AJvYcCU7ASz6vdHBJozNjoNc6OlqA1y7x0BLmnzRhGH1+CPW/XI747JsMgoT0NxEwAurZ20mknbCF2tsSsQ/9QU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywigt5YyTcn4mqEip+x7DkE8cvlTCDRNap9TjkvgONT9Ws6tUo0
-	K80Jk8T69lDuoHVjWR9YEgWNJ9xDsxXcHqxYUrBIWQM779Pje5Hk52R4lG5DINFtxJyACQg5hLX
-	ZYVrw5A==
-X-Google-Smtp-Source: AGHT+IEtqmOWyc2b0VefNP8+RxTxYVwyvsPccMVCWFhQFWDyZ1nHgtQ/5h+wSOOn5ob1foG8cOMdK2s8JDAm
-X-Received: from pfbga15.prod.google.com ([2002:a05:6a00:620f:b0:732:2279:bc82])
- (user=jyescas job=prod-delivery.src-stubby-dispatcher) by 2002:aa7:9308:0:b0:736:34ca:dee2
- with SMTP id d2e1a72fcca58-73c1f8c6b5emr422992b3a.4.1744737653056; Tue, 15
- Apr 2025 10:20:53 -0700 (PDT)
-Date: Tue, 15 Apr 2025 10:19:53 -0700
+        d=1e100.net; s=20230601; t=1744737738; x=1745342538;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FwKXjChYz6Is/rS9aNK0pEeqdCKV3joL7n7XCoKDlvE=;
+        b=nkxZObNA6vKkGJ0N7BJv2bH4Vm50AEGQTBaxi8SYRT15j3tsf1tie3N/X3BN7nmYR3
+         dt2KHwZYs+7S/D03duOerb6c+KFm6uhfdJ7u5qWUx/qkOoX68rbJR1Ryf6IXX6NT3WXT
+         AvcgZbX2MK7qoL3U24+IGSdSQxArZhtxI4ygos363AMW/VYAK8nz+RCqLOnLRX1CcejG
+         dumD4SPAdOWMGqFnJAk+EA5gXYl8IjOhj/Ct9ZWfIvvfZUla2p7dafJzrM0qf0yPDINB
+         IR5zTVqkHhcm94SqwxW+HC7++FqlP/r3hZvDz3URgjWIGpwsIH0RW07htDQPtzSiHCWj
+         6HPw==
+X-Forwarded-Encrypted: i=1; AJvYcCVyLzKu1Kq7nYsm3CAza/1hQeo9J6GczB+meyZOC5Ji8dcejkBH9pGRxnnhxR9CqHRiVecMQfN+J4yeYno=@vger.kernel.org, AJvYcCXHulnq5eNRkFWEQcLSpKtdaTZf5mAFWTi8Ge9P7BthbrOB8f2VtbpX+qD18WnNRiU8mNUWeS820KUK@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCAjqt/ClJUB6vDr+RqH5rU3lKR5Zf+0vsEaLPx1HxL9icVIpJ
+	TIwSZjF3ThT5uPktHqAseUkmWRONp+uNe2t21CHkf7Zo3oJ1MfstZyzih5jT
+X-Gm-Gg: ASbGncuX2U5FSmDUwiiCex6Pco6m29oy+gQUrj+nUEq41Y699b8Dm9sUGM20aLkC6Vg
+	3+GFKi+tBZgPzCimuQoL9y0txmmXjXWghPok9SxKqFPsajJRt/qwFGTsSqSWZeFgZVbYkuxP4Y3
+	oag/vTVjT6S5dmM13FM+69rIBRwZVY8eu9BqZOqtBd0Kz+6ft+Rll2Te7LbVhSws2raF8dyol+U
+	gxlgQJeVj3/KRJs8Yuvw+I4oa4WRjI0zknr0fnGpT/ST3ceTc0sOyAwBkWuvXzver8nEgKViRkn
+	XTACSxFKxVGGEm277eNFfyqzkoXeK5lPIEUE5GI=
+X-Google-Smtp-Source: AGHT+IFVOpubUVLLQVtvo7qirvjW9oD1wrN9HqH+MmwM72PBdc70iqYfMbJISwhSYp/zGkEAR1mu2Q==
+X-Received: by 2002:a17:903:1b2f:b0:21f:5063:d3ca with SMTP id d9443c01a7336-22c24a142a9mr64747355ad.16.1744737737795;
+        Tue, 15 Apr 2025 10:22:17 -0700 (PDT)
+Received: from nuvole.. ([144.202.86.13])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7ccac49sm120493215ad.217.2025.04.15.10.22.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Apr 2025 10:22:17 -0700 (PDT)
+From: Pengyu Luo <mitltlatltl@gmail.com>
+To: Pengyu Luo <mitltlatltl@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] usb: typec: ucsi: huawei_gaokun: add error checking
+Date: Wed, 16 Apr 2025 01:20:05 +0800
+Message-ID: <20250415172006.126740-1-mitltlatltl@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.604.gff1f9ca942-goog
-Message-ID: <20250415171954.3970818-1-jyescas@google.com>
-Subject: [PATCH] dma-buf: heaps: Set allocation orders for larger page sizes
-From: Juan Yescas <jyescas@google.com>
-To: Sumit Semwal <sumit.semwal@linaro.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	John Stultz <jstultz@google.com>, "T.J. Mercier" <tjmercier@google.com>, 
-	"=?UTF-8?q?Christian=20K=C3=B6nig?=" <christian.koenig@amd.com>, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
-	linux-kernel@vger.kernel.org
-Cc: jyescas@google.com, baohua@kernel.org, dmitry.osipenko@collabora.com, 
-	jaewon31.kim@samsung.com, Guangming.Cao@mediatek.com, surenb@google.com, 
-	kaleshsingh@google.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-This change sets the allocation orders for the different page sizes
-(4k, 16k, 64k) based on PAGE_SHIFT. Before this change, the orders
-for large page sizes were calculated incorrectly, this caused system
-heap to allocate from 2% to 4% more memory on 16KiB page size kernels.
+'cci' may be uninitialized, adding error checking to fix it.
 
-This change was tested on 4k/16k page size kernels.
-
-Signed-off-by: Juan Yescas <jyescas@google.com>
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/all/Z_44zoTyLLdXNkKT@stanley.mountain
+Fixes: 00327d7f2c8c ("usb: typec: ucsi: add Huawei Matebook E Go ucsi driver")
+Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
 ---
- drivers/dma-buf/heaps/system_heap.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/usb/typec/ucsi/ucsi_huawei_gaokun.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/dma-buf/heaps/system_heap.c b/drivers/dma-buf/heaps/system_heap.c
-index 26d5dc89ea16..54674c02dcb4 100644
---- a/drivers/dma-buf/heaps/system_heap.c
-+++ b/drivers/dma-buf/heaps/system_heap.c
-@@ -50,8 +50,15 @@ static gfp_t order_flags[] = {HIGH_ORDER_GFP, HIGH_ORDER_GFP, LOW_ORDER_GFP};
-  * to match with the sizes often found in IOMMUs. Using order 4 pages instead
-  * of order 0 pages can significantly improve the performance of many IOMMUs
-  * by reducing TLB pressure and time spent updating page tables.
-+ *
-+ * Note: When the order is 0, the minimum allocation is PAGE_SIZE. The possible
-+ * page sizes for ARM devices could be 4K, 16K and 64K.
-  */
--static const unsigned int orders[] = {8, 4, 0};
-+#define ORDER_1M (20 - PAGE_SHIFT)
-+#define ORDER_64K (16 - PAGE_SHIFT)
-+#define ORDER_FOR_PAGE_SIZE (0)
-+static const unsigned int orders[] = {ORDER_1M, ORDER_64K, ORDER_FOR_PAGE_SIZE};
-+
- #define NUM_ORDERS ARRAY_SIZE(orders)
+diff --git a/drivers/usb/typec/ucsi/ucsi_huawei_gaokun.c b/drivers/usb/typec/ucsi/ucsi_huawei_gaokun.c
+index 344aa7aeaf..7b5222081b 100644
+--- a/drivers/usb/typec/ucsi/ucsi_huawei_gaokun.c
++++ b/drivers/usb/typec/ucsi/ucsi_huawei_gaokun.c
+@@ -359,6 +359,7 @@ static int gaokun_ucsi_notify(struct notifier_block *nb,
+ 			      unsigned long action, void *data)
+ {
+ 	u32 cci;
++	int ret;
+ 	struct gaokun_ucsi *uec = container_of(nb, struct gaokun_ucsi, nb);
  
- static struct sg_table *dup_sg_table(struct sg_table *table)
+ 	switch (action) {
+@@ -368,7 +369,10 @@ static int gaokun_ucsi_notify(struct notifier_block *nb,
+ 		return NOTIFY_OK;
+ 
+ 	case EC_EVENT_UCSI:
+-		gaokun_ucsi_read_cci(uec->ucsi, &cci);
++		ret = gaokun_ucsi_read_cci(uec->ucsi, &cci);
++		if (ret)
++			return NOTIFY_DONE;
++
+ 		ucsi_notify_common(uec->ucsi, cci);
+ 		if (UCSI_CCI_CONNECTOR(cci))
+ 			gaokun_ucsi_handle_no_usb_event(uec, UCSI_CCI_CONNECTOR(cci) - 1);
 -- 
-2.49.0.604.gff1f9ca942-goog
+2.49.0
 
 
