@@ -1,88 +1,105 @@
-Return-Path: <linux-kernel+bounces-604638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF479A896D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:35:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF67AA896D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:35:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 528093BAF53
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:34:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21472189DC5B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:35:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F36841624CE;
-	Tue, 15 Apr 2025 08:32:53 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CCF72DFA23
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 08:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0293227FD46;
+	Tue, 15 Apr 2025 08:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NluUiR6w"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB0627A938
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 08:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744705973; cv=none; b=ndL6b6f8/bhed87osi/ij0NYSq6udckT/TS+SAXPYd9EZ96ZYY/1Y3tM6IujbpNffAzf7ZV5qAjrCl/o7LWX0+VpWfrpXoE3Bt0nJqRa8CUO27X0veouvW4bFIQKyMp2Ow+Sb4sFRuYsAJIDgidCRhUjbJN0qd9qwFrqxpZO21U=
+	t=1744706007; cv=none; b=ERFHE01Yse+5lU9WbS3mNRZnlgPMpPaRmdjmY8ieo/h/0hLTp7yNZ3IevwCijyioBJJ2ymZeryoAABdShcx4B+0sXy3pBTeomIJL0yQVuL8oLKR/5E8IfoxBI2+VHi6z2WRO2RLhAbC1Q/wVPvT/2EMOX/gxwOClQjAXMbRUxw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744705973; c=relaxed/simple;
-	bh=UMxtwlRz0GAwu6surQiT21cmWeAzM++nsmAFg830Qg0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bC2ASmQMuT/GoCLUMHZWZkI9sAI/AxgLWCNjdp4uLW9LU9n2mLVeneNAT57VCD8JDE+BWf3SqzXeXbQ4w0lPcJ696i2e+QJ9LgKATO2rgXcC3xHuuuVoJ7o9mcyut97w+LSKhES5nqZT7+VlLhcW447IfJuK+jpGroEQ5cmBZnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 99D03339;
-	Tue, 15 Apr 2025 01:32:49 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 694AE3F694;
-	Tue, 15 Apr 2025 01:32:50 -0700 (PDT)
-Date: Tue, 15 Apr 2025 09:32:47 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: "lihuisong (C)" <lihuisong@huawei.com>
-Cc: <xuwei5@huawei.com>, <linux-kernel@vger.kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH] soc: hisilicon: kunpeng_hccs: Simplify PCC shared memory
- region handling
-Message-ID: <20250415-cream-jackrabbit-of-psychology-57f038@sudeepholla>
-References: <20250411112539.1149863-1-sudeep.holla@arm.com>
- <0e34d68f-c5fb-4fdb-90bf-2ce005c7cf66@huawei.com>
+	s=arc-20240116; t=1744706007; c=relaxed/simple;
+	bh=BVq44rUWz2Ng76u3u2UZTBQ+iG1mC9PAk3X824w7T0s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gL00wVT5FcvpYZV92PUxkp0ga6cFzsXRfqME2gtgFsT2MiMozZaZim4zONVyr5t9mkI0TikfbXg+CQs6k8vX+4bFBnee+kTBJuxRo+u6+b87h1zUg0JojE/HYhPCxMsi/IpJ018ebWdBuU56jLyqHaUFsScfr9rcwjlJpfjVz2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NluUiR6w; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-548409cd2a8so6857194e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 01:33:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744706003; x=1745310803; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BVq44rUWz2Ng76u3u2UZTBQ+iG1mC9PAk3X824w7T0s=;
+        b=NluUiR6wPTq8SHzWY+yBbO9bw1e9QriXtkVUMaqsbbPWY1xYyUnykSLXlEli583CwJ
+         catBIZhrhYGMCqlxNLWYZMDAnRoD9kCTVUcaflYHTwdCI8jIZ7JRM719IyWR3xtXqkP9
+         8znovBZF6ozkKUcEFdeSJGMzT3HczEjnOnugFOvXQYXGvyQSSI4hpnr3tVtDCcuGQ5sT
+         gkwkO5qWoKI+Y6Qz/Z7P3gDSej2f+9qRf6La5ca+57JWEbZp6GXn31ssr8DdyQWdZ5Iy
+         pHirL6BCBm+i8nwyKgILGrpnRreepW0ow/W/GbXgqgRGgvN12LUjNIv4qiLTpAL7HQLw
+         y4/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744706003; x=1745310803;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BVq44rUWz2Ng76u3u2UZTBQ+iG1mC9PAk3X824w7T0s=;
+        b=fbo0FykWmbkpvD9InqCfCZM0eahwzuFyw4vHEUQVGZZOMC+3WZVzDjLD0OJ/ZUS4rf
+         XOHJpEWTRiJ0mPLLLfULvEEhfJ/duW+xfFSWsol8qHyYd0Iw9dwiP1InQylfYas8k//2
+         Zw74b7jhM7QJyDRw1AiANK6APcQqFYQaY5fjcqI0V5a5ycWTAZq/5W74d2tBugRUdV1M
+         3NQweKz0HLz6EbSKL2a8ZNM5aG5GwPL4WMNZeV8ZekHQyqPAeG2Rc5p1V53VcXFc+CKN
+         f0mmEbKWMI8ZoYsW0nKHFH0Cf8CLamwtPdXz5mY0Gf7wQ2i0szJR07WDA4I6t3gH3Fdq
+         VkXg==
+X-Forwarded-Encrypted: i=1; AJvYcCX4KQy88680ja3q+W0aEAV2OV5u1it/5sQ7owtKndDpPRhMJjgMymrOn5wyZkPOxR3ac/CtIRi0vYoePwk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsxUthyFO2VZRMU43FOmhkLSavD4q220O6VBbzPgUa7zEWFZeR
+	Tp0pjRbvlQVASIiHgE4sWeM/pm/orjcx4MfUOEjtGNuaC76QOwoZ3mpuaz1AXctJQc92yKp91ye
+	alIqQJn35Q9Jox3mzRhevr5IQqWzBXqTrBIzQIg==
+X-Gm-Gg: ASbGncuHGL4pNyaR0e+9WjLE2pZe6a0s9v4U/xbjhARMNthmzbUBJrG+0mswSLM6FjV
+	DtG1mEftFJaLI4eyao1cdPXfTI/DWgyUFLvE53xdNQW8Iw/xeYpp6Qxgb2QHpQMQv/MYAXjQma/
+	o5Fcc+3BAFNGvFANiuxFWW5Q==
+X-Google-Smtp-Source: AGHT+IEd5j3qZm6qDkFbtbUTVHnuADdbaQWk+metpqA/AlzIHuMA1sSiTw/XLml6l2Q9TnXYbPJqqjE1BZkT77NNJ54=
+X-Received: by 2002:a2e:ad07:0:b0:30c:aae:6d61 with SMTP id
+ 38308e7fff4ca-31049a80156mr48550281fa.30.1744706003557; Tue, 15 Apr 2025
+ 01:33:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0e34d68f-c5fb-4fdb-90bf-2ce005c7cf66@huawei.com>
+References: <20250407-gpiochip-set-rv-gpio-part1-v1-0-78399683ca38@linaro.org> <20250407-gpiochip-set-rv-gpio-part1-v1-9-78399683ca38@linaro.org>
+In-Reply-To: <20250407-gpiochip-set-rv-gpio-part1-v1-9-78399683ca38@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 15 Apr 2025 10:33:12 +0200
+X-Gm-Features: ATxdqUEnypAgX3dvdjBuXa1nxNBH1F6RCCsFWROhOuXbV9-fbo2oM-bC4KfkygE
+Message-ID: <CACRpkdbjyNqiJjPkhxaWYUp65RYpLvciNyXCKzgd3n7PNgDY5w@mail.gmail.com>
+Subject: Re: [PATCH 09/12] gpio: htc-egpio: enable building with COMPILE_TEST=y
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Chunyan Zhang <zhang.lyra@gmail.com>, Andy Shevchenko <andy@kernel.org>, Peter Tyser <ptyser@xes-inc.com>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 15, 2025 at 02:26:40PM +0800, lihuisong (C) wrote:
-> +Wei who is Hisilicon SoC maintainer.
-> 
-> 在 2025/4/11 19:25, Sudeep Holla 写道:
-> > The PCC driver now handles mapping and unmapping of shared memory
-> > areas as part of pcc_mbox_{request,free}_channel(). Without these before,
-> > this Kunpeng HCCS driver did handling of those mappings like several
-> > other PCC mailbox client drivers.
-> > 
-> > There were redundant operations, leading to unnecessary code. Maintaining
-> > the consistency across these driver was harder due to scattered handling
-> > of shmem.
-> > 
-> > Just use the mapped shmem and remove all redundant operations from this
-> > driver.
-> > 
-> > Cc: Huisong Li <lihuisong@huawei.com>
-> > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> Reviewed-by: Huisong Li <lihuisong@huawei.com>
+On Mon, Apr 7, 2025 at 9:25=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl> =
+wrote:
 
-Thanks and sorry for dropping it assuming you will pick it up.
-The maintainers file just list you.
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> Extend the build coverage by allowing to build the module with
+> COMPILE_TEST enabled.
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Wei,
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Let me know if you want me to repost or if you can pick it from [1]
-
--- 
-Regards,
-Sudeep
-
-[1] https://lore.kernel.org/all/20250411112539.1149863-1-sudeep.holla@arm.com/
+Yours,
+Linus Walleij
 
