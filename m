@@ -1,146 +1,86 @@
-Return-Path: <linux-kernel+bounces-604365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14730A8939A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:00:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 278F5A8939D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:00:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16BF51745FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 06:00:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B0C9189539E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 06:00:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF13F274FDD;
-	Tue, 15 Apr 2025 05:59:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GKLReZU7"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A55427511C;
+	Tue, 15 Apr 2025 06:00:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D543275102;
-	Tue, 15 Apr 2025 05:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE8727510A
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 06:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744696773; cv=none; b=Q614ULSsaT+8idnYsBXZV6TCtHAJRUCrmURt6Wafig4HzpW35N38RsEzWJ09CWqXqlmmkxkq4LwflcfXxYJzlftNnULfxV94dyp9QdUw463mleCveXdiunKK5+1yttDg0W319kKspSskwZJFQMlfuvAsaUQpWnEbTU5X/mCKIi8=
+	t=1744696804; cv=none; b=mRjycGa19++rlLGHNgyK+louvlBlo+wE3HGbCsBDjJmHweIQCubaVND2LJRVrp8EmmJeZik57bCqqxBa/T4NhsXERTSHiqGnp0plNRSb8txHDX7+Q7H9oeKl+UxtMtRG/S8uj4pBIWlwSHp5x97JCV8Hnn1XEX3wx0MiSkcyhrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744696773; c=relaxed/simple;
-	bh=YCGDQojD8nya6OBnR7iagaQHAlVaXzUTMmVsiIk5blE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=s/tcF6BX6SyI8QRUQ9bXKJIpjFviZT/jrE6JYHzfYLbRUCkgQ6QCflH5hXwnSgrL1rTsd8yC6qplH9Zns/vWUb36vTNQ21sIg+VwhplGX6rhMJiMUy1oK2d1mRLp6J5hknWhZoXeJ4NQWdg4thBWq5YYWCd4XHx2OfyjHJdA9Ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GKLReZU7; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-54963160818so6312784e87.2;
-        Mon, 14 Apr 2025 22:59:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744696769; x=1745301569; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=i11n14/4d12JDY2DmtQ7aKWTPCB2K2tXSiZI90yPfyM=;
-        b=GKLReZU7WnFEoUJd/VgjnuXFMlrMmTiI7dnP3xDNRcRsd7Sa73Hv1bWTIt9nhU5r24
-         ioPLn0SEOcqnum5XMVmyol2JsImvaNlfEPDXTjh2AP+1tB+Bu4tJoJaNszhI1IYAO3Pg
-         L+MyTnPWHktCXkZd8O6rb5LFpM8auCVCKOmHCb5eTseDLiSEf5qLcmnDVH0d20VSdt2o
-         vE3KQER0c1lwo1k4rzy2PAjubGSAdkPBgZlHEG6lLMAfsmSJ25lyJc7ycHSSz6mBiRpv
-         //KZovYu7iwLB9wio6EA+FTGmnZI1J8/2eywDYj0V5fOehnfHp3pTHcdVLiu2ZW3QA0D
-         nsFw==
+	s=arc-20240116; t=1744696804; c=relaxed/simple;
+	bh=30BnLDoNL1Oo4GFo12Sgdolh1uMx4oSYIi6y4Tie1E0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=mANwxiwb/mHQCLEF/mZnRErf5uPB7TIdy6cDOBO0OdpA4YmViKboOCYOvoQjZaj6+uJXX0DYQsjhq5GvCBnuIH3aLDy9fbAcKLMwrF1cerO3P6UFBy8/SqPaKvnevEWqS4A5MbudEi6N0ePfXQB3he4dvi0Rcf5rdfQNZKOOdpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3d702175925so50794775ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 23:00:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744696769; x=1745301569;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=i11n14/4d12JDY2DmtQ7aKWTPCB2K2tXSiZI90yPfyM=;
-        b=h2aAkGKgiV5JyzLQHyHst5k3n/2HvXvVuihXkSZbyypKyp6+7JkME5sI+upQYtGiUS
-         3x57YSoNcxeQlfcxxa0tguVC1aLUFga4w47kHqwOa3JuKHsuNfqOmHDMC5ZSwQ7/JZsk
-         iUJtAd8FHwziijYhpDyQ84O29LQCg/axypABkKsUCv8uIE30VDrpKD8ZJPfBrlENYDo3
-         6MlZEvLs0WkPf/ngA/gQjkGsR6NT4bBF52TRet3wce5/tMyIhoKF7N1lgdqcRDPkEwq9
-         2H7LYzmBntj5acyFn8PIQWE4/7UX4SlhuPrFVEcX3CHdI7+dordn7WOOlVtDZeOJUC4i
-         3X/A==
-X-Forwarded-Encrypted: i=1; AJvYcCX5xxqZiWf0dHsW04OTPx+IsPc45smDTYb/pYGhSwyMIwMnCSsD9zxBa/zB5yssamT+YcoMbgGEnvby@vger.kernel.org, AJvYcCXFGtED2QvGDG/sM1LobheFx+1WNFcU4Zs4MFCza3Il83Qk94Pv2QDCJdeMcpbOsInrX0DMsyDJMP5D5D0b@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUoRuK5Ni4CJLWSvg6a9WEXVSzwGQwrs1hJrreu9fFZFfZtMF4
-	rgQffCoDdbrgqekFjImHlzMwp5Hat9RO9MVhJveiSZF72Rv1cyZR
-X-Gm-Gg: ASbGncvDgx6Krc5Nfxtcow/1F04OHmfk1wRcKdZElxGLcxrPUDMsnH3PQ2CTvvJu7Pl
-	Gv0dqQ0hWIl5CpKEGC8J614CU/mZkhM/4s08c01KwBhN6G2E2NdKNxiLP1PCR16wRfm14cCxLax
-	4oYjy76sGfE/LbNpH52ziWnSgO5Fs0rrqMxw8W7PGDW4A8xna1KHob/3dxsqntlC+tPyfjVUVtO
-	SxKaQ84gZNDoNtd857cFOC5pEpJrcNhqCgSelPCgJygZhFyI8SfHNciJy8qVAwrNquKyiUHEz/x
-	frKS4DamV57+wzPfFWcyf3EkHphuyihrGNeI8RS8S1bAAoBTY/zgxi+sIolm+8pYfbqAFRnT+u0
-	brGO70FEi
-X-Google-Smtp-Source: AGHT+IGGzEQ0x3pZhLyULvXchSuuoFv6C+TX/Gfsfz6VnJM59lAdCP1QkZD/hF7omLQChyBq+YZF/Q==
-X-Received: by 2002:a05:6512:31d4:b0:549:9044:94b1 with SMTP id 2adb3069b0e04-54d4529d599mr4513847e87.27.1744696769363;
-        Mon, 14 Apr 2025 22:59:29 -0700 (PDT)
-Received: from [192.168.2.11] (83-233-6-197.cust.bredband2.com. [83.233.6.197])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54d3d238820sm1325471e87.80.2025.04.14.22.59.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Apr 2025 22:59:27 -0700 (PDT)
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-Date: Tue, 15 Apr 2025 07:59:00 +0200
-Subject: [PATCH v4 3/3] MAINTAINERS: add entry for Sitronix ST7571 LCD
- Controller
+        d=1e100.net; s=20230601; t=1744696802; x=1745301602;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=spel44pypa6rlZePUPAJ6+VBanCdedYp6rIzP+5ZZy4=;
+        b=MYrYEm0FHolJ0+Ct/hTiGq4Wtjw2rSXJNsmq3tXp7t1U39xpRHP66FiCxwDl3LrBNg
+         NKhoP2Ce2IGM+bkeUdY3xC3nFl4gsz9Z5E4e6GPJcWGObCPYi4D3gMqEGoF1wqqdlmV+
+         yDoi5aR7IdKj0klGzbM9MehzCeQfhhfGJlbGfsC1Z0sZhSTsezb6d5W0bheRm1sAyV6l
+         HBZxx23Qs7ZwnsmE3W/Td2GkzNdpxfZgpf8o7HlT5TCyg62WmpvhmbZp1zVIdBdn7E8R
+         0MdgHQwWhXs0p38smPP2uTKxlb0SzWBGLc4gkdzzqaoRZTkdVoxSVcn8+x4on6NLv1yQ
+         Fm5Q==
+X-Gm-Message-State: AOJu0YzfbyJJZOgBV1DYEU58Ht0WYVRUHgOKZB7pSc8n8gA2p4U6za/B
+	OmzaFJfzEnh4lM6fmVn6SrVuHytyN/6A4Of/0QRowOt8Tbfbt7tCptAs9H7y7Hl3Ql6DqKFU6tl
+	KynqwQQ2sGekLUnI5ZrziTfVF/PPCHM/cV/tMS61Dx9wQChvZs6p0m9g=
+X-Google-Smtp-Source: AGHT+IF5ncEkRLKao3XFTZP+isr5hgY1c/gHItw/OLUWEf5GIQ9xDLBOKvXLtJjHg2GIyyFKmZE2Nz7LnJnoEAVE+W2DILAs0EOh
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250415-st7571-v4-3-8b5c9be8bae7@gmail.com>
-References: <20250415-st7571-v4-0-8b5c9be8bae7@gmail.com>
-In-Reply-To: <20250415-st7571-v4-0-8b5c9be8bae7@gmail.com>
-To: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Marcus Folkesson <marcus.folkesson@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=954;
- i=marcus.folkesson@gmail.com; h=from:subject:message-id;
- bh=YCGDQojD8nya6OBnR7iagaQHAlVaXzUTMmVsiIk5blE=;
- b=owEBbQKS/ZANAwAIAYiATm9ZXVIyAcsmYgBn/fWyrMfUB92/ROVnDkWUc+Ca2lw8TH4nKiocQ
- rcfgkm+rE2JAjMEAAEIAB0WIQQFUaLotmy1TWTBLGWIgE5vWV1SMgUCZ/31sgAKCRCIgE5vWV1S
- MskLD/9Rk5p9Za1MNvrLcfpl/OYBNzjbdp8PdyTAWaUyo7BsYlbOEiZT32ea/LGn33rzskoiZcg
- /52tYVDIPkL5DfuHnWUsQtOc7AXfS4JiTP8sXUWEIu9Vq2zB2y+vPQRoxWEQWE1v4kM9yj4CLHK
- dSoA1YEsiPm6t/VgHk4jzv+anAY3odpFM6Kan7NcgckwWkvm+z2OjdLW+7SzJI6wpHphy1NDS0J
- /f/NXyqehGSWM7+Zv9VTZ4nYsP1JDSWjV3fbugFXVapbNXCAfZKvIhDT7Z+AoDyOg31SJW9mhk+
- TsTxgZcJcvoPnTGconb7khHmlDIY779nB5uPI+1A2rG/ppGPHjfWEKvDcJ+vMPDGZSDTzaTxIa3
- eEVyJjhayRL+gySkGduS+NGuCOTYd1LeExF/8ZsDBhLpmOv08Xc0kJlTdvKehqpey5KD5ldLw7K
- rW20Eaoo2GhIfgCB/u3MAtgpix2T455mEgp9gafdhBJWsVVMb5k9CO0om6s2gwEvKBWw+tymfKU
- ZA/KHukpf3tbVE3AsUyq9HkXSkBro2rXyeVHPe+5BnM/Cmvo7M5p7Z/bPrnu+LFUOS7+WvHqgG0
- 1jS7Br6tN6pKTxo5qHq0d/uCL7g8TczQcHUQp9NRX6SOw7pGcKR3uhewoWV/slJ41KluqF7iKv4
- /PKK0f8O20Cpkrw==
-X-Developer-Key: i=marcus.folkesson@gmail.com; a=openpgp;
- fpr=AB91D46C7E0F6E6FB2AB640EC0FE25D598F6C127
+X-Received: by 2002:a05:6e02:1a2f:b0:3d4:6ec8:c63c with SMTP id
+ e9e14a558f8ab-3d7ec267738mr141778465ab.17.1744696802410; Mon, 14 Apr 2025
+ 23:00:02 -0700 (PDT)
+Date: Mon, 14 Apr 2025 23:00:02 -0700
+In-Reply-To: <ae35d5a9-c958-4cad-96fb-673e8bb9d46c@amd.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67fdf5e2.050a0220.3483fc.0047.GAE@google.com>
+Subject: Re: [syzbot] [mm?] WARNING in move_to_new_folio
+From: syzbot <syzbot+8bb6fd945af4e0ad9299@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, shivankg@amd.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Add MAINTAINERS entry for the Sitronix ST7571 dot matrix LCD
-controller.
+Hello,
 
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
----
- MAINTAINERS | 6 ++++++
- 1 file changed, 6 insertions(+)
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+unregister_netdevice: waiting for DEV to become free
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 889bd4a59551c9bc125f94944a6e1c7e3ef2de83..eeae24fda846b9f63400ebb08c3fa7f02f3f4b19 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7572,6 +7572,12 @@ T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
- F:	Documentation/devicetree/bindings/display/sitronix,st7586.txt
- F:	drivers/gpu/drm/tiny/st7586.c
- 
-+DRM DRIVER FOR SITRONIX ST7571 PANELS
-+M:	Marcus Folkesson <marcus.folkesson@gmail.com>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/display/sitronix,st7571.yaml
-+F:	drivers/gpu/drm/tiny/st7571-i2c.c
-+
- DRM DRIVER FOR SITRONIX ST7701 PANELS
- M:	Jagan Teki <jagan@amarulasolutions.com>
- S:	Maintained
+unregister_netdevice: waiting for batadv0 to become free. Usage count = 3
 
--- 
-2.49.0
+
+Tested on:
+
+commit:         01c6df60 Add linux-next specific files for 20250411
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=13f1f398580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=db03cefa26ecf825
+dashboard link: https://syzkaller.appspot.com/bug?extid=8bb6fd945af4e0ad9299
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12c3cfe4580000
 
 
