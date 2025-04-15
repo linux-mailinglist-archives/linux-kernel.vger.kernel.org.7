@@ -1,225 +1,126 @@
-Return-Path: <linux-kernel+bounces-604642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93527A896DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:36:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BECAAA896E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:37:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45DCD3BAEB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:35:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A8343AAB58
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:35:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A69274FF0;
-	Tue, 15 Apr 2025 08:35:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 612DD27A936;
+	Tue, 15 Apr 2025 08:35:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="GUr3rBan";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="QqK2E6iT"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XbTM3J1u"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28531DE8B0;
-	Tue, 15 Apr 2025 08:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7141DAC92;
+	Tue, 15 Apr 2025 08:35:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744706128; cv=none; b=KGVglo2i55+zgNLdLkg6YbShr6n9qs8yScr1LHByRPZ+2nVdnmgeJ0aMOqSiTCOaKIqREhU4AvFYgdJxPxUW30J11OdDCW0TysDyaX/uPkN83EBugMP8RfSbH/kFxB0xaXL0nHg0Rc21jyhnq2rl+SdsLepRnp6g6frPl/SYj/c=
+	t=1744706148; cv=none; b=nIq0VJUjGZGE1mgCo11L0ciGfuJNevdR5/jzUn9ttiixQY/b1+8a/sw3Kkou/E7DQVwq/Rg+ftpijyzMoyy3Mjw6wi++6D+l+ATvizOINEE7OkticwWpchfW1zPCJzrT9Uvc+bm16sPEGGzF0DCt1xEssuQ0WS5Q40VcuLirmS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744706128; c=relaxed/simple;
-	bh=i+509ryJKJQmkn9+J/lCIfTtFXalbSn8FjHJ7x/dckQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BuBc789Cr4BpKV/R9SQYo39RzWBuzPW5MBMZ64O/DOz3K1RrIV0EDjvmqPs7UlzdE6mg8zQplFtH3S52PWEH+ycgVGUz0rhG0XpF0hzr+KuEQA6bZX1qNLUN/eElyAS3+rQoFyvGMEaqG9aXXDZdmNYdzlLIgAbF+LAw4ON4XXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=GUr3rBan; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=QqK2E6iT reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1744706148; c=relaxed/simple;
+	bh=V1699VeLw28LsYN0B5Q7I8KcWdg2NFRLB5qafh9m23o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DZQwAkAdB/vvrV9isFHDmI6o6XLZTOmaR7V8xBkAB6ORXRwg4EoNsbYs9kl206zvpItDOc95bMnXlVYdmD0JazZlQ2jbbwXSP3KeB3E9gPw66Gx78wyWmG7Pzj3tLf0Gt8ja1dsS+bBO5jfNIMm9ovKsBxt7Up6vhcMWT/W7zos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XbTM3J1u; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2ff85fec403so5878481a91.1;
+        Tue, 15 Apr 2025 01:35:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1744706124; x=1776242124;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=t7sX4ntKbLpFGtsynu9D4uCV1+s7lyl50jhGsnyH5EU=;
-  b=GUr3rBanGQ+z6Y/EYW1sBGzENbD/GhICIpy9VwwKjJNRC9XJiR13O6cO
-   VQoVvgdb18DQRDAwq8/vNvai7CHODuiHZfhh7q+TDEIWo8f4HSqw/Ybv9
-   0Kz9MYZ3KjBjq5nSbLfYCp8RMZ0Mur3rygT2HRZ/7kCb+IoOTjVUI/Sbj
-   n/qAO7eMsH6lW+nuH5zLQwMIUyh3ZFkHfSHVXt+Y9nzUFnZ+srO11Ld8G
-   ogRGf4yxPLWTAw1GPCySeDoVw3YDO//YiUvhszmKz+IY2EnJcbE5fwrKu
-   aS6pyMewvVDOudeIawgkRsalQIEd6qVeQaO96YAtJyjWiZNno9kTKkuC3
-   w==;
-X-CSE-ConnectionGUID: RY2ljpalTvewaM8Ah5s4qw==
-X-CSE-MsgGUID: OjugpQMXTQyYGi26XPOMJg==
-X-IronPort-AV: E=Sophos;i="6.15,213,1739833200"; 
-   d="scan'208";a="43533980"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 15 Apr 2025 10:35:21 +0200
-X-CheckPoint: {67FE1A48-36-F35B2447-E1635CDE}
-X-MAIL-CPID: 3DD5DC0CAE778B2C95C854D9D45F62CB_1
-X-Control-Analysis: str=0001.0A006368.67FE1A54.0074,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B7523160F46;
-	Tue, 15 Apr 2025 10:35:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1744706116;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t7sX4ntKbLpFGtsynu9D4uCV1+s7lyl50jhGsnyH5EU=;
-	b=QqK2E6iTMSKnfvdua8fvymCLNx14HqN89/DczRZPLmUxlur+6O495MVNwztJS63dbbGHBb
-	rylLV7/Tx88zwe3bseo8u14iYtkwpuPBjCS1gG11vHjb7gWWhQcs4RMPeo7deqlVJ+04bA
-	EI1Shl4XJHH3hWQ5xNzxiUpSzr5ibqMlOV2qkOPfngt3EJBBhGSsUxxlP1C+u3Mn4hqVWF
-	N7kPwRkBEkToycS25O2zrzL1VByIZewhTLYe1RC5VQHlsBAFd8Ls8fQ5RZiMJ/r6k0Ypki
-	fT8AzgFD3sM9qh2orc+yBRR42bmVlU6ekmQ617lLSKwm/T87ou4+EFUaQ1hBWQ==
-Message-ID: <f28d39095f3ed99b6235a6f300d31111f2486f06.camel@ew.tq-group.com>
-Subject: Re: [PATCH net-next 1/2] net: phy: dp83867: remove check of delay
- strap configuration
-From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, netdev@vger.kernel.org,  linux-kernel@vger.kernel.org,
- linux@ew.tq-group.com
-Date: Tue, 15 Apr 2025 10:35:14 +0200
-In-Reply-To: <c0c9cbcaf8bb8fd46d2ca618302bed8caa7bc812.camel@ew.tq-group.com>
-References: 
-	<8013ae5966dd22bcb698c0c09d2fc0912ae7ac25.1744639988.git.matthias.schiffer@ew.tq-group.com>
-	 <c0c9cbcaf8bb8fd46d2ca618302bed8caa7bc812.camel@ew.tq-group.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+        d=gmail.com; s=20230601; t=1744706146; x=1745310946; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=b7wgcoQf1HXs+uoKapVgaPIMG7HIkBdUZKlvUkkaF2E=;
+        b=XbTM3J1u1sO1pdUZLlZBisqxqKrSwetbgrSeJ+n0u4LN4OkexflhLGQLk1CKCQ7l53
+         23hNxxieBobh8cAEaCqMUPccbrah7UDj0T/+/UPhj0NIpSE02M/6HGi/naOkiTbzeBFH
+         h1xJyll3O5m335CFQrQi8w7S985VofkJN55Pxaui6mLMgqETCugU6bhoz3ODrEKjqcjj
+         jj9WeX7+3/w6EPnKEDf62NMe0JL4xk65hYL7dm6FlLyERShyr7w5DZFu/OoRS3CFVSk3
+         3eWFkeiKRIHsi1t3hLq2gYPh2xI5ktiPfD26L6gE5FNx6TO4h4J8sHFcURFlIwXdwPPr
+         CM3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744706146; x=1745310946;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=b7wgcoQf1HXs+uoKapVgaPIMG7HIkBdUZKlvUkkaF2E=;
+        b=v9D6uHviGwtkx7NQWTsazWge9nEDaJ5uM8ZQr7Q+csnQYME8iCjlblCQbSAQ4YODm8
+         qTJPxb6Gy03q8kFWMLCGH47ICJx5khVp16BtaU2u958ZZgvsd8zA/VpgBfLTu36MJh3s
+         UoPcql3ksganAv4MOjGqt4lT6RLpRXKYukcxz8MnON/n0bkFVuBQu7GyC8bhWkWech+5
+         Zr7ngfXc689nZNqs9+LdAq7NeDQ+pPnuKBG/+ZJTrAceViAORPw9LwiWQqeCWddpr959
+         Y3dJtH2rohip5yL/rl05SA3LBXzGSnZghgSAavibMz+Jf5XSu4q/JLr2jRj6bbWB0bCl
+         O9vw==
+X-Forwarded-Encrypted: i=1; AJvYcCUA351BYpsyB0qw8tXgeZvFSsCSzE4oFi7tYbh9Z3W1Ai8xGTV+oZWKCtO4A1xJNqO9u/5Rty5yZA8gLac=@vger.kernel.org, AJvYcCUy+B7IgrvtHvxuvPnVdXQFr9cijODGpF+WTnkccfs96K3+IQcfn3oJglgy2a4Lm9B6dGs0G1fa@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzWdzdMwthZhCdAJV+JMY/OYVvKhm8x0V5oXVwrvyiIMSr+xK8
+	aREtl3abaFGUjhy/soVU0NvRIOsOSq9yb4z2mNn3vjLWGbygh7Np
+X-Gm-Gg: ASbGncsMe8EXQ3UfSZPnNfMGZiRJWKCoQs2oyDJnvTN4yujU/uuNMLOno7G60qU7xTf
+	4z5ItseyLNjVd8Z5Sd0ZMIg4k0yIhKvsKcHf7TAUOWqo70eQapd37hZZa+OQeY3lLrMUjgHIH2/
+	K6YazmrfZc/vSXC2YjdzBgYLYW/vw19Z6Mv54BmxkxkmWbap7TzAQvyy4Fol5jrUL9vyofxXzTN
+	QyGHFsq0qjnz1AnQ5uFVNqG/UZBalfui6NVxQ56YZ0TcOzv+FPOJTdyCKlRXS4GrEE75Hm3X+Xk
+	HFv/rf13dj38RMY5FNCd/3t8Uv6ckdGWcUJW3/I5/6QgNGw5O2MkQw29V4wl5Q==
+X-Google-Smtp-Source: AGHT+IEtyDE/Rk+/GYGCjbdmJSJYIY9LwLisO4zjpojtftfoG8bs61Cw1ghB546bQODnjkT/w+EpWA==
+X-Received: by 2002:a17:90b:58c5:b0:2fc:aaf:74d3 with SMTP id 98e67ed59e1d1-3084f2fbb88mr3594703a91.4.1744706145908;
+        Tue, 15 Apr 2025 01:35:45 -0700 (PDT)
+Received: from VM-16-38-fedora.. ([43.135.149.86])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-306df06a767sm13973871a91.6.2025.04.15.01.35.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Apr 2025 01:35:45 -0700 (PDT)
+From: alexjlzheng@gmail.com
+X-Google-Original-From: alexjlzheng@tencent.com
+To: willy@infradead.org,
+	akpm@linux-foundation.org,
+	andrea@betterlinux.com,
+	fengguang.wu@intel.com
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	mengensun@tencent.com,
+	Jinliang Zheng <alexjlzheng@tencent.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] mm: fix ratelimit_pages update error in dirty_ratio_handler()
+Date: Tue, 15 Apr 2025 16:35:42 +0800
+Message-ID: <20250415083542.6946-1-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2025-04-14 at 16:19 +0200, Matthias Schiffer wrote:
-> On Mon, 2025-04-14 at 16:13 +0200, Matthias Schiffer wrote:
-> > The check that intended to handle "rgmii" PHY mode differently from the
-> > other RGMII modes never worked as intended:
-> >=20
-> > - added in commit 2a10154abcb7 ("net: phy: dp83867: Add TI dp83867 phy"=
-):
-> >   logic error caused the condition to always evaluate to true
-> > - changed in commit a46fa260f6f5 ("net: phy: dp83867: Fix warning check
-> >   for setting the internal delay"): now the condition always evaluates
-> >   to false
+From: Jinliang Zheng <alexjlzheng@tencent.com>
 
-Ah, I just realized that this is not entirely accurate. The condition did n=
-ot
-always evaluate to false, it just incorrectly evaluated to false for rgmii-=
-txid.
-Another thing to fix in v2.
+In the dirty_ratio_handler() function, vm_dirty_bytes must be set to
+zero before calling writeback_set_ratelimit(), as global_dirty_limits()
+always prioritizes the value of vm_dirty_bytes.
 
+Fixes: 9d823e8f6b1b ("writeback: per task dirty rate limit")
+Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
+Cc: stable@vger.kernel.org
+---
+ mm/page-writeback.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > - removed in commit 2b892649254f ("net: phy: dp83867: Set up RGMII TX
-> >   delay")
-> >=20
-> > Around the time of the removal, commit c11669a2757e ("net: phy: dp83867=
-:
-> > Rework delay rgmii delay handling") started clearing the delay enable
-> > flags in RGMIICTL (or it would have, if the condition ever evaluated to
-> > true at that time). The change attempted to preserve the historical
-> > behavior of not disabling internal delays with "rgmii" PHY mode and als=
-o
-> > documented this in a comment, but due to a conflict between "Set up
-> > RGMII TX delay" and "Rework delay rgmii delay handling", the behavior
-> > dp83867_verify_rgmii_cfg() warned about (and that was also described in
-> > a commit in dp83867_config_init()) disappeared in the following merge
->=20
-> Ugh, of course I find a mistake in the commit message right after submitt=
-ing the
-> patch - this should read "a comment in ...". I'm going to wait for review=
- and
-> then fix this in v2.
->=20
->=20
-> > of net into net-next in commit b4b12b0d2f02
-> > ("Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net").
-> >=20
-> > While is doesn't appear that this breaking change was intentional, it
-> > has been like this since 2019, and the new behavior to disable the dela=
-ys
-> > with "rgmii" PHY mode is generally desirable - in particular with MAC
-> > drivers that have to fix up the delay mode, resulting in the PHY driver
-> > not even seeing the same mode that was specified in the Device Tree.
-> >=20
-> > Remove the obsolete check and comment.
-> >=20
-> > Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-> > ---
-> >  drivers/net/phy/dp83867.c | 32 +-------------------------------
-> >  1 file changed, 1 insertion(+), 31 deletions(-)
-> >=20
-> > diff --git a/drivers/net/phy/dp83867.c b/drivers/net/phy/dp83867.c
-> > index 063266cafe9c7..e5b0c1b7be13f 100644
-> > --- a/drivers/net/phy/dp83867.c
-> > +++ b/drivers/net/phy/dp83867.c
-> > @@ -92,11 +92,6 @@
-> >  #define DP83867_STRAP_STS1_RESERVED		BIT(11)
-> > =20
-> >  /* STRAP_STS2 bits */
-> > -#define DP83867_STRAP_STS2_CLK_SKEW_TX_MASK	GENMASK(6, 4)
-> > -#define DP83867_STRAP_STS2_CLK_SKEW_TX_SHIFT	4
-> > -#define DP83867_STRAP_STS2_CLK_SKEW_RX_MASK	GENMASK(2, 0)
-> > -#define DP83867_STRAP_STS2_CLK_SKEW_RX_SHIFT	0
-> > -#define DP83867_STRAP_STS2_CLK_SKEW_NONE	BIT(2)
-> >  #define DP83867_STRAP_STS2_STRAP_FLD		BIT(10)
-> > =20
-> >  /* PHY CTRL bits */
-> > @@ -510,25 +505,6 @@ static int dp83867_verify_rgmii_cfg(struct phy_dev=
-ice *phydev)
-> >  {
-> >  	struct dp83867_private *dp83867 =3D phydev->priv;
-> > =20
-> > -	/* Existing behavior was to use default pin strapping delay in rgmii
-> > -	 * mode, but rgmii should have meant no delay.  Warn existing users.
-> > -	 */
-> > -	if (phydev->interface =3D=3D PHY_INTERFACE_MODE_RGMII) {
-> > -		const u16 val =3D phy_read_mmd(phydev, DP83867_DEVADDR,
-> > -					     DP83867_STRAP_STS2);
-> > -		const u16 txskew =3D (val & DP83867_STRAP_STS2_CLK_SKEW_TX_MASK) >>
-> > -				   DP83867_STRAP_STS2_CLK_SKEW_TX_SHIFT;
-> > -		const u16 rxskew =3D (val & DP83867_STRAP_STS2_CLK_SKEW_RX_MASK) >>
-> > -				   DP83867_STRAP_STS2_CLK_SKEW_RX_SHIFT;
-> > -
-> > -		if (txskew !=3D DP83867_STRAP_STS2_CLK_SKEW_NONE ||
-> > -		    rxskew !=3D DP83867_STRAP_STS2_CLK_SKEW_NONE)
-> > -			phydev_warn(phydev,
-> > -				    "PHY has delays via pin strapping, but phy-mode =3D 'rgmii'\n"
-> > -				    "Should be 'rgmii-id' to use internal delays txskew:%x rxskew:=
-%x\n",
-> > -				    txskew, rxskew);
-> > -	}
-> > -
-> >  	/* RX delay *must* be specified if internal delay of RX is used. */
-> >  	if ((phydev->interface =3D=3D PHY_INTERFACE_MODE_RGMII_ID ||
-> >  	     phydev->interface =3D=3D PHY_INTERFACE_MODE_RGMII_RXID) &&
-> > @@ -836,13 +812,7 @@ static int dp83867_config_init(struct phy_device *=
-phydev)
-> >  		if (ret)
-> >  			return ret;
-> > =20
-> > -		/* If rgmii mode with no internal delay is selected, we do NOT use
-> > -		 * aligned mode as one might expect.  Instead we use the PHY's defau=
-lt
-> > -		 * based on pin strapping.  And the "mode 0" default is to *use*
-> > -		 * internal delay with a value of 7 (2.00 ns).
-> > -		 *
-> > -		 * Set up RGMII delays
-> > -		 */
-> > +		/* Set up RGMII delays */
-> >  		val =3D phy_read_mmd(phydev, DP83867_DEVADDR, DP83867_RGMIICTL);
-> > =20
-> >  		val &=3D ~(DP83867_RGMII_TX_CLK_DELAY_EN | DP83867_RGMII_RX_CLK_DELA=
-Y_EN);
->=20
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index c81624bc3969..20e1d76f1eba 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -520,8 +520,8 @@ static int dirty_ratio_handler(const struct ctl_table *table, int write, void *b
+ 
+ 	ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
+ 	if (ret == 0 && write && vm_dirty_ratio != old_ratio) {
+-		writeback_set_ratelimit();
+ 		vm_dirty_bytes = 0;
++		writeback_set_ratelimit();
+ 	}
+ 	return ret;
+ }
+-- 
+2.49.0
 
---=20
-TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
-any
-Amtsgericht M=C3=BCnchen, HRB 105018
-Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
-neider
-https://www.tq-group.com/
 
