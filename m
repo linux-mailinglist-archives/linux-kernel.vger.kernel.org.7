@@ -1,225 +1,130 @@
-Return-Path: <linux-kernel+bounces-605865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17BB4A8A725
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 20:49:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11E52A8A72B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 20:50:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53E463BF44A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 18:49:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C72A44331D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 18:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB48231A2D;
-	Tue, 15 Apr 2025 18:48:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81C7233D7B;
+	Tue, 15 Apr 2025 18:50:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ck4MKnLr"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BI7MZsmW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52CB231A23
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 18:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DDF923315F;
+	Tue, 15 Apr 2025 18:50:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744742918; cv=none; b=tLOtZRf/Y3UJffUM6pVSPJMKhmOLCPajR1Flms/4zKaTzxKhNzLWbRtDQMcaV8pV0VEvA5mT/0bJR0VngLEPgkzsXf4r/ggC89BzfE1ty0gW9FgXsfqSTxmDLUQwPDQ24UyBazxLGd4yMQt2QA1PIu9dL2OhNxbwhGBLkJDEy6M=
+	t=1744743021; cv=none; b=cee5DpMtDXxVYQL+D9QGJqJztc10IPhuGJ1TQF/xjamX+k9z0CAQXtAL9L2xg+Raf0LlrXQ/UAGdMaRs+d2a3RgPowyoi/yHzcPHYfXDqTmLWbLknWLhNbU6903Cepngfez2TeyUXcXKzDyvBIZNend2AQxQo/zPkjknQWRlv+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744742918; c=relaxed/simple;
-	bh=GRRaOckWV14C5R56GzSjTz+WY7vTwquDv45YfqjFogo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ImFPuFebClxlCuoQRp0+ugATPhGA0EN1DRLwx0003pVTffeE8U34JTfRupMpAroX49I7JbL24gx1tYgoQ9Atn48b063K+qQLLDYXaDiRbcqSCsmdfx1O7dBlbSY7n239yHtZocJWUu/DaegaklKyQGIYO/Qt9a6jVn3XUJg7r84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ck4MKnLr; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744742916; x=1776278916;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GRRaOckWV14C5R56GzSjTz+WY7vTwquDv45YfqjFogo=;
-  b=ck4MKnLrg8MJBlrJr2Z6V4GRTxTJL6qvwKB79TfIrI0P/RWJadW3F2u/
-   XQUwzoR6M8Yopc3ReX8W6k84Eq1AJqUDJQ8N+YmVcgslUh6ztV8XP+f13
-   D/Jh94rCd/rzm9HejNJX9LnUmctwgUwrClbEny3PcYZF6fCsOFwcWqtCL
-   hQ0BN5tUTnqiq/PTDPCjORvcyqOkxZ5OQ12KQDfoir1rAq7+q369a+5gu
-   Mvl9HpC4iHd4Pp7GjRXpufykDd6bj7/NBGZtfs71TqXZCDfCd+XStEqR5
-   p9XuOCaYVN3nFfnwAEFCnZRQCBi/54aZgB0ITa/1c4rmigEql51xoTc6K
-   w==;
-X-CSE-ConnectionGUID: 4MmkWVQUT3iUHAfyVKc65Q==
-X-CSE-MsgGUID: 6+kSUgg5T1yPd6ZZJOqoDg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="57262561"
-X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="57262561"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 11:48:35 -0700
-X-CSE-ConnectionGUID: 6lTeCAv0TAqn67QZ3t0+Iw==
-X-CSE-MsgGUID: nDr2kPCFTZuclBesbf6ywQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,214,1739865600"; 
-   d="scan'208";a="135375065"
-Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.222.70])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 11:48:35 -0700
-Date: Tue, 15 Apr 2025 11:48:33 -0700
-From: "Luck, Tony" <tony.luck@intel.com>
-To: James Morse <james.morse@arm.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	H Peter Anvin <hpa@zytor.com>, Babu Moger <Babu.Moger@amd.com>,
-	shameerali.kolothum.thodi@huawei.com,
-	D Scott Phillips OS <scott@os.amperecomputing.com>,
-	carl@os.amperecomputing.com, lcherian@marvell.com,
-	bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
-	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
-	Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
-	dfustini@baylibre.com, amitsinght@marvell.com,
-	David Hildenbrand <david@redhat.com>,
-	Rex Nie <rex.nie@jaguarmicro.com>,
-	Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com
-Subject: Re: [PATCH v8 00/21] x86/resctrl: Move the resctrl filesystem code
- to /fs/resctrl
-Message-ID: <Z_6qASaZHG0QfpD2@agluck-desk3>
-References: <20250411164229.23413-1-james.morse@arm.com>
+	s=arc-20240116; t=1744743021; c=relaxed/simple;
+	bh=Wh9+r6C8QnFxVuYP0gI7fEkh16Fr4uto4HN5gD1lmc8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=a068dNKuNxayUNUoyqYf8HKfb3ZZPwvwtaypcxXs3HUV3xd+gULSWMlK0rFTJ3L8ogslBgFq2EDNN8b8AQph0RU9MXW+QkE9dHrmbYkM+6fU0ZEwF3WKpUlN0zCi8Bdek9WsYzW7+L8gX6Ff8x73mgM3rXXjFyXTtPZZ74vNEZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BI7MZsmW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62A6AC4CEE7;
+	Tue, 15 Apr 2025 18:50:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744743019;
+	bh=Wh9+r6C8QnFxVuYP0gI7fEkh16Fr4uto4HN5gD1lmc8=;
+	h=From:Subject:Date:To:Cc:From;
+	b=BI7MZsmWrpStN+UFK57Vh+JYaiGy27sqvN9DyRh0TD3VVvAZG7/+W8ONOyhbBNPL7
+	 r5agAYMUXNtsaU4F3qgfjATl+sQFxMa1K5b0foC6mvTp2rdeehWoCf1b+YVR9aTzbD
+	 P3gM3+K7KljWg7ssH7OR38k8U3d4rV0iLd1CHbjsX35V+V9IcAyOEko8feTh4XsYjT
+	 NRNlNumc3Zu2Hk3O8Rnt6fTS8x+VGdJJnX7BgmD6Wzv7qjLQA/xky4Zu4QUhTgmX5w
+	 znDuosk8B0A/sWelciOSoRzCiIoFbiowIEShqIenTJLat9kMu8z1HNen8IwUYhIeJJ
+	 gsf0HIqAk0wZw==
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH v2 0/8] ref_tracker: add ability to register a debugfs file
+ for a ref_tracker_dir
+Date: Tue, 15 Apr 2025 14:49:38 -0400
+Message-Id: <20250415-reftrack-dbgfs-v2-0-b18c4abd122f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250411164229.23413-1-james.morse@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEKq/mcC/13MQQ6CMBCF4auQWVvTdqgQV97DsCgwLQ2mNVNCN
+ IS7W0ncuPxn8r4NMnGgDNdqA6Y15JBiCX2qYJhs9CTCWBq01EbWCgWTW9gOsxh777LA5tL0KJG
+ 0s1BGz/IPrwO8d6WnkJfE78Nf1ff6o+p/alVCCifRtKZFrSXeZuJIj3NiD92+7x8pbae5rQAAA
+ A==
+X-Change-ID: 20250413-reftrack-dbgfs-3767b303e2fa
+To: Andrew Morton <akpm@linux-foundation.org>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>
+Cc: Kuniyuki Iwashima <kuniyu@amazon.com>, Qasim Ijaz <qasdev00@gmail.com>, 
+ Nathan Chancellor <nathan@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ Jeff Layton <jlayton@kernel.org>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1896; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=Wh9+r6C8QnFxVuYP0gI7fEkh16Fr4uto4HN5gD1lmc8=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBn/qphBv0yiZyz25NAHCFtGVV8gUZ7l4UWmbc7B
+ +j56syFNuuJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZ/6qYQAKCRAADmhBGVaC
+ FfjaD/48Cd1Nn25CCF68ks0mWwqMtvSe77wgEdeZQlx75JAipkoc5V/CFnVddb326XiSs594Nqx
+ ECjL0Z0ZKnIYbxSf91nZuAX7XErhEv0vKK1iwvMQ5gTFpIff7V+pftQdBxKKKfMffEks9cugesI
+ vT/+KAv66lh0Q6aTx67jj4Z/hXKVA3DRtuWcHOcNG3WxpmLaFDRp5OcTOkRutpNP2JchDQlPXVm
+ RBtAcTqB8Mfjk+sUfsPsXd4+rPlxkKTBpufgHDXkfL2qr5AjR1yaPh9a8Hyxsz3gpOFcUY2u5jA
+ WbcVHOUYvU620P0DgDq6Q+y7H5Ljgun8cmuTJmR8zmBsU528wZN1PNF+43KTMon+wwlx1FYL1Am
+ yN+6pk92KZMKPGG27aL29g00Aj0QAoU6HblcJlSWyM2OKx3/TWW3xxUahhphZ76qoaikuO+yUJi
+ UmsTmUqZHaIEMIwKRLE8besrQHqnbE07oEg/L2A/uw1MGiSDYks7jX6z72+5T+8KOCIVhRS3cjh
+ Hp98Hxh2R5QAHdbsmTKugmAF/IDVvRqs7RpMii3k+RcD/f3kXrGPolu62SCIBiWkfIpOXPmRM1P
+ 0CYyivox08stucvvJiwRhDQkiPFWI9nOM57mG/uZP1stpTGxPLXZzbtFRlEDsLM9D7BAIdhPNxq
+ W4FqTQpXu7rYIpA==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On Fri, Apr 11, 2025 at 04:42:08PM +0000, James Morse wrote:
-> Changes since v7:
->  * Switched to Tony's alternative for having a structure behind struct
->    mon_data.
-> 
-> Changes otherwise noted on each patch.
-> 
-> N.B, the disk in my machine recently died - so I've re-done the feedback
-> changes multiple times. Appologies if I missed something on the second pass!
-> ---
-> Patch 1 has been posted as a fix that should get picked up independently.
-> 
-> Patches X-Y should be squashed together when merged - they are posted like
+I had previously sent some patches to add debugfs files for the net
+namespace refcount trackers, but Andrew convinced me to make this more
+generic and better-integrated into the ref_tracker infrastructure.
 
-X=17 (the big move). Y=20 (last of the cleanups from the move)?
+This adds a new ref_tracker_dir_debugfs() call that subsystems can call
+to finalize the name of their dir and register a debugfs file for it.
+The last two patches add these calls for the netns and netdev
+ref_trackers.
 
-> this to allow folk to re-generate patch N, then review the differences on
-> top. Not squashing them together would expose a ftrace build warning
-> during bisect. (but who does that!)
-> That would look like this:
-> git://git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git mpam/move_to_fs/v8_final
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+Changes in v2:
+- Add patch to do %pK -> %p conversion in ref_tracker.c
+- Pass in output function to pr_ostream() instead of if statement
+- Widen ref_tracker_dir.name to 64 bytes to accomodate unique names
+- Eliminate error handling with debugfs manipulation
+- Incorporate pointer value into netdev name
+- Link to v1: https://lore.kernel.org/r/20250414-reftrack-dbgfs-v1-0-f03585832203@kernel.org
 
-This "final" branch is missing the patch that move resctrl.rst into
-Documentation/filesystems.
+---
+Jeff Layton (8):
+      ref_tracker: don't use %pK in pr_ostream() output
+      ref_tracker: add a top level debugfs directory for ref_tracker
+      ref_tracker: have callers pass output function to pr_ostream()
+      ref_tracker: allow pr_ostream() to print directly to a seq_file
+      ref_tracker: add ability to register a file in debugfs for a ref_tracker_dir
+      net: add ref_tracker_dir_debugfs() calls for netns refcount tracking
+      ref_tracker: widen the ref_tracker_dir.name field
+      net: register debugfs file for net_device refcnt tracker
 
-> This series is based on rc1, and can be retrieved from:
-> git://git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git mpam/move_to_fs/v8
-> 
-> This series renames functions and moves code around. With the
-> exception of invalid configurations for the configurable-events, there should
-> be no changes in behaviour caused by this series. It is now possible for
-> throttle_mode to report 'undefined', but no known platform will do this.
+ include/linux/ref_tracker.h |  15 ++++-
+ lib/ref_tracker.c           | 153 +++++++++++++++++++++++++++++++++++++++-----
+ net/core/dev.c              |   6 +-
+ net/core/net_namespace.c    |  34 +++++++++-
+ 4 files changed, 190 insertions(+), 18 deletions(-)
+---
+base-commit: 695caca9345a160ecd9645abab8e70cfe849e9ff
+change-id: 20250413-reftrack-dbgfs-3767b303e2fa
 
-As far as I can tell x86/Intel systems are still working as before.
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
 
-> The driving pattern is to make things like struct rdtgroup private to resctrl.
-> Features like pseudo-lock aren't going to work on arm64, the ability to disable
-> it at compile time is added.
-> 
-> After this, I can start posting the MPAM driver to make use of resctrl on arm64.
-> (What's MPAM? See the cover letter of the first series. [1])
-> 
-> As ever - bugs welcome,
-
-Couldn't find any bugs for you.
-
-> Thanks,
-> 
-> James
-> 
-> [v7] https://lore.kernel.org/all/20250228195913.24895-1-james.morse@arm.com/
-> [v6] https://lore.kernel.org/lkml/20250207181823.6378-1-james.morse@arm.com/
-> [v5] https://lore.kernel.org/r/20241004180347.19985-1-james.morse@arm.com
-> [v4] https://lore.kernel.org/all/20240802172853.22529-1-james.morse@arm.com/
-> [v3] https://lore.kernel.org/r/20240614150033.10454-1-james.morse@arm.com
-> [v2] https://lore.kernel.org/r/20240426150537.8094-1-Dave.Martin@arm.com
-> [v1] https://lore.kernel.org/r/20240321165106.31602-1-james.morse@arm.com
-> [1] https://lore.kernel.org/lkml/20201030161120.227225-1-james.morse@arm.com/
-> 
-> Amit Singh Tomar (1):
->   x86/resctrl: Remove the limit on the number of CLOSID
-> 
-> Dave Martin (3):
->   x86/resctrl: Squelch whitespace anomalies in resctrl core code
->   x86/resctrl: Prefer alloc(sizeof(*foo)) idiom in rdt_init_fs_context()
->   x86/resctrl: Relax some asm #includes
-> 
-> James Morse (17):
->   x86/resctrl: Fix rdtgroup_mkdir()'s unlocked use of kernfs_node::name
->   x86/resctrl: Rename resctrl_sched_in() to begin with "resctrl_arch_"
->   x86/resctrl: resctrl_exit() teardown resctrl but leave the mount point
->   x86/resctrl: Drop __init/__exit on assorted symbols
->   x86/resctrl: Move is_mba_sc() out of core.c
->   x86/resctrl: Add end-marker to the resctrl_event_id enum
->   x86/resctrl: Expand the width of dom_id by replacing mon_data_bits
->   x86/resctrl: Remove a newline to avoid confusing the code move script
->   x86/resctrl: Split trace.h
->   fs/resctrl: Add boiler plate for external resctrl code
->   x86/resctrl: Move the filesystem bits to headers visible to fs/resctrl
->   x86/resctrl: Always initialise rid field in rdt_resources_all[]
->   x86,fs/resctrl: Move the resctrl filesystem code to live in
->     /fs/resctrl
->   x86,fs/resctrl: Remove duplicated trace header files
->   fs/resctrl: Remove unnecessary includes
->   fs/resctrl: Change internal.h's header guard macros
->   x86,fs/resctrl: Move resctrl.rst to live under
->     Documentation/filesystems
-> 
->  Documentation/arch/x86/index.rst              |    1 -
->  Documentation/filesystems/index.rst           |    1 +
->  .../{arch/x86 => filesystems}/resctrl.rst     |    0
->  MAINTAINERS                                   |    3 +-
->  arch/Kconfig                                  |    8 +
->  arch/x86/Kconfig                              |   11 +-
->  arch/x86/include/asm/resctrl.h                |    7 +-
->  arch/x86/kernel/cpu/resctrl/Makefile          |    3 +
->  arch/x86/kernel/cpu/resctrl/core.c            |   31 +-
->  arch/x86/kernel/cpu/resctrl/ctrlmondata.c     |  635 ---
->  arch/x86/kernel/cpu/resctrl/internal.h        |  397 +-
->  arch/x86/kernel/cpu/resctrl/monitor.c         |  909 +---
->  arch/x86/kernel/cpu/resctrl/pseudo_lock.c     | 1092 +---
->  .../resctrl/{trace.h => pseudo_lock_trace.h}  |   26 +-
->  arch/x86/kernel/cpu/resctrl/rdtgroup.c        | 4426 +----------------
->  arch/x86/kernel/process_32.c                  |    2 +-
->  arch/x86/kernel/process_64.c                  |    2 +-
->  fs/Kconfig                                    |    1 +
->  fs/Makefile                                   |    1 +
->  fs/resctrl/Kconfig                            |   39 +
->  fs/resctrl/Makefile                           |    6 +
->  fs/resctrl/ctrlmondata.c                      |  660 +++
->  fs/resctrl/internal.h                         |  440 ++
->  fs/resctrl/monitor.c                          |  929 ++++
->  fs/resctrl/monitor_trace.h                    |   33 +
->  fs/resctrl/pseudo_lock.c                      | 1105 ++++
->  fs/resctrl/rdtgroup.c                         | 4311 ++++++++++++++++
->  include/linux/resctrl.h                       |   10 +-
->  include/linux/resctrl_types.h                 |    5 +
->  29 files changed, 7731 insertions(+), 7363 deletions(-)
->  rename Documentation/{arch/x86 => filesystems}/resctrl.rst (100%)
->  rename arch/x86/kernel/cpu/resctrl/{trace.h => pseudo_lock_trace.h} (56%)
->  create mode 100644 fs/resctrl/Kconfig
->  create mode 100644 fs/resctrl/Makefile
->  create mode 100644 fs/resctrl/ctrlmondata.c
->  create mode 100644 fs/resctrl/internal.h
->  create mode 100644 fs/resctrl/monitor.c
->  create mode 100644 fs/resctrl/monitor_trace.h
->  create mode 100644 fs/resctrl/pseudo_lock.c
->  create mode 100644 fs/resctrl/rdtgroup.c
-> 
-> -- 
-> 2.20.1
-> 
 
