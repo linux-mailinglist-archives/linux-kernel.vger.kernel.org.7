@@ -1,106 +1,205 @@
-Return-Path: <linux-kernel+bounces-605912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-605916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56EBBA8A798
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 21:15:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BC6EA8A7A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 21:16:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 688B017C674
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 19:15:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B31DB3B044B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 19:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99EA524166E;
-	Tue, 15 Apr 2025 19:15:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFCC02417EC;
+	Tue, 15 Apr 2025 19:16:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BHWKzUlV"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="Wlck606T"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F7D204F73;
-	Tue, 15 Apr 2025 19:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744744502; cv=none; b=QQJ1+wO1gw+5rzvQobPAVNbUzSj44aFSuuHmyvVpdzSpKCmLVDCSpOfY5fDSQutFxsNmcuRZ5u20QKURlrWaYr4wg+IzIK5dCjDRBWA+72gZCkdEOX9xTgvsVBZii6Z7fkf6AI12S6tokCOdQ9GzkGumvC7s0pM08Qz/2G3fd0s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744744502; c=relaxed/simple;
-	bh=z0xrkIkCd7ceRKWd4bCh9B7HSXmd44FG6cF+UxyLWp8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GAEZZiX1jGK5bI7grUWTVlq6QErol33UVmyHWgQ69FYydBRIN+oKDBV4UKMnmfw1fE3NfopjdkZz5nAMLqJggpqmMoGFCZ4M8AyQDiLN+IZ4FnuDM/448tx7N2MHsyQlHcLci8bd0dzd1SKC54tN+2nJTP80q3tdXphK9PPQpfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BHWKzUlV; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2ff53b26af2so1034065a91.0;
-        Tue, 15 Apr 2025 12:15:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744744500; x=1745349300; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ntkk2EuJ1XJRKx1RttSweaGGZM6MW37mEH+h/pvePak=;
-        b=BHWKzUlV1FeA6tUoEtyXkhWN0g7Exv4JNQ3T9aim110XuLjC0cEvuy49C4ZEW7J/In
-         eBrgwx+d5nPbjTdAK+0546zfEwoW9Q5XQE4RcQGO93CfT+gcpwMZBxfoxTZHUKei9JAJ
-         HE9mYh3TN1Ot1dC+nDWsBdhV/ed8crR4iczaxCIP398ZK400EHgK/7aTvSwEuexht9Ca
-         V8E+7IacVLiHb1Bajmpxkxn//luNPv/TFQdgLY6EXU4rp10MMRHfdYpVWxH5UWeUmaWk
-         /UKZuqZVdnwC2nU6z1YLU6uxNXyhl/aCjby7BTxMj/i9BZn16KbeqdEmz50oSMHQVIby
-         6Ogg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744744500; x=1745349300;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ntkk2EuJ1XJRKx1RttSweaGGZM6MW37mEH+h/pvePak=;
-        b=sW2gX0MX2UXSqfYknEXiTYGQX3CDi2esq1cRKwsjzNO8F2nW7b858gNi4rLQFtzFuH
-         0Rtz+s3rCnPoqZ1sld5zSP786jxh+8fttXgYr/gsALYNj02KK0GHIpE6cbCA7bAn+4lL
-         rfotgrIEw/aXiPQEy2bmb5rUq4vl7abdTeX0Aj3vyto9sMkFX69zrDNnYpJ/8pjFj0Qy
-         jisnYLwDY04s2zJaJk9N0heR1khYrR5VBHSqTCFdJ/i14uNQdbXZOiEV9voQ9Eg9Phh5
-         c2dwE1zZjEvm53VhqV0f10Dv+vnxWcpI9Jap6jDv/t1hRk9fvhTseCrSWiQVpYsmoVgh
-         YYKw==
-X-Forwarded-Encrypted: i=1; AJvYcCU14DNT1azAP/qTbuhea0UIfaTr2FOhQp0Kkk91dAGF2ijSr0iLMjC4MBpW/To7RnOaQlOlt08QvxPlPbo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwytHnYxTCWhVXyHB4xApReBU2H517smuzbIRhBNyhxyCgkz14I
-	3fG7s/ZdhcxWjQ0hYAZvP0EjST+D1lTk8xStxiClS4bZeIFtTsvV7ZPWfCQv3jxjDkPdIM7ZcLV
-	RaVSNT0KhXR7jIhwcAkVedGGyJi8=
-X-Gm-Gg: ASbGncuYRzBE1JV2NELmR96A5PwoM/ZBH4XxqMxypeIr2nuEoi+wsaTCwu26TivsY4Z
-	EpnSSi9hhXI1UBq5iQHUsjurM4HmTa6P3r2iq/x8QR5VQPolhOEkRSbDfXHDfwBUrVr1tdxAyQA
-	WaWsGFHSWafx3CBd3IyaSKGA==
-X-Google-Smtp-Source: AGHT+IGc5DVYt2SE6BYaqtTqo6hk2/0tRd0JrYscIn68HrcFugnLC6Gj9XZ3iEbYFgiGu0SCjkXVZRFhjUt7k/6oerU=
-X-Received: by 2002:a17:90b:17c2:b0:306:e75e:dbc7 with SMTP id
- 98e67ed59e1d1-3085ed78171mr234636a91.0.1744744500072; Tue, 15 Apr 2025
- 12:15:00 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 144DB241676
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 19:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744744581; cv=pass; b=l6hmln6a+Sw2iOla7JC4dU+KgMa01CC7054F0yLWMxA7/dAAZf8Kkqfn4xQTVk18tZf7hvdur4HYvHimBR4IZqGIUyoSYpxrdMbUJK7xaZ5h3YkQ0Nk39VICkbnI0kZ+40mwlfabs+oNuHUt6qfbI++uaWTX8UPAqk4guVxDsmU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744744581; c=relaxed/simple;
+	bh=dhz9UGHbHn+mizBtYXx62TCv9WfwhQ8rTuKOcOho5CE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=M3BKlpWHkJLTfb1oOZobyPsmK0ZQLqhYwzwyNyVn9n7pC2WQPyr7taupndW1wV1gdyjWXQFlSg+MygByjtMIodCgMZUzwpTj1eX9w2Q8IPmWruXSVqY5YJmSlDOcE5WY66YibvykG3LThOzYyzyofy/NI9p9t1PyvUQotR9oX0E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=Wlck606T; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1744744553; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=KeEBLqSYQcZP61Fn5nvmpnxffzoXrbnSYpG3bo0jN45nKP03jtUPQ1wMAAuQ40e5GkjdqKd0/+rRXe66pvCSSC5smzsWcV32YZyxlGMJBFrgy8oCSLWUU6blXHE4dnXm03CU1nbN/LOdsD3WxFJ16iOVNKqLWeyKtC9f53RgKNg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1744744553; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=UzjWkioBVb65gUNCBmnlaI8i+iV8X/K04q3AUfe2PqU=; 
+	b=jFa8lhpckar+99zcM+LiogmmYLCN8SXdYib24tdIp0QHo2ZRYyWtB/2UnnFR3yxCrfMBxLefwO8IRbU3Isn3YkhSUs2eiY28GQIPRio92gWSp7PkZ+Y9UAN3lZJnlssEtnoc4ZDsuMvR/bqmrjFNzd3TFOWnB/DHROyzn1o31bc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1744744553;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=UzjWkioBVb65gUNCBmnlaI8i+iV8X/K04q3AUfe2PqU=;
+	b=Wlck606TN3I9zDiB8rTB0pX8HApzWXR5IeKpgkaiwmJCfMmL3mVxSIUEIzzOI59H
+	7FUzMu4PPtymXhdcSc/gsx+aKeaHftjD2P27eWpy/HQpm3i0kfAHe2xxgELRH5jr6se
+	TVZgKA1GwgaXaADKtNsGF0wN+37C+I/vUCVKwBr4=
+Received: by mx.zohomail.com with SMTPS id 1744744550731637.6127074309752;
+	Tue, 15 Apr 2025 12:15:50 -0700 (PDT)
+From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
+To: Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: kernel@collabora.com,
+	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v8 1/4] drm/panthor: Introduce BO labeling
+Date: Tue, 15 Apr 2025 20:15:30 +0100
+Message-ID: <20250415191539.55258-1-adrian.larumbe@collabora.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250412005341.157150-1-fujita.tomonori@gmail.com>
-In-Reply-To: <20250412005341.157150-1-fujita.tomonori@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 15 Apr 2025 21:14:47 +0200
-X-Gm-Features: ATxdqUHlXfvqgCSoo4-vySZAgrgL2xgqbfG1d1cB0y3EXvoKuokh17lk5we2yzg
-Message-ID: <CANiq72kKhkVRAmg26DNG=Q8-s_+zkz8jVe5MZa__9RPjRs7f6A@mail.gmail.com>
-Subject: Re: [PATCH v2] rust: helpers: Remove volatile qualifier from io helpers
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-um@lists.infradead.org, richard@nod.at, anton.ivanov@cambridgegreys.com, 
-	johannes@sipsolutions.net, geert@linux-m68k.org, logang@deltatee.com, 
-	sbates@raithlin.com, dakr@kernel.org, dinguyen@kernel.org, arnd@arndb.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sat, Apr 12, 2025 at 2:54=E2=80=AFAM FUJITA Tomonori
-<fujita.tomonori@gmail.com> wrote:
->
-> Remove the `volatile` qualifier used with __iomem in helper functions
-> in io.c. These helper functions are just wrappers around the
-> corresponding accessors so they are unnecessary.
->
-> This fixes the following UML build error with CONFIG_RUST enabled:
+Add a new character string Panthor BO field, and a function that allows
+setting it from within the driver.
 
-Applied to `rust-fixes` -- thanks everyone!
+Driver takes care of freeing the string when it's replaced or no longer
+needed at object destruction time, but allocating it is the responsibility
+of callers.
 
-    [ Reworded for relative paths. - Miguel ]
+Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+---
+ drivers/gpu/drm/panthor/panthor_gem.c | 46 +++++++++++++++++++++++++++
+ drivers/gpu/drm/panthor/panthor_gem.h | 17 ++++++++++
+ 2 files changed, 63 insertions(+)
 
-Cheers,
-Miguel
+diff --git a/drivers/gpu/drm/panthor/panthor_gem.c b/drivers/gpu/drm/panthor/panthor_gem.c
+index 8244a4e6c2a2..8dd7fa63f1ff 100644
+--- a/drivers/gpu/drm/panthor/panthor_gem.c
++++ b/drivers/gpu/drm/panthor/panthor_gem.c
+@@ -2,6 +2,7 @@
+ /* Copyright 2019 Linaro, Ltd, Rob Herring <robh@kernel.org> */
+ /* Copyright 2023 Collabora ltd. */
+ 
++#include <linux/cleanup.h>
+ #include <linux/dma-buf.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/err.h>
+@@ -18,6 +19,14 @@ static void panthor_gem_free_object(struct drm_gem_object *obj)
+ 	struct panthor_gem_object *bo = to_panthor_bo(obj);
+ 	struct drm_gem_object *vm_root_gem = bo->exclusive_vm_root_gem;
+ 
++	/*
++	 * Label might have been allocated with kstrdup_const(),
++	 * we need to take that into account when freeing the memory
++	 */
++	kfree_const(bo->label.str);
++
++	mutex_destroy(&bo->label.lock);
++
+ 	drm_gem_free_mmap_offset(&bo->base.base);
+ 	mutex_destroy(&bo->gpuva_list_lock);
+ 	drm_gem_shmem_free(&bo->base);
+@@ -196,6 +205,7 @@ struct drm_gem_object *panthor_gem_create_object(struct drm_device *ddev, size_t
+ 	obj->base.map_wc = !ptdev->coherent;
+ 	mutex_init(&obj->gpuva_list_lock);
+ 	drm_gem_gpuva_set_lock(&obj->base.base, &obj->gpuva_list_lock);
++	mutex_init(&obj->label.lock);
+ 
+ 	return &obj->base.base;
+ }
+@@ -247,3 +257,39 @@ panthor_gem_create_with_handle(struct drm_file *file,
+ 
+ 	return ret;
+ }
++
++void
++panthor_gem_bo_set_label(struct drm_gem_object *obj, const char *label)
++{
++	struct panthor_gem_object *bo = to_panthor_bo(obj);
++	const char *old_label;
++
++	scoped_guard(mutex, &bo->label.lock) {
++		old_label = bo->label.str;
++		bo->label.str = label;
++	}
++
++	kfree_const(old_label);
++}
++
++void
++panthor_gem_kernel_bo_set_label(struct panthor_kernel_bo *bo, const char *label)
++{
++	const char *str;
++
++	/* We should never attempt labelling a UM-exposed GEM object */
++	if (drm_WARN_ON(bo->obj->dev, bo->obj->handle_count > 0))
++		return;
++
++	if (!label)
++		return;
++
++	str = kstrdup_const(label, GFP_KERNEL);
++	if (!str) {
++		/* Failing to allocate memory for a label isn't a fatal condition */
++		drm_warn(bo->obj->dev, "Not enough memory to allocate BO label");
++		return;
++	}
++
++	panthor_gem_bo_set_label(bo->obj, str);
++}
+diff --git a/drivers/gpu/drm/panthor/panthor_gem.h b/drivers/gpu/drm/panthor/panthor_gem.h
+index 1a363bb814f4..af0d77338860 100644
+--- a/drivers/gpu/drm/panthor/panthor_gem.h
++++ b/drivers/gpu/drm/panthor/panthor_gem.h
+@@ -46,6 +46,20 @@ struct panthor_gem_object {
+ 
+ 	/** @flags: Combination of drm_panthor_bo_flags flags. */
+ 	u32 flags;
++
++	/**
++	 * @label: BO tagging fields. The label can be assigned within the
++	 * driver itself or through a specific IOCTL.
++	 */
++	struct {
++		/**
++		 * @label.str: Pointer to NULL-terminated string,
++		 */
++		const char *str;
++
++		/** @lock.str: Protects access to the @label.str field. */
++		struct mutex lock;
++	} label;
+ };
+ 
+ /**
+@@ -91,6 +105,9 @@ panthor_gem_create_with_handle(struct drm_file *file,
+ 			       struct panthor_vm *exclusive_vm,
+ 			       u64 *size, u32 flags, uint32_t *handle);
+ 
++void panthor_gem_bo_set_label(struct drm_gem_object *obj, const char *label);
++void panthor_gem_kernel_bo_set_label(struct panthor_kernel_bo *bo, const char *label);
++
+ static inline u64
+ panthor_kernel_bo_gpuva(struct panthor_kernel_bo *bo)
+ {
+-- 
+2.48.1
+
 
