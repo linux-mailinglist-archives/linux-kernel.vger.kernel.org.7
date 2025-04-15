@@ -1,126 +1,109 @@
-Return-Path: <linux-kernel+bounces-604571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51688A89621
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:10:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF2E4A89611
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 10:09:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58BB817DAC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:10:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20EE7188EF77
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 08:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417B227B51B;
-	Tue, 15 Apr 2025 08:10:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E72127B4F8;
+	Tue, 15 Apr 2025 08:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CF39gLfm"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MzagwxYg"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F97D2309B6;
-	Tue, 15 Apr 2025 08:10:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14347215F7F
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 08:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744704627; cv=none; b=oiGsVX8JRMouV75Kg7M0pq8bZn99VYiaxmYnYViZopI+Xby3kkdH1KAtRBcRZOvgdDE7PeIIr06lIdPEX1SYtQmONq6KoYQrouoY6GocJAECFhrPTAVCLRzpzwy1vm4nf5hUjr8G32prm3ixavnY9RTMe4y3jZ04dy2pxxO6YI4=
+	t=1744704580; cv=none; b=s4uMhyZT+hmMkIZOYnqjs9Uh/vMPKD+VlZdR7gT3fCxa092Ld+1KSkbMUYAo1WqbFHx2e4HAIMob6b+tY/0yhHBlyg8b5fFbDSZ8SVM9Q6DM1IZERdpLxN0ia6e31lbd198p7eRv0695xUsePQmxfuNrGM89oEykYS8j/RfvRy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744704627; c=relaxed/simple;
-	bh=zDIPSWHHd2CBUilACS5l+ZTN79OAHuDpka07FpjaGKQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W3MXdFuS13onPoAK4MxnaibCRdXp3xbQ7h+DcK+PjYPLeGmfVqGHiIIWRnSRMDE6+0lE/oeT5+G8k6a2jS8YLgDs441QxzLIgn6kSs3RL88p1LSpakABspFmUi76OnlSo0tfABKZYwfqNA4eHaadoFn4SLW6rE2FFkU3mkDVlTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CF39gLfm; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744704626; x=1776240626;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zDIPSWHHd2CBUilACS5l+ZTN79OAHuDpka07FpjaGKQ=;
-  b=CF39gLfmysltDfXmlooynp2e/LWoTk9DAhhcSJkUBFGrauEfqpXEjOrA
-   B61NBvcYobqTp9tMshbVd5R+l2Fo6lmkoj6Wuuxl7e1MAqBx1RiLLOYQB
-   ijyYmW+BvHCYHJ/mqghyhov4fvAnhIWXXPjefy+gYGjFSIIgqEJoU/BAZ
-   24r2NE/ud/wuse9hVr5sfFeWBBhExFN7G5+4B9cWoEcOFsCf0JY+kp8Ni
-   7dYUIugufotvM6uw0KgCLH7vxsaOEH6o6Mc0TIKnk9j3uEjdcNihCj/DN
-   aeZMhw4t/TGeFfE88ZssZCcacDVlUJqNJ++ZbSEZOzgoAgi86WSFp0TKO
-   A==;
-X-CSE-ConnectionGUID: 5wCmYrxMSv6T6IlBZD8oPQ==
-X-CSE-MsgGUID: wEFXOojnRJKHZ4yC0TaYRw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11403"; a="49853088"
-X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="49853088"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 01:09:17 -0700
-X-CSE-ConnectionGUID: fii+49GORGWCqr0JQOhU5w==
-X-CSE-MsgGUID: PlttizJ2RoW9iLE+2lcA6Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="167219741"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 15 Apr 2025 01:09:15 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u4bM0-000FOg-05;
-	Tue, 15 Apr 2025 08:09:12 +0000
-Date: Tue, 15 Apr 2025 16:08:45 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dzmitry Sankouski <dsankouski@gmail.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dzmitry Sankouski <dsankouski@gmail.com>
-Subject: Re: [PATCH v4] hwmon: (max77705) add initial support
-Message-ID: <202504151506.IwAzrT7r-lkp@intel.com>
-References: <20250412-initial-support-for-max77705-sensors-v4-1-2e4cf268a3d0@gmail.com>
+	s=arc-20240116; t=1744704580; c=relaxed/simple;
+	bh=a1KLlXlZdYC0DQZmxE2jQ7mHnlUnvqQd623UMlv4WaE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ps1iqf9bpOW8GcLG5lJxUAl9icgFJ6YK4nY1M43jgRPw3KAk1+miSPYWtrq/cA8sRhMruq9pM07R/NJ2JB9eBi9k8Hejjdlc+S6g+5h31IolmPAyO4y5dJ2l/bid5cvT1rCbNDDjUI9Qs8FXWCob5Ziarh5kYa/VeqTQURfqvNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MzagwxYg; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-549946c5346so5931810e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 01:09:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744704577; x=1745309377; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ICfwA3EdEWzVcVx+hLIJ6dLtBuJmhGYaj0rjrQ65WG4=;
+        b=MzagwxYg9X50BylOmXjHipvJap58tOUpE/nafLw5uaec/GM4h/ADslrhhzRSr/b3+B
+         wnXTz6f3D8O7euVuyIVnmJZfxx64pB+zLFUhLAAIPfoDYTyznEsVRjPhwa0otmnsUKp6
+         UjzOVquit8zfh5R87GKW0FR5jRE8uzv3k3rfhM9dKXsuQIub8rsE03m2wECV4RkjPYtH
+         kqp3aySE0a4mfkKTIZNt6iIIpvEHsr4l46UmChxaawD4hIsiHkPLy4W3ccXBVNHFLN1V
+         Ccx5H0ZA9gXWRTmDBrS/OEvKUNPq1f1pnFij9gYu2Y/Kcm1JQPehFqPnHuMS8RZTNh4H
+         2OJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744704577; x=1745309377;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ICfwA3EdEWzVcVx+hLIJ6dLtBuJmhGYaj0rjrQ65WG4=;
+        b=m9f76aFozfh0/7DzvJCFTZShFKLQb6pLQNOKoVIy3N8T5V5WV/FX9HvIDSAt1lirRw
+         9GzE8+v9/sSS8DJX6smeFTEsCPdw6snRNY0cYuRT/XPjOXABjNqwDyogNknjuoip9Fz2
+         VvqMz97QL9vDhNeHbBoOcIkxyMXKlvpbtRAnHsHBtUuOCIZ808YBkf0CM6HAHXJQc0UW
+         RMyrxJGIjOfsBglT+WkKxfjLdOjpjBbZzZAG9zeGKB126UkIJ3Wual4byMTlR3WR+hIA
+         IjVMkDX/czazRLdTeNrrMfGY+g4I0hGmiHA442QYUkl5QrA/e0be1PP84avHJgpLkR0Q
+         CP9A==
+X-Forwarded-Encrypted: i=1; AJvYcCVBi+t1St4xpTKn0SvfhRBE6QjM7NN9FDFy/sn3tN0W/7h1k/+gDeoz0h5RGJZGYy1DKopeTK37e1D2LnE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvIMkxIrY+0nWZonXODSCMVFA1T7NOSU1ZYP+Z/JGaU2lboNzQ
+	nx6fpK8OqUYe/FKgqO+JvwhlY28KCuPBfeiJCpTQHo0NyPnd0kuz4XBI+DVM/W7Io1Cx7/+DlT4
+	vTf69p+Za53mnKJkzOycDyoGZIP+zJ5ptCQs/Ow==
+X-Gm-Gg: ASbGncsEoYOoZuFnRSFLUVPW3ZOx43eQkFPQTZIExgkPOdputqs4Jh5muPo8XpRZ/5W
+	hAy0VDK6ig33a2UERwcuH1t5WE/rpYowqv3ya27TKUhMmeip30NrFbiT7WwPiQsNQXc3eurj+sm
+	MtzMfxj9VSoIgJQTNJWqT70Q==
+X-Google-Smtp-Source: AGHT+IH0Y4jm0LaYVhqlf4ygy8v6EM0HqVDr1pCml9YV4eSiyilIsQJQAcufVd3/LXkLFdiQwaLxvtXP5qPvFl0mrI0=
+X-Received: by 2002:a05:6512:4019:b0:549:8f06:8225 with SMTP id
+ 2adb3069b0e04-54d452d692amr4312543e87.53.1744704577064; Tue, 15 Apr 2025
+ 01:09:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250412-initial-support-for-max77705-sensors-v4-1-2e4cf268a3d0@gmail.com>
+References: <20250404115719.309999-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250404115719.309999-1-krzysztof.kozlowski@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 15 Apr 2025 10:09:26 +0200
+X-Gm-Features: ATxdqUHY0rsQZ362mf1eSV0hA552eBY6l9M2A3A0WPZhzC_XlT3-mPSct8oGVPI
+Message-ID: <CACRpkdZr-s2sW07M8f-qr6YzRuNxJ_vRE6-kFaXaX7v+3g01FA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl: meson: Do not enable by default during
+ compile testing
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Dzmitry,
+On Fri, Apr 4, 2025 at 1:57=E2=80=AFPM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
 
-kernel test robot noticed the following build warnings:
+> Enabling the compile test should not cause automatic enabling of all
+> drivers.  Restrict the default to ARCH also for individual drivers, even
+> though their choice is not visible without selecting parent Kconfig
+> symbol, because otherwise selecting parent would select the child during
+> compile testing.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-[auto build test WARNING on a4cda136f021ad44b8b52286aafd613030a6db5f]
+No comments, but the patch makes perfect sense to me, so applied.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Dzmitry-Sankouski/hwmon-max77705-add-initial-support/20250414-123556
-base:   a4cda136f021ad44b8b52286aafd613030a6db5f
-patch link:    https://lore.kernel.org/r/20250412-initial-support-for-max77705-sensors-v4-1-2e4cf268a3d0%40gmail.com
-patch subject: [PATCH v4] hwmon: (max77705) add initial support
-config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20250415/202504151506.IwAzrT7r-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250415/202504151506.IwAzrT7r-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504151506.IwAzrT7r-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/hwmon/max77705-hwmon.c:59:41: warning: 'max77705_hwmon_readable_table' defined but not used [-Wunused-const-variable=]
-      59 | static const struct regmap_access_table max77705_hwmon_readable_table = {
-         |                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +/max77705_hwmon_readable_table +59 drivers/hwmon/max77705-hwmon.c
-
-    58	
-  > 59	static const struct regmap_access_table max77705_hwmon_readable_table = {
-    60		.yes_ranges = max77705_hwmon_readable_ranges,
-    61		.n_yes_ranges = ARRAY_SIZE(max77705_hwmon_readable_ranges),
-    62	};
-    63	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Yours,
+Linus Walleij
 
