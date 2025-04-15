@@ -1,166 +1,134 @@
-Return-Path: <linux-kernel+bounces-606015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90DF1A8A964
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 22:34:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EC9CA8A968
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 22:37:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 138A1189FCFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 20:34:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D39151900B16
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 20:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8BC5250C13;
-	Tue, 15 Apr 2025 20:34:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1ED125395E;
+	Tue, 15 Apr 2025 20:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WAlU6FjB"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gwBlDFU3"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775192356D8
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 20:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98ADB253927
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 20:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744749242; cv=none; b=FwITfxyK7a30FrCm5R9vNopAvaZ25Wz+nBsn1UZIUroHZqedpUpQ/zqERHTjgT6Q9qnQNxrHtzDWBW7KtrelE4dBFZ2zQxc+AuLdLZ0nmfR+GblYWtxh9y89loQRwAOzoTm3JWQ4BrnWHwckMOSa9vSuZdSzEWdSa6fhmCh8BC0=
+	t=1744749458; cv=none; b=kNfGuBDzCDculljjB2dbp9nJz5cXf/sdeCB99JqiN2AJ+GGB2VuAp83p08o1Uh7RpdLUEtptki4bzl3WQVmInl6qdql20MrjeNGloW25MxM9yYaF0FNrLamBYLDzwFUZGOBfbat2pboMxUvuPXs+WaSqDLtGcpBS+BG3MKbKUpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744749242; c=relaxed/simple;
-	bh=bx1iKrdSrzWwm/Z1ftrLLfS3+M1pXWoevSNmsf2zLtw=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=PvQT1aIOSgLFj4idQlV82/LfQt/EFyE1terXbZvaJZMyH8vizbiK96y+WZMNilDvvLWlHKXXpg3ApCTyDlffX8fzYbDflCtuPZBpnsxEpep9zyKJpS3q0dyAH+gtGs5n1xGDTZxKNs3j5GNa5Gll/Trs/aDhboa2F/2K/gQJ8R0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WAlU6FjB; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43ced8c2eb7so47009955e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 13:33:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744749238; x=1745354038; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=IEKdMkwaC8ZVuzeK27ofbBSfYgZV8m32yzn+EY7u520=;
-        b=WAlU6FjBiwGQSiSmCH6WVvmRYp/nrxrQ04rFbtco7QHT+KuRfafjPBjl12+xb4qle0
-         vHLB+UhLhcXu+5JhgSlBUo8qSiw21fOgAYRb8NR6T55/TiUekRapPSY0qmOQ6dxM2x0M
-         UOU7PMJRaXdvKSgQOi19vxFUlE2s64cvaCStTKX+a7D6tRfaf9UhK6DWn9JTMMDsFKJM
-         IY6H2aX8Tq2RetoE8kNKXDqxE1iehrZBrtMeU7LLQLsQv4mrqYvA9b9+Xtv8EGrbbCd+
-         eg5Lj47PhkU/uvJcA/eQuvd/W/xiGSYzAhx0frMqpy7bwo7jbVd1+4923G2yv5kG0bxv
-         RuPQ==
+	s=arc-20240116; t=1744749458; c=relaxed/simple;
+	bh=vJYeZKynbW0y/0TN0VVY3GeBlfQ+ky5vNJGDsEcf0H8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E3N5Buxw8AMUoi9aiWrdHRIG1vJMXnEgPpz51SBeVUcaGK5v3hr1bNU1LsykHMnqPVz3435rFhpDS7VwONbIz1A4didmAmAgCN+96KAj2YW8AGX3zMGL/Psy3NKPuddysb99lN/e68TVYswi+t6S4TtDQgRsZ4e4MAEuvTGrDJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gwBlDFU3; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53FJSAhJ019191
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 20:37:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Jh6wZ8wOe35XO6nPBtm56xEYnTRfvkG4K4xQHIRnHpc=; b=gwBlDFU3bpUIJNxd
+	cDUPvSEQzGsF62CBJHDxxJSU5PS6Sa5LUYbFVqU+NSm9Rrpp6PP2iHzIq2E4unwP
+	nFkJ8bf3hqwTgv+pyMb6PCIWoc0lNjHElLpoYDSKR3iq0t0aIWGRdhrwyKrE0Orf
+	cQV1VqxDVgifvSBFXLtDr9RpzqtqmVSmnAM3nHT8z3e8s0Mex0fJXms4pBpjSI+R
+	7nU8Xd5hZ0hAKxaXyjeyCPWbgph/rcfJziw2RfAyEiy6QAAFAxCLMVh/k1cdkbj0
+	ET86gbWy4bDcfLzxSy5orjeEs+56rA6hLbQL5cdDKZnJxZ+qA2W4YWYYd7DCymAX
+	2UYGTA==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45yfgjhau4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 20:37:35 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c5af539464so140872385a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 13:37:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744749238; x=1745354038;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IEKdMkwaC8ZVuzeK27ofbBSfYgZV8m32yzn+EY7u520=;
-        b=syLJ718+/ojMLScm445LKFbn6HJ7/xem3BJ9N1Lhw5+IGXzvTmFWbc+38SUBNnhlVv
-         2+8bTXTl3rCq+5xRiB9IGP2OJWP1TLdp0Pf0XWXn3IMir3fn8xfLwreEwMLxrJ536SCt
-         GRLQgJ+9rZfsw/DtL9DsI4+3W1ZaRJgNs6WTN3SqP+mCyOfjT6I30Ku+RRIXpTnlRf0v
-         AhBVLd/+tCRhfW48no7yMweVPrL01EMd7Z7XyPpxJPG+xRnH6Vx34xUegcUCj8y6BuSS
-         s5h5JXYOS52iAmf4J7/JK8bUcoQHZVKazMffmUuJXw/N1odEk5kDwbTTcI+o/9hAODJL
-         VBGw==
-X-Gm-Message-State: AOJu0YzQEd09wIciMY+JzO18YCNU6zK5/LaRQhWL2FRDBbKTKp7n9N9G
-	CKQNPK49EM2tPKxDW72fZWOlNBxF+REsA1eHhP9EU3bcWdLNM30gR7l5A9GB6v2mCRBa50JdW+H
-	mgQWx0eqNNtu+shFOE/LElatQCgWN0edka8bkxVCbdb61eNqFYiQMNbaOnvXZUKRKynxzry1DZp
-	zXpUQu6K6rFNmd3Ct4+6Mewx5J+fSc6O7rUdPEYALOLe3yZq/HHYE=
-X-Google-Smtp-Source: AGHT+IENnzOlV1ODYOpeVHVMRaRkJZcFtJId27vjFItTdwFcgI3VPSYpTFyt3sy2P89IAYGXhZHJCkY6z9VHrA==
-X-Received: from wmcn2.prod.google.com ([2002:a05:600c:c0c2:b0:43c:f7c3:c16e])
- (user=smostafa job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:3ba2:b0:43d:1b95:6d0e with SMTP id 5b1f17b1804b1-4405a0a4136mr3880525e9.23.1744749237846;
- Tue, 15 Apr 2025 13:33:57 -0700 (PDT)
-Date: Tue, 15 Apr 2025 20:33:54 +0000
+        d=1e100.net; s=20230601; t=1744749454; x=1745354254;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jh6wZ8wOe35XO6nPBtm56xEYnTRfvkG4K4xQHIRnHpc=;
+        b=FIuyiFjMTlCAY8mDx3Jr351hCXqVaj1+mWz780iVW9cc5dUf+3i31qHSE+yrcdMw66
+         17r1mjt3tyfcD1b/WcKUVD6EHQrJXMyLofvSf9A0Hrsm6DXU6/xM2rphTCmxHxFmSrGw
+         SYwxiJ+wVrJAbOC52sG5ZrzAUXeDcHj3Fo57ehYBrBA3Is30BUc6SHEeSHzQPTHdpWol
+         dITMnfJLfjPMN8smBtYkXMsBCvILClCjvQ8+6mg8YLvMQ++Lbu9Ecarob0qMHYRYzaWd
+         5AL2vh/M+EcuFZ+1xC5Rs0LglaKyOeY5GGrMPHCvXhCiU0mRjmXWqKpCa5U+eHtSRvZm
+         PfUw==
+X-Forwarded-Encrypted: i=1; AJvYcCURAeHydZ0PKG7S5aLibSzpXW72hs7qJ5+wZ9eTFq/CXu8Pc2HCN5c8pmChndBv/ZQmH/TcDRM2OA2gbO0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYJLPbI/NkC7+8j7OGAtwd5kJfJIdg4remSZ5TZ1K5uGtO3OPR
+	aufX/XRMw8LXdPt5kD2JAZTH5z46IdeGArafNAdXtqDn5hIsSmkFoT/P1CkPNgS16igeNnf0xXj
+	ORW40O7Ksu2Nk1pU02QS+FGE7Og4pnkFzLlQXnQj0PvxQLJkQnqaztkWIjrj2F9c=
+X-Gm-Gg: ASbGncu/wumlcq5dv3WPRVXVt+vBFnTazayMXJb8M9h/eGCry1dYCF094PPO5vgOpVO
+	NoE+kX0osk4tgI4D9Xlz/4SA5qgTZKg2uMTjsE7sZ8ya2+mkF2Ga+BkPh6NHf1cB1rBMaXmDGBm
+	JZaFeGuAeFcks4NrBoQ0N5XtHfg9jTxStczYDthjQEl1jzf3KjgBXy0xayd51W4Cxn/5EjRVvnI
+	J7FRZhYhDem/mQrS29jXJNih5b6MBxCbwQ7rlRh36ZQnHMsuAKM/CUy6mHY8wJyJK0tWTxk9Cma
+	YxRHVnoJHvGbf2qugeH6LCQQNou8XeYEtSMEVV7cmRxC+BYSq/e0bNQHwgkbEF9a08s=
+X-Received: by 2002:ad4:5765:0:b0:6e6:9c39:ae44 with SMTP id 6a1803df08f44-6f2ad9e0c4fmr6195716d6.10.1744749454593;
+        Tue, 15 Apr 2025 13:37:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGL2uGX/Z6b8+QQ5A7RjQ9VGQklgqNfIx9zsMrX/Z761Y0JZsqutG+DGTlwNH2KtxyKSf33qA==
+X-Received: by 2002:ad4:5765:0:b0:6e6:9c39:ae44 with SMTP id 6a1803df08f44-6f2ad9e0c4fmr6195496d6.10.1744749454247;
+        Tue, 15 Apr 2025 13:37:34 -0700 (PDT)
+Received: from [192.168.65.126] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1cb42b4sm1163025566b.97.2025.04.15.13.37.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Apr 2025 13:37:33 -0700 (PDT)
+Message-ID: <b5d139f6-5704-4486-b7ae-c960ceddc7ba@oss.qualcomm.com>
+Date: Tue, 15 Apr 2025 22:37:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.604.gff1f9ca942-goog
-Message-ID: <20250415203354.4109415-1-smostafa@google.com>
-Subject: [PATCH v2] lib/test_ubsan.c: Fix panic from test_ubsan_out_of_bounds
-From: Mostafa Saleh <smostafa@google.com>
-To: linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com, 
-	linux-hardening@vger.kernel.org
-Cc: akpm@linux-foundation.org, kees@kernel.org, elver@google.com, 
-	andreyknvl@gmail.com, ryabinin.a.a@gmail.com, 
-	Mostafa Saleh <smostafa@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/8] arm64: dts: qcom: msm8916/39: Move UART pinctrl to
+ board files
+To: Stephan Gerhold <stephan.gerhold@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sam Day <me@samcday.com>, Casey Connolly <caleb.connolly@linaro.org>
+References: <20250415-msm8916-console-pinctrl-v1-0-a1d33ea994b9@linaro.org>
+ <20250415-msm8916-console-pinctrl-v1-1-a1d33ea994b9@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250415-msm8916-console-pinctrl-v1-1-a1d33ea994b9@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: VuB1uxddbnfc8cjEUAQGno0b-T1jNuRc
+X-Proofpoint-ORIG-GUID: VuB1uxddbnfc8cjEUAQGno0b-T1jNuRc
+X-Authority-Analysis: v=2.4 cv=Cve/cm4D c=1 sm=1 tr=0 ts=67fec38f cx=c_pps a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=HegNSTBbrY75hgcjlfYA:9 a=QEXdDO2ut3YA:10
+ a=bTQJ7kPSJx9SKPbeHEYW:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-15_07,2025-04-15_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
+ malwarescore=0 lowpriorityscore=0 bulkscore=0 spamscore=0 phishscore=0
+ suspectscore=0 impostorscore=0 mlxlogscore=799 mlxscore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504150145
 
-Running lib_ubsan.ko on arm64 (without CONFIG_UBSAN_TRAP) panics the
-kernel
+On 4/15/25 3:52 PM, Stephan Gerhold wrote:
+> In preparation of adding a new console UART specific pinctrl template, move
+> the pinctrl reference to the board DT part. This forces people porting new
+> boards to consider what exactly they need for their board.
+> 
+> No functional change for the boards upstream.
+> 
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+> ---
 
-[   31.616546] Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: test_ubsan_out_of_bounds+0x158/0x158 [test_ubsan]
-[   31.646817] CPU: 3 UID: 0 PID: 179 Comm: insmod Not tainted 6.15.0-rc2 #1 PREEMPT
-[   31.648153] Hardware name: linux,dummy-virt (DT)
-[   31.648970] Call trace:
-[   31.649345]  show_stack+0x18/0x24 (C)
-[   31.650960]  dump_stack_lvl+0x40/0x84
-[   31.651559]  dump_stack+0x18/0x24
-[   31.652264]  panic+0x138/0x3b4
-[   31.652812]  __ktime_get_real_seconds+0x0/0x10
-[   31.653540]  test_ubsan_load_invalid_value+0x0/0xa8 [test_ubsan]
-[   31.654388]  init_module+0x24/0xff4 [test_ubsan]
-[   31.655077]  do_one_initcall+0xd4/0x280
-[   31.655680]  do_init_module+0x58/0x2b4
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-That happens because the test corrupts other data in the stack:
-400:   d5384108        mrs     x8, sp_el0
-404:   f9426d08        ldr     x8, [x8, #1240]
-408:   f85f83a9        ldur    x9, [x29, #-8]
-40c:   eb09011f        cmp     x8, x9
-410:   54000301        b.ne    470 <test_ubsan_out_of_bounds+0x154>  // b.any
-
-As there is no guarantee the compiler will order the local variables
-as declared in the module:
-        volatile char above[4] = { }; /* Protect surrounding memory. */
-        volatile int arr[4];
-        volatile char below[4] = { }; /* Protect surrounding memory. */
-
-There is another problem where the out-of-bound index is 5 which is larger
-than the extra surrounding memory for protection.
-
-So, use a struct to enforce the ordering, and fix the index to be 4.
-Also, remove some of the volatiles and rely on OPTIMIZER_HIDE_VAR()
-
-Signed-off-by: Mostafa Saleh <smostafa@google.com>
-
----
-v2:
-- Use struct instead of reading.
-- remove some of the volatiles.
----
- lib/test_ubsan.c | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
-
-diff --git a/lib/test_ubsan.c b/lib/test_ubsan.c
-index 8772e5edaa4f..a4b6f52b9c57 100644
---- a/lib/test_ubsan.c
-+++ b/lib/test_ubsan.c
-@@ -77,18 +77,22 @@ static void test_ubsan_shift_out_of_bounds(void)
- 
- static void test_ubsan_out_of_bounds(void)
- {
--	volatile int i = 4, j = 5, k = -1;
--	volatile char above[4] = { }; /* Protect surrounding memory. */
--	volatile int arr[4];
--	volatile char below[4] = { }; /* Protect surrounding memory. */
-+	int i = 4, j = 4, k = -1;
-+	volatile struct {
-+		char above[4]; /* Protect surrounding memory. */
-+		int arr[4];
-+		char below[4]; /* Protect surrounding memory. */
-+	} data;
- 
--	above[0] = below[0];
-+	OPTIMIZER_HIDE_VAR(i);
-+	OPTIMIZER_HIDE_VAR(j);
-+	OPTIMIZER_HIDE_VAR(k);
- 
- 	UBSAN_TEST(CONFIG_UBSAN_BOUNDS, "above");
--	arr[j] = i;
-+	data.arr[j] = i;
- 
- 	UBSAN_TEST(CONFIG_UBSAN_BOUNDS, "below");
--	arr[k] = i;
-+	data.arr[k] = i;
- }
- 
- enum ubsan_test_enum {
--- 
-2.49.0.604.gff1f9ca942-goog
-
+Konrad
 
