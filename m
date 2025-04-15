@@ -1,164 +1,270 @@
-Return-Path: <linux-kernel+bounces-604231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9386A8923E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 04:53:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 696E5A8922D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 04:51:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D882417DB89
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 02:53:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AE4E17D8E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 02:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D3D62356D9;
-	Tue, 15 Apr 2025 02:48:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C3F23236F;
+	Tue, 15 Apr 2025 02:47:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="kPovSJD3"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iQNbOBEu"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B702356C8
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 02:48:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3CF421CFF6;
+	Tue, 15 Apr 2025 02:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744685309; cv=none; b=nxVHbPUab/0OkR64iNjsPTAcufPiUHbLuM1IJzCBmqISNUlbO1GePEirMFLRa5TkXKgu1h6zB1EwshoFRtdlnrzPD2C9srKM8Zwyr4ErTKET0Mj2pWefciAwCBSarX9x85r5IXxyw0fYWFKCBp1JusgDUqcnzMLi0xRfreeiWrw=
+	t=1744685263; cv=none; b=Nckh+uxZ7ylN0BlzCotmWZP1QHC5+s+zEj1rEBISHm1RDeR5Ty+LXi+E0FCGbJ8Ur3HfoGWvBgjiUfcyaR7TOlTAgfvQlNE5HgpCME6dnhWlfSo8A1ZfbaKt6oDM8voPtYJajcruM7ovk9SOTXvnLfDYUaChA/NQWcZxs4cU7As=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744685309; c=relaxed/simple;
-	bh=qfxs19SK10slyUO0O8nR8PbPqoZ9Hjoq9tzPkm4Mjx8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gm3Y3MzccnrEeZ8q3nJZaY/AVSV8/oZiEvKzsN10c776mkZY9xYtHv7ERT1AShlu5eWSJD2ogQDyJLKUT5pmLUxK4fkLggCLGnnTfoChQLWCnYr8Jic+QKPjEjYbJJN2COJLPrIKHsIwd4ZVEZ8DjEMVae7ref9/3gs3tYHLoIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=kPovSJD3; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-30820167b47so4172843a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 19:48:27 -0700 (PDT)
+	s=arc-20240116; t=1744685263; c=relaxed/simple;
+	bh=nGGYa/bok5qJ8KVw7OSMgHlxCvXTiVuD2OOmgM0FeYU=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sGCEZGppQw01ljIMsIz86wv71HMCFU9qnvb9gWrf9xnz/juC878NWYSTmpw2T1ggXZX+eb2R4uRPA2qqrCImcF1fhtdjp8MC0HR2YMbwxTc2bhNvdq1u6PjHHJCsqaZCyjRIM7yEzxJD5Hn0UY846m8ByZV4JOuZvJneudFWeVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iQNbOBEu; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22423adf751so45813615ad.2;
+        Mon, 14 Apr 2025 19:47:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1744685306; x=1745290106; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UXOKqlBcK7wmw0vjxin9AD5vy+d1LV8LiFHk+wC2Q/0=;
-        b=kPovSJD3T5k4Wp3/2QgSI2nVOJlsPBaE/mXyRp1yP1T6zU6bqQUUZhSFpTkX92hAp8
-         NyKFgvPOrkxzi5h02VVY1TgrEU+jwsbJm0BiQGSySJje5M4WwzU1K1u25UeFfTywUP97
-         ObhZIdxypCfmdzJrM8KfHu9aXX5KGFjt4qIwEp6W2pX0QTsyCiKNq9vOO6QkMOnJejmO
-         w4lConQT8sno2bzPxgMaf0kL70BTNgxcIEnEC8q0/WeP+HYuiI5PJ9INtcTnXu4Dexs3
-         wMj8VW4BUoQ0FhMw5HKji0VvypzhV6GrLBFUpo/OdljAHn/BA9L/ZhGX1aA76DUGKcip
-         7IkA==
+        d=gmail.com; s=20230601; t=1744685261; x=1745290061; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cWvpma1dORIiySs5jF5nA8uB3wDE1U9RthmOs2kPK+Y=;
+        b=iQNbOBEu/iza0ZlmCXA7y44eZDZuyZNH5+dm3/0MZb5Vsbfg6RdL+KC5/YdCtpganO
+         zr8/kAYh9M7VDCqtE99FvnTf5FZkD5D2XnuLSmnmYXA9WEF655+zJ5zjPzITMhjyAzQA
+         g7CPPf7vgma/Pb24U8mtBuzxc5UFo3rKM5JtOGf7Yy0jKLRx7I9DdK/rt4Fgjh45ht0s
+         npWzu97OHw/zAIHXe/WSCDb6HAwFdFSrVDIKcHqZUNOuzGw3VfFj3JyWrfTeC4rGtqDl
+         ItnsXXwpd4QmJNNQizopv5ERkUT6dfW5vqLd1H44U/uySmT51S0BoxozScI5SRkzFMJC
+         3PoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744685306; x=1745290106;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UXOKqlBcK7wmw0vjxin9AD5vy+d1LV8LiFHk+wC2Q/0=;
-        b=emfykj0Hq+g4GPf/W/q2fBlFM2KoHYWimHazVjf7b+OZh+3bwrH8SkQNkzK6E1oyW8
-         y5zh/GBNqwz1LxhDKkytnlA6cA4n1gcvjYOp9rGRIWOF5dkzusrRMzxB6Q88duPfxT4U
-         CazbLbTZfFvnLpYkrZjroHFv4Lh/DpBObmLXaT4y9P7FvSqby2k3Hj61R7Y9rpuz0cJh
-         +7JF21WpM58ugjTyBsCzzcz7kRPieUqdpCia5k+OOVE7wdrJGcJK/tD8gGqUuiqpOa5k
-         TF1hcwJJuAUSpHywjP7PKb7YJd5TnU0Azrm+nNPBU9XfiD8evo65By9CnX0xvob8pVoB
-         lmvA==
-X-Gm-Message-State: AOJu0YzBNGDwiGIlLMIR7bR48LUEDzYAI1rjZ1CJ7ngsdiY+KLwhZKRv
-	vJesWTE6lmEw9NzxPgUTJcgM3wXSRlQ2xNBWmpMewuOt/6e67ijdIh02LEOSCb4=
-X-Gm-Gg: ASbGnctDA4OHJmWa6WysZYAoHRv7Oj94YRbkXUZWBX05sFOdPj/GkD0uxY+1gMs638D
-	xmeDpl9pCggikX/f/CHSNvmyn3Gnx4LfiIr5LPYbViKk0uQ4FTegY37Uodst8s39JEbYlPPh5Zs
-	EiLolOCve40SpSo0yKARDN5PTUrvhOMJt0CHntvFVmTmMVaCkFwmgOYoBNc4tq8x/XP7gNLcLgF
-	kJu6wHwlw8qrqt1hD+z0uCtLbzj0LDKJ+17t2x2l6d6+HD9/rGvUexJxvD28Skq2HSYfl+dH8y+
-	U2v3/mK3r/RYQs7P3TlUI0trU+yvcSpmYu5bSDvpFwGQqZNOt+ALz01cmhva0OWLWkd6uKwd5lS
-	iT1rndIs=
-X-Google-Smtp-Source: AGHT+IH7xXBf+pSvn3kHgRy6uEQ3xLaVZ8ScWHSC0IXjydDRK6JttBy5tPzuwSPN3xTseySeCrXp4w==
-X-Received: by 2002:a17:90b:28d0:b0:2ef:ad48:7175 with SMTP id 98e67ed59e1d1-3084f3d2a3amr2508095a91.15.1744685306495;
-        Mon, 14 Apr 2025 19:48:26 -0700 (PDT)
-Received: from PXLDJ45XCM.bytedance.net ([61.213.176.5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7ccac49sm106681185ad.217.2025.04.14.19.48.21
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 14 Apr 2025 19:48:26 -0700 (PDT)
-From: Muchun Song <songmuchun@bytedance.com>
-To: hannes@cmpxchg.org,
-	mhocko@kernel.org,
-	roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev,
-	muchun.song@linux.dev,
-	akpm@linux-foundation.org,
-	david@fromorbit.com,
-	zhengqi.arch@bytedance.com,
-	yosry.ahmed@linux.dev,
-	nphamcs@gmail.com,
-	chengming.zhou@linux.dev
-Cc: linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org,
-	linux-mm@kvack.org,
-	hamzamahfooz@linux.microsoft.com,
-	apais@linux.microsoft.com,
-	Muchun Song <songmuchun@bytedance.com>
-Subject: [PATCH RFC 28/28] mm: lru: add VM_WARN_ON_ONCE_FOLIO to lru maintenance helpers
-Date: Tue, 15 Apr 2025 10:45:32 +0800
-Message-Id: <20250415024532.26632-29-songmuchun@bytedance.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250415024532.26632-1-songmuchun@bytedance.com>
-References: <20250415024532.26632-1-songmuchun@bytedance.com>
+        d=1e100.net; s=20230601; t=1744685261; x=1745290061;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cWvpma1dORIiySs5jF5nA8uB3wDE1U9RthmOs2kPK+Y=;
+        b=l7IiyevBGdo5pcM2CxP64i4Bf9aWSU/GqjA0UpY2DVk3DRZyaQPXmJK/J0QFD8m/Eu
+         Ay/AcweBRuAN/51gfLk1yHPxAWRvZ13q2HTkJFgXRzN76kaExomRKQV3JDgufPROb77H
+         LC75XjL2MNWjRegwfrmi/gRVR9GreWZzQnPvHeOYKqXhH3z+tkwgnbJT/clTGPkl4RXM
+         hsj/jAcY7EjMRabAP5IdWx3HBFQgzgVv5Hs0H9E3Wzju/KW6FkQqh7AHPpEuqA6NvzlR
+         kzqT+ls/7vZ+NKRzyQTlFz+FSwJG5avMd36esKqxx/+ddbN/z+pTSeQOjba9feh44L8r
+         G1Nw==
+X-Forwarded-Encrypted: i=1; AJvYcCUYK3J9Tu2ORQOHp93PJZbZRsYjF9YQ7uKC4SDfEkalTfNwdyVHYa+JoxW2vXAkTx2Y4uPFelbN5fa8A2Oy@vger.kernel.org, AJvYcCXW23Rap0eGt6grGhm1b+7Zv7C/5HcKtj7OcCx9VRame8FfBOTccGmEzMNP29SxQ+gVIxRbeUHZEUs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3JNBhofyiMBUi/hJFS1q4vtFACCarB/skLwIHqVkx8V2AeMI8
+	JrB/8H9kJ34kEJm4MrEyluK0w9yF2YIDZX2oahytog7b5kkWT9GM
+X-Gm-Gg: ASbGncs3CmWqHXsyPSEYpxYAwfDCtuagiAIrH90oeQt1VPJ8nAJDzUL1majeZ3lujcI
+	5Le4luBMW83UrUOkAlMb8fUuQ2modvqZsnOgnRlLUOSh4E/13vKWlLNZJDgMYm9nNKMOUBQvnVn
+	gA8j8AAGCXOz3KQArPUQfqwTuNRrwr5Clz70tcK4OdMRqD9uqY8wLgDMCnPOkTl9OwX6+hmZfUk
+	u9Mzkmi5QCVlfNGD+mykSMoRkVd6K6onOLzMekRI7HVymfOMRN73gLpgKEAFRe41RrgUgzOnDAf
+	s7Ax/fYVwWfXniwnKN9ARo7x9c4p3QV1S2pm
+X-Google-Smtp-Source: AGHT+IHBix5KPP3nRhmwiVvvlwa79tN2lYjB87B7Yo6JZ4XsMjjb6cCLThbByHf08kY8KD0bEF4xHQ==
+X-Received: by 2002:a17:903:3c44:b0:223:517c:bfa1 with SMTP id d9443c01a7336-22bea4efa84mr222013945ad.38.1744685261112;
+        Mon, 14 Apr 2025 19:47:41 -0700 (PDT)
+Received: from debian ([2601:646:8f03:9fee:5e33:e006:dcd5:852d])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7c97298sm106915325ad.138.2025.04.14.19.47.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Apr 2025 19:47:40 -0700 (PDT)
+From: Fan Ni <nifan.cxl@gmail.com>
+X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
+Date: Mon, 14 Apr 2025 19:47:38 -0700
+To: Ira Weiny <ira.weiny@intel.com>
+Cc: Fan Ni <nifan.cxl@gmail.com>, Dave Jiang <dave.jiang@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>, linux-cxl@vger.kernel.org,
+	nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Li Ming <ming.li@zohomail.com>
+Subject: Re: [PATCH v9 00/19] DCD: Add support for Dynamic Capacity Devices
+ (DCD)
+Message-ID: <Z_3Iyk7oj-EiJWgX@debian>
+References: <20250413-dcd-type2-upstream-v9-0-1d4911a0b365@intel.com>
+ <Z_0v-iFQpWlgG7oT@debian>
+ <67fdc64e3fa03_15df832946e@iweiny-mobl.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <67fdc64e3fa03_15df832946e@iweiny-mobl.notmuch>
 
-We must ensure the folio is deleted from or added to the correct lruvec list.
-So, add VM_WARN_ON_ONCE_FOLIO() to catch invalid users. The VM_BUG_ON_PAGE()
-in move_pages_to_lru() can be removed as add_page_to_lru_list() will perform
-the necessary check.
+On Mon, Apr 14, 2025 at 09:37:02PM -0500, Ira Weiny wrote:
+> Fan Ni wrote:
+> > On Sun, Apr 13, 2025 at 05:52:08PM -0500, Ira Weiny wrote:
+> > > A git tree of this series can be found here:
+> > > 
+> > > 	https://github.com/weiny2/linux-kernel/tree/dcd-v6-2025-04-13
+> > > 
+> > > This is now based on 6.15-rc2.
+> > > 
+> > > Due to the stagnation of solid requirements for users of DCD I do not
+> > > plan to rev this work in Q2 of 2025 and possibly beyond.
+> > > 
+> > > It is anticipated that this will support at least the initial
+> > > implementation of DCD devices, if and when they appear in the ecosystem.
+> > > The patch set should be reviewed with the limited set of functionality in
+> > > mind.  Additional functionality can be added as devices support them.
+> > > 
+> > > It is strongly encouraged for individuals or companies wishing to bring
+> > > DCD devices to market review this set with the customer use cases they
+> > > have in mind.
+> > 
+> > Hi Ira,
+> > thanks for sending it out.
+> > 
+> > I have not got a chance to check the code or test it extensively.
+> > 
+> > I tried to test one specific case and hit issue.
+> > 
+> > I tried to add some DC extents to the extent list on the device when the
+> > VM is launched by hacking qemu like below,
+> > 
+> > diff --git a/hw/mem/cxl_type3.c b/hw/mem/cxl_type3.c
+> > index 87fa308495..4049fc8dd9 100644
+> > --- a/hw/mem/cxl_type3.c
+> > +++ b/hw/mem/cxl_type3.c
+> > @@ -826,6 +826,11 @@ static bool cxl_create_dc_regions(CXLType3Dev *ct3d, Error **errp)
+> >      QTAILQ_INIT(&ct3d->dc.extents);
+> >      QTAILQ_INIT(&ct3d->dc.extents_pending);
+> >  
+> > +    cxl_insert_extent_to_extent_list(&ct3d->dc.extents, 0,
+> > +                                     CXL_CAPACITY_MULTIPLIER, NULL, 0);
+> > +    ct3d->dc.total_extent_count = 1;
+> > +    ct3_set_region_block_backed(ct3d, 0, CXL_CAPACITY_MULTIPLIER);
+> > +
+> >      return true;
+> >  }
+> > 
+> > 
+> > Then after the VM is launched, I tried to create a DC region with
+> > commmand: cxl create-region -m mem0 -d decoder0.0 -s 1G -t
+> > dynamic_ram_a.
+> > 
+> > It works fine. As you can see below, the region is created and the
+> > extent is showing correctly.
+> > 
+> > root@debian:~# cxl list -r region0 -N
+> > [
+> >   {
+> >     "region":"region0",
+> >     "resource":79725330432,
+> >     "size":1073741824,
+> >     "interleave_ways":1,
+> >     "interleave_granularity":256,
+> >     "decode_state":"commit",
+> >     "extents":[
+> >       {
+> >         "offset":0,
+> >         "length":268435456,
+> >         "uuid":"00000000-0000-0000-0000-000000000000"
+> >       }
+> >     ]
+> >   }
+> > ]
+> > 
+> > 
+> > However, after that, I tried to create a dax device as below, it failed.
+> > 
+> > root@debian:~# daxctl create-device -r region0 -v
+> > libdaxctl: __dax_regions_init: no dax regions found via: /sys/class/dax
+> > error creating devices: No such device or address
+> > created 0 devices
+> > root@debian:~# 
+> > 
+> > root@debian:~# ls /sys/class/dax 
+> > ls: cannot access '/sys/class/dax': No such file or directory
+> 
+> Have you update daxctl with cxl-cli?
+> 
+> I was confused by this lack of /sys/class/dax and checked with Vishal.  He
+> says this is legacy.
+> 
+> I have /sys/bus/dax and that works fine for me with the latest daxctl
+> built from the ndctl code I sent out:
+> 
+> https://github.com/weiny2/ndctl/tree/dcd-region3-2025-04-13
+> 
+> Could you build and use the executables from that version?
+> 
+> Ira
 
-Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-Acked-by: Roman Gushchin <roman.gushchin@linux.dev>
----
- include/linux/mm_inline.h | 6 ++++++
- mm/vmscan.c               | 1 -
- 2 files changed, 6 insertions(+), 1 deletion(-)
+That is my setup.
 
-diff --git a/include/linux/mm_inline.h b/include/linux/mm_inline.h
-index f9157a0c42a5..f36491c42ace 100644
---- a/include/linux/mm_inline.h
-+++ b/include/linux/mm_inline.h
-@@ -341,6 +341,8 @@ void lruvec_add_folio(struct lruvec *lruvec, struct folio *folio)
- {
- 	enum lru_list lru = folio_lru_list(folio);
- 
-+	VM_WARN_ON_ONCE_FOLIO(!folio_matches_lruvec(folio, lruvec), folio);
-+
- 	if (lru_gen_add_folio(lruvec, folio, false))
- 		return;
- 
-@@ -355,6 +357,8 @@ void lruvec_add_folio_tail(struct lruvec *lruvec, struct folio *folio)
- {
- 	enum lru_list lru = folio_lru_list(folio);
- 
-+	VM_WARN_ON_ONCE_FOLIO(!folio_matches_lruvec(folio, lruvec), folio);
-+
- 	if (lru_gen_add_folio(lruvec, folio, true))
- 		return;
- 
-@@ -369,6 +373,8 @@ void lruvec_del_folio(struct lruvec *lruvec, struct folio *folio)
- {
- 	enum lru_list lru = folio_lru_list(folio);
- 
-+	VM_WARN_ON_ONCE_FOLIO(!folio_matches_lruvec(folio, lruvec), folio);
-+
- 	if (lru_gen_del_folio(lruvec, folio, false))
- 		return;
- 
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index fbba14094c6d..a59268bf4112 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1952,7 +1952,6 @@ static unsigned int move_folios_to_lru(struct list_head *list)
- 			continue;
- 		}
- 
--		VM_BUG_ON_FOLIO(!folio_matches_lruvec(folio, lruvec), folio);
- 		lruvec_add_folio(lruvec, folio);
- 		nr_pages = folio_nr_pages(folio);
- 		nr_moved += nr_pages;
--- 
-2.20.1
+root@debian:~# cxl list -r region0 -N
+[
+  {
+    "region":"region0",
+    "resource":79725330432,
+    "size":2147483648,
+    "interleave_ways":1,
+    "interleave_granularity":256,
+    "decode_state":"commit",
+    "extents":[
+      {
+        "offset":0,
+        "length":268435456,
+        "uuid":"00000000-0000-0000-0000-000000000000"
+      }
+    ]
+  }
+]
+root@debian:~# cd ndctl/
+root@debian:~/ndctl# git branch
+* dcd-region3-2025-04-13
+root@debian:~/ndctl# ./build/daxctl/daxctl create-device -r region0 -v
+libdaxctl: __dax_regions_init: no dax regions found via: /sys/class/dax
+error creating devices: No such device or address
+created 0 devices
 
+root@debian:~/ndctl# cat .git/config 
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[remote "origin"]
+	url = https://github.com/weiny2/ndctl.git
+	fetch = +refs/heads/dcd-region3-2025-04-13:refs/remotes/origin/dcd-region3-2025-04-13
+[branch "dcd-region3-2025-04-13"]
+	remote = origin
+	merge = refs/heads/dcd-region3-2025-04-13
+
+
+Fan
+
+> 
+> > 
+> > The dmesg shows the really_probe function returns early as resource
+> > presents before probe as below,
+> > 
+> > [ 1745.505068] cxl_core:devm_cxl_add_dax_region:3251: cxl_region region0: region0: register dax_region0
+> > [ 1745.506063] cxl_pci:__cxl_pci_mbox_send_cmd:263: cxl_pci 0000:0d:00.0: Sending command: 0x4801
+> > [ 1745.506953] cxl_pci:cxl_pci_mbox_wait_for_doorbell:74: cxl_pci 0000:0d:00.0: Doorbell wait took 0ms
+> > [ 1745.507911] cxl_core:__cxl_process_extent_list:1802: cxl_pci 0000:0d:00.0: Got extent list 0-0 of 1 generation Num:0
+> > [ 1745.508958] cxl_core:__cxl_process_extent_list:1815: cxl_pci 0000:0d:00.0: Processing extent 0/1
+> > [ 1745.509843] cxl_core:cxl_validate_extent:975: cxl_pci 0000:0d:00.0: DC extent DPA [range 0x0000000000000000-0x000000000fffffff] (DCR:[range 0x0000000000000000-0x000000007fffffff])(00000000-0000-0000-0000-000000000000)
+> > [ 1745.511748] cxl_core:__cxl_dpa_to_region:2869: cxl decoder2.0: dpa:0x0 mapped in region:region0
+> > [ 1745.512626] cxl_core:cxl_add_extent:460: cxl decoder2.0: Checking ED ([mem 0x00000000-0x3fffffff flags 0x80000200]) for extent [range 0x0000000000000000-0x000000000fffffff]
+> > [ 1745.514143] cxl_core:cxl_add_extent:492: cxl decoder2.0: Add extent [range 0x0000000000000000-0x000000000fffffff] (00000000-0000-0000-0000-000000000000)
+> > [ 1745.515485] cxl_core:online_region_extent:176:  extent0.0: region extent HPA [range 0x0000000000000000-0x000000000fffffff]
+> > [ 1745.516576] cxl_core:cxlr_notify_extent:285: cxl dax_region0: Trying notify: type 0 HPA [range 0x0000000000000000-0x000000000fffffff]
+> > [ 1745.517768] cxl_core:cxl_bus_probe:2087: cxl_region region0: probe: 0
+> > [ 1745.524984] cxl dax_region0: Resources present before probing
+> > 
+> > 
+> > btw, I hit the same issue with the previous verson also.
+> > 
+> > Fan
+> 
+> [snip]
 
