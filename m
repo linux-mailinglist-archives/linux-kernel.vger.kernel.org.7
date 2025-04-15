@@ -1,85 +1,111 @@
-Return-Path: <linux-kernel+bounces-606080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9D03A8AA5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 23:48:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1C45A8AA6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 23:49:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35A5E189EBBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 21:48:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DECE190337C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 21:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61BCC25D1FF;
-	Tue, 15 Apr 2025 21:48:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC5E261381;
+	Tue, 15 Apr 2025 21:48:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F8GdjGKy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yZgY2IwG"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEFDF2571B5;
-	Tue, 15 Apr 2025 21:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE7F2561C7
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 21:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744753711; cv=none; b=shoE/zm1MZHu7Qnp4imkw8Puvjlc+s/vYg0y/CftFF4L7nrIcj6xCiZgvVjtUdroqHVTdFePTGn8mjlZIiAFxa2qq0UOQFEDgEOieSdgGmaOcQi+aKRd4T9GEbk3uXBmkPITnJMa0adXtMF5fZfRWBFNIdt8qvAeo1a4EmU5FoE=
+	t=1744753736; cv=none; b=FSVFTg7N3QOUXQurzx+UH0nFqrNx9QjnsSKOowKfnO3vCAwG2FMdE1rwhdRMwo9IVbtk8zGgGTix4kFfU8GxHl6DjMQg+85Pg7MPQA0mnofMGEN66oXlrauYQkODD86ZTTCV6mPVDnWkNo9Sk8T3NTy4RCwcfVTZaWTvKTJUHpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744753711; c=relaxed/simple;
-	bh=vg2ZoJT5wdMRs33As6ZuOrUTti2euO5Vt02+P+ipmcU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bnoHuzUzXT0CMaUMhi43SfYKPncTH1ph5xhT8RnQQ3bymUGk9iTP81yrtGfa4hTo9HmlSU6/5aFVA2Y9+Gzlqz/KHhQI3hBJyOXhI6snRnGF1eu+8eWpV0y7PAcaWurAlgHIv9RmxLZ/GE+rAbq9+jY53cssfkMtThUd4e+gbzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F8GdjGKy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 054FEC4CEE7;
-	Tue, 15 Apr 2025 21:48:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744753711;
-	bh=vg2ZoJT5wdMRs33As6ZuOrUTti2euO5Vt02+P+ipmcU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F8GdjGKy8ZSA0v7ioClITQo+70LyAyHE/hPTUr8sUTgN0bPi2N7vlhH+bIRaebdM+
-	 Jkcpyk/6LQxuNwAUg/H3kcmA7IeObDR59ofbmWtYndD1lNJ/owWppsmf+iazMcV87d
-	 9+94WNGfkfdwxJSFHXuVxnfQRSvLTtNds+FDN6MYe9QzeiMGsfwE9NexLVXB1o1I7a
-	 UmIzyk0tb8bTd/2ulx/YXRI5eJF9tvuo96vAXJScQ84q5CL0EZu3qU8tHdgAn/Q4zw
-	 1KD4Kp5ORxBqLkLApkDgWCkJ6zJSDtpnjkfWetB2tUTVWn49YocEFH5KUDeBjI/NKX
-	 DzlnsJ6e1Ia0A==
-Date: Tue, 15 Apr 2025 16:48:29 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org,
-	Sebastian Reichel <sre@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	linux-tegra@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Aradhya Bhatia <a-bhatia1@ti.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v2 2/4] dt-bindings: power: supply: Document Pegatron
- Chagall fuel gauge
-Message-ID: <174475370881.885498.12340209522588997087.robh@kernel.org>
-References: <20250413111033.11408-1-clamor95@gmail.com>
- <20250413111033.11408-3-clamor95@gmail.com>
+	s=arc-20240116; t=1744753736; c=relaxed/simple;
+	bh=w/GU520f/3jBAe24+ir+D2COnHV2dCfaPkORIPMWF9U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kJwjAIEfrbPKHxpcO8lW7/wqT/ehFjnj6dfhk3hW+2kbBoOkhptE6iTngW3B2Xfngfau1THBOHBTOLh4gkFCRuLNqOCUst2RRH9e0RwtP15sE54Hpw759STZmnOUycGG5F6USuCsVBWj2OX1/P914SLIaNjb7poIY3L6xo7mgTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yZgY2IwG; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-54d42884842so1510921e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 14:48:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744753732; x=1745358532; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w/GU520f/3jBAe24+ir+D2COnHV2dCfaPkORIPMWF9U=;
+        b=yZgY2IwGwDD6Xd1zIz8g/u09tiEAOCez4tZ5CdZUFsZJjjDLSgO5Gxo8lpp7B7EjST
+         sq+4GG9ENMkoVBfyvICDzcFB6u+d0kZX6icRosvU9fu+0QKsOhoPRf5zzr/ikZnSohk9
+         7b0AOHl6uX8I7uk917QviuwUTS0SrROnsqgE0vWzXDUM/zxCq+TXy9mcd/o6Ah58E2ep
+         NcbRs4OoOtbeI1TVl9B2EIy+YxU2nUps9M5XMYRXBzTO+kUi7zGfRBej6koYTaynmGKk
+         iKIqonx1bF5L55gUPvLfXkLnHK9igRQL57+aGP1jrzNeKMoIYkjDmM1C+qASqqWYqMkx
+         q4vQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744753732; x=1745358532;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w/GU520f/3jBAe24+ir+D2COnHV2dCfaPkORIPMWF9U=;
+        b=RkGEYLTQSBK/JTNlxZAhfURnSyl8nSW/LiFnNghNFIZm4k57Sfbukg+g/Y50yW6flF
+         Rm7Z3c2GuEHtlCanykSFrOH6y/AUpIGb/H+SsuSYfjsABrpnvF5KeYHPnXXAfS+rkAue
+         cvsrmKZxlF9oagMDNS3WamcnEUoghRoN4MwsziyQs5OTuXqSaD64/H00BHgQ74AAESRQ
+         2qGwi92ghVWgur3vVcdp/iqX5AbbQZHJh0is2Gn9uRQsfm9/d660TsWlz8uNbb3RQaN4
+         0eDHWpd1iiHQzyWRmUbe/fRPzCDoHgPh7Pb993MGb48ii6JWCuPgWLVK/agk+RU60+I3
+         FNwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWiYOa56d2kB7JL3BkqsDoNHBOz/pAr8aqmYEbF9LNK38AKnccGNLf/Eh6euHr8Xcahq/Up11+1o6zYOwU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFo/6WKyGoyoSgUsO9i6AC15u7zhebzRt//j6Z3eU/or/xmx86
+	MeFjComwupWfmFoSQlxC+EZRtbCMt3jfkzf0W+A6G4LUoGiXhcaZv+xlFVGuBFQ9xCOX0qe6CmD
+	hLAa8SmoJEqt7QF0dhTWCxueufX17ykdjRBT+Ug==
+X-Gm-Gg: ASbGncs7A4J+XavzuMxRun+bXJcohj5d+3YlaWgnzoBbsi8hd4xk4q67Lm9DE/QuegL
+	LfV0l/WmLmz/Z6TAosCvvy8AgUEkbnhOGzdW6EEqpwHaR5QfTt23a52wReYFxcggQ6extKE5gCg
+	ErgunD6Gok+Hpenynkq2fPzA==
+X-Google-Smtp-Source: AGHT+IFSu+OKLB2VNur9Dle83J6HMvG4kflsWZSu9S8S6IR4G67eFIhSB0oS7wnO/q/UzPPA34KfjLwXTtDj9Vzih0s=
+X-Received: by 2002:a05:6512:1328:b0:54b:f04:59e8 with SMTP id
+ 2adb3069b0e04-54d60517c07mr145437e87.23.1744753732331; Tue, 15 Apr 2025
+ 14:48:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250413111033.11408-3-clamor95@gmail.com>
+References: <20250408-gpiochip-set-rv-pinctrl-part1-v1-0-c9d521d7c8c7@linaro.org>
+In-Reply-To: <20250408-gpiochip-set-rv-pinctrl-part1-v1-0-c9d521d7c8c7@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 15 Apr 2025 23:48:40 +0200
+X-Gm-Features: ATxdqUHvlNdtzl3Q_1xgpiYLVxVG4W9MxWXBnWdrebvCbvJB7NiLnFtisrLsjeo
+Message-ID: <CACRpkdZGmHqS=Ln=YF26aCLcuJOB-Zx3AUA8sSyf+Z_LJiC2Uw@mail.gmail.com>
+Subject: Re: [PATCH 00/10] pinctrl: convert GPIO chips to using new value setters
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Ludovic Desroches <ludovic.desroches@microchip.com>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+	Xianwei Zhao <xianwei.zhao@amlogic.com>, Patrick Rudolph <patrick.rudolph@9elements.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Apr 8, 2025 at 9:17=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl> =
+wrote:
 
-On Sun, 13 Apr 2025 14:10:31 +0300, Svyatoslav Ryhel wrote:
-> Add binding for Pegatron Chagall tablets battery monitor.
-> 
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  .../power/supply/pegatron,chagall-ec.yaml     | 49 +++++++++++++++++++
->  1 file changed, 49 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/power/supply/pegatron,chagall-ec.yaml
-> 
+> struct gpio_chip now has callbacks for setting line values that return
+> an integer, allowing to indicate failures. We're in the process of
+> converting all GPIO drivers to using the new API. This series converts
+> the first part of pinctrl GPIO controllers.
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+All patches applied for next!
 
+Yours,
+Linus Walleij
 
