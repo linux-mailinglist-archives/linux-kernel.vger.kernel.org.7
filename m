@@ -1,145 +1,217 @@
-Return-Path: <linux-kernel+bounces-607294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FA01A90481
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 15:39:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2302A90494
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 15:43:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F22D7189C3E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 13:39:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48E6E3BDAC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 13:43:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E93A32;
-	Wed, 16 Apr 2025 13:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="IrzECk7d"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2340B1598F4
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 13:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB0651ADFFB;
+	Wed, 16 Apr 2025 13:43:28 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8531A23B0;
+	Wed, 16 Apr 2025 13:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744810753; cv=none; b=mbgl3zKXk0d/eZ3yYeIleS3OUmmb6rU4vtADKRZDGDEScaDwD7w9bGdmqW09MfGfaSJb22DkISXoSRTzwebWDXjDuQdrfQzuUBqzoYNaUjJAjRS0lMcWGwpfaVTZ7ZXVDgbKQzii78+ChwFFQ9YWKKNRSoUqwAz2iE1ahDWt+ZM=
+	t=1744811008; cv=none; b=tZGnasikt4XTr+6we0P9a+XTWs+b7Qv+MpcFKJB3yEwuDbH4KPCdgkIleM5Jo49i+9Z/mZv8SENwG64yQ+MrObyYbi8cPsKD4OEVIdWTBbyodsdbH25+cyy5TL1p0xw3IhVtwP6e0EL0CKOiLfswF3rHbEpWY3WQXVif4ihghFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744810753; c=relaxed/simple;
-	bh=gXTPoI5T8ZoVXJpDGb6l3mLTDj7peXW/zXfipaAJJzc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZUNP+6KTCuYOO6+Py9/HdZ76pVRo4riD8LS/M1yrMPrFAhLRkyUAX84O1GYNuEmJTIXAFR+h1m5EaQgoYlzbM6SuyPobzCDFGjENgmDY8wy1Bzp7cuyjWzytwoSRaCGy74G2XNf6h2wTYRnmAeMwQ9vhGXK4hE/9cLUm+daoZLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=IrzECk7d; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2255003f4c6so70430705ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 06:39:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1744810751; x=1745415551; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HQPjVTwAlpJP7gDyjMdFPiWvjeOPxcDyZfzJMUg3hr8=;
-        b=IrzECk7dkGqsFtjB6oqP0MbRhUD6kI16gtqXuwuPoy5M9yIOW9IOUV0vxv0gTJhIPh
-         sf/FqCHueDB2HFRpuF/uobjfejvvHydAOaUhutSxDnlEc7fWFxrH9Uti45tUoSinn8Hw
-         3XM8sOOz9pPSRCfxO3f3nVAezDf6t9PLx4FZ1VyFDw4VgWT8DEUDfaZyDSw6oabvAKIQ
-         gcD//vEXZVL6XHYs5RGHHj0Uu/28CbcyVtecVASW4/SWH0OQCWlYW31NKWH0vnj+BFtL
-         Gpg3p9Dnihvp+xa9msY/VMsG51NlpmQotSy8o8dtNNJMxIffk5v5JUbN+jvcytDMU+YV
-         vE2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744810751; x=1745415551;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HQPjVTwAlpJP7gDyjMdFPiWvjeOPxcDyZfzJMUg3hr8=;
-        b=n8Z8SleG1ACgIZZnNW576t9edn2ZR0Oo4GU3Cb+Jk7QkjXB0Hj9ktyki5AA512SSnU
-         FYWsSduf+AG0oltDwvYSf+jB0ZE6Q4PgO5j2nWHEmpGlY1BUbNizhxMeYnuc7VZ2xbSX
-         foAoPpRSh/jaq/Q/fbuXY02UTndSLDLS/9ieiRU7Pt7XlBvpeMctJHoQKATBV3f1fFRA
-         rI86q5X8Zrtvrdx3Wlmolm+bge8AfMLk107Blag27EK+mTsAi96EntcOzn1f4yIZTm32
-         gFZr/8Ni1KnKmCM1L36QxIcAOFjZsov0jd6xCucuZwUXlF/pztQzJSN3l970YDdBUM6p
-         khEg==
-X-Forwarded-Encrypted: i=1; AJvYcCW2pisRD/5DrsYssG/UznDzQp1yRDag88el45tJY8LqJp5QQj4IPOpWl77AtBSFlv/gb86viBrMz0s2BZA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yybxkz4GCGvKKfJA91ikYQS041PYoJtTh68T5SCXzf+vtEQQF9D
-	JVK1oRAqt9oHDlltld/PHVoSjVNdSgk24uvslAFrfLKM2OJIC50xlAaWf6dmUpxXNynOzXC4Gpc
-	d
-X-Gm-Gg: ASbGncty3HYVq+W0uyqJSs9zAVjZe949vVNr99K5jOuSBDD3zIouhduMzlpwuU+T76j
-	QAsNi/oG+N0IxzpWUfbQ0V54JI+WmLiQ8zNLeqsvKBbGmkXHe96jkvLPViJkaUkyyhq+F4Fals2
-	AAHbk4q1XJfxrYWf1ratjqSE2yLhyqzYSNvCXWldAYzkvBwtT+oZAoQPyiLb3YELUMr4DOuomG1
-	T80f+VVL1xE0xdR7QT51QzT1aNmEZ7nb0uSbz9ZB7EdpvXibTc8IfGNX8AF15vzQ2kxN44lbbAI
-	rM05AbhUpdV7NdShW6vRAn8iJlVEjkGJv+4/DIdg8qgUXSI=
-X-Google-Smtp-Source: AGHT+IFoIPNDkQn7oVxuncqn9fPhp4/UfPtkr5qC8X0Eb/ohId2zdqpFsmOhFASawm3nULqiEQTX4g==
-X-Received: by 2002:a17:903:2383:b0:229:1717:8826 with SMTP id d9443c01a7336-22c358fd48bmr33065235ad.28.1744810751270;
-        Wed, 16 Apr 2025 06:39:11 -0700 (PDT)
-Received: from medusa.lab.kspace.sh ([2601:640:8900:32c0::c137])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-22c33fcbf61sm13589115ad.201.2025.04.16.06.39.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Apr 2025 06:39:10 -0700 (PDT)
-Date: Wed, 16 Apr 2025 06:39:09 -0700
-From: Mohamed Khalfella <mkhalfella@purestorage.com>
-To: Daniel Wagner <dwagner@suse.de>
-Cc: Daniel Wagner <wagi@kernel.org>, Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>, Keith Busch <kbusch@kernel.org>,
-	Hannes Reinecke <hare@suse.de>,
-	John Meneghini <jmeneghi@redhat.com>, randyj@purestorage.com,
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 3/3] nvme: delay failover by command quiesce timeout
-Message-ID: <20250416133909.GH1868505-mkhalfella@purestorage.com>
-References: <20250324-tp4129-v1-0-95a747b4c33b@kernel.org>
- <20250324-tp4129-v1-3-95a747b4c33b@kernel.org>
- <20250410085137.GE1868505-mkhalfella@purestorage.com>
- <6f0d50b2-7a16-4298-8129-c3a0b1426d26@flourine.local>
- <20250416001738.GA78596-mkhalfella@purestorage.com>
- <22e48664-63f3-4cc0-8b99-f56e98204e5b@flourine.local>
+	s=arc-20240116; t=1744811008; c=relaxed/simple;
+	bh=uZrx/R+c96B6f1yZ874Z3PH13AxzGewggazq0D+ga7A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ksnxp033dbQCw8Z6A+sFsXSxdhnjtz9cwVSh95th+RU3OOeCMH3eZN2l6Fam3IQ4Rx0ifPrWXV5mbiSoKV2JYV2kc4qu57C5oXPqkn33FczlGy6B4iSoyzP0IO+f3fF/qN3W+SF87TfbqMuSZv7TkkquFF9yl+Ey98nElF9+l3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 56EED1595;
+	Wed, 16 Apr 2025 06:43:22 -0700 (PDT)
+Received: from e122027.arm.com (unknown [10.57.90.52])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B111A3F59E;
+	Wed, 16 Apr 2025 06:43:19 -0700 (PDT)
+From: Steven Price <steven.price@arm.com>
+To: kvm@vger.kernel.org,
+	kvmarm@lists.linux.dev
+Cc: Steven Price <steven.price@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>,
+	linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>,
+	Alper Gun <alpergun@google.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
+Subject: [PATCH v8 00/43] arm64: Support for Arm CCA in KVM
+Date: Wed, 16 Apr 2025 14:41:22 +0100
+Message-ID: <20250416134208.383984-1-steven.price@arm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <22e48664-63f3-4cc0-8b99-f56e98204e5b@flourine.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 2025-04-16 08:57:19 +0200, Daniel Wagner wrote:
-> On Tue, Apr 15, 2025 at 05:17:38PM -0700, Mohamed Khalfella wrote:
-> > Help me see this:
-> > 
-> > - nvme_failover_req() is the only place reqs are added to failover_list.
-> > - nvme_decide_disposition() returns FAILOVER only if req has REQ_NVME_MPATH set.
-> > 
-> > How/where do admin requests get REQ_NVME_MPATH set?
-> 
-> Admin commands don't set REQ_NVME_MPATH. This is what the current code
-> does and I have deliberately decided not to touch this with this RFC.
-> 
-> Given how much discussion the CQT/CCR feature triggers, I don't think
-> it's a good idea to add this topic to this discussion.
-> 
+This series adds support for running protected VMs using KVM under the
+Arm Confidential Compute Architecture (CCA).
 
-The point is that holding requests at nvme_failover_req() does not cover
-admin requests. Do you plan to add support for holding admin requests in
-the next revision of these patches?
+The related guest support was merged for v6.14-rc1 so you no longer need
+that separately.
 
-> > > > - What about requests that do not go through nvme_failover_req(), like
-> > > >   passthrough requests, do we not want to hold these requests until it
-> > > >   is safe for them to be retried?
-> > > 
-> > > Pasthrough commands should fail immediately. Userland is in charge here,
-> > > not the kernel. At least this what should happen here.
-> > > 
-> > > > - In case of controller reset or delete if nvme_disable_ctrl()
-> > > >   successfully disables the controller, then we do not want to add
-> > > >   canceled requests to failover_list, right? Does this implementation
-> > > >   consider this case?
-> > > 
-> > > Not sure. I've tested a few things but I am pretty sure this RFC is far
-> > > from being complete.
-> > 
-> > I think it does not, and maybe it should honor this. Otherwise every
-> > controller reset/delete will end up holding requests unnecessarily.
-> 
-> Yes, this is one of the problems with the failover queue. It could be
-> solved by really starting to track the delay timeout for each commands.
-> But this is a lot of logic code and complexity. Thus during the
-> discussion at LSFMM everyone including me, said failover queue idea
-> should not be our first choice.
+There are a few changes since v7, many thanks for the review
+comments. The highlights are below, and individual patches have a changelog.
 
-Got it. I assume this will be addressed in the next revision?
+ * More documentation - the new ioctls and capabilties are now all
+   documented.
+
+ * Initial patch adding "only_private"/"only_shared" to struct
+   kvm_gfn_range replaced with already upstream "attr_filter".
+
+ * Improvement in variable naming and error codes, and some improved/new
+   comments. All following valuable review feedback (thanks!).
+
+ * Drop the final WIP patch for enabling large PAGE_SIZE support. It's
+   not ready for merging and I want to focus on landing the 4k support.
+
+ * Rebased onto v6.15-rc1.
+
+Things to note:
+
+ * The magic numbers for capabilities and ioctls have been updated. So
+   you'll need to update your VMM. See below for update kvmtool branch.
+
+ * Patch 42 increases KVM_VCPU_MAX_FEATURES to expose the new feature.
+   This also exposes the NV features (as they are currently numbered
+   lower). This will resolve when Marc's NV series has landed, see [2].
+
+ * There are some conflicts with v6.15-rc2, mostly documentation, but
+   also commit 26fbdf369227 ("KVM: arm64: Don't translate FAR if
+   invalid/unsafe") 'hijacks' HPFAR_EL2_NS as a valid bit. This will
+   require corresponding changes to the CCA code.
+
+The ABI to the RMM (the RMI) is based on RMM v1.0-rel0 specification[1].
+
+This series is based on v6.15-rc1. It is also available as a git
+repository:
+
+https://gitlab.arm.com/linux-arm/linux-cca cca-host/v8
+
+Work in progress changes for kvmtool are available from the git
+repository below:
+
+https://gitlab.arm.com/linux-arm/kvmtool-cca cca/v6
+
+[1] https://developer.arm.com/documentation/den0137/1-0rel0/
+[2] https://lore.kernel.org/r/20250408105225.4002637-17-maz%40kernel.org
+
+Jean-Philippe Brucker (7):
+  arm64: RME: Propagate number of breakpoints and watchpoints to
+    userspace
+  arm64: RME: Set breakpoint parameters through SET_ONE_REG
+  arm64: RME: Initialize PMCR.N with number counter supported by RMM
+  arm64: RME: Propagate max SVE vector length from RMM
+  arm64: RME: Configure max SVE vector length for a Realm
+  arm64: RME: Provide register list for unfinalized RME RECs
+  arm64: RME: Provide accurate register list
+
+Joey Gouly (2):
+  arm64: RME: allow userspace to inject aborts
+  arm64: RME: support RSI_HOST_CALL
+
+Steven Price (31):
+  arm64: RME: Handle Granule Protection Faults (GPFs)
+  arm64: RME: Add SMC definitions for calling the RMM
+  arm64: RME: Add wrappers for RMI calls
+  arm64: RME: Check for RME support at KVM init
+  arm64: RME: Define the user ABI
+  arm64: RME: ioctls to create and configure realms
+  KVM: arm64: Allow passing machine type in KVM creation
+  arm64: RME: RTT tear down
+  arm64: RME: Allocate/free RECs to match vCPUs
+  KVM: arm64: vgic: Provide helper for number of list registers
+  arm64: RME: Support for the VGIC in realms
+  KVM: arm64: Support timers in realm RECs
+  arm64: RME: Allow VMM to set RIPAS
+  arm64: RME: Handle realm enter/exit
+  arm64: RME: Handle RMI_EXIT_RIPAS_CHANGE
+  KVM: arm64: Handle realm MMIO emulation
+  arm64: RME: Allow populating initial contents
+  arm64: RME: Runtime faulting of memory
+  KVM: arm64: Handle realm VCPU load
+  KVM: arm64: Validate register access for a Realm VM
+  KVM: arm64: Handle Realm PSCI requests
+  KVM: arm64: WARN on injected undef exceptions
+  arm64: Don't expose stolen time for realm guests
+  arm64: RME: Always use 4k pages for realms
+  arm64: RME: Prevent Device mappings for Realms
+  arm_pmu: Provide a mechanism for disabling the physical IRQ
+  arm64: RME: Enable PMU support with a realm guest
+  arm64: RME: Hide KVM_CAP_READONLY_MEM for realm guests
+  KVM: arm64: Expose support for private memory
+  KVM: arm64: Expose KVM_ARM_VCPU_REC to user space
+  KVM: arm64: Allow activating realms
+
+Suzuki K Poulose (3):
+  kvm: arm64: Include kvm_emulate.h in kvm/arm_psci.h
+  kvm: arm64: Don't expose debug capabilities for realm guests
+  arm64: RME: Allow checking SVE on VM instance
+
+ Documentation/virt/kvm/api.rst       |   91 +-
+ arch/arm64/include/asm/kvm_emulate.h |   40 +
+ arch/arm64/include/asm/kvm_host.h    |   17 +-
+ arch/arm64/include/asm/kvm_rme.h     |  137 +++
+ arch/arm64/include/asm/rmi_cmds.h    |  508 ++++++++
+ arch/arm64/include/asm/rmi_smc.h     |  259 ++++
+ arch/arm64/include/asm/virt.h        |    1 +
+ arch/arm64/include/uapi/asm/kvm.h    |   49 +
+ arch/arm64/kvm/Kconfig               |    1 +
+ arch/arm64/kvm/Makefile              |    3 +-
+ arch/arm64/kvm/arch_timer.c          |   48 +-
+ arch/arm64/kvm/arm.c                 |  160 ++-
+ arch/arm64/kvm/guest.c               |  104 +-
+ arch/arm64/kvm/hypercalls.c          |    4 +-
+ arch/arm64/kvm/inject_fault.c        |    5 +-
+ arch/arm64/kvm/mmio.c                |   16 +-
+ arch/arm64/kvm/mmu.c                 |  201 ++-
+ arch/arm64/kvm/pmu-emul.c            |    6 +
+ arch/arm64/kvm/psci.c                |   30 +
+ arch/arm64/kvm/reset.c               |   23 +-
+ arch/arm64/kvm/rme-exit.c            |  199 +++
+ arch/arm64/kvm/rme.c                 | 1708 ++++++++++++++++++++++++++
+ arch/arm64/kvm/sys_regs.c            |   49 +-
+ arch/arm64/kvm/vgic/vgic-init.c      |    2 +-
+ arch/arm64/kvm/vgic/vgic-v3.c        |    6 +-
+ arch/arm64/kvm/vgic/vgic.c           |   54 +-
+ arch/arm64/mm/fault.c                |   31 +-
+ drivers/perf/arm_pmu.c               |   15 +
+ include/kvm/arm_arch_timer.h         |    2 +
+ include/kvm/arm_pmu.h                |    4 +
+ include/kvm/arm_psci.h               |    2 +
+ include/linux/perf/arm_pmu.h         |    5 +
+ include/uapi/linux/kvm.h             |   29 +-
+ 33 files changed, 3709 insertions(+), 100 deletions(-)
+ create mode 100644 arch/arm64/include/asm/kvm_rme.h
+ create mode 100644 arch/arm64/include/asm/rmi_cmds.h
+ create mode 100644 arch/arm64/include/asm/rmi_smc.h
+ create mode 100644 arch/arm64/kvm/rme-exit.c
+ create mode 100644 arch/arm64/kvm/rme.c
+
+-- 
+2.43.0
+
 
