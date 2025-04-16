@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-606582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F8B1A8B127
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 08:53:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80E9CA8B125
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 08:52:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EC1F3ACA2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 06:52:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 961BE440237
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 06:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 884862309A6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E96321423F;
 	Wed, 16 Apr 2025 06:52:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="U9z6yc/O";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0lDo9cQv"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CISPyXb/";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5iRo80Rq"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898D922D4D9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8986622D4D1;
 	Wed, 16 Apr 2025 06:52:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744786322; cv=none; b=kNya+5M+n/iL2n8A9J6yX5KJji31Cor0Q99jVDu/NQFqRBO44cZc8+IH2hKOkecLNzd9WLm5O3TUn4VA42csY6iAY7fjN++QStnZuWQLOiH/Qjm7OMHm6G2LaLCeTh4jbIy1QcUO7sR5Mw9fQ9CoDLIANudKRava1mtTJmwG/p0=
+	t=1744786322; cv=none; b=aHOBj9eizPkQM38ItLfqReJgp+p1qNQCBjPzchYq6UQGyauHveCGNs29/KOhFheUGfk8gCqZE6yeAK9BsKXhtsNugckM9lsKNCSS06TrNj+3Zva0pY+EJbcwLz+p7rk2slxn8I2vyIMFyJrqwMkwFOYsIXmzJhPTzmsHp7MZGGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1744786322; c=relaxed/simple;
-	bh=H9V8DEOULiOnbQER9jdq86jI9UV0AVKo/mqnQ8wukQU=;
+	bh=XSpDwdeVTB2AcA9ttMFS/qjUB4L4tN4Ug5OWOSxhkZA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QaL2LBH9gNEFo/hYt4nqtZ+yawnGBnR9NQ/tMWTBNX7IN9AqxJ0VCZS6I/fitSuKCu3QYEk4jEY4dUvfWApmGKx5Hf1d0JNoDe5U1vUFCa3K6gOMaGdzmjuV8hXMkuRkzJQk3eP/u+i6A+6/7o3NHaAkV5tGfSdrAEFJxFLjZzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=U9z6yc/O; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0lDo9cQv; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=ctRcqtZw3yj6p5rifC3aD3NtpMhmnH0i12q74oHv0N1QjoEFZsUHuD17FtfnQLp1gK+m9PoosY85KHIp55RFWEpN39tkS1BIAp9Kuat9DP2tc46jJkiWhltMyLAcIkMHRahevYB3ae5PBtZgbyU2C8u9MERkvbyZNgRY7ZGdlQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CISPyXb/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5iRo80Rq; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Nam Cao <namcao@linutronix.de>
@@ -38,30 +38,30 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=CbJkEpwB3OdGpjoifJXvu2A5D6lki3gos/XOzAV2UjA=;
-	b=U9z6yc/O5uV0Gs51CV4au27gYHgXZOcZ2ZEsY+HB36wMZLYfzljK1Q9aB6MyMouqYeVVS+
-	EAR62rAGYg7055AtQ7fkrXtE6TtcM/aJ/AQ2DLmYJdUHcwnwWa0Jmk92Gip9kNkwUXfdKJ
-	L0ri+TJq0nxNtEYWijlb8riCLLHSWIaWp/kb92ZLgC3QVWb8CJOtokKlaac9sYASeMrOit
-	HAzCjvrImkq1k8I8rGikpEGo0KDm7IjG3z8TKH1UVcZKKxVHzUlxxa6ErHAjnHzjxjpp37
-	jZuVTB/qb9QtHS9XjgdC7NUkLxhDgpi6nanMq1vOx7rmv+WpJKzTI3wBljGpHg==
+	bh=QrTG+If+tj0i64ta81V4qn3gNx721oseNH6iwdhWG4c=;
+	b=CISPyXb/8o2FrYgQdb35L+hCPlYdKFVhEIZiiXoBeDKARaS1YkvlEtVGJlJrG3nxCVqqZV
+	EFrY5bDMuY9d89QWDTnVTWWf7IKPzWJTAD8wGZVU6i22gOVdF5CikZOb8hDtW7wOF9S5IF
+	/l7SNbxYjuh64b/L8tzmHwUkR7UjQVvyuRLXrOa9yc6xcxJClG/H3Vr7eRnorstf0YuTfa
+	OOE+XecZNPm+OtPP795r+CswgtBpqsdx7kmd5+JTZc8TK/2mRxvXxUjmcZ7sCBkPkMpPb1
+	rVT+HhAlUeun78i105zp/JgiBFgv+yO/QEAk+VV+1r6HXH1xCV0x4ChCX6ohZQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1744786317;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=CbJkEpwB3OdGpjoifJXvu2A5D6lki3gos/XOzAV2UjA=;
-	b=0lDo9cQvyKyTQ3/ixTggGfR/aQlbQci6IPHnPXHpBzFk7QSExed2LzmIbEp4BPqpH7lWkV
-	OvA1UaQawpJQYXCQ==
+	bh=QrTG+If+tj0i64ta81V4qn3gNx721oseNH6iwdhWG4c=;
+	b=5iRo80RqXsUoclxGVly2qAOmt210DR05GwyqGon0v2UnNZIexZkRdHOMhqEHXr+YbTwLhb
+	K1J+uuxL8zHVRwDg==
 To: Steven Rostedt <rostedt@goodmis.org>,
 	Gabriele Monaco <gmonaco@redhat.com>,
 	linux-trace-kernel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: john.ogness@linutronix.de,
 	Nam Cao <namcao@linutronix.de>
-Subject: [PATCH v3 07/22] verification/dot2k: Replace is_container() hack with subparsers
-Date: Wed, 16 Apr 2025 08:51:13 +0200
-Message-Id: <6c587d3723a8fc2cf220441d8d7ed1614218c392.1744785335.git.namcao@linutronix.de>
+Subject: [PATCH v3 08/22] rv: rename CONFIG_DA_MON_EVENTS to CONFIG_RV_MON_EVENTS
+Date: Wed, 16 Apr 2025 08:51:14 +0200
+Message-Id: <454bd20c699ed365cd36516601cc356f821b103d.1744785335.git.namcao@linutronix.de>
 In-Reply-To: <cover.1744785335.git.namcao@linutronix.de>
 References: <cover.1744785335.git.namcao@linutronix.de>
 Precedence: bulk
@@ -72,126 +72,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 
-dot2k is used for both generating deterministic automaton (DA) monitor and
-generating container monitor.
+CONFIG_DA_MON_EVENTS is not specific to deterministic automaton. It could
+be used for other monitor types. Therefore rename it to
+CONFIG_RV_MON_EVENTS.
 
-Generating DA monitor and generating container requires different
-parameters. This is implemented by peeking at sys.argv and check whether
-"--container" is specified, and use that information to make some
-parameters optional or required.
-
-This works, but is quite hacky and ugly.
-
-Replace this hack with Python's built-in subparsers.
-
-The old commands:
-
-  python3 dot2/dot2k -d wip.dot -t per_cpu
-  python3 dot2/dot2k -n sched --container
-
-are equivalent to the new commands:
-
-  python3 dot2/dot2k monitor -d wip.dot -t per_cpu
-  python3 dot2/dot2k container -n sched
+This prepares for the introduction of linear temporal logic monitor.
 
 Reviewed-by: Gabriele Monaco <gmonaco@redhat.com>
 Signed-off-by: Nam Cao <namcao@linutronix.de>
 ---
- tools/verification/dot2/dot2k    | 37 +++++++++++++++++---------------
- tools/verification/dot2/dot2k.py |  2 +-
- 2 files changed, 21 insertions(+), 18 deletions(-)
+ kernel/trace/rv/Kconfig | 6 +++---
+ kernel/trace/rv/rv.c    | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/tools/verification/dot2/dot2k b/tools/verification/dot2/dot2k
-index 767064f415e7..133fb17d9d47 100644
---- a/tools/verification/dot2/dot2k
-+++ b/tools/verification/dot2/dot2k
-@@ -13,30 +13,33 @@ if __name__ =3D=3D '__main__':
-     import argparse
-     import sys
+diff --git a/kernel/trace/rv/Kconfig b/kernel/trace/rv/Kconfig
+index b39f36013ef2..6cdffc04b73c 100644
+--- a/kernel/trace/rv/Kconfig
++++ b/kernel/trace/rv/Kconfig
+@@ -1,14 +1,14 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ #
+-config DA_MON_EVENTS
++config RV_MON_EVENTS
+ 	bool
 =20
--    def is_container():
--        """Should work even before parsing the arguments"""
--        return "-c" in sys.argv or "--container" in sys.argv
--
-     parser =3D argparse.ArgumentParser(description=3D'transform .dot file =
-into kernel rv monitor')
--    parser.add_argument('-d', "--dot", dest=3D"dot_file", required=3Dnot i=
-s_container())
--    parser.add_argument('-t', "--monitor_type", dest=3D"monitor_type", req=
-uired=3Dnot is_container(),
--                        help=3Df"Available options: {', '.join(dot2k.monit=
-or_types.keys())}")
--    parser.add_argument('-n', "--model_name", dest=3D"model_name", require=
-d=3Dis_container())
-     parser.add_argument("-D", "--description", dest=3D"description", requi=
-red=3DFalse)
-     parser.add_argument("-a", "--auto_patch", dest=3D"auto_patch",
-                         action=3D"store_true", required=3DFalse,
-                         help=3D"Patch the kernel in place")
--    parser.add_argument("-p", "--parent", dest=3D"parent",
--                        required=3DFalse, help=3D"Create a monitor nested =
-to parent")
--    parser.add_argument("-c", "--container", dest=3D"container",
--                        action=3D"store_true", required=3DFalse,
--                        help=3D"Create an empty monitor to be used as a co=
-ntainer")
-+
-+    subparsers =3D parser.add_subparsers(dest=3D"subcmd", required=3DTrue)
-+
-+    monitor_parser =3D subparsers.add_parser("monitor")
-+    monitor_parser.add_argument('-n', "--model_name", dest=3D"model_name")
-+    monitor_parser.add_argument("-p", "--parent", dest=3D"parent",
-+                                required=3DFalse, help=3D"Create a monitor=
- nested to parent")
-+    monitor_parser.add_argument('-d', "--dot", dest=3D"dot_file")
-+    monitor_parser.add_argument('-t', "--monitor_type", dest=3D"monitor_ty=
-pe",
-+                                help=3Df"Available options: {', '.join(dot=
-2k.monitor_types.keys())}")
-+
-+    container_parser =3D subparsers.add_parser("container")
-+    container_parser.add_argument('-n', "--model_name", dest=3D"model_name=
-", required=3DTrue)
-+
-     params =3D parser.parse_args()
+ config DA_MON_EVENTS_IMPLICIT
+-	select DA_MON_EVENTS
++	select RV_MON_EVENTS
+ 	bool
 =20
--    if not is_container():
--        print("Opening and parsing the dot file %s" % params.dot_file)
-     try:
--        monitor=3Ddot2k(params.dot_file, params.monitor_type, vars(params))
-+        if params.subcmd =3D=3D "monitor":
-+            print("Opening and parsing the dot file %s" % params.dot_file)
-+            monitor =3D dot2k(params.dot_file, params.monitor_type, vars(p=
-arams))
-+        else:
-+            monitor =3D dot2k(None, None, vars(params))
-     except Exception as e:
-         print('Error: '+ str(e))
-         print("Sorry : :-(")
-@@ -45,7 +48,7 @@ if __name__ =3D=3D '__main__':
-     print("Writing the monitor into the directory %s" % monitor.name)
-     monitor.print_files()
-     print("Almost done, checklist")
--    if not is_container():
-+    if params.subcmd =3D=3D "monitor":
-         print("  - Edit the %s/%s.c to add the instrumentation" % (monitor=
-.name, monitor.name))
-         print(monitor.fill_tracepoint_tooltip())
-     print(monitor.fill_makefile_tooltip())
-diff --git a/tools/verification/dot2/dot2k.py b/tools/verification/dot2/dot=
-2k.py
-index 0922754454b9..9ec99e297012 100644
---- a/tools/verification/dot2/dot2k.py
-+++ b/tools/verification/dot2/dot2k.py
-@@ -19,7 +19,7 @@ class dot2k(Dot2c):
-     monitor_type =3D "per_cpu"
+ config DA_MON_EVENTS_ID
+-	select DA_MON_EVENTS
++	select RV_MON_EVENTS
+ 	bool
 =20
-     def __init__(self, file_path, MonitorType, extra_params=3D{}):
--        self.container =3D extra_params.get("container")
-+        self.container =3D extra_params.get("subcmd") =3D=3D "container"
-         self.parent =3D extra_params.get("parent")
-         self.__fill_rv_templates_dir()
+ menuconfig RV
+diff --git a/kernel/trace/rv/rv.c b/kernel/trace/rv/rv.c
+index 50344aa9f7f9..dae84deb327d 100644
+--- a/kernel/trace/rv/rv.c
++++ b/kernel/trace/rv/rv.c
+@@ -143,7 +143,7 @@
+ #include <linux/init.h>
+ #include <linux/slab.h>
 =20
+-#ifdef CONFIG_DA_MON_EVENTS
++#ifdef CONFIG_RV_MON_EVENTS
+ #define CREATE_TRACE_POINTS
+ #include <rv_trace.h>
+ #endif
 --=20
 2.39.5
 
