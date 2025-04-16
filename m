@@ -1,224 +1,137 @@
-Return-Path: <linux-kernel+bounces-607068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE1B7A8B78C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 13:22:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2015A8B795
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 13:24:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DC535A011B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 11:22:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 611E0189F208
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 11:25:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FEAA23CEFF;
-	Wed, 16 Apr 2025 11:22:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2768323CEFF;
+	Wed, 16 Apr 2025 11:24:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="AxZYzZ9Y"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="luZhMUWo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99ABD14F9D9
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 11:22:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E772921D3EA
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 11:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744802559; cv=none; b=NKBaRfQkOzJwgXTnKG/hWaUJmX+UNmXPWy43N07DOqsaGOyyGTUyz0JAs0EHYyLWEFXlEyRf/Kf3g8SMlr/FkKEDZt6Q/2OitVmRYhj2/MQSA0vrf21IfxlYkBFGfL8ozBv3k1bjpQyNdRYTfTey9HTDnmb4uLS/juDWg/TMEVk=
+	t=1744802689; cv=none; b=CH1o0AVxdTFDxzYTdouhW2LZtnUuDsS0+pMOgyTxNDspmnAZ01dAEhA8EoeizlyI+pGvuJdKfWrYFNhij3PWfitHWDKydu9vtZ4lE0irjQsduQ1WPSLg6FxG83GI4HeIHbJoOyi+J5dXOW2As3SCVbFa8sNBSKDi2IVaZKecxck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744802559; c=relaxed/simple;
-	bh=u9+J56ZVO8d3RgBpDR2plZVRI891RyFTxFeHAW8KyPU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=uN5iDa1+SZXhLsKbsCmYYuDt6eeyfc9d12IeJZbbQrBREDBUt1S2wV+z+8Rm9JIIv+01WjE5tmS6E8oHURV+cae9bp3GbVq4ACRL6GDq6PG5kVW2LGXLdhvY2qP0S+9gjlbbE4Nq5Fv4IpA7wYfLq034ZIm8e+k5n3Al7xXEwHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=AxZYzZ9Y; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250416112234euoutp02bf940d36708dfe72b3fe5c23235853ac~2yK3jBcJW1646316463euoutp02Y
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 11:22:34 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250416112234euoutp02bf940d36708dfe72b3fe5c23235853ac~2yK3jBcJW1646316463euoutp02Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1744802554;
-	bh=o/JZlQdMxe3Mo96yx/aJSrBGKnbJT9wWiAHIxzblxxQ=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=AxZYzZ9YXRriyj+u6GV4T3daSjhmA0EkHr+2pGi+tfWsfBsq2pZhGIK/ULw+DhMq6
-	 WelXZ4Yw6GGYMWhiB+3LytLiq05iA/y9IQNJkbmT8/ZuYC+azzKxiU8uE+Ivy5ZqM/
-	 Z50NBO+4FcKoxg26bq8P2y3ZX0/8RqwKEIy7s9Dc=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20250416112234eucas1p208c7db55a031e7309e207c39b3fd2822~2yK2-DgQC2586025860eucas1p2f;
-	Wed, 16 Apr 2025 11:22:34 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id F4.96.20821.AF29FF76; Wed, 16
-	Apr 2025 12:22:34 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250416112233eucas1p10bb8e43a0c391392501d48c7dace23b6~2yK2YMxp11951519515eucas1p1y;
-	Wed, 16 Apr 2025 11:22:33 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250416112233eusmtrp10af3df9bf1f76b1c37a2f539cc012007~2yK2XMO-p2331123311eusmtrp1F;
-	Wed, 16 Apr 2025 11:22:33 +0000 (GMT)
-X-AuditID: cbfec7f2-b11c470000005155-43-67ff92fa36dd
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id E0.19.19920.9F29FF76; Wed, 16
-	Apr 2025 12:22:33 +0100 (BST)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250416112232eusmtip2f05b1e8bb84da2e08f38a19a071633bc~2yK1D-LF52910429104eusmtip2i;
-	Wed, 16 Apr 2025 11:22:32 +0000 (GMT)
-Message-ID: <02e21251-5c02-420d-81f2-d6f241e0212d@samsung.com>
-Date: Wed, 16 Apr 2025 13:22:31 +0200
+	s=arc-20240116; t=1744802689; c=relaxed/simple;
+	bh=fbM8D2I2VQPp/G5SEymTSmFb47JhCi5lG/QM0596HmE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IOacB7+r1ZIuQ8T5TMvVANwbwwpDqGnG4v7426JlrW4iC0kiGFF6H/91pCKGoNSIkdFtFjoXEj/ldJRMz0LB3RgnHYgxiBS6Pko/TqQr76fh5FSPaYz8v4Gng+fasDQUvvGTk/T1MibpJjnS2Vy6Pwp31HTOZ0ZxrwC33LMq+7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=luZhMUWo; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744802687; x=1776338687;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fbM8D2I2VQPp/G5SEymTSmFb47JhCi5lG/QM0596HmE=;
+  b=luZhMUWo8wnwsIFpDadDlsg8/QvkMOJaLo4TNXe6dY0Yv1prjHudv27f
+   mgArKl8OUK1XnubtPqy6J79RFH4vORvHqO3Tg/ATpiSvQOkf7lpfYtcLR
+   AEf+bBFsZg2pQmvLTHoYsyWiwxJtOcT/94EaugB/KTWp86w72JIAA7hxV
+   BYuaqMZUsE3es6rOC9aB1C8WK3Z3pk6OWftE7fs84TusLfNYuzZcLzUFC
+   624WcJ9BRRxPZ3OVnuNEVft2yZ4YEv+QeGn1s95BKvopGdndZzDULLYgf
+   Z8XohltDjQZmcmbmnObWSonnW70y/OD9r8+nnPlxaKB9gIRAQHgPMBiZ4
+   Q==;
+X-CSE-ConnectionGUID: LqU/++guSw2FFR+5ddKlJA==
+X-CSE-MsgGUID: LqXqb9rQQFGaDBGzQ2x7lA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="46226894"
+X-IronPort-AV: E=Sophos;i="6.15,216,1739865600"; 
+   d="scan'208";a="46226894"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 04:24:46 -0700
+X-CSE-ConnectionGUID: fMiJ5kbERtmEMEGHaz/zFA==
+X-CSE-MsgGUID: kjLusjOPTM2n2pkkW3pJEA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,216,1739865600"; 
+   d="scan'208";a="130208504"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 16 Apr 2025 04:24:45 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u50sj-000JbU-2p;
+	Wed, 16 Apr 2025 11:24:41 +0000
+Date: Wed, 16 Apr 2025 19:23:58 +0800
+From: kernel test robot <lkp@intel.com>
+To: Brahmajit Das <brahmajit.xyz@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, "Borislav Petkov (AMD)" <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Tony Luck <tony.luck@intel.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] regulator: hi6421v530: fix building with GCC 15
+Message-ID: <202504161944.iNjyTvch-lkp@intel.com>
+References: <20250415111411.6331-1-listout@listout.xyz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 19/21] riscv: dts: thead: Introduce power domain
- nodes with aon firmware
-To: Drew Fustini <drew@pdp7.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, guoren@kernel.org, wefu@redhat.com,
-	jassisinghbrar@gmail.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
-	aou@eecs.berkeley.edu, frank.binns@imgtec.com, matt.coster@imgtec.com,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
-	airlied@gmail.com, simona@ffwll.ch, ulf.hansson@linaro.org,
-	jszhang@kernel.org, p.zabel@pengutronix.de, m.szyprowski@samsung.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <Z/6p6MQDS8ZlQv5r@x1>
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xTVxzHOffe3luaFa7F0TOHkVwdiW4DBBNOtsXANrJrTDaIkiUmTBu5
-	KQYKrhVRgwECdODKUB5xa+d4zEnHBgRWKq08HFTKa50C41EeugQXS3jIq51s0tFet/Hf5/s7
-	3/N75RwhLmkjdwnPpJ3jlGmyVIYUEcaeZ7Y3N0rd8nDXHRL1jtVgqOUvLYV+bLdhqNJiE6CZ
-	IQOGRtaXSNTw+D6FnrTnEmhUf4NCeT2NJHJoZ0i0rJkRoGHz1yRaLbYAZFzNJ1G9ZZpC1cst
-	BLrZagZIXXRLgB70x6LpmV4COYY1OFJr/ZG7rZVCm6NNBNItdlLIMH9NgKz1H6P8znIieje7
-	NF5AsfMOB8F2F65RbLuzimBN2mmK1ZgGAdtcV0SyU6NtJPtNXzz78HMrxv50M5vNr+/B2JLn
-	4exSx28k+4WhDrBDeWNUnOSE6J0kLvXMeU4ZdviUKHmu4Hf8bI30woIrOQc0BVwBQiGkD0HL
-	vb1XgEgoofUA6tXrJC/WAJyf68B5sQrgqDpvS/h6b2wOfUfwB7UAfrtupXixAKDLfg/zuMT0
-	Ydi7VEp5mKBfg39OVgn4+A7Y99Us4eGX6T3wof1LryeAlsEJg4n08E46GNr0Q5gnKU7/IICW
-	u6vepDgthfbZSi+TdAR8VFvpTepLM/CXTTfJe/bAvBadt29I94mgursI4/t+H9YuLJA8B8A5
-	q4HiOQgOlGkIntPho5aVF3NmQZPG+oLfhlO2DdKzMZzeDxvNYXw4Bo4NPCb4RfrB8YUdfAt+
-	sNR4HefDYliolvDuEFihKf6vqE1vxK4CRrttK9ptQ2q3DaP9v24VIOqAlMtQKeSc6mAalxmq
-	kilUGWny0NPpimaw9cAHNq0rreDG3HJoF8CEoAtAIc7sFNuiNuUScZLs4iVOmX5SmZHKqbrA
-	q0KCkYprOgvkElouO8elcNxZTvnvKSb03ZWD7dtdduF0QnD0XZFuv2ImMFxbOYjr4sP8EtOY
-	TyNDxvVqc4zoiN45uH75wfNjny0fr451RpX02liyIcZdPet71d2peK980hEi8LmYUozFJdzO
-	ynMpExXR5pSJA1zy1leCU9mZ6r8DmWlpU8do1NGRjhMoN+kD86EPHR8FWqqC/hg2hV5/K9M/
-	y9n/bqBPiU+b72JN+RP7MZ1fd9ea4RpTXTZZsXIprux25J37G8m/Vmh/jjipiMb2EgmvvNEo
-	72WEOcEN3z81jlS5LrsI/2ehT4+IFhW1roSIyET7J68XCir7T0XFjsXPBzXlDkz0NQ/1hMe5
-	fc47bXZ1Rja1cuslhlAlyw4ewJUq2T8MHt+WTwQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrPKsWRmVeSWpSXmKPExsVy+t/xe7o/J/1PN7iyW9LixPVFTBZbf89i
-	t1iz9xyTxfwj51gt7l3awmRx5et7Not1Ty+wW7zY28hicW3FXHaL5mPr2SxezrrHZvGx5x6r
-	xeVdc9gsPvceYbTY9rmFzWLtkbvsFgs/bmWxWLJjF6NFW+cyVouLp1wt7t47wWLx8nIPs0Xb
-	LH6L/3t2sFv8u7aRxWL2u/3sFlveTGS1OL423KJl/xQWB1mP9zda2T3evHzJ4nG44wu7x95v
-	C1g8ds66y+7Rs/MMo8emVZ1sHneu7WHzmHcy0ON+93Emj81L6j1a1h5j8uj/a+Dxft9VNo++
-	LasYPS41X2cPEIrSsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJzcks
-	Sy3St0vQy3jV+pC5YJF4xdvvGQ2MG4W7GDk5JARMJP5dWsrSxcjFISSwlFHi4cHr7BAJGYlr
-	3S9ZIGxhiT/Xutggil4zStyc+o0RJMErYCdx4v0ksAYWAVWJH7cXsELEBSVOznwC1iwqIC9x
-	/9YMsBphgUSJaWsgFogIKEicW3GJCWQos8BqVonlX+8yQmz4wSixbMNFJpAqZgFxiVtP5oPZ
-	bAJGEg+WzwfbwCmgJHH233+gkziAatQl1s8TgiiXl2jeOpt5AqPQLCR3zEIyaRZCxywkHQsY
-	WVYxiqSWFuem5xYb6hUn5haX5qXrJefnbmIEpqxtx35u3sE479VHvUOMTByMhxglOJiVRHjP
-	mf9LF+JNSaysSi3Kjy8qzUktPsRoCgyLicxSosn5wKSZVxJvaGZgamhiZmlgamlmrCTO63b5
-	fJqQQHpiSWp2ampBahFMHxMHp1QDU0yFxBpPd1M2P87bZtd0FQ/M7J0y6WHS4T6e8DSV630v
-	98e8v6f+cOWxs79Y7u1tWPBpcmVsXs2lhfIvzBtmbQm+EDLJMS+2+RV31qTLLc8uv2i8rjzH
-	VjQydgrLWqlFb2cf2S0poHlBVuBtlO5PkR/nDzXZJax8vFdt2ZnzlgFaL8p/MGnFaj75z9Zo
-	W/JBtjLk8T+Lk9+eLuP/GuKap1S17HT0G+bO0+1fuw9tKxcwm8JhMtlPR1rwE49uyppiG1nD
-	I9GaAYmnTJsZnNZWf/ix+cR6hi270tbHd6i3/WOeIhq3USb/yJc9rcnSbFXzNykeM9Nme9no
-	b13ZO7t0to7eUqZVbWV7ZK2XSOelKbEUZyQaajEXFScCAHoYScPiAwAA
-X-CMS-MailID: 20250416112233eucas1p10bb8e43a0c391392501d48c7dace23b6
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250219140315eucas1p10f08d297580edd114f4c487c1fbffa8d
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20250219140315eucas1p10f08d297580edd114f4c487c1fbffa8d
-References: <20250219140239.1378758-1-m.wilczynski@samsung.com>
-	<CGME20250219140315eucas1p10f08d297580edd114f4c487c1fbffa8d@eucas1p1.samsung.com>
-	<20250219140239.1378758-20-m.wilczynski@samsung.com> <Z/2+rbhsaBP0DQop@x1>
-	<Z/6p6MQDS8ZlQv5r@x1>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250415111411.6331-1-listout@listout.xyz>
+
+Hi Brahmajit,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on linus/master]
+[also build test WARNING on v6.15-rc2 next-20250416]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Brahmajit-Das/regulator-hi6421v530-fix-building-with-GCC-15/20250415-191555
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20250415111411.6331-1-listout%40listout.xyz
+patch subject: [PATCH 1/1] regulator: hi6421v530: fix building with GCC 15
+config: arm-randconfig-002-20250416 (https://download.01.org/0day-ci/archive/20250416/202504161944.iNjyTvch-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 7.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250416/202504161944.iNjyTvch-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504161944.iNjyTvch-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from scripts/mod/devicetable-offsets.c:3:0:
+>> include/linux/mod_devicetable.h:608:2: warning: 'nonstring' attribute directive ignored [-Wattributes]
+     char name[PLATFORM_NAME_SIZE] __attribute__((nonstring));
+     ^~~~
+   scripts/kernel-doc: 1: kernel-doc.py: not found
+   make[3]: *** [scripts/Makefile.build:203: scripts/mod/empty.o] Error 127 shuffle=3373171021
+   make[3]: *** Deleting file 'scripts/mod/empty.o'
+   make[3]: Target 'scripts/mod/' not remade because of errors.
+   make[2]: *** [Makefile:1279: prepare0] Error 2 shuffle=3373171021
+   make[2]: Target 'prepare' not remade because of errors.
+   make[1]: *** [Makefile:248: __sub-make] Error 2 shuffle=3373171021
+   make[1]: Target 'prepare' not remade because of errors.
+   make: *** [Makefile:248: __sub-make] Error 2 shuffle=3373171021
+   make: Target 'prepare' not remade because of errors.
 
 
+vim +/nonstring +608 include/linux/mod_devicetable.h
 
-On 4/15/25 20:48, Drew Fustini wrote:
-> On Mon, Apr 14, 2025 at 07:04:29PM -0700, Drew Fustini wrote:
->> On Wed, Feb 19, 2025 at 03:02:37PM +0100, Michal Wilczynski wrote:
->>> The DRM Imagination GPU requires a power-domain driver. In the T-HEAD
->>> TH1520 SoC implements power management capabilities through the E902
->>> core, which can be communicated with through the mailbox, using firmware
->>> protocol.
->>>
->>> Add AON node, which servers as a power-domain controller.
->>>
->>> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
->>> ---
->>>  arch/riscv/boot/dts/thead/th1520.dtsi | 8 ++++++++
->>>  1 file changed, 8 insertions(+)
->>>
->>> diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
->>> index 197df1f32b25..474f31576a1b 100644
->>> --- a/arch/riscv/boot/dts/thead/th1520.dtsi
->>> +++ b/arch/riscv/boot/dts/thead/th1520.dtsi
->>> @@ -6,6 +6,7 @@
->>>  
->>>  #include <dt-bindings/interrupt-controller/irq.h>
->>>  #include <dt-bindings/clock/thead,th1520-clk-ap.h>
->>> +#include <dt-bindings/power/thead,th1520-power.h>
->>>  
->>>  / {
->>>  	compatible = "thead,th1520";
->>> @@ -229,6 +230,13 @@ stmmac_axi_config: stmmac-axi-config {
->>>  		snps,blen = <0 0 64 32 0 0 0>;
->>>  	};
->>>  
->>> +	aon: aon {
->>> +		compatible = "thead,th1520-aon";
->>> +		mboxes = <&mbox_910t 1>;
->>> +		mbox-names = "aon";
->>> +		#power-domain-cells = <1>;
->>> +	};
->>> +
->>>  	soc {
->>>  		compatible = "simple-bus";
->>>  		interrupt-parent = <&plic>;
->>> -- 
->>> 2.34.1
->>>
->>
->> Reviewed-by: Drew Fustini <drew@pdp7.com>
->>
->> I tested this on top of 6.15-rc1 and found no issues.
->>
->> -Drew
-> 
-> I've applied to thead-dt-for-next:
-> https://protect2.fireeye.com/v1/url?k=2f3b741b-4eb0613b-2f3aff54-74fe485fb347-beeac007773a982c&q=1&e=eb6b4dda-c02a-4e0a-831a-a28d0489f6c3&u=https%3A%2F%2Fgithub.com%2Fpdp7%2Flinux%2Fcommit%2F2bae46e3de2a64fe3a619d61b16da0c01b8df2a1
-> 
-> Michal - are there any other dts patches that I should consider for 6.16
-> PR?  I would probably send to Arnd around 6.15-rc3 or 6.15-rc4.
+   606	
+   607	struct platform_device_id {
+ > 608		char name[PLATFORM_NAME_SIZE] __attribute__((nonstring));
+   609		kernel_ulong_t driver_data;
+   610	};
+   611	
 
-Thanks for the heads-up.
-
-I think the reset DT node would be a good candidate for inclusion [1].
-Depending on how the clock series evolves, we might also consider this
-commit without the reset part [2]. Similarly, if the PM series lands in
-time, we may want to update the aon node to include the reset [3].
-
-To avoid any last-minute issues, I can send a separate DT-only series
-that includes all relevant patches targeting the next release. Just give
-me a heads-up a few days before your PR, and I’ll make sure everything
-is ready.
-
-Best regards,
-Michał
-
-[1] - https://lore.kernel.org/all/20250219140239.1378758-21-m.wilczynski@samsung.com/
-[2] - https://lore.kernel.org/all/20250219140239.1378758-19-m.wilczynski@samsung.com/
-[3] - https://lore.kernel.org/all/20250414-apr_14_for_sending-v2-2-70c5af2af96c@samsung.com/
-
-> 
-> Thanks,
-> Drew
-> 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
