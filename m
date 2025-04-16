@@ -1,314 +1,240 @@
-Return-Path: <linux-kernel+bounces-607069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA9E9A8B792
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 13:24:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98590A8B7A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 13:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45E3A3A71DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 11:23:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABA0917E952
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 11:25:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5045723D297;
-	Wed, 16 Apr 2025 11:24:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A76523FC54;
+	Wed, 16 Apr 2025 11:25:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="abgyc2Cv"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k4bSm1St"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7596B23BD05
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 11:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B363A23C8AE;
+	Wed, 16 Apr 2025 11:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744802647; cv=none; b=QE4Q27v3tP+5ZEbkvg3VflcZFnzN0FODO0rvO+tZY8sNVxGu/ZwLPkn1rs3NHcQ96YdEpUKbS/W1Etbr3W+/z6aSJyKirp9iG1q0MdfSDx20TXuHgOUVfmHbEOybCafPGTJPI17jX2Vh8FDRkc3RT+btfz4sgAIfo/w9vpZ4aD0=
+	t=1744802718; cv=none; b=Rgf0KD1nRz23Sw6XrpRIcDS/c9xxLOQYIWEMVyp0K63gnZA/YpM13nkLs2mmjRNlZUmHZpeEMNwl56o/HgAGHquYB3eR8AfxLlkliUXJ5Wr5Wuge1zsB+XbuO+BlRkiXPLtQDIzCkbp+QfeE6Gpn3SS1kZnvDomN80fhlWZOemE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744802647; c=relaxed/simple;
-	bh=L3xiW7OFASaQrPX7HUHPQmKiHZe0ue+Bk0MFscC/I3U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KbJRIl6WMMVCr6ZFbm01s8eD1TzeVTocW/wlJ6EwwTF3qxs9MQ7YHqtjwPxQd5olcmI5ruz6ErzQ+9V5u5X4ClsNmZsAatr+mOeliVeyKVQqCgKpFTqTDvV/Bvr8XgkIG1uJkyNHnj6VEYNjIDSLaBTB1w+E5VSF/sxXhKWaUNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=abgyc2Cv; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53G9mLot020861
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 11:24:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=3D1a5NjFUGpMMJ2ECwG4uMU1
-	Jk5bwW4EN61RcOaeaTU=; b=abgyc2CvgzfXN6hPsYiocNNvm371tkYwG8j8ydT+
-	qBChJpfG7yrG5moH9tkjAUDBHXmyFK2LA/Mwv9VUfmZxOH3WiS3ZiQ9Mk0zE7cj+
-	lGFvj9qJKVaDjHxw/OJO2GbyW3bKWFxW5hlLLulRSCf0ITTzk0LrMxmNhT8pXnEP
-	sZRWuaDSoQR2iMxVxoq9vBOJkxEfpCnwfZca+H7Zx1hhqOYWt6TJcijMKZdXTvFR
-	LdRTPpciipLyNyixZftMoz0Ye28izdr9+nn337fr8lLGxpgZzb1Y8/eGhQUrVfqr
-	LxxQVG9oOEKG89801XxdM8RwQnox49eEpAW2lBiYa0opLg==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45yg8wkajk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 11:24:04 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6f2b4ab462cso1782746d6.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 04:24:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744802643; x=1745407443;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1744802718; c=relaxed/simple;
+	bh=LuhEbviQuC9XWl0F8oM+3l/5RDoRF2hsThgfXj7u+Bs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A7bCMeQn0x6VQqDS8Tlstq38SoCaz91HP0pv/kTxU4Ewg6Mwgq3Gn8qiBcAPT4wRdhs3UrbXsb9J5E9NOR4sbke93ETX7puiaOQwMwGA+cFomZXX+SMgSA91MSWKrrdknUKNc43Vk+S+Cu6WwLhGl/IrrUtCbNx8MS5YQufyv14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k4bSm1St; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-39ee651e419so195609f8f.3;
+        Wed, 16 Apr 2025 04:25:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744802715; x=1745407515; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3D1a5NjFUGpMMJ2ECwG4uMU1Jk5bwW4EN61RcOaeaTU=;
-        b=Sr5DsguirXjQaKMHdLCahP5GxJ550APWCFSDPGpS2QuTJJ3qz9JDbplF4g4pAbbEmM
-         RSmSvRlywECm9v1Ogaw8Hpq6mOfIJRAozwh3gxzLRyYAafaojhDH70SASav6BrwB929n
-         MDJEJ4ExAFQv+vtNSZUUItB3SI/qltgXLgkTKQuIrl0AeY2CsyApkCGtx9nQOXNeKpVw
-         pHZDywB6HbqSG/SlO73ZiwcrhpvYt3Rdie7equDxL5Voa77uK9NvtKnT5faBunSrqcUR
-         V3yBKE60+WUxsQFvgYdCIs4dy0Rz+38EajsqI7ugiwSlIWtgNABeTcM9v77ozvJaN4p9
-         ZxuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXMfHOvv+FwXHHL5l6yi1JhMVjjaFEQBjKqGbUG6nvQjIl4eArGKjfPSQ046w+d29yznZ8uA35FmWXJtIE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxF1pIRqHdNF4Gz+9SQq6QJVXmXF8kbWXJ973TtoxwVUk6vrQx/
-	GZWlTU1/X2ou3Nmeslki1DSnwmbSVeVR/HPxFsLS13MMqAWRhBz7nmFSZMTur7iYJteWW3Flpqf
-	JQX7UNMpljVzZtiFxIyD98WRS9Rl/2cwCjz23C18lLMqoviVkE3DZ6T6mV9toK70=
-X-Gm-Gg: ASbGncvUu5PL2uCnncHjul2qdChGJaG/zL434WuetkofIrkMnHeSYEobni9q2bQ6kWg
-	M0uNZeDM7IovR49UIQfP4jNVe/oA2oDwwUdr2lTIyuUYoabJzQJi/FdxwpqTbccQAcWfO054hVg
-	ESb4iOsjWsdmz+e6GpoDtBj5QBb/JiEoqm4upyBTZ0toMePaeEjWBFlOhB/KKuZ9DsGWrSSySo+
-	CEdj7boi/m7QwgFrq3EsIL3/6OdqHDFQ4Y73DT6pxL6YdmtcV8RHRqc4pe3KdRd2RByA4QF3gn1
-	ZLVYcoIImhHxtmso5GyOfSiutpKbyHGaAxMTIfemS8nWHAbv+40l8BtoG/PhVLrmmrVj9xOeTmg
-	=
-X-Received: by 2002:ad4:5b83:0:b0:6e8:9a55:824f with SMTP id 6a1803df08f44-6f2b2efa1ffmr18929046d6.6.1744802643205;
-        Wed, 16 Apr 2025 04:24:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFZBV0Xexr1gM35pEN9z1Z6VI4fD2Dum+sBzeR89TNCj5FG5on6G+p5JH1nBP1pGyz6WoWbjg==
-X-Received: by 2002:ad4:5b83:0:b0:6e8:9a55:824f with SMTP id 6a1803df08f44-6f2b2efa1ffmr18928676d6.6.1744802642738;
-        Wed, 16 Apr 2025 04:24:02 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54d3d238d5dsm1644275e87.93.2025.04.16.04.24.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Apr 2025 04:24:01 -0700 (PDT)
-Date: Wed, 16 Apr 2025 14:23:59 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 7/7] media: platform: qcom/iris: add sm8650 support
-Message-ID: <opy25iocdw5i2go5male5rzwoxl2hd4jxxjqj77qjiyxz7vens@wmrnrfuakhjs>
-References: <20250415-topic-sm8x50-iris-v10-v6-0-8ad319094055@linaro.org>
- <20250415-topic-sm8x50-iris-v10-v6-7-8ad319094055@linaro.org>
- <085acdab-87b0-3a94-72fd-881d517d95cb@quicinc.com>
+        bh=UK1qE9wdXLtXZ7bpXZQ96bl6ineBI8nWFsz8yMF/6bs=;
+        b=k4bSm1StNo3pCSq0YPWspsP70YxJ0S77heOTwyw5DZUmjT5l3FzxdClD7eaGpc3uc5
+         z3Ny0JT5urOoPMuQNZYT/4m86eIpXQnv6tHPU92UR13N93zGVqlMZD7k1A6r3cJXQlNV
+         wSq9LV+Q/kZ6q1rK0D0wVacCWGU5pmdOP3DKiHyPuLeHUQlFiWqHiYRRI5QHARPpERro
+         T++SdpNN2amaspUdY5ozhq4O53RBsXy4bg7wF9C35rfW4b+FT3JQzqqHuwNba+XnI3U9
+         5xCKAaM9xGpEpKp14oNArUJJmI2/grp7ki9iBlBOXEfBg2udt1Z3GHeDbFSMtNdZF02U
+         xehg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744802715; x=1745407515;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UK1qE9wdXLtXZ7bpXZQ96bl6ineBI8nWFsz8yMF/6bs=;
+        b=NWB4rOcABoq4p+AMiNcts1W3dJE8oh2fhf1iUG0w1YyupgtElR8lVOyhx5KUAItoCb
+         Fa6gn92XSstjk2jA+5NdYcxbUPImSL7Ymb+EzXNXjIwQH9utEd+WAqK9EKhtZUZR830f
+         unjXhFE2BXpfOaRiUPRzlMPgAztBURhlEEwRXyKr/2PNxDKqxNHqJkm5Fq0OON5hGbwQ
+         egw4T3u/5FINWbdbA/tCnbEZxow8/j/wGttEgt5D5nQU8Mm76khfj0vmk/3cDiHyFnQi
+         fiyKA2ScKFFnzVLUVmuxlo27/Pn0ydrJLtvXOL1bJ+fLLAIuUFr9vAASrM3xNmvAABdr
+         38NQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUCsBpeNEkdOdvmt1zEcxrTAEHLqAf5U9nWMFrnHpJs63559iVYlirtrzsYAO+lSSy2VED68v1O@vger.kernel.org, AJvYcCVFq78qkbP6YOsNKwUWqnNmNWgrwgOpbQuhYNtnKBZ2sgzkn67GiSyblfApSVvN/GLe7vHwVtsaUqB+@vger.kernel.org, AJvYcCWf1s4zFh4XGoLSnwDutwFkvEt+kyOWybjTasda0Ahs2a2uGqcNUM4XPi42PBdIsNfiOSKpL0G1Vfx6kvKWtHosiao=@vger.kernel.org, AJvYcCXmmT1jRGhQsrm1b+xM2MgfF4czYPMjH8jzcx+64GGu21NwoFKgmDRBLp+u6UqXD7OL8lnYtBAOYkpxyw4O@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoCqWfwI5mduFsFV+8Afnsn1Vbws5YbGsHZ3Qhbe17Lwbz0WcS
+	8JmnlmVF1ABVIClgaoNJtoChZSSYMq7FRQ4276VQA5UXc1Q97vYfgp/XnOH9KhDk+K4ofXZ3PnW
+	1dfH5SqmmagHcvFkJqkz25lDmvAU=
+X-Gm-Gg: ASbGnctWsp+eEqqfwvXzGvoMd+Q9fQoFbqyy/CNiQfByU+KP9X9Da3sH7zys35N2DJK
+	H5aiar2CaT7i63kCrgQmLjk4ODfjoMNAmeeoj/vFJmTIeSx6xhRw9Tbv7S0XPiKJjyTaJvdpHR+
+	ZU75s/Uiy5OzhXOWKdDslX9ocJ9ZbN+z3lFO4xVt4G9UqXzPw3cqHarKU=
+X-Google-Smtp-Source: AGHT+IG20ioUwmVK8jT1auGEvfYmau6FZT4iN5r9cG0sTpD+CwE5vavkmt0SHhCn9DBrwBdOjgbt0xLoMYoKYshrtUA=
+X-Received: by 2002:a05:6000:1867:b0:39e:cbca:922f with SMTP id
+ ffacd0b85a97d-39ee5b12f23mr1105841f8f.12.1744802714969; Wed, 16 Apr 2025
+ 04:25:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <085acdab-87b0-3a94-72fd-881d517d95cb@quicinc.com>
-X-Authority-Analysis: v=2.4 cv=E9TNpbdl c=1 sm=1 tr=0 ts=67ff9354 cx=c_pps a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=KKAkSRfTAAAA:8 a=C-jBNuSA4hYJbswlNoEA:9 a=CjuIK1q_8ugA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: yA0JiHryiWkohuFEbyI4GFP6XxH45_ol
-X-Proofpoint-GUID: yA0JiHryiWkohuFEbyI4GFP6XxH45_ol
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-16_04,2025-04-15_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- mlxscore=0 bulkscore=0 clxscore=1015 phishscore=0 lowpriorityscore=0
- suspectscore=0 mlxlogscore=999 spamscore=0 priorityscore=1501
- impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504160093
+References: <20250416104015.47788-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250416104015.47788-4-prabhakar.mahadev-lad.rj@bp.renesas.com> <TY3PR01MB11346266349649D5E69923BAC86BD2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY3PR01MB11346266349649D5E69923BAC86BD2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Wed, 16 Apr 2025 12:24:48 +0100
+X-Gm-Features: ATxdqUHUY3qYyUELPpVyGQloNfVvIlHwW8HOxGgTg9mF-SSWoLexEHk-cqLqtZo
+Message-ID: <CA+V-a8tu-9gu_Rm3TGeGPjO48tpUVYu+PR7K9FyUU6DORQYQYg@mail.gmail.com>
+Subject: Re: [PATCH net-next v7 3/4] net: stmmac: Add DWMAC glue layer for
+ Renesas GBETH
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Richard Cochran <richardcochran@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
+	Jose Abreu <joabreu@synopsys.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 16, 2025 at 03:55:35PM +0530, Dikshita Agarwal wrote:
-> 
-> 
-> On 4/15/2025 7:17 PM, Neil Armstrong wrote:
-> > Add support for the SM8650 platform by re-using the SM8550
-> > definitions and using the vpu33 ops.
-> > 
-> > Move the reset tables that diffes in a per-SoC platform
-> > header, that will contain mode SoC specific data when
-> > more codecs are introduced.
-> > 
-> > The SM8650/vpu33 requires more reset lines, but the H.264
-> > decoder capabilities are identical.
-> > 
-> > Tested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org> # x1e Dell
-> > Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+Hi Biju,
+
+Thank you for the review.
+
+On Wed, Apr 16, 2025 at 11:44=E2=80=AFAM Biju Das <biju.das.jz@bp.renesas.c=
+om> wrote:
+>
+> Hi Prabhakar,
+>
+> Thanks for the patch.
+>
+> > -----Original Message-----
+> > From: Prabhakar <prabhakar.csengg@gmail.com>
+> > Sent: 16 April 2025 11:40
+> > Subject: [PATCH net-next v7 3/4] net: stmmac: Add DWMAC glue layer for =
+Renesas GBETH
+> >
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add the DWMAC glue layer for the GBETH IP found in the Renesas RZ/V2H(P=
+) SoC.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
 > > ---
-> >  .../platform/qcom/iris/iris_platform_common.h      |  1 +
-> >  .../media/platform/qcom/iris/iris_platform_gen2.c  | 65 +++++++++++++++++++++-
-> >  .../platform/qcom/iris/iris_platform_sm8550.h      | 11 ++++
-> >  .../platform/qcom/iris/iris_platform_sm8650.h      | 13 +++++
-> >  drivers/media/platform/qcom/iris/iris_probe.c      |  4 ++
-> >  5 files changed, 92 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
-> > index fdd40fd80178c4c66b37e392d07a0a62f492f108..6bc3a7975b04d612f6c89206eae95dac678695fc 100644
-> > --- a/drivers/media/platform/qcom/iris/iris_platform_common.h
-> > +++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
-> > @@ -35,6 +35,7 @@ enum pipe_type {
-> >  
-> >  extern struct iris_platform_data sm8250_data;
-> >  extern struct iris_platform_data sm8550_data;
-> > +extern struct iris_platform_data sm8650_data;
-> >  
-> >  enum platform_clk_type {
-> >  	IRIS_AXI_CLK,
-> > diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen2.c b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-> > index 35d278996c430f2856d0fe59586930061a271c3e..6d1771bd68689d96b5b9087b0ad32b934f7295ee 100644
-> > --- a/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-> > +++ b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-> > @@ -10,6 +10,9 @@
-> >  #include "iris_platform_common.h"
-> >  #include "iris_vpu_common.h"
-> >  
-> > +#include "iris_platform_sm8550.h"
-> > +#include "iris_platform_sm8650.h"
+> >  drivers/net/ethernet/stmicro/stmmac/Kconfig   |  11 ++
+> >  drivers/net/ethernet/stmicro/stmmac/Makefile  |   1 +
+> >  .../stmicro/stmmac/dwmac-renesas-gbeth.c      | 146 ++++++++++++++++++
+> >  3 files changed, 158 insertions(+)
+> >  create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-g=
+beth.c
+> >
+> > diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/=
+ethernet/stmicro/stmmac/Kconfig
+> > index 3c820ef56775..2c99b23f0faa 100644
+> > --- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
+> > +++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+> > @@ -131,6 +131,17 @@ config DWMAC_QCOM_ETHQOS
+> >         This selects the Qualcomm ETHQOS glue layer support for the
+> >         stmmac device driver.
+> >
+> > +config DWMAC_RENESAS_GBETH
+> > +     tristate "Renesas RZ/V2H(P) GBETH support"
+> > +     default ARCH_RENESAS
+> > +     depends on OF && (ARCH_RENESAS || COMPILE_TEST)
+> > +     help
+> > +       Support for Gigabit Ethernet Interface (GBETH) on Renesas
+> > +       RZ/V2H(P) SoCs.
 > > +
-> >  #define VIDEO_ARCH_LX 1
-> >  
-> >  static struct platform_inst_fw_cap inst_fw_cap_sm8550[] = {
-> > @@ -142,8 +145,6 @@ static const struct icc_info sm8550_icc_table[] = {
-> >  	{ "video-mem",  1000, 15000000 },
-> >  };
-> >  
-> > -static const char * const sm8550_clk_reset_table[] = { "bus" };
-> > -
-> >  static const struct bw_info sm8550_bw_table_dec[] = {
-> >  	{ ((4096 * 2160) / 256) * 60, 1608000 },
-> >  	{ ((4096 * 2160) / 256) * 30,  826000 },
-> > @@ -264,3 +265,63 @@ struct iris_platform_data sm8550_data = {
-> >  	.dec_op_int_buf_tbl = sm8550_dec_op_int_buf_tbl,
-> >  	.dec_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_op_int_buf_tbl),
-> >  };
+> > +       This selects the Renesas RZ/V2H(P) Soc specific glue layer supp=
+ort
+> > +       for the stmmac device driver.
 > > +
+> >  config DWMAC_ROCKCHIP
+> >       tristate "Rockchip dwmac support"
+> >       default ARCH_ROCKCHIP
+> > diff --git a/drivers/net/ethernet/stmicro/stmmac/Makefile
+> > b/drivers/net/ethernet/stmicro/stmmac/Makefile
+> > index 594883fb4164..91050215511b 100644
+> > --- a/drivers/net/ethernet/stmicro/stmmac/Makefile
+> > +++ b/drivers/net/ethernet/stmicro/stmmac/Makefile
+> > @@ -20,6 +20,7 @@ obj-$(CONFIG_DWMAC_LPC18XX) +=3D dwmac-lpc18xx.o
+> >  obj-$(CONFIG_DWMAC_MEDIATEK) +=3D dwmac-mediatek.o
+> >  obj-$(CONFIG_DWMAC_MESON)    +=3D dwmac-meson.o dwmac-meson8b.o
+> >  obj-$(CONFIG_DWMAC_QCOM_ETHQOS)      +=3D dwmac-qcom-ethqos.o
+> > +obj-$(CONFIG_DWMAC_RENESAS_GBETH) +=3D dwmac-renesas-gbeth.o
+> >  obj-$(CONFIG_DWMAC_ROCKCHIP) +=3D dwmac-rk.o
+> >  obj-$(CONFIG_DWMAC_RZN1)     +=3D dwmac-rzn1.o
+> >  obj-$(CONFIG_DWMAC_S32)              +=3D dwmac-s32.o
+> > diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c
+> > b/drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c
+> > new file mode 100644
+> > index 000000000000..f34bec7794e2
+> > --- /dev/null
+> > +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c
+> > @@ -0,0 +1,146 @@
+> > +// SPDX-License-Identifier: GPL-2.0+
 > > +/*
-> > + * Shares most of SM8550 data except:
-> > + * - vpu_ops to iris_vpu33_ops
-> > + * - clk_rst_tbl to sm8650_clk_reset_table
-> > + * - controller_rst_tbl to sm8650_controller_reset_table
-> > + * - fwname to "qcom/vpu/vpu33_p4.mbn"
-> > + */
-> > +struct iris_platform_data sm8650_data = {
-> > +	.get_instance = iris_hfi_gen2_get_instance,
-> > +	.init_hfi_command_ops = iris_hfi_gen2_command_ops_init,
-> > +	.init_hfi_response_ops = iris_hfi_gen2_response_ops_init,
-> > +	.vpu_ops = &iris_vpu33_ops,
-> > +	.set_preset_registers = iris_set_sm8550_preset_registers,
-> > +	.icc_tbl = sm8550_icc_table,
-> > +	.icc_tbl_size = ARRAY_SIZE(sm8550_icc_table),
-> > +	.clk_rst_tbl = sm8650_clk_reset_table,
-> > +	.clk_rst_tbl_size = ARRAY_SIZE(sm8650_clk_reset_table),
-> > +	.controller_rst_tbl = sm8650_controller_reset_table,
-> > +	.controller_rst_tbl_size = ARRAY_SIZE(sm8650_controller_reset_table),
-> > +	.bw_tbl_dec = sm8550_bw_table_dec,
-> > +	.bw_tbl_dec_size = ARRAY_SIZE(sm8550_bw_table_dec),
-> > +	.pmdomain_tbl = sm8550_pmdomain_table,
-> > +	.pmdomain_tbl_size = ARRAY_SIZE(sm8550_pmdomain_table),
-> > +	.opp_pd_tbl = sm8550_opp_pd_table,
-> > +	.opp_pd_tbl_size = ARRAY_SIZE(sm8550_opp_pd_table),
-> > +	.clk_tbl = sm8550_clk_table,
-> > +	.clk_tbl_size = ARRAY_SIZE(sm8550_clk_table),
-> > +	/* Upper bound of DMA address range */
-> > +	.dma_mask = 0xe0000000 - 1,
-> > +	.fwname = "qcom/vpu/vpu33_p4.mbn",
-> > +	.pas_id = IRIS_PAS_ID,
-> > +	.inst_caps = &platform_inst_cap_sm8550,
-> > +	.inst_fw_caps = inst_fw_cap_sm8550,
-> > +	.inst_fw_caps_size = ARRAY_SIZE(inst_fw_cap_sm8550),
-> > +	.tz_cp_config_data = &tz_cp_config_sm8550,
-> > +	.core_arch = VIDEO_ARCH_LX,
-> > +	.hw_response_timeout = HW_RESPONSE_TIMEOUT_VALUE,
-> > +	.ubwc_config = &ubwc_config_sm8550,
-> > +	.num_vpp_pipe = 4,
-> > +	.max_session_count = 16,
-> > +	.max_core_mbpf = ((8192 * 4352) / 256) * 2,
-> > +	.input_config_params =
-> > +		sm8550_vdec_input_config_params,
-> > +	.input_config_params_size =
-> > +		ARRAY_SIZE(sm8550_vdec_input_config_params),
-> > +	.output_config_params =
-> > +		sm8550_vdec_output_config_params,
-> > +	.output_config_params_size =
-> > +		ARRAY_SIZE(sm8550_vdec_output_config_params),
-> > +	.dec_input_prop = sm8550_vdec_subscribe_input_properties,
-> > +	.dec_input_prop_size = ARRAY_SIZE(sm8550_vdec_subscribe_input_properties),
-> > +	.dec_output_prop = sm8550_vdec_subscribe_output_properties,
-> > +	.dec_output_prop_size = ARRAY_SIZE(sm8550_vdec_subscribe_output_properties),
+> > + * dwmac-renesas-gbeth.c - DWMAC Specific Glue layer for Renesas GBETH
+> > + *
+> > + * The Rx and Tx clocks are supplied as follows for the GBETH IP.
+> > + *
+> > + *                         Rx / Tx
+> > + *   -------+------------- on / off -------
+> > + *          |
+> > + *          |            Rx-180 / Tx-180
+> > + *          +---- not ---- on / off -------
+> > + *
+> > + * Copyright (C) 2025 Renesas Electronics Corporation  */
 > > +
-> > +	.dec_ip_int_buf_tbl = sm8550_dec_ip_int_buf_tbl,
-> > +	.dec_ip_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_ip_int_buf_tbl),
-> > +	.dec_op_int_buf_tbl = sm8550_dec_op_int_buf_tbl,
-> > +	.dec_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_op_int_buf_tbl),
+> > +#include <linux/clk.h>
+> > +#include <linux/device.h>
+> > +#include <linux/module.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/reset.h>
+> > +
+> > +#include "stmmac_platform.h"
+> > +
+> > +struct renesas_gbeth {
+> > +     struct plat_stmmacenet_data *plat_dat;
+> > +     struct reset_control *rstc;
+> > +     struct device *dev;
 > > +};
-> > diff --git a/drivers/media/platform/qcom/iris/iris_platform_sm8550.h b/drivers/media/platform/qcom/iris/iris_platform_sm8550.h
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..ac8847edb585e4a9ce6b669a3a5988e7809972af
-> > --- /dev/null
-> > +++ b/drivers/media/platform/qcom/iris/iris_platform_sm8550.h
-> > @@ -0,0 +1,11 @@
-> > +/* SPDX-License-Identifier: GPL-2.0-only */
-> > +/*
-> > + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-> > + */
 > > +
-> > +#ifndef __IRIS_PLATFORM_SM8550_H__
-> > +#define __IRIS_PLATFORM_SM8550_H__
+> > +static const char *const renesas_gbeth_clks[] =3D {
+> > +     "tx", "tx-180", "rx", "rx-180",
+> > +};
 > > +
-> > +static const char * const sm8550_clk_reset_table[] = { "bus" };
+> > +static int renesas_gbeth_init(struct platform_device *pdev, void *priv=
+)
+> > +{
+> > +     struct plat_stmmacenet_data *plat_dat;
+> > +     struct renesas_gbeth *gbeth =3D priv;
+> > +     int ret;
 > > +
-> > +#endif
-> There is no need of iris_platform_sm8550.h, you can keep this entry in
-> gen2.c file itself. As we are making that our base.
+> > +     plat_dat =3D gbeth->plat_dat;
+> > +
+> > +     ret =3D reset_control_deassert(gbeth->rstc);
+> > +     if (ret) {
+> > +             dev_err(gbeth->dev, "Reset deassert failed\n");
+> > +             return ret;
+> > +     }
+> > +
+> > +     ret =3D clk_bulk_prepare_enable(plat_dat->num_clks,
+> > +                                   plat_dat->clks);
+> > +     if (ret)
+> > +             reset_control_assert(gbeth->rstc);
+> > +
+> > +     return 0;
+>
+>         return ret??
+>
+Indeed I missed it.
 
-That would make it unsymmetrical. I think having a separate header is a
-better option.
-
-> You can just have iris_platform_sm8650.h which overrides this entry with
-> SOC specific reset requirements for SM8650.
-> 
-> Thanks,
-> Dikshita
-> > diff --git a/drivers/media/platform/qcom/iris/iris_platform_sm8650.h b/drivers/media/platform/qcom/iris/iris_platform_sm8650.h
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..75e9d572e788de043a56cf85a4cb634bd02226b9
-> > --- /dev/null
-> > +++ b/drivers/media/platform/qcom/iris/iris_platform_sm8650.h
-> > @@ -0,0 +1,13 @@
-> > +/* SPDX-License-Identifier: GPL-2.0-only */
-> > +/*
-> > + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-> > + */
-> > +
-> > +#ifndef __IRIS_PLATFORM_SM8650_H__
-> > +#define __IRIS_PLATFORM_SM8650_H__
-> > +
-> > +static const char * const sm8650_clk_reset_table[] = { "bus", "core" };
-> > +
-> > +static const char * const sm8650_controller_reset_table[] = { "xo" };
-> > +
-> > +#endif
-> > diff --git a/drivers/media/platform/qcom/iris/iris_probe.c b/drivers/media/platform/qcom/iris/iris_probe.c
-> > index 4f8bce6e2002bffee4c93dcaaf6e52bf4e40992e..7cd8650fbe9c09598670530103e3d5edf32953e7 100644
-> > --- a/drivers/media/platform/qcom/iris/iris_probe.c
-> > +++ b/drivers/media/platform/qcom/iris/iris_probe.c
-> > @@ -345,6 +345,10 @@ static const struct of_device_id iris_dt_match[] = {
-> >  			.data = &sm8250_data,
-> >  		},
-> >  #endif
-> > +	{
-> > +		.compatible = "qcom,sm8650-iris",
-> > +		.data = &sm8650_data,
-> > +	},
-> >  	{ },
-> >  };
-> >  MODULE_DEVICE_TABLE(of, iris_dt_match);
-> > 
-
--- 
-With best wishes
-Dmitry
+Cheers,
+Prabhakar
 
