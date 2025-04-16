@@ -1,99 +1,63 @@
-Return-Path: <linux-kernel+bounces-607095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FE8DA8B7D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 13:44:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC9F7A8B7DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 13:45:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CD757A5D99
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 11:43:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89C417A2E74
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 11:44:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49EF023F40F;
-	Wed, 16 Apr 2025 11:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FGveR/Te"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7741D45C18;
+	Wed, 16 Apr 2025 11:45:18 +0000 (UTC)
+Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D287207DF8
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 11:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B3B23C376
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 11:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744803844; cv=none; b=B3vwJVfa2CGm6j1X2ngGc8SPjje8OIqJONTcGjYMhFmmvswDznDgUf9TAepyZK3p2eUhvgFkK+Rs3sZ4j1d5IttGWKeSKmMbzbLYWq3QB592xCEK1bYMZxP1ZA0UlOaPevAzBg+S4ZvDt9j9tdktqS8R/4EmOpRtAVOIm3HrNGM=
+	t=1744803918; cv=none; b=O25LGUXBMjYz0DS4u3aNhpsu0U91F3iZypp8dGImyfjkV+sMLfMAzpgYLM5qa3txi+gloKU+2rVSnDXCaatonz8AptjkS1zjGweX6vRhIvFarzOexwcB8sS2TVtPPO7EIO4le3llCjocz7HxAAOTJoT04Tg0Wdceq6ZBra9nllM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744803844; c=relaxed/simple;
-	bh=AZEe1RfOvu1q7GUgcepVbmiSBnsNo8L/yZQuZJXUvpo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E2YNBUiIRCLTKJCPs/7ssLcfUaRtTNLgbUy8umtwAIk36pFo+mmoQLMONDtrlNLiFfIwqG1LMT94tMhudbDZ5oI93SHAixM7By5mpUnzJZXSULA1GbSYolZvaHZK+VDz+Yss6GuUfGCL+Em/WqXtASaCCaRA5XSYhs+f8YmSR+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FGveR/Te; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-306b6ae4fb3so6327571a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 04:44:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744803843; x=1745408643; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=AZEe1RfOvu1q7GUgcepVbmiSBnsNo8L/yZQuZJXUvpo=;
-        b=FGveR/Te9l61hgscuALBQoMQk6hob/H/eYGIBP1eM1FmeQmxsMSZ1oA9dg5T6TzRZs
-         d/xIdUFVUh6yITbICnX5JkAG7H2ggla0sdvh+rXSqM8L/UsQ+BPX/HEJVIrMJTzXYIHK
-         vf2BBIPKByYYVSD17/NBhS7kkag7BLPBRla0ctGCg9fUvyhVGUCW0XBC6G05JbfhbgbG
-         zj60I+KWGCreCTdXtpTzm0m+QXZ9CKcHlK+FOrsC13joPzlcJYvdnr/ufn9//zHpOTSr
-         BCb7ZjkaZY67xqUMbO3uwbRURQKfVuwnCODljn9xVAFXCQHZar94XTJVTvsDRci8Al/5
-         i8Kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744803843; x=1745408643;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AZEe1RfOvu1q7GUgcepVbmiSBnsNo8L/yZQuZJXUvpo=;
-        b=dCT/4qdJRjO09MGLqNvx/gVNL4N2PCZCK771Dp5CcgJw5o7z2WjWBjMOCRO7le1mok
-         cOSEtBqXoMF/flR1WbXNTsCdXRbL+vxM11pgCEsGmxboJm833GKBj7aIBXwkOf8rnG9z
-         ofmxjucbmowTsB1nS1cJQhXCVMBTyZ7xgUDQMIBYx4nrBz2zqoxwmeRHMyDTjgdI+qBr
-         dUbLuwpjzjpSXyW/FCjSgGSsW8EW44CkqrR6zU2Uv92aXYi0V/eJIrOUeA1bhqhXioE4
-         hv5ba+CTG8UUbtD5uEuwTt/uTmdUpdI8BylN/qaYCNpoeeuqh1lxxyRwIY59TC82fitk
-         sXtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVvGQ4oex6XE4GK09oqShyApaXtMes0aZqdeZKAYIPZXaqKIVlhHNkiIgD2Awg8ItdjGwlYKlkgxgvDsKQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLxBP/ADPxrom1eUvH/rAH+XgeUn9K6iq5XU+wp5R0+ow0RBl6
-	RMxAz0HuEqy1nFIFQipv3RE0YPIYa8TjRXJvODTHmTnpIBPb9RJfQ0uRLNuGj5vALqxGxueSemB
-	JZh9zDCTGXSnFAQ0w292/Xp3TUDPNUoNzvQ==
-X-Gm-Gg: ASbGncuhmmiGJ6hbMD1oq6auuRyCE6rTKVLnZV5y3fLilp6TpmiTGOkVZIzr3QMdI76
-	HQVbS6Y85rcrQ4WKlzY0FmqsGBuOuBmQd6TIaGuQuze43jCxJQIimiU2CKBYlh8/yLEBH7sXoTA
-	4xJPVyokOWLVVKfNAjXb1hliehxZe/y/lZqqp326PV6PcqBV27h1ydrWo=
-X-Google-Smtp-Source: AGHT+IHRzDwjfA3VhiXoJ9w7CvBGnZUfl1D3wlF7cVjsZnBUO1T3cpj1g1gCRyxquxD7cm2X4+bYulvm0qakj3Q2+Fc=
-X-Received: by 2002:a17:90b:1f92:b0:2ee:ad18:b309 with SMTP id
- 98e67ed59e1d1-30863d1de84mr2289142a91.3.1744803842763; Wed, 16 Apr 2025
- 04:44:02 -0700 (PDT)
+	s=arc-20240116; t=1744803918; c=relaxed/simple;
+	bh=b/bzpqZfVEdCNmyIVRjqZrvta44n0doOI6+0koS3w9U=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Hp43+5DsZfSTusxLL5/xWfIWW8jI17ISzv+5n7Btv+/qQ3AExazBkwTdoX8JxZCA+jcFMIWBu9GAtbxMwaJRrIL9USZi9ZLODma/9gU5dSTBGgEFYXFX2ChO2nBeHvmEgk+pxYg8DPRIJXSTKuHh3iaQjWTUU6KUqJlmdzAiay0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
+Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
+ (195.54.195.169) with Microsoft SMTP Server (TLS) id 14.3.498.0; Wed, 16 Apr
+ 2025 14:43:56 +0300
+Received: from localhost (10.0.253.138) by Ex16-01.fintech.ru (10.0.10.18)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Wed, 16 Apr
+ 2025 14:43:56 +0300
+From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+To: <syzbot+a2e67807a84a561c08fb@syzkaller.appspotmail.com>
+CC: Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
+	<syzkaller-bugs@googlegroups.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [syzbot] [usb?] BUG: corrupted list in usb_hcd_link_urb_to_ep (4)
+Date: Wed, 16 Apr 2025 14:43:51 +0300
+Message-ID: <20250416114352.120139-1-n.zhandarovich@fintech.ru>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <67b6bf57.050a0220.14d86d.015b.GAE@google.com>
+References:
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250416072825.3790-1-ujwal.kundur@gmail.com> <241a9bbb-6d59-4c24-8e18-a0acebc6f536@amd.com>
-In-Reply-To: <241a9bbb-6d59-4c24-8e18-a0acebc6f536@amd.com>
-From: Ujwal Kundur <ujwal.kundur@gmail.com>
-Date: Wed, 16 Apr 2025 17:13:50 +0530
-X-Gm-Features: ATxdqUHlTjwJQjfOZfGM2sNeVWakgF2t5Ff-hXQ0-Ap1ykAmMwP7TjWL6pmkSIw
-Message-ID: <CALkFLLLKT=4LD_YFJdq8QdzybknRQW+W3P-3GnJzT1eoYuGg8A@mail.gmail.com>
-Subject: Re: [PATCH RFC] drm/amdgpu: Block userspace mapping of IO
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: alexander.deucher@amd.com, airlied@gmail.com, simona@ffwll.ch, 
-	lijo.lazar@amd.com, sunil.khatri@amd.com, Hawking.Zhang@amd.com, 
-	Jun.Ma2@amd.com, Yunxiang.Li@amd.com, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
+ (10.0.10.18)
 
-Thanks for your response.
+Test if the issue is active. Syz repro is flaky and triggers
+different issues.
 
-> Hui what? Why do you think that grabbing a reference to an interrupt would block userspace mapping of IO registers?
-
-It looks like I am missing a lot of pieces to do this, I'll try again
-once I have a better understanding.
-
-Sorry about that and thanks again for your time.
-
---- Ujwal.
+#syz test
 
