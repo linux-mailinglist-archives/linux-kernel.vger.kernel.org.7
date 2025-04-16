@@ -1,90 +1,108 @@
-Return-Path: <linux-kernel+bounces-606274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74083A8AD4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 03:05:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8657A8AD53
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 03:05:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E50217506A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 01:04:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6291E5A089E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 01:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1001FCFE9;
-	Wed, 16 Apr 2025 01:03:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15178205AC1;
+	Wed, 16 Apr 2025 01:03:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="G4aYUmGD"
-Received: from smtp-fw-6001.amazon.com (smtp-fw-6001.amazon.com [52.95.48.154])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iFL1UDW5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232552C859;
-	Wed, 16 Apr 2025 01:03:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.48.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE85E1FFC7B;
+	Wed, 16 Apr 2025 01:03:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744765400; cv=none; b=oWo+dNLV2yxS2p2uWcHNZGU1zfjjqkf7iDfE7GwySdq/MbUQ1CGcUegNhFT6sTp3GrbkHRY2sykzKtMJ1Us9V2qX/08K6r2VyIy/W3iCVntD0m8VilHqtIIFb+p6blWuaU6e8MKYl5h9AvEhERy/1olBjBSmeqrKlOaAN0frSCg=
+	t=1744765419; cv=none; b=GWV/k9CSvw7ZcxWc2eCBqHFtj8XjplqgAsvgc890OxKfAQeMsOj1HFvUmwgOfH6lelJPPesukQ9e85CmVkN3vrvwTNJXFwHolirybtsmaQkZKS6GtaJ4OHNF8nNamNgaarVMHVemFOZO0+3Jjc+uBJySAq0MmTjLgMh2RBXQRAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744765400; c=relaxed/simple;
-	bh=RvIvw1baOtKFUbdj/r8jXJMMMvL9X954wdybrDaTzm0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=a/u8q9cYj+1BSeGPN9eduV25jsn8EdZf+kXeZ2QJrhyoZL4ulz6V3wYMkfqfJYqK4Jz9HkeLbIcKofRxKLHDZVzAnTBPo5VhuvChz3YHY/4F0yDXcu/VQzT+Ua5sljAcUIsOSrsn6tPeBAFgjLXJADPmwRKimsuV3MTb20mp1ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=G4aYUmGD; arc=none smtp.client-ip=52.95.48.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1744765399; x=1776301399;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=GGnNNXM1Px+CfW0IznRviikPq3m3ytR6/Sbfff9L1uQ=;
-  b=G4aYUmGDXbZyu4CcO+TqI3i84kjzskL81xySzl0e55flXAzFm0h95xVl
-   UJ+UW2WPt9N7nLbmMn/Mpw8TfDW4pkBFrawq/aauJN9MhRUbFogloI/Cz
-   0XhBSD+QL7TRKhE5598m3GFe0MAfgYGtusr3zo+lM0ZHmx/nZXYPPpzTQ
-   I=;
-X-IronPort-AV: E=Sophos;i="6.15,214,1739836800"; 
-   d="scan'208";a="480740641"
-Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
-  by smtp-border-fw-6001.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 01:03:17 +0000
-Received: from EX19MTAUWC002.ant.amazon.com [10.0.38.20:45153]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.14.132:2525] with esmtp (Farcaster)
- id 1401027b-4679-4367-833c-9f46bb5bcbbe; Wed, 16 Apr 2025 01:03:15 +0000 (UTC)
-X-Farcaster-Flow-ID: 1401027b-4679-4367-833c-9f46bb5bcbbe
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 16 Apr 2025 01:03:14 +0000
-Received: from 6c7e67bfbae3.amazon.com (10.88.149.87) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 16 Apr 2025 01:03:10 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <leitao@debian.org>
-CC: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <dsahern@kernel.org>,
-	<edumazet@google.com>, <horms@kernel.org>, <kernel-team@meta.com>,
-	<kuba@kernel.org>, <kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <pabeni@redhat.com>
-Subject: Re: [PATCH net-next 5/8] ipv4: Use nlmsg_payload in fib_frontend file
-Date: Tue, 15 Apr 2025 18:03:01 -0700
-Message-ID: <20250416010302.23388-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250415-nlmsg_v2-v1-5-a1c75d493fd7@debian.org>
-References: <20250415-nlmsg_v2-v1-5-a1c75d493fd7@debian.org>
+	s=arc-20240116; t=1744765419; c=relaxed/simple;
+	bh=FD0iaAe27y+WPApOkpURJpfi7Zsp8bjMYlZBsbsTXfE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bu8rYTeK+ZjsnOTypTbLQzeyJeOqxWchk93hUsJulMY+zIAD98zRF8sselikg3CPeF8LmbAt4GSAj+a0A8ToTEMQLf2xBAR6i83bivDC6EhNR+tQpNos2ay09Aq9497UFhnlOo4vUzwOzqDez+oIXtWr5IHjgixEbJAqlNAlTPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iFL1UDW5; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744765417; x=1776301417;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=FD0iaAe27y+WPApOkpURJpfi7Zsp8bjMYlZBsbsTXfE=;
+  b=iFL1UDW5oWfRQDWQ+A9rbISWnNPq4g8+f8l56advFSN7wzkrgmajABMS
+   JC028ePkM0qYXtA53+oDY5UQq07KVWxAVplySx4pATD/6jMUW4DMs7s7Q
+   UTKR8yp/ZI1WIVh60pfyjWYd5TlGyurSMV7FeWiz+pWSjbxwCzgBTSzP6
+   lCsGv9+fb7GdnJ3IJ47flRI6v5jdIf70kyaws2+C3UW44ygdFTcncEKU/
+   +XxiXxmPn2ooa2kgZObgQzKM0DtUUk9tjMONVQGk7CCpmYcFRJCR4cjFK
+   uhcHHLPEOIZ6cwaZjUnt9gE27khsUJKO6MuhPhJU7SSnROKJy5J3+HYcf
+   Q==;
+X-CSE-ConnectionGUID: WCk4qPgDRpmzJEluaWyJiw==
+X-CSE-MsgGUID: 8EsDX4+1Raq0ETzc/k9bLA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="48994112"
+X-IronPort-AV: E=Sophos;i="6.15,214,1739865600"; 
+   d="scan'208";a="48994112"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 18:03:36 -0700
+X-CSE-ConnectionGUID: gG1IwMHAQ0qwDVE1RNINQA==
+X-CSE-MsgGUID: PZDnM1ZyTuyNAceGKTpDPA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,214,1739865600"; 
+   d="scan'208";a="130244675"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.128]) ([10.124.245.128])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 18:03:33 -0700
+Message-ID: <5a9f25a8-7679-4619-8fa1-97ab86dc6104@linux.intel.com>
+Date: Wed, 16 Apr 2025 09:03:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D037UWC002.ant.amazon.com (10.13.139.250) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v3 11/22] perf/x86/intel: Allocate arch-PEBS buffer and
+ initialize PEBS_BASE MSR
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
+ <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+ Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
+ Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
+References: <20250415114428.341182-1-dapeng1.mi@linux.intel.com>
+ <20250415114428.341182-12-dapeng1.mi@linux.intel.com>
+ <20250415134829.GB4031@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <20250415134829.GB4031@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Breno Leitao <leitao@debian.org>
-Date: Tue, 15 Apr 2025 12:28:56 -0700
-> Leverage the new nlmsg_payload() helper to avoid checking for message
-> size and then reading the nlmsg data.
-> 
-> Signed-off-by: Breno Leitao <leitao@debian.org>
 
-Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+On 4/15/2025 9:48 PM, Peter Zijlstra wrote:
+> On Tue, Apr 15, 2025 at 11:44:17AM +0000, Dapeng Mi wrote:
+>
+>> +void fini_arch_pebs_buf_on_cpu(int cpu)
+>> +{
+>> +	if (!x86_pmu.arch_pebs)
+>> +		return;
+>> +
+>> +	release_pebs_buffer(cpu);
+>> +	wrmsr_on_cpu(cpu, MSR_IA32_PEBS_BASE, 0, 0);
+>> +}
+> So first we free the pages, and then we tell the hardware to not write
+> into them again.
+>
+> What could possibly go wrong :-)
+
+Oh, yes. Thanks for pointing this. I would exchange the sequence.
+
+
 
