@@ -1,146 +1,154 @@
-Return-Path: <linux-kernel+bounces-606300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3960A8AD94
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 03:39:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8305FA8AD8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 03:26:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B67C1902BFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 01:39:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94AA317C37F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 01:26:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D8DE227B94;
-	Wed, 16 Apr 2025 01:39:14 +0000 (UTC)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A7E221D96;
+	Wed, 16 Apr 2025 01:26:19 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EC6A1A2658;
-	Wed, 16 Apr 2025 01:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C490C19F40A
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 01:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744767553; cv=none; b=nNLyayMDDabuOXbwGoL6xqCoOAmbgd6PE7zASTvks6As7HREEC80BbuUioB8YfVjCFjCgWIJTatlb1xVAXCDu4kF/6wwtf7WDqb5GOc/F7UaMRohxye8KMG1jb1kShsRq6zi6OMFsCI2g10g1eevSy2PaEj8tKYDtOZxy7EtpRA=
+	t=1744766779; cv=none; b=PMFPdTIEt0Xzz+pqAro5UtX05IabeM/gNkuq2teoWnaVA/8oJ+qJIvQidOSkbKA4mMs+jm99DnLYsIEdxHISMaYjYncl8UXK6B+0D1Ev5GMw6oiXcXptYOoRvC2Pc2egCvcD76VF0bMmvqEg1fVDC5N3MTnE7LHuTIq3Q1ppkxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744767553; c=relaxed/simple;
-	bh=splohQJw8U1XANtyUsXhKKF8Cy9tRT9Bwe2SzN0BEbw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S2A6Aq6j++MSsGD/eEe393o5NCTS0w9yzUbU95mazJDBQE5r8Eel1wxV+LCBEGAVwekjE8wPGTFAQIrP8va1Jp4vRrK7Mp5dTIBP55+gHKnG1clAT0kUfrIYmeQTuhrVMUHjwtI4Jb5w0RNhIcJsymU+lOIjUq75bFhe9OxmPLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac73723b2d5so1232528866b.3;
-        Tue, 15 Apr 2025 18:39:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744767549; x=1745372349;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V1HXQ+Xi113ayzUNabjj8NTshwQmo5mZvOv0N53Neb4=;
-        b=lPQ3rHdCNWMHKTTnhsyr9fS7wdwlWVywIOFL56A/N8Cu1/gYuNCwLrhIoHEIFsqhlT
-         SYq+hleAsBnBeQc46oJTVc8Q2Byd0FiC8mfWoeVEAoFNuJdJ7ieq9chRTXo/xD0aSriP
-         kielyulv4q2wJAzjtQ+w58LLvr3HwAQ1+oTnidteckRSuQx+2aYcc10A3joiNAlqBqgE
-         XDLjhcvQw4puIHbXNFNLShqCvSquAbkld7P7fZ68EMQDOl+OIhj9NaA+gbrdEabq8g76
-         xgKcrhK4nHu64n+oNcr22w5g+1QuRO52X+fxFLW7ROxYsQx5p+8KGPpnPg06ankoX/AO
-         iSSw==
-X-Forwarded-Encrypted: i=1; AJvYcCXjRs01epEeNSPkExnt7kqlcRdgxuJHOeUr9A/VemkNJ0MqU4m3npz0XP23ZYiXXjISYENPE9yHN0U=@vger.kernel.org, AJvYcCXyJSBRDtiSdFSfaOgjCcyS+uDg2cpM3SgCUQ6KkA5ET1b5tmD/2UE5bjlztmJMglrlXU+V6563pXacGzhK@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrGbJbGERD9cNKFOpOoEZWXWfXqVJ+VqVq9eY78/eFcRZZspK1
-	igk5CEUNYRwpu7ADZoaLZ0h5J+8KZIcINCVR0ESlHClm40mVPmSNVua5bXs0/hg=
-X-Gm-Gg: ASbGncu7pj2z1x11wPDHy1NoxyY8+Mh4aNlA+Ni+7DxqRAK27/Kk7DG8LFEHoPaFHzv
-	wp97U/BfKyLZLThftqYaZj0LJWm2Gtn28+VX5Rpl7fco5/DK1rWzTXB8vLXgAVTDwRn9UmCoA/J
-	vXUwiZWquFQrDNv6MY5uQRbgZnvWBISDKCC883a0mWNw8BHUw1qcyShE39NdiOWholgDY9Qcpxb
-	IwUosN+vkU4Ba05cCpFky2BgLEst3xhxvdvNK1TVkmxsQGZ08b2aYxO8NZN7aLxm28kVZRZ3Hra
-	uYfXH3IeyPA0EzxEPXk58TLNjPTBhrbpBciFRmvGQJgcl5wrU3DevwavhyJypbCiHTpjGJM=
-X-Google-Smtp-Source: AGHT+IHgHIJADHseDzKH72XvS0TxfebXufKy/lOPcvTeaf6MAdKq0tS9P7LMI703Bf7LGTq+x3OIaQ==
-X-Received: by 2002:a17:907:2d27:b0:ac8:179a:42f5 with SMTP id a640c23a62f3a-acb38222672mr89261966b.14.1744767549076;
-        Tue, 15 Apr 2025 18:39:09 -0700 (PDT)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb3d349d24sm27776466b.182.2025.04.15.18.39.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Apr 2025 18:39:08 -0700 (PDT)
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac73723b2d5so1232522866b.3;
-        Tue, 15 Apr 2025 18:39:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUIH/UAmESSo2GHgUqjkmj8/H0dMxDN6uJ3IOQrd8D0Fz6er1ycu9H/SRNwAGrxwtkvKl7wy3XPm/YspbSV@vger.kernel.org, AJvYcCXEe+TMjDitnQu6ZB5VEEbFXJE4tPRUsq3+/R0LL/neN6qyovaUHo7tiuxI3q0bxWicHl9t40VdXDc=@vger.kernel.org
-X-Received: by 2002:a17:907:6ea1:b0:ac6:e327:8de7 with SMTP id
- a640c23a62f3a-acb3849df86mr88724666b.42.1744767548484; Tue, 15 Apr 2025
- 18:39:08 -0700 (PDT)
+	s=arc-20240116; t=1744766779; c=relaxed/simple;
+	bh=CjEssOQtrqoZAS4iZ9mhfuJMxxXSyP8p/PrrzFxcy/A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ciKCEojlsm64tca+2KXWtg5Don9tUfDo31lYlJeC2XaPmMlILoDbV1QiNO5cUlzjjbni3oxJfq60FHf9MPuBkj3H+urIQLCW0AiRJfXlYrxSsd2E7+AH72KnFurNr/th2mYytePgujht2RKVixpruO8ds/ef16plDPF4yMA6jHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Zcjyl5rWHz4f3jjr
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 09:25:51 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 250271A15D5
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 09:26:10 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.67.174.193])
+	by APP4 (Coremail) with SMTP id gCh0CgAHa18wB_9ndlJxJg--.51759S4;
+	Wed, 16 Apr 2025 09:26:09 +0800 (CST)
+From: Luo Gengkun <luogengkun@huaweicloud.com>
+To: akpm@linux-foundation.org
+Cc: joel.granados@kernel.org,
+	song@kernel.org,
+	dianders@chromium.org,
+	tglx@linutronix.de,
+	linux-kernel@vger.kernel.org,
+	luogengkun@huaweicloud.com
+Subject: [PATCH] watchdog: Fix watchdog may detect false positive of softlockup
+Date: Wed, 16 Apr 2025 01:39:22 +0000
+Message-Id: <20250416013922.2905051-1-luogengkun@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250415-pasemi-fixes-v2-0-c543bf53151a@svenpeter.dev>
-In-Reply-To: <20250415-pasemi-fixes-v2-0-c543bf53151a@svenpeter.dev>
-From: Neal Gompa <neal@gompa.dev>
-Date: Tue, 15 Apr 2025 21:38:32 -0400
-X-Gmail-Original-Message-ID: <CAEg-Je9vfqKe8tThUNxy2hKGGMYR4F2RJaKXqaXJx8f856Oncg@mail.gmail.com>
-X-Gm-Features: ATxdqUGM2YL7UPwB2q8EHrpPvcO9cfPSM4k-2kB4UVuY2Jof3nZs232BzqVAc98
-Message-ID: <CAEg-Je9vfqKe8tThUNxy2hKGGMYR4F2RJaKXqaXJx8f856Oncg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] Apple/PASemi i2c error recovery fixes
-To: Sven Peter <sven@svenpeter.dev>
-Cc: Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Naveen N Rao <naveen@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
-	Hector Martin <marcan@marcan.st>, linuxppc-dev@lists.ozlabs.org, asahi@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAHa18wB_9ndlJxJg--.51759S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxGF4UXw15Ar47tw1UJw47urg_yoW5GFWxpa
+	yjvFyYyr4Utr4kX3y3J3ZFqF18Ga48XrW5XFnrWw1rKFn8Kr1rtryfCF1fK3yqvFZxXr1j
+	qF4YqrZ7JayUKF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
+	AVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
+	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkG
+	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4U
+	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUbSfO7UUUU
+	U==
+X-CM-SenderInfo: 5oxrwvpqjn3046kxt4xhlfz01xgou0bp/
 
-On Tue, Apr 15, 2025 at 11:37=E2=80=AFAM Sven Peter via B4 Relay
-<devnull+sven.svenpeter.dev@kernel.org> wrote:
->
-> Hi,
->
-> This series adds a few fixes/improvements to the error recovery for
-> Apple/PASemi i2c controllers.
-> The patches have been in our downstream tree and were originally used
-> to debug a rare glitch caused by clock strechting but are useful in
-> general. We haven't seen the controller misbehave since adding these.
->
-> Best,
->
-> Sven
->
-> Signed-off-by: Sven Peter <sven@svenpeter.dev>
-> ---
-> Changes in v2:
-> - Added commit to use the correct include (bits.h instead of bitfield.h)
-> - Added commit to sort includes
-> - Moved timeout explanations to code instead of just the commit log
-> - Made timeout recovery also work correctly in the interrupt case when
->   waiting for the condition failed
-> - Used readx_poll_timeout instead of open-coded alternative
-> - Link to v1: https://lore.kernel.org/r/20250222-pasemi-fixes-v1-0-d7ea33=
-d50c5e@svenpeter.dev
->
-> ---
-> Hector Martin (3):
->       i2c: pasemi: Improve error recovery
->       i2c: pasemi: Enable the unjam machine
->       i2c: pasemi: Log bus reset causes
->
-> Sven Peter (3):
->       i2c: pasemi: Use correct bits.h include
->       i2c: pasemi: Sort includes alphabetically
->       i2c: pasemi: Improve timeout handling
->
->  drivers/i2c/busses/i2c-pasemi-core.c | 114 ++++++++++++++++++++++++++++-=
-------
->  drivers/i2c/busses/i2c-pasemi-pci.c  |  10 +--
->  2 files changed, 96 insertions(+), 28 deletions(-)
-> ---
-> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
-> change-id: 20250220-pasemi-fixes-916cb77404ba
->
+The watchdog may dectect false positive of softlockup because of stop
+softlockup after update watchdog_thresh. The problem can be described as
+follow:
 
-The series looks good to me, especially the new patches.
+ # We asuume previous watchdog_thresh is 60, so the timer is coming every
+ # 24s.
+echo 10 > /proc/sys/kernel/watchdog_thresh (User space)
+|
++------>+ update watchdog_thresh (We are in kernel now)
+	|
+	|
+	+------>+ watchdog hrtimer (irq context: detect softlockup)
+		|
+		|
+	+-------+
+	|
+	|
+	+ softlockup_stop_all
 
-Reviewed-by: Neal Gompa <neal@gompa.dev>
+As showed above, there is a window between update watchdog_thresh and
+softlockup_stop_all. During this window, if a timer is coming, a false
+positive of softlockup will happen. To fix this problem, use a shadow
+variable to store the new value and write back to watchdog_thresh after
+softlockup_stop_all.
 
+Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
+---
+ kernel/watchdog.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---=20
-=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
-=BC=81/ Always, there's only one truth!
+diff --git a/kernel/watchdog.c b/kernel/watchdog.c
+index 9fa2af9dbf2c..80e5a77e92fd 100644
+--- a/kernel/watchdog.c
++++ b/kernel/watchdog.c
+@@ -47,6 +47,7 @@ int __read_mostly watchdog_user_enabled = 1;
+ static int __read_mostly watchdog_hardlockup_user_enabled = WATCHDOG_HARDLOCKUP_DEFAULT;
+ static int __read_mostly watchdog_softlockup_user_enabled = 1;
+ int __read_mostly watchdog_thresh = 10;
++static int __read_mostly watchdog_thresh_shadow;
+ static int __read_mostly watchdog_hardlockup_available;
+ 
+ struct cpumask watchdog_cpumask __read_mostly;
+@@ -876,6 +877,7 @@ static void __lockup_detector_reconfigure(void)
+ 	watchdog_hardlockup_stop();
+ 
+ 	softlockup_stop_all();
++	watchdog_thresh = READ_ONCE(watchdog_thresh_shadow);
+ 	set_sample_period();
+ 	lockup_detector_update_enable();
+ 	if (watchdog_enabled && watchdog_thresh)
+@@ -1035,10 +1037,12 @@ static int proc_watchdog_thresh(const struct ctl_table *table, int write,
+ 
+ 	mutex_lock(&watchdog_mutex);
+ 
+-	old = READ_ONCE(watchdog_thresh);
++	watchdog_thresh_shadow = READ_ONCE(watchdog_thresh);
++
++	old = watchdog_thresh_shadow;
+ 	err = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
+ 
+-	if (!err && write && old != READ_ONCE(watchdog_thresh))
++	if (!err && write && old != READ_ONCE(watchdog_thresh_shadow))
+ 		proc_watchdog_update();
+ 
+ 	mutex_unlock(&watchdog_mutex);
+@@ -1080,7 +1084,7 @@ static const struct ctl_table watchdog_sysctls[] = {
+ 	},
+ 	{
+ 		.procname	= "watchdog_thresh",
+-		.data		= &watchdog_thresh,
++		.data		= &watchdog_thresh_shadow,
+ 		.maxlen		= sizeof(int),
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_watchdog_thresh,
+-- 
+2.34.1
+
 
