@@ -1,104 +1,118 @@
-Return-Path: <linux-kernel+bounces-606623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 843BCA8B189
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:03:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DA7FA8B1A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:06:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D21AB190440F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 07:04:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E88EB1904C08
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 07:06:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E328422CBC0;
-	Wed, 16 Apr 2025 07:03:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C19AF22C35D;
+	Wed, 16 Apr 2025 07:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="Xu13jP7Y"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="n18/EU8Y"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06B722AE7E;
-	Wed, 16 Apr 2025 07:03:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7BC522B5AA;
+	Wed, 16 Apr 2025 07:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744787021; cv=none; b=XOKsP2f+jmG9rHwurg81z0T5URLa9eJwDW08dOL/3E1EelZd70X/Qxne4aiYUFzkYqj6rFNeHFuUAvBxEcMCJbC3U0wu4hhFa72Veag0uif+PlvBovEsnfoR19Kq8plkCCOmXCYSXGI688H9rSQn0SXFhzIdJYD6ONasqPS9QHo=
+	t=1744787082; cv=none; b=QLDmP6l/aJW1lH2IrdE3xToOmkofpxpi9I6Y2jMrOIt7ucqEDqixh6idxOkFTL4x/e0P2TZCNzNAMrljbpUowB1lzYIfUZLZm3dnCU8xU50WJ6vU2Gl/SWGOGEJ9RW+yJMNv2AtrPsR13Vz6zmunF1ILEbJ4Kaeo4/+qfH6Vfrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744787021; c=relaxed/simple;
-	bh=jp5cuusuZlWSG9qC8WkJbw+y7WybCshjWUXUvRyu0lI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qXEgAjfjRGv8lRffoIA2TXwRiydPxnuLcw672w/TLDKVOE8Do7/YQhNUrU+Cneu88rZawf9ODEw/KX1RM6THOZNilpHl8ZFQ/abhlnNgCQCeKYD6Z30zuWmDUqLGkrQ8EbUr1hsjtXvoD7LFg7LYZ/h2RFIdvM5YnSG3JI6XPtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=Xu13jP7Y; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=Obah4dDcC5p/Xr+tamvOubSTzdyNUfy7HNjgymRkE4c=; b=Xu13jP7YnvsA0jxvBfQyX0R6vf
-	zhlgZgAo1i/qge45QVxgDuVwZDuzvMimYoferLCTr0cmX6S5vFCUkGHzYSYyTDXxbzrJS4hkJr8Sg
-	xUuWzxvOntEdI2IO6tLQotFV0fWWolKuT2bo+tzqXHhYU8IQEEEtHSTo9ByLKaD97n6R2bCuilWPz
-	hoYifsqQrcl/+OmSWVIttTBNTTWS4SGqMzLDYhU7ThIHGI/FmHxWwA4l02w6ee1fgZ5ex1otHs25k
-	2N0kKdSH9JlSy0B3vZR69C+ZgbHiOI+SxxOg/Bsd7mMdCt0wMDdtvQyXJnVclrlu8K3/JVO2A9FQN
-	pDP9qnNw==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1u4wnv-00G74J-2C;
-	Wed, 16 Apr 2025 15:03:28 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 16 Apr 2025 15:03:27 +0800
-Date: Wed, 16 Apr 2025 15:03:27 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: T Pratham <t-pratham@ti.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Kamlesh Gurudasani <kamlesh@ti.com>,
-	Praneeth Bajjuri <praneeth@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Manorit Chawdhry <m-chawdhry@ti.com>, linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] crypto: ti: Add driver for DTHE V2 AES Engine
- (ECB, CBC)
-Message-ID: <Z_9WPwz-xVdVDMMw@gondor.apana.org.au>
-References: <20250411091321.2925308-1-t-pratham@ti.com>
- <20250411091321.2925308-3-t-pratham@ti.com>
+	s=arc-20240116; t=1744787082; c=relaxed/simple;
+	bh=HS/z4N64pw2j7J+mRowqcRtfuewBz9oZ/SCe+FNi88M=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=P16QS69MQq2n1qds4DVWu5dyupjrwZ5jzT4D1IZ1iad+8Xz4G9rUYvSAcW0VJo2zN1nTKmCF2r/62+8GKEAdsIpZXlsj5HrW7B8Puj+VbXY2PVO397YkjxxldAINdUzcnEegAyx8a/vDnJLCkPNyO0lykcbfxeNiLjKG2x4uD4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=n18/EU8Y; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 53G749voC2842662, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1744787049; bh=HS/z4N64pw2j7J+mRowqcRtfuewBz9oZ/SCe+FNi88M=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=n18/EU8YmpQ0gZurQCDKb6mcdcDzZiwDjj9W1fng3wCxM86JhA4Yu/NUFhrbQlIQL
+	 zlKC370tSMUmdf6rn40ZlXWDcgU6fRbbwT96KPESQqxABWVcFo6gxac5dW+Vs+EvKY
+	 fi7QN8iUoEpWUxZ57bDhSjEGhbGQ7KPJo85JKoy7pf/rhbHnT/swXE8CIZoP/guE+t
+	 IvjZ4EyiNCzHz+A2amiWhXfBxib/usTe1Dj/3PKmPh0pO8ZF7QWDUzfoE4jinw09yh
+	 GwwLS/6M4H69FXl27YmJ0GPBbdBbiaseV8dGupWCOdnDRjnmFKkzx1h8VJ59RpZmkZ
+	 f2Ti/EYnEbQhQ==
+Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
+	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 53G749voC2842662
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 16 Apr 2025 15:04:09 +0800
+Received: from RTEXMBS03.realtek.com.tw (172.21.6.96) by
+ RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 16 Apr 2025 15:04:09 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS03.realtek.com.tw (172.21.6.96) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Wed, 16 Apr 2025 15:04:09 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622]) by
+ RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622%5]) with mapi id
+ 15.01.2507.035; Wed, 16 Apr 2025 15:04:09 +0800
+From: Justin Lai <justinlai0215@realtek.com>
+To: Jakub Kicinski <kuba@kernel.org>
+CC: "davem@davemloft.net" <davem@davemloft.net>,
+        "edumazet@google.com"
+	<edumazet@google.com>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "horms@kernel.org"
+	<horms@kernel.org>,
+        Ping-Ke Shih <pkshih@realtek.com>,
+        Larry Chiu
+	<larry.chiu@realtek.com>
+Subject: RE: [PATCH net-next v3] rtase: Add ndo_setup_tc support for CBS offload in traffic control setup
+Thread-Topic: [PATCH net-next v3] rtase: Add ndo_setup_tc support for CBS
+ offload in traffic control setup
+Thread-Index: AQHbrO80xvliwf3v7k6gHUORMXC8/LOk63SAgADsrVA=
+Date: Wed, 16 Apr 2025 07:04:09 +0000
+Message-ID: <b9fcab27bc6a4d35ba32438623e5b259@realtek.com>
+References: <20250414034202.7261-1-justinlai0215@realtek.com>
+ <20250415172303.19022025@kernel.org>
+In-Reply-To: <20250415172303.19022025@kernel.org>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+x-kse-serverinfo: RTEXMBS03.realtek.com.tw, 9
+x-kse-antispam-interceptor-info: fallback
+x-kse-antivirus-interceptor-info: fallback
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250411091321.2925308-3-t-pratham@ti.com>
+X-KSE-AntiSpam-Interceptor-Info: fallback
 
-On Fri, Apr 11, 2025 at 02:43:22PM +0530, T Pratham wrote:
->
-> +	// Need to do a timeout to ensure mutex gets unlocked if DMA callback fails for any reason
-> +	ret = wait_for_completion_timeout(&actx->aes_compl, msecs_to_jiffies(DTHE_DMA_TIMEOUT_MS));
+>=20
+> On Mon, 14 Apr 2025 11:42:02 +0800 Justin Lai wrote:
+> > Add support for ndo_setup_tc to enable CBS offload functionality as
+> > part of traffic control configuration for network devices.
+>=20
+> This is some semi-switch-like device right? Or am I misremembering?
+> Could you clarify where the limits are applied?
+> From CPU into the switch or on the switch ports?
+> Should be documented in the commit msg.
+> --
+> pw-bot: cr
 
-You cannot wait here.  The preferred method of indicating completion
-is through an interrupt.  If you hardware can't do that, then you need
-to use crypto_engine and poll in that thread.
+Hi Jakub,
 
-> +static int dthe_aes_crypt(struct skcipher_request *req, int enc)
-> +{
-> +	struct dthe_tfm_ctx *ctx = crypto_skcipher_ctx(crypto_skcipher_reqtfm(req));
-> +
-> +	/*
-> +	 * If data is not a multiple of AES_BLOCK_SIZE, need to return -EINVAL
-> +	 * If data length input is zero, no need to do any operation.
-> +	 */
-> +	if (req->cryptlen % AES_BLOCK_SIZE) {
-> +		skcipher_request_complete(req, -EINVAL);
+Yes, this device is a switch, and CBS is applied from the CPU to the
+switch. More specifically, CBS is applied at the GMAC in the topmost
+architecture diagram in this driver. I will post a new version and
+add this information to the commit message.
 
-The completion function must not be called unless you first
-returned EINPROGRESS.
-
-PS Please set the bit KERN_DRIVER_ONLY in cra_flags.
-
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Thanks,
+Justin
 
