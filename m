@@ -1,223 +1,187 @@
-Return-Path: <linux-kernel+bounces-607577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 560A0A9080C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 17:54:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68FD2A9081C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 17:56:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C77C3BC559
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 15:53:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC5F01907970
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 15:56:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 795D220E31B;
-	Wed, 16 Apr 2025 15:53:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B24720E719;
+	Wed, 16 Apr 2025 15:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RKRGmnQa"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="HftpTnM+"
+Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2058.outbound.protection.outlook.com [40.107.249.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A5520468D
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 15:53:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744818837; cv=none; b=Ouxzou3seodSrJAYiW0Wb6tljixNzy2mjOFAOyxiXRbetPXmH13rL7y2PlTWgbWzRIOOLRPm+8pofscNeWMxkUkWixbHMzMU8bWlWjkTVta8ZkMppUCdTV9ctn+O6ZeJDVCKHxAraDb75J9aBjIjOSekNvllz0Mhdw1/iDaPZZM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744818837; c=relaxed/simple;
-	bh=glmNT1BbAi86Vu1viujSYC8MN3OzvhCYDxVNgCwDMOw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LPVIXjVJ5sxAXrC01ld0nmeL1geY1GH5TsZHztTeAUFXPkCdua+V7sFgDUXCncifX8iYrmAldo46FKlb+b1VTBFyZh6XEJc/MGc3VnA0+ec1C6wzw01FqIERSmSOFaUDRsUKnR8uhBhNwfkrpsHPAhcwHddzY/7CDOrpzqpK9R0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RKRGmnQa; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2242ac37caeso183395ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 08:53:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744818835; x=1745423635; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eI0hqFIi9hhMaOETvsAWB98XuGpw5hSchlp+ya2NdF0=;
-        b=RKRGmnQaXJMTpKq0QMRHhbODtmoXhhnpP/AQrCgUeDHWZWa+DL6x1N+6aXUZHuHGFc
-         iE6dl/wV2WAHJ8C5GcealehDDy1hmuNfVYS28bcvLcz/L+4WdNAowVInG346f1i0V+qD
-         FhdRpzDrsByA5bqg2b5/dxfFMMfFttoz6HiCgQG+vqnhibgqMV+6IIFw1zAwmwKF6WmN
-         fGy6YB48dXMa+lEwDRXBDCjzxMPxuXuks2e2Q4HWPQLSXJIBfgWqN6MxLFab70NJfWJa
-         iF1C2695OUAW1WIZJPUlhzGuqSJhurn+cYw2H6437J4uCdKNe6//2opR1HcMz9aoXd0Y
-         EfkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744818835; x=1745423635;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eI0hqFIi9hhMaOETvsAWB98XuGpw5hSchlp+ya2NdF0=;
-        b=QRtA4weIDUADjaaDxea4jyOY4D4NIGihkPeIg2sn3Pgy0XR99uL+rWzbDLC44vUn9s
-         At/mSu9WflnxgjzCeU5LnN3L4qlR1fJ5WVVxPzX5tpfEuRQF7pJVYNUqCzFZb0FhZh/v
-         bBnyjACleXXFLz2e4a7MQaDae/IuRcVQD2YY7N13gUUHsMlml9W9JDY6lQ8W0Tf81fos
-         TYlOfYyef+RVfgD3qc7StcyfN0CF2pYHmnPYb7I/JS7IFBPIa9fovonRBFpFPsPCAGMP
-         AHdwCHtf2pme7DNCRCRKLz5K/pjS6wbTrotZBh3QpjxbWOA+Q8zrNPN3+YqoY2O+3Mg2
-         iZQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXZn51rNKze8GGSmPoqnJ8dRlyZNhGayr3JANzbDjFgtxTqd05w8vcphfbgqrqYmYzMbPpbvLI26EKHrD0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwpWh+PGIY7K22LLiLC1+RFOpCNoMpJHKGoxFVjg8deefUz2uL
-	o56MM/KTq82cXV+31erTwV7HnueJGD9PmEFtveUtsElPWzA063UfVduwoRzSmBq95vUFeXj3kYU
-	YeA==
-X-Gm-Gg: ASbGncs0nl13COf/2HzQki/kF+DtBtQaP7CPhVuW2cAw3pxnLCcnxzbcgWnxt/sscY0
-	9EJCPrdPuPhJH9tyLuuzj++DzYEIv9ytdl3yQQJYwQlpyETzzuI1Pv+1os7V+EAUVi4NI341p+o
-	J6WoXrCvir9+wteBMfmOBn/nT1plD8cNDDI8Y1xb7M+TIFJwmUqvZ1EqQ4KB0yyrC/fJErPFZSY
-	R2L1DyePq2+prXodb4ZWkGyHWO9Yb3kbmPTTf1YHEMw+0f9Hjlb3IA7Xu/25HX6hcYYKQYd6gPS
-	YW4k4yvgdPTh2ovmUhFetvQ64z8B0STnSlL+iBInwcqOW2idlnfIC8AN8ivxcXAOMrgWlqraVqk
-	VHg==
-X-Google-Smtp-Source: AGHT+IGW7bV/dNSGL8pCQfslTd7/5svY9xc/915CTEb9/xFu4LQPdMWsZ8vx5QfVS5f4fDQb1/N6kw==
-X-Received: by 2002:a17:903:1aa6:b0:21f:631c:7fc9 with SMTP id d9443c01a7336-22c353bac4cmr2148905ad.0.1744818835300;
-        Wed, 16 Apr 2025 08:53:55 -0700 (PDT)
-Received: from google.com (176.13.105.34.bc.googleusercontent.com. [34.105.13.176])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c33fa7638sm15905665ad.142.2025.04.16.08.53.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Apr 2025 08:53:54 -0700 (PDT)
-Date: Wed, 16 Apr 2025 08:53:49 -0700
-From: Vipin Sharma <vipinsh@google.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] KVM: x86/mmu: Dynamically allocate shadow MMU's
- hashed page list
-Message-ID: <20250416155349.GA701848.vipinsh@google.com>
-References: <20250401155714.838398-1-seanjc@google.com>
- <20250401155714.838398-2-seanjc@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C711F193D;
+	Wed, 16 Apr 2025 15:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744818972; cv=fail; b=m+4Gi3M3QyBDB+fwPwm2/QyUvErMVO5heD3Uftkhj4YSr/n1sQx25OaMhLGXZJ3pGDiWdiVKCKDDuQzw5ASJrbv7dzKqZ5T5YIbAy5DVa0UIfBDhQcS4TudGmpO55WOoq8BSOeUVb4UqlwdbnIG7cA725Bq/WID2h5BVs0sbVB0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744818972; c=relaxed/simple;
+	bh=SRZ9ueEjHns7fDvPqN7N9+EqSRx7IbgvwZcbTZPrQNw=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=meBM1JielA9ATMnxibTikGLsDHz5eTXld1n646Sf4rYUQS9/XTtpCVccdCCntLMA4XX4dSwAEj5Gd3Zh8b3nwey1YX3EaqW2mmknIiNMXhK8Xlk8wYaExSvXv4v2/eIj0fze5skxYghyk+bhKhY3JqCzktcWhFMZDKPAUTZ7bHc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=HftpTnM+; arc=fail smtp.client-ip=40.107.249.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Q4IY+mldLh/8G2FUX5NmsoyiwvGTyiAcw3AAubHkbjADUsR+xD3l28FHXMmbkg4V1unkODNmdq2X3i9rFcH5n7a6nuTcqpaY4jw/v99LEE2qry/MopfZEExgv1NYkeR+sYfu4sUd3SHa9UXjTG+7nXaF2x6WsIZsJeuCXce6m6l6iMu3MAeDQu6gLTHRcfftHGwlznFhKxWajausxYyIy9QXTkZ2Jwj4EqkyvVb35CwF5tqeh5rDvzSnak9VfDCIjIpKejn9x3hNEc1Tp6yw7jMV8D9S/gxsjOHVD8Weze5Ls8W/nPA3zPPe/6BOMJ4ipUIYx+uy/r6NPCsC/Jptew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XIRGuObXU/TCN3nUC78PpMxMrsJvU3BvAJBwH4y/MAw=;
+ b=mUR5ca7tgOZkv4pbGpWTusMd9HJ8RJoTiiOUwpCGpCh8bbFFB24hzKF27vV6MsgICDEwZ6JB1j5KznEagQOEDAmauEPgM4jtTPp8zDWwuDgaBIAYjsbeQEicSpN3VNQTUG+BYkS/5sjYvb3C7SbEjYhiqBRppPkSCG+dK6dqcWdTIXQ3wyzhUeNrbSQLxebzwKNdmXSjii5Und1kJOwJCAITswQgHCsQqc47UKenqjUIVaPAeSUxuiJtWVCGgkLn84MvjEE9FTT4FkN2a1bzcr2YNrsZxbTcuCRDiIgec5XSk8ekszdyQlozBcuYgaqrU6g9T/GClKOM5LyFEZWAew==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XIRGuObXU/TCN3nUC78PpMxMrsJvU3BvAJBwH4y/MAw=;
+ b=HftpTnM+Rcdfe9HogBJglljBCPjo4gA1p/KClFm37x9bBzRRQj/NdT7jAWcHDo+C6QgZ6kvoEjAmI3KVC57aNZhNG9ySZQ88gn4dl2ABtM109mGth9biT6Bj5pfcoZEmclED7GXU1SIqfMqqNMMpXK/rPrLUqHy2s7OChEP252lKXatL28G9sK16RJ8C/ha2Zr/jbDQ0IIyEe4l2YFzlK6eREiV0jzsKJSZ8kUwRU0NEowUEvyNE8Sk9dd0gYzd69Uexf0erP40GH57o1FI9bEGjrJBlmDTb79UDSIhHPlZLV+wxtdvVVy5YeE0kk4yW3QXgx8GVL8ncQDicjHFS9Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAWPR04MB9910.eurprd04.prod.outlook.com (2603:10a6:102:380::7)
+ by DB9PR04MB9307.eurprd04.prod.outlook.com (2603:10a6:10:36d::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.31; Wed, 16 Apr
+ 2025 15:56:07 +0000
+Received: from PAWPR04MB9910.eurprd04.prod.outlook.com
+ ([fe80::24b9:b9fd:bcc0:4ee6]) by PAWPR04MB9910.eurprd04.prod.outlook.com
+ ([fe80::24b9:b9fd:bcc0:4ee6%7]) with mapi id 15.20.8632.030; Wed, 16 Apr 2025
+ 15:56:07 +0000
+From: Jeff Chen <jeff.chen_1@nxp.com>
+To: linux-wireless@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	briannorris@chromium.org,
+	johannes@sipsolutions.net,
+	francesco@dolcini.it,
+	tsung-hsien.hsieh@nxp.com,
+	s.hauer@pengutronix.de,
+	Jeff Chen <jeff.chen_1@nxp.com>
+Subject: [PATCH] wifi: mwifiex: Use "scan_plans->iterations" for bgscan repeat count
+Date: Wed, 16 Apr 2025 23:54:25 +0800
+Message-Id: <20250416155425.4070888-1-jeff.chen_1@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: AS4P190CA0026.EURP190.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5d0::13) To PAWPR04MB9910.eurprd04.prod.outlook.com
+ (2603:10a6:102:380::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250401155714.838398-2-seanjc@google.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAWPR04MB9910:EE_|DB9PR04MB9307:EE_
+X-MS-Office365-Filtering-Correlation-Id: b8e56b94-da53-4df5-3685-08dd7cff3327
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|52116014|376014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?tvUfAaI0+8nQ4PFdP437KRMuYKh9+a9zB8uDDwzAxY0BHtbbNrt4tXh/IRgd?=
+ =?us-ascii?Q?bHel+K/TqXwElCevpNK63w8KugLXddTB4H8lzBWN7PF7f+Rr2jJ7koF3wy2G?=
+ =?us-ascii?Q?IGnBvE2eom0zone/VwDlZhChbyWmyUDikgsg2cFDxf0fQ/CYTf+etjT1vHDU?=
+ =?us-ascii?Q?DmCITlt5HfNdqQ2fNuU0vgL8OSPgwoUqbPyGmezYR3hKAd+ej4p3h9KSXS7U?=
+ =?us-ascii?Q?dwuabmUycRR2zKleEPK3SNz6EytgKAr/nOgRWRVQHzEX2QK+YQyqRFtLTDNz?=
+ =?us-ascii?Q?H7VbqYEBQcJNnnO6O4XZnYIApblbjD5Nx9GfDwdHGPG+oSAGdh0XW8eQJrlr?=
+ =?us-ascii?Q?3zTTjilWfc3hULs7iXJhuU20Xv/rypB0rVZ+xWJD0cBj3hVdsdLz3dCmdn9T?=
+ =?us-ascii?Q?/7fTx+0MoJNb6RqfX2dZhUThMSPputs8t3Xum+b1cWRLmWsZdY450yDcEBr8?=
+ =?us-ascii?Q?ZQTt7fI3fkLZrucUSCxycUb5lOkiogx9AeDRk5Zp7Orykr7Mm1BwU7LyC8nw?=
+ =?us-ascii?Q?UHvJIWDxbKDDWqLNCz/pBH7ENNlKgp7Orbp2Fsw81Kt7KOinLp5E0d42mQ0I?=
+ =?us-ascii?Q?+HX5ZTegjBKTKayAYqYktvthrFcrVVURzahpvcHmvtbn8Dbsu9vdl9k0iHFo?=
+ =?us-ascii?Q?p9ykQQ0knNqvjM0/o2H/EWjI8PxNjEASWvdvDfjeEic2ghXDUTm8b0QHu9A2?=
+ =?us-ascii?Q?zJJsMvzHBbERD5IH5O0xxI1fqKG3OrkddZYSRq8S9Q+42ojO1MeSmPh3TUCm?=
+ =?us-ascii?Q?CzjTUj6MQPfwO2V6MRoVCevMZq9lnUpAKfLvDjN0Vqk0XwQJwIXAyi+yFLgm?=
+ =?us-ascii?Q?bv6zqX54bOPXB8BnzWqKY5XG5BFpLD8FbRWqUM/PQcmOcQiehipLjXJxM3Qh?=
+ =?us-ascii?Q?AHeD4VBQZSLC3OZbtzxvJJfQpcZ+7Bxxk4mvlUWDlFSuW/33Ly1CqKNbBQC0?=
+ =?us-ascii?Q?NSRAD4q2xERHaYywE/jwHBGJ2pkZOulrdaoPz2fR4Y+9piuA1xpBeCBSXYuP?=
+ =?us-ascii?Q?Z0VefLhh77y4wiUAdUsBTEBOpR2HXIPPVhijXibQxOY0Xt4yHOoBV8piPBxM?=
+ =?us-ascii?Q?DfYpoM3e5Qrmnk8jRija/d+r6BtJ2znX1e6cjhL3I5IrbKcUfDmGaqIJoZAn?=
+ =?us-ascii?Q?pM+q0Im2F8aXEqs0sRVypTbOR0frxr9nyGXTgWpbuFHxjXAvewGpRIlaJfyE?=
+ =?us-ascii?Q?kNpHDQ8x+ProGnFeDT8SCbumwoqL4XKHe2ImkSJWtL1r1INIF3dgJo4Z8K9B?=
+ =?us-ascii?Q?J9hndqdpGf9LJ9rTEKJwQU7RD6epy7B15jFvOL8nnJ/vWKdn2yiR+xQi+By3?=
+ =?us-ascii?Q?facvp+o8iD8EMDDLYd07LdbV1QExX8kr7hL6aZIa3ZC9HUVQd+UQmALKkmj6?=
+ =?us-ascii?Q?2sgcuE2kot5ERvElXatlYt0DetLfUCBZVPo0hHKmpFjeb9JLMctCMQgBXiqI?=
+ =?us-ascii?Q?jfYn8o5Z4H63XSeWDJE+YVh4cUfmEP1aJaGs8bDjfoQEBeVUelkz/w=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAWPR04MB9910.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?oovKlksBEIRONkb6eXkfrNEK6UOQjmFleF2sDC1phHb1O1QmyAtzG+03yP4y?=
+ =?us-ascii?Q?J+ul3s0HLvk7ej6yofn0K+pF2vMZTDbTCYFBKp1sYSO1MQFLqV9d2Zi0/02b?=
+ =?us-ascii?Q?26ngISO1pTUu1KbPEGtahhc6izyoeb8OeD80pUehBuytcsJlQmztZODe7MkM?=
+ =?us-ascii?Q?snyxJMNJmM6CdRKaPfzCmky3zcl0XmAlAl/HacS/wMyQeW/GXpgSdf21PXRQ?=
+ =?us-ascii?Q?U8sya4wcBixcun2QcnKuVh8Kd+LDPDlOxmHhq1MrtN+D/Gpgirab1BYn3wUE?=
+ =?us-ascii?Q?bQWyLXCpp/np5Hq5sX7zVJfmKSK/pKB4n6l0vik/iXbqRR8s1bWyYvDVvnfU?=
+ =?us-ascii?Q?96j77nMCDTL84FypPlnQGTq6khHHxOuhQ5k2nPNv9p9HKj7hEiYRQTvSmc7I?=
+ =?us-ascii?Q?N/GF9Xv8+74LTkue0oWPc5uqsC+7krFXfxzN8ahINY1xWMvZA0ztkQnJk45G?=
+ =?us-ascii?Q?PQRSUbFiPtJr5me71MT03tXHI2y5JMm3d3zOHNNAej2KRHBKq7uruxJ+ZCR4?=
+ =?us-ascii?Q?iHB5p5PZGMcmga3kRYeI1ZBFd5C/k6xMidavQhrMjr0xj5p63qF6dLjL7AT7?=
+ =?us-ascii?Q?KgARhfyStkvFmIih58DbskN+uRJpcH7YtQvREHr2TfbrP7r7THXUevcLFXnN?=
+ =?us-ascii?Q?OoylkzFTj0KC+xIgBQMIA7vW3NGvqAtcZ6gW3rs69KfMy3XBgaEwYrnY0edK?=
+ =?us-ascii?Q?L4RK80II83awatTql9KNGF+H/2V9Z/0udUC54a0O/tL6oEtenwepYWbZnPCB?=
+ =?us-ascii?Q?pG27aFWXFT+Gs84yTpLo+zJLZvb7nadgL3E3znC0vQ266AmPwTsCwnvpEavw?=
+ =?us-ascii?Q?eyCfN02n2NsQj6qmb1MqvVUCpeuqllXT3lGJdqlJvn4W1tP8q1Rhgp5gy+Su?=
+ =?us-ascii?Q?EZv/RT9gvPLi1k3TiHE5/ehlQ41dwwhWCQN0i6gFppeXmDMAslUEiqiEbBLL?=
+ =?us-ascii?Q?2asqWk+D/BfDYthCcHOmwdMw1vSJGrwvahGpwuYslmCw0b+h/cfgXvxAXt9a?=
+ =?us-ascii?Q?v7ZGAgYvnsG4NwAeFFdW+9RWOcj3YqwxztKf2BcEN+5JT0fYijz7aQtbEx3M?=
+ =?us-ascii?Q?Uw5XwY6C+y5WrxnPp86L2xg7iOHyxAy2qdxpn5cEg6QQt7wmwV/8eqw8AmDx?=
+ =?us-ascii?Q?lP9tvi9JtWBwp8lXRcC7OcjHKaVH0Dwbv8ENUC9AoefSqtdW1SUPCK9tkQZ0?=
+ =?us-ascii?Q?YkOmw5i7Yk9DtRR/zXVU4gxjNYT1ZtR4WvFJuvSYBQM+zoO+hz440S3VTSeG?=
+ =?us-ascii?Q?hdZCSXj4E5vBW3lOLx/tWyPYDAHqBNd2h189oyDZSluG2Bl0fqfnNZ3Xotnp?=
+ =?us-ascii?Q?6GtEa5gKnwW7yLOOf6FkOTixuqiIeC4NEM9cI1cfNTV1jFKB6O5EG+g8/T+3?=
+ =?us-ascii?Q?jWo4LUFzuwfyA2vcGRHz/KT1NYA5mCGw0qbrWtCME+nIo7AttUE/wmRoPpYR?=
+ =?us-ascii?Q?XJcmQCidh1lLTfFv6X20JkYMzrhJZ8KxSHv2QxK0fyIcFhg4MzDM+aDcADuZ?=
+ =?us-ascii?Q?WvUCX6a3z5oMphlx+ZQbZ4a+DiYZ2eHWXO+/xnpoupatfOURs3TAk91KX0ch?=
+ =?us-ascii?Q?Cfvrp0WhisQHnaSljMz5K1aBDyapxLjppG35fJ2s?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b8e56b94-da53-4df5-3685-08dd7cff3327
+X-MS-Exchange-CrossTenant-AuthSource: PAWPR04MB9910.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Apr 2025 15:56:07.6776
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qUx+3QLjmvy6RVN7tn8U+5DA7TqTUJVywzIK1qkYYe/PoBnD6tXZ20m0xt7mbwQO/Wsjn3cu8dRFogKsN33acw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9307
 
-On 2025-04-01 08:57:12, Sean Christopherson wrote:
-> Dynamically allocate the (massive) array of hashed lists used to track
-> shadow pages, as the array itself is 32KiB, i.e. is an order-3 allocation
-> all on its own, and is *exactly* an order-3 allocation.  Dynamically
-> allocating the array will allow allocating "struct kvm" using regular
-> kmalloc(), and will also allow deferring allocation of the array until
-> it's actually needed, i.e. until the first shadow root is allocated.
-> 
-> Cc: Vipin Sharma <vipinsh@google.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/include/asm/kvm_host.h |  4 ++--
->  arch/x86/kvm/mmu/mmu.c          | 23 ++++++++++++++++++++++-
->  arch/x86/kvm/x86.c              |  5 ++++-
->  3 files changed, 28 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index a884ab544335..e523d7d8a107 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -1333,7 +1333,7 @@ struct kvm_arch {
->  	bool has_private_mem;
->  	bool has_protected_state;
->  	bool pre_fault_allowed;
-> -	struct hlist_head mmu_page_hash[KVM_NUM_MMU_PAGES];
-> +	struct hlist_head *mmu_page_hash;
->  	struct list_head active_mmu_pages;
->  	/*
->  	 * A list of kvm_mmu_page structs that, if zapped, could possibly be
-> @@ -1985,7 +1985,7 @@ void kvm_mmu_vendor_module_exit(void);
->  
->  void kvm_mmu_destroy(struct kvm_vcpu *vcpu);
->  int kvm_mmu_create(struct kvm_vcpu *vcpu);
-> -void kvm_mmu_init_vm(struct kvm *kvm);
-> +int kvm_mmu_init_vm(struct kvm *kvm);
->  void kvm_mmu_uninit_vm(struct kvm *kvm);
->  
->  void kvm_mmu_init_memslot_memory_attributes(struct kvm *kvm,
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index 63bb77ee1bb1..6b9c72405860 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -3880,6 +3880,18 @@ static int mmu_alloc_direct_roots(struct kvm_vcpu *vcpu)
->  	return r;
->  }
->  
-> +static int kvm_mmu_alloc_page_hash(struct kvm *kvm)
-> +{
-> +	typeof(kvm->arch.mmu_page_hash) h;
-> +
-> +	h = kcalloc(KVM_NUM_MMU_PAGES, sizeof(*h), GFP_KERNEL_ACCOUNT);
-> +	if (!h)
-> +		return -ENOMEM;
-> +
-> +	kvm->arch.mmu_page_hash = h;
-> +	return 0;
-> +}
-> +
->  static int mmu_first_shadow_root_alloc(struct kvm *kvm)
->  {
->  	struct kvm_memslots *slots;
-> @@ -6673,13 +6685,19 @@ static void kvm_mmu_zap_all_fast(struct kvm *kvm)
->  		kvm_tdp_mmu_zap_invalidated_roots(kvm, true);
->  }
->  
-> -void kvm_mmu_init_vm(struct kvm *kvm)
-> +int kvm_mmu_init_vm(struct kvm *kvm)
->  {
-> +	int r;
-> +
->  	kvm->arch.shadow_mmio_value = shadow_mmio_value;
->  	INIT_LIST_HEAD(&kvm->arch.active_mmu_pages);
->  	INIT_LIST_HEAD(&kvm->arch.possible_nx_huge_pages);
->  	spin_lock_init(&kvm->arch.mmu_unsync_pages_lock);
->  
-> +	r = kvm_mmu_alloc_page_hash(kvm);
-> +	if (r)
-> +		return r;
-> +
->  	if (tdp_mmu_enabled)
->  		kvm_mmu_init_tdp_mmu(kvm);
->  
-> @@ -6690,6 +6708,7 @@ void kvm_mmu_init_vm(struct kvm *kvm)
->  
->  	kvm->arch.split_desc_cache.kmem_cache = pte_list_desc_cache;
->  	kvm->arch.split_desc_cache.gfp_zero = __GFP_ZERO;
-> +	return 0;
->  }
->  
->  static void mmu_free_vm_memory_caches(struct kvm *kvm)
-> @@ -6701,6 +6720,8 @@ static void mmu_free_vm_memory_caches(struct kvm *kvm)
->  
->  void kvm_mmu_uninit_vm(struct kvm *kvm)
->  {
-> +	kfree(kvm->arch.mmu_page_hash);
-> +
->  	if (tdp_mmu_enabled)
->  		kvm_mmu_uninit_tdp_mmu(kvm);
->  
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index c841817a914a..4070f9d34521 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -12721,7 +12721,9 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
->  	if (ret)
->  		goto out;
->  
-> -	kvm_mmu_init_vm(kvm);
-> +	ret = kvm_mmu_init_vm(kvm);
-> +	if (ret)
-> +		goto out_cleanup_page_track;
->  
->  	ret = kvm_x86_call(vm_init)(kvm);
->  	if (ret)
-> @@ -12774,6 +12776,7 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
->  
->  out_uninit_mmu:
->  	kvm_mmu_uninit_vm(kvm);
-> +out_cleanup_page_track:
->  	kvm_page_track_cleanup(kvm);
->  out:
->  	return ret;
-> -- 
-> 2.49.0.472.ge94155a9ec-goog
-> 
+Updated the "mwifiex_cfg80211_sched_scan_start" function to assign
+"bgscan_cfg->repeat_count" based on "scan_plans->iterations"
+provided in the sched_scan settings instead of the default
+"MWIFIEX_BGSCAN_REPEAT_COUNT". This change ensures that the repeat
+count aligns with the iterations specified in the schedule scan
+plans.
 
-Reviewed-by: Vipin Sharma <vipinsh@google.com>
+Signed-off-by: Jeff Chen <jeff.chen_1@nxp.com>
+---
+ drivers/net/wireless/marvell/mwifiex/cfg80211.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/marvell/mwifiex/cfg80211.c b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+index a099fdaafa45..be28c841c299 100644
+--- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
++++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+@@ -2833,7 +2833,7 @@ mwifiex_cfg80211_sched_scan_start(struct wiphy *wiphy,
+ 				request->scan_plans->interval :
+ 				MWIFIEX_BGSCAN_INTERVAL;
+ 
+-	bgscan_cfg->repeat_count = MWIFIEX_BGSCAN_REPEAT_COUNT;
++	bgscan_cfg->repeat_count = request->scan_plans->iterations;
+ 	bgscan_cfg->report_condition = MWIFIEX_BGSCAN_SSID_MATCH |
+ 				MWIFIEX_BGSCAN_WAIT_ALL_CHAN_DONE;
+ 	bgscan_cfg->bss_type = MWIFIEX_BSS_MODE_INFRA;
+
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+-- 
+2.34.1
 
 
