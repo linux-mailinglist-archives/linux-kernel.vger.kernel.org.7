@@ -1,105 +1,120 @@
-Return-Path: <linux-kernel+bounces-606573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F7E9A8B11D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 08:51:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FCA8A8B136
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 08:54:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C69943B1EFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 06:51:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9678C1903854
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 06:54:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC557224B16;
-	Wed, 16 Apr 2025 06:51:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582982459FA;
+	Wed, 16 Apr 2025 06:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l5ynJXuq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eHR72bZy";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="l2HtqqLt"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9691DDC1B;
-	Wed, 16 Apr 2025 06:51:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6EAE230BD8;
+	Wed, 16 Apr 2025 06:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744786291; cv=none; b=Pk5ugtDaCSEBIjopowoBNmE0LJ313FTih42vd1BUEBGnNpdg1G0BrYwjfafPzwgzeJQFaXwW73VqABsGygapcXtR5jbJGVyNNM7TmTKAH+eVmadQn7Dox4frkvD1GCWqT3rvaf6BdIp1zberNy5UF1862F4UnQQRs6LGmjHQeBQ=
+	t=1744786327; cv=none; b=GkthGZTfI75VxcmdeXmDxQs5s5teq9Ed82yNXu6GhrEzlMsV6cMfulv6e/sHgVuu3vsGG4C/XttHoUe8lUouhpa5hQ5rrIJxh1Y1HVpaA8vMd2uA87LqwmiJhKA8j7DJbtLfh2RgvTc+oFX8sSL2PkDTxmEzsADBvrhCtg038wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744786291; c=relaxed/simple;
-	bh=FGgt10fsKaB31v9J8sD2pS75CuOzx1QkbiWqKQvt16E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z4tnjoFfc0CaBwEu91V0AeO4zedClQP4Y41g3BNCb6yGfB1j/6oR3Uia67wYfTx0HCnzPBHk1PWK5ZayXFskovkRjPSNgs34xWfBP3SKPox1AagzF6NOPZcrDRXniapgdLdV3iGEXdVnFc4qNp/oqp2LeObAJ19dB9u5ZB1XJuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l5ynJXuq; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744786289; x=1776322289;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=FGgt10fsKaB31v9J8sD2pS75CuOzx1QkbiWqKQvt16E=;
-  b=l5ynJXuqvAMM/oup95FEqccXRl4gqIDRaxtoFunjICxhYDH6C0Chm4Pj
-   LkLOQi5+Uvdn1WrYdi2CwzeuDae43fCSbkNuf6gHSQw+xGy2+y8XcS6Z7
-   /OqNe3b6aKwx79rhxnOTzX1C6Ayopj33biud7AwIwa6WyEi1heg0jQ6ME
-   wps1kND1BUR7J19ljX9mZDnZ4KIagFDnnNX/pjqfjROwTg7uRbaiwL+1+
-   uLK+QbDBOtqRTuSBvxMAa91tewy2wsw7KJ0OvHjZbTLEhx31Lj9VUh5F9
-   MMFbwvMDFuuqrwYT64x1DpQYM4YZ+Il67nkjFE57t0APsrNQswGOKWtH/
-   Q==;
-X-CSE-ConnectionGUID: yjTEW/roQMetWuUoQSwEUQ==
-X-CSE-MsgGUID: tpEhxyQzT3Su+5eRlivl4g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="46035146"
-X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
-   d="scan'208";a="46035146"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 23:51:29 -0700
-X-CSE-ConnectionGUID: kVR8noIGRCis9km2Bq+BGQ==
-X-CSE-MsgGUID: VevFSuRVT06zP80/VHmn3w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
-   d="scan'208";a="130301713"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 23:51:27 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1u4wcF-0000000Clqu-4Ap9;
-	Wed, 16 Apr 2025 09:51:23 +0300
-Date: Wed, 16 Apr 2025 09:51:23 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Jai Luthra <jai.luthra@ideasonboard.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: Re: [PATCH v4 2/7] i2c: core: Unify the firmware node type check
-Message-ID: <Z_9Ta5CpplHUTK_X@smile.fi.intel.com>
-References: <20250414100409.3910312-1-andriy.shevchenko@linux.intel.com>
- <20250414100409.3910312-3-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1744786327; c=relaxed/simple;
+	bh=D+9wO9dNN3EYV0lv+fWUQwBnCRPK8BfN8oSeYBiKgwM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=OFFaU+fdIhI537RW03+8zLERUnxLhWBw8eb4YkwahvlWpFukSZmrHVqes+u9HEPKeZXDsALLnw42EALdoIdfTxsUrmGur1NSdOq0BPhFNM2KOU6dZr9XRUoFT2p1eFbX+0k11f5904G0WzNJWHig61wbB7tcXJYSSEDo+MCN1wA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eHR72bZy; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=l2HtqqLt; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744786320;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=X+UQEszhhyx5orvv0upRMEVuQLmNZT576sheEcGpELI=;
+	b=eHR72bZylIbq0WrE3VY+Wdf6rzeiV/LZFizmP6c9mZARRIFmxLhaB2Q7REttLm1znj4hah
+	gS7EQp6PXvCQuRy3OIVpf0F8tDU9ZF+ZJeS+eHkHbpTYztVD5j8caj5nwpK4cpYDyGgaqX
+	WpzLOx7pzoKUxRGK6Vv94dx3skWRGEyo0eiWY+lQI9k0WhpUSVJnIxjSXRweN48l+kguf5
+	pQp9mgHSv3GxOawcGDE7saE4o4zN2nImnTZZrUsp7/oepZ5ZTgsuSZ6/dBoLUI1o3YRm9p
+	J7svVS9TFBVUXDhNTcVrakMUX4GviKqPUv/pQWXjEz+DdVHZgEcHra/kFdD+yQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744786320;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=X+UQEszhhyx5orvv0upRMEVuQLmNZT576sheEcGpELI=;
+	b=l2HtqqLtED4EAiAkJZ3w0SQSzLbWv/ImpVLWY3NnLCaPVvVKYzrqaeIm7GVGYXpyTba00U
+	H2HT0UhL5WJfYZCQ==
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Gabriele Monaco <gmonaco@redhat.com>,
+	linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: john.ogness@linutronix.de,
+	Nam Cao <namcao@linutronix.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 17/22] arm64: mm: Add page fault trace points
+Date: Wed, 16 Apr 2025 08:51:23 +0200
+Message-Id: <77c5fa64e512cc72d10a027dfae49263def3520d.1744785335.git.namcao@linutronix.de>
+In-Reply-To: <cover.1744785335.git.namcao@linutronix.de>
+References: <cover.1744785335.git.namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250414100409.3910312-3-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 14, 2025 at 01:01:52PM +0300, Andy Shevchenko wrote:
-> OF and ACPI currently are using asymmetrical APIs to check
-> for the firmware node type. Unify them by using is_*_node()
-> against struct fwnode_handle pointer.
+Add page fault trace points, which are useful to implement RV monitor which
+watches page faults.
 
-Note, media CI complains on wrong {} style, but
-1) it was in the original code;
-2) it is gone after the whole series applied.
+Signed-off-by: Nam Cao <namcao@linutronix.de>
+---
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org
+---
+ arch/arm64/mm/fault.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-I suggest to ignore that report based on the above.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+index ef63651099a9..e3f096b0dffd 100644
+--- a/arch/arm64/mm/fault.c
++++ b/arch/arm64/mm/fault.c
+@@ -44,6 +44,9 @@
+ #include <asm/tlbflush.h>
+ #include <asm/traps.h>
+=20
++#define CREATE_TRACE_POINTS
++#include <trace/events/exceptions.h>
++
+ struct fault_info {
+ 	int	(*fn)(unsigned long far, unsigned long esr,
+ 		      struct pt_regs *regs);
+@@ -559,6 +562,11 @@ static int __kprobes do_page_fault(unsigned long far, =
+unsigned long esr,
+ 	if (kprobe_page_fault(regs, esr))
+ 		return 0;
+=20
++	if (user_mode(regs))
++		trace_page_fault_user(addr, regs, esr);
++	else
++		trace_page_fault_kernel(addr, regs, esr);
++
+ 	/*
+ 	 * If we're in an interrupt or have no user context, we must not take
+ 	 * the fault.
+--=20
+2.39.5
 
 
