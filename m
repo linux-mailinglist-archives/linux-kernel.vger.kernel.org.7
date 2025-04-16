@@ -1,145 +1,83 @@
-Return-Path: <linux-kernel+bounces-607775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46588A90AA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 19:59:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60F33A90AB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:01:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0E515A29E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 17:59:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 583CC7AD72F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 425D8218EBF;
-	Wed, 16 Apr 2025 17:59:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5382B217736;
+	Wed, 16 Apr 2025 18:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KKy5jIN+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B20209673;
-	Wed, 16 Apr 2025 17:59:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC9728373;
+	Wed, 16 Apr 2025 18:01:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744826380; cv=none; b=G4xO52yfr8/wm6Lfdg9jPUkevS7FXft/3ZxRe7GinFIBCl5x/LnrrH6AS2Wq35r5AqxtY/tUEC8DLAP51nQcYYP72lMRX15Bv5ButNcQXzUi6rtbYoBOjQXDfdVZZFb3Iv6z6B44nRBqi0AnEr24BvfT5fWSrQ2Hf5eY6tMi43Y=
+	t=1744826485; cv=none; b=rBoh1arROI5nX+dFSkEPsO5/5BUBr3vAkN1Ogd09+TZ9yWNMXu3Qlyc5/OAf/JHSqcXJaR6rEe2a2eRI/7AvJ4G5yUYe1mgcSqs8MVXCvPcvkZaIUlbdRqfTklVYY4FNgzbbx/Sp1afCdmSqIWMRhHHgEn8xXTPVabzEIYg0xss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744826380; c=relaxed/simple;
-	bh=2r1Acswmzhjq3+S12S+Csmh4foxN7PUxu5mf+ncbnJQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MDuz2imrwJ90pwb3tziDBBmNkS47TpmrZr1A2Riv5SMMfQ9egbwx2iq42/RX9BQvE5daOFh3eJXi6pGl7Ro0TkIQZw0fEdy9zC1CUwEAPYI6Bir6s8Rq3Yt17uU32kFI2oxy+wC9HJUNF7TEptY7pJ3lMhSImSHIOSuUXQB5IcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2146C4CEE4;
-	Wed, 16 Apr 2025 17:59:38 +0000 (UTC)
-Date: Wed, 16 Apr 2025 14:01:15 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Junxuan Liao <ljx@cs.wisc.edu>, linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org, x86@kernel.org, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Dave Hansen
- <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Masami
- Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, "Paul E. McKenney" <paulmck@kernel.org>
-Subject: Re: [PATCH] x86/tracing: introduce enter/exit tracepoint pairs for
- page faults
-Message-ID: <20250416140115.5b836b33@gandalf.local.home>
-In-Reply-To: <20250416174714.GGZ__tIi3yNzNKoKFE@fat_crate.local>
-References: <e7d4cd81-c0a5-446c-95d2-6142d660c15b@cs.wisc.edu>
-	<20250414205441.GGZ_12Eew18bGcPTG0@fat_crate.local>
-	<20250414182050.213480aa@gandalf.local.home>
-	<20250416174714.GGZ__tIi3yNzNKoKFE@fat_crate.local>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1744826485; c=relaxed/simple;
+	bh=ou+C4e6bXqBL2PzQ5WovjFqxQSEgJjK5auA6fY/WUrY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LHQTLHoR/87ahgBLfaubQXTZNMuIbYdhKJI9CC8k5bL5PrZ7sx0Jr+EagHqtXGVhXhiSQoNoV8J8pHlQbEsu6hym8P73bz/A3pMyvPefYwBG0QV0F/7D831Unb8paaXJvXKXhlKfcCFsoVxguAxuelFX+y5PzrTZHk5fZ52qNUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KKy5jIN+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D1DEC4CEE2;
+	Wed, 16 Apr 2025 18:01:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744826485;
+	bh=ou+C4e6bXqBL2PzQ5WovjFqxQSEgJjK5auA6fY/WUrY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KKy5jIN+IkYTNJf90za19g48rtLjr5/BzpkxH3zIRXnTdSZdfqrAeXhR/2yGpfmxf
+	 5ZkOWqRgRIlAU36Rz5B/kfb8oMGCAY7aFJkk6P0TnkOqsMwwMgkZEhrb//cRD/ihqM
+	 PASYViR9cDS1ciH1v2520s8vC3ZfWtEp7tP6AGNEx52oBERBibNnYe9M48J1/HiEd5
+	 XB2DF5MFi1SmjwCUpCCT7tsppIGWbpl9/3bqgokTylawleL97wL1uYxNhR1CU+GuJD
+	 szGjynRnRyqInmCtk4gQcb6avxS8wPqK0lZ+aw90fz0utvVOfZQ4UUJXsAtteAwnkY
+	 5INk6Te9+x6ew==
+Date: Wed, 16 Apr 2025 13:01:23 -0500
+From: Rob Herring <robh@kernel.org>
+To: Pin-yen Lin <treapking@chromium.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Kaehlcke <mka@chromium.org>,
+	Stephen Boyd <swboyd@chromium.org>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] dt-bindings: usb: realtek,rts5411: Adapt
+ usb-hub.yaml
+Message-ID: <20250416180123.GC3327258-robh@kernel.org>
+References: <20250415094227.3629916-1-treapking@chromium.org>
+ <20250415094227.3629916-4-treapking@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250415094227.3629916-4-treapking@chromium.org>
 
-On Wed, 16 Apr 2025 19:47:14 +0200
-Borislav Petkov <bp@alien8.de> wrote:
-
-> On Mon, Apr 14, 2025 at 06:20:50PM -0400, Steven Rostedt wrote:
-> > It's useful for me ;-)  
+On Tue, Apr 15, 2025 at 05:42:00PM +0800, Pin-yen Lin wrote:
+> Inherit usb-hub.yaml and remove duplicated schemas.
 > 
-> That's why I CCed you.
+> Signed-off-by: Pin-yen Lin <treapking@chromium.org>
 > 
-> I suspected you'd have "your mustard to share". :-P
-
-:-)
-
+> ---
 > 
-> >  # cd /sys/kernel/tracing
-> >  # echo 's:user_faults u64 delta;' >> dynamic_events
-> >  # echo 'hist:keys=common_pid:ts0=common_timestamp.usecs' >> events/exceptions/page_fault_user_enter/trigger
-> >  # echo 'hist:keys=common_pid:delta=common_timestamp.usecs-$ts0:onmatch(exceptions.page_fault_user_enter).trace(user_faults,$delta)' >> events/exceptions/page_fault_user_exit/trigger
-> > 
-> >  # cd /work/git/trace-cmd.git
-> >  # echo 'hist:keys=delta.log2:sort=delta if COMM == "cc1"' > /sys/kernel/tracing/events/synthetic/user_faults/trigger  
+> Changes in v2:
+> - New in v2
 > 
-> OMG, this tracing thing has turned into a language almost. I hope you're
-> documenting those fancy use cases...
+>  .../bindings/usb/realtek,rts5411.yaml         | 47 +++++--------------
+>  1 file changed, 13 insertions(+), 34 deletions(-)
 
-The above was created by:
+Similar comments as patch 2 on this one.
 
- # trace-cmd sqlhist -e -n user_faults SELECT TIMESTAMP_DELTA_USECS as delta FROM page_fault_user_enter as start JOIN \
-     page_fault_user_exit as end ON start.common_pid = end.common_pid
-
-It also shows the kernel commands, which I took and sanitized a bit.
-
-;-)
-
-> 
-> >  # make
-> > [..]
-> > 
-> >  # cat /sys/kernel/tracing/events/synthetic/user_faults/hist
-> > # event histogram
-> > #
-> > # trigger info: hist:keys=delta.log2:vals=hitcount:sort=delta.log2:size=2048 if COMM == "cc1" [active]
-> > #
-> > 
-> > { delta: ~ 2^0  } hitcount:          1
-> > { delta: ~ 2^1  } hitcount:        334
-> > { delta: ~ 2^2  } hitcount:       4090
-> > { delta: ~ 2^3  } hitcount:      86037
-> > { delta: ~ 2^4  } hitcount:     108790
-> > { delta: ~ 2^5  } hitcount:      27387
-> > { delta: ~ 2^6  } hitcount:       6015
-> > { delta: ~ 2^7  } hitcount:        481
-> > { delta: ~ 2^8  } hitcount:        134
-> > { delta: ~ 2^9  } hitcount:         74
-> > { delta: ~ 2^10 } hitcount:         54
-> > { delta: ~ 2^11 } hitcount:          6
-> > 
-> > Totals:
-> >     Hits: 233403
-> >     Entries: 12
-> >     Dropped: 0
-> > 
-> > 
-> > The above shows a histogram in microseconds where the buckets increase in a
-> > power of two. The biggest bucket is between 2^4 (16) and 2^5 (32) microseconds
-> > with 108790 hits.
-> > 
-> > The longest bucket of 2^11 (2ms) to 2^12 (4ms) had 6 hits.
-> > 
-> > And when sframes is supported, it will be able to show the user space stack
-> > trace of where the longest page faults occur.  
-> 
-> Ok, so AFAIU, this gives you how long user page faults take and apparently for
-> someone this is important info.
-
-This was just a simple example. I rather see where in the kernel it happens.
-I can still use the synthetic events and user stack trace to find where the
-big faults occur.
-
-> 
-> Now if only that info were in the commit message along with the usage scenario
-> so that people can *actually* do what you guys are bragging about...
-
-I plan on adding things like this to Documentation/trace/debugging.rst
-
-I need to get time out to add a bunch of helpful tricks there.
-
--- Steve
+Rob
 
