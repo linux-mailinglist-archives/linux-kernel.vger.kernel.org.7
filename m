@@ -1,219 +1,137 @@
-Return-Path: <linux-kernel+bounces-607435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA594A90668
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:30:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E36BA9066B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:30:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D67D8E4C1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:20:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EB418A5C47
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:21:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B0321AA1D5;
-	Wed, 16 Apr 2025 14:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="CMfa5YQN"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFACB1AA1EC;
+	Wed, 16 Apr 2025 14:21:32 +0000 (UTC)
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357071AA782
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 14:19:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365B8192D68
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 14:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744813194; cv=none; b=nNhOlXJj3JLUCGdQZES4Wlrsc/icWMaEYCYM7aZVm9s5asMIn9WWV91hax/u3YpBtLHemrd4MPNEO4glMkYF44fO+XqGOZVAR6IldPBRxaFsZPgjHjLcI0aKZ4Z3vAj+hhPOq2bdP80bf3I/qpX+fz7SQM+X6e+Pc7B9mEqH0Fs=
+	t=1744813292; cv=none; b=oxbF8Pi3tdSG+jf97Vd2297iP55H8Jb7DvAQnxZcW5LFWdnC6LDkyLrjAJfBUOS5Ohv1kcnPGjv/JkPTTtbHoWlqhY7hC4lmCzEwPOAbQxlKhv096A6rQhDv1wKu/mLpbS8AxKgg9im/LNGVPHbF+jSVi6DKU8K/JDgmrMYu4EM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744813194; c=relaxed/simple;
-	bh=HfrPiWru8k8p6DPiavzJB6DAONCMI2/gXm28JKBOR18=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Gpoa21Y36w3d6YL7DzS+cLE5uBs3PPjOvXWxU/NeQrHdg2kUUySSe6+kelcNF7LcbRCguO2hvoYAblWe9/HRi44YOaU9VGDwEXnuN/WXrDPIeJET/RL/wK5ysGFbhFj/L2Mn46I/OwnteDqpXlD3tekqWnuyTs3NVddqwrgk3SE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=CMfa5YQN; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53GA4LVI030084;
-	Wed, 16 Apr 2025 14:19:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=E6X3bH
-	XkjfioHKJdqS9ZwJDDLbXEQrJOvdoxcCQdXDM=; b=CMfa5YQN+rVqdCvU1ZpIso
-	qhzLKix+qgcIoSSWxZk9cYaCLNRRalUMnrgRRZfJ0G5tnPs4odTK56L2TCNX5Xz1
-	8RC0MVawd3I6jIEkHDXCj94XSDH4nAwTA5Un9IDlonTbsnO4WUXt3cF6d7rgkW3b
-	G/gWnvaZmga1F2ki03mBLhG2u3jkSv1GDuvkazKmZNTWde3u4MqgVpVAFdC86zfe
-	4Op1mb1CrOVDGLgxf71s6UG/09aoG8CkeViRD1hkSgk8+WAFFaDiPMg2DJgTIhAx
-	TnMOy1TiPohfjGt9DJ/m34h0N0dToPdvi0ugJEglB1ijkoFvQMRjcxjrcSBx7LSQ
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 462aff9b88-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Apr 2025 14:19:45 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53GDR3oa024888;
-	Wed, 16 Apr 2025 14:19:44 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4602gth0wa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Apr 2025 14:19:44 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53GEJg4W21365354
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 16 Apr 2025 14:19:42 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 687055805D;
-	Wed, 16 Apr 2025 14:19:42 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2652C58055;
-	Wed, 16 Apr 2025 14:19:40 +0000 (GMT)
-Received: from [9.61.241.145] (unknown [9.61.241.145])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 16 Apr 2025 14:19:39 +0000 (GMT)
-Message-ID: <99a06f56-08cf-42ce-a231-f9a38c6ece9a@linux.ibm.com>
-Date: Wed, 16 Apr 2025 19:49:38 +0530
+	s=arc-20240116; t=1744813292; c=relaxed/simple;
+	bh=kwl1ptkCJXWD3ZmvhhxrdXUzTXTVymEdchqvj4VsObE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=gxwx+HZECWzpOf++P374UCe16BsvHx9JGHB1NYsy1ZtZG9tcgjugfQ4YikFWjD4CPRAiVBSeAi8mCzHPoWNWu6v35NVCO2tue+CWFM0y7l/+dSbNfUfISfD+dr11m31a95LUn8ohqtpkS83BYx2/Cr77ug+N9i5JeYwY0aRXnCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
+Received: from fangorn.home.surriel.com ([10.0.13.7])
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@shelob.surriel.com>)
+	id 1u53c6-000000006y0-3OJb;
+	Wed, 16 Apr 2025 10:19:42 -0400
+Message-ID: <abffc286b637060f631925f9b373fad114d667d6.camel@surriel.com>
+Subject: Re: [PATCH] sched/fair: Add null pointer check to pick_next_entity()
+From: Rik van Riel <riel@surriel.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Chris Mason <clm@meta.com>, Pat Cody <pat@patcody.io>, mingo@redhat.com,
+ 	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, 	rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, vschneid@redhat.com, 	linux-kernel@vger.kernel.org,
+ patcody@meta.com, kernel-team@meta.com, Breno Leitao	 <leitao@debian.org>
+Date: Wed, 16 Apr 2025 10:19:42 -0400
+In-Reply-To: <20250416124442.GC6580@noisy.programming.kicks-ass.net>
+References: <20250320205310.779888-1-pat@patcody.io>
+	 <20250324115613.GD14944@noisy.programming.kicks-ass.net>
+	 <7B2CFC16-1ADE-4565-B555-7525A50494C2@surriel.com>
+	 <20250402082221.GT5880@noisy.programming.kicks-ass.net>
+	 <b378f48593ca7449257a1bb55e78b186d88cd9f1.camel@surriel.com>
+	 <20250415080235.GK5600@noisy.programming.kicks-ass.net>
+	 <20250416124442.GC6580@noisy.programming.kicks-ass.net>
+Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
+ keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33A
+ eo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47
+ Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/
+ lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdY
+ dIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gU
+ mllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986o
+ gEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/
+ r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHV
+ WjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o
+ 6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635
+ Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE
+ +BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTe
+ g4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/jddPx
+ KRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/Ne
+ fO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z
+ 3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0Mm
+ G1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tP
+ okBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznneko
+ TE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44N
+ cQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhI
+ omYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0Ip
+ QrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkE
+ c4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [mainline]tools/perf build warnings
-Content-Language: en-GB
-From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-To: Athira Rajeev <atrajeev@linux.ibm.com>
-Cc: Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Namhyung Kim <namhyung@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, jiang.peng9@zte.com.cn,
-        shao.mingyin@zte.com.cn, Thomas Gleixner <tglx@linutronix.de>
-References: <2c04b7ef-dc85-4a40-b0d8-6ae73c20b65d@linux.ibm.com>
- <B34E8075-7F38-4E30-9E51-23E43DDDF06F@linux.ibm.com>
- <1ec497ed-b98c-46aa-a9c2-5fa906790298@linux.ibm.com>
-In-Reply-To: <1ec497ed-b98c-46aa-a9c2-5fa906790298@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: MANUmOX_47QreoPsuuhU2vmLvicelOuF
-X-Proofpoint-GUID: MANUmOX_47QreoPsuuhU2vmLvicelOuF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-16_04,2025-04-15_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- lowpriorityscore=0 mlxscore=0 phishscore=0 priorityscore=1501
- impostorscore=0 malwarescore=0 spamscore=0 clxscore=1015 bulkscore=0
- suspectscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2502280000 definitions=main-2504160115
+Sender: riel@surriel.com
+
+On Wed, 2025-04-16 at 14:44 +0200, Peter Zijlstra wrote:
+> On Tue, Apr 15, 2025 at 10:02:35AM +0200, Peter Zijlstra wrote:
+> > On Mon, Apr 14, 2025 at 03:57:42PM -0400, Rik van Riel wrote:
+> > > On Wed, 2025-04-02 at 10:22 +0200, Peter Zijlstra wrote:
+> > > >=20
+> > > > Please confirm what the reason for overflow is.
+> > > >=20
+> > > Running a large enough sample size has its benefits.
+> > >=20
+> > > We have hit 3 out of the 4 warnings below.
+> > >=20
+> > > The only one we did not hit is the cfs_rq->avg_load !=3D avg_load
+> > > warning.
+> >=20
+> > Fair enough, that one really isn't hard.
+> >=20
+> > > Most of the time we seem to hit the warnings from the
+> > > code that removes tasks from the runqueue,=20
+> >=20
+> > *blink*..
+>=20
+> Which warning is getting hit on removal? The avg_vruntime mismatch?
+>=20
+> Also, which removal path? schedule()'s block path, or migration like?
+
+The most common warning by far, hitting
+about 90% of the time we hit anything
+in avg_vruntime_validate is the
+WARN_ON_ONCE(cfs_rq->avg_vruntime !=3D vruntime)
+
+The most common code path to getting there,
+covering about 85% of the cases:
+
+avg_vruntime_validate
+avg_vruntime_sub
+__dequeue_entity
+set_next_entity
+pick_task_fair
+pick_next_task_fair
+__pick_next_task
+pick_next_task
+__schedule
+schedule
 
 
-On 16/04/25 7:33 pm, Venkat Rao Bagalkote wrote:
->
-> On 16/04/25 6:41 pm, Athira Rajeev wrote:
->>
->>> On 16 Apr 2025, at 5:12 PM, Venkat Rao Bagalkote 
->>> <venkat88@linux.ibm.com> wrote:
->>>
->>> Hello,
->>>
->>>
->>> I am observing a new build warning on today mainline kernel, with 
->>> head commit: g834a4a689699
->>>
->>> Repo:https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
->>>
->>>
->>> Warnings:
->>>
->>> diff -u tools/include/vdso/unaligned.h include/vdso/unaligned.h
->>>
->>>
->>> If you happen to fix this, please add below tag.
->>>
->>>
->>> Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
->> Hi Venkat
->>
->> Can you please check with 
->> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/?h=tmp.perf-tools-next
->> with the tmp.perf-tools-next branch..
->
->
-> I verified with perf-tools-next repo on both branches namely 
-> tmp.perf-tools-next and perf-tools-next, and I think this warning got 
-> recently introduced.
-
-/Typo in the last mail, please refer to below update./
-
-I verified with perf-tools-next repo on both branches namely 
-tmp.perf-tools-next and perf-tools-next, and issue is not seen there. 
-And I think this warning got recently introduced.
-
->
-> Git Bisect is pointing to acea9943271b62905033f2f8ca571cdd52d6ea7b as 
-> first bad commit.
->
->
-> Below is the bisect log:
->
-> git bisect log
-> git bisect start
-> # status: waiting for both good and bad commits
-> # bad: [834a4a689699090a406d1662b03affa8b155d025] Merge tag 
-> 'for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma
-> git bisect bad 834a4a689699090a406d1662b03affa8b155d025
-> # status: waiting for good commit(s), bad commit known
-> # good: [0af2f6be1b4281385b618cb86ad946eded089ac8] Linux 6.15-rc1
-> git bisect good 0af2f6be1b4281385b618cb86ad946eded089ac8
-> # bad: [ef7785882672e73847fb80f6c39e76998d4db57b] Merge tag 
-> 'bcachefs-2025-04-10' of git://evilpiepirate.org/bcachefs
-> git bisect bad ef7785882672e73847fb80f6c39e76998d4db57b
-> # good: [e4742a89cfaced383db758bef94037637899487a] Merge tag 
-> 'block-6.15-20250410' of git://git.kernel.dk/linux
-> git bisect good e4742a89cfaced383db758bef94037637899487a
-> # good: [eaa517b77e63442260640d875f824d1111ca6569] ethtool: cmis_cdb: 
-> Fix incorrect read / write length extension
-> git bisect good eaa517b77e63442260640d875f824d1111ca6569
-> # good: [ac253a537da3b210fa4b65d522d5533fc68f9515] Merge tag 
-> 'perf-urgent-2025-04-10' of 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-> git bisect good ac253a537da3b210fa4b65d522d5533fc68f9515
-> # good: [3c9de67dd37029cca1d0f391ff565b3809b40a1f] Merge tag 
-> 'x86-urgent-2025-04-10' of 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-> git bisect good 3c9de67dd37029cca1d0f391ff565b3809b40a1f
-> # bad: [0c7cae12f67c4c5fd232cffb27023deb409e1e20] Merge tag 
-> 'irq-urgent-2025-04-10' of 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-> git bisect bad 0c7cae12f67c4c5fd232cffb27023deb409e1e20
-> # bad: [34833819d2270ef96fa98fe3c1d3d297b5dec986] Merge tag 
-> 'timers-urgent-2025-04-10' of 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-> git bisect bad 34833819d2270ef96fa98fe3c1d3d297b5dec986
-> # good: [92e250c624ea37fde64bfd624fd2556f0d846f18] timekeeping: Add a 
-> lockdep override in tick_freeze()
-> git bisect good 92e250c624ea37fde64bfd624fd2556f0d846f18
-> # bad: [acea9943271b62905033f2f8ca571cdd52d6ea7b] vdso: Address 
-> variable shadowing in macros
-> git bisect bad acea9943271b62905033f2f8ca571cdd52d6ea7b
-> # first bad commit: [acea9943271b62905033f2f8ca571cdd52d6ea7b] vdso: 
-> Address variable shadowing in macros
->
->
-> Regards,
->
-> Venkat.
->
->>
->> Also there is a patchset here:
->> https://lore.kernel.org/linux-perf-users/FE96FD04-4396-4C34-A70D-2A592FD5F916@linux.ibm.com/T/#m3e9d6aac4c34ebf42f18f3c213b7dff8f8c70d9d 
->>
->>
->> Which I think you have already tested..
->>
->> Thanks
->> Athira
->>>
->>> Regards,
->>>
->>> Venkat.
->>>
->>>
->>>
+--=20
+All Rights Reversed.
 
