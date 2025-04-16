@@ -1,101 +1,123 @@
-Return-Path: <linux-kernel+bounces-607112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46195A8B817
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:02:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C5B4A8B840
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:05:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E93F7A4C4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 12:00:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C25E01905DD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 12:05:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B8823D2B5;
-	Wed, 16 Apr 2025 12:01:54 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D8720E6E4;
-	Wed, 16 Apr 2025 12:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E742B248883;
+	Wed, 16 Apr 2025 12:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LeKvEFVw"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0A5224728F;
+	Wed, 16 Apr 2025 12:04:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744804914; cv=none; b=toZXGyobQSSJU5ESK9kp242HsTkPUp+kKDEnAhzHphIiRZdLsFciYefLbUAbc6sagBGqOUakJKHoeAduazny5kohLfDflUifYAOJHZiKEu3x47SH0clvkFbb2jK/6OcK8vV5pXY7wMx73Syuw7akVyzw2CgoYY/oJpIipkAEu7Q=
+	t=1744805070; cv=none; b=P51xa0mqfhd+QcNSIs27mmS3y7gRNG+uwGZ5AJ3zgyrF0j1cTjhp12DZnV6vulSGQzRoJ+2P77Kh4pegFj1BqJLjJ1HTlRI+F2ICjpFP4GwoCVq5+gQ5c8zFUgn9Zqz/nMUSQKGfRmto7Sr6+EiIV57hY7BDSbRW5z8Xa696d+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744804914; c=relaxed/simple;
-	bh=61G4ZtYEDF4bwHv3JKZIAd75tAB7F5sVcNbZwmSNjpo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rpCSCqiJj9EclAuNoEmd/5RduBqb1BJE1huRP0SiSYpePEBiDyc5yw78aTRjJiWWKZmyDU6yMmQ9fNYQnn5JwRCW8hMJf8qBhWor+xHf1KPWM1sjt20QecroYFbeapiS7v+SMk55XB2CgE/JrDsdF6b1n2abHx22ikQ6DFJjMVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BB4DC1595;
-	Wed, 16 Apr 2025 05:01:48 -0700 (PDT)
-Received: from [10.1.35.42] (e127648.arm.com [10.1.35.42])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 225443F694;
-	Wed, 16 Apr 2025 05:01:47 -0700 (PDT)
-Message-ID: <b0c863d8-b1bd-4b69-b5ec-18544608448c@arm.com>
-Date: Wed, 16 Apr 2025 13:01:46 +0100
+	s=arc-20240116; t=1744805070; c=relaxed/simple;
+	bh=N5G9mRINCYZ8LZ4QGQ0gtT9BgYXjs96KJhHQAGMFPtM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YB8clydYiyKVAIoHFYKqnPQEKzvyv75zQqB34/jEcw3Je2CscZlfo0nnmbENXKB6i3W5GaHaj582yov70NQ5rexHgfZolEWlHWUjucYYqMdd792UIP/BKmabHspTAGVfd+KQ5vYqROj4HucbWiRP9rimxvUJp6RXvq0+FJt1I0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LeKvEFVw; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-22c33e5013aso6072315ad.0;
+        Wed, 16 Apr 2025 05:04:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744805068; x=1745409868; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9tGlDQ1IGUwDLO9hraMXZmL07bXao+CXFFnK+kzwkl4=;
+        b=LeKvEFVwepNe17jsqcaJCJ9TwMfm5e2QcXiWMFE2EeTOvBO/s5ffw7KwVxYMSO+1MC
+         HOWvdVvyUVXvAjU9PFyfRA6Ia4OCwHdte99YHbVRBvEiDb0icoog3z+Eoa15DeiNp2MT
+         JRnsW719TaV+NIsgQYV4pG7gJD/dGROtzM5w/iOm2P5S9IzX3hIQXNjrmLIMlQdadeAa
+         imBnFvKM5wF9k84Gx/0iQsI9lFZAoyoSSg51Dk1ZJjz1P0zXzHCKieFjB0OVtEiyqyI+
+         MMpjKCcQ7lUoqRafktr5ZPtT0m/Q+/3eO5dWLSowLdCenARAeFQD5SGLY5/kSe0qvRNX
+         vK7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744805068; x=1745409868;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9tGlDQ1IGUwDLO9hraMXZmL07bXao+CXFFnK+kzwkl4=;
+        b=vXhdKa9kAVFCQHvYad6rRhxt5FgmKdk6v8qz3VkxEoXTLfPTfYO5UwZHU1q22+Dkr8
+         /REQEpLZugyW/K435lsaOKqh+BZKnY157cIsjou6/7u62fkOy7VjSdJ84lQdDf88uunu
+         6MZAeyksnPXCo8SEKKDdXbZYTM+duToHevSOQgQg0pxs4EE6eCAP2tw4y9CyErz8hzvu
+         HdtnJFB15smWKem3TjJEEEG8mdjL6kgVly6tIM2hWq6n5gYG01EaomyTanHrTGZnTmP9
+         Cny0cRPsHUnF03GKjIvAaoyJZCDHfwhkdBpvxXcTItyimD7hJmPSd3088mWAEM1rHV7J
+         dQFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVcaFYIW9XPFzpcd0pMHMNIJIJfsYn6CZBiPAxBRFxpT94lmusj63cw8JYLma4reaYoi7/RbG/7J04JWBOk@vger.kernel.org, AJvYcCWzw63sB/2Nf4oVd8A3HaSxvEMNx7acw3fPW7pgcIQE4yNJPiBAW0iQTLe+ZHl12zpIoltjcJjQF0yl@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqFMLCEwqnTPiAZfeu5cU/3bZa4M+wnf9WiYNz3+ptDJwTszVA
+	5NleRHHQ3pBoLSzG+m+LnEMUKqEL0+YbW1eqy0hO0RTOe0RURtlK
+X-Gm-Gg: ASbGncuVxoztsrUX/Fk5bG+llO1fQ9Mz4B732jZ1vq5A75j4j/gDiLvNN8UUlupST/y
+	8cRD3viw4tZs41LTLFZk/g3dc9KeWxsAL7QZ4MPQUDO1yKU/X1GXq51llQDVvTe6/CMEWliMDFw
+	FuwD6vE9vuWLdR5FuEzIa+Kw6kRUQwDDEE+08qzJEuxVOcMnjSNNtVcXfKP8GGsu1+w7e7m1kft
+	cjFLsIUHaTymz+mDNxFEXtffZ5LnmnRu4cVcgRMXniSafNQw98r517fGoywrWbflTyUpPFttQeS
+	WpOgdks/qbq9DRo1O+Ljwoyh5FMt6sYQJXXj/U7dTSxQ6sWsaw==
+X-Google-Smtp-Source: AGHT+IGQweeqw93BBrEZ2xKPnpflNgKnyE2iuuUblGrDtL4/O2TrHxcy8ICju5cv/v4MTTf4qYa9rg==
+X-Received: by 2002:a17:902:cece:b0:223:619e:71e9 with SMTP id d9443c01a7336-22c358c4130mr19704575ad.11.1744805067880;
+        Wed, 16 Apr 2025 05:04:27 -0700 (PDT)
+Received: from nuvole.. ([144.202.86.13])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c33febfb3sm12033385ad.259.2025.04.16.05.04.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Apr 2025 05:04:27 -0700 (PDT)
+From: Pengyu Luo <mitltlatltl@gmail.com>
+To: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Pengyu Luo <mitltlatltl@gmail.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Abel Vesa <abel.vesa@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] phy: qualcomm: phy-qcom-eusb2-repeater: rework reg override handler
+Date: Wed, 16 Apr 2025 20:01:59 +0800
+Message-ID: <20250416120201.244133-1-mitltlatltl@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/6] cpufreq/sched: Explicitly synchronize
- limits_changed flag handling
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Mario Limonciello <mario.limonciello@amd.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Sultan Alsawaf <sultan@kerneltoast.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Valentin Schneider <vschneid@redhat.com>, Ingo Molnar <mingo@redhat.com>
-References: <6171293.lOV4Wx5bFT@rjwysocki.net>
- <3376719.44csPzL39Z@rjwysocki.net>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <3376719.44csPzL39Z@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 4/15/25 10:59, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> The handling of the limits_changed flag in struct sugov_policy needs to
-> be explicitly synchronized to ensure that cpufreq policy limits updates
-> will not be missed in some cases.
-> 
-> Without that synchronization it is theoretically possible that
-> the limits_changed update in sugov_should_update_freq() will be
-> reordered with respect to the reads of the policy limits in
-> cpufreq_driver_resolve_freq() and in that case, if the limits_changed
-> update in sugov_limits() clobbers the one in sugov_should_update_freq(),
-> the new policy limits may not take effect for a long time.
-> 
-> Likewise, the limits_changed update in sugov_limits() may theoretically
-> get reordered with respect to the updates of the policy limits in
-> cpufreq_set_policy() and if sugov_should_update_freq() runs between
-> them, the policy limits change may be missed.
-> 
-> To ensure that the above situations will not take place, add memory
-> barriers preventing the reordering in question from taking place and
-> add READ_ONCE() and WRITE_ONCE() annotations around all of the
-> limits_changed flag updates to prevent the compiler from messing up
-> with that code.
-> 
-> Fixes: 600f5badb78c ("cpufreq: schedutil: Don't skip freq update when limits change")
-> Cc: 5.3+ <stable@vger.nernel.org> # 5.3+
+In downstream tree, many registers need to be overrided, it varies
+from devices and platforms, with these registers getting more, adding
+a handler for this is helpful.
 
-typo in the address here.
-I don't fully understand why we wouldn't want this in 6.15-rc already,
-even if the actual impact may be limited?
+Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
+---
+Changes in v2:
+- Drop dts changes, backwards compatible now
+- Changes for dt-bindings (Krzysztof)
+- Drop sequence overrides to use single property (Dmitry)
+- Link to v1: https://lore.kernel.org/linux-arm-msm/20250405174319.405975-1-mitltlatltl@gmail.com
 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+Pengyu Luo (2):
+  dt-bindings: phy: qcom,snps-eusb2-repeater: Add more tuning overrides
+  phy: qualcomm: phy-qcom-eusb2-repeater: rework reg override handler
 
-Reviewed-by: Christian Loehle <christian.loehle@arm.com>
+ .../phy/qcom,snps-eusb2-repeater.yaml         |  41 ++++++-
+ .../phy/qualcomm/phy-qcom-eusb2-repeater.c    | 105 +++++++++++++++---
+ 2 files changed, 130 insertions(+), 16 deletions(-)
+---
+base-commit: afd30f00ef898643491ce0c0c2571b3498f1a61e
 
->[snip]
+-- 
+2.49.0
+
 
