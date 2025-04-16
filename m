@@ -1,187 +1,138 @@
-Return-Path: <linux-kernel+bounces-607581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68FD2A9081C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 17:56:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39904A90815
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 17:54:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC5F01907970
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 15:56:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71FE15A26B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 15:54:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B24720E719;
-	Wed, 16 Apr 2025 15:56:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2125120FAAC;
+	Wed, 16 Apr 2025 15:54:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="HftpTnM+"
-Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2058.outbound.protection.outlook.com [40.107.249.58])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CYsB7iLF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C711F193D;
-	Wed, 16 Apr 2025 15:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744818972; cv=fail; b=m+4Gi3M3QyBDB+fwPwm2/QyUvErMVO5heD3Uftkhj4YSr/n1sQx25OaMhLGXZJ3pGDiWdiVKCKDDuQzw5ASJrbv7dzKqZ5T5YIbAy5DVa0UIfBDhQcS4TudGmpO55WOoq8BSOeUVb4UqlwdbnIG7cA725Bq/WID2h5BVs0sbVB0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744818972; c=relaxed/simple;
-	bh=SRZ9ueEjHns7fDvPqN7N9+EqSRx7IbgvwZcbTZPrQNw=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=meBM1JielA9ATMnxibTikGLsDHz5eTXld1n646Sf4rYUQS9/XTtpCVccdCCntLMA4XX4dSwAEj5Gd3Zh8b3nwey1YX3EaqW2mmknIiNMXhK8Xlk8wYaExSvXv4v2/eIj0fze5skxYghyk+bhKhY3JqCzktcWhFMZDKPAUTZ7bHc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=HftpTnM+; arc=fail smtp.client-ip=40.107.249.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Q4IY+mldLh/8G2FUX5NmsoyiwvGTyiAcw3AAubHkbjADUsR+xD3l28FHXMmbkg4V1unkODNmdq2X3i9rFcH5n7a6nuTcqpaY4jw/v99LEE2qry/MopfZEExgv1NYkeR+sYfu4sUd3SHa9UXjTG+7nXaF2x6WsIZsJeuCXce6m6l6iMu3MAeDQu6gLTHRcfftHGwlznFhKxWajausxYyIy9QXTkZ2Jwj4EqkyvVb35CwF5tqeh5rDvzSnak9VfDCIjIpKejn9x3hNEc1Tp6yw7jMV8D9S/gxsjOHVD8Weze5Ls8W/nPA3zPPe/6BOMJ4ipUIYx+uy/r6NPCsC/Jptew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XIRGuObXU/TCN3nUC78PpMxMrsJvU3BvAJBwH4y/MAw=;
- b=mUR5ca7tgOZkv4pbGpWTusMd9HJ8RJoTiiOUwpCGpCh8bbFFB24hzKF27vV6MsgICDEwZ6JB1j5KznEagQOEDAmauEPgM4jtTPp8zDWwuDgaBIAYjsbeQEicSpN3VNQTUG+BYkS/5sjYvb3C7SbEjYhiqBRppPkSCG+dK6dqcWdTIXQ3wyzhUeNrbSQLxebzwKNdmXSjii5Und1kJOwJCAITswQgHCsQqc47UKenqjUIVaPAeSUxuiJtWVCGgkLn84MvjEE9FTT4FkN2a1bzcr2YNrsZxbTcuCRDiIgec5XSk8ekszdyQlozBcuYgaqrU6g9T/GClKOM5LyFEZWAew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XIRGuObXU/TCN3nUC78PpMxMrsJvU3BvAJBwH4y/MAw=;
- b=HftpTnM+Rcdfe9HogBJglljBCPjo4gA1p/KClFm37x9bBzRRQj/NdT7jAWcHDo+C6QgZ6kvoEjAmI3KVC57aNZhNG9ySZQ88gn4dl2ABtM109mGth9biT6Bj5pfcoZEmclED7GXU1SIqfMqqNMMpXK/rPrLUqHy2s7OChEP252lKXatL28G9sK16RJ8C/ha2Zr/jbDQ0IIyEe4l2YFzlK6eREiV0jzsKJSZ8kUwRU0NEowUEvyNE8Sk9dd0gYzd69Uexf0erP40GH57o1FI9bEGjrJBlmDTb79UDSIhHPlZLV+wxtdvVVy5YeE0kk4yW3QXgx8GVL8ncQDicjHFS9Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAWPR04MB9910.eurprd04.prod.outlook.com (2603:10a6:102:380::7)
- by DB9PR04MB9307.eurprd04.prod.outlook.com (2603:10a6:10:36d::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.31; Wed, 16 Apr
- 2025 15:56:07 +0000
-Received: from PAWPR04MB9910.eurprd04.prod.outlook.com
- ([fe80::24b9:b9fd:bcc0:4ee6]) by PAWPR04MB9910.eurprd04.prod.outlook.com
- ([fe80::24b9:b9fd:bcc0:4ee6%7]) with mapi id 15.20.8632.030; Wed, 16 Apr 2025
- 15:56:07 +0000
-From: Jeff Chen <jeff.chen_1@nxp.com>
-To: linux-wireless@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	briannorris@chromium.org,
-	johannes@sipsolutions.net,
-	francesco@dolcini.it,
-	tsung-hsien.hsieh@nxp.com,
-	s.hauer@pengutronix.de,
-	Jeff Chen <jeff.chen_1@nxp.com>
-Subject: [PATCH] wifi: mwifiex: Use "scan_plans->iterations" for bgscan repeat count
-Date: Wed, 16 Apr 2025 23:54:25 +0800
-Message-Id: <20250416155425.4070888-1-jeff.chen_1@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: AS4P190CA0026.EURP190.PROD.OUTLOOK.COM
- (2603:10a6:20b:5d0::13) To PAWPR04MB9910.eurprd04.prod.outlook.com
- (2603:10a6:102:380::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C9001F193D;
+	Wed, 16 Apr 2025 15:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744818885; cv=none; b=YBUVOpp6Otg1poRmAGFikienfeA0t9yxMlzoyKyr/wsQ2sVxylEfFkapMDjF7PJX4Ik8EOAGoz/1hzIII+RX2vKsWEmpYJllUsi5NqwAC+YRULS2OTQWAeNNJVRmvuMyx2q5GT8MMLcDvfMhuwp7A3NjR2AMeyBtXtzw8SUdqnU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744818885; c=relaxed/simple;
+	bh=BK6yw88CCQMOuS+aZ2Cf0kz3xcaYu31IAHaHB7+z3cw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k4oZu9xVFXBRgOKJcFHrXbI7dDzqqWc46H3ZlgFA5NBZfJTQbxGvJzKMpAUL0ha0BHGs8dC2yjnark5FtC4L4+Dm8vES+YFefV0gFoF886YGjTjbyxztcKEwaV9hmsao+bQ+b5QzRVnJejT9UGaopLM/gbhoBiU53SKnzez/ebE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CYsB7iLF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EF83C4CEE2;
+	Wed, 16 Apr 2025 15:54:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744818883;
+	bh=BK6yw88CCQMOuS+aZ2Cf0kz3xcaYu31IAHaHB7+z3cw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CYsB7iLFu7CRO3Le0pvmC1k268EFLWH7CYrVAhgxHXz/hQKlGrhkytRRyfxhrFRLa
+	 kLWtrgRIFCVezFrhVYZi/slKn9mmAhE5BNzwbioipRzXvxBRe20qSGWRYEoBVVOn4C
+	 EHs3j8eTEtQA7Y1GrcktDJQf0XFLzKInpzctB45OjBhPa2rSJmMnw1aUcZjTSYAK6s
+	 CiSdKNvuxd/I+GZEiYg3us08A1t4SeJm1Z+KQq8BkAxgxhMAYAFQZ/tbuLHPWbWvlI
+	 i4d9EwJSJCI4WiRJ34sJF0ZXuEn3EmuFUh8xOpPzpJWwrT7Oh77TTOUTXNZWnb8eyN
+	 kDLHP3E9Of9dA==
+Date: Wed, 16 Apr 2025 10:54:42 -0500
+From: Rob Herring <robh@kernel.org>
+To: Alexey Charkov <alchark@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pwm@vger.kernel.org
+Subject: Re: [PATCH 00/13] ARM: vt8500: DT bindings and dts updates
+Message-ID: <20250416155442.GA3255418-robh@kernel.org>
+References: <20250416-wmt-updates-v1-0-f9af689cdfc2@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAWPR04MB9910:EE_|DB9PR04MB9307:EE_
-X-MS-Office365-Filtering-Correlation-Id: b8e56b94-da53-4df5-3685-08dd7cff3327
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|376014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?tvUfAaI0+8nQ4PFdP437KRMuYKh9+a9zB8uDDwzAxY0BHtbbNrt4tXh/IRgd?=
- =?us-ascii?Q?bHel+K/TqXwElCevpNK63w8KugLXddTB4H8lzBWN7PF7f+Rr2jJ7koF3wy2G?=
- =?us-ascii?Q?IGnBvE2eom0zone/VwDlZhChbyWmyUDikgsg2cFDxf0fQ/CYTf+etjT1vHDU?=
- =?us-ascii?Q?DmCITlt5HfNdqQ2fNuU0vgL8OSPgwoUqbPyGmezYR3hKAd+ej4p3h9KSXS7U?=
- =?us-ascii?Q?dwuabmUycRR2zKleEPK3SNz6EytgKAr/nOgRWRVQHzEX2QK+YQyqRFtLTDNz?=
- =?us-ascii?Q?H7VbqYEBQcJNnnO6O4XZnYIApblbjD5Nx9GfDwdHGPG+oSAGdh0XW8eQJrlr?=
- =?us-ascii?Q?3zTTjilWfc3hULs7iXJhuU20Xv/rypB0rVZ+xWJD0cBj3hVdsdLz3dCmdn9T?=
- =?us-ascii?Q?/7fTx+0MoJNb6RqfX2dZhUThMSPputs8t3Xum+b1cWRLmWsZdY450yDcEBr8?=
- =?us-ascii?Q?ZQTt7fI3fkLZrucUSCxycUb5lOkiogx9AeDRk5Zp7Orykr7Mm1BwU7LyC8nw?=
- =?us-ascii?Q?UHvJIWDxbKDDWqLNCz/pBH7ENNlKgp7Orbp2Fsw81Kt7KOinLp5E0d42mQ0I?=
- =?us-ascii?Q?+HX5ZTegjBKTKayAYqYktvthrFcrVVURzahpvcHmvtbn8Dbsu9vdl9k0iHFo?=
- =?us-ascii?Q?p9ykQQ0knNqvjM0/o2H/EWjI8PxNjEASWvdvDfjeEic2ghXDUTm8b0QHu9A2?=
- =?us-ascii?Q?zJJsMvzHBbERD5IH5O0xxI1fqKG3OrkddZYSRq8S9Q+42ojO1MeSmPh3TUCm?=
- =?us-ascii?Q?CzjTUj6MQPfwO2V6MRoVCevMZq9lnUpAKfLvDjN0Vqk0XwQJwIXAyi+yFLgm?=
- =?us-ascii?Q?bv6zqX54bOPXB8BnzWqKY5XG5BFpLD8FbRWqUM/PQcmOcQiehipLjXJxM3Qh?=
- =?us-ascii?Q?AHeD4VBQZSLC3OZbtzxvJJfQpcZ+7Bxxk4mvlUWDlFSuW/33Ly1CqKNbBQC0?=
- =?us-ascii?Q?NSRAD4q2xERHaYywE/jwHBGJ2pkZOulrdaoPz2fR4Y+9piuA1xpBeCBSXYuP?=
- =?us-ascii?Q?Z0VefLhh77y4wiUAdUsBTEBOpR2HXIPPVhijXibQxOY0Xt4yHOoBV8piPBxM?=
- =?us-ascii?Q?DfYpoM3e5Qrmnk8jRija/d+r6BtJ2znX1e6cjhL3I5IrbKcUfDmGaqIJoZAn?=
- =?us-ascii?Q?pM+q0Im2F8aXEqs0sRVypTbOR0frxr9nyGXTgWpbuFHxjXAvewGpRIlaJfyE?=
- =?us-ascii?Q?kNpHDQ8x+ProGnFeDT8SCbumwoqL4XKHe2ImkSJWtL1r1INIF3dgJo4Z8K9B?=
- =?us-ascii?Q?J9hndqdpGf9LJ9rTEKJwQU7RD6epy7B15jFvOL8nnJ/vWKdn2yiR+xQi+By3?=
- =?us-ascii?Q?facvp+o8iD8EMDDLYd07LdbV1QExX8kr7hL6aZIa3ZC9HUVQd+UQmALKkmj6?=
- =?us-ascii?Q?2sgcuE2kot5ERvElXatlYt0DetLfUCBZVPo0hHKmpFjeb9JLMctCMQgBXiqI?=
- =?us-ascii?Q?jfYn8o5Z4H63XSeWDJE+YVh4cUfmEP1aJaGs8bDjfoQEBeVUelkz/w=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAWPR04MB9910.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?oovKlksBEIRONkb6eXkfrNEK6UOQjmFleF2sDC1phHb1O1QmyAtzG+03yP4y?=
- =?us-ascii?Q?J+ul3s0HLvk7ej6yofn0K+pF2vMZTDbTCYFBKp1sYSO1MQFLqV9d2Zi0/02b?=
- =?us-ascii?Q?26ngISO1pTUu1KbPEGtahhc6izyoeb8OeD80pUehBuytcsJlQmztZODe7MkM?=
- =?us-ascii?Q?snyxJMNJmM6CdRKaPfzCmky3zcl0XmAlAl/HacS/wMyQeW/GXpgSdf21PXRQ?=
- =?us-ascii?Q?U8sya4wcBixcun2QcnKuVh8Kd+LDPDlOxmHhq1MrtN+D/Gpgirab1BYn3wUE?=
- =?us-ascii?Q?bQWyLXCpp/np5Hq5sX7zVJfmKSK/pKB4n6l0vik/iXbqRR8s1bWyYvDVvnfU?=
- =?us-ascii?Q?96j77nMCDTL84FypPlnQGTq6khHHxOuhQ5k2nPNv9p9HKj7hEiYRQTvSmc7I?=
- =?us-ascii?Q?N/GF9Xv8+74LTkue0oWPc5uqsC+7krFXfxzN8ahINY1xWMvZA0ztkQnJk45G?=
- =?us-ascii?Q?PQRSUbFiPtJr5me71MT03tXHI2y5JMm3d3zOHNNAej2KRHBKq7uruxJ+ZCR4?=
- =?us-ascii?Q?iHB5p5PZGMcmga3kRYeI1ZBFd5C/k6xMidavQhrMjr0xj5p63qF6dLjL7AT7?=
- =?us-ascii?Q?KgARhfyStkvFmIih58DbskN+uRJpcH7YtQvREHr2TfbrP7r7THXUevcLFXnN?=
- =?us-ascii?Q?OoylkzFTj0KC+xIgBQMIA7vW3NGvqAtcZ6gW3rs69KfMy3XBgaEwYrnY0edK?=
- =?us-ascii?Q?L4RK80II83awatTql9KNGF+H/2V9Z/0udUC54a0O/tL6oEtenwepYWbZnPCB?=
- =?us-ascii?Q?pG27aFWXFT+Gs84yTpLo+zJLZvb7nadgL3E3znC0vQ266AmPwTsCwnvpEavw?=
- =?us-ascii?Q?eyCfN02n2NsQj6qmb1MqvVUCpeuqllXT3lGJdqlJvn4W1tP8q1Rhgp5gy+Su?=
- =?us-ascii?Q?EZv/RT9gvPLi1k3TiHE5/ehlQ41dwwhWCQN0i6gFppeXmDMAslUEiqiEbBLL?=
- =?us-ascii?Q?2asqWk+D/BfDYthCcHOmwdMw1vSJGrwvahGpwuYslmCw0b+h/cfgXvxAXt9a?=
- =?us-ascii?Q?v7ZGAgYvnsG4NwAeFFdW+9RWOcj3YqwxztKf2BcEN+5JT0fYijz7aQtbEx3M?=
- =?us-ascii?Q?Uw5XwY6C+y5WrxnPp86L2xg7iOHyxAy2qdxpn5cEg6QQt7wmwV/8eqw8AmDx?=
- =?us-ascii?Q?lP9tvi9JtWBwp8lXRcC7OcjHKaVH0Dwbv8ENUC9AoefSqtdW1SUPCK9tkQZ0?=
- =?us-ascii?Q?YkOmw5i7Yk9DtRR/zXVU4gxjNYT1ZtR4WvFJuvSYBQM+zoO+hz440S3VTSeG?=
- =?us-ascii?Q?hdZCSXj4E5vBW3lOLx/tWyPYDAHqBNd2h189oyDZSluG2Bl0fqfnNZ3Xotnp?=
- =?us-ascii?Q?6GtEa5gKnwW7yLOOf6FkOTixuqiIeC4NEM9cI1cfNTV1jFKB6O5EG+g8/T+3?=
- =?us-ascii?Q?jWo4LUFzuwfyA2vcGRHz/KT1NYA5mCGw0qbrWtCME+nIo7AttUE/wmRoPpYR?=
- =?us-ascii?Q?XJcmQCidh1lLTfFv6X20JkYMzrhJZ8KxSHv2QxK0fyIcFhg4MzDM+aDcADuZ?=
- =?us-ascii?Q?WvUCX6a3z5oMphlx+ZQbZ4a+DiYZ2eHWXO+/xnpoupatfOURs3TAk91KX0ch?=
- =?us-ascii?Q?Cfvrp0WhisQHnaSljMz5K1aBDyapxLjppG35fJ2s?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b8e56b94-da53-4df5-3685-08dd7cff3327
-X-MS-Exchange-CrossTenant-AuthSource: PAWPR04MB9910.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Apr 2025 15:56:07.6776
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qUx+3QLjmvy6RVN7tn8U+5DA7TqTUJVywzIK1qkYYe/PoBnD6tXZ20m0xt7mbwQO/Wsjn3cu8dRFogKsN33acw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9307
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250416-wmt-updates-v1-0-f9af689cdfc2@gmail.com>
 
-Updated the "mwifiex_cfg80211_sched_scan_start" function to assign
-"bgscan_cfg->repeat_count" based on "scan_plans->iterations"
-provided in the sched_scan settings instead of the default
-"MWIFIEX_BGSCAN_REPEAT_COUNT". This change ensures that the repeat
-count aligns with the iterations specified in the schedule scan
-plans.
+On Wed, Apr 16, 2025 at 12:21:25PM +0400, Alexey Charkov wrote:
+> Convert some more VT8500 related textual DT binding descriptions to
+> YAML schema, do minor dts correctness fixes, and add a DT for the
+> board I'm actually testing those on (VIA APC Rock).
+> 
+> While at that, also describe the PL310 L2 cache controller present on
+> WM8850/WM8950.
+> 
+> Note that this series is based upon Krzysztof's linux-dt/for-next
+> 
+> Signed-off-by: Alexey Charkov <alchark@gmail.com>
+> ---
+> Alexey Charkov (13):
+>       dt-bindings: i2c: i2c-wmt: Convert to YAML
+>       dt-bindings: interrupt-controller: via,vt8500-intc: Convert to YAML
+>       dt-bindings: mmc: vt8500-sdmmc: Convert to YAML
+>       dt-bindings: net: via-rhine: Convert to YAML
+>       dt-bindings: pwm: vt8500-pwm: Convert to YAML
+>       dt-bindings: timer: via,vt8500-timer: Convert to YAML
+>       dt-bindings: arm: vt8500: Add VIA APC Rock/Paper boards
+>       ARM: dts: vt8500: Add node address and reg in CPU nodes
+>       ARM: dts: vt8500: Move memory nodes to board dts and fix addr/size
+>       ARM: dts: vt8500: Use generic compatibles for EHCI
+>       ARM: dts: vt8500: Use generic node name for the SD/MMC controller
+>       ARM: dts: vt8500: Add VIA APC Rock/Paper board
+>       ARM: dts: vt8500: Add L2 cache controller on WM8850/WM8950
+> 
+>  Documentation/devicetree/bindings/arm/vt8500.yaml  | 19 ++++---
+>  Documentation/devicetree/bindings/i2c/i2c-wmt.txt  | 24 ---------
+>  .../devicetree/bindings/i2c/wm,wm8505-i2c.yaml     | 47 +++++++++++++++++
+>  .../interrupt-controller/via,vt8500-intc.txt       | 16 ------
+>  .../interrupt-controller/via,vt8500-intc.yaml      | 47 +++++++++++++++++
+>  .../devicetree/bindings/mmc/vt8500-sdmmc.txt       | 23 --------
+>  .../devicetree/bindings/mmc/wm,wm8505-sdhc.yaml    | 61 ++++++++++++++++++++++
+>  .../devicetree/bindings/net/via,vt8500-rhine.yaml  | 41 +++++++++++++++
+>  .../devicetree/bindings/net/via-rhine.txt          | 17 ------
+>  .../devicetree/bindings/pwm/via,vt8500-pwm.yaml    | 43 +++++++++++++++
+>  .../devicetree/bindings/pwm/vt8500-pwm.txt         | 18 -------
+>  .../devicetree/bindings/timer/via,vt8500-timer.txt | 15 ------
+>  .../bindings/timer/via,vt8500-timer.yaml           | 36 +++++++++++++
+>  MAINTAINERS                                        |  7 ++-
+>  arch/arm/boot/dts/vt8500/Makefile                  |  3 +-
+>  arch/arm/boot/dts/vt8500/vt8500-bv07.dts           |  5 ++
+>  arch/arm/boot/dts/vt8500/vt8500.dtsi               | 12 ++---
+>  arch/arm/boot/dts/vt8500/wm8505-ref.dts            |  5 ++
+>  arch/arm/boot/dts/vt8500/wm8505.dtsi               | 14 ++---
+>  arch/arm/boot/dts/vt8500/wm8650-mid.dts            |  5 ++
+>  arch/arm/boot/dts/vt8500/wm8650.dtsi               | 14 ++---
+>  arch/arm/boot/dts/vt8500/wm8750-apc8750.dts        |  5 ++
+>  arch/arm/boot/dts/vt8500/wm8750.dtsi               | 14 ++---
+>  arch/arm/boot/dts/vt8500/wm8850-w70v2.dts          |  5 ++
+>  arch/arm/boot/dts/vt8500/wm8850.dtsi               | 23 +++++---
+>  arch/arm/boot/dts/vt8500/wm8950-apc-rock.dts       | 21 ++++++++
+>  arch/arm/boot/dts/vt8500/wm8950.dtsi               | 11 ++++
+>  27 files changed, 386 insertions(+), 165 deletions(-)
+> ---
+> base-commit: 62db22c2af6ce306943df5de6f5198ea9bd3d47b
 
-Signed-off-by: Jeff Chen <jeff.chen_1@nxp.com>
----
- drivers/net/wireless/marvell/mwifiex/cfg80211.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I could not apply this series for testing. What base is this? It is 
+unknown to anything I have. Please use most recent rc1 unless you have 
+a dependency then use recent linux-next or a branch in it.
 
-diff --git a/drivers/net/wireless/marvell/mwifiex/cfg80211.c b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-index a099fdaafa45..be28c841c299 100644
---- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-+++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-@@ -2833,7 +2833,7 @@ mwifiex_cfg80211_sched_scan_start(struct wiphy *wiphy,
- 				request->scan_plans->interval :
- 				MWIFIEX_BGSCAN_INTERVAL;
- 
--	bgscan_cfg->repeat_count = MWIFIEX_BGSCAN_REPEAT_COUNT;
-+	bgscan_cfg->repeat_count = request->scan_plans->iterations;
- 	bgscan_cfg->report_condition = MWIFIEX_BGSCAN_SSID_MATCH |
- 				MWIFIEX_BGSCAN_WAIT_ALL_CHAN_DONE;
- 	bgscan_cfg->bss_type = MWIFIEX_BSS_MODE_INFRA;
-
-base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
--- 
-2.34.1
-
+Rob
 
