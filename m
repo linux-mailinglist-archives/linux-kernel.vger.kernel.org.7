@@ -1,240 +1,189 @@
-Return-Path: <linux-kernel+bounces-608111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6127CA90F27
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 01:06:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF7C7A90FC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 01:48:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8DD83A9512
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 23:06:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3B72444397
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 23:48:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044432475C3;
-	Wed, 16 Apr 2025 23:06:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4561924BC1E;
+	Wed, 16 Apr 2025 23:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="ntAWTydm"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="ZArVtwS2"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2135.outbound.protection.outlook.com [40.107.93.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B8221B9E1;
-	Wed, 16 Apr 2025 23:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744844791; cv=none; b=Mxk3cL5P7KVI9lpZvsBP/0leuIPC7tUd2v9MfxU9kOYsNYglSicBNvm9IXTjBNiW6d9kHGsVtQl54RUXS8uBZ7DwijFFUkkdq5H8zCMKofP6MBDbRAjeYu2khM2FRzyM5jWvMmNOiH4ZavJgPnFld63hoqVL9jwa5VCx9cu2jjU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744844791; c=relaxed/simple;
-	bh=yxkomdsLfy5unhX48embS1AoHidUAG1I51bZRO6evCc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Uu0AUHg5f4NFtviKAocEy5WmVZFVhxkCv84x+SsRCm+sLYu+5Ra8W+lBtW5baxpRc5/XU7uCMBHN6Ihqra9Lqu5Rh+J/2AiWMfhhQtcVjwdF0jaZfxSd7hOLJnOt3M/qLRL7yo8bKrj/X0MeiBD198dolbX5hwKrTK2QbqDciVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=ntAWTydm; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1744844774; x=1745449574; i=w_armin@gmx.de;
-	bh=yxkomdsLfy5unhX48embS1AoHidUAG1I51bZRO6evCc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=ntAWTydmUOcDuj0Gu8h1ZY1cch0YIqEeXGYFQRssLXg7GgrY7HaztyzafPWb+7o1
-	 60ybVHsFb1/c9Dk0/cdNVEz8OfiFWYJgC4bcJAhuygw9L7CumnWOJbpq5KcjTLSKe
-	 1GVaEK5/E7dtvWHsN4GruNrz4AmdDixf40l49mrmpr/RUsKIsMA0AaP4y1PSDyc/t
-	 xeaA821Yh1nS4pzMjTbm6dwTlP3uDofBmyAUThMmsTSQioOtKi7rXQ0WwfEd2SQxU
-	 7/FSFUaQXnqBi+HwC078UB+NWnAETjXgimW4fot616UwtajQnz3sYYQJTvSW73P42
-	 QYRVUu41u8Rhc+6I2g==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.69] ([87.177.78.219]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1M5fIW-1uCKRY1wXy-009VKw; Thu, 17
- Apr 2025 01:06:14 +0200
-Message-ID: <951d3144-1141-4cb8-b86a-1ade764c6e79@gmx.de>
-Date: Thu, 17 Apr 2025 01:06:12 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29BE924BC09
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 23:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.135
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744847293; cv=fail; b=pAnGcIPGv4CfID3+lshnyCZI3UmV8/3QkEK9Q2bJq55j9EvekpDMlkFsA6XnHjNb4d9eZMJN3tX7i6UU6aALQAPOGD5Qwr0S9rbiEhNwNLYo9C7iSVQ/rjftegEDoJYlvV7PzMuBPUNkHcTEvuDqCfmh4/GQyB5Vklv4aNaWJck=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744847293; c=relaxed/simple;
+	bh=iHGJbUy2lPX4RaMCY8H9ce0snTS7ckrtm3R+QC+MhAM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 Content-Type:MIME-Version; b=HTf7mfEQXROXRUpFBjE6qph7f93IqXxxMlBKQl3vutBZSQQYJA4bL2WBfdls5R4hzl91CC5AOPhzBz8z6NDfR9LOq0x7hil/pHCmzCx006gAfatzyAZRxnMON2M9FDHBc740kPm5VQietfLX7uEj1NkgfOyT0My/GlIdevSeaPI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=ZArVtwS2; arc=fail smtp.client-ip=40.107.93.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aqS9g42YkMJzewpCTXjQpFvA+lYW9UP5r5dA0J05IAd/zUTUVLxYdYSCMI9pf7E2WfjDx/R1beQNq0K0CiKGhsq98RYlg7gekf/asrrYQReWQEgv86FPSd5vOkHueRTY3cHJ8LglbCFobBbB0Ku7OC51v1WMa1a4o/F1iGD640d4P4Rgpx6V96EIbrj87oJ+b1locTSV4d9f96/sNcE1D+6c5pTSMNCGMUYmlhLVumBBEByhVUsBtkQJaJ7xYvxJWbAQFza6gihLNwxQLVaqYn7Y8XoBPHRoCGypw+fgLok7Nj4WCIxIRE1EwMfz5ywlMlplTTzlqjhQZ/6eZ8J+Dw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=J+l3Lvykqt+wLAVH8LpyeonpAsUGR1w9iGz5bP4jrFw=;
+ b=caah8ftErmAnHxyM7OMg2GGFziPx+j4kVfU1lGiOHf6xeU82xwZLCM6P3e399Ln/0UVAWrk1so+0C4rkVuBpC29FqLH1viYJviv7fQFs22HMbpA5F+qpf3X+OxPN4EY0JLT+K0QHynRSzUuu7cFX7lEfBYzD8zxBOzZChIYNNoLcXsaNpE2SwO3Klo2vZc0ADf1+liZYGtS1RcUzUsntz7xcecduaXULcs10RHalnf/NN5to7YuRD+EbyWxfUjyFRM+Nuhsj/mnNyQczdTkyXiaNh4+Kn/fhH1Igq5w5OtrQ4GEA4mWFbuQC+N3zvPuP6Nsy5rUisuYiDenf46YVkw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=J+l3Lvykqt+wLAVH8LpyeonpAsUGR1w9iGz5bP4jrFw=;
+ b=ZArVtwS2tOlW5/bVYc8iXm+ZMoaiNcvEdsYL7YaUHQ6jqp+gFRd8HLL6eynMPPmFBx38xHZMBdRSMUK6lZn1ZLZJCt1K6d7pCbI067GXW3P0M7KSvF4ezgDVUxxbIp0SSK8f+t96X2vhHsyamDSzVtqAHG1f/Mvezl4z8lr0sus=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from LV2PR01MB7792.prod.exchangelabs.com (2603:10b6:408:14f::10) by
+ CO1PR01MB9009.prod.exchangelabs.com (2603:10b6:303:275::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8655.22; Wed, 16 Apr 2025 23:48:08 +0000
+Received: from LV2PR01MB7792.prod.exchangelabs.com
+ ([fe80::2349:ebe6:2948:adb9]) by LV2PR01MB7792.prod.exchangelabs.com
+ ([fe80::2349:ebe6:2948:adb9%5]) with mapi id 15.20.8655.022; Wed, 16 Apr 2025
+ 23:48:08 +0000
+From: D Scott Phillips <scott@os.amperecomputing.com>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Oliver Upton <oliver.upton@linux.dev>, Catalin Marinas
+ <catalin.marinas@arm.com>, James Clark <james.clark@linaro.org>, James
+ Morse <james.morse@arm.com>, Joey Gouly <joey.gouly@arm.com>, Kevin
+ Brodsky <kevin.brodsky@arm.com>, Mark Brown <broonie@kernel.org>, Mark
+ Rutland <mark.rutland@arm.com>, "Rob Herring
+ (Arm)" <robh@kernel.org>, Shameer Kolothum
+ <shameerali.kolothum.thodi@huawei.com>, Shiqi Liu <shiqiliu@hust.edu.cn>,
+ Will Deacon <will@kernel.org>, Yicong Yang <yangyicong@hisilicon.com>,
+ kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, open list
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] arm64: errata: Work around AmpereOne's erratum
+ AC04_CPU_23
+In-Reply-To: <86y0w0k2c7.wl-maz@kernel.org>
+References: <20250415154711.1698544-1-scott@os.amperecomputing.com>
+ <20250415154711.1698544-2-scott@os.amperecomputing.com>
+ <Z_6SKjdvje1Lpeo3@linux.dev>
+ <864iypgjjc.fsf@scott-ph-mail.amperecomputing.com>
+ <86y0w0k2c7.wl-maz@kernel.org>
+Date: Wed, 16 Apr 2025 16:06:36 -0700
+Message-ID: <86mscfyadf.fsf@scott-ph-mail.amperecomputing.com>
+Content-Type: text/plain
+X-ClientProxiedBy: CY5PR15CA0247.namprd15.prod.outlook.com
+ (2603:10b6:930:66::22) To LV2PR01MB7792.prod.exchangelabs.com
+ (2603:10b6:408:14f::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] Input: Add a helper for reporting a screen lock key
- sequence
-To: Mario Limonciello <superm1@kernel.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Hans de Goede <hdegoede@redhat.com>,
- "open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..."
- <linux-input@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
- "open list:AMD PMF DRIVER" <platform-driver-x86@vger.kernel.org>,
- Mario Limonciello <mario.limonciello@amd.com>
-References: <20250407152705.1222469-1-superm1@kernel.org>
- <7bb43fb5-83dd-4531-b835-77a8e937f54b@gmx.de>
- <cebf59f2-5d81-41f9-8c4f-d51fcb514f86@kernel.org>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <cebf59f2-5d81-41f9-8c4f-d51fcb514f86@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ZQC0MlBfymIz4z1ZYVea5zO1/0zWJJTHFBDutn2aEGVRhZ3dUR/
- Jcunl0yGcIaVFw9YuXpdciahr3mMhjqG7+UGqAAd+tYq9bVTJmmhnqa5lxypEJpXPi1nbKt
- 3BefPazVXBy+yzBzBuk+WYwrfXDFw/1OzPyM3CD5/r5FXDN4Sme8+S9KnTLeEXVqmn2Wxct
- TSvZMcn+ymZWy4mbnTNyA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:mhTVUpXpOxk=;TWriY19oXIz027eHrhpcvqYeDCd
- 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
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV2PR01MB7792:EE_|CO1PR01MB9009:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6f85bf48-0a32-4d9e-fb29-08dd7d4123e1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|366016|7416014|376014|1800799024|38350700014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?rX5nV4n/6KLR85X7GemJVoookAk0q6c5NSg7sl/Npc8QjlbV30Gmyc3KRZjX?=
+ =?us-ascii?Q?ONcTwC9NLRlc2rOTfcg9/KBlu3s4hWVGu8uGoPEAebbcpqVvg0f0MBbijzAZ?=
+ =?us-ascii?Q?CmK0g16I4XVg98/ZfvU7QVBSRDIJ8xU1qJlela9EHk7jueJKSP1AH5IHaSZz?=
+ =?us-ascii?Q?dv00Da7DoB3KCoqAm4wAj9ehFy1E7luGZCySpS01ii8gIqlAIE3KpJ+omowd?=
+ =?us-ascii?Q?bNeTQx1+/HlYlgQg/lc2WE4QIomwu+qrm/kXZmoE2DWSyi0EPOcB/yBnQjHS?=
+ =?us-ascii?Q?BPfrFxWH34pGkOz29dgO0ypAcnVPJlgLxe9TaIVVY6Syxu5ZRMEO5Kox2Vci?=
+ =?us-ascii?Q?sWxTjdz/CwSUDYLiSx9Dk0nPN5WK7+1FDSf7FTR8N7XMiHq+oUfBSMUD2TjV?=
+ =?us-ascii?Q?t97O1yFBnHzcnN5xEbDauxnJbmrCpDqVWeofW5j8vHjesef96CZUdQsNM/r8?=
+ =?us-ascii?Q?7Qs1x2gmJtiKDQCEv7FfShLIQunN6J1MIGJEqX1YEggAS1RkOphe7cnD0DtD?=
+ =?us-ascii?Q?cpEfPsMBahqVQG7G1tN+7+lZiqys4hjG2BLxfWXQUiqgCNJJF8jrEH+e86JS?=
+ =?us-ascii?Q?Dqpm6b8Yq77tYBzBNTTrE2gaDDwqyIc/MAif7VuCT8BLbpMyh/Je+TZt3Af+?=
+ =?us-ascii?Q?tbGGh2AZu+q6O3xx7O2+C/+Vgdsf2yjUtLgI5qU+ShMhjSzpGf4fDUvkGAZ2?=
+ =?us-ascii?Q?9S2gcNJhm3UF7n3Aq1QSXy/mAK0rebdgKvgAJ2QvXkvO/DMJ96ghXsgrlWu4?=
+ =?us-ascii?Q?SG/Obz1pu8+f2DL0s3CCcNf2D4OPA5WBXK+Quw/on0E0TgZFHhdL8regCBrF?=
+ =?us-ascii?Q?I2Vm2EE8S7h7vTAOvpDP7Gk71bsqrwuCdeCVgvZZtOPPYIzVV050L0bG9lJM?=
+ =?us-ascii?Q?R/c1Yg63g5Eqz+NojZJOyLgdSXvnkAMLZy27sqW7YeZivAOd2oVnt8lcInKW?=
+ =?us-ascii?Q?v2zpgx2ZLdzFd6nIoL3gCvgNc6ZJ+CAW+71BL6075bsuWeMXkwYE50O38UPH?=
+ =?us-ascii?Q?XjYPyySL2PX/y62wnCZ8vMGYTL+3BBP6aqtoIDYV2oxovGi25aFyWl4BfUlo?=
+ =?us-ascii?Q?9j/wIOQkn/kjoEBbDsaurjXmEfRVBS/XZdvQCAxSKfWRnI4cPgAhl1zxrul0?=
+ =?us-ascii?Q?hZxTzZVsQ9TY576eWN5oobly58v4zilTOqGm0RFuFdOfGA8Es3LosAJ15D3e?=
+ =?us-ascii?Q?eJsqf1Rim5y0Ms/aKxwGA6kMjt8d3JKzUeIxFk7AVvndsbUhptwTjXt23qVm?=
+ =?us-ascii?Q?uZwnPVNyC7N+yq98LvuVH8Ez+UVlqT89f10LZxaZ/PRueUthWJWevFVEQX0n?=
+ =?us-ascii?Q?M+IfIQZpHUvhvzzR6D9voxGDK1y79NZg21PYXaQemE1AHz0LHVCaaK07LJAS?=
+ =?us-ascii?Q?JQPmAtKXapEc/JZflP0nTxYnqKjStIxA4Uzism8svyT8Gowmp0/r0hBy8zVx?=
+ =?us-ascii?Q?ZC8k5Vc0cYFdpbW1yvB4POWNkRut1Y3oGrdn3VvUyb5fZjqDDV4ypw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR01MB7792.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(7416014)(376014)(1800799024)(38350700014)(7053199007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?QzyzC7y3ku4V8zyHrsiJAr5A7Dn+p0+yVw7Gd9h8vuaAninIHu9ohyF+wtf2?=
+ =?us-ascii?Q?Uxtcm87ON+tQ9eXDyFbrDU4NQpkCgvwRg4T7EDC6zisu2HD/xNcyAX5Vth0P?=
+ =?us-ascii?Q?0guu3dQmgkjBh24gChhyTr1WtP5RUkwf5Sr9dwss01FpDlbUOMsXk1iursTd?=
+ =?us-ascii?Q?cwgjxf7GYKPgsFqL2dcGdWXUl7LXsbJO5NwtpNxKHpZGQ7dpZfRGiZEfACan?=
+ =?us-ascii?Q?mVEGgKJxY46TTstniQt6hcb+iAAPp7jlevx0wsl4N5HvFUNDCDew8SWfXtHX?=
+ =?us-ascii?Q?OaQ3qPSwL3E47IuyQY/GYM6C5CY1maHXrYSI8h6r1nTvSMSSGLa07SqGGt3s?=
+ =?us-ascii?Q?KamsVWljSDKmB9t8Kx+bIMTQBy7MbgxohYZCWS2A9U2weznrfOkHOqG4SxBI?=
+ =?us-ascii?Q?xP7G26Ttyz75Kb3uzVF/cPI5LsDcBjc4wfb20cTRGdocsWljafwOMvYdlE83?=
+ =?us-ascii?Q?KKf4dANbSQjS3rF/OTJvQKET0cYFvuggZHdFKv9CYpEVzB5BIH2YOoXGnjzi?=
+ =?us-ascii?Q?aH5qZFyiXllH6S+iWnoO4ByaQhGBtyALOy3IS4/KEt63/mTwNGMqZmp4LKom?=
+ =?us-ascii?Q?6qWeEVx8CPH9ZbE64PlkRRNmBp+TTErDvAoAoJ1cmE0HvGnZ0uU6fSGU/nT/?=
+ =?us-ascii?Q?IIqiGT0kofYiKWR/V1c9J3pUMI13cYvhOyHlUi1VBvprCzlmEHCczgtbBL4z?=
+ =?us-ascii?Q?JBgrKnmh4FMX9xEoidKXXKWYdEeUT+aj/cwWyvdJlAC0WJvGGoCigVkURMgr?=
+ =?us-ascii?Q?dNgcf+lhZn7x3ojb/Q1bmdki/oRRAqhkNtENEXv30jlkqQ3+H/V6YSty8vCC?=
+ =?us-ascii?Q?Y3IHjurfqNe3jaRPVrfolneyGhX6Vog5CDg+Newj+Q26bwrHhuCUewbtY2iu?=
+ =?us-ascii?Q?BoAqZhxAJ6HKFJ7qERevcuhVGJvNlFh/sYrxFz5EzVSDePTO6wSTkv2yS2z2?=
+ =?us-ascii?Q?JTJCJ2dkPooEDGl9nhgiiKnB04dkDzGK8qHg3bIqveum9bcWtt0pAQJKaCt0?=
+ =?us-ascii?Q?AObuae+6Wf+p7EAH6v5ZzCC9hbSzG8kqvSK37iSqsdkCc8YVmq51DTdyFVzJ?=
+ =?us-ascii?Q?VK8v9laZtcn4Lgn8rGYouVm4m9OGAsdtY3/o2Q65RA/yDjvulrI6I49IzvEi?=
+ =?us-ascii?Q?8IZcX9B7gSWLhwCjL9kdkwkx1yP3IkOQNU8MLqpuoVnAhKdlR7iIogelFMaw?=
+ =?us-ascii?Q?zKTN/X5AFwsUqPl0IDYLYBQz4ZHyIi7L5uO694raM8/J6qaf5qrEMgKQEquq?=
+ =?us-ascii?Q?gJcIEbRuTuahrIAIYZF8XjP9gzIHRJ2IDbl85KeymuaK9T08jaEAazGerdjj?=
+ =?us-ascii?Q?g2lw7iH2RBsPJvVGKteVRTwv1prK51CajtevTXsaZiyVoJ3vFKcpoQQOcmtf?=
+ =?us-ascii?Q?abYCy/GDa8m1x+6fg6etoUCbSfP7o3CkA5mLjgnLio75mnoxUCelYMEO42OQ?=
+ =?us-ascii?Q?WrY2WA5eo9rA7ImR0Rd/yWFzkPyG17xgEGhCFGGZuRpHaagdfX5aILT64+nZ?=
+ =?us-ascii?Q?umGik5MaA+RtE/DyPadNUDYng/rlsX/xnu+ZyixxdLtNoqalE3ZNpxOd/HC3?=
+ =?us-ascii?Q?9PGF/SkvUnPTvS8ofCXPeyHkdcDfagu0ERhP4egqPagexFSckGtfTuvWBxkM?=
+ =?us-ascii?Q?TLZUUPKX40KKDKSuaN84aN8=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6f85bf48-0a32-4d9e-fb29-08dd7d4123e1
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR01MB7792.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Apr 2025 23:48:08.6168
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Mq/aEcpkm4Y7DBtLqOS5DSc/bNpFoR55T2bAkO1trkLJUnoRYENrRWoIjRI/Y+tc/1F8WcTAzexwn6meKyCNKYcQnOosY9CIyiwhws45y6u5QCQA28vC8TaabI3RoP1P
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR01MB9009
 
-Am 16.04.25 um 22:43 schrieb Mario Limonciello:
+Marc Zyngier <maz@kernel.org> writes:
 
-> On 4/16/2025 3:39 PM, Armin Wolf wrote:
->> Am 07.04.25 um 17:27 schrieb Mario Limonciello:
->>
->>> From: Mario Limonciello <mario.limonciello@amd.com>
->>>
->>> In the PC industry KEY_SCREENLOCK isn't used as frequently as it used
->>> to be. Modern versions of Windows [1], GNOME and KDE support "META"=20
->>> + "L"
->>> to lock the screen. Modern hardware [2] also sends this sequence of
->>> events for keys with a silkscreen for screen lock.
->>>
->>> Introduced a helper input_report_lock_sequence() for drivers to utiliz=
-e
->>> if they want to send this sequence.
->>>
->>> Link:=20
->>> https://support.microsoft.com/en-us/windows/keyboard-shortcuts-=20
->>> in-windows-dcc61a57-8ff0-cffe-9796-cb9706c75eec [1]
->>> Link: https://www.logitech.com/en-us/shop/p/k860-split-=20
->>> ergonomic.920-009166 [2]
->>> Suggested-by: Armin Wolf <W_Armin@gmx.de>
->>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
->>> ---
->>> =C2=A0 drivers/input/input.c | 20 ++++++++++++++++++++
->>> =C2=A0 include/linux/input.h |=C2=A0 2 ++
->>> =C2=A0 2 files changed, 22 insertions(+)
->>>
->>> diff --git a/drivers/input/input.c b/drivers/input/input.c
->>> index ec4346f20efdd..dfeace85c4710 100644
->>> --- a/drivers/input/input.c
->>> +++ b/drivers/input/input.c
->>> @@ -508,6 +508,26 @@ void input_copy_abs(struct input_dev *dst,=20
->>> unsigned int dst_axis,
->>> =C2=A0 }
->>> =C2=A0 EXPORT_SYMBOL(input_copy_abs);
->>> +/**
->>> + * input_report_lock_sequence - Report key combination to lock the=20
->>> screen
->>> + * @dev: input device
->>> + *
->>> + * Key combination used in the PC industry since Windows 7 for=20
->>> locking display
->>> + * is META + L. This is also used in GNOME and KDE by default.
->>> + * See https://support.microsoft.com/en-us/windows/keyboard-=20
->>> shortcuts-in-windows-dcc61a57-8ff0-cffe-9796-cb9706c75eec
->>> + */
->>
->> Hi,
->>
->> maybe it would make more sense to have the input subsystem=20
->> transparently translate between KEY_SCREENLOCK and this
->> special screen lock sequence. This way there would be no room for=20
->> regressions as people could enable/disable this
->> behavior via Kconfig.
+> On Tue, 15 Apr 2025 23:13:43 +0100,
+> D Scott Phillips <scott@os.amperecomputing.com> wrote:
+>> 
+>> Marc Zyngier <maz@kernel.org> writes:
+>> 
+>> > On Tue, 15 Apr 2025 16:47:11 +0100,
+>> > If the write to HCR_EL2 can corrupt translations, what guarantees that
+>> > such write placed on a page boundary (therefore requiring another TLB
+>> > lookup to continue in sequence) will be able to get to the ISB?
+>> 
+>> Hi Marc, I understand now from the core team that an ISB on another page
+>> will be ok as the problem is on the data side only.
 >
-> Wouldn't all drivers that emit KEY_SCREENLOCK still need to be=20
-> modified to have support to emit KEY_LEFTMETA and KEY_L?
->
-> Wouldn't that mean conditional code in every single driver based on=20
-> the Kconfig?
->
-> Is that worth it?
->
-This translation code could live inside the input code itself. This way al=
-l drivers would benefit from it.
+> Are you guaranteed that a younger data access can't be hoisted up and
+> affect things similarly? I don't see anything that would prevent this.
 
-Thanks,
-Armin Wolf
-
->>
->> Thanks,
->> Armin Wolf
->>
->>> +void input_report_lock_sequence(struct input_dev *dev)
->>> +{
->>> +=C2=A0=C2=A0=C2=A0 input_report_key(dev, KEY_LEFTMETA, 1);
->>> +=C2=A0=C2=A0=C2=A0 input_report_key(dev, KEY_L, 1);
->>> +=C2=A0=C2=A0=C2=A0 input_sync(dev);
->>> +=C2=A0=C2=A0=C2=A0 input_report_key(dev, KEY_L, 0);
->>> +=C2=A0=C2=A0=C2=A0 input_sync(dev);
->>> +=C2=A0=C2=A0=C2=A0 input_report_key(dev, KEY_LEFTMETA, 0);
->>> +=C2=A0=C2=A0=C2=A0 input_sync(dev);
->>> +}
->>> +EXPORT_SYMBOL(input_report_lock_sequence);
->>> +
->>> =C2=A0 /**
->>> =C2=A0=C2=A0 * input_grab_device - grabs device for exclusive use
->>> =C2=A0=C2=A0 * @handle: input handle that wants to own the device
->>> diff --git a/include/linux/input.h b/include/linux/input.h
->>> index 7d7cb0593a63e..16f7bef12f1c1 100644
->>> --- a/include/linux/input.h
->>> +++ b/include/linux/input.h
->>> @@ -492,6 +492,8 @@ void input_set_abs_params(struct input_dev *dev,=
-=20
->>> unsigned int axis,
->>> =C2=A0 void input_copy_abs(struct input_dev *dst, unsigned int dst_axi=
-s,
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 const struct input_dev *src, unsigned int src_axis);
->>> +void input_report_lock_sequence(struct input_dev *dev);
->>> +
->>> =C2=A0 #define INPUT_GENERATE_ABS_ACCESSORS(_suffix, _item)=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 \
->>> =C2=A0 static inline int input_abs_get_##_suffix(struct input_dev *dev=
-,=C2=A0=C2=A0=C2=A0 \
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsi=
-gned int axis)=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 \
->
+Yes that's my understanding, that the younger instructions
+(mis-speculated or not) can't have their window for corruption of a
+translation line up with the store to HCR due to the ISB.
 
