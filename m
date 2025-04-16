@@ -1,154 +1,162 @@
-Return-Path: <linux-kernel+bounces-607632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C60FA908C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:26:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6042A908CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:27:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B69717B525
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:26:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AF6B188419C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:27:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A4E2211499;
-	Wed, 16 Apr 2025 16:26:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A229B213239;
+	Wed, 16 Apr 2025 16:26:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="uVkYkYng"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XAVkrKNC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27241F418B;
-	Wed, 16 Apr 2025 16:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE1EB212D69;
+	Wed, 16 Apr 2025 16:26:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744820772; cv=none; b=pI5vtRsie3KU5/V3sq7qnsw8JHQW1kKwxRu/2KfYF1OHrfnbC64p9MuhyctZVvp3Tk+aUIsfPcypXxxWWu+QAOA/5IFgL4y7aQWTbmyjxSP5cpvp9iMHDPwRGFH7XTrXX/l5Ha7HlC7PG7xPhpNw1ahOfwgQ+nsBSn5Leon5luA=
+	t=1744820810; cv=none; b=I+EsxZvDU7tHaFY5bHgDWYZEZYCz9e9GrgcHrshSxlq4/iyQoMDdFZKQS2pOj5WtBAmA0lbPQyT/zzU5AB5vX29wrOCr2lvLYEBWwNhAp9hNlGxL16rMkJ/GHs5QUTE9KLJ4BDjIdoPjsLINrjt/Ema9Hi1f6j96PBZ2ScJHyNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744820772; c=relaxed/simple;
-	bh=oIk5RB2Z7VODW71DCnyv/1I2G8sqUu3r8RnvySXZ2Qo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gep0ewI/5BFb9GWjJwI/JxTp34wxF/pryBPeO+C6veHMMVZ3YuWM+UMNl7TU7wuR6YbEwNLpYeGS33GRrYxkYGrIZxWHkfB2IUZphHJ26kpMEBJ4eybEZH1JridqIg3x0fszaCHZjen0OsQRLGDC12cbXo5EQtcw9JDUEa3Gx8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=uVkYkYng; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4Zd5xN6PCQz9skp;
-	Wed, 16 Apr 2025 18:26:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1744820760; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Daumu/GKB63UxCCk17/VedpOd+PiGaKu/v1uLufAehk=;
-	b=uVkYkYngJx/tXivKPfhecZqFy1cisWZu6g9GQRE3/sKk5/23S4MynAGdPf4XpoqsVqYjsv
-	+MriMlPQMeqND32HHTdMrLPDkiyE/9luMTXCqwpYQ/L1P6fbFD+TR73lFijlFAnIHjpqRV
-	VeWYZy4OzXkf77YQ/kDQllC09nnfYPKqo5rD9BEBEzpH5ZNZ84blduMYP2G0XNe/b5ZT2s
-	cQ3Kzhdmf/F20xBnQKGw6YjWrcQ4fGJ0A+cZ1U+fwIw2xF0ShqHDY1iKQ8d9wWMwPDDh4B
-	cAPO4xJgqu3V2oPnGzD58GBI34e7wk02qwU2UknxYeKn0m1NnB9XEdv3yVCgBA==
-Message-ID: <d035a74a2c6d53721df8d68fd75f439feb8da4a7.camel@mailbox.org>
-Subject: Re: [PATCH 02/31] ASoC: intel/avs: Use pure devres PCI
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Philipp Stanner
-	 <phasta@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>, Krzysztof
- =?UTF-8?Q?Wilczy=C5=84ski?=
-	 <kwilczynski@kernel.org>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Jaya
- Kumar <jayakumar.alsa@gmail.com>, Clemens Ladisch <clemens@ladisch.de>,
- Cezary Rojewski <cezary.rojewski@intel.com>, Liam Girdwood
- <liam.r.girdwood@linux.intel.com>, Peter Ujfalusi
- <peter.ujfalusi@linux.intel.com>, Bard Liao
- <yung-chuan.liao@linux.intel.com>, Ranjani Sridharan
- <ranjani.sridharan@linux.intel.com>, Kai Vehmanen
- <kai.vehmanen@linux.intel.com>,  Pierre-Louis Bossart
- <pierre-louis.bossart@linux.dev>, Mark Brown <broonie@kernel.org>, Daniel
- Baluta <daniel.baluta@nxp.com>,  Colin Ian King <colin.i.king@gmail.com>,
- David Rhodes <drhodes@opensource.cirrus.com>, liujing
- <liujing@cmss.chinamobile.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Andres Urian Florez <andres.emb.sys@gmail.com>, Oswald Buddenhagen
- <oswald.buddenhagen@gmx.de>, Thorsten Blum <thorsten.blum@linux.dev>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
- Amadeusz =?UTF-8?Q?S=C5=82awi=C5=84ski?=
- <amadeuszx.slawinski@linux.intel.com>, Charles Keepax
- <ckeepax@opensource.cirrus.com>, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, sound-open-firmware@alsa-project.org
-Date: Wed, 16 Apr 2025 18:25:52 +0200
-In-Reply-To: <Z__PINxPVW5QrpgH@smile.fi.intel.com>
-References: <20250416131241.107903-1-phasta@kernel.org>
-	 <20250416131241.107903-3-phasta@kernel.org>
-	 <Z__PINxPVW5QrpgH@smile.fi.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1744820810; c=relaxed/simple;
+	bh=RYGOuCC7qfaii7HzSw7mAkhXbeZOScoiAgqxLmoftKM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kL3EUtCSgokgVYT5lZQ9JyElhSktr1AVKO70yKZQjrv0dHkt5ijpRabiZQIjalsSnbIwS4f+Uy2FfeMtRV4MUsg1FI09umD0nC5IvBl1OvfIzPDK6W7GpdmkmLhNeE0LI5xnTnqkJdpMEMfotQVWzfXVR+LLWmyqJ8C63/9gOeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XAVkrKNC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DA67C4CEED;
+	Wed, 16 Apr 2025 16:26:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744820809;
+	bh=RYGOuCC7qfaii7HzSw7mAkhXbeZOScoiAgqxLmoftKM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XAVkrKNCwP2vYfhZWMcATIhRkbwS1dCVXvWCnD05O1ekkxGPTF8zXweoSQBwFjexo
+	 qjf9Wwp14Jt1OUMD+GtBi6kO3Crcp8dkvF7c3SNxbvb4M+ZW0BuePMWQZH6rGvKBej
+	 wLZCk2/LkAtfYfymKuipf04MyynDKNmNI5P+PDAJm0AIVSEBssXElV3JQBGuKSrOrG
+	 l+2MRXGhhvi05MK7a5oiDkxZZicr4oMa5lXqCKCa1xAHWOdVScStdjTdUTIUuya5hr
+	 fkb3cekkDXV0N2cT0o2zqYso0b4v1TZrfy9AdDgk4B6ZiYafukL57X9jXZ8XNesnAz
+	 YSGeXiT6ov/yQ==
+Date: Wed, 16 Apr 2025 09:26:49 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: brauner@kernel.org, hch@lst.de, viro@zeniv.linux.org.uk, jack@suse.cz,
+	cem@kernel.org, linux-fsdevel@vger.kernel.org, dchinner@redhat.com,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
+	martin.petersen@oracle.com, linux-ext4@vger.kernel.org,
+	linux-block@vger.kernel.org, catherine.hoang@oracle.com,
+	linux-api@vger.kernel.org
+Subject: Re: [PATCH v7.1 14/14] xfs: allow sysadmins to specify a maximum
+ atomic write limit at mount time
+Message-ID: <20250416162649.GJ25675@frogsfrogsfrogs>
+References: <20250415121425.4146847-1-john.g.garry@oracle.com>
+ <20250415121425.4146847-15-john.g.garry@oracle.com>
+ <20250415223625.GV25675@frogsfrogsfrogs>
+ <81f0fe3e-4c1a-497d-b20e-1f8d182ed208@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-ID: 576a6f1260635a5ab7d
-X-MBO-RS-META: a9oh6gij3kdzcsuoa8utnddcwngjne4d
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <81f0fe3e-4c1a-497d-b20e-1f8d182ed208@oracle.com>
 
-+Cc Bjorn, Krzysztof
+On Wed, Apr 16, 2025 at 11:08:25AM +0100, John Garry wrote:
+> On 15/04/2025 23:36, Darrick J. Wong wrote:
+> 
+> Thanks for this, but it still seems to be problematic for me.
+> 
+> In my test, I have agsize=22400, and when I attempt to mount with
+> atomic_write_max=8M, it passes when it shouldn't. It should not because
+> max_pow_of_two_factor(22400) = 128, and 8MB > 128 FSB.
+> 
+> How about these addition checks:
+> 
+> > +
+> > +	if (new_max_bytes) {
+> > +		xfs_extlen_t	max_write_fsbs =
+> > +			rounddown_pow_of_two(XFS_B_TO_FSB(mp, MAX_RW_COUNT));
+> > +		xfs_extlen_t	max_group_fsbs =
+> > +			max(mp->m_groups[XG_TYPE_AG].blocks,
+> > +			    mp->m_groups[XG_TYPE_RTG].blocks);
+> > +
+> > +		ASSERT(max_write_fsbs <= U32_MAX);
+> 
+> 		if (!is_power_of_2(new_max_bytes)) {
+> 			xfs_warn(mp,
+>  "max atomic write size of %llu bytes is not a power-of-2",
+> 					new_max_bytes);
+> 			return -EINVAL;
+> 		}
 
-On Wed, 2025-04-16 at 18:39 +0300, Andy Shevchenko wrote:
-> On Wed, Apr 16, 2025 at 03:12:12PM +0200, Philipp Stanner wrote:
-> > pci_request_regions() is a hybrid function which becomes managed if
-> > pcim_enable_device() was called before. This hybrid nature is
-> > deprecated
-> > and should not be used anymore.
-> >=20
-> > Replace pci_request_regions() with the always-managed function
-> > pcim_request_all_regions().
-> >=20
-> > Remove the goto jump to pci_release_regions(), since pcim_
-> > functions
-> > clean up automatically.
->=20
-> ...
->=20
-> > =C2=A0	bus->remap_addr =3D pci_ioremap_bar(pci, 0);
-> > =C2=A0	if (!bus->remap_addr) {
-> > =C2=A0		dev_err(bus->dev, "ioremap error\n");
-> > -		ret =3D -ENXIO;
-> > -		goto err_remap_bar0;
-> > +		return -ENXIO;
->=20
-> Here and everywhere else these can now be converted to
-> dev_err_probe().
-> Are you planning to do so?
+Long-term I'm not convinced that we really need to have all these power
+of two checks because the software fallback can remap just about
+anything, but for now I see no harm in doing this because
+generic_atomic_write_valid enforces that property on the IO length.
 
-I want to do what's necessary to get PCI in better shape, since that's
-what the GPUs and accelerators we / I care about use :)
+> > +
+> > +		if (new_max_bytes % mp->m_sb.sb_blocksize > 0) {
+> > +			xfs_warn(mp,
+> > + "max atomic write size of %llu bytes not aligned with fsblock",
+> > +					new_max_bytes);
+> > +			return -EINVAL;
+> > +		}
+> > +
+> > +		if (new_max_fsbs > max_write_fsbs) {
+> > +			xfs_warn(mp,
+> > + "max atomic write size of %lluk cannot be larger than max write size %lluk",
+> > +					new_max_bytes >> 10,
+> > +					XFS_FSB_TO_B(mp, max_write_fsbs) >> 10);
+> > +			return -EINVAL;
+> > +		}
+> > +
+> > +		if (new_max_fsbs > max_group_fsbs) {
+> > +			xfs_warn(mp,
+> > + "max atomic write size of %lluk cannot be larger than allocation group size %lluk",
+> > +					new_max_bytes >> 10,
+> > +					XFS_FSB_TO_B(mp, max_group_fsbs) >> 10);
+> > +			return -EINVAL;
+> > +		}
+> > +	}
+> > +
+> 
+> 	if (new_max_fsbs > max_pow_of_two_factor(max_group_fsbs)) {
+> 		xfs_warn(mp,
+>  "max atomic write size of %lluk not aligned with allocation group size
+> %lluk",
+> 				new_max_bytes >> 10,
+> 				XFS_FSB_TO_B(mp, max_group_fsbs) >> 10);
+> 		return -EINVAL;
 
-IOW, I want pci_request_regions() removed from here.
+I think I'd rather clean up these bits:
 
->=20
-> ...
->=20
-> > =C2=A0err_remap_bar4:
-> > =C2=A0	iounmap(bus->remap_addr);
->=20
-> This looks weird if the driver already is using pcim_enable_device().
-> Doesn't this look to you as an existing bug?
+	if (mp->m_ddev_targp->bt_bdev_awu_min > 0)
+		max_agsize = max_pow_of_two_factor(mp->m_sb.sb_agblocks);
+	else
+		max_agsize = mp->m_ag_max_usable;
 
-I looked briefly at it and it doesn't appear like an obvious bug to me
-because the drivers uses the (very old? deprecated?) pci_ioremap_bar().
+and
 
-In any case the driver doesn't set up any devres callback, so has to
-iounmap() manually.
+	if (mp->m_rtdev_targp && mp->m_rtdev_targp->bt_bdev_awu_min > 0)
+		max_rgsize = max_pow_of_two_factor(rgs->blocks);
+	else
+		max_rgsize = rgs->blocks;
 
-@Bjorn:
-Any comments on pci_ioremap_bar()? Should we mark that as deprecated?
+into a shared helper for xfs_compute_atomic_write_unit_max so that we
+use the exact same logic in both places.  But I agree with the general
+direction.
 
-P.
+--D
 
->=20
-> > -err_remap_bar0:
-> > -	pci_release_regions(pci);
-> > =C2=A0	return ret;
->=20
-
+> 	}
+> 
+> thanks,
+> John
+> 
 
