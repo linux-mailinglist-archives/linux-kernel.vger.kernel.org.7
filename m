@@ -1,242 +1,143 @@
-Return-Path: <linux-kernel+bounces-606924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 483B5A8B59E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 11:38:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AD2AA8B5A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 11:39:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C69C73BC3EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:38:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB95A3BA06A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6758A13B7A3;
-	Wed, 16 Apr 2025 09:38:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B075237704;
+	Wed, 16 Apr 2025 09:38:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i62b/4nI"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J5eYNU70"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15261236426
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 09:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B122376E9;
+	Wed, 16 Apr 2025 09:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744796306; cv=none; b=IdMcr94EBJOeIXLkndx1G8NC+znrS0Oo2Y3QCB09DqGZ2C9LZdTTvAUPX6X1WtRyJinMajMJ774YRedZcLPRe4y6FDuMIvyi/+PAMUMxH1jUqtmJVmJFlRX37DofLnEH4AbS8JNniP+wnRxWN82fIdjMFvC4a0Pb63/rzyJn0a4=
+	t=1744796318; cv=none; b=XrHdTXQw0YEVMv2vJud8Eu1R7QizOAPLF2euTj6QRe8ROQvgwzeeyCG93LKtnTgZaZb22uJ6gR2KoM4lD68Yb+fW0AXGMH6QuIZA8X4Sg/4GVYN8y+Dnxmh/E/ZJP+ZPWurLStgKhyhVGUaGrRcNZLNtuKpPeiPRqj0T+NG1bOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744796306; c=relaxed/simple;
-	bh=ei1zDpJPgnRHet19eC5HTew8EV0D3bETY22gn9aMT0Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dJ+zj9vbkM6h8djmVOk77dGOfSm+68MSTJHE0+Vvy/FsyTqKu+CpG0DVZBc4q7hgxn6d+NVdj5WPEQZ367mGZ3hOIltPIQsVD1HVrHFvyAVBSaodn/r8pQPM5pSi293/5CdAzaSKMOpUit1AiWX0u3DlIQwUFSSgqk0Gesd+QQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i62b/4nI; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6eb16dfa988so57587336d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 02:38:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744796304; x=1745401104; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=OMjnp3KwkkPrkXTls7zgOCWfr5tAjXdEKVZA+pejEDc=;
-        b=i62b/4nIZfI2sU1DuNKXRCTiDefWVQhg5aiJMf3TvbdT7rz/WzTrGp8qWIFB42J4dq
-         moxKAgHnPfAoQviVqMKYwk8zpZDouxHFYE1E9tGfnaXXFxaHwFJnhKJXJw+u82tTLevq
-         pbwiXkASMpONRtrXzqEAcQBfLwTl2OMB8ljBO7bN8N/t9BXV2mr88tV9YTWghxsvZ66A
-         xRkSSx51jVT0Hyd05nMWn61UNl3buViat+jlDT1lCBb8tRX18nj1Hxo7Cdt+Q+xZI79w
-         +GwcV1lc0wqquEAu7D/m9H82f8klcLYBLS4s/0dCGb8A508GrnRUwni+b9Hq7PO1z2HS
-         q+Ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744796304; x=1745401104;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OMjnp3KwkkPrkXTls7zgOCWfr5tAjXdEKVZA+pejEDc=;
-        b=nfjEOBWgF0Obb96q9aLGy2LCSXEwYSGRC4oRITgLd0tR6AEpy6XHlSAGoXy7xuoWpv
-         qOd3nDYCL9RxPmWSmEQ5B+zmwoFNlrcwGTm5OO2zG1erLRGmkXf+mOkO7byQ0v0t2uAt
-         wxFcY9WRiUzjLQJCenquxVrm8NScUNx8HaiZbcI2J6KX80sCe1IQ4UBUOxbhfGitQpb8
-         4tvd5pnMBY39exk7ReUC9UnzWBC53ynAfngh3aDcjSQYtbNyHCGbJZdtULVF+psXcW43
-         8O+F5whOxpc2Rz/Wkbvuk1k7lpO4mu93kqmccPb7WDWymkv7sZOMKP+bVP8+cPEj5PSC
-         k2CQ==
-X-Forwarded-Encrypted: i=1; AJvYcCULdncrv7SRM6m2esDpJDq5PYo9+BhCZiGSdlyh8Yu7WTew7hjTlfOFqiZM6Hk2m033ba3bfgUndTdj/C4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxm7XDjud6BlZa18O51POyPQQQ8ZnCTeav+nzgzucy1802fe7Ar
-	IrdF7Wjmrw+QjdBBZpvJVHcgeWzvK+nsstI796Any9hINtlWotzY9z3slngNx4nqGsCwTH01N9u
-	b/Dd7A2X6OB/ImMJgG0jGlOhRjkzwBOmTNskr
-X-Gm-Gg: ASbGnctywUZ4UpwGLyPgh+noevuSFSxiel8u5L8C5CmOaM35UvpUNwVGNka4FWrVdBR
-	f99uz1U0ox8FFuJXI0YY5iT1gItmMbbv7LEuH5m1tBKgwTh0+Mym3TVeMsgpdedK6a8E6DYJKH7
-	dvy+dJusiKhZ2Z18OxffCOMQw=
-X-Google-Smtp-Source: AGHT+IHczy/h4m6lbM37OMNxNmlnrNveCd35Yhtu9WZpN7aYDKjmiKfCgGqKGTZv1VdnOJ1RL+AmVwqYfj7CbVcO20A=
-X-Received: by 2002:ad4:5965:0:b0:6ed:1651:e8dc with SMTP id
- 6a1803df08f44-6f2b2f43031mr14628976d6.11.1744796303619; Wed, 16 Apr 2025
- 02:38:23 -0700 (PDT)
+	s=arc-20240116; t=1744796318; c=relaxed/simple;
+	bh=+ZCWbE1PR1VWajVp5YhiYDBJVfRXd0HwklhLy77IOWI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Nu3dwJsuSEajt+dPhHxxtR9wvSS8h2FLNvmGPUn72EQAQt7BARA11yEWpJvFwHqracHKA960nLOU9oRVMizK6fLY1jGelZLBjcWqyzFsxwatynbig03fr9YSwDRI/0hAjZYqCchrtMwZjL1kVk6e8WFhixpUnM9KDsXcGT2KHZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J5eYNU70; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B442C4CEED;
+	Wed, 16 Apr 2025 09:38:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744796317;
+	bh=+ZCWbE1PR1VWajVp5YhiYDBJVfRXd0HwklhLy77IOWI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=J5eYNU70oLJ0F1Q9S/3mFsHhNQ/7mz9Cowdbh+vkRpjA/X57MT+RQ8apm9iZz+2r/
+	 NgeC6JlaQHH26sf3mfYC0lsJKDR8CmG1iwguO7pVLVs+q3ML81C70/y9tON46gHKKR
+	 g3vj31zi6pfp2nWRDrFExRd1pBxQ4bGzDpp4QPb0P93SxWlIp4sHfyMzV57QKDxk3O
+	 DQ8QKj74wOvwEYvbb7hNbbm/bd4/Q+vPEtZg2RtA9nG7ghOPWpXVjIIVCOOCn6/PsY
+	 fYG1LajUfhqaX2GKX3E2OJdSgAwWZz7sa/V43RPpfxaVOU82iLmPNx9k09o+vJ7gFD
+	 1csmdSufPcBRQ==
+Date: Wed, 16 Apr 2025 17:38:11 +0800
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Jonathan Corbet
+ <corbet@lwn.net>, Andy Shevchenko <andriy.shevchenko@intel.com>, David
+ Airlie <airlied@gmail.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Masahiro Yamada
+ <masahiroy@kernel.org>, Maxime Ripard <mripard@kernel.org>, Nathan
+ Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Simona Vetter <simona@ffwll.ch>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, dri-devel@lists.freedesktop.org,
+ intel-gfx@lists.freedesktop.org, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] scripts/kernel-doc.py: don't create *.pyc files
+Message-ID: <20250416173811.71c3c345@sal.lan>
+In-Reply-To: <20250416172901.60104103@sal.lan>
+References: <cover.1744789777.git.mchehab+huawei@kernel.org>
+	<4ad5eb8d4b819997c1615d2401581c22a32bb2c1.1744789777.git.mchehab+huawei@kernel.org>
+	<87tt6opks7.fsf@intel.com>
+	<20250416171917.0985c0eb@sal.lan>
+	<20250416172901.60104103@sal.lan>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250415-kunit-qemu-sparc64-v1-0-253906f61102@linutronix.de> <20250415-kunit-qemu-sparc64-v1-2-253906f61102@linutronix.de>
-In-Reply-To: <20250415-kunit-qemu-sparc64-v1-2-253906f61102@linutronix.de>
-From: David Gow <davidgow@google.com>
-Date: Wed, 16 Apr 2025 17:38:09 +0800
-X-Gm-Features: ATxdqUFJg1wnf66yT66yypkr57cAjIIFlAbgSjna9aBUt0buK_u3p0ElTOZP8DE
-Message-ID: <CABVgOS=0b167BRd-gLO4m+yUxjcB0mLjV=7OBMcck-UrmJhiqA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] kunit: qemu_configs: Add 64-bit SPARC configuration
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000eb29140632e20b51"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
---000000000000eb29140632e20b51
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Em Wed, 16 Apr 2025 17:29:01 +0800
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> escreveu:
 
-On Tue, 15 Apr 2025 at 21:38, Thomas Wei=C3=9Fschuh
-<thomas.weissschuh@linutronix.de> wrote:
->
-> Add a basic config to run kunit tests on 64-bit SPARC.
->
-> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-> ---
+> Em Wed, 16 Apr 2025 17:19:17 +0800
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> escreveu:
+> 
+> > Em Wed, 16 Apr 2025 11:34:16 +0300
+> > Jani Nikula <jani.nikula@linux.intel.com> escreveu:
+> > 
+> > > On Wed, 16 Apr 2025, Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> > > > As reported by Andy, kernel-doc.py is creating a __pycache__
+> > > > directory at build time.
+> > > >
+> > > > Disable creation of __pycache__ for the libraries used by
+> > > > kernel-doc.py, when excecuted via the build system or via
+> > > > scripts/find-unused-docs.sh.
+> > > >
+> > > > Reported-by: Andy Shevchenko <andriy.shevchenko@intel.com>
+> > > > Closes: https://lore.kernel.org/linux-doc/Z_zYXAJcTD-c3xTe@black.fi.intel.com/
+> > > > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> > > > ---
+> > > >  drivers/gpu/drm/Makefile      | 2 +-
+> > > >  drivers/gpu/drm/i915/Makefile | 2 +-
+> > > >  include/drm/Makefile          | 2 +-
+> > > >  scripts/Makefile.build        | 2 +-
+> > > >  scripts/find-unused-docs.sh   | 2 +-
+> > > >  5 files changed, 5 insertions(+), 5 deletions(-)
+> > > >
+> > > > diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
+> > > > index ed54a546bbe2..d21d0cd2c752 100644
+> > > > --- a/drivers/gpu/drm/Makefile
+> > > > +++ b/drivers/gpu/drm/Makefile
+> > > > @@ -236,7 +236,7 @@ always-$(CONFIG_DRM_HEADER_TEST) += \
+> > > >  quiet_cmd_hdrtest = HDRTEST $(patsubst %.hdrtest,%.h,$@)
+> > > >        cmd_hdrtest = \
+> > > >  		$(CC) $(c_flags) -fsyntax-only -x c /dev/null -include $< -include $<; \
+> > > > -		$(srctree)/scripts/kernel-doc -none $(if $(CONFIG_WERROR)$(CONFIG_DRM_WERROR),-Werror) $<; \
+> > > > +		 PYTHONDONTWRITEBYTECODE=1 $(KERNELDOC) -none $(if $(CONFIG_WERROR)$(CONFIG_DRM_WERROR),-Werror) $<; \  
+> > > 
+> > > KERNELDOC is not set here.
+> > 
+> > > 
+> > > /bin/sh: 1: -none: not found
+> > 
+> > Weird. This is set on Documentation/Makefile:
+> > 
+> > 	$ grep KERNELDOC Documentation/Makefile 
+> > 	KERNELDOC       = $(srctree)/scripts/kernel-doc.py
+> > 	...
+> > 
+> > drivers/gpu/drm/Makefile should be able to see this variable there...
+> 
+> I suspect that the building system tries to confine variables to
+> sub-directories, so maybe one solution would be to move it to the
+> main makefile.
+> 
+> could you please check if this patch solves the issue?
 
-Thanks!
+Answering myself: it doesn't.
 
-Reviewed-by: David Gow <davidgow@google.com>
+Heh, trying to quickly write a patch before calling it a day is
+usually not a good idea ;-)
 
-Cheers,
--- David
+I'll send a fix tomorrow.
 
-
->  tools/testing/kunit/qemu_configs/sparc64.py | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
->
-> diff --git a/tools/testing/kunit/qemu_configs/sparc64.py b/tools/testing/=
-kunit/qemu_configs/sparc64.py
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..53d4e5a8c972b96efc72f6b69=
-fe83463499ef847
-> --- /dev/null
-> +++ b/tools/testing/kunit/qemu_configs/sparc64.py
-> @@ -0,0 +1,16 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +from ..qemu_config import QemuArchParams
-> +
-> +QEMU_ARCH =3D QemuArchParams(linux_arch=3D'sparc',
-> +                          kconfig=3D'''
-> +CONFIG_64BIT=3Dy
-> +CONFIG_SPARC64=3Dy
-> +CONFIG_PCI=3Dy
-> +CONFIG_SERIAL_SUNSU=3Dy
-> +CONFIG_SERIAL_SUNSU_CONSOLE=3Dy
-> +''',
-> +                          qemu_arch=3D'sparc64',
-> +                          kernel_path=3D'arch/sparc/boot/image',
-> +                          kernel_command_line=3D'console=3DttyS0 kunit_s=
-hutdown=3Dpoweroff',
-> +                          extra_qemu_params=3D[])
->
-> --
-> 2.49.0
->
-
---000000000000eb29140632e20b51
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIIUnQYJKoZIhvcNAQcCoIIUjjCCFIoCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
-ghIEMIIGkTCCBHmgAwIBAgIQfofDAVIq0iZG5Ok+mZCT2TANBgkqhkiG9w0BAQwFADBMMSAwHgYD
-VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSNjETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
-AxMKR2xvYmFsU2lnbjAeFw0yMzA0MTkwMzUzNDdaFw0zMjA0MTkwMDAwMDBaMFQxCzAJBgNVBAYT
-AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
-IFI2IFNNSU1FIENBIDIwMjMwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDYydcdmKyg
-4IBqVjT4XMf6SR2Ix+1ChW2efX6LpapgGIl63csmTdJQw8EcbwU9C691spkltzTASK2Ayi4aeosB
-mk63SPrdVjJNNTkSbTowej3xVVGnYwAjZ6/qcrIgRUNtd/mbtG7j9W80JoP6o2Szu6/mdjb/yxRM
-KaCDlloE9vID2jSNB5qOGkKKvN0x6I5e/B1Y6tidYDHemkW4Qv9mfE3xtDAoe5ygUvKA4KHQTOIy
-VQEFpd/ZAu1yvrEeA/egkcmdJs6o47sxfo9p/fGNsLm/TOOZg5aj5RHJbZlc0zQ3yZt1wh+NEe3x
-ewU5ZoFnETCjjTKz16eJ5RE21EmnCtLb3kU1s+t/L0RUU3XUAzMeBVYBEsEmNnbo1UiiuwUZBWiJ
-vMBxd9LeIodDzz3ULIN5Q84oYBOeWGI2ILvplRe9Fx/WBjHhl9rJgAXs2h9dAMVeEYIYkvW+9mpt
-BIU9cXUiO0bky1lumSRRg11fOgRzIJQsphStaOq5OPTb3pBiNpwWvYpvv5kCG2X58GfdR8SWA+fm
-OLXHcb5lRljrS4rT9MROG/QkZgNtoFLBo/r7qANrtlyAwPx5zPsQSwG9r8SFdgMTHnA2eWCZPOmN
-1Tt4xU4v9mQIHNqQBuNJLjlxvalUOdTRgw21OJAFt6Ncx5j/20Qw9FECnP+B3EPVmQIDAQABo4IB
-ZTCCAWEwDgYDVR0PAQH/BAQDAgGGMDMGA1UdJQQsMCoGCCsGAQUFBwMCBggrBgEFBQcDBAYJKwYB
-BAGCNxUGBgkrBgEEAYI3FQUwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUM7q+o9Q5TSoZ
-18hmkmiB/cHGycYwHwYDVR0jBBgwFoAUrmwFo5MT4qLn4tcc1sfwf8hnU6AwewYIKwYBBQUHAQEE
-bzBtMC4GCCsGAQUFBzABhiJodHRwOi8vb2NzcDIuZ2xvYmFsc2lnbi5jb20vcm9vdHI2MDsGCCsG
-AQUFBzAChi9odHRwOi8vc2VjdXJlLmdsb2JhbHNpZ24uY29tL2NhY2VydC9yb290LXI2LmNydDA2
-BgNVHR8ELzAtMCugKaAnhiVodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL3Jvb3QtcjYuY3JsMBEG
-A1UdIAQKMAgwBgYEVR0gADANBgkqhkiG9w0BAQwFAAOCAgEAVc4mpSLg9A6QpSq1JNO6tURZ4rBI
-MkwhqdLrEsKs8z40RyxMURo+B2ZljZmFLcEVxyNt7zwpZ2IDfk4URESmfDTiy95jf856Hcwzdxfy
-jdwx0k7n4/0WK9ElybN4J95sgeGRcqd4pji6171bREVt0UlHrIRkftIMFK1bzU0dgpgLMu+ykJSE
-0Bog41D9T6Swl2RTuKYYO4UAl9nSjWN6CVP8rZQotJv8Kl2llpe83n6ULzNfe2QT67IB5sJdsrNk
-jIxSwaWjOUNddWvCk/b5qsVUROOuctPyYnAFTU5KY5qhyuiFTvvVlOMArFkStNlVKIufop5EQh6p
-jqDGT6rp4ANDoEWbHKd4mwrMtvrh51/8UzaJrLzj3GjdkJ/sPWkDbn+AIt6lrO8hbYSD8L7RQDqK
-C28FheVr4ynpkrWkT7Rl6npWhyumaCbjR+8bo9gs7rto9SPDhWhgPSR9R1//WF3mdHt8SKERhvtd
-NFkE3zf36V9Vnu0EO1ay2n5imrOfLkOVF3vtAjleJnesM/R7v5tMS0tWoIr39KaQNURwI//WVuR+
-zjqIQVx5s7Ta1GgEL56z0C5GJoNE1LvGXnQDyvDO6QeJVThFNgwkossyvmMAaPOJYnYCrYXiXXle
-A6TpL63Gu8foNftUO0T83JbV/e6J8iCOnGZwZDrubOtYn1QwggWDMIIDa6ADAgECAg5F5rsDgzPD
-hWVI5v9FUTANBgkqhkiG9w0BAQwFADBMMSAwHgYDVQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBS
-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
-YE9NAgMBAAGjggHgMIIB3DAeBgNVHREEFzAVgRNkYXZpZGdvd0Bnb29nbGUuY29tMA4GA1UdDwEB
-/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIwHQYDVR0OBBYEFHgsCGkO2Hex
-N6ybc+GeQEb6790qMFgGA1UdIARRME8wCQYHZ4EMAQUBAjBCBgorBgEEAaAyCgMDMDQwMgYIKwYB
-BQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAwGA1UdEwEB/wQC
-MAAwgZoGCCsGAQUFBwEBBIGNMIGKMD4GCCsGAQUFBzABhjJodHRwOi8vb2NzcC5nbG9iYWxzaWdu
-LmNvbS9jYS9nc2F0bGFzcjZzbWltZWNhMjAyMzBIBggrBgEFBQcwAoY8aHR0cDovL3NlY3VyZS5n
-bG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3J0MB8GA1UdIwQYMBaA
-FDO6vqPUOU0qGdfIZpJogf3BxsnGMEYGA1UdHwQ/MD0wO6A5oDeGNWh0dHA6Ly9jcmwuZ2xvYmFs
-c2lnbi5jb20vY2EvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3JsMA0GCSqGSIb3DQEBCwUAA4ICAQAs
-exV05yVDmPhHRqOq9lAbfWOUvEf8zydxabZUHna6bayb83jD2eb9nMGGEprfuNBRmFg35sgF1TyN
-+ieuQakvQYmY8tzK49hhHa2Y3qhGCTqYTHO3ypHvhHsZiGbL0gmdgB9P8ssVIws//34ae99GUOxo
-XKTxPwwsQ5Arq42besv3/HXAW+4nRAT8d3ht5ZWCHc5rjL/vdGzu7PaYo3u0da69AZ8Sh4Gf5yoc
-QANr2ZkMrxXbLmSmnRvbkQrzlZp2YbTFnczx46429D6q75/FNFOL1vAjxtRAPzkyACvW0eKvchza
-TMvvD3IWERLlcBL5yXpENc3rI8/wVjqgAWYxlFg1b/4b/TCgYe2MZC0rx4Uh3zTIbmPNiHdN6QZ9
-oDiYzWUcqWZ5jCO4bMKNlVJXeCvdANLHuhcC8FONj5VzNgYXs6gWkp9/Wt6XnQPX4dF4JBa8JdL/
-cT46RJIzoiJHEx/8syO5FparZHIKbkunoq6niPsRaQUGeqWc56H4Z1sQXuBJN9fhqkIkG0Ywfrwt
-uFrCoYIRlx4rSVHpBIKgnsgdm0SFQK72MPmIkfhfq9Fh0h8AjhF73sLO7K5BfwWkx1gwMySyNY0e
-PCRYr6WEVOkUJS0a0fui693ymMPFLQAimmz8EpyFok4Ju066StkYO1dIgUIla4x61auxkWHwnzGC
-Al0wggJZAgEBMGgwVDELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExKjAo
-BgNVBAMTIUdsb2JhbFNpZ24gQXRsYXMgUjYgU01JTUUgQ0EgMjAyMwIQAcDMKctW1GQKDKqEUSh4
-pjANBglghkgBZQMEAgEFAKCBxzAvBgkqhkiG9w0BCQQxIgQg6v+LYLQyREezrgB/anCfkkRqOYJT
-oi4VWTQUvjYhvpQwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjUw
-NDE2MDkzODI0WjBcBgkqhkiG9w0BCQ8xTzBNMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJ
-YIZIAWUDBAECMAoGCCqGSIb3DQMHMAsGCSqGSIb3DQEBBzALBglghkgBZQMEAgEwDQYJKoZIhvcN
-AQEBBQAEggEAGBoqFayl2BrvOOJGDABuorzCDIuJyRW9yFXm6dog6jp5Hj3BM+/Dj5bml6ZhPR/D
-lP4T77HHG15LjlFcV1IEKgYur1wJ1xuCwizJn7JFOOyqiDs3vNRntvb08xjuCBjQXpWBhytJXJcM
-PvuFWhXU8MI6a37/7NWMCI0z0PXoKD7IfP6QgxUooqAxkaoSNkTJ+qTr/Pi87A+U3WktPAGAZhUX
-Sq4WyF5UsPvost8oU4JbvfhzHHA20/u8p0+3Y4YEPCd2mtyZrJdpdQtDLoLybWza05qD1tcyLoes
-0hsJsAsDLnN09NXyigK8SPWEqHkNsoVxihT9SnH50y8bUNIRVQ==
---000000000000eb29140632e20b51--
+Regards,
+Mauro
 
