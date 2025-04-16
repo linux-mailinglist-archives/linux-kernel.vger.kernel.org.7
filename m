@@ -1,131 +1,139 @@
-Return-Path: <linux-kernel+bounces-607580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75160A9081A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 17:56:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76F95A9081D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 17:56:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 458873BD58C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 15:55:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8191217397F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 15:56:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7064820FAA4;
-	Wed, 16 Apr 2025 15:55:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1DF20DD65;
+	Wed, 16 Apr 2025 15:56:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="Q3aiAyJs";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Ape697iD"
-Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="qgsyf4fL"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81AABA50;
-	Wed, 16 Apr 2025 15:55:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D9A1A315F
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 15:56:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744818948; cv=none; b=Na24k6jXO1ME7M9A1bHXNFShgLLAX+ljFoRGRmbIXpgqxS8uUndPLUizarvhZ6E9PZtIZgR9uXljX+9rkO1hikmzj46A4B3ggyeQWdBhI/aOkdo90XAl/sc3YMSAPDC9319Bi1Pk9vAwac+vEcK000K+oqGueOxKstRat2zbpBk=
+	t=1744818995; cv=none; b=QNfnY7mbWgJuWoUplha6B2DOtvpAXiX8pTksv0ITTLTEQ8rDLJ1GqiWeWZlM11m5sSB22KgLmbXQV5sju9qC3D0LW23Sl9BMMxAhQiU5waBGSfJXnc/HXeipwEHoLGVA0bkvhNf0NcDb0M5I0YZ4tgEPcwgZSUaxJ7GzqxZsHAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744818948; c=relaxed/simple;
-	bh=9pbg4C0z8sXp7KkEc5RFY+hZQ1L/rGu7X3Ow2EVMjqQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LhswA8SbBJgH3zxu1QQlEe4guEJmwOUbpmdVVdh68PR8thXaYM2bdHkzVqAtaAAfVca0u6vvjQT+rglZkRryvmcwx3JACvFhwnirSEH51VhqNJGFTE65XNBxvjUwPke0bOZwAz22ZqS1G+6Vw0I8Jce15Ph8Lfcd9UIWShvfC6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=Q3aiAyJs; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Ape697iD; arc=none smtp.client-ip=202.12.124.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfout.stl.internal (Postfix) with ESMTP id 2B70A1140293;
-	Wed, 16 Apr 2025 11:55:44 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Wed, 16 Apr 2025 11:55:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1744818944;
-	 x=1744905344; bh=EVsUq8vIHVHSJ8OpZq0XMo4UVFNqeRv0Sm7W7t18X/s=; b=
-	Q3aiAyJsevWE/ISVeky1rPGQZFQI8JAxruyp32pE43BHMbnOi8EUxnrQU4HWg8CG
-	QmRb0xNvOgk9MFQQZ5Ah5HMN0LjyQpYDmZ7ydY4rHKmyxl0iH1WTw/eBssZk02VL
-	+8y53bKuP+BJhMTieMK7u7TRUyZWbCfTbJjuOucek3z9kMTEHBWwbhAu10XvCoF5
-	iu+wX2zHaQpHbozF0GzbPz7X6B+y3CKdEahr5/GYyPLT0vKyc+Bh4L2NhkJBgIqB
-	poFY3OCN+QjR/Mefy67IFwkr7hr6nek9MgLwUD/5+o51ysCPAteJXH2c1INubG1E
-	bDCX6nyWGi7C6KBP0+v5VQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1744818944; x=
-	1744905344; bh=EVsUq8vIHVHSJ8OpZq0XMo4UVFNqeRv0Sm7W7t18X/s=; b=A
-	pe697iDAH3rFm+RhD2cv8csyY/ecTvQOGunw0sH11LheoKs9EVCJgiwKKeXneP4S
-	ACbCpWWhacDZ4juyUDt3YvUvDSJNEY7a7Xbe3BbQOHQfBt5/SL6+UhoNTjK1mSHq
-	1ICm4Y7Tk344V7WJtxqH+9oT8SJulM/DYVH7A2ZBninXcxQV6VV1Ml8+PXbPlfTv
-	/puKBiEbjK6AkAYKGqLiAr5RoOqLk+inCHunenrSefG3chI02lPf0bekagOgc+iG
-	G7LjE1G2HqY5BSpAD0js0vPC7KsLea70WQiQsX7UfACuw23NdFNF2mTTF3c+iJWv
-	gxDpw8AWHZgW1oVdD2ceg==
-X-ME-Sender: <xms:_9L_ZymCMPyx3sQqJ8O0VYwakETCEdUWOeazsvE2I2At18aj8ULrVA>
-    <xme:_9L_Z51dWsmSL8qEx4kkDeoXGlSzpVleUBkyzgEL6UlWBiYh-M1VLGyssNxPpXdHd
-    kGT387b5GdWALM7>
-X-ME-Received: <xmr:_9L_ZwpCsVXXJQWDewPEPA6W3mnkh8QMZPEgCeyQlyt3u7FSJenIVQhB4br7HT-c0w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvdeijeekucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddt
-    vdejnecuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvg
-    hrnhgurdgtohhmqeenucggtffrrghtthgvrhhnpeehhfejueejleehtdehteefvdfgtdel
-    ffeuudejhfehgedufedvhfehueevudeugeenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgusegsshgsvghrnhgurdgtohhmpdhnsggp
-    rhgtphhtthhopeekpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehluhhishesih
-    hgrghlihgrrdgtohhmpdhrtghpthhtohepmhhikhhlohhssehsiigvrhgvughirdhhuhdp
-    rhgtphhtthhopehlrghurhgrrdhprhhomhgsvghrghgvrhestggvrhhnrdgthhdprhgtph
-    htthhopegurghvihgusehfrhhomhhorhgsihhtrdgtohhmpdhrtghpthhtohepmhhhrghr
-    vhgvhiesjhhumhhpthhrrgguihhnghdrtghomhdprhgtphhtthhopehlihhnuhigqdhfsh
-    guvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidq
-    khgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgvrhhnvg
-    hlqdguvghvsehighgrlhhirgdrtghomh
-X-ME-Proxy: <xmx:_9L_Z2mG6Y8EWSakQ2eOTPLXAbZ2wkjoCTV6Senykb8dNzK0X7tVng>
-    <xmx:_9L_Zw1VQEhPa7Id0NAYVP6oajSI_YnaZZaeT5X9uuEx62bfY12_9g>
-    <xmx:_9L_Z9uAsL5nDn0rKRJf0avlsMo76RCvm4dlJuhq_APW7ZVPpHpG4g>
-    <xmx:_9L_Z8UwbessxYtPJdcW_Q6Ni3wBzqMAzR2c7Vue4pkIdZgjcV5jjQ>
-    <xmx:ANP_Z4YbEQpKEhs-w3vEhYs18WpKis_HJ_65h8Dk_U3ltomd_8ueLXyb>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 16 Apr 2025 11:55:42 -0400 (EDT)
-Message-ID: <89257861-9f17-4c07-8358-f90392032983@bsbernd.com>
-Date: Wed, 16 Apr 2025 17:55:40 +0200
+	s=arc-20240116; t=1744818995; c=relaxed/simple;
+	bh=YM9zi+kOtxfP5E+wBpfWpsmMBG0Ma0EA/c0HJo8Tme0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Bpv42FFsNLSmkdaqdO0u58YAectTMKBNyQO41E1IF0WLQnLRKkq49DY4jwr7gxZu5Sj0VMGudIaY0+Yx4J25/o0RvN7snUp5IyEe1VUWApWQiO5d+JLZHI0n1EZ2MCpJ4Lf3xJ/73n0xHjdRWuLNhjIj3taFs6wVzlupFrtTDds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=qgsyf4fL; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43d07ca6a80so34134885e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 08:56:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744818991; x=1745423791; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a94M0ymOqffHM8faeNroH3ykIR/ZTOIWb+VkApInaMs=;
+        b=qgsyf4fL/GASYZvBhgYf3NkEJJZnYTpo6JjIxcHHdQnfZHuYtCHseVemGS6eApa3Gt
+         IpgMTUoXOkrqkf5BNu3W2cypCuZx8n4HGjVbkVPpdU8vpG/XpwCSqLnSUPw2t7UVs3Rd
+         OO+Mm0zO2v24BOwIcEoJuGCplFRxV8IFAkMYcWR7o5IgHj4+1/NuV+1VsyYtmbzFX4wA
+         EiHvwWAF6bLH3GjmQWNrrDS13j9xNnGYmBZymn4GWH6ato9fENIzpV2ySZFC1chCUKAh
+         9EjuyAOM7iXb5s2nnSUJHgj2A8JEqjzQl+OlPAy+LUuSUJB/93Rw/DBK9WnLJ5dsnjMO
+         M04g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744818991; x=1745423791;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a94M0ymOqffHM8faeNroH3ykIR/ZTOIWb+VkApInaMs=;
+        b=If1vSJQQ71UE+9u668iedQJuJfODl/C/nRVgBGbez1mvx9b8v7sW40l5Cain2OOiHq
+         x8STd8zzltA3zAlhbk85PJ6rngn1GelsY+JWJQD2gSHxiezohzJeUpT7PcE/+LyZu+7+
+         qUlqoBEbY6spILIksnauT6LIT9AmlYt0N4e0XF5VuzKfCJhcAezzdwWJlu0GJ3iTr6VJ
+         QOxjmHQlAADM2D0gbGhz1iqTu28eJ5jZ1n/K05INouV56qHMPrX8JN4C6bYRHClyJUvd
+         kPCFIXizLG+TWNoGy35IMdZ8OsZF0hWZv+fuL/KnA19MOq7f3IhSbtRUV/EjeRbCzGQQ
+         pZNg==
+X-Forwarded-Encrypted: i=1; AJvYcCVuDaOylOiZaCx19uTpSp6bp1pAKYSUsz74Weae4gC0HRbqh1h0Lj4JoIs0XKnkBGLfmHfA/O0WFUyXCTM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIw+rn6mrp1ndWqMMKLFGUX1VB+V5JlapEizZtHVrTqTFdRuzI
+	YoPUN8kLYGngsRLGnDt3odqcbNT4UCyJ6FqS3dMx/5K4zr8uKqIk9cjDPTVu/z8=
+X-Gm-Gg: ASbGncvSSsp41cbba+IE+ApS3+f5Ry+5AZ+75HudhLOJ8zHpoKwqnwXVtLufdkbCXFE
+	irJZnQayRmdf0V3eiWFJnR4GcNRw5Fd3GSiQYvL1ekbtsSDq0ukeixccJE7LfEad/RGj5JSq0tG
+	OSyc0j9FIDoKU6EKPnmsHs8w/l1+jdsI49mL1REL2zuir9Ab/6UZpaDkjDWftpzZm3ImvGakeg3
+	qn3v3yih2GYdZJFIHVklsXuXBuTFolR9IWGBEzZekG2Zq00tGFA5UcGdY9z4BdUm5zs8hlILBg6
+	sBTgG8usrc2PwSOCbNVYTRcaYfgVjTCWShVtbZWu
+X-Google-Smtp-Source: AGHT+IHdKNI6hyGPzGgFf5fHX3qw3Otr1c1zzkPAkc5yYzhNBYKNJ1QofozTxuH6uqxYT6WbIuMfCw==
+X-Received: by 2002:a05:600c:54c1:b0:43d:10a:1b90 with SMTP id 5b1f17b1804b1-4405e3cb261mr22306725e9.16.1744818991221;
+        Wed, 16 Apr 2025 08:56:31 -0700 (PDT)
+Received: from brgl-pocket.lan ([2001:861:4445:5860:9621:2787:c462:7dd5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4404352a5f0sm37224015e9.1.2025.04.16.08.56.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Apr 2025 08:56:30 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Peter Tyser <ptyser@xes-inc.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH 00/12] gpio: convert more GPIO chips to using new value setters
+Date: Wed, 16 Apr 2025 17:56:24 +0200
+Message-ID: <174481898215.8191.2166208947252160548.b4-ty@bgdev.pl>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250407-gpiochip-set-rv-gpio-part1-v1-0-78399683ca38@linaro.org>
+References: <20250407-gpiochip-set-rv-gpio-part1-v1-0-78399683ca38@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2] fuse: add optional workqueue to periodically
- invalidate expired dentries
-To: Luis Henriques <luis@igalia.com>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: Laura Promberger <laura.promberger@cern.ch>,
- Dave Chinner <david@fromorbit.com>, Matt Harvey <mharvey@jumptrading.com>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-dev@igalia.com
-References: <20250415133801.28923-1-luis@igalia.com>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: en-US
-In-Reply-To: <20250415133801.28923-1-luis@igalia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-
-Hi Luis
-
-On 4/15/25 15:38, Luis Henriques wrote:
-> This patch adds a new mount option that will allow to set a workqueue to
-> periodically invalidate expired dentries.  When this parameter is set,
-> every new (or revalidated) dentry will be added to a tree, sorted by
-> expiry time.  The workqueue period is set when a filesystem is mounted
-> using this new parameter, and can not be less than 5 seconds.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
 
-I will look into it tomorrow. I wonder a bit if we can extend it to 
-provide an LRU and to limit max cached dentries without a timeout. Need 
-to think about details.
+On Mon, 07 Apr 2025 09:13:09 +0200, Bartosz Golaszewski wrote:
+> struct gpio_chip now has callbacks for setting line values that return
+> an integer, allowing to indicate failures. We're in the process of
+> converting all GPIO drivers to using the new API. This series converts
+> another round of GPIO controllers.
+> 
+> 
 
+Applied, thanks!
 
-Thanks,
-Bernd
+[01/12] gpio: dln2: use new line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/afb4aed832f9000a5d15ecd28a7b2faa5789d28d
+[02/12] gpio: eic-sprd: use new line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/21d3c6531b113b1aaecd99ae90dddd55c20f372b
+[03/12] gpio: em: use new line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/097cf61ba5bd69328a69c4920f3454089fae0a43
+[04/12] gpio: exar: use new line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/bcdd5b37640cc577cd93d20f00519e70d7add8a6
+[05/12] gpio: allow building port-mapped GPIO drivers with COMPILE_TEST=y
+        https://git.kernel.org/brgl/linux/c/f031312c8e1903859a3a2a58ab5a3f97ba8b0ae9
+[06/12] gpio: f7188: use new line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/56193775d1ec9ab5ac23b05c821c26704debe040
+[07/12] gpio: graniterapids: use new line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/04eaa41eb8ebb7be4c78d1e57442a581d0bfdc22
+[08/12] gpio: gw-pld: use new line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/674817f336bdde5887191c61eaecf3f0a70cd405
+[09/12] gpio: htc-egpio: enable building with COMPILE_TEST=y
+        https://git.kernel.org/brgl/linux/c/6be51668eda37089d9a484bc8a41c1e9ecd6f577
+[10/12] gpio: htc-egpio: use new line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/4c71b46278c2b0cfc8e019e4fe3ec31ce258741e
+[11/12] gpio: ich: enable building with COMPILE_TEST=y
+        https://git.kernel.org/brgl/linux/c/10b16abc29e17c6ca86bcb8ceebf840e509b0ce5
+[12/12] gpio: ich: use new line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/69e230a0a288a73ce2a8e9373bcb7b37239cafaa
+
+Best regards,
+-- 
+Bartosz Golaszewski <brgl@bgdev.pl>
 
