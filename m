@@ -1,148 +1,126 @@
-Return-Path: <linux-kernel+bounces-607602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39725A90863
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:10:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC646A90868
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:11:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43AD417C05E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:10:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E5AD4601E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CAC9214A74;
-	Wed, 16 Apr 2025 16:09:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE772045B7;
+	Wed, 16 Apr 2025 16:10:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="xslu3yuj"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C470211A0B
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 16:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="LBMazJEH"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44DED21147B
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 16:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744819775; cv=none; b=aA2uuXtBZPkzUGKYQLiZhQD8WPtcYxIIWCriICsVmhzZlGTN/iDDuVqwK8+U3R4NYn9rUO4R4MDRb+JM7vkUAg4NMw8+/mXmHfxylRHTj6eVjenyz/Lq9kBc19DJ9DV7uSFaPecs0LVGWOlB5aQszeI/AANOvYISumdVyT9ILp4=
+	t=1744819835; cv=none; b=he5APlAYBYe7cBQGgW69Qbj9JYoYQarq4vN5VG3lem1g+dOW+sYQ/E0ybqP+aAoTMNGGnaBb0vA1w9Giy3AaPA2yI1e9BaXYHBPw1rhdQlMdzGO6jE3lVqkD0p+I6E07s5wcBj0guJZZasuf+JLHDV18Cnkws/WnSXdkTB9lwKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744819775; c=relaxed/simple;
-	bh=6gIfY2O9SRNMsf8TpU0oXNbXomtsGMw4EUG+PlvfsPM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AWO6klSi1tQckk5mLx+7SAdGP37dNABqrk8aVRC2DF3v9XTWfRjnFglPA6F30PRlcRwD1ezC/lmdBC5ac/Bp7yNKKxS8fTSGX/8C4gZZICAPS0uyISx2J1beOwYk7401SRJutmEcCqzd91hSZgCgpiplApz5GI3pq4V6iey806o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=xslu3yuj; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cf034d4abso75800015e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 09:09:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1744819771; x=1745424571; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6gIfY2O9SRNMsf8TpU0oXNbXomtsGMw4EUG+PlvfsPM=;
-        b=xslu3yujU9rfen0sstCfEHbTKdZNTT4pG0iSV1QQHlEFENzfycxQ88MVbEITU3CD53
-         /Ug2h8sLkbKnV6RcxMvxyG5tZKu7WpOVytUfmM15n/8xL835qJ+RrWW9rNHs6VAdiNTt
-         6iCEE9mh96JGwexEmzcn3TDdhXF8kzYwzO+GpYlVdoGyltLaaJseNEACrP70PtG5JRSt
-         ydWsrDZACzCWXMbSNtF/masRf+OgbX9DTR/Kt5kFfensWtN9GjLq1YHiHQcNTx11dmBy
-         QLJYIZexzKUEAUT/G4AmsxGmyfjzAxqMJj5KzOldkkoBtnLkKfH0R3bDCc2N0BJ2geSe
-         +oXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744819771; x=1745424571;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6gIfY2O9SRNMsf8TpU0oXNbXomtsGMw4EUG+PlvfsPM=;
-        b=E/6JidE9ilsyxd24uOFwZhXGS8PD7an1lDUIwEsZ5dbSpNRsTGucpZNzOnaEgasLSS
-         WwEwBMnnrwSZIsrHA9SS7X+9ucrB/MIvGkPVl12s8pxK92f1gdiavK869qLV9sUrhXJ9
-         sjVd1/71lngQ21nHQQ80MUUeC39Q8GwczVS/lpEolKu100AU4RFWetv9jMn/T9HKa/JJ
-         S2ptMBDCJUd3pYzxlm/OJUKfMYPnpz9BoDETns9h0/Lw9fazBW+q1GkExSj5fR7wHKEL
-         JHbyxRfEOreGAzeN4mdIrXqEMwESJYqyJ/ymXe/PTC2CxTQpkRtt8yl/4jput6Ryswk5
-         f9OQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXXpEi9lQ5PN4CBJJxNCHgrMbrj3BHtFssErfIV4ZaxHyYrA1ltv/IuuPg3aBJU400PC630rMsJPW5JMpc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8PJnnfPNfKspP68S3rz4may11UJWEyNY7hDG/vXFD3MN91XHb
-	z+OW8i7EAZmvMAz78FmOPtSxkG3ml+ksF4RQKUV6mYneQtnlADP/ELwnZFCv97w=
-X-Gm-Gg: ASbGnctMmDrSL1JlW+jaMin/AHXuxFJpKCIZOf4hUMpe/2U7iv8auqQruRZNQDL4sME
-	IlpWPRR/0tO+3Ly/aKkx42OMQZB4VOzAMh+eFDA9oygpYhr0FaEFy0HWYnQ/4vYY+OdfsZqXGqB
-	oF6HsEG7TcU1Vlp9LzKP7poorOdS/ZHuZZwb1lcKKlJpYIlEPTvzHTdwlK63nPnVW5YdZIB5cDz
-	XpSDur5hSoGmXyg3Ue+VGIUk0awZxmZvIR+kD5ChLgw0Pakq5FF7ZENUPS5OfZb7mh/5oxnxmmR
-	Nwzee5L5wHtU7OLfV0MxhmrbfFcQawYRtv+H2JGpSTlHmtxt/mUlElxOfN4aRV1M/auEZ+pv4ed
-	i14BpHQQ=
-X-Google-Smtp-Source: AGHT+IF3ZHpE7zJB9IQ2y8x59SUdSUcwVopqWk1Zp0WNiDguj5I7CqqTziJa38Gb4iY+V+RufRzqeg==
-X-Received: by 2002:a05:600c:3ecb:b0:43c:fa24:873e with SMTP id 5b1f17b1804b1-4405d625054mr30574145e9.13.1744819771461;
-        Wed, 16 Apr 2025 09:09:31 -0700 (PDT)
-Received: from localhost (p200300f65f13aa0400000000000001b9.dip0.t-ipconnect.de. [2003:f6:5f13:aa04::1b9])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4405b4f3df8sm25248205e9.24.2025.04.16.09.09.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Apr 2025 09:09:30 -0700 (PDT)
-Date: Wed, 16 Apr 2025 18:09:29 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Sean Wang <sean.wang@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Hao Chang <ot_chhao.chang@mediatek.com>, Qingliang Li <qingliang.li@mediatek.com>
-Subject: Re: [PATCH] pinctrl: mediatek: common-v1: Fix EINT breakage on older
- controllers
-Message-ID: <n3pyida4e4qhzzeyp4rpswiwiomgumgqeci7lwuimr6r4m5mxy@5s3w2ab3p75p>
-References: <20250415112339.2385454-1-wenst@chromium.org>
+	s=arc-20240116; t=1744819835; c=relaxed/simple;
+	bh=Vfyrn4sci4VZ12tMwuzEKJhCvHNChdBJTlObtHxjXM4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=Mtge7H/KMCdPZrouQpmY3koKHv55iInOuKnsd3XK7RQ+eRiMiWGeJIqjLaa3hvRluHysf+nH8ojAg45XuNXhfcoY00nmiZVUfB8O6etJ+KUmz3Bm5ZIlZJVsi9gnlYrJZElAxPv45/O11e4SmuevS9uR69Etd6YjW3t346a5lVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=LBMazJEH reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=d6PzMlsChX8XLKLTAraoErRhLqsSXDpIfKoTtzsgAxo=; b=L
+	BMazJEHSsbW9G6/DUvWedBCUo2CtaamOQrINRFU1n5FMddxiofiem3MjH7DN/PSI
+	0K9LAsTQpSQlO8vjgqOyJQK09g9rlfjYKw7FmNoEIoI0tQjKuUfdbijnWt+m7fAo
+	G+up6ijBmGHL5Fez+VKoLRrgpFVLIztiGnjCd8s8Es=
+Received: from xavier_qy$163.com ( [2408:820c:3408:68f0:2136:e7d4:a861:aae3]
+ ) by ajax-webmail-wmsvr-40-102 (Coremail) ; Thu, 17 Apr 2025 00:09:36 +0800
+ (CST)
+Date: Thu, 17 Apr 2025 00:09:36 +0800 (CST)
+From: Xavier  <xavier_qy@163.com>
+To: "Ryan Roberts" <ryan.roberts@arm.com>
+Cc: dev.jain@arm.com, ioworker0@gmail.com, 21cnbao@gmail.com,
+	akpm@linux-foundation.org, catalin.marinas@arm.com, david@redhat.com,
+	gshan@redhat.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, will@kernel.org, willy@infradead.org,
+	ziy@nvidia.com
+Subject: Re: [mm/contpte v3 1/1] mm/contpte: Optimize loop to reduce
+ redundant operations
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <eba7a8fa-0b85-4b30-ab3e-9c0a65b7dc80@arm.com>
+References: <f0e109c7-6bb2-4218-bc76-c5de39184064@arm.com>
+ <20250415082205.2249918-1-xavier_qy@163.com>
+ <20250415082205.2249918-2-xavier_qy@163.com>
+ <eba7a8fa-0b85-4b30-ab3e-9c0a65b7dc80@arm.com>
+X-NTES-SC: AL_Qu2fBvSatk8s4CWaZekfmk4QgeY+WMW1vP4m34NSN5FwjCzp0ysiZlJTIXjNyvCDLzqKkAiHVTRiy9ZZf7hifrko7HzbN781LCzEGZh9hD9SQg==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ed2ffzrhvzkyt6i3"
-Content-Disposition: inline
-In-Reply-To: <20250415112339.2385454-1-wenst@chromium.org>
+Message-ID: <72ff1deb.b3a7.1963f5cec0c.Coremail.xavier_qy@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:ZigvCgD339ZA1v9nYeSXAA--.45267W
+X-CM-SenderInfo: 50dyxvpubt5qqrwthudrp/1tbiwhExEGf-pJJ9EwAMs+
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-
---ed2ffzrhvzkyt6i3
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] pinctrl: mediatek: common-v1: Fix EINT breakage on older
- controllers
-MIME-Version: 1.0
-
-On Tue, Apr 15, 2025 at 07:23:37PM +0800, Chen-Yu Tsai wrote:
-> When EINT support for multiple addresses was introduced, the driver
-> library for the older generations (pinctrl-mtk-common) was not fixed
-> together. This resulted in invalid pointer accesses.
->=20
-> Fix up the filled in |struct mtk_eint| in pinctrl-mtk-common to match
-> what is now expected by the mtk-eint library.
->=20
-> Reported-by: "Uwe Kleine-K=F6nig" <u.kleine-koenig@baylibre.com>
-> Closes: https://lore.kernel.org/all/43nd5jxpk7b7fv46frqlfjnqfh5jlpqsemeoa=
-kqzd4wdi3df6y@w7ycd3k5ezvn/
-> Fixes: 3ef9f710efcb ("pinctrl: mediatek: Add EINT support for multiple ad=
-dresses")
-> Cc: Hao Chang <ot_chhao.chang@mediatek.com>
-> Cc: Qingliang Li <qingliang.li@mediatek.com>
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-
-I confirm this fixes the booting issue on the mt8365-evk.
-
-If it's not too late for that:
-
-Tested-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
-
-Thanks
-Uwe
-
---ed2ffzrhvzkyt6i3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmf/1jcACgkQj4D7WH0S
-/k5aXAf/UP6i2a3y5UocoQPs0pyP+rVPxb+aRfLPNEEqjbC2EfKVw3TBePDcSXYw
-62fTt6kjxzOwm4tDzLbKcDzMIqHEIs2W2mE87RbAtUcp8Kobd1qUPJD++4lcIfjO
-isr+ZlQXT3mG0xCiZF5AHmhgzz4c3Ggc8RqeGDYCxzD3hj30XznRrOTTCv2wovzt
-Rlnu37XuzkHOGMJly86gPc5LSJHDUMyNs/66hNb5h+1v95Hpe8YZ+ZXreQsE9+8T
-9QnXW/NtxHg37nY1XIxdE6pBbUbz1jF8Woe83eBWDIwciCTpAeQ+WOFk1bLKf7Fg
-wRAaujOB3aa0qRpq3UL0vErWjNaMzg==
-=PJFt
------END PGP SIGNATURE-----
-
---ed2ffzrhvzkyt6i3--
+CgpBdCAyMDI1LTA0LTE2IDIwOjU0OjQ3LCAiUnlhbiBSb2JlcnRzIiA8cnlhbi5yb2JlcnRzQGFy
+bS5jb20+IHdyb3RlOgo+T24gMTUvMDQvMjAyNSAwOToyMiwgWGF2aWVyIHdyb3RlOgo+PiBUaGlz
+IGNvbW1pdCBvcHRpbWl6ZXMgdGhlIGNvbnRwdGVfcHRlcF9nZXQgZnVuY3Rpb24gYnkgYWRkaW5n
+IGVhcmx5Cj4+ICB0ZXJtaW5hdGlvbiBsb2dpYy4gSXQgY2hlY2tzIGlmIHRoZSBkaXJ0eSBhbmQg
+eW91bmcgYml0cyBvZiBvcmlnX3B0ZQo+PiAgYXJlIGFscmVhZHkgc2V0IGFuZCBza2lwcyByZWR1
+bmRhbnQgYml0LXNldHRpbmcgb3BlcmF0aW9ucyBkdXJpbmcKPj4gIHRoZSBsb29wLiBUaGlzIHJl
+ZHVjZXMgdW5uZWNlc3NhcnkgaXRlcmF0aW9ucyBhbmQgaW1wcm92ZXMgcGVyZm9ybWFuY2UuCj4+
+IAo+PiBTaWduZWQtb2ZmLWJ5OiBYYXZpZXIgPHhhdmllcl9xeUAxNjMuY29tPgo+PiAtLS0KPj4g
+IGFyY2gvYXJtNjQvbW0vY29udHB0ZS5jIHwgMjAgKysrKysrKysrKysrKysrKysrLS0KPj4gIDEg
+ZmlsZSBjaGFuZ2VkLCAxOCBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQo+PiAKPj4gZGlm
+ZiAtLWdpdCBhL2FyY2gvYXJtNjQvbW0vY29udHB0ZS5jIGIvYXJjaC9hcm02NC9tbS9jb250cHRl
+LmMKPj4gaW5kZXggYmNhYzRmNTVmOWMxLi4wYWNmZWU2MDQ5NDcgMTAwNjQ0Cj4+IC0tLSBhL2Fy
+Y2gvYXJtNjQvbW0vY29udHB0ZS5jCj4+ICsrKyBiL2FyY2gvYXJtNjQvbW0vY29udHB0ZS5jCj4+
+IEBAIC0xNTIsNiArMTUyLDE2IEBAIHZvaWQgX19jb250cHRlX3RyeV91bmZvbGQoc3RydWN0IG1t
+X3N0cnVjdCAqbW0sIHVuc2lnbmVkIGxvbmcgYWRkciwKPj4gIH0KPj4gIEVYUE9SVF9TWU1CT0xf
+R1BMKF9fY29udHB0ZV90cnlfdW5mb2xkKTsKPj4gIAo+PiArLyogTm90ZTogaW4gb3JkZXIgdG8g
+aW1wcm92ZSBlZmZpY2llbmN5LCB1c2luZyB0aGlzIG1hY3JvIHdpbGwgbW9kaWZ5IHRoZQo+PiAr
+ICogcGFzc2VkLWluIHBhcmFtZXRlcnMuKi8KPj4gKyNkZWZpbmUgQ0hFQ0tfQ09OVFBURV9GTEFH
+KHN0YXJ0LCBwdGVwLCBvcmlnX3B0ZSwgZmxhZykgXAo+PiArICAgIGZvciAoOyAoc3RhcnQpIDwg
+Q09OVF9QVEVTOyAoc3RhcnQpKyssIChwdGVwKSsrKSB7IFwKPj4gKwkJaWYgKHB0ZV8jI2ZsYWco
+X19wdGVwX2dldChwdGVwKSkpIHsgXAo+PiArCQkJCW9yaWdfcHRlID0gcHRlX21rIyNmbGFnKG9y
+aWdfcHRlKTsgXAo+PiArCQkJCWJyZWFrOyBcCj4+ICsJCX0gXAo+PiArICAgIH0KPgo+SSdtIHJl
+YWxseSBub3QgYSBmYW4gb2YgdGhpcyBtYWNybywgaXQganVzdCBvYmZ1c2NhdGVzIHdoYXQgaXMg
+Z29pbmcgb24uIEknZAo+cGVyc29uYWxseSBwcmVmZXIgdG8gc2VlIHRoZSAyIGV4dHJhIGxvb3Bz
+IG9wZW4gY29kZWQgYmVsb3cuCj4KPk9yIGV2ZW4gYmV0dGVyLCBjb3VsZCB5b3UgcHJvdmlkZSBy
+ZXN1bHRzIGNvbXBhcmluZyB0aGlzIDMgbG9vcCB2ZXJzaW9uIHRvIHRoZQo+c2ltcGxlciBhcHBy
+b2FjaCBJIHN1Z2dlc3RlZCBwcmV2aW91c2x5PyBJZiB0aGUgcGVyZm9ybWFuY2UgaXMgc2ltaWxh
+ciAod2hpY2ggSQo+ZXhwZWN0IGl0IHdpbGwgYmUsIGVzcGVjaWFsbHkgZ2l2ZW4gQmFycnkncyBw
+b2ludCB0aGF0IHlvdXIgdGVzdCBhbHdheXMgZW5zdXJlcwo+dGhlIGZpcnN0IFBURSBpcyBib3Ro
+IHlvdW5nIGFuZCBkaXJ0eSkgdGhlbiBJJ2QgcHJlZmVyIHRvIGdvIHdpdGggdGhlIHNpbXBsZXIg
+Y29kZS4KCkkgd2lsbCB0ZXN0IHRoZSBwZXJmb3JtYW5jZSBkaWZmZXJlbmNlcyBhbW9uZyB0aGVz
+ZSBzZXZlcmFsIGltcGxlbWVudGF0aW9ucy4KSWYgdGhlIGRpZmZlcmVuY2VzIGFyZSBub3Qgc2ln
+bmlmaWNhbnQsIEkgd2lsbCB0cnkgdG8gaW1wbGVtZW50IGl0IHdpdGggdGhlIHNpbXBsZXIgbWV0
+aG9kLgoKQXQgdGhlIHNhbWUgdGltZSwgYWNjb3JkaW5nIHRvIEJhcnJ5J3Mgc3VnZ2VzdGlvbiwg
+SSB3aWxsIGFkZCBzb21lIG1vcmUgZ2VuZXJhbAp0ZXN0IGNhc2VzIHRvIHZlcmlmeSB3aGV0aGVy
+IHRoZSBvcHRpbWl6YXRpb24gaXMgZWZmZWN0aXZlLgoKU2luY2UgSSdtIGEgYml0IGJ1c3kgcmVj
+ZW50bHksIGl0IG1heSB0YWtlIG1lIGEgZmV3IGRheXMgdG8gY29tcGxldGUgdGhpcyB0YXNrLgoK
+Pj4gKwo+PiAgcHRlX3QgY29udHB0ZV9wdGVwX2dldChwdGVfdCAqcHRlcCwgcHRlX3Qgb3JpZ19w
+dGUpCj4+ICB7Cj4+ICAJLyoKPj4gQEAgLTE2OSwxMSArMTc5LDE3IEBAIHB0ZV90IGNvbnRwdGVf
+cHRlcF9nZXQocHRlX3QgKnB0ZXAsIHB0ZV90IG9yaWdfcHRlKQo+PiAgCWZvciAoaSA9IDA7IGkg
+PCBDT05UX1BURVM7IGkrKywgcHRlcCsrKSB7Cj4+ICAJCXB0ZSA9IF9fcHRlcF9nZXQocHRlcCk7
+Cj4+ICAKPj4gLQkJaWYgKHB0ZV9kaXJ0eShwdGUpKQo+PiArCQlpZiAocHRlX2RpcnR5KHB0ZSkp
+IHsKPj4gIAkJCW9yaWdfcHRlID0gcHRlX21rZGlydHkob3JpZ19wdGUpOwo+PiArCQkJQ0hFQ0tf
+Q09OVFBURV9GTEFHKGksIHB0ZXAsIG9yaWdfcHRlLCB5b3VuZyk7Cj4+ICsJCQlicmVhazsKPj4g
+KwkJfQo+PiAgCj4+IC0JCWlmIChwdGVfeW91bmcocHRlKSkKPj4gKwkJaWYgKHB0ZV95b3VuZyhw
+dGUpKSB7Cj4+ICAJCQlvcmlnX3B0ZSA9IHB0ZV9ta3lvdW5nKG9yaWdfcHRlKTsKPj4gKwkJCUNI
+RUNLX0NPTlRQVEVfRkxBRyhpLCBwdGVwLCBvcmlnX3B0ZSwgZGlydHkpOwo+PiArCQkJYnJlYWs7
+Cj4+ICsJCX0KPj4gIAl9Cj4+ICAKPj4gIAlyZXR1cm4gb3JpZ19wdGU7Cj4KPklmIHdlIGRlY2lk
+ZSB0aGlzIGlzIGFsbCB3b3J0aCB0aGUgdHJvdWJsZSwgdGhlbiBJIHRoaW5rIHdlIGNhbiAoYW5k
+ICpzaG91bGQqLAo+aW4gb3JkZXIgdG8gYmUgY29uc2lzdGVudCkgcHVsbCBhIHNpbWlsYXIgc3R1
+bnQgaW4gY29udHB0ZV9wdGVwX2dldF9sb2NrbGVzcygpLgoKT0suIFRoaXMgZnVuY3Rpb24gc2Vl
+bXMgdG8gYmUgYSBiaXQgbW9yZSBjb21wbGljYXRlZC4gSSdsbCBnaXZlIGl0IGEgdHJ5IHRvCmZp
+Z3VyZSBvdXQgaG93IHRvIG9wdGltaXplIGl0LgoKLS0KVGhhbmtzLApYYXZpZXIKCg==
 
