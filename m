@@ -1,81 +1,86 @@
-Return-Path: <linux-kernel+bounces-606652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0B25A8B1E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:22:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2118BA8B1EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:22:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 343141901292
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 07:22:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 550577AD1BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 07:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED51225A32;
-	Wed, 16 Apr 2025 07:22:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2352C22B8B1;
+	Wed, 16 Apr 2025 07:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kVRMdqp2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="D/ByJwt7"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69CC5219A97
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 07:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C4922C336;
+	Wed, 16 Apr 2025 07:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744788126; cv=none; b=OSKTEiDMWY71kLDigRCD0Qf6wCMoXyv1QJMbFlX8qGvko5nWjdfZZZSWd9yhYcolqxldwVKaYJYD9L7YEVD0Vb+B21gEY1m14TblLHsUoVajOl2H5zSChVB6krm34T0iUKK0tnkqRHk1esSLAlppJ+FNiBs1VsUEwhNB9164adg=
+	t=1744788139; cv=none; b=tCz4XCTYu2tt7HN+41/ns90oCjymgVDYJtaxkFZZ2Ki+7S1RW391tq7FQtnZ+SlE3aXU4q/UFPDQ4oLuDw82kNMeSB09xzAXscwtacQr13ZSTcVFJD1aWD8j6pEv9I7ODDEiTi7wGLvJ5WaR770HPV4un6yab+K/tYYyg2f6ALc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744788126; c=relaxed/simple;
-	bh=qAn2gavUN3kjKs6JO64H2BBeRbzexvhd1YVTNaubjzI=;
+	s=arc-20240116; t=1744788139; c=relaxed/simple;
+	bh=pq9E7g2iPBPNHP3j9zLHxqTxjogm10Qq37msVgpxYTg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qZYutg18YbLKIpuA9n7Z18tMUYGCN8UcJdic3y74G2X1EhywD3EpuATl0V3kbNDBt10zf9nvdKKZsP7QKfyIX6DA9B9skLgiblwgp7C7krJ6/RhHJ5kghstrmslb8k5qJEuhituZoorhLnfmlHdp5rtxd9mDBjta6Sryx7xlLQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kVRMdqp2; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744788125; x=1776324125;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qAn2gavUN3kjKs6JO64H2BBeRbzexvhd1YVTNaubjzI=;
-  b=kVRMdqp286P2KXgINdb8JLBKSwZ+F+rQ1drFHT+BaMYYY+lw5+/izNk+
-   97nqEXPCTGKoYxOF/QvDWTbjDnAUkmHzTLGy+X9LorPJ5+rMVIvS7kL+7
-   zpNSm7LiMIkFUCGC8DHLmMYVkdnCdoM49NkTL/oAoMqyuC/9la3AWE6DD
-   AFpjKuFHJrCIaTKrcNguGlQEYzCzW+qjp91twZ3vociy0SsoAn3fmA1Od
-   BpCznC5Pua57Gz9R1vgg0aHcGkIcf7FH3aCC3C3oWHP2/YpNv90RAxlFb
-   UF8yovp8kSskNVMVgSqUaSF3oZlhbEbgXfM7GQGFG56oGUbvmnbui0bZj
-   g==;
-X-CSE-ConnectionGUID: 4lepfI9IQsyLWrq5jerx2Q==
-X-CSE-MsgGUID: zWQ2MB0dSjqyuAAiO4+ByQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="57710815"
-X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
-   d="scan'208";a="57710815"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 00:22:04 -0700
-X-CSE-ConnectionGUID: 3TFzByauSvC4oLtQb8L1ew==
-X-CSE-MsgGUID: XssrkKJcSbyndgCPf4z/aA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
-   d="scan'208";a="135418907"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 16 Apr 2025 00:22:02 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u4x5r-000JFE-1G;
-	Wed, 16 Apr 2025 07:21:59 +0000
-Date: Wed, 16 Apr 2025 15:21:14 +0800
-From: kernel test robot <lkp@intel.com>
-To: Oscar Salvador <osalvador@suse.de>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Matthew Wilcox <willy@infradead.org>,
-	Oscar Salvador <osalvador@suse.de>
-Subject: Re: [PATCH] mm, hugetlb: Reset mapping to TAIL_MAPPING before
- restoring vmemmap
-Message-ID: <202504161523.M2CmTjsj-lkp@intel.com>
-References: <20250415054705.370412-1-osalvador@suse.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=h2Udq8lxJkARrrK5U6fuJ9fbLWpv3/LuPRK6hpwz7LqDUPLUvV+w1xYxZTowCq2tAYZxTNrxbVkR9m09pNqSA6C9YDUeJGczzCB2obU7nyRFfkGdUGFGBbSuBfutg1luh07FCwRV0fRjnpQlG6Hw0gP9t4wbRZ0SaQEGUmNWHHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=D/ByJwt7; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53FJbme3021767;
+	Wed, 16 Apr 2025 07:22:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=BMzl79yb8d1fDamDeMLAWNQP69WWyr
+	XmT0w7knPA3X8=; b=D/ByJwt7LsJ5/vmf1pFn6/pl/Oa9EOUpqvXDRtDy5E4T24
+	JmD7LqNGIRXhxGsQTB1LmgZWvT9RIRwCeqPEbswBYa2GjDviaZUryAdoVsibo9zN
+	2r0hwkqXt3GLn17eQWFSRqXznMXvJl58DpiD/WGQV6i0tpKzuc+xiaLTddmp79ol
+	pmq2hpguR4lwHH8KcJ8u6N3Ff5O2INT38CfnX89TRxl2aq1ouKeGkmzWSnJiZley
+	ILzUdtXX1VULU7JEo9zP6bXP0/7wUy1yvTPaARo8NGqQF7J/ADkewcSGRXQxm3VM
+	zurFEjRNOcK58fd7tJf7MPJ16ERLOt+Hhp1ykbmg==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 461nwq5054-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Apr 2025 07:22:02 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53G3Fr4t010467;
+	Wed, 16 Apr 2025 07:22:01 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4604qk6ted-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Apr 2025 07:22:01 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53G7LvQo33096442
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 16 Apr 2025 07:21:58 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D01792004B;
+	Wed, 16 Apr 2025 07:21:57 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 85B1A20043;
+	Wed, 16 Apr 2025 07:21:57 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.60])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 16 Apr 2025 07:21:57 +0000 (GMT)
+Date: Wed, 16 Apr 2025 09:21:55 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, linux-watchdog@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: Re: [PATCH] watchdog: diag288_wdt: Implement module autoload
+Message-ID: <20250416072155.7284A2f-hca@linux.ibm.com>
+References: <20250410095036.1525057-1-hca@linux.ibm.com>
+ <abe3b3f3-0c9d-4ac2-af1f-59aa186c723c@roeck-us.net>
+ <20250415162440.7369A19-hca@linux.ibm.com>
+ <bd9de770-7e51-4ed9-bbef-2a11ad7eb1b3@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,62 +89,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250415054705.370412-1-osalvador@suse.de>
+In-Reply-To: <bd9de770-7e51-4ed9-bbef-2a11ad7eb1b3@roeck-us.net>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: QRDgFfAulZlAFvGHKdAoIObescVAngzu
+X-Proofpoint-GUID: QRDgFfAulZlAFvGHKdAoIObescVAngzu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-16_02,2025-04-15_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=0 clxscore=1015 bulkscore=0 priorityscore=1501 mlxscore=0
+ spamscore=0 malwarescore=0 mlxlogscore=559 impostorscore=0 adultscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2504160056
 
-Hi Oscar,
+On Tue, Apr 15, 2025 at 09:51:35AM -0700, Guenter Roeck wrote:
+> On 4/15/25 09:24, Heiko Carstens wrote:
+> > On Thu, Apr 10, 2025 at 05:10:50AM -0700, Guenter Roeck wrote:
+> > > On 4/10/25 02:50, Heiko Carstens wrote:
+> > > > The s390 specific diag288_wdt watchdog driver makes use of the virtual
+> > > > watchdog timer, which is available in most machine configurations.
+> > > > If executing the diagnose instruction with subcode 0x288 results in an
+> > > > exception the watchdog timer is not available, otherwise it is available.
+> > > > ---
+> > > >    arch/s390/boot/startup.c           | 17 ++++++++++
+> > > >    arch/s390/include/asm/cpufeature.h |  1 +
+> > > >    arch/s390/include/asm/diag288.h    | 41 +++++++++++++++++++++++
+> > > >    arch/s390/include/asm/machine.h    |  1 +
+> > > >    arch/s390/kernel/cpufeature.c      |  5 +++
+> > > >    drivers/watchdog/diag288_wdt.c     | 53 ++----------------------------
+> > > >    6 files changed, 68 insertions(+), 50 deletions(-)
+> > > >    create mode 100644 arch/s390/include/asm/diag288.h
+> > 
+> > Guenter, Wim, I assume this can/should go upstream via the s390 tree?
+> 
+> It touches s390 core code, and you did not suggest otherwise when submitting
+> the patch, so that was my assumption.
 
-kernel test robot noticed the following build errors:
+Sure, just wanted to check that everybody is fine with this.
+Will apply this later to the s390 tree.
 
-[auto build test ERROR on akpm-mm/mm-everything]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Oscar-Salvador/mm-hugetlb-Reset-mapping-to-TAIL_MAPPING-before-restoring-vmemmap/20250415-134835
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20250415054705.370412-1-osalvador%40suse.de
-patch subject: [PATCH] mm, hugetlb: Reset mapping to TAIL_MAPPING before restoring vmemmap
-config: x86_64-buildonly-randconfig-003-20250416 (https://download.01.org/0day-ci/archive/20250416/202504161523.M2CmTjsj-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250416/202504161523.M2CmTjsj-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504161523.M2CmTjsj-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   mm/hugetlb_vmemmap.c: In function 'hugetlb_vmemmap_restore_folio':
->> mm/hugetlb_vmemmap.c:506:9: error: implicit declaration of function 'set_hugetlb_cgroup' [-Werror=implicit-function-declaration]
-     506 |         set_hugetlb_cgroup(folio, TAIL_MAPPING);
-         |         ^~~~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
-
-
-vim +/set_hugetlb_cgroup +506 mm/hugetlb_vmemmap.c
-
-   488	
-   489	/**
-   490	 * hugetlb_vmemmap_restore_folio - restore previously optimized (by
-   491	 *				hugetlb_vmemmap_optimize_folio()) vmemmap pages which
-   492	 *				will be reallocated and remapped.
-   493	 * @h:		struct hstate.
-   494	 * @folio:     the folio whose vmemmap pages will be restored.
-   495	 *
-   496	 * Return: %0 if @folio's vmemmap pages have been reallocated and remapped,
-   497	 * negative error code otherwise.
-   498	 */
-   499	int hugetlb_vmemmap_restore_folio(const struct hstate *h, struct folio *folio)
-   500	{
-   501		/*
-   502		 * Before restoring vmemmap, make sure to reset mapping to TAIL_MAPPING,
-   503		 * so tail pages that were reset will have the right thing after being
-   504		 * restored, and the checks in free_tail_page_prepare() will pass.
-   505		 */
- > 506		set_hugetlb_cgroup(folio, TAIL_MAPPING);
-   507		return __hugetlb_vmemmap_restore_folio(h, folio, VMEMMAP_SYNCHRONIZE_RCU);
-   508	}
-   509	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks!
 
