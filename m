@@ -1,219 +1,131 @@
-Return-Path: <linux-kernel+bounces-607349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A72FA9053C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:01:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23265A90542
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:01:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F010A19E0712
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 13:58:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D30E67AE86F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:00:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B82A221F2A;
-	Wed, 16 Apr 2025 13:46:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA2F200110;
+	Wed, 16 Apr 2025 13:48:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kfrbmt2/"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bhjX5arh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89823221D94
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 13:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53240201266
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 13:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744811172; cv=none; b=hsadiaAWH6QAE592xBO4oBfin7fx64Zx66nYCj2TsTfRN4qCfN7cqsTDIVDEtWC/sraZKKogNTNCBceN6GFnyvtC92/WJmcO+kBk3TSeufvg4Z7bB89FxdUlLgRq3NB/baaPUkawbBJC3YP6GFC+pJlU2kjL+Y7YE2BPdI5rQ4M=
+	t=1744811285; cv=none; b=PSn9EgaZX+F2T/FWwGWMNGtEx1OSUPUT9vArkizV8ya53i9WfT1G7USaV/8Fe4KH4ORKP1gR+Z/eGrlu+2DXJF8WOwcLhkAkq8c2l1GuWygzUxO35MGIXN7hwQYaKoAma8+axxigsb7lIIhPtFFGN4JtzXs1dwvGrbewD89B1eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744811172; c=relaxed/simple;
-	bh=t+jlbKBTkg3+/hs9ZVICnnlmyrYUYqdcHWmZM6Rv6hw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hh9ddTqo/CXFKXm3REaqesu9uSLcXPYNa4Ql4bbCSoDDTJLd3HLzXJd4AQiwG27sp/fC7do5eaM3Fqh+oYe2e4cCkuP+w3flZTgVW5cRpW+H1FB1mVWjN54jFRMJWIRbs98+e0o6yNBe8J8LEa3b8noNG6UR9Nu+71udM552fp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kfrbmt2/; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3913d129c1aso573734f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 06:46:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744811169; x=1745415969; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/VGTw2OCtCwNoikhMS1xSw/P9HzEaDz2YmQHVZNP6Cw=;
-        b=kfrbmt2/S6WL/ORkdeYnxwAB5fjVRitH+4VwLe0WRFFvLCMScgXZYPnDsZWoDIdXLL
-         5pDRHAiPZvrGS4y/1WDiJ1JYOaZ1Ghq2d/rAyMGPvbiMSqBiIlnvECQASlzf4sB9fYNq
-         ULNxxhOE+nNsyTpgsY/l5/a46kFMQoabTofnQNq7UF86CjvjKxoxoRTTg3KBM8Py7CJe
-         02CweFMYJYCXQmo7oxTIbXsnWqp5FI3kzXP92K7je/GlgPahaPT/CKTm7uxgUTx6ba5H
-         QSAYCi8AcWwYUALdJbTb6kxL9GFQCI85U7EKuxK1alJxKVXCkb+AOdVmCzjQKB4RBh+t
-         GR0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744811169; x=1745415969;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/VGTw2OCtCwNoikhMS1xSw/P9HzEaDz2YmQHVZNP6Cw=;
-        b=EjcASQyz17JI7Bs2l0JwnRFrc+9psm+mis93qPrmq8qrqbFwE0b9TGX8EJDtZLMMzz
-         UpdEWpuvCriDX66G1tj4Bt7HlBL0D0QYqXNEqFG1m8owei9n4WDj4xXS2lEu/AcmeVmt
-         Vr7CoYne52I8AQWD+Iy75wYNsVw1O+oqJfOiPZhxZqR7LuZ0sGara1zY1bC7yutzoTCu
-         T7QH70B1FJlz7w/8+w2ItRPDp3RW1JeAqaaJVQHhKw3LwAWFcUach7Eu5beH2633umuW
-         3dttP4oLTL98CIWzBhL86GPN9agfw2+XdASjO48EH14Aiff1PhzXSF1ctg55FKtT6ScB
-         G3rg==
-X-Forwarded-Encrypted: i=1; AJvYcCUdkHUeegQzL/8gQMm6YDNyMqEnoVZAARN1OaxA68r/uqvi19mqQsXDGFj/1DGaA9C7Jy28aLU1pM6BJgc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3VHN8nw9HaDqQgGMrpKURL7xlYNuSn+muliA5kGQ0bP9HLJ11
-	EbECZTfddI9Pp4aKTqFpHZvxdTC7aLPwY0kP+DW70KljT8/DeEyCsrYrEhvF26k=
-X-Gm-Gg: ASbGncuZrWlvKbG8RmWkVMu/HK13CiR2PapAhfDt1aqTUBtZNv7xmZslboKgUIDulQ4
-	7UEyqZGrDL+2rumzzQm7S6p7xnuRE+Jn+dEDVg9/1KS+6WE1ua5xJODsxZ52MINgg2BofAM/pG+
-	YW3spZG3KeHE2a7NFsorP4GLWnLV/4V599qd095cF05ttfiSHzRVbS5d9D/emyjLV9HrU9+vrBY
-	V73Aa1AWqqnPpRoSMjNT7t9F6XAPs1pu6DZ7sJrQlVjTg6xXjBg9Ld4v9Zq8em34Q7VqMGXFTb7
-	lN/cwHExhxelpSzLsbFEW8oBmlidLQBUYC96koVnG2yle8pLA62Eg5BxKotkijpLUZeeIhr5gs9
-	rMuw=
-X-Google-Smtp-Source: AGHT+IE4YAl2mZjXep57P1NBcGIHNuPRNP7vshUejNnQtQU0uCb6wkLBjcmMTW/advV5IiWmlcYETQ==
-X-Received: by 2002:a05:6000:2901:b0:39c:30f7:b6ad with SMTP id ffacd0b85a97d-39ee5ee2546mr1463106f8f.18.1744811168641;
-        Wed, 16 Apr 2025 06:46:08 -0700 (PDT)
-Received: from mai.linaro.org (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eaf44579bsm16937709f8f.87.2025.04.16.06.46.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Apr 2025 06:46:08 -0700 (PDT)
-Date: Wed, 16 Apr 2025 15:46:05 +0200
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: John Stultz <jstultz@google.com>
-Cc: Will McVicker <willmcvicker@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Saravana Kannan <saravanak@google.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Donghoon Yu <hoony.yu@samsung.com>,
-	Hosung Kim <hosung0.kim@samsung.com>, kernel-team@android.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Youngmin Nam <youngmin.nam@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 6/7] clocksource/drivers/exynos_mct: Add module support
-Message-ID: <Z_-0nX3Z-DLPjL_j@mai.linaro.org>
-References: <20250402233407.2452429-1-willmcvicker@google.com>
- <20250402233407.2452429-7-willmcvicker@google.com>
- <Z_6OZHYfC0bC5289@mai.linaro.org>
- <CANDhNCodHATboF2=U2tTwdEkEJ+PsfB2F=fbBrs=J1UzZTEX8g@mail.gmail.com>
+	s=arc-20240116; t=1744811285; c=relaxed/simple;
+	bh=+swuqaf0lJxZrTM35AiSOW0sWIVEV0cXKaMle4kmxI8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=UwyctU6kOujNipeuKw6gPmFXDoqQDpFIy+oyOgPFv4Iyn7ucF9FRGpCDYN53SAMXkic2cswwuq8pU98x2NfMbmXP4ofHXX2kwwGWHVE1/zKw7bY4oCxQ25PzJH8fOjdZ3WT8I6o5ndYicGyY111b8XpbcwMQUSlPvNM4JMJlPKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bhjX5arh; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744811283; x=1776347283;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=+swuqaf0lJxZrTM35AiSOW0sWIVEV0cXKaMle4kmxI8=;
+  b=bhjX5arhtspaPEVDY50EF/fkI9SLW+2bsB7lnR+jIHnDr5yFdIjjCE1O
+   VioH+hHnwPHWL+A313ju5ooC12HTVX8f0zBmS0nrU0LwfcQ4kqRQxMRYn
+   IN8DDEWb+HLGlLdyTkvNIFHm0C38RTVHzxJX06+FXUc1706HR/0ppezHz
+   txlr62wl2b0kst77G6qSEqV9GXN2T9eEYCfrafvxrgFe7Yw4oy/dwY/p+
+   1w5y7Ie/JdKYP4WP4wF1/zvKByeQmjust6z4fWCXsULxvNa9HVth2a/GB
+   XhdkX5B5lbSHsBOheyOAHRnvuyY0k47I61cKL5emf/zq55zUSlkIovu8c
+   Q==;
+X-CSE-ConnectionGUID: sw5pUjRrTy6Lhbyaavipdw==
+X-CSE-MsgGUID: RL7G9wToRaicOoiIfrXwLw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11405"; a="71750795"
+X-IronPort-AV: E=Sophos;i="6.15,216,1739865600"; 
+   d="scan'208";a="71750795"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 06:48:02 -0700
+X-CSE-ConnectionGUID: g4x2vE8nSjKDwzCsoo6QPA==
+X-CSE-MsgGUID: MDTMqWFARk+Ynu1oj+Qk1w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,216,1739865600"; 
+   d="scan'208";a="167657845"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 16 Apr 2025 06:48:01 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u537P-000Jp2-0H;
+	Wed, 16 Apr 2025 13:47:59 +0000
+Date: Wed, 16 Apr 2025 21:47:31 +0800
+From: kernel test robot <lkp@intel.com>
+To: Baisong Zhong <zhongbaisong@huawei.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Luis Chamberlain <mcgrof@kernel.org>
+Subject: kernel/sched/rt.c:9:18: warning: 'max_rt_runtime' defined but not
+ used
+Message-ID: <202504162121.Q3qxvByw-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANDhNCodHATboF2=U2tTwdEkEJ+PsfB2F=fbBrs=J1UzZTEX8g@mail.gmail.com>
 
-On Tue, Apr 15, 2025 at 05:48:41PM -0700, John Stultz wrote:
-> On Tue, Apr 15, 2025 at 9:50 AM Daniel Lezcano
-> <daniel.lezcano@linaro.org> wrote:
-> > On Wed, Apr 02, 2025 at 04:33:57PM -0700, Will McVicker wrote:
-> > > From: Donghoon Yu <hoony.yu@samsung.com>
-> > >
-> > > On Arm64 platforms the Exynos MCT driver can be built as a module. On
-> > > boot (and even after boot) the arch_timer is used as the clocksource and
-> > > tick timer. Once the MCT driver is loaded, it can be used as the wakeup
-> > > source for the arch_timer.
-> >
-> > From a previous thread where there is no answer:
-> >
-> > https://lore.kernel.org/all/c1e8abec-680c-451d-b5df-f687291aa413@linaro.org/
-> >
-> > I don't feel comfortable with changing the clocksource / clockevent drivers to
-> > a module for the reasons explained in the aforementionned thread.
-> 
-> I wasn't CC'ed on that, but to address a few of your points:
-> 
-> > I have some concerns about this kind of changes:
-> >
-> >   * the core code may not be prepared for that, so loading / unloading
-> > the modules with active timers may result into some issues
-> 
-> That's a fair concern, but permanent modules (which are loaded but not
-> unloaded) shouldn't suffer this issue. I recognize having modules be
-> fully unloadable is generally cleaner and preferred, but I also see
-> the benefit of allowing permanent modules to be one-way loaded so a
-> generic/distro kernel shared between lots of different platforms
-> doesn't need to be bloated with drivers that aren't used everywhere.
-> Obviously any single driver doesn't make a huge difference, but all
-> the small drivers together does add up.
+Hi Baisong,
 
-Yes, I agree.
+FYI, the error/warning still remains.
 
-So the whole clockevent / clocksource drivers policy would have to be making
-impossible to unload a module once it is loaded.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   1a1d569a75f3ab2923cb62daf356d102e4df2b86
+commit: 28f152cd0926596e69d412467b11b6fe6fe4e864 sched/rt: fix build error when CONFIG_SYSCTL is disable
+date:   3 years ago
+config: csky-randconfig-r001-20230826 (https://download.01.org/0day-ci/archive/20250416/202504162121.Q3qxvByw-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 12.4.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250416/202504162121.Q3qxvByw-lkp@intel.com/reproduce)
 
-Do you have any ideas how to ensure that the converted drivers follow this
-rule without putting more burden on the maintainer?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504162121.Q3qxvByw-lkp@intel.com/
 
-> >  * it may end up with some interactions with cpuidle at boot time and
-> > the broadcast timer
-> 
-> Do you have more details as to your concerns here? I know there can be
-> cases of issues if the built in clockevent drivers are problematic and
-> the working ones don't load until later, you can have races where if
-> the system goes into idle before the module loads it could stall out
-> (there was a recent issue with an older iMac TSC halting in idle and
-> it not reliably getting disqualified before it got stuck in idle). 
+All warnings (new ones prefixed by >>):
 
-Yes, that is that kind of issue I suspect.
+   In file included from kernel/sched/build_policy.c:43:
+   kernel/sched/rt.c:309:6: warning: no previous prototype for 'unregister_rt_sched_group' [-Wmissing-prototypes]
+     309 | void unregister_rt_sched_group(struct task_group *tg) { }
+         |      ^~~~~~~~~~~~~~~~~~~~~~~~~
+   kernel/sched/rt.c:311:6: warning: no previous prototype for 'free_rt_sched_group' [-Wmissing-prototypes]
+     311 | void free_rt_sched_group(struct task_group *tg) { }
+         |      ^~~~~~~~~~~~~~~~~~~
+   kernel/sched/rt.c:313:5: warning: no previous prototype for 'alloc_rt_sched_group' [-Wmissing-prototypes]
+     313 | int alloc_rt_sched_group(struct task_group *tg, struct task_group *parent)
+         |     ^~~~~~~~~~~~~~~~~~~~
+   kernel/sched/rt.c:716:6: warning: no previous prototype for 'sched_rt_bandwidth_account' [-Wmissing-prototypes]
+     716 | bool sched_rt_bandwidth_account(struct rt_rq *rt_rq)
+         |      ^~~~~~~~~~~~~~~~~~~~~~~~~~
+>> kernel/sched/rt.c:9:18: warning: 'max_rt_runtime' defined but not used [-Wunused-const-variable=]
+       9 | static const u64 max_rt_runtime = MAX_BW;
+         |                  ^~~~~~~~~~~~~~
 
-> In
-> those cases I could imagine folks reasonably arguing for including the
-> working clock as a built in, but I'm not sure I'd say forcing
-> everything to be built in is the better approach.
 
-When the first driver converted as a module will be accepted, I'm pretty sure
-there will be a wave of patches to convert more drivers into modules. 
+vim +/max_rt_runtime +9 kernel/sched/rt.c
 
-What tool / use cases / tests can we put in place to ensure it is not breaking
-the existing platforms for the different configurations?
+d505b8af58912a Huaixin Chang  2020-04-25  @9  static const u64 max_rt_runtime = MAX_BW;
+ce0dbbbb30aee6 Clark Williams 2013-02-07  10  
 
-> > * the timekeeping may do jump in the past [if and] when switching the
-> > clocksource
-> 
-> ? It shouldn't. We've had tests in kselftest that switch between
-> clocksources checking for inconsistencies for awhile, so if such a
-> jump occurred it would be considered a bug.
+:::::: The code at line 9 was first introduced by commit
+:::::: d505b8af58912ae1e1a211fabc9995b19bd40828 sched: Defend cfs and rt bandwidth quota against overflow
 
-But in the context of modules, the current clocksource counter is running but
-what about the clocksource's counter related to the module which will be
-started when the driver is loaded and then switches to the new clocksource. Is
-it possible in this case there is a time drift between the clocksource which
-was started at boot time and the one started later when the module is loaded ?
- 
-> >  * the GKI approach is to have an update for the 'mainline' kernel and
-> > let the different SoC vendors deal with their drivers. I'm afraid this
-> > will prevent driver fixes to be carry on upstream because they will stay
-> > in the OoT kernels
-> 
-> I'm not sure I understand this point?  Could you expand on it a bit?
-> While I very much can understand concerns and potential downsides of
-> the GKI approach, I'm not sure how that applies to the submission
-> here, as the benefit would apply to classic distro kernels as much as
-> GKI.
-
-Ok let's consider my comment as out of the technical aspects of the changes. I
-can clarify it but it does not enter into consideration for the module
-conversion. It is an overall feeling about the direction of all in modules for
-GKI policy. I'm a little worried about changes not carried on mainline because
-it is no longer an obstacle to keep OoT drivers. The core kernel is mainline
-but the drivers can be vendor provided as module. I understand it is already
-the case but the time framework is the base brick of the system, so there is
-the risk a platform is supported with less than the minimum functionality.
-
+:::::: TO: Huaixin Chang <changhuaixin@linux.alibaba.com>
+:::::: CC: Peter Zijlstra <peterz@infradead.org>
 
 -- 
-
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
