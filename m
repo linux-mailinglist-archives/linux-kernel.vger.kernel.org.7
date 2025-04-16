@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-606545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C445CA8B08E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 08:41:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5519AA8B094
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 08:41:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D85A188F337
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 06:41:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E3F43BF9E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 06:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8840C21CC61;
-	Wed, 16 Apr 2025 06:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAC59233702;
+	Wed, 16 Apr 2025 06:40:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DroUADkf"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xidwe0V7"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D9E22CBF4
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 06:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45AF4230BDF
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 06:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744785616; cv=none; b=Y5iNjZ6j2PeLyI+71QzqVc60Or2sRGK/+QLdKh0/0jvyyA59roRndusYnb9caxag4+A+Xs15r4yMeneg2zmYHMsyWYfl+N54Xkwu48bDv8KSsOh9eHwVfZXtehsNzYIp3HdPrRzuHOcHuHPyk64ztcOZ/NC+a+SLXAvlBSi9kRQ=
+	t=1744785621; cv=none; b=V6WWD6oBPMzLsj04x5EuO3lydmjFnvRSfLkBAEw+WUgSozHWnFKI35zBpg8oEIVDCXis0aWMAOVD6NB9+EJIFjx3DhlcwokY+8TuxloUq1/ioWn1xGVN849mGYRxZTK51dgp3htQQTYZTJ++qvjHhia3vuAWc3w+ejaBAT4Nuak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744785616; c=relaxed/simple;
-	bh=RPs39+G/2/WRBdJP3KwTQnQlR3Lp/kvURzUIgtDgvwA=;
+	s=arc-20240116; t=1744785621; c=relaxed/simple;
+	bh=FXN7MqRrTtWb3HqWkB4bVWXQmRagu7xa10NZ2Fw72s8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=p6IaibS6EwM6lsV1b+vlzKeZPbi0x2NCjyRmO0/7QHyIIDcMNWHFk6bltpgsajYbBqqpZlJxXyVHKvlDY9xdTa2D6OaLqthJhGMr0ET7yvhbHgDGLtApHfsOYBKLtfRsJ22ZO4A9BhzYYDNvw3M+6TO9tG+8ULI1yFsqg8PQwK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DroUADkf; arc=none smtp.client-ip=209.85.214.181
+	 MIME-Version; b=eQn5RGbZP+o9m+gVQBU24wJt/f4O6/AtLDyDPtQBxb5hYZq631CeajXRVdtWQUBtFwpkpyAX8ki59g2aGKSXy0kKX4SmsKPl7LF2mxDPNvOTHUiZGU+i8P8B9rT7stK4hcX8uCKfiNZtYYmhDGnsnxsLTAXf+3mXSV0RLncxm8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Xidwe0V7; arc=none smtp.client-ip=209.85.210.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-22c336fcdaaso3104385ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 23:40:14 -0700 (PDT)
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-739525d4e12so5895449b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 23:40:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744785614; x=1745390414; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1744785618; x=1745390418; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=06XWI3zWvI8xB81BSzBcpZnXhq7zBjUBfZT4cp51CDs=;
-        b=DroUADkfGP9ENmXbc0Ucy2ZkNEfwC5hYWmEuM/MFlN9DGve7mzqEKrl6YjeKJLGDzQ
-         M7oEKXY8WkeBgKssiS+4MZJhzL+yMh8+IaNGcreuFFMa+78svFmVlCF3QQOzPUvopZw3
-         n0MX089dXsGmhZDM6prwNGq5XHjcAKt0iAbLGMf74cAQSf8M3K3xkFxqO/32ZVJWTgOS
-         mzE7FmNUj9uJoTJpXn0871RgLg1s5VqOxT7eQVo4ovVJHj1ra7FRrmm4O0HeVPSa7Y1T
-         6dLZiMgTiqDBWt1cHGRHp3JSRVHl8M3IH8EhYDNQUzRFXFNiYKMmSsDf+ol99rlYbK0S
-         lM6A==
+        bh=8I9rp3cxJf7RfTSYMTTz5L7zI5/p8FTKb0IR9cJ6SsU=;
+        b=Xidwe0V7wfxWDgHsAStGUguKV3Skl485YhNSuWeLrDUvT2Mbu7kFP7XXwkWmc+Zk2I
+         ekQNNSfdFw63oaDlO4RKTkEpIXB9ahHvFulnWhSYE+IioINb/X834cLcQfuPeXGUyV5J
+         jBwHurnbItPYW9B42bsbmiZoE4BpvpvYtK0vzCVLJTnizVBuMleOXUwkh77Tn0pslFg7
+         N03mjesuZLvqTUNqH5LOCf3Euywf3HQ6ifpmHjCQVjO9PTyQTmKmve4J05XCd/XE6lWy
+         MI9IZ/qzK/wBW1GZDjiO2kerJF5cUc61EDne5KqhncI7Sa0yysHE+Tghy3DER15q1HlX
+         ZCjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744785614; x=1745390414;
+        d=1e100.net; s=20230601; t=1744785618; x=1745390418;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=06XWI3zWvI8xB81BSzBcpZnXhq7zBjUBfZT4cp51CDs=;
-        b=QyswOrKXOq30xLugXcFVp/AaOi/Jap/gxMa2V9wXOM4BqoOoOE6r4/JQc75L7NWwc7
-         nlqnZZQwdpfRLfaevjnRKtufDt8ww93feLQ8Ki7wsAIP1DhamrtDiunhJEiCdHR3Xzl9
-         f6u7Bk0k9168HnkjQWS7N1M0hMd6QOmrqdKfVFrSIIFssc++UP/V0HkAquJQMW68qcwt
-         JyZMzGGpQz2LrPSGd4TVMNNsr1QWn5hydSte+idwhjpzESuZbKe7TChDdHuywjqSBSwb
-         KmRjwxCecG5qxkMXj212uOBWLMfOstQlkgPTplQrshJnjgwCLFfI4ePAJsMQ7vhCL6By
-         96JA==
-X-Forwarded-Encrypted: i=1; AJvYcCWxYVDzNoazZV/tsX9o0RVonrk/e6kwIJKgdlP1jMJENZT3LsV5BJtY4sFLY8PojgYCeKfC596IwOErqqw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzs+Tn/cIxKH30qO68y7FZViQg4uO44n5+nC6eEh/Z/grHFBlOy
-	X+Iqxh4F0T+o9Bw/JmcCWHvf/shFFWIzy6gCWqQ72aeSpAwWK+bIPSMptr6mrG4=
-X-Gm-Gg: ASbGncuC+VmWd1c3L4ZTRXxoDxTzGbUUI1Tmcvy/icalbbImwF0bjDoYexwLZ3FDjZf
-	dUcR1uYxSX7t9jd+R76dPB+bZpb1IQ12xlZNnv8S69YSatum1LcWpaJn1oRAXYXpArP5auQVzdT
-	P6eOkVdgMgkimqgloL2HZCqOWgN7D+AkRDgw9AK2bqjj0to2YmJy3hBZLwOSi0/yBkdvoIQfcSo
-	XfbZbu252oxSUWadl/SKIoVgVbrvXLCPaZVmm+/SU7kvWcVb4Bds4aan8kSA4hxcNTGQjDkZ983
-	M9qJF77IhEUWU2CCjkmSVIp7p3K2pNejBPk6JMZ7zA==
-X-Google-Smtp-Source: AGHT+IF2Rglo7eHxKgDEgBNsJGaQtvp/oXKgIHcXad7KTacx4TnahZHOzUtBIJLTVG1uvlzQ1gByKw==
-X-Received: by 2002:a17:903:84f:b0:224:122d:d2de with SMTP id d9443c01a7336-22c358ddb96mr9533055ad.16.1744785614335;
-        Tue, 15 Apr 2025 23:40:14 -0700 (PDT)
+        bh=8I9rp3cxJf7RfTSYMTTz5L7zI5/p8FTKb0IR9cJ6SsU=;
+        b=Kz0tZ4vEqi16idWzWq1qU7eq1XrQN6hGic6MTNNGuIjoLUXQKHTvjIhYFoH3Db0dji
+         sWGxJdWw+CzLNLoyISt4rojbzbz8bhDXX3BIhe56Q8kuzX5BouJMzfZ8xe3rg6eRGLzH
+         gSEBC1rqIlY/GnIjEorKylQ+E8tjIeAn+H+KS2wQOEjksuYHrTEwZGhHb/MJL/7p3oi6
+         Upvms8sdRxDzJs/TuEb6wvEZFrhTWtFpxPKBNopWYGRdQ9Olv1UQk4DQXd2CX2eEzOIc
+         EqP+Z7sdgAMTLK0qGE3yVgZpJ6YqclRNQMALJZRrAR0asXr4spoY9km/t6HXrFWZC4JE
+         GLfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVXBqFYF9Qmd0p9qFQp+EI95DfFcJFtAF/AtgU0wzp4h+7ZjT8QoeUT+5aFEmZ64sH3pv1bAPWE6tbUYDg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmOemQpHXognG6BxVSuekuUYRb/wp1Jstqyz7pERFVl/mekVjg
+	BdKpnlB7rAGtV8BNESuEjbULIdoLhgLwjWY3lSQskEYEdiDf5vbhFzpCMWqfnmE=
+X-Gm-Gg: ASbGncu1JORLFrlAfL3VWhooiT2UE4vS5cSZSLkNPitrPizP0aOx4zknqnlKywB59Ri
+	1qF5Bx5r7e6LL4kptoBpqhBvq9odpDHXE4JdMyZ0LoSqTgyn+8genn2D/r99LTOIkQUjKIgtP/9
+	fr4A48fwlsGbhGPHDmgFKuYviPCupm4wDvOJwPZ/BW9UYFbeQlQsgB8xrUjYuqcNtdhF53oPiUg
+	ifvBMRyKc8osfgG7NdS+lxiEhthVxsXiyHv9Zo5Sj/6dV11c1K+OpOEuRrrg0afpIL5zNkps+hQ
+	ygLLsL4dbNHsJ43uLHT+qjTb2ZAkWFh1YQprGWVYRg==
+X-Google-Smtp-Source: AGHT+IF0ex/iD+sUrbitNrvOanXTZ6pYvDsy9aAY8JPu8xZYMYJcxxzu0L7Lfm7GAzJbTIuYn066Rw==
+X-Received: by 2002:a05:6a20:e68f:b0:1ee:c8e7:203c with SMTP id adf61e73a8af0-203b3eea03dmr933373637.24.1744785618538;
+        Tue, 15 Apr 2025 23:40:18 -0700 (PDT)
 Received: from localhost ([122.172.83.32])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c33ef0e83sm6446415ad.35.2025.04.15.23.40.13
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b0b2221bb77sm582080a12.71.2025.04.15.23.40.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Apr 2025 23:40:13 -0700 (PDT)
+        Tue, 15 Apr 2025 23:40:18 -0700 (PDT)
 From: Viresh Kumar <viresh.kumar@linaro.org>
 To: "Rafael J. Wysocki" <rafael@kernel.org>,
 	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
@@ -84,7 +84,9 @@ To: "Rafael J. Wysocki" <rafael@kernel.org>,
 	Andreas Hindborg <a.hindborg@kernel.org>,
 	Alice Ryhl <aliceryhl@google.com>,
 	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>
+	Danilo Krummrich <dakr@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>
 Cc: Viresh Kumar <viresh.kumar@linaro.org>,
 	linux-pm@vger.kernel.org,
 	Vincent Guittot <vincent.guittot@linaro.org>,
@@ -101,11 +103,10 @@ Cc: Viresh Kumar <viresh.kumar@linaro.org>,
 	Russell King <linux@armlinux.org.uk>,
 	linux-clk@vger.kernel.org,
 	Michael Turquette <mturquette@baylibre.com>,
-	Anisse Astier <anisse@astier.eu>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH V10 06/15] rust: macros: enable use of hyphens in module names
-Date: Wed, 16 Apr 2025 12:09:23 +0530
-Message-Id: <b7f534dfbb63aa0e8acfe90f122e23ad052d5e19.1744783509.git.viresh.kumar@linaro.org>
+Subject: [PATCH V10 07/15] rust: cpu: Add from_cpu()
+Date: Wed, 16 Apr 2025 12:09:24 +0530
+Message-Id: <cf7c84e4fcd5ef0430d11e02cd727120ba94a248.1744783509.git.viresh.kumar@linaro.org>
 X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
 In-Reply-To: <cover.1744783509.git.viresh.kumar@linaro.org>
 References: <cover.1744783509.git.viresh.kumar@linaro.org>
@@ -117,91 +118,93 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Anisse Astier <anisse@astier.eu>
+This implements cpu::from_cpu(), which returns a reference to
+Device for a CPU. The C struct is created at initialization time for
+CPUs and is never freed and so ARef isn't returned from this function.
 
-Some modules might need naming that contains hyphens "-" to match the
-auto-probing by name in the platform devices that comes from the device
-tree.
+The new helper will be used by Rust based cpufreq drivers.
 
-But rust identifiers cannot contain hyphens, so replace the module name
-by an underscore anywhere we'd use it as an identifier.
-
-Signed-off-by: Anisse Astier <anisse@astier.eu>
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-[Viresh: Replace "-" with '-', and fix line length checkpatch warnings]
 Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- rust/macros/module.rs | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+ MAINTAINERS                     |  1 +
+ rust/bindings/bindings_helper.h |  1 +
+ rust/kernel/cpu.rs              | 30 ++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs              |  1 +
+ 4 files changed, 33 insertions(+)
+ create mode 100644 rust/kernel/cpu.rs
 
-diff --git a/rust/macros/module.rs b/rust/macros/module.rs
-index a9418fbc9b44..27cc72d474f0 100644
---- a/rust/macros/module.rs
-+++ b/rust/macros/module.rs
-@@ -185,7 +185,9 @@ pub(crate) fn module(ts: TokenStream) -> TokenStream {
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 12cde55579a0..475abf72869c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6155,6 +6155,7 @@ F:	include/linux/cpuhotplug.h
+ F:	include/linux/smpboot.h
+ F:	kernel/cpu.c
+ F:	kernel/smpboot.*
++F:	rust/kernel/cpu.rs
  
-     let info = ModuleInfo::parse(&mut it);
- 
--    let mut modinfo = ModInfoBuilder::new(info.name.as_ref());
-+    /* Rust does not allow hyphens in identifiers, use underscore instead */
-+    let name_identifier = info.name.replace('-', "_");
-+    let mut modinfo = ModInfoBuilder::new(name_identifier.as_ref());
-     if let Some(author) = info.author {
-         modinfo.emit("author", &author);
-     }
-@@ -310,14 +312,15 @@ mod __module_init {{
-                     #[doc(hidden)]
-                     #[link_section = \"{initcall_section}\"]
-                     #[used]
--                    pub static __{name}_initcall: extern \"C\" fn() -> kernel::ffi::c_int = __{name}_init;
-+                    pub static __{name_identifier}_initcall: extern \"C\" fn() ->
-+                        kernel::ffi::c_int = __{name_identifier}_init;
- 
-                     #[cfg(not(MODULE))]
-                     #[cfg(CONFIG_HAVE_ARCH_PREL32_RELOCATIONS)]
-                     core::arch::global_asm!(
-                         r#\".section \"{initcall_section}\", \"a\"
--                        __{name}_initcall:
--                            .long   __{name}_init - .
-+                        __{name_identifier}_initcall:
-+                            .long   __{name_identifier}_init - .
-                             .previous
-                         \"#
-                     );
-@@ -325,7 +328,7 @@ mod __module_init {{
-                     #[cfg(not(MODULE))]
-                     #[doc(hidden)]
-                     #[no_mangle]
--                    pub extern \"C\" fn __{name}_init() -> kernel::ffi::c_int {{
-+                    pub extern \"C\" fn __{name_identifier}_init() -> kernel::ffi::c_int {{
-                         // SAFETY: This function is inaccessible to the outside due to the double
-                         // module wrapping it. It is called exactly once by the C side via its
-                         // placement above in the initcall section.
-@@ -335,13 +338,13 @@ mod __module_init {{
-                     #[cfg(not(MODULE))]
-                     #[doc(hidden)]
-                     #[no_mangle]
--                    pub extern \"C\" fn __{name}_exit() {{
-+                    pub extern \"C\" fn __{name_identifier}_exit() {{
-                         // SAFETY:
-                         // - This function is inaccessible to the outside due to the double
-                         //   module wrapping it. It is called exactly once by the C side via its
-                         //   unique name,
--                        // - furthermore it is only called after `__{name}_init` has returned `0`
--                        //   (which delegates to `__init`).
-+                        // - furthermore it is only called after `__{name_identifier}_init` has
-+                        //   returned `0` (which delegates to `__init`).
-                         unsafe {{ __exit() }}
-                     }}
- 
-@@ -381,6 +384,7 @@ unsafe fn __exit() {{
-         ",
-         type_ = info.type_,
-         name = info.name,
-+        name_identifier = name_identifier,
-         modinfo = modinfo.buffer,
-         initcall_section = ".initcall6.init"
-     )
+ CPU IDLE TIME MANAGEMENT FRAMEWORK
+ M:	"Rafael J. Wysocki" <rafael@kernel.org>
+diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+index f53d6e1a21f2..ac92c67d2c38 100644
+--- a/rust/bindings/bindings_helper.h
++++ b/rust/bindings/bindings_helper.h
+@@ -11,6 +11,7 @@
+ #include <linux/blk_types.h>
+ #include <linux/blkdev.h>
+ #include <linux/clk.h>
++#include <linux/cpu.h>
+ #include <linux/cpumask.h>
+ #include <linux/cred.h>
+ #include <linux/device/faux.h>
+diff --git a/rust/kernel/cpu.rs b/rust/kernel/cpu.rs
+new file mode 100644
+index 000000000000..10c5c3b25873
+--- /dev/null
++++ b/rust/kernel/cpu.rs
+@@ -0,0 +1,30 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! Generic CPU definitions.
++//!
++//! C header: [`include/linux/cpu.h`](srctree/include/linux/cpu.h)
++
++use crate::{bindings, device::Device, error::Result, prelude::ENODEV};
++
++/// Creates a new instance of CPU's device.
++///
++/// # Safety
++///
++/// Reference counting is not implemented for the CPU device in the C code. When a CPU is
++/// hot-unplugged, the corresponding CPU device is unregistered, but its associated memory
++/// is not freed.
++///
++/// Callers must ensure that the CPU device is not used after it has been unregistered.
++/// This can be achieved, for example, by registering a CPU hotplug notifier and removing
++/// any references to the CPU device within the notifier's callback.
++pub unsafe fn from_cpu(cpu: u32) -> Result<&'static Device> {
++    // SAFETY: It is safe to call `get_cpu_device()` for any CPU.
++    let ptr = unsafe { bindings::get_cpu_device(cpu) };
++    if ptr.is_null() {
++        return Err(ENODEV);
++    }
++
++    // SAFETY: The pointer returned by `get_cpu_device()`, if not `NULL`, is a valid pointer to
++    // a `struct device` and is never freed by the C code.
++    Ok(unsafe { Device::as_ref(ptr) })
++}
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index f4dcfefe94be..db372f806875 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -44,6 +44,7 @@
+ pub mod build_assert;
+ #[cfg(CONFIG_COMMON_CLK)]
+ pub mod clk;
++pub mod cpu;
+ pub mod cpumask;
+ pub mod cred;
+ pub mod device;
 -- 
 2.31.1.272.g89b43f80a514
 
