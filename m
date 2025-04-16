@@ -1,138 +1,123 @@
-Return-Path: <linux-kernel+bounces-606384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84C60A8AE8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 05:45:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F131A8AEA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 05:49:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1F803A99E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 03:45:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A86133B8B6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 03:49:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB6E61FCFE2;
-	Wed, 16 Apr 2025 03:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A67F227B9C;
+	Wed, 16 Apr 2025 03:49:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aCsXskQp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="DlzlSveh"
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430AD15B543;
-	Wed, 16 Apr 2025 03:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C4E2DFA49;
+	Wed, 16 Apr 2025 03:49:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744775145; cv=none; b=HzofuEpFm7RuevG9rZCq48PqPNwd1R1sVVBvMUakdtflo1+32A/0dy9wnU0kRVLzbaz98ySRlrYauRc2gWdn7kbthkndQPy8oZK9GWXzROE+1gqbD2kfsBZvp7WRf9H6LE8Nfh4+NgyX43idjQNZb2i6dFqjPsEsQ+8ygT7sHhk=
+	t=1744775357; cv=none; b=pEe3JtT48nve5qpDn17X5K0pP5IF/l6Yohwl/owG9MwoFvqvGNSSkDVKKXhCHzrMf5MS5ciilzjcBIf0KWZPhNf6Iv6s1eIaEtV4dOD8wEqEIWhK8t7s0Z4GSTEwUPtI8Mh0xdBSbJKs6mCtVcTYFq6w1mTVF3Hnp5qlBQOX8Ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744775145; c=relaxed/simple;
-	bh=Q/SXGPp3w7zDxJbEJI7HKZTVU2NnaABXW4B/3EMpNkw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TvSLmGxUC7RAe+Xicn4jAzZrXwbxjFYkEGHtU14UakisyVD7QUGPnD3+BcYTQ1lf9zvIeV31XojRo2i/8szCSl4mHx2mEE1+BrrKnnCZ9lC+ehNW+4zNbywfukPsfGCfxdrAGyPdIO2ev5uBDWJ5QRcrObqPLc1ztgvsr3F9LLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aCsXskQp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A13F8C4CEE2;
-	Wed, 16 Apr 2025 03:45:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744775144;
-	bh=Q/SXGPp3w7zDxJbEJI7HKZTVU2NnaABXW4B/3EMpNkw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aCsXskQpnTkLRG9qwgu2ohYa6Y7IkCCCR7rUl6cVZnJjaNbe7j1aCkG7cl+4g2RcB
-	 vasi7Y84lIspTDm7QDYPgLLMwA9ljoQLwVfxGwrWufPXm2A/kg7YrpvLU+/OdaeOws
-	 NPPtiuecbe+QjgWqE8XnpGmB110JOpcwyh0PMUmFuN/ZFPCSiv2/QcUmKo5zk5wiev
-	 iicOS46VoqIjeKab1sykWkab9lgQltTAUwWTm1mwfZ808s4lV4z+nIxts8fGrCZaMt
-	 ZD0HTxdHgm5vTbk9SVdNSIaMp75lNbHHGB6GPfJ8/7sXLk3Jr5473ncuL6cZxdD+iP
-	 Qh/LMLxBCYezA==
-Message-ID: <a05950b2-8995-484f-8678-699584d30ffe@kernel.org>
-Date: Wed, 16 Apr 2025 05:45:41 +0200
+	s=arc-20240116; t=1744775357; c=relaxed/simple;
+	bh=72kNaEoJFUZL5dZZw8pv+GFtk1SKD6lHC7619kVBsdU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=elh0YWDMfoMAmZKUiK3H7+Tn2lDNBB+cDTsffz1vYf2i57y3F2vstVzEoseUz1JunmxaH0bPzmsUqgZbrJ6F98K3G9lsq/XbhCwq2eWYo0Nt9gK+RU5r3lu9NqsvGc19NSRTpfO6u4SxKA7JyEt60zoTEFB/pNM0nf59e5tmEyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=DlzlSveh; arc=none smtp.client-ip=54.92.39.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1744775318;
+	bh=sRE/NmB6AY8qA+aqCchSM3QNZ8JoxLXRhVx3KHBUcgo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=DlzlSvehYUNbwiwQeLrHJ2Mf5eAy6onbzXGtvWnf33lLxzyI4LQ0e1VSI/ir1YC6U
+	 4Y0ZPYPhg2dhVXYuXaPMg5MixuxQY2hMiETESHsK+vFDuGdJCxzzROsx8ghDZcE3oB
+	 OcjgpBfihbT8oxYddITxsC+GSRMkEg3YqtymMxk8=
+X-QQ-mid: zesmtpip3t1744775274t39dec912
+X-QQ-Originating-IP: 6Z6gzrNj5IQ3lDirIA9LsJZ9LdzKXqg2VesTeEtsCIA=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 16 Apr 2025 11:47:52 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 13549914313903707969
+EX-QQ-RecipientCnt: 14
+From: WangYuli <wangyuli@uniontech.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	tsbogend@alpha.franken.de
+Cc: wangyuli@uniontech.com,
+	devicetree@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jiaxun.yang@flygoat.com,
+	chenhuacai@kernel.org,
+	yangtiezhu@loongson.cn,
+	zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	guanwentao@uniontech.com
+Subject: [PATCH] MIPS: Loongson64: Add missing '#interrupt-cells' for loongson64c_ls7a
+Date: Wed, 16 Apr 2025 11:45:48 +0800
+Message-ID: <6E749D043BC7BD99+20250416034548.805069-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/13] vt: properly support zero-width Unicode code
- points
-To: Nicolas Pitre <nico@fluxnic.net>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Nicolas Pitre <npitre@baylibre.com>, linux-serial@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250415192212.33949-1-nico@fluxnic.net>
- <20250415192212.33949-4-nico@fluxnic.net>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20250415192212.33949-4-nico@fluxnic.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: Nn1UX5BQtzc8h+RdnigxYQgaQjagILkmS3a5XRrsUz4Q0DsowSDGbkwC
+	BymttjFN4AokWecu5dzAfKejb2zfaq/SuQ49zhy79sE1HiId42+MUtOe219xFJoXu58PtfC
+	HOesbVJ9xh9qo2l+VbWZsfqXITfhoVHHb9J9bgUDP1J2UdptHJfSxlPO3qwjz8Lx42uxRsp
+	Pzt/3yaVU6raS9B3UKQszwd0PMbG95NSKsw+bvN6qef55QUVYC+KmwBZm//Wtlrc6z9zzYW
+	Lje575k0/x7Kdplm5TiKd0MtabgK+E3xyEuFtbEWYANoe/3fgMnMOt7JZwSx2un59ScBCM9
+	QGEPIZan6Ky0Ze9izgEZpj6WPCnidJZEETkFPthpE0vNr4FgAeFm2usEgBQAnPVIlh9rqEp
+	FTc+1Miixh5btecQ541woQhOEAAJjci4P6Vgvf4kFUf/7Wh1uvhJszMc52PddBbZpEWwska
+	vle/o105n6SkXIGt/0RceVoZu4yTYdA6FmkBsGJeUldzlOnhQmuawTVqxcJJTOaM+cvGLJf
+	McV3P49NVWVZhTFt2LeMsw7e5erTg3gkDa/kNcq5yjmyFBRVGNTmWkWBWSbbwHMNgpv0WBS
+	7gBlgaA3UlfOnpcw43RQH5jBGaBS/x2NOxo+rDIgVr9f2pjo71LolkAo2FlcEWdk44n5Fou
+	7povt/JYPTz8rlC/KFDOyj4uCw1jy+QMv7dwC2xA1oyzSM/BHtLfQEY+uet9z5LwEdaaUlh
+	y6CH+h2eH+6B21UCjqM8BAWfv7usyvtDUE5Ma/7vRLjtXUJHLnOxns7tfVHp9VPcVJgsOCe
+	FmpV7G3GIKPLlulo6XoZ1S4dJ9rkm9PMxE61jRNf8ci0wOcdg7HD2MPUP+0EW7E2T/Z0K1u
+	eQM7X+N/MvLOg217BJlW7Ugd/U5HS+a/R/FSocc7OSvys1TDCi9xgrgxJOO7eNOqAQ7DVw3
+	Ka0b0uvppHxyCEMmtR+ku5uifTNt7ClVJDyJTeZSyaZ5thO0+o0jf62L9q2aTdbod8qfIfh
+	fMGUHJFQLiG0ug/skj
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+X-QQ-RECHKSPAM: 0
 
-On 15. 04. 25, 21:17, Nicolas Pitre wrote:
-> From: Nicolas Pitre <npitre@baylibre.com>
-> 
-> Zero-width Unicode code points are causing misalignment in vertically
-> aligned content, disrupting the visual layout. Let's handle zero-width
-> code points more intelligently.
-> 
-> Double-width code points are stored in the screen grid followed by a white
-> space code point to create the expected screen layout. When a double-width
-> code point is followed by a zero-width code point in the console incoming
-> bytestream (e.g., an emoji with a presentation selector) then we may
-> replace the white space padding by that zero-width code point instead of
-> dropping it. This maximize screen content information while preserving
-> proper layout.
-> 
-> If a zero-width code point is preceded by a single-width code point then
-> the above trick is not possible and such zero-width code point must
-> be dropped.
-> 
-> VS16 (Variation Selector 16, U+FE0F) is special as it doubles the width
-> of the preceding single-width code point. We handle that case by giving
-> VS16 a width of 1 when that happens.
-> 
-> Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
+Similar to commit 98a9e2ac3755 ("MIPS: Loongson64: DTS: Fix msi node for ls7a").
 
-Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
+Fix follow warnings:
+  arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dts:28.31-36.4: Warning (interrupt_provider): /bus@10000000/msi-controller@2ff00000: Missing '#interrupt-cells' in interrupt provider
+  arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: Warning (interrupt_map): Failed prerequisite 'interrupt_provider'
 
+Fixes: 24af105962c8 ("MIPS: Loongson64: DeviceTree for LS7A PCH")
+Tested-by: WangYuli <wangyuli@uniontech.com>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dts | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dts b/arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dts
+index c7ea4f1c0bb2..6c277ab83d4b 100644
+--- a/arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dts
++++ b/arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dts
+@@ -29,6 +29,7 @@ msi: msi-controller@2ff00000 {
+ 		compatible = "loongson,pch-msi-1.0";
+ 		reg = <0 0x2ff00000 0 0x8>;
+ 		interrupt-controller;
++		#interrupt-cells = <1>;
+ 		msi-controller;
+ 		loongson,msi-base-vec = <64>;
+ 		loongson,msi-num-vecs = <64>;
 -- 
-js
-suse labs
+2.49.0
+
 
