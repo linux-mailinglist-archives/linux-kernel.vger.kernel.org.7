@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-607657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C481A90911
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:32:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 664E4A90915
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69F1C7A190A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:31:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DDC8190738D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 329E8221DB6;
-	Wed, 16 Apr 2025 16:29:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096A7222571;
+	Wed, 16 Apr 2025 16:29:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ObsJYWKq";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Th8pQuwP"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UdoW2kjA";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="faVP8Bbn"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 696C021ADB2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C46A21A45E
 	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 16:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744820978; cv=none; b=Is+6TOIeCdUZg3VXATWzfWSGsFNJxGOgh5OhuAqtSO4EqWreWJhXHiEcwmS/igj5OcQDQTsubG1KkfRDx6Gmmn9P/auo/ekanl/ixfEK2oMPgjjxS4sIftg/kTXj+cQmbuuSNVMnpb69IzS3R36V/T/ofmHDT0tJcxX94eCwJ8k=
+	t=1744820980; cv=none; b=OnToDEQfcw4iposMhzcnjkMo08P0l60lO3TGX9Lt8HRmt7shxj7J4TH8rd7kfVUKmGXt6qjFfLZA9DDUa5gTCRCBxdY9hjQ/8p3LL6u63pwUVHtIjvaiyIvIasj+hhd8i6JivBDTvsZeIodMQkXyq5gN36ZvemspQTgk98S0WRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744820978; c=relaxed/simple;
-	bh=uSjj2prwgpxPK1WfhS5g0UP1RCfBJaD0kQ9KvFiBfBI=;
+	s=arc-20240116; t=1744820980; c=relaxed/simple;
+	bh=7J0RzhUpf7dV8BUJD0PuDv6DZpLLc6u0FSxeeX2ZA5I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iLEd8UUVG/MdbkD0KHLA35s/k/kcBetbYdwv1PfuRiMfxEW/oGypgCvVV9x79edmpN7/E2vKLiuzm866TqxTpW602OfE4YOl026JooMxTplG+cu8XCkxclU1OxIMfLYsCjLLSry7uP50/oEcleaWLCVZJX49tYwJXT0qotjN7I0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ObsJYWKq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Th8pQuwP; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=RbqmXFdY29wNiS4qGmK1kB5IEbHmej5oRysZQ09JPvxgYxLJqlXiXgs8OHjy+6pEb6lCXYayVWhnVLHOTvN1Xr9N/6Xz3xCnXmByXuWGLMbQSgi4Q8MnQWeWUGCYITdq/oi1b9LQZ64Oyfwv83kSY9HLI43t857KNG7/hStNT8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UdoW2kjA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=faVP8Bbn; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
@@ -38,21 +38,21 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=yyaf1r00Tl/hAYybKNhDkdWLTny5vavj746pDaUGf7M=;
-	b=ObsJYWKqE8VKH7icrwGBSTgPqw4Va2e6HP5CmdN/UKaGvEl3BEZ5gBCdGs79b8AGK4ESYb
-	PfDMv/7ebOrLLmf7QMR0jlVuA+hrvJw9s1JrpArw6t9PtuPc06hoigtnPmsfzrM5gsrgsv
-	fWD4K+1XFCHTDf+mIootvbdYVShSf3vrtE+20PCyESyOufL3NozeHvBLZf0KhNV3a7YigM
-	A79xpLQkqhd1C6BD1LB2J8+/jjcKSn1qEhvRFowrlvCV1DsVtM9cxV5jpzuUhJOEpxqs2T
-	NdZdSeEmZ9AmNO90G8f5pg4mSET3Y1GBTURgdsFx/UozCJbquUCSB54Ij53g+w==
+	bh=K7u6CZonrzzvRz/i9kOfa0iBQn4JLrzLuiVIvnvYeJ4=;
+	b=UdoW2kjABMT+n4N2bgGPtc2xQEbl1EQgDWwdwmmdfoOagAEgfH2nEqw8CZ16AWZ7tR6tys
+	LqUvWN67UGffQkQiM7wamKD8wvTbnJhSpGczJe7pcqpanSBrbu1Z/PFL0I0VlY0Glyhnp/
+	4qaDnPk+g3l/r2cYuxYwN+vSDMAyDis7XZHgRvJmom7Qsjz2kkevM25j9Bpj5nCIC/QmCJ
+	NT0EOsAlwnpVVyZx9qm4gOihD/4HzMSH00Lu7M531+OKtnvAGFoapQLkbHTIAnXsiHLE7K
+	YueN22uNaHSmfIJcZdB5s+WEV8Egh6exjSkWxmcLYAOm3G4h19fuOrbGnVc80A==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1744820972;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=yyaf1r00Tl/hAYybKNhDkdWLTny5vavj746pDaUGf7M=;
-	b=Th8pQuwPHbBzB9CRNsoFRxyZqgTSo/xK1yazt/5P6ZEHUV+zzbEtYfjMTrfA62WO2sWEPg
-	o44Ih8VaNdN3GZDg==
+	bh=K7u6CZonrzzvRz/i9kOfa0iBQn4JLrzLuiVIvnvYeJ4=;
+	b=faVP8BbngzV01cTNC7EbebgEqsZ1xXPanvlI4vXE+mZLYJxCYF4xfsxmxAg3g04KzeHdB0
+	rKnir0BWVu6mvcBg==
 To: linux-kernel@vger.kernel.org
 Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
 	Darren Hart <dvhart@infradead.org>,
@@ -63,11 +63,10 @@ Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Valentin Schneider <vschneid@redhat.com>,
 	Waiman Long <longman@redhat.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Shrikanth Hegde <sshegde@linux.ibm.com>
-Subject: [PATCH v12 15/21] futex: Allow to make the private hash immutable
-Date: Wed, 16 Apr 2025 18:29:15 +0200
-Message-ID: <20250416162921.513656-16-bigeasy@linutronix.de>
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH v12 16/21] futex: Implement FUTEX2_NUMA
+Date: Wed, 16 Apr 2025 18:29:16 +0200
+Message-ID: <20250416162921.513656-17-bigeasy@linutronix.de>
 In-Reply-To: <20250416162921.513656-1-bigeasy@linutronix.de>
 References: <20250416162921.513656-1-bigeasy@linutronix.de>
 Precedence: bulk
@@ -78,218 +77,338 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 
-My initial testing showed that
-	perf bench futex hash
+From: Peter Zijlstra <peterz@infradead.org>
 
-reported less operations/sec with private hash. After using the same
-amount of buckets in the private hash as used by the global hash then
-the operations/sec were about the same.
+Extend the futex2 interface to be numa aware.
 
-This changed once the private hash became resizable. This feature added
-a RCU section and reference counting via atomic inc+dec operation into
-the hot path.
-The reference counting can be avoided if the private hash is made
-immutable.
-Extend PR_FUTEX_HASH_SET_SLOTS by a fourth argument which denotes if the
-private should be made immutable. Once set (to true) the a further
-resize is not allowed (same if set to global hash).
-Add PR_FUTEX_HASH_GET_IMMUTABLE which returns true if the hash can not
-be changed.
-Update "perf bench" suite.
+When FUTEX2_NUMA is specified for a futex, the user value is extended
+to two words (of the same size). The first is the user value we all
+know, the second one will be the node to place this futex on.
 
-For comparison, results of "perf bench futex hash -s":
-- Xeon CPU E5-2650, 2 NUMA nodes, total 32 CPUs:
-  - Before the introducing task local hash
-    shared  Averaged 1.487.148 operations/sec (+- 0,53%), total secs =3D 10
-    private Averaged 2.192.405 operations/sec (+- 0,07%), total secs =3D 10
+  struct futex_numa_32 {
+	u32 val;
+	u32 node;
+  };
 
-  - With the series
-    shared  Averaged 1.326.342 operations/sec (+- 0,41%), total secs =3D 10
-    -b128   Averaged   141.394 operations/sec (+- 1,15%), total secs =3D 10
-    -Ib128  Averaged   851.490 operations/sec (+- 0,67%), total secs =3D 10
-    -b8192  Averaged   131.321 operations/sec (+- 2,13%), total secs =3D 10
-    -Ib8192 Averaged 1.923.077 operations/sec (+- 0,61%), total secs =3D 10
-    128 is the default allocation of hash buckets.
-    8192 was the previous amount of allocated hash buckets.
+When node is set to ~0, WAIT will set it to the current node_id such
+that WAKE knows where to find it. If userspace corrupts the node value
+between WAIT and WAKE, the futex will not be found and no wakeup will
+happen.
 
-- Xeon(R) CPU E7-8890 v3, 4 NUMA nodes, total 144 CPUs:
-  - Before the introducing task local hash
-    shared   Averaged 1.810.936 operations/sec (+- 0,26%), total secs =3D 20
-    private  Averaged 2.505.801 operations/sec (+- 0,05%), total secs =3D 20
+When FUTEX2_NUMA is not set, the node is simply an extension of the
+hash, such that traditional futexes are still interleaved over the
+nodes.
 
-  - With the series
-    shared   Averaged 1.589.002 operations/sec (+- 0,25%), total secs =3D 20
-    -b1024   Averaged    42.410 operations/sec (+- 0,20%), total secs =3D 20
-    -Ib1024  Averaged   740.638 operations/sec (+- 1,51%), total secs =3D 20
-    -b65536  Averaged    48.811 operations/sec (+- 1,35%), total secs =3D 20
-    -Ib65536 Averaged 1.963.165 operations/sec (+- 0,18%), total secs =3D 20
-    1024 is the default allocation of hash buckets.
-    65536 was the previous amount of allocated hash buckets.
+This is done to avoid having to have a separate !numa hash-table.
 
-Acked-by: Shrikanth Hegde <sshegde@linux.ibm.com>
+[bigeasy: ensure to have at least hashsize of 4 in futex_init(), add
+pr_info() for size and allocation information. Cast the naddr math to
+void*]
+
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- include/uapi/linux/prctl.h |  1 +
- kernel/futex/core.c        | 44 ++++++++++++++++++++++++++++++++------
- 2 files changed, 38 insertions(+), 7 deletions(-)
+ include/linux/futex.h      |   3 ++
+ include/uapi/linux/futex.h |   8 +++
+ kernel/futex/core.c        | 100 ++++++++++++++++++++++++++++++-------
+ kernel/futex/futex.h       |  33 ++++++++++--
+ 4 files changed, 124 insertions(+), 20 deletions(-)
 
-diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-index 3b93fb906e3c5..21f30b3ded74b 100644
---- a/include/uapi/linux/prctl.h
-+++ b/include/uapi/linux/prctl.h
-@@ -368,5 +368,6 @@ struct prctl_mm_map {
- #define PR_FUTEX_HASH			78
- # define PR_FUTEX_HASH_SET_SLOTS	1
- # define PR_FUTEX_HASH_GET_SLOTS	2
-+# define PR_FUTEX_HASH_GET_IMMUTABLE	3
-=20
- #endif /* _LINUX_PRCTL_H */
-diff --git a/kernel/futex/core.c b/kernel/futex/core.c
-index 9e7dad52abea8..81c5705b6af5e 100644
---- a/kernel/futex/core.c
-+++ b/kernel/futex/core.c
-@@ -63,6 +63,7 @@ struct futex_private_hash {
- 	struct rcu_head	rcu;
- 	void		*mm;
- 	bool		custom;
-+	bool		immutable;
- 	struct futex_hash_bucket queues[];
+diff --git a/include/linux/futex.h b/include/linux/futex.h
+index 40bc778b2bb45..eccc99751bd94 100644
+--- a/include/linux/futex.h
++++ b/include/linux/futex.h
+@@ -34,6 +34,7 @@ union futex_key {
+ 		u64 i_seq;
+ 		unsigned long pgoff;
+ 		unsigned int offset;
++		/* unsigned int node; */
+ 	} shared;
+ 	struct {
+ 		union {
+@@ -42,11 +43,13 @@ union futex_key {
+ 		};
+ 		unsigned long address;
+ 		unsigned int offset;
++		/* unsigned int node; */
+ 	} private;
+ 	struct {
+ 		u64 ptr;
+ 		unsigned long word;
+ 		unsigned int offset;
++		unsigned int node;	/* NOT hashed! */
+ 	} both;
  };
 =20
-@@ -132,12 +133,16 @@ static inline bool futex_key_is_private(union futex_k=
-ey *key)
+diff --git a/include/uapi/linux/futex.h b/include/uapi/linux/futex.h
+index d2ee625ea1890..0435025beaae8 100644
+--- a/include/uapi/linux/futex.h
++++ b/include/uapi/linux/futex.h
+@@ -74,6 +74,14 @@
+ /* do not use */
+ #define FUTEX_32		FUTEX2_SIZE_U32 /* historical accident :-( */
 =20
- bool futex_private_hash_get(struct futex_private_hash *fph)
++
++/*
++ * When FUTEX2_NUMA doubles the futex word, the second word is a node valu=
+e.
++ * The special value -1 indicates no-node. This is the same value as
++ * NUMA_NO_NODE, except that value is not ABI, this is.
++ */
++#define FUTEX_NO_NODE		(-1)
++
+ /*
+  * Max numbers of elements in a futex_waitv array
+  */
+diff --git a/kernel/futex/core.c b/kernel/futex/core.c
+index 81c5705b6af5e..b5be2d4a34a53 100644
+--- a/kernel/futex/core.c
++++ b/kernel/futex/core.c
+@@ -36,6 +36,8 @@
+ #include <linux/pagemap.h>
+ #include <linux/debugfs.h>
+ #include <linux/plist.h>
++#include <linux/gfp.h>
++#include <linux/vmalloc.h>
+ #include <linux/memblock.h>
+ #include <linux/fault-inject.h>
+ #include <linux/slab.h>
+@@ -51,11 +53,14 @@
+  * reside in the same cacheline.
+  */
+ static struct {
+-	struct futex_hash_bucket *queues;
+ 	unsigned long            hashmask;
++	unsigned int		 hashshift;
++	struct futex_hash_bucket *queues[MAX_NUMNODES];
+ } __futex_data __read_mostly __aligned(2*sizeof(long));
+-#define futex_queues   (__futex_data.queues)
+-#define futex_hashmask (__futex_data.hashmask)
++
++#define futex_hashmask	(__futex_data.hashmask)
++#define futex_hashshift	(__futex_data.hashshift)
++#define futex_queues	(__futex_data.queues)
+=20
+ struct futex_private_hash {
+ 	rcuref_t	users;
+@@ -339,15 +344,35 @@ __futex_hash(union futex_key *key, struct futex_priva=
+te_hash *fph)
  {
-+	if (fph->immutable)
-+		return true;
- 	return rcuref_get(&fph->users);
+ 	struct futex_hash_bucket *hb;
+ 	u32 hash;
++	int node;
+=20
+ 	hb =3D __futex_hash_private(key, fph);
+ 	if (hb)
+ 		return hb;
+=20
+ 	hash =3D jhash2((u32 *)key,
+-		      offsetof(typeof(*key), both.offset) / 4,
++		      offsetof(typeof(*key), both.offset) / sizeof(u32),
+ 		      key->both.offset);
+-	return &futex_queues[hash & futex_hashmask];
++	node =3D key->both.node;
++
++	if (node =3D=3D FUTEX_NO_NODE) {
++		/*
++		 * In case of !FLAGS_NUMA, use some unused hash bits to pick a
++		 * node -- this ensures regular futexes are interleaved across
++		 * the nodes and avoids having to allocate multiple
++		 * hash-tables.
++		 *
++		 * NOTE: this isn't perfectly uniform, but it is fast and
++		 * handles sparse node masks.
++		 */
++		node =3D (hash >> futex_hashshift) % nr_node_ids;
++		if (!node_possible(node)) {
++			node =3D find_next_bit_wrap(node_possible_map.bits,
++						  nr_node_ids, node);
++		}
++	}
++
++	return &futex_queues[node][hash & futex_hashmask];
  }
 =20
- void futex_private_hash_put(struct futex_private_hash *fph)
- {
- 	/* Ignore return value, last put is verified via rcuref_is_dead() */
-+	if (fph->immutable)
-+		return;
- 	if (rcuref_put(&fph->users))
- 		wake_up_var(fph->mm);
- }
-@@ -277,6 +282,8 @@ struct futex_private_hash *futex_private_hash(void)
- 		if (!fph)
- 			return NULL;
+ /**
+@@ -454,25 +479,49 @@ int get_futex_key(u32 __user *uaddr, unsigned int fla=
+gs, union futex_key *key,
+ 	struct page *page;
+ 	struct folio *folio;
+ 	struct address_space *mapping;
+-	int err, ro =3D 0;
++	int node, err, size, ro =3D 0;
+ 	bool fshared;
 =20
-+		if (fph->immutable)
-+			return fph;
- 		if (rcuref_get(&fph->users))
- 			return fph;
- 	}
-@@ -1433,7 +1440,7 @@ static bool futex_hash_less(struct futex_private_hash=
- *a,
- 	return false; /* equal */
- }
-=20
--static int futex_hash_allocate(unsigned int hash_slots, bool custom)
-+static int futex_hash_allocate(unsigned int hash_slots, unsigned int immut=
-able, bool custom)
- {
- 	struct mm_struct *mm =3D current->mm;
- 	struct futex_private_hash *fph;
-@@ -1441,13 +1448,15 @@ static int futex_hash_allocate(unsigned int hash_sl=
-ots, bool custom)
-=20
- 	if (hash_slots && (hash_slots =3D=3D 1 || !is_power_of_2(hash_slots)))
- 		return -EINVAL;
-+	if (immutable > 2)
-+		return -EINVAL;
+ 	fshared =3D flags & FLAGS_SHARED;
++	size =3D futex_size(flags);
++	if (flags & FLAGS_NUMA)
++		size *=3D 2;
 =20
  	/*
- 	 * Once we've disabled the global hash there is no way back.
+ 	 * The futex address must be "naturally" aligned.
  	 */
- 	scoped_guard(rcu) {
- 		fph =3D rcu_dereference(mm->futex_phash);
--		if (fph && !fph->hash_mask) {
-+		if (fph && (!fph->hash_mask || fph->immutable)) {
- 			if (custom)
- 				return -EBUSY;
- 			return 0;
-@@ -1461,6 +1470,7 @@ static int futex_hash_allocate(unsigned int hash_slot=
-s, bool custom)
- 	rcuref_init(&fph->users, 1);
- 	fph->hash_mask =3D hash_slots ? hash_slots - 1 : 0;
- 	fph->custom =3D custom;
-+	fph->immutable =3D !!immutable;
- 	fph->mm =3D mm;
+ 	key->both.offset =3D address % PAGE_SIZE;
+-	if (unlikely((address % sizeof(u32)) !=3D 0))
++	if (unlikely((address % size) !=3D 0))
+ 		return -EINVAL;
+ 	address -=3D key->both.offset;
 =20
- 	for (i =3D 0; i < hash_slots; i++)
-@@ -1553,7 +1563,7 @@ int futex_hash_allocate_default(void)
- 	if (current_buckets >=3D buckets)
- 		return 0;
+-	if (unlikely(!access_ok(uaddr, sizeof(u32))))
++	if (unlikely(!access_ok(uaddr, size)))
+ 		return -EFAULT;
 =20
--	return futex_hash_allocate(buckets, false);
-+	return futex_hash_allocate(buckets, 0, false);
- }
+ 	if (unlikely(should_fail_futex(fshared)))
+ 		return -EFAULT;
 =20
- static int futex_hash_get_slots(void)
-@@ -1567,9 +1577,22 @@ static int futex_hash_get_slots(void)
- 	return 0;
- }
-=20
-+static int futex_hash_get_immutable(void)
-+{
-+	struct futex_private_hash *fph;
++	if (flags & FLAGS_NUMA) {
++		u32 __user *naddr =3D (void *)uaddr + size / 2;
 +
-+	guard(rcu)();
-+	fph =3D rcu_dereference(current->mm->futex_phash);
-+	if (fph && fph->immutable)
-+		return 1;
-+	if (fph && !fph->hash_mask)
-+		return 1;
-+	return 0;
-+}
++		if (futex_get_value(&node, naddr))
++			return -EFAULT;
 +
- #else
-=20
--static int futex_hash_allocate(unsigned int hash_slots, bool custom)
-+static int futex_hash_allocate(unsigned int hash_slots, unsigned int immut=
-able, bool custom)
- {
- 	return -EINVAL;
- }
-@@ -1578,6 +1601,11 @@ static int futex_hash_get_slots(void)
- {
- 	return 0;
- }
++		if (node =3D=3D FUTEX_NO_NODE) {
++			node =3D numa_node_id();
++			if (futex_put_value(node, naddr))
++				return -EFAULT;
 +
-+static int futex_hash_get_immutable(void)
-+{
-+	return 0;
-+}
- #endif
-=20
- int futex_hash_prctl(unsigned long arg2, unsigned long arg3, unsigned long=
- arg4)
-@@ -1586,15 +1614,17 @@ int futex_hash_prctl(unsigned long arg2, unsigned l=
++		} else if (node >=3D MAX_NUMNODES || !node_possible(node)) {
++			return -EINVAL;
++		}
++
++		key->both.node =3D node;
++
++	} else {
++		key->both.node =3D FUTEX_NO_NODE;
++	}
++
+ 	/*
+ 	 * PROCESS_PRIVATE futexes are fast.
+ 	 * As the mm cannot disappear under us and the 'key' only needs
+@@ -1635,24 +1684,41 @@ int futex_hash_prctl(unsigned long arg2, unsigned l=
 ong arg3, unsigned long arg4)
+ static int __init futex_init(void)
+ {
+ 	unsigned long hashsize, i;
+-	unsigned int futex_shift;
++	unsigned int order, n;
++	unsigned long size;
 =20
- 	switch (arg2) {
- 	case PR_FUTEX_HASH_SET_SLOTS:
--		if (arg4 !=3D 0)
--			return -EINVAL;
--		ret =3D futex_hash_allocate(arg3, true);
-+		ret =3D futex_hash_allocate(arg3, arg4, true);
- 		break;
+ #ifdef CONFIG_BASE_SMALL
+ 	hashsize =3D 16;
+ #else
+-	hashsize =3D roundup_pow_of_two(256 * num_possible_cpus());
++	hashsize =3D 256 * num_possible_cpus();
++	hashsize /=3D num_possible_nodes();
++	hashsize =3D max(4, hashsize);
++	hashsize =3D roundup_pow_of_two(hashsize);
+ #endif
++	futex_hashshift =3D ilog2(hashsize);
++	size =3D sizeof(struct futex_hash_bucket) * hashsize;
++	order =3D get_order(size);
 =20
- 	case PR_FUTEX_HASH_GET_SLOTS:
- 		ret =3D futex_hash_get_slots();
- 		break;
+-	futex_queues =3D alloc_large_system_hash("futex", sizeof(*futex_queues),
+-					       hashsize, 0, 0,
+-					       &futex_shift, NULL,
+-					       hashsize, hashsize);
+-	hashsize =3D 1UL << futex_shift;
++	for_each_node(n) {
++		struct futex_hash_bucket *table;
 =20
-+	case PR_FUTEX_HASH_GET_IMMUTABLE:
-+		ret =3D futex_hash_get_immutable();
-+		break;
+-	for (i =3D 0; i < hashsize; i++)
+-		futex_hash_bucket_init(&futex_queues[i], NULL);
++		if (order > MAX_PAGE_ORDER)
++			table =3D vmalloc_huge_node(size, GFP_KERNEL, n);
++		else
++			table =3D alloc_pages_exact_nid(n, size, GFP_KERNEL);
 +
- 	default:
- 		ret =3D -EINVAL;
- 		break;
++		BUG_ON(!table);
++
++		for (i =3D 0; i < hashsize; i++)
++			futex_hash_bucket_init(&table[i], NULL);
++
++		futex_queues[n] =3D table;
++	}
+=20
+ 	futex_hashmask =3D hashsize - 1;
++	pr_info("futex hash table entries: %lu (%lu bytes on %d NUMA nodes, total=
+ %lu KiB, %s).\n",
++		hashsize, size, num_possible_nodes(), size * num_possible_nodes() / 1024,
++		order > MAX_PAGE_ORDER ? "vmalloc" : "linear");
+ 	return 0;
+ }
+ core_initcall(futex_init);
+diff --git a/kernel/futex/futex.h b/kernel/futex/futex.h
+index 899aed5acde12..acc7953678898 100644
+--- a/kernel/futex/futex.h
++++ b/kernel/futex/futex.h
+@@ -54,7 +54,7 @@ static inline unsigned int futex_to_flags(unsigned int op)
+ 	return flags;
+ }
+=20
+-#define FUTEX2_VALID_MASK (FUTEX2_SIZE_MASK | FUTEX2_PRIVATE)
++#define FUTEX2_VALID_MASK (FUTEX2_SIZE_MASK | FUTEX2_NUMA | FUTEX2_PRIVATE)
+=20
+ /* FUTEX2_ to FLAGS_ */
+ static inline unsigned int futex2_to_flags(unsigned int flags2)
+@@ -87,6 +87,19 @@ static inline bool futex_flags_valid(unsigned int flags)
+ 	if ((flags & FLAGS_SIZE_MASK) !=3D FLAGS_SIZE_32)
+ 		return false;
+=20
++	/*
++	 * Must be able to represent both FUTEX_NO_NODE and every valid nodeid
++	 * in a futex word.
++	 */
++	if (flags & FLAGS_NUMA) {
++		int bits =3D 8 * futex_size(flags);
++		u64 max =3D ~0ULL;
++
++		max >>=3D 64 - bits;
++		if (nr_node_ids >=3D max)
++			return false;
++	}
++
+ 	return true;
+ }
+=20
+@@ -282,7 +295,7 @@ static inline int futex_cmpxchg_value_locked(u32 *curva=
+l, u32 __user *uaddr, u32
+  * This looks a bit overkill, but generally just results in a couple
+  * of instructions.
+  */
+-static __always_inline int futex_read_inatomic(u32 *dest, u32 __user *from)
++static __always_inline int futex_get_value(u32 *dest, u32 __user *from)
+ {
+ 	u32 val;
+=20
+@@ -299,12 +312,26 @@ static __always_inline int futex_read_inatomic(u32 *d=
+est, u32 __user *from)
+ 	return -EFAULT;
+ }
+=20
++static __always_inline int futex_put_value(u32 val, u32 __user *to)
++{
++	if (can_do_masked_user_access())
++		to =3D masked_user_access_begin(to);
++	else if (!user_read_access_begin(to, sizeof(*to)))
++		return -EFAULT;
++	unsafe_put_user(val, to, Efault);
++	user_read_access_end();
++	return 0;
++Efault:
++	user_read_access_end();
++	return -EFAULT;
++}
++
+ static inline int futex_get_value_locked(u32 *dest, u32 __user *from)
+ {
+ 	int ret;
+=20
+ 	pagefault_disable();
+-	ret =3D futex_read_inatomic(dest, from);
++	ret =3D futex_get_value(dest, from);
+ 	pagefault_enable();
+=20
+ 	return ret;
 --=20
 2.49.0
 
