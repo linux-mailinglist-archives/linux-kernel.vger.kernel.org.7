@@ -1,123 +1,142 @@
-Return-Path: <linux-kernel+bounces-606307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D75D0A8ADA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 03:48:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69434A8ADA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 03:46:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57943189FFD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 01:48:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED9C43BECB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 01:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF532135C2;
-	Wed, 16 Apr 2025 01:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1061620E6F3;
+	Wed, 16 Apr 2025 01:46:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wn8sCCRK"
-Received: from mail-yw1-f195.google.com (mail-yw1-f195.google.com [209.85.128.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YCcpgkhx"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E935227;
-	Wed, 16 Apr 2025 01:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877392D78A
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 01:46:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744768093; cv=none; b=DH0o9pdSIKQ/+9jft6FNDYU8VVJeresGpeV+pbFPRdIkeFOvFTDchHS0gDpgvcIazS12hcGbXh8asVjRfbsOiJbPeAPUw3oitD9UJgZsTnq871y1/1d6kvXVeu5PbUEtn6QbJEhudwVfJHQwxQebvtwl11uHHVWXpiVW9UcGf00=
+	t=1744767984; cv=none; b=CkXEk6TSsCa7whk2w1T0LhlVCl49QRLpI740B8pqniLhttd8PYnr5eY3OnxygZVsHcE4fq7HnXjzjbxl8vnT8x4sOH204TDjnzwiWVcqntHEx9VbS1SdUGdpmEMmsd1xUOB8OD9PSHrZACbcRazJlm0d9BFVW+5RTEzR6MjQf6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744768093; c=relaxed/simple;
-	bh=LmRYGZfdjzKD+GNeB7ijBk/znXqeRMAfPREUU9oAlno=;
+	s=arc-20240116; t=1744767984; c=relaxed/simple;
+	bh=slMNd8V2GysT0NTYZWzzGoLITlsJBv2wSc+G3gFEgqk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MX2JcuJln1rOblgGv6Ouy9F4JJbXeneTrT3FWDeyUkwOE3CUBEl5GeAD/F1zfeQ+Q2XDT7epT9WY9lDu6lBcDIlCfsAcUgrQh3nuvj078zY6nQFk0ScPKcvukBdytJcXxAaoe4lWDh0mgOTCfRYieqes3HXTlFzHs0s9qrC7WWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wn8sCCRK; arc=none smtp.client-ip=209.85.128.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f195.google.com with SMTP id 00721157ae682-70565ccf3bcso39707667b3.0;
-        Tue, 15 Apr 2025 18:48:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744768091; x=1745372891; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xqLmF3Z6t3I+6keU46Rahz1Y3IvBRd9Ly3KaUnN+N7o=;
-        b=Wn8sCCRK9EOLtICz88DpWRUB0/2LdwnOtzagFKWCL7qbHJUeefHtEgPNaSWRjgZZ6D
-         U9GbTr0ElmsptOB6Q6T7RQwvdxvdHNE4Ls51y1rlejIErSlo02uN9LRXhxB31QHNGJjp
-         fzG0g6IUVMGNSv5B78wvUSlro3idjotntqSl5ZP++7r5TkA8gE3Vw+rZOPCqi7gm7feR
-         aoSZiwHCDhn5XFqVNLYic0jKcWRWkWDlT86KpGsQR58WjrCiHxmNScgzdcnx1hG3G9+m
-         Cmfqabq1aGHaWAbRnZaTu23NkrYJltXyrQEUdS+U5Ndmoy8VxYzEUjMJ7OexTshSF7ft
-         TjAA==
+	 To:Cc:Content-Type; b=Xvtdb9Zz88hpyQaDm7A2wjuOuN/85obtCIlkbKGqUMBYSSn6haBrztPyFfPZV6TNDMAVH0fxABdyiRryjZTsbkaKIA2HE/L5dhW9/i/DchBKvNozyvraExLLvDuNP3gylT6bbbvCZCvtM6DfR4Tsm7SUwTlSQKmRJoX4QknuLsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YCcpgkhx; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744767981;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bAux2x29rzru79GAnli/9y6p/hjt91wz4YpqymUDDzs=;
+	b=YCcpgkhxRY5AFzBwsw2pzXg/FvjkkUDF+3bvmecmDNEKEB1zpV1sCSYWDSXK8zrPMi5GSe
+	5d2IBVZnUeqDnc62ytwFSYJUvzjgyww7Hrs00a7gDIxnnvHQ/2IQzE9/e1Jz6qf7t5ocZr
+	sY3OjOVAsk7tHJr3rG+KAHTfspVUuo0=
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
+ [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-665-goTQQhlmPx6TbM4fcjSIDw-1; Tue, 15 Apr 2025 21:46:20 -0400
+X-MC-Unique: goTQQhlmPx6TbM4fcjSIDw-1
+X-Mimecast-MFC-AGG-ID: goTQQhlmPx6TbM4fcjSIDw_1744767979
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-af2f03fcc95so6246435a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 18:46:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744768091; x=1745372891;
+        d=1e100.net; s=20230601; t=1744767979; x=1745372779;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xqLmF3Z6t3I+6keU46Rahz1Y3IvBRd9Ly3KaUnN+N7o=;
-        b=U2wXEY+Ksk3O9LUyYb/8HAeHnnoxNDmoFKbQ8TyWlWf1T4mbwbQ1w55DPu6SAX3tsO
-         HKcT4io27WPK3eROkrg3wtT87wPr1O1B++VUjVWP0WgWSvUBtwC+j1+ipV+as8sQ/E9U
-         b1gEsJZAEjUe+uc+YPforl+cHvK59c4S7/l55peQkJBwKf6E/8kr1FPUMZxAcETr7GJU
-         7nt3UCpfirW44QVx+csNC5EFJIQe02455dGrXcjuv7rbN2OtiD4M4xsONVKAimKt2ueU
-         KQpSh3urUAYCyz0lHWZdWNl7eAKu8zqwOScZ7iQjVWPazadJdzlk58s4uMfGMKbz7njO
-         sc/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUaeBVqo1lAso58LdAZa8t+IS5h14ybAIHU5ZSN/Sa4KqCTDeMQVAcTschvKjo6AkrH6U6cllc6UwMgPFw=@vger.kernel.org, AJvYcCWH/mCmMmkije0EbPd8K2rAD8EOYCtOAcSCVEXfojHCxvNPsTBsgsTPS4scIUyzaIOSUnXS1Khl0RAPQL3Iaxfw35RR@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywd0k7awKN8UgXO+ZfHEiAx1hkJVIonlYox6sg8rNtN+HtIHK+m
-	c678PHyqi8/ey9aMDAf8FVdfdSlXhfE1CdlHLTLVHU2WTyugbtjUGUdspFobMB6hHa5z1Fk20XG
-	U7alIYZ//qMp/EgeAPX57ZVV6xY3j/u9k23A=
-X-Gm-Gg: ASbGncvC140fLYIyx+/53MaP4CxwCJRTOHiVqXBHJMveZYgdH/Au4RQyj7NJkqh7wS7
-	IOcvb9alCRHZfz7SYo/z+5o9InjZ+kn/LmqOASin4wm63U3P1ZBPLxD0Z+tICkVJdr/LTXGbZXi
-	oxhLKmeg8NC+rhPU+GmIuNAg==
-X-Google-Smtp-Source: AGHT+IH6C4g81eZKeTeUb9hCFSy4U/5I3cBEhngWsJsQqyVX/TxQ+f+/ZVXpEgAzRxOjX2mWC8EQzFip8VeewplAl20=
-X-Received: by 2002:a05:690c:6c0a:b0:700:a6a1:66ae with SMTP id
- 00721157ae682-706b32a622dmr1004437b3.16.1744768090833; Tue, 15 Apr 2025
- 18:48:10 -0700 (PDT)
+        bh=bAux2x29rzru79GAnli/9y6p/hjt91wz4YpqymUDDzs=;
+        b=ng+UnmeKWiDkoBBM2rnhOPoIDZ6hnfRThBPZaxb8EjRI9Hzy6LgDESjqMmQdhWSF0K
+         VYa8SE+QBa2PiaGUy/WNwcXmNb9CnUBplXQfQymp1gDDf8bvpr68BQygXl3oM5DEEQGj
+         RN1QheuAycsZnvGgEn7e2cCJWtZvqLIUPMUq2BnavWz/n88Z4mdo5ae/Yug2mFvM8QPE
+         la1eKAdWcRyBPRLRMwyIIHhpb8DDZ24Xb+vSigNnGgeV4n+B4+TyJfCvuFFTLuLDHJ3j
+         qR9uP86b1fG8UiOosowxMCF3rPXknHEXgG4FvwGSxfjWZhPiUQVJZIFae74eKZi0pJ7Q
+         70sg==
+X-Gm-Message-State: AOJu0Yw73ivnDBvU39PHZrIKPv/+rn16vV1oA9oAbjE/rzI+EyYuCyvn
+	bTUrBc3lQt6Z5mW5QzzAdf7j3K9KgmnUr6k5iafp2fhCxsVcVab3wGEGs+r5HMSNyNEjpCAbAnq
+	5oCmUIZ17aTWDSx6wKcfKIPFJYP+FPdvTLhuJ2qvXGHgWsPpqQzyKK23j43+JrfkCA2pYgygnRB
+	O9foRPSNYBON9atMyXuFDI4uH6vAZFDoUVnlryrPTKZC8d
+X-Gm-Gg: ASbGnctLxtYnM/h26hYQa3/kvfaYs/7B5P9/TVOvzXgvsDMo9OcRXwNZEZbvQSTqTeT
+	onXMnXl9L2e7J1DURN4LrqlDeIAdy4LF5FDJfj5jQB6KSNIKHB0fPyEi6QVrUVkADDXI=
+X-Received: by 2002:a17:90b:264d:b0:2ee:aed6:9ec2 with SMTP id 98e67ed59e1d1-3085eeb4675mr2220916a91.14.1744767978880;
+        Tue, 15 Apr 2025 18:46:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGVAUDYX1fc9zo3gyEt8qqe/RuhMfN8ThzDds91F5a1f+kZ++CgF1OWTJE4cpzcWzli2Hyns3BIdFo4trIBp14=
+X-Received: by 2002:a17:90b:264d:b0:2ee:aed6:9ec2 with SMTP id
+ 98e67ed59e1d1-3085eeb4675mr2220892a91.14.1744767978471; Tue, 15 Apr 2025
+ 18:46:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250415112750.1477339-1-guoj17@chinatelecom.cn> <20250415074633.3cf7546d@gandalf.local.home>
-In-Reply-To: <20250415074633.3cf7546d@gandalf.local.home>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Wed, 16 Apr 2025 09:45:54 +0800
-X-Gm-Features: ATxdqUGoxV7-FrLDOfL0otb9nTJnPoreiefCjKG7AC-p9lj_cIcVamgdmnzlrjE
-Message-ID: <CADxym3bjjp8edgbpAct0GKno3NGLxs2Pd0hod94r7u_2jGUC5w@mail.gmail.com>
-Subject: Re: [PATCH] ftrace: make ftrace_location() more accurate
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: mhiramat@kernel.org, mark.rutland@arm.com, mathieu.desnoyers@efficios.com, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	Jin Guo <guoj17@chinatelecom.cn>
+References: <Z/anHRAx3SQWr+h8@animx.eu.org> <Z/2pzDAplsZz8AVd@animx.eu.org>
+In-Reply-To: <Z/2pzDAplsZz8AVd@animx.eu.org>
+From: David Airlie <airlied@redhat.com>
+Date: Wed, 16 Apr 2025 11:46:06 +1000
+X-Gm-Features: ATxdqUGaR9ylaT4IMINZhWP69BAL6dWZUQv6Kz0vm82yhI7-yxIZA-d8PtCceR0
+Message-ID: <CAMwc25rKPKooaSp85zDq2eh-9q4UPZD=RqSDBRp1fAagDnmRmA@mail.gmail.com>
+Subject: Re: MGA G200 issue in 6.12 and up
+To: Wakko Warner <wakko@animx.eu.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	dri-devel <dri-devel@lists.freedesktop.org>
+Cc: linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 15, 2025 at 7:45=E2=80=AFPM Steven Rostedt <rostedt@goodmis.org=
-> wrote:
+adding some people
+
+On Tue, Apr 15, 2025 at 10:35=E2=80=AFAM Wakko Warner <wakko@animx.eu.org> =
+wrote:
 >
-> On Tue, 15 Apr 2025 19:27:50 +0800
-> Jin Guo <menglong8.dong@gmail.com> wrote:
+> I found the fix that works for me.  See below.
 >
-> > The function ftrace_location is used to lookup the ftrace location with=
- an
-> > ip. However, the result that it returns can be wrong in some case.
+> Wakko Warner wrote:
+> > I decided to upgrade to 6.14 on a system with a Matrox G200 onboard vga
+> > (supermicro X9SCL).
 > >
-> > Let's image that we have the following kallsyms:
+> > I use this system via the BMC.  When the mgag200 driver loads, the bmc
+> > screen flashes between no signal and the screen.  The rate seems to be =
+about
+> > 1 second no signal and 1 second with signal.
 > >
-> >   ffffffff812c35f0 T sys_ni_syscall
-> >   ffffffff812c38b0 W __pfx___x64_sys_io_pgetevents_time32
-> >   ffffffff812c38c0 W __x64_sys_io_pgetevents_time32
+> > 6.12 and 6.13 both have this problem.
+> >
+> > 6.11 does not have this problem.
+> >
+> > I have a monitor plugged into the vga port and it doesn't have this pro=
+blem
+> > on any of the kernels I've tried.  Only the remote connection through t=
+he bmc
+> > has this problem.  I have booted the system with and with out the monit=
+or
+> > plugged in, it does not appear to make a difference.
 >
-> Have you tried the latest kernel? because on x86, weak functions that are
-> not used should no longer be in the ftrace table. That is, you should nev=
-er
-> see __ftrace_invalid_addres_* anymore.
+> I found a thread on arch linux forums
+> (https://bbs.archlinux.org/viewtopic.php?id=3D303819) where the op has th=
+e
+> same issue.  He bisected and came up with the bad commit.
+> That commit is
+> d6460bd52c27fde97d6a73e3d9c7a8d747fbaa3e drm/mgag200: Add dedicated varia=
+bles
+> for blanking fields
 >
-> See https://lore.kernel.org/all/20250218195918.255228630@goodmis.org/
+> I searched this commit and manually reverted it from my vanilla 6.14 and =
+it
+> works fine.  No blinking in the BMC remote console and the external VGA
+> works fine as well.
 >
-> That was just added this merge window, which would make your patch obsole=
-te.
+> --
+>  Microsoft has beaten Volkswagen's world record.  Volkswagen only created=
+ 22
+>  million bugs.
+>
 
-Hi, Steve
-
-you are right, I haven't updated my code in over a month, and
-the latest kernel works fine.
-
->
-> -- Steve
 
