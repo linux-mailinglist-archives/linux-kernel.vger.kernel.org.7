@@ -1,122 +1,253 @@
-Return-Path: <linux-kernel+bounces-606912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 305EEA8B551
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 11:29:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14517A8B55D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 11:29:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32BC719053D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:29:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF5B93B21DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:29:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04593146D65;
-	Wed, 16 Apr 2025 09:29:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377912356A2;
+	Wed, 16 Apr 2025 09:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fapwU1Ms"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="AtQnKvus"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82553236441
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 09:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9CFF235355
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 09:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744795752; cv=none; b=uxAxzoUNSVMySBEC+5G+OG5Ex6RTxJe0Go1l8ttQ0o+XZcRoD0eCQ/6ItTcSxgHiPST11U2i7bxqP/DKv4pRYob4C5nsQerC/s8XWnWRIO6zmLfWPdh/HVou6XSFpKfC8TXis1IrzyRNTi5x2dUDMr51H9eazpoxVO1kDkVP5Ro=
+	t=1744795789; cv=none; b=CGMe5RAEEz15LlRwHuhji92oUNbbJIwrZ5YhP1sOm6wkhg15dyt2hCNJpXX1Xmlr6TKxl1a/ifsyDUBGiUppR9pUS6eZiAcUOTYIVLllhwwf5OQawpzx1iCEXBCq0zd7RhAEx8JeNeoqoo13aAC2FCDcWbfa/fVIvSRYexiP1D4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744795752; c=relaxed/simple;
-	bh=o55GeMY7B+wVncPex3pi9DLfKpWbxRoRoFGIzfLKFO8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OA1rGfsn5Qk1Eys32nfPcaCEyDdth71Al5xlHOe+nLcP384aA7CIeAsu6I0afHZE9rWecNZVLmaNkAdkYajTfI0zJGdII8WzYPhuzwk+p2tzPXdfMAovMxRAOpCrQeQiFeTiUhOe1Us1TaKnL5URW3Gyj0+SS7sGHSckxbvuJ9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fapwU1Ms; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3914aba1ce4so5245605f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 02:29:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1744795749; x=1745400549; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iwFMU/CIUfhwkOB23SUiFhp0ktZpZfT3Pn6auhe4gJE=;
-        b=fapwU1MsfAEEj81+R76jC2w20mJDlmkAzf4VracvO5A+yRBGJYB6pSH9HH+Wgh7js8
-         mjE7D6fzn2nqyR5DCJu+cVFDsE2fGMYEgTZ4P3lm44oXh+5hxESq/MYvU4k8WZ5MV/jI
-         mzt3hFxOeQvSI7ZxDjqHMGhwDt0XnZ9+A55LWrizZMvE+fa1w7+IdWQrJwO0azZ1eX/L
-         plvR9i0tK7+x62sqFgMDbZB+0T2jRSCuIYOpyuEh0OLAhO5r8il5DKA30ud8sUocn0wj
-         PpbEbQISOGBs7cs329UGOtn3qMnPtPfSNnZ1RkEqF5N2SsqVoA6JXEoL+7qeWAPcx/QE
-         aHxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744795749; x=1745400549;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iwFMU/CIUfhwkOB23SUiFhp0ktZpZfT3Pn6auhe4gJE=;
-        b=gn/aWA0ddBcp1xkMri6AQpwGUMpLebHwOBpPXKOzIMANVH2IxKkDSJqWwdkbUwjwNl
-         2qZ/13hFnVhkc2+eKj2jY4IFmbXhTuhH+wM0WU4rqEUhZOWaegZhHSqZa50oqdpeQ+FN
-         sAUbvzXzF3Vczw7mPSkeZYnr05xP6sdoB72Hga0qtvt/dX4rAI5q3M2rr0oVryb9G9nT
-         sfhW2XcqYX/C5v1EOJDgMBtuglsNLdzDgdqkT5xo5wP01Yv+wttYFsMiURQe5iWlgLjj
-         oZAzfRUDjKIeVnLPv500wu+mM6zSAW+61G9sX9zOTriKYibvBX6VT13e3Ihrkm7QqJiE
-         GYaw==
-X-Forwarded-Encrypted: i=1; AJvYcCXUC4PYq/zaU2wydGJF0PSJxP8y2DVCxNOrxoBAeF6GE6hP4XCthb65AqneHCSBG1vC9qV++rYBxIsD7G4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/T+lzGiRxfK3IHMfJzyj3xvnDQ+dfI4ctgFm+AhIX61VPo8K/
-	fwgBYrEu72NR52Q5jDmqnn87bP+cHAPmfmIMHH6jFf72+TBqoZw9dJpW+oYvtRE=
-X-Gm-Gg: ASbGnct6/DUIueofDTtB0eRVNI9XZtraFfRaYu1RoM90Y/6ogmP83ZhzKHAsKKt29dJ
-	6snZuWOHrjh94z6p0DBvBDb+EZWh7fnBNJiYfKOUMWTezSxOjbRdKIyjAWu4fuZMexxAcPkqHxM
-	oTBySQxEUriC4eknQCzUuwfYI+EhrovsrsvO9YdaNcj4JkIlonmiZ6LYFZNBN3L3cf2HbIBTI0U
-	C/Rj4WjyStvVCuwRXdmDIUecahy0ktJFhx0Y0lUV1rBYfCyuCXBiFaap8NQ8qon4hKxeja22p3v
-	AMy5io3szIeFXuodJ6Z09Pxd46nvTBjIHihzkvZuA64=
-X-Google-Smtp-Source: AGHT+IHG24BI/s6GMoLVsPWuWiDfurxtiJ9IfZU2cz4E6a4f9Ru2A7MtNJxcyIrDsYjvapIyQSdlpg==
-X-Received: by 2002:a5d:47ab:0:b0:391:4889:5045 with SMTP id ffacd0b85a97d-39ee5b8b916mr1140442f8f.36.1744795748587;
-        Wed, 16 Apr 2025 02:29:08 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eaf445315sm16542282f8f.82.2025.04.16.02.29.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Apr 2025 02:29:08 -0700 (PDT)
-Date: Wed, 16 Apr 2025 11:29:06 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: "T.J. Mercier" <tjmercier@google.com>
-Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Waiman Long <longman@redhat.com>, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] cgroup/cpuset-v1: Add missing support for
- cpuset_v2_mode
-Message-ID: <575w7vjlpcvh4yfyvmiqnurenzhdcpdfwjwswb4kulbdimxtuy@pzgqw5aqhn3m>
-References: <20250415235308.424643-1-tjmercier@google.com>
+	s=arc-20240116; t=1744795789; c=relaxed/simple;
+	bh=yDi9auieVQtc3jrxyxriM2T9kENhPJAGsVBIFjqV5hI=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=YD1IKgL7sZYT0cf3TyL6IX2wKLXhATZiBUSUbqhfnHplxq5L3lVcUuhuSNL768VkkBx9ZxBkik7PE5652LzQBIBfLKTdIJbh431QYPMWI/VSw9cR7QiLehDccgi78lziY+zyZiKQHkXzwj1wN3028KkNA+XOfQR/m+3XO9atfbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=AtQnKvus; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53FLdAxI018943;
+	Wed, 16 Apr 2025 09:29:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=pAvvbi
+	8S6se/LeeMTQ0Vq6LN1pMjptJnujRCxUR6ONU=; b=AtQnKvus5PEGokH5IANVmN
+	mSJc2GGNW+eDhlju/Cl9Q1vcBeI894/ZVFekc6Af3OhPTcVQusTogI4UvCCh/TY2
+	O9Y1uN2KW8ymeJhritQlHZeEZnQbkSBKQU0VyOZYj+xVz/qoYA0McMteL816IaYC
+	tVRujdv7OocYgJhix3y5SdiwQULc2gzQDG1jyMPCX12dP148bG4+CaNxKPJh5qjT
+	n5ZyOEawiSjzouFdV5/rrGSqOz5rTN8amp3r3FxmFP/zMDXIkk4NoLdnm3q4B/Gy
+	tdtaD2LoHsVhUAOd5OCSaF5TnbIgOs2QeHBNB0228/hKYFc/5/MVRNsD8p4mu+wQ
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 461yj52p0k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Apr 2025 09:29:40 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53G81Uf3016703;
+	Wed, 16 Apr 2025 09:29:40 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 46057277s8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Apr 2025 09:29:39 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53G9TcQ656623552
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 16 Apr 2025 09:29:38 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2F39320043;
+	Wed, 16 Apr 2025 09:29:38 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CB9862004B;
+	Wed, 16 Apr 2025 09:29:36 +0000 (GMT)
+Received: from [9.109.215.252] (unknown [9.109.215.252])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 16 Apr 2025 09:29:36 +0000 (GMT)
+Message-ID: <517b6aac-7fbb-4c28-a0c4-086797f5c2eb@linux.ibm.com>
+Date: Wed, 16 Apr 2025 14:59:36 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="va3lsphxxw3lwntv"
-Content-Disposition: inline
-In-Reply-To: <20250415235308.424643-1-tjmercier@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sched: Skip useless sched_balance_running acquisition if
+ load balance is not due
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+To: "Chen, Yu C" <yu.c.chen@intel.com>, Tim Chen
+ <tim.c.chen@linux.intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>
+Cc: Doug Nelson <doug.nelson@intel.com>,
+        Mohini Narkhede <mohini.narkhede@intel.com>,
+        linux-kernel@vger.kernel.org
+References: <20250416035823.1846307-1-tim.c.chen@linux.intel.com>
+ <fbe29b49-92af-4b8c-b7c8-3c15405e5f15@linux.ibm.com>
+ <667f2076-fbcd-4da7-8e4b-a8190a673355@intel.com>
+ <5e191de4-f580-462d-8f93-707addafb9a2@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <5e191de4-f580-462d-8f93-707addafb9a2@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: XaUa7pGJgHJ9od2izhWMQQsTdAo1EIGg
+X-Proofpoint-ORIG-GUID: XaUa7pGJgHJ9od2izhWMQQsTdAo1EIGg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-16_03,2025-04-15_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ mlxlogscore=999 clxscore=1015 impostorscore=0 bulkscore=0 phishscore=0
+ adultscore=0 spamscore=0 suspectscore=0 malwarescore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504160073
 
 
---va3lsphxxw3lwntv
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2] cgroup/cpuset-v1: Add missing support for
- cpuset_v2_mode
-MIME-Version: 1.0
 
-On Tue, Apr 15, 2025 at 11:53:07PM +0000, "T.J. Mercier" <tjmercier@google.=
-com> wrote:
-=2E..
->  kernel/cgroup/cgroup.c | 29 +++++++++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
+On 4/16/25 14:46, Shrikanth Hegde wrote:
+> 
+> 
+> On 4/16/25 11:58, Chen, Yu C wrote:
+>> Hi Shrikanth,
+>>
+>> On 4/16/2025 1:30 PM, Shrikanth Hegde wrote:
+>>>
+>>>
+>>> On 4/16/25 09:28, Tim Chen wrote:
+>>>> At load balance time, balance of last level cache domains and
+>>>> above needs to be serialized. The scheduler checks the atomic var
+>>>> sched_balance_running first and then see if time is due for a load
+>>>> balance. This is an expensive operation as multiple CPUs can attempt
+>>>> sched_balance_running acquisition at the same time.
+>>>>
+>>>> On a 2 socket Granite Rapid systems enabling sub-numa cluster and
+>>>> running OLTP workloads, 7.6% of cpu cycles are spent on cmpxchg of
+>>>> sched_balance_running.  Most of the time, a balance attempt is aborted
+>>>> immediately after acquiring sched_balance_running as load balance time
+>>>> is not due.
+>>>>
+>>>> Instead, check balance due time first before acquiring
+>>>> sched_balance_running. This skips many useless acquisitions
+>>>> of sched_balance_running and knocks the 7.6% CPU overhead on
+>>>> sched_balance_domain() down to 0.05%.  Throughput of the OLTP workload
+>>>> improved by 11%.
+>>>>
+>>>
+>>> Hi Tim.
+>>>
+>>> Time check makes sense specially on large systems mainly due to 
+>>> NEWIDLE balance.
+> 
+> scratch the NEWLY_IDLE part from that comment.
+> 
+>>>
+>>
+>> Could you elaborate a little on this statement? There is no timeout 
+>> mechanism like periodic load balancer for the NEWLY_IDLE, right?
+> 
+> Yes. NEWLY_IDLE is very opportunistic.
+> 
+>>
+>>> One more point to add, A lot of time, the CPU which acquired 
+>>> sched_balance_running,
+>>> need not end up doing the load balance, since it not the CPU meant to 
+>>> do the load balance.
+>>>
+>>> This thread.
+>>> https://lore.kernel.org/all/1e43e783-55e7-417f- 
+>>> a1a7-503229eb163a@linux.ibm.com/
+>>>
+>>>
+>>> Best thing probably is to acquire it if this CPU has passed the time 
+>>> check and as well it is
+>>> actually going to do load balance.
+>>>
+>>>
+>>
+>> This is a good point, and we might only want to deal with periodic load
+>> balancer rather than NEWLY_IDLE balance. Because the latter is too 
+>> frequent and contention on the sched_balance_running might introduce
+>> high cache contention.
+>>
+> 
+> But NEWLY_IDLE doesn't serialize using sched_balance_running and can 
+> endup consuming a lot of cycles. But if we serialize using 
+> sched_balance_running, it would definitely cause a lot contention as is.
+> 
+> 
+> The point was, before acquiring it, it would be better if this CPU is 
+> definite to do the load balance. Else there are chances to miss the 
+> actual load balance.
+> 
+> 
 
-Acked-by: Michal Koutn=FD <mkoutny@suse.com>
+Sorry, forgot to add.
 
---va3lsphxxw3lwntv
-Content-Type: application/pgp-signature; name="signature.asc"
+Do we really need newidle running all the way till NUMA? or if it runs till PKG is it enough?
+the regular (idle) can take care for NUMA by serializing it?
 
------BEGIN PGP SIGNATURE-----
+-               if (sd->flags & SD_BALANCE_NEWIDLE) {
++               if (sd->flags & SD_BALANCE_NEWIDLE && !(sd->flags & SD_SERIALIZE)) {
+  
+                         pulled_task = sched_balance_rq(this_cpu, this_rq,
+                                                    sd, CPU_NEWLY_IDLE,
 
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZ/94WQAKCRAt3Wney77B
-SbSeAP9JkFLMSl4nksOMab6B62/csP+sac3doIRszWSDmJpZkwEAoCsPrJwLs2W8
-otFloLpMdklEoCUND+I45f0k3ytzcAM=
-=Kbk5
------END PGP SIGNATURE-----
 
---va3lsphxxw3lwntv--
+Anyways, having a policy around this SD_SERIALIZE would be a good thing.
+
+>> thanks,
+>> Chenyu
+>>
+>>>> Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+>>>> Reported-by: Mohini Narkhede <mohini.narkhede@intel.com>
+>>>> Tested-by: Mohini Narkhede <mohini.narkhede@intel.com>
+>>>> ---
+>>>>   kernel/sched/fair.c | 16 ++++++++--------
+>>>>   1 file changed, 8 insertions(+), 8 deletions(-)
+>>>>
+>>>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>>>> index e43993a4e580..5e5f7a770b2f 100644
+>>>> --- a/kernel/sched/fair.c
+>>>> +++ b/kernel/sched/fair.c
+>>>> @@ -12220,13 +12220,13 @@ static void sched_balance_domains(struct 
+>>>> rq *rq, enum cpu_idle_type idle)
+>>>>           interval = get_sd_balance_interval(sd, busy);
+>>>> -        need_serialize = sd->flags & SD_SERIALIZE;
+>>>> -        if (need_serialize) {
+>>>> -            if (atomic_cmpxchg_acquire(&sched_balance_running, 0, 1))
+>>>> -                goto out;
+>>>> -        }
+>>>> -
+>>>>           if (time_after_eq(jiffies, sd->last_balance + interval)) {
+>>>> +            need_serialize = sd->flags & SD_SERIALIZE;
+>>>> +            if (need_serialize) {
+>>>> +                if (atomic_cmpxchg_acquire(&sched_balance_running, 
+>>>> 0, 1))
+>>>> +                    goto out;
+>>>> +            }
+>>>> +
+>>>>               if (sched_balance_rq(cpu, rq, sd, idle, 
+>>>> &continue_balancing)) {
+>>>>                   /*
+>>>>                    * The LBF_DST_PINNED logic could have changed
+>>>> @@ -12238,9 +12238,9 @@ static void sched_balance_domains(struct rq 
+>>>> *rq, enum cpu_idle_type idle)
+>>>>               }
+>>>>               sd->last_balance = jiffies;
+>>>>               interval = get_sd_balance_interval(sd, busy);
+>>>> +            if (need_serialize)
+>>>> +                atomic_set_release(&sched_balance_running, 0);
+>>>>           }
+>>>> -        if (need_serialize)
+>>>> -            atomic_set_release(&sched_balance_running, 0);
+>>>>   out:
+>>>>           if (time_after(next_balance, sd->last_balance + interval)) {
+>>>>               next_balance = sd->last_balance + interval;
+>>>
+> 
+
 
