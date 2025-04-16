@@ -1,148 +1,111 @@
-Return-Path: <linux-kernel+bounces-606657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CA97A8B1F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:23:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87E20A8B1F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:23:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ACB13AE03C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 07:22:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B3F01904A37
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 07:23:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 381A822D4DF;
-	Wed, 16 Apr 2025 07:22:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0380922D4E9;
+	Wed, 16 Apr 2025 07:22:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="s9LTNb5X";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Nc0hDZPa";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="s9LTNb5X";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Nc0hDZPa"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EdPOO+ei"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E930E22DF80
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 07:22:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CDA022D4EF
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 07:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744788158; cv=none; b=VwWMEmzr36nxY6hrbWrGeu+SK8bDkuQ0hz1NB/G0j2n4cSHNwxuD+Ckg9F+c9z79bxUuJpi4Nr2N4lRe2usUJkCDAsYKZhMYzsmZLL3eG9t/cBkgnP8f2kcTpDIx8UhVsj4S3i/he21oDIcJpYPX7d/lhl2METqYzS8FbTuRIVg=
+	t=1744788170; cv=none; b=KWgchTpH5SpN2LnR1YDhsdBt6I1UXMavaA3TJJd/UznkCO2ZCxWVHhoYukb9dccGA0PUzE7/onpX+SiBje3xOEi05+haEnmYumFsjxy107xlAFIvargxu/I54N3wW4/WabdqdQkW9+kx5D3sEQScLEGn7/MjD27Ow7g7OUrv2Qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744788158; c=relaxed/simple;
-	bh=eseylKMdVRZH2+CNpgs9H6rty2NhrrwmC/qUEJSp59o=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Sb45k2g8R3Qj/hPaI2WJJeJOWR9fmd1fSrLoyjFABsM/5oGb9m3UCHlYmRu4XTtQTBpGxqpGMAsltIvg/CbS1zVdw5sd5O2Y6QNLiohAnV3kVDOh/KyfujL/Mj0i8GHTfL4QZOz78sViQyAhUsSwjGp+T0cb+qDokQL2KKwSNMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=s9LTNb5X; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Nc0hDZPa; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=s9LTNb5X; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Nc0hDZPa; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id F21E621157;
-	Wed, 16 Apr 2025 07:22:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744788155; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Sigi6BLV9HZPEYvYXElKrGDVaSnKG9moEmfl608ubyE=;
-	b=s9LTNb5X/Y1K5CSLcQhudtytXYebLDTAyXOA8U56kzvrEkCPR7AbOX3BXKfFXCIJucSCd7
-	gOxeJkONdyMKM7CleJYi6pasH4GLEmBzCQMW0GUtszVVLoAFZApf82IH+7qdG1DnAnQOre
-	gzwnrTyPxV9lt735rxrxFgID4YEpb+s=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744788155;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Sigi6BLV9HZPEYvYXElKrGDVaSnKG9moEmfl608ubyE=;
-	b=Nc0hDZPa++XIlgJk/AgD2I4NvdvcRrqGWn4aZ7qIk3Sfw3S9wrgG2P3Wl/XNr9EMNPf7Us
-	Rv3us87240WPLHCA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744788155; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Sigi6BLV9HZPEYvYXElKrGDVaSnKG9moEmfl608ubyE=;
-	b=s9LTNb5X/Y1K5CSLcQhudtytXYebLDTAyXOA8U56kzvrEkCPR7AbOX3BXKfFXCIJucSCd7
-	gOxeJkONdyMKM7CleJYi6pasH4GLEmBzCQMW0GUtszVVLoAFZApf82IH+7qdG1DnAnQOre
-	gzwnrTyPxV9lt735rxrxFgID4YEpb+s=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744788155;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Sigi6BLV9HZPEYvYXElKrGDVaSnKG9moEmfl608ubyE=;
-	b=Nc0hDZPa++XIlgJk/AgD2I4NvdvcRrqGWn4aZ7qIk3Sfw3S9wrgG2P3Wl/XNr9EMNPf7Us
-	Rv3us87240WPLHCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 90A9A13976;
-	Wed, 16 Apr 2025 07:22:34 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Q7/7Ibpa/2fjSgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Wed, 16 Apr 2025 07:22:34 +0000
-Date: Wed, 16 Apr 2025 09:22:34 +0200
-Message-ID: <87lds0y3id.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Shenghao Ding <shenghao-ding@ti.com>
-Cc: <broonie@kernel.org>,
-	<andriy.shevchenko@linux.intel.com>,
-	<13564923607@139.com>,
-	<13916275206@139.com>,
-	<alsa-devel@alsa-project.org>,
-	<linux-kernel@vger.kernel.org>,
-	<baojun.xu@ti.com>,
-	<Baojun.Xu@fpt.com>,
-	<robinchen@ti.com>
-Subject: Re: [PATCH v3] ALSA: hda/tas2781: Create a common header for both spi and i2c tas2781 hda driver
-In-Reply-To: <20250416051838.2001-1-shenghao-ding@ti.com>
-References: <20250416051838.2001-1-shenghao-ding@ti.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1744788170; c=relaxed/simple;
+	bh=6tPzTMhBIP4Ztm/pamoA9E7AfPXNf+05fR7f70iwjcg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UXh5DTrrMDjQAEFXZ90zHxDC+6guGYDot9QITEXDYRsMPXTZUXSydado1+yX/+ufQaCO+kb6heahvDi29SNnhvslYAoh5nbKp0aS3klqJKwjSWaoqWmtWyglhI+HfAX40s8vUUiDVEYNfH6PKUoP2r4XrCahhSyruBauV+p8j+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EdPOO+ei; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30bfe0d2b6dso64935981fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 00:22:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744788166; x=1745392966; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xWD5DtO8Zmjj8hm/jgNeXXYBfzD9O0HKgWcyYm/pe+g=;
+        b=EdPOO+ei2bPpqPvFGSAN5GkWEPL5g+w7K0Xg3ZtOd0xDm7VqxWZgXKJC2or7VdY8tY
+         S3PSICLGT8C3k7syA6GtNAtVh+xacMzsXIN9Kjl6YKmKTqk020PDS/b+idXA61pmGDT/
+         gUfMPPIn/Ohg18u1+R3fJdy3KlKH/SNiXjmBlfT4K4/zpDnBhdsCR8xqsgpI8VcUbZvH
+         62Z+pgv4uFDP0ZYnR/FBvxbl1rgPAE6pCxfySCvSWCKpLWAoKDD6Xvo1DMfKzP4L9WN0
+         mRnkvpdTfNylZUQU32QFyP3PZl/CzKfcjhQ7yNpTSdv43CWgkkZUUWBccTza4/S7+R/V
+         5UKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744788166; x=1745392966;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xWD5DtO8Zmjj8hm/jgNeXXYBfzD9O0HKgWcyYm/pe+g=;
+        b=PuGJKocErdbng5449pDAQFV6z4u20jXGXoxo8gmBOze3uwMxvtvKoeScyFyaV7wQl5
+         UsN06yafeUj7z+IQJ8SLuutJPKQR1XosXOChtpcxIdGCqOPo56FAbN/tNeEhgqd2+89u
+         bP7U+zVx3ID6kwt35w6VUqRMwMOoCd0GX3BIzd/EBSjGLCDqEXcTh4zOsBsqFSeegZC/
+         /jxw2SszGFNQFxkqvIPPxLc4CMi8jTWdbC4JoEGeLETXYoJbTO+OuKDMcvMdeApBnPcI
+         KnnlAvkJgpvxtN0NANlMlh7H6tBaq7pt6hO577CxgqYhURS0LeqZmTSsrkJ5Y5L15J/s
+         0OSg==
+X-Forwarded-Encrypted: i=1; AJvYcCVTM/CjCcaDHA1or26V3IKs1QHTd2br1ocUYLO9Ty3CrplDTnpsHt6hy9rPJypvYdJjpmhrQRjxGcYlvoE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxy1OhxOxYV/XJR9gYpjWQbMChn5irMHN0tiFuzXrV9GzVSxZ1F
+	Wdm3SzP3pJOMlgGeTb1gaaNZo3twqfn4IsY+gY/e/szFZaUsf62gDyRwpWsHvbv6QcfwYzGv9zt
+	iox91DTZTuLSr8oxnKG2o4NlT6YG/X43WA4LxzQ==
+X-Gm-Gg: ASbGncuA6bSJd7xlvoU4huppdi7vy6MfJVfVS1INVhUol7UOG8iA1h3EMiKVV3L+bXH
+	mAd4IEB2gmckPLpqhV96feTXd9dM4LvGj2T1XUmhx2nX93AQGt9DiIRAwWzlrZCP7sgoQM41uEY
+	qwn8rl3rrZNGtNo0LDEdYDlg==
+X-Google-Smtp-Source: AGHT+IFJzy+zttruUfUSE7DAKwZxb0lvHyIXLpWKETv/eqQTmvTOtmlAPv2KPiXrE9yHLzHL0bc/wktEHBwODzsfibQ=
+X-Received: by 2002:a05:651c:243:b0:309:2ed:72df with SMTP id
+ 38308e7fff4ca-3107f6ceca2mr1915221fa.24.1744788166445; Wed, 16 Apr 2025
+ 00:22:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[139.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,linux.intel.com,139.com,alsa-project.org,vger.kernel.org,ti.com,fpt.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,ti.com:email]
-X-Spam-Score: -3.30
-X-Spam-Flag: NO
+MIME-Version: 1.0
+References: <20250414090215.16091-1-ot_cathy.xu@mediatek.com>
+In-Reply-To: <20250414090215.16091-1-ot_cathy.xu@mediatek.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 16 Apr 2025 09:22:35 +0200
+X-Gm-Features: ATxdqUGunV3YCOGXGIOJ9QSL-oTOhWVqzDgVFDf8RsYkNrat6ruPMmmT7W9km-0
+Message-ID: <CACRpkdYUqHzid4Rnuv4arC9wu9fmpcGR22Jc5JzJhyr7fABMCw@mail.gmail.com>
+Subject: Re: [PATCH v7 0/3] pinctrl: mediatek: Add pinctrl driver on mt8196
+To: Cathy Xu <ot_cathy.xu@mediatek.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sean Wang <sean.wang@kernel.org>, 
+	Lei Xue <lei.xue@mediatek.com>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	yong.mao@mediatek.com, Axe.Yang@mediatek.com, Andy-ld.Lu@mediatek.com, 
+	Wenbin.Mei@mediatek.com, Jimin.Wang@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 16 Apr 2025 07:18:38 +0200,
-Shenghao Ding wrote:
-> 
-> Move the common macro definition of kcontrols into a common header for code
-> cleanup, and create a common header to store the common declaration for
-> both spi and i2c hda driver.
-> 
-> Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
+Thanks Cathy, this version looks finished!
 
-Applied now to for-next branch.  Thanks.
+On Mon, Apr 14, 2025 at 11:03=E2=80=AFAM Cathy Xu <ot_cathy.xu@mediatek.com=
+> wrote:
 
+>   dt-bindings: pinctrl: mediatek: Add support for mt8196
+>   pinctrl: mediatek: Add pinctrl driver on mt8196
 
-Takashi
+I applied thes two patches to the pinctrl tree.
+
+>   arm64: dts: mediatek: mt8196: Add pinmux macro header file
+
+Please apply this patch to the SoC tree.
+
+Yours,
+Linus Walleij
 
