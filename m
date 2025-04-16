@@ -1,138 +1,183 @@
-Return-Path: <linux-kernel+bounces-607370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B19FA9057A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:08:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 644FFA90562
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:05:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECDC719E21EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:03:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B5407AECE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFECE20FA8F;
-	Wed, 16 Apr 2025 13:53:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07DE8215178;
+	Wed, 16 Apr 2025 13:54:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="BUD2wyAD"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=atlas.cz header.i=@atlas.cz header.b="RaHc1mWK"
+Received: from gmmr-2.centrum.cz (gmmr-2.centrum.cz [46.255.227.203])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 706211F09AF
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 13:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5C302139B5;
+	Wed, 16 Apr 2025 13:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.227.203
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744811603; cv=none; b=jrQu1tCuM+7NLoygot6Mf5cGGw2fNa57Lo0TJx+68aqoJcxo3Aq2XZMcI6te3JZ2MSjmP9T/O8TY1vcqwX/8hBrviN9eUFulCJFBSlFZpd0phoiEiBdZ722+wmDATDnQKwibODTmTNw6sEPRWUfYzy9bPjDNUglbpmTwu68cz2o=
+	t=1744811683; cv=none; b=eUSCIWYZCDfQ3frQtYaqSXbH3cinlFTOnCfvQXKkBayQAAwliQXIj48Kq976xlb3g1uQlDl8rmhG12nROGrezUMU2/Q1bfyQdlIgJ0skgL7C6wKCmwj9t3UNx2owj23/l5s6Rdrzz/agFyO168zu4wxVIeKHvBy23BIhD2JDQaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744811603; c=relaxed/simple;
-	bh=c3iouo++elzhU5kLFJNofCSl943fAkEehYhJJtecVxk=;
+	s=arc-20240116; t=1744811683; c=relaxed/simple;
+	bh=8iPCyBnNECrvFDdWDc3xKa6kubWw6Oh2mtACz/I0iCo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ILFp1O8bT2h+rODx8moC7DmGCQon6gkWjJUHP/vrL2pXDLliw76Thk1wMrGnZSx9jaWcBkhG9dZMZIyvSmrT9DX8GKUVXslv2jB443e2fs6nh2xyVil2rY+KjLvKR+HsWWFIIuBCDELSZrCZkYNsiWd9fkEz83Kq+qGZc1v1sVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=BUD2wyAD; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-301e05b90caso6591659a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 06:53:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1744811600; x=1745416400; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9gcrtZdemerL6aQk6jw2p5xNDI9nJ1A11Kxs8TNl/+g=;
-        b=BUD2wyADgrr42g9VEbsYouF4CSrO0QqN4BWLlKvpD59k4QtqHiuLDhbv75RNinN7pX
-         5fwnPlmB7b6qgd/RFd3oJ4oG6riP+8DIuR4Si6YuQPBnfb4QqGpjmcwXyPqpuyioBUUM
-         Q4mlLWFS1iFVhbxobzipobO/VCbkqaKDb5VJrV73zd5TfqwOKKk83/x2bRDtJKU3wQW4
-         PRiw/EixAAvcrcnH0baogb40fLn5yd5tsOdCw1WDyi+gxAesUd2WNAlzm1toSyZK5HKT
-         pSMwulzcurRkjF/oZcV4TGRP/NEuGjrei5YYUEt9hdc/NLi/+ddCyczvosQ4Kbv2CfRn
-         TkvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744811600; x=1745416400;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9gcrtZdemerL6aQk6jw2p5xNDI9nJ1A11Kxs8TNl/+g=;
-        b=feO6O3+uOnI7fijrHBiWB2QWMNhDQu+IHTaUmEnkUJaoEf23iljTWpf2ccuKrFhfJ+
-         /c3RHA6eTvV3qT2AWCCfj//BYwWI8uvQFzRBcFMo9kEV1NKzViRoUk0WuRbc7JP0Ngc2
-         oC8nL5Xsai2Z+ul9UCGCAHs4Rox3GtItHhn0wjQUgB1BmXEXIImQJU5AsrYTzWj/TiPm
-         P1c750B1OSQ8RD59bdSU2aB2QS9/C8ICY0xH7Ex0/1H60FzRl61Com+AS6OTWk8RtW9H
-         oqfE6qacDiq6x4OIiKztDlhTW2dUjKe1hloFU+PpFZ0tXqA9H8bl4p48u2mrIHbWXJ7Q
-         k2iw==
-X-Forwarded-Encrypted: i=1; AJvYcCXXy7U0mEtsQrbLg7CAfYkHQCzhuWmd23AEmOOPFJcQjvop/pWdxZ8Mi4wyAX/zGELvYmVy6EWbCRuHmwM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTaMz9N1hELqzYkdxsF03gdAr+IwGSAfIJ5iA9D7hwY31ecmmR
-	znwuyJTwh09UbO/0TX5GnUXTfD+hwdxxLwn9iQw8yeIMFDgKgdiCtdif5Xxo+a4=
-X-Gm-Gg: ASbGncvCrnGo1QKUh6jlHzzo9DcS9kf2Zshd34bWIq24Dnr737YTCtHJ70GAMCn8Rur
-	9gDrLoWYD1G8wXPj2oOWCA24GIRPBw1/2P6dPhMU9MqzsHfswhyt0HSK0Os2XqloW3wDb/Ek0MJ
-	WybRYidWPo8vWaNuVRozRJpru8H74uH1ogCcqyxIMi5JGC0IItswKVP4xcEC68bxgm0GOxn4MgM
-	Cvzz3M6bVyjMYyxpyGJ2gHTGlI6lNRvP71Dfof/fFw4xb9Sd3SBrXLVSZv5DdIhGFPL1JCP/+VE
-	mmx+xvmWwwFqt3sSHrMK78Ycj4b3vwv39T4WgudY1aak8PM=
-X-Google-Smtp-Source: AGHT+IH2odz4MFUc8fi8peGC8XeupX73csOpmsRiYA+TNcVlda9dlCfptbzJAjHUUoSNYQRcyiH6+w==
-X-Received: by 2002:a17:90b:17c2:b0:2ff:6af3:b5fa with SMTP id 98e67ed59e1d1-3086415dde8mr2433910a91.22.1744811600569;
-        Wed, 16 Apr 2025 06:53:20 -0700 (PDT)
-Received: from medusa.lab.kspace.sh ([2601:640:8900:32c0::c137])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-30861212fffsm1568898a91.25.2025.04.16.06.53.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Apr 2025 06:53:19 -0700 (PDT)
-Date: Wed, 16 Apr 2025 06:53:18 -0700
-From: Mohamed Khalfella <mkhalfella@purestorage.com>
-To: Daniel Wagner <dwagner@suse.de>
-Cc: Daniel Wagner <wagi@kernel.org>, Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>, Keith Busch <kbusch@kernel.org>,
-	Hannes Reinecke <hare@suse.de>,
-	John Meneghini <jmeneghi@redhat.com>, randyj@purestorage.com,
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 3/3] nvme: delay failover by command quiesce timeout
-Message-ID: <20250416135318.GI1868505-mkhalfella@purestorage.com>
-References: <20250324-tp4129-v1-0-95a747b4c33b@kernel.org>
- <20250324-tp4129-v1-3-95a747b4c33b@kernel.org>
- <20250410085137.GE1868505-mkhalfella@purestorage.com>
- <6f0d50b2-7a16-4298-8129-c3a0b1426d26@flourine.local>
- <20250416004016.GC78596-mkhalfella@purestorage.com>
- <3dad09ce-151d-41fc-8137-56a931c4c224@flourine.local>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OWXRrKXg+gxleH0fyTEiM0vHSI0c5CjtqggqrLPurh/tHiJV2JL/3EQ28ADw65Oc0iTBfcgx0nu6e4ZBL5EZMtXTM5KqBzl5Gj4vbkrtaLbVIckQnz1wtaGwq9mAXI7aEjmKHINCkKCDswVk29WulILpX4rXHFNiT4Rysu0BfTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=atlas.cz; spf=pass smtp.mailfrom=atlas.cz; dkim=pass (1024-bit key) header.d=atlas.cz header.i=@atlas.cz header.b=RaHc1mWK; arc=none smtp.client-ip=46.255.227.203
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=atlas.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atlas.cz
+Received: from gmmr-2.centrum.cz (localhost [127.0.0.1])
+	by gmmr-2.centrum.cz (Postfix) with ESMTP id 194BD2160D3C;
+	Wed, 16 Apr 2025 15:53:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=atlas.cz; s=mail;
+	t=1744811608; bh=mOJi3ULIs6S9O57TJ4KmwFOJWvhHrsVQiIfVdvf40wo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RaHc1mWKy7sjYT1nowppfylloj95wowcY3xUi1JChHr5bx04qhidWORWHHsFkKB1U
+	 0cJKHHuWcbiS//5UXr/keo+Wjhh6u+DlsKnaSb8zf0Z6zGz1bwkOawADRFYuAIA9Wa
+	 az6jEzrxs5I0r5Ye/kIE/SGhz7lZ6u7XYsbs0UFo=
+Received: from antispam39.centrum.cz (antispam39.cent [10.30.208.39])
+	by gmmr-2.centrum.cz (Postfix) with ESMTP id 167EC211FC88;
+	Wed, 16 Apr 2025 15:53:28 +0200 (CEST)
+X-CSE-ConnectionGUID: Mln02DEDTaycyQEoKV972g==
+X-CSE-MsgGUID: kN5ul4MZQEKiIS9TdEEyWw==
+X-ThreatScanner-Verdict: Negative
+X-IPAS-Result: =?us-ascii?q?A2EHAAAqtf9n/03h/y5aGgEBAQEBAQEBAQEDAQEBARIBA?=
+ =?us-ascii?q?QEBAgIBAQEBQAmBOAMBAQEBCwGJeZFxA4t2hjOGDoVbgX4PAQEBAQEBAQEBC?=
+ =?us-ascii?q?UQEAQGFBwKLLCc2Bw4BAgQBAQEBAwIDAQEBAQEBAQEBDQEBBgEBAQEBAQYGA?=
+ =?us-ascii?q?QKBHYU1U4JiAYN/AQEBAQIBIw8BRhALDQEKAgIfBwICVgaDFYIwAREjsVt6g?=
+ =?us-ascii?q?TIaAmXccAKBI2OBKoEaLgGITwGFbIR3QoINhD8+gQUBhxiCaQSCLYEXlBCNO?=
+ =?us-ascii?q?FJ7HANZLAFVExcLBwWBKUMDgQ8jTgUwHYF6g3OFNoIRgVwDAyIBgxV1HIRsh?=
+ =?us-ascii?q?FYtT4MzgWgdQAMLbT03FBsGnHwBWSInOIElFcc5gxyBCYROnRUzl3ADkmQuh?=
+ =?us-ascii?q?2WPcnmpM4FuAoINMyIwgyNRGY5HIctZgTICBwEKAQEDCYI7jWGBSwEB?=
+IronPort-PHdr: A9a23:rB4ocBeT2Fj2wyLStyGyCRB0lGM+5djLVj580XLHo4xHfqnrxZn+J
+ kuXvawr0ASTG92DoKge1beM+4nbGkU+or+5+EgYd5JNUxJXwe43pCcHROOjNwjQAcWuURYHG
+ t9fXkRu5XCxPBsdMs//Y1rPvi/6tmZKSV3wOgVvO+v6BJPZgdip2OCu4Z3TZBhDiCagbb9oI
+ xi7oxvdutMKjYd+Jao91AXFr3pIduhI2GhlOU+dkxHg68i/+5Ju7z5esO87+c5aVqX6caU4T
+ bhGAzkjLms4+s7luwTdQAWW/ncSXX0YnRVRDwXb4x/0Q4/9vSTmuOVz3imaJtD2QqsvWTu+9
+ adrSQTnhzkBOjUk7WzYkM1wjKZcoBK8uxxyxpPfbY+JOPZieK7WYMgXTnRdUMlPSyNBA5u8b
+ 4oRAOoHIeZYtJT2q18XoRejGQWgGObjxzlVjXH0wKI6yfwsHw/G0gI+Ad8ArXfarNv6O6gOT
+ O+7w6vHwC7fb/5Vwzrx9JTEfgwjrPyKQLl+cdDRyU4qFw7dlFuft5DlPymI3esCqWeb6fRlV
+ eGygGMgsQ5xuDuvyd0piobTnIIY0UrL9Tl9wIkvPt20UlJ0YN+9HZZWqiqVOJd4TNk4TGF0p
+ CY11KcGuZijcSUWx5kqyBHRZfKDfoWL4hzuWumfLSl4iX9qZL+zmgu+/0a+x+HiVsS50UhGo
+ jZFn9TOqnwByx/e59WHRPZg/kms3yuE2QPL6uxcLk05lLDXJ4Ahz7MwjJYfr1rPEy/slEj0j
+ qKablso9vWm5uj9fLnquIOQO5VqhgzxLqgigMiyDOU+PwMTRWaU4/6826fm/UDhRbVKieA5n
+ bfBvZDBIMQbura5AwhI0oY/8xq/Dymp0NAfnXQfI1JFfQuLj5PsO1HSOPD0EOuzj06wnzh1w
+ fDGIqfhAojILnTZjLjgfK5x609ayAUt0dBS/51ZB7AbLP7tWkL8tMbUAgEnPwG02erqCtdw2
+ psbWW2VA6+ZNK3SsUWP5uIqO+SDfpUVuDXnJPgg/fHul2Q0lkUBfamtx5QXc2q0EehnIkmBe
+ 3rjns8BEXsWvgo5VOHqi0ONUSBSZ3a0Ra4z/Ss7CIW7AofYRYCsgKeM0z2hHp1TfGxJFleME
+ XLwe4WeR/gMcD6SItNmkjEcW7mhSosh1RWutQLhyrpnKOTU+jcCup3+ytd6/fDcmQs19TxuA
+ MSRy3uNQH1snmMUWz8227hyoEN+x1qCyqV4gOJXFcZV5/xXVgc2L5ncz/Z1C9zqQALOYs+JS
+ Eq6QtWhGTwxStMxw9kTY0dyAtmiixXD0jGpA78LjbOEGJ80/rjb33jrKMZx02zG27U5j1k6X
+ stPMnWribR89wjLAo7EiEGZl6esdaQB0y/B7WmDzW2TvEFeTQF/S7nFXXEYZkvQt9j54VnCT
+ 7C2BbQ9LgRB0dKCKrdNatDxglRJWvHjNM3DbG2vhWe/GxKIy6iIbIrrYGUdwD7dBFILkg8N+
+ 3aGLRI+BiCjo23AEDNuCUjjY0T28elxsH+7VFM7zxmWb0190Lq44hwVhfOGS/MUxbIEozwsq
+ y5pHFamwd3aEcaPpw1kfKlEe9My/E9H1X7Ftwx6JpGgK6FihlgDcwV4pk/hzQ93BZlAkcUxs
+ nMqwxR9KbiC3FNCaTyYx5bwNaPTKmXo+xCvcaHWiRni14Oz87sT6Pkn42riuAquBgJ27HRj1
+ 8h90n2S/JzGAQMeF5XrXRBk2QJ9ouTibzUnr73d095vef29qDzL3tszLOI5zh+7OdxNZvDXX
+ DTuGtEXUpD9YNchnEKkO1ddZLg6yQ==
+IronPort-Data: A9a23:pAIPxq2XSE7AvH5IEPbD5Sxwkn2cJEfYwER7XKvMYLTBsI5bpzwOy
+ GpJD2nTO/qDMzH9LdlwYNy/8R4PscSAy4I3HQI63Hw8FHgiRegppDi6wuUcGwvIc6UvmWo+t
+ 512huHodZ1yEzmF4E/wb9ANlFEkvYmQXL3wFeXYDS54QA5gWU8JhAlq8wIDqtcAbeORXUXU5
+ Lsen+WFYAX4g2ItbDpOg06+gEoHUMra6W5wUmMWOqgjUG/2zxE9EJ8ZLKetGHr0KqE8NvK6X
+ evK0Iai9Wrf+Ro3Yvv9+losWhBirhb6ZGBiu1IOM0SQqkEqSh8ajs7XAMEhhXJ/0F1lqfgqk
+ YkQ6sbgIeseFvakdOw1C3G0GszlVEFM0OevzXOX6aR/w6BaGpdFLjoH4EweZOUlFuhL7W5m0
+ PgecGohQzy/jvO90YuWTcpS15t5I5y+VG8fkikIITDxAvNjWpXfW/ySo9RV2isqm8UIFuS2i
+ 8gxNWQpNkmdJUcVZxFIV/rSn8/x7pX7WzRCq1uQrLAf6nTXxRc326qF3N/9I4TVFJwIxRfGz
+ o7A12ffXwweaPmt8Bem81OX19PDsA7qZ51HQdVU8dYv2jV/3Fc7CxAIVF39q+O+hlW9SvpWM
+ UlS8S0rxYAt9UivX/H8WROiqXKJtxJaXMBfe8UquF+lyafO5QudQG8eQVZpbN0gqd9zQDkC1
+ UGAlNCvAiZg2JWcSmqY3rOVqy6ifCYSMGkObDMFSg1D5MPsyKkjgxSKQtt9HaqditzuBSq20
+ z2MtDI5hbgYkYgMzarT1VLImTW3vbDSUxU4oA7QWwqN6gJ/eZ7gbpaj6XDF4vtaaoWUVF+Mu
+ D4Dgcf2xOQPC4yd0S+AWuMAGJm36Pufdj7Rm1hiG98m7TvFxpK4VdwOpmsjeQEzaJtCJmCBj
+ FLvhD69LaR7ZBOCBZKbqarqYyj25cAMzejYa80=
+IronPort-HdrOrdr: A9a23:O5DWYajdvBx/8rMLyYk+pBXutXBQXtcji2hC6mlwRA09TyVXra
+ +TddAgpHrJYVEqKRUdcLG7Scu9qBznn6KdjbN9AV7mZniAhILKFvAA0WKB+Vzd8kTFn4Y36U
+ 4jSchD4bbLY2SS4/yX3DWF
+X-Talos-CUID: 9a23:fUGq6mCSgmxYPLH6Ewxj8hZONu0JTnTMx2bpDkibNzc2ErLAHA==
+X-Talos-MUID: 9a23:X4pqhQSXDz+mun8oRXTvomx/MJtN0Z2DK0EsqsQ6t+SpJBNvbmI=
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-AV: E=Sophos;i="6.15,216,1739833200"; 
+   d="scan'208";a="107915396"
+Received: from unknown (HELO gm-smtp10.centrum.cz) ([46.255.225.77])
+  by antispam39.centrum.cz with ESMTP; 16 Apr 2025 15:53:27 +0200
+Received: from arkam (ip-213-220-240-96.bb.vodafone.cz [213.220.240.96])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by gm-smtp10.centrum.cz (Postfix) with ESMTPSA id 8550480911AC;
+	Wed, 16 Apr 2025 15:53:27 +0200 (CEST)
+Date: Wed, 16 Apr 2025 15:53:25 +0200
+From: Petr =?utf-8?B?VmFuxJtr?= <arkamar@atlas.cz>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+	Kevin Brodsky <kevin.brodsky@arm.com>,
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	x86@kernel.org, xen-devel@lists.xenproject.org,
+	linux-arch@vger.kernel.org
+Subject: Re: Regression from a9b3c355c2e6 ("asm-generic: pgalloc: provide
+ generic __pgd_{alloc,free}") with CONFIG_DEBUG_VM_PGFLAGS=y and Xen
+Message-ID: <2025416135325-Z_-2VTPsw81jMgCm-arkamar@atlas.cz>
+References: <202541612720-Z_-deOZTOztMXHBh-arkamar@atlas.cz>
+ <Z_-lj5kCg084MXRI@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <3dad09ce-151d-41fc-8137-56a931c4c224@flourine.local>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z_-lj5kCg084MXRI@casper.infradead.org>
 
-On 2025-04-16 10:30:11 +0200, Daniel Wagner wrote:
-> On Tue, Apr 15, 2025 at 05:40:16PM -0700, Mohamed Khalfella wrote:
-> > On 2025-04-15 14:17:48 +0200, Daniel Wagner wrote:
-> > > Pasthrough commands should fail immediately. Userland is in charge here,
-> > > not the kernel. At least this what should happen here.
+On Wed, Apr 16, 2025 at 01:41:51PM +0100, Matthew Wilcox wrote:
+> On Wed, Apr 16, 2025 at 02:07:20PM +0200, Petr Vaněk wrote:
+> > I have discovered a regression introduced in commit a9b3c355c2e6
+> > ("asm-generic: pgalloc: provide generic __pgd_{alloc,free}") [1,2] in
+> > kernel version 6.14. The problem occurs when the x86 kernel is
+> > configured with CONFIG_DEBUG_VM_PGFLAGS=y and is run as a PV Dom0 in Xen
+> > 4.19.1. During the startup, the kernel panics with the error log below.
+> 
+> You also have to have CONFIG_MITIGATION_PAGE_TABLE_ISOLATION enabled
+> to hit this problem, otherwise we allocate an order-0 page.
+
+Indeed, the issue disappears when I disable
+CONFIG_MITIGATION_PAGE_TABLE_ISOLATION.
+
+> > The commit changed PGD allocation path.  In the new implementation
+> > _pgd_alloc allocates memory with __pgd_alloc, which indirectly calls 
 > > 
-> > I see your point. Unless I am missing something these requests should be
-> > held equally to bio requests from multipath layer. Let us say app
-> > submitted write a request that got canceled immediately, how does the app
-> > know when it is safe to retry the write request?
+> >   alloc_pages_noprof(gfp | __GFP_COMP, order);
+> > 
+> > This is in contrast to the old behavior, where __get_free_pages was
+> > used, which indirectly called
+> > 
+> >   alloc_pages_noprof(gfp_mask & ~__GFP_HIGHMEM, order);
+> > 
+> > The key difference is that the new allocator can return a compound page.
+> > When xen_pin_page is later called on such a page, it call
+> > TestSetPagePinned function, which internally uses the PF_NO_COMPOUND
+> > macro. This macro enforces VM_BUG_ON_PGFLAGS if PageCompound is true,
+> > triggering the panic when CONFIG_DEBUG_VM_PGFLAGS is enabled.
 > 
-> Good question, but nothing new as far I can tell. If the kernel doesn't
-> start to retry passthru IO commands, we have to figure out how to pass
-> additional information to the userland.
+> I suspect the right thing to do here is to change the PF_NO_COMPOUND to
+> PF_HEAD.  Probably for all of these:
 > 
+> /* Xen */
+> PAGEFLAG(Pinned, pinned, PF_NO_COMPOUND)
+>         TESTSCFLAG(Pinned, pinned, PF_NO_COMPOUND)
+> PAGEFLAG(SavePinned, savepinned, PF_NO_COMPOUND);
+> PAGEFLAG(Foreign, foreign, PF_NO_COMPOUND);
+> PAGEFLAG(XenRemapped, xen_remapped, PF_NO_COMPOUND)
+>         TESTCLEARFLAG(XenRemapped, xen_remapped, PF_NO_COMPOUND)
+> 
+> Could you give that a try?
 
-nvme multipath does not retry passthru commands. That is said, there is
-nothing prevents userspace from retrying canceled command immediately
-resulting in the unwanted behavior these very patches try to address.
+Yes, I could. Changing PF_NO_COMPOUND to PF_HEAD in those lines resolves
+the issue for me.
 
-> > Holding requests like write until it is safe to be retried is the whole
-> > point of this work, right?
-> 
-> My first goal was to address the IO commands submitted via the block
-> layer. I didn't had the IO passthru interface on my radar. I agree,
-> getting the IO passthru path correct is also good idea.
-
-Okay. This will be addressed in the next revision, right?
-
-> 
-> Anyway, I don't have a lot of experience with the IO passthru interface.
-> A quick test to fitgure out what the status quo is: 'nvme read'
-> results in an EINTR or 'Resource temporarily unavailable' (EAGAIN or
-> EWOULDBLOCK) when a tcp connection between host and target is blocked
-> (*), though it comes from an admin command. It looks like I have to dive
-> into this a bit more.
-> 
-> (*) I think this might be the same problem as the systemd folks have
-> reported.
+Petr
 
