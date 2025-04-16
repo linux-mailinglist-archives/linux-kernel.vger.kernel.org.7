@@ -1,47 +1,39 @@
-Return-Path: <linux-kernel+bounces-607035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA7BAA8B730
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 12:55:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0564FA8B734
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 12:56:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 235D7445674
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 10:55:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B69D189F9ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 10:56:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E10238144;
-	Wed, 16 Apr 2025 10:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cj/BDpNY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0201E7C24;
-	Wed, 16 Apr 2025 10:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE901236440;
+	Wed, 16 Apr 2025 10:55:57 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91C51233718
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 10:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744800898; cv=none; b=d9WJhSGoJixkyhIO9HzdpUkR5U2VYNx3EIJUJ9F14qHRSS1pQVxRX1xJzuXNcbcjONJ/HSTzCZytKI5kuoLesWzpVTnOoTIdSymihI/TJoViQbrabAZgPyuIDPePxHs2AqKAQ8rpWy1g7oB3HmWXhkLaSP1c1BokzNUZ0v3ZmsA=
+	t=1744800957; cv=none; b=hOlQhGwgHk4sX++p+FRocGuAVfiBvafFa/uSJXWsV1VoaSsz9I8nf9BinFVPSdcxlBagotXlNYGh2jDk+ukLzPffa8EiJ8JD2xA+EWHPO342XVGhtSjRouCFFjQHlmZVQW0Vja+Wxy8ZGI4Xbjgsi+LpWzb+78fIG6kYvqNVujw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744800898; c=relaxed/simple;
-	bh=7JN6snAw2lrK/X6VkKve41wf57owbc2L0SobKwitddE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=N6YFAUjOn/apXCDw5NtoSFiqa00WLH6y8dfyG+dKTMTlXZACiHnrJd2EJVkY9P+fBDnlcOE5DBuP0BkwLHEKeCBqs9dhI/wFdQXnblLvdlY7rGKY+cBgEPDgDWFX0bNylsYDUtAeODGLw8tNFLzuSaiHTJV1++YmQfaVhGQFmHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cj/BDpNY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 801BEC4CEE2;
-	Wed, 16 Apr 2025 10:54:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744800897;
-	bh=7JN6snAw2lrK/X6VkKve41wf57owbc2L0SobKwitddE=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=cj/BDpNYbphHzJEiLNFlvYm/GFcN98+FI2ZMAotiQ+7iud0nIMOvFnIxmc0pwY1gA
-	 jVLzyaSW9VJq6/x1pXj1QwlOluMrDtVvGJOrTWGXHd+qKgAvOKc6N8aVB3jDLW4YoM
-	 vTBoLZ9KX8lE0PttueVMsJVjoWmFmOcCElXGkatr31RC41/lY5fTwIQWylqNU7dP62
-	 vbgFzIh2gJmY75eSU7i8/CfD5hDJcH4ibpUGi4t8beoGygnT/CmsXAZfB1fqs5mhpA
-	 +2gLEfipmQ3BzLEdaeJJ/EucRiUlHTSB3FK9rb2FyKsHrhxWip2oQTGpV2s9CODEe5
-	 STEzAfRW2LSug==
-Message-ID: <6ee047d4-f3de-4c25-aaae-721221dc3003@kernel.org>
-Date: Wed, 16 Apr 2025 12:54:51 +0200
+	s=arc-20240116; t=1744800957; c=relaxed/simple;
+	bh=BX29mFmxNs7GRBvA+Nt3iMZeGvNwbVcTiCJ/uRpP9/E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hiRQP3pmuOa+53zfCth+3sF5M0NKlsmPyca+GKHnzhL2Ou3Sc5GT+PiT38f8TaolT0zgq75vRfoAr+k+Bvgd+dPNXlsumMmgfahjmLUkvWAijR8Z5zdcGIZdhiS6WI/Euv2ivyxCthryD/k00hiSoIGTJDVUN8+SSQKCT4ayyMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AB693152B;
+	Wed, 16 Apr 2025 03:55:52 -0700 (PDT)
+Received: from [192.168.178.115] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 053793F66E;
+	Wed, 16 Apr 2025 03:55:51 -0700 (PDT)
+Message-ID: <d71b49d3-78a0-44c6-bac8-2619f8d0c4f0@arm.com>
+Date: Wed, 16 Apr 2025 12:55:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,275 +41,89 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] net: pse-pd: Add Si3474 PSE controller driver
-To: Piotr Kubik <piotr.kubik@adtran.com>,
- Oleksij Rempel <o.rempel@pengutronix.de>,
- Kory Maincent <kory.maincent@bootlin.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <a92be603-7ad4-4dd3-b083-548658a4448a@adtran.com>
- <93d3bbf0-742c-41d4-83c6-6d94a0dd779c@adtran.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [RFC PATCH] sched/util_est: Do not sub the delayed-task's
+ util-est
+To: Hongyan Xia <hongyan.xia2@arm.com>, Xuewen Yan <xuewen.yan@unisoc.com>,
+ vincent.guittot@linaro.org, mingo@redhat.com, peterz@infradead.org,
+ juri.lelli@redhat.com
+Cc: rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+ vschneid@redhat.co, linux-kernel@vger.kernel.org, qyousef@layalina.io,
+ ke.wang@unisoc.com, di.shen@unisoc.com, xuewen.yan94@gmail.com
+References: <20250314090909.8404-1-xuewen.yan@unisoc.com>
+ <be0cace9-d173-4de3-959e-861876ad77fc@arm.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <93d3bbf0-742c-41d4-83c6-6d94a0dd779c@adtran.com>
+In-Reply-To: <be0cace9-d173-4de3-959e-861876ad77fc@arm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 16/04/2025 12:47, Piotr Kubik wrote:
-> From: Piotr Kubik <piotr.kubik@adtran.com>
+On 14/04/2025 15:39, Hongyan Xia wrote:
+> On 14/03/2025 09:09, Xuewen Yan wrote:
+>> In cpu_util_without, When the task is in rq, we should
+>> sub the task's util_est, however, the delayed_task->on_rq
+>> is true, however, the delayed_task's util had been sub
+>> when sleep, so there is no need to sub the delayed task's
+>> util-est. So add the checking of delayed-task.
+>>
+>> On the other hand, as said in [1], the logic of util_est's
+>> enqueue/dequeue could be simplified.
+>> So simplify it by aligning with the conditions of uclamp.
+>>
+>> [1]https://lore.kernel.org/all/CAB8ipk8pEvOtCm-d0o1rsekwxPWUHk9iBGtt9TLTWW-iWTQKiA@mail.gmail.com/
+>>
+>> Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
+>> ---
+>>   kernel/sched/fair.c | 7 ++++---
+>>   1 file changed, 4 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>> index c798d2795243..bebf40a0fa4e 100644
+>> --- a/kernel/sched/fair.c
+>> +++ b/kernel/sched/fair.c
+>> @@ -6930,7 +6930,7 @@ enqueue_task_fair(struct rq *rq, struct
+>> task_struct *p, int flags)
+>>        * Let's add the task's estimated utilization to the cfs_rq's
+>>        * estimated utilization, before we update schedutil.
+>>        */
+>> -    if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags &
+>> ENQUEUE_RESTORE))))
+>> +    if (!p->se.sched_delayed || (flags & ENQUEUE_DELAYED))
+>>           util_est_enqueue(&rq->cfs, p);
+>>         if (flags & ENQUEUE_DELAYED) {
+>> @@ -7168,7 +7168,7 @@ static int dequeue_entities(struct rq *rq,
+>> struct sched_entity *se, int flags)
+>>    */
+>>   static bool dequeue_task_fair(struct rq *rq, struct task_struct *p,
+>> int flags)
+>>   {
+>> -    if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags &
+>> DEQUEUE_SAVE))))
+>> +    if (!p->se.sched_delayed)
+>>           util_est_dequeue(&rq->cfs, p);
+>>         util_est_update(&rq->cfs, p, flags & DEQUEUE_SLEEP);
+>> @@ -8037,7 +8037,8 @@ cpu_util(int cpu, struct task_struct *p, int
+>> dst_cpu, int boost)
+>>            */
+>>           if (dst_cpu == cpu)
+>>               util_est += _task_util_est(p);
+>> -        else if (p && unlikely(task_on_rq_queued(p) || current == p))
+>> +        else if (p && unlikely(current == p ||
+>> +             (task_on_rq_queued(p) && !p->se.sched_delayed)))
+>>               lsub_positive(&util_est, _task_util_est(p));
+>>             util = max(util, util_est);
 > 
-> Add a driver for the Skyworks Si3474 I2C Power Sourcing Equipment
-> controller.
+> Tested this patch on several workloads and added util_est warnings. No
+> util_est overflow or underflow warnings were seen.
 > 
-> Based on the TPS23881 driver code.
-> 
-> Driver supports basic features of Si3474 IC:
-> - get port status,
-> - get port power,
-> - get port voltage,
-> - enable/disable port power.
-> 
-> Only 4p configurations are supported at this moment.
-> 
-> Signed-off-by: Piotr Kubik <piotr.kubik@adtran.com>
-> ---
->  drivers/net/pse-pd/Kconfig  |  10 +
->  drivers/net/pse-pd/Makefile |   1 +
->  drivers/net/pse-pd/si3474.c | 477 ++++++++++++++++++++++++++++++++++++
->  3 files changed, 488 insertions(+)
->  create mode 100644 drivers/net/pse-pd/si3474.c
+> Tested-by: Hongyan Xia <hongyan.xia2@arm.com>
 
-Please put bindings before their user (see DT submitting patches)
+Just to make sure, does this 'Tested-by' also apply to the current v2
+version of this patch?
 
-> 
-> diff --git a/drivers/net/pse-pd/Kconfig b/drivers/net/pse-pd/Kconfig
-> index 7fab916a7f46..6d2fef6c2602 100644
-> --- a/drivers/net/pse-pd/Kconfig
-> +++ b/drivers/net/pse-pd/Kconfig
-> @@ -41,4 +41,14 @@ config PSE_TPS23881
-> 
->           To compile this driver as a module, choose M here: the
->           module will be called tps23881.
-> +
-> +config PSE_SI3474
-> +       tristate "Si3474 PSE controller"
-> +       depends on I2C
-> +       help
-> +         This module provides support for Si3474 regulator based Ethernet
-> +         Power Sourcing Equipment.
-> +
-> +         To compile this driver as a module, choose M here: the
-> +         module will be called si3474.
->  endif
-> diff --git a/drivers/net/pse-pd/Makefile b/drivers/net/pse-pd/Makefile
-> index 9d2898b36737..b33b4d905cd5 100644
-> --- a/drivers/net/pse-pd/Makefile
-> +++ b/drivers/net/pse-pd/Makefile
-> @@ -6,3 +6,4 @@ obj-$(CONFIG_PSE_CONTROLLER) += pse_core.o
->  obj-$(CONFIG_PSE_REGULATOR) += pse_regulator.o
->  obj-$(CONFIG_PSE_PD692X0) += pd692x0.o
->  obj-$(CONFIG_PSE_TPS23881) += tps23881.o
-> +obj-$(CONFIG_PSE_SI3474) += si3474.o
-> \ No newline at end of file
+https://lkml.kernel.org/r/20250325014733.18405-1-xuewen.yan@unisoc.com
 
-1. Warnin ghere
-2. Don't add your entries to the end but in more-or-less alphabetically
-sorted place.
-
-> diff --git a/drivers/net/pse-pd/si3474.c b/drivers/net/pse-pd/si3474.c
-> new file mode 100644
-> index 000000000000..a2b4b8bff393
-> --- /dev/null
-> +++ b/drivers/net/pse-pd/si3474.c
-> @@ -0,0 +1,477 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Driver for the Skyworks Si3474 PoE PSE Controller
-> + *
-> + */
-> +
-> +#include <linux/bitfield.h>
-> +#include <linux/delay.h>
-> +#include <linux/i2c.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pse-pd/pse.h>
-> +
-> +#define SI3474_MAX_CHANS 8
-> +
-> +#define MANUFACTURER_ID 0x08
-> +#define IC_ID 0x05
-> +#define SI3474_DEVICE_ID (MANUFACTURER_ID << 3 | IC_ID)
-> +
-> +/* Misc registers */
-> +#define VENDOR_IC_ID_REG 0x1B
-> +#define TEMPERATURE_REG 0x2C
-> +#define FIRMWARE_REVISION_REG 0x41
-> +#define CHIP_REVISION_REG 0x43
-> +
-> +/* Main status registers */
-> +#define POWER_STATUS_REG 0x10
-> +#define PB_POWER_ENABLE_REG 0x19
-> +
-> +/* PORTn Current */
-> +#define PORT1_CURRENT_LSB_REG 0x30
-> +
-> +/* PORTn Current [mA], return in [nA] */
-> +/* 1000 * ((PORTn_CURRENT_MSB << 8) + PORTn_CURRENT_LSB) / 16384 */
-> +#define SI3474_NA_STEP (1000 * 1000 * 1000 / 16384)
-> +
-> +/* VPWR Voltage */
-> +#define VPWR_LSB_REG 0x2E
-> +#define VPWR_MSB_REG 0x2F
-> +
-> +/* PORTn Voltage */
-> +#define PORT1_VOLTAGE_LSB_REG 0x32
-> +
-> +/* VPWR Voltage [V], return in [uV] */
-> +/* 60 * (( VPWR_MSB << 8) + VPWR_LSB) / 16384 */
-> +#define SI3474_UV_STEP (1000 * 1000 * 60 / 16384)
-> +
-> +struct si3474_port_desc {
-> +       u8 chan[2];
-> +       bool is_4p;
-> +};
-> +
-> +struct si3474_priv {
-> +       struct i2c_client *client;
-> +       struct pse_controller_dev pcdev;
-> +       struct device_node *np;
-> +       struct si3474_port_desc port[SI3474_MAX_CHANS];
-> +};
-> +
-> +static struct si3474_priv *to_si3474_priv(struct pse_controller_dev *pcdev)
-> +{
-> +       return container_of(pcdev, struct si3474_priv, pcdev);
-> +}
-> +
-> +static int si3474_pi_get_admin_state(struct pse_controller_dev *pcdev,
-> int id,
-
-Your patchset is corrupted
-
-> +                                    struct pse_admin_state *admin_state)
-> +{
-> +       struct si3474_priv *priv = to_si3474_priv(pcdev);
-> +       struct i2c_client *client = priv->client;
-> +       bool enabled = FALSE;
-
-I believe it is "false", not FALSE.
-
-
-...
-
-> +
-> +       if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
-> +               dev_err(dev, "i2c check functionality failed\n");
-> +               return -ENXIO;
-> +       }
-> +
-> +       priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +       if (!priv)
-> +               return -ENOMEM;
-> +
-> +       ret = i2c_smbus_read_byte_data(client, VENDOR_IC_ID_REG);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       if (ret != SI3474_DEVICE_ID) {
-> +               dev_err(dev, "Wrong device ID: 0x%x\n", ret);
-> +               return -ENXIO;
-> +       }
-> +
-> +       ret = i2c_smbus_read_byte_data(client, FIRMWARE_REVISION_REG);
-> +       if (ret < 0)
-> +               return ret;
-> +       fw_version = ret;
-> +
-> +       ret = i2c_smbus_read_byte_data(client, CHIP_REVISION_REG);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       dev_info(&client->dev, "Chip revision: 0x%x, firmware version: 0x%x\n",
-> +                ret, fw_version);
-
-dev_dbg, don't pollute dmesg on success.
-
-> +
-> +       priv->client = client;
-> +       i2c_set_clientdata(client, priv);
-> +       priv->np = dev->of_node;
-> +
-> +       priv->pcdev.owner = THIS_MODULE;
-> +       priv->pcdev.ops = &si3474_ops;
-> +       priv->pcdev.dev = dev;
-> +       priv->pcdev.types = ETHTOOL_PSE_C33;
-> +       priv->pcdev.nr_lines = SI3474_MAX_CHANS;
-> +       ret = devm_pse_controller_register(dev, &priv->pcdev);
-> +       if (ret) {
-> +               return dev_err_probe(dev, ret,
-> +                                    "Failed to register PSE controller\n");
-> +       }
-> +
-> +       return ret;
-> +}
-> +
-> +static const struct i2c_device_id si3474_id[] = {{"si3474"}, {}};
-
-Use existing kernel style for such arrays.
+In this case Xuewen should apply it on his next version.
 
 
 
-Best regards,
-Krzysztof
 
