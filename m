@@ -1,95 +1,163 @@
-Return-Path: <linux-kernel+bounces-607852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62DDEA90B83
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:42:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DEA09A90B74
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:40:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA2363B906C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:41:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AFA33B5060
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:40:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43FCB224258;
-	Wed, 16 Apr 2025 18:41:25 +0000 (UTC)
-Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E987E22424F;
+	Wed, 16 Apr 2025 18:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="LD1GMJSQ"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0048A22423F
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 18:41:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6765322370A
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 18:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744828884; cv=none; b=gOPU8ZcKC5QOCH20Lg9yLDjkW1tutCR5ic9T8Q/GPHPGuO9TOL97qjt+HHxQ/fXS1ulMc9atQrqTtNikNQD+4iZTwZ4zB9UP2s3Lm8KUu/YDV7iZe8I5aqcpkv+h1dia2vme3vlZpjjpFkMxsKpQcyOGYSaBORsiJsbavyyEJdo=
+	t=1744828820; cv=none; b=QBiPqACt9vzsGP21i+qWftTe6sTFSq9b5cOprLBGUBLWDGC0OszO8cwaLyEc9YkkqpGrYO8A6VkorL6guQ8DhJNVY66PR3yGmHzR8j1nRdkz3x5v0yKfQ6+D4Vsp3ZvasiTFtMsKSVNG27GZ0wrqdS+izQvzMZlJYUBWbofmqUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744828884; c=relaxed/simple;
-	bh=TIrX4iOVr8p9Oe1RYGhC6gRPmryUIhl+Oic6wxp+sfA=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=YBKGANh0RRzWbzpn/QRdlGZZ5bX1ftl5JTlWDWBJ1uepKUHN+lDCEMcyH9S6VZqmSG6meKoZwm7/WPctMWDKGx5DQjhkog25/gpi6J25MyoSWJkYeMpnZdlaSKNNl01wmGI71dHGWO2TLPlzU4icgkARVtnye4Nhw2lAop1wF+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 57A49294730;
-	Wed, 16 Apr 2025 20:41:19 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id sM60Dn9crzIu; Wed, 16 Apr 2025 20:41:18 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 92068298566;
-	Wed, 16 Apr 2025 20:41:18 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id IfrJQsT_emOt; Wed, 16 Apr 2025 20:41:18 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 66DDC294730;
-	Wed, 16 Apr 2025 20:41:18 +0200 (CEST)
-Date: Wed, 16 Apr 2025 20:41:18 +0200 (CEST)
-From: Richard Weinberger <richard@nod.at>
-To: =?utf-8?B?Q3PDs2vDoXM=?= Bence <csokas.bence@prolan.hu>
-Cc: Michael Walle <mwalle@kernel.org>, linux-mtd <linux-mtd@lists.infradead.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	=?utf-8?Q?Tam=C3=A1s?= Szentendrei <szentendrei.tamas@prolan.hu>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	pratyush <pratyush@kernel.org>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>
-Message-ID: <81225127.297167214.1744828878236.JavaMail.zimbra@nod.at>
-In-Reply-To: <c56c52c0-a824-4ad7-9847-e0e973f811ed@prolan.hu>
-References: <20250415180434.513405-1-csokas.bence@prolan.hu> <D981O3AA6NK9.2EEVUPM62EV6S@kernel.org> <dd3c7cc0-a568-4046-b105-e6786b5c80f8@prolan.hu> <373620122.295980015.1744808943985.JavaMail.zimbra@nod.at> <c56c52c0-a824-4ad7-9847-e0e973f811ed@prolan.hu>
-Subject: Re: [PATCH] spi-nor: Verify written data in paranoid mode
+	s=arc-20240116; t=1744828820; c=relaxed/simple;
+	bh=I0EC3INMQjYBg9VGIiLtTG4Lcuu/qjJUk/7T+xVwA2c=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H6DedrR3nqkkG+7BZ3DX7s0k+1N8omtLKxHJJm5Y+Ql0lV369taACabPd5l9K9PoJaZ5A4h/ZJyqY/IkbAjxFOgiT9qz55ciWFUHHGiyLemPcBSIoBUOoPfEwdCtMbQURX2GXj2vvQa2Y6u1hDOiSlfeq/IvSa9W37NFQBfAF7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=LD1GMJSQ; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aaee2c5ee6eso1043327066b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 11:40:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1744828815; x=1745433615; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hf73Zqm591Z4cwB1QMdZKpjmrpXWTvATJ+WgcmCQVhs=;
+        b=LD1GMJSQOrBW+IW3DUebNTOeBoNHlzgNfHC6N+Cy/2/K3acmAfdsvgYhMSVUb2TlVe
+         Yk+gUdmx/w/dvO6YltaqRDKqg5FHljjnniE2GorWOmwTLiKVYxj0SVG+NXEpp+JuXkOR
+         uOVGcghvdhcGTzCxXN2i0t48Hwwg08Q3ehyBkLhJdfgbzEQzz23z9qTq2NtepnaN7P13
+         UpYykxGF+EyY50WwA1Q5Vmf7CoR6Uo8dB7mhZbFjataonD8Bg8fxvMB142n54y6RK5+0
+         XTeA/YZbmEfn+3atBwgCnAKmAb7b+veSiNS3H215KE6Yz0R0Nkr+Izd58UCs6N/xNw+3
+         fT3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744828815; x=1745433615;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hf73Zqm591Z4cwB1QMdZKpjmrpXWTvATJ+WgcmCQVhs=;
+        b=Fr6KDr7ArHScqVoHrx+Hc7Gp60lRKA/RPdqKQOkJNGPexrS3pC0gyuZ12cjPQMHf2a
+         aGKZeTIz+woGTblJiFu5ntdaF9EyWV/7QAxF8dZCpp+ofeS+EmnKiklNBOQSa+SMVv0l
+         E15RvGgZ4KsNNdIUw27Mh5MqaH5vjwg1dggsj4CELTRdBbe/Mof6G5k+hhir/A5F9gYF
+         9R9R8g6V5vrk/xVJX35DqnpSZgVul9G2s/0peyYpqmKO+ysNdRp3BhYARBTW0qeAmODu
+         StlSg7k9GP8T5ACNL5S7TKYxg5y4p3jX7wASqtISopBQPi7unupNQWKLRfN7DSUpIaXJ
+         8prw==
+X-Forwarded-Encrypted: i=1; AJvYcCU8m5ylbF/Z8rjD8HAW9Ped3PnsDf1X5ff6B0S662hkWqondfoUU2k0cBs3UOOUtQosL5fFCJlCOq5IgQE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/fntZs5mEUHaeNbKfFVoK3o35N2RtrA77AGGX7rw4EWruc8qA
+	CTYLHjdACvUUYqq/q6rHjFUnoYUdUQLr/hd1Zh3E48nxQl7eoiRpeZnF59dHeUw=
+X-Gm-Gg: ASbGnct3KY0cIbcD4e+m8gg3o7Sc++5pTcLE8h4/Xhlwz3kCbn5Rlx5jTGRKcJX00AN
+	X195YqifslCAP0tmHncmRqV9lGByA8L7wGDvxc2936woTsQhIk38+9QaS6pcBzluTSa47E3S6Un
+	QaO1EmqxTkbwAAyKxNKN8H9pjCI8KGp+LgHxCZG+AswDa3BBa0L5fovsYeFm0nDmvVsWPOSjQAQ
+	p1X02f12vW2rLf9NErn5HmAGuZzpHms5HGQLiV+nVlQESRQzhJXLhudZJnS4HfJuUjRnrkJP+wn
+	MPcdf3MmuZAs0LAMDaT16JIaKA1i/L73zGSfh08FWwbkufPBB1BFKOH/V8uo88zoiEPNeH0=
+X-Google-Smtp-Source: AGHT+IHvwwjkQBu7DihmtTvqsvfxr52Defd8zqRFD9EThPH0EkutvTV+muEgyvB55Eg0nTCHnjLeIA==
+X-Received: by 2002:a17:906:f5a9:b0:ac2:cf0b:b809 with SMTP id a640c23a62f3a-acb429ed4d2mr324522566b.31.1744828815585;
+        Wed, 16 Apr 2025 11:40:15 -0700 (PDT)
+Received: from localhost (93-44-188-26.ip98.fastwebnet.it. [93.44.188.26])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb3d34a5a8sm174672666b.183.2025.04.16.11.40.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Apr 2025 11:40:15 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Wed, 16 Apr 2025 20:41:37 +0200
+To: Stefan Wahren <wahrenst@gmx.net>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	kernel-list@raspberrypi.com
+Subject: Re: [PATCH v8 11/13] arm64: dts: bcm2712: Add external clock for RP1
+ chipset on Rpi5
+Message-ID: <Z__54c628WTjznoG@apocalypse>
+References: <cover.1742418429.git.andrea.porta@suse.com>
+ <7c26a0b52e00a39930ba02f7552abdd1be4c828c.1742418429.git.andrea.porta@suse.com>
+ <45c1a50c-2ecd-4201-85e5-9a0e94f06fa3@gmx.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF136 (Linux)/8.8.12_GA_3809)
-Thread-Topic: spi-nor: Verify written data in paranoid mode
-Thread-Index: 316iU8/+hGzm5OegdVUSCxd/avO+wg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <45c1a50c-2ecd-4201-85e5-9a0e94f06fa3@gmx.net>
 
------ Urspr=C3=BCngliche Mail -----
-> Von: "Cs=C3=B3k=C3=A1s Bence" <csokas.bence@prolan.hu>
->> I'm not so sure whether it makes sense at all.
->> In it's current form, there is no recovery. So anything non-trivial
->> on top of the MTD will just see an -EIO and has to give up.
->> E.g. a filesystem will remount read-only.
->=20
-> In our case, we use UBIFS on top of UBI, which in this case chooses
-> another eraseblock to hold the data instead, then re-tests (erase+write
-> cycles) the one which gave -EIO. Since the bus error is only transient,
-> it goes away by this time, and thus UBIFS will recover from this cleanly.
+Hi Stefan,
 
-Are you sure about that?
+On 13:55 Mon 14 Apr     , Stefan Wahren wrote:
+> Hi Andrea,
+> 
+> Am 19.03.25 um 22:52 schrieb Andrea della Porta:
+> > The RP1 found on Raspberry Pi 5 board needs an external crystal at 50MHz.
+> > Add clk_rp1_xosc node to provide that.
+> > 
+> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> > Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> i'm fine with the patch content, but I think this is necessary before
+> Patch 9 is applied?
 
-I'd expect UBI to go into RO mode via a call path like:
-ubi_eba_write_leb() -> ubi_io_write() -> mtd_write()
-If mtd_write() returns an EIO, UBI will go into RO mode immediately.
+True. Thanks for pointing that out.
 
-(I'm assuming, your SPI-NOR has no bad block support, so ubi->bad_allowed
-is false).
+Cheers,
+Andrea
 
-Thanks,
-//richard
+> > ---
+> >   arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts | 7 +++++++
+> >   1 file changed, 7 insertions(+)
+> > 
+> > diff --git a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
+> > index fbc56309660f..1850a575e708 100644
+> > --- a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
+> > +++ b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
+> > @@ -16,6 +16,13 @@ chosen: chosen {
+> >   		stdout-path = "serial10:115200n8";
+> >   	};
+> > 
+> > +	clk_rp1_xosc: clock-50000000 {
+> > +		compatible = "fixed-clock";
+> > +		#clock-cells = <0>;
+> > +		clock-output-names = "rp1-xosc";
+> > +		clock-frequency = <50000000>;
+> > +	};
+> > +
+> >   	/* Will be filled by the bootloader */
+> >   	memory@0 {
+> >   		device_type = "memory";
+> 
 
