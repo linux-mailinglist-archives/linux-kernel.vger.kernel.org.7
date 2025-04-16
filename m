@@ -1,188 +1,127 @@
-Return-Path: <linux-kernel+bounces-607817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AF76A90B1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:14:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A6C9A90A6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 19:48:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8463189351E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:14:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 632F319070E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 17:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43927221F29;
-	Wed, 16 Apr 2025 18:12:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED071CAA97;
+	Wed, 16 Apr 2025 17:48:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="YbwT+bgR"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GdBVAovm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E73C422155E;
-	Wed, 16 Apr 2025 18:12:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D1F215F42;
+	Wed, 16 Apr 2025 17:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744827177; cv=none; b=WvMYoOVzQhoEwGyVYlw6oGwtFrSWtqhKZ/obYMqoteiBzOGzMMEC14Jq/ricKyfypHvmCfV/pGbYE1CvpTN5DKizAmQ2LWKHrztsotVN28777m/B61x4jwFte5H24rs1uFVfien9j7A5Z78vVKUXaLFUpEhrGEDYzaFFV+9vcck=
+	t=1744825728; cv=none; b=M4/jKtEAcclRuxO3szEucFJ2/RiDrzwm72BTqFF2xqfoOvWZLRExNvdgElyrgV2n7B1sz6rI6OVKVLN2HgW+E85NnnpFkTYUH3l4VkvFr6htFT5OavAPYik96GZD/OsGHMOrs1BbSB+vejanCAcmVJeiBkcHT4R3H2yI0nCSqbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744827177; c=relaxed/simple;
-	bh=iQKshVydollss9hMFH/JZu600SfS0P7cj3iiIysqwAQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RY8DpAFcuCAx26Pz1fPXtMMaAoVcCv+cG3FGpv8KBKIE5cPka0KFj0D4fYDq2KcETbZczdwMZLshX3gaahUV61Q8+a3F7hFvPYWlisYG1aOMCyHt1Gu98eiWBAG7aPqJiFMmRIPJXri+TunrLBIsJOZUS2sPBobxKFfkYxzBr+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=YbwT+bgR; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 8450E662715;
-	Wed, 16 Apr 2025 20:12:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1744827173;
-	bh=iQKshVydollss9hMFH/JZu600SfS0P7cj3iiIysqwAQ=;
-	h=From:Subject:Date;
-	b=YbwT+bgRt/bKqpCoFLZViC9RyILIuDQLDJaTHohcgWXixwvNydqMC3dRQh4Re05ej
-	 Pm9RM+J/cMiK1yC6gzaJNCsK39BTAveURC5xedn2q7xnGFLIcOco335vFv9wH1FfMH
-	 SGAcJ3RMi2uewl1Al6EEOvI3gCjb3ZbhtdGjwUT0PTJlWIMc0on9rejifzmL4CP7Ln
-	 QstDDHaMTUFGryCd27t55PrhSYdpAGtMtEsSl4D2rUV1yypF46PVzR2E89r0bqMr07
-	 aPl7+mGCL8/Hm07ghtYbOokJsUd87en2zDxkROacjHMjHj/08lvleS+KZ6gfkZKlLV
-	 a3Iydd89oX0Xg==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Morten Rasmussen <morten.rasmussen@arm.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
- Pierre Gondois <pierre.gondois@arm.com>,
- Christian Loehle <christian.loehle@arm.com>
-Subject:
- [RFT][PATCH v1 1/8] cpufreq/sched: schedutil: Add helper for governor checks
-Date: Wed, 16 Apr 2025 19:48:16 +0200
-Message-ID: <10640940.nUPlyArG6x@rjwysocki.net>
-In-Reply-To: <3344336.aeNJFYEL58@rjwysocki.net>
-References: <3344336.aeNJFYEL58@rjwysocki.net>
+	s=arc-20240116; t=1744825728; c=relaxed/simple;
+	bh=v4XwhaUeZk3BYsAXaR29UkZdFjLWFGa044ZokdLWR8A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nz7VWr1tycKxD89N08ox1V7PAHE7egYE1f8UeFFrI9FyO8SYVxNAR3Hb6SubB/0Tl+9MWprqHLA1oQWkIahH8w7Vo13Ii9u2dTe0I5Z9KSAE6ac1rn7VvwSef2H8ffOmJPokMAEshLmWEBxWW70WNptWjVUySJwJ13YSfK5Ofaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GdBVAovm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0408C4CEE2;
+	Wed, 16 Apr 2025 17:48:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744825727;
+	bh=v4XwhaUeZk3BYsAXaR29UkZdFjLWFGa044ZokdLWR8A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GdBVAovmhB1UljmHHNyLhF0hxqGhhRuRKXZwqcyO/adBY48zZBRbdDbJB9M7PJs+9
+	 0j2ko3cmHZdfFrkH5ZvxYdo9QFPEclZ3dj/jgrPIp3sr9duFHwG5JT2pijcIt27V07
+	 ZNX2u2l/RkL/hLsy/MtGuWmctwaG39Vfk7ejLVl+rzVAMCzANGUNVa9rlfzZYwIuNl
+	 AxFhvAvI0iDRRAQnzJZ3nFXpyy0F9M4Jmp8pKWFsEjPqMUDzjlZl99QnYpNx1IAIHf
+	 xvazOMDRyHkBglCDin7oFj4gJXMJRW+IYMi4GP7mzpkt1qGQpeus7aotP6Kaj8CDgY
+	 wlFKWO6r1sP8A==
+Date: Wed, 16 Apr 2025 10:48:45 -0700
+From: Kees Cook <kees@kernel.org>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Claudiu Manoil <claudiu.manoil@nxp.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Wei Fang <wei.fang@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>,
+	Jeroen de Borst <jeroendb@google.com>,
+	Harshitha Ramamurthy <hramamurthy@google.com>,
+	Ido Schimmel <idosch@nvidia.com>, Petr Machata <petrm@nvidia.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Simon Horman <horms@kernel.org>, Geoff Levand <geoff@infradead.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Praveen Kaligineedi <pkaligineedi@google.com>,
+	Willem de Bruijn <willemb@google.com>,
+	Joshua Washington <joshwash@google.com>,
+	Furong Xu <0x1207@gmail.com>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Jisheng Zhang <jszhang@kernel.org>, Petr Tesarik <petr@tesarici.cz>,
+	netdev@vger.kernel.org, imx@lists.linux.dev,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	Richard Cochran <richardcochran@gmail.com>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Shannon Nelson <shannon.nelson@amd.com>,
+	Ziwei Xiao <ziweixiao@google.com>,
+	Shailend Chand <shailend@google.com>,
+	Choong Yong Liang <yong.liang.choong@linux.intel.com>,
+	Andrew Halaney <ahalaney@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] net: ethtool: Adjust exactly ETH_GSTRING_LEN-long stats
+ to use memcpy
+Message-ID: <202504161047.79ED8EF5@keescook>
+References: <20250416010210.work.904-kees@kernel.org>
+ <20250416110351.1dbb7173@kmaincent-XPS-13-7390>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvdejtdehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepuddupdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehsrhhinhhivhgrshdrphgrnhgurhhuvhgruggrsehlihhnuhigrdh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=11 Fuz1=11 Fuz2=11
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250416110351.1dbb7173@kmaincent-XPS-13-7390>
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Wed, Apr 16, 2025 at 11:03:51AM +0200, Kory Maincent wrote:
+> On Tue, 15 Apr 2025 18:02:15 -0700
+> Kees Cook <kees@kernel.org> wrote:
+> 
+> > Many drivers populate the stats buffer using C-String based APIs (e.g.
+> > ethtool_sprintf() and ethtool_puts()), usually when building up the
+> > list of stats individually (i.e. with a for() loop). This, however,
+> > requires that the source strings be populated in such a way as to have
+> > a terminating NUL byte in the source.
+> > 
+> > Other drivers populate the stats buffer directly using one big memcpy()
+> > of an entire array of strings. No NUL termination is needed here, as the
+> > bytes are being directly passed through. Yet others will build up the
+> > stats buffer individually, but also use memcpy(). This, too, does not
+> > need NUL termination of the source strings.
+> > 
+> > However, there are cases where the strings that populate the
+> > source stats strings are exactly ETH_GSTRING_LEN long, and GCC
+> > 15's -Wunterminated-string-initialization option complains that the
+> > trailing NUL byte has been truncated. This situation is fine only if the
+> > driver is using the memcpy() approach. If the C-String APIs are used,
+> > the destination string name will have its final byte truncated by the
+> > required trailing NUL byte applied by the C-string API.
+> > 
+> > For drivers that are already using memcpy() but have initializers that
+> > truncate the NUL terminator, mark their source strings as __nonstring to
+> > silence the GCC warnings.
+> 
+> Shouldn't we move on to ethtool_cpy in these drivers too to unify the code?
 
-Add a helper for checking if schedutil is the current governor for
-a given cpufreq policy and use it in sched_is_eas_possible() to avoid
-accessing cpufreq policy internals directly from there.
+I decided that the code churn wasn't worth it. Perhaps in a follow-up
+patch if folks want to see the removal of the explicit memcpy() uses?
 
-No intentional functional impact.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
-v0.3 -> v1
-     * Change the name of the new function to sugov_is_governor().
-
-This patch is regarded as a cleanup for 6.16.
-
----
- include/linux/cpufreq.h          |    9 +++++++++
- kernel/sched/cpufreq_schedutil.c |    9 +++++++--
- kernel/sched/sched.h             |    2 --
- kernel/sched/topology.c          |    6 +++---
- 4 files changed, 19 insertions(+), 7 deletions(-)
-
---- a/include/linux/cpufreq.h
-+++ b/include/linux/cpufreq.h
-@@ -650,6 +650,15 @@
- struct cpufreq_governor *cpufreq_default_governor(void);
- struct cpufreq_governor *cpufreq_fallback_governor(void);
- 
-+#ifdef CONFIG_CPU_FREQ_GOV_SCHEDUTIL
-+bool sugov_is_governor(struct cpufreq_policy *policy);
-+#else
-+static inline bool sugov_is_governor(struct cpufreq_policy *policy)
-+{
-+	return false;
-+}
-+#endif
-+
- static inline void cpufreq_policy_apply_limits(struct cpufreq_policy *policy)
- {
- 	if (policy->max < policy->cur)
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@ -630,7 +630,7 @@
- 
- /********************** cpufreq governor interface *********************/
- 
--struct cpufreq_governor schedutil_gov;
-+static struct cpufreq_governor schedutil_gov;
- 
- static struct sugov_policy *sugov_policy_alloc(struct cpufreq_policy *policy)
- {
-@@ -909,7 +909,7 @@
- 	WRITE_ONCE(sg_policy->limits_changed, true);
- }
- 
--struct cpufreq_governor schedutil_gov = {
-+static struct cpufreq_governor schedutil_gov = {
- 	.name			= "schedutil",
- 	.owner			= THIS_MODULE,
- 	.flags			= CPUFREQ_GOV_DYNAMIC_SWITCHING,
-@@ -927,4 +927,9 @@
- }
- #endif
- 
-+bool sugov_is_governor(struct cpufreq_policy *policy)
-+{
-+	return policy->governor == &schedutil_gov;
-+}
-+
- cpufreq_governor_init(schedutil_gov);
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -3509,8 +3509,6 @@
- 	return static_branch_unlikely(&sched_energy_present);
- }
- 
--extern struct cpufreq_governor schedutil_gov;
--
- #else /* ! (CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL) */
- 
- #define perf_domain_span(pd) NULL
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -213,7 +213,7 @@
- {
- 	bool any_asym_capacity = false;
- 	struct cpufreq_policy *policy;
--	struct cpufreq_governor *gov;
-+	bool policy_is_ready;
- 	int i;
- 
- 	/* EAS is enabled for asymmetric CPU capacity topologies. */
-@@ -258,9 +258,9 @@
- 			}
- 			return false;
- 		}
--		gov = policy->governor;
-+		policy_is_ready = sugov_is_governor(policy);
- 		cpufreq_cpu_put(policy);
--		if (gov != &schedutil_gov) {
-+		if (!policy_is_ready) {
- 			if (sched_debug()) {
- 				pr_info("rd %*pbl: Checking EAS, schedutil is mandatory\n",
- 					cpumask_pr_args(cpu_mask));
-
-
-
+-- 
+Kees Cook
 
