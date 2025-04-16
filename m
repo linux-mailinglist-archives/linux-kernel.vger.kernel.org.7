@@ -1,217 +1,145 @@
-Return-Path: <linux-kernel+bounces-607391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 148C9A905AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:11:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D650EA905B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:12:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7ABDE16BC66
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:09:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC0308A6348
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACEE821E091;
-	Wed, 16 Apr 2025 14:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4ABA1A0730;
+	Wed, 16 Apr 2025 13:59:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AZdym7W6"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="VQgfCytX"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CEF71FF1C7;
-	Wed, 16 Apr 2025 14:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A381DA634
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 13:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744812006; cv=none; b=TdoVWMcuLu528EeDdCJ8CKom1XNOIfi9ATt5X1ll+GFHbj9IoVs530BKR76yS5FaBezRUolrk8mK+lnzi+2FbltNFkNVtKXGGQYJ8OKJ4IQO7revJ3RxOy3BOL771Qjpr8maSGiaNLCcU7K4e4lZHozO7Roe+E1Flp0n95sodT4=
+	t=1744811979; cv=none; b=QUaRz6QVr7uhFh3p5p0/qxNGUG93MfiN7LCcsdIFIfoSfyplo/36YQX0MjtrKHo0P79hhtury6tXOPs5j46fL/BdzDAhiDERU47MMPEeHNKBOU3H/kBBeedFcb1f2K888AdF/stixnjsW1PEHxtDH4/mwNaeMNdeDL2JGqiB9A0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744812006; c=relaxed/simple;
-	bh=luuZwnA57py/IT0wbmPZ1ZWYUmQInFWtDeYolOtf3Do=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NnOOq9qrPizMPl4MgpDNadxUi+ktoCMRe6Mqmi4PKO/yvI+VKQhUUfues+o1ogb8YGO0VnIGobhYMw8bDwijmdbHHHrj2sT9ADAGsUt19ZZLr3k4L82Uq8sP1ziCiQMZNV5uj6XEJ0K/EZJ9goO+yF835RiALMxNZOZttmTm12c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AZdym7W6; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5e6f4b3ebe5so11825691a12.0;
-        Wed, 16 Apr 2025 07:00:03 -0700 (PDT)
+	s=arc-20240116; t=1744811979; c=relaxed/simple;
+	bh=PrXWueJELQClhsRoDZoa/OuljX1rJijZLuQXa9z6ewA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ef9EOKI/KpOx/sD7Fnc4ssKla7c/U5MkJKTADjdgvWjXXCmcrGgmGE6Z+hl6/NhJATFlHSejSbQ1Nh2/AAdbsb++Zs+YCoL+CD5jqQsenm+mCk0yMSfuNtbG7kjFU0XRC0wFooU+VSAjwa+m155CAsuLrle/0mQixnk55FJ720s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=VQgfCytX; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43690d4605dso53727925e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 06:59:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744812002; x=1745416802; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IUgvm+DiPpmDjC2mORrvt+5jPl+d2nrcr0fpozEFS0o=;
-        b=AZdym7W6Je0cYSGQ5CDVv9gjbcqfNwb/w8VNxxPhsYpi8o9t68xIDw5ya2xFpCcw8v
-         llUEMIweqKhqAVNr47RQkOxhuCokp0UwOu8Z3EdffpsVbgK3Xb0scaQHHkAqVQ9YkCkM
-         ESY70AxFIRJwns4HorI9ju8GYoalH0+ytjNfQP5FVZEwrAR0fok9fEeiOWbG6GsXzw4l
-         eQB92/2P2AtlkY/h6z3OCKrrduOo24nEN/UVHhYldnDBvTzMswym2TeWy2Hi1z1zG6NY
-         frBKlBf8uhAjiUfsdctssdk1Db+3LsqayXhpiZzbNBWyHxezp+VSsIuoKSTFBJdCrE3T
-         iZrA==
+        d=suse.com; s=google; t=1744811975; x=1745416775; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=D58Ch4hi8djKlPVHC4ID+DAXWkOZ6h8jrefgNN0XtNg=;
+        b=VQgfCytX2s1Rtn5PSnv/YDXAGdYzskOhaEv4pnJ6l9klesECs6JZnOdKPm8SF2p9MB
+         uEiVPwqLy9zN2HOSf6P8E24p9FfeX2/j3fhLDjS60yLpCDfcV5hr9rrw+TRKBiuOzKfc
+         /fF595J/1hsQ/XKGM8MdJhvmGPKxbRCkKwMmTg6XtELXemfJldMx5HGhx8JZ9sOmrh40
+         7dgoO7B1/pvkb3vJr/7T1gG05WD/lbMNG7LPBJnK64WZbS5VQSacP9hWLWM3U9HVo5rn
+         6J6wxQUur6JsE3/jAukmCNeHdHDzNCWJ9dIQj04LSNyhd2D7t+rioARz4WG9D/sEIERl
+         xDhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744812002; x=1745416802;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IUgvm+DiPpmDjC2mORrvt+5jPl+d2nrcr0fpozEFS0o=;
-        b=vu/lJQaPJOTbyfm58LEImWy5aNDNU6JjpZO/MIIA5g+lcb2yK71i6NjCEgHc/+0P1v
-         SdCZnuSnGpBKA1GIdnaFCyZY8vemotwlfdtFlK9YkFZpY/S4FyBVRyxEOb2uAHGXGuV8
-         VtOjLYUHHKRcE/SyyRpxz2JyJXwPakqjMW1UQI02EqWAI8OG9RkF3vIFH1wM5cC7OqTk
-         wY8KOc3nNG4AFDzZb2LafOAvXmrttyz7nTqLWL5mUAiCNX3xYxaIiaZVNll/33dlxVFB
-         lGtIL6fb6u7Im2xJ/Yc6WpEi2jdfdDaQ1CJ+tdTNX/I4AacyxHYWr9m0bKLdWayB+J4a
-         9nAw==
-X-Forwarded-Encrypted: i=1; AJvYcCUdvaObVQB8qbqUIw5i6LvOncKL6XGZ2ApkuzVcHimIM6OIBryF1vSNkm4y22vShEmWR9NxkSHn@vger.kernel.org, AJvYcCXgCmqk3hjNM6nxJ30QnfyYhJgN97pUwy9yewOCepTMxZuwCs1YnLTWbrRRgSoIdO6s8j8j1ooo50bubeM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyISnh+pJEdNWqukeapcxHT8pRqLtO71jkDoDIS4IEUjwolIvjS
-	Oeg2cwlu9+tk7igpsjfMM+NJp1QNtbG9qSFWx5UCwRzSOUBO428GB24P9TDp/SHDAYKCTSbSr69
-	p4+JMapfqHlSIeuetNW2eatYoUIs=
-X-Gm-Gg: ASbGncv5Rg2aNzOlD6RV5d76hVhQ2tTUNlWpICmd0EexmmA+sONxQAM9NivzZ/wRfHW
-	IQvFkiH2Wr1McwYGepGAf+zm3usgCKnheidCTsm3AJ78CcSPp00xTqT/Xjoa/bgZKRbMEJhNWkV
-	Fi7I8KVjDfGwwVmxXoS2HA
-X-Google-Smtp-Source: AGHT+IFybF67oGA69tGhjx227ggX9ZUR73/3iBTjwBDtuR4eg/2zNDJZjb1T1t5XXyD0pv+unM3x1++ujHfZ4rHc6yY=
-X-Received: by 2002:a17:907:7b87:b0:ac7:f2b9:ec3b with SMTP id
- a640c23a62f3a-acb428748d0mr160511966b.4.1744812002038; Wed, 16 Apr 2025
- 07:00:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744811975; x=1745416775;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=D58Ch4hi8djKlPVHC4ID+DAXWkOZ6h8jrefgNN0XtNg=;
+        b=C724bCkRC1MvzJzegllVJfdq/f6Z52AGxJMJ78TkPt5yWpzH3mnahSBiBqCRdIvJ2J
+         jw4mlnU2Tar08YyypgQlF7bcI97r63KEujftPcyyDtwJnJFt5CVKB2GG+JX0cH6KqcmU
+         LFfZAAmscvH5omlrhUkiNxydmV5CWXaUxN0W7+vPiEDUMx7FNy6h9Pzbwx0fNtKq2eoN
+         ZdSuOpZgP2+nP1cKksAO5T2igoMMB+pxNHalAn3azNuUIPAdXwQo1geGaLXzflQ9/kr6
+         6AEs+DIB+4vhfnmGNesMh6kzFZoikgz9YYTxhu+sW0BoR6TYiQskyPA4ybtHNjrCxfr/
+         dlDw==
+X-Gm-Message-State: AOJu0YxGqxGm70aKU9UIzJrWPrF/IAHBn7Zc1xuyLrsT68mEu58nHwfv
+	3s5pims/dT+ai41M0wdW9paqGF5U7A9C3B6fDFzoAkEgw0wSfTUiq1AnuQ94Eks=
+X-Gm-Gg: ASbGncvn2R2IqnvvMOmZHqW+g07Sz4jL2pU/+qzGn1iQmCKL4zUzwuGF6IooxaOPvcI
+	2+vcuhaieO7MsQXqO8yczJ7z6I22EhE/akJmRdI4QVvwkGMZ8g9dZi+JAK/6tet/dS5UgzCSEcq
+	P08oNXXsDXpWiSpFPzCHEu3chtBuiG7KO5s9AgaoyzRwiPzlp+fhTdqzmqYfcIIrGvoeAGHwPb+
+	S3JbF3zjhM43djOLdJQaqXGGBWNl1QTu3VmoLMFdrwA8IQaubN7v9qmK1v0bPokSVQhhAaokVN2
+	SU6iFDvasc/jD2n20s3/6dwmfgPCwqxBHJSR683o0us=
+X-Google-Smtp-Source: AGHT+IHTIaWFA3QfhyJicogJ8cBkQ/je47l8+mLeE8Qjo2zZQg1uZN/gNAJBrvAGrFgjsLsXF8IfqA==
+X-Received: by 2002:a05:600c:1c04:b0:43c:fb36:d296 with SMTP id 5b1f17b1804b1-4405d6ab656mr15696095e9.25.1744811974863;
+        Wed, 16 Apr 2025 06:59:34 -0700 (PDT)
+Received: from [10.100.51.48] ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4405b58cc4csm22365265e9.25.2025.04.16.06.59.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Apr 2025 06:59:34 -0700 (PDT)
+Message-ID: <de64c91f-efd5-49c2-8e24-b41aafe800fb@suse.com>
+Date: Wed, 16 Apr 2025 15:59:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250414085412.117120-1-maimon.sagi@gmail.com>
- <b6aea926-ebb6-48fe-a1be-6f428a648eae@linux.dev> <CAMuE1bG_+qj++Q0OXfBe3Z_aA-zFj3nmzr9CHCuKJ_Jr19oWEg@mail.gmail.com>
- <aa9a1485-0a0b-442b-b126-a00ee5d4801c@linux.dev> <CAMuE1bETL1+sGo9wq46O=Ad-_aa8xNLK0kWC63Mm5rTFdebp=w@mail.gmail.com>
- <39839bcb-90e9-4886-913d-311c75c92ad8@linux.dev> <CAMuE1bHsPeaokc-_qR4Ai8o=b3Qpbosv6MiR5_XufyRTtE4QFQ@mail.gmail.com>
- <44b67f86-ed27-49e8-9e15-917fa2b75a60@linux.dev> <CAMuE1bFk=LFTWfu8RFJeSoPtjO8ieJDdEHhHpKYr4QxqB-7BBg@mail.gmail.com>
- <507eb775-d7df-4dd2-a7d1-626d5a51c1de@linux.dev>
-In-Reply-To: <507eb775-d7df-4dd2-a7d1-626d5a51c1de@linux.dev>
-From: Sagi Maimon <maimon.sagi@gmail.com>
-Date: Wed, 16 Apr 2025 16:59:33 +0300
-X-Gm-Features: ATxdqUFIjnpeuKHyLdCEt5PwV7Ym-YP21Nq8a5H3aqMI-LdF0ngvFWyHmxIZvzM
-Message-ID: <CAMuE1bFLB24ELFOSG=v+0hxJ+a+KGNWc8=Z3=kbXOs03PtLFOA@mail.gmail.com>
-Subject: Re: [PATCH v1] ptp: ocp: fix NULL deref in _signal_summary_show
-To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc: jonathan.lemon@gmail.com, richardcochran@gmail.com, andrew+netdev@lunn.ch, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/4] Properly handle module_kobject creation
+To: Shyam Saini <shyamsaini@linux.microsoft.com>
+Cc: linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+ code@tyhicks.com, linux@rasmusvillemoes.dk, christophe.leroy@csgroup.eu,
+ hch@infradead.org, mcgrof@kernel.org, frkaya@linux.microsoft.com,
+ vijayb@linux.microsoft.com, linux@weissschuh.net, samitolvanen@google.com,
+ da.gomez@samsung.com, gregkh@linuxfoundation.org, rafael@kernel.org,
+ dakr@kernel.org
+References: <20250227184930.34163-1-shyamsaini@linux.microsoft.com>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20250227184930.34163-1-shyamsaini@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 16, 2025 at 1:35=E2=80=AFPM Vadim Fedorenko
-<vadim.fedorenko@linux.dev> wrote:
->
-> On 16/04/2025 07:33, Sagi Maimon wrote:
-> > On Mon, Apr 14, 2025 at 4:55=E2=80=AFPM Vadim Fedorenko
-> > <vadim.fedorenko@linux.dev> wrote:
-> >>
-> >> On 14/04/2025 14:43, Sagi Maimon wrote:
-> >>> On Mon, Apr 14, 2025 at 4:01=E2=80=AFPM Vadim Fedorenko
-> >>> <vadim.fedorenko@linux.dev> wrote:
-> >>>>
-> >>>> On 14/04/2025 12:38, Sagi Maimon wrote:
-> >>>>> On Mon, Apr 14, 2025 at 2:09=E2=80=AFPM Vadim Fedorenko
-> >>>>> <vadim.fedorenko@linux.dev> wrote:
-> >>>>>>
-> >>>>>> On 14/04/2025 11:56, Sagi Maimon wrote:
-> >>>>>>> On Mon, Apr 14, 2025 at 12:37=E2=80=AFPM Vadim Fedorenko
-> >>>>>>> <vadim.fedorenko@linux.dev> wrote:
-> >>>>>>>>
-> >>>>>>>> On 14/04/2025 09:54, Sagi Maimon wrote:
-> >>>>>>>>> Sysfs signal show operations can invoke _signal_summary_show be=
-fore
-> >>>>>>>>> signal_out array elements are initialized, causing a NULL point=
-er
-> >>>>>>>>> dereference. Add NULL checks for signal_out elements to prevent=
- kernel
-> >>>>>>>>> crashes.
-> >>>>>>>>>
-> >>>>>>>>> Fixes: b325af3cfab9 ("ptp: ocp: Add signal generators and updat=
-e sysfs nodes")
-> >>>>>>>>> Signed-off-by: Sagi Maimon <maimon.sagi@gmail.com>
-> >>>>>>>>> ---
-> >>>>>>>>>       drivers/ptp/ptp_ocp.c | 3 +++
-> >>>>>>>>>       1 file changed, 3 insertions(+)
-> >>>>>>>>>
-> >>>>>>>>> diff --git a/drivers/ptp/ptp_ocp.c b/drivers/ptp/ptp_ocp.c
-> >>>>>>>>> index 7945c6be1f7c..4c7893539cec 100644
-> >>>>>>>>> --- a/drivers/ptp/ptp_ocp.c
-> >>>>>>>>> +++ b/drivers/ptp/ptp_ocp.c
-> >>>>>>>>> @@ -3963,6 +3963,9 @@ _signal_summary_show(struct seq_file *s, =
-struct ptp_ocp *bp, int nr)
-> >>>>>>>>>           bool on;
-> >>>>>>>>>           u32 val;
-> >>>>>>>>>
-> >>>>>>>>> +     if (!bp->signal_out[nr])
-> >>>>>>>>> +             return;
-> >>>>>>>>> +
-> >>>>>>>>>           on =3D signal->running;
-> >>>>>>>>>           sprintf(label, "GEN%d", nr + 1);
-> >>>>>>>>>           seq_printf(s, "%7s: %s, period:%llu duty:%d%% phase:%=
-llu pol:%d",
-> >>>>>>>>
-> >>>>>>>> That's not correct, the dereference of bp->signal_out[nr] happen=
-s before
-> >>>>>>>> the check. But I just wonder how can that even happen?
-> >>>>>>>>
-> >>>>>>> The scenario (our case): on ptp_ocp_adva_board_init we
-> >>>>>>> initiate only signals 0 and 1 so 2 and 3 are NULL.
-> >>>>>>> Later ptp_ocp_summary_show runs on all 4 signals and calls _signa=
-l_summary_show
-> >>>>>>> when calling signal 2 or 3  the dereference occurs.
-> >>>>>>> can you please explain: " the dereference of bp->signal_out[nr] h=
-appens before
-> >>>>>>> the check", where exactly? do you mean in those lines:
-> >>>>>>> struct signal_reg __iomem *reg =3D bp->signal_out[nr]->mem;
-> >>>>>>        ^^^
-> >>>>>> yes, this is the line which dereferences the pointer.
-> >>>>>>
-> >>>>>> but in case you have only 2 pins to configure, why the driver expo=
-ses 4
-> >>>>>> SMAs? You can simply adjust the attributes (adva_timecard_attrs).
-> >>>>>>
-> >>>>> I can (and will) expose only 2 sma in adva_timecard_attrs, but stil=
-l
-> >>>>> ptp_ocp_summary_show runs
-> >>>>> on all 4 signals and not only on the on that exposed, is it not a b=
-ug?
-> >>>>
-> >>>> Yeah, it's a bug, but different one, and we have to fix it other way=
-.
-> >>>>
-> >>> Do you want to instruct me how to fix it , or will you fix it?
-> >>
-> >> well, the original device structure was not designed to have the amoun=
-t
-> >> of SMAs less than 4. We have to introduce another field to store actua=
-l
-> >> amount of SMAs to work with, and adjust the code to check the value. T=
-he
-> >> best solution would be to keep maximum amount of 4 SMAs in the structu=
-re
-> >> but create a helper which will init new field and will have
-> >> BUILD_BUG_ON() to prevent having more SMAs than fixed size array for
-> >> them. That will solve your problem, but I will need to check it on the
-> >> HW we run.
-> >>
-> > just to be clear you will write the fix and test it on your HW, so you
-> > don't want me to write the fix?
->
-> Well, it would be great if you can write the code which will make SMA
-> functions flexible to the amount of pin the HW has. All our HW has fixed
-> amount of 4 pins that's why the driver was coded with constants. Now
-> your hardware has slightly different amount of pins, so it needs
-> adjustments to the driver to work properly. I just want to be sure that
-> any adjustments will not break my HW - that's what I meant saying I'll
-> test it.
->
-Just to be clear (correct me please if I am wrong):
-I will write the code, then create a patch and upstream to the vanilla
-you will test my change on your HW and only then approve the patch
-> >>>>>>> struct ptp_ocp_signal *signal =3D &bp->signal[nr];
-> >>>>>>>> I believe the proper fix is to move ptp_ocp_attr_group_add() clo=
-ser to
-> >>>>>>>> the end of ptp_ocp_adva_board_init() like it's done for other bo=
-ards.
-> >>>>>>>>
-> >>>>>>>> --
-> >>>>>>>> pw-bot: cr
-> >>>>>>
-> >>>>
-> >>
->
+On 2/27/25 19:49, Shyam Saini wrote:
+> Hi Everyone,
+> 
+> This patch series fixes handling of module_kobject creation.
+> A driver expect module_kset list populated with its corresponding
+> module_kobject to create its /sys/module/<built-in-module>/drivers
+> directory.
+> 
+> Since,
+> [1] commit 96a1a2412acb ("kernel/params.c: defer most of param_sysfs_init() to late_initcall time")
+> Call to populate module_kset list is deferred to save init time so that
+> external watchdog doesn't fireup on some boards and Linux can take
+> responsibility of feeding watchdog before it spuriously resets the
+> system. However, [1] this fix caused another issue i.e, consumers
+> of module_kset can't get related module_kobject during driver
+> initialisation and hence can't create their
+> /sys/module/<built-in-module>/drivers directory.
+> 
+> Consequently, [1] breaks user-space applications for eg: DPDK, which
+> expects /sys/module/vfio_pci/drivers/pci:vfio-pci/new_id to be present.
+> 
+> The second issue was reported and the [2] revert of [1] was
+> proposed. However, [2] the Revert doesn't address the original issue
+> reported in [1].
+> 
+> This patch series addresses both issues reported in [1] and [2].
+> 
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=96a1a2412acb
+> [2] https://lore.kernel.org/lkml/20250130225803.321004-1-shyamsaini@linux.microsoft.com/
+
+I've queued now the series on modules-fixes, with some minor cleanups to
+the commit messages.
+
+I changed the "Cc: stable@kernel.org" tag on the last patch to "Cc:
+stable@vger.kernel.org". Documentation/process/stable-kernel-rules.rst
+recommends using the latter address by default, unless the patch is
+fixing unpublished vulnerabilities.
+
+I've removed "Fixes: 96a1a2412acb" and "Cc: stable@kernel.org" from the
+first three patches because only the final patch contains the actual
+fix. I suspect the stable tooling should automatically determine the
+dependencies in this case, but to be explicit, I added a note to
+stable@vger.kernel.org on the last patch indicating that it requires all
+other patches from the series.
+
+-- 
+Thanks,
+Petr
 
