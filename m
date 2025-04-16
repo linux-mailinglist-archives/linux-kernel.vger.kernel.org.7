@@ -1,98 +1,95 @@
-Return-Path: <linux-kernel+bounces-607850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 399CAA90B80
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:41:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62DDEA90B83
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:42:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 524E9442427
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:41:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA2363B906C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F305C223704;
-	Wed, 16 Apr 2025 18:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="FKGY49PY"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43FCB224258;
+	Wed, 16 Apr 2025 18:41:25 +0000 (UTC)
+Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE2722538F;
-	Wed, 16 Apr 2025 18:40:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0048A22423F
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 18:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744828851; cv=none; b=PiuQgxbQAf7tVxEMOIFQNMWuQ+MslzknIMss9s/bwlBS8+FIEH1tKHKKytALA4rknowQHZag1r8v3unZ1fANJKx91bOfVihglhiBnIrQqdJ9l+49q4bxq/tEP83vaYbgvwKzy3aRnsCfVYJp/nudEmGKqVld79WvBODxwXTjc1s=
+	t=1744828884; cv=none; b=gOPU8ZcKC5QOCH20Lg9yLDjkW1tutCR5ic9T8Q/GPHPGuO9TOL97qjt+HHxQ/fXS1ulMc9atQrqTtNikNQD+4iZTwZ4zB9UP2s3Lm8KUu/YDV7iZe8I5aqcpkv+h1dia2vme3vlZpjjpFkMxsKpQcyOGYSaBORsiJsbavyyEJdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744828851; c=relaxed/simple;
-	bh=Z1bcOwaEL8wb4h1D5AwFZlAHw44W8YDLCsN003ABHao=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Y2rLRGc7h+Fsxi371rScBBBM0Uj7LGfZ7JvM9R1/u06hEpqZvFk63BLaXjuNmwrN3sPS5WFsO9i8qR1MX4VHJOVpVSC6AevGxzRnbT/2o3U/aZTtjxQVGlP5d6Ngch0pYyiyZ4bqNL50lNq1SBMse1swV+LrhQVoiT40XjY0uok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=FKGY49PY; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1744828843;
-	bh=Z1bcOwaEL8wb4h1D5AwFZlAHw44W8YDLCsN003ABHao=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=FKGY49PY+aJD3Zk9hYaJNGqTL2b9kWh9V1zAiApB9zkBxrWyO3gG6xRhOW6I/XLqK
-	 /iXWjsAJd5Q2zeMam5O8wgV935eLlRa3tIYVbcezzjGX/SHGTIpzWR4WYa9LieOXEd
-	 /FyhLfrguBiArRLUK2mIiCozc8sr8E2Ug24bshww=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Wed, 16 Apr 2025 20:40:21 +0200
-Subject: [PATCH 6/6] selftests/nolibc: enable UBSAN if available
+	s=arc-20240116; t=1744828884; c=relaxed/simple;
+	bh=TIrX4iOVr8p9Oe1RYGhC6gRPmryUIhl+Oic6wxp+sfA=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=YBKGANh0RRzWbzpn/QRdlGZZ5bX1ftl5JTlWDWBJ1uepKUHN+lDCEMcyH9S6VZqmSG6meKoZwm7/WPctMWDKGx5DQjhkog25/gpi6J25MyoSWJkYeMpnZdlaSKNNl01wmGI71dHGWO2TLPlzU4icgkARVtnye4Nhw2lAop1wF+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 57A49294730;
+	Wed, 16 Apr 2025 20:41:19 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id sM60Dn9crzIu; Wed, 16 Apr 2025 20:41:18 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 92068298566;
+	Wed, 16 Apr 2025 20:41:18 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id IfrJQsT_emOt; Wed, 16 Apr 2025 20:41:18 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 66DDC294730;
+	Wed, 16 Apr 2025 20:41:18 +0200 (CEST)
+Date: Wed, 16 Apr 2025 20:41:18 +0200 (CEST)
+From: Richard Weinberger <richard@nod.at>
+To: =?utf-8?B?Q3PDs2vDoXM=?= Bence <csokas.bence@prolan.hu>
+Cc: Michael Walle <mwalle@kernel.org>, linux-mtd <linux-mtd@lists.infradead.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	=?utf-8?Q?Tam=C3=A1s?= Szentendrei <szentendrei.tamas@prolan.hu>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	pratyush <pratyush@kernel.org>, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>
+Message-ID: <81225127.297167214.1744828878236.JavaMail.zimbra@nod.at>
+In-Reply-To: <c56c52c0-a824-4ad7-9847-e0e973f811ed@prolan.hu>
+References: <20250415180434.513405-1-csokas.bence@prolan.hu> <D981O3AA6NK9.2EEVUPM62EV6S@kernel.org> <dd3c7cc0-a568-4046-b105-e6786b5c80f8@prolan.hu> <373620122.295980015.1744808943985.JavaMail.zimbra@nod.at> <c56c52c0-a824-4ad7-9847-e0e973f811ed@prolan.hu>
+Subject: Re: [PATCH] spi-nor: Verify written data in paranoid mode
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250416-nolibc-ubsan-v1-6-c4704bb23da7@weissschuh.net>
-References: <20250416-nolibc-ubsan-v1-0-c4704bb23da7@weissschuh.net>
-In-Reply-To: <20250416-nolibc-ubsan-v1-0-c4704bb23da7@weissschuh.net>
-To: Willy Tarreau <w@1wt.eu>, "Paul E. McKenney" <paulmck@kernel.org>, 
- Shuah Khan <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744828842; l=1309;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=Z1bcOwaEL8wb4h1D5AwFZlAHw44W8YDLCsN003ABHao=;
- b=5uH7BCyiQnYSwYc4OPAZ5rlK+ma+NvCLUa/EsmPXvEDEVpsBANvQVnSAT2W8GTzRrxn7DeLBf
- 3v9YgXN0OrpBa5Jz7H7j0pHw/+rzfFAa2mVIp4bg9e5dOmFRf4pAdX/
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF136 (Linux)/8.8.12_GA_3809)
+Thread-Topic: spi-nor: Verify written data in paranoid mode
+Thread-Index: 316iU8/+hGzm5OegdVUSCxd/avO+wg==
 
-UBSAN detects undefined behaviour at runtime.
-To avoid introduction of new UB, enable UBSAN for nolibc-test.
+----- Urspr=C3=BCngliche Mail -----
+> Von: "Cs=C3=B3k=C3=A1s Bence" <csokas.bence@prolan.hu>
+>> I'm not so sure whether it makes sense at all.
+>> In it's current form, there is no recovery. So anything non-trivial
+>> on top of the MTD will just see an -EIO and has to give up.
+>> E.g. a filesystem will remount read-only.
+>=20
+> In our case, we use UBIFS on top of UBI, which in this case chooses
+> another eraseblock to hold the data instead, then re-tests (erase+write
+> cycles) the one which gave -EIO. Since the bus error is only transient,
+> it goes away by this time, and thus UBIFS will recover from this cleanly.
 
-By signalling detected errors through traps no runtime dependency
-is necessary.
+Are you sure about that?
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
- tools/testing/selftests/nolibc/Makefile | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+I'd expect UBI to go into RO mode via a call path like:
+ubi_eba_write_leb() -> ubi_io_write() -> mtd_write()
+If mtd_write() returns an EIO, UBI will go into RO mode immediately.
 
-diff --git a/tools/testing/selftests/nolibc/Makefile b/tools/testing/selftests/nolibc/Makefile
-index aa05c1faac20d3054b231090b939d050b0231d40..94f3e8be7a68f63ecd639c4f283b3cd10764ce74 100644
---- a/tools/testing/selftests/nolibc/Makefile
-+++ b/tools/testing/selftests/nolibc/Makefile
-@@ -189,9 +189,10 @@ ifeq ($(origin XARCH),command line)
- CFLAGS_XARCH = $(CFLAGS_$(XARCH))
- endif
- CFLAGS_STACKPROTECTOR ?= $(call cc-option,-mstack-protector-guard=global $(call cc-option,-fstack-protector-all))
-+CFLAGS_SANITIZER ?= $(call cc-option,-fsanitize=undefined -fsanitize-trap=all)
- CFLAGS  ?= -Os -fno-ident -fno-asynchronous-unwind-tables -std=c89 -W -Wall -Wextra \
- 		$(call cc-option,-fno-stack-protector) $(call cc-option,-Wmissing-prototypes) \
--		$(CFLAGS_XARCH) $(CFLAGS_STACKPROTECTOR) $(CFLAGS_EXTRA)
-+		$(CFLAGS_XARCH) $(CFLAGS_STACKPROTECTOR) $(CFLAGS_SANITIZER) $(CFLAGS_EXTRA)
- LDFLAGS :=
- 
- LIBGCC := -lgcc
+(I'm assuming, your SPI-NOR has no bad block support, so ubi->bad_allowed
+is false).
 
--- 
-2.49.0
-
+Thanks,
+//richard
 
