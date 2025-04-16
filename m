@@ -1,107 +1,99 @@
-Return-Path: <linux-kernel+bounces-607607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA5E4A90870
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:12:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FBBBA90874
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:15:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DE84188447E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:12:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 619D9442FDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C651E20FAAC;
-	Wed, 16 Apr 2025 16:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WJOu70q+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 696E7211A1D;
+	Wed, 16 Apr 2025 16:14:50 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BDE41ADC78;
-	Wed, 16 Apr 2025 16:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4662080DC
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 16:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744819916; cv=none; b=HQkZrNEWsmLk20NhO4/FC9lbUa86+sM7Kvf1dhQs5YLpAI9NwQyvQJw694Xd6EChgFynLodI+VHtMJg5GQLsjpdBcXshujeQ6Yh1+Dq+/FO4YUKzxJoobiR+BqT4ld9Biv0Qvqb8Z8gUWwHvYzkj97X55s3DOcVbq5qNxBlcBLw=
+	t=1744820090; cv=none; b=T1Sl0tIGu4HYEvOwIqh3W5KlWEkkDLqutjX3RJmrGxxrXMovEBi/UdU0/XLnKy2ejm5hALQWluGYcRuCRBV1br7nXhp3qgML1AnlSgTkb0d853uYGMq3SYjn9HuZbhzL/ptwhxCRfEfBJuE+Il40jAJSsTGEoVwG3ISBjCDeV2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744819916; c=relaxed/simple;
-	bh=sWaORZRshemWzFZsKcditOWZrjblebMb5oMGJ741IuE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ntoRcM1uWTB2AxhkaLk7GWdp1nKqAW7QAdS9sFOh03OVwk1yY5v/HYuiI9He6m7iitk3ewpb6RU9Zds5yf4TJZRwx67A83GNoD8gvXKeYW6h/Qs/TmSuQrEyeg4oFYM8vdFWQ1BAOlsvn0kV6HunmlF6+60nDFByTQpURRA78rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WJOu70q+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4031C4CEE2;
-	Wed, 16 Apr 2025 16:11:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744819915;
-	bh=sWaORZRshemWzFZsKcditOWZrjblebMb5oMGJ741IuE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WJOu70q+hUr+FrrsYKfyAYk2FRTygiV3pqZrHh3duEgpxfDeMCiEocwS3ZzGbpGzB
-	 ttvf24I0+PRyGcvM2vRAcvD1Fy9qGq1nLXAeTlhDAtFgpvT44uqsuEJSksnk1RL83l
-	 YgkEBNcTXkJpDG/O7YEtDJy08ieOYkYqraRntir8y+ApmSslGrTFUTKZaTyqkJToq4
-	 50sadUVwjRZkjILE3URn1slF4omwTnJP1B1kkQ6ZOpeSbMs4IOvgZKpjoJ5+p5Ewzo
-	 aVYvKIeUVuXCiMRpTSh0etKXMR+R4CVR77h0/PxxzdNaK98otjOxFSO4S3XyFdH7a8
-	 3whu3KtDMiJAA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1u55Mf-000000007Pv-3BLb;
-	Wed, 16 Apr 2025 18:11:54 +0200
-Date: Wed, 16 Apr 2025 18:11:53 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Cristian Marussi <cristian.marussi@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org, sudeep.holla@arm.com,
-	james.quinlan@broadcom.com, f.fainelli@gmail.com,
-	vincent.guittot@linaro.org, peng.fan@oss.nxp.com,
-	michal.simek@amd.com, quic_sibis@quicinc.com,
-	dan.carpenter@linaro.org, maz@kernel.org
-Subject: Re: [PATCH 4/4] [NOT FOR UPSTREAM] firmware: arm_scmi: quirk: Ignore
- FC bit in attributes
-Message-ID: <Z__WyYWhelFwt-rQ@hovoldconsulting.com>
-References: <20250415142933.1746249-1-cristian.marussi@arm.com>
- <20250415142933.1746249-5-cristian.marussi@arm.com>
+	s=arc-20240116; t=1744820090; c=relaxed/simple;
+	bh=8EofjnALU1aphS3lTh1VvkVFJxt8Z2SpLNqKU5ee8Y0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UsbOA4S9LjuiIWXV5JLm0aeHPXcOm8WjuLDVH+zV5tFe9c4XcVPsO6Ucaiw5/nT+a4Oga5SwCUrG5sayJUZNRBkTJv9IY9D0+Z3t4KF7NRsDXLW+O7ak3YKK8F27TFYeZyIRCPwK89TojvVTlRKfQLhpFcN6xOpJPhgkt7A1oQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1u55PN-0002Fz-D7; Wed, 16 Apr 2025 18:14:41 +0200
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1u55PN-000c9E-0D;
+	Wed, 16 Apr 2025 18:14:41 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1u55PM-00CGQ8-3D;
+	Wed, 16 Apr 2025 18:14:40 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: [PATCH net-next v1 0/4] net: selftest: improve test string formatting and checksum handling
+Date: Wed, 16 Apr 2025 18:14:35 +0200
+Message-Id: <20250416161439.2922994-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250415142933.1746249-5-cristian.marussi@arm.com>
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, Apr 15, 2025 at 03:29:33PM +0100, Cristian Marussi wrote:
-> Some platform misreported the support of FastChannel when queried: ignore
-> that bit on selected platforms.
-> 
-> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
-> ---
-> Match features has to be set-up properly before upstreaming this.
-> Ideally the out-of-spec firmware should be matched with a quirk matching
-> pattern based on Vendor/SubVendor/ImplVersion....but it is NOT clear if the
-> platform at hand will ship with future fixed firmwares where the ImplVersion
-> field is properly handled.
-> If we cannot be sure about that, we should fallback to a compatible match.
-> 
-> RFC->V1
-> - fix QUIRKS conditions
+This patchset addresses two issues in the current net selftest
+framework:
 
-This looks good to me now and works as intended after updating the
-vendor name:
+- Truncated test names: Existing test names are prefixed with an index,
+  reducing the available space within the ETH_GSTRING_LEN limit.  This
+  patch removes the index to allow more descriptive names.
 
-Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
-Tested-by: Johan Hovold <johan+linaro@kernel.org>
+- Inconsistent checksum behavior: On DSA setups and similar
+  environments, checksum offloading is not always available or
+  appropriate. The previous selftests did not distinguish between software
+  and hardware checksum modes, leading to unreliable results. This
+  patchset introduces explicit csum_mode handling and adds separate tests
+  for both software and hardware checksum validation.
 
-Interestingly, I'm no longer seeing the crash on x1e without the quirk
-enabled with 6.14 and 6.15-rc2.
+Oleksij Rempel (4):
+  net: selftests: drop test index from net_selftest_get_strings()
+  net: selftest: prepare for detailed error handling in
+    net_test_get_skb()
+  net: selftest: add checksum mode support and SW checksum handling
+  net: selftest: add PHY loopback tests with HW checksum offload
 
-I still hit it immediately with 6.12 and 6.13 when accessing the cpufreq
-sysfs attributes (with patch 1/4 applied):
+ net/core/selftests.c | 307 ++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 290 insertions(+), 17 deletions(-)
 
-	[   30.663577] arm-scmi arm-scmi.0.auto: timed out in resp(caller: do_xfer+0x164/0x564)
+--
+2.39.5
 
-So presumably something changed in 6.14 that masks the earlier issue
-when falling back to regular messaging.
-
-Any ideas what could have caused this, Sibi?
-
-Johan
 
