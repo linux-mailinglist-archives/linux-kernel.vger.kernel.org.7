@@ -1,77 +1,46 @@
-Return-Path: <linux-kernel+bounces-607214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E819A8B98E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:47:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96BF3A8B994
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:48:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 992213BBA48
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 12:46:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FD9919015D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 12:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 387DD14F9E2;
-	Wed, 16 Apr 2025 12:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ufMbBZza"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF4935971;
+	Wed, 16 Apr 2025 12:47:52 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A02A11CA0;
-	Wed, 16 Apr 2025 12:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 144FC4683
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 12:47:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744807622; cv=none; b=iNJv4X0lFKAiQ+Mxmk23cKpfmfmPuZipnBEnVrkmwveUUjE7pyvE4B4rCvLE0mw9FjLSze17fVuCvaZ+PYUJCSWjZul39m5EUbn6ZXE9J0zL2fOel8B7kTFSz3+vQEvnE4ZHiwYQZ2DH4WZqtSlyv7/o6aHK29JHkNsfhHCrGQw=
+	t=1744807672; cv=none; b=Oqyp2qZVA26mo+G6mS1QDN0koYgqi4kTaKJbTd3bywC4dWCLws8VS44tt3FLk/RiCzkQ5Jha2X2DejbLXe9pImH/0XiCiU4ERZBx1O9gSReM+pkz1zaB1XilgUrsipNBIZLM8TKu3uHomLKcaQbfZ47d4UiWC5m99DGOKAPwOmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744807622; c=relaxed/simple;
-	bh=LvJ12tKplLNrFrTCz4Wzqin22ujyIlOPSdlj12fSrN8=;
+	s=arc-20240116; t=1744807672; c=relaxed/simple;
+	bh=MMKg4AQ+6qm3J8umrN0RA1ce1X9q/b3eIAEO/wkwkJw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p6c79JPwKqtOXmXDgcvRVoLY1XWr//82EF+0FRHX9E3pzXx0p6WkkqrSKfNQ1O0HpZPoWyENHVgaMFXykUfup+XXs6nZIFdMJ8DrmKxkKpERFWykekfTxKodQlYSyxKXRv2je2bW2vWcYcqmEQUp1SEqRurm/qDSnmSITzBNuvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ufMbBZza; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 705C6C4CEE2;
-	Wed, 16 Apr 2025 12:46:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744807620;
-	bh=LvJ12tKplLNrFrTCz4Wzqin22ujyIlOPSdlj12fSrN8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ufMbBZzaEUx30bSlUVP3sqOw//LJN3SAfJPd8tH3iTGtQ3tjSddJ5/M0RLqX4FSjT
-	 DhP7cnt0EWXxkA/8Xe3QuweEZl2iPLQwz6oQOWsWT0E+8G6+WOT5BUJP2zbTTKM91B
-	 xRY7Iu1ZfJ9LUnAMbZSLMQ51o3pObzL+uA/dz6TMyI1gIOh9d4PlQQ8s/CQFeGvX0t
-	 2Hf6RY7hq4jpgCpTCXEOjdIZk1FW+lQ/uS3Q36RpTrWzyM0EqTyZbanAomZaa+0LGs
-	 /m8dehnanFXVpzxyiJEZ6W89mnjJoTSwHGbF8OlQR0qI96XD99ls5QaMKTYVX6Fsqf
-	 sZOUnS9t3bOaA==
-Date: Wed, 16 Apr 2025 14:46:52 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Danilo Krummrich <dakr@redhat.com>,
-	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	linux-pm@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	rust-for-linux@vger.kernel.org,
-	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
-	Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>,
-	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
-	Yury Norov <yury.norov@gmail.com>, Burak Emir <bqe@google.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V10 14/15] rust: opp: Extend OPP abstractions with
- cpufreq support
-Message-ID: <Z_-mvB7hibFD4Q34@pollux>
-References: <cover.1744783509.git.viresh.kumar@linaro.org>
- <a940d1b1a02d99fdc80ba8d0526c35a776854cb3.1744783509.git.viresh.kumar@linaro.org>
- <Z_9v24SghlIhT62r@pollux>
- <20250416095943.f3jxy55bamekscst@vireshk-i7>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uuCMNVWhvnqNtwewnGnDFxGWF7JQVlogFbydfQMbdbc7fTMRdBNPYomtZkuB9e1Pw+RKArZepoK92U2YwlOEmd0+dWVkPZq87CKHdk1mtXbnI0jbDh2gyG4xMxB1x46X7QYeQmgltmUX54NIXNyedZ4S2uPkihHgdjPOx9fTY/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 378CAC4CEE2;
+	Wed, 16 Apr 2025 12:47:49 +0000 (UTC)
+Date: Wed, 16 Apr 2025 13:47:46 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Xavier <xavier_qy@163.com>
+Cc: ryan.roberts@arm.com, dev.jain@arm.com, ioworker0@gmail.com,
+	21cnbao@gmail.com, akpm@linux-foundation.org, david@redhat.com,
+	gshan@redhat.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, will@kernel.org, willy@infradead.org,
+	ziy@nvidia.com
+Subject: Re: [mm/contpte v3 0/1] mm/contpte: Optimize loop to reduce
+ redundant operations
+Message-ID: <Z_-m8s5EUrL4DAME@arm.com>
+References: <f0e109c7-6bb2-4218-bc76-c5de39184064@arm.com>
+ <20250415082205.2249918-1-xavier_qy@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,157 +49,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250416095943.f3jxy55bamekscst@vireshk-i7>
+In-Reply-To: <20250415082205.2249918-1-xavier_qy@163.com>
 
-On Wed, Apr 16, 2025 at 03:29:43PM +0530, Viresh Kumar wrote:
-> On 16-04-25, 10:52, Danilo Krummrich wrote:
-> > This config is needed quite often, it probably makes sense to move this code in
-> > its own Rust module, i.e.:
-> > 
-> > 	#[cfg(CONFIG_CPU_FREQ)]
-> > 	pub mod freq;
-> 
-> Like this ?
+On Tue, Apr 15, 2025 at 04:22:04PM +0800, Xavier wrote:
+> Patch V3 has changed the while loop to a for loop according to the suggestions
+> of Dev.
 
-Yes, I thought of a separate file, but I that should work as well.
+For some reason, my email (office365) rejected all these patches (not
+even quarantined), I only got the replies. Anyway, I can get them from
+the lore archive.
 
+> Meanwhile, to improve efficiency, the definition of local variables has
+> been removed. This macro is only used within the current function and there
+> will be no additional risks. In order to verify the optimization performance of
+> Patch V3, a test function has been designed. By repeatedly calling mlock in a
+> loop, the kernel is made to call contpte_ptep_get extensively to test the
+> optimization effect of this function.
+> The function's execution time and instruction statistics have been traced using
+> perf, and the following are the operation results on a certain Qualcomm mobile
+> phone chip:
 > 
-> diff --git a/rust/kernel/opp.rs b/rust/kernel/opp.rs
-> index 734be8b6d0ef..f4cabe859c43 100644
-> --- a/rust/kernel/opp.rs
-> +++ b/rust/kernel/opp.rs
-> @@ -20,10 +20,67 @@
->  };
+> Instruction Statistics - Before Optimization
+> #          count  event_name              # count / runtime
+>       20,814,352  branch-load-misses      # 662.244 K/sec
+>   41,894,986,323  branch-loads            # 1.333 G/sec
+>        1,957,415  iTLB-load-misses        # 62.278 K/sec
+>   49,872,282,100  iTLB-loads              # 1.587 G/sec
+>      302,808,096  L1-icache-load-misses   # 9.634 M/sec
+>   49,872,282,100  L1-icache-loads         # 1.587 G/sec
 > 
->  #[cfg(CONFIG_CPU_FREQ)]
-> -use crate::cpufreq;
-> +// Frequency table implementation.
-> +mod freq {
-> +    use crate::cpufreq;
-> +    use core::ops::Deref;
-> +    use super::*;
-> +
-> +    /// OPP frequency table.
-> +    ///
-> +    /// A [`cpufreq::Table`] created from [`Table`].
-> +    pub struct FreqTable {
-> +        dev: ARef<Device>,
-> +        ptr: *mut bindings::cpufreq_frequency_table,
-> +    }
-> +
-> +    impl FreqTable {
-> +        /// Creates a new instance of [`FreqTable`] from [`Table`].
-> +        pub(crate) fn new(table: &Table) -> Result<Self> {
-> +            let mut ptr: *mut bindings::cpufreq_frequency_table = ptr::null_mut();
-> +
-> +            // SAFETY: The requirements are satisfied by the existence of [`Device`] and its safety
-> +            // requirements.
-> +            to_result(unsafe {
-> +                bindings::dev_pm_opp_init_cpufreq_table(table.dev.as_raw(), &mut ptr)
-> +            })?;
-> +
-> +            Ok(Self {
-> +                dev: table.dev.clone(),
-> +                ptr,
-> +            })
-> +        }
-> +
-> +        // Returns a reference to the underlying [`cpufreq::Table`].
-> +        #[inline]
-> +        fn table(&self) -> &cpufreq::Table {
-> +            // SAFETY: The `ptr` is guaranteed by the C code to be valid.
-> +            unsafe { cpufreq::Table::from_raw(self.ptr) }
-> +        }
-> +    }
-> +
-> +    impl Deref for FreqTable {
-> +        type Target = cpufreq::Table;
-> +
-> +        #[inline]
-> +        fn deref(&self) -> &Self::Target {
-> +            self.table()
-> +        }
-> +    }
-> +
-> +    impl Drop for FreqTable {
-> +        fn drop(&mut self) {
-> +            // SAFETY: The pointer was created via `dev_pm_opp_init_cpufreq_table`, and is only
-> +            // freed here.
-> +            unsafe {
-> +                bindings::dev_pm_opp_free_cpufreq_table(self.dev.as_raw(), &mut self.as_raw())
-> +            };
-> +        }
-> +    }
-> +}
+> Total test time: 31.485237 seconds.
 > 
->  #[cfg(CONFIG_CPU_FREQ)]
-> -use core::ops::Deref;
-> +pub use freq::FreqTable;
+> Instruction Statistics - After Optimization
+> #          count  event_name              # count / runtime
+>       19,340,524  branch-load-misses      # 688.753 K/sec
+>   38,510,185,183  branch-loads            # 1.371 G/sec
+>        1,812,716  iTLB-load-misses        # 64.554 K/sec
+>   47,673,923,151  iTLB-loads              # 1.698 G/sec
+>      675,853,661  L1-icache-load-misses   # 24.068 M/sec
+>   47,673,923,151  L1-icache-loads         # 1.698 G/sec
 > 
->  use core::{marker::PhantomData, ptr};
-> 
-> @@ -502,60 +559,6 @@ extern "C" fn config_regulators(
->      }
->  }
-> 
-> -/// OPP frequency table.
-> -///
-> -/// A [`cpufreq::Table`] created from [`Table`].
-> -#[cfg(CONFIG_CPU_FREQ)]
-> -pub struct FreqTable {
-> -    dev: ARef<Device>,
-> -    ptr: *mut bindings::cpufreq_frequency_table,
-> -}
-> -
-> -#[cfg(CONFIG_CPU_FREQ)]
-> -impl FreqTable {
-> -    /// Creates a new instance of [`FreqTable`] from [`Table`].
-> -    fn new(table: &Table) -> Result<Self> {
-> -        let mut ptr: *mut bindings::cpufreq_frequency_table = ptr::null_mut();
-> -
-> -        // SAFETY: The requirements are satisfied by the existence of [`Device`] and its safety
-> -        // requirements.
-> -        to_result(unsafe {
-> -            bindings::dev_pm_opp_init_cpufreq_table(table.dev.as_raw(), &mut ptr)
-> -        })?;
-> -
-> -        Ok(Self {
-> -            dev: table.dev.clone(),
-> -            ptr,
-> -        })
-> -    }
-> -
-> -    // Returns a reference to the underlying [`cpufreq::Table`].
-> -    #[inline]
-> -    fn table(&self) -> &cpufreq::Table {
-> -        // SAFETY: The `ptr` is guaranteed by the C code to be valid.
-> -        unsafe { cpufreq::Table::from_raw(self.ptr) }
-> -    }
-> -}
-> -
-> -#[cfg(CONFIG_CPU_FREQ)]
-> -impl Deref for FreqTable {
-> -    type Target = cpufreq::Table;
-> -
-> -    #[inline]
-> -    fn deref(&self) -> &Self::Target {
-> -        self.table()
-> -    }
-> -}
-> -
-> -#[cfg(CONFIG_CPU_FREQ)]
-> -impl Drop for FreqTable {
-> -    fn drop(&mut self) {
-> -        // SAFETY: The pointer was created via `dev_pm_opp_init_cpufreq_table`, and is only freed
-> -        // here.
-> -        unsafe { bindings::dev_pm_opp_free_cpufreq_table(self.dev.as_raw(), &mut self.as_raw()) };
-> -    }
-> -}
-> -
->  /// A reference-counted OPP table.
->  ///
->  /// Rust abstraction for the C `struct opp_table`.
-> 
-> -- 
-> viresh
+> Total test time: 28.108048 seconds.
+
+We'd need to reproduce these numbers on other platforms as well and with
+different page sizes. I hope Ryan can do some tests next week.
+
+Purely looking at the patch, I don't like the complexity. I'd rather go
+with your v1 if the numbers are fairly similar (even if slightly slower).
+
+However, I don't trust microbenchmarks like calling mlock() in a loop.
+It was hand-crafted to dirty the whole buffer (making ptes young+dirty)
+before mlock() to make the best out of the rewritten contpte_ptep_get().
+Are there any real world workloads that would benefit from such change?
+
+As it stands, I think this patch needs better justification.
+
+Thanks.
+
+-- 
+Catalin
 
