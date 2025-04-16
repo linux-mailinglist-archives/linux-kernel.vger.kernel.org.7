@@ -1,97 +1,144 @@
-Return-Path: <linux-kernel+bounces-606400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B799A8AEC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 05:57:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 352D9A8AEA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 05:51:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC6545A04CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 03:57:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B97383B8E10
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 03:51:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85FCB22A4EA;
-	Wed, 16 Apr 2025 03:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F847221567;
+	Wed, 16 Apr 2025 03:51:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jxtXUTiE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hwWey3TQ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2852227EB2;
-	Wed, 16 Apr 2025 03:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6902DFA49
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 03:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744775811; cv=none; b=Spzwv3o7K53BLTwHXRWG7FXcuGABVOrLVPIZCQVMwDUJKT83TAebz3KIDTpVsa5Cf0cdjYPfTuZsC8SRlRFoAOuM5A2BQuK2rqLoJK1NB1obuDPXn09+f47ySch2lR/Ga6vbC/UrR6roAnl33BC58T5adriXeZLLzZ46FHWcSjk=
+	t=1744775477; cv=none; b=RO+J4ZOVQH6o39HTayqVD5FO5BcHtOcC1Q5uGeNx82BhYGjAJ27DOB4VO+7EnQo6r02UBmX6UicpkpY0ZixKkJBD5kPkIErasWG5jvcHSCUja/hzGgQ1P+lEqcqB4Hf8ofGXCmqCqawXqHbR5i1vrcqxUZL+7ZL6PHleZxHAazE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744775811; c=relaxed/simple;
-	bh=srYclNAF6hwGXM90kzTLH+JNUxLwQVKujXYqQkal3Oo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rtPjunLx9D6ysvXF1LsgYLCIHh6/YVAxCBbN5qgO7kky+kguKPJ4MjN0Ls7Siv3DGPQIxlRjbwntP5cIcn2BI4LX70p51DIBKCzhwHBTsEjuP9F7h04RM5Fu2IdM0eInBGHxsbgJ6hOQfEEFRQp5qegHLnoRXc7l0Y1gpOpVoR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jxtXUTiE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7199C4CEE2;
-	Wed, 16 Apr 2025 03:56:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744775810;
-	bh=srYclNAF6hwGXM90kzTLH+JNUxLwQVKujXYqQkal3Oo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jxtXUTiEjkmm9XCs6bB73TMkMX6Q59nAHZdi2EqXeAKDvADK/395w8sM8BEhDj77F
-	 mhZHU2Ncp4Xo8BKwnmjiAWAMJnBXigVNFStxY7EJOINx030L+K7aCRyqrcbAMCOHoG
-	 vc62WRUD8Fp12X1F4J5u+Ffyo57F69ZYyC4AHTPtP4qIjnH1IODA/xuK4bYoxIZ13K
-	 t7VgOBrUhm0WgAdl623qWo1FQhesf2c4vLx0l/0Dyecnj3oDhJvP5xyWS5X5LZVt2c
-	 YrRezHfNjhRqHOhdn4or1UkyG+EIZmPgyoXlpDcQmEBsOkbJYIomb0h4XnQlF9GUM3
-	 uTiYBViafUJhg==
-Date: Tue, 15 Apr 2025 20:56:48 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Qasim Ijaz <qasdev00@gmail.com>, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- horms@kernel.org, linux-usb@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- syzbot+3361c2d6f78a3e0892f9@syzkaller.appspotmail.com,
- stable@vger.kernel.org
-Subject: Re: [PATCH 5/5] net: ch9200: avoid triggering NWay restart on
- non-zero PHY ID
-Message-ID: <20250415205648.4aa937c9@kernel.org>
-In-Reply-To: <20250415205230.01f56679@kernel.org>
-References: <20250412183829.41342-1-qasdev00@gmail.com>
-	<20250412183829.41342-6-qasdev00@gmail.com>
-	<b49e6c21-8e0a-4e54-86eb-c18f1446c430@lunn.ch>
-	<20250415205230.01f56679@kernel.org>
+	s=arc-20240116; t=1744775477; c=relaxed/simple;
+	bh=JwInkB976ZE2MX+AcyWk2PmBMMcKJtR4i+Ev0NkVLDY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AYFFMpQP8RReD0l0dQI+d66tCshNSQ07y7mnL8oergxUgPCZk5yaZBl3fVhPwyZQqVHeuPh+Wv/P0t9q1yE0mVJRBaXUNTQF9h6qMwMFL7zSDFAQNsKO4u9sS15pTLETn5mzAYU3mF6HeVgKGECbtVIC1fW4w4T2JXflLzSCfak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hwWey3TQ; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744775476; x=1776311476;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=JwInkB976ZE2MX+AcyWk2PmBMMcKJtR4i+Ev0NkVLDY=;
+  b=hwWey3TQkoyV1sH2wrIiaWJP3+JNLSDG990iZghoVXqMQ6jxEgC/jWwi
+   RhnP7dh3J81CfOxVCiAt5z+VG+tkr+5tDtpsE6AeOVO6JkuRp9N4R/yzE
+   seyMLjoFBr+wZsJeO5TDSWL1t3bc4YenURT79GJI/PvvtOVHLTC7iZrOe
+   Hcf39DmViSl5KthIaPNmNhDK2dNUfa2I0SqYli+0H+t4pQoArxMpukT6k
+   fD4LhyxNEjy3dWtwWHnGsiz4lotqnVsibQETARU1orZHmfdQClqNEFeUe
+   f5kqrt6PBnyBX5t3QIAtelewCYI8ATiMqdCVS6/ZiJwRChOIo9xetTiRl
+   w==;
+X-CSE-ConnectionGUID: cEZbCjsbRVKZbuTWyoyu0A==
+X-CSE-MsgGUID: 0QBuuFToSeqy0zK+66k7Lw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="45443186"
+X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
+   d="scan'208";a="45443186"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 20:51:15 -0700
+X-CSE-ConnectionGUID: GdBEIuj6Rw+BBlnqhrG4ow==
+X-CSE-MsgGUID: /DNQ1vUmRVa7NFKEbvwpPA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
+   d="scan'208";a="130855472"
+Received: from b04f130c83f2.jf.intel.com ([10.165.154.98])
+  by orviesa007.jf.intel.com with ESMTP; 15 Apr 2025 20:51:15 -0700
+From: Tim Chen <tim.c.chen@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Chen Yu <yu.c.chen@intel.com>,
+	Doug Nelson <doug.nelson@intel.com>,
+	Mohini Narkhede <mohini.narkhede@intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] sched: Skip useless sched_balance_running acquisition if load balance is not due
+Date: Tue, 15 Apr 2025 20:58:23 -0700
+Message-Id: <20250416035823.1846307-1-tim.c.chen@linux.intel.com>
+X-Mailer: git-send-email 2.32.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue, 15 Apr 2025 20:52:30 -0700 Jakub Kicinski wrote:
-> On Tue, 15 Apr 2025 03:35:07 +0200 Andrew Lunn wrote:
-> > > @@ -182,7 +182,7 @@ static int ch9200_mdio_read(struct net_device *netdev, int phy_id, int loc)
-> > >  		   __func__, phy_id, loc);
-> > >  
-> > >  	if (phy_id != 0)
-> > > -		return -ENODEV;
-> > > +		return 0;    
-> > 
-> > An actually MDIO bus would return 0xffff is asked to read from a PHY
-> > which is not on the bus. But i've no idea how the ancient mii code
-> > handles this.
-> > 
-> > If this code every gets updated to using phylib, many of the changes
-> > you are making will need reverting because phylib actually wants to
-> > see the errors. So i'm somewhat reluctant to make changes like this.  
-> 
-> Right.
-> 
-> I mean most of the patches seem to be adding error checking, unlike
-> this one, but since Qasim doesn't have access to this HW they are
-> more likely to break stuff than fix. I'm going to apply the first
-> patch, Qasim if you'd like to clean up the rest I think it should
-> be done separately without the Fixes tags, if at all.
+At load balance time, balance of last level cache domains and
+above needs to be serialized. The scheduler checks the atomic var
+sched_balance_running first and then see if time is due for a load
+balance. This is an expensive operation as multiple CPUs can attempt
+sched_balance_running acquisition at the same time.
 
-Ah, no, patch 1 also does return 0. Hm. Maybe let's propagate the real
-error to silence the syzbot error and if someone with access to the HW
-comes along they can try to move this driver to more modern infra?
+On a 2 socket Granite Rapid systems enabling sub-numa cluster and
+running OLTP workloads, 7.6% of cpu cycles are spent on cmpxchg of
+sched_balance_running.  Most of the time, a balance attempt is aborted
+immediately after acquiring sched_balance_running as load balance time
+is not due.
+
+Instead, check balance due time first before acquiring
+sched_balance_running. This skips many useless acquisitions
+of sched_balance_running and knocks the 7.6% CPU overhead on
+sched_balance_domain() down to 0.05%.  Throughput of the OLTP workload
+improved by 11%.
+
+Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+Reported-by: Mohini Narkhede <mohini.narkhede@intel.com>
+Tested-by: Mohini Narkhede <mohini.narkhede@intel.com>
+---
+ kernel/sched/fair.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index e43993a4e580..5e5f7a770b2f 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -12220,13 +12220,13 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
+ 
+ 		interval = get_sd_balance_interval(sd, busy);
+ 
+-		need_serialize = sd->flags & SD_SERIALIZE;
+-		if (need_serialize) {
+-			if (atomic_cmpxchg_acquire(&sched_balance_running, 0, 1))
+-				goto out;
+-		}
+-
+ 		if (time_after_eq(jiffies, sd->last_balance + interval)) {
++			need_serialize = sd->flags & SD_SERIALIZE;
++			if (need_serialize) {
++				if (atomic_cmpxchg_acquire(&sched_balance_running, 0, 1))
++					goto out;
++			}
++
+ 			if (sched_balance_rq(cpu, rq, sd, idle, &continue_balancing)) {
+ 				/*
+ 				 * The LBF_DST_PINNED logic could have changed
+@@ -12238,9 +12238,9 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
+ 			}
+ 			sd->last_balance = jiffies;
+ 			interval = get_sd_balance_interval(sd, busy);
++			if (need_serialize)
++				atomic_set_release(&sched_balance_running, 0);
+ 		}
+-		if (need_serialize)
+-			atomic_set_release(&sched_balance_running, 0);
+ out:
+ 		if (time_after(next_balance, sd->last_balance + interval)) {
+ 			next_balance = sd->last_balance + interval;
+-- 
+2.32.0
+
 
