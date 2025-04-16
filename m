@@ -1,93 +1,195 @@
-Return-Path: <linux-kernel+bounces-607878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D25A3A90BCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:58:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4B17A90BD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:59:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90333446C3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:58:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60CBE3BAF6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:59:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24177224894;
-	Wed, 16 Apr 2025 18:58:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D94A22422B;
+	Wed, 16 Apr 2025 18:59:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TEebix6O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="NtIOQshP"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2ED224227;
-	Wed, 16 Apr 2025 18:58:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB06029A5
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 18:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744829928; cv=none; b=RW/YbrzgSVpMlRmubRT57igTWfwXDIbShAEkHQMapnil06F9UnoGPAisHHhGabvyDEsPRQAya7hU0JTZ9D33RHBa6YOjwbhp8PJf/4GivObpTt72pYgU7va11s4eSGXEAIR3vINwLO43nsxYHsV5JuSzYGMom040zmBt/vW7OG0=
+	t=1744829979; cv=none; b=FfFPP+b/GfpfXvHthxI054tK8CL/c3JGQdlj8qyKiJXrJpAVMPGgo57LMEkzSkc7uwGwi+B7HqAPlx7BfaNSAVH+S11cwt2gVy0F0yDH7J8FRZXM0+gr7o10rFYir4ya75xVIMNa+a+yl2IKe2xWKe3KvQBo2thMDiG4r/irnz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744829928; c=relaxed/simple;
-	bh=/hNhJZcR4CUwBEo2blgUcniwjsPrSIgbIv64kUB5918=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SWLP0Q6vlaRsY+Vx553y3HIiTo9wtKvFZ97whJ9qT849Gfv4EaD56yZq45TZRUlwMKHq0non5XulZ2kkARzRuPyIg7Wf+T8YyVFXqfs9JTKA0Wn+TJxIKj3AG4F3MeQYN4+oVvU8VtLG8FgCJQf0s0EX5TJLUblZcNGZWG4KFqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TEebix6O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC2EBC4CEE2;
-	Wed, 16 Apr 2025 18:58:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744829928;
-	bh=/hNhJZcR4CUwBEo2blgUcniwjsPrSIgbIv64kUB5918=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TEebix6ON9AXItAp4J7RHk3Df2FVKYqV50SRmeR3uNoJuvSGuzKS9PTtY3HPC0Je2
-	 5NvQWbmsn+lmaEEmLmR5ROuQ1Sti6E7Z1j6USfRxd1UX45GemQtVcbmoS2BV73dIRC
-	 cqukW7FwZgjsQUSdIJFbtXg0nSZglEFPIh+W26OI3Nt9J/GOLgAP+qSBrNF8tND6S1
-	 +bKlAnQtUk88kjXghAzLdlt9vlMpujUFVBbcrmjBa2th0Km98PYsb7bMHENTMjhmVr
-	 VuqRoB6eeMsi9jnJ0Po2kyfWBR94AwUUcs/8f6ERjXUx7o2YH/dJbz+F+O1WoafKy/
-	 Ao5mqGtkcq3ZQ==
-Date: Wed, 16 Apr 2025 13:58:46 -0500
-From: Rob Herring <robh@kernel.org>
-To: Siddharth Menon <simeddon@gmail.com>
-Cc: linux-iio@vger.kernel.org, lars@metafoo.de,
-	Michael.Hennerich@analog.com, jic23@kernel.org,
-	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev, marcelo.schmitt1@gmail.com
-Subject: Re: [PATCH v2] iio: frequency: ad9832: devicetree probing support
-Message-ID: <20250416185846.GA3735440-robh@kernel.org>
-References: <20250322163211.253009-1-simeddon@gmail.com>
+	s=arc-20240116; t=1744829979; c=relaxed/simple;
+	bh=51nkwLlT5jg0VROfv/tO2kx9Y2MHMUOAVbGk81PhBFk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VwHhYg7ar0P7olMoBgm0t0IKX//H8cswfY9oCPgtweDt8HvPbF54oS/DyXSMCvIRorNm3KQRAVSXyfGYfnlas188PRillW5781FPz6EDYl/Bglb03FfZ5oY9f0oJGfVq404BhKx+116Hx4KJI2dRnDv+khfU8LPbSN4zIYrOi7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=NtIOQshP; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-224172f32b3so17755ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 11:59:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1744829977; x=1745434777; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BT4C3mEaVrvFwtlJvm7OQIQmXZZGsey90MSNFFjJZxk=;
+        b=NtIOQshPf2jpfpKxV8skjmhcgBUgRxibOo9J4Fz182kdGDSLpzx8cMlx2UF09Y5n9g
+         XuekCo4ZYBqf7qJsJNewzQaZFEtz/UaG44g5o179HWKiCXAXVUuIJAmvuSwdT425FrTg
+         bk5RhhT8TP8NtnHj5BweFkTJT0UfbV+d6x/w2aqTENfCzDmR10tnmDxJQ1ZP7RZKHftu
+         3RS01WzKzYjbSLHRk9oeSyPLM5+xAQf8RgG0mguHIe99gIBX2t7U9oWsD5NOPEV1S3C5
+         EC27zVIwAnqBdB4nZTpL9HGA2yBRYhTlNtYg2WjBEiwCeFnhJn37i7mIF1CjTIa3sz1R
+         zHMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744829977; x=1745434777;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BT4C3mEaVrvFwtlJvm7OQIQmXZZGsey90MSNFFjJZxk=;
+        b=SRlF/2buCfm9kTALQLu7VFrtwkUpmQEeBzjVyom8buHshx4obSdSobjgZJX6E4f3hu
+         7CoC4yWI1B5iiHzYC3Hw2Wx8OPjtwguygsAM4ONEUaFm2DyiqyElxDyKuhGprFV3w1BC
+         2B87r/1h028WEwUYUI4klQCHLWl+JsNSmbxKJmRAMkrXjfDXiLaI3f+e5onrpVUYROlU
+         IBLDcYViyv8QhhvylxOruox0x6kjz+vT6cCYaivQ6Dqs/m4MTKmc4/ZfpE+NRe4VFIdM
+         X3I3iylFlQcrELe/sJBovKEdsQZMHskWUV1HfPzy3Bk32yKdkb1P2RBzGg3CxfMBSxPS
+         cJIw==
+X-Forwarded-Encrypted: i=1; AJvYcCWxc8ZJJSQHScyXTjB6PQIsz7S5yFPll5chcVaWTfrg6q1frcgC3ewemxyRWAGsBixnoCyHx19/2XnQP6M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz44fDzbp0ur8sqlC9/OnCmfQMA1QFFRFbfyq3ED+WFVc5Aw+89
+	TVk/eNG+HoBRT0EEhIltfZcWxTBeCfy2v2dwBedRUGEFPs80iE5QuomP8S29wcHDjPVpySA0b8O
+	H0kjKcB0wLaxgMRxQkFT8LnhM8GmgNncFSvz3FQ==
+X-Gm-Gg: ASbGncvsU6Y4a1E2aCRYrBIFJ3dQ3Hy482XhT5YF8f+sJ20Egk8/G/bSO1FjU2OgGEH
+	tqMUoqeXTHpe0Y584H4khRO8vJeUBZwAqR74RE3xLj5K9vw1RcMKsrs+o9QU/QMHqXRUj+R8p8K
+	3ZhZYfIY6NhabpllFDzz3Hq38b
+X-Google-Smtp-Source: AGHT+IGk1i3RkpdcJp3QcE02uCrxSyG+iRG8aDx/SDyY97zYpvoc3S3Pq0DahgOGXI3ck/al/159MwKjHUp37ZuCwVA=
+X-Received: by 2002:a17:902:dac2:b0:223:5525:622f with SMTP id
+ d9443c01a7336-22c3f998c6bmr4546015ad.1.1744829976980; Wed, 16 Apr 2025
+ 11:59:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250322163211.253009-1-simeddon@gmail.com>
+References: <20250415-ublk_task_per_io-v4-0-54210b91a46f@purestorage.com> <20250415-ublk_task_per_io-v4-2-54210b91a46f@purestorage.com>
+In-Reply-To: <20250415-ublk_task_per_io-v4-2-54210b91a46f@purestorage.com>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Wed, 16 Apr 2025 11:59:25 -0700
+X-Gm-Features: ATxdqUFipM7PBblC7CSB15RCGnyvrvx_I-8-TA50XPH4OOX9U_PLbzucYr3kHYM
+Message-ID: <CADUfDZpkDUE8heSFEhA1aCfn3a59D1+=2piWPtRvX3t9FLgjbw@mail.gmail.com>
+Subject: Re: [PATCH v4 2/4] ublk: mark ublk_queue as const for ublk_commit_and_fetch
+To: Uday Shankar <ushankar@purestorage.com>
+Cc: Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Mar 22, 2025 at 09:58:11PM +0530, Siddharth Menon wrote:
-> Introduce struct for device match of_device_id to avoid relying on fallback
-> mechanisms, which could lead to false matches against other AD9832 variants
-> in the future.
-> 
-> Suggested-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-> Signed-off-by: Siddharth Menon <simeddon@gmail.com>
+On Tue, Apr 15, 2025 at 6:00=E2=80=AFPM Uday Shankar <ushankar@purestorage.=
+com> wrote:
+>
+> We now allow multiple tasks to operate on I/Os belonging to the same
+> queue concurrently. This means that any writes to ublk_queue in the I/O
+> path are potential sources of data races. Try to prevent these by
+> marking ublk_queue pointers as const when handling COMMIT_AND_FETCH.
+> Move the logic for this command into its own function
+> ublk_commit_and_fetch. Also open code ublk_commit_completion in
+> ublk_commit_and_fetch to reduce the number of parameters/avoid a
+> redundant lookup.
+>
+> Suggested-by: Ming Lei <ming.lei@redhat.com>
+> Signed-off-by: Uday Shankar <ushankar@purestorage.com>
 > ---
->  v1->v2:
->  - updated commit message to be more informative
->  - minor changes to code formatting
->  drivers/staging/iio/frequency/ad9832.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/staging/iio/frequency/ad9832.c b/drivers/staging/iio/frequency/ad9832.c
-> index 140ee4f9c137..7d4f655f6df1 100644
-> --- a/drivers/staging/iio/frequency/ad9832.c
-> +++ b/drivers/staging/iio/frequency/ad9832.c
-> @@ -431,6 +431,13 @@ static int ad9832_probe(struct spi_device *spi)
->  	return devm_iio_device_register(&spi->dev, indio_dev);
+>  drivers/block/ublk_drv.c | 91 +++++++++++++++++++++++-------------------=
+------
+>  1 file changed, 43 insertions(+), 48 deletions(-)
+>
+> diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
+> index 9a0d2547512fc8119460739230599d48d2c2a306..153f67d92248ad45bddd2437b=
+1306bb23df7d1ae 100644
+> --- a/drivers/block/ublk_drv.c
+> +++ b/drivers/block/ublk_drv.c
+> @@ -1518,30 +1518,6 @@ static int ublk_ch_mmap(struct file *filp, struct =
+vm_area_struct *vma)
+>         return remap_pfn_range(vma, vma->vm_start, pfn, sz, vma->vm_page_=
+prot);
 >  }
->  
-> +static const struct of_device_id ad9832_of_match[] = {
-> +	{ .compatible = "adi,ad9832" },
-> +	{ .compatible = "adi,ad9835" },
+>
+> -static void ublk_commit_completion(struct ublk_device *ub,
+> -               const struct ublksrv_io_cmd *ub_cmd)
+> -{
+> -       u32 qid =3D ub_cmd->q_id, tag =3D ub_cmd->tag;
+> -       struct ublk_queue *ubq =3D ublk_get_queue(ub, qid);
+> -       struct ublk_io *io =3D &ubq->ios[tag];
+> -       struct request *req;
+> -
+> -       /* now this cmd slot is owned by nbd driver */
+> -       io->flags &=3D ~UBLK_IO_FLAG_OWNED_BY_SRV;
+> -       io->res =3D ub_cmd->result;
+> -
+> -       /* find the io request and complete */
+> -       req =3D blk_mq_tag_to_rq(ub->tag_set.tags[qid], tag);
+> -       if (WARN_ON_ONCE(unlikely(!req)))
+> -               return;
+> -
+> -       if (req_op(req) =3D=3D REQ_OP_ZONE_APPEND)
+> -               req->__sector =3D ub_cmd->zone_append_lba;
+> -
+> -       if (likely(!blk_should_fake_timeout(req->q)))
+> -               ublk_put_req_ref(ubq, req);
+> -}
+> -
+>  /*
+>   * Called from io task context via cancel fn, meantime quiesce ublk
+>   * blk-mq queue, so we are called exclusively with blk-mq and io task
+> @@ -1918,6 +1894,45 @@ static int ublk_unregister_io_buf(struct io_uring_=
+cmd *cmd,
+>         return io_buffer_unregister_bvec(cmd, index, issue_flags);
+>  }
+>
+> +static int ublk_commit_and_fetch(const struct ublk_queue *ubq,
+> +                                struct ublk_io *io, struct io_uring_cmd =
+*cmd,
+> +                                const struct ublksrv_io_cmd *ub_cmd,
+> +                                struct request *req)
+> +{
+> +       if (!(io->flags & UBLK_IO_FLAG_OWNED_BY_SRV))
+> +               return -EINVAL;
+> +
+> +       if (ublk_need_map_io(ubq)) {
+> +               /*
+> +                * COMMIT_AND_FETCH_REQ has to provide IO buffer if
+> +                * NEED GET DATA is not enabled or it is Read IO.
+> +                */
+> +               if (!ub_cmd->addr && (!ublk_need_get_data(ubq) ||
+> +                                       req_op(req) =3D=3D REQ_OP_READ))
+> +                       return -EINVAL;
+> +       } else if (req_op(req) !=3D REQ_OP_ZONE_APPEND && ub_cmd->addr) {
+> +               /*
+> +                * User copy requires addr to be unset when command is
+> +                * not zone append
+> +                */
+> +               return -EINVAL;
+> +       }
+> +
+> +       ublk_fill_io_cmd(io, cmd, ub_cmd->addr);
+> +
+> +       /* now this cmd slot is owned by ublk driver */
+> +       io->flags &=3D ~UBLK_IO_FLAG_OWNED_BY_SRV;
+> +       io->res =3D ub_cmd->result;
+> +
+> +       if (req_op(req) =3D=3D REQ_OP_ZONE_APPEND)
+> +               req->__sector =3D ub_cmd->zone_append_lba;
+> +
+> +       if (likely(!blk_should_fake_timeout(req->q)))
+> +               ublk_put_req_ref(ubq, req);
+> +
+> +       return -EIOCBQUEUED;
 
-Is there some reason we can't add a binding for this?
+I think it would be clearer to just return 0. __ublk_ch_uring_cmd()
+already takes care of returning -EIOCBQUEUED in the successful case.
+Aside from that,
 
-Rob
-
+Reviewed-by: Caleb Sander Mateos <csander@purestorage.com>
 
