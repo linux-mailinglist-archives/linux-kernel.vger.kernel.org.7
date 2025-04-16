@@ -1,128 +1,202 @@
-Return-Path: <linux-kernel+bounces-607170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 149EDA8B8BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:20:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFA48A8B8C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:21:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94D8C3BC917
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 12:19:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8DEA4453E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 12:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50AFD24502A;
-	Wed, 16 Apr 2025 12:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1676623FC41;
+	Wed, 16 Apr 2025 12:21:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VU1/ZC8L"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BRbHAmp3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 513A31DC993;
-	Wed, 16 Apr 2025 12:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6517434CF5;
+	Wed, 16 Apr 2025 12:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744805994; cv=none; b=j3sseqgQlYVm43vewRLh2pYr9yIbwDS3YiLKWM5smrA9Bh9zyYZfDIje8P7mWmC44IFhSxjBE/krXXlC8bKhFWYtSPuN8RZCIsjLLxCM/HhdOP87wLdvR6MKpcrbljy8Mt9ZkHXgFv/KF8MeFRGyC1zwAsAZ9zW350QTHb4E4Rk=
+	t=1744806080; cv=none; b=DlkAyhrklBDw8+2sBPYfqa9mbiJB7rPO3u5H1rCs+1Lr7B/qPn4oH5AuvL2+vKUzehouhet+no5emGfIFlc7caQll10VD05+hEaI1q2ytgdWytCTD2Fub3KqqQAcB/84z6XeTYq9R8ZRGFmFdsxT0cvd+PIqxaUDULQzoKYy1P0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744805994; c=relaxed/simple;
-	bh=wlsv5J0qW4q1s1lnmnmj+z0jm/VZfCrj2ndlMJV+Obc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LQ7eRFKRWqx2CFGzcOGPdRhV4Xc6OCr10Q0S1oNx9dst6ffS5aWmYT7c2hm5aBBFSAgI5luweRcemmJyLCUArOu/0IjbsRuZc3sWHpQodTlqMlaaZSq4utL4ut6I1CE3n05ccrwVwxkdLIj5WTJ4sP9aJSTLB2LimaFT7z2AHJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VU1/ZC8L; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53G9mHSV020781;
-	Wed, 16 Apr 2025 12:19:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ty2KUrwiSGBBrNtXXT8zeDW5ZJOkxCadkpAPfFJqnv4=; b=VU1/ZC8LvkA+dI4N
-	85gjqVuFEQPzkhTULLET96L5K6BMwDM6hS1u72LYJd1CoQd7yqix1/mCVbtQDQMA
-	3Cp7KITTUIF49O6MDenlH+gXZo81QY7dGEhZuJQ2R3bobpPWun/+btkNIExsVCC3
-	LpsSGla4vZL0/YMWg0GQ6dW1me26HXcG8AbUxMRH851OuJ11imBPW/mdKcylv4+x
-	b4qaMdoyxKdX7e66EVS2L2Ns2OFzi1NyvLiRfex1aj2CUq/qJxPr1moHRvRmtc3b
-	MJDhIh+x/3iFehaqrLTsvhANerUtC+YJWgrUSzOV/4dVtbZqVzn3Pj6ax/cunLWU
-	bNHt5w==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45yhbpu914-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Apr 2025 12:19:47 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53GCJlue020074
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Apr 2025 12:19:47 GMT
-Received: from [10.217.219.207] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 16 Apr
- 2025 05:19:45 -0700
-Message-ID: <cf67e195-cb7f-4474-9f93-96030fe76e12@quicinc.com>
-Date: Wed, 16 Apr 2025 17:49:42 +0530
+	s=arc-20240116; t=1744806080; c=relaxed/simple;
+	bh=imFebmYu1OY9KuHZh3bQW3/s6Grl8SJUmxkN69et5F8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hvWD121PWfFC4RTKJ8A/wKfM7bAFK5/jm5+KT24869B0suOkH1hVBYCnDWF2V9i6NWnHMJWeikTmdA2ZMnWlwTCYNaOnSs4cQeVDjgqIsbsO8rC3lPvJI+6fGnHFwoFLzcJS8EqDeUSZYT1o/pN8lEoG4iVHezjjxRxxbU5UD/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BRbHAmp3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50D7AC4CEE2;
+	Wed, 16 Apr 2025 12:21:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744806079;
+	bh=imFebmYu1OY9KuHZh3bQW3/s6Grl8SJUmxkN69et5F8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=BRbHAmp3UstI/QNOKyxuO5RLnMeIZo4Pe0oEIr6HKpI5EDVWh4jwenh9s4eX+Fy0B
+	 m19Gvf4bTmrPdtEFOyWk9xBFF81NDPdiBcBxm0FJ7E141il7SMRmyMnIyqkfFI7isW
+	 dJDM8mq2HUTS7Tqzl508VQO2tV0aG6i6UVqHiLpnoB1I7h8cxZDeNAbdaPFfrVw2bD
+	 FGMfzZ9eV/fnsBffCXRLz7FNMgsMGgVgb2mrgQmVUqV99GEUlwoyHy6NQD9hVCIWOU
+	 qfIrow6FOsNluKe2AZu6SvqnmrZmFtRrzIBKXR/h1CFTyrWXUoXaGPeVFttG5ueGgt
+	 jHdHT4I3LrDMg==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>
+Cc: dri-devel@lists.freedesktop.org,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: [PATCH] drm/panic: use `///` for private items too
+Date: Wed, 16 Apr 2025 14:21:06 +0200
+Message-ID: <20250416122106.2554208-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] i2c: designware: Use better constants from units.h
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Andi Shyti
-	<andi.shyti@kernel.org>, <linux-i2c@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Mika Westerberg
-	<mika.westerberg@linux.intel.com>,
-        Jan Dabros <jsd@semihalf.com>
-References: <20250416101702.2128740-1-andriy.shevchenko@linux.intel.com>
-Content-Language: en-US
-From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-In-Reply-To: <20250416101702.2128740-1-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: SCAJDX8oxWOUvbHlJ5k9pWH9k2xFPvon
-X-Proofpoint-GUID: SCAJDX8oxWOUvbHlJ5k9pWH9k2xFPvon
-X-Authority-Analysis: v=2.4 cv=I+plRMgg c=1 sm=1 tr=0 ts=67ffa063 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=QyXUC8HyAAAA:8 a=COk6AnOGAAAA:8 a=pOyD9p4RhXsQ4LtHtzEA:9
- a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-16_04,2025-04-15_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
- phishscore=0 adultscore=0 priorityscore=1501 mlxscore=0 lowpriorityscore=0
- bulkscore=0 mlxlogscore=999 clxscore=1011 impostorscore=0 malwarescore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504160101
+Content-Transfer-Encoding: 8bit
 
+`///` should still be used for private items [1]. Some of the items in
+this file do so already, so do it for a few other clear candidates in
+the file.
 
+Link: https://lore.kernel.org/rust-for-linux/20250416112454.2503872-1-ojeda@kernel.org/ [1]
+Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+---
+Not sure if you would consider it a fix, but please feel free to add Fixes: etc.
+if so. Thanks!
 
-On 4/16/2025 3:47 PM, Andy Shevchenko wrote:
-> When we use constants in a time or frequency related contexts,
-> it's better to utilise the respective definitions that have
-> encoded units in them. This will make code better to read and
-> understand.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->   drivers/i2c/busses/i2c-designware-platdrv.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/busses/i2c-designware-platdrv.c
-> index d6e1ee935399..879719e91df2 100644
-> --- a/drivers/i2c/busses/i2c-designware-platdrv.c
-> +++ b/drivers/i2c/busses/i2c-designware-platdrv.c
-> @@ -34,7 +34,7 @@
->   
->   static u32 i2c_dw_get_clk_rate_khz(struct dw_i2c_dev *dev)
->   {
-> -	return clk_get_rate(dev->clk) / KILO;
-> +	return clk_get_rate(dev->clk) / HZ_PER_KHZ;
->   }
->   
->   #ifdef CONFIG_OF
-Acked-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+ drivers/gpu/drm/drm_panic_qr.rs | 29 +++++++++++++++--------------
+ 1 file changed, 15 insertions(+), 14 deletions(-)
 
+diff --git a/drivers/gpu/drm/drm_panic_qr.rs b/drivers/gpu/drm/drm_panic_qr.rs
+index f2a99681b998..642e3240a014 100644
+--- a/drivers/gpu/drm/drm_panic_qr.rs
++++ b/drivers/gpu/drm/drm_panic_qr.rs
+@@ -315,7 +315,7 @@ fn get_header(&self) -> (u16, usize) {
+         }
+     }
+
+-    // Returns the size of the length field in bits, depending on QR Version.
++    /// Returns the size of the length field in bits, depending on QR Version.
+     fn length_bits_count(&self, version: Version) -> usize {
+         let Version(v) = version;
+         match self {
+@@ -331,7 +331,7 @@ fn length_bits_count(&self, version: Version) -> usize {
+         }
+     }
+
+-    // Number of characters in the segment.
++    /// Number of characters in the segment.
+     fn character_count(&self) -> usize {
+         match self {
+             Segment::Binary(data) => data.len(),
+@@ -569,8 +569,8 @@ struct EncodedMsgIterator<'a> {
+ impl Iterator for EncodedMsgIterator<'_> {
+     type Item = u8;
+
+-    // Send the bytes in interleaved mode, first byte of first block of group1,
+-    // then first byte of second block of group1, ...
++    /// Send the bytes in interleaved mode, first byte of first block of group1,
++    /// then first byte of second block of group1, ...
+     fn next(&mut self) -> Option<Self::Item> {
+         let em = self.em;
+         let blocks = em.g1_blocks + em.g2_blocks;
+@@ -638,7 +638,7 @@ fn clear(&mut self) {
+         self.data.fill(0);
+     }
+
+-    // Set pixel to light color.
++    /// Set pixel to light color.
+     fn set(&mut self, x: u8, y: u8) {
+         let off = y as usize * self.stride as usize + x as usize / 8;
+         let mut v = self.data[off];
+@@ -646,13 +646,13 @@ fn set(&mut self, x: u8, y: u8) {
+         self.data[off] = v;
+     }
+
+-    // Invert a module color.
++    /// Invert a module color.
+     fn xor(&mut self, x: u8, y: u8) {
+         let off = y as usize * self.stride as usize + x as usize / 8;
+         self.data[off] ^= 0x80 >> (x % 8);
+     }
+
+-    // Draw a light square at (x, y) top left corner.
++    /// Draw a light square at (x, y) top left corner.
+     fn draw_square(&mut self, x: u8, y: u8, size: u8) {
+         for k in 0..size {
+             self.set(x + k, y);
+@@ -784,7 +784,7 @@ fn is_version_info(&self, x: u8, y: u8) -> bool {
+         vinfo != 0 && ((x >= pos && x < pos + 3 && y < 6) || (y >= pos && y < pos + 3 && x < 6))
+     }
+
+-    // Returns true if the module is reserved (Not usable for data and EC).
++    /// Returns true if the module is reserved (Not usable for data and EC).
+     fn is_reserved(&self, x: u8, y: u8) -> bool {
+         self.is_alignment(x, y)
+             || self.is_finder(x, y)
+@@ -793,13 +793,14 @@ fn is_reserved(&self, x: u8, y: u8) -> bool {
+             || self.is_version_info(x, y)
+     }
+
+-    // Last module to draw, at bottom left corner.
++    /// Last module to draw, at bottom left corner.
+     fn is_last(&self, x: u8, y: u8) -> bool {
+         x == 0 && y == self.width - 1
+     }
+
+-    // Move to the next module according to QR code order.
+-    // From bottom right corner, to bottom left corner.
++    /// Move to the next module according to QR code order.
++    ///
++    /// From bottom right corner, to bottom left corner.
+     fn next(&self, x: u8, y: u8) -> (u8, u8) {
+         let x_adj = if x <= 6 { x + 1 } else { x };
+         let column_type = (self.width - x_adj) % 4;
+@@ -812,7 +813,7 @@ fn next(&self, x: u8, y: u8) -> (u8, u8) {
+         }
+     }
+
+-    // Find next module that can hold data.
++    /// Find next module that can hold data.
+     fn next_available(&self, x: u8, y: u8) -> (u8, u8) {
+         let (mut x, mut y) = self.next(x, y);
+         while self.is_reserved(x, y) && !self.is_last(x, y) {
+@@ -841,7 +842,7 @@ fn draw_data(&mut self, data: impl Iterator<Item = u8>) {
+         }
+     }
+
+-    // Apply checkerboard mask to all non-reserved modules.
++    /// Apply checkerboard mask to all non-reserved modules.
+     fn apply_mask(&mut self) {
+         for x in 0..self.width {
+             for y in 0..self.width {
+@@ -852,7 +853,7 @@ fn apply_mask(&mut self) {
+         }
+     }
+
+-    // Draw the QR code with the provided data iterator.
++    /// Draw the QR code with the provided data iterator.
+     fn draw_all(&mut self, data: impl Iterator<Item = u8>) {
+         // First clear the table, as it may have already some data.
+         self.clear();
+
+base-commit: 8ffd015db85fea3e15a77027fda6c02ced4d2444
+--
+2.49.0
 
