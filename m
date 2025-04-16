@@ -1,221 +1,255 @@
-Return-Path: <linux-kernel+bounces-606854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6ABAA8B48D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 10:58:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F68AA8B491
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 10:59:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C75CA7A4E8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 08:57:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B8573BE4E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 08:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11447233701;
-	Wed, 16 Apr 2025 08:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77AA1233708;
+	Wed, 16 Apr 2025 08:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="EIDnzoyY"
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010039.outbound.protection.outlook.com [52.101.228.39])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vatXZo60"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A56233150;
-	Wed, 16 Apr 2025 08:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.39
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744793926; cv=fail; b=eIispAF5OFaCI5vDOZ9C//O8lQtq8ExQe/ZNwM4apAefZpOIoqYSL5RCj1t5mOnLHiRRJFMY26LIa1KYju7ljazeEdPmnswX2ccpt7WZDUgkVRb6yiEd9jOaU3Nlt4zUYAEqW5TmmCmgiqlDLGevx+JEAAz3ZnOaghDX/lCApk8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744793926; c=relaxed/simple;
-	bh=8PhqpYlB26Vjri5NK0d9FHhh5v/zcl3RFe1JVpmL2Fg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=HaeCIFBQm/F6QkYCVtBSjqVVBe3eoN/8cJONqYBAsOShd8+Tx3n8YUJXfzI0KsvFoDxKaEVDZJaLsNWP01aSEnqDmAsCqTQEDrZYb1yOo45JqJmYq/kP1dHfDA/9Rq2KiNsCQy/O8mKu9chPWpkWdCLEtG0GrQaHLfSPfxSli8M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=EIDnzoyY; arc=fail smtp.client-ip=52.101.228.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nP73wazCFhXw0cwKrkTEQjCAjt45P3EblGxcp6duVd3JQPgZKCBlxTcukPS8p93xNNfWs5SMGWRYxA+8WA7DePkaNj+CzPaEcTB9bBLv8AbMXJWUkMmOidp+8Kxr4tR34v85xbF3imI7G9zRZOJxKctZI2g+aMbyK4kQ8gOk2RNUT9ffw8jSRm5G721GeHwpZbltA0H1W8vLsveO9lTMnKkn7eNcvTxO8Ia0/O1SYEZRH5meVYs5HA09+HQco+nSxexGk7aHgbSMZoN7v/L9m989/axhovV7F8d6OVykRGaUsYTZhjgxdPlxdnlGql8iJaaUJauoEsSFnb342YU9Pg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fNFbbs9bP/emuAHA3zcrXSG7aZMeg0LLWKn/uG4sUkc=;
- b=LjaSqAN3pPZFrmluc6hdcUOQ2+VP1hwNpVm9XCxjno5GYwO6o7zMXYoIGORulQkSB0HzahFsgCNW7FzlZ2BPJUpVColUeSO3KOgRKDNijfLZlVVfS0KQm0WyqXEAFqeY77wIBO4XtHayj/9fSOn5NFoCfXUUSKdXyIgmD4COcPozb3txRg0tajvATcK0WhNgjxIJajh2NV3Qyc4t6ho16CnUVudFz6q613O+jniRhe/zcOWZt+Jq34jX+LAyhhSKeLHnFHae7AG8er2feTb3cfoJN1EjyiHZ0WkNLpSZUCosBPqSOHbdKo8MT+ZRF/p2/gn5goW0K5+Wbnh3kPr4Dw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fNFbbs9bP/emuAHA3zcrXSG7aZMeg0LLWKn/uG4sUkc=;
- b=EIDnzoyYmZBAOy28yqVm0KX2q40gVMJx5gcT7DGah5My1LzwuQ6EbljcYHcBhl3sHizlAIa6b4wyN5k4p7WsY/TdFRk+heZYVWvezyEDZ50J/5m+D6pg5LJcJz+a6MtUwcMVGz8V15UoFkyeFSeAkmnNlLAAHs3tNKu6TArZoJk=
-Received: from TYCPR01MB12093.jpnprd01.prod.outlook.com (2603:1096:400:448::7)
- by TYWPR01MB10379.jpnprd01.prod.outlook.com (2603:1096:400:24b::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.29; Wed, 16 Apr
- 2025 08:58:36 +0000
-Received: from TYCPR01MB12093.jpnprd01.prod.outlook.com
- ([fe80::439:42dd:2bf:a430]) by TYCPR01MB12093.jpnprd01.prod.outlook.com
- ([fe80::439:42dd:2bf:a430%4]) with mapi id 15.20.8655.022; Wed, 16 Apr 2025
- 08:58:36 +0000
-From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>
-CC: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Biju Das
-	<biju.das.jz@bp.renesas.com>, Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [PATCH v5 3/3] MAINTAINERS: Add entry for Renesas RZ/V2H(P)
- USB2PHY Port Reset driver
-Thread-Topic: [PATCH v5 3/3] MAINTAINERS: Add entry for Renesas RZ/V2H(P)
- USB2PHY Port Reset driver
-Thread-Index: AQHbrj/Ra8KjoH82YkOzJqqe1fCuSLOl/WpQ
-Date: Wed, 16 Apr 2025 08:58:35 +0000
-Message-ID:
- <TYCPR01MB12093291405D0830D828FD52AC2BD2@TYCPR01MB12093.jpnprd01.prod.outlook.com>
-References: <20250415195131.281060-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250415195131.281060-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250415195131.281060-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYCPR01MB12093:EE_|TYWPR01MB10379:EE_
-x-ms-office365-filtering-correlation-id: 5e9d36a3-8107-4a02-8f8a-08dd7cc4df6d
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?y6gaBhisZrhbx46IDA1ms61g9CV1fsks6caOw0nHREZrJwpZ0kSD4pH2gF07?=
- =?us-ascii?Q?5dueEGNJlsroqUkr6qDpEaV3ypbRNhWmSxfjsV2ssEMNxi52GG2x9TPWSUqm?=
- =?us-ascii?Q?ganKKgIMa5lXc7AjhA4fCDJr0aGwNh7i1N/rmjw+jpRLm+p7SpVduJuSQLJR?=
- =?us-ascii?Q?QckuLgCyaxOlJx8T8qclh870D+kvVpASxOiQfq2c7DLUTMdfL8ADFHMNPRVP?=
- =?us-ascii?Q?A4VpP99Vimen3KZsa6X8IDKMBZZh1VXyjEt0Bz9h1e0SPoZWPLETNR+2CYI/?=
- =?us-ascii?Q?Dfyimy9QXmGHmuo6qirgSxRsPrwhGezwx+ID8A5h2hd07H8h6nmtZ1gfwvAV?=
- =?us-ascii?Q?2d3DRg1yIxD40QgM4X+s3nTSpca8nnw20X4jhuXjFKWJN+wyj8aJipfaz3rN?=
- =?us-ascii?Q?Eor1APHT8eGqJ/7hQpayWoxL1N/onHqq6IZcPoNNlFxaOOf42u5RAkvFrqpV?=
- =?us-ascii?Q?l7yGyiiTDA2946Hn9qkQX5s2iMA2iK7R3hqpvUtD7t8cc1+QvcF1YYCc1ouJ?=
- =?us-ascii?Q?d6GGEViU9vAtftojnEG68AgpKVIUsSGVvHKa8hwe8+XWjY8tZ87yzzk3juGU?=
- =?us-ascii?Q?Un58zVsJkcpeVSufBK/eIGhHjAlwB+uT4XBFp4VvJ1Et2+RNsn8FPChZCdS0?=
- =?us-ascii?Q?twEgRiAGspfu+lnzyy/CyUFw0F+yqSUS22aTpUEdo6tIa+RETeNXOzUB6V0y?=
- =?us-ascii?Q?fJPYkgv0E8IXlzCEwLzeqCnAHqZuLNW0eb2vxBtoYhYyIqSkIafpdJIa6zQ2?=
- =?us-ascii?Q?mbXy7qg/cyjC8sPCg/zTEFX0KmXWO3U10P+xRfWn23bBonC+vGZPMWDxsjAQ?=
- =?us-ascii?Q?53yo0e/SPMHtKdX06YXTKce3sbSTDQruQ281JTU+WWA0GHUG+C1yrLXvMdzO?=
- =?us-ascii?Q?h012Bjd6PokfjDmSPpt0KDSwhbdh/AZDm53oZP1ZzsSQUSBhpFpkgiHse81f?=
- =?us-ascii?Q?wbMVBDBQVMfAcRCg3HbDcHQKAOy9Hx6/D8Y9CNpRhsGz7oZRySYO/AZM+V2G?=
- =?us-ascii?Q?paqlSp9qnvfqsgtoO6/Q/LurGlE0Wtj/SnxG8b2v6NDcW1Va5UtYf45aJdiJ?=
- =?us-ascii?Q?N1kxhOv+DKLjnsnnKuWunWYUQ/SYMKsLb7CgNcuHmXe4po4NP9Ns3iwRoy0w?=
- =?us-ascii?Q?n/vQwUZcKhPGdxcAR1hndzof0jQ6XLpjJ+2w2IKLjKsZsSdgWBE8eyW2WGdb?=
- =?us-ascii?Q?CzIERyApeQgASJ0PvQNfuU13Zi3o+7FQ+MbbTN1IZTsakC3d8BqmlJMPG30t?=
- =?us-ascii?Q?T5QvsPZdEdm7/6yPftsLy0ZTa0KkPLU9HbCg2DpqBUut5R6D8nQgDwswGgAT?=
- =?us-ascii?Q?1yQ0SZ1xBmKmqkO1FJbGFdMz7JemWX3GSI/HJxJv8w8cudEVpzXjxu0Ya90H?=
- =?us-ascii?Q?RXXVpWJN98LC6MANTPW0/GG3PHQq2bunuWO7l8U2NqlmOFlDmk1eatORV8KT?=
- =?us-ascii?Q?5BFSvJ2XF25ob2LinjpDepTdZbePzNGCzZ0IAFPzvnw4L+eY425qoQ=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB12093.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?szdtNX0NCMr7OZDQoqjMUsDmVUrl9UoIT6BFeSDw0aaks09BWrHHAjPuCyOV?=
- =?us-ascii?Q?kB4m48r1CUXkhNF+IMe2BdS+GAUeLZaU0a/XozVdlWlgnLEzc5YWjxVtE8JW?=
- =?us-ascii?Q?K/RWurkDO4DKbCSMDe4DkMZ50WAqZd/phR6gKNY/FYtClnEPwph7ZuSU4Ha5?=
- =?us-ascii?Q?zUWS8Ftcm6UD4BFXWrIQzqon8oElcp+NPZr9UeSxLuI1ShJ7gwaJ7DtIPpnh?=
- =?us-ascii?Q?SCS+H4avpIUrMRBsSoOyuaWvsBrqE/WsyKA3tV+J0ehMXWRQrAigdCb9RpHd?=
- =?us-ascii?Q?NkJ4N7+iWG9S7LKmkBXSpfcg/yOEN3AjFZZ/wwlP9ob+1I8EGSjyrrlVjTBc?=
- =?us-ascii?Q?kYJT8pbueA5+NklvC294Zffn7VN+0ucVZ7xfLe1xxubu44yx+KMIBac+v8iN?=
- =?us-ascii?Q?BtGr2d7Nt1Ras/zGd12MhcypJLLc1dAZ0aexWd12sjt8/D/h8Y/SEk+Qm9ZN?=
- =?us-ascii?Q?89UcQIPueiD4z05c/m8cE1gLBg+5jyJN0W3EoJMVK0smuHyvcbFfiPb8sAvx?=
- =?us-ascii?Q?EUBBjDGqsQnZgcEeypGtYtep2qIQ9OWYtsF50EexS3obPaFPy/ec3CrAMwNZ?=
- =?us-ascii?Q?bwUzg+y+RQJYhKMiRMiFXqtxuhOlRGCgiGqksgVJSysJ8D1cKUyVOM2NUv6B?=
- =?us-ascii?Q?qts0pENePkQYHrKiLR+iAlG7yP00tBCKKQ2+9fKdS2J/KtM0EILuWTmUBBmx?=
- =?us-ascii?Q?GbUvBI5Z5oqbYQkkYiYLDYNPVWAvnNTFlYJ+yS7Pda1DnwytPpubTFZlbt+Z?=
- =?us-ascii?Q?GcmZsD/+rcDDQrfGocg/YO7yoBm91AybLqwQueaeuHdtlqSqSTWGpdjCVbqX?=
- =?us-ascii?Q?th1BHVF80Kx4LizlHh/bnwRBcwrsP37EPWWurJw/s/wutBPEnDgztztOYGVk?=
- =?us-ascii?Q?4Uq8DHlSIImSY3/+fxkhdIW9Zw+xp8WG5SGUVrpjtnlvMjDy8mbpcmLGkvIn?=
- =?us-ascii?Q?zKVgp7xuniIdn5ms6UCWDUX+rEPFWOxVXP03f7+UW94nXL7vvmrrWv+d/PfS?=
- =?us-ascii?Q?1f2ZOtMwkQPO0aH/Zh4z5/tTWG8a6Mj1C3qxTqbEZwnMOV+8kBrppUBgWNiU?=
- =?us-ascii?Q?3s44nKovf7eYA9N8OyqWepnXqHP2n2zZIGJdNxcqyHjU14mXK5DVHWjEMPkP?=
- =?us-ascii?Q?XB538K7aAM0WiLcq6YlRfrwOcBCPOcCf4NfWQ7qMQ66HMwI3MvSezN0o4NtC?=
- =?us-ascii?Q?PnEB4x/8go5O4sKnuLokLTKtiaF8+z4ZRSgWaF3xyXtmvRAPUWmwd533w3Dw?=
- =?us-ascii?Q?sNe6yn+KptiIzOoA2NVzd4hoyudcUYSFG8w1IzWN7HlhAru/C+nYySE4twCy?=
- =?us-ascii?Q?WgEyRvS3lHdhMBEDxhXinVWVOIJtOiE4dcnBQLThY/YQ0p+GNaMVPpLzoCMb?=
- =?us-ascii?Q?slEezfNacoo/6IvJorBeu8hLPRvc/yAg9tp2/t58xJdrn3HQVIUP14uKG7dK?=
- =?us-ascii?Q?2iMi+6rsZGRZQZJ0tjDkPFdQ+ZM1eUpWy6XOKEOX4V3LuKHw9drZbBB+udq2?=
- =?us-ascii?Q?fohL1INBCdNSWP8QP2Y7v7ZBleylK7gLfI5PDgh1k44P/qyIVeOmAJGRvywe?=
- =?us-ascii?Q?NXArgala7JRqwPbssUqplIsXcigkLpK/LqbX62QCQIKGV1sccova1QqEHqas?=
- =?us-ascii?Q?yw=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEF1E20E003
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 08:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744793991; cv=none; b=p9RafsnDN2s2OuXxFvZROKbvosW8+N9o5I9PcSatAiVgl86m0+xbhe/R4DSnq8IWOfzzSwET9ydRidaoY87dqNNUsH01k+sGzVS6HXPK22QVHaXiFoht2aCRwBr3FxwhiAeb0f1aZ6flPFuagCxAc6mAnIyyhq8XqCCKzpF9/10=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744793991; c=relaxed/simple;
+	bh=IK9UyR16MCakiskdgLYvgLg+KiigxiyDPwyZXHoB2FA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UscZLkFEXnsLxB5q5O+sx8MKOUZxuNhGGcNuxW7nCwI4sXW1LW9QPcPUaJv5h9dUQmDigPGAvABegzaclCJJVBdR8rD+L/vuCxXHIuF7IttXKwTxKk1q2za5MdS2rEc2qKksG643gcLIiNWYB/GzjccmrX0z/RLtE6rsQ1cYkXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=vatXZo60; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 870DA965;
+	Wed, 16 Apr 2025 10:57:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1744793865;
+	bh=IK9UyR16MCakiskdgLYvgLg+KiigxiyDPwyZXHoB2FA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=vatXZo60UrHedGeP6O9FWVxOQTiJDS6lAZMxI+nX/m/FwwmBdX30c4RD18ZKfL9eq
+	 qFK9BB8+D9D0x5If8AOC2EzAQQAKtp4vuA6cxsIbJBgZ5bDNfcUtqw1Q9AwgYNHqcj
+	 881aElHAa32eokWKJPUOX5p3ybFQ5tuBnK3S8I0U=
+Message-ID: <73bd6628-374d-417f-a30f-88a4b1d157bb@ideasonboard.com>
+Date: Wed, 16 Apr 2025 11:59:43 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB12093.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5e9d36a3-8107-4a02-8f8a-08dd7cc4df6d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Apr 2025 08:58:36.0281
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: DPRqdxKagT1r0AfK6mIer8EKaRxe5eTqe6+wetB31XW3bJEQQKcwr6nO7FjHJGkswb2xQPTC5SAnDDCjw0UTL97cD4KArgZZM8S22lnAGjI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB10379
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 03/11] drm/fourcc: Add DRM_FORMAT_Y8
+To: Pekka Paalanen <pekka.paalanen@haloniitty.fi>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+ Vishal Sagar <vishal.sagar@amd.com>,
+ Anatoliy Klymenko <anatoliy.klymenko@amd.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Michal Simek <michal.simek@amd.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+References: <20250326-xilinx-formats-v4-0-322a300c6d72@ideasonboard.com>
+ <20250326-xilinx-formats-v4-3-322a300c6d72@ideasonboard.com>
+ <CAMuHMdXM1B1c=62EpcuUdpdpaBRZSJLXb1GBB0egzp7Fyeo5-w@mail.gmail.com>
+ <b195971c-52e6-463e-a440-83dde4346e65@ideasonboard.com>
+ <20250327112009.6b4dc430@eldfell>
+ <b5cf15a4-7c65-4718-9c39-a4c86179ba4c@ideasonboard.com>
+ <20250327175842.130c0386@eldfell>
+ <CAMuHMdVEpTVWmwrYt+G-QSWucT91goUcFor9qbo5rZ+X2jnRog@mail.gmail.com>
+ <20250331105446.098f0fbe@eldfell>
+ <20250331082135.GB13690@pendragon.ideasonboard.com>
+ <20250331135337.61934003@eldfell> <20250401162732.731ef774@eldfell>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20250401162732.731ef774@eldfell>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> From: Prabhakar <prabhakar.csengg@gmail.com>
-> Sent: 15 April 2025 20:52
-> To: Philipp Zabel <p.zabel@pengutronix.de>; Geert Uytterhoeven <geert+ren=
-esas@glider.be>; Rob Herring
-> <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor Dooley=
- <conor+dt@kernel.org>;
-> Magnus Damm <magnus.damm@gmail.com>
-> Cc: linux-renesas-soc@vger.kernel.org; devicetree@vger.kernel.org; linux-=
-kernel@vger.kernel.org;
-> Prabhakar <prabhakar.csengg@gmail.com>; Biju Das <biju.das.jz@bp.renesas.=
-com>; Fabrizio Castro
-> <fabrizio.castro.jz@renesas.com>; Prabhakar Mahadev Lad <prabhakar.mahade=
-v-lad.rj@bp.renesas.com>
-> Subject: [PATCH v5 3/3] MAINTAINERS: Add entry for Renesas RZ/V2H(P) USB2=
-PHY Port Reset driver
->=20
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->=20
-> Add a new MAINTAINERS entry for the Renesas RZ/V2H(P) USB2PHY Port Reset
-> driver.
->=20
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hi,
 
-Acked-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+On 01/04/2025 16:27, Pekka Paalanen wrote:
+> On Mon, 31 Mar 2025 13:53:37 +0300
+> Pekka Paalanen <pekka.paalanen@haloniitty.fi> wrote:
+> 
+>> On Mon, 31 Mar 2025 11:21:35 +0300
+>> Laurent Pinchart <laurent.pinchart@ideasonboard.com> wrote:
+>>
+>>> On Mon, Mar 31, 2025 at 10:54:46AM +0300, Pekka Paalanen wrote:
+>>>> On Thu, 27 Mar 2025 17:35:39 +0100
+>>>> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>>>>      
+>>>>> Hi Pekka,
+>>>>>
+>>>>> On Thu, 27 Mar 2025 at 16:59, Pekka Paalanen
+>>>>> <pekka.paalanen@haloniitty.fi> wrote:
+>>>>>> On Thu, 27 Mar 2025 16:21:16 +0200
+>>>>>> Tomi Valkeinen <tomi.valkeinen@ideasonboard.com> wrote:
+>>>>>>> On 27/03/2025 11:20, Pekka Paalanen wrote:
+>>>>>>>> On Wed, 26 Mar 2025 15:55:18 +0200
+>>>>>>>> Tomi Valkeinen <tomi.valkeinen@ideasonboard.com> wrote:
+>>>>>>>>> On 26/03/2025 15:52, Geert Uytterhoeven wrote:
+>>>>>>>>>> On Wed, 26 Mar 2025 at 14:23, Tomi Valkeinen
+>>>>>>>>>> <tomi.valkeinen@ideasonboard.com> wrote:
+>>>>>>>>>>> Add greyscale Y8 format.
+>>>>>>>>>>>
+>>>>>>>>>>> Acked-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>>>>>>>>>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+>>>>>>>>>>
+>>>>>>>>>> Thanks for your patch!
+>>>>>>>>>>       
+>>>>>>>>>>> --- a/include/uapi/drm/drm_fourcc.h
+>>>>>>>>>>> +++ b/include/uapi/drm/drm_fourcc.h
+>>>>>>>>>>> @@ -405,6 +405,9 @@ extern "C" {
+>>>>>>>>>>>     #define DRM_FORMAT_YUV444      fourcc_code('Y', 'U', '2', '4') /* non-subsampled Cb (1) and Cr (2) planes */
+>>>>>>>>>>>     #define DRM_FORMAT_YVU444      fourcc_code('Y', 'V', '2', '4') /* non-subsampled Cr (1) and Cb (2) planes */
+>>>>>>>>>>>
+>>>>>>>>>>> +/* Greyscale formats */
+>>>>>>>>>>> +
+>>>>>>>>>>> +#define DRM_FORMAT_Y8          fourcc_code('G', 'R', 'E', 'Y')  /* 8-bit Y-only */
+>>>>>>>>>>
+>>>>>>>>>> This format differs from e.g. DRM_FORMAT_R8, which encodes
+>>>>>>>>>> the number of bits in the FOURCC format. What do you envision
+>>>>>>>>>> for e.g. DRM_FORMAT_Y16? fourcc_code('G', 'R', '1', '6')?
+>>>>>>>>>
+>>>>>>>>> I wanted to use the same fourcc as on V4L2 side. Strictly speaking it's
+>>>>>>>>> not required, but different fourccs for the same formats do confuse.
+>>>>>>>>>
+>>>>>>>>> So, generally speaking, I'd pick an existing fourcc from v4l2 side if
+>>>>>>>>> possible, and if not, invent a new one.
+>>>>>>>>
+>>>>>>>> what's the actual difference between DRM_FORMAT_R8 and DRM_FORMAT_Y8?
+>>>>>>>>
+>>>>>>>> Is the difference that when R8 gets expanded to RGB, it becomes (R, 0,
+>>>>>>>> 0), but Y8 gets expanded to (c1 * Y, c2 * Y, c3 * Y) where c1..c3 are
+>>>>>>>> defined by MatrixCoefficients (H.273 terminology)?
+>>>>>>>>
+>>>>>>>> That would be my intuitive assumption following how YCbCr is handled.
+>>>>>>>> Is it obvious enough, or should there be a comment to that effect?
+>>>>>>>
+>>>>>>> You raise an interesting point. Is it defined how a display driver, that
+>>>>>>> supports R8 as a format, shows R8 on screen? I came into this in the
+>>>>>>> context of grayscale formats, so I thought R8 would be handled as (R, R,
+>>>>>>> R) in RGB. But you say (R, 0, 0), which... also makes sense.
+>>>>>>
+>>>>>> That is a good question too. I based my assumption on OpenGL behavior
+>>>>>> of R8.
+>>>>>>
+>>>>>> Single channel displays do exist I believe, but being single-channel,
+>>>>>> expansion on the other channels is likely meaningless. Hm, but for the
+>>>>>> KMS color pipeline, it would be meaningful, like with a CTM.
+>>>>>> Interesting.
+>>>>>>
+>>>>>> I don't know. Maybe Geert does?
+>>>>>
+>>>>> I did some digging, and was a bit surprised that it was you who told
+>>>>> me to use R8 instead of Y8?
+>>>>> https://lore.kernel.org/all/20220202111954.6ee9a10c@eldfell
+>>>>
+>>>> Hi Geert,
+>>>>
+>>>> indeed I did. I never thought of the question of expansion to R,G,B
+>>>> before. Maybe that expansion is what spells R8 and Y8 apart?
+>>>>
+>>>> I do think that expansion needs to be specified, so that the KMS color
+>>>> pipeline computations are defined. There is a big difference between
+>>>> multiplying these with an arbitrary 3x3 matrix (e.g. CTM):
+>>>>
+>>>> - (R, 0, 0)
+>>>> - (R, R, R)
+>>>> - (c1 * Y, c2 * Y, c3 * Y)
+>>>
+>>> I'd be very surprised by an YUV to RGB conversion matrix where the first
+>>> column would contain different values. What we need to take into account
+>>> though is quantization (full vs. limited range).
+> 
+> Quantization range is indeed good to note. R8 would be always full
+> range, but Y8 would follow COLOR_RANGE property.
+> 
+>> That makes Y8 produce (Y, Y, Y), and we have our answer: R8 should be
+>> (R, 0, 0), so we have both variants.
+>>
+>> Can we specify Y, R, G and B be nominal values in the range 0.0 - 1.0
+>> in the KMS color processing?
+> 
+> I think this 0.0 - 1.0 nominal range definition for the abstract KMS
+> color processing is necessary.
+> 
+> It also means that limited range Y8 data, when containing values 0-15
+> or 240-255, would produce negative and greater than 1.0 values,
+> respectively. They might get immediately clamped to 0.0 - 1.0 with the
+> first color operation they face, though, but the concept seems
+> important and carrying over to the new color pipelines UAPI which might
+> choose not to clamp.
 
-> ---
->  MAINTAINERS | 8 ++++++++
->  1 file changed, 8 insertions(+)
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index b5acf50fc6af..a8d8eabf9ecf 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -20684,6 +20684,14 @@ S:	Maintained
->  F:	Documentation/devicetree/bindings/usb/renesas,rzn1-usbf.yaml
->  F:	drivers/usb/gadget/udc/renesas_usbf.c
->=20
-> +RENESAS RZ/V2H(P) USB2PHY PORT RESET DRIVER
-> +M:	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> +M:	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> +L:	linux-renesas-soc@vger.kernel.org
-> +S:	Supported
-> +F:	Documentation/devicetree/bindings/reset/renesas,rzv2h-usb2phy-reset.y=
-aml
-> +F:	drivers/reset/reset-rzv2h-usb2phy.c
-> +
->  RENESAS RZ/V2M I2C DRIVER
->  M:	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
->  L:	linux-i2c@vger.kernel.org
-> --
-> 2.49.0
+Is the behavior of values outside the limited range something that needs 
+to be defined? We can't know how each piece of HW behaves with 
+"undefined" input, so should we not just define the behavior as platform 
+specific?
+
+In any case: I can't say I fully understood all the discussions wrt. 
+color spaces. But my immediate interest is, of course, this series =). 
+So is there something that you think should be improved here?
+
+My understanding is that the Y-only pixel formats behave in a well 
+defined way (or, as well defined as the YUV formats), and there's 
+nothing more to add here. Is that right?
+
+  Tomi
 
 
