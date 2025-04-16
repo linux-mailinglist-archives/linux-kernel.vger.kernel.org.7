@@ -1,112 +1,152 @@
-Return-Path: <linux-kernel+bounces-607550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17698A907B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 17:29:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7C58A907BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 17:29:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8A0D3B700F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 15:28:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 219B95A1776
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 15:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D7820C031;
-	Wed, 16 Apr 2025 15:28:32 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCDB018A6AE;
+	Wed, 16 Apr 2025 15:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="FhIrQWLO"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E3E18A6AE;
-	Wed, 16 Apr 2025 15:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D807207DE5;
+	Wed, 16 Apr 2025 15:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744817311; cv=none; b=qPzanA82TgzM/ghjT5eKGgmIcu5DprbMH3pfXqxF172Km/2PHR9RB0YOhEZC4Qcm8xMfUGukqsD/Cw+3d/5Dcj3icSG0a6/fa/pv/vxafsAcWvCbfBE1rdxaZsjLkKUZ/CN0Mcf8bCWyOGe2E36/2TYDsUWO7uFyhfbFa2aeRfk=
+	t=1744817331; cv=none; b=feAIBrvWLknkw3oq8PC20FjUzxyqxsMPLXsdLfm/U0uML3UgdIfkrMYCohfEQYp2741ZR4ujY6driYtpiCsbgdHoDMkovWpl7enGtLTZAI87a3y6Ieh7fpPMO0UpE7T/qJwuiJtHnNBMIXjxVLRmwY7jkA1PxqEkekqiotsIff4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744817311; c=relaxed/simple;
-	bh=RgI1o+XxLxQB23YF/Dqsu7X9RDMwa8iK3d9xfzCl/kA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N82RqD8iYp3cUdZLcmXsY3xrgaMXICsHKrzoGpR8GmZ+fyQUXc4xA0htxjpA4ngvCw8mRkA6Su+TyfHHpiCeC6z7/MTEGz0nRAmSdw16iZMDUCnpS0h2r1puorwJYqKNRtW/di0nrscnfaqPKKu93GIyUi20KEfJaRzBUUXzDSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-X-CSE-ConnectionGUID: TmkhVHyZR0ymvp1KwwboCw==
-X-CSE-MsgGUID: WCT9WYCdQmWKndWpHK9mEA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11405"; a="46385870"
-X-IronPort-AV: E=Sophos;i="6.15,216,1739865600"; 
-   d="scan'208";a="46385870"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 08:28:28 -0700
-X-CSE-ConnectionGUID: Gnf0r/AJT3q3dQn8EEsw2A==
-X-CSE-MsgGUID: Ic8+6FHiQA+WYeQ+2V0SbA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,216,1739865600"; 
-   d="scan'208";a="161475482"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 08:28:25 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andy.shevchenko@gmail.com>)
-	id 1u54gZ-0000000CtkW-1J0u;
-	Wed, 16 Apr 2025 18:28:23 +0300
-Date: Wed, 16 Apr 2025 18:28:23 +0300
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-To: Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] iio: imu: inv_icm42600: add WoM support
-Message-ID: <Z__Ml-NvzgC8-ltv@smile.fi.intel.com>
-References: <20250415-losd-3-inv-icm42600-add-wom-support-v2-0-de94dfb92b7e@tdk.com>
- <20250415-losd-3-inv-icm42600-add-wom-support-v2-1-de94dfb92b7e@tdk.com>
- <CAHp75VdZDovPuRqQMpP=TkjeBr9AgRssPFJfmsjnXC=wUXxFHg@mail.gmail.com>
- <FR3P281MB1757B4BF12AD9F6AC5F8F361CEBD2@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
- <CAHp75VciPdgt13GbWtH08_k-f6VHQ-e3aA+CibKNAS6WRWE9Ng@mail.gmail.com>
- <FR3P281MB1757AA98627383BC411A35F5CEBD2@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1744817331; c=relaxed/simple;
+	bh=kUcLwlYlJfjnn4VvnlXL4MjUe8PfXD7bUmO0OiNmjvI=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=UJnRE5WyZLIWFQUnaA9thjcIcp+kwN/kuv2fiyq0IXeNr4NEkk4f06XgDH8MwcBz2XxS1CrrVjFoMmwZ162qL/rsReXMXfck/5x8wqrUGYqM+bteeuKeZ96WIHH/tQI2sRR7+0IkSphOKlgAplI6OFS7nurM61IMQcGNpbznlu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=FhIrQWLO; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1744817326; x=1745422126; i=markus.elfring@web.de;
+	bh=Y9ve19JkjveFsFqfCSTPf1Qll+JvmiD7A2VvAMQXuos=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=FhIrQWLO0Daw872shpuW1utsEXae3IwGCa8PRn+2bEzfDUMmruzvXuer4Kr0Z+iO
+	 QN6sqvSogX90KEy+GV8fpHfWkDtX6HxciFMNRCTBSoHFSjExXqRDl6YX68KgwgcNg
+	 FwDU3Oj2Zx6G9KSA2gKZZQ1BdFngrfamLb/t8L4tQR5TPZclrZkL9uY4JCCMEdFIi
+	 sQRWqf4fbusXIEMw3IRRbtawBB3TMJ74Gnh0s951gg6sCT97rmTI9Nm8494fj7Ofu
+	 oftCMWtlMsuCHy9Pf7UZSk5klEWVWHadVxHfOVQ08fONGoR9sDxHLLhc4w0QJZO9C
+	 JdNMuGXWQVSurF5gAA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.13]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M8Bvz-1tzs212Bvf-00F6Ig; Wed, 16
+ Apr 2025 17:28:46 +0200
+Message-ID: <d4516add-45ad-412a-b9bf-ee21afae3da9@web.de>
+Date: Wed, 16 Apr 2025 17:28:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <FR3P281MB1757AA98627383BC411A35F5CEBD2@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+To: linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
+ Mark Rutland <mark.rutland@arm.com>, Suzuki Poulouse
+ <suzuki.poulose@arm.com>, Will Deacon <will@kernel.org>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, Chenyuan Yang
+ <chenyuan0y@gmail.com>, Julia Lawall <julia.lawall@inria.fr>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] perf/thunderx2: Replace devm_kasprintf() call by
+ devm_kstrdup() in tx2_uncore_pmu_register()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:2orxDoFcZeWABEqYTXfmUT0qCBaa8P1eddz3r+RVltY4BcfGG6B
+ Vr+WUH6usiKVdV4MHUhDg192g6PXWqKIbBWMd+acibmZLPFGsrKY4kk2JxHDdQt/gajKUJV
+ q1hdqM9V8AUc8lmSAlAi33+XCFwpb783DKsXlfm1O68hmc7o63TQzS1ujdCySjdT/nslWNX
+ kuY2YuW6jWSOtTuWldSKA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:fW9PoLHPsDQ=;KP97CRwQzqftHcOiCzPhXPUMPS9
+ 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
 
-On Wed, Apr 16, 2025 at 02:40:50PM +0000, Jean-Baptiste Maneyrol wrote:
-> OK, understood.
-> 
-> But for this particular patch, do I need to stay consistent with the existing
-> driver by keeping the standard type or use kernel types and mix with standard
-> types?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 16 Apr 2025 17:15:54 +0200
 
-Yes, consistency with the existing code is priority, if the change is a fix.
-If it's a feature, better to clean up first (i.e. switch the types elsewhere)
-and then add a new feature.
+Use a devm_kstrdup() call instead of a devm_kasprintf() call
+in this function implementation because only a single string
+should be copied.
 
-> From: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Sent: Wednesday, April 16, 2025 15:06
-> To: Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>
-> On Wed, Apr 16, 2025 at 3:41 PM Jean-Baptiste Maneyrol
-> <Jean-Baptiste.Maneyrol@tdk.com> wrote:
-> >
-> > concerning usage of kernel types, my understanding was that we should
-> > conform to existing types usage in a driver. That's why I'm keeping the
-> > standard types instead of kernel ones. I could change them in the patch,
-> > but it would mix usage of both standard and kernel types.
-> >
-> > Another thing not related, by reading the coding style documentation I
-> > would think that for new driver we can use whatever we prefer between
-> > standard types and kernel types. Is it not the case?
-> 
-> It's not for the repositories Greg KH maintaining directly or indirectly:
-> https://urldefense.com/v3/__https://lore.kernel.org/all/20170411140919.GC4388@kroah.com/__;!!FtrhtPsWDhZ6tw!ACor8Q-WyU0CorzLpw0OtWqNk59Wn2Z_s7KKOZuNnglKBzN4jTqb3c6oea83KLER97bFxkEIgSl8_IcKHTxvaRKCUwVCP5wunvo$[lore[.]kernel[.]org]
+The source code was transformed by using the Coccinelle software.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/perf/thunderx2_pmu.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
+diff --git a/drivers/perf/thunderx2_pmu.c b/drivers/perf/thunderx2_pmu.c
+index 6ed4707bd6bb..f0d7d1f9948a 100644
+=2D-- a/drivers/perf/thunderx2_pmu.c
++++ b/drivers/perf/thunderx2_pmu.c
+@@ -736,9 +736,7 @@ static int tx2_uncore_pmu_register(
+ 		.capabilities	=3D PERF_PMU_CAP_NO_EXCLUDE,
+ 	};
+=20
+-	tx2_pmu->pmu.name =3D devm_kasprintf(dev, GFP_KERNEL,
+-			"%s", name);
+-
++	tx2_pmu->pmu.name =3D devm_kstrdup(dev, name, GFP_KERNEL);
+ 	return perf_pmu_register(&tx2_pmu->pmu, tx2_pmu->pmu.name, -1);
+ }
+=20
+=2D-=20
+2.49.0
 
 
