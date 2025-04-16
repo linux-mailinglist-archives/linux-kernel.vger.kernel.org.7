@@ -1,143 +1,187 @@
-Return-Path: <linux-kernel+bounces-607132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57BA7A8B854
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:06:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF4E7A8B866
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:09:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5091A445434
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 12:06:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93AAD7A54EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 12:08:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3500224A042;
-	Wed, 16 Apr 2025 12:06:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1296D24EF63;
+	Wed, 16 Apr 2025 12:06:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Uf1PAeeN"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="l+kio0Xd"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2054.outbound.protection.outlook.com [40.107.244.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014F12472B9;
-	Wed, 16 Apr 2025 12:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744805178; cv=none; b=mWjyJwAQRxuOJIppO+/E9QMSkDVOBnm3/tWZgtV1xHIiUp2l1fuSlcQUtwuPtlPoWfNwuUU1YXubC5n2+q5C9ELKzaWzkSRVviscVBmZFNp13KwAiHSqaL5RqVMnCzPNZuiklyvdx7EkL4InLJFYYboQAAo+dZJWGeh6vQfT+IQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744805178; c=relaxed/simple;
-	bh=z+35z4Xm7Qmu1+l6vMV68bBCRCqlu/kIyQ/IweF1fDE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lsXy/9vTYDK1NS0vCR6xlIRKFdssUBV/iRk8JXmQD85jeocKZ8beV7DbPgq5mYT6prA7ukDONX9++xQjRRdED4CQEtrFGjToJYzTadp6Jf0akMki1hLY+d9lFadDSPVopUIturITfyMhBOMvljPYk5L9taLV6y3Iw8iB6NJVNW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Uf1PAeeN; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=48rObYaeZ/USnSNxnjEIUdReTs2PvkcUzFPZ3od5ozQ=; b=Uf1PAeeNB7mtGRr9XeqT+lWOsk
-	tU/VlmKveq7vFIay9Q57fAfy2osB/m5R1soDdnon8DLivpYkDTVTN4JNGXBHfNH521M+lfQLHBuMv
-	th6fTqdKgseLY7FfLCKg5Gz/1l1WR3qZm5b53xVUgQD+DFQE2KYw/OzgerrpF0pmvjkQ=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1u51WY-009c9k-0K; Wed, 16 Apr 2025 14:05:50 +0200
-Date: Wed, 16 Apr 2025 14:05:49 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Peter Rosin <peda@axentia.se>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Wolfram Sang <wsa@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>
-Subject: Re: [PATCH 15/16] misc: lan966x_pci: Add dtso nodes in order to
- support SFPs
-Message-ID: <97cf068f-3770-4df9-a60a-30761ffcb03d@lunn.ch>
-References: <19f1a382-1b6b-42bd-a548-a1a5644c9a1b@lunn.ch>
- <20250408162603.02d6c3a1@bootlin.com>
- <D91CSNC07NYM.3KC467K0OZ4GG@bootlin.com>
- <c14dd5c6-2dae-4398-89a9-342e7a25bb30@lunn.ch>
- <D91XV1I4CY37.20T12FMZ5QLQ5@bootlin.com>
- <b1b33000-4c10-43cd-bcf4-d24fc73902b1@lunn.ch>
- <20250409161444.6158d388@windsurf>
- <c6257afe-36bb-46d8-8c22-da3b85028105@lunn.ch>
- <20250410084809.1829dc65@windsurf>
- <20250416111819.4fd7b364@bootlin.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B34F624EA85;
+	Wed, 16 Apr 2025 12:06:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744805200; cv=fail; b=SVKnpsLS2OFuJKAy2GjfatG4/FlIbZrw3l1Cmqurpss86JVo9kdkl4NSxg5q0vi2yUwsxEimT15d5chkXPjOb9jPNSbimPxyh3DpfY1hdhrQaHPuUNSRmFLGaZqyUf4JmO1B4MNVx2TJ7vCW44T+587ov96RB1QN9v4DskariNE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744805200; c=relaxed/simple;
+	bh=DzVgUQkHwmkilIqneQuH2avK65TrXIMYz2FYCfHesOQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ep1XWgvs6nvEe0WlE1D9rPFHK02SLwkh7OiNoD8ctGQRaIQDrdr8jXPTyH4908+yYByGSrwe40ghyh66tsk4SzS0vmewARqNwGAx0kNKuHAvgl1au5/kO/ar7fY1poBSgCi7xMaM0/tyiKgvyCScWTi+YNWyMxc7nmSbsXZchzg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=l+kio0Xd; arc=fail smtp.client-ip=40.107.244.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nCfwUGSbMweQBLqvu5BZffzd6M7YizOApCoqbSufVB6Nyo67skzf3AKE4Eh73gR6Ezpz9CkUhcgpjAqtPvwZBZhsfLnGo5wnpD/lWVKpNgaTQwk5pXkxgtO9GFrl7aMOwZMjPuyirglzao5XYWUHphsrCRsi/Httb+Q6ZEYseAYhVJOrnG6Snh8fqB+PRiUjM2AsgOj9dZ8gP/ftlVyvHYRavYT3g+Ux9hd5/Zu+I3OZskDKHdnfbb+1ZyPOlYxdA8/PfLvAeQLof6q1wIZHCa3WIAi9gATuEynPhAvuIiv8t7rM1KhzhBF5N1BK9uBuVdQ4oUus6NtWdCIFZzZP6Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nboUpHQADsVkYP6Yc+ILU63CARbrFLl+deONFhBcHdQ=;
+ b=MoZciMOnLqO+YoQ+H8ypDKzzRd5rsUvwcjmDxNN9rx7LfkLX8LbtXqhHbi64tHOFo8pJBKPZmjld9pe+5w2xy57WmL6sLKp4dY7z+VU8GLHIbjN2C2w0o3+/JGYu7VjjLBR27rVhLxg/aHhXywKXDTy0NsRxr8OHFd/OJcdXOerv8GFnZWhk/9kDC5BzESIFrpHJMhTSe1nua/Jxrop8TfxKxT+whrcvay6CXTN+OaHnzJE59AULbmoCK9+/wFyTJg2PjZaJQaj3uOY2urRGPuymU1xBomxQwr6rYcMVEVGcQj49abnvzuDh8obgXsbvW0nO6C6lr4nHBk8tmYRAfQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nboUpHQADsVkYP6Yc+ILU63CARbrFLl+deONFhBcHdQ=;
+ b=l+kio0XdeeRGN9xPQkR5W35BXyNyHBnjtPvJBwkcaTrtrFyxBZH1Hm0mYno4slCOT46xbFoPWoSCoK+Gme5+zdiQMXWTG/UWNOMnrftIZrrvtybnB3tJafiP8/BQnTG/E8qzjtgyh2gQXPawJMHESq5UNHUoy02TgVXA3l9msLM1ReF/FwovMG6qs5HyqKe46rnU60DJtfbi4t0h2aFyhVq/ecvg9DoZoq9/0CdiooyZ1r/taSF+v4tsD7cxjILyygjPtWE8r9Sc/dBnXjXihcBrwOswSNEbqbkBNTqOfKc96WMpLXph6SZsx6DQnJ9I28FFiRU9HvjFC744JZqeeA==
+Received: from BN0PR04CA0059.namprd04.prod.outlook.com (2603:10b6:408:e8::34)
+ by SA1PR12MB8947.namprd12.prod.outlook.com (2603:10b6:806:386::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.35; Wed, 16 Apr
+ 2025 12:06:35 +0000
+Received: from MN1PEPF0000F0E1.namprd04.prod.outlook.com
+ (2603:10b6:408:e8:cafe::53) by BN0PR04CA0059.outlook.office365.com
+ (2603:10b6:408:e8::34) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.15 via Frontend Transport; Wed,
+ 16 Apr 2025 12:06:35 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ MN1PEPF0000F0E1.mail.protection.outlook.com (10.167.242.39) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8655.12 via Frontend Transport; Wed, 16 Apr 2025 12:06:35 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 16 Apr
+ 2025 05:06:21 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 16 Apr
+ 2025 05:06:21 -0700
+Received: from build-shgarg-focal-20241118.internal (10.127.8.11) by
+ mail.nvidia.com (10.129.68.6) with Microsoft SMTP Server id 15.2.1544.14 via
+ Frontend Transport; Wed, 16 Apr 2025 05:06:21 -0700
+From: Shubhi Garg <shgarg@nvidia.com>
+To: <lee@kernel.org>, <alexandre.belloni@bootlin.com>,
+	<thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>
+CC: <shgarg@nvidia.com>
+Subject: [PATCH 0/5] Add NVIDIA VRS PSEQ support
+Date: Wed, 16 Apr 2025 12:06:14 +0000
+Message-ID: <20250416120619.483793-1-shgarg@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250416111819.4fd7b364@bootlin.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0E1:EE_|SA1PR12MB8947:EE_
+X-MS-Office365-Filtering-Correlation-Id: 02c1ea57-0d67-4ae4-8277-08dd7cdf2286
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?6EP9Jaq0W3/jkulIuAmP5e1rrwoJskME3eYM2I+h5RvfhmxjjwQYKh7olg1f?=
+ =?us-ascii?Q?GAbA29aiub/LyaF1xkQWbfe8L6af4aFiPn3hZS2Dqx4wJCBDTKrGfvIkV4pF?=
+ =?us-ascii?Q?RwjuhDKXVJWxe3d2gZioR5AI3m+ABNiUg0VhH8yJkrLf0dEXTXj7Vlkgglwg?=
+ =?us-ascii?Q?7ydLOfrYlmSKN2oSo6jpk1mqQ4usOitkuMtKT0WdR9XPnlbueG9OG/P45dwD?=
+ =?us-ascii?Q?41axUD/pM0TLCjFEVs2tAjBIheODi9aebEDrlz8WArkIhLKKmsXfA4xo9u/T?=
+ =?us-ascii?Q?BZ9TXO+giVjWA1QeL7JnktnypBHVZnVCuoLfIeHIZss+mgm7lJCO47YEwTeh?=
+ =?us-ascii?Q?Kn7enjPJzE3hVbivgXhpCvm0DjNSpeszLZC0wgrePylk0xWBqbDO3ciUU5e+?=
+ =?us-ascii?Q?0nxZNs/Xxvc5B4q1CLNkz2KTdW+JYWj4gO7GRW81dj3YjR0XKbXILElZUFBB?=
+ =?us-ascii?Q?pN984H+tuX3QdaMCfurj5Onq6nZgPBHRGww3I0/MMVhWzfnb1ZWvwNOHGDXD?=
+ =?us-ascii?Q?5GstgosY/2eRnKeLb2C+mgK6agjWRdQUeewPVX3hFB9dSjgQWiekOej9lth1?=
+ =?us-ascii?Q?IlVMs0w/a/pPM8Tnu8TT+eLjwqRQyKDpAwYh7WY/kv1fx988mhIkA1UcFyle?=
+ =?us-ascii?Q?fqSwSn57cjzaSULBso15nweYdwV6FyxI2HKoCLr+255Yjizj5ugky3uxWmfS?=
+ =?us-ascii?Q?MupXPObK+mNpKImLJgtLPTaZgAFyXBm6s/Xji+brlPnsVhDrfhFMI40ZQ3I/?=
+ =?us-ascii?Q?FUakaRYBp65W3cLFhz2XCmKs2X5yADAi6ULGwIiZQmQYgTHpccJAnxSl+V7V?=
+ =?us-ascii?Q?d2KVLAG30JNO5M89rvPwuQIgUQd6cy93J6j2Wrrv0WGuPI+KkCCwdCeHAE4/?=
+ =?us-ascii?Q?/i1dwFJYGg2VImyU8qLC7fX6n3WQy2DohEjX4AB9HCZ3IdIrHQq8zdegfN7g?=
+ =?us-ascii?Q?kwnxcldH95cW78uW9ASxcRnJlPXV8w0ft3zakzQSa9brf3U4r/epjvqb8PaN?=
+ =?us-ascii?Q?bQkU/E3DqpZNFMxEUrchqAL/zEHEu7wEeapqNwL8UpqHPNBr1/oqy1DkTu4Q?=
+ =?us-ascii?Q?VASjCGh5ThQE+hqjNLD1iB/Ehfvxhb1tKshM2E8N9u6Dg8qYPUOYeT2pYKC1?=
+ =?us-ascii?Q?g2pILpmjdSS4n88kdArQxk3shKVvCpmQNbfcamcT2spFyjeTB6n5Sj49T7WF?=
+ =?us-ascii?Q?zdtjESwvnWI7yPliWU09uzGUZFrqtra/jDaCNbZhPywKzXN1/70OK6k2TdE0?=
+ =?us-ascii?Q?Pw1eHKXbi+b0B96PtxRF1RGkgJAeUGgcTDSDdWTT+zeHs8mPPXeTE1plNjq3?=
+ =?us-ascii?Q?SwVnW5qbYg1yTUXZEKOAa8+U59+JVcQvvA2CMbqiTEj5trCsdvDejb1R0u2V?=
+ =?us-ascii?Q?ArFuu8P6IZsNsKOa25LdV2rDvRxwZjBlLEP9HldHYttIdXtu6s4TGZpeDf4+?=
+ =?us-ascii?Q?g+JwfMByItlqQbiwsg13npO0F8M+BTYkkrllkz13A6kN+j5M9RoF8NPyOzkn?=
+ =?us-ascii?Q?MN0tBeqEwxR2rGJhgF2RPykJ2MdT63RFQlqH?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Apr 2025 12:06:35.3395
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 02c1ea57-0d67-4ae4-8277-08dd7cdf2286
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MN1PEPF0000F0E1.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8947
 
-On Wed, Apr 16, 2025 at 11:18:19AM +0200, Herve Codina wrote:
-> Hi Thomas, Andrew,
-> 
-> On Thu, 10 Apr 2025 08:48:09 +0200
-> Thomas Petazzoni <thomas.petazzoni@bootlin.com> wrote:
-> 
-> > On Wed, 9 Apr 2025 17:03:45 +0200
-> > Andrew Lunn <andrew@lunn.ch> wrote:
-> > 
-> > > So it only supports a single .dtbo. In its current form it does not
-> > > scale to multiple .dtso files for multiple different boards built
-> > > around the PCIe chip.
-> > > 
-> > > At the moment, that is not really an issue, but when the second board
-> > > comes along, some refactoring will be needed.  
-> > 
-> > Indeed, but that's really an implementation detail. It doesn't change
-> > anything to the overall approach. The only thing that would have to
-> > change is how the driver gets the .dtbo. We could bundle several .dtbos
-> > in the driver, we could fall back to request_firmware(), etc.
-> > 
-> 
-> Not sure we need to split right now the existing dtso file nor rename it
-> even if it is updated in the series.
-> 
-> This could be done later when an other user of the LAN996x PCI chip is
-> there.
-> 
-> Doing something right now will probably need other modification when this
-> potential other user comes in. Indeed, depending on specificities of this
-> future user, what is done now could not match the need of this future user.
-> 
-> Any opinion?
+This patch series adds support for NVIDIA's Voltage Regulator Specification
+(VRS) Power Sequencer (PSEQ) controller. This controller includes a PSEQ
+hardware block, that manages power sequencing and voltage regulation for
+various components in the system. This controller also provides 32kHz RTC
+support with backup battery for system timing.
 
-I agree support for multiple .dtso can be done later.
+The series includes:
+- Device tree bindings for the VRS PSEQ controller
+- MFD driver to handle the core functionality
+- RTC driver for the PSEQ's real-time clock functionality
+- Device tree nodes for Tegra234 platforms
+- Configuration updates to enable the driver
 
-But i would do the split between the .dtsi file for the PCIe device,
-and the .dtso file for the board now. That is a pretty fundamental
-concept in Linux DT support.
+Shubhi Garg (5):
+  dt-bindings: mfd: add bindings for NVIDIA VRS PSEQ
+  arm64: tegra: Add device-tree node for NVVRS PSEQ
+  mfd: nvvrs: add NVVRS PSEQ MFD driver
+  rtc: nvvrs: add NVIDIA VRS PSEQ RTC device driver
+  arm64: defconfig: enable NVIDIA VRS PSEQ
 
-	Andrew
+ .../bindings/mfd/nvidia,vrs-pseq.yaml         |  61 ++
+ .../arm64/boot/dts/nvidia/tegra234-p3701.dtsi |  11 +
+ .../arm64/boot/dts/nvidia/tegra234-p3767.dtsi |  17 +
+ arch/arm64/configs/defconfig                  |   2 +
+ drivers/mfd/Kconfig                           |  12 +
+ drivers/mfd/Makefile                          |   1 +
+ drivers/mfd/nvidia-vrs-pseq.c                 | 279 +++++++++
+ drivers/rtc/Kconfig                           |  10 +
+ drivers/rtc/Makefile                          |   1 +
+ drivers/rtc/rtc-nvidia-vrs-pseq.c             | 559 ++++++++++++++++++
+ include/linux/mfd/nvidia-vrs-pseq.h           | 127 ++++
+ 11 files changed, 1080 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/nvidia,vrs-pseq.yaml
+ create mode 100644 drivers/mfd/nvidia-vrs-pseq.c
+ create mode 100644 drivers/rtc/rtc-nvidia-vrs-pseq.c
+ create mode 100644 include/linux/mfd/nvidia-vrs-pseq.h
+
+-- 
+2.25.1
+
 
