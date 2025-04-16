@@ -1,64 +1,65 @@
-Return-Path: <linux-kernel+bounces-607750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB5BCA90A46
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 19:39:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87DB1A90A4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 19:40:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83E1F7ADDB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 17:38:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6178444507C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 17:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E9EE218EBF;
-	Wed, 16 Apr 2025 17:37:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 116E8218EBF;
+	Wed, 16 Apr 2025 17:39:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n1uQgUBD"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="nd2o0HoK"
+Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5D618C32C
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 17:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866BF1DDC3E
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 17:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744825041; cv=none; b=LK/VokFqzg5O2FPcBMR/GNb8046thooJGnEXneaYtZWWqTm4/0XXTyYxlHMk6E/h0sphuhXHhlTLxuuwh0hMYOSc3vIt71cOBP/tim8Ur5NyUXQjaxZEPmxv7C4McpLLfVUWkdzrPSByjg3dBtDYDDmVyAjjZMvOqZoudWL+OMw=
+	t=1744825172; cv=none; b=Fe2VKfv10FxN/mBIig9AlrkKJn35i1kLAkooCtlHSFuRzPZ2NjwIFRZNi9S8KucT+ew000Q9UoFXbusBxysdk44ycKNgRp4VpEmBpQH+9irAHsevxnZh2Jbn0qDcyw7JmTj8qpCtonVeGL9BqleK8ZOjQLPAmS2dzHjXtBk8q/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744825041; c=relaxed/simple;
-	bh=LiA4Ew9/bslUQ0woQN9yhgqfWbuYxHGY2sxaYeyT8GU=;
+	s=arc-20240116; t=1744825172; c=relaxed/simple;
+	bh=BcCjvOgeeU0ATsNlaTQ94OdcTJ9s7OSEwfE4jWKYuxY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jn7bPwfe4Bk/i3X/qjdntkcIcStyDTZ+Dq3F31gqh11U/X0hFeX4eyIfp9YYNTHi30ntMp4pJ5HsfjXIgdi9GlCZJvUMqgapIbCZOpHjHcV5HeuYoa4iY7PnYoF1gl/K/5x5yT9J2u4RRY3g5eiYKD6enIbGBTgEl2bV5vDdJ14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n1uQgUBD; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744825040; x=1776361040;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=LiA4Ew9/bslUQ0woQN9yhgqfWbuYxHGY2sxaYeyT8GU=;
-  b=n1uQgUBDGiyOXi6D+aA5c+gQ3gjkdcOxAKuufUPpgkmrYasy0idJWzN7
-   xhcbrUc+tkjDcEUxYZB3Gun+jAzwtJtQdlPXVozv1XUZvNUW+0jbVVj8q
-   Hv7gQNQeb8MTpQAzOBlMW8LlRG1FmQQ2y8eb6xdioPtHWvEHBUBRWiRU2
-   To1jLMm2L1IeL4HD2tZe7HbmfCaZaIZDmlJhDU+I8p+iolb/V2iSI2L2b
-   FKHKIH02WYngdVUcIKXdyyhE+KziTSEcJNojmJNdFaEHaBmYokm/NJC+J
-   ri0Eb5O2AVnwnmzozpJVIMML6cERItqnmwvn5cZjUFvnFgLxmzSr6pltG
-   w==;
-X-CSE-ConnectionGUID: IjwehowNRPqAT+siKnHLUA==
-X-CSE-MsgGUID: BZ7qtOqeQv+FaqZkG53uww==
-X-IronPort-AV: E=McAfee;i="6700,10204,11405"; a="57051927"
-X-IronPort-AV: E=Sophos;i="6.15,216,1739865600"; 
-   d="scan'208";a="57051927"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 10:37:17 -0700
-X-CSE-ConnectionGUID: RMTCV4fjS/m5+n+uLolu6Q==
-X-CSE-MsgGUID: 5gbTEe3UR8eldM3FeRy2vA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,216,1739865600"; 
-   d="scan'208";a="131105676"
-Received: from spandruv-desk2.amr.corp.intel.com (HELO [10.124.223.6]) ([10.124.223.6])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 10:37:16 -0700
-Message-ID: <d30ab1d0-e09d-41ba-b98d-9b7d039f6d80@intel.com>
-Date: Wed, 16 Apr 2025 10:37:15 -0700
+	 In-Reply-To:Content-Type; b=V60q4TLMFLw+hOKpDo/VZ3h+No3KtXx5XQRBN7EGrKL8Je1vZ7iWu98pCI1w+HhzEVKsMO7Ikamkd21NaeATFtsjpVdhaX7i7gkaL7uRAD0HFUBOBoKoSfM+YMGV7qpbRruqWzYtbzrw8JYzjEAUTjfGVE2M+RabUAugkLQhoPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=nd2o0HoK; arc=none smtp.client-ip=35.89.44.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-6008a.ext.cloudfilter.net ([10.0.30.227])
+	by cmsmtp with ESMTPS
+	id 53NOuOphiAfjw56huuJObk; Wed, 16 Apr 2025 17:37:54 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id 56htuJtfeM7Yo56htusH4e; Wed, 16 Apr 2025 17:37:53 +0000
+X-Authority-Analysis: v=2.4 cv=Nejg1XD4 c=1 sm=1 tr=0 ts=67ffeaf1
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=B3fuDwYyW55wTQKIj88FGw==:17
+ a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
+ a=BLRy5mX9rXzc9QvDkdkA:9 a=QEXdDO2ut3YA:10 a=Xt_RvD8W3m28Mn_h3AK8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ar/aweR9FQh73z0BhLDPfxHbNifaEbR7MIlAP92gXkM=; b=nd2o0HoKjdABzlrSzyrYVlzbki
+	bWSFjcR+oUssgRLC7gcx3jcuq6+zXAwEa5YwjihZX+pVTIMl3ItGz+7xmWpb1ZnomucSI165sPX/e
+	Jr3xnLlOSNszyI5iBVeYkxbvrZDyuSl+bJsa+ifwfmbrHctj5/zwA/1QPCQETHUfbMEeT2W2Q8Ahs
+	Ux2qokNcMfM+gg6HlfZgmTwOzQ+1ZWQwQ40W3nt/GSFPlN70JBOtcdGniV933k/YnqnT+pYi3+rpy
+	AR8rk2SlnPcx3Ey7OitoOE8VMd3sZEMLz5u2mNlvfwH3HpHx24jAnIhUzQxTeLEvy1LLNyGWFTeBd
+	XYDVHgfQ==;
+Received: from [201.172.174.147] (port=53400 helo=[192.168.15.14])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1u56hs-00000000pNK-1je2;
+	Wed, 16 Apr 2025 12:37:53 -0500
+Message-ID: <658d0535-6842-4515-a888-217cb375968c@embeddedor.com>
+Date: Wed, 16 Apr 2025 11:37:40 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,145 +67,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/6] x86/microcode/intel: Support mailbox transfer
-To: "Chang S. Bae" <chang.seok.bae@intel.com>, Chao Gao <chao.gao@intel.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
- colinmitchell@google.com
-References: <20250320234104.8288-1-chang.seok.bae@intel.com>
- <20250409232713.4536-1-chang.seok.bae@intel.com>
- <20250409232713.4536-6-chang.seok.bae@intel.com> <Z/+7O6pYQ8FkD+Xj@intel.com>
- <166b29f2-a178-4d60-8f5d-218bfd7b51ac@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH] overflow: Clarify expectations for getting DEFINE_FLEX
+ variable sizes
+To: Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250416172911.work.854-kees@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <166b29f2-a178-4d60-8f5d-218bfd7b51ac@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <20250416172911.work.854-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.172.174.147
+X-Source-L: No
+X-Exim-ID: 1u56hs-00000000pNK-1je2
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.15.14]) [201.172.174.147]:53400
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 1
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfK4lVgmTAoSlgLgMe3pLDJQ4QntHYQ+BRi7QE9seXVKBuNq6yQkmhAYJYNteY2JpZTkgejNgdqaAUa62lZWynHJPwbYIGd738dHWg4MAL1J3Xqroze2Q
+ wcpWnBbSfTwMbVxIc7zmxOejf/Hi8egnL4gHcy/icPcgSrSZv6Sxggs0STzmA7pgwglyVLY8khYv0qGl5ZepBM5YhPrl0DbBUWjzavL9QEVo/owNTZg3Iw5I
 
-On 4/16/25 10:22, Chang S. Bae wrote:
-> On 4/16/2025 7:14 AM, Chao Gao wrote:
->>> +/*
->>> + * Wait for the hardware to complete a transaction.
->>> + * Return true on success, false on failure.
->>> + */
->>> +static bool wait_for_transaction(struct staging_state *ss)
->>> +{
->>> +    u32 timeout, status;
->>> +
->>> +    /* Allow time for hardware to complete the operation: */
->>> +    for (timeout = 0; timeout < MBOX_XACTION_TIMEOUT_MS; timeout++) {
->>> +        msleep(1);
->>> +
->>> +        status = readl(ss->mmio_base + MBOX_STATUS_OFFSET);
->>> +        /* Break out early if the hardware is ready: */
->>> +        if (status & MASK_MBOX_STATUS_READY)
->>> +            break;
->>
->> Shouldn't we exit the loop if the MASK_MBOX_STATUS_ERROR is set, or is
->> the
->> ERROR bit always set in conjunction with the READY bit?
->>
->>> +    }
->>> +
->>> +    status = readl(ss->mmio_base + MBOX_STATUS_OFFSET);
->>
->> I still think this read is not needed.
+
+
+On 16/04/25 11:29, Kees Cook wrote:
+> Mention the use of __member_size() for DEFINE_FLEX variables as a hint
+> for getting at the compile-time size of the resulting flexible array
+> member.
 > 
-> No, if it times out, it could exit without having read the status.
+> Signed-off-by: Kees Cook <kees@kernel.org>
 
-Can it? There are only two ways out of the loop: the explicit break and
-the implicit break from the 'timeout' check. Both happen at the "end" of
-the loop, unless the timeout< check failed up front:
+Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 
-	for (timeout = 0; timeout < MBOX_XACTION_TIMEOUT_MS; timeout++){
-		msleep(1);
-		status = readl(ss->mmio_base + MBOX_STATUS_OFFSET);
-		if (status & MASK_MBOX_STATUS_READY)
-			break;
-	}
+Thanks!
+--
+Gustavo
 
-> But this is a slow path — instead of trying to save a few cycles, I
-> wanted to present the logic more clearly:
+> ---
+> Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+> Cc: linux-hardening@vger.kernel.org
+> ---
+>   include/linux/overflow.h | 2 ++
+>   1 file changed, 2 insertions(+)
 > 
->   * Give the hardware enough time, but not forever.
->     * Oh, we don't need to wait anymore if it's done
-> 
->   * After waiting, check the status and handle it properly.
-> 
-> Isn’t it clearer to read the status after the wait, right before the
-> error handling?
+> diff --git a/include/linux/overflow.h b/include/linux/overflow.h
+> index 0c7e3dcfe867..6ee67c20b575 100644
+> --- a/include/linux/overflow.h
+> +++ b/include/linux/overflow.h
+> @@ -419,6 +419,7 @@ static inline size_t __must_check size_sub(size_t minuend, size_t subtrahend)
+>    * Define a zeroed, on-stack, instance of @type structure with a trailing
+>    * flexible array member.
+>    * Use __struct_size(@name) to get compile-time size of it afterwards.
+> + * Use __member_size(@name->member) to get compile-time size of @name members.
+>    */
+>   #define DEFINE_RAW_FLEX(type, name, member, count)	\
+>   	_DEFINE_FLEX(type, name, member, count, = {})
+> @@ -436,6 +437,7 @@ static inline size_t __must_check size_sub(size_t minuend, size_t subtrahend)
+>    * Define a zeroed, on-stack, instance of @TYPE structure with a trailing
+>    * flexible array member.
+>    * Use __struct_size(@NAME) to get compile-time size of it afterwards.
+> + * Use __member_size(@NAME->member) to get compile-time size of @NAME members.
+>    */
+>   #define DEFINE_FLEX(TYPE, NAME, MEMBER, COUNTER, COUNT)	\
+>   	_DEFINE_FLEX(TYPE, NAME, MEMBER, COUNT, = { .obj.COUNTER = COUNT, })
 
-It's simpler to read the code the way you have it. You don't have to
-consider if 'status' could be uninitialized. It makes the "timeout loop"
-*COMPLETELY* independent from the rest of the function. It could be:
-
-foo()
-{
-	spin_until_ready();
-
-	status = readl(ss->mmio_base + MBOX_STATUS_OFFSET);
-
-	...
-}
-
-for example.
-
-It's less likely to break, too. Let's say someone added a new break:
-
-	for (timeout = 0; timeout < MBOX_XACTION_TIMEOUT_MS; timeout++){
-+		if (some_other_condition());
-+			break;
-		msleep(1);
-		status = readl(ss->mmio_base + MBOX_STATUS_OFFSET);
-		if (status & MASK_MBOX_STATUS_READY)
-			break;
-	}
-
-you'd have a bug on your hands.
-
-I'm fine with the way you have it. I probably would have written it that
-way too.
 
