@@ -1,109 +1,188 @@
-Return-Path: <linux-kernel+bounces-607762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABB83A90A6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 19:48:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AF76A90B1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:14:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3AF65A1BEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 17:48:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8463189351E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:14:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08BB32192FA;
-	Wed, 16 Apr 2025 17:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43927221F29;
+	Wed, 16 Apr 2025 18:12:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ke4aSG9l"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="YbwT+bgR"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F9814B950;
-	Wed, 16 Apr 2025 17:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E73C422155E;
+	Wed, 16 Apr 2025 18:12:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744825702; cv=none; b=QiER7k6vhUwWTI2jDJIqqBKg1+q70Ka1HR58RHFptZwXu2fPVWXYbpFHY9VMc8VQbGEI6cS3fup8ovzQqfNXuwwnqsOEdF1Yx3ShAMf5unv60V0wRaOGDVAiEFkUqFv2hEJm2GkkixLkqCp7McE3qND4JMKUGgEFh7d+UgG5vqI=
+	t=1744827177; cv=none; b=WvMYoOVzQhoEwGyVYlw6oGwtFrSWtqhKZ/obYMqoteiBzOGzMMEC14Jq/ricKyfypHvmCfV/pGbYE1CvpTN5DKizAmQ2LWKHrztsotVN28777m/B61x4jwFte5H24rs1uFVfien9j7A5Z78vVKUXaLFUpEhrGEDYzaFFV+9vcck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744825702; c=relaxed/simple;
-	bh=K01BARh6HijRfnPdurMe8L58/LzFkiQR5RkCkKbib+U=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SH/47vUya5vj7azHr0n7yjRHu1IQt8RaCs74y+uqGrbhItrGeGYLAwUgHnTtWusIDust5J+uKtHlYxN0vcOGN5pkFDsfUJuyJcBvRdAQhtHVt7QptfOj1QXcj+0rcFWqlBglTfVNseG9O9uRnOs3oeUogvbWjEjVChwvLm6eU4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ke4aSG9l; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744825701; x=1776361701;
-  h=date:from:to:subject:message-id:references:mime-version:
-   in-reply-to;
-  bh=K01BARh6HijRfnPdurMe8L58/LzFkiQR5RkCkKbib+U=;
-  b=Ke4aSG9lI9T0AYgKxlMv9sTtwB/a/ZfDFlrnIPWpca4IbDf+ZwGwsXVi
-   yM+JEOQNgEqj1fzQzSlkFgbh1ywgnQWS2DoKfHPJl7QTIBDPXroANeicJ
-   B5IzvY62zGjIk2fOoVT+kjY9FgQpj59+QcAoHcIcdpHWjRurUbUjwjPSM
-   M9tzhw8H1w2/VekIW05ECoN6rQGpXfi9hgFx2U5jKZLlCxEJg067QMzo2
-   19ea2LD7mBj5FLKa65DdlZBj/QZZ7chVjv6OWfeQrHerfXAd/tdhEccLO
-   J1lDob6svI68hWjJoG+UmujD2pa1NkCgr0ILBGcJJ59OEesWNC05cdFHO
-   Q==;
-X-CSE-ConnectionGUID: sQ9lVC+HRHibdbYbjQrodA==
-X-CSE-MsgGUID: M7MD8GztSdOLYok6cd2DEQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11405"; a="57029321"
-X-IronPort-AV: E=Sophos;i="6.15,216,1739865600"; 
-   d="scan'208";a="57029321"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 10:48:20 -0700
-X-CSE-ConnectionGUID: INewvuJ4Qp6+WveIGxtopQ==
-X-CSE-MsgGUID: 3/VcZldXSeOxWjFwqIBbFw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,216,1739865600"; 
-   d="scan'208";a="167736133"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 10:48:18 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1u56rv-0000000CvgL-0iO1;
-	Wed, 16 Apr 2025 20:48:15 +0300
-Date: Wed, 16 Apr 2025 20:48:14 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Jai Luthra <jai.luthra@ideasonboard.com>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: Re: [PATCH v5 0/7] i2c: core: Move client towards fwnode
-Message-ID: <Z__tXkgOhvJUIYXq@smile.fi.intel.com>
-References: <20250416070409.1867862-1-andriy.shevchenko@linux.intel.com>
- <Z__Wlri8-tjuctsa@shikoro>
+	s=arc-20240116; t=1744827177; c=relaxed/simple;
+	bh=iQKshVydollss9hMFH/JZu600SfS0P7cj3iiIysqwAQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RY8DpAFcuCAx26Pz1fPXtMMaAoVcCv+cG3FGpv8KBKIE5cPka0KFj0D4fYDq2KcETbZczdwMZLshX3gaahUV61Q8+a3F7hFvPYWlisYG1aOMCyHt1Gu98eiWBAG7aPqJiFMmRIPJXri+TunrLBIsJOZUS2sPBobxKFfkYxzBr+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=YbwT+bgR; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 8450E662715;
+	Wed, 16 Apr 2025 20:12:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1744827173;
+	bh=iQKshVydollss9hMFH/JZu600SfS0P7cj3iiIysqwAQ=;
+	h=From:Subject:Date;
+	b=YbwT+bgRt/bKqpCoFLZViC9RyILIuDQLDJaTHohcgWXixwvNydqMC3dRQh4Re05ej
+	 Pm9RM+J/cMiK1yC6gzaJNCsK39BTAveURC5xedn2q7xnGFLIcOco335vFv9wH1FfMH
+	 SGAcJ3RMi2uewl1Al6EEOvI3gCjb3ZbhtdGjwUT0PTJlWIMc0on9rejifzmL4CP7Ln
+	 QstDDHaMTUFGryCd27t55PrhSYdpAGtMtEsSl4D2rUV1yypF46PVzR2E89r0bqMr07
+	 aPl7+mGCL8/Hm07ghtYbOokJsUd87en2zDxkROacjHMjHj/08lvleS+KZ6gfkZKlLV
+	 a3Iydd89oX0Xg==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Morten Rasmussen <morten.rasmussen@arm.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+ Pierre Gondois <pierre.gondois@arm.com>,
+ Christian Loehle <christian.loehle@arm.com>
+Subject:
+ [RFT][PATCH v1 1/8] cpufreq/sched: schedutil: Add helper for governor checks
+Date: Wed, 16 Apr 2025 19:48:16 +0200
+Message-ID: <10640940.nUPlyArG6x@rjwysocki.net>
+In-Reply-To: <3344336.aeNJFYEL58@rjwysocki.net>
+References: <3344336.aeNJFYEL58@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z__Wlri8-tjuctsa@shikoro>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvdejtdehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepuddupdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehsrhhinhhivhgrshdrphgrnhgurhhuvhgruggrsehlihhnuhigrdh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=11 Fuz1=11 Fuz2=11
 
-On Wed, Apr 16, 2025 at 06:11:02PM +0200, Wolfram Sang wrote:
-> On Wed, Apr 16, 2025 at 10:01:30AM +0300, Andy Shevchenko wrote:
-> > The struct i2c_board_info has of_node and fwnode members. This is quite
-> > confusing as they are of the same semantics and it's tend to have an issue
-> > if user assigns both. Luckily there is only a single driver that does this
-> > and fix is provided in the last patch. Nevertheless the series moves
-> > the client handling code to use fwnode and deprecates the of_node member
-> > in the respective documentation.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-...
+Add a helper for checking if schedutil is the current governor for
+a given cpufreq policy and use it in sched_is_eas_possible() to avoid
+accessing cpufreq policy internals directly from there.
 
-> Works at least on my OF-based platform. Let's go CI.
-> 
-> Applied to for-next, thanks!
-Thank you!
+No intentional functional impact.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+
+v0.3 -> v1
+     * Change the name of the new function to sugov_is_governor().
+
+This patch is regarded as a cleanup for 6.16.
+
+---
+ include/linux/cpufreq.h          |    9 +++++++++
+ kernel/sched/cpufreq_schedutil.c |    9 +++++++--
+ kernel/sched/sched.h             |    2 --
+ kernel/sched/topology.c          |    6 +++---
+ 4 files changed, 19 insertions(+), 7 deletions(-)
+
+--- a/include/linux/cpufreq.h
++++ b/include/linux/cpufreq.h
+@@ -650,6 +650,15 @@
+ struct cpufreq_governor *cpufreq_default_governor(void);
+ struct cpufreq_governor *cpufreq_fallback_governor(void);
+ 
++#ifdef CONFIG_CPU_FREQ_GOV_SCHEDUTIL
++bool sugov_is_governor(struct cpufreq_policy *policy);
++#else
++static inline bool sugov_is_governor(struct cpufreq_policy *policy)
++{
++	return false;
++}
++#endif
++
+ static inline void cpufreq_policy_apply_limits(struct cpufreq_policy *policy)
+ {
+ 	if (policy->max < policy->cur)
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -630,7 +630,7 @@
+ 
+ /********************** cpufreq governor interface *********************/
+ 
+-struct cpufreq_governor schedutil_gov;
++static struct cpufreq_governor schedutil_gov;
+ 
+ static struct sugov_policy *sugov_policy_alloc(struct cpufreq_policy *policy)
+ {
+@@ -909,7 +909,7 @@
+ 	WRITE_ONCE(sg_policy->limits_changed, true);
+ }
+ 
+-struct cpufreq_governor schedutil_gov = {
++static struct cpufreq_governor schedutil_gov = {
+ 	.name			= "schedutil",
+ 	.owner			= THIS_MODULE,
+ 	.flags			= CPUFREQ_GOV_DYNAMIC_SWITCHING,
+@@ -927,4 +927,9 @@
+ }
+ #endif
+ 
++bool sugov_is_governor(struct cpufreq_policy *policy)
++{
++	return policy->governor == &schedutil_gov;
++}
++
+ cpufreq_governor_init(schedutil_gov);
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -3509,8 +3509,6 @@
+ 	return static_branch_unlikely(&sched_energy_present);
+ }
+ 
+-extern struct cpufreq_governor schedutil_gov;
+-
+ #else /* ! (CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL) */
+ 
+ #define perf_domain_span(pd) NULL
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -213,7 +213,7 @@
+ {
+ 	bool any_asym_capacity = false;
+ 	struct cpufreq_policy *policy;
+-	struct cpufreq_governor *gov;
++	bool policy_is_ready;
+ 	int i;
+ 
+ 	/* EAS is enabled for asymmetric CPU capacity topologies. */
+@@ -258,9 +258,9 @@
+ 			}
+ 			return false;
+ 		}
+-		gov = policy->governor;
++		policy_is_ready = sugov_is_governor(policy);
+ 		cpufreq_cpu_put(policy);
+-		if (gov != &schedutil_gov) {
++		if (!policy_is_ready) {
+ 			if (sched_debug()) {
+ 				pr_info("rd %*pbl: Checking EAS, schedutil is mandatory\n",
+ 					cpumask_pr_args(cpu_mask));
+
 
 
 
