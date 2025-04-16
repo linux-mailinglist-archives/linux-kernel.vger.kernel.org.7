@@ -1,163 +1,312 @@
-Return-Path: <linux-kernel+bounces-607476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97844A906CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:44:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1D96A906F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:50:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D885E179104
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:44:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E0D51896D39
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C75ED2046B3;
-	Wed, 16 Apr 2025 14:43:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 894D71FF7B4;
+	Wed, 16 Apr 2025 14:50:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="A/K4V5qM"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ubkYjl5e"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F46120408A
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 14:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E6F1FFC62
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 14:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744814589; cv=none; b=GOY1KJRnB3MG82OVx6hvpDL6M8Q0esJGmYM6VLAuj4fXK4u8lwJbamG0IAEJdpkbNqD4Q1816PJLUZb0LRFf9ldH277t+VPEr9VIWmKd7GiWFZZLzH//5OITId6BaUtcwQE51GdFYpHKS8lc8ER/8T4XCkcsEZH3uOu0CKFrGUk=
+	t=1744815002; cv=none; b=Jav+RMjQ5x8Q5stliAJPPfgg6+V/B/7zrsROEkfIY/grGMyZ8TPXP4KLUpOfyXLG1B1JNDalpADfn5WcmyYVjONU98UDUHJwjW8jJ8OXVaWDoC+Ni70D53zwjkeH4OkZUx0HngliUsOhzVHJt1e8gvKJtmq7EhcKGelQU9L2xaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744814589; c=relaxed/simple;
-	bh=E6t2wqmmdFRlHcAciWfp+a0sirqkJIVlwFk9TXz9k3g=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=NJCiwwa4C7rh6nrpWZYDZnHJSo1aWM/cj2rkycBkx+G+iBDVO8ZbaXXA6M2duGahCiVW1IhbwmPM1AXkrv+HbyrXLga3b+mKy30YkKG+t0JyRyQYH3o897HSfByEqZzRf7iaW+QKYEq8VYQPcCvGjVGsUamC0UAbfbSz0bem4LA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=A/K4V5qM; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3d6e11cd7e2so50497425ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 07:43:05 -0700 (PDT)
+	s=arc-20240116; t=1744815002; c=relaxed/simple;
+	bh=vamw0maEHaBukVhssMS+S6Gwg15K722frOBUN1+Eaec=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=uvVXeISwPslAoMJCSfsuWZMJG9/T3Jporjw4humGld+kA6yOogxNQ3yGPZ5EI2q7/r2++aoMbieFbJmgn8HVc6VuFYkHz0km+9o8LRmcIBiG6mQmdMZgdg6BH17Ct5Jf64B9VhH45TsXWra1/tBSIdOLFHTH9BiRfk1Cy8jArpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--guanyulin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ubkYjl5e; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--guanyulin.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-736fff82264so721876b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 07:50:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1744814585; x=1745419385; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=WMm6d3jVPnnWoSD2RLZiFQFOhLAPPJVL4Xw7hd2A1OM=;
-        b=A/K4V5qMmW+xxpaRBowCwpan6aJGSx5InlIjAqVRfgX/HHna+i7IO8W5S9b8IHepPl
-         sbP5DTLNocxPCp74AoehJuLP9fZPVxMfIJSoNUxH/0egS4mkC04euoDlkFd2DyYR7Qda
-         8RliMNPS/7umdk2C1AMuFtlj+YWsY4ePjUWYjkmFWFfrBXRDyc54gTF1t5Nfr40YzfDJ
-         VcuMcgqIhtX5Y40nN/11Z5hxqAbfPkRSLIMgrb1POzvs9i94pzPcfHE1kLiiVN7PLPB5
-         7t6pErgQY4VXo7DDT48amLLU7pHUQw32NeCaXs10kXEwJuk/mzIHrqX2AdgIV2o7pX2o
-         m50A==
+        d=google.com; s=20230601; t=1744815000; x=1745419800; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7zUjS2x82QyAbbEFyP3zEMnOERceY+liurHl5RmB4q8=;
+        b=ubkYjl5edCinKiSiDEnXN6QiG+Yed71AtQM9UQ7dsL8HN0BVwDTLe5ZjFkrTC4kOkK
+         gD4VJjJfFxH0ymSUyxBTY+rybGRIeo/k7yfE8KX2OZfhlHNBH9QpsJQdAe5G1KsbL/Mi
+         3yxpDfyWVWq/iYmwyZLdlaZHqej8mBho8NROfWX5jj61o6D3+Hqgxo3n6EOlxzGHyLgc
+         LWBiYe+wbJjjQV71NlfJ2eX6I+GqGyKPCPYm6vIBmyHztuFrnrozHcaV4LRrM/ey5jPn
+         z111ymyLwG/XOYvJpPCReNKYClk/QXIAHloCEE15z0S5vSaE9D1rkVJtsS7fLkmQbmUY
+         kagA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744814585; x=1745419385;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WMm6d3jVPnnWoSD2RLZiFQFOhLAPPJVL4Xw7hd2A1OM=;
-        b=WMNnpWuQtcxXiY3oBSP+V0g02RD8MtGa91j9hzrShaVy3DJLLXVHAPwwiBookd9T6K
-         iBieiRjSWxFvzd7EKfWazMLCIQSBnXHhxx+eusQHJ4RhPAq+D5+/YZrkL/MrYcgz2LIK
-         gY4tCDtOooINUugF8r7IJa/Dxz7N6u2QYVBhoyINfbW1a0eLdmgIK75zMWsUSlFYfh01
-         fOyM/hxcHbp0QWUT7xC1lddv8J9BvDFf0iVCnf8iaIKetl8ub8FHzbRIAXqCf9xkZl/g
-         YKkKdElDdGsDmUiO6xj9SPhSztf2rYt2D2HBIM8h5VWmtzMgy4TTKwWfiWrfasL6Ny+T
-         GivQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUVXkdGtXMO+IeMPVv0QtAfMLZi6u0wOuWOKmPvMgkgMhL0TTyz0QejS4DVLn6PHKubcBMe7tW9tn2Yrvw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySgECgbkH0EjU1it5bbtX7qkcLj9Mk25U0zFdc3YgbJtGaGlrl
-	KINZOmz8DCUKQcqwUDl0m6petE+t3a292IXVJ/Q+2PO2toF6XFqnmLdY+rzeYlQ=
-X-Gm-Gg: ASbGncuIMkVpQHcf8G9iwE4+lpogkEltP21Lwn8QtO3tmeHmFsoGOKJOlMW9jZUSWr1
-	xNJuSLJ4OoXlcapKf0gvIVZwQLZI3cCc6YmYzvRDrVkeOasoLIw3spir2gH7EN18RA5db4bI4QB
-	CTp69aO8bPxBhGUIVJD80WQWN12b0sg4LW0Ga01yEk/0AO2vX8YewYys8rY9BEJ+u/jctbx8NOx
-	/DVPemYzjIDDAYsQ4F3O5xh4Yz0NGR+pd37yOLeID2DT7uU3cNbfoDGC/QqD9ohbcI1CG+Yok9J
-	SqH6aS67Ul+h3cooFO6pzqgbxZweiakdyH6vKIWAUuyIgpY=
-X-Google-Smtp-Source: AGHT+IGlvN7JP53zjNxCtaMyuGDYZA5EaC4ATTfHMLn7dUs7YCas0nBrZh0gvhk83EKFLBCxa+WxPQ==
-X-Received: by 2002:a05:6e02:1d84:b0:3d5:eb14:9c85 with SMTP id e9e14a558f8ab-3d815b10ce6mr17959305ab.6.1744814584887;
-        Wed, 16 Apr 2025 07:43:04 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d7dba854f8sm38539175ab.21.2025.04.16.07.43.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Apr 2025 07:43:04 -0700 (PDT)
-Message-ID: <ee2850a5-6269-48c3-a843-4d87c9e107f8@kernel.dk>
-Date: Wed, 16 Apr 2025 08:43:03 -0600
+        d=1e100.net; s=20230601; t=1744815000; x=1745419800;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7zUjS2x82QyAbbEFyP3zEMnOERceY+liurHl5RmB4q8=;
+        b=I4BqJVSBAO248ieSqQ/DAXsl3xAWjQDPIqs9SQ9mPCKWiU2s+TgkugwWPqlTHdHsmO
+         V74e2TUU2evS4qyL4EBQ7EzZ5NzYxqeKXpUrV0rqXrLj4+ekAOmAcxBEX2r7mo7RaJNZ
+         5XEz6vwYajSe8k1mGPaoHPDkEB5ru7Lvjv3YnLGp5Pt9MvC5oZOh6uSvVfOziQxuwi9N
+         6EgRmjs6Ch3anHlem/+aAQ0B5zi9BhJAiirnmf97s6da26eTvmAgGDUeUI7SfnefaW28
+         CKFwFOPB0SNc51Hrkwtt4B52rVqSc8RBYe7LcpSC4AwcTNloFPuzAhKOJXOqHLlI+KwI
+         dDCg==
+X-Forwarded-Encrypted: i=1; AJvYcCVLA2ERk1cs6rL6K8j90sJo9pcyGtAJxu+QzjF+ZyQk7MHPcds5MGCRJKSu37BJMNp278P7okyAJloxshk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxi7CvI0xBGh+STW79Z3L6gcjh/OwDYuE45dEPqapasikiQfGjL
+	B5mBfEB+x/Vf58B6cGYN0KWAsKLSD3iKF5oN1ysZ3/z8RpUEglDaHHP6yNipiIjDfGoUqc23Pbo
+	JxoXtnQDLXJHlKw==
+X-Google-Smtp-Source: AGHT+IHO9p0R6vx/xasgcNdYKoGnU97x1A00K9+39lodTTl67acuMpglei7UlMT7MGYETEDcubAg3m4QWvN/Hg4=
+X-Received: from pfih17.prod.google.com ([2002:a05:6a00:2191:b0:736:a134:94ad])
+ (user=guanyulin job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a00:3a96:b0:736:aea8:c9b7 with SMTP id d2e1a72fcca58-73c26d17aa0mr3050071b3a.2.1744815000385;
+ Wed, 16 Apr 2025 07:50:00 -0700 (PDT)
+Date: Wed, 16 Apr 2025 14:43:04 +0000
+In-Reply-To: <20250416144917.16822-1-guanyulin@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring/rsrc: send exact nr_segs for fixed buffer
-From: Jens Axboe <axboe@kernel.dk>
-To: Nitesh Shetty <nj.shetty@samsung.com>,
- Pavel Begunkov <asml.silence@gmail.com>
-Cc: gost.dev@samsung.com, nitheshshetty@gmail.com, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <CGME20250416055250epcas5p25fa8223a1bfeea5583ad8ba88c881a05@epcas5p2.samsung.com>
- <20250416054413.10431-1-nj.shetty@samsung.com>
- <4ed32b40-47ee-43f8-b3e3-88fdc6ca60fa@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <4ed32b40-47ee-43f8-b3e3-88fdc6ca60fa@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250416144917.16822-1-guanyulin@google.com>
+X-Mailer: git-send-email 2.49.0.604.gff1f9ca942-goog
+Message-ID: <20250416144917.16822-5-guanyulin@google.com>
+Subject: [PATCH v12 4/4] usb: host: enable USB offload during system sleep
+From: Guan-Yu Lin <guanyulin@google.com>
+To: gregkh@linuxfoundation.org, mathias.nyman@intel.com, 
+	stern@rowland.harvard.edu, sumit.garg@kernel.org, gargaditya08@live.com, 
+	kekrby@gmail.com, jeff.johnson@oss.qualcomm.com, quic_zijuhu@quicinc.com, 
+	andriy.shevchenko@linux.intel.com, ben@decadent.org.uk, broonie@kernel.org, 
+	quic_wcheng@quicinc.com
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Guan-Yu Lin <guanyulin@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 4/16/25 8:19 AM, Jens Axboe wrote:
-> On 4/15/25 11:44 PM, Nitesh Shetty wrote:
->> Sending exact nr_segs, avoids bio split check and processing in
->> block layer, which takes around 5%[1] of overall CPU utilization.
->>
->> In our setup, we see overall improvement of IOPS from 7.15M to 7.65M [2]
->> and 5% less CPU utilization.
->>
->> [1]
->>      3.52%  io_uring         [kernel.kallsyms]     [k] bio_split_rw_at
->>      1.42%  io_uring         [kernel.kallsyms]     [k] bio_split_rw
->>      0.62%  io_uring         [kernel.kallsyms]     [k] bio_submit_split
->>
->> [2]
->> sudo taskset -c 0,1 ./t/io_uring -b512 -d128 -c32 -s32 -p1 -F1 -B1 -n2
->> -r4 /dev/nvme0n1 /dev/nvme1n1
-> 
-> This must be a regression, do you know which block/io_uring side commit
-> caused the splits to be done for fixed buffers?
-> 
->> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
->> ---
->>  io_uring/rsrc.c | 3 +++
->>  1 file changed, 3 insertions(+)
->>
->> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
->> index b36c8825550e..6fd3a4a85a9c 100644
->> --- a/io_uring/rsrc.c
->> +++ b/io_uring/rsrc.c
->> @@ -1096,6 +1096,9 @@ static int io_import_fixed(int ddir, struct iov_iter *iter,
->>  			iter->iov_offset = offset & ((1UL << imu->folio_shift) - 1);
->>  		}
->>  	}
->> +	iter->nr_segs = (iter->bvec->bv_offset + iter->iov_offset +
->> +		iter->count + ((1UL << imu->folio_shift) - 1)) /
->> +		(1UL << imu->folio_shift);
-> 
-> 	iter->nr_segs = (iter->bvec->bv_offset + iter->iov_offset +
-> 		iter->count + ((1UL << imu->folio_shift) - 1)) >> imu->folio_shift;
-> 
-> to avoid a division, seems worthwhile?
+Sharing a USB controller with another entity via xhci-sideband driver
+creates power management complexities. To prevent the USB controller
+from being inadvertently deactivated while in use by the other entity, a
+usage-count based mechanism is implemented. This allows the system to
+manage power effectively, ensuring the controller remains available
+whenever needed.
+In order to maintain full functionality of an offloaded USB devices,
+several changes are made within the suspend flow of such devices:
+- skip usb_suspend_device() so that the port/hub are still active for
+  USB transfers via offloaded path.
+- not suspending the endpoints which are used by USB interfaces marked
+  with needs_remote_wakeup. Namely, skip usb_suspend_interface() and
+  usb_hcd_flush_endpoint() on associated USB interfaces. This reserves a
+  pending interrupt urb during system suspend for handling the interrupt
+  transfer, which is necessary since remote wakeup doesn't apply in the
+  offloaded USB devices when controller is still active.
+- not flushing the endpoints of actively offloaded USB devices. Given
+  that the USB devices is used by another entity, unilaterally flush the
+  endpoint might lead to unexpected behavior on another entity.
+- not suspending the xhci controller. This is done by skipping the
+  suspend/resume callbacks in the xhci platform driver.
 
-And we should be able to drop the ->nr_segs assignment in the above
-section as well with this change.
+Signed-off-by: Guan-Yu Lin <guanyulin@google.com>
+---
+ drivers/usb/core/driver.c    | 50 +++++++++++++++++++++++++++++++-----
+ drivers/usb/host/xhci-plat.c | 19 ++++++++++++++
+ drivers/usb/host/xhci-plat.h |  1 +
+ include/linux/usb.h          |  7 ++---
+ 4 files changed, 68 insertions(+), 9 deletions(-)
 
-Tested on a box here, previously:
-
-IOPS=99.19M, BW=48.43GiB/s, IOS/call=32/31
-IOPS=99.48M, BW=48.57GiB/s, IOS/call=32/32
-IOPS=99.43M, BW=48.55GiB/s, IOS/call=32/32
-IOPS=99.48M, BW=48.57GiB/s, IOS/call=31/31
-IOPS=99.49M, BW=48.58GiB/s, IOS/call=32/32
-
-and with the fix:
-
-IOPS=103.28M, BW=50.43GiB/s, IOS/call=32/31
-IOPS=103.18M, BW=50.38GiB/s, IOS/call=32/32
-IOPS=103.22M, BW=50.40GiB/s, IOS/call=32/31
-IOPS=103.18M, BW=50.38GiB/s, IOS/call=31/32
-IOPS=103.19M, BW=50.38GiB/s, IOS/call=31/32
-IOPS=103.12M, BW=50.35GiB/s, IOS/call=32/31
-
-and I do indeed see the same ~4% time wasted on splits.
-
+diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
+index 76372690add0..6c3eb8fb6310 100644
+--- a/drivers/usb/core/driver.c
++++ b/drivers/usb/core/driver.c
+@@ -1420,11 +1420,28 @@ static int usb_suspend_both(struct usb_device *udev, pm_message_t msg)
+ 			udev->state == USB_STATE_SUSPENDED)
+ 		goto done;
+ 
++	if (msg.event == PM_EVENT_SUSPEND && usb_offload_check(udev)) {
++		dev_dbg(&udev->dev, "device offloaded, skip suspend.\n");
++		udev->offload_at_suspend = 1;
++	}
++
+ 	/* Suspend all the interfaces and then udev itself */
+ 	if (udev->actconfig) {
+ 		n = udev->actconfig->desc.bNumInterfaces;
+ 		for (i = n - 1; i >= 0; --i) {
+ 			intf = udev->actconfig->interface[i];
++			/*
++			 * Don't suspend interfaces with remote wakeup while
++			 * the controller is active. This preserves pending
++			 * interrupt urbs, allowing interrupt events to be
++			 * handled during system suspend.
++			 */
++			if (udev->offload_at_suspend &&
++			    intf->needs_remote_wakeup) {
++				dev_dbg(&intf->dev,
++					"device offloaded, skip suspend.\n");
++				continue;
++			}
+ 			status = usb_suspend_interface(udev, intf, msg);
+ 
+ 			/* Ignore errors during system sleep transitions */
+@@ -1435,7 +1452,8 @@ static int usb_suspend_both(struct usb_device *udev, pm_message_t msg)
+ 		}
+ 	}
+ 	if (status == 0) {
+-		status = usb_suspend_device(udev, msg);
++		if (!udev->offload_at_suspend)
++			status = usb_suspend_device(udev, msg);
+ 
+ 		/*
+ 		 * Ignore errors from non-root-hub devices during
+@@ -1480,9 +1498,11 @@ static int usb_suspend_both(struct usb_device *udev, pm_message_t msg)
+ 	 */
+ 	} else {
+ 		udev->can_submit = 0;
+-		for (i = 0; i < 16; ++i) {
+-			usb_hcd_flush_endpoint(udev, udev->ep_out[i]);
+-			usb_hcd_flush_endpoint(udev, udev->ep_in[i]);
++		if (!udev->offload_at_suspend) {
++			for (i = 0; i < 16; ++i) {
++				usb_hcd_flush_endpoint(udev, udev->ep_out[i]);
++				usb_hcd_flush_endpoint(udev, udev->ep_in[i]);
++			}
+ 		}
+ 	}
+ 
+@@ -1524,17 +1544,35 @@ static int usb_resume_both(struct usb_device *udev, pm_message_t msg)
+ 	udev->can_submit = 1;
+ 
+ 	/* Resume the device */
+-	if (udev->state == USB_STATE_SUSPENDED || udev->reset_resume)
+-		status = usb_resume_device(udev, msg);
++	if (udev->state == USB_STATE_SUSPENDED || udev->reset_resume) {
++		if (!udev->offload_at_suspend)
++			status = usb_resume_device(udev, msg);
++		else
++			dev_dbg(&udev->dev,
++				"device offloaded, skip resume.\n");
++	}
+ 
+ 	/* Resume the interfaces */
+ 	if (status == 0 && udev->actconfig) {
+ 		for (i = 0; i < udev->actconfig->desc.bNumInterfaces; i++) {
+ 			intf = udev->actconfig->interface[i];
++			/*
++			 * Interfaces with remote wakeup aren't suspended
++			 * while the controller is active. This preserves
++			 * pending interrupt urbs, allowing interrupt events
++			 * to be handled during system suspend.
++			 */
++			if (udev->offload_at_suspend &&
++			    intf->needs_remote_wakeup) {
++				dev_dbg(&intf->dev,
++					"device offloaded, skip resume.\n");
++				continue;
++			}
+ 			usb_resume_interface(udev, intf, msg,
+ 					udev->reset_resume);
+ 		}
+ 	}
++	udev->offload_at_suspend = 0;
+ 	usb_mark_last_busy(udev);
+ 
+  done:
+diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+index 9843d3ad5cf4..598f1b974347 100644
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
+@@ -20,6 +20,7 @@
+ #include <linux/acpi.h>
+ #include <linux/usb/of.h>
+ #include <linux/reset.h>
++#include <linux/usb/xhci-sideband.h>
+ 
+ #include "xhci.h"
+ #include "xhci-plat.h"
+@@ -483,6 +484,15 @@ static int xhci_plat_suspend_common(struct device *dev)
+ 
+ static int xhci_plat_suspend(struct device *dev)
+ {
++	struct usb_hcd	*hcd = dev_get_drvdata(dev);
++	struct xhci_plat_priv *priv = hcd_to_xhci_priv(hcd);
++
++	if (xhci_sideband_check(hcd)) {
++		priv->sideband_at_suspend = 1;
++		dev_dbg(dev, "sideband instance active, skip suspend.\n");
++		return 0;
++	}
++
+ 	return xhci_plat_suspend_common(dev);
+ }
+ 
+@@ -535,6 +545,15 @@ static int xhci_plat_resume_common(struct device *dev, bool power_lost)
+ 
+ static int xhci_plat_resume(struct device *dev)
+ {
++	struct usb_hcd	*hcd = dev_get_drvdata(dev);
++	struct xhci_plat_priv *priv = hcd_to_xhci_priv(hcd);
++
++	if (priv->sideband_at_suspend) {
++		priv->sideband_at_suspend = 0;
++		dev_dbg(dev, "sideband instance active, skip resume.\n");
++		return 0;
++	}
++
+ 	return xhci_plat_resume_common(dev, false);
+ }
+ 
+diff --git a/drivers/usb/host/xhci-plat.h b/drivers/usb/host/xhci-plat.h
+index fe4f95e690fa..cd07b22adc60 100644
+--- a/drivers/usb/host/xhci-plat.h
++++ b/drivers/usb/host/xhci-plat.h
+@@ -15,6 +15,7 @@ struct usb_hcd;
+ struct xhci_plat_priv {
+ 	const char *firmware_name;
+ 	unsigned long long quirks;
++	unsigned sideband_at_suspend:1;
+ 	bool power_lost;
+ 	void (*plat_start)(struct usb_hcd *);
+ 	int (*init_quirk)(struct usb_hcd *);
+diff --git a/include/linux/usb.h b/include/linux/usb.h
+index ec8d839e1e2b..f5bca317fa4c 100644
+--- a/include/linux/usb.h
++++ b/include/linux/usb.h
+@@ -635,6 +635,8 @@ struct usb3_lpm_parameters {
+  * @do_remote_wakeup:  remote wakeup should be enabled
+  * @reset_resume: needs reset instead of resume
+  * @port_is_suspended: the upstream port is suspended (L2 or U3)
++ * @offload_at_suspend: offload activities during suspend is enabled.
++ * @offload_usage: number of offload activities happening on this usb device.
+  * @slot_id: Slot ID assigned by xHCI
+  * @l1_params: best effor service latency for USB2 L1 LPM state, and L1 timeout.
+  * @u1_params: exit latencies for USB3 U1 LPM state, and hub-initiated timeout.
+@@ -647,7 +649,6 @@ struct usb3_lpm_parameters {
+  *	parent->hub_delay + wHubDelay + tTPTransmissionDelay (40ns)
+  *	Will be used as wValue for SetIsochDelay requests.
+  * @use_generic_driver: ask driver core to reprobe using the generic driver.
+- * @offload_usage: number of offload activities happening on this usb device.
+  *
+  * Notes:
+  * Usbcore drivers should not set usbdev->state directly.  Instead use
+@@ -724,6 +725,8 @@ struct usb_device {
+ 	unsigned do_remote_wakeup:1;
+ 	unsigned reset_resume:1;
+ 	unsigned port_is_suspended:1;
++	unsigned offload_at_suspend:1;
++	int offload_usage;
+ 	enum usb_link_tunnel_mode tunnel_mode;
+ 
+ 	int slot_id;
+@@ -734,8 +737,6 @@ struct usb_device {
+ 
+ 	u16 hub_delay;
+ 	unsigned use_generic_driver:1;
+-
+-	int offload_usage;
+ };
+ 
+ #define to_usb_device(__dev)	container_of_const(__dev, struct usb_device, dev)
 -- 
-Jens Axboe
+2.49.0.604.gff1f9ca942-goog
+
 
