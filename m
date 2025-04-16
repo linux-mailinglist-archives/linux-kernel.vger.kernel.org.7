@@ -1,231 +1,466 @@
-Return-Path: <linux-kernel+bounces-608039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F7AEA90DD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 23:31:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B091A90DEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 23:43:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BAF47A53B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 21:30:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30A653BA7DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 21:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480F0233120;
-	Wed, 16 Apr 2025 21:31:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4243238C28;
+	Wed, 16 Apr 2025 21:43:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m68bG7oo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=o1oo11oo.de header.i=@o1oo11oo.de header.b="cDUtIEXM"
+Received: from dd44826.kasserver.com (dd44826.kasserver.com [85.13.151.91])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E41991FF1B0;
-	Wed, 16 Apr 2025 21:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744839100; cv=fail; b=Xu9n9W3q82WC4BGhYAqsYnGhaXCz7LzTUPYPHUp3HglI80AEwe0pV0b2OsvrgfOwS63v84ZvpVJAxYGgX5xADFptJLJKj3gmzm3w22+2tckaEdi0oCYPwIjyonGvoagg8Z3nzmHVAOssk9eGlnoqiGKUH5ig3qs6g2oGZTUmDxQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744839100; c=relaxed/simple;
-	bh=Lk/dftFmg+lr5vNr8jVXOxXl+/OxpLqU8Oo6zJIs9Z4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=PdpMaGEJGznYmmm9DmYEhK4vjn3zGEvOFt5/exkrIHwS4rMlomNaKx9b0flezhDdOao2FTruVtSTumG2JfraFC9YWAdpBAi3RqUB62diNmE7JGY4iCkzaAd1jzBoKlGmTUe+AurRLV3rHnOKd0adFiZMu/9c3NTZWr+yQcrc45E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m68bG7oo; arc=fail smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744839099; x=1776375099;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=Lk/dftFmg+lr5vNr8jVXOxXl+/OxpLqU8Oo6zJIs9Z4=;
-  b=m68bG7ooo722ZcfjyZjLKLizwmSl/C2f0DLcot+NfRyBerqgOiLN1ryP
-   YfhfNbUl9hUyt7cdigKXB+BrIaQDg4UJbPShF0FGuaAytg2b0BOxyl8BF
-   vU/Y5TBOrsr9SEvce0r93E/VbxlLcNGXnY/tZE9W+bbZCVQew7le4Brfx
-   BJ3UWfmX5xKBnpRBM74ndF6dSN+b3TfcSMNWpjSfi22YAy8tJhAR4S+Nu
-   V992FEIscNu5chpgDeYMX7pJWGJqoH3xWyUQzFCqJpjSZp3gnHxjcZWlN
-   651Mw8xXD+S4ZHcIdaEduQD+Vuod/QPSo6tG5BcBn1qFyo+jIafOURqWC
-   Q==;
-X-CSE-ConnectionGUID: usZjAs1tTEu1+au28OEOWQ==
-X-CSE-MsgGUID: Skk/exuwRfqQpWX4u6idYQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11405"; a="50216276"
-X-IronPort-AV: E=Sophos;i="6.15,217,1739865600"; 
-   d="scan'208";a="50216276"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 14:31:38 -0700
-X-CSE-ConnectionGUID: XaFrZvAaRPmuXoHiJYJ7iA==
-X-CSE-MsgGUID: dl09yShDSTORkAfJ7eCVaA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,217,1739865600"; 
-   d="scan'208";a="131504641"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 14:31:39 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Wed, 16 Apr 2025 14:31:37 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Wed, 16 Apr 2025 14:31:37 -0700
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (104.47.51.48) by
- edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Wed, 16 Apr 2025 14:31:36 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pXvKGGWHw3sukpXz/bBRKzMiEZ0S9NRarG89DPn5/1wPgY20WfP4G8Hm/dyCrsMXJg5iqoOjpPestZbEelJQosQO9CLburZWqeQvAhAibS/FiKcwYRli4nVApm+jBu6icmON1aiLushqmPZ5k9us6wl0QZMJTn208TK7nM2tMtcfyBAqLAbNJ9TtOU2bPbwRrwFYqOoM5oqzvL59tGSngLHtdvlbLRduocvRR2Gzligdt6uDcgG0HZ4o7tKE/mhJp25WJPjNer92IBjbdFGkqWdwgbp6Zq4aUOpjQEHhOMUmMEo8EzDLR9QQY8CLVvkXfdLDzCVzFR01LdFGGxc4Gg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/8J/4AH9XAF7L4LrBODMKftbqq91bCoLwU74hrX06FU=;
- b=xMg5bICR2XXpEtiX1WrGAd6JsgNttGUEo6rW0unDa5uAQDml4oxw/KEMlg4JJZ8Nm3xyosYE3K7VJZkLBAGpCQkZ/Yg/dN9RtqnZYEs2jnGDekwLah/EkHUNMX8XQbLMaypNj87DW773sT0aJhYa0KV3CZ+uOlgIBPh61QiuSn502yWLijE/zB6XH0oF+jhS8mfw5f9GPg7P6z/tmHN6Tk4MrCcgiYJC+iay17Nt9JylRG5KweazgXmN6hwPsZF4B/KAheil0PDTj0MO2sHRDAf/G7EQWXn8R03LqmFIywDzgDECyA90+BxL4mq4M3+alnwLHMWBH8U7Yk/rEDVbgw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
- by DS7PR11MB7908.namprd11.prod.outlook.com (2603:10b6:8:ea::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8632.35; Wed, 16 Apr 2025 21:31:00 +0000
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8%4]) with mapi id 15.20.8632.030; Wed, 16 Apr 2025
- 21:31:00 +0000
-Date: Wed, 16 Apr 2025 14:30:57 -0700
-From: Dan Williams <dan.j.williams@intel.com>
-To: Naveen N Rao <naveen@kernel.org>, Dan Williams <dan.j.williams@intel.com>
-CC: <dave.hansen@linux.intel.com>, <x86@kernel.org>, Ingo Molnar
-	<mingo@kernel.org>, Vishal Annapurve <vannapurve@google.com>, Kirill Shutemov
-	<kirill.shutemov@linux.intel.com>, Nikolay Borisov <nik.borisov@suse.com>,
-	<stable@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 3/3] x86/devmem: Restrict /dev/mem access for
- potentially unaccepted memory by default
-Message-ID: <68002191c4733_71fe294da@dwillia2-xfh.jf.intel.com.notmuch>
-References: <174433453526.924142.15494575917593543330.stgit@dwillia2-xfh.jf.intel.com>
- <174433455868.924142.4040854723344197780.stgit@dwillia2-xfh.jf.intel.com>
- <l2crzyeoux2pammbifkivrhp637gza7piumd3s6j66mezsfvdy@nwczgs2hkq4f>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <l2crzyeoux2pammbifkivrhp637gza7piumd3s6j66mezsfvdy@nwczgs2hkq4f>
-X-ClientProxiedBy: MW4PR04CA0378.namprd04.prod.outlook.com
- (2603:10b6:303:81::23) To PH8PR11MB8107.namprd11.prod.outlook.com
- (2603:10b6:510:256::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E8A91ACEBE;
+	Wed, 16 Apr 2025 21:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.13.151.91
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744839791; cv=none; b=HBrfgRrPgYSpESK75wfrQCPgc+FCpa/KVdRIdFmPEjCrZYG7ldya7qiJ8v9/BpBlZEZPLUyMGaHnL2aiQdU5maToZOgalGsdU+qkn0lRCUuM+ROvGHGupEPLoRDE4lx5XedSf44Eg/b8pZ0dLUm7Fp2N8YPu4RmFr1LdYEzbq9Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744839791; c=relaxed/simple;
+	bh=PBqiWEdLgsZlfNsIAcuOiw5QGPBpPjG2W/1wwqS2BKQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Zfw5AjtLokUXRlo1RQMhUAMoDj4OIWqigk1kIhdbhMVUsOpmMCL9ouKl5XX0D+pOBJj7KgrU2TG2XL1Qwnic+MGdnYR0W0f8dL9N5boqmLXhjAHW2TWBnnERNhtSPXTtWKPw7OJ99kN5KA8WkBbHQTaEZ2rdOkxpZGdpoLLQWtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=o1oo11oo.de; spf=pass smtp.mailfrom=o1oo11oo.de; dkim=pass (2048-bit key) header.d=o1oo11oo.de header.i=@o1oo11oo.de header.b=cDUtIEXM; arc=none smtp.client-ip=85.13.151.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=o1oo11oo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=o1oo11oo.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=o1oo11oo.de;
+	s=kas202503061048; t=1744839401;
+	bh=7pIJZupzbBZ9CRQk9SjNQxa6dL77BWVKSe4GGYrR6HU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=cDUtIEXMjyylEOV7bYGQORB8KRuV9EPuwieHX4EX6TtbkGnULOSLAQT98rHp17QDz
+	 NtHRl6TxwInrw7w2aDUoLLyJ8ff7+en+ngYmWI27LF0k9f7HrGJ0hABRtRlhtWRKm/
+	 TTWVHUQhRm0yshAF7V1ocFUpeb1XtwWeu+8Np+EWrPcLpgDpwoLA35wSxY1nOKZEHq
+	 qy44x5CdKhg0M9/1jMri+VxEJOArt2lGH/L/6g0voh8hWPc8BPrWcpgnvdi84Ih8LQ
+	 NXqGAFUmxbDzOATLbFBqgp+KFzWTixGnrWfLWG5oTJ4SVKfHoNOdrxXi3aDwrbn6aW
+	 5KogAcgzmnN8A==
+Received: from MBP-von-Lukas.fritz.box (p5dd100e0.dip0.t-ipconnect.de [93.209.0.224])
+	by dd44826.kasserver.com (Postfix) with ESMTPSA id 485DDB6E01B7;
+	Wed, 16 Apr 2025 23:36:41 +0200 (CEST)
+From: Lukas Fischer <kernel@o1oo11oo.de>
+To: Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>
+Cc: Lukas Fischer <kernel@o1oo11oo.de>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: [RFC PATCH] lsm: Add Rust bindings with example LSM
+Date: Wed, 16 Apr 2025 23:32:04 +0200
+Message-ID: <20250416213206.26060-2-kernel@o1oo11oo.de>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|DS7PR11MB7908:EE_
-X-MS-Office365-Filtering-Correlation-Id: dc1e1ea4-220c-498f-9333-08dd7d2dfb59
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?jCq6OwB/8RN8XfQUUXMT+02vK8iVo5FHRN0htuZb0KtBwIzYkXScaEO19yRC?=
- =?us-ascii?Q?POtWFYhnhvZo18rFvheL4qGOEYyaUQ1DHESBirSn4+5h2/2VVkIHvhzGFyxv?=
- =?us-ascii?Q?888RFb2SCXACgjtU0zRqcoMlbIv0/brael/pFtjhZEe89gtUsau2sqYE8tYN?=
- =?us-ascii?Q?vGEWDlBX9qSb5oovZ4xC/dn6d7tCMmNc+zOcNwxQh8+8+paQgpRlhPV/a26A?=
- =?us-ascii?Q?utA/JKKrophH0dIFoGPuBF9juc9RFyTqf7sx24cBvTJkWzhl6gU6exryRoG6?=
- =?us-ascii?Q?cTWlhBvvLsEFWEA6IqFxqyKwo7Ilie0O7BodWr6f2r2F9VDq00pGT0ImBM3Z?=
- =?us-ascii?Q?Nd5rWgvpZSW19Qp1q1M+ap8h0F5mDNP09q7SOu+cMREHwwK5LJ5STJHm+TLV?=
- =?us-ascii?Q?Igc5mct7hokxBcjGwXj9wT9jZJC+PsL/1/kCtDyr4sVdzG6IFMsw+PZ0DBfM?=
- =?us-ascii?Q?3WYD8h1bScQKl8ov2VVoNnKOcV/DzpkZ4aMtj3t1XiPBcGz1PPIOKobUiRgW?=
- =?us-ascii?Q?LP0nOU/cOV5d8ARaNLOveRvkcsZ8izCaYvS28YV7tNT1Po6ZSdeZswkfynK7?=
- =?us-ascii?Q?0tlt+s2dDEsXoq0jY5DIUxmqutMRjBv4NaN+stt/itXGmdYot1lPRtNxo0In?=
- =?us-ascii?Q?1wVloa1rwNYv1kyMHTck8Bl+8OS5Eozd6AmPokmh8eMCHA4HCckJI8cSbRqF?=
- =?us-ascii?Q?lMJEwaCSgmbsUBLMctJBEjRPw+TzqYf/lD7oKiNxOohPrrO2vHAeeO+G2MVL?=
- =?us-ascii?Q?ZTwLHx6PcC1NbIg7SIDKBZLL17SxsZFumEIGFseyGh88MbLP8WwuxDEYx1Nk?=
- =?us-ascii?Q?PpTsASvNVriYZEhEwM2NSCIEvnuOK307+Ooxl0zzaFk96xSSIWYlvwquCXE1?=
- =?us-ascii?Q?iz6CQGXGVcDj0Ze5XJJqfT+/Z5xSulZFg8BAMaWZgo8Pz6y74vBWqpf2EIb3?=
- =?us-ascii?Q?ESat+umHNmJloBnRdsgldT8a333deGW+uocfuH0HakNN0xYf7CVVbFthlRGW?=
- =?us-ascii?Q?0VPYeUhbK8AeBbXavM+c31iVncDdlmNdHqwtqIDTFkLPhnY1dA7OFcnKhA8a?=
- =?us-ascii?Q?HyQ2bxyx91INbpTVwafLSO7xz0HHso9zkw+hWckz3ZJrR1RzRXgHPEpgrmQN?=
- =?us-ascii?Q?EOrvQYAYAKIRHFTg+honZX2pvwS8PyjvFI4vtDmwUQcPxm6QhlJPd+pcyRPf?=
- =?us-ascii?Q?mls8HnNjTjRSMJSzDJfqeiZqBk+cl6fbRIZYkEo19Rq5WwlbR4RKdlMhx2aM?=
- =?us-ascii?Q?fIKS9HSOPIHPKf2lRL1snbZ/CvNWG138xT7/po3bkgAnxyN/3c5pkmDUBEgs?=
- =?us-ascii?Q?iMKhqAq4I2yD4UNVA+cnr87TG2FLP159ys23OPArdh4K65gPEeN3NfYNppfj?=
- =?us-ascii?Q?2dgYtk71lRk8GHCqOow5YijSGVTBA4C4zBqpaawL9n59xJmeZfR80owX/yrt?=
- =?us-ascii?Q?TWNWMmD/Rbc=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ETAo2IxjYPJ9Aq3xslG9kK5yQoYEzrzYjOG79nge4TnRex3Xsr4yG8CTZ+3a?=
- =?us-ascii?Q?MCO117zEhMm9jBwpBJYFDz4BhINb9y75m0D5ZtE7Vw/Jt0UEZaqunZjbR9XI?=
- =?us-ascii?Q?FauXQLUmYn9RLlAFSYAPyfN66Zp+4gzAKywRHVUSFuXPGf5P0mWDykf6geMV?=
- =?us-ascii?Q?/XRXS1xJUKuNZA6EfKCr7tNZxgIRV38sJkzqQeRk7fxbPytOjgHGLclXdPch?=
- =?us-ascii?Q?CDhFL25M2uoITUjYmJCEk2OKq/V+Nh7D1XRYN6kHJh0PIly3sGT1FSYX2SOm?=
- =?us-ascii?Q?c7K4WQBe1oitagMfuI0diQ04Wv9udOX4tQNdhAdb884fE8LB3r4enfCDqRx/?=
- =?us-ascii?Q?8X9g/gw1P44bzogvFNgDGupi9o06vqPQGO/wSaUrFoQWvXFWiHT/nhbmfnQE?=
- =?us-ascii?Q?hhNIT1ePDmcAYSgfIfawJUWd9QE+sjakGyf4+4Lovt/Pr4xlBzXhq/B27qy4?=
- =?us-ascii?Q?bybDcDx8fSSC6+M3SNGdrETVsR706r27LGDA2l6QdMUepQys4Ma1mJ5uP5xD?=
- =?us-ascii?Q?vfEIGLeltTAyksUYfyQIEawZ0+B7Yno9XB7TCfJBkemSOCOUsUfIqQZiJbO3?=
- =?us-ascii?Q?Eff47UntSqXeuggBc8vmTh0jqbY2IsuQ8jNKoPxmMReVaj213V7f8KObhTH8?=
- =?us-ascii?Q?a6HbyaDpTrZQ0O58Q+CpjskolaBe+Y/Qm9eKQ+r1xdcsDXeRvXdNrHGF/PhI?=
- =?us-ascii?Q?63KqkC5B3zth8i7bLS+fmqH3E0EFB1383YFN+qsMLENl7kFWjsE9SCbhZ0DP?=
- =?us-ascii?Q?W4K/dDdAILkJgmmGK7/9AnmBEPpOQzGr9eCp/TedDlGRBgDyT0IsWMqLovPq?=
- =?us-ascii?Q?5Rz4ET3FDr17vSJzSPXEWiIsr/Qzb7dDEM91/ymgY+R1ncVGAK3hR/sM5rjM?=
- =?us-ascii?Q?q5zP1VaQTD6Eu1tVxlT4v/hmFtDC1MHk6+yeu7u/27HKLccy+m1VXSe4LiYN?=
- =?us-ascii?Q?95ozdMZ0gqiQUsEenxIkCttM7ZNhyigjodliXYNIogbfywZlRGi81Kx2iGYH?=
- =?us-ascii?Q?lQnXLdzpu/zsdYQOXx7ZW/YzqCUk0QWX775HUAjYjWVFCd1swhvG9+qbyide?=
- =?us-ascii?Q?TdvJhEeyAbuINIeMTG4toAzQcGBwfHbuxMIX89AdUXQvFJCTnacP3o9xNHup?=
- =?us-ascii?Q?0MKNErSD6jS7n1BQv5dmbQfCWzsvBCvISZYT9Hy1KMptrObFqAIDl+mHZevG?=
- =?us-ascii?Q?ffjK17rkCAIMCabLnNXGUCiDHzRjZqrh1dK25BLcHtObuTQnUEMxWZgtvDee?=
- =?us-ascii?Q?z9lVHmoSefNDQwtUYiUwwMM1A9uCBPaN584tr6WtDJygw85rPRn4FtiT9D2M?=
- =?us-ascii?Q?hCGnClvJRpVIwItZrSmhwkZ20rtR/TI2wx/ytirxRi9liPLHN/VLiFZfgQgW?=
- =?us-ascii?Q?n9ogK7rNOnNnzPVZvEsqma+x9uTVhBEWJfKvi80dqCoXmXpM5V0+bAJFRX8f?=
- =?us-ascii?Q?tsiU7m9e3btbMW2sDw24snO8k/0xOD8mCRxdvWyG//wslGBt11diPEZ4mIjP?=
- =?us-ascii?Q?fK4T7x5k8RUTedSBxIKk8zcq0/ad2BAgzA0C2CIGWYNkUebbTrU5PA2UZkN2?=
- =?us-ascii?Q?s2gp/CRM4O6YxfCwk9URMSJiAJ6OvLupLbLsY0oGDbWhZdPSUg4tVjVyaSMd?=
- =?us-ascii?Q?Bg=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: dc1e1ea4-220c-498f-9333-08dd7d2dfb59
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Apr 2025 21:31:00.1955
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: R+FfDYQSGMIMLw/IuXMO9cOgbszY8qnRMnmA2QN3yoCd52XtiPW+Q/Bi1jie272guy7yHLCfeP1e2bwu1LOLQXa4uUk3PWRUH77e/LhEr7g=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB7908
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+X-Spamd-Bar: ++
 
-Naveen N Rao wrote:
-> On Thu, Apr 10, 2025 at 06:22:38PM -0700, Dan Williams wrote:
-> > Nikolay reports [1] that accessing BIOS data (first 1MB of the physical
-> > address space) via /dev/mem results in an SEPT violation.
-> > 
-> > The cause is ioremap() (via xlate_dev_mem_ptr()) establishes an
-> > unencrypted mapping where the kernel had established an encrypted
-> > mapping previously.
-> > 
-> > An initial attempt to fix this revealed that TDX and SEV-SNP have
-> > different expectations about which and when address ranges can be mapped
-> > via /dev/mem.
-> > 
-> > Rather than develop a precise set of allowed /dev/mem capable TVM
-> > address ranges, teach devmem_is_allowed() to always restrict access to
-> > the BIOS data space.
-> 
-> This patch does more than just restrict the BIOS data space - it rejects 
-> all accesses to /dev/mem _apart_ from the first 1MB. That should be made 
-> clear here.
-> 
+These are the bare necessities to implement an LSM in Rust. They are in
+an early WIP state intended to gather feedback, mainly for the use of
+unsafe.
 
-Agree, and per the follow on conversation [1] even that low 1MB access to
-return zeroes is not helpful. Confidential Computing userspace should
-drop its dependency on interfaces that are difficult to make compatible
-with consistent encryption policy and acceptance status.
+The LSM is implemented in security/rust_lsm/lsm.rs and uses the bindings
+to the C side directly to set itself up. This is of course not
+production ready, but enough to set up a minimal example of an LSM.
 
-http://lore.kernel.org/67f98e27a799e_7205294e3@dwillia2-xfh.jf.intel.com.notmuch [1]
+The `lsm_info` struct technically needs to be aligned to
+`size_of::<kernel::ffi::c_ulong>()`, but Rust does not allow this in
+combination with `repr(transparent)`. So far this works, but it seems
+brittle.
 
-[..]
-> >  int devmem_is_allowed(unsigned long pagenr)
-> >  {
-> > +	bool platform_allowed = x86_platform.devmem_is_allowed(pagenr);
-> > +
-> 
-> If we are going to do this, I don't see the point of having an 
-> x86_platform_op. It may be better to simply gate this on  
-> cc_platform_has(CC_ATTR_GUEST_MEM_ENCRYPT) directly here.
+To limit the scope of the implementation, the example and bindings only
+cover the `file_permission` hook.
 
-That is fair, no point in premature flexibility.
+Signed-off-by: Lukas Fischer <kernel@o1oo11oo.de>
+---
+As part of my master's thesis, I am developing a Rust-based LSM. These
+are the bindings I have created for that, so that I can register and
+implement an LSM in Rust.
+
+At the moment, the bindings are a pretty direct C to Rust translation
+and only allow registering a single LSM. Because of this, they are part
+of the example LSM code and not the `kernel` crate. During my thesis I
+will unfortunately not have the time to polish them enough to be
+upstreamable, and since there is likely no user for them, upstreaming
+seems unlikely in the first place.
+
+To me it seems like Rust bindings usually involve a trait or struct
+defined for the abstraction, so that the lifetime of the struct can be
+tied to the data/object/hardware it represents (please correct me on
+this). For LSMs, which are loaded once duing boot and cannot be
+unloaded, this seems not as relevent to me, but for consistency the
+final bindings should probably look similar to other existing ones.
+
+The intent of sending the bindings is to gather feedback on the current
+implementation, mainly whether my use of unsafe is correct. Kind of as a
+review, but more as a sanity check.
+
+I have previously asked about Rust-based LSMs and about this RFC in the
+Rust for Linux Zulip [1][2].
+
+Thanks,
+Lukas
+
+[1]: https://rust-for-linux.zulipchat.com/#narrow/channel/288089-General/topic/Rust-based.20LSMs
+[2]: https://rust-for-linux.zulipchat.com/#narrow/channel/288089-General/topic/.22Review.22.20of.20LSM.20bindings
+---
+ include/linux/lsm_count.h         |   9 +-
+ include/uapi/linux/lsm.h          |   1 +
+ rust/bindings/bindings_helper.h   |   1 +
+ scripts/generate_rust_analyzer.py |   2 +-
+ security/Kconfig                  |   1 +
+ security/Makefile                 |   1 +
+ security/rust_lsm/Kconfig         |  10 ++
+ security/rust_lsm/Makefile        |   4 +
+ security/rust_lsm/bindings.rs     | 161 ++++++++++++++++++++++++++++++
+ security/rust_lsm/lsm.rs          |  33 ++++++
+ 10 files changed, 221 insertions(+), 2 deletions(-)
+ create mode 100644 security/rust_lsm/Kconfig
+ create mode 100644 security/rust_lsm/Makefile
+ create mode 100644 security/rust_lsm/bindings.rs
+ create mode 100644 security/rust_lsm/lsm.rs
+
+diff --git a/include/linux/lsm_count.h b/include/linux/lsm_count.h
+index 16eb49761b25..e6cc2f6d6f0c 100644
+--- a/include/linux/lsm_count.h
++++ b/include/linux/lsm_count.h
+@@ -102,6 +102,12 @@
+ #define IPE_ENABLED
+ #endif
+ 
++#if IS_ENABLED(CONFIG_SECURITY_RUST_LSM)
++#define RUST_LSM_ENABLED 1,
++#else
++#define RUST_LSM_ENABLED
++#endif
++
+ /*
+  *  There is a trailing comma that we need to be accounted for. This is done by
+  *  using a skipped argument in __COUNT_LSMS
+@@ -124,7 +130,8 @@
+ 		LANDLOCK_ENABLED	\
+ 		IMA_ENABLED		\
+ 		EVM_ENABLED		\
+-		IPE_ENABLED)
++		IPE_ENABLED		\
++		RUST_LSM_ENABLED)
+ 
+ #else
+ 
+diff --git a/include/uapi/linux/lsm.h b/include/uapi/linux/lsm.h
+index 938593dfd5da..938f7694e6ed 100644
+--- a/include/uapi/linux/lsm.h
++++ b/include/uapi/linux/lsm.h
+@@ -65,6 +65,7 @@ struct lsm_ctx {
+ #define LSM_ID_IMA		111
+ #define LSM_ID_EVM		112
+ #define LSM_ID_IPE		113
++#define LSM_ID_RUST_LSM		114
+ 
+ /*
+  * LSM_ATTR_XXX definitions identify different LSM attributes
+diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+index ab37e1d35c70..f941a1caf141 100644
+--- a/rust/bindings/bindings_helper.h
++++ b/rust/bindings/bindings_helper.h
+@@ -21,6 +21,7 @@
+ #include <linux/fs.h>
+ #include <linux/jiffies.h>
+ #include <linux/jump_label.h>
++#include <linux/lsm_hooks.h>
+ #include <linux/mdio.h>
+ #include <linux/miscdevice.h>
+ #include <linux/of_device.h>
+diff --git a/scripts/generate_rust_analyzer.py b/scripts/generate_rust_analyzer.py
+index cd41bc906fbd..204bc144a0ab 100755
+--- a/scripts/generate_rust_analyzer.py
++++ b/scripts/generate_rust_analyzer.py
+@@ -144,7 +144,7 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
+     # Then, the rest outside of `rust/`.
+     #
+     # We explicitly mention the top-level folders we want to cover.
+-    extra_dirs = map(lambda dir: srctree / dir, ("samples", "drivers"))
++    extra_dirs = map(lambda dir: srctree / dir, ("samples", "drivers", "security"))
+     if external_src is not None:
+         extra_dirs = [external_src]
+     for folder in extra_dirs:
+diff --git a/security/Kconfig b/security/Kconfig
+index 4816fc74f81e..7f8707e7f80b 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -230,6 +230,7 @@ source "security/safesetid/Kconfig"
+ source "security/lockdown/Kconfig"
+ source "security/landlock/Kconfig"
+ source "security/ipe/Kconfig"
++source "security/rust_lsm/Kconfig"
+ 
+ source "security/integrity/Kconfig"
+ 
+diff --git a/security/Makefile b/security/Makefile
+index 22ff4c8bd8ce..ba482f051511 100644
+--- a/security/Makefile
++++ b/security/Makefile
+@@ -26,6 +26,7 @@ obj-$(CONFIG_CGROUPS)			+= device_cgroup.o
+ obj-$(CONFIG_BPF_LSM)			+= bpf/
+ obj-$(CONFIG_SECURITY_LANDLOCK)		+= landlock/
+ obj-$(CONFIG_SECURITY_IPE)		+= ipe/
++obj-$(CONFIG_SECURITY_RUST_LSM)		+= rust_lsm/
+ 
+ # Object integrity file lists
+ obj-$(CONFIG_INTEGRITY)			+= integrity/
+diff --git a/security/rust_lsm/Kconfig b/security/rust_lsm/Kconfig
+new file mode 100644
+index 000000000000..d3e8bc2907f2
+--- /dev/null
++++ b/security/rust_lsm/Kconfig
+@@ -0,0 +1,10 @@
++# SPDX-License-Identifier: GPL-2.0
++
++config SECURITY_RUST_LSM
++	bool "Rust example LSM Support"
++	depends on RUST && SECURITY
++	default n
++	help
++	  Enable the Rust example LSM.
++
++	  If you are unsure how to answer this question, answer N.
+diff --git a/security/rust_lsm/Makefile b/security/rust_lsm/Makefile
+new file mode 100644
+index 000000000000..14b651a82ca6
+--- /dev/null
++++ b/security/rust_lsm/Makefile
+@@ -0,0 +1,4 @@
++# SPDX-License-Identifier: GPL-2.0
++ccflags-y += -I$(src)			# needed for trace events
++
++obj-$(CONFIG_SECURITY_RUST_LSM)		+= lsm.o
+diff --git a/security/rust_lsm/bindings.rs b/security/rust_lsm/bindings.rs
+new file mode 100644
+index 000000000000..d69ccc4187ed
+--- /dev/null
++++ b/security/rust_lsm/bindings.rs
+@@ -0,0 +1,161 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! Bindings for Rust example LSM.
++//!
++//! Implements the bare necessities to implement an LSM in Rust and register it, using the bindings
++//! to C. Long term this should move to the kernel crate, but since these bindings are currently
++//! specific to a single LSM, instead of allowing arbitrary LSMs to get registered, they live here
++//! for now.
++
++use kernel::{bindings, c_str, ffi::*, fs::LocalFile, prelude::*, types::Opaque};
++
++/// The name the LSM gets registered under.
++const NAME: &CStr = c_str!("rust_lsm");
++
++/// The amount of hooks that get registered by this LSM.
++///
++/// This could be automatically calculated from the length of the array, but would then still need
++/// to manually be adjusted there. Having it as a separate constant simplifies access for calling
++/// [`security_add_hooks`] though.
++///
++/// This value is `usize` so that it can be used in the array directly, but [`security_add_hooks`]
++/// requires `i32`, which is why [`SECURITY_HOOK_LIST_COUNT`] exists.
++///
++/// [`security_add_hooks`]: bindings::security_add_hooks
++const SECURITY_HOOK_LIST_LEN: usize = 1;
++
++/// The amount of hooks that get registered by this LSM.
++///
++/// This time as `i32`, because that's what [`security_add_hooks`] requires. Const-converting this
++/// makes sure an overflow results in a compiler error, although having that many hooks is unlikely.
++///
++/// [`security_add_hooks`]: bindings::security_add_hooks
++const SECURITY_HOOK_LIST_COUNT: i32 = {
++    // Manually implement i32::try_from(...).unwrap() here because it is not const
++    if SECURITY_HOOK_LIST_LEN > (i32::MAX as usize) {
++        panic!("Cannot register more than i32::MAX LSM hooks!")
++    } else {
++        SECURITY_HOOK_LIST_LEN as i32
++    }
++};
++
++/// Wrapper to be able to use `lsm_id` in a static context.
++#[repr(transparent)]
++struct LsmId(Opaque<bindings::lsm_id>);
++
++// SAFETY: There is only a static instance and in that one the pointer field points to an immutable
++// C string.
++unsafe impl Sync for LsmId {}
++
++/// Wrapper to be able to use `lsm_info` in a static context.
++// Needs to be aligned to `size_of::<kernel::ffi::c_ulong>()`, but Rust attributes cannot express
++// this and even statically setting it to 8 cannot be combined with `repr(transparent)`.
++#[repr(transparent)]
++struct LsmInfo(Opaque<bindings::lsm_info>);
++
++// SAFETY: There is only a static instance and in that one the pointer fields point to an immutable
++// C string and the init function defined here.
++unsafe impl Sync for LsmInfo {}
++
++/// Wrapper to be able to use `security_hook_list` in a static context.
++///
++/// This is `Opaque<[...]>` instead of `[Opaque<...>]` because it simplifies the call to
++/// [`bindings::security_add_hooks`] a lot.
++#[repr(transparent)]
++struct SecurityHookList(Opaque<[bindings::security_hook_list; SECURITY_HOOK_LIST_LEN]>);
++
++// SAFETY: There is only a static instance, which is only modified from C during LSM initialization
++// using the interior mutability of `Opaque`.
++unsafe impl Sync for SecurityHookList {}
++
++/// Static information about the LSM.
++static LSM_ID: LsmId = LsmId(Opaque::new(bindings::lsm_id {
++    name: NAME.as_char_ptr(),
++    id: bindings::LSM_ID_RUST_LSM as _,
++}));
++
++/// Register the LSM in the kernel.
++///
++/// This is achieved by placing it in the `.lsm_info.init` linker section.
++///
++/// Everything but `name` and `init` is optional, but [`Default::default()`] cannot be used in a
++/// const context.
++#[used]
++#[link_section = ".lsm_info.init"]
++static LSM_INFO: LsmInfo = LsmInfo(Opaque::new(bindings::lsm_info {
++    name: NAME.as_char_ptr(),
++    init: Some(init),
++    order: bindings::lsm_order_LSM_ORDER_MUTABLE,
++    flags: 0,
++    enabled: core::ptr::null_mut(),
++    blobs: core::ptr::null_mut(),
++}));
++
++/// List of hooks to register callbacks for.
++///
++/// The data stored here is updated by the LSM code during LSM initialization using the interior
++/// mutability of [`Opaque`].
++#[used]
++#[link_section = ".data..ro_after_init"]
++static HOOKS: SecurityHookList = SecurityHookList(Opaque::new([bindings::security_hook_list {
++    // SAFETY: Creates an unaligned pointer to the mutable static since the
++    // `static_calls_table` is `repr(packed)`. The pointers are only used
++    // from C code.
++    scalls: unsafe { &raw mut bindings::static_calls_table.file_permission }.cast(),
++    hook: bindings::security_list_options {
++        file_permission: Some(file_permission),
++    },
++    lsmid: LSM_ID.0.get(),
++}]));
++
++/// Init function for the LSM
++///
++/// Gets called from the C side through the pointer stored in [`LSM_INFO`].
++///
++/// # Safety
++///
++/// This function must only be called once from the C LSM initialization code.
++#[link_section = ".init.text"]
++unsafe extern "C" fn init() -> c_int {
++    pr_info!("Rust example LSM is starting...\n");
++
++    // Register the hooks
++    // SAFETY: FFI call to register the hooks for the LSM. All pointers point to statics which are
++    // only accessed from this init and are therefore valid for the call. The hook list is modified
++    // using the interior mutability of `Opaque`.
++    unsafe {
++        bindings::security_add_hooks(
++            HOOKS.0.get().cast(),
++            SECURITY_HOOK_LIST_COUNT,
++            LSM_ID.0.get(),
++        );
++    }
++
++    // Call the Rust side init function for further initialization
++    if let Err(e) = super::init() {
++        return e.to_errno();
++    }
++
++    pr_info!("Rust example LSM is initialized!\n");
++
++    0
++}
++
++/// Callback for the `file_permission` hook.
++///
++/// This gets called every time an already opened file is read or written.
++///
++/// # Safety
++///
++/// May only be called by the LSM framework as `file_permission` hook with a file pointer valid for
++/// the duration of the call.
++unsafe extern "C" fn file_permission(file: *mut bindings::file, mask: c_int) -> c_int {
++    // SAFETY: `file` is valid for the duration of this call
++    let file = unsafe { LocalFile::from_raw_file(file) };
++
++    match super::file_permission(file, mask) {
++        Ok(true) => 0,
++        Ok(false) => EPERM.to_errno(),
++        Err(e) => e.to_errno(),
++    }
++}
+diff --git a/security/rust_lsm/lsm.rs b/security/rust_lsm/lsm.rs
+new file mode 100644
+index 000000000000..9ac777d5a168
+--- /dev/null
++++ b/security/rust_lsm/lsm.rs
+@@ -0,0 +1,33 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! Rust example LSM.
++//!
++//! Rust-based example LSM to demonstrate an initial version of bindings to C.
++
++mod bindings;
++
++use kernel::{fs::LocalFile, prelude::*};
++
++/// Prefix to appear before log messages printed from within this crate.
++const __LOG_PREFIX: &[u8] = b"rust_lsm\0";
++
++/// LSM init function.
++///
++/// Called exactly once from `init()` in [`bindings`] when the LSM is registered.
++fn init() -> Result {
++    // Custom init logic could go here
++    Ok(())
++}
++
++/// `file_permission` hook implementation.
++///
++/// Gets called for every file access that needs to be checked.
++fn file_permission(_file: &LocalFile, _mask: i32) -> Result<bool> {
++    // Arbitrary policy logic could go here
++    let resolution = true;
++
++    // Uncomment this for lots of spam in dmesg
++    // pr_info!("file_permission hook called");
++
++    Ok(resolution)
++}
+
+base-commit: 8ffd015db85fea3e15a77027fda6c02ced4d2444
+-- 
+2.49.0
+
 
