@@ -1,95 +1,315 @@
-Return-Path: <linux-kernel+bounces-606572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCDF4A8B119
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 08:50:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F392A8B121
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 08:52:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D8E07A9C01
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 06:49:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B5AB3A9279
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 06:52:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A6222539D;
-	Wed, 16 Apr 2025 06:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 227E422C328;
+	Wed, 16 Apr 2025 06:52:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W2fGiVfh"
-Received: from mail-lf1-f66.google.com (mail-lf1-f66.google.com [209.85.167.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oW2E7Dd9";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="I/jMN65u"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99403207DF7;
-	Wed, 16 Apr 2025 06:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A1322156C;
+	Wed, 16 Apr 2025 06:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744786241; cv=none; b=MUsjE9iG3usVFeAUV4mXg6YsdObG0NL6LJhlxaTLkhONNiQUow9gsotR8HCU41Q3jitN1RYUCpfFuBa/teObC/twwOCIYJ2NWkJtR6f1lqmR5kW1Sg1mvSQJizkugZ1+Gm66wdN8Nv0qhWMMiY2POhif/p4rYudiLlsFR5sCIHo=
+	t=1744786319; cv=none; b=TN9t2M0zQ6eSkfYtyqgY7q8xm/F+VCHhsfLFbt9jNctpS2veWiphxraBLydS+lJL/T378j7agCGmRvFAqIRUqaNpbAu7Y+ZClM4Ty2jnj1miAWc2Flfy0qiEGy9zyQ2XFMe+XIbj/jG/SaqfGTH5YpNW4dWGyi5AXhS2vwtrJb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744786241; c=relaxed/simple;
-	bh=B1KKRwM2trU1CVGyeOoOABBXy1cregEeykhg280smrw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BWXTjEvHtbZ/SYWQgvtLDngzY9AGoi6N/m0QPFD8/w9Liw+A0Mt/jPyBqYFBwu1woK06p16t0bopsXwEIdOgcYOt4Fd7qGyPBuBsqlM6nH19CoESqqhK2OoayoAfG5ZJiv9qw5/mp8PsSKR3bcHMZPOm9PsMSQtUIadnhiha8CM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W2fGiVfh; arc=none smtp.client-ip=209.85.167.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f66.google.com with SMTP id 2adb3069b0e04-5499659e669so7621342e87.3;
-        Tue, 15 Apr 2025 23:50:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744786237; x=1745391037; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=B1KKRwM2trU1CVGyeOoOABBXy1cregEeykhg280smrw=;
-        b=W2fGiVfhV1B9saQZBJnY1ruSh96jkzc71+FKec+HBZo8nuuaBQ5rJoLYW5pyNEQ1Fj
-         NbsJV7VxwED61U+CZdUb31iN2AGkAwdWN5ii6nDwinRzFMcPF/hSoHCG5M5gbIvm4E9X
-         ArXnCNpWGb94BPsaQAbVwq4Oy1T/h2VRnrU54o8ABA7BIOpWRFbDhetrKT+Ok+d4KBsP
-         VAP1/c35P/nHLJUO6AS+ucf9+mRk2wD3UfNSqoYa8kFkCNhFHPlYYtV1TJpbhiW06Yqx
-         fJCUB/V/fBYpFPy8pbYL0gf+nu/W42kxRW1moHKLPXTvkTxmMbyC1NZelNWvQXX/VRR4
-         ZwOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744786237; x=1745391037;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=B1KKRwM2trU1CVGyeOoOABBXy1cregEeykhg280smrw=;
-        b=lvp/oln1JERzKkUeuYH/gBGx1c6OltaJSigMsPlZTSzvHaT+0PZHlxr5XDJjWgrvJ5
-         Jcv3FpxNod8CDqcXihlMR/cZOWKwRaRo0CuWWIo52Y0+Tf8rtmqI7MhvLk+0ERM6FseY
-         HE1vrbGtyvtTmEszVr+AHUyHY93DF1Up+0oxF3OoNG7q72IsXEMtK5JND1TdsLvxHK/8
-         P5Hqp4pk4Ek8mfGKUVBkiEFPSHz9FShH1OfHCCmZLUpsbSJxKSXPpwj3laZwCZOoYI2H
-         g1yAKxAmqEgsNY6JtXzNKEnRxYSa3ygrg9DWG3i7G2wXoXI1cqaBTQpZmP312oyEF+wQ
-         OWPg==
-X-Forwarded-Encrypted: i=1; AJvYcCVUrYqw9UPHk8AijW3V2AD5IWiJBYy/YVw9FWtHu9LADQqXfFa7NfPVFRf4kekydCXWkvt1yKCX@vger.kernel.org, AJvYcCX3JE77OLO2xAcLwkNAzHYw992CFXzairI+VCSsaeVFcwmZKFyOvh/zdSoaZZJaPi+pqG8nfu/tZ6JaDus=@vger.kernel.org, AJvYcCX3U5Y8RtqPjDdxwId1qVjoursanSE8ko36vE7kHb7kYYVki4SPgv3zWsjFUGwuR//AUVHYB7PhkEbF2g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPfshGLWmu7KwDPq9wm4OJ/leSomh9LF5/tJj1SexQjRvrsglR
-	unYM8iPz9bfc6vc1RQcw3A11nuwjOdUOAnxAiMgbwBFeGMqO3MLrtc7ZolPNO7YtyEAB/lhyZxB
-	OA1t3W+jj9rq5X1mgDRx8ah1BCCU=
-X-Gm-Gg: ASbGncsgE9pUV0U8hDPl2E7eeTGTP4Yh5qbG8iEaOHaqozhw224BToGucaOBGl8XyrV
-	1DsK6rnmsZqia15A7sd9oTgRkOURyPbIBUuc/zheh38K9DhF+VVukknUctp8hywc2g6dE/qOZe/
-	0tyMz6jQpUjOBENd0EM5JmfQ==
-X-Google-Smtp-Source: AGHT+IFkUl68vPRq3Eoh7lTjnZsGM+ezWLD4qM9I0vkyVblUK6mahjlvr+SHWNSVM8wd+7zn98YgfcXamDumw7iE2ME=
-X-Received: by 2002:a2e:a5c7:0:b0:30b:c980:c589 with SMTP id
- 38308e7fff4ca-3107f6bf415mr1948791fa.14.1744786237122; Tue, 15 Apr 2025
- 23:50:37 -0700 (PDT)
+	s=arc-20240116; t=1744786319; c=relaxed/simple;
+	bh=fI8sgX2sYCHF0S8sd0kn3Bzp6dP4zzIgfYquQKlJEOc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=J+RxgkNt9lrIhS08FoDIa9LU5IgmoUiLMMRTpvH3ljs7doCmTIO7RKyOyVIeyeYlQfT/bvaXtcC0iYDt6aHJAQ21WpKAhPCFm3NIt/MCZjWC8zYSlWNyOMB+LVS0tN1Cv6g03Cu0nGEWuuDhAhDSVQ69+k1M4Qo+Cc9YfCxg6Lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oW2E7Dd9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=I/jMN65u; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744786314;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=kEa53DLXSt5fYwIh/pdm1qFtBdBEdfTt9Sac/8r9MQI=;
+	b=oW2E7Dd95BRzpl3UcUE555dWMTyk19dVlz5oD+Cf9aVb9hVjcSlL3dGmO5S/1ee2CZ6nDZ
+	jyCoIzgJlLiKnAdW/qQ+coI0nzCRPk0zDyvgZD1j4/uP9rI94DiqTRYy7IO2U6QzsJgkKh
+	oSW+M9EHsDfS9kMm9EcycUb9yd/TrlstQhq34H0PX6M0Sp5oJy+mepbgz7Bx9WO93iP6kG
+	Fcij2zOVExCdl4BpQ/h9RRxMOdcAUjVOrDB+zoYn8laRHEVGe+Qv+DvT/TgynXkIaJsvg3
+	7vahOBJ/RmviCs1qs6aLnfPf8RkJjkK92W4Qi5MoAfTFjsJ5o40WCGsA8HpxlQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744786314;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=kEa53DLXSt5fYwIh/pdm1qFtBdBEdfTt9Sac/8r9MQI=;
+	b=I/jMN65ub54JCwQ1PnE63Fh3QjFxutB9J57gKjrSZDnZJlkMXr9tpHxuSECpmtMsEXs7q2
+	OpMKIf3VG9pRBIDQ==
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Gabriele Monaco <gmonaco@redhat.com>,
+	linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: john.ogness@linutronix.de,
+	Nam Cao <namcao@linutronix.de>,
+	Petr Mladek <pmladek@suse.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Waiman Long <longman@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH v3 00/22] RV: Linear temporal logic monitors for RT application
+Date: Wed, 16 Apr 2025 08:51:06 +0200
+Message-Id: <cover.1744785335.git.namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250415124128.59198-1-bsdhenrymartin@gmail.com>
- <20250415124128.59198-3-bsdhenrymartin@gmail.com> <c0125e86-79f7-4217-832e-44249cae16dd@nvidia.com>
-In-Reply-To: <c0125e86-79f7-4217-832e-44249cae16dd@nvidia.com>
-From: henry martin <bsdhenrymartin@gmail.com>
-Date: Wed, 16 Apr 2025 14:50:28 +0800
-X-Gm-Features: ATxdqUEYO-wItcyAq0JOiMYlpEM-Jg-HBC1uyFcYUgvgHxfq3Kiv3jhkqgwAjWQ
-Message-ID: <CAEnQdOrvtYPghA1=4t9HfP=jSZE=2pHi9jR1mWyJgCNCPEG5Fw@mail.gmail.com>
-Subject: Re: [PATCH v5 2/2] net/mlx5: Fix memory leak in error path of ttc creation
-To: Mark Bloch <mbloch@nvidia.com>
-Cc: saeedm@nvidia.com, leon@kernel.org, tariqt@nvidia.com, 
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org, 
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, amirtz@nvidia.com, 
-	ayal@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> What about just moving the ttc allocation after the switch case?
+Real-time applications may have design flaws causing them to have
+unexpected latency. For example, the applications may raise page faults, or
+may be blocked trying to take a mutex without priority inheritance.
 
-Thanks for the suggestion. Moving the allocation after the switch statement is
-indeed a cleaner approach.
+However, while attempting to implement DA monitors for these real-time
+rules, deterministic automaton is found to be inappropriate as the
+specification language. The automaton is complicated, hard to understand,
+and error-prone.
+
+For these cases, linear temporal logic is found to be more suitable. The
+LTL is more concise and intuitive.
+
+This series adds support for LTL RV monitor, and use it to implement two
+monitors for reporting problems with real-time tasks.
+
+Patch 1-12 cleanup and prepare the RV code for the integration of LTL
+monitors.
+
+Patch 13 adds support for LTL monitors.
+
+Patch 14 adds the container monitor "rtapp". This encapsulates the
+sub-monitors for real-time.
+
+Patch 15-18 prepares the pagefault tracepoints, so that patch 19 can add
+the monitor which watches real-time tasks doing page faults.
+
+Patch 20 adds the "sleep" monitor: it detects potential undesirable latency
+with real-time threads.
+
+Patch 21 adds documentation on the new monitors.
+
+Patch 22 allows the number of per-task monitors to be configurable, so that
+the two new monitors can be enabled simultaneously.
+
+v2->v3 https://lore.kernel.org/lkml/cover.1744355018.git.namcao@linutronix.=
+de/
+  - fix a problem with sleep monitor's specification (around
+    KTHREAD_SHOULD_STOP)
+  - merge the patches that move the dot2k/rvgen scripts around
+  - pull panic/printk changes into separate patches
+  - fixup some build errors
+  - fixup monitor's init function return code
+  - fix some flake8 warnings with the scripts
+  - add some references to LTL documentation
+  - fixup some mistakes with rtapp documentation
+  - fixup capitalization mistake with monitor_synthesis.rst
+  - remove the now-redundant macro RV_PER_TASK_MONITORS
+
+v1->v2 https://lore.kernel.org/lkml/cover.1741708239.git.namcao@linutronix.=
+de/
+  - Integrate the LTL scripts into the existing dot2k tool, taking
+    advantage of the existing monitor generation scripts.
+  - Switch the struct ltl_monitor to use bitmap instead of an array, to
+    optimize memory usage.
+  - Correct the generated code to be non-deterministic state machine,
+    instead of deterministic state machine
+  - Put common code for all LTL monitors into a single file
+    (include/rv/ltl_monitor.h), reducing code duplication
+  - Change the LTL monitors to make user of container. Add a bug fix to
+    container while at it.
+  - Make the number of per-task monitor configurable
+
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: x86@kernel.org
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: Paul Walmsley <paul.walmsley@sifive.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>
+Cc: Albert Ou <aou@eecs.berkeley.edu>
+Cc: Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-riscv@lists.infradead.org
+
+Nam Cao (22):
+  rv: Add #undef TRACE_INCLUDE_FILE
+  printk: Make vprintk_deferred() public
+  panic: Add vpanic()
+  rv: Let the reactors take care of buffers
+  verification/dot2k: Make a separate dot2k_templates/Kconfig_container
+  verification/dot2k: Remove __buff_to_string()
+  verification/dot2k: Replace is_container() hack with subparsers
+  rv: rename CONFIG_DA_MON_EVENTS to CONFIG_RV_MON_EVENTS
+  verification/dot2k: Prepare the frontend for LTL inclusion
+  Documentation/rv: Prepare monitor synthesis document for LTL inclusion
+  verification/rvgen: Restructure the templates files
+  verification/rvgen: Restructure the classes to prepare for LTL
+    inclusion
+  rv: Add support for LTL monitors
+  rv: Add rtapp container monitor
+  x86/tracing: Remove redundant trace_pagefault_key
+  x86/tracing: Move page fault trace points to generic
+  arm64: mm: Add page fault trace points
+  riscv: mm: Add page fault trace points
+  rv: Add rtapp_pagefault monitor
+  rv: Add rtapp_sleep monitor
+  rv: Add documentation for rtapp monitor
+  rv: Allow to configure the number of per-task monitor
+
+ .../trace/rv/da_monitor_synthesis.rst         | 147 -----
+ Documentation/trace/rv/index.rst              |   3 +-
+ .../trace/rv/linear_temporal_logic.rst        | 119 ++++
+ Documentation/trace/rv/monitor_rtapp.rst      | 107 ++++
+ Documentation/trace/rv/monitor_synthesis.rst  | 256 ++++++++
+ arch/arm64/mm/fault.c                         |   8 +
+ arch/riscv/mm/fault.c                         |   8 +
+ arch/x86/include/asm/trace/common.h           |  12 -
+ arch/x86/include/asm/trace/irq_vectors.h      |   1 -
+ arch/x86/kernel/Makefile                      |   1 -
+ arch/x86/kernel/tracepoint.c                  |  21 -
+ arch/x86/mm/fault.c                           |   5 +-
+ include/linux/panic.h                         |   3 +
+ include/linux/printk.h                        |   5 +
+ include/linux/rv.h                            |  74 ++-
+ include/linux/sched.h                         |   8 +-
+ include/rv/da_monitor.h                       |  45 +-
+ include/rv/ltl_monitor.h                      | 184 ++++++
+ .../trace/events}/exceptions.h                |  27 +-
+ kernel/fork.c                                 |   5 +-
+ kernel/panic.c                                |  17 +-
+ kernel/printk/internal.h                      |   1 -
+ kernel/trace/rv/Kconfig                       |  27 +-
+ kernel/trace/rv/Makefile                      |   3 +
+ kernel/trace/rv/monitors/pagefault/Kconfig    |  11 +
+ .../trace/rv/monitors/pagefault/pagefault.c   |  80 +++
+ .../trace/rv/monitors/pagefault/pagefault.h   |  57 ++
+ .../rv/monitors/pagefault/pagefault_trace.h   |  14 +
+ kernel/trace/rv/monitors/rtapp/Kconfig        |   6 +
+ kernel/trace/rv/monitors/rtapp/rtapp.c        |  34 ++
+ kernel/trace/rv/monitors/rtapp/rtapp.h        |   3 +
+ kernel/trace/rv/monitors/sleep/Kconfig        |  13 +
+ kernel/trace/rv/monitors/sleep/sleep.c        | 216 +++++++
+ kernel/trace/rv/monitors/sleep/sleep.h        | 293 +++++++++
+ kernel/trace/rv/monitors/sleep/sleep_trace.h  |  14 +
+ kernel/trace/rv/reactor_panic.c               |   8 +-
+ kernel/trace/rv/reactor_printk.c              |   8 +-
+ kernel/trace/rv/rv.c                          |  10 +-
+ kernel/trace/rv/rv_reactors.c                 |   2 +-
+ kernel/trace/rv/rv_trace.h                    |  52 +-
+ tools/verification/dot2/Makefile              |  26 -
+ tools/verification/dot2/dot2k                 |  53 --
+ tools/verification/models/rtapp/pagefault.ltl |   1 +
+ tools/verification/models/rtapp/sleep.ltl     |  15 +
+ tools/verification/rvgen/.gitignore           |   3 +
+ tools/verification/rvgen/Makefile             |  27 +
+ tools/verification/rvgen/__main__.py          |  67 +++
+ tools/verification/{dot2 =3D> rvgen}/dot2c      |   2 +-
+ .../{dot2 =3D> rvgen/rvgen}/automata.py         |   0
+ tools/verification/rvgen/rvgen/container.py   |  22 +
+ .../{dot2 =3D> rvgen/rvgen}/dot2c.py            |   2 +-
+ tools/verification/rvgen/rvgen/dot2k.py       | 129 ++++
+ .../dot2k.py =3D> rvgen/rvgen/generator.py}     | 249 ++------
+ tools/verification/rvgen/rvgen/ltl2ba.py      | 558 ++++++++++++++++++
+ tools/verification/rvgen/rvgen/ltl2k.py       | 242 ++++++++
+ .../rvgen/templates}/Kconfig                  |   0
+ .../rvgen/rvgen/templates/container/Kconfig   |   5 +
+ .../rvgen/templates/container/main.c}         |   0
+ .../rvgen/templates/container/main.h}         |   0
+ .../rvgen/templates/dot2k}/main.c             |   0
+ .../rvgen/templates/dot2k}/trace.h            |   0
+ .../rvgen/rvgen/templates/ltl2k/main.c        | 102 ++++
+ .../rvgen/rvgen/templates/ltl2k/trace.h       |  14 +
+ 63 files changed, 2875 insertions(+), 550 deletions(-)
+ delete mode 100644 Documentation/trace/rv/da_monitor_synthesis.rst
+ create mode 100644 Documentation/trace/rv/linear_temporal_logic.rst
+ create mode 100644 Documentation/trace/rv/monitor_rtapp.rst
+ create mode 100644 Documentation/trace/rv/monitor_synthesis.rst
+ delete mode 100644 arch/x86/include/asm/trace/common.h
+ delete mode 100644 arch/x86/kernel/tracepoint.c
+ create mode 100644 include/rv/ltl_monitor.h
+ rename {arch/x86/include/asm/trace =3D> include/trace/events}/exceptions.h=
+ (55%)
+ create mode 100644 kernel/trace/rv/monitors/pagefault/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/pagefault/pagefault.c
+ create mode 100644 kernel/trace/rv/monitors/pagefault/pagefault.h
+ create mode 100644 kernel/trace/rv/monitors/pagefault/pagefault_trace.h
+ create mode 100644 kernel/trace/rv/monitors/rtapp/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/rtapp/rtapp.c
+ create mode 100644 kernel/trace/rv/monitors/rtapp/rtapp.h
+ create mode 100644 kernel/trace/rv/monitors/sleep/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/sleep/sleep.c
+ create mode 100644 kernel/trace/rv/monitors/sleep/sleep.h
+ create mode 100644 kernel/trace/rv/monitors/sleep/sleep_trace.h
+ delete mode 100644 tools/verification/dot2/Makefile
+ delete mode 100644 tools/verification/dot2/dot2k
+ create mode 100644 tools/verification/models/rtapp/pagefault.ltl
+ create mode 100644 tools/verification/models/rtapp/sleep.ltl
+ create mode 100644 tools/verification/rvgen/.gitignore
+ create mode 100644 tools/verification/rvgen/Makefile
+ create mode 100644 tools/verification/rvgen/__main__.py
+ rename tools/verification/{dot2 =3D> rvgen}/dot2c (97%)
+ rename tools/verification/{dot2 =3D> rvgen/rvgen}/automata.py (100%)
+ create mode 100644 tools/verification/rvgen/rvgen/container.py
+ rename tools/verification/{dot2 =3D> rvgen/rvgen}/dot2c.py (99%)
+ create mode 100644 tools/verification/rvgen/rvgen/dot2k.py
+ rename tools/verification/{dot2/dot2k.py =3D> rvgen/rvgen/generator.py} (5=
+2%)
+ create mode 100644 tools/verification/rvgen/rvgen/ltl2ba.py
+ create mode 100644 tools/verification/rvgen/rvgen/ltl2k.py
+ rename tools/verification/{dot2/dot2k_templates =3D> rvgen/rvgen/templates=
+}/Kconfig (100%)
+ create mode 100644 tools/verification/rvgen/rvgen/templates/container/Kcon=
+fig
+ rename tools/verification/{dot2/dot2k_templates/main_container.c =3D> rvge=
+n/rvgen/templates/container/main.c} (100%)
+ rename tools/verification/{dot2/dot2k_templates/main_container.h =3D> rvge=
+n/rvgen/templates/container/main.h} (100%)
+ rename tools/verification/{dot2/dot2k_templates =3D> rvgen/rvgen/templates=
+/dot2k}/main.c (100%)
+ rename tools/verification/{dot2/dot2k_templates =3D> rvgen/rvgen/templates=
+/dot2k}/trace.h (100%)
+ create mode 100644 tools/verification/rvgen/rvgen/templates/ltl2k/main.c
+ create mode 100644 tools/verification/rvgen/rvgen/templates/ltl2k/trace.h
+
+--=20
+2.39.5
+
 
