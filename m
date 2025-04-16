@@ -1,242 +1,545 @@
-Return-Path: <linux-kernel+bounces-606948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47582A8B5FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 11:47:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29F77A8B61D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 11:56:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50CA844583C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:47:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87C4B5A265F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:56:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D6E22B8A7;
-	Wed, 16 Apr 2025 09:47:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC4E7238C2E;
+	Wed, 16 Apr 2025 09:55:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TJpthMs8"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QtUlhWKG"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11955230D35
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 09:47:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B025423817E
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 09:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744796858; cv=none; b=hWA4dKVrw9Bc4nSQvR+EW/vuDLgeq1PhrBCQExJRYYjvV432pHXxDMXNIv3WL+G8w3UNGJc647S08WsnTvaO9o/S/Imz2KMC/WyzobkyzTLU+Xl6XY44G0blZURZDSBzhVTEzOJWuBl/iXVl+sVOHSngL+1pWEGUctuCbMhWtOU=
+	t=1744797314; cv=none; b=pveehyFNuAe7sLp7ncKyjdgK1cJPEf8W4rTHnIZMV/CRIdb9kbff9QpuDDhgHgQruD2Ud2rTzGRbU1GALJq+0rCjN4t4PqaZI396fYHcOd99NWMSZ8hAYQEYhMN824gYtw8EqHeTq7RJGfhJSGHneSQC5ywUDqcxJAGFs2w0Ruk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744796858; c=relaxed/simple;
-	bh=swN/d1ArilqHXmC4tanvqClqj28FPmGCz/zycT8hDHc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cLX81G8/KApTCF5sfdWI5flpyvBFuk4uWeDTF/5H66uPic3XAemoi2uIA/+m7Kb4h+8IVcehcaFuRtZi9tXRpbzyAnfvzZAC0zy4iPKZ/uewKsYyVxhmDx7CPNAMeuLKiJGUNwX+wgqdZRyJP3uDipMi6g2oQPI18LBYdy6kFEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TJpthMs8; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ac3eb3fdd2eso1213985166b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 02:47:35 -0700 (PDT)
+	s=arc-20240116; t=1744797314; c=relaxed/simple;
+	bh=AmixYYDH1ZKvvrGtK8hvhxMkDVtSKsVn6a+Mo+h0VmA=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=IVpXV8Sl9qBv26xIxez9hbf8UtOe0uydOiqkW9YqUiV9K1J3LvQ7e2QVyewRvf5PrS5zXpr/VMhw+caJLhJVGAzEmVYpfdmSC4MxmQSV7btTOShcelVqNnj0IVB2Mr4vvxg8Knta+Krv4WRWVEjigH7S4DWdOh0sQs05Q/eej1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--chharry.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QtUlhWKG; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--chharry.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-229170fbe74so55268555ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 02:55:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744796854; x=1745401654; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hyl86y/1hon71hYziH4dS4SrSNyjZobv+uGhWBzXkK8=;
-        b=TJpthMs8ka/LUS1/BMc+9MMGMRuESjbZbmT/imCyIyndz7W31VU20DbjB3wJYgjD3O
-         n9hqK+YpWvtTys1HbmL7kIBegb9KFT7rLIspM6fM1IPgWisBwWdHDhAC1AyOKXvuiv8e
-         jwIi+BDht7j7ZeHG+aY523OAB/kE4DSvQbSi0WdPPeiwgcRkmIQ55m7aHkkYL29Cnt+E
-         XJQEyJv6vDLoTBMOFjpMVHD85s01BN+QyYL5VFSMS19UaZvkEZouTMB8MoYaEeHX3PJ5
-         T8QrOwg2uqDP8ps6Fd+NtVPUucerGt3L2ECu+igknQAk0SdgvyC8LdfEY0fVAiVvbetJ
-         3n8w==
+        d=google.com; s=20230601; t=1744797311; x=1745402111; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=InEo4fDcRL9q31V6DTrhwJjfPEkjK1fc2RFFHanel/w=;
+        b=QtUlhWKGZG5pKFHWMHY3mgzFldxvj2mhQ4Onx1ED6bC+R04mckvU9JyV40Ippo98w2
+         x2m6kMilScmneBw6WQWcCPDuC9G6g/MBpOLZOZn5Fm7gZcVHK9uv9nWTgFn6Dx5ILG8X
+         R7VQ14tctwwHFrLfLvki21WqNrizlDTCf96+71XZxkKt2HIp+b0gvweI9er/QLn+om9O
+         I5woub+FIkvF09H3CvXefyq40trUI3P4sPSvZWQWHx77UwXQHJ/7jTSs1hk0uHiIQjNz
+         fYeJL/DDEriNG7y3tDUPyLqlRwsUFVcz8DnkV+3Ljpmz7o++Jx7Ia/p6ikFwPuEJsFII
+         J8HA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744796854; x=1745401654;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Hyl86y/1hon71hYziH4dS4SrSNyjZobv+uGhWBzXkK8=;
-        b=MPZ2cs3xIYEu64vrNLHmFSYIdhK71AG2+LwqtVN5dF/76xfZl9/8WyaAlg2UiRCS5T
-         jFws7tASJLALhKZCpgXmh4+6yDdVuUbTbA9LmYClEbpA3pQaM+bsWH5jwvCHxyF1qjBB
-         JeBWAXAoBrccIRikOAg+t4bBD3g2kDLniIy3AKRn2OFEMu5G/6Hwe5AseT7kdk2eTqNX
-         X9GwBNC7biBczYuTw819zMHmOYX18FKqPV5N5uu8ghe2O9FcJcN7vqxL4WCFjB3KWsRk
-         EMkeKllKokRlSyinAYOdBqVTcZ8b8TFWbp5fQHxiq0bCEURHXx5HZLaIK2Drpbl2G1vj
-         afbw==
-X-Forwarded-Encrypted: i=1; AJvYcCUD4YiAyLATPT9CIMHRYabBgpdMlbdYDLF7mS5kVudq5dR1OaYMKuDRzpKnGEPGeFuWaUPSw7W0ph810co=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFgKFELaEYUm8792j/9MeJyvPeEThCqkj02b/QDSpT3DrT1O2f
-	EOWtiUHCxE4FJMPtsdLCDxbIqUkH/vfxG/xZwuaiy7nXOzWH50SkSyb8XR1Dh0OBPsBrKvqfO09
-	oTgm5Bx+HuvQz3uC9otbETixeP7w/G/kUt2t6fw==
-X-Gm-Gg: ASbGncvwH89vGfr0rnska58B5/Vdi+y41h3lysn4qLlcFyvUN38cIJzlCYOvAF3y1kX
-	NJUW2xzjIk6Xa5k1U0dn9SlwiveY6FqNaIdr7U4+AAy5Rx2mo1b9+91RDeXrGArGSb7cfGfgwrs
-	yJvw8yJSajExzrMz2D/hi64mn9bjH/AURR5Vuy/ij5VCyLnBfTFgo=
-X-Google-Smtp-Source: AGHT+IGRnbaLq9ecJ6dzopwBDhjvPlvdQn5WNBtCGC6fa+uZuSew/YTmI/wGhNf943PcrWq8qAO676plKpqm2NmJUQc=
-X-Received: by 2002:a17:906:f5a1:b0:ac2:4db0:1d22 with SMTP id
- a640c23a62f3a-acb42bfbe63mr86326466b.42.1744796854163; Wed, 16 Apr 2025
- 02:47:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744797311; x=1745402111;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=InEo4fDcRL9q31V6DTrhwJjfPEkjK1fc2RFFHanel/w=;
+        b=i4qGKoB8e5e2x9wt3LmfCP+q6fRC/+T7ImNe8c4qbER0tGTEg/6Vdf47lu1RWt0QBQ
+         3hgFxES/wcKnUjGBcYehlZF+AdqYDGyKKM6D3sF6txcvr5EXDcvnoj/ug7PqvPNKWADY
+         k15uUL8bDM6BDUgElvSh/py/slSIb4NpqGFiKXRpuG0wORc0pT0vmZexwL/fNzWCWEXC
+         OpMNtNA7XLBM8r2/kpWk/PBMSI0rT1/rAhs/24UrKW3GaZJbAFTNa7zjv5sa2ic2drtG
+         iqW2yxzmftlZC1aaBwjK1fQaO28MN4cykHaDfhsSU18xHQgZTkZ+KeV5+C6nK0iL1IR+
+         rtig==
+X-Forwarded-Encrypted: i=1; AJvYcCXALu74FX+kO33APaQN9HZH63kde+4BC9ZUGKUzYO0Wl/eiClx4pYnWfRM4gyaj7YJi5+d7UPAPEA5ZdJE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyT6alJ2O6MzUpccQJqXYxcrHeNIkLudP6g48cMwrn/xGcO0HDL
+	zspUKv86wm5TZpmt68m6f+tBwHidBBQUR77PN0ENNvTjBS+mn15kmCfjRH6jikH31gRUyJrBAN/
+	2k72hDg==
+X-Google-Smtp-Source: AGHT+IGlWFEHgcXVhtD8bhrbBEorI+mmSq2kg9Nl2j3VREL+nCdIzhb+JaqrWa/36cmimrphtXHeb9bFV40l
+X-Received: from plqw3.prod.google.com ([2002:a17:902:a703:b0:220:da6b:5d08])
+ (user=chharry job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:3284:b0:220:e338:8d2
+ with SMTP id d9443c01a7336-22c358ddb8bmr15086005ad.21.1744797310972; Wed, 16
+ Apr 2025 02:55:10 -0700 (PDT)
+Date: Wed, 16 Apr 2025 09:53:35 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250416035823.1846307-1-tim.c.chen@linux.intel.com>
- <fbe29b49-92af-4b8c-b7c8-3c15405e5f15@linux.ibm.com> <667f2076-fbcd-4da7-8e4b-a8190a673355@intel.com>
- <5e191de4-f580-462d-8f93-707addafb9a2@linux.ibm.com> <517b6aac-7fbb-4c28-a0c4-086797f5c2eb@linux.ibm.com>
-In-Reply-To: <517b6aac-7fbb-4c28-a0c4-086797f5c2eb@linux.ibm.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Wed, 16 Apr 2025 11:47:22 +0200
-X-Gm-Features: ATxdqUF5hneV2-KdMQQJo5D01DkUCayxhz2iH5zJR9RwvyFLjQ5VrOXgJzz4QHg
-Message-ID: <CAKfTPtBF353mFXrqdm9_QbfhDJKsvOpjvER+p+X61XEeAd=URA@mail.gmail.com>
-Subject: Re: [PATCH] sched: Skip useless sched_balance_running acquisition if
- load balance is not due
-To: Shrikanth Hegde <sshegde@linux.ibm.com>
-Cc: "Chen, Yu C" <yu.c.chen@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
-	Doug Nelson <doug.nelson@intel.com>, Mohini Narkhede <mohini.narkhede@intel.com>, 
-	linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.604.gff1f9ca942-goog
+Message-ID: <20250416095505.769906-1-chharry@google.com>
+Subject: [PATCH v2 1/4] Bluetooth: Introduce HCI Driver protocol
+From: Hsin-chen Chuang <chharry@google.com>
+To: luiz.dentz@gmail.com
+Cc: Hsin-chen Chuang <chharry@chromium.org>, chromeos-bluetooth-upstreaming@chromium.org, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Johan Hedberg <johan.hedberg@gmail.com>, 
+	Marcel Holtmann <marcel@holtmann.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Ying Hsu <yinghsu@chromium.org>, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 16 Apr 2025 at 11:29, Shrikanth Hegde <sshegde@linux.ibm.com> wrote:
->
->
->
-> On 4/16/25 14:46, Shrikanth Hegde wrote:
-> >
-> >
-> > On 4/16/25 11:58, Chen, Yu C wrote:
-> >> Hi Shrikanth,
-> >>
-> >> On 4/16/2025 1:30 PM, Shrikanth Hegde wrote:
-> >>>
-> >>>
-> >>> On 4/16/25 09:28, Tim Chen wrote:
-> >>>> At load balance time, balance of last level cache domains and
-> >>>> above needs to be serialized. The scheduler checks the atomic var
-> >>>> sched_balance_running first and then see if time is due for a load
-> >>>> balance. This is an expensive operation as multiple CPUs can attempt
-> >>>> sched_balance_running acquisition at the same time.
-> >>>>
-> >>>> On a 2 socket Granite Rapid systems enabling sub-numa cluster and
-> >>>> running OLTP workloads, 7.6% of cpu cycles are spent on cmpxchg of
-> >>>> sched_balance_running.  Most of the time, a balance attempt is aborted
-> >>>> immediately after acquiring sched_balance_running as load balance time
-> >>>> is not due.
-> >>>>
-> >>>> Instead, check balance due time first before acquiring
-> >>>> sched_balance_running. This skips many useless acquisitions
-> >>>> of sched_balance_running and knocks the 7.6% CPU overhead on
-> >>>> sched_balance_domain() down to 0.05%.  Throughput of the OLTP workload
-> >>>> improved by 11%.
-> >>>>
-> >>>
-> >>> Hi Tim.
-> >>>
-> >>> Time check makes sense specially on large systems mainly due to
-> >>> NEWIDLE balance.
-> >
-> > scratch the NEWLY_IDLE part from that comment.
-> >
-> >>>
-> >>
-> >> Could you elaborate a little on this statement? There is no timeout
-> >> mechanism like periodic load balancer for the NEWLY_IDLE, right?
-> >
-> > Yes. NEWLY_IDLE is very opportunistic.
-> >
-> >>
-> >>> One more point to add, A lot of time, the CPU which acquired
-> >>> sched_balance_running,
-> >>> need not end up doing the load balance, since it not the CPU meant to
-> >>> do the load balance.
-> >>>
-> >>> This thread.
-> >>> https://lore.kernel.org/all/1e43e783-55e7-417f-
-> >>> a1a7-503229eb163a@linux.ibm.com/
-> >>>
-> >>>
-> >>> Best thing probably is to acquire it if this CPU has passed the time
-> >>> check and as well it is
-> >>> actually going to do load balance.
-> >>>
-> >>>
-> >>
-> >> This is a good point, and we might only want to deal with periodic load
-> >> balancer rather than NEWLY_IDLE balance. Because the latter is too
-> >> frequent and contention on the sched_balance_running might introduce
-> >> high cache contention.
-> >>
-> >
-> > But NEWLY_IDLE doesn't serialize using sched_balance_running and can
-> > endup consuming a lot of cycles. But if we serialize using
-> > sched_balance_running, it would definitely cause a lot contention as is.
-> >
-> >
-> > The point was, before acquiring it, it would be better if this CPU is
-> > definite to do the load balance. Else there are chances to miss the
-> > actual load balance.
-> >
-> >
->
-> Sorry, forgot to add.
->
-> Do we really need newidle running all the way till NUMA? or if it runs till PKG is it enough?
-> the regular (idle) can take care for NUMA by serializing it?
->
-> -               if (sd->flags & SD_BALANCE_NEWIDLE) {
-> +               if (sd->flags & SD_BALANCE_NEWIDLE && !(sd->flags & SD_SERIALIZE)) {
+From: Hsin-chen Chuang <chharry@chromium.org>
 
-Why not just clearing SD_BALANCE_NEWIDLE in your sched domain when you
-set SD_SERIALIZE
+Although commit 75ddcd5ad40e ("Bluetooth: btusb: Configure altsetting
+for HCI_USER_CHANNEL") has enabled the HCI_USER_CHANNEL user to send out
+SCO data through USB Bluetooth chips, it's observed that with the patch
+HFP is flaky on most of the existing USB Bluetooth controllers: Intel
+chips sometimes send out no packet for Transparent codec; MTK chips may
+generate SCO data with a wrong handle for CVSD codec; RTK could split
+the data with a wrong packet size for Transparent codec; ... etc.
 
->
->                          pulled_task = sched_balance_rq(this_cpu, this_rq,
->                                                     sd, CPU_NEWLY_IDLE,
->
->
-> Anyways, having a policy around this SD_SERIALIZE would be a good thing.
->
-> >> thanks,
-> >> Chenyu
-> >>
-> >>>> Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
-> >>>> Reported-by: Mohini Narkhede <mohini.narkhede@intel.com>
-> >>>> Tested-by: Mohini Narkhede <mohini.narkhede@intel.com>
-> >>>> ---
-> >>>>   kernel/sched/fair.c | 16 ++++++++--------
-> >>>>   1 file changed, 8 insertions(+), 8 deletions(-)
-> >>>>
-> >>>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> >>>> index e43993a4e580..5e5f7a770b2f 100644
-> >>>> --- a/kernel/sched/fair.c
-> >>>> +++ b/kernel/sched/fair.c
-> >>>> @@ -12220,13 +12220,13 @@ static void sched_balance_domains(struct
-> >>>> rq *rq, enum cpu_idle_type idle)
-> >>>>           interval = get_sd_balance_interval(sd, busy);
-> >>>> -        need_serialize = sd->flags & SD_SERIALIZE;
-> >>>> -        if (need_serialize) {
-> >>>> -            if (atomic_cmpxchg_acquire(&sched_balance_running, 0, 1))
-> >>>> -                goto out;
-> >>>> -        }
-> >>>> -
-> >>>>           if (time_after_eq(jiffies, sd->last_balance + interval)) {
-> >>>> +            need_serialize = sd->flags & SD_SERIALIZE;
-> >>>> +            if (need_serialize) {
-> >>>> +                if (atomic_cmpxchg_acquire(&sched_balance_running,
-> >>>> 0, 1))
-> >>>> +                    goto out;
-> >>>> +            }
-> >>>> +
-> >>>>               if (sched_balance_rq(cpu, rq, sd, idle,
-> >>>> &continue_balancing)) {
-> >>>>                   /*
-> >>>>                    * The LBF_DST_PINNED logic could have changed
-> >>>> @@ -12238,9 +12238,9 @@ static void sched_balance_domains(struct rq
-> >>>> *rq, enum cpu_idle_type idle)
-> >>>>               }
-> >>>>               sd->last_balance = jiffies;
-> >>>>               interval = get_sd_balance_interval(sd, busy);
-> >>>> +            if (need_serialize)
-> >>>> +                atomic_set_release(&sched_balance_running, 0);
-> >>>>           }
-> >>>> -        if (need_serialize)
-> >>>> -            atomic_set_release(&sched_balance_running, 0);
-> >>>>   out:
-> >>>>           if (time_after(next_balance, sd->last_balance + interval)) {
-> >>>>               next_balance = sd->last_balance + interval;
-> >>>
-> >
->
+To address the issue above one needs to reset the altsetting back to
+zero when there is no active SCO connection, which is the same as the
+BlueZ behavior, and another benefit is the bus doesn't need to reserve
+bandwidth when no SCO connection.
+
+This patch adds the infrastructure that allow the user space program to
+talk to Bluetooth drivers directly:
+- Define the new packet type HCI_DRV_PKT which is specifically used for
+  communication between the user space program and the Bluetooth drviers
+- hci_send_frame intercepts the packets and invokes drivers' HCI Drv
+  callbacks (so far only defined for btusb)
+- 2 kinds of events to user space: Command Status and Command Complete,
+  the former simply returns the status while the later may contain
+  additional response data.
+
+Cc: chromeos-bluetooth-upstreaming@chromium.org
+Fixes: b16b327edb4d ("Bluetooth: btusb: add sysfs attribute to control USB alt setting")
+Signed-off-by: Hsin-chen Chuang <chharry@chromium.org>
+---
+
+Changes in v2:
+- Specifying drvier specific commands by hci_opcode_ogf
+
+ drivers/bluetooth/btusb.c        |  69 ++++++++++++++++++--
+ include/net/bluetooth/hci.h      |   1 +
+ include/net/bluetooth/hci_core.h |   3 +
+ include/net/bluetooth/hci_drv.h  |  76 ++++++++++++++++++++++
+ include/net/bluetooth/hci_mon.h  |   2 +
+ net/bluetooth/Makefile           |   3 +-
+ net/bluetooth/hci_core.c         |  10 +++
+ net/bluetooth/hci_drv.c          | 104 +++++++++++++++++++++++++++++++
+ net/bluetooth/hci_sock.c         |  12 +++-
+ 9 files changed, 271 insertions(+), 9 deletions(-)
+ create mode 100644 include/net/bluetooth/hci_drv.h
+ create mode 100644 net/bluetooth/hci_drv.c
+
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index 7a9b89bcea22..79a944cdb662 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -21,6 +21,7 @@
+ 
+ #include <net/bluetooth/bluetooth.h>
+ #include <net/bluetooth/hci_core.h>
++#include <net/bluetooth/hci_drv.h>
+ 
+ #include "btintel.h"
+ #include "btbcm.h"
+@@ -3754,6 +3755,61 @@ static ssize_t isoc_alt_store(struct device *dev,
+ 
+ static DEVICE_ATTR_RW(isoc_alt);
+ 
++static const struct {
++	u16 opcode;
++	const char *desc;
++} btusb_hci_drv_supported_commands[] = {
++	/* Common commands */
++	{ HCI_DRV_OP_READ_INFO, "Read Info" },
++};
++static int btusb_hci_drv_read_info(struct hci_dev *hdev, void *data,
++				   u16 data_len)
++{
++	struct hci_drv_rp_read_info *rp;
++	size_t rp_size;
++	int err, i;
++	u16 opcode, num_supported_commands =
++		ARRAY_SIZE(btusb_hci_drv_supported_commands);
++
++	rp_size = sizeof(*rp) + num_supported_commands * 2;
++
++	rp = kmalloc(rp_size, GFP_KERNEL);
++	if (!rp)
++		return -ENOMEM;
++
++	strscpy_pad(rp->driver_name, btusb_driver.name);
++
++	rp->num_supported_commands = cpu_to_le16(num_supported_commands);
++	for (i = 0; i < num_supported_commands; i++) {
++		opcode = btusb_hci_drv_supported_commands[i].opcode;
++		bt_dev_info(hdev,
++			    "Supported HCI Drv command (0x%02x|0x%04x): %s",
++			    hci_opcode_ogf(opcode),
++			    hci_opcode_ocf(opcode),
++			    btusb_hci_drv_supported_commands[i].desc);
++		rp->supported_commands[i] = cpu_to_le16(opcode);
++	}
++
++	err = hci_drv_cmd_complete(hdev, HCI_DRV_OP_READ_INFO,
++				   HCI_DRV_STATUS_SUCCESS, rp, rp_size);
++
++	kfree(rp);
++	return err;
++}
++
++static const struct hci_drv_handler btusb_hci_drv_common_handlers[] = {
++	{ btusb_hci_drv_read_info,	HCI_DRV_READ_INFO_SIZE },
++};
++
++static const struct hci_drv_handler btusb_hci_drv_specific_handlers[] = {};
++
++static struct hci_drv btusb_hci_drv = {
++	.common_handler_count	= ARRAY_SIZE(btusb_hci_drv_common_handlers),
++	.common_handlers	= btusb_hci_drv_common_handlers,
++	.specific_handler_count	= ARRAY_SIZE(btusb_hci_drv_specific_handlers),
++	.specific_handlers	= btusb_hci_drv_specific_handlers,
++};
++
+ static int btusb_probe(struct usb_interface *intf,
+ 		       const struct usb_device_id *id)
+ {
+@@ -3893,12 +3949,13 @@ static int btusb_probe(struct usb_interface *intf,
+ 		data->reset_gpio = reset_gpio;
+ 	}
+ 
+-	hdev->open   = btusb_open;
+-	hdev->close  = btusb_close;
+-	hdev->flush  = btusb_flush;
+-	hdev->send   = btusb_send_frame;
+-	hdev->notify = btusb_notify;
+-	hdev->wakeup = btusb_wakeup;
++	hdev->open    = btusb_open;
++	hdev->close   = btusb_close;
++	hdev->flush   = btusb_flush;
++	hdev->send    = btusb_send_frame;
++	hdev->notify  = btusb_notify;
++	hdev->wakeup  = btusb_wakeup;
++	hdev->hci_drv = &btusb_hci_drv;
+ 
+ #ifdef CONFIG_PM
+ 	err = btusb_config_oob_wake(hdev);
+diff --git a/include/net/bluetooth/hci.h b/include/net/bluetooth/hci.h
+index a8586c3058c7..e297b312d2b7 100644
+--- a/include/net/bluetooth/hci.h
++++ b/include/net/bluetooth/hci.h
+@@ -494,6 +494,7 @@ enum {
+ #define HCI_EVENT_PKT		0x04
+ #define HCI_ISODATA_PKT		0x05
+ #define HCI_DIAG_PKT		0xf0
++#define HCI_DRV_PKT		0xf1
+ #define HCI_VENDOR_PKT		0xff
+ 
+ /* HCI packet types */
+diff --git a/include/net/bluetooth/hci_core.h b/include/net/bluetooth/hci_core.h
+index 5115da34f881..dd80f1a398be 100644
+--- a/include/net/bluetooth/hci_core.h
++++ b/include/net/bluetooth/hci_core.h
+@@ -31,6 +31,7 @@
+ #include <linux/rculist.h>
+ 
+ #include <net/bluetooth/hci.h>
++#include <net/bluetooth/hci_drv.h>
+ #include <net/bluetooth/hci_sync.h>
+ #include <net/bluetooth/hci_sock.h>
+ #include <net/bluetooth/coredump.h>
+@@ -613,6 +614,8 @@ struct hci_dev {
+ 	struct list_head	monitored_devices;
+ 	bool			advmon_pend_notify;
+ 
++	struct hci_drv		*hci_drv;
++
+ #if IS_ENABLED(CONFIG_BT_LEDS)
+ 	struct led_trigger	*power_led;
+ #endif
+diff --git a/include/net/bluetooth/hci_drv.h b/include/net/bluetooth/hci_drv.h
+new file mode 100644
+index 000000000000..2f01c44f05ec
+--- /dev/null
++++ b/include/net/bluetooth/hci_drv.h
+@@ -0,0 +1,76 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (C) 2025 Google Corporation
++ */
++
++#ifndef __HCI_DRV_H
++#define __HCI_DRV_H
++
++#include <linux/types.h>
++
++#include <net/bluetooth/bluetooth.h>
++#include <net/bluetooth/hci.h>
++
++struct hci_drv_cmd_hdr {
++	__le16	opcode;
++	__le16	len;
++} __packed;
++
++struct hci_drv_ev_hdr {
++	__le16	opcode;
++	__le16	len;
++} __packed;
++
++#define HCI_DRV_EV_CMD_STATUS	0x0000
++struct hci_drv_ev_cmd_status {
++	__le16	opcode;
++	__u8	status;
++} __packed;
++
++#define HCI_DRV_EV_CMD_COMPLETE	0x0001
++struct hci_drv_ev_cmd_complete {
++	__le16	opcode;
++	__u8	status;
++	__u8	data[];
++} __packed;
++
++#define HCI_DRV_STATUS_SUCCESS			0x00
++#define HCI_DRV_STATUS_UNSPECIFIED_ERROR	0x01
++#define HCI_DRV_STATUS_UNKNOWN_COMMAND		0x02
++#define HCI_DRV_STATUS_INVALID_PARAMETERS	0x03
++
++#define HCI_DRV_MAX_DRIVER_NAME_LENGTH	32
++
++/* Common commands that make sense on all drivers start from 0x0000 */
++#define HCI_DRV_OP_READ_INFO	0x0000
++#define HCI_DRV_READ_INFO_SIZE	0
++struct hci_drv_rp_read_info {
++	__u8	driver_name[HCI_DRV_MAX_DRIVER_NAME_LENGTH];
++	__le16	num_supported_commands;
++	__le16	supported_commands[];
++} __packed;
++
++/* Driver specific OGF (Opcode Group Field)
++ * Commands in this group may have different meanings across different drivers.
++ */
++#define HCI_DRV_OGF_DRIVER_SPECIFIC	0x01
++
++int hci_drv_cmd_status(struct hci_dev *hdev, u16 cmd, u8 status);
++int hci_drv_cmd_complete(struct hci_dev *hdev, u16 cmd, u8 status, void *rp,
++			 size_t rp_len);
++int hci_drv_process_cmd(struct hci_dev *hdev, struct sk_buff *cmd_skb);
++
++struct hci_drv_handler {
++	int (*func)(struct hci_dev *hdev, void *data, u16 data_len);
++	size_t data_len;
++};
++
++struct hci_drv {
++	size_t common_handler_count;
++	const struct hci_drv_handler *common_handlers;
++
++	size_t specific_handler_count;
++	const struct hci_drv_handler *specific_handlers;
++};
++
++#endif /* __HCI_DRV_H */
+diff --git a/include/net/bluetooth/hci_mon.h b/include/net/bluetooth/hci_mon.h
+index 082f89531b88..bbd752494ef9 100644
+--- a/include/net/bluetooth/hci_mon.h
++++ b/include/net/bluetooth/hci_mon.h
+@@ -51,6 +51,8 @@ struct hci_mon_hdr {
+ #define HCI_MON_CTRL_EVENT	17
+ #define HCI_MON_ISO_TX_PKT	18
+ #define HCI_MON_ISO_RX_PKT	19
++#define HCI_MON_DRV_TX_PKT	20
++#define HCI_MON_DRV_RX_PKT	21
+ 
+ struct hci_mon_new_index {
+ 	__u8		type;
+diff --git a/net/bluetooth/Makefile b/net/bluetooth/Makefile
+index 5a3835b7dfcd..a7eede7616d8 100644
+--- a/net/bluetooth/Makefile
++++ b/net/bluetooth/Makefile
+@@ -14,7 +14,8 @@ bluetooth_6lowpan-y := 6lowpan.o
+ 
+ bluetooth-y := af_bluetooth.o hci_core.o hci_conn.o hci_event.o mgmt.o \
+ 	hci_sock.o hci_sysfs.o l2cap_core.o l2cap_sock.o smp.o lib.o \
+-	ecdh_helper.o mgmt_util.o mgmt_config.o hci_codec.o eir.o hci_sync.o
++	ecdh_helper.o mgmt_util.o mgmt_config.o hci_codec.o eir.o hci_sync.o \
++	hci_drv.o
+ 
+ bluetooth-$(CONFIG_DEV_COREDUMP) += coredump.o
+ 
+diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
+index 5eb0600bbd03..2815b2d7d28d 100644
+--- a/net/bluetooth/hci_core.c
++++ b/net/bluetooth/hci_core.c
+@@ -2911,6 +2911,8 @@ int hci_recv_frame(struct hci_dev *hdev, struct sk_buff *skb)
+ 		break;
+ 	case HCI_ISODATA_PKT:
+ 		break;
++	case HCI_DRV_PKT:
++		break;
+ 	default:
+ 		kfree_skb(skb);
+ 		return -EINVAL;
+@@ -3019,6 +3021,14 @@ static int hci_send_frame(struct hci_dev *hdev, struct sk_buff *skb)
+ 		return -EINVAL;
+ 	}
+ 
++	if (hci_skb_pkt_type(skb) == HCI_DRV_PKT) {
++		// Intercept HCI Drv packet here and don't go with hdev->send
++		// callabck.
++		err = hci_drv_process_cmd(hdev, skb);
++		kfree_skb(skb);
++		return err;
++	}
++
+ 	err = hdev->send(hdev, skb);
+ 	if (err < 0) {
+ 		bt_dev_err(hdev, "sending frame failed (%d)", err);
+diff --git a/net/bluetooth/hci_drv.c b/net/bluetooth/hci_drv.c
+new file mode 100644
+index 000000000000..3c011edc7fd8
+--- /dev/null
++++ b/net/bluetooth/hci_drv.c
+@@ -0,0 +1,104 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (C) 2025 Google Corporation
++ */
++
++#include <linux/skbuff.h>
++#include <linux/types.h>
++
++#include <net/bluetooth/bluetooth.h>
++#include <net/bluetooth/hci.h>
++#include <net/bluetooth/hci_core.h>
++#include <net/bluetooth/hci_drv.h>
++
++int hci_drv_cmd_status(struct hci_dev *hdev, u16 cmd, u8 status)
++{
++	struct hci_drv_ev_hdr *hdr;
++	struct hci_drv_ev_cmd_status *ev;
++	struct sk_buff *skb;
++
++	skb = bt_skb_alloc(sizeof(*hdr) + sizeof(*ev), GFP_KERNEL);
++	if (!skb)
++		return -ENOMEM;
++
++	hdr = skb_put(skb, sizeof(*hdr));
++	hdr->opcode = __cpu_to_le16(HCI_DRV_EV_CMD_STATUS);
++	hdr->len = __cpu_to_le16(sizeof(*ev));
++
++	ev = skb_put(skb, sizeof(*ev));
++	ev->opcode = __cpu_to_le16(cmd);
++	ev->status = status;
++
++	hci_skb_pkt_type(skb) = HCI_DRV_PKT;
++
++	return hci_recv_frame(hdev, skb);
++}
++EXPORT_SYMBOL(hci_drv_cmd_status);
++
++int hci_drv_cmd_complete(struct hci_dev *hdev, u16 cmd, u8 status, void *rp,
++			 size_t rp_len)
++{
++	struct hci_drv_ev_hdr *hdr;
++	struct hci_drv_ev_cmd_complete *ev;
++	struct sk_buff *skb;
++
++	skb = bt_skb_alloc(sizeof(*hdr) + sizeof(*ev) + rp_len, GFP_KERNEL);
++	if (!skb)
++		return -ENOMEM;
++
++	hdr = skb_put(skb, sizeof(*hdr));
++	hdr->opcode = __cpu_to_le16(HCI_DRV_EV_CMD_COMPLETE);
++	hdr->len = __cpu_to_le16(sizeof(*ev) + rp_len);
++
++	ev = skb_put(skb, sizeof(*ev));
++	ev->opcode = __cpu_to_le16(cmd);
++	ev->status = status;
++
++	skb_put_data(skb, rp, rp_len);
++
++	hci_skb_pkt_type(skb) = HCI_DRV_PKT;
++
++	return hci_recv_frame(hdev, skb);
++}
++EXPORT_SYMBOL(hci_drv_cmd_complete);
++
++int hci_drv_process_cmd(struct hci_dev *hdev, struct sk_buff *skb)
++{
++	struct hci_drv_cmd_hdr *hdr;
++	const struct hci_drv_handler *handler = NULL;
++	u16 opcode, len, ogf, ocf;
++
++	hdr = skb_pull_data(skb, sizeof(*hdr));
++	if (!hdr)
++		return -EILSEQ;
++
++	opcode = __le16_to_cpu(hdr->opcode);
++	len = __le16_to_cpu(hdr->len);
++	if (len != skb->len)
++		return -EILSEQ;
++	ogf = hci_opcode_ogf(opcode);
++	ocf = hci_opcode_ocf(opcode);
++
++	if (!hdev->hci_drv)
++		return hci_drv_cmd_status(hdev, opcode,
++					  HCI_DRV_STATUS_UNKNOWN_COMMAND);
++
++	if (ogf != HCI_DRV_OGF_DRIVER_SPECIFIC) {
++		if (opcode < hdev->hci_drv->common_handler_count)
++			handler = &hdev->hci_drv->common_handlers[opcode];
++	} else {
++		if (ocf < hdev->hci_drv->specific_handler_count)
++			handler = &hdev->hci_drv->specific_handlers[ocf];
++	}
++
++	if (!handler || !handler->func)
++		return hci_drv_cmd_status(hdev, opcode,
++					  HCI_DRV_STATUS_UNKNOWN_COMMAND);
++
++	if (len != handler->data_len)
++		return hci_drv_cmd_status(hdev, opcode,
++					  HCI_DRV_STATUS_INVALID_PARAMETERS);
++
++	return handler->func(hdev, skb->data, len);
++}
++EXPORT_SYMBOL(hci_drv_process_cmd);
+diff --git a/net/bluetooth/hci_sock.c b/net/bluetooth/hci_sock.c
+index 022b86797acd..428ee5c7de7e 100644
+--- a/net/bluetooth/hci_sock.c
++++ b/net/bluetooth/hci_sock.c
+@@ -234,7 +234,8 @@ void hci_send_to_sock(struct hci_dev *hdev, struct sk_buff *skb)
+ 			if (hci_skb_pkt_type(skb) != HCI_EVENT_PKT &&
+ 			    hci_skb_pkt_type(skb) != HCI_ACLDATA_PKT &&
+ 			    hci_skb_pkt_type(skb) != HCI_SCODATA_PKT &&
+-			    hci_skb_pkt_type(skb) != HCI_ISODATA_PKT)
++			    hci_skb_pkt_type(skb) != HCI_ISODATA_PKT &&
++			    hci_skb_pkt_type(skb) != HCI_DRV_PKT)
+ 				continue;
+ 		} else {
+ 			/* Don't send frame to other channel types */
+@@ -391,6 +392,12 @@ void hci_send_to_monitor(struct hci_dev *hdev, struct sk_buff *skb)
+ 		else
+ 			opcode = cpu_to_le16(HCI_MON_ISO_TX_PKT);
+ 		break;
++	case HCI_DRV_PKT:
++		if (bt_cb(skb)->incoming)
++			opcode = cpu_to_le16(HCI_MON_DRV_RX_PKT);
++		else
++			opcode = cpu_to_le16(HCI_MON_DRV_TX_PKT);
++		break;
+ 	case HCI_DIAG_PKT:
+ 		opcode = cpu_to_le16(HCI_MON_VENDOR_DIAG);
+ 		break;
+@@ -1860,7 +1867,8 @@ static int hci_sock_sendmsg(struct socket *sock, struct msghdr *msg,
+ 		if (hci_skb_pkt_type(skb) != HCI_COMMAND_PKT &&
+ 		    hci_skb_pkt_type(skb) != HCI_ACLDATA_PKT &&
+ 		    hci_skb_pkt_type(skb) != HCI_SCODATA_PKT &&
+-		    hci_skb_pkt_type(skb) != HCI_ISODATA_PKT) {
++		    hci_skb_pkt_type(skb) != HCI_ISODATA_PKT &&
++		    hci_skb_pkt_type(skb) != HCI_DRV_PKT) {
+ 			err = -EINVAL;
+ 			goto drop;
+ 		}
+-- 
+2.49.0.604.gff1f9ca942-goog
+
 
