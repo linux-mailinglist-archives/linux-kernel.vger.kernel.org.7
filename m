@@ -1,67 +1,90 @@
-Return-Path: <linux-kernel+bounces-606249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D69EEA8AD16
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 02:55:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 681B7A8AD1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 02:57:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64C133ABED0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 00:55:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B16F3189D9DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 00:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC611E832C;
-	Wed, 16 Apr 2025 00:55:43 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5CAF1FCFEC;
+	Wed, 16 Apr 2025 00:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="tEiRFiui"
+Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2AE1D90A5;
-	Wed, 16 Apr 2025 00:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6181E1FBEA4;
+	Wed, 16 Apr 2025 00:57:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744764942; cv=none; b=a+xEGqrgTw8xT8Jn10XjXk4GLL10sH2W3N76Ya1FwObPRqDs7hhlave5WxwIkCRQ3tE027KC9ulnfaObel2N48iRJvD5l4AgYQ550dwO4qZCnOjy7Nrzo7MpcGqtTprO/e/oFU9nSH9zgnZNzMep2ifQLzwmIIXBAxPy36qm2Ks=
+	t=1744765036; cv=none; b=EhbISgtgmpBJ7r2Kc/xVDL6WLYXYyTI3lZpoD+o3zqzg+lmeLFlVQbflW3eSU8GsvsLKrSr2suydv+dT2YJVFWqQLHrD3H+qzvHsU7k3oGo2kILYoKU5j+BZ/IVPxdyd6BplEi8Ujvd/pMMyPdRy7J0oA9ycrA2gDNPT381/Jkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744764942; c=relaxed/simple;
-	bh=VhXDg+HaETjX6mRSrq+Zl1gFu5zv4Nk9K0mjPrhoPpg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XqP9A7Q7oJuS3rr7Fh9hrTYNgYILV9uFuE9kjUHvUEOYLACusljv1+ugbIna8qajLn7S4irjt6XsgRAGnFxO/p852pvmigFm2Z/VEQc4hsac39UPDKFDdST7UHIYLge0cP3wIs1c/Fl1BUEHAKoIDYIbO+SK8DLXs55SdY3cSbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25691C4CEE7;
-	Wed, 16 Apr 2025 00:55:41 +0000 (UTC)
-Date: Tue, 15 Apr 2025 20:55:39 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Menglong Dong
- <menglong8.dong@gmail.com>, mark.rutland@arm.com,
- mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, Menglong Dong
- <dongml2@chinatelecom.cn>
-Subject: Re: [PATCH bpf v2] ftrace: fix incorrect hash size in
- register_ftrace_direct()
-Message-ID: <20250415205539.5712e5c5@batman.local.home>
-In-Reply-To: <CAEf4BzbyqNAPrOR7cR+2PKCy+cXoEftWufFbhMv73QPFZM+ysw@mail.gmail.com>
-References: <20250413014444.36724-1-dongml2@chinatelecom.cn>
-	<20250414160528.3fd76062ad194bdffff515b5@kernel.org>
-	<CAEf4BzbyqNAPrOR7cR+2PKCy+cXoEftWufFbhMv73QPFZM+ysw@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1744765036; c=relaxed/simple;
+	bh=zZFPGfsc//NRWuZDZlLrSUrUXHq3y4H4Y7BgpiLI22k=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oEtZtXCnV0QFqxX7YU1xTX2EwGR/fzcsUPAWmtsGH1YEZIVeG6fm5teFijDuK+uUFbdOPvoQ1ez8fJE7ZV5k09zGbdO/SGJq88ccmdaiaadU+G30g7+UMD6+VikJxSN+wM455QWXUw6rzl5nZ9NBuZmUQtDivceWXZ7nwHdrGN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=tEiRFiui; arc=none smtp.client-ip=52.119.213.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1744765034; x=1776301034;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=TpbT/RExLtbxnvfHDc23jyzlTtaFl9juJsFsutLQ0hA=;
+  b=tEiRFiuiJVrDTMehiBjMS7vzRypCmgdWA6MHDtmXqjyfdLi05ck4SGDk
+   VGASoWPK9AY6wDR4Txzk4V0seppp4BSNQYS0Ez4zmF5arujGMAYB2QLmA
+   FeuutFkl2sgqNpgaRV57gEawSIg6DyTAaKJX3sEGywySwCImaX8gbJTcH
+   E=;
+X-IronPort-AV: E=Sophos;i="6.15,214,1739836800"; 
+   d="scan'208";a="714143491"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 00:57:12 +0000
+Received: from EX19MTAUWC002.ant.amazon.com [10.0.21.151:21743]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.14.132:2525] with esmtp (Farcaster)
+ id 6eeade8f-f4b7-40cf-8960-7eb52489d252; Wed, 16 Apr 2025 00:57:12 +0000 (UTC)
+X-Farcaster-Flow-ID: 6eeade8f-f4b7-40cf-8960-7eb52489d252
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 16 Apr 2025 00:57:10 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.88.149.87) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 16 Apr 2025 00:57:07 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <leitao@debian.org>
+CC: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <dsahern@kernel.org>,
+	<edumazet@google.com>, <horms@kernel.org>, <kernel-team@meta.com>,
+	<kuba@kernel.org>, <kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>
+Subject: Re: [PATCH net-next 2/8] ipv6: Use nlmsg_payload in addrconf file
+Date: Tue, 15 Apr 2025 17:56:57 -0700
+Message-ID: <20250416005659.22629-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250415-nlmsg_v2-v1-2-a1c75d493fd7@debian.org>
+References: <20250415-nlmsg_v2-v1-2-a1c75d493fd7@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D045UWA001.ant.amazon.com (10.13.139.83) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On Tue, 15 Apr 2025 16:14:01 -0700
-Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
+From: Breno Leitao <leitao@debian.org>
+Date: Tue, 15 Apr 2025 12:28:53 -0700
+> Leverage the new nlmsg_payload() helper to avoid checking for message
+> size and then reading the nlmsg data.
+> 
+> Signed-off-by: Breno Leitao <leitao@debian.org>
 
-> I'm a bit confused by the "[PATCH bpf]" prefix... This fix doesn't
-> seem to be BPF-related, so I'm not sure why it would go through the
-> bpf tree. I presume Masami or Steven will route it through their tree,
-> is that right?
-
-I can take this in my tree.
-
--- Steve
+Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
 
