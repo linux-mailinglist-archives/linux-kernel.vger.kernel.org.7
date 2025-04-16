@@ -1,195 +1,138 @@
-Return-Path: <linux-kernel+bounces-607879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4B17A90BD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:59:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD770A90BEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 21:06:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60CBE3BAF6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:59:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EE605A249D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 19:06:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D94A22422B;
-	Wed, 16 Apr 2025 18:59:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7CA522489A;
+	Wed, 16 Apr 2025 19:06:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="NtIOQshP"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="PQMcoNLA"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB06029A5
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 18:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC07224228;
+	Wed, 16 Apr 2025 19:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744829979; cv=none; b=FfFPP+b/GfpfXvHthxI054tK8CL/c3JGQdlj8qyKiJXrJpAVMPGgo57LMEkzSkc7uwGwi+B7HqAPlx7BfaNSAVH+S11cwt2gVy0F0yDH7J8FRZXM0+gr7o10rFYir4ya75xVIMNa+a+yl2IKe2xWKe3KvQBo2thMDiG4r/irnz0=
+	t=1744830375; cv=none; b=a5FHXW0HVKcTp4q+Q4vgbzqIXzNYC5MkBs9MtbnfSl2hVwhzuuxEU5/7lSD/+SZ0Uq1ciJsehGmEyeUGwuH/owYVDFVEB1pH9CD9oJiuET9B9h7YUrLO+PQ24YXheCQM1dq5BtRUjEKKUsA4LKa29m9y/Y7SAnWZ4/PYlMrIa3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744829979; c=relaxed/simple;
-	bh=51nkwLlT5jg0VROfv/tO2kx9Y2MHMUOAVbGk81PhBFk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VwHhYg7ar0P7olMoBgm0t0IKX//H8cswfY9oCPgtweDt8HvPbF54oS/DyXSMCvIRorNm3KQRAVSXyfGYfnlas188PRillW5781FPz6EDYl/Bglb03FfZ5oY9f0oJGfVq404BhKx+116Hx4KJI2dRnDv+khfU8LPbSN4zIYrOi7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=NtIOQshP; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-224172f32b3so17755ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 11:59:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1744829977; x=1745434777; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BT4C3mEaVrvFwtlJvm7OQIQmXZZGsey90MSNFFjJZxk=;
-        b=NtIOQshPf2jpfpKxV8skjmhcgBUgRxibOo9J4Fz182kdGDSLpzx8cMlx2UF09Y5n9g
-         XuekCo4ZYBqf7qJsJNewzQaZFEtz/UaG44g5o179HWKiCXAXVUuIJAmvuSwdT425FrTg
-         bk5RhhT8TP8NtnHj5BweFkTJT0UfbV+d6x/w2aqTENfCzDmR10tnmDxJQ1ZP7RZKHftu
-         3RS01WzKzYjbSLHRk9oeSyPLM5+xAQf8RgG0mguHIe99gIBX2t7U9oWsD5NOPEV1S3C5
-         EC27zVIwAnqBdB4nZTpL9HGA2yBRYhTlNtYg2WjBEiwCeFnhJn37i7mIF1CjTIa3sz1R
-         zHMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744829977; x=1745434777;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BT4C3mEaVrvFwtlJvm7OQIQmXZZGsey90MSNFFjJZxk=;
-        b=SRlF/2buCfm9kTALQLu7VFrtwkUpmQEeBzjVyom8buHshx4obSdSobjgZJX6E4f3hu
-         7CoC4yWI1B5iiHzYC3Hw2Wx8OPjtwguygsAM4ONEUaFm2DyiqyElxDyKuhGprFV3w1BC
-         2B87r/1h028WEwUYUI4klQCHLWl+JsNSmbxKJmRAMkrXjfDXiLaI3f+e5onrpVUYROlU
-         IBLDcYViyv8QhhvylxOruox0x6kjz+vT6cCYaivQ6Dqs/m4MTKmc4/ZfpE+NRe4VFIdM
-         X3I3iylFlQcrELe/sJBovKEdsQZMHskWUV1HfPzy3Bk32yKdkb1P2RBzGg3CxfMBSxPS
-         cJIw==
-X-Forwarded-Encrypted: i=1; AJvYcCWxc8ZJJSQHScyXTjB6PQIsz7S5yFPll5chcVaWTfrg6q1frcgC3ewemxyRWAGsBixnoCyHx19/2XnQP6M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz44fDzbp0ur8sqlC9/OnCmfQMA1QFFRFbfyq3ED+WFVc5Aw+89
-	TVk/eNG+HoBRT0EEhIltfZcWxTBeCfy2v2dwBedRUGEFPs80iE5QuomP8S29wcHDjPVpySA0b8O
-	H0kjKcB0wLaxgMRxQkFT8LnhM8GmgNncFSvz3FQ==
-X-Gm-Gg: ASbGncvsU6Y4a1E2aCRYrBIFJ3dQ3Hy482XhT5YF8f+sJ20Egk8/G/bSO1FjU2OgGEH
-	tqMUoqeXTHpe0Y584H4khRO8vJeUBZwAqR74RE3xLj5K9vw1RcMKsrs+o9QU/QMHqXRUj+R8p8K
-	3ZhZYfIY6NhabpllFDzz3Hq38b
-X-Google-Smtp-Source: AGHT+IGk1i3RkpdcJp3QcE02uCrxSyG+iRG8aDx/SDyY97zYpvoc3S3Pq0DahgOGXI3ck/al/159MwKjHUp37ZuCwVA=
-X-Received: by 2002:a17:902:dac2:b0:223:5525:622f with SMTP id
- d9443c01a7336-22c3f998c6bmr4546015ad.1.1744829976980; Wed, 16 Apr 2025
- 11:59:36 -0700 (PDT)
+	s=arc-20240116; t=1744830375; c=relaxed/simple;
+	bh=kdyTtW+aDnediSAQNm+CqqexrHdwy9hwbT0UGQq/mBQ=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=VQe4Rt0tQD7c+lfc+75T8PkgI1xXH6GdRC2GUV2kubLPr+6Gk4SQyDQfdZX5zXk2FaWmqN10NaKtbCcPfjNlbwN63PJGtybtVwqV2G/jn+Qn9qFzReS0CTTjV7DdKemOjYOey5dWZUp9DGMFEolYEfeo2jBjw59aczteXNe5JRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=PQMcoNLA; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1744830370; x=1745435170; i=markus.elfring@web.de;
+	bh=kdyTtW+aDnediSAQNm+CqqexrHdwy9hwbT0UGQq/mBQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=PQMcoNLAxdTVA00C4fwqCidKmIr8MugzOw0b5wTXVnug2NdhdMFKnTKz6PSXVB7r
+	 WcjuY0rcWDt7jk2FbMQQUnUDXUo2/V6uBDCxmvL5FLIixJZ43dgqfA/bMAvsNDVNp
+	 SXjWEUUkZd89IZoSTGcYicOkMpugSofc4pfv56FC2fShDshVAD391CImCC/c7WPFK
+	 JQaT4kiTzrh5kKId1zKwvoVXx0817mdZUbwudnAa9tfAzOGhZjUnJXI+Rfrhe4MAt
+	 8B4UpIRJoahw6Np+AI3G30QCWENSfEMe4tLs+EtFn/8RBxy4n6q/643qMglKDJsnt
+	 /yc9W7r54vNI6bhORA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.13]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MXXRF-1tW4ST36ER-00SZPE; Wed, 16
+ Apr 2025 21:00:10 +0200
+Message-ID: <de1ffbc9-4d19-485c-80b5-17f0d95d5566@web.de>
+Date: Wed, 16 Apr 2025 21:00:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250415-ublk_task_per_io-v4-0-54210b91a46f@purestorage.com> <20250415-ublk_task_per_io-v4-2-54210b91a46f@purestorage.com>
-In-Reply-To: <20250415-ublk_task_per_io-v4-2-54210b91a46f@purestorage.com>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Wed, 16 Apr 2025 11:59:25 -0700
-X-Gm-Features: ATxdqUFipM7PBblC7CSB15RCGnyvrvx_I-8-TA50XPH4OOX9U_PLbzucYr3kHYM
-Message-ID: <CADUfDZpkDUE8heSFEhA1aCfn3a59D1+=2piWPtRvX3t9FLgjbw@mail.gmail.com>
-Subject: Re: [PATCH v4 2/4] ublk: mark ublk_queue as const for ublk_commit_and_fetch
-To: Uday Shankar <ushankar@purestorage.com>
-Cc: Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+To: Henry Martin <bsdhenrymartin@gmail.com>, linux-rdma@vger.kernel.org,
+ netdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Amir Tzin <amirtz@nvidia.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Leon Romanovsky <leon@kernel.org>,
+ Mark Bloch <mbloch@nvidia.com>,
+ Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
+ Paolo Abeni <pabeni@redhat.com>, Saeed Mahameed <saeedm@nvidia.com>,
+ Tariq Toukan <tariqt@nvidia.com>
+References: <20250416092243.65573-2-bsdhenrymartin@gmail.com>
+Subject: Re: [PATCH v6 1/2] net/mlx5: Fix null-ptr-deref in
+ mlx5_create_{inner_,}ttc_table()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250416092243.65573-2-bsdhenrymartin@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:wPZRXwmcdlPUfxs+0KJv9X2KX89wwV56Cg2xrU/aVP92VnuT6De
+ s4hszYE02qPt6J3YWrs4HZVJl7AB7D7EPgFOXx3XZRTHahhg1swrb+/X5GXX8kpeDz1J4Xn
+ YWJ4SE3RoeLakcFCW2aeSBXbnl8qe1zzBQa5oyt78Kt3qRDJCJEO0n7n3bEJvdBpkyxtlVe
+ /qOvLMDETRFrM+ExQLdGg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ent964mkJ6o=;AviZf0MUA+qYq4ZCu4xIOBQSGLx
+ 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
 
-On Tue, Apr 15, 2025 at 6:00=E2=80=AFPM Uday Shankar <ushankar@purestorage.=
-com> wrote:
->
-> We now allow multiple tasks to operate on I/Os belonging to the same
-> queue concurrently. This means that any writes to ublk_queue in the I/O
-> path are potential sources of data races. Try to prevent these by
-> marking ublk_queue pointers as const when handling COMMIT_AND_FETCH.
-> Move the logic for this command into its own function
-> ublk_commit_and_fetch. Also open code ublk_commit_completion in
-> ublk_commit_and_fetch to reduce the number of parameters/avoid a
-> redundant lookup.
->
-> Suggested-by: Ming Lei <ming.lei@redhat.com>
-> Signed-off-by: Uday Shankar <ushankar@purestorage.com>
-> ---
->  drivers/block/ublk_drv.c | 91 +++++++++++++++++++++++-------------------=
-------
->  1 file changed, 43 insertions(+), 48 deletions(-)
->
-> diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-> index 9a0d2547512fc8119460739230599d48d2c2a306..153f67d92248ad45bddd2437b=
-1306bb23df7d1ae 100644
-> --- a/drivers/block/ublk_drv.c
-> +++ b/drivers/block/ublk_drv.c
-> @@ -1518,30 +1518,6 @@ static int ublk_ch_mmap(struct file *filp, struct =
-vm_area_struct *vma)
->         return remap_pfn_range(vma, vma->vm_start, pfn, sz, vma->vm_page_=
-prot);
->  }
->
-> -static void ublk_commit_completion(struct ublk_device *ub,
-> -               const struct ublksrv_io_cmd *ub_cmd)
-> -{
-> -       u32 qid =3D ub_cmd->q_id, tag =3D ub_cmd->tag;
-> -       struct ublk_queue *ubq =3D ublk_get_queue(ub, qid);
-> -       struct ublk_io *io =3D &ubq->ios[tag];
-> -       struct request *req;
-> -
-> -       /* now this cmd slot is owned by nbd driver */
-> -       io->flags &=3D ~UBLK_IO_FLAG_OWNED_BY_SRV;
-> -       io->res =3D ub_cmd->result;
-> -
-> -       /* find the io request and complete */
-> -       req =3D blk_mq_tag_to_rq(ub->tag_set.tags[qid], tag);
-> -       if (WARN_ON_ONCE(unlikely(!req)))
-> -               return;
-> -
-> -       if (req_op(req) =3D=3D REQ_OP_ZONE_APPEND)
-> -               req->__sector =3D ub_cmd->zone_append_lba;
-> -
-> -       if (likely(!blk_should_fake_timeout(req->q)))
-> -               ublk_put_req_ref(ubq, req);
-> -}
-> -
->  /*
->   * Called from io task context via cancel fn, meantime quiesce ublk
->   * blk-mq queue, so we are called exclusively with blk-mq and io task
-> @@ -1918,6 +1894,45 @@ static int ublk_unregister_io_buf(struct io_uring_=
-cmd *cmd,
->         return io_buffer_unregister_bvec(cmd, index, issue_flags);
->  }
->
-> +static int ublk_commit_and_fetch(const struct ublk_queue *ubq,
-> +                                struct ublk_io *io, struct io_uring_cmd =
-*cmd,
-> +                                const struct ublksrv_io_cmd *ub_cmd,
-> +                                struct request *req)
-> +{
-> +       if (!(io->flags & UBLK_IO_FLAG_OWNED_BY_SRV))
-> +               return -EINVAL;
-> +
-> +       if (ublk_need_map_io(ubq)) {
-> +               /*
-> +                * COMMIT_AND_FETCH_REQ has to provide IO buffer if
-> +                * NEED GET DATA is not enabled or it is Read IO.
-> +                */
-> +               if (!ub_cmd->addr && (!ublk_need_get_data(ubq) ||
-> +                                       req_op(req) =3D=3D REQ_OP_READ))
-> +                       return -EINVAL;
-> +       } else if (req_op(req) !=3D REQ_OP_ZONE_APPEND && ub_cmd->addr) {
-> +               /*
-> +                * User copy requires addr to be unset when command is
-> +                * not zone append
-> +                */
-> +               return -EINVAL;
-> +       }
-> +
-> +       ublk_fill_io_cmd(io, cmd, ub_cmd->addr);
-> +
-> +       /* now this cmd slot is owned by ublk driver */
-> +       io->flags &=3D ~UBLK_IO_FLAG_OWNED_BY_SRV;
-> +       io->res =3D ub_cmd->result;
-> +
-> +       if (req_op(req) =3D=3D REQ_OP_ZONE_APPEND)
-> +               req->__sector =3D ub_cmd->zone_append_lba;
-> +
-> +       if (likely(!blk_should_fake_timeout(req->q)))
-> +               ublk_put_req_ref(ubq, req);
-> +
-> +       return -EIOCBQUEUED;
+> Add NULL check for mlx5_get_flow_namespace() returns in
+> mlx5_create_inner_ttc_table() and mlx5_create_ttc_table() to prevent
+> NULL pointer dereference.
 
-I think it would be clearer to just return 0. __ublk_ch_uring_cmd()
-already takes care of returning -EIOCBQUEUED in the successful case.
-Aside from that,
+* Can an other summary phrase variant become more desirable accordingly?
 
-Reviewed-by: Caleb Sander Mateos <csander@purestorage.com>
+* Please avoid duplicate source code.
+
+
+Regards,
+Markus
 
