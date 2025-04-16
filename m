@@ -1,284 +1,133 @@
-Return-Path: <linux-kernel+bounces-607778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 506A8A90AAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:01:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B51C1A90B18
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:13:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 682591907B48
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:01:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE58A460412
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:13:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED69C20E01B;
-	Wed, 16 Apr 2025 18:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B3B22170A;
+	Wed, 16 Apr 2025 18:12:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cPUs/7SD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="MM3I5nJJ"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D4D7219A8B;
-	Wed, 16 Apr 2025 18:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED03121CFF6;
+	Wed, 16 Apr 2025 18:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744826446; cv=none; b=VXFLZLId327iPg9/B/n8d3XmEKG0HJXXYJ6zlMn+fjJ+NvJk9WpBtenZn5GaErOKLpGaF4pH+QqbLUnUeo8gUztLmUVQszuubnQT4yDrqlfVBXmACc2bpfBcbqHDxZoyyCeteHtiM9GAo9Gf5qKcO+VHrKfVLwaINb1+yIA4o/U=
+	t=1744827175; cv=none; b=Jyl21wUue4vrwPPqOzRgJmjbb7wQEFly8X5LCvOOppPhacuM6gJgEQihFLHpjaS48wt8l1tndMW1gma80+SA3s+Jdz51c2EF5Teq73wPkvKB9y7m5NQqmFelh3pE9j3ekADlX3F70HUSuYWHQhi7UA6dPqRMkyS9wwBWGKSpKvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744826446; c=relaxed/simple;
-	bh=SJY0xG1DrlZDBeIQmUalS9GpwgIa3ejXcZ6rQbeRQtY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=mcD6EapdmOn3WzlMT2eIIl1iO8ENz0b/if8FujSseazpiZgbJRuatgTk3sfKpUvyYO1/8GHoMRBu5HyP82gb32CX6PaexIHviOclNIX45X6ycrRlG8b+oYc3wSd+Puqeso88ozwO+u2VIrlP1KEjPk4VbWUcLUbTDFU1lEVUUa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cPUs/7SD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6E7CC4CEE2;
-	Wed, 16 Apr 2025 18:00:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744826446;
-	bh=SJY0xG1DrlZDBeIQmUalS9GpwgIa3ejXcZ6rQbeRQtY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=cPUs/7SDgeiM0HerpNhmtjeKguIPd24msJJ+OoUVpI5Lf0fu53ldSmmleu5CyF1b7
-	 x4EQX4drBvPa95+a7mnx6zF7ODs+HXvY35mqHNw4IhlHtCrML2g/+5cKCxtvWfYYF7
-	 8yT9fMJ6NKQjyqJAplFZRM12GeK0WX5GlEIX0wkaxnwlH8291ky9nWrIG5P/k42KBZ
-	 zTJMz1nexk4QIopQ9yFSLhghFwYJZkrc7LXL/cCcYVCz5lE470veypc3LfpoVJRMSE
-	 k/Yd7mfKb6MMsDS5NKVBfc+4k+h+4jrEE5p6L+Nja2/8Kok9ZmPxiYcCJp66Yu1Hr3
-	 PbbcKOUgU9GJA==
-Date: Wed, 16 Apr 2025 12:00:42 -0600
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org, Kees Cook <kees@kernel.org>
-Subject: [PATCH v2][next] drm/nouveau: chan: Avoid
- -Wflex-array-member-not-at-end warnings
-Message-ID: <Z__wSgHK5_lHw8x9@kspp>
+	s=arc-20240116; t=1744827175; c=relaxed/simple;
+	bh=uaq6qM+Ck6AxQX9+RJSqmkPle2TaQ7kI+Uy3iMaX6a0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pmEUKyziQF62A0JYi5gtFkyUVkCAnqjLM9a1AT+lPF5DyjWpudaP8ERcStfN7OXFn1IGD0YsLnu4xb0aoxihp4RwrxrOAonh66mD2knnIof3quEKCWYdKOfvaVKmCNrMlPBUH3sUC9U5XZA9OiuIxFi3WxJedyeB9L/Kg9+oGdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=MM3I5nJJ; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 7A676662719;
+	Wed, 16 Apr 2025 20:12:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1744827171;
+	bh=uaq6qM+Ck6AxQX9+RJSqmkPle2TaQ7kI+Uy3iMaX6a0=;
+	h=From:Subject:Date;
+	b=MM3I5nJJjWyN4SOSGReaZWFXzqWI9ybsdE62U0zfPtnueHY6SNmTgtyOfSFuxSjRm
+	 yuw9FSkM/gLQ6JSN7bsNnPIZBqxq+a0q179cFZeepvjQoPsktOHK53zrsZm51Mv5vZ
+	 h449YANwSfdVkBWvD7Pa7YrSWZkTJWVjWr9kYb91bvZD+qmRPcUZ2kAYyzy95VHl2d
+	 +82xwHaR7+5ne02yHc1hnixQTelZqCxRmanPBiwpeDXrVHWEn7/Ge0KvsH7bOEJvWk
+	 8CbnarFmNN7RBTWMPte/gi8x/BEq2oTegRqwJi/jU0D+hFTnv2239gd3svrjesXgyS
+	 L02ABIvmdQVoA==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Morten Rasmussen <morten.rasmussen@arm.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+ Pierre Gondois <pierre.gondois@arm.com>,
+ Christian Loehle <christian.loehle@arm.com>
+Subject:
+ [RFT][PATCH v1 3/8] cpufreq/sched: Allow .setpolicy() cpufreq drivers to
+ enable EAS
+Date: Wed, 16 Apr 2025 20:01:06 +0200
+Message-ID: <8554829.NyiUUSuA9g@rjwysocki.net>
+In-Reply-To: <3344336.aeNJFYEL58@rjwysocki.net>
+References: <3344336.aeNJFYEL58@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvdejtdeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepuddupdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehsrhhinhhivhgrshdrphgrnhgurhhuvhgruggrsehlihhnuhigrdh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=11 Fuz1=11 Fuz2=11
 
--Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-getting ready to enable it, globally.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Use the `DEFINE_RAW_FLEX()` helper for a few on-stack definitions
-of a flexible structure where the size of the flexible-array member
-is known at compile-time, and refactor the rest of the code,
-accordingly.
+Some cpufreq drivers, like intel_pstate, have built-in governors that
+are used instead of regular cpufreq governors, schedutil in particular,
+but they can work with EAS just fine, so allow EAS to be used with
+those drivers.
 
-So, with these changes, fix the following warnings:
-
-drivers/gpu/drm/nouveau/nouveau_chan.c:274:37: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/gpu/drm/nouveau/nouveau_chan.c:371:46: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/gpu/drm/nouveau/nouveau_chan.c:524:42: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
-Changes in v2:
- - Use __member_size() instead of __struct_size() to get the
-   compile-time size of the flexible array.
 
-v1:
- - Link: https://lore.kernel.org/linux-hardening/Z-67Hm9uHEJs0RGw@kspp/
+v0.3 -> v1
+     * Rebase on top of the new [1-2/8].
+     * Update the diagnostic message printed if the conditions are not met.
 
- drivers/gpu/drm/nouveau/nouveau_chan.c | 114 ++++++++++++-------------
- 1 file changed, 55 insertions(+), 59 deletions(-)
+This patch is regarded as a cleanup for 6.16.
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_chan.c b/drivers/gpu/drm/nouveau/nouveau_chan.c
-index cd659b9fd1d9..1286a664f688 100644
---- a/drivers/gpu/drm/nouveau/nouveau_chan.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_chan.c
-@@ -270,10 +270,7 @@ nouveau_channel_ctor(struct nouveau_cli *cli, bool priv, u64 runm,
- 		{    NV03_CHANNEL_DMA     , 0 },
- 		{}
- 	};
--	struct {
--		struct nvif_chan_v0 chan;
--		char name[TASK_COMM_LEN+16];
--	} args;
-+	DEFINE_RAW_FLEX(struct nvif_chan_v0, args, name, TASK_COMM_LEN + 16);
- 	struct nvif_device *device = &cli->device;
- 	struct nouveau_channel *chan;
- 	const u64 plength = 0x10000;
-@@ -298,28 +295,28 @@ nouveau_channel_ctor(struct nouveau_cli *cli, bool priv, u64 runm,
- 		return ret;
+---
+ drivers/cpufreq/cpufreq.c |   13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -3054,7 +3054,16 @@
  
- 	/* create channel object */
--	args.chan.version = 0;
--	args.chan.namelen = sizeof(args.name);
--	args.chan.runlist = __ffs64(runm);
--	args.chan.runq = 0;
--	args.chan.priv = priv;
--	args.chan.devm = BIT(0);
-+	args->version = 0;
-+	args->namelen = __member_size(args->name);
-+	args->runlist = __ffs64(runm);
-+	args->runq = 0;
-+	args->priv = priv;
-+	args->devm = BIT(0);
- 	if (hosts[cid].oclass < NV50_CHANNEL_GPFIFO) {
--		args.chan.vmm = 0;
--		args.chan.ctxdma = nvif_handle(&chan->push.ctxdma);
--		args.chan.offset = chan->push.addr;
--		args.chan.length = 0;
-+		args->vmm = 0;
-+		args->ctxdma = nvif_handle(&chan->push.ctxdma);
-+		args->offset = chan->push.addr;
-+		args->length = 0;
- 	} else {
--		args.chan.vmm = nvif_handle(&chan->vmm->vmm.object);
-+		args->vmm = nvif_handle(&chan->vmm->vmm.object);
- 		if (hosts[cid].oclass < FERMI_CHANNEL_GPFIFO)
--			args.chan.ctxdma = nvif_handle(&chan->push.ctxdma);
-+			args->ctxdma = nvif_handle(&chan->push.ctxdma);
- 		else
--			args.chan.ctxdma = 0;
--		args.chan.offset = ioffset + chan->push.addr;
--		args.chan.length = ilength;
-+			args->ctxdma = 0;
-+		args->offset = ioffset + chan->push.addr;
-+		args->length = ilength;
- 	}
--	args.chan.huserd = 0;
--	args.chan.ouserd = 0;
-+	args->huserd = 0;
-+	args->ouserd = 0;
+ 	guard(cpufreq_policy_read)(policy);
  
- 	/* allocate userd */
- 	if (hosts[cid].oclass >= VOLTA_CHANNEL_GPFIFO_A) {
-@@ -329,27 +326,28 @@ nouveau_channel_ctor(struct nouveau_cli *cli, bool priv, u64 runm,
- 		if (ret)
- 			return ret;
- 
--		args.chan.huserd = nvif_handle(&chan->mem_userd.object);
--		args.chan.ouserd = 0;
-+		args->huserd = nvif_handle(&chan->mem_userd.object);
-+		args->ouserd = 0;
- 
- 		chan->userd = &chan->mem_userd.object;
- 	} else {
- 		chan->userd = &chan->user;
- 	}
- 
--	snprintf(args.name, sizeof(args.name), "%s[%d]", current->comm, task_pid_nr(current));
-+	snprintf(args->name, __member_size(args->name), "%s[%d]",
-+		 current->comm, task_pid_nr(current));
- 
- 	ret = nvif_object_ctor(&device->object, "abi16ChanUser", 0, hosts[cid].oclass,
--			       &args, sizeof(args), &chan->user);
-+			       args, __struct_size(args), &chan->user);
- 	if (ret) {
- 		nouveau_channel_del(pchan);
- 		return ret;
- 	}
- 
--	chan->runlist = args.chan.runlist;
--	chan->chid = args.chan.chid;
--	chan->inst = args.chan.inst;
--	chan->token = args.chan.token;
-+	chan->runlist = args->runlist;
-+	chan->chid = args->chid;
-+	chan->inst = args->inst;
-+	chan->token = args->token;
- 	return 0;
+-	return sugov_is_governor(policy);
++	/*
++	 * For EAS compatibility, require that either schedutil is the policy
++	 * governor or the policy is governed directly by the cpufreq driver.
++	 *
++	 * In the latter case, it is assumed that EAS can only be enabled by the
++	 * cpufreq driver itself which will not enable EAS if it does not meet
++	 * the EAS' expectations regarding performance scaling response.
++	 */
++	return sugov_is_governor(policy) || (!policy->governor &&
++		policy->policy != CPUFREQ_POLICY_UNKNOWN);
  }
  
-@@ -367,17 +365,17 @@ nouveau_channel_init(struct nouveau_channel *chan, u32 vram, u32 gart)
- 		return ret;
- 
- 	if (chan->user.oclass >= FERMI_CHANNEL_GPFIFO) {
--		struct {
--			struct nvif_event_v0 base;
--			struct nvif_chan_event_v0 host;
--		} args;
-+		DEFINE_RAW_FLEX(struct nvif_event_v0, args, data,
-+				sizeof(struct nvif_chan_event_v0));
-+		struct nvif_chan_event_v0 *host =
-+				(struct nvif_chan_event_v0 *)args->data;
- 
--		args.host.version = 0;
--		args.host.type = NVIF_CHAN_EVENT_V0_KILLED;
-+		host->version = 0;
-+		host->type = NVIF_CHAN_EVENT_V0_KILLED;
- 
- 		ret = nvif_event_ctor(&chan->user, "abi16ChanKilled", chan->chid,
- 				      nouveau_channel_killed, false,
--				      &args.base, sizeof(args), &chan->kill);
-+				      args, __struct_size(args), &chan->kill);
- 		if (ret == 0)
- 			ret = nvif_event_allow(&chan->kill);
- 		if (ret) {
-@@ -520,46 +518,44 @@ nouveau_channels_fini(struct nouveau_drm *drm)
- int
- nouveau_channels_init(struct nouveau_drm *drm)
- {
--	struct {
--		struct nv_device_info_v1 m;
--		struct {
--			struct nv_device_info_v1_data channels;
--			struct nv_device_info_v1_data runlists;
--		} v;
--	} args = {
--		.m.version = 1,
--		.m.count = sizeof(args.v) / sizeof(args.v.channels),
--		.v.channels.mthd = NV_DEVICE_HOST_CHANNELS,
--		.v.runlists.mthd = NV_DEVICE_HOST_RUNLISTS,
--	};
-+	DEFINE_RAW_FLEX(struct nv_device_info_v1, args, data, 2);
-+	struct nv_device_info_v1_data *channels = &args->data[0];
-+	struct nv_device_info_v1_data *runlists = &args->data[1];
- 	struct nvif_object *device = &drm->client.device.object;
- 	int ret, i;
- 
--	ret = nvif_object_mthd(device, NV_DEVICE_V0_INFO, &args, sizeof(args));
-+	args->version = 1;
-+	args->count = __member_size(args->data) / sizeof(*args->data);
-+	channels->mthd = NV_DEVICE_HOST_CHANNELS;
-+	runlists->mthd = NV_DEVICE_HOST_RUNLISTS;
-+
-+	ret = nvif_object_mthd(device, NV_DEVICE_V0_INFO, args,
-+			       __struct_size(args));
- 	if (ret ||
--	    args.v.runlists.mthd == NV_DEVICE_INFO_INVALID || !args.v.runlists.data ||
--	    args.v.channels.mthd == NV_DEVICE_INFO_INVALID)
-+	    runlists->mthd == NV_DEVICE_INFO_INVALID || !runlists->data ||
-+	    channels->mthd == NV_DEVICE_INFO_INVALID)
- 		return -ENODEV;
- 
--	drm->chan_nr = drm->chan_total = args.v.channels.data;
--	drm->runl_nr = fls64(args.v.runlists.data);
-+	drm->chan_nr = drm->chan_total = channels->data;
-+	drm->runl_nr = fls64(runlists->data);
- 	drm->runl = kcalloc(drm->runl_nr, sizeof(*drm->runl), GFP_KERNEL);
- 	if (!drm->runl)
- 		return -ENOMEM;
- 
- 	if (drm->chan_nr == 0) {
- 		for (i = 0; i < drm->runl_nr; i++) {
--			if (!(args.v.runlists.data & BIT(i)))
-+			if (!(runlists->data & BIT(i)))
- 				continue;
- 
--			args.v.channels.mthd = NV_DEVICE_HOST_RUNLIST_CHANNELS;
--			args.v.channels.data = i;
-+			channels->mthd = NV_DEVICE_HOST_RUNLIST_CHANNELS;
-+			channels->data = i;
- 
--			ret = nvif_object_mthd(device, NV_DEVICE_V0_INFO, &args, sizeof(args));
--			if (ret || args.v.channels.mthd == NV_DEVICE_INFO_INVALID)
-+			ret = nvif_object_mthd(device, NV_DEVICE_V0_INFO, args,
-+					       __struct_size(args));
-+			if (ret || channels->mthd == NV_DEVICE_INFO_INVALID)
- 				return -ENODEV;
- 
--			drm->runl[i].chan_nr = args.v.channels.data;
-+			drm->runl[i].chan_nr = channels->data;
- 			drm->runl[i].chan_id_base = drm->chan_total;
- 			drm->runl[i].context_base = dma_fence_context_alloc(drm->runl[i].chan_nr);
- 
--- 
-2.43.0
+ bool cpufreq_ready_for_eas(const struct cpumask *cpu_mask)
+@@ -3064,7 +3073,7 @@
+ 	/* Do not attempt EAS if schedutil is not being used. */
+ 	for_each_cpu(cpu, cpu_mask) {
+ 		if (!cpufreq_policy_is_good_for_eas(cpu)) {
+-			pr_debug("rd %*pbl: schedutil is mandatory for EAS\n",
++			pr_debug("rd %*pbl: EAS requirements not met\n",
+ 				 cpumask_pr_args(cpu_mask));
+ 			return false;
+ 		}
+
+
 
 
