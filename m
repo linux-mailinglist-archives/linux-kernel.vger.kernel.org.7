@@ -1,115 +1,124 @@
-Return-Path: <linux-kernel+bounces-607908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2A28A90C3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 21:24:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6975A90C44
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 21:26:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 133765A365B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 19:24:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2D677ADD5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 19:24:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F33E224B0F;
-	Wed, 16 Apr 2025 19:24:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB8E2253F8;
+	Wed, 16 Apr 2025 19:25:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="nhYGLM6g"
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sKLbGIU+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDC52248B0
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 19:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3285317A304;
+	Wed, 16 Apr 2025 19:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744831467; cv=none; b=PRWjxQt2ZbU93H1u1gG3N13WEV09w+IthPg+7p0AGOG7im8ftC9Dn4BvlbTUkuQjp36Do7wcOsqplI/lgnZEF7BxW5dhOKIBzecysD8JsPqOQOLS3lhBHQ/3pIP/Q1jngMT53rYMTSAoLO9Kv9ClyJ5qGpLUDDerqP0bCoCIxmc=
+	t=1744831551; cv=none; b=goXZN/eNKle8SJF0BhCDfy3kOLUlr1UM6DMk64re0BfwdeLyBvEQnVN7Q/eYuEV+Htz0LbyI1+Z/hmN84L2O74sobdtm16t14XnT3lcD33EFjmuQ6363RO8gxULWEUkb5rVLN50/UF/yqnri3/37NsIqj5oXJIYF5jjqaqCuEvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744831467; c=relaxed/simple;
-	bh=L1QpL+dJg+mvC89uNW9F0Wau2KS/B5UiT7wTtGlO8ks=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lURAZU84CI9sOg2Kj4ppljBfxezwtO0LSYSUPwIpuud97r4W48SMjcHKl9yB+8+HB20JGN2WKRK5GDWLAREE60NAwEoUH3ORei/jvHtmnSp5JRfBYJyKmdpi2bd4mps2q0G7plpuyvk/vV5+91bkhtOQKMe42u4EWQGWthcTEoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=nhYGLM6g; arc=none smtp.client-ip=209.85.167.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-400b948600aso17594b6e.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 12:24:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1744831463; x=1745436263; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OVWtjKl7iqOi18r6l4CQzpfIdcd44V0fOP6BaJjZNMU=;
-        b=nhYGLM6gcJcCl+oQB7bN27zSlNCtr/ulhx77MXw+Cfl5JQuZr5qX+gprtsDvobHw1y
-         KHbxm7Lt0zl0fVl6/iZ4WC5PmqZBKZmDCwKNR2SGsLqyJ37SqcqPFxwLx7+UlhvdFMhZ
-         nRBF3f8SHdTnYtM0IGAjx8+qghmJ5LdJuOzKj9tZXs31rm4/WLE/RR3Lkejd0QdGBBu9
-         vGw52Q4evc/RCUtq+7Fa3qvXSO1S7ajeEmLRWJwNAfjno8IHA4WvsMzwRxKaEtutSy2E
-         C8pkWQssm0VoGUj5VntrM8QLtR788neZASlnYzwgQsB2YYzNaoL0lLriJd0dTzxP6/q4
-         7jUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744831463; x=1745436263;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OVWtjKl7iqOi18r6l4CQzpfIdcd44V0fOP6BaJjZNMU=;
-        b=tRfFIpP7ngFrwhR1tEZmHUYdPTc9s8JqjmaDYpy7Igyisupdv20aWbP6cB2Nf5nI41
-         16B7GaLt3dmjLnSAgcvijkFH8CX3TI+Okpcr+hIQ3deNAe5RzA4sOw4Revqb7tnfwb9i
-         Kuv+wSehjmi6pLtKBl90wwEt9OxcLp+IAHJYaFg42jfGgs9Oj4veP4JAOrWfa/DylkqC
-         b3XAbaqYzOom7/B5mtbcw+6cRged3xIwhFSN+Wqa2bS41IigFMoghwuEkwdbBX0yVkwh
-         uZ1UabkSTvZcXDAEg1tquHToL2x8jUpdkPxdDEqz0wtG5jlELTaXB357oBXy9hYJmdcP
-         4Mzg==
-X-Forwarded-Encrypted: i=1; AJvYcCXBvzaOji76iR3YUbz5mYKUm3r75pjXecIDSp5+6n55/Hn1ht384yvPj1SnlMQgRE5tVnU6x5evmpQiRi4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrwdWDeYSbHpGkK2o8zq8Nw+Ot2/yHkNgb7LaVHJVOtMJjvXy4
-	Vt8mx+xqV5I0aKufETNv+GHtcVp4Mq8I4TmLOEAQwju0T3jvtum3oSghJWpif3I=
-X-Gm-Gg: ASbGnct0JANui3XlK7ujzW8g/7OwSiJafCna9/PhXH7BSoZjhutsFSO6Qsy4GlrJypb
-	9AWnrIMup8gZbcztdof6www3Nxj1ObMcL/9qPfDh0lQhfVxdgtQ1R4JL7wPlh9/WQYzvXbMERc6
-	60OkOpbsGjlrc/UakkAzbjTnSY1CgYtX6t/0UBezK7WxOXJiKP6cdZrdoTuxh88gGFB2TKeNDyX
-	IvDFcquP1ThE35AsRY+iM2Oyleus8X0oaFwC4mVom0p06iUSe+N29e39P+tkckjt4xRYkzycl1z
-	4T0+zVEbjzZ8D/D4Z2UqO0nUlgar8rYiiuLKqjGyy9zE1WyXP1lWduM0l8/7JzPZA94Ve/D4A1+
-	4zus3i7dcsXFU6/DrOtrUwdBprIgs
-X-Google-Smtp-Source: AGHT+IF0mpnDIyAnn6ZeAXKJmpAUqrHnVA/Xnwlkcpkjjq8eHzK67t5vDdKrA4mdat/Ij0oR7736Lw==
-X-Received: by 2002:a05:6808:3094:b0:3f6:7cd2:8187 with SMTP id 5614622812f47-400b01e17e9mr2050247b6e.20.1744831463701;
-        Wed, 16 Apr 2025 12:24:23 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:58f0:670c:6b15:7fd3? ([2600:8803:e7e4:1d00:58f0:670c:6b15:7fd3])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-400763bab7bsm2809388b6e.45.2025.04.16.12.24.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Apr 2025 12:24:23 -0700 (PDT)
-Message-ID: <dbc60881-39e9-45a6-b535-1672c5f8cb6b@baylibre.com>
-Date: Wed, 16 Apr 2025 14:24:22 -0500
+	s=arc-20240116; t=1744831551; c=relaxed/simple;
+	bh=GoKF/LHpNhib2a1akfwq5UC5HXAUAFvsZueILxTSKdw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JWoCOK3jyB/TU9xZgxDyywpBfv6VpbO48Ft2f2J+dkdhmwc6vXwewaCiIRqOg3pifLiwoMd2JS87mK8cxuogA7f2St0+L5myVUSR+rjoDIS1HzN1xYIlyYPN65K2AzSOCYoYG8MONybBNzM5OkLx5zOP1HoeokY3BXOplbbuSKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sKLbGIU+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A12B2C4CEE4;
+	Wed, 16 Apr 2025 19:25:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744831550;
+	bh=GoKF/LHpNhib2a1akfwq5UC5HXAUAFvsZueILxTSKdw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=sKLbGIU+HO9oZU+O5p9XTmPx+Nqcai3OsVsKBiUp0z5zjXGCTlcI9vYM8cMDoNYWb
+	 5qMKvsSGucyMcBNpnxubc95XB/wmy4ZiqWkRoc/6fS8HXEmT4fgCfmgF9O/tEBhBo8
+	 at397kBMTIdPbsAVZt3Wqv0q9YU3R6VFhzMQTIYbi5e8dVPAa+l63MCVRH9pFNFHLl
+	 BMQ2r/aPJUacA6zKOfU228AFH+4Fc3MxriRxuy2zvfho7ZqTUgiD513BNmxx/9Wz7f
+	 Kzpw1dhOh/LM8ERdDbiIB91jMvHhPiV7n74jGk+lS3jQ1YIOdh49SGalirewopj5RA
+	 murx2vyirJNGA==
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ac34257295dso1333767966b.2;
+        Wed, 16 Apr 2025 12:25:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWxGZ6wFUzH1KOT5RM0gXMrvj2ecwuRelug9wODkF2Wsy44c2FvZY5kRbzas5siTm0MS+5dfHIQsNMERTQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfbhrNkG7wZYMUwFHUs7DnaRfzAZAB6xbhTjXN5VjOMGF37kid
+	/7zzB8wW7JSFtbVbBnDq8zeo1Kx/CNhMmeyMYhGWyoLlPsp8rU1F28ZxvfAV5S351qrOmO4bg9/
+	YiLA2S3RscZXx0T3toxpwtO5JqQ==
+X-Google-Smtp-Source: AGHT+IFh1JR5Z0LAxnoYuZevCEEpxkJH9c1vzPj8jxuIXtqnUi8yKHEwDF59bxVh8xYkFd1igpWXehoXB7ESE8EBUos=
+X-Received: by 2002:a17:907:720c:b0:ac7:4d45:f13e with SMTP id
+ a640c23a62f3a-acb428d3a04mr335420066b.13.1744831549136; Wed, 16 Apr 2025
+ 12:25:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/3] Add driver for AD3530R and AD3531R DACs
-To: Kim Seer Paller <kimseer.paller@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <noname.nuno@gmail.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20250412-togreg-v4-0-cb9e5309b99d@analog.com>
-From: David Lechner <dlechner@baylibre.com>
-Content-Language: en-US
-In-Reply-To: <20250412-togreg-v4-0-cb9e5309b99d@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <CAL_Jsq++MbY=s5t1hmE0AhcmFA14t3fxLM1xPFZAA0ETX_ee-g@mail.gmail.com>
+ <tencent_607C227A96060DD8EC83C78184305D264109@qq.com>
+In-Reply-To: <tencent_607C227A96060DD8EC83C78184305D264109@qq.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 16 Apr 2025 14:25:37 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqK733Q9bbxC0Wz5uxyZ9m7bs+bci5kUJF9GJMv73-dO4w@mail.gmail.com>
+X-Gm-Features: ATxdqUFF9-IUSq1djrMpuWjuhr9hIZbcSKeFY8qPTBYsU0Aj7DIvMGHJilsZfgc
+Message-ID: <CAL_JsqK733Q9bbxC0Wz5uxyZ9m7bs+bci5kUJF9GJMv73-dO4w@mail.gmail.com>
+Subject: Re: [PATCH] of: reserved-mem: Warn for missing initfn in __reservedmem_of_table
+To: 1425075683@qq.com
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	m.szyprowski@samsung.com, saravanak@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 4/12/25 12:57 AM, Kim Seer Paller wrote:
-> The AD3530/AD3530R (8-channel) and AD3531/AD3531R (4-channel) are
-> low-power, 16-bit, buffered voltage output DACs with software-
-> programmable gain controls, providing full-scale output spans of 2.5V or
-> 5V for reference voltages of 2.5V. These devices operate from a single
-> 2.7V to 5.5V supply and are guaranteed monotonic by design. The "R"
-> variants include a 2.5V, 5ppm/°C internal reference, which is disabled
-> by default.
-> 
-> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
+On Tue, Apr 15, 2025 at 9:02=E2=80=AFPM <1425075683@qq.com> wrote:
+>
+> > On Tue, Apr 15, 2025 at 9:16=E2=80=AFAM Liya Huang <1425075683@qq.com> =
+wrote:
+> > >
+> > > For the data in __reservedmem_of_table, its function pointer initfn m=
+ight
+> > > be NULL. However, __reserved_mem_init_node() only considers non-NULL =
+cases
+> > > and ignores NULL function pointers.
+> >
+> > If initfn is NULL, there's no point to the entry and that's a bug.
+> > Unless you have a build time check, there's no point to add this.
+> >
+> > Rob
+>
+> Thank you for your response. Based on your suggestion, I have made the
+> modifications and used static_assert() to perform the check at compile
+> time. The specific code is as follows. Could you please review whether
+> this modification is reasonable? If it is acceptable, I will proceed with
+> submitting the patch.
+>
+> I did not find any usage of static_assert() for null pointer checks in th=
+e
+> kernel code.
+
+That's a bit strange, but the use of static_assert() is a bit new.
+
+> Additionally, BUILD_BUG_ON() cannot be used globally.
+>
 > ---
-I made a few comments on the driver, but still good enough for:
+> diff --git a/include/linux/of_reserved_mem.h b/include/linux/of_reserved_=
+mem.h
+> index e338282da652..87446ad2deb2 100644
+> --- a/include/linux/of_reserved_mem.h
+> +++ b/include/linux/of_reserved_mem.h
+> @@ -29,6 +29,7 @@ typedef int (*reservedmem_of_init_fn)(struct reserved_m=
+em *rmem);
+>  #ifdef CONFIG_OF_RESERVED_MEM
+>
+>  #define RESERVEDMEM_OF_DECLARE(name, compat, init)                     \
+> +       static_assert((init) !=3D NULL);  \
+>         _OF_DECLARE(reservedmem, name, compat, init, reservedmem_of_init_=
+fn)
 
-Reviewed-by: David Lechner <dlechner@baylibre.com>
+I'm pretty sure we can apply this globally in _OF_DECLARE() as any
+NULL init function would be useless. The special case is
+CLK_OF_DECLARE which wraps the init function.
+
+Rob
 
