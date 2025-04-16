@@ -1,104 +1,95 @@
-Return-Path: <linux-kernel+bounces-606986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93114A8B66C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 12:09:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F0C0A8B679
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 12:11:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16D533BB8A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 10:09:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FCD0189B46A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 10:11:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41523238D21;
-	Wed, 16 Apr 2025 10:09:46 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3BC2356C3
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 10:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B85423C39A;
+	Wed, 16 Apr 2025 10:11:28 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DAC7230BD6;
+	Wed, 16 Apr 2025 10:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744798185; cv=none; b=XOuQ6z6ceNP1266ZTHMg2zT4WGw6lJGL1xto4V+jcdBBwwe3qZD/X1WEtIoudDXw0jAd8xwUskuqMotgYxcbA/fGMiS9ld1spaECOTgcL8UziBATF9QHd2PdkDfrozgVPLi1SGCPZda+N4Rcb7Zv8FOUN+njTL4ZU6ZSilSYI6A=
+	t=1744798288; cv=none; b=tt7HJYVlfl1+Kgk/HhFOGhyEgQHlYSNtlpa2HUc5YTk24V6V0PycOjhCvOhG3xz8HVLtsZAbD388E0/ohk2nmQ2ucZPxsaVB7w+OtnfjceaP6ijQ5DK75nSrhLOV8zkXkcg9NnUfBsc4NKyyDiezRhQKXKGOgb/E7VRhJdiQKE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744798185; c=relaxed/simple;
-	bh=7F3RTIY0HnFFVdJogRDV6fzFIiE9f8lOEJ5iXhX4fnU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DBRg/I658FgNOxIFxK8hojuXLDnl9iSuZOrSgUJ30hbzfH8hy09b1g9hPSaTGYtNleA6TacN1hd0nDD3cEddBUUW0zSdyhfg1ndmlw4Imy7b+XJCb6f74htht3rRZhtFLS07Iz+flbNVjN/QOsOZtv+tTQL29W1/oR0dZjCoUaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A9D0C4CEE2;
-	Wed, 16 Apr 2025 10:09:43 +0000 (UTC)
-Date: Wed, 16 Apr 2025 11:09:41 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Ross Stutterheim <ross.stutterheim@garmin.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>,
-	Mike Rapoport <rppt@linux.ibm.com>, ross.sweng@gmail.com,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] arm/memremap: fix arch_memremap_can_ram_remap()
-Message-ID: <Z_-B5fAhZzShX34I@arm.com>
-References: <20250414133219.107455-1-ross.stutterheim@garmin.com>
- <20250414142140.131756-1-ross.stutterheim@garmin.com>
+	s=arc-20240116; t=1744798288; c=relaxed/simple;
+	bh=bPoeZDmonHWLDSTPwGCwozvXf49O//btsCfxc1EAQs4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=g9chNWSfCWcm/FgGnDJ+7eO1mdAiyzoDat24F/K4Zbfp2U1xpog3BkrCBjU0VeAl5YGVCHqRyvH9AaVZp2HrvQYeHEJLOBwk6bd0lAuQPxZEPfHWJJWgGxqg3iI/yxN9kaT/omN26oRUgxFTQmIB/ohi8Oavv/lSPW5HqLsiRuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3DA5D152B;
+	Wed, 16 Apr 2025 03:11:23 -0700 (PDT)
+Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 867EE3F694;
+	Wed, 16 Apr 2025 03:11:23 -0700 (PDT)
+Date: Wed, 16 Apr 2025 11:11:18 +0100
+From: Andre Przywara <andre.przywara@arm.com>
+To: Chukun Pan <amadeus@jmu.edu.cn>
+Cc: Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Samuel Holland <samuel@sholland.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Jernej Skrabec
+ <jernej.skrabec@gmail.com>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>, <linux-sunxi@lists.linux.dev>,
+ <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 1/1] arm64: dts: allwinner: correct the model name for
+ Radxa Cubie A5E
+Message-ID: <20250416111118.2afd8f89@donnerap.manchester.arm.com>
+In-Reply-To: <20250416100006.82920-1-amadeus@jmu.edu.cn>
+References: <20250416100006.82920-1-amadeus@jmu.edu.cn>
+Organization: ARM
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250414142140.131756-1-ross.stutterheim@garmin.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Apr 14, 2025 at 09:21:40AM -0500, Ross Stutterheim wrote:
-> commit 260364d112bc ("arm[64]/memremap: don't abuse pfn_valid() to ensure
-> presence of linear map") added the definition of
-> arch_memremap_can_ram_remap() for arm[64] specific filtering of what pages
-> can be used from the linear mapping. memblock_is_map_memory() was called
-> with the pfn of the address given to arch_memremap_can_ram_remap();
-> however, memblock_is_map_memory() expects to be given an address for arm,
-> not a pfn.
-> 
-> This results in calls to memremap() returning a newly mapped area when
-> it should return an address in the existing linear mapping.
-> 
-> Fix this by removing the address to pfn translation and pass the
-> address directly.
-> 
-> Fixes: 260364d112bc ("arm[64]/memremap: don't abuse pfn_valid() to ensure presence of linear map")
-> Signed-off-by: Ross Stutterheim <ross.stutterheim@garmin.com>
+On Wed, 16 Apr 2025 18:00:06 +0800
+Chukun Pan <amadeus@jmu.edu.cn> wrote:
 
-I think you could also add:
+> According to https://radxa.com/products/cubie/a5e,
+> the name of this board should be "Radxa Cubie A5E".
+> This is also consistent with the dt-bindings.
+> 
+> Fixes: 80e0fb4e491b ("arm64: dts: allwinner: a523: add Radxa A5E support")
+> Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
 
-Cc: <stable@vger.kernel.org>
+Indeed, thanks for sending a patch!
+
+Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+
+Cheers,
+Andre
 
 > ---
->  arch/arm/mm/ioremap.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+>  arch/arm64/boot/dts/allwinner/sun55i-a527-radxa-a5e.dts | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/arch/arm/mm/ioremap.c b/arch/arm/mm/ioremap.c
-> index 748698e91a4b..27e64f782cb3 100644
-> --- a/arch/arm/mm/ioremap.c
-> +++ b/arch/arm/mm/ioremap.c
-> @@ -515,7 +515,5 @@ void __init early_ioremap_init(void)
->  bool arch_memremap_can_ram_remap(resource_size_t offset, size_t size,
->  				 unsigned long flags)
->  {
-> -	unsigned long pfn = PHYS_PFN(offset);
-> -
-> -	return memblock_is_map_memory(pfn);
-> +	return memblock_is_map_memory(offset);
->  }
+> diff --git a/arch/arm64/boot/dts/allwinner/sun55i-a527-radxa-a5e.dts b/arch/arm64/boot/dts/allwinner/sun55i-a527-radxa-a5e.dts
+> index 912e1bda974c..03c9a9ef5adc 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun55i-a527-radxa-a5e.dts
+> +++ b/arch/arm64/boot/dts/allwinner/sun55i-a527-radxa-a5e.dts
+> @@ -8,7 +8,7 @@
+>  #include <dt-bindings/gpio/gpio.h>
+>  
+>  / {
+> -	model = "Radxa A5E";
+> +	model = "Radxa Cubie A5E";
+>  	compatible = "radxa,cubie-a5e", "allwinner,sun55i-a527";
+>  
+>  	aliases {
 
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-
-Not sure how Russell picks patches up these days (I used to send them to
-the patch system -
-https://www.arm.linux.org.uk/developer/patches/info.php).
-
-It might be simpler with git send-email (that's the alias I had):
-
-  git send-email --add-header="KernelVersion: $(git describe --abbrev=0)" --no-thread --suppress-cc=all --to="patches@armlinux.org.uk"
-
--- 
-Catalin
 
