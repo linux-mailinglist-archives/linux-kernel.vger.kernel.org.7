@@ -1,138 +1,144 @@
-Return-Path: <linux-kernel+bounces-606716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28686A8B2B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:52:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F54EA8B2B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:54:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC0EF3A5921
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 07:51:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C10D2441047
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 07:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C37A22E3FF;
-	Wed, 16 Apr 2025 07:52:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D875B22E3E3;
+	Wed, 16 Apr 2025 07:54:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V6ESEMQL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PC/sMngk"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9726C189B9D;
-	Wed, 16 Apr 2025 07:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BEEF22F14C
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 07:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744789919; cv=none; b=Nkl8+HoFcB8bMqDo0iS+It4gIAgoebvBOEK9ST3KpsLZAdeO95GkWfrsQlgrKN7L43wtO34mQgmVdG8sWqj8OBaz2upxBpi/7S2o0r1Gq7nlQzkMLibBhQBnkfz/Ns7r+YlvwW3BAaakYknZFUnw0vWj7Srzt1pUnIBDz9koZt0=
+	t=1744790050; cv=none; b=O6RQpvVG6bAOIiDD+Yau7G9rg/0JGNrl2U/WxshQaAb/uV30jDX7g44tlpReTyoIBWxEI1LsKuaUZ85BAh1T+NQ3q0gnVNxmN0DtOQxFdamyESCZxLEmgo3gvfvJgY8Bx31V9mNVccXX4RTxEuIfrusVLux5VoqZmqd8pwpUjHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744789919; c=relaxed/simple;
-	bh=iLOvCfHAlkl2qqlJ2x0ADYafFrSh4AKEbA4z06zylDk=;
+	s=arc-20240116; t=1744790050; c=relaxed/simple;
+	bh=M+jg169zSVo6ZismI6ncNWlx1PXdIQmNy/hfg0Q9PJQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JT2SlWTkFl+7Z0e1tsU29H9NyjwxLvJLCzq1TiB0cptbf0RTKxE09tUtoQ7jhigW2vrYYcLicjN1cXq2dqRCnXtsbFRTTwMYgodeIMKILxQ3eZSI8cgdzavrHeqSHhYuDIzFbq1VxsKZgfVnadni693y0qrm1Lz/rBj4WKrU9gA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V6ESEMQL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16D5EC4CEE9;
-	Wed, 16 Apr 2025 07:51:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744789919;
-	bh=iLOvCfHAlkl2qqlJ2x0ADYafFrSh4AKEbA4z06zylDk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V6ESEMQLt+0taO4/Ie3NZ0+cQyX6mhGocswhyaFyACEDvXDIzhQGzVKIZFdWfr+54
-	 AJYH/jMu7t1K5H1Ajgo7XDOjV/lITEXcrzttJagShpyrQSXK4ZkH2XZDcAX5SFOcbU
-	 2+HZpqxN9gyfWKnxqyS6+7H3XwjPSQOTHcpa87GFIoFaCgBO5t3UDuUdouG3REE93g
-	 x+cd/NSh3FQAFdx4K+xqqj7syyG9js7QC2QUmmeH1eAus8LE3JGvICdMkZ6W5vQt+y
-	 ztoellq8oR4pUh2xuhvYn0MGroaTPgpbRoUbvmnlNkxrJAO4m1bZL+hcOFv8rfGIVQ
-	 2PAw602YCZq7w==
-Date: Wed, 16 Apr 2025 09:51:53 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Mike Rapoport <rppt@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-tip-commits@vger.kernel.org, Arnd Bergmann <arnd@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Davide Ciminaghi <ciminaghi@gnudd.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=K9imdWnPdzzO3zZUHS70F9quzNttNnZGmPfDT7VPmIoJG3UNW6aLQ+hvOYM8USiNYYgVnaiek7eYNVfTU+T96ReSZLdJikctLCyI+tGp/A2f84o+i8+ObsxU+uXfi+SB3CDn4fQP6cdNrR5YZraf/52x6WWQfsbrTO4u7Aqwo6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PC/sMngk; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744790047; x=1776326047;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=M+jg169zSVo6ZismI6ncNWlx1PXdIQmNy/hfg0Q9PJQ=;
+  b=PC/sMngkAdrvSQh9k0miF/lEtMEB4ZNVk590Y5O4IyqQA/PIBFiq6Z2d
+   Rte8alQKLM1nAfkQRJU4CDlybW9ENlI4KoUECxJAD3Mz/Ac7ygpqsR0BA
+   dMzH+0aL5E3soRgzTtS7rZg8MgoQk0ZQRZX7I2KJQdUiUCre5dSAM8rWL
+   cJpxWaRWgrqgiEw0Gq98f2R3yECNMCJZh5mAGrrqKtdKHAc651o4/n+/K
+   g/bo1zNMDW6l2sj0rubDyJbp9l8pBVO5w+MPR7pOrsrmm7g/PH4huzudD
+   SUUYw7LH9rOCQXa2K7aiYfAQHSa7ql1S5GUaROjMN4xXGHEh0urp3vWP1
+   w==;
+X-CSE-ConnectionGUID: irLmjjtmRJGen8aPKc1VOg==
+X-CSE-MsgGUID: WrKoN0YLTb2vi8txtc/CjQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="46487841"
+X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
+   d="scan'208";a="46487841"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 00:54:06 -0700
+X-CSE-ConnectionGUID: y+iglnNJQK6HRW0n2kQwyw==
+X-CSE-MsgGUID: pi2gb3OgRoup42oW9KxnBg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
+   d="scan'208";a="130891544"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 16 Apr 2025 00:54:04 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u4xar-000JGi-2f;
+	Wed, 16 Apr 2025 07:54:01 +0000
+Date: Wed, 16 Apr 2025 15:53:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: Oscar Salvador <osalvador@suse.de>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
+	Vlastimil Babka <vbabka@suse.cz>,
 	Matthew Wilcox <willy@infradead.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org,
-	x86@kernel.org
-Subject: Re: [tip: x86/urgent] x86/e820: Discard high memory that can't be
- addressed by 32-bit systems
-Message-ID: <Z_9hmdMTP3wpB3Cc@gmail.com>
-References: <20250413080858.743221-1-rppt@kernel.org>
- <174453620439.31282.5525507256376485910.tip-bot2@tip-bot2>
- <a641e123-be70-41ab-b0ce-6710d7fd0c2d@intel.com>
- <Z_4ISTuGo8VmZt9X@kernel.org>
- <c811f662-79fd-4db1-b4e1-74a869d9a4f1@intel.com>
- <Z_9ZblhCgEeTgGQ8@gmail.com>
+	Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH] mm, hugetlb: Reset mapping to TAIL_MAPPING before
+ restoring vmemmap
+Message-ID: <202504161522.S1qEFD4b-lkp@intel.com>
+References: <20250415054705.370412-1-osalvador@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z_9ZblhCgEeTgGQ8@gmail.com>
+In-Reply-To: <20250415054705.370412-1-osalvador@suse.de>
+
+Hi Oscar,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on akpm-mm/mm-everything]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Oscar-Salvador/mm-hugetlb-Reset-mapping-to-TAIL_MAPPING-before-restoring-vmemmap/20250415-134835
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20250415054705.370412-1-osalvador%40suse.de
+patch subject: [PATCH] mm, hugetlb: Reset mapping to TAIL_MAPPING before restoring vmemmap
+config: x86_64-buildonly-randconfig-006-20250416 (https://download.01.org/0day-ci/archive/20250416/202504161522.S1qEFD4b-lkp@intel.com/config)
+compiler: clang version 20.1.2 (https://github.com/llvm/llvm-project 58df0ef89dd64126512e4ee27b4ac3fd8ddf6247)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250416/202504161522.S1qEFD4b-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504161522.S1qEFD4b-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> mm/hugetlb_vmemmap.c:506:2: error: call to undeclared function 'set_hugetlb_cgroup'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     506 |         set_hugetlb_cgroup(folio, TAIL_MAPPING);
+         |         ^
+   1 error generated.
 
 
-* Ingo Molnar <mingo@kernel.org> wrote:
+vim +/set_hugetlb_cgroup +506 mm/hugetlb_vmemmap.c
 
-> 
-> * Dave Hansen <dave.hansen@intel.com> wrote:
-> 
-> > On 4/15/25 00:18, Mike Rapoport wrote:
-> > >> How about we reuse 'MAX_NONPAE_PFN' like this:
-> > >>
-> > >> 	if (IS_ENABLED(CONFIG_X86_32))
-> > >> 		memblock_remove(PFN_PHYS(MAX_NONPAE_PFN), -1);
-> > >>
-> > >> Would that make the connection more obvious?
-> > > Yes, that's better. Here's the updated patch:
-> > 
-> > Looks, great. Thanks for the update and the quick turnaround on the
-> > first one after the bug report!
-> > 
-> > Tested-by: Dave Hansen <dave.hansen@intel.com>
-> > Acked-by: Dave Hansen <dave.hansen@intel.com>
-> 
-> I've amended the fix in tip:x86/urgent accordingly and added your tags, 
-> thanks!
+   488	
+   489	/**
+   490	 * hugetlb_vmemmap_restore_folio - restore previously optimized (by
+   491	 *				hugetlb_vmemmap_optimize_folio()) vmemmap pages which
+   492	 *				will be reallocated and remapped.
+   493	 * @h:		struct hstate.
+   494	 * @folio:     the folio whose vmemmap pages will be restored.
+   495	 *
+   496	 * Return: %0 if @folio's vmemmap pages have been reallocated and remapped,
+   497	 * negative error code otherwise.
+   498	 */
+   499	int hugetlb_vmemmap_restore_folio(const struct hstate *h, struct folio *folio)
+   500	{
+   501		/*
+   502		 * Before restoring vmemmap, make sure to reset mapping to TAIL_MAPPING,
+   503		 * so tail pages that were reset will have the right thing after being
+   504		 * restored, and the checks in free_tail_page_prepare() will pass.
+   505		 */
+ > 506		set_hugetlb_cgroup(folio, TAIL_MAPPING);
+   507		return __hugetlb_vmemmap_restore_folio(h, folio, VMEMMAP_SYNCHRONIZE_RCU);
+   508	}
+   509	
 
-So I had to apply the fix below as well, due to this build failure on 
-x86-defconfig:
-
-  arch/x86/kernel/e820.c:1307:42: error: ‘MAX_NONPAE_PFN’ undeclared (first use in this function); did you mean ‘MAX_DMA_PFN’?
-
-IS_ENABLED(CONFIG_X86_32) can only be used when the code is 
-syntactically correct on !CONFIG_X86_32 kernels too - which it wasn't.
-
-So I went for the straightforward #ifdef block instead.
-
-Thanks,
-
-	Ingo
-
-===========>
- arch/x86/kernel/e820.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
-index de6238886cb2..c984be8ee060 100644
---- a/arch/x86/kernel/e820.c
-+++ b/arch/x86/kernel/e820.c
-@@ -1299,13 +1299,14 @@ void __init e820__memblock_setup(void)
- 		memblock_add(entry->addr, entry->size);
- 	}
- 
-+#ifdef CONFIG_X86_32
- 	/*
- 	 * Discard memory above 4GB because 32-bit systems are limited to 4GB
- 	 * of memory even with HIGHMEM.
- 	 */
--	if (IS_ENABLED(CONFIG_X86_32))
--		memblock_remove(PFN_PHYS(MAX_NONPAE_PFN), -1);
-+	memblock_remove(PFN_PHYS(MAX_NONPAE_PFN), -1);
-+#endif
- 
- 	/* Throw away partial pages: */
- 	memblock_trim_memory(PAGE_SIZE);
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
