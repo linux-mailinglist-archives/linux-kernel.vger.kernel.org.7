@@ -1,79 +1,54 @@
-Return-Path: <linux-kernel+bounces-607841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F8C7A90B64
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:38:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09CBEA90B6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:39:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D12417D52A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:38:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 190FD16F542
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89058224223;
-	Wed, 16 Apr 2025 18:38:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C8A6224243;
+	Wed, 16 Apr 2025 18:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="KG8NPEKT"
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Qqo1+7bO"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB2D21A42F
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 18:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A4B2222B0;
+	Wed, 16 Apr 2025 18:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744828699; cv=none; b=e/4iNQd5XtXHdoZmkDR3uJdWNd0HmoVfsptgN00Ez/ljqbNDmGzn0TMY6rqfvFiPvg2AtIjPWAvVMX7anQiFEaTiDZ3It+uTUGstjl7V0Rb3HhTUh8z/ICMVgT2jrLi9SeuxWhxTwK1hEcDnwMpxI5DGlBMawq4r9vjL78C1FeQ=
+	t=1744828751; cv=none; b=E4JaEXN0r3fsdfKqQjwrCNxD0sj0CPhRBuvVl4nqu6kUJo6+C86SOw8gziiODN/I4hb+VYZ7T1FBK2/I3nsAE99ET3tFl4KxdKfMY4BADOzVPrEJL00FDyoUnYNcR6vJYBRHQBtSNnZ9hDkVk1+QolxKWr4ONEo1yYnvQl3NMHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744828699; c=relaxed/simple;
-	bh=h2gb2aaLNETxBykAcxNCX0wPL5kV5DokaxdYgDODkII=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Te+yGP1s0p23InKj33s9LvkznzaBesroULbHO0XY+JxNFuSrqIQ8AUOwVgTgHi/vKfN1tJSyetmZ+j11xZD/iWWZEL9nvxPZJYiS3BKqCY0sbfukjZK4zU/z/uzyZZ+iLmiPasznG+qq6jMhSWeZEqtBzak5/Qfx/IVqHCcfIvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=KG8NPEKT; arc=none smtp.client-ip=209.85.167.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3feb3f54339so5552657b6e.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 11:38:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1744828696; x=1745433496; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=b9sY/HN/LGdgvtFdsZcaEiPxjht+cFZcMXATw7Z4WEk=;
-        b=KG8NPEKT75Ib1TSyhnQhvNUfg3caH1X3Lh05MNjAacI8PH4sjAnWy2ANhKxagQdDyV
-         8N/XbTOncRMSe0FPcx5A7XAP4Y51NTg0uJ0GR6u2MHLAnRIM5ZgXr464Mxm37gA+wrM+
-         wZ0AP0QzSlo53bbSbPhsxbaaAwUSym8GJJnxMTep3YK1EZXA1Mp1Tt96EWoBfvxuV2HJ
-         N4CDQ12suFHm32pKkndO31P+6t/7f9NyH7o0avZjCJwxux49AdV39Nj3cXfj9+3B7seV
-         MzrkU1KxyZ0nVb9zhBuc2SyVF80j4G7dw9Xjz96H6x050h7ITCTEeNy6UUnOPn3/oeB3
-         abIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744828696; x=1745433496;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=b9sY/HN/LGdgvtFdsZcaEiPxjht+cFZcMXATw7Z4WEk=;
-        b=oSfiL2Ht7NNqWwExCer6D0r17JG3R6+Lxt5/cOyOawNnkjynBpzbD5pPr5Mwkezvl9
-         C/47biC0f/flHIeyo3mot1Taucgw/AVSkYrAnO5ww4jAaC0aOvvncaLja+0KsxYnDEHc
-         /SsDnsTBE4RF3Qi7DbFIXjKBgpcfsWmwdUacPg/vVAVhYlhdINZfkq34HapyBIA/GKIQ
-         YK6AqahdXVywXPB6SpC83BIrdzkHg+OrRMPvMujBW+xXrthn9kqfcUL4tCP9UdctITqK
-         7F82IN4q768Qy/OqqWS5IS5/L0xlB0c0wvHcI6506DHKY59/1qWfEryTcPH6Ne6O+Jqb
-         MVeg==
-X-Forwarded-Encrypted: i=1; AJvYcCXB//lF4/AD42WsrA4GQRhbRU/yV86nCZIVxyjYE0JtyVpg3mtxCGJ/oSiK4z3iRdK5tVSCCeGsh7Q0wEE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx89tyQ+4BxSoY1RTKui5rCnwq3Cjhsbu2jInl0rpyZ9BKhQIaX
-	Mp2tEcD8kovLhRtkheA2MLslTzTQAnDNWNfLnc9Zt0jzSigRAqGO/zpTumecKEs=
-X-Gm-Gg: ASbGnctJH33rHPjSzByLz+ynod0B/J5G29Vye3AihbMt+W62q9GpT47j66lHnZtO8y/
-	1cpfKSQmliXRdHsd+/8uhWYXfuCpND5saARjgYgbd1oKVZrJnuAdAn9/IwEVNRd/UHlJ7cC+ALM
-	eZCgB/F9SkYth/t9zfK+Y0N1GL49vGShaA5GDp8Xt5uzfiCA1Itzo2cptKN1jXoYKTPQ+7wg4ky
-	0frmswT6ixESYDm0zsXrUokKV3zaCQhRLn3k+QTqxG11li78LiUoCK+foGXC61qPIHkAkQiEJTZ
-	82/NU7oc97hPpbaXbTcjgwn8E6db7n/Y62fxj1q1kKqOvJPWRrUHvKj+hrYQxYr8sgwKxpoGpnd
-	Y7l6QkvgM5VS5EeBXQw==
-X-Google-Smtp-Source: AGHT+IEHpixfYLQ8d8XW9pFSR0q33vUhJbw2GwxLqv8IPvVSJvgfVlFlUazzgGh993Sed/nw/j0RfA==
-X-Received: by 2002:a05:6808:1b06:b0:3f9:28b9:702a with SMTP id 5614622812f47-400b01c393dmr1926683b6e.8.1744828696461;
-        Wed, 16 Apr 2025 11:38:16 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:58f0:670c:6b15:7fd3? ([2600:8803:e7e4:1d00:58f0:670c:6b15:7fd3])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-4007639c638sm2866501b6e.35.2025.04.16.11.38.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Apr 2025 11:38:15 -0700 (PDT)
-Message-ID: <96765a57-9e02-4f9e-837c-c0513e74ade4@baylibre.com>
-Date: Wed, 16 Apr 2025 13:38:14 -0500
+	s=arc-20240116; t=1744828751; c=relaxed/simple;
+	bh=g6p8wSF/Di9t0vl6klobyNO8oa8BX+pSLfq24fDqHcE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=RC3RkXWJUzflOXejGJP/G6xJBU+3Bw0dzjFhSwYkQhcELqkJjIb4pSwUyxB9IpGfeyFWGDV/eMo1dn3daOZGi834kLBt5rIzegJsKCOgZCitsUJzcvJItX/bxsGLszS8OxkGjmrT79G3yP0j5bLORMN4FuZBYNiotxgDTQomBuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Qqo1+7bO; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1744828735; x=1745433535; i=markus.elfring@web.de;
+	bh=g6p8wSF/Di9t0vl6klobyNO8oa8BX+pSLfq24fDqHcE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Qqo1+7bOhEUNCmPWfSJaiYKepVNs2GIP3Gi+3WHkEacsCIBn/wf5uWEO74OQrc9r
+	 3BIFiZTG5c2v/ebtibMG6dGbhERYwhdXbUxx0+80V40RgbxKZhZnfy46a+uJjkzEH
+	 riL3VW490/2G88P8aLksTaIi/XuTjdNxiFBSA4eKzBCq4TA7JG1lZWcifUaGzSKEm
+	 uafnv00wCiyuzy65iFUBst7QdQG4fujjg0sUx8rNYc3wxfkn5fqOEg5/uO+JcObXh
+	 2y9zVI1Ew8KCBLfH0xw6yWjUH+xZE+x7XRXCaogTgBxXwHasqvO5RdiUJZQpfAcvC
+	 2VRIYrh/ndwbPQirFQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.13]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N4vNe-1t4Btj2Xcy-017Qj4; Wed, 16
+ Apr 2025 20:38:55 +0200
+Message-ID: <9ae2b1be-0bd7-42f6-b8e3-4786e22cb271@web.de>
+Date: Wed, 16 Apr 2025 20:38:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,61 +56,82 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 01/14] dt-bindings: trigger-source: add generic GPIO
- trigger source
-To: Linus Walleij <linus.walleij@linaro.org>,
- Jonathan Santos <Jonathan.Santos@analog.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, lars@metafoo.de,
- Michael.Hennerich@analog.com, marcelo.schmitt@analog.com, jic23@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- marcelo.schmitt1@gmail.com, brgl@bgdev.pl, lgirdwood@gmail.com,
- broonie@kernel.org, jonath4nns@gmail.com
-References: <cover.1744325346.git.Jonathan.Santos@analog.com>
- <414f5b60b81f87f99b4e18b9a55eb51f29d2225a.1744325346.git.Jonathan.Santos@analog.com>
- <CACRpkdauyPb3bhgK4MTYN4Xq0cM80vwT8i_jcKoQcicpvMo7yg@mail.gmail.com>
-From: David Lechner <dlechner@baylibre.com>
-Content-Language: en-US
-In-Reply-To: <CACRpkdauyPb3bhgK4MTYN4Xq0cM80vwT8i_jcKoQcicpvMo7yg@mail.gmail.com>
+To: Henry Martin <bsdhenrymartin@gmail.com>, linux-rdma@vger.kernel.org,
+ netdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Amir Tzin <amirtz@nvidia.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Leon Romanovsky <leon@kernel.org>,
+ Mark Bloch <mbloch@nvidia.com>,
+ Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
+ Paolo Abeni <pabeni@redhat.com>, Saeed Mahameed <saeedm@nvidia.com>,
+ Tariq Toukan <tariqt@nvidia.com>
+References: <20250416092243.65573-1-bsdhenrymartin@gmail.com>
+Subject: Re: [PATCH v6 0/2] net/mlx5: Fix NULL dereference and memory leak in
+ ttc_table creation
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250416092243.65573-1-bsdhenrymartin@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:mSLhQutZM4kqZTgdGPHo7i+HhbSjqvmSPg7vsFks+Q/ivxn9jKc
+ xEf8IatYt/MlmtUZoyy4OxUk2hFPsvzn0fBjQcg9f62/Dr/69z73Zh14kFhrnW0pyk11tGP
+ Nv3Rte12nHWDViJ6U+vV55a1cGSRgE1giMop7LyWkoA+VYXL660jfHxd+yrh0dEfGoteS4q
+ UtWQ7Gh2s6NLk/ketLuFg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:lsMTTt34LZw=;ocFmzeWH/texmyqBHNCWwchc6vd
+ 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
+ FOqlo52zIIhYY=
 
-On 4/16/25 2:43 AM, Linus Walleij wrote:
-> Hi Jonathan,
-> 
-> thanks for your patch!
-> 
-> On Fri, Apr 11, 2025 at 5:56 PM Jonathan Santos
-> <Jonathan.Santos@analog.com> wrote:
-> 
->> Inspired by pwn-trigger, create a new binding for using a GPIO
->> pin as a trigger source.
->>
->> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
-> 
-> Is this actually documenting the trigger sources I implemented for LED
-> here?
-> https://lore.kernel.org/all/20230926-gpio-led-trigger-dt-v2-0-e06e458b788e@linaro.org/
+> This patch series addresses two issues in =E2=80=A6
 
-No. This is something more like "pwm-clock" where it is converting a gpios
-phandle to a trigger-sources phandle. Doing it this way comes from some
-discussion on using trigger-sources for the SPI offload stuff I was working
-on recently. [1]
+It would have been helpful to extend patch version descriptions accordingl=
+y.
+https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
+e/Documentation/process/submitting-patches.rst?h=3Dv6.15-rc2#n310
 
-As a result of that work, there are generic bindings for trigger-sources and
-#trigger-source cells in dtschma now that can be used by any node. [2]
-
-The way the leds subsystem does it where you can have trigger-sources = <&gpio 0>
-or <&ohci_port1> directly has the issue where it isn't easy for the consumer
-to know what type of node the provider is. Effectively, we have to have the
-linux,default-trigger property to tell us what the provider node type is. By
-adding this extra node in between we can get that type info more naturally than
-the linux-specific property. And each subsystem won't have to have extra code
-added for trigger-sources like you had to add for gpios.
-
-[1]: https://lore.kernel.org/all/20241031-croon-boss-3b30ff9e9333@spud/
-[2]: https://github.com/devicetree-org/dt-schema/commit/93ee8008959e362548168eaa7bdc20c115f3d586
-
-
-
+Regards,
+Markus
 
