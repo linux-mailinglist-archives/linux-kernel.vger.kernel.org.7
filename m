@@ -1,121 +1,138 @@
-Return-Path: <linux-kernel+bounces-606484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D60E8A8AFDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 07:51:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7ADCA8AFE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 07:54:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68EBF3BD2E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 05:51:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AFB53BF21B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 05:54:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A977722B5AA;
-	Wed, 16 Apr 2025 05:51:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A16D22B8A7;
+	Wed, 16 Apr 2025 05:54:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="epm+x4zr";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YZgRfbp1"
-Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wn7Pc0B6"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE8B2036FE;
-	Wed, 16 Apr 2025 05:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5CA6224B05
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 05:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744782698; cv=none; b=o4dCa0ksoD4+jaka1/4NvsNcy2JmKm3UXwUfOl9u/aAeg2MHfRNO45LGpTG8j7HAJmf6yw/vgxikhWr6YSrseFeOI0D2zd28k2EcWhr0V8CMNjwjdX57nXgBGEj6gwn/4rTYoQYhaBBcuNpdPSoxtsKqCpxasxyrusasJG8raQI=
+	t=1744782853; cv=none; b=OyR/Pgw5sLJBHiaLXuYTpRzmkhn3UAYbYqazoR9kClEJ1ktpqIZE21MO9DJ54GVttosgE7TdczGoMkA3yYmh8q9oV/3NBGc3y5eLhhir4uPndsuClfXskMmu1mTEmsK5DDRbK1/X5L6UhsGCUEKydZWpTj3A/xtT0Fb6YxP4zhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744782698; c=relaxed/simple;
-	bh=a3jxz39fD3wy1lu3uy7vIwo3YPqJ47vLZqKHe5UkmoI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a9Ki2XLfYksaL+/Af/tNT+AUEB5pf7yIP0kKrDxMIj4oICMw/kr6W6cq1tWwmfVVCSLVN0zRcBVinvzGAtRWDI5iI6ALoxP60FyerEjshRvFq8YM+8c6hKVLxehobhW4jBp8OMCSawXPzeeIg4BVVFMapIBs1oaxA95D4g6mYwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=epm+x4zr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YZgRfbp1; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfout.phl.internal (Postfix) with ESMTP id D02EE13801E3;
-	Wed, 16 Apr 2025 01:51:34 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-11.internal (MEProxy); Wed, 16 Apr 2025 01:51:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1744782694; x=1744869094; bh=AEDh6MCvsE
-	A1PfXpd2mpHSjULH8yOr5QYDym5AMx5Ms=; b=epm+x4zrTWmqhPlC169IGWcmUA
-	VjfGVMoH48DQXiS9xd8yk8Uvib+MPEI2Vy2NspjDVnfYLdrBS4zBQLfR/n7GHqu6
-	PQiUeuBwBCSZnF9Xw3a7W6NtbSM72mY2A00clJ7dKwrHkn33rpkl2TdhTYt4TUWh
-	q1vpaCxW69DNP+SCkAHk5EtgpMFcbGV8GGAhtZLfb+60XzCdU27T0lL8JxmIhRP7
-	VJXlukYFFo2NIpjFabw9skDRNH6OALGpHbsbjMi9berQtNPLAlVo6TpdFkLgsRO8
-	pIzA/BAZkZfZj+c3snT651AwLOwd1DA7VLDNJqUWRUFtvBB2el42AHX805pw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1744782694; x=1744869094; bh=AEDh6MCvsEA1PfXpd2mpHSjULH8yOr5QYDy
-	m5AMx5Ms=; b=YZgRfbp14tSI6zR1xnryrVF+UG4BGwthawZ3VUNBD7aCcITzt2j
-	CY2Delw5OWHpwJs6CN/Av4Io1wcN1tWZZNoVDIQovE2QJKoQ3osca8K0xWu+IbaA
-	FnMTsYxNkg5gw9aVGMmEvAjtgY2NNfAjct4Z/A+1s976bA3mDIrVHOT/hn/5epVe
-	kS/B5EYInKmU3fMlXs5r1P2JZSySH2o9R9qnMm2UZyIbf1J2oFGLfaoW7ojQx3UA
-	lhH81T+XhjgGTvta4PsPGtOY38J/Sm86eT5iSvSKJ7hcQmSvQsk8qlVX3oO6ycvq
-	zZyDLG4pCsy39NBMQ6/loPpSmBOdfBT4Xyg==
-X-ME-Sender: <xms:ZkX_Z3huxd9cz4nGim2-PulB6VQ3LSf_3ekqkyj-jlhKeba7A2mL3Q>
-    <xme:ZkX_Z0D15dbm5jKEdg7lHoQTdKQ_CwlTeD3RThpPeKkxkZarHC5ZSHbGxKsqlsD9v
-    Jpn63iTd06FYA>
-X-ME-Received: <xmr:ZkX_Z3FEoaiFekP1CkX8NLNpTP5g9P_ZwFpJsSMLe0GUuU7HAO-0U3gkaRLLf-vA6IpA75kOvqnY6fE-jZ2RpJdF_9GsTZM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvdehheejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
-    vdenucfhrhhomhepifhrvghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecugg
-    ftrfgrthhtvghrnhepheegvdevvdeljeeugfdtudduhfekledtiefhveejkeejuefhtdeu
-    fefhgfehkeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepghhrvghgsehkrhhorghhrdgtohhmpdhnsggprhgtphhtthhopeekpdhmohguvgep
-    shhmthhpohhuthdprhgtphhtthhopehsfhhrsegtrghnsgdrrghuuhhgrdhorhhgrdgruh
-    dprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhr
-    tghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpd
-    hrtghpthhtoheplhhinhhugidqnhgvgihtsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:ZkX_Z0QWNwvCboq9vYUnBYQRhnFS1QfkQQijKTKR4RMVyk9VhyMN1w>
-    <xmx:ZkX_Z0xXaf-kQrYzvEKmJq0eSinXr2l_5EizxSU9hSx1_b3MxodVnQ>
-    <xmx:ZkX_Z64PP0f6N1fkPOUa31qCTUHd2kNkgi9QwXnUJj-GR6WpMlgQmg>
-    <xmx:ZkX_Z5yS9chEGRE9EA-9bBtb9bbRrpY6BWFVI29Qpd-HHkayGJ_IWA>
-    <xmx:ZkX_Z4r3Pw4Ujmau0MwX1HQ9DXA5N92ykMDWQ1Smrgfo14EYoKwociay>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 16 Apr 2025 01:51:33 -0400 (EDT)
-Date: Wed, 16 Apr 2025 07:49:58 +0200
-From: Greg KH <greg@kroah.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patch in the driver-core.current tree
-Message-ID: <2025041646-resubmit-erasable-4386@gregkh>
-References: <20250416094455.55506561@canb.auug.org.au>
+	s=arc-20240116; t=1744782853; c=relaxed/simple;
+	bh=239UQEfkZYAKSBMhKmP9uLLuYFgWkkQrNgSjEh3EfTE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KLrYQBwaj1pVV0/jHpS5l17WyNsBCIta6dMSLuCZZHTjdl1gn/FIZwfcfe02nmRB2aFQ5qmXDYoSFJgZETZembDfSacK/PoHNIlx77hQkWiULtuOibr5lNTA/1U9AAwTxZ4AbtP+TCesYGQa0XJVLOs/jsIZ3mLZrmSNdrYot/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wn7Pc0B6; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5497590ffbbso6685435e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 22:54:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744782849; x=1745387649; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ma56JdV1nhumd2hIrzxNZCq7YqsIb2ro3nhXeH33szk=;
+        b=Wn7Pc0B66/iF+eipEIxO7Dy+iplQxRLd3ocMBEyX6PtSgSpJVAj0xc4wm0rzVMD49+
+         r9H164Je3MbGoWIl2AHyQMnaQlSWSoAQg1EnZhnuEg91QrteaBmNgLmpXY7WBOm3/q6U
+         c5rxfSdgSssSEJxoi1IWSZhzWRYpcxMikQYCePGNr2ksaBBXF93szBtBFbqqmPeVUbvT
+         vj9l04Nut7ELylYuFZy4t+MMJZwSCWbzf0IsDimSKaGmaAn9Czv4l0UIz67HaDdtHbNh
+         qlFInQx3gCsa2fVrCw7EZTDgxGWDgiaGWvK3KlF8wnmYA+/snxQSIfjQKEiADcpO0PQW
+         WJ1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744782849; x=1745387649;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ma56JdV1nhumd2hIrzxNZCq7YqsIb2ro3nhXeH33szk=;
+        b=aBrkIb/q/HRkEeT2C2fQwyRjfPFk9Gpqng0T/MlJ+1K08S2iT6L5QD443J6fRFGIAZ
+         5gSqukgvjyuSOqIu9FTDLm4H4UO/SMqR6PAYkdfY93X9h/DocgbpzbLB8WNdI1cZRf1q
+         wGNZ4ApkD6eRFq1GiR94epLEbjx9Mzd1XfundNuRI2SUDyTm6kdTlL5bibFAJ7k3V5GS
+         YpXSRau0mIy2sYoHq2kz6ojqYdhdGHX3MOlzwH6p4sK+vJ5d0Q58CHKSN3vUFO2R1xna
+         57VTR7/uf/mP4nhW4bAqEtHLXiEBo6ChpZ2QXXScfUTlEq3GDXzGHnK/JSKUvxXd5xe7
+         W39A==
+X-Forwarded-Encrypted: i=1; AJvYcCXK9J5yfnvXbkXjRepqR82sIMImQOfsdpEKb1m3H8K9W3Z42IFDEfzbyN1TqwU2PUgPAfLKMZUFEHFwwdQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0eicVq1GG/CfnlYiRjD6nuTst0cPLbT4YI3xquWlAc6omJ8mO
+	VnSdu+AnSJc4ok5ZvPu8IZNBkqIxsVrSIidqVYLt5vy/VdsK6HSuTHVWP7HwfUPuE03+aJQckxk
+	XfRPsSO7QtziuFUKJI/3apcilsmjQzHUelc8PFA==
+X-Gm-Gg: ASbGncvZb7t7q3tEBRZnGiZlgYmBRSCT6pTjz2/JauWUSUK5vBCSNRc72iHwb1e29Pt
+	ZfxBDoxULQGqpo575y6q6O79gwYcBQIXudi1BibaQAUQUEenKqCytITQNTBQbUeQ21taYdD/Q3L
+	jhdV2hz07KIsQdjxDfMSrKCA==
+X-Google-Smtp-Source: AGHT+IFKNOvvk/guKx+5UUNDUQ3VjKqbOOR/YrgZhnhd/s/Jt7rhsOWn5n+XMebPpbtROoWDcm4vmhTDkFWPo7tjwhg=
+X-Received: by 2002:a2e:bea5:0:b0:30c:6f38:f675 with SMTP id
+ 38308e7fff4ca-3107f718b32mr1334801fa.31.1744782848194; Tue, 15 Apr 2025
+ 22:54:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250416094455.55506561@canb.auug.org.au>
+References: <20250414145650.10776-1-ubizjak@gmail.com> <20250415185558.112621df@pumpkin>
+In-Reply-To: <20250415185558.112621df@pumpkin>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Wed, 16 Apr 2025 07:53:56 +0200
+X-Gm-Features: ATxdqUELBsckZ2mk1WsCsKoeAANw0iyzdNyTWIq2U13CXOfTkWqT8UIebtQcx5w
+Message-ID: <CAFULd4YV0yKTULPM-+Y0b72EJ48tqfW_ni8RjHsQTULT8TGaTQ@mail.gmail.com>
+Subject: Re: [PATCH] um/asm: Replace "REP; NOP" with PAUSE mnemonic
+To: David Laight <david.laight.linux@gmail.com>
+Cc: linux-um@lists.infradead.org, x86@kernel.org, linux-kernel@vger.kernel.org, 
+	Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
+	Johannes Berg <johannes@sipsolutions.net>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 16, 2025 at 09:44:55AM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> The following commit is also in the mm-hotfixes tree as a different commit
-> (but the same patch):
-> 
->   b9792abb76ae ("drivers/base/memory: Avoid overhead from for_each_present_section_nr()")
-> 
-> This is commit
-> 
->   ab81406e527d ("drivers/base/memory: avoid overhead from for_each_present_section_nr()")
-> 
-> in the mm-hotfixes-unstable branch of the mm-hotfixes tree.
+On Tue, Apr 15, 2025 at 7:56=E2=80=AFPM David Laight
+<david.laight.linux@gmail.com> wrote:
+>
+> On Mon, 14 Apr 2025 16:55:57 +0200
+> Uros Bizjak <ubizjak@gmail.com> wrote:
+>
+> > Current minimum required version of binutils is 2.25,
+> > which supports PAUSE instruction mnemonic.
+> >
+> > Replace "REP; NOP" with this proper mnemonic.
+> >
+> > No functional change intended.
+> >
+> > Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> > Cc: Richard Weinberger <richard@nod.at>
+> > Cc: Anton Ivanov <anton.ivanov@cambridgegreys.com>
+> > Cc: Johannes Berg <johannes@sipsolutions.net>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: Ingo Molnar <mingo@kernel.org>
+> > Cc: Borislav Petkov <bp@alien8.de>
+> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> > Cc: "H. Peter Anvin" <hpa@zytor.com>
+> > ---
+> >  arch/x86/um/asm/processor.h | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/arch/x86/um/asm/processor.h b/arch/x86/um/asm/processor.h
+> > index 478710384b34..233a7a0d29c9 100644
+> > --- a/arch/x86/um/asm/processor.h
+> > +++ b/arch/x86/um/asm/processor.h
+> > @@ -24,7 +24,7 @@
+> >  /* REP NOP (PAUSE) is a good thing to insert into busy-wait loops. */
+> >  static __always_inline void rep_nop(void)
+> >  {
+> > -     __asm__ __volatile__("rep;nop": : :"memory");
+> > +     __asm__ __volatile__("pause": : :"memory");
+> >  }
+> >
+>
+> That only makes sense if you also change the function name.
 
-Looks like Andrew dropped this from his tree now, thanks!
+This function is used in several places, and is also defined for x86
+in arch/x86/include/asm/vdso/processor.h. The renaming should be
+coordinated with x86 and should definitely be a separate patch.
 
-greg k-h
+Uros.
 
