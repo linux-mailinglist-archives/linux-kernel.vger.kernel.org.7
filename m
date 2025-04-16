@@ -1,125 +1,100 @@
-Return-Path: <linux-kernel+bounces-607810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08DF5A90B0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:12:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79ED0A90B24
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:15:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FB8A460337
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:12:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C1F15A1726
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:14:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0732521ABC9;
-	Wed, 16 Apr 2025 18:12:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA8E21B8FE;
+	Wed, 16 Apr 2025 18:13:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="I6igity2"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vFwg2W7u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB221AF0BC;
-	Wed, 16 Apr 2025 18:12:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5EBC18870C;
+	Wed, 16 Apr 2025 18:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744827170; cv=none; b=fCWGbPsHjl/zBNTOcn/6231SuJ87bvb3gG/WuprNvxoMXmHXXLfqhWuwFfjNQMNCLnIQVlk++0XuR1jzJ64JoVWiAxaZnjdNCKm88nH6UsPworbakr1veksrDwU9M1GRD+7kN7jX4jve8KXxRrjPCDDDcmg20zlETBIk77dLm2g=
+	t=1744827238; cv=none; b=YEYIB6TsEXheBNUv/PgcKnLb8YdXEzt7CmOWwbUCNRb0agMJQeEYJfoc2oMNol3YQNF6uuvKr2UaLpSl5fYDJmDzClNarpjXHTRewItXLO4wYkX1mMwPI+A6vrgL6Rb42MO441bxh0e0ZWc1xHt8bBRNj8kQS7SBXFY/U8m1+h4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744827170; c=relaxed/simple;
-	bh=p6lZpJkVX9UkBcwJa0YIg46R9uDoxvpxGH9F8PLq/Q8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=D/vTBd6/m7GdsrHa2yNJJHpkUVpoypZC3iz2X91ql2ty3xYSU2bQCT03G5m4bN4Nm2WAaP55hlwiq3LnChUcfNxlfZI6la0mKkMtHS3ZW99MQInPLGtpC9if/pMHOB/dMIzJXe1h0OLqhHW7R2Ot6ludX4sgO94ZbWxZBhTL3Ok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=I6igity2; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 4D75B662714;
-	Wed, 16 Apr 2025 20:12:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1744827165;
-	bh=p6lZpJkVX9UkBcwJa0YIg46R9uDoxvpxGH9F8PLq/Q8=;
-	h=From:Subject:Date;
-	b=I6igity2Dw9lBf3q+iF7XjByV2oQ+CxjerVombDSs9e3eZlfgzmgYrE9ioA1tDt32
-	 AYa2vfEWV+3ualUWbVnc58vkEfP9P1G1rtQCIfN6i5yQqhWPLgkIFeW8ZQ/FvJpAKU
-	 f5R37AnG108I2I7jW2mp5BAFQQIWxeyIoTCSd+SOdn/8+nbj9WfR02wy0a8nzMivig
-	 Kx6ORQMbyzlBEWnGch3sg/KseHdEuea3Tro3LRfBQnATd5EKKCMHBxOfHvpkEJhUAk
-	 V/q1uAgMUzY2yUXQeGd/ISQZXXmsJxHWskQrpKEEc1gGW/uQbD0s9ZUKcmFqQO0nqN
-	 JoxHsggIi7C9Q==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Morten Rasmussen <morten.rasmussen@arm.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
- Pierre Gondois <pierre.gondois@arm.com>,
- Christian Loehle <christian.loehle@arm.com>
-Subject:
- [RFT][PATCH v1 8/8] cpufreq: intel_pstate: EAS: Increase cost for CPUs using
- L3 cache
-Date: Wed, 16 Apr 2025 20:12:07 +0200
-Message-ID: <47159248.fMDQidcC6G@rjwysocki.net>
-In-Reply-To: <3344336.aeNJFYEL58@rjwysocki.net>
-References: <3344336.aeNJFYEL58@rjwysocki.net>
+	s=arc-20240116; t=1744827238; c=relaxed/simple;
+	bh=E4ZCn18zFjw6q5PMnJTlMEpj3cHQAfhZ5PeKZVr6sKw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f/FhSQgZlQUKzJ1BCi9cbej+3+sBOlBL2D/bHAmOhfFRSueVG2iuY6+T8W1wlQ2RecC0m9GUt4ANO+cD7HKgMpmuAFUaGgJ2HnR87mldo1MiUVTz4C5YvqOjOr0hc7emRTbydA5hdW71ZNRV1s3VkJkne62WTxmeTHr80VOx4f8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vFwg2W7u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E98A1C4CEE2;
+	Wed, 16 Apr 2025 18:13:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744827238;
+	bh=E4ZCn18zFjw6q5PMnJTlMEpj3cHQAfhZ5PeKZVr6sKw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vFwg2W7ulzfpoDWHo1BLmWMkAnQCxVGe2j5NOi6tePl5s07giWZMkhjfYjNaGhc+E
+	 DoBfd+PAHJHY/uyGUOngwGsQdhpWJHeDC6rfW5EjIw+t0fUgVImU6oGJEL7ADtGIxP
+	 6XJk9xzY9LEnlV+XZRLm/mfjI0maPA5jnsuQoRLQD7zcaiTgFVGcbomv13di2oNWOD
+	 CRvFOfgosj6N16eIFvBGl8ilBctjMJxXdAbEcVnGTxSMAnidclUHGCLaB9Qu8f16rt
+	 Rwpf8jN2dNbArsyt3fhr1k6LvGZP6RYSu6VLJDX54u6I0+4BdCLquqlRV0xVUbi3ZQ
+	 Fp+tph9YwLL/g==
+Date: Wed, 16 Apr 2025 13:13:56 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: David Airlie <airlied@gmail.com>, devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Shawn Guo <shawnguo@kernel.org>, Maxime Ripard <mripard@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	imx@lists.linux.dev, Thomas Zimmermann <tzimmermann@suse.de>,
+	Simona Vetter <simona@ffwll.ch>, Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH 1/1] dt-bindings: display: imx: convert fsl-imx-drm.txt
+ to yaml format
+Message-ID: <174482723439.3590548.522151644513682982.robh@kernel.org>
+References: <20250415212943.3400852-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvdejtdehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepuddupdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehsrhhinhhivhgrshdrphgrnhgurhhuvhgruggrsehlihhnuhigrdh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=11 Fuz1=11 Fuz2=11
-
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-On some hybrid platforms some efficient CPUs (E-cores) are not connected
-to the L3 cache, but there are no other differences between them and the
-other E-cores that use L3.  In that case, it is generally more efficient
-to run "light" workloads on the E-cores that do not use L3 and allow all
-of the cores using L3, including P-cores, to go into idle states.
-
-For this reason, slightly increase the cost for all CPUs sharing the L3
-cache to make EAS prefer CPUs that do not use it to the other CPUs with
-the same perf-to-frequency scaling factor (if any).
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/cpufreq/intel_pstate.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
-
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -979,6 +979,7 @@
- 			   unsigned long *cost)
- {
- 	struct pstate_data *pstate = &all_cpu_data[dev->id]->pstate;
-+	struct cpu_cacheinfo *cacheinfo = get_cpu_cacheinfo(dev->id);
- 
- 	/*
- 	 * The smaller the perf-to-frequency scaling factor, the larger the IPC
-@@ -991,6 +992,13 @@
- 	 * of the same type in different "utilization bins" is different.
- 	 */
- 	*cost = div_u64(100ULL * INTEL_PSTATE_CORE_SCALING, pstate->scaling) + freq;
-+	/*
-+	 * Inrease the cost slightly for CPUs able to access L3 to avoid litting
-+	 * it up too eagerly in case some other CPUs of the same type cannot
-+	 * access it.
-+	 */
-+	if (cacheinfo->num_levels >= 3)
-+		(*cost)++;
- 
- 	return 0;
- }
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250415212943.3400852-1-Frank.Li@nxp.com>
 
 
+On Tue, 15 Apr 2025 17:29:42 -0400, Frank Li wrote:
+> Convert fsl-imx-drm.txt to yaml format and create 5 yaml files for
+> differences purpose.
+> 
+> Additional changes:
+> - add missed include file in examples.
+> - add clocks, clock-names for ipu.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  .../imx/fsl,imx-display-subsystem.yaml        |  36 ++++
+>  .../display/imx/fsl,imx-parallel-display.yaml |  74 ++++++++
+>  .../bindings/display/imx/fsl,imx6q-ipu.yaml   |  97 +++++++++++
+>  .../bindings/display/imx/fsl,imx6qp-pre.yaml  |  55 ++++++
+>  .../bindings/display/imx/fsl,imx6qp-prg.yaml  |  52 ++++++
+>  .../bindings/display/imx/fsl-imx-drm.txt      | 160 ------------------
+>  6 files changed, 314 insertions(+), 160 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx-display-subsystem.yaml
+>  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx-parallel-display.yaml
+>  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx6q-ipu.yaml
+>  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx6qp-pre.yaml
+>  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx6qp-prg.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/display/imx/fsl-imx-drm.txt
+> 
+
+Applied, thanks!
 
 
