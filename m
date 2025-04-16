@@ -1,124 +1,89 @@
-Return-Path: <linux-kernel+bounces-607424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28076A90605
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:19:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E35AA90636
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:24:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38096171E57
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:16:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFADF3B6C3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:14:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC211F8AC8;
-	Wed, 16 Apr 2025 14:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TY4PgM1K"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 538851B0414;
+	Wed, 16 Apr 2025 14:11:23 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B2A1F55F8
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 14:12:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E373594B;
+	Wed, 16 Apr 2025 14:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744812773; cv=none; b=C7RawCf0BJjddp7Zz/yoNBamWOepBcP1tNDBKNyfWsbuTO8uZog05crh2DHHzd8+fMp0W9MnCkLmSt2GZVNNMywcrbeLBfslFLfTt3l21icQcvLGNTsbE5wppKdnQIGcYxdNLOJlmLmBn7Kjr5Tvl1cYLOLBT53N9710ofEhw2Y=
+	t=1744812683; cv=none; b=W2Xa9jGDtgufM5JCWNwnV+DH4FdMFKq8WVOTveq74WvzFeywm7asqxKZFY2DTDRVUYgeZGTQpH/CWVQZI6ihoJvdAnZ9fwlCEY9Ky/sa9d82jIhj/qACkYMHDbLWxNPpKsTvkQip8UfIu+hlAwgL0PqBqDDW/1EBsUWZUTHCy14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744812773; c=relaxed/simple;
-	bh=XTkntqDwePYCb0luiS2lGmMOslSaMPOKVqshcejczDg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PFHPvAYq7rsMjrsuej1Wa35Z7GyrQAmswsQ8MK5H76wqH1ziUiuXe/pg5OObNcU/6AgRKvuvgzM2woSPyZwvcvbyUtCr0UZd9G8OO9g4ubIAu548hzX9btOl/ple+Gyv+varlG8wZfBuV4jhrG9tthFQzMEIJo3DRl7thqMaguU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TY4PgM1K; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aaee2c5ee6eso1005815766b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 07:12:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744812769; x=1745417569; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=TZMTVb3pZE6oHhA0d7W1SxUDzw2vnyZ2X+M+C9eM56o=;
-        b=TY4PgM1KfaShKUCbyX8HFFo774fz2AkxuG6Jju0esbmx2rV51BlG9AZD4JKuo+xeBR
-         MDpv0aYKAOwI+5RHBE5OI8E0rElv/hL6Nn6UJx+PZs63A2m+j1dW2FiC0GtPD49GY+qG
-         xVgBSbCCNdn3O8N315LimcJLVIKai4VlzBFhWVwvhQfUqgfPS8DMqB7B5kL3vDwSADo5
-         tsBW5n8rWH7xrwcuW5m+7TN1irh1fBObtNEiAcimR8+vXXKjUEhN7nrtdoWQh6ndwfkX
-         kqqSf5vfB6jEkun/pLOGMrY6glyZTEFBt7b9pON5h2qnIzlonZIOWKPJQNyg5GVl3DI3
-         DkeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744812769; x=1745417569;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TZMTVb3pZE6oHhA0d7W1SxUDzw2vnyZ2X+M+C9eM56o=;
-        b=VaFgJhKF/Baa6RIxf13vMf/8CRCj5nBhzaXYFxeFENe5C09cRHHFdT1pV3YACohFjX
-         k6aCxPGa//vbISSJfgaDvoUlB+AaVtsUyKjU8rhlkpPx/Z8RoupYtHOUnHJiCmcfq+/A
-         tvN4dXXor0w0x6MR/ZpqHYFCN6LWnhp/++3y1VEzE+IhXihiCaGoBFX4yWtPuF6z5fkO
-         EMyWoNfMiYSoYaOQvLhC6jGMcK4pKCJKrhs3olCJeucWdhxHnBYthgIOfzxEj7lMEyCW
-         ecZm2Rdxk1ulnZ/mJOMCIfGYFqYDVc7XpfNTA0s0hGJCoD6Ii85BWsq+E7B9sNd1HtqD
-         VLbg==
-X-Forwarded-Encrypted: i=1; AJvYcCXWjckm+cycb8zL1gMYyhlH3YDIE2p0Z7kFyrBIN/Eueen167pCv97v9I/7sT46fUeSN5H/WKaajdG7bnc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzr0HuQlyyWDFyjOz0aRNzsyFkGpQ8wY5A6aoINryEokEGq7Rw3
-	ecVjMpkESj4na+sW07FPQ3y6Y0G+75Uovz1nhkPs3obR63RGo8hz+pX/nNND6ravlZRIEIkdfRT
-	+zHOHeQMuhAKYCy313NGcBolrgoCPgJVl7UagKw==
-X-Gm-Gg: ASbGncttPX1IU2RfO6ToRLXEjx7CNZA0P9OG9M090ZVZbHY4bkHUgn8Jz8hPz5nMYzg
-	x+ULIFnUEFqx09GVjH5XnpAtEXc5t47wJzkSYgcV/ZOrA+42Gljzqsu5o4VO924JKkx7KdMaB3t
-	p+XRJjgCHeUD9pT7J1tedC1cDd//CIdhTabM43OjwjUpu0ZMHrZSjBGXA=
-X-Google-Smtp-Source: AGHT+IFKh78VHVMJondHG+OsJwidPfNrFauRyCcIsVgg2sFjRBzYe5AIwmVRBEBBtiTUMeOMLDkaj0i2I1JGEUQ+Qgk=
-X-Received: by 2002:a17:907:3d9f:b0:ac2:cdcb:6a85 with SMTP id
- a640c23a62f3a-acb429839b2mr140366666b.22.1744812769573; Wed, 16 Apr 2025
- 07:12:49 -0700 (PDT)
+	s=arc-20240116; t=1744812683; c=relaxed/simple;
+	bh=5wXw+YmLaPMTjoh6FG8mJ9VaFdyKw7r3X7pc6Vhl+Sc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MxuDLbaC3lCdLr8otuIbWIg800uO/lXR2I8AYr0u935vjaBX5tcFkc4Z1ZZXzQKbUU+cmEZcUWtUNgwb/j/drzenauGFItK9+j25fCLA9f4eV0qofzFVWdKMRr7od8vVTueyVe6nzH0FlI7KVm9uW8RG2oBppE1JK5MS4Dj16RA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9545EC4CEE2;
+	Wed, 16 Apr 2025 14:11:21 +0000 (UTC)
+Date: Wed, 16 Apr 2025 10:12:57 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Kernel
+ Tracing <linux-trace-kernel@vger.kernel.org>, Linux Documentation
+ <linux-doc@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Jonathan Corbet
+ <corbet@lwn.net>
+Subject: Re: [PATCH v2 0/2] Table of contents refactoring for tracing docs
+Message-ID: <20250416101257.7339e3cf@gandalf.local.home>
+In-Reply-To: <20250416024050.19735-1-bagasdotme@gmail.com>
+References: <20250416024050.19735-1-bagasdotme@gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Z_-P7bsD3KL5K25R@stanley.mountain>
-In-Reply-To: <Z_-P7bsD3KL5K25R@stanley.mountain>
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Date: Wed, 16 Apr 2025 16:12:37 +0200
-X-Gm-Features: ATxdqUGQSIwu5i_6p0YPHLy3HbMNhNvwue3TIyNU5eKcYhwj52asxFGUhRcPQLE
-Message-ID: <CACMJSesQ1NZZ5jHy=h6eaRyV+-FaRpzVKtfnycv_5Z4YXJ+o-Q@mail.gmail.com>
-Subject: Re: [PATCH next] iio: dac: ad5592r: Delete stray unlock in ad5592r_write_raw()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
-	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, 16 Apr 2025 at 13:09, Dan Carpenter <dan.carpenter@linaro.org> wrote:
->
-> This code was converted to use guard locks but one of the unlocks was
-> accidentally overlooked.  Delete it.
->
-> Fixes: f8fedb167ba4 ("iio: dac: ad5592r: use lock guards")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/iio/dac/ad5592r-base.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/drivers/iio/dac/ad5592r-base.c b/drivers/iio/dac/ad5592r-base.c
-> index 217a8a88818d..5f2cd51723f6 100644
-> --- a/drivers/iio/dac/ad5592r-base.c
-> +++ b/drivers/iio/dac/ad5592r-base.c
-> @@ -324,10 +324,8 @@ static int ad5592r_write_raw(struct iio_dev *iio_dev,
->
->                         ret = st->ops->reg_read(st, AD5592R_REG_CTRL,
->                                                 &st->cached_gp_ctrl);
-> -                       if (ret < 0) {
-> -                               mutex_unlock(&st->lock);
-> +                       if (ret < 0)
->                                 return ret;
-> -                       }
->
->                         if (chan->output) {
->                                 if (gain)
-> --
-> 2.47.2
->
+On Wed, 16 Apr 2025 09:40:48 +0700
+Bagas Sanjaya <bagasdotme@gmail.com> wrote:
 
-Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> Hi,
+> 
+> The trace toctree refactoring series [1] didn't make it through 6.15
+> merge window previously, so I forwarded it targeting 6.16 via
+> docs-next tree instead.
+> 
+> Enjoy!
+> 
+> Changes since v1 [2]:
+> 
+>   - Remove mention of individual docs' toctree as the generated sidebar
+>     toctree don't include them ([patch 1/2])
+>   - Move uprobetracer to user-space tracing section (Steven, [patch 2/2])
+> 
+> [1]: https://lore.kernel.org/linux-doc/20250318113230.24950-1-purvayeshi550@gmail.com/T/#u
+> [2]: https://lore.kernel.org/linux-doc/20250415034613.21305-1-bagasdotme@gmail.com/
+> 
+> Purva Yeshi (2):
+>   Documentation: trace: Reduce toctree depth
+>   Documentation: trace: Refactor toctree
+> 
+>  Documentation/trace/index.rst | 98 +++++++++++++++++++++++++++++------
+>  1 file changed, 81 insertions(+), 17 deletions(-)
 
-Thanks for spotting it.
+Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+
+for both patches.
+
+Jon, feel free to take this through your tree.
+
+Thanks,
+
+-- Steve
 
