@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-606951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81D8AA8B608
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 11:54:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 001F6A8B60E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 11:55:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E290442D61
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:54:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94DEF444332
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5B6A237185;
-	Wed, 16 Apr 2025 09:54:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC76236A6B;
+	Wed, 16 Apr 2025 09:54:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="bDzJA9Qm"
-Received: from mxout3.routing.net (mxout3.routing.net [134.0.28.8])
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="oxckEjGQ"
+Received: from mxout4.routing.net (mxout4.routing.net [134.0.28.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297A2230D0D;
-	Wed, 16 Apr 2025 09:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6138423814F;
+	Wed, 16 Apr 2025 09:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744797263; cv=none; b=UoQAYBcnSueDv3ZCowrhEt8fKB91BsasmVBHmWn5BRpdXZRD/kp4qzO2V9XGCmfkekyegFhampdgyKIuXvNVMcQDP9yVD8tGcqEnDUFKP/ExyKni44wqIY7+fopgGRH7SytTf97AAsIKEXdIfmQcywIgRlVwl5019pzM/ZOXpw0=
+	t=1744797270; cv=none; b=XMYUrbOVrSQtSYMBziJ8E/XDpM1sBwKLTj+PrcGTd02Eu966ms5fIx3tQmGt4+k1v3QGYsIRnegZPY2TmFZUTli/Gmv47WmWRD35xNXo2cYDurLJaYm/8QbkmvK5zbXsXDA9Y2jovxzGFgJR/AqmCe9eWSwK7xCjguRo1CH1usc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744797263; c=relaxed/simple;
-	bh=F74LX8pwmJpUJ1WcbB/uKtET0VL3fvaTNZy443SfgXc=;
+	s=arc-20240116; t=1744797270; c=relaxed/simple;
+	bh=em2nW4ErSe6f1DWXJFh6zTOm6m54qnj8AM0omgkBVdQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CFstWMYyNiKBEC9d/TqBsdA2tvf7TSCvTbH2EA8u+PwhkZLwb+qpGfexwcC14OfBf3rplpS+Ly14ozyNIWF+LVmBRKOSQnZWKMNgDgYZym8RJPPPyjdFBPDFq3BmTyjxphEqdpeh5TWqfHxUvByM3r6+ct9Yuz2/CVPvH6GoAzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=bDzJA9Qm; arc=none smtp.client-ip=134.0.28.8
+	 MIME-Version; b=FLBK63yBJcC8vruMNsqsL0ru2W+K5/RVzgQDghSrpr1SLy1NPqUV/y+pexc4h/opBDSjLigwlBJ99HZTcw1uQ8Ea/ZgO60xOYzdllAz2Za+TEzPZ2ZWmG5DeHspVUzPQZ37YfSymGspiAJArSpzbcAr+Df2f8eyldf4VUH++uuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=oxckEjGQ; arc=none smtp.client-ip=134.0.28.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
 Received: from mxbox3.masterlogin.de (unknown [192.168.10.78])
-	by mxout3.routing.net (Postfix) with ESMTP id 5DDD1605DC;
-	Wed, 16 Apr 2025 09:54:19 +0000 (UTC)
+	by mxout4.routing.net (Postfix) with ESMTP id 83C66100D7B;
+	Wed, 16 Apr 2025 09:54:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1744797259;
+	s=20200217; t=1744797260;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=PKUZ1+4YVFc7xv72f1Tv2gQXBQdFJKtnqIffuvfuqJg=;
-	b=bDzJA9Qm+DbjhJfbD38CohBA6JMDAsvWAgalFsT3SxhB7SiUPRz/YQ7+3jslEDP/oqrAsJ
-	xvurmy2TpZdBS2IYSAdhlJAmrf67XAKneHDL0oLp91wa5U/qeSGSjpj0xINgZqO6U24XZm
-	JZK3MXs60kEW8ztM3bT2D6lsUIwW7kY=
+	bh=Tk944o+t28fwTlX6o9Q4U3/0SH31rFieSB+B7TGU3R0=;
+	b=oxckEjGQ55ln5RAA8KeA5PKqqQZXNmwZ0fLAbi7+fhNmAl47tcsVq+TCjXx2bDWlnIkIur
+	uoZ5Tm4mlNx9OAn12bs7bxkgZo1veF3Uxw6O5fWS1jmCeqs8+O1HOfWHCdVhl/o+YH4qKx
+	TwY4ZkGW1bc/CWKPqJsV6KQV9Bq/FLw=
 Received: from frank-u24.. (fttx-pool-80.245.72.47.bambit.de [80.245.72.47])
-	by mxbox3.masterlogin.de (Postfix) with ESMTPSA id 53D3A3600F2;
-	Wed, 16 Apr 2025 09:54:18 +0000 (UTC)
+	by mxbox3.masterlogin.de (Postfix) with ESMTPSA id 4A675360528;
+	Wed, 16 Apr 2025 09:54:19 +0000 (UTC)
 From: Frank Wunderlich <linux@fw-web.de>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -65,9 +65,9 @@ Cc: Frank Wunderlich <frank-w@public-files.de>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org,
 	linux-phy@lists.infradead.org
-Subject: [PATCH v3 3/8] dt-bindings: phy: mtk-xs-phy: Add mt7988 compatible
-Date: Wed, 16 Apr 2025 11:53:55 +0200
-Message-ID: <20250416095402.90543-4-linux@fw-web.de>
+Subject: [PATCH v3 4/8] dt-bindings: phy: mtk-xs-phy: support type switch by pericfg
+Date: Wed, 16 Apr 2025 11:53:56 +0200
+Message-ID: <20250416095402.90543-5-linux@fw-web.de>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250416095402.90543-1-linux@fw-web.de>
 References: <20250416095402.90543-1-linux@fw-web.de>
@@ -78,29 +78,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Mail-ID: d0b3d6f3-e15e-47c6-ac72-8faa3eedf86c
+X-Mail-ID: 5a7bdc89-6d2f-403a-9e25-48950e628308
 
 From: Frank Wunderlich <frank-w@public-files.de>
 
-Add compatible for xs-phy on mt7988.
+Add support for type switch by pericfg register between USB3/PCIe.
 
 Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
 ---
- Documentation/devicetree/bindings/phy/mediatek,xsphy.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ .../devicetree/bindings/phy/mediatek,xsphy.yaml  | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/phy/mediatek,xsphy.yaml b/Documentation/devicetree/bindings/phy/mediatek,xsphy.yaml
-index a9e3139fd421..3b5253659e6f 100644
+index 3b5253659e6f..5033d77c1239 100644
 --- a/Documentation/devicetree/bindings/phy/mediatek,xsphy.yaml
 +++ b/Documentation/devicetree/bindings/phy/mediatek,xsphy.yaml
-@@ -49,6 +49,7 @@ properties:
-       - enum:
-           - mediatek,mt3611-xsphy
-           - mediatek,mt3612-xsphy
-+          - mediatek,mt7988-xsphy
-       - const: mediatek,xsphy
+@@ -151,6 +151,22 @@ patternProperties:
+         minimum: 1
+         maximum: 31
  
-   reg:
++      mediatek,syscon-type:
++        $ref: /schemas/types.yaml#/definitions/phandle-array
++        maxItems: 1
++        description:
++          A phandle to syscon used to access the register of type switch,
++          the field should always be 3 cells long.
++        items:
++          items:
++            - description:
++                The first cell represents a phandle to syscon
++            - description:
++                The second cell represents the register offset
++            - description:
++                The third cell represents the index of config segment
++              enum: [0, 1, 2, 3]
++
+     required:
+       - reg
+       - clocks
 -- 
 2.43.0
 
