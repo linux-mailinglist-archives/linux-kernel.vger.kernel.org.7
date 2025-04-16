@@ -1,112 +1,162 @@
-Return-Path: <linux-kernel+bounces-606619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE02EA8B17C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:02:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C31E5A8B187
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:03:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E34DD175A90
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 07:02:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46B9519041DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 07:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF7B22A807;
-	Wed, 16 Apr 2025 07:02:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309CE224248;
+	Wed, 16 Apr 2025 07:03:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GjfSR7Ka"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OSAENeAP"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DB2221572;
-	Wed, 16 Apr 2025 07:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB66E15B546;
+	Wed, 16 Apr 2025 07:03:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744786943; cv=none; b=sfq28OmvCA1RjKWrqVDn4pxapKQtxLqdeTWaT1wSLKu6iJkdLQDWc5cZ61CSuqodvTlWLRsYKAiBc37Uo6+Vx++Fj9OkKmPydCeazFKanuq2LTN4B0rQFttYjaQcvxjVzMYjTpYeYLfpvlRtkqIbsys9ULxmYE/+S9T4T5Q/3H0=
+	t=1744787016; cv=none; b=np+MlD0dCrqbVKC9w08XvtF7DVzyOt49XdRiVhxpZN0Qkt8v6BOdfKDvnEJvZZERuOSdNDVw2PN91CPKzUV99uEG178kZowPspAknGsJQzYEfbhGz5AyS/JI7/WoL4dzJ8iY/510e9wEEa9VQZG3H8N8aP/l5kU67Sv2DfvzX+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744786943; c=relaxed/simple;
-	bh=vC9qu2x28cbxmK7VJr+Bv79rWkNOEx2eUdan3K30uI0=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Var3LST7uVTyyQjNFcUe0N71RLYOHHxCxb1LtJqU6J4XqubYJay0YbfLvWgYmXUnKO2Ci+wNkxAhS/pMUDbN82oTZesdX1nGH1vqwuoJFvZtBnbV3NznvjMggD33Ybj1wMbAtLHBM3zmVDij3pqZHL8whVE/ZRqka1PQVPwmO1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GjfSR7Ka; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744786941; x=1776322941;
-  h=date:from:to:subject:message-id:references:mime-version:
-   in-reply-to;
-  bh=vC9qu2x28cbxmK7VJr+Bv79rWkNOEx2eUdan3K30uI0=;
-  b=GjfSR7KakS9Ni2ufnsU6nokwTrhzSjqcd38j4yeiA4cFVFi0/pMbiyId
-   1Iz38FswTDbs/Jf/6b4QXY26Ugo+emMJxZsJCW4sXHHaMbGsF1vdn89wX
-   AeoRLV2EsImLSsjoPj1zRmlTOJzSRxEEaIIlPpMFKafUSVAsSiYuYigxi
-   H1zyQiVkX671LBAT3ADT/w5wtn/OU9Y4yGZRchCgDf/KkWnf7a1yN/KR7
-   S/TigyFI0iEBJBkqLoS8H8l9epJwpm/YpMij7uprazeQQ3AMnToXSojlH
-   x8AfimAaem79b+yPwQt+JLxqV3dtQAIhZuXywKb+k3c0d5p8ulY43Zele
-   Q==;
-X-CSE-ConnectionGUID: bq3/ZRTOQaKqyOS8c/SHbg==
-X-CSE-MsgGUID: eESMnd4OQnGGWipTVPs47g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="49016428"
-X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
-   d="scan'208";a="49016428"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 00:02:20 -0700
-X-CSE-ConnectionGUID: 3xCPRFkrQH+OdM2dLByN/w==
-X-CSE-MsgGUID: +j+Anc7CRfmXx+9z0ZOrzg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
-   d="scan'208";a="130370786"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 00:02:18 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1u4wml-0000000Cm2v-3loF;
-	Wed, 16 Apr 2025 10:02:15 +0300
-Date: Wed, 16 Apr 2025 10:02:15 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Jai Luthra <jai.luthra@ideasonboard.com>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: Re: [PATCH v4 5/7] i2c: core: Do not dereference fwnode in struct
- device
-Message-ID: <Z_9V9x_YBfxiCh1w@smile.fi.intel.com>
-References: <20250414100409.3910312-1-andriy.shevchenko@linux.intel.com>
- <20250414100409.3910312-6-andriy.shevchenko@linux.intel.com>
- <Z_9UX9xkGjvhnub_@shikoro>
+	s=arc-20240116; t=1744787016; c=relaxed/simple;
+	bh=d7t3L/caqB1pt1UwFaFY/ssl+0gr4B7q23mO9m2NFbE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jjXQAGbXFqHNOHojXrTNnqCpDQNU9AJPJDxxMalw8HQx6FA3VsipNRsrcma9nlkg7NQv0UuV67iossrIeB08va92ZsDS2nGfiNeXwZGYlg3Gs2AUd7PQYENL8i8f2jGXjeakUTwbmQoqYOKF/xltsVqLB3j6W4cgtUD6QnAPf+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OSAENeAP; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53G6mMch011887;
+	Wed, 16 Apr 2025 07:03:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	qYkJ4A+q4rNkjssG5BOHFKwtap1/YDvQTq39pEJ34aY=; b=OSAENeAPL26wwKod
+	j5zGl1+Og9FFjEa/ZSfa5PGrPjZ9NW+hx5MAFCd9THRdbBRKJRsM4skecA+T1+wF
+	WY7hXN/7LApoZaj3SMeeRLbWEzdjGVmDNhintskHLoRYZVeniruR5NFJYTvIvVml
+	sIg95eX9cc5Z1VMOWs2dUe7a1/5Sw2r21xFWekq+Lk6GNoYW+9zWzYnFETTJEsVS
+	EwUPnRRKZy2NoNktAY9tiRpsz9LeTLQEwgeDGwtgJ7K7wJjxXazk0AlNJe0JCf5b
+	Fim6WGtuf3Wdx3s4aBUghXGd61JDfaoxO8c9yOQwe6dS+fomzz8yn8uzsLoNklA0
+	PMGR/w==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ydvjasrj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Apr 2025 07:03:29 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53G73T2O002643
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Apr 2025 07:03:29 GMT
+Received: from [10.217.219.207] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 16 Apr
+ 2025 00:03:27 -0700
+Message-ID: <db36c119-c6f6-42e9-b8a0-f09e9e5a2585@quicinc.com>
+Date: Wed, 16 Apr 2025 12:33:24 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z_9UX9xkGjvhnub_@shikoro>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] spi: Add spi_bpw_to_bytes() helper and use it
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mark Brown
+	<broonie@kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: David Lechner <dlechner@baylibre.com>
+References: <20250416062013.1826421-1-andriy.shevchenko@linux.intel.com>
+ <20250416062013.1826421-2-andriy.shevchenko@linux.intel.com>
+Content-Language: en-US
+From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+In-Reply-To: <20250416062013.1826421-2-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=ZIrXmW7b c=1 sm=1 tr=0 ts=67ff5641 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=QyXUC8HyAAAA:8 a=4D89g91-iFHQ57AWMqkA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: tpya_sjQjFOk-Cw2YS5gvrS36axSPP_H
+X-Proofpoint-ORIG-GUID: tpya_sjQjFOk-Cw2YS5gvrS36axSPP_H
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-16_02,2025-04-15_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 suspectscore=0
+ clxscore=1011 priorityscore=1501 bulkscore=0 phishscore=0 mlxlogscore=999
+ spamscore=0 impostorscore=0 malwarescore=0 mlxscore=0 lowpriorityscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504160056
 
-On Wed, Apr 16, 2025 at 08:55:27AM +0200, Wolfram Sang wrote:
-> On Mon, Apr 14, 2025 at 01:01:55PM +0300, Andy Shevchenko wrote:
-> > In order to make the underneath API easier to change in the future,
-> > prevent users from dereferencing fwnode from struct device.
-> > Instead, use the specific device_set_node() API for that.
-> > 
-> > Tested-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-> > Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+
+On 4/16/2025 11:46 AM, Andy Shevchenko wrote:
+> This helper converts the given bits per word to bytes. The result
+> will always be power-of-two (e.g. for 37 bits it returns 8 bytes)
+> or 0 for 0 input.
 > 
-> I'll check this patch later today. Rest of the series looks good to me
-> already.
+> There are a couple of cases in SPI that are using the same approach
+> and at least one more (in IIO) would benefit of it. Add a helper
+> for everyone.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>   drivers/spi/spi.c       |  2 +-
+>   include/linux/spi/spi.h | 15 +++++++++++++++
+>   2 files changed, 16 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+> index b0e7702951fe..1bc0fdbb1bd7 100644
+> --- a/drivers/spi/spi.c
+> +++ b/drivers/spi/spi.c
+> @@ -3800,7 +3800,7 @@ int spi_split_transfers_maxwords(struct spi_controller *ctlr,
+>   		size_t maxsize;
+>   		int ret;
+>   
+> -		maxsize = maxwords * roundup_pow_of_two(BITS_TO_BYTES(xfer->bits_per_word));
+> +		maxsize = maxwords * spi_bpw_to_bytes(xfer->bits_per_word);
+>   		if (xfer->len > maxsize) {
+>   			ret = __spi_split_transfer_maxsize(ctlr, msg, &xfer,
+>   							   maxsize);
+> diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
+> index 834a09bd8ccc..abfc7f5e19e4 100644
+> --- a/include/linux/spi/spi.h
+> +++ b/include/linux/spi/spi.h
+> @@ -1340,6 +1340,21 @@ static inline bool spi_is_bpw_supported(struct spi_device *spi, u32 bpw)
+>   	return false;
+>   }
+>   
+> +/**
+> + * spi_bpw_to_bytes - Covert bits per word to bytes
+> + * @bpw: Bits per word
+> + *
+> + * This function converts the given @bpw to bytes. The result is always
+> + * power-of-two (e.g. for 37 bits it returns 8 bytes) or 0 for 0 input.
+Would it be good to say in 4 byte aligned /Multiples ?
+> + *
+> + * Returns:
+> + * Bytes for the given @bpw.
+Returns: Bytes for the given @bpw.
+Good to keep in one line.
+ > + */> +static inline u32 spi_bpw_to_bytes(u32 bpw)
+u8 bpw ?
 
-Note, I'm planning to send a v5 shortly with the style fixes and commit
-messages as you suggested.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+struct spi_device {
+u8 bits_per_word;
+}
+so arg should be u8.
+> +{
+> +	return roundup_pow_of_two(BITS_TO_BYTES(bpw));
+> +}
+> +
+>   /**
+>    * spi_controller_xfer_timeout - Compute a suitable timeout value
+>    * @ctlr: SPI device
 
 
