@@ -1,71 +1,166 @@
-Return-Path: <linux-kernel+bounces-607786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AFD7A90AC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:04:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2345A90B16
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:13:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F37663AA155
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:04:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37FC43B04BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:13:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 233D4219A75;
-	Wed, 16 Apr 2025 18:04:37 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940481AF0BC;
+	Wed, 16 Apr 2025 18:12:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="Ne+C/Xkq"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE1E217F35;
-	Wed, 16 Apr 2025 18:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125AC21B1BC;
+	Wed, 16 Apr 2025 18:12:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744826676; cv=none; b=qL3m0xjGv/C8ia8ELQEKcSGwIgfv5wyguuH1/iMu9URdkWHSIcXBu36GjnZmXpK2N3SDQ/sKWYXsgDHG6Ea/3Ix1Yk0cUuaG/SWsS1/YmME3d3SBwUmR83AIfKLfPbvXnkD3KpA49vwlpN53/3FGMzvPwCn6AKTQne90DA1J0PQ=
+	t=1744827174; cv=none; b=d0h4TvGZvxveDbkh0Ef1zfKM2yBDVD5fkYBnkUbP2zyvCEG/X4gt0g8hDKO3rfAS1Ms3qfstTxwOjasSTq2WDw3kcPSDH/mEByVeJXULHsg4tXi4G0Pr7EcRRuOJ00fr2HBq90j8lWi2Y2unlJE4iLkQk7N+Tq79xe6URmrPdAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744826676; c=relaxed/simple;
-	bh=++H/SPj2hlgAsEXEILale8u7bquKXSSXOGs5qLQm0yM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SBE1FBuVylMHMJ94N87NeDEI2bgEn8XOVFf3xqtD1diKMdFJ/RTfFehh4cwtLJIHrLF9Y0XI5RrqjczLJDeFElW6l5Jlp3Y3fCUwf7bPq9Z4X+LP/t6NZI5BwWr7s7PxDsi9dQ2sPHeQwDbsLCtg7Z0dB7dBCtiqyvf/f+A4uGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED6E9C4CEE2;
-	Wed, 16 Apr 2025 18:04:34 +0000 (UTC)
-Date: Wed, 16 Apr 2025 14:06:11 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Junxuan Liao <ljx@cs.wisc.edu>, linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org, x86@kernel.org, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Dave Hansen
- <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Masami
- Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, "Paul E. McKenney" <paulmck@kernel.org>
-Subject: Re: [PATCH] x86/tracing: introduce enter/exit tracepoint pairs for
- page faults
-Message-ID: <20250416140611.17a87271@gandalf.local.home>
-In-Reply-To: <20250416140115.5b836b33@gandalf.local.home>
-References: <e7d4cd81-c0a5-446c-95d2-6142d660c15b@cs.wisc.edu>
-	<20250414205441.GGZ_12Eew18bGcPTG0@fat_crate.local>
-	<20250414182050.213480aa@gandalf.local.home>
-	<20250416174714.GGZ__tIi3yNzNKoKFE@fat_crate.local>
-	<20250416140115.5b836b33@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1744827174; c=relaxed/simple;
+	bh=ORPobRSIjW5dpK/qm7vNZhGebo2cfHQSp0/z/ui7sjc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HwgYDzLP4JgcjUjV6VAJ27AOfxC27l2/20XBf+Ht3aQf/BcJsxDr2Ac6l9KPHxfdYeRX8PM/tv/bh+dmjFn/5xEMC52SxDRKdqKCsrzMQsXKaJfdXdHShQvSdzpgvX83mJL2Nq3DwOWhwvJGBQeBBaTOt30RsoXNvGtXz5Al/NE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=Ne+C/Xkq; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 90CA0662717;
+	Wed, 16 Apr 2025 20:12:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1744827169;
+	bh=ORPobRSIjW5dpK/qm7vNZhGebo2cfHQSp0/z/ui7sjc=;
+	h=From:Subject:Date;
+	b=Ne+C/XkqjvJOc0z1k1fivTG0oR7pQsYZruHoBEGjYqG6Bygm+aAZBoptS8pb/AErX
+	 0aZ9pZegKWbvObEPUSilLkJCbBgI1b/glb6S38kBdSqwApDXg9zrxdzcrpOVg4lNAg
+	 6V24dgutuj/9ghdl87fCvO/o9Msv8x/KlwmENIQLmspwyoWJEBXBYEV+EEieO4YMyv
+	 bmcAwkUYRfIqaliqqe7JOs6yXed76M58zgdloTLURmzt0v5s7BDeJVe8iv9Tuszzzi
+	 /5l7cEbuErVfCY/dglIGsrThxJGP6033gEJG1R2AZnraxZbKd4VVXoMm7BakJdtn3E
+	 UDqCEOUIWIghw==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Morten Rasmussen <morten.rasmussen@arm.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+ Pierre Gondois <pierre.gondois@arm.com>,
+ Christian Loehle <christian.loehle@arm.com>
+Subject: [RFT][PATCH v1 5/8] PM: EM: Introduce em_adjust_cpu_capacity()
+Date: Wed, 16 Apr 2025 20:06:16 +0200
+Message-ID: <2649447.Lt9SDvczpP@rjwysocki.net>
+In-Reply-To: <3344336.aeNJFYEL58@rjwysocki.net>
+References: <3344336.aeNJFYEL58@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvdejtdeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepuddupdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehsrhhinhhivhgrshdrphgrnhgurhhuvhgruggrsehlihhnuhigrdh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=11 Fuz1=11 Fuz2=11
 
-On Wed, 16 Apr 2025 14:01:15 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-> > Ok, so AFAIU, this gives you how long user page faults take and apparently for
-> > someone this is important info.  
-> 
-> This was just a simple example. I rather see where in the kernel it happens.
-                                                      ^^^^^^^^^^^^
-                                                     user space
+Add a function for updating the Energy Model for a CPU after its
+capacity has changed, which subsequently will be used by the
+intel_pstate driver.
 
-> I can still use the synthetic events and user stack trace to find where the
-> big faults occur.
+An EM_PERF_DOMAIN_ARTIFICIAL check is added to em_adjust_new_capacity()
+to prevent it from calling em_compute_costs() for an "artificial" perf
+domain with a NULL cb parameter which would cause it to crash.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+---
+
+v0.3 -> v1:
+     * Added R-by from Lukasz.
+
+---
+ include/linux/energy_model.h |    2 ++
+ kernel/power/energy_model.c  |   28 ++++++++++++++++++++++++----
+ 2 files changed, 26 insertions(+), 4 deletions(-)
+
+--- a/include/linux/energy_model.h
++++ b/include/linux/energy_model.h
+@@ -179,6 +179,7 @@
+ int em_dev_update_chip_binning(struct device *dev);
+ int em_update_performance_limits(struct em_perf_domain *pd,
+ 		unsigned long freq_min_khz, unsigned long freq_max_khz);
++void em_adjust_cpu_capacity(unsigned int cpu);
+ void em_rebuild_sched_domains(void);
+ 
+ /**
+@@ -405,6 +406,7 @@
+ {
+ 	return -EINVAL;
+ }
++static inline void em_adjust_cpu_capacity(unsigned int cpu) {}
+ static inline void em_rebuild_sched_domains(void) {}
+ #endif
+ 
+--- a/kernel/power/energy_model.c
++++ b/kernel/power/energy_model.c
+@@ -698,10 +698,12 @@
+ {
+ 	int ret;
+ 
+-	ret = em_compute_costs(dev, em_table->state, NULL, pd->nr_perf_states,
+-			       pd->flags);
+-	if (ret)
+-		goto free_em_table;
++	if (!(pd->flags & EM_PERF_DOMAIN_ARTIFICIAL)) {
++		ret = em_compute_costs(dev, em_table->state, NULL,
++				       pd->nr_perf_states, pd->flags);
++		if (ret)
++			goto free_em_table;
++	}
+ 
+ 	ret = em_dev_update_perf_domain(dev, em_table);
+ 	if (ret)
+@@ -751,6 +753,24 @@
+ 	em_recalc_and_update(dev, pd, em_table);
+ }
+ 
++/**
++ * em_adjust_cpu_capacity() - Adjust the EM for a CPU after a capacity update.
++ * @cpu: Target CPU.
++ *
++ * Adjust the existing EM for @cpu after a capacity update under the assumption
++ * that the capacity has been updated in the same way for all of the CPUs in
++ * the same perf domain.
++ */
++void em_adjust_cpu_capacity(unsigned int cpu)
++{
++	struct device *dev = get_cpu_device(cpu);
++	struct em_perf_domain *pd;
++
++	pd = em_pd_get(dev);
++	if (pd)
++		em_adjust_new_capacity(cpu, dev, pd);
++}
++
+ static void em_check_capacity_update(void)
+ {
+ 	cpumask_var_t cpu_done_mask;
+
+
+
 
