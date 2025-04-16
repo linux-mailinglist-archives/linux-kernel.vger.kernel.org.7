@@ -1,126 +1,99 @@
-Return-Path: <linux-kernel+bounces-606297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10A29A8AD8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 03:24:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB422A8AD8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 03:34:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 791DB1904265
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 01:25:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 678613BC476
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 01:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2925221D8B;
-	Wed, 16 Apr 2025 01:24:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10E7226533;
+	Wed, 16 Apr 2025 01:34:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NWys1/ig"
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="q2Y4RuaI"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5FFB19F40A
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 01:24:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF361487F6
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 01:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744766686; cv=none; b=ZgKT89GZxazcZ1jeYV9VwjwLixWkzsbooO3QAXeoF3GtFeVdSL/uKJD8QglGh/simwCNGGo4QeH1yBhP4uTlG/cJjKOEAdqxoix1p70KpdnEylfZf5InSRX6XbLOA1tPp7VyJ2qgbMo6XYFLXQG3n7ahhgyjNODVthw0u/og0rQ=
+	t=1744767288; cv=none; b=BffOdlDyIAQC9pB6K99pNOZJqYx4sWsWG76zXKCOHxM6FEEIu0uHt6S3oHGn/s2k9qB6VefTYOVOwqHnwOeO07TrsVmid+7Lsz8PH2I1cTlUtt91iiNzuTPmp6n0KToB+vf53+9kn5bQuHZE7IyaaxWZ2/DrCqw7XiBF6bWX660=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744766686; c=relaxed/simple;
-	bh=hLwnONbgkXs3AQfY2NdUdEHG/Y3d2eZ1tECEUayKyTc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hc3uKC2dUAQKo1CABdGiQ0qhAL1Enb63iLTaW6+/U8q8DIQMykWixrPSSkXvbiiuAez8+0tps+6SL5iLhobY/7tnUS8hNBl+W50aAheCfmmXcXx1dDhKu4wqJo+m0ZeaeWdq80wHn36lNlGN2KPOShjsSjfoXniQzqB/K8noizw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NWys1/ig; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-52446b21cfdso2550436e0c.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 18:24:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744766682; x=1745371482; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sdKdn70M1WrWKq5CkuLZtZt10QyYO6gcPi3ytovJxXI=;
-        b=NWys1/igvW3j/K7xK9mNNfm9KYypZLS7rn1QaFbsv1fSQnoIdVZG4AkfGND8RqJh/h
-         O79P4WOcDEUY6GmLRbMerG2ZjAzSQB0AN+HJuecaDp4N7TaHEwxlyfKIHfSnu2fbF88N
-         EYy4Jukeu/8Jh5Oal8qpHSuXKbCwandzJSTs2fkTXlOdZFGnySIzoyfGrF5afqW1j4dF
-         oyiIo6u+2+qGDTZdDe2/MzgjCXN4U7Gcz/5TbDgM5U/BfCmwJshLiKkRj076UwwQb4Fa
-         N9d+PZmLp2NUD3jYYgwxVKafH1Y25q33yelnz7JAvc8Za6Dc62Jm6UaplecZdOJjLuOH
-         XgxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744766682; x=1745371482;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sdKdn70M1WrWKq5CkuLZtZt10QyYO6gcPi3ytovJxXI=;
-        b=Mn+RLZ+6+6Aj8Nwyt1k74wInAjFCt+n6TJSLqmZITl/f0YU8Mc7t7rVvrtRhGqIiXC
-         6Y3Hvs3wwPaQuAQJX6nuf9kkEfBFppBmSQzIw3RpCjHdPaMkQLhVf0zn571IFNpaGiZE
-         YVxC+jUvmE2n17s2uhGTcxpRPGrN78ktXyCsQHQNPt2I0ekoaciV433D7RYqi0HudYQR
-         f/UjXIVqxbyMEx5diDaG91UkXuNsPvuweMrvlNOlggd11t/ZR3q9AOawXLJkxjQUfi/o
-         BwAXefsn9WXP8VzOA8+ode8wRk8/M7nLDyftzA2v2oUTBPSrKC8A4kZdQzogTubUrC96
-         vRQw==
-X-Forwarded-Encrypted: i=1; AJvYcCXVeIQJPgbRWHIGAjfvMYHjsz0FHYHFHcIKJDxpl87Vrc989Zp2dLnx68xKxTu3zbZuIu453l3rK3cTEPo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdhWknRhxW2wL5QnkFXUJCBZcPSBWLuhA6PHEIRRZeEX4U/Wjm
-	eLEWNoiaE/4YC/f2442E/zL8P6IDad14uAAg5RnelHWVAhPGTgWSPuAZEYH0s+McPTmLpS+thRr
-	Isco4iWefNfizcvQHwLA2IqM7Sty/i4DQtno=
-X-Gm-Gg: ASbGncstilo+mZSRIdPDHl4IYsAzKmgfmL4EPRJkSxXGQNEtc6OuwiWc9PVAEv1P9on
-	ORnmcAOos4qLBkCu3NIPOs/LXYMfyJfErS2sgmZNVzAgMJ2N+MAfOhoTtBL632qwqnfJCbhakLV
-	220ek+cgaFuf6h8AH31jP1g6o=
-X-Google-Smtp-Source: AGHT+IGeLcLTAsrZtctAj5QLxbbexgEQXdYtXdXzBjzYtCJMyNimzzzwHUHM95R2TCxETocIlsSNLzu363yOPtxXT5E=
-X-Received: by 2002:a05:6122:319f:b0:520:6773:e5bf with SMTP id
- 71dfb90a1353d-52909111d6cmr1167731e0c.1.1744766682434; Tue, 15 Apr 2025
- 18:24:42 -0700 (PDT)
+	s=arc-20240116; t=1744767288; c=relaxed/simple;
+	bh=G7qJ+O6AudU15nAQNGAyxHo/Rn7ubP77f07kony7XBE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c6WIPkI8ODvvehgh76X30nrpUwVQRwTj9SnsuTEh8mvHo8PLkCgzo9v8YTqxlLOliCqImfc6Q8zjdsTNX0OG4CVuVibDzntAD7tV4jGdGKmZrtI3+5LHiW6bRf976J2wpVdW+7XgEaRzWniNpOmbXFbNkDyFGjoGIb57WWk89e4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=q2Y4RuaI; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <0696eaac-943f-4116-b682-f9b15de6aeaf@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1744767283;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G7qJ+O6AudU15nAQNGAyxHo/Rn7ubP77f07kony7XBE=;
+	b=q2Y4RuaI3nFA3ccoh2YiR/vE3O+lp7fMvmRU+IQuehiurj350KmQnc7L7x5TmIWyOiJwH6
+	ia1SczifUTw+LEi2T8vdfPJSn72x+Dc80MWoTwzrgJo9I5LG491N6/mjbGyUl6wke32sYJ
+	xmKCTr1lfqi0lp2cJhwYJsweIUqeQTE=
+Date: Wed, 16 Apr 2025 09:34:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250415054642.3878839-1-yangsonghua@lixiang.com> <Z_5z0phM6h73EGci@slm.duckdns.org>
-In-Reply-To: <Z_5z0phM6h73EGci@slm.duckdns.org>
-From: Eric yang <jluyangsonghua@gmail.com>
-Date: Wed, 16 Apr 2025 09:24:31 +0800
-X-Gm-Features: ATxdqUGd8qLBVovYvn5vaAowjTfa953T69lHhmAIGUfSiSyhYjlfXvhRUCJkOPE
-Message-ID: <CA+P2CkZ3c6MvaX7RDy_0x9VuXDqKPisOPdW1rndrgwJoPCkjwg@mail.gmail.com>
-Subject: Re: [PATCH v2] tools/sched_ext: Improve cross-compilation support in Makefile
-To: Tejun Heo <tj@kernel.org>
-Cc: void@manifault.com, arighi@nvidia.com, changwoo@igalia.com, 
-	linux-kernel@vger.kernel.org, sched-ext@meta.com, 
-	yangsonghua <yangsonghua@lixiang.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] mm/rmap: Move anon_vma initialization to anon_vma_ctor()
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Ye Liu <liuye@kylinos.cn>
+References: <20250415092548.271718-1-ye.liu@linux.dev>
+ <Z_5C7YNDwZ4pdwQn@harry>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Ye Liu <ye.liu@linux.dev>
+In-Reply-To: <Z_5C7YNDwZ4pdwQn@harry>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Okay, v1 works well. I misunderstood your intentions last time. Please
-disregard v2.
 
-Thanks
-Eric
+在 2025/4/15 19:28, Harry Yoo 写道:
+> On Tue, Apr 15, 2025 at 05:25:48PM +0800, Ye Liu wrote:
+>> From: Ye Liu <liuye@kylinos.cn>
+>>
+>> Currently, some initialization of anon_vma is performed in
+>> anon_vma_alloc(). Move the initialization to anon_vma_ctor()
+>> so that all object setup is handled in one place.
+>>
+>> Signed-off-by: Ye Liu <liuye@kylinos.cn>
+>> ---
+> NACK unless the patch explains how the object's initial state
+> ('constructed state') is preserved between uses.
+>
+> anon_vma_ctor() is a slab constructor. That means it is called only once
+> when a slab (folio) is allocated, and not called again when an anon_vma
+> is allocated from an existing slab (folio). In other words it is not called
+> everytime an object allocated via kmem_cache_alloc() interface.
+Thank you for the feedback. You're absolutely right — I misunderstood
+how the slab constructor (ctor) works. I had assumed it would be called
+every time an object is allocated via kmem_cache_alloc(), but I now
+realize it is only called once when a new slab is initialized, not on
+every object allocation.
+> This patch looks very dangerous to me and makes me question whether you
+> tested it before submission.
+>
+Appreciate you catching this — and yes, I'll test it more thoroughly
+before submitting other patches.
 
-Tejun Heo <tj@kernel.org> =E4=BA=8E2025=E5=B9=B44=E6=9C=8815=E6=97=A5=E5=91=
-=A8=E4=BA=8C 22:57=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Tue, Apr 15, 2025 at 01:46:42PM +0800, yangsonghua wrote:
-> > Modify the tools/sched_ext/Makefile to better handle cross-compilation
-> > environments by:
-> >
-> > 1. Adjusted `HOST_OUTPUT_DIR` to be relative to `$(OBJ_DIR)`, ensuring
-> >    correct path handling during host tool building when cross-compile
-> >    (HOST_OUTPUT_DIR now points to $(OBJ_DIR)/host-tools)
-> > 2. Properly propagate CROSS_COMPILE to libbpf sub-make invocation
-> > 3. Add missing $(HOST_BPFOBJ) build rule with proper host toolchain fla=
-gs
-> >    (ARCH=3D, CROSS_COMPILE=3D, explicit HOSTCC/HOSTLD)
-> > 4. Consistently quote $(HOSTCC) in bpftool build rule
-> >
-> > The changes ensure proper cross-compilation behavior while maintaining
-> > backward compatibility with native builds. Host tools are now correctly
-> > built with the host toolchain while target binaries use the cross-toolc=
-hain.
-> >
-> > Signed-off-by: yangsonghua <yangsonghua@lixiang.com>
->
-> I already applied v1, so please send the updates as incremental changes
-> atop.
->
-> Thanks.
->
-> --
-> tejun
+Drop it.
+
+Thanks,
+Ye                                                                     
+
 
