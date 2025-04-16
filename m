@@ -1,151 +1,101 @@
-Return-Path: <linux-kernel+bounces-607818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6946DA90B1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:14:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6576BA90A5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 19:45:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 410C9460930
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:14:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E7543BC651
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 17:45:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF8A2222C9;
-	Wed, 16 Apr 2025 18:12:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78DFE217723;
+	Wed, 16 Apr 2025 17:45:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="xT57oqYN"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="poVs4j1q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F53A221D80;
-	Wed, 16 Apr 2025 18:12:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D08FD154C17;
+	Wed, 16 Apr 2025 17:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744827178; cv=none; b=JPnu8/gObIOYZcjpvqvQTVvKRSPBENfZTqmdNjbYeao4MMo1a43iDqDullCU/2Wwn0u6yZBDmSE2d5veVmtvVqZLgwa6lw55ENjlpWPX32ilPLhgq7zg2Opsjtr0docja/hoO/TCOTLkzL6eP8i23KuuY8XgqLQMe++deXxnJyM=
+	t=1744825521; cv=none; b=m3cLa/OVoVUNddwMeDW7ikewV0kGchHbEklOAHs7+gP1MH4u1gt4DCl9Ilt0sCcJGAmGJFCg/h0QA40C+/itKTvMQapvFSTy3hsMmhiP1Jtxm5QGAK1JYqcso9zcdiqvjcZctp7Perm0PnxWBAhlV/yfDOUFGeOwixJCT1qnmkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744827178; c=relaxed/simple;
-	bh=SXPUl90BjvGcpXMvmbXxCsof9c3BOGco/bFN/nHJFmI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ibIknG6lMl5UtXgBEZDTe5qH22WDTiZAshHjqIVl6WfsLVsKkv4AfAkX2qs0A5RhgQynSuvA8DcjputdByxNAl9m47h3w2y2HRM8M7AkkafycGb4+G88roPGerFwxs5MsFfL8pOyZDi0WHC2MxVlKUDN7KEaxmt0MaGPRpjSgNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=xT57oqYN; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 73572662716;
-	Wed, 16 Apr 2025 20:12:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1744827174;
-	bh=SXPUl90BjvGcpXMvmbXxCsof9c3BOGco/bFN/nHJFmI=;
-	h=From:Subject:Date;
-	b=xT57oqYNKhSfN3LgVlcpUWX8w/K2GWnDdEl1KZ3TtBmOpI2981uCUqUuAHCs+zFCy
-	 /BTJNP5EaZyVib/0FodXuC41vNftwI6nKZVQmLZ89JJ2zQ08blESOIHNm/vavVQLS8
-	 DfEWzgL7Xb6+T95uD6AqJugjKA4dLl1qcl5VHvIoc3QL3Thdjq/Oj5vAO+8XwKZigy
-	 5Ok87vtcGabzs5KVJwogUKPIAcDizn5CuV1LOYGNEV/Z1Bmw8jlAkIgT2yDsukaiX/
-	 taADtHZfKsYiFLMR12KdygJ69cXaxq5gtJI/pMCEgf+Tf2LzMoCes18A83JfyRC0yO
-	 MeFJ+H/zcpcIg==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Morten Rasmussen <morten.rasmussen@arm.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
- Pierre Gondois <pierre.gondois@arm.com>,
- Christian Loehle <christian.loehle@arm.com>
-Subject:
- [RFT][PATCH v1 0/8] cpufreq: intel_pstate: Enable EAS on hybrid platforms
- without SMT
-Date: Wed, 16 Apr 2025 19:44:43 +0200
-Message-ID: <3344336.aeNJFYEL58@rjwysocki.net>
+	s=arc-20240116; t=1744825521; c=relaxed/simple;
+	bh=INhAtgzTbo+H9P90iWeVT1I+06inDlWJEEG+41qUq1c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WALEuYm0Ob+Kcc/EPAlp73B6ygXUpfhmhsBNHLFL/2u+V3yitXLU/U7ojknTj4vIJgW9gJ1a9As7HEaooJVnx/P0HhuYDlpJ+fikzvSMKOkAgdN5kUPWTj4OKswTITEtnAcpQPDS5h07nWhNMHjs3OHe7uTXkSRWwmwZjV5sfWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=poVs4j1q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44402C4CEE2;
+	Wed, 16 Apr 2025 17:45:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744825521;
+	bh=INhAtgzTbo+H9P90iWeVT1I+06inDlWJEEG+41qUq1c=;
+	h=From:To:Cc:Subject:Date:From;
+	b=poVs4j1qzHaSgPNBoCaQY9VleGrtK4KIDHxrF6jDFV7guhXfUwtBKNgFVC6Cp02qX
+	 jfi+S7SUHj03VvAO1of9wiNMODEwfSbra9N6Q5hj25QxFiZpYq3MBvQXZ8yMU4vyyG
+	 REtrao/EpwYsQiwVi8NSaJaIBXSHu+HtTmE4ySOsglj/7lYyD0CLnApZrOBcDdHEM7
+	 3gXfZnF4V+TxWBQLq6Ei/Lqp+1jlRgRjodIIgV4ghW+vaYUjQgvGIuaFz5fRTAC6gv
+	 AWGwheJPReFqrCotJa+w/BD7bVd9H/YXdQXE70uM6DmAmSu5YQLG2eI7L1OvIV1RLT
+	 TKoiuzYPGu1Qw==
+From: Kees Cook <kees@kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Kees Cook <kees@kernel.org>,
+	Erick Archer <erick.archer@outlook.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] input/joystick: magellan: Mark __nonstring look-up table
+Date: Wed, 16 Apr 2025 10:45:17 -0700
+Message-Id: <20250416174513.work.662-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvdejtdeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepgeffhfdujeelhfdtgeffkeetudfhtefhhfeiteethfekvefgvdfgfeeikeeigfehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeduuddprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepshhrihhnihhvrghsrdh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=11 Fuz1=11 Fuz2=11
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1560; i=kees@kernel.org; h=from:subject:message-id; bh=INhAtgzTbo+H9P90iWeVT1I+06inDlWJEEG+41qUq1c=; b=owGbwMvMwCVmps19z/KJym7G02pJDOn/36x5tEVfWlVaPPLcvdbjK+TuXFZzNdtyacfem9cSG i7e0fgwraOUhUGMi0FWTJElyM49zsXjbXu4+1xFmDmsTCBDGLg4BWAiQV8Z/vBaZcebzA5JE793 oPLCjGNLs48HHziXvWjF/+cJaxNrdYoZ/tmrSHxObAn8lnLodIpyYuPpjEP61xLfGBzfGqrZdfX dRSYA
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-Hi Everyone,
+GCC 15's new -Wunterminated-string-initialization notices that the
+16 character lookup table "nibbles" (which is not used as a C-String)
+needs to be marked as "nonstring":
 
-This is a new version of
+drivers/input/joystick/magellan.c: In function 'magellan_crunch_nibbles':
+drivers/input/joystick/magellan.c:51:44: warning: initializer-string for array of 'unsigned char' truncates NUL terminator but destination lacks 'nonstring' attribute (17 chars into 16 available) [-Wunterminated-string-initialization]
+   51 |         static unsigned char nibbles[16] = "0AB3D56GH9:K<MN?";
+      |                                            ^~~~~~~~~~~~~~~~~~
 
-https://lore.kernel.org/linux-pm/22640172.EfDdHjke4D@rjwysocki.net/
+Add the annotation and While at it, mark the table as const too.
 
-which is not regarded as RFC any more.  It appears to be better than
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Erick Archer <erick.archer@outlook.com>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-input@vger.kernel.org
+---
+ drivers/input/joystick/magellan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-https://lore.kernel.org/linux-pm/5861970.DvuYhMxLoT@rjwysocki.net/
-
-but still requires more testing, so I'd appreciate any help here.
-
-The following paragraph from the original cover letter still applies:
-
-"The underlying observation is that on the platforms targeted by these changes,
-Lunar Lake at the time of this writing, the "small" CPUs (E-cores), when run at
-the same performance level, are always more energy-efficient than the "big" or
-"performance" CPUs (P-cores).  This means that, regardless of the scale-
-invariant utilization of a task, as long as there is enough spare capacity on
-E-cores, the relative cost of running it there is always lower."
-
-The first 3 patches have been updated since v0.3 and they now depend on the new
-cpufreq material in linux-next.
-
-The next 2 patches (Energy Model code changes) have been reviewed in the
-meantime, but they are only needed for the last 3 patches.
-
-Patch [6/8] is essentially the same as before.  It causes perf domains to be
-registered per CPU and in addition to the primary cost component, which is
-related to the CPU type, there is a small component proportional to performance
-whose role is to help balance the load between CPUs of the same type.
-
-This is done to avoid migrating tasks too much between CPUs of the same type,
-especially between E-cores, which has been observed in tests of
-
-https://lore.kernel.org/linux-pm/5861970.DvuYhMxLoT@rjwysocki.net/
-
-The expected effect is still that the CPUs of the "low-cost" type will be
-preferred so long as there is enough spare capacity on any of them.
-
-The last 2 patches are new.
-
-Patch [7/8] looks at the cache topology to avoid creating per-CPU perf domains
-for CPUs sharing an L2 cache.  Typically, on the chips that will be affected
-by this patch, CPUs sharing an L2 cache also share a voltage regulator and a
-clock, so they technically belong to the same OPP domain and they will be put
-into a shared perf domain after this patch.
-
-Patch [8/8] makes CPUs sharing the L3 cache look slightly more expensive to
-cause the scheduler to prefer placing tasks on CPUs that don't use the L3,
-which in some cases should allow all of the CPUs sharing the L3 to stay in
-idle states and the energy usage should be reduced.
-
-Please refer to the individual patch changelogs for details.
-
-Since patches [7-8/8] also apply on top of the v0.3, I have created a git branch at
-
-git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
-experimental/intel_pstate/eas-take2-extended
-
-or
-
-https://web.git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git/log/?h=experimental/intel_pstate/eas-take2-extended
-
-to allow the difference they make with respect to the v0.3 to be seen (if any).
-
-Later, I'm going to put this series as a whole into a new git branch on top of
-the mainline and the cpufreq material queued up for 6.16.
-
-Thanks!
-
-
+diff --git a/drivers/input/joystick/magellan.c b/drivers/input/joystick/magellan.c
+index 2eaa25c9c68c..7622638e5bb8 100644
+--- a/drivers/input/joystick/magellan.c
++++ b/drivers/input/joystick/magellan.c
+@@ -48,7 +48,7 @@ struct magellan {
+ 
+ static int magellan_crunch_nibbles(unsigned char *data, int count)
+ {
+-	static unsigned char nibbles[16] = "0AB3D56GH9:K<MN?";
++	static const unsigned char nibbles[16] __nonstring = "0AB3D56GH9:K<MN?";
+ 
+ 	do {
+ 		if (data[count] == nibbles[data[count] & 0xf])
+-- 
+2.34.1
 
 
