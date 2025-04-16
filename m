@@ -1,203 +1,151 @@
-Return-Path: <linux-kernel+bounces-607753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F059AA90A4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 19:42:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6946DA90B1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:14:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6650F3A47EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 17:41:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 410C9460930
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:14:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 559FF218AC0;
-	Wed, 16 Apr 2025 17:41:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF8A2222C9;
+	Wed, 16 Apr 2025 18:12:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="INIiMUlm"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="xT57oqYN"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9D2202C42
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 17:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F53A221D80;
+	Wed, 16 Apr 2025 18:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744825315; cv=none; b=aJhJriwShfKh4dRWL/4Q2XUeRaJK2F+hSN9FMgcH4xeRnFXesyn97ds8wAcefpVGMCag7OMkNbpxj5kapRJd6saaVC7ofMFj4bxQe0N6vrGl7S9aRye26pLluC0FlatW9X6EpBQDQOY9UY24b2lpu/h8e7rYjSoecHflFk/svQM=
+	t=1744827178; cv=none; b=JPnu8/gObIOYZcjpvqvQTVvKRSPBENfZTqmdNjbYeao4MMo1a43iDqDullCU/2Wwn0u6yZBDmSE2d5veVmtvVqZLgwa6lw55ENjlpWPX32ilPLhgq7zg2Opsjtr0docja/hoO/TCOTLkzL6eP8i23KuuY8XgqLQMe++deXxnJyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744825315; c=relaxed/simple;
-	bh=W7bBtLlluteHP/1dAH+Ya9l7v9aR1LVZvIfTf+Z30DM=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BTLU8d9vHISCo5+zf8misyDiynS6HBmjcG026TBwJVOvdIa9McwlDIwHkpSvGpdOeWNinq/MVL3hz/K+tFfI1qhYWR0+eZhgbcVh23vT8pSHnCYhCOwjDkBxWtaVUUvriq6RP1AL4/v51Lr1Hr5PY7RnN8Tj6TQDQOWLHjEJaWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=INIiMUlm; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e5deb6482cso1979159a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 10:41:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1744825312; x=1745430112; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=F/+k1VaPPfC6JjSP1qAD5erxrr3Ql1dchYoION8KrN4=;
-        b=INIiMUlmJ16tGuQVFvdcInPU6DmNXr6/gZ3TDNQYNZyfPLyYsAZ6uurwWn+a/23ZF+
-         mSctnYE022rQOVZmUfG09MDSJvraPebPxuar3yb72otY6H1gBxmogVJ1W/zwiKQo+j5+
-         m4v8CyDvTfY+oSmHpSb9CfoBrH629D6U/27hrPrtGWoyta9raQXVbEBIdVAiOABvdm87
-         0zTU0hpSm/CoCDis6b9J3OoDmj0BY7EsrYFwDREd/1oBT/dq7gZ+ZbX+BkPXezPR9PTa
-         igWPjF/Ky1UmyVu1wPICDR+6cxvPjLMmnQbQRU3cq5Cp/aYWcJezuVFZtwv1VlwQfVkm
-         CBVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744825312; x=1745430112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F/+k1VaPPfC6JjSP1qAD5erxrr3Ql1dchYoION8KrN4=;
-        b=d6iNXvXuaUb00S7mwilt3wBMn7aVVsoT2qPmEKD4Fu0w9FxmfgervMAfYJk+xQY8j+
-         4eK7EDaODBSRz7kM9kzPP2ByrruadROtNgMAkKjJPMqHU2tJZlAyq4MBWgwMZ11x1ic/
-         C7NGCpD2+Go8qCWop0c7OpGk+fGaXkXqBgK0VcE38kswVvN77IGAM5lHdjBwjsN4B4uJ
-         D/IC/xeM6MKElEgJG1nBOv0px8IQYxaClpNHDkxLrYaVNSW2FyrzZ5K1EY5PHQmrSofa
-         bIt+pmoi5gIKfW/vl41+ofD19KILYa2SWmR+Ub6ptOPDrNJpH80p9Ph+uE0/vMAA9TjQ
-         tSyA==
-X-Forwarded-Encrypted: i=1; AJvYcCWxb29YiZoi8JDohKFlO7cAfu77dli/RQjhdvuadixRUcFwUzrPHrV12+kQr7NX509NZGBwhsnVeslaWGU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2F7b7g6vidfvV8fudEWKwHfkGJxWdWMGbXDvGtaOVUjlnNtCp
-	OUaH78jDdPtBEkfRkda/O81ZIckJRi3dTibkRQLe7+ivF/EX/ztTem3xfaLNTxs=
-X-Gm-Gg: ASbGncul9ZRVW8/VtjHli8mhUKkqFTeVd3a/ifYu0QQgafi1kpX03PWGQ2+vaxZ85DZ
-	2NlEaI7MLljtRdZYsjdbz74aXH4Rz9J0EVgi6Cvcb1KBUEmoyzlXRDIJ1KGO+F339EFqYlXpOZi
-	qFucOdDOMMyfXD/y2B9ARMfhl6FJKcgthUmYPb1hR2/hTGBARPMDHQZdp5oW0ZKQMmMY2lb9RXM
-	9y+/DG5YXQSBeMtRhiLmZfj8D6itainhxM+bIE2nIErw6cX7EoavCK1la1mUzV5yUIOc6uGvP+K
-	e8IlLHZHkn7uwANg0X/9GcbupkccYl0X0D9f4PqCrNrtboO4q1LVT/m3OECN+Om8irXuTNU=
-X-Google-Smtp-Source: AGHT+IG7VChiUUBXbPZt2UsOsnvfmMZv1kTPdmKDqxu0K/iyE0OKTXPbM6G10YQaE7vDg/k0DkFp+g==
-X-Received: by 2002:a17:907:1b2a:b0:ac7:b1eb:8283 with SMTP id a640c23a62f3a-acb5220ab4dmr51498666b.17.1744825311718;
-        Wed, 16 Apr 2025 10:41:51 -0700 (PDT)
-Received: from localhost (93-44-188-26.ip98.fastwebnet.it. [93.44.188.26])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb3d1ce081sm159581866b.154.2025.04.16.10.41.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Apr 2025 10:41:51 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Wed, 16 Apr 2025 19:43:14 +0200
-To: Stefan Wahren <wahrenst@gmx.net>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	kernel-list@raspberrypi.com
-Subject: Re: [PATCH v8 09/13] arm64: dts: Add board DTS for Rpi5 which
- includes RP1 node
-Message-ID: <Z__sMg-RJ6B-3OL4@apocalypse>
-References: <cover.1742418429.git.andrea.porta@suse.com>
- <c6498d8cf8dfade1980b566e99a9a91551fd8b53.1742418429.git.andrea.porta@suse.com>
- <526751d2-c7e8-4097-9454-c9049b880225@gmx.net>
+	s=arc-20240116; t=1744827178; c=relaxed/simple;
+	bh=SXPUl90BjvGcpXMvmbXxCsof9c3BOGco/bFN/nHJFmI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ibIknG6lMl5UtXgBEZDTe5qH22WDTiZAshHjqIVl6WfsLVsKkv4AfAkX2qs0A5RhgQynSuvA8DcjputdByxNAl9m47h3w2y2HRM8M7AkkafycGb4+G88roPGerFwxs5MsFfL8pOyZDi0WHC2MxVlKUDN7KEaxmt0MaGPRpjSgNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=xT57oqYN; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 73572662716;
+	Wed, 16 Apr 2025 20:12:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1744827174;
+	bh=SXPUl90BjvGcpXMvmbXxCsof9c3BOGco/bFN/nHJFmI=;
+	h=From:Subject:Date;
+	b=xT57oqYNKhSfN3LgVlcpUWX8w/K2GWnDdEl1KZ3TtBmOpI2981uCUqUuAHCs+zFCy
+	 /BTJNP5EaZyVib/0FodXuC41vNftwI6nKZVQmLZ89JJ2zQ08blESOIHNm/vavVQLS8
+	 DfEWzgL7Xb6+T95uD6AqJugjKA4dLl1qcl5VHvIoc3QL3Thdjq/Oj5vAO+8XwKZigy
+	 5Ok87vtcGabzs5KVJwogUKPIAcDizn5CuV1LOYGNEV/Z1Bmw8jlAkIgT2yDsukaiX/
+	 taADtHZfKsYiFLMR12KdygJ69cXaxq5gtJI/pMCEgf+Tf2LzMoCes18A83JfyRC0yO
+	 MeFJ+H/zcpcIg==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Morten Rasmussen <morten.rasmussen@arm.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+ Pierre Gondois <pierre.gondois@arm.com>,
+ Christian Loehle <christian.loehle@arm.com>
+Subject:
+ [RFT][PATCH v1 0/8] cpufreq: intel_pstate: Enable EAS on hybrid platforms
+ without SMT
+Date: Wed, 16 Apr 2025 19:44:43 +0200
+Message-ID: <3344336.aeNJFYEL58@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <526751d2-c7e8-4097-9454-c9049b880225@gmx.net>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvdejtdeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepgeffhfdujeelhfdtgeffkeetudfhtefhhfeiteethfekvefgvdfgfeeikeeigfehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeduuddprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepshhrihhnihhvrghsrdh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=11 Fuz1=11 Fuz2=11
 
-Hi Stefan,
+Hi Everyone,
 
-On 13:48 Mon 14 Apr     , Stefan Wahren wrote:
-> Hi Andrea,
-> 
-> Am 19.03.25 um 22:52 schrieb Andrea della Porta:
-> > Add the board 'monolithic' DTS for RaspberryPi 5 which includes
-> > the RP1 node definition.  The inclusion treeis as follow (the
-> > arrow points to the includer):
-> > 
-> > rp1-common.dtsi ----> rp1-nexus.dtsi ----> bcm2712-rpi-5-b-monolithic.dts
-> >                                                 ^
-> >                                                 |
-> >                                             bcm2712-rpi-5-b.dts
-> sorry for the delay. I'm not happy with the monolithic appendix.
-> 
-> How about bcm2712-rpi-5-b-rp1.dts or something more self-explaining?Regards
+This is a new version of
 
-Sure, good catch. I'd go even further saying that we can rename (or merge if
-the destination file already exists) as:
+https://lore.kernel.org/linux-pm/22640172.EfDdHjke4D@rjwysocki.net/
 
-bcm2712-rpi-5-b.dts             ->  bcm2712-rpi-5-b-norp1.dts (or some better suffix other than -norp1)
-bcm2712-rpi-5-b-monolithic.dts  ->  bcm2712-rpi-5-b.dts
+which is not regarded as RFC any more.  It appears to be better than
 
-so the monolithic one, which seems to be the 'safest' option as of now,
-would be the default dtb. Do you think it could be ok?
+https://lore.kernel.org/linux-pm/5861970.DvuYhMxLoT@rjwysocki.net/
 
-> > This is designed to maximize the compatibility with downstream DT
-> > while ensuring that a fully defined DT (one which includes the RP1
-> > node as opposed to load it from overlay at runtime) is present
-> > since early boot stage.
-> > 
-> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > ---
-> > Right now bcm2712-rpi-5-b.dts is the overlay-ready DT which will make
-> > the RP1 driver to load the RP1 dtb overlay at runtime, while
-> > bcm2712-rpi-5-b-monolithic.dts is the fully defined one (i.e. it
-> > already contains RP1 node, so no overlay is loaded nor needed).
-> > Depending on which one we want to be considered the default, we can
-> > swap the file names to align with downstream naming convention that
-> > has only the fully defined DT called bcm2712-rpi-5-b.dts.
-> Could you please move some of this good explanation into this dts file as
-> comment?
+but still requires more testing, so I'd appreciate any help here.
 
-Sure.
+The following paragraph from the original cover letter still applies:
 
-Thanks,
-Andrea
+"The underlying observation is that on the platforms targeted by these changes,
+Lunar Lake at the time of this writing, the "small" CPUs (E-cores), when run at
+the same performance level, are always more energy-efficient than the "big" or
+"performance" CPUs (P-cores).  This means that, regardless of the scale-
+invariant utilization of a task, as long as there is enough spare capacity on
+E-cores, the relative cost of running it there is always lower."
 
-> > ---
-> >   arch/arm64/boot/dts/broadcom/Makefile                     | 1 +
-> >   .../boot/dts/broadcom/bcm2712-rpi-5-b-monolithic.dts      | 8 ++++++++
-> >   2 files changed, 9 insertions(+)
-> >   create mode 100644 arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b-monolithic.dts
-> > 
-> > diff --git a/arch/arm64/boot/dts/broadcom/Makefile b/arch/arm64/boot/dts/broadcom/Makefile
-> > index 3d0efb93b06d..4836c6da5bee 100644
-> > --- a/arch/arm64/boot/dts/broadcom/Makefile
-> > +++ b/arch/arm64/boot/dts/broadcom/Makefile
-> > @@ -7,6 +7,7 @@ dtb-$(CONFIG_ARCH_BCM2835) += bcm2711-rpi-400.dtb \
-> >   			      bcm2711-rpi-4-b.dtb \
-> >   			      bcm2711-rpi-cm4-io.dtb \
-> >   			      bcm2712-rpi-5-b.dtb \
-> > +			      bcm2712-rpi-5-b-monolithic.dtb \
-> >   			      bcm2712-d-rpi-5-b.dtb \
-> >   			      bcm2837-rpi-3-a-plus.dtb \
-> >   			      bcm2837-rpi-3-b.dtb \
-> > diff --git a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b-monolithic.dts b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b-monolithic.dts
-> > new file mode 100644
-> > index 000000000000..3aeee678b0bc
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b-monolithic.dts
-> > @@ -0,0 +1,8 @@
-> > +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> > +/dts-v1/;
-> > +
-> > +#include "bcm2712-rpi-5-b.dts"
-> > +
-> > +&pcie2 {
-> > +	#include "rp1-nexus.dtsi"
-> > +};
-> 
+The first 3 patches have been updated since v0.3 and they now depend on the new
+cpufreq material in linux-next.
+
+The next 2 patches (Energy Model code changes) have been reviewed in the
+meantime, but they are only needed for the last 3 patches.
+
+Patch [6/8] is essentially the same as before.  It causes perf domains to be
+registered per CPU and in addition to the primary cost component, which is
+related to the CPU type, there is a small component proportional to performance
+whose role is to help balance the load between CPUs of the same type.
+
+This is done to avoid migrating tasks too much between CPUs of the same type,
+especially between E-cores, which has been observed in tests of
+
+https://lore.kernel.org/linux-pm/5861970.DvuYhMxLoT@rjwysocki.net/
+
+The expected effect is still that the CPUs of the "low-cost" type will be
+preferred so long as there is enough spare capacity on any of them.
+
+The last 2 patches are new.
+
+Patch [7/8] looks at the cache topology to avoid creating per-CPU perf domains
+for CPUs sharing an L2 cache.  Typically, on the chips that will be affected
+by this patch, CPUs sharing an L2 cache also share a voltage regulator and a
+clock, so they technically belong to the same OPP domain and they will be put
+into a shared perf domain after this patch.
+
+Patch [8/8] makes CPUs sharing the L3 cache look slightly more expensive to
+cause the scheduler to prefer placing tasks on CPUs that don't use the L3,
+which in some cases should allow all of the CPUs sharing the L3 to stay in
+idle states and the energy usage should be reduced.
+
+Please refer to the individual patch changelogs for details.
+
+Since patches [7-8/8] also apply on top of the v0.3, I have created a git branch at
+
+git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+experimental/intel_pstate/eas-take2-extended
+
+or
+
+https://web.git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git/log/?h=experimental/intel_pstate/eas-take2-extended
+
+to allow the difference they make with respect to the v0.3 to be seen (if any).
+
+Later, I'm going to put this series as a whole into a new git branch on top of
+the mainline and the cpufreq material queued up for 6.16.
+
+Thanks!
+
+
+
 
