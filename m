@@ -1,114 +1,137 @@
-Return-Path: <linux-kernel+bounces-607975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CD0AA90D0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 22:24:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C1B3A90D10
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 22:25:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B8F844639C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:24:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 353564480CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:25:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0096422A4E1;
-	Wed, 16 Apr 2025 20:24:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B291522ACD1;
+	Wed, 16 Apr 2025 20:25:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Sx1/0BHX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bWmCR0U1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D521189915
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 20:24:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18666226CFD;
+	Wed, 16 Apr 2025 20:25:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744835092; cv=none; b=BY07tTYEWLCjyuzCzin7trCOMhP87A+3jmKsqZ6fOctLyp6otXi4j6X+PLNSxLW7XFE9JR4nqWtLoM1RUQhNeRKh2fVmgiB4eJDKIuvqSZynWzLkbtaPBwAAEGWQus2Ma/BWrqLySi5wQjbzU7H2M6nejDRtAzxc7EL75keXTXY=
+	t=1744835139; cv=none; b=s5WHdND0DJwZs8FZMmQS1fRYdYAFnaMjGO49qcBCiSlDYRQH288FxBntGzFPXPCTWa9I2BXLyIMLJOvm8kAiB8pH5M9ALE1ksas/ZzTuboXtTWYPZkELN+oOyTAVg1sGabtKDVHgqVKIALKN9uQui4GRALk+vqREmS7LLB4Aw08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744835092; c=relaxed/simple;
-	bh=UoVArrvvhwt6nCyqZeqrxlVsp4O86V4QRNxYAeGzaV4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SgE0iH+4NpXKXPWDfX4fbn9vfj5IXOlR+oRg8lwWLPRASCBiUJgnsqMLlxb0y+JR4LZ0dIHgz0Bf8ddSbgeIXzU7ipJxYAi3CtVgIsvCNkHf5KSsxUvzhk/66e3hl8fDxSXtkxhhfZTqH1RV6Yq21UDfuNnqGIxthaJZq7GKQjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Sx1/0BHX; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744835089;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ju14Dd13F13ROmOuZTdiY+l+wLgVYj/IyRazcIBWaZc=;
-	b=Sx1/0BHXavDhIKRE4NEmBkEcn8ooZEl5Vkk+m47AJjLiz/btO4yp+cKr9XJBm/TNJXKKNn
-	+YbggsrHvbfpOlcKNcGXFITcx4voaau5O0KFW1A2hwTugspRsSuAIVlYhK+CUrEORwwke4
-	QFmbfqgJBjfGRgkGhPv5tpnn6ikUmRY=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-424-_emr5mBXOv-MMGo6lEAlDg-1; Wed,
- 16 Apr 2025 16:24:48 -0400
-X-MC-Unique: _emr5mBXOv-MMGo6lEAlDg-1
-X-Mimecast-MFC-AGG-ID: _emr5mBXOv-MMGo6lEAlDg_1744835086
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A0BC11955DCE;
-	Wed, 16 Apr 2025 20:24:46 +0000 (UTC)
-Received: from omen.home.shazbot.org (unknown [10.22.88.22])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id F3D6D1800965;
-	Wed, 16 Apr 2025 20:24:44 +0000 (UTC)
-From: Alex Williamson <alex.williamson@redhat.com>
-To: 
-Cc: Alex Williamson <alex.williamson@redhat.com>,
-	Salvatore Bonaccorso <carnil@debian.org>,
-	Milan Broz <gmazyland@gmail.com>,
-	stable@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH stable 6.1] mm: Fix is_zero_page() usage in try_grab_page()
-Date: Wed, 16 Apr 2025 14:24:39 -0600
-Message-ID: <20250416202441.3911142-1-alex.williamson@redhat.com>
+	s=arc-20240116; t=1744835139; c=relaxed/simple;
+	bh=uJjIX4nC+xXVxRR3bEJVGojCt9+X4z6MXrjrvgod4sg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=GQabQk1J2sGK7Sow0FLAhz6V8mPg42PvMNksbyTAdLdfVL0LHotKrL0Kjz0PenhM9tZKK5UcORwZ+0TkU/AMhKRCgMj5Wzl9yCXvgysK1g20LdwoHCkzN3nj+YuqJcflhmA3j2BfANDyRevTrkz6/AWjdadxCMYnyCYPDEkq6kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bWmCR0U1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8377BC4CEE2;
+	Wed, 16 Apr 2025 20:25:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744835138;
+	bh=uJjIX4nC+xXVxRR3bEJVGojCt9+X4z6MXrjrvgod4sg=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=bWmCR0U1PBKF8OmHfEWIjH3cUBdKGvswqvMdKLR1Yu0DMWaR2/TaKITQOlziaCCua
+	 4NMbXgNvCrUaXWzaGmbBdu6FahqlGubzUN0sTo63HMcaLhyRe12BZCC71FxoOwNvIo
+	 CN4a1hYUQaesiLA8ldZe7rzd54OKv+97CD7sKo0ndFspVxQTEbrwsemUoXrbDh6USr
+	 no09XZC7t+PbNQKggPY/0eKR6CwF70ad3DWN8UtUA1BGPvlu4IyKxMQH3SQOb0OO01
+	 D24UXznA6bZBUeUS8KDM9InAnkZBuBH+Xx8bUte+1vzB5SoM7FObqqejQN9Kr251W7
+	 VJjbxz8CrlK/A==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 734C8C369C7;
+	Wed, 16 Apr 2025 20:25:38 +0000 (UTC)
+From: Janne Grunau via B4 Relay <devnull+j.jannau.net@kernel.org>
+Subject: [PATCH 0/4] Apple Display Pipe driver fixes
+Date: Wed, 16 Apr 2025 22:25:26 +0200
+Message-Id: <20250416-drm_adp_fixes-v1-0-772699f13293@jannau.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADYSAGgC/x3LQQqAIBBG4avErBMyrEVXiQhzfmsWmShEIN09a
+ fnxeIUykiDT1BRKuCXLFSp025A7bNihhKup7/qhM3pUnM7Vcly9PMhK282zAcN5UH1iwh/qMi/
+ v+wEFYswQXwAAAA==
+X-Change-ID: 20250416-drm_adp_fixes-1abfd4edecfe
+To: Sasha Finkelstein <fnkl.kernel@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Neal Gompa <neal@gompa.dev>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+ Dmitry Baryshkov <lumag@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, asahi@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, Janne Grunau <j@jannau.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2395; i=j@jannau.net;
+ s=yk2024; h=from:subject:message-id;
+ bh=uJjIX4nC+xXVxRR3bEJVGojCt9+X4z6MXrjrvgod4sg=;
+ b=owGbwMvMwCW2UNrmdq9+ahrjabUkhgwGIfu4ybVGnVciuBPqD8kurrZxPqa9bPP0H2vWLQpJX
+ mm6Yqt7RykLgxgXg6yYIkuS9ssOhtU1ijG1D8Jg5rAygQxh4OIUgIkEcTD8s7x+IGfxKy3DCWHZ
+ M6YxP41YLjDdkYuv4MuFEg6JdD2NCIY/3K928jteerD0249/t/rEnk788vPc5aizck3evtuDT50
+ 6ww0A
+X-Developer-Key: i=j@jannau.net; a=openpgp;
+ fpr=8B336A6BE4E5695E89B8532B81E806F586338419
+X-Endpoint-Received: by B4 Relay for j@jannau.net/yk2024 with auth_id=264
+X-Original-From: Janne Grunau <j@jannau.net>
+Reply-To: j@jannau.net
 
-The backport of upstream commit c8070b787519 ("mm: Don't pin ZERO_PAGE
-in pin_user_pages()") into v6.1.130 noted below in Fixes does not
-account for commit 0f0892356fa1 ("mm: allow multiple error returns in
-try_grab_page()"), which changed the return value of try_grab_page()
-from bool to int.  Therefore returning 0, success in the upstream
-version, becomes an error here.  Fix the return value.
+While looking at a suspend issue in the Asahi downstream kernel I
+noticed several issues in the the ADP driver. This series fixes those
+issue.
 
-Fixes: 476c1dfefab8 ("mm: Don't pin ZERO_PAGE in pin_user_pages()")
-Link: https://lore.kernel.org/all/Z_6uhLQjJ7SSzI13@eldamar.lan
-Reported-by: Salvatore Bonaccorso <carnil@debian.org>
-Reported-by: Milan Broz <gmazyland@gmail.com>
-Cc: stable@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org
-Cc: Sasha Levin <sashal@kernel.org>
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+The root cause of the issue was that the device is unexpectedly powered
+down on suspend. The driver relies on initialization done by the boot
+loader and can not bring the device up from reset. The change in [1]
+annotates the power-domain as always on on devices with touchbars. This
+is preferable to driver changes since keeps the device powered on if the
+adpdrm module is not available during boot.
+
+The device comes out of reset firing interrupts with a rate of 60Hz even
+if vblank interrupts are disabled. This itself is not an issue.
+The event_lock outside of the irq handler is locked with spin_lock()
+resulting in a deadlock if the irq fires while the lock is held and
+processed on the same CPU core. This happens eventually and results in a
+soft-locked CPU. [Patch 1/4] "drm: adp: Use spin_lock_irqsave for drm
+device event_lock" addresses this.
+
+In addition I noticed that the driver does not use drm_crtc_vblank_on()
+and instead enables HW vblank interrupts in probe(). This may have been
+done to avoid errors from drm_crtc_vblank_get() after crtc reset. 
+drm_crtc_vblank_reset() intentionally leaves struct drm_vblank_crtc in
+state where drm_crtc_vblank_get() cannot enable vblank interrupts.
+Handle this case explictly in [Patch 2/4] "drm: adp: Handle
+drm_crtc_vblank_get() errors".
+
+[Patch 3/4] "drm: adp: Enable vblank interrupts in crtc's
+.atomic_enable" then uses the expected drm_crtc_vblank_on() call to
+enable vblank interrupts.
+
+[Patch 4/4] "drm: adp: Remove pointless irq_lock spinlock" removes an
+unnecessary spinlock protecting the irq handler from itself.
+
+[1] https://lore.kernel.org/asahi/20250416-arm64_dts_apple_touchbar-v1-1-e1c0b53b9125@jannau.net/
+
 ---
- mm/gup.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Janne Grunau (4):
+      drm: adp: Use spin_lock_irqsave for drm device event_lock
+      drm: adp: Handle drm_crtc_vblank_get() errors
+      drm: adp: Enable vblank interrupts in crtc's .atomic_enable
+      drm: adp: Remove pointless irq_lock spin lock
 
-diff --git a/mm/gup.c b/mm/gup.c
-index b1daaa9d89aa..76a2b0943e2d 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -232,7 +232,7 @@ bool __must_check try_grab_page(struct page *page, unsigned int flags)
- 		 * and it is used in a *lot* of places.
- 		 */
- 		if (is_zero_page(page))
--			return 0;
-+			return true;
- 
- 		/*
- 		 * Similar to try_grab_folio(): be sure to *also*
+ drivers/gpu/drm/adp/adp_drv.c | 23 +++++++++++------------
+ 1 file changed, 11 insertions(+), 12 deletions(-)
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250416-drm_adp_fixes-1abfd4edecfe
+
+Best regards,
 -- 
-2.48.1
+Janne Grunau <j@jannau.net>
+
 
 
