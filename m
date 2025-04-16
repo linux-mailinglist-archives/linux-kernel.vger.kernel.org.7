@@ -1,312 +1,208 @@
-Return-Path: <linux-kernel+bounces-607492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1D96A906F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:50:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A826FA906D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:45:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E0D51896D39
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:51:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85A193A9A3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:44:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 894D71FF7B4;
-	Wed, 16 Apr 2025 14:50:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5CDE2063D8;
+	Wed, 16 Apr 2025 14:43:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ubkYjl5e"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="n5ZBCKQo"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2074.outbound.protection.outlook.com [40.107.22.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E6F1FFC62
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 14:50:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744815002; cv=none; b=Jav+RMjQ5x8Q5stliAJPPfgg6+V/B/7zrsROEkfIY/grGMyZ8TPXP4KLUpOfyXLG1B1JNDalpADfn5WcmyYVjONU98UDUHJwjW8jJ8OXVaWDoC+Ni70D53zwjkeH4OkZUx0HngliUsOhzVHJt1e8gvKJtmq7EhcKGelQU9L2xaQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744815002; c=relaxed/simple;
-	bh=vamw0maEHaBukVhssMS+S6Gwg15K722frOBUN1+Eaec=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=uvVXeISwPslAoMJCSfsuWZMJG9/T3Jporjw4humGld+kA6yOogxNQ3yGPZ5EI2q7/r2++aoMbieFbJmgn8HVc6VuFYkHz0km+9o8LRmcIBiG6mQmdMZgdg6BH17Ct5Jf64B9VhH45TsXWra1/tBSIdOLFHTH9BiRfk1Cy8jArpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--guanyulin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ubkYjl5e; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--guanyulin.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-736fff82264so721876b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 07:50:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744815000; x=1745419800; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7zUjS2x82QyAbbEFyP3zEMnOERceY+liurHl5RmB4q8=;
-        b=ubkYjl5edCinKiSiDEnXN6QiG+Yed71AtQM9UQ7dsL8HN0BVwDTLe5ZjFkrTC4kOkK
-         gD4VJjJfFxH0ymSUyxBTY+rybGRIeo/k7yfE8KX2OZfhlHNBH9QpsJQdAe5G1KsbL/Mi
-         3yxpDfyWVWq/iYmwyZLdlaZHqej8mBho8NROfWX5jj61o6D3+Hqgxo3n6EOlxzGHyLgc
-         LWBiYe+wbJjjQV71NlfJ2eX6I+GqGyKPCPYm6vIBmyHztuFrnrozHcaV4LRrM/ey5jPn
-         z111ymyLwG/XOYvJpPCReNKYClk/QXIAHloCEE15z0S5vSaE9D1rkVJtsS7fLkmQbmUY
-         kagA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744815000; x=1745419800;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7zUjS2x82QyAbbEFyP3zEMnOERceY+liurHl5RmB4q8=;
-        b=I4BqJVSBAO248ieSqQ/DAXsl3xAWjQDPIqs9SQ9mPCKWiU2s+TgkugwWPqlTHdHsmO
-         V74e2TUU2evS4qyL4EBQ7EzZ5NzYxqeKXpUrV0rqXrLj4+ekAOmAcxBEX2r7mo7RaJNZ
-         5XEz6vwYajSe8k1mGPaoHPDkEB5ru7Lvjv3YnLGp5Pt9MvC5oZOh6uSvVfOziQxuwi9N
-         6EgRmjs6Ch3anHlem/+aAQ0B5zi9BhJAiirnmf97s6da26eTvmAgGDUeUI7SfnefaW28
-         CKFwFOPB0SNc51Hrkwtt4B52rVqSc8RBYe7LcpSC4AwcTNloFPuzAhKOJXOqHLlI+KwI
-         dDCg==
-X-Forwarded-Encrypted: i=1; AJvYcCVLA2ERk1cs6rL6K8j90sJo9pcyGtAJxu+QzjF+ZyQk7MHPcds5MGCRJKSu37BJMNp278P7okyAJloxshk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxi7CvI0xBGh+STW79Z3L6gcjh/OwDYuE45dEPqapasikiQfGjL
-	B5mBfEB+x/Vf58B6cGYN0KWAsKLSD3iKF5oN1ysZ3/z8RpUEglDaHHP6yNipiIjDfGoUqc23Pbo
-	JxoXtnQDLXJHlKw==
-X-Google-Smtp-Source: AGHT+IHO9p0R6vx/xasgcNdYKoGnU97x1A00K9+39lodTTl67acuMpglei7UlMT7MGYETEDcubAg3m4QWvN/Hg4=
-X-Received: from pfih17.prod.google.com ([2002:a05:6a00:2191:b0:736:a134:94ad])
- (user=guanyulin job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:3a96:b0:736:aea8:c9b7 with SMTP id d2e1a72fcca58-73c26d17aa0mr3050071b3a.2.1744815000385;
- Wed, 16 Apr 2025 07:50:00 -0700 (PDT)
-Date: Wed, 16 Apr 2025 14:43:04 +0000
-In-Reply-To: <20250416144917.16822-1-guanyulin@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B20F205E2F;
+	Wed, 16 Apr 2025 14:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744814607; cv=fail; b=ExoAp4NnpgA7uyChr9tgraHqrXAmRtFFvP2JNFi2dytBZJC9A3/fSICfPE3fPedfBAUGyXp17SrbkFqquwQwPSwwmT2qMp/Rc/126PjS4G4x94NSnpbvXWlQs6bs7CP8cAnDyaXQ/oDhPQsSRJaRN+PjpMStCfUPteoZQc9uD7M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744814607; c=relaxed/simple;
+	bh=53rf5yv+uJYAeMUqmk6Stm15kRh75vIPFJ2ZA3d60ZA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=jxJIc8YXH2Q8Ad4C0AINNHrFzzFURGeVPy95b6BrbqIe2Wz3FdfM6Z23RkvtZ65P9ZglPvmtB5wRlqFbMzLbrvUDca1wmVL4e37rQBkcIdaSphwVjkhlAVDao/c7u3lO25Z1rmepRd2lenLh+6v5ZZ1Mj/w2jpz6qV/PjfrrgA8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=n5ZBCKQo; arc=fail smtp.client-ip=40.107.22.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hQQIlUqMgfuNIKASYprP2mE3fX43fmURPPMy9xc7S5bg7wBdhbBimtj3brzVM43KyuDc8G74nhw8DPb4IYg88jip4Rdo5RmhRYGMWiyeLHmHiic5ktP78Klctt9wWYgoMu46ZuDfxvfX+oArqq1yeFoOpZ34Zh1a0RO+bBrWnRrEm6gFfyhvOJe/oQ4RaW1D176i/knvFQBzjsRrFHAM+21h6vpaDKAu0zXeHXyDyHvIvM7A9RYCep8tRw3sgb2gddqTdX/bbqgkINju7EkS2Y8YIkPvo3QJoh2O55uPs77vlQnyt9jcigBlW9RIKPrGL/bziQ55ORjAhaoaLhz0aw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iOUi9de/V5xLAiHTN9G5ffErPRTJOHvM6drDy5XJMVg=;
+ b=TOdhuZAwwKYYNFeKtV7ItFwl4Nm2y64tfu1keuTmgGcC0haWMkG44wK0VeHDCszs67C3b50UUO8boL+8d/2OeoVIYhINIPFmBBKfwgF1/v61abf3GA6w1owzupmVf0fz4w23NUY7FFmqXh6fGkJ13PROJiKYcqenOuyz+0d02xyjLtK3KKm8OEKWgXPOn0ZK919zLqu/9VVatyB3/H9Yeu/49NlfUmTdQYXYOfBrERZNvjf2eipHetJrVnbayDVJbZDEFdsZ8Hna59vD6sn1a1AO+gDlMqZfrJSAOMS+nLeAPjUFj4BnHApUo9zvPXaYjQYxjOz0J3p5ICCPN2KShg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iOUi9de/V5xLAiHTN9G5ffErPRTJOHvM6drDy5XJMVg=;
+ b=n5ZBCKQo41wfFv8ohTY6+1Ws0vbSsrAQyO/9nXuXXJDvsE4CDvMwsIPe5Cb7S5p4lyfeLg/VaL2R2vpaemXc2NltfSvSr71elqyMovQjBUJnEmiTY2CMe1tOy6Rxzka6BS0XFAXlTGK96WGPVsh7vPc8xmkdJWK4YCFOdN5rWemJCFNZWtwm+tOJ7u+ra+qzgYdMm02zBF8y9WtdSLRLPCtM8sb1IPGHM72I6j2qHuPzEgG3FCdJoQt2J66wG2fCcKuddStY8TMbxCXkmZ3Gp+WkAICHCxJIgILXosJRk+mW35QUnwnQjVCpU2vT/IemonGM+TqQyrucbw4UtxOLYg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by GVXPR04MB10732.eurprd04.prod.outlook.com (2603:10a6:150:215::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.31; Wed, 16 Apr
+ 2025 14:43:23 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.8632.035; Wed, 16 Apr 2025
+ 14:43:23 +0000
+Date: Wed, 16 Apr 2025 10:43:16 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Adam Ford <aford173@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, aford@beaconembedded.com,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 07/10] arm64: dts: imx8mn-beacon: Configure Ethernet
+ PHY reset and GPIO IRQ
+Message-ID: <Z//CBD7dVNW29JRW@lizhi-Precision-Tower-5810>
+References: <20250416010141.1785841-1-aford173@gmail.com>
+ <20250416010141.1785841-7-aford173@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250416010141.1785841-7-aford173@gmail.com>
+X-ClientProxiedBy: PH7PR02CA0027.namprd02.prod.outlook.com
+ (2603:10b6:510:33d::16) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250416144917.16822-1-guanyulin@google.com>
-X-Mailer: git-send-email 2.49.0.604.gff1f9ca942-goog
-Message-ID: <20250416144917.16822-5-guanyulin@google.com>
-Subject: [PATCH v12 4/4] usb: host: enable USB offload during system sleep
-From: Guan-Yu Lin <guanyulin@google.com>
-To: gregkh@linuxfoundation.org, mathias.nyman@intel.com, 
-	stern@rowland.harvard.edu, sumit.garg@kernel.org, gargaditya08@live.com, 
-	kekrby@gmail.com, jeff.johnson@oss.qualcomm.com, quic_zijuhu@quicinc.com, 
-	andriy.shevchenko@linux.intel.com, ben@decadent.org.uk, broonie@kernel.org, 
-	quic_wcheng@quicinc.com
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Guan-Yu Lin <guanyulin@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|GVXPR04MB10732:EE_
+X-MS-Office365-Filtering-Correlation-Id: e30c9d8c-b7df-4817-eaac-08dd7cf509c9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|52116014|366016|376014|7416014|7053199007|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?gLSu1DmwLXK1O5Q5KUW5DXqQ1BwBdWih1k/9ryVqmIE3Fm5GA/Hv/nDlmdGj?=
+ =?us-ascii?Q?+Bb2x7xPVGB2Z50Vxw6N77tR++KaaybbUTxpL8Ol9VLnLQtgJwol/ENxib68?=
+ =?us-ascii?Q?Ic+xHsIuc7fqp0ZwCFf2rS3dBuvdkCELpfnuPXSMuZzeQyS04fhqrswqR+d4?=
+ =?us-ascii?Q?rb/qNb5UBlSKJN0mGm9nu7taF1xTI97nhHQjOyykFn9hjgh5H/WVMrwPRPBW?=
+ =?us-ascii?Q?8FSEuib4pST4Hv3RUVwj32wHEvXb+0n2NWxI1WsRa9mAE3aKMTdjskczOs+X?=
+ =?us-ascii?Q?58lvmSV0iqHJf5OCuffPQS0VPeO1vap/bF5gOazkeTjY0OZAxyBH9quCdYlF?=
+ =?us-ascii?Q?LI/KvmAcRnm7ojKgu2kD1xNOe7NGKJy2x42TMt/l7udGNk8Hr8Q2pBO2gtDT?=
+ =?us-ascii?Q?I2Ui+1qDrIiQbGZZC9eJWzEKsngXxpQagm2wNmSZtCOpAMfkTG0nI/v10qkN?=
+ =?us-ascii?Q?SqGacs2MnYnn7JzBgvHg9MTzx550SVsLVfx9STM2gDR3GuvazQzx8i7M1/ta?=
+ =?us-ascii?Q?fMeuatHX7oRXFSgyS6G4UfLWbqZ7c/0e9S8DkaSS0RoQlfDTUxGoprV1zHwD?=
+ =?us-ascii?Q?W2OtijZYLVyapXOc9KFe/8yOMRtNC0swFqtvxd+c3t8slE+HWsmIN8kIOnVl?=
+ =?us-ascii?Q?/bXfkvCmz0iCr4mEpl0yxC27eKBC8A8b7YVTf+/Hh3WfNfhAq6eBQ/N2IBwb?=
+ =?us-ascii?Q?wxVEpfQLtarzuZ0VlPfYGWfwIAAq2T5+FWAnvP1URrOVHcHRjyS0p6kvRmBv?=
+ =?us-ascii?Q?7FamPcxSOkGi65yDoFD/CR8NO84IAHdH+T7YbfJQ3JQxOquC4XX98cG7lvjJ?=
+ =?us-ascii?Q?ZnGjR5joz4G0KlsupmuLtFGyrGZcSLWM5penX7xKE2/d8/cSrZfb7da3A996?=
+ =?us-ascii?Q?3cpEtiQmkfoCUHZdeHEqKjrQ7g/xY/vpFawTahfephJqJ59qe4E8KnvgGF53?=
+ =?us-ascii?Q?2H2cOoYTN6YgZk+7herC+uO4Qp+g4SuFwji6DxpEhA3gXX3ZEYyzmv2ysGxR?=
+ =?us-ascii?Q?GOkgysDkL6EoFmiY/1y51a20eKBa3os0RfsguXjPODfNZ/zzBp2IwPx2c0mM?=
+ =?us-ascii?Q?+IpgKvGaoIthKWXzC3JxHhgdLJElG8vYWHU42yelMcsRgIouds5g7Ne7bWXc?=
+ =?us-ascii?Q?drIDpD4lXdk8uqEIyDjJG4BmRp15r/0w77CYzpOfSZx1+WQpF0TWSxzxQy6l?=
+ =?us-ascii?Q?mbRHiCY2LZA/BuNptAV7D3d9yQrw3rvjobEJIWrF/rahDEOIOXMJFeBXX2Rf?=
+ =?us-ascii?Q?p3fejFjXxsD8jMEvNayMnOvvU2/ZruCCj4r8GBLbmLey+EwSwqtoZCjVWJas?=
+ =?us-ascii?Q?yy8dIkQfV+5ahpvVO0RvKNwUB144/T7Hu9piQJP0nqYkq/ynt4bjkv7tjqoo?=
+ =?us-ascii?Q?WHFhkLV+h+5NxzBcBHeMkjHNaQ3Cw9U96A6TEFb8iDTLuxlitbC291/k7T3G?=
+ =?us-ascii?Q?d+2iBI5ZmJJPLfm8TfnYB2tQKJ7dQr9Ky91D1d7TiNuncaSRn3tnmg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(366016)(376014)(7416014)(7053199007)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?/J8xjqj+wSHmh9DQBJt7roeMA71u6KXP7NjGmctDy1LLx0exJfX3zDCpx7Oq?=
+ =?us-ascii?Q?DdFxKB6iD7qIX86mip6p4SPBoKBBvtpvY/Q8qKux0QPV7pKNLRHDAK7lxmmc?=
+ =?us-ascii?Q?9IVL5UcdKmnWnEjDz/Atcyv4Ru5/10pq0xlqIYw6840Wy7YQU4SGRuCPAQw1?=
+ =?us-ascii?Q?UADLhYnVCGjCfB8W1FbLFW3dGkp22Hn6xSO7UfvrZ6UtECPXNqfwUM/2Ov65?=
+ =?us-ascii?Q?bItyrBbu0NbNSJ3nNJ5kO9KWgvIfj5rbH4fLo44SSbx63orw3l5ngz/zxEGY?=
+ =?us-ascii?Q?1VAgnwcE5iWOayrRD2Ww+tTscQRMi5PvZNS+aEZ8HE1Wxuxz/jYGFn+lLh9k?=
+ =?us-ascii?Q?jYx4toWZBN2NRzbDhocG7hzafUqF71KSmFRJowsfVDrvZMNlbLHJdK4YSWZt?=
+ =?us-ascii?Q?cyvR3VOHkFVdMv3f/zIJN8WT0yq0dZmQoAZf5Hw32SO1FhRItT4g+GJuVsTf?=
+ =?us-ascii?Q?W0VkHO6cyzoxO3a+HXPJDyzcV70OtjxvVG6amNokZmF2ty+PdBtPX2xfAGoa?=
+ =?us-ascii?Q?pkjN7uHtZh0jT+a2bfmxRvBukrAr1Wp7igmhqVoK8y2GN2QJ7h/Mj5EM8W6d?=
+ =?us-ascii?Q?pdMnAHKoozg7x3xMank9ctd/WY8ZmWPMSsCyP1JRFpIpqOPFYe6xUygEcy9J?=
+ =?us-ascii?Q?Jok5+YWiTXa+S0QQ9Nr9gx1XSN+WvpZ+NjNEsweGDEVuJ3hzD0sWfP0JM/Cb?=
+ =?us-ascii?Q?JLOHMtCFJh/Eb01rn5kCIJ7+lBxTYXdGlZ93FI7QkFyQ01ipsH54eygh0/Xt?=
+ =?us-ascii?Q?+QONIYBHSZtQadTyasf3ekdjfbBlYHMKc4mt0jM4f3PMRpftP40RKzVTeOu1?=
+ =?us-ascii?Q?gU+dHqX1I9DR5yFmw+1kCq6VqLUIykSCk6RJg2QK4sskQTE2k2eJD5oz1Nmv?=
+ =?us-ascii?Q?cQdNJGPYmOpuRbFx/5ctKM9r27McVrLsl6W7rRaQ9I/CSlBis9PhDx8rwETP?=
+ =?us-ascii?Q?xxEIJ4WxQihKYKiNztAPFhmNYm7DbFKwJSZIveP+u8fwkVAlb0Lf1zseQzZK?=
+ =?us-ascii?Q?GDLhY6S90JYUiGkvSQbNInocbzvcrXt8GnQNt8CDZTdLBZZpuX2OdguYv0Og?=
+ =?us-ascii?Q?CEX2R77Rl4fXamuDNpXyjTMyKr6ylUrG7a/J5Lis9rVGnBJQxRWXa2fy3TJ1?=
+ =?us-ascii?Q?YUqxgnsKkFrEa0Jpq7bcrocRaMmP0vCyP3HPluKjXZ4R8CoDuKK/B05L9kvE?=
+ =?us-ascii?Q?KfGUcK0DFyKshZ21UJ4ZLJLyTVU95VKF2B9snX/Qz2F4nqn87Ns3k/UIbx9D?=
+ =?us-ascii?Q?j1AvbLvC40XMCVF8PEMKW6CDlEkGB9XYH7brTT7cayzJJureZBstAlV01Eh0?=
+ =?us-ascii?Q?aOvYwrPBqPzh9tT25vI2krBpoF13RFGohZkUPgIXRLisSO8QC6k8reTvSZAV?=
+ =?us-ascii?Q?h/ydW/+1WvKxnJii/2br8UgwBcsMeO6A7L1FgjIQn6qVqq54V8efwSzsh6SU?=
+ =?us-ascii?Q?/9TPhyzvrlSK89jzgs/ubiZsU1cckbi9POn/9NDbF5iUyN/fcTyA8+R4OCvR?=
+ =?us-ascii?Q?uSVHS5GUQL4fmOvWOuHIx4cAOZ97jZ1oz0VDPdhMjqNQyMEFWiZeNr96A8A1?=
+ =?us-ascii?Q?0jQXNbheWJPbMqPPklk=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e30c9d8c-b7df-4817-eaac-08dd7cf509c9
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Apr 2025 14:43:23.1581
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fNJvTCKx5wvmtYn9TYkJNdc7xYse+8cqudzHApQec/GWaU/l2QbcrdVILT+xqhnDsoSAJypn2cnBS9ztG+BViA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10732
 
-Sharing a USB controller with another entity via xhci-sideband driver
-creates power management complexities. To prevent the USB controller
-from being inadvertently deactivated while in use by the other entity, a
-usage-count based mechanism is implemented. This allows the system to
-manage power effectively, ensuring the controller remains available
-whenever needed.
-In order to maintain full functionality of an offloaded USB devices,
-several changes are made within the suspend flow of such devices:
-- skip usb_suspend_device() so that the port/hub are still active for
-  USB transfers via offloaded path.
-- not suspending the endpoints which are used by USB interfaces marked
-  with needs_remote_wakeup. Namely, skip usb_suspend_interface() and
-  usb_hcd_flush_endpoint() on associated USB interfaces. This reserves a
-  pending interrupt urb during system suspend for handling the interrupt
-  transfer, which is necessary since remote wakeup doesn't apply in the
-  offloaded USB devices when controller is still active.
-- not flushing the endpoints of actively offloaded USB devices. Given
-  that the USB devices is used by another entity, unilaterally flush the
-  endpoint might lead to unexpected behavior on another entity.
-- not suspending the xhci controller. This is done by skipping the
-  suspend/resume callbacks in the xhci platform driver.
+On Tue, Apr 15, 2025 at 08:01:33PM -0500, Adam Ford wrote:
+> The Ethernet PHY setup currently assumes that the bootloader will take the
+> PHY out of reset, but this behavior is not guaranteed across all
+> bootloaders. Add the reset GPIO to ensure the kernel can properly control
+> the PHY reset line.
+>
+> Also configure the PHY IRQ GPIO to enable interrupt-driven link status
+> reporting, instead of relying on polling.
+>
+> This ensures more reliable Ethernet initialization and improves PHY event
+> handling.
+>
+> Signed-off-by: Adam Ford <aford173@gmail.com>
+> ---
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-Signed-off-by: Guan-Yu Lin <guanyulin@google.com>
----
- drivers/usb/core/driver.c    | 50 +++++++++++++++++++++++++++++++-----
- drivers/usb/host/xhci-plat.c | 19 ++++++++++++++
- drivers/usb/host/xhci-plat.h |  1 +
- include/linux/usb.h          |  7 ++---
- 4 files changed, 68 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
-index 76372690add0..6c3eb8fb6310 100644
---- a/drivers/usb/core/driver.c
-+++ b/drivers/usb/core/driver.c
-@@ -1420,11 +1420,28 @@ static int usb_suspend_both(struct usb_device *udev, pm_message_t msg)
- 			udev->state == USB_STATE_SUSPENDED)
- 		goto done;
- 
-+	if (msg.event == PM_EVENT_SUSPEND && usb_offload_check(udev)) {
-+		dev_dbg(&udev->dev, "device offloaded, skip suspend.\n");
-+		udev->offload_at_suspend = 1;
-+	}
-+
- 	/* Suspend all the interfaces and then udev itself */
- 	if (udev->actconfig) {
- 		n = udev->actconfig->desc.bNumInterfaces;
- 		for (i = n - 1; i >= 0; --i) {
- 			intf = udev->actconfig->interface[i];
-+			/*
-+			 * Don't suspend interfaces with remote wakeup while
-+			 * the controller is active. This preserves pending
-+			 * interrupt urbs, allowing interrupt events to be
-+			 * handled during system suspend.
-+			 */
-+			if (udev->offload_at_suspend &&
-+			    intf->needs_remote_wakeup) {
-+				dev_dbg(&intf->dev,
-+					"device offloaded, skip suspend.\n");
-+				continue;
-+			}
- 			status = usb_suspend_interface(udev, intf, msg);
- 
- 			/* Ignore errors during system sleep transitions */
-@@ -1435,7 +1452,8 @@ static int usb_suspend_both(struct usb_device *udev, pm_message_t msg)
- 		}
- 	}
- 	if (status == 0) {
--		status = usb_suspend_device(udev, msg);
-+		if (!udev->offload_at_suspend)
-+			status = usb_suspend_device(udev, msg);
- 
- 		/*
- 		 * Ignore errors from non-root-hub devices during
-@@ -1480,9 +1498,11 @@ static int usb_suspend_both(struct usb_device *udev, pm_message_t msg)
- 	 */
- 	} else {
- 		udev->can_submit = 0;
--		for (i = 0; i < 16; ++i) {
--			usb_hcd_flush_endpoint(udev, udev->ep_out[i]);
--			usb_hcd_flush_endpoint(udev, udev->ep_in[i]);
-+		if (!udev->offload_at_suspend) {
-+			for (i = 0; i < 16; ++i) {
-+				usb_hcd_flush_endpoint(udev, udev->ep_out[i]);
-+				usb_hcd_flush_endpoint(udev, udev->ep_in[i]);
-+			}
- 		}
- 	}
- 
-@@ -1524,17 +1544,35 @@ static int usb_resume_both(struct usb_device *udev, pm_message_t msg)
- 	udev->can_submit = 1;
- 
- 	/* Resume the device */
--	if (udev->state == USB_STATE_SUSPENDED || udev->reset_resume)
--		status = usb_resume_device(udev, msg);
-+	if (udev->state == USB_STATE_SUSPENDED || udev->reset_resume) {
-+		if (!udev->offload_at_suspend)
-+			status = usb_resume_device(udev, msg);
-+		else
-+			dev_dbg(&udev->dev,
-+				"device offloaded, skip resume.\n");
-+	}
- 
- 	/* Resume the interfaces */
- 	if (status == 0 && udev->actconfig) {
- 		for (i = 0; i < udev->actconfig->desc.bNumInterfaces; i++) {
- 			intf = udev->actconfig->interface[i];
-+			/*
-+			 * Interfaces with remote wakeup aren't suspended
-+			 * while the controller is active. This preserves
-+			 * pending interrupt urbs, allowing interrupt events
-+			 * to be handled during system suspend.
-+			 */
-+			if (udev->offload_at_suspend &&
-+			    intf->needs_remote_wakeup) {
-+				dev_dbg(&intf->dev,
-+					"device offloaded, skip resume.\n");
-+				continue;
-+			}
- 			usb_resume_interface(udev, intf, msg,
- 					udev->reset_resume);
- 		}
- 	}
-+	udev->offload_at_suspend = 0;
- 	usb_mark_last_busy(udev);
- 
-  done:
-diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-index 9843d3ad5cf4..598f1b974347 100644
---- a/drivers/usb/host/xhci-plat.c
-+++ b/drivers/usb/host/xhci-plat.c
-@@ -20,6 +20,7 @@
- #include <linux/acpi.h>
- #include <linux/usb/of.h>
- #include <linux/reset.h>
-+#include <linux/usb/xhci-sideband.h>
- 
- #include "xhci.h"
- #include "xhci-plat.h"
-@@ -483,6 +484,15 @@ static int xhci_plat_suspend_common(struct device *dev)
- 
- static int xhci_plat_suspend(struct device *dev)
- {
-+	struct usb_hcd	*hcd = dev_get_drvdata(dev);
-+	struct xhci_plat_priv *priv = hcd_to_xhci_priv(hcd);
-+
-+	if (xhci_sideband_check(hcd)) {
-+		priv->sideband_at_suspend = 1;
-+		dev_dbg(dev, "sideband instance active, skip suspend.\n");
-+		return 0;
-+	}
-+
- 	return xhci_plat_suspend_common(dev);
- }
- 
-@@ -535,6 +545,15 @@ static int xhci_plat_resume_common(struct device *dev, bool power_lost)
- 
- static int xhci_plat_resume(struct device *dev)
- {
-+	struct usb_hcd	*hcd = dev_get_drvdata(dev);
-+	struct xhci_plat_priv *priv = hcd_to_xhci_priv(hcd);
-+
-+	if (priv->sideband_at_suspend) {
-+		priv->sideband_at_suspend = 0;
-+		dev_dbg(dev, "sideband instance active, skip resume.\n");
-+		return 0;
-+	}
-+
- 	return xhci_plat_resume_common(dev, false);
- }
- 
-diff --git a/drivers/usb/host/xhci-plat.h b/drivers/usb/host/xhci-plat.h
-index fe4f95e690fa..cd07b22adc60 100644
---- a/drivers/usb/host/xhci-plat.h
-+++ b/drivers/usb/host/xhci-plat.h
-@@ -15,6 +15,7 @@ struct usb_hcd;
- struct xhci_plat_priv {
- 	const char *firmware_name;
- 	unsigned long long quirks;
-+	unsigned sideband_at_suspend:1;
- 	bool power_lost;
- 	void (*plat_start)(struct usb_hcd *);
- 	int (*init_quirk)(struct usb_hcd *);
-diff --git a/include/linux/usb.h b/include/linux/usb.h
-index ec8d839e1e2b..f5bca317fa4c 100644
---- a/include/linux/usb.h
-+++ b/include/linux/usb.h
-@@ -635,6 +635,8 @@ struct usb3_lpm_parameters {
-  * @do_remote_wakeup:  remote wakeup should be enabled
-  * @reset_resume: needs reset instead of resume
-  * @port_is_suspended: the upstream port is suspended (L2 or U3)
-+ * @offload_at_suspend: offload activities during suspend is enabled.
-+ * @offload_usage: number of offload activities happening on this usb device.
-  * @slot_id: Slot ID assigned by xHCI
-  * @l1_params: best effor service latency for USB2 L1 LPM state, and L1 timeout.
-  * @u1_params: exit latencies for USB3 U1 LPM state, and hub-initiated timeout.
-@@ -647,7 +649,6 @@ struct usb3_lpm_parameters {
-  *	parent->hub_delay + wHubDelay + tTPTransmissionDelay (40ns)
-  *	Will be used as wValue for SetIsochDelay requests.
-  * @use_generic_driver: ask driver core to reprobe using the generic driver.
-- * @offload_usage: number of offload activities happening on this usb device.
-  *
-  * Notes:
-  * Usbcore drivers should not set usbdev->state directly.  Instead use
-@@ -724,6 +725,8 @@ struct usb_device {
- 	unsigned do_remote_wakeup:1;
- 	unsigned reset_resume:1;
- 	unsigned port_is_suspended:1;
-+	unsigned offload_at_suspend:1;
-+	int offload_usage;
- 	enum usb_link_tunnel_mode tunnel_mode;
- 
- 	int slot_id;
-@@ -734,8 +737,6 @@ struct usb_device {
- 
- 	u16 hub_delay;
- 	unsigned use_generic_driver:1;
--
--	int offload_usage;
- };
- 
- #define to_usb_device(__dev)	container_of_const(__dev, struct usb_device, dev)
--- 
-2.49.0.604.gff1f9ca942-goog
-
+> V2:  Update commit message. No active changes.
+>
+>  arch/arm64/boot/dts/freescale/imx8mn-beacon-som.dtsi | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mn-beacon-som.dtsi b/arch/arm64/boot/dts/freescale/imx8mn-beacon-som.dtsi
+> index bb11590473a4..b3692b367a42 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mn-beacon-som.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8mn-beacon-som.dtsi
+> @@ -88,6 +88,9 @@ mdio {
+>  		ethphy0: ethernet-phy@0 {
+>  			compatible = "ethernet-phy-ieee802.3-c22";
+>  			reg = <0>;
+> +			reset-gpios = <&gpio4 22 GPIO_ACTIVE_LOW>;
+> +			interrupt-parent = <&gpio1>;
+> +			interrupts = <10 IRQ_TYPE_LEVEL_LOW>;
+>  		};
+>  	};
+>  };
+> @@ -326,6 +329,7 @@ MX8MN_IOMUXC_ENET_TXC_ENET1_RGMII_TXC	0x1f
+>  			MX8MN_IOMUXC_ENET_RXC_ENET1_RGMII_RXC	0x91
+>  			MX8MN_IOMUXC_ENET_RX_CTL_ENET1_RGMII_RX_CTL	0x91
+>  			MX8MN_IOMUXC_ENET_TX_CTL_ENET1_RGMII_TX_CTL	0x1f
+> +			MX8MN_IOMUXC_GPIO1_IO10_GPIO1_IO10             0x146
+>  			MX8MN_IOMUXC_SAI2_RXC_GPIO4_IO22	0x19
+>  		>;
+>  	};
+> --
+> 2.48.1
+>
 
