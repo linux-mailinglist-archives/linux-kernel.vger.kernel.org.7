@@ -1,151 +1,110 @@
-Return-Path: <linux-kernel+bounces-607045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F588A8B756
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 13:07:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8849AA8B75D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 13:08:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A6C8189F80F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 11:07:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49D7B1900A7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 11:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD0423D2BA;
-	Wed, 16 Apr 2025 11:06:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B85723A9A0;
+	Wed, 16 Apr 2025 11:06:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nkoy7Dp7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qC9rshun"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB6D23BCE6;
-	Wed, 16 Apr 2025 11:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51A223BCEF
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 11:06:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744801605; cv=none; b=tMXWozZkYHuPFyNJwOr1MKQ6NHaBfJAYBPby0/h+X1LwlE2+PZQo3RBpHnk9/prsF5yUXAP9v8WhPTP5L00mjTjeZOc9CD8uflDjyxb4H/MgNCYm0Z5s1QVprXA+lSz8mgPRPb0ibzoWl1GaIG8o7QdNEyruRHqtnBnhtfhvvVs=
+	t=1744801612; cv=none; b=b6jd1b1zYyG6HjPL1Z1u1HBssugncTQX4rvduCEh5gVMV7TxCpLHte1HL/0EI3OOYxh/Hyjfy4Kp3T5pDWVFQCUeEVWoXyW473Bn0lIgHiar1DxkvFd2fFiSmsmhliTM54JZK+Y+Qry+tDplXnVLndQa4Z+U+fL/0A/j4BLqghk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744801605; c=relaxed/simple;
-	bh=16DgpotWcDvzYYfzPcopAIgxhIvQDfu72PE4r4IyL3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZAopr5Cl/UjIBEkGk7pT55spoVOM/Lo7ccLcVEM/+1mXkO+Gj2zGMZSpkMLctLfw22Xq9X55xpYjrHG9kcSLZKSkmDOjQdL2SLlnu59+RfXAFEj91tPHda+UAAAr8LFHmdUbYxb9eR+6hG7IvoOUwqao591uWCMeFsn71d79ikc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nkoy7Dp7; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744801604; x=1776337604;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=16DgpotWcDvzYYfzPcopAIgxhIvQDfu72PE4r4IyL3k=;
-  b=nkoy7Dp7faB9HpoOYf3w62cosSof0B8bj8Q/yDFT+6BhJrqSS8lXcNic
-   Z0sLapwG5J82eZ5gNWX8V3a+/PlO05Mx9Xjn4aYy9cqTMdEkltDi7s03a
-   NATddQ/Y3s32oSoRmfj6X/9B/fM61tubCLxnYcTT7EEre4JA06I/eVNr1
-   1Gh6xaeeDjDC99Hh0LTzhk73pVuK8Q3erycDnYlPkh7laUOObbM2w7w2x
-   G1OEAGyhpBrsa+YLaBlMD0M4Tr36sJl41M9CdHZcBTcE3YBhbu/gzqqX4
-   OB+nVUC+PRr86xAXhcwqrU+J63zhsSpjok1XYLvTBypBUUfosU8xWZUKR
-   g==;
-X-CSE-ConnectionGUID: +GOt46gWTVyMAWXF3xsREg==
-X-CSE-MsgGUID: lS40vlXjRmyrgJxq1ceT4A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="49037888"
-X-IronPort-AV: E=Sophos;i="6.15,216,1739865600"; 
-   d="scan'208";a="49037888"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 04:06:39 -0700
-X-CSE-ConnectionGUID: WleBxw5jSOy/jsnUAIjeew==
-X-CSE-MsgGUID: IWkk0DsNTHWf2R8r+5d1nQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,216,1739865600"; 
-   d="scan'208";a="134535186"
-Received: from mev-dev.igk.intel.com ([10.237.112.144])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 04:06:36 -0700
-Date: Wed, 16 Apr 2025 13:06:21 +0200
-From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-To: Henry Martin <bsdhenrymartin@gmail.com>
-Cc: saeedm@nvidia.com, leon@kernel.org, tariqt@nvidia.com,
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, mbloch@nvidia.com,
-	michal.swiatkowski@linux.intel.com, amirtz@nvidia.com,
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 2/2] net/mlx5: Move ttc allocation after switch case
- to prevent leaks
-Message-ID: <Z/+PLbjcrd3F9pte@mev-dev.igk.intel.com>
-References: <20250416092243.65573-1-bsdhenrymartin@gmail.com>
- <20250416092243.65573-3-bsdhenrymartin@gmail.com>
+	s=arc-20240116; t=1744801612; c=relaxed/simple;
+	bh=MItm8lfg7E21L1vIBXLReQo7hX1VUAj4VEBvbFisqZE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=sA8RQD+FA45iqfQ/JujfpBm+oX3EV901rVVdTrz8UZ0ZIEdQmYUGUHnOgcS6UIOP3SYItT2sYOsN66ln2O78hI6jHeDrbkfRNTxBJXNYaOEJSfQMnB9olIUcEg9ChJzkbg30K6KG+ex0ni9Oc43ANTJcIWgXTVIqzjxg0MQGSh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=qC9rshun; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C466A965;
+	Wed, 16 Apr 2025 13:04:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1744801485;
+	bh=MItm8lfg7E21L1vIBXLReQo7hX1VUAj4VEBvbFisqZE=;
+	h=From:Subject:Date:To:Cc:From;
+	b=qC9rshunoFPJTVYEBtXZLhs2K1cIrIlA7aqHAbdD9PbPINT4OznhORb6VXBp6SAJj
+	 Ily5xjnjg3s8x3XzYSSnHrgYChzQ1BuEXpSnk2Quvdounh3tAUHSw7RdktEJ+9dhZR
+	 /4xgh+tS10NMFnPv41Df8F+OZJroSW21ssXjxsYY=
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Subject: [PATCH 0/2] drm/tidss: Delay reset if we have a splash-screen
+Date: Wed, 16 Apr 2025 14:06:28 +0300
+Message-Id: <20250416-tidss-splash-v1-0-4ff396eb5008@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250416092243.65573-3-bsdhenrymartin@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADSP/2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDE0Mz3ZLMlOJi3eKCnMTiDF3jFIs0YyOLJHNDMwMloJaCotS0zAqwcdG
+ xtbUAaVb/Ol4AAAA=
+X-Change-ID: 20250416-tidss-splash-3d8f328b7160
+To: Jyri Sarha <jyri.sarha@iki.fi>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ linux-kernel@vger.kernel.org, Devarsh Thakkar <devarsht@ti.com>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+X-Mailer: b4 0.15-dev-c25d1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=869;
+ i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
+ bh=MItm8lfg7E21L1vIBXLReQo7hX1VUAj4VEBvbFisqZE=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBn/49DPxxfKLpcZ7G4rANhH82N8fji5+GFN7rDx
+ y+R+wmemjaJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZ/+PQwAKCRD6PaqMvJYe
+ 9bwCEACaKS0vBsmA/uj0Hpf7onTI2RJWGA6XDX/luy5hA5rbiXMN2/tnreZ/zXD3WVkeVLMB2Q5
+ T5PYt1v+Sh1zLZon6exPF6ZnRIHMQVZP1F7qeH/b2U4nUHylro9VtZfPdbHautaWjxZJOPZB3dU
+ k/nHo+fV6KeSdzXzw4Br0cDw5mUhmheiMOCxby4FeYX7zBy/JqhGw8/zxzPAVRSa+sjcaTLzeBB
+ wPeB4a8B+mqQWPCELIG6WVDtmayRosYctMiX5VzcPyD7+WBjeUM/C5BbIxYT1YmvzNgUpyzPD1V
+ znM6ZrT7c3ZwjX6RWnRbEhaBNxFIFYq2Q51cpZwuoKAElee402GySx//pquaJVWe32zlba/HQ07
+ cIWL7dmOLKRgIQ5BmNtdpoBQNTfeeXjmtwFuVIdKBL1lofVIoRMZaSN5Ss6tZynF+xLCTaZTYgJ
+ jxe48VcZIiH9uDAoxUjcOvMV+rNuufC1VWTX+MDT3m7BB3B3JklBczzyryniVV7bxgtFKBz4V5p
+ JSWPvpErxSLGSzRE1eNe23G+Vb/FsL7f8c0sRs7cb4DLQEx39C3eV18pkgWf365yCaRCbgwMWhQ
+ 0mbpZFY76aDlAiNJhr1LluhjvdKpG1atDz5NObpOaZo9y1uw/1YH/8WqwGWCL5eL7ZFVxHKY7cp
+ aiMmpTRiZorFYew==
+X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
+ fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
-On Wed, Apr 16, 2025 at 05:22:43PM +0800, Henry Martin wrote:
-> Relocate the memory allocation for ttc table after the switch statement
-> that validates params->ns_type in both mlx5_create_inner_ttc_table() and
-> mlx5_create_ttc_table(). This ensures memory is only allocated after
-> confirming valid input, eliminating potential memory leaks when invalid
-> ns_type cases occur.
-> 
-> Signed-off-by: Henry Martin <bsdhenrymartin@gmail.com>
-> ---
->  .../net/ethernet/mellanox/mlx5/core/lib/fs_ttc.c | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_ttc.c b/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_ttc.c
-> index 066121fed718..513dafd5ebf2 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_ttc.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_ttc.c
-> @@ -637,10 +637,6 @@ struct mlx5_ttc_table *mlx5_create_inner_ttc_table(struct mlx5_core_dev *dev,
->  	bool use_l4_type;
->  	int err;
->  
-> -	ttc = kvzalloc(sizeof(*ttc), GFP_KERNEL);
-> -	if (!ttc)
-> -		return ERR_PTR(-ENOMEM);
-> -
->  	switch (params->ns_type) {
->  	case MLX5_FLOW_NAMESPACE_PORT_SEL:
->  		use_l4_type = MLX5_CAP_GEN_2(dev, pcc_ifa2) &&
-> @@ -654,6 +650,10 @@ struct mlx5_ttc_table *mlx5_create_inner_ttc_table(struct mlx5_core_dev *dev,
->  		return ERR_PTR(-EINVAL);
->  	}
->  
-> +	ttc = kvzalloc(sizeof(*ttc), GFP_KERNEL);
-> +	if (!ttc)
-> +		return ERR_PTR(-ENOMEM);
-> +
->  	ns = mlx5_get_flow_namespace(dev, params->ns_type);
->  	if (!ns) {
->  		kvfree(ttc);
-> @@ -715,10 +715,6 @@ struct mlx5_ttc_table *mlx5_create_ttc_table(struct mlx5_core_dev *dev,
->  	bool use_l4_type;
->  	int err;
->  
-> -	ttc = kvzalloc(sizeof(*ttc), GFP_KERNEL);
-> -	if (!ttc)
-> -		return ERR_PTR(-ENOMEM);
-> -
->  	switch (params->ns_type) {
->  	case MLX5_FLOW_NAMESPACE_PORT_SEL:
->  		use_l4_type = MLX5_CAP_GEN_2(dev, pcc_ifa2) &&
-> @@ -732,6 +728,10 @@ struct mlx5_ttc_table *mlx5_create_ttc_table(struct mlx5_core_dev *dev,
->  		return ERR_PTR(-EINVAL);
->  	}
->  
-> +	ttc = kvzalloc(sizeof(*ttc), GFP_KERNEL);
-> +	if (!ttc)
-> +		return ERR_PTR(-ENOMEM);
-> +
->  	ns = mlx5_get_flow_namespace(dev, params->ns_type);
->  	if (!ns) {
->  		kvfree(ttc);
+These two patches are part of a bigger work to improve splash-screen
+support (i.e. the bootloader sets up the initial display, and we try to
+keep that on the screen until something else (Weston/X11) takes over).
 
-Thanks for fixing
-Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+ Tomi
 
-> -- 
-> 2.34.1
-> 
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+---
+Tomi Valkeinen (2):
+      drm/tidss: Add some support for splash-screen
+      drm/tidss: Remove early fb
+
+ drivers/gpu/drm/tidss/tidss_dispc.c | 126 ++++++++++++++++++++++++++++++++----
+ drivers/gpu/drm/tidss/tidss_dispc.h |   5 ++
+ drivers/gpu/drm/tidss/tidss_drv.c   |  38 ++++++++++-
+ drivers/gpu/drm/tidss/tidss_drv.h   |   2 +
+ 4 files changed, 156 insertions(+), 15 deletions(-)
+---
+base-commit: aec8a40228acb385d60feec59b54573d307e60f3
+change-id: 20250416-tidss-splash-3d8f328b7160
+
+Best regards,
+-- 
+Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+
 
