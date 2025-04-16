@@ -1,201 +1,172 @@
-Return-Path: <linux-kernel+bounces-607060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7D90A8B77B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 13:13:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B03AEA8B77D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 13:14:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E06FA164B7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 11:13:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1005B189CE77
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 11:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7441323C8DB;
-	Wed, 16 Apr 2025 11:13:17 +0000 (UTC)
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D272623A985;
+	Wed, 16 Apr 2025 11:14:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="brDtzqrP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14B1230BD9;
-	Wed, 16 Apr 2025 11:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B62022D7AD
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 11:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744801997; cv=none; b=CLfp1iKWlJC09Iz4JzOFTROp6U+keCa9/MukFBexJHXjCXk3DrF9+Df+3Si1cLBISA85Jnj1tTsQe+RwV81uoP4OdkbJmOcghOsdwfbUJ+LwnDfmRkDtJOkmuG7HGWthrufm5kvk6mymwDSGIL749ifYTs3PseQIsy+QzH28Hs4=
+	t=1744802087; cv=none; b=KNbA4WvrAIATjlfMPACl+37bvCE/AVuysLNYDuJwusE1GxvYkApKJ6LIjof/EfTZqPDlFxCJpN+QJj9oReHXzkmHK9ljVV3z5hpg2KQhPknZO9ZvxF9GKTlMSkiP0K4CmblFZHHBe7BkMc+SIEdwip8yXZZJgTTATAt7EBfSRVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744801997; c=relaxed/simple;
-	bh=sOc+D0tolTcUGJ9KPHoXk+kBoSFT8/GUfkzNFqzDPzE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BYE8H19GZazTdwipOnuRDuktUJYmo8b9TwIoUMgOaelL7hW8kzzggva/A6LzNMb6grnwKSC7Sr6DCXMC6eY6PiayBTP9yPqaaiYw9iGlldm04uEGI6dPnp6susG4oT/A37dzrTCpLYpBkmfMXL+lbmj5/MKOhqJ8+5YZOSITRk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-5262475372eso2730321e0c.2;
-        Wed, 16 Apr 2025 04:13:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744801992; x=1745406792;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MocR616+VqlYQgKAO9looh+5bl/oUxpGHWgrj7ut1gY=;
-        b=YvNMRqd/Ri2E6uY5dZjEebDTvHCDbu6Rq+M/KmZ5qkcYrfYfFwG/aExDWVExRBHntA
-         QVDk4oOF+TmRSIzZ+6fIp0aDRf4LWFkNBSQ0LgWv2xcDnnyi9W6T00c7vnlRJF710CTi
-         8wdwHQY0+kCLEpzUBuGlIygk7NkHhxyLVLiiJdAWlzpg7YriFPKA7hg5cOHbLu05yZ/v
-         o33PpKrv9A3jQ5J8D30IJZ/VfkQhwzmo5Evp/CzVc8EpagvWXvDxahvb9vOfmi0B9O2o
-         RDALX9c3q7gVePwldpokH7C7UIjOLXuAkHt3YOlZMM+AgpPBrB61g0BMtjvpAs9bAfo1
-         wLnw==
-X-Forwarded-Encrypted: i=1; AJvYcCUxGVyaw2TJMtrRjThVoDGaaCCkXmkdxpSCLRFTzDDIEtrbt82J2PDL6qDRTWmGdVjCuHWQeP6qo6tX@vger.kernel.org, AJvYcCX894TN7okdCUn2QDEqX2uGO3OEJTs0uHUcW49j/3HhPmJJtIAm2ssMGIcFRIgX1zH9Yb7TfW5e1V4LyXWL@vger.kernel.org, AJvYcCXeVfS7kRwT44Ir0vQkk9IVhct4WHwihZQD/j8p0QFb2JyYKHp9LrAJnKhMVrexeHI9mOFUQ7MUHtZs@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjeC2RdXlNzHSQRGHKu3wtCk3cWS+dTevdI6zfbawqghqwKvPj
-	x4qd256D6cve77k5yQGKbVygqjjcHY3bLw3z3+YVncN4e60hsEPKUo/hiA5x
-X-Gm-Gg: ASbGncucB9DqEfxQo+9lnt27jtIFkCyQTk/O7wbezF/eZ+V9mpN9alEzB8J3r/nfdWT
-	b9H+YGR/cS064VZ0YYMcNt5vnR+fKfMlnw+1mGpGiewNL9osi2qbF+sczm+hLPV/NLbyWegAWvH
-	xkNLm3/S2l766uBsTr9RQYXtH/MrdR5RP0dBvbDewona2VEc6HNO85ahBVdbWyOAcbC7+7zEKI+
-	3dRBDQeHf4ICD5xYqBigWpRHq9qVkNCW2QviI/l5a3kqrV2CIVDknVjWglUmtpQyEN35/ykDAxM
-	2jQQdlSt738EKAoeW30S1ajE/PBkTBC6GIsrO1xB325iQgff4tKUL28NPUNIrWxe9/EyOaXojds
-	2V/k=
-X-Google-Smtp-Source: AGHT+IEmyT0XqqO/RVFmwLEG/URFxo9rKk0kXubHpUh/sz4yC3NCBWMjvghdHBXqXXgMwseAgRUbqg==
-X-Received: by 2002:a05:6122:3bc2:b0:520:5a87:66eb with SMTP id 71dfb90a1353d-5290debefcfmr557013e0c.3.1744801991987;
-        Wed, 16 Apr 2025 04:13:11 -0700 (PDT)
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com. [209.85.222.46])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-527abd9b3desm3044757e0c.23.2025.04.16.04.13.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Apr 2025 04:13:11 -0700 (PDT)
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-86f9c719d63so2558267241.1;
-        Wed, 16 Apr 2025 04:13:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUeVEAKkO6nWZlWYQ6SKRb5cJQyGCYvXAyeWQIuwafJSbx5eP/J4io83z5G31xVC1MuRhIVdMEcAP5l77yK@vger.kernel.org, AJvYcCUzujGHKzpb2ouAmmtjjw5b0d2L6F4Ai4QKysZ6ritU7UYSgoS5Xb+gLyMgzCsdKccjZPRecpJubHnl@vger.kernel.org, AJvYcCXGswo+ZQ7Y/KL/H70uFWtJys7zIYzzQP4XvNc87cBLtXFiKka/gNiAmL6AnfhFB7PstvSGSj8E/x40@vger.kernel.org
-X-Received: by 2002:a05:6102:2991:b0:4c3:9b0:9e6b with SMTP id
- ada2fe7eead31-4cb591e784bmr414553137.10.1744801990755; Wed, 16 Apr 2025
- 04:13:10 -0700 (PDT)
+	s=arc-20240116; t=1744802087; c=relaxed/simple;
+	bh=y04507FbmezAK8rMj6tPXO7bVGj9VUwZE90RETgFlVw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=K7IEtOi6og7fV/l1xcJGBQ4m/a3GYGKznIuhEdBfjw/arDHjt50M3ykyiHXRkxXJbDiJ6h6R/fmH7ohhQ9pG1djMadZszxaWPFbZvVQvQYixjkHFSmsE/U5RJVo7WJ3OQum0roqYZxX421uBzxTjBJFB9IvUkAYYLHj2xS3i3PQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=brDtzqrP; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744802085; x=1776338085;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=y04507FbmezAK8rMj6tPXO7bVGj9VUwZE90RETgFlVw=;
+  b=brDtzqrPmrdSYS/nL3jhPRhbMqjC2oQsjxqbNHop/6Af9C71ebxdb3z6
+   2wv3VmTF0w6tQbosZtGVy2q3YbcaXWqgxbzl2t9lByZplG/I+SlZ+MHvF
+   vKo5U96iCxjzl0C36URAzecNuCarAMMaq/9CJpTpc1UCGQ4S1o8CJIyjp
+   k/V/NdvuLr+nTWVjKluESVDMgBmWcGDQ3Te2cK/WGxwvM3gpVcHkpZST2
+   mVcU6BJ46H1ofxq/JrmazRqfivsREmC/iUBvEZRZne8R5YsYZTbNkzLSu
+   4YUyJXEbjqvCKDGIa9098JdwkK5QKCZuXoJWYYeK+w+y8U4srfwP9FSip
+   g==;
+X-CSE-ConnectionGUID: psXrL8SxS3SZz9El1FH7xQ==
+X-CSE-MsgGUID: l4vmNnJEQaaZXQa3rtSNaQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="68835049"
+X-IronPort-AV: E=Sophos;i="6.15,216,1739865600"; 
+   d="scan'208";a="68835049"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 04:14:45 -0700
+X-CSE-ConnectionGUID: QEz0H0rbTjeiP3gpe+WFEg==
+X-CSE-MsgGUID: mUrm/8FeR3mQrJU/eo9ndA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,216,1739865600"; 
+   d="scan'208";a="153639921"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 16 Apr 2025 04:14:43 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u50j3-000JbA-0Y;
+	Wed, 16 Apr 2025 11:14:41 +0000
+Date: Wed, 16 Apr 2025 19:13:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Johannes Cornelis Draaijer (datdenkikniet)" <jcdra1@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Guenter Roeck <linux@roeck-us.net>
+Subject: drivers/hwmon/aht10.c:182: warning: Function parameter or struct
+ member 'data' not described in 'aht10_interval_write'
+Message-ID: <202504161919.duDL1s2X-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250109-enable-rtc-v3-0-f003e8144419@baylibre.com>
- <20250109-enable-rtc-v3-3-f003e8144419@baylibre.com> <erttkpna2hzg7zuddzlocaou2wqcwmgcxfhldwdt55yleie6dm@nfg374fv66fq>
-In-Reply-To: <erttkpna2hzg7zuddzlocaou2wqcwmgcxfhldwdt55yleie6dm@nfg374fv66fq>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 16 Apr 2025 13:12:58 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdX3u97MtDiPuJgFtO5YTRuLeDHgs4tx7004CScLO11WkQ@mail.gmail.com>
-X-Gm-Features: ATxdqUHjMszLt95drNgnUajxAYkWqRme3b0HzHSYcdCgcByHGIiSYzx7n6CDpNY
-Message-ID: <CAMuHMdX3u97MtDiPuJgFtO5YTRuLeDHgs4tx7004CScLO11WkQ@mail.gmail.com>
-Subject: Re: [PATCH v3 3/5] rtc: Fix the RTC time comparison issues adding cast
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Alexandre Mergnat <amergnat@baylibre.com>, Eddie Huang <eddie.huang@mediatek.com>, 
-	Sean Wang <sean.wang@mediatek.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Uwe,
+Hi Johannes,
 
-On Tue, 15 Apr 2025 at 00:30, Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@baylibre.com> wrote:
-> On Fri, Apr 11, 2025 at 02:35:56PM +0200, Alexandre Mergnat wrote:
-> > The RTC subsystem was experiencing comparison issues between signed and
-> > unsigned time values. When comparing time64_t variables (signed) with
-> > potentially unsigned range values, incorrect results could occur leadin=
-g
-> > to runtime errors.
-> >
-> > Adds explicit type casts to time64_t for critical RTC time comparisons
-> > in both class.c and interface.c files. The changes ensure proper
-> > handling of negative time values during range validation and offset
-> > calculations, particularly when dealing with timestamps before 1970.
-> >
-> > The previous implementation might incorrectly interpret negative values
-> > as extremely large positive values, causing unexpected behavior in the
-> > RTC hardware abstraction logic.
-> >
-> > Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
-> > ---
-> >  drivers/rtc/class.c     | 6 +++---
-> >  drivers/rtc/interface.c | 8 ++++----
-> >  2 files changed, 7 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/drivers/rtc/class.c b/drivers/rtc/class.c
-> > index e31fa0ad127e9..1ee3f609f92ea 100644
-> > --- a/drivers/rtc/class.c
-> > +++ b/drivers/rtc/class.c
-> > @@ -282,7 +282,7 @@ static void rtc_device_get_offset(struct rtc_device=
- *rtc)
-> >        * then we can not expand the RTC range by adding or subtracting =
-one
-> >        * offset.
-> >        */
-> > -     if (rtc->range_min =3D=3D rtc->range_max)
-> > +     if (rtc->range_min =3D=3D (time64_t)rtc->range_max)
-> >               return;
->
-> For which values of range_min and range_max does this change result in a
-> different semantic?
->
-> Trying to answer that question myself I wrote two functions:
->
->         #include <stdint.h>
->
->         int compare_unsigned(uint64_t a, int64_t b)
->         {
->                 return a =3D=3D b;
->         }
->
->         int compare_signed(uint64_t a, int64_t b)
->         {
->                 return (int64_t)a =3D=3D b;
->         }
->
-> When I compile this (with gcc -Os) the assembly for both functions is
-> the same (tested for x86_64 and arm32).
->
-> >       ret =3D device_property_read_u32(rtc->dev.parent, "start-year",
-> > @@ -299,7 +299,7 @@ static void rtc_device_get_offset(struct rtc_device=
- *rtc)
-> >       if (!rtc->set_start_time)
-> >               return;
-> >
-> > -     range_secs =3D rtc->range_max - rtc->range_min + 1;
-> > +     range_secs =3D (time64_t)rtc->range_max - rtc->range_min + 1;
->
-> In the case where no overflow (or underflow) happens, the result is the
-> same, isn't it? If there is an overflow, the unsigned variant is
-> probably the better choice because overflow for signed variables is
-> undefined behaviour (UB).
->
-> Respective demo program looks as follows:
->
->         #include <stdint.h>
->
->         int test_unsigned(uint64_t a)
->         {
->                 return a + 3 > a;
->         }
->
->         int test_signed(int64_t a)
->         {
->                 return a + 3 > a;
->         }
->
-> Using again `gcc -Os`, the signed variant is compiled to a function that
-> returns true unconditionally while the unsigned one implements the
-> expected semantic.
+FYI, the error/warning still remains.
 
-Hence that is why the kernel is compiled with -fwrapv...
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   1a1d569a75f3ab2923cb62daf356d102e4df2b86
+commit: 8c78f0dee4371ab3b0422edf08597525c6219512 hwmon: Add AHT10 Temperature and Humidity Sensor Driver
+date:   4 years, 3 months ago
+config: csky-randconfig-002-20250106 (https://download.01.org/0day-ci/archive/20250416/202504161919.duDL1s2X-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250416/202504161919.duDL1s2X-lkp@intel.com/reproduce)
 
-Gr{oetje,eeting}s,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504161919.duDL1s2X-lkp@intel.com/
 
-                        Geert
+All warnings (new ones prefixed by >>):
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+   drivers/hwmon/aht10.c:87: warning: Excess function parameter 'client' description in 'aht10_init'
+   drivers/hwmon/aht10.c:131: warning: Function parameter or struct member 'data' not described in 'aht10_read_values'
+   drivers/hwmon/aht10.c:131: warning: Excess function parameter 'aht10_data' description in 'aht10_read_values'
+>> drivers/hwmon/aht10.c:182: warning: Function parameter or struct member 'data' not described in 'aht10_interval_write'
+>> drivers/hwmon/aht10.c:182: warning: Function parameter or struct member 'val' not described in 'aht10_interval_write'
+>> drivers/hwmon/aht10.c:193: warning: Function parameter or struct member 'data' not described in 'aht10_interval_read'
+>> drivers/hwmon/aht10.c:193: warning: Function parameter or struct member 'val' not described in 'aht10_interval_read'
+>> drivers/hwmon/aht10.c:202: warning: Function parameter or struct member 'data' not described in 'aht10_temperature1_read'
+>> drivers/hwmon/aht10.c:202: warning: Function parameter or struct member 'val' not described in 'aht10_temperature1_read'
+>> drivers/hwmon/aht10.c:217: warning: Function parameter or struct member 'data' not described in 'aht10_humidity1_read'
+>> drivers/hwmon/aht10.c:217: warning: Function parameter or struct member 'val' not described in 'aht10_humidity1_read'
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+
+vim +182 drivers/hwmon/aht10.c
+
+   174	
+   175	/**
+   176	 * aht10_interval_write() - store the given minimum poll interval.
+   177	 * Return: 0 on success, -EINVAL if a value lower than the
+   178	 *         AHT10_MIN_POLL_INTERVAL is given
+   179	 */
+   180	static ssize_t aht10_interval_write(struct aht10_data *data,
+   181					    long val)
+ > 182	{
+   183		data->min_poll_interval = ms_to_ktime(clamp_val(val, 2000, LONG_MAX));
+   184		return 0;
+   185	}
+   186	
+   187	/**
+   188	 * aht10_interval_read() - read the minimum poll interval
+   189	 *                            in milliseconds
+   190	 */
+   191	static ssize_t aht10_interval_read(struct aht10_data *data,
+   192					   long *val)
+ > 193	{
+   194		*val = ktime_to_ms(data->min_poll_interval);
+   195		return 0;
+   196	}
+   197	
+   198	/**
+   199	 * aht10_temperature1_read() - read the temperature in millidegrees
+   200	 */
+   201	static int aht10_temperature1_read(struct aht10_data *data, long *val)
+ > 202	{
+   203		int res;
+   204	
+   205		res = aht10_read_values(data);
+   206		if (res < 0)
+   207			return res;
+   208	
+   209		*val = data->temperature;
+   210		return 0;
+   211	}
+   212	
+   213	/**
+   214	 * aht10_humidity1_read() - read the relative humidity in millipercent
+   215	 */
+   216	static int aht10_humidity1_read(struct aht10_data *data, long *val)
+ > 217	{
+   218		int res;
+   219	
+   220		res = aht10_read_values(data);
+   221		if (res < 0)
+   222			return res;
+   223	
+   224		*val = data->humidity;
+   225		return 0;
+   226	}
+   227	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
