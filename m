@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-607661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 664E4A90915
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:33:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89826A90913
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:33:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DDC8190738D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:33:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FD5644605A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:33:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096A7222571;
-	Wed, 16 Apr 2025 16:29:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2ED2221563;
+	Wed, 16 Apr 2025 16:29:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UdoW2kjA";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="faVP8Bbn"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BZWh+ysD";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3tqKL4sw"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C46A21A45E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ED2621B9E5
 	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 16:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744820980; cv=none; b=OnToDEQfcw4iposMhzcnjkMo08P0l60lO3TGX9Lt8HRmt7shxj7J4TH8rd7kfVUKmGXt6qjFfLZA9DDUa5gTCRCBxdY9hjQ/8p3LL6u63pwUVHtIjvaiyIvIasj+hhd8i6JivBDTvsZeIodMQkXyq5gN36ZvemspQTgk98S0WRs=
+	t=1744820978; cv=none; b=WRUzxj3D5qmibRi7z7xwGsogcotXEbx68zYqpEb37OqC1p7hXp067Pv0+uxtIOQo8r2Tkn3n9w6+53KDkl5VR2ywQI+YzWzW/CYXJAuhTEwY8/0m5eKd2DnhkUO0WeWwrpi+HvLA3rcYEPDh9hBAgqJLXH7IIAxvRC0q2ncIits=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744820980; c=relaxed/simple;
-	bh=7J0RzhUpf7dV8BUJD0PuDv6DZpLLc6u0FSxeeX2ZA5I=;
+	s=arc-20240116; t=1744820978; c=relaxed/simple;
+	bh=d9QnKurb5SH5mTyAlKLm+x2veeu8q55k+fNPL7B78yI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RbqmXFdY29wNiS4qGmK1kB5IEbHmej5oRysZQ09JPvxgYxLJqlXiXgs8OHjy+6pEb6lCXYayVWhnVLHOTvN1Xr9N/6Xz3xCnXmByXuWGLMbQSgi4Q8MnQWeWUGCYITdq/oi1b9LQZ64Oyfwv83kSY9HLI43t857KNG7/hStNT8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UdoW2kjA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=faVP8Bbn; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=tuTExe8Q/bswauQZyYaKbNleDpU9GBCRGnvGDkSaVWqndGdxzyXK/tZ/8xt6K/2K2/NA/kZOH7HdXLuKF/lhUnwLmwd4rIrxUdMY9VCiTjDzSb+wUAfbQsK2F6Y9Xt8ZbEYF3WNPmf8VA0GoEo+PNbUZFOxIc6jD9vuSKdPTacA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BZWh+ysD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3tqKL4sw; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
@@ -38,21 +38,21 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=K7u6CZonrzzvRz/i9kOfa0iBQn4JLrzLuiVIvnvYeJ4=;
-	b=UdoW2kjABMT+n4N2bgGPtc2xQEbl1EQgDWwdwmmdfoOagAEgfH2nEqw8CZ16AWZ7tR6tys
-	LqUvWN67UGffQkQiM7wamKD8wvTbnJhSpGczJe7pcqpanSBrbu1Z/PFL0I0VlY0Glyhnp/
-	4qaDnPk+g3l/r2cYuxYwN+vSDMAyDis7XZHgRvJmom7Qsjz2kkevM25j9Bpj5nCIC/QmCJ
-	NT0EOsAlwnpVVyZx9qm4gOihD/4HzMSH00Lu7M531+OKtnvAGFoapQLkbHTIAnXsiHLE7K
-	YueN22uNaHSmfIJcZdB5s+WEV8Egh6exjSkWxmcLYAOm3G4h19fuOrbGnVc80A==
+	bh=w4uAkwnBy7IBc0gSxMrL7lL3oQSyk01HKxQFhkjakhg=;
+	b=BZWh+ysDeeGKokqy2feS1iDf3PGFnpYyYQqBmO99kibJhu42CEsvTv2uXCZIY9cEE0AGqK
+	1JRn7fMkpNUH7WmgpbxJJTTOWcOcGoQwCG1R7ZFhzdB41wIWPNpJ8uqFXyVAab8EtRBaIb
+	Q/7nr7Wt7rlE3p0PTVyHRnYoIzKcUx1LYayZqyZyiDgChSBkC5voUZCnslFuMx3hYQWph8
+	5UfTQeEDSATtSBsDVDzmaWJ9A1h4vvEo2pkQ7cfITcG61WJ5Wo33PBvSK76vX4juszZ+MD
+	tGkWjeWMxJHCHsAv+0bZFPEK0WQ/N6xTMXCJGOmlzFLABtADTeB9Ms5BXQpQFA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1744820972;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=K7u6CZonrzzvRz/i9kOfa0iBQn4JLrzLuiVIvnvYeJ4=;
-	b=faVP8BbngzV01cTNC7EbebgEqsZ1xXPanvlI4vXE+mZLYJxCYF4xfsxmxAg3g04KzeHdB0
-	rKnir0BWVu6mvcBg==
+	bh=w4uAkwnBy7IBc0gSxMrL7lL3oQSyk01HKxQFhkjakhg=;
+	b=3tqKL4swFjwYoALRjxBvalSVtcIF5aLDjr7tiIEXX/4mI/npLo5P++wA3dMyVi7jUFXXQw
+	Ahn1aK4n634LlACw==
 To: linux-kernel@vger.kernel.org
 Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
 	Darren Hart <dvhart@infradead.org>,
@@ -64,9 +64,9 @@ Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
 	Valentin Schneider <vschneid@redhat.com>,
 	Waiman Long <longman@redhat.com>,
 	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH v12 16/21] futex: Implement FUTEX2_NUMA
-Date: Wed, 16 Apr 2025 18:29:16 +0200
-Message-ID: <20250416162921.513656-17-bigeasy@linutronix.de>
+Subject: [PATCH v12 17/21] futex: Implement FUTEX2_MPOL
+Date: Wed, 16 Apr 2025 18:29:17 +0200
+Message-ID: <20250416162921.513656-18-bigeasy@linutronix.de>
 In-Reply-To: <20250416162921.513656-1-bigeasy@linutronix.de>
 References: <20250416162921.513656-1-bigeasy@linutronix.de>
 Precedence: bulk
@@ -79,336 +79,289 @@ Content-Transfer-Encoding: quoted-printable
 
 From: Peter Zijlstra <peterz@infradead.org>
 
-Extend the futex2 interface to be numa aware.
+Extend the futex2 interface to be aware of mempolicy.
 
-When FUTEX2_NUMA is specified for a futex, the user value is extended
-to two words (of the same size). The first is the user value we all
-know, the second one will be the node to place this futex on.
+When FUTEX2_MPOL is specified and there is a MPOL_PREFERRED or
+home_node specified covering the futex address, use that hash-map.
 
-  struct futex_numa_32 {
-	u32 val;
-	u32 node;
-  };
+Notably, in this case the futex will go to the global node hashtable,
+even if it is a PRIVATE futex.
 
-When node is set to ~0, WAIT will set it to the current node_id such
-that WAKE knows where to find it. If userspace corrupts the node value
-between WAIT and WAKE, the futex will not be found and no wakeup will
-happen.
+When FUTEX2_NUMA|FUTEX2_MPOL is specified and the user specified node
+value is FUTEX_NO_NODE, the MPOL lookup (as described above) will be
+tried first before reverting to setting node to the local node.
 
-When FUTEX2_NUMA is not set, the node is simply an extension of the
-hash, such that traditional futexes are still interleaved over the
-nodes.
-
-This is done to avoid having to have a separate !numa hash-table.
-
-[bigeasy: ensure to have at least hashsize of 4 in futex_init(), add
-pr_info() for size and allocation information. Cast the naddr math to
-void*]
-
+[bigeasy: add CONFIG_FUTEX_MPOL, add MPOL to FUTEX2_VALID_MASK, write
+the node only to user if FUTEX_NO_NODE was supplied]
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- include/linux/futex.h      |   3 ++
- include/uapi/linux/futex.h |   8 +++
- kernel/futex/core.c        | 100 ++++++++++++++++++++++++++++++-------
- kernel/futex/futex.h       |  33 ++++++++++--
- 4 files changed, 124 insertions(+), 20 deletions(-)
+ include/linux/mmap_lock.h  |   4 ++
+ include/uapi/linux/futex.h |   2 +-
+ init/Kconfig               |   5 ++
+ kernel/futex/core.c        | 114 +++++++++++++++++++++++++++++++------
+ kernel/futex/futex.h       |   6 +-
+ 5 files changed, 113 insertions(+), 18 deletions(-)
 
-diff --git a/include/linux/futex.h b/include/linux/futex.h
-index 40bc778b2bb45..eccc99751bd94 100644
---- a/include/linux/futex.h
-+++ b/include/linux/futex.h
-@@ -34,6 +34,7 @@ union futex_key {
- 		u64 i_seq;
- 		unsigned long pgoff;
- 		unsigned int offset;
-+		/* unsigned int node; */
- 	} shared;
- 	struct {
- 		union {
-@@ -42,11 +43,13 @@ union futex_key {
- 		};
- 		unsigned long address;
- 		unsigned int offset;
-+		/* unsigned int node; */
- 	} private;
- 	struct {
- 		u64 ptr;
- 		unsigned long word;
- 		unsigned int offset;
-+		unsigned int node;	/* NOT hashed! */
- 	} both;
- };
+diff --git a/include/linux/mmap_lock.h b/include/linux/mmap_lock.h
+index 4706c67699027..e0eddfd306ef3 100644
+--- a/include/linux/mmap_lock.h
++++ b/include/linux/mmap_lock.h
+@@ -7,6 +7,7 @@
+ #include <linux/rwsem.h>
+ #include <linux/tracepoint-defs.h>
+ #include <linux/types.h>
++#include <linux/cleanup.h>
 =20
-diff --git a/include/uapi/linux/futex.h b/include/uapi/linux/futex.h
-index d2ee625ea1890..0435025beaae8 100644
---- a/include/uapi/linux/futex.h
-+++ b/include/uapi/linux/futex.h
-@@ -74,6 +74,14 @@
- /* do not use */
- #define FUTEX_32		FUTEX2_SIZE_U32 /* historical accident :-( */
-=20
-+
-+/*
-+ * When FUTEX2_NUMA doubles the futex word, the second word is a node valu=
-e.
-+ * The special value -1 indicates no-node. This is the same value as
-+ * NUMA_NO_NODE, except that value is not ABI, this is.
-+ */
-+#define FUTEX_NO_NODE		(-1)
-+
- /*
-  * Max numbers of elements in a futex_waitv array
-  */
-diff --git a/kernel/futex/core.c b/kernel/futex/core.c
-index 81c5705b6af5e..b5be2d4a34a53 100644
---- a/kernel/futex/core.c
-+++ b/kernel/futex/core.c
-@@ -36,6 +36,8 @@
- #include <linux/pagemap.h>
- #include <linux/debugfs.h>
- #include <linux/plist.h>
-+#include <linux/gfp.h>
-+#include <linux/vmalloc.h>
- #include <linux/memblock.h>
- #include <linux/fault-inject.h>
- #include <linux/slab.h>
-@@ -51,11 +53,14 @@
-  * reside in the same cacheline.
-  */
- static struct {
--	struct futex_hash_bucket *queues;
- 	unsigned long            hashmask;
-+	unsigned int		 hashshift;
-+	struct futex_hash_bucket *queues[MAX_NUMNODES];
- } __futex_data __read_mostly __aligned(2*sizeof(long));
--#define futex_queues   (__futex_data.queues)
--#define futex_hashmask (__futex_data.hashmask)
-+
-+#define futex_hashmask	(__futex_data.hashmask)
-+#define futex_hashshift	(__futex_data.hashshift)
-+#define futex_queues	(__futex_data.queues)
-=20
- struct futex_private_hash {
- 	rcuref_t	users;
-@@ -339,15 +344,35 @@ __futex_hash(union futex_key *key, struct futex_priva=
-te_hash *fph)
- {
- 	struct futex_hash_bucket *hb;
- 	u32 hash;
-+	int node;
-=20
- 	hb =3D __futex_hash_private(key, fph);
- 	if (hb)
- 		return hb;
-=20
- 	hash =3D jhash2((u32 *)key,
--		      offsetof(typeof(*key), both.offset) / 4,
-+		      offsetof(typeof(*key), both.offset) / sizeof(u32),
- 		      key->both.offset);
--	return &futex_queues[hash & futex_hashmask];
-+	node =3D key->both.node;
-+
-+	if (node =3D=3D FUTEX_NO_NODE) {
-+		/*
-+		 * In case of !FLAGS_NUMA, use some unused hash bits to pick a
-+		 * node -- this ensures regular futexes are interleaved across
-+		 * the nodes and avoids having to allocate multiple
-+		 * hash-tables.
-+		 *
-+		 * NOTE: this isn't perfectly uniform, but it is fast and
-+		 * handles sparse node masks.
-+		 */
-+		node =3D (hash >> futex_hashshift) % nr_node_ids;
-+		if (!node_possible(node)) {
-+			node =3D find_next_bit_wrap(node_possible_map.bits,
-+						  nr_node_ids, node);
-+		}
-+	}
-+
-+	return &futex_queues[node][hash & futex_hashmask];
+ #define MMAP_LOCK_INITIALIZER(name) \
+ 	.mmap_lock =3D __RWSEM_INITIALIZER((name).mmap_lock),
+@@ -211,6 +212,9 @@ static inline void mmap_read_unlock(struct mm_struct *m=
+m)
+ 	up_read(&mm->mmap_lock);
  }
 =20
++DEFINE_GUARD(mmap_read_lock, struct mm_struct *,
++	     mmap_read_lock(_T), mmap_read_unlock(_T))
++
+ static inline void mmap_read_unlock_non_owner(struct mm_struct *mm)
+ {
+ 	__mmap_lock_trace_released(mm, false);
+diff --git a/include/uapi/linux/futex.h b/include/uapi/linux/futex.h
+index 0435025beaae8..247c425e175ef 100644
+--- a/include/uapi/linux/futex.h
++++ b/include/uapi/linux/futex.h
+@@ -63,7 +63,7 @@
+ #define FUTEX2_SIZE_U32		0x02
+ #define FUTEX2_SIZE_U64		0x03
+ #define FUTEX2_NUMA		0x04
+-			/*	0x08 */
++#define FUTEX2_MPOL		0x08
+ 			/*	0x10 */
+ 			/*	0x20 */
+ 			/*	0x40 */
+diff --git a/init/Kconfig b/init/Kconfig
+index b308b98d79347..174633bc9810b 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1704,6 +1704,11 @@ config FUTEX_PRIVATE_HASH
+ 	depends on FUTEX && !BASE_SMALL && MMU
+ 	default y
+=20
++config FUTEX_MPOL
++	bool
++	depends on FUTEX && NUMA
++	default y
++
+ config EPOLL
+ 	bool "Enable eventpoll support" if EXPERT
+ 	default y
+diff --git a/kernel/futex/core.c b/kernel/futex/core.c
+index b5be2d4a34a53..ee1d7182ce0c0 100644
+--- a/kernel/futex/core.c
++++ b/kernel/futex/core.c
+@@ -43,6 +43,8 @@
+ #include <linux/slab.h>
+ #include <linux/prctl.h>
+ #include <linux/rcuref.h>
++#include <linux/mempolicy.h>
++#include <linux/mmap_lock.h>
+=20
+ #include "futex.h"
+ #include "../locking/rtmutex_common.h"
+@@ -328,6 +330,73 @@ struct futex_hash_bucket *futex_hash(union futex_key *=
+key)
+=20
+ #endif /* CONFIG_FUTEX_PRIVATE_HASH */
+=20
++#ifdef CONFIG_FUTEX_MPOL
++static int __futex_key_to_node(struct mm_struct *mm, unsigned long addr)
++{
++	struct vm_area_struct *vma =3D vma_lookup(mm, addr);
++	struct mempolicy *mpol;
++	int node =3D FUTEX_NO_NODE;
++
++	if (!vma)
++		return FUTEX_NO_NODE;
++
++	mpol =3D vma_policy(vma);
++	if (!mpol)
++		return FUTEX_NO_NODE;
++
++	switch (mpol->mode) {
++	case MPOL_PREFERRED:
++		node =3D first_node(mpol->nodes);
++		break;
++	case MPOL_PREFERRED_MANY:
++	case MPOL_BIND:
++		if (mpol->home_node !=3D NUMA_NO_NODE)
++			node =3D mpol->home_node;
++		break;
++	default:
++		break;
++	}
++
++	return node;
++}
++
++static int futex_key_to_node_opt(struct mm_struct *mm, unsigned long addr)
++{
++	int seq, node;
++
++	guard(rcu)();
++
++	if (!mmap_lock_speculate_try_begin(mm, &seq))
++		return -EBUSY;
++
++	node =3D __futex_key_to_node(mm, addr);
++
++	if (mmap_lock_speculate_retry(mm, seq))
++		return -EAGAIN;
++
++	return node;
++}
++
++static int futex_mpol(struct mm_struct *mm, unsigned long addr)
++{
++	int node;
++
++	node =3D futex_key_to_node_opt(mm, addr);
++	if (node >=3D FUTEX_NO_NODE)
++		return node;
++
++	guard(mmap_read_lock)(mm);
++	return __futex_key_to_node(mm, addr);
++}
++#else /* !CONFIG_FUTEX_MPOL */
++
++static int futex_mpol(struct mm_struct *mm, unsigned long addr)
++{
++	return FUTEX_NO_NODE;
++}
++
++#endif /* CONFIG_FUTEX_MPOL */
++
  /**
-@@ -454,25 +479,49 @@ int get_futex_key(u32 __user *uaddr, unsigned int fla=
-gs, union futex_key *key,
- 	struct page *page;
+  * __futex_hash - Return the hash bucket
+  * @key:	Pointer to the futex key for which the hash is calculated
+@@ -342,18 +411,20 @@ struct futex_hash_bucket *futex_hash(union futex_key =
+*key)
+ static struct futex_hash_bucket *
+ __futex_hash(union futex_key *key, struct futex_private_hash *fph)
+ {
+-	struct futex_hash_bucket *hb;
++	int node =3D key->both.node;
+ 	u32 hash;
+-	int node;
+=20
+-	hb =3D __futex_hash_private(key, fph);
+-	if (hb)
+-		return hb;
++	if (node =3D=3D FUTEX_NO_NODE) {
++		struct futex_hash_bucket *hb;
++
++		hb =3D __futex_hash_private(key, fph);
++		if (hb)
++			return hb;
++	}
+=20
+ 	hash =3D jhash2((u32 *)key,
+ 		      offsetof(typeof(*key), both.offset) / sizeof(u32),
+ 		      key->both.offset);
+-	node =3D key->both.node;
+=20
+ 	if (node =3D=3D FUTEX_NO_NODE) {
+ 		/*
+@@ -480,6 +551,7 @@ int get_futex_key(u32 __user *uaddr, unsigned int flags=
+, union futex_key *key,
  	struct folio *folio;
  	struct address_space *mapping;
--	int err, ro =3D 0;
-+	int node, err, size, ro =3D 0;
+ 	int node, err, size, ro =3D 0;
++	bool node_updated =3D false;
  	bool fshared;
 =20
  	fshared =3D flags & FLAGS_SHARED;
-+	size =3D futex_size(flags);
-+	if (flags & FLAGS_NUMA)
-+		size *=3D 2;
-=20
- 	/*
- 	 * The futex address must be "naturally" aligned.
- 	 */
- 	key->both.offset =3D address % PAGE_SIZE;
--	if (unlikely((address % sizeof(u32)) !=3D 0))
-+	if (unlikely((address % size) !=3D 0))
- 		return -EINVAL;
- 	address -=3D key->both.offset;
-=20
--	if (unlikely(!access_ok(uaddr, sizeof(u32))))
-+	if (unlikely(!access_ok(uaddr, size)))
- 		return -EFAULT;
-=20
+@@ -501,27 +573,37 @@ int get_futex_key(u32 __user *uaddr, unsigned int fla=
+gs, union futex_key *key,
  	if (unlikely(should_fail_futex(fshared)))
  		return -EFAULT;
 =20
++	node =3D FUTEX_NO_NODE;
++
+ 	if (flags & FLAGS_NUMA) {
+ 		u32 __user *naddr =3D (void *)uaddr + size / 2;
+=20
+ 		if (futex_get_value(&node, naddr))
+ 			return -EFAULT;
+=20
++		if (node !=3D FUTEX_NO_NODE &&
++		    (node >=3D MAX_NUMNODES || !node_possible(node)))
++			return -EINVAL;
++	}
++
++	if (node =3D=3D FUTEX_NO_NODE && (flags & FLAGS_MPOL)) {
++		node =3D futex_mpol(mm, address);
++		node_updated =3D true;
++	}
++
 +	if (flags & FLAGS_NUMA) {
 +		u32 __user *naddr =3D (void *)uaddr + size / 2;
 +
-+		if (futex_get_value(&node, naddr))
+ 		if (node =3D=3D FUTEX_NO_NODE) {
+ 			node =3D numa_node_id();
+-			if (futex_put_value(node, naddr))
+-				return -EFAULT;
+-
+-		} else if (node >=3D MAX_NUMNODES || !node_possible(node)) {
+-			return -EINVAL;
++			node_updated =3D true;
+ 		}
+-
+-		key->both.node =3D node;
+-
+-	} else {
+-		key->both.node =3D FUTEX_NO_NODE;
++		if (node_updated && futex_put_value(node, naddr))
 +			return -EFAULT;
-+
-+		if (node =3D=3D FUTEX_NO_NODE) {
-+			node =3D numa_node_id();
-+			if (futex_put_value(node, naddr))
-+				return -EFAULT;
-+
-+		} else if (node >=3D MAX_NUMNODES || !node_possible(node)) {
-+			return -EINVAL;
-+		}
-+
-+		key->both.node =3D node;
-+
-+	} else {
-+		key->both.node =3D FUTEX_NO_NODE;
-+	}
+ 	}
+=20
++	key->both.node =3D node;
 +
  	/*
  	 * PROCESS_PRIVATE futexes are fast.
  	 * As the mm cannot disappear under us and the 'key' only needs
-@@ -1635,24 +1684,41 @@ int futex_hash_prctl(unsigned long arg2, unsigned l=
-ong arg3, unsigned long arg4)
- static int __init futex_init(void)
- {
- 	unsigned long hashsize, i;
--	unsigned int futex_shift;
-+	unsigned int order, n;
-+	unsigned long size;
-=20
- #ifdef CONFIG_BASE_SMALL
- 	hashsize =3D 16;
- #else
--	hashsize =3D roundup_pow_of_two(256 * num_possible_cpus());
-+	hashsize =3D 256 * num_possible_cpus();
-+	hashsize /=3D num_possible_nodes();
-+	hashsize =3D max(4, hashsize);
-+	hashsize =3D roundup_pow_of_two(hashsize);
- #endif
-+	futex_hashshift =3D ilog2(hashsize);
-+	size =3D sizeof(struct futex_hash_bucket) * hashsize;
-+	order =3D get_order(size);
-=20
--	futex_queues =3D alloc_large_system_hash("futex", sizeof(*futex_queues),
--					       hashsize, 0, 0,
--					       &futex_shift, NULL,
--					       hashsize, hashsize);
--	hashsize =3D 1UL << futex_shift;
-+	for_each_node(n) {
-+		struct futex_hash_bucket *table;
-=20
--	for (i =3D 0; i < hashsize; i++)
--		futex_hash_bucket_init(&futex_queues[i], NULL);
-+		if (order > MAX_PAGE_ORDER)
-+			table =3D vmalloc_huge_node(size, GFP_KERNEL, n);
-+		else
-+			table =3D alloc_pages_exact_nid(n, size, GFP_KERNEL);
-+
-+		BUG_ON(!table);
-+
-+		for (i =3D 0; i < hashsize; i++)
-+			futex_hash_bucket_init(&table[i], NULL);
-+
-+		futex_queues[n] =3D table;
-+	}
-=20
- 	futex_hashmask =3D hashsize - 1;
-+	pr_info("futex hash table entries: %lu (%lu bytes on %d NUMA nodes, total=
- %lu KiB, %s).\n",
-+		hashsize, size, num_possible_nodes(), size * num_possible_nodes() / 1024,
-+		order > MAX_PAGE_ORDER ? "vmalloc" : "linear");
- 	return 0;
- }
- core_initcall(futex_init);
 diff --git a/kernel/futex/futex.h b/kernel/futex/futex.h
-index 899aed5acde12..acc7953678898 100644
+index acc7953678898..069fc2a83080d 100644
 --- a/kernel/futex/futex.h
 +++ b/kernel/futex/futex.h
-@@ -54,7 +54,7 @@ static inline unsigned int futex_to_flags(unsigned int op)
+@@ -39,6 +39,7 @@
+ #define FLAGS_HAS_TIMEOUT	0x0040
+ #define FLAGS_NUMA		0x0080
+ #define FLAGS_STRICT		0x0100
++#define FLAGS_MPOL		0x0200
+=20
+ /* FUTEX_ to FLAGS_ */
+ static inline unsigned int futex_to_flags(unsigned int op)
+@@ -54,7 +55,7 @@ static inline unsigned int futex_to_flags(unsigned int op)
  	return flags;
  }
 =20
--#define FUTEX2_VALID_MASK (FUTEX2_SIZE_MASK | FUTEX2_PRIVATE)
-+#define FUTEX2_VALID_MASK (FUTEX2_SIZE_MASK | FUTEX2_NUMA | FUTEX2_PRIVATE)
+-#define FUTEX2_VALID_MASK (FUTEX2_SIZE_MASK | FUTEX2_NUMA | FUTEX2_PRIVATE)
++#define FUTEX2_VALID_MASK (FUTEX2_SIZE_MASK | FUTEX2_NUMA | FUTEX2_MPOL | =
+FUTEX2_PRIVATE)
 =20
  /* FUTEX2_ to FLAGS_ */
  static inline unsigned int futex2_to_flags(unsigned int flags2)
-@@ -87,6 +87,19 @@ static inline bool futex_flags_valid(unsigned int flags)
- 	if ((flags & FLAGS_SIZE_MASK) !=3D FLAGS_SIZE_32)
- 		return false;
+@@ -67,6 +68,9 @@ static inline unsigned int futex2_to_flags(unsigned int f=
+lags2)
+ 	if (flags2 & FUTEX2_NUMA)
+ 		flags |=3D FLAGS_NUMA;
 =20
-+	/*
-+	 * Must be able to represent both FUTEX_NO_NODE and every valid nodeid
-+	 * in a futex word.
-+	 */
-+	if (flags & FLAGS_NUMA) {
-+		int bits =3D 8 * futex_size(flags);
-+		u64 max =3D ~0ULL;
++	if (flags2 & FUTEX2_MPOL)
++		flags |=3D FLAGS_MPOL;
 +
-+		max >>=3D 64 - bits;
-+		if (nr_node_ids >=3D max)
-+			return false;
-+	}
-+
- 	return true;
+ 	return flags;
  }
 =20
-@@ -282,7 +295,7 @@ static inline int futex_cmpxchg_value_locked(u32 *curva=
-l, u32 __user *uaddr, u32
-  * This looks a bit overkill, but generally just results in a couple
-  * of instructions.
-  */
--static __always_inline int futex_read_inatomic(u32 *dest, u32 __user *from)
-+static __always_inline int futex_get_value(u32 *dest, u32 __user *from)
- {
- 	u32 val;
-=20
-@@ -299,12 +312,26 @@ static __always_inline int futex_read_inatomic(u32 *d=
-est, u32 __user *from)
- 	return -EFAULT;
- }
-=20
-+static __always_inline int futex_put_value(u32 val, u32 __user *to)
-+{
-+	if (can_do_masked_user_access())
-+		to =3D masked_user_access_begin(to);
-+	else if (!user_read_access_begin(to, sizeof(*to)))
-+		return -EFAULT;
-+	unsafe_put_user(val, to, Efault);
-+	user_read_access_end();
-+	return 0;
-+Efault:
-+	user_read_access_end();
-+	return -EFAULT;
-+}
-+
- static inline int futex_get_value_locked(u32 *dest, u32 __user *from)
- {
- 	int ret;
-=20
- 	pagefault_disable();
--	ret =3D futex_read_inatomic(dest, from);
-+	ret =3D futex_get_value(dest, from);
- 	pagefault_enable();
-=20
- 	return ret;
 --=20
 2.49.0
 
