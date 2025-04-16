@@ -1,266 +1,88 @@
-Return-Path: <linux-kernel+bounces-606473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 281FBA8AFB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 07:32:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94483A8AFC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 07:35:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30EA91796A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 05:32:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 298A13A2C50
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 05:34:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A03C1A3160;
-	Wed, 16 Apr 2025 05:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LDQpvzqm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 490921E1DE9;
+	Wed, 16 Apr 2025 05:35:02 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63340154423
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 05:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6179910E9;
+	Wed, 16 Apr 2025 05:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744781548; cv=none; b=LlF8aGTFbZ2sx/2HTX73uS2o77RVWlkzlVIIg3lA0z0TVoXdWmsfQvndwtTtsJJqTthlF/eqDlHBrXdlN7NmsrcIA83SvdrCHLQpoy8Uu/Edlna6rVX5YKyalFv1mjSQVICQsF3uYLUNFbcN/4pfXkyHjeIFEAaKYi54ui/3j7E=
+	t=1744781701; cv=none; b=hy7SA6iXwtBDXoI6dgaIvP+VTqZ7hhugzWvAfr2Zal+Z6BGGG4DD/DRqhtXXFK+xuOEckauziqlO/OiBup5VAkZPtXaCu2I88oPkyHv2axQLbo09vYzRnff8nptO5T3DYyYqXF8XaGfwxCKyN4a0nR3tFqK/qwMASLjqPi2l/SQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744781548; c=relaxed/simple;
-	bh=QOu9vI2dumfba/O/jFcBMaqEag+WvaQ7EqmF4C9gQ6k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OfCjY4MWKF9ARC5XjvPj6K0U9bcmvfXDRgro0PI6L1uMeXcIW+nswUGlcAloRb/m1+Urayl/HPBsjIccb70+Wz9pKMY2I2O5x4EjOTuMC8tE7H0ADAOM3Gljp6d/tXwSRv9kdqcZV+Jjyi/ySH+sFesw7bqlHsn0cw3hiQ+eE/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LDQpvzqm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77A88C4CEE2;
-	Wed, 16 Apr 2025 05:32:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744781547;
-	bh=QOu9vI2dumfba/O/jFcBMaqEag+WvaQ7EqmF4C9gQ6k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LDQpvzqm3cmpe3T2DtyMRGHjfDJbqD2cvNagRixOHn2K84T1LM1MED28SO4o6choC
-	 KmOw2bIjgBN9roWW4i/SyK9/5k042vXnG/+7r6N1jEEuPekrI918uNrMMwFYoNQ8sP
-	 w0H9MxxG2F74u89R2Rzfp0rN1AJFC8u/4kpIfuOGkGWBwbadGh/2bGzreU5OymwyOl
-	 W8CUIsSPZeRbN5ro5vSEuiDfv5YLm1loYPrhCEODeV4ut3H8Ijbs7GykTAX4rMjA8d
-	 ehAhSigTIZiBSIGTukvi2slslPhNnTGDhQTAJvardom8nTNj87RkneX3AU2os99ZbA
-	 miF27sG3XHXGw==
-Date: Wed, 16 Apr 2025 07:32:22 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, Frederic Weisbecker <frederic@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Anil Gurumurthy <anil.gurumurthy@qlogic.com>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>
-Subject: Re: [PATCH 02/17] scsi: bfa: Rename 'timer_mod' to 'timer_module'
-Message-ID: <Z_9A5tXUjVkHZFQX@gmail.com>
-References: <20250414102301.332225-1-mingo@kernel.org>
- <20250414102301.332225-3-mingo@kernel.org>
- <87lds2sjse.ffs@tglx>
+	s=arc-20240116; t=1744781701; c=relaxed/simple;
+	bh=qJ0eWAfZQvMKC14qaN5C2gsiSBtw8LBERrVoH+b2buU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BqCFFKfNJuF4czE/Xj4JNm7YbhStzIo+hrZIjrKvfXLUHvSUvmJ563uVIwJYoQEWP6om537sEhQ9LjZLq5nvUBsoISrO1AOFn6Dt0yAWCrjWIQo0w1p01M1ZdVDgAZGm3xmlgt5UzqFy7u8LqzbI4gbPqhWqMqArwTPNwLbP8Z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53G3bihf026759;
+	Wed, 16 Apr 2025 05:34:31 GMT
+Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 45ydd1md40-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Wed, 16 Apr 2025 05:34:31 +0000 (GMT)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Tue, 15 Apr 2025 22:34:30 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Tue, 15 Apr 2025 22:34:27 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <hch@infradead.org>
+CC: <almaz.alexandrovich@paragon-software.com>, <brauner@kernel.org>,
+        <jack@suse.cz>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
+        <ntfs3@lists.linux.dev>,
+        <syzbot+e36cc3297bd3afd25e19@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>, <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH V2] fs/ntfs3: Add missing direct_IO in ntfs_aops_cmpr
+Date: Wed, 16 Apr 2025 13:34:26 +0800
+Message-ID: <20250416053426.2931176-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <Z_8z8CD4FKlxw5Vm@infradead.org>
+References: <Z_8z8CD4FKlxw5Vm@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <87lds2sjse.ffs@tglx>
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: Rao5gv14PV8_wt8iKtHyAHgOBfN6ksym
+X-Proofpoint-GUID: Rao5gv14PV8_wt8iKtHyAHgOBfN6ksym
+X-Authority-Analysis: v=2.4 cv=HecUTjE8 c=1 sm=1 tr=0 ts=67ff4167 cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=t7CeM3EgAAAA:8 a=haV94hm0_3eM6ig1Zd8A:9 a=FdTzh2GWekK77mhwV6Dw:22
+X-Sensitive_Customer_Information: Yes
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-16_02,2025-04-15_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ phishscore=0 malwarescore=0 priorityscore=1501 spamscore=0 bulkscore=0
+ adultscore=0 mlxlogscore=521 impostorscore=0 suspectscore=0 clxscore=1015
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.21.0-2502280000
+ definitions=main-2504160044
 
-
-* Thomas Gleixner <tglx@linutronix.de> wrote:
-
-> >  #ifdef CONFIG_OMAP_DM_TIMER
-> > -	use_idlect1 = omap_dm_timer_modify_idlect_mask(use_idlect1);
-> > +	use_idlect1 = omap_dm_timer_moduleify_idlect_mask(use_idlect1);
+On Tue, 15 Apr 2025 21:37:04 -0700, Christoph Hellwig wrote:
+> > The ntfs3 can use the page cache directly, so its address_space_operations
+> > need direct_IO.
 > 
-> I have no idea how this is related to the subject or the change log of
-> this patch.
-
-That was a horrible script fail, but I wrote the changelog for the 
-right patch, which is the reason for the dissonance. I sent the updated 
--v2 patch 2 days ago already (and it was updated in the Git tree then 
-too):
-
-  https://lore.kernel.org/all/Z_0oWnbcjsekHXJd@gmail.com/
-
-Unfortunately you weren't Cc:-ed for Thomas Weißschuh's reply, so you 
-probably didn't see the fixed patch. :-/
-
-> Has AI gone wild or what?
-
-Simple sed pattern mistake doing s/timer_mod/timer_module instead of 
-the s/\<timer_mod\>/timer_module change I wrote the changelog for.
-
-Thanks,
-
-	Ingo
-
-=============>
-From 48f2aff7501a6dd1154297b7a00e0f2fbea36e24 Mon Sep 17 00:00:00 2001
-From: Ingo Molnar <mingo@kernel.org>
-Date: Mon, 14 Apr 2025 11:23:06 +0200
-Subject: [PATCH] scsi: bfa: Rename 'timer_mod' to 'timer_module'
-
-We'd like to introduce timer_mod() in the kernel, so make
-sure the namespace is clear.
-
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Anil Gurumurthy <anil.gurumurthy@qlogic.com>
-Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>
----
- drivers/scsi/bfa/bfa.h         |  2 +-
- drivers/scsi/bfa/bfa_core.c    |  4 ++--
- drivers/scsi/bfa/bfa_ioc.c     | 16 ++++++++--------
- drivers/scsi/bfa/bfa_ioc.h     |  4 ++--
- drivers/scsi/bfa/bfa_modules.h |  2 +-
- drivers/scsi/bfa/bfad.c        |  2 +-
- 6 files changed, 15 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/scsi/bfa/bfa.h b/drivers/scsi/bfa/bfa.h
-index a6b8c4ddea19..80b75669fc50 100644
---- a/drivers/scsi/bfa/bfa.h
-+++ b/drivers/scsi/bfa/bfa.h
-@@ -429,7 +429,7 @@ bfa_status_t bfa_iocfc_israttr_set(struct bfa_s *bfa,
- void bfa_iocfc_enable(struct bfa_s *bfa);
- void bfa_iocfc_disable(struct bfa_s *bfa);
- #define bfa_timer_start(_bfa, _timer, _timercb, _arg, _timeout)		\
--	bfa_timer_begin(&(_bfa)->timer_mod, _timer, _timercb, _arg, _timeout)
-+	bfa_timer_begin(&(_bfa)->timer_module, _timer, _timercb, _arg, _timeout)
- 
- struct bfa_cb_pending_q_s {
- 	struct bfa_cb_qe_s	hcb_qe;
-diff --git a/drivers/scsi/bfa/bfa_core.c b/drivers/scsi/bfa/bfa_core.c
-index a99a101b95ef..667a631a2abc 100644
---- a/drivers/scsi/bfa/bfa_core.c
-+++ b/drivers/scsi/bfa/bfa_core.c
-@@ -1526,14 +1526,14 @@ bfa_iocfc_attach(struct bfa_s *bfa, void *bfad, struct bfa_iocfc_cfg_s *cfg,
- 	bfa_iocfc_cbfn.reset_cbfn = bfa_iocfc_reset_cbfn;
- 
- 	ioc->trcmod = bfa->trcmod;
--	bfa_ioc_attach(&bfa->ioc, bfa, &bfa_iocfc_cbfn, &bfa->timer_mod);
-+	bfa_ioc_attach(&bfa->ioc, bfa, &bfa_iocfc_cbfn, &bfa->timer_module);
- 
- 	bfa_ioc_pci_init(&bfa->ioc, pcidev, BFI_PCIFN_CLASS_FC);
- 	bfa_ioc_mbox_register(&bfa->ioc, bfa_mbox_isrs);
- 
- 	bfa_iocfc_init_mem(bfa, bfad, cfg, pcidev);
- 	bfa_iocfc_mem_claim(bfa, cfg);
--	INIT_LIST_HEAD(&bfa->timer_mod.timer_q);
-+	INIT_LIST_HEAD(&bfa->timer_module.timer_q);
- 
- 	INIT_LIST_HEAD(&bfa->comp_q);
- 	for (i = 0; i < BFI_IOC_MAX_CQS; i++)
-diff --git a/drivers/scsi/bfa/bfa_ioc.c b/drivers/scsi/bfa/bfa_ioc.c
-index aa68d61a2d0d..4a9bd084cd5d 100644
---- a/drivers/scsi/bfa/bfa_ioc.c
-+++ b/drivers/scsi/bfa/bfa_ioc.c
-@@ -28,12 +28,12 @@ BFA_TRC_FILE(CNA, IOC);
- #define BFA_IOC_POLL_TOV	BFA_TIMER_FREQ
- 
- #define bfa_ioc_timer_start(__ioc)					\
--	bfa_timer_begin((__ioc)->timer_mod, &(__ioc)->ioc_timer,	\
-+	bfa_timer_begin((__ioc)->timer_module, &(__ioc)->ioc_timer,	\
- 			bfa_ioc_timeout, (__ioc), BFA_IOC_TOV)
- #define bfa_ioc_timer_stop(__ioc)   bfa_timer_stop(&(__ioc)->ioc_timer)
- 
- #define bfa_hb_timer_start(__ioc)					\
--	bfa_timer_begin((__ioc)->timer_mod, &(__ioc)->hb_timer,		\
-+	bfa_timer_begin((__ioc)->timer_module, &(__ioc)->hb_timer,		\
- 			bfa_ioc_hb_check, (__ioc), BFA_IOC_HB_TOV)
- #define bfa_hb_timer_stop(__ioc)	bfa_timer_stop(&(__ioc)->hb_timer)
- 
-@@ -159,16 +159,16 @@ bfa_ioc_sm_to_state(struct bfa_ioc_sm_table *smt, bfa_ioc_sm_t sm)
-  */
- 
- #define bfa_iocpf_timer_start(__ioc)					\
--	bfa_timer_begin((__ioc)->timer_mod, &(__ioc)->ioc_timer,	\
-+	bfa_timer_begin((__ioc)->timer_module, &(__ioc)->ioc_timer,	\
- 			bfa_iocpf_timeout, (__ioc), BFA_IOC_TOV)
- #define bfa_iocpf_timer_stop(__ioc)	bfa_timer_stop(&(__ioc)->ioc_timer)
- 
- #define bfa_iocpf_poll_timer_start(__ioc)				\
--	bfa_timer_begin((__ioc)->timer_mod, &(__ioc)->ioc_timer,	\
-+	bfa_timer_begin((__ioc)->timer_module, &(__ioc)->ioc_timer,	\
- 			bfa_iocpf_poll_timeout, (__ioc), BFA_IOC_POLL_TOV)
- 
- #define bfa_sem_timer_start(__ioc)					\
--	bfa_timer_begin((__ioc)->timer_mod, &(__ioc)->sem_timer,	\
-+	bfa_timer_begin((__ioc)->timer_module, &(__ioc)->sem_timer,	\
- 			bfa_iocpf_sem_timeout, (__ioc), BFA_IOC_HWSEM_TOV)
- #define bfa_sem_timer_stop(__ioc)	bfa_timer_stop(&(__ioc)->sem_timer)
- 
-@@ -2333,11 +2333,11 @@ bfa_ioc_isr(struct bfa_ioc_s *ioc, struct bfi_mbmsg_s *m)
-  */
- void
- bfa_ioc_attach(struct bfa_ioc_s *ioc, void *bfa, struct bfa_ioc_cbfn_s *cbfn,
--	       struct bfa_timer_mod_s *timer_mod)
-+	       struct bfa_timer_mod_s *timer_module)
- {
- 	ioc->bfa	= bfa;
- 	ioc->cbfn	= cbfn;
--	ioc->timer_mod	= timer_mod;
-+	ioc->timer_module	= timer_module;
- 	ioc->fcmode	= BFA_FALSE;
- 	ioc->pllinit	= BFA_FALSE;
- 	ioc->dbg_fwsave_once = BFA_TRUE;
-@@ -5062,7 +5062,7 @@ bfa_diag_memtest(struct bfa_diag_s *diag, struct bfa_diag_memtest_s *memtest,
- 
- 	memtest_tov = (bfa_ioc_asic_gen(diag->ioc) == BFI_ASIC_GEN_CT2) ?
- 		       CT2_BFA_DIAG_MEMTEST_TOV : BFA_DIAG_MEMTEST_TOV;
--	bfa_timer_begin(diag->ioc->timer_mod, &diag->timer,
-+	bfa_timer_begin(diag->ioc->timer_module, &diag->timer,
- 			bfa_diag_memtest_done, diag, memtest_tov);
- 	diag->timer_active = 1;
- 	return BFA_STATUS_OK;
-diff --git a/drivers/scsi/bfa/bfa_ioc.h b/drivers/scsi/bfa/bfa_ioc.h
-index d70332e9ad6d..3fa8a65bf067 100644
---- a/drivers/scsi/bfa/bfa_ioc.h
-+++ b/drivers/scsi/bfa/bfa_ioc.h
-@@ -333,7 +333,7 @@ struct bfa_ioc_s {
- 	bfa_ioc_sm_t		fsm;
- 	struct bfa_s		*bfa;
- 	struct bfa_pcidev_s	pcidev;
--	struct bfa_timer_mod_s	*timer_mod;
-+	struct bfa_timer_mod_s	*timer_module;
- 	struct bfa_timer_s	ioc_timer;
- 	struct bfa_timer_s	sem_timer;
- 	struct bfa_timer_s	hb_timer;
-@@ -918,7 +918,7 @@ void bfa_ioc_set_ct2_hwif(struct bfa_ioc_s *ioc);
- void bfa_ioc_ct2_poweron(struct bfa_ioc_s *ioc);
- 
- void bfa_ioc_attach(struct bfa_ioc_s *ioc, void *bfa,
--		struct bfa_ioc_cbfn_s *cbfn, struct bfa_timer_mod_s *timer_mod);
-+		struct bfa_ioc_cbfn_s *cbfn, struct bfa_timer_mod_s *timer_module);
- void bfa_ioc_detach(struct bfa_ioc_s *ioc);
- void bfa_ioc_suspend(struct bfa_ioc_s *ioc);
- void bfa_ioc_pci_init(struct bfa_ioc_s *ioc, struct bfa_pcidev_s *pcidev,
-diff --git a/drivers/scsi/bfa/bfa_modules.h b/drivers/scsi/bfa/bfa_modules.h
-index ed29ebda30da..9911794286cc 100644
---- a/drivers/scsi/bfa/bfa_modules.h
-+++ b/drivers/scsi/bfa/bfa_modules.h
-@@ -61,7 +61,7 @@ struct bfa_s {
- 	struct bfa_trc_mod_s	*trcmod;	/*  driver tracing	    */
- 	struct bfa_ioc_s	ioc;		/*  IOC module		    */
- 	struct bfa_iocfc_s	iocfc;		/*  IOCFC module	    */
--	struct bfa_timer_mod_s	timer_mod;	/*  timer module	    */
-+	struct bfa_timer_mod_s	timer_module;	/*  timer module	    */
- 	struct bfa_modules_s	modules;	/*  BFA modules	    */
- 	struct list_head	comp_q;		/*  pending completions     */
- 	bfa_boolean_t		queue_process;	/*  queue processing enabled */
-diff --git a/drivers/scsi/bfa/bfad.c b/drivers/scsi/bfa/bfad.c
-index 598f2fc93ef2..695c77c5275d 100644
---- a/drivers/scsi/bfa/bfad.c
-+++ b/drivers/scsi/bfa/bfad.c
-@@ -691,7 +691,7 @@ bfad_bfa_tmo(struct timer_list *t)
- 
- 	spin_lock_irqsave(&bfad->bfad_lock, flags);
- 
--	bfa_timer_beat(&bfad->bfa.timer_mod);
-+	bfa_timer_beat(&bfad->bfa.timer_module);
- 
- 	bfa_comp_deq(&bfad->bfa, &doneq);
- 	spin_unlock_irqrestore(&bfad->bfad_lock, flags);
+> This sentence still does not make any sense.
+Did you see the following comments?
+https://lore.kernel.org/all/20250415010518.2008216-1-lizhi.xu@windriver.com/
 
