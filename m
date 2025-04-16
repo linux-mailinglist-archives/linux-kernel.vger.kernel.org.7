@@ -1,45 +1,95 @@
-Return-Path: <linux-kernel+bounces-606194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C109A8AC5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 01:58:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60FE6A8AC60
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 02:02:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB90C7A697A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 23:57:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8D813A6D0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 00:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B54832D8DD4;
-	Tue, 15 Apr 2025 23:58:46 +0000 (UTC)
-Received: from invmail3.skhynix.com (exvmail3.hynix.com [166.125.252.90])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A6D28F53F
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 23:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B233525569;
+	Wed, 16 Apr 2025 00:02:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="b+IOVZmR"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C1729A5
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 00:02:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744761526; cv=none; b=oI7kXSLwtSRMx4tPjIrMVtnp0ae8iN8TdRFGOdqDR/GeuXXk5dVBexz7JE2aWCF5YtDYwnMuLDmJ/34N9JKGu/u/QglTMT+n5qTF1iZe9OPkexy1jeGXkXNZZuk2o++1F/4K0wQ7uElCDAGLddGRWEYnxqJfnndaaZpG8nURRwI=
+	t=1744761735; cv=none; b=LQREd5knUH17upCZbcPDIdNkXhr8tEXoFazuvQ92H93z8p7KLheaOYtcxh77/eHyNKF2voAcL8LMgsdSzATsGOilznM0B6ce/2FWNBCX+7GVIkTQNCdNgYAwhjcxIDfVxg5gIrtTNon5qQ2A3zzFSFQgNVEZSVHNa/EZIjTY+FA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744761526; c=relaxed/simple;
-	bh=ocMyd/+F9njsJBHIDcBlp6ILk7K4UYbDoGQBteV/7+0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kOzrxRhg8DwJwl+liqMT6ai9I/DVwDE211mTr1JkqayKxTmXliaxj0bqOWjwZUDPSJDuYg5SOqjFZ+zfhLOK2lXk3jiY/jr057noRYhY9KC9sQoCYPLdd7EPnKzCyuFIuvOrj8IqV9gdddiNFMttFPL3stktjadU5Fkv/8ucWKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc59-057ff7000000aab6-da-67fef2a5aafd
-From: "yohan.joung" <yohan.joung@sk.com>
-To: daeho43@gmail.com
-Cc: chao@kernel.org,
-	jaegeuk@kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	pilhyun.kim@sk.com
-Subject: Re: [f2fs-dev] [PATCH v1] f2fs: Improve large section GC by locating valid block segments
-Date: Wed, 16 Apr 2025 08:58:23 +0900
-Message-ID: <20250415235828.2045-1-yohan.joung@sk.com>
-X-Mailer: git-send-email 2.49.0.windows.1
-In-Reply-To: <CACOAw_x6YjYzF0PbifP05c9fnO9n1r_jN8NxUByef3DMPVXjPQ@mail.gmail.com>
-References: <CACOAw_x6YjYzF0PbifP05c9fnO9n1r_jN8NxUByef3DMPVXjPQ@mail.gmail.com>
+	s=arc-20240116; t=1744761735; c=relaxed/simple;
+	bh=cRmda5bmrfCcBQPE77qN3/UFddHhyZ+FKubxHJT/wkw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=k68d0nf8NVzMA5RZYxsLxq3kGahvJIW9SlNhcSlXHzt+X+1daAiYVszeplQUr40Bxuw7RAn43oZktOAKB8u92Bjoo/8yCujjVJPLo1FReZKzVqMHSI0Ls9/lrJu8vM1YZ78curA6/G9LnuvRYd0UIxmJPJFavjCy35bRhMBFJ3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=b+IOVZmR; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-30549dacd53so139499a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 17:02:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1744761732; x=1745366532; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bgdhLXqZmm02+iuTYg8IYzdl8VvNi9VMKk7v6vfTzwQ=;
+        b=b+IOVZmRWvXP7dxekykI47UwBU4k+7TRxs43A1LpgzkzUgu0hOsPHKvLmuymkjfdcv
+         ULi4aEc+wIZO2orJE97BGh8QVRIFCtb1DJ5PTT1EnqEVYZAR8hxKDASF1dxYqfHAauZ5
+         cGPM/kcAoII60f0Et8CN+OFstOcHsX5uKQ1nM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744761732; x=1745366532;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bgdhLXqZmm02+iuTYg8IYzdl8VvNi9VMKk7v6vfTzwQ=;
+        b=iTWWS03uIaa9goaLqc9dY6wIQzsTvfcYDSNyFTgjzIEX1chBrt7cauAjmCw8st3Yu7
+         fNlJX3snnkCo96swkMV4kNWT+Pa/eeHdxarTv4MMqqMp/rpUG0KQkQHIApXaL/QN/50U
+         AHCbOq0R0urq+Hw0BH5HatguNVqkxttod/vdnXZ3CmeQUkQYL08mpzuUB2iGoDEQDo4/
+         7HPRdB4wevYZ0crrxCjlkbVtAwQijSQUWVkZfAtLNH9LyW33kVCnXMfovPOw86WBQhMm
+         q2EqRLX6Gq5yEFA7jRudEzb3J4hlugl8S+KO0yoPA37UeJ70nKyf8BZu/nFStTMZDpjE
+         mywA==
+X-Gm-Message-State: AOJu0YyFyFnN05DNjnnsPvlCtU84AwPgs4efaUHHy6/fUs0lXBw+20uS
+	Ue5z0jvJr3fCbKBdrqM5HQw2UUnW81KCn92oMRAOzDIr2StLiYimQu8b3Sn/4A==
+X-Gm-Gg: ASbGncvMmhMjj+lnUZtRn4zJTJIGn5Ggk3XiZjO5sA4A0yMfOPTleoP8Ok+muIqc9Th
+	vlsfi111KKKu8cl6x70QOPUBj/lGiHiPuWy7UFMAj8IPNnGAWrworU70t4Va5qc0g6z2KqfgsGA
+	5HTqCTqS1mmUPH8jfavGsHku3xcBAzolM/+aZjHsqvzz5fsGGqoI5GR7pw+JlFINMDxa9EW2w+o
+	ihb50OvTN57pjT0rTYptRm1ceXKb3RXUi1yn5sHhSwPc1hH8X2zQ9pBFupfSCPCnjlEAnvCZJnW
+	DOvqYfrddThTg47oHUWF6sA64bjtlgUXnXnjxILy5d6J2CFDM6sVG3HzMKDstSfR2ZP9Lscu0Uy
+	G0w==
+X-Google-Smtp-Source: AGHT+IEW2BUyetqEJqp2Byr5gKAPoyPMy/3pBAQDFJR2uAF5E8DZzaAi+L5qSZqV09GCAbzUezOZCQ==
+X-Received: by 2002:a17:90b:5243:b0:2fa:2268:1af4 with SMTP id 98e67ed59e1d1-3084f3176d1mr7881903a91.7.1744761731705;
+        Tue, 15 Apr 2025 17:02:11 -0700 (PDT)
+Received: from localhost (199.24.125.34.bc.googleusercontent.com. [34.125.24.199])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-308613b3849sm196226a91.38.2025.04.15.17.02.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Apr 2025 17:02:11 -0700 (PDT)
+From: Stephen Boyd <swboyd@chromium.org>
+To: Tzung-Bi Shih <tzungbi@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	devicetree@vger.kernel.org,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Benson Leung <bleung@chromium.org>,
+	chrome-platform@lists.linux.dev,
+	Pin-yen Lin <treapking@chromium.org>,
+	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
+	=?UTF-8?q?=C5=81ukasz=20Bartosik?= <ukaszb@chromium.org>,
+	Jameson Thies <jthies@google.com>,
+	Andrei Kuchynski <akuchynski@chromium.org>
+Subject: [PATCH 0/7] platform/chrome: Support for USB DP altmode muxing w/ DT
+Date: Tue, 15 Apr 2025 17:02:00 -0700
+Message-ID: <20250416000208.3568635-1-swboyd@chromium.org>
+X-Mailer: git-send-email 2.49.0.604.gff1f9ca942-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,349 +98,131 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOLMWRmVeSWpSXmKPExsXC9ZZnke7ST//SDX5u1LA4PfUsk8WbI2dY
-	LJ6sn8VscWmRu8XlXXPYHFg9ds66y+6xaVUnm8fuBZ+ZPD5vkgtgieKySUnNySxLLdK3S+DK
-	eLv0JnvBjcyKWU01DYxt3l2MnBwSAiYSjVcXssHYP48fBLPZBDQk/vT2MoPYIgKiEvNW72ME
-	sZkFOhklfm0JALGFBZIknlw+ywpiswioSqz73c4EYvMKmEnc+7iAEWKmpsSOL+fB4pwCgRJL
-	FiwFqxcSCJDoXdnCAlEvKHFy5hMgmwNovrrE+nlCEKvkJZq3zgY6gQtoTA+bxPaT/ewQMyUl
-	Dq64wTKBUWAWkvZZCO2zkLQvYGRexSiSmVeWm5iZY6xXnJ1RmZdZoZecn7uJERi8y2r/RO5g
-	/HYh+BCjAAejEg9vZPy/dCHWxLLiytxDjBIczEoivOfMgUK8KYmVValF+fFFpTmpxYcYpTlY
-	lMR5jb6VpwgJpCeWpGanphakFsFkmTg4pRoYuW4vWxvnMzvsoqIol8+ZwJo3m0XvPZiW/bav
-	aPmp1lNPz75/vaw4PTz/cLO+vZl4yc7v6+e/bZ/7jnXO3eD/y2UVF89nO3l9G4tf94r3R24t
-	s9sn29bnbPHQ0XFiyIYJtlUVhoICuYK6gaWhF/+JrbcROTm50ef+kWyvOEaHJ1slKyOS3LbP
-	VmIpzkg01GIuKk4EAGkJDRBaAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNLMWRmVeSWpSXmKPExsXCNUNlju7ST//SDT79kbY4PfUsk8WbI2dY
-	LJ6sn8VscWmRu8XlXXPYLCbMvcrkwOaxc9Zddo9NqzrZPHYv+Mzk8e22h8fnTXIBrFFcNimp
-	OZllqUX6dglcGW+X3mQvuJFZMauppoGxzbuLkZNDQsBE4ufxg2wgNpuAhsSf3l5mEFtEQFRi
-	3up9jCA2s0Ano8SvLQEgtrBAksSTy2dZQWwWAVWJdb/bmUBsXgEziXsfFzBCzNSU2PHlPFic
-	UyBQYsmCpWD1QgIBEr0rW1gg6gUlTs58AmRzAM1Xl1g/TwhilbxE89bZzBMYeWchqZqFUDUL
-	SdUCRuZVjCKZeWW5iZk5ZnrF2RmVeZkVesn5uZsYgUG4rPbPpB2M3y67H2IU4GBU4uGNiP+X
-	LsSaWFZcmXuIUYKDWUmE95w5UIg3JbGyKrUoP76oNCe1+BCjNAeLkjivV3hqgpBAemJJanZq
-	akFqEUyWiYNTqoGxdt+Wzt3zpK3T9Pd3J81Y6n3dqU/TxmeS71eWnSsbtu/dY2/FZWr4eMt+
-	53f7fXSzrvk471/oc7psp8eq98qzdvec/P3F7m724wXXvRya9iRYpbaLF088L2u24uOt449v
-	i/w5xZyYeqtMnOPiRh6jaMWfLy3Pu8stnMqr7nBE7GX1+wlaoc3blFiKMxINtZiLihMBMDQw
-	Tz4CAAA=
-X-CFilter-Loop: Reflected
 
->On Fri, Apr 11, 2025 at 3:07 AM Chao Yu <chao@kernel.org> wrote:
->>
->> Yohan,
->>
->> Sorry for the delay, will catch up this a little bit latter.
->>
->> On 2025/4/10 8:17, yohan.joung wrote:
->> > hi jeageuk, chao
->> > How about changing the large section gc in this direction?
->> > Thanks
->> >
->> >> Change the large section GC to locate valid block segments instead of
->> >> performing a sequential search. This modification enhances performance
->> >> by reducing unnecessary block scanning in large storage sections.
->> >>
->> >> example :
->> >> [invalid seg 0] [invalid seg 1] [invalid seg 2]
->> >> [  valid seg 3] [  valid seg 4] [  valid seg 5]
->> >>
->> >> Current: In the first GC, nothing is moved,
->> >> but in the second GC, segments 3, 4, and 5 are moved.
->> >> Change: In the first GC, segments 3, 4, and 5 are moved.
->> >>
->> >> Signed-off-by: yohan.joung <yohan.joung@sk.com>
->> >> ---
->> >>   fs/f2fs/f2fs.h  |  2 ++
->> >>   fs/f2fs/gc.c    | 92 +++++++++++++++++++++++++++++++++++--------------
->> >>   fs/f2fs/gc.h    |  6 ++++
->> >>   fs/f2fs/super.c |  8 ++++-
->> >>   4 files changed, 82 insertions(+), 26 deletions(-)
->> >>
->> >> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> >> index f1576dc6ec67..348417edac25 100644
->> >> --- a/fs/f2fs/f2fs.h
->> >> +++ b/fs/f2fs/f2fs.h
->> >> @@ -4008,6 +4008,8 @@ int f2fs_gc_range(struct f2fs_sb_info *sbi,
->> >>   int f2fs_resize_fs(struct file *filp, __u64 block_count);
->> >>   int __init f2fs_create_garbage_collection_cache(void);
->> >>   void f2fs_destroy_garbage_collection_cache(void);
->> >> +int __init f2fs_init_garbage_collection_summary_cache(void);
->> >> +void f2fs_destroy_garbage_collection_summary_cache(void);
->> >>   /* victim selection function for cleaning and SSR */
->> >>   int f2fs_get_victim(struct f2fs_sb_info *sbi, unsigned int *result,
->> >>                      int gc_type, int type, char alloc_mode,
->> >> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->> >> index 2b8f9239bede..3b63e85fa038 100644
->> >> --- a/fs/f2fs/gc.c
->> >> +++ b/fs/f2fs/gc.c
->> >> @@ -24,6 +24,7 @@
->> >>   #include <trace/events/f2fs.h>
->> >>
->> >>   static struct kmem_cache *victim_entry_slab;
->> >> +static struct kmem_cache *gc_page_entry_slab;
->> >>
->> >>   static unsigned int count_bits(const unsigned long *addr,
->> >>                              unsigned int offset, unsigned int len);
->> >> @@ -711,6 +712,30 @@ static void release_victim_entry(struct f2fs_sb_info *sbi)
->> >>      f2fs_bug_on(sbi, !list_empty(&am->victim_list));
->> >>   }
->> >>
->> >> +static struct gc_page_entry *add_gc_page_entry(struct list_head *gc_page_list,
->> >> +                                    struct page *sum_page, unsigned int segno)
->> >> +{
->> >> +    struct gc_page_entry *gpe;
->> >> +
->> >> +    gpe = f2fs_kmem_cache_alloc(gc_page_entry_slab, GFP_NOFS, true, NULL);
->> >> +    gpe->segno = segno;
->> >> +    gpe->sum_page = sum_page;
->> >> +    list_add_tail(&gpe->list, gc_page_list);
->> >> +    return gpe;
->> >> +}
->> >> +
->> >> +static void release_gc_page_entry(struct list_head *gc_page_list, bool putpage)
->> >> +{
->> >> +    struct gc_page_entry *gpe, *tmp;
->> >> +
->> >> +    list_for_each_entry_safe(gpe, tmp, gc_page_list, list) {
->> >> +            if (putpage)
->> >> +                    f2fs_put_page(gpe->sum_page, 0);
->> >> +            list_del(&gpe->list);
->> >> +            kmem_cache_free(gc_page_entry_slab, gpe);
->> >> +    }
->> >> +}
->> >> +
->> >>   static bool f2fs_pin_section(struct f2fs_sb_info *sbi, unsigned int segno)
->> >>   {
->> >>      struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
->> >> @@ -1721,14 +1746,18 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
->> >>      struct page *sum_page;
->> >>      struct f2fs_summary_block *sum;
->> >>      struct blk_plug plug;
->> >> +    struct gc_page_entry *gpe;
->> >>      unsigned int segno = start_segno;
->> >>      unsigned int end_segno = start_segno + SEGS_PER_SEC(sbi);
->> >>      unsigned int sec_end_segno;
->> >> +    unsigned int window_granularity = 1;
->> >>      int seg_freed = 0, migrated = 0;
->> >>      unsigned char type = IS_DATASEG(get_seg_entry(sbi, segno)->type) ?
->> >>                                              SUM_TYPE_DATA : SUM_TYPE_NODE;
->> >>      unsigned char data_type = (type == SUM_TYPE_DATA) ? DATA : NODE;
->> >>      int submitted = 0;
->> >> +    int gc_list_count = 0;
->> >> +    LIST_HEAD(gc_page_list);
->> >>
->> >>      if (__is_large_section(sbi)) {
->> >>              sec_end_segno = rounddown(end_segno, SEGS_PER_SEC(sbi));
->> >> @@ -1744,7 +1773,7 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
->> >>                                      f2fs_usable_segs_in_sec(sbi);
->> >>
->> >>              if (gc_type == BG_GC || one_time) {
->> >> -                    unsigned int window_granularity =
->> >> +                    window_granularity =
->> >>                              sbi->migration_window_granularity;
->
->Plz, refer to the below described in sysfs-fs-f2fs.
-Thanks, I'll take a look at this.
->
->What:           /sys/fs/f2fs/<disk>/migration_window_granularity
->Date:           September 2024
->Contact:        "Daeho Jeong" <daehojeong@google.com>
->Description:    Controls migration window granularity of garbage
->collection on large
->                section. it can control the scanning window
->granularity for GC migration
->                in a unit of segment, while migration_granularity
->controls the number
->                of segments which can be migrated at the same turn.
->
->In your patch, it's more like migration_granularity.
->Plus, I think we don't need migration_window_granularity anymore with
->your patch.
->
->> >>
->> >>                      if (f2fs_sb_has_blkzoned(sbi) &&
->> >> @@ -1752,8 +1781,6 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
->> >>                                      sbi->gc_thread->boost_zoned_gc_percent))
->> >>                              window_granularity *=
->> >>                                      BOOST_GC_MULTIPLE;
->> >> -
->> >> -                    end_segno = start_segno + window_granularity;
->> >>              }
->> >>
->> >>              if (end_segno > sec_end_segno)
->> >> @@ -1762,37 +1789,38 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
->> >>
->> >>      sanity_check_seg_type(sbi, get_seg_entry(sbi, segno)->type);
->> >>
->> >> -    /* readahead multi ssa blocks those have contiguous address */
->> >> -    if (__is_large_section(sbi))
->> >> +    for (segno = start_segno; segno < end_segno; segno++) {
->> >> +            if (!get_valid_blocks(sbi, segno, false))
->> >> +                    continue;
->> >> +
->> >> +            /* readahead multi ssa blocks those have contiguous address */
->> >>              f2fs_ra_meta_pages(sbi, GET_SUM_BLOCK(sbi, segno),
->> >> -                                    end_segno - segno, META_SSA, true);
->> >> +                            window_granularity, META_SSA, true);
->> >>
->> >> -    /* reference all summary page */
->> >> -    while (segno < end_segno) {
->> >> -            sum_page = f2fs_get_sum_page(sbi, segno++);
->> >> +            /* reference all summary page */
->> >> +            sum_page = f2fs_get_sum_page(sbi, segno);
->> >>              if (IS_ERR(sum_page)) {
->> >>                      int err = PTR_ERR(sum_page);
->> >> -
->> >> -                    end_segno = segno - 1;
->> >> -                    for (segno = start_segno; segno < end_segno; segno++) {
->> >> -                            sum_page = find_get_page(META_MAPPING(sbi),
->> >> -                                            GET_SUM_BLOCK(sbi, segno));
->> >> -                            f2fs_put_page(sum_page, 0);
->> >> -                            f2fs_put_page(sum_page, 0);
->> >> -                    }
->> >> +                    release_gc_page_entry(&gc_page_list, true);
->> >>                      return err;
->> >>              }
->> >> +            add_gc_page_entry(&gc_page_list, sum_page, segno);
->> >>              unlock_page(sum_page);
->> >> +            if (++gc_list_count >= window_granularity)
->> >> +                    break;
->> >>      }
->> >>
->> >>      blk_start_plug(&plug);
->> >>
->> >> -    for (segno = start_segno; segno < end_segno; segno++) {
->> >> +    list_for_each_entry(gpe, &gc_page_list, list) {
->> >>
->> >>              /* find segment summary of victim */
->> >> -            sum_page = find_get_page(META_MAPPING(sbi),
->> >> -                                    GET_SUM_BLOCK(sbi, segno));
->> >> -            f2fs_put_page(sum_page, 0);
->> >> +            sum_page = gpe->sum_page;
->> >> +            segno = gpe->segno;
->> >> +            if (!sum_page) {
->> >> +                    f2fs_err(sbi, "Failed to get summary page for segment %u", segno);
->> >> +                    goto skip;
->> >> +            }
->> >>
->> >>              if (get_valid_blocks(sbi, segno, false) == 0)
->> >>                      goto freed;
->> >> @@ -1835,18 +1863,20 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
->> >>                              get_valid_blocks(sbi, segno, false) == 0)
->> >>                      seg_freed++;
->> >>
->> >> -            if (__is_large_section(sbi))
->> >> -                    sbi->next_victim_seg[gc_type] =
->> >> -                            (segno + 1 < sec_end_segno) ?
->> >> -                                    segno + 1 : NULL_SEGNO;
->> >>   skip:
->> >>              f2fs_put_page(sum_page, 0);
->> >>      }
->> >>
->> >> +    if (__is_large_section(sbi) && !list_empty(&gc_page_list))
->> >> +            sbi->next_victim_seg[gc_type] =
->> >> +                    (segno + 1 < sec_end_segno) ?
->> >> +                            segno + 1 : NULL_SEGNO;
->> >> +
->> >>      if (submitted)
->> >>              f2fs_submit_merged_write(sbi, data_type);
->> >>
->> >>      blk_finish_plug(&plug);
->> >> +    release_gc_page_entry(&gc_page_list, false);
->> >>
->> >>      if (migrated)
->> >>              stat_inc_gc_sec_count(sbi, data_type, gc_type);
->> >> @@ -2008,6 +2038,18 @@ int f2fs_gc(struct f2fs_sb_info *sbi, struct f2fs_gc_control *gc_control)
->> >>      return ret;
->> >>   }
->> >>
->> >> +int __init f2fs_init_garbage_collection_summary_cache(void)
->> >> +{
->> >> +    gc_page_entry_slab = f2fs_kmem_cache_create("f2fs_gc_page_entry",
->> >> +                                    sizeof(struct gc_page_entry));
->> >> +    return gc_page_entry_slab ? 0 : -ENOMEM;
->> >> +}
->> >> +
->> >> +void f2fs_destroy_garbage_collection_summary_cache(void)
->> >> +{
->> >> +    kmem_cache_destroy(gc_page_entry_slab);
->> >> +}
->> >> +
->> >>   int __init f2fs_create_garbage_collection_cache(void)
->> >>   {
->> >>      victim_entry_slab = f2fs_kmem_cache_create("f2fs_victim_entry",
->> >> diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
->> >> index 5c1eaf55e127..9c8695efe394 100644
->> >> --- a/fs/f2fs/gc.h
->> >> +++ b/fs/f2fs/gc.h
->> >> @@ -82,6 +82,12 @@ struct victim_entry {
->> >>      struct list_head list;
->> >>   };
->> >>
->> >> +struct gc_page_entry {
->> >> +    unsigned int segno;
->> >> +    struct page *sum_page;
->> >> +    struct list_head list;
->> >> +};
->> >> +
->> >>   /*
->> >>    * inline functions
->> >>    */
->> >> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->> >> index f087b2b71c89..a3241730fe4f 100644
->> >> --- a/fs/f2fs/super.c
->> >> +++ b/fs/f2fs/super.c
->> >> @@ -5090,9 +5090,12 @@ static int __init init_f2fs_fs(void)
->> >>      err = f2fs_create_garbage_collection_cache();
->> >>      if (err)
->> >>              goto free_extent_cache;
->> >> -    err = f2fs_init_sysfs();
->> >> +    err = f2fs_init_garbage_collection_summary_cache();
->> >>      if (err)
->> >>              goto free_garbage_collection_cache;
->> >> +    err = f2fs_init_sysfs();
->> >> +    if (err)
->> >> +            goto free_garbage_collection_summary_cache;
->> >>      err = f2fs_init_shrinker();
->> >>      if (err)
->> >>              goto free_sysfs;
->> >> @@ -5141,6 +5144,8 @@ static int __init init_f2fs_fs(void)
->> >>      f2fs_exit_shrinker();
->> >>   free_sysfs:
->> >>      f2fs_exit_sysfs();
->> >> +free_garbage_collection_summary_cache:
->> >> +    f2fs_destroy_garbage_collection_summary_cache();
->> >>   free_garbage_collection_cache:
->> >>      f2fs_destroy_garbage_collection_cache();
->> >>   free_extent_cache:
->> >> @@ -5172,6 +5177,7 @@ static void __exit exit_f2fs_fs(void)
->> >>      f2fs_destroy_root_stats();
->> >>      f2fs_exit_shrinker();
->> >>      f2fs_exit_sysfs();
->> >> +    f2fs_destroy_garbage_collection_summary_cache();
->> >>      f2fs_destroy_garbage_collection_cache();
->> >>      f2fs_destroy_extent_cache();
->> >>      f2fs_destroy_recovery_cache();
->> >> --
->> >> 2.33.0
->> >>
->
->Do you have any numbers showing how much the performance is enhanced?
-Depending on the valid block count within a section, 
-in the worst-case scenario, it is assumed that only 
-the last 3 segments in the section are valid (SEGS_PER_SEC 512)
-#define DEF_GC_THREAD_MAX_SLEEP_TIME_ZONED	20
-#define DEF_MIGRATION_WINDOW_GRANULARITY_ZONED	3
-The time required to move a single section
-before : 
-170 * 20ms + migrate 3segments
-after : 
-migrate 3segments
-Thanks.
->
->Thanks.
+This is a continuation of an earlier series[1] split out to become more
+manageable. After discussions at LPC2024 with Dmitry, I've settled on
+using the DisplayPort altmode driver to signal HPD to the DP controller
+through the out of band API. This series patches up the ChromeOS EC
+driver enough to the point that Chromebooks that use EC driven entry can
+bind the DP altmode driver (CONFIG_TYPEC_DP_ALTMODE) and signal the HPD
+state to the drm_connector.
 
->
->> >>
->> >>
->> >> _______________________________________________
->> >> Linux-f2fs-devel mailing list
->> >> Linux-f2fs-devel@lists.sourceforge.net
+The first few patches make the DP altmode driver work on Trogdor and
+other EC mode entry based Chromebooks. The next couple patches add
+support to the cros-ec-typec binding to describe the DP graph
+connections between the DP controller and the DP altmode. I chose to put
+the graph into the altmode node, but I suspect it can just as easily be
+added to the usb-c-connector graph as another port or endpoint within
+the port@1 if we want to keep it close to the SuperSpeed endpoint. The
+final patches support creating a drm_bridge in the cros-ec-typec driver.
+They workaround a problem on Trogdor where HPD doesn't signal properly
+so we have to capture the HPD signal from the upstream drm_bridge and
+inject it into the USB type-c framework. We will pretty much only use
+this bridge on Trogdor where we're steering the DP lanes from the EC.
+
+With this series the USB type-c sysfs entries reflect the state of the
+port when the DP altmode driver binds. Trying to control the mode from
+the sysfs entries doesn't really work because the EC is in control and
+most writes are blocked if they try to exit DP altmode for example.
+
+There's still one part left though; finding the drm_connector from the
+DP altmode driver. The way that the binding is written for the Corsola
+case where a four lane DP bridge is hard-wired to two USB-C connectors
+requires more work, but we're pretty much setup to tackle the problem
+even on Trogdor with this proposed binding. I'm imagining in the Corsola
+scenario the DP chip has a binding like this:
+
+  it6505 {
+    ports {
+      port@0 { }; // input port from MIPI DSI
+      port@1 {  // output port for DP
+        dp_ml0_1: endpoint@0 { // output port for DP lanes ML0/1
+          data-lanes = <0 1>;
+          remote-endpoint = <&usbc0_dp>;
+        };
+        dp_ml2_3: endpoint@1 { // output port for DP lanes ML2/3
+          data-lanes = <2 3>;
+          remote-endpoint = <&usbc1_dp>;
+        };
+    };
+  };
+
+  cros-ec {
+    typec {
+      connector@0 {
+        altmodes {
+          displayport {
+            port {
+              usbc0_dp: endpoint {
+                remote-endpoint = <&dp_ml0_1>;
+              };
+            };
+          };
+        };
+      };
+      connector@1 {
+        altmodes {
+          displayport {
+            port {
+              usbc1_dp: endpoint {
+                remote-endpoint = <&dp_ml2_3>;
+              };
+            };
+          };
+        };
+      };
+    };
+  };
+
+We'll need to implement a drm_bridge in the connector's altmode node
+that can be connected to the dp_ml0_1 or dp_ml2_3 endpoint. That final
+drm_bridge that lives in the DP altmode driver needs to be implemented
+on top of this series[2] that supports hotpluggable DRM bridges. If we
+do that we can hotplug the it6505 bridge and the usb-c-connector bridge
+when DP altmode is entered on the port. We'll also be able to easily
+associate the drm_connector with the usb-c connector because the bridge
+will be implemented there. Once we do that it should be possible to get
+rid of the out of band HPD API and signal HPD state from the drm_bridge
+created in the DP altmode driver while hotplugging the bridge chain upon
+DP altmode entry.
+
+[1] https://lore.kernel.org/r/20240901040658.157425-1-swboyd@chromium.org
+[2] https://lore.kernel.org/r/20250206-hotplug-drm-bridge-v6-0-9d6f2c9c3058@bootlin.com
+
+Cc: Benson Leung <bleung@chromium.org>
+Cc: Tzung-Bi Shih <tzungbi@kernel.org>
+Cc: <chrome-platform@lists.linux.dev>
+Cc: Pin-yen Lin <treapking@chromium.org>
+Cc: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+Cc: Łukasz Bartosik <ukaszb@chromium.org>
+Cc: Jameson Thies <jthies@google.com>
+Cc: Andrei Kuchynski <akuchynski@chromium.org>
+
+Stephen Boyd (7):
+  platform/chrome: cros_ec_typec: No pending status means attention
+  platform/chrome: cros_ec_typec: Allow DP configure to work
+  platform/chrome: cros_ec_typec: Support EC mode entry
+  dt-bindings: Move google,cros-ec-typec binding to usb
+  dt-bindings: usb: google,cros-ec-typec: Add ports for DP altmode
+  platform/chrome: cros_ec_typec: Add support for DP altmode via
+    drm_bridge
+  platform/chrome: cros_ec_typec: Support DP muxing
+
+ .../bindings/chrome/google,cros-ec-typec.yaml |  66 -----
+ .../bindings/connector/usb-connector.yaml     |   6 +
+ .../bindings/mfd/google,cros-ec.yaml          |   7 +-
+ .../bindings/usb/google,cros-ec-typec.yaml    | 231 ++++++++++++++++++
+ drivers/platform/chrome/Kconfig               |   1 +
+ drivers/platform/chrome/cros_ec_typec.c       | 167 ++++++++++++-
+ drivers/platform/chrome/cros_ec_typec.h       |  21 ++
+ drivers/platform/chrome/cros_typec_altmode.c  | 121 +++++----
+ 8 files changed, 508 insertions(+), 112 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yaml
+ create mode 100644 Documentation/devicetree/bindings/usb/google,cros-ec-typec.yaml
+
+
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+-- 
+https://chromeos.dev
+
 
