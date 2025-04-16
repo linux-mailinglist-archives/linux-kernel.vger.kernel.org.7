@@ -1,304 +1,389 @@
-Return-Path: <linux-kernel+bounces-607129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD62EA8B844
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:06:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 34B8CA8B84C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:06:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5EEB445984
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 12:06:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA724444524
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 12:06:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F235C24C069;
-	Wed, 16 Apr 2025 12:04:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16BED2472B4;
+	Wed, 16 Apr 2025 12:05:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F3j/TddK"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pafbQmE0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17EB524BC07;
-	Wed, 16 Apr 2025 12:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1848A23F422;
+	Wed, 16 Apr 2025 12:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744805080; cv=none; b=GQHVUAjVxVS5nT2LdLuJK3H+Rev40+kDBylsrmQSmR2QUYw+GRRmpHANEKOE2QHixWHOyWZToLi4ShHfxE038LVqTxp25kNZUnFtVQPTJYK/EsBKof6iy3ieFlJS/lVCFP8AbsTMNubPydIbeYtyR6NWMk4Utybfb2xvfMd9dvg=
+	t=1744805156; cv=none; b=SGtiRMao03qGiP1LWC5YE+pjsyj3K2ykx3vGiQ0JGUA35xyXo+P61PMlE81KzMe67FHESkqTQj1hjIO6kwSG/1TIWq6FNVys1xR51fQdA8qi6eMvWHyjSKLCHqySqq3e6Cmti4NJ9d8OJG5/ch6jtzKPeYigvB/iW/xLDcJeYm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744805080; c=relaxed/simple;
-	bh=dt2pl/21XRjfjBSr9SoElSDtuTvPIB2ynsRrkiCn1mM=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=CVd5SthaZSUyz7cx/oSCc9AAdKILT4nTDnReaMe5JuDE4XOvo+d614qmjbIM1+cyFXWc3rjLZz6pmkYIbUg1iSJwKessRJGXbXyCC7WjqXLrXt23xcFok1z/JXOJcwss0CmrGgYwRpRPe8pKbHIpQynHWtfFl+lKq8BSamymqrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F3j/TddK; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744805078; x=1776341078;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=dt2pl/21XRjfjBSr9SoElSDtuTvPIB2ynsRrkiCn1mM=;
-  b=F3j/TddKj7z3fRH6vzjuJL8Hrtz4PkiVfM3CN7T5sZUFTm9/Yl52jS2W
-   1OdKO71tDZkmxI5+CkD8FXfE1lPdMgtC/JDDAuk0Cr6q3pxxTOmOVs/so
-   usCQ7Ha0Ben+jO0CS3Qc1PkEji6kvL1lThCdSq9fJggQ2y8UjenPu/oIi
-   0smqQEAdEn0uBtB/PNPBXRAvlj441Ww274MHwgOTUz3KDKq7WiDSSIel/
-   SlCvg37y6UTJm+QeSWySAmqOL6AFBHAPqheZLXKGEJksOsIyQkDWnNHtu
-   oTKfONB8gHSjHy+yNHkNDxdVzKwLnDpcyNlsrFExcEfLffgVAhiwaZLA/
-   A==;
-X-CSE-ConnectionGUID: hBjtIx6+TNKJvrV5wVj24w==
-X-CSE-MsgGUID: p6XsZkwhSOyXOdjirAop8g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="50169671"
-X-IronPort-AV: E=Sophos;i="6.15,216,1739865600"; 
-   d="scan'208";a="50169671"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 05:04:37 -0700
-X-CSE-ConnectionGUID: DU29bHeIQLedJe1U/CMbgA==
-X-CSE-MsgGUID: ZHkiVqJCROGHHUS6kGoLAA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,216,1739865600"; 
-   d="scan'208";a="153654670"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.243])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 05:04:31 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 16 Apr 2025 15:04:27 +0300 (EEST)
-To: Yunhui Cui <cuiyunhui@bytedance.com>
-cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    Jiri Slaby <jirislaby@kernel.org>, john.ogness@linutronix.de, 
-    pmladek@suse.com, arnd@arndb.de, namcao@linutronix.de, 
-    benjamin.larsson@genexis.eu, schnelle@linux.ibm.com, 
-    heikki.krogerus@linux.intel.com, markus.mayer@linaro.org, 
-    tim.kryger@linaro.org, matt.porter@linaro.org, 
-    LKML <linux-kernel@vger.kernel.org>, 
-    linux-serial <linux-serial@vger.kernel.org>
-Subject: Re: [PATCH v3] serial: 8250: fix panic due to PSLVERR
-In-Reply-To: <079c8fe6-9ce4-fa59-4b44-93e27dd376d6@linux.intel.com>
-Message-ID: <6f4ed9f5-a6c7-e690-98e2-2d18ed20cc22@linux.intel.com>
-References: <20250414031450.42237-1-cuiyunhui@bytedance.com> <079c8fe6-9ce4-fa59-4b44-93e27dd376d6@linux.intel.com>
+	s=arc-20240116; t=1744805156; c=relaxed/simple;
+	bh=bnMHt1rL/O6Hg4QOcjQu/TboqXC7jvmxdMfDriXSJrI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lCeMZwwd+GLttUabuzu55M5OMhKQ8maJDDqnVDDwn4OZh2vCC7Wxv5I34pVcxYrav/nuJ9ktXPb1rTmkrEuTCQ9RuKcSygjtS0Pd1EJb3WY7rtBzJ3qY0G4LX/CbnQDDcJCJANKvij4Et6GF2uLAwk919IXigl+UfuOC/TWrlzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pafbQmE0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D45FAC4CEE2;
+	Wed, 16 Apr 2025 12:05:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744805155;
+	bh=bnMHt1rL/O6Hg4QOcjQu/TboqXC7jvmxdMfDriXSJrI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pafbQmE0kdKd2epxSFbX+aHj66P+4Irm/VJM0YBN2/Us1PDyFps2Hwx05AkWO0eIb
+	 T/LJTHBvb2Ixpd9fE4uspC+NmUYvjrZ+PB47zKk/Y7DyJuNqjGPouPQYbPwVAAvoEl
+	 89wXmy7bm/3ey0J/fgTpt9X7iJJMSn8V21uVhlm8HuoAlUyKU3ZdqIyLPyO8312AYb
+	 CJQgk9FNYOWRLqK/ClgrcpjSnGg/gHRLtRrcR7O3kN1q8PpZibBq+7TlgZjHNxXt6u
+	 BbQv9wBaEhz5nM85jvH/tVhCF7wkp8oCkuE39Nx0LAyyTPsOFgBGD0wuy2+b+kXBnv
+	 VSus8NV6ceJpw==
+Date: Wed, 16 Apr 2025 14:05:44 +0200
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: Shivendra Pratap <quic_spratap@quicinc.com>
+Cc: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+	Elliot Berman <quic_eberman@quicinc.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, cros-qcom-dts-watchers@chromium.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
+	Melody Olvera <quic_molvera@quicinc.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Stephen Boyd <swboyd@chromium.org>, linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, Elliot Berman <elliotb317@gmail.com>,
+	Elliot Berman <elliot.berman@oss.qualcomm.com>
+Subject: Re: [PATCH v9 2/5] firmware: psci: Read and use vendor reset types
+Message-ID: <Z/+dGLAGXpf9bX7G@lpieralisi>
+References: <20250303-arm-psci-system_reset2-vendor-reboots-v9-0-b2cf4a20feda@oss.qualcomm.com>
+ <20250303-arm-psci-system_reset2-vendor-reboots-v9-2-b2cf4a20feda@oss.qualcomm.com>
+ <Z9QQw6BcE7IXzu+r@lpieralisi>
+ <Z+K3uNjTNbq3pUis@hu-mojha-hyd.qualcomm.com>
+ <Z/U95G+2GsoLD6Mi@lpieralisi>
+ <973eaca7-0632-53d8-f892-fe4d859ebbac@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1067653622-1744805067=:991"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <973eaca7-0632-53d8-f892-fe4d859ebbac@quicinc.com>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Wed, Apr 09, 2025 at 11:48:24PM +0530, Shivendra Pratap wrote:
+> 
+> 
+> On 4/8/2025 8:46 PM, Lorenzo Pieralisi wrote:
+> > On Tue, Mar 25, 2025 at 07:33:36PM +0530, Mukesh Ojha wrote:
+> >> On Fri, Mar 14, 2025 at 12:19:31PM +0100, Lorenzo Pieralisi wrote:
+> >>> On Mon, Mar 03, 2025 at 01:08:31PM -0800, Elliot Berman wrote:
+> >>>> From: Elliot Berman <elliot.berman@oss.qualcomm.com>
+> >>>>
+> >>>> SoC vendors have different types of resets and are controlled through
+> >>>> various registers. For instance, Qualcomm chipsets can reboot to a
+> >>>> "download mode" that allows a RAM dump to be collected. Another example
+> >>>> is they also support writing a cookie that can be read by bootloader
+> >>>> during next boot. PSCI offers a mechanism, SYSTEM_RESET2, for these
+> >>>> vendor reset types to be implemented without requiring drivers for every
+> >>>> register/cookie.
+> >>>>
+> >>>> Add support in PSCI to statically map reboot mode commands from
+> >>>> userspace to a vendor reset and cookie value using the device tree.
+> >>>
+> >>> I have managed to discuss a little bit this patchset over the last
+> >>> few days and I think we have defined a plan going forward.
+> >>>
+> >>> A point that was raised is:
+> >>>
+> >>> https://man7.org/linux/man-pages/man2/reboot.2.html
+> >>>
+> >>> LINUX_REBOOT_CMD_RESTART2 *arg command, what is it supposed to
+> >>> represent ?
+> >>>
+> >>> Is it the mode the system should reboot into OR it is the
+> >>> actual command to be issued (which is what this patchset
+> >>> implements) ?
+> >>>
+> >>> LINUX_REBOOT_CMD_RESTART "..a default restart..."
+> >>>
+> >>> It is unclear what "default" means. We wonder whether the
+> >>> reboot_mode variable was introduced to _define_ that "default".
+> >>>
+> >>> So, in short, my aim is trying to decouple reboot_mode from the
+> >>> LINUX_REBOOT_CMD_RESTART2 *arg command.
+> >>>
+> >>> I believe that adding a sysfs interface to reboot-mode driver
+> >>> infrastructure would be useful, so that the commands would
+> >>> be exposed to userspace and userspace can set the *arg command
+> >>> specifically to issue a given reset/mode.
+> >>>
+> >>> I wonder why this is not already in place for eg syscon-reboot-mode
+> >>> resets, how does user space issue a command in those systems if the
+> >>> available commands aren't exposed to userspace ?
+> >>>
+> >>> Is there a kernel entity exposing those "modes" to userspace, somehow ?
+> >>>
+> >>>> A separate initcall is needed to parse the devicetree, instead of using
+> >>>> psci_dt_init because mm isn't sufficiently set up to allocate memory.
+> >>>>
+> >>>> Reboot mode framework is close but doesn't quite fit with the
+> >>>> design and requirements for PSCI SYSTEM_RESET2. Some of these issues can
+> >>>> be solved but doesn't seem reasonable in sum:
+> >>>>  1. reboot mode registers against the reboot_notifier_list, which is too
+> >>>>     early to call SYSTEM_RESET2. PSCI would need to remember the reset
+> >>>>     type from the reboot-mode framework callback and use it
+> >>>>     psci_sys_reset.
+> >>>>  2. reboot mode assumes only one cookie/parameter is described in the
+> >>>>     device tree. SYSTEM_RESET2 uses 2: one for the type and one for
+> >>>>     cookie.
+> >>>
+> >>> This can be changed and I think it should, so that the reboot modes
+> >>> are exposed to user space and PSCI can use that.
+> >>>
+> >> In the case of a regular reboot or panic, the reboot/panic notifiers run
+> >> first, followed by the restart notifiers. The PSCI reset/reset2 should
+> >> be the last call from Linux, and ideally, this call should not fail.
+> >>
+> >> Reboot mode notifiers => restart notifiers or Panic notifiers => restart
+> >> notifiers
+> >>
+> >> So, if I understand correctly, you mean that we can change the reboot
+> >> mode framework to expose the arguments available to user space. We can
+> >> extend it to accept magic and cookies, save them in the reboot
+> >> framework, and retrieve them via a call from PSCI during a regular
+> >> reboot or panic based on the current arguments. Is this leading towards
+> >> writing an ARM-specific PSCI-reboot-mode driver, which in its reboot
+> >> notifier callback saves the magic and cookies, and these magic and
+> >> cookies will be used during psci_sys_reset2()? Or is there something
+> >> wrong with my understanding?
+> > 
+> > No, you got it right (apologies for the delay in replying) - if the
+> > case for making reboot mode available to user space is accepted.
+> > 
+> 
+> Agree that the available modes should be exposed to usespace via sysfs interface
+> and we should implement it. Also #1 and #2 can be handled via some
+> changes in the design as mentioned in above discussion.
+> 
+> I have one doubt though when we implement this via reboot-mode framework.
+> The current patch implements PSCI ARM PSCI SYSTEM RESET2 vendor reset types.
+> psci driver is initialized very early at boot but potential ARM psci reboot-mode
+> driver will not probe at that stage and the ARM PSCI SYSTEM RESET2 vendor reset
+> types functionality will not be available in psci reset path until the reboot-mode
+> driver probes. Will this cause any limitation on usage of ARM's PSCI vendor-reset
+> types for early device resets?
+> 
+> One use-case may be an early device crash or a early reset where a vendor 
+> wants to use PSCI SYSTEM RESET2 vendor reset type to a reset the device to a 
+> specific state but may not be able to use this driver.
+> (eg: a kernel panic at early boot where a vendor wants to reset device 
+> to a specific state using vendor reset. Currently panic passes a NULL
+> (*arg command) while device reset but it may be explored for vendor specific
+> reset).
 
---8323328-1067653622-1744805067=:991
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+As you said, that would not be a PSCI only issue - *if* we wanted to
+plug in this use case we should find a way to do it at reboot mode
+driver level.
 
-On Mon, 14 Apr 2025, Ilpo J=E4rvinen wrote:
+As a matter of fact, this is not a mainline issue AFAICS.
 
-> On Mon, 14 Apr 2025, Yunhui Cui wrote:
->=20
-> > When the PSLVERR_RESP_EN parameter is set to 1, the device generates
-> > an error response if an attempt is made to read an empty RBR (Receive
-> > Buffer Register) while the FIFO is enabled.
-> >=20
-> > In serial8250_do_startup(), calling serial_port_out(port, UART_LCR,
-> > UART_LCR_WLEN8) triggers dw8250_check_lcr(), which invokes
-> > dw8250_force_idle() and serial8250_clear_and_reinit_fifos(). The latter
-> > function enables the FIFO via serial_out(p, UART_FCR, p->fcr).
-> > Execution proceeds to the dont_test_tx_en label:
-> > ...
-> > serial_port_in(port, UART_RX);
-> > This satisfies the PSLVERR trigger condition.
-> >=20
-> > Because another CPU(e.g., using printk()) is accessing the UART (UART
-> > is busy), the current CPU fails the check (value & ~UART_LCR_SPAR) =3D=
-=3D
-> > (lcr & ~UART_LCR_SPAR), causing it to enter dw8250_force_idle().
-> >=20
-> > To fix this, all calls to serial_out(UART_LCR) and serial_in(UART_RX)
-> > should be executed under port->lock. Additionally, checking the readine=
-ss
-> > via UART_LSR should also be done under port->lock.
-> >=20
-> > Panic backtrace:
-> > [    0.442336] Oops - unknown exception [#1]
-> > [    0.442343] epc : dw8250_serial_in32+0x1e/0x4a
-> > [    0.442351]  ra : serial8250_do_startup+0x2c8/0x88e
-> > ...
-> > [    0.442416] console_on_rootfs+0x26/0x70
-> >=20
-> > Fixes: c49436b657d0 ("serial: 8250_dw: Improve unwritable LCR workaroun=
-d")
-> > Link: https://lore.kernel.org/all/84cydt5peu.fsf@jogness.linutronix.de/=
-T/
-> > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
->=20
-> As Andy mentioned, this change looks it would benefit from splitting to=
-=20
-> multiple parts.
->=20
-> However, this change brings back some memories from a few years back.
-> Back then, there was a reporter who had issues issues related to=20
-> dw8250_force_idle() or writing some of the registers (IIRC). I ended up=
-=20
-> looking into finding a better solution to the write-while-BUSY problem=20
-> which entirely replaced dw8250_force_idle() that is quite hacky and seems=
-=20
-> unreliable on fundamendal level.
->=20
-> Sadly, once I had posted a patch for testing, the reporter went dead=20
-> silent so the patch was left rotting as I had no time to try to reproduce=
-=2E
->=20
-> Perhaps the patch I created back then would be useful for addressing this=
-=20
-> problem you're facing (the patch is attached). I've rebased the patch on=
-=20
-> top of the tty-next now (but I did no testing beyond compiling). There ar=
-e=20
-> a few further thoughts / missing bits mentioned in the comments within th=
-e=20
-> patch itself (I did not try to updated them now, so the comments may have=
-=20
-> rotten too).
+Even if we did not design this as a reboot mode driver there would be a
+time window where you would not be able to use vendor resets on panic.
 
-After some further thinking. I realized you're interested in the opposite=
-=20
-case (empty rx), whereas my patch focused on addressing (rx getting=20
-refilled constantly) so it doesn't seem that useful for your case. The=20
-patch shows though the direction I'd like to head with idle forcing=20
-approach.
+I don't see it as a major roadblock at the moment.
 
---
- i.
+Thanks,
+Lorenzo
 
-> > ---
-> >  drivers/tty/serial/8250/8250_dw.c   |  8 +++++
-> >  drivers/tty/serial/8250/8250_port.c | 46 ++++++++++++++++++-----------
-> >  2 files changed, 36 insertions(+), 18 deletions(-)
-> >=20
-> > diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/825=
-0/8250_dw.c
-> > index af24ec25d976..e97200ff30e3 100644
-> > --- a/drivers/tty/serial/8250/8250_dw.c
-> > +++ b/drivers/tty/serial/8250/8250_dw.c
-> > @@ -13,6 +13,7 @@
-> >  #include <linux/delay.h>
-> >  #include <linux/device.h>
-> >  #include <linux/io.h>
-> > +#include <linux/lockdep.h>
-> >  #include <linux/mod_devicetable.h>
-> >  #include <linux/module.h>
-> >  #include <linux/notifier.h>
-> > @@ -112,6 +113,13 @@ static void dw8250_force_idle(struct uart_port *p)
-> >  =09struct uart_8250_port *up =3D up_to_u8250p(p);
-> >  =09unsigned int lsr;
-> > =20
-> > +=09/*
-> > +=09 * Serial_in(p, UART_RX) should be under port->lock, but we can't a=
-dd
-> > +=09 * it to avoid AA deadlock as we're unsure if serial_out*(...UART_L=
-CR)
-> > +=09 * is under port->lock.
-> > +=09 */
-> > +=09lockdep_assert_held_once(&p->lock);
-> > +
-> >  =09serial8250_clear_and_reinit_fifos(up);
-> > =20
-> >  =09/*
-> > diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8=
-250/8250_port.c
-> > index 3f256e96c722..21bbd18195f5 100644
-> > --- a/drivers/tty/serial/8250/8250_port.c
-> > +++ b/drivers/tty/serial/8250/8250_port.c
-> > @@ -1328,6 +1328,7 @@ static void autoconfig_irq(struct uart_8250_port =
-*up)
-> >  =09unsigned int ICP =3D 0;
-> >  =09unsigned long irqs;
-> >  =09int irq;
-> > +=09u16 lsr;
-> > =20
-> >  =09if (port->flags & UPF_FOURPORT) {
-> >  =09=09ICP =3D (port->iobase & 0xfe0) | 0x1f;
-> > @@ -1357,9 +1358,10 @@ static void autoconfig_irq(struct uart_8250_port=
- *up)
-> >  =09/* Synchronize UART_IER access against the console. */
-> >  =09uart_port_lock_irq(port);
-> >  =09serial_out(up, UART_IER, UART_IER_ALL_INTR);
-> > +=09lsr =3D serial_in(up, UART_LSR);
-> > +=09if (lsr & UART_LSR_DR)
-> > +=09=09serial_port_in(port, UART_RX);
-> >  =09uart_port_unlock_irq(port);
-> > -=09serial_in(up, UART_LSR);
-> > -=09serial_in(up, UART_RX);
-> >  =09serial_in(up, UART_IIR);
-> >  =09serial_in(up, UART_MSR);
-> >  =09serial_out(up, UART_TX, 0xFF);
-> > @@ -2137,19 +2139,16 @@ static void wait_for_xmitr(struct uart_8250_por=
-t *up, int bits)
-> >  static int serial8250_get_poll_char(struct uart_port *port)
-> >  {
-> >  =09struct uart_8250_port *up =3D up_to_u8250p(port);
-> > -=09int status;
-> > +=09int status =3D NO_POLL_CHAR;
-> >  =09u16 lsr;
-> > =20
-> >  =09serial8250_rpm_get(up);
-> > =20
-> > +=09uart_port_lock_irqsave(port, &flags);
-> >  =09lsr =3D serial_port_in(port, UART_LSR);
-> > -
-> > -=09if (!(lsr & UART_LSR_DR)) {
-> > -=09=09status =3D NO_POLL_CHAR;
-> > -=09=09goto out;
-> > -=09}
-> > -
-> > -=09status =3D serial_port_in(port, UART_RX);
-> > +=09if ((lsr & UART_LSR_DR))
-> > +=09=09status =3D serial_port_in(port, UART_RX);
-> > +=09uart_port_unlock_irqrestore(port, flags);
-> >  out:
-> >  =09serial8250_rpm_put(up);
-> >  =09return status;
-> > @@ -2264,13 +2263,16 @@ int serial8250_do_startup(struct uart_port *por=
-t)
-> >  =09 * Clear the FIFO buffers and disable them.
-> >  =09 * (they will be reenabled in set_termios())
-> >  =09 */
-> > +=09uart_port_lock_irqsave(port, &flags);
-> >  =09serial8250_clear_fifos(up);
-> > =20
-> >  =09/*
-> >  =09 * Clear the interrupt registers.
-> >  =09 */
-> > -=09serial_port_in(port, UART_LSR);
-> > -=09serial_port_in(port, UART_RX);
-> > +=09lsr =3D serial_port_in(port, UART_LSR);
-> > +=09if (lsr & UART_LSR_DR)
-> > +=09=09serial_port_in(port, UART_RX);
-> > +=09uart_port_unlock_irqrestore(port, flags);
-> >  =09serial_port_in(port, UART_IIR);
-> >  =09serial_port_in(port, UART_MSR);
-> > =20
-> > @@ -2380,9 +2382,10 @@ int serial8250_do_startup(struct uart_port *port=
-)
-> >  =09/*
-> >  =09 * Now, initialize the UART
-> >  =09 */
-> > -=09serial_port_out(port, UART_LCR, UART_LCR_WLEN8);
-> > =20
-> >  =09uart_port_lock_irqsave(port, &flags);
-> > +=09serial_port_out(port, UART_LCR, UART_LCR_WLEN8);
-> > +
-> >  =09if (up->port.flags & UPF_FOURPORT) {
-> >  =09=09if (!up->port.irq)
-> >  =09=09=09up->port.mctrl |=3D TIOCM_OUT1;
-> > @@ -2428,15 +2431,16 @@ int serial8250_do_startup(struct uart_port *por=
-t)
-> >  =09}
-> > =20
-> >  dont_test_tx_en:
->=20
-> I don't see this in the tty-next branch?
->=20
-> ~/linux/tty-next$ git grep dont_test_tx_en | cat -
-> ~/linux/tty-next$=20
->=20
->=20
---8323328-1067653622-1744805067=:991--
+> 
+> - Shivendra
+> 
+> >> P.S. We appreciate Elliot for his work and follow-up on this while being
+> >> employed at Qualcomm.
+> > 
+> > Yes I sincerely do for his patience, thank you.
+> > 
+> > Lorenzo
+> > 
+> >>>>  3. psci cpuidle driver already registers a driver against the
+> >>>>     arm,psci-1.0 compatible. Refactoring would be needed to have both a
+> >>>>     cpuidle and reboot-mode driver.
+> >>>>
+> >>>> Signed-off-by: Elliot Berman <elliot.berman@oss.qualcomm.com>
+> >>>> ---
+> >>>>  drivers/firmware/psci/psci.c | 105 +++++++++++++++++++++++++++++++++++++++++++
+> >>>>  1 file changed, 105 insertions(+)
+> >>>>
+> >>>> diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
+> >>>> index a1ebbe9b73b136218e9d9f9b8daa7756b3ab2fbe..6f8c47deaec0225f26704e1f3bcad52603127a85 100644
+> >>>> --- a/drivers/firmware/psci/psci.c
+> >>>> +++ b/drivers/firmware/psci/psci.c
+> >>>> @@ -80,6 +80,14 @@ static u32 psci_cpu_suspend_feature;
+> >>>>  static bool psci_system_reset2_supported;
+> >>>>  static bool psci_system_off2_hibernate_supported;
+> >>>>  
+> >>>> +struct psci_reset_param {
+> >>>> +	const char *mode;
+> >>>> +	u32 reset_type;
+> >>>> +	u32 cookie;
+> >>>> +};
+> >>>> +static struct psci_reset_param *psci_reset_params __ro_after_init;
+> >>>> +static size_t num_psci_reset_params __ro_after_init;
+> >>>> +
+> >>>>  static inline bool psci_has_ext_power_state(void)
+> >>>>  {
+> >>>>  	return psci_cpu_suspend_feature &
+> >>>> @@ -306,9 +314,39 @@ static int get_set_conduit_method(const struct device_node *np)
+> >>>>  	return 0;
+> >>>>  }
+> >>>>  
+> >>>> +static int psci_vendor_system_reset2(const char *cmd)
+> >>>> +{
+> >>>> +	unsigned long ret;
+> >>>> +	size_t i;
+> >>>> +
+> >>>> +	for (i = 0; i < num_psci_reset_params; i++) {
+> >>>> +		if (!strcmp(psci_reset_params[i].mode, cmd)) {
+> >>>> +			ret = invoke_psci_fn(PSCI_FN_NATIVE(1_1, SYSTEM_RESET2),
+> >>>> +					     psci_reset_params[i].reset_type,
+> >>>> +					     psci_reset_params[i].cookie, 0);
+> >>>> +			/*
+> >>>> +			 * if vendor reset fails, log it and fall back to
+> >>>> +			 * architecture reset types
+> >>>
+> >>> That's not what the code does.
+> >>>
+> >> Ack.
+> >>
+> >> -Mukesh
+> >>
+> >>>> +			 */
+> >>>> +			pr_err("failed to perform reset \"%s\": %ld\n", cmd,
+> >>>> +			       (long)ret);
+> >>>> +			return 0;
+> >>>> +		}
+> >>>> +	}
+> >>>> +
+> >>>> +	return -ENOENT;
+> >>>> +}
+> >>>> +
+> >>>>  static int psci_sys_reset(struct notifier_block *nb, unsigned long action,
+> >>>>  			  void *data)
+> >>>>  {
+> >>>> +	/*
+> >>>> +	 * try to do the vendor system_reset2
+> >>>> +	 * If there wasn't a matching command, fall back to architectural resets
+> >>>> +	 */
+> >>>> +	if (data && !psci_vendor_system_reset2(data))
+> >>>> +		return NOTIFY_DONE;
+> >>>> +
+> >>>>  	if ((reboot_mode == REBOOT_WARM || reboot_mode == REBOOT_SOFT) &&
+> >>>>  	    psci_system_reset2_supported) {
+> >>>>  		/*
+> >>>> @@ -795,6 +833,73 @@ static const struct of_device_id psci_of_match[] __initconst = {
+> >>>>  	{},
+> >>>>  };
+> >>>>  
+> >>>> +#define REBOOT_PREFIX "mode-"
+> >>>> +
+> >>>> +static int __init psci_init_system_reset2_modes(void)
+> >>>> +{
+> >>>> +	const size_t len = strlen(REBOOT_PREFIX);
+> >>>> +	struct psci_reset_param *param;
+> >>>> +	struct device_node *psci_np __free(device_node) = NULL;
+> >>>> +	struct device_node *np __free(device_node) = NULL;
+> >>>> +	struct property *prop;
+> >>>> +	size_t count = 0;
+> >>>> +	u32 magic[2];
+> >>>> +	int num;
+> >>>> +
+> >>>> +	if (!psci_system_reset2_supported)
+> >>>> +		return 0;
+> >>>> +
+> >>>> +	psci_np = of_find_matching_node(NULL, psci_of_match);
+> >>>> +	if (!psci_np)
+> >>>> +		return 0;
+> >>>> +
+> >>>> +	np = of_find_node_by_name(psci_np, "reset-types");
+> >>>> +	if (!np)
+> >>>> +		return 0;
+> >>>
+> >>> Related to my initial question above. If LINUX_REBOOT_CMD_RESTART2 *arg command,
+> >>> is the actual reset to be issued, should we add a default mode "cold"
+> >>> and, if SYSTEM_RESET2 is supported, a "warm" reset mode too ?
+> >>>
+> >>> It all boils down to what *arg represents - adding "cold" and "warm"
+> >>> modes would remove the dependency on reboot_mode for resets issued
+> >>> through LINUX_REBOOT_CMD_RESTART2, the question is whether this
+> >>> is the correct thing to do.
+> >>>
+> >>> Comments very welcome.
+> >>>
+> >>> Thanks,
+> >>> Lorenzo
+> >>>
+> >>>> +
+> >>>> +	for_each_property_of_node(np, prop) {
+> >>>> +		if (strncmp(prop->name, REBOOT_PREFIX, len))
+> >>>> +			continue;
+> >>>> +		num = of_property_count_u32_elems(np, prop->name);
+> >>>> +		if (num != 1 && num != 2)
+> >>>> +			continue;
+> >>>> +
+> >>>> +		count++;
+> >>>> +	}
+> >>>> +
+> >>>> +	param = psci_reset_params =
+> >>>> +		kcalloc(count, sizeof(*psci_reset_params), GFP_KERNEL);
+> >>>> +	if (!psci_reset_params)
+> >>>> +		return -ENOMEM;
+> >>>> +
+> >>>> +	for_each_property_of_node(np, prop) {
+> >>>> +		if (strncmp(prop->name, REBOOT_PREFIX, len))
+> >>>> +			continue;
+> >>>> +
+> >>>> +		num = of_property_read_variable_u32_array(np, prop->name, magic,
+> >>>> +							  1, ARRAY_SIZE(magic));
+> >>>> +		if (num < 0) {
+> >>>> +			pr_warn("Failed to parse vendor reboot mode %s\n",
+> >>>> +				param->mode);
+> >>>> +			kfree_const(param->mode);
+> >>>> +			continue;
+> >>>> +		}
+> >>>> +
+> >>>> +		param->mode = kstrdup_const(prop->name + len, GFP_KERNEL);
+> >>>> +		if (!param->mode)
+> >>>> +			continue;
+> >>>> +
+> >>>> +		/* Force reset type to be in vendor space */
+> >>>> +		param->reset_type = PSCI_1_1_RESET_TYPE_VENDOR_START | magic[0];
+> >>>> +		param->cookie = num > 1 ? magic[1] : 0;
+> >>>> +		param++;
+> >>>> +		num_psci_reset_params++;
+> >>>> +	}
+> >>>> +
+> >>>> +	return 0;
+> >>>> +}
+> >>>> +arch_initcall(psci_init_system_reset2_modes);
+> >>>> +
+> >>>>  int __init psci_dt_init(void)
+> >>>>  {
+> >>>>  	struct device_node *np;
+> >>>>
+> >>>> -- 
+> >>>> 2.34.1
+> >>>>
 
