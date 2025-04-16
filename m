@@ -1,178 +1,140 @@
-Return-Path: <linux-kernel+bounces-607446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 251B7A90687
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:32:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC206A9069D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:37:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AB9E8E3746
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:25:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49D543ADAC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:37:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 956511B4140;
-	Wed, 16 Apr 2025 14:25:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D2831C36;
+	Wed, 16 Apr 2025 14:37:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BpubTfbn"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b="crrQzbY9"
+Received: from mail.fris.de (mail.fris.de [116.203.77.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3CCC1B87E9
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 14:25:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7531AB50D;
+	Wed, 16 Apr 2025 14:37:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.77.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744813511; cv=none; b=DojatJA5w2584dXc26+yMJNjb7tOIvJyc9RRifRjs8wkDflpkpkaG02I1jhVNx6/jEUItCGKpGs7H5iYRqmdRtwzyWIHkBs+8A/QS0P5ay+2E2nss1yU3oyNl6jm4M6IO4e4y4fkmG2qhH1LK3Ds54e75D5I7ZaPl+fwyJt9XGc=
+	t=1744814239; cv=none; b=kTbPdubxWkybrBDV+gZ8xiZE2a0BlNlX9BhFfKwqKMmAOXkgptjNaNTLUPmIpzHcpZCQZGvU+zbIuy07cmk1RImZNXt1Jz3U6G5yfKS/Dj2PVouQEfeGHWI79TXcG74uSQJSfJQ/qwVyGoMGkwuJ8OhtmlNmik8ZRkHVTbk8bgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744813511; c=relaxed/simple;
-	bh=aofn8mOguoH/olcy6EB2Cgtv0peBzYexyfebvYP16xY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=kVAG3VCJDeHpRrQGaG0tXzY9ddFiF7UQUFBecMVMmU3WAKXem/jxxOhwPVJ88iZom7YuwJRg4KLs9IKvtmMulAWmNIYSMZRrGikKDbgviSvoiNkFGUg7IGKV3MQthS3oVECwgv0GusrAeuRRLky03H7nmZiXyuYrrBPwQc8WR8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=BpubTfbn; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250416142506euoutp0220b538876df9940d3766b970b55b65a0~20qPbJO6y2843628436euoutp02I
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 14:25:06 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250416142506euoutp0220b538876df9940d3766b970b55b65a0~20qPbJO6y2843628436euoutp02I
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1744813506;
-	bh=shUz1heMGc/0v/n7nVwvI1VZPkVH2FhMEMQCajNspuE=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=BpubTfbnQgjjSza7H4yjO/XIeP8cXOxKjl0xBMHGiUDLBUbzqldxyeSmsHvLIMiq2
-	 Zstd/bo4e6yO78TwiJ5P+KRPHgxU81vlaVylfS0g/1XaD4Fc1vIpekKmV9s2jXubY5
-	 R2bPCt4tkJHYCvgSjOoQH78oAb3MAAOxCqagHmTA=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20250416142506eucas1p19fe6562f1fa472d4cdf730e6001208f4~20qOyJNCI0172801728eucas1p16;
-	Wed, 16 Apr 2025 14:25:06 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id C1.88.20409.1CDBFF76; Wed, 16
-	Apr 2025 15:25:06 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250416142505eucas1p2fffb9ed80d3741d3f8f0c32fa47d1b82~20qOTfI982575125751eucas1p2H;
-	Wed, 16 Apr 2025 14:25:05 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250416142505eusmtrp1a1daf89c1b4ba691b759c376629cb1b0~20qOSm5Po0635206352eusmtrp1r;
-	Wed, 16 Apr 2025 14:25:05 +0000 (GMT)
-X-AuditID: cbfec7f4-c0df970000004fb9-e3-67ffbdc124c3
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id CD.B1.19654.1CDBFF76; Wed, 16
-	Apr 2025 15:25:05 +0100 (BST)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250416142504eusmtip179c28fc737df25cb9be21b56335766a6~20qNAXxzq1603616036eusmtip1y;
-	Wed, 16 Apr 2025 14:25:04 +0000 (GMT)
-Message-ID: <60914de9-f507-4099-be53-ea1fc282c537@samsung.com>
-Date: Wed, 16 Apr 2025 16:25:04 +0200
+	s=arc-20240116; t=1744814239; c=relaxed/simple;
+	bh=KUEHY7ZRwTuC/5HTGE/zXecsPRtJxHha9LUkQvT/XN4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PRl4AWOpWAs8kStxkuA3fpQ6x+Rz9ct7fvI2Zi4jvel5rqaStmE2f1isns1cMWg3dLBlSpuRh2L/NwIJFNwtRBIDwMOgx0HaBbVR5yun2zG0aEwhxfVYEjgjEhJPpH5xeevO5h23nZxqlF+4tqLc8JUHXOpAVFJJIsJqEu3elak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de; spf=pass smtp.mailfrom=fris.de; dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b=crrQzbY9; arc=none smtp.client-ip=116.203.77.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fris.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B7ADFC9699;
+	Wed, 16 Apr 2025 16:27:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fris.de; s=dkim;
+	t=1744813669; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=HBqHrUhw97eHPrj9acjB4nBmmHDFArDGTlBCisgNOvc=;
+	b=crrQzbY9TVfvcvN+4H3r8iiMKkgfILDsW19WI8gtf8+p+QieW4e/QkEEisQi3jA8/Kc/Pk
+	3WVznrzGJodRTM0zi8xFxXN7I5rVMKjb2JgWD0/ApfsaeFmas82LjMAEiJvpEsVQWGkdS8
+	+vTtuNd1x9Zqq3xAabobt5+P6KPgwK12wnyXBvk1ljy/85u44Std/GULiRY4UTUaBinKA9
+	DW/7buLKYQhSgKnUrfzorCALiSyAhQ3sH0uKKOeWY3Pg8PU5enAt3NVWz3DrUNM/6LDHin
+	mYHTny6pz+6rDFFAiojeUrfKMEFIKXgjNFPk1e/XtwWJhkoRTZv5Mpd8D/V72g==
+From: Frieder Schrempf <frieder@fris.de>
+To: Peng Fan <peng.fan@nxp.com>,
+	Pankaj Gupta <pankaj.gupta@nxp.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Frieder Schrempf <frieder.schrempf@kontron.de>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+	Shengjiu Wang <shengjiu.wang@nxp.com>,
+	Shenwei Wang <shenwei.wang@nxp.com>,
+	Xu Yang <xu.yang_2@nxp.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [RFC PATCH 0/5] Add NVMEM driver for i.MX93 OTP access through ELE
+Date: Wed, 16 Apr 2025 16:26:19 +0200
+Message-ID: <20250416142715.1042363-1-frieder@fris.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 13/21] drm/imagination: Add reset controller support
- for GPU initialization
-To: frank.binns@imgtec.com, matt.coster@imgtec.com
-Cc: p.zabel@pengutronix.de, m.szyprowski@samsung.com,
-	linux-clk@vger.kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
-	mripard@kernel.org, linux-kernel@vger.kernel.org, tzimmermann@suse.de,
-	linux-riscv@lists.infradead.org, airlied@gmail.com, simona@ffwll.ch,
-	aou@eecs.berkeley.edu, dri-devel@lists.freedesktop.org,
-	ulf.hansson@linaro.org, linux-pm@vger.kernel.org, jszhang@kernel.org,
-	palmer@dabbelt.com, guoren@kernel.org, maarten.lankhorst@linux.intel.com,
-	wefu@redhat.com, paul.walmsley@sifive.com, jassisinghbrar@gmail.com,
-	drew@pdp7.com, robh@kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
-	krzk+dt@kernel.org
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <20250219140239.1378758-14-m.wilczynski@samsung.com>
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUxTVxjHd+69vbd0K7sWNo5MR1K3ZRsTGWHxiMZh4rL7ZTr8AMZl2Gpv
-	KpEW1sLGHAnMAiqUQXEKlg6Yc0IIHeN1wKiM2lHkpYrKi4QWiDVQxstqAccQGOXOjW+/83/+
-	z/k/z8nh46JfyUB+nDKJVSml8WJSQDR2LNl2mk1r8tD7Ghx1Dl7FUMOynkJVJhuGSi02HnLc
-	rcfQ/YU5Ev306A6FJk1fE2ig4jsKaTqqSeTSO0jk1jp46F6LgUSeXAtAjZ4MEhktdgp9724g
-	0LWmFoCyLlznob6uD5Dd0Ukg1z0tjrL0L6K11iYKrQ7UEKh4to1C9dM6HrIaY1BG27dE5HZm
-	biiTYqZdLoK5eX6eYkyLZQTTrLdTjLa5BzC1lRdIZmSglWRKbkUxozlWjKm7lsZkGDswJm8l
-	lJm70U8y39RXAuauZpD6WHRMsE/Gxsd9zqp27ZcITuVop8hE4wspmjs/gnSgE2QDHz6kw6F1
-	ScfzsoiuANDSfiQbCNZ5HsDf+h9TXMEDoLY86lnD5eUiHmcqXzedHQfcYQbAh08XMK9LSO+H
-	cw7DBhP063BqwkZy+hZ464qT8PJLdBAcHS7aSPCjZXBwbRR42Z8OgznpGYT3UpzO5kFTS/VG
-	AacD4LCzdONSct00Vl66Pgaf70MfgFdqYzlLENQ0FOPeXkj3CmDh9Zs8buyD8E+XBnDsB6es
-	9RTH22D3RS3BcQIca3iMc5wKm7XWf3kvHLH9TXqzcPotWN2yi5MPwPTZPswrQ9oXDs1s4Ubw
-	hQWNhTgnC+H5LBHnfgNe0ub+F2qraMTygVi/6VH0m3bUb1pG/39uGSAqQQCbrFbIWXWYkv0i
-	RC1VqJOV8pCTCYpasP6/u1et802gfModYgYYH5gB5ONif6Ft96pcJJRJvzzDqhKOq5LjWbUZ
-	vMInxAHCq22ZchEtlyaxp1k2kVU9q2J8n8B0LLJQKIt+P9gjyOIfeijBHvQk1Sk+2arbcbvb
-	/fS1Avt8TVFY3YSfaWDnZxMpsZRlz+HQ3DbXV2eqfkbsSpDnyavFEl2MIF9RdvbNscXdCrt4
-	bU/CDVnmovFJQ7T9r99jpiMkk+UDNQcvnavk/dI1XoWUXZOBNTNbH7zcviNvqUjtLH5HdzHC
-	VlG3fTjV0Os5asxxrj5K7ZuMPLZymddaGJE1Hjx9Ynnwo5K05xbjJO7Skfay8NgTf5j3OmaP
-	FCQesoQP5UTJbB/6LzkzJUc7e94zLEyc7Ld+6ru2+MO59pLT+Z2hjpZKezRIsVdvG+/1Sdt3
-	2JB3O/J5hcifDQk+3tcfLibUp6Tvvo2r1NJ/AMaqa21OBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sf1CTdRjvu71738Gx42WM4z2uRHdy3Vm+bIOx7zwk7drdm16X/lFdFtmE
-	143cGO2HaXclNWbIKEQ9nBMZKJoQk6QxkRzImiCosFSGURteUroFLcLsZMYa23Xx3+eez6/n
-	nnvYTO4YK4tdVq6nteVyFR9NRq4tDvnXDriiCsHlqWx4deIkA3ZHrBjscI0yoM0zyoKBmw4G
-	vP1XGIXnfvFi8IHrEwT6zp7AoHGwE4VBawCFc7UBFrzV24jC+c89ADrnq1Bo9/gx2DLXjcDW
-	nl4A9x84w4Lfj8igP3AVgcFbtUy435oKo5d6MLjoO4/A47/3Y9AxU8+CQ/Y3YFX/EWTDM1T4
-	jgmjZoJBhPqu+iFGuR41I9RFqx+jai9eB1RX+wGU+sl3CaWahrdSU+YhBvVN6z6qyj7IoOr+
-	EVDhvnGU+sLRDqibxglsC3cbWajVGPT0SqVGp1/Pf0sIRaRQCklRvpQU5kmK14nE/NyiwlJa
-	Vbab1uYWvUsqzbUhtMKessfoPQ0qQX1yDUhiE3g+0RCxsGpAMpuLnwZEzY0QSBBPEz5zEEng
-	dOKJrwZNiH4DxLDVHSc4eBERDjQyljCC5xCh+6NoYp5GDB+bjmsy8GxiatKCLeF0vJSYiE7F
-	C3i4iDBXViFLoUy8hkVM986ARMMIIFofm+IqJp5JTE7b4g1ozHH3S1tsVzY7Cd9IHOt6Zwky
-	8WeJziZuQp1NGLuPMw8CrnXZGtZlQdb/HdZljmaAtAMebdCpFWqdiNTJ1TpDuYIs0ai7QOyz
-	nIOPHT2gLTRHugGDDdyAYDP5PM6oZFHB5ZTK935IazXbtQYVrXMDcewU9cysjBJN7DXL9duF
-	BQKxML9AKhBLC/L4mRz09thOLq6Q6+ldNF1Ba//zMdhJWZUMBe/RhRu1Ty1+fXj2R62gEvS5
-	nKslppSo4H2Kfv0DR15K6uTz69X3VXV/SNddf+9BGJmrJv9Ene49TEvftcD5wc41/W92HLqL
-	oNTagVNve3wl3isPF7ZFGzc7J8dsfY0tfnuhbNVXv86zHRRd3XnH/Gqyvvijww2Zr/2wcOiM
-	TGLyXvlsc1rGt+KBFQt9nLKNxgrZuaNP+G2Wv2eP0htcz6168VOTR5W9e4f1ZEPW+I6ijoOp
-	FwwFL4w0paWckpxAc/faxiI5ZBGxRRk5+/J4pE6TuikHbl2Z3nvZ8jMv9NKmthWzO8eR1cWv
-	fHykZVq4Sylr2Fd/L83v9jbfG5FIOWGSj+iUcuEaplYn/xdqyz204gMAAA==
-X-CMS-MailID: 20250416142505eucas1p2fffb9ed80d3741d3f8f0c32fa47d1b82
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250219140306eucas1p19ba425ddb1e499ef1014b1665be9de8e
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20250219140306eucas1p19ba425ddb1e499ef1014b1665be9de8e
-References: <20250219140239.1378758-1-m.wilczynski@samsung.com>
-	<CGME20250219140306eucas1p19ba425ddb1e499ef1014b1665be9de8e@eucas1p1.samsung.com>
-	<20250219140239.1378758-14-m.wilczynski@samsung.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
+From: Frieder Schrempf <frieder.schrempf@kontron.de>
 
+This depends on [1] for the support of the Edgelock Secure Enclave firmware
+driver.
 
-On 2/19/25 15:02, Michal Wilczynski wrote:
-> All IMG Rogue GPUs include a reset line that participates in the
-> power-up sequence. On some SoCs (e.g., T-Head TH1520 and Banana Pi
-> BPI-F3), this reset line is exposed and must be driven explicitly to
-> ensure proper initialization.  On others, such as the currently
-> supported TI SoC, the reset logic is handled in hardware or firmware
-> without exposing the line directly. In platforms where the reset line is
-> externally accessible, if it is not driven correctly, the GPU may remain
-> in an undefined state, leading to instability or performance issues.
-> 
-> This commit adds a dedicated reset controller to the drm/imagination
-> driver.  By managing the reset line (where applicable) as part of normal
-> GPU bring-up, the driver ensures reliable initialization across
-> platforms regardless of whether the reset is controlled externally or
-> handled internally.
-> 
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
->  drivers/gpu/drm/imagination/pvr_device.c | 21 +++++++++++++++++++++
->  drivers/gpu/drm/imagination/pvr_device.h |  9 +++++++++
->  drivers/gpu/drm/imagination/pvr_power.c  | 22 +++++++++++++++++++++-
->  3 files changed, 51 insertions(+), 1 deletion(-)
-> 
+There are at least two ways to access the OTP fuses on i.MX93:
 
-Hi Matt,
+(1) through the FSB (fuseblock) registers
+(2) through the ELE S400 API
 
-This commit, along with the corresponding change in the DT bindings,
-doesn’t appear to conflict with the work you're doing for Rogue series
-enablement.
+There currently is a NVMEM driver imx-ocotp-ele.c that (despite its name)
+implements (1). As the FSB only provides limited access to the OTP registers
+(read only) it's not sufficient for all use-cases.
 
-Would you prefer if I re-send them as a mini-series so you can consider
-picking them up for the next kernel release?
+It seems like imx-ocotp-ele.c was intended to be extended later to implement
+(1) and (2) deciding on a per-fuse-register basis which of both access methods
+should be used.
 
-Regards,
-Michał
+This has some downsides:
+
+* the driver gets convoluted and complex
+* the driver decides which OTP registers are accessed in which way and therefore
+  mixes read-only and read/write access
+
+Therefore I implemented a simple driver that uses the ELE S400 API only, as the
+FSB access (1) doesn't provide any benefits except for that it doesn't depend
+on the ELE firmware being available. This is used by us downstream.
+
+For the upstream solution I would like to have some feedback on how to move
+on:
+
+1. switch imx-ocotp-ele.c to use ELE API exclusively
+   -> this will create a hard dependency on the ELE firmware/driver being available
+2. extend imx-ocotp-ele.c to use FSB and ELE API
+   -> make the driver use ELE API for all registers if ELE firmware/driver is available
+3. create separate drivers as done in this RFC
+
+Thanks!
+
+[1] https://patchwork.kernel.org/project/linux-arm-kernel/cover/20250409-imx-se-if-v16-0-5394e5f3417e@nxp.com/
+
+Frieder Schrempf (5):
+  firmware: imx: ele: Add API functions for OCOTP fuse access
+  nvmem: Add i.MX OCOTP fuse driver using ELE S400 API
+  arm64: dts: imx93: Add node for EdgeLock Enclave (ELE) firmware driver
+  arm64: dts: imx93: Add node for OCOTP S400 NVMEM driver
+  arm64: dts: imx93-kontron: Add DMA memory region for ELE firmware
+
+ .../dts/freescale/imx93-kontron-osm-s.dtsi    |  16 ++
+ arch/arm64/boot/dts/freescale/imx93.dtsi      |  11 +
+ drivers/firmware/imx/ele_base_msg.c           | 122 +++++++++++
+ drivers/firmware/imx/ele_base_msg.h           |   8 +
+ drivers/nvmem/Kconfig                         |  11 +
+ drivers/nvmem/Makefile                        |   2 +
+ drivers/nvmem/imx-ocotp-s400.c                | 195 ++++++++++++++++++
+ include/linux/firmware/imx/se_api.h           |   3 +
+ 8 files changed, 368 insertions(+)
+ create mode 100644 drivers/nvmem/imx-ocotp-s400.c
+
+-- 
+2.49.0
 
