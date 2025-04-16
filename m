@@ -1,197 +1,309 @@
-Return-Path: <linux-kernel+bounces-606682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C420A8B242
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:35:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EE31A8B24B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:36:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 973D55A4DDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 07:35:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9972D1900DDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 07:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C95122A801;
-	Wed, 16 Apr 2025 07:35:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A8A22D4E2;
+	Wed, 16 Apr 2025 07:36:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DB+VRTiy"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="JzOjblXd"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E8D13AF2
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 07:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907B513AF2;
+	Wed, 16 Apr 2025 07:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744788943; cv=none; b=BlT64JqNCPpakgo+nzxeh/epdQgx/6BFKNIHVnCvWmjDtNWud/0fogl7sOPBlK0/k5XvNigcVjPE2bd8iCCQ9Y5iZ9Twmyaf9R3elvdAPj/2sN3wmALSj2jFRG7b8+PFJ3aID+zg6BKVetEYLDFJG7VSk2XcyGW8tJ3DUfBUc1M=
+	t=1744788997; cv=none; b=W8/Sh6B9WO+4rKFubV7o6ziFfZ1Qh8HSy+NjWDtpUmd2EHKrXe2YmOYxvHazVkQteYE5o73BtO/OEFV5gLJ18NYmFrsGHgXr0V4lZKWuQ5xRBBH304TAgHhhqQlx69TrJGOasGJIh0DBU1xDi2TrqS4ql6BTnoPEiCTEU+ERo0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744788943; c=relaxed/simple;
-	bh=+H9GX5y26Nfo2MH/KkOqaPDNpwN4wm07XI8ZoMfksT0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p43m7vUJo6WlF2HmjMpRNi0v9WZYSNbNL2u8BXZFiWDHAQwFy+erFJk1dWYQZIGpKLywYkZsJskRhMl3L40k0XW9cX/Fdj2dh0gfT5fkC9JMj87EvMawD+52YTjt0eF0XOOIdV6Zk2FJHEca4+cqA6Mq+5Hv6L4IxM0mjRyEWrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DB+VRTiy; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744788942; x=1776324942;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=+H9GX5y26Nfo2MH/KkOqaPDNpwN4wm07XI8ZoMfksT0=;
-  b=DB+VRTiy+b20NSMQL2Kki1IVvRzy3O+uWflTgbG2j9mlFZD8/z2kj2TZ
-   4K3IjKfFrQIoGgvycZ0fYGkj5GyAQRr9vMrSAByKBK2I8a2aok9Fy3qVb
-   8z0082i/Qa+KUzRfg1L6B+yq6/FhnlHmoVhxgqzUjrh6YttgUIJTOm/Z4
-   s0MPws0tFAGFq3n9kFJwHmdeDP3nNLm0QGW6rs/gn0TEe0gCdkNVMjpSU
-   cHrIfNP4uJjplKrXE/T6CU73nceHQCAY6F9MbxbZaV/9ianv6lY0uycou
-   khhwuUeJVx7jA3/vWTBjHN34h+1v7TwZJ9Fvuth0G7inINBwZWjeetcLf
-   g==;
-X-CSE-ConnectionGUID: b7BSulabR0e7wArtE3y7lg==
-X-CSE-MsgGUID: sltVvaYJSN6iQYN8QdovPg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="56958602"
-X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
-   d="scan'208";a="56958602"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 00:35:41 -0700
-X-CSE-ConnectionGUID: C8PDJANBTxKKjBGNJq+46g==
-X-CSE-MsgGUID: hdf1rhpcSiazkD8+FhZLIg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
-   d="scan'208";a="135205715"
-Received: from allen-box.sh.intel.com ([10.239.159.52])
-  by orviesa003.jf.intel.com with ESMTP; 16 Apr 2025 00:35:39 -0700
-From: Lu Baolu <baolu.lu@linux.intel.com>
-To: Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Cc: iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Lu Baolu <baolu.lu@linux.intel.com>
-Subject: [PATCH 1/1] iommu/vt-d: Revert ATS timing change to fix boot failure
-Date: Wed, 16 Apr 2025 15:36:08 +0800
-Message-ID: <20250416073608.1799578-1-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1744788997; c=relaxed/simple;
+	bh=0/Am+LhYfAV4nH0Da9mQx+t7aay+VUzZy8x+9CyuxYs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=m3sKy5EpRiczdkorgS9FZvTayaN51/6dg4UvYT3l7B3Y7BZBNdf6jN0pjK022LgnniCnzZr5tAUpw4U7KlgEUrSZC0U2clkP7B34QnpD1B/0MizshvwEsCfdDxXTX6rQnLK6lazc8DXsTwO7ITjlFUv+ZWTZSqQIg6JgBXbxlNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=JzOjblXd; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2EC4E1039EF29;
+	Wed, 16 Apr 2025 09:36:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1744788986; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=Sc8sq8yhI+eFhQYdluameP+NynQUgnB1EXAG4gA7e5Y=;
+	b=JzOjblXdlaekTamo8vCfUy3Ccow5WSv7kuJMoqEphQvpslF7jgaW2BA7J2Qb+roH1s+ial
+	vcJ8xp3FUvObAG4mBYArwOhUASkLeJYZzOuYhVJJWd7XUqdrfRyzz4HI24J3Zh4brxITY9
+	5AWwam9y4nvogEQzuEquNnvBLUkAzjcPvDdbkkFYSLzKauk8rEUyciJqgitEt5BpYczfFk
+	WPrKe1+3lF8mBlc0stvH8IodYsJfbd7jSxmRrCsaGGrGYftW6wlVvjJ+z6eyaPrLStuosJ
+	CEd06l5IUlWCk84OMgNl8Ctb2sU1Xv0zQF1LSPq1N6D37Q1oxAVQNgFKoCSI2Q==
+Date: Wed, 16 Apr 2025 09:36:18 +0200
+From: Lukasz Majewski <lukma@denx.de>
+To: Rob Herring <robh@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Richard Cochran
+ <richardcochran@gmail.com>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, Stefan Wahren
+ <wahrenst@gmx.net>, Simon Horman <horms@kernel.org>
+Subject: Re: [net-next v5 1/6] dt-bindings: net: Add MTIP L2 switch
+ description
+Message-ID: <20250416093618.6269ae22@wsk>
+In-Reply-To: <20250415220853.GA903775-robh@kernel.org>
+References: <20250414140128.390400-1-lukma@denx.de>
+	<20250414140128.390400-2-lukma@denx.de>
+	<20250415220853.GA903775-robh@kernel.org>
+Organization: denx.de
+X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/E+Y3p4p0EiminI1G.eDIyI2";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+X-Last-TLS-Session-Version: TLSv1.3
 
-Commit <5518f239aff1> ("iommu/vt-d: Move scalable mode ATS enablement to
-probe path") changed the PCI ATS enablement logic to run earlier,
-specifically before the default domain attachment.
+--Sig_/E+Y3p4p0EiminI1G.eDIyI2
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On some client platforms, this change resulted in boot failures, causing
-the kernel to panic with the following message and call trace:
+Hi Rob,
 
- Kernel panic - not syncing: DMAR hardware is malfunctioning
- CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.14.0-rc3+ #175
- Call Trace:
-  <TASK>
-  dump_stack_lvl+0x6f/0xb0
-  dump_stack+0x10/0x16
-  panic+0x10a/0x2b7
-  iommu_enable_translation.cold+0xc/0xc
-  intel_iommu_init+0xe39/0xec0
-  ? trace_hardirqs_on+0x1e/0xd0
-  ? __pfx_pci_iommu_init+0x10/0x10
-  pci_iommu_init+0xd/0x40
-  do_one_initcall+0x5b/0x390
-  kernel_init_freeable+0x26d/0x2b0
-  ? __pfx_kernel_init+0x10/0x10
-  kernel_init+0x15/0x120
-  ret_from_fork+0x35/0x60
-  ? __pfx_kernel_init+0x10/0x10
-  ret_from_fork_asm+0x1a/0x30
- RIP: 1f0f:0x0
- Code: Unable to access opcode bytes at 0xffffffffffffffd6.
- RSP: 0000:0000000000000000 EFLAGS: 841f0f2e66 ORIG_RAX:
-      1f0f2e6600000000
- RAX: 0000000000000000 RBX: 1f0f2e6600000000 RCX:
-      2e66000000000084
- RDX: 0000000000841f0f RSI: 000000841f0f2e66 RDI:
-      00841f0f2e660000
- RBP: 00841f0f2e660000 R08: 00841f0f2e660000 R09:
-      000000841f0f2e66
- R10: 0000000000841f0f R11: 2e66000000000084 R12:
-      000000841f0f2e66
- R13: 0000000000841f0f R14: 2e66000000000084 R15:
-      1f0f2e6600000000
-  </TASK>
- ---[ end Kernel panic - not syncing: DMAR hardware is malfunctioning ]---
+> On Mon, Apr 14, 2025 at 04:01:23PM +0200, Lukasz Majewski wrote:
+> > This patch provides description of the MTIP L2 switch available in
+> > some NXP's SOCs - e.g. imx287.
+> >=20
+> > Signed-off-by: Lukasz Majewski <lukma@denx.de>
+> > ---
+> > Changes for v2:
+> > - Rename the file to match exactly the compatible
+> >   (nxp,imx287-mtip-switch)
+> >=20
+> > Changes for v3:
+> > - Remove '-' from const:'nxp,imx287-mtip-switch'
+> > - Use '^port@[12]+$' for port patternProperties
+> > - Drop status =3D "okay";
+> > - Provide proper indentation for 'example' binding (replace 8
+> >   spaces with 4 spaces)
+> > - Remove smsc,disable-energy-detect; property
+> > - Remove interrupt-parent and interrupts properties as not required
+> > - Remove #address-cells and #size-cells from required properties
+> > check
+> > - remove description from reg:
+> > - Add $ref: ethernet-switch.yaml#
+> >=20
+> > Changes for v4:
+> > - Use $ref: ethernet-switch.yaml#/$defs/ethernet-ports and remove
+> > already referenced properties
+> > - Rename file to nxp,imx28-mtip-switch.yaml
+> >=20
+> > Changes for v5:
+> > - Provide proper description for 'ethernet-port' node
+> > ---
+> >  .../bindings/net/nxp,imx28-mtip-switch.yaml   | 141
+> > ++++++++++++++++++ 1 file changed, 141 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/net/nxp,imx28-mtip-switch.yaml
+> >=20
+> > diff --git
+> > a/Documentation/devicetree/bindings/net/nxp,imx28-mtip-switch.yaml
+> > b/Documentation/devicetree/bindings/net/nxp,imx28-mtip-switch.yaml
+> > new file mode 100644 index 000000000000..6f2b5a277ac2 --- /dev/null
+> > +++
+> > b/Documentation/devicetree/bindings/net/nxp,imx28-mtip-switch.yaml
+> > @@ -0,0 +1,141 @@ +# SPDX-License-Identifier: (GPL-2.0-only OR
+> > BSD-2-Clause) +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/net/nxp,imx28-mtip-switch.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: NXP SoC Ethernet Switch Controller (L2 MoreThanIP switch)
+> > +
+> > +maintainers:
+> > +  - Lukasz Majewski <lukma@denx.de>
+> > +
+> > +description:
+> > +  The 2-port switch ethernet subsystem provides ethernet packet
+> > (L2)
+> > +  communication and can be configured as an ethernet switch. It
+> > provides the
+> > +  reduced media independent interface (RMII), the management data
+> > input
+> > +  output (MDIO) for physical layer device (PHY) management.
+> > +
+> > +$ref: ethernet-switch.yaml#/$defs/ethernet-ports
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: nxp,imx28-mtip-switch
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  phy-supply:
+> > +    description:
+> > +      Regulator that powers Ethernet PHYs.
+> > +
+> > +  clocks:
+> > +    items:
+> > +      - description: Register accessing clock
+> > +      - description: Bus access clock
+> > +      - description: Output clock for external device - e.g. PHY
+> > source clock
+> > +      - description: IEEE1588 timer clock
+> > +
+> > +  clock-names:
+> > +    items:
+> > +      - const: ipg
+> > +      - const: ahb
+> > +      - const: enet_out
+> > +      - const: ptp
+> > +
+> > +  interrupts:
+> > +    items:
+> > +      - description: Switch interrupt
+> > +      - description: ENET0 interrupt
+> > +      - description: ENET1 interrupt
+> > +
+> > +  pinctrl-names: true
+> > +
+> > +  ethernet-ports:
+> > +    type: object
+> > +    additionalProperties: true
+> > +    properties:
+> > +      ethernet-port:
+> > +        type: object
+> > +        unevaluatedProperties: false =20
+>=20
+> This is going to fail if you have any property other than 'reg'.
 
-Fix this by reverting the timing change for ATS enablement introduced by
-the offending commit and restoring the previous behavior.
+The DT schema check shall fail when reg is not equal to 1 or 2, as this
+switch has only two ports.
 
-Fixes: 5518f239aff1 ("iommu/vt-d: Move scalable mode ATS enablement to probe path")
-Reported-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Closes: https://lore.kernel.org/linux-iommu/01b9c72f-460d-4f77-b696-54c6825babc9@linux.intel.com/
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
----
- drivers/iommu/intel/iommu.c | 31 +++++++++++++++++++------------
- 1 file changed, 19 insertions(+), 12 deletions(-)
+> But=20
+> then it will never be applied because you never have a node called
+> 'ethernet-port' since you have more than 1 child node.
+> You need this=20
+> under 'patternProperties' and 'additionalProperties: true' instead.
+> And please test some of the requirements here. Like a reg value of 3
+> or remove 'phy-mode'.
 
-diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index b29da2d96d0b..e60b699e7b8c 100644
---- a/drivers/iommu/intel/iommu.c
-+++ b/drivers/iommu/intel/iommu.c
-@@ -3785,6 +3785,22 @@ static struct iommu_device *intel_iommu_probe_device(struct device *dev)
- 
- 	intel_iommu_debugfs_create_dev(info);
- 
-+	return &iommu->iommu;
-+free_table:
-+	intel_pasid_free_table(dev);
-+clear_rbtree:
-+	device_rbtree_remove(info);
-+free:
-+	kfree(info);
-+
-+	return ERR_PTR(ret);
-+}
-+
-+static void intel_iommu_probe_finalize(struct device *dev)
-+{
-+	struct device_domain_info *info = dev_iommu_priv_get(dev);
-+	struct intel_iommu *iommu = info->iommu;
-+
- 	/*
- 	 * The PCIe spec, in its wisdom, declares that the behaviour of the
- 	 * device is undefined if you enable PASID support after ATS support.
-@@ -3792,22 +3808,12 @@ static struct iommu_device *intel_iommu_probe_device(struct device *dev)
- 	 * we can't yet know if we're ever going to use it.
- 	 */
- 	if (info->pasid_supported &&
--	    !pci_enable_pasid(pdev, info->pasid_supported & ~1))
-+	    !pci_enable_pasid(to_pci_dev(dev), info->pasid_supported & ~1))
- 		info->pasid_enabled = 1;
- 
--	if (sm_supported(iommu))
-+	if (sm_supported(iommu) && !dev_is_real_dma_subdevice(dev))
- 		iommu_enable_pci_ats(info);
- 	iommu_enable_pci_pri(info);
--
--	return &iommu->iommu;
--free_table:
--	intel_pasid_free_table(dev);
--clear_rbtree:
--	device_rbtree_remove(info);
--free:
--	kfree(info);
--
--	return ERR_PTR(ret);
- }
- 
- static void intel_iommu_release_device(struct device *dev)
-@@ -4391,6 +4397,7 @@ const struct iommu_ops intel_iommu_ops = {
- 	.domain_alloc_sva	= intel_svm_domain_alloc,
- 	.domain_alloc_nested	= intel_iommu_domain_alloc_nested,
- 	.probe_device		= intel_iommu_probe_device,
-+	.probe_finalize		= intel_iommu_probe_finalize,
- 	.release_device		= intel_iommu_release_device,
- 	.get_resv_regions	= intel_iommu_get_resv_regions,
- 	.device_group		= intel_iommu_device_group,
--- 
-2.43.0
+In linux-next we now also have realtek,rtl9301-switch.yaml which uses
+just:
 
+properties:
+  ethernet-ports:
+    type: object
+
+but when in "examples" I do remove for example "phy-handle" the command:
+make dt_binding_check DT_SCHEMA_FILES=3Drealtek,rtl9301-switch.yaml
+
+is executed without errors.
+
+
+IMHO the problem is with proper usage of
+$ref: ethernet-switch.yaml#/$defs/ethernet-ports
+
+which shall in my case be extended to have:
+$ref: ethernet-switch.yaml#/$defs/ethernet-ports/patternProperties
+
+In the case of MTIP - the following SCHEMA description shall be used:
+
+  ethernet-ports:
+    type: object
+    $ref: ethernet-switch.yaml#/$defs/ethernet-ports/patternProperties
+    additionalProperties: true
+
+    patternProperties:
+      '^ethernet-port@[12]$':
+        type: object
+        additionalProperties: true
+        properties:
+          reg:
+            items:
+              - enum: [1, 2]
+            description: MTIP L2 switch port number
+
+        required:
+          - reg
+          - label
+          - phy-mode
+          - phy-handle
+
+
+And then, when I remove from 'example:' the 'label':
+
+make dt_binding_check DT_SCHEMA_FILES=3Dnxp,imx28-mtip-switch.yaml
+/Documentation/devicetree/bindings/net/nxp,imx28-mtip-switch.example.dtb:
+switch@800f0000: ethernet-ports:ethernet-port@2: 'label' is a required
+property from schema $id:
+http://devicetree.org/schemas/net/nxp,imx28-mtip-switch.yaml#
+/Documentation/devicetree/bindings/net/nxp,imx28-mtip-switch.example.dtb:
+switch@800f0000: Unevaluated properties are not allowed
+('ethernet-ports' was unexpected) from schema $id:
+http://devicetree.org/schemas/net/nxp,imx28-mtip-switch.yaml#
+
+or when reg =3D <3>;
+
+Documentation/devicetree/bindings/net/nxp,imx28-mtip-switch.example.dtb:
+switch@800f0000: ethernet-ports:ethernet-port@2:reg:0:0: 3 is not one
+of [1, 2]
+
+When I do use the untouched example: node - it compiles without errors.
+
+I do guess that this is the expected behaviour... :-)
+
+>=20
+> > +
+> > +        properties:
+> > +          reg:
+> > +            items:
+> > +              - enum: [1, 2]
+> > +            description: MTIP L2 switch port number
+> > +
+> > +        required:
+> > +          - reg
+> > +          - label
+> > +          - phy-mode
+> > +          - phy-handle =20
+
+
+
+
+Best regards,
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH,      Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
+
+--Sig_/E+Y3p4p0EiminI1G.eDIyI2
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmf/XfIACgkQAR8vZIA0
+zr1GTwf/b33OaBe5N9vRxgAOvVMNfYHagLQoWiI/DqsxTokp7CwJmXhQnAF1wQQX
+5NRUw5pMohXvR4hJmOQ5ME+14OH0GkvxVWje/CfobWpV65pdXZA20IYztqaoLgQn
+QeBVZZgsEhQShUd/Ksy64CnSMjD3Ln4cDffE+8Ep7uST7fNwncVbFkEHjuGch4XK
+zXx7DrkfUyrDhBQU6GS9DNELju4NaK6lEPEATOV9tCQ5AfGmcPIZ9oWho84aLg9/
+XSzStIBJThE3XKK8w+DkDx9CYWMUUqT+tRrKktqK8ad3ASLMvRICe41L0ovly1Ng
+GBZVi8lIMMneCqM7qFyYDVg46xk++g==
+=tuno
+-----END PGP SIGNATURE-----
+
+--Sig_/E+Y3p4p0EiminI1G.eDIyI2--
 
