@@ -1,134 +1,149 @@
-Return-Path: <linux-kernel+bounces-608135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0120BA90F8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 01:24:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8797FA90F7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 01:21:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6AB67A99BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 23:23:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9324A17F24D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 23:21:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABE324C072;
-	Wed, 16 Apr 2025 23:23:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30BA022371B;
+	Wed, 16 Apr 2025 23:20:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k58AEY3T"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CsqrQAXT"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4FA8235345;
-	Wed, 16 Apr 2025 23:23:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39DBB221F24
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 23:20:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744845834; cv=none; b=YEypM27YwfOwMnGbgXukvWU62NMRZ1kr2e7cWgsQTqx1XRPAMWc5CDkgEI76g0JEcyk57e9AmidEamc93WouNQ2V4+ZamyeO77DTjWmYI3cjDHNhVhJcIamGI9EAEPWDb6R0YWi2UaMBxWlfDAKUCkNGY3jMjNRaHuK84oduL6g=
+	t=1744845657; cv=none; b=lbKOacG9OLn9i29eSEDDTZxDBkSqIIqgH8jiYEiB/ogNP7tTLEPz+Jlm509+cHMS0b+JFJyvvvxz2HHEYT0qOaz4AKH/Xt0/+j13YCRjH4VcD2NU9gY08CuNRScEGm5XRbiL/ZGC9PLXD1Cpc+LNF/QM4QH4qx5YE+7sfYYPZWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744845834; c=relaxed/simple;
-	bh=LKTrU+sgU2OIjybj0utaZFM0waoa3ItskjDGTcF6xOA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=J4UNzr4qFLPdjkcPilA1dmzGrhWjPXV0DJxPkSEY3q/dSN9CHddvE8v2fzvvv+6+VRMc3jlcr6Xh56BoXgaCtqbrMWmXU6EL2dQpbNiA/IS+USedS1mUtmr12vYv0GEjtGKI32ysysRJCZFzMV3zTZ4MJ188tInaMe/KfBxSet8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k58AEY3T; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43d0359b1fcso1347465e9.0;
-        Wed, 16 Apr 2025 16:23:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744845831; x=1745450631; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qjHXYMC7zHygZVzVtYT+NoerxDkgqGuxQiQmQIb1pA4=;
-        b=k58AEY3TTP3sJHgs5W/4iVg72VsTxYbZRJCLOk8imxqLj/PM1PQxT/4nbm79zYiLCv
-         X6aN2ndEWO9Uv2XvKDvumsYNGm8PjAJWZW2mocU6rB4VPizAOJNImWDDKK3ugweyNEsw
-         oMwxhkG3obsHrKkV05elxC2Gi0SIgz4Ju98/4duO8RkChOGru1ANr0dJz0s5CmT9kTYu
-         u4gj81+M+v3HkcD2rBkITZp3Ldw/zLoWVC9uTgsffnah4bjw1+6opNVle6lgAeWmMG15
-         GDAfcH/OF861QyAxZIQGjAoY4Hhbk+R1o+kA+Pu3UBHOuvVxANELkIXNidTCBCSLGent
-         KaZA==
+	s=arc-20240116; t=1744845657; c=relaxed/simple;
+	bh=n/UJ4zfd5eWbWds+vSxU1j3cVshSHI+TyU62weqbJ9o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RU7LEOMH0cycabzmW75c21mkbWWlsPrHGWNBMgq7vglxM6RyXz5s12Kgq7XYAYswUJ3ZFXCtiwirsdtHzxD5F1oq+4lPjI4lKo9RE85ddNaHOVp5geAbPkbsuafad+rRwhXk560VlAQdTlMDBFdBc/XchTuXnW2Gr0rYSP6+ZWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CsqrQAXT; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53GLgIQR007820
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 23:20:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=O+bay3u8UkUVUh3z4kt+jJUd
+	J2Y3Kg04YyWU0gm+6Mc=; b=CsqrQAXTNSS7hFeXDgqLDm2NwS456itAL6Lf+0FU
+	H1+oESwd+4CmlAEVCkNpbdgtB1Qmr9ndpC/wx0H+sw49/ak4SN9ISyPwTy9JyQei
+	ToVBZqQoqvnS+MIvLrxETEiNhtSCjw+ZqnnNWxfM9u2w6d2Y34uRC5h0BL4Ru8zV
+	a0549cC8O3REmpKAFZspuvMBEEMoUk8x61DFoHXMk11Sbp2iwohsxpchydXxp/DO
+	u3xnw+9mhp1rgscNr5z1KMXoY7CNcbGxyh0b59xGgbILfvIfSDbthbmTAxlGRMKy
+	usikbt+TUAW3gmO94+t2jRNYfK/MXKm7YzSSb4S8LkpScg==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ygd6n49t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 23:20:55 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6f0e2d30ab4so4616866d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 16:20:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744845831; x=1745450631;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qjHXYMC7zHygZVzVtYT+NoerxDkgqGuxQiQmQIb1pA4=;
-        b=Hg3vMxPiN50FTqKOR0IdmUq+MLXFtXHEcuHrdMcXAaVCknyPus1iJmRvk0kEZQboeB
-         aFzA4zDA14yeWfhcArFzOiHA0D8oqYwhcF0K1H0zDCaueZsCloRa+Z25goWsDB6U88tD
-         Jz59N9gVjtajLTPdb3PbscgDLVYYsxmfN0xt9zRKGtbXbVB+GwTFiV1LoMqsStyW/ft7
-         RlFX9yxcjCukgDOvKb9tsZCQZEjmL/GP2ECEYp5jrMG9PHnFdmpqtO/KmOn1rB2CGzxG
-         yIT+hNBTy/GA86Qhnj7NcOTPOvQhAgmc5mMv9y4gvbv4Kyw6VUGzatnz9Wf/yq4YbA+i
-         ugPw==
-X-Forwarded-Encrypted: i=1; AJvYcCUEbelFsMfGY8aMD54LtlMb8xt/l+l9kA9PGc2XYKPyzfvGx22B8qM/ExiH83sxuju9i5VdGtPM34vxLKpHgQ==@vger.kernel.org, AJvYcCUHYJ5ef0QsqvYtUxDVTkGbErVkBuw1eExqxwH6UwYO7eibqvich/9STPL7GzFHZCs3wsv2sZlrRjvjzE42@vger.kernel.org, AJvYcCVhgxOgaPpNmnTwXEiDF5qrWIylCxqFPo91D5Xx/tFPniUuo127Sh2k5vWV5kPCBAkRDRGXnMH38ncq@vger.kernel.org, AJvYcCWn/0RM8hehKAzTpk50UZB+SHhZ0U67rOEEdcpPt5/SZSi860tB3IgArTp6OsU9eIxDogGtON46bIm6@vger.kernel.org
-X-Gm-Message-State: AOJu0YzW/ND6NDazrT1qRabdcwE0TPwL7nJgubL634NCJfKoCOqwGQem
-	p5ysGq5nkluFe2EdpQysrFjXBJa3zVKNVEj8ROa35VcU6SwKdks=
-X-Gm-Gg: ASbGncusXunLIWa9I+xZyxpZwieDm2aXiJvt/Ee4eP/8hvpU9FNDV2BHSTBPH00eujZ
-	RC7T85gN3LKzwfF67O7lZ414hSsHW0ZKyAV5wCyzwB8Rkqnfxyh94djL5DDIApqgOATwi0hOJQd
-	hA7K48kIItm20AA68Pzq+SOvYrrA4jWGXLrjqHKawzvDOfkv8f+j6aKbv5vcnt/lgKfhbRH05+2
-	1p0VYg/vG5tq+yPA/shNeVxeXa7Bsz3EmdVVRfSdf5no+au009ZpEIlcSry5+b+WRMjd+J8kXgX
-	bkZ4aPMWD1CT+flLB/K8+HGVV6f5sqDp043DcPJdt9ve2Q==
-X-Google-Smtp-Source: AGHT+IE5zbHou//dRNGvt+Vsme8KKZ8BhiJRDmyZVKFMRGE+OOd3vEs4H5fPDZbFtNhjriRHcXPv8A==
-X-Received: by 2002:a05:600c:3b88:b0:439:8e95:796a with SMTP id 5b1f17b1804b1-440636a4008mr3712315e9.13.1744845830281;
-        Wed, 16 Apr 2025 16:23:50 -0700 (PDT)
-Received: from alex-x1.lan ([84.226.118.249])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4405b4f3ac4sm34026465e9.23.2025.04.16.16.23.49
+        d=1e100.net; s=20230601; t=1744845654; x=1745450454;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O+bay3u8UkUVUh3z4kt+jJUdJ2Y3Kg04YyWU0gm+6Mc=;
+        b=cMyuP2IIz1DzwCcm9YGrvxuhhow2eai3oBauIUa/Ag2bAXnJsmQc6xdfx+8plceY77
+         HrnVTSjGUBxyhaaGwPVLYQlgb0UI4w5Y5n5ldijJWSV9Zbs3WS30eca2yCJtYxyZhari
+         Q+B+tredo+8F/9mK56tOhLxLjQz6h3fh8peMJVEZ804YGMBN1wPCH7g0nv/nFHhzmf9J
+         Nv7X493hE/adF+jQRloogG7q3Ra9f1BNiERW3WEcy3KvWoAKyXhfDFJisivcrhM2SsdD
+         JhwDcd2u6zxz4M5/2vD61j02kql/LsGUWbiAPoblMOzQh5P47aZOiEUptVPUoRc76OV6
+         7nMA==
+X-Forwarded-Encrypted: i=1; AJvYcCWSpkGvc/wRcLKuSn3O5rD+wUi3eVsfASKbQjm91c640KzPr/4H9YLqeHYKUvipTjiqF36v3chcTyokvuo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzI81+1wfr0jtKlMYfzyYn6IDewNjWCcPD4QCCBCwfqTAXXfvaD
+	y9QpPqs92OIHJfcMNCls7eZtN/Eg3TI0+8qaHeeEFtnU9E0jLo/rnoKLn9nrzO6ZIxwNAI6LaF5
+	tcFD6bjdeEAQkz2DhJAJ9ZQtK63d7kvnzMv1omct9dtBCRes/7/UHirXdp1RWdic=
+X-Gm-Gg: ASbGncty+583ubQf1ap0YdgPebWkdyVMKM44JZbSuFuiI5XYFHRpwXck48tvbP3EXDx
+	ho9mPiPtloRhIPzva2woV1RDoiH9gzskHctywcw77FMcmxH64ngErrW2bNtW2AjEi0TxPeBuzmn
+	/sU7Mjme9SgrYuy7FLy5/lyWLhXccIv5t8Naa5D9nL+TKXctM1ZzIJVFeu/Zb8jfcduHmY93qL2
+	JGVJnqMx11ZxapBsOPJkEq36nmwhAm0XveW2zFoBIICZenB9ENbshiLPJJxAqn++o2NypRmSuM5
+	KIjpZyaJuzlNBSGYpRycbBRwdT2Q2EU+fIj9MnzZKldsFb1iu+gdX3oR5AiXFJMlwCg2aj9P0vY
+	=
+X-Received: by 2002:a05:6214:20a2:b0:6e8:f65a:67bd with SMTP id 6a1803df08f44-6f2b2f3e4ffmr54592246d6.11.1744845654039;
+        Wed, 16 Apr 2025 16:20:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHBAA9vrfbsRJNy3z4MIqCYUoUGx8TD8fWhZnK3l2Nt2B+kFTS0IhIbhX4Oxt4YB0i74q0tEA==
+X-Received: by 2002:a05:6214:20a2:b0:6e8:f65a:67bd with SMTP id 6a1803df08f44-6f2b2f3e4ffmr54591936d6.11.1744845653574;
+        Wed, 16 Apr 2025 16:20:53 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54d3d520389sm1784976e87.251.2025.04.16.16.20.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Apr 2025 16:23:50 -0700 (PDT)
-From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Cc: Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	maud_spierings@hotmail.com,
-	dmitry.baryshkov@oss.qualcomm.com
-Subject: [PATCH v3 2/4] dt-bindings: arm: qcom: Add Asus Zenbook A14
-Date: Thu, 17 Apr 2025 01:20:49 +0200
-Message-ID: <20250416232345.5240-3-alex.vinarskis@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250416232345.5240-1-alex.vinarskis@gmail.com>
-References: <20250416232345.5240-1-alex.vinarskis@gmail.com>
+        Wed, 16 Apr 2025 16:20:51 -0700 (PDT)
+Date: Thu, 17 Apr 2025 02:20:50 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Rob Clark <robdclark@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, Rob Clark <robdclark@chromium.org>,
+        Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 08/34] drm/msm: Remove vram carveout support
+Message-ID: <q2tzc2cvzfu7hirxcd6l6vi7veynqdopdg2myjbjkzbslcu5bi@52pmnd3thdil>
+References: <20250319145425.51935-1-robdclark@gmail.com>
+ <20250319145425.51935-9-robdclark@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250319145425.51935-9-robdclark@gmail.com>
+X-Proofpoint-ORIG-GUID: CQ7MdK9qK0YOJypEPUOVQ62-oB60WgkL
+X-Proofpoint-GUID: CQ7MdK9qK0YOJypEPUOVQ62-oB60WgkL
+X-Authority-Analysis: v=2.4 cv=ANaQCy7k c=1 sm=1 tr=0 ts=68003b57 cx=c_pps a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=cm27Pg_UAAAA:8 a=9D-VRocS9j12M_ZVpNYA:9 a=CjuIK1q_8ugA:10 a=iYH6xdkBrDN1Jqds4HTS:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-16_09,2025-04-15_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
+ mlxlogscore=999 suspectscore=0 clxscore=1015 lowpriorityscore=0
+ phishscore=0 impostorscore=0 spamscore=0 priorityscore=1501 malwarescore=0
+ bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504160187
 
-Document the X1E-78-100 and X1P-42-100/X1-26-100 variants.
+On Wed, Mar 19, 2025 at 07:52:20AM -0700, Rob Clark wrote:
+> From: Rob Clark <robdclark@chromium.org>
+> 
+> It is standing in the way of drm_gpuvm / VM_BIND support.  Not to
+> mention frequently broken and rarely tested.  And I think only needed
+> for a 10yr old not quite upstream SoC (msm8974).
 
-Signed-off-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
----
- Documentation/devicetree/bindings/arm/qcom.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+Well... MSM8974 is quite upstream, but anyway, let's drop it. Maybe
+somebody will write an IOMMU driver.
 
-diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
-index 08c329b1e919..bb589021a97a 100644
---- a/Documentation/devicetree/bindings/arm/qcom.yaml
-+++ b/Documentation/devicetree/bindings/arm/qcom.yaml
-@@ -1133,6 +1133,7 @@ properties:
-       - items:
-           - enum:
-               - asus,vivobook-s15
-+              - asus,zenbook-a14-ux3407ra
-               - dell,xps13-9345
-               - hp,omnibook-x14
-               - lenovo,yoga-slim7x
-@@ -1144,6 +1145,7 @@ properties:
- 
-       - items:
-           - enum:
-+              - asus,zenbook-a14-ux3407qa
-               - qcom,x1p42100-crd
-           - const: qcom,x1p42100
- 
+> 
+> Maybe we can add support back in later, but I'm doubtful.
+> 
+> Signed-off-by: Rob Clark <robdclark@chromium.org>
+> ---
+>  drivers/gpu/drm/msm/adreno/a2xx_gpu.c      |   6 +-
+>  drivers/gpu/drm/msm/adreno/a3xx_gpu.c      |  13 +-
+>  drivers/gpu/drm/msm/adreno/a4xx_gpu.c      |  13 +-
+>  drivers/gpu/drm/msm/adreno/adreno_device.c |   4 -
+>  drivers/gpu/drm/msm/adreno/adreno_gpu.h    |   1 -
+>  drivers/gpu/drm/msm/msm_drv.c              | 117 +-----------------
+>  drivers/gpu/drm/msm/msm_drv.h              |  11 --
+>  drivers/gpu/drm/msm/msm_gem.c              | 131 ++-------------------
+>  drivers/gpu/drm/msm/msm_gem.h              |   5 -
+>  drivers/gpu/drm/msm/msm_gem_submit.c       |   5 -
+>  10 files changed, 19 insertions(+), 287 deletions(-)
+
 -- 
-2.45.2
-
+With best wishes
+Dmitry
 
