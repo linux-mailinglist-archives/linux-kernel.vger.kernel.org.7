@@ -1,239 +1,171 @@
-Return-Path: <linux-kernel+bounces-607633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ECA9A908C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:26:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14466A908E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:28:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0B7C1905E67
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:27:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BC243B1CBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:28:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E591D211706;
-	Wed, 16 Apr 2025 16:26:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4390C213255;
+	Wed, 16 Apr 2025 16:28:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Zbk9V2mz"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DMt5At1z"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0011620E31C
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 16:26:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49BC72116ED
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 16:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744820806; cv=none; b=ucMh885JPFxfYDjzAeEbIKaqg1tqoq5tp1wFf88Jt2YFXURCfKkPXyyR/8dFXjLHx/UfwOIAopwgGjmnYykv9w5Sph8nCRyU4TMunMeIbPfbh/eKquZGLZ36eAgDNCRtm6W+yfgRwGRQPq98SyCiAJAuTw2acA9grY2cmebzq0c=
+	t=1744820909; cv=none; b=ReWoBCr+v30c0jfW3GvFNkXEB33xdjcysVru6Ra8AxxgykX+1zFiGFQDkvESjG6Fb4LEkJ0SZsq1wXHD7pQ8plTQjaZzU5ConLcq83ZhUoexfneNDemGtwBu/jq8/l7YCg0TGn9Vg1sJt0tSlQsQjFuR5FxPFqSOCEtfiWN33ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744820806; c=relaxed/simple;
-	bh=IgVUPVmeENy0Uzuoi0wDjp+mUTJq74C5LbxA0jQcmRU=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GSk5zbni2o5lkeHzlpuqAS/dApAAmEAvGZX1QiNRQuFGPuiUk7WyloOPYovrDANoJtDIbgwX2tyT+TCNESrTemClQFd9/7TNT16NWaBLI8UNCNFrdc+Q2dosHgbRvl06Kh8yJJfcT54rJb8Ys0vHh/GVnFypVsoocT5P47bPml4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Zbk9V2mz; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ac345bd8e13so1200335166b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 09:26:43 -0700 (PDT)
+	s=arc-20240116; t=1744820909; c=relaxed/simple;
+	bh=V5EjEqLAI6VF4m0ym14G0zP2Lk1AAeOTupEjRA2/fhk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QACrgutKr4BjAv8djXAQQ4/CKHkCVzHVAB/WhgRkv+m2b6KHGUtAOkHHLa49McZkiLFj92wKmVgNzWIKbKyOFV+V8DphEfolQWEWKavjyQUJTKZMR/xZutzlbT3jWA3g16ufi+AzhFywVb2LqySIbGyA/4uV3Kw6EBdFK22kQdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DMt5At1z; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43cf3192d8bso62935e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 09:28:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1744820802; x=1745425602; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9FlZ3978PiTGhVSgh9hGMx7P3nOMDWWhOsbZtxjmYRo=;
-        b=Zbk9V2mzhvYatYTUOlXlO837M+Gz8+Hde2DMQCNpqHmfAXowQx43KtI8Fcn54XHz5A
-         4S04TNsffSUSK3qDocq8M8dd4EuM2JJlsWxvnG5UTulUD7qGwNHD4HGSMo5bgvZdQuiZ
-         o5EdZYA+J66smISdM4BYTjwZESdVpwxHfOiQfC4DnKidSfmf1jYZY6DIJ5b8fc37pDPe
-         nkq1GrBQ+HYunIBXFGhxiOJTyB0d9YNCoeeLvCpKBoVJ27fTdyCdi/yUZJP+MAqeG6Yx
-         BM5ntIRGHA0WQHTBkpoOxJZ2g8wOW29GQpHZGeM+E1z+N6D4MlFFlKdQBaI9XdxwDlmW
-         /iMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744820802; x=1745425602;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1744820905; x=1745425705; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9FlZ3978PiTGhVSgh9hGMx7P3nOMDWWhOsbZtxjmYRo=;
-        b=gdP/382RiW9cG82NDKRRxtNoZSiKmCFv5Yxykjc1UusnCVk2CKihSQi7/3Hbzbwjg2
-         uogZ/awTVs5JlByAqaQf661diIlXuVKyH+pFWvnxTDTwGK0RtVa5tuOFZ0bB8v7rtGTi
-         kZi00e58i/6xU9sCe5fjaW273cQEMhv7gEeSYQ0eMG5NQPAhEeYYxffjHYtXR9ROTfdE
-         h1d7kLTeIctjF3uPPkbW/dw+5bvpHPLglqRzfzOjAfcK6eFD8Yv8nL8sf9lpgjqUqXA9
-         rj6xi19KVEwCJfQ4U2zLc5n8dnMTsb2yprgKJQTecrYIdkTa6jPDCkUu0z4mJrgydkxk
-         +BNg==
-X-Forwarded-Encrypted: i=1; AJvYcCXdyGNb0OuYaGSQxsJzoK4lDik6PpaY4ArfmdrsdO/HrnsAOs17jJdaiN5F4rzP7rN95GwhQP74fOtDtJ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0kpWC+EtdGavMxAXDKNxeeT8FPfvcfwrOLv6cYDjskVs7numV
-	7oom9TXs9ngwHdp91shoq3ty3e636vzliam/gOXPVYc+wZKCyXFqV0PSPnbDG2Y=
-X-Gm-Gg: ASbGncsD3wXea0dNEybsClvijDkCZ7aH1kqBwnSWt6ZXmvecmz/4avSY2ThovOMJtsp
-	O1vveFQaSl1Lbo9mVKVPfliGW2FRAFpEYGoBrmwNbVfw65IQFa26PUgSqOzSTklq16mG9YcF/Bt
-	Wk9tpTHlbx3H6K5yA6MBbH0Pub9mikyTUBuThmtNNWQTBonOYM+AuPjBiZZCRzLNOoLKVrjIVUH
-	VVlX4fWbo6b4xdgJgmxQ59+deu+6U0u54RTvbj7MjSbbYDYDeEnAtUVPoPU2lj84nWLpiMcAoGJ
-	eJf4E8FDmwWdBDc8+GawmUdteO9Eif4elwJP348F7k8jzer8LmZ+NidBY8Z37wbsxWry6xUPgYX
-	ZPnlOSQ==
-X-Google-Smtp-Source: AGHT+IHS1EQoXBYosStv1ftcoY5+W8c3n7WjQIALsG6rcu4q9LYmbRt8Y9GVkdutMbrKBeFufo1cQw==
-X-Received: by 2002:a17:907:2d9e:b0:aca:c441:e861 with SMTP id a640c23a62f3a-acb42890585mr270946866b.7.1744820802220;
-        Wed, 16 Apr 2025 09:26:42 -0700 (PDT)
-Received: from localhost (93-44-188-26.ip98.fastwebnet.it. [93.44.188.26])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb3d1ccd75sm155050366b.142.2025.04.16.09.26.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Apr 2025 09:26:41 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Wed, 16 Apr 2025 18:28:05 +0200
-To: Stefan Wahren <wahrenst@gmx.net>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	kernel-list@raspberrypi.com
-Subject: Re: [PATCH v8 05/13] clk: rp1: Add support for clocks provided by RP1
-Message-ID: <Z__alTyVJOwu_1gR@apocalypse>
-References: <cover.1742418429.git.andrea.porta@suse.com>
- <370137263691f4fc14928e4b378b27f75bfd0826.1742418429.git.andrea.porta@suse.com>
- <23ac3d05-5fb7-4cd8-bb87-cf1f3eab521d@gmx.net>
+        bh=dcKONrIAwY+Efjpusl4unIszUT6B68ir1oyM8EH1UJY=;
+        b=DMt5At1zuEraXQDFdfoUFyvRo93WxwpM9AIaXjydcUOd8acdr4WnZ6Od9BCDBrfZoS
+         IpXaXURIRkBaAdzsoDppwKFlPtFA597blEBXLIQ1jzW7DAp13/CExsblaURmFHAXV8QS
+         DrO+HYC4JjqVac0hoL4iQ3zlCoSC7/pMpMWwN7GEIIxd3vjAg19/VB4ZS7cQoqOAnw0c
+         MdgvX2MYGIRzNlqFIrtG70316UJiEz5U0phJ7y7ft2ylDXQiMkb6xKPnzp7nbG6cuUbZ
+         1cNgss8+3qC8TmXwbbCnlq9Hi+8kYLMWCI8qfmxw+aLQrm8d020+hs9ra7i1jJ65Vi0x
+         S4dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744820905; x=1745425705;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dcKONrIAwY+Efjpusl4unIszUT6B68ir1oyM8EH1UJY=;
+        b=IXuC5BQgqPr2+iflKUqCMwnG7DkV14Uo74Y61dF6JScnJlXkesAnSwugyg/ownpexA
+         iV2zvpLQZ3vbAvB5W0GQmLG2K72BDDaDdmJKX66ULD7ZlFq/NSxcVfo4STmQkPvUyoWx
+         i0RO6TPwbMJvY6f/aJ3JPf8rWhzK3/1qM9dLt5PqxchtYe2dFaZeJQO7pde9nP8jbknr
+         zGkkLW6ILFSvLSSQULa2tm/RgmF1MZn7WTF+twk7whF4WyU0SXmMRxjbPoaWH3t37KWd
+         qrSo3uX97K1OwRknqaC0VQK8kt8YCd4uBW+Rxws5LgYBJL1u6g/HUJySl8/oZxinybe+
+         8XcA==
+X-Forwarded-Encrypted: i=1; AJvYcCVe7mInFgR+2s5wnqeNkIPd/nVVRFNyfiFCvJ+fzqPUHtt60KqJeAtneU5Omxl6X+J92ni5Cqi6AtlHFAE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYA4vUrFpPAGG48POUbg2Qll9u8jWk7q6N63l+uaR1Ldac4xer
+	G/pwkExFECWEAVNfEuikACZWpOgEbhUix806TpjXgwPVcsNrd4tBdA4VFef0qZYQyQn7YjPr0uF
+	estSpmyDFufx+Su/ZJbbO5ZqS8fffsoIldLma
+X-Gm-Gg: ASbGnct5yciRFnKv9fWcLdbW/vOyz1/uV0P98i/7S81wnN3iQe+nS+s//G0rucwrvk7
+	7nq8A44fHgwYZ/SC0YyJoMLTv8mY+BUDcmiEDEbMItJ4Qvsdg6hka9kB9qHmGMKxi2UP8jV3Hye
+	laMDejDyyAOM8si5Lw/hX+qvb9Y/tegv+SEw6Va5dGHeWgDqJo/qm8
+X-Google-Smtp-Source: AGHT+IECcvlnv6xPe9UB0/XJHO7q92sQEEqdeeGFlPVCn4BZ/toc+Qo3v9Dc1e4mY/RgIEckbUeu3UbXyA3ppO6oN3o=
+X-Received: by 2002:a05:600c:6a87:b0:439:4a76:c246 with SMTP id
+ 5b1f17b1804b1-4405d26eadcmr1009515e9.6.1744820905359; Wed, 16 Apr 2025
+ 09:28:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <23ac3d05-5fb7-4cd8-bb87-cf1f3eab521d@gmx.net>
+References: <20250414225227.3642618-3-tjmercier@google.com> <202504161015.x2XLaha2-lkp@intel.com>
+In-Reply-To: <202504161015.x2XLaha2-lkp@intel.com>
+From: "T.J. Mercier" <tjmercier@google.com>
+Date: Wed, 16 Apr 2025 09:28:13 -0700
+X-Gm-Features: ATxdqUFoAbnFhGEzvGofJporgvqMuSJROlNX-nlFC0ORBP_b5Axo3RH1otfUvlU
+Message-ID: <CABdmKX16QttfxRYHaq1B92U8nw+S6Gte+mFVhOTnCy4H3cLFcA@mail.gmail.com>
+Subject: Re: [PATCH 2/4] bpf: Add dmabuf iterator
+To: kernel test robot <lkp@intel.com>
+Cc: sumit.semwal@linaro.org, christian.koenig@amd.com, ast@kernel.org, 
+	daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev, 
+	skhan@linuxfoundation.org, llvm@lists.linux.dev, 
+	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linaro-mm-sig@lists.linaro.org, linux-doc@vger.kernel.org, 
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, android-mm@google.com, 
+	simona@ffwll.ch, corbet@lwn.net, eddyz87@gmail.com, song@kernel.org, 
+	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
+	sdf@fomichev.me, jolsa@kernel.org, mykolal@fb.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Stefan,
+On Tue, Apr 15, 2025 at 9:43=E2=80=AFPM kernel test robot <lkp@intel.com> w=
+rote:
+>
+> Hi Mercier,
+>
+> kernel test robot noticed the following build errors:
+>
+> [auto build test ERROR on bpf-next/net]
+> [also build test ERROR on bpf-next/master bpf/master linus/master v6.15-r=
+c2 next-20250415]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>
+> url:    https://github.com/intel-lab-lkp/linux/commits/T-J-Mercier/dma-bu=
+f-Rename-and-expose-debugfs-symbols/20250415-065354
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git =
+net
+> patch link:    https://lore.kernel.org/r/20250414225227.3642618-3-tjmerci=
+er%40google.com
+> patch subject: [PATCH 2/4] bpf: Add dmabuf iterator
+> config: i386-buildonly-randconfig-005-20250416
+> compiler: clang version 20.1.2 (https://github.com/llvm/llvm-project 58df=
+0ef89dd64126512e4ee27b4ac3fd8ddf6247)
+> reproduce (this is a W=3D1 build):
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202504161015.x2XLaha2-lkp=
+@intel.com/
+>
+> All errors (new ones prefixed by >>):
+>
+> >> ld.lld: error: undefined symbol: dmabuf_debugfs_list_mutex
+>    >>> referenced by dmabuf_iter.c:44 (kernel/bpf/dmabuf_iter.c:44)
+>    >>>               vmlinux.o:(dmabuf_iter_seq_next)
+>    >>> referenced by dmabuf_iter.c:53 (kernel/bpf/dmabuf_iter.c:53)
+>    >>>               vmlinux.o:(dmabuf_iter_seq_next)
+>    >>> referenced by dmabuf_iter.c:26 (kernel/bpf/dmabuf_iter.c:26)
+>    >>>               vmlinux.o:(dmabuf_iter_seq_start)
+>    >>> referenced 1 more times
+> --
+> >> ld.lld: error: undefined symbol: dma_buf_put
+>    >>> referenced by dmabuf_iter.c:45 (kernel/bpf/dmabuf_iter.c:45)
+>    >>>               vmlinux.o:(dmabuf_iter_seq_next)
+>    >>> referenced by dmabuf_iter.c:90 (kernel/bpf/dmabuf_iter.c:90)
+>    >>>               vmlinux.o:(dmabuf_iter_seq_stop)
+> --
+> >> ld.lld: error: undefined symbol: dmabuf_debugfs_list
+>    >>> referenced by list.h:354 (include/linux/list.h:354)
+>    >>>               vmlinux.o:(dmabuf_iter_seq_next)
+>    >>> referenced by dmabuf_iter.c:0 (kernel/bpf/dmabuf_iter.c:0)
+>    >>>               vmlinux.o:(dmabuf_iter_seq_start)
+>    >>> referenced by list.h:364 (include/linux/list.h:364)
+>    >>>               vmlinux.o:(dmabuf_iter_seq_start)
+>
+> --
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
 
-On 14:09 Mon 14 Apr     , Stefan Wahren wrote:
-> Hi Andrea,
-> 
-> Am 19.03.25 um 22:52 schrieb Andrea della Porta:
-> > RaspberryPi RP1 is an MFD providing, among other peripherals, several
-> > clock generators and PLLs that drives the sub-peripherals.
-> > Add the driver to support the clock providers.
-> > 
-> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > ---
-> >   MAINTAINERS           |    5 +
-> >   drivers/clk/Kconfig   |    9 +
-> >   drivers/clk/Makefile  |    1 +
-> >   drivers/clk/clk-rp1.c | 1512 +++++++++++++++++++++++++++++++++++++++++
-> >   4 files changed, 1527 insertions(+)
-> >   create mode 100644 drivers/clk/clk-rp1.c
-> > 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 896a307fa065..75263700370d 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -19748,6 +19748,11 @@ S:	Maintained
-> >   F:	Documentation/devicetree/bindings/media/raspberrypi,rp1-cfe.yaml
-> >   F:	drivers/media/platform/raspberrypi/rp1-cfe/
-> > 
-> > +RASPBERRY PI RP1 PCI DRIVER
-> > +M:	Andrea della Porta <andrea.porta@suse.com>
-> > +S:	Maintained
-> > +F:	drivers/clk/clk-rp1.c
-> > +
-> >   RC-CORE / LIRC FRAMEWORK
-> >   M:	Sean Young <sean@mess.org>
-> >   L:	linux-media@vger.kernel.org
-> > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> > index 713573b6c86c..cff90de71409 100644
-> > --- a/drivers/clk/Kconfig
-> > +++ b/drivers/clk/Kconfig
-> > @@ -88,6 +88,15 @@ config COMMON_CLK_RK808
-> >   	  These multi-function devices have two fixed-rate oscillators, clocked at 32KHz each.
-> >   	  Clkout1 is always on, Clkout2 can off by control register.
-> > 
-> > +config COMMON_CLK_RP1
-> > +	tristate "Raspberry Pi RP1-based clock support"
-> > +	depends on MISC_RP1 || COMPILE_TEST
-> > +	default MISC_RP1
-> > +	help
-> > +	  Enable common clock framework support for Raspberry Pi RP1.
-> > +	  This multi-function device has 3 main PLLs and several clock
-> > +	  generators to drive the internal sub-peripherals.
-> > +
-> >   config COMMON_CLK_HI655X
-> >   	tristate "Clock driver for Hi655x" if EXPERT
-> >   	depends on (MFD_HI655X_PMIC || COMPILE_TEST)
-> > diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> > index bf4bd45adc3a..ff3993ed7e09 100644
-> > --- a/drivers/clk/Makefile
-> > +++ b/drivers/clk/Makefile
-> > @@ -84,6 +84,7 @@ obj-$(CONFIG_CLK_LS1028A_PLLDIG)	+= clk-plldig.o
-> >   obj-$(CONFIG_COMMON_CLK_PWM)		+= clk-pwm.o
-> >   obj-$(CONFIG_CLK_QORIQ)			+= clk-qoriq.o
-> >   obj-$(CONFIG_COMMON_CLK_RK808)		+= clk-rk808.o
-> > +obj-$(CONFIG_COMMON_CLK_RP1)            += clk-rp1.o
-> >   obj-$(CONFIG_COMMON_CLK_HI655X)		+= clk-hi655x.o
-> >   obj-$(CONFIG_COMMON_CLK_S2MPS11)	+= clk-s2mps11.o
-> >   obj-$(CONFIG_COMMON_CLK_SCMI)           += clk-scmi.o
-> > diff --git a/drivers/clk/clk-rp1.c b/drivers/clk/clk-rp1.c
-> > new file mode 100644
-> > index 000000000000..72c74e344c1d
-> > --- /dev/null
-> > +++ b/drivers/clk/clk-rp1.c
-> > @@ -0,0 +1,1512 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> ...
-> > +
-> > +static int rp1_pll_divider_set_rate(struct clk_hw *hw,
-> > +				    unsigned long rate,
-> > +				    unsigned long parent_rate)
-> > +{
-> > +	struct rp1_clk_desc *divider = container_of(hw, struct rp1_clk_desc, div.hw);
-> > +	struct rp1_clockman *clockman = divider->clockman;
-> > +	const struct rp1_pll_data *data = divider->data;
-> > +	u32 div, sec;
-> > +
-> > +	div = DIV_ROUND_UP_ULL(parent_rate, rate);
-> > +	div = clamp(div, 8u, 19u);
-> > +
-> > +	spin_lock(&clockman->regs_lock);
-> > +	sec = clockman_read(clockman, data->ctrl_reg);
-> > +	sec &= ~PLL_SEC_DIV_MASK;
-> > +	sec |= FIELD_PREP(PLL_SEC_DIV_MASK, div);
-> > +
-> > +	/* Must keep the divider in reset to change the value. */
-> > +	sec |= PLL_SEC_RST;
-> > +	clockman_write(clockman, data->ctrl_reg, sec);
-> > +
-> > +	/* TODO: must sleep 10 pll vco cycles */
-> Is it possible to implement this with some kind of xsleep or xdelay?
+This is due to no CONFIG_DMA_SHARED_BUFFER. Fixed by:
 
-I guess so... unless anyone knows a better method such as checking
-for some undocumented register flag which reveals when the clock is stable
-so it can be enabled (Phil, Dave, please feel free to step in with advice
-if you have any), I think this line could solve the issue:
-
-ndelay (10 * div * NSEC_PER_SEC / parent_rate);
-
-Many thanks,
-Andrea
-
-> > +	sec &= ~PLL_SEC_RST;
-> > +	clockman_write(clockman, data->ctrl_reg, sec);
-> > +	spin_unlock(&clockman->regs_lock);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > 
+--- a/kernel/bpf/Makefile
++++ b/kernel/bpf/Makefile
+@@ -53,7 +53,7 @@ obj-$(CONFIG_BPF_SYSCALL) +=3D relo_core.o
+ obj-$(CONFIG_BPF_SYSCALL) +=3D btf_iter.o
+ obj-$(CONFIG_BPF_SYSCALL) +=3D btf_relocate.o
+ obj-$(CONFIG_BPF_SYSCALL) +=3D kmem_cache_iter.o
+-ifeq ($(CONFIG_DEBUG_FS),y)
++ifeq ($(CONFIG_DMA_SHARED_BUFFER)$(CONFIG_DEBUG_FS),yy)
+ obj-$(CONFIG_BPF_SYSCALL) +=3D dmabuf_iter.o
+ endif
 
