@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-607135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32EF2A8B860
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:08:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D841A8B858
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:07:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EA9B5A35C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 12:06:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7562C7AEFC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 12:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C5224BBE0;
-	Wed, 16 Apr 2025 12:06:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5582424BCEA;
+	Wed, 16 Apr 2025 12:06:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JBlsWcpe";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kV4dRiKD"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="luYtl5qE";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cnOJl8gq"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A4224A055
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15DB424A05A
 	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 12:06:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744805185; cv=none; b=jO4jKeslbhT+ajhRebBnGRTwCvsnc7AMLR1c/1px2cYBK6gVnmMG1fl98yuAZ3D8oHkoDbOyxrQGW6eBEYkA28kMKB7JICjIozYERkwUcDh1vQ3woL8c6wZJ+u0hzbGxaBFKdVSbeXGxjEBs5BdNquw6Ta8LG0PgybZ3kAiyfDs=
+	t=1744805186; cv=none; b=lWcGSRJah96xlt6bJ0EK2L5rH1C2SKOTIP+Wdu6/w6ev7tNX8nRQOSEzLWfvPgjGJL/gDiUqg87dsUyvL6y/rxPuYgQZYTHQs8kkumc32unufvq04fPbURDiG6rj9NvHsnzV5dSEKFvWD1SJdnFJ6b+BwH9nBhXGVHt0CGqX8oE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744805185; c=relaxed/simple;
-	bh=/v1YZLb5r0nwuzBwXN9pK+KCnV1nO/MMUBtr8E5Yrus=;
+	s=arc-20240116; t=1744805186; c=relaxed/simple;
+	bh=HmLYaF6k75emMNYuVKPaAVfZFtSclPYYeJ0ZzkL/MFw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pX3+SNsI06Jy715uQV5gSA0+2fGTvKjOc+AGh3P+20MpfXkiTnUZeSfIhpxkcYTdAv+wNMX6sRw2Z++Ge5Q6f/v+PiKVTmdtsAITGD1pCD9mcoJlERkVIVTE6nKAS3rI9QaJ9JPqagrYtKBhIy62GePVRdAoDAqpNoRbHf9F7CQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JBlsWcpe; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kV4dRiKD; arc=none smtp.client-ip=193.142.43.55
+	 In-Reply-To:To:Cc; b=nqy9FuVhZZMwydTOZs59SgC4ES2cCmRtHgCHXolAxWUcj2BC5t6wC69MRyP/rRqnQzMPikHC0mw3KXHB+LQNm66PlSaCsfu7pUsERBkG0wDIvb2kYIHDZHViSs5x10rEbl6ywH5B7xT/xZ4t774xeQ1sKJwaFjHvDpZFCnhJ1+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=luYtl5qE; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cnOJl8gq; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744805181;
+	s=2020; t=1744805182;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=OtHlFmG4xMfevK368geVp5vwSOOouC9xi41I1IozzwI=;
-	b=JBlsWcpeztaI1nc0zF//sewYNrKtHRXzi58qL3SNexi/byDvrGdfu0asPhmShink3Lfpa9
-	IM9x/9G3YX850gGt7XUPsaMiobKSFtA86zZmgOWkbogrxIitbw3epFNoftcUdT9A7SwW67
-	5qsVwVkf3nR4Rx9F60xmWRiCV91rniPNUjYrW2uUd3gq1QPseGjAyFt5LX9KFbopxVnUVV
-	Y91eOPxClOCYcN19P6E16n48zS230kfR6TFQtIUP3YAd3CfNZ6tFDvSw9aE5M/RVT/n6TX
-	V7SbZBOFmziSTNOq1tpxGiH2SfeZMT2K3XpTg5MN2dEtoEpnN37ZTI2r0Bu6ew==
+	bh=1TF1+UPseHbLqKixvEBKKrw7HcxtjV+VM41Hak2YZ+c=;
+	b=luYtl5qEIb2GAfRMoftqlCTkRiTeQPvlrqLZ1czJH1+lRv/jN+Da6YfXppbEfergLaZ0Qq
+	KeadDVBArKN0lG2mPm/qPZGr/kUVR0/xJqUwme2gBLQL7jdo9fIWAXEPXWW5VFQCg7dcuh
+	0o1V7ic7h6huB2uhbrec3gVhlkTHeao/oiqLF7/ZqfL8vUM9iug77vY+GGDBJZPcyPssuj
+	1s+I4aTbsX5qPmf8ZxrARmrd2w5XgkM/7lOZWXKyEdaSlEnpRfOYdJucoysd5K+rDHLjDz
+	Rttxfmd1B6qg1MFEkEakHl7SgaEVQu4hLpVYDB3ZfPESfsrniyK91ELrqDZrnw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744805181;
+	s=2020e; t=1744805182;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=OtHlFmG4xMfevK368geVp5vwSOOouC9xi41I1IozzwI=;
-	b=kV4dRiKDz5DQHEpwBrkgpNlvTx0fV/A/GKdyywn3NkB/IO9JjEV5ZO/SPYhFpE4+2Hk4WE
-	usz8H422JvmKlzAg==
-Date: Wed, 16 Apr 2025 14:06:17 +0200
-Subject: [PATCH 02/10] tools/nolibc: add elf.h
+	bh=1TF1+UPseHbLqKixvEBKKrw7HcxtjV+VM41Hak2YZ+c=;
+	b=cnOJl8gqhzoQ4YMtor8pID9qmiX88Nd9OZTgMPVO2SI3Rx25UnMimu5C37aazq9JXGLpmr
+	x+SJJjLjxI1B5sCA==
+Date: Wed, 16 Apr 2025 14:06:18 +0200
+Subject: [PATCH 03/10] tools/nolibc: move open() and friends to fcntl.h
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,76 +63,206 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250416-nolibc-split-sys-v1-2-a069a3f1d145@linutronix.de>
+Message-Id: <20250416-nolibc-split-sys-v1-3-a069a3f1d145@linutronix.de>
 References: <20250416-nolibc-split-sys-v1-0-a069a3f1d145@linutronix.de>
 In-Reply-To: <20250416-nolibc-split-sys-v1-0-a069a3f1d145@linutronix.de>
 To: Willy Tarreau <w@1wt.eu>, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 Cc: linux-kernel@vger.kernel.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744805177; l=1759;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744805177; l=4920;
  i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=/v1YZLb5r0nwuzBwXN9pK+KCnV1nO/MMUBtr8E5Yrus=;
- b=5urcga8JNB3Agfa0IMvsjpbtvE2GaILFFYBH/5wBZ8bt/eADjYapbnRcgcL4K2e0UBATT70/y
- wvHwLUOTD4MBXK2OdWSzB/SmsXeDavUra7zes98PIj+1dhONjlWivoN
+ bh=HmLYaF6k75emMNYuVKPaAVfZFtSclPYYeJ0ZzkL/MFw=;
+ b=ijLcVYHNTKCnJgCuZGgQlgtAZAhqppbY5Qu9VfTdmT+n5wRcCYpqex2BnAc7dg5uDaO6j19CJ
+ nWbc3f5h70GBon6sXZIKENxu1TDSkdUQKRF5Kz+N0LY9cH1OjUlCWpb
 X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
  pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-The UAPI header do already provide an elf.h implementation.
-Reexport it under its libc name.
+This is the location regular userspace expects these definitions.
 
 Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 ---
  tools/include/nolibc/Makefile |  1 +
- tools/include/nolibc/elf.h    | 15 +++++++++++++++
+ tools/include/nolibc/dirent.h |  1 +
+ tools/include/nolibc/fcntl.h  | 69 +++++++++++++++++++++++++++++++++++++++++++
  tools/include/nolibc/nolibc.h |  1 +
- 3 files changed, 17 insertions(+)
+ tools/include/nolibc/sys.h    | 52 --------------------------------
+ 5 files changed, 72 insertions(+), 52 deletions(-)
 
 diff --git a/tools/include/nolibc/Makefile b/tools/include/nolibc/Makefile
-index f562cb53be10efc4e0758b8836cf3ace5b3c151f..fd76d267d79a8533b7e78375c30324c962b01973 100644
+index fd76d267d79a8533b7e78375c30324c962b01973..2132e4f4d2165729ec6d10860d0586f1b71ee0fb 100644
 --- a/tools/include/nolibc/Makefile
 +++ b/tools/include/nolibc/Makefile
-@@ -30,6 +30,7 @@ all_files := \
- 		crt.h \
- 		ctype.h \
+@@ -32,6 +32,7 @@ all_files := \
  		dirent.h \
-+		elf.h \
+ 		elf.h \
  		errno.h \
++		fcntl.h \
  		limits.h \
  		nolibc.h \
-diff --git a/tools/include/nolibc/elf.h b/tools/include/nolibc/elf.h
+ 		signal.h \
+diff --git a/tools/include/nolibc/dirent.h b/tools/include/nolibc/dirent.h
+index c5c30d0dd6806b1bec2fa8120a3df29aaa201393..d3fb9500c60a31bc1b75601d78871df82ca75f7d 100644
+--- a/tools/include/nolibc/dirent.h
++++ b/tools/include/nolibc/dirent.h
+@@ -9,6 +9,7 @@
+ 
+ #include "stdint.h"
+ #include "types.h"
++#include "fcntl.h"
+ 
+ #include <linux/limits.h>
+ 
+diff --git a/tools/include/nolibc/fcntl.h b/tools/include/nolibc/fcntl.h
 new file mode 100644
-index 0000000000000000000000000000000000000000..beb0b3a87569a3037055c8fe7e9b086a26ca7d13
+index 0000000000000000000000000000000000000000..5feb08ad54a7d943b8100eac21f4058310efea91
 --- /dev/null
-+++ b/tools/include/nolibc/elf.h
-@@ -0,0 +1,15 @@
++++ b/tools/include/nolibc/fcntl.h
+@@ -0,0 +1,69 @@
 +/* SPDX-License-Identifier: LGPL-2.1 OR MIT */
 +/*
-+ * Shim elf.h header for NOLIBC.
-+ * Copyright (C) 2025 Thomas Weißschuh <thomas.weissschuh@linutronix.de>
++ * fcntl definition for NOLIBC
++ * Copyright (C) 2017-2021 Willy Tarreau <w@1wt.eu>
 + */
 +
-+#ifndef _NOLIBC_SYS_ELF_H
-+#define _NOLIBC_SYS_ELF_H
++#ifndef _NOLIBC_FCNTL_H
++#define _NOLIBC_FCNTL_H
 +
-+#include <linux/elf.h>
++#include "arch.h"
++#include "types.h"
++#include "sys.h"
++
++/*
++ * int openat(int dirfd, const char *path, int flags[, mode_t mode]);
++ */
++
++static __attribute__((unused))
++int sys_openat(int dirfd, const char *path, int flags, mode_t mode)
++{
++	return my_syscall4(__NR_openat, dirfd, path, flags, mode);
++}
++
++static __attribute__((unused))
++int openat(int dirfd, const char *path, int flags, ...)
++{
++	mode_t mode = 0;
++
++	if (flags & O_CREAT) {
++		va_list args;
++
++		va_start(args, flags);
++		mode = va_arg(args, mode_t);
++		va_end(args);
++	}
++
++	return __sysret(sys_openat(dirfd, path, flags, mode));
++}
++
++/*
++ * int open(const char *path, int flags[, mode_t mode]);
++ */
++
++static __attribute__((unused))
++int sys_open(const char *path, int flags, mode_t mode)
++{
++	return my_syscall4(__NR_openat, AT_FDCWD, path, flags, mode);
++}
++
++static __attribute__((unused))
++int open(const char *path, int flags, ...)
++{
++	mode_t mode = 0;
++
++	if (flags & O_CREAT) {
++		va_list args;
++
++		va_start(args, flags);
++		mode = va_arg(args, mode_t);
++		va_end(args);
++	}
++
++	return __sysret(sys_open(path, flags, mode));
++}
 +
 +/* make sure to include all global symbols */
 +#include "nolibc.h"
 +
-+#endif /* _NOLIBC_SYS_ELF_H */
++#endif /* _NOLIBC_FCNTL_H */
 diff --git a/tools/include/nolibc/nolibc.h b/tools/include/nolibc/nolibc.h
-index 70872401aca8d5aa37b12ee585193353f692576d..127f0d9068c6508bd45acfe0ebf2ce15acc422b0 100644
+index 127f0d9068c6508bd45acfe0ebf2ce15acc422b0..bb4183a8fdc41023d9b8b37fe35ec37ca408b4c6 100644
 --- a/tools/include/nolibc/nolibc.h
 +++ b/tools/include/nolibc/nolibc.h
-@@ -97,6 +97,7 @@
- #include "types.h"
- #include "sys.h"
- #include "ctype.h"
-+#include "elf.h"
- #include "signal.h"
- #include "unistd.h"
- #include "stdio.h"
+@@ -106,6 +106,7 @@
+ #include "time.h"
+ #include "stackprotector.h"
+ #include "dirent.h"
++#include "fcntl.h"
+ 
+ /* Used by programs to avoid std includes */
+ #define NOLIBC
+diff --git a/tools/include/nolibc/sys.h b/tools/include/nolibc/sys.h
+index 08c1c074bec89a27e53e5d461a3ebbf71ec323d1..5fa351e6a3512a3d0c609867244ac91e8563ab2a 100644
+--- a/tools/include/nolibc/sys.h
++++ b/tools/include/nolibc/sys.h
+@@ -764,58 +764,6 @@ int mount(const char *src, const char *tgt,
+ 	return __sysret(sys_mount(src, tgt, fst, flags, data));
+ }
+ 
+-/*
+- * int openat(int dirfd, const char *path, int flags[, mode_t mode]);
+- */
+-
+-static __attribute__((unused))
+-int sys_openat(int dirfd, const char *path, int flags, mode_t mode)
+-{
+-	return my_syscall4(__NR_openat, dirfd, path, flags, mode);
+-}
+-
+-static __attribute__((unused))
+-int openat(int dirfd, const char *path, int flags, ...)
+-{
+-	mode_t mode = 0;
+-
+-	if (flags & O_CREAT) {
+-		va_list args;
+-
+-		va_start(args, flags);
+-		mode = va_arg(args, mode_t);
+-		va_end(args);
+-	}
+-
+-	return __sysret(sys_openat(dirfd, path, flags, mode));
+-}
+-
+-/*
+- * int open(const char *path, int flags[, mode_t mode]);
+- */
+-
+-static __attribute__((unused))
+-int sys_open(const char *path, int flags, mode_t mode)
+-{
+-	return my_syscall4(__NR_openat, AT_FDCWD, path, flags, mode);
+-}
+-
+-static __attribute__((unused))
+-int open(const char *path, int flags, ...)
+-{
+-	mode_t mode = 0;
+-
+-	if (flags & O_CREAT) {
+-		va_list args;
+-
+-		va_start(args, flags);
+-		mode = va_arg(args, mode_t);
+-		va_end(args);
+-	}
+-
+-	return __sysret(sys_open(path, flags, mode));
+-}
+-
+ 
+ /*
+  * int pipe2(int pipefd[2], int flags);
 
 -- 
 2.49.0
