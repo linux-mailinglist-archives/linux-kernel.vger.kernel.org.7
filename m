@@ -1,165 +1,177 @@
-Return-Path: <linux-kernel+bounces-607637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6094CA908FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:29:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1E81A90903
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:30:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97F313B5671
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:29:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FEC77A73AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:29:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A87CD2135B8;
-	Wed, 16 Apr 2025 16:29:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58D7212D84;
+	Wed, 16 Apr 2025 16:29:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ucPkNdZI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="U9712h/I";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GZ1cIBCE"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86FD211A39;
-	Wed, 16 Apr 2025 16:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978D5211A1D
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 16:29:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744820955; cv=none; b=U+w8Hx4vhlghTFrFOsc3P6dQ1eG7JwLHvGR7cCGaaviU4xIGndDkXD+Gw1HYJ8vGtJip+jGv5ZD8beYPwHUqC8YByWWBOZisW6peKeHghGt55LdCbpKIV5uUFAQ4BxAutdH9W4Js+buuioxq2U6NIMRKaR1r8JdwhUtyQfFJmbU=
+	t=1744820971; cv=none; b=tVGYwjBGE0/XDICvLTaw8/gmuqSbtg/J+/p7QGMltV+RlBAM2OZ8+2Ia/rbIquzQXO/Q2aBA5ywtQn1+rxe6lnzW2KRBtIarLIPElBfV9dr97mN+e5ItDX/CCn3lUWOJwE5/se0fjSHxl8lWU24lQJ2/+9FuOLWHBLMPC/zy554=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744820955; c=relaxed/simple;
-	bh=j7a1MWfbRFpfxfm/Ng5E8w9b6pWr++a/2lyhhriAkgI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Qvjr37veWFVlVxOMZVFDTjY1oSN/wzdcHYmmjgUHEfFz0uGhzTt3gtvUFEToPuwtXzWwPapZlRw42JVf6XI2/ZuIK/CUXKjULwX1iAvgYOklEZvvyOHjWYGANgzu9+J3u4lBolaMGdCRo9KndgWn43t6F8TaoNmwXcFgckzGauc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ucPkNdZI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5247EC4CEEE;
-	Wed, 16 Apr 2025 16:29:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744820955;
-	bh=j7a1MWfbRFpfxfm/Ng5E8w9b6pWr++a/2lyhhriAkgI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=ucPkNdZIG2w/r6/fz5JZk/qs61NNDlEpYY7H7aqvoxWCKi7PQZ86Ld0SVT1KjvuDk
-	 C0C/7s20L2WV4kZkbRPbyxpPB/vHaxKzkZi/LwjsuU8gt1LRPi+B87zBuVpDkYr3Fj
-	 avjfj6uMKCyNy2AmisGa4avLGHD41a2Co91Lawe+Ja7+Q4iwErgBB7cywZQSFVjD9w
-	 jNjhIcILWMuGuDL7xItMcyqRC/DrVyMxxH6HP8f8W+F8t9a+5vooe+6/SjjZCIhd2f
-	 aUhJe1szUUIaN+m6UDulgc7E9Gue+kPbOOiEQASSCNuSZ+rGm2C3EJS0FJotY0u6L+
-	 66zgCckN8q0bg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41A00C369C5;
-	Wed, 16 Apr 2025 16:29:15 +0000 (UTC)
-From: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.linaro.org@kernel.org>
-Date: Wed, 16 Apr 2025 21:59:04 +0530
-Subject: [PATCH v2 2/4] PCI/ERR: Add support for resetting the slots in a
- platform specific way
+	s=arc-20240116; t=1744820971; c=relaxed/simple;
+	bh=Qn/57B9VzWB0JKYD2iE64ugEwzZtE06e200axAfuk/Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=heqRTy7dFw5CQ+TjDm2ZxhVRF1M4wMjsNEgdWV48F8lIK9xKsTwZXv5tHKw9nX/4SfLG3qS3/+HmjIbqdStZf/J4fiMScEd35eVWAVEq2cBWz56ayA99pXeJRvIAiZfByzKGSTV8/K6GJzkEuEeWhyBnA2Ddys9dxrgbSDJSEkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=U9712h/I; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GZ1cIBCE; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744820967;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+7I78ss84vjJrdkUeLd869WN5gJwqNqGsAX7SSgTHw8=;
+	b=U9712h/IdrrqPwQBFDjDVZBK2RJooIUpw0Sfc61EoSzA03M5yxEAeLXywaqjRNx9mtldGt
+	JAcNslLKZ+t8yBu1OFy7zOXv+UX2Q5303m2HdQ4YHr9hUhBk8h6DzURqF9G38NVrY4KZH9
+	973S0zqZKRvO3TBbD5+ONZfpq5mGJYl71hT3dKHRSMaQamU1u73uyU0RnUMAu/K55eMB1f
+	y1eWZzBgkVKUIJ/xh+3iwAsu86mUy64z1NYR5J2DZYsqvYJhi+9GEeuSKjlzXTx2r8cWQ5
+	WJe+FXzQ5W6w8mtbJXfHNA5j4474T0jAkrgrOLjwx4kBINpmjBL9b7zb8qjOWQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744820967;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+7I78ss84vjJrdkUeLd869WN5gJwqNqGsAX7SSgTHw8=;
+	b=GZ1cIBCElpr0EQjLhcan7BCrlPHYHWN/xBBlHonMGKlc5mbFDpBofsxG/Z8DrD2mMM0iLW
+	B40tdNioRgx8MDDg==
+To: linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH v12 04/21] futex: Pull futex_hash() out of futex_q_lock()
+Date: Wed, 16 Apr 2025 18:29:04 +0200
+Message-ID: <20250416162921.513656-5-bigeasy@linutronix.de>
+In-Reply-To: <20250416162921.513656-1-bigeasy@linutronix.de>
+References: <20250416162921.513656-1-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250416-pcie-reset-slot-v2-2-efe76b278c10@linaro.org>
-References: <20250416-pcie-reset-slot-v2-0-efe76b278c10@linaro.org>
-In-Reply-To: <20250416-pcie-reset-slot-v2-0-efe76b278c10@linaro.org>
-To: Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
- Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Rob Herring <robh@kernel.org>
-Cc: dingwei@marvell.com, cassel@kernel.org, Lukas Wunner <lukas@wunner.de>, 
- Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
- linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2766;
- i=manivannan.sadhasivam@linaro.org; h=from:subject:message-id;
- bh=DxjgbttCz+WbWbTBQh3uh5PZxc6tk82mAeHt4QTMKaE=;
- b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBn/9rXPir56LKePoLEBXt0d8b+kq7X+ZFgid+RI
- JzzZ1AKKwuJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCZ//a1wAKCRBVnxHm/pHO
- 9WTDB/9DvoXiP4Dq0I6q4cMG31g9lImU8jRuTybuyvxvopbn/Mixdu1u8Dy4W5c7xzTqjMNMTIi
- R22LFIph88ll3whCEIsdH7n45oO3SwPgXOvaQlC2imWxUPVKfL9SGTTOlrDX6yRGlXNSxpRpo1F
- TfNNPT2bqFz1knIxaskBgdyollmA67HYaOMXmgW7hEK53TIWWxbSHb/6ASfjm0HyUIVmjLpZAN1
- Sc3z32OoK/DMMvGF1dRxrWuj9Qfz/NeQcHb5uuLXur5L2QlkkDB6YjtjrSM1NTcwS5h7QfKtPxm
- VapGFs7dlSZ7/g/ZJqdw2gr9Z2DMQ8Jmtxqr1RB1jKHmYF4U
-X-Developer-Key: i=manivannan.sadhasivam@linaro.org; a=openpgp;
- fpr=C668AEC3C3188E4C611465E7488550E901166008
-X-Endpoint-Received: by B4 Relay for
- manivannan.sadhasivam@linaro.org/default with auth_id=185
-X-Original-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Reply-To: manivannan.sadhasivam@linaro.org
+Content-Transfer-Encoding: quoted-printable
 
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+From: Peter Zijlstra <peterz@infradead.org>
 
-Some host bridge devices require resetting the slots in a platform specific
-way to recover them from error conditions such as Fatal AER errors, Link
-Down etc... So introduce pci_host_bridge::reset_slot callback and call it
-from pcibios_reset_secondary_bus() if available.
-
-The 'reset_slot' callback is responsible for resetting the given slot
-referenced by the 'pci_dev' pointer in a platform specific way and bring it
-back to the working state if possible. If any error occurs during the slot
-reset operation, relevant errno should be returned.
-
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- drivers/pci/pci.c      | 12 ++++++++++++
- drivers/pci/pcie/err.c |  5 -----
- include/linux/pci.h    |  1 +
- 3 files changed, 13 insertions(+), 5 deletions(-)
+ kernel/futex/core.c     | 7 +------
+ kernel/futex/futex.h    | 2 +-
+ kernel/futex/pi.c       | 3 ++-
+ kernel/futex/waitwake.c | 6 ++++--
+ 4 files changed, 8 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 4d7c9f64ea24ec754a135a2585c99489cfa641a9..13709bb898a967968540826a2b7ee8ade6b7e082 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -4982,7 +4982,19 @@ void pci_reset_secondary_bus(struct pci_dev *dev)
- 
- void __weak pcibios_reset_secondary_bus(struct pci_dev *dev)
- {
-+	struct pci_host_bridge *host = pci_find_host_bridge(dev->bus);
-+	int ret;
-+
-+	if (host->reset_slot) {
-+		ret = host->reset_slot(host, dev);
-+		if (ret)
-+			pci_err(dev, "failed to reset slot: %d\n", ret);
-+
-+		return;
-+	}
-+
- 	pci_reset_secondary_bus(dev);
-+
+diff --git a/kernel/futex/core.c b/kernel/futex/core.c
+index cca15859a50be..7adc914878933 100644
+--- a/kernel/futex/core.c
++++ b/kernel/futex/core.c
+@@ -502,13 +502,9 @@ void __futex_unqueue(struct futex_q *q)
  }
- 
- /**
-diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
-index de6381c690f5c21f00021cdc7bde8d93a5c7db52..b834fc0d705938540d3d7d3d8739770c09fe7cf1 100644
---- a/drivers/pci/pcie/err.c
-+++ b/drivers/pci/pcie/err.c
-@@ -234,11 +234,6 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
- 	}
- 
- 	if (status == PCI_ERS_RESULT_NEED_RESET) {
--		/*
--		 * TODO: Should call platform-specific
--		 * functions to reset slot before calling
--		 * drivers' slot_reset callbacks?
--		 */
- 		status = PCI_ERS_RESULT_RECOVERED;
- 		pci_dbg(bridge, "broadcast slot_reset message\n");
- 		pci_walk_bridge(bridge, report_slot_reset, &status);
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 0e8e3fd77e96713054388bdc82f439e51023c1bf..8d7d2a49b76cf64b4218b179cec495e0d69ddf6f 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -599,6 +599,7 @@ struct pci_host_bridge {
- 	void (*release_fn)(struct pci_host_bridge *);
- 	int (*enable_device)(struct pci_host_bridge *bridge, struct pci_dev *dev);
- 	void (*disable_device)(struct pci_host_bridge *bridge, struct pci_dev *dev);
-+	int (*reset_slot)(struct pci_host_bridge *bridge, struct pci_dev *dev);
- 	void		*release_data;
- 	unsigned int	ignore_reset_delay:1;	/* For entire hierarchy */
- 	unsigned int	no_ext_tags:1;		/* No Extended Tags */
-
--- 
-2.43.0
-
+=20
+ /* The key must be already stored in q->key. */
+-struct futex_hash_bucket *futex_q_lock(struct futex_q *q)
++void futex_q_lock(struct futex_q *q, struct futex_hash_bucket *hb)
+ 	__acquires(&hb->lock)
+ {
+-	struct futex_hash_bucket *hb;
+-
+-	hb =3D futex_hash(&q->key);
+-
+ 	/*
+ 	 * Increment the counter before taking the lock so that
+ 	 * a potential waker won't miss a to-be-slept task that is
+@@ -522,7 +518,6 @@ struct futex_hash_bucket *futex_q_lock(struct futex_q *=
+q)
+ 	q->lock_ptr =3D &hb->lock;
+=20
+ 	spin_lock(&hb->lock);
+-	return hb;
+ }
+=20
+ void futex_q_unlock(struct futex_hash_bucket *hb)
+diff --git a/kernel/futex/futex.h b/kernel/futex/futex.h
+index 16aafd0113442..a219903e52084 100644
+--- a/kernel/futex/futex.h
++++ b/kernel/futex/futex.h
+@@ -354,7 +354,7 @@ static inline int futex_hb_waiters_pending(struct futex=
+_hash_bucket *hb)
+ #endif
+ }
+=20
+-extern struct futex_hash_bucket *futex_q_lock(struct futex_q *q);
++extern void futex_q_lock(struct futex_q *q, struct futex_hash_bucket *hb);
+ extern void futex_q_unlock(struct futex_hash_bucket *hb);
+=20
+=20
+diff --git a/kernel/futex/pi.c b/kernel/futex/pi.c
+index 7a941845f7eee..3bf942e9400ac 100644
+--- a/kernel/futex/pi.c
++++ b/kernel/futex/pi.c
+@@ -939,7 +939,8 @@ int futex_lock_pi(u32 __user *uaddr, unsigned int flags=
+, ktime_t *time, int tryl
+ 		goto out;
+=20
+ retry_private:
+-	hb =3D futex_q_lock(&q);
++	hb =3D futex_hash(&q.key);
++	futex_q_lock(&q, hb);
+=20
+ 	ret =3D futex_lock_pi_atomic(uaddr, hb, &q.key, &q.pi_state, current,
+ 				   &exiting, 0);
+diff --git a/kernel/futex/waitwake.c b/kernel/futex/waitwake.c
+index 6cf10701294b4..1108f373fd315 100644
+--- a/kernel/futex/waitwake.c
++++ b/kernel/futex/waitwake.c
+@@ -441,7 +441,8 @@ int futex_wait_multiple_setup(struct futex_vector *vs, =
+int count, int *woken)
+ 		struct futex_q *q =3D &vs[i].q;
+ 		u32 val =3D vs[i].w.val;
+=20
+-		hb =3D futex_q_lock(q);
++		hb =3D futex_hash(&q->key);
++		futex_q_lock(q, hb);
+ 		ret =3D futex_get_value_locked(&uval, uaddr);
+=20
+ 		if (!ret && uval =3D=3D val) {
+@@ -611,7 +612,8 @@ int futex_wait_setup(u32 __user *uaddr, u32 val, unsign=
+ed int flags,
+ 		return ret;
+=20
+ retry_private:
+-	hb =3D futex_q_lock(q);
++	hb =3D futex_hash(&q->key);
++	futex_q_lock(q, hb);
+=20
+ 	ret =3D futex_get_value_locked(&uval, uaddr);
+=20
+--=20
+2.49.0
 
 
