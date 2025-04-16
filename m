@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-607138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01ECFA8B862
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:08:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75710A8B85C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:08:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C5215A3FA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 12:07:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B1F97A5C9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 12:06:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 569E824BCF5;
-	Wed, 16 Apr 2025 12:06:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02CA124C689;
+	Wed, 16 Apr 2025 12:06:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aAPCOmpU";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="443wkJ2F"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MRPib1Ct";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="is3vmZSG"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D86024A062
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 12:06:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4FF224BBE2
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 12:06:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744805186; cv=none; b=Haq2ABNKFGlWCqIdIrYEGUmonFyWPVjWQ3U0yqTlDt7xLfFRgOZiV6cNxIMdC74tMKD9zDZF0VV5f/iSwfc5gxsDcxqrT8CcIvcH+ZMm4n+LAi3/mLO4QuFWF2RgW4ZVCwBpXly88CRy+yejegN41DVDJd3GmJ8DePf9e+fqi1Y=
+	t=1744805188; cv=none; b=WX6T+F+P9bxck+DF8cxDt+DD0yrf3vpwjTxOSk98MrH5UrWP/DTN8hJLGo4d8TvHKaWf8BMVT5Xtgq3g/e60H9W2/kDm8R1LaYGSTO8tzDwyqaVBEVFxMyLzpPdbPbwr6KQtdnP66uE9ZgrgAFbKtCXsVoTve4u2BomO/rtMoIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744805186; c=relaxed/simple;
-	bh=jcMAMRnolUY1bDZt4MbiC8UWAP3z6gSGbjezDeJ4Z4c=;
+	s=arc-20240116; t=1744805188; c=relaxed/simple;
+	bh=VlCWVBZLPVVDDzV0ZU+ZVnBVcZRtRE3tN9Wy+3iVLq0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=culmVFKBx3NDroHyPytzSM5oLCXfXi8L/1QwXhkoNDBvmEqWADbm21MSJPyXrOsGg+S8B9BG+7NBdIzucdZ+fe2L9wGH0hzNa1nprSre8hqXkMj1oafa3UjsJtNWaVyk/a2qkKfavM5qJguGKCsFz1gx5VuhMwdJFH2QvvrKgkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aAPCOmpU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=443wkJ2F; arc=none smtp.client-ip=193.142.43.55
+	 In-Reply-To:To:Cc; b=MkwrU/jgYkjXGqYJnYMOZFr0QM3odQ9CrrNvG0z8SzQYrgdlVK7MUVF6tbK7muePdqs/S7rDSocJDlBOAXRhQZi4ZrWJ5CGchb1UFSwUC53m5xDfwT7EY32fpR4XQdJx9evgQryTLQDsxvm1Y8WsjgqipSQBqOw9D/x5fsCbAIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MRPib1Ct; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=is3vmZSG; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744805182;
+	s=2020; t=1744805183;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=O47BuNNWp13z6juq4IINR3lK0GsXcN1rSFQjsRGU+oc=;
-	b=aAPCOmpUbmUfN9GU8cEWehRy1RLDxdKpmrR9o1hWfEZ0IJ8GSs5bFaMm4I4qvIzTdcsVO2
-	1AQJgPGn+KSISGXYfAmHZfwC0hbh02dzqnyb5LjMfpUEn3cV8Kmt9yxRSuEk01eW2NUTsz
-	FIknA1Jl17tNWXLHogV+s9myUqAZ+xpcgxuRsQ2vrvN6m4AcwGG4ocG8DeLNVD/61NNtbZ
-	FkGZNWkBeMrqM1CmncoohLhO7yEUMX7J2n1hNgxFccwmlSjB4IfKegxMeZ5pIoot76P4s+
-	8GGI4rdQasbWe5nIO1jbt2Jlvk0ex4Flm1GrKKkVtEwzxxGH7wtja4zRJqwImQ==
+	bh=tGrQuRPsSyUXfEKNZ/KdVH5q6P06Sel2Spt2RFQ0F4w=;
+	b=MRPib1CtYBgXt8raTSuqHqLgKIw6zW2ByeYK3V/JCFdmDoZLdEf1cCEYZngAY3TS12jKZY
+	nQkvYsOduZnucsUYBX8CLHdRN2u38V+hNOiVxbKBhfgXJ27hhHlGS90W3fjMzbxdO4QvMv
+	uKbYHIdcBhUWR+DAeRSKMbS4G1Z/o9B+Wec5PVdBcws1FPQgZnrYJp64UR+Q/Hox5cgxbH
+	VasTLdBBSDcG8sJxI+Aek8idhBeXqwi0O7Baxzqh9Bp0Hv84UzBnZTFJeF2MzX/doRpebX
+	rSGE5Z9lDUXaWCoqkwe/LlawAtR5ihue0v83iI6bmNxukAtc7zKnbQlq3IqVSQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744805182;
+	s=2020e; t=1744805183;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=O47BuNNWp13z6juq4IINR3lK0GsXcN1rSFQjsRGU+oc=;
-	b=443wkJ2Fx2h89663rwxjRCIaGkba4s5yUfFWm3hFbSGtNoJdbH5sSvBB04uBXH7aH99DKt
-	tmMdL1A5bud7AlCw==
-Date: Wed, 16 Apr 2025 14:06:19 +0200
-Subject: [PATCH 04/10] tools/nolibc: move getauxval() to sys/auxv.h
+	bh=tGrQuRPsSyUXfEKNZ/KdVH5q6P06Sel2Spt2RFQ0F4w=;
+	b=is3vmZSGIw0C+zXyS+Z8DPrGoyiabEiktOla1Nq1PG2oS6GyJB1rr8fgtW6E+R9U/ynP6n
+	Vd4xrAZUFZeK7vAg==
+Date: Wed, 16 Apr 2025 14:06:20 +0200
+Subject: [PATCH 05/10] tools/nolibc: move mmap() and friends to sys/mman.h
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,139 +63,190 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250416-nolibc-split-sys-v1-4-a069a3f1d145@linutronix.de>
+Message-Id: <20250416-nolibc-split-sys-v1-5-a069a3f1d145@linutronix.de>
 References: <20250416-nolibc-split-sys-v1-0-a069a3f1d145@linutronix.de>
 In-Reply-To: <20250416-nolibc-split-sys-v1-0-a069a3f1d145@linutronix.de>
 To: Willy Tarreau <w@1wt.eu>, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 Cc: linux-kernel@vger.kernel.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744805177; l=2973;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744805177; l=4739;
  i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=jcMAMRnolUY1bDZt4MbiC8UWAP3z6gSGbjezDeJ4Z4c=;
- b=3AV1pfbj5N0QXHOFyF/zUAhXlsECD95xWZG41NbJ2748ZJt517h179aONPmKxhK6NlOdCheNp
- XwfpxGZxs0WCvWqkVlDxgDbFWwJPK08aXchT3k/4gz1Z+i/8ceQ9UcZ
+ bh=VlCWVBZLPVVDDzV0ZU+ZVnBVcZRtRE3tN9Wy+3iVLq0=;
+ b=qtMimDZyY1+rv4Fn7OqvAHkuoKno1OqNr2l2ZguoFMNCXtddkdskuZ9FNki0RVDTB2+eIZdGW
+ iA3588v0NiqC11uDndeXnofHtH1rYQmPxYJXL5SYXM2FvnfodADAVHe
 X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
  pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-This is the location regular userspace expects the definition.
+This is the location regular userspace expects these definitions.
 
 Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 ---
  tools/include/nolibc/Makefile   |  1 +
  tools/include/nolibc/nolibc.h   |  1 +
- tools/include/nolibc/stdlib.h   | 26 --------------------------
- tools/include/nolibc/sys/auxv.h | 41 +++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 43 insertions(+), 26 deletions(-)
+ tools/include/nolibc/sys.h      | 48 -------------------------------
+ tools/include/nolibc/sys/mman.h | 63 +++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 65 insertions(+), 48 deletions(-)
 
 diff --git a/tools/include/nolibc/Makefile b/tools/include/nolibc/Makefile
-index 2132e4f4d2165729ec6d10860d0586f1b71ee0fb..a3781f39692532fb75c7aaf70f65b2d5bf7c7abd 100644
+index a3781f39692532fb75c7aaf70f65b2d5bf7c7abd..ca8817e84c3a5b4df3d373e60a956945d2665b94 100644
 --- a/tools/include/nolibc/Makefile
 +++ b/tools/include/nolibc/Makefile
-@@ -44,6 +44,7 @@ all_files := \
- 		stdlib.h \
+@@ -45,6 +45,7 @@ all_files := \
  		string.h \
  		sys.h \
-+		sys/auxv.h \
+ 		sys/auxv.h \
++		sys/mman.h \
  		time.h \
  		types.h \
  		unistd.h \
 diff --git a/tools/include/nolibc/nolibc.h b/tools/include/nolibc/nolibc.h
-index bb4183a8fdc41023d9b8b37fe35ec37ca408b4c6..0d8c49e0dddc595c2f029788ecb5b51231e2695a 100644
+index 0d8c49e0dddc595c2f029788ecb5b51231e2695a..ffdf501db1b6faebe2f0d5f56bd3c31c1a8ec164 100644
 --- a/tools/include/nolibc/nolibc.h
 +++ b/tools/include/nolibc/nolibc.h
-@@ -96,6 +96,7 @@
- #include "arch.h"
+@@ -97,6 +97,7 @@
  #include "types.h"
  #include "sys.h"
-+#include "sys/auxv.h"
+ #include "sys/auxv.h"
++#include "sys/mman.h"
  #include "ctype.h"
  #include "elf.h"
  #include "signal.h"
-diff --git a/tools/include/nolibc/stdlib.h b/tools/include/nolibc/stdlib.h
-index 86ad378ab1ea220559d5ab1adc4bb9972977ba9e..ba8a1427121fc543fc83646e5108c645cbdd62a2 100644
---- a/tools/include/nolibc/stdlib.h
-+++ b/tools/include/nolibc/stdlib.h
-@@ -102,32 +102,6 @@ char *getenv(const char *name)
- 	return NULL;
+diff --git a/tools/include/nolibc/sys.h b/tools/include/nolibc/sys.h
+index 5fa351e6a3512a3d0c609867244ac91e8563ab2a..13e6b2479fbf8bcb36843072665e50046c5f41eb 100644
+--- a/tools/include/nolibc/sys.h
++++ b/tools/include/nolibc/sys.h
+@@ -24,7 +24,6 @@
+ #include <linux/resource.h>
+ #include <linux/utsname.h>
+ 
+-#include "arch.h"
+ #include "errno.h"
+ #include "stdarg.h"
+ #include "types.h"
+@@ -697,53 +696,6 @@ int mknod(const char *path, mode_t mode, dev_t dev)
+ 	return __sysret(sys_mknod(path, mode, dev));
  }
  
+-#ifndef sys_mmap
 -static __attribute__((unused))
--unsigned long getauxval(unsigned long type)
+-void *sys_mmap(void *addr, size_t length, int prot, int flags, int fd,
+-	       off_t offset)
 -{
--	const unsigned long *auxv = _auxv;
--	unsigned long ret;
+-	int n;
 -
--	if (!auxv)
--		return 0;
+-#if defined(__NR_mmap2)
+-	n = __NR_mmap2;
+-	offset >>= 12;
+-#else
+-	n = __NR_mmap;
+-#endif
 -
--	while (1) {
--		if (!auxv[0] && !auxv[1]) {
--			ret = 0;
--			break;
--		}
+-	return (void *)my_syscall6(n, addr, length, prot, flags, fd, offset);
+-}
+-#endif
 -
--		if (auxv[0] == type) {
--			ret = auxv[1];
--			break;
--		}
+-/* Note that on Linux, MAP_FAILED is -1 so we can use the generic __sysret()
+- * which returns -1 upon error and still satisfy user land that checks for
+- * MAP_FAILED.
+- */
 -
--		auxv += 2;
+-static __attribute__((unused))
+-void *mmap(void *addr, size_t length, int prot, int flags, int fd, off_t offset)
+-{
+-	void *ret = sys_mmap(addr, length, prot, flags, fd, offset);
+-
+-	if ((unsigned long)ret >= -4095UL) {
+-		SET_ERRNO(-(long)ret);
+-		ret = MAP_FAILED;
 -	}
--
 -	return ret;
 -}
 -
- static __attribute__((unused))
- void *malloc(size_t len)
- {
-diff --git a/tools/include/nolibc/sys/auxv.h b/tools/include/nolibc/sys/auxv.h
+-static __attribute__((unused))
+-int sys_munmap(void *addr, size_t length)
+-{
+-	return my_syscall2(__NR_munmap, addr, length);
+-}
+-
+-static __attribute__((unused))
+-int munmap(void *addr, size_t length)
+-{
+-	return __sysret(sys_munmap(addr, length));
+-}
+-
+ /*
+  * int mount(const char *source, const char *target,
+  *           const char *fstype, unsigned long flags,
+diff --git a/tools/include/nolibc/sys/mman.h b/tools/include/nolibc/sys/mman.h
 new file mode 100644
-index 0000000000000000000000000000000000000000..04c2b9cbe51a262025bbbc7c74a0640c71529eab
+index 0000000000000000000000000000000000000000..ad9d06b6b7919ec76a0652266158366cf639a77a
 --- /dev/null
-+++ b/tools/include/nolibc/sys/auxv.h
-@@ -0,0 +1,41 @@
++++ b/tools/include/nolibc/sys/mman.h
+@@ -0,0 +1,63 @@
 +/* SPDX-License-Identifier: LGPL-2.1 OR MIT */
 +/*
-+ * auxv definitions for NOLIBC
++ * mm definition for NOLIBC
 + * Copyright (C) 2017-2021 Willy Tarreau <w@1wt.eu>
 + */
 +
-+#ifndef _NOLIBC_SYS_AUXV_H
-+#define _NOLIBC_SYS_AUXV_H
++#ifndef _NOLIBC_SYS_MMAN_H
++#define _NOLIBC_SYS_MMAN_H
 +
-+#include "../crt.h"
++#include "../arch.h"
++#include "../sys.h"
++
++#ifndef sys_mmap
++static __attribute__((unused))
++void *sys_mmap(void *addr, size_t length, int prot, int flags, int fd,
++	       off_t offset)
++{
++	int n;
++
++#if defined(__NR_mmap2)
++	n = __NR_mmap2;
++	offset >>= 12;
++#else
++	n = __NR_mmap;
++#endif
++
++	return (void *)my_syscall6(n, addr, length, prot, flags, fd, offset);
++}
++#endif
++
++/* Note that on Linux, MAP_FAILED is -1 so we can use the generic __sysret()
++ * which returns -1 upon error and still satisfy user land that checks for
++ * MAP_FAILED.
++ */
 +
 +static __attribute__((unused))
-+unsigned long getauxval(unsigned long type)
++void *mmap(void *addr, size_t length, int prot, int flags, int fd, off_t offset)
 +{
-+	const unsigned long *auxv = _auxv;
-+	unsigned long ret;
++	void *ret = sys_mmap(addr, length, prot, flags, fd, offset);
 +
-+	if (!auxv)
-+		return 0;
-+
-+	while (1) {
-+		if (!auxv[0] && !auxv[1]) {
-+			ret = 0;
-+			break;
-+		}
-+
-+		if (auxv[0] == type) {
-+			ret = auxv[1];
-+			break;
-+		}
-+
-+		auxv += 2;
++	if ((unsigned long)ret >= -4095UL) {
++		SET_ERRNO(-(long)ret);
++		ret = MAP_FAILED;
 +	}
-+
 +	return ret;
++}
++
++static __attribute__((unused))
++int sys_munmap(void *addr, size_t length)
++{
++	return my_syscall2(__NR_munmap, addr, length);
++}
++
++static __attribute__((unused))
++int munmap(void *addr, size_t length)
++{
++	return __sysret(sys_munmap(addr, length));
 +}
 +
 +/* make sure to include all global symbols */
 +#include "../nolibc.h"
 +
-+#endif /* _NOLIBC_SYS_AUXV_H */
++#endif /* _NOLIBC_SYS_MMAN_H */
 
 -- 
 2.49.0
