@@ -1,130 +1,121 @@
-Return-Path: <linux-kernel+bounces-606680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9FEAA8B23B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:35:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68EDCA8B247
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:36:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A032E16A727
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 07:34:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2972419005B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 07:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C93DF22D781;
-	Wed, 16 Apr 2025 07:34:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662B822D796;
+	Wed, 16 Apr 2025 07:36:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k9RTKt/u"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lu3GcZPN"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80EE0227E8C
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 07:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA362221567
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 07:36:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744788866; cv=none; b=kY0UP0MFT7DOufg2KrtPmFIRA9HkPbSuxFWdp9HM9I22+ugCsbN87zY1tAFzY5g0QtzR/Z0a9H/Jr085JdbAyba2Ud54ffPWbuTXBOGtGoSxgE7YHAvPaGTMsor6aX7MmsnOLa7zDrNLiz2h6IHeK2H4saAqPs8HHFiJNVCUCDI=
+	t=1744788963; cv=none; b=pdSIjMX/tFUlORE/WXXq7W3q0ixkjmkXsNoL7HWxZ0vy10JSNghhS1QYha8gbJO6l7mKIXvb4fjSrSzOUAPdMj4dtzlGdYHdkf72x83/2E604+qUbyJb6FZDRifVIQYgA9lFrDAbwc1lJ6ALOdQpGfvkEn6fFcxv018p6nMsYg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744788866; c=relaxed/simple;
-	bh=Osz8UwWeE7SoEkx8hhEOY9AIQrzeHRMkeYvC/KMmssg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NdH4bANeO5VLroR4/z0zbbJd5Dvxbvc6UZGT2eAFlGKoVhwn9m0QWPRrQsiNw6fGjyNTAo4ZN5h5B6QDWWYM3qV2ZBSpRWAE3SnRFZ2OGVhIRqzsntTsITJrVWNotdWTO0gjIHLI/2iV0zn9p5cb8gIrGuyz8aA3DpCjfeSuE68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=k9RTKt/u; arc=none smtp.client-ip=209.85.215.174
+	s=arc-20240116; t=1744788963; c=relaxed/simple;
+	bh=utHL6CUHYCqScb8aWOZTdLTjaHpP5+HYoKwpnSAv4bU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kc+hOgi/U9bAOi3la/UGDExWm13Jd4ivaXBFrk/AvgrCgmUgrZ7esvZumXslS99TG5iUHXIMKWctTYPtkRg3GA9+NvEmKL6CnL5C33cqD0goMvk21HhuLSWK+2EKKcx6xtM99+2UNDEOWymY8PD2H+mFdKagUno/lRl1qHnqxEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lu3GcZPN; arc=none smtp.client-ip=209.85.208.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7fd581c2bf4so5634539a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 00:34:24 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30c416cdcc0so56605611fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 00:36:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744788864; x=1745393664; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9OojZ/Set6ofgNmoLSDBYOLQFH7SYSkSj18BSfmQvXU=;
-        b=k9RTKt/uvTR1WeO25aPrI229c1HvXDZofuLiap+ruI3JkoA/nbq6fxCTIUUZe4DZQB
-         Z2VrF+lzQeUmdPOGe0qYh79VHj6jnLB/CcnmG5hj1jwLJHHaA5G8pzwslRCmDORUPcMP
-         mv2ncRtLlJfvz5n/1l+9NERw5IPD5RFut3RVRM5E6KfbIixxLtluGo+se7AQRY+DBv9q
-         EaN2EyBVD/oXrhonMyPWkfvVX/DRkS5DE7fsqrVXMaP9R++w0rgR4z6onWJgd7LrMwYe
-         LY2boD/J2CazvI0xDpDHP3XT9nPUrfGGxrsnkWcQecFqKrsg1n6T/lQV2ATfS06dne8B
-         siEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744788864; x=1745393664;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1744788960; x=1745393760; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9OojZ/Set6ofgNmoLSDBYOLQFH7SYSkSj18BSfmQvXU=;
-        b=ANPHjytHsiVOI2x/DRwszIqLQcnpDeOv/kRqH1IUHO7AatWawdEpy2hAorQo1ccEbf
-         0mkcnEyKCxcgKvaWSdTJqeSDMd6sY0PHoir9mpMTv+T8Ging4va0PoritbVIpD4GvNj8
-         417Isyj/aoFRXHWY7t4XwGKgTvMJ39c1WsClIRCTXUCWzUsyyisNIgii7RiRCpI+Z4Hn
-         vgxlCKdOSiXMnNqBRgAZlVLUB9nB5DLzSGD5q04ROksXK0EzcOHCoZeYYk9KxrKTJ3Pu
-         tGpE3WSvGJcPuAjMmoi/w08gNjEUXbOMMe1HaH19E9DBEe6wLJcgesVP5/qVZqfGOS4h
-         QroQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVg/4SWH7w6xZuLibTiWkyzQ/rbCbdnyzTQBcy7GvQzADUQO4jxebYLJnXbPkG5mNFcG2xUh9KdLbbWKIo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFstLGm6RMxMkctxZAAX419uJKohwIAbpRXJpOLtLatJ43yYQ5
-	okDNF0soj0GPthVsO3G9Spaj6Vayy0NEtuFwLj2WvQ2AQfEjIG7KCSfgcGaaMls=
-X-Gm-Gg: ASbGnctpKfhzT0j6p5HX5ZyeChgkfpeZVjxtQgIPV+cVEYelh9u7l6LRBRlpOyBXSvc
-	+To4aoBNV70P5gmFpibPVZ7teDdqd8pXt1W0eJq0HosmtJcnWzhrQCopQn4InP/gXhXDyMS1SE+
-	tcrqPvy/zvZHJSa3HIoTcDYV4KYgIIeURnBZB5unmOGQOXhS/8zkeTR8TUVLuLPCK7Xk1iEvSHd
-	YW0TiQyginejgJnPsbHU+bcyjmRnQPli8ksoZxurR3gZwFBq8xWcgr0SBU6cofpghxXfwoNDgiL
-	hE96CT+lgjX5zv48VXESHTYPpBvKRKgKyBvcazKa1g==
-X-Google-Smtp-Source: AGHT+IF5gr7KTNmsoqWboKzNZwhfvZjvETmtD0k891OgOb0tDlIqVA7ofglJmZDsPCASVeystx4Ztg==
-X-Received: by 2002:a17:90b:520a:b0:2fe:8282:cb9d with SMTP id 98e67ed59e1d1-3086415c684mr1191209a91.28.1744788863789;
-        Wed, 16 Apr 2025 00:34:23 -0700 (PDT)
-Received: from localhost ([122.172.83.32])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30861212c3esm872339a91.25.2025.04.16.00.34.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Apr 2025 00:34:23 -0700 (PDT)
-Date: Wed, 16 Apr 2025 13:04:20 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: rafael@kernel.org, Marc Zyngier <maz@kernel.org>
-Cc: Chenyuan Yang <chenyuan0y@gmail.com>, sven@svenpeter.dev, j@jannau.net,
-	alyssa@rosenzweig.io, neal@gompa.dev, marcan@marcan.st,
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: apple-soc: Fix possible null pointer dereference
-Message-ID: <20250416073420.xrhwnzy22zf6yltm@vireshk-i7>
-References: <20250412160518.1824538-1-chenyuan0y@gmail.com>
- <86bjt0l6q4.wl-maz@kernel.org>
+        bh=tahJOR44ovG/8oTG2DD87WyQ8FqTumd0rmUHp9pfS34=;
+        b=lu3GcZPN+XygfeaT2uHJayCF6M+/wfAPQ/bNsYGXAxeR+WRfQ/tkWJHaSS+SZoHgbf
+         RsduXzY2ze1fG4ztcLqfU9FZ0h27ogNF0IL/K9015x58ey4l+myjAmT3yz8Mb3p7tgT8
+         ca4KthVRjNVU5/0V9jTOvWEe9PSfRA4jxO3/xnnmVCeQVgJuNztTHZhRBcdgonT2sydU
+         lx9bel5VhZoMQswpK6A0jfFjCCxb9KRlm0EkwwDAx723eGBa0cuauyLXzP4IBR73IL++
+         hAQ4eNfoQkEjAnIGAQ6DBfJNrJuLcCW6nEPe1rRgpc4P3mdob3HPQH47Vadg93KLTrS8
+         T0Zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744788960; x=1745393760;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tahJOR44ovG/8oTG2DD87WyQ8FqTumd0rmUHp9pfS34=;
+        b=hdUARYDa0QGuEwyx3a0UEWmIIfRxNZkvLVaYBRMzIliztKXLUPSKkkSoSv62C3n6RD
+         iXuEEGQuG2eO/t//2jKNF38Cl+X0sMQ1dR3zuC08vtMg72GWr6ih7OXoZKV65qtdzu42
+         8yiywnLtwudHvHeDpBLfRbBjHGseY3kcsuU6r9MpWjPgVml2vo5iLzTp1PV/JryYxv//
+         2gRSNcAzu6ZZ99FpoVrGEb6BveKHBYtqsX+e6X4Vy85y2aIDQi1QQHGpNp2J3kgf+V/b
+         2zJvh8Q7VSlJHeD3bVlJTc9STtY2NC+MICKc3AccckQE331IDcMG1dKiiIEMLcnwdLBk
+         xGVA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4G3h3i+REjMHAKlDUmyjL4K7lw60wwQHKsv//kkAjyRlmrS+Bp2h/h1D2pWAM1lCLN/JJvgGi5IgQkTM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywfjuf0zAX2mN3I+HX3kFucLlf+/Tly2pQS4fu54DD/J7tXLwaX
+	d5LnFgkMCVpHPIwdfOAzFzdaejaHlYyon761Oq3oqKt77pVV7iDO7N2yDbSPxR9FIrpk/eNbgFk
+	dQhk9WXmDigBDHiLmCNEhhkteimL2Up2nMd2/dQ==
+X-Gm-Gg: ASbGncv5U1V7VDZoUVrQ6ZmhXmQvSjKA7gzo+Y3iN+DLAVyUvamJDe/0g+ghE0Z9kmn
+	V15g9tLXfb7B0bIp23x7KzapVfIpNEFOPb9J7v8/XWyX4HhdlNfiJ2eHPSmxddnnRnBGYjrcwA9
+	2ob63lGesLr6TkcBe7S3MbFQ==
+X-Google-Smtp-Source: AGHT+IH24Ze7Uj+sez6vaxU18ssHrwQYzi2qOUAKOEfNuhruNeH0Yi5FTQWh526Drs8Kqf/boypXWbGB6xmSwB0JtV4=
+X-Received: by 2002:a05:651c:b0f:b0:30b:d44d:e76d with SMTP id
+ 38308e7fff4ca-3107f717f28mr2363111fa.26.1744788959942; Wed, 16 Apr 2025
+ 00:35:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <86bjt0l6q4.wl-maz@kernel.org>
+References: <cover.1744325346.git.Jonathan.Santos@analog.com> <2a789531fda5031c135fc207a547f2c3f00a13ea.1744325346.git.Jonathan.Santos@analog.com>
+In-Reply-To: <2a789531fda5031c135fc207a547f2c3f00a13ea.1744325346.git.Jonathan.Santos@analog.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 16 Apr 2025 09:35:49 +0200
+X-Gm-Features: ATxdqUERw-HLaVcEGEBRc9LkrCdUDVa5ewjlkgrTDVV5Xmky5Ym5mhn0wiOk-Q4
+Message-ID: <CACRpkdY0VAkW3v5mBzxz5u5RfLv4zpj5sy-zpx8Ma9+0=8qQfQ@mail.gmail.com>
+Subject: Re: [PATCH v5 09/14] iio: adc: ad7768-1: Add GPIO controller support
+To: Jonathan Santos <Jonathan.Santos@analog.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Sergiu Cuciurean <sergiu.cuciurean@analog.com>, lars@metafoo.de, Michael.Hennerich@analog.com, 
+	marcelo.schmitt@analog.com, jic23@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, marcelo.schmitt1@gmail.com, 
+	brgl@bgdev.pl, lgirdwood@gmail.com, broonie@kernel.org, jonath4nns@gmail.com, 
+	dlechner@baylibre.com, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 13-04-25, 11:02, Marc Zyngier wrote:
-> Irrespective of this, it would be good to describe under which
-> circumstances this can occur, because I can't see *how* this can
-> trigger. The policy is directly provided by the core code and provide
-> its association with a cpu, and is never NULL at the point of init.
-> 
-> And if it can trigger, why only fix this one particular case?
-> Dereferences of policy are all over the map, and would be just as
-> wrong.
-> 
-> So while this is not wrong, I don't think this serves any real
-> purpose.
+Hi Jonathan,
 
-I have applied such patches in the past, considering the same as good
-practice. But I do understand your inputs.
+thanks for your patch!
 
-And so I tried to see if there is actually a way to trigger this.
+On Fri, Apr 11, 2025 at 5:58=E2=80=AFPM Jonathan Santos
+<Jonathan.Santos@analog.com> wrote:
 
-- Platform with two cpufreq policies (freq domains) with one CPU in
-  each of them.
-- Boot the kernel, policies will initialize for both the domains.
-- Hotplug out CPU1, that will remove the policy as well.
-- Call cpufreq_quick_get(1), this will call the ->get() callback for
-  CPU1, for which there is no policy available.
+> +static void ad7768_gpio_set(struct gpio_chip *chip, unsigned int offset,=
+ int value)
+> +{
+(...)
+> +       st->gpiochip =3D (struct gpio_chip) {
+> +               .label =3D "ad7768_1_gpios",
+> +               .base =3D -1,
+> +               .ngpio =3D 4,
+> +               .parent =3D &st->spi->dev,
+> +               .can_sleep =3D true,
+> +               .direction_input =3D ad7768_gpio_direction_input,
+> +               .direction_output =3D ad7768_gpio_direction_output,
+> +               .get =3D ad7768_gpio_get,
+> +               .set =3D ad7768_gpio_set,
 
-But this is the case only for drivers with `setpolicy` callback, this
-shouldn't happen on apple-soc.
+Due to refactorings going on in the .set calls please switch this to use
+the new .set_rv() callback that return an integer (errorcode) on failure.
 
-I am not sure now if we should just apply this patch to be safe, or
-leave it as is. The cpufreq core may change in the future and call the
-`get` callback for all drivers.
-
-Rafael, what do you suggest ?
-
--- 
-viresh
+Yours,
+Linus Walleij
 
