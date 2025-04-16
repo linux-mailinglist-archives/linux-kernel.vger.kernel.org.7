@@ -1,45 +1,95 @@
-Return-Path: <linux-kernel+bounces-606827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C337A8B445
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 10:47:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD2F3A8B449
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 10:47:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DED0188DB9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 08:47:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5151117D29C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 08:47:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FEEB230BFC;
-	Wed, 16 Apr 2025 08:47:23 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 438E3230BDC;
+	Wed, 16 Apr 2025 08:47:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0usSjG8L";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fPJmfU2F";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0usSjG8L";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fPJmfU2F"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66BAE1B808;
-	Wed, 16 Apr 2025 08:47:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC1722E410
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 08:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744793243; cv=none; b=Ks0u2fP8/dIa/a7bJn2szFzgnKrLd3Zutkcr7D9Or4+ZohoL+teA6DYwQXkdixQaQlbNJV7Xb4XK2Ula4eAGZO0rajXObYLbRsvu+XsN9wCVENx6jbgIkC1vkbQg5w1XSjcOUi3JgkGhHKlcIWKSdpU28wNx34U8GLNU0QOBbSU=
+	t=1744793252; cv=none; b=GWgWJLec6h95l9fexSV8uiF7CC88qzjPh/OiXeqibijarbjcmCp4n3a7Duo6FeIBF8c2e/J560TckYcAX7q5LIMN3jYsbNlDt3Tuf/k4dZTeP/cN/11yWU9bxEaT1VomX/jvNvqxwxg0NTGP5d5i3FRx0DyxHIcBPc4k8XK0WyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744793243; c=relaxed/simple;
-	bh=fLXHMkxoJ8Z1dDK7dL/OMmJXrTAheJQWIFyzqwbg7a0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=edDdvqF8aaHFhuNBwQbTHrXgiE+/NGKDixhwXsIDH2zOUlJlRzICFj/Hvwq6YMfpV89ZrIuCuBzjXR4cne1rE/MV7QiYvRN+tPTGqGvUgd7i4EVuhZcyKsUJt1IqAQyXaDUCnENUbi2KxGRCozp9uS++59844Mk4yj/SPWIhIPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Zcvjk5BfLz1R7Z5;
-	Wed, 16 Apr 2025 16:45:14 +0800 (CST)
-Received: from kwepemh100008.china.huawei.com (unknown [7.202.181.93])
-	by mail.maildlp.com (Postfix) with ESMTPS id 51FAE1401F3;
-	Wed, 16 Apr 2025 16:47:11 +0800 (CST)
-Received: from [10.67.121.90] (10.67.121.90) by kwepemh100008.china.huawei.com
- (7.202.181.93) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 16 Apr
- 2025 16:47:10 +0800
-Message-ID: <87665307-1be3-465b-ab7c-3bf908b45217@huawei.com>
-Date: Wed, 16 Apr 2025 16:47:10 +0800
+	s=arc-20240116; t=1744793252; c=relaxed/simple;
+	bh=rTz79nyqYXCqfZegXGgXUmICVvlNtsXx5Vy1dALeEGU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oy8bYICtLX3Ak0APo8MJNWs+WcHvOQCM5fDpZxJgXxdGD8c2VKXKiYuKjCtqztNsq2hFXegOSpa5QxhnSap2wGjM92M/0v9vn5nD7bwHRHQRLKKIJx9gHn6T6n98IpIgtRfg3HoZM7q4cXAw4X2FJSyjYOK/3mnCOHqSPCTnyvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0usSjG8L; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fPJmfU2F; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0usSjG8L; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fPJmfU2F; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 84DEF21169;
+	Wed, 16 Apr 2025 08:47:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1744793248; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=N/iQa/bHlCIV3jsmb10Jofbx4+n/X1xLWQ0SmjyAFFU=;
+	b=0usSjG8LHRzyBwcpCz++NuQFU/uSctREooE549wfOjtbR7nvram3QfDrQOq9lHI0ATTcQD
+	uyXqzsxKHLLnD1To5LJ3FbQ0P5+kmGri8Kf//bDsVNG8NBFu2bn64UiBwXVy1D6yhtr5f2
+	Xb5LSbjPXNqXv6ibhhe3YqiaMaAU9Ok=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1744793248;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=N/iQa/bHlCIV3jsmb10Jofbx4+n/X1xLWQ0SmjyAFFU=;
+	b=fPJmfU2F7RvE0YdLZyDgz14wtr2fM+90sHR2rvmyNTNj6C+ghnnOUb9v+eHRzUtM1ktWhO
+	/Hl4Nwf0uH5cTvAA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=0usSjG8L;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=fPJmfU2F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1744793248; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=N/iQa/bHlCIV3jsmb10Jofbx4+n/X1xLWQ0SmjyAFFU=;
+	b=0usSjG8LHRzyBwcpCz++NuQFU/uSctREooE549wfOjtbR7nvram3QfDrQOq9lHI0ATTcQD
+	uyXqzsxKHLLnD1To5LJ3FbQ0P5+kmGri8Kf//bDsVNG8NBFu2bn64UiBwXVy1D6yhtr5f2
+	Xb5LSbjPXNqXv6ibhhe3YqiaMaAU9Ok=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1744793248;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=N/iQa/bHlCIV3jsmb10Jofbx4+n/X1xLWQ0SmjyAFFU=;
+	b=fPJmfU2F7RvE0YdLZyDgz14wtr2fM+90sHR2rvmyNTNj6C+ghnnOUb9v+eHRzUtM1ktWhO
+	/Hl4Nwf0uH5cTvAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 63EAA13976;
+	Wed, 16 Apr 2025 08:47:28 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 5u0LF6Bu/2e9ZQAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Wed, 16 Apr 2025 08:47:28 +0000
+Message-ID: <5c544eef-554f-46f8-942f-0062278abf16@suse.de>
+Date: Wed, 16 Apr 2025 10:47:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,118 +97,131 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cpufreq: acpi: Don't enable boost on policy exit
-To: Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki"
-	<rafael@kernel.org>
-CC: <linux-pm@vger.kernel.org>, Vincent Guittot <vincent.guittot@linaro.org>,
-	Nicholas Chin <nic.c3.14@gmail.com>, "Rafael J. Wysocki"
-	<rafael.j.wysocki@intel.com>, <linux-kernel@vger.kernel.org>
-References: <2c788c2ca0cab09a8ef4e384f272af928a880b0e.1744781329.git.viresh.kumar@linaro.org>
-From: "zhenglifeng (A)" <zhenglifeng1@huawei.com>
-In-Reply-To: <2c788c2ca0cab09a8ef4e384f272af928a880b0e.1744781329.git.viresh.kumar@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: MGA G200 issue in 6.12 and up
+To: David Airlie <airlied@redhat.com>, Wakko Warner <wakko@animx.eu.org>,
+ dri-devel <dri-devel@lists.freedesktop.org>
+Cc: linux-kernel@vger.kernel.org
+References: <Z/anHRAx3SQWr+h8@animx.eu.org> <Z/2pzDAplsZz8AVd@animx.eu.org>
+ <CAMwc25rKPKooaSp85zDq2eh-9q4UPZD=RqSDBRp1fAagDnmRmA@mail.gmail.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <CAMwc25rKPKooaSp85zDq2eh-9q4UPZD=RqSDBRp1fAagDnmRmA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemh100008.china.huawei.com (7.202.181.93)
+X-Rspamd-Queue-Id: 84DEF21169
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_THREE(0.00)[4];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:dkim]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 2025/4/16 13:29, Viresh Kumar wrote:
+Hi,
 
-> The boost-related code in cpufreq has undergone several changes over the
-> years, but this particular piece remained unchanged and is now outdated.
-> 
-> The cpufreq core currently manages boost settings during initialization,
-> and only when necessary. As such, there's no longer a need to enable
-> boost explicitly when entering system suspend.
-> 
-> Previously, this wasn’t causing issues because boost settings were
-> force-updated during policy initialization. However, commit 2b16c631832d
-> ("cpufreq: ACPI: Remove set_boost in acpi_cpufreq_cpu_init()") changed
-> that behavior—correctly—by avoiding unnecessary updates.
-> 
-> As a result of this change, if boost was disabled prior to suspend, it
-> remains disabled on resume—as expected. But due to the current code
-> forcibly enabling boost at suspend time, the system ends up with boost
-> frequencies enabled after resume, even if the global boost flag was
-> disabled. This contradicts the intended behavior.
-> 
-> Fix this by not enabling boost on policy exit.
-> 
-> Fixes: 2b16c631832d ("cpufreq: ACPI: Remove set_boost in acpi_cpufreq_cpu_init()")
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=220013
-> Reported-by: Nicholas Chin <nic.c3.14@gmail.com>
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  drivers/cpufreq/acpi-cpufreq.c | 23 +++--------------------
->  1 file changed, 3 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/acpi-cpufreq.c b/drivers/cpufreq/acpi-cpufreq.c
-> index 924314cdeebc..85b5a88f723f 100644
-> --- a/drivers/cpufreq/acpi-cpufreq.c
-> +++ b/drivers/cpufreq/acpi-cpufreq.c
-> @@ -89,8 +89,9 @@ static bool boost_state(unsigned int cpu)
->  	return false;
->  }
->  
-> -static int boost_set_msr(bool enable)
-> +static void boost_set_msr_each(void *p_en)
->  {
-> +	bool enable = (bool) p_en;
->  	u32 msr_addr;
->  	u64 msr_mask, val;
->  
-> @@ -107,7 +108,7 @@ static int boost_set_msr(bool enable)
->  		msr_mask = MSR_K7_HWCR_CPB_DIS;
->  		break;
->  	default:
-> -		return -EINVAL;
-> +		return;
->  	}
->  
->  	rdmsrl(msr_addr, val);
-> @@ -118,14 +119,6 @@ static int boost_set_msr(bool enable)
->  		val |= msr_mask;
->  
->  	wrmsrl(msr_addr, val);
-> -	return 0;
-> -}
-> -
-> -static void boost_set_msr_each(void *p_en)
-> -{
-> -	bool enable = (bool) p_en;
-> -
-> -	boost_set_msr(enable);
->  }
->  
->  static int set_boost(struct cpufreq_policy *policy, int val)
-> @@ -532,15 +525,6 @@ static void free_acpi_perf_data(void)
->  	free_percpu(acpi_perf_data);
->  }
->  
-> -static int cpufreq_boost_down_prep(unsigned int cpu)
-> -{
-> -	/*
-> -	 * Clear the boost-disable bit on the CPU_DOWN path so that
-> -	 * this cpu cannot block the remaining ones from boosting.
-> -	 */
-> -	return boost_set_msr(1);
-> -}
-> -
->  /*
->   * acpi_cpufreq_early_init - initialize ACPI P-States library
->   *
-> @@ -931,7 +915,6 @@ static void acpi_cpufreq_cpu_exit(struct cpufreq_policy *policy)
->  
->  	pr_debug("%s\n", __func__);
->  
-> -	cpufreq_boost_down_prep(policy->cpu);
->  	policy->fast_switch_possible = false;
->  	policy->driver_data = NULL;
->  	acpi_processor_unregister_performance(data->acpi_perf_cpu);
+thanks for reporting.
 
-Nice!
+Am 16.04.25 um 03:46 schrieb David Airlie:
+> adding some people
+>
+> On Tue, Apr 15, 2025 at 10:35 AM Wakko Warner <wakko@animx.eu.org> wrote:
+>> I found the fix that works for me.  See below.
+>>
+>> Wakko Warner wrote:
+>>> I decided to upgrade to 6.14 on a system with a Matrox G200 onboard vga
+>>> (supermicro X9SCL).
+>>>
+>>> I use this system via the BMC.  When the mgag200 driver loads, the bmc
+>>> screen flashes between no signal and the screen.  The rate seems to be about
+>>> 1 second no signal and 1 second with signal.
+>>>
+>>> 6.12 and 6.13 both have this problem.
+>>>
+>>> 6.11 does not have this problem.
+>>>
+>>> I have a monitor plugged into the vga port and it doesn't have this problem
+>>> on any of the kernels I've tried.  Only the remote connection through the bmc
+>>> has this problem.  I have booted the system with and with out the monitor
+>>> plugged in, it does not appear to make a difference.
+>> I found a thread on arch linux forums
+>> (https://bbs.archlinux.org/viewtopic.php?id=303819) where the op has the
+>> same issue.  He bisected and came up with the bad commit.
+>> That commit is
+>> d6460bd52c27fde97d6a73e3d9c7a8d747fbaa3e drm/mgag200: Add dedicated variables
+>> for blanking fields
+>>
+>> I searched this commit and manually reverted it from my vanilla 6.14 and it
+>> works fine.  No blinking in the BMC remote console and the external VGA
+>> works fine as well.
 
-I wonder why this cpufreq_boost_down_prep() was needed at the beginning.
+I sent out a patch for what I think is the problem. See
 
-Reviewed-by: Lifeng Zheng <zhenglifeng1@huawei.com>
+https://lore.kernel.org/dri-devel/20250416083847.51764-1-tzimmermann@suse.de/
+
+Testing and feedback would be much appreciated.
+
+Best regards
+Thomas
+
+>>
+>> --
+>>   Microsoft has beaten Volkswagen's world record.  Volkswagen only created 22
+>>   million bugs.
+>>
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
 
