@@ -1,202 +1,129 @@
-Return-Path: <linux-kernel+bounces-607588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B807A9082C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:00:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C523A90832
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:01:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8409319E0A46
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:00:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B45B3445332
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:01:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B7F2045B7;
-	Wed, 16 Apr 2025 16:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CImHhWh7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B859B1DED77;
+	Wed, 16 Apr 2025 16:01:40 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5147E191;
-	Wed, 16 Apr 2025 16:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A641EE021
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 16:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744819242; cv=none; b=ZeReim0IdLw4hisf16MLRtnQagsKSPWkrW0ByJaiuZpKCF7zwl5iamjyqmjMuOA7hvtwaciGasI3CxnS/0DpYJIzV9Lx1dXu4OyVQqCoJWGGhNLBjbYlhH0y3TergZUKHctmAVSUgj2c0flCIi5F3EpdRkYcdKLFT8IJXjhvZu0=
+	t=1744819300; cv=none; b=mRCNDpFC0a0TEfgfAiYhmlwiu9jgK+Tg9/Uvu2PRBfUVJJ+1I7m1BHKw9aLNeiFySsamUhM64Uqdj3MEBiNWtjfhblIFDNeSm/IRnKSrPCHy/LewhWKvQFltOZrOGgagp3ynrTegIditmL6rhgxHJARwGJCEr0N4bCb+UKSmpYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744819242; c=relaxed/simple;
-	bh=Vz6bk6YGvtsRN2ZEQVaZ0sI/BeiXUIfOnij8CvC8Fuc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=evOTF6Qw420RWZRWJAngDJvuCLT8sEV6D8QZYwil03YsPm7VRf9MO5++6jyxx16KSQb1j5qXQ2MjgLN3yyiTvaV5GoQHt3RLdcrLGSYwWJ9d+5PT6Q4qEGaL/ZIPD+iV5pCCjU8F4Of1KywkIjoTzewCVX1LLgAG8nWahCp1FtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CImHhWh7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0B43C4CEE2;
-	Wed, 16 Apr 2025 16:00:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744819239;
-	bh=Vz6bk6YGvtsRN2ZEQVaZ0sI/BeiXUIfOnij8CvC8Fuc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CImHhWh71IJT8+4R26J6xICoE//1H58e6w3PjnHDwH2nMhUIdie79qzCkxzQ4nzDA
-	 rXzhVycoO+M1KZfnWUCNPYw8wSV7Bi8sA4vpi3izzWzIit6zbmqV60IE7zSScr/pLE
-	 e5eRoOM9KhD6tZjYZkqe06bDizHxkMRmkH+nPbLj5IKGTKRVDOwwHXL0IkXc2zAXQF
-	 vOCp2SD7Iy0mM51VxfrTJ7B5H4n+XFdVklxldigYiSEny8qOz1hv9OOJRiSH47A2W4
-	 sLXLz3NYzlJ5/R+CzQQPRnb8/5jwYGQUYKai2SIjiflg29VI6zrr/MZFZwTB7dkvZt
-	 U8fLtBQ2KXZqw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1u55Bl-000000007DM-3BB9;
-	Wed, 16 Apr 2025 18:00:38 +0200
-Date: Wed, 16 Apr 2025 18:00:37 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Cristian Marussi <cristian.marussi@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org, sudeep.holla@arm.com,
-	james.quinlan@broadcom.com, f.fainelli@gmail.com,
-	vincent.guittot@linaro.org, peng.fan@oss.nxp.com,
-	michal.simek@amd.com, quic_sibis@quicinc.com,
-	dan.carpenter@linaro.org, maz@kernel.org
-Subject: Re: [PATCH 2/4] firmware: arm_scmi: Add Quirks framework
-Message-ID: <Z__UJUKaMRoFLYLc@hovoldconsulting.com>
-References: <20250415142933.1746249-1-cristian.marussi@arm.com>
- <20250415142933.1746249-3-cristian.marussi@arm.com>
+	s=arc-20240116; t=1744819300; c=relaxed/simple;
+	bh=zkeuqcHTaXh8e07BhXhQC4nCiGMSr4a3k1xy1bL+/UA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AG7b4Dgudi/SrJoY6fRxsRJuePfqMGFZufydMpZDmLoxjFMHQCqsqMeMsng5YYNiYrx9tvioT0YJLYTaALhwPFuyAWVM9TMVbRsK7/HI2ZfVSNvHp5QaMLWgeKtELth382DA7qk3ZkMnwQkzizbdCR8c97keLAGsIIeHRg2xazo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1u55Ca-0005My-6K; Wed, 16 Apr 2025 18:01:28 +0200
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1u55CY-000bs2-38;
+	Wed, 16 Apr 2025 18:01:26 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1u55CY-00CEFz-2s;
+	Wed, 16 Apr 2025 18:01:26 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	stable@vger.kernel.org,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: [PATCH net v1 1/1] net: selftests: initialize TCP header and skb payload with zero
+Date: Wed, 16 Apr 2025 18:01:25 +0200
+Message-Id: <20250416160125.2914724-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250415142933.1746249-3-cristian.marussi@arm.com>
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, Apr 15, 2025 at 03:29:31PM +0100, Cristian Marussi wrote:
-> Add a common framework to describe SCMI quirks and associate them with a
-> specific platform or a specific set of SCMI firmware versions.
-> 
-> All the matching SCMI quirks will be enabled when the SCMI core stack
-> probes and after all the needed SCMI firmware versioning information was
-> retrieved using Base protocol.
-> 
-> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
-> ---
-> RFC->V1
-> - added handling of impl_ver ranges in quirk definition
-> - make Quirks Framework default-y
-> - match on all NULL/0 too..these are quirks that apply always anywhere !
-> - depends on COMPILE_TEST too
-> - move quirk enable calling logic out of Base protocol init (triggers a
->   LOCKDEP issues around cpu locks (cpufreq, static_branch_enable interactions..)
+Zero-initialize TCP header via memset() to avoid garbage values that
+may affect checksum or behavior during test transmission.
 
-> +static void scmi_enable_matching_quirks(struct scmi_info *info)
-> +{
-> +	struct scmi_revision_info *rev = &info->version;
-> +	const char *compatible = NULL;
-> +	struct device_node *root;
-> +
-> +	root = of_find_node_by_path("/");
-> +	if (root) {
-> +		of_property_read_string(root, "compatible", &compatible);
+Also zero-fill allocated payload and padding regions using memset()
+after skb_put(), ensuring deterministic content for all outgoing
+test packets.
 
-Looks like you still only allow matching on the most specific compatible
-string.
+Fixes: 3e1e58d64c3d ("net: add generic selftest support")
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: stable@vger.kernel.org
+---
+ net/core/selftests.c | 18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
 
-As we discussed in the RFC thread, this will result in one quirk entry
-for each machine in a SoC family in case the issue is not machine
-specific.
+diff --git a/net/core/selftests.c b/net/core/selftests.c
+index e99ae983fca9..35f807ea9952 100644
+--- a/net/core/selftests.c
++++ b/net/core/selftests.c
+@@ -100,10 +100,10 @@ static struct sk_buff *net_test_get_skb(struct net_device *ndev,
+ 	ehdr->h_proto = htons(ETH_P_IP);
+ 
+ 	if (attr->tcp) {
++		memset(thdr, 0, sizeof(*thdr));
+ 		thdr->source = htons(attr->sport);
+ 		thdr->dest = htons(attr->dport);
+ 		thdr->doff = sizeof(struct tcphdr) / 4;
+-		thdr->check = 0;
+ 	} else {
+ 		uhdr->source = htons(attr->sport);
+ 		uhdr->dest = htons(attr->dport);
+@@ -144,10 +144,18 @@ static struct sk_buff *net_test_get_skb(struct net_device *ndev,
+ 	attr->id = net_test_next_id;
+ 	shdr->id = net_test_next_id++;
+ 
+-	if (attr->size)
+-		skb_put(skb, attr->size);
+-	if (attr->max_size && attr->max_size > skb->len)
+-		skb_put(skb, attr->max_size - skb->len);
++	if (attr->size) {
++		void *payload = skb_put(skb, attr->size);
++
++		memset(payload, 0, attr->size);
++	}
++
++	if (attr->max_size && attr->max_size > skb->len) {
++		size_t pad_len = attr->max_size - skb->len;
++		void *pad = skb_put(skb, pad_len);
++
++		memset(pad, 0, pad_len);
++	}
+ 
+ 	skb->csum = 0;
+ 	skb->ip_summed = CHECKSUM_PARTIAL;
+-- 
+2.39.5
 
-> +		of_node_put(root);
-> +	}
-> +
-> +	/* Enable applicable quirks */
-> +	scmi_quirks_enable(info->dev, compatible,
-> +			   rev->vendor_id, rev->sub_vendor_id, rev->impl_ver);
-> +}
-
-> +static int scmi_quirk_range_parse(struct scmi_quirk *quirk)
-> +{
-> +	const char *last, *first = quirk->impl_ver_range;
-> +	size_t len;
-> +	char *sep;
-> +	int ret;
-> +
-> +	quirk->start_range = 0;
-> +	quirk->end_range = 0xFFFFFFFF;
-> +	len = quirk->impl_ver_range ? strlen(quirk->impl_ver_range) : 0;
-> +	if (!len)
-> +		return 0;
-> +
-> +	last = first + len - 1;
-> +	sep = strchr(quirk->impl_ver_range, '-');
-> +	if (sep)
-> +		*sep = '\0';
-> +
-> +	if (sep == first) // -X
-> +		ret = kstrtouint(first + 1, 0, &quirk->end_range);
-> +	else // X OR X- OR X-y
-> +		ret = kstrtouint(first, 0, &quirk->start_range);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (!sep)
-> +		quirk->end_range = quirk->start_range;
-> +	else if (sep != last) //x-Y
-
-nit: space after // (if you insist on using c99 comments)
-
-> +		ret = kstrtouint(sep + 1, 0, &quirk->end_range);
-> +
-> +	if (quirk->start_range > quirk->end_range)
-> +		return -EINVAL;
-> +
-> +	return ret;
-> +}
-
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * System Control and Management Interface (SCMI) Message Protocol Quirks
-> + *
-> + * Copyright (C) 2025 ARM Ltd.
-> + */
-> +#ifndef _SCMI_QUIRKS_H
-> +#define _SCMI_QUIRKS_H
-> +
-> +#include <linux/static_key.h>
-> +#include <linux/types.h>
-> +
-> +#ifdef CONFIG_ARM_SCMI_QUIRKS
-> +
-> +#define DECLARE_SCMI_QUIRK(_qn)						\
-> +	DECLARE_STATIC_KEY_FALSE(scmi_quirk_ ## _qn)
-> +
-> +#define SCMI_QUIRK(_qn, _blk)						\
-> +	do {								\
-> +		if (static_branch_unlikely(&(scmi_quirk_ ## _qn)))	\
-> +			(_blk);						\
-> +	} while (0)
-> +
-> +void scmi_quirks_initialize(void);
-> +void scmi_quirks_enable(struct device *dev, const char *compat,
-> +			const char *vend, const char *subv, const u32 impl);
-> +
-> +#else
-> +
-> +#define DECLARE_SCMI_QUIRK(_qn)
-> +#define SCMI_QUIRK(_qn, _blk)
-
-As I mentioned earlier, wouldn't it be useful to always compile the
-quirk code in order to make sure changes to surrounding code does not
-break builds where the quirks are enabled?
-
-For example, by adding something like
-
-#define SCMI_QUIRK(_qn, _blk)						\
-	do {								\
-		if (0)							\
-			(_blk);						\
-	} while (0)
-
-here?
-
-I didn't really review this in detail, but it seems to work as intended
-when matching on vendor and version:
-
-Tested-by: Johan Hovold <johan+linaro@kernel.org>
 
