@@ -1,123 +1,247 @@
-Return-Path: <linux-kernel+bounces-607986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78983A90D2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 22:33:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A01C7A90D45
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 22:41:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B518A19041E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:33:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB033447CF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:41:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F25B231A37;
-	Wed, 16 Apr 2025 20:33:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6732235C11;
+	Wed, 16 Apr 2025 20:41:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b="JevTmEjB"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="oXDcUd/S"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04C6922B597
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 20:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B59D21324F;
+	Wed, 16 Apr 2025 20:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744835586; cv=none; b=o304Ww+5Gc9l90IB3j9FXRaAkK5lfBdrOEtFIMkCvHK0+jY9jIo46qMj0ZIuRkJeHFBuuTbj2M2zVCOO8YfAg8RXxphhAHzEX1ZRsRKqDuasateZXuTNzYV0uDRNp2O29svu4TFx6i0c9bmJnWGXlqIomK3fJ++gq1dSHAJEb3g=
+	t=1744836068; cv=none; b=Mjvlh94KkGwik11Zwp/rWO+qugCN8su85PbuYctLGAOb2MkIfVXE+o1qDWvwNUoVUNsUwRiPpxkiFCk8x8/6l0dftiV+u7iGF9qPNjIWtBydeSVjSXyh3FkqcL3gnMxai2oUnS0ryT2BvsFHWp1Mj2TXaz2exYevdnR08Z9wF/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744835586; c=relaxed/simple;
-	bh=gCn9wDu0xLD3oM32PN6Fuzizs59+OD/Pgihax6B632A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZqDLhDO7+7/3g3KQn6pYJwJtqCN3+fWPif5ek9Q6n0daQ0XuH2BOuslxaqJiFAhlvY+KZ1J6n1GqyILHn773qbHwwOb1+gWPlfTheMFiwd65wwf7CBZWd3Uk6XXv2EG8u/xeRcFSiGMbeaUmPNVoJ9jXrHAz1Rb9nn4ULrUCUCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=neverthere.org; spf=pass smtp.mailfrom=neverthere.org; dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b=JevTmEjB; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=neverthere.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neverthere.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22c33ac23edso1199405ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 13:33:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=neverthere.org; s=google; t=1744835583; x=1745440383; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1DXoGDvZGyLbH2+aIwdP9O6JxIXF+8VBI32a8Nw8pfU=;
-        b=JevTmEjB3jDBW/SMOM3yL88VwgzZ2bHWMLQFL91Kcmv5a0dGBH0Z2QvXOVrcxGhFhc
-         B27K3nulaKwxCQIBG/ZDQ8mq+65W7F0Lvui+5e8w64dibHgtuasqWe5NY/QMxx2psiXH
-         49RgRavdCn4wOrgPqV1fQwHmzLAL/jhuMW1Hi+JM+Ln3RG89WlRJFB5SsW6IsykkB80J
-         scosTsbJNFPsOcIcurNUBPwZytlhy/xmKeeLpAHAPNEp9eHK27zCm6xMzar4YGxzeVik
-         0DMzwCijPxiH7BLDSAylp2SbUeqR1dDi8VFXDcUmsytE0EYkmS22R4c+Eu9oCg8lILzo
-         DsmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744835583; x=1745440383;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1DXoGDvZGyLbH2+aIwdP9O6JxIXF+8VBI32a8Nw8pfU=;
-        b=VVvj1VVewkQrAW9mRcPbysdSEVYsWDsaUlX9J/bLDo7S24nc9EqaqqTRX60MpHbpFU
-         ExuKzArUModWtlNxW/Aqn76VQleeY19XkVYRbWn7nrZkRz2O++8zbkmIWEYD/dGHojke
-         vjLwhxZOTAopzx06YB6kN6A9fhiXF0nZFdS3YdNW9UcJMH3sZo9uhkzngg7EeV2WohnN
-         TpvFmfcMjarMFTn/urVqRtyKZPukfvxfBHU76qi4BuDx2E9R8qMCkr+U7iLFNNwhFGGu
-         +HCfkSSXpL7yf1jXkLzHAcesnH3PxZFZB3HinMVEEu2Z6u8XVwJZCLv3I2Oj2w2lIWVn
-         VfQw==
-X-Forwarded-Encrypted: i=1; AJvYcCX8c3RJ5FazsUF+YO0YJSZrAX8SuV4Fjuyvqa18lVMMFMUNcxwW80cNyAqfaP15LhK3LEYiJ4r/QF7dEIY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOfJwUBkH/ZkKaEs/+69dWuoaYtlvUT9eA5rBHwQhNABBkguCy
-	TyZB1pG9HrCpTsvI+FWKjptUAp5GGp7VgIKvDOW+ozaIv+nU42J6DYJWtAQACg==
-X-Gm-Gg: ASbGnctbaIsAmG2VfY9VOGX2mC3f6agQUkSmIT1eeptn8u1LpR1En11/8OuT2UZBzFM
-	Ryf+RgpPI9sijRHhLa2UFZQFiwP9aC9EJC8Rig/X8nPBGX635q4dSV8IexpQzSw/Bm6uW2C6FvN
-	wZm6m97Iaj8A6Y8oU9aAN96dHBhBwSNrTWDV6BcQdo2RJy/eX+hqrodC9LxRJrcDOvjP5jC4NPp
-	ljBHrm8Irf5E8eKyoNlHhDdq3wJ6Nb0PcKGaMeTlJgtO47PBhDN3GhXKWi3fRY3JFnCfLXDtzZk
-	HjdahHeuGfhMTNLpMQKZx4ClMKriJZSvy5Dl9gV7cLZzu3Pqt0ersAycmCLDLfNAJ1WB78+kQ/H
-	BtDQz6g==
-X-Google-Smtp-Source: AGHT+IF1rgbANcy3xraKnwKl/N0AbEb24Ewaky61VevbVWIUq2501P3ww4PGv4nFiekkm00UXVamvQ==
-X-Received: by 2002:a17:902:f541:b0:223:fbc7:25f4 with SMTP id d9443c01a7336-22c358db642mr38322875ad.14.1744835583243;
-        Wed, 16 Apr 2025 13:33:03 -0700 (PDT)
-Received: from tiamat (c-69-181-214-135.hsd1.ca.comcast.net. [69.181.214.135])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c33f1cd56sm18830875ad.83.2025.04.16.13.33.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Apr 2025 13:33:03 -0700 (PDT)
-From: Michael Rubin <matchstick@neverthere.org>
-To: gregkh@linuxfoundation.org,
-	dpenkler@gmail.com
-Cc: linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Michael Rubin <matchstick@neverthere.org>
-Subject: [PATCH v2 10/14 1/1] staging: gpib: uapi: Fix CamelCase and IBA Dup
-Date: Wed, 16 Apr 2025 20:32:59 +0000
-Message-ID: <20250416203259.7862-2-matchstick@neverthere.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250416203259.7862-1-matchstick@neverthere.org>
-References: <20250416203259.7862-1-matchstick@neverthere.org>
+	s=arc-20240116; t=1744836068; c=relaxed/simple;
+	bh=v7UN+6CjXz2XLGpkAAt+coSnP+B3OwoBHVUpCmbXSZ4=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=eTFeIBIZ+NyoAHp6z3Y4zPcSYBv+IhkTi0DiyDg3+eHkNgkvNvpSwpBX4Jx6De/p9i3g+B/WXAha0FLXx4EjhK39cNw4XJeT9AKueJgz4LPfOEGy6LlsjtBbNyVDFN7XZOLpgBRVWouYd2SMf8CVSOB9fJdm/3VycC7sOWXPzMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=oXDcUd/S; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+Received: from localhost (web.docker-mailserver_default [172.18.0.2])
+	by mail.mainlining.org (Postfix) with ESMTPSA id 69865BBAD2;
+	Wed, 16 Apr 2025 20:33:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
+	s=psm; t=1744835607;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KWNDczDpsZAXQp+kAkO6XxPalFUodMDdefQ7Hqvnp3I=;
+	b=oXDcUd/SrbjUZCVHpXK24ZQmD8eBsHZdttsQMwVDTwpErRn4lZfOJdH1A8oiVepKQPSDqZ
+	zlhtcHxJxDDvgtuNwu0JYAy5U1GvSo79Ey+649CcXxXpIIsyraAVU9Vr3PUPmWGlvRSKO1
+	xvLKpW0+s6nahxy3YDOwEU50jHtD38VCy88Y7xJgheSSEovev889x1DVU+LlGAJM5GUo38
+	P9tScdTlm2HuSd3uMqrUThPEGS4wG9Ma44SnYo2szJaYY3suuCYH78B0NE5BhULGNe21tZ
+	x6h9u4B4Ynv1/7XO73MGACy6WDFSjOXDm641nbh1O2DtAhNmPuNkGfh2aPRg7g==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Date: Wed, 16 Apr 2025 22:33:27 +0200
+From: barnabas.czeman@mainlining.org
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>,
+ =?UTF-8?Q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, Linus Walleij
+ <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, Srinivas Kandagatla
+ <srinivas.kandagatla@linaro.org>, Joerg Roedel <joro@8bytes.org>, Will
+ Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Konrad Dybcio
+ <konradybcio@kernel.org>, Rob Clark <robdclark@gmail.com>, Sean Paul
+ <sean@poorly.run>, Abhinav Kumar <quic_abhinavk@quicinc.com>, Marijn Suijten
+ <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, Simona
+ Vetter <simona@ffwll.ch>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Dmitry Baryshkov
+ <lumag@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ iommu@lists.linux.dev, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, phone-devel@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht, linux@mainlining.org, Dang Huynh
+ <danct12@riseup.net>
+Subject: Re: [PATCH v4 4/6] arm64: dts: qcom: Add initial support for MSM8937
+In-Reply-To: <f85195a1-f55e-41ea-967d-b758014cba06@oss.qualcomm.com>
+References: <20250315-msm8937-v4-0-1f132e870a49@mainlining.org>
+ <20250315-msm8937-v4-4-1f132e870a49@mainlining.org>
+ <f85195a1-f55e-41ea-967d-b758014cba06@oss.qualcomm.com>
+Message-ID: <ddf29d5743e25f311cd86711f39f7ad0@mainlining.org>
+X-Sender: barnabas.czeman@mainlining.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
 
-Resolved duplicate entry for IbaSPollBit vs IbaSpollBit.
-Correct CamelCase for IBA enums
-
-Adhere to Linux kernel coding style.
-
-Reported by checkpatch
-
-Signed-off-by: Michael Rubin <matchstick@neverthere.org>
----
- drivers/staging/gpib/uapi/gpib_user.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/gpib/uapi/gpib_user.h b/drivers/staging/gpib/uapi/gpib_user.h
-index 301083f287ad..58b996a8bd7f 100644
---- a/drivers/staging/gpib/uapi/gpib_user.h
-+++ b/drivers/staging/gpib/uapi/gpib_user.h
-@@ -285,7 +285,7 @@ enum ibask_option {
- 	IBA_RSV = 0x21,	/* board only */
- 	IBA_BNA = 0x200,	/* device only */
- 	/* linux-gpib extensions */
--	IBA_7BitEOS = 0x1000	/* board only. Returns 1 if board supports 7 bit eos compares*/
-+	IBA_7_BIT_EOS = 0x1000	/* board only. Returns 1 if board supports 7 bit eos compares*/
- };
- 
- enum ibconfig_option {
--- 
-2.43.0
-
+On 2025-04-14 22:55, Konrad Dybcio wrote:
+> On 3/15/25 3:57 PM, Barnabás Czémán wrote:
+>> From: Dang Huynh <danct12@riseup.net>
+>> 
+>> Add initial support for MSM8937 SoC.
+>> 
+>> Signed-off-by: Dang Huynh <danct12@riseup.net>
+>> Co-developed-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+>> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+>> ---
+> 
+> [...]
+> 
+>> +			power-domains = <&cpu_pd0>;
+>> +			power-domain-names = "psci";
+> 
+> So CPU4-7 get "nicer" idle, but 0-3 don't?
+I am not sure, i will check.
+> 
+> [...]
+> 
+>> +		cpu-map {
+>> +			/* The MSM8937 has 2 cluster A53 setup. */
+> 
+> This comment seems superfluous
+> 
+> [...]
+> 
+>> +	timer {
+> 
+> 'p' < 't', please sort top-level nodes alphabetically
+> 
+> [...]
+> 
+>> +				wcss-wlan2-pins {
+>> +					pins = "gpio76";
+>> +					function = "wcss_wlan2";
+>> +					drive-strength = <6>;
+> 
+> please unify this order (drive-strength before bias)
+> 
+>> +					bias-pull-up;
+>> +
+>> +				};
+> 
+> Extra newline
+> 
+> [...]
+> 
+>> +		gpu: gpu@1c00000 {
+>> +			compatible = "qcom,adreno-505.0", "qcom,adreno";
+>> +			reg = <0x1c00000 0x40000>;
+>> +			reg-names = "kgsl_3d0_reg_memory";
+>> +			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
+>> +			interrupt-names = "kgsl_3d0_irq";
+>> +			#cooling-cells = <2>;
+>> +			clocks = <&gcc GCC_OXILI_GFX3D_CLK>,
+>> +				<&gcc GCC_OXILI_AHB_CLK>,
+>> +				<&gcc GCC_BIMC_GFX_CLK>,
+>> +				<&gcc GCC_BIMC_GPU_CLK>,
+>> +				<&gcc GCC_OXILI_TIMER_CLK>,
+>> +				<&gcc GCC_OXILI_AON_CLK>;
+> 
+> Please align the <s
+> 
+>> +			clock-names = "core",
+>> +				      "iface",
+>> +				      "mem_iface",
+>> +				      "alt_mem_iface",
+>> +				      "rbbmtimer",
+>> +				      "alwayson";
+>> +			operating-points-v2 = <&gpu_opp_table>;
+>> +			power-domains = <&gcc OXILI_GX_GDSC>;
+>> +
+>> +			iommus = <&adreno_smmu 0>;
+>> +
+>> +			status = "disabled";
+>> +
+>> +			gpu_opp_table: opp-table {
+>> +				compatible = "operating-points-v2";
+>> +
+>> +				opp-19200000 {
+>> +					opp-hz = /bits/ 64 <19200000>;
+>> +					opp-supported-hw = <0xFF>;
+> 
+> 0xff is overly broad, please document the existing known speed bins
+> 
+> [...]
+> 
+>> +		adreno_smmu: iommu@1c40000 {
+>> +			compatible = "qcom,msm8996-smmu-v2",
+>> +				     "qcom,adreno-smmu",
+>> +				     "qcom,smmu-v2";
+>> +			reg = <0x1c40000 0x10000>;
+> 
+> Does it work as-is, without iommu changes?
+Yes
+> 
+> [...]
+> 
+>> +	thermal_zones: thermal-zones {
+>> +		aoss-thermal {
+>> +			polling-delay-passive = <250>;
+> 
+> There are no passive trip points> +
+Should i remove polling-delay-passive?
+>> +			thermal-sensors = <&tsens 0>;
+>> +
+>> +			trips {
+>> +				aoss_alert0: trip-point0 {
+>> +					temperature = <85000>;
+>> +					hysteresis = <2000>;
+>> +					type = "hot";
+>> +				};
+> 
+> Please convert these to 'critical' instead
+> 
+> [...]
+> 
+>> +		cpuss1-thermal {
+>> +			polling-delay-passive = <250>;
+> 
+> You can drop polling-delay-passive under CPU tzones, as threshold
+> crossing is interrupt-driven
+Should I remove polling-delay-passive then?
+> 
+>> +
+>> +			thermal-sensors = <&tsens 4>;
+>> +
+>> +			cooling-maps {
+>> +				map0 {
+>> +					trip = <&cpuss1_alert0>;
+>> +					cooling-device = <&cpu4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+>> +							 <&cpu5 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+>> +							 <&cpu6 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+>> +							 <&cpu7 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+>> +				};
+>> +			};
+>> +
+>> +			trips {
+>> +				cpuss1_alert0: trip-point0 {
+>> +					temperature = <75000>;
+>> +					hysteresis = <2000>;
+>> +					type = "passive";
+>> +				};
+>> +
+>> +				cpuss1_alert1: trip-point1 {
+>> +					temperature = <85000>;
+>> +					hysteresis = <2000>;
+>> +					type = "hot";
+>> +				};
+> 
+> On newer platforms we rely on LMH to shut down the device if it
+> were to reach the junction temperature, but let's leave them here
+> as probably no one remembers for sure how reliable that is on these
+> older platforms and you're most likely not willing to test that
+> 
+> Konrad
 
