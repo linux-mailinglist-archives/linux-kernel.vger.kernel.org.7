@@ -1,171 +1,218 @@
-Return-Path: <linux-kernel+bounces-607635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14466A908E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:28:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87347A90901
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:30:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BC243B1CBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:28:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E32E190684E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4390C213255;
-	Wed, 16 Apr 2025 16:28:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE82212D61;
+	Wed, 16 Apr 2025 16:29:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DMt5At1z"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="N9eSl3jX";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7bqALs5B"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49BC72116ED
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 16:28:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4104D20DD65
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 16:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744820909; cv=none; b=ReWoBCr+v30c0jfW3GvFNkXEB33xdjcysVru6Ra8AxxgykX+1zFiGFQDkvESjG6Fb4LEkJ0SZsq1wXHD7pQ8plTQjaZzU5ConLcq83ZhUoexfneNDemGtwBu/jq8/l7YCg0TGn9Vg1sJt0tSlQsQjFuR5FxPFqSOCEtfiWN33ak=
+	t=1744820970; cv=none; b=tquh4KRU2KOPRu5tMTU8uEN8lcbn3e0iEWWYg3aqbquPh/0HLdqDVjtAI/iHVaC0BNr7LipjeM7kUSJJ1MiLpg/iQ27iep3E6/rXldoxwNAqcbkeR4fNxQK3LY2FZ9wWVf1cXjm619z2n9uaKVBOd10oIl1NVrNFrnXhP3Z59gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744820909; c=relaxed/simple;
-	bh=V5EjEqLAI6VF4m0ym14G0zP2Lk1AAeOTupEjRA2/fhk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QACrgutKr4BjAv8djXAQQ4/CKHkCVzHVAB/WhgRkv+m2b6KHGUtAOkHHLa49McZkiLFj92wKmVgNzWIKbKyOFV+V8DphEfolQWEWKavjyQUJTKZMR/xZutzlbT3jWA3g16ufi+AzhFywVb2LqySIbGyA/4uV3Kw6EBdFK22kQdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DMt5At1z; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43cf3192d8bso62935e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 09:28:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744820905; x=1745425705; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dcKONrIAwY+Efjpusl4unIszUT6B68ir1oyM8EH1UJY=;
-        b=DMt5At1zuEraXQDFdfoUFyvRo93WxwpM9AIaXjydcUOd8acdr4WnZ6Od9BCDBrfZoS
-         IpXaXURIRkBaAdzsoDppwKFlPtFA597blEBXLIQ1jzW7DAp13/CExsblaURmFHAXV8QS
-         DrO+HYC4JjqVac0hoL4iQ3zlCoSC7/pMpMWwN7GEIIxd3vjAg19/VB4ZS7cQoqOAnw0c
-         MdgvX2MYGIRzNlqFIrtG70316UJiEz5U0phJ7y7ft2ylDXQiMkb6xKPnzp7nbG6cuUbZ
-         1cNgss8+3qC8TmXwbbCnlq9Hi+8kYLMWCI8qfmxw+aLQrm8d020+hs9ra7i1jJ65Vi0x
-         S4dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744820905; x=1745425705;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dcKONrIAwY+Efjpusl4unIszUT6B68ir1oyM8EH1UJY=;
-        b=IXuC5BQgqPr2+iflKUqCMwnG7DkV14Uo74Y61dF6JScnJlXkesAnSwugyg/ownpexA
-         iV2zvpLQZ3vbAvB5W0GQmLG2K72BDDaDdmJKX66ULD7ZlFq/NSxcVfo4STmQkPvUyoWx
-         i0RO6TPwbMJvY6f/aJ3JPf8rWhzK3/1qM9dLt5PqxchtYe2dFaZeJQO7pde9nP8jbknr
-         zGkkLW6ILFSvLSSQULa2tm/RgmF1MZn7WTF+twk7whF4WyU0SXmMRxjbPoaWH3t37KWd
-         qrSo3uX97K1OwRknqaC0VQK8kt8YCd4uBW+Rxws5LgYBJL1u6g/HUJySl8/oZxinybe+
-         8XcA==
-X-Forwarded-Encrypted: i=1; AJvYcCVe7mInFgR+2s5wnqeNkIPd/nVVRFNyfiFCvJ+fzqPUHtt60KqJeAtneU5Omxl6X+J92ni5Cqi6AtlHFAE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYA4vUrFpPAGG48POUbg2Qll9u8jWk7q6N63l+uaR1Ldac4xer
-	G/pwkExFECWEAVNfEuikACZWpOgEbhUix806TpjXgwPVcsNrd4tBdA4VFef0qZYQyQn7YjPr0uF
-	estSpmyDFufx+Su/ZJbbO5ZqS8fffsoIldLma
-X-Gm-Gg: ASbGnct5yciRFnKv9fWcLdbW/vOyz1/uV0P98i/7S81wnN3iQe+nS+s//G0rucwrvk7
-	7nq8A44fHgwYZ/SC0YyJoMLTv8mY+BUDcmiEDEbMItJ4Qvsdg6hka9kB9qHmGMKxi2UP8jV3Hye
-	laMDejDyyAOM8si5Lw/hX+qvb9Y/tegv+SEw6Va5dGHeWgDqJo/qm8
-X-Google-Smtp-Source: AGHT+IECcvlnv6xPe9UB0/XJHO7q92sQEEqdeeGFlPVCn4BZ/toc+Qo3v9Dc1e4mY/RgIEckbUeu3UbXyA3ppO6oN3o=
-X-Received: by 2002:a05:600c:6a87:b0:439:4a76:c246 with SMTP id
- 5b1f17b1804b1-4405d26eadcmr1009515e9.6.1744820905359; Wed, 16 Apr 2025
- 09:28:25 -0700 (PDT)
+	s=arc-20240116; t=1744820970; c=relaxed/simple;
+	bh=PB6XcSCYfNJQdGCAKXhDm2oNQcbS8M1HTYiw7vECgEE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OD6HGuB4DsxK99Tae/xPWsoNrv5sQsmbT9RmjQSENFpDxib+6T2M3C9vh0hRRP5Js8gBBFEDln18TF9srTHFrV2W+C2Zd2jdDTmBg0C8peTU3Bnjl0NHSfhohCv7gi7rhKyTkrrnzSNi29hmGjP90V/n7tkkrYghk4H9i13nAIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=N9eSl3jX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7bqALs5B; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744820966;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=spD35W96nKD49Crow6RpCiupvQnh/aVqf2XKsPESEx8=;
+	b=N9eSl3jXl+mhHtn9QoXk5YFCw6fZRqeEYUwJ/o1L5reCSm2IyZMbCw0w25AV7od28lLNPi
+	O2ck6XWhOKRGcfzKx0O0TtNmq+7mYXzwIxSXVrI13l33aVoQw7GwbELYlBSQn7TWhoi9Cm
+	/Doe330tQm/J2FpyCfCVtg3jG5Gw+nbsdp/GhE/Apkgz/Dkmc9NzONYhjsV015rA5zEuo/
+	oKbvNOmHN23jC6PzFu4yWjPqmmyb33sdMGHh0+YdvCKK0xgc/fsJfgjsmwXeDCGgOhNwAi
+	cE+yYO5pxP0HXJ8oOsP5onZ1C7XUtMBZ7vmXJa1EpsXaRl5Z79K6etkaBkz+yQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744820966;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=spD35W96nKD49Crow6RpCiupvQnh/aVqf2XKsPESEx8=;
+	b=7bqALs5B0gU5ZGQ30pEEDczfnW8jdmJpDBWua5DFhjS2Yh7mSijX4M+kzfOurG9rj5x40q
+	195nFAhgeynDRUCg==
+To: linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH v12 00/21] futex: Add support task local hash maps, FUTEX2_NUMA and FUTEX2_MPOL
+Date: Wed, 16 Apr 2025 18:29:00 +0200
+Message-ID: <20250416162921.513656-1-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250414225227.3642618-3-tjmercier@google.com> <202504161015.x2XLaha2-lkp@intel.com>
-In-Reply-To: <202504161015.x2XLaha2-lkp@intel.com>
-From: "T.J. Mercier" <tjmercier@google.com>
-Date: Wed, 16 Apr 2025 09:28:13 -0700
-X-Gm-Features: ATxdqUFoAbnFhGEzvGofJporgvqMuSJROlNX-nlFC0ORBP_b5Axo3RH1otfUvlU
-Message-ID: <CABdmKX16QttfxRYHaq1B92U8nw+S6Gte+mFVhOTnCy4H3cLFcA@mail.gmail.com>
-Subject: Re: [PATCH 2/4] bpf: Add dmabuf iterator
-To: kernel test robot <lkp@intel.com>
-Cc: sumit.semwal@linaro.org, christian.koenig@amd.com, ast@kernel.org, 
-	daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev, 
-	skhan@linuxfoundation.org, llvm@lists.linux.dev, 
-	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linaro-mm-sig@lists.linaro.org, linux-doc@vger.kernel.org, 
-	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, android-mm@google.com, 
-	simona@ffwll.ch, corbet@lwn.net, eddyz87@gmail.com, song@kernel.org, 
-	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
-	sdf@fomichev.me, jolsa@kernel.org, mykolal@fb.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 15, 2025 at 9:43=E2=80=AFPM kernel test robot <lkp@intel.com> w=
-rote:
->
-> Hi Mercier,
->
-> kernel test robot noticed the following build errors:
->
-> [auto build test ERROR on bpf-next/net]
-> [also build test ERROR on bpf-next/master bpf/master linus/master v6.15-r=
-c2 next-20250415]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/T-J-Mercier/dma-bu=
-f-Rename-and-expose-debugfs-symbols/20250415-065354
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git =
-net
-> patch link:    https://lore.kernel.org/r/20250414225227.3642618-3-tjmerci=
-er%40google.com
-> patch subject: [PATCH 2/4] bpf: Add dmabuf iterator
-> config: i386-buildonly-randconfig-005-20250416
-> compiler: clang version 20.1.2 (https://github.com/llvm/llvm-project 58df=
-0ef89dd64126512e4ee27b4ac3fd8ddf6247)
-> reproduce (this is a W=3D1 build):
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202504161015.x2XLaha2-lkp=
-@intel.com/
->
-> All errors (new ones prefixed by >>):
->
-> >> ld.lld: error: undefined symbol: dmabuf_debugfs_list_mutex
->    >>> referenced by dmabuf_iter.c:44 (kernel/bpf/dmabuf_iter.c:44)
->    >>>               vmlinux.o:(dmabuf_iter_seq_next)
->    >>> referenced by dmabuf_iter.c:53 (kernel/bpf/dmabuf_iter.c:53)
->    >>>               vmlinux.o:(dmabuf_iter_seq_next)
->    >>> referenced by dmabuf_iter.c:26 (kernel/bpf/dmabuf_iter.c:26)
->    >>>               vmlinux.o:(dmabuf_iter_seq_start)
->    >>> referenced 1 more times
-> --
-> >> ld.lld: error: undefined symbol: dma_buf_put
->    >>> referenced by dmabuf_iter.c:45 (kernel/bpf/dmabuf_iter.c:45)
->    >>>               vmlinux.o:(dmabuf_iter_seq_next)
->    >>> referenced by dmabuf_iter.c:90 (kernel/bpf/dmabuf_iter.c:90)
->    >>>               vmlinux.o:(dmabuf_iter_seq_stop)
-> --
-> >> ld.lld: error: undefined symbol: dmabuf_debugfs_list
->    >>> referenced by list.h:354 (include/linux/list.h:354)
->    >>>               vmlinux.o:(dmabuf_iter_seq_next)
->    >>> referenced by dmabuf_iter.c:0 (kernel/bpf/dmabuf_iter.c:0)
->    >>>               vmlinux.o:(dmabuf_iter_seq_start)
->    >>> referenced by list.h:364 (include/linux/list.h:364)
->    >>>               vmlinux.o:(dmabuf_iter_seq_start)
->
-> --
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
+this is a follow up on
+        https://lore.kernel.org/ZwVOMgBMxrw7BU9A@jlelli-thinkpadt14gen4.rem=
+ote.csb
 
-This is due to no CONFIG_DMA_SHARED_BUFFER. Fixed by:
+and adds support for task local futex_hash_bucket.
 
---- a/kernel/bpf/Makefile
-+++ b/kernel/bpf/Makefile
-@@ -53,7 +53,7 @@ obj-$(CONFIG_BPF_SYSCALL) +=3D relo_core.o
- obj-$(CONFIG_BPF_SYSCALL) +=3D btf_iter.o
- obj-$(CONFIG_BPF_SYSCALL) +=3D btf_relocate.o
- obj-$(CONFIG_BPF_SYSCALL) +=3D kmem_cache_iter.o
--ifeq ($(CONFIG_DEBUG_FS),y)
-+ifeq ($(CONFIG_DMA_SHARED_BUFFER)$(CONFIG_DEBUG_FS),yy)
- obj-$(CONFIG_BPF_SYSCALL) +=3D dmabuf_iter.o
- endif
+This is the local hash map series with PeterZ FUTEX2_NUMA and
+FUTEX2_MPOL. This went through some testing now with the selftests=E2=80=A6
+
+The complete tree is at
+        https://git.kernel.org/pub/scm/linux/kernel/git/bigeasy/staging.git=
+/log/?h=3Dfutex_local_v12
+        https://git.kernel.org/pub/scm/linux/kernel/git/bigeasy/staging.git=
+ futex_local_v12
+
+v11=E2=80=A6v12: https://lore.kernel.org/all/20250407155742.968816-1-bigeas=
+y@linutronix.de
+  - Moved futex_hash_put() in futex_lock_pi() before
+    rt_mutex_pre_schedule() for obvious reasons.
+=20=20
+  - Use __GFP_NOWARN while allocating the local hash to supress warnings
+    about failures especially if huge values were used and vmalloc
+    refuses.
+
+  - The "immutable" mode is its own patch. The basic infrastructure patch
+    enforces a "0" for prctl()'s arg4. The "immutable mode" allows only 0
+    (disabled) or 1 (enabled) as argument.
+    The "perf bench" bench adds the "bucket" and "immutable" support.
+=20=20
+  - The position of node member after the uaddr is computed in units of
+    u32. Added a cast to (void *) to get the math in right.
+=20=20
+  - Added FUTEX2_MPOL to FUTEX2_VALID_MASK assuming that we want to expose
+    it. However the mpol seems not to work here but it is likely that my
+    setup is proper.
+=20=20
+  - If the user specified FUTEX_NO_NODE as node then the node is updated
+    to a valid node number. The node value is only written back to the
+    user if it has been changed.
+    While this only avoids the unnecessary write back if the user supplied
+    a valid node number the whole interface is slighly race if
+    FUTEX_NO_NODE is supplied and two futex_wait() invocations are invoked
+    on parallel then the first invocation can set node to 0 and the send
+    to 1. The following callers will stick to node 1 but the first one
+    will remain waiting on the wrong node.
+=20=20
+  - Added selftests for private hash and the NUMA bits.
+
+v10=E2=80=A6v11: https://lore.kernel.org/all/20250312151634.2183278-1-bigea=
+sy@linutronix.de
+  - PeterZ' fixups, changes to the local hash series have been folded
+    into the earlier patches so things are not added and renamed later
+    and the functionality is changed.
+
+  - vmalloc_huge() has been implemented on top of vmalloc_huge_node()
+    and the NOMMU bots have been adjusted. akpm asked for this.
+
+  - wake_up_var() has been removed from __futex_pivot_hash(). It is
+    enough to wake the userspace waiter after the final put so it can
+    perform the resize itself.
+
+  - Changed to logic in futex_pivot_pending() so it does not block for
+    the user. It waits for __futex_pivot_hash() which follows the logic
+    in __futex_pivot_hash().
+
+  - Updated kernel doc for __futex_hash().
+
+  - Patches 17+ are new:
+    - Wire up PR_FUTEX_HASH_SET_SLOTS in "perf bench futex"
+    - Add "immutable" mode to PR_FUTEX_HASH_SET_SLOTS to avoid resizing
+      the local hash any further. This avoids rcuref usage which is
+      noticeable in "perf bench futex hash"
+
+
+Peter Zijlstra (8):
+  mm: Add vmalloc_huge_node()
+  futex: Move futex_queue() into futex_wait_setup()
+  futex: Pull futex_hash() out of futex_q_lock()
+  futex: Create hb scopes
+  futex: Create futex_hash() get/put class
+  futex: Create private_hash() get/put class
+  futex: Implement FUTEX2_NUMA
+  futex: Implement FUTEX2_MPOL
+
+Sebastian Andrzej Siewior (13):
+  rcuref: Provide rcuref_is_dead()
+  futex: Acquire a hash reference in futex_wait_multiple_setup()
+  futex: Decrease the waiter count before the unlock operation
+  futex: Introduce futex_q_lockptr_lock()
+  futex: Create helper function to initialize a hash slot
+  futex: Add basic infrastructure for local task local hash
+  futex: Allow automatic allocation of process wide futex hash
+  futex: Allow to resize the private local hash
+  futex: Allow to make the private hash immutable
+  tools headers: Synchronize prctl.h ABI header
+  tools/perf: Allow to select the number of hash buckets
+  selftests/futex: Add futex_priv_hash
+  selftests/futex: Add futex_numa_mpol
+
+ include/linux/futex.h                         |  36 +-
+ include/linux/mm_types.h                      |   7 +-
+ include/linux/mmap_lock.h                     |   4 +
+ include/linux/rcuref.h                        |  22 +-
+ include/linux/vmalloc.h                       |   9 +-
+ include/uapi/linux/futex.h                    |  10 +-
+ include/uapi/linux/prctl.h                    |   6 +
+ init/Kconfig                                  |  10 +
+ io_uring/futex.c                              |   4 +-
+ kernel/fork.c                                 |  24 +
+ kernel/futex/core.c                           | 802 ++++++++++++++++--
+ kernel/futex/futex.h                          |  73 +-
+ kernel/futex/pi.c                             | 306 ++++---
+ kernel/futex/requeue.c                        | 480 +++++------
+ kernel/futex/waitwake.c                       | 201 +++--
+ kernel/sys.c                                  |   4 +
+ mm/nommu.c                                    |  18 +-
+ mm/vmalloc.c                                  |  11 +-
+ tools/include/uapi/linux/prctl.h              |  44 +-
+ tools/perf/bench/Build                        |   1 +
+ tools/perf/bench/futex-hash.c                 |   7 +
+ tools/perf/bench/futex-lock-pi.c              |   5 +
+ tools/perf/bench/futex-requeue.c              |   6 +
+ tools/perf/bench/futex-wake-parallel.c        |   9 +-
+ tools/perf/bench/futex-wake.c                 |   4 +
+ tools/perf/bench/futex.c                      |  65 ++
+ tools/perf/bench/futex.h                      |   5 +
+ .../selftests/futex/functional/.gitignore     |   6 +-
+ .../selftests/futex/functional/Makefile       |   4 +-
+ .../futex/functional/futex_numa_mpol.c        | 232 +++++
+ .../futex/functional/futex_priv_hash.c        | 315 +++++++
+ .../testing/selftests/futex/functional/run.sh |   7 +
+ .../selftests/futex/include/futex2test.h      |  34 +
+ 33 files changed, 2199 insertions(+), 572 deletions(-)
+ create mode 100644 tools/perf/bench/futex.c
+ create mode 100644 tools/testing/selftests/futex/functional/futex_numa_mpo=
+l.c
+ create mode 100644 tools/testing/selftests/futex/functional/futex_priv_has=
+h.c
+
+--=20
+2.49.0
+
 
