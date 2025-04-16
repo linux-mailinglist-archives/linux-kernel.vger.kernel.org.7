@@ -1,127 +1,112 @@
-Return-Path: <linux-kernel+bounces-606621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08213A8B181
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:03:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE02EA8B17C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:02:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C72A1903762
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 07:03:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E34DD175A90
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 07:02:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 001AF225A24;
-	Wed, 16 Apr 2025 07:02:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF7B22A807;
+	Wed, 16 Apr 2025 07:02:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="flMM80qI"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GjfSR7Ka"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3334221572
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 07:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744786975; cv=pass; b=arIj/EXSiejS6xyK0vXz4flDqVoY2DwvBOr7eA4QUECHZTXU1r7bYs3UZlWPm32eDiCDfrqDK9vfteCaFQ/eTfz5n5ZlTxHQ8d98sqx3zAhkcAuHZ7pbwygOaOwVZ5jMRo18kvIyZxknZy9uwqJ0FrZQjlLe69VVyQBsKOdUd3I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744786975; c=relaxed/simple;
-	bh=pRKbzkJxgaqHMdybzBo+PJJQ4rGQsm4NkYN/wWKehzk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uZYxHRYyEaXpc+2MFNjX0VRw+gBhpS6cNvNqVLCdcQUt9sI2u409eYGWm7ntgg/RlTqs3OxFxUyKtMAye5gCnDPv1NYL04LSVsGOmYqy+rfP3FbxRHbo+cMB8KEyOyltX3B/4H31UpU/q/7q/U6iwMnfE3a0beec9hbLp8oEkS4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=flMM80qI; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1744786951; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=KYpUsSPZ08iV51WhMV5+Xvn3HsAGdqJDQsETqTLpmBYNJw31QKIyPeO75zM7BJewStjtxUSoD6aGOrMABb+DbWMfl/xB9ka40GjtYpJgO2/duARK9xmOvz3q/+TyvnFr+PXcQIsmCZZvPznD4dtC4vpuhwZZDfrqAVPmRdUfmzg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1744786951; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=VvHdLu/1DjYBRDNdGpthOoaX7QDWeZcIa++hyBZ9pYY=; 
-	b=OOadFqAvLhRG4wDZ2tnanPtbbPPLpuzT446gOOIfmR7M/Yzw0ukM5G8w7R7SqIsHnFwM1yXWfjnYB2hGQRbnKWmiFTLlXi+YJxtteuOdGT4E17XY0OhiggGLTc8OU96mJDYC7CDetlEpXawLBn59jqEv8ER4Z1hVy1AMMrvADw0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1744786950;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=VvHdLu/1DjYBRDNdGpthOoaX7QDWeZcIa++hyBZ9pYY=;
-	b=flMM80qI3DjCZqkNdx1/fJw3XELhl1+/EjzFzW5hVP+oevRtvV1BnANfG7ZX9Uex
-	MpzEDkW8nD3BPKJuzyQN0Aj2MYY1foyC2SgEEcq5u7k3yqgvHWusLd2Z3xDRNDPrGda
-	TfA67VPdGD55zMOP9y2miUW6ZvPMMqHCI3N6EwX0=
-Received: by mx.zohomail.com with SMTPS id 1744786949579725.8412945424827;
-	Wed, 16 Apr 2025 00:02:29 -0700 (PDT)
-Message-ID: <a48864f2-ff81-4b03-9de7-3d4959a9b301@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DB2221572;
+	Wed, 16 Apr 2025 07:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744786943; cv=none; b=sfq28OmvCA1RjKWrqVDn4pxapKQtxLqdeTWaT1wSLKu6iJkdLQDWc5cZ61CSuqodvTlWLRsYKAiBc37Uo6+Vx++Fj9OkKmPydCeazFKanuq2LTN4B0rQFttYjaQcvxjVzMYjTpYeYLfpvlRtkqIbsys9ULxmYE/+S9T4T5Q/3H0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744786943; c=relaxed/simple;
+	bh=vC9qu2x28cbxmK7VJr+Bv79rWkNOEx2eUdan3K30uI0=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Var3LST7uVTyyQjNFcUe0N71RLYOHHxCxb1LtJqU6J4XqubYJay0YbfLvWgYmXUnKO2Ci+wNkxAhS/pMUDbN82oTZesdX1nGH1vqwuoJFvZtBnbV3NznvjMggD33Ybj1wMbAtLHBM3zmVDij3pqZHL8whVE/ZRqka1PQVPwmO1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GjfSR7Ka; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744786941; x=1776322941;
+  h=date:from:to:subject:message-id:references:mime-version:
+   in-reply-to;
+  bh=vC9qu2x28cbxmK7VJr+Bv79rWkNOEx2eUdan3K30uI0=;
+  b=GjfSR7KakS9Ni2ufnsU6nokwTrhzSjqcd38j4yeiA4cFVFi0/pMbiyId
+   1Iz38FswTDbs/Jf/6b4QXY26Ugo+emMJxZsJCW4sXHHaMbGsF1vdn89wX
+   AeoRLV2EsImLSsjoPj1zRmlTOJzSRxEEaIIlPpMFKafUSVAsSiYuYigxi
+   H1zyQiVkX671LBAT3ADT/w5wtn/OU9Y4yGZRchCgDf/KkWnf7a1yN/KR7
+   S/TigyFI0iEBJBkqLoS8H8l9epJwpm/YpMij7uprazeQQ3AMnToXSojlH
+   x8AfimAaem79b+yPwQt+JLxqV3dtQAIhZuXywKb+k3c0d5p8ulY43Zele
+   Q==;
+X-CSE-ConnectionGUID: bq3/ZRTOQaKqyOS8c/SHbg==
+X-CSE-MsgGUID: eESMnd4OQnGGWipTVPs47g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="49016428"
+X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
+   d="scan'208";a="49016428"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 00:02:20 -0700
+X-CSE-ConnectionGUID: 3xCPRFkrQH+OdM2dLByN/w==
+X-CSE-MsgGUID: +j+Anc7CRfmXx+9z0ZOrzg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
+   d="scan'208";a="130370786"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 00:02:18 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1u4wml-0000000Cm2v-3loF;
+	Wed, 16 Apr 2025 10:02:15 +0300
 Date: Wed, 16 Apr 2025 10:02:15 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Jai Luthra <jai.luthra@ideasonboard.com>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: Re: [PATCH v4 5/7] i2c: core: Do not dereference fwnode in struct
+ device
+Message-ID: <Z_9V9x_YBfxiCh1w@smile.fi.intel.com>
+References: <20250414100409.3910312-1-andriy.shevchenko@linux.intel.com>
+ <20250414100409.3910312-6-andriy.shevchenko@linux.intel.com>
+ <Z_9UX9xkGjvhnub_@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/virtio: Support drm_panic with non-vmapped shmem BO
-To: Ryosuke Yasuoka <ryasuoka@redhat.com>, airlied@redhat.com,
- kraxel@redhat.com, gurchetansingh@chromium.org, olvaffe@gmail.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- simona@ffwll.ch, jfalempe@redhat.com
-Cc: virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org
-References: <20250412132012.291837-1-ryasuoka@redhat.com>
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250412132012.291837-1-ryasuoka@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z_9UX9xkGjvhnub_@shikoro>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 4/12/25 16:20, Ryosuke Yasuoka wrote:
-> Pass array of pages of the scanout buffer [1] to shmem BO, allowing
-> drm_panic to work even if the BO is not vmapped.
+On Wed, Apr 16, 2025 at 08:55:27AM +0200, Wolfram Sang wrote:
+> On Mon, Apr 14, 2025 at 01:01:55PM +0300, Andy Shevchenko wrote:
+> > In order to make the underneath API easier to change in the future,
+> > prevent users from dereferencing fwnode from struct device.
+> > Instead, use the specific device_set_node() API for that.
+> > 
+> > Tested-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> > Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> > Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > 
-> [1] https://lore.kernel.org/all/20250407140138.162383-3-jfalempe@redhat.com/
-> 
-> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
-> Signed-off-by: Ryosuke Yasuoka <ryasuoka@redhat.com>
-> ---
->  drivers/gpu/drm/virtio/virtgpu_plane.c | 14 +++++++++++---
->  1 file changed, 11 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_plane.c b/drivers/gpu/drm/virtio/virtgpu_plane.c
-> index a6f5a78f436a..2ff57d559c86 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_plane.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_plane.c
-> @@ -500,11 +500,19 @@ static int virtio_drm_get_scanout_buffer(struct drm_plane *plane,
->  
->  	bo = gem_to_virtio_gpu_obj(plane->state->fb->obj[0]);
->  
-> -	/* Only support mapped shmem bo */
-> -	if (virtio_gpu_is_vram(bo) || bo->base.base.import_attach || !bo->base.vaddr)
-> +	if (virtio_gpu_is_vram(bo) || bo->base.base.import_attach)
->  		return -ENODEV;
->  
-> -	iosys_map_set_vaddr(&sb->map[0], bo->base.vaddr);
-> +	if (bo->base.vaddr)
-> +		iosys_map_set_vaddr(&sb->map[0], bo->base.vaddr);
-> +	else {
-> +		struct drm_gem_shmem_object *shmem = &bo->base;
-> +
-> +		if (!shmem->pages)
-> +			return -ENODEV;
-> +		/* map scanout buffer later */
-> +		sb->pages = shmem->pages;
-> +	}
->  
->  	sb->format = plane->state->fb->format;
->  	sb->height = plane->state->fb->height;
-> 
-> base-commit: e7bb7d44c3b97aea1f0e354c6499900154ac67f2
+> I'll check this patch later today. Rest of the series looks good to me
+> already.
 
-Works well!
-
-Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Tested-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Note, I'm planning to send a v5 shortly with the style fixes and commit
+messages as you suggested.
 
 -- 
-Best regards,
-Dmitry
+With Best Regards,
+Andy Shevchenko
+
+
 
