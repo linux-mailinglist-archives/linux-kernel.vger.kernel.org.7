@@ -1,188 +1,173 @@
-Return-Path: <linux-kernel+bounces-607715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADF7BA909C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 19:16:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 238DAA909B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 19:15:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3454D3BCC68
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 17:16:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D09C1895524
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 17:15:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447A4221555;
-	Wed, 16 Apr 2025 17:15:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 977232163A4;
+	Wed, 16 Apr 2025 17:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jqwVnAu1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="a5sosI7U"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D809217739;
-	Wed, 16 Apr 2025 17:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 852BE215778
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 17:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744823700; cv=none; b=szrMidPzs0L3gO59dcuRzBUktgEZIz8EA+hxzOWKqJbt9zQ/Ji3cXD9FZ7J8+J9OdqzK/Ae46TGHHk8/QmxXGFZeFwmKsR355uiF36NUdMuXnJIz+vCCR3b+Thzq1K4a7XPYsB4do26jiSQmJXBi6DhhNoEJd1eBGWYl3pSeiOk=
+	t=1744823699; cv=none; b=nmZzxDA/eDrn3AaS2NQqrMmCKJcpsBDOlrKNHa50jv+0GMH59Er/lBzRCOuf+jVGbZnRCaQcOl+oGGtaoUE86RKjZLP5UNFB40WFSK/eiGA0KfS4fwT4V9ws8Ek4OWaZ/TkxFiNxIfnPi8GkhOI2P+K696/lJbq5xV08DUdZ3h0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744823700; c=relaxed/simple;
-	bh=goePd7zMNr7BemvNLAfHe6YmAcUBAYJT6AWRUnM94sw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Dfh6jY9P0Fb/dle2igld2COAhtjjaMSWayS1bnCq8qI0WOLe1oaCWU1+rqruTsOrAFmLTuc+EBmJ6BegpBw8ci0DnpKQEWOF4DOL4xOoDdQ9rOkGUXHnkDr66I7tKxKvj4PWrAM0RAeFOZlpPU9PVZCum5YoWS79g/6W487J80A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jqwVnAu1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BCBA9C4CEEE;
-	Wed, 16 Apr 2025 17:14:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744823699;
-	bh=goePd7zMNr7BemvNLAfHe6YmAcUBAYJT6AWRUnM94sw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=jqwVnAu1fvuILmnr+yAQrOXnAAIowEa5lzhvoReGoJ0NNDiFtDVhYjFH4sM4CJFSD
-	 jnYrxPy4BAgxcpG/I6etC2/JT4CV2z7oYPPXpYr82ioZKDmpTHBgQosdJOSndC+kej
-	 Qvm7pxfJ1nVXyObyn4N7FF1HM6KSvmM4fPx56848NjiaAkpR+uNE66ln/h2vW0Oid1
-	 M/g7Epe9ypBDVEwpMeWvVI4Hzlk1qHQJOYnuSosVe7khxGubJvLB76WsooIy6C8Fs4
-	 q3tVStl28HW86IRhznC7NAXZ3XviHk/+aMZWLNwyohGVmZFHXCvW3f+HVWej15KDVj
-	 /8t8QTKkL+osw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DBE3C369BA;
-	Wed, 16 Apr 2025 17:14:59 +0000 (UTC)
-From: Dimitri Fedrau via B4 Relay <devnull+dimitri.fedrau.liebherr.com@kernel.org>
-Date: Wed, 16 Apr 2025 19:14:50 +0200
-Subject: [PATCH net-next v3 4/4] net: phy: dp83822: Add support for
- changing the MAC termination
+	s=arc-20240116; t=1744823699; c=relaxed/simple;
+	bh=9SkCY6iihCFwj7IPPmUbxABHAZCNX2kKzqx/NAUf1WU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oFS7aAgUTu27GJfkaeVVS67o4AKqpxHPh3fLU8XkMfbpaJsx24NyFaGVGHlOrefi6Man4WgVjmug1FVHJjN8+CZuMcRxleXN+3ii8ZRorzK4Iz/2bjJwXB26FWOhQQFjh4TqjhlEQagpcKGdIN0pB0ep/o4Ow0yO5ljBib+2fBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=a5sosI7U; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-22c33677183so11291975ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 10:14:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1744823697; x=1745428497; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lVzvcllkC0jfEMoiDKBA8hFV4BOeetLydl7c79dBAS4=;
+        b=a5sosI7UFJ5dwWyiuI0ZS6uta22vYc+y6dL0D1YwBsBtGBdMpqT1MTFlvgjL4MI0Yv
+         30efuyq5xl9nhMUIf+/bVL15I9N2cEohFz4GJlrnuMRh5lWRrFRWkHpDM4LsPjl9AVZv
+         zZzg3f/1eyCbfOmJ3ioF1l6hOboE4BNAVbRZ4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744823697; x=1745428497;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lVzvcllkC0jfEMoiDKBA8hFV4BOeetLydl7c79dBAS4=;
+        b=KbIGMLWF5UeRFJcc1GFVwXlh3ScM5W0XoOoR4SNMboNP8rER17ehAcHfkGKMP2hjoR
+         2qgurZJy0D9CC1WuqK7REFtjl0XFM+A4c8V7sZU4TBjbjgCpi7ZtBFiOSVCtKATM6+kL
+         UwePRxkQFfnhEXJduO4M8u2DygVtg+BDrIo5xYnoOoolag0w36/QT0l5EECunMJphur6
+         uGyXovhdkZHjsZKv5x1pFW/rOJN8CpbYcEuh31HEAJd/s63cfxFqovCbNpbEq9SYUro3
+         JzyX9mJfFflP452XQJRIMb86zPJTEaJzQHGWJotPu2dYJELd7EAsq+7+Upaiv7GcPfHF
+         sjRg==
+X-Forwarded-Encrypted: i=1; AJvYcCVtYCt5S0rKaARpKGDkJcla+ili/zWY9BGBegIL/sA503fwS+kHC5C34tnNxWxo3no2vq9kBbLs4uJkGUM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzxi6NyowCrhHVTubU97+YhpTXNG1h43+G7SA06HEezO1ozqf3F
+	mYQ9uEQ7Hv7N1IrlppIqMbBco/nHEDZbj54KTKLGa/e4qsMc73p/arVoh7fLTg==
+X-Gm-Gg: ASbGncv3WFcB+xnvLbghb29sj1a9Mb99GNdBTYkqscPgmOQXdmSpzVZ+Y0HtHIV35/s
+	OiDjjIS3WB+JsaREBFBfNR649/QGHEOjEjb45tnVaDuSnhxDzDayUiiftqQjPK/6QF82gHPujkn
+	sM7zWJlZ1MeRIly8aMyKUuFFEhM0Qr8h3Elej4Aw//iXiwOQDFxBwHS/DQTEfZFs7rR7zMHdtos
+	FfQJ0+vyACltv+lbF/By+fYUTtfBWwf4+RjFf+OcgsnIP28V9MSA7nmusyqhvUaYUfkfrTByQy8
+	rFUSF1UJj7ZUg65gkR2taTZVhf0xH9apAvCk6B2VTtuOVl7V9Q8nBEmIQidMjnj3EirdeqKHCm4
+	Pwsg=
+X-Google-Smtp-Source: AGHT+IGro/X8tybGDrXPwFullPBzAQWDFsX52G7fyEPBaGNoBYml6oJkaZxBKpAOBoBrGK4soTkl2Q==
+X-Received: by 2002:a17:902:ebc1:b0:223:67ac:8929 with SMTP id d9443c01a7336-22c357ad512mr44104645ad.0.1744823696816;
+        Wed, 16 Apr 2025 10:14:56 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e14:7:f195:5eb7:420a:d820])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-22c33fa7638sm16880035ad.142.2025.04.16.10.14.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Apr 2025 10:14:55 -0700 (PDT)
+Date: Wed, 16 Apr 2025 10:14:53 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+	Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	dmitry.baryshkov@linaro.org, Tsai Sung-Fu <danielsftsai@google.com>
+Subject: Re: [RFC] PCI: pwrctrl and link-up dependencies
+Message-ID: <Z__ljc6WaK8u5kff@google.com>
+References: <Z_WAKDjIeOjlghVs@google.com>
+ <vfjh3xzfhwoppcaxlov5bcmkfngyf6no4zyrgexlcxpfajsw2t@o5nbfcep3auz>
+ <Z_2ZNuJsDr0lDjbo@google.com>
+ <4pwigzf7q6abyntt4opjv6lnvkdulyejr73efnud2cvltskgt2@tjs2k5tiwyvc>
+ <Z_6kZ7x7gnoH-P7x@google.com>
+ <eix65qdwtk5ocd7lj6sw2lslidivauzyn6h5cc4mc2nnci52im@qfmbmwy2zjbe>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250416-dp83822-mac-impedance-v3-4-028ac426cddb@liebherr.com>
-References: <20250416-dp83822-mac-impedance-v3-0-028ac426cddb@liebherr.com>
-In-Reply-To: <20250416-dp83822-mac-impedance-v3-0-028ac426cddb@liebherr.com>
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, Andrew Davis <afd@ti.com>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Dimitri Fedrau <dimitri.fedrau@liebherr.com>, 
- Dimitri Fedrau <dima.fedrau@gmail.com>, 
- "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744823698; l=3207;
- i=dimitri.fedrau@liebherr.com; s=20241202; h=from:subject:message-id;
- bh=aUB5dQ6e7my0jObP7hS6jVNZ0SSji5tioyizzZyZ9Wo=;
- b=HVfJ/PMe7SX0eZJKufHILN7AgzuaTJja2DNEup344W4GrcWoMxNqv3A7aYOtREJCSY97U8Tdb
- ZkSIfbvU2/tAgWtVHw+Dgdj1LZxOt2tcD9uouwo12ww3xX2Vm/7m9b4
-X-Developer-Key: i=dimitri.fedrau@liebherr.com; a=ed25519;
- pk=rT653x09JSQvotxIqQl4/XiI4AOiBZrdOGvxDUbb5m8=
-X-Endpoint-Received: by B4 Relay for dimitri.fedrau@liebherr.com/20241202
- with auth_id=290
-X-Original-From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-Reply-To: dimitri.fedrau@liebherr.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eix65qdwtk5ocd7lj6sw2lslidivauzyn6h5cc4mc2nnci52im@qfmbmwy2zjbe>
 
-From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+Hi Manivannan,
 
-The dp83822 provides the possibility to set the resistance value of the
-the MAC termination. Modifying the resistance to an appropriate value can
-reduce signal reflections and therefore improve signal quality.
+On Wed, Apr 16, 2025 at 11:29:32AM +0530, Manivannan Sadhasivam wrote:
+> On Tue, Apr 15, 2025 at 11:24:39AM -0700, Brian Norris wrote:
+> > We might be talking past each other. Per above, I think we can do better
+> > with (1)-(3). But you're bringing up (4). Problem (3) exists for all
+> > drivers, although it's more acute with DWC, and I happen to be using it.
+> > I also think it's indicative of larger design and ordering problems in
+> > pwrctrl.
+> > 
+> 
+> Now I get what you are saying.
 
-Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
----
- drivers/net/phy/dp83822.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+Great! I probably didn't include all my thoughts in the first place, but
+then, my first email was already long enough :)
 
-diff --git a/drivers/net/phy/dp83822.c b/drivers/net/phy/dp83822.c
-index 14f36154963841dff98be5af4dfbd2760325c13d..490c9f4e5d4e4dc866ef99f426f7497b5e1b49b4 100644
---- a/drivers/net/phy/dp83822.c
-+++ b/drivers/net/phy/dp83822.c
-@@ -33,6 +33,7 @@
- #define MII_DP83822_MLEDCR	0x25
- #define MII_DP83822_LDCTRL	0x403
- #define MII_DP83822_LEDCFG1	0x460
-+#define MII_DP83822_IOCTRL	0x461
- #define MII_DP83822_IOCTRL1	0x462
- #define MII_DP83822_IOCTRL2	0x463
- #define MII_DP83822_GENCFG	0x465
-@@ -118,6 +119,9 @@
- #define DP83822_LEDCFG1_LED1_CTRL	GENMASK(11, 8)
- #define DP83822_LEDCFG1_LED3_CTRL	GENMASK(7, 4)
- 
-+/* IOCTRL bits */
-+#define DP83822_IOCTRL_MAC_IMPEDANCE_CTRL	GENMASK(4, 1)
-+
- /* IOCTRL1 bits */
- #define DP83822_IOCTRL1_GPIO3_CTRL		GENMASK(10, 8)
- #define DP83822_IOCTRL1_GPIO3_CTRL_LED3		BIT(0)
-@@ -202,6 +206,7 @@ struct dp83822_private {
- 	u32 gpio2_clk_out;
- 	bool led_pin_enable[DP83822_MAX_LED_PINS];
- 	int tx_amplitude_100base_tx_index;
-+	int mac_termination_index;
- };
- 
- static int dp83822_config_wol(struct phy_device *phydev,
-@@ -533,6 +538,12 @@ static int dp83822_config_init(struct phy_device *phydev)
- 			       FIELD_PREP(DP83822_100BASE_TX_LINE_DRIVER_SWING,
- 					  dp83822->tx_amplitude_100base_tx_index));
- 
-+	if (dp83822->mac_termination_index >= 0)
-+		phy_modify_mmd(phydev, MDIO_MMD_VEND2, MII_DP83822_IOCTRL,
-+			       DP83822_IOCTRL_MAC_IMPEDANCE_CTRL,
-+			       FIELD_PREP(DP83822_IOCTRL_MAC_IMPEDANCE_CTRL,
-+					  dp83822->mac_termination_index));
-+
- 	err = dp83822_config_init_leds(phydev);
- 	if (err)
- 		return err;
-@@ -736,6 +747,10 @@ static const u32 tx_amplitude_100base_tx_gain[] = {
- 	93, 95, 97, 98, 100, 102, 103, 105,
- };
- 
-+static const u32 mac_termination[] = {
-+	99, 91, 84, 78, 73, 69, 65, 61, 58, 55, 53, 50, 48, 46, 44, 43,
-+};
-+
- static int dp83822_of_init_leds(struct phy_device *phydev)
- {
- 	struct device_node *node = phydev->mdio.dev.of_node;
-@@ -852,6 +867,23 @@ static int dp83822_of_init(struct phy_device *phydev)
- 		}
- 	}
- 
-+	ret = phy_get_mac_termination(phydev, dev, &val);
-+	if (!ret) {
-+		for (i = 0; i < ARRAY_SIZE(mac_termination); i++) {
-+			if (mac_termination[i] == val) {
-+				dp83822->mac_termination_index = i;
-+				break;
-+			}
-+		}
-+
-+		if (dp83822->mac_termination_index < 0) {
-+			phydev_err(phydev,
-+				   "Invalid value for mac-termination-ohms property (%u)\n",
-+				   val);
-+			return -EINVAL;
-+		}
-+	}
-+
- 	return dp83822_of_init_leds(phydev);
- }
- 
-@@ -931,6 +963,7 @@ static int dp8382x_probe(struct phy_device *phydev)
- 		return -ENOMEM;
- 
- 	dp83822->tx_amplitude_100base_tx_index = -1;
-+	dp83822->mac_termination_index = -1;
- 	phydev->priv = dp83822;
- 
- 	return 0;
+> > As an example less-cute way of doing pwrctrl: expose a wrapped version
+> > of pci_pwrctrl_create_device() such that drivers can call it earlier. If
+> > there is a pwrctrl device created, that means a driver should not yet
+> > wait for link-up -- it should defer that until the relevant pwrctrl is
+> > marked "ready". (There are likely other problems to solve in here too,
+> > but this is just an initial sketch. And to be clear, I suspect this
+> > doesn't fit your notion of "generic", because it requires each driver to
+> > adapt to it.)
+> > 
+> 
+> This is what I initially had in my mind, but then I opted for a solution which
+> allowed the pwrctrl devices to be created in the PCI core itself without any
+> modifications in the controller drivers.
+> 
+> But I totally agree with you that now we don't have any control over PERST# and
+> that should be fixed.
 
--- 
-2.39.5
+Yeah, if we have to handle PERST# and its timing, then we have to touch
+essentially every driver anyway, I think. So it's definitely a chance to
+go a (slightly) different direction.
 
+(Side note: I think this is potentially a chance to solve the odd I2C
+pwrctrl problem I linked in my original post with the same set of hooks.
+If a controller driver can know when pwrctrl is finished, then it can
+also defer its LTSSM until after that point.
 
+I doubt this will be the last set of "odd" HW where additional
+platform-specific dependencies need to be inserted between pwrctrl and
+PCI enumeration.)
+
+> > IOW, the pwrctl sequence should be something like:
+> > 
+> >  (1) power up the slot
+> >  (1)(a) delay, per spec
+> >  (1)(b) deassert PERST#
+> >  (1)(c) wait for link up
+> >  (2) rescan bus
+> > 
+> > Currently, we skip all of (1)(a)-(c). We're probably lucky that (1)(b)'s
+> > ordering doesn't matter all the time, as long as we did it earlier. And
+> > we're lucky that there are natural delays in software such that lack of
+> > (1)(a) and (1)(c) aren't significant.
+> > 
+> 
+> Let me go back to the drawing board and come up with a proposal. There are
+> atleast a couple of ways to fix this issue and I need to pick a less intrusive
+> one.
+
+That's kind of you. Let me know if I can help at all. Or at least CC me
+on any updates you have.
+
+> Thanks for reporting it, appreciated!
+
+Thanks for walking through it with me!
+
+Brian
 
