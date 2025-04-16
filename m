@@ -1,99 +1,118 @@
-Return-Path: <linux-kernel+bounces-606736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11CFFA8B2EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 10:05:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A66FA8B2F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 10:07:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25908171CA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 08:05:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD24A3B234B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 08:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 702C422D7B7;
-	Wed, 16 Apr 2025 08:05:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C587822D4F9;
+	Wed, 16 Apr 2025 08:07:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hKdswsPI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aex4n+Bi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D418F21CC68
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 08:05:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F7C1F94C
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 08:07:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744790721; cv=none; b=GH5fdwpuinxviips5EQeXHvVc/8VkG7z1xRq8svcSW1SkJFRRtJLjgzG2ejqQRHmWPZa9lf317Mo+i1GZnud365Tfwt2dbrWQ/DgPwaeS9Lu3c1IACWp9SNFbHzrQqKyCHtOAP+NaADoNFd6DG+7NW2AiJ4Hjc6CyPKFt4b16aU=
+	t=1744790842; cv=none; b=fQON/Ter0o68GmnUGQcRs5AtjIN5OhuFGUuyEHEkxgNs8aP7iD46ruaB2L3PXL+6ytLPzR6kpm5SlukrO8aNEopPYEcByuDwj0SNCGFYf8bw8KtV8rnH9HiZTrfvyiGKe36jOi9iqDn4GVb3HDwaK335PKGJVCJUW6nlWULwIsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744790721; c=relaxed/simple;
-	bh=cXksQGNjIMHHG4YDW19IW0xZ/lgV5FlGNZcHYsaMLk4=;
+	s=arc-20240116; t=1744790842; c=relaxed/simple;
+	bh=CMBzEDZprgGkLI2ECJBCn9yABiQXpRjf2Rf+wPZznkU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ltp7SqDZr0hQRCiHERwaVxLt/ydZuR+dVNIFfj3U36G62RJh3VuLGWiOzNuJkEv4nCD0IJtIxHSNo6CTaxSHb+GXYv21RvbMXAf4LqWgE2MkzAKZq419nV8iJZjwnlrzMYIruBATfu/sQx3Sgb3y4+/hGyogOWwfrskDA/6fZ2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hKdswsPI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C07FC4CEE2;
-	Wed, 16 Apr 2025 08:05:19 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=LeRdgQTZaFoUMiN0RmR9ZIYtnFVhZmf0ltx5SI0kIw/rbD0IPTGOB6wBXKqF79ho8OeWhny6JguT0i/jXzmRWFW7tef4DrhBaJ2nedbtjyZqLa9/4Jzn7+aJCEh90h/wZmtXP7yNa9kGZ+bVXkumCGieYFJl9tz7YvQKZ2H7TL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Aex4n+Bi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C323BC4CEE2;
+	Wed, 16 Apr 2025 08:07:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744790721;
-	bh=cXksQGNjIMHHG4YDW19IW0xZ/lgV5FlGNZcHYsaMLk4=;
+	s=k20201202; t=1744790841;
+	bh=CMBzEDZprgGkLI2ECJBCn9yABiQXpRjf2Rf+wPZznkU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hKdswsPIt0DqUK2DTWurtOUHLmvLCXuB6H6ck03UQAjn6+D8f6gRkkfdDVWZSdZXk
-	 afoOXKmsiWOQVckTKbgfgiQeasHtqX5Qm9Jiiy47FKLXrm888yMpryYJYsCopHqG6L
-	 sySgR8psWd3PcTp9Uanqn+zlUrV1Hxo2lPSU349myOP10nD9pfzotgM+YzOZbeii6D
-	 c7HQH+pNdiK9OTLRo/3nl3pw2GbLsY5CbdEzTz/cfIPxalTZXetNiv0IiYDeBrT877
-	 NxM2wR8RiqAi03gm2xcBtnKckPkIYKzsCmGlXHo1TdkKaSBIiRMpo+0TE3Xm/aAk+a
-	 7yzI+U3uKsAcA==
-Date: Wed, 16 Apr 2025 10:05:17 +0200
+	b=Aex4n+Bimei/5U9f0trsuRSoW8b7lgjciSlpEdPN2DgsLn8q/Q9ErV3gzhvP9Kpd8
+	 HaMV2eXYim7mdcOpdfig/fl9Z631GjCFfgMN2HPbxu4Bz6CON5BGcqqEmQiqDXFVKX
+	 HtmLI5/ofHl9I6ciot380LbZmtDv23+tMsdKCIAZfTG+djB4VBSoQFIhXVf47MtbHD
+	 5bZphReguirS+vtlpssrudbNHS5aoTHqnGvVrFnw6pnL/gx9gkdlMrT3y+XYg6J5p2
+	 E6gZNEzLld4+g03Mb8A1K8HP0HLIpRQZDN3peFBz/+HffpiVV36sxqFqfpIZCgwuw8
+	 fN/W/zaSM0nbQ==
+Date: Wed, 16 Apr 2025 10:07:17 +0200
 From: Ingo Molnar <mingo@kernel.org>
 To: "Chang S. Bae" <chang.seok.bae@intel.com>
 Cc: mingo@redhat.com, linux-kernel@vger.kernel.org, x86@kernel.org,
 	tglx@linutronix.de, bp@alien8.de, dave.hansen@linux.intel.com
-Subject: Re: [PATCH 07/10] x86/fpu: Refactor xfeature bitmask update code for
- sigframe XSAVE
-Message-ID: <Z_9kvTUIqOo7htBl@gmail.com>
+Subject: Re: [PATCH 00/10] x86/fpu: APX enablement and assorted FPU code
+ improvements
+Message-ID: <Z_9lNentUMOy5vZW@gmail.com>
 References: <Z_onl1QbH9L1-8dq@gmail.com>
  <20250416021720.12305-1-chang.seok.bae@intel.com>
- <20250416021720.12305-8-chang.seok.bae@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250416021720.12305-8-chang.seok.bae@intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250416021720.12305-1-chang.seok.bae@intel.com>
 
 
 * Chang S. Bae <chang.seok.bae@intel.com> wrote:
 
-> +static inline int set_xfeature_in_sigframe(struct xregs_state __user *xbuf, u64 mask)
-> +{
-> +	u64 xfeatures;
-> +	int err;
-> +
-> +	/* Read the xfeatures value already saved in the user buffer */
-> +	err  = __get_user(xfeatures, &xbuf->header.xfeatures);
-> +	xfeatures |= mask;
-> +	err |= __put_user(xfeatures, &xbuf->header.xfeatures);
-> +	return err;
-> +}
+> On 4/12/2025 1:43 AM, Ingo Molnar wrote:
+> >
+> > Chang, mind sending a series of the latest version of all the pending
+> > APX patches you have at the moment (and any other pending FPU patches
+> > you may have), with Reviewed-by tags rolled in, etc.
+> 
+> Hi Ingo,
+> 
+> Here’s the updated patch set following up on the previous APX series [1],
+> along with a collection of additional FPU-related cleanups and
+> improvements that were previously posted or discussed.
+> 
+> The series is organized into two parts:
+> 
+>   1. APX Enabling (PATCH 1–5)
+> 
+>      These patches complete the APX bring-up. After laying the groundwork,
+>      this portion finalizes the enablement:
+> 
+>      *  Patches 1, 2, and 4 are typical xfeature plumbing.
+> 
+>      *  Patch 3 handles MPX conflict -- unexpected hardware issue
+> 
+>      *  Patch 5 adds a test case.
+> 
+>   2. Miscellaneous FPU Code Improvements (PATCH 6–10)
+> 
+>      This batch includes various standalone improvements:
+> 
+>      *  Patch 6: Centralizes the XSAVE disablement message
+> 
+>      *  Patches 7-8: Simplifies PKRU update in XSTATE_BV on sigframe
+> 
+>      *  Patch 9: Removes the unused mxcsr_feature_mask export
+> 
+>      *  Patch 10: Renames fpu_reset_fpregs() for clarity
+> 
+>      Each patch includes context and links to earlier discussions or
+>      revisions.
 
-For future reference, please put an extra newline before 'return' 
-statements, so that the code looks more 'balanced':
+>  14 files changed, 69 insertions(+), 26 deletions(-)
 
-> +{
-> +	u64 xfeatures;
-> +	int err;
-> +
-> +	/* Read the xfeatures value already saved in the user buffer */
-> +	err  = __get_user(xfeatures, &xbuf->header.xfeatures);
-> +	xfeatures |= mask;
-> +	err |= __put_user(xfeatures, &xbuf->header.xfeatures);
-> +
-> +	return err;
-> +}
+Applied to tip:x86/fpu, thanks!
 
-I've done that for this patch, so no need to resend it.
+Note that I've merged the currently pending tip:x86/cpu bits into 
+tip:x86/fpu before applying these patches, to resolve a conflict with 
+<asm/cpufeatures.h>, and re-formatted the new X86_FEATURE_APX line to 
+have the canonical format.
 
-Thanks,
 
 	Ingo
 
