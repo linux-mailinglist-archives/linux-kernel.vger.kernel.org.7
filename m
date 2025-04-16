@@ -1,115 +1,115 @@
-Return-Path: <linux-kernel+bounces-606925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DD3BA8B5A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 11:38:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29E8BA8B5AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 11:39:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D7AC190550E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:39:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0147A169C5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B2A236426;
-	Wed, 16 Apr 2025 09:38:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0634F23642E;
+	Wed, 16 Apr 2025 09:39:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DU8YlgBp"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FXu6k4xm"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05A202356DF
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 09:38:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8CC2356A5;
+	Wed, 16 Apr 2025 09:39:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744796315; cv=none; b=KJAjGWa+XInPbzEVVAkKKawUAxibeX6GYQ9KTyweFu2QUO0uLULI0g9ElH+D28AoxVKjERId0s0kA/3SX8t2EMbCoQe5ri7x9s7zvJ8JOgVklkD02dT0EyCjmIcK2sNf4noKVHOYmKmU9xQlfTLRxTMvxeQEyzUnblQc1kGQYEY=
+	t=1744796359; cv=none; b=vA5XV/5phTsvbZuPq9M2F+tuluxy/o9IXRAWyL9Ghnc9D588JySdhOsQ56dLHq73+vyr8WGMf2LvDp3RduQjw3+DlGGkiSqZ9nxlLczFUGBdDZY7QitX2I0D4yFBOJvr1fS/3Wces0Ta2xKqtYSV5JO/V+UUTvFLOtVGA5+ushQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744796315; c=relaxed/simple;
-	bh=sOfxDqWJ9ymYnjosfevYHIkqWVeQgthQJLwgiCPonuo=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=qTyg537ukZjhHcVx4F5Jrqcw8FsHmsNSSAwCqOo93AzMMM2PeMWHVdDmM3NKlCy2RPLjHXbPVwuHw81U6l924cABFrV7X5qBPp/IasH6PjKN4B/mE92lIpLfT/dTznOLhEai/6ve2AVtvIQ0Z4WT0y5IphI2SeUgZfXhHgXI2Kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DU8YlgBp; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-af8e645a1d1so4498638a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 02:38:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744796313; x=1745401113; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=IoFQtZYiuwltMSwksmBWJecA1s6pjQa1QqN35UJ7mbY=;
-        b=DU8YlgBps1gFrCTUXbDMickc9dR8VJrf7sqYW8wxuXwWGuItTswxX1YayUUf+eS8dH
-         z96FkdsaCqQHBA7GDCOLWqhF85jZ3aS680DAqQDz0+nXoftZcc8ruAG2O1r/mNjKdHro
-         yu58pZebT2vXtaPQKovdZJopc/vKvd5KU/FSYOhfU+0uudgwVgMjCz1ZpNqc97g4m8dR
-         +ELZPKmXbnL96iNiNvoTMAlEqnJbF5meIFmghswu03SpylrP2oCIO0ddV4lVtdySOq4Q
-         7eZ83xS9vIEpxbCbhacPYUcvd9z43EcxbvosajOmouovJnjXCPu3xxK/mdvFdWxTvvST
-         hhcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744796313; x=1745401113;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IoFQtZYiuwltMSwksmBWJecA1s6pjQa1QqN35UJ7mbY=;
-        b=EVDrNsUDZCTYX4PYzXVc5dqBVmIuMdF/rgj6dVb/Co7agJQuxnJEA2M9CKHLSjbT1B
-         hBtGeFNkKFfRFvclnZAyx+qY6oX3j5Ckv+va0hxlCHb2rs0xFtlP1d9e1rFxdUquiWE4
-         dzg0TYoifkgRLqUm30h3UO2fK1gnoLNW02hhW62Nq9gw1QvlcDNOuCnilko2fSlQ3aXI
-         pmqIiaocz71kTKWxUDH3oLdzIaYt5FTc9jO+GoGOZEZsuMuMbPSeakQKvfILIEm4u1OL
-         vO6yoNtiSaes8e8ZnZZReQLrLTQVil0QCNwPrmkUVHgRMQEZWU2Rgtiu6qGTLwvtCXbM
-         RmnA==
-X-Forwarded-Encrypted: i=1; AJvYcCUw3clStyvnmdB1AK6d9AjICSXcD2RbDH7qiVn2enqz6Wzk1ktAd53Y4av6pPZA+EAeB9fS8Vtj9fl7lME=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYAhNVkPJC8aO0y9PZfDifwJjQKKjVfrIh5x1ayq7JDIY5yq9F
-	TxiESkBS+vU/RPGImBtFXmkaX+54/DSAd0MU5cbY5BCNKhC2nN2cgmrv5FRR2r5WhViw5T5153t
-	+WyDjQHuVTw==
-X-Google-Smtp-Source: AGHT+IFFPxpgsM7gXnMG5DlNdF6g++0p05toIQ90I7Ym9i5+B/o9N3F0bIR/RIGYEq7KV/oxE4LDXF8+tzSAfQ==
-X-Received: from pfbcz18.prod.google.com ([2002:aa7:9312:0:b0:730:90b2:dab])
- (user=davidgow job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:d50d:b0:1f5:8d8f:27aa with SMTP id adf61e73a8af0-203b3e4fe8dmr1797837637.8.1744796313238;
- Wed, 16 Apr 2025 02:38:33 -0700 (PDT)
-Date: Wed, 16 Apr 2025 17:38:25 +0800
+	s=arc-20240116; t=1744796359; c=relaxed/simple;
+	bh=9fdBsleaD8dgnq57jOyrHHe3KA3jPINhieNOqKGD4VA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CvS2kp4wh0jh3GatebMhNRBOEjmFERlVkxx5phgOli4uwyN9sP9vlVNYNFLEBxsGveqE2kTZggpyeoKGfDn61WRvi25X+cvm3Q4XZMixh0TlGoLM88u1kz9JfHmhDVsXktM8CzTHYzoIJjS4w71q7iNxjonnVH2UIRyRjuTXs+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FXu6k4xm; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744796358; x=1776332358;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9fdBsleaD8dgnq57jOyrHHe3KA3jPINhieNOqKGD4VA=;
+  b=FXu6k4xmjoUcDQqLa7FuXdBg3PUZLl5/XARLUKkzqsBNv++7XaZujvwH
+   iWCICmJCUuD4u8IT6DKmoxSMY18ojVPTi2jmfLJl93o1aenL+FtLuY8Bv
+   3+kZdVUdoCv2doovHxHIGqI7UzEXtCWHEmml/T74MEPD1xWZfo0bDmMCd
+   h0gxRqvfHNYh/6e6tmvoqAbBq3kmNSS3Jfz5u8U1rp38StW+oziAG/Rjs
+   GD1siO0of8RE3PXDMXYQ734xbVqrXBQmhcV3vraJLC8K37XGCs96ivNYV
+   E+l4wdjE6gxm/XsG+p4Fa4YM7IczeO3qK1jDBFLZpmf7QZ35Olw2BvYKk
+   Q==;
+X-CSE-ConnectionGUID: YFVUGpXiTwSay9kAKpAeTw==
+X-CSE-MsgGUID: sC7tJ58AR3SePEsiximfhA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="46497309"
+X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
+   d="scan'208";a="46497309"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 02:39:17 -0700
+X-CSE-ConnectionGUID: WTSAaOr3Qf+M/8N6Ta0UMA==
+X-CSE-MsgGUID: DOyLZq5mRLuMjO3OY4M6FQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
+   d="scan'208";a="153610408"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 02:39:12 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1u4zEb-0000000CoKF-1MhN;
+	Wed, 16 Apr 2025 12:39:09 +0300
+Date: Wed, 16 Apr 2025 12:39:09 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>,
+	Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, David Airlie <airlied@gmail.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Maxime Ripard <mripard@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] scripts/kernel-doc.py: don't create *.pyc files
+Message-ID: <Z_96vRs03t4gkFoR@smile.fi.intel.com>
+References: <cover.1744789777.git.mchehab+huawei@kernel.org>
+ <4ad5eb8d4b819997c1615d2401581c22a32bb2c1.1744789777.git.mchehab+huawei@kernel.org>
+ <87tt6opks7.fsf@intel.com>
+ <20250416171917.0985c0eb@sal.lan>
+ <20250416172901.60104103@sal.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.604.gff1f9ca942-goog
-Message-ID: <20250416093826.1550040-1-davidgow@google.com>
-Subject: [PATCH] kunit: qemu_configs: Disable faulting tests on 32-bit SPARC
-From: David Gow <davidgow@google.com>
-To: "=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?=" <thomas.weissschuh@linutronix.de>, Rae Moar <rmoar@google.com>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Brendan Higgins <brendan.higgins@linux.dev>
-Cc: David Gow <davidgow@google.com>, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250416172901.60104103@sal.lan>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-The 32-bit sparc configuration (--arch sparc) crashes on
-the kunit_fault_test. It's known that some architectures don't handle
-deliberate segfaults in kernel mode well, so there's a config switch to
-disable tests which rely upon it by default.
+On Wed, Apr 16, 2025 at 05:29:01PM +0800, Mauro Carvalho Chehab wrote:
+> Em Wed, 16 Apr 2025 17:19:17 +0800
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> escreveu:
 
-Use this for the sparc config, making sure the default config for it
-passes.
+...
 
-Fixes: 87c9c1631788 ("kunit: tool: add support for QEMU")
-Signed-off-by: David Gow <davidgow@google.com>
----
+> could you please check if this patch solves the issue?
 
-Another quick fix to the sparc qemu_config I noticed while testing [1].
+Doesn't work for me.
 
----
- tools/testing/kunit/qemu_configs/sparc.py | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/tools/testing/kunit/qemu_configs/sparc.py b/tools/testing/kunit/qemu_configs/sparc.py
-index 3131dd299a6e..2019550a1b69 100644
---- a/tools/testing/kunit/qemu_configs/sparc.py
-+++ b/tools/testing/kunit/qemu_configs/sparc.py
-@@ -2,6 +2,7 @@ from ..qemu_config import QemuArchParams
- 
- QEMU_ARCH = QemuArchParams(linux_arch='sparc',
- 			   kconfig='''
-+CONFIG_KUNIT_FAULT_TEST=n
- CONFIG_SPARC32=y
- CONFIG_SERIAL_SUNZILOG=y
- CONFIG_SERIAL_SUNZILOG_CONSOLE=y
 -- 
-2.49.0.604.gff1f9ca942-goog
+With Best Regards,
+Andy Shevchenko
+
 
 
