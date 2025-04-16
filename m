@@ -1,55 +1,58 @@
-Return-Path: <linux-kernel+bounces-607642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87347A90901
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:30:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DACEA90902
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E32E190684E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:30:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEFF244681E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:30:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE82212D61;
-	Wed, 16 Apr 2025 16:29:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D29AA211A38;
+	Wed, 16 Apr 2025 16:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="N9eSl3jX";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7bqALs5B"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ITjw4ExO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ak1Llw4o"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4104D20DD65
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 16:29:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DAB02116ED
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 16:29:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744820970; cv=none; b=tquh4KRU2KOPRu5tMTU8uEN8lcbn3e0iEWWYg3aqbquPh/0HLdqDVjtAI/iHVaC0BNr7LipjeM7kUSJJ1MiLpg/iQ27iep3E6/rXldoxwNAqcbkeR4fNxQK3LY2FZ9wWVf1cXjm619z2n9uaKVBOd10oIl1NVrNFrnXhP3Z59gk=
+	t=1744820970; cv=none; b=c0sk7rABWRDuLo15Kp4OfyD5b5H5KT0R7XKcJq6Qmo/zRs81YsD5D261W7441/Gn8sGt5aSrsDAAFZt/mtHz80X13JA2D+pxMJQREBsyA4hlSJbnheGdOAuA9lel0gsrhdzAjj+15cnb81maiCez4+4UjfkfYF/40Yo+23pgW/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1744820970; c=relaxed/simple;
-	bh=PB6XcSCYfNJQdGCAKXhDm2oNQcbS8M1HTYiw7vECgEE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OD6HGuB4DsxK99Tae/xPWsoNrv5sQsmbT9RmjQSENFpDxib+6T2M3C9vh0hRRP5Js8gBBFEDln18TF9srTHFrV2W+C2Zd2jdDTmBg0C8peTU3Bnjl0NHSfhohCv7gi7rhKyTkrrnzSNi29hmGjP90V/n7tkkrYghk4H9i13nAIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=N9eSl3jX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7bqALs5B; arc=none smtp.client-ip=193.142.43.55
+	bh=gZDykHfMqby7gxGce8x+ayT1Qdrm+fVyGpKvFiZf75A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=dgiKug3Uj+MSfPgzrKLX7WuLQrJyt8yBKAuCRd+6Wse1rfDA42DCDJU0ncwkokK3HsO/lr/tSrRYGcVLq0DOpGsWuQFhRWMsgWXLOoHHnAbF0mTVNSAVttzxMB4j4cfGmvG/4fTwzpOajKkyNCSbRlXiHRVadifFsnyl1Z1RkbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ITjw4ExO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ak1Llw4o; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020; t=1744820966;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=spD35W96nKD49Crow6RpCiupvQnh/aVqf2XKsPESEx8=;
-	b=N9eSl3jXl+mhHtn9QoXk5YFCw6fZRqeEYUwJ/o1L5reCSm2IyZMbCw0w25AV7od28lLNPi
-	O2ck6XWhOKRGcfzKx0O0TtNmq+7mYXzwIxSXVrI13l33aVoQw7GwbELYlBSQn7TWhoi9Cm
-	/Doe330tQm/J2FpyCfCVtg3jG5Gw+nbsdp/GhE/Apkgz/Dkmc9NzONYhjsV015rA5zEuo/
-	oKbvNOmHN23jC6PzFu4yWjPqmmyb33sdMGHh0+YdvCKK0xgc/fsJfgjsmwXeDCGgOhNwAi
-	cE+yYO5pxP0HXJ8oOsP5onZ1C7XUtMBZ7vmXJa1EpsXaRl5Z79K6etkaBkz+yQ==
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3jgr1wk+mD/xSNbvenCkg/mlo+/bFFKzD/3SVlMGOxc=;
+	b=ITjw4ExOlIk6Ey+wzASnp9LHCpswtwfHHAsetd2V94ffYkZFmPCd1B7NoXYqy9QykiJUV5
+	O0/gq3YJoYJbZ65Q+qumMJflTwNdK+CQjN4zJ7hfq3Ixq1MfDRgH8L/NTzMFFqt/bB0eHF
+	5tTVCPbW1XPPN808Qul/qaDDozGBQwcgrC0MajqCePmI8j7yYK4MmbZ8K3FCAy0yHuPH/L
+	R+0zrOE9CwN2OK92EjpDXMCmqtR429WPrRTZBnnTdZI/hzVFJB3aEMiH0HA3H5j8aavF4q
+	d0COd/DdtrUlVBYGRFQ7jOWYSJ91QTB6GPuJbu30rXOFXSCnkumxBg/hbS0dQQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1744820966;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=spD35W96nKD49Crow6RpCiupvQnh/aVqf2XKsPESEx8=;
-	b=7bqALs5B0gU5ZGQ30pEEDczfnW8jdmJpDBWua5DFhjS2Yh7mSijX4M+kzfOurG9rj5x40q
-	195nFAhgeynDRUCg==
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3jgr1wk+mD/xSNbvenCkg/mlo+/bFFKzD/3SVlMGOxc=;
+	b=Ak1Llw4om2VFqR376+gNgYWtb5v9jjBBRYopdMs36usbcP2D/56NbdK5QHjgY8KuFwnJvz
+	2qM6XKZOwd1Pb5AA==
 To: linux-kernel@vger.kernel.org
 Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
 	Darren Hart <dvhart@infradead.org>,
@@ -61,157 +64,83 @@ Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
 	Valentin Schneider <vschneid@redhat.com>,
 	Waiman Long <longman@redhat.com>,
 	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH v12 00/21] futex: Add support task local hash maps, FUTEX2_NUMA and FUTEX2_MPOL
-Date: Wed, 16 Apr 2025 18:29:00 +0200
-Message-ID: <20250416162921.513656-1-bigeasy@linutronix.de>
+Subject: [PATCH v12 01/21] rcuref: Provide rcuref_is_dead()
+Date: Wed, 16 Apr 2025 18:29:01 +0200
+Message-ID: <20250416162921.513656-2-bigeasy@linutronix.de>
+In-Reply-To: <20250416162921.513656-1-bigeasy@linutronix.de>
+References: <20250416162921.513656-1-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-this is a follow up on
-        https://lore.kernel.org/ZwVOMgBMxrw7BU9A@jlelli-thinkpadt14gen4.rem=
-ote.csb
+rcuref_read() returns the number of references that are currently held.
+If 0 is returned then it is not safe to assume that the object ca be
+scheduled for deconstruction because it is marked DEAD. This happens if
+the return value of rcuref_put() is ignored and assumptions are made.
 
-and adds support for task local futex_hash_bucket.
+If 0 is returned then the counter transitioned from 0 to RCUREF_NOREF.
+If rcuref_put() did not return to the caller then the counter did not
+yet transition from RCUREF_NOREF to RCUREF_DEAD. This means that there
+is still a chance that the counter will transition from RCUREF_NOREF to
+0 meaning it is still valid and must not be deconstructed. In this brief
+window rcuref_read() will return 0.
 
-This is the local hash map series with PeterZ FUTEX2_NUMA and
-FUTEX2_MPOL. This went through some testing now with the selftests=E2=80=A6
+Provide rcuref_is_dead() to determine if the counter is marked as
+RCUREF_DEAD.
 
-The complete tree is at
-        https://git.kernel.org/pub/scm/linux/kernel/git/bigeasy/staging.git=
-/log/?h=3Dfutex_local_v12
-        https://git.kernel.org/pub/scm/linux/kernel/git/bigeasy/staging.git=
- futex_local_v12
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ include/linux/rcuref.h | 22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
 
-v11=E2=80=A6v12: https://lore.kernel.org/all/20250407155742.968816-1-bigeas=
-y@linutronix.de
-  - Moved futex_hash_put() in futex_lock_pi() before
-    rt_mutex_pre_schedule() for obvious reasons.
-=20=20
-  - Use __GFP_NOWARN while allocating the local hash to supress warnings
-    about failures especially if huge values were used and vmalloc
-    refuses.
-
-  - The "immutable" mode is its own patch. The basic infrastructure patch
-    enforces a "0" for prctl()'s arg4. The "immutable mode" allows only 0
-    (disabled) or 1 (enabled) as argument.
-    The "perf bench" bench adds the "bucket" and "immutable" support.
-=20=20
-  - The position of node member after the uaddr is computed in units of
-    u32. Added a cast to (void *) to get the math in right.
-=20=20
-  - Added FUTEX2_MPOL to FUTEX2_VALID_MASK assuming that we want to expose
-    it. However the mpol seems not to work here but it is likely that my
-    setup is proper.
-=20=20
-  - If the user specified FUTEX_NO_NODE as node then the node is updated
-    to a valid node number. The node value is only written back to the
-    user if it has been changed.
-    While this only avoids the unnecessary write back if the user supplied
-    a valid node number the whole interface is slighly race if
-    FUTEX_NO_NODE is supplied and two futex_wait() invocations are invoked
-    on parallel then the first invocation can set node to 0 and the send
-    to 1. The following callers will stick to node 1 but the first one
-    will remain waiting on the wrong node.
-=20=20
-  - Added selftests for private hash and the NUMA bits.
-
-v10=E2=80=A6v11: https://lore.kernel.org/all/20250312151634.2183278-1-bigea=
-sy@linutronix.de
-  - PeterZ' fixups, changes to the local hash series have been folded
-    into the earlier patches so things are not added and renamed later
-    and the functionality is changed.
-
-  - vmalloc_huge() has been implemented on top of vmalloc_huge_node()
-    and the NOMMU bots have been adjusted. akpm asked for this.
-
-  - wake_up_var() has been removed from __futex_pivot_hash(). It is
-    enough to wake the userspace waiter after the final put so it can
-    perform the resize itself.
-
-  - Changed to logic in futex_pivot_pending() so it does not block for
-    the user. It waits for __futex_pivot_hash() which follows the logic
-    in __futex_pivot_hash().
-
-  - Updated kernel doc for __futex_hash().
-
-  - Patches 17+ are new:
-    - Wire up PR_FUTEX_HASH_SET_SLOTS in "perf bench futex"
-    - Add "immutable" mode to PR_FUTEX_HASH_SET_SLOTS to avoid resizing
-      the local hash any further. This avoids rcuref usage which is
-      noticeable in "perf bench futex hash"
-
-
-Peter Zijlstra (8):
-  mm: Add vmalloc_huge_node()
-  futex: Move futex_queue() into futex_wait_setup()
-  futex: Pull futex_hash() out of futex_q_lock()
-  futex: Create hb scopes
-  futex: Create futex_hash() get/put class
-  futex: Create private_hash() get/put class
-  futex: Implement FUTEX2_NUMA
-  futex: Implement FUTEX2_MPOL
-
-Sebastian Andrzej Siewior (13):
-  rcuref: Provide rcuref_is_dead()
-  futex: Acquire a hash reference in futex_wait_multiple_setup()
-  futex: Decrease the waiter count before the unlock operation
-  futex: Introduce futex_q_lockptr_lock()
-  futex: Create helper function to initialize a hash slot
-  futex: Add basic infrastructure for local task local hash
-  futex: Allow automatic allocation of process wide futex hash
-  futex: Allow to resize the private local hash
-  futex: Allow to make the private hash immutable
-  tools headers: Synchronize prctl.h ABI header
-  tools/perf: Allow to select the number of hash buckets
-  selftests/futex: Add futex_priv_hash
-  selftests/futex: Add futex_numa_mpol
-
- include/linux/futex.h                         |  36 +-
- include/linux/mm_types.h                      |   7 +-
- include/linux/mmap_lock.h                     |   4 +
- include/linux/rcuref.h                        |  22 +-
- include/linux/vmalloc.h                       |   9 +-
- include/uapi/linux/futex.h                    |  10 +-
- include/uapi/linux/prctl.h                    |   6 +
- init/Kconfig                                  |  10 +
- io_uring/futex.c                              |   4 +-
- kernel/fork.c                                 |  24 +
- kernel/futex/core.c                           | 802 ++++++++++++++++--
- kernel/futex/futex.h                          |  73 +-
- kernel/futex/pi.c                             | 306 ++++---
- kernel/futex/requeue.c                        | 480 +++++------
- kernel/futex/waitwake.c                       | 201 +++--
- kernel/sys.c                                  |   4 +
- mm/nommu.c                                    |  18 +-
- mm/vmalloc.c                                  |  11 +-
- tools/include/uapi/linux/prctl.h              |  44 +-
- tools/perf/bench/Build                        |   1 +
- tools/perf/bench/futex-hash.c                 |   7 +
- tools/perf/bench/futex-lock-pi.c              |   5 +
- tools/perf/bench/futex-requeue.c              |   6 +
- tools/perf/bench/futex-wake-parallel.c        |   9 +-
- tools/perf/bench/futex-wake.c                 |   4 +
- tools/perf/bench/futex.c                      |  65 ++
- tools/perf/bench/futex.h                      |   5 +
- .../selftests/futex/functional/.gitignore     |   6 +-
- .../selftests/futex/functional/Makefile       |   4 +-
- .../futex/functional/futex_numa_mpol.c        | 232 +++++
- .../futex/functional/futex_priv_hash.c        | 315 +++++++
- .../testing/selftests/futex/functional/run.sh |   7 +
- .../selftests/futex/include/futex2test.h      |  34 +
- 33 files changed, 2199 insertions(+), 572 deletions(-)
- create mode 100644 tools/perf/bench/futex.c
- create mode 100644 tools/testing/selftests/futex/functional/futex_numa_mpo=
-l.c
- create mode 100644 tools/testing/selftests/futex/functional/futex_priv_has=
-h.c
-
+diff --git a/include/linux/rcuref.h b/include/linux/rcuref.h
+index 6322d8c1c6b42..2fb2af6d98249 100644
+--- a/include/linux/rcuref.h
++++ b/include/linux/rcuref.h
+@@ -30,7 +30,11 @@ static inline void rcuref_init(rcuref_t *ref, unsigned i=
+nt cnt)
+  * rcuref_read - Read the number of held reference counts of a rcuref
+  * @ref:	Pointer to the reference count
+  *
+- * Return: The number of held references (0 ... N)
++ * Return: The number of held references (0 ... N). The value 0 does not
++ * indicate that it is safe to schedule the object, protected by this refe=
+rence
++ * counter, for deconstruction.
++ * If you want to know if the reference counter has been marked DEAD (as
++ * signaled by rcuref_put()) please use rcuread_is_dead().
+  */
+ static inline unsigned int rcuref_read(rcuref_t *ref)
+ {
+@@ -40,6 +44,22 @@ static inline unsigned int rcuref_read(rcuref_t *ref)
+ 	return c >=3D RCUREF_RELEASED ? 0 : c + 1;
+ }
+=20
++/**
++ * rcuref_is_dead -	Check if the rcuref has been already marked dead
++ * @ref:		Pointer to the reference count
++ *
++ * Return: True if the object has been marked DEAD. This signals that a pr=
+evious
++ * invocation of rcuref_put() returned true on this reference counter mean=
+ing
++ * the protected object can safely be scheduled for deconstruction.
++ * Otherwise, returns false.
++ */
++static inline bool rcuref_is_dead(rcuref_t *ref)
++{
++	unsigned int c =3D atomic_read(&ref->refcnt);
++
++	return (c >=3D RCUREF_RELEASED) && (c < RCUREF_NOREF);
++}
++
+ extern __must_check bool rcuref_get_slowpath(rcuref_t *ref);
+=20
+ /**
 --=20
 2.49.0
 
