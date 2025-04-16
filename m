@@ -1,94 +1,112 @@
-Return-Path: <linux-kernel+bounces-607857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80D36A90B88
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:43:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FD8CA90B8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:44:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C53F93BEFA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:42:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4821E445AD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:44:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 727582253B5;
-	Wed, 16 Apr 2025 18:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E3CD22424D;
+	Wed, 16 Apr 2025 18:44:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EI/F5Tvp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Hl6cYHC/"
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D332522540B
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 18:41:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB16522422C
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 18:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744828918; cv=none; b=cje4+IkEP7czNNZAv/ZGjN9Tz9LfHYohFM5dymfXdFuXgNdQLTs/vU2weFjYx0Cs2mH5bX9kwUnGbxI4CoqOnoXoIfMzzy5YlB271+O5VfRG0+bV5e5BjQt4E1XXBs+J+fBOvRPjs23GNbP7X2G2E4jSigtctDmzTFAqSdh/1jE=
+	t=1744829043; cv=none; b=t0qrMKjSSIv1kMowE2+lDsL7nOxrNVCZwAb29qtQFUSVzHoBDTWqZDaahsp1e9Il+xyoWM08UfEmG3jUpIR69DKK9N8Ko7dyzlUF1q0woDbGWY8b/Hxd5QqsRx93e2866TKlRQXKrnJCgkxw6gQ2atdIcv2uZPZs+eqLXSX46HU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744828918; c=relaxed/simple;
-	bh=FxlsQdF/tRWe6WvKosJu3QY6wulI3m6lFJkvkMeuo1g=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=br+Gm+JPhi+1mCAEfSBPwbNf8Joiuxaa3hO5CH3SZAPc/nC83pta3ZM8YqkM8VG4EAc5mgfSA8ncawczvkpIv/KlkdQC6ldHuigK9Om1MwYgWAoJkMhDiOFaW5ieuaCPKFn369071osoxLLRNF80GIRY3x2vxpM90yET+4oTtGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EI/F5Tvp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0D66C4CEE4;
-	Wed, 16 Apr 2025 18:41:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744828918;
-	bh=FxlsQdF/tRWe6WvKosJu3QY6wulI3m6lFJkvkMeuo1g=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=EI/F5TvpkwUo8nFCWGEi1iyM6SWUV8+4dzQSQCM8roO57ONkJnzkNSZkU3uT9oj4M
-	 ofPPmwgxDsbpPmts+Ty+dV12kfBi3frHHv1gfUhEf1AE9z/hh2WoxuGtdhJe8wKl+0
-	 v3FYeg2xFUdCe/ickF6LvRn+dFRlIoMLNo8BJ7KL8Idjc2aiRPSHJQIoya31pm2K+O
-	 2qiXhXeSfVYIwjzQtK9FQr0odyH2KsfEegD8lZybHbnqvvN3mMi6zcT88cxaqwIguz
-	 w5hTnkqnHzVok/EdXAEGlqrLheTXQCm9jxc8gwHi5IL46wbZWerq4/5+Wa+96WLluA
-	 feJdqMjpTk66g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAE153822D59;
-	Wed, 16 Apr 2025 18:42:37 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1744829043; c=relaxed/simple;
+	bh=C8cKwh7uzGJstEM3SOQj91jM6awnax2SblmAOFtgeBM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Wopmcx7t8nA2qypJ09F24cmCm+K8EJEy0S4U8VDL7Y4S8ClHRFZ7ch9G6CL1MkEfULLWcmASxPPOcHDOXCgyLHo0kyV7o3lZ52t+PHt8cW7aSuiIgqruL6dMD1WU8pkg4PrGQiRO3Hu61d5njKVVxqvUnU1w+8MwFBZeKJb8zJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Hl6cYHC/; arc=none smtp.client-ip=209.85.210.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-72bb9725de1so1842501a34.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 11:44:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1744829040; x=1745433840; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eFNyZFztrG1dOuqdMRUTe/Wty6L/zEKrXsP9PzAiPXk=;
+        b=Hl6cYHC/5kkMExMREYI2xBpVr/oL8qeVMwsW6PfCYnCTYEEl4zHlGjZylUakZy0SOI
+         OeJCrutnVTDCrPRh2P5p/fGY8u+VT5gNXLRS11TKNfBBHao+Qj2xneBeAEhwpycaU86z
+         ABakAivxoVjW2Y9ZHzzc+M2rRyDX2ja3o9WJzn/uOXUij6HZEESW5jV6ptdg3e9OAX+i
+         13xG8T0+9cNC2OTrILU7q76t/gpM5wWOdFFT4h1gMcswhwEmKsYzq+Ya0cFz66X5InW8
+         nm1B0UWgGYaKF07aU7/x6c16BAiLfr41VPYGd7dSSHrGrEViSp+3bfRayi6xjIVMa/o5
+         X5JQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744829040; x=1745433840;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eFNyZFztrG1dOuqdMRUTe/Wty6L/zEKrXsP9PzAiPXk=;
+        b=xESb9WtheOMKOWlIzvCAgpOqSCL+7ITYi8fY7Hb1ryD94dBjdPHOFMdtnK5y69fuGy
+         z6IQUS+WGrPnSAQ/NJGFiy9HCqnUXz2FlX2EWLyCe8ZchlxOgfnSaFFm9h8dmYGrdG/v
+         IblSQCKnbWx6tc7j2kD43ku5GHZ1Pqgg8LV2TVaW2uwFhkPL/pTy+mWBGdAyXepswS/z
+         gr38m1zJI21LiVFJcqi8jmWqZnMwyoROUb5MeCFeV0AlvAcbpKCPpFtWl2beOoHUsk5s
+         HGrTDFOq5RmQU1U7bDCyAh35BQuldHiEP3o75zlqbzWDMKkxZEj9kQv26yJ++EXahL2f
+         7EXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXHQoKKnEvbCTF5ykPGH8z/freq3P+r0Gvrkqyg/J9fDStxjHIBt8vmZivGU7AjjcaryYg2YUJQzdy9Z68=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVSi8AWoCXuZXFIj6O2n/qHVw38ycjKY/wSkr14HjxXcxwABOq
+	avI83f678blhPkWNaea/p7eiFzyUQmPyTMVvQSAVPh1qMqaaHhBfn3YdasLjm4w=
+X-Gm-Gg: ASbGnctGug51ZVziDvlS3nVakuf4QqCEo61jLQjR4fUjrMYctkeNEe8wgrN78ONMjD3
+	nw+rOAGLuhy+MGgPee4Q7IWXUPKeHOdFjwxzo3AQcaYcZytI5Fph8zhGiT1j9KC/Rpp7FiTV/s/
+	5NawQBcGR9gFTdpJImiPevwEzt9qEvBAxce+pel6nrN90eyLxLY9Yr1fo8yGePgjeUoBhIRCbyY
+	zaqmnJORsvhXxuLo0lBQPbFtsb3dh4XImE81wlyhrBB+bR5YzFFRyaQPBvaWrS55Yuum/ysQ6LZ
+	LXyAgtWgfrm1TQFUrUWV7PvOfbO5CQ1VGA3ERasqUuN5o0gm5Tpqsq1Ade5jC8ecwt8XEfsvfJj
+	nHdVvxMF1ureErh5MLA==
+X-Google-Smtp-Source: AGHT+IFNy7Si480QA8MeOF7SjrhfcYCIh4tBh20HJCj/dT3m88fwp7Q5GoiwZjRbLJPiJQ65PvSFwA==
+X-Received: by 2002:a05:6830:2113:b0:727:4356:9f07 with SMTP id 46e09a7af769-72ec6bf6163mr2046480a34.14.1744829039908;
+        Wed, 16 Apr 2025 11:43:59 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:58f0:670c:6b15:7fd3? ([2600:8803:e7e4:1d00:58f0:670c:6b15:7fd3])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-604a5c4bfafsm467955eaf.25.2025.04.16.11.43.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Apr 2025 11:43:59 -0700 (PDT)
+Message-ID: <a6023ccd-76b2-487e-ae22-6bfbbc47ff85@baylibre.com>
+Date: Wed, 16 Apr 2025 13:43:58 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] riscv: Fix unaligned access info messages
-From: patchwork-bot+linux-riscv@kernel.org
-Message-Id: 
- <174482895651.3460781.10451440487742168881.git-patchwork-notify@kernel.org>
-Date: Wed, 16 Apr 2025 18:42:36 +0000
-References: <20250409153650.84433-2-ajones@ventanamicro.com>
-In-Reply-To: <20250409153650.84433-2-ajones@ventanamicro.com>
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- paul.walmsley@sifive.com, palmer@dabbelt.com, cleger@rivosinc.com,
- alexghiti@rivosinc.com, geert@linux-m68k.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iio: adc: ad4000: Avoid potential double data word read
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: jic23@kernel.org, lars@metafoo.de, Michael.Hennerich@analog.com,
+ nuno.sa@analog.com, andy@kernel.org, marcelo.schmitt1@gmail.com
+References: <8f765cfd6e93fad4e755dd95d709b7bea2a388e2.1744718916.git.marcelo.schmitt@analog.com>
+From: David Lechner <dlechner@baylibre.com>
+Content-Language: en-US
+In-Reply-To: <8f765cfd6e93fad4e755dd95d709b7bea2a388e2.1744718916.git.marcelo.schmitt@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello:
-
-This patch was applied to riscv/linux.git (fixes)
-by Alexandre Ghiti <alexghiti@rivosinc.com>:
-
-On Wed,  9 Apr 2025 17:36:51 +0200 you wrote:
-> Ensure we only print messages about command line parameters when
-> the parameters are actually in use. Also complain about the use
-> of the vector parameter when vector support isn't available.
+On 4/15/25 7:21 AM, Marcelo Schmitt wrote:
+> Currently, SPI-Engine offload module always sends 32-bit data elements to
+> DMA engine. Appropriately, when set for SPI offloading, the IIO driver uses
+> 32 storagebits for IIO ADC channel buffer elements. However, setting SPI
+> transfer length according to storagebits (32-bits in case of offload) can
+> lead to unnecessarily long transfers for ADCs that are 16-bit or less
+> precision. Adjust AD4000 single-shot read to run transfers of 2 bytes when
+> that is enough to get all ADC data bits.
 > 
-> Fixes: aecb09e091dc ("riscv: Add parameter for skipping access speed tests")
-> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Closes: https://lore.kernel.org/all/CAMuHMdVEp2_ho51gkpLLJG2HimqZ1gZ0fa=JA4uNNZjFFqaPMg@mail.gmail.com/
-> Closes: https://lore.kernel.org/all/CAMuHMdWVMP0MYCLFq+b7H_uz-2omdFiDDUZq0t_gw0L9rrJtkQ@mail.gmail.com/
-> Signed-off-by: Andrew Jones <ajones@ventanamicro.com>
-> 
-> [...]
+> Fixes: d0dba3df842f ("iio: adc: ad4000: Add support for SPI offload")
+> Suggested-by: David Lechner <dlechner@baylibre.com>
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> ---
 
-Here is the summary with links:
-  - riscv: Fix unaligned access info messages
-    https://git.kernel.org/riscv/c/441016056010
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+Reviewed-by: David Lechner <dlechner@baylibre.com>
 
 
