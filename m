@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-607650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97E15A90909
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:31:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4CCEA9090C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:32:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3840419073F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:31:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BD3C443A43
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82B721B183;
-	Wed, 16 Apr 2025 16:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06C9F21D5AC;
+	Wed, 16 Apr 2025 16:29:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NlaJcZrQ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DQNvwQ7m"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="z/0EFdua";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hmCqIHJJ"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF7C218593
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF1B21771F
 	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 16:29:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744820974; cv=none; b=ROdCKcFJeEPH/L/Dxiq6vr7mm9iil650SPXhAJdCJhdBf2GUPFiPKg1rcZDosA0xyllwROj5sY1lIfE0ogU103+b1onYhWynNQy10fPcP5fIhJjrDKBqMlMW4QdIYu2gq+R8m2AV8HkdKjee3OUs+p3N8saY5+f3Ve8N+m7HwOo=
+	t=1744820975; cv=none; b=NEVdZp23giED3TwWshZQ0VN/42S3YDxxpswHYXcQencqmC0gDfgQm3Z6TYcjO2zKzt/6MATQUjcDZj53U1wBBFeLkbxmef1Ivz4qNAp0DMfxWFymfclVrhuk4dFTi3NMkd5Iz8z91xvvsmF+YXEVYwdPV2Vvu2/JEkU+GSR/Hjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744820974; c=relaxed/simple;
-	bh=/HU00ieQBIUIR0aAgwtAN1WOYXF/cezNNGTBq+PfTj8=;
+	s=arc-20240116; t=1744820975; c=relaxed/simple;
+	bh=N6yrzpAAQFKwXl4BfBp8AhSXc89KA6CVmJh+mBfxcsk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nnDLGjFDDB0Cd2ct+IunblxU7YGPV341qO5c8EksXis3ZURATLrpHUEGD3/VcR0zNisjPQd8tCLP18ILb5T6C1cLS97r176gQyJNUtO7rlPwFNBFDE/UcsPeyMzaNZzL/xGqYH7VVSSaKMEwMDgQwXyQ5ezxrok01LLGjWG5diE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NlaJcZrQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DQNvwQ7m; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=NEWdKrWuQFwS0O2Ogj+IRn/618q9/rrSzNKezcgQSCFRpjNLB0klhk7KYkRd1JZYUiw/8n4qeeOV0SwbFp3OUEdWavL5Q68Dnvxedi9y3xiQ3ZDeST1Ul+pjLFQgjMIvo3mlaDtSWg0X8eDCEa3vNfparL+Mcl8cRh9+Bn2807E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=z/0EFdua; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hmCqIHJJ; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744820970;
+	s=2020; t=1744820971;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=j6vUDPLxCGc9wD33fZGUNE2aAZ3Nc4AuJ6xxO4D9DEk=;
-	b=NlaJcZrQScjEmlBuKYmTydsoEN07cDRv/EdvY9ds5/iFLZ97q+n4FOpRs8lWJ9UHyjnDeQ
-	M3pD12pLgD/+WHPbFcctColDQb77Qcrwoi/GTPDZ7+FL8BdfokniLbyQKY91EGMQTO/uky
-	85xKW4oEyPhaxjgu7FVIk68NjLmEaqS5r+i+xKVa5PscdNghsYUwv0OJjecH9gVoXEL3+1
-	ziz8FpADwSx9blGP6homxKK+9LMSrW8NV0ZeUJ/zti/CDJ+Jx/9EJYK8C0Sa3tZPvC62f/
-	ubaIx2yH8kCu2742mQ/PHSGq3Q64cCYlDPeTTwAOoBFmh8mLKE4aBqTouv0BoQ==
+	bh=ECLPi4hPWp9ONs+iACcBH/xjjhCYhJom7ym/nPuUq8o=;
+	b=z/0EFdua8GhQANWVHDIGXCM6+OzYbZCJDt81KvEGw89s48GcK7ylNN3N7KbDVvtXR0x6om
+	J8SHw1M0L9QuYl4AdRy0zOASZFeiDcLXv64vBz2jyAkybsQGqMON67Ze9o4lgAciSllms2
+	A3O2LrU+CA4AjX8WO+MvVf98YdnV2+/o7+BsdgKDDgal8djVFW9ReGaHMy9WbppCTtUmjN
+	EDZdJeBoqqa6a7mrXt5XHq3dZvIWdIJJg4ehFUY1ISaWANBL9HAs5gcJs3IPCA/NmEMDN5
+	18d/0VF7hLGOsO366xxeiRpC/EVA3mr2hHTyjQrJgPI91AHiSbMiIebiaJWSUw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744820970;
+	s=2020e; t=1744820971;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=j6vUDPLxCGc9wD33fZGUNE2aAZ3Nc4AuJ6xxO4D9DEk=;
-	b=DQNvwQ7mnpj5ycM87W5QO/RBkaCCuc+mNAE3LbXn0FTx9R2AkhRdeKVMJaeGIVEtAB1VAr
-	rcj3ds4eQytpp7Dg==
+	bh=ECLPi4hPWp9ONs+iACcBH/xjjhCYhJom7ym/nPuUq8o=;
+	b=hmCqIHJJnfM9Rhi5rMSLKXDF1+8UY7goK1Y8mwOk+kphIFE6xs4b6HrzNYAosfZn9icrfR
+	ecB8IJ2Jmio5sJCQ==
 To: linux-kernel@vger.kernel.org
 Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
 	Darren Hart <dvhart@infradead.org>,
@@ -64,9 +64,9 @@ Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
 	Valentin Schneider <vschneid@redhat.com>,
 	Waiman Long <longman@redhat.com>,
 	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH v12 11/21] futex: Create helper function to initialize a hash slot
-Date: Wed, 16 Apr 2025 18:29:11 +0200
-Message-ID: <20250416162921.513656-12-bigeasy@linutronix.de>
+Subject: [PATCH v12 12/21] futex: Add basic infrastructure for local task local hash
+Date: Wed, 16 Apr 2025 18:29:12 +0200
+Message-ID: <20250416162921.513656-13-bigeasy@linutronix.de>
 In-Reply-To: <20250416162921.513656-1-bigeasy@linutronix.de>
 References: <20250416162921.513656-1-bigeasy@linutronix.de>
 Precedence: bulk
@@ -77,47 +77,532 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 
-Factor out the futex_hash_bucket initialisation into a helpr function.
-The helper function will be used in a follow up patch implementing
-process private hash buckets.
+The futex hash is system wide and shared by all tasks. Each slot
+is hashed based on futex address and the VMA of the thread. Due to
+randomized VMAs (and memory allocations) the same logical lock (pointer)
+can end up in a different hash bucket on each invocation of the
+application. This in turn means that different applications may share a
+hash bucket on the first invocation but not on the second and it is not
+always clear which applications will be involved. This can result in
+high latency's to acquire the futex_hash_bucket::lock especially if the
+lock owner is limited to a CPU and can not be effectively PI boosted.
+
+Introduce basic infrastructure for process local hash which is shared by
+all threads of process. This hash will only be used for a
+PROCESS_PRIVATE FUTEX operation.
+
+The hashmap can be allocated via
+        prctl(PR_FUTEX_HASH, PR_FUTEX_HASH_SET_SLOTS, num)
+
+A `num' of 0 means that the global hash is used instead of a private
+hash.
+Other values for `num' specify the number of slots for the hash and the
+number must be power of two, starting with two.
+The prctl() returns zero on success. This function can only be used
+before a thread is created.
+
+The current status for the private hash can be queried via
+        num =3D prctl(PR_FUTEX_HASH, PR_FUTEX_HASH_GET_SLOTS);
+
+which return the current number of slots. The value 0 means that the
+global hash is used. Values greater than 0 indicate the number of slots
+that are used. A negative number indicates an error.
+
+For optimisation, for the private hash jhash2() uses only two arguments
+the address and the offset. This omits the VMA which is always the same.
+
+[peterz: Use 0 for global hash. A bit shuffling and renaming. ]
 
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- kernel/futex/core.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ include/linux/futex.h      |  26 ++++-
+ include/linux/mm_types.h   |   5 +-
+ include/uapi/linux/prctl.h |   5 +
+ init/Kconfig               |   5 +
+ kernel/fork.c              |   2 +
+ kernel/futex/core.c        | 208 +++++++++++++++++++++++++++++++++----
+ kernel/futex/futex.h       |  10 ++
+ kernel/sys.c               |   4 +
+ 8 files changed, 244 insertions(+), 21 deletions(-)
 
+diff --git a/include/linux/futex.h b/include/linux/futex.h
+index b70df27d7e85c..8f1be08bef18d 100644
+--- a/include/linux/futex.h
++++ b/include/linux/futex.h
+@@ -4,11 +4,11 @@
+=20
+ #include <linux/sched.h>
+ #include <linux/ktime.h>
++#include <linux/mm_types.h>
+=20
+ #include <uapi/linux/futex.h>
+=20
+ struct inode;
+-struct mm_struct;
+ struct task_struct;
+=20
+ /*
+@@ -77,7 +77,22 @@ void futex_exec_release(struct task_struct *tsk);
+=20
+ long do_futex(u32 __user *uaddr, int op, u32 val, ktime_t *timeout,
+ 	      u32 __user *uaddr2, u32 val2, u32 val3);
+-#else
++int futex_hash_prctl(unsigned long arg2, unsigned long arg3, unsigned long=
+ arg4);
++
++#ifdef CONFIG_FUTEX_PRIVATE_HASH
++void futex_hash_free(struct mm_struct *mm);
++
++static inline void futex_mm_init(struct mm_struct *mm)
++{
++	mm->futex_phash =3D  NULL;
++}
++
++#else /* !CONFIG_FUTEX_PRIVATE_HASH */
++static inline void futex_hash_free(struct mm_struct *mm) { }
++static inline void futex_mm_init(struct mm_struct *mm) { }
++#endif /* CONFIG_FUTEX_PRIVATE_HASH */
++
++#else /* !CONFIG_FUTEX */
+ static inline void futex_init_task(struct task_struct *tsk) { }
+ static inline void futex_exit_recursive(struct task_struct *tsk) { }
+ static inline void futex_exit_release(struct task_struct *tsk) { }
+@@ -88,6 +103,13 @@ static inline long do_futex(u32 __user *uaddr, int op, =
+u32 val,
+ {
+ 	return -EINVAL;
+ }
++static inline int futex_hash_prctl(unsigned long arg2, unsigned long arg3,=
+ unsigned long arg4)
++{
++	return -EINVAL;
++}
++static inline void futex_hash_free(struct mm_struct *mm) { }
++static inline void futex_mm_init(struct mm_struct *mm) { }
++
+ #endif
+=20
+ #endif
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 56d07edd01f91..a4b5661e41770 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -31,6 +31,7 @@
+ #define INIT_PASID	0
+=20
+ struct address_space;
++struct futex_private_hash;
+ struct mem_cgroup;
+=20
+ /*
+@@ -1031,7 +1032,9 @@ struct mm_struct {
+ 		 */
+ 		seqcount_t mm_lock_seq;
+ #endif
+-
++#ifdef CONFIG_FUTEX_PRIVATE_HASH
++		struct futex_private_hash	*futex_phash;
++#endif
+=20
+ 		unsigned long hiwater_rss; /* High-watermark of RSS usage */
+ 		unsigned long hiwater_vm;  /* High-water virtual memory usage */
+diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+index 15c18ef4eb11a..3b93fb906e3c5 100644
+--- a/include/uapi/linux/prctl.h
++++ b/include/uapi/linux/prctl.h
+@@ -364,4 +364,9 @@ struct prctl_mm_map {
+ # define PR_TIMER_CREATE_RESTORE_IDS_ON		1
+ # define PR_TIMER_CREATE_RESTORE_IDS_GET	2
+=20
++/* FUTEX hash management */
++#define PR_FUTEX_HASH			78
++# define PR_FUTEX_HASH_SET_SLOTS	1
++# define PR_FUTEX_HASH_GET_SLOTS	2
++
+ #endif /* _LINUX_PRCTL_H */
+diff --git a/init/Kconfig b/init/Kconfig
+index dd2ea3b9a7992..b308b98d79347 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1699,6 +1699,11 @@ config FUTEX_PI
+ 	depends on FUTEX && RT_MUTEXES
+ 	default y
+=20
++config FUTEX_PRIVATE_HASH
++	bool
++	depends on FUTEX && !BASE_SMALL && MMU
++	default y
++
+ config EPOLL
+ 	bool "Enable eventpoll support" if EXPERT
+ 	default y
+diff --git a/kernel/fork.c b/kernel/fork.c
+index c4b26cd8998b8..831dfec450544 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1305,6 +1305,7 @@ static struct mm_struct *mm_init(struct mm_struct *mm=
+, struct task_struct *p,
+ 	RCU_INIT_POINTER(mm->exe_file, NULL);
+ 	mmu_notifier_subscriptions_init(mm);
+ 	init_tlb_flush_pending(mm);
++	futex_mm_init(mm);
+ #if defined(CONFIG_TRANSPARENT_HUGEPAGE) && !defined(CONFIG_SPLIT_PMD_PTLO=
+CKS)
+ 	mm->pmd_huge_pte =3D NULL;
+ #endif
+@@ -1387,6 +1388,7 @@ static inline void __mmput(struct mm_struct *mm)
+ 	if (mm->binfmt)
+ 		module_put(mm->binfmt->module);
+ 	lru_gen_del_mm(mm);
++	futex_hash_free(mm);
+ 	mmdrop(mm);
+ }
+=20
 diff --git a/kernel/futex/core.c b/kernel/futex/core.c
-index 1443a98dfa7fa..afc66780f84fc 100644
+index afc66780f84fc..818df7420a1a9 100644
 --- a/kernel/futex/core.c
 +++ b/kernel/futex/core.c
-@@ -1160,6 +1160,13 @@ void futex_exit_release(struct task_struct *tsk)
+@@ -39,6 +39,7 @@
+ #include <linux/memblock.h>
+ #include <linux/fault-inject.h>
+ #include <linux/slab.h>
++#include <linux/prctl.h>
+=20
+ #include "futex.h"
+ #include "../locking/rtmutex_common.h"
+@@ -55,6 +56,12 @@ static struct {
+ #define futex_queues   (__futex_data.queues)
+ #define futex_hashmask (__futex_data.hashmask)
+=20
++struct futex_private_hash {
++	unsigned int	hash_mask;
++	void		*mm;
++	bool		custom;
++	struct futex_hash_bucket queues[];
++};
+=20
+ /*
+  * Fault injections for futexes.
+@@ -107,9 +114,17 @@ late_initcall(fail_futex_debugfs);
+=20
+ #endif /* CONFIG_FAIL_FUTEX */
+=20
+-struct futex_private_hash *futex_private_hash(void)
++static struct futex_hash_bucket *
++__futex_hash(union futex_key *key, struct futex_private_hash *fph);
++
++#ifdef CONFIG_FUTEX_PRIVATE_HASH
++static inline bool futex_key_is_private(union futex_key *key)
+ {
+-	return NULL;
++	/*
++	 * Relies on get_futex_key() to set either bit for shared
++	 * futexes -- see comment with union futex_key.
++	 */
++	return !(key->both.offset & (FUT_OFF_INODE | FUT_OFF_MMSHARED));
+ }
+=20
+ bool futex_private_hash_get(struct futex_private_hash *fph)
+@@ -117,21 +132,8 @@ bool futex_private_hash_get(struct futex_private_hash =
+*fph)
+ 	return false;
+ }
+=20
+-void futex_private_hash_put(struct futex_private_hash *fph) { }
+-
+-/**
+- * futex_hash - Return the hash bucket in the global hash
+- * @key:	Pointer to the futex key for which the hash is calculated
+- *
+- * We hash on the keys returned from get_futex_key (see below) and return =
+the
+- * corresponding hash bucket in the global hash.
+- */
+-struct futex_hash_bucket *futex_hash(union futex_key *key)
++void futex_private_hash_put(struct futex_private_hash *fph)
+ {
+-	u32 hash =3D jhash2((u32 *)key, offsetof(typeof(*key), both.offset) / 4,
+-			  key->both.offset);
+-
+-	return &futex_queues[hash & futex_hashmask];
+ }
+=20
+ /**
+@@ -144,6 +146,84 @@ struct futex_hash_bucket *futex_hash(union futex_key *=
+key)
+ void futex_hash_get(struct futex_hash_bucket *hb) { }
+ void futex_hash_put(struct futex_hash_bucket *hb) { }
+=20
++static struct futex_hash_bucket *
++__futex_hash_private(union futex_key *key, struct futex_private_hash *fph)
++{
++	u32 hash;
++
++	if (!futex_key_is_private(key))
++		return NULL;
++
++	if (!fph)
++		fph =3D key->private.mm->futex_phash;
++	if (!fph || !fph->hash_mask)
++		return NULL;
++
++	hash =3D jhash2((void *)&key->private.address,
++		      sizeof(key->private.address) / 4,
++		      key->both.offset);
++	return &fph->queues[hash & fph->hash_mask];
++}
++
++struct futex_private_hash *futex_private_hash(void)
++{
++	struct mm_struct *mm =3D current->mm;
++	struct futex_private_hash *fph;
++
++	fph =3D mm->futex_phash;
++	return fph;
++}
++
++struct futex_hash_bucket *futex_hash(union futex_key *key)
++{
++	struct futex_hash_bucket *hb;
++
++	hb =3D __futex_hash(key, NULL);
++	return hb;
++}
++
++#else /* !CONFIG_FUTEX_PRIVATE_HASH */
++
++static struct futex_hash_bucket *
++__futex_hash_private(union futex_key *key, struct futex_private_hash *fph)
++{
++	return NULL;
++}
++
++struct futex_hash_bucket *futex_hash(union futex_key *key)
++{
++	return __futex_hash(key, NULL);
++}
++
++#endif /* CONFIG_FUTEX_PRIVATE_HASH */
++
++/**
++ * __futex_hash - Return the hash bucket
++ * @key:	Pointer to the futex key for which the hash is calculated
++ * @fph:	Pointer to private hash if known
++ *
++ * We hash on the keys returned from get_futex_key (see below) and return =
+the
++ * corresponding hash bucket.
++ * If the FUTEX is PROCESS_PRIVATE then a per-process hash bucket (from the
++ * private hash) is returned if existing. Otherwise a hash bucket from the
++ * global hash is returned.
++ */
++static struct futex_hash_bucket *
++__futex_hash(union futex_key *key, struct futex_private_hash *fph)
++{
++	struct futex_hash_bucket *hb;
++	u32 hash;
++
++	hb =3D __futex_hash_private(key, fph);
++	if (hb)
++		return hb;
++
++	hash =3D jhash2((u32 *)key,
++		      offsetof(typeof(*key), both.offset) / 4,
++		      key->both.offset);
++	return &futex_queues[hash & futex_hashmask];
++}
++
+ /**
+  * futex_setup_timer - set up the sleeping hrtimer.
+  * @time:	ptr to the given timeout value
+@@ -985,6 +1065,13 @@ static void exit_pi_state_list(struct task_struct *cu=
+rr)
+ 	struct futex_pi_state *pi_state;
+ 	union futex_key key =3D FUTEX_KEY_INIT;
+=20
++	/*
++	 * Ensure the hash remains stable (no resize) during the while loop
++	 * below. The hb pointer is acquired under the pi_lock so we can't block
++	 * on the mutex.
++	 */
++	WARN_ON(curr !=3D current);
++	guard(private_hash)();
+ 	/*
+ 	 * We are a ZOMBIE and nobody can enqueue itself on
+ 	 * pi_state_list anymore, but we have to be careful
+@@ -1160,13 +1247,98 @@ void futex_exit_release(struct task_struct *tsk)
  	futex_cleanup_end(tsk, FUTEX_STATE_DEAD);
  }
 =20
-+static void futex_hash_bucket_init(struct futex_hash_bucket *fhb)
+-static void futex_hash_bucket_init(struct futex_hash_bucket *fhb)
++static void futex_hash_bucket_init(struct futex_hash_bucket *fhb,
++				   struct futex_private_hash *fph)
+ {
++#ifdef CONFIG_FUTEX_PRIVATE_HASH
++	fhb->priv =3D fph;
++#endif
+ 	atomic_set(&fhb->waiters, 0);
+ 	plist_head_init(&fhb->chain);
+ 	spin_lock_init(&fhb->lock);
+ }
+=20
++#ifdef CONFIG_FUTEX_PRIVATE_HASH
++void futex_hash_free(struct mm_struct *mm)
 +{
-+	atomic_set(&fhb->waiters, 0);
-+	plist_head_init(&fhb->chain);
-+	spin_lock_init(&fhb->lock);
++	kvfree(mm->futex_phash);
++}
++
++static int futex_hash_allocate(unsigned int hash_slots, bool custom)
++{
++	struct mm_struct *mm =3D current->mm;
++	struct futex_private_hash *fph;
++	int i;
++
++	if (hash_slots && (hash_slots =3D=3D 1 || !is_power_of_2(hash_slots)))
++		return -EINVAL;
++
++	if (mm->futex_phash)
++		return -EALREADY;
++
++	if (!thread_group_empty(current))
++		return -EINVAL;
++
++	fph =3D kvzalloc(struct_size(fph, queues, hash_slots), GFP_KERNEL_ACCOUNT=
+ | __GFP_NOWARN);
++	if (!fph)
++		return -ENOMEM;
++
++	fph->hash_mask =3D hash_slots ? hash_slots - 1 : 0;
++	fph->custom =3D custom;
++	fph->mm =3D mm;
++
++	for (i =3D 0; i < hash_slots; i++)
++		futex_hash_bucket_init(&fph->queues[i], fph);
++
++	mm->futex_phash =3D fph;
++	return 0;
++}
++
++static int futex_hash_get_slots(void)
++{
++	struct futex_private_hash *fph;
++
++	fph =3D current->mm->futex_phash;
++	if (fph && fph->hash_mask)
++		return fph->hash_mask + 1;
++	return 0;
++}
++
++#else
++
++static int futex_hash_allocate(unsigned int hash_slots, bool custom)
++{
++	return -EINVAL;
++}
++
++static int futex_hash_get_slots(void)
++{
++	return 0;
++}
++#endif
++
++int futex_hash_prctl(unsigned long arg2, unsigned long arg3, unsigned long=
+ arg4)
++{
++	int ret;
++
++	switch (arg2) {
++	case PR_FUTEX_HASH_SET_SLOTS:
++		if (arg4 !=3D 0)
++			return -EINVAL;
++		ret =3D futex_hash_allocate(arg3, true);
++		break;
++
++	case PR_FUTEX_HASH_GET_SLOTS:
++		ret =3D futex_hash_get_slots();
++		break;
++
++	default:
++		ret =3D -EINVAL;
++		break;
++	}
++	return ret;
 +}
 +
  static int __init futex_init(void)
  {
  	unsigned long hashsize, i;
-@@ -1177,11 +1184,8 @@ static int __init futex_init(void)
- 					       hashsize, hashsize);
+@@ -1185,7 +1357,7 @@ static int __init futex_init(void)
  	hashsize =3D 1UL << futex_shift;
 =20
--	for (i =3D 0; i < hashsize; i++) {
--		atomic_set(&futex_queues[i].waiters, 0);
--		plist_head_init(&futex_queues[i].chain);
--		spin_lock_init(&futex_queues[i].lock);
--	}
-+	for (i =3D 0; i < hashsize; i++)
-+		futex_hash_bucket_init(&futex_queues[i]);
+ 	for (i =3D 0; i < hashsize; i++)
+-		futex_hash_bucket_init(&futex_queues[i]);
++		futex_hash_bucket_init(&futex_queues[i], NULL);
 =20
  	futex_hashmask =3D hashsize - 1;
  	return 0;
+diff --git a/kernel/futex/futex.h b/kernel/futex/futex.h
+index 26e69333cb745..899aed5acde12 100644
+--- a/kernel/futex/futex.h
++++ b/kernel/futex/futex.h
+@@ -118,6 +118,7 @@ struct futex_hash_bucket {
+ 	atomic_t waiters;
+ 	spinlock_t lock;
+ 	struct plist_head chain;
++	struct futex_private_hash *priv;
+ } ____cacheline_aligned_in_smp;
+=20
+ /*
+@@ -204,6 +205,7 @@ futex_setup_timer(ktime_t *time, struct hrtimer_sleeper=
+ *timeout,
+ 		  int flags, u64 range_ns);
+=20
+ extern struct futex_hash_bucket *futex_hash(union futex_key *key);
++#ifdef CONFIG_FUTEX_PRIVATE_HASH
+ extern void futex_hash_get(struct futex_hash_bucket *hb);
+ extern void futex_hash_put(struct futex_hash_bucket *hb);
+=20
+@@ -211,6 +213,14 @@ extern struct futex_private_hash *futex_private_hash(v=
+oid);
+ extern bool futex_private_hash_get(struct futex_private_hash *fph);
+ extern void futex_private_hash_put(struct futex_private_hash *fph);
+=20
++#else /* !CONFIG_FUTEX_PRIVATE_HASH */
++static inline void futex_hash_get(struct futex_hash_bucket *hb) { }
++static inline void futex_hash_put(struct futex_hash_bucket *hb) { }
++static inline struct futex_private_hash *futex_private_hash(void) { return=
+ NULL; }
++static inline bool futex_private_hash_get(void) { return false; }
++static inline void futex_private_hash_put(struct futex_private_hash *fph) =
+{ }
++#endif
++
+ DEFINE_CLASS(hb, struct futex_hash_bucket *,
+ 	     if (_T) futex_hash_put(_T),
+ 	     futex_hash(key), union futex_key *key);
+diff --git a/kernel/sys.c b/kernel/sys.c
+index c434968e9f5dd..adc0de0aa364a 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -52,6 +52,7 @@
+ #include <linux/user_namespace.h>
+ #include <linux/time_namespace.h>
+ #include <linux/binfmts.h>
++#include <linux/futex.h>
+=20
+ #include <linux/sched.h>
+ #include <linux/sched/autogroup.h>
+@@ -2820,6 +2821,9 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, ar=
+g2, unsigned long, arg3,
+ 			return -EINVAL;
+ 		error =3D posixtimer_create_prctl(arg2);
+ 		break;
++	case PR_FUTEX_HASH:
++		error =3D futex_hash_prctl(arg2, arg3, arg4);
++		break;
+ 	default:
+ 		trace_task_prctl_unknown(option, arg2, arg3, arg4, arg5);
+ 		error =3D -EINVAL;
 --=20
 2.49.0
 
