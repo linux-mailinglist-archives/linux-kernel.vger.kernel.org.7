@@ -1,125 +1,140 @@
-Return-Path: <linux-kernel+bounces-607165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92D22A8B8B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:18:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B73A6A8B8B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:19:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17B293A5576
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 12:17:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0194F441D5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 12:19:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB3C3247289;
-	Wed, 16 Apr 2025 12:17:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88DA62472B0;
+	Wed, 16 Apr 2025 12:19:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n+nQJPtm"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AdUkq7fa"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69A7C23F41D
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 12:17:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A2C221272;
+	Wed, 16 Apr 2025 12:19:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744805874; cv=none; b=bd8YW1dWfcouoMY3/GuKxJvqm2XHBhUoyhF+dyjc4CNYxebXfN3dKnxEXV5WbrHSVtzUwwbSu4uP67g3SswPbG0GWQK8W1j5vbVo2RohnPTgTo5PXAWgtcSQu8/Su9meQAqvt/Pz75o/qSC3qI7mirYD52K2QnDb6QCcQXy+uTo=
+	t=1744805948; cv=none; b=MRue9sLBI9uPEMYVAdHVAISoIbCfyFjztoqtZM1EQoSGpL2AR1GyumoUAVw07CO0I0zpCGWiQ8VhorTo61iUaV0Y8BZD2zyMrggI9I9WfLOIJVUHvrXWgj3rH1AGdW9GGtJjcf5l7Z/+Z3jzguTkIg6vD10zQ6bzv01cd+IGFys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744805874; c=relaxed/simple;
-	bh=D1y0KTa//ihPdQUc7xWoDdFeEGayl6MAw3XGGJlN9oY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=etcc8uwLjeFsu87OCK1J7UyMhOVS/s3ymdJGmGL3fHdm76j1RNOo4ixsyZ9F54vxon4peVzuGOdx0ynlzkOzCpzfdQ55DYYsUPjPPMroeJh0cFnY/YwvprfNa7eatPBFv2N/TUsCUZRvBX17/QmBcVBVTx1/pOJE4yEsq5nr4F8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n+nQJPtm; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43d22c304adso2943135e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 05:17:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744805871; x=1745410671; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ujHiZnvLKpv7O+1PchdCF4Z+DSa+OumwellZTchKlcM=;
-        b=n+nQJPtmMcWRPPtlnZ0CC5Q5y7MWmpvh5m8xWVeYqcMBMGG6dkgtSISNIks2/bfjhs
-         Bh2UAFMo9yODVboMDTeDF+clVY+iHpqritnPVVKRlwX0TOWsiO4fOp6p/NSDVO1yyS6+
-         bC+suvI3B3CrfcN+ajR+uh0VW2jqAtFS5neXC7xDu2rcuy0XgtxUTOKrfkYwYEs+C4+8
-         yJMnxAqTLL5R2eUW7M04MuIGTA6z8QAi4zUgU5OyPSdVHy6OAyQ1rHkyEm1VvWyxwE+J
-         /CNu1SwytcEwh2s8SawfIm7qiBwCgLuBuW0kZ0+tigNIdJAJhv4bokGqsDf4ncK4WqSx
-         ZbaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744805871; x=1745410671;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ujHiZnvLKpv7O+1PchdCF4Z+DSa+OumwellZTchKlcM=;
-        b=PCEbgd2EI4pi2WZ9Xrl4rK9GNfjlkJfandGRSePmiQwZWsoOMldmGh60nCdfjltnqv
-         LaVPRPBJ/g+sq7/rxXRWeRi3WJxj+IPuSy/KeZZ3LdpIsx7U7j5cR3WrcWuwuBfSo8nn
-         iE2xaCCH6+jScx904x/0QsTpDZpjH6XY65y2MLILtPxKDvLtci5xF5HLhLeCgJlPJH6N
-         1Om6538oeuK/XxwK2Y4NSVpv2gvHD1Vpr3ySiGVDYBKpgS3I4YnQphPeTZ86GFbbDaFL
-         R5bMpn8D5JBkVKTeAAfP2ZQvT+5xQyqOG+V5rQslT+h4R8XAjap8gCEY0c1QXUY+cpRF
-         ChSw==
-X-Forwarded-Encrypted: i=1; AJvYcCV9QioT0f0vC2rMkDc3wTZqh63gbKaX/7gR1VeaP7gNjVcOJoD4SGZ/hHYP2nuBU4LcG+EUZf+8ODYb0Y0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz10jV7d5jOoYfEx9thgNjvxQYKQxnsV0wNxjK1sAJSgGhkd7iR
-	HbmLqiBO8GFLb4sZfLKv9h0q04l45Mc4TpPtLmyHALFpUaKWgfbyDVFA3vH1H+ardSTcxishKGD
-	C1pbr8UZm5570LA==
-X-Google-Smtp-Source: AGHT+IEzatG2HQFac6ZOfa+8cIrCdslwsCCFqQIEGW5V4XRwi//PICjXbEq1k1OUg3aeTxgDNHaNRm3VyImE5Do=
-X-Received: from wmbes23.prod.google.com ([2002:a05:600c:8117:b0:43d:7e5:30f0])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:a366:b0:439:873a:1114 with SMTP id 5b1f17b1804b1-4405d76933amr15311095e9.6.1744805870771;
- Wed, 16 Apr 2025 05:17:50 -0700 (PDT)
-Date: Wed, 16 Apr 2025 12:17:48 +0000
-In-Reply-To: <Z_45kDv_wAHIBNpI@cassiopeiae>
+	s=arc-20240116; t=1744805948; c=relaxed/simple;
+	bh=Uwk/C5Fncf0gM3yHMM6IMOis7Lej7BqXPBmzclEOot8=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=N5l9EU6whjRnnGDOKL6cgSw9Ce8Xb7hvuKd0CLQktfQZ8j55cjI0qBQG26lYihcxSFQRGCMoYk0xMOzCPpnVpEbo+hdcgBM8CNvxAlRrP1K82OG6d77KElveoeTGbI/er2l67UhiVJv6EH34PRiF/xnRJQ0Q4qy3Ze9uvN4rE1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AdUkq7fa; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744805947; x=1776341947;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=Uwk/C5Fncf0gM3yHMM6IMOis7Lej7BqXPBmzclEOot8=;
+  b=AdUkq7farBOCEkFVOmn2Vzrjfp07JlVc9gxy+egUkA4Q8qClsB26qV8I
+   NJ62xS2PKNJGnMUMPEYlnIxFqkx9eDqGNmSKLIwg1rPP6fhDy0pspjie3
+   CB+hComZvfj24moOnjvZ4L0u4ZIMYqhZfp5c1vvjyfHMmR/7ZdH2tM3Xv
+   ba5oEF0vlnSEnCYuME0gTsfWS+xNuEUlbZdU7/xsOF1YA0DqDpZXUWT84
+   X7joDuTLF0vczmKReW6WYlZ7m1ZtJWo0LyyaxtfAPrORKNhaB+Rpxj3b1
+   vNa4sFNv6iQk4U3rfn+jlTnuy1uAE1L+FpjmWzfjPDEZxZg0XDD1OxLzU
+   Q==;
+X-CSE-ConnectionGUID: Etfr6T6ZQ2GPxLi1TGQQDQ==
+X-CSE-MsgGUID: ffGyuR9RRQaaeldd85Jq8g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="46271070"
+X-IronPort-AV: E=Sophos;i="6.15,216,1739865600"; 
+   d="scan'208";a="46271070"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 05:19:06 -0700
+X-CSE-ConnectionGUID: uiM4xANsQpmKm+YiO3uNLg==
+X-CSE-MsgGUID: BthUMN0UReeTsIzXg0uYdg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,216,1739865600"; 
+   d="scan'208";a="135444032"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.243])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 05:19:01 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 16 Apr 2025 15:18:56 +0300 (EEST)
+To: Andy Shevchenko <andy@kernel.org>
+cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+    Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+    Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+    x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+    Bjorn Helgaas <bhelgaas@google.com>, linux-acpi@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, linux-pci@vger.kernel.org
+Subject: Re: [PATCH 1/1] x86: Use resource_set_{range,size}() helpers
+In-Reply-To: <Z_-cgFJWZTjMl_ud@smile.fi.intel.com>
+Message-ID: <7f0d376c-2d03-8e09-5d85-e53b0bce0cc5@linux.intel.com>
+References: <20250416101318.7313-1-ilpo.jarvinen@linux.intel.com> <Z_-E3W8i4EfxdBh3@smile.fi.intel.com> <a046f6bb-0b6e-a431-eaa5-ecd279459f86@linux.intel.com> <Z_-cgFJWZTjMl_ud@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250411-create-workqueue-v1-1-f7dbe7f1e05f@google.com>
- <Z_1QzTdV8mHJYdQ6@cassiopeiae> <Z_4gb8ZAlbfhobgW@google.com> <Z_45kDv_wAHIBNpI@cassiopeiae>
-Message-ID: <Z_-f7Bgjw35iXkui@google.com>
-Subject: Re: [PATCH] workqueue: rust: add creation of workqueues
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Lai Jiangshan <jiangshanlai@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Daniel Almeida <daniel.almeida@collabora.com>, Tamir Duberstein <tamird@gmail.com>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="8323328-2113019736-1744805936=:991"
 
-On Tue, Apr 15, 2025 at 12:48:48PM +0200, Danilo Krummrich wrote:
-> On Tue, Apr 15, 2025 at 09:01:35AM +0000, Alice Ryhl wrote:
-> > On Mon, Apr 14, 2025 at 08:15:41PM +0200, Danilo Krummrich wrote:
-> > > On Fri, Apr 11, 2025 at 03:34:24PM +0000, Alice Ryhl wrote:
-> > > > 
-> > > > +/// An owned kernel work queue.
-> > > 
-> > > I'd suggest to document that dropping an OwnedQueue will wait for pending work.
-> > > 
-> > > Additionally, given that you're about to implement delayed work as well, we
-> > > should also mention that destroy_workqueue() currently does not cover waiting
-> > > for delayed work *before* it is scheduled and hence may cause WARN() splats or
-> > > even UAF bugs.
-> > 
-> > Ah, that's a problem :(
-> > 
-> > Can we make destroy_workqueue() wait for delayed items too? And/or have
-> > a variant of it that does so? I'm not sure what is best to do here...
-> 
-> I think the problem is that the workq is not aware of all the timers in flight
-> and simply queues the work in the timer callback. See also [1].
-> 
-> I'm not sure there's an easy solution to that, without adding extra overhead,
-> such as keeping a list of timers in flight in the workqueue end. :(
-> 
-> [1] https://elixir.bootlin.com/linux/v6.13.7/source/kernel/workqueue.c#L2489
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-It looks like panthor handles this by only having a single delayed work
-item on each queue and using cancel_delayed_work_sync before calling
-destroy_workqueue.
+--8323328-2113019736-1744805936=:991
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Tejun, what do you suggest? The goal of the Rust API is to make it
-impossible to accidentally trigger a UAF, so we need to design the API
-to prevent this mistake.
+On Wed, 16 Apr 2025, Andy Shevchenko wrote:
 
-Alice
+> On Wed, Apr 16, 2025 at 02:53:51PM +0300, Ilpo J=E4rvinen wrote:
+> > On Wed, 16 Apr 2025, Andy Shevchenko wrote:
+> > > On Wed, Apr 16, 2025 at 01:13:18PM +0300, Ilpo J=E4rvinen wrote:
+>=20
+> > > > +=09=09=09resource_set_range(res, 0xC0000, SZ_128K);
+> > > >  =09=09=09res->flags =3D IORESOURCE_MEM | IORESOURCE_ROM_SHADOW |
+> > > >  =09=09=09=09     IORESOURCE_PCI_FIXED;
+> > >=20
+> > > I'm wondering why not DEFINE_RES_MEM() in such cases?
+> >=20
+> > I guess you meant DEFINE_RES() as that seems to allow giving custom fla=
+gs.
+> > However, DEFINE_RES*() will overwrite ->name which seems something that=
+=20
+> > ought to not be done here.
+>=20
+> Okay, I haven't checked the initial state of name field here, so then
+> DEFINE_RES_MEM_NAMED()?  Or don't we have one?
+
+There's pre-existing res->name on it and your suggestion would have=20
+resulted in overwriting it with NULL. res->name seems to be filled earlier=
+=20
+by PCI probe code.
+
+> In any case I would rather see a one assignment for these cases than some=
+thing
+> hidden behind proposed conversions.
+
+TBH, these DEFINE_RES*() helpers are doing hidden things such as=20
+blantantly overwriting ->name which I only realized after I had already=20
+converted to it as per your suggestion.
+
+And yes, it is possible to pass the pre-existing res->name to=20
+DEFINE_RES_NAMED() if that what you insist, though it seems doing it for=20
+the sake of DEFINE_RES*() interface rather than this code wanting to=20
+really define the resource from scratch.
+
+Given the hidden overwriting, please be careful on suggesting=20
+DEFINE_RES*() conversions as it's not as trivial as it seems.
+
+> > I found one other case from the same file though which is truly defines
+> > a resource from scratch.
+>=20
+>=20
+>=20
+
+--=20
+ i.
+
+--8323328-2113019736-1744805936=:991--
 
