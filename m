@@ -1,200 +1,101 @@
-Return-Path: <linux-kernel+bounces-607110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A14AA8B80E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 13:59:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46195A8B817
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:02:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D7AA3AC0F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 11:59:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E93F7A4C4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 12:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A3F241673;
-	Wed, 16 Apr 2025 11:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ndE0hFjI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95882241664
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 11:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B8823D2B5;
+	Wed, 16 Apr 2025 12:01:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D8720E6E4;
+	Wed, 16 Apr 2025 12:01:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744804769; cv=none; b=NNmvRxNodmlATOBSbNjGnKfiAqo53eOVLqXGYLyzMz59Z6/HJ6uyCYXmA9lgLh5tOrAz4TrIDui5e3RnVGT/FrhpfL/Uhmzc/uZ3Q1REmZJRn5llqPrPwIj+sWR2o1GlxPR7TtjZjdh90i79a7vBwDVt8XnpbPdo4c2AHGdPk0E=
+	t=1744804914; cv=none; b=toZXGyobQSSJU5ESK9kp242HsTkPUp+kKDEnAhzHphIiRZdLsFciYefLbUAbc6sagBGqOUakJKHoeAduazny5kohLfDflUifYAOJHZiKEu3x47SH0clvkFbb2jK/6OcK8vV5pXY7wMx73Syuw7akVyzw2CgoYY/oJpIipkAEu7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744804769; c=relaxed/simple;
-	bh=/uKCmU1Vz1ywvlNixmev4FFs84ywfczXR3E4cW/SJ1I=;
-	h=Content-Type:Date:Message-Id:Subject:Cc:From:To:References:
-	 In-Reply-To; b=VLxbgo75OcOGIbGYR3aOW17ykKWHPmARv10DLEyGCAYr39a4JhbHuqbKsCRTpBQnYl3KjZFOmiidPaC3HkhCvfKh1pcgox8sk4P2zbDj44+uloBK21uAXt0dC7p9kDz+KA8asjnFjQkzw6qwGBys+5IPLp/+lSMAYDyXFQctXlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ndE0hFjI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60881C4CEED;
-	Wed, 16 Apr 2025 11:59:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744804769;
-	bh=/uKCmU1Vz1ywvlNixmev4FFs84ywfczXR3E4cW/SJ1I=;
-	h=Date:Subject:Cc:From:To:References:In-Reply-To:From;
-	b=ndE0hFjIfjZCKt/yrOn7BG2U2o4sTYSH4eSrFUwtspESakdH2in0pJVMarfwzWGxn
-	 HukFRizMFg5mTKzxSCobGgs5+gmS3RSJJ4N9k+ylMrtBr43BdlOITZjj6F2mWVJQye
-	 7wQGh57tX5OuPBzMFetrexFV97YCAwvitGv6USczYDmu47T5athiVlB0DiO60PZ94S
-	 SFHD4n/AOQARE7u7GrzymnJdJFcY3vNnWR4TBTFYcFxsNZABwC/YZgfV1klw3fwDza
-	 m0hKMuSZNBFhZXKBTnOVdQWDwhI3cxZ2kowGd+z9wbcUU6z1/XNZUrMIJjowlio3S+
-	 CucKuujE0a7tw==
-Content-Type: multipart/signed;
- boundary=6af618ae81b496f90345a50d55f9963d965d2fb226cee0b7dd26dd3b6e33;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Wed, 16 Apr 2025 13:59:24 +0200
-Message-Id: <D981O3AA6NK9.2EEVUPM62EV6S@kernel.org>
-Subject: Re: [PATCH] spi-nor: Verify written data in paranoid mode
-Cc: =?utf-8?b?U3plbnRlbmRyZWksIFRhbcOhcw==?= <szentendrei.tamas@prolan.hu>,
- "Tudor Ambarus" <tudor.ambarus@linaro.org>, "Pratyush Yadav"
- <pratyush@kernel.org>, "Miquel Raynal" <miquel.raynal@bootlin.com>,
- "Richard Weinberger" <richard@nod.at>, "Vignesh Raghavendra"
- <vigneshr@ti.com>
-From: "Michael Walle" <mwalle@kernel.org>
-To: =?utf-8?q?Bence_Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>,
- <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.16.0
-References: <20250415180434.513405-1-csokas.bence@prolan.hu>
-In-Reply-To: <20250415180434.513405-1-csokas.bence@prolan.hu>
+	s=arc-20240116; t=1744804914; c=relaxed/simple;
+	bh=61G4ZtYEDF4bwHv3JKZIAd75tAB7F5sVcNbZwmSNjpo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rpCSCqiJj9EclAuNoEmd/5RduBqb1BJE1huRP0SiSYpePEBiDyc5yw78aTRjJiWWKZmyDU6yMmQ9fNYQnn5JwRCW8hMJf8qBhWor+xHf1KPWM1sjt20QecroYFbeapiS7v+SMk55XB2CgE/JrDsdF6b1n2abHx22ikQ6DFJjMVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BB4DC1595;
+	Wed, 16 Apr 2025 05:01:48 -0700 (PDT)
+Received: from [10.1.35.42] (e127648.arm.com [10.1.35.42])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 225443F694;
+	Wed, 16 Apr 2025 05:01:47 -0700 (PDT)
+Message-ID: <b0c863d8-b1bd-4b69-b5ec-18544608448c@arm.com>
+Date: Wed, 16 Apr 2025 13:01:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-
---6af618ae81b496f90345a50d55f9963d965d2fb226cee0b7dd26dd3b6e33
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/6] cpufreq/sched: Explicitly synchronize
+ limits_changed flag handling
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Sultan Alsawaf <sultan@kerneltoast.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Valentin Schneider <vschneid@redhat.com>, Ingo Molnar <mingo@redhat.com>
+References: <6171293.lOV4Wx5bFT@rjwysocki.net>
+ <3376719.44csPzL39Z@rjwysocki.net>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <3376719.44csPzL39Z@rjwysocki.net>
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 4/15/25 10:59, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> The handling of the limits_changed flag in struct sugov_policy needs to
+> be explicitly synchronized to ensure that cpufreq policy limits updates
+> will not be missed in some cases.
+> 
+> Without that synchronization it is theoretically possible that
+> the limits_changed update in sugov_should_update_freq() will be
+> reordered with respect to the reads of the policy limits in
+> cpufreq_driver_resolve_freq() and in that case, if the limits_changed
+> update in sugov_limits() clobbers the one in sugov_should_update_freq(),
+> the new policy limits may not take effect for a long time.
+> 
+> Likewise, the limits_changed update in sugov_limits() may theoretically
+> get reordered with respect to the updates of the policy limits in
+> cpufreq_set_policy() and if sugov_should_update_freq() runs between
+> them, the policy limits change may be missed.
+> 
+> To ensure that the above situations will not take place, add memory
+> barriers preventing the reordering in question from taking place and
+> add READ_ONCE() and WRITE_ONCE() annotations around all of the
+> limits_changed flag updates to prevent the compiler from messing up
+> with that code.
+> 
+> Fixes: 600f5badb78c ("cpufreq: schedutil: Don't skip freq update when limits change")
+> Cc: 5.3+ <stable@vger.nernel.org> # 5.3+
 
-> Add MTD_SPI_NOR_PARANOID config option for verifying all written data to
-> prevent silent bit errors to be undetected, at the cost of halving SPI
-> bandwidth.
+typo in the address here.
+I don't fully understand why we wouldn't want this in 6.15-rc already,
+even if the actual impact may be limited?
 
-What is the use case for this? Why is it specific to SPI-NOR
-flashes? Or should it rather be an MTD "feature". I'm not sure
-whether this is the right way to do it, thus I'd love to hear more
-about the background story to this.
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-> Co-developed-by: Szentendrei, Tam=C3=A1s <szentendrei.tamas@prolan.hu>
-> Signed-off-by: Szentendrei, Tam=C3=A1s <szentendrei.tamas@prolan.hu>
-> Signed-off-by: Cs=C3=B3k=C3=A1s, Bence <csokas.bence@prolan.hu>
-> ---
->  drivers/mtd/spi-nor/Kconfig | 10 ++++++++++
->  drivers/mtd/spi-nor/core.c  | 33 +++++++++++++++++++++++++++++++++
->  2 files changed, 43 insertions(+)
->
-> diff --git a/drivers/mtd/spi-nor/Kconfig b/drivers/mtd/spi-nor/Kconfig
-> index 24cd25de2b8b..425ea9a22424 100644
-> --- a/drivers/mtd/spi-nor/Kconfig
-> +++ b/drivers/mtd/spi-nor/Kconfig
-> @@ -68,6 +68,16 @@ config MTD_SPI_NOR_SWP_KEEP
-> =20
->  endchoice
-> =20
-> +config MTD_SPI_NOR_PARANOID
-> +	bool "Read back written data (paranoid mode)"
+Reviewed-by: Christian Loehle <christian.loehle@arm.com>
 
-No kernel configs please. This doesn't scale. What if you have two
-flashes and one should have this and one does not?
-
--michael
-
-> +	help
-> +	  This option makes the SPI NOR core read back all data on a write
-> +	  and report an error if it doesn't match the written data. This can
-> +	  safeguard against silent bit errors resulting from a faulty Flash,
-> +	  controller oddities, bus noise etc.
-> +
-> +	  If you are unsure, select 'n'.
-> +
->  source "drivers/mtd/spi-nor/controllers/Kconfig"
-> =20
->  endif # MTD_SPI_NOR
-> diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
-> index ac4b960101cc..ca05a6ec8afe 100644
-> --- a/drivers/mtd/spi-nor/core.c
-> +++ b/drivers/mtd/spi-nor/core.c
-> @@ -2063,6 +2063,7 @@ static int spi_nor_write(struct mtd_info *mtd, loff=
-_t to, size_t len,
->  	size_t *retlen, const u_char *buf)
->  {
->  	struct spi_nor *nor =3D mtd_to_spi_nor(mtd);
-> +	u_char *verify_buf =3D NULL;
->  	size_t i;
->  	ssize_t ret;
->  	u32 page_size =3D nor->params->page_size;
-> @@ -2073,6 +2074,14 @@ static int spi_nor_write(struct mtd_info *mtd, lof=
-f_t to, size_t len,
->  	if (ret)
->  		return ret;
-> =20
-> +#if IS_ENABLED(CONFIG_MTD_SPI_NOR_PARANOID)
-> +	verify_buf =3D devm_kmalloc(nor->dev, page_size, GFP_KERNEL);
-> +	if (!verify_buf) {
-> +		ret =3D -ENOMEM;
-> +		goto write_err;
-> +	}
-> +#endif
-> +
->  	for (i =3D 0; i < len; ) {
->  		ssize_t written;
->  		loff_t addr =3D to + i;
-> @@ -2099,11 +2108,35 @@ static int spi_nor_write(struct mtd_info *mtd, lo=
-ff_t to, size_t len,
->  		ret =3D spi_nor_wait_till_ready(nor);
->  		if (ret)
->  			goto write_err;
-> +
-> +#if IS_ENABLED(CONFIG_MTD_SPI_NOR_PARANOID)
-> +		/* read back to make sure it's correct */
-> +		ret =3D spi_nor_read_data(nor, addr, written, verify_buf);
-> +		if (ret < 0)
-> +			goto write_err;
-> +		if (ret !=3D written) {
-> +			/* We shouldn't see short reads */
-> +			dev_err(nor->dev, "Verify failed, written %zd but only read %zd",
-> +				written, ret);
-> +			ret =3D -EIO;
-> +			goto write_err;
-> +		}
-> +
-> +		if (memcmp(verify_buf, buf + i, written)) {
-> +			dev_err(nor->dev, "Verify failed, compare mismatch!");
-> +			ret =3D -EIO;
-> +			goto write_err;
-> +		}
-> +#endif
-> +
-> +		ret =3D 0;
-> +
->  		*retlen +=3D written;
->  		i +=3D written;
->  	}
-> =20
->  write_err:
-> +	devm_kfree(nor->dev, verify_buf);
->  	spi_nor_unlock_and_unprep_pe(nor, to, len);
-> =20
->  	return ret;
->
-> base-commit: 834a4a689699090a406d1662b03affa8b155d025
-
-
---6af618ae81b496f90345a50d55f9963d965d2fb226cee0b7dd26dd3b6e33
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCZ/+bnRIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/gTIwF/Zk06SOzJFI02yhhZml0QcjqB1i/yNmx8
-NmXcG6KCP2Oayi6LOFM7AtPSviWNrXLJAX4jVdIcXHyWBxFPT6Qmq5LeBLUEVGqd
-8BdHT9XbSYGQjyGRQH6vcXreRHcqoNT9wio=
-=Dz4e
------END PGP SIGNATURE-----
-
---6af618ae81b496f90345a50d55f9963d965d2fb226cee0b7dd26dd3b6e33--
+>[snip]
 
