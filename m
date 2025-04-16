@@ -1,144 +1,203 @@
-Return-Path: <linux-kernel+bounces-606389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 352D9A8AEA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 05:51:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB2AFA8AECC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 05:59:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B97383B8E10
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 03:51:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C84573BF771
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 03:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F847221567;
-	Wed, 16 Apr 2025 03:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC18922837F;
+	Wed, 16 Apr 2025 03:58:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hwWey3TQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jfzy5SBJ"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6902DFA49
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 03:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E8A19DF8D
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 03:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744775477; cv=none; b=RO+J4ZOVQH6o39HTayqVD5FO5BcHtOcC1Q5uGeNx82BhYGjAJ27DOB4VO+7EnQo6r02UBmX6UicpkpY0ZixKkJBD5kPkIErasWG5jvcHSCUja/hzGgQ1P+lEqcqB4Hf8ofGXCmqCqawXqHbR5i1vrcqxUZL+7ZL6PHleZxHAazE=
+	t=1744775935; cv=none; b=Ly7yfjtbHF/2XpuN7Yxfhvk6PAIF4mJWVnmqIDzud7MYDDOx/YzBK1OgbTGQ/PyjyBpyv9du4iKBJjM20PWdR/3F3PUgynm+j1sONvj/S4zlHN5mVFu/KWv7kQpyvRPa/9BhSZHXvVbx8FN0zMS2oiYY0DcQ5iTiklu/NHiEGsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744775477; c=relaxed/simple;
-	bh=JwInkB976ZE2MX+AcyWk2PmBMMcKJtR4i+Ev0NkVLDY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AYFFMpQP8RReD0l0dQI+d66tCshNSQ07y7mnL8oergxUgPCZk5yaZBl3fVhPwyZQqVHeuPh+Wv/P0t9q1yE0mVJRBaXUNTQF9h6qMwMFL7zSDFAQNsKO4u9sS15pTLETn5mzAYU3mF6HeVgKGECbtVIC1fW4w4T2JXflLzSCfak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hwWey3TQ; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744775476; x=1776311476;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=JwInkB976ZE2MX+AcyWk2PmBMMcKJtR4i+Ev0NkVLDY=;
-  b=hwWey3TQkoyV1sH2wrIiaWJP3+JNLSDG990iZghoVXqMQ6jxEgC/jWwi
-   RhnP7dh3J81CfOxVCiAt5z+VG+tkr+5tDtpsE6AeOVO6JkuRp9N4R/yzE
-   seyMLjoFBr+wZsJeO5TDSWL1t3bc4YenURT79GJI/PvvtOVHLTC7iZrOe
-   Hcf39DmViSl5KthIaPNmNhDK2dNUfa2I0SqYli+0H+t4pQoArxMpukT6k
-   fD4LhyxNEjy3dWtwWHnGsiz4lotqnVsibQETARU1orZHmfdQClqNEFeUe
-   f5kqrt6PBnyBX5t3QIAtelewCYI8ATiMqdCVS6/ZiJwRChOIo9xetTiRl
-   w==;
-X-CSE-ConnectionGUID: cEZbCjsbRVKZbuTWyoyu0A==
-X-CSE-MsgGUID: 0QBuuFToSeqy0zK+66k7Lw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="45443186"
-X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
-   d="scan'208";a="45443186"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 20:51:15 -0700
-X-CSE-ConnectionGUID: GdBEIuj6Rw+BBlnqhrG4ow==
-X-CSE-MsgGUID: /DNQ1vUmRVa7NFKEbvwpPA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
-   d="scan'208";a="130855472"
-Received: from b04f130c83f2.jf.intel.com ([10.165.154.98])
-  by orviesa007.jf.intel.com with ESMTP; 15 Apr 2025 20:51:15 -0700
-From: Tim Chen <tim.c.chen@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Chen Yu <yu.c.chen@intel.com>,
-	Doug Nelson <doug.nelson@intel.com>,
-	Mohini Narkhede <mohini.narkhede@intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] sched: Skip useless sched_balance_running acquisition if load balance is not due
-Date: Tue, 15 Apr 2025 20:58:23 -0700
-Message-Id: <20250416035823.1846307-1-tim.c.chen@linux.intel.com>
-X-Mailer: git-send-email 2.32.0
+	s=arc-20240116; t=1744775935; c=relaxed/simple;
+	bh=/jNHeqelxuQoACbaXmWuUWs85LQe8P+MsreFE3ZURDM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HEPstOxStn16qykyYxkjrAwifFsxsulaVCgRftPiwyjkxUmBjUeE1ps+oId8QzSJQqvVm0sSnWrvtWG98QCqFrAvEPLw6UMxtJlG8W7NI3uZoqbYt8QfnZE9vS3tvWx23np81K6LxvgCgRYOZ50rII1Wq84r7xwsuEwFKNwPGw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Jfzy5SBJ; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-47666573242so263391cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 20:58:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1744775932; x=1745380732; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TFabfu1YUr8Gpuaxg0bUAkmAqFwkoAZ83WLrOAJAIgA=;
+        b=Jfzy5SBJrm00nzblcsCwOxXwMtqOXCWlfG4ur316TPCDmKp1FjL/QO3xvk+ItWDqJ2
+         ggPQE5IjaraI0SYmXr/IjjlG1rftYvLnj0Qn++JSkiUjkP+QF4a7xwadDqSi3o2rXLwf
+         lm/mONTBtxhH3AhJE+27TRdtIFK0mZuPU2b3iDDRS3JtFJZWX9QLQnxvnXKWTNkD0WHC
+         GLSyWna9OZLv28aNi8XOLo87dcquQ8FUkkoyi1A41I3VMqPvJc/SJB6/BOFQnqxJYyDQ
+         G4SBcRLW9xkSPGZUv2RvTQTRLemrx+qC/GnI54PDeKsQxKFmfnIvnaipYk8KUIfeWz0l
+         6HYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744775932; x=1745380732;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TFabfu1YUr8Gpuaxg0bUAkmAqFwkoAZ83WLrOAJAIgA=;
+        b=d/hdOjoPH9SwIstcmza48Ji9DGj0fAX79EMz/dAYEoJgDpJ3ekRRIcObxSoD0B5o8p
+         5RyUa6RO2/XiMDAT0ZUXxWtwpCfku+mL1ru5AGOQFDImc0tWdHxT5YcxijFB9Vvhbldb
+         InNCC1igVkp1XvU0hwehtREYHfglyiUnn4aILnx/ZT7quxTaTGgPqQ2Tpearv0Qz95+Q
+         UgL89/lh1bDcryE34m71z1hIojWtEPAHyoa2jJ7eUqBkr2bZFyBJPMpVFGEeqNK/UuK1
+         bQUmiXwh7icaVuTh5gLQn7gt8wK9VtoEVWszeasJwhC6/hhiCtO5NsTvnicxgccKHVCK
+         H/2g==
+X-Forwarded-Encrypted: i=1; AJvYcCX36xmT5g9ETPY0usnrv0nDTZnSvJ0bFB35F7yCH69ZU0yYsfZBPE1E+DCNL5pssZ3Uysws7z5Qjb8EufE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeiZvocjBX4OYIjmDXXSFdWnrrwIA1AOwMww1ZPCrsvEyQTAPZ
+	++pR/U3GInQxyYRf82VpVWkpDJy+2v+w3KcYVJBim2VTFsqQvmcI41Y9eXc1FQxM5yYqb0ihmOC
+	UBcKMRCVdgV6KZo4K6H28892L19aoAyLEtbuX
+X-Gm-Gg: ASbGnctUL9HsyfvScj6g1x4YRbIeN1PQLidiubZNA/svxWZ4fAroyd9ElGwfsk9QeFY
+	z4S2Z6pi8Cf/XKfNntI8hvP6heoulqEYhrxeqmAJTMPh20X3HJXqmymcAKnhgQSZtEU3NppTSLv
+	YiSMwkuCzeNFzbhRt+2fhFkL84egY9wy1x0azP0RFoB652ujpug3KUqA0n
+X-Google-Smtp-Source: AGHT+IGeOWFg3oYjRQF/8DYP6nBlgJnhbE7CLdjFrvnB17no8ih232I0TwalyaJOkOjEzNnrhqtwOr+YIgZVqCq+nEI=
+X-Received: by 2002:ac8:7dc1:0:b0:466:8c23:823a with SMTP id
+ d75a77b69052e-47ad7ad737cmr339751cf.17.1744775932099; Tue, 15 Apr 2025
+ 20:58:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250415171954.3970818-1-jyescas@google.com> <CGME20250415205720epcas1p4a8bbb4ff1ad221a72776694d08801368@epcas1p4.samsung.com>
+ <CABdmKX3Ht=bCcPFxK5mGX2qD4riXQ7Ucw6H_-+1PupXy-1ABGQ@mail.gmail.com> <106c301dbae77$414454a0$c3ccfde0$@samsung.com>
+In-Reply-To: <106c301dbae77$414454a0$c3ccfde0$@samsung.com>
+From: Juan Yescas <jyescas@google.com>
+Date: Tue, 15 Apr 2025 20:58:40 -0700
+X-Gm-Features: ATxdqUHh7qbmy3C_xdgIq0V1oTSEWDrnu_ijLPdQUZ9_-V5qyO1ldD2Pd_jbOZU
+Message-ID: <CAJDx_riYc2GRpcmf5RH8mwJQ-ehh7+JA+tQ__vX1Qsm1HJo9OQ@mail.gmail.com>
+Subject: Re: [PATCH] dma-buf: heaps: Set allocation orders for larger page sizes
+To: =?UTF-8?B?6rmA7J6s7JuQ?= <jaewon31.kim@samsung.com>
+Cc: "T.J. Mercier" <tjmercier@google.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org, 
+	baohua@kernel.org, dmitry.osipenko@collabora.com, Guangming.Cao@mediatek.com, 
+	surenb@google.com, kaleshsingh@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-At load balance time, balance of last level cache domains and
-above needs to be serialized. The scheduler checks the atomic var
-sched_balance_running first and then see if time is due for a load
-balance. This is an expensive operation as multiple CPUs can attempt
-sched_balance_running acquisition at the same time.
+On Tue, Apr 15, 2025 at 7:28=E2=80=AFPM =EA=B9=80=EC=9E=AC=EC=9B=90 <jaewon=
+31.kim@samsung.com> wrote:
+>
+>
+>
+> > -----Original Message-----
+> > From: T.J. Mercier [mailto:tjmercier@google.com]
+> > Sent: Wednesday, April 16, 2025 5:57 AM
+> > To: Juan Yescas <jyescas@google.com>
+> > Cc: Sumit Semwal <sumit.semwal@linaro.org>; Benjamin Gaignard
+> > <benjamin.gaignard@collabora.com>; Brian Starkey <Brian.Starkey@arm.com=
+>;
+> > John Stultz <jstultz@google.com>; Christian K=C3=B6nig
+> > <christian.koenig@amd.com>; linux-media@vger.kernel.org; dri-
+> > devel@lists.freedesktop.org; linaro-mm-sig@lists.linaro.org; linux-
+> > kernel@vger.kernel.org; baohua@kernel.org; dmitry.osipenko@collabora.co=
+m;
+> > jaewon31.kim@samsung.com; Guangming.Cao@mediatek.com; surenb@google.com=
+;
+> > kaleshsingh@google.com
+> > Subject: Re: [PATCH] dma-buf: heaps: Set allocation orders for larger p=
+age
+> > sizes
+> >
+> > On Tue, Apr 15, 2025 at 10:20=E2=80=AFAM Juan Yescas <jyescas@google.co=
+m> wrote:
+> > >
+> > > This change sets the allocation orders for the different page sizes
+> > > (4k, 16k, 64k) based on PAGE_SHIFT. Before this change, the orders fo=
+r
+> > > large page sizes were calculated incorrectly, this caused system heap
+> > > to allocate from 2% to 4% more memory on 16KiB page size kernels.
+> > >
+> > > This change was tested on 4k/16k page size kernels.
+> > >
+> > > Signed-off-by: Juan Yescas <jyescas@google.com>
+> >
+> > I think "dma-buf: system_heap:" would be better for the subject since t=
+his
+> > is specific to the system heap.
+> >
+> > Would you mind cleaning up the extra space on line 321 too?
+> > @@ -318,7 +318,7 @@ static struct page
+> > *alloc_largest_available(unsigned long size,
+> >         int i;
+> >
+> >         for (i =3D 0; i < NUM_ORDERS; i++) {
+> > -               if (size <  (PAGE_SIZE << orders[i]))
+> > +               if (size < (PAGE_SIZE << orders[i]))
+> >
+> > With that,
+> > Reviewed-by: T.J. Mercier <tjmercier@google.com>
+> >
+> > Fixes: d963ab0f15fb ("dma-buf: system_heap: Allocate higher order pages=
+ if
+> > available") is also probably a good idea.
+> >
+>
+>
+> Hi Juan.
+>
+> Yes. This system_heap change should be changed for 16KB page. Actually,
+> we may need to check other drivers using page order number. I guess
+> gpu drivers may be one of them.
+>
 
-On a 2 socket Granite Rapid systems enabling sub-numa cluster and
-running OLTP workloads, 7.6% of cpu cycles are spent on cmpxchg of
-sched_balance_running.  Most of the time, a balance attempt is aborted
-immediately after acquiring sched_balance_running as load balance time
-is not due.
+Thanks Jaewon for pointing it out. We'll take a look at the GPU drivers to =
+make
+sure that they are using the proper page order.
 
-Instead, check balance due time first before acquiring
-sched_balance_running. This skips many useless acquisitions
-of sched_balance_running and knocks the 7.6% CPU overhead on
-sched_balance_domain() down to 0.05%.  Throughput of the OLTP workload
-improved by 11%.
-
-Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
-Reported-by: Mohini Narkhede <mohini.narkhede@intel.com>
-Tested-by: Mohini Narkhede <mohini.narkhede@intel.com>
----
- kernel/sched/fair.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index e43993a4e580..5e5f7a770b2f 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -12220,13 +12220,13 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
- 
- 		interval = get_sd_balance_interval(sd, busy);
- 
--		need_serialize = sd->flags & SD_SERIALIZE;
--		if (need_serialize) {
--			if (atomic_cmpxchg_acquire(&sched_balance_running, 0, 1))
--				goto out;
--		}
--
- 		if (time_after_eq(jiffies, sd->last_balance + interval)) {
-+			need_serialize = sd->flags & SD_SERIALIZE;
-+			if (need_serialize) {
-+				if (atomic_cmpxchg_acquire(&sched_balance_running, 0, 1))
-+					goto out;
-+			}
-+
- 			if (sched_balance_rq(cpu, rq, sd, idle, &continue_balancing)) {
- 				/*
- 				 * The LBF_DST_PINNED logic could have changed
-@@ -12238,9 +12238,9 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
- 			}
- 			sd->last_balance = jiffies;
- 			interval = get_sd_balance_interval(sd, busy);
-+			if (need_serialize)
-+				atomic_set_release(&sched_balance_running, 0);
- 		}
--		if (need_serialize)
--			atomic_set_release(&sched_balance_running, 0);
- out:
- 		if (time_after(next_balance, sd->last_balance + interval)) {
- 			next_balance = sd->last_balance + interval;
--- 
-2.32.0
-
+> > > ---
+> > >  drivers/dma-buf/heaps/system_heap.c | 9 ++++++++-
+> > >  1 file changed, 8 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/dma-buf/heaps/system_heap.c
+> > > b/drivers/dma-buf/heaps/system_heap.c
+> > > index 26d5dc89ea16..54674c02dcb4 100644
+> > > --- a/drivers/dma-buf/heaps/system_heap.c
+> > > +++ b/drivers/dma-buf/heaps/system_heap.c
+> > > @@ -50,8 +50,15 @@ static gfp_t order_flags[] =3D {HIGH_ORDER_GFP,
+> > HIGH_ORDER_GFP, LOW_ORDER_GFP};
+> > >   * to match with the sizes often found in IOMMUs. Using order 4 page=
+s
+> > instead
+> > >   * of order 0 pages can significantly improve the performance of man=
+y
+> > IOMMUs
+> > >   * by reducing TLB pressure and time spent updating page tables.
+> > > + *
+> > > + * Note: When the order is 0, the minimum allocation is PAGE_SIZE.
+> > > + The possible
+> > > + * page sizes for ARM devices could be 4K, 16K and 64K.
+> > >   */
+> > > -static const unsigned int orders[] =3D {8, 4, 0};
+> > > +#define ORDER_1M (20 - PAGE_SHIFT)
+> > > +#define ORDER_64K (16 - PAGE_SHIFT)
+> > > +#define ORDER_FOR_PAGE_SIZE (0)
+> > > +static const unsigned int orders[] =3D {ORDER_1M, ORDER_64K,
+> > > +ORDER_FOR_PAGE_SIZE};
+> > > +
+> > >  #define NUM_ORDERS ARRAY_SIZE(orders)
+> > >
+> > >  static struct sg_table *dup_sg_table(struct sg_table *table)
+> > > --
+> > > 2.49.0.604.gff1f9ca942-goog
+> > >
+>
+>
 
