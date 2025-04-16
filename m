@@ -1,221 +1,190 @@
-Return-Path: <linux-kernel+bounces-606981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16DF9A8B65C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 12:05:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF034A8B662
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 12:06:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 670E91897B20
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 10:05:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDEEA17ED3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 10:06:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF17243947;
-	Wed, 16 Apr 2025 10:05:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C743923AE95;
+	Wed, 16 Apr 2025 10:06:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1FOGb9ZW"
-Received: from mail-lf1-f73.google.com (mail-lf1-f73.google.com [209.85.167.73])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bL3EH1dg";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UdVJw91v";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="06qahNkR";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LDu48oUJ"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4E9221567
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 10:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B337723536F
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 10:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744797926; cv=none; b=hmOuNHL2MzasvR/v7PIc7peu8Xa0ZiYYdxHcghtvRwsoi7HRfVDSHtbv2FMI/kRxWgf/UeF6pLciHCX5YmVjAusIa/ZXJMIcfkCgmRYozuUHXnX3bUrkSHXsMkNdbuzh2TCIz20dsjMp04VcHBz/2XzWLG/VGhDVtbsy7l7GF+Q=
+	t=1744798004; cv=none; b=Raq4HrMU/mvDTU+urqF3zEiruQ1CmRHqKJEUdzput98eXkmZiZcfWD5/zGCza/y+FddEDb26zAuU+sdoVAPiDIRvGmgCLR+wS6JUvRD7YoT6SHEtnuktqdJ1WckarPfV9QKB+LVHeAViiWSDZRrybqCXrcoF0X8NUmVSUmpuwKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744797926; c=relaxed/simple;
-	bh=ekrhzQaSw2MdohNpnsoV/92s5r4SyiWALxJ6dOI0hMk=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=eLq/rDAdgodrYE8i6Pn3TUkzfrtE5J46k1aWEK8QIXNjoWWCwTQgqSYnVxu9zuZwB5tLDtdZrWScRHYS3uvRlki2WRRD6whbZ9RhKF3hRH+i6XnePIY+VVBuvY5qNB3ZM6Qx2JHcAHDaquiCVb7u/cV/DjLrB759Eeyju0+oZ4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--khtsai.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1FOGb9ZW; arc=none smtp.client-ip=209.85.167.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--khtsai.bounces.google.com
-Received: by mail-lf1-f73.google.com with SMTP id 2adb3069b0e04-549b3bf4664so3020922e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 03:05:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744797922; x=1745402722; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=b6XUAiTBKyTClUnsPpBxFxcE1W6gZkKjCwkz0Nr+Oww=;
-        b=1FOGb9ZWNJKeG1tCg9s4b0fDUkd5GPDj/qQJow8hchcmm/qx9oag1L4SQYzHMyuaVw
-         qpw67dZylFelW4k3CaT+X98traLfhcWLiSVmZOl1c0FoEJ+ZT5wqMdUUWv43J0WOpqrc
-         Le/NPWdlEHDkCPbttyrPJHtu9EMdRq/fzIjqS73AWSklyPznS+3t4c2t8tBvRoKT0HGV
-         pShGNrnrIoxqN8Rl5YNyB6lIcKVEnep13Yeii3yBfTMBva+Yf2AIvDnidNr4tpxBChJf
-         28QT7qZ+F6RLhD5pNZ3/n/ug6iDSyn2YIcZmPMmfZhS/AvUHE5JJE68UvaU1NSyDBruZ
-         iC0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744797922; x=1745402722;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=b6XUAiTBKyTClUnsPpBxFxcE1W6gZkKjCwkz0Nr+Oww=;
-        b=jevrPlkir5ugwa7I27eMR57O8lishtg7EpkWWkPubC9RnRttcv1XBR7FgT99PatXhy
-         vBszVhsXNw1VaP0h5qvg4IdoSpw8JEV59tad9otHgXe5no9zF5wXfHAMdA83F10mZmR2
-         byHlkvtVETenZra6Y/cv360JEiOprTWnb11hyAdWZWc32Wr1W1AdlHyChILLWfKmYa07
-         uCbniayyGBZXRzvNTV2jX81EcmjfgqV1JQdifSBBUFxmJlbYT3XDYQ+n8qSggJzy+AYt
-         bu7W1XifbJFLm5U5GB/lqPL5l2v/9wWPjKX4CXMwH2UQbZlCXfkT1gLhtBLjbmczWARF
-         xW6g==
-X-Forwarded-Encrypted: i=1; AJvYcCX5mNaLHD2sa3ZiHfR13d6hfzipYThk5Hhlt686Geo/8UH2ol2u7X7bf6YlQA0xPUxm7heoDfjDLnFcGW4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytTEw/zlJ11HEfXD/LYoZiIzzeiZQU1k6YYsnc4GWPkz7YyItx
-	hlN4kBJQeIZ6/LRk/DvBdOSboV2q+eSFUMs1Qm2ALy5Oir00HY/OOOSxHq7iga2SXQcGjWYoZXT
-	WgA==
-X-Google-Smtp-Source: AGHT+IGRljwotQdVRaKKCETZgGbDJXMaM7jHiVXaeRigV9PLjGdO8DYST6DDfxjAYmdpf16UqNIiKulduZA=
-X-Received: from lfbfj5.prod.google.com ([2002:a05:6512:2585:b0:54d:63e1:a4d5])
- (user=khtsai job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6512:3f28:b0:549:8db6:b2dd
- with SMTP id 2adb3069b0e04-54d64aa9d6emr368670e87.31.1744797922481; Wed, 16
- Apr 2025 03:05:22 -0700 (PDT)
-Date: Wed, 16 Apr 2025 18:05:12 +0800
+	s=arc-20240116; t=1744798004; c=relaxed/simple;
+	bh=W43sdgqXTheATUR1xnioTdkhPutfeDefzJfdTHToV9g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LfadzdwEFsKha/ibHdt3Vv+NEFdOfSOw6uGpd9FIAhEcTzh6gZBNgKrDfSWc116hinzoBMjKD8XyMnlVeVZjjWTPNHuiq9aTSHKkppaDbWnX0w5U54HeyH8tnhbnZhm1lZuJ4NGDwPzqDcOoewiIhPiyMjC18vHPfn/Nun7wmes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bL3EH1dg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UdVJw91v; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=06qahNkR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LDu48oUJ; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C96A2211A9;
+	Wed, 16 Apr 2025 10:06:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744797999;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4eqvmwnkNKXAjzGYgdgqGMvB0VzEfPjxj8p2HmbMKXQ=;
+	b=bL3EH1dgQcINNM7gPVP/zG222MLC+LdZU8ghWj0C1mnn7tDrDsehj6MbPrLyhODb1gS4Xq
+	JJsYO1w57YsmOaUkmtjqKUBqqz3ym6PYunlvm/HUtu9MrJnG9x/zLNL4XODHZ8HRnJ8CZz
+	ZcCGzkryYSU+Q+tcqFJmNuOrTRmA4nE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744797999;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4eqvmwnkNKXAjzGYgdgqGMvB0VzEfPjxj8p2HmbMKXQ=;
+	b=UdVJw91v73bwdqXkO6XBHSCKRTZA4i6rRfuTjw5dXGdJWLoP3Lv0rYacWJmbIE9xxfu50t
+	eladOwJ/gqqzzRAw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=06qahNkR;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=LDu48oUJ
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744797995;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4eqvmwnkNKXAjzGYgdgqGMvB0VzEfPjxj8p2HmbMKXQ=;
+	b=06qahNkRTslsaqSo4Zm+P2pEDVQuhiwaaV5kZznGkrHel+z78i1FqLGbbWdgmjFG8+v1FV
+	zvdWNsrgoyJPXOQV4cdaaE1rAGGR8xX96ppDdn7NvubN98LBU0MUqEfv5oR2ciuB+NU17T
+	jRma8ZARnJszTXZ5SMFEE2G/n8bcuJs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744797995;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4eqvmwnkNKXAjzGYgdgqGMvB0VzEfPjxj8p2HmbMKXQ=;
+	b=LDu48oUJjbf37y6TIWvEsR/bCzp4FVZxgOIAD6zsIBwcnJsIvs/SywNaN+/aN2hj1DRlAx
+	KAiEcuDYrTT2dfAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B2B9A139A1;
+	Wed, 16 Apr 2025 10:06:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 71RgKyuB/2dqfQAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Wed, 16 Apr 2025 10:06:35 +0000
+Date: Wed, 16 Apr 2025 12:06:34 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Integral <integral@archlinuxcn.org>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: Maybe we can set default zstd compression level to 1 when SSD
+ detected?
+Message-ID: <20250416100634.GB13877@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <8c2e5d04-dbda-4b12-992e-34f0e70c7218@archlinuxcn.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.604.gff1f9ca942-goog
-Message-ID: <20250416100515.2131853-1-khtsai@google.com>
-Subject: [PATCH v4] usb: dwc3: Abort suspend on soft disconnect failure
-From: Kuen-Han Tsai <khtsai@google.com>
-To: Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Kuen-Han Tsai <khtsai@google.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8c2e5d04-dbda-4b12-992e-34f0e70c7218@archlinuxcn.org>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Rspamd-Queue-Id: C96A2211A9
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.21 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	SUBJECT_ENDS_QUESTION(1.00)[];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_TLS_ALL(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,suse.cz:dkim,suse.cz:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.21
+X-Spam-Flag: NO
 
-When dwc3_gadget_soft_disconnect() fails, dwc3_suspend_common() keeps
-going with the suspend, resulting in a period where the power domain is
-off, but the gadget driver remains connected.  Within this time frame,
-invoking vbus_event_work() will cause an error as it attempts to access
-DWC3 registers for endpoint disabling after the power domain has been
-completely shut down.
+On Sun, Apr 13, 2025 at 12:07:26PM +0800, Integral wrote:
+> Hi,
+> 
+> When SSD is detected, maybe we can set default zstd compression level to 1.
+> 
+> Current default compression level for zstd is 3, which is not optimal 
+> for SSDs.
+> 
+> This GitHub Gist [1] can serve as a reference.
 
-Abort the suspend sequence when dwc3_gadget_suspend() cannot halt the
-controller and proceeds with a soft connect.
+Well, while the linked gist is thorough I don't see that zstd:1 clearly
+wins against zstd:3. The compression brings overhead (more extents, CPU
+cost) so the preferred criteria should be space savings. The runtimes of
+read and write seem to be roughly the same.
 
-Fixes: 9f8a67b65a49 ("usb: dwc3: gadget: fix gadget suspend/resume")
-CC: stable@vger.kernel.org
-Signed-off-by: Kuen-Han Tsai <khtsai@google.com>
----
+I haven't found any description or classification of the input data
+(other than known to be incompressible). This is an important factor.
 
-Kernel panic - not syncing: Asynchronous SError Interrupt
-Workqueue: events vbus_event_work
-Call trace:
- dump_backtrace+0xf4/0x118
- show_stack+0x18/0x24
- dump_stack_lvl+0x60/0x7c
- dump_stack+0x18/0x3c
- panic+0x16c/0x390
- nmi_panic+0xa4/0xa8
- arm64_serror_panic+0x6c/0x94
- do_serror+0xc4/0xd0
- el1h_64_error_handler+0x34/0x48
- el1h_64_error+0x68/0x6c
- readl+0x4c/0x8c
- __dwc3_gadget_ep_disable+0x48/0x230
- dwc3_gadget_ep_disable+0x50/0xc0
- usb_ep_disable+0x44/0xe4
- ffs_func_eps_disable+0x64/0xc8
- ffs_func_set_alt+0x74/0x368
- ffs_func_disable+0x18/0x28
- composite_disconnect+0x90/0xec
- configfs_composite_disconnect+0x64/0x88
- usb_gadget_disconnect_locked+0xc0/0x168
- vbus_event_work+0x3c/0x58
- process_one_work+0x1e4/0x43c
- worker_thread+0x25c/0x430
- kthread+0x104/0x1d4
- ret_from_fork+0x10/0x20
+> An example is Fedora Workstation [2], which uses `zstd:1` as default
+> compression option.
+> 
+> [1] Link: 
+> https://gist.github.com/braindevices/fde49c6a8f6b9aaf563fb977562aafec
+> 
+> [2] Link: https://fedoraproject.org/wiki/Changes/BtrfsTransparentCompression
 
----
-Changelog:
+Unfortunately the Fedora evaluation disqualifies itself because it uses
+/dev/urandom (practically incompressible) and /dev/zero (trivially
+compressible). I would not select the default based on that benchmark
+for the wole distro, it's IMHO flawed or incomplete at best.
 
-v4:
-- correct the mistake where semicolon was forgotten
-- return -EAGAIN upon dwc3_gadget_suspend() failure
+For the evaluation I recommend some commonly found data types based on
+their compressibility, like we did for the recent fast zstd levels
+https://lore.kernel.org/linux-btrfs/20250128132235.1356769-1-neelx@suse.com/ .
+Binaries, documentation, enwik9 (commonly used for compression
+benchmarks), linux sources.
 
-v3:
-- change the Fixes tag
+The classes are not exact but should represent files that are common
+and have a chance of being considered for compression.  Already
+compressed files or other hard to compress files like media are
+detected and not considered by the heuristic.
 
-v2:
-- move declarations in separate lines
-- add the Fixes tag
+Changing defaults is possible but it affects everybody and from past
+experience breaks somebody's use case or negatively affects performance.
 
----
- drivers/usb/dwc3/core.c   |  9 +++++++--
- drivers/usb/dwc3/gadget.c | 22 +++++++++-------------
- 2 files changed, 16 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index 66a08b527165..f36bc933c55b 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -2388,6 +2388,7 @@ static int dwc3_suspend_common(struct dwc3 *dwc, pm_message_t msg)
- {
- 	u32 reg;
- 	int i;
-+	int ret;
-
- 	if (!pm_runtime_suspended(dwc->dev) && !PMSG_IS_AUTO(msg)) {
- 		dwc->susphy_state = (dwc3_readl(dwc->regs, DWC3_GUSB2PHYCFG(0)) &
-@@ -2406,7 +2407,9 @@ static int dwc3_suspend_common(struct dwc3 *dwc, pm_message_t msg)
- 	case DWC3_GCTL_PRTCAP_DEVICE:
- 		if (pm_runtime_suspended(dwc->dev))
- 			break;
--		dwc3_gadget_suspend(dwc);
-+		ret = dwc3_gadget_suspend(dwc);
-+		if (ret)
-+			return ret;
- 		synchronize_irq(dwc->irq_gadget);
- 		dwc3_core_exit(dwc);
- 		break;
-@@ -2441,7 +2444,9 @@ static int dwc3_suspend_common(struct dwc3 *dwc, pm_message_t msg)
- 			break;
-
- 		if (dwc->current_otg_role == DWC3_OTG_ROLE_DEVICE) {
--			dwc3_gadget_suspend(dwc);
-+			ret = dwc3_gadget_suspend(dwc);
-+			if (ret)
-+				return ret;
- 			synchronize_irq(dwc->irq_gadget);
- 		}
-
-diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index 89a4dc8ebf94..630fd5f0ce97 100644
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -4776,26 +4776,22 @@ int dwc3_gadget_suspend(struct dwc3 *dwc)
- 	int ret;
-
- 	ret = dwc3_gadget_soft_disconnect(dwc);
--	if (ret)
--		goto err;
--
--	spin_lock_irqsave(&dwc->lock, flags);
--	if (dwc->gadget_driver)
--		dwc3_disconnect_gadget(dwc);
--	spin_unlock_irqrestore(&dwc->lock, flags);
--
--	return 0;
--
--err:
- 	/*
- 	 * Attempt to reset the controller's state. Likely no
- 	 * communication can be established until the host
- 	 * performs a port reset.
- 	 */
--	if (dwc->softconnect)
-+	if (ret && dwc->softconnect) {
- 		dwc3_gadget_soft_connect(dwc);
-+		return -EAGAIN;
-+	}
-
--	return ret;
-+	spin_lock_irqsave(&dwc->lock, flags);
-+	if (dwc->gadget_driver)
-+		dwc3_disconnect_gadget(dwc);
-+	spin_unlock_irqrestore(&dwc->lock, flags);
-+
-+	return 0;
- }
-
- int dwc3_gadget_resume(struct dwc3 *dwc)
---
-2.49.0.604.gff1f9ca942-goog
-
+The evaluation from the gist could be enhanced with more input data
+types and CPU strengths.
 
