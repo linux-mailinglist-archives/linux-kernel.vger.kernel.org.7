@@ -1,286 +1,246 @@
-Return-Path: <linux-kernel+bounces-607130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C602A8B856
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:07:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3134A8B81A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:02:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76C963AA086
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 12:05:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0D627A1B50
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 12:01:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF4C24C06C;
-	Wed, 16 Apr 2025 12:04:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF45B2459F3;
+	Wed, 16 Apr 2025 12:02:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eZbWGhzD"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Yu40u7As"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2049.outbound.protection.outlook.com [40.107.237.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E07724BC07;
-	Wed, 16 Apr 2025 12:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744805086; cv=none; b=Gk/quiBddYo7ewPA/zr/98WN0Q7j3L8TU5vlxMftYf2SgudZhq1k2/K5R1UizfU7teeg5mmy8T0Y255a3YhDGptAlukGhFUMHe3uKonQrw5TLAv5AXTOw35zb9uICDb4HMlcC1rymSHeAccs2zLv8wB/HZMor5xz5kBWClYDYyk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744805086; c=relaxed/simple;
-	bh=0eqbW/ADX0/3OFgPSkh+pNLMavSwHy31i9yMWuD4ffI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TvVk36+fdxZ9AxmRnuXLsC066dZyecFShXclIrSUHSJFc3zhMbWVXcs5E67L5kWGwsuvu+sfrwB9V2M0mpLDZYXPc1aqGeUfkBDFtDMeBZQLbozsAlNSaxM5tvmXAuQG0P+SztSmmSjU/jAiON/Y8unkSdYwqZ2SPmzJvFZxF6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eZbWGhzD; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-227cf12df27so5411635ad.0;
-        Wed, 16 Apr 2025 05:04:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744805084; x=1745409884; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ie7hREUa4SMJAa/pZTbegFZ7KD0h8GRA9ZCVQg1tUQo=;
-        b=eZbWGhzDJhSPdJpzPPslkfmlwPP7KaRcuE/uH38hn4P4XDNRrztdjko/SRd/ySGHt0
-         YuHPrGEF3EXkQTHUyBWvGecoBqXKzmYwlCmmqVwtkFid5jeMommqYIOmwdTg+hREVRF3
-         Q9Zo7djlAxxAAGK1NBo8vS5PBz3Tm59hEitcxnFWQyd46bU7GaM3aRLuJtixuq7LDa00
-         ASRc+NgYcO2nINdZqOh7xCXzENeDnp/XD+0aCxuakxF+Iajz+KgPZGRMyepuLx34F8KF
-         KcXc0hdY3l8q1AlwB/R8qTDWoMBsCsTez/QOp9naTbW9DoaySTr78+ko3kz/wzvlX3RJ
-         R+mA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744805084; x=1745409884;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ie7hREUa4SMJAa/pZTbegFZ7KD0h8GRA9ZCVQg1tUQo=;
-        b=Ya2XW/D35Yidhj79U/AUjgDa8USZDZR71C7YJHTFlgwAsR95xbm2F7ivFIrSBTN5me
-         /E5PUbmTg1dOlCxrZP02LzetTxOH6wAMW2ADupZfgWV0/J1cJ/R6hsUVpRkNvWuBmzyK
-         MaH7SZ3M39/YFjSo4T/ijd4wk8WtFrOaf8zR9xG16Knsk9W24oEEst3upnfWf+vBKgRF
-         6xnbxhLshArZRdq50OhPF7cf4rCEgeNjjPfI7GSPgDZ96HQaJDrf/xBOdsIY/iFQCH+r
-         CWbvtqEWr84FkUoDFi/RTDPhpBB1/FZevzxM6paAtMgKgibshm/SQ7EnngV+ykR2CNEl
-         napw==
-X-Forwarded-Encrypted: i=1; AJvYcCUpyBl7X8pAX0ImUim0aEXIPP34vq5yGgl5kl5Rkx3uidcDX1t0nPh/rnDuGr5/GcPS2CIHdaYMxe2I@vger.kernel.org, AJvYcCWE1pUD/ekGwg28z6phdjbk7dhVT0ind6u4LxeToCPZyWtZ1b/IXRHbslf3L49zd98SpMOGAY9Z28xyoQFz@vger.kernel.org
-X-Gm-Message-State: AOJu0YznXpuKbcLaPnOI2wD7xv/thUa7SRUh+0PKAVgYZok7Vs3bsupY
-	d3bbIDMyRTNLZdtSFcMyIQu/047cQpUxCr/fmnbMiOW6iJ1fLVHh
-X-Gm-Gg: ASbGncvVoblRBylfdcLsPpEiT9MoCeCIUzDw3ac1oIOLJPNNqqB1GeRCR7K8HPu3lVx
-	/i16zMGMAFlntAvpqNPNgjVxYN1EJO8J9gTLUGGcJIIaV5I0EBl29+nK4dxG3NQPrpTMNFkA1Bd
-	jN0533f79Fn98Ztt5R3NJbonc2WyY11HVOxJ4qyl6+D3qteGLWwUJW+Ew1uMH7XOV+lK4dMSK07
-	IUijLSWkI/bIZma3OrNR3e8WfweBuvXvMuwdq8NmcfJ53fyTzVkuJ5+rTDtLwsduH+3kR7fldTk
-	dJupP7S5hbfCYZcG15Y+BTkIbd14gCz9z+pqu/2NahBysYIq4A==
-X-Google-Smtp-Source: AGHT+IF3c77cgFMGhot+IttF6abeW9f9RiIxUS3EHqsIYXeT4jB4a6Vdk4WPQdSgQAWsR+Iaultg5w==
-X-Received: by 2002:a17:903:188:b0:220:cfb7:56eb with SMTP id d9443c01a7336-22c35f1cd23mr19478865ad.26.1744805083546;
-        Wed, 16 Apr 2025 05:04:43 -0700 (PDT)
-Received: from nuvole.. ([144.202.86.13])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c33febfb3sm12033385ad.259.2025.04.16.05.04.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Apr 2025 05:04:43 -0700 (PDT)
-From: Pengyu Luo <mitltlatltl@gmail.com>
-To: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Pengyu Luo <mitltlatltl@gmail.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Abel Vesa <abel.vesa@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] phy: qualcomm: phy-qcom-eusb2-repeater: rework reg override handler
-Date: Wed, 16 Apr 2025 20:02:01 +0800
-Message-ID: <20250416120201.244133-3-mitltlatltl@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250416120201.244133-1-mitltlatltl@gmail.com>
-References: <20250416120201.244133-1-mitltlatltl@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474332327A1;
+	Wed, 16 Apr 2025 12:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744804943; cv=fail; b=jy6lC+/TSATUOBJLuJ2CgfauY0R8toBwsi+LUkVfol+9z/pIqjvoMZLxhyU9eloJ3fIryQlyEBzTiPDzny5ILIZXg7S8pRcqE3DacDKKXtRd8GI8oPAkzkhF1jgFj8/smbUKbSAiaIgYzSqMbkurDXIvEuZOo0Vyv0NWc1P7vq8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744804943; c=relaxed/simple;
+	bh=jYSSLjsnzQnoYPNtRz6GWl/u1bGiBQS2CZpoXpJ7SMY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=eBubJdobf9kQE452yhNa9nj5RFN+hcYPaGrmRj8IQtz+UZ4+sV49LNElZGgelWSm4JhTayiNOdUbp4F1pEhLQP6Km8IYTfd6w/+kQkJkk6hOx64Xwp3K2O8cQ7IlZjdxcySoAWYTmDosbz/sIUyJxGi9BIfT5pFGK7zIBFoAtMM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Yu40u7As; arc=fail smtp.client-ip=40.107.237.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dtR0iwcQuVqljLOQTaBO+tFGSYMm6v20qhBVQ/newRZzupVuNlEE2StEniL50EYb8QzR+ASajs1X78x6l53Hr+PCq3d269z+tzy8bUjnugN3KOr4cJ7LBaicrXzsBFQEwBzFkR7v0QVmf8Sd/QwRaiYzPL8p09927RpQvrWyrlyv23vsWHe3nS394Ncpqzjsgo/Hqu+aZUru7HcDcSPzaikDOFfMFwJcDX5Dq8f1FCqKFxjM16c2nKZAGr8/sQDImEatjktcdYMaCgtqLlfV/T3hhOjHWDXaroGXuapB6ls9mFazYmVX8fgHv29iQ6SB09qGdUGW3cu0o7fnXOCsKg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vVZjJ+syV6a/tEQjdxtSZyR4V5oljUtmSGQ1bMLXToc=;
+ b=g45FwNoiKVYRw9behL0pCW4M9UPz/N/qar5njXqAgMe85VgAK+3VkeWL33dqXZ7Z+LyaHb1V9RV8suZPGpRrFXYHRQAkhXqGHmcTSUIhy9n4fHNd9SXPlTWqYp83ww25mUEV886P7klTT+AUX9B1hjyl6CkgaEzMKB0hdRLMuIOmS+sVSoSp6AM0wz+HcgWQ7CSwdQKhsHiLyI1hyyKvwRvzvPddG8LrPQwist0ck3UCKw52a59ocha88NQru7sBoBjfFG/b5roWc5B2FrhH2vz/faqNYWyKr4VqeQQEyyWjNOcNfcf/iPO+MWGhOioQX4G46UqMtUGnWWdwiKcY1w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vVZjJ+syV6a/tEQjdxtSZyR4V5oljUtmSGQ1bMLXToc=;
+ b=Yu40u7AsB3y0seeWv8sjEkxOcJHhq8pqWl5XmY6CPm/4CoB1WvcwzObChpNcAbxEqoNLA4EueMYYEfafT68MNAVCLVLjXhlJ/W/RLfH+Av8NmzM89pVCMi1KCwhgHT00BKwD8deomAvXvQr+dGrk9i8bwr36HiyjxajMoZlrgh+/n8OmY3dLjU6W91nbPuKsiJIlwW3KBT59t7lrbOeUVjAXvKboVamw/3QA042Ph1luh5hrbvCZcqfj3FPO9XtfEwb5fWlg1fvRsyZBYbDfxuxQP8GYHBKfzsMfX4cwvGPUVc82tHYSzTt8NSNptahcTXxowIEep4du5ah5bcRCEA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB7548.namprd12.prod.outlook.com (2603:10b6:610:144::12)
+ by PH7PR12MB8794.namprd12.prod.outlook.com (2603:10b6:510:27d::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.33; Wed, 16 Apr
+ 2025 12:02:16 +0000
+Received: from CH3PR12MB7548.namprd12.prod.outlook.com
+ ([fe80::e8c:e992:7287:cb06]) by CH3PR12MB7548.namprd12.prod.outlook.com
+ ([fe80::e8c:e992:7287:cb06%4]) with mapi id 15.20.8632.030; Wed, 16 Apr 2025
+ 12:02:16 +0000
+Message-ID: <817d5a9f-63c0-40b2-8e97-4a29185c0455@nvidia.com>
+Date: Wed, 16 Apr 2025 15:02:13 +0300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/2] net/mlx5: Move ttc allocation after switch case to
+ prevent leaks
+To: Henry Martin <bsdhenrymartin@gmail.com>, saeedm@nvidia.com,
+ leon@kernel.org, tariqt@nvidia.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, michal.swiatkowski@linux.intel.com, amirtz@nvidia.com
+Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250416092243.65573-1-bsdhenrymartin@gmail.com>
+ <20250416092243.65573-3-bsdhenrymartin@gmail.com>
+Content-Language: en-US
+From: Mark Bloch <mbloch@nvidia.com>
+In-Reply-To: <20250416092243.65573-3-bsdhenrymartin@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR4P281CA0062.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:ce::19) To CH3PR12MB7548.namprd12.prod.outlook.com
+ (2603:10b6:610:144::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB7548:EE_|PH7PR12MB8794:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5a88b8b1-46c7-484b-bbdd-08dd7cde880c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|921020|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QXFlMnZvanJOdlpqOGE2Sk5oeFB0c0NpM2FHZ0xYZjZwaDdqYzNoODdwT21z?=
+ =?utf-8?B?cHl6dWkvZ0w2MXNFVS94cTdwMm5VLzM5eGc4YmNlYzZmSGloa3pTWFBYZ1p5?=
+ =?utf-8?B?eHBHd1ZueTltbHlLVWVXZ1pBUXd5cU04VExkYkliS0hDdkhXbXNYWFhVMVd1?=
+ =?utf-8?B?ckt2clpZUTJhV2dwMEtCbjN1dTZUK0JEUkZTU0thSDBsclI5MGtPZlc5akJC?=
+ =?utf-8?B?czVxcUZkQjA4TTFZU1VRaTE0NCsyRFVPWWxJaEptaDNVeXVzMzdLK1Irb3RB?=
+ =?utf-8?B?ZkNvWEo2SWliOW9USDQwclBkUTVWSkxVZEhxbnY3bUY4VDFvVlowSk1ON1ZC?=
+ =?utf-8?B?UjhaNmF0YXBVYzhVekN1TElKc2x6dVZOTE5OOWFEeXd5dnBOOHlMOThQazVB?=
+ =?utf-8?B?RkhsSzZQeVRpNlpWV1ZpK0dVM0pQY3RoY1RkV1ZaU2lNWFpYV0FmOGVXTXVL?=
+ =?utf-8?B?TDNKQ1R3Z0pmbG5EWDRzUE80VnNDeC9nR24zbzFhOTNjY1RoWmtORG1vQ3dh?=
+ =?utf-8?B?WnRrSFJtRVZBWU5MbVI1Ky8xNWRVVEVnclNXUWthcEFVazlJTDhaZ1hTYnpl?=
+ =?utf-8?B?WlYxOTMrTGFrNTNJNG9TVGI0eGZWd2hOYlJrREtqV0RlK2x6R0FYZGJidG4r?=
+ =?utf-8?B?dUxlMlBXWW9oZU8vdit4SmhyRFNBSkFBRjF2eVFXakpzcG5PSkJLMHhWTHBP?=
+ =?utf-8?B?eGtQUWY2UlRNVEszQkN4bWszY1hvSzlld0t2RFg0Z3VXUldWUzIyMVFpWm1R?=
+ =?utf-8?B?K1dscmNKUTRabUs0NlB0dFhjcVRmL2tOZVhZMGdMQmtYeEFXdWY2NFhmeUIr?=
+ =?utf-8?B?cTRtWW9Qai9NcE1tRWhzS1dJalhVT0NtenJZcmdzQWE3QkcyT0M5bUREUnZS?=
+ =?utf-8?B?aVZRVVVQcGxSZ29TR1VZaEcxeUU3S0ZTa0pMM3JibngvTytqbS8vSVBpYWhv?=
+ =?utf-8?B?cHdtQXFwMzVGWExaSE9KNURVa0UxQURlNHlXMVVBSjBHZ1VHM2Q5bzZZNnVR?=
+ =?utf-8?B?VVd6cjR2dFZKTUErWkRvY0NoMUZaczViVW5rYlBvdFJsSTNqd2g0QytZQjJ2?=
+ =?utf-8?B?cWNSTlBlUGtCQjZoeDZlUHMrSk9VU280M1pQQzVGMWZyV0dHV3paNWt2ZGhJ?=
+ =?utf-8?B?dlZ6akNRK25PV2pVa1B6WEZyaWtoZ01ZcFE1VHhsRFV6N2tQRWpJV1VJNU1R?=
+ =?utf-8?B?Q0JiNHZiMUIrOTB2L3NaTDZ3MEZEZlJaQW5XaG43M0NxUFZlTkFJOTYrOG80?=
+ =?utf-8?B?Z1V3MHRFcnl5QTlWeXdncUFJelZjc2luQTh1YTFmZ24vUmppaS9ReEQ2T21M?=
+ =?utf-8?B?MlQ2dUVnSXJZWnpXYmI4UUppOVpRQnNYcXVqd044THluZVpwMEZ6VVp0WlhZ?=
+ =?utf-8?B?MmpJakk1L3hkeXZBTUxndVFKd3F5S0xRWi9GM1JNQVdTRHdFZUtnaXlRaFoz?=
+ =?utf-8?B?YlMweHVkcG9kTzlaamRaK3dsNWNaT3kzclRlT2tQSzkxZTVNc3RtUmpiUEh2?=
+ =?utf-8?B?dldPVWJVblpJQkpZY1FmNWl0RGM2WkhBT1EzSVJ1REZWOGJCSkZ4akJ5L2w4?=
+ =?utf-8?B?Rm95cUp6eExFMVNTTWtXS0JEQ0Nkd2lsYUo5R0hFTk5md3lQSzViRkdvRzgw?=
+ =?utf-8?B?T2djMEpSTkZxWVZJVng2TE43bVJMTFVhd0kxdVFPOWllQmRkUE9HcU5rRGFU?=
+ =?utf-8?B?OWRReG1wTVhUS0hWeHZSWEQvcGNPY0VEM0dqcWN4LytGd1FPbXEwdEdmS05V?=
+ =?utf-8?B?ejZWWVVXWVRtS0QxUU1XZThwNUV2b1BCTGtiV1R1WUFIaW9jNlJSREJMK3pl?=
+ =?utf-8?B?RlVBekFJVHQxemp3dXBuU09uYmFsdkxUSDY2YXNycU9CczhrbG9ISGE3cDVZ?=
+ =?utf-8?B?bUtQTnQ5WDltTGFoZkZCVUZweVlMQTdiZHR6VjFXYkR2RGsreWNLUXBhSGxv?=
+ =?utf-8?B?QVQrdFFsbmJsbDc4QUdqRjB0SmZUS09lQlJYYUNkZHV0WnpVelp2YWwrMndj?=
+ =?utf-8?B?RXcvMGhjVThnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB7548.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(921020)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bFNwL1h2eGYyczU5ZU1NRFVHSHlNdldSSU81d3FDM2UzK09HNkpyQjFrNXIx?=
+ =?utf-8?B?VE42NGROUnp4SG85YU8zWWFTdG51Q0ZSa3NqUEZtYk9RYmZxSENwWXdZWWZ5?=
+ =?utf-8?B?cklmRG9yZ0pMZmloenZjZlU3WjRKN1pSTDZ6Y0tKREp3VWUyc0dSalVCSGh3?=
+ =?utf-8?B?MDJucnN4U2VueG1FOUJ2T1p4bmo4eG1aNTh6TEg3Y01FRXJhRmwybGlJT1FC?=
+ =?utf-8?B?emRaeXJLNW5VRXFzaEVPQnR0bk5seTR1VEJsNERTbmI1a0JrSkdsdXkrVUFS?=
+ =?utf-8?B?MHEzdWlkRzlxWEQ0aFJtVXJvU3NaTDdtRUwwOERYZnE5Q1pZaHQxUFBlRkZt?=
+ =?utf-8?B?UXJUTkxVMUlyTTVlR0x4UWZJZ0tzWDEwZnVCQVprUlJ2cm5GU3l2eFJkS1FR?=
+ =?utf-8?B?RlhsaVpacUpDZE1tMVRrYy8wOE5rUUU0a1p1cGF5MlJ1aVMxcEJYTEhGdE8z?=
+ =?utf-8?B?K0xIUG5ZWGExUkxjeEJwc3U2Q05uejdyWmFtSHFIRFN1eVpRWVRCSW9BcURr?=
+ =?utf-8?B?Smc5cDZzTmVhU1gySmxvR0lnREdqUHJnYUJmVXVKS25WcWxTeTVBRXdtdDRJ?=
+ =?utf-8?B?cjNDakt1bFFGc0VtOWFNU0FQQWlWYVhtbW9UOHBYZk91OCs2KzVERHd2WldM?=
+ =?utf-8?B?ZU9EL21IYXVnTUxMejBEbFdJZHRsWW5FaUdBWEhlLzBaajR2UGl1U2VmYWZt?=
+ =?utf-8?B?MndGaitXMDl2YTdqN3AvWXZaKzlNa1I1aHBHNUYyd3h5RER2Q0FnRHJmdVlO?=
+ =?utf-8?B?U0J6OCtYZlVjOGFBeHczdXh4d2M1OFFrQUgyRzJMSWRMQWxTVVlUbTBXZjhM?=
+ =?utf-8?B?RVJUc3NWY0lrSkpsVmFjaUYrVmdpUHI2TTIvd2k1S0laKzRJK2pFRjhOSjRW?=
+ =?utf-8?B?eUl6NlBQcjJNU04rVWsweTRvUy9mQVZXOHhEc29Ra3Noa2NScXlpM2VnT2Y3?=
+ =?utf-8?B?SFFRSHc5TXdzeTZCOHozK3ZNMXQ1b25LclY4T0RqUWErcUpmUHJ2WThsSWZK?=
+ =?utf-8?B?d3NhQlpzQmMvMkV1NUtsN3dWRk94M0FYTVJ4NW1Kdm5hamhnQXlQNEJhUWdV?=
+ =?utf-8?B?Y0NwUkdBSnN2SEVoMGtkYm9xaGUrS3RxUUZ1aEc4MjVQL0p2OCs1RFlSL1hk?=
+ =?utf-8?B?dTlMVC9xODRtdnJENTUveGw1ZDAvWFRrQm5ZdS9BMndHam9scGRreXNoL0NU?=
+ =?utf-8?B?VWNKamx3S3JmSXYwMTFhT292eHNWSnNvNXhuejd4WG5Tb3hOcVhzRkdBT1NH?=
+ =?utf-8?B?Q2xOMzE3UXZ0cHlyV05TNUdrNXprZFJFV3krL3hzS3FKa0V1N2Mwa041amgx?=
+ =?utf-8?B?ZlBpWXFGaXV5SjlBMDlqenZyQXliZ2RaZTgxK0VBb1pDRktPQkF2UmFsVkU4?=
+ =?utf-8?B?cW9OODI1ZTlSank2V3pPKzI5bmVFYk5lRlFFYkptdnRJSUJQQlYrNHIvRWti?=
+ =?utf-8?B?VnZCbXc3eWNva2dDRlRibk5YS1NuVUJtV1JuNjA3NTRjTnFra1p4Sll6SHpr?=
+ =?utf-8?B?d3dZWHozYmoyUDUyYjcxYkJiMVgyMFRyeURCVTZYaGJTaWZncVdqWkROdm1w?=
+ =?utf-8?B?Vi83bkVicjY4dmt5TGVISTZSMzh6WTg1ZVNpZ1dkVkpTRE9Dc2dhRWNtczNE?=
+ =?utf-8?B?R1NxUEJnUjU3Z0hNK2tMUU4xWU9NL1dFSlJzNmJzZFJjSVlKVmx2WVRhR053?=
+ =?utf-8?B?cldvaFVPNjAwZUY3a1N3dzU2cjN5eUJWYmx3T0VWREhRYlhpZ3JJYUU3UGsw?=
+ =?utf-8?B?WjlHeWwxRk9DOVBrODFtNXFRVVdVOUkreDNnZFd0bHNiMHBGaS9FWG90QnQ1?=
+ =?utf-8?B?VnNHaWJFcUZDaU82cGlsTm5ReC9NTmZYbEpkQmNGNDUrb1hKUmhFSXN1eGNB?=
+ =?utf-8?B?U2lHUTRvMnpXM3kzaGtoNUIvYkprUUVVT1ZWcVFZa0JzaGFDR20ra2FVVTF6?=
+ =?utf-8?B?Q2kxMC9BTHlFdmZ0SllkNHpUWEV6cE83aFpBM2FzcEN1RFdNNzVzY2U0MEtn?=
+ =?utf-8?B?TGxkY2FJenQ2QVRvUHZUNXdSOUFVOWdEU1FMdXFDb2c4Q0FaeUY4N2Z1U09T?=
+ =?utf-8?B?d3ZrVzFmaC9RQytIbE13N1MybkgxaXU5cGF0MXU0bGNhUFFwUGVMUHJSVGlY?=
+ =?utf-8?Q?MfeT+QBz6PS+JEe1IXRsetKrN?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5a88b8b1-46c7-484b-bbdd-08dd7cde880c
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB7548.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Apr 2025 12:02:16.6390
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3s7je+PEZgtWpJBSPuFMis1A5gy1eJRtAQvqCqAMwxaqWrk7Sn2OL0nuxXddupK3YxMlBhhCKLb+lrplqfbbwQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8794
 
-In downstream tree, many registers need to be overridden, it varies
-from devices and platforms, with these registers getting more, adding
-a handler for this is helpful.
 
-Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
----
- .../phy/qualcomm/phy-qcom-eusb2-repeater.c    | 105 +++++++++++++++---
- 1 file changed, 92 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/phy/qualcomm/phy-qcom-eusb2-repeater.c b/drivers/phy/qualcomm/phy-qcom-eusb2-repeater.c
-index 6bd1b3c75..a4b75e70e 100644
---- a/drivers/phy/qualcomm/phy-qcom-eusb2-repeater.c
-+++ b/drivers/phy/qualcomm/phy-qcom-eusb2-repeater.c
-@@ -68,12 +68,27 @@ struct eusb2_repeater_cfg {
- 	int num_vregs;
- };
- 
-+struct tune {
-+	const char * const tune_name;
-+	const char * const host_tune_name;
-+	enum eusb2_reg_layout init_tbl_idx;
-+	u8 tune_reg;
-+	u8 tune;
-+	u8 host_tune;
-+};
-+
-+struct tune_cfg {
-+	struct tune *tune_tbl;
-+	int tune_tbl_size;
-+};
-+
- struct eusb2_repeater {
- 	struct device *dev;
- 	struct regmap *regmap;
- 	struct phy *phy;
- 	struct regulator_bulk_data *vregs;
- 	const struct eusb2_repeater_cfg *cfg;
-+	struct tune_cfg *tune_cfg;
- 	u32 base;
- 	enum phy_mode mode;
- };
-@@ -108,6 +123,79 @@ static const struct eusb2_repeater_cfg smb2360_eusb2_cfg = {
- 	.num_vregs	= ARRAY_SIZE(pm8550b_vreg_l),
- };
- 
-+static struct tune tune_tbl[] = {
-+	{
-+		.tune_name = "qcom,tune-usb2-amplitude",
-+		.host_tune_name = "qcom,tune-usb2-amplitude-host",
-+		.init_tbl_idx = TUNE_IUSB2,
-+		.tune_reg = EUSB2_TUNE_IUSB2,
-+	},
-+	{
-+		.tune_name = "qcom,tune-usb2-disc-thres",
-+		.host_tune_name = "qcom,tune-usb2-disc-thres-host",
-+		.init_tbl_idx = TUNE_HSDISC,
-+		.tune_reg = EUSB2_TUNE_HSDISC,
-+
-+	},
-+	{
-+		.tune_name = "qcom,tune-usb2-squelch",
-+		.host_tune_name = "qcom,tune-usb2-squelch-host",
-+		.init_tbl_idx = TUNE_SQUELCH_U,
-+		.tune_reg = EUSB2_TUNE_SQUELCH_U,
-+	},
-+	{
-+		.tune_name = "qcom,tune-usb2-preem",
-+		.host_tune_name = "qcom,tune-usb2-preem-host",
-+		.init_tbl_idx = TUNE_USB2_PREEM,
-+		.tune_reg = EUSB2_TUNE_USB2_PREEM,
-+	},
-+};
-+
-+static struct tune_cfg tune_cfg = {
-+	.tune_tbl	= tune_tbl,
-+	.tune_tbl_size	= ARRAY_SIZE(tune_tbl),
-+};
-+
-+static void eusb2_repeater_write_overrides(struct eusb2_repeater *rptr,
-+					   bool is_host_mode)
-+{
-+	struct tune *tune_tbl;
-+	int size, i;
-+
-+	tune_tbl = rptr->tune_cfg->tune_tbl;
-+	size = rptr->tune_cfg->tune_tbl_size;
-+
-+	for (i = 0; i < size; ++i)
-+		regmap_write(rptr->regmap, rptr->base + tune_tbl[i].tune_reg,
-+			     is_host_mode ? tune_tbl[i].host_tune : tune_tbl[i].tune);
-+}
-+
-+static void eusb2_repeater_parse_dt(struct eusb2_repeater *rptr)
-+{
-+	struct device_node *np = rptr->dev->of_node;
-+	const u32 *init_tbl = rptr->cfg->init_tbl;
-+	struct tune *tune_tbl;
-+	int size, i, idx;
-+
-+	tune_tbl = tune_cfg.tune_tbl;
-+	size = tune_cfg.tune_tbl_size;
-+
-+	for (i = 0; i < size; ++i) {
-+		/* set default values from init_tbl */
-+		idx = tune_tbl[i].init_tbl_idx;
-+		tune_tbl[i].tune = init_tbl[idx];
-+		tune_tbl[i].host_tune = init_tbl[idx];
-+
-+		/* update values from dt */
-+		of_property_read_u8(np, tune_tbl[i].tune_name,
-+				    &tune_tbl[i].tune);
-+		of_property_read_u8(np, tune_tbl[i].host_tune_name,
-+				    &tune_tbl[i].host_tune);
-+	}
-+
-+	rptr->tune_cfg = &tune_cfg;
-+}
-+
- static int eusb2_repeater_init_vregs(struct eusb2_repeater *rptr)
- {
- 	int num = rptr->cfg->num_vregs;
-@@ -127,20 +215,12 @@ static int eusb2_repeater_init_vregs(struct eusb2_repeater *rptr)
- static int eusb2_repeater_init(struct phy *phy)
- {
- 	struct eusb2_repeater *rptr = phy_get_drvdata(phy);
--	struct device_node *np = rptr->dev->of_node;
- 	struct regmap *regmap = rptr->regmap;
- 	const u32 *init_tbl = rptr->cfg->init_tbl;
--	u8 tune_usb2_preem = init_tbl[TUNE_USB2_PREEM];
--	u8 tune_hsdisc = init_tbl[TUNE_HSDISC];
--	u8 tune_iusb2 = init_tbl[TUNE_IUSB2];
- 	u32 base = rptr->base;
- 	u32 val;
- 	int ret;
- 
--	of_property_read_u8(np, "qcom,tune-usb2-amplitude", &tune_iusb2);
--	of_property_read_u8(np, "qcom,tune-usb2-disc-thres", &tune_hsdisc);
--	of_property_read_u8(np, "qcom,tune-usb2-preem", &tune_usb2_preem);
--
- 	ret = regulator_bulk_enable(rptr->cfg->num_vregs, rptr->vregs);
- 	if (ret)
- 		return ret;
-@@ -153,14 +233,9 @@ static int eusb2_repeater_init(struct phy *phy)
- 	regmap_write(regmap, base + EUSB2_TUNE_USB2_HS_COMP_CUR, init_tbl[TUNE_USB2_HS_COMP_CUR]);
- 	regmap_write(regmap, base + EUSB2_TUNE_USB2_EQU, init_tbl[TUNE_USB2_EQU]);
- 	regmap_write(regmap, base + EUSB2_TUNE_USB2_SLEW, init_tbl[TUNE_USB2_SLEW]);
--	regmap_write(regmap, base + EUSB2_TUNE_SQUELCH_U, init_tbl[TUNE_SQUELCH_U]);
- 	regmap_write(regmap, base + EUSB2_TUNE_RES_FSDIF, init_tbl[TUNE_RES_FSDIF]);
- 	regmap_write(regmap, base + EUSB2_TUNE_USB2_CROSSOVER, init_tbl[TUNE_USB2_CROSSOVER]);
- 
--	regmap_write(regmap, base + EUSB2_TUNE_USB2_PREEM, tune_usb2_preem);
--	regmap_write(regmap, base + EUSB2_TUNE_HSDISC, tune_hsdisc);
--	regmap_write(regmap, base + EUSB2_TUNE_IUSB2, tune_iusb2);
--
- 	ret = regmap_read_poll_timeout(regmap, base + EUSB2_RPTR_STATUS, val, val & RPTR_OK, 10, 5);
- 	if (ret)
- 		dev_err(rptr->dev, "initialization timed-out\n");
-@@ -177,6 +252,7 @@ static int eusb2_repeater_set_mode(struct phy *phy,
- 
- 	switch (mode) {
- 	case PHY_MODE_USB_HOST:
-+		eusb2_repeater_write_overrides(rptr, true);
- 		/*
- 		 * CM.Lx is prohibited when repeater is already into Lx state as
- 		 * per eUSB 1.2 Spec. Below implement software workaround until
-@@ -186,6 +262,7 @@ static int eusb2_repeater_set_mode(struct phy *phy,
- 		regmap_write(regmap, base + EUSB2_FORCE_VAL_5, V_CLK_19P2M_EN);
- 		break;
- 	case PHY_MODE_USB_DEVICE:
-+		eusb2_repeater_write_overrides(rptr, false);
- 		/*
- 		 * In device mode clear host mode related workaround as there
- 		 * is no repeater reset available, and enable/disable of
-@@ -252,6 +329,8 @@ static int eusb2_repeater_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
-+	eusb2_repeater_parse_dt(rptr);
-+
- 	rptr->phy = devm_phy_create(dev, np, &eusb2_repeater_ops);
- 	if (IS_ERR(rptr->phy)) {
- 		dev_err(dev, "failed to create PHY: %d\n", ret);
--- 
-2.49.0
+On 16/04/2025 12:22, Henry Martin wrote:
+> Relocate the memory allocation for ttc table after the switch statement
+> that validates params->ns_type in both mlx5_create_inner_ttc_table() and
+> mlx5_create_ttc_table(). This ensures memory is only allocated after
+> confirming valid input, eliminating potential memory leaks when invalid
+> ns_type cases occur.
+> 
+> Signed-off-by: Henry Martin <bsdhenrymartin@gmail.com>
+> ---
+>  .../net/ethernet/mellanox/mlx5/core/lib/fs_ttc.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_ttc.c b/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_ttc.c
+> index 066121fed718..513dafd5ebf2 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_ttc.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_ttc.c
+> @@ -637,10 +637,6 @@ struct mlx5_ttc_table *mlx5_create_inner_ttc_table(struct mlx5_core_dev *dev,
+>  	bool use_l4_type;
+>  	int err;
+>  
+> -	ttc = kvzalloc(sizeof(*ttc), GFP_KERNEL);
+> -	if (!ttc)
+> -		return ERR_PTR(-ENOMEM);
+> -
+>  	switch (params->ns_type) {
+>  	case MLX5_FLOW_NAMESPACE_PORT_SEL:
+>  		use_l4_type = MLX5_CAP_GEN_2(dev, pcc_ifa2) &&
+> @@ -654,6 +650,10 @@ struct mlx5_ttc_table *mlx5_create_inner_ttc_table(struct mlx5_core_dev *dev,
+>  		return ERR_PTR(-EINVAL);
+>  	}
+>  
+> +	ttc = kvzalloc(sizeof(*ttc), GFP_KERNEL);
+> +	if (!ttc)
+> +		return ERR_PTR(-ENOMEM);
+> +
+>  	ns = mlx5_get_flow_namespace(dev, params->ns_type);
+>  	if (!ns) {
+>  		kvfree(ttc);
+> @@ -715,10 +715,6 @@ struct mlx5_ttc_table *mlx5_create_ttc_table(struct mlx5_core_dev *dev,
+>  	bool use_l4_type;
+>  	int err;
+>  
+> -	ttc = kvzalloc(sizeof(*ttc), GFP_KERNEL);
+> -	if (!ttc)
+> -		return ERR_PTR(-ENOMEM);
+> -
+>  	switch (params->ns_type) {
+>  	case MLX5_FLOW_NAMESPACE_PORT_SEL:
+>  		use_l4_type = MLX5_CAP_GEN_2(dev, pcc_ifa2) &&
+> @@ -732,6 +728,10 @@ struct mlx5_ttc_table *mlx5_create_ttc_table(struct mlx5_core_dev *dev,
+>  		return ERR_PTR(-EINVAL);
+>  	}
+>  
+> +	ttc = kvzalloc(sizeof(*ttc), GFP_KERNEL);
+> +	if (!ttc)
+> +		return ERR_PTR(-ENOMEM);
+> +
+>  	ns = mlx5_get_flow_namespace(dev, params->ns_type);
+>  	if (!ns) {
+>  		kvfree(ttc);
 
+Reviewed-by: Mark Bloch <mbloch@nvidia.com>
+
+Mark
 
