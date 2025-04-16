@@ -1,125 +1,143 @@
-Return-Path: <linux-kernel+bounces-607278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECE20A90435
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 15:20:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6BAEA90444
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 15:22:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 752F21906355
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 13:20:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 289848A1C4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 13:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7FA1F4165;
-	Wed, 16 Apr 2025 13:18:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8711F8AC8;
+	Wed, 16 Apr 2025 13:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xdNK2VZv"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b="S4ro5uwy"
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E151A5BB5
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 13:18:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D771624DD
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 13:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744809503; cv=none; b=Jtrk5ZxAdJ669MVB8Y1BfFTIGbbrQRf+shdskY9IuA+FxVwkMTg7ol++1sq0lonqQyAMNqYDX3lD8o6Pg5wqQfhdZv3W33K6CBEtK8u++CdR+hHMVO+2OUx255uTp3NtTaGuXT9JNMy3IOyCF6mT5PwTotC7rVAE3/MmWd8BGQU=
+	t=1744809514; cv=none; b=tsMCuw2xVIVKfMGC+WQeVJXDcvMaNQ35zsbYky7q35UQhRHU4bmB81bgcNU/X3Zo7Ylq6VmpjyYG/j3NO2VBR6blq3PEDQhLb1djOkE6owqU86UqdwcqBW+1rx519rE75ljnH8oT6H2/H1R1ieAdgQtrbQdUSg6qzqX2ci748ZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744809503; c=relaxed/simple;
-	bh=VnOmVdIWCnCv1Y47g0GAzATjL0V491d4IQ1Ral1ChpI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JykSqiAzB/xzT9+xQrj7uxz7RLpdwfknCiI1sbhgoWmkmmuBsqBzZ5xindkgKURtBNEAE6RRJQuOCwLGFPRKYTEuR5i/MF26IPZ/1GqDtd2tueDvshTQ9oBdExlCR+9x1c1RPzD7gTByzfBa9kl8CIPlps3hM/Xv39fHtzQ1VV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xdNK2VZv; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-39c1efc457bso4523173f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 06:18:21 -0700 (PDT)
+	s=arc-20240116; t=1744809514; c=relaxed/simple;
+	bh=Q4ttbuBffcmq3g31sJMsiGeIZiBuPdY4oesqsmvYtFY=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FPC5Kl7yMdkMaJjkxrEtoTqDfCX5Iq/Ya5qWnIRfcq3beaVIndN7RVaJjv1Yy5smBY+C6GE4SiMZFdEGWjuJkfW0tLDRpdX04h3dgwWP7xYBMrQTQXWucvOP/ltjk+LFeZR75NF7QKfw6jX+UIh5M5fSMLYsqXzSzXtsKawqiuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net; spf=none smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b=S4ro5uwy; arc=none smtp.client-ip=209.85.167.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=minyard.net
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3feb3f54339so5299677b6e.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 06:18:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744809500; x=1745414300; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xWn9+73LuPrJPzYBaqm6TVjkazCmRiGrWcuRy0+t00U=;
-        b=xdNK2VZvl3KqlaYtkWYpKiFVksp9nEGPH96j6foLgONiImtq8/bKBrjRVAKbArNncV
-         kxwKnW1d3IC7rxKu9OgJ/N2ZW6+MPl5DWU4NccQWCO6UId0bY/YBAVk4Aqhy52srdwkO
-         8eEliu/9TgQrmVtP0i2wamSCmCkoM7wAohZD0bB1Bu9atIvQ8d4MXxKHe/f7DNUMKtLz
-         RA8Mxgd2Ba/PqEkBMUjyW74YPQDU3L3fxZo2f/MI0YqaAXbar2e+cXLO0JLfxXTE+ARl
-         CERMQ/u0Rau20UdklgGYFGq8MrA3zM4SGOAkRDZtfx5BXgz4JH7Gx3Ro6Tqo+DDHSauI
-         xidw==
+        d=minyard-net.20230601.gappssmtp.com; s=20230601; t=1744809511; x=1745414311; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:reply-to
+         :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Wa6MsH58z3XLwdZ2LbORmPsv7fxdG2RZCdMCz/p7LwA=;
+        b=S4ro5uwyuyOr0rPuqCvmZptaKVJg4/gLs604tO1dpwTx/kGxtQyiMzIxIPHCQTVX85
+         K4kKPKxKpCZ41eimTA8AE22+Kv1ukqu0fgWHY46w0ertDMw6wr8VdaPlF4KUaOmB/4Kk
+         xHMVJXtARGdHpIegJCWqPFSqAb4RMb2EYve9RinJnJNE+nih0lGVliUIe+DIIbKAyAfK
+         qXUofxvXqxTL9AgnrUkAlmOQBvM9IHDXfnlNH1BHIjhvXEmDjOssvjdeLxN1vcOCJ//O
+         wYDrQKhR6N2Fx4VWV8tRbXRp4x6p7qae8xI2GpgoGRS4LkD+Nhhru4wFJAIGdwj2ubFQ
+         nGoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744809500; x=1745414300;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xWn9+73LuPrJPzYBaqm6TVjkazCmRiGrWcuRy0+t00U=;
-        b=jnN4PhFXqnUI5g7w6cGkJ916JBv4gU2JNh39iDftLLVe9YUtWgeQIbdsh1llX2m59r
-         ERyrYAavDBi7DDDH9EpIgbgfdCc9waghUyRUiDUJ7tdU7dH7LggB0MdOCHd/uXDZYk1M
-         8ii7+n+LLh7LISizJN8T3mRdbzQLWK6NhqaKADQMlPcMbuGuvr7EOqlDMv3eAzba5BHG
-         OYqjJollJgfCaT3GYMfff+1uQW7kc+Dvc8H8ADKEOtGoxuqMlHmRuylsunpBsrpdCZPJ
-         fQlC0Or6WE52ipgHXRJujmxRYRaMsewxszJMUU6BJMCzui2YHi1xrl4mhEoLARnKKdyg
-         AWbw==
-X-Forwarded-Encrypted: i=1; AJvYcCXxNiwxYw/K4spwTxXWCkoRMNZuQNzo4dmDfw45D5MQ6pV3PmpACaDn8NKUpdH/b3DZkl1PYwvD8/T6Xak=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyn5RvoEHLR6SnkMUvq6K8lU3zTfMdrAEpjPGZYxTlDnouAGkeo
-	Og9Cwo6LUgROPYnYLCMDYmmHzuF0UklJYA+MtzVnhPyc5MTjw93cIe3f0H6JJAE=
-X-Gm-Gg: ASbGncvkWTbhJHvy4fAnL0uJ0XQlx5EmXBXKtng7KWQfoXiz4CiNx7Ree2mGE8Tk8ZS
-	JcaVAQWPGf5vSF0th5v1P3HyDht3Te1kKOJFsdX5acSdGJszpFjfTCiQeJgxYLvo3r2bkxJSAIC
-	Guo5dlX/ITCsmVhNhl3jIAsPkZd4oDKN4X/PghvxccnfcbJlc2dyUB+o2Z9w3PthYVC1uWYeC8P
-	/NT1Ai/VGJ7hpA0KDyexhLSVCJT2tRuODxkI22xYOISXVQAe3HdBQx7kYgUQqZgzmyMwm460JB/
-	IeAuKdWFG1vsrKjYnk4M8Kk0PRWdOvtrHqk90Nk97XW41kh7OxP8+g==
-X-Google-Smtp-Source: AGHT+IFPmeeCHDegVrMeD81/94FGQ0WEJLqoFfiQo0Bs7FAdB3e7HEdNT5bOUrtUpFhR2QE18/iDAw==
-X-Received: by 2002:a5d:5f82:0:b0:391:31f2:b998 with SMTP id ffacd0b85a97d-39ee5b12f0dmr1905115f8f.6.1744809499611;
-        Wed, 16 Apr 2025 06:18:19 -0700 (PDT)
-Received: from [192.168.1.3] ([77.81.75.81])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eae964025sm16881088f8f.6.2025.04.16.06.18.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Apr 2025 06:18:19 -0700 (PDT)
-Message-ID: <e1b05184-91b1-43e6-80c3-b7a84b9d4d92@linaro.org>
-Date: Wed, 16 Apr 2025 14:18:18 +0100
+        d=1e100.net; s=20230601; t=1744809511; x=1745414311;
+        h=in-reply-to:content-disposition:mime-version:references:reply-to
+         :message-id:subject:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Wa6MsH58z3XLwdZ2LbORmPsv7fxdG2RZCdMCz/p7LwA=;
+        b=jLBiSFBZtdJrrObvC2LmEqOL3KTTAhidXjP12re3JPrKxY+iB4bRUOBjCbwhHtqvBo
+         5yPTShhCEsVEnP+ot2Ba6BgkMT01mbEF7nC0rwls2oQ8u86i6P1wyfh1lterdD9DSza1
+         xRivL/qrYNJUltEzy/mNN5KFawT3mn+84V9TMtRtwN6K9d/33ozMr4hgIUjE7tmBBdKH
+         pY7pZx34QPNoBo0iDMbcRnmK1tonN1mtFHT8bEooaiRbWB/2vWWYcJ6HHs5JJDwAKHWk
+         jxStr0KDxJCsSem2MKT0ex2qK9bC+3Be4G2XR0puQrIWGe3FFi37VUQ8101YWEzq4j5B
+         rYXA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+I03HSWg9NSBWlsqWbbgpJb8Zw/n+GH8kC7AU27iD9y16xZLlXez1g94UzSX6ElLYGr8Tke/67sFJxXg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzw4fTa5dT3zilgqLGsMhRQ9p2+PFJBFedfwwHyKYv6a82FsMmT
+	DYxh3Ocf7U6QhS+K7ppVM6HpT//ZbazTBS0ni4chdnst/is9TXD+tS8Kb7V/4hI=
+X-Gm-Gg: ASbGnctJVlPtq48GZJThF8tgUKyK+MvpdJ40f8r+X59MD6+O3SgWMsVMTm9lzzbDVTm
+	4sgXqFvwfZy5oyRldN4d/n0fHVLC/yLPiUdVf1St39eFUBtPAH6xmDuuX2ETtg3tCaDgPiDPxIx
+	PAuJYIHldnDTleRQgtZwgYK6jIEh6+Do1lO9ExH/rv3s7+SlDyN4RyZV1u2p9X0Avfa5kaCT7cA
+	8XXBvst69/Hl16N/VH2o6b+lHwT9fA2doy7/4vzQ5ao/T3z4YUQK3v1dsuMKeIhZRrhRa18VnDl
+	N3lmf+b+o05nm0jsk54qUWfAOMPkzP4l5CLZdBEQFcg=
+X-Google-Smtp-Source: AGHT+IEXdh9viCyTYOko4w3G6Y1ne2GquJIMBJqCkTdtsxhHOobGstbQxj5tY4onr49Ez0e5MxXfkg==
+X-Received: by 2002:a05:6808:3507:b0:3f6:a7c7:90a5 with SMTP id 5614622812f47-400b01cfd6dmr951383b6e.16.1744809510906;
+        Wed, 16 Apr 2025 06:18:30 -0700 (PDT)
+Received: from mail.minyard.net ([2001:470:b8f6:1b:1e17:765:833b:6e44])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-400763b6c95sm2806002b6e.48.2025.04.16.06.18.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Apr 2025 06:18:29 -0700 (PDT)
+Date: Wed, 16 Apr 2025 08:18:23 -0500
+From: Corey Minyard <corey@minyard.net>
+To: Breno Leitao <leitao@debian.org>, Rik van Riel <riel@surriel.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	openipmi-developer@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH] ipmi: fix suspicious RCU usage warning
+Message-ID: <Z_-uH_aBVqLSkC2u@mail.minyard.net>
+Reply-To: corey@minyard.net
+References: <20250312131932.44d901f7@fangorn>
+ <20250317-horned-nano-degu-a6e5bc@leitao>
+ <Z9gVMuEMk9yNNL89@mail.minyard.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] MAINTAINERS: Add hisilicon pmu json events under its
- entry
-To: Junhao He <hejunhao3@huawei.com>
-Cc: linuxarm@huawei.com, peterz@infradead.org, mingo@redhat.com,
- acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- leo.yan@arm.com, john.g.garry@oracle.com, will@kernel.org,
- mike.leach@linaro.org, yangyicong@hisilicon.com, jonathan.cameron@huawei.com
-References: <20250416020216.3377959-1-hejunhao3@huawei.com>
- <20250416020216.3377959-3-hejunhao3@huawei.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20250416020216.3377959-3-hejunhao3@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9gVMuEMk9yNNL89@mail.minyard.net>
 
-
-
-On 16/04/2025 3:02 am, Junhao He wrote:
-> The all hisilicon pmu json events were missing to be listed there.
+On Mon, Mar 17, 2025 at 07:27:30AM -0500, Corey Minyard wrote:
+> On Mon, Mar 17, 2025 at 02:33:31AM -0700, Breno Leitao wrote:
+> > On Wed, Mar 12, 2025 at 01:19:32PM -0400, Rik van Riel wrote:
+> > > On recent kernels this warning fires:
+> > > 
+> > > drivers/char/ipmi/ipmi_msghandler.c:1238 RCU-list traversed in non-reader section!!
+> > > 
+> > > This looks like a fairly simple lockdep trigger, where
+> > > list_for_each_entry_rcu and list_for_each_entry_srcu are
+> > > functionally identical, but the lockdep annotation in
+> > > the former has an extra check.
+> > > 
+> > > That extra check is whether the RCU read lock is held,
+> > > which is not true when the code uses srcu_read_lock.
+> > > 
+> > > Get rid of the warning by using the properly annotated
+> > > list traversal macro.
+> > 
+> > Thanks for looking at this one.
+> > 
+> > There was a discussion about this issue a few years ago, with
+> > a different approach that never landed upstream.
+> > 
+> > 	https://lore.kernel.org/all/20201119123831.GH3710@minyard.net/#r
 > 
-> Signed-off-by: Junhao He <hejunhao3@huawei.com>
-> ---
->   MAINTAINERS | 1 +
->   1 file changed, 1 insertion(+)
+> I thought this looked familiar.
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 00ff21b955bc..bf9588a94919 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -10474,6 +10474,7 @@ W:	http://www.hisilicon.com
->   F:	Documentation/admin-guide/perf/hisi-pcie-pmu.rst
->   F:	Documentation/admin-guide/perf/hisi-pmu.rst
->   F:	drivers/perf/hisilicon
-> +F:	tools/perf/pmu-events/arch/arm64/hisilicon/
->   
->   HISILICON PTT DRIVER
->   M:	Yicong Yang <yangyicong@hisilicon.com>
+> Breno, I believe you suggested a change to the patch that sounded
+> reasonable, so I removed the patch, and then nothing happened and I
+> didn't follow up.
+> 
+> This is kind of a mess :-(.  Let me look at it.
 
-Reviewed-by: James Clark <james.clark@linaro.org>
+I've been working on this, so it's not forgotten.  Actually, I've mostly
+been working on a test framework for the IPMI driver, which has been a
+fairly big job.
 
+The modification was fairly easy.  I decided to just pull srcu out of
+this and use a different method.  And I'm not going to do that without
+some serious testing, thus the delay.
+
+Reviewing the code has shown me that the IPMI driver needs some TLC in
+some places.
+
+Anyway, expect some changes in the next few days.
+
+-corey
 
