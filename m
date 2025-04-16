@@ -1,116 +1,127 @@
-Return-Path: <linux-kernel+bounces-606631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB029A8B1A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:06:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08213A8B181
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:03:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 910C85A2C8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 07:05:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C72A1903762
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 07:03:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1652323817D;
-	Wed, 16 Apr 2025 07:04:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 001AF225A24;
+	Wed, 16 Apr 2025 07:02:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IkpVsuLX"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="flMM80qI"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7613F2309B1;
-	Wed, 16 Apr 2025 07:04:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744787063; cv=none; b=Uy0VLgv26V8hHcfBoWY93L2fLgQUYnicSSzrRr/czwo8qsIssAkKW6JwlCxzGy4QX57+5KF/bdULdeDbsvFtID7siy1kba0wM2T5wVXwJjzBDvuKJ7mX9P2KIgy5GB/xm+5Un1ba7PhfLFu0yju8P4za2Rf5bS8682mxU+eS604=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744787063; c=relaxed/simple;
-	bh=/z8O9SDZiaTEXhg4ysbJsJfwrcHDw53/UnAOR7/dwrs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=grjbsSe6DteO0W/r/ZmuGB7gDOgUNk91cD7OHZosXIxKb1kwVH1zH2zghwuqH3b8q8sYHXmKEJRw0PVIw04keC12yfFetWSK4p4bzHtTMVZc4sY5z9dzbSUcUu6k2SjAXIOYbv/YbwoLECnvqphmJBrfItkvmb9wPEs0rDSlIfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IkpVsuLX; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744787062; x=1776323062;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=/z8O9SDZiaTEXhg4ysbJsJfwrcHDw53/UnAOR7/dwrs=;
-  b=IkpVsuLXfzqhZUA4wycQcJ3s8yDWk7hJuBkrm9nTLy8qjzc8toVRiSaR
-   U51l42tRUve2tQDyOiN8HTZLqC47CcPH4VtejRryr63XK+qHFmmNriXNC
-   9TydHQ86qkRLWEKfTHu7YJLetpYEeuA2KUbRr3+DpnuH9qJIcxL3veZ75
-   MU80HyHd8pCwEONe36G3xEbiF0LmBnxcD4VNpjM4KbW7/z7nCmILY27iz
-   nuoEhrxDCqEKF7Y92eVr4CuoYSev2mN6Mt2CgJdQ849++kXdwNZAwywHf
-   WtHqvbEYtniKMe3FtUm4pk3u4j+2FRpmpIfjOO1cVx8+56AVIL9M6dMMC
-   A==;
-X-CSE-ConnectionGUID: kPCNy67vRKa83ysMhHfYuA==
-X-CSE-MsgGUID: 2IcchoUgSyu6KLU+5Rbovw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="46241862"
-X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
-   d="scan'208";a="46241862"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 00:04:18 -0700
-X-CSE-ConnectionGUID: A1VrY2KOTjmLpK6I8Y5sBw==
-X-CSE-MsgGUID: 7BYbbExuR1STIQxM3SHw9Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
-   d="scan'208";a="131315374"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa008.jf.intel.com with ESMTP; 16 Apr 2025 00:04:15 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id C7B8476C; Wed, 16 Apr 2025 10:04:10 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Jai Luthra <jai.luthra@ideasonboard.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: [PATCH v5 7/7] media: i2c: ds90ub960: Remove of_node assignment
-Date: Wed, 16 Apr 2025 10:01:37 +0300
-Message-ID: <20250416070409.1867862-8-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250416070409.1867862-1-andriy.shevchenko@linux.intel.com>
-References: <20250416070409.1867862-1-andriy.shevchenko@linux.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3334221572
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 07:02:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744786975; cv=pass; b=arIj/EXSiejS6xyK0vXz4flDqVoY2DwvBOr7eA4QUECHZTXU1r7bYs3UZlWPm32eDiCDfrqDK9vfteCaFQ/eTfz5n5ZlTxHQ8d98sqx3zAhkcAuHZ7pbwygOaOwVZ5jMRo18kvIyZxknZy9uwqJ0FrZQjlLe69VVyQBsKOdUd3I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744786975; c=relaxed/simple;
+	bh=pRKbzkJxgaqHMdybzBo+PJJQ4rGQsm4NkYN/wWKehzk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uZYxHRYyEaXpc+2MFNjX0VRw+gBhpS6cNvNqVLCdcQUt9sI2u409eYGWm7ntgg/RlTqs3OxFxUyKtMAye5gCnDPv1NYL04LSVsGOmYqy+rfP3FbxRHbo+cMB8KEyOyltX3B/4H31UpU/q/7q/U6iwMnfE3a0beec9hbLp8oEkS4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=flMM80qI; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1744786951; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=KYpUsSPZ08iV51WhMV5+Xvn3HsAGdqJDQsETqTLpmBYNJw31QKIyPeO75zM7BJewStjtxUSoD6aGOrMABb+DbWMfl/xB9ka40GjtYpJgO2/duARK9xmOvz3q/+TyvnFr+PXcQIsmCZZvPznD4dtC4vpuhwZZDfrqAVPmRdUfmzg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1744786951; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=VvHdLu/1DjYBRDNdGpthOoaX7QDWeZcIa++hyBZ9pYY=; 
+	b=OOadFqAvLhRG4wDZ2tnanPtbbPPLpuzT446gOOIfmR7M/Yzw0ukM5G8w7R7SqIsHnFwM1yXWfjnYB2hGQRbnKWmiFTLlXi+YJxtteuOdGT4E17XY0OhiggGLTc8OU96mJDYC7CDetlEpXawLBn59jqEv8ER4Z1hVy1AMMrvADw0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1744786950;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=VvHdLu/1DjYBRDNdGpthOoaX7QDWeZcIa++hyBZ9pYY=;
+	b=flMM80qI3DjCZqkNdx1/fJw3XELhl1+/EjzFzW5hVP+oevRtvV1BnANfG7ZX9Uex
+	MpzEDkW8nD3BPKJuzyQN0Aj2MYY1foyC2SgEEcq5u7k3yqgvHWusLd2Z3xDRNDPrGda
+	TfA67VPdGD55zMOP9y2miUW6ZvPMMqHCI3N6EwX0=
+Received: by mx.zohomail.com with SMTPS id 1744786949579725.8412945424827;
+	Wed, 16 Apr 2025 00:02:29 -0700 (PDT)
+Message-ID: <a48864f2-ff81-4b03-9de7-3d4959a9b301@collabora.com>
+Date: Wed, 16 Apr 2025 10:02:15 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/virtio: Support drm_panic with non-vmapped shmem BO
+To: Ryosuke Yasuoka <ryasuoka@redhat.com>, airlied@redhat.com,
+ kraxel@redhat.com, gurchetansingh@chromium.org, olvaffe@gmail.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ simona@ffwll.ch, jfalempe@redhat.com
+Cc: virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org
+References: <20250412132012.291837-1-ryasuoka@redhat.com>
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250412132012.291837-1-ryasuoka@redhat.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-Remove of_node assignment which duplicates fwnode in struct i2c_board_info.
-In general drivers must not set both, it's quite confusing. The I²C core
-will consider fwnode with a priority and of_node is subject to remove from
-above mentioned data structure.
+On 4/12/25 16:20, Ryosuke Yasuoka wrote:
+> Pass array of pages of the scanout buffer [1] to shmem BO, allowing
+> drm_panic to work even if the BO is not vmapped.
+> 
+> [1] https://lore.kernel.org/all/20250407140138.162383-3-jfalempe@redhat.com/
+> 
+> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
+> Signed-off-by: Ryosuke Yasuoka <ryasuoka@redhat.com>
+> ---
+>  drivers/gpu/drm/virtio/virtgpu_plane.c | 14 +++++++++++---
+>  1 file changed, 11 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/virtio/virtgpu_plane.c b/drivers/gpu/drm/virtio/virtgpu_plane.c
+> index a6f5a78f436a..2ff57d559c86 100644
+> --- a/drivers/gpu/drm/virtio/virtgpu_plane.c
+> +++ b/drivers/gpu/drm/virtio/virtgpu_plane.c
+> @@ -500,11 +500,19 @@ static int virtio_drm_get_scanout_buffer(struct drm_plane *plane,
+>  
+>  	bo = gem_to_virtio_gpu_obj(plane->state->fb->obj[0]);
+>  
+> -	/* Only support mapped shmem bo */
+> -	if (virtio_gpu_is_vram(bo) || bo->base.base.import_attach || !bo->base.vaddr)
+> +	if (virtio_gpu_is_vram(bo) || bo->base.base.import_attach)
+>  		return -ENODEV;
+>  
+> -	iosys_map_set_vaddr(&sb->map[0], bo->base.vaddr);
+> +	if (bo->base.vaddr)
+> +		iosys_map_set_vaddr(&sb->map[0], bo->base.vaddr);
+> +	else {
+> +		struct drm_gem_shmem_object *shmem = &bo->base;
+> +
+> +		if (!shmem->pages)
+> +			return -ENODEV;
+> +		/* map scanout buffer later */
+> +		sb->pages = shmem->pages;
+> +	}
+>  
+>  	sb->format = plane->state->fb->format;
+>  	sb->height = plane->state->fb->height;
+> 
+> base-commit: e7bb7d44c3b97aea1f0e354c6499900154ac67f2
 
-Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Tested-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
----
- drivers/media/i2c/ds90ub960.c | 1 -
- 1 file changed, 1 deletion(-)
+Works well!
 
-diff --git a/drivers/media/i2c/ds90ub960.c b/drivers/media/i2c/ds90ub960.c
-index 5dde8452739b..5afdbbad9ff4 100644
---- a/drivers/media/i2c/ds90ub960.c
-+++ b/drivers/media/i2c/ds90ub960.c
-@@ -1682,7 +1682,6 @@ static int ub960_rxport_add_serializer(struct ub960_data *priv, u8 nport)
- 	struct device *dev = &priv->client->dev;
- 	struct ds90ub9xx_platform_data *ser_pdata = &rxport->ser.pdata;
- 	struct i2c_board_info ser_info = {
--		.of_node = to_of_node(rxport->ser.fwnode),
- 		.fwnode = rxport->ser.fwnode,
- 		.platform_data = ser_pdata,
- 	};
+Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Tested-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+
 -- 
-2.47.2
-
+Best regards,
+Dmitry
 
