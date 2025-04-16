@@ -1,143 +1,118 @@
-Return-Path: <linux-kernel+bounces-606565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE967A8B109
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 08:48:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B50C3A8B153
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 08:58:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C54A5442377
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 06:48:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 832733A784E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 06:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE3022E3F1;
-	Wed, 16 Apr 2025 06:46:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05A762356C6;
+	Wed, 16 Apr 2025 06:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n+4KlJdn"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="oQTc5NQF"
+Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA1422A4E5;
-	Wed, 16 Apr 2025 06:45:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA612231CAE;
+	Wed, 16 Apr 2025 06:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744785961; cv=none; b=sDX9D1GOSr6OMA6TNH2fTukNacjX5QXUKNcHvSp0uzIwidtX4asEcEOeNewflFivbvTdQDcapITqCf17XzWqwtWL0BGjG47mRzAoqYE0108WIs3coFYViTuelN/6ehWkp5jwlSRVj1hUPCwckFJTD4jlM2G63dKcbU0sUuUUCHc=
+	t=1744786507; cv=none; b=gm1RXtUSbCDeGglA5aCE5JmXWMbTjeeICijZCkK1kPCmmUGgaehzhF/IH1BqtrDEuFSNgYNMKEDLdUPoeqDdtzLfEHHtaFW6PjSigBeEHxcGqN1sDG/3OKqDUzRPmGe+Tu8/gzeesfR/3omjXwjh3hKE1t31cMRI2iZdHM/BsxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744785961; c=relaxed/simple;
-	bh=jGokpnFOqE6CW4PQnkZgtiGtX+d0K4vFQAPTpPYAqCE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JhREzrhpBkGyWozoq8kOwXc1vSuIwgev09XUjv6WSqkQQbhhD2sMSDsIyMIkWC4NILPs06+0In2pdEySarRfqGLTitkqDcn/H0ka5zz6WGAAr7WHiv9EuRUsN8X75g7VyEXN5zKYVMWbdMcUQDk4/KJ8C87m7zo7KSYIzeiQUnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n+4KlJdn; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744785960; x=1776321960;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jGokpnFOqE6CW4PQnkZgtiGtX+d0K4vFQAPTpPYAqCE=;
-  b=n+4KlJdnMOn9y68xAWOM4bDVmGJV7Tk1npwb1ucifzE8b5ynYLnqA6AG
-   o1iSLtpmpCw4MSIhMnLCCkxVGuHKaUgEvSzxLdYLqDBtvfk3elLX13L0d
-   QLOWm+bNDOSZ5gjsxb8Re0TJ3Fu7g+LnXe7sDLf96ebExVmVqZmVv8eaJ
-   FtzxKd47RSKpiNLIyLWgK26G5IXNidxXtcVZucoATrJmeIVJzjV9Hh6qX
-   px+xv5pcwfrBI196BCLP2K77Iqn24Hp6DL0NU3ZUE9yWhtw/8ffsoobeI
-   DxYeqZ4hB/E1HrKSS8TBGO2fRN3vFuwZdDtBPFcqZJCZF+wvp/mL9zljw
-   Q==;
-X-CSE-ConnectionGUID: FQU8xltQS/GVcW2CpXa/iA==
-X-CSE-MsgGUID: skH2XKWlQcmIr5r8jb7Igg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="46408901"
-X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
-   d="scan'208";a="46408901"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 23:45:59 -0700
-X-CSE-ConnectionGUID: 8nE96dtOSQu/lMLES/GcLQ==
-X-CSE-MsgGUID: yciDKKQQRaWVp0Ux3mGmwQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
-   d="scan'208";a="130201223"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 23:45:55 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1u4wWu-0000000Clkq-33e2;
-	Wed, 16 Apr 2025 09:45:52 +0300
-Date: Wed, 16 Apr 2025 09:45:52 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Kees Cook <kees@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nipun Gupta <nipun.gupta@amd.com>,
-	Nikhil Agarwal <nikhil.agarwal@amd.com>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>,
-	Pieter Jansen van Vuuren <pieter.jansen-van-vuuren@amd.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Ingo Molnar <mingo@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Wesley Cheng <quic_wcheng@quicinc.com>,
-	Tony Luck <tony.luck@intel.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] mod_devicetable: Enlarge the maximum platform_device_id
- name length
-Message-ID: <Z_9SIBPsf4_cQ77Y@smile.fi.intel.com>
-References: <20250415231420.work.066-kees@kernel.org>
+	s=arc-20240116; t=1744786507; c=relaxed/simple;
+	bh=5Aw7PZlPRNIq1ZdW/H4hJQMsd7p/xyc2yDa2BP5+vrk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=RX5EZmiz51beC2R/mRArAa/18w6IR0wXPXCjshmByMTp3iiV/OV6TfZ2wQ1mwPUyLo14iUo9G4WzgZ6pNA34o6mtImc2xH1ebvMRQOO7/+nR+vTnRftYmT56D6FX8lOTd0TAAxx47pbTNtlPA3MOck952mvUPQ7ZW8ovRJVOLno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=oQTc5NQF; arc=none smtp.client-ip=185.125.188.121
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from 2001-b400-e2a9-54f6-6e67-7778-9cb9-7043.emome-ip6.hinet.net (unknown [10.101.200.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 2731F3FF14;
+	Wed, 16 Apr 2025 06:46:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1744786015;
+	bh=ETroOFXahmn2t5VaBTxI4L8slF1VXmL7ifUOmTK6emQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc;
+	b=oQTc5NQFdHYUVVI4hxcmFWo+lKqjy2nxSjk/z69S9TmJwpcYcDWe/czHnUrfMpMdF
+	 9t766T+UAJFqvzUfkTRVLhl0o/Gh7MvPw+/nqviKISnh1ju89mOqQhMQNy0d9OT28f
+	 tZTRgkd8z3yEVb6106N+Ft8As12eIna6BvMngR0b+rKratIz5j2L2VT3kxODZ4T75Y
+	 yy4MXLngx4YqahhZg6rJyfaTSmn2QhQwkoTWM0WaX7IeMZFTH2VHOYxz95wGqzKOFJ
+	 wpbJo7oIYUQQmem1dx5SxjS2WmGC+bmpSsxUBWrllq6hazfNeS0m4X8B/oFCbHsXhM
+	 bjSe79LeZ36Eg==
+From: "Yo-Jung (Leo) Lin" <leo.lin@canonical.com>
+Subject: [PATCH 0/2] hwmon: (spd5118) adjust sensor behaviors under SPD
+ write protection
+Date: Wed, 16 Apr 2025 14:46:25 +0800
+Message-Id: <20250416-for-upstream-spd5118-spd-write-prot-detect-v1-0-8b3bcafe9dad@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250415231420.work.066-kees@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAEFS/2cC/x2NMQ7CMAwAv1J5xlKTUlr4CmIIiQseaCLb0EpV/
+ 05gOt1yt4GSMClcmg2EPqyc5yru0EB8hvlByKk6+Nb37dGdcMqC76ImFF6oJfXOjT/iImyERbJ
+ hIqNoGAbq7qE7+2GMUINFaOL1P7ve9v0L8zDwh3wAAAA=
+To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ "Yo-Jung Lin (Leo)" <leo.lin@canonical.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1380; i=leo.lin@canonical.com;
+ h=from:subject:message-id; bh=5Aw7PZlPRNIq1ZdW/H4hJQMsd7p/xyc2yDa2BP5+vrk=;
+ b=owEBbQKS/ZANAwAKAV8XsZZKKe6GAcsmYgBn/1JWLAwAKHbyy+9+Z8YexEPaFUs4n/3akN+oH
+ fIbX2PE77+JAjMEAAEKAB0WIQQzqV4kW+yguuqHrw5fF7GWSinuhgUCZ/9SVgAKCRBfF7GWSinu
+ hvteD/0e7R6YeZFa7jAZ0N9I53PZ0u3o+CIxTGha978uofrnLXWDCQ1XAq4OAXCNY3bJgiqnZab
+ AxMT3JVwLcOx7MBv3Glx92xxjpGn+9f+4yKfvYb4lIqDunxhW0FjPsBUxtNOScoD+niIKOcT7uI
+ 3tFEdYsymrhrvfO7apeyEA33G3GtmHParyj+aVLcI32tyrBZRV8kpX/KPIwpJFpvnYEyr9LpOk4
+ yb8SssmLoTxTMreX9M9joKshsQBAAjs/Iu7GMUEO7gn1kIFMp+noHJYMEpsLYDTWv2oelVSlfH9
+ Y7c3gpUy0TTGiu/M1jCMj+CXQJfsGNuY8OaL/GD2T1M5yFKtkSmH4j/4kd1nznLnd9k7i8VAqjg
+ eC6OcIyE4gOfsSHPKsmeF4K87H4ao1j4bRTlYtVkBMvD4wbOw1tumQTvcxQkHM9F+z1sfoBjPQ3
+ fjLFlKAjBc0xOlslrH9JFRRvvDqbJMTQiLzx19qR5lkFk0PdQdhjmzGaZuX6VwRlyO0rieR22nK
+ LkXdqFl50xlfFrfMDri9/7cki4eSU4GgBRPMu7u++n/RwCSAF2JOv1/ngLcrR5YWHtzwsb0nj5e
+ 36s7h+nP7Q2SXTAMCTv+7t/4QUwTLJHZo4V7xahFK2oKgynNMOsb1VD6GWLJ9MiXGqOBOL2Nw3W
+ y1lUdcS4A7yx8Qw==
+X-Developer-Key: i=leo.lin@canonical.com; a=openpgp;
+ fpr=33A95E245BECA0BAEA87AF0E5F17B1964A29EE86
 
-On Tue, Apr 15, 2025 at 04:14:24PM -0700, Kees Cook wrote:
-> The 20 byte length of struct platform_device_id::name is not long enough
-> for many devices (especially regulators), where the string initialization
-> is getting truncated and missing the trailing NUL byte. This is seen
-> with GCC 15's -Wunterminated-string-initialization option:
-> 
-> drivers/regulator/hi6421v530-regulator.c:189:19: warning: initializer-string for array of 'char' truncates NUL terminator but destination lacks 'nonstring' attribute (21 chars into 20 available) [-Wunterminated-string-initialization]
->   189 |         { .name = "hi6421v530-regulator" },
->       |                   ^~~~~~~~~~~~~~~~~~~~~~
-> drivers/regulator/hi6421v600-regulator.c:278:19: warning: initializer-string for array of 'char' truncates NUL terminator but destination lacks 'nonstring' attribute (21 chars into 20 available) [-Wunterminated-string-initialization]
->   278 |         { .name = "hi6421v600-regulator" },
->       |                   ^~~~~~~~~~~~~~~~~~~~~~
-> drivers/regulator/lp87565-regulator.c:233:11: warning: initializer-string for array of 'char' truncates NUL terminator but destination lacks 'nonstring' attribute (21 chars into 20 available) [-Wunterminated-string-initialization]
->   233 |         { "lp87565-q1-regulator", },
->       |           ^~~~~~~~~~~~~~~~~~~~~~
-> sound/soc/fsl/imx-pcm-rpmsg.c:818:19: warning: initializer-string for array of 'char' truncates NUL terminator but destination lacks 'nonstring' attribute (21 chars into 20 available) [-Wunterminated-string-initialization]
->   818 |         { .name = "rpmsg-micfil-channel" },
->       |                   ^~~~~~~~~~~~~~~~~~~~~~
-> drivers/iio/light/hid-sensor-als.c:457:25: warning: initializer-string for array of 'char' truncates NUL terminator but destination lacks 'nonstring' attribute (21 chars into 20 available) [-Wunterminated-string-initialization]
->   457 |                 .name = "HID-SENSOR-LISS-0041",
->       |                         ^~~~~~~~~~~~~~~~~~~~~~
-> drivers/iio/light/hid-sensor-prox.c:366:25: warning: initializer-string for array of 'char' truncates NUL terminator but destination lacks 'nonstring' attribute (21 chars into 20 available) [-Wunterminated-string-initialization]
->   366 |                 .name = "HID-SENSOR-LISS-0226",
->       |                         ^~~~~~~~~~~~~~~~~~~~~~
-> 
-> Increase the length to 24, slightly more than is currently being used by
-> the affected drivers. The string is used in '%s' format strings and via
-> the module code, which appears to do its own length encoding. This size
-> was chosen because there was already a 4 byte hole in the structure:
-> 
-> struct platform_device_id {
->         char                       name[20];             /*     0    20 */
-> 
->         /* XXX 4 bytes hole, try to pack */
-> 
->         kernel_ulong_t             driver_data;          /*    24     8 */
-> 
->         /* size: 32, cachelines: 1, members: 2 */
->         /* sum members: 28, holes: 1, sum holes: 4 */
->         /* last cacheline: 32 bytes */
-> };
+On some PC platforms, BIOS may enable SPD Write Protection and forbids
+writes to certain SMBus addresses. For i801 family those addresses are
+0x50 to 0x57 [1], where the spd5118 sensors usually get probed.
 
-Since there is no even potential ABI breakage, I'm fine with the change.
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+One implication is that the driver is not able to sync back values to
+the sensor registers cache during resume, leading to resume failure.
+Also, sensor functions related to writes are not functional in those
+cases. This has been observed on multiple existing PC platforms from
+Dell and HP.
 
+This patchset introduces basic mechanism similar to what was done in the
+spd5118_init() to detect this, and bypass sensor functions that might
+involve writes if this is detected.
+
+[1] 18.1.16 HOSTC—Host Configuration Register (SMBus—D31:F3),
+    Intel 8 Series/C220 Series Chipset Family Platform Controller Hub(PCH)
+
+Signed-off-by: Yo-Jung Lin (Leo) <leo.lin@canonical.com>
+---
+Yo-Jung (Leo) Lin (2):
+      hwmon: (spd5118) pass spd5118_data to hwmon callbacks
+      hwmon: (spd5118) restrict writes under SPD write protection
+
+ drivers/hwmon/spd5118.c | 41 ++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 36 insertions(+), 5 deletions(-)
+---
+base-commit: a6d89461ace59cf66bbfecddfdf3433f626ecd7a
+change-id: 20250416-for-upstream-spd5118-spd-write-prot-detect-a7e3ba39278c
+
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Yo-Jung (Leo) Lin <leo.lin@canonical.com>
 
 
