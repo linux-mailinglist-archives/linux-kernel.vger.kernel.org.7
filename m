@@ -1,168 +1,83 @@
-Return-Path: <linux-kernel+bounces-606317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E78AA8ADC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 04:01:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D1270A8ADD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 04:08:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 141524420E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 02:01:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2407165DFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 02:08:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C5E227EB9;
-	Wed, 16 Apr 2025 02:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YNT2UY8M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 247A41A5BB8;
+	Wed, 16 Apr 2025 02:08:42 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10CDE15E96;
-	Wed, 16 Apr 2025 02:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919D815E96;
+	Wed, 16 Apr 2025 02:08:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744768879; cv=none; b=hhRVZ2PbglAPsOiChken3s9LDEeE4MNdr3pA9GXfOS/SjsE7rK8JQ/EXc51y/b5shm9tNXb/G39Oe+JdUfWaF9xehhaeS26PSnZbDDEoUvxxQ2enu7N1VZmG6CaZGMB3RakN7v9ut2RtZXXUYUnVaug3h0CdqGTEr42H50K9F8o=
+	t=1744769321; cv=none; b=OS2qQJlK7Lky+Ltry3yMGH54mGl0XkUNFhmO96q93F+CoRQRusZiAhF7k4HmioD6ElRwbAyPJhQCttXP+i6K63t1E8FVMJcfuftaagT/F5wPbJcSxy2jgKgahX0jYovnmknYB73eSsZlQXmJ7tdbFlfFpCo/feWr2TKIEzN0ZP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744768879; c=relaxed/simple;
-	bh=nEhH+Ut3F8uAcBTMMylusgUEDdx1R8hJlDxeA1XhERM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZnvVDoCrMCUVuPQW7VbnigxBA2QR3LZ3aBk+O/Czudr77bgMLY5UW63s34JTIzfrPQaa+cwFK/EQFB8rhL5HPDyyw0K8OelztJodH3NglhXvNIq2NyMTEGJvBo0CXWyp07oK0jONlDNaLViM7Fike1QbYv4fp+eQw2mjY8vgdzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YNT2UY8M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ACD8C4CEE7;
-	Wed, 16 Apr 2025 02:01:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744768878;
-	bh=nEhH+Ut3F8uAcBTMMylusgUEDdx1R8hJlDxeA1XhERM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=YNT2UY8MJqxDYqUJ5wOVCnB9hVE2OIYoH9ua3Jsl8ikpke4pgXQ/asbzniq2k6BCR
-	 MozP5zzjg8tJbD5mQiFkgMliM7a8W1NLBIsJ9BVmoK4quZx6mXVGWVKinuczh1fuf5
-	 //RyLjUHNwNAmqeJdzZib/Z5iYDBSfW9Mj9JwR4YS528YF9PnuIWzxjpqbULUCZY2p
-	 0bBDRmCaM77RgngvZQ/Hr7DbPjK2GqMv+J8qP0h4/KBm6J4GtrKta9mBr1eyncVhOz
-	 /TM+djOgA65n202CKo2H5z9OVSg6yFi+LEbWAXDUhUJP3zaBafTRwJI0FcvI6z9Xpc
-	 ftGxL9LNkxUgg==
-From: Kees Cook <kees@kernel.org>
-To: Saeed Mahameed <saeedm@nvidia.com>
-Cc: Kees Cook <kees@kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH] net/mlx5e: ethtool: Fix formatting of ptp_rq0_csum_complete_tail_slow
-Date: Tue, 15 Apr 2025 19:01:14 -0700
-Message-Id: <20250416020109.work.297-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1744769321; c=relaxed/simple;
+	bh=qR6lA/y5DDnN0ipNgt3BbT8hrUfGqg7N34Og8kjE3dw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P8OAMW94HeyoXNTnIBUG7T9tFkso3b3a3QAuc1H3j9Mb5jo7z2M/IkdfoJ/c3M7w5gliuuwFjDrU4fF1y+G44AnqVCR3pLSFuSZwcZiImrZEUDMjj4uuWIqFJuglbRpnoZzcQmWpvHdKO25rf9izU3yUhLjqcd0cMZLoamCiR+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Zckwt4jfrz27hQ2;
+	Wed, 16 Apr 2025 10:09:18 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id D904B1402C7;
+	Wed, 16 Apr 2025 10:08:36 +0800 (CST)
+Received: from kwepemn500004.china.huawei.com (7.202.194.145) by
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 16 Apr 2025 10:08:36 +0800
+Received: from localhost.localdomain (10.90.30.45) by
+ kwepemn500004.china.huawei.com (7.202.194.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 16 Apr 2025 10:08:35 +0800
+From: Junhao He <hejunhao3@huawei.com>
+To: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+	<namhyung@kernel.org>, <mark.rutland@arm.com>,
+	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+	<irogers@google.com>, <james.clark@linaro.org>,
+	<linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<leo.yan@arm.com>, <john.g.garry@oracle.com>, <will@kernel.org>,
+	<mike.leach@linaro.org>, <yangyicong@hisilicon.com>,
+	<jonathan.cameron@huawei.com>
+CC: <linuxarm@huawei.com>, <hejunhao3@huawei.com>
+Subject: [PATCH 0/2] perf vendor events arm64: Add some missing content for Hisi hip08 json
+Date: Wed, 16 Apr 2025 10:02:14 +0800
+Message-ID: <20250416020216.3377959-1-hejunhao3@huawei.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4652; i=kees@kernel.org; h=from:subject:message-id; bh=nEhH+Ut3F8uAcBTMMylusgUEDdx1R8hJlDxeA1XhERM=; b=owGbwMvMwCVmps19z/KJym7G02pJDOn/+TOF7J6w5O3gP7+K2c3bYuaKKNu1HkY3Dfdr8/6Y+ m5D6BK/jlIWBjEuBlkxRZYgO/c4F4+37eHucxVh5rAygQxh4OIUgIl8v8bIsHCxYeglTgF3DrsT U57ImsS+XahxQJVjfen06b6zZ3rESTD8D874JvKu1Zfx+7S4O3s0ko6uy+1YcPeV1ZLjNyb/dli 7nQcA
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemn500004.china.huawei.com (7.202.194.145)
 
-The new GCC 15 warning -Wunterminated-string-initialization reports:
+Add missing field for Hisi hip08 json and list hisilicon pmu json
+events under the its entry to MAINTAINERS.
 
-In file included from drivers/net/ethernet/mellanox/mlx5/core/en.h:55,
-                 from drivers/net/ethernet/mellanox/mlx5/core/en_stats.c:34:
-drivers/net/ethernet/mellanox/mlx5/core/en_stats.h:57:46: warning: initializer-string for array of 'char' truncates NUL terminator but destination lacks 'nonstring' attribute (33 chars into 32 available) [-Wunterminated-string-initialization]
-   57 | #define MLX5E_DECLARE_PTP_RQ_STAT(type, fld) "ptp_rq%d_"#fld, offsetof(type, fld)
-      |                                              ^~~~~~~~~~~
-drivers/net/ethernet/mellanox/mlx5/core/en_stats.c:2279:11: note: in expansion of macro 'MLX5E_DECLARE_PTP_RQ_STAT'
- 2279 |         { MLX5E_DECLARE_PTP_RQ_STAT(struct mlx5e_rq_stats, csum_complete_tail_slow) },
-      |           ^~~~~~~~~~~~~~~~~~~~~~~~~
+Junhao He (2):
+  perf vendor events arm64: Fill up Desc field for Hisi hip08 hha pmu
+  MAINTAINERS: Add hisilicon pmu json events under its entry
 
-This stat string is being used in ethtool_sprintf(), so it must be a
-valid NUL-terminated string. Currently the string lacks the final NUL
-byte (as GCC warns), but by absolute luck, the next byte in memory is a
-space (decimal 32) followed by a NUL. "format" is immediately followed
-by little-endian size_t:
+ MAINTAINERS                                   |  1 +
+ .../arm64/hisilicon/hip08/uncore-hha.json     | 32 +++++++++++++++++++
+ 2 files changed, 33 insertions(+)
 
-struct counter_desc {
-        char                       format[32];           /*     0    32 */
-        size_t                     offset;               /*    32     8 */
-};
-
-The "offset" member is populated by the stats member offset:
-
- #define MLX5E_DECLARE_PTP_RQ_STAT(type, fld) "ptp_rq%d_"#fld, offsetof(type, fld)
-
-which for this struct mlx5e_rq_stats member, csum_complete_tail_slow, is
-32, or space, and then the rest of the "offset" bytes are NULs.
-
-struct mlx5e_rq_stats {
-	...
-        u64                        csum_complete_tail_slow; /* 32     8 */
-
-The use of vsnprintf(), within ethtool_sprintf(), reads past the end of
-"format" and sees the format string as "ptp_rq%d_csum_complete_tail_slow ",
-with %d getting resolved by MLX5E_PTP_CHANNEL_IX (value 0):
-
-                       ethtool_sprintf(data, ptp_rq_stats_desc[i].format,
-                                       MLX5E_PTP_CHANNEL_IX);
-
-With an output result of "ptp_rq0_csum_complete_tail_slow", which gets
-precisely truncated to 31 characters with a trailing NUL.
-
-So, instead of accidentally getting this correct due to the NUL bytes
-at the end of the size_t that happens to follow the format string, just
-make the string initializer 1 byte shorter by replacing "%d" with "0",
-since MLX5E_PTP_CHANNEL_IX is already hard-coded. This results in no
-initializer truncation and no need to call sprintf().
-
-Signed-off-by: Kees Cook <kees@kernel.org>
----
-Cc: Saeed Mahameed <saeedm@nvidia.com>
-Cc: Tariq Toukan <tariqt@nvidia.com>
-Cc: Leon Romanovsky <leon@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Eric Dumazet <edumazet@google.com>
-Cc: Jakub Kicinski <kuba@kernel.org>
-Cc: Paolo Abeni <pabeni@redhat.com>
-Cc: Richard Cochran <richardcochran@gmail.com>
-Cc: netdev@vger.kernel.org
-Cc: linux-rdma@vger.kernel.org
----
- drivers/net/ethernet/mellanox/mlx5/core/en_stats.c | 3 +--
- drivers/net/ethernet/mellanox/mlx5/core/en_stats.h | 2 +-
- 2 files changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_stats.c b/drivers/net/ethernet/mellanox/mlx5/core/en_stats.c
-index 1c121b435016..19664fa7f217 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_stats.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_stats.c
-@@ -2424,8 +2424,7 @@ static MLX5E_DECLARE_STATS_GRP_OP_FILL_STRS(ptp)
- 	}
- 	if (priv->rx_ptp_opened) {
- 		for (i = 0; i < NUM_PTP_RQ_STATS; i++)
--			ethtool_sprintf(data, ptp_rq_stats_desc[i].format,
--					MLX5E_PTP_CHANNEL_IX);
-+			ethtool_puts(data, ptp_rq_stats_desc[i].format);
- 	}
- }
- 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_stats.h b/drivers/net/ethernet/mellanox/mlx5/core/en_stats.h
-index 8de6fcbd3a03..def5dea1463d 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_stats.h
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_stats.h
-@@ -54,7 +54,7 @@
- #define MLX5E_DECLARE_PTP_TX_STAT(type, fld) "ptp_tx%d_"#fld, offsetof(type, fld)
- #define MLX5E_DECLARE_PTP_CH_STAT(type, fld) "ptp_ch_"#fld, offsetof(type, fld)
- #define MLX5E_DECLARE_PTP_CQ_STAT(type, fld) "ptp_cq%d_"#fld, offsetof(type, fld)
--#define MLX5E_DECLARE_PTP_RQ_STAT(type, fld) "ptp_rq%d_"#fld, offsetof(type, fld)
-+#define MLX5E_DECLARE_PTP_RQ_STAT(type, fld) "ptp_rq0_"#fld, offsetof(type, fld)
- 
- #define MLX5E_DECLARE_QOS_TX_STAT(type, fld) "qos_tx%d_"#fld, offsetof(type, fld)
- 
 -- 
-2.34.1
+2.33.0
 
 
