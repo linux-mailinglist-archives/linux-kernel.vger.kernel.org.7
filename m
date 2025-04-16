@@ -1,165 +1,182 @@
-Return-Path: <linux-kernel+bounces-607785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A57D7A90AC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:04:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59AD3A90B17
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:13:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B43E3445FF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:04:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC8264604E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1BB4219302;
-	Wed, 16 Apr 2025 18:04:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C088221701;
+	Wed, 16 Apr 2025 18:12:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UibLDwJE"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="O08rCwsn"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AE7A1DA2E5;
-	Wed, 16 Apr 2025 18:04:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAA2C21CFEA;
+	Wed, 16 Apr 2025 18:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744826652; cv=none; b=atKW1VAz6ZuDhR4BRUabYD55weVGlortf9rsDNY66ZdCOb6KkQqz1IibzQf86EhKSQ9zg1fbdcOU82vX8VYBUlat1yy+lwgjyeHblnG++0hehtTu5eukAyWq7WaKzYvSuY8S0we1ofqRI1+Pi0MkIIAKA8/KX4ikFOECgBK3QRU=
+	t=1744827175; cv=none; b=VEMnTICPuZpsdw496eesGR2YBampjUUhDlbNwuBeV59/VybGwK/GCYFLsBqvhbL2GTiVv2j3Mm5EZ+dwqQLr8kkcbrNICL8nHLD2vu6oEP61wiA6iaIs5mcxoTsgoMA4DUczRNhRT0gyNAnOBOmBxx/gENKg0lYkorQQbw48O1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744826652; c=relaxed/simple;
-	bh=rkhovvfIaInjDWiRcY8SysMeEZB09iLQUi8FLP0WOs0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X5OgVZFlUoi9ly5KhcyBeb5U2EyOPrf1NlcjATktwn5Ipvn5nMiczW/9pMahMSiQBbLxhvrlHCNZTFxnoowWDrETpVmUc0vxjwchbJA0n6oZrM04RfufZVy/4op9W5olwDHPLGtRbbjUCpjlXo7UHD98csBHwYH732OW0U4Fz2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UibLDwJE; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744826650; x=1776362650;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=rkhovvfIaInjDWiRcY8SysMeEZB09iLQUi8FLP0WOs0=;
-  b=UibLDwJEtaCBY9JwyyZiBsIeu1XnUK5Ox0JWkWL/jE2j2IcoumF2D4nm
-   TibgO6Kf0SnGpZA3jkrs8Y03vvP93PCTAy1noRB1p/RjJKvNrueLLWlJV
-   TXpQPT098s4DAqKie4kCj602Ao1kMJ4vDUH0suQ+IVlzmgQF3Brd+SK4w
-   IqmvtN/oO6wxezUWdLb/T4HWP8tAo+nOHAL3wA/eaUNG6LWDSLp2uEnmE
-   UomCPswzfyNl4X4wEqMV/w2xpwiaZAlsnohhlUii4yc2QsR+yRcu42jry
-   RbkuIB4kJudCjbO82dn4G3EHPdMGsLbC/sx+ySmbYrlsE69SLcj6iwTxn
-   g==;
-X-CSE-ConnectionGUID: XYn7FMB2Q8mfvvsPQoqOcA==
-X-CSE-MsgGUID: Dbx7yUm/QhS/K32+a3ZF5g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11405"; a="49085291"
-X-IronPort-AV: E=Sophos;i="6.15,216,1739865600"; 
-   d="scan'208";a="49085291"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 11:04:09 -0700
-X-CSE-ConnectionGUID: C4g2q8wmRsWcSFP3k09e2w==
-X-CSE-MsgGUID: zvQgcI4QTBWaatHHzQt9jQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,216,1739865600"; 
-   d="scan'208";a="130557977"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 11:04:04 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1u5779-0000000Cvup-46gI;
-	Wed, 16 Apr 2025 21:03:59 +0300
-Date: Wed, 16 Apr 2025 21:03:59 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: phasta@kernel.org
-Cc: Bjorn Helgaas <helgaas@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Jaya Kumar <jayakumar.alsa@gmail.com>,
-	Clemens Ladisch <clemens@ladisch.de>,
-	Cezary Rojewski <cezary.rojewski@intel.com>,
-	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
-	Mark Brown <broonie@kernel.org>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	David Rhodes <drhodes@opensource.cirrus.com>,
-	liujing <liujing@cmss.chinamobile.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Andres Urian Florez <andres.emb.sys@gmail.com>,
-	Oswald Buddenhagen <oswald.buddenhagen@gmx.de>,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Amadeusz =?utf-8?B?U8WCYXdpxYRza2k=?= <amadeuszx.slawinski@linux.intel.com>,
-	Charles Keepax <ckeepax@opensource.cirrus.com>,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	sound-open-firmware@alsa-project.org
-Subject: Re: [PATCH 02/31] ASoC: intel/avs: Use pure devres PCI
-Message-ID: <Z__xD0WcujiT-12-@smile.fi.intel.com>
-References: <20250416131241.107903-1-phasta@kernel.org>
- <20250416131241.107903-3-phasta@kernel.org>
- <Z__PINxPVW5QrpgH@smile.fi.intel.com>
- <d035a74a2c6d53721df8d68fd75f439feb8da4a7.camel@mailbox.org>
+	s=arc-20240116; t=1744827175; c=relaxed/simple;
+	bh=FTOuMPjeTUHaacx8ul/ZKRVujZeYC6eVmnz2zMxqLEM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Eu8EZr+bcKcu9s8zYAZXvFhEwr5VdBOKwcFyLT+qqifLOfVwHgZV8iSXbgDzClTvFLr0mGuKjceLZiGW+nv3edHWvOSxWSs50yj42zAs+P3uMl7/VtyFhl6Sxx7cGPNeEA75wNOiD5+Q/0rRea+r80XtWfhktxXgTR9TXiqN2b8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=O08rCwsn; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 988E7662718;
+	Wed, 16 Apr 2025 20:12:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1744827170;
+	bh=FTOuMPjeTUHaacx8ul/ZKRVujZeYC6eVmnz2zMxqLEM=;
+	h=From:Subject:Date;
+	b=O08rCwsnw+VV+pxjDr81KbTxjsg9lO8K1MInKwmc1/IadA5zTtJfEQo9BjjvZ1xor
+	 nBuTYB0Qtm+YbNfUl8uLGL9Jump3XfN2tgm0xCTkou9CPYBueub5NkwcSVgTWQLfVr
+	 LpSREu/xdBtPjPL2/Q2s+C8W4dWEUfHpMPxndUFo2JG9ei1C3tLKVfkENlgF8Y96Ph
+	 syUscB/z9AFtMfmJdOyIr2LVGCR2FKGKnzHD0ycj/Q5bsWO4bZ1oDpu+5iR0yz5Yo3
+	 mhxTKFyQNvLViekIRDcJFeiNutxaqZGqtvdMTL7MemPiDMXqeikOCmTwrVVx3ypVtb
+	 UcgnhCtFOHOpA==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Morten Rasmussen <morten.rasmussen@arm.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+ Pierre Gondois <pierre.gondois@arm.com>,
+ Christian Loehle <christian.loehle@arm.com>
+Subject:
+ [RFT][PATCH v1 4/8] PM: EM: Move CPU capacity check to
+ em_adjust_new_capacity()
+Date: Wed, 16 Apr 2025 20:04:23 +0200
+Message-ID: <1921260.CQOukoFCf9@rjwysocki.net>
+In-Reply-To: <3344336.aeNJFYEL58@rjwysocki.net>
+References: <3344336.aeNJFYEL58@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d035a74a2c6d53721df8d68fd75f439feb8da4a7.camel@mailbox.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvdejtdeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepuddupdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehsrhhinhhivhgrshdrphgrnhgurhhuvhgruggrsehlihhnuhigrdh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=11 Fuz1=11 Fuz2=11
 
-On Wed, Apr 16, 2025 at 06:25:52PM +0200, Philipp Stanner wrote:
-> On Wed, 2025-04-16 at 18:39 +0300, Andy Shevchenko wrote:
-> > On Wed, Apr 16, 2025 at 03:12:12PM +0200, Philipp Stanner wrote:
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-...
+Move the check of the CPU capacity currently stored in the energy model
+against the arch_scale_cpu_capacity() value to em_adjust_new_capacity()
+so it will be done regardless of where the latter is called from.
 
-> > >  	bus->remap_addr = pci_ioremap_bar(pci, 0);
-> > >  	if (!bus->remap_addr) {
-> > >  		dev_err(bus->dev, "ioremap error\n");
-> > > -		ret = -ENXIO;
-> > > -		goto err_remap_bar0;
-> > > +		return -ENXIO;
-> > 
-> > Here and everywhere else these can now be converted to
-> > dev_err_probe().
-> > Are you planning to do so?
-> 
-> I want to do what's necessary to get PCI in better shape, since that's
-> what the GPUs and accelerators we / I care about use :)
-> 
-> IOW, I want pci_request_regions() removed from here.
+This will be useful when a new em_adjust_new_capacity() caller is added
+subsequently.
 
-Okay!
+While at it, move the pd local variable declaration in
+em_check_capacity_update() into the loop in which it is used.
 
-...
+No intentional functional impact.
 
-> > >  err_remap_bar4:
-> > >  	iounmap(bus->remap_addr);
-> > 
-> > This looks weird if the driver already is using pcim_enable_device().
-> > Doesn't this look to you as an existing bug?
-> 
-> I looked briefly at it and it doesn't appear like an obvious bug to me
-> because the drivers uses the (very old? deprecated?) pci_ioremap_bar().
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+---
 
-> In any case the driver doesn't set up any devres callback, so has to
-> iounmap() manually.
+v0.3 -> v1:
+     * Added R-by from Lukasz.
 
-Okay, so they are using managed and non-managed APIs, but release / error path
-ordering is fine. So, false alarm then.
+---
+ kernel/power/energy_model.c |   40 +++++++++++++++++-----------------------
+ 1 file changed, 17 insertions(+), 23 deletions(-)
 
-> @Bjorn:
-> Any comments on pci_ioremap_bar()? Should we mark that as deprecated?
+--- a/kernel/power/energy_model.c
++++ b/kernel/power/energy_model.c
+@@ -721,10 +721,24 @@
+  * Adjustment of CPU performance values after boot, when all CPUs capacites
+  * are correctly calculated.
+  */
+-static void em_adjust_new_capacity(struct device *dev,
++static void em_adjust_new_capacity(unsigned int cpu, struct device *dev,
+ 				   struct em_perf_domain *pd)
+ {
++	unsigned long cpu_capacity = arch_scale_cpu_capacity(cpu);
+ 	struct em_perf_table *em_table;
++	struct em_perf_state *table;
++	unsigned long em_max_perf;
++
++	rcu_read_lock();
++	table = em_perf_state_from_pd(pd);
++	em_max_perf = table[pd->nr_perf_states - 1].performance;
++	rcu_read_unlock();
++
++	if (em_max_perf == cpu_capacity)
++		return;
++
++	pr_debug("updating cpu%d cpu_cap=%lu old capacity=%lu\n", cpu,
++		 cpu_capacity, em_max_perf);
+ 
+ 	em_table = em_table_dup(pd);
+ 	if (!em_table) {
+@@ -740,9 +754,6 @@
+ static void em_check_capacity_update(void)
+ {
+ 	cpumask_var_t cpu_done_mask;
+-	struct em_perf_state *table;
+-	struct em_perf_domain *pd;
+-	unsigned long cpu_capacity;
+ 	int cpu;
+ 
+ 	if (!zalloc_cpumask_var(&cpu_done_mask, GFP_KERNEL)) {
+@@ -753,7 +764,7 @@
+ 	/* Check if CPUs capacity has changed than update EM */
+ 	for_each_possible_cpu(cpu) {
+ 		struct cpufreq_policy *policy;
+-		unsigned long em_max_perf;
++		struct em_perf_domain *pd;
+ 		struct device *dev;
+ 
+ 		if (cpumask_test_cpu(cpu, cpu_done_mask))
+@@ -776,24 +787,7 @@
+ 		cpumask_or(cpu_done_mask, cpu_done_mask,
+ 			   em_span_cpus(pd));
+ 
+-		cpu_capacity = arch_scale_cpu_capacity(cpu);
+-
+-		rcu_read_lock();
+-		table = em_perf_state_from_pd(pd);
+-		em_max_perf = table[pd->nr_perf_states - 1].performance;
+-		rcu_read_unlock();
+-
+-		/*
+-		 * Check if the CPU capacity has been adjusted during boot
+-		 * and trigger the update for new performance values.
+-		 */
+-		if (em_max_perf == cpu_capacity)
+-			continue;
+-
+-		pr_debug("updating cpu%d cpu_cap=%lu old capacity=%lu\n",
+-			 cpu, cpu_capacity, em_max_perf);
+-
+-		em_adjust_new_capacity(dev, pd);
++		em_adjust_new_capacity(cpu, dev, pd);
+ 	}
+ 
+ 	free_cpumask_var(cpu_done_mask);
 
-> > > -err_remap_bar0:
-> > > -	pci_release_regions(pci);
-> > >  	return ret;
-
--- 
-With Best Regards,
-Andy Shevchenko
 
 
 
