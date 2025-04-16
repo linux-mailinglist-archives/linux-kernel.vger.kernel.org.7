@@ -1,49 +1,60 @@
-Return-Path: <linux-kernel+bounces-606215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25302A8AC98
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 02:20:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F246A8ACA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 02:23:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49B5D7AE14D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 00:19:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD40F19039AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 00:23:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CF3019341F;
-	Wed, 16 Apr 2025 00:20:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1166B199E9A;
+	Wed, 16 Apr 2025 00:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OwSQy9bO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="AgUT39X6"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B63221917FB;
-	Wed, 16 Apr 2025 00:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA15B1922DD;
+	Wed, 16 Apr 2025 00:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744762801; cv=none; b=QWtiDFj/XGUjZcHPzEANCIlzXP2FOMfoyt3AXK98MYPVrLh21H6OEliI79EWNc8CY2/mh5ykOdY3/GicKMPKDzhf/6ZAzXDSuCZx9+1XE4OW0Y46c73aNC0pUXVQSCGHFHLTEN4RWhtQxvlzv5+4hWDMv5Y7JxUyjbMo5AG7rMI=
+	t=1744762980; cv=none; b=VgUY9IkyAZpZJ7fMuB7Rkf9xJIqa3p5C0sMUb5WdC7shZJ3IIkd1MIwWQOx/MUnJIY/Q0t27K7lfYhYCH6OgyBQp6vAhzD6ReXD0uT5Petf0meSwQrXHDQ2qjHuWNarul0D1LYH8o3OiQrxbnD3gfg1ie8OO/u+Un8mpN+00vkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744762801; c=relaxed/simple;
-	bh=ic8GQvJLhDageRtWQvgdYpJc8sgiqXmhmyNqGUuo838=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=MB9SmF7WWSaXZjCOP4noZ6badoRbH38z758xkCd+3gsrh6rZvSvUG6JJeX3BdLKqowVBefL88ZKy/0w18NLAVq13JVnqEsj0ORWpcLNL3PrrTpbmyFD8BMFZTHOEmcrTxnbjDUrOjz1Ds9EZfzDPUhor3izmn8XtA22WMXpqn7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OwSQy9bO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89948C4CEE9;
-	Wed, 16 Apr 2025 00:20:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744762801;
-	bh=ic8GQvJLhDageRtWQvgdYpJc8sgiqXmhmyNqGUuo838=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=OwSQy9bOXcpcvrLHiWAIcN2Y0cR2Z8umo1lZzlBN4oOrmL9f9IOZzjWINAhrP3kKq
-	 vG3/zNRMoC72Frw3VluVbjTaAdnmG4iP9sj8bHOZWl3a5ymRqWNIlU2Pw81l0wbXCP
-	 QI4967v2GpE0oszz1tWUr256e0+ZrCr8LAbxNyZ4GFNaZRwlSnCe/kHtRbqfQyaWqZ
-	 7Gp0sDjV0wDiwRE5VTVwQeF3LNfBqpbxyNk+R8itCLSFrJ7LwdlyVs4Jqis2JQ39VG
-	 2ca33LTH+fYQfI0SKVFsXkfE0odcFc7RCEsNuRoU8ujzAf4ZkgsxSV7v9mM7K3Kt7H
-	 6P94qp2zzsbCg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADE863822D55;
-	Wed, 16 Apr 2025 00:20:40 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1744762980; c=relaxed/simple;
+	bh=eqTSVK0fJb93nGmyoukDCWFIAgXFKsNTr2iOnbl6pms=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ce50QFKdRFQwRWfHnwVEQEqLQaCv7UVMdazNec9Rd0VeGg7j9kMH/7xKYtCcOj+b6kjREeUqGzd8DhuvAEPcqQ8RwB8jahha1s2ZkRPO+bDF0WOBS/nRPsj+6JdVKD1C98gceutUl6BkzGYerq7AHl918RfjW+ltoEsc4hlaVAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=AgUT39X6; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=eFxO4nceIdBdEGm0H6ZsUqRPhFyxoqg5KX+zbJw4bnY=; b=AgUT39X6WbB1yxW7
+	nSg4FDkzSUA8Sgwd0XwG6xkDpgPFJMqtfgbmonH2/ryud2NYHcISMgOXBu7Ja8941GwE8r9bmHtf8
+	mDMgG8Kfi+GLCspIE+5Xxu2mII3YRxyjA6s91ZQpbGTQEPPzygxh+T2PDoP3prH3FxsFc/pSrjZZs
+	WdY07EGTBfC4x22dhyJE9T7hxxzxej7lZvfdFVVmbooReUi9rxl8ARobLwdSaZ7UJhtOiU8a0czec
+	efaJE+yaT7rZGHntAzRe82e3Dbshvn3aKkmqsbOpSRLEkOkgG9z77H8/cLYAscWWrueAgwjM1aOB3
+	XzGdG4aocNxl2fO02Q==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1u4qY0-00Bl42-0J;
+	Wed, 16 Apr 2025 00:22:36 +0000
+From: linux@treblig.org
+To: njavali@marvell.com,
+	mrangankar@marvell.com,
+	GR-QLogic-Storage-Upstream@marvell.com,
+	James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH 0/2] scsi: qedi deadcoding
+Date: Wed, 16 Apr 2025 01:22:33 +0100
+Message-ID: <20250416002235.299347-1-linux@treblig.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,43 +62,29 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] octeontx2-pf: handle otx2_mbox_get_rsp errors
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174476283936.2824794.16159287732746068279.git-patchwork-notify@kernel.org>
-Date: Wed, 16 Apr 2025 00:20:39 +0000
-References: <20250412183327.3550970-1-chenyuan0y@gmail.com>
-In-Reply-To: <20250412183327.3550970-1-chenyuan0y@gmail.com>
-To: Chenyuan Yang <chenyuan0y@gmail.com>
-Cc: sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
- hkelam@marvell.com, bbhushan2@marvell.com, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello:
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Hi,
+  A couple of deadcode patches for the qdi driver.
 
-On Sat, 12 Apr 2025 13:33:27 -0500 you wrote:
-> Adding error pointer check after calling otx2_mbox_get_rsp().
-> 
-> This is similar to the commit bd3110bc102a
-> ("octeontx2-pf: handle otx2_mbox_get_rsp errors in otx2_flows.c").
-> 
-> Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
-> Fixes: 6c40ca957fe5 ("octeontx2-pf: Adds TC offload support")
-> 
-> [...]
+Build tested only.
 
-Here is the summary with links:
-  - octeontx2-pf: handle otx2_mbox_get_rsp errors
-    https://git.kernel.org/netdev/net/c/688abe1027d0
+Dave
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 
-You are awesome, thank you!
+
+Dr. David Alan Gilbert (2):
+  scsi: qedi: Remove unused sysfs functions
+  scsi: qedi: Remove unused qedi_get_proto_itt
+
+ drivers/scsi/qedi/qedi_dbg.c  | 22 ----------------------
+ drivers/scsi/qedi/qedi_dbg.h  | 12 ------------
+ drivers/scsi/qedi/qedi_gbl.h  |  1 -
+ drivers/scsi/qedi/qedi_main.c |  8 --------
+ 4 files changed, 43 deletions(-)
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.49.0
 
 
