@@ -1,90 +1,140 @@
-Return-Path: <linux-kernel+bounces-607508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 470C1A9073B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 17:03:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D27D0A90738
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 17:02:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A1513B3000
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 15:02:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DE93189DF50
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 15:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A7F1FBEB3;
-	Wed, 16 Apr 2025 15:02:55 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D5551FCD1F;
+	Wed, 16 Apr 2025 15:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nacMTI+g"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 792CE1A0BD6
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 15:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43FCB1FC0ED;
+	Wed, 16 Apr 2025 15:02:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744815775; cv=none; b=Ijg/Suzmb9TP8Lz17Yds+4Uve8E7lJUJ42BvTk6w4Io7bHGj4UYbWjrUr63kOhtE3HMglNz9x0bey/YDLEYnOWvzB1NH1K3Er5WLrFtRbdfjzvBlbIHmUyB4Bxc9DjC4vJTqj41ch2s4X/DrtX/AwCBWvD/Ndf5iIoDaA84CQwk=
+	t=1744815734; cv=none; b=fbBnvV62+aiTM/IGblyYoi3HEhtzDqjEciEWKdUqJHEdt5uUhqTVZr0/JvdWBnfzpbnhuvh5F5i4DLFmQJWJZRINUu5a3vpL6Morxf0IKsY+f1h0tY+KE/mFa2E067lNogYIs2u8ZUe1o1uk8k+/Prz6NMAG0KIJEQCaszipA5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744815775; c=relaxed/simple;
-	bh=IQQMr++ejsZw0KfhanTU/+IFMKcwynCPQ7jx1iWxd2E=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bAd33mQ0l4ZUXVXXI7R9+QDntYjKkzpZrtoqbPs9nn+ZWZC5yjHl5RTywO1Hg1krLQAeUTgzb2dgLiqkT/8DqpBQTPOB7t7W8STulAEtCSwi08S+q+yA1ST1t2DWB9Ky56E8OjlulfGBorQFx5u+1TokyrBHy6SD4YnWkIqniX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A4AEC4CEE2;
-	Wed, 16 Apr 2025 15:02:54 +0000 (UTC)
-Date: Wed, 16 Apr 2025 11:02:53 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Madhavan Srinivasan
- <maddy@linux.ibm.com>, Hari Bathini <hbathini@linux.ibm.com>
-Subject: Re: [mainline]Kernel crash while running ftrace selftest
-Message-ID: <20250416110253.62056f4f@batman.local.home>
-In-Reply-To: <1db64a42-626d-4b3a-be08-c65e47333ce2@linux.ibm.com>
-References: <1db64a42-626d-4b3a-be08-c65e47333ce2@linux.ibm.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1744815734; c=relaxed/simple;
+	bh=QRxPya7JpXCETvUcH9DRxaL80/XVXjs4IkrDFBt/OGM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sspWkWQupX/pUc82S14vYVbkQPIocvi5h1kku8NkuqEKbhCX69Uz5t08PrZF4+kFpv9/ZI+tmViuxnF488b5o3fQFro8vWWiqef92DwddLWKCkWp969P/2aV7SDRTzaZ+4grWfG1XBEQNOonD6UQvo2IW4RVSgRiEP7Bg6/Qn28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nacMTI+g; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5efe8d9eb12so11571938a12.1;
+        Wed, 16 Apr 2025 08:02:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744815730; x=1745420530; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=F6XcolHXlIjt28ayjF3eP0yfHiDO0i8Rtn3p581woik=;
+        b=nacMTI+gdS1Gwulwz0zYUnQJr+C+rGxvfxchEnnHsOE4zUP3uTOhnFCUftX8Ub38gG
+         hY9YeywkN33RvIm917S6Hvq8pn+5H1tXOBCqgvf8Xoest4+vEtaj+jriiqWQJysLLXsI
+         STU1a2yMyOJS89WBt4eaehUxB5tJ7al10ttbjyqhsPXmPN5wEehf2erb+19HTmxx/7X+
+         omQYVMZ2IXVsCPxPO4kxFfXuqXsdfxe8qP9x8gntLG9xBQhBaoC0DgyU4AdGZvA6vaWQ
+         s7C6QAx37d/jxHbqtIspJX9WAh0WSO8WrWqpD8D7B3QsVQlQdNIQ35Y0o6h/HYQWk9ff
+         qYfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744815730; x=1745420530;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=F6XcolHXlIjt28ayjF3eP0yfHiDO0i8Rtn3p581woik=;
+        b=Idz37PhgMCuWfCbLump9uoHsMbGt40AjaVe45vA8m0hvOyleW/9t7yF+7pwumzIooR
+         kvPggjR0EljrADbnbxtKrpYUs21hXVMagcYvm59cW587VPUvM35a9JRUIOWVLmtHevr6
+         u/od4y3c1lnph8/R+RXCA8TMThobOykPdUqie7nhgYWRX4pXqlQeHEiy5+pEIIkSXiXg
+         3gnuBeYWiJNY31oifveKW1syjtbRXl4O7rES/ls/uEKU0i5cnoKYgUnrdTogZZISNLFr
+         UUel1XQoB0cVjQBigSZYVVoz+5ultCA1C7L/KoG/xa5heghrptdRCzXBNpeuCcrc2zfm
+         pkXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlWser5UeR1nf7U7GsY6r849T07Rd6KkUNP3bzrl1xge8gHIetavBeqxsDpkBEznkW+/oziOeHDQ==@vger.kernel.org, AJvYcCVdbrpocPtSXCfR7ZoTJ5xdF6QT05APwcqWZENiYhpjR2DEbN7aPLEmjvZfDNGi6q3BWwR6ayPUCrJcXccI@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyzjYci9hZuQjOUs6Jqz0O48MnafmvxNEIe6D48tjBFtJDYqpZ
+	KlrwFsdRwJDzs8GLyVmbXeZnV3Mi4BRSJYvZF4mHiio1/ho42kQw
+X-Gm-Gg: ASbGncuac8jAp/73rzIPSEXDZ7N4NtF081u/yXUqPC+xsLE+mTDLXovhT8Ecfmrzv1I
+	MdrNeR90EkaeTEqCQBPpCecIj1DEFA4u6Y2JYYIgyQcpaW5KgD41hzqmelofAX6a4wF5s8rw6uo
+	EKlAFVOk7tZ/LNhE8a5Bumxh32E+J5zBUINtJKoZtVNVnLahQuru5HNReuoLpy+2PsOunIPVgzz
+	lZWE6cELgi9KdDaOPvSvmq1rtn6BR8zlcxH2ofuXoh5shcdtnqFXsnItg6qBnHkSPsBQ6PoKFfH
+	eBW4zeQve3h/t05964OgVcabECW6x2+Ae/Eq7ziL5wQc6xgMZaCmJg==
+X-Google-Smtp-Source: AGHT+IFcj9jkDdgV+jSAuWrirYf6lJ1KteDhxbknY3Im4OWYZoJVGcid1LYGM0PLuUm1hpPNncyEDA==
+X-Received: by 2002:a05:6402:849:b0:5e7:b02b:5ae with SMTP id 4fb4d7f45d1cf-5f4b76f12a3mr1484060a12.31.1744815727270;
+        Wed, 16 Apr 2025 08:02:07 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325::1e4? ([2620:10d:c092:600::1:1ccb])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f4b78a3308sm1010332a12.7.2025.04.16.08.02.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Apr 2025 08:02:06 -0700 (PDT)
+Message-ID: <98f08b07-c8de-4489-9686-241c0aab6acc@gmail.com>
+Date: Wed, 16 Apr 2025 16:03:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] io_uring/rsrc: send exact nr_segs for fixed buffer
+To: Nitesh Shetty <nj.shetty@samsung.com>, Jens Axboe <axboe@kernel.dk>
+Cc: gost.dev@samsung.com, nitheshshetty@gmail.com, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <CGME20250416055250epcas5p25fa8223a1bfeea5583ad8ba88c881a05@epcas5p2.samsung.com>
+ <20250416054413.10431-1-nj.shetty@samsung.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20250416054413.10431-1-nj.shetty@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Wed, 16 Apr 2025 12:37:15 +0530
-Venkat Rao Bagalkote <venkat88@linux.ibm.com> wrote:
+On 4/16/25 06:44, Nitesh Shetty wrote:
+> Sending exact nr_segs, avoids bio split check and processing in
+> block layer, which takes around 5%[1] of overall CPU utilization.
+> 
+> In our setup, we see overall improvement of IOPS from 7.15M to 7.65M [2]
+> and 5% less CPU utilization.
+> 
+> [1]
+>       3.52%  io_uring         [kernel.kallsyms]     [k] bio_split_rw_at
+>       1.42%  io_uring         [kernel.kallsyms]     [k] bio_split_rw
+>       0.62%  io_uring         [kernel.kallsyms]     [k] bio_submit_split
+> 
+> [2]
+> sudo taskset -c 0,1 ./t/io_uring -b512 -d128 -c32 -s32 -p1 -F1 -B1 -n2
+> -r4 /dev/nvme0n1 /dev/nvme1n1
+> 
+> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
+> ---
+>   io_uring/rsrc.c | 3 +++
+>   1 file changed, 3 insertions(+)
+> 
+> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+> index b36c8825550e..6fd3a4a85a9c 100644
+> --- a/io_uring/rsrc.c
+> +++ b/io_uring/rsrc.c
+> @@ -1096,6 +1096,9 @@ static int io_import_fixed(int ddir, struct iov_iter *iter,
+>   			iter->iov_offset = offset & ((1UL << imu->folio_shift) - 1);
+>   		}
+>   	}
+> +	iter->nr_segs = (iter->bvec->bv_offset + iter->iov_offset +
+> +		iter->count + ((1UL << imu->folio_shift) - 1)) /
+> +		(1UL << imu->folio_shift);
 
+That's not going to work with ->is_kbuf as the segments are not uniform in
+size.
 
-Thanks for the bug report!
+And can we make it saner? Split it into several statements, add variables
+for folio size and so, or maybe just use ALIGN. If moved above, you
+probably don't even need to recalc
 
-> [15137.589546] NIP [c0000000003e4738] ops_equal+0x8/0x170
-> [15137.589553] LR [c0000000003ec708] ftrace_update_ops+0x78/0xe0
+iter->bvec->bv_offset + iter->iov_offset
 
-Hmm, I'm guessing that you hit a path where the filter_hash or
-notrace_hash never was initialized.
+-- 
+Pavel Begunkov
 
-> [15137.589561] Call Trace:
-> [15137.589564] [c00000001473f9c0] [c0000000003ec6ec] 
-> ftrace_update_ops+0x5c/0xe0 (unreliable)
-> [15137.589575] [c00000001473fa00] [c0000000003f31b4] 
-> ftrace_startup_subops+0x124/0x5c0
-> [15137.589583] [c00000001473faa0] [c
-
-Can you see if this fixes the issue for you?
-
-Thanks!
-
--- Steve
-
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index a8a02868b435..777574fa3095 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -3625,8 +3625,8 @@ static int rebuild_hashes(struct ftrace_hash **filter_hash, struct ftrace_hash *
-  */
- int ftrace_shutdown_subops(struct ftrace_ops *ops, struct ftrace_ops *subops, int command)
- {
--	struct ftrace_hash *filter_hash;
--	struct ftrace_hash *notrace_hash;
-+	struct ftrace_hash *filter_hash = EMPTY_HASH;
-+	struct ftrace_hash *notrace_hash = EMPTY_HASH;
- 	int ret;
- 
- 	if (unlikely(ftrace_disabled))
 
