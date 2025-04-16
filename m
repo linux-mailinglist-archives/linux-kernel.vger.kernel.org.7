@@ -1,102 +1,158 @@
-Return-Path: <linux-kernel+bounces-607275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CC93A9042F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 15:19:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8625FA8FC5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 15:09:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A944F170363
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 13:19:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01CCB1905035
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 13:09:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7631A23A0;
-	Wed, 16 Apr 2025 13:17:23 +0000 (UTC)
-Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0496419B3EC;
+	Wed, 16 Apr 2025 13:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="UrtzcOUs";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MLggXF0z"
+Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6F71367
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 13:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A267818A6AE;
+	Wed, 16 Apr 2025 13:09:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744809443; cv=none; b=FcT8zYXpzs1L3twNyMs7EcIMBjRnkPRTKX58sL9gTnbNVLGSwC0AItKuOu/tE2B5yZVklKY+nben98/dzdwnssnumOe06b2mIQZjXSp2gBA6oik1NvWeVV6CI9zvGiln8KqjFpHy2kk1STLhYOylirE0rcfwte9WqLvL9iWS3VM=
+	t=1744808964; cv=none; b=TtdLf2a2FH4rwyZzUsOHu3VTSEJGhCnz+Fn4SebLkMTBykwWIlrN2Ahiem0EX4goo9iTNamd8MkikYAknCKsvqqsbkCv/mh+hCZq/kgi7UQHTowIIe64RDzVOnM+bI43Nc3cz5q/pN+l9PTzLiUGPC6rHsuPQbSrlCb9yQOoIxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744809443; c=relaxed/simple;
-	bh=eEQyWOwpQcKlBy3G/4Du62DyNtQujjB6ykj5fhh6QwQ=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=RpNAF4PMyP+6xAX32LEX6Frbi43SP8lGzr6+gxdb3rUjizKxE8wCL+MEVAh+5CJeG090rI1QlkHpKfhYBc8XUUD4UZUp096s0rXLQvc0ISDB5QH7lnzeGounL9oYjWQF60khJp4T/3TRVeOlg5AyuSTCQDzqJOleLaFuIZHVMR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id C482E294730;
-	Wed, 16 Apr 2025 15:09:04 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id vqjfnlm228wd; Wed, 16 Apr 2025 15:09:04 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 67B63298566;
-	Wed, 16 Apr 2025 15:09:04 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id u3ActQa5Oaya; Wed, 16 Apr 2025 15:09:04 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 3E1EB294730;
-	Wed, 16 Apr 2025 15:09:04 +0200 (CEST)
-Date: Wed, 16 Apr 2025 15:09:03 +0200 (CEST)
-From: Richard Weinberger <richard@nod.at>
-To: =?utf-8?B?Q3PDs2vDoXM=?= Bence <csokas.bence@prolan.hu>
-Cc: Michael Walle <mwalle@kernel.org>, linux-mtd <linux-mtd@lists.infradead.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	=?utf-8?Q?Szentendrei=2C_Tam=C3=A1s?= <szentendrei.tamas@prolan.hu>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	pratyush <pratyush@kernel.org>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>
-Message-ID: <373620122.295980015.1744808943985.JavaMail.zimbra@nod.at>
-In-Reply-To: <dd3c7cc0-a568-4046-b105-e6786b5c80f8@prolan.hu>
-References: <20250415180434.513405-1-csokas.bence@prolan.hu> <D981O3AA6NK9.2EEVUPM62EV6S@kernel.org> <dd3c7cc0-a568-4046-b105-e6786b5c80f8@prolan.hu>
-Subject: Re: [PATCH] spi-nor: Verify written data in paranoid mode
+	s=arc-20240116; t=1744808964; c=relaxed/simple;
+	bh=gDvLnOvCfVSyAinptyO15tUxBl7lFEc/y0+/dcEFDgo=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=jBaSVMEhxvYIKU7C5kS1yHU/oE0CI1/PT4pnoHMZ89pznQQKnDl7axS8ZMMj3+UVhAOC6YXP4nU8YNeNPbIzoZY4axJWNIwngwYldf/QfAcAfR9WKrGOdVZQPlUKKa3EP3qQdQM4djwe+8O5q6HgWEmwE00u7uMRHEx4dlK7nNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=UrtzcOUs; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MLggXF0z; arc=none smtp.client-ip=103.168.172.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fluxnic.net
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 9B81D1140135;
+	Wed, 16 Apr 2025 09:09:19 -0400 (EDT)
+Received: from phl-frontend-01 ([10.202.2.160])
+  by phl-compute-12.internal (MEProxy); Wed, 16 Apr 2025 09:09:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fluxnic.net; h=
+	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1744808959; x=1744895359; bh=RT0o9ESgA1
+	IOg2dSl39PiMpkDYcmJ8fSsA4gzhvlJ78=; b=UrtzcOUsHD+648RtY30UiBD3e4
+	3PiGpE3rVGuKVQ7KS9GUfuZioM0UclQoEVRNieaa9c3u8nEE2b84ukpn5HMPJXbm
+	Jk9oMlqOAAqM0ah7yGKqlrqdUoegCUCTfL7s2STQSx/cZqQPA+gQ7PxqM65T1b/S
+	UCtheRgdlLBbLZy0XOdZYzyPnhBiNoWp8js0m5IiAz1tvEqtgrp1ZX95GF/jiEw0
+	x0DQIaeJXv6JQ+XBLPRWs8ZAXjfrX8avTaWkt8KrHJQMUwKOmN92JjTCYXCaKV6X
+	9Q9SA534CiqY4X2JdfYayNdOwKvhJAjgBD+MbR+rclHnzZ/OOWdBeTFws4JA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1744808959; x=1744895359; bh=RT0o9ESgA1IOg2dSl39PiMpkDYcmJ8fSsA4
+	gzhvlJ78=; b=MLggXF0zWvc25GHBc+HswrLe7VvoXW86plHGnGw4Ndkcdm+krbX
+	RDpdfkLKbBM925GA3fWO51dK4nwgI/QAZLpI8iEB0KdGPmVJgGMLHT/KAGWOH33S
+	EIXn2eYEd1Sw7Zh6i/2WhQ8nepaY4OoG6TVi0egJa7rk/gxREnLcn1Q4MdMO/sOH
+	yeKFoG1qamkMw0dOeWYW98/U6crdA6wr6vo/XIOd7LC66cSha8YORWlkC/tzBmA4
+	HNVIFb7Z+7My8hDMRErs0b22nf8RW0i7Y9OJeYxLmXYrSV2c1mtbzMjKtMuQoUiX
+	Qq++cAgMo2Eq1+EoPmLrPGP1MvJ8eVKts2w==
+X-ME-Sender: <xms:_6v_Z5X0wtmoeEVMshvwAYjjRJcjRrdbJeL0-bufPnOBmMw4Ykw_lw>
+    <xme:_6v_Z5kdEtdu0_N6569N5rFqaGIxi0EE3zU1wqHUoT2yVpR3KtmJETeEMzIJaqUBj
+    qZAc2QVRk1DhooPwXo>
+X-ME-Received: <xmr:_6v_Z1Zousf7bv9FQUQtBA8OysnrA2nvU-ZMf2KdO9MJvEY2kkSpeWUeJB9GNNf0YbbjmAOwiLwSXLxvoAJ1kju7-OclwAOLRvP3dul8cwKRwSHTjA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvdeigeeiucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepfffhvfevufgjkfhfgggtsehttdertddttddv
+    necuhfhrohhmpefpihgtohhlrghsucfrihhtrhgvuceonhhitghosehflhhugihnihgtrd
+    hnvghtqeenucggtffrrghtthgvrhhnpefgvedvhfefueejgefggfefhfelffeiieduvdeh
+    ffduheduffekkefhgeffhfefveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpehnihgtohesfhhluhignhhitgdrnhgvthdpnhgspghrtghpthht
+    ohepgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhhirhhishhlrggshieskh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggr
+    thhiohhnrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshgvrhhirghlsehvghgvrhdr
+    khgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:_6v_Z8UcR4w1nNcTc-3TrJAN9gxn5n1NwBBxX6UGZKnCmlvMhn79Vw>
+    <xmx:_6v_ZzkCADZ1N4qfMpCZ27f4AtFXzBeVy9hvzH7VNbLH6dpcCAcb5Q>
+    <xmx:_6v_Z5fEcvtmf58ahSKpEmmq9LjwcW4XHvve2u6jL8t7Pm3JOYpVuw>
+    <xmx:_6v_Z9HvTsx4YAV0JKeg00CAYkjyunAQOio_6aWgVw1kkNi0-GG1lg>
+    <xmx:_6v_Z34hJbhSUPUAergXxkQTrNccO0Qf62vyU49RCpxzI_mNTNewmzXy>
+Feedback-ID: i58514971:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 16 Apr 2025 09:09:19 -0400 (EDT)
+Received: from xanadu (xanadu.lan [192.168.1.120])
+	by yoda.fluxnic.net (Postfix) with ESMTPSA id 7AE45111853E;
+	Wed, 16 Apr 2025 09:09:18 -0400 (EDT)
+Date: Wed, 16 Apr 2025 09:09:18 -0400 (EDT)
+From: Nicolas Pitre <nico@fluxnic.net>
+To: Jiri Slaby <jirislaby@kernel.org>
+cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+    linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 13/13] vt: refresh ucs_width_table.h and adjust code
+ in ucs.c accordingly
+In-Reply-To: <7c3a13ce-c5df-4ea7-a3b1-32a13ab95274@kernel.org>
+Message-ID: <9ps0r788-qo06-4893-7753-4n3oo1238q23@syhkavp.arg>
+References: <20250415192212.33949-1-nico@fluxnic.net> <20250415192212.33949-14-nico@fluxnic.net> <7c3a13ce-c5df-4ea7-a3b1-32a13ab95274@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF136 (Linux)/8.8.12_GA_3809)
-Thread-Topic: spi-nor: Verify written data in paranoid mode
-Thread-Index: 93VulI8MDViHseErL85xPb6FAYhpBQ==
+Content-Type: text/plain; charset=US-ASCII
 
------ Urspr=C3=BCngliche Mail -----
-> Von: "Cs=C3=B3k=C3=A1s Bence" <csokas.bence@prolan.hu>
->>> Add MTD_SPI_NOR_PARANOID config option for verifying all written data t=
-o
->>> prevent silent bit errors to be undetected, at the cost of halving SPI
->>> bandwidth.
->>=20
->> What is the use case for this? Why is it specific to SPI-NOR
->> flashes? Or should it rather be an MTD "feature". I'm not sure
->> whether this is the right way to do it, thus I'd love to hear more
->> about the background story to this.
->=20
-> Well, our case is quite specific, but we wanted to provide a general
-> solution for upstream. In our case we have a component in the data path
-> that can cause a burst bit error, on average after about a hundred
-> megabytes written.
+On Wed, 16 Apr 2025, Jiri Slaby wrote:
 
-Hmm. So, there is a serve hardware issue you're working around.
+> On 15. 04. 25, 21:18, Nicolas Pitre wrote:
+> > From: Nicolas Pitre <npitre@baylibre.com>
+> > 
+> > Width tables are now split into BMP (16-bit) and non-BMP (above 16-bit).
+> > This reduces the corresponding text size by 20-25%.
+> > 
+> > Note: scripts/checkpatch.pl complains about "... exceeds 100 columns".
+> >        Please ignore.
+> ...
+> > --- a/drivers/tty/vt/ucs.c
+> > +++ b/drivers/tty/vt/ucs.c
+> > @@ -5,17 +5,34 @@
+> ...
+> > -static int interval_cmp(const void *key, const void *element)
+> > +static int interval16_cmp(const void *key, const void *element)
+> > +{
+> > +	u16 cp = *(u16 *)key;
+> 
+> You cast away const. Does the compiler not complain?
 
-> We _could_ make it MTD-wide, in our case we only have a NOR Flash
-> onboard so this is where we added it. If it were in the MTD core, where
-> would it make sense?
+Nope.
 
-I'm not so sure whether it makes sense at all.
-In it's current form, there is no recovery. So anything non-trivial
-on top of the MTD will just see an -EIO and has to give up.
-E.g. a filesystem will remount read-only.
+> > +	const struct ucs_interval16 *entry = element;
+> > +
+> > +	if (cp < entry->first)
+> > +		return -1;
+> > +	if (cp > entry->last)
+> > +		return 1;
+> > +	return 0;
+> > +}
+> > +
+> > +static int interval32_cmp(const void *key, const void *element)
+> >   {
+> >    u32 cp = *(u32 *)key;
+> 
+> Apparently not, given we do this for ages. I wonder why?
 
-Thanks,
-//richard
+Because we're not creating another pointer that could be used for 
+modifying the referenced memory.
+
+> Anyway:
+> 
+> Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
+> 
+> -- 
+> js
+> suse labs
+> 
+> 
 
