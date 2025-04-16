@@ -1,228 +1,195 @@
-Return-Path: <linux-kernel+bounces-607107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FEBCA8B7FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 13:59:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1A89A8B80D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 13:59:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E2F55A0E5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 11:58:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BC4C1905738
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 11:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D1D242913;
-	Wed, 16 Apr 2025 11:58:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2758A2459E9;
+	Wed, 16 Apr 2025 11:59:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="BDsxXtE8"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hb9+z3he"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CC1B22A1D5;
-	Wed, 16 Apr 2025 11:58:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA84243947;
+	Wed, 16 Apr 2025 11:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744804735; cv=none; b=ols+ZSVZP/AEbXvIMrxt5KZOQK+vZE7l40Lkqt1EFOmY6sarWuK9vMgjio6hHNBSkqRCwGxPXlhDvYhEijmLUkEYS6WSaVGWRhytFpUX+9wEtBf0iV6rk01UZ7mkH7giy0r73yrPsASjj9d7dLYWGcHkjyqhETyEcO2a1gyBm/Y=
+	t=1744804750; cv=none; b=DwXuhyWGTOvAOYLgO0Jb55xu67okxRqJe/MJQ7XhJwU33se18rbJjd/qjL0yZcQPfz5mkBDbXP322PMU3wWi/bAeOUvxQw0eMs6+AsyldEfGeXADOrfYgx62gc7wR8Y3P0Ct57wiABbb1AlpkWz/05T59VraCAmepRQFjj14Obw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744804735; c=relaxed/simple;
-	bh=LSLJn4Y3NHxbkC24XiSwtDfDkGTqa8EMqgKQ7ZHDZcE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EnqABNYP0a4w38UC91F/xt4PBcwUUORQ/vAi4E+qG0k3tQfhfKbeDgD22S1hJPEC/JUdcPtPM0Q0+FqLRv7bipv0LHPFG6Ns/spRGTf5zh5zQ5qlejJ9QIA7iT8kG4zgHfQrGUehMrrWJpie+jNoqmzQxLNw0MHwxyDKqAvmfKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=BDsxXtE8; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 53GBwNZJ13220261, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1744804703; bh=LSLJn4Y3NHxbkC24XiSwtDfDkGTqa8EMqgKQ7ZHDZcE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
-	 Content-Transfer-Encoding:Content-Type;
-	b=BDsxXtE8Tb/YcxnHFIy0wjoAhzGlt6spqy6czmIcUh5muYYcqOKUw7yZnOpRJl3gQ
-	 KHLFxVVjvY04m5t8j4L2FaZYDaQj9slzEb/bB83CCjUo2Qxu9RK+r5TMivKj/aiuHE
-	 cUmtHeuc7Nl6Gajrgo9XNC3EApb+aHyrCMu1fB+2LbzIJN4j+JsRrap+MbN53UBzfV
-	 zmK8hUrj8VJC/MYbNUorfm1msz+eOP1wAVmQNf7XjM+X3zUPmiLDgZw23em1LuNwkl
-	 CJoSaKk7LbaUb1q/ehXrZbZGWzBT9kKwEVa3JA2gH3ZkOqNUnAFuWxS+FaSe2XVQqU
-	 o/4Wk192+pnCA==
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 53GBwNZJ13220261
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 16 Apr 2025 19:58:23 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 16 Apr 2025 19:58:24 +0800
-Received: from RTDOMAIN (172.21.210.70) by RTEXMBS04.realtek.com.tw
- (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Wed, 16 Apr
- 2025 19:58:23 +0800
-From: Justin Lai <justinlai0215@realtek.com>
-To: <kuba@kernel.org>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
-        <andrew+netdev@lunn.ch>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <horms@kernel.org>, <pkshih@realtek.com>,
-        <larry.chiu@realtek.com>, Justin Lai <justinlai0215@realtek.com>
-Subject: [PATCH net-next v4] rtase: Add ndo_setup_tc support for CBS offload in traffic control setup
-Date: Wed, 16 Apr 2025 19:57:57 +0800
-Message-ID: <20250416115757.28156-1-justinlai0215@realtek.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1744804750; c=relaxed/simple;
+	bh=ALtJQWXgZ6dN7/4UoANBpoZDVZTBpnr7WjxXKFApxyc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mP1DfNKFPQSyO8aRMyVqU12h5ojrDNpOMDXhc1tgvKXMm8nE5K5EpC1Ms/j7ewrEK5jG/PRGx74mEDPqJsmHMVY9uib6AD1/yUtROqjzjN4iTpLIsCuy/D0jGSjZ5GJJ4b4bJfBv23JrvCTFSx2lNu0x3W7nyaBG2N9cqKwtOXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hb9+z3he; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC571C4AF0B;
+	Wed, 16 Apr 2025 11:59:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744804748;
+	bh=ALtJQWXgZ6dN7/4UoANBpoZDVZTBpnr7WjxXKFApxyc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Hb9+z3heJulB223YkFfTYprUoXmfjh1/NpF+gh80Ps9qeEfzFVmn79lu8eLWRhIQS
+	 w9ISqlHxsRCPf+Mg1F7PtVduS632OV/90K+mGzEHV/+4oYAt5EAhvQJo7HCk2JMn9s
+	 IIPiUecrzG0i586fNUL0hBde4A5HWuqajs76qiQsdTXbloZLTv4Yxg4CxaLEiXWhDD
+	 Od9h+oQLNCsyK4M9lAQANvfB6Qwep1fKgUnnojJe5iN59mP7EhCmUWgcFpsHVex4jn
+	 9Q3nfbQA3LSvrBWuYr/F9LctHu9xMr8GRggXzXRV6wpbucMXYGC+xz/NYOggSbOHxS
+	 agronkrJ78Flw==
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-2c7b2c14455so4296331fac.2;
+        Wed, 16 Apr 2025 04:59:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUQ3xnT+V9odSHj2JlQdUvNLv3r2ycbcH8Hubb59eCWXTUpIIgEClOLb8k75J0LRjjZ188tVXBchXiUPuU=@vger.kernel.org, AJvYcCWmdKQGnHjqS6QX6wu9yG6hyIKAFGPM3Y1JibUAKvYQXBQHNvFJC/E1hJASwbQvPdmeCoKPpZ4TtuA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5z9nKX4df7Enlp6NcxwCo2SIvl8cfV36V7upMBe1XlH8mjrTe
+	v+1ApFKdoa1LK6SrVs8r9pXp4dzBl7TLdEHlcFf4M5mNcwCJ8KBZN+KCZX29Z1EjgfSzJOIMLx6
+	tg/eyBeWM68hkeYYba4sqy8PAWZM=
+X-Google-Smtp-Source: AGHT+IEOcIVMxPhD85Zgkg4nhoiGIkKp4+2/bsREymu1TNHKVG4+1Cg/k72QVd3D1cutVfhQ21BsE0D/9orPt13jsKQ=
+X-Received: by 2002:a05:6870:596:b0:2d4:e101:13dd with SMTP id
+ 586e51a60fabf-2d4e1011ad8mr225979fac.1.1744804748169; Wed, 16 Apr 2025
+ 04:59:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: RTEXH36506.realtek.com.tw (172.21.6.27) To
- RTEXMBS04.realtek.com.tw (172.21.6.97)
+References: <tencent_EE27C7D1D6BDB3EE57A2C467CC59A866C405@qq.com>
+ <tencent_6D2374392DB66C9D23BF6E2546638A42EC08@qq.com> <CAJZ5v0iE_iw+pSBppEWnJw=2=DFNa-J2VPDorTNF=Mve+0PNCg@mail.gmail.com>
+ <tencent_8E3A87C6D6A193F757BA846F0C41887CC405@qq.com>
+In-Reply-To: <tencent_8E3A87C6D6A193F757BA846F0C41887CC405@qq.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 16 Apr 2025 13:58:55 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iq4bw3WAk1yQRP=B3zk-rRYwibKNRjSfu=PGqTt6RNYw@mail.gmail.com>
+X-Gm-Features: ATxdqUE-tmeeHAEfid9e8PoBcQlKbHjRF175tpJhnR3Wn_yFirnDS7kDRNAlGeA
+Message-ID: <CAJZ5v0iq4bw3WAk1yQRP=B3zk-rRYwibKNRjSfu=PGqTt6RNYw@mail.gmail.com>
+Subject: Re: [PATCH v3] PM: EM: Fix potential division-by-zero error in em_compute_costs()
+To: Yaxiong Tian <iambestgod@qq.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, lukasz.luba@arm.com, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Yaxiong Tian <tianyaxiong@kylinos.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add support for ndo_setup_tc to enable CBS offload functionality as
-part of traffic control configuration for network devices, where CBS
-is applied from the CPU to the switch. More specifically, CBS is
-applied at the GMAC in the topmost architecture diagram.
+On Wed, Apr 16, 2025 at 4:57=E2=80=AFAM Yaxiong Tian <iambestgod@qq.com> wr=
+ote:
+>
+> =E5=9C=A8 2025/4/16 01:17, Rafael J. Wysocki =E5=86=99=E9=81=93:
+> > On Mon, Apr 14, 2025 at 11:09=E2=80=AFAM Yaxiong Tian <iambestgod@qq.co=
+m> wrote:
+> >>
+> >> From: Yaxiong Tian <tianyaxiong@kylinos.cn>
+> >>
+> >> When the device is of a non-CPU type, table[i].performance won't be
+> >> initialized in the previous em_init_performance(), resulting in divisi=
+on
+> >> by zero when calculating costs in em_compute_costs().
+> >>
+> >> Since the 'cost' algorithm is only used for EAS energy efficiency
+> >> calculations and is currently not utilized by other device drivers, we
+> >> should add the _is_cpu_device(dev) check to prevent this division-by-z=
+ero
+> >> issue.
+> >>
+> >> Fixes: <1b600da51073> ("PM: EM: Optimize em_cpu_energy() and remove di=
+vision")
+> >
+> > Please look at the Fixes: tags in the kernel git history.  They don't
+> > look like the one above.
+> >
+> Yes, there's an extra '<>' here.
+>
+> >> Signed-off-by: Yaxiong Tian <tianyaxiong@kylinos.cn>
+> >> ---
+> >>   kernel/power/energy_model.c | 4 ++--
+> >>   1 file changed, 2 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
+> >> index d9b7e2b38c7a..fc972cc1fc12 100644
+> >> --- a/kernel/power/energy_model.c
+> >> +++ b/kernel/power/energy_model.c
+> >> @@ -235,7 +235,7 @@ static int em_compute_costs(struct device *dev, st=
+ruct em_perf_state *table,
+> >>
+> >>          /* Compute the cost of each performance state. */
+> >>          for (i =3D nr_states - 1; i >=3D 0; i--) {
+> >> -               unsigned long power_res, cost;
+> >> +               unsigned long power_res, cost =3D 0;
+> >>
+> >>                  if ((flags & EM_PERF_DOMAIN_ARTIFICIAL) && cb->get_co=
+st) {
+> >>                          ret =3D cb->get_cost(dev, table[i].frequency,=
+ &cost);
+> >> @@ -244,7 +244,7 @@ static int em_compute_costs(struct device *dev, st=
+ruct em_perf_state *table,
+> >>                                          cost, ret);
+> >>                                  return -EINVAL;
+> >>                          }
+> >> -               } else {
+> >> +               } else if (_is_cpu_device(dev)) {
+> >
+> > Can't you just check this upfront at the beginning of the function and
+> > make it bail out if dev is not a CPU device?
+> >
+> Sure, But the current implementation applies em_compute_costs() to both
+> non-CPU devices and CPU devices.
 
-Signed-off-by: Justin Lai <justinlai0215@realtek.com>
-Reviewed-by: Simon Horman <horms@kernel.org>
----
-v1 -> v2:
-- Add a check to ensure that qopt->queue is within the specified range.
-- Add a check for qopt->enable and handle it appropriately.
+Maybe it shouldn't do that for non-CPU ones?
 
-v2 -> v3:
-- Nothing has changed, and it is simply being posted again now that
-net-next has reopened.
+> After carefully reviewing the latest code,
+> I've found this issue has expanded in scope.
+>
+> There are currently three call paths for invoking em_compute_costs():
+>
+> 1) Registering performance domains (for both non-CPU and CPU devices)
+> em_dev_register_perf_domain() =E2=86=92 em_create_pd() =E2=86=92
+> em_create_perf_table() =E2=86=92 em_compute_costs()
+>
+> 2)EM update paths (CPU devices only)
+>
+> Periodic 1000ms update check via em_update_work work item:
+> em_check_capacity_update() =E2=86=92 em_adjust_new_capacity() =E2=86=92
+> em_recalc_and_update() =E2=86=92 em_compute_costs()
+>
+> Exynos-chip initialization:
+> em_dev_update_chip_binning() =E2=86=92 em_recalc_and_update() =E2=86=92 e=
+m_compute_costs()
+>
+> 3) Device cost computation (non-CPU devices only - currently unused)
+> em_dev_compute_costs() =E2=86=92 em_compute_costs()
 
-v3 -> v4
-- Modify the commit message to include a description of the location
-where CBS is applied.
----
- drivers/net/ethernet/realtek/rtase/rtase.h    | 15 +++++
- .../net/ethernet/realtek/rtase/rtase_main.c   | 60 +++++++++++++++++++
- 2 files changed, 75 insertions(+)
+So because this one is unused and AFAICS the cost values are never
+used for non-CPU devices, it's better to just avoid computing them at
+all.
 
-diff --git a/drivers/net/ethernet/realtek/rtase/rtase.h b/drivers/net/ethernet/realtek/rtase/rtase.h
-index 2bbfcad613ab..498cfe4d0cac 100644
---- a/drivers/net/ethernet/realtek/rtase/rtase.h
-+++ b/drivers/net/ethernet/realtek/rtase/rtase.h
-@@ -170,6 +170,7 @@ enum rtase_registers {
- #define RTASE_TC_MODE_MASK GENMASK(11, 10)
- 
- 	RTASE_TOKSEL      = 0x2046,
-+	RTASE_TXQCRDT_0   = 0x2500,
- 	RTASE_RFIFONFULL  = 0x4406,
- 	RTASE_INT_MITI_TX = 0x0A00,
- 	RTASE_INT_MITI_RX = 0x0A80,
-@@ -259,6 +260,12 @@ union rtase_rx_desc {
- #define RTASE_VLAN_TAG_MASK     GENMASK(15, 0)
- #define RTASE_RX_PKT_SIZE_MASK  GENMASK(13, 0)
- 
-+/* txqos hardware definitions */
-+#define RTASE_1T_CLOCK            64
-+#define RTASE_1T_POWER            10000000
-+#define RTASE_IDLESLOPE_INT_SHIFT 25
-+#define RTASE_IDLESLOPE_INT_MASK  GENMASK(31, 25)
-+
- #define RTASE_IVEC_NAME_SIZE (IFNAMSIZ + 10)
- 
- struct rtase_int_vector {
-@@ -294,6 +301,13 @@ struct rtase_ring {
- 	u64 alloc_fail;
- };
- 
-+struct rtase_txqos {
-+	int hicredit;
-+	int locredit;
-+	int idleslope;
-+	int sendslope;
-+};
-+
- struct rtase_stats {
- 	u64 tx_dropped;
- 	u64 rx_dropped;
-@@ -313,6 +327,7 @@ struct rtase_private {
- 
- 	struct page_pool *page_pool;
- 	struct rtase_ring tx_ring[RTASE_NUM_TX_QUEUE];
-+	struct rtase_txqos tx_qos[RTASE_NUM_TX_QUEUE];
- 	struct rtase_ring rx_ring[RTASE_NUM_RX_QUEUE];
- 	struct rtase_counters *tally_vaddr;
- 	dma_addr_t tally_paddr;
-diff --git a/drivers/net/ethernet/realtek/rtase/rtase_main.c b/drivers/net/ethernet/realtek/rtase/rtase_main.c
-index 2aacc1996796..6251548d50ff 100644
---- a/drivers/net/ethernet/realtek/rtase/rtase_main.c
-+++ b/drivers/net/ethernet/realtek/rtase/rtase_main.c
-@@ -1661,6 +1661,65 @@ static void rtase_get_stats64(struct net_device *dev,
- 	stats->rx_length_errors = tp->stats.rx_length_errors;
- }
- 
-+static void rtase_set_hw_cbs(const struct rtase_private *tp, u32 queue)
-+{
-+	u32 idle = tp->tx_qos[queue].idleslope * RTASE_1T_CLOCK;
-+	u32 val, i;
-+
-+	val = u32_encode_bits(idle / RTASE_1T_POWER, RTASE_IDLESLOPE_INT_MASK);
-+	idle %= RTASE_1T_POWER;
-+
-+	for (i = 1; i <= RTASE_IDLESLOPE_INT_SHIFT; i++) {
-+		idle *= 2;
-+		if ((idle / RTASE_1T_POWER) == 1)
-+			val |= BIT(RTASE_IDLESLOPE_INT_SHIFT - i);
-+
-+		idle %= RTASE_1T_POWER;
-+	}
-+
-+	rtase_w32(tp, RTASE_TXQCRDT_0 + queue * 4, val);
-+}
-+
-+static int rtase_setup_tc_cbs(struct rtase_private *tp,
-+			      const struct tc_cbs_qopt_offload *qopt)
-+{
-+	int queue = qopt->queue;
-+
-+	if (queue < 0 || queue >= tp->func_tx_queue_num)
-+		return -EINVAL;
-+
-+	if (!qopt->enable) {
-+		tp->tx_qos[queue].hicredit = 0;
-+		tp->tx_qos[queue].locredit = 0;
-+		tp->tx_qos[queue].idleslope = 0;
-+		tp->tx_qos[queue].sendslope = 0;
-+
-+		rtase_w32(tp, RTASE_TXQCRDT_0 + queue * 4, 0);
-+	} else {
-+		tp->tx_qos[queue].hicredit = qopt->hicredit;
-+		tp->tx_qos[queue].locredit = qopt->locredit;
-+		tp->tx_qos[queue].idleslope = qopt->idleslope;
-+		tp->tx_qos[queue].sendslope = qopt->sendslope;
-+
-+		rtase_set_hw_cbs(tp, queue);
-+	}
-+
-+	return 0;
-+}
-+
-+static int rtase_setup_tc(struct net_device *dev, enum tc_setup_type type,
-+			  void *type_data)
-+{
-+	struct rtase_private *tp = netdev_priv(dev);
-+
-+	switch (type) {
-+	case TC_SETUP_QDISC_CBS:
-+		return rtase_setup_tc_cbs(tp, type_data);
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+}
-+
- static netdev_features_t rtase_fix_features(struct net_device *dev,
- 					    netdev_features_t features)
- {
-@@ -1696,6 +1755,7 @@ static const struct net_device_ops rtase_netdev_ops = {
- 	.ndo_change_mtu = rtase_change_mtu,
- 	.ndo_tx_timeout = rtase_tx_timeout,
- 	.ndo_get_stats64 = rtase_get_stats64,
-+	.ndo_setup_tc = rtase_setup_tc,
- 	.ndo_fix_features = rtase_fix_features,
- 	.ndo_set_features = rtase_set_features,
- };
--- 
-2.34.1
+> Note: In em_dev_compute_costs(), when calling em_compute_costs(),
+> neither the callback (cb) nor flags are set.In fact, it either does
+> nothing at all or performs incorrect operations.
+>
+> Therefore, should we mandate that non-CPU devices must provide a
+> get_cost callback?
 
+Why would that be an improvement?
+
+> So Should we add a check at the beginning of the em_compute_costs() to:
+>
+>         if (!_is_cpu_device(dev) && !cb->get_cost) {
+>                 dev_dbg(dev, "EM: No get_cost provided, cost unset.\n");
+>                 return 0;
+>         }
+> And Modify em_dev_compute_costs() to require callers to provide the cb
+> callback function,Also need to update its corresponding comments.
+>
+>
+> >>                          /* increase resolution of 'cost' precision */
+> >>                          power_res =3D table[i].power * 10;
+> >>                          cost =3D power_res / table[i].performance;
+> >> --
+
+I think until there is a user of em_dev_compute_costs() this is all
+moot and hard to figure out.
+
+I would drop em_dev_compute_costs() altogether for now and put a
+_is_cpu_device(dev) upfront check into em_compute_costs().
 
