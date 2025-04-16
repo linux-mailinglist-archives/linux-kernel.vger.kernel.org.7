@@ -1,136 +1,79 @@
-Return-Path: <linux-kernel+bounces-607534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8C45A9079B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 17:24:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1E56A9079F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 17:24:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F07E9190758F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 15:24:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BEAE17ADB71
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 15:23:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 168782080F6;
-	Wed, 16 Apr 2025 15:23:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 165CB20DD4D;
+	Wed, 16 Apr 2025 15:24:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="botiQ902"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BRPBMaxZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE31F2080F1;
-	Wed, 16 Apr 2025 15:23:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7291D18C32C;
+	Wed, 16 Apr 2025 15:24:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744817034; cv=none; b=tgy9+nm1qMJYqFSuV7ASdIq6uEVI8VqQOYbx8c/X8cgCunerO2YM3lI6AXVbdgbTe/r8x2FiS4Sdda+LdDSi22AxGCz7o2NkzPjNfWxWN4r923BrqqASZP6BGGWifqq33HDChmDpTmuZONdr3c6y8E+t/5UDsXLDb+AQC/QWJdI=
+	t=1744817042; cv=none; b=Qxee+9URZQxrNjyvd/0WgpPEKPx9MsqKcs4iXHqRU2IgwTncIuzHL6RKOOJXap8GoP/AncCHJZ9SER/b74r2xi6ohf4tWVzJwKDo1bIRXZHxdEgDicucVkStx4j0JBUU+VoqosfPR0arUoI0T2i6BeFlZ2gqWp1obukPitpG0yU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744817034; c=relaxed/simple;
-	bh=6+Xff3WmVmrU7Jwc0/xmBLRH1QISypH8FTA0rZNist8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VCLhj2eHlaktbfwZyHTA/YH2OItK1TEzzXs8m98Rsr73Zy3YPOGeW2OPTycMi3ND4rrcaBK8DKwjedfFBm7Gy8pEdPC2IjQTAeNocUvVcBAli2MvnAcHdPOT7CENRKXVNJyUwaqgzYZjNaaL1npvRKw2TQpKe7WZCo1zOO6mvXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=botiQ902; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ac345bd8e13so1188161266b.0;
-        Wed, 16 Apr 2025 08:23:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744817031; x=1745421831; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PzCfD8AVoCom/Bn2tq9P2rJP1QmLxaxUFxS9I84+6mE=;
-        b=botiQ902K1l76N5tco4Z/882lQQZyWtmqcqEy76f3MjP84c930hYFknISaU8C3zxzv
-         qrKz0HmngJJ+73mYghBR+tqCxWctU5Mb6Sd34GbLVMhCHX2SYyfdj2cDbyzQd2ngE993
-         lYZ/jPIuPzx3XL3qTQIZOEu8+9+vb8ras5wfy9mcsGBxfZDpDaG/DXlsU8Tas+2iwuj+
-         7TENG9yn6MZpMFTkDSBn9d8F8W+KvqZEFHHJGOUsAPYituYVZuUGbmC9cNT7w3/PgAKd
-         Njqsg4Nr1ZrLojQ8cWxVCDLGp4TsLWvhyBN7F3llU8utftdvAZLUwinHuQW4f1A9kFz/
-         Jtyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744817031; x=1745421831;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PzCfD8AVoCom/Bn2tq9P2rJP1QmLxaxUFxS9I84+6mE=;
-        b=MXWoXB+RxW8HM1wU62+5+45zwy3n2fKOzIpvuDIquV4wDz3c/UzUpc/9Pl8FYjd221
-         fGLXBIu44Ps7MaLIJFGimMLKS+Qqo9EdA64v263+oTa9SpXo7Lab2LbqHKZ01er9c5tJ
-         OPZ/u+lmS/6M9hounXwMdMw0OxmDht14ZNgpWbegDoarT9Q1L5AeSqQ9UT6qWpytk9mv
-         EyJpDPsD0LZm/Mf8jjwKULxNrZC4Jfyfd+jE1dj79E1atg0TryOWrFlQHP7BqdBZ4PGA
-         mXYYzzeeoS9Nx87EJx+e1vZn1jmL9Axu33VSttZPESJnXboA7tbi9Ok686vO1MvKUIFb
-         E5nw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXTKC87nXjSRvQIkHATV6IaJPiB+D//qEkCAlkhTg5gwDYIi69WfMFRK08a2vlPilNOx7Q2hQwyVuelG4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzL4TOQ97EtNfJpX3x0C8FnxiCsZz2MWBG5CjVHlgLpdy4Tr1bp
-	cr31z3aAzhaLbPIjDSPAd8mQnBj3FSLAp/Ouzi53ZZqq5Pzbq6vX
-X-Gm-Gg: ASbGncvFt6EqD1a95EtahQ/H4OgSW9WmA7q7L+z4nzGehj+8E+t46Hvy5d0Ewa35OE0
-	RRT948/HeP/BDB2h7r3x+3zuqCeHvX9uy1+Rz35xhlg/5C1DVt5Hf7cGWUYgWG+dYx/Sn0Tli1m
-	LJ+HaQ+a6osPFiA+wFYOqG58Z3NMYA71XYR7YMAscYELylcAI5wNnno6WaGPDeNSGWgyWE+4EYL
-	+Bnj5N+G9HDzviTa56ydCkim6iwBOsUQpwgklx73zuguy6G1Qdhn3Mh3QbZmr9nVXqSG3U9MKoP
-	h9ttu/YG3wSqDaGThNSvpnOlsOYnbFA9t56CrligNvhBYTRlNNiKEg==
-X-Google-Smtp-Source: AGHT+IEs1ZzVQ8GjIKt9qqGPXdjcq0XJQJLPFj6DXGnlrIrkSbfc/kHD1jmt0knZEI36Xqzxj1ImOg==
-X-Received: by 2002:a17:907:3cd4:b0:ac7:c585:c3bc with SMTP id a640c23a62f3a-acb428fd7e3mr232409866b.19.1744817030809;
-        Wed, 16 Apr 2025 08:23:50 -0700 (PDT)
-Received: from ?IPV6:2001:871:22a:99c5::1ad1? ([2001:871:22a:99c5::1ad1])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb3d1cc9fdsm142973466b.157.2025.04.16.08.23.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Apr 2025 08:23:50 -0700 (PDT)
-Message-ID: <dc70e77a-87f3-4759-acf2-854c679e8cde@gmail.com>
-Date: Wed, 16 Apr 2025 17:23:49 +0200
+	s=arc-20240116; t=1744817042; c=relaxed/simple;
+	bh=pGN2FXf/xEtwV//iodDxkLZW7OxIkiZj+THM/M1JVek=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uMa4jaE0TTOmxbAHya94pHm+vfXvxCW46ZHmkz0sezdGq3VPqqXG6p/MwGaEuUwTZnPkF4NV7A+/PwRfO/5tgpn3p0b+LTHIilwOuIvIPZu3IC52HON9E3YLMw/yrL00RY/xQZfzUApnaKATgY2dv975H3ulpBww0/C89hyKec0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BRPBMaxZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C46AFC4CEE2;
+	Wed, 16 Apr 2025 15:23:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744817042;
+	bh=pGN2FXf/xEtwV//iodDxkLZW7OxIkiZj+THM/M1JVek=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BRPBMaxZC9H7f4o35IrstTtLsqBUWW3k/4Mrmjl3qoXyvWKjO5oalml9EdnxkxAvW
+	 /XNT1GZ5t40KQ6qTl9J/zTiAgSdg0brYz/whhj7z8CtLo3jpPAJYu0v9s4P1mJq9EO
+	 aEk7QOW7PYd29Bdxk7kF0Q7f6Ni1YuExs21svDjQHNePcqnXwy3fSsE6LNHKOPVdhz
+	 U6tn8hw5V+1GV1i5qlxwgs5Z9cnZKXQMBZpdIV/Z1Mcuv943LXYwBois7+KYL5xfzE
+	 iwMiCiOou9jXYAWbfZWVOv/pnTStmQm8UvBb9v4q/6uAu+AsG1V3GgfHk5CnahVFal
+	 7eAmm/VbGzT9w==
+Date: Wed, 16 Apr 2025 16:23:57 +0100
+From: Simon Horman <horms@kernel.org>
+To: Abdun Nihaal <abdun.nihaal@gmail.com>
+Cc: jiawenwu@trustnetic.com, mengyuanlou@net-swift.com,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] net: txgbe: fix memory leak in txgbe_probe() error
+ path
+Message-ID: <20250416152357.GS395307@horms.kernel.org>
+References: <20250415032910.13139-1-abdun.nihaal@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] rust: pin-init: internal: skip rustfmt formatting of
- kernel-only module
-To: Benno Lossin <benno.lossin@proton.me>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>, Fiona Behrens <me@kloenk.dev>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250414195928.129040-1-benno.lossin@proton.me>
- <20250414195928.129040-2-benno.lossin@proton.me>
-Content-Language: en-US, de-DE
-From: Christian Schrefl <chrisi.schrefl@gmail.com>
-In-Reply-To: <20250414195928.129040-2-benno.lossin@proton.me>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250415032910.13139-1-abdun.nihaal@gmail.com>
 
-On 14.04.25 10:00 PM, Benno Lossin wrote:
-> The `quote` module only is available in the kernel and thus running
-> `cargo fmt` or `rustfmt internal/src/lib.rs` in the user-space
-> repository [1] results in:
+On Tue, Apr 15, 2025 at 08:59:09AM +0530, Abdun Nihaal wrote:
+> When txgbe_sw_init() is called, memory is allocated for wx->rss_key
+> in wx_init_rss_key(). However, in txgbe_probe() function, the subsequent
+> error paths after txgbe_sw_init() don't free the rss_key. Fix that by
+> freeing it in error path along with wx->mac_table.
 > 
->     error: couldn't read `~/pin-init/internal/src/../../../macros/quote.rs`: No such file or directory (os error 2)
->       --> ~/pin-init/internal/src/lib.rs:25:1
->        |
->     25 | mod quote;
->        | ^^^^^^^^^^
+> Also change the label to which execution jumps when txgbe_sw_init()
+> fails, because otherwise, it could lead to a double free for rss_key,
+> when the mac_table allocation fails in wx_sw_init().
 > 
->     Error writing files: failed to resolve mod `quote`: ~/pin-init/internal/src/../../../macros/quote.rs does not exist
-> 
-> Thus mark it with `rustfmt::skip` when compiling without kernel support.
-> 
-> Link: https://github.com/Rust-for-Linux/pin-init [1]
-> Link: https://github.com/Rust-for-Linux/pin-init/pull/33/commits/a6caf1945e51da38761aab4dffa56e63e2baa218
-> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
-> ---
->  rust/pin-init/internal/src/lib.rs | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/rust/pin-init/internal/src/lib.rs b/rust/pin-init/internal/src/lib.rs
-> index babe5e878550..56aa9ecc1e1a 100644
-> --- a/rust/pin-init/internal/src/lib.rs
-> +++ b/rust/pin-init/internal/src/lib.rs
-> @@ -22,6 +22,7 @@
->  #[cfg(kernel)]
->  #[path = "../../../macros/quote.rs"]
->  #[macro_use]
-> +#[cfg_attr(not(kernel), rustfmt::skip)]
->  mod quote;
->  #[cfg(not(kernel))]
->  #[macro_use]
+> Fixes: 937d46ecc5f9 ("net: wangxun: add ethtool_ops for channel number")
+> Reported-by: Jiawen Wu <jiawenwu@trustnetic.com>
+> Signed-off-by: Abdun Nihaal <abdun.nihaal@gmail.com>
 
-Reviewed-by: Christian Schrefl <chrisi.schrefl@gmail.com>
+Reviewed-by: Simon Horman <horms@kernel.org>
 
