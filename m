@@ -1,54 +1,39 @@
-Return-Path: <linux-kernel+bounces-608069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32AD8A90E7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 00:13:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98450A90E76
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 00:12:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B6A817943A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 22:13:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25858189BFE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 22:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE232241CBA;
-	Wed, 16 Apr 2025 22:13:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="cW1jJYDP"
-Received: from smtp.smtpout.orange.fr (smtp-76.smtpout.orange.fr [80.12.242.76])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E863223E337;
-	Wed, 16 Apr 2025 22:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF73B248880;
+	Wed, 16 Apr 2025 22:12:42 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A48D946F
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 22:12:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744841593; cv=none; b=qn+LvRPXIUNAWVEF9X8qc0YJ+Gv+A6UaJb6a+qBd4Jkg+zVuaK1QPvIyMAKnCJsDxFtCI2WP0kggoIO/pueUR5mIQSPVFPIYjNEr5F08OYwWSVdxNwJdGPKiIX8b8hqM9wVuY4psIlUX0OPmUK/CIH+yP0Dv8B5N+sMYuByKABQ=
+	t=1744841562; cv=none; b=s7FiYSioOmelmvXxM4nNxDOBkRnwrjEzo0TLl1RccOA0hp93hF5EtQv9W880dWurgIrtnphsVYLmx89wDdy1OmZOkHjkuU+dqjv7jWWYI2c/llsaTFO0r1bNk8WOVX+kDz33OK6A0+vRKY6NqvPQ7JVIIGlv1Nk6dGNhiOMj5+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744841593; c=relaxed/simple;
-	bh=3bKyZYWUalNrwQszDcOUxuHDdhvZgg/fHH3jT5lMJc0=;
+	s=arc-20240116; t=1744841562; c=relaxed/simple;
+	bh=+djmq/65MXaFk74ZdFkRIEnNr7KrEi62o3NkXvf2dIs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YQex/BgEYwBBku+xLh2rlYni6onLLCrdjl/nnSSVpeDocu81BYwW1SlcRgudRgbXOY+KMrVRhR4nIsu4ft67C3V2tc+K/6lpX6w7gClJtrP4e9vSKRGUSHOQsKwBAfssrWZP6ZZ75sJ1DA9U/0KFq5HBPQaFrvy/0dKmn7lR/n0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=cW1jJYDP; arc=none smtp.client-ip=80.12.242.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id 5Az3ua0kIGpxt5Az7uBigD; Thu, 17 Apr 2025 00:11:57 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1744841517;
-	bh=SjrNmlRrkGDIQEmcssUoZOv3MOsPjmBKRLcUPgyGHhU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=cW1jJYDPKWw12QGyMUYkRY2pm9O5E96diRTHIjM04AJY7rvn4jkcD6nFPDv1/tcz/
-	 smZnekfvEQuasuXGjF5oRPxOy3ZYGzp2lFV80lBBjYXw0gVOeg2g9E8ZLbyHqTBKqO
-	 TixXXmfedo9zn8kURpjj75VmYXqqsbj7+NV1UoEhYB6AkVHXk2xzoNk/5XvRdP0eHJ
-	 73TrAC2Ln4NDLpbDBNwJE2/qetoc10BaboQePhbOcXAdlZs5brc6HtsF6/SzwaUj/5
-	 iz3WHY/vZMPb+S0DR7lew0VisfrIsBd5qgqExmrMqPCLDav72PpK9j7fwc0ZNqy4DI
-	 ixR7c0BGBXOsQ==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Thu, 17 Apr 2025 00:11:57 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <f4742d44-0ea3-4af1-91ab-8bb5af6d781b@wanadoo.fr>
-Date: Thu, 17 Apr 2025 00:11:53 +0200
+	 In-Reply-To:Content-Type; b=N9biq5wH3Y4XOeIyKNWUDEEVln8qewnIJ5vaDEvKv3gFgxLzU0nuoWCB+6D/R7xQ/fZnpF6V07SLpZimRJ2QcxxP04yZ8JjADTLLlkou0wzbNeUf/p8Uehe7nhVz4lz4Ylu8UHRgNghHiZRTRKjmIZ+3WPcfTiraxRBWhpcm6xU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B6CCF1595;
+	Wed, 16 Apr 2025 15:12:29 -0700 (PDT)
+Received: from [192.168.178.115] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AEF873F66E;
+	Wed, 16 Apr 2025 15:12:28 -0700 (PDT)
+Message-ID: <acef778c-a359-484d-a61d-aeca81bdae1d@arm.com>
+Date: Thu, 17 Apr 2025 00:12:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,50 +41,126 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] i2c: Fix reference leak in of_i2c_register_devices
-To: Sunny Patel <nueralspacetech@gmail.com>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1dacfce7-c66d-44c6-9a0c-2dd00bc24ffc@wanadoo.fr>
- <20250414154224.27836-1-nueralspacetech@gmail.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20250414154224.27836-1-nueralspacetech@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v2] sched/uclamp: Align uclamp and util_est and call
+ before freq update
+To: Vincent Guittot <vincent.guittot@linaro.org>,
+ Xuewen Yan <xuewen.yan94@gmail.com>
+Cc: Xuewen Yan <xuewen.yan@unisoc.com>, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, rostedt@goodmis.org,
+ bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
+ hongyan.xia2@arm.com, qyousef@layalina.io, ke.wang@unisoc.com,
+ di.shen@unisoc.com, linux-kernel@vger.kernel.org
+References: <20250325014733.18405-1-xuewen.yan@unisoc.com>
+ <CAKfTPtA06D1EGg2VdVHt-P0PDE-1XZVJOp3myZPSNknnFT3nNg@mail.gmail.com>
+ <CAB8ipk_uOKn+U0ozZyaQ8J9OjifoZWSh-9NUQ9UD+K-kLV28vw@mail.gmail.com>
+ <CAKfTPtD2T8Qm-6Nq-9qODQASoU9Wn1Ujk4uQbbN1Dvo3+EFZFA@mail.gmail.com>
+ <CAB8ipk-G_Q20Cyx69GRY5pdTj9C4SyVyiuRVFi-i-otQ1zBVFg@mail.gmail.com>
+ <CAKfTPtC2XA_DUy5zjPo4Xr1r7W-CFiZEwabEQcZPk0FDLxc3QQ@mail.gmail.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Content-Language: en-US
+In-Reply-To: <CAKfTPtC2XA_DUy5zjPo4Xr1r7W-CFiZEwabEQcZPk0FDLxc3QQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Le 14/04/2025 à 17:42, Sunny Patel a écrit :
-> Fix a potential reference leak in of_i2c_register_devices where the
-> reference to the node is not released if device registration fails.
-> This ensures proper reference management and avoids memory leaks.
+On 16/04/2025 14:19, Vincent Guittot wrote:
+> On Wed, 16 Apr 2025 at 13:07, Xuewen Yan <xuewen.yan94@gmail.com> wrote:
+>>
+>> On Wed, Apr 16, 2025 at 5:42 PM Vincent Guittot
+>> <vincent.guittot@linaro.org> wrote:
+>>>
+>>> On Wed, 16 Apr 2025 at 04:55, Xuewen Yan <xuewen.yan94@gmail.com> wrote:
+>>>>
+>>>> On Wed, Apr 16, 2025 at 1:05 AM Vincent Guittot
+>>>> <vincent.guittot@linaro.org> wrote:
+>>>>>
+>>>>> On Tue, 25 Mar 2025 at 02:48, Xuewen Yan <xuewen.yan@unisoc.com> wrote:
+
+[...]
+
+>>> Why is testing sched_delayed enough for migrating/prio_change ?
+>>> With your change, we will remove then add back util_est when changing
+>>> prio of the task which is useless
+>>
+>> I sincerely apologize for any misunderstanding my previous description
+>> may have caused.
+>> When changing prio without changing class, the delayed_task's
+>> sched_delayed flag is not changed,
+>> we would not remove then add back util_est.
+>> If the class was changed：
+>>
+>> if (prev_class != next_class && p->se.sched_delayed)
+>>                  dequeue_task(rq, p, DEQUEUE_SLEEP | DEQUEUE_DELAYED |
+>> DEQUEUE_NOCLOCK);
+>>
+>> It will dequeue the delayed-task first, and will not enqueue it.
+>>
+>> As for normal tasks which are not delayed, indeed, the issue you
+>> mentioned can occur, but it seems that this problem has always
+>> existed. Perhaps this is a new issue that has come up.
 > 
-> Signed-off-by: Sunny Patel <nueralspacetech@gmail.com>
-> ---
->   drivers/i2c/i2c-core-of.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/i2c/i2c-core-of.c b/drivers/i2c/i2c-core-of.c
-> index 02feee6c9ba9..7c50905de8f1 100644
-> --- a/drivers/i2c/i2c-core-of.c
-> +++ b/drivers/i2c/i2c-core-of.c
-> @@ -107,6 +107,7 @@ void of_i2c_register_devices(struct i2c_adapter *adap)
->   				 "Failed to create I2C device for %pOF\n",
->   				 node);
->   			of_node_clear_flag(node, OF_POPULATED);
-> +			of_node_put(node);
->   		}
->   	}
->   
+> I have been confused by the patch that added  the condition "if
+> (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags &
+> ENQUEUE_RESTORE))))". I wrongly thought it was for
+> dequeue_save/enqueue_restore
 
-Hi,
+No, this was just for sched_delayed. I convinced myself that the
+logic stays the same with the following tests:
 
-Why resending this patch?
-it is the same has before,, so my understanding is still the same and I 
-still think that it is just wrong.
+-->8--
 
-See [1].
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index eb5a2572b4f8..65692938696f 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -6930,6 +6930,19 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+        int rq_h_nr_queued = rq->cfs.h_nr_queued;
+        u64 slice = 0;
+ 
++       bool D = !!p->se.sched_delayed;
++       bool M = task_on_rq_migrating(p);
++       bool Er = !!(flags & ENQUEUE_RESTORE);
++       bool Ed = !!(flags & ENQUEUE_DELAYED);
++
++       /* won't be called */
++       BUG_ON(D && M && Er);                           // [1]
++       BUG_ON(!D && M && Er);                          // [2]
++
++       BUG_ON(D && ((M || Er) == Ed));                 // [3]
++       BUG_ON(!(D && (M || Er)) != (!D || Ed));        // [4]
++       BUG_ON(!(D && (M || Er)) != (!(D && !Ed)));
++
+        /*
+         * The code below (indirectly) updates schedutil which looks at
+         * the cfs_rq utilization to select a frequency.
+@@ -7178,6 +7191,17 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
+  */
+ static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ {
++       bool D = !!p->se.sched_delayed;
++       bool M = task_on_rq_migrating(p);
++       bool Ds = !!(flags & DEQUEUE_SAVE);
++
++       /* won't be called */
++       BUG_ON(D && M && Ds);                           // [5]
++       BUG_ON(!D && M && Ds);                          // [6]
++       BUG_ON(D && !M && !Ds);                         // [7]
++
++       BUG_ON(!(D && (M || Ds)) != !D);                // [8]
++
+        if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags & DEQUEUE_SAVE))))
+                util_est_dequeue(&rq->cfs, p);
 
-CJ
+-->8--
 
-[1]: 
-https://lore.kernel.org/all/1dacfce7-c66d-44c6-9a0c-2dd00bc24ffc@wanadoo.fr/
+In enqueue, when D is true, M or Er is never set with Ed. [3], [4].
+In dequeue, since [7] is never true, [8] is never true as well.
+
+> Could you please split this in 2 patches :
+> patch 1 updates condition for util_est_dequeue/enqueue  and a
+> description why it's safe
+> patch 2 for aligning uclamp with util_est
+
++1
+
+[...]
 
