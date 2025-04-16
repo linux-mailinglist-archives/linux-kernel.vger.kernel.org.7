@@ -1,103 +1,114 @@
-Return-Path: <linux-kernel+bounces-606980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01F86A8B656
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 12:03:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E6FDA8B65E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 12:06:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D2B23AD67E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 10:03:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A491617DF67
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 10:06:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A55EF2451D7;
-	Wed, 16 Apr 2025 10:02:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 227B7243968;
+	Wed, 16 Apr 2025 10:06:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ExvZvf32"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qDAwAVhb"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6A5237700;
-	Wed, 16 Apr 2025 10:02:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFAE92DFA39
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 10:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744797775; cv=none; b=TDH7I5VBs+eGQ1KlSuJ8tA5voM/ICngyIZMhl5/IyTBk5DyTvI9qASijpv7pyOMAicVKAazL4UDkjZSM/UQjWfJPZPhu7COrwOLwklXl7tCAHx8VzcBDxs6DyKjpT1fGmHAmdd0iFaEQP9PXlSbCokks4K+nao30q38jOUkCnqY=
+	t=1744797972; cv=none; b=uoBle52UxtN9ghSrZFMuaimkvwwmRr6jgw0HiOGqrqWu3AwZRhnXdwiaxYkRGcxtdnul+BAzApbykKrq5I2Upxy1e3cOMvm37U8XBI8XDfKnVuXNHIxZCARwMn6DfK3+0Ed4770RBrAH4UqTLg8d/LSmle6oSnne7fs+BObBFLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744797775; c=relaxed/simple;
-	bh=+cKq8aKhcGOaMlZseIjnVl0ziwhnIryENv47tAzoNxg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=BpLG34OIvUn5B5qM0xjmn7pKxbELkAH5uWqr0VcdgX4TYEune4g9t2nGd0FGXAKrIofTjPVIeb9cjVuR3NDzV78WfHEmG5CB8Wavq5zAimEj1F571hcixS3sXXl61LWO1WdqpDuxcgVtrqdle5wZM6U5Wd0sOvWe8m+p4j97zpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ExvZvf32; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744797772; x=1776333772;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=+cKq8aKhcGOaMlZseIjnVl0ziwhnIryENv47tAzoNxg=;
-  b=ExvZvf32+dVjk/6LNeB9Y4cQ56FI1Uw53YY2QATykGJ1L0UiMv2PUhsJ
-   wY0eeh9E4TxRtVnp7+u2uKVO33IazHE9dgIJUVRYtD7T7XjGCH36mFg9e
-   34Nbfkq0A6ElOId8nhC0Qgja/a6bXqzjnhgQmS2VDXg6CEz2kkUDKbxm6
-   SCI8aIf3cKrvNxHe2/wvLDbWu7bIIX02r9oNq+mauzGKQHdhh/pUz8oif
-   FyCKC28d9eccdyUB4Aidn3k13vJifpENzTrmSnATOmUBBCDMgzG3OiZzu
-   6CYPApYDEDepXho09xYPIGgllKfJep6jwHfXWJxOePSJHDHfwW6Ya95Xv
-   A==;
-X-CSE-ConnectionGUID: hfC2DSDNRIK9eLIep7XhrQ==
-X-CSE-MsgGUID: M7ZMF9lVT22htHuLvBquMA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="49987801"
-X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
-   d="scan'208";a="49987801"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 03:02:50 -0700
-X-CSE-ConnectionGUID: ffEA1J1qSkS2k+ZErWBacg==
-X-CSE-MsgGUID: 3sxvh7DWTuK/oFTttngPIA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
-   d="scan'208";a="161449257"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.243])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 03:02:47 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH 1/1] PCI: Use PCI_STD_NUM_BARS instead of 6
-Date: Wed, 16 Apr 2025 13:02:39 +0300
-Message-Id: <20250416100239.6958-1-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1744797972; c=relaxed/simple;
+	bh=2IcbjuyAVM4kLhvW0gDdafAXht8sirWnrRq3F/Gm0hA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Qj3/sPVTCrXSOOX4Z434mejae01ElSJ8KhGE1y9E4TXoqkBSPO4Wj7UsS638ORvPkv8oVNapRF9qNGFdUi+SMzeOPob8ySOHtNJC2vK9jiuPR+3moJ2iqYoG9nWGNl0kC8KwPTggrhJgZF21Yx2Phrbb3GDwdpUQc5BIu/1w8Q0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qDAwAVhb; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5f438523d6fso7529a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 03:06:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1744797969; x=1745402769; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oJtO5p/6ZsGHTmasHcgl8RQRMFMxAkQzPoyy/PT0rL8=;
+        b=qDAwAVhbyh1j7xqLWYCZmU7OhzS+D/YSoxijZdC6bT5dPIuP+dBwrA2wS3X6MhVzcR
+         2Il0b8MvhDFvFAbVE0OwaXjjOKN5XxxMBbyiyzM78vpmKNhXKeFjjYiYgoOTu/9zbIDL
+         wiOf54On9z43wWQAFr4RhA4lWdmP3PbR/3pAAFiY3DTeS5uVYUrYg47zpmRslZED0HE3
+         L7NLfFicZncYUuPg28Qom/07aFjQt0jb1Rcy2PNrz5HpEOrX5kLkvO1mj7g2Gndtk88B
+         EOJ8/lg3CN4T7EDLjZYDcGj+S5mtXWPslXrzcCmTg3TjnHJ5XKZCESg9JU5wJgrhYZzl
+         cXBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744797969; x=1745402769;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oJtO5p/6ZsGHTmasHcgl8RQRMFMxAkQzPoyy/PT0rL8=;
+        b=c0nxHUOdOiuK7qU42jFxa32O7tdApgrq1XVFYadMWiGj/E/GVWehrT6o6AQIXGJJU9
+         shL5RJv8/4Xs0WtTnWfvMdcRuFgSEGPEPvd5iXaCpSUzjp6BbziQywMhGaJLZrsfqYqQ
+         QVt+r1+MYEchdnCSPxHRk4IsTQyzg534TN3M20oQ1odnCCnOY6udUYljM0Pq1QHAzeF7
+         lCoYfrdrxDrKmfilcdrD7TltVSUuyP2SKjSGjlSksMqKI3pr+dUCt734CbFT0E5QNNX6
+         TSVktgeqgh0t4IEZeAxp5YtyOvBIcQ04Nkrpmtnso/4s1ACoKhiqwYlZOJNwgPP2E4US
+         qKig==
+X-Forwarded-Encrypted: i=1; AJvYcCXIvm33JV+74+izVHgQBOeklCl+RCuWfu71Ki64YCF1Oc4496lUj0uVn/BowEsw91T0b9foaG8y0BScgbc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0yFDpdOKeAhqyci9QHEp0R9o61pKxBb2bL2hCm+S+oD8DWVd9
+	CpLS3+ytakX1fDlnuJ4QXUmji+4+kk6DDOpGvp7gNL8jrGfMLn0tHXvlN+m3n8/OL5q+3mmsxKS
+	4wzC+DweCh4s6AvtQNVYPg+em/wCKo0qP/Nbu
+X-Gm-Gg: ASbGncu0TTbWjv+PslUzKGkjHZTDIfnxyyheVPCdn7ilD6I/LHVPJNMhqZxMe/tb+AZ
+	dqVhdMcAJ4/wzntLomyIE9jMAV3pPIz6PHTSAZ2VRL9PQ6vgieUZZoYmn20ricUjP+WdFVOJJnY
+	2v2mTvkZ7DMFnfrPA3H9iSKSsG9bWCHVbevrGABA++1QABGw2Krdtj
+X-Google-Smtp-Source: AGHT+IFFSblm/GfnDiFSG1MLMOppLXh+oYcsUvCfbwn5ir+K9snJXxGTAxtAyqmuqMenSvvMadnZW3B6voE0rCrc9yU=
+X-Received: by 2002:a50:9517:0:b0:5e0:eaa6:a2b0 with SMTP id
+ 4fb4d7f45d1cf-5f4b6dc8e63mr35464a12.5.1744797968923; Wed, 16 Apr 2025
+ 03:06:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250408035833.844821-1-guanyulin@google.com> <20250408035833.844821-5-guanyulin@google.com>
+ <2025041140-fernlike-reconvene-b2e5@gregkh>
+In-Reply-To: <2025041140-fernlike-reconvene-b2e5@gregkh>
+From: Guan-Yu Lin <guanyulin@google.com>
+Date: Wed, 16 Apr 2025 18:05:00 +0800
+X-Gm-Features: ATxdqUFJFRm6-kvXF9DTZ5ctKMay55IyEenq8Hx1UwGOVHXGa1wo5iRkeFUV09U
+Message-ID: <CAOuDEK3b6vM_vyLDHjxYWu1UCaZ53hNse91bjkoB7vPaebEMPg@mail.gmail.com>
+Subject: Re: [PATCH v11 4/4] usb: host: enable USB offload during system sleep
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: mathias.nyman@intel.com, stern@rowland.harvard.edu, gargaditya08@live.com, 
+	kekrby@gmail.com, jeff.johnson@oss.qualcomm.com, elder@kernel.org, 
+	quic_zijuhu@quicinc.com, ben@decadent.org.uk, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-pci_read_bases() is given literal 6 that means PCI_STD_NUM_BARS.
-Replace the literal with the define to annotate the code better.
+On Fri, Apr 11, 2025 at 10:02=E2=80=AFPM Greg KH <gregkh@linuxfoundation.or=
+g> wrote:
+>
+> On Tue, Apr 08, 2025 at 03:57:24AM +0000, Guan-Yu Lin wrote:
+> > @@ -736,6 +737,7 @@ struct usb_device {
+> >       unsigned use_generic_driver:1;
+> >
+> >       refcount_t offload_usage;
+> > +     unsigned offload_at_suspend:1;
+>
+> Please take a second and think about how the memory is now layed out
+> here with your new addition.  The tool 'pahole' is your friend...
+>
+> thanks,
+>
+> greg k-h
 
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
----
- drivers/pci/probe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for providing this helpful information. I'll reconstruct the
+struct to minimize the effect of new additions.
 
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index 364fa2a514f8..08971fca0819 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -2058,7 +2058,7 @@ int pci_setup_device(struct pci_dev *dev)
- 		if (class == PCI_CLASS_BRIDGE_PCI)
- 			goto bad;
- 		pci_read_irq(dev);
--		pci_read_bases(dev, 6, PCI_ROM_ADDRESS);
-+		pci_read_bases(dev, PCI_STD_NUM_BARS, PCI_ROM_ADDRESS);
- 
- 		pci_subsystem_ids(dev, &dev->subsystem_vendor, &dev->subsystem_device);
- 
-
-base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
--- 
-2.39.5
-
+Regards,
+Guan-Yu
 
