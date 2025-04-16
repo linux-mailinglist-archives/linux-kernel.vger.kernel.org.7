@@ -1,90 +1,145 @@
-Return-Path: <linux-kernel+bounces-606252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F786A8AD1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 02:59:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9A76A8AD2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 03:00:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12B6D7A81A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 00:58:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECBDB4428BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 01:00:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78B91FCFF8;
-	Wed, 16 Apr 2025 00:59:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 093051FCF78;
+	Wed, 16 Apr 2025 01:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="O37iHB76"
-Received: from smtp-fw-80008.amazon.com (smtp-fw-80008.amazon.com [99.78.197.219])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="ALg9fH3T"
+Received: from mail-il1-f226.google.com (mail-il1-f226.google.com [209.85.166.226])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DDF1C54B2;
-	Wed, 16 Apr 2025 00:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9984204C0C
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 01:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744765173; cv=none; b=KQPWsVhlG6/3KgtjNIC2YtWoF3Vd7ir/7Xr6Kh4evaMWdTVqXe/S6m6jmJaXuMNnA791OeJK4DzkCmCawfF+f0wLgO2yaI1hEulJaB5592Lzic4QxDhTBpLtFnlSS6qIjGk83hbGFAytyeod7J6UppyG1E3O1m1KGF7jiZJK8CU=
+	t=1744765214; cv=none; b=aU2CnKWtpHSS5t6ZkJ8BM2iLOC7gOGJgfHZSnib+fnU/x8oI/i/JQ8+Hwg14lm/Sx0sH7u12UqAFLkkbs3BuRG06NkKUxI6JtCmPTDztxPQTQ84MuBXSuHsi0wr2QvT3qfFG83Ud80zFtJwh+8YdkUQZ6/+vuv/naLKxfTcf6vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744765173; c=relaxed/simple;
-	bh=w4FUEyy7zoYuLoYqM6PQcZ3L6bczBwa/Qf4185Rlb/g=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LRsZZrfTlHn9AkCbTnAR6FPTb7IwQcsxyaonIv6E4zkzGH5kj2knGx+zY04Sb1zsdvv4LFnJsm3ZZqaWdBP9Z4uA9s4NLKBmDgym8+U/UHQx6E9GKXDQQzMJ5wybB5n9KZxTjx8Zy3xcey9TmfbzvPFt10f8sxGFZDvXWHw07Z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=O37iHB76; arc=none smtp.client-ip=99.78.197.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+	s=arc-20240116; t=1744765214; c=relaxed/simple;
+	bh=U1bGSc2/nLMY1+nk4hzmzUuRmIijrn47A/VZgqDeFSQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PwhcbavO5QvrUcWORZclX6IVpdb/XCrCOLdCKnhZNaPRM9I/rTRSnaWmTRZ9NHwn5KYN9FFiMLzgjXmEC2/N7YT1L8uZLZDz5+3+dDpiHVGCYVl9KqezPBif+O26GOmRCMd3Dc2gMzbdh6SZ/J1+2VosbL011wEoFs+77xrA9Dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=ALg9fH3T; arc=none smtp.client-ip=209.85.166.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-il1-f226.google.com with SMTP id e9e14a558f8ab-3d5e2606a1bso52128295ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 18:00:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1744765171; x=1776301171;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ivhcK5dNCAkewU7voLylymXzEJ3I3+donvO6DDt+N4Y=;
-  b=O37iHB760rCpfi/o1XCP6xxWA9C45tR6MmVTyVYy1WKMHpg4zIDldDCC
-   iiOo56eL9KMS87jmM9btlpVqzUko5p0nKm3rXQ5a8S5nRSiloFQaBbEqL
-   7yFCLzdmt0I38L86gZMXCEcg8YDxXJuADzZfIGYakQ1z2AdEFzTnIie2j
-   M=;
-X-IronPort-AV: E=Sophos;i="6.15,214,1739836800"; 
-   d="scan'208";a="187740544"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-80008.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 00:59:31 +0000
-Received: from EX19MTAUWC002.ant.amazon.com [10.0.21.151:47402]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.21.195:2525] with esmtp (Farcaster)
- id 512a03c6-919e-4da0-b14e-341c52859a1f; Wed, 16 Apr 2025 00:59:31 +0000 (UTC)
-X-Farcaster-Flow-ID: 512a03c6-919e-4da0-b14e-341c52859a1f
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 16 Apr 2025 00:59:28 +0000
-Received: from 6c7e67bfbae3.amazon.com (10.88.149.87) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 16 Apr 2025 00:59:25 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <leitao@debian.org>
-CC: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <dsahern@kernel.org>,
-	<edumazet@google.com>, <horms@kernel.org>, <kernel-team@meta.com>,
-	<kuba@kernel.org>, <kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <pabeni@redhat.com>
-Subject: Re: [PATCH net-next 3/8] ipv6: Use nlmsg_payload in route file
-Date: Tue, 15 Apr 2025 17:59:15 -0700
-Message-ID: <20250416005916.23068-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250415-nlmsg_v2-v1-3-a1c75d493fd7@debian.org>
-References: <20250415-nlmsg_v2-v1-3-a1c75d493fd7@debian.org>
+        d=purestorage.com; s=google2022; t=1744765209; x=1745370009; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oCtxuzbiw7A2fjHQxchMMP5hVbTuD1H5d0tolsC0hJY=;
+        b=ALg9fH3TG4ZtVtUq4MM+gyGvYrYf1JMzIWIFp8a8LD7Py7kxCZGsqqIyk4FmD5GIIV
+         quNHmYpQ0WffWXucoWz7TEJsdtmbfvZD7nuWP98aaZcCTriK+OhLpigyy72sgPLoMRyF
+         PF8qsIHJ0pw3ddQp2u7viqItdqQrPZiLFMMDxP/CWt7XES13y/loE3bKJThK5f7QBrCU
+         lxPLirvGObysgEHuDKqNRru8gLbsY4mWCPuyFHc3TolvNvDX5fWKd4PegXWdWKVKYn+g
+         W1zjBygqcY3KnYUeuA/uIqW9N4yJLWKnCrhmcAnVcYPJFmO3nr1WGlldnKtm+lxtJWEL
+         cTZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744765209; x=1745370009;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oCtxuzbiw7A2fjHQxchMMP5hVbTuD1H5d0tolsC0hJY=;
+        b=hFEIW0EB2dntgi5Hub7lqsB7AoBlQh6ZGEREnCOHuDtTjlTgnc31R6GclDulXnXdP+
+         ZZwr/Y50oDyMm0n35Ng+8UMRSHpJhhlz67iA55bXtspR1n/JmmAGY4L2yVJsfjbk6rXT
+         bd3/Sk3lWXczqygw3aOq8hyYxsnayhdLuSEwHHFfftzLEIIX6rnpH2YWVKx8sezI3sk0
+         J7N7GT5n8Il0TlZJAAiKIi9rIt0alcDJytC7W5e7yZacB0JFnCweW3Frl7qeD5a4tnna
+         nGz275v9P1Ua7zUH6lp8VMSjif8UQp0qvy9iIgBEGYACKqTjiJPmKA1zgsEnVSpUJYfy
+         QqGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCURU5hOhRLYEl/ZXPZ82P997F9Q07biWjGcL4MUbmI9TLQ4Zotd95D5RN70JHKnF7NeiQQ8XDYZnSoWO88=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlrWSwmUSiIkebUvqo7R6U2Pd4BFPAAVfJk5qvT5hHLRIYabOd
+	xvudI9IxXfujLjDJNvczVXo1OV9LB63U82xiMHqDr1jgLA95E+McK5971u3mbGX1KP/cloRQlEr
+	RhkUNMHQggYHK6Pt3Om71ZC/TH0tlS9OPdLEFSpzBNFmIq6I0
+X-Gm-Gg: ASbGncszyO4E1N62nvgDSZXwYox7I8bbrs19RcQP+0VLd9oQYxKpuj8Mi8Mo6RBpIQW
+	ZEE0QQbkNPz6ZH6bC+AAoY66tYCU4Zpn9RoDu8WTNLYl/FL4wvufWWWAvhhCHoYXfpNBz4EWkmO
+	6cxE7NHx3gTY3FVVmaxxrXVMwp20Dq8GhdzT812/Nz2YxWGuGLFYcPAkFLO8xwQqXxAlgP2nSER
+	2vm2414qj3M7JEsPOy6TBefwaxgzpKzzCmGhdEoRx3Bk8ta3/PXkmLRGnGCnCbtamIOJgmbyJnT
+	mAYR+UZHk57hgC/lrASFHDL4dZy4vnA=
+X-Google-Smtp-Source: AGHT+IEcpjg7SzGB4NuiaamC7OJymu8iX3OpxT46nVTcfyROGQNAohxfp/QCq27936eQZhxInEAm9vHNLdCG
+X-Received: by 2002:a05:6e02:3605:b0:3d2:aa73:7b65 with SMTP id e9e14a558f8ab-3d8124cdf02mr13580195ab.6.1744765208884;
+        Tue, 15 Apr 2025 18:00:08 -0700 (PDT)
+Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
+        by smtp-relay.gmail.com with ESMTPS id 8926c6da1cb9f-4f505d18f78sm735169173.21.2025.04.15.18.00.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Apr 2025 18:00:08 -0700 (PDT)
+X-Relaying-Domain: purestorage.com
+Received: from dev-ushankar.dev.purestorage.com (dev-ushankar.dev.purestorage.com [IPv6:2620:125:9007:640:7:70:36:0])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 0339F3400DE;
+	Tue, 15 Apr 2025 19:00:08 -0600 (MDT)
+Received: by dev-ushankar.dev.purestorage.com (Postfix, from userid 1557716368)
+	id EBE75E40391; Tue, 15 Apr 2025 19:00:07 -0600 (MDT)
+From: Uday Shankar <ushankar@purestorage.com>
+Subject: [PATCH v4 0/4] ublk: decouple server threads from hctxs
+Date: Tue, 15 Apr 2025 18:59:36 -0600
+Message-Id: <20250415-ublk_task_per_io-v4-0-54210b91a46f@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D046UWA001.ant.amazon.com (10.13.139.112) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPgA/2cC/3XO3wqCMBQG8FeJXTc5+6ObXfUeEbL0aMNS2VSK8
+ N3bhCDILr8D3+87L+LRWfTksHsRh7P1tu9CkPsdKa+ma5DaKmTCgacgQdPpcmuL0fi2GNAVtqd
+ llouyzkBXypBQGxzW9rGSp3PIV+vH3j3XhZnFa8QkA+CcSylUIkDrXDPK6OTDZmvccZgcxpppM
+ Cn7O4nQzD/lP5/MnAK95EorhVldpbDNiC+GwQYjIqMZQ13LNJXml1mW5Q1PjeVQOgEAAA==
+X-Change-ID: 20250408-ublk_task_per_io-c693cf608d7a
+To: Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>, 
+ Caleb Sander Mateos <csander@purestorage.com>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Uday Shankar <ushankar@purestorage.com>
+X-Mailer: b4 0.14.2
 
-From: Breno Leitao <leitao@debian.org>
-Date: Tue, 15 Apr 2025 12:28:54 -0700
-> Leverage the new nlmsg_payload() helper to avoid checking for message
-> size and then reading the nlmsg data.
-> 
-> Signed-off-by: Breno Leitao <leitao@debian.org>
+This patch set aims to allow ublk server threads to better balance load
+amongst themselves by decoupling server threads from ublk queues/hctxs,
+so that multiple threads can service I/Os from a single hctx.
 
-Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+Signed-off-by: Uday Shankar <ushankar@purestorage.com>
+---
+Changes in v4:
+- Drop "ublk: properly serialize all FETCH_REQs" since Ming is taking it
+  in another set
+- Prevent data races by marking data structures which should be
+  read-only in the I/O path as const (Ming Lei)
+- Link to v3: https://lore.kernel.org/r/20250410-ublk_task_per_io-v3-0-b811e8f4554a@purestorage.com
+
+Changes in v3:
+- Check for UBLK_IO_FLAG_ACTIVE on I/O again after taking lock to ensure
+  that two concurrent FETCH_REQs on the same I/O can't succeed (Caleb
+  Sander Mateos)
+- Link to v2: https://lore.kernel.org/r/20250408-ublk_task_per_io-v2-0-b97877e6fd50@purestorage.com
+
+Changes in v2:
+- Remove changes split into other patches
+- To ease error handling/synchronization, associate each I/O (instead of
+  each queue) to the last task that issues a FETCH_REQ against it. Only
+  that task is allowed to operate on the I/O.
+- Link to v1: https://lore.kernel.org/r/20241002224437.3088981-1-ushankar@purestorage.com
+
+---
+Uday Shankar (4):
+      ublk: require unique task per io instead of unique task per hctx
+      ublk: mark ublk_queue as const for ublk_commit_and_fetch
+      ublk: mark ublk_queue as const for ublk_register_io_buf
+      ublk: mark ublk_queue as const for ublk_handle_need_get_data
+
+ drivers/block/ublk_drv.c | 205 +++++++++++++++++++++++------------------------
+ 1 file changed, 100 insertions(+), 105 deletions(-)
+---
+base-commit: d3b4b25e363e4ce193e6103e64f7de12b96668b9
+change-id: 20250408-ublk_task_per_io-c693cf608d7a
+
+Best regards,
+-- 
+Uday Shankar <ushankar@purestorage.com>
+
 
