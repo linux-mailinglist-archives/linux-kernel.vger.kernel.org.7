@@ -1,205 +1,120 @@
-Return-Path: <linux-kernel+bounces-607722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27F03A909CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 19:18:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8D6CA909CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 19:19:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A33FE3B584E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 17:18:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 736721904EBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 17:19:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F732222B3;
-	Wed, 16 Apr 2025 17:15:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB4021C19C;
+	Wed, 16 Apr 2025 17:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i9Cu6Asf"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZMtpy1oe"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E01221D94;
-	Wed, 16 Apr 2025 17:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4887F21C162;
+	Wed, 16 Apr 2025 17:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744823758; cv=none; b=CiGfzaNpvWRrRAP2plkiiaBnduVykeAhQp+eRRonaINqx2aA3FvRP7dK6QsHK9yHr1dl1uVgFha3VX0FAfk7g1IXtVL8r10rnv6XjLPW+7MACNCvdoRgNmPkCiV3VU2woDscbfcsG6bOkeAwl8xes4no4cY73rPMn+FKX7oqGPc=
+	t=1744823793; cv=none; b=thyhWpkVlsvpgCQp2FBNzIy9+lj9xfXsM5snImOwDLdaBJk4ZYJniqrcE4YG9e0zVuHjb8KqrTbS+g5sOS4N4B63KlMyDYBxUQCzMeazb+EXjdfIk88CU9Jst6DUEpVFqFXyb0zWdE7R9IOGa3HOy+vs6goHitFp8uocQXgZu9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744823758; c=relaxed/simple;
-	bh=HONVM/3gBdh6iNvjtIbFIPb2A1MgnYPmlfkaZFNDgT8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gszoBkV05zcrCDkVTFWjS942qtmdhY/bVl5jcZ7StYElbYCZWt7U+QAHILS8teHYwJEUNF7Lfa2UxNLelTRMzh9zUfVyGDjM15VcZ/f+jNIMQRSMbjc8F0y/s8Wo/KQdisucUzvcwE9WYS1SPyIx46gXZcAvvI54004eiwQnw54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i9Cu6Asf; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7c559b3eb0bso332376285a.1;
-        Wed, 16 Apr 2025 10:15:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744823755; x=1745428555; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eebxCf0do5RI0mDndq9BzvOFzHvt6jSVZ8J5rmAS1tI=;
-        b=i9Cu6AsfNpWkxa37YXBSd8/TJvxkRZWQudCa9kNAWb+9CsHz79m5Xl9Ywpyz5MljEG
-         v1Ko17ps3hs41wyiiF87g696UHjRkokguWMGWBZCdhBZASnkLoMScr59I5FOSz1PL0Mh
-         +14rKlpf+DyuCOxa2FBf2+PKYX5L67H9x7Rj/m1ObmX4Lh7i4rEDzyMnMGJdybPvkrxk
-         7hGAq9TBFmph8dcXNhLIBZShj1fVFIfDNrw36J3Jo3SB0VxR2D7Qe4vGSE36HmXMxF09
-         GyYFfwAEy6/AS/vU4VwkZQRwyVLM5fZX+1Bcpz+y/5WrcQrckEruZPj7GGo+0mTpAkjz
-         yUdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744823755; x=1745428555;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eebxCf0do5RI0mDndq9BzvOFzHvt6jSVZ8J5rmAS1tI=;
-        b=SMZ20nt49RM5DxtghxpImR3aMoTx/YJLjM5nY9qofDQjORHK/W+NACguwJEr2EBx4d
-         K6QBvIMqfudonoRIBTUxdnQglFXVMVmbXkVJI0DikdsyVFMy7/pwYp7o+8MP/vpqwNGx
-         f1JJREdWEZAqJnBtW10EKk5Ilgq3Brg6E7Dw4pOkHXJnlYPIFEx4ILJtpwddq+Gg3/+7
-         1rMH6+mYyq2SC4sYjOcamtIepaUKcrX40hHCohhIyHOklRKsMuVe41/eGPg246dThSnG
-         K4CuocPaaEayH83RIHhVw4L1Rzwzo+b/4iaJdViJidmXk75hMdFXvb5Bbxz0rPdCcovR
-         ViWw==
-X-Forwarded-Encrypted: i=1; AJvYcCUPzCxY2Jf3zQYj0jPdvJ35gNLwBU59U9gRxURyiR/rv6WSYnCYmW1rDhZH8CtNfIJKtkcH9d1HLCrW1Wk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjV8KMe1LchvYxZC7N52un5O5yJDyKIv4Wjcjkyy3rosrlYfhy
-	7hSYrLREwHp1zJfl6qABMIXdevXr4B9Y3TRYxTPivkTq7/Fpk8sBxa9UhvtM
-X-Gm-Gg: ASbGncvqZjyVUkT8PrU/45QEpM7bci7svHJ0AlqAj1HHJ1OrxzenKxL2nlWhp6tcGCL
-	Jh6Ho4OJp77eV6xavIGpjJKRxTxjv+cibHnUqJsE13/GPlXFWSUq3wjuxefkwcuWxCZ5//eqQL9
-	GLrLWgCw7nc7cz35dKGpwNS6GelVZA/l12OyDzkygnwbIKMIODkb2kNRDAlETyQ0HKpJEaAUBDC
-	uuaaK2YkoAn/j+xKysaWX5lq0JgGLKqEcLpbO3pT3Lg7IfDpv79OumzyeB/9I5T2kHPAhE1MDVi
-	7SY+m151WmWjYMVGnsLTqtS/56V7SKwOHykdN1earc5t78TOIWzhskwT+i7wgB13w36cFgDl0Tl
-	beEU3xV5EuUVmnVLjRjnD3jcLLmwMKFzyKgG1goMu5bYx
-X-Google-Smtp-Source: AGHT+IGuG697vPrZYBUJYZ8jq6lkxyIC5MFQzO5gQGWU6a19DuYPpQz+xfbwAAsfpA7POqntMoG1hg==
-X-Received: by 2002:a05:620a:2611:b0:7c5:42c8:ac89 with SMTP id af79cd13be357-7c9190057dcmr419158385a.33.1744823755425;
-        Wed, 16 Apr 2025 10:15:55 -0700 (PDT)
-Received: from 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa ([2620:10d:c091:600::1:a61d])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c7a8943834sm1084605185a.22.2025.04.16.10.15.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Apr 2025 10:15:54 -0700 (PDT)
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Wed, 16 Apr 2025 13:15:43 -0400
-Subject: [PATCH v4 4/4] rust: alloc: replace `Vec::set_len` with `inc_len`
+	s=arc-20240116; t=1744823793; c=relaxed/simple;
+	bh=taVQQkw3FOUMcF5ublnCq+0dNIVsAf3UO57Pec7tlNk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j38tgMFOSauB876b7gABuFqEsDD0JUC1Ib6kT/mzEytjDw1YwmEUH8SsFWsuBaVDXfwe0cL/PEdar1HZGeyffb8QXcQQ/1ryO5m5It0PbR1rGBAiLaFl5MUdP+W8klwy1iPuAS3EkVqfJZ8RUWzotrnWqQYasXc74myE0SaK608=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZMtpy1oe; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744823791; x=1776359791;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=taVQQkw3FOUMcF5ublnCq+0dNIVsAf3UO57Pec7tlNk=;
+  b=ZMtpy1oeSJhwIjMGUmi+/m5MKmPw/ek7Byi+DAnlb7iZgHSm5Jyi5JuG
+   pOBd9AK5GFnupxm+8R5AJTBXx+Aq5aEQF+qtL5tsWSnMjQAztJQtjLqGI
+   9BBA2O7ZrUpuDprWRUFmCGUG8lqsZggEKBP7cVtCeMlOS9ZFcfKnbEkyj
+   z+TuwZ9ANefstpA6Nwva2ocpRelsmdHhHc/JvccxRMd5pK080fpSl3H36
+   guBHtQ4hjP0WqKxy3h0g4UkOlTuelA+jjFP4Wx4ZDsFjBR8vOho+X8f4u
+   0Xw8zT64bgSHizVItp7CVf/UNZNQEPz03Kxvr20Ynpq9ehP3oPECwP/sz
+   Q==;
+X-CSE-ConnectionGUID: znjelGkQQAS3Jw27i5uLIQ==
+X-CSE-MsgGUID: RfMyVkB0REKq3xFNo+SHLQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11405"; a="57382077"
+X-IronPort-AV: E=Sophos;i="6.15,216,1739865600"; 
+   d="scan'208";a="57382077"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 10:16:30 -0700
+X-CSE-ConnectionGUID: NaxrGpnzSm+nJ/yHWfN4Jw==
+X-CSE-MsgGUID: y9ug51VPSkWZljs3fe6zUQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,216,1739865600"; 
+   d="scan'208";a="131524887"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 16 Apr 2025 10:16:27 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u56N6-000K76-1r;
+	Wed, 16 Apr 2025 17:16:24 +0000
+Date: Thu, 17 Apr 2025 01:15:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: Vidya Sagar <vidyas@nvidia.com>, lpieralisi@kernel.org, kw@linux.com,
+	manivannan.sadhasivam@linaro.org, robh@kernel.org,
+	bhelgaas@google.com, cassel@kernel.org
+Cc: Paul Gazzillo <paul@pgazz.com>,
+	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+	oe-kbuild-all@lists.linux.dev, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, treding@nvidia.com,
+	jonathanh@nvidia.com, kthota@nvidia.com, mmaddireddy@nvidia.com,
+	vidyas@nvidia.com, sagar.tv@gmail.com
+Subject: Re: [PATCH V2] PCI: dwc: tegra194: Broaden architecture dependency
+Message-ID: <202504170034.ZUFz0z7Z-lkp@intel.com>
+References: <20250410194552.944818-1-vidyas@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250416-vec-set-len-v4-4-112b222604cd@gmail.com>
-References: <20250416-vec-set-len-v4-0-112b222604cd@gmail.com>
-In-Reply-To: <20250416-vec-set-len-v4-0-112b222604cd@gmail.com>
-To: Danilo Krummrich <dakr@kernel.org>, 
- Andrew Ballance <andrewjballance@gmail.com>, 
- Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
- Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <benno.lossin@proton.me>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Tamir Duberstein <tamird@gmail.com>
-X-Mailer: b4 0.15-dev
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250410194552.944818-1-vidyas@nvidia.com>
 
-Rename `set_len` to `inc_len` and simplify its safety contract.
+Hi Vidya,
 
-Note that the usage in `CString::try_from_fmt` remains correct as the
-receiver is known to have `len == 0`.
+kernel test robot noticed the following build warnings:
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-Signed-off-by: Tamir Duberstein <tamird@gmail.com>
----
- rust/kernel/alloc/kvec.rs | 25 ++++++++++++-------------
- rust/kernel/str.rs        |  2 +-
- rust/kernel/uaccess.rs    |  2 +-
- 3 files changed, 14 insertions(+), 15 deletions(-)
+[auto build test WARNING on pci/next]
+[also build test WARNING on pci/for-linus linus/master v6.15-rc2 next-20250416]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
-index 87dc37ecb94d..5798e2c890a2 100644
---- a/rust/kernel/alloc/kvec.rs
-+++ b/rust/kernel/alloc/kvec.rs
-@@ -185,20 +185,19 @@ pub fn len(&self) -> usize {
-         self.len
-     }
- 
--    /// Forcefully sets `self.len` to `new_len`.
-+    /// Increments `self.len` by `additional`.
-     ///
-     /// # Safety
-     ///
--    /// - `new_len` must be less than or equal to [`Self::capacity`].
--    /// - If `new_len` is greater than `self.len`, all elements within the interval
--    ///   [`self.len`,`new_len`) must be initialized.
-+    /// - `additional` must be less than or equal to `self.capacity - self.len`.
-+    /// - All elements within the interval [`self.len`,`self.len + additional`) must be initialized.
-     #[inline]
--    pub unsafe fn set_len(&mut self, new_len: usize) {
--        debug_assert!(new_len <= self.capacity());
--
--        // INVARIANT: By the safety requirements of this method `new_len` represents the exact
--        // number of elements stored within `self`.
--        self.len = new_len;
-+    pub unsafe fn inc_len(&mut self, additional: usize) {
-+        // Guaranteed by the type invariant to never underflow.
-+        debug_assert!(additional <= self.capacity() - self.len());
-+        // INVARIANT: By the safety requirements of this method this represents the exact number of
-+        // elements stored within `self`.
-+        self.len += additional;
-     }
- 
-     /// Decreases `self.len` by `count`.
-@@ -317,7 +316,7 @@ pub fn push(&mut self, v: T, flags: Flags) -> Result<(), AllocError> {
-         // SAFETY: We just initialised the first spare entry, so it is safe to increase the length
-         // by 1. We also know that the new length is <= capacity because of the previous call to
-         // `reserve` above.
--        unsafe { self.set_len(self.len() + 1) };
-+        unsafe { self.inc_len(1) };
-         Ok(())
-     }
- 
-@@ -521,7 +520,7 @@ pub fn extend_with(&mut self, n: usize, value: T, flags: Flags) -> Result<(), Al
-         // SAFETY:
-         // - `self.len() + n < self.capacity()` due to the call to reserve above,
-         // - the loop and the line above initialized the next `n` elements.
--        unsafe { self.set_len(self.len() + n) };
-+        unsafe { self.inc_len(n) };
- 
-         Ok(())
-     }
-@@ -552,7 +551,7 @@ pub fn extend_from_slice(&mut self, other: &[T], flags: Flags) -> Result<(), All
-         //   the length by the same number.
-         // - `self.len() + other.len() <= self.capacity()` is guaranteed by the preceding `reserve`
-         //   call.
--        unsafe { self.set_len(self.len() + other.len()) };
-+        unsafe { self.inc_len(other.len()) };
-         Ok(())
-     }
- 
-diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
-index 878111cb77bc..d3b0b00e05fa 100644
---- a/rust/kernel/str.rs
-+++ b/rust/kernel/str.rs
-@@ -886,7 +886,7 @@ pub fn try_from_fmt(args: fmt::Arguments<'_>) -> Result<Self, Error> {
- 
-         // SAFETY: The number of bytes that can be written to `f` is bounded by `size`, which is
-         // `buf`'s capacity. The contents of the buffer have been initialised by writes to `f`.
--        unsafe { buf.set_len(f.bytes_written()) };
-+        unsafe { buf.inc_len(f.bytes_written()) };
- 
-         // Check that there are no `NUL` bytes before the end.
-         // SAFETY: The buffer is valid for read because `f.bytes_written()` is bounded by `size`
-diff --git a/rust/kernel/uaccess.rs b/rust/kernel/uaccess.rs
-index 80a9782b1c6e..e4882f113d79 100644
---- a/rust/kernel/uaccess.rs
-+++ b/rust/kernel/uaccess.rs
-@@ -290,7 +290,7 @@ pub fn read_all<A: Allocator>(mut self, buf: &mut Vec<u8, A>, flags: Flags) -> R
- 
-         // SAFETY: Since the call to `read_raw` was successful, so the next `len` bytes of the
-         // vector have been initialized.
--        unsafe { buf.set_len(buf.len() + len) };
-+        unsafe { buf.inc_len(len) };
-         Ok(())
-     }
- }
+url:    https://github.com/intel-lab-lkp/linux/commits/Vidya-Sagar/PCI-dwc-tegra194-Broaden-architecture-dependency/20250411-035134
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
+patch link:    https://lore.kernel.org/r/20250410194552.944818-1-vidyas%40nvidia.com
+patch subject: [PATCH V2] PCI: dwc: tegra194: Broaden architecture dependency
+config: arm64-kismet-CONFIG_PHY_TEGRA194_P2U-CONFIG_PCIE_TEGRA194_HOST-0-0 (https://download.01.org/0day-ci/archive/20250417/202504170034.ZUFz0z7Z-lkp@intel.com/config)
+reproduce: (https://download.01.org/0day-ci/archive/20250417/202504170034.ZUFz0z7Z-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504170034.ZUFz0z7Z-lkp@intel.com/
+
+kismet warnings: (new ones prefixed by >>)
+>> kismet: WARNING: unmet direct dependencies detected for PHY_TEGRA194_P2U when selected by PCIE_TEGRA194_HOST
+   WARNING: unmet direct dependencies detected for PHY_TEGRA194_P2U
+     Depends on [n]: ARCH_TEGRA_194_SOC [=n] || ARCH_TEGRA_234_SOC [=n] || COMPILE_TEST [=n]
+     Selected by [y]:
+     - PCIE_TEGRA194_HOST [=y] && PCI [=y] && ARCH_TEGRA [=y] && (ARM64 [=y] || COMPILE_TEST [=n]) && PCI_MSI [=y]
 
 -- 
-2.49.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
