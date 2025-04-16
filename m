@@ -1,133 +1,145 @@
-Return-Path: <linux-kernel+bounces-607815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B51C1A90B18
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:13:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46588A90AA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 19:59:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE58A460412
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:13:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0E515A29E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 17:59:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B3B22170A;
-	Wed, 16 Apr 2025 18:12:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="MM3I5nJJ"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 425D8218EBF;
+	Wed, 16 Apr 2025 17:59:41 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED03121CFF6;
-	Wed, 16 Apr 2025 18:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B20209673;
+	Wed, 16 Apr 2025 17:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744827175; cv=none; b=Jyl21wUue4vrwPPqOzRgJmjbb7wQEFly8X5LCvOOppPhacuM6gJgEQihFLHpjaS48wt8l1tndMW1gma80+SA3s+Jdz51c2EF5Teq73wPkvKB9y7m5NQqmFelh3pE9j3ekADlX3F70HUSuYWHQhi7UA6dPqRMkyS9wwBWGKSpKvQ=
+	t=1744826380; cv=none; b=G4xO52yfr8/wm6Lfdg9jPUkevS7FXft/3ZxRe7GinFIBCl5x/LnrrH6AS2Wq35r5AqxtY/tUEC8DLAP51nQcYYP72lMRX15Bv5ButNcQXzUi6rtbYoBOjQXDfdVZZFb3Iv6z6B44nRBqi0AnEr24BvfT5fWSrQ2Hf5eY6tMi43Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744827175; c=relaxed/simple;
-	bh=uaq6qM+Ck6AxQX9+RJSqmkPle2TaQ7kI+Uy3iMaX6a0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pmEUKyziQF62A0JYi5gtFkyUVkCAnqjLM9a1AT+lPF5DyjWpudaP8ERcStfN7OXFn1IGD0YsLnu4xb0aoxihp4RwrxrOAonh66mD2knnIof3quEKCWYdKOfvaVKmCNrMlPBUH3sUC9U5XZA9OiuIxFi3WxJedyeB9L/Kg9+oGdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=MM3I5nJJ; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 7A676662719;
-	Wed, 16 Apr 2025 20:12:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1744827171;
-	bh=uaq6qM+Ck6AxQX9+RJSqmkPle2TaQ7kI+Uy3iMaX6a0=;
-	h=From:Subject:Date;
-	b=MM3I5nJJjWyN4SOSGReaZWFXzqWI9ybsdE62U0zfPtnueHY6SNmTgtyOfSFuxSjRm
-	 yuw9FSkM/gLQ6JSN7bsNnPIZBqxq+a0q179cFZeepvjQoPsktOHK53zrsZm51Mv5vZ
-	 h449YANwSfdVkBWvD7Pa7YrSWZkTJWVjWr9kYb91bvZD+qmRPcUZ2kAYyzy95VHl2d
-	 +82xwHaR7+5ne02yHc1hnixQTelZqCxRmanPBiwpeDXrVHWEn7/Ge0KvsH7bOEJvWk
-	 8CbnarFmNN7RBTWMPte/gi8x/BEq2oTegRqwJi/jU0D+hFTnv2239gd3svrjesXgyS
-	 L02ABIvmdQVoA==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Morten Rasmussen <morten.rasmussen@arm.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
- Pierre Gondois <pierre.gondois@arm.com>,
- Christian Loehle <christian.loehle@arm.com>
-Subject:
- [RFT][PATCH v1 3/8] cpufreq/sched: Allow .setpolicy() cpufreq drivers to
- enable EAS
-Date: Wed, 16 Apr 2025 20:01:06 +0200
-Message-ID: <8554829.NyiUUSuA9g@rjwysocki.net>
-In-Reply-To: <3344336.aeNJFYEL58@rjwysocki.net>
-References: <3344336.aeNJFYEL58@rjwysocki.net>
+	s=arc-20240116; t=1744826380; c=relaxed/simple;
+	bh=2r1Acswmzhjq3+S12S+Csmh4foxN7PUxu5mf+ncbnJQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MDuz2imrwJ90pwb3tziDBBmNkS47TpmrZr1A2Riv5SMMfQ9egbwx2iq42/RX9BQvE5daOFh3eJXi6pGl7Ro0TkIQZw0fEdy9zC1CUwEAPYI6Bir6s8Rq3Yt17uU32kFI2oxy+wC9HJUNF7TEptY7pJ3lMhSImSHIOSuUXQB5IcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2146C4CEE4;
+	Wed, 16 Apr 2025 17:59:38 +0000 (UTC)
+Date: Wed, 16 Apr 2025 14:01:15 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Junxuan Liao <ljx@cs.wisc.edu>, linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, x86@kernel.org, Thomas Gleixner
+ <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Dave Hansen
+ <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, "Paul E. McKenney" <paulmck@kernel.org>
+Subject: Re: [PATCH] x86/tracing: introduce enter/exit tracepoint pairs for
+ page faults
+Message-ID: <20250416140115.5b836b33@gandalf.local.home>
+In-Reply-To: <20250416174714.GGZ__tIi3yNzNKoKFE@fat_crate.local>
+References: <e7d4cd81-c0a5-446c-95d2-6142d660c15b@cs.wisc.edu>
+	<20250414205441.GGZ_12Eew18bGcPTG0@fat_crate.local>
+	<20250414182050.213480aa@gandalf.local.home>
+	<20250416174714.GGZ__tIi3yNzNKoKFE@fat_crate.local>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvdejtdeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepuddupdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehsrhhinhhivhgrshdrphgrnhgurhhuvhgruggrsehlihhnuhigrdh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=11 Fuz1=11 Fuz2=11
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Wed, 16 Apr 2025 19:47:14 +0200
+Borislav Petkov <bp@alien8.de> wrote:
 
-Some cpufreq drivers, like intel_pstate, have built-in governors that
-are used instead of regular cpufreq governors, schedutil in particular,
-but they can work with EAS just fine, so allow EAS to be used with
-those drivers.
+> On Mon, Apr 14, 2025 at 06:20:50PM -0400, Steven Rostedt wrote:
+> > It's useful for me ;-)  
+> 
+> That's why I CCed you.
+> 
+> I suspected you'd have "your mustard to share". :-P
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
+:-)
 
-v0.3 -> v1
-     * Rebase on top of the new [1-2/8].
-     * Update the diagnostic message printed if the conditions are not met.
+> 
+> >  # cd /sys/kernel/tracing
+> >  # echo 's:user_faults u64 delta;' >> dynamic_events
+> >  # echo 'hist:keys=common_pid:ts0=common_timestamp.usecs' >> events/exceptions/page_fault_user_enter/trigger
+> >  # echo 'hist:keys=common_pid:delta=common_timestamp.usecs-$ts0:onmatch(exceptions.page_fault_user_enter).trace(user_faults,$delta)' >> events/exceptions/page_fault_user_exit/trigger
+> > 
+> >  # cd /work/git/trace-cmd.git
+> >  # echo 'hist:keys=delta.log2:sort=delta if COMM == "cc1"' > /sys/kernel/tracing/events/synthetic/user_faults/trigger  
+> 
+> OMG, this tracing thing has turned into a language almost. I hope you're
+> documenting those fancy use cases...
 
-This patch is regarded as a cleanup for 6.16.
+The above was created by:
 
----
- drivers/cpufreq/cpufreq.c |   13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ # trace-cmd sqlhist -e -n user_faults SELECT TIMESTAMP_DELTA_USECS as delta FROM page_fault_user_enter as start JOIN \
+     page_fault_user_exit as end ON start.common_pid = end.common_pid
 
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -3054,7 +3054,16 @@
- 
- 	guard(cpufreq_policy_read)(policy);
- 
--	return sugov_is_governor(policy);
-+	/*
-+	 * For EAS compatibility, require that either schedutil is the policy
-+	 * governor or the policy is governed directly by the cpufreq driver.
-+	 *
-+	 * In the latter case, it is assumed that EAS can only be enabled by the
-+	 * cpufreq driver itself which will not enable EAS if it does not meet
-+	 * the EAS' expectations regarding performance scaling response.
-+	 */
-+	return sugov_is_governor(policy) || (!policy->governor &&
-+		policy->policy != CPUFREQ_POLICY_UNKNOWN);
- }
- 
- bool cpufreq_ready_for_eas(const struct cpumask *cpu_mask)
-@@ -3064,7 +3073,7 @@
- 	/* Do not attempt EAS if schedutil is not being used. */
- 	for_each_cpu(cpu, cpu_mask) {
- 		if (!cpufreq_policy_is_good_for_eas(cpu)) {
--			pr_debug("rd %*pbl: schedutil is mandatory for EAS\n",
-+			pr_debug("rd %*pbl: EAS requirements not met\n",
- 				 cpumask_pr_args(cpu_mask));
- 			return false;
- 		}
+It also shows the kernel commands, which I took and sanitized a bit.
 
+;-)
 
+> 
+> >  # make
+> > [..]
+> > 
+> >  # cat /sys/kernel/tracing/events/synthetic/user_faults/hist
+> > # event histogram
+> > #
+> > # trigger info: hist:keys=delta.log2:vals=hitcount:sort=delta.log2:size=2048 if COMM == "cc1" [active]
+> > #
+> > 
+> > { delta: ~ 2^0  } hitcount:          1
+> > { delta: ~ 2^1  } hitcount:        334
+> > { delta: ~ 2^2  } hitcount:       4090
+> > { delta: ~ 2^3  } hitcount:      86037
+> > { delta: ~ 2^4  } hitcount:     108790
+> > { delta: ~ 2^5  } hitcount:      27387
+> > { delta: ~ 2^6  } hitcount:       6015
+> > { delta: ~ 2^7  } hitcount:        481
+> > { delta: ~ 2^8  } hitcount:        134
+> > { delta: ~ 2^9  } hitcount:         74
+> > { delta: ~ 2^10 } hitcount:         54
+> > { delta: ~ 2^11 } hitcount:          6
+> > 
+> > Totals:
+> >     Hits: 233403
+> >     Entries: 12
+> >     Dropped: 0
+> > 
+> > 
+> > The above shows a histogram in microseconds where the buckets increase in a
+> > power of two. The biggest bucket is between 2^4 (16) and 2^5 (32) microseconds
+> > with 108790 hits.
+> > 
+> > The longest bucket of 2^11 (2ms) to 2^12 (4ms) had 6 hits.
+> > 
+> > And when sframes is supported, it will be able to show the user space stack
+> > trace of where the longest page faults occur.  
+> 
+> Ok, so AFAIU, this gives you how long user page faults take and apparently for
+> someone this is important info.
 
+This was just a simple example. I rather see where in the kernel it happens.
+I can still use the synthetic events and user stack trace to find where the
+big faults occur.
+
+> 
+> Now if only that info were in the commit message along with the usage scenario
+> so that people can *actually* do what you guys are bragging about...
+
+I plan on adding things like this to Documentation/trace/debugging.rst
+
+I need to get time out to add a bunch of helpful tricks there.
+
+-- Steve
 
