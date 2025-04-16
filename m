@@ -1,187 +1,118 @@
-Return-Path: <linux-kernel+bounces-607765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4A8FA90A7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 19:51:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F667A90A84
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 19:53:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C59285A2381
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 17:51:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D771F1906FF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 17:53:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07D4821ABC9;
-	Wed, 16 Apr 2025 17:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA438217F36;
+	Wed, 16 Apr 2025 17:53:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="cPZHhQRz"
-Received: from mail-ed1-f65.google.com (mail-ed1-f65.google.com [209.85.208.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k/FeiuTG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEACC218592
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 17:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3DD1CAA97;
+	Wed, 16 Apr 2025 17:53:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744825895; cv=none; b=XbQLOnHMbTpedmqBzwtDbh3nnt6KZJrd4BYgF4+wsNe++dhlUnmawi32l16W8au+Ogd11FGN8Pn8eucsQFE6CIwulc3fVspRUgOHY+EWBiNPFUPF/9DEpxB7ErLXmiAbCcS8f3ioxUoM8/n5+5ODvJ2vt2+NixktzAaVXTlhrEE=
+	t=1744825998; cv=none; b=k3u7T3DVsxQODkEb5ePz3l8Pz+Y4VrAazAtm/gve3EXf5r9dZdKabH19jsBhaf/U7wc3bhigKAkJSm8Y8oSHcxL2RLrxNLr4wAmIRh+eh5J8aFeM+uuE2zyIqf3qu5jT/wEu0/COziiqr4jqWY9R1aAl50xCzD7T/3NXYrNbuoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744825895; c=relaxed/simple;
-	bh=TBZ3+IULu0N+duqvjfzo4MbqJH8vZN2SCabf43+KQyI=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HSdOv/Pwab54Vvm8dJbarxufazT94GR97Ccbjesfpte6bVDPyOSNLD89qAGNSMB4Jiy+RqTama3JUdZXx+2TCYXnhyllpZyk1o1sSQKGGStTa9rm89LafbABNbdwCvjTxrVY74TtKtq8h/H+Bd2G+cTeqbULZqK2Aj69rWr7Id8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=cPZHhQRz; arc=none smtp.client-ip=209.85.208.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f65.google.com with SMTP id 4fb4d7f45d1cf-5eb92df4fcbso12211316a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 10:51:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1744825891; x=1745430691; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7xlBoDFGfwAiK0YOXlC4SwDB4WdN2STB65PhvVY3kGQ=;
-        b=cPZHhQRzzydDIk7JgVIWYDsaKXxgVTfyDSeP7v8JK8BDcHa2puEK1LNdNqVYhBKuFO
-         rPWDic4nMpbi7UXdJ0mpxoF3fKY5dF0k8/9Vgu68txTMuYlwpOf7JelTsg5c9ipwlPeO
-         BJepNfAEVEjQrpVfMA0TFqhm7L8CD8WEl/ZU2KFgFIJ2yegC61g2i1WbMi1wPijepvvu
-         fJkh9d1Js9YEO3sWWrmlqFnhj/+6kDbMmOV2cPIFo8ByePmcmg62HQhcghoJicMoI4/7
-         qqucvQxh4jWl7IWNIVanfIzUZSZmxOw5yf+ztwVNGDG2B6x7do/OYOu/JvJ1Zi0q9YeL
-         F7jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744825891; x=1745430691;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7xlBoDFGfwAiK0YOXlC4SwDB4WdN2STB65PhvVY3kGQ=;
-        b=HxDTLwLHzEgLP5iOsOfm+p5HoAMJlk/xu1VFPVgo7MBU3ttJshQ4U0nrd7GcEamfY6
-         wEfHiz4YwoWMnpfkiiW3g61apEIO2/wN5CsGarH4o3YnKkzA+DG5EzMN53pEFfrNfAtj
-         NiucsdPzxveli+c68Yr7cIz0mArpK41/qA5PPeGcA2H/KwJIbbhug8EvNWd7uuyp4Cmk
-         TN9KKzMPZ5MTe1R6SBZXsYpJHw7/HV7OAvDpnn68pnfCUGbL2dT/SCquR/h8dQDwbyZI
-         Hb+7B6a9y6nssPtn2bULqIfKB2HSXJoB2xdmUOHSdAS8QnQWzSq3zOObqPrsTDaAF3Zs
-         qeeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWqcs45QzUacTxtf6yMzQPNOuaYIen4a/nUmhgnJCaEbKrQSp8EuEWV7ypsl34r48h+paeTOJ/y4hAmn20=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz86qSUBSbHVstpWRhrWVzIl9nqYrRQWWmBvMQcgkjhLc0v8Qq/
-	2LOvSjWDvfnZ/jxhgh7ssg2e6qcmF0ALAV6LkbkmRf4hInM2wlAAbs3umPg0jiY=
-X-Gm-Gg: ASbGnctHtTfOW55pBGwdqpefrBnZkSnjJz4A7AzTX9JxT902J/nYZLGzbtMwyMEyhAf
-	QFvNmec4pBF1JV254T67paqiwCm/ETqA6Z7a2wkVEOsJZrP7XP3QNUhV48kQo1iJc1RxtVv0pVu
-	X61ti55M6Bgq/c79BKuM0TkC7mfd8sjgWM9SSSYSp3w/v8BcCyxI40pVkF/ovWPAt4QjpJMIdfX
-	iMa7SK+5+um1xy07aiIskrwVD21jJtO4b4TETZGJLJUA0hqWLFD3dALfYF2VBWNEdji2toyViv8
-	Pk2pwbzBCiYcmuoBFfWIj/fJTiLEH1Gw8WrgfuorpYC0rwNSalbSqfXH2IanSL5a6LPS1lw=
-X-Google-Smtp-Source: AGHT+IG8ocY2R4u3MSMUM8wLm0cAOVd+8ApQg05RyBRV3UoKUWOsni8cwFhkPXwWINMuR8awGmVJfQ==
-X-Received: by 2002:a17:907:3d0e:b0:ac3:853e:4345 with SMTP id a640c23a62f3a-acb42ac181emr250869466b.45.1744825891181;
-        Wed, 16 Apr 2025 10:51:31 -0700 (PDT)
-Received: from localhost (93-44-188-26.ip98.fastwebnet.it. [93.44.188.26])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb3cde06f8sm167165366b.61.2025.04.16.10.51.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Apr 2025 10:51:30 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Wed, 16 Apr 2025 19:52:54 +0200
-To: Stefan Wahren <wahrenst@gmx.net>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	kernel-list@raspberrypi.com
-Subject: Re: [PATCH v8 10/13] arm64: dts: Add overlay for RP1 device
-Message-ID: <Z__udrXkRz-5DSB6@apocalypse>
-References: <cover.1742418429.git.andrea.porta@suse.com>
- <ab9ab3536baf5fdf6016f2a01044f00034189291.1742418429.git.andrea.porta@suse.com>
- <abb3405a-45fb-4425-a817-89a03b0c16c4@gmx.net>
+	s=arc-20240116; t=1744825998; c=relaxed/simple;
+	bh=3aocZmmM0xo3L08WVrGRy3d56/7XtLUVo6wAG0g3wMA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qMRDsjcAh7o+PJlZ1Se4pc2B9oG3g5/evlI5908rVfSHqA3NFRTXpFJolGa1fGO31TBK7keIQgBdfCw3nNMcaLs7YEGCXuF+99S5xbpvNXX33bH5BaCVImoxRyDi3M2RXFxKEMTNdZiM6OeuhrxxR76S+snEuC8YEqO9ipgBrnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k/FeiuTG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FCC8C4CEE2;
+	Wed, 16 Apr 2025 17:53:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744825997;
+	bh=3aocZmmM0xo3L08WVrGRy3d56/7XtLUVo6wAG0g3wMA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k/FeiuTGRmVvwARCZJEmpCG9jFIdkBii/99uRO3q0AqOQbS0fV/4UCenwGG/a0DKb
+	 kWcJs7tNoOzz3yBcweEoRVTaoQ3o11qpGAWZkb5Rn8UbMw3e47RvXF+SP+6eUhQksT
+	 U+RxfpBPw4zhOjhoc6cktRuQyyYQybabV7NpAMLcvyZ066ZOBYo/c1uQqc6v00O8SW
+	 OtgjJ6Lgyru57xjwrSHelyu6M2mYxAxELK4xz9sNe1hIcGp5dWfvl+v2QyLvLfDi3l
+	 9eo772AE2hSBSyNjOpOPFmiZhUMLbcj5KgDbZKZaf+sh01QpjtdbHJBcghIGU7TzQS
+	 ZMZ6/ikwoJrIQ==
+Date: Wed, 16 Apr 2025 10:53:14 -0700
+From: Kees Cook <kees@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+	David Gow <davidgow@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>, sparclinux@vger.kernel.org
+Subject: Re: [PATCH] kunit/usercopy: Disable u64 test on 32-bit SPARC
+Message-ID: <202504161052.4011756D7@keescook>
+References: <20250416-kunit-sparc-usercopy-v1-1-a772054db3af@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <abb3405a-45fb-4425-a817-89a03b0c16c4@gmx.net>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250416-kunit-sparc-usercopy-v1-1-a772054db3af@linutronix.de>
 
-Hi Stefan,
-
-On 13:38 Mon 14 Apr     , Stefan Wahren wrote:
-> Hi Andrea,
+On Wed, Apr 16, 2025 at 02:44:19PM +0200, Thomas Weiﬂschuh wrote:
+> usercopy of 64 bit values does not work on 32-bit SPARC:
 > 
-> just a nit. Could you please add "broadcom:" to the subject?
-
-Consider it done.
-
-Many thanks,
-Andrea
-
+>     # usercopy_test_valid: EXPECTATION FAILED at lib/tests/usercopy_kunit.c:209
+>     Expected val_u64 == 0x5a5b5c5d6a6b6c6d, but
+>         val_u64 == 1515936861 (0x5a5b5c5d)
+>         0x5a5b5c5d6a6b6c6d == 6510899242581322861 (0x5a5b5c5d6a6b6c6d)
 > 
-> Am 19.03.25 um 22:52 schrieb Andrea della Porta:
-> > Define the RP1 node in an overlay. The inclusion tree is
-> > as follow (the arrow points to the includer):
-> > 
-> >                        rp1.dtso
-> >                            ^
-> >                            |
-> > rp1-common.dtsi ----> rp1-nexus.dtsi
-> > 
-> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > ---
-> > This patch can be considered optional, since it fills just the second
-> > scenario as detailed in [1], which is the RP1 DT node loaded from a dtb
-> > overlay by the FW at early boot stage.
-> > This may be useful for debug purpose, but as such not strictly necessary.
-> > 
-> > [1] https://lore.kernel.org/all/CAMEGJJ0f4YUgdWBhxvQ_dquZHztve9KO7pvQjoDWJ3=zd3cgcg@mail.gmail.com/#t
-> > ---
-> >   arch/arm64/boot/dts/broadcom/Makefile |  3 ++-
-> >   arch/arm64/boot/dts/broadcom/rp1.dtso | 11 +++++++++++
-> >   2 files changed, 13 insertions(+), 1 deletion(-)
-> >   create mode 100644 arch/arm64/boot/dts/broadcom/rp1.dtso
-> > 
-> > diff --git a/arch/arm64/boot/dts/broadcom/Makefile b/arch/arm64/boot/dts/broadcom/Makefile
-> > index 4836c6da5bee..58293f9c16ab 100644
-> > --- a/arch/arm64/boot/dts/broadcom/Makefile
-> > +++ b/arch/arm64/boot/dts/broadcom/Makefile
-> > @@ -13,7 +13,8 @@ dtb-$(CONFIG_ARCH_BCM2835) += bcm2711-rpi-400.dtb \
-> >   			      bcm2837-rpi-3-b.dtb \
-> >   			      bcm2837-rpi-3-b-plus.dtb \
-> >   			      bcm2837-rpi-cm3-io3.dtb \
-> > -			      bcm2837-rpi-zero-2-w.dtb
-> > +			      bcm2837-rpi-zero-2-w.dtb \
-> > +			      rp1.dtbo
-> >   subdir-y	+= bcmbca
-> >   subdir-y	+= northstar2
-> > diff --git a/arch/arm64/boot/dts/broadcom/rp1.dtso b/arch/arm64/boot/dts/broadcom/rp1.dtso
-> > new file mode 100644
-> > index 000000000000..ab4f146d22c0
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/broadcom/rp1.dtso
-> > @@ -0,0 +1,11 @@
-> > +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> > +
-> > +/dts-v1/;
-> > +/plugin/;
-> > +
-> > +&pcie2 {
-> > +	#address-cells = <3>;
-> > +	#size-cells = <2>;
-> > +
-> > +	#include "rp1-nexus.dtsi"
-> > +};
+> Disable the test.
 > 
+> Fixes: 4c5d7bc63775 ("usercopy: Add tests for all get_user() sizes")
+> Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+> ---
+> To be honest I think sparc32 wants to support usercopy of 64 bit values.
+> But it does seem to be broken.
+> 
+> (+Cc SPARC maintainers)
+
+I wonder if these archs need to explicitly fail to build if they trigger
+a 64-bit wide put_user/get_user call? It seems weird to me that it
+should be possible at all to provide access to the function if we know
+it's going to 100% fail.
+
+-Kees
+
+> ---
+>  lib/tests/usercopy_kunit.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/lib/tests/usercopy_kunit.c b/lib/tests/usercopy_kunit.c
+> index 77fa00a13df775074a19772bfbc9120ef33634bb..80f8abe10968c1d91c61006f1eaa63858c633872 100644
+> --- a/lib/tests/usercopy_kunit.c
+> +++ b/lib/tests/usercopy_kunit.c
+> @@ -27,6 +27,7 @@
+>  			    !defined(CONFIG_MICROBLAZE) &&	\
+>  			    !defined(CONFIG_NIOS2) &&		\
+>  			    !defined(CONFIG_PPC32) &&		\
+> +			    !defined(CONFIG_SPARC32) &&		\
+>  			    !defined(CONFIG_SUPERH))
+>  # define TEST_U64
+>  #endif
+> 
+> ---
+> base-commit: 1a1d569a75f3ab2923cb62daf356d102e4df2b86
+> change-id: 20250416-kunit-sparc-usercopy-c36de3ca4ef8
+> 
+> Best regards,
+> -- 
+> Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+> 
+
+-- 
+Kees Cook
 
