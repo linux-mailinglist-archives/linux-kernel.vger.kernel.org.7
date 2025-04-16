@@ -1,137 +1,133 @@
-Return-Path: <linux-kernel+bounces-607017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEA67A8B6EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 12:40:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 820FCA8B709
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 12:43:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84B96445583
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 10:40:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98D9C3B43A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 10:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3C0236428;
-	Wed, 16 Apr 2025 10:40:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF29239581;
+	Wed, 16 Apr 2025 10:42:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JD+HC2/K"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W5dkR8Ok"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530E01BC9E2
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 10:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527C9236A99;
+	Wed, 16 Apr 2025 10:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744800020; cv=none; b=S8IECOePiW+4Gs6YnQnm9ZVfK8c8DiCrL4MjgO5jzZNimi0Tuu4FwBz1zJhl70gBAaxV0PssLCMTbMbJL7s+k3pO+nhoMEYzYbc9r9KZcKo2fq2fuo3CLOAk47oTi6wj58FUThvGA0cOhttKrbD2bweFjqich1BTTNmNdUI0+uQ=
+	t=1744800169; cv=none; b=bNIjgX+1WugHfuFwTORGdzYSr0zDShx46Rs+c90spaHoGIA6UcldVfJE61AtB1OAh9R51ttrmNdiStT9s7wd0P6v9qr/YAfBbIwP0bcZ+AmISWQfXv8+76Q410PzBnRhrtCHxTh0oP0+NvrA0EhSeVwFK1EvonblWzCMMG8TEN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744800020; c=relaxed/simple;
-	bh=AW7LAXhV4M8nrRRBsTVlNww4j59JMk/7529JME2B/rc=;
+	s=arc-20240116; t=1744800169; c=relaxed/simple;
+	bh=x1lH8oqBgVGQYWa5D2CjIrYJC5tQeyL3FgkI0tDXeuQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YZe7rAENE6mgz94giu6Y6WDLDxmrZKQlbDioXn+APcNSyZlgBdSoYh5oGLf4XWO96XhFA16ei28mIuKmJ9oBIVbA+cMl80CMdUarBeqjwNowjR5lXARHd+UaPu0Wh+tc/8o+tmB/y3SlhGlAFHGHuWT1vvYkZg/l215KF+BKvpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JD+HC2/K; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-736e52948ebso7448693b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 03:40:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744800018; x=1745404818; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ttWNacvPGMYQA86vkqzo9EZOaHGhJM4Jor7D4v7bz+0=;
-        b=JD+HC2/KLl5Kw1IwDPOQX1FlAefqYt5X4wCei0hd2eRydlFAvDFGe5D872rawwIKpb
-         tp5hIEPbOxZdeMzAsYCu9B7HUXtxXErxMBAqaCtE6NpMOP+epDQIx6bTe8VSaQThnFvX
-         YNgbTWwtKQ258NojH3FFi+DYLcIWIeEXFTReA9k89RMiOV7csOOHBkWMXGtY0slfGQ7f
-         lLTOKdoPwDdrSTTXLhqagSTfbp0wr70b+A9Dk0vj+SlqbFNJX9rGdHKAKeEXg549PWp1
-         Y2Vb4Ta8yi3b66F6coUD0kfIMJXDTOpBbnqaoRL50Lv1YM+3yMCPYV8oCmCh7KZQsRYZ
-         hnyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744800018; x=1745404818;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ttWNacvPGMYQA86vkqzo9EZOaHGhJM4Jor7D4v7bz+0=;
-        b=CgJZk4qX0gedoj60xTEhlyBZ9fjxxLlrm+/RdyCsFCK8zhPFBX1eUAi/i+1BHjLOGZ
-         eWugaEt4e3EWEYDjEbihusX2Tf4100pIKTJGd6Fp1IUXJtfjAY5zXHM41/4psKNyw/WV
-         DaKsP8YiAxDp6dn5vuxmw/Xr0mYW+abfgxoRqXIKEwb5LoSmCzE/OYvVN1SJJmaQ1n89
-         C2w8ZIOwmeOJ31YK8Ezjr4c0L4bwNxEsW9zzVaogdoaDCOpGXNxR7Kk00jHbpxVhwEI+
-         uU7ngHgIRjNd0PUi/lyovBizcMRSFz7UW+XM2WyswKiQfYCTzRdQzn0fJMfdQh+kLVve
-         rnFw==
-X-Forwarded-Encrypted: i=1; AJvYcCV+8WNit0iAvk/28HJ4Cr86R0t/9QHHlR2bLJBh9G4NSWquU3fp30jXjTXE8qwqmc+4/nLo5Vl2mWnVJTA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQZ38HDQLV2JQa3rApLlS78Rq6kCdQre1mel5d50I7n1anEgJW
-	NVG99Wdq206CRgqH/JPYDgq5Tqs4dUUCwnm5xxjI7ZW4a8i4NTPHS82uiXCVFkE=
-X-Gm-Gg: ASbGnctAUJ3OBDcp42B+XGHeZbMV1cajvRLoRUUTa1EKULwgAyPPRV3qA6DKpadM5SJ
-	bht2T7/B725AdQGR5RA+qnxBJ0P69PXE1ep7aSbaS8BEnOlaDdS6uBsvFdYbAdzeXAJeV/DN1Rm
-	5x1m1laUEu7a+9YsnHbk7hSZtuhiZv0z7AXRhefBpIJz12u5u6frCRu/PaKke6tt04iuwe6YzWi
-	8V4szPL/ZHG0QmU71BXD4zYnwkv/MMYYNTwkXt1U4VNk0LRVtCa/el3zbGVK4IsHauQj4wC49ZM
-	jRhmjClLkfQ5odmS0cLF6Ptcgxs63WsAyjKQsReF4g==
-X-Google-Smtp-Source: AGHT+IGwBbJAub8B5aJaGw+Dq2HNzt5OaEsdk5WiMT3ZEcrD7+h/HrHX+IN/nBZbxfI2sbK6SePbFw==
-X-Received: by 2002:a05:6a20:9c8a:b0:1f5:8eb1:d5d2 with SMTP id adf61e73a8af0-203b3e90173mr1985396637.13.1744800018636;
-        Wed, 16 Apr 2025 03:40:18 -0700 (PDT)
-Received: from localhost ([122.172.83.32])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b0b2221e78csm808883a12.73.2025.04.16.03.40.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Apr 2025 03:40:18 -0700 (PDT)
-Date: Wed, 16 Apr 2025 16:10:16 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Danilo Krummrich <dakr@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@redhat.com>,
-	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	linux-pm@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	rust-for-linux@vger.kernel.org,
-	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
-	Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
-	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
-	Yury Norov <yury.norov@gmail.com>, Burak Emir <bqe@google.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V10 14/15] rust: opp: Extend OPP abstractions with
- cpufreq support
-Message-ID: <20250416104016.mkzyitdm4moz4qts@vireshk-i7>
-References: <cover.1744783509.git.viresh.kumar@linaro.org>
- <a940d1b1a02d99fdc80ba8d0526c35a776854cb3.1744783509.git.viresh.kumar@linaro.org>
- <Z_9v24SghlIhT62r@pollux>
- <20250416095943.f3jxy55bamekscst@vireshk-i7>
- <CANiq72=MQmUop5UzeeN-r7gAE0ep8Z+EUaLuA6exeazhZCHqLw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mDVM3ZaMz1VvDNVzblq2+MHP+FAK3dTzYo1Tbyp7caBxDsMr74njCveHFvJPyTgQ8VQ2Anuv3j7NVRGWSjDoXBLdapzGVc9tWbrVl4drfpQOWafJ7N2QCJKPHxhC1EnBNgPCoke2jq0gnw5AIXKjz7mtixuuV871liG8cUc7Z9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W5dkR8Ok; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744800167; x=1776336167;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=x1lH8oqBgVGQYWa5D2CjIrYJC5tQeyL3FgkI0tDXeuQ=;
+  b=W5dkR8OkBc4OlnT2uMlBMysiS1Qq+bQ1uWr1BLfMU1rmNIJ4aI2cLp3X
+   hRrHSg9O6V9V8g9WyUznWUBNOrbegJjCW5S2yJN+bWknK5RXMYXsPGZoi
+   kmiUtspPmBZqo/so52Dsp6HO4ecsvOo4wsq7SMTp8eM8mpWV4A2GJRg/3
+   Ugx7pG0k8vd9WAgLeByOhT5eTBdjfU8uYILq2PRdtwFlIDoLaLe6wZI1E
+   FzaJinPbUrzp82Qp3CC7OJFwJGPe7VvaRzPOZtqs2MF66zdPlywokboEK
+   6ImC/AwaMjYcjSGEWnUNyH70kOCNsmBPMFCRgCLjoJHXgvJsEGl+syS+J
+   w==;
+X-CSE-ConnectionGUID: PmT0dfygSIaGMWn7MPpA/Q==
+X-CSE-MsgGUID: kT/m3zq8S8qJL+N+i89WYg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="56976587"
+X-IronPort-AV: E=Sophos;i="6.15,216,1739865600"; 
+   d="scan'208";a="56976587"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 03:42:45 -0700
+X-CSE-ConnectionGUID: z9dLZdJJST2jc1KhAcS7uA==
+X-CSE-MsgGUID: s295PVukTPyNQXGcU5Y76w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,216,1739865600"; 
+   d="scan'208";a="130949202"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 16 Apr 2025 03:42:39 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u50E1-000JXy-15;
+	Wed, 16 Apr 2025 10:42:37 +0000
+Date: Wed, 16 Apr 2025 18:41:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Nipun Gupta <nipun.gupta@amd.com>, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	krzk+dt@kernel.org, gregkh@linuxfoundation.org, robh@kernel.org,
+	conor+dt@kernel.org, ogabbay@kernel.org,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+	derek.kiernan@amd.com, dragan.cvetic@amd.com, arnd@arndb.de
+Cc: oe-kbuild-all@lists.linux.dev, praveen.jain@amd.com,
+	harpreet.anand@amd.com, nikhil.agarwal@amd.com,
+	srivatsa@csail.mit.edu, code@tyhicks.com, ptsm@linux.microsoft.com,
+	Nipun Gupta <nipun.gupta@amd.com>
+Subject: Re: [PATCH v2 2/3] accel/amdpk: add driver for AMD PKI accelerator
+Message-ID: <202504161842.xI2wcOdf-lkp@intel.com>
+References: <20250409173033.2261755-2-nipun.gupta@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72=MQmUop5UzeeN-r7gAE0ep8Z+EUaLuA6exeazhZCHqLw@mail.gmail.com>
+In-Reply-To: <20250409173033.2261755-2-nipun.gupta@amd.com>
 
-On 16-04-25, 12:31, Miguel Ojeda wrote:
-> On Wed, Apr 16, 2025 at 11:59 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> >
-> > +// Frequency table implementation.
-> 
-> ///
-> 
-> > +        // Returns a reference to the underlying [`cpufreq::Table`].
-> 
-> Ditto.
+Hi Nipun,
 
-Hmm, I did not use /// as the comments were added to private
-definitions.
+kernel test robot noticed the following build errors:
 
-Sorry for the dumb question, but why should we use /// in such cases ?
-They will never show up in documentation anyway, right ?
+[auto build test ERROR on robh/for-next]
+[also build test ERROR on staging/staging-testing staging/staging-next staging/staging-linus linus/master drm-misc/drm-misc-next drm-tip/drm-tip v6.15-rc2 next-20250416]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Nipun-Gupta/accel-amdpk-add-driver-for-AMD-PKI-accelerator/20250410-013224
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20250409173033.2261755-2-nipun.gupta%40amd.com
+patch subject: [PATCH v2 2/3] accel/amdpk: add driver for AMD PKI accelerator
+config: x86_64-randconfig-003-20250416 (https://download.01.org/0day-ci/archive/20250416/202504161842.xI2wcOdf-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250416/202504161842.xI2wcOdf-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504161842.xI2wcOdf-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> error: include/uapi/drm/amdpk.h: missing "WITH Linux-syscall-note" for SPDX-License-Identifier
+   make[3]: *** [scripts/Makefile.headersinst:63: usr/include/drm/amdpk.h] Error 1 shuffle=3983912090
+   make[3]: Target '__headers' not remade because of errors.
+   make[2]: *** [Makefile:1375: headers] Error 2 shuffle=3983912090
+   scripts/kernel-doc: 1: kernel-doc.py: not found
+   make[3]: *** [scripts/Makefile.build:203: scripts/mod/empty.o] Error 127 shuffle=3983912090
+   make[3]: *** Deleting file 'scripts/mod/empty.o'
+   make[3]: Target 'scripts/mod/' not remade because of errors.
+   make[2]: *** [Makefile:1276: prepare0] Error 2 shuffle=3983912090
+   make[2]: Target 'prepare' not remade because of errors.
+   make[1]: *** [Makefile:248: __sub-make] Error 2 shuffle=3983912090
+   make[1]: Target 'prepare' not remade because of errors.
+   make: *** [Makefile:248: __sub-make] Error 2 shuffle=3983912090
+   make: Target 'prepare' not remade because of errors.
 
 -- 
-viresh
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
