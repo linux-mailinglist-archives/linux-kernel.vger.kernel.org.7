@@ -1,162 +1,122 @@
-Return-Path: <linux-kernel+bounces-606606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D350A8B15F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 08:58:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4451FA8B163
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 08:59:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80CCB1903F8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 06:58:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D44F16F0D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 06:58:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98AA823A9AA;
-	Wed, 16 Apr 2025 06:55:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A1822D4D1;
+	Wed, 16 Apr 2025 06:55:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S/3jgQyE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="JJL/06eQ"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F5D239594;
-	Wed, 16 Apr 2025 06:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0F123E229
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 06:55:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744786518; cv=none; b=NmLuBZYkMnan1sByXD+ZKOzflxYnElQW5rc0azBwIcYawxrtrY1BxeYy/1kjbpb8po8mNstAaXhengiH2ezEldmWtMTZHK2lo0M2Llpw80rX2w7wMv4st4s91r/rASkgQgxnsDxCj8572D+q2mnW/ueubNOp0AVXMPlj0zezKcY=
+	t=1744786538; cv=none; b=cAZ8b+bEci4jztNbv+xRZhhjQX5EcZikJ4NBESPxpWkdh5QipE0bW5oOjWAXhryAQtpC2TXGQpci1vSKcBnZexouihUH1T5IVAi47DCFEDAueqWxPvDCf6uQLds/XCRh57JPVQ4pGSu6UvcJ39kFjIuYMRUWxX+liK4Rq98TwOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744786518; c=relaxed/simple;
-	bh=9483KVRR+VyjWpfj8/PmYms6WhIigj+r/oHwCDrTj+0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OLCgQb2E18a+LM9fVCj0wjz0XYxJggaYzcT6yRymojG3+L8/2KWDccDrWMhgIqehAl3T2kcaA0m7j8o+/eOrSzDn/F8ffLn/EzovBb1PNfa1ZPx+vRCoA/C3k3uP/N2cupsPROQPbVQyxqAaj/q/kihoxlmmbAh7kQAgjnKBfk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S/3jgQyE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B5A3C4CEE2;
-	Wed, 16 Apr 2025 06:55:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744786517;
-	bh=9483KVRR+VyjWpfj8/PmYms6WhIigj+r/oHwCDrTj+0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=S/3jgQyEb24mEGySglCbuuNXPZ4YAqJtG/zBPWR8Q6qD5Gh2ypzwHFG9g9rNH18bz
-	 vAJenDgnPEqP8K3bjwsVilheTIxPdgtVeDdXbTS99xpWV6C3n3pWTQuPGdaQ+/tYez
-	 Z1K4ir4iBVOBkye9+GyoaPI5c1LlG2Ug4/Vy6qgu4EVg6CG33rycN79Q/vDsKs+LOo
-	 Pg7/Xcv2mwQ5wvC9GLe5Taob3kXPd+KYTBiDxFJGdCJkxbVn/ZUvzz+Co95pjzeNuy
-	 LmxtOOwd6E1L+GjsahZ92UECkVN8XyC2Z8CTlOLg6ByIFdaahf5RnUaeA3UGeosgFT
-	 2vTmE0vF35ZPQ==
-Message-ID: <79400920-22b4-4bce-b204-c58087495c22@kernel.org>
-Date: Wed, 16 Apr 2025 08:55:11 +0200
+	s=arc-20240116; t=1744786538; c=relaxed/simple;
+	bh=9AWnnDPt11sXZ68zVw3VobBypj8iGzpX/p3WzL6YkMs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZI7MwrPCmQ7kRkptYZeqxWY6sby0Zr9fK/aNfd8zoH2jinpqYSG8R4GnuW3MKU08zql/cXvrEE97tFl2FosQUbrjT41cil8/tW1Mlz1McGOm/qkq5dS0wRs5yYnEnDFxjIMc1LfBQ5QdcfbIomYaFDCDnibdtfAgZZ0A85Z24MY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=JJL/06eQ; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=9AWn
+	nDPt11sXZ68zVw3VobBypj8iGzpX/p3WzL6YkMs=; b=JJL/06eQo222JFOy5ont
+	b0BisnKAsfelOJXqgPtd7BLy9pRtgU8EJansG5KHmbiUM3wQRhyKoQJZjMFwcsxk
+	AteyPP61XowKlKwAg1jWERPFtkU0L4NRjgzaC/PTD2AUx4L8p/QEOe9UUsd/bBLF
+	JjgSPwKM25Vw9591dkZwRYeVMrieyoGnqOSq7+ai3qC9LsxxM1yzRX5ZBEaMa01O
+	wkD47a673deFxrALPvgnhG12lRlA58mWXbzYYQaLlb+EsS0Erlu77Yw8DGmWM4HI
+	iKHxap9jyHJ8/pfhahVXkeMHpHFAS9WUbopTEYGsNqtvZ6raavzB2LW+xxdtAl6I
+	Ig==
+Received: (qmail 601464 invoked from network); 16 Apr 2025 08:55:28 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 16 Apr 2025 08:55:28 +0200
+X-UD-Smtp-Session: l3s3148p1@bSs8xd8y0Lgujnsq
+Date: Wed, 16 Apr 2025 08:55:27 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Jai Luthra <jai.luthra@ideasonboard.com>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: Re: [PATCH v4 5/7] i2c: core: Do not dereference fwnode in struct
+ device
+Message-ID: <Z_9UX9xkGjvhnub_@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Jai Luthra <jai.luthra@ideasonboard.com>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab@kernel.org>
+References: <20250414100409.3910312-1-andriy.shevchenko@linux.intel.com>
+ <20250414100409.3910312-6-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: Fix nuvoton 8xx clock properties
-To: "William A. Kennington III" <william@wkennington.com>,
- Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>,
- Tali Perry <tali.perry1@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: openbmc@lists.ozlabs.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250415232521.2049906-1-william@wkennington.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250415232521.2049906-1-william@wkennington.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 16/04/2025 01:25, William A. Kennington III wrote:
-> The latest iteration of the clock driver got rid of the separate clock
-
-I don't see the binding deprecated.
-
-> compatible node, merging clock and reset devices.
-> 
-> Signed-off-by: William A. Kennington III <william@wkennington.com>
-> ---
->  .../boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi | 16 ++++++----------
->  .../boot/dts/nuvoton/nuvoton-npcm845-evb.dts     |  8 ++++++++
->  2 files changed, 14 insertions(+), 10 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi b/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
-> index ecd171b2feba..4da62308b274 100644
-> --- a/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
-> +++ b/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
-> @@ -47,17 +47,13 @@ ahb {
->  		interrupt-parent = <&gic>;
->  		ranges;
->  
-> -		rstc: reset-controller@f0801000 {
-> +		clk: rstc: reset-controller@f0801000 {
->  			compatible = "nuvoton,npcm845-reset";
->  			reg = <0x0 0xf0801000 0x0 0x78>;
-
-So now it lacks quite a bit of address space. This must be explained in
-commit msg.
-
->  			#reset-cells = <2>;
->  			nuvoton,sysgcr = <&gcr>;
-> -		};
-> -
-> -		clk: clock-controller@f0801000 {
-> -			compatible = "nuvoton,npcm845-clk";
-> +			clocks = <&refclk>;
->  			#clock-cells = <1>;
-> -			reg = <0x0 0xf0801000 0x0 0x1000>;
->  		};
->  
->  		apb {
-> @@ -81,7 +77,7 @@ timer0: timer@8000 {
->  				compatible = "nuvoton,npcm845-timer";
->  				interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
->  				reg = <0x8000 0x1C>;
-> -				clocks = <&clk NPCM8XX_CLK_REFCLK>;
-> +				clocks = <&refclk>;
-
-Not explained in commit msg.
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="uOld3320BOoglIIe"
+Content-Disposition: inline
+In-Reply-To: <20250414100409.3910312-6-andriy.shevchenko@linux.intel.com>
 
 
-Best regards,
-Krzysztof
+--uOld3320BOoglIIe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Apr 14, 2025 at 01:01:55PM +0300, Andy Shevchenko wrote:
+> In order to make the underneath API easier to change in the future,
+> prevent users from dereferencing fwnode from struct device.
+> Instead, use the specific device_set_node() API for that.
+>=20
+> Tested-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+I'll check this patch later today. Rest of the series looks good to me
+already.
+
+Thanks!
+
+
+--uOld3320BOoglIIe
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmf/VF8ACgkQFA3kzBSg
+Kba3+hAAmfNvum5FEcfQ6hqrsUfbDMAROGyPm4V1DU+wUmncR6PDbQr/Rs01wFIm
+Cn7dv7sx7dOCx3V6sKLzy463ffLVR82jaIme1gtin7Wfesg5JU62wEG3JsSrvlw2
++U+8IwYVxToPhAu47xQi+lDFPMOVuBluGnb8pI3LouJ3RxfpaS0w8+1FbuWGpex1
+mdlSllWxNW6+2/hkIzokpTfvimvl6ZMSeteXP6FTc0wUttd87QiSQwpVATtOPN/+
+XDWf43huWPtZxGwYUVUwPtHNEPLX2PfN7OAFIDvBPVeuGLCKOaKwX8y/LpWginWn
+38KSZfm9lqGBTU6Jnm8kXwBxRSOa8Ba14HotPKcmpvrwzxAyyR+IHV6Od3L/zABv
+93I1+dNEJRyVmFBggimWNTZGALu/tgv32sN/rCtTB4STuePy4lXERZGhbCOIvL0n
+z9dZqAybLXv9u60n8slnB//NwrGBRGBr6Bdc0mlAC4/cGBRftggrSQpJ49MmG1sx
+ExFvacJNf9SRHY4EVYCDpnpJtuaVT/fZ6yXg6wkYEsfoC3keBJP8zJgmZIDDGtkJ
++1ZkDFoPm7+MAvI/QHbd7QOXdgoO/BTPybY3EeEr7BDQbiFwNPdskjdABeZLRLhx
+RlNA4o851ASS4M+gzc+Tu/ezjg1mXyofhlTMzIz9FDNGoJ2j0+c=
+=zQR6
+-----END PGP SIGNATURE-----
+
+--uOld3320BOoglIIe--
 
