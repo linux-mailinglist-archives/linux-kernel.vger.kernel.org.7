@@ -1,162 +1,147 @@
-Return-Path: <linux-kernel+bounces-606646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39FF6A8B1D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:19:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F02E2A8AFD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 07:48:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0C4C1900AA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 07:19:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64811189D94B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 05:48:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096E0219A7E;
-	Wed, 16 Apr 2025 07:19:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E0C224B05;
+	Wed, 16 Apr 2025 05:48:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FPUx7vCm"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rb6zamL7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ECFB24B34
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 07:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52931D6AA
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 05:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744787968; cv=none; b=Lx/Cn9Y2vbpBxBzCzQk5QGj6lgUH8rFaFjWXskz0pwiE4n+0xnoaigHR6dkAjs5BZcVHL8bgpKAuMYgHpv0axVpwDgQlYl/wnzISt9PiDNBkklsfnQO5A+y7wEObLAHn2C/u+RFJ1G1qaVVQWKdIpwd2ReKptJOJGl63ur/C8us=
+	t=1744782491; cv=none; b=M2TNGpFG7uh8a1V/G+L0ixF9AXY+AUU+qruykIZ1u6XjzDuctLuiKrohbjIhLyeAEjOfks0GpR3srlMVtnJWqfGIUwQmIHoli9tc7XDa4wRKzvBU0EBwH1IWJ+IHS8KcAXZUFDMp71oO5jkDB5TFdE37YGt2GBoRLCN7XY+5HDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744787968; c=relaxed/simple;
-	bh=xDDcW/yh5WwRX8GowWgfey0TjKGVFHdjmfqP2jlNGLI=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=tZ676wSdzSuUFX14IRTEH2DWUD6fMF95o7l4OApF4zCtzzoTmU9ExT5pkJ226q6c24nNwnjwu45XDLCNW9Nv5SZZpQbeJEkAojIzXbJEljeUQnDn9zS+ZCpGHH8QZ5G2O54dAJJIZcCvFJbyCRYCYEvsxywUE4fG4dctktdCX9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=FPUx7vCm; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250416071207epoutp02232bf78a2fb2608fda48c75eae193fa6~2uwMr_GXU0738707387epoutp021
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 07:12:07 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250416071207epoutp02232bf78a2fb2608fda48c75eae193fa6~2uwMr_GXU0738707387epoutp021
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1744787527;
-	bh=Sp/AfvFZrKUebiEPouVjGoI4C1RBrg4TQO9aRIbLLt8=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=FPUx7vCmIlTqq69CDYyosT1XBjqtNaTjCl5XYtUmUjRBVUz18FGkUSoCfaOhCaT9L
-	 Z4hV858n4ZDgDSf3tXFaVmm05vonR/9M/x9VC5CKjJT+iUT2TvEC3IH+pkrMUdDL+m
-	 1h7jeTYeNs/MUd5MfwjTx+PdosKxJuDcGHKN7ZII=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250416071207epcas5p40b443a883f19d8eb8abef67d0ed949f9~2uwMW78p00736407364epcas5p4r;
-	Wed, 16 Apr 2025 07:12:07 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.178]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4ZcsfF6pqPz6B9m7; Wed, 16 Apr
-	2025 07:12:05 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	2A.28.10173.5485FF76; Wed, 16 Apr 2025 16:12:05 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250416055250epcas5p25fa8223a1bfeea5583ad8ba88c881a05~2tq9ii79B1170811708epcas5p2D;
-	Wed, 16 Apr 2025 05:52:50 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250416055250epsmtrp1d98ab536639d9c9a1fd3e7e97f91e732~2tq9h3PhP0934409344epsmtrp1k;
-	Wed, 16 Apr 2025 05:52:50 +0000 (GMT)
-X-AuditID: b6c32a44-8b5fb700000027bd-76-67ff5845e610
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	7F.91.07818.1B54FF76; Wed, 16 Apr 2025 14:52:49 +0900 (KST)
-Received: from green245.sa.corp.samsungelectronics.net (unknown
-	[107.99.41.245]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250416055248epsmtip2c8f30a2c7162811596b655a2ee9db302~2tq8bhws52102421024epsmtip2d;
-	Wed, 16 Apr 2025 05:52:48 +0000 (GMT)
-From: Nitesh Shetty <nj.shetty@samsung.com>
-To: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>
-Cc: gost.dev@samsung.com, nitheshshetty@gmail.com, Nitesh Shetty
-	<nj.shetty@samsung.com>, io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] io_uring/rsrc: send exact nr_segs for fixed buffer
-Date: Wed, 16 Apr 2025 11:14:12 +0530
-Message-Id: <20250416054413.10431-1-nj.shetty@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHKsWRmVeSWpSXmKPExsWy7bCmpq5rxP90gynnDC3mrNrGaLH6bj+b
-	xc0DO5ks3rWeY7G4vGsOm8WOJ42MFtt+z2d2YPfYOesuu8fls6UefVtWMXp83iQXwBKVbZOR
-	mpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6DrlpkDdICSQlliTilQ
-	KCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8CkQK84Mbe4NC9dLy+1xMrQwMDIFKgwITuja34b
-	c8EpzoqWWT8ZGxgPsncxcnJICJhIfJx+nLmLkYtDSGA3o8SOP0vZIZxPjBKd3ZcZIZxvjBKH
-	Hu5mhWn5taCPCSKxl1HiwtM1UC2tTBKfn2wEGsbBwSagLXH6PwdIg4iAp8S5WcvBGpgFpjBK
-	HJ3YwwaSEBZwlri8ZAkTiM0ioCqxc3ofmM0rYCXxZ85xqAPlJVZvOAB2oITAMnaJm4tgznCR
-	OLwa5gthiVfHt0DZUhIv+9ug7HKJlVNWsEHYJRLP//RC2fYSraf6wQ5lFtCUWL9LHyIsKzH1
-	1DqwG5gF+CR6fz9hgojzSuyYB2MrS6xZvwBqjKTEte+NULaHxIrP/YwgtpBArMShiZ/ZJjDK
-	zkLYsICRcRWjZGpBcW56arJpgWFeajk8ppLzczcxghOWlssOxhvz/+kdYmTiYDzEKMHBrCTC
-	e878X7oQb0piZVVqUX58UWlOavEhRlNgmE1klhJNzgemzLySeEMTSwMTMzMzE0tjM0Mlcd7m
-	nS3pQgLpiSWp2ampBalFMH1MHJxSDUz2UxTmBi6K6W25mXWyKKPz4bucNeWfynrjdHQ10zbn
-	3AmoFduUtcPXc3dgyhHZf3WBiYFTWaZMnDzddHN6g87z6dJ3Vx3aarPl1I+81NPyk/eFbP+c
-	bf+d/9+v50fy95iwJUm2L9Hk+/H5bvKDEGWGiymcpdMupypovmyr+1q/VPVpWprcTQuP4Dzz
-	hw2O6uVyFyZE+qrnbvMwCp22qfZ3v/2NTcsy32YHW39W+/uem83fd4G92M9+IXbGbm5f68fz
-	/IQF15t5PDnWG2aScaOe402bqr6N07fO/KcrnmcnVsqG6Z+4uOn86V0L1z/s4nW1F7TlV+Jw
-	XegxOW/G3W6/Hwx/lnGZPy5RZ9ksrMRSnJFoqMVcVJwIAHqhccPhAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBJMWRmVeSWpSXmKPExsWy7bCSvO5G1//pBsuemlvMWbWN0WL13X42
-	i5sHdjJZvGs9x2JxedccNosdTxoZLbb9ns/swO6xc9Zddo/LZ0s9+rasYvT4vEkugCWKyyYl
-	NSezLLVI3y6BK6NrfhtzwSnOipZZPxkbGA+ydzFyckgImEj8WtDHBGILCexmlDg7XxQiLimx
-	7O8RZghbWGLlv+dA9VxANc1MEpd6frB0MXJwsAloS5z+zwFSIyLgLfF+3yWwGmaBGYwS706d
-	ZgFJCAs4S1xesgRsAYuAqsTO6RDLeAWsJP7MOQ51hLzE6g0HmCcw8ixgZFjFKJlaUJybnpts
-	WGCYl1quV5yYW1yal66XnJ+7iREcOFoaOxjffWvSP8TIxMF4iFGCg1lJhPec+b90Id6UxMqq
-	1KL8+KLSnNTiQ4zSHCxK4rwrDSPShQTSE0tSs1NTC1KLYLJMHJxSDUytHYqbmUXObtaUOJq9
-	LKP72NEST0bFXQuOX92nek0ow/y3HpdEFluGweUz/JkfLs+axyTZ/uvC9i8zxFQfSXb9n/B9
-	N0uGaImHymVVZ5/TKTefG+0NU2d8LOk5v+FZ3cPNn97Zcx9ZeIwxye5ASdrr+N86U7/8+N/G
-	I3Yx8uLDkN/pQmtspsdvO73kT5Hvc8vU5THF1yJXz5h5JC/musBUHwab85nJpWmzvHZpbdKY
-	oCx74olwUC+bhnTg9jSGCW/yTZ4cz7OY/yHombhKz9PrT5o+3mYLlTLc+Srklv55zdSvyjJ8
-	pZNj6mqP3K/efuyE+gn7h2GXnnDnJQo9njmr/eoJ7/UHInkceCZNvf5QiaU4I9FQi7moOBEA
-	/GT8v4sCAAA=
-X-CMS-MailID: 20250416055250epcas5p25fa8223a1bfeea5583ad8ba88c881a05
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250416055250epcas5p25fa8223a1bfeea5583ad8ba88c881a05
-References: <CGME20250416055250epcas5p25fa8223a1bfeea5583ad8ba88c881a05@epcas5p2.samsung.com>
+	s=arc-20240116; t=1744782491; c=relaxed/simple;
+	bh=UCyiDm2TjAms0gkzQqN29nR6SyF2kYY1rrXuh5bVPl4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NiwWoF2ERr32jymie7tAlEXWZ5x9WIMpzxG1P0B+Sz6uR5ymsBXP0SoNnnA/qawk959BKSnSQmprpQ5cA2NcflGjcbwmRds6wI5mlFXQi9XgvZSxxbnY1K7YvKcU58vyFRQ+JHvPnQzhwxvrnUgcZwMTH6o7ZsxUIrem0n118/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rb6zamL7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11FEBC4CEE2;
+	Wed, 16 Apr 2025 05:48:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744782491;
+	bh=UCyiDm2TjAms0gkzQqN29nR6SyF2kYY1rrXuh5bVPl4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rb6zamL73hlRkYjswss586a+WyYKWcZA+Al7696J2ed8vVoxj0/81ZZKv7ne4iG8S
+	 IMjjKc+voKz7sAHYEkI9fbvXRGSDHtIk/0FGUv1hzYaflh+gjN6sq1iWSFeUOLK+C3
+	 yT9otbXfui49oq5Gi5gFY58kjjp9UM3i8qfCaYyUSDL5hwQqmG6r7PS7SCmBO2ZNJK
+	 eiaXm1mgWkKEUCai9Nz9CP7twwvuoqh70XecPNWe5dPKBUnvHlQ73e+NkIKR+4S2n1
+	 piWh1SijtvMPZ4hIveHFp+yZ/WYTw5npdGSj2AAWhOGdqz4uHdJb+/cpFaaA/93lhr
+	 fo5I+ZXpXGn+w==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>
+Subject: [PATCH 1/2] f2fs: sysfs: add encoding_flags entry
+Date: Wed, 16 Apr 2025 13:48:04 +0800
+Message-ID: <20250416054805.1416834-1-chao@kernel.org>
+X-Mailer: git-send-email 2.49.0.604.gff1f9ca942-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Sending exact nr_segs, avoids bio split check and processing in
-block layer, which takes around 5%[1] of overall CPU utilization.
+This patch adds a new sysfs entry /sys/fs/f2fs/<disk>/encoding_flags,
+it is a read-only entry to show the value of sb.s_encoding_flags, the
+value is hexadecimal.
 
-In our setup, we see overall improvement of IOPS from 7.15M to 7.65M [2]
-and 5% less CPU utilization.
+===========================      ==========
+Flag_Name                        Flag_Value
+===========================      ==========
+SB_ENC_STRICT_MODE_FL            0x00000001
+SB_ENC_NO_COMPAT_FALLBACK_FL     0x00000002
+===========================      ==========
 
-[1]
-     3.52%  io_uring         [kernel.kallsyms]     [k] bio_split_rw_at
-     1.42%  io_uring         [kernel.kallsyms]     [k] bio_split_rw
-     0.62%  io_uring         [kernel.kallsyms]     [k] bio_submit_split
+case#1
+mkfs.f2fs -f -O casefold -C utf8:strict /dev/vda
+mount /dev/vda /mnt/f2fs
+cat /sys/fs/f2fs/vda/encoding_flags
+1
 
-[2]
-sudo taskset -c 0,1 ./t/io_uring -b512 -d128 -c32 -s32 -p1 -F1 -B1 -n2
--r4 /dev/nvme0n1 /dev/nvme1n1
+case#2
+mkfs.f2fs -f -O casefold -C utf8 /dev/vda
+fsck.f2fs --nolinear-lookup=1 /dev/vda
+mount /dev/vda /mnt/f2fs
+cat /sys/fs/f2fs/vda/encoding_flags
+2
 
-Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
+Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- io_uring/rsrc.c | 3 +++
- 1 file changed, 3 insertions(+)
+ Documentation/ABI/testing/sysfs-fs-f2fs | 13 +++++++++++++
+ fs/f2fs/sysfs.c                         |  9 +++++++++
+ 2 files changed, 22 insertions(+)
 
-diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index b36c8825550e..6fd3a4a85a9c 100644
---- a/io_uring/rsrc.c
-+++ b/io_uring/rsrc.c
-@@ -1096,6 +1096,9 @@ static int io_import_fixed(int ddir, struct iov_iter *iter,
- 			iter->iov_offset = offset & ((1UL << imu->folio_shift) - 1);
- 		}
- 	}
-+	iter->nr_segs = (iter->bvec->bv_offset + iter->iov_offset +
-+		iter->count + ((1UL << imu->folio_shift) - 1)) /
-+		(1UL << imu->folio_shift);
- 
- 	return 0;
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index 59adb7dc6f9e..0dbe6813b709 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -846,3 +846,16 @@ Description:	For several zoned storage devices, vendors will provide extra space
+ 		reserved_blocks. However, it is not enough, since this extra space should
+ 		not be shown to users. So, with this new sysfs node, we can hide the space
+ 		by substracting reserved_blocks from total bytes.
++
++What:		/sys/fs/f2fs/<disk>/encoding_flags
++Date:		April 2025
++Contact:	"Chao Yu" <chao@kernel.org>
++Description:	This is a read-only entry to show the value of sb.s_encoding_flags, the
++		value is hexadecimal.
++
++		===========================      ==========
++		Flag_Name                        Flag_Value
++		===========================      ==========
++		SB_ENC_STRICT_MODE_FL            0x00000001
++		SB_ENC_NO_COMPAT_FALLBACK_FL     0x00000002
++		===========================      ==========
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index 3a3485622691..cf98c5cbb98a 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -274,6 +274,13 @@ static ssize_t encoding_show(struct f2fs_attr *a,
+ 	return sysfs_emit(buf, "(none)\n");
  }
-
-base-commit: 834a4a689699090a406d1662b03affa8b155d025
+ 
++static ssize_t encoding_flags_show(struct f2fs_attr *a,
++		struct f2fs_sb_info *sbi, char *buf)
++{
++	return sysfs_emit(buf, "%x\n",
++		le16_to_cpu(F2FS_RAW_SUPER(sbi)->s_encoding_flags));
++}
++
+ static ssize_t mounted_time_sec_show(struct f2fs_attr *a,
+ 		struct f2fs_sb_info *sbi, char *buf)
+ {
+@@ -1158,6 +1165,7 @@ F2FS_GENERAL_RO_ATTR(features);
+ F2FS_GENERAL_RO_ATTR(current_reserved_blocks);
+ F2FS_GENERAL_RO_ATTR(unusable);
+ F2FS_GENERAL_RO_ATTR(encoding);
++F2FS_GENERAL_RO_ATTR(encoding_flags);
+ F2FS_GENERAL_RO_ATTR(mounted_time_sec);
+ F2FS_GENERAL_RO_ATTR(main_blkaddr);
+ F2FS_GENERAL_RO_ATTR(pending_discard);
+@@ -1270,6 +1278,7 @@ static struct attribute *f2fs_attrs[] = {
+ 	ATTR_LIST(reserved_blocks),
+ 	ATTR_LIST(current_reserved_blocks),
+ 	ATTR_LIST(encoding),
++	ATTR_LIST(encoding_flags),
+ 	ATTR_LIST(mounted_time_sec),
+ #ifdef CONFIG_F2FS_STAT_FS
+ 	ATTR_LIST(cp_foreground_calls),
 -- 
-2.43.0
+2.49.0
 
 
