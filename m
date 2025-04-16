@@ -1,172 +1,175 @@
-Return-Path: <linux-kernel+bounces-606844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBDE7A8B47F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 10:56:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45C5BA8B484
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 10:56:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DAB53BF86A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 08:55:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBDBA19010F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 08:56:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2372327AE;
-	Wed, 16 Apr 2025 08:55:13 +0000 (UTC)
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sg2apc01on2136.outbound.protection.outlook.com [40.107.215.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B080B233732;
-	Wed, 16 Apr 2025 08:55:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.136
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744793712; cv=fail; b=n++1hdPAjpOXxU8iM7axSNC5DXl6vAOOaPrkht9Hub+4lq+TbK2doknVaIJ+4LiXG+MeSt1Rmt11n3Yt4m/g3+JYfQ8ZWuopBV1Jh8WB1ceN6EroDKAq7HRshtjF20ZeouYf+d8EaeQgyTVirAAvoyf+teC6VGO2zmoB3ffNHdk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744793712; c=relaxed/simple;
-	bh=j2eATLBFzXSVtq78YOVNvjy1qscWa2U2JMYv/eC7Sxw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JgzvBLFM4k3cEDmNCu4E/WLgl0ThAp0f1SDW3SBn6D1AlFWoCNFDDJtCD9bLhq7Hj6Kil07CroRIgAFqKTEmycnRBRKwPNctsIjwhYwUDK5KEUoyDlPGjk/j40mdBgO4ZDnpCwOpG7KFs6SCA6ZAcUOPfpDy/XFQq9nx6sNmps4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.215.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kt41NwnblJ7mq7WCSLadUHtl+RpBNarIj53cubIovEYxxY3/UAKNK6ENtk2Evv3K9vjRj54mKLU3iHTWpJIE5mLy+e0/VGzbfm58NCLlTV1wQlbj4hXsJ0m6D6Lh9K1+Zp6Q4xqrzJA4F+1U/TGaeLgovC0kkIsPhGaI1PErEuuzJ7tOGsGugaBTJIVtbf+wexdijUM7GpZkOClmGNKTBqyMYdraJD/ON4O9WIO/cnZGioK9Nt77hrCqMFzdBH99nA9Z65MGwF2x2xdQi67N+uFXLqIQAtoztTVzRXKHzvS3VWCJ90aBm97A7T89FyaLtMxesrX1vkIpJAJML4HkUA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zyWQd9RirQuvWOMoRUPdR5G6DNJV40Tjnu/eR5qttPk=;
- b=LsKQtXVK5XIXBg6I/8Q0BQmn5abPnY0c/yf5NaCxPBLbGstzK2hYJnoEo++e9murRsqq84uTbKTNjEV/alyXHklgENcclQXZo0oc51qBwPoT5xtdjZkoy9Q/uPCSFPR75RyxwHEzt8a+L1PTOHwe1Tu/FmP0QwYfRcvX/ZfVezEKP6u3uartoyq89Yc7A3485zwYgvXNhqwz4MynpFNSEWcFZAUb+ghHqBBscYuGYP+aBUuIe38TLk04sV53D50274aScLpJdHod3ya/DW+2EgGRc+ZYHWjLh6uSAoO6cha0o6vDf3Y/UJUp3+T8BKcH6OzSCfC4YWS+/nInNOjXIw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 222.71.101.198) smtp.rcpttodomain=arm.com smtp.mailfrom=cixtech.com;
- dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
- not signed); arc=none (0)
-Received: from KL1PR0401CA0030.apcprd04.prod.outlook.com (2603:1096:820:e::17)
- by KL1PR06MB7010.apcprd06.prod.outlook.com (2603:1096:820:11e::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.36; Wed, 16 Apr
- 2025 08:55:06 +0000
-Received: from HK2PEPF00006FB1.apcprd02.prod.outlook.com
- (2603:1096:820:e:cafe::20) by KL1PR0401CA0030.outlook.office365.com
- (2603:1096:820:e::17) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8632.33 via Frontend Transport; Wed,
- 16 Apr 2025 08:55:06 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
- smtp.mailfrom=cixtech.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
- 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
-Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- HK2PEPF00006FB1.mail.protection.outlook.com (10.167.8.7) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8655.12 via Frontend Transport; Wed, 16 Apr 2025 08:55:05 +0000
-Received: from nchen-desktop (unknown [172.16.64.25])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 0631E40A5A01;
-	Wed, 16 Apr 2025 16:55:05 +0800 (CST)
-Date: Wed, 16 Apr 2025 16:55:03 +0800
-From: Peter Chen <peter.chen@cixtech.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: soc@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, catalin.marinas@arm.com, will@kernel.org,
-	arnd@arndb.de, jassisinghbrar@gmail.com,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, cix-kernel-upstream@cixtech.com,
-	maz@kernel.org, kajetan.puchalski@arm.com,
-	Gary Yang <gary.yang@cixtech.com>
-Subject: Re: [PATCH v6 08/10] dt-bindings: clock: cix: Add CIX sky1 scmi
- clock id
-Message-ID: <Z_9wZ74-cqqVTPD7@nchen-desktop>
-References: <20250415072724.3565533-1-peter.chen@cixtech.com>
- <20250415072724.3565533-9-peter.chen@cixtech.com>
- <bdfe0108-7ac3-4f2c-b7f2-97943ee85235@kernel.org>
- <2f05420b-0c6f-4336-9854-036edf8d28fa@kernel.org>
- <Z_9pvs-YKLwFal90@nchen-desktop>
- <99e3b06a-f612-4f22-ae5f-43a3d618b06d@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 172F2232379;
+	Wed, 16 Apr 2025 08:55:38 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A46232368
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 08:55:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744793737; cv=none; b=kAcF1otinTrD4x9xCzAWgsM4fQAWui3mF1hP4DVVWHBzDd9YQtx5CMWfqtb7MJi2rhkHUpVbh2PfO0ZUzkg8A9waWcEBdJUaNoA/4Tjm7mYFb8LWqWbjDBzJLBVUbabvGDY/xjBCPejkkTVdKyamNnC/fNdYZNoOPoUSAmewlNI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744793737; c=relaxed/simple;
+	bh=tHTbotaHIx1TRZDQHKUtMWVP60FIcBQOR/mllBoTpaA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q24BOVKxMsT8oo/P65gaKMGguH6BztZQMNABUSnlIEbkgV5Po4oq/HMCEyLShpEWrC991gC2qJsePW3KIT1n/QLUIBpiXlzBrqmxSmdh3++kbEk4dAGjWdG7PrHCs3GP29gH0wmqwmQaJshPLAX6WwgDjxg/aWHZ0o5XeTlSrss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3B773152B;
+	Wed, 16 Apr 2025 01:55:31 -0700 (PDT)
+Received: from [10.163.75.121] (unknown [10.163.75.121])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2F9F03F66E;
+	Wed, 16 Apr 2025 01:55:28 -0700 (PDT)
+Message-ID: <4089150b-0cb8-45f1-bdae-035b047bd9a6@arm.com>
+Date: Wed, 16 Apr 2025 14:25:25 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <99e3b06a-f612-4f22-ae5f-43a3d618b06d@kernel.org>
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: HK2PEPF00006FB1:EE_|KL1PR06MB7010:EE_
-X-MS-Office365-Filtering-Correlation-Id: a7f056cc-ea34-49d6-9ffe-08dd7cc46255
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|376014|7416014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?GFkFxYO5hFlrGNrA3GHd+Z+wrF4qhTicyGF3YuEAvF4pM6MWHfd9iOH9ajQf?=
- =?us-ascii?Q?GE/zLDpHm6JtnCGAG2wpotSH3xfEKjmJKGT2xPQLzlVbQvrF8WS/Poh03WLw?=
- =?us-ascii?Q?w2OU5gMeZIgwwE4l6lGQzCQ3fPJ2/xHpN4s5zFV6N6rHvgMhJ+oq4TeydlQq?=
- =?us-ascii?Q?Qf12wrVWB2TpaK5/NjPSJvMwepyC34JS02MgT2sD0LLEQ7EADI9dwmbllGnV?=
- =?us-ascii?Q?DwMuaUZ21+04JEi+7LcXS3PZlN+t+IW51vJyun9PUIo5rJNsjLXqFxXZCD4H?=
- =?us-ascii?Q?WioTErNjBnHfslrCZB7NPbJ6KZsMPGyxBG4C5EZrwwtjDlmptjAWZfupdjte?=
- =?us-ascii?Q?CKNucWAgBCM6boFvSWJrP8jApe/ZaPnQiBqG8Ckg8mNIYOuRfKqPKQ55b0gf?=
- =?us-ascii?Q?vlG3ZY0Umj8vZq7aewOkJTZZ88V9JTcluvY0S1QVuJekMfzdqe9L8udLbSG7?=
- =?us-ascii?Q?BOanpA9H0CyKn3G/ZwAK28B6Jo03gyY5G9sW0gaC2svQd2liE3deFFx3C7BO?=
- =?us-ascii?Q?F3I4EZ+swU3+yqPcZ9LPEL23cWz2z1xdJD9NB+uDIHmsuqWgc6VuWWacqFua?=
- =?us-ascii?Q?TTTRzab9I3zjYqvoItT9HB8nanJxIkBTVJeFtnt4LmA0B3GMhse5tgxJJohR?=
- =?us-ascii?Q?nyQFdDA174BEz9rVGthy7VAmfAp8MrnIB2ilZ8YfvOsaFCiqmLVsNGKGvRan?=
- =?us-ascii?Q?wS1zF8ZIwHITBupL+z4l69oNcS2VzVL0P6ECa1QSJkyqhKQ+PYk1guuOwobv?=
- =?us-ascii?Q?TNwIPAT17DoV6cvz0nmU1OimODihgB5MDAJXXDFnbARQhIhi0plmK5ZNXgJV?=
- =?us-ascii?Q?9iD6pVJcj/pkJmIgEzb6WtZsEvfhTBaeQxB2woQ5S4HNgIpW3xNtmtq1/gzP?=
- =?us-ascii?Q?E5MF1htaqkRpJlN/tovgaZ0iO+yy7MWBtL5hoOw4OTp2vPgmu9MMm3WCLOMW?=
- =?us-ascii?Q?QAfCw/vbtAroY3+64GYngaUKmQFikgdjr6V1UK5eObk8YsbDkdKiw3b4GrdJ?=
- =?us-ascii?Q?BmKI2qR7oQq0NQGJUB7wHGx3aBecgwTt/eC0bjKCUT+VHrDacaQaOBYAxt2N?=
- =?us-ascii?Q?MRZcmcBX0Tkp+F3ptXutz+T3g1jBRxMYD4W3Xb9tVnJZu/RTlg5I3fvKg9nD?=
- =?us-ascii?Q?Rz1Y/sjMz75RoLp1ZmAO3J2rz8RaZnsfCZW58KzXvM1DYSUr0UKBngzXYy1M?=
- =?us-ascii?Q?iP9JzfOfIEavX2dd1VdkEyiqfqC7rr+RdlrNGVtZcPFYBqEes518xoC2vyfP?=
- =?us-ascii?Q?wNEafNG1Pdojvw7Irs5SyYhdCJTpAiAS9FyXSINeBCJt+ayYpBrFFaCU+ONQ?=
- =?us-ascii?Q?oBmCw0iDglAH+mLpS2iVV1B70f8ruAE6kE02V+b7H9m1qeSgMO3Yc1Rs9uMp?=
- =?us-ascii?Q?IQ4/UrFhxgwbnJRp5Kt0GdsgMNHCaAxwmYTo0K2/5lVcZT7p/oAArXLG3rAt?=
- =?us-ascii?Q?9Qw/vz0nCL2fpFY46pDquxkDE3HPIFKCx2HnU8c7gwmtr0HAXpf4wCZR6A9S?=
- =?us-ascii?Q?fNdyeflAsDAUJJdKKRdbvunYtD4IjyBijndY?=
-X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(7416014)(36860700013);DIR:OUT;SFP:1102;
-X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Apr 2025 08:55:05.9191
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a7f056cc-ea34-49d6-9ffe-08dd7cc46255
-X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
-X-MS-Exchange-CrossTenant-AuthSource: HK2PEPF00006FB1.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB7010
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mempolicy: Optimize queue_folios_pte_range by PTE
+ batching
+To: Baolin Wang <baolin.wang@linux.alibaba.com>,
+ David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org
+Cc: ryan.roberts@arm.com, willy@infradead.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, hughd@google.com, vishal.moola@gmail.com,
+ yang@os.amperecomputing.com, ziy@nvidia.com
+References: <20250411081301.8533-1-dev.jain@arm.com>
+ <09c77ab5-65fc-4bca-a7e5-2b11bba9330d@redhat.com>
+ <9ed4c113-37eb-4e3d-98a1-f46f786aaea9@arm.com>
+ <fa4ee2f1-223d-4af3-8e3e-a1371688a548@linux.alibaba.com>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <fa4ee2f1-223d-4af3-8e3e-a1371688a548@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 25-04-16 10:29:45, Krzysztof Kozlowski wrote:
-> EXTERNAL EMAIL
+
+
+On 16/04/25 1:03 pm, Baolin Wang wrote:
 > 
-> On 16/04/2025 10:26, Peter Chen wrote:
-> > On 25-04-16 08:38:55, Krzysztof Kozlowski wrote:
-> >> EXTERNAL EMAIL
-> >>
-> >> On 16/04/2025 08:35, Krzysztof Kozlowski wrote:
-> >>> On 15/04/2025 09:27, Peter Chen wrote:
-> >>>> From: Gary Yang <gary.yang@cixtech.com>
-> >>>>
-> >>>> Add device tree bindings for the scmi clock id on
-> >>>> Cix sky1 platform.
-> >>>>
-> >>>> Reviewed-by: Peter Chen <peter.chen@cixtech.com>
-> >>>> Signed-off-by: Gary Yang <gary.yang@cixtech.com>
-> >>>
-> >>> Incomplete SoB chain.
-> >
-> > Sorry? What do you mean?
 > 
-> Your SoB is missing. Please read DCO part and actually everything around
-> authorship in submitting patches.
+> On 2025/4/15 19:47, Dev Jain wrote:
+>>
+>>
+>> On 15/04/25 3:47 pm, David Hildenbrand wrote:
+>>> On 11.04.25 10:13, Dev Jain wrote:
+>>>> After the check for queue_folio_required(), the code only cares 
+>>>> about the
+>>>> folio in the for loop, i.e the PTEs are redundant. Therefore, 
+>>>> optimize this
+>>>> loop by skipping over a PTE batch mapping the same folio.
+>>>>
+>>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+>>>> ---
+>>>> Unfortunately I have only build tested this since my test 
+>>>> environment is
+>>>> broken.
+>>>>
+>>>>   mm/mempolicy.c | 12 +++++++++++-
+>>>>   1 file changed, 11 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+>>>> index b28a1e6ae096..b019524da8a2 100644
+>>>> --- a/mm/mempolicy.c
+>>>> +++ b/mm/mempolicy.c
+>>>> @@ -573,6 +573,9 @@ static int queue_folios_pte_range(pmd_t *pmd, 
+>>>> unsigned long addr,
+>>>>       pte_t *pte, *mapped_pte;
+>>>>       pte_t ptent;
+>>>>       spinlock_t *ptl;
+>>>> +    int max_nr;
+>>>> +    const fpb_t fpb_flags = FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIRTY;
+>>>> +    int nr = 1;
+>>>
+>>> Try sticking to reverse xmas tree, please. (not completely the case 
+>>> here, but fpb_flags can easily be moved all he way to the top)
+>>
+>> I thought that the initializations were to be kept at the bottom.
+>> Asking for future patches, should I put all declarations in reverse- 
+>> xmas fashion (even those which I don't intend to touch w.r.t the patch 
+>> logic), or do I do that for only my additions?
+>>
+>>>
+>>> Also, why are you initializing nr to 1 here if you reinitialize it 
+>>> below?
+>>
+>> Yup no need, I thought pte += nr will blow up due to nr not being 
+>> initialized, but it won't because it gets executed just before the 
+>> start of the second iteration.
+>>
+>>>
+>>>  >       ptl = pmd_trans_huge_lock(pmd, vma);>       if (ptl) {
+>>>> @@ -586,7 +589,8 @@ static int queue_folios_pte_range(pmd_t *pmd, 
+>>>> unsigned long addr,
+>>>>           walk->action = ACTION_AGAIN;
+>>>>           return 0;
+>>>>       }
+>>>  > -    for (; addr != end; pte++, addr += PAGE_SIZE) {> +    for (; 
+>>> addr != end; pte += nr, addr += nr * PAGE_SIZE) {
+>>>> +        nr = 1;
+>>>>           ptent = ptep_get(pte);
+>>>>           if (pte_none(ptent))
+>>>>               continue;
+>>>> @@ -607,6 +611,11 @@ static int queue_folios_pte_range(pmd_t *pmd, 
+>>>> unsigned long addr,
+>>>>           if (!queue_folio_required(folio, qp))
+>>>>               continue;
+>>>>           if (folio_test_large(folio)) {
+>>>> +            max_nr = (end - addr) >> PAGE_SHIFT;
+>>>> +            if (max_nr != 1)
+>>>> +                nr = folio_pte_batch(folio, addr, pte, ptent,
+>>>> +                             max_nr, fpb_flags,
+>>>> +                             NULL, NULL, NULL);
+>>>
+>>> We should probably do that immediately after we verified that 
+>>> vm_normal_folio() have us something reasonable.
+>>
+>> But shouldn't we keep the small folio case separate to avoid the 
+>> overhead of folio_pte_batch()?
+>>
+>>>
+>>>>               /*
+>>>>                * A large folio can only be isolated from LRU once,
+>>>>                * but may be mapped by many PTEs (and Copy-On-Write may
+>>>> @@ -633,6 +642,7 @@ static int queue_folios_pte_range(pmd_t *pmd, 
+>>>> unsigned long addr,
+>>>>               qp->nr_failed++;
+>>>>               if (strictly_unmovable(flags))
+>>>>                   break;
+>>>> +            qp->nr_failed += nr - 1;
+>>>
+>>> Can't we do qp->nr_failed += nr; above?
+>>
+>> I did not dive deep into the significance of nr_failed, but I did that
+>> to keep the code, before and after the change, equivalent:
+>>
+>> Claim: if we reach qp->nr_failed++ for a single pte, we will reach 
+>> here for all ptes belonging to the same batch.
 > 
+> Sorry, I missed the previous discussion (I replied to your new version). 
+> I think this claim is incorrect, we will skip remaining ptes belonging 
+> to the same batch with checking 'qp->large'.
+> 
+>          if (folio_test_large(folio)) {
+>              if (folio == qp->large)
+>                  continue;
+>              qp->large = folio;
+>          }
 
-Thanks, will add my SoB at the Tag list.
-
--- 
-
-Best regards,
-Peter
+Oops you are right, I missed that.
 
