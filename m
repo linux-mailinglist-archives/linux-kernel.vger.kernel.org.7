@@ -1,135 +1,196 @@
-Return-Path: <linux-kernel+bounces-607477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 917C1A906CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:44:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6CA4A906C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:42:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57B431784BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:44:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FFEF3BDB69
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:42:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CFF71FF610;
-	Wed, 16 Apr 2025 14:43:25 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56DBE1EF36F;
-	Wed, 16 Apr 2025 14:43:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744814604; cv=none; b=Y2Ln83PoDF0IxEq9QoxeqgzEsE/RdqBPZ/XYWyAKFosAQRcx66e6jeoHxtQOJWBRD1YDpwWFVhOoSoJi6RIcCgwd7I3bMOQyQRoIvm7qKkX6rBun+3BxM9I16OlpD1YpLXoZzRVtdsbUHuPqxtQ72eyPNbcWZ786FO1iGFlTgPA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744814604; c=relaxed/simple;
-	bh=/OC7e4P2dnaJxneYyWEnenCxMKH6b4HqmRjheb0R7+o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AnmsFN/KoRLH1t8YXTMIESixBmcmgLLUq2oFZWSA5/uR/d0hbI5dfUBRvOnPcA6bFrTF9a+xFNiU0SJyNPtr2/rAoCgaT53URODqsxZa1ITT2If6mdhLixs7BT0RJl2tj5/J9fkoxTdgCS4GhhD8TEsAFocNe4JC+T/dlKMcuCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.68.238])
-	by gateway (Coremail) with SMTP id _____8Bx364Fwv9nmvy_AA--.37797S3;
-	Wed, 16 Apr 2025 22:43:17 +0800 (CST)
-Received: from localhost.localdomain (unknown [223.64.68.238])
-	by front1 (Coremail) with SMTP id qMiowMBx2xqowf9nLD2GAA--.2909S5;
-	Wed, 16 Apr 2025 22:43:15 +0800 (CST)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Yanteng Si <si.yanteng@linux.dev>,
-	Feiyang Chen <chris.chenfeiyang@gmail.com>,
-	loongarch@lists.linux.dev,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Huacai Chen <chenhuacai@loongson.cn>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Henry Chen <chenx97@aosc.io>,
-	Biao Dong <dongbiao@loongson.cn>,
-	Baoqi Zhang <zhangbaoqi@loongson.cn>
-Subject: [PATCH net-next V2 3/3] net: stmmac: dwmac-loongson: Add new GMAC's PCI device ID support
-Date: Wed, 16 Apr 2025 22:41:32 +0800
-Message-ID: <20250416144132.3857990-4-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250416144132.3857990-1-chenhuacai@loongson.cn>
-References: <20250416144132.3857990-1-chenhuacai@loongson.cn>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A831FC114;
+	Wed, 16 Apr 2025 14:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="oXDERyIf"
+Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03on2086.outbound.protection.outlook.com [40.107.104.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A151F9A89;
+	Wed, 16 Apr 2025 14:42:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.104.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744814531; cv=fail; b=YwNH/WEWEVuwaGBMA8c5nQWThKF2WWOs+PanBpf3IAhyT45OZHVguXljl+FvwiE4xd3FT11iDCVLsIogT4pdNxAuxIP8oSe7wEUk/KOEqMAoW9WdHZfNDDv4Jncxiupx6m+2M7Gz3fF6k0u0tPkKLkNcwBZFMJcxCJsZdzSyRxE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744814531; c=relaxed/simple;
+	bh=gJ7A3/RyBUT2a8jOSsAcyBoDY1Rxv3dZmOU7OKPVcrM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=k13HaNT9yAslVgX8DJ7YstqU9al47yNQELMtXtsEURD4+YQsUI5nkBFnhJiIsuxhbgXhF8NzniRgJTenYFqMoAe1OnX8a1iVw3NQgYM+33r06d0noJjCvwcoKW6y7WXdtiT6Y4ZC0QKccATdmkIc6bAKf8yH/Z5WVDdVN22jbBM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=oXDERyIf; arc=fail smtp.client-ip=40.107.104.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YEPfCVYAZuTkAzSuD19G16FH4KnsHGjjGZ99g48gTCKiIWFUZUEEgXyFkOjjJE6w2ZmbMnyowrUtafxAqZRyuX6NlimHxCOhtuOjD5AUkm9x8dlHdMVOak8LcldpgLCOTBDPgqirwv0TKK69k3PW5FwBbutovPeNITHnN02qYlO/rwK4NTf3+7aNq0xE76sWNazAhpcBOe42jQEc+7k3UZ/htkkU1puUpqqOGy9lfEEdqw+VMAzKJa47Sq7Zr2gmKXiW0p9F1ZhNSCUrj32ZV0OKHWQrGO8e+xdmX+j0vrTWbUawg0bJILluquWhxboXFWeYmPeuzYS7/Jrip4ifHQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ne2fXTvDvNP2Ot3uN+Pirpn3NxJl1d4Zq2XUsoVNJD0=;
+ b=iLvR2/YC7JGunGANW+IVFpU/rfEcOAVqYjV/57lmQUfFjWZptQhkAc8JY74qE7VTMHmLUQzvCVk/u6BEoDc/nl+80ze9OFivl+f7+cUyi/2ubY83Rl+/ogUP/TMhChQeQEgbwmSDXJ/wCXEhRh2Hc4OVKNhj5ofDdqIZw0tqKtjuobu4XPoXdqflJaFzElKtppraoTgqjv9uG0Hh0pBoYIpC3pRJfMXG3faZUVXNh3PTCAdL535mqBv4DRCD74wgpu3U0cpArM+Ge+tvKKUCyGKh41owckWrDwgu1SxumjDem/BIp9iYc+G5CplY77eoLmEJSUO8PYEDyyNRlS+HSA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ne2fXTvDvNP2Ot3uN+Pirpn3NxJl1d4Zq2XUsoVNJD0=;
+ b=oXDERyIf2/gwjN/cwAxLVind4u2OZuhH8oRHm9Wr3Ys0beNG7nZPRYPfgPOLUH7J9IM//DNEIxtfHvR1s0p2QgHgmGTevMSzFRyrsbwiseFH1ZdhJOX/gOTRGge6MlpkBJG+Z3o0Oibf6goghrdMTshd813eiAW6nWgHJHn8Sq5IXL4Yc/jLI3IcFdMii9AfI4Wl9KOI1L2yH73t2EjWYYWnjH+Wxlroi/WbdzHDujetd4/kiYf/nyx2lS77DGwnh2Eb0yh11RzF2g7lMlPMlQ5SbAVRWESGYprNNw6Euv/eSjeZPyvJbjL5LbcsXE5RLsu4NraOZNIOcEO1ltq+/A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by PA1PR04MB10294.eurprd04.prod.outlook.com (2603:10a6:102:44d::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.34; Wed, 16 Apr
+ 2025 14:42:05 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.8632.035; Wed, 16 Apr 2025
+ 14:42:05 +0000
+Date: Wed, 16 Apr 2025 10:41:58 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Adam Ford <aford173@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, aford@beaconembedded.com,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 04/10] arm64: dts: imx8mm-beacon: Set SAI5 MCLK
+ direction to output for HDMI audio
+Message-ID: <Z//Btmb7TytV1xLL@lizhi-Precision-Tower-5810>
+References: <20250416010141.1785841-1-aford173@gmail.com>
+ <20250416010141.1785841-4-aford173@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250416010141.1785841-4-aford173@gmail.com>
+X-ClientProxiedBy: PH7P223CA0027.NAMP223.PROD.OUTLOOK.COM
+ (2603:10b6:510:338::18) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMBx2xqowf9nLD2GAA--.2909S5
-X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoWxJrWrtrykCrW8KF13Kw4Dtrc_yoW8KrW5pr
-	45Za9FgrZ7GF45Ca1vqrWDWry5ZFZxG3srCF42yw4UWF9xJ342q3sF9Fs8Ar17ur4rXFy2
-	vrWkCw48CFs8KwbCm3ZEXasCq-sJn29KB7ZKAUJUUUUD529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUBYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
-	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWrXVW3
-	AwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI4
-	8JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j
-	6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
-	AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
-	0xvE14v26ryj6F1UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4
-	v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AK
-	xVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0XdjtUUUUU==
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PA1PR04MB10294:EE_
+X-MS-Office365-Filtering-Correlation-Id: a9048958-4531-4e8a-3ae2-08dd7cf4db9f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|1800799024|52116014|7416014|38350700014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Y+J3xhmIJAzmMbMPETwQag/cJZz6AqYmUKZYlHYTIv780m5ZuC1WIUaMNshJ?=
+ =?us-ascii?Q?5fi3i/22oFhSqrTMfR03or3pywCGVP/FeVdUM3+M8NKUtKj+EAivOHBzPi5H?=
+ =?us-ascii?Q?jbCpyzbLbrcf+CN6grBTU1GMarRjUtFIOWJFZGcCCFSdPGL4CfRo8QFyqg3+?=
+ =?us-ascii?Q?Omy+ZjNiXp2uQJwxtebhZcVt7wOP6cnITlmGJ35Z1qwQtMZOlJWEIagzx1Ai?=
+ =?us-ascii?Q?moLF7jGCsrDoxSzffqV+uSxhIQwWcujaLVGQxpcD5/zaFTll0qTdNbtAZtm9?=
+ =?us-ascii?Q?dgOKNangB2t7Sm1LR8o1tpYK8u6mfPZLl6uv68xTKauTY2UZgaDXXzU8BVBw?=
+ =?us-ascii?Q?fX2x7mSKgceC988fX9Lwr00WXRqx67AHV+nY3r0yONJCIoqZVPZ+qz/ns782?=
+ =?us-ascii?Q?MDFDgzxYSJsSvMIBc650MdM3XycCtnR0pcN4jgrvPClse4OSipgLthAvMzfI?=
+ =?us-ascii?Q?V0nrwSRCNxW3mmLEw/IgK4YUrcfQ5AL9DA14ledpMq9zb6xF+EgKc7ac/sAf?=
+ =?us-ascii?Q?3zQhlAaCiwLO2UhnZ1prIhsF/o/AeyuP0E7STKcKC12gXujWg5AwTvI0/rT6?=
+ =?us-ascii?Q?MsDD7pNU4E2TjKsZ8ikhHYrCykVJuAQBkSDfckO0YmtVb5nP2AxFkgYRrWxS?=
+ =?us-ascii?Q?EzQWeRsYWIBzx8By3C9k9oPBjs6axy1teNCi/0k6yaqI64x7obuxZczhoucA?=
+ =?us-ascii?Q?Ld2SkBpaDSoSCLsd3ln6rjcrC8pfkspmq9wdAzbP2J+WQPJS8cOffbMcWHgR?=
+ =?us-ascii?Q?KPDgjilENQ70PjE/z+SXB3Ts2rV8//KlwMYGwvsuMAvN521DrA27znbd+eVI?=
+ =?us-ascii?Q?VKROvNs3pO5R6YLVfR0gNI+hvsqjur4NALPlvVjvqBXhN/QNrvCm81bX6GLT?=
+ =?us-ascii?Q?2aasFUtq1BVAi90GLfkReDSlQSxM/11CpPvdMf10I9pNunYZpUmzOtcWgy1w?=
+ =?us-ascii?Q?NIGFkfpsOa+WaVBOgff7FEhbcsOn4FOv2GFU7bkqlUx5Ory8O5zj33emex6L?=
+ =?us-ascii?Q?NlqELmcXUbMaoxNrwFrC37m1wPjXq/LaLb4HRmsWKs88JP1hu0cJb+cjA12j?=
+ =?us-ascii?Q?95OMHoj+JhYWnkCQSEQKLvX31ti91AMm4UxgaFp2+hKB+Qu4B1VMDj0U4TdK?=
+ =?us-ascii?Q?pCSS+UQihBWKm64T8mXmP/Ef+ajq2cU1vR3tRQ5xjIcwUJZTmxLRBKnj305t?=
+ =?us-ascii?Q?sYLmTkSgqBqaXHA9UtIFe1L6OlX2ysQpWHOOr9fx5GO76OvuqOdYtWHjK7Pr?=
+ =?us-ascii?Q?zQHhbBOyIwvox2aeIjeNv660XrTTT0Nz254lSs0YiNvKQP62I4csf6XCMvWi?=
+ =?us-ascii?Q?aWH5xLHsN8waygybApydASZSrvVDvQl/5+6TVA7K+Hdui7zmxUEZCU904+Ol?=
+ =?us-ascii?Q?SNALQilslx3sgq+Pkl/k2SHkcQIzFrTQfV9JRfiZ4DGA1JLC/f8A+68Bnuim?=
+ =?us-ascii?Q?GJIqrbqSX5sBxz9DTFzJVKGgtkDkwzUsBX/mLsB0fkwERr9vO129bg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(52116014)(7416014)(38350700014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?myC6OkxWKKu5Qd44jN1U5yrPFW9jRp2+AksKMA4hNmxwX6nCrocUmUs+nEUg?=
+ =?us-ascii?Q?iR7Uo++b9bwVZ9RGWKBannxXMwDnKBUi8DrQgNdGdgAK2xGMybrDGhOwnUvR?=
+ =?us-ascii?Q?iFV8OtVKgzJfEKLtlkJqDTIoBCeHQXtkpiWBnCFx7AxLPKX6k+eUi1tHuWYL?=
+ =?us-ascii?Q?bDC7s9aCCaRCFKoiJOZJcrCW42FgXHmV5pOB+pKqgGDo54XXoRwVT9LQf58F?=
+ =?us-ascii?Q?ZiegVmH8NZwZwtp1HuRaM+iLYNl6CHykps6CHiPqU+IT8NOQaXpDWplPjK7l?=
+ =?us-ascii?Q?T6iSD5YIj0Hl5b9PcQOuDYIjU076k/gIvBhWJGMcXFatna3bU31PVP/emvuR?=
+ =?us-ascii?Q?N7uhEHe+2jYnxfL9ktj1Jc5r5rA6PWn4Nf+TkZKbjw16m2U/p9977bXR/K8V?=
+ =?us-ascii?Q?1ra9TrpUm8vMuMQJgsqc1Gs3UhmpSx6YhVTczWitZqmwj+YTtXSfK53Lt+cY?=
+ =?us-ascii?Q?oJVgKQl6T3OceOAFZHhHl5enoS/W6wp/Fbnmfuv8RGUHhzlo/ttGo7P5RuI4?=
+ =?us-ascii?Q?KqvX1b056OXI0sm/qx3GDe9Kn16ll9pQpW7RsQFtLtdVBDlIhu80q/PBfgZI?=
+ =?us-ascii?Q?2sOu9B5zFabM6CINRLqKJDSUyDs0VR15pQ+p3d8TxJiPkY4oAqspTzvrKtdY?=
+ =?us-ascii?Q?I+rCLl4QZIpoRoFkkVwDRqRWWP/hP36JzgYhF9rnMy8aTZvyMA2vEDc8tOvl?=
+ =?us-ascii?Q?Txqhl+jJjuMyX5F5L6PvJg0xybdq9rzM5Q7zH+H0IkG916XIdSaPpnAJAzNT?=
+ =?us-ascii?Q?ZNaJQP1nXgqBXjIoBG+OdUiY6CfWbmFZj0HzO5sgTmBRmBhcsDIzX1f+GzWP?=
+ =?us-ascii?Q?aoloEX0oUK6rrHpCcCM0sDiFF/fqFSYmyEsOZLHKLMY93tiyJo3ti6t7jHlK?=
+ =?us-ascii?Q?1wa/mEKyDWeFavdt8o2AjpKqbEk9IY4VuqvDfS9vKJxd5/cKQzCwpqqN9/PE?=
+ =?us-ascii?Q?pEvQM8OMp9kFFIZuDK+nK/csJXzw4anjq/nfmkzdicKTfhfMti+VU05baM6E?=
+ =?us-ascii?Q?C+5EVlEqgJ/oh0P0Dj9lrHtmTsFJIwzIDFTnS9DHjgll61Kg0NulVbXLWvHi?=
+ =?us-ascii?Q?WP4EkBMK6XqK2x+EfJl29wwzaJ+iy2er8ZRHUtLwqtt8Hu9p7Euk3o7mXUqr?=
+ =?us-ascii?Q?4DTvo7wkTNrAfnoM9X5c/pu5FCNZbqJ1+yclYowknwyd86+bjcyiKkVlbb3t?=
+ =?us-ascii?Q?a8rBIDE3v9vvdlX5XzTrJcuDxmBCvEVclz8OsKzj6zibEDD56Cp1eKemYISc?=
+ =?us-ascii?Q?aAyJOLbLYUwTUAsBSCjnYgsxQvw+40vVrc8hdap8Y2AUfyEgkiJR4koIFEL1?=
+ =?us-ascii?Q?m/9mmVUoV0DhJ1yYtVzm7y4bjhkofgLzc1+F+e89kcxcn193BANayltutkUW?=
+ =?us-ascii?Q?OHUYUT1t/uguCTiU43q7UEhs8BJf7gaElxXA30nMJ7HVDSvsxpMfIoRiXVMD?=
+ =?us-ascii?Q?8JsPaH/zZACh4fQqiWivNpQWFTaegINCe90p4Tau9yTEvsv2zK4RKYh+impr?=
+ =?us-ascii?Q?KU4S0Hg6cM4w7ayhx21DVcvbwXpU6xYAODTr7Ia4MjvfRq6qUetfNH8Jdc1H?=
+ =?us-ascii?Q?4ZUGdowoV33XzLzfdA/Tn0LDxFpEUDR8u8sYeXpC?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a9048958-4531-4e8a-3ae2-08dd7cf4db9f
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Apr 2025 14:42:05.6519
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: v+3q4D1EQDWstq4LRcIX9/G5NYFxFvvtpJiWCFQjbOS66wEHdgMd4bDo0+i7ZtnRSpLmwFcer4MS9/GICb+vZQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10294
 
-Add a new GMAC's PCI device ID (0x7a23) support which is used in
-Loongson-2K3000/Loongson-3B6000M. The new GMAC device use external PHY,
-so it reuses loongson_gmac_data() as the old GMAC device (0x7a03), and
-the new GMAC device still doesn't support flow control now.
+On Tue, Apr 15, 2025 at 08:01:30PM -0500, Adam Ford wrote:
+> The HDMI bridge chip fails to generate an audio source due to the SAI5
+> master clock (MCLK) direction not being set to output. This prevents proper
+> clocking of the HDMI audio interface.
+>
+> Add the `fsl,sai-mclk-direction-output` property to the SAI5 node to ensure
+> the MCLK is driven by the SoC, resolving the HDMI sound issue.
+>
+> Fixes: 8ad7d14d99f3 ("arm64: dts: imx8mm-beacon: Add HDMI video with sound")
+> Signed-off-by: Adam Ford <aford173@gmail.com>
+> ---
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Tested-by: Henry Chen <chenx97@aosc.io>
-Tested-by: Biao Dong <dongbiao@loongson.cn>
-Signed-off-by: Baoqi Zhang <zhangbaoqi@loongson.cn>
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
----
- drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-index 57917f26ab4d..e1591e6217d4 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-@@ -66,7 +66,8 @@
- 					 DMA_STATUS_TPS | DMA_STATUS_TI  | \
- 					 DMA_STATUS_MSK_COMMON_LOONGSON)
- 
--#define PCI_DEVICE_ID_LOONGSON_GMAC	0x7a03
-+#define PCI_DEVICE_ID_LOONGSON_GMAC1	0x7a03
-+#define PCI_DEVICE_ID_LOONGSON_GMAC2	0x7a23
- #define PCI_DEVICE_ID_LOONGSON_GNET	0x7a13
- #define DWMAC_CORE_MULTICHAN_V1	0x10	/* Loongson custom ID 0x10 */
- #define DWMAC_CORE_MULTICHAN_V2	0x12	/* Loongson custom ID 0x12 */
-@@ -371,7 +372,7 @@ static struct mac_device_info *loongson_dwmac_setup(void *apriv)
- 	/* Loongson GMAC doesn't support the flow control. Loongson GNET
- 	 * without multi-channel doesn't support the half-duplex link mode.
- 	 */
--	if (pdev->device == PCI_DEVICE_ID_LOONGSON_GMAC) {
-+	if (pdev->device != PCI_DEVICE_ID_LOONGSON_GNET) {
- 		mac->link.caps = MAC_10 | MAC_100 | MAC_1000;
- 	} else {
- 		if (ld->multichan)
-@@ -659,7 +660,8 @@ static SIMPLE_DEV_PM_OPS(loongson_dwmac_pm_ops, loongson_dwmac_suspend,
- 			 loongson_dwmac_resume);
- 
- static const struct pci_device_id loongson_dwmac_id_table[] = {
--	{ PCI_DEVICE_DATA(LOONGSON, GMAC, &loongson_gmac_pci_info) },
-+	{ PCI_DEVICE_DATA(LOONGSON, GMAC1, &loongson_gmac_pci_info) },
-+	{ PCI_DEVICE_DATA(LOONGSON, GMAC2, &loongson_gmac_pci_info) },
- 	{ PCI_DEVICE_DATA(LOONGSON, GNET, &loongson_gnet_pci_info) },
- 	{}
- };
--- 
-2.47.1
-
+> V2:  Change commit message, no active changes.
+>
+>  arch/arm64/boot/dts/freescale/imx8mm-beacon-kit.dts | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mm-beacon-kit.dts b/arch/arm64/boot/dts/freescale/imx8mm-beacon-kit.dts
+> index 97ff1ddd6318..734a75198f06 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mm-beacon-kit.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx8mm-beacon-kit.dts
+> @@ -124,6 +124,7 @@ &sai5 {
+>  	assigned-clock-parents = <&clk IMX8MM_AUDIO_PLL1_OUT>;
+>  	assigned-clock-rates = <24576000>;
+>  	#sound-dai-cells = <0>;
+> +	fsl,sai-mclk-direction-output;
+>  	status = "okay";
+>  };
+>
+> --
+> 2.48.1
+>
 
