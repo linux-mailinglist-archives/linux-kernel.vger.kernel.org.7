@@ -1,276 +1,177 @@
-Return-Path: <linux-kernel+bounces-606370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A91DDA8AE51
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 04:55:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A4D4A8AE59
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 05:05:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BE8D3B8195
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 02:55:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CD75189F035
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 03:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5227621D595;
-	Wed, 16 Apr 2025 02:55:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C9F227E8A;
+	Wed, 16 Apr 2025 03:05:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Moi6gXch"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="WJ9yoUEr"
+Received: from out162-62-57-87.mail.qq.com (out162-62-57-87.mail.qq.com [162.62.57.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D27A32BAF4
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 02:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A1614B08E;
+	Wed, 16 Apr 2025 03:05:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744772153; cv=none; b=fOBD17w5J59Ewbr5c6ZKfl0TAInIgSP4LvsbyKMT4zT0ofAQ4hr3+eU8UOcX/1ITV2LlbWnN8lwhbggRDvMI+ZVef0iXN6t9rHQLmZvzboIa6l3HSOSYXkcgMufSGA01WAHkRt9VDHqcXwvLUcsMdjD4ypiIxLNY823wDqIdAKI=
+	t=1744772713; cv=none; b=H5PE3sCqrAIjQHGxnNiVmdEVfwuLRz+GmqGiNvMiAHxc83wMXkadpU+GQtityRwyNLZpW2wrrRPKbKmWTQ19rqiNdmnUDc5weMfTqfBZfBE3vFSEZUCysBjiVUFoFZL9jmEhXVk/riTsYIqAlRXMUuNHWKHZRtjHUse44M3zvBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744772153; c=relaxed/simple;
-	bh=oAokXkuZNiMD4NRr2WFvKf8KvR/v4Wz3OZEUdNgVmRA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mCXk2Vl/rLHIH4BHyH4re2ZEdpYnJtHvloKQQ4Twzonxcr7ctn4sr982kXCWTeM53ab44ilsvgp3D3ZX5M7/ACQ6y0Wq7hW+NoZTokiDYldj17hSUhgTQtH7dtPPz4Flm5F4pc1yTEVfo1HNvw6jeBTIRhaRMxHQvDIXzpY0GLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Moi6gXch; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-477296dce8dso60950421cf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 19:55:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744772151; x=1745376951; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yQApA44nPBOCQAElcgWIO7K/icwgydIhVEvn8ir3fmw=;
-        b=Moi6gXchk63SBxwk5yFc7AVRiA3wsh5flxmgPInsXR4SO7tTF02JkejNspTyOTle2Y
-         //WB8Y/MvUPtN/rtXAMmzGy1+2dsZ0ctYcmOStROQELUkEsvRDMDcVfP2J42lfraipXt
-         G/ThkTuEEdsZYRRStzUEpXPXa6/3jNHzRwT/azzx63XASLzWSMKarmnN5cxdsGR28hNu
-         oB5ekCcHYCXN7zLr9VCy9nKHb23UzKbiKwIv3DxfTtaUp6loQZl6Iq/Ns5HT2oyrmJom
-         GJ2/HYaEPnYt0jS+fW7XchvnTNrSnaQiTNAb0X31nR+yau7PgcA9HCCpz6uGPRX+N5RQ
-         tQ1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744772151; x=1745376951;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yQApA44nPBOCQAElcgWIO7K/icwgydIhVEvn8ir3fmw=;
-        b=VVmk/q5j++yg653lVRS21I2+f+ZT1i07gpEDKdiBmqDVCBcTKfNH/R0LufgXs9YG7K
-         yVF6uNmpaxoj6aiwILnQ0k9Q3bbG54lwfzlHQjWw8IIDT6KE9LK6/NjdP9PEgaHTO55B
-         49gMqyWgAO3b5nOqKhRXv7E4HKsXgskBliQ+TE42uhntGYWf8v6B9Qt3g/wj8SMp6jq8
-         73JPRSvMT0Lz8EFwrCLyQP1LQL6Y/e5kpxto61KNruRfDTJYPlNgIaLNJ/zxWnhqXb4H
-         5PG3I58l1EO/9I0X/PMXjOjFf4RuLI2ryC9cOEzjSEnaf2BPiUdwn7519QNZQojvYiKA
-         iuyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXiW+knDGyXxWQ7NttjztZygNGa+2IP4GisfpncN5XAALHnQcVKpyyW19JNZ6tMq0qHOedgqcNfKxihLxo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnchtsCW6yYBRuTEQj+wi+4E+LtnzWWWs2ZmcCxwRA1ASIUMH9
-	1hyerTwEzPgbQKk1cRByBgjREwfrWKs1lxq7SpVCcK6LiswF2uFFD8SSKLPs50LWi2r2JFl4Pzz
-	e3rUCdhyjk9jBocuHzjMSSgMWbS8=
-X-Gm-Gg: ASbGncsya9tGcsfsuCok2oWSyNg6zkb8svgWt9iIg/e4Kdhdgq2ammnNMzibEqFpXJj
-	CYCb2/gwXJHb7v4rIBU319IZHqoeEuecTUJ4RSoUgJF0G0hz0lN4+0CxIIcH01VWJh0pJ0lqgKb
-	qmUZyO+EeDppnEZL0vRNiCwRM=
-X-Google-Smtp-Source: AGHT+IEVIMg1jbsWuAJnV/hnlgtQ1pf3ApeF1yQUNvNx/Ilqvnpyt4hd9rrLIrLPSHTBiJgvnec04sgIOEeOpwxZcQQ=
-X-Received: by 2002:ac8:5f4a:0:b0:476:8ee8:d8a1 with SMTP id
- d75a77b69052e-47ad81674c7mr106341cf.45.1744772150790; Tue, 15 Apr 2025
- 19:55:50 -0700 (PDT)
+	s=arc-20240116; t=1744772713; c=relaxed/simple;
+	bh=EJVUI9KSvQfQwUCZePCOhcJz4E1p4vOGAWLbEepgnTA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CbiMdgK5+OXQL5+EkQ5D8GEDzBEJdfCJtEF0TGd+id/m0k6KkCORmbQCGNzW0MVLPhvaJOYMrRJcINXC9YvnlgWlH8p+wiRvmo6CG3m3aOK8iBd05XiXsUgb1n6IFedWbBP2UHQs3p8hh/uNY1oMosHuR84y8uBFOjuH2SPvWjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=WJ9yoUEr; arc=none smtp.client-ip=162.62.57.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1744772705; bh=hAWduTvr0sJAnXhsLn2DSAj0wDfYHSVg47D65kJ4tQI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=WJ9yoUErHNaXDk0FB5qfhChc/N3OMfUiA1Ntk0Myj6MZIkuyxD4tXU5AhpaAvcEKH
+	 gH1bcoZrM1NIlGBiWDfsuTOYKa8WKOkPhUVG/vfEyah9wPERG3a/osSffhColruaFw
+	 hpHCKDGWwuDAWO98M8uUPTmv7JNMBjQUGQQgBnEA=
+Received: from [10.42.13.21] ([116.128.244.169])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id E2C1BEA6; Wed, 16 Apr 2025 10:56:44 +0800
+X-QQ-mid: xmsmtpt1744772204tma6pjlhf
+Message-ID: <tencent_8E3A87C6D6A193F757BA846F0C41887CC405@qq.com>
+X-QQ-XMAILINFO: OUUXHEo9i1uk26ueGppu7GY2aV/A+sCMmnRPkhBh0ngRNdwXQTQh+Y3KrHjQdk
+	 +xpMvJ4U6N7PrzocNH39CzKLyrEaEQn7JDX3oN6/XhzerTEEyvqsbmfcJukd/+s1BPtaxB37yGQ2
+	 IdNA/5kPWbf2QXiLSmVqZyNngok+FjCcGvkg81zUtdvKfg9stej8NO1jeLpeNnyIJE4hpBo+h+oP
+	 S+7+RJtH51rlGEdj2au7L9BDw9f+rrc4qOrdyV/h16I/rV419e10YTdbha0wLIaMKCBVyyQaBvN9
+	 vxlskQiFYqk2US9LZbQAUJfGk6xbOBBCeYZqnHKCzr76zjCmcxHYwFrj46XGv58WqM7PEM+nmHdH
+	 nx1DC5fIFxsAlDVDydd3QUyR07BVZ4vkwnr3z0KSgcm8cTEKhEcylPRvpezBA2rSnyW5Hlvo1xvN
+	 Ym16CvrbVWGkh1ualHBsRNhIBBYAdr2PGlp1z1N1xq9wzGsDXx/Pkx7OdSt1+8Qzz1PxTrTeVvgO
+	 Cnj/IZ82udEWOEoLq6ilCDd2EFYrP7XYx/FuvmiTMjNErVOCGHHZk7lcX7YYnTR9eG27TnB6v/ff
+	 d+2to97fLmSiGJIgvoxkY870VyQ//py+vwOZa2j8KKKJ/NMqzHquasQgqSpf86ZirGrv/GThIHTL
+	 PPiD+prEmtom/1Ta0Hm/DOkvSqLwNpqC7xCdyO0c3syv4zxts5xY1KhnM9vtbOJD7mGySUaPl6op
+	 qEDUJoCYJL3Jj0dQOee6Ay4Jf9iGehICuwMFnWN9eWAL5cwEiU6PBoxBl9Pq4lnAE9gZ0ddlEvjz
+	 9847I+9G+HUQQxDeAM8hqHQXVpCYxv48Cqn5d58VVOx06Fa4ImLH5dKif7fVNEC1uMlqwpaGo8tv
+	 oRCkOF8rurXLu3vHwKIj1vxFOODJOAK7x8TxSDvLe1FsuMP6vDzutOG97npU1W+S+b8ljBIreL25
+	 us1fOGBvvm8j0zkmuHPCbHgQ0nW3H6DsS6uuQuDkg=
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+X-OQ-MSGID: <056eb78e-7d1f-446c-a2a6-03ee1cc16a46@qq.com>
+Date: Wed, 16 Apr 2025 10:56:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250325014733.18405-1-xuewen.yan@unisoc.com> <CAKfTPtA06D1EGg2VdVHt-P0PDE-1XZVJOp3myZPSNknnFT3nNg@mail.gmail.com>
-In-Reply-To: <CAKfTPtA06D1EGg2VdVHt-P0PDE-1XZVJOp3myZPSNknnFT3nNg@mail.gmail.com>
-From: Xuewen Yan <xuewen.yan94@gmail.com>
-Date: Wed, 16 Apr 2025 10:55:40 +0800
-X-Gm-Features: ATxdqUH2t1gr0NGV19AlAejpSL8vcj7lw6C6UpPex3TbM96TTtNjQswJRHYXvvw
-Message-ID: <CAB8ipk_uOKn+U0ozZyaQ8J9OjifoZWSh-9NUQ9UD+K-kLV28vw@mail.gmail.com>
-Subject: Re: [PATCH v2] sched/uclamp: Align uclamp and util_est and call
- before freq update
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Xuewen Yan <xuewen.yan@unisoc.com>, dietmar.eggemann@arm.com, mingo@redhat.com, 
-	peterz@infradead.org, juri.lelli@redhat.com, rostedt@goodmis.org, 
-	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
-	hongyan.xia2@arm.com, qyousef@layalina.io, ke.wang@unisoc.com, 
-	di.shen@unisoc.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] PM: EM: Fix potential division-by-zero error in
+ em_compute_costs()
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: lukasz.luba@arm.com, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Yaxiong Tian <tianyaxiong@kylinos.cn>
+References: <tencent_EE27C7D1D6BDB3EE57A2C467CC59A866C405@qq.com>
+ <tencent_6D2374392DB66C9D23BF6E2546638A42EC08@qq.com>
+ <CAJZ5v0iE_iw+pSBppEWnJw=2=DFNa-J2VPDorTNF=Mve+0PNCg@mail.gmail.com>
+Content-Language: en-US
+From: Yaxiong Tian <iambestgod@qq.com>
+In-Reply-To: <CAJZ5v0iE_iw+pSBppEWnJw=2=DFNa-J2VPDorTNF=Mve+0PNCg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 16, 2025 at 1:05=E2=80=AFAM Vincent Guittot
-<vincent.guittot@linaro.org> wrote:
->
-> On Tue, 25 Mar 2025 at 02:48, Xuewen Yan <xuewen.yan@unisoc.com> wrote:
-> >
-> > When task's uclamp is set, we hope that the CPU frequency
-> > can increase as quickly as possible when the task is enqueued.
-> > Because the cpu frequency updating happens during the enqueue_task(),
->
-> Strictly speaking, it doesn't happen during enqueue_task but when :
-> - attach/detach tasks when migrating
-> - update_load_avg decayed
-> - io_wait
->
-> This often happens during an enqueue but not always ...
 
-Okay, I would make some adjustments to these descriptions.
 
->
-> > so the rq's uclamp needs to be updated before the task is enqueued,
->
-> this doesn't ensure that new rq's uclamp will be taken into account
+在 2025/4/16 01:17, Rafael J. Wysocki 写道:
+> On Mon, Apr 14, 2025 at 11:09 AM Yaxiong Tian <iambestgod@qq.com> wrote:
+>>
+>> From: Yaxiong Tian <tianyaxiong@kylinos.cn>
+>>
+>> When the device is of a non-CPU type, table[i].performance won't be
+>> initialized in the previous em_init_performance(), resulting in division
+>> by zero when calculating costs in em_compute_costs().
+>>
+>> Since the 'cost' algorithm is only used for EAS energy efficiency
+>> calculations and is currently not utilized by other device drivers, we
+>> should add the _is_cpu_device(dev) check to prevent this division-by-zero
+>> issue.
+>>
+>> Fixes: <1b600da51073> ("PM: EM: Optimize em_cpu_energy() and remove division")
+> 
+> Please look at the Fixes: tags in the kernel git history.  They don't
+> look like the one above.
+> 
+Yes, there's an extra '<>' here.
 
-Did I miss something?
+>> Signed-off-by: Yaxiong Tian <tianyaxiong@kylinos.cn>
+>> ---
+>>   kernel/power/energy_model.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
+>> index d9b7e2b38c7a..fc972cc1fc12 100644
+>> --- a/kernel/power/energy_model.c
+>> +++ b/kernel/power/energy_model.c
+>> @@ -235,7 +235,7 @@ static int em_compute_costs(struct device *dev, struct em_perf_state *table,
+>>
+>>          /* Compute the cost of each performance state. */
+>>          for (i = nr_states - 1; i >= 0; i--) {
+>> -               unsigned long power_res, cost;
+>> +               unsigned long power_res, cost = 0;
+>>
+>>                  if ((flags & EM_PERF_DOMAIN_ARTIFICIAL) && cb->get_cost) {
+>>                          ret = cb->get_cost(dev, table[i].frequency, &cost);
+>> @@ -244,7 +244,7 @@ static int em_compute_costs(struct device *dev, struct em_perf_state *table,
+>>                                          cost, ret);
+>>                                  return -EINVAL;
+>>                          }
+>> -               } else {
+>> +               } else if (_is_cpu_device(dev)) {
+> 
+> Can't you just check this upfront at the beginning of the function and
+> make it bail out if dev is not a CPU device?
+> 
+Sure, But the current implementation applies em_compute_costs() to both 
+non-CPU devices and CPU devices. After carefully reviewing the latest code,
+I've found this issue has expanded in scope.
 
-As following stack:
-enqueue_task_fair()
-update_load_avg()
-cfs_rq_util_change(cfs_rq, 0);
-cpufreq_update_util()
-  sugov_update_shared()
-    sugov_next_freq_shared()
-     sugov_get_util()
-        effective_cpu_util()
-            *min =3D max(irq + cpu_bw_dl(rq), uclamp_rq_get(rq, UCLAMP_MIN)=
-);
-            *max =3D min(scale, uclamp_rq_get(rq, UCLAMP_MAX));
+There are currently three call paths for invoking em_compute_costs():
 
-So, the rq's uclamp value should update before enqueue_task().
->
-> > just like util_est.
->
-> just like util_est
->
-> > So, aline the uclamp and util_est and call before freq update.
->
-> nit s/aline/align/ ?
-align.
->
-> >
-> > For sched-delayed tasks, the rq uclamp/util_est should only be updated
-> > when they are enqueued upon being awakened.
-> > So simply the logic of util_est's enqueue/dequeue check.
-> >
-> > Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
-> > ---
-> > v2:
-> > - simply the util-est's en/dequeue check;
-> > ---
-> > Previous discussion:
-> > https://lore.kernel.org/all/CAB8ipk8pEvOtCm-d0o1rsekwxPWUHk9iBGtt9TLTWW=
--iWTQKiA@mail.gmail.com/
-> > https://lore.kernel.org/all/84441660bef0a5e67fd09dc3787178d0276dad31.17=
-40664400.git.hongyan.xia2@arm.com/T/#u
-> > https://lore.kernel.org/all/CAB8ipk9LpbiUDnbcV6+59+Sa=3DAi7tFzO=3D=3D=
-=3DmpLD3obNdV4=3DJ-A@mail.gmail.com/T/#u
-> > https://lore.kernel.org/all/aa8baf67-a8ec-4ad8-a6a8-afdcd7036771@arm.co=
-m/
-> > ---
-> >  kernel/sched/core.c | 17 ++++++++++-------
-> >  kernel/sched/fair.c |  4 ++--
-> >  2 files changed, 12 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> > index 042351c7afce..72fbe2031e54 100644
-> > --- a/kernel/sched/core.c
-> > +++ b/kernel/sched/core.c
-> > @@ -1747,7 +1747,7 @@ static inline void uclamp_rq_dec_id(struct rq *rq=
-, struct task_struct *p,
-> >         }
-> >  }
-> >
-> > -static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p)
-> > +static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p,=
- int flags)
-> >  {
-> >         enum uclamp_id clamp_id;
-> >
-> > @@ -1763,7 +1763,8 @@ static inline void uclamp_rq_inc(struct rq *rq, s=
-truct task_struct *p)
-> >         if (unlikely(!p->sched_class->uclamp_enabled))
-> >                 return;
-> >
-> > -       if (p->se.sched_delayed)
-> > +       /* Only inc the delayed task which being woken up. */
-> > +       if (p->se.sched_delayed && !(flags & ENQUEUE_DELAYED))
-> >                 return;
-> >
-> >         for_each_clamp_id(clamp_id)
-> > @@ -2031,7 +2032,7 @@ static void __init init_uclamp(void)
-> >  }
-> >
-> >  #else /* !CONFIG_UCLAMP_TASK */
-> > -static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p)=
- { }
-> > +static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p,=
- int flags) { }
-> >  static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p)=
- { }
-> >  static inline void uclamp_fork(struct task_struct *p) { }
-> >  static inline void uclamp_post_fork(struct task_struct *p) { }
-> > @@ -2067,12 +2068,14 @@ void enqueue_task(struct rq *rq, struct task_st=
-ruct *p, int flags)
-> >         if (!(flags & ENQUEUE_NOCLOCK))
-> >                 update_rq_clock(rq);
-> >
-> > -       p->sched_class->enqueue_task(rq, p, flags);
-> >         /*
-> > -        * Must be after ->enqueue_task() because ENQUEUE_DELAYED can c=
-lear
-> > -        * ->sched_delayed.
-> > +        * Can be before ->enqueue_task() because uclamp considers the
-> > +        * ENQUEUE_DELAYED task before its ->sched_delayed gets cleared
-> > +        * in ->enqueue_task().
-> >          */
-> > -       uclamp_rq_inc(rq, p);
-> > +       uclamp_rq_inc(rq, p, flags);
-> > +
-> > +       p->sched_class->enqueue_task(rq, p, flags);
-> >
-> >         psi_enqueue(p, flags);
-> >
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index c798d2795243..c92fee07fb7b 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -6930,7 +6930,7 @@ enqueue_task_fair(struct rq *rq, struct task_stru=
-ct *p, int flags)
-> >          * Let's add the task's estimated utilization to the cfs_rq's
-> >          * estimated utilization, before we update schedutil.
-> >          */
-> > -       if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags=
- & ENQUEUE_RESTORE))))
-> > +       if (!p->se.sched_delayed || (flags & ENQUEUE_DELAYED))
->
-> commit message doesn't explain why you change util_est condition
+1) Registering performance domains (for both non-CPU and CPU devices)
+em_dev_register_perf_domain() → em_create_pd() →
+em_create_perf_table() → em_compute_costs()
 
-Because, the sched_delayed flag is set when dequeue_entity, and clear
-after the condition,
-so for migrating/prio_change, we could just check the sched_delayed.
-And for the wakeup, because the the sched_delayed flag is cleared after thi=
-s,
-so use the ENQUEUE_DELAYED flag to ensure the util_est could enqueue.
+2)EM update paths (CPU devices only)
 
->
-> >                 util_est_enqueue(&rq->cfs, p);
-> >
-> >         if (flags & ENQUEUE_DELAYED) {
-> > @@ -7168,7 +7168,7 @@ static int dequeue_entities(struct rq *rq, struct=
- sched_entity *se, int flags)
-> >   */
-> >  static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, in=
-t flags)
-> >  {
-> > -       if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags=
- & DEQUEUE_SAVE))))
-> > +       if (!p->se.sched_delayed)
->
-> same here, you should explain in commit message why it's okay to do so
+Periodic 1000ms update check via em_update_work work item:
+em_check_capacity_update() → em_adjust_new_capacity() → 
+em_recalc_and_update() → em_compute_costs()
 
-Same as above,  the sched_delayed flag is set when dequeue_entity, so
-this place,
-the sched_delayed was not set when sleeping, If the flag is set, it
-indicates that it
-was migrating or prio changing.
+Exynos-chip initialization:
+em_dev_update_chip_binning() → em_recalc_and_update() → em_compute_costs()
 
-By the way, I will kindly update these reasons in the commit message.
+3) Device cost computation (non-CPU devices only - currently unused)
+em_dev_compute_costs() → em_compute_costs()
 
-Thanks!
+Note: In em_dev_compute_costs(), when calling em_compute_costs(),
+neither the callback (cb) nor flags are set.In fact, it either does
+nothing at all or performs incorrect operations.
 
-BR
----
-xuewen
+Therefore, should we mandate that non-CPU devices must provide a
+get_cost callback?
+
+So Should we add a check at the beginning of the em_compute_costs() to:
+
+	if (!_is_cpu_device(dev) && !cb->get_cost) {
+		dev_dbg(dev, "EM: No get_cost provided, cost unset.\n");
+		return 0;
+	}
+And Modify em_dev_compute_costs() to require callers to provide the cb
+callback function,Also need to update its corresponding comments.
+
+
+>>                          /* increase resolution of 'cost' precision */
+>>                          power_res = table[i].power * 10;
+>>                          cost = power_res / table[i].performance;
+>> --
+
 
