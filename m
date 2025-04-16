@@ -1,47 +1,48 @@
-Return-Path: <linux-kernel+bounces-608018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBD44A90D80
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 22:58:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4F48A90D84
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 22:59:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 534093BD8AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:58:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D6B01907BF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:59:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1397234966;
-	Wed, 16 Apr 2025 20:58:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028BA238C2E;
+	Wed, 16 Apr 2025 20:59:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="C+RKc3Cy"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="O/8oRwAH"
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725A222069F
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 20:58:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E61F1FF1B0
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 20:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744837109; cv=none; b=fRC7gzWkWVPL7H7yU6wqzRUoVOpLfJEP9vgTmtpKteusz1I+Mv3oIvFVUMTF9t80vtbmiEBmFFsDN2KQOu4kBdYmlhZY3y2egZJZ5vgF6uLRlQOJUU+vCyvz/AlDyjpB/30TEP2PQZ7kdbMshtUKI2FJxskgDnDpzt+WXL5Eh2Q=
+	t=1744837170; cv=none; b=G74HxYeutw3KA1RPGUQjFqjG4v4AVe5W6eeiA8+ZGCL2dOhA82H3D3j+PgK5iU2pV82t4sYJmoeRLjJIlq4SI/YdOwEg5Z90+GC3l6zSz0hG+Cn9tDKCSQx2I4C5vMzBcBEaJJKvuFodYQxTD8nbjuCoW8LVe+xBo31I/LqvRLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744837109; c=relaxed/simple;
-	bh=j5RC3enUXwVXzMEJUQTbhkZj6HXXkHlsw3V2BQMlmyI=;
+	s=arc-20240116; t=1744837170; c=relaxed/simple;
+	bh=CKUjE84RQfThr2eBImwBJkQ3//Qg7TYoT/eOJY1Fkmc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s9SpO8Tw37+UWK2Vnudckd2CTheToF5zrfQ7iHZOtH6A3YwlO0KS1W0VdF87uHmHycu49Ldic0J7iFmYNP57hRdvkzn04Yyg3PK3l9fXA2YUUFs3uIxifnjTPulKCJiRTXwZMih38vqHtPjeKTAOUhZ5prhhDjTgWrgOTwDXdxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=C+RKc3Cy; arc=none smtp.client-ip=91.218.175.183
+	 Content-Type:Content-Disposition:In-Reply-To; b=Iky1AXJlHY4MdX04HWLumixwTxNazxWHUiFPB7gO8e+u+Q8ZDGBBGXMhhYB/4hkXDZ2aP/xoIcLlfzoB5oCW0vD1wJuRKvwJyZayDUDBlcfUMqk5ysI+cX1LcFySV1yMLcqC8h8ixAGZ9Y1WbsqAP3XdR32bjzTBViL73danjPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=O/8oRwAH; arc=none smtp.client-ip=91.218.175.188
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosenzweig.io
-Date: Wed, 16 Apr 2025 16:58:18 -0400
+Date: Wed, 16 Apr 2025 16:59:19 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosenzweig.io;
-	s=key1; t=1744837105;
+	s=key1; t=1744837164;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=NdQpuGRR10gNQcv5XLfg3fsBASs65X0pcBvFcqE6/LE=;
-	b=C+RKc3Cyt6ZV+BMa/0RtEY3HqPur3LQD8icOfxhuqQNLmhiWx3NvihKurNpw43u2uaf4Xw
-	NqZX232XuZSMvk+OuXQRr/2Nbk5hGswcUFoIUiOUFfxc5zAakPfvgKw2ExzSPn7fJiBP4g
-	s70w5NOHg2Bk3kuIL8+8K+tXNkykG7NRg1LuSkuHmVndwDWfs9aoxkFL6S6m/kdQr3Zrbt
-	b+rn2NS5kD9zlu6hWjVc2GdisDQNm1shJpAkri7KLLYlG58UUDx067YidANCT4JZ1EPd5r
-	Pi8nH4z/yOGKXOTNWGq6KaMA9QJ9UpkRMVNuotQbxRLzhEUQU6AgLla7zbBCcw==
+	bh=TvaLv2QNdfX5fSfGS64EBI+Z7WBX+FDFB//I+E9KN9I=;
+	b=O/8oRwAHgPlyXtr3Pq/S4J2Zpf7RVhm1pjkM2X2NgnNlY7UCKk0OTOSFa8dlrIvOigv+3M
+	EF56EJcREr1Mn/jIzudPxAWg9GZfyamDWyh57vYLwmoJv0D4EkFyehGc3syoA+z6WwK4mM
+	0ZFyYgWh6UIKiw89MeBjfZe1xCrJhBnZDyaoEsIphvVcYMODPzaLAc5ohdKeGM1w7B4mra
+	3F2/kDejYT+eXf46sXzQ1NUzi3V3m4LObmQCsipma5hbC9z1J7H4xDuyKrulZFhhUUzufT
+	IZw0tRKMbdrnQG3qju6y//Lfm9tx+8ptsJ5n7JBK6m5V2LD3HXL0Oz0U8+b3Dw==
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: Alyssa Rosenzweig <alyssa@rosenzweig.io>
 To: j@jannau.net
@@ -53,44 +54,64 @@ Cc: Sasha Finkelstein <fnkl.kernel@gmail.com>,
 	Neal Gompa <neal@gompa.dev>, Dmitry Baryshkov <lumag@kernel.org>,
 	dri-devel@lists.freedesktop.org, asahi@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] drm: adp: Handle drm_crtc_vblank_get() errors
-Message-ID: <aAAZ6iIUtYcfpcdm@blossom>
+Subject: Re: [PATCH 3/4] drm: adp: Enable vblank interrupts in crtc's
+ .atomic_enable
+Message-ID: <aAAaJ_6Y4VXRC3q-@blossom>
 References: <20250416-drm_adp_fixes-v1-0-772699f13293@jannau.net>
- <20250416-drm_adp_fixes-v1-2-772699f13293@jannau.net>
+ <20250416-drm_adp_fixes-v1-3-772699f13293@jannau.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250416-drm_adp_fixes-v1-2-772699f13293@jannau.net>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250416-drm_adp_fixes-v1-3-772699f13293@jannau.net>
 X-Migadu-Flow: FLOW_OUT
 
-> -	spin_lock_irqsave(&crtc->dev->event_lock, flags);
->  	if (crtc->state->event) {
-> -		drm_crtc_vblank_get(crtc);
-> -		adp->event = crtc->state->event;
-> +		spin_lock_irqsave(&crtc->dev->event_lock, flags);
-> +
-> +		if (drm_crtc_vblank_get(crtc) != 0)
-> +			drm_crtc_send_vblank_event(crtc, crtc->state->event);
-> +		else
-> +			adp->event = crtc->state->event;
-> +
-> +		spin_unlock_irqrestore(&crtc->dev->event_lock, flags);
->  	}
->  	crtc->state->event = NULL;
-> -	spin_unlock_irqrestore(&crtc->dev->event_lock, flags);
+Reviewed-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
 
-Kind of confused about
-
->  	crtc->state->event = NULL;
-
-now being out of the lock. Should we set to NULL in the if, since
-if we don't take the if, we know event is already NULL? Or should we
-hold the lock for the whole time, the way the code did before your
-change? I'm not sure between the two, but the in-between here smells
-wrong.
+Le Wed , Apr 16, 2025 at 10:25:29PM +0200, Janne Grunau via B4 Relay a écrit :
+> From: Janne Grunau <j@jannau.net>
+> 
+> Calling drm_crtc_vblank_on() drm_crtc_helper_funcs' atomic_enable is
+> expected to enable vblank interrupts. It may have been avoided here to
+> due to drm_crtc_vblank_get()'s error behavior after
+> drm_crtc_vblank_reset(). With that fixed in the preceding change the
+> driver can call drm_crtc_vblank_on() from adp_crtc_atomic_enable().
+> 
+> Signed-off-by: Janne Grunau <j@jannau.net>
+> ---
+>  drivers/gpu/drm/adp/adp_drv.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/adp/adp_drv.c b/drivers/gpu/drm/adp/adp_drv.c
+> index 27119acac92238858d58a690eb4196dbb2ae0c1a..c6238fb059342eebafddd53650a499fea0079dea 100644
+> --- a/drivers/gpu/drm/adp/adp_drv.c
+> +++ b/drivers/gpu/drm/adp/adp_drv.c
+> @@ -288,6 +288,7 @@ static void adp_crtc_atomic_enable(struct drm_crtc *crtc,
+>  	writel(BIT(0), adp->be + ADBE_BLEND_EN3);
+>  	writel(BIT(0), adp->be + ADBE_BLEND_BYPASS);
+>  	writel(BIT(0), adp->be + ADBE_BLEND_EN4);
+> +	drm_crtc_vblank_on(crtc);
+>  }
+>  
+>  static void adp_crtc_atomic_disable(struct drm_crtc *crtc,
+> @@ -517,8 +518,7 @@ static int adp_drm_bind(struct device *dev)
+>  	struct adp_drv_private *adp = to_adp(drm);
+>  	int err;
+>  
+> -	adp_disable_vblank(adp);
+> -	writel(ADP_CTRL_FIFO_ON | ADP_CTRL_VBLANK_ON, adp->fe + ADP_CTRL);
+> +	writel(ADP_CTRL_FIFO_ON, adp->fe + ADP_CTRL);
+>  
+>  	adp->next_bridge = drmm_of_get_bridge(&adp->drm, dev->of_node, 0, 0);
+>  	if (IS_ERR(adp->next_bridge)) {
+> 
+> -- 
+> 2.49.0
+> 
+> 
 
