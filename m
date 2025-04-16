@@ -1,167 +1,90 @@
-Return-Path: <linux-kernel+bounces-606283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54124A8AD63
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 03:08:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1152A8AD5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 03:07:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B10316C20E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 01:08:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 578161903E10
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 01:07:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 355342063E2;
-	Wed, 16 Apr 2025 01:08:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBF542063D5;
+	Wed, 16 Apr 2025 01:06:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gx8bp6/Q"
-Received: from mail-yw1-f196.google.com (mail-yw1-f196.google.com [209.85.128.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Gy6qtbrI"
+Received: from smtp-fw-9106.amazon.com (smtp-fw-9106.amazon.com [207.171.188.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B4981DA31F;
-	Wed, 16 Apr 2025 01:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF17204C36;
+	Wed, 16 Apr 2025 01:06:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744765714; cv=none; b=EIb4Q/ZAEz4HZ/TJTs5A8olQ9zRTyoJ1f9bT6ff5R0WPDou6uiTkVL3GH/CwB+YJHvTAs7qGZWrGji55bgkoEKhKxEQ8kkO0TWJooUrlcWtOXFHvmZPI/8m24wr8jph2sOfFj6vw37VFBGmQ+GfbJmNEZntLYdcjNwwcg4G0r4c=
+	t=1744765619; cv=none; b=meQ3pUmnD2RXS6Cq3KaVve4UGQ65RQqM8BstntBXBpbP34tnWGCwzUrFFmoMBBH/sCQGJ9BGIz3X4KGShBCjCWvzWmEPlCdYno289DiFDyW6u3th9mYKB0jGLDXRcsTzrjoZxrRTSt+nKYOz9TISn/egpwaidkuY/UoCPS40Ve8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744765714; c=relaxed/simple;
-	bh=24Pj5QnVkkLGfnJr0G5AfJt9DVnlfVPreKS2E55Q0Eo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sjd2vSF+4X1MR6nnFI4cdU5mNkWa3IxlQwXuJQZrcF6P3LDFsKnFE3G5mNR8H8fxcWjaXgN3okDX7VUkj1l3W28oyw4N/3OhU+eJMop6sCWmYiL/MmGkrxHg3X1PUuuirDhGE2JEEJyrhDClkl9Iu7ynq2fDuV+RXPhvob0i3zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gx8bp6/Q; arc=none smtp.client-ip=209.85.128.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f196.google.com with SMTP id 00721157ae682-6f6ca9a3425so73139727b3.2;
-        Tue, 15 Apr 2025 18:08:31 -0700 (PDT)
+	s=arc-20240116; t=1744765619; c=relaxed/simple;
+	bh=Mjjm6Mzqf4mF5cdpX26kfG0QtYpiA3cJIIijw5IrfHA=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=r+Kl20YK4IxSMdKie8mK96jU+p5z00FUu3OVBMkjs3nn8IS3TcpkOD5oF9RUU7FWL77cJiHFGTYWcBgLOqWC2MR5U/xhHAi9QkmDtIqEHcjKGvN4JKrn1pgabny1zh32EFfhXTIGn5QispQKgtHWH4iyKggyyOkrsV6SIyx1fnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Gy6qtbrI; arc=none smtp.client-ip=207.171.188.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744765711; x=1745370511; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nae8iA9Q44bLOPIklEeda/m4+BCHuPMc/pHieS0xpfQ=;
-        b=Gx8bp6/QMJPBH+3bbM4rXpV8wp+gI0HJbjQ8u2vsxX0yuwHMfNzLcqDo/up84Llord
-         p6imXBAdLyNmWTrZXrrVQVp6XdSbb+FxJRcvxYvj/ss1qfbWu0ZkEEWwZ7J2YzMNylrx
-         Fgj+VUMXj/XzewdtNCkFzBCjuLN2lOufcao8AyKdJEfcZfba1Ugl9FMGS+f5mEVqnFaf
-         5uVen5BFXhxH+qfv14cjDPI9aYGpjytFWG/KryYEK2EoMTwFk7asOZmfLvlkbNfuC9MC
-         HhWNBHwPSJS1GQtshKcuU5fEkUrqT85qNav0phfOJvZmDdTdoyp48Kzh9LZYslau3Wsi
-         8Nhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744765711; x=1745370511;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nae8iA9Q44bLOPIklEeda/m4+BCHuPMc/pHieS0xpfQ=;
-        b=mUMHwSE2TWJwB3koR2f4vwiVbZRiqLkQaXNHhVUCRN4TLaBJ4lDAPYlIq//OF7FBKD
-         bWFb52RH9v6mrg4zxOBcR7GrhvG2sw1/+Pta044viLl1AdcYJoQc3lJcZbdkx4ANYzBw
-         w1KVKEn55YJ7LiCBQH0GPNGyP2RmFF8ccqQyFNLLn+DMtGiAemfNosMPv5KNHiR9AU/X
-         g6eHOg/JQJdOt8jU4XL8Ds/Y+8YK8AvHeZ8mvF2lQjf/Sy+HoiSNKruarPVKiiqFJI/y
-         8GvZoNXL+RIBzL1KfQrnQTrIKws67PZGyvrzAzPjNy7hQf/fB4WLUAfbnTZ/cBbXN1DI
-         j2Ag==
-X-Forwarded-Encrypted: i=1; AJvYcCUciDjY3kM08AtSNpkewYTocjRpxT+PmYpBlVrISNeHC0VsQAlfPfvv8N4+vxkGUQeh1NNcj8zhBzmSBmUT@vger.kernel.org, AJvYcCWbnflrfeUs57lLKB0mYR+p29sA7y0CQUNefA+EYma/62UN62WDkwabaZpNG5i0FLX3Ix+a80bdBvq/K3fcwpUX7TlM@vger.kernel.org, AJvYcCXFsksgehe579tQXkm0bkxmitRpLQwMYgPbTdRPEEjsDu3Tps9lZehhiSElRoDv8IqIQ6M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyp2VBMBjsi47Jn6VRHXwXulrePbIm6u7VHD2klojuSNkFNHfz5
-	Ef9DxMTAbbn2sSc53zXQPtutZ+QyNEhJwET5R5wCAvywSbvu5R/Cekj3B0Ed0xSJ6DJlTLMj7WM
-	9Rs4B8ZtlMWu17SQOOSnJtV1o6E0=
-X-Gm-Gg: ASbGncvY7WQaPn6cZrwUQqcOqAlwQQqLsyONrcrrBMwyY8TtKI5pO0DbGecy6R4pRUK
-	z2eGBwiGxw5qHqRwmrd3G/JZ9Kawkcvm9rnyAFEWa2Cf4sfCb41/SDKUHH789yHK/2OHsCUWbxk
-	Sy6G+esgHzckttULq84XC7fA==
-X-Google-Smtp-Source: AGHT+IErozDlBEtdi3kw+kK2RMiMLcVJupyXpukTsMbcRfzHTw8qXYapvuK6UCyQRpv5sk9NgzQQexQH7kAbCBffMJQ=
-X-Received: by 2002:a05:690c:6009:b0:6f9:af1f:fdd0 with SMTP id
- 00721157ae682-706ad1d8a76mr23158377b3.31.1744765710804; Tue, 15 Apr 2025
- 18:08:30 -0700 (PDT)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1744765618; x=1776301618;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=EELDPN3KWPUe2puUTTKzUEAFHJseIIQ+Xj/tNjNHJC8=;
+  b=Gy6qtbrI0TcDaE08ZXMx8bmIwUPIw01P6Ex/NBDlhm3Yfw25uAltUgVL
+   F2+jq1DUpChkHtZWpA3EGnD2MGYp4/Zm8wFWwyO+0aamEiWY38ynrV10/
+   q6ByZwV/WiaGwGks9LPlARv5DsFlIoO6wqXdyelu2uUhNPUH5HL9L1266
+   0=;
+X-IronPort-AV: E=Sophos;i="6.15,214,1739836800"; 
+   d="scan'208";a="816357818"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-9106.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 01:06:52 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.7.35:26034]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.8.63:2525] with esmtp (Farcaster)
+ id 4b446256-361e-4eee-b9d4-b68a544bc03a; Wed, 16 Apr 2025 01:06:51 +0000 (UTC)
+X-Farcaster-Flow-ID: 4b446256-361e-4eee-b9d4-b68a544bc03a
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 16 Apr 2025 01:06:51 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.88.149.87) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 16 Apr 2025 01:06:48 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <leitao@debian.org>
+CC: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <dsahern@kernel.org>,
+	<edumazet@google.com>, <horms@kernel.org>, <kernel-team@meta.com>,
+	<kuba@kernel.org>, <kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>
+Subject: Re: [PATCH net-next 7/8] ipv4: Use nlmsg_payload in ipmr file
+Date: Tue, 15 Apr 2025 18:06:38 -0700
+Message-ID: <20250416010640.23879-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250415-nlmsg_v2-v1-7-a1c75d493fd7@debian.org>
+References: <20250415-nlmsg_v2-v1-7-a1c75d493fd7@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250413014444.36724-1-dongml2@chinatelecom.cn>
- <20250414160528.3fd76062ad194bdffff515b5@kernel.org> <CAEf4BzbyqNAPrOR7cR+2PKCy+cXoEftWufFbhMv73QPFZM+ysw@mail.gmail.com>
-In-Reply-To: <CAEf4BzbyqNAPrOR7cR+2PKCy+cXoEftWufFbhMv73QPFZM+ysw@mail.gmail.com>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Wed, 16 Apr 2025 09:06:14 +0800
-X-Gm-Features: ATxdqUH3BxeiuPSItNg15YgITrPiruh7-ARebQqerIosErclXgD5_4u5RLQsuuI
-Message-ID: <CADxym3a2sr-CB=G-ryew+LV3tcbZ1EZ6kzbAPDyQmV=xbaF4bQ@mail.gmail.com>
-Subject: Re: [PATCH bpf v2] ftrace: fix incorrect hash size in register_ftrace_direct()
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, rostedt@goodmis.org, mark.rutland@arm.com, 
-	mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	Menglong Dong <dongml2@chinatelecom.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D039UWB001.ant.amazon.com (10.13.138.119) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On Wed, Apr 16, 2025 at 7:14=E2=80=AFAM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> On Mon, Apr 14, 2025 at 12:05=E2=80=AFAM Masami Hiramatsu <mhiramat@kerne=
-l.org> wrote:
-> >
-> > On Sun, 13 Apr 2025 09:44:44 +0800
-> > Menglong Dong <menglong8.dong@gmail.com> wrote:
-> >
-> > > The maximum of the ftrace hash bits is made fls(32) in
-> > > register_ftrace_direct(), which seems illogical. So, we fix it by mak=
-ing
-> > > the max hash bits FTRACE_HASH_MAX_BITS instead.
-> > >
-> >
-> > Loogs good to me.
-> >
-> > Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> >
-> > Thanks!
-> >
->
-> I'm a bit confused by the "[PATCH bpf]" prefix... This fix doesn't
-> seem to be BPF-related, so I'm not sure why it would go through the
-> bpf tree. I presume Masami or Steven will route it through their tree,
-> is that right?
->
+From: Breno Leitao <leitao@debian.org>
+Date: Tue, 15 Apr 2025 12:28:58 -0700
+> Leverage the new nlmsg_payload() helper to avoid checking for message
+> size and then reading the nlmsg data.
+> 
+> Signed-off-by: Breno Leitao <leitao@debian.org>
 
-Sorry about the confusing......I throught the register_ftrace_direct()
-is mainly used by BPF, and it should go to the ftrace tree :/
-
-Thanks!
-Menglong Dong
-
->
-> > > Fixes: d05cb470663a ("ftrace: Fix modification of direct_function has=
-h while in use")
-> > > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
-> > > ---
-> > > v2:
-> > > - thanks for Steven's advice, we fix the problem by making the max ha=
-sh
-> > >   bits FTRACE_HASH_MAX_BITS instead.
-> > > ---
-> > >  kernel/trace/ftrace.c | 7 ++++---
-> > >  1 file changed, 4 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-> > > index 1a48aedb5255..d153ad13e0e0 100644
-> > > --- a/kernel/trace/ftrace.c
-> > > +++ b/kernel/trace/ftrace.c
-> > > @@ -5914,9 +5914,10 @@ int register_ftrace_direct(struct ftrace_ops *=
-ops, unsigned long addr)
-> > >
-> > >       /* Make a copy hash to place the new and the old entries in */
-> > >       size =3D hash->count + direct_functions->count;
-> > > -     if (size > 32)
-> > > -             size =3D 32;
-> > > -     new_hash =3D alloc_ftrace_hash(fls(size));
-> > > +     size =3D fls(size);
-> > > +     if (size > FTRACE_HASH_MAX_BITS)
-> > > +             size =3D FTRACE_HASH_MAX_BITS;
-> > > +     new_hash =3D alloc_ftrace_hash(size);
-> > >       if (!new_hash)
-> > >               goto out_unlock;
-> > >
-> > > --
-> > > 2.39.5
-> > >
-> > >
-> >
-> >
-> > --
-> > Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> >
+Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
 
