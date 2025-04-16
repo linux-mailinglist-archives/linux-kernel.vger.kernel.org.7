@@ -1,297 +1,283 @@
-Return-Path: <linux-kernel+bounces-607648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41B69A90908
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:31:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1E70A90900
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:29:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CDBB5A3757
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:31:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3AF03B06E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:29:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2338E21ABCB;
-	Wed, 16 Apr 2025 16:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C744D2135C5;
+	Wed, 16 Apr 2025 16:29:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bs+/vFS9";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="X1FU8SgH"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="crB2dKg/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B7F217679
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 16:29:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06C3212B09;
+	Wed, 16 Apr 2025 16:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744820974; cv=none; b=CMVfO9GfIxwE2dhNgRtmhwBI6u59n8LVoIFP+hYWA0kM+JhNZ67NlpbCZYxg2XY5VmOPate9/DP07bU7RPV9F20xpyEND9ahTlGfEdwbJY9Zo6omDQphB+YGwES29ZAV1lSB1l+gSjnSdAvIgWQFEYNc/uTZZVrzJA3Mohmy2DM=
+	t=1744820956; cv=none; b=gQnaBR4YcnbEeXz6I9Rn6T6oBEmMH897mMUd3pFVtcOk8wrlH6erzgHszay3lnC0PqazXbBypRz+lhzsUz0TEZz6RkPfPiOsbjYcdKG7jMzIgO5ewn0CP9B883c9h7OnWnQ03LF2pImvp1mtCdyUkxZXfW8j2jZn3hdzKJAql4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744820974; c=relaxed/simple;
-	bh=4RVs5yFFOy+skWJbJ0/tGqbCUNWFm8fmZA1dFb0K0h0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pMvSqYLxHHPRGSnCxPAc3SRcTVjwgWaIZmaWW/ArVA3Leoabjox/Z/I9OdREXQFCqpm0CI5GJCu8RKjgKgjeONRojWrfzO6OrVYgPS4hBLLb2gO1hnRfDxoX1UFgehhfBt3mn+BrO4i5mg7m0xxA3AzqQ9DiaaBM03SNB7SUhhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bs+/vFS9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=X1FU8SgH; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744820968;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FZv5mCM9VZtVeecvyTzEV6NiEWP8t+URKBFUyOq84PE=;
-	b=bs+/vFS9WTwXQO/ULpH2/0vAgTqygfJRMTST3dyCKbH8nSGdKe9U51TZUiZXLa7QnXYEz8
-	463EJsWre3yJIYgBOjc2momDvLzs8K0NMhCTysOVpeo6/fGjSkWUiDEzAG3bFEdxv96UvA
-	re392JFyzlgze3r86WDOuqmzx8Id+NBl9y3hiuXhF2yME4fRX5RerMbsgeZ1vDsbiukDrM
-	a9hfjnXc3btBPuTWh7Aos1gCQ3IrQq03TQprm65wCiEEyRx0iMPq2i8F5GQdhykzxNK/hO
-	IYfPddceWXjSio42WNvOdpNFKZhY8iCmWQQcYFKuAkXWqNXM5pYhOovZfjJusQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744820968;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FZv5mCM9VZtVeecvyTzEV6NiEWP8t+URKBFUyOq84PE=;
-	b=X1FU8SgHYV9tJmvuUF9LaFnIbjMUSgni+Be+pd00We03+HwDPidtxcOr9QscacWWN1gzla
-	0xx1zenkGyq6ybBw==
-To: linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH v12 06/21] futex: Create futex_hash() get/put class
-Date: Wed, 16 Apr 2025 18:29:06 +0200
-Message-ID: <20250416162921.513656-7-bigeasy@linutronix.de>
-In-Reply-To: <20250416162921.513656-1-bigeasy@linutronix.de>
-References: <20250416162921.513656-1-bigeasy@linutronix.de>
+	s=arc-20240116; t=1744820956; c=relaxed/simple;
+	bh=VVNtNqLbvtE8kexzLh9DxK8ugOPeqCM3+F4GjZ9t2SI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=U/6S3JUn5Ugff0wyauZxFu1qq3EvQPmDNo8cg1ihR8bdkAVYoE48NTS4w44gsYV1M01sCLQN3M8tv/V4w89bOOlST1ARVXR/5/P32+QxlvCW9cQKWP1s8GAqeBAthK/TNe0mZh3bzxxePV9dTSRSpbCINZ3QZgMobf/UZ7KNt/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=crB2dKg/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 755D4C4CEF1;
+	Wed, 16 Apr 2025 16:29:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744820955;
+	bh=VVNtNqLbvtE8kexzLh9DxK8ugOPeqCM3+F4GjZ9t2SI=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=crB2dKg/c9rH0KjDGvpkiMspMeAitcPRNeS3hjCDevr3e9ZPuYh7gLQF6YKMz+YnV
+	 jnU1e5AWsVgnxjshhw5TE9x26/NxsbMFT0/W+KlWJDs2I3aQzQM/gJFX08CdUuCALJ
+	 uIXPmk/g291gSg+APdGmkAQFgrXg3SWQ5+aerYKhOMohv2zZRAWL/nPIMitf5Xo2zO
+	 4KjguVMRXfGv9sN4pceagq0JI1FiT4jIBfd6/aT/iVYYqr0tLGeCmsqq5dSTEeVxZU
+	 cFObGK7/gCHIXrPSM4NHLTpBWrLYNKGFhEVAPiFWyEKYzX1xsnKJusQXFFCtBNyQWO
+	 eCyrLOCmXR4kQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 686DBC369C4;
+	Wed, 16 Apr 2025 16:29:15 +0000 (UTC)
+From: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.linaro.org@kernel.org>
+Date: Wed, 16 Apr 2025 21:59:06 +0530
+Subject: [PATCH v2 4/4] PCI: qcom: Add support for resetting the slot due
+ to link down event
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250416-pcie-reset-slot-v2-4-efe76b278c10@linaro.org>
+References: <20250416-pcie-reset-slot-v2-0-efe76b278c10@linaro.org>
+In-Reply-To: <20250416-pcie-reset-slot-v2-0-efe76b278c10@linaro.org>
+To: Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
+ Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Rob Herring <robh@kernel.org>
+Cc: dingwei@marvell.com, cassel@kernel.org, Lukas Wunner <lukas@wunner.de>, 
+ Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
+ linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6126;
+ i=manivannan.sadhasivam@linaro.org; h=from:subject:message-id;
+ bh=u/UvQ7QZOIYDpjR36le74CWa9kFm5T00hOF6YTv343I=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBn/9rYJo2pzHO0PJSZIFRclRPwqiYKcpVt0WcD1
+ 30o9+sLpDyJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCZ//a2AAKCRBVnxHm/pHO
+ 9QARB/9ByY8CCpO1DLSOJaeQ+13Fx1JKIuFwhuKvwb2W3Kjfngd6gYA+zC6FiE+8CAyJ2GUBurV
+ ix/qLs4RJXZ9xIm6CjiqjDBC5iGzo69HghE3H7Bjzive33tcLbmofsRF1Y/QqvbYzDPIXuLi9vz
+ lZ30ZpTrB1pJgQEapz9yPtRf29gGLtnLHX9UAHJKSalv1o22GavTdvTnaRNIdZVe55ZbXzv4kK0
+ fIOerpBMmwHr2F+s6fpEhKpMyxOIDo//7UEuTy5eagf62kl7b61DBkJqSiAqrU06c4b1xF9yfF7
+ 9oTsO7BKKOP9fnV99atYQOOwKyYJP6IdqcTYOInEwdgHQ3i1
+X-Developer-Key: i=manivannan.sadhasivam@linaro.org; a=openpgp;
+ fpr=C668AEC3C3188E4C611465E7488550E901166008
+X-Endpoint-Received: by B4 Relay for
+ manivannan.sadhasivam@linaro.org/default with auth_id=185
+X-Original-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Reply-To: manivannan.sadhasivam@linaro.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-This gets us:
+The PCIe link can go down under circumstances such as the device firmware
+crash, link instability, etc... When that happens, the PCIe slot needs to
+be reset to make it operational again. Currently, the driver is not
+handling the link down event, due to which the users have to restart the
+machine to make PCIe link operational again. So fix it by detecting the
+link down event and resetting the slot.
 
-  hb =3D futex_hash(key) /* gets hb and inc users */
-  futex_hash_get(hb)   /* inc users */
-  futex_hash_put(hb)   /* dec users */
+Since the Qcom PCIe controllers report the link down event through the
+'global' IRQ, enable the link down event by setting PARF_INT_ALL_LINK_DOWN
+bit in PARF_INT_ALL_MASK register.
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Then in the case of the event, call pci_host_handle_link_down() API
+in the handler to let the PCI core handle the link down condition.
+
+The API will internally call, 'pci_host_bridge::reset_slot()' callback to
+reset the slot in a platform specific way. So implement the callback to
+reset the slot by first resetting the PCIe core, followed by reinitializing
+the resources and then finally starting the link again.
+
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- kernel/futex/core.c     |  6 +++---
- kernel/futex/futex.h    |  7 +++++++
- kernel/futex/pi.c       | 16 ++++++++++++----
- kernel/futex/requeue.c  | 10 +++-------
- kernel/futex/waitwake.c | 15 +++++----------
- 5 files changed, 30 insertions(+), 24 deletions(-)
+ drivers/pci/controller/dwc/pcie-qcom.c | 89 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 87 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/futex/core.c b/kernel/futex/core.c
-index e4cb5ce9785b1..56a5653e450cb 100644
---- a/kernel/futex/core.c
-+++ b/kernel/futex/core.c
-@@ -122,6 +122,8 @@ struct futex_hash_bucket *futex_hash(union futex_key *k=
-ey)
- 	return &futex_queues[hash & futex_hashmask];
- }
-=20
-+void futex_hash_get(struct futex_hash_bucket *hb) { }
-+void futex_hash_put(struct futex_hash_bucket *hb) { }
-=20
- /**
-  * futex_setup_timer - set up the sleeping hrtimer.
-@@ -957,9 +959,7 @@ static void exit_pi_state_list(struct task_struct *curr)
- 		pi_state =3D list_entry(next, struct futex_pi_state, list);
- 		key =3D pi_state->key;
- 		if (1) {
--			struct futex_hash_bucket *hb;
--
--			hb =3D futex_hash(&key);
-+			CLASS(hb, hb)(&key);
-=20
- 			/*
- 			 * We can race against put_pi_state() removing itself from the
-diff --git a/kernel/futex/futex.h b/kernel/futex/futex.h
-index a219903e52084..77d9b3509f75c 100644
---- a/kernel/futex/futex.h
-+++ b/kernel/futex/futex.h
-@@ -7,6 +7,7 @@
- #include <linux/sched/wake_q.h>
- #include <linux/compat.h>
- #include <linux/uaccess.h>
-+#include <linux/cleanup.h>
-=20
- #ifdef CONFIG_PREEMPT_RT
- #include <linux/rcuwait.h>
-@@ -202,6 +203,12 @@ futex_setup_timer(ktime_t *time, struct hrtimer_sleepe=
-r *timeout,
- 		  int flags, u64 range_ns);
-=20
- extern struct futex_hash_bucket *futex_hash(union futex_key *key);
-+extern void futex_hash_get(struct futex_hash_bucket *hb);
-+extern void futex_hash_put(struct futex_hash_bucket *hb);
+diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+index dc98ae63362db0422384b1879a2b9a7dc564d091..b0df108fb4f3c6a8b8290062ecb3e1c5c34ddd4c 100644
+--- a/drivers/pci/controller/dwc/pcie-qcom.c
++++ b/drivers/pci/controller/dwc/pcie-qcom.c
+@@ -55,6 +55,7 @@
+ #define PARF_INT_ALL_STATUS			0x224
+ #define PARF_INT_ALL_CLEAR			0x228
+ #define PARF_INT_ALL_MASK			0x22c
++#define PARF_STATUS				0x230
+ #define PARF_SID_OFFSET				0x234
+ #define PARF_BDF_TRANSLATE_CFG			0x24c
+ #define PARF_DBI_BASE_ADDR_V2			0x350
+@@ -130,8 +131,11 @@
+ 
+ /* PARF_LTSSM register fields */
+ #define LTSSM_EN				BIT(8)
++#define SW_CLEAR_FLUSH_MODE			BIT(10)
++#define FLUSH_MODE				BIT(11)
+ 
+ /* PARF_INT_ALL_{STATUS/CLEAR/MASK} register fields */
++#define PARF_INT_ALL_LINK_DOWN			BIT(1)
+ #define PARF_INT_ALL_LINK_UP			BIT(13)
+ #define PARF_INT_MSI_DEV_0_7			GENMASK(30, 23)
+ 
+@@ -145,6 +149,9 @@
+ /* PARF_BDF_TO_SID_CFG fields */
+ #define BDF_TO_SID_BYPASS			BIT(0)
+ 
++/* PARF_STATUS fields */
++#define FLUSH_COMPLETED				BIT(8)
 +
-+DEFINE_CLASS(hb, struct futex_hash_bucket *,
-+	     if (_T) futex_hash_put(_T),
-+	     futex_hash(key), union futex_key *key);
-=20
- /**
-  * futex_match - Check whether two futex keys are equal
-diff --git a/kernel/futex/pi.c b/kernel/futex/pi.c
-index a56f28fda58dd..e52f540e81b6a 100644
---- a/kernel/futex/pi.c
-+++ b/kernel/futex/pi.c
-@@ -939,9 +939,8 @@ int futex_lock_pi(u32 __user *uaddr, unsigned int flags=
-, ktime_t *time, int tryl
-=20
- retry_private:
- 	if (1) {
--		struct futex_hash_bucket *hb;
-+		CLASS(hb, hb)(&q.key);
-=20
--		hb =3D futex_hash(&q.key);
- 		futex_q_lock(&q, hb);
-=20
- 		ret =3D futex_lock_pi_atomic(uaddr, hb, &q.key, &q.pi_state, current,
-@@ -994,6 +993,16 @@ int futex_lock_pi(u32 __user *uaddr, unsigned int flag=
-s, ktime_t *time, int tryl
- 			goto no_block;
+ /* ELBI_SYS_CTRL register fields */
+ #define ELBI_SYS_CTRL_LT_ENABLE			BIT(0)
+ 
+@@ -169,6 +176,7 @@
+ 						PCIE_CAP_SLOT_POWER_LIMIT_SCALE)
+ 
+ #define PERST_DELAY_US				1000
++#define FLUSH_TIMEOUT_US			100
+ 
+ #define QCOM_PCIE_CRC8_POLYNOMIAL		(BIT(2) | BIT(1) | BIT(0))
+ 
+@@ -274,11 +282,14 @@ struct qcom_pcie {
+ 	struct icc_path *icc_cpu;
+ 	const struct qcom_pcie_cfg *cfg;
+ 	struct dentry *debugfs;
++	int global_irq;
+ 	bool suspended;
+ 	bool use_pm_opp;
+ };
+ 
+ #define to_qcom_pcie(x)		dev_get_drvdata((x)->dev)
++static int qcom_pcie_reset_slot(struct pci_host_bridge *bridge,
++				  struct pci_dev *pdev);
+ 
+ static void qcom_ep_reset_assert(struct qcom_pcie *pcie)
+ {
+@@ -1263,6 +1274,8 @@ static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
+ 			goto err_assert_reset;
+ 	}
+ 
++	pp->bridge->reset_slot = qcom_pcie_reset_slot;
++
+ 	return 0;
+ 
+ err_assert_reset:
+@@ -1300,6 +1313,73 @@ static const struct dw_pcie_host_ops qcom_pcie_dw_ops = {
+ 	.post_init	= qcom_pcie_host_post_init,
+ };
+ 
++static int qcom_pcie_reset_slot(struct pci_host_bridge *bridge,
++				  struct pci_dev *pdev)
++{
++	struct pci_bus *bus = bridge->bus;
++	struct dw_pcie_rp *pp = bus->sysdata;
++	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
++	struct qcom_pcie *pcie = to_qcom_pcie(pci);
++	struct device *dev = pcie->pci->dev;
++	u32 val;
++	int ret;
++
++	/* Wait for the pending transactions to be completed */
++	ret = readl_relaxed_poll_timeout(pcie->parf + PARF_STATUS, val,
++					 val & FLUSH_COMPLETED, 10,
++					 FLUSH_TIMEOUT_US);
++	if (ret) {
++		dev_err(dev, "Flush completion failed: %d\n", ret);
++		goto err_host_deinit;
++	}
++
++	/* Clear the FLUSH_MODE to allow the core to be reset */
++	val = readl(pcie->parf + PARF_LTSSM);
++	val |= SW_CLEAR_FLUSH_MODE;
++	writel(val, pcie->parf + PARF_LTSSM);
++
++	/* Wait for the FLUSH_MODE to clear */
++	ret = readl_relaxed_poll_timeout(pcie->parf + PARF_LTSSM, val,
++					 !(val & FLUSH_MODE), 10,
++					 FLUSH_TIMEOUT_US);
++	if (ret) {
++		dev_err(dev, "Flush mode clear failed: %d\n", ret);
++		goto err_host_deinit;
++	}
++
++	qcom_pcie_host_deinit(pp);
++
++	ret = qcom_pcie_host_init(pp);
++	if (ret) {
++		dev_err(dev, "Host init failed\n");
++		return ret;
++	}
++
++	ret = dw_pcie_setup_rc(pp);
++	if (ret)
++		goto err_host_deinit;
++
++	/*
++	 * Re-enable global IRQ events as the PARF_INT_ALL_MASK register is
++	 * non-sticky.
++	 */
++	if (pcie->global_irq)
++		writel_relaxed(PARF_INT_ALL_LINK_UP | PARF_INT_ALL_LINK_DOWN |
++			       PARF_INT_MSI_DEV_0_7, pcie->parf + PARF_INT_ALL_MASK);
++
++	qcom_pcie_start_link(pci);
++	dw_pcie_wait_for_link(pci);
++
++	dev_dbg(dev, "Slot reset completed\n");
++
++	return 0;
++
++err_host_deinit:
++	qcom_pcie_host_deinit(pp);
++
++	return ret;
++}
++
+ /* Qcom IP rev.: 2.1.0	Synopsys IP rev.: 4.01a */
+ static const struct qcom_pcie_ops ops_2_1_0 = {
+ 	.get_resources = qcom_pcie_get_resources_2_1_0,
+@@ -1571,6 +1651,9 @@ static irqreturn_t qcom_pcie_global_irq_thread(int irq, void *data)
+ 		pci_unlock_rescan_remove();
+ 
+ 		qcom_pcie_icc_opp_update(pcie);
++	} else if (FIELD_GET(PARF_INT_ALL_LINK_DOWN, status)) {
++		dev_dbg(dev, "Received Link down event\n");
++		pci_host_handle_link_down(pp->bridge);
+ 	} else {
+ 		dev_WARN_ONCE(dev, 1, "Received unknown event. INT_STATUS: 0x%08x\n",
+ 			      status);
+@@ -1732,8 +1815,10 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+ 			goto err_host_deinit;
  		}
-=20
-+		/*
-+		 * Caution; releasing @hb in-scope. The hb->lock is still locked
-+		 * while the reference is dropped. The reference can not be dropped
-+		 * after the unlock because if a user initiated resize is in progress
-+		 * then we might need to wake him. This can not be done after the
-+		 * rt_mutex_pre_schedule() invocation. The hb will remain valid because
-+		 * the thread, performing resize, will block on hb->lock during
-+		 * the requeue.
-+		 */
-+		futex_hash_put(no_free_ptr(hb));
- 		/*
- 		 * Must be done before we enqueue the waiter, here is unfortunately
- 		 * under the hb lock, but that *should* work because it does nothing.
-@@ -1119,7 +1128,6 @@ int futex_unlock_pi(u32 __user *uaddr, unsigned int f=
-lags)
- {
- 	u32 curval, uval, vpid =3D task_pid_vnr(current);
- 	union futex_key key =3D FUTEX_KEY_INIT;
--	struct futex_hash_bucket *hb;
- 	struct futex_q *top_waiter;
- 	int ret;
-=20
-@@ -1139,7 +1147,7 @@ int futex_unlock_pi(u32 __user *uaddr, unsigned int f=
-lags)
- 	if (ret)
- 		return ret;
-=20
--	hb =3D futex_hash(&key);
-+	CLASS(hb, hb)(&key);
- 	spin_lock(&hb->lock);
- retry_hb:
-=20
-diff --git a/kernel/futex/requeue.c b/kernel/futex/requeue.c
-index 209794cad6f2f..992e3ce005c6f 100644
---- a/kernel/futex/requeue.c
-+++ b/kernel/futex/requeue.c
-@@ -444,10 +444,8 @@ int futex_requeue(u32 __user *uaddr1, unsigned int fla=
-gs1,
-=20
- retry_private:
- 	if (1) {
--		struct futex_hash_bucket *hb1, *hb2;
--
--		hb1 =3D futex_hash(&key1);
--		hb2 =3D futex_hash(&key2);
-+		CLASS(hb, hb1)(&key1);
-+		CLASS(hb, hb2)(&key2);
-=20
- 		futex_hb_waiters_inc(hb2);
- 		double_lock_hb(hb1, hb2);
-@@ -817,9 +815,7 @@ int futex_wait_requeue_pi(u32 __user *uaddr, unsigned i=
-nt flags,
- 	switch (futex_requeue_pi_wakeup_sync(&q)) {
- 	case Q_REQUEUE_PI_IGNORE:
- 		{
--			struct futex_hash_bucket *hb;
--
--			hb =3D futex_hash(&q.key);
-+			CLASS(hb, hb)(&q.key);
- 			/* The waiter is still on uaddr1 */
- 			spin_lock(&hb->lock);
- 			ret =3D handle_early_requeue_pi_wakeup(hb, &q, to);
-diff --git a/kernel/futex/waitwake.c b/kernel/futex/waitwake.c
-index 7dc35be09e436..d52541bcc07e9 100644
---- a/kernel/futex/waitwake.c
-+++ b/kernel/futex/waitwake.c
-@@ -154,7 +154,6 @@ void futex_wake_mark(struct wake_q_head *wake_q, struct=
- futex_q *q)
-  */
- int futex_wake(u32 __user *uaddr, unsigned int flags, int nr_wake, u32 bit=
-set)
- {
--	struct futex_hash_bucket *hb;
- 	struct futex_q *this, *next;
- 	union futex_key key =3D FUTEX_KEY_INIT;
- 	DEFINE_WAKE_Q(wake_q);
-@@ -170,7 +169,7 @@ int futex_wake(u32 __user *uaddr, unsigned int flags, i=
-nt nr_wake, u32 bitset)
- 	if ((flags & FLAGS_STRICT) && !nr_wake)
- 		return 0;
-=20
--	hb =3D futex_hash(&key);
-+	CLASS(hb, hb)(&key);
-=20
- 	/* Make sure we really have tasks to wakeup */
- 	if (!futex_hb_waiters_pending(hb))
-@@ -267,10 +266,8 @@ int futex_wake_op(u32 __user *uaddr1, unsigned int fla=
-gs, u32 __user *uaddr2,
-=20
- retry_private:
- 	if (1) {
--		struct futex_hash_bucket *hb1, *hb2;
--
--		hb1 =3D futex_hash(&key1);
--		hb2 =3D futex_hash(&key2);
-+		CLASS(hb, hb1)(&key1);
-+		CLASS(hb, hb2)(&key2);
-=20
- 		double_lock_hb(hb1, hb2);
- 		op_ret =3D futex_atomic_op_inuser(op, uaddr2);
-@@ -444,9 +441,8 @@ int futex_wait_multiple_setup(struct futex_vector *vs, =
-int count, int *woken)
- 		u32 val =3D vs[i].w.val;
-=20
- 		if (1) {
--			struct futex_hash_bucket *hb;
-+			CLASS(hb, hb)(&q->key);
-=20
--			hb =3D futex_hash(&q->key);
- 			futex_q_lock(q, hb);
- 			ret =3D futex_get_value_locked(&uval, uaddr);
-=20
-@@ -618,9 +614,8 @@ int futex_wait_setup(u32 __user *uaddr, u32 val, unsign=
-ed int flags,
-=20
- retry_private:
- 	if (1) {
--		struct futex_hash_bucket *hb;
-+		CLASS(hb, hb)(&q->key);
-=20
--		hb =3D futex_hash(&q->key);
- 		futex_q_lock(q, hb);
-=20
- 		ret =3D futex_get_value_locked(&uval, uaddr);
---=20
-2.49.0
+ 
+-		writel_relaxed(PARF_INT_ALL_LINK_UP | PARF_INT_MSI_DEV_0_7,
+-			       pcie->parf + PARF_INT_ALL_MASK);
++		writel_relaxed(PARF_INT_ALL_LINK_UP | PARF_INT_ALL_LINK_DOWN |
++			       PARF_INT_MSI_DEV_0_7, pcie->parf + PARF_INT_ALL_MASK);
++
++		pcie->global_irq = irq;
+ 	}
+ 
+ 	qcom_pcie_icc_opp_update(pcie);
+
+-- 
+2.43.0
+
 
 
