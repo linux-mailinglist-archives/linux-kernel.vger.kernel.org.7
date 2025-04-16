@@ -1,481 +1,235 @@
-Return-Path: <linux-kernel+bounces-607893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8255A90C0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 21:15:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1696BA90C06
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 21:14:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D73F7ADFBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 19:13:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC4337AB26F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 19:12:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96538224889;
-	Wed, 16 Apr 2025 19:14:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E165224883;
+	Wed, 16 Apr 2025 19:13:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="OoIaQsb1"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2047.outbound.protection.outlook.com [40.107.220.47])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="FOrmY4u3";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="W7EYP9YC"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C58D51E9B04;
-	Wed, 16 Apr 2025 19:14:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF52D1DC9A8;
+	Wed, 16 Apr 2025 19:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744830896; cv=fail; b=dlDd8uvkAH0KHFA0jfHYe2vu/QU/S07+JLbkqCGRH/s+39ghz8FumDD61rLztUy5pV095aQEepqDK/nemlnImH9ymOdQmkUaxEX2ZRIqr+LYHjtaC5vZMpNo9MbXcUeoY2A04M03PKoIlg7ZpopKpj/ZWEkHI8bj6LMBCrEz4rM=
+	t=1744830837; cv=fail; b=WFemafqkn+xfLfCkjRyajXqLR2/Waf0gcU/2VLhxePOso5rABep6CQ4IktuYEAqZG6D6I1eJjAltoVFkIMEhPJVCxFRVexkdOy6QiYoYHgEoEhyu7jVJJxP7zIEjB6FdKdpu396j9BqxHetxQ6+kPfo6HLQIXZ9ASobPZdXmOv0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744830896; c=relaxed/simple;
-	bh=9W3YT1nmZxZ2zlDV56Pu5ArLgrKUtuRomvocEWfXFLo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AAlxCVUTw80/HUIYwAVNpuX4JpkdVuU9fwCedPvm0/t8wziGQvrbC4w7lyxAnzO9gvboTvGYBydvnpo/U08tJ2f0dAS7f0JeSSmBustj6RDs75NIyJCz3QeynI1fKfWOQ/NV1QHH0+2Nf01MnhYAjnhJcwHTsQuLf7rd2AZ/kbc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=OoIaQsb1; arc=fail smtp.client-ip=40.107.220.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1744830837; c=relaxed/simple;
+	bh=Foj+tVt0cyQW5qSOitgJh05P37POy7g62zBDCDP0OhQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=UfyTHJaRdb3BO4I6dwOVuWbB34dgxCwsGw09B7/BOGBMyKnB1F9aDcKf8mNC5NA/K1g2rvMzl71mb0pWea8R6tsD7g4LRTai0ZCwqL4HCc/vfELPKc6lmj78TjJN18i+iMKLvJLmPBTPeP9ZI/aNbrz/laQ1MSkeldnC+jE9HDA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=FOrmY4u3; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=W7EYP9YC; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53GIuhn9006490;
+	Wed, 16 Apr 2025 19:13:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=0RoVsl1w8WrBTBVdtcgwNEvPpdHir+/+9xr4MpoIy7E=; b=
+	FOrmY4u3NITOy4lRdiC8EqJxQuIP0gWhzN3Jp93CDk2LhGGrOhddbHs54kr648kr
+	T9jUtFMj/gNwD2mhtgj6KMiI89zGkZfx8NWksIQWrs84nufjc7CiKb09pAiLLWsf
+	Zi4k9lwcJxwxgLjIX0fUe1q74iyti/nVUi9uL/AMGYnu5ahSZn8O9kjMQf55WMJG
+	BpViu9Wjz9gahqefNDLj/k02MbbNdvxYrGK3i7zoKDd7SkCMJ0A/jRKuROPXRbo/
+	G8aYOzmEDLaZw8vMv1GfFb/9kODiofaOCQztkGXMepZOb/xIz7GA4J18U8sBsmY2
+	OyrdQ7pKWgAau9fnCRN05g==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4619444nte-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 16 Apr 2025 19:13:43 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 53GJ9WEU038842;
+	Wed, 16 Apr 2025 19:13:42 GMT
+Received: from dm1pr04cu001.outbound.protection.outlook.com (mail-centralusazlp17010005.outbound.protection.outlook.com [40.93.13.5])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 460d4tdmec-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 16 Apr 2025 19:13:42 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kkcQfyWD67fFvSrtaXVdrGyEnDzKty4PSXN8IYH0pNuz9yHVN2xL1mizTM5/Zbvhkp0tcN8CjgQgtsUdXIXOvPzKgjB28ey4coHo10gRk1XDQ7L2stWee8mb0Sjdgxg1a1u+7oX4VVy1e6gmBUO2d5eiYUDAqMQqUKZMypIzu2zQLyHR/hNS+G4gpARR87TKQHBqHnhoQ+u/GnW7AhpOWbgRQ4OabSPjSJ6NLRfvCGq4Q5xA7stw0pRRUxpJ5OWeEOH1xL8jXA595VTOEWuxaxLJKvMGHuGwSzyOrZ3khebo1TjVxyjEMLTsEVkI9zfjjo9xUmxNhXjY/iY55nKW6A==
+ b=lDoTxEjRs1TKD+jrOrGs4H9JxQFbTpg2JK7ma2rUnABkcd94YJkuAQP3fvmfc8uIo3e7GwUxXjEtmGE1dTj3G7XXt+3JyCuVdNGdVHGFIB3yg8BBlAr9WPy6v6wDlVBakVN2V2QSd76PigkzW7PHiTe52x6D8BOwnSSlIvKlW2743f1+AmSiWqKuTCTuYOZeGT0HlI8e7a6IZZuBzlaTFuMyUcTfaIBMrV5Zr/3zIvKQMUNoiEtr9IvmJ94TVK+nsrm+A57fKGIhK+HHX5XC3vRyGkS084Sy7UUctJG1g2a5HfHfHzSTIYzE4myuc48KCSlwXaVuQFyrUN/p+byNxA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IGYM60oDwyADSqSLL+tMAQUGb4HCGLDYOkBtTrrek7k=;
- b=MqUrrvhCEKtd3w3ly1mS5lpV007fzMeNX32Vrgcx2RSfqsPo5PnZ6s18NPH4uiBy0PRl8UNaIixAen4tF3gFe1XD8NVpQUo8kfxQXYKgfUdZ3Kqgoq9uPt8x86JQRv+nMFhG6UqUH/IKk/Apo189A/ewGgQv7k6TdxH1VElI4hdXhr1EUTRj00wEEDgWiKtf1lmfkh3bYPnZvt2QCMGLHQRNGdghzkOBBIiEBGDpwHkSvF8KMBbQVRUhaEIYdbAPhd5ohAVRm+ZGUT1upniU/FkE5F29VHdHBGqBdYOjXWW2ZEoaZAiJSASPG3xoyIuYggqSBK6H2XzGjmmUIeCsBg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ bh=0RoVsl1w8WrBTBVdtcgwNEvPpdHir+/+9xr4MpoIy7E=;
+ b=DPDjxrA0f+uGCDb+dVZrt20DtELCEpGmFZKadBW7PN62KXcVaL+hI9qQHUscW99grO35pKrqxTgjrYlGz1HGIkofWdMpviLjBUq5fRZZPHnK8b6woEc2eIyjL5PC+MAUQ0oxOofuj+6qh5yv/tTwuUmifd2Xd246RnTQfPHmEeG3pv+Jbo7E8ud7upBIUlUpbLBST2JMqII3BaQ3YXbF/+4bGxGABcfjuJlB65XY35rqU7DPoj2OpPvEsZPzdIk0mqSgMyBI899V4VtkStMsAMnZfjses27o1Gaw3IcHsWZmSvhbeKuoIy30WlcxWVBE619s/2FNtf2b+Z9ZbPNhzg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IGYM60oDwyADSqSLL+tMAQUGb4HCGLDYOkBtTrrek7k=;
- b=OoIaQsb1yfRHGaJsisjBvMEdJkP0ANiSxkACwVadDGLStAQ7TdNzPq1/YtqsAm48oBMp8hjOvF6hAhxj9LD4q6V+9hL77YTZoybXiWptxO2xuZCnMf149Ap4xfAwaPYEQ3BsxhEMmJUOikBt2uMYKVq0ZJMUErU1OhqXaP/QuAo=
-Received: from CH2PR16CA0030.namprd16.prod.outlook.com (2603:10b6:610:50::40)
- by DM4PR12MB8559.namprd12.prod.outlook.com (2603:10b6:8:17d::8) with
+ bh=0RoVsl1w8WrBTBVdtcgwNEvPpdHir+/+9xr4MpoIy7E=;
+ b=W7EYP9YC0xofN5DL0Ixtvem67w7r8//LVknW20K8VukY2iNn83369FdYhZWzVbl7wYYEy506Zr3oqLwLZwGRte7pK4AjcQAoSgpyWyav86U9fgY5MvH/uXH+HtOlOMU+8RtAVpcbUyIxT/4OXPlzrLOdDfoXzLK+yOqChSuOZqE=
+Received: from BLAPR10MB5315.namprd10.prod.outlook.com (2603:10b6:208:324::8)
+ by DS0PR10MB7978.namprd10.prod.outlook.com (2603:10b6:8:1aa::22) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.34; Wed, 16 Apr
- 2025 19:14:47 +0000
-Received: from CH3PEPF0000000E.namprd04.prod.outlook.com
- (2603:10b6:610:50:cafe::9d) by CH2PR16CA0030.outlook.office365.com
- (2603:10b6:610:50::40) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8632.35 via Frontend Transport; Wed,
- 16 Apr 2025 19:14:47 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CH3PEPF0000000E.mail.protection.outlook.com (10.167.244.42) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8655.12 via Frontend Transport; Wed, 16 Apr 2025 19:14:47 +0000
-Received: from maple-stxh-linux-10.amd.com (10.180.168.240) by
- SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 16 Apr 2025 14:14:46 -0500
-From: Pratap Nirujogi <pratap.nirujogi@amd.com>
-To: <hdegoede@redhat.com>, <ilpo.jarvinen@linux.intel.com>, <W_Armin@gmx.de>,
-	<mario.limonciello@amd.com>
-CC: <platform-driver-x86@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<benjamin.chan@amd.com>, <bin.du@amd.com>, <gjorgji.rosikopulos@amd.com>,
-	<king.li@amd.com>, <dantony@amd.com>, Pratap Nirujogi
-	<pratap.nirujogi@amd.com>
-Subject: [PATCH v6] platform/x86: Add AMD ISP platform config for OV05C10
-Date: Wed, 16 Apr 2025 15:13:10 -0400
-Message-ID: <20250416191411.1482060-1-pratap.nirujogi@amd.com>
-X-Mailer: git-send-email 2.43.0
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.35; Wed, 16 Apr
+ 2025 19:13:40 +0000
+Received: from BLAPR10MB5315.namprd10.prod.outlook.com
+ ([fe80::7056:2e10:874:f3aa]) by BLAPR10MB5315.namprd10.prod.outlook.com
+ ([fe80::7056:2e10:874:f3aa%7]) with mapi id 15.20.8632.035; Wed, 16 Apr 2025
+ 19:13:40 +0000
+Message-ID: <a03efee0-3470-4d7f-9a63-3ec9f1ae4f3a@oracle.com>
+Date: Thu, 17 Apr 2025 00:43:33 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 1/1] platform/x86/tuxedo: Add virtual LampArray for
+ TUXEDO NB04 devices
+To: Werner Sembach <wse@tuxedocomputers.com>, hdegoede@redhat.com,
+        ilpo.jarvinen@linux.intel.com, bentiss@kernel.org
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org
+References: <20250416171809.557674-1-wse@tuxedocomputers.com>
+ <20250416171809.557674-2-wse@tuxedocomputers.com>
+Content-Language: en-US
+From: ALOK TIWARI <alok.a.tiwari@oracle.com>
+In-Reply-To: <20250416171809.557674-2-wse@tuxedocomputers.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: KL1PR01CA0080.apcprd01.prod.exchangelabs.com
+ (2603:1096:820:2::20) To BLAPR10MB5315.namprd10.prod.outlook.com
+ (2603:10b6:208:324::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PEPF0000000E:EE_|DM4PR12MB8559:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0f5cf7e9-c866-413e-7d2d-08dd7d1af3e3
+X-MS-TrafficTypeDiagnostic: BLAPR10MB5315:EE_|DS0PR10MB7978:EE_
+X-MS-Office365-Filtering-Correlation-Id: 800358b7-e853-415f-d945-08dd7d1acbb4
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|30052699003|82310400026|1800799024|36860700013;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?2g4hsKJA4ZntidXG8dpDILRjnTM4w8WVEJbSuYKyKLZWNilypASdgm/lTUUl?=
- =?us-ascii?Q?2F6wiDlrqR0H4SPNmUW9WhsY+Mv5nd/H+1fePRKHk+M+IR3yz59SM+S5l9Op?=
- =?us-ascii?Q?M67SwHAhH9EQbDZDhDBRegoxmN84S2hrGRSFWZBuMS5u4aLM24djCxk5OlE4?=
- =?us-ascii?Q?4qHQ1P6EgE04l0O9Ja0Yu4SZ2Ydk0qd7lF2L5xgCd7APeE5RxnviQINrhVEp?=
- =?us-ascii?Q?AmHOPza0ofs5UrLDE9h/TajYVPhy/sK9TH/HumIDoSlS1VRab56B4xzb4mzX?=
- =?us-ascii?Q?R4CcGIZTUzylf3CTCqCAX36hbmb6rZ5MYv09MqQsQXVGmJiNPEOLzDZLiiMi?=
- =?us-ascii?Q?ZQn0h5GZx19i4zS4OZr6OWmMY1D8cj+QfTycirBa6HjCK4yQcdyUhOWZEE8C?=
- =?us-ascii?Q?raefq2QFn5w5uac5dDfrE7rUQAA/2I6a2Uwt16/yWJsxLgq/Y663vC06dlnT?=
- =?us-ascii?Q?+fOHgbkl24/5wHciHU19pDi9D4920Xo80ToOtuQrpAaL9I/JtMFfmUB0f+h+?=
- =?us-ascii?Q?8N0SMXwAYf8evzKJuTqHNf1KDhKW8MWMaMggySJA6mt5wxpnaZC02Gy12lZE?=
- =?us-ascii?Q?a+htq8CyUCl9namnccHhYe1Ed60UNu84ZLi1bvbjrctC3hw8h/Vi0HPTBw2D?=
- =?us-ascii?Q?MlItl7p10oRWR+Ohu/N9nfd3UsE4rSTqRON4VFRxhBgP/KigVEstBJlrwinj?=
- =?us-ascii?Q?n3v/eIbV6+HG2TnFn8dVRWovdezlKnUMBtHzI9z10GpLVwJTqdhraJCIeCkz?=
- =?us-ascii?Q?TZwdZAoPTidOKrneh2xV8R0GX1g9R1OdgK3oYgKRawDLw9i4cgw/LVeohalu?=
- =?us-ascii?Q?KI5JvQYnPsMsOmfVP4aIdzhG71EbxhcCKsdP8SmLQpabqfBRiucWpyRl8aru?=
- =?us-ascii?Q?mYYY+Sy8vseIeLlHlW7VvbC6DWRwL5lGnfizt/VCSki0rB7g5wzkDgo9ahSq?=
- =?us-ascii?Q?WxJO1c9p2iYZrcwFBg6ux5GkTq3gXsLIPSURoNh41FCec+ugSvqG7je4B2T5?=
- =?us-ascii?Q?zbZpeazSv+2HsoTlsahZXdCZZSc2l+hlrtw1gwsoiiUEmInBT9vHNx0RtfNj?=
- =?us-ascii?Q?H09sFHcVtqEKGZXAXwv5tgTV5M9mz2Y2cvwm0oWRw61LdjN9iCepmViK68mk?=
- =?us-ascii?Q?tkbQ1MYmO8m4GMIqPjSfMVPwXAS6vGAJqyfvp5tRMkLipi5ZH3NiJaM16KVw?=
- =?us-ascii?Q?WXdsK2K/Zq35+mPMV16755F/suw7lMSRJlZUgCSzGg5ke3TQ3HmF/sQqufjw?=
- =?us-ascii?Q?FaZfL/Iz7Eny7XHtI3ZqkF27grc11LYXS2L/msK6qc4WY39EN/OskON5JyWW?=
- =?us-ascii?Q?BY7C2gyomsdMk8EzOnZtaPiMHe1KNm8eEBoqxDQU9WaGgiCMTaEaafWYQVAQ?=
- =?us-ascii?Q?lPHl36BXEnxDuRzDgusfigM12LvNZEPRTTq9HO1CEYmh4xo2zJUnjnAaLor7?=
- =?us-ascii?Q?YDma3q27juJ3vNNpUfJ2PTMLFeCT7TXw282LJ0kGsal7uSX0NQmPzy8crz4E?=
- =?us-ascii?Q?HdZTqVG3LWNfA0egpCmR18b1ymU6vdv2CGcC?=
+	=?utf-8?B?OTZqYmEwNTNDOGVPczRaS0lXazk3MmFCUFpJWkEzZTR4STVMNitIWWFBVzEv?=
+ =?utf-8?B?aWtKeUdKbW55VUMxc0pSV2kxYnZYQWVZTnlVaFc1SzVqRVpkOW9QWCt2WVJJ?=
+ =?utf-8?B?WThvRkpQK2hGN1Y4NytSbHNJOS9OcjA2Z3ZFY1VoMVpycTI0Y1FubnhORWVW?=
+ =?utf-8?B?dTRWQUJDUU9vZmd3blhjb29wQlRoMnNHSEE5RnhOTGR0U0hWZGFxaVFxT1Nu?=
+ =?utf-8?B?ZjRKQ1RXVlVZUFlZMHZtZGhxWEVlUUJzdUxYY0lqbTJOQ1YvaWozeEFhKzc2?=
+ =?utf-8?B?c2lnQ3JlWGtPVk9jTERXdE0yUEU0Wlp1UXVWNjJ6MlpyejRpL1V6WXV4Ynlp?=
+ =?utf-8?B?VXZKbElQR2lkYXhoWUJ6cnVBVGdZYXFaN05Nby9EMmNUWksrMDFZVHM0dHhE?=
+ =?utf-8?B?SENjLy80czFaZHlkK0Nqd25VZ2FIUFovSExJOWFQb252UCs3WHZ2T3BCRVJz?=
+ =?utf-8?B?SlA3YmJmWW0xRjRIeGhFUU9xUkZid1FLbWFjc3lRTGg2a0tVY0Q5LzI5amJZ?=
+ =?utf-8?B?NTdqeEN4dVE3SDc5OFZYckF4ZjlkSGZsU1V5SCtCRDRCbkRnR2F1ZGVhbjZm?=
+ =?utf-8?B?OEF4c0kwRFdaWVR4OUlpVUtMbTlVOGhucWxEN3MrdEFxR1Q1UjdRbXpOWFlj?=
+ =?utf-8?B?aW8rTU0wM0orcVN5VXJBeHlUNUFwelJOVG13VXdSRy9aUE1RM3J6Y2NaOUdr?=
+ =?utf-8?B?K1NiVTJUZTVOU1huTFhhWXFsd3lZWXBQZ2Y2OXdGOWlCSFQ3czF6WFZSMDlI?=
+ =?utf-8?B?dGlTOU4yN2F3MWVtT21PVXY1enBINS8rVTFxVUF3cFpEOWdlR3ZpTUJLYVZ1?=
+ =?utf-8?B?cVJWcXREbnZqVWR0Nkc5NFkrSXZ0SFhabEVFd3paV1gxYTgxclBTa2JERDlK?=
+ =?utf-8?B?ZVM5Sis5bDN0dmc0Wk1OTDdqYzlSaGlsSlhTWGg1OStCVFFMYTlMUlpBZEJY?=
+ =?utf-8?B?WkJ6ZFhmMk5nQ2s0T21vdTQzVHZwRGZhS0xybjVoL3ZHekFlcHBvMnF1WXpE?=
+ =?utf-8?B?S0d0RW5XbjkxcWRWSHBJY3NaSXVuRGk1UjJsNmdZSVhLanNPMU4rUlBOejRm?=
+ =?utf-8?B?RW1WYXQ1UEIrRlZkR1JxbWZoZ0k3OFZBVUpVNjBQQ1NENllFTHI5S2NOU09q?=
+ =?utf-8?B?ekdWQVUrcDB1eWNYWm82WkJhQUovUVRPU1NaN1ladmVaYmdXdlNVbW1zdWhT?=
+ =?utf-8?B?QTN2aC9YbEJUaHdVZE0vZ3podXA1ckR6NncyQXdpOTZSSCtyVmR5L0t3NWNZ?=
+ =?utf-8?B?a05qVTVRZ2lCQ0QvRFBWekY3VHJkWE5CSWlSNEM0VEFpc1R1eFdqcnpjMDgr?=
+ =?utf-8?B?RElJMWRab01OQzBjTGgrVWRBSlU1MjE1TGVncEoydDJqejVCRHRlV1R2Zy8z?=
+ =?utf-8?B?Zmt5L2kvbGhDTmF4MW13T2dFYTA4UHRvMzdFVkZ2RlJ1SXZaOWdIL1lxeHdJ?=
+ =?utf-8?B?V0UzTWFmZ2Jvb0VMWFE0c0YrT3VjMDBORktWZk42bndtdFo3QmFteGVzVlZv?=
+ =?utf-8?B?T09ZLzhoTlFiWk5qZ0NnejlwMjlCVFROZG9HL2NQUUhPVlRTejJydDBLeWVE?=
+ =?utf-8?B?cVhwc3NReXQwbVgyZkF1aXJFNGJJVXNSL1NGcVkrMnAyYVJtS2tNT2VYcXlq?=
+ =?utf-8?B?alF4RGg3VHN4WHpEKzRody9vR0dZSzZ3QnlGd1lmaU5kQVQ5WUErVCt6aTVK?=
+ =?utf-8?B?ampybHVhRHZCWWk5VFFISUdyazA1Y1VpTk9YQXNzdm1oRlp1c1U0dUFpMzVy?=
+ =?utf-8?B?THhoYTBHTlFQaWU1YVF4aDE5Rm9jQkQ3bDVTb2Z4WmlTYlJMSTBnbkhPNkdG?=
+ =?utf-8?B?QWFsT2RQTUorTXRERzJ4UzZNZCtteWJ0eWRCamJ4a3FBdXZIQldBcEtBRktW?=
+ =?utf-8?B?VDcrdVpEcHFsU0h5blRxTWJzWG9QWnVmQWo0ZDUrTDNwYTk2SS9FblBKVGlO?=
+ =?utf-8?Q?pLdy24esPkI=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(30052699003)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Apr 2025 19:14:47.0247
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BLAPR10MB5315.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?YVJhWGplaVlDYlRjN1VRT2JaWmJUVTFVS1ZFdjB0cWNXMGV0NkJIL01tZ1hJ?=
+ =?utf-8?B?dHl6ZG1CYlBuWG1QUFVyYmEyUFk1WjU0dEs2Ym5qRk9ubUhMTlpoV3RwMDBt?=
+ =?utf-8?B?TTlNN0grN3oyQUV4dGJ2QmgzS3VhZjE0cGNpOWlZL2MyV3YwaG4zL013MXdi?=
+ =?utf-8?B?UzFyRHlNNkFTTk1oVXZQNEM4bWI1d0thdUhKdnRWdXdEZlVOUjVRTVFtQlBa?=
+ =?utf-8?B?YTF6b2EwTzE0RU0wbDRCTVNmVThCSFdJNk1YUE5pZDNadWlzdGlVNFZpbTFE?=
+ =?utf-8?B?ZHhmUFNkcVpVSjRzU2o2T204NzhrQU0vMnNBZWM2SDlKeXlaQ0drVHdwdXVy?=
+ =?utf-8?B?UnlQUWE0cXVjR01wNkErNW05ZWRQbEhkWUVsYXJ4VEU0N2ZqYmY5ZE9pd3Zv?=
+ =?utf-8?B?Y0J2T2JvbmwvN2VpQ20wS3lOS3Y0YzhCemh5UitWVGFrNmFWM0VzL0N0V0lM?=
+ =?utf-8?B?Q25wRXUvdlM1MjZKTjFPWHRBOEhIUW1mZ3lXc1MvU2kxNlZZdzNUcUN0WS9j?=
+ =?utf-8?B?M1pDKzE2dmRTNlNnMXlNMEhWQW9RejNRWnIwdzB2SVV2akw0OC9SckZDMUJx?=
+ =?utf-8?B?Z3RzUFV4UEQ2R0ViamdJUXdCMU1KdHphMmJMVkZLMkFwZ2xxVTdzalF3VEZn?=
+ =?utf-8?B?WE4yZGpYTXJGYXloMlNXYnRYVlE5bDBaU1FnY1N3Vmo1M2kxWjV4UXJ1eGVQ?=
+ =?utf-8?B?WmJtbjkrOVlFR2dIQStUTmlnYXRsenRJT1RHUFk3NElZckMrUUwrSDM3QmE5?=
+ =?utf-8?B?bkRJU1d5ejB4bnVGUDVRbGV5VkZGWjM2dE5NQzdwdVNrVGtnZmw3WlRnbDRx?=
+ =?utf-8?B?T01iRWRhMDZyQTJnMFFKMncvaUVvOHBsaHR5eFdOWGZ4bXNTajR3cm1renM2?=
+ =?utf-8?B?VVNnQlF6N1Y4c1N4MVZkY21jT0RSVm9aWVVkMnVHZFZVMmFtVGpoYWUyOVpq?=
+ =?utf-8?B?NzAwRVVHUE5QRDNBaGpDeVZhWDNjdW9zNXUwZzQvNTNxUTIzVmczTXJSZnN4?=
+ =?utf-8?B?RDJwTTlPYm1taVM0REt6b0tKVDJNeG4zWG5tNFVDcEkzR2tkRkxlWEZrbjFQ?=
+ =?utf-8?B?UlM1dXJyUThnYXdwdnJ5ZFZDS0tNOVBKREgwSWNHWnBVQVpuWldtUjArNzM4?=
+ =?utf-8?B?TUhGYnE1SHkyWVV2Z3FZWll5Rm9RM0lYNnpxVHpYRmVtUTgybUlGTnVzRGda?=
+ =?utf-8?B?VjFtUXlvbHdCSFJoWkVQc0sxL1BpelhPTTdaSDhtaDlLTzcvT1B5NmFVc0VL?=
+ =?utf-8?B?TlNwZURSYXRDUXhORS8xTllscVdjd2lnbjdYZGZ4SDgwZ2RpQzZSRXJvNTJV?=
+ =?utf-8?B?bnpaN3UvbXJnZzBOR3FGbzVLK2ZRRUZHYVVqZUxza0phVHdrYkVOTVFLdGZL?=
+ =?utf-8?B?T3ZjTEo1c0dvK05KM0ZXbG81SG9tKzNPSDl3UTRPdGlPRCs0RXNFVWpnRFRK?=
+ =?utf-8?B?aVdqVldnZW5HbllVSyt4MXpsenZGTWU4Zkp4MGZUZnMrWkFFYVBYMU1Oc1Ey?=
+ =?utf-8?B?dFh5TE9nY25IWWJRdTFDVSs3UGRleVNDWXlLdi9qTldMbWw1YUxQRENVdk1C?=
+ =?utf-8?B?eG5zeFhkeGR4VHBpUTVWNldVSlE2aDdIT3NZRjJaY2JFRHMrMzZMUG0rVUUy?=
+ =?utf-8?B?NzZKMlVyRXM1bXdFNXBOalhYd29kV08wajdnNjRRRGpLQnltbHg4RmJMT3FR?=
+ =?utf-8?B?N1JHTlpaYlpIQkdEZWxreUtmL0JIOTVxOWJ6ckhydzZYbGJxWVkzTUhiYW1E?=
+ =?utf-8?B?bml0Yng0TlJ6Um44NkFvd1pkUTRPMG5EQTJyNFIyTktSb0YxbEpmYUswQ0V5?=
+ =?utf-8?B?Z2xrRzMrbjFaUG9TTW9WS0ZEMHJyY1F0RVZhdkU1c2Foa0FVd2h6ME5IdGpp?=
+ =?utf-8?B?UTNhV1ZmMkwvRlF1OUNQeUUwdWZwc0crYm02NlBXdlNmWWx2MUVGNlloNXBN?=
+ =?utf-8?B?b0FyM3JUakpyMjJqdndXWlphS3BiQ0ZQcXhVRFJxUHdhWm54RGVqTGk3QXNx?=
+ =?utf-8?B?cUpMTlNseHUxbHk4eXVHZUJ0eGtCN0dDcDNzVElSZnZVU2dMVjBrTHF3b0hn?=
+ =?utf-8?B?cUR3K010L1hGQVJqQmhhSkJQa2p2TkFSNGdJNGhhQlRuSzU0VlB6ZDVHd083?=
+ =?utf-8?B?L2pRTm01M3A5SmV4L21SS05reDhGd0ZkcnhqcmRERlQ4cy8xZkFJVHVyeTBE?=
+ =?utf-8?B?THc9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	7CzSrKtNLoqYO+2jB3219AyOpiuc7usfZ+cvnRZi1I1Z4jslFUHbpWUa53sn6azidef5bEJiA/UeE0su4j3kKd9t4KI1GOQX/ozajmk4mps8zLBXWI+Uif8IN7OrPZ6EgXUR7A8R70kSEnJWD2nGM9lHBckoYibz46u3KkqHA3CVFqRdOxLyDTpU2tcl17A2sGKhXuRKx6DT29of/rrxcW6XavgEWX7l0gpWnS1OzioQnr8B1J8wzYZ2VP05/UGf78sWMiBam9T6zRus2KBr0kewf2YxWgGMCuV2otM0a9MF9KSqR+OVr6savZvbvZSzXD8yrFfMvzq3namNSLAPZe3/rnJ46ZDCo27RiyDWPc5hDxbPHpqSgU5LL+t9LgimZsDyQ9z+tuxQKg6dW9SAreXDVVSafYCAbHXPCM4rrj5+UNa5/B1II3vw7jvHcparHbHVqItz3OP6fn9ZPhsDrmXjXdtcqJr8uSo7v6E+ZfMVtvgh9NjWSQin+OlgjRgQXiX7pHRFkISYjpyjwXyR2L/KwIQRGZqCWSoJeTMlc4N9Pdxe56bEWCUkWVcA1RBFO9PocKAoU01CDRg7SohUMlZF1kBHZdH6OjLGaPc56o0=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 800358b7-e853-415f-d945-08dd7d1acbb4
+X-MS-Exchange-CrossTenant-AuthSource: BLAPR10MB5315.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Apr 2025 19:13:40.0580
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0f5cf7e9-c866-413e-7d2d-08dd7d1af3e3
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH3PEPF0000000E.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB8559
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fmgI+QgGd8oQFNjWKwLeJk3ckxbRC2TY/LqD2LungF+2UkZKWZDVXzNhwSTWaiOcVYCsvYspPy1O/N2Y1YzbILuEvd1Ew6fUN6IUt9e6z/A=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB7978
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-16_07,2025-04-15_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0 spamscore=0
+ bulkscore=0 mlxscore=0 phishscore=0 malwarescore=0 mlxlogscore=890
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502280000
+ definitions=main-2504160157
+X-Proofpoint-GUID: 1YbU89fWFovo1-NyncAqld7_nToXD-IL
+X-Proofpoint-ORIG-GUID: 1YbU89fWFovo1-NyncAqld7_nToXD-IL
 
-ISP device specific configuration is not available in ACPI. Add
-swnode graph to configure the missing device properties for the
-OV05C10 camera device supported on amdisp platform.
 
-Add support to create i2c-client dynamically when amdisp i2c
-adapter is available.
 
-Co-developed-by: Benjamin Chan <benjamin.chan@amd.com>
-Signed-off-by: Benjamin Chan <benjamin.chan@amd.com>
-Signed-off-by: Pratap Nirujogi <pratap.nirujogi@amd.com>
----
-Changes v5 -> v6:
+On 16-04-2025 22:41, Werner Sembach wrote:
+> +	for (unsigned int i = 0; i < rep->lamp_count; ++i) {
+> +		if (rep->lamp_id[i] > driver_data->lamp_count) {
+> +			hid_dbg(hdev, "Out of bounds lamp_id in lamp_multi_update_report. Skippng whole report!\n");
+> +			return sizeof(*rep);
+> +		}
 
-* Cleanup header files
-* Avoid unnecessary casts
-* Fix coding error with software_node_unregister_node_group()
-* Use i2c_client_has_driver() to validate i2c client handle
-* Address other cosmetic errors
+typo -Skippng
 
- drivers/platform/x86/amd/Kconfig    |  11 ++
- drivers/platform/x86/amd/Makefile   |   1 +
- drivers/platform/x86/amd/amd_isp4.c | 278 ++++++++++++++++++++++++++++
- 3 files changed, 290 insertions(+)
- create mode 100644 drivers/platform/x86/amd/amd_isp4.c
+> +
+> +		for (unsigned int j = i + 1; j < rep->lamp_count; ++j) {
+> +			if (rep->lamp_id[i] == rep->lamp_id[j]) {
+> +				hid_dbg(hdev, "Duplicate lamp_id in lamp_multi_update_report. Skippng whole report!\n");
+> +				return sizeof(*rep);
+> +			}
+> +		}
+> +	}
 
-diff --git a/drivers/platform/x86/amd/Kconfig b/drivers/platform/x86/amd/Kconfig
-index c3e086ea64fc..ec755b5fc93c 100644
---- a/drivers/platform/x86/amd/Kconfig
-+++ b/drivers/platform/x86/amd/Kconfig
-@@ -32,3 +32,14 @@ config AMD_WBRF
- 
- 	  This mechanism will only be activated on platforms that advertise a
- 	  need for it.
-+
-+config AMD_ISP_PLATFORM
-+	tristate "AMD ISP4 platform driver"
-+	depends on I2C && X86_64 && ACPI && AMD_ISP4
-+	help
-+	  Platform driver for AMD platforms containing image signal processor
-+	  gen 4. Provides camera sensor module board information to allow
-+	  sensor and V4L drivers to work properly.
-+
-+	  This driver can also be built as a module.  If so, the module
-+	  will be called amd_isp4.
-diff --git a/drivers/platform/x86/amd/Makefile b/drivers/platform/x86/amd/Makefile
-index c6c40bdcbded..b0e284b5d497 100644
---- a/drivers/platform/x86/amd/Makefile
-+++ b/drivers/platform/x86/amd/Makefile
-@@ -10,3 +10,4 @@ obj-$(CONFIG_AMD_PMC)		+= pmc/
- obj-$(CONFIG_AMD_HSMP)		+= hsmp/
- obj-$(CONFIG_AMD_PMF)		+= pmf/
- obj-$(CONFIG_AMD_WBRF)		+= wbrf.o
-+obj-$(CONFIG_AMD_ISP_PLATFORM)	+= amd_isp4.o
-diff --git a/drivers/platform/x86/amd/amd_isp4.c b/drivers/platform/x86/amd/amd_isp4.c
-new file mode 100644
-index 000000000000..9d1abbcc915f
---- /dev/null
-+++ b/drivers/platform/x86/amd/amd_isp4.c
-@@ -0,0 +1,278 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * AMD ISP platform driver for sensor i2-client instantiation
-+ *
-+ * Copyright 2025 Advanced Micro Devices, Inc.
-+ */
-+
-+#include <linux/i2c.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/property.h>
-+#include <linux/units.h>
-+
-+#define AMDISP_OV05C10_I2C_ADDR		0x10
-+#define AMDISP_OV05C10_PLAT_NAME	"amdisp_ov05c10_platform"
-+#define AMDISP_OV05C10_HID		"OMNI5C10"
-+#define AMDISP_OV05C10_REMOTE_EP_NAME	"ov05c10_isp_4_1_1"
-+#define AMD_ISP_PLAT_DRV_NAME		"amd-isp4"
-+
-+/*
-+ * AMD ISP platform definition to configure the device properties
-+ * missing in the ACPI table.
-+ */
-+struct amdisp_platform {
-+	const char *name;
-+	u8 i2c_addr;
-+	u8 max_num_swnodes;
-+	struct i2c_board_info board_info;
-+	struct notifier_block i2c_nb;
-+	struct i2c_client *i2c_dev;
-+	const struct software_node **swnodes;
-+};
-+
-+/* Top-level OV05C10 camera node property table */
-+static const struct property_entry ov05c10_camera_props[] = {
-+	PROPERTY_ENTRY_U32("clock-frequency", 24 * HZ_PER_MHZ),
-+	{ }
-+};
-+
-+/* Root AMD ISP OV05C10 camera node definition */
-+static const struct software_node camera_node = {
-+	.name = AMDISP_OV05C10_HID,
-+	.properties = ov05c10_camera_props,
-+};
-+
-+/*
-+ * AMD ISP OV05C10 Ports node definition. No properties defined for
-+ * ports node for OV05C10.
-+ */
-+static const struct software_node ports = {
-+	.name = "ports",
-+	.parent = &camera_node,
-+};
-+
-+/*
-+ * AMD ISP OV05C10 Port node definition. No properties defined for
-+ * port node for OV05C10.
-+ */
-+static const struct software_node port_node = {
-+	.name = "port@",
-+	.parent = &ports,
-+};
-+
-+/*
-+ * Remote endpoint AMD ISP node definition. No properties defined for
-+ * remote endpoint node for OV05C10.
-+ */
-+static const struct software_node remote_ep_isp_node = {
-+	.name = AMDISP_OV05C10_REMOTE_EP_NAME,
-+};
-+
-+/*
-+ * Remote endpoint reference for isp node included in the
-+ * OV05C10 endpoint.
-+ */
-+static const struct software_node_ref_args ov05c10_refs[] = {
-+	SOFTWARE_NODE_REFERENCE(&remote_ep_isp_node),
-+};
-+
-+/* OV05C supports one single link frequency */
-+static const u64 ov05c10_link_freqs[] = {
-+	925 * HZ_PER_MHZ,
-+};
-+
-+/* OV05C supports only 2-lane configuration */
-+static const u32 ov05c10_data_lanes[] = {
-+	1,
-+	2,
-+};
-+
-+/* OV05C10 endpoint node properties table */
-+static const struct property_entry ov05c10_endpoint_props[] = {
-+	PROPERTY_ENTRY_U32("bus-type", 4),
-+	PROPERTY_ENTRY_U32_ARRAY_LEN("data-lanes", ov05c10_data_lanes,
-+				     ARRAY_SIZE(ov05c10_data_lanes)),
-+	PROPERTY_ENTRY_U64_ARRAY_LEN("link-frequencies", ov05c10_link_freqs,
-+				     ARRAY_SIZE(ov05c10_link_freqs)),
-+	PROPERTY_ENTRY_REF_ARRAY("remote-endpoint", ov05c10_refs),
-+	{ }
-+};
-+
-+/* AMD ISP endpoint node definition */
-+static const struct software_node endpoint_node = {
-+	.name = "endpoint",
-+	.parent = &port_node,
-+	.properties = ov05c10_endpoint_props,
-+};
-+
-+/*
-+ * AMD ISP swnode graph uses 5 nodes and also its relationship is
-+ * fixed to align with the structure that v4l2 expects for successful
-+ * endpoint fwnode parsing.
-+ *
-+ * It is only the node property_entries that will vary for each platform
-+ * supporting different sensor modules.
-+ */
-+#define NUM_SW_NODES 5
-+
-+static const struct software_node *ov05c10_nodes[NUM_SW_NODES + 1] = {
-+	&camera_node,
-+	&ports,
-+	&port_node,
-+	&endpoint_node,
-+	&remote_ep_isp_node,
-+	NULL
-+};
-+
-+/* OV05C10 specific AMD ISP platform configuration */
-+static const struct amdisp_platform amdisp_ov05c10_platform_config = {
-+	.name = AMDISP_OV05C10_PLAT_NAME,
-+	.board_info = {
-+		.dev_name = "ov05c10",
-+		I2C_BOARD_INFO("ov05c10", AMDISP_OV05C10_I2C_ADDR),
-+	},
-+	.i2c_addr = AMDISP_OV05C10_I2C_ADDR,
-+	.max_num_swnodes = NUM_SW_NODES,
-+	.swnodes = ov05c10_nodes,
-+};
-+
-+static const struct acpi_device_id amdisp_sensor_ids[] = {
-+	{ AMDISP_OV05C10_HID },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(acpi, amdisp_sensor_ids);
-+
-+static inline bool is_isp_i2c_adapter(struct i2c_adapter *adap)
-+{
-+	return !strcmp(adap->owner->name, "i2c_designware_amdisp");
-+}
-+
-+static void instantiate_isp_i2c_client(struct amdisp_platform *ov05c10, struct i2c_adapter *adap)
-+{
-+	struct i2c_board_info *info = &ov05c10->board_info;
-+	struct i2c_client *i2c_dev;
-+
-+	if (ov05c10->i2c_dev)
-+		return;
-+
-+	if (!info->addr) {
-+		dev_err(&adap->dev, "invalid i2c_addr 0x%x detected\n", ov05c10->i2c_addr);
-+		return;
-+	}
-+
-+	i2c_dev = i2c_new_client_device(adap, info);
-+	if (!i2c_client_has_driver(i2c_dev)) {
-+		dev_err(&adap->dev, "error %pe registering isp i2c_client\n", i2c_dev);
-+		return;
-+	}
-+	ov05c10->i2c_dev = i2c_dev;
-+}
-+
-+static int isp_i2c_bus_notify(struct notifier_block *nb,
-+			      unsigned long action, void *data)
-+{
-+	struct amdisp_platform *ov05c10 = container_of(nb, struct amdisp_platform, i2c_nb);
-+	struct device *dev = data;
-+	struct i2c_client *client;
-+	struct i2c_adapter *adap;
-+
-+	switch (action) {
-+	case BUS_NOTIFY_ADD_DEVICE:
-+		adap = i2c_verify_adapter(dev);
-+		if (!adap)
-+			break;
-+		if (is_isp_i2c_adapter(adap))
-+			instantiate_isp_i2c_client(ov05c10, adap);
-+		break;
-+	case BUS_NOTIFY_REMOVED_DEVICE:
-+		client = i2c_verify_client(dev);
-+		if (!client)
-+			break;
-+		if (ov05c10->i2c_dev == client) {
-+			dev_dbg(&client->adapter->dev, "amdisp i2c_client removed\n");
-+			ov05c10->i2c_dev = NULL;
-+		}
-+		break;
-+	default:
-+		break;
-+	}
-+
-+	return NOTIFY_DONE;
-+}
-+
-+static struct amdisp_platform *prepare_amdisp_platform(const struct amdisp_platform *src)
-+{
-+	struct amdisp_platform *isp_ov05c10;
-+	const struct software_node **sw_nodes;
-+	struct i2c_board_info *info;
-+	int ret;
-+
-+	isp_ov05c10 = kmemdup(src, sizeof(*isp_ov05c10), GFP_KERNEL);
-+	if (!isp_ov05c10)
-+		return ERR_PTR(-ENOMEM);
-+
-+	info = &isp_ov05c10->board_info;
-+
-+	sw_nodes = (const struct software_node **)src->swnodes;
-+	ret = software_node_register_node_group(sw_nodes);
-+	if (ret)
-+		goto error_free_platform;
-+
-+	info->swnode = src->swnodes[0];
-+
-+	return isp_ov05c10;
-+
-+error_free_platform:
-+	kfree(isp_ov05c10);
-+	return ERR_PTR(ret);
-+}
-+
-+static int amd_isp_probe(struct platform_device *pdev)
-+{
-+	struct amdisp_platform *ov05c10;
-+	int ret;
-+
-+	ov05c10 = prepare_amdisp_platform(&amdisp_ov05c10_platform_config);
-+	if (IS_ERR(ov05c10))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(ov05c10),
-+				     "failed to prepare AMD ISP platform fwnode\n");
-+
-+	ov05c10->i2c_nb.notifier_call = isp_i2c_bus_notify;
-+	ret = bus_register_notifier(&i2c_bus_type, &ov05c10->i2c_nb);
-+	if (ret)
-+		goto error_free_platform;
-+
-+	platform_set_drvdata(pdev, ov05c10);
-+	return 0;
-+
-+error_free_platform:
-+	kfree(ov05c10);
-+	return ret;
-+}
-+
-+static void amd_isp_remove(struct platform_device *pdev)
-+{
-+	struct amdisp_platform *ov05c10 = platform_get_drvdata(pdev);
-+
-+	bus_unregister_notifier(&i2c_bus_type, &ov05c10->i2c_nb);
-+	i2c_unregister_device(ov05c10->i2c_dev);
-+	software_node_unregister_node_group(ov05c10->swnodes);
-+	kfree(ov05c10);
-+}
-+
-+static struct platform_driver amd_isp_platform_driver = {
-+	.driver	= {
-+		.name			= AMD_ISP_PLAT_DRV_NAME,
-+		.acpi_match_table	= amdisp_sensor_ids,
-+	},
-+	.probe	= amd_isp_probe,
-+	.remove	= amd_isp_remove,
-+};
-+
-+module_platform_driver(amd_isp_platform_driver);
-+
-+MODULE_AUTHOR("Benjamin Chan <benjamin.chan@amd.com>");
-+MODULE_AUTHOR("Pratap Nirujogi <pratap.nirujogi@amd.com>");
-+MODULE_DESCRIPTION("AMD ISP4 Platform Driver");
-+MODULE_LICENSE("GPL");
--- 
-2.43.0
 
+Thanks,
+Alok
 
