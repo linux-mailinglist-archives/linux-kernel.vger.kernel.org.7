@@ -1,63 +1,162 @@
-Return-Path: <linux-kernel+bounces-606480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0167DA8AFD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 07:44:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39FF6A8B1D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:19:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69D70189E262
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 05:44:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0C4C1900AA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 07:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D845222A7EB;
-	Wed, 16 Apr 2025 05:44:02 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096E0219A7E;
+	Wed, 16 Apr 2025 07:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FPUx7vCm"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F6DF1E5B7D;
-	Wed, 16 Apr 2025 05:43:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ECFB24B34
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 07:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744782242; cv=none; b=roVB4xqJ+qBdZ8WP/Y3h7exPvtP9d0MXcOpemVwM7Zo0IfJ2a7ty+iLNrVWf9sHSJljioxDJ6mlcJiE5x1UAiDazvi0/eyQnz28BwYAlp4rSuEYbNsq0H+UJH/XU7rExLMD8HPK3qhWMlWLTMh0KspIXLVHum9edY5hMz0OsaII=
+	t=1744787968; cv=none; b=Lx/Cn9Y2vbpBxBzCzQk5QGj6lgUH8rFaFjWXskz0pwiE4n+0xnoaigHR6dkAjs5BZcVHL8bgpKAuMYgHpv0axVpwDgQlYl/wnzISt9PiDNBkklsfnQO5A+y7wEObLAHn2C/u+RFJ1G1qaVVQWKdIpwd2ReKptJOJGl63ur/C8us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744782242; c=relaxed/simple;
-	bh=m+KgC2jJH/6Jo/NQ+qRB4Um+A/HbSoN2qQkFubW8hFU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lWKRdriETpSBGXkwQYjqy3gVXMPuyT61FcCRfHZKV37WbNFznq9YySzPEmczYE/B2Rt90eu6hvoZo13a9NZw/WRl8pbPrwBbpfhCw5R6wcCeduHUjH4H/vhSjvH+Jb5nA52buWGdClObR4RY9nSclxX7d7RUYEDDRB2MaZumexM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 9BE4168BFE; Wed, 16 Apr 2025 07:43:52 +0200 (CEST)
-Date: Wed, 16 Apr 2025 07:43:52 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	Chaitanya Kulkarni <kch@nvidia.com>, linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH][next] nvme-loop: Avoid -Wflex-array-member-not-at-end
- warning
-Message-ID: <20250416054352.GA25107@lst.de>
-References: <Z-axRObjXYjIHGQC@kspp> <a1c6fd4e-69b4-4698-bc5d-ef02cf7312e4@embeddedor.com>
+	s=arc-20240116; t=1744787968; c=relaxed/simple;
+	bh=xDDcW/yh5WwRX8GowWgfey0TjKGVFHdjmfqP2jlNGLI=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=tZ676wSdzSuUFX14IRTEH2DWUD6fMF95o7l4OApF4zCtzzoTmU9ExT5pkJ226q6c24nNwnjwu45XDLCNW9Nv5SZZpQbeJEkAojIzXbJEljeUQnDn9zS+ZCpGHH8QZ5G2O54dAJJIZcCvFJbyCRYCYEvsxywUE4fG4dctktdCX9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=FPUx7vCm; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250416071207epoutp02232bf78a2fb2608fda48c75eae193fa6~2uwMr_GXU0738707387epoutp021
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 07:12:07 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250416071207epoutp02232bf78a2fb2608fda48c75eae193fa6~2uwMr_GXU0738707387epoutp021
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1744787527;
+	bh=Sp/AfvFZrKUebiEPouVjGoI4C1RBrg4TQO9aRIbLLt8=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=FPUx7vCmIlTqq69CDYyosT1XBjqtNaTjCl5XYtUmUjRBVUz18FGkUSoCfaOhCaT9L
+	 Z4hV858n4ZDgDSf3tXFaVmm05vonR/9M/x9VC5CKjJT+iUT2TvEC3IH+pkrMUdDL+m
+	 1h7jeTYeNs/MUd5MfwjTx+PdosKxJuDcGHKN7ZII=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250416071207epcas5p40b443a883f19d8eb8abef67d0ed949f9~2uwMW78p00736407364epcas5p4r;
+	Wed, 16 Apr 2025 07:12:07 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.178]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4ZcsfF6pqPz6B9m7; Wed, 16 Apr
+	2025 07:12:05 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	2A.28.10173.5485FF76; Wed, 16 Apr 2025 16:12:05 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250416055250epcas5p25fa8223a1bfeea5583ad8ba88c881a05~2tq9ii79B1170811708epcas5p2D;
+	Wed, 16 Apr 2025 05:52:50 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250416055250epsmtrp1d98ab536639d9c9a1fd3e7e97f91e732~2tq9h3PhP0934409344epsmtrp1k;
+	Wed, 16 Apr 2025 05:52:50 +0000 (GMT)
+X-AuditID: b6c32a44-8b5fb700000027bd-76-67ff5845e610
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	7F.91.07818.1B54FF76; Wed, 16 Apr 2025 14:52:49 +0900 (KST)
+Received: from green245.sa.corp.samsungelectronics.net (unknown
+	[107.99.41.245]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250416055248epsmtip2c8f30a2c7162811596b655a2ee9db302~2tq8bhws52102421024epsmtip2d;
+	Wed, 16 Apr 2025 05:52:48 +0000 (GMT)
+From: Nitesh Shetty <nj.shetty@samsung.com>
+To: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>
+Cc: gost.dev@samsung.com, nitheshshetty@gmail.com, Nitesh Shetty
+	<nj.shetty@samsung.com>, io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] io_uring/rsrc: send exact nr_segs for fixed buffer
+Date: Wed, 16 Apr 2025 11:14:12 +0530
+Message-Id: <20250416054413.10431-1-nj.shetty@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHKsWRmVeSWpSXmKPExsWy7bCmpq5rxP90gynnDC3mrNrGaLH6bj+b
+	xc0DO5ks3rWeY7G4vGsOm8WOJ42MFtt+z2d2YPfYOesuu8fls6UefVtWMXp83iQXwBKVbZOR
+	mpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6DrlpkDdICSQlliTilQ
+	KCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8CkQK84Mbe4NC9dLy+1xMrQwMDIFKgwITuja34b
+	c8EpzoqWWT8ZGxgPsncxcnJICJhIfJx+nLmLkYtDSGA3o8SOP0vZIZxPjBKd3ZcZIZxvjBKH
+	Hu5mhWn5taCPCSKxl1HiwtM1UC2tTBKfn2wEGsbBwSagLXH6PwdIg4iAp8S5WcvBGpgFpjBK
+	HJ3YwwaSEBZwlri8ZAkTiM0ioCqxc3ofmM0rYCXxZ85xqAPlJVZvOAB2oITAMnaJm4tgznCR
+	OLwa5gthiVfHt0DZUhIv+9ug7HKJlVNWsEHYJRLP//RC2fYSraf6wQ5lFtCUWL9LHyIsKzH1
+	1DqwG5gF+CR6fz9hgojzSuyYB2MrS6xZvwBqjKTEte+NULaHxIrP/YwgtpBArMShiZ/ZJjDK
+	zkLYsICRcRWjZGpBcW56arJpgWFeajk8ppLzczcxghOWlssOxhvz/+kdYmTiYDzEKMHBrCTC
+	e878X7oQb0piZVVqUX58UWlOavEhRlNgmE1klhJNzgemzLySeEMTSwMTMzMzE0tjM0Mlcd7m
+	nS3pQgLpiSWp2ampBalFMH1MHJxSDUz2UxTmBi6K6W25mXWyKKPz4bucNeWfynrjdHQ10zbn
+	3AmoFduUtcPXc3dgyhHZf3WBiYFTWaZMnDzddHN6g87z6dJ3Vx3aarPl1I+81NPyk/eFbP+c
+	bf+d/9+v50fy95iwJUm2L9Hk+/H5bvKDEGWGiymcpdMupypovmyr+1q/VPVpWprcTQuP4Dzz
+	hw2O6uVyFyZE+qrnbvMwCp22qfZ3v/2NTcsy32YHW39W+/uem83fd4G92M9+IXbGbm5f68fz
+	/IQF15t5PDnWG2aScaOe402bqr6N07fO/KcrnmcnVsqG6Z+4uOn86V0L1z/s4nW1F7TlV+Jw
+	XegxOW/G3W6/Hwx/lnGZPy5RZ9ksrMRSnJFoqMVcVJwIAHqhccPhAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBJMWRmVeSWpSXmKPExsWy7bCSvO5G1//pBsuemlvMWbWN0WL13X42
+	i5sHdjJZvGs9x2JxedccNosdTxoZLbb9ns/swO6xc9Zddo/LZ0s9+rasYvT4vEkugCWKyyYl
+	NSezLLVI3y6BK6NrfhtzwSnOipZZPxkbGA+ydzFyckgImEj8WtDHBGILCexmlDg7XxQiLimx
+	7O8RZghbWGLlv+dA9VxANc1MEpd6frB0MXJwsAloS5z+zwFSIyLgLfF+3yWwGmaBGYwS706d
+	ZgFJCAs4S1xesgRsAYuAqsTO6RDLeAWsJP7MOQ51hLzE6g0HmCcw8ixgZFjFKJlaUJybnpts
+	WGCYl1quV5yYW1yal66XnJ+7iREcOFoaOxjffWvSP8TIxMF4iFGCg1lJhPec+b90Id6UxMqq
+	1KL8+KLSnNTiQ4zSHCxK4rwrDSPShQTSE0tSs1NTC1KLYLJMHJxSDUytHYqbmUXObtaUOJq9
+	LKP72NEST0bFXQuOX92nek0ow/y3HpdEFluGweUz/JkfLs+axyTZ/uvC9i8zxFQfSXb9n/B9
+	N0uGaImHymVVZ5/TKTefG+0NU2d8LOk5v+FZ3cPNn97Zcx9ZeIwxye5ASdrr+N86U7/8+N/G
+	I3Yx8uLDkN/pQmtspsdvO73kT5Hvc8vU5THF1yJXz5h5JC/musBUHwab85nJpWmzvHZpbdKY
+	oCx74olwUC+bhnTg9jSGCW/yTZ4cz7OY/yHombhKz9PrT5o+3mYLlTLc+Srklv55zdSvyjJ8
+	pZNj6mqP3K/efuyE+gn7h2GXnnDnJQo9njmr/eoJ7/UHInkceCZNvf5QiaU4I9FQi7moOBEA
+	/GT8v4sCAAA=
+X-CMS-MailID: 20250416055250epcas5p25fa8223a1bfeea5583ad8ba88c881a05
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250416055250epcas5p25fa8223a1bfeea5583ad8ba88c881a05
+References: <CGME20250416055250epcas5p25fa8223a1bfeea5583ad8ba88c881a05@epcas5p2.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a1c6fd4e-69b4-4698-bc5d-ef02cf7312e4@embeddedor.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Tue, Apr 15, 2025 at 06:20:03PM -0600, Gustavo A. R. Silva wrote:
-> Hi all,
->
-> Friendly ping: who can take this patch, please? :)
+Sending exact nr_segs, avoids bio split check and processing in
+block layer, which takes around 5%[1] of overall CPU utilization.
 
-This will go into the 6.16 nvme branch as soon as it opens.
+In our setup, we see overall improvement of IOPS from 7.15M to 7.65M [2]
+and 5% less CPU utilization.
+
+[1]
+     3.52%  io_uring         [kernel.kallsyms]     [k] bio_split_rw_at
+     1.42%  io_uring         [kernel.kallsyms]     [k] bio_split_rw
+     0.62%  io_uring         [kernel.kallsyms]     [k] bio_submit_split
+
+[2]
+sudo taskset -c 0,1 ./t/io_uring -b512 -d128 -c32 -s32 -p1 -F1 -B1 -n2
+-r4 /dev/nvme0n1 /dev/nvme1n1
+
+Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
+---
+ io_uring/rsrc.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+index b36c8825550e..6fd3a4a85a9c 100644
+--- a/io_uring/rsrc.c
++++ b/io_uring/rsrc.c
+@@ -1096,6 +1096,9 @@ static int io_import_fixed(int ddir, struct iov_iter *iter,
+ 			iter->iov_offset = offset & ((1UL << imu->folio_shift) - 1);
+ 		}
+ 	}
++	iter->nr_segs = (iter->bvec->bv_offset + iter->iov_offset +
++		iter->count + ((1UL << imu->folio_shift) - 1)) /
++		(1UL << imu->folio_shift);
+ 
+ 	return 0;
+ }
+
+base-commit: 834a4a689699090a406d1662b03affa8b155d025
+-- 
+2.43.0
 
 
