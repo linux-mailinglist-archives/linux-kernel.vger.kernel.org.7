@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-607641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DACEA90902
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:30:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F832A90904
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:30:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEFF244681E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:30:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABC1B5A0639
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:30:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D29AA211A38;
-	Wed, 16 Apr 2025 16:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD50212D62;
+	Wed, 16 Apr 2025 16:29:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ITjw4ExO";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ak1Llw4o"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FYiL1+TY";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4YQN6KEf"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DAB02116ED
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04BAF21170B
 	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 16:29:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744820970; cv=none; b=c0sk7rABWRDuLo15Kp4OfyD5b5H5KT0R7XKcJq6Qmo/zRs81YsD5D261W7441/Gn8sGt5aSrsDAAFZt/mtHz80X13JA2D+pxMJQREBsyA4hlSJbnheGdOAuA9lel0gsrhdzAjj+15cnb81maiCez4+4UjfkfYF/40Yo+23pgW/U=
+	t=1744820970; cv=none; b=a17uw9BjW8Tx+7IRqUpNz84Q8iqR/V5YOvG52O8ZBr+1PP3IDWq7/Xa/Y2WMNo5t+eyyWdJKDMohn6HRq2R9Lw+1oPyMrAKkkTIQpm0cqBmwy5Ncx3mdn/Qp6QlyqnHnDKhLDQlW5pFgRVKgtTPOq7pAIWgPioQbVQo5lS+8jKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1744820970; c=relaxed/simple;
-	bh=gZDykHfMqby7gxGce8x+ayT1Qdrm+fVyGpKvFiZf75A=;
+	bh=LqNzPbHVr/YdzrkJlwIphlHRZxx/nS6ZHMaT8AIKgss=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dgiKug3Uj+MSfPgzrKLX7WuLQrJyt8yBKAuCRd+6Wse1rfDA42DCDJU0ncwkokK3HsO/lr/tSrRYGcVLq0DOpGsWuQFhRWMsgWXLOoHHnAbF0mTVNSAVttzxMB4j4cfGmvG/4fTwzpOajKkyNCSbRlXiHRVadifFsnyl1Z1RkbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ITjw4ExO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ak1Llw4o; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=CJT1e1sl3WGvBnzX5EuQ61CuC1/f2EUrljDeC+76Euit6bMGEJZIOjo9nM18YirOee7jf7r+OcWReRG0FLzTkfhiqUsj5CRWT6b1mXaBUDL8uYu+gBnsVIPxE8Rj26PL3xwt4xYYKUlj7+syH3wjiK8TxdqxPQ0ChZCwkn5KUF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FYiL1+TY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4YQN6KEf; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
@@ -38,21 +38,21 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3jgr1wk+mD/xSNbvenCkg/mlo+/bFFKzD/3SVlMGOxc=;
-	b=ITjw4ExOlIk6Ey+wzASnp9LHCpswtwfHHAsetd2V94ffYkZFmPCd1B7NoXYqy9QykiJUV5
-	O0/gq3YJoYJbZ65Q+qumMJflTwNdK+CQjN4zJ7hfq3Ixq1MfDRgH8L/NTzMFFqt/bB0eHF
-	5tTVCPbW1XPPN808Qul/qaDDozGBQwcgrC0MajqCePmI8j7yYK4MmbZ8K3FCAy0yHuPH/L
-	R+0zrOE9CwN2OK92EjpDXMCmqtR429WPrRTZBnnTdZI/hzVFJB3aEMiH0HA3H5j8aavF4q
-	d0COd/DdtrUlVBYGRFQ7jOWYSJ91QTB6GPuJbu30rXOFXSCnkumxBg/hbS0dQQ==
+	bh=Ixf69cvPKcltCaDhuFinxelm76iWpbIm6Qn87X50Bzo=;
+	b=FYiL1+TYQ8tEQe9ZtUrNyXWmN/WiT0weoz/rxxGcm7E+XGSTvSyoKSsnmA1Atb1Y0w4dPA
+	jqBwqXbAzseEwenTHPpODXE/vtTgaEPBHGhp8GiurcDIbM6oTPjl33V0H6/Q398W7ZvfIf
+	uG4QsTZJju2ZSpsFTzSt83wC9idmjZBZ2nRijvyQJWeSPf7xjTRLgB280+kHNpGn2Hb56Y
+	3jrGHJa+vCZdLhdl07YZoKs/kSsgCBS2laBBJ4SmP7jm5gORLsVNP3dHmTMQGkQrpjJKP1
+	0uu9HSQ5F/JHPgRbL6tsVs8HGOoNAVgq95qlSmiSIIOc7C1eDI0yE0w4KIO4EA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1744820966;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3jgr1wk+mD/xSNbvenCkg/mlo+/bFFKzD/3SVlMGOxc=;
-	b=Ak1Llw4om2VFqR376+gNgYWtb5v9jjBBRYopdMs36usbcP2D/56NbdK5QHjgY8KuFwnJvz
-	2qM6XKZOwd1Pb5AA==
+	bh=Ixf69cvPKcltCaDhuFinxelm76iWpbIm6Qn87X50Bzo=;
+	b=4YQN6KEfhrxlBEtSSaBsINXO0S5yFl8y0Vkf2hGlHqZ/K/ENUN5VYzAZ34OHTMY113CWuF
+	VkWkt7hr42Yi/PCg==
 To: linux-kernel@vger.kernel.org
 Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
 	Darren Hart <dvhart@infradead.org>,
@@ -63,10 +63,15 @@ Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Valentin Schneider <vschneid@redhat.com>,
 	Waiman Long <longman@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	linux-mm@kvack.org,
+	Christoph Hellwig <hch@lst.de>,
 	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH v12 01/21] rcuref: Provide rcuref_is_dead()
-Date: Wed, 16 Apr 2025 18:29:01 +0200
-Message-ID: <20250416162921.513656-2-bigeasy@linutronix.de>
+Subject: [PATCH v12 02/21] mm: Add vmalloc_huge_node()
+Date: Wed, 16 Apr 2025 18:29:02 +0200
+Message-ID: <20250416162921.513656-3-bigeasy@linutronix.de>
 In-Reply-To: <20250416162921.513656-1-bigeasy@linutronix.de>
 References: <20250416162921.513656-1-bigeasy@linutronix.de>
 Precedence: bulk
@@ -77,70 +82,119 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 
-rcuref_read() returns the number of references that are currently held.
-If 0 is returned then it is not safe to assume that the object ca be
-scheduled for deconstruction because it is marked DEAD. This happens if
-the return value of rcuref_put() is ignored and assumptions are made.
+From: Peter Zijlstra <peterz@infradead.org>
 
-If 0 is returned then the counter transitioned from 0 to RCUREF_NOREF.
-If rcuref_put() did not return to the caller then the counter did not
-yet transition from RCUREF_NOREF to RCUREF_DEAD. This means that there
-is still a chance that the counter will transition from RCUREF_NOREF to
-0 meaning it is still valid and must not be deconstructed. In this brief
-window rcuref_read() will return 0.
+To enable node specific hash-tables using huge pages if possible.
 
-Provide rcuref_is_dead() to determine if the counter is marked as
-RCUREF_DEAD.
+[bigeasy: use __vmalloc_node_range_noprof(), add nommu bits, inline
+vmalloc_huge]
 
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Uladzislau Rezki <urezki@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>
+Cc: linux-mm@kvack.org
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- include/linux/rcuref.h | 22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
+ include/linux/vmalloc.h |  9 +++++++--
+ mm/nommu.c              | 18 +++++++++++++++++-
+ mm/vmalloc.c            | 11 ++++++-----
+ 3 files changed, 30 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/rcuref.h b/include/linux/rcuref.h
-index 6322d8c1c6b42..2fb2af6d98249 100644
---- a/include/linux/rcuref.h
-+++ b/include/linux/rcuref.h
-@@ -30,7 +30,11 @@ static inline void rcuref_init(rcuref_t *ref, unsigned i=
-nt cnt)
-  * rcuref_read - Read the number of held reference counts of a rcuref
-  * @ref:	Pointer to the reference count
-  *
-- * Return: The number of held references (0 ... N)
-+ * Return: The number of held references (0 ... N). The value 0 does not
-+ * indicate that it is safe to schedule the object, protected by this refe=
-rence
-+ * counter, for deconstruction.
-+ * If you want to know if the reference counter has been marked DEAD (as
-+ * signaled by rcuref_put()) please use rcuread_is_dead().
-  */
- static inline unsigned int rcuref_read(rcuref_t *ref)
- {
-@@ -40,6 +44,22 @@ static inline unsigned int rcuref_read(rcuref_t *ref)
- 	return c >=3D RCUREF_RELEASED ? 0 : c + 1;
- }
+diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
+index 31e9ffd936e39..de95794777ad6 100644
+--- a/include/linux/vmalloc.h
++++ b/include/linux/vmalloc.h
+@@ -168,8 +168,13 @@ void *__vmalloc_node_noprof(unsigned long size, unsign=
+ed long align, gfp_t gfp_m
+ 		int node, const void *caller) __alloc_size(1);
+ #define __vmalloc_node(...)	alloc_hooks(__vmalloc_node_noprof(__VA_ARGS__))
 =20
-+/**
-+ * rcuref_is_dead -	Check if the rcuref has been already marked dead
-+ * @ref:		Pointer to the reference count
-+ *
-+ * Return: True if the object has been marked DEAD. This signals that a pr=
-evious
-+ * invocation of rcuref_put() returned true on this reference counter mean=
-ing
-+ * the protected object can safely be scheduled for deconstruction.
-+ * Otherwise, returns false.
-+ */
-+static inline bool rcuref_is_dead(rcuref_t *ref)
+-void *vmalloc_huge_noprof(unsigned long size, gfp_t gfp_mask) __alloc_size=
+(1);
+-#define vmalloc_huge(...)	alloc_hooks(vmalloc_huge_noprof(__VA_ARGS__))
++void *vmalloc_huge_node_noprof(unsigned long size, gfp_t gfp_mask, int nod=
+e) __alloc_size(1);
++#define vmalloc_huge_node(...)	alloc_hooks(vmalloc_huge_node_noprof(__VA_A=
+RGS__))
++
++static inline void *vmalloc_huge(unsigned long size, gfp_t gfp_mask)
 +{
-+	unsigned int c =3D atomic_read(&ref->refcnt);
-+
-+	return (c >=3D RCUREF_RELEASED) && (c < RCUREF_NOREF);
++	return vmalloc_huge_node(size, gfp_mask, NUMA_NO_NODE);
 +}
-+
- extern __must_check bool rcuref_get_slowpath(rcuref_t *ref);
+=20
+ extern void *__vmalloc_array_noprof(size_t n, size_t size, gfp_t flags) __=
+alloc_size(1, 2);
+ #define __vmalloc_array(...)	alloc_hooks(__vmalloc_array_noprof(__VA_ARGS_=
+_))
+diff --git a/mm/nommu.c b/mm/nommu.c
+index 617e7ba8022f5..70f92f9a7fab3 100644
+--- a/mm/nommu.c
++++ b/mm/nommu.c
+@@ -200,7 +200,23 @@ void *vmalloc_noprof(unsigned long size)
+ }
+ EXPORT_SYMBOL(vmalloc_noprof);
+=20
+-void *vmalloc_huge_noprof(unsigned long size, gfp_t gfp_mask) __weak __ali=
+as(__vmalloc_noprof);
++/*
++ *	vmalloc_huge_node  -  allocate virtually contiguous memory, on a node
++ *
++ *	@size:		allocation size
++ *	@gfp_mask:	flags for the page level allocator
++ *	@node:          node to use for allocation or NUMA_NO_NODE
++ *
++ *	Allocate enough pages to cover @size from the page level
++ *	allocator and map them into contiguous kernel virtual space.
++ *
++ *	Due to NOMMU implications the node argument and HUGE page attribute is
++ *	ignored.
++ */
++void *vmalloc_huge_node_noprof(unsigned long size, gfp_t gfp_mask, int nod=
+e)
++{
++	return __vmalloc_noprof(size, gfp_mask);
++}
+=20
+ /*
+  *	vzalloc - allocate virtually contiguous memory with zero fill
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 3ed720a787ecd..8b9f6d3c099dd 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -3943,9 +3943,10 @@ void *vmalloc_noprof(unsigned long size)
+ EXPORT_SYMBOL(vmalloc_noprof);
 =20
  /**
+- * vmalloc_huge - allocate virtually contiguous memory, allow huge pages
++ * vmalloc_huge_node - allocate virtually contiguous memory, allow huge pa=
+ges
+  * @size:      allocation size
+  * @gfp_mask:  flags for the page level allocator
++ * @node:	    node to use for allocation or NUMA_NO_NODE
+  *
+  * Allocate enough pages to cover @size from the page level
+  * allocator and map them into contiguous kernel virtual space.
+@@ -3954,13 +3955,13 @@ EXPORT_SYMBOL(vmalloc_noprof);
+  *
+  * Return: pointer to the allocated memory or %NULL on error
+  */
+-void *vmalloc_huge_noprof(unsigned long size, gfp_t gfp_mask)
++void *vmalloc_huge_node_noprof(unsigned long size, gfp_t gfp_mask, int nod=
+e)
+ {
+ 	return __vmalloc_node_range_noprof(size, 1, VMALLOC_START, VMALLOC_END,
+-				    gfp_mask, PAGE_KERNEL, VM_ALLOW_HUGE_VMAP,
+-				    NUMA_NO_NODE, __builtin_return_address(0));
++					   gfp_mask, PAGE_KERNEL, VM_ALLOW_HUGE_VMAP,
++					   node, __builtin_return_address(0));
+ }
+-EXPORT_SYMBOL_GPL(vmalloc_huge_noprof);
++EXPORT_SYMBOL_GPL(vmalloc_huge_node_noprof);
+=20
+ /**
+  * vzalloc - allocate virtually contiguous memory with zero fill
 --=20
 2.49.0
 
