@@ -1,143 +1,117 @@
-Return-Path: <linux-kernel+bounces-606969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9C7CA8B634
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 11:58:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCEE8A8B622
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 11:57:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44F0B3AC545
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:57:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CF9544458C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:57:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D29A243378;
-	Wed, 16 Apr 2025 09:56:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E187D2417E0;
+	Wed, 16 Apr 2025 09:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NtrunQMv"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m9QDIN57"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E46F5238D3B;
-	Wed, 16 Apr 2025 09:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A91123AE79;
+	Wed, 16 Apr 2025 09:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744797415; cv=none; b=FzMCnU0Ycsm5u6JsJN8GS0MTcVxfv2w1M9WeyJWmb6K+QS2SdiNwqCbvOFAdlWs9kTr7jZYw3Z8CmMfsSXVrJzN/A8JQHT1+pY+5+P4tkTjvWP3qvvTyrrfj4GRtkh+F1SJamS0zkXVS6gGEveKOjZAWeUVFgUCibmCU4h7x+Q8=
+	t=1744797357; cv=none; b=H52uFpG8+qbibzWRENYC+lwqnroaKTq22oI/wCEP7huVBY4gz77hEpOiWqzSaB6tWR2n+VBmwUfTI5dZJwScwQIPT5kJqx4sJISfvzOMn8L1W/mupTY+gIfgAYiswAsZe3B30urg3u3aJb9veJwGeQeafS6jOHMbTWoKOZXGZJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744797415; c=relaxed/simple;
-	bh=gLZPBb6tb6Bvp+DJa0qiKRTWFJZiDmh1mf/1qkujX5k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KCSFs/sw9v60PkP3hjoVewefxC+Y0N2dJiRwGenbaU3XKxbgoJLbaCvN/lQMTRSrDtgca/HZ94xchqSKDeW4zf51RvmjGqGiPiFgb31do2tHS3qu6S5MGupLdQFQ0Z59+KBagObSAL60Pg3y2GnD0EPU8S1g914y17opuc9Lo0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NtrunQMv; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744797414; x=1776333414;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=gLZPBb6tb6Bvp+DJa0qiKRTWFJZiDmh1mf/1qkujX5k=;
-  b=NtrunQMvOrEfhcnSoFc/MzjkAXXYJAcTy02quE0DASZE/clU1XEiJw0j
-   1a6kLg0+kS+XtD9YouekgUvECsavNn1zCnrkBYMn9mgrZGfk6jI4FTWH9
-   WAqwa79FFAAmM73MbR3KGFmO59wwf0tcc4bhvFsPwSlHWWzY2Qs/s8EAU
-   kGRaqGvfhIEgtf2x4XVXTMv1tECcpbkq0jw4uX7OVollyxyyiIH5ILELH
-   QukAeL8+3gbfsZyhpgeAFBm975GGA10LQg9G/mkTNJE6iPFZjdhKVcNdY
-   kah0Udeo2EJQyDxraPrmFUyKcycg5289EGDvIlaty+U/+NOfyLu+0UJJI
-   g==;
-X-CSE-ConnectionGUID: ZKOdaeSyT/SkXIIepuwd2A==
-X-CSE-MsgGUID: riVQAYtsSRWGVM6I8rYbxw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="63743647"
-X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
-   d="scan'208";a="63743647"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 02:56:52 -0700
-X-CSE-ConnectionGUID: 4xBP6AaZQgqnJZzDvQ1BRA==
-X-CSE-MsgGUID: KX3wyM63RrSyLnk3GOZE1Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
-   d="scan'208";a="131323324"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa009.fm.intel.com with ESMTP; 16 Apr 2025 02:56:50 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 3FB288D1; Wed, 16 Apr 2025 12:56:47 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
+	s=arc-20240116; t=1744797357; c=relaxed/simple;
+	bh=eDDs43dEmiFVlnLk6aV1gwYevt0KcicPW6D8DnobW7w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HlUU4HfLIzp6IFHbtlDmXVAHLz5ZVVgodbAqXZREHKZc2/xPm2NzNgoMAyoIobew7DFW/N3c7nbdMIODIWiqllVb7YFDQ3b21jfHlZR7pZiR2KIP99RdgHNhlzKdgG0MN0bw9ms0ZfKfw71GxhKzLBe+aNohdOdv6SP5GM2mPBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m9QDIN57; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43cf0d787eeso75377495e9.3;
+        Wed, 16 Apr 2025 02:55:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744797354; x=1745402154; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=CFOCTI/pVmuX8N5R8+4QyY9BGqjF4fNy/dpUPF7Hk3w=;
+        b=m9QDIN57NI/RJsXogHV97ps0sZc9p/bN3lBVaJFDVLP+MZp8q78XD2gfrAdpPtN01I
+         kAQ/93uYtU8TMCtYjl8B99fLMJPFwCiYZ+kYfbNlUXCnVMz9nTI20SgyEh2j2v1kAOno
+         payQtDhkpHtVRIsKLJGSGOz+tu7DuTDz6Owoj/fiZs8aRg5cMEXY8LVBKkjk86UqkEuH
+         eDP2L73RLMh/EyjpL0P0yhf9gv8lLasMyU0iQmsdv8J0JPnuGCKV2bWyO98dT+297ASO
+         Y+QDGy2GH2SqWbpaG5qsHpphrzxdfFIzm5KnH4yy+1QMyIBBZSrV/fTnppzZ0eMXTfFG
+         md3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744797354; x=1745402154;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CFOCTI/pVmuX8N5R8+4QyY9BGqjF4fNy/dpUPF7Hk3w=;
+        b=YaR5nKUsvvjeE8iH9aTPP0RATWvtEPKBj/5D0aVU9b2/TawDNrZ7Ruz8hupubls9WS
+         CMML6iYuDVcK54OUUgVrHM4VDd4GRdU0ZojwV+JzeB1y48XcrQiI2EpdDA0hd8qU3Zfk
+         WCXYqT/idilYnmT/u2mB1N1yf2IXrCCRhH9qemgCAcOQCuSQQz2TJznsKSZQVr0tlfNl
+         +EDIKgKE9J/S0v8pOE8ioxBVWeR4ACEnfwIKevdzCtzM0AkCBAbZH41YFtBPvETYgPxR
+         3fuTj6wTo2lHuqzBG5OYwO6tZXidzSVc42qfdRZJZoE7/kwbQnOcPfc6cYfNHjokSQHt
+         fVwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW7eOJiZiG973eZTpLiByZpYlISjwxAOXNcNbjos5rh+KJ/mvAuAGL4H+Rh0S/IAeVMaNKpV7vwnTpkqfM=@vger.kernel.org, AJvYcCXyvOfUoJsM2MWKmEEtry5G+kGmPC7Uef5CJ/mVCJa+Fw84IqgMpJTwfbGjS1iymCVHeLGjlp9+YoTg7sCm@vger.kernel.org
+X-Gm-Message-State: AOJu0YwM9IuAy7WKGswnmimTctAxoOyGdE7OVMd022Xp2MPOcA9pFg3I
+	vFaW+pnw6tAuOvDMmKWkkNVqqommXMJVCWODwmk69PB0OGGweuZr
+X-Gm-Gg: ASbGncv+XeKiiD5Erymuye8RmZFdmJNQYcJ+kqpqe0jWxMDhwlCmYS/KECTOwnoYqDG
+	BqndpWMQ3NlzUNsEgUXnJ1QHdYXYwWFuZABXRGJQLEgMDCtR2NCWfp338d/YWrM+zCmHrWXgQR8
+	b/vsVYee1gljE39QU0enb6YxOA6lGlkeKQr63hQNts8PELcg8wwlRe7vND2EgVTaRR2BCA3saZR
+	7PApykEBUlb2kc0HWGk3yUEeY8XUzDqKqenzmxzAaIGPro5AZKIicOXnfglT1XUicFjGxubei2M
+	aKvGMt9HbnUzGrPMR/XrcpGMHfZuPqOCjPHt3P+uBoMsmr8ylvzA
+X-Google-Smtp-Source: AGHT+IFakZCLJe9/p0oIcP9EVvp0XPStGbEzGdVK/8A3vzfhtwwJ3pEkUIOAa93Xu3jpLcKogUzb/g==
+X-Received: by 2002:a05:600c:1994:b0:439:6118:c188 with SMTP id 5b1f17b1804b1-4405d638b04mr9926565e9.19.1744797353330;
+        Wed, 16 Apr 2025 02:55:53 -0700 (PDT)
+Received: from Red ([2a01:cb1d:898:ab00:4a02:2aff:fe07:1efc])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4405b4f3227sm16102365e9.20.2025.04.16.02.55.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Apr 2025 02:55:51 -0700 (PDT)
+Date: Wed, 16 Apr 2025 11:55:48 +0200
+From: Corentin Labbe <clabbe.montjoie@gmail.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Ovidiu Panait <ovidiu.panait.oss@gmail.com>,
+	linux-crypto@vger.kernel.org, davem@davemloft.net,
 	linux-kernel@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 8/8] gpiolib: Remove redundant assignment of return variable
-Date: Wed, 16 Apr 2025 12:55:16 +0300
-Message-ID: <20250416095645.2027695-9-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250416095645.2027695-1-andriy.shevchenko@linux.intel.com>
-References: <20250416095645.2027695-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH 1/4] crypto: img-hash - use API helpers to setup fallback
+ request
+Message-ID: <Z_9-pJ_lXA3AzjGC@Red>
+References: <20250407123604.2109561-1-ovidiu.panait.oss@gmail.com>
+ <Z_9ie2KwYhCaK_mB@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z_9ie2KwYhCaK_mB@gondor.apana.org.au>
 
-In some functions the returned variable is assigned to 0 and then
-reassigned to the actual value. Remove redundant assignments.
+Le Wed, Apr 16, 2025 at 03:55:39PM +0800, Herbert Xu a écrit :
+> On Mon, Apr 07, 2025 at 03:36:01PM +0300, Ovidiu Panait wrote:
+> > Rather than setting up the fallback request by hand, use
+> > ahash_request_set_callback() and ahash_request_set_crypt() API helpers
+> > to properly setup the new request.
+> > 
+> > This also ensures that the completion callback is properly passed down
+> > to the fallback algorithm, which avoids a crash with async fallbacks.
+> > 
+> > Signed-off-by: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
+> > ---
+> >  drivers/crypto/img-hash.c | 41 ++++++++++++++++++++++-----------------
+> >  1 file changed, 23 insertions(+), 18 deletions(-)
+> 
+> Patches 1-2,4 applied.  Thanks.
 
-In one case make it more clear that the assignment is not needed.
+You can merge sun8i-ss patch, it is ok.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpiolib.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+Could you add my tested-by on rk3328 patch also ?
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 7a669218e42c..c787c9310e85 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1015,7 +1015,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
- 	struct gpio_device *gdev;
- 	unsigned int desc_index;
- 	int base = 0;
--	int ret = 0;
-+	int ret;
- 
- 	/* Only allow one set() and one set_multiple(). */
- 	if ((gc->set && gc->set_rv) ||
-@@ -1040,11 +1040,10 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
- 
- 	device_set_node(&gdev->dev, gpiochip_choose_fwnode(gc));
- 
--	gdev->id = ida_alloc(&gpio_ida, GFP_KERNEL);
--	if (gdev->id < 0) {
--		ret = gdev->id;
-+	ret = ida_alloc(&gpio_ida, GFP_KERNEL);
-+	if (ret < 0)
- 		goto err_free_gdev;
--	}
-+	gdev->id = ret;
- 
- 	ret = dev_set_name(&gdev->dev, GPIOCHIP_NAME "%d", gdev->id);
- 	if (ret)
-@@ -3068,7 +3067,7 @@ int gpiod_direction_output_nonotify(struct gpio_desc *desc, int value)
-  */
- int gpiod_enable_hw_timestamp_ns(struct gpio_desc *desc, unsigned long flags)
- {
--	int ret = 0;
-+	int ret;
- 
- 	VALIDATE_DESC(desc);
- 
-@@ -3101,7 +3100,7 @@ EXPORT_SYMBOL_GPL(gpiod_enable_hw_timestamp_ns);
-  */
- int gpiod_disable_hw_timestamp_ns(struct gpio_desc *desc, unsigned long flags)
- {
--	int ret = 0;
-+	int ret;
- 
- 	VALIDATE_DESC(desc);
- 
--- 
-2.47.2
-
+Thanks
 
