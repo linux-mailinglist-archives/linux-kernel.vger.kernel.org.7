@@ -1,119 +1,121 @@
-Return-Path: <linux-kernel+bounces-606496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCDF5A8B002
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 08:08:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62A20A8B018
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 08:12:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 662A13B163C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 06:08:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA8253BE3E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 06:11:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A337B22B8B0;
-	Wed, 16 Apr 2025 06:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185E322AE7E;
+	Wed, 16 Apr 2025 06:11:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jkHC0Wyt"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XNQ3CK4Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B4A9221F1E
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 06:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746613597A;
+	Wed, 16 Apr 2025 06:11:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744783728; cv=none; b=DM7BDe/BDwbTh8FsWbPCvD77/4Cg4xbaSB4Ak+w8EWU6eb/7nH9DDfFrqpgugFUAdBAAaV2aQlzxZG3uEzAs6E7Fl8k9tfBHULeZYdmkasZL3nrzVtaOKgIqMuCnxVmpPIEkt5q3909VFDRl05unfaXpAFx5f/jLvGrMk1WnXLw=
+	t=1744783917; cv=none; b=XXYSWdLUpbU/aAQWWC6mw0jmerdXdLREEfqrVrjtH8iboBaTv0IW4fvs1KqtZXgzDWckkGIjxno/EC9OXekk3yGYLIdyPsya+wXEZ68fLO2JQ+8HR6ZGdOnggECIbJmSIK/6ROB/G6VD1qkFG5n3pxjqzQY3DFcm68K5R44Fbtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744783728; c=relaxed/simple;
-	bh=S1hfwxWvddOHrR2LujD9OnylZrLvihKEOzv4l90MvuQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ObjSYoiMQ6eMbgxnpiD2Q63+kv15G9DSnoXi/wEYpXz0dLuu0DbHzHxDBh+AgI+0BInIlgrYHwuD7AOhmwOVZ8sktlSAJMLTlMBsZ21BwJT14DS/gP2AKXyQinOANXi8ZaGOhg9jdTckv5qlVmkzhEMaUuaGIiVs1Oj8KG8E0rM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jkHC0Wyt; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <07f93a57-6459-46e2-8ee3-e0328dd67967@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1744783714;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sDlzw9n3dMf2bJtTmXN0wtIQIhVbVUue8+JMQPzg3aY=;
-	b=jkHC0WytKU6OpaEV1nK9F6q3mzOB80piLbfVb3zy+c0gMXjhYmdstAHQZdZWz5aez3KDeT
-	vfxMbnv7mvcZyUVVJIOQJluUNrWcrSy95MZVAs+ZfQzpI2h/yLuPScMA6PJqGlLqDDXBe3
-	pMRgsp5raEOvMdvAvTrDK9ShTl57ODk=
-Date: Wed, 16 Apr 2025 14:08:25 +0800
+	s=arc-20240116; t=1744783917; c=relaxed/simple;
+	bh=Ux+wyNixqbSXxuEjmcaLENj8uIw5/U9ErqcvHgV9HaQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bIceQZwzmNJg+fEUhFG5Kn9jS2TgF3Tdz8iisGC58PQ5qHty4GrCD/y4JM7fump0JN8Ts3vU1GsmUINec9KSwSSDoVZxSF8oQxhLERK3XZnEHmMalItqrYUB7WaQaL3LdHdYq7ZtYg05cPOIjvavgmxrWdWH1L73tVtiRSmdkIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XNQ3CK4Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2E6FC4CEE2;
+	Wed, 16 Apr 2025 06:11:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744783916;
+	bh=Ux+wyNixqbSXxuEjmcaLENj8uIw5/U9ErqcvHgV9HaQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XNQ3CK4YwPP1CZEQN8BRnsixRhPe7Ikh7H7wKC0u4muW/bY6YaWFZhCGQ90t/KM6g
+	 Dg3qav/HR+STQaEBYuRDNJ7HWQ312ClAxuVTEpSkCSHdihBRMQVYzMh8Dr1/olUs1G
+	 iL9rHUYt1O0YDh9vBtewIMh60ksPb1PPeVFr8oEzmN/PHa6xU7DyYX33HAiWrUFyjF
+	 B3p7mydK1qdEJeLmXV6jyQQPucegiUS1ICcjnS9QKJaEK0NCAMl06J3BWsMbd3desa
+	 6bk+frmt3G4zky1mi3KRvZ6ZDX1fy+Hlca6Jnnuxe7dt5/LQmtW3zXVUgovvjyE3ex
+	 QfLQ3Qr8YBcrA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1u4w02-000000004GE-3HYz;
+	Wed, 16 Apr 2025 08:11:54 +0200
+Date: Wed, 16 Apr 2025 08:11:54 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Dmitry Nikiforov <Dm1tryNk@yandex.ru>
+Cc: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+Subject: Re: [PATCH v2] media: davinci: vpif: Fix memory leaks in probe error
+ path
+Message-ID: <Z_9KKrbKFDekGLOw@hovoldconsulting.com>
+References: <20250415223825.3777-1-Dm1tryNk@yandex.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [RFC PATCH 00/11] pcache: Persistent Memory Cache for Block
- Devices
-To: Jens Axboe <axboe@kernel.dk>, Dan Williams <dan.j.williams@intel.com>,
- hch@lst.de, gregory.price@memverge.com, John@groves.net,
- Jonathan.Cameron@huawei.com, bbhushan2@marvell.com, chaitanyak@nvidia.com,
- rdunlap@infradead.org
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-cxl@vger.kernel.org, linux-bcache@vger.kernel.org,
- nvdimm@lists.linux.dev
-References: <20250414014505.20477-1-dongsheng.yang@linux.dev>
- <67fe9ea2850bc_71fe294d8@dwillia2-xfh.jf.intel.com.notmuch>
- <15e2151a-d788-48eb-8588-1d9a930c64dd@kernel.dk>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Dongsheng Yang <dongsheng.yang@linux.dev>
-In-Reply-To: <15e2151a-d788-48eb-8588-1d9a930c64dd@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250415223825.3777-1-Dm1tryNk@yandex.ru>
 
+On Wed, Apr 16, 2025 at 01:38:20AM +0300, Dmitry Nikiforov wrote:
+> If `of_graph_get_endpoint_by_regs()` fails, the probe function currently
+> returns 0, skipping cleanup. 
+> 
+> Also, if an error occurs during the initialization of `pdev_display`,
+> the allocated platform device `pdev_capture` is not released properly,
+> leading to a memory leak.
+> 
+> Adjust error path handling to fix the leaks.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> Fixes: 43acb728bbc4 ("media: davinci: vpif: fix use-after-free on driver unbind")
+> Signed-off-by: Dmitry Nikiforov <Dm1tryNk@yandex.ru>
+> ---
+> v2: also fix of_graph_get_endpoint_by_regs() error path (Johan Hovold).
+>  drivers/media/platform/ti/davinci/vpif.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/ti/davinci/vpif.c b/drivers/media/platform/ti/davinci/vpif.c
+> index a81719702a22..4839e34e5d29 100644
+> --- a/drivers/media/platform/ti/davinci/vpif.c
+> +++ b/drivers/media/platform/ti/davinci/vpif.c
+> @@ -467,7 +467,8 @@ static int vpif_probe(struct platform_device *pdev)
+>  	 */
+>  	endpoint = of_graph_get_endpoint_by_regs(pdev->dev.of_node, 0, -1);
+>  	if (!endpoint)
+> -		return 0;
+> +		ret = -ENODEV;
+> +		goto err_put_rpm;
 
-On 2025/4/16 9:04, Jens Axboe wrote:
-> On 4/15/25 12:00 PM, Dan Williams wrote:
->> Thanks for making the comparison chart. The immediate question this
->> raises is why not add "multi-tree per backend", "log structured
->> writeback", "readcache", and "CRC" support to dm-writecache?
->> device-mapper is everywhere, has a long track record, and enhancing it
->> immediately engages a community of folks in this space.
-> Strongly agree.
+This looks wrong, since you're changing an early success path into a
+probe failure.
 
+Either way, that would need to go into a separate patch.
 
-Hi Dan and Jens,
-Thanks for your reply, that's a good question.
+I was referring to the error handling for the pdev_display allocation
+earlier, which also needs to deregister the capture device on errors
+(and that can be done as part of this patch).
 
-     1. Why not optimize within dm-writecache?
-     From my perspective, the design goal of dm-writecache is to be a 
-minimal write cache. It achieves caching by dividing the cache device 
-into n blocks, each managed by a wc_entry, using a very simple 
-management mechanism. On top of this design, it's quite difficult to 
-implement features like multi-tree structures, CRC, or log-structured 
-writeback. Moreover, adding such optimizations—especially a read 
-cache—would deviate from the original semantics of dm-writecache. So, we 
-didn't consider optimizing dm-writecache to meet our goals.
+>  	of_node_put(endpoint);
+>  
+>  	/*
+> @@ -527,6 +528,7 @@ static int vpif_probe(struct platform_device *pdev)
+>  
+>  err_put_pdev_display:
+>  	platform_device_put(pdev_display);
+> +	platform_device_del(pdev_capture);
+>  err_put_pdev_capture:
+>  	platform_device_put(pdev_capture);
+>  err_put_rpm:
 
-     2. Why not optimize within bcache or dm-cache?
-     As mentioned above, dm-writecache is essentially a minimal write 
-cache. So, why not build on bcache or dm-cache, which are more complete 
-caching systems? The truth is, it's also quite difficult. These systems 
-were designed with traditional SSDs/NVMe in mind, and many of their 
-design assumptions no longer hold true in the context of PMEM. Every 
-design targets a specific scenario, which is why, even with dm-cache 
-available, dm-writecache emerged to support DAX-capable PMEM devices.
-
-     3. Then why not implement a full PMEM cache within the dm framework?
-     In high-performance IO scenarios—especially with PMEM 
-hardware—adding an extra DM layer in the IO stack is often unnecessary. 
-For example, DM performs a bio clone before calling __map_bio(clone) to 
-invoke the target operation, which introduces overhead.
-
-Thank you again for the suggestion. I absolutely agree that leveraging 
-existing frameworks would be helpful in terms of code review, and 
-merging. I, more than anyone, hope more people can help review the code 
-or join in this work. However, I believe that in the long run, building 
-a standalone pcache module is a better choice.
-
-Thanx
-Dongsheng
-
->
+Johan
 
