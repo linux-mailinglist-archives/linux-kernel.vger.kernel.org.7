@@ -1,116 +1,98 @@
-Return-Path: <linux-kernel+bounces-606668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D9EEA8B226
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:30:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3717BA8B21E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:28:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63B8E19057D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 07:30:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A17DA3B23EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 07:28:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB942DFA4E;
-	Wed, 16 Apr 2025 07:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397E922B8B0;
+	Wed, 16 Apr 2025 07:28:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VB7XOpYe"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BGk9j0m6"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C882224891
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 07:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 328CE2DFA4E;
+	Wed, 16 Apr 2025 07:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744788595; cv=none; b=SsL0cnJouO4Dx50sdgwPZnutZvf5hYvWlH6KNHyeUarxHAx1P9uEe4CbO97u3eDV0ndoBPrteU3hUQKGm9ncL+vOj0IC1+V1eu4p78zSBgUh0LijJXJxdXLep/8cWl7IpUbf+iZeH1PHdJ0V62eIXa2Uo3JX0mue/g3ohMLzmZ0=
+	t=1744788516; cv=none; b=hrQX71fehU8UrNxIXJaoIsUpqiv0lQBVvbFjsvvrg83WSdNYgyj+GDd1Qgjc7jPLWl+BF7PUUs/+8fmOZxOKYkojMmxVUUCtSo/vcvrapfYXiNjXgpEFB9xDuCWt3kDi9XYdyy6gtI335c2p81WflVcD86rkpBEI642LcnLTYOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744788595; c=relaxed/simple;
-	bh=Vu1Z1iNyXH/P0QywYALzynooSIZlETxbTzFpRmXM8t0=;
+	s=arc-20240116; t=1744788516; c=relaxed/simple;
+	bh=qvlLa3VA9efC7avAUZkCgRlCB4WN+H9bYNViBn32pLg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NW3amxKCrjGuldpuO+MKd/zZd6Mfo9P/wgOZsKxXn0KWcHKtMm7bWudwLw/CzCEGoMYaoFVYeWJYG6ytD957GcSXTYbOA8JxtAnlrV/yHt3Xlc48DsJoM/AsCM4V9EqSVJn/zc2/WL8x5xhH+GuIwozP23TMtrjTLwcQY/z7V9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VB7XOpYe; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-548409cd2a8so8408423e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 00:29:53 -0700 (PDT)
+	 To:Cc:Content-Type; b=N44dh45z01RARGj9OvlCRc+Tav6XRkQLLzqoqw0xpZMEpXaDjzaBt214QOBkUC/216wYYPSpnOP9gOyZN9Z+wYhlnBLdslK+ps8ygGRUc8o0usYO95zH0SirlcLwd6ePV5jjpvwFOGyL0LnFnDIIXAmgaBcN3R5UJavEsIS418Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BGk9j0m6; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-301302a328bso6347438a91.2;
+        Wed, 16 Apr 2025 00:28:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744788592; x=1745393392; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1744788514; x=1745393314; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Vu1Z1iNyXH/P0QywYALzynooSIZlETxbTzFpRmXM8t0=;
-        b=VB7XOpYeXsxjQYFLpY+qLwHfsWEoE8mvq5nvMYY9gOwAUhDfBFuiXlVz6OyucCQ9Yb
-         Owmppq6GCgwfs15BbC8baenIljnkyh+QMbI/drRtn8SXhCSuIrzIKaHlnlXl6VwBNarT
-         KS3Jm/Yo/M8F6ghW5Mv6fe26bYa2TvaLG6ezcehUK7SxLUBdwq5vxRvjy3N8kd/0i1tv
-         Hbf91iHoI2q69z0TsAyFWncxv5o+PD8XLAesJWo0yxCclKnpL/6rfy/jzaEvq0WIAm3l
-         /c60AwJaehSh+cWrsg0NPrQw9T/VV8RRO+MtSDmtgbH97zj4FYeEzS5Bsd2p4DxpYN0p
-         M50g==
+        bh=qvlLa3VA9efC7avAUZkCgRlCB4WN+H9bYNViBn32pLg=;
+        b=BGk9j0m6EdxamlnlmFeiadhCgDJQrwkXz3AXyoyDd1aSGtdiMeWgM5CjTiZrg2Gv8Y
+         NdR0dPXXDpJfJUzqpDqrsBo6ZDCyGEHsidsEE6MveiX2QEwld1REmXisOt7ewSxGMOrq
+         H/W/mVoFWF873UEBzl8BVDbvzxFlLFe8eDnBTlZblQzcMIGh6u5zV/lbNLSw6zgU5RAZ
+         Met/Xm9tTeCOIn+6m9DrHk4IVZsHhF1rbeno4zoSVVBt/IrraPhKBsX75hejy7RU+5KL
+         h168Jnps1T8cy0egZ4v1YV6FwBAdzi0MBy7Y4EJFmHApW0hkhrxLgeufqGa6kXs3HLqO
+         S48A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744788592; x=1745393392;
+        d=1e100.net; s=20230601; t=1744788514; x=1745393314;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Vu1Z1iNyXH/P0QywYALzynooSIZlETxbTzFpRmXM8t0=;
-        b=AosuhkvrmQwrYau/Qmd1kpv9Wup4D63uRRn0zbnoXSaF4oTgxdavYaT11mm6+2CGYL
-         GHDHho0s0WC603KVnlqdt83J5PTZ31KTB1ruFKhiXPEGB/eChR3UNfz2fO7HZBydfi5e
-         zPbRHPK0vdVatwg5L802NvKwea0F/XCWjBOup86DEDlUSjyOhMnFXFMHAapB5AdzFQL9
-         KzoOZP6QSTuVskpcnVgnYSSgB5vk3g7U4wjT8qO8+ba5ZQtpJi0UhWjVOE5cKAnQ5ch1
-         jKyyqL+YZtfFdetaVtfqvpvprPh/ZRxgHppXtndUYQBYw0W7+ktheA35FEgGRJtDv7kk
-         2chA==
-X-Forwarded-Encrypted: i=1; AJvYcCWw/7lVCEoGYJ9d0qHwGPD8SgKyNvXiMpGc1SofTxM9LXAFLPguWH+H3Rub8hPaAj+UH8t/oB1kSOAkcMk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHBZF+VB5oFFZG4em/z0hoWvWO1a64FMLDQ87cQSpRJ/w/D48R
-	lyHtKW9NwDqFJXQTMaXtUoy35KEhQdyoo/GKiZzUcqJTR53CcEHvzqSgSuW0bKl2hZge8t5tiq9
-	BZT2oe0pWb+2AQg/vkCVp+G2XRpFGk48qe7mwm4tDZTv2B+N7
-X-Gm-Gg: ASbGnct5Nd5/AIIM13Kler4K03KFcJA95M1MMDLv5dHUgSvy/UE5hXBWZhvTZLUmxMV
-	uv0Vo8Lj1cqLbnOT9MQNnSQTzG33NQTL3z+j9Ey7qm7BffJwG+N8Jlf84MFd7tpXrtgjOfCJAEk
-	Xu5dwWhrMAywUwK0icYCg0aQ==
-X-Google-Smtp-Source: AGHT+IFIpyoa4b37GuE7bShcO/RCUjBlfmU/mTjYO4extyxyEAUNDPyqKbiJFcyUDnd++AOe+MPmtXvLY9f9jwMpHVM=
-X-Received: by 2002:a05:6512:108e:b0:54a:c835:cc4b with SMTP id
- 2adb3069b0e04-54d64aea449mr196703e87.45.1744788592107; Wed, 16 Apr 2025
- 00:29:52 -0700 (PDT)
+        bh=qvlLa3VA9efC7avAUZkCgRlCB4WN+H9bYNViBn32pLg=;
+        b=fMTkrhvCna4zHenj+yoQbjsT1w4CoZyw8JZP1N3p7viiGOqYt5V3WkiCJMuKy5LLcm
+         RrqxLJNRvTC9CMEaiYk51brcBYk2wBeM3cMiWbcqkNtWXMVjtmw9MDUea3sH1tjS6v6C
+         iwDZ1P6VtbDh7AaSXFO4W4diwzvhm/Nkkirv7ugN1854lVuOOukOje/MV4WULecwjSEZ
+         9esmq4p00CSfDBbz3+gBqVGg5Gpdw8LPOo+lNOnow882CdYccmrHGVVpyY2bRVs16XL4
+         ABssVN2j73tg49yJYM4ZkkkFsdZU43FSAxpePWmHAYQPC56BHARjXNa8XlZqInJ/KVFI
+         34Iw==
+X-Forwarded-Encrypted: i=1; AJvYcCUKER31F5l0UrRVTuR/B8IE8oFGaVAZoI+RFuOzetvD+KPsc8h9PU21wTqJce29MKE+vwWyjh1PpX7dwTs=@vger.kernel.org, AJvYcCXvkee/ULCLw2ojgT2B7ANpswfdVU+Z5k3Xa00jSwtf+VxpA50A6NjO0c5nHyj59EfmTj+CzOGn65LHF7E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyeqpeFQTpRtxGq/tSy+gUU2ktIKx1bpa1K8+YvfoR3gkFD5R3
+	gdyrB91MLkjz/uuT08nsJI1CWjI33tnfnlxK9tHftgmlyTVAr5T7KsSor1q/Q43lCndyj7Ifrnl
+	CMZvMBq3KfT6ylXh6MD/sKltrNxM=
+X-Gm-Gg: ASbGnctb/HoI7oTfNO6unl361mHdfZaBUEfJgGc46D0h57cs9YVbxRW9OLcO13o4M4v
+	snunoT9aZhcpsVB2MtH4XXvbZw6BAOHVUJxIyreYJq3KZUOAbnycHwVBrwE8h3oz3pj5oxgcJ5c
+	EQ4MIvAp4OZVoEgXAlxg==
+X-Google-Smtp-Source: AGHT+IGW5zcCmv3b7BVm4A40QK0n9oi/g9NFeFg+vQtedK+zMuIzEBKZNFZcJGBHY+4JsYxPwA1hTYFwiZZ7HXKb0a8=
+X-Received: by 2002:a17:90b:574c:b0:2ee:edae:75e with SMTP id
+ 98e67ed59e1d1-30863f1c831mr1185370a91.13.1744788514329; Wed, 16 Apr 2025
+ 00:28:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250415112339.2385454-1-wenst@chromium.org>
-In-Reply-To: <20250415112339.2385454-1-wenst@chromium.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 16 Apr 2025 09:29:41 +0200
-X-Gm-Features: ATxdqUGsaRj7mRwORGwu-YQfJxqBlwgA7akp1LopdnGat1Af2KKfApGkes9E8jA
-Message-ID: <CACRpkda0HVd1auh1zmyX8QdDCL6jNVb+JYj7hbZrdg+v26BQWw@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: mediatek: common-v1: Fix EINT breakage on older controllers
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	Hao Chang <ot_chhao.chang@mediatek.com>, Qingliang Li <qingliang.li@mediatek.com>
+References: <20250416041431.546370-1-nichen@iscas.ac.cn>
+In-Reply-To: <20250416041431.546370-1-nichen@iscas.ac.cn>
+From: Daniel Baluta <daniel.baluta@gmail.com>
+Date: Wed, 16 Apr 2025 10:30:19 +0300
+X-Gm-Features: ATxdqUEL8u77ss7dHQffyWPdVCGHmFsnGmhGr0uT_PfqkPxcRAmmZB4Ahi-EWlY
+Message-ID: <CAEnQRZBb=E75DPn=siqvhAqFas6Lt-++0Ka9W6gY0fbQgHBcrg@mail.gmail.com>
+Subject: Re: [PATCH] ASoC: fsl_rpmsg: Remove useless return variable
+To: Chen Ni <nichen@iscas.ac.cn>
+Cc: shengjiu.wang@gmail.com, Xiubo.Lee@gmail.com, festevam@gmail.com, 
+	nicoleotsuka@gmail.com, lgirdwood@gmail.com, broonie@kernel.org, 
+	perex@perex.cz, tiwai@suse.com, linux-sound@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 15, 2025 at 1:23=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.org> w=
-rote:
-
-> When EINT support for multiple addresses was introduced, the driver
-> library for the older generations (pinctrl-mtk-common) was not fixed
-> together. This resulted in invalid pointer accesses.
+On Wed, Apr 16, 2025 at 7:15=E2=80=AFAM Chen Ni <nichen@iscas.ac.cn> wrote:
 >
-> Fix up the filled in |struct mtk_eint| in pinctrl-mtk-common to match
-> what is now expected by the mtk-eint library.
+> Remove unnecessary return variable and compress the return logic.
 >
-> Reported-by: "Uwe Kleine-K=C3=B6nig" <u.kleine-koenig@baylibre.com>
-> Closes: https://lore.kernel.org/all/43nd5jxpk7b7fv46frqlfjnqfh5jlpqsemeoa=
-kqzd4wdi3df6y@w7ycd3k5ezvn/
-> Fixes: 3ef9f710efcb ("pinctrl: mediatek: Add EINT support for multiple ad=
-dresses")
-> Cc: Hao Chang <ot_chhao.chang@mediatek.com>
-> Cc: Qingliang Li <qingliang.li@mediatek.com>
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
 
-Patch applied for fixes.
-
-Yours,
-Linus Walleij
+Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
 
