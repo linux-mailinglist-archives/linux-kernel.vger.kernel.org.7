@@ -1,154 +1,152 @@
-Return-Path: <linux-kernel+bounces-606298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8305FA8AD8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 03:26:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42E19A8AD97
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 03:39:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94AA317C37F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 01:26:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A8931902893
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 01:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A7E221D96;
-	Wed, 16 Apr 2025 01:26:19 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB93621D595;
+	Wed, 16 Apr 2025 01:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="Rd3j35hj"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C490C19F40A
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 01:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83DEB226D13
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 01:39:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744766779; cv=none; b=PMFPdTIEt0Xzz+pqAro5UtX05IabeM/gNkuq2teoWnaVA/8oJ+qJIvQidOSkbKA4mMs+jm99DnLYsIEdxHISMaYjYncl8UXK6B+0D1Ev5GMw6oiXcXptYOoRvC2Pc2egCvcD76VF0bMmvqEg1fVDC5N3MTnE7LHuTIq3Q1ppkxI=
+	t=1744767573; cv=none; b=J5nDudapcSNNZjHWfy1YWT/IzkFNJ5ay2mHZfWbcBcwksrHKfsBHaUyTdfsNZcAOqHsZrNj6eiDWyW8I7atBuaTmAZ6c/tUWsLRmjkWXIE1Ea/iyBmptWZti8gv8y+bMAcrQz8tdm8JyVG+zX+6NJsk7flFeU3IgHxD9QhIDwas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744766779; c=relaxed/simple;
-	bh=CjEssOQtrqoZAS4iZ9mhfuJMxxXSyP8p/PrrzFxcy/A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ciKCEojlsm64tca+2KXWtg5Don9tUfDo31lYlJeC2XaPmMlILoDbV1QiNO5cUlzjjbni3oxJfq60FHf9MPuBkj3H+urIQLCW0AiRJfXlYrxSsd2E7+AH72KnFurNr/th2mYytePgujht2RKVixpruO8ds/ef16plDPF4yMA6jHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Zcjyl5rWHz4f3jjr
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 09:25:51 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 250271A15D5
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 09:26:10 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.67.174.193])
-	by APP4 (Coremail) with SMTP id gCh0CgAHa18wB_9ndlJxJg--.51759S4;
-	Wed, 16 Apr 2025 09:26:09 +0800 (CST)
-From: Luo Gengkun <luogengkun@huaweicloud.com>
-To: akpm@linux-foundation.org
-Cc: joel.granados@kernel.org,
-	song@kernel.org,
-	dianders@chromium.org,
-	tglx@linutronix.de,
-	linux-kernel@vger.kernel.org,
-	luogengkun@huaweicloud.com
-Subject: [PATCH] watchdog: Fix watchdog may detect false positive of softlockup
-Date: Wed, 16 Apr 2025 01:39:22 +0000
-Message-Id: <20250416013922.2905051-1-luogengkun@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1744767573; c=relaxed/simple;
+	bh=dTnq697UHqs4Zk+ACZjnV/VcHC+rw4zE0mnepumyuk0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AR6WEylruhAVjQBU22cdKPWF9PG0FHYQr17J/vR3tN0Qj8LAP9BK9rH/HxV8Ddp5L19fOSM238GpYM3iCk2dqytgsLq8qQGI8wl5gbdTsjwDIM2e9RHKcAdI19xwXCIuyPHBMbrUB8i6wD89FuD+xbV6cq2VP4SWiSQtvKrQ6rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=Rd3j35hj; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-22928d629faso60846665ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Apr 2025 18:39:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1744767571; x=1745372371; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RJHYVgEVoY4PsMLuoYWXVUdOXZM3Dp29HRy62pgdjTw=;
+        b=Rd3j35hj2xWKtfhMqhHMNAyTmBxwCMjG38v86slF2193sI6XYQ3R7BZzGIkyyrrXvw
+         KjPujaFoaPJTfcIaC3qSvqccdLRhnVOTT42VgJIzOiAsY2n0CX07lkUG4OIOSiDZBPYi
+         kkPXVxdfAOOWh1OCAi9L0DdNGQvztq6IDnciM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744767571; x=1745372371;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RJHYVgEVoY4PsMLuoYWXVUdOXZM3Dp29HRy62pgdjTw=;
+        b=nKRr0BWAa/icbKthEICkLb86JUJEhK9DlpVOt4ikUQsXWPZuNRGty3odLB4kSmAW2m
+         mtoDyLvaaMETn0ukoTDqtGrnnzgsBuP1996CcvjLSbOJ6ChG6Qfbr3eOEiM6y1HCE3pd
+         97O/fUfMaJqLhAevamtKqB0mdSQ/AOX/1QADB72BcKvWORjOsE4BGtmB66+shHn6O2oX
+         jTVHEEI/GFRG5xZ+xWLvR5SCrCeqw0kJbntOszPHlXAzSpFa55PpEXc7oq2LaFUIWW2q
+         98BuaV6IY5/NWac7qPGTfqawppKWnwnP7X6MxrrlPAft0t7gAFSRaCc2Em0tYTbC361F
+         A8fw==
+X-Forwarded-Encrypted: i=1; AJvYcCXYxueZErX4qpXrwwLXA/fbIrgyChq0RZ+6nxUwDXNZzxqkG8ogjrtuq+aTD5+IracL6xmvtPkgx5WAZA0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyt/PdD9EgkoGyEOQh0lwMsrSll7+rQOPAForJRm2IC7hRx/Psh
+	ydtkr8lmKOSRm6C/p9clcLhaqymu7p+XXL56lie3v5KXHnsa/xYmr3Nh136tOE0=
+X-Gm-Gg: ASbGncsvp6MGpVXvsws06Xs3BOfdaqrBpCE2b4w4akc2/O77tjWvnzsQWKT/JQA4r/5
+	Opkoj6DxD05oNeGbyZ3I28/llwAwxBWeoIiTGOy8r4sMZC5Go6UGLXtZhKlXS/SZO21VYx5O7PN
+	dd2vUUkymmU/2Ty5cjJ8Co8RJqq2ea1TnLK6VC8nJohNRwZDu1ue7DzZYQzMN9U+k+6YWndRUrY
+	bxkidNGXUBG+BQGXPjw6BGrOryQJCSRXwwzxyLEvJjXVf42UM6Z1TI10tsWGMbhDW9I86TofVot
+	fcw2acHQc1XXwrBMNZ7o0HESinz10a790aFTxFwaRGLztbov2buJcmcPS5x2swh6AsgWWbnS4VV
+	v/WUg1KxgVAU/
+X-Google-Smtp-Source: AGHT+IGal5XUm/5ZjIJym+rt2yFc1Nr3o7jD6J3I/S17PgjABrDnWFW2YF0A1YKdPmsdX90xjsLVeQ==
+X-Received: by 2002:a17:902:db05:b0:224:160d:3f54 with SMTP id d9443c01a7336-22c31a84ec4mr19284785ad.31.1744767570671;
+        Tue, 15 Apr 2025 18:39:30 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c33fe4de0sm2097415ad.212.2025.04.15.18.39.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Apr 2025 18:39:30 -0700 (PDT)
+Date: Tue, 15 Apr 2025 18:39:27 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>, David Wei <dw@davidwei.uk>,
+	Eric Dumazet <edumazet@google.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Subject: Re: [RFC net 0/1] Fix netdevim to correctly mark NAPI IDs
+Message-ID: <Z_8KT7LYUgyZQhI-@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>, David Wei <dw@davidwei.uk>,
+	Eric Dumazet <edumazet@google.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+References: <20250329000030.39543-1-jdamato@fastly.com>
+ <20250331133615.32bd59b8@kernel.org>
+ <Z-sX6cNBb-mFMhBx@LQ3V64L9R2>
+ <20250331163917.4204f85d@kernel.org>
+ <Z_613wmrKRu4R-IP@LQ3V64L9R2>
+ <20250415171154.0382c7f7@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAHa18wB_9ndlJxJg--.51759S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxGF4UXw15Ar47tw1UJw47urg_yoW5GFWxpa
-	yjvFyYyr4Utr4kX3y3J3ZFqF18Ga48XrW5XFnrWw1rKFn8Kr1rtryfCF1fK3yqvFZxXr1j
-	qF4YqrZ7JayUKF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
-	AVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
-	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkG
-	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4U
-	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUbSfO7UUUU
-	U==
-X-CM-SenderInfo: 5oxrwvpqjn3046kxt4xhlfz01xgou0bp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250415171154.0382c7f7@kernel.org>
 
-The watchdog may dectect false positive of softlockup because of stop
-softlockup after update watchdog_thresh. The problem can be described as
-follow:
+On Tue, Apr 15, 2025 at 05:11:54PM -0700, Jakub Kicinski wrote:
+> On Tue, 15 Apr 2025 12:39:11 -0700 Joe Damato wrote:
+> > On Mon, Mar 31, 2025 at 04:39:17PM -0700, Jakub Kicinski wrote:
+> > > Up to you. The patch make me wonder how many other corner cases / bugs
+> > > we may be missing in drivers. And therefore if we shouldn't flesh out
+> > > more device-related tests. But exercising the core code makes sense
+> > > in itself so no strong feelings.  
+> > 
+> > Sorry to revive this old thread, but I have a bit of time to get
+> > this fixed now. I have a patch for netdevsim but am trying to figure
+> > out what the best way to write a test for this is.
+> > 
+> > Locally, I've hacked up a tools/testing/selftests/drivers/net/napi_id.py
+> > 
+> > I'm using NetDrvEpEnv, but am not sure: is there an easy way in
+> > Python to run stuff in a network namespace? Is there an example I
+> > can look at?
+> > 
+> > In my Python code, I was thinking that I'd call fork and have each
+> > python process (client and server) set their network namespace
+> > according to the NetDrvEpEnv cfg... but wasn't sure if there was a
+> > better/easier way ?
+> > 
+> > It looks like tools/testing/selftests/net/rds/test.py uses
+> > LoadLibrary to call setns before creating a socket.
+> > 
+> > Should I go in that direction too?
+> 
+> Why do you need a netns? The NetDrvEpEnv will create one for you
+> automatically and put one side of the netdevsim into it.
+> Do you mean that you need to adjust that other endpoint?
+> It's done the same way as if it was a remote machine:
+> 
+> 	cmd(..., host=cfg.remote)
 
- # We asuume previous watchdog_thresh is 60, so the timer is coming every
- # 24s.
-echo 10 > /proc/sys/kernel/watchdog_thresh (User space)
-|
-+------>+ update watchdog_thresh (We are in kernel now)
-	|
-	|
-	+------>+ watchdog hrtimer (irq context: detect softlockup)
-		|
-		|
-	+-------+
-	|
-	|
-	+ softlockup_stop_all
+Maybe I'm just thinking about it wrong and/or describing it poorly.
 
-As showed above, there is a window between update watchdog_thresh and
-softlockup_stop_all. During this window, if a timer is coming, a false
-positive of softlockup will happen. To fix this problem, use a shadow
-variable to store the new value and write back to watchdog_thresh after
-softlockup_stop_all.
+The idea was that napi_id.py test forks. One process does a
+listen()/accept() and the other does a connect(). The accept side
+checks that the napi ID is non-zero. For that to work, both
+processes need their netdevsims to be able to talk to each other.
 
-Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
----
- kernel/watchdog.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+> If you really need a netnes check out
+> tools/testing/selftests/net/lib/py/netns.py
 
-diff --git a/kernel/watchdog.c b/kernel/watchdog.c
-index 9fa2af9dbf2c..80e5a77e92fd 100644
---- a/kernel/watchdog.c
-+++ b/kernel/watchdog.c
-@@ -47,6 +47,7 @@ int __read_mostly watchdog_user_enabled = 1;
- static int __read_mostly watchdog_hardlockup_user_enabled = WATCHDOG_HARDLOCKUP_DEFAULT;
- static int __read_mostly watchdog_softlockup_user_enabled = 1;
- int __read_mostly watchdog_thresh = 10;
-+static int __read_mostly watchdog_thresh_shadow;
- static int __read_mostly watchdog_hardlockup_available;
- 
- struct cpumask watchdog_cpumask __read_mostly;
-@@ -876,6 +877,7 @@ static void __lockup_detector_reconfigure(void)
- 	watchdog_hardlockup_stop();
- 
- 	softlockup_stop_all();
-+	watchdog_thresh = READ_ONCE(watchdog_thresh_shadow);
- 	set_sample_period();
- 	lockup_detector_update_enable();
- 	if (watchdog_enabled && watchdog_thresh)
-@@ -1035,10 +1037,12 @@ static int proc_watchdog_thresh(const struct ctl_table *table, int write,
- 
- 	mutex_lock(&watchdog_mutex);
- 
--	old = READ_ONCE(watchdog_thresh);
-+	watchdog_thresh_shadow = READ_ONCE(watchdog_thresh);
-+
-+	old = watchdog_thresh_shadow;
- 	err = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
- 
--	if (!err && write && old != READ_ONCE(watchdog_thresh))
-+	if (!err && write && old != READ_ONCE(watchdog_thresh_shadow))
- 		proc_watchdog_update();
- 
- 	mutex_unlock(&watchdog_mutex);
-@@ -1080,7 +1084,7 @@ static const struct ctl_table watchdog_sysctls[] = {
- 	},
- 	{
- 		.procname	= "watchdog_thresh",
--		.data		= &watchdog_thresh,
-+		.data		= &watchdog_thresh_shadow,
- 		.maxlen		= sizeof(int),
- 		.mode		= 0644,
- 		.proc_handler	= proc_watchdog_thresh,
--- 
-2.34.1
-
+I'll take a look, but I'm probably just missing something about how
+to properly use NetDrvEpEnv.
 
