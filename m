@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-607264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F157A90424
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 15:17:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9733EA90427
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 15:18:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C615189E40E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 13:17:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 547333B87C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 13:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D1D1624DD;
-	Wed, 16 Apr 2025 13:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41B2F1DE2CA;
+	Wed, 16 Apr 2025 13:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PC774tm4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PjmCn/v9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505331A2547;
-	Wed, 16 Apr 2025 13:15:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D7819ABAB;
+	Wed, 16 Apr 2025 13:15:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744809327; cv=none; b=DAerFUXikBlwM+YsStzHePE571vygtJpcuVxDdUALtL24hxIKH0yeQbzcakNcJtTZT3I5NxNV0O/z9TgujPU3DnEb5MhJuwowxKNSua0k+FwyxieodhCfLNWHK7F1pl4rXfjZM+6PoASfBhHZBX3WZmmbFEWhgRDiRy2Aq8d0Nc=
+	t=1744809334; cv=none; b=f5ugCcb/+mX+v40tMKj7l603Uc80+kKFWUh3SKLmCct8VVL3wICusg5m/7HM3zUQgkJYvn5ir5WqaojHuz1Wk/oiY2ozjoXcUwxD6qIHpZKYUOcMn07Xz4FWI16TZTlYgl3VmUTGdTLSN/InrfkPJozhu9QUIyDQh7bN+hEMJAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744809327; c=relaxed/simple;
-	bh=Yy/lK4DGjx7wy8eH2tmthzctLlCL4AxCcCNMyjKUWG8=;
+	s=arc-20240116; t=1744809334; c=relaxed/simple;
+	bh=UksMB/TSljPXbwmxfQmIH/846gqV+jBpHPGQhk3lL0M=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tw/uF+/qPVjH6/8q5BMfGzR+S01Lq04RgI6ljfpej/krwR9TG7fMywI7SfgHi+vIk5QhCSzQmsSoxkvgIUw/Lesh1BtDKmuPuywsLZrGZKmNJqT5cS/EyfNGgaCUoNyrldRu7t7OOYknT0SWgKz8v+ctlUkadAKbgXnFbpJ/Doc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PC774tm4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0B23C4CEEA;
-	Wed, 16 Apr 2025 13:15:20 +0000 (UTC)
+	 MIME-Version; b=moCSR3Y1NnO3+BdnvnGT0hiMsxQx5xqM3DTyCNqb6Vs1kzzNPz6t/ME0ivMOCXIe41nTvyrvJn6awI0M9hQMfNZ0tEs3WsOj4BZv+YnXOZBFQ50Vxn6+PxW+X0giPV+uXP3K94tQACJCrMthfwqvZ779YMQ79SZl4KuA4dQVDIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PjmCn/v9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5D5DC4CEE2;
+	Wed, 16 Apr 2025 13:15:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744809327;
-	bh=Yy/lK4DGjx7wy8eH2tmthzctLlCL4AxCcCNMyjKUWG8=;
+	s=k20201202; t=1744809334;
+	bh=UksMB/TSljPXbwmxfQmIH/846gqV+jBpHPGQhk3lL0M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PC774tm4doPhIN0XeiRZzEUj0CwuJPw+3oqcCpau91vz/fYL0QdX1b5D/H6siz6lw
-	 ZjuCGnh26fqhFGLvEI5t4RnMqb66LLlabwCayf69nqAJl+ucEVQwBtuqVAXU9Mukjk
-	 fgjmWy66mbAkbvDHTgV/K9BaDCyiLQ49R1cqldPMev9cx1Ak5dMMS+XAAmlqu4telO
-	 2bNSoa6nM8fnMxzvGDCQ0U1Fco3gMePlcjQpaHMzknSQcuUwAYzmOaZRcDhQXxi+fU
-	 Pe2bOs2G4amcp1NY0V87KP8qUkTt9F8EHpR2b6Bn9V9f82ypWdsO0r3qsOU1M7mfzw
-	 OF/W7S+UqDeTg==
+	b=PjmCn/v9d2bED4k86oAyNP4W971WEYhoZkH3JwzixTviMHrSf0yFuy9m6wXBMRvpu
+	 +rn2cqV3eL14XASaz4rW/dCFBqCRCVaY11CrxcmCSL5SppCoeZmwNcr2WG1iA9bye6
+	 BLiR9T9eKXGx8SyFzz0NnubKsbnXAkGCILRpKfhoeY6tz7rmLtLFDJBR6EiTX25NAW
+	 2wPN852aqXkwWAJngECTWnC3Hm8tgPM0WbGMzF+OX2+V8IsHbwZorPU/o21oJ/PI7b
+	 4RHC7TZdoXFjrtF+Wt6cAuYFeJa8/4+/ZuAFPPJn5iQB42AEegabelsZbxfOQXFNCj
+	 tAbPHexOfT0HA==
 From: Philipp Stanner <phasta@kernel.org>
 To: Jaroslav Kysela <perex@perex.cz>,
 	Takashi Iwai <tiwai@suse.com>,
@@ -70,9 +70,9 @@ To: Jaroslav Kysela <perex@perex.cz>,
 Cc: linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	sound-open-firmware@alsa-project.org
-Subject: [PATCH 22/31] ALSA: riptide: Use pure devres PCI
-Date: Wed, 16 Apr 2025 15:12:32 +0200
-Message-ID: <20250416131241.107903-23-phasta@kernel.org>
+Subject: [PATCH 23/31] ALSA: nm256: Use pure devres PCI
+Date: Wed, 16 Apr 2025 15:12:33 +0200
+Message-ID: <20250416131241.107903-24-phasta@kernel.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250416131241.107903-1-phasta@kernel.org>
 References: <20250416131241.107903-1-phasta@kernel.org>
@@ -93,22 +93,22 @@ pcim_request_all_regions().
 
 Signed-off-by: Philipp Stanner <phasta@kernel.org>
 ---
- sound/pci/riptide/riptide.c | 2 +-
+ sound/pci/nm256/nm256.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/pci/riptide/riptide.c b/sound/pci/riptide/riptide.c
-index 329816f37b76..578be0755b8a 100644
---- a/sound/pci/riptide/riptide.c
-+++ b/sound/pci/riptide/riptide.c
-@@ -1831,7 +1831,7 @@ snd_riptide_create(struct snd_card *card, struct pci_dev *pci)
- 	chip->cif = NULL;
- 	card->private_free = snd_riptide_free;
+diff --git a/sound/pci/nm256/nm256.c b/sound/pci/nm256/nm256.c
+index 44085237fb44..cd4dc43dbff1 100644
+--- a/sound/pci/nm256/nm256.c
++++ b/sound/pci/nm256/nm256.c
+@@ -1447,7 +1447,7 @@ snd_nm256_create(struct snd_card *card, struct pci_dev *pci)
+ 	chip->buffer_addr = pci_resource_start(pci, 0);
+ 	chip->cport_addr = pci_resource_start(pci, 1);
  
--	err = pci_request_regions(pci, "RIPTIDE");
-+	err = pcim_request_all_regions(pci, "RIPTIDE");
+-	err = pci_request_regions(pci, card->driver);
++	err = pcim_request_all_regions(pci, card->driver);
  	if (err < 0)
  		return err;
- 	hwport = (struct riptideport *)chip->port;
+ 
 -- 
 2.48.1
 
