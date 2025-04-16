@@ -1,203 +1,132 @@
-Return-Path: <linux-kernel+bounces-608150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8253A90FC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 01:47:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26BD3A90F24
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 01:06:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FD8F19060A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 23:47:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF8F77A8E8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 23:05:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A54BD24A04B;
-	Wed, 16 Apr 2025 23:46:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A76A23F295;
+	Wed, 16 Apr 2025 23:06:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="VdcHCAj9"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2113.outbound.protection.outlook.com [40.107.92.113])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="di+gkxZW"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685D722FE0D
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 23:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.113
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744847216; cv=fail; b=JZQzl3lX5dVtKmpcwQq7zp4A8X1gILp3T1pHmJjID5Wygj4hnzSKaQ2AD4mnFeCUZiE5Bf7jHfGA4LBGF8KWvplEuO2Ia+hQRhH5EiN+RHphveVIuusUWutN30tvQFw06UNMJfztEkT4n66lXt84WUmirZHPABeMVs4RcqsSVUw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744847216; c=relaxed/simple;
-	bh=DRQbTBLbBkiGap39ewOAC9LnPNgwBoo8EtsnDWlPGUc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 Content-Type:MIME-Version; b=CTF3qJh7QGXvXkJT+Q8nDmRQKpkxK4xtv0Y/bzfhmDDNDln+7st2k/OJqdAVgYjU+iWxa7dmuz+gOtNuVlnIbH++nuixZS542jzLeKalSTIqNII0ESzNunM5W7BfDc65zu7DAH1YjecO3JxQ/5boB1QmKwL+Uz32Sr+eV2kfS98=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=VdcHCAj9; arc=fail smtp.client-ip=40.107.92.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=o31YOEC6wObrvvm/e8OGi8t8JeMw0ORj21O+FexgvNwJomr/XZMBjBrQKpt9rb9qT1+XnPA8bxkolzzOKUDourMwfNhsOsB0CfkkCwdmMe//udFOuujqkHej8vpy7jIm2+pc0ocOci1VKdF4wN5wv+UvrF+u+Xj7o1KIgBWUp4hKEuJiBaZ/CRIlHRpkCUmkSWM/jYby5gx7AzhH2RZI/jSKhk5vJCGQXUViBt2j7AvsIyhjBJMLHilgpcIUAva8JgjGDWtiY0dV8129Ug5dmho+amVy1Efew4Z9PWFVDE1yi4Fcrq8EmrgqoUz4iLZNBb1F7FTgvq8tlaEcApc95A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LfAMt/qGnbnF3B3ukDM+Fm9a0gCEH4GtSe4R/UEIRDY=;
- b=tlighLxzYQv4J8CSnHYALQN3S6gbwSvkv/E4gqncRNav4ntyn7xeJaU0VdPbjdS/fYWbC1ShmDj0rMjhLg5hsWM9k6D6cbhooLBcY+uA8c+Pav9e2uLLOM26CYnsWY2wXervS48oACzFCpWuJlfejYeoffUfPw6OM8++pGSquy5pBQIOz/nhcUCOZj9l6AGtT3hhn2UWJCg2VR8ooFM6RKB9eXCPIm3iFq8oOTtwXHVkw+RdwXVOgZDKnNVjnP5UTTgCwHCi43s+Ax1n3fG+tDphGL56xPTMZ/J6+kXezBF4oBefDkTI+BQgsEszZJURkZ0UklV9jyHu1leh9kTZrQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D1A22FF59
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 23:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744844763; cv=none; b=LOFAHSQWmTVER5hno6iX4SSA4q/nKtzzLkAaO/XJxVOlDz49NiRxuMCRpbtEP1f/RuEgco/9rTbIVM/XCz2Au/KxZKcb0wj6vCOustGixNUVV3yi3ASbDC2rzvJdBDyCuomW2LiuFIit1GPSg0zKEqUWghx0cNfHNJGEutRFCRM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744844763; c=relaxed/simple;
+	bh=4kyHN4UTIgjzUuq83z52M+ItyFPbuwZn0oMGTQl/rqE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VZYmfZ8mqX+2NinJiQSlpjHG3MiAM11TodN5h8he5ylqN+WKdeJSQ/feiHiuNVrTwHL1dFk57n+NT0U27tdnRNsS+FElWfPWxy3kgmGnkUEkT1Ry97TrkamfMGPokLbt6y2bcggd9VMGvhYosPBRBTPy8WO2JFo9eh8N6YHQZ9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=di+gkxZW; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-223fd89d036so2260365ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 16:06:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LfAMt/qGnbnF3B3ukDM+Fm9a0gCEH4GtSe4R/UEIRDY=;
- b=VdcHCAj9Q62l5yWDWX9M8vYG+ghInY8wESsgPcsi3LGipshTdidhPrRQbkUzwvitjhNVyb2cmu5f+zLQNFTUf/K/vB+Xq/8C1oIVqRl4RO4q6kZ2fNfzCP7g/7u3fpR1NJ0G3exDxN4Ej3FgozzUzzjQqR2tHBjd+cnucQSaWao=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from LV2PR01MB7792.prod.exchangelabs.com (2603:10b6:408:14f::10) by
- CO1PR01MB9009.prod.exchangelabs.com (2603:10b6:303:275::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8655.22; Wed, 16 Apr 2025 23:46:51 +0000
-Received: from LV2PR01MB7792.prod.exchangelabs.com
- ([fe80::2349:ebe6:2948:adb9]) by LV2PR01MB7792.prod.exchangelabs.com
- ([fe80::2349:ebe6:2948:adb9%5]) with mapi id 15.20.8655.022; Wed, 16 Apr 2025
- 23:46:51 +0000
-From: D Scott Phillips <scott@os.amperecomputing.com>
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: Marc Zyngier <maz@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, James Clark <james.clark@linaro.org>, James
- Morse <james.morse@arm.com>, Joey Gouly <joey.gouly@arm.com>, Kevin
- Brodsky <kevin.brodsky@arm.com>, Mark Brown <broonie@kernel.org>, Mark
- Rutland <mark.rutland@arm.com>, "Rob Herring (Arm)" <robh@kernel.org>,
- Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>, Shiqi Liu
- <shiqiliu@hust.edu.cn>, Will Deacon <will@kernel.org>, Yicong Yang
- <yangyicong@hisilicon.com>, kvmarm@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, open list
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] arm64: errata: Work around AmpereOne's erratum
- AC04_CPU_23
-In-Reply-To: <Z_753eQ29wP7OQlg@linux.dev>
-References: <20250415154711.1698544-1-scott@os.amperecomputing.com>
- <20250415154711.1698544-2-scott@os.amperecomputing.com>
- <Z_6SKjdvje1Lpeo3@linux.dev>
- <864iypgjjc.fsf@scott-ph-mail.amperecomputing.com>
- <Z_753eQ29wP7OQlg@linux.dev>
-Date: Wed, 16 Apr 2025 16:05:19 -0700
-Message-ID: <86plhbyafk.fsf@scott-ph-mail.amperecomputing.com>
-Content-Type: text/plain
-X-ClientProxiedBy: CY5PR19CA0039.namprd19.prod.outlook.com
- (2603:10b6:930:1a::29) To LV2PR01MB7792.prod.exchangelabs.com
- (2603:10b6:408:14f::10)
+        d=gmail.com; s=20230601; t=1744844761; x=1745449561; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=CdmSSsvImzYo0cP+z7F0QmEv3k5MRXxXAzSzF8bX4M0=;
+        b=di+gkxZWijGHX1tTqI3YNx/tL7unJn2+fvQpB3KezXhKCRrfv1Kri2LH95jLHbN8Hr
+         MlduGuJ4uY7YNKXqFv0UCy3+j+h+8ce3VKymEl/1R3mmEfCzeJgoTWEPFhYJTb9Nt9Oc
+         TiGrHeNYmT5RIrojoGQ9PuF478lKPS36XHvhyEK43pRslvm3nxdKoutsN0immx7+IllM
+         lPyqdhP8A8yGnfobozkv62XUFYI2uJjf8V8SeHcX/7VerhMOkb11aFz9cYpxAyPz/IYS
+         BLhtD5Rvu4JzXEWbQlJOuy1u+mm7H1gHma0fQl2Au4fTi5qB6X+V6gYIyfUbHT2LMCH+
+         eAkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744844761; x=1745449561;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CdmSSsvImzYo0cP+z7F0QmEv3k5MRXxXAzSzF8bX4M0=;
+        b=vpRHz2HUnKAWyKVk/etDVwyKIfABGVuz6A9kVDDeS+ykU7unJJLtcg0+upp0f9P+F5
+         DUbZI3G+bCqd6a8luuPvJTxzHtaoG7yI2VM2hSe7CXqoFwA9a9lpIJYO+ifLlKZlwj8R
+         BlcXx6RmXoob0yhXqgFBl7UAlXrL8a44iBYr+YJfTx8hR9mK8j4F0La48C1h+sxS5clg
+         zZV0sw1vh3Ef7WeUfcXXddtOy/IvSLWD1nZ1f1cbi5AgBi7oljEbxr3oIsHbo8/E+FFM
+         JXrzAS+XZug81ZSwox3XL8cs/SxDNEZp40VfQ2ZGDrybu+tbcWjBdjL2p97TZQOs0zKE
+         T7aw==
+X-Forwarded-Encrypted: i=1; AJvYcCXjBoovf1fr7NR1xL/AbrGUFZPpwbyIE9Zahxk/MTOfJ3RzEdrDhbvQWMEnyp/V/ecWtxqUlya5nmWqGhw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxm1+Ubypfp6iLmkZUdFHHpVziJB7L6WCq+7MmtoL+Ws30am2Ty
+	4uW6kVkn3eeKSeaC8pLztT0dBB5JI/WJSVA4RsEjH0mg58uwjMVt
+X-Gm-Gg: ASbGncv2F7m7dK8bNAMkWm8W29AzM60DBu3s6be5pDGi5hgn+sDG/YXLa0E96eqNona
+	+gczXHkjQcZLE//yFBQjTplNEYoWlFcp6lKSlCprVMJ3JOTgxDE/RCiN608GWoEHmuKcU3t58CK
+	tRU0Tyc6/NAiiSrmMMZYt1TVcjmhr/pNELEhWvp939Vaur5tlT6a96FXsNfPfMNCYGAfuIkTzJa
+	cuTiajCQzsTQAzXB3B3d6k6S9xtxT3Bawe80NtJpl3gLrPnBimhT+Zp1nEwtkcYvwd4VbuWV5VF
+	eEY/3NBKS/PVXs2+t81Fb0pmNbhB7gbQtsfgXHWYcd1utwkfrWfYjQ==
+X-Google-Smtp-Source: AGHT+IGb+iwZPvwFmGD/Bqht/JaCGGiq6oLImqQOCQMLbnS0CXsfrm1e96q4XIwZpdcLIdyCbRwIng==
+X-Received: by 2002:a17:902:ea0a:b0:224:d72:920d with SMTP id d9443c01a7336-22c35973f3cmr44762605ad.37.1744844761237;
+        Wed, 16 Apr 2025 16:06:01 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd2199d57sm11048561b3a.32.2025.04.16.16.06.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Apr 2025 16:06:00 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+To: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+Cc: Alexander Potapenko <glider@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	kasan-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org,
+	Guenter Roeck <linux@roeck-us.net>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH v2] x86/Kconfig: Fix allyesconfig
+Date: Wed, 16 Apr 2025 16:05:59 -0700
+Message-ID: <20250416230559.2017012-1-linux@roeck-us.net>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV2PR01MB7792:EE_|CO1PR01MB9009:EE_
-X-MS-Office365-Filtering-Correlation-Id: f1507d4f-7cd2-45ff-8cae-08dd7d40f5f9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|366016|7416014|376014|1800799024|38350700014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?eSZwLW6g39/9lzNEk41KcqX8Bdaz4C6XWnGzZc9X2W2Q3zo4xaCUTu48UcXI?=
- =?us-ascii?Q?ixCH4WEE2W7ZMbLc51i9v3Cwe4HXJ/vOdIvO3hInFpXWG8GSYhdAfdn7zeXs?=
- =?us-ascii?Q?/VS+zJIE03ODOnwhrDSlnoRBDZHz0Tt5N3cNmyW4rOyZHC5saVblvYyEZllu?=
- =?us-ascii?Q?WPNd6vIiYv4pEFRcY6rcW65+l2+gqFI3iqywco59rNNgB1jL//CoOVvL9qVV?=
- =?us-ascii?Q?50BEWp7ClL7/konGAM+2/UOUhjrjUq+o4NGl9Gc9NrlQXf2DdfCxJcyzR1R9?=
- =?us-ascii?Q?Y4QZTu0HfO+EIG4f9OxQAP9DqoudH1i+OUYzzaGDhV37OBz80j/6n1Ka26IK?=
- =?us-ascii?Q?RSn7qAv7YHrqlfrAxjE32O1YI424Aq07xBa7e+3SOYIJv9EYPukUyJAH9niC?=
- =?us-ascii?Q?ShzhdezH5/CnbijkENgu8+rnbIDlOX54pNpjDIU6W/RRF5k/jowbup25SYjx?=
- =?us-ascii?Q?GVM05DspLFRyASxduiLz9tuZycrrifC+rf0zSWaETv0jKqIYtIWyppFOuppl?=
- =?us-ascii?Q?ZMAKXFgW+1hy3hZczB4rVgwp07GOp8Tm/lAAo4OXwby0BnDqpLv0mWL6b3SX?=
- =?us-ascii?Q?Rd6N11NIwc/AJxYDF4/tUTERT1QoAEPO1yIeyEOo4v//J/ko/pu57mc0eXe7?=
- =?us-ascii?Q?6k+eaNeb1aWzWHKGyigVKPLPwc9lIvGlMJJnbyvg4+ROHwdsBKbYagRPlEeT?=
- =?us-ascii?Q?HadQiaezwXUlciUBF3aTm3xO9XDZnFVuZcsrWoVWjtPcu2YO1AO6jon5YSbE?=
- =?us-ascii?Q?XaD9aZ7jdDKzWaa7tRPJifeoN/mgBoP46lacXnMl1prHXpqPkWyb6amQg/Pp?=
- =?us-ascii?Q?4pVk0QqPuU22av6f7Eg0vRCgJrCAeDgZTxxE0NBFhgmm4JmqCRXIwNgs+lt+?=
- =?us-ascii?Q?zm6nnAbbA7hdELE/FhQaSkbYH8Gagt8DZhLgwiSfTFhlUJx2+W4vrZmnk/UM?=
- =?us-ascii?Q?iZHzfH4EU97q29eOjTqIIS2gzzbwzPy4NaAiplyE1BTITGwWLlQQImttCak9?=
- =?us-ascii?Q?A8KsnmzHEtEuUJn5oyJJOoDi3eRhg/jqOjhcqmjECx+La0bOPUQtGe1RLF+V?=
- =?us-ascii?Q?QmKISgzYX8qUZ6fZk8BeMGxHtEzJ/4tqL6ebpa3tZAnL4xVDBBEtKB0Sy89p?=
- =?us-ascii?Q?ru8rdLGIaJg1lW3gEWtZEN5EBfkBmFvTc49nL57QMGCITktF3wiGmllbyF7q?=
- =?us-ascii?Q?agI2Xy0ftq1823TPX/KRS3fOr+ggOK9q41SomFOIWP/3t4a5wUXuzyJeAnaK?=
- =?us-ascii?Q?1AP9KjUaMB98cw47DlfP6IrDTfs97RHc2IYzD8zXsCC0ttYEpAesRl35KoYW?=
- =?us-ascii?Q?Ch3H7Wr82Tecz9+iuE240Tg9OToFBRDJxqzhWun5rosJRzyUvlSJIMGi2JhT?=
- =?us-ascii?Q?dOvmqDmlN2xj9QeZN2oFsXfFo3haeKxOGrN/+5d1vJSuO57Y/BNIQH2a9b83?=
- =?us-ascii?Q?faCuzIYHjPzCn9Xh3CGY3MVhpofjChAzST310WNVgjlDrhOToMBZAg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR01MB7792.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(7416014)(376014)(1800799024)(38350700014)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?9qvq8oXQAINDZ3i+eclWm51H6wNwN405th7evJJtwaXfBQ3rfTEtliNq58nv?=
- =?us-ascii?Q?Uj6r2Au7+VtuTqg/04vfO+Mqxk7ftzAYEPriuZNYL/DoCdXm9aRmO6212H3e?=
- =?us-ascii?Q?SqDpvaxifLija8TsnXH6vD01Q7ReBm850ZlUtpL3XQzJNZGmb/YUPa2XZdMq?=
- =?us-ascii?Q?z9nv5FBwyG1zo9QxaqwYnaZBj0NxWxznoA+sC9pCRe3qfZEXJkNgj13jslfi?=
- =?us-ascii?Q?l/yBlAR4e+BBAny5u3dN7Ptl94GDa09acbfxNwfvJVCep1UnRBM2QCXMMxXG?=
- =?us-ascii?Q?vtin8r4HLSbAAvxCXFZqJH4iOSdBfoF9e/FX1gO+UPhK90aglQOwQwsE83f1?=
- =?us-ascii?Q?HVGvQm8jDCXSWfCh5LVo29U1cGh0xzWKv1ygYW18MKk7eJK6agzVaCwpQhA+?=
- =?us-ascii?Q?UIMKEr3FdAQ/Vk+ZELMq3aQ5CLjNQCOcQsYb0tvs1sXQYZDKNyuWz6xTB41J?=
- =?us-ascii?Q?20DZhHoEO/uZKKvP/JXjOcJn8l+bwqQF6RgpJzg3JaNRWErBRphNzZrk0+R0?=
- =?us-ascii?Q?ztTuq4Kd8ipLyHYHdfeflf086uvBf6rxRcujMDJ8hSRhD7XWvqSpun4lzEC2?=
- =?us-ascii?Q?GNO+w6za0ZAUNmVZuxjLc6ajxU6kjKSdVqida8J8pK1cftKB2xgOKE808Jrj?=
- =?us-ascii?Q?/b//Mrpo6SOVrDhwTrGbuJAl/ThrNVWKVx0imOZ7li+l5V6Y42gnPnnwGN2w?=
- =?us-ascii?Q?ECGECXfm4FC6kbQV9xAsJMPsIZCl733qQahgjUaSR06tgMDVyOAxQOGBHdZQ?=
- =?us-ascii?Q?t5GWcDsZjeBi0Fs35hvL6jCZbjWwpPQrEKrJe2vT21QuAAcqskfMdM/l/sCA?=
- =?us-ascii?Q?f7f4irDe3cLjxDXOgrKJ3VZ7cJ3/0qs9FQiGWQpaqKH6K63eCI/EXVSdpEVc?=
- =?us-ascii?Q?NetoqE76FwiPK4aG14YVWxpZuJp/y75K+HGkODdH9EprSDWGaJHgiVg1uknj?=
- =?us-ascii?Q?goXnBq/J0nJmV7x3JhR8eEPleq2I3uAsjMadF38JFGwTMf55APpVRLrFLRkt?=
- =?us-ascii?Q?y3QLrfwY81u1jRA8d0KwH2uWiUGHRuRGNNDtOT7qUw8vtz6jZx0wrd0a7sv5?=
- =?us-ascii?Q?Wr1tKTwVTyKlwZlnjfnkbtK8pvNlq7SLGB/2i9dSfEsLQ/KPhe4Z908qM6kG?=
- =?us-ascii?Q?DCLm0brlMft3/k0rzd6ToV3VTJhZ0tXyuNRHGxP+hmsl3EVEdcFkVsNrw88Y?=
- =?us-ascii?Q?NHt49GHQUPdhY0fety30Q7XM+Z2RKbC+G3y56dZFulS1a19j+lSLNo2D6dCY?=
- =?us-ascii?Q?2hj2gkXKvwBHgvutX5iCaAt66XkVFk3Q9eAEque/tyBA1FkcMa+xmhRmZd20?=
- =?us-ascii?Q?gzV9ugynUXYxRFNQSYxDW8feppqX/ltW3aUz4gN1O3zvoVhdKv4Nm53zbiaV?=
- =?us-ascii?Q?oYredeHdNHA6to1m/eAkimyvxtHwRTicZVCqD+KnbSecXdCepm7qIkIo5mDh?=
- =?us-ascii?Q?r5JaBcxOpUU38LhIxLiakU8ni7W5ojVy0OjUa0sV22XkDU60llQdbR04zEOA?=
- =?us-ascii?Q?k3k2xhXsY/C3jbj5q/XvlPOAIIUN8On94MBvmlGOjLhU9CVt/EXzJxNqcQS9?=
- =?us-ascii?Q?cLdqwSUsGjrdfc3+6GFqHyjUiKweYpaffb9q3ZTqn4lUcjjT7ue0eyf0EKaE?=
- =?us-ascii?Q?K1kaxQ30xakYeCc9mO/7pJY=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f1507d4f-7cd2-45ff-8cae-08dd7d40f5f9
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR01MB7792.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Apr 2025 23:46:51.6044
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kRFig8TiYE2j6mYmueH0lVpKLhpqCw71GNbrRREefBsaG/aWK7z9iYaB3ftTOOFiAldyGFTEUctTD2shD5X4o+ddUMchUAZnrO/GqG807YKn9rD+HV4qVQrYBF1n2KG3
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR01MB9009
+Content-Transfer-Encoding: 8bit
 
-Oliver Upton <oliver.upton@linux.dev> writes:
+64-bit allyesconfig builds fail with
 
-> On Tue, Apr 15, 2025 at 03:13:43PM -0700, D Scott Phillips wrote:
->> > At least from your erratum description it isn't clear to me that this
->> > eliminates the problem and only narrows the window of opportunity.
->> > Couldn't the implementation speculatively fetch translations with an
->> > unsynchronized HCR up to the ISB? Do we know what translation regimes
->> > are affected by the erratum?
->> 
->> Hi Oliver, I got some clarification from the core folks. The issue
->> affects the data side of the core only, not the instruction side.  I'll
->> update my description to include that.
->> 
->> Speculation after the `msr hcr_el2` couldn't launch a problem
->> translation when the `msr` is followed by an `isb` like this.
->
-> Thanks, agree that the subsequent ISB protects against speculative
-> behavior relating to the instruction stream. To be absolutely certain,
-> there's no risk of, say, a TLB prefetcher pulling in a problematic
-> translation in this window? IOW, there's no behavior that meets the ARM
-> ARM definition of a Speculative operation that can lead to a corrupted
-> translation.
+x86_64-linux-ld: kernel image bigger than KERNEL_IMAGE_SIZE
 
-Yes, that's right, it's just translations from load/store instructions,
-and the DSB before closes the window where earlier instructions can get
-corrupted, and then the ISB after prevents the window for corruption
-from later instructions from overlapping with the write to HCR.
+Bisect points to commit 6f110a5e4f99 ("Disable SLUB_TINY for build
+testing") as the responsible commit. Reverting that patch does indeed
+fix the problem. Further analysis shows that disabling SLUB_TINY enables
+KASAN, and that KASAN is responsible for the image size increase.
 
-> Sorry to hassle about these issues but they're helpful for maintaining
-> the workaround in the future. If you can fold all the extra details into
-> the patch for v2 that'd be great.
+Solve the build problem by disabling KASAN for test builds.
 
-No worries, and sorry to not have the description more clear
-originally. I'll include a more complete description in the next
-version.
+Fixes: 6f110a5e4f99 ("Disable SLUB_TINY for build testing")
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+---
+v2: Disable KASAN unconditionally for test builds
+
+ lib/Kconfig.kasan | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/Kconfig.kasan b/lib/Kconfig.kasan
+index f82889a830fa..190297f2ff83 100644
+--- a/lib/Kconfig.kasan
++++ b/lib/Kconfig.kasan
+@@ -37,7 +37,7 @@ menuconfig KASAN
+ 		     (HAVE_ARCH_KASAN_SW_TAGS && CC_HAS_KASAN_SW_TAGS)) && \
+ 		    CC_HAS_WORKING_NOSANITIZE_ADDRESS) || \
+ 		   HAVE_ARCH_KASAN_HW_TAGS
+-	depends on SYSFS && !SLUB_TINY
++	depends on SYSFS && !SLUB_TINY && !COMPILE_TEST
+ 	select STACKDEPOT_ALWAYS_INIT
+ 	help
+ 	  Enables KASAN (Kernel Address Sanitizer) - a dynamic memory safety
+-- 
+2.45.2
+
 
