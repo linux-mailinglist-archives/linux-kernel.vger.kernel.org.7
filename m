@@ -1,297 +1,153 @@
-Return-Path: <linux-kernel+bounces-607452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFA22A90674
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:30:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC750A90691
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:35:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6865F16E6DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:30:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA46F3B852E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED7CB1C7013;
-	Wed, 16 Apr 2025 14:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461EE1C7013;
+	Wed, 16 Apr 2025 14:30:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HbiEyvuD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="hIUGtH2u"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB891B4235
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 14:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2120199947;
+	Wed, 16 Apr 2025 14:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744813803; cv=none; b=cfDzwsrDCcwCsqu5Oit2zT5/IXI/hIWWCsy9d77OId7UuaoETxna+6O7zHrZ2DKGoyQfrySoxdMzbsH0Cmj8+C/jvVQrvN0dgQ5eUUaI1zv1QLscB+iNx0gRecdGiUy8dLNbLbIogtdqpj4vVwx3pDCrtYHPjuy50o1jZUl7OFI=
+	t=1744813831; cv=none; b=OoaollBTXfUyxPGLz4OJyr+L+LZzRfCLIm4gP0ac7J4JfzHTeQKQim60WiRCRw4S7eofIIL3PbtP2uEdX6IlArAOIVB413V0U3Yjkh2HAIhZ7bfPL/ysIarnbzTyEb/+GQl49jxsFwiTJZlzD5lFVVp1rqo0Ae3sl3ogDL+bmn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744813803; c=relaxed/simple;
-	bh=M3aKjuBSofdl/WfprYl6DJmKZ07dVKfFKg7ZK124i70=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=b1uinERQaPuEYnTBdNCVFQhPxyaeej/LJA4/afB83ezOuAee3illgGCzlinitcMEC1A7PBwJ8ZKKke+KplJnQ4majMZlJDM5/bhehZ4KgsSlMtbNK4JHG8Yur65aSn5GsuOWCmb0GVtXfQp/XmuI43O975HaiKi8eGgp1KBfOGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HbiEyvuD; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744813799;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=M3aKjuBSofdl/WfprYl6DJmKZ07dVKfFKg7ZK124i70=;
-	b=HbiEyvuDHrLEnAhvbV3WpoERWnRtOq3ibcTdLRrMtW22cZz9+xT8wKPa2TdZlOJ0LjuPnP
-	YYD9gKtLi8xsga/CvnOBFN4U+1ZuzOt6fIlsEEX9zdGcYH0K3LCN7YhDLATGC6XMSftx1l
-	bi+ohyE1Diu156/HFTQ4fnvZlHEMkOc=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-671-LyRY0oRYM_qXmEUYVeiQiA-1; Wed, 16 Apr 2025 10:29:57 -0400
-X-MC-Unique: LyRY0oRYM_qXmEUYVeiQiA-1
-X-Mimecast-MFC-AGG-ID: LyRY0oRYM_qXmEUYVeiQiA_1744813796
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3912b54611dso3846783f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 07:29:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744813796; x=1745418596;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M3aKjuBSofdl/WfprYl6DJmKZ07dVKfFKg7ZK124i70=;
-        b=qAQykt78AIdpwyygsHb4yzU6ieZWxK3LtpEOpkUTWR9fjoIYxMnHEYFdbppR3wuXEj
-         PN63w2qbAUkzpMS3DqVEMQ4/bLr1Ws7CfMfXWr6lMaQJxUYZ5RtEgfXM+BneSv/sQjbM
-         utyCVGs9E40ewR3PUEWSMGSxU25TBWl4X57UsUPAc2FyNd1FKIrn5ugKtiuGnOQU/KNJ
-         eT7A8LbGAkNwHAn/4VLh5BT8WrQXIfqdVsT0tthSGdqw+qU6oWPYenSX83MOY2nTR85w
-         F9FzJ+Xq98oEnagYNPJRIONz/KfV/N6nGBTcvZ6VV4047lML5CZRCkVjLxqNQb6lw1Hv
-         uxQw==
-X-Forwarded-Encrypted: i=1; AJvYcCV5YhiSCMOD6wPvj1BEAYD0FdwnMq08gIu0bQhKX8XHVwOch06KxqXmABVZY16XZ4PJQNrBdG6ZBcNKmtU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywug0r1+VMXv2JWq+8twKCKZg9H4hqmycDbF9stwtffkGaNIzbG
-	+zTwyY6iOMBDapoPn267fQCjBkPkWBgNm8ywgtI8jEyXos+6KXaooThhEAJxZbSAzPh3u6lDyUp
-	ZNpVROQu0223w0GxiRNm0mRMsqov2pcJzUuhx3B8esVGIrCklLzYM1m3+/sy+TA==
-X-Gm-Gg: ASbGnctWwmskqXyq3IUJ7HEutRHaWLTQfsXLAAEMEj9uSF9FerAG2UDUcfIaOFLjRhH
-	xcjk8nOg3tisO4TVpyy+QGDm3wG9jCHgy4RWIWubeL324IHqOWi0Yp9CuWl6S6es2mNx1P6NSDq
-	PU9L38omT/PkSmdWENQ2A9YLYRFOxPuTCuQqY5Xeoshg14OyhZPtE2x9RjYTNF2psyJYANskngZ
-	ka9CAW2i+WCGJfyhmtqqDzzUlPTEQBU1N1cnwNng9kjy08sPaLxitWdyDzQ0ktqUITZPYi+U337
-	IGq4aEVZ/2+avK+V/UtM2RDdZ2zmOt9BMeL0ZFA=
-X-Received: by 2002:a5d:47cb:0:b0:391:139f:61af with SMTP id ffacd0b85a97d-39ee5b1cf87mr2140988f8f.32.1744813796230;
-        Wed, 16 Apr 2025 07:29:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEmzjek8Rw/7fmoyQ/sF0qY6jOKHwHwLvp4Y/yffnHxieGarrZnnOuxkacClA21nZkn7yg+rw==
-X-Received: by 2002:a5d:47cb:0:b0:391:139f:61af with SMTP id ffacd0b85a97d-39ee5b1cf87mr2140964f8f.32.1744813795804;
-        Wed, 16 Apr 2025 07:29:55 -0700 (PDT)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([195.174.134.30])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4405b4d3453sm22492985e9.16.2025.04.16.07.29.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Apr 2025 07:29:55 -0700 (PDT)
-Message-ID: <a85dcc1c6b493838abdc8716ae35fe4ad734db2b.camel@redhat.com>
-Subject: Re: [PATCH v3 13/22] rv: Add support for LTL monitors
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Nam Cao <namcao@linutronix.de>, Steven Rostedt <rostedt@goodmis.org>, 
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: john.ogness@linutronix.de
-Date: Wed, 16 Apr 2025 16:29:53 +0200
-In-Reply-To: <19f424c910bfa0f4854117e3f8771aeb6e98a9d2.1744785335.git.namcao@linutronix.de>
-References: <cover.1744785335.git.namcao@linutronix.de>
-	 <19f424c910bfa0f4854117e3f8771aeb6e98a9d2.1744785335.git.namcao@linutronix.de>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
- xyhmqeUWOzFx5P43S1E1dhsrLWgP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1744813831; c=relaxed/simple;
+	bh=mYbW2DT1w5X3RypUfXyK5Jb3D1YRyHwDKvLTIL0PwNs=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Tucmh3PNc29A/Cfoyr91FqAeSANgQjFGl5E7H3vdOlKf+awUceIsJb6TlRDyGvi7jHV5LtE5vvnZD8/bAh8iTuYVnxp5MYwCG5x4BZORAuPHGTsWwYso+BThRWvNTBzcGLY6N8y/gBg4q1UVS/anmpHfUEXJPUq/OOYPSQC/u08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=hIUGtH2u; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1744813821; x=1745418621; i=markus.elfring@web.de;
+	bh=hxhI6gqX3pyMrwjZJ35l5Ur1hW8wIF3MipU6G+qRRVU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=hIUGtH2uhSUFudeesZSfc5Z6gOWbJPGUZaJufYdPXjyyN8/vyiRNZcXoPOPUwnWN
+	 D9cp2l2U0iryJFWf/9IiRT1K7JuC1IZBYMbr9RWo2tKw7UXY9lVgzAUXepOhOSxRq
+	 oE2BHICp1+a2T7U720/FPviXpIOyLEGex3ShqgB4euCBnBVSVrFlsXSeKodSMM4SG
+	 qZlhSFvROLHYe2qDoMGeNYYiq3u2Dy0fSx3ErqskobX2lIcrW3+uSwYqJ67nczDQB
+	 0LlMiQoaATehdJ6PHcPkYVsZQF6IQSNz1XVC+PTEhVdAYMfy86Dy0S+Cz5z4BLKo6
+	 0Ct22NTc4yaBv6tzDg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.13]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MGgNS-1trFzb1Nn0-006XH2; Wed, 16
+ Apr 2025 16:30:21 +0200
+Message-ID: <44df2f04-655e-47cc-8785-0855377c4bf7@web.de>
+Date: Wed, 16 Apr 2025 16:30:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Linus Walleij <linus.walleij@linaro.org>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, Chenyuan Yang <chenyuan0y@gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] misc: sram: Replace devm_kasprintf() call by devm_kstrdup()
+ in sram_reserve_regions()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:K53tmICETy4fXmGeOgvtXGZxjBjBzMVwyv4pfrf/l+kb6hZ/9cn
+ GoAEHLmXpLGZ0tnVvSR8a6+s/0h+FiaWPmlaJHcRkOuPSOsPDm0eS0s1r/X8TU8m923sEUs
+ 0urRHA7o6zYWu2unSNp65YrF29zNAtIcUQf24eBFBETXtVX2he5RtJr0PZw0WzS6rnYngJ5
+ eyCyPHr1S4sOt14vlcIvw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:5F83Olip9cM=;+IaxY4wEj1mRWiTZA3DNz8D7Zio
+ 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
+ A/hA6ALRsExkE=
 
-On Wed, 2025-04-16 at 08:51 +0200, Nam Cao wrote:
-> diff --git a/Documentation/trace/rv/linear_temporal_logic.rst
-> b/Documentation/trace/rv/linear_temporal_logic.rst
-> new file mode 100644
-> index 000000000000..232f9700cbaa
-> --- /dev/null
-> +++ b/Documentation/trace/rv/linear_temporal_logic.rst
-> @@ -0,0 +1,119 @@
-> +Introduction
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 16 Apr 2025 16:10:06 +0200
 
-Just noticed you misplaced the sections in this file, it should be like:
+Use a devm_kstrdup() call instead of a devm_kasprintf() call
+in this function implementation because only a single string
+should be copied.
 
-Linear Temporal Logic
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+The source code was transformed by using the Coccinelle software.
 
-Introduction
-------------
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/misc/sram.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-[...]
-
-Grammar
--------
-
-[...]
-
-Example linear temporal logic
------------------------------
-
-[...]
-
-E.g. use =3D=3D=3D only for the page's title (which is missing) and --- for
-the sections, otherwise you get it oddly integrated in the index.
-
-Thanks,
-Gabriele
-
-> +Runtime verification monitor is a verification technique which
-> checks that the kernel follows a
-> +specification. It does so by using tracepoints to monitor the
-> kernel's execution trace, and
-> +verifying that the execution trace sastifies the specification.
-> +
-> +Initially, the specification can only be written in the form of
-> deterministic automaton (DA).
-> +However, while attempting to implement DA monitors for some complex
-> specifications, deterministic
-> +automaton is found to be inappropriate as the specification
-> language. The automaton is complicated,
-> +hard to understand, and error-prone.
-> +
-> +Thus, RV monitors based on linear temporal logic (LTL) are
-> introduced. This type of monitor uses LTL
-> +as specification instead of DA. For some cases, writing the
-> specification as LTL is more concise and
-> +intuitive.
-> +
-> +Many materials explain LTL in details. One book is::
-> +
-> +=C2=A0 Christel Baier aund Joost-Pieter Katoen: Principles of Model
-> Checking, The MIT Press, 2008.
-> +
-> +Grammar
-> +=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +Unlike some existing syntax, kernel's implementation of LTL is more
-> verbose. This is motivated by
-> +considering that the people who read the LTL specifications may not
-> be well-versed in LTL.
-> +
-> +Grammar:
-> +=C2=A0=C2=A0=C2=A0 ltl ::=3D opd | ( ltl ) | ltl binop ltl | unop ltl
-> +
-> +Operands (opd):
-> +=C2=A0=C2=A0=C2=A0 true, false, user-defined names consisting of upper-c=
-ase
-> characters, digits, and underscore.
-> +
-> +Unary Operators (unop):
-> +=C2=A0=C2=A0=C2=A0 always
-> +=C2=A0=C2=A0=C2=A0 eventually
-> +=C2=A0=C2=A0=C2=A0 not
-> +
-> +Binary Operators (binop):
-> +=C2=A0=C2=A0=C2=A0 until
-> +=C2=A0=C2=A0=C2=A0 and
-> +=C2=A0=C2=A0=C2=A0 or
-> +=C2=A0=C2=A0=C2=A0 imply
-> +=C2=A0=C2=A0=C2=A0 equivalent
-> +
-> +This grammar is ambiguous: operator precedence is not defined.
-> Parentheses must be used.
-> +
-> +Example linear temporal logic
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-> +.. code-block::
-> +
-> +=C2=A0=C2=A0 RAIN imply (GO_OUTSIDE imply HAVE_UMBRELLA)
-> +
-> +means: if it is raining, going outside means having an umbrella.
-> +
-> +.. code-block::
-> +
-> +=C2=A0=C2=A0 RAIN imply (WET until not RAIN)
-> +
-> +means: if it is raining, it is going to be wet until the rain stops.
-> +
-> +.. code-block::
-> +
-> +=C2=A0=C2=A0 RAIN imply eventually not RAIN
-> +
-> +means: if it is raining, rain will eventually stop.
-> +
-> +The above examples are referring to the current time instance only.
-> For kernel verification, the
-> +`always` operator is usually desirable, to specify that something is
-> always true at the present and
-> +for all future. For example::
-> +
-> +=C2=A0=C2=A0=C2=A0 always (RAIN imply eventually not RAIN)
-> +
-> +means: *all* rain eventually stops.
-> +
-> +In the above examples, `RAIN`, `GO_OUTSIDE`, `HAVE_UMBRELLA` and
-> `WET` are the "atomic
-> +propositions".
-> +
-> +Monitor synthesis
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +To synthesize an LTL into a kernel monitor, the `rvgen` tool can be
-> used:
-> +`tools/verification/rvgen`. The specification needs to be provided
-> as a file, and it must have a
-> +"RULE =3D LTL" assignment. For example::
-> +
-> +=C2=A0=C2=A0=C2=A0 RULE =3D always (ACQUIRE imply ((not KILLED and not C=
-RASHED) until
-> RELEASE))
-> +
-> +which says: if `ACQUIRE`, then `RELEASE` must happen before `KILLED`
-> or `CRASHED`.
-> +
-> +The LTL can be broken down using sub-expressions. The above is
-> equivalent to:
-> +
-> +=C2=A0=C2=A0 .. code-block::
-> +
-> +=C2=A0=C2=A0=C2=A0 RULE =3D always (ACQUIRE imply (ALIVE until RELEASE))
-> +=C2=A0=C2=A0=C2=A0 ALIVE =3D not KILLED and not CRASHED
-> +
-> +From this specification, `rvgen` generates the C implementation of a
-> Buchi automaton - a
-> +non-deterministic state machine which checks the satisfiability of
-> the LTL. See
-> +Documentation/trace/rv/monitor_synthesis.rst for details on using
-> `rvgen`.
-> +
-> +References
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +One book covering model checking and linear temporal logic is::
-> +
-> +=C2=A0 Christel Baier aund Joost-Pieter Katoen: Principles of Model
-> Checking, The MIT Press, 2008.
-> +
-> +For an example of using linear temporal logic in software testing,
-> see::
-> +
-> +=C2=A0 Ruijie Meng, Zhen Dong, Jialin Li, Ivan Beschastnikh, and Abhik
-> Roychoudhury. 2022. Linear-time
-> +=C2=A0 temporal logic guided greybox fuzzing. In Proceedings of the 44th
-> International Conference on
-> +=C2=A0 Software Engineering (ICSE '22). Association for Computing
-> Machinery, New York, NY, USA,
-> +=C2=A0 1343=E2=80=931355. https://doi.org/10.1145/3510003.3510082
-> +
-> +The kernel's LTL monitor implementation is based on::
-> +
-> +=C2=A0 Gerth, R., Peled, D., Vardi, M.Y., Wolper, P. (1996). Simple On-
-> the-fly Automatic Verification of
-> +=C2=A0 Linear Temporal Logic. In: Dembi=C5=84ski, P., =C5=9Aredniawa, M.=
- (eds)
-> Protocol Specification, Testing and
-> +=C2=A0 Verification XV. PSTV 1995. IFIP Advances in Information and
-> Communication Technology. Springer,
-> +=C2=A0 Boston, MA. https://doi.org/10.1007/978-0-387-34892-6_1
+diff --git a/drivers/misc/sram.c b/drivers/misc/sram.c
+index e5069882457e..5a2412ca43cd 100644
+=2D-- a/drivers/misc/sram.c
++++ b/drivers/misc/sram.c
+@@ -235,8 +235,9 @@ static int sram_reserve_regions(struct sram_dev *sram,=
+ struct resource *res)
+ 				goto err_chunks;
+ 			}
+ 			if (!label)
+-				block->label =3D devm_kasprintf(sram->dev, GFP_KERNEL,
+-							      "%s", of_node_full_name(child));
++				block->label =3D devm_kstrdup(sram->dev,
++							    of_node_full_name(child),
++							    GFP_KERNEL);
+ 			else
+ 				block->label =3D devm_kstrdup(sram->dev,
+ 							    label, GFP_KERNEL);
+=2D-=20
+2.49.0
 
 
