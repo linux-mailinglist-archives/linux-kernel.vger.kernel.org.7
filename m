@@ -1,120 +1,85 @@
-Return-Path: <linux-kernel+bounces-606318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35287A8ADCB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 04:02:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D34C0A8ADB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 03:59:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6F9A18990AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 02:02:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 502C71902E4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 01:59:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C98691A01D4;
-	Wed, 16 Apr 2025 02:02:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D01E3227E95;
+	Wed, 16 Apr 2025 01:58:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Ej2oNmKq"
-Received: from out203-205-221-221.mail.qq.com (out203-205-221-221.mail.qq.com [203.205.221.221])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cYEmPHI4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43F215E96;
-	Wed, 16 Apr 2025 02:02:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245981C5D72;
+	Wed, 16 Apr 2025 01:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744768957; cv=none; b=u5+VQYjeT06WwLiAeMzJdk1cyKQrEEZdITDIY4WIISMEC9msTubmelRZ7fjNn44fGrknztrTxDncXBH2JFHw7ke6dDauhc5XphgUAiG1GT4f2nUEXTGH9Ky933umKWKWxkW58QRmt86KtLnxZy+JOEnxS0Y3epoHxddtF49/QaM=
+	t=1744768735; cv=none; b=lM9NT41/psFnLWozxfsPoZb94iwuzp4KvDuEihh9a0Sh6XFxBNGCar/KwTSyhFMtEkMD2gaFWQlVxZbf3TyGyAuwXmW+pnu2ad8Kl+I77jn4g3P9sFcRZooOGI23SPfwqSWON0eWSbz0wBBM0WUNxAZOxah3vqsQoT4r9MmRtAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744768957; c=relaxed/simple;
-	bh=v4/phJQUAPeOK41LzcUnYsiA3yKOssm+W9ZqAkAigfk=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IcCtjsOEa9GTFU/3bmiLplb0uVEgkMqBRXCbMleI5+fmf/I1vO5RQbDAorZKhxHWW5kHEBcD7dTJSkXmYIj4xJXT7QeCvWweDvNYyCmMq3ARDQfXltwfIao5w5vz2iwWJYbfO3V2WRs4QjR9yrG5nWkAgGwMv5ZiF596nfUsCNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Ej2oNmKq; arc=none smtp.client-ip=203.205.221.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1744768642; bh=KvSaTgFS8WeHQJzlGw/Ub9odmid7Z1N7H4quqWzN/KM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=Ej2oNmKqHZ67Gedex9lBRdzlaMtU6fbb/ZGtWGXavGc4M1zV5/0rp0WnkniLrn4Dd
-	 9MrWUAZ0wiaEseQIKi6nMwEbDWav5A5W+qYmeSFG9UchjSgXfSPdBUBMSj0isUYura
-	 IeGYWFsSfMG5NPKef7Jp4PTzu6fShHsqre+1LMTQ=
-Received: from ubuntu.localdomain ([218.104.140.83])
-	by newxmesmtplogicsvrszc11-0.qq.com (NewEsmtp) with SMTP
-	id E53888DF; Wed, 16 Apr 2025 09:57:19 +0800
-X-QQ-mid: xmsmtpt1744768639t22hacpvg
-Message-ID: <tencent_607C227A96060DD8EC83C78184305D264109@qq.com>
-X-QQ-XMAILINFO: N7h1OCCDntuj9RM+yAw0CZYpw+uCKkqPhP58CShgWJ3pZMIQUoXQdBNpE0P0Y5
-	 I/40uwm6/Uggqid2uq66wyBQT3D/ZP43ANKRcULFnBEBFUq23dD5eE5GBWSrglZBANiNDWQ402u/
-	 altPJVOP8Luscihfv40JmXKB24hE6pJkKeaZqukpMauThdb429rnZpoJb2MsaQwwx8YBGPSwTyn+
-	 H6P1rR0Y1wBZdUW6oBw/h1Pn/7DerkgH/Qc3scNlnM6SEVY0zhwhrJ/86vr+JFyD/hNlR+8QAKxh
-	 Txvba5BAFLqjRijf+4cejOV7jE4cZ7yq6U4sQKXmc12fkmOFsIsxBUO6eOWPrUh4dWNwqd7OEPao
-	 cD0XJCGTuo9iUtqbW+aUfESiMkot9+COyxPezhQMhl7nMrXfv2pD/vYwwYVXi7GowLJJXBfLXtog
-	 hFi2ZzMqE8QWSkcxs04IbYCTIfS0aItfDk++HMkE1kKNu06l267A6IzJ68Q4PR0Rg0DOJ1/G4j9D
-	 NW9TpraqOxuTgNRbJn9ypOvBK8WdOwYHNDh738Kj7my2ON5YeJpvUW/CLg3o91JI2N9QnuuD19Fa
-	 40BBxM7nziWBNjPJ37c4iB2d8hzi0qt6gdt4aRq/dEsC5Tx1ksdu4fgMVfmBhdZmTGkOeFZnhHR8
-	 NsdDDf/6qU383/htCJPGsehvQ5P94YCcFc9KidTObcI8VIzPBG/Jkuktc74Mg4hXRHKsSxEXtZoF
-	 DtKWcU5bArEtVzsi+544NirU7bmj/J4BjpzY73VN+yKCGjUd+qlX4fxzWmAAacb/o2NL3x6IY5Uq
-	 ccJTOYQskwQd6PJnMNMLxm88xcF1IIUqJDXlVRQCgvbNMoha/0nCGIgJlOyFk5UNkl++0IusKfwB
-	 WCyAZIfEeuoi0y4pXfY32wOpEwIsyrQ+86x4I7N36CdoSLsGGZKprW48Bh9JtiWjATHqejL1QRr6
-	 J6LZSu4WM=
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-From: 1425075683@qq.com
-To: robh@kernel.org
-Cc: 1425075683@qq.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	m.szyprowski@samsung.com,
-	saravanak@google.com
-Subject: Re: [PATCH] of: reserved-mem: Warn for missing initfn in __reservedmem_of_table
-Date: Wed, 16 Apr 2025 09:57:08 +0800
-X-OQ-MSGID: <20250416015707.11088-1-1425075683@qq.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <CAL_Jsq++MbY=s5t1hmE0AhcmFA14t3fxLM1xPFZAA0ETX_ee-g@mail.gmail.com>
-References: <CAL_Jsq++MbY=s5t1hmE0AhcmFA14t3fxLM1xPFZAA0ETX_ee-g@mail.gmail.com>
+	s=arc-20240116; t=1744768735; c=relaxed/simple;
+	bh=L3o/7F4MZw2GsitKRi44JKWGnNf/gein/ZxWerdQGwY=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=ckng8wlBQKy0sbIxm7TTYtHWQHSq7XQxnjL/vNft/GhZFSxDjcddgQkj24GFsSnmrHOhzUtAfPT8uHeX3EO4mKmDj1V4r0jYPUFve3L68AHJ70WdD9rvu0BAntorQR7fkmL4YcmPfZd/mpAUSfSSdfCZmqfBKZOQEGH4RQiLGwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=cYEmPHI4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39B8CC4CEE7;
+	Wed, 16 Apr 2025 01:58:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1744768732;
+	bh=L3o/7F4MZw2GsitKRi44JKWGnNf/gein/ZxWerdQGwY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cYEmPHI4kYr6oATSI+VqxPwKjliyvrgzgV1eiOpK0h3032kT0yDSJOHCchr263Y2Z
+	 eulIy68ckZ1fI4XjPaFBXMym5A77qmLinC91yRqQ20zTlSYrtV5r5NvRJxrK/XzGyl
+	 US6JelDMIjrRVMpLQTz9K+Xh9o6dxiMj1nr8hqC8=
+Date: Tue, 15 Apr 2025 18:58:51 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: alexjlzheng@gmail.com
+Cc: willy@infradead.org, andrea@betterlinux.com, fengguang.wu@intel.com,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, mengensun@tencent.com, Jinliang Zheng
+ <alexjlzheng@tencent.com>, stable@vger.kernel.org
+Subject: Re: [PATCH v2] mm: fix ratelimit_pages update error in
+ dirty_ratio_handler()
+Message-Id: <20250415185851.e8d632f60ec5049f734ac2a8@linux-foundation.org>
+In-Reply-To: <20250415090232.7544-1-alexjlzheng@tencent.com>
+References: <20250415090232.7544-1-alexjlzheng@tencent.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-> On Tue, Apr 15, 2025 at 9:16 AM Liya Huang <1425075683@qq.com> wrote:
-> >
-> > For the data in __reservedmem_of_table, its function pointer initfn might
-> > be NULL. However, __reserved_mem_init_node() only considers non-NULL cases
-> > and ignores NULL function pointers.
->
-> If initfn is NULL, there's no point to the entry and that's a bug.
-> Unless you have a build time check, there's no point to add this.
+On Tue, 15 Apr 2025 17:02:32 +0800 alexjlzheng@gmail.com wrote:
+
+> From: Jinliang Zheng <alexjlzheng@tencent.com>
 > 
-> Rob
+> In the dirty_ratio_handler() function, vm_dirty_bytes must be set to
+> zero before calling writeback_set_ratelimit(), as global_dirty_limits()
+> always prioritizes the value of vm_dirty_bytes.
 
-Thank you for your response. Based on your suggestion, I have made the 
-modifications and used static_assert() to perform the check at compile 
-time. The specific code is as follows. Could you please review whether 
-this modification is reasonable? If it is acceptable, I will proceed with 
-submitting the patch.
+Can you please tell us precisely where global_dirty_limits()
+prioritizes vm_dirty_bytes?  I spent a while chasing code and didn't
+see how global_dirty_limits() gets to node_dirty_ok()(?).
 
-I did not find any usage of static_assert() for null pointer checks in the
-kernel code. Additionally, BUILD_BUG_ON() cannot be used globally.
+> That causes ratelimit_pages to still use the value calculated based on
+> vm_dirty_bytes, which is wrong now.
+> 
+> Fixes: 9d823e8f6b1b ("writeback: per task dirty rate limit")
+> Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
+> Reviewed-by: MengEn Sun <mengensun@tencent.com>
+> Cc: stable@vger.kernel.org
 
----
-diff --git a/include/linux/of_reserved_mem.h b/include/linux/of_reserved_mem.h
-index e338282da652..87446ad2deb2 100644
---- a/include/linux/of_reserved_mem.h
-+++ b/include/linux/of_reserved_mem.h
-@@ -29,6 +29,7 @@ typedef int (*reservedmem_of_init_fn)(struct reserved_mem *rmem);
- #ifdef CONFIG_OF_RESERVED_MEM
- 
- #define RESERVEDMEM_OF_DECLARE(name, compat, init)			\
-+	static_assert((init) != NULL);	\
- 	_OF_DECLARE(reservedmem, name, compat, init, reservedmem_of_init_fn)
- 
- int of_reserved_mem_device_init_by_idx(struct device *dev,
----
-
-Thanks,
--- 
-Liya Huang <1425075683@qq.com>
+Please, as always, provide a description of the userspace-visible
+effects of this bug?
 
 
