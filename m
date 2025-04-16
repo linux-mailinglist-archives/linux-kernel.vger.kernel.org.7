@@ -1,156 +1,151 @@
-Return-Path: <linux-kernel+bounces-607990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7416A90D40
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 22:41:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA960A90D47
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 22:42:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 697CD5A3457
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:40:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4AE1447F94
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F7BC232787;
-	Wed, 16 Apr 2025 20:40:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA792356A5;
+	Wed, 16 Apr 2025 20:42:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eKd7z5T9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b="cfCtctn+"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD021F8937;
-	Wed, 16 Apr 2025 20:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA3321324F
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 20:42:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744836053; cv=none; b=bO1b1xwRD7PJkeLRx5bJG9fP27pXRvSwBIkKeOm0u6UhCtgQM8R8/zUdBx5XAaJdegYHE+gfv/v/XzRGF61+0P/JHGAoQNZqhzI/iSwnJIOgbT4es2A/ipARyYGUg93ACTs70iFRTm6Ll3Tz78tWSoeWeGe29UN+Zww5YTSKjZY=
+	t=1744836131; cv=none; b=jcH3WDaBwUwvw7IY7VzqId58y/RJ69pKG2AzkqfCoWQua00JhuNXV4iGGSe4DPcomtd/TzI0OONEmYferRBTZGWm1rIenZSW29TPRdW2kfDBU5KuK6sbrHswfICfWvQ61rplPpWs19s7+KDARNSqnglXnC3pEqhz/3sDBXgmPVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744836053; c=relaxed/simple;
-	bh=EvvTI2dVum18RivfEtnLiFFNULxxc8d7/TvWnBJ57e0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=rUM+oJOCcEDgllGGPXp65PUN8evR8ft1R/Mras3QmJibFTqZBJxVauWki5rX6PyKOJH7EGtwwLnQ3GADLOPIQcGpSD28umBoNETirpOAfwE1g6VilRUlxDfNN67HMbBLYH90gUdDzC+E3YEE/cfbBnNVWHlwXVYCKQ71PgMArv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eKd7z5T9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB5B9C4CEE4;
-	Wed, 16 Apr 2025 20:40:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744836053;
-	bh=EvvTI2dVum18RivfEtnLiFFNULxxc8d7/TvWnBJ57e0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=eKd7z5T9E+knRBpQ3jKb/8ftx91rIF0bQBduS15ZAE2ht6hl19zLfGIL9jHC8vshl
-	 ykdizw73AakIuy3I1ly2//T08eeyRE3ODKNdIFqgSHtB8hcBfBJ4LJzlAXzQu/t7Zm
-	 SxWbJqE5V3eH2DBbGvY8tdy1KPA+cXGIi7fCUQ0pQrR4Qsloroe1ehc3TYdmQyzw9q
-	 N9vYSg1SXVhHXpRvwzpeWwPWveWbjNh0kAPClbvhKFeY/KZ3j7OEnAqbmNQSYWp/AH
-	 pkrq53hr0Xo0jqC6lng23FIZb2jtzv4zasaBJGtDpm9etx3bJvK3BIgUA6SyMXkGwn
-	 T9sqLP0GT211Q==
-Date: Wed, 16 Apr 2025 15:40:51 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Hans Zhang <18255117159@163.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com,
-	heiko@sntech.de, manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	jingoohan1@gmail.com, thomas.richard@bootlin.com,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH] PCI: dw-rockchip: Configure max payload size on host init
-Message-ID: <20250416204051.GA78956@bhelgaas>
+	s=arc-20240116; t=1744836131; c=relaxed/simple;
+	bh=isd3pWKNkrhji+qFvUAUdB4tZj2kAOCHkG7qUxql/Qg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P1q6twZ/MFCJibNxRL1ifPwg1UWTnX7l6as3TEtDVyu00U9C3cH+pW1UqJUhBglsItGipVV3wrIFmn3jJbS7I8oa6nWwWLT8kDzN4t4sbHzW/+i10XKvXyF03yD2P6kflOAIzBhCZRm8EtckJYCFx8Wf4niSfPUrIlbNe8zPTkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=neverthere.org; spf=pass smtp.mailfrom=neverthere.org; dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b=cfCtctn+; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=neverthere.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neverthere.org
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-225477548e1so1229855ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 13:42:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=neverthere.org; s=google; t=1744836127; x=1745440927; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IhFC5zP0nN1As31BXZj0zvD7HqsSqRg0k5dUe1wvE0g=;
+        b=cfCtctn+E5bb06+nO+NEOvxdXStHVdhEwB36q9RpCOGt4m8/MSeNZGZaQvvA2CQ5Z1
+         +ada1yEfTlHlORTmK74DxRdhlI9UEGNmzMSo8FTFK+u7I7l007S/0wjTunaGOCyBI+lm
+         FbwfMbCkb7CXs2cV52bHdMhCKZBdaygJ7lrxMnOVKrzlDrf9LdMJviUEaAwQsegb8un2
+         BlFKQy01/uq1Vav+GK0JWS8M5fRLIpiZhPUHtisPXFCCiIUe1KbQGTQGfEUU0BjB/0vf
+         yaP2ZokRT/byiI9X6Tt9GXGFlQYBXRUzQOaPEBXvyCj2GFZ+p45v3frgb/0tCepz2tp+
+         n42A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744836127; x=1745440927;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IhFC5zP0nN1As31BXZj0zvD7HqsSqRg0k5dUe1wvE0g=;
+        b=CxzfcDMcijQvOOgDFZAwTZBZzRs0qj1Xabq+4nS7luNablvcuQIMY5V3UgWXjHKXuq
+         pJX3FdAtTPWmKVC5nOJD+eHJBVsR8yiXTVEZaygCmnQpL8Ll27E5HlW7vpP2i/WPJoCc
+         3Ts8CoY5wAEraryJuYY0eKPO1OTxn3ISbnekXPCreUNsN+39S4q012m7BHoo2V+98SFW
+         Orekg4U9CHNVpS14UGzeiBJi1bDGVddka2qYL51LBak10q/pMKdaytn1HpuWpFkIyVaX
+         n5axBj2dz0Er1zXnEG23y3Nlb1QvEJ2e9I6RgrF6cJA4YdB0aEQu7i9YXc04rGpeu4VQ
+         MbVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUqcHFuz4S904k6n1yMSFbs7J39aNoD4e5O+ZtRmBTd2Mu24svLdyWq7QTdV68PPcRDU3Kymha9w+dW+X8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlrbkCPEdKAQ8cKA05LvSfbm82AtvQrEnTf39JwbJpXkUsvvVW
+	C0LKRfHse6RuRiDstjl8LvAbELmtE0FLnK7mAqXT82kiT/ojXp5QiqbqrumHJQ==
+X-Gm-Gg: ASbGncsDzO3udD4CLg7Fga4Nvpdjro3o8GcWHTDeIpM7uYrusOAUHIHlDkL2Te1K3Fl
+	lVSxIxKiXugTf5bPqA5AkiVgGsG9dx2s5pErN0Xzr36W2YsJYNL5BlW4OjEVK0PaEQNdPBlu6sy
+	jRS//BssbtdUabgKu2/J69dFCY5HfO0eVV8z8jV9QVDrNhyFwyFFhp11aEsliCebEQfqqav6C3A
+	JnWRDfiwDNHsbGM/Uu9hgkmTIRyBt3PaOdr4IxYxt1tzCKYn4WxSOTk26mfOZDeDrQGja/Ve3+n
+	MctmMNavtu8Jx2wkYAf7a/AVfdhCSlUu5Ybl0THCvKtdwDIWM0/x56/P1+7UHL6JsgZviNoL/q9
+	GxZaVBg==
+X-Google-Smtp-Source: AGHT+IGvO1pPtoCMh1G8ZobJNDUhVfmiaAosvQAjes3PNqavxN65KPJVMCnf89ttFZeJegPK78M7Jg==
+X-Received: by 2002:a17:902:f68e:b0:223:3b76:4e22 with SMTP id d9443c01a7336-22c358bc257mr41543505ad.6.1744836127500;
+        Wed, 16 Apr 2025 13:42:07 -0700 (PDT)
+Received: from tiamat (c-69-181-214-135.hsd1.ca.comcast.net. [69.181.214.135])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c33fa5de2sm18854845ad.133.2025.04.16.13.42.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Apr 2025 13:42:07 -0700 (PDT)
+From: Michael Rubin <matchstick@neverthere.org>
+To: gregkh@linuxfoundation.org,
+	dpenkler@gmail.com
+Cc: linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Michael Rubin <matchstick@neverthere.org>
+Subject: [PATCH v2 00/18] staging: gpib: Removing typedef of gpib_interface_t
+Date: Wed, 16 Apr 2025 20:41:46 +0000
+Message-ID: <20250416204204.8009-1-matchstick@neverthere.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250416151926.140202-1-18255117159@163.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 16, 2025 at 11:19:26PM +0800, Hans Zhang wrote:
-> The RK3588's PCIe controller defaults to a 128-byte max payload size,
-> but its hardware capability actually supports 256 bytes. This results
-> in suboptimal performance with devices that support larger payloads.
-> 
-> Signed-off-by: Hans Zhang <18255117159@163.com>
-> ---
->  drivers/pci/controller/dwc/pcie-dw-rockchip.c | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-> index c624b7ebd118..5bbb536a2576 100644
-> --- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-> +++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-> @@ -477,6 +477,22 @@ static irqreturn_t rockchip_pcie_ep_sys_irq_thread(int irq, void *arg)
->  	return IRQ_HANDLED;
->  }
->  
-> +static void rockchip_pcie_set_max_payload(struct rockchip_pcie *rockchip)
-> +{
-> +	struct dw_pcie *pci = &rockchip->pci;
-> +	u32 dev_cap, dev_ctrl;
-> +	u16 offset;
-> +
-> +	offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
-> +	dev_cap = dw_pcie_readl_dbi(pci, offset + PCI_EXP_DEVCAP);
-> +	dev_cap &= PCI_EXP_DEVCAP_PAYLOAD;
-> +
-> +	dev_ctrl = dw_pcie_readl_dbi(pci, offset + PCI_EXP_DEVCTL);
-> +	dev_ctrl &= ~PCI_EXP_DEVCTL_PAYLOAD;
-> +	dev_ctrl |= dev_cap << 5;
-> +	dw_pcie_writel_dbi(pci, offset + PCI_EXP_DEVCTL, dev_ctrl);
-> +}
+Using Linux code style for struct gpib_interface.
 
-I can't really complain too much about this since meson does basically
-the same thing, but there are some things I don't like about this:
+Adhering to Linux code style.
 
-  - I don't think it's safe to set MPS higher in all cases.  If we set
-    the Root Port MPS=256, and an Endpoint only supports MPS=128, the
-    Endpoint may do a 256-byte DMA read (assuming its MRRS>=256).  In
-    that case the RP may respond with a 256-byte payload the Endpoint
-    can't handle.  The generic code in pci_configure_mps() might be
-    smart enough to avoid that situation, but I'm not confident about
-    it.  Maybe I could be convinced.
+Reported by checkpatch.pl
 
-  - There's nothing rockchip-specific about this.
+In general, a pointer, or a struct that has elements that can reasonably be
+directly accessed should never be a typedef.
 
-  - It's very similar to meson_set_max_payload(), so it'd be nice to
-    share that code somehow.
+* Patch 1: "struct gpib_interface"
+	Having the word "_struct" in the name of the struct doesn't add any
+	information so rename "struct gpib_interface_struct" to
+	"struct gpib_interface".
 
-  - The commit log is specific about Max_Payload_Size Supported being
-    256 bytes, but the patch actually reads the value from Device
-    Capabilities.
+* Patch 2 - Patch 17: Replacing gpib_interface_t with "struct gpib_interface"
 
-  - I'd like to see FIELD_PREP()/FIELD_GET() used when possible.
-    PCIE_LTSSM_STATUS_MASK is probably the only other place.
+* Patch 18: Removing typedef for gpib_interface_t.
 
-These would be material for a separate patch:
+Michael Rubin (18):
+  staging: gpib: struct typing for gpib_interface
+  staging: gpib: agilent_82350b: gpib_interface
+  staging: gpib: agilent_82357a: gpib_interface
+  staging: gpib: cb7210: struct gpib_interface
+  staging: gpib: cec: struct gpib_interface
+  staging: gpib: common: struct gpib_interface
+  staging: gpib: fluke: struct gpib_interface
+  staging: gpib: fmh: struct gpib_interface
+  staging: gpib: gpio: struct gpib_interface
+  staging: gpib: hp_82335: struct gpib_interface
+  staging: gpib: hp2341: struct gpib_interface
+  staging: gpib: gpibP: struct gpib_interface
+  staging: gpib: ines: struct gpib_interface
+  staging: gpib: lpvo_usb: struct gpib_interface
+  staging: gpib: ni_usb: struct gpib_interface
+  staging: gpib: pc2: struct gpib_interface
+  staging: gpib: tnt4882: struct gpib_interface
+  staging: gpib: Removing typedef gpib_interface_t
 
-  - The #defines for register offsets and bits are kind of a mess,
-    e.g., PCIE_SMLH_LINKUP, PCIE_RDLH_LINKUP, PCIE_LINKUP,
-    PCIE_L0S_ENTRY, and PCIE_LTSSM_STATUS_MASK are in
-    PCIE_CLIENT_LTSSM_STATUS, but you couldn't tell that from the
-    names, and they're not even defined together.
+ .../gpib/agilent_82350b/agilent_82350b.c      |  4 ++--
+ .../gpib/agilent_82357a/agilent_82357a.c      |  2 +-
+ drivers/staging/gpib/cb7210/cb7210.c          | 18 +++++++-------
+ drivers/staging/gpib/cec/cec_gpib.c           |  2 +-
+ drivers/staging/gpib/common/gpib_os.c         |  4 ++--
+ drivers/staging/gpib/eastwood/fluke_gpib.c    |  6 ++---
+ drivers/staging/gpib/fmh_gpib/fmh_gpib.c      |  8 +++----
+ drivers/staging/gpib/gpio/gpib_bitbang.c      |  2 +-
+ drivers/staging/gpib/hp_82335/hp82335.c       |  2 +-
+ drivers/staging/gpib/hp_82341/hp_82341.c      |  4 ++--
+ drivers/staging/gpib/include/gpibP.h          |  6 ++---
+ drivers/staging/gpib/include/gpib_types.h     |  9 ++++---
+ drivers/staging/gpib/ines/ines_gpib.c         | 14 +++++------
+ .../gpib/lpvo_usb_gpib/lpvo_usb_gpib.c        |  2 +-
+ drivers/staging/gpib/ni_usb/ni_usb_gpib.c     |  2 +-
+ drivers/staging/gpib/pc2/pc2_gpib.c           |  8 +++----
+ drivers/staging/gpib/tnt4882/tnt4882_gpib.c   | 24 +++++++++----------
+ 17 files changed, 58 insertions(+), 59 deletions(-)
 
-  - Same for PCIE_RDLH_LINK_UP_CHGED, PCIE_LINK_REQ_RST_NOT_INT,
-    PCIE_RDLH_LINK_UP_CHGED, which are in
-    PCIE_CLIENT_INTR_STATUS_MISC.
+-- 
+2.43.0
 
-  - PCIE_LTSSM_ENABLE_ENHANCE is apparently in
-    PCIE_CLIENT_HOT_RESET_CTRL?  Sure wouldn't guess that from the
-    names or the order of #defines.
-
-  - PCIE_CLIENT_GENERAL_DEBUG isn't used at all.
-
->  static int rockchip_pcie_configure_rc(struct platform_device *pdev,
->  				      struct rockchip_pcie *rockchip)
->  {
-> @@ -511,6 +527,8 @@ static int rockchip_pcie_configure_rc(struct platform_device *pdev,
->  	pp->ops = &rockchip_pcie_host_ops;
->  	pp->use_linkup_irq = true;
->  
-> +	rockchip_pcie_set_max_payload(rockchip);
-> +
->  	ret = dw_pcie_host_init(pp);
->  	if (ret) {
->  		dev_err(dev, "failed to initialize host\n");
-> 
-> base-commit: a24588245776dafc227243a01bfbeb8a59bafba9
-> -- 
-> 2.25.1
-> 
 
