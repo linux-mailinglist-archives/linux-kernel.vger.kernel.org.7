@@ -1,166 +1,150 @@
-Return-Path: <linux-kernel+bounces-607813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2345A90B16
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:13:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E10E0A90ADE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 20:07:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37FC43B04BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:13:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D49B18819B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 18:07:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940481AF0BC;
-	Wed, 16 Apr 2025 18:12:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 200A621A42D;
+	Wed, 16 Apr 2025 18:06:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="Ne+C/Xkq"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Im2xwCnb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125AC21B1BC;
-	Wed, 16 Apr 2025 18:12:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7555C217F35;
+	Wed, 16 Apr 2025 18:06:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744827174; cv=none; b=d0h4TvGZvxveDbkh0Ef1zfKM2yBDVD5fkYBnkUbP2zyvCEG/X4gt0g8hDKO3rfAS1Ms3qfstTxwOjasSTq2WDw3kcPSDH/mEByVeJXULHsg4tXi4G0Pr7EcRRuOJ00fr2HBq90j8lWi2Y2unlJE4iLkQk7N+Tq79xe6URmrPdAo=
+	t=1744826783; cv=none; b=UWGLc+ZbOdOz6UWKntaMW4NgMyDGcuBP0rVukV00Jcu7TFr2uPPHmHuLDMEAQPGMuBTIDsYrmvLUtstPobb3AQ1e79d9Kj1gASVdu/E9DwaOnOgkpSQXGwvTfGAlfDUn0si0TLFhZ3bgYJkfQMz73J5D5XvQG9JBrJ9fO99ckk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744827174; c=relaxed/simple;
-	bh=ORPobRSIjW5dpK/qm7vNZhGebo2cfHQSp0/z/ui7sjc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HwgYDzLP4JgcjUjV6VAJ27AOfxC27l2/20XBf+Ht3aQf/BcJsxDr2Ac6l9KPHxfdYeRX8PM/tv/bh+dmjFn/5xEMC52SxDRKdqKCsrzMQsXKaJfdXdHShQvSdzpgvX83mJL2Nq3DwOWhwvJGBQeBBaTOt30RsoXNvGtXz5Al/NE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=Ne+C/Xkq; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 90CA0662717;
-	Wed, 16 Apr 2025 20:12:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1744827169;
-	bh=ORPobRSIjW5dpK/qm7vNZhGebo2cfHQSp0/z/ui7sjc=;
-	h=From:Subject:Date;
-	b=Ne+C/XkqjvJOc0z1k1fivTG0oR7pQsYZruHoBEGjYqG6Bygm+aAZBoptS8pb/AErX
-	 0aZ9pZegKWbvObEPUSilLkJCbBgI1b/glb6S38kBdSqwApDXg9zrxdzcrpOVg4lNAg
-	 6V24dgutuj/9ghdl87fCvO/o9Msv8x/KlwmENIQLmspwyoWJEBXBYEV+EEieO4YMyv
-	 bmcAwkUYRfIqaliqqe7JOs6yXed76M58zgdloTLURmzt0v5s7BDeJVe8iv9Tuszzzi
-	 /5l7cEbuErVfCY/dglIGsrThxJGP6033gEJG1R2AZnraxZbKd4VVXoMm7BakJdtn3E
-	 UDqCEOUIWIghw==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Morten Rasmussen <morten.rasmussen@arm.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
- Pierre Gondois <pierre.gondois@arm.com>,
- Christian Loehle <christian.loehle@arm.com>
-Subject: [RFT][PATCH v1 5/8] PM: EM: Introduce em_adjust_cpu_capacity()
-Date: Wed, 16 Apr 2025 20:06:16 +0200
-Message-ID: <2649447.Lt9SDvczpP@rjwysocki.net>
-In-Reply-To: <3344336.aeNJFYEL58@rjwysocki.net>
-References: <3344336.aeNJFYEL58@rjwysocki.net>
+	s=arc-20240116; t=1744826783; c=relaxed/simple;
+	bh=PVkhubuFxAaW2HEyB3Yl5c1VtK6NW7DIrcdAG8enNZc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=jg5TJXFyEoEf0RmmeAOOstcmaf/WAtOyMXRNx20PdpXvfDMipYuJ0kXg4vi+LcnlP9yWY1K5jaG/P1cmM3YXZDDOgRFixrUnz9V/UQ/uFunKkF7/AXoXnzOcptVXiHUC980aD6Za3zks8HUPppj8N87DksDKiyv2NNhsufH9Vhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Im2xwCnb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id CF97AC4CEE2;
+	Wed, 16 Apr 2025 18:06:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744826782;
+	bh=PVkhubuFxAaW2HEyB3Yl5c1VtK6NW7DIrcdAG8enNZc=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=Im2xwCnbuWvXprxRMFN95uCNBl4XFTCLZC5G3/pNuuqiITId0KO4AYAhS49Bfljri
+	 U3+tG0xNx4jDl4XH/iM6UUCVlV/QE378Y4zhkcHMv0raFO6cVuOg1CAw8ZyaGYCYiU
+	 glfjWAcaNQt0/RdqWGH6PC22Y6LKk3c3uCUlUvVUzLQefupDJt8/5s0pb/Q0OFnLt9
+	 AhdNdrvB5fmJqlAQRGLgYuOqCk0uLsPrTxtKChK+MQd7cNN8W6gTCMejvWIDmsdzte
+	 NoLOAMUZE4jqdJlnyJNc0uQF2HAvaP4Wwao26xK1iBQbJkRThTR9CaRo/l8jmJYnCZ
+	 IrTQrCVfVhUTw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B75D7C369BA;
+	Wed, 16 Apr 2025 18:06:22 +0000 (UTC)
+From: Janne Grunau via B4 Relay <devnull+j.jannau.net@kernel.org>
+Date: Wed, 16 Apr 2025 20:06:18 +0200
+Subject: [PATCH] arm64: dts: apple: touchbar: Mark ps_dispdfr_be as
+ always-on
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvdejtdeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepuddupdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehsrhhinhhivhgrshdrphgrnhgurhhuvhgruggrsehlihhnuhigrdh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=11 Fuz1=11 Fuz2=11
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250416-arm64_dts_apple_touchbar-v1-1-e1c0b53b9125@jannau.net>
+X-B4-Tracking: v=1; b=H4sIAJnx/2cC/x3MywqAIBBA0V+JWSdUmD1+JUJMpxroIWNFEP170
+ vIs7n0gIBMGaJMHGC8KtG8ReZqAnc02oSAXDUVWlJnMlTC8KqndEbTxfkF97KedB8NClbV1TSU
+ dNhXE3DOOdP/rrn/fD/MfiopqAAAA
+X-Change-ID: 20250416-arm64_dts_apple_touchbar-658cd974de97
+To: Sven Peter <sven@svenpeter.dev>, 
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Nick Chan <towinchenmi@gmail.com>, 
+ Sasha Finkelstein <fnkl.kernel@gmail.com>
+Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Janne Grunau <j@jannau.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2090; i=j@jannau.net;
+ s=yk2024; h=from:subject:message-id;
+ bh=vW+HnwVsI6HKFCWS8Ni6G5ezcLgPyLTobLTnqE3VCiY=;
+ b=owGbwMvMwCW2UNrmdq9+ahrjabUkhvT/H+dWvp50jXemd5qQ38RFF3hTijMsYu7mde2Ydziu+
+ KpFdK5BRykLgxgXg6yYIkuS9ssOhtU1ijG1D8Jg5rAygQxh4OIUgIkY+zH8z965537Wq0sasRts
+ wlRYNmew7NDQK/Cxvlme92LpL6YWXoY/PILfNx+xaZGRT/UpC81uWrzrNUvCNpd5TLmLLgRUvLj
+ MAQA=
+X-Developer-Key: i=j@jannau.net; a=openpgp;
+ fpr=8B336A6BE4E5695E89B8532B81E806F586338419
+X-Endpoint-Received: by B4 Relay for j@jannau.net/yk2024 with auth_id=264
+X-Original-From: Janne Grunau <j@jannau.net>
+Reply-To: j@jannau.net
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+From: Janne Grunau <j@jannau.net>
 
-Add a function for updating the Energy Model for a CPU after its
-capacity has changed, which subsequently will be used by the
-intel_pstate driver.
+The driver depends on boot loader initialized state which resets when the
+ps_dispdfr_be power-domain is powered off. This happens on suspend or
+when the driver is missing during boot.
+Mark the domain as always on until the driver can handle this.
 
-An EM_PERF_DOMAIN_ARTIFICIAL check is added to em_adjust_new_capacity()
-to prevent it from calling em_compute_costs() for an "artificial" perf
-domain with a NULL cb parameter which would cause it to crash.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+Fixes: 7275e795e520 ("arm64: dts: apple: Add touchbar screen nodes")
+Signed-off-by: Janne Grunau <j@jannau.net>
 ---
+ arch/arm64/boot/dts/apple/t8103-j293.dts | 10 ++++++++++
+ arch/arm64/boot/dts/apple/t8112-j493.dts | 10 ++++++++++
+ 2 files changed, 20 insertions(+)
 
-v0.3 -> v1:
-     * Added R-by from Lukasz.
-
----
- include/linux/energy_model.h |    2 ++
- kernel/power/energy_model.c  |   28 ++++++++++++++++++++++++----
- 2 files changed, 26 insertions(+), 4 deletions(-)
-
---- a/include/linux/energy_model.h
-+++ b/include/linux/energy_model.h
-@@ -179,6 +179,7 @@
- int em_dev_update_chip_binning(struct device *dev);
- int em_update_performance_limits(struct em_perf_domain *pd,
- 		unsigned long freq_min_khz, unsigned long freq_max_khz);
-+void em_adjust_cpu_capacity(unsigned int cpu);
- void em_rebuild_sched_domains(void);
+diff --git a/arch/arm64/boot/dts/apple/t8103-j293.dts b/arch/arm64/boot/dts/apple/t8103-j293.dts
+index 2dfe7b895b2bc0a913e73141e558fa5124a13b2e..e2d9439397f71a93c28b75a7eea589f4bcb3e374 100644
+--- a/arch/arm64/boot/dts/apple/t8103-j293.dts
++++ b/arch/arm64/boot/dts/apple/t8103-j293.dts
+@@ -77,6 +77,16 @@ touchbar0: touchbar@0 {
+ 	};
+ };
  
- /**
-@@ -405,6 +406,7 @@
- {
- 	return -EINVAL;
- }
-+static inline void em_adjust_cpu_capacity(unsigned int cpu) {}
- static inline void em_rebuild_sched_domains(void) {}
- #endif
- 
---- a/kernel/power/energy_model.c
-+++ b/kernel/power/energy_model.c
-@@ -698,10 +698,12 @@
- {
- 	int ret;
- 
--	ret = em_compute_costs(dev, em_table->state, NULL, pd->nr_perf_states,
--			       pd->flags);
--	if (ret)
--		goto free_em_table;
-+	if (!(pd->flags & EM_PERF_DOMAIN_ARTIFICIAL)) {
-+		ret = em_compute_costs(dev, em_table->state, NULL,
-+				       pd->nr_perf_states, pd->flags);
-+		if (ret)
-+			goto free_em_table;
-+	}
- 
- 	ret = em_dev_update_perf_domain(dev, em_table);
- 	if (ret)
-@@ -751,6 +753,24 @@
- 	em_recalc_and_update(dev, pd, em_table);
- }
- 
-+/**
-+ * em_adjust_cpu_capacity() - Adjust the EM for a CPU after a capacity update.
-+ * @cpu: Target CPU.
-+ *
-+ * Adjust the existing EM for @cpu after a capacity update under the assumption
-+ * that the capacity has been updated in the same way for all of the CPUs in
-+ * the same perf domain.
++/*
++ * The driver depends on boot loader initialized state which resets when this
++ * power-domain is powered off. This happens on suspend or when the driver is
++ * missing during boot. Mark the domain as always on until the driver can
++ * handle this.
 + */
-+void em_adjust_cpu_capacity(unsigned int cpu)
-+{
-+	struct device *dev = get_cpu_device(cpu);
-+	struct em_perf_domain *pd;
++&ps_dispdfr_be {
++	apple,always-on;
++};
 +
-+	pd = em_pd_get(dev);
-+	if (pd)
-+		em_adjust_new_capacity(cpu, dev, pd);
-+}
+ &display_dfr {
+ 	status = "okay";
+ };
+diff --git a/arch/arm64/boot/dts/apple/t8112-j493.dts b/arch/arm64/boot/dts/apple/t8112-j493.dts
+index 3d73f9ee2f46a35a3b23da5b233ef316c7372ef7..be86d34c6696cb47d31696541266e504cee8ce10 100644
+--- a/arch/arm64/boot/dts/apple/t8112-j493.dts
++++ b/arch/arm64/boot/dts/apple/t8112-j493.dts
+@@ -40,6 +40,16 @@ led-0 {
+ 	};
+ };
+ 
++/*
++ * The driver depends on boot loader initialized state which resets when this
++ * power-domain is powered off. This happens on suspend or when the driver is
++ * missing during boot. Mark the domain as always on until the driver can
++ * handle this.
++ */
++&ps_dispdfr_be {
++	apple,always-on;
++};
 +
- static void em_check_capacity_update(void)
- {
- 	cpumask_var_t cpu_done_mask;
+ &display_dfr {
+ 	status = "okay";
+ };
 
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250416-arm64_dts_apple_touchbar-658cd974de97
+
+Best regards,
+-- 
+Janne Grunau <j@jannau.net>
 
 
 
