@@ -1,90 +1,97 @@
-Return-Path: <linux-kernel+bounces-606371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83EE6A8AE53
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 04:58:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63AA3A8AE5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 05:10:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E77C33B2EAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 02:58:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 745FF3BA7ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 03:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1AB9221DBC;
-	Wed, 16 Apr 2025 02:58:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28EF8227EB2;
+	Wed, 16 Apr 2025 03:09:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="gs96T9PA"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SXnvyzUF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 114BA2BAF4;
-	Wed, 16 Apr 2025 02:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9AB227E82;
+	Wed, 16 Apr 2025 03:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744772296; cv=none; b=oRHlcQPqNwfSt8nLT+/unTeVm5fwEZJpj+4rpMV2T6dZUAsNXYknJf0sOVNv3LBXPy/j8H2ePdmCcHuoPsBwHu7cFKGxLdeY0DnEaLaGTc3oy1VyC3Z7UKEnXQDAh4Mi00dqVfECfJc+pFPU/sKcb72AhhB1enES3KN2/9MxfI4=
+	t=1744772996; cv=none; b=M9gC+U892Ar8eQffACtWy2jD2KAROFYTxyvtMhPsN6no44L8W4fVAKo79FGBPu6Jt4oUR66b0cz0S66TrVTBf5uvVZb3t5pIAD9o403wcReSQUGZ3RzlSIhw+cMQOyxjaOCehWlRc7hIQJSBIdDZ7OBJMLuwqlREhlxibUpGnf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744772296; c=relaxed/simple;
-	bh=d/6+sdskCrLsKwy62dtHiSyR9XRXAzvVqNbASfas5l0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=hphO2SOZmeL8MRmYfgnYBCT3Sx/XKAOJK4yMbumtKM5oRshXG2od3mrSo9uPgdCTL+qB75LWllaM3nwI1ABXGOA6HnA2wxCYjE9a/8OtmqWgweGjU8Nar8WqGECasAboLX+xpGNG4vKIf1PS38n3XSYdC6gMybxpFXOSpnLHLIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=gs96T9PA; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1744772290; h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type;
-	bh=Xt9y/TXOKzJQAIbUnGUu3h8qY8Wn1nW44gkteQt3rNo=;
-	b=gs96T9PA4D201PzV/JzZ22rpSnslRRZPxzqQg1i1TnaOMzSs7DlvpCl+ZeGrA8OgrZfJDrYkNIYPCCm0sgzYLM4oZ1vleghTcdab3iNZgvFk6TrQjGUHtOiX6nGAd5E9wtyqMhoWTl2BmWiYpChiuci2y3Sn91hSwICKX0WLCBs=
-Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0WX74JhJ_1744772284 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 16 Apr 2025 10:58:10 +0800
-From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To: jikos@kernel.org
-Cc: bentiss@kernel.org,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH -next] HID: hid-steam: Remove the unused variable connected
-Date: Wed, 16 Apr 2025 10:58:03 +0800
-Message-Id: <20250416025803.9078-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 2.32.0.3.g01195cf9f
+	s=arc-20240116; t=1744772996; c=relaxed/simple;
+	bh=pjwuOhl+6YnLRO0UJWY97LUYEwC0+mgIl+EW6AZdz3s=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=qN2AxiOqTxsrqtpRKLgRyS3EIhadEq4oAlVfzryAwSbfeEEdQuuzPEt4jDskWm2t6+ktU1G6Yb8TzL0iZW+ssZesDSenwjO/ZOPJPkaA21ovx4GeHqSXN4gRSZFttwq0gc1U6NtSTTjWo3+QdWXitRXBP9KTPEr2b9A3F6rpt/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SXnvyzUF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDF5FC4CEEB;
+	Wed, 16 Apr 2025 03:09:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744772996;
+	bh=pjwuOhl+6YnLRO0UJWY97LUYEwC0+mgIl+EW6AZdz3s=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=SXnvyzUF3PkfQxd3KY6C5nx9Z7fGtfz7q/PDdxxbjw0UC1s008kRVlDl93zijVNtA
+	 KVz7FG+RMh9Z+FXd6u2o4FJ7i1Vx9qOr8Q9FrUzagsh4mC3z/XoCahfxEzQyZgQkaA
+	 F5tmhBw0dvPPjwahH/qfPfHad7iBDEUFFELtlk4BhKk4XREv4aX33gHU2iHLY3ekOV
+	 L/V/ES9a7ozknm23AqcXMNmOGHjb+7R2AaLbwQF5nd08BfSGHLQnhYvp97rLZxaOni
+	 8hKQRVf3Fd3R39/lOf1iyezpfhCLKvE930/6mioecx1jyrhKv9LDbktKlG+L6FoTwP
+	 bnXBisWu2dbWw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33F593822D55;
+	Wed, 16 Apr 2025 03:10:35 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v5] batman-adv: Fix double-hold of meshif when getting
+ enabled
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174477303400.2860234.7904751019740013737.git-patchwork-notify@kernel.org>
+Date: Wed, 16 Apr 2025 03:10:34 +0000
+References: <20250414-double_hold_fix-v5-1-10e056324cde@narfation.org>
+In-Reply-To: <20250414-double_hold_fix-v5-1-10e056324cde@narfation.org>
+To: Sven Eckelmann <sven@narfation.org>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, b.a.t.m.a.n@lists.open-mesh.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzbot+ff3aa851d46ab82953a3@syzkaller.appspotmail.com,
+ syzbot+4036165fc595a74b09b2@syzkaller.appspotmail.com,
+ syzbot+c35d73ce910d86c0026e@syzkaller.appspotmail.com,
+ syzbot+48c14f61594bdfadb086@syzkaller.appspotmail.com,
+ syzbot+f37372d86207b3bb2941@syzkaller.appspotmail.com
 
-Variable connected is not effectively used, so delete it.
+Hello:
 
-drivers/hid/hid-steam.c:1153:7: warning: variable ‘connected’ set but not used.
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=20462
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
----
- drivers/hid/hid-steam.c | 2 --
- 1 file changed, 2 deletions(-)
+On Mon, 14 Apr 2025 20:05:37 +0200 you wrote:
+> It was originally meant to replace the dev_hold with netdev_hold. But this
+> was missed in batadv_hardif_enable_interface(). As result, there was an
+> imbalance and a hang when trying to remove the mesh-interface with
+> (previously) active hard-interfaces:
+> 
+>   unregister_netdevice: waiting for batadv0 to become free. Usage count = 3
+> 
+> [...]
 
-diff --git a/drivers/hid/hid-steam.c b/drivers/hid/hid-steam.c
-index dfd9d22ed559..949d307c66a8 100644
---- a/drivers/hid/hid-steam.c
-+++ b/drivers/hid/hid-steam.c
-@@ -1150,11 +1150,9 @@ static void steam_client_ll_close(struct hid_device *hdev)
- 	struct steam_device *steam = hdev->driver_data;
- 
- 	unsigned long flags;
--	bool connected;
- 
- 	spin_lock_irqsave(&steam->lock, flags);
- 	steam->client_opened--;
--	connected = steam->connected && !steam->client_opened;
- 	spin_unlock_irqrestore(&steam->lock, flags);
- 
- 	schedule_work(&steam->unregister_work);
+Here is the summary with links:
+  - [net,v5] batman-adv: Fix double-hold of meshif when getting enabled
+    https://git.kernel.org/netdev/net/c/10a77965760c
+
+You are awesome, thank you!
 -- 
-2.32.0.3.g01195cf9f
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
