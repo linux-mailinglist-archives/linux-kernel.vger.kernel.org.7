@@ -1,171 +1,108 @@
-Return-Path: <linux-kernel+bounces-607336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47DA8A90512
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 15:56:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE802A9056B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 16:06:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6187119058AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 13:54:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAC2C8A55EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:02:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5AA20F087;
-	Wed, 16 Apr 2025 13:45:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFAFB1EFFA8;
+	Wed, 16 Apr 2025 13:51:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="DIqVPSEp"
-Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="tX+Px/kj"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8219250BF8
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 13:45:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B78A185920
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 13:51:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744811112; cv=none; b=N83CzPsaueMn8eKqepeE7g2ZKFSnsBs7ZAMVySXdlKz3n+Uz46fpGhYKZeilH13f11CoMpWdvs5NeEvg+HLVG+DexHb6GH7YKYPnjL+/rTMuSvnx2NEO4WR1Aenw9YpisYFDMrrWf1zahLOw736Wq9nR5g5EulD1IbPWq4/BE6w=
+	t=1744811518; cv=none; b=qLZrsAJJa6YfYBRpcohrx2ZzLs52hIRvKkmz2nTb6x6YuztibsXe7CKyaDZ6IHyI2arFe/Aaogmxb8U6mxY48KS2WwgsrWJbiAFH2dOKMfO6c7ivoZNHentv5Yu8wOwdCFPF5YVIjGvxeagyn8G6mnJpYBZNxmrfjj/X0aWLrwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744811112; c=relaxed/simple;
-	bh=SSGumOPO7KarJQZoMZ0YMRQJ+OOUafoEC97qoNhTAS4=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=G0Va+JWQX542JbMlcfVv7upXQ5e3HlTxr/dJ2qgB84TVg5p7iYZ2ixzv0weRRAZ/V3lpLUeU1gzEkvUsAycYvmabhoRN74pH7/8zb+kAbI2ir8AT1qPSVXkqEhRXRPHZ9US0mXWwP6YbchuYyj5cT+A/aQfWDSjWFblzNUUI1i0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=DIqVPSEp; arc=none smtp.client-ip=192.134.164.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+	s=arc-20240116; t=1744811518; c=relaxed/simple;
+	bh=O652EDl6UwUbsu14UlA+Lv1Ltuil8ye7clm7QQ4ffrk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Jq4vp2YSOPpwPYWg88i6d0dmm7Kbd+QrcvIrlpUWQ8pxTP3lzgVzfexuz0V4XAS/LGjiJV/gV2zXtQ8z4yTbdYT0vMRKOSEKOTw/1/f7EbG+KPkebhWkAtGesoHiEhEOC5E0PEWYIplAPwi6lM4yHN1ZWyz+mMqx7en78bzQTAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=tX+Px/kj; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7c554d7dc2aso1041570585a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 06:51:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=Sse+MWmWlUd4okV9BvuTdMxj6pvfwR3JRfox5MJ9mM4=;
-  b=DIqVPSEpeLCVXm75PNoQiMZRvdri/xgpKOU7Ynad6EhLnwMuj1gOw5cd
-   n9ppAAvhr8GLhMDrR5ZYn+tucmhiIpQW0AJ4Ju63tf6GpX6Hg0itN83Bc
-   UWhgPHNNvcYa6TGD95MKDwHAny4suflBow3WZLRjTYqgDp9fR3ac026Qi
-   U=;
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.15,216,1739833200"; 
-   d="scan'208";a="218156110"
-Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 15:45:01 +0200
-Date: Wed, 16 Apr 2025 15:45:00 +0200 (CEST)
-From: Julia Lawall <julia.lawall@inria.fr>
-To: Ayush Singh <ayushdevel1325@gmail.com>
-cc: rujra <braker.noob.kernel@gmail.com>, johan@kernel.org, elder@kernel.org, 
-    gregkh@linuxfoundation.org, greybus-dev@lists.linaro.org, 
-    outreachy@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [FIRST-PATCH] staging : greybus : gb-beagleplay.c : fixing the
- checks as first-patch
-In-Reply-To: <490ab216-982e-4707-abe4-a5b8d0444458@gmail.com>
-Message-ID: <eec572fd-3074-8f2c-f978-94841edf7a6@inria.fr>
-References: <CAG+54DbvpWHyX8+ucEQpg2B6rNTJP11CRpYxcYVrKpKehzrK-A@mail.gmail.com> <490ab216-982e-4707-abe4-a5b8d0444458@gmail.com>
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1744811513; x=1745416313; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tzLhMgMwNH0NH5AOa4O9mcMXGuopza907c5GCi91e+0=;
+        b=tX+Px/kj7Y7fVqT1Cqzx48I93MOo/pWKwdkL+VcMpCH5mgXhT7HaQ2OlDVjsalrdoM
+         svEoPkOapU5Fu5UaqCrQ9jH2aJwTEPxDQjtCkIjfK5t0vopRv/AKqAFQoZ1VhuF42nyv
+         lr2PLmK6tMva0CaL769tZeb1FI1UUJDq/gSQrVJxMrg/UMswwKghf7Uk+dt0LdL0bDMB
+         kOF7zATUeIBi98AaN2y1lUWCzGevvawnto69/NHMnB133MsaiBCrr0pIN5sxDsRlHQL2
+         OIEbBoviHSOoWOpIi7mdlqootrzTeafqhabyxaNOmGVVND/kx7UgHq+G03sK3V+9rbpZ
+         hOcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744811513; x=1745416313;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tzLhMgMwNH0NH5AOa4O9mcMXGuopza907c5GCi91e+0=;
+        b=bRaWegwW+P8jZIdMIh/pClpgMZhvjzVoPPz7O3Rm1laiYDAoa2HVv43UFvk0ALHN+v
+         a7Dzif8DcAluF7i0C1sYgwy4colmVPzM7b38Wpv2Cb3shSidc1h31KNfbumWB0rKIAlv
+         DIvghG5ELwFrVpWSGRs5lPomUESb9sKCLLOHp25khT/vl31jjz++zao/4wkZGDRssOSR
+         lVaOeentrHAV88d58c926iwE3L7ws5hyNy5OUn0lTHgYwVGx2ec2a4B9hvWppvkt2EXk
+         cyYBtjwH+yXVVISLSwYcAPIryUdewJts+JQ8FCUA47uIgIFI1zUEVBkUCwjuuog3DCAw
+         lRYw==
+X-Forwarded-Encrypted: i=1; AJvYcCUpDEm4yIXYtgLWrEVX8oFLREgMX/Gx6PU0vqifw808O4p7RLLd834VIaiGwgF7RDvTLRUnfsxGAUHBEP4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKSkFTeG6uCAhhF5IQPUZOir4SIIEcm+HV1GZ5P+PczCzqowBt
+	Bebo7907YOHsTWieZ3Xi7sYoQDi8GM3WNrdmJDqd2kzNTzLSm7X1+Liv4jjsL44=
+X-Gm-Gg: ASbGncu9ckS93ZGLNh8752YbTeQwuRiV5YqDI1ANgqQt1fYFUAqragACs5ChO9jGPUZ
+	eXzQcuCUZHXM+YeNuapx7LXGJ6fT7DQFnEy7QMm/ss4m5G8wszKZQc7r+MUyccjc3KThF5QejXS
+	+dyXZoLN7tusqg7R93sk6UhCmvCL8yEJbhSCYq2/rfFdDI+nou1ilzvye78BDNDhhpEPXhNBQ/q
+	py5nK1+REAjxQKrcBxGPneXZXCTOOHk33K/scvweL58XQd/0PmUIY/nnQ/P9svmGBXCVn35RFpx
+	eu9zENcvcI6/3o+6xY9vJJZHBRHGqnyCEMA64EGDZluj5tH6qQ==
+X-Google-Smtp-Source: AGHT+IEK5xcLCTEstx/iGH3+x/DoyF2pbgoR2j9HRIFCwxYq9oqyIz9Gtu4Bo2sL9Ekj03MVC7PbLQ==
+X-Received: by 2002:a05:620a:424b:b0:7c5:d888:7098 with SMTP id af79cd13be357-7c9190642abmr225230285a.44.1744811513336;
+        Wed, 16 Apr 2025 06:51:53 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:365a:60ff:fe62:ff29])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c7a89f98eesm1062834085a.83.2025.04.16.06.51.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Apr 2025 06:51:52 -0700 (PDT)
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>,
+	Brendan Jackman <jackmanb@google.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] mm: two allocator fixes for 6.15
+Date: Wed, 16 Apr 2025 09:45:38 -0400
+Message-ID: <20250416135142.778933-1-hannes@cmpxchg.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 
+Two fixes based on Vlastimil's review of the defrag_mode patches.
 
+#1 fixes a bug that can lead to memory deadlocks on high-CPU-count
+machines. This affects not just defrag_mode.
 
-On Wed, 16 Apr 2025, Ayush Singh wrote:
+#2 fixes an overreclaim issue when defrag_mode is enabled.
 
-> On 4/16/25 17:47, rujra wrote:
->
-> > added comments on spinlocks for producer-consumer model, rearranged the
-> > lines on function calls where it should not end with "(" this bracket,
-> > also removed white-spaces and aligned the arguments of function calls.
->
-> Are these manual adjustments, or using clang-format?
->
-> I do not care about formatting being "readable". As long as it can be done by
-> a tool like clang-format, that's fine with me.
->
-> Of course if you are fixing some checkpatch error, that is okay, but if now,
-> please avoid formatting changes.
->
-> The comments are fine. Although you probably want to add a space between `//`
-> and the sentence start.
+Based on:
 
-I don't think the kernel commonly uses // for comments.
+  commit 16176182efbf3dfce6dad18dcc8801164329d1c2 (akpm/mm-hotfixes-unstable)
+  Author: Uros Bizjak <ubizjak@gmail.com>
+  Date:   Fri Apr 4 12:24:37 2025 +0200
 
-julia
+ include/linux/mmzone.h |  2 --
+ mm/page_alloc.c        | 12 ------------
+ mm/vmscan.c            | 29 ++++++++++++++++++++++++++---
+ 3 files changed, 26 insertions(+), 17 deletions(-)
 
->
->
-> >
-> > Signed-off-by: Rujra Bhatt <braker.noob.kernel@gmail.com>
-> >
-> > > 8------------------------------------------------------8<
-> >   drivers/greybus/gb-beagleplay.c | 16 ++++++++--------
-> >   1 file changed, 8 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/drivers/greybus/gb-beagleplay.c
-> > b/drivers/greybus/gb-beagleplay.c
-> > index 473ac3f2d382..fa1c3a40dd0b 100644
-> > --- a/drivers/greybus/gb-beagleplay.c
-> > +++ b/drivers/greybus/gb-beagleplay.c
-> > @@ -73,7 +73,9 @@ struct gb_beagleplay {
-> >          struct gb_host_device *gb_hd;
-> >
-> >          struct work_struct tx_work;
-> > +       //used to ensure that only one producer can access the shared
-> > resource at a time.
-> >          spinlock_t tx_producer_lock;
-> > +       //used to ensure that only one consumer can access the shared
-> > resource at a time.
-> >          spinlock_t tx_consumer_lock;
-> >          struct circ_buf tx_circ_buf;
-> >          u16 tx_crc;
-> > @@ -642,8 +644,8 @@ static int cc1352_bootloader_wait_for_ack(struct
-> > gb_beagleplay *bg)
-> >   {
-> >          int ret;
-> >
-> > -       ret = wait_for_completion_timeout(
-> > -               &bg->fwl_ack_com,
-> > msecs_to_jiffies(CC1352_BOOTLOADER_TIMEOUT));
-> > +       ret = wait_for_completion_timeout(&bg->fwl_ack_com,
-> > +
-> > msecs_to_jiffies(CC1352_BOOTLOADER_TIMEOUT));
-> >          if (ret < 0)
-> >                  return dev_err_probe(&bg->sd->dev, ret,
-> >                                       "Failed to acquire ack semaphore");
-> > @@ -680,9 +682,8 @@ static int cc1352_bootloader_get_status(struct
-> > gb_beagleplay *bg)
-> >          if (ret < 0)
-> >                  return ret;
-> >
-> > -       ret = wait_for_completion_timeout(
-> > -               &bg->fwl_cmd_response_com,
-> > -               msecs_to_jiffies(CC1352_BOOTLOADER_TIMEOUT));
-> > +       ret = wait_for_completion_timeout(&bg->fwl_cmd_response_com,
-> > +
-> > msecs_to_jiffies(CC1352_BOOTLOADER_TIMEOUT));
-> >          if (ret < 0)
-> >                  return dev_err_probe(&bg->sd->dev, ret,
-> >                                       "Failed to acquire last status
-> > semaphore");
-> > @@ -765,9 +766,8 @@ static int cc1352_bootloader_crc32(struct
-> > gb_beagleplay *bg, u32 *crc32)
-> >          if (ret < 0)
-> >                  return ret;
-> >
-> > -       ret = wait_for_completion_timeout(
-> > -               &bg->fwl_cmd_response_com,
-> > -               msecs_to_jiffies(CC1352_BOOTLOADER_TIMEOUT));
-> > +       ret = wait_for_completion_timeout(&bg->fwl_cmd_response_com,
-> > +
-> > msecs_to_jiffies(CC1352_BOOTLOADER_TIMEOUT));
-> >          if (ret < 0)
-> >                  return dev_err_probe(&bg->sd->dev, ret,
-> >                                       "Failed to acquire last status
-> > semaphore");
-> > --
-> > 2.43.0
->
->
-> Best Regards,
->
-> Ayush Singh
->
->
->
 
