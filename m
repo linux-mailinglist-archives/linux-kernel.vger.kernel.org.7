@@ -1,105 +1,149 @@
-Return-Path: <linux-kernel+bounces-606527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 549BDA8B05F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 08:33:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A601BA8B05C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 08:32:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99BDC3AB470
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 06:32:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB5E017A785
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 06:32:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C3C22B8C1;
-	Wed, 16 Apr 2025 06:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF3F207DEE;
+	Wed, 16 Apr 2025 06:32:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rrt1UJia"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="h2GVUFUS"
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186CB219A81
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 06:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466D12557C
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 06:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744785175; cv=none; b=DIKao6GV2txdkpWp+mqbE8IMI+WpULR6gytTUp+sreZc0J6RdEYgWsh88N1pPvxfWzcfQjFtzkEgZDuiZNx69Wz5Wyf/5nnsNhxgVYAXyVVJNHiNDAVewTgKqTnK+k1s+DfyqNS7xdCh+Vl7iT2+SyWGJp9nLariQEFLF0lj+hY=
+	t=1744785156; cv=none; b=bDkyuyB+/YO9o7Y2uNXPyXyxdNmnLaYu3oeqn361U/vXYWnuyenc7EAy91GIAspdkhjV1ghj+91/mhlUpxdNgixRwnrP5UAtbeZxB7vtW9Wyosg4g/i8GmhBZA+BnCFSEoQL9fM+wVZMhjVyeapFoWcTsFKCf8Dqq1vyOihUi70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744785175; c=relaxed/simple;
-	bh=HqvXA8IoqqkTrWaKGwRoZgujmwxcAeItEBGAZ5IQMF8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KM8eXcCwZWhMnsNJQ9TZkV4uLAopP33AAlhl1yMiuQ3RRLl+/ebHTPUNpqsRrB+K9JneMNadhFvrRc9qILcbF6BVqpEswioMtTbEFCSgjaX42zazGcGwLPfWSydXuI2A0aCbsiIT94ZtOWhqJh2/BExq7bcWoPr4O6Fx2XFCtlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rrt1UJia; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744785174; x=1776321174;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=HqvXA8IoqqkTrWaKGwRoZgujmwxcAeItEBGAZ5IQMF8=;
-  b=Rrt1UJiaMPmPcB5jO54s74pfJ7QlXGUeIvo5Cpl9KmEwzPjIedzCjzi0
-   NUePqR6t7/810/76hRVkIU1XvbnXQ4JDuDgfqVL0B0ArQ5tKy6XKUwKqV
-   NVfjc6KN7LZFOpTB7THBAo1Zt5ZfI7gftEO1NAy73hl+mRHUUuiA8lTdv
-   tRCbjqURdk1nYsSRpgDqd8iI+3LPwSwmJcA2pQRNXUZrEMyKIRWRaUUQK
-   tjW1pmtTC+wR0eXA9Z1P9z+/Jz6UORvcI9/njAq9c0ZVgtOk+9kToJSRB
-   DTiWd0LtqobfF90hHVVrxN3j6DCMN5NrXfyx/G0AwmKV6XIz3kBpl8bnz
-   w==;
-X-CSE-ConnectionGUID: M0Dk+o+dSfeIyAi3yP3Ncw==
-X-CSE-MsgGUID: lfdZQfBjRf+t/LcO7Rh6iw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="46033327"
-X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
-   d="scan'208";a="46033327"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 23:32:53 -0700
-X-CSE-ConnectionGUID: bQf4fybUSJu2h7zOAdK36A==
-X-CSE-MsgGUID: LIAFhK6JTi2auAMnLEmSZQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,215,1739865600"; 
-   d="scan'208";a="130296388"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa006.jf.intel.com with ESMTP; 15 Apr 2025 23:32:51 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 59052481; Wed, 16 Apr 2025 09:32:50 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Cc: Yury Norov <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH v2 2/2] bitmap-str: Add missing header(s)
-Date: Wed, 16 Apr 2025 09:32:11 +0300
-Message-ID: <20250416063248.1864059-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250416063248.1864059-1-andriy.shevchenko@linux.intel.com>
-References: <20250416063248.1864059-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1744785156; c=relaxed/simple;
+	bh=C+YlPii4h2q66bDUAaOLPXTEyxIIrlkZRkSTT6uvWLE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hy+FHrGBsDkOqTolE9dBV5s7g+biP5eUu9+CnVLRCtZZbBel0RAldg8zWgQkmzABFbUF05886bWp9hrfHzmjUluaOvqX5evn41F6sypamYH2rrShBCCnBScAkLrB1LrP8wY0IHWJ64HS5yZ4FU8jtCBEBoBXMZBtMAakmg6uVdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=h2GVUFUS; arc=none smtp.client-ip=115.124.30.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1744785149; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=iuviVh9BV5zcVo9BVHDs26PBd6MDMyyyghZwUMJKQ90=;
+	b=h2GVUFUSevwU49syUUqCvpRw+ovroQy9XD01EkMhxUAJarcaFIynm4KlWWuBpg6/b5qTQLleB9scD/AKZZJAwLrQWqxtk6XYgBHBBeMGojBmvl74cQ9apCsb+ONhpFqvjOCiw5gOSn5mR2+rrI4X2vpeWpaO7RsSVpvoef1Z7Tg=
+Received: from 30.74.144.124(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WX7uX4._1744785147 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 16 Apr 2025 14:32:28 +0800
+Message-ID: <7f96283b-11b3-49ee-9d2d-5ad977325cb0@linux.alibaba.com>
+Date: Wed, 16 Apr 2025 14:32:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] mempolicy: Optimize queue_folios_pte_range by PTE
+ batching
+To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org
+Cc: ryan.roberts@arm.com, david@redhat.com, willy@infradead.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, hughd@google.com,
+ vishal.moola@gmail.com, yang@os.amperecomputing.com, ziy@nvidia.com
+References: <20250416053048.96479-1-dev.jain@arm.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20250416053048.96479-1-dev.jain@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-bitmap-str.h is not self-contained, it uses something that is provided
-elsewhere, add missing header(s).
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- include/linux/bitmap-str.h | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/include/linux/bitmap-str.h b/include/linux/bitmap-str.h
-index d758b4809a3a..53d3e1b32d3d 100644
---- a/include/linux/bitmap-str.h
-+++ b/include/linux/bitmap-str.h
-@@ -2,6 +2,8 @@
- #ifndef __LINUX_BITMAP_STR_H
- #define __LINUX_BITMAP_STR_H
- 
-+#include <linux/types.h>
-+
- int bitmap_parse_user(const char __user *ubuf, unsigned int ulen, unsigned long *dst, int nbits);
- int bitmap_print_to_pagebuf(bool list, char *buf, const unsigned long *maskp, int nmaskbits);
- int bitmap_print_bitmask_to_buf(char *buf, const unsigned long *maskp, int nmaskbits,
--- 
-2.47.2
+On 2025/4/16 13:30, Dev Jain wrote:
+> After the check for queue_folio_required(), the code only cares about the
+> folio in the for loop, i.e the PTEs are redundant. Therefore, optimize
+> this loop by skipping over a PTE batch mapping the same folio.
+> 
+> With a test program migrating pages of the calling process, which includes
+> a mapped VMA of size 4GB with pte-mapped large folios of order-9, and
+> migrating once back and forth node-0 and node-1, the average execution
+> time reduces from 7.5 to 4 seconds, giving an approx 47% speedup.
+> 
+> v2->v3:
+>   - Don't use assignment in if condition
+> 
+> v1->v2:
+>   - Follow reverse xmas tree declarations
+>   - Don't initialize nr
+>   - Move folio_pte_batch() immediately after retrieving a normal folio
+>   - increment nr_failed in one shot
+> 
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Dev Jain <dev.jain@arm.com>
+> ---
+>   mm/mempolicy.c | 12 ++++++++++--
+>   1 file changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> index b28a1e6ae096..4d2dc8b63965 100644
+> --- a/mm/mempolicy.c
+> +++ b/mm/mempolicy.c
+> @@ -566,6 +566,7 @@ static void queue_folios_pmd(pmd_t *pmd, struct mm_walk *walk)
+>   static int queue_folios_pte_range(pmd_t *pmd, unsigned long addr,
+>   			unsigned long end, struct mm_walk *walk)
+>   {
+> +	const fpb_t fpb_flags = FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIRTY;
+>   	struct vm_area_struct *vma = walk->vma;
+>   	struct folio *folio;
+>   	struct queue_pages *qp = walk->private;
+> @@ -573,6 +574,7 @@ static int queue_folios_pte_range(pmd_t *pmd, unsigned long addr,
+>   	pte_t *pte, *mapped_pte;
+>   	pte_t ptent;
+>   	spinlock_t *ptl;
+> +	int max_nr, nr;
+>   
+>   	ptl = pmd_trans_huge_lock(pmd, vma);
+>   	if (ptl) {
+> @@ -586,7 +588,9 @@ static int queue_folios_pte_range(pmd_t *pmd, unsigned long addr,
+>   		walk->action = ACTION_AGAIN;
+>   		return 0;
+>   	}
+> -	for (; addr != end; pte++, addr += PAGE_SIZE) {
+> +	for (; addr != end; pte += nr, addr += nr * PAGE_SIZE) {
+> +		max_nr = (end - addr) >> PAGE_SHIFT;
+> +		nr = 1;
+>   		ptent = ptep_get(pte);
+>   		if (pte_none(ptent))
+>   			continue;
+> @@ -598,6 +602,10 @@ static int queue_folios_pte_range(pmd_t *pmd, unsigned long addr,
+>   		folio = vm_normal_folio(vma, addr, ptent);
+>   		if (!folio || folio_is_zone_device(folio))
+>   			continue;
+> +		if (folio_test_large(folio) && max_nr != 1)
+> +			nr = folio_pte_batch(folio, addr, pte, ptent,
+> +					     max_nr, fpb_flags,
+> +					     NULL, NULL, NULL);
+>   		/*
+>   		 * vm_normal_folio() filters out zero pages, but there might
+>   		 * still be reserved folios to skip, perhaps in a VDSO.
+> @@ -630,7 +638,7 @@ static int queue_folios_pte_range(pmd_t *pmd, unsigned long addr,
+>   		if (!(flags & (MPOL_MF_MOVE | MPOL_MF_MOVE_ALL)) ||
+>   		    !vma_migratable(vma) ||
+>   		    !migrate_folio_add(folio, qp->pagelist, flags)) {
+> -			qp->nr_failed++;
+> +			qp->nr_failed += nr;
 
+Sorry for chiming in late, but I am not convinced that 'qp->nr_failed' 
+should add 'nr' when isolation fails.
+
+ From the comments of queue_pages_range():
+"
+* >0 - this number of misplaced folios could not be queued for moving
+  *      (a hugetlbfs page or a transparent huge page being counted as 1).
+"
+
+That means if a large folio is failed to isolate, we should only add '1' 
+for qp->nr_failed instead of the number of pages in this large folio. Right?
 
