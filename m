@@ -1,179 +1,121 @@
-Return-Path: <linux-kernel+bounces-607529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 385B6A90789
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 17:19:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEEBFA90793
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 17:20:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B466C3B458E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 15:19:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0564D1906DD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 15:20:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 757982080D5;
-	Wed, 16 Apr 2025 15:19:19 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65704207673;
-	Wed, 16 Apr 2025 15:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF5912080DC;
+	Wed, 16 Apr 2025 15:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="VNOTY+dy"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76220189BB5;
+	Wed, 16 Apr 2025 15:20:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744816759; cv=none; b=QKIF1e0tXohbybjfd/5bboslM5iwT6d3ouDHr/JWtBdsE1ThO1q7RBr+yNFHh7LLHx89ANIr3A81Wilx0j5DZraIB7/EP0EXTOh2fnKbjCsIrAGMuw1ZETrYxkUVRu9p95fKtbKH9cee8Kl0mg/TBd3i//3jU2OEHNPYZRcM23g=
+	t=1744816833; cv=none; b=g64wOLGsfyp/POAr8m2BW36a0pjQdOqEd/cBABUSttwCZ/AICE/Ob5iEQjoQ447UfpJYJldsYCj0y1keV3rJqNE7sXJjwF4IkDLeRpyom6zK9tR5sy3zHiFe1uAMwBtjVfLFz02ceBmNHK9WcHRvzhCt/2Y6b/IXCDgbacJXWE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744816759; c=relaxed/simple;
-	bh=FotjLCtH909KmRe7dnW4c9ApzGddHscsXDIL7+9hWbY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=unxhwNR3bGWM5b17UzhG3HoZL2T0yQWDW+z+1EcHkFOwlYnIXVIlAyC9mP4fcCJ+z7anydNueckPOBgaUXdFh4fHO/Narze+vqCByN755E8/Dy5qOpLof85jKzlcFpsxsND1SFv6+21+Zp3QIGDUM+Mhi8vRt95R6KsVsZ5c/Wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8BE401595;
-	Wed, 16 Apr 2025 08:19:12 -0700 (PDT)
-Received: from [10.1.35.42] (e127648.arm.com [10.1.35.42])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B305A3F66E;
-	Wed, 16 Apr 2025 08:19:12 -0700 (PDT)
-Message-ID: <ad74a241-391c-4d1b-8b42-665cb4be3d2a@arm.com>
-Date: Wed, 16 Apr 2025 16:19:10 +0100
+	s=arc-20240116; t=1744816833; c=relaxed/simple;
+	bh=rmHHaaug2DDbVdoWrpVDh9XFDcdhs6q/pEUn8PkZvMU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pZPnuvvhGXNRRQK7Pzf9zFifZLXyXQ3ZVWE9bEeHA/I6oLewoPdXy28DExs08cUG/GLECN/141nQBMpjdvs92GAOCXowG5KKriwq51llIOF9Le1EGjZciOG3Zkw2y/jPCMih8Zu4XGQtuLvK60FiY9WyZB+h7H9aFEcKCDnoIFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=VNOTY+dy; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=n/CrH
+	Wu7/N0JbLzLhfGyYLZ28eCk9w7x/JfjK48Yd84=; b=VNOTY+dyHQg0QwO0e8psO
+	1EQh2MMGJQGnp3gE7RZOKgtSb5zfsTKfHHKKCNbUzvitXSSl3J0y5cC8cALMA47X
+	7rtM7Qw4JcH2MELzQEd1xPDKl+z/3X3mmD9+ZB+q/60izYZ7rlG28v4v628nHscN
+	aiAFBgX+VVteVApJxz5dW8=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wDHrr6Ayv9nGGzuAQ--.32225S2;
+	Wed, 16 Apr 2025 23:19:29 +0800 (CST)
+From: Hans Zhang <18255117159@163.com>
+To: lpieralisi@kernel.org,
+	kw@linux.com,
+	bhelgaas@google.com,
+	heiko@sntech.de
+Cc: manivannan.sadhasivam@linaro.org,
+	robh@kernel.org,
+	jingoohan1@gmail.com,
+	thomas.richard@bootlin.com,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Hans Zhang <18255117159@163.com>
+Subject: [PATCH] PCI: dw-rockchip: Configure max payload size on host init
+Date: Wed, 16 Apr 2025 23:19:26 +0800
+Message-Id: <20250416151926.140202-1-18255117159@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] cpufreq: Avoid using inconsistent policy->min and
- policy->max
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Mario Limonciello <mario.limonciello@amd.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Sultan Alsawaf <sultan@kerneltoast.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Valentin Schneider <vschneid@redhat.com>, Ingo Molnar <mingo@redhat.com>
-References: <5907080.DvuYhMxLoT@rjwysocki.net>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <5907080.DvuYhMxLoT@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDHrr6Ayv9nGGzuAQ--.32225S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7WFWrZFWfWFy7CrWxtryDAwb_yoW8Cr4xpa
+	yDAFW5Ary5GF4agFnrC3Zxur4rt3Zayay7Jws3Kw1I9Fy2yryDtFy3urnxta1fJF40kFy5
+	Cr45ta40kr43Xr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pELvKUUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiOhAxo2f-yS0qIAAAsO
 
-On 4/16/25 15:12, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> Since cpufreq_driver_resolve_freq() can run in parallel with
-> cpufreq_set_policy() and there is no synchronization between them,
-> the former may access policy->min and policy->max while the latter
-> is updating them and it may see intermediate values of them due
-> to the way the update is carried out.  Also the compiler is free
-> to apply any optimizations it wants both to the stores in
-> cpufreq_set_policy() and to the loads in cpufreq_driver_resolve_freq()
-> which may result in additional inconsistencies.
-> 
-> To address this, use WRITE_ONCE() when updating policy->min and
-> policy->max in cpufreq_set_policy() and use READ_ONCE() for reading
-> them in cpufreq_driver_resolve_freq().  Moreover, rearrange the update
-> in cpufreq_set_policy() to avoid storing intermediate values in
-> policy->min and policy->max with the help of the observation that
-> their new values are expected to be properly ordered upfront.
-> 
-> Also modify cpufreq_driver_resolve_freq() to take the possible reverse
-> ordering of policy->min and policy->max, which may happen depending on
-> the ordering of operations when this function and cpufreq_set_policy()
-> run concurrently, into account by always honoring the max when it
-> turns out to be less than the min (in case it comes from thermal
-> throttling or similar).
-> 
-> Fixes: 151717690694 ("cpufreq: Make policy min/max hard requirements")
-> Cc: 5.16+ <stable@vger.kernel.org> # 5.16+
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+The RK3588's PCIe controller defaults to a 128-byte max payload size,
+but its hardware capability actually supports 256 bytes. This results
+in suboptimal performance with devices that support larger payloads.
 
-Reviewed-by: Christian Loehle <christian.loehle@arm.com>
+Signed-off-by: Hans Zhang <18255117159@163.com>
+---
+ drivers/pci/controller/dwc/pcie-dw-rockchip.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-> ---
-> 
-> This replaces the last 3 patches in
-> 
-> https://lore.kernel.org/linux-pm/6171293.lOV4Wx5bFT@rjwysocki.net/
-> 
-> v2 -> v3:
->    * Fold 3 patches into one.
->    * Drop an unrelated white space fixup change.
->    * Fix a typo in a comment (Christian).
-> 
-> v1 -> v2: Cosmetic changes
-> 
-> ---
->  drivers/cpufreq/cpufreq.c |   32 +++++++++++++++++++++++++-------
->  1 file changed, 25 insertions(+), 7 deletions(-)
-> 
-> --- a/drivers/cpufreq/cpufreq.c
-> +++ b/drivers/cpufreq/cpufreq.c
-> @@ -495,8 +495,6 @@
->  {
->  	unsigned int idx;
->  
-> -	target_freq = clamp_val(target_freq, policy->min, policy->max);
-> -
->  	if (!policy->freq_table)
->  		return target_freq;
->  
-> @@ -520,7 +518,22 @@
->  unsigned int cpufreq_driver_resolve_freq(struct cpufreq_policy *policy,
->  					 unsigned int target_freq)
->  {
-> -	return __resolve_freq(policy, target_freq, CPUFREQ_RELATION_LE);
-> +	unsigned int min = READ_ONCE(policy->min);
-> +	unsigned int max = READ_ONCE(policy->max);
-> +
-> +	/*
-> +	 * If this function runs in parallel with cpufreq_set_policy(), it may
-> +	 * read policy->min before the update and policy->max after the update
-> +	 * or the other way around, so there is no ordering guarantee.
-> +	 *
-> +	 * Resolve this by always honoring the max (in case it comes from
-> +	 * thermal throttling or similar).
-> +	 */
-> +	if (unlikely(min > max))
-> +		min = max;
-> +
-> +	return __resolve_freq(policy, clamp_val(target_freq, min, max),
-> +			      CPUFREQ_RELATION_LE);
->  }
->  EXPORT_SYMBOL_GPL(cpufreq_driver_resolve_freq);
->  
-> @@ -2338,6 +2351,7 @@
->  	if (cpufreq_disabled())
->  		return -ENODEV;
->  
-> +	target_freq = clamp_val(target_freq, policy->min, policy->max);
->  	target_freq = __resolve_freq(policy, target_freq, relation);
->  
->  	pr_debug("target for CPU %u: %u kHz, relation %u, requested %u kHz\n",
-> @@ -2631,11 +2645,15 @@
->  	 * Resolve policy min/max to available frequencies. It ensures
->  	 * no frequency resolution will neither overshoot the requested maximum
->  	 * nor undershoot the requested minimum.
-> +	 *
-> +	 * Avoid storing intermediate values in policy->max or policy->min and
-> +	 * compiler optimizations around them because they may be accessed
-> +	 * concurrently by cpufreq_driver_resolve_freq() during the update.
->  	 */
-> -	policy->min = new_data.min;
-> -	policy->max = new_data.max;
-> -	policy->min = __resolve_freq(policy, policy->min, CPUFREQ_RELATION_L);
-> -	policy->max = __resolve_freq(policy, policy->max, CPUFREQ_RELATION_H);
-> +	WRITE_ONCE(policy->max, __resolve_freq(policy, new_data.max, CPUFREQ_RELATION_H));
-> +	new_data.min = __resolve_freq(policy, new_data.min, CPUFREQ_RELATION_L);
-> +	WRITE_ONCE(policy->min, new_data.min > policy->max ? policy->max : new_data.min);
-> +
->  	trace_cpu_frequency_limits(policy);
->  
->  	cpufreq_update_pressure(policy);
-> 
-> 
-> 
+diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+index c624b7ebd118..5bbb536a2576 100644
+--- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
++++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+@@ -477,6 +477,22 @@ static irqreturn_t rockchip_pcie_ep_sys_irq_thread(int irq, void *arg)
+ 	return IRQ_HANDLED;
+ }
+ 
++static void rockchip_pcie_set_max_payload(struct rockchip_pcie *rockchip)
++{
++	struct dw_pcie *pci = &rockchip->pci;
++	u32 dev_cap, dev_ctrl;
++	u16 offset;
++
++	offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
++	dev_cap = dw_pcie_readl_dbi(pci, offset + PCI_EXP_DEVCAP);
++	dev_cap &= PCI_EXP_DEVCAP_PAYLOAD;
++
++	dev_ctrl = dw_pcie_readl_dbi(pci, offset + PCI_EXP_DEVCTL);
++	dev_ctrl &= ~PCI_EXP_DEVCTL_PAYLOAD;
++	dev_ctrl |= dev_cap << 5;
++	dw_pcie_writel_dbi(pci, offset + PCI_EXP_DEVCTL, dev_ctrl);
++}
++
+ static int rockchip_pcie_configure_rc(struct platform_device *pdev,
+ 				      struct rockchip_pcie *rockchip)
+ {
+@@ -511,6 +527,8 @@ static int rockchip_pcie_configure_rc(struct platform_device *pdev,
+ 	pp->ops = &rockchip_pcie_host_ops;
+ 	pp->use_linkup_irq = true;
+ 
++	rockchip_pcie_set_max_payload(rockchip);
++
+ 	ret = dw_pcie_host_init(pp);
+ 	if (ret) {
+ 		dev_err(dev, "failed to initialize host\n");
+
+base-commit: a24588245776dafc227243a01bfbeb8a59bafba9
+-- 
+2.25.1
 
 
