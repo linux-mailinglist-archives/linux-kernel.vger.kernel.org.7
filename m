@@ -1,308 +1,304 @@
-Return-Path: <linux-kernel+bounces-607126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16658A8B846
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:06:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD62EA8B844
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 14:06:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 071BB5A32DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 12:05:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5EEB445984
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 12:06:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11AC24BBF3;
-	Wed, 16 Apr 2025 12:04:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F235C24C069;
+	Wed, 16 Apr 2025 12:04:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hStAe5+b"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F3j/TddK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB94223D2AD;
-	Wed, 16 Apr 2025 12:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17EB524BC07;
+	Wed, 16 Apr 2025 12:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744805054; cv=none; b=g8UjXSuXJiCVaHMvldP9USsC7ougajQsgH1YlT/mBhRtf402iuyP8eNCYToP/UE2ikMAGL4/vwLCL/RvW6WO/dlSeNREzLxPwjVU6z/Wod/JkobRQ4RO7QxXaRrT10t8MgaFIPKA0KKmsXAYhOWtACa3v5a6LNu2iI3ZsURJ5/I=
+	t=1744805080; cv=none; b=GQHVUAjVxVS5nT2LdLuJK3H+Rev40+kDBylsrmQSmR2QUYw+GRRmpHANEKOE2QHixWHOyWZToLi4ShHfxE038LVqTxp25kNZUnFtVQPTJYK/EsBKof6iy3ieFlJS/lVCFP8AbsTMNubPydIbeYtyR6NWMk4Utybfb2xvfMd9dvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744805054; c=relaxed/simple;
-	bh=pRy/yf3rb2f/5vary4SI2XiqiIspzuR69I8MYwOtfLw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=XJvQB9zJdrT5L+pUiSNoUmwnDesqTy4SU6m6IA8pfiBbIKZPHa/nYwXw/n8fIiip58hS/lYX7X6EUq42aGl/w/8/LJz5G8T5akgozKodAndPluBTX2QUaXrB7gi6tY8eqMFAd7PDi+qQnI4z+rnIJSNT0S2VKKC/uwihfDYwU+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hStAe5+b; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53G9mFjt007022;
-	Wed, 16 Apr 2025 12:04:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	R4agLGYVcIwurlDn1M6IVPranaN65EgP6yHwFxXfH6c=; b=hStAe5+bc0jGhpI/
-	YhnYlZTSQGDqz07cdDnI0IvCmZSKDhvrj+K+CM86THPWtBXaGPFHjlSedX4ll3TN
-	20sLuFzYH0fqRNl+fl3Mht1qWfbcv2jzF8o+K3BGsB9oX2eyFOor3EINxio8YXqZ
-	TXGl9WfUp1mlHV0dWmkhkBsm88tyei/baE4QHoMa9ofmx2KiHGRoRq3MHEfozT+x
-	4dEcdPeHsHg0gMCRYIe33O9JMg8/+vAxxO3+2rEl+cHN5J/GmBwrRbBhAZ0Ilu/O
-	qkiW7jglfv8HLAgWWwgNqMjdyANqqWcvdjyOwCDPH15ObgX7ooLHHSSvFhEIugeo
-	b1UBow==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45yfgjkc33-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Apr 2025 12:04:04 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53GC43x8018224
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Apr 2025 12:04:03 GMT
-Received: from [10.206.107.210] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 16 Apr
- 2025 05:03:59 -0700
-Message-ID: <38f41c8b-1795-dc84-afce-dd222b7f3be1@quicinc.com>
-Date: Wed, 16 Apr 2025 17:33:56 +0530
+	s=arc-20240116; t=1744805080; c=relaxed/simple;
+	bh=dt2pl/21XRjfjBSr9SoElSDtuTvPIB2ynsRrkiCn1mM=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=CVd5SthaZSUyz7cx/oSCc9AAdKILT4nTDnReaMe5JuDE4XOvo+d614qmjbIM1+cyFXWc3rjLZz6pmkYIbUg1iSJwKessRJGXbXyCC7WjqXLrXt23xcFok1z/JXOJcwss0CmrGgYwRpRPe8pKbHIpQynHWtfFl+lKq8BSamymqrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F3j/TddK; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744805078; x=1776341078;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=dt2pl/21XRjfjBSr9SoElSDtuTvPIB2ynsRrkiCn1mM=;
+  b=F3j/TddKj7z3fRH6vzjuJL8Hrtz4PkiVfM3CN7T5sZUFTm9/Yl52jS2W
+   1OdKO71tDZkmxI5+CkD8FXfE1lPdMgtC/JDDAuk0Cr6q3pxxTOmOVs/so
+   usCQ7Ha0Ben+jO0CS3Qc1PkEji6kvL1lThCdSq9fJggQ2y8UjenPu/oIi
+   0smqQEAdEn0uBtB/PNPBXRAvlj441Ww274MHwgOTUz3KDKq7WiDSSIel/
+   SlCvg37y6UTJm+QeSWySAmqOL6AFBHAPqheZLXKGEJksOsIyQkDWnNHtu
+   oTKfONB8gHSjHy+yNHkNDxdVzKwLnDpcyNlsrFExcEfLffgVAhiwaZLA/
+   A==;
+X-CSE-ConnectionGUID: hBjtIx6+TNKJvrV5wVj24w==
+X-CSE-MsgGUID: p6XsZkwhSOyXOdjirAop8g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="50169671"
+X-IronPort-AV: E=Sophos;i="6.15,216,1739865600"; 
+   d="scan'208";a="50169671"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 05:04:37 -0700
+X-CSE-ConnectionGUID: DU29bHeIQLedJe1U/CMbgA==
+X-CSE-MsgGUID: ZHkiVqJCROGHHUS6kGoLAA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,216,1739865600"; 
+   d="scan'208";a="153654670"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.243])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 05:04:31 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 16 Apr 2025 15:04:27 +0300 (EEST)
+To: Yunhui Cui <cuiyunhui@bytedance.com>
+cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+    Jiri Slaby <jirislaby@kernel.org>, john.ogness@linutronix.de, 
+    pmladek@suse.com, arnd@arndb.de, namcao@linutronix.de, 
+    benjamin.larsson@genexis.eu, schnelle@linux.ibm.com, 
+    heikki.krogerus@linux.intel.com, markus.mayer@linaro.org, 
+    tim.kryger@linaro.org, matt.porter@linaro.org, 
+    LKML <linux-kernel@vger.kernel.org>, 
+    linux-serial <linux-serial@vger.kernel.org>
+Subject: Re: [PATCH v3] serial: 8250: fix panic due to PSLVERR
+In-Reply-To: <079c8fe6-9ce4-fa59-4b44-93e27dd376d6@linux.intel.com>
+Message-ID: <6f4ed9f5-a6c7-e690-98e2-2d18ed20cc22@linux.intel.com>
+References: <20250414031450.42237-1-cuiyunhui@bytedance.com> <079c8fe6-9ce4-fa59-4b44-93e27dd376d6@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v6 7/7] media: platform: qcom/iris: add sm8650 support
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-CC: Neil Armstrong <neil.armstrong@linaro.org>,
-        Vikash Garodia
-	<quic_vgarodia@quicinc.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>,
-        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250415-topic-sm8x50-iris-v10-v6-0-8ad319094055@linaro.org>
- <20250415-topic-sm8x50-iris-v10-v6-7-8ad319094055@linaro.org>
- <085acdab-87b0-3a94-72fd-881d517d95cb@quicinc.com>
- <opy25iocdw5i2go5male5rzwoxl2hd4jxxjqj77qjiyxz7vens@wmrnrfuakhjs>
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-In-Reply-To: <opy25iocdw5i2go5male5rzwoxl2hd4jxxjqj77qjiyxz7vens@wmrnrfuakhjs>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 5ZnS_a2uM5yrUDiGIWCD9EkmqMXUqe17
-X-Proofpoint-ORIG-GUID: 5ZnS_a2uM5yrUDiGIWCD9EkmqMXUqe17
-X-Authority-Analysis: v=2.4 cv=Cve/cm4D c=1 sm=1 tr=0 ts=67ff9cb5 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=KKAkSRfTAAAA:8 a=2r83TW8UEMx5wHHBcaUA:9 a=QEXdDO2ut3YA:10
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-16_04,2025-04-15_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
- malwarescore=0 lowpriorityscore=0 bulkscore=0 spamscore=0 phishscore=0
- suspectscore=0 impostorscore=0 mlxlogscore=999 mlxscore=0
- priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504160098
+Content-Type: multipart/mixed; boundary="8323328-1067653622-1744805067=:991"
 
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
+--8323328-1067653622-1744805067=:991
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-On 4/16/2025 4:53 PM, Dmitry Baryshkov wrote:
-> On Wed, Apr 16, 2025 at 03:55:35PM +0530, Dikshita Agarwal wrote:
->>
->>
->> On 4/15/2025 7:17 PM, Neil Armstrong wrote:
->>> Add support for the SM8650 platform by re-using the SM8550
->>> definitions and using the vpu33 ops.
->>>
->>> Move the reset tables that diffes in a per-SoC platform
->>> header, that will contain mode SoC specific data when
->>> more codecs are introduced.
->>>
->>> The SM8650/vpu33 requires more reset lines, but the H.264
->>> decoder capabilities are identical.
->>>
->>> Tested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org> # x1e Dell
->>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->>> ---
->>>  .../platform/qcom/iris/iris_platform_common.h      |  1 +
->>>  .../media/platform/qcom/iris/iris_platform_gen2.c  | 65 +++++++++++++++++++++-
->>>  .../platform/qcom/iris/iris_platform_sm8550.h      | 11 ++++
->>>  .../platform/qcom/iris/iris_platform_sm8650.h      | 13 +++++
->>>  drivers/media/platform/qcom/iris/iris_probe.c      |  4 ++
->>>  5 files changed, 92 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
->>> index fdd40fd80178c4c66b37e392d07a0a62f492f108..6bc3a7975b04d612f6c89206eae95dac678695fc 100644
->>> --- a/drivers/media/platform/qcom/iris/iris_platform_common.h
->>> +++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
->>> @@ -35,6 +35,7 @@ enum pipe_type {
->>>  
->>>  extern struct iris_platform_data sm8250_data;
->>>  extern struct iris_platform_data sm8550_data;
->>> +extern struct iris_platform_data sm8650_data;
->>>  
->>>  enum platform_clk_type {
->>>  	IRIS_AXI_CLK,
->>> diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen2.c b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
->>> index 35d278996c430f2856d0fe59586930061a271c3e..6d1771bd68689d96b5b9087b0ad32b934f7295ee 100644
->>> --- a/drivers/media/platform/qcom/iris/iris_platform_gen2.c
->>> +++ b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
->>> @@ -10,6 +10,9 @@
->>>  #include "iris_platform_common.h"
->>>  #include "iris_vpu_common.h"
->>>  
->>> +#include "iris_platform_sm8550.h"
->>> +#include "iris_platform_sm8650.h"
->>> +
->>>  #define VIDEO_ARCH_LX 1
->>>  
->>>  static struct platform_inst_fw_cap inst_fw_cap_sm8550[] = {
->>> @@ -142,8 +145,6 @@ static const struct icc_info sm8550_icc_table[] = {
->>>  	{ "video-mem",  1000, 15000000 },
->>>  };
->>>  
->>> -static const char * const sm8550_clk_reset_table[] = { "bus" };
->>> -
->>>  static const struct bw_info sm8550_bw_table_dec[] = {
->>>  	{ ((4096 * 2160) / 256) * 60, 1608000 },
->>>  	{ ((4096 * 2160) / 256) * 30,  826000 },
->>> @@ -264,3 +265,63 @@ struct iris_platform_data sm8550_data = {
->>>  	.dec_op_int_buf_tbl = sm8550_dec_op_int_buf_tbl,
->>>  	.dec_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_op_int_buf_tbl),
->>>  };
->>> +
->>> +/*
->>> + * Shares most of SM8550 data except:
->>> + * - vpu_ops to iris_vpu33_ops
->>> + * - clk_rst_tbl to sm8650_clk_reset_table
->>> + * - controller_rst_tbl to sm8650_controller_reset_table
->>> + * - fwname to "qcom/vpu/vpu33_p4.mbn"
->>> + */
->>> +struct iris_platform_data sm8650_data = {
->>> +	.get_instance = iris_hfi_gen2_get_instance,
->>> +	.init_hfi_command_ops = iris_hfi_gen2_command_ops_init,
->>> +	.init_hfi_response_ops = iris_hfi_gen2_response_ops_init,
->>> +	.vpu_ops = &iris_vpu33_ops,
->>> +	.set_preset_registers = iris_set_sm8550_preset_registers,
->>> +	.icc_tbl = sm8550_icc_table,
->>> +	.icc_tbl_size = ARRAY_SIZE(sm8550_icc_table),
->>> +	.clk_rst_tbl = sm8650_clk_reset_table,
->>> +	.clk_rst_tbl_size = ARRAY_SIZE(sm8650_clk_reset_table),
->>> +	.controller_rst_tbl = sm8650_controller_reset_table,
->>> +	.controller_rst_tbl_size = ARRAY_SIZE(sm8650_controller_reset_table),
->>> +	.bw_tbl_dec = sm8550_bw_table_dec,
->>> +	.bw_tbl_dec_size = ARRAY_SIZE(sm8550_bw_table_dec),
->>> +	.pmdomain_tbl = sm8550_pmdomain_table,
->>> +	.pmdomain_tbl_size = ARRAY_SIZE(sm8550_pmdomain_table),
->>> +	.opp_pd_tbl = sm8550_opp_pd_table,
->>> +	.opp_pd_tbl_size = ARRAY_SIZE(sm8550_opp_pd_table),
->>> +	.clk_tbl = sm8550_clk_table,
->>> +	.clk_tbl_size = ARRAY_SIZE(sm8550_clk_table),
->>> +	/* Upper bound of DMA address range */
->>> +	.dma_mask = 0xe0000000 - 1,
->>> +	.fwname = "qcom/vpu/vpu33_p4.mbn",
->>> +	.pas_id = IRIS_PAS_ID,
->>> +	.inst_caps = &platform_inst_cap_sm8550,
->>> +	.inst_fw_caps = inst_fw_cap_sm8550,
->>> +	.inst_fw_caps_size = ARRAY_SIZE(inst_fw_cap_sm8550),
->>> +	.tz_cp_config_data = &tz_cp_config_sm8550,
->>> +	.core_arch = VIDEO_ARCH_LX,
->>> +	.hw_response_timeout = HW_RESPONSE_TIMEOUT_VALUE,
->>> +	.ubwc_config = &ubwc_config_sm8550,
->>> +	.num_vpp_pipe = 4,
->>> +	.max_session_count = 16,
->>> +	.max_core_mbpf = ((8192 * 4352) / 256) * 2,
->>> +	.input_config_params =
->>> +		sm8550_vdec_input_config_params,
->>> +	.input_config_params_size =
->>> +		ARRAY_SIZE(sm8550_vdec_input_config_params),
->>> +	.output_config_params =
->>> +		sm8550_vdec_output_config_params,
->>> +	.output_config_params_size =
->>> +		ARRAY_SIZE(sm8550_vdec_output_config_params),
->>> +	.dec_input_prop = sm8550_vdec_subscribe_input_properties,
->>> +	.dec_input_prop_size = ARRAY_SIZE(sm8550_vdec_subscribe_input_properties),
->>> +	.dec_output_prop = sm8550_vdec_subscribe_output_properties,
->>> +	.dec_output_prop_size = ARRAY_SIZE(sm8550_vdec_subscribe_output_properties),
->>> +
->>> +	.dec_ip_int_buf_tbl = sm8550_dec_ip_int_buf_tbl,
->>> +	.dec_ip_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_ip_int_buf_tbl),
->>> +	.dec_op_int_buf_tbl = sm8550_dec_op_int_buf_tbl,
->>> +	.dec_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_op_int_buf_tbl),
->>> +};
->>> diff --git a/drivers/media/platform/qcom/iris/iris_platform_sm8550.h b/drivers/media/platform/qcom/iris/iris_platform_sm8550.h
->>> new file mode 100644
->>> index 0000000000000000000000000000000000000000..ac8847edb585e4a9ce6b669a3a5988e7809972af
->>> --- /dev/null
->>> +++ b/drivers/media/platform/qcom/iris/iris_platform_sm8550.h
->>> @@ -0,0 +1,11 @@
->>> +/* SPDX-License-Identifier: GPL-2.0-only */
->>> +/*
->>> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
->>> + */
->>> +
->>> +#ifndef __IRIS_PLATFORM_SM8550_H__
->>> +#define __IRIS_PLATFORM_SM8550_H__
->>> +
->>> +static const char * const sm8550_clk_reset_table[] = { "bus" };
->>> +
->>> +#endif
->> There is no need of iris_platform_sm8550.h, you can keep this entry in
->> gen2.c file itself. As we are making that our base.
-> 
-> That would make it unsymmetrical. I think having a separate header is a
-> better option.
-> 
-It can never by symmetrical anyways.
-As we add new SOCs, Some other platform data might differ for that SOC. And
-then SOC specific file will have that entry only. We won't be taking out
-that table from common and have it in all SOC platform files to make it
-symmetrical again.
+On Mon, 14 Apr 2025, Ilpo J=E4rvinen wrote:
 
-Thanks,
-Dikshita
->> You can just have iris_platform_sm8650.h which overrides this entry with
->> SOC specific reset requirements for SM8650.
->>
->> Thanks,
->> Dikshita
->>> diff --git a/drivers/media/platform/qcom/iris/iris_platform_sm8650.h b/drivers/media/platform/qcom/iris/iris_platform_sm8650.h
->>> new file mode 100644
->>> index 0000000000000000000000000000000000000000..75e9d572e788de043a56cf85a4cb634bd02226b9
->>> --- /dev/null
->>> +++ b/drivers/media/platform/qcom/iris/iris_platform_sm8650.h
->>> @@ -0,0 +1,13 @@
->>> +/* SPDX-License-Identifier: GPL-2.0-only */
->>> +/*
->>> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
->>> + */
->>> +
->>> +#ifndef __IRIS_PLATFORM_SM8650_H__
->>> +#define __IRIS_PLATFORM_SM8650_H__
->>> +
->>> +static const char * const sm8650_clk_reset_table[] = { "bus", "core" };
->>> +
->>> +static const char * const sm8650_controller_reset_table[] = { "xo" };
->>> +
->>> +#endif
->>> diff --git a/drivers/media/platform/qcom/iris/iris_probe.c b/drivers/media/platform/qcom/iris/iris_probe.c
->>> index 4f8bce6e2002bffee4c93dcaaf6e52bf4e40992e..7cd8650fbe9c09598670530103e3d5edf32953e7 100644
->>> --- a/drivers/media/platform/qcom/iris/iris_probe.c
->>> +++ b/drivers/media/platform/qcom/iris/iris_probe.c
->>> @@ -345,6 +345,10 @@ static const struct of_device_id iris_dt_match[] = {
->>>  			.data = &sm8250_data,
->>>  		},
->>>  #endif
->>> +	{
->>> +		.compatible = "qcom,sm8650-iris",
->>> +		.data = &sm8650_data,
->>> +	},
->>>  	{ },
->>>  };
->>>  MODULE_DEVICE_TABLE(of, iris_dt_match);
->>>
-> 
+> On Mon, 14 Apr 2025, Yunhui Cui wrote:
+>=20
+> > When the PSLVERR_RESP_EN parameter is set to 1, the device generates
+> > an error response if an attempt is made to read an empty RBR (Receive
+> > Buffer Register) while the FIFO is enabled.
+> >=20
+> > In serial8250_do_startup(), calling serial_port_out(port, UART_LCR,
+> > UART_LCR_WLEN8) triggers dw8250_check_lcr(), which invokes
+> > dw8250_force_idle() and serial8250_clear_and_reinit_fifos(). The latter
+> > function enables the FIFO via serial_out(p, UART_FCR, p->fcr).
+> > Execution proceeds to the dont_test_tx_en label:
+> > ...
+> > serial_port_in(port, UART_RX);
+> > This satisfies the PSLVERR trigger condition.
+> >=20
+> > Because another CPU(e.g., using printk()) is accessing the UART (UART
+> > is busy), the current CPU fails the check (value & ~UART_LCR_SPAR) =3D=
+=3D
+> > (lcr & ~UART_LCR_SPAR), causing it to enter dw8250_force_idle().
+> >=20
+> > To fix this, all calls to serial_out(UART_LCR) and serial_in(UART_RX)
+> > should be executed under port->lock. Additionally, checking the readine=
+ss
+> > via UART_LSR should also be done under port->lock.
+> >=20
+> > Panic backtrace:
+> > [    0.442336] Oops - unknown exception [#1]
+> > [    0.442343] epc : dw8250_serial_in32+0x1e/0x4a
+> > [    0.442351]  ra : serial8250_do_startup+0x2c8/0x88e
+> > ...
+> > [    0.442416] console_on_rootfs+0x26/0x70
+> >=20
+> > Fixes: c49436b657d0 ("serial: 8250_dw: Improve unwritable LCR workaroun=
+d")
+> > Link: https://lore.kernel.org/all/84cydt5peu.fsf@jogness.linutronix.de/=
+T/
+> > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+>=20
+> As Andy mentioned, this change looks it would benefit from splitting to=
+=20
+> multiple parts.
+>=20
+> However, this change brings back some memories from a few years back.
+> Back then, there was a reporter who had issues issues related to=20
+> dw8250_force_idle() or writing some of the registers (IIRC). I ended up=
+=20
+> looking into finding a better solution to the write-while-BUSY problem=20
+> which entirely replaced dw8250_force_idle() that is quite hacky and seems=
+=20
+> unreliable on fundamendal level.
+>=20
+> Sadly, once I had posted a patch for testing, the reporter went dead=20
+> silent so the patch was left rotting as I had no time to try to reproduce=
+=2E
+>=20
+> Perhaps the patch I created back then would be useful for addressing this=
+=20
+> problem you're facing (the patch is attached). I've rebased the patch on=
+=20
+> top of the tty-next now (but I did no testing beyond compiling). There ar=
+e=20
+> a few further thoughts / missing bits mentioned in the comments within th=
+e=20
+> patch itself (I did not try to updated them now, so the comments may have=
+=20
+> rotten too).
+
+After some further thinking. I realized you're interested in the opposite=
+=20
+case (empty rx), whereas my patch focused on addressing (rx getting=20
+refilled constantly) so it doesn't seem that useful for your case. The=20
+patch shows though the direction I'd like to head with idle forcing=20
+approach.
+
+--
+ i.
+
+> > ---
+> >  drivers/tty/serial/8250/8250_dw.c   |  8 +++++
+> >  drivers/tty/serial/8250/8250_port.c | 46 ++++++++++++++++++-----------
+> >  2 files changed, 36 insertions(+), 18 deletions(-)
+> >=20
+> > diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/825=
+0/8250_dw.c
+> > index af24ec25d976..e97200ff30e3 100644
+> > --- a/drivers/tty/serial/8250/8250_dw.c
+> > +++ b/drivers/tty/serial/8250/8250_dw.c
+> > @@ -13,6 +13,7 @@
+> >  #include <linux/delay.h>
+> >  #include <linux/device.h>
+> >  #include <linux/io.h>
+> > +#include <linux/lockdep.h>
+> >  #include <linux/mod_devicetable.h>
+> >  #include <linux/module.h>
+> >  #include <linux/notifier.h>
+> > @@ -112,6 +113,13 @@ static void dw8250_force_idle(struct uart_port *p)
+> >  =09struct uart_8250_port *up =3D up_to_u8250p(p);
+> >  =09unsigned int lsr;
+> > =20
+> > +=09/*
+> > +=09 * Serial_in(p, UART_RX) should be under port->lock, but we can't a=
+dd
+> > +=09 * it to avoid AA deadlock as we're unsure if serial_out*(...UART_L=
+CR)
+> > +=09 * is under port->lock.
+> > +=09 */
+> > +=09lockdep_assert_held_once(&p->lock);
+> > +
+> >  =09serial8250_clear_and_reinit_fifos(up);
+> > =20
+> >  =09/*
+> > diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8=
+250/8250_port.c
+> > index 3f256e96c722..21bbd18195f5 100644
+> > --- a/drivers/tty/serial/8250/8250_port.c
+> > +++ b/drivers/tty/serial/8250/8250_port.c
+> > @@ -1328,6 +1328,7 @@ static void autoconfig_irq(struct uart_8250_port =
+*up)
+> >  =09unsigned int ICP =3D 0;
+> >  =09unsigned long irqs;
+> >  =09int irq;
+> > +=09u16 lsr;
+> > =20
+> >  =09if (port->flags & UPF_FOURPORT) {
+> >  =09=09ICP =3D (port->iobase & 0xfe0) | 0x1f;
+> > @@ -1357,9 +1358,10 @@ static void autoconfig_irq(struct uart_8250_port=
+ *up)
+> >  =09/* Synchronize UART_IER access against the console. */
+> >  =09uart_port_lock_irq(port);
+> >  =09serial_out(up, UART_IER, UART_IER_ALL_INTR);
+> > +=09lsr =3D serial_in(up, UART_LSR);
+> > +=09if (lsr & UART_LSR_DR)
+> > +=09=09serial_port_in(port, UART_RX);
+> >  =09uart_port_unlock_irq(port);
+> > -=09serial_in(up, UART_LSR);
+> > -=09serial_in(up, UART_RX);
+> >  =09serial_in(up, UART_IIR);
+> >  =09serial_in(up, UART_MSR);
+> >  =09serial_out(up, UART_TX, 0xFF);
+> > @@ -2137,19 +2139,16 @@ static void wait_for_xmitr(struct uart_8250_por=
+t *up, int bits)
+> >  static int serial8250_get_poll_char(struct uart_port *port)
+> >  {
+> >  =09struct uart_8250_port *up =3D up_to_u8250p(port);
+> > -=09int status;
+> > +=09int status =3D NO_POLL_CHAR;
+> >  =09u16 lsr;
+> > =20
+> >  =09serial8250_rpm_get(up);
+> > =20
+> > +=09uart_port_lock_irqsave(port, &flags);
+> >  =09lsr =3D serial_port_in(port, UART_LSR);
+> > -
+> > -=09if (!(lsr & UART_LSR_DR)) {
+> > -=09=09status =3D NO_POLL_CHAR;
+> > -=09=09goto out;
+> > -=09}
+> > -
+> > -=09status =3D serial_port_in(port, UART_RX);
+> > +=09if ((lsr & UART_LSR_DR))
+> > +=09=09status =3D serial_port_in(port, UART_RX);
+> > +=09uart_port_unlock_irqrestore(port, flags);
+> >  out:
+> >  =09serial8250_rpm_put(up);
+> >  =09return status;
+> > @@ -2264,13 +2263,16 @@ int serial8250_do_startup(struct uart_port *por=
+t)
+> >  =09 * Clear the FIFO buffers and disable them.
+> >  =09 * (they will be reenabled in set_termios())
+> >  =09 */
+> > +=09uart_port_lock_irqsave(port, &flags);
+> >  =09serial8250_clear_fifos(up);
+> > =20
+> >  =09/*
+> >  =09 * Clear the interrupt registers.
+> >  =09 */
+> > -=09serial_port_in(port, UART_LSR);
+> > -=09serial_port_in(port, UART_RX);
+> > +=09lsr =3D serial_port_in(port, UART_LSR);
+> > +=09if (lsr & UART_LSR_DR)
+> > +=09=09serial_port_in(port, UART_RX);
+> > +=09uart_port_unlock_irqrestore(port, flags);
+> >  =09serial_port_in(port, UART_IIR);
+> >  =09serial_port_in(port, UART_MSR);
+> > =20
+> > @@ -2380,9 +2382,10 @@ int serial8250_do_startup(struct uart_port *port=
+)
+> >  =09/*
+> >  =09 * Now, initialize the UART
+> >  =09 */
+> > -=09serial_port_out(port, UART_LCR, UART_LCR_WLEN8);
+> > =20
+> >  =09uart_port_lock_irqsave(port, &flags);
+> > +=09serial_port_out(port, UART_LCR, UART_LCR_WLEN8);
+> > +
+> >  =09if (up->port.flags & UPF_FOURPORT) {
+> >  =09=09if (!up->port.irq)
+> >  =09=09=09up->port.mctrl |=3D TIOCM_OUT1;
+> > @@ -2428,15 +2431,16 @@ int serial8250_do_startup(struct uart_port *por=
+t)
+> >  =09}
+> > =20
+> >  dont_test_tx_en:
+>=20
+> I don't see this in the tty-next branch?
+>=20
+> ~/linux/tty-next$ git grep dont_test_tx_en | cat -
+> ~/linux/tty-next$=20
+>=20
+>=20
+--8323328-1067653622-1744805067=:991--
 
