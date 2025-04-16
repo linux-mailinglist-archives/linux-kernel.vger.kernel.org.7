@@ -1,116 +1,92 @@
-Return-Path: <linux-kernel+bounces-606697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC71DA8B273
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:42:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FC5BA8B279
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 09:43:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D270A17B40A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 07:42:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DCC43A8A71
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 07:42:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C07D22D7A8;
-	Wed, 16 Apr 2025 07:42:20 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2533922D797;
+	Wed, 16 Apr 2025 07:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dgkw2Eer"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04DE522CBF9;
-	Wed, 16 Apr 2025 07:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D73422D4DF;
+	Wed, 16 Apr 2025 07:42:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744789339; cv=none; b=EKidhICQokZonDU3/txViLVwduryD4DkJ8JXCQQULPIC8p8NXlifk/QQBznnhvwpqDc0bv45lOYczwLTm1UAjPLRrNrksZghxaxRh1D7nRePHzjSMiOanbzL/zk35UCHNvruyF+knk6N+5pQUSicokeWMZdPFp2nXwz0EQ3b6Gk=
+	t=1744789356; cv=none; b=tuuUbOm59Ezc8baxIWcH63siwK/uUvcty5t4u7t7dVbkvNTNmQwI3zVu0SaJYUVqEIPPnx7EU3sE05rm9tbRy5Ucg+golB4rCt8oGV1vOvWF/m1rPwjwqF9YnBaOeTV7oENLvjU1hRn2mtVu1sKHcjZfmTOLRRWTj9I4bKkzgBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744789339; c=relaxed/simple;
-	bh=wGGibtdlTh9hdjHY1DMQhiqGGz4gxVpPaZDpTvsf1Og=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=W17nQoIYo2KQlrh9sAiUnFIUuDNWgnoIOIReSQllkxXgJKV7Q/6gVaQHgTz/7AQziCAv2Yk9X7exhKafM6t4RQbmZBOcu8bwtKYXUYE0kFvihPCtz0tR/2NjCJiM4LXQts6r90re9r+EcvKtiCWFOinp62qQOQNReZCZWKEgR4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZctJQ0JgBz4f3lWG;
-	Wed, 16 Apr 2025 15:41:42 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 438671A08FC;
-	Wed, 16 Apr 2025 15:42:07 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgD3Wl9NX_9n0yaLJg--.51301S3;
-	Wed, 16 Apr 2025 15:42:07 +0800 (CST)
-Subject: Re: [PATCH 3/4] md: fix is_mddev_idle()
-To: Xiao Ni <xni@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>,
- axboe@kernel.dk, song@kernel.org
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250412073202.3085138-1-yukuai1@huaweicloud.com>
- <20250412073202.3085138-4-yukuai1@huaweicloud.com>
- <c085664e-3a52-4a1c-b973-8d2ba6e5d509@redhat.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <42cbe72e-1db5-1723-789d-a93b5dc95f8f@huaweicloud.com>
-Date: Wed, 16 Apr 2025 15:42:05 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1744789356; c=relaxed/simple;
+	bh=Jz6qHTg8Q8zRmoy99ODS+PiAJiETvWfoBcUY75LwSgI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XmvqL+sGEHT9ozbarQ0nU42pGIH1UU7cPt3L1gmdzCaj3NENiQak4zVMNqB3bGBrPSmEU8M1XQRFY/l++aFD7KCzwDk9uZWkaeAmn1hxrHB8TIKhqFj+4h8dsWrtd48dmIlLwzBeq3Ul7EEr/T9Hsl7llfP6UqbSqW1ge0jwK8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dgkw2Eer; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=KYd5npbJzyzOtmH5HG/Rke9Rgxyj9IA+KROKFQ48knQ=; b=dgkw2EerY+ijHY0llMySBA1oxv
+	xSPZge946AAbseUxLprw1dmHPIe+Ay0niuuilqJ9xf49w160AavLss33BZyxu6U04clsa0Jzbxnw5
+	hLaS8Sc8ObsVLlseuWOJkFq1tOFOzNGEe2RdsyOksxaKexJEf+xvSqS9M1L6eIife4lKDBIYHA+rT
+	nTnZ7YW1EOOh79sltbW7nF7QsF00Qwvy25XgD1rJUq5hESeFhT48NdjJvkuk1IlGCph3jHJlE21XU
+	6mBPMTuCF8G65GKfwJRIVaRAykcU7gXDrGwCDpyB+/WDjSHaVpkeCWZP13NdSeKGlsLXybawFzFcH
+	V16L9j3A==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1u4xPe-0000000A3y0-1TNG;
+	Wed, 16 Apr 2025 07:42:26 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id B917B3003C4; Wed, 16 Apr 2025 09:42:25 +0200 (CEST)
+Date: Wed, 16 Apr 2025 09:42:25 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Liang, Kan" <kan.liang@linux.intel.com>
+Cc: Dapeng Mi <dapeng1.mi@linux.intel.com>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
+Subject: Re: [Patch v3 00/22] Arch-PEBS and PMU supports for Clearwater
+ Forest and Panther Lake
+Message-ID: <20250416074225.GG4031@noisy.programming.kicks-ass.net>
+References: <20250415114428.341182-1-dapeng1.mi@linux.intel.com>
+ <71ba0725-04f5-4142-8536-b5c17d2d5e00@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <c085664e-3a52-4a1c-b973-8d2ba6e5d509@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgD3Wl9NX_9n0yaLJg--.51301S3
-X-Coremail-Antispam: 1UD129KBjvdXoW7JFyDGr4fuw15Ar48XF1rCrg_yoWDXrbE9r
-	WFkryUZF48JrWktry2yF4FvryqgF4jka4DJrs8tF1UGFyUJrZa9r4Fq3saqF4kKw43Wr15
-	KrnYgF1SyFy7ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbfkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUonmRUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <71ba0725-04f5-4142-8536-b5c17d2d5e00@linux.intel.com>
 
-Hi,
-
-在 2025/04/16 14:20, Xiao Ni 写道:
->> +static bool is_rdev_idle(struct md_rdev *rdev, bool init)
->> +{
->> +    unsigned long last_events = rdev->last_events;
->> +
->> +    if (!bdev_is_partition(rdev->bdev))
->> +        return true;
+On Tue, Apr 15, 2025 at 11:21:30AM -0400, Liang, Kan wrote:
+> Hi Peter,
 > 
+> On 2025-04-15 7:44 a.m., Dapeng Mi wrote:
+> > Dapeng Mi (21):
+> >   perf/x86/intel: Add PMU support for Clearwater Forest
+> > 
+> > Kan Liang (1):
+> >   perf/x86/intel: Add Panther Lake support
 > 
-> For md array, I think is_rdev_idle is not useful. Because 
-> mddev->last_events must be increased while upper ios come in and idle 
-> will be set to false. For dm array, mddev->last_events can't work. So 
-> is_rdev_idle is for dm array. If member disk is one partition, 
-> is_rdev_idle alwasy returns true, and is_mddev_idle always return true. 
-> It's a bug here. Do we need to check bdev_is_partition here?
+> Could you please take a look and pick up the above two patches if they
+> look good to you?
 
-is_rdev_idle() is not used for current array, for example:
+Yes, I've picked up that earlier 2 patch series and will pick up the
+first 6 patches from this series.
 
-sda1 is used for array md0, and user doesn't issue IO to md0, while
-user issues IO to sda2. In this case, is_mddev_idle() still fail for
-array md0 because is_rdev_idle() fail.
-
-This is just inherited from the old behaviour.
-
-Thanks,
-Kuai
-
-> 
-> Best Regards
-> 
-> Xiao
-
+Thanks!
 
