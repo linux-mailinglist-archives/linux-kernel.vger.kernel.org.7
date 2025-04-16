@@ -1,299 +1,123 @@
-Return-Path: <linux-kernel+bounces-606304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2146A8ADA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 03:44:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D75D0A8ADA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 03:48:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A995617F55E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 01:44:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57943189FFD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 01:48:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0865C227E89;
-	Wed, 16 Apr 2025 01:44:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF532135C2;
+	Wed, 16 Apr 2025 01:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WfNRSlbh"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wn8sCCRK"
+Received: from mail-yw1-f195.google.com (mail-yw1-f195.google.com [209.85.128.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6DD1487F6;
-	Wed, 16 Apr 2025 01:44:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E935227;
+	Wed, 16 Apr 2025 01:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744767870; cv=none; b=tmrF0QBQl2+dR6/rymgVplwZt9lg0vFXNlCvjhaUe3xO9mfb9rBVkXnmECNtG/KGQZumwh2bicw8lt6L9bc7+xvRRNUtJBBTZvUPZdkg7nrOvdPrmG37LAM0vaGKfzMh4FJmIbIF59213tRLlt+aSoOk66H27zMeArDQS7tzhYs=
+	t=1744768093; cv=none; b=DH0o9pdSIKQ/+9jft6FNDYU8VVJeresGpeV+pbFPRdIkeFOvFTDchHS0gDpgvcIazS12hcGbXh8asVjRfbsOiJbPeAPUw3oitD9UJgZsTnq871y1/1d6kvXVeu5PbUEtn6QbJEhudwVfJHQwxQebvtwl11uHHVWXpiVW9UcGf00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744767870; c=relaxed/simple;
-	bh=1VbvWTNe/fniX3+iY/F9pCcSQOUG2CFW2qCV0+CUGOk=;
+	s=arc-20240116; t=1744768093; c=relaxed/simple;
+	bh=LmRYGZfdjzKD+GNeB7ijBk/znXqeRMAfPREUU9oAlno=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bydeUY7ORj5jy5ETy7RCEzC5FxsvU8rlOacJ/GwdyR/ftsPXNKgaaeji6QQRiMVUCZEMq26tMI0erRzLIpQYe0+MvXzfTkZkmM3lTBCOzHodRS516RXslAfo5LuGq5QmBAmfsIdU8TBB09ZDjpT/1kyb2vUWz3f+N6cHUAF6sUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WfNRSlbh; arc=none smtp.client-ip=209.85.167.181
+	 To:Cc:Content-Type; b=MX2JcuJln1rOblgGv6Ouy9F4JJbXeneTrT3FWDeyUkwOE3CUBEl5GeAD/F1zfeQ+Q2XDT7epT9WY9lDu6lBcDIlCfsAcUgrQh3nuvj078zY6nQFk0ScPKcvukBdytJcXxAaoe4lWDh0mgOTCfRYieqes3HXTlFzHs0s9qrC7WWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wn8sCCRK; arc=none smtp.client-ip=209.85.128.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3f8d2f8d890so3338384b6e.0;
-        Tue, 15 Apr 2025 18:44:28 -0700 (PDT)
+Received: by mail-yw1-f195.google.com with SMTP id 00721157ae682-70565ccf3bcso39707667b3.0;
+        Tue, 15 Apr 2025 18:48:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744767867; x=1745372667; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1744768091; x=1745372891; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LTTd/0/2LZSe7Cp0uHQDJpqW1SQdnvZm0OG1nRFBmME=;
-        b=WfNRSlbhq8NmwB3MT1SVUMf1WqPv2uJt3BEvoYSR0v/dRlxNBpSl8+csTXlf+s4A00
-         PWdhUhkneDN5CXzw56mJ8tHHXQnOiYrPQgZhn9csup3ehCcKwpaf82maiM5JEeaGNnxm
-         nlcyTR4f+BUg1CDEBcHHNA8SywlZS1KS2LkjDqz8U50XREmHymjmWDeupQQ574NEXGyc
-         hMS3D6pe7b2hDs3l4/eAkzAJyiLfe/8PwOgwH/MQefOVjRCEDjmBrW0aeZvQOY4rx4TH
-         JmrdXPcqzc75dKqqv/x0mtXz6M3wvPzhxbiqqoJtetbUpvb2LWQWzFedKmgRJVYMoAjh
-         K0HQ==
+        bh=xqLmF3Z6t3I+6keU46Rahz1Y3IvBRd9Ly3KaUnN+N7o=;
+        b=Wn8sCCRK9EOLtICz88DpWRUB0/2LdwnOtzagFKWCL7qbHJUeefHtEgPNaSWRjgZZ6D
+         U9GbTr0ElmsptOB6Q6T7RQwvdxvdHNE4Ls51y1rlejIErSlo02uN9LRXhxB31QHNGJjp
+         fzG0g6IUVMGNSv5B78wvUSlro3idjotntqSl5ZP++7r5TkA8gE3Vw+rZOPCqi7gm7feR
+         aoSZiwHCDhn5XFqVNLYic0jKcWRWkWDlT86KpGsQR58WjrCiHxmNScgzdcnx1hG3G9+m
+         Cmfqabq1aGHaWAbRnZaTu23NkrYJltXyrQEUdS+U5Ndmoy8VxYzEUjMJ7OexTshSF7ft
+         TjAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744767867; x=1745372667;
+        d=1e100.net; s=20230601; t=1744768091; x=1745372891;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LTTd/0/2LZSe7Cp0uHQDJpqW1SQdnvZm0OG1nRFBmME=;
-        b=i9qaaTw+c8WBMCLk/pYmMF/L4WZoUCO3wpm79LlqwoMxzkM83q772mJNx6pwFqeqev
-         /eq/jxHzZyS6xM2i0GrRaLwA1Lx6Nv4EcEg/tXsROUB4m2ZipYo4/2Jj9jkszAlKBSQ1
-         j6UPIYu5ex9taAYTWWGGez1WBXReHYQvyoMMz8tJbzB3aj098EIhvXYLHO1YX2mxgwC2
-         89HJAscipq9Hpr19n0teedi16YAGOxm6u71ZLCVQLA9mg9Q6/q6C0dI3mxStH1IUCbK9
-         JhWgqEOxeXDK7OswprEZaAMIF7P1vSo35TSZY19Vw4VMSJZbs4u0pqXOtWCI3y+Afr6/
-         Twew==
-X-Forwarded-Encrypted: i=1; AJvYcCVG5F5ZQUz7kInbX9xF+Qhh4F5GtC7ytkaTnEp93RhE1Csd3wLJ2h1EZafZDSr2xAFDckyuG57Jdb/P6+vl@vger.kernel.org, AJvYcCXy6k/BGvi2dbwKxq8HsUPLECrmDbJYl5udlYdpH7poBZem0M60sKxo508Pur7ojj8JoLE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjZ/XD6qg0caer95ced58ZYqFZn4RpUrInSlHX3bGbVZoYinzI
-	zZnkbfFQ6J5bJh+etzzZ3IUPtERTfx87q4xGnluzklo2uArEKY4maJ/hJXp4s66ifQGxpc97uAo
-	TFYODLE4NI+E+pvuF8zch6xYkqCU=
-X-Gm-Gg: ASbGncvPtoiPl+ZQZIlkVEPVwS3AekSUxhQD7xdSzPmESppiJ+UptiDL/m2NQholSBG
-	lez1LQ1sBS3q+umLZbd6R110PkEf17GdS0ervAJbrzoDKkHgxze84Wl+wPsEBjd7Ek71MkH1NOA
-	ufKbwOUW3ehJvUD1+0KxS6ug==
-X-Google-Smtp-Source: AGHT+IFQ1BYgGMjS8evMCZPXovj65fndhT0CwIflnBZBG6vOgAAunL053HSfsCNCAm/15Km8rCBQ70kJCOe0CTYQQT4=
-X-Received: by 2002:a05:6808:2126:b0:3f8:6caf:8339 with SMTP id
- 5614622812f47-400b044caa7mr21690b6e.37.1744767867290; Tue, 15 Apr 2025
- 18:44:27 -0700 (PDT)
+        bh=xqLmF3Z6t3I+6keU46Rahz1Y3IvBRd9Ly3KaUnN+N7o=;
+        b=U2wXEY+Ksk3O9LUyYb/8HAeHnnoxNDmoFKbQ8TyWlWf1T4mbwbQ1w55DPu6SAX3tsO
+         HKcT4io27WPK3eROkrg3wtT87wPr1O1B++VUjVWP0WgWSvUBtwC+j1+ipV+as8sQ/E9U
+         b1gEsJZAEjUe+uc+YPforl+cHvK59c4S7/l55peQkJBwKf6E/8kr1FPUMZxAcETr7GJU
+         7nt3UCpfirW44QVx+csNC5EFJIQe02455dGrXcjuv7rbN2OtiD4M4xsONVKAimKt2ueU
+         KQpSh3urUAYCyz0lHWZdWNl7eAKu8zqwOScZ7iQjVWPazadJdzlk58s4uMfGMKbz7njO
+         sc/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUaeBVqo1lAso58LdAZa8t+IS5h14ybAIHU5ZSN/Sa4KqCTDeMQVAcTschvKjo6AkrH6U6cllc6UwMgPFw=@vger.kernel.org, AJvYcCWH/mCmMmkije0EbPd8K2rAD8EOYCtOAcSCVEXfojHCxvNPsTBsgsTPS4scIUyzaIOSUnXS1Khl0RAPQL3Iaxfw35RR@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywd0k7awKN8UgXO+ZfHEiAx1hkJVIonlYox6sg8rNtN+HtIHK+m
+	c678PHyqi8/ey9aMDAf8FVdfdSlXhfE1CdlHLTLVHU2WTyugbtjUGUdspFobMB6hHa5z1Fk20XG
+	U7alIYZ//qMp/EgeAPX57ZVV6xY3j/u9k23A=
+X-Gm-Gg: ASbGncvC140fLYIyx+/53MaP4CxwCJRTOHiVqXBHJMveZYgdH/Au4RQyj7NJkqh7wS7
+	IOcvb9alCRHZfz7SYo/z+5o9InjZ+kn/LmqOASin4wm63U3P1ZBPLxD0Z+tICkVJdr/LTXGbZXi
+	oxhLKmeg8NC+rhPU+GmIuNAg==
+X-Google-Smtp-Source: AGHT+IH6C4g81eZKeTeUb9hCFSy4U/5I3cBEhngWsJsQqyVX/TxQ+f+/ZVXpEgAzRxOjX2mWC8EQzFip8VeewplAl20=
+X-Received: by 2002:a05:690c:6c0a:b0:700:a6a1:66ae with SMTP id
+ 00721157ae682-706b32a622dmr1004437b3.16.1744768090833; Tue, 15 Apr 2025
+ 18:48:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250415093907.280501-1-yangfeng59949@163.com>
- <20250415093907.280501-2-yangfeng59949@163.com> <CAEf4BzYZpLOOV5MVxaB4+WPZiO3SjSkNCPrNkd67jZ49kUYDZA@mail.gmail.com>
-In-Reply-To: <CAEf4BzYZpLOOV5MVxaB4+WPZiO3SjSkNCPrNkd67jZ49kUYDZA@mail.gmail.com>
-From: Hengqi Chen <hengqi.chen@gmail.com>
-Date: Wed, 16 Apr 2025 09:44:16 +0800
-X-Gm-Features: ATxdqUGgd60uTO0YuHuEJBemweoR8ND1ZZ9ZAxRp_g4hhHmJRcETHD1Oj-sHxCs
-Message-ID: <CAEyhmHQG5+F7b2OBUXYHRKqYuQyG3e_MAj9q=fwebHD_uAU9-w@mail.gmail.com>
-Subject: Re: [PATCH v4 bpf-next 1/3] libbpf: Fix event name too long error
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Feng Yang <yangfeng59949@163.com>, ast@kernel.org, daniel@iogearbox.net, 
-	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
-	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
-	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, olsajiri@gmail.com, 
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250415112750.1477339-1-guoj17@chinatelecom.cn> <20250415074633.3cf7546d@gandalf.local.home>
+In-Reply-To: <20250415074633.3cf7546d@gandalf.local.home>
+From: Menglong Dong <menglong8.dong@gmail.com>
+Date: Wed, 16 Apr 2025 09:45:54 +0800
+X-Gm-Features: ATxdqUGoxV7-FrLDOfL0otb9nTJnPoreiefCjKG7AC-p9lj_cIcVamgdmnzlrjE
+Message-ID: <CADxym3bjjp8edgbpAct0GKno3NGLxs2Pd0hod94r7u_2jGUC5w@mail.gmail.com>
+Subject: Re: [PATCH] ftrace: make ftrace_location() more accurate
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: mhiramat@kernel.org, mark.rutland@arm.com, mathieu.desnoyers@efficios.com, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	Jin Guo <guoj17@chinatelecom.cn>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrii,
+On Tue, Apr 15, 2025 at 7:45=E2=80=AFPM Steven Rostedt <rostedt@goodmis.org=
+> wrote:
+>
+> On Tue, 15 Apr 2025 19:27:50 +0800
+> Jin Guo <menglong8.dong@gmail.com> wrote:
+>
+> > The function ftrace_location is used to lookup the ftrace location with=
+ an
+> > ip. However, the result that it returns can be wrong in some case.
+> >
+> > Let's image that we have the following kallsyms:
+> >
+> >   ffffffff812c35f0 T sys_ni_syscall
+> >   ffffffff812c38b0 W __pfx___x64_sys_io_pgetevents_time32
+> >   ffffffff812c38c0 W __x64_sys_io_pgetevents_time32
+>
+> Have you tried the latest kernel? because on x86, weak functions that are
+> not used should no longer be in the ftrace table. That is, you should nev=
+er
+> see __ftrace_invalid_addres_* anymore.
+>
+> See https://lore.kernel.org/all/20250218195918.255228630@goodmis.org/
+>
+> That was just added this merge window, which would make your patch obsole=
+te.
 
-On Wed, Apr 16, 2025 at 7:05=E2=80=AFAM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> On Tue, Apr 15, 2025 at 2:40=E2=80=AFAM Feng Yang <yangfeng59949@163.com>=
- wrote:
-> >
-> > From: Feng Yang <yangfeng@kylinos.cn>
-> >
-> > When the binary path is excessively long, the generated probe_name in l=
-ibbpf
-> > exceeds the kernel's MAX_EVENT_NAME_LEN limit (64 bytes).
-> > This causes legacy uprobe event attachment to fail with error code -22.
-> >
-> > The fix reorders the fields to place the unique ID before the name.
-> > This ensures that even if truncation occurs via snprintf, the unique ID
-> > remains intact, preserving event name uniqueness. Additionally, explici=
-t
-> > checks with MAX_EVENT_NAME_LEN are added to enforce length constraints.
-> >
-> > Before Fix:
-> >         ./test_progs -t attach_probe/kprobe-long_name
-> >         ......
-> >         libbpf: failed to add legacy kprobe event for 'bpf_testmod_looo=
-oooooooooooooooooooooooooooong_name+0x0': -EINVAL
-> >         libbpf: prog 'handle_kprobe': failed to create kprobe 'bpf_test=
-mod_looooooooooooooooooooooooooooooong_name+0x0' perf event: -EINVAL
-> >         test_attach_kprobe_long_event_name:FAIL:attach_kprobe_long_even=
-t_name unexpected error: -22
-> >         test_attach_probe:PASS:uprobe_ref_ctr_cleanup 0 nsec
-> >         #13/11   attach_probe/kprobe-long_name:FAIL
-> >         #13      attach_probe:FAIL
-> >
-> >         ./test_progs -t attach_probe/uprobe-long_name
-> >         ......
-> >         libbpf: failed to add legacy uprobe event for /root/linux-bpf/b=
-pf-next/tools/testing/selftests/bpf/test_progs:0x13efd9: -EINVAL
-> >         libbpf: prog 'handle_uprobe': failed to create uprobe '/root/li=
-nux-bpf/bpf-next/tools/testing/selftests/bpf/test_progs:0x13efd9' perf even=
-t: -EINVAL
-> >         test_attach_uprobe_long_event_name:FAIL:attach_uprobe_long_even=
-t_name unexpected error: -22
-> >         #13/10   attach_probe/uprobe-long_name:FAIL
-> >         #13      attach_probe:FAIL
-> > After Fix:
-> >         ./test_progs -t attach_probe/uprobe-long_name
-> >         #13/10   attach_probe/uprobe-long_name:OK
-> >         #13      attach_probe:OK
-> >         Summary: 1/1 PASSED, 0 SKIPPED, 0 FAILED
-> >
-> >         ./test_progs -t attach_probe/kprobe-long_name
-> >         #13/11   attach_probe/kprobe-long_name:OK
-> >         #13      attach_probe:OK
-> >         Summary: 1/1 PASSED, 0 SKIPPED, 0 FAILED
-> >
-> > Fixes: 46ed5fc33db9 ("libbpf: Refactor and simplify legacy kprobe code"=
-)
-> > Fixes: cc10623c6810 ("libbpf: Add legacy uprobe attaching support")
-> > Signed-off-by: Hengqi Chen <hengqi.chen@gmail.com>
-> > Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
-> > ---
-> >  tools/lib/bpf/libbpf.c | 41 +++++++++++++++--------------------------
-> >  1 file changed, 15 insertions(+), 26 deletions(-)
-> >
-> > diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-> > index b2591f5cab65..b7fc57ac16a6 100644
-> > --- a/tools/lib/bpf/libbpf.c
-> > +++ b/tools/lib/bpf/libbpf.c
-> > @@ -60,6 +60,8 @@
-> >  #define BPF_FS_MAGIC           0xcafe4a11
-> >  #endif
-> >
-> > +#define MAX_EVENT_NAME_LEN     64
-> > +
-> >  #define BPF_FS_DEFAULT_PATH "/sys/fs/bpf"
-> >
-> >  #define BPF_INSN_SZ (sizeof(struct bpf_insn))
-> > @@ -11136,16 +11138,16 @@ static const char *tracefs_available_filter_f=
-unctions_addrs(void)
-> >                              : TRACEFS"/available_filter_functions_addr=
-s";
-> >  }
-> >
-> > -static void gen_kprobe_legacy_event_name(char *buf, size_t buf_sz,
-> > -                                        const char *kfunc_name, size_t=
- offset)
-> > +static void gen_probe_legacy_event_name(char *buf, size_t buf_sz,
-> > +                                       const char *name, size_t offset=
-)
-> >  {
-> >         static int index =3D 0;
-> >         int i;
-> >
-> > -       snprintf(buf, buf_sz, "libbpf_%u_%s_0x%zx_%d", getpid(), kfunc_=
-name, offset,
-> > -                __sync_fetch_and_add(&index, 1));
-> > +       snprintf(buf, buf_sz, "libbpf_%u_%d_%s_0x%zx", getpid(),
-> > +                __sync_fetch_and_add(&index, 1), name, offset);
-> >
-> > -       /* sanitize binary_path in the probe name */
-> > +       /* sanitize name in the probe name */
-> >         for (i =3D 0; buf[i]; i++) {
-> >                 if (!isalnum(buf[i]))
-> >                         buf[i] =3D '_';
-> > @@ -11270,9 +11272,9 @@ int probe_kern_syscall_wrapper(int token_fd)
-> >
-> >                 return pfd >=3D 0 ? 1 : 0;
-> >         } else { /* legacy mode */
-> > -               char probe_name[128];
-> > +               char probe_name[MAX_EVENT_NAME_LEN];
-> >
-> > -               gen_kprobe_legacy_event_name(probe_name, sizeof(probe_n=
-ame), syscall_name, 0);
-> > +               gen_probe_legacy_event_name(probe_name, sizeof(probe_na=
-me), syscall_name, 0);
-> >                 if (add_kprobe_event_legacy(probe_name, false, syscall_=
-name, 0) < 0)
-> >                         return 0;
-> >
-> > @@ -11328,9 +11330,9 @@ bpf_program__attach_kprobe_opts(const struct bp=
-f_program *prog,
-> >                                             func_name, offset,
-> >                                             -1 /* pid */, 0 /* ref_ctr_=
-off */);
-> >         } else {
-> > -               char probe_name[256];
-> > +               char probe_name[MAX_EVENT_NAME_LEN];
-> >
-> > -               gen_kprobe_legacy_event_name(probe_name, sizeof(probe_n=
-ame),
-> > +               gen_probe_legacy_event_name(probe_name, sizeof(probe_na=
-me),
-> >                                              func_name, offset);
-> >
-> >                 legacy_probe =3D strdup(probe_name);
-> > @@ -11875,20 +11877,6 @@ static int attach_uprobe_multi(const struct bp=
-f_program *prog, long cookie, stru
-> >         return ret;
-> >  }
-> >
-> > -static void gen_uprobe_legacy_event_name(char *buf, size_t buf_sz,
-> > -                                        const char *binary_path, uint6=
-4_t offset)
-> > -{
-> > -       int i;
-> > -
-> > -       snprintf(buf, buf_sz, "libbpf_%u_%s_0x%zx", getpid(), binary_pa=
-th, (size_t)offset);
-> > -
-> > -       /* sanitize binary_path in the probe name */
-> > -       for (i =3D 0; buf[i]; i++) {
-> > -               if (!isalnum(buf[i]))
-> > -                       buf[i] =3D '_';
-> > -       }
-> > -}
-> > -
-> >  static inline int add_uprobe_event_legacy(const char *probe_name, bool=
- retprobe,
-> >                                           const char *binary_path, size=
-_t offset)
-> >  {
-> > @@ -12312,13 +12300,14 @@ bpf_program__attach_uprobe_opts(const struct =
-bpf_program *prog, pid_t pid,
-> >                 pfd =3D perf_event_open_probe(true /* uprobe */, retpro=
-be, binary_path,
-> >                                             func_offset, pid, ref_ctr_o=
-ff);
-> >         } else {
-> > -               char probe_name[PATH_MAX + 64];
-> > +               char probe_name[MAX_EVENT_NAME_LEN];
-> >
-> >                 if (ref_ctr_off)
-> >                         return libbpf_err_ptr(-EINVAL);
-> >
-> > -               gen_uprobe_legacy_event_name(probe_name, sizeof(probe_n=
-ame),
-> > -                                            binary_path, func_offset);
-> > +               gen_probe_legacy_event_name(probe_name, sizeof(probe_na=
-me),
-> > +                                           basename((void *)binary_pat=
-h),
->
-> This patch is a nice refactoring overall and I like it. But this (void
-> *) cast on binary_path I'm not so fond of. Yes, if you read
-> smallprint, you'll see that with _GNU_SOURCE basename won't *really*
-> modify input argument, but meh.
->
+Hi, Steve
 
-This has been used in bpf_object__new() like:
+you are right, I haven't updated my code in over a month, and
+the latest kernel works fine.
 
-    /* Using basename() GNU version which doesn't modify arg. */
-    libbpf_strlcpy(obj->name, basename((void *)path), sizeof(obj->name));
-
-> Let's instead do a simple `strrchr(binary_path, '/') ?: binary_path`?
 >
-> pw-bot: cr
->
->
-> > +                                           func_offset);
-> >
-> >                 legacy_probe =3D strdup(probe_name);
-> >                 if (!legacy_probe)
-> > --
-> > 2.43.0
-> >
+> -- Steve
 
