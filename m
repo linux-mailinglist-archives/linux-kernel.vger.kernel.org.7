@@ -1,150 +1,84 @@
-Return-Path: <linux-kernel+bounces-606396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-606397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05D64A8AEBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 05:56:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 486AEA8AEBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 05:57:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 268AE3BFE88
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 03:56:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2CAE5A048B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 03:56:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DADE22B8C2;
-	Wed, 16 Apr 2025 03:55:11 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F2B2288D6;
-	Wed, 16 Apr 2025 03:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB1B0228C9C;
+	Wed, 16 Apr 2025 03:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mlC0FuQj";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RJTGDVh0"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29CDA2288FE;
+	Wed, 16 Apr 2025 03:55:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744775710; cv=none; b=dxpSFRHfaNK3rc0/E0NrVEIKaluBRmpkEG/pYKbUuCEYNzn1lbW1VVTjLBUXY/qBUHvAvSruvCCY3MNnPG4GSoIR8eYY7lM7LZLRjEEf5LivYjulJ6GrXhP8adL61aRvF80oxG8RwrbLfq/HzPPhLX+0HGpyM5KcMfvtnAND3/s=
+	t=1744775726; cv=none; b=CPhk5C3D2LS5wEJmqf8FwUN3Pet06qfaqO6knZPkinxnCrqGxK/cMT+ihjqRZJCOI1ka3qYNwQ7iDBSRgc5En0iaa2fvXL5sLAAkqFRs2SNuWC4MAGmez7Sf1/hGmsReK79aFOwmIhMUCPzNDk61B40hJHDgOLfNk+w37wP1E1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744775710; c=relaxed/simple;
-	bh=w3FkjR5czfE4/cnL5UgfQx8rD8ipfK4DqjVobHgR7bY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=M0r9ZwUMGNFDgqwbMQdefpNG3skioWsYAyfHbL0itL5JEPPuevZFQOcbxrMjwy+b9CedqFO+da2T81B01xAsIn65KAl68JCQZtq6RtqXQr7K82R3UPNQGfjJ6M58TJW7TH8KRwuPdYHeD4/BOPKBGoCsnfxDM/+j7W0Avnq8NgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.5.213])
-	by gateway (Coremail) with SMTP id _____8Axz3MZKv9njDG_AA--.53998S3;
-	Wed, 16 Apr 2025 11:55:05 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.5.213])
-	by front1 (Coremail) with SMTP id qMiowMCxLcUQKv9nvh2FAA--.62153S7;
-	Wed, 16 Apr 2025 11:55:03 +0800 (CST)
-From: Bibo Mao <maobibo@loongson.cn>
-To: Paolo Bonzini <pbonzini@redhat.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Sean Christopherson <seanjc@google.com>
-Cc: Shuah Khan <shuah@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH v9 5/5] KVM: selftests: Add test cases for LoongArch
-Date: Wed, 16 Apr 2025 11:54:55 +0800
-Message-Id: <20250416035455.25996-6-maobibo@loongson.cn>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20250416035455.25996-1-maobibo@loongson.cn>
-References: <20250416035455.25996-1-maobibo@loongson.cn>
+	s=arc-20240116; t=1744775726; c=relaxed/simple;
+	bh=2LDHgZZY4QAjoLBXWMfleK+g+ifD6TRzoMqJ5IoR2zE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o8KBtclkEyNthsVqPrjLhy5jQgd2X11XogTwgVrw36F7krU2ghdowVHa5iucyOxjMjsCadLX4tA/rZAQsHY6qho9OAiyVa5uoKVIXcPNkzkiOeh/zBKf9ihfgUJpYWx7WCktr0VKS3Rq8IueKopfhppdm6gttCaGSdY6kBiZYkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mlC0FuQj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RJTGDVh0; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 16 Apr 2025 05:55:20 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744775721;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2LDHgZZY4QAjoLBXWMfleK+g+ifD6TRzoMqJ5IoR2zE=;
+	b=mlC0FuQjz3reL2hQtpYB3XTFT5YBtyKxLNfJCZcHl0NmF5pnhauqSn1TMCsyL2s80wlFJA
+	lQNUq2cXi2GwpkTPWyOj74gguF538tGCglbRKWQNgPL+Ni7CJGFxrTi/4lOgGERr6Y93FM
+	tSI6LFphgOEPmFMgp2nA5C0vKIU11XebPnXxqHFwL9Rh0eDVRt92mJA6TdAQYaVoD6F15B
+	8Ck414u64v4JAfF1hEloEX5oyIv32jzURLWbIQcKyCSwpnDRVZVTI2QPeHvm5i8GRwc8d8
+	AYgprRtpdj//qhycLpxtf6hHx1zdDb7IUceorQ3vECY3jemJur9v7mNFJ32yYA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744775721;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2LDHgZZY4QAjoLBXWMfleK+g+ifD6TRzoMqJ5IoR2zE=;
+	b=RJTGDVh0C57MlAwj+5XDkfqAJksUasdOdY1Ev9PUwZLlF8LvTmvM1imn6CnawJfbDygbRA
+	MVHba6JnHL1+9FBg==
+From: Nam Cao <namcao@linutronix.de>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	john.ogness@linutronix.de
+Subject: Re: [PATCH v2 13/22] rv: Add support for LTL monitors
+Message-ID: <20250416035520.2FP4eY4j@linutronix.de>
+References: <cover.1744355018.git.namcao@linutronix.de>
+ <5dbd62940b252ee49777e9c4298eadd644bf6526.1744355018.git.namcao@linutronix.de>
+ <63d8320abb309ef649780af44d14b9d993bab697.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMCxLcUQKv9nvh2FAA--.62153S7
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
-	nUUI43ZEXa7xR_UUUUUUUUU==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <63d8320abb309ef649780af44d14b9d993bab697.camel@redhat.com>
 
-Some common KVM test cases are supported on LoongArch now as following:
-  coalesced_io_test
-  demand_paging_test
-  dirty_log_perf_test
-  dirty_log_test
-  guest_print_test
-  hardware_disable_test
-  kvm_binary_stats_test
-  kvm_create_max_vcpus
-  kvm_page_table_test
-  memslot_modification_stress_test
-  memslot_perf_test
-  set_memory_region_test
-And other test cases are not supported by LoongArch such as rseq_test,
-since it is not supported on LoongArch physical machine either.
+On Tue, Apr 15, 2025 at 03:22:09PM +0200, Gabriele Monaco wrote:
+> You probably read a lot to write this, do you mind adding a brief
+> Reference section for the curious reader? Asking for a friend ;)
 
-Signed-off-by: Bibo Mao <maobibo@loongson.cn>
----
- tools/testing/selftests/kvm/Makefile           |  2 +-
- tools/testing/selftests/kvm/Makefile.kvm       | 18 ++++++++++++++++++
- .../selftests/kvm/set_memory_region_test.c     |  2 +-
- 3 files changed, 20 insertions(+), 2 deletions(-)
+I actually learned lots of it during university.
 
-diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
-index 20af35a91d6f..d9fffe06d3ea 100644
---- a/tools/testing/selftests/kvm/Makefile
-+++ b/tools/testing/selftests/kvm/Makefile
-@@ -3,7 +3,7 @@ top_srcdir = ../../../..
- include $(top_srcdir)/scripts/subarch.include
- ARCH            ?= $(SUBARCH)
- 
--ifeq ($(ARCH),$(filter $(ARCH),arm64 s390 riscv x86 x86_64))
-+ifeq ($(ARCH),$(filter $(ARCH),arm64 s390 riscv x86 x86_64 loongarch))
- # Top-level selftests allows ARCH=x86_64 :-(
- ifeq ($(ARCH),x86_64)
- 	ARCH := x86
-diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/selftests/kvm/Makefile.kvm
-index f62b0a5aba35..7985bb42d2c1 100644
---- a/tools/testing/selftests/kvm/Makefile.kvm
-+++ b/tools/testing/selftests/kvm/Makefile.kvm
-@@ -47,6 +47,10 @@ LIBKVM_riscv += lib/riscv/handlers.S
- LIBKVM_riscv += lib/riscv/processor.c
- LIBKVM_riscv += lib/riscv/ucall.c
- 
-+LIBKVM_loongarch += lib/loongarch/processor.c
-+LIBKVM_loongarch += lib/loongarch/ucall.c
-+LIBKVM_loongarch += lib/loongarch/exception.S
-+
- # Non-compiled test targets
- TEST_PROGS_x86 += x86/nx_huge_pages_test.sh
- 
-@@ -190,6 +194,20 @@ TEST_GEN_PROGS_riscv += coalesced_io_test
- TEST_GEN_PROGS_riscv += get-reg-list
- TEST_GEN_PROGS_riscv += steal_time
- 
-+TEST_GEN_PROGS_loongarch += coalesced_io_test
-+TEST_GEN_PROGS_loongarch += demand_paging_test
-+TEST_GEN_PROGS_loongarch += dirty_log_perf_test
-+TEST_GEN_PROGS_loongarch += dirty_log_test
-+TEST_GEN_PROGS_loongarch += demand_paging_test
-+TEST_GEN_PROGS_loongarch += guest_print_test
-+TEST_GEN_PROGS_loongarch += hardware_disable_test
-+TEST_GEN_PROGS_loongarch += kvm_binary_stats_test
-+TEST_GEN_PROGS_loongarch += kvm_create_max_vcpus
-+TEST_GEN_PROGS_loongarch += kvm_page_table_test
-+TEST_GEN_PROGS_loongarch += memslot_modification_stress_test
-+TEST_GEN_PROGS_loongarch += memslot_perf_test
-+TEST_GEN_PROGS_loongarch += set_memory_region_test
-+
- SPLIT_TESTS += arch_timer
- SPLIT_TESTS += get-reg-list
- 
-diff --git a/tools/testing/selftests/kvm/set_memory_region_test.c b/tools/testing/selftests/kvm/set_memory_region_test.c
-index bc440d5aba57..ce3ac0fd6dfb 100644
---- a/tools/testing/selftests/kvm/set_memory_region_test.c
-+++ b/tools/testing/selftests/kvm/set_memory_region_test.c
-@@ -350,7 +350,7 @@ static void test_invalid_memory_region_flags(void)
- 	struct kvm_vm *vm;
- 	int r, i;
- 
--#if defined __aarch64__ || defined __riscv || defined __x86_64__
-+#if defined __aarch64__ || defined __riscv || defined __x86_64__ || defined __loongarch__
- 	supported_flags |= KVM_MEM_READONLY;
- #endif
- 
--- 
-2.39.3
+But I certainly can link some materials.
 
+Best regards,
+Nam
 
