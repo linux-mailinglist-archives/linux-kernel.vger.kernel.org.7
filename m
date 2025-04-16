@@ -1,184 +1,229 @@
-Return-Path: <linux-kernel+bounces-607310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-607319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFC8EA904B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 15:47:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B524A904CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 15:50:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46DDB1907C67
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 13:47:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41287167B05
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Apr 2025 13:49:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4241FFC77;
-	Wed, 16 Apr 2025 13:44:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B17D21324F;
+	Wed, 16 Apr 2025 13:44:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gMUIM62A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="B5EmKYsg"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0D71FF1DA;
-	Wed, 16 Apr 2025 13:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635C720A5F8;
+	Wed, 16 Apr 2025 13:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744811062; cv=none; b=TKnhdA27/NP2nvjXJLGa7IQxWiq88RWMDDdhPL0Bbg08I8tqOLKKyKiT1VG+kJFoSMWzn5hjRu21yGQvjbs4R6TtMlEdPhEmLy8qQOYDSnbd7cI7mBvpVMzuGlGMoWTytJ0kfO/RwZDcrFPnPW0DjElBP7BAR+4XvtzkzIFIwxQ=
+	t=1744811096; cv=none; b=Dkdn3oTHShpv2K+jZv0bMSDnzUAu8s3Um+PdnMPZL767Q8q2PbmNfNszlp7rUmhaY4eoNorYJMTCDz2tj2+SzLbpZ3cOm9FNRFpnPlVdCE6Yn+TL2Yd4a92z+55exAHST4Y1PYtcjc8MHXE7wxOESk93mjfERIjg4BIFBQuAtjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744811062; c=relaxed/simple;
-	bh=llhbpgSWI+xUYrKnvFoHYfdLjRKqCYZ9cBfBE8mukT0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=okG/I0GMpmxyuI2GWY9zoG0+9AqbZxDp7aCNlesd4JWWxw6iOU4870fY9UBTBJgaPFwtFHtNvqfT0vyO1d45ON8SgQX/I29MbnzddDisvsh8D40BekzwM2O6k1iA2l0zWTTyC03OU1nUskam3t6huZc9zV8i+l75GbqQrHyb8AE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gMUIM62A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8BA0C4CEE2;
-	Wed, 16 Apr 2025 13:44:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744811062;
-	bh=llhbpgSWI+xUYrKnvFoHYfdLjRKqCYZ9cBfBE8mukT0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=gMUIM62A5bs+x1Dbr4SWdFRhY4UZhj4cMJ66VmYwEwz54JfQLupunypzlLoiXkd4Y
-	 wpLrZFELfnikVzkZLQBb8/HEqXNY+0zjqKKdgO9NdfV6hSWsuOc4G58eBUpgW6JJcL
-	 jVwkzlzTnTNuxANTaLnKWusVkdPNUJMMwvnuRE0m0fsG7gNeUcYh6Fxc6scfKN90eK
-	 67JIpcuOiKQJJ3sHLxjATo4QYwECjDBH1AghIKfa6JgsRkaXj1znUfcCyrKojnAgMU
-	 09N5lv/a2uSnWQbRQ1QR4Jfzbw81ipsX+DXq9R+inHk5QunQfFcxRD1fpiewN2GBTe
-	 EWmdk8w2qX8Zw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan+linaro@kernel.org>)
-	id 1u533r-000000001zg-45M3;
-	Wed, 16 Apr 2025 15:44:20 +0200
-From: Johan Hovold <johan+linaro@kernel.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rob Herring (Arm)" <robh@kernel.org>,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>,
-	stable@vger.kernel.org
-Subject: [PATCH] cpufreq: fix compile-test defaults
-Date: Wed, 16 Apr 2025 15:43:31 +0200
-Message-ID: <20250416134331.7604-1-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1744811096; c=relaxed/simple;
+	bh=sNzfI/09Fet1o0dCHO6sj3Yvtgix00ESiE2SyikyQmI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=MTaBH3Sq6W7MhooR7WCg1mU09axmqlNzKLr8xC3D8Q0i/4a61bgjj/a+flY5OX5a6u82+QH4mNftToh7BZUgfyFl5MKvBGfWfa6MuSlapDrMubBiXqU6M3WP2qBOez16HkgheVyDM9S3JT/CcDmiFpBRiTDRKqeCGwspnZ6SBbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=B5EmKYsg; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 6586943915;
+	Wed, 16 Apr 2025 13:44:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1744811085;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=C4JaaSNXL49TkXBPQr2/TrYPE8d4ZvvtVq3dcTJ1b0w=;
+	b=B5EmKYsgT6Lc/pmVq6P67w2E3JWwdE39BNNSXmHDccnbRaSpALlagA3gu8AVUHK3T7s+t2
+	hP0F/42PY/kwxolhqMtKiEElzEuDF6adR0Mk/CAe0KJ2flQwLQxO6yi6Y1y17kP//dejHn
+	E6SXjEa36KndI716w4q+hkSrRC/fR7lzHiTMYOYPrim+HuZwYc5PHTX55+6R1VdPPQHQZA
+	qbVyBT5td1/fN1NCRI7DpjRhMldYPW0wbRLjumHW6l3RWPILi9QYgYseIkiylRiUevGmI8
+	r9lUCjcfErfUPlLFd8jB2QHzgicNg+1vM0Ddcsrh38ZTX6B1GDzhUNwMZnrUMg==
+From: Kory Maincent <kory.maincent@bootlin.com>
+Subject: [PATCH net-next v8 00/13] Add support for PSE budget evaluation
+ strategy
+Date: Wed, 16 Apr 2025 15:44:15 +0200
+Message-Id: <20250416-feature_poe_port_prio-v8-0-446c39dc3738@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAC+0/2cC/3XQzWrEIBAA4FdZPNeio0btqe9RymJ17AptDMaGL
+ UvevSZQtiV4mMMwzDc/NzJjSTiTp9ONFFzSnPLYEvNwIv7ixnekKbScAAPJLBc0oqtfBc9T3qL
+ U81RSpk5xh0ELAehJ650KxnTd3RcyYqUjXit5bZVLmmsu3/vAhe/1zeaMQcdeOGVUG82UjFpiU
+ M9vOdePND76/LmbC/xxBOs50ByrlB0AEKV2R0fcHQ6854jmGAHWRjfYQfujI38dxdpCPUc2J3j
+ LnfDMc6OPjro7wE3PUc0RwUkzoIphkEdH3x3Juo7e/hNV9BbbdT78d9Z1/QGOQKWtLgIAAA==
+To: Andrew Lunn <andrew@lunn.ch>, Oleksij Rempel <o.rempel@pengutronix.de>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Jonathan Corbet <corbet@lwn.net>, Donald Hunter <donald.hunter@gmail.com>, 
+ Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+ Simon Horman <horms@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
+ linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, 
+ Dent Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de, 
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ "Kory Maincent (Dent Project)" <kory.maincent@bootlin.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.15-dev-8cb71
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvdeiheefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhufffkfggtgfgvfevofesthekredtredtjeenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeduhfevudetfffgkedvhfevheeghedtleeghfffudeiffefvdehfeegieeivdekteenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdgsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegluddvjedrtddruddrudgnpdhmrghilhhfrhhomhepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdekpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopehkvghrnhgvlhesphgvn
+ hhguhhtrhhonhhigidruggvpdhrtghpthhtohephhhorhhmsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepohdrrhgvmhhpvghlsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopeguohhnrghlugdrhhhunhhtvghrsehgmhgrihhlrdgtohhm
+X-GND-Sasl: kory.maincent@bootlin.com
 
-Commit 3f66425a4fc8 ("cpufreq: Enable COMPILE_TEST on Arm drivers")
-enabled compile testing of most Arm CPUFreq drivers but left the
-existing default values unchanged so that many drivers are enabled by
-default whenever COMPILE_TEST is selected.
+From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
 
-This specifically results in the S3C64XX CPUFreq driver being enabled
-and initialised during boot of non-S3C64XX platforms with the following
-error logged:
+This series brings support for budget evaluation strategy in the PSE
+subsystem. PSE controllers can set priorities to decide which ports should
+be turned off in case of special events like over-current.
 
-	cpufreq: Unable to obtain ARMCLK: -2
+This patch series adds support for two budget evaluation strategy.
+1. Static Method:
 
-Fix the default values for drivers that can be compile tested and that
-should be enabled by default when not compile testing.
+   This method involves distributing power based on PD classification.
+   It’s straightforward and stable, the PSE core keeping track of the
+   budget and subtracting the power requested by each PD’s class.
 
-Fixes: 3f66425a4fc8 ("cpufreq: Enable COMPILE_TEST on Arm drivers")
-Cc: stable@vger.kernel.org	# 6.12
-Cc: Rob Herring (Arm) <robh@kernel.org>
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+   Advantages: Every PD gets its promised power at any time, which
+   guarantees reliability.
+
+   Disadvantages: PD classification steps are large, meaning devices
+   request much more power than they actually need. As a result, the power
+   supply may only operate at, say, 50% capacity, which is inefficient and
+   wastes money.
+
+2. Dynamic Method:
+
+   To address the inefficiencies of the static method, vendors like
+   Microchip have introduced dynamic power budgeting, as seen in the
+   PD692x0 firmware. This method monitors the current consumption per port
+   and subtracts it from the available power budget. When the budget is
+   exceeded, lower-priority ports are shut down.
+
+   Advantages: This method optimizes resource utilization, saving costs.
+
+   Disadvantages: Low-priority devices may experience instability.
+
+The UAPI allows adding support for software port priority mode managed from
+userspace later if needed.
+
+Patches 1-2: Add support for interrupt event report in PSE core, ethtool
+	     and ethtool specs.
+Patch 3: Adds support for interrupt and event report in TPS23881 driver.
+Patches 4,5: Add support for PSE power domain in PSE core and ethtool.
+Patches 6-8: Add support for budget evaluation strategy in PSE core,
+	     ethtool and ethtool specs.
+Patches 9-11: Add support for port priority and power supplies in PD692x0
+	      drivers.
+Patches 12,13: Add support for port priority in TPS23881 drivers.
+
+Signed-off-by: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
 ---
- drivers/cpufreq/Kconfig.arm | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+Changes in v8:
+- Rename a few functions for better clarity.
+- Add missing kref_init in PSE power domain support and a wrong error
+  check condition.
+- Link to v7: https://lore.kernel.org/r/20250408-feature_poe_port_prio-v7-0-9f5fc9e329cd@bootlin.com
 
-diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-index 4f9cb943d945..0d46402e3094 100644
---- a/drivers/cpufreq/Kconfig.arm
-+++ b/drivers/cpufreq/Kconfig.arm
-@@ -76,7 +76,7 @@ config ARM_VEXPRESS_SPC_CPUFREQ
- config ARM_BRCMSTB_AVS_CPUFREQ
- 	tristate "Broadcom STB AVS CPUfreq driver"
- 	depends on (ARCH_BRCMSTB && !ARM_SCMI_CPUFREQ) || COMPILE_TEST
--	default y
-+	default y if ARCH_BRCMSTB && !ARM_SCMI_CPUFREQ
- 	help
- 	  Some Broadcom STB SoCs use a co-processor running proprietary firmware
- 	  ("AVS") to handle voltage and frequency scaling. This driver provides
-@@ -88,7 +88,7 @@ config ARM_HIGHBANK_CPUFREQ
- 	tristate "Calxeda Highbank-based"
- 	depends on ARCH_HIGHBANK || COMPILE_TEST
- 	depends on CPUFREQ_DT && REGULATOR && PL320_MBOX
--	default m
-+	default m if ARCH_HIGHBANK
- 	help
- 	  This adds the CPUFreq driver for Calxeda Highbank SoC
- 	  based boards.
-@@ -133,7 +133,7 @@ config ARM_MEDIATEK_CPUFREQ
- config ARM_MEDIATEK_CPUFREQ_HW
- 	tristate "MediaTek CPUFreq HW driver"
- 	depends on ARCH_MEDIATEK || COMPILE_TEST
--	default m
-+	default m if ARCH_MEDIATEK
- 	help
- 	  Support for the CPUFreq HW driver.
- 	  Some MediaTek chipsets have a HW engine to offload the steps
-@@ -181,7 +181,7 @@ config ARM_RASPBERRYPI_CPUFREQ
- config ARM_S3C64XX_CPUFREQ
- 	bool "Samsung S3C64XX"
- 	depends on CPU_S3C6410 || COMPILE_TEST
--	default y
-+	default CPU_S3C6410
- 	help
- 	  This adds the CPUFreq driver for Samsung S3C6410 SoC.
- 
-@@ -190,7 +190,7 @@ config ARM_S3C64XX_CPUFREQ
- config ARM_S5PV210_CPUFREQ
- 	bool "Samsung S5PV210 and S5PC110"
- 	depends on CPU_S5PV210 || COMPILE_TEST
--	default y
-+	default CPU_S5PV210
- 	help
- 	  This adds the CPUFreq driver for Samsung S5PV210 and
- 	  S5PC110 SoCs.
-@@ -214,7 +214,7 @@ config ARM_SCMI_CPUFREQ
- config ARM_SPEAR_CPUFREQ
- 	bool "SPEAr CPUFreq support"
- 	depends on PLAT_SPEAR || COMPILE_TEST
--	default y
-+	default PLAT_SPEAR
- 	help
- 	  This adds the CPUFreq driver support for SPEAr SOCs.
- 
-@@ -233,7 +233,7 @@ config ARM_TEGRA20_CPUFREQ
- 	tristate "Tegra20/30 CPUFreq support"
- 	depends on ARCH_TEGRA || COMPILE_TEST
- 	depends on CPUFREQ_DT
--	default y
-+	default ARCH_TEGRA
- 	help
- 	  This adds the CPUFreq driver support for Tegra20/30 SOCs.
- 
-@@ -241,7 +241,7 @@ config ARM_TEGRA124_CPUFREQ
- 	bool "Tegra124 CPUFreq support"
- 	depends on ARCH_TEGRA || COMPILE_TEST
- 	depends on CPUFREQ_DT
--	default y
-+	default ARCH_TEGRA
- 	help
- 	  This adds the CPUFreq driver support for Tegra124 SOCs.
- 
-@@ -256,14 +256,14 @@ config ARM_TEGRA194_CPUFREQ
- 	tristate "Tegra194 CPUFreq support"
- 	depends on ARCH_TEGRA_194_SOC || ARCH_TEGRA_234_SOC || (64BIT && COMPILE_TEST)
- 	depends on TEGRA_BPMP
--	default y
-+	default ARCH_TEGRA_194_SOC || ARCH_TEGRA_234_SOC
- 	help
- 	  This adds CPU frequency driver support for Tegra194 SOCs.
- 
- config ARM_TI_CPUFREQ
- 	bool "Texas Instruments CPUFreq support"
- 	depends on ARCH_OMAP2PLUS || ARCH_K3 || COMPILE_TEST
--	default y
-+	default ARCH_OMAP2PLUS || ARCH_K3
- 	help
- 	  This driver enables valid OPPs on the running platform based on
- 	  values contained within the SoC in use. Enable this in order to
+Changes in v7:
+- Add reference count and mutex lock for PSE power domain.
+- Add support to retry enabling port that failed to be powered in case of
+  port disconnection or priority change.
+- Use flags definition for pse events in ethtool specs.
+- Small changes in the TPS23881 driver.
+- Link to v6: https://lore.kernel.org/r/20250304-feature_poe_port_prio-v6-0-3dc0c5ebaf32@bootlin.com
+
+Changes in v6:
+- Few typos.
+- Use uint instead of bitset for PSE_EVENT.
+- Remove report of budget evaluation strategy in the uAPI.
+- Link to v5: https://lore.kernel.org/r/20250218-feature_poe_port_prio-v5-0-3da486e5fd64@bootlin.com
+
+Changes in v5:
+- Remove the first part of the patch series which tackled PSE
+  improvement and already gets merged:
+  https://lore.kernel.org/netdev/20250110-b4-feature_poe_arrange-v3-0-142279aedb94@bootlin.com/
+- Remove the PSE index support which is useless for now. The PSE power
+  domain ID is sufficient.
+- Add support for PD692x0 power supplies other than Vmain which was already
+  in the patch series.
+- Few other small fixes.
+- Link to v4: https://lore.kernel.org/r/20250103-feature_poe_port_prio-v4-0-dc91a3c0c187@bootlin.com
+
+Changes in v4:
+- Remove disconnection policy.
+- Rename port priority mode to budget evaluation strategy.
+- Add cosmetic changes in PSE core.
+- Add support for port priority in PD692x0 driver.
+- Link to v3: https://lore.kernel.org/r/20241121-feature_poe_port_prio-v3-0-83299fa6967c@bootlin.com
+
+Changes in v3:
+- Move power budget to regulator core.
+- Add disconnection policies with PIs using the same priority.
+- Several fixes on the TPS23881 drivers.
+- Several new cosmetic patches.
+- Link to v2: https://lore.kernel.org/r/20241030-feature_poe_port_prio-v2-0-9559622ee47a@bootlin.com
+
+Changes in v2:
+- Rethink the port priority management.
+- Add PSE id.
+- Add support for PSE power domains.
+- Add get power budget regulator constraint.
+- Link to v1: https://lore.kernel.org/r/20241002-feature_poe_port_prio-v1-0-787054f74ed5@bootlin.com
+
+---
+Kory Maincent (13):
+      net: ethtool: Add support for ethnl_info_init_ntf helper function
+      net: pse-pd: Add support for reporting events
+      net: pse-pd: tps23881: Add support for PSE events and interrupts
+      net: pse-pd: Add support for PSE power domains
+      net: ethtool: Add support for new power domains index description
+      net: pse-pd: Add helper to report hardware enable status of the PI
+      net: pse-pd: Add support for budget evaluation strategies
+      net: ethtool: Add PSE port priority support feature
+      net: pse-pd: pd692x0: Add support for PSE PI priority feature
+      net: pse-pd: pd692x0: Add support for controller and manager power supplies
+      dt-bindings: net: pse-pd: microchip,pd692x0: Add manager regulator supply
+      net: pse-pd: tps23881: Add support for static port priority feature
+      dt-bindings: net: pse-pd: ti,tps23881: Add interrupt description
+
+ .../bindings/net/pse-pd/microchip,pd692x0.yaml     |  22 +-
+ .../bindings/net/pse-pd/ti,tps23881.yaml           |   8 +
+ Documentation/netlink/specs/ethtool.yaml           |  47 +
+ Documentation/networking/ethtool-netlink.rst       |  49 +
+ drivers/net/mdio/fwnode_mdio.c                     |  26 +-
+ drivers/net/pse-pd/pd692x0.c                       | 225 +++++
+ drivers/net/pse-pd/pse_core.c                      | 988 ++++++++++++++++++++-
+ drivers/net/pse-pd/tps23881.c                      | 404 ++++++++-
+ include/linux/ethtool_netlink.h                    |   9 +
+ include/linux/pse-pd/pse.h                         |  90 +-
+ include/uapi/linux/ethtool.h                       |  34 +
+ include/uapi/linux/ethtool_netlink_generated.h     |  12 +
+ net/ethtool/netlink.c                              |   7 +-
+ net/ethtool/netlink.h                              |   2 +
+ net/ethtool/pse-pd.c                               |  67 ++
+ 15 files changed, 1931 insertions(+), 59 deletions(-)
+---
+base-commit: 1db8aa453e21cfcf89e43f9945cab0fb7912c728
+change-id: 20240913-feature_poe_port_prio-a51aed7332ec
+
+Best regards,
 -- 
-2.49.0
+Köry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
 
