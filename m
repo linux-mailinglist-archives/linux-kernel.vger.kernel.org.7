@@ -1,202 +1,278 @@
-Return-Path: <linux-kernel+bounces-609207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FB64A91F3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 16:15:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6C49A91F40
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 16:16:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D941319E6F64
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:15:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BCE519E7A68
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD4D2512C9;
-	Thu, 17 Apr 2025 14:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="J8MGNIZR"
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013038.outbound.protection.outlook.com [40.107.44.38])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936892512D3;
+	Thu, 17 Apr 2025 14:15:54 +0000 (UTC)
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285FFF9EC;
-	Thu, 17 Apr 2025 14:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.38
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744899326; cv=fail; b=l+/AIp6gCUY+L/dhb4s2BzcgSRX8eZiXjmPEfP8idsZ1NZ+2m6xMizDfVtWamggW+1XUH9rQvg5Hov5vHR13WCKeGdJF1hSA2KTlNnRHtX6PsmVvjEmo8MKhEEsh5jLYbCVNZlnZGhAcyz8HQsww8RmTbjP9WQdJc3XlxD3kEqI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744899326; c=relaxed/simple;
-	bh=FBQ0hQMr39VN2X7SnpYtbekfLNot3MfQL4kl5x1jVPI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=tK/62Y4nUXHQsuxuoz8oALzjmW66BsiXZJfnUTOouh+y8WyW+ZC68K7LWRDbCUosL247rIs1Exvto5V8SU+K/+KZfwb3WfZmmNs1Mmu9W8lKnVaTfaTMFMEsIPatZOlrsIt/Fq6zHPp6wjtOFRZ6DiRH2UmjzQMiyCg6Sk5fAPo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=J8MGNIZR; arc=fail smtp.client-ip=40.107.44.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uHI2qmCwhtihcKEo//uP2w/6enN7prhkIrwuNGhHqsboTDFnFosVOg8cx8qbDcgQNMeeQPGtw8qA5Y9ReaUSajBQ/kZxmGt9iTVnbp5c1Xm/A+uOp0ZDr5bpMsXNPZF4i2Uuw6F4MCt/pJDCGYkVsVliVfYbw2f/DaHZpEaK1PyVVVI61U4iaKQzG0k/nBULy6+uuj/kSLOC2EQVasaDp7y0YVyokKIlEC/WQxB5pDLD/jbZO95WffBfalnC0J6zGQgy19KkpkfIFkJkCt/IsgNo4g/6N2JYGFW1ngpi1Aa1p69me0U6WcnssWMdTzpGXba5NyL61OiGgRjzOd2lCw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FBQ0hQMr39VN2X7SnpYtbekfLNot3MfQL4kl5x1jVPI=;
- b=LOVUqvjVgeB+NSAe33z3Duebp2BIJk4iwpNQfztGZ1udZE/SrnKhQLCwBFuREc/aVXg+sUyou4Spz8Cg/hhL1Qbpp7FQSW2djnJNdAQqEt3SZJjYoOE44X/DjqKPesmCwJFpzykiC3HUEhpyxfUwkgSA0chUYpID4r3es3ABHt3yLXXm3GZj9+dnROBO+pQvLd5vAc8+y7sZtxnVZUzNsA0DveHZuTgqI4148ISCIxZ3qZiCiA8UWpOOC5lDxUsQ122+oPOWEptBAL8jshZcwET5h/cqF7+OPwetkrpUIQ6cuLbXNpcIyN2GO0k7QJt+RU9fRhyTWWyTgQap9ER8pw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FBQ0hQMr39VN2X7SnpYtbekfLNot3MfQL4kl5x1jVPI=;
- b=J8MGNIZRwLzfbEotu2dub1I/xw4ptBbXnwm2xFWU8hG205GCk77FCU5p/17cWwHHXlpxLHk6oP6jeHRRXHFhUlAyUfMV/mfjRWC2k+AURUlX0xW9OoH0bxOywvhr/FPiEN6z+SOZlVb/Kc5n6SXLcIEYdoSTS4h4zRCyqRthIaB73jdRHEGHt2bmDWMHY7bvnlP7Zq+6x5aYTRoHPpnAjG6Zo+ON/JiEvQCqlPmcDWINF3jPRnYYpEntW5DFQXdVEoozT6MTkK6Bifn7RGHYyqxbv71Mp3oOTPi7hgIBtTgnDp1+5cvjMTacz5ZqvXg1rYxUolxbgZrcQFQEtKye/w==
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
- by SEYPR06MB7025.apcprd06.prod.outlook.com (2603:1096:101:1d3::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.22; Thu, 17 Apr
- 2025 14:15:18 +0000
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::8c74:6703:81f7:9535]) by SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::8c74:6703:81f7:9535%6]) with mapi id 15.20.8632.030; Thu, 17 Apr 2025
- 14:15:17 +0000
-From: =?utf-8?B?5p2O5oms6Z+s?= <frank.li@vivo.com>
-To: Filipe Manana <fdmanana@kernel.org>, "dsterba@suse.cz" <dsterba@suse.cz>
-CC: Sun YangKai <sunk67188@gmail.com>, "clm@fb.com" <clm@fb.com>,
-	"dsterba@suse.com" <dsterba@suse.com>, "josef@toxicpanda.com"
-	<josef@toxicpanda.com>, "linux-btrfs@vger.kernel.org"
-	<linux-btrfs@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "neelx@suse.com" <neelx@suse.com>
-Subject:
- =?utf-8?B?5Zue5aSNOiBbUEFUQ0ggMS8zXSBidHJmczogZ2V0IHJpZCBvZiBwYXRoIGFs?=
- =?utf-8?B?bG9jYXRpb24gaW4gYnRyZnNfZGVsX2lub2RlX2V4dHJlZigp?=
-Thread-Topic: [PATCH 1/3] btrfs: get rid of path allocation in
- btrfs_del_inode_extref()
-Thread-Index:
- AQHbrbUqBDIkC3HhxESrhQE2MboFAbOkzooAgAAT+4CAAWa94IAABL2AgABdN4CAAAhOAIABNs6A
-Date: Thu, 17 Apr 2025 14:15:17 +0000
-Message-ID:
- <SEZPR06MB5269D8348566FC049107053FE8BC2@SEZPR06MB5269.apcprd06.prod.outlook.com>
-References: <20250415033854.848776-1-frank.li@vivo.com>
- <3353953.aeNJFYEL58@saltykitkat> <20250415155637.GG16750@suse.cz>
- <SEZPR06MB5269DCFA737F179B0F552B01E8BD2@SEZPR06MB5269.apcprd06.prod.outlook.com>
- <CAL3q7H7z_iVmeuRNXQvvZseB9ntSDz9_tUTXB0KvrcsSQVJb9w@mail.gmail.com>
- <20250416191111.GC13877@suse.cz>
- <CAL3q7H4_vNoKokn213rY2Q0MNkDLWSk7XRBqJLxfiw1ikRGM7Q@mail.gmail.com>
-In-Reply-To:
- <CAL3q7H4_vNoKokn213rY2Q0MNkDLWSk7XRBqJLxfiw1ikRGM7Q@mail.gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SEZPR06MB5269:EE_|SEYPR06MB7025:EE_
-x-ms-office365-filtering-correlation-id: b05ad318-68b7-4103-b7e0-08dd7dba47ba
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?dUEzQ0xIOGtnY0RiMmQ4ZTk4L1hDZTlDUzJiTVhqZGs3Y1hlTVJpMzlsNFJu?=
- =?utf-8?B?UnlKTXV2Y29KeWc3a3loVGwzZXovL0RHUU56RmFoM1RXQXhPNVRsTC8xcnJI?=
- =?utf-8?B?NzUvZXlHVkdkMTFMMllDWllXSnlkNzFpQy9xRXBrQWJ5Y3ZnQ0lrZjRHdERi?=
- =?utf-8?B?RkFqSXE2b3JmRGFFRDN0Z0s0d1JXWlhZR2hOM2lCZ2lMcU1PUzhZWTJnbGZ0?=
- =?utf-8?B?TWxSYnRLcDVBT2ZPczZKZnBUcjdWZnBnemQ3aGZnQ0RqWThKaVVnOTVkZ1dS?=
- =?utf-8?B?ZVBlNFg3VWVVUTBoR3BQNlkrZGY1Tm9CaHpob28vTjQ2eEFGTjIrWFVKbG1u?=
- =?utf-8?B?Y2xFTmtmbS9ja3JFK3pFa0RUTzhDbXpnczk0M1BVL2E0bkRkZmVwNVNpWE9t?=
- =?utf-8?B?bXpFSHRLeXNJUGZKclFKdWM1VGtmS0hSR2xhbVhPSXFLS09IcEJuditxRUNW?=
- =?utf-8?B?L2tUR3BwZndUNkxVeUZVZjFLNm1uV3c3SDdFS21QdkwxeVpLZi8yMTkzWHI0?=
- =?utf-8?B?cGlNdzlFQ2F4MmtPT3YrMXhYbjE1Y0VNdHZRQTBtUk15dnhRc0RaZXNGQXZx?=
- =?utf-8?B?SEI5NE9LZ0l6MkQ0OC9CdU1GTkFrbEs1aHZpeHJZOVl3MEdwTTU1RmdWTGVJ?=
- =?utf-8?B?QkFOYmN1TVFOZm5CRVZHekJMU2FZRCt3UzZEeDlKV2JNOFNOSnJqUC9oYnFZ?=
- =?utf-8?B?UXo2MUh0b05MaUhMTEptYU5IVTBKekdaRHVXU0gxOG1QaE9CcU0ycW1Bd2ox?=
- =?utf-8?B?bFA4M3ZoVzJ5VEtoNzR0ZkRSNi9QTlFha0Y5S1owZEhhWXM0SlFiRE8rbU9i?=
- =?utf-8?B?VGFmckNXMkEvSzQ4eG5jemRYNTdJWldHYnlGT1hrMUd4OTlkazJwejdFUGNz?=
- =?utf-8?B?TEVMRXZRaC9pUTlYZldCcnhYZGYvVE5oeUlJNHBYaXloRDIzakRXQlBVWHdv?=
- =?utf-8?B?cXBHb1dsaVdIbDdpL0lLRnhEWVFZMGMxYmhEVHM0K3IwNzAraHJXcmJqN3px?=
- =?utf-8?B?b29mNjlFeU9UcTExcCtIRk85d2Q1c3AzKzVHYytMaStGaC8xUERObUFHaXQ2?=
- =?utf-8?B?cmU3VDVkdE83MGVDblBidmFlTW9uZ0IxSGs0eTdwUFF2NEdRTU5FSnlQclN3?=
- =?utf-8?B?OGI5U0FXNHBmQ2xteXA1ZmJIbkgyVENkMlpUWGtZZ0RDZGg5MXI1TFdBc016?=
- =?utf-8?B?N0xLRFFXNHpqeXk1UVB2VVptUFhCSFkrenpSSGwrbmw1UEtLbjArN3VaclZw?=
- =?utf-8?B?bjRtZ1lBWlNZNnhCS29jdFpyVkVNTlU0NXV1VnRPbkhrbVgrVjEvTVpqRmlo?=
- =?utf-8?B?cWozcXlaUjdSL2p3eGlOak1XZFhzeituc0VwRzdPZWlkdmZXaFBWeklQdGhP?=
- =?utf-8?B?bmxocEpaTTNhRUdoVFRtM0Q0TkRsODR4dCt0WS84U1N2OG9VK0Uxak9Oc0x6?=
- =?utf-8?B?b1V3Szd1am5BeE0yRkhBaURSVWhUWlp3aHdpUWdHQkdSZXRRQ0tUYnVUR2lR?=
- =?utf-8?B?ZDdNUDdSL25aOGNZS3ZCRkxWbWphWWsyelQwMGVyaFVHdHErQTl5T01LbERv?=
- =?utf-8?B?M25qYjBSaDBONHp4WjFjbmhybTN6bVpkNllRS3JoYTBma1BQZTl3RUJYa1Bu?=
- =?utf-8?B?Q0hHVkdnSGZlMUZieFMwVGZhSC9Qa3pOblhONHhHZ2U2Z000SUU2QnB3eC80?=
- =?utf-8?B?ZVJMbDA1U1RNSUdRTlMyc3UxS25TcEgvVWJiRVlURUlsVmFWYVRtMHhMQWJJ?=
- =?utf-8?B?TSsxenlyclAyTjFWQk91WlR4cEhNN2dmQnRLR1FYN25leUF6bWx0RkN6V2RI?=
- =?utf-8?B?SUVTSUtZS0l0VG0vVVZnWmhjTHd0eGhncjJ3L1prbFkrUm81UW95Y3lGbFIy?=
- =?utf-8?B?bkQrWWcrQk1YalVHVVU1Z2dXL3c1RFRLeno5RUJId1dINE9uTExDR3VSeE5s?=
- =?utf-8?B?a2ErbTRmbVVqc2JNZVEvdVpzdCtXY1JPUXR3T2RXOCtLckh5VXU1NVkxNUxt?=
- =?utf-8?B?V2lJOXJXc293PT0=?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?ZExPem55VjBIcTYrMitFMDZOMktqSzNvdXN1UTFlU3dvTzlXVjFqanJoZXo2?=
- =?utf-8?B?cHM5RnNyeUR0NVBEckFzQlV0RFJCc3V2eGpxeWNYaWhIWDRxVkF3Sk1vajgx?=
- =?utf-8?B?ZHlqeUtJRjNxdjZZdmoxWGlDcjZSb0RqTnB5T29kU1F1ZGtKY2swcE1ST3No?=
- =?utf-8?B?dFNGT2VJSE9ZeFhsc0wwMmNJVzFHclJaZlN6dk02QkhtODZSQ0dwMkIvVlZn?=
- =?utf-8?B?a0QrR0gydFlQRkNBcmVLdFUwazlJT2VhempscStjUmZBMitQbnE2QTBqaFdH?=
- =?utf-8?B?OUp4d2dKNTdSTmVjb3FKdUxGdVJ1TkE4Sm02aUFXNnFBamIyWHRlSDA2V2Zq?=
- =?utf-8?B?RCszM3pWcXhFZ1o3UVVnSzFERXBIcHVTU2Q0VG5tMVNrZloxT3V4Y3kxekxD?=
- =?utf-8?B?Q0lCRUg5bjd2ODhOd2RZUmxZejVXOE1QUERjZmVMOUFzamhwVnYrNWlOVXJ5?=
- =?utf-8?B?bEEyR0RXaDc1ZDNsR3YyMTZXSkxCUjgwVkRsYU05US9URVNZaXlubURqU25m?=
- =?utf-8?B?NVJhVE5CTFE0ektJVjhybi96TTRSQUV1YmQvN0RXcVhhTnFDOTJQT2pjS0RO?=
- =?utf-8?B?WnJxUno3dzJDSVVOcUVhMGFUdzRTYm1TdGZyQWFLVDhOV09WUzMyRTZFVDJu?=
- =?utf-8?B?UHY5WVhUN1J2R2VaYmVzWmgwaVNMeGJyUDI3Y1B4Uk5BMEtpNUlmWFBYZURP?=
- =?utf-8?B?dWpGV1FqSGgxV0NwSjRBdDRWSFRwWVozWGxtakNSTEV3UklHWldPT3k2dlZH?=
- =?utf-8?B?OFA5by9qUWJFTHhPT3BwQjhJR0dzMURDeE5rSmNoaHY4UFZuRWlkOUczWlVx?=
- =?utf-8?B?cGlCQ2pHOFBKOFN2VVNmUXJmRVN4YXpDcHhTR3dnejNuVVhkMmtYL2h4WVlt?=
- =?utf-8?B?cEE4QWxiV29IbzR3eEZUNjZVVHhWbGFQaURSZ1hGS3VyV0VzdkFFVE5RNTRT?=
- =?utf-8?B?Wm1HNXRENURXMUxqNENHVHlReGY4a1NscWZPTEpkVW1DOFdVVWpsSGdJNlhI?=
- =?utf-8?B?OThHK0MwNDVjTWRSSEgvVEY1QmUvVmNWalVVZFZQNldxbGk2b05ad3dsSTNs?=
- =?utf-8?B?UmpBOHhnU3N2dWU2a092dFllVUhTcjZYNnJaZ1BxU3p2ZXd4czhPMTBkM3Ix?=
- =?utf-8?B?MWs4S3krVEJCN0xZb0V6eWxmd1JoeC9IT0Ric0MrdzlSQUpnaTZZeXE4KzhD?=
- =?utf-8?B?c0ZHSlRKT09lMmdEa1owTWsycWV2ZDNkVW1TU2RhUjlNVFB4ZEx1RU9ROUVw?=
- =?utf-8?B?TTQ2aTgycnRLNEJNV3JiL0dLYXVGT2QxQURSV2d6cWh0L0NyK253cS9lZGsx?=
- =?utf-8?B?NzVGUEJHdzhLRW5xZnBtZjQ4WHdpQlJYY2gwd1hDcFpiaFMwK3ZsakJoYWZT?=
- =?utf-8?B?M2Y0bCtTbCtmMG4yKzhxdVE1RUZmdG03NEZnUkFIYXY4MjhBNllsOFBWUG9F?=
- =?utf-8?B?RWlZdTdCL3hoaWJwaVpYcjdlVERBWmhKZHVqUS9FZFp5RGJFZnNPZ3pPTkxN?=
- =?utf-8?B?VTdRMjNVdXJmTzd5Vm1LSzlkZlRiOXpydnc4b0ZnK2JHdG41VEFJRG1MV29v?=
- =?utf-8?B?NEF2d0NmUDcxSHpBVWgvMTlMMzZCdDh3OXU3dVRnT1dzOHBwKzRsRmJxbmM0?=
- =?utf-8?B?dmhJdnNvMVRjb2lXdVlhQXY4WEE2YzZDV3Yyd3lNWWJiWllXNTFVSWVXMzIz?=
- =?utf-8?B?cTlSRjFBenV4UHcyRWdER0tOOXJOcUgrZExVWGpoZFVFWTZPL3NmS0R6ZWZo?=
- =?utf-8?B?VDg0eVRLK3pDMUxZWXA0SFBtU0pHWWRDUnZObFFUV2lBWWY5Qk5LNmptZmZO?=
- =?utf-8?B?a0ZvekxKbm1VbEtmSVNUOW1FQmVkYVQ5SFM3Q3JyUjJvZUVyZGExdCs3NS9K?=
- =?utf-8?B?dkJ6L1J3UmpYV2dpR0s2N0tmQVRoMFU0c2hTSm5nU1kvL0V5SFdNeXAxNWd4?=
- =?utf-8?B?c2lGK0o5b3dvOGkzanF1Q0xHZE0zSEErc0VaTEI0M3dXWG82dGpQSnBTQVp5?=
- =?utf-8?B?NkFtOG9YcDhnNkNWL1dQd29vWThHVlVVU1NSTlZhV1hGcGdTd09HelhPOFY1?=
- =?utf-8?B?b05aN3FJT1dmeWluWENmZUtsdGJsdkRQd1hYek1MMVN1QkZDTXpVRjcxK0Ny?=
- =?utf-8?Q?rvLM=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E409B1624DC;
+	Thu, 17 Apr 2025 14:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744899354; cv=none; b=ohiicU47n+lBH3SMzKKRjSto/QC7doe2+SUbUvNzR87lIP9oKeSJ9DQkTc7x4Qv4L0m5cB2PNSE3Y0yJ0egheSWMzL7BiLcblEMu16rmi6WXZBVa5CZdtQmL/xmws5EDiMoJyS5etQp8IgadZWBGvtmJ9psSgxO6BK8ZQR8h0Qc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744899354; c=relaxed/simple;
+	bh=vazE/OzKBBSg2rjIggOk4OJ14N/Lt5458VFxQiSnZsY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PP2iFpxMEbrxuETNw/f86DTyT3Wcm2PVSPvtsSg+P8L5cOgWaRlyyaAu042gG0IXtukmkVamJ2NN1mrtsbldnP/og/6N0tjJN0EyrVW6wkAw4+7NMkASI5y5Avkh7qM/LafZ7gDrv+YZJALH+yae90M29fPSWb+wMdl8nqmCSf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7c5c815f8efso68376385a.2;
+        Thu, 17 Apr 2025 07:15:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744899350; x=1745504150;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6ozcptRYeKioDAf1+hL3+/Kh+TNtMmTVxXgs8Vkwsgs=;
+        b=q50mrEJ04CkN/du6CgvgHy0rtam/w/7A5nKGxKPJTz7yUiluY8Rt3VEZp9NVY0Lw7p
+         i7TndtmW74qUuzbI0nHLUjBj8ZAUAgGX34kp9o4mm46PRfVC+HhVAyDHXGbcd3ixwSpl
+         SpWmOXCayoQj3y+5VpWpvoMoMKh5lPSFl+FM2F9+d8AEVaFyOP0fwN0HiuPZxsRP1C3y
+         30qBkrDFR4KgEUWTtS/nXCxcErx4uA36JlQDuar9mYi4YpeotY4BU9k7gU8yHmQcB4tX
+         GVPzpjvZ/XEjeQiQq1hEDlWPGHiJpkstVgq+NtgyL4iYwI3Hd0ItedrLSq4EJptBiYGX
+         FGaA==
+X-Forwarded-Encrypted: i=1; AJvYcCV55mOsaJkHDAcrRc3JdE7lX54x0lq5/zNQkPQ9dzyky4GLpXSv9qkWVEL4pVEzUgsdPJR7HW5CW3CCgOel@vger.kernel.org, AJvYcCVySVkcudgTuqWHRHti2weKPBco7+elNap9u/2opOlk+8XgdliI0WP3k7hK07sJCnN1lYmwje40lFNZph1iCNkrKMo=@vger.kernel.org, AJvYcCXFwS1OUMBKfkJclY+ZAZ9QuQwFA/U+Jb7CCoHliWywd6CHzkU/nEwAme9MZzgdua/dahPrkn2SGMg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIsGaG6R89fFDjJ1FOa5v56uw5wQo/TK8++WU4o+S4r1KTmWIW
+	+exZvefRz0jt9R8RoMWBnE2gQSWA1/3EPKY3DSiSfz9QBPFP1EnJdE0tNmR9
+X-Gm-Gg: ASbGnctVQGbmXqx1l2O4TKU33iF/riNjOQMEkhLGvXvDxgdJEi7sxyJ+hqSH+zNnlE0
+	ziAp/LdHv6Q0OSWFVM4EWoSjCbVxlDxDfEnZGPrms12Bi889GumFUX/PfqC+lVidWBPsQcD9hYG
+	3Z0EGzaVKE21x6C7WqZHXx7zVeVJ1ITsYyRhtmKMB3I6ctOvjOzUcswuWv9GcTV6kik4rNYPx5V
+	Pg1RVh6x4DZieYzk5QKerXfu6wuRG18W85dTYKdwtp/vyz+uPVBZZGd1MHc55z/koKNgC85R7o7
+	kuw/1noSMVICWZyIPuGJIP3dTtpYhInjv8tPGjD4+AR1P+T16uZLDjejV7Pl4Hm/uSyxCjINpLe
+	3uW8=
+X-Google-Smtp-Source: AGHT+IFJH1AzXuc5IZhd3k9hgLRCWGGutWbYC2A54S0nnZLrcEDWkGjbfg1nvWP/innDXRdFlm0/Og==
+X-Received: by 2002:a05:620a:424b:b0:7c5:55be:7bff with SMTP id af79cd13be357-7c9190652c6mr770883185a.43.1744899349835;
+        Thu, 17 Apr 2025 07:15:49 -0700 (PDT)
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com. [209.85.219.49])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c7a8969143sm1178126085a.50.2025.04.17.07.15.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Apr 2025 07:15:49 -0700 (PDT)
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6e8f4c50a8fso7818786d6.1;
+        Thu, 17 Apr 2025 07:15:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUfG3O5gFYP/wzDsg6+DU3TwjdYGv4jUsFTOYKT4jlHOH2VcsxCm0OF85qi2gYPOlDZWrF219U//4Y=@vger.kernel.org, AJvYcCUh+W2t/TyVEPWBSvA5e8ScLVwodDrv/XyOrZbf65AGuHSvLVGgaBulEvJnCKtnmAjvRQI+of0JGS/r8mEzqYPFCtw=@vger.kernel.org, AJvYcCXEWi3D9sfMsNy4jHi1VvXLI1LBBK2Zm4CLZFgzu6WaD+/gYBWPSbeUG3k0zoPs+uOMi3ralU4sR+eCQdaV@vger.kernel.org
+X-Received: by 2002:a05:6214:410e:b0:6e6:68e3:8d84 with SMTP id
+ 6a1803df08f44-6f2b2f8c378mr94221856d6.18.1744899349400; Thu, 17 Apr 2025
+ 07:15:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b05ad318-68b7-4103-b7e0-08dd7dba47ba
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Apr 2025 14:15:17.7191
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 4JFu5QZAgQxgmUstUmgYlTuqbthsLs4kbJqhtY9oDMOSz7x02lY+qaat7mBOYt34j39O+Uxj4XV8S2xVDxclXQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB7025
+References: <20250403212919.1137670-1-thierry.bultel.yh@bp.renesas.com> <20250403212919.1137670-6-thierry.bultel.yh@bp.renesas.com>
+In-Reply-To: <20250403212919.1137670-6-thierry.bultel.yh@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 17 Apr 2025 16:15:37 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUu4o5VU9Sd1CW5QyEZewKLj--2yMPYCfcwVMut5FiVyg@mail.gmail.com>
+X-Gm-Features: ATxdqUGdJarQQ-GgVZlFhU6ALz5FSk5JmuyCNTEwOSgp5rihxYznS7cN1STNyRI
+Message-ID: <CAMuHMdUu4o5VU9Sd1CW5QyEZewKLj--2yMPYCfcwVMut5FiVyg@mail.gmail.com>
+Subject: Re: [PATCH v7 05/13] clk: renesas: Pass sub struct of cpg_mssr_priv
+ to cpg_clk_register
+To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+Cc: thierry.bultel@linatsea.fr, linux-renesas-soc@vger.kernel.org, 
+	paul.barker.ct@bp.renesas.com, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-PiBIb25lc3RseSBJIGRvbid0IGxpa2UgYWRkaW5nIHlldCBhbm90aGVyIGZ1bmN0aW9uIHRvIGRv
-IHN1Y2ggInJlc2V0IiB0aGluZy4NCj4NCj4gTGVhdmluZyBwYXRoLT5za2lwX3JlbGVhc2Vfb25f
-ZXJyb3IgaXMgcGVyZmVjdGx5IGZpbmUgaW4gdGhpcyBzY2VuYXJpby4NCj4gSWYgdGhhdCBib3Ro
-ZXJzIGFueW9uZSBzbyBtdWNoLCBqdXN0IHNldCBwYXRoLT5za2lwX3JlbGVhc2Vfb25fZXJyb3Ig
-dG8gMCBhZnRlciBjYWxsaW5nIGJ0cmZzX3JlbGVhc2VfcGF0aCgpIGFuZCBiZWZvcmUgcGFzc2lu
-ZyB0aGUgcGF0aCB0byBidHJmc19pbnNlcnRfaW5vZGVfZXh0cmVmKCkuDQo+DQo+IFRoaXMgaXMg
-dGhlIHNvcnQgb2Ygb3B0aW1pemF0aW9uIHRoYXQgaXMgbm90IHdvcnRoIHNwZW5kaW5nIHRoaXMg
-bXVjaCB0aW1lIGFuZCBhZGRpbmcgbmV3IEFQSXMgLSBmcmVlaW5nIGFuZCBhbGxvY2F0aW5nIGEg
-cGF0aCBzaG9ydGx5IGFmdGVyIGlzIGFsbW9zdCBhbHdheXMgZmFzdCBhcyB3ZSdyZSB1c2luZyBh
-IHNsYWIsIHBsdXMgdGhpcyBpcyBhIHJhcmVseSBoaXQgdXNlIGNhc2UgLSBoYXZpbmcgdG8gdXNl
-IGV4dHJlZnMsIG1lYW5pbmcgd2UgaGF2ZSBhIHZlcnkgbGFyZ2UgbnVtYmVyIG9mIGlub2RlIHJl
-ZnMuDQoNCkkgYW0gZmluZSB0byBhZGQgYnRyZnNfcmVzZXRfcGF0aCBvciBqdXN0IGNsZWFyIHBh
-dGgtPnNraXBfcmVsZWFzZV9vbl9lcnJvci4NCg0KRGF2aWQsIHdoYXQgZG8geW91IHRoaW5rPw0K
-DQpUaHgsDQpZYW5ndGFvDQo=
+Hi Thierry,
+
+On Thu, 3 Apr 2025 at 23:30, Thierry Bultel
+<thierry.bultel.yh@bp.renesas.com> wrote:
+> In a subsequent patch, the registration callback will need more parameters
+> from cpg_mssr_priv (like another base address with clock controllers
+> with double register block, and also, notifiers and rmw_lock).
+> Instead of adding more parameters, move the needed parameters to a public
+> sub-struct.
+> Instead moving clks to this structure, which would have implied to add
+> an allocation (and cleanup) for it, keep the way the allocation is done
+> and just have a copy of the pointer in the public structure.
+>
+> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+
+Thanks for your patch!
+
+> --- a/drivers/clk/renesas/r8a77970-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a77970-cpg-mssr.c
+> @@ -218,11 +218,13 @@ static int __init r8a77970_cpg_mssr_init(struct device *dev)
+>  }
+>
+>  static struct clk * __init r8a77970_cpg_clk_register(struct device *dev,
+> -       const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
+> -       struct clk **clks, void __iomem *base,
+> -       struct raw_notifier_head *notifiers)
+> +       const struct cpg_core_clk *core,
+> +       const struct cpg_mssr_info *info,
+
+These two still fit on a single line, like before.
+
+> +       struct cpg_mssr_pub *pub)
+>  {
+>         const struct clk_div_table *table;
+> +       void __iomem *base = pub->base0;
+> +       struct clk **clks = pub->clks;
+>         const struct clk *parent;
+>         unsigned int shift;
+>
+
+> --- a/drivers/clk/renesas/rcar-gen3-cpg.h
+> +++ b/drivers/clk/renesas/rcar-gen3-cpg.h
+> @@ -80,9 +80,9 @@ struct rcar_gen3_cpg_pll_config {
+>  #define CPG_RCKCR      0x240
+>
+>  struct clk *rcar_gen3_cpg_clk_register(struct device *dev,
+> -       const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
+> -       struct clk **clks, void __iomem *base,
+> -       struct raw_notifier_head *notifiers);
+> +       const struct cpg_core_clk *core,
+> +       const struct cpg_mssr_info *info,
+
+Likewise.
+
+> +       struct cpg_mssr_pub *pub);
+>  int rcar_gen3_cpg_init(const struct rcar_gen3_cpg_pll_config *config,
+>                        unsigned int clk_extalr, u32 mode);
+>
+
+> --- a/drivers/clk/renesas/rcar-gen4-cpg.c
+> +++ b/drivers/clk/renesas/rcar-gen4-cpg.c
+> @@ -418,9 +418,11 @@ static const struct clk_div_table cpg_rpcsrc_div_table[] = {
+>
+>  struct clk * __init rcar_gen4_cpg_clk_register(struct device *dev,
+>         const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
+> -       struct clk **clks, void __iomem *base,
+> -       struct raw_notifier_head *notifiers)
+> +       struct cpg_mssr_pub *pub)
+>  {
+> +       struct raw_notifier_head *notifiers = &pub->notifiers;
+> +       void __iomem *base = pub->base0;
+> +       struct clk **clks = pub->clks;
+>         const struct clk *parent;
+>         unsigned int mult = 1;
+>         unsigned int div = 1;
+> @@ -517,7 +519,7 @@ struct clk * __init rcar_gen4_cpg_clk_register(struct device *dev,
+>
+>         case CLK_TYPE_GEN4_RPC:
+>                 return cpg_rpc_clk_register(core->name, base + CPG_RPCCKCR,
+> -                                           __clk_get_name(parent), notifiers);
+> +                                           __clk_get_name(parent), &pub->notifiers);
+
+Please drop this unneeded change.
+
+>
+>         case CLK_TYPE_GEN4_RPCD2:
+>                 return cpg_rpcd2_clk_register(core->name, base + CPG_RPCCKCR,
+
+> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
+> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+> @@ -127,14 +127,12 @@ static const u16 srstclr_for_gen4[] = {
+>   *
+>   * @rcdev: Optional reset controller entity
+>   * @dev: CPG/MSSR device
+> - * @base: CPG/MSSR register block base address
+>   * @reg_layout: CPG/MSSR register layout
+>   * @rmw_lock: protects RMW register accesses
+
+rmw_lock is removed below.
+
+>   * @np: Device node in DT for this CPG/MSSR module
+>   * @num_core_clks: Number of Core Clocks in clks[]
+>   * @num_mod_clks: Number of Module Clocks in clks[]
+>   * @last_dt_core_clk: ID of the last Core Clock exported to DT
+> - * @notifiers: Notifier chain to save/restore clock state for system resume
+>   * @status_regs: Pointer to status registers array
+>   * @control_regs: Pointer to control registers array
+>   * @reset_regs: Pointer to reset registers array
+> @@ -143,6 +141,7 @@ static const u16 srstclr_for_gen4[] = {
+>   *                 [].val: Saved values of SMSTPCR[]
+>   * @reserved_ids: Temporary used, reserved id list
+>   * @num_reserved_ids: Temporary used, number of reserved id list
+> + * @pub: Data passed to clock registration callback
+>   * @clks: Array containing all Core and Module Clocks
+>   */
+>  struct cpg_mssr_priv {
+> @@ -150,16 +149,13 @@ struct cpg_mssr_priv {
+>         struct reset_controller_dev rcdev;
+>  #endif
+>         struct device *dev;
+> -       void __iomem *base;
+>         enum clk_reg_layout reg_layout;
+> -       spinlock_t rmw_lock;
+>         struct device_node *np;
+>
+>         unsigned int num_core_clks;
+>         unsigned int num_mod_clks;
+>         unsigned int last_dt_core_clk;
+>
+> -       struct raw_notifier_head notifiers;
+>         const u16 *status_regs;
+>         const u16 *control_regs;
+>         const u16 *reset_regs;
+> @@ -172,6 +168,7 @@ struct cpg_mssr_priv {
+>         unsigned int *reserved_ids;
+>         unsigned int num_reserved_ids;
+>
+> +       struct cpg_mssr_pub pub;
+
+Perhaps insert this at the top of the structure, so &priv->pub needs
+no calculation?
+
+>         struct clk *clks[];
+>  };
+
+> --- a/drivers/clk/renesas/renesas-cpg-mssr.h
+> +++ b/drivers/clk/renesas/renesas-cpg-mssr.h
+
+> @@ -27,6 +29,21 @@ struct cpg_core_clk {
+>         unsigned int div;
+>         unsigned int mult;
+>         unsigned int offset;
+> +
+> +/**
+> + * struct cpg_mssr_pub - Private data shared with
+
+The "private" sounds a bit weird here, so please just drop it.
+
+> + * device-specific clk registration code
+> + *
+> + * @base0: CPG/MSSR register block base0 address
+> + * @rmw_lock: protects RMW register accesses
+> + * @notifiers: Notifier chain to save/restore clock state for system resume
+
+These two lines should be exchanged, to match the declaration order
+below.
+
+> + * @clks: pointer to clocks
+> + */
+> +struct cpg_mssr_pub {
+> +       void __iomem *base0;
+> +       struct raw_notifier_head notifiers;
+> +       spinlock_t rmw_lock;
+> +       struct clk **clks;
+>  };
+>
+>  enum clk_types {
+
+The rest LGTM.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
