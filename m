@@ -1,346 +1,256 @@
-Return-Path: <linux-kernel+bounces-608883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1DB8A919BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 12:50:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4850A919C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 12:51:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55C2319E43BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 10:50:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE49A16A215
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 10:51:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63FFC22CBC1;
-	Thu, 17 Apr 2025 10:49:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 648DF2356DC;
+	Thu, 17 Apr 2025 10:50:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="elfO380P";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="VSJVXdM1";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="elfO380P";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="VSJVXdM1"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kYGADsBq";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hYZ1aIn3"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6400F22AE74
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 10:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43102356AE;
+	Thu, 17 Apr 2025 10:50:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744886961; cv=none; b=jHcIZvV7hW2+fDvd6V1nXZISlRdFYEpZdFFpvwRc0klYZQPytZIc7NOpNU8rv3E1+qp85RybLWSrf7cTZvRO8MiZxPzH6apdNjXDzXX7BehjEkCJvG3I1aVb3oUSybvrEM5ZRkx6+20y9/pqDPEW4PwgYm3qltb2d5AKlHck3j8=
+	t=1744887008; cv=none; b=fJ9CS2/pAaxFSG9H9j4NrLFv2RvrcOldDVqQsxCTJhIRODWNwcwteK7hNPEZjdvVnIiTSLnz5fcU51qcGUR4qurcH65FCQx6Lo2128if7vj6wQpobPk9Pwv40HdfklqySGcFSZPzLwsPl879n6oHmsnPdk8bIjFr0ciA9AZHHWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744886961; c=relaxed/simple;
-	bh=cvIlQ7wMKAmBLuGD8J/k+8QJiAJq2WQfIxaEfXMl5zI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FBh+V9lUgN9MMrhBwsPokXlJ/+hWbbmUkYJLeCqYGEeS5N+5VwKHADaNhwSE4PPg24n9EPE2nPYyewyqyUWBPTNgFgTvb3/ky8hnUPffm8i7vkTm5PiA6SU3HAQ1m9aS6XD8oSkMguc0hVPuI/kz5yow8y7O+BGmTGnPf+aV7uU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=elfO380P; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=VSJVXdM1; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=elfO380P; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=VSJVXdM1; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 735732116B;
-	Thu, 17 Apr 2025 10:49:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744886956; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	s=arc-20240116; t=1744887008; c=relaxed/simple;
+	bh=fHt9v11xJay+tpSZs3Zlbur4bEkB+EmQhHNI8b/cImA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=cnbYetyVIzbgAyhI+32/EHYo4gI5xXlls7FuP3uv9rkF7Xv495wf/Gc0aASst+gPWWmgBGvCN3+YBm9K/1+5EB9rkNKR342nMYZoFzk38BLuiFEXgNcn6mC7BEc1KIgGdRcCG7iP8zh7/2O01KJnQTLuY7JNPYpH7cWHA4vvg/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kYGADsBq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hYZ1aIn3; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744887004;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=XgBGIb8Ml757E8HqOMQaHqsZI/NRoUruYO5ZoA1mMes=;
-	b=elfO380PV0rf33+Q7/uzinckxIOPD9vkd4TAU5u+L1FPUmA3oeBB9AyRRCbsDzcGRO61xo
-	kCAPy/QSRZNnW+nCEMwYGCJF54ExKa1AmKYLAqk2peiL0fKFktzJ4pMwxuDSiwA4VoJQ7F
-	8dzV3yVrEpZA87aerlUQQWjs6/4YzsU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744886956;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	bh=jUgP7QIAkoCQuc95oiAM2VFsr+DSEvrjzzdDoEmLzAk=;
+	b=kYGADsBqFf8IlDrezSa3zIJ+BT4RNlAnd3iH+5GTw+BKrObB1f8EluY48Qe6s+cltv3JhD
+	VaLaR3a+Qc/Zj8dJr8s55MAZ9Fel6sMPkivRYKWJrKkwiSJewORSL9Oq/FTTCeHsLDSz6i
+	Zz85DqgV10It7a0zjffVTw/VtF/HW7yXOopczfeIcgep0k5QQBocltWnY4vzwXJ8GeeWJy
+	b6QgY7Vuic0JTDuSgFF9Z+CUiHR7luoEWOdlswpDjIeUZ+gvk8U7/mKI9yYTixDnMJYDZl
+	OvscdGLXiqmWIMHUqUXqscOY5XarNuycFUeStTBrvo9F3e0qXNj9IHoMboNyWA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744887004;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=XgBGIb8Ml757E8HqOMQaHqsZI/NRoUruYO5ZoA1mMes=;
-	b=VSJVXdM1oxM8OHTgsNKb2F1UwlPXIT0MTCbX/bPLZkZOON2Dc4Idd0pjse7s/E9Lilow8v
-	o5aWNYrXwyPEykCw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744886956; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XgBGIb8Ml757E8HqOMQaHqsZI/NRoUruYO5ZoA1mMes=;
-	b=elfO380PV0rf33+Q7/uzinckxIOPD9vkd4TAU5u+L1FPUmA3oeBB9AyRRCbsDzcGRO61xo
-	kCAPy/QSRZNnW+nCEMwYGCJF54ExKa1AmKYLAqk2peiL0fKFktzJ4pMwxuDSiwA4VoJQ7F
-	8dzV3yVrEpZA87aerlUQQWjs6/4YzsU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744886956;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XgBGIb8Ml757E8HqOMQaHqsZI/NRoUruYO5ZoA1mMes=;
-	b=VSJVXdM1oxM8OHTgsNKb2F1UwlPXIT0MTCbX/bPLZkZOON2Dc4Idd0pjse7s/E9Lilow8v
-	o5aWNYrXwyPEykCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 15E89137CF;
-	Thu, 17 Apr 2025 10:49:16 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id j2ZuA6zcAGilEAAAD6G6ig
-	(envelope-from <jdelvare@suse.de>); Thu, 17 Apr 2025 10:49:16 +0000
-Date: Thu, 17 Apr 2025 12:49:14 +0200
-From: Jean Delvare <jdelvare@suse.de>
-To: Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: Joel Stanley <joel@jms.id.au>, Henry Martin <bsdhenrymartin@gmail.com>,
- Patrick Rudolph <patrick.rudolph@9elements.com>, Andrew Geissler
- <geissonator@yahoo.com>, Ninad Palsule <ninad@linux.ibm.com>, Patrick
- Venture <venture@google.com>, Robert Lippert <roblip@gmail.com>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 7/7] soc: aspeed: lpc-snoop: Lift channel config to
- const structs
-Message-ID: <20250417124914.77f80975@endymion>
-In-Reply-To: <20250411-aspeed-lpc-snoop-fixes-v1-7-64f522e3ad6f@codeconstruct.com.au>
-References: <20250411-aspeed-lpc-snoop-fixes-v1-0-64f522e3ad6f@codeconstruct.com.au>
-	<20250411-aspeed-lpc-snoop-fixes-v1-7-64f522e3ad6f@codeconstruct.com.au>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.43; x86_64-suse-linux-gnu)
+	bh=jUgP7QIAkoCQuc95oiAM2VFsr+DSEvrjzzdDoEmLzAk=;
+	b=hYZ1aIn3APfPnc9HM9Z3FojJjQszJXZ2FgdFK4s/By++uUr+h0rARMU8MfKbv3ceJRtiEr
+	LFejf3luJhdMG3Ag==
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, linux-kernel@vger.kernel.org
+Cc: bp@alien8.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+ Thomas.Lendacky@amd.com, nikunj@amd.com, Santosh.Shukla@amd.com,
+ Vasant.Hegde@amd.com, Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com,
+ x86@kernel.org, hpa@zytor.com, peterz@infradead.org, seanjc@google.com,
+ pbonzini@redhat.com, kvm@vger.kernel.org, kirill.shutemov@linux.intel.com,
+ huibo.wang@amd.com, naveen.rao@amd.com, francescolavra.fl@gmail.com
+Subject: Re: [PATCH v4 06/18] x86/apic: Add update_vector callback for
+ Secure AVIC
+In-Reply-To: <20250417091708.215826-7-Neeraj.Upadhyay@amd.com>
+References: <20250417091708.215826-1-Neeraj.Upadhyay@amd.com>
+ <20250417091708.215826-7-Neeraj.Upadhyay@amd.com>
+Date: Thu, 17 Apr 2025 12:50:04 +0200
+Message-ID: <87a58frrj7.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	HAS_ORG_HEADER(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,yahoo.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[jms.id.au,gmail.com,9elements.com,yahoo.com,linux.ibm.com,google.com,vger.kernel.org];
-	MIME_TRACE(0.00)[0:+];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_DN_SOME(0.00)[]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+Content-Type: text/plain
 
-Hi Andrew,
+On Thu, Apr 17 2025 at 14:46, Neeraj Upadhyay wrote:
+> Add update_vector callback to set/clear ALLOWED_IRR field in
+> a vCPU's APIC backing page for external vectors. The ALLOWED_IRR
+> field indicates the interrupt vectors which the guest allows the
+> hypervisor to send (typically for emulated devices). Interrupt
+> vectors used exclusively by the guest itself and the vectors which
+> are not emulated by the hypervisor, such as IPI vectors, are part
+> of system vectors and are not set in the ALLOWED_IRR.
 
-On Fri, 11 Apr 2025 10:38:37 +0930, Andrew Jeffery wrote:
-> The shifts and masks for each channel are defined by hardware and
-> are not something that changes at runtime. Accordingly, describe the
-> information in an array of const structs and associate elements with
-> each channel instance, removing the need for the switch and handling of
-> its default case.
+Please structure changelogs properly in paragraphs:
 
-I like the idea very much. A few comments on the implementations below.
+  https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#changelog
 
-> Signed-off-by: Andrew Jeffery <andrew@codeconstruct.com.au>
-> ---
->  drivers/soc/aspeed/aspeed-lpc-snoop.c | 82 +++++++++++++++++------------------
->  1 file changed, 41 insertions(+), 41 deletions(-)
-> 
-> diff --git a/drivers/soc/aspeed/aspeed-lpc-snoop.c b/drivers/soc/aspeed/aspeed-lpc-snoop.c
-> index 0b2044fd79b1be08dfa33bfcaf249b020c909bb9..b54d8fbf7b83ebadd4fe1b16cbddf07a0bfac868 100644
-> --- a/drivers/soc/aspeed/aspeed-lpc-snoop.c
-> +++ b/drivers/soc/aspeed/aspeed-lpc-snoop.c
-> @@ -10,6 +10,7 @@
->   * 0x80 writes made by the BIOS during the boot process.
->   */
->  
-> +#include "linux/ratelimit.h"
->  #include <linux/bitops.h>
->  #include <linux/clk.h>
->  #include <linux/interrupt.h>
-> @@ -57,7 +58,15 @@ struct aspeed_lpc_snoop_model_data {
->  	unsigned int has_hicrb_ensnp;
->  };
->  
-> +struct aspeed_lpc_snoop_channel_cfg {
-> +	u32 hicr5_en;
-> +	u32 snpwadr_mask;
-> +	u32 snpwadr_shift;
-> +	u32 hicrb_en;
-> +};
-> +
->  struct aspeed_lpc_snoop_channel {
-> +	const struct aspeed_lpc_snoop_channel_cfg *cfg;
->  	bool enabled;
->  	struct kfifo		fifo;
->  	wait_queue_head_t	wq;
-> @@ -188,7 +197,6 @@ static int aspeed_lpc_enable_snoop(struct aspeed_lpc_snoop *lpc_snoop,
->  				   int index, u16 lpc_port)
->  {
->  	const struct aspeed_lpc_snoop_model_data *model_data;
-> -	u32 hicr5_en, snpwadr_mask, snpwadr_shift, hicrb_en;
->  	struct aspeed_lpc_snoop_channel *channel;
->  	int rc = 0;
->  
-> @@ -200,6 +208,9 @@ static int aspeed_lpc_enable_snoop(struct aspeed_lpc_snoop *lpc_snoop,
->  	if (channel->enabled)
->  		return -EBUSY;
->  
-> +	if (WARN_ONCE(!channel->cfg, "snoop channel %d lacks required config", index))
+>  arch/x86/include/asm/apic.h         |  9 +++++
+>  arch/x86/kernel/apic/vector.c       | 53 ++++++++++++++++++++++-------
+>  arch/x86/kernel/apic/x2apic_savic.c | 35 +++++++++++++++++++
 
-Why not just WARN? WARN_ONCE has a higher cost, and I don't expect this
-code path to be taken more than twice.
+And split this patch up into two:
 
-> +		return -EINVAL;
-> +
->  	init_waitqueue_head(&channel->wq);
->  
->  	channel->miscdev.minor = MISC_DYNAMIC_MINOR;
-> @@ -220,39 +231,20 @@ static int aspeed_lpc_enable_snoop(struct aspeed_lpc_snoop *lpc_snoop,
->  		goto err_free_fifo;
->  
->  	/* Enable LPC snoop channel at requested port */
-> -	switch (index) {
-> -	case 0:
-> -		hicr5_en = HICR5_EN_SNP0W | HICR5_ENINT_SNP0W;
-> -		snpwadr_mask = SNPWADR_CH0_MASK;
-> -		snpwadr_shift = SNPWADR_CH0_SHIFT;
-> -		hicrb_en = HICRB_ENSNP0D;
-> -		break;
-> -	case 1:
-> -		hicr5_en = HICR5_EN_SNP1W | HICR5_ENINT_SNP1W;
-> -		snpwadr_mask = SNPWADR_CH1_MASK;
-> -		snpwadr_shift = SNPWADR_CH1_SHIFT;
-> -		hicrb_en = HICRB_ENSNP1D;
-> -		break;
-> -	default:
-> -		rc = -EINVAL;
-> -		goto err_misc_deregister;
-> -	}
-> -
-> -	/* Enable LPC snoop channel at requested port */
+  1) Do the modifications in vector.c which is what the $Subject line
+     says
 
-Strange that you discard a comment which you added yourself in the
-previous patch.
+  2) Add the SAVIC specific bits
 
-> -	regmap_update_bits(lpc_snoop->regmap, HICR5, hicr5_en, hicr5_en);
-> -	regmap_update_bits(lpc_snoop->regmap, SNPWADR, snpwadr_mask,
-> -			   lpc_port << snpwadr_shift);
-> +	regmap_update_bits(lpc_snoop->regmap, HICR5, channel->cfg->hicr5_en,
-> +		channel->cfg->hicr5_en);
-
-Not caused by your patch, but I think regmap_set_bits() could be used
-here to improve readability.
-
-> +	regmap_update_bits(lpc_snoop->regmap, SNPWADR, channel->cfg->snpwadr_mask,
-> +		lpc_port << channel->cfg->snpwadr_shift);
->  
->  	model_data = of_device_get_match_data(dev);
->  	if (model_data && model_data->has_hicrb_ensnp)
-> -		regmap_update_bits(lpc_snoop->regmap, HICRB, hicrb_en, hicrb_en);
-> +		regmap_update_bits(lpc_snoop->regmap, HICRB, channel->cfg->hicrb_en,
-> +			channel->cfg->hicrb_en);
-
-Could also use regmap_set_bits().
-
->  
->  	channel->enabled = true;
->  
->  	return 0;
->  
-> -err_misc_deregister:
-> -	misc_deregister(&lpc_snoop->chan[index].miscdev);
->  err_free_fifo:
->  	kfifo_free(&lpc_snoop->chan[index].fifo);
->  	return rc;
-> @@ -272,21 +264,7 @@ static void aspeed_lpc_disable_snoop(struct aspeed_lpc_snoop *lpc_snoop,
->  	if (!channel->enabled)
->  		return;
->  
-> -	/* Disable interrupts along with the device */
-
-Any reason for killing this poor innocent comment? ^^
-
-> -	switch (index) {
-> -	case 0:
-> -		regmap_update_bits(lpc_snoop->regmap, HICR5,
-> -				   HICR5_EN_SNP0W | HICR5_ENINT_SNP0W,
-> -				   0);
-> -		break;
-> -	case 1:
-> -		regmap_update_bits(lpc_snoop->regmap, HICR5,
-> -				   HICR5_EN_SNP1W | HICR5_ENINT_SNP1W,
-> -				   0);
-> -		break;
-> -	default:
-> -		return;
-> -	}
-> +	regmap_update_bits(lpc_snoop->regmap, HICR5, channel->cfg->hicr5_en, 0);
-
-Could use regmap_clear_bits() if I'm not mistaken.
-
->  
->  	channel->enabled = false;
->  	/* Consider improving safety wrt concurrent reader(s) */
-> @@ -294,6 +272,21 @@ static void aspeed_lpc_disable_snoop(struct aspeed_lpc_snoop *lpc_snoop,
->  	kfifo_free(&channel->fifo);
+> @@ -471,6 +473,12 @@ static __always_inline bool apic_id_valid(u32 apic_id)
+>  	return apic_id <= apic->max_apic_id;
 >  }
 >  
-> +static const struct aspeed_lpc_snoop_channel_cfg channel_cfgs[] = {
-> +	{
-> +		.hicr5_en = HICR5_EN_SNP0W | HICR5_ENINT_SNP0W,
-> +		.snpwadr_mask = SNPWADR_CH0_MASK,
-> +		.snpwadr_shift = SNPWADR_CH0_SHIFT,
-> +		.hicrb_en = HICRB_ENSNP0D,
-> +	},
-> +	{
-> +		.hicr5_en = HICR5_EN_SNP1W | HICR5_ENINT_SNP1W,
-> +		.snpwadr_mask = SNPWADR_CH1_MASK,
-> +		.snpwadr_shift = SNPWADR_CH1_SHIFT,
-> +		.hicrb_en = HICRB_ENSNP1D,
-> +	},
-> +};
+> +static __always_inline void apic_update_vector(unsigned int cpu, unsigned int vector, bool set)
+> +{
+> +	if (apic->update_vector)
+> +		apic->update_vector(cpu, vector, set);
+> +}
+
+This is in the public header because it can?
+  
+> -static void apic_update_vector(struct irq_data *irqd, unsigned int newvec,
+> -			       unsigned int newcpu)
+> +static int irq_alloc_vector(const struct cpumask *dest, bool resvd, unsigned int *cpu)
+> +{
+> +	int vector;
 > +
->  static int aspeed_lpc_snoop_probe(struct platform_device *pdev)
->  {
->  	struct aspeed_lpc_snoop *lpc_snoop;
-> @@ -308,6 +301,13 @@ static int aspeed_lpc_snoop_probe(struct platform_device *pdev)
->  	if (!lpc_snoop)
->  		return -ENOMEM;
->  
-> +	static_assert(ARRAY_SIZE(channel_cfgs) == ARRAY_SIZE(lpc_snoop->chan),
-> +		"Broken implementation assumption regarding cfg count");
-> +	static_assert(ARRAY_SIZE(lpc_snoop->chan) == 2,
-> +		"Broken implementation assumption regarding channel count");
+> +	vector = irq_matrix_alloc(vector_matrix, dest, resvd, cpu);
 
-Wouldn't it be good (and maybe sufficient) to declare
-aspeed_lpc_snoop_channel_cfg as channel_cfgs[NUM_SNOOP_CHANNELS]?
-
-If you insist on keeping the second assert then you should at least use
-NUM_SNOOP_CHANNELS instead of hard-coding 2.
-
-> +	lpc_snoop->chan[0].cfg = &channel_cfgs[0];
-> +	lpc_snoop->chan[1].cfg = &channel_cfgs[1];
-
-Could this be done at the beginning of aspeed_lpc_enable_snoop()? So
-that you don't have to duplicate the statement (and don't set
-lpc_snoop->chan[1].cfg if there's no second port). Would save a WARN as
-well.
+        int vector = irq_matrix_alloc(...);
 
 > +
->  	np = pdev->dev.parent->of_node;
->  	if (!of_device_is_compatible(np, "aspeed,ast2400-lpc-v2") &&
->  	    !of_device_is_compatible(np, "aspeed,ast2500-lpc-v2") &&
-> 
+> +	if (vector >= 0)
+> +		apic_update_vector(*cpu, vector, true);
+> +
+> +	return vector;
+> +}
+> +
+> +static int irq_alloc_managed_vector(unsigned int *cpu)
+> +{
+> +	int vector;
+> +
+> +	vector = irq_matrix_alloc_managed(vector_matrix, vector_searchmask, cpu);
+> +
+> +	if (vector >= 0)
+> +		apic_update_vector(*cpu, vector, true);
+> +
+> +	return vector;
+> +}
 
+I completely fail to see the value of these two functions. Each of them
+has exactly _ONE_ call site and both sites invoke apic_update_vector()
+when the allocation succeeded. Why can't you just do the obvious and
+leave the existing code alone and add
 
--- 
-Jean Delvare
-SUSE L3 Support
+      if (apic->update_vector)
+      		apic->update_vector();
+
+into apic_update_vector()? But then you have another place where you
+need the update, which does not invoke apic_update_vector().
+
+Now if you look deeper, then you notice that all places which invoke
+apic_update_vector() invoke apic_update_irq_cfg(), which is also called
+at this other place, no?
+
+> +static void irq_free_vector(unsigned int cpu, unsigned int vector, bool managed)
+> +{
+> +	apic_update_vector(cpu, vector, false);
+> +	irq_matrix_free(vector_matrix, cpu, vector, managed);
+> +}
+
+This one makes sense, but please name it: apic_free_vector()
+
+Something like the uncompiled below, no?
+
+Thanks,
+
+        tglx
+---
+--- a/arch/x86/kernel/apic/vector.c
++++ b/arch/x86/kernel/apic/vector.c
+@@ -134,9 +134,19 @@ static void apic_update_irq_cfg(struct i
+ 
+ 	apicd->hw_irq_cfg.vector = vector;
+ 	apicd->hw_irq_cfg.dest_apicid = apic->calc_dest_apicid(cpu);
++
++	if (apic->update_vector)
++		apic->update_vector(cpu, vector, true);
++
+ 	irq_data_update_effective_affinity(irqd, cpumask_of(cpu));
+-	trace_vector_config(irqd->irq, vector, cpu,
+-			    apicd->hw_irq_cfg.dest_apicid);
++	trace_vector_config(irqd->irq, vector, cpu, apicd->hw_irq_cfg.dest_apicid);
++}
++
++static void apic_free_vector(unsigned int cpu, unsigned int vector, bool managed)
++{
++	if (apic->update_vector)
++		apic->update_vector(cpu, vector, false);
++	irq_matrix_free(vector_matrix, cpu, vector, managed);
+ }
+ 
+ static void apic_update_vector(struct irq_data *irqd, unsigned int newvec,
+@@ -174,8 +184,7 @@ static void apic_update_vector(struct ir
+ 		apicd->prev_cpu = apicd->cpu;
+ 		WARN_ON_ONCE(apicd->cpu == newcpu);
+ 	} else {
+-		irq_matrix_free(vector_matrix, apicd->cpu, apicd->vector,
+-				managed);
++		apic_free_vector(apicd->cpu, apicd->vector, managed);
+ 	}
+ 
+ setnew:
+@@ -183,6 +192,7 @@ static void apic_update_vector(struct ir
+ 	apicd->cpu = newcpu;
+ 	BUG_ON(!IS_ERR_OR_NULL(per_cpu(vector_irq, newcpu)[newvec]));
+ 	per_cpu(vector_irq, newcpu)[newvec] = desc;
++	apic_update_irq_cfg(irqd, newvec, newcpu);
+ }
+ 
+ static void vector_assign_managed_shutdown(struct irq_data *irqd)
+@@ -261,8 +271,6 @@ assign_vector_locked(struct irq_data *ir
+ 	if (vector < 0)
+ 		return vector;
+ 	apic_update_vector(irqd, vector, cpu);
+-	apic_update_irq_cfg(irqd, vector, cpu);
+-
+ 	return 0;
+ }
+ 
+@@ -338,7 +346,6 @@ assign_managed_vector(struct irq_data *i
+ 	if (vector < 0)
+ 		return vector;
+ 	apic_update_vector(irqd, vector, cpu);
+-	apic_update_irq_cfg(irqd, vector, cpu);
+ 	return 0;
+ }
+ 
+@@ -357,7 +364,7 @@ static void clear_irq_vector(struct irq_
+ 			   apicd->prev_cpu);
+ 
+ 	per_cpu(vector_irq, apicd->cpu)[vector] = VECTOR_SHUTDOWN;
+-	irq_matrix_free(vector_matrix, apicd->cpu, vector, managed);
++	apic_free_vector(apicd->cpu, vector, managed);
+ 	apicd->vector = 0;
+ 
+ 	/* Clean up move in progress */
+@@ -366,7 +373,7 @@ static void clear_irq_vector(struct irq_
+ 		return;
+ 
+ 	per_cpu(vector_irq, apicd->prev_cpu)[vector] = VECTOR_SHUTDOWN;
+-	irq_matrix_free(vector_matrix, apicd->prev_cpu, vector, managed);
++	apic_free_vector(apicd->prev_cpu, vector, managed);
+ 	apicd->prev_vector = 0;
+ 	apicd->move_in_progress = 0;
+ 	hlist_del_init(&apicd->clist);
+@@ -905,7 +912,7 @@ static void free_moved_vector(struct api
+ 	 *    affinity mask comes online.
+ 	 */
+ 	trace_vector_free_moved(apicd->irq, cpu, vector, managed);
+-	irq_matrix_free(vector_matrix, cpu, vector, managed);
++	apic_free_vector(cpu, vector, managed);
+ 	per_cpu(vector_irq, cpu)[vector] = VECTOR_UNUSED;
+ 	hlist_del_init(&apicd->clist);
+ 	apicd->prev_vector = 0;
 
