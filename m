@@ -1,186 +1,172 @@
-Return-Path: <linux-kernel+bounces-608561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6DDBA91540
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:31:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A108EA91527
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:29:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 140545A031B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:31:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76BEE178CFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:29:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CDCF21E0AC;
-	Thu, 17 Apr 2025 07:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fx1ff+N0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E371B4153
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 07:30:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1756D21C176;
+	Thu, 17 Apr 2025 07:29:14 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D993219A76;
+	Thu, 17 Apr 2025 07:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744875002; cv=none; b=IPzpomqSSg/reVy6NzS7WepAxTnC8j5WiXg4UdDvHXNyluy3eECKaivTM3Lh+SPJGxxo0UYV2S6bxv8wJaJ8BB5DnNBreZY8o83W4baCEvPuF7wMjgUxBRu+r3+PKNwZUnZQtBGjORb6/QNyOQmh5gUkN0aJD89N3rCWAF/TXlE=
+	t=1744874953; cv=none; b=CWs5vOSvZzRo/fKXrILKZYD3voTlYH5mivpFxxpowiYpvHydcNzupyqKFuZdKlrH0d0VyaaQ0Y8RthOjcNLCCXvdLZfpj0YUcI+LUEl8HYFfzbDIwq6vmN1LdggU0Afs2zbValUJZj8vo9DExgk1wEeK1FrfegyyHpVkMBdfUbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744875002; c=relaxed/simple;
-	bh=W5dO5+1iQDL11I67wwgPDyxZ3fBJwPwBYC8gQq8nxhw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bp6e/+A66gz6J+pFHG1p8LO87EtXyzgoFz5tXMYRVoDVtopIDSIXPmGV6/WbYe8oo314OZ8k4QzNlqw0gMoPaKnNO4B92nVGA+lkAg/emltw7kh/95RcP7Zb6rVgJgc6DIgTLD1nIbcRldnZcY9/zSBMC5Rlecj/KQkS9km/G80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fx1ff+N0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F3F3C4CEE4;
-	Thu, 17 Apr 2025 07:30:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744875001;
-	bh=W5dO5+1iQDL11I67wwgPDyxZ3fBJwPwBYC8gQq8nxhw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Fx1ff+N0lInqZBtgczz/K8jggjODkehaathKdT1rdrulLjfP3XbIkkdvbJnaovMK+
-	 cbqPiF6m7V7Wva8E4yP0N8hVqIF0khMlBcGqPzXX89kMWxYanV6xZz7QZ6XcV8ny+W
-	 FaKLAY0520ssGOwYyaM1aLjXwFqVbXoyqRXDfHc4OnUoXFTOrwpssWoEOArqKbdHFp
-	 gQD3GpD5Oqz7QY+lksDAopFwy6Wlq2Axhu4o1m02CZU4Qf3MYI/VOsOMb9S3XEUhCe
-	 t9o2zCvP02kMrequCOWk9WocV/jL1QDYKb1lQ52azbCKMG9NF4V2z1xxCIJkoVv87G
-	 a4P8bwlCQ4LxQ==
-Date: Thu, 17 Apr 2025 12:58:22 +0530
-From: Naveen N Rao <naveen@kernel.org>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: dave.hansen@linux.intel.com, Ingo Molnar <mingo@kernel.org>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] x86/devmem: Remove duplicate range_is_allowed()
- definition
-Message-ID: <ucdjz2mytjsndtkoroadd7r7grsi4hwpqd47v752zwo6rn5bg7@a7pq6ah4tdai>
-References: <174433453526.924142.15494575917593543330.stgit@dwillia2-xfh.jf.intel.com>
- <174433454327.924142.13014632539194148381.stgit@dwillia2-xfh.jf.intel.com>
- <s6fek3k3zsgf74yuppzckhcnud67pgfitz66n6uwkky7gvjcpc@rp4pxvie2dpb>
- <6800205d86e73_71fe294e4@dwillia2-xfh.jf.intel.com.notmuch>
+	s=arc-20240116; t=1744874953; c=relaxed/simple;
+	bh=bKXHuTaUCZ2Xb/kzNU41+ezyI5P4/jk2iouHpcNh4qU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aIsrjzuSEnA7Jc8IJpd0CO5qaqonfYRXCLJkyAZdVis8CHHn3m4Ymly6ePO3Jxjgt52i3Qp8OZP0iUEpFW+vYcggajR/2oJ8cf1mJZJZ/BN2eF31fASvXgvs9ajRbs+mSSk5CZJPBWe6oQxnrb7r3tUbcrGYW+Ipk4koN8AQMtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-669ff7000002311f-b0-6800adbbfdce
+From: Rakie Kim <rakie.kim@sk.com>
+To: akpm@linux-foundation.org
+Cc: gourry@gourry.net,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-cxl@vger.kernel.org,
+	joshua.hahnjy@gmail.com,
+	dan.j.williams@intel.com,
+	ying.huang@linux.alibaba.com,
+	david@redhat.com,
+	Jonathan.Cameron@huawei.com,
+	osalvador@suse.de,
+	kernel_team@skhynix.com,
+	honggyu.kim@sk.com,
+	yunjeong.mun@sk.com,
+	rakie.kim@sk.com
+Subject: [PATCH v9 0/3] Enhance sysfs handling for memory hotplug in weighted interleave
+Date: Thu, 17 Apr 2025 16:28:34 +0900
+Message-ID: <20250417072839.711-1-rakie.kim@sk.com>
+X-Mailer: git-send-email 2.48.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6800205d86e73_71fe294e4@dwillia2-xfh.jf.intel.com.notmuch>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrALMWRmVeSWpSXmKPExsXC9ZZnke7utQwZBg+2GlrMWb+GzWL61AuM
+	Fl/X/2K2+Hn3OLvFqoXX2CyOb53HbnF+1ikWi8u75rBZ3Fvzn9XizLQii9VrMhy4PXbOusvu
+	0d12md2j5chbVo/Fe14yeWz6NInd48SM3yweOx9aerzfd5XNY/Ppao/Pm+QCuKK4bFJSczLL
+	Uov07RK4Mg71bWUveKhQ8XLOKZYGxqvSXYycHBICJhIrLm1j7mLkgLB3uIKYbAJKEsf2xoBU
+	iAjISkz9e56li5GLg1ngMZPEo+cvGEESwgIREue/7mcHsVkEVCV2HP3JBmLzChhLXN6zkQli
+	vKZEw6V7TBBxQYmTM5+wgNjMAvISzVtnM4MMlRC4zyax+edVqAZJiYMrbrBMYOSdhaRnFpKe
+	BYxMqxiFMvPKchMzc0z0MirzMiv0kvNzNzECw3lZ7Z/oHYyfLgQfYhTgYFTi4T2x6H+6EGti
+	WXFl7iFGCQ5mJRHec+b/0oV4UxIrq1KL8uOLSnNSiw8xSnOwKInzGn0rTxESSE8sSc1OTS1I
+	LYLJMnFwSjUw5n2VXvA7imON59mJziziR5g76qtsn7rLmIqtCNh+0netxnyjlkORqpdWWx+1
+	q5zWPkXBt1rq13rP5s6FzzR3NpjJ9xW8Ez39X/iU+tz9gZZJvjf/2nTpGK6+nD5z9g8WJw1m
+	zgMuQa8C92erMane/1sZ+9FGqjnIxdOFkf2F0ZQKjSn2SkuVWIozEg21mIuKEwENuAoFYwIA
+	AA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFLMWRmVeSWpSXmKPExsXCNUNNS3f3WoYMg4NPlC3mrF/DZjF96gVG
+	i6/rfzFb/Lx7nN3i87PXzBarFl5jszi+dR67xeG5J1ktzs86xWJxedccNot7a/6zWpyZVmRx
+	6NpzVovVazIsfm9bwebA77Fz1l12j+62y+weLUfesnos3vOSyWPTp0nsHidm/Gbx2PnQ0uP9
+	vqtsHt9ue3gsfvGByWPz6WqPz5vkAniiuGxSUnMyy1KL9O0SuDIO9W1lL3ioUPFyzimWBsar
+	0l2MHBwSAiYSK3a4gphsAkoSx/bGdDFycogIyEpM/XuepYuRi4NZ4DGTxKPnLxhBEsICERLn
+	v+5nB7FZBFQldhz9yQZi8woYS1zes5EJxJYQ0JRouHSPCSIuKHFy5hMWEJtZQF6ieets5gmM
+	XLOQpGYhSS1gZFrFKJKZV5abmJljqlecnVGZl1mhl5yfu4kRGMLLav9M3MH45bL7IUYBDkYl
+	Ht4Ti/6nC7EmlhVX5h5ilOBgVhLhPWf+L12INyWxsiq1KD++qDQntfgQozQHi5I4r1d4aoKQ
+	QHpiSWp2ampBahFMlomDU6qB8bhKYvJ9o0W3bTh+f7hRwPpwJYdCwQyOydp/dtpH7Bde4eg1
+	M1hfsknBgPPrb2WJ6Vr2awu7tT7deVU1/8E+jydnzz2Oq9gb16TCnhzMc3yt23vflEJT3rvC
+	FT8KvSW8Bef2fBHaKM51mMPy+/d6Bi9/bw8Ws8faJj3XP6/N4frZaO55idFLiaU4I9FQi7mo
+	OBEAsbaAJV0CAAA=
+X-CFilter-Loop: Reflected
 
-On Wed, Apr 16, 2025 at 02:25:49PM -0700, Dan Williams wrote:
-> Naveen N Rao wrote:
-> > On Thu, Apr 10, 2025 at 06:22:23PM -0700, Dan Williams wrote:
-> > > It looks like x86 has a local re-implementation of range_is_allowed()
-> > > just to add a pat_enabled() check for the strong symbol override of
-> > > phys_mem_access_prot_allowed() from drivers/char/mem.c.
-> > > 
-> > > In preparation for updating range_is_allowed() logic, arrange for there
-> > > to be only one shared instance of "range_is_allowed()" in the kernel by
-> > > moving a common helper to include/linux/io.h.
-> > > 
-> > > Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> > > Cc: Ingo Molnar <mingo@kernel.org>
-> > > Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> > > ---
-> > >  arch/x86/mm/pat/memtype.c |   31 ++++---------------------------
-> > >  drivers/char/mem.c        |   18 ------------------
-> > >  include/linux/io.h        |   21 +++++++++++++++++++++
-> > >  3 files changed, 25 insertions(+), 45 deletions(-)
-> > > 
-> > > diff --git a/arch/x86/mm/pat/memtype.c b/arch/x86/mm/pat/memtype.c
-> > > index 72d8cbc61158..c97b6598f187 100644
-> > > --- a/arch/x86/mm/pat/memtype.c
-> > > +++ b/arch/x86/mm/pat/memtype.c
-> > > @@ -38,6 +38,7 @@
-> > >  #include <linux/kernel.h>
-> > >  #include <linux/pfn_t.h>
-> > >  #include <linux/slab.h>
-> > > +#include <linux/io.h>
-> > >  #include <linux/mm.h>
-> > >  #include <linux/highmem.h>
-> > >  #include <linux/fs.h>
-> > > @@ -773,38 +774,14 @@ pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
-> > >  	return vma_prot;
-> > >  }
-> > >  
-> > > -#ifdef CONFIG_STRICT_DEVMEM
-> > > -/* This check is done in drivers/char/mem.c in case of STRICT_DEVMEM */
-> > > -static inline int range_is_allowed(unsigned long pfn, unsigned long size)
-> > > -{
-> > > -	return 1;
-> > > -}
-> > 
-> > It looks like no checks were done here if CONFIG_STRICT_DEVMEM was set, 
-> > so this patch changes that.
-> 
-> Yes, but this still matches the historical intent, and the historical
-> intent is a tad messy.
-> 
-> The pat_enabled check was originally added as a *bypass* of additional
-> logic in phys_mem_access_prot_allowed() [1] to validate that /dev/mem was
-> establishing compatible mappings of "System-RAM" via /dev/mem. This
-> patch maintains that expectation that phys_mem_access_prot_allowed()
-> returns immediately when there is no potential cache conflict.
+The following patch series enhances the weighted interleave policy in the
+memory management subsystem by improving sysfs handling, fixing memory leaks,
+and introducing dynamic sysfs updates for memory hotplug support.
 
-Thanks for the background, that makes sense.
+Changes from v8:
+https://lore.kernel.org/all/20250416113123.629-1-rakie.kim@sk.com/
+- Updated lock usage during sysfs entry creation
+- Fixed sysfs removal warning triggered during exception handling paths
 
-Do we also no longer need the devmem_is_allowed() checks in pat.c if PAT 
-is enabled and !CONFIG_STRICT_DEVMEM?
+Changes from v7:
+https://lore.kernel.org/all/20250408073243.488-1-rakie.kim@sk.com/
+- Refactored error handling paths to remove unnecessary `goto` usage
+- Renamed unclear variables and functions for better readability
 
-> 
-> However, the point is moot in current code because [2] and [3] removed
-> all cache type validation from phys_mem_access_prot_allowed() in favor
-> track_pfn_remap().
-> 
-> According to:
-> Commit 9e41bff2708e ("x86: fix /dev/mem mmap breakage when PAT is disabled") [1]
-> Commit 1886297ce0c8 ("x86/mm/pat: Fix BUG_ON() in mmap_mem() on QEMU/i386") [2]
-> Commit 0c3c8a18361a ("x86, PAT: Remove duplicate memtype reserve in devmem mmap") [3]
-> 
-> > > -#else
-> > > -/* This check is needed to avoid cache aliasing when PAT is enabled */
-> > > -static inline int range_is_allowed(unsigned long pfn, unsigned long size)
-> > > -{
-> > > -	u64 from = ((u64)pfn) << PAGE_SHIFT;
-> > > -	u64 to = from + size;
-> > > -	u64 cursor = from;
-> > > -
-> > > -	if (!pat_enabled())
-> > > -		return 1;
-> > > -
-> > > -	while (cursor < to) {
-> > > -		if (!devmem_is_allowed(pfn))
-> > > -			return 0;
-> > > -		cursor += PAGE_SIZE;
-> > > -		pfn++;
-> > > -	}
-> > > -	return 1;
-> > > -}
-> > > -#endif /* CONFIG_STRICT_DEVMEM */
-> > > -
-> > >  int phys_mem_access_prot_allowed(struct file *file, unsigned long pfn,
-> > >  				unsigned long size, pgprot_t *vma_prot)
-> > >  {
-> > >  	enum page_cache_mode pcm = _PAGE_CACHE_MODE_WB;
-> > >  
-> > > +	if (!pat_enabled())
-> > > +		return 1;
-> > > +
-> > 
-> > Shouldn't this test for pat_enabled() (perhaps only if 
-> > CONFIG_STRICT_DEVMEM is set) and continue with the rest of the function 
-> > otherwise?
-> 
-> No because, per above, the check is here to short-circuit the rest of
-> phys_mem_access_prot_allowed() when PAT is disabled.
-> 
-> I will add some notes to the changelog to save the next person from
-> needing to find the history here.
-> 
-> I found it interesting that Venki suggested that the duplicated
-> "range_is_allowed()" be cleaned up back in 2008 [4], so this is a
-> cleanup 17 years (almost to the day) in the making:
-> 
-> Commit 0124cecfc85a ("x86, PAT: disable /dev/mem mmap RAM with PAT") [4]
+Changes from v6:
+https://lore.kernel.org/all/20250404074623.1179-1-rakie.kim@sk.com/
+- Removed redundant error handling in MEM_OFFLINE case
 
-Indeed!
+Changes from v5:
+https://lore.kernel.org/all/20250402014906.1086-1-rakie.kim@sk.com/
+- Added lock protection to sensitive sections
+
+Changes from v4:
+https://lore.kernel.org/all/20250401090901.1050-1-rakie.kim@sk.com/
+- Added missing `kobject_del()` when removing a kobject
+- Extended locking coverage to protect shared state
+
+Changes from v3:
+https://lore.kernel.org/all/20250320041749.881-1-rakie.kim@sk.com/
+- Added error handling for allocation and cleanup paths
+- Replaced static node attribute list with flexible array
+- Reorganized four patches into three based on their functional scope
+
+Changes from v2:
+https://lore.kernel.org/all/20250312075628.648-1-rakie.kim@sk.com/
+- Clarified commit messages
+- Refactored to avoid passing the global structure as a parameter
+
+Changes from v1:
+https://lore.kernel.org/all/20250307063534.540-1-rakie.kim@sk.com/
+- Fixed memory leaks related to `kobject` lifecycle
+- Refactored sysfs layout for hotplug readiness
+- Introduced initial memory hotplug support for weighted interleave
+
+### Introduction
+The weighted interleave policy distributes memory allocations across multiple
+NUMA nodes based on their performance weight, thereby optimizing memory
+bandwidth utilization. The weight values are configured through sysfs.
+
+Previously, sysfs entries for weighted interleave were managed statically
+at initialization. This led to several issues:
+- Memory Leaks: Improper `kobject` teardown caused memory leaks
+  when initialization failed or when nodes were removed.
+- Lack of Dynamic Updates: Sysfs attributes were created only during
+  initialization, preventing nodes added at runtime from being recognized.
+- Handling of Unusable Nodes: Sysfs entries were generated for all
+  possible nodes (`N_POSSIBLE`), including memoryless or unavailable nodes,
+  leading to sysfs entries for unusable nodes and potential
+  misconfigurations.
+
+### Patch Overview
+1. [PATCH 1/3] mm/mempolicy: Fix memory leaks in weighted interleave sysfs
+   - Ensures proper cleanup of `kobject` allocations.
+   - Adds `kobject_del()` before `kobject_put()` to clean up sysfs state correctly.
+   - Prevents memory/resource leaks and improves teardown behavior.
+   - Ensures that `sysfs_remove_file()` is not called from the release path
+     after `kobject_del()` has cleared sysfs state, to avoid potential
+     inconsistencies and warnings in the kernfs subsystem.
+
+2. [PATCH 2/3] mm/mempolicy: Prepare weighted interleave sysfs for memory hotplug
+   - Refactors static sysfs layout into a new `sysfs_wi_group` structure.
+   - Makes per-node sysfs attributes accessible to external modules.
+   - Lays groundwork for future hotplug support by enabling runtime modification.
+
+3. [PATCH 3/3] mm/mempolicy: Support memory hotplug in weighted interleave
+   - Dynamically adds/removes sysfs entries when nodes are online/offline.
+   - Limits sysfs creation to nodes with memory, avoiding unusable node entries.
+   - Hooks into memory hotplug notifier for runtime updates.
+
+These patches have been tested under CXL-based memory configurations,
+including hotplug scenarios, to ensure proper behavior and stability.
+
+ mm/mempolicy.c | 240 ++++++++++++++++++++++++++++++-------------------
+ 1 file changed, 148 insertions(+), 92 deletions(-)
 
 
-Thanks,
-Naveen
+base-commit: 8ffd015db85fea3e15a77027fda6c02ced4d2444
+-- 
+2.34.1
+
 
