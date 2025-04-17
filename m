@@ -1,180 +1,99 @@
-Return-Path: <linux-kernel+bounces-609427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 508B4A92211
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 17:56:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4E66A921E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 17:45:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 306AC3BD44C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:56:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29A0F3ACE30
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A536A25484A;
-	Thu, 17 Apr 2025 15:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EiZSKqc1"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29796253B48;
+	Thu, 17 Apr 2025 15:45:41 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F92B254846
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 15:56:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B69182D0;
+	Thu, 17 Apr 2025 15:45:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744905368; cv=none; b=hE4fRg6HMQadsusScVX7KCAPdu76lKPXPG8ORILSUWXLhsC1PCBds0UF4To7zNk6icGB39stWVF6t2V65kySwRgttT8FIZy8f7UIIIKYqI5MhB8AHDfE69kxk8ByOidggTdirLdOcGGGMA27UTsf5lqUQC232eap8dtpyykrmaI=
+	t=1744904740; cv=none; b=bsqtwhHGZcQ1TTP0LCGGZTgsq3Iio7wmdtVeUs8gfn81kDCsIg6FyneVMcc1uXoM1bGUjR1L+bz2j2/VWeZpjMHNBmpePPZezkVqgKqf+JdNu05wDHwxaD1jTs+YXWhGnnu0GBsVrxg639dVTU6cnlYuth/UGO1oWU3xytmpv7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744905368; c=relaxed/simple;
-	bh=XIy1TETct7ceQFwt/R5rYqGgneBGQXVAVFHkIGpP8EQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=F2c/TawFje4E05s2ybMFLeQzHL01Avoi2ym1Lu0TavhxFZDq/99QakPr3d0EawNyXl2G/fQKTqbAriMcmJwq47Ow0GgYJGHUIUcJlz2Ac3wCTrlC2QJQpLckCIVIP297CmvQBB3eYuNyIM6TJbTu5P1CR5Pq8nTMntGkvHIThH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EiZSKqc1; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2241053582dso14870375ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 08:56:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744905366; x=1745510166; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MNo4trKsSrAblzJZ1AtMfvORrQgIvx7kTybovwOHbKI=;
-        b=EiZSKqc12oQgDZp36xpbx5Sk/bcuHWCJBJUGhVN7My7f2i6EeWnllbPBXmKcZvsOzM
-         Ju1gfT0LZBaB8HL89qOXWIh5GA4w65nN8v9u56o+0vcuZhXRzrQYkq0/bIsA/Ppnjit2
-         lyEIdB00OZm701mQvGDqS1r1W+YYBMY6Tt+xnA+1aNI4XMBNv5g/2kO/SJ9MkaZXWUfk
-         Dg2UDlrY4dOLiBGqcjjInVqfmTW7kGuC7GW9pNnRkQHnD2TLjP83ShsyNYwjoFdBqPh1
-         SUKEr/K70gFuxtQaqwQ8FgEEnsGieVTAsQ35W6wEmZY3ekY7FkWNYVk/UmNQLVVW6Bz9
-         6b6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744905366; x=1745510166;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MNo4trKsSrAblzJZ1AtMfvORrQgIvx7kTybovwOHbKI=;
-        b=miT0GxOvK+xH3PmUp4DqMGR5KwnkbUG412HOwywbD4r6bMcZJW+hMbb+HUcmgCJJuh
-         tClDnsg1Oakkn58CV48JJcE8sYCWph0TG1JNtxMESNt//iHeFmVMEzBQY+ZFAdI7rpAN
-         tK/j6p02KZFvAe0GjxArYKMhptc+tnZUienp27EcZP3w5DS1YZhaXipRd8AwFME3dY1j
-         sKz4nZxKWt70IXjb1kovvrpePnEzyBJtri1sYSL+2yaBjksQCWVoj8vV6xZa1nbLUYmd
-         B3oK049rhbYbDDD4u2juFjwy54Je3LoWeIWanuTEqLHCOr7sTi/Ct0HtG5EgSGPUiYWR
-         APHA==
-X-Forwarded-Encrypted: i=1; AJvYcCWdwYMaRRnOhb5Iy6psQwUFfXpfgxtNkPkhFK7WtjT0X2k0RZRmlqwpTSTTU3ojaBIdaGRfY3MhnBPlKTo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1dMMTMY7pIqnko5GKo30+OqWPAEDidsJvMBsF9Q4132ILQVZQ
-	qBPfV8C5z0G9KFglzL9Z4MtGza4mZjzYLNNl0nAZCbsA2PmD/ki7
-X-Gm-Gg: ASbGnctXeaCiVkchiVeczpFYszLO9V2QjMwxHybvR8i/K8H3Ylx5erkRmstFcDa+rnw
-	pDx9uQOmfekUoovcqmwLfbrpQx0TnkSbgVC+4Zupt01c510CX4B2fzNaBmkV3GdQCCxrh7Oir5M
-	FCQjqEngdpSiPI5RSD5dDehvAJN0hK6P1+uC+23dJRFFmXD7v7UhQPnYxPFb529TzmntvIlLyjO
-	vOD7qwnr1ks4kJrCf0Xq+74FWsCb8ZL2OWbeQqWLqzG0QntLIp/2iBx2rlGHbE5fgT1E7TmOA8L
-	6aKHEf66kYX6towRPx/3kLgJi6oSkY6eR2s4qBAVWSx3zJtElfJZfiGkEQ==
-X-Google-Smtp-Source: AGHT+IH6hPLhTkRRuAmzXBkZvtr/mvV00mkfy9wR3j+cWFOfhtUSnXbr8ajdUurTGsVz18KRAbX+mQ==
-X-Received: by 2002:a17:902:d491:b0:216:3c36:69a7 with SMTP id d9443c01a7336-22c359a2687mr85665945ad.45.1744905366545;
-        Thu, 17 Apr 2025 08:56:06 -0700 (PDT)
-Received: from localhost.localdomain ([2601:646:8f03:9fee:5e33:e006:dcd5:852d])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50bdaae7sm1636085ad.36.2025.04.17.08.56.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Apr 2025 08:56:06 -0700 (PDT)
-From: nifan.cxl@gmail.com
-To: muchun.song@linux.dev,
-	willy@infradead.org
-Cc: mcgrof@kernel.org,
-	a.manzanares@samsung.com,
-	dave@stgolabs.net,
-	akpm@linux-foundation.org,
-	david@redhat.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Fan Ni <fan.ni@samsung.com>
-Subject: [PATCH 3/3] mm/hugetlb: Refactor __unmap_hugepage_range() to take folio instead of page
-Date: Thu, 17 Apr 2025 08:43:15 -0700
-Message-ID: <20250417155530.124073-3-nifan.cxl@gmail.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250417155530.124073-1-nifan.cxl@gmail.com>
-References: <20250417155530.124073-1-nifan.cxl@gmail.com>
+	s=arc-20240116; t=1744904740; c=relaxed/simple;
+	bh=dQh+X+m8OEmQKRtOdQmQPjj5mBNJKtXEfgJHzuVkwSg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A0cYP1Ke/3BqYaxQJSIM7haL2lB07Vf7gbXJ1UzRUKzVqbV5PHMWcguAq9fm3dSSQ4xNQhZm0x/HFQzCe3UxlsvVkiKfH0rGIC7Ib5B3GWpvbOOzdiTJR7gCVFE4RCaMGvMFwXhsobPAvZ1g0JoiSFcDXv5ZiZo4tf7f4kbEXLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1u5RNv-000000001vT-3TbA;
+	Thu, 17 Apr 2025 15:45:17 +0000
+Date: Thu, 17 Apr 2025 16:45:14 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH net v2 4/5] net: ethernet: mtk_eth_soc: net: revise
+ NETSYSv3 hardware configuration
+Message-ID: <aAEiCjdJdsqH6EAU@makrotopia.org>
+References: <8ab7381447e6cdcb317d5b5a6ddd90a1734efcb0.1744764277.git.daniel@makrotopia.org>
+ <28929b5bb2bfd45e040a07c0efefb29e57a77513.1744764277.git.daniel@makrotopia.org>
+ <20250417081055.1bda2ff6@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250417081055.1bda2ff6@kernel.org>
 
-From: Fan Ni <fan.ni@samsung.com>
+On Thu, Apr 17, 2025 at 08:10:55AM -0700, Jakub Kicinski wrote:
+> On Wed, 16 Apr 2025 01:51:42 +0100 Daniel Golle wrote:
+> > +		/* PSE should not drop port8, port9 and port13 packets from WDMA Tx */
+> > +		mtk_w32(eth, 0x00002300, PSE_DROP_CFG);
+> > +
+> > +		/* PSE should drop packets to port8, port9 and port13 on WDMA Rx ring full */
+> 
+> nit: please try to wrap at 80 chars. There's really no need to go over
+> on comments. Some of us stick to 80 char terminals. 
 
-The function __unmap_hugepage_range() has two kinds of users:
-1) unmap_hugepage_range(), which passes in the head page of a folio.
-   Since unmap_hugepage_range() already takes folio and there are no other
-   uses of the folio struct in the function, it is natural for
-   __unmap_hugepage_range() to take folio also.
-2) All other uses, which pass in NULL pointer.
+Too late now to send another revision...
 
-In both cases, we can pass in folio. Refactor __unmap_hugepage_range() to
-take folio.
+> > [...]
+> > diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.h b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
+> > index 39709649ea8d1..eaa96c8483b70 100644
+> > --- a/drivers/net/ethernet/mediatek/mtk_eth_soc.h
+> > +++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
+> > @@ -151,7 +151,12 @@
+> >  #define PSE_FQFC_CFG1		0x100
+> >  #define PSE_FQFC_CFG2		0x104
+> >  #define PSE_DROP_CFG		0x108
+> > -#define PSE_PPE0_DROP		0x110
+> > +#define PSE_PPE_DROP(x)		(0x110 + ((x) * 0x4))
+> > +
+> > +/* PSE Last FreeQ Page Request Control */
+> > +#define PSE_DUMY_REQ		0x10C
+> 
+> This really looks like misspelling of DUMMY, is it really supposed 
+> to have one 'M' ?
 
-Signed-off-by: Fan Ni <fan.ni@samsung.com>
----
-
-Question: If the change in the patch makes sense, should we try to convert all
-"page" uses in __unmap_hugepage_range() to folio?
-
----
- include/linux/hugetlb.h |  2 +-
- mm/hugetlb.c            | 10 +++++-----
- 2 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-index b7699f35c87f..d6c503dd2f7d 100644
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -133,7 +133,7 @@ void unmap_hugepage_range(struct vm_area_struct *,
- void __unmap_hugepage_range(struct mmu_gather *tlb,
- 			  struct vm_area_struct *vma,
- 			  unsigned long start, unsigned long end,
--			  struct page *ref_page, zap_flags_t zap_flags);
-+			  struct folio *ref_folio, zap_flags_t zap_flags);
- void hugetlb_report_meminfo(struct seq_file *);
- int hugetlb_report_node_meminfo(char *buf, int len, int nid);
- void hugetlb_show_meminfo_node(int nid);
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 3181dbe0c4bb..7d280ab23784 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -5833,7 +5833,7 @@ int move_hugetlb_page_tables(struct vm_area_struct *vma,
- 
- void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 			    unsigned long start, unsigned long end,
--			    struct page *ref_page, zap_flags_t zap_flags)
-+			    struct folio *ref_folio, zap_flags_t zap_flags)
- {
- 	struct mm_struct *mm = vma->vm_mm;
- 	unsigned long address;
-@@ -5910,8 +5910,8 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 		 * page is being unmapped, not a range. Ensure the page we
- 		 * are about to unmap is the actual page of interest.
- 		 */
--		if (ref_page) {
--			if (page != ref_page) {
-+		if (ref_folio) {
-+			if (page != folio_page(ref_folio, 0)) {
- 				spin_unlock(ptl);
- 				continue;
- 			}
-@@ -5977,7 +5977,7 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 		/*
- 		 * Bail out after unmapping reference page if supplied
- 		 */
--		if (ref_page)
-+		if (ref_folio)
- 			break;
- 	}
- 	tlb_end_vma(tlb, vma);
-@@ -6052,7 +6052,7 @@ void unmap_hugepage_range(struct vm_area_struct *vma, unsigned long start,
- 	tlb_gather_mmu(&tlb, vma->vm_mm);
- 
- 	__unmap_hugepage_range(&tlb, vma, start, end,
--			       folio_page(ref_folio, 0), zap_flags);
-+			       ref_folio, zap_flags);
- 
- 	mmu_notifier_invalidate_range_end(&range);
- 	tlb_finish_mmu(&tlb);
--- 
-2.47.2
-
+I also thought that when I first saw that and have told MediaTek engineers
+about it, they told me that the register is called like that also in their
+datasheet and hence they want the name to be consistent in the driver.
 
