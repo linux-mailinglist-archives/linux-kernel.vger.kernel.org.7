@@ -1,133 +1,88 @@
-Return-Path: <linux-kernel+bounces-608430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6565DA9135D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:55:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A8BBA91231
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 06:21:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8156F441197
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 05:55:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36A1D5A22D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 04:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EDCE1E5B79;
-	Thu, 17 Apr 2025 05:54:57 +0000 (UTC)
-Received: from mx2.usergate.com (unknown [46.229.79.2])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D9EB1C3F30;
+	Thu, 17 Apr 2025 04:21:05 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4421DE4FC;
-	Thu, 17 Apr 2025 05:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.229.79.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA69185935
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 04:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744869297; cv=none; b=fxc7sPdUJrD3dqZSCB3TAqecPt+BfhqXEtiNw/FdbOjxfuBVrOKnri/7dOaYZpct8QZzJwnWTBnrJ0pO7F7J1amGzV5eGfWLNGSTp7XTBNEsf5URB76/idcko9ehr4izidUzTpXhl06zDl/ygfMWTqZXIfb+G18vr25GnIW5SD4=
+	t=1744863664; cv=none; b=VhoKlupgM3gAyUMkrVgNOq1IIic767tkFc/ojLoSQugY45OZA9FUXUqP6mO0ThN3kqB0K56oK6t/yG3xjgb97Xrnm3X2MlHHOmUFaz8Vra/yxE/6zfBiIdWhuMPxn/V27ZdR/j49SuMW6OOw4Yg9Fk6Kl4g7SXasyowV6rfSNc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744869297; c=relaxed/simple;
-	bh=Od0yWLlZbKBUa36Zzz8mWeVChx1sO/abmn2CfT7dci0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b2lCNyleSlEduZCGlRuz25utRghwGbMn57S0uBF6TQh1EfsUjE7FJl0epmpgTq+QmAIVnI9w4YWXJsB5wln8i8Q5AtyurIp+MWRQy1+Zx07R8yMBqqHfC7KeBqX2nrRwjKrz2TrlZ3yRJOX20Bwl8Kcx66LgMxe+yDJT0r8Jp8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=usergate.com; spf=pass smtp.mailfrom=usergate.com; arc=none smtp.client-ip=46.229.79.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=usergate.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=usergate.com
-Received: from mail.usergate.com[192.168.90.36] by mx2.usergate.com with ESMTP id
-	 B4D8733438D542E28A1FEB29109F5909; Thu, 17 Apr 2025 11:20:39 +0700
-From: Boris Belyavtsev <bbelyavtsev@usergate.com>
-To: <hare@suse.org>
-CC: <linux-scsi@vger.kernel.org>,<linux-kernel@vger.kernel.org>,"Boris
- Belyavtsev" <bbelyavtsev@usergate.com>
-Subject: [PATCH 3/3] scsi: aic79xx: check for non-NULL scb in
-	 ahd_linux_queue_abort_cmd
-Date: Thu, 17 Apr 2025 11:20:15 +0700
-Message-ID: <20250417042015.780823-4-bbelyavtsev@usergate.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250417042015.780823-1-bbelyavtsev@usergate.com>
-References: <20250417042015.780823-1-bbelyavtsev@usergate.com>
+	s=arc-20240116; t=1744863664; c=relaxed/simple;
+	bh=zKgmMw5M/FIyzqJDaMLdICR0MGyRBeVckPPHOAqsZ9k=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=aSKXhxyFpwGhustrGgxr0GLBo0NOwFxWM81sdXz9/tAHMUoAzvniqk71EEKWGR7oqzxfycq9PbYzjnA16eFtlUPtXQ373UvUS9y4dx271RYwg5FshZjCNniqVElqZ17lGlkDMaAcJ9n8iWcoqQ73ie6C6iO2hda5RxptHh8rXNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3d44ba1c2b5so4023975ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 21:21:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744863662; x=1745468462;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hOx1qW2VGmO6PLzv4gQpE58CYHIAJJUvQB+BBQ0do9A=;
+        b=ZJcrKOTpL09BTxDGQE70rJ7EGLygsIlACN6lgZVz6J/76yvPPrMPABaFkfgExtupB0
+         +uKhb5noOA90u64BgWWyREXF+gJHPtwdmixQilZss5ki3nZFK/s/u0Ud+K5yA2oiJc9T
+         8IeMk2IKIhWSJufWoAlhDcu1gniaxz66iVggo297NnXPwuJKxos7ToSKAJ+G1TqalgRz
+         0zamMCMNASzSErZ1BxvnIAqDUC6FmXGIU9Wq8Q3pS1CJARGKPyM9Kk+UMoOGUp+YV0R3
+         8/3Nhz2dN071QUIo5idcPPoP0T6oxCOpJ9qgK4kRpeVviMeP+2yqveIlc9dsntrHhvf4
+         /Ehw==
+X-Forwarded-Encrypted: i=1; AJvYcCVibTR6lHUUAa6JwoCSSrk1Uk11c3f1vHb7vdP63HDz9enLfmKZPRuwxlOqqtzsaFB23uYpUuhHZNATwD4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzs6R2ePl0ii+WRJ3i1bWiF2eXFm6oTb+YVDfbt5Uc+E4ZelL3w
+	5edOEu80/zs4qrIyLS5Af2bM/vv1ihICteV/9lxNKaISnmULuuMlX0StJ/XsSQ8/OkLza7rNpat
+	LwjPpyAJwwOqqvNkPLh/nHHEet5wXrZ6yunUH2TJZFr5SjBf5WoKvt5Y=
+X-Google-Smtp-Source: AGHT+IGnd8eV5ayGQsYUuq2AcTRA0V2EyqoKcS0OYFHWZRk0N6XqhX6HoydKe18pTV9cA0YxKoZmD1Nx8M+d63v9Z2WAjT2eBGFI
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset="utf-8"
-X-ClientProxiedBy: ESLSRV-EXCH-01.esafeline.com (192.168.90.36) To
- nsk02-mbx01.esafeline.com (10.10.1.35)
-X-Message-Id: CD07E1B6428D475B95C80F94AC46F7AF
-X-MailFileId: 3A8A392F50A64BE0AC8477CCC4284E4D
+X-Received: by 2002:a05:6e02:470b:b0:3d8:1d7c:e190 with SMTP id
+ e9e14a558f8ab-3d81d7ce2aemr2651065ab.7.1744863662422; Wed, 16 Apr 2025
+ 21:21:02 -0700 (PDT)
+Date: Wed, 16 Apr 2025 21:21:02 -0700
+In-Reply-To: <89d94f84-8e88-4860-aaf7-102a51c11537@suse.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <680081ae.050a0220.d9ef5.0003.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] possible deadlock in ocfs2_finish_quota_recovery
+From: syzbot <syzbot+f59a1ae7b7227c859b8f@syzkaller.appspotmail.com>
+To: heming.zhao@suse.com, jack@suse.cz, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, m.masimov@mt-integration.ru, 
+	ocfs2-devel@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-possible NULL pointer dereference in case hardware returns invalid scb
-index
+Hello,
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+unregister_netdevice: waiting for DEV to become free
 
-Signed-off-by: Boris Belyavtsev <bbelyavtsev@usergate.com>
----
- drivers/scsi/aic7xxx/aic79xx_osm.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+unregister_netdevice: waiting for batadv0 to become free. Usage count = 3
 
-diff --git a/drivers/scsi/aic7xxx/aic79xx_osm.c b/drivers/scsi/aic7xxx/aic7=
-9xx_osm.c
-index 17dfc3c72110..7d40c7d80411 100644
---- a/drivers/scsi/aic7xxx/aic79xx_osm.c
-+++ b/drivers/scsi/aic7xxx/aic79xx_osm.c
-@@ -2265,7 +2265,8 @@ ahd_linux_queue_abort_cmd(struct scsi_cmnd *cmd)
-                 * and hope that the target responds.
-                 */
-                pending_scb =3D ahd_lookup_scb(ahd, active_scbptr);
--               pending_scb->flags |=3D SCB_RECOVERY_SCB|SCB_ABORT;
-+               if (pending_scb =3D=3D NULL)
-+                       pending_scb->flags |=3D SCB_RECOVERY_SCB|SCB_ABORT;
-                ahd_outb(ahd, MSG_OUT, HOST_MSG);
-                ahd_outb(ahd, SCSISIGO, last_phase|ATNO);
-                scmd_printk(KERN_INFO, cmd, "Device is active, asserting AT=
-N\n");
---
-2.43.0
 
-=D0=9D=D0=B0=D1=81=D1=82=D0=BE=D1=8F=D1=89=D0=B5=D0=B5 =D1=8D=D0=BB=D0=B5=
-=D0=BA=D1=82=D1=80=D0=BE=D0=BD=D0=BD=D0=BE=D0=B5 =D1=81=D0=BE=D0=BE=D0=B1=
-=D1=89=D0=B5=D0=BD=D0=B8=D0=B5 =D1=81=D0=BE=D0=B4=D0=B5=D1=80=D0=B6=D0=B8=
-=D1=82 =D0=B8=D0=BD=D1=84=D0=BE=D1=80=D0=BC=D0=B0=D1=86=D0=B8=D1=8E =D0=BA=
-=D0=BE=D0=BD=D1=84=D0=B8=D0=B4=D0=B5=D0=BD=D1=86=D0=B8=D0=B0=D0=BB=D1=8C=D0=
-=BD=D0=BE=D0=B3=D0=BE =D1=85=D0=B0=D1=80=D0=B0=D0=BA=D1=82=D0=B5=D1=80=D0=
-=B0, =D0=B0 =D1=82=D0=B0=D0=BA=D0=B6=D0=B5 =D0=BC=D0=BE=D0=B6=D0=B5=D1=82 =
-=D1=81=D0=BE=D0=B4=D0=B5=D1=80=D0=B6=D0=B0=D1=82=D1=8C =D0=BA=D0=BE=D0=BC=
-=D0=BC=D0=B5=D1=80=D1=87=D0=B5=D1=81=D0=BA=D1=83=D1=8E =D1=82=D0=B0=D0=B9=
-=D0=BD=D1=83 =D0=9E=D0=9E=D0=9E =C2=AB=D0=AE=D0=B7=D0=B5=D1=80=D0=B3=D0=B5=
-=D0=B9=D1=82=C2=BB =D0=98=D0=9D=D0=9D 5408308256 (UserGate). =D0=9D=D0=B5=
-=D0=BF=D1=80=D0=B0=D0=B2=D0=BE=D0=BC=D0=B5=D1=80=D0=BD=D0=BE=D0=B5 =D0=B8=
-=D1=81=D0=BF=D0=BE=D0=BB=D1=8C=D0=B7=D0=BE=D0=B2=D0=B0=D0=BD=D0=B8=D0=B5 / =
-=D1=80=D0=B0=D1=81=D0=BA=D1=80=D1=8B=D1=82=D0=B8=D0=B5 =D1=82=D0=B0=D0=BA=
-=D0=BE=D0=B2=D0=BE=D0=B9 =D0=B8=D0=BD=D1=84=D0=BE=D1=80=D0=BC=D0=B0=D1=86=
-=D0=B8=D0=B8 =D0=B7=D0=B0=D0=BF=D1=80=D0=B5=D1=89=D0=B5=D0=BD=D0=BE. =D0=95=
-=D1=81=D0=BB=D0=B8 =D0=B2=D1=8B =D0=BF=D0=BE=D0=BB=D1=83=D1=87=D0=B8=D0=BB=
-=D0=B8 =D0=BD=D0=B0=D1=81=D1=82=D0=BE=D1=8F=D1=89=D0=B5=D0=B5 =D1=81=D0=BE=
-=D0=BE=D0=B1=D1=89=D0=B5=D0=BD=D0=B8=D0=B5 =D0=BF=D0=BE =D0=BE=D1=88=D0=B8=
-=D0=B1=D0=BA=D0=B5, =D0=BF=D0=BE=D0=B6=D0=B0=D0=BB=D1=83=D0=B9=D1=81=D1=82=
-=D0=B0, =D1=81=D0=B2=D1=8F=D0=B6=D0=B8=D1=82=D0=B5=D1=81=D1=8C =D1=81 =D0=
-=BE=D1=82=D0=BF=D1=80=D0=B0=D0=B2=D0=B8=D1=82=D0=B5=D0=BB=D0=B5=D0=BC =D0=
-=B8 =D1=83=D0=B4=D0=B0=D0=BB=D0=B8=D1=82=D0=B5 =D0=B2=D1=81=D0=B5 =D0=BA=D0=
-=BE=D0=BF=D0=B8=D0=B8 =D1=81=D0=BE=D0=BE=D0=B1=D1=89=D0=B5=D0=BD=D0=B8=D1=
-=8F. =D0=9D=D0=B0=D1=81=D1=82=D0=BE=D1=8F=D1=89=D0=B5=D0=B5 =D1=81=D0=BE=D0=
-=BE=D0=B1=D1=89=D0=B5=D0=BD=D0=B8=D0=B5 =D0=BD=D0=B5 =D1=8F=D0=B2=D0=BB=D1=
-=8F=D0=B5=D1=82=D1=81=D1=8F =D0=BE=D1=84=D0=B5=D1=80=D1=82=D0=BE=D0=B9. =D0=
-=A1=D0=B2=D0=B5=D0=B4=D0=B5=D0=BD=D0=B8=D1=8F =D0=BE =D0=BF=D0=BB=D0=B0=D0=
-=BD=D0=B8=D1=80=D1=83=D0=B5=D0=BC=D1=8B=D1=85 =D0=BA =D1=80=D0=B0=D0=B7=D1=
-=80=D0=B0=D0=B1=D0=BE=D1=82=D0=BA=D0=B5 =D1=82=D0=B5=D1=85=D0=BD=D0=BE=D0=
-=BB=D0=BE=D0=B3=D0=B8=D1=87=D0=B5=D1=81=D0=BA=D0=B8=D1=85 =D1=80=D0=B5=D1=
-=88=D0=B5=D0=BD=D0=B8=D1=8F=D1=85, =D1=86=D0=B5=D0=BD=D0=BE=D0=B2=D0=BE=D0=
-=B9 =D0=BF=D0=BE=D0=BB=D0=B8=D1=82=D0=B8=D0=BA=D0=B5, =D0=B8=D0=BD=D1=8B=D0=
-=B5 =D1=81=D0=BE=D0=B4=D0=B5=D1=80=D0=B6=D0=B0=D1=89=D0=B8=D0=B5=D1=81=D1=
-=8F =D0=B2 =D1=81=D0=BE=D0=BE=D0=B1=D1=89=D0=B5=D0=BD=D0=B8=D0=B8 =D1=81=D0=
-=B2=D0=B5=D0=B4=D0=B5=D0=BD=D0=B8=D1=8F =D0=B8=D0=BC=D0=B5=D1=8E=D1=82 =D0=
-=B8=D1=81=D0=BA=D0=BB=D1=8E=D1=87=D0=B8=D1=82=D0=B5=D0=BB=D1=8C=D0=BD=D0=BE=
- =D0=B8=D0=BD=D1=84=D0=BE=D1=80=D0=BC=D0=B0=D1=86=D0=B8=D0=BE=D0=BD=D0=BD=
-=D1=8B=D1=85 =D1=85=D0=B0=D1=80=D0=B0=D0=BA=D1=82=D0=B5=D1=80 =D0=B8 =D0=BD=
-=D0=B5 =D0=B4=D0=BE=D0=BB=D0=B6=D0=BD=D1=8B =D0=B1=D1=8B=D1=82=D1=8C =D1=80=
-=D0=B0=D1=81=D1=86=D0=B5=D0=BD=D0=B5=D0=BD=D1=8B =D0=B2 =D0=BA=D0=B0=D1=87=
-=D0=B5=D1=81=D1=82=D0=B2=D0=B5 =D0=BE=D1=81=D0=BD=D0=BE=D0=B2=D0=B0=D0=BD=
-=D0=B8=D1=8F =D0=B4=D0=BB=D1=8F =D0=B2=D0=BE=D0=B7=D0=BD=D0=B8=D0=BA=D0=BD=
-=D0=BE=D0=B2=D0=B5=D0=BD=D0=B8=D1=8F =D0=BE=D0=B1=D1=8F=D0=B7=D0=B0=D1=82=
-=D0=B5=D0=BB=D1=8C=D1=81=D1=82=D0=B2 =D0=BB=D1=8E=D0=B1=D0=BE=D0=B3=D0=BE =
-=D1=81=D0=B2=D0=BE=D0=B9=D1=81=D1=82=D0=B2=D0=B0.
+Tested on:
+
+commit:         11376431 ocfs2: Stop quota recovery before disabling q..
+git tree:       https://github.com/zhaohem/linux jans_ocfs2
+console output: https://syzkaller.appspot.com/x/log.txt?x=14183a3f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5348e7fd1b89a770
+dashboard link: https://syzkaller.appspot.com/bug?extid=f59a1ae7b7227c859b8f
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Note: no patches were applied.
 
