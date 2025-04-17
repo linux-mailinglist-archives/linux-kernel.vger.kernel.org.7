@@ -1,289 +1,117 @@
-Return-Path: <linux-kernel+bounces-609834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C65D8A92C3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 22:22:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1DD9A92C41
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 22:26:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 461BD7B0F97
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 20:20:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57FE21892D65
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 20:26:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D0DF20C023;
-	Thu, 17 Apr 2025 20:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9FE205AAB;
+	Thu, 17 Apr 2025 20:26:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xW6S3/5w"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uXHIUhir"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19FD020C00E
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 20:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF96F1C6B4
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 20:26:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744921289; cv=none; b=dR9U0haQ3UO7tmMvQcNzTw6oDDhwJ7XOGVSPqH1iXQ+fnudep8H9AxB3dKr8qEiEuqKqoAHljAXth8Kgaa14xucVkSbYWH3vi1gf75ACzJGH/9Sl5oV0g9k5vS5w8GXBT+2yny4MdL4Bp+27M8OXrO8m7R3nHl1pu+67dQyVdqk=
+	t=1744921581; cv=none; b=qbRnzqgoKKznzUqPKgZHihdMqqQS+Da55PPEBIyJ5gxiYQHmUkSyKnBWsd5A6LBqNFn7kzPKIb2UxgneGQu6HqEk75GxG4iiHmgy6HWrIIZimhDbm3GG1+Osqvw4/Maft58nhz77ZUk82fiWffq4v8qOqSFqOk3aQIhpHYHuNQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744921289; c=relaxed/simple;
-	bh=66tsWBjNz+zh8eLqwu33nyvpM7vLKA/wolnUy6WBQfY=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=O5iAyzb1/jwIz8Kz5wwtXiNto7JRb4V4+mBtn/UDUE6llsDwp9ys1t/2ir66bbFN5ITVV9PbnlSvTdH1eK0lFvKPTc0VuZ4fdPtORaS5JNOVUNwaLzGa2aaxE1nrg6mFx/jZXXEHQ/5XHuymOdMvYsugXOKiLDhwu+CcJ514Vps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xW6S3/5w; arc=none smtp.client-ip=209.85.128.74
+	s=arc-20240116; t=1744921581; c=relaxed/simple;
+	bh=J9BR1fk4Lu9EfXNC1K+ho4OcbepgW+mVZht6+kGIrq4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oy64RBSZ/dchR8pjlmQQ5drXYy4XPuTlq4GtAPhoeUMtGkUgVW2PJ0pKoryu28XZUFqEERr1CBb/Vzz/Mkorbq5TEgyZhhc6AV6wftXOvjuXARp/BZHDQ+ttxHjrWwzwu1yA7pyUYCecAci1eEp9UGlogU7KrZoyqeCWjM4Faek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uXHIUhir; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43eea5a5d80so6130805e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 13:21:25 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-39ee5ac4321so1094219f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 13:26:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744921284; x=1745526084; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Ycmcvdno8cbwQvOBXiBeKxD5ah0Oq2an+ma35xNxgcw=;
-        b=xW6S3/5wvTFUSRKGTujNkRVmz+9m1DSX4KN/HxumituPkzDUcwNwHP/kgPeDKXMV34
-         0ldSin48QaDMMzLy0FkZfAwOqYo7cC9m23x3fKH4PwieE1a8WHXma5Eik7uhQHBbGvN6
-         v9aANn46WJMf/FgQwwBAjhdcfC8ex96EE26i0JdCC/1ytYJyksoz6UEK7J4QiXa7k2B4
-         TkodXMyHJrInVzebvidyIjEtCkgMD+tQiTMG830Bf3anFgOiz0CSaO7KSHBHk3H4OMgz
-         k771io1Qk0sayMsAYaZ0yqKRrotjIoTZDLJSjYvYpErQ8KDXWQKWo5wPRbQzHhOj2YDd
-         Ckrw==
+        d=google.com; s=20230601; t=1744921578; x=1745526378; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J9BR1fk4Lu9EfXNC1K+ho4OcbepgW+mVZht6+kGIrq4=;
+        b=uXHIUhirlKnW9uPK2FfcmgbbHVXo03E7nYXrhuEiQq7Kz8mcvZ1QqIjqAvUOH++bji
+         cQs/2afYDNg0uNU0xkt0HtZ9oyNeMhqA98kQmTuTVLbLUMk7sx8tM9NeJeVgzMaHgOk3
+         b2oXHgboYklLZVYY1vppAtNrUm0+QJP0c6lyjUCMbe5iXbxRbqSw0yIKwBpZyWEEB67c
+         jeZMIw+ubjUTv+kYWwIdPz7AHkzUCw61+i8cingsI+RHa7/5PoCLyGefJwrlfy5+vUkT
+         hohuheKga0Lr93e9ibyPavLL/2pZ9EBTFFDhREAG4mBnUc8v84W6L/oTswY6AMKBCYQY
+         FFIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744921284; x=1745526084;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ycmcvdno8cbwQvOBXiBeKxD5ah0Oq2an+ma35xNxgcw=;
-        b=GrXVe06tLvg1w49KvB16hKdUfVyQ1LbGArnVzHUbjFaicSDnyA1hY6dv6P5DkoSwbS
-         PJRopDmf9N4DT1xNXbHxIgljwi/UUJusePCr95/r1hsuSoobsi5X0ymn4Fs9Pf/w8SQb
-         TEPme68fwm2P4z5mWs5sDq5unPiaQJr+xa6dgd/7XpLPmgauaYRtP+Xh0IRQYFTjWYt2
-         O1i3LJqAT1yCqnq/8FBUEzSuW5idRliHqhbP1jVykPL0pD64EIUfdR5Vu+lah5lWfYI3
-         5sWXXYQjpf9+VdLjZ0OK0b1C4DTRXGCvFxAObr6QLB+IFQk2Gq5uVSw+piSHGvlDCHPc
-         +T0w==
-X-Forwarded-Encrypted: i=1; AJvYcCX/BBeXGCIdK2CbWjq7uQgTTg8s6Im+fOmtqhIWKbrQmGb2uiZNFClZy2Gj/At3t1YI5QVh3+QckpSLCbM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcrW2ikqWlj4aBe3/Eha1eWHiatpqCceeyuK960k7RugFjMOFM
-	NAxsUx+4jav9oa4CtJdwhz24oKEWuBZ2O5m1WkNcYq2oACDV7ecQsTjQFnhDTdQoaQKRBw==
-X-Google-Smtp-Source: AGHT+IG8+unzD76nH5G9KkFEMP2nIMDfAJ/43N26yu/0Q7N5fHf28RA+aXrlAyEOBcXUjtUkdzlCqOsp
-X-Received: from wmbfl16.prod.google.com ([2002:a05:600c:b90:b0:43b:c336:7b29])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:34cb:b0:43c:fabf:9146
- with SMTP id 5b1f17b1804b1-4406abb3a80mr2721585e9.17.1744921284535; Thu, 17
- Apr 2025 13:21:24 -0700 (PDT)
-Date: Thu, 17 Apr 2025 22:21:21 +0200
+        d=1e100.net; s=20230601; t=1744921578; x=1745526378;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=J9BR1fk4Lu9EfXNC1K+ho4OcbepgW+mVZht6+kGIrq4=;
+        b=jVxSzFuavyvW56fCqoDcDOFUz6lGVoGFW0zllP/R7w1p+9z4E1qAtzIKujZ0GOi/VA
+         j4W7atEfjActxERVXSLKN1E/NsZJLzzD+Qys3410aVbvbC0Ef1RBenBqdLev77buwnbB
+         lFny4Vt3PmFP670XYt86HVUZJcaHombm8NBzcqXL47P4jlWexvgkb+dfQjK7Ihlue8ix
+         8FM9/5HmFY2/nRx2vhE4qoBu9kx5icoQL1+40QcRz6xYQOHEJWLHKUlEXl9L7rAvkWVu
+         UUHVmxzhTM+l/HphsxEpMM7Pgo/ECWOjMxP3yGT3QWchooWgrUgn5qO5IMHGbt5waxBI
+         zrSg==
+X-Forwarded-Encrypted: i=1; AJvYcCVRlOiPBwlCFASiqfh4650Ylqs82y7BIVCv4vH5Ux8Xj8GquiMCazKZ2QO4TN9osn5pE6GNC2vGlkFEJqQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwczABnrSPamtE0wy+VxYiCBw6Fl9+PUEs3WK2L15n0U8geX9LO
+	JJREH1n0cmKhXEUwOrl9ZaZAxEXMIo4p1I86dGYFlhyldRwNi5fiz54Z9rwE1bzODBnVKR6jN4p
+	zM3Ex+BK5RKgizpn9tlxdWfpvFz2gCsbOmcqa
+X-Gm-Gg: ASbGncs0Y3WQm25QDoqKLTQopbKGZYb0KEMCR1+n/VzpdYP/tdkvQNhR0p0TSr9CNvU
+	O3iDDsD4S0QEdcDF0tf0hcbDmv9cjYGbTphW6KIA00/jiaZp9UzIKLiJUKZVf0HNExgnbhCTjbl
+	VqlHvz0+f5FYcLUK95udvKFXleH/4OBWuqzA==
+X-Google-Smtp-Source: AGHT+IEgbVUFGlu0tTYWSq2oOplLEYj/UF+LzYxMvihYNkYK3OXsIfhVMkkX8xl+OBW1JVcPLtcbLOqeqQ7WLI7Wqcs=
+X-Received: by 2002:a5d:648d:0:b0:39c:141b:904a with SMTP id
+ ffacd0b85a97d-39efba2ca27mr255141f8f.11.1744921577906; Thu, 17 Apr 2025
+ 13:26:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6395; i=ardb@kernel.org;
- h=from:subject; bh=o9bsI1ur2w/CAIs/5tUfsltgM6OvITQ4xcKeWO0v2Ss=;
- b=owGbwMvMwCFmkMcZplerG8N4Wi2JIYMx6aDz8cZMw97K3cVbrRuf5sZvMmvv+RDPHXgzLNqq6
- nrjFI2OUhYGMQ4GWTFFFoHZf9/tPD1RqtZ5lizMHFYmkCEMXJwCMJHP5owMv2snMxSvCm/4s5Rp
- w4/0Ex+Dlz4VfLVti9nRre/2LNLtP8LIcMx50XSO3jSFHMuI2MUi38oev/mQcc3zKKfr1d8KJ+b l8AEA
-X-Mailer: git-send-email 2.49.0.805.g082f7c87e0-goog
-Message-ID: <20250417202120.1002102-2-ardb+git@google.com>
-Subject: [PATCH v4] x86/boot/sev: Avoid shared GHCB page for early memory acceptance
-From: Ard Biesheuvel <ardb+git@google.com>
-To: linux-efi@vger.kernel.org
-Cc: x86@kernel.org, mingo@kernel.org, linux-kernel@vger.kernel.org, 
-	Ard Biesheuvel <ardb@kernel.org>, Tom Lendacky <thomas.lendacky@amd.com>, 
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Borislav Petkov <bp@alien8.de>, 
-	Dionna Amalie Glaze <dionnaglaze@google.com>, Kevin Loughlin <kevinloughlin@google.com>, 
-	stable@vger.kernel.org
+MIME-Version: 1.0
+References: <20250411-create-workqueue-v1-1-f7dbe7f1e05f@google.com>
+ <Z_1QzTdV8mHJYdQ6@cassiopeiae> <Z_4gb8ZAlbfhobgW@google.com>
+ <Z_45kDv_wAHIBNpI@cassiopeiae> <Z_-f7Bgjw35iXkui@google.com>
+ <CAH5fLgiKxDpWg=dDsTJsrB6Kmkw32GZ9WPO-SrpWm4TZDxGVtg@mail.gmail.com>
+ <aAALmSjLyWqrcQ45@slm.duckdns.org> <59c1e09a5c47a60e26c5fb10c3305356328a98a6.camel@mailbox.org>
+ <aACtqnC7okO7eZEg@slm.duckdns.org>
+In-Reply-To: <aACtqnC7okO7eZEg@slm.duckdns.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Thu, 17 Apr 2025 22:26:04 +0200
+X-Gm-Features: ATxdqUHB_J0T6QISOWtmxns5Ap3H-yx5PgjJvKRY1cMssCc41H0DFFgA7pnX8Rg
+Message-ID: <CAH5fLgg3RrsWy-ArWb9502st3O=DsmPsBsXoZ5M_nS7oWggJuA@mail.gmail.com>
+Subject: Re: [PATCH] workqueue: rust: add creation of workqueues
+To: Tejun Heo <tj@kernel.org>
+Cc: phasta@kernel.org, Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Lai Jiangshan <jiangshanlai@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Daniel Almeida <daniel.almeida@collabora.com>, 
+	Tamir Duberstein <tamird@gmail.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Ard Biesheuvel <ardb@kernel.org>
+On Thu, Apr 17, 2025 at 9:28=E2=80=AFAM Tejun Heo <tj@kernel.org> wrote:
+>
+> On Thu, Apr 17, 2025 at 09:22:40AM +0200, Philipp Stanner wrote:
+> > I assume you, ultimately, mean that the list of delayed_work's would be
+> > accessible through workqueue_struct, correct?
+> >
+> > And then destroy_workqueue() could loop over all of them with
+> > cancel_delayed_work_sync()?
+>
+> Yeap, I was thinking flush_delayed_work() but maybe
+> cancel_delayed_work_sync() is better.
 
-Communicating with the hypervisor using the shared GHCB page requires
-clearing the C bit in the mapping of that page. When executing in the
-context of the EFI boot services, the page tables are owned by the
-firmware, and this manipulation is not possible.
+But doesn't that have a cleanup problem? If the work item owns an
+allocation or a refcount that's cleared by the work item's run
+function, then using cancel_delayed_work_sync() will fail to clean
+that up. Whereas flush_delayed_work() avoids this problem.
 
-So switch to a different API for accepting memory in SEV-SNP guests, one
-which is actually supported at the point during boot where the EFI stub
-may need to accept memory, but the SEV-SNP init code has not executed
-yet.
-
-For simplicity, also switch the memory acceptance carried out by the
-decompressor when not booting via EFI - this only involves the
-allocation for the decompressed kernel, and is generally only called
-after kexec, as normal boot will jump straight into the kernel from the
-EFI stub.
-
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dionna Amalie Glaze <dionnaglaze@google.com>
-Cc: Kevin Loughlin <kevinloughlin@google.com>
-Cc: <stable@vger.kernel.org>
-Fixes: 6c3211796326 ("x86/sev: Add SNP-specific unaccepted memory support")
-Co-developed-by: Tom Lendacky <thomas.lendacky@amd.com>
-Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
----
-Changes since v3 [0]:
-- work around the fact that sev_snp_enabled() does not work yet when the
-  EFI stub accepts misaligned chunks of memory while populating the E820
-  table
-
-Changes since v2 [1]:
-- avoid two separate acceptance APIs; instead, use MSR based page-by-page
-  acceptance for the decompressor as well
-
-[0] https://lore.kernel.org/all/20250410132850.3708703-2-ardb+git@google.com/T/#u
-[1] https://lore.kernel.org/all/20250404082921.2767593-8-ardb+git@google.com/T/#u
-
- arch/x86/boot/compressed/mem.c |  5 +-
- arch/x86/boot/compressed/sev.c | 67 +++++---------------
- arch/x86/boot/compressed/sev.h |  2 +
- 3 files changed, 21 insertions(+), 53 deletions(-)
-
-diff --git a/arch/x86/boot/compressed/mem.c b/arch/x86/boot/compressed/mem.c
-index dbba332e4a12..f676156d9f3d 100644
---- a/arch/x86/boot/compressed/mem.c
-+++ b/arch/x86/boot/compressed/mem.c
-@@ -34,11 +34,14 @@ static bool early_is_tdx_guest(void)
- 
- void arch_accept_memory(phys_addr_t start, phys_addr_t end)
- {
-+	static bool sevsnp;
-+
- 	/* Platform-specific memory-acceptance call goes here */
- 	if (early_is_tdx_guest()) {
- 		if (!tdx_accept_memory(start, end))
- 			panic("TDX: Failed to accept memory\n");
--	} else if (sev_snp_enabled()) {
-+	} else if (sevsnp || (sev_get_status() & MSR_AMD64_SEV_SNP_ENABLED)) {
-+		sevsnp = true;
- 		snp_accept_memory(start, end);
- 	} else {
- 		error("Cannot accept memory: unknown platform\n");
-diff --git a/arch/x86/boot/compressed/sev.c b/arch/x86/boot/compressed/sev.c
-index 6eadd790f4e5..478eca4f7180 100644
---- a/arch/x86/boot/compressed/sev.c
-+++ b/arch/x86/boot/compressed/sev.c
-@@ -169,10 +169,7 @@ bool sev_snp_enabled(void)
- 
- static void __page_state_change(unsigned long paddr, enum psc_op op)
- {
--	u64 val;
--
--	if (!sev_snp_enabled())
--		return;
-+	u64 val, msr;
- 
- 	/*
- 	 * If private -> shared then invalidate the page before requesting the
-@@ -181,6 +178,9 @@ static void __page_state_change(unsigned long paddr, enum psc_op op)
- 	if (op == SNP_PAGE_STATE_SHARED)
- 		pvalidate_4k_page(paddr, paddr, false);
- 
-+	/* Save the current GHCB MSR value */
-+	msr = sev_es_rd_ghcb_msr();
-+
- 	/* Issue VMGEXIT to change the page state in RMP table. */
- 	sev_es_wr_ghcb_msr(GHCB_MSR_PSC_REQ_GFN(paddr >> PAGE_SHIFT, op));
- 	VMGEXIT();
-@@ -190,6 +190,9 @@ static void __page_state_change(unsigned long paddr, enum psc_op op)
- 	if ((GHCB_RESP_CODE(val) != GHCB_MSR_PSC_RESP) || GHCB_MSR_PSC_RESP_VAL(val))
- 		sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_PSC);
- 
-+	/* Restore the GHCB MSR value */
-+	sev_es_wr_ghcb_msr(msr);
-+
- 	/*
- 	 * Now that page state is changed in the RMP table, validate it so that it is
- 	 * consistent with the RMP entry.
-@@ -200,11 +203,17 @@ static void __page_state_change(unsigned long paddr, enum psc_op op)
- 
- void snp_set_page_private(unsigned long paddr)
- {
-+	if (!sev_snp_enabled())
-+		return;
-+
- 	__page_state_change(paddr, SNP_PAGE_STATE_PRIVATE);
- }
- 
- void snp_set_page_shared(unsigned long paddr)
- {
-+	if (!sev_snp_enabled())
-+		return;
-+
- 	__page_state_change(paddr, SNP_PAGE_STATE_SHARED);
- }
- 
-@@ -228,56 +237,10 @@ static bool early_setup_ghcb(void)
- 	return true;
- }
- 
--static phys_addr_t __snp_accept_memory(struct snp_psc_desc *desc,
--				       phys_addr_t pa, phys_addr_t pa_end)
--{
--	struct psc_hdr *hdr;
--	struct psc_entry *e;
--	unsigned int i;
--
--	hdr = &desc->hdr;
--	memset(hdr, 0, sizeof(*hdr));
--
--	e = desc->entries;
--
--	i = 0;
--	while (pa < pa_end && i < VMGEXIT_PSC_MAX_ENTRY) {
--		hdr->end_entry = i;
--
--		e->gfn = pa >> PAGE_SHIFT;
--		e->operation = SNP_PAGE_STATE_PRIVATE;
--		if (IS_ALIGNED(pa, PMD_SIZE) && (pa_end - pa) >= PMD_SIZE) {
--			e->pagesize = RMP_PG_SIZE_2M;
--			pa += PMD_SIZE;
--		} else {
--			e->pagesize = RMP_PG_SIZE_4K;
--			pa += PAGE_SIZE;
--		}
--
--		e++;
--		i++;
--	}
--
--	if (vmgexit_psc(boot_ghcb, desc))
--		sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_PSC);
--
--	pvalidate_pages(desc);
--
--	return pa;
--}
--
- void snp_accept_memory(phys_addr_t start, phys_addr_t end)
- {
--	struct snp_psc_desc desc = {};
--	unsigned int i;
--	phys_addr_t pa;
--
--	if (!boot_ghcb && !early_setup_ghcb())
--		sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_PSC);
--
--	pa = start;
--	while (pa < end)
--		pa = __snp_accept_memory(&desc, pa, end);
-+	for (phys_addr_t pa = start; pa < end; pa += PAGE_SIZE)
-+		__page_state_change(pa, SNP_PAGE_STATE_PRIVATE);
- }
- 
- void sev_es_shutdown_ghcb(void)
-diff --git a/arch/x86/boot/compressed/sev.h b/arch/x86/boot/compressed/sev.h
-index fc725a981b09..4e463f33186d 100644
---- a/arch/x86/boot/compressed/sev.h
-+++ b/arch/x86/boot/compressed/sev.h
-@@ -12,11 +12,13 @@
- 
- bool sev_snp_enabled(void);
- void snp_accept_memory(phys_addr_t start, phys_addr_t end);
-+u64 sev_get_status(void);
- 
- #else
- 
- static inline bool sev_snp_enabled(void) { return false; }
- static inline void snp_accept_memory(phys_addr_t start, phys_addr_t end) { }
-+static inline u64 sev_get_status(void) { return 0; }
- 
- #endif
- 
--- 
-2.49.0.805.g082f7c87e0-goog
-
+Alice
 
