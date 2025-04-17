@@ -1,187 +1,575 @@
-Return-Path: <linux-kernel+bounces-609276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0755A92002
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 16:42:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E023EA92006
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 16:42:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 851B0167C20
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:42:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FDBE7B1C0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:41:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799662517AF;
-	Thu, 17 Apr 2025 14:42:04 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED9925178D;
-	Thu, 17 Apr 2025 14:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744900924; cv=none; b=UKEGMP3YGaH90gfgcjetxIzG5eNKo6UyakZEz2Owe6IfgZstwpNmQWBg0OAgwmlfD3YugHV7OOI8n3lsJaIVvEJlr9PUuKr50Bl76Du1YqseIb/JWKpMsCDZ7dPSIiVQ5gGzF8pItVWDOR5TKmeIjAcb8F4+mUkJ6YFT6bUyWyU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744900924; c=relaxed/simple;
-	bh=DCj4wV+HtaRAx/iATqsBwAlOGrZWM7b3RYCTouHM4yo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KrbvgUOWqKrrePJLi7hEvnRkEmhOEfWa9OgpR8g3xStkew+wIpezInD3Xvg3Iw0rAETiVt2/yPa8V1n9bMUYl4ig9hgwgBlkDWlR5F8F8HzDJ6jaY3G5uTQBpxxoj1l3n6Lcb0+Qc8yY/sjxbXXLuMibpCEnSoldCd2lkoJKvuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 356E91515;
-	Thu, 17 Apr 2025 07:41:59 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 61CFE3F66E;
-	Thu, 17 Apr 2025 07:41:59 -0700 (PDT)
-Date: Thu, 17 Apr 2025 15:41:56 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Cristian Marussi <cristian.marussi@arm.com>
-Cc: Johan Hovold <johan@kernel.org>, <linux-kernel@vger.kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <arm-scmi@vger.kernel.org>,
-	<james.quinlan@broadcom.com>, <f.fainelli@gmail.com>,
-	<vincent.guittot@linaro.org>, <peng.fan@oss.nxp.com>,
-	<michal.simek@amd.com>, <quic_sibis@quicinc.com>,
-	<dan.carpenter@linaro.org>, <maz@kernel.org>
-Subject: Re: [PATCH 2/4] firmware: arm_scmi: Add Quirks framework
-Message-ID: <20250417-teal-sidewinder-of-courtesy-d0473d@sudeepholla>
-References: <20250415142933.1746249-1-cristian.marussi@arm.com>
- <20250415142933.1746249-3-cristian.marussi@arm.com>
- <Z__UJUKaMRoFLYLc@hovoldconsulting.com>
- <Z__cuT5IW0Sbjqpg@pluto>
- <aAC_aPHD4Ik-DW0x@hovoldconsulting.com>
- <aADhoX4Rkx8Eu_er@pluto>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C884252287;
+	Thu, 17 Apr 2025 14:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="B9W1Orku"
+Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011041.outbound.protection.outlook.com [40.107.130.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA552517A7;
+	Thu, 17 Apr 2025 14:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744900966; cv=fail; b=KMgyiiTEPfZjbXlgLTDeit3W9/ZKFduUt8OtCgQiBCY431nHGk2yr259d/gKg8oYp3eCtp0Bi6+RiL3bPoib+yOW6wgxPBn+Bc0/z7pwNy6Ws7aUaI4dYxBURRAh1iiFKVIn6PtDuCjHMvhRmyRA+Bqaik+8QQ4ojAG9M/E6Bq0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744900966; c=relaxed/simple;
+	bh=hv7lcZ17OoTGhaT26Ap9SUu7btH8/MVWYxtgkVudS5k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=sEWqCGGPQiEaILTMciXmkCdruDSz3ENOl9s9UcFb7f6UGVU0BIjDHRXczNbJb4PrFrDBuxcDhZLOhsKyRi6MSlHQ8lfvZFMa4yujWkhhpanSjeEStvbuZ8k9uZSZucWm+H97sFYqAvndRvtsiD6PIvJW7auVZBVQff0F6PSiOd4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=fail (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=B9W1Orku reason="signature verification failed"; arc=fail smtp.client-ip=40.107.130.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oFavQrnA9ll/PX14FW3NZxG7wf5RlsmH8NjgiKmBepWrsdieFC6Q2mYX9jXN0IUkidMFiQluiVi8QM6ceLhHEKOROOuCjCqZ8QSVLbGrSQF5vdaZWyLFs7ro3CKBPSDfcTVf/DZF8CHFFsfANJgjDxcIzSzF0BEChHjveZ/TZ3DI4IECB+Ylfl+q5OQ59UEdHTzWKurF9Y/za5A7XAD56yOd41nyBYLEG7OBSy2hdEk+e/wTwQYFqA8E19Oif8nV1ehlkgj/jAGf1MSbbR6BqCnJGJ8maQJ7Bk5jHZzZkyqVsQsIwVnvjthvhzldDYpkVXCLrdWdq31ghXWvOU9EcQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LaEOGlFLZQrTH2gqMCrfUiTV0a1+E2CyVJtnEbyufJM=;
+ b=SzOVr/1IB9+AFGmJPeLjXADoELGYQOMd1LLS5lZlhlmUohiaoTM6wrp5LTaZv4TuCP5TjRwPyqi/VBbr3BsoU/J1sgczJLQVFfjoJvX1M/2NIJA1PdW3nje9Qib1ofJlv1+i8JLV120UF2ytKmMOCc+MQlg1lH7mdJ6DqLACRk92vnKIOAuUa0o0GHQe1WtwJrGq3BWqL0EXrQxrP33wOtmiBpDs2Dspl6zjiFHGNP8SyaXZa855eiIWaEpo3/YQPD/yHCiU/+IYggG1QzgfoA32SkIpEKyMK0KAgIHZDs5PwW+/3Wu0pbaizvi31NO3mHxHVF2CEOPPbuxqEk5l1Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LaEOGlFLZQrTH2gqMCrfUiTV0a1+E2CyVJtnEbyufJM=;
+ b=B9W1OrkuoxMXB0jpBlAZ6XMordxX4bZNMZHdKUN2hsRZJT/y3z7UU/lAXobmxenSp1I3ThkMRzzx/ZNLFk1qF/kix9IdyZmy5k5AztFvnZn04eS0Z1meR3JwVjUNGT6Eee8Tfe0PYomAYCBn098+4BXsZyYc1FsqFDnPqfNprZkreG3HSjAALVHTaYJwFYElN/OOJHsA7j3W+3Clsftr/yiMCDnJvXNbkLiLJr8h7d3c6lJYP4kpkr41aKtUmBtFDXcPYWSL22qCUTLGl7GVr6XRw9uy+mmeSQ8crWawC41JXppUW0oBA4ROqkf1qIloN3A5VQ39B9NrPEY2s6LAxg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by PAXPR04MB8752.eurprd04.prod.outlook.com (2603:10a6:102:20e::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.36; Thu, 17 Apr
+ 2025 14:42:39 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.8632.035; Thu, 17 Apr 2025
+ 14:42:39 +0000
+Date: Thu, 17 Apr 2025 10:42:29 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	"open list:DRM DRIVERS FOR FREESCALE IMX 5/6" <dri-devel@lists.freedesktop.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/1] dt-bindings: display: imx: convert ldb.txt to yaml
+ format
+Message-ID: <aAETVRHVBFN+nF5O@lizhi-Precision-Tower-5810>
+References: <20250416211929.3502902-1-Frank.Li@nxp.com>
+ <2987529.e9J7NaK4W3@steina-w>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2987529.e9J7NaK4W3@steina-w>
+X-ClientProxiedBy: SJ0PR05CA0069.namprd05.prod.outlook.com
+ (2603:10b6:a03:332::14) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aADhoX4Rkx8Eu_er@pluto>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PAXPR04MB8752:EE_
+X-MS-Office365-Filtering-Correlation-Id: bc2a5966-0984-4232-f19c-08dd7dbe1a3f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|7416014|376014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?iso-8859-1?Q?P7iuuxKEbOeqVMlDwIvOiMUIFt7r+PeCdKOzHUs0AjusnnjJiW2UMrtGFb?=
+ =?iso-8859-1?Q?Ye3RFtOQzrdlW8ZmIgcMd/j6z9BGq9JuE1EGQ97IRx+n5k7SjVcQzbuHIe?=
+ =?iso-8859-1?Q?yKHFAJdTi9rI3jn6Qa6yTQlpOO/NzdDEqgGARAQWPGQeLhQkb8iTA0wJj5?=
+ =?iso-8859-1?Q?sFjnJolOnfE5AiVJy6uaHS/R9APGLR8NkvJik9ewvzYvR/vrG3tkXUmw97?=
+ =?iso-8859-1?Q?KS26J+oEtJXp+7oUqvCeQLslCI4KmGQOZWohp7ozFvROvS+Lc+6j2Dy/Vu?=
+ =?iso-8859-1?Q?7db9jkfbfVKoD2AcU5Pv8mScYxXhlKFw38u8P9lDNGXKcV3q34Hg2eA1Go?=
+ =?iso-8859-1?Q?zvtBEJ4vGxD6uD+6mNozygcEBbW3Cr5F+7ASMpfmuBTaBmkCpkRXimhnAh?=
+ =?iso-8859-1?Q?rfX/gLGmbvDzh5GB0vS98wjE0HZ570/xDFcwlhSpenpI4t6M09wxxVGLpt?=
+ =?iso-8859-1?Q?R349bzjgK09kdJ3vW5QE7ZuopSvs5Tg0RKIqeqDhuB+cxzVBdy7BOmJ0vF?=
+ =?iso-8859-1?Q?9hCp2AF9mGpdcCrJEROY5ycqDgiu1XDrPgTmFsfOfJ7BAihGOjRWpTEKJj?=
+ =?iso-8859-1?Q?i9RtpszhZA1d/WiIIAom0oawn79QlEDFXPinHw2HQQ+hZEKYpBkuPsP6lN?=
+ =?iso-8859-1?Q?BFPBeY9TVuFZKh1p0VcOGDDqigrXyEEIZWegDcvuD+Ag3YjRduKgwfFrkZ?=
+ =?iso-8859-1?Q?eYZUap6GMud4s8oxBSaNahkOa0LShZov/4WZXMcJC42Wqaye+B8vqOb/BH?=
+ =?iso-8859-1?Q?07MR5ySHSV+y5vFNqmyKqfAQsDdaVsaIMGienokoyaCFgy1amjq0afF8ex?=
+ =?iso-8859-1?Q?Vw86RYQOb0lqeUXvcTZg+RldLqKKEDwtlYrqBnrXCsB5ESbJplxFyGqryU?=
+ =?iso-8859-1?Q?oJMm0gvQiSfeZLJk/CHteZ9aKKD2JTkVUzMtZ3w1vHQn8Oac7dpBLwdKYe?=
+ =?iso-8859-1?Q?i07aAtb3wtcmBwFN3//sIXqnOwmx5VWxwbEpp69E1cZGvIcSJcwCF9Glfv?=
+ =?iso-8859-1?Q?o8N1583NSmfWI5BUcSjJshq0tzl2YXrsQgdFycl2Bbh5+/Wpc8HQgAskg2?=
+ =?iso-8859-1?Q?eK6/kK7kFBqfjqpqDBvCU10d1a0Hh49YhwbA460Lq3tWRe+4dyoXRjtCed?=
+ =?iso-8859-1?Q?EoXH2cGvfq130Mjowu9PHbZkHzEyzdOaycAb+X931p9lQmHQtIrJC8KXk5?=
+ =?iso-8859-1?Q?7nsCcmkGap8njt7MeclG0UzT32DjY1kfBoSi1jR9LFbA8hT7for83rJZUt?=
+ =?iso-8859-1?Q?wwO6yqlgC3Hg7DyBDbGx2q5XIO5aOINl32DyO/DRvX+kE70/9Z6kM5SsAc?=
+ =?iso-8859-1?Q?nIcy5YgpkA7y/I0OPgd/gKApJMbrSc7hd0zdi6hMhfiRLyiKRg2RMNWeVT?=
+ =?iso-8859-1?Q?87jfAmEoNbzJPptKI/95Y+76b0JU80fGV/nfK+nmPV8UbgZk6Nw8dBBo4b?=
+ =?iso-8859-1?Q?jkWwkh37Jdj6iwoeMWpVC61TGkdSMCIc80x+0GVc7u/7zO93enYUKpbgfC?=
+ =?iso-8859-1?Q?Y=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?iso-8859-1?Q?gJCYcT0e+WcE66EeODElASBR2OFcz+4mjFpCyKf6ykDubvYhxI7cFriQX0?=
+ =?iso-8859-1?Q?kpvIq3J/+wjlAraKILQxqTLq0NzFzKQlHqXpTYu8GotAWtZT/yUQAJZyPJ?=
+ =?iso-8859-1?Q?z1q3VeEErNr8atvl/FtMZ8/bD0jgO6fznoo4PngRWUpXfX6Jtuld9ZZriI?=
+ =?iso-8859-1?Q?fCaYMWqx8dW9enPUkBkcohyJ5PMKKaZpARZrjGAoQm9T7h/41y1oYn52Z2?=
+ =?iso-8859-1?Q?m/NKaZcxO3a/U62qjcubLxpErHIix+kbTQmvre2X+4z36RYc4B2kpsGB9x?=
+ =?iso-8859-1?Q?SFIqQJkmxq3Bc5hnAQZ/Qc+wEvfuURwioTB9Ya75WwqcdT9GKL3oos+PlE?=
+ =?iso-8859-1?Q?g1Hlxj+gS8Umdv8My5AH29owAVadFOcUmET8+TK8oDXPjulJaOOiXqeY8e?=
+ =?iso-8859-1?Q?QXsDOsrRtuTw4NHgHBF7GPUM+CIS+hv0ZIhvv/WF7UK4KpVVWBCugfPKHI?=
+ =?iso-8859-1?Q?z0rDxGtQqjdrJ93Ygyj0VPVtM6utEduffdEjUPZLspNz6Y6U4CeaQ1etoL?=
+ =?iso-8859-1?Q?FacSqVqfa2LiQzCW2IjBo0XisIvV/JkQu4dF3yOX6DbQpw/At8/3309x0F?=
+ =?iso-8859-1?Q?+V59wVkHUqpdB1V1vwdeok0w1R7/GVVg/h2fG2LUHrG2NRq1/B8u2RKFWY?=
+ =?iso-8859-1?Q?SQbfqhLjXvfphhOM68oPDESgskZciAdpdHWEAbECrY/S/1qfpqmrZPzmGT?=
+ =?iso-8859-1?Q?OUQc/ZbXmfEMGK5pMxs5i1PPZBE60mTHYT8zNdacG9clUuZLq633mdmQxS?=
+ =?iso-8859-1?Q?h18auO0Opc+fKlib3sUfy8BS3JTCWa2TJROYE98Ie+gfOhGYP9Nwzimxd1?=
+ =?iso-8859-1?Q?bS5x02NDbpsYudqAIS0u+Ms+ku/1Jn0IqkCRlQbpvR0TQA70Epb+8WjOmQ?=
+ =?iso-8859-1?Q?j68uw4myrHA0zrUMmiIAbMVo7DPpGSYgKt8nHs4SNOpl/lS/x3VijAGFW5?=
+ =?iso-8859-1?Q?oDMp3TxO+Avy8qDVsZMUVdtOy6z1unabNm5MEwCtcaJ/hnteFD4gTa/ukr?=
+ =?iso-8859-1?Q?WOVLzcF07zV+e55wHbXjMdfsTepFtezbe6c9QNMAkPzkTRFKVakVHl6IKi?=
+ =?iso-8859-1?Q?Th2VygvODDSBrIghju5rxxXd6to97VYHO4sUZGyc82Zpd8HVym7/f3NmF2?=
+ =?iso-8859-1?Q?DOjZRjHKsRdyBdlo4gtFt4dIYe/nzI185aT4slx91rSJYQxLX8X9mTDK4b?=
+ =?iso-8859-1?Q?8pOkA80Q5aTToNVazlLo1hD+Oan9HyBRnMtRiX1QUP0Q0SUE3LQp+Cc2l4?=
+ =?iso-8859-1?Q?Jv3QhXCR9owE2YZ1qHCfWIOGrA6J2AB9vjhWAs3Js2j+IU+2CWl6DGCMAK?=
+ =?iso-8859-1?Q?MT8otaNPfeZei4kcU8eQ024xX5weZ1QZ/Ii6tmq9RbvMWDPRqHj1LYCN/J?=
+ =?iso-8859-1?Q?l66jQSP+DqhxzWGof9Xj5+j8+diWO/FTcciuaWaCgJs3EXpNVCJgyEFFhZ?=
+ =?iso-8859-1?Q?Fd3x2XRIt7QNam4NktaYGeSVAo3rs7yXsdpviCqTZHRNTnU06qB3DBkNVW?=
+ =?iso-8859-1?Q?MeCcdzSr0vBPeY4+8oRSGwwGMv4/ADFNlV+ressKkcX9LSjAjIe5+lluu7?=
+ =?iso-8859-1?Q?PgnAeWVLd1Q2uHbidYR2x2OK07la7QJKqemHFBMBWIppnORk2X7AgN7mOC?=
+ =?iso-8859-1?Q?NPlACSYyVfkbs=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bc2a5966-0984-4232-f19c-08dd7dbe1a3f
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2025 14:42:39.7264
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7bmSd2VpT2j0NigQ1ASavACTR1Dy1GZX0yBA+L134o0BODkIMDWBBcWNRReXw8DB8IiSWNIXsWoqvypy3FFa4A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8752
 
-On Thu, Apr 17, 2025 at 12:10:25PM +0100, Cristian Marussi wrote:
-> On Thu, Apr 17, 2025 at 10:44:24AM +0200, Johan Hovold wrote:
-> > On Wed, Apr 16, 2025 at 05:37:13PM +0100, Cristian Marussi wrote:
-> > > On Wed, Apr 16, 2025 at 06:00:37PM +0200, Johan Hovold wrote:
-> > > > On Tue, Apr 15, 2025 at 03:29:31PM +0100, Cristian Marussi wrote:
-> > 
-> > > > > +static void scmi_enable_matching_quirks(struct scmi_info *info)
-> > > > > +{
-> > > > > +	struct scmi_revision_info *rev = &info->version;
-> > > > > +	const char *compatible = NULL;
-> > > > > +	struct device_node *root;
-> > > > > +
-> > > > > +	root = of_find_node_by_path("/");
-> > > > > +	if (root) {
-> > > > > +		of_property_read_string(root, "compatible", &compatible);
-> > > > 
-> > > > Looks like you still only allow matching on the most specific compatible
-> > > > string.
-> > > > 
-> > > > As we discussed in the RFC thread, this will result in one quirk entry
-> > > > for each machine in a SoC family in case the issue is not machine
-> > > > specific.
+On Thu, Apr 17, 2025 at 08:37:49AM +0200, Alexander Stein wrote:
+> Am Mittwoch, 16. April 2025, 23:19:27 CEST schrieb Frank Li:
+> > Convert ldb.txt to yaml format.
+> >
+> > Additional changes
+> > - fix clock-names order to match existed dts file.
+> > - remove lvds-panel and iomuxc-gpr node in examples.
+> > - fsl,imx6q-ldb fail back to fsl,imx53-ldb.
+> >
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > ---
+> >  .../bindings/display/imx/fsl,imx6q-ldb.yaml   | 182 ++++++++++++++++++
+> >  .../devicetree/bindings/display/imx/ldb.txt   | 146 --------------
+> >  2 files changed, 182 insertions(+), 146 deletions(-)
+> >  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx6q-ldb.yaml
+> >  delete mode 100644 Documentation/devicetree/bindings/display/imx/ldb.txt
+> >
+> > diff --git a/Documentation/devicetree/bindings/display/imx/fsl,imx6q-ldb.yaml b/Documentation/devicetree/bindings/display/imx/fsl,imx6q-ldb.yaml
+> > new file mode 100644
+> > index 0000000000000..7edd5f28b1372
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/display/imx/fsl,imx6q-ldb.yaml
+> > @@ -0,0 +1,182 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/display/imx/fsl,imx6q-ldb.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Freescale LVDS Display Bridge (ldb)
+> > +
+> > +description:
+> > +  The LVDS Display Bridge device tree node contains up to two lvds-channel
+> > +  nodes describing each of the two LVDS encoder channels of the bridge.
+> > +
+> > +maintainers:
+> > +  - Frank Li <Frank.Li@nxp.com>
+> > +
+> > +properties:
+> > +  compatible:
+> > +    oneOf:
+> > +      - enum:
+> > +          - fsl,imx53-ldb
+> > +      - items:
+> > +          - const: fsl,imx6q-ldb
+> > +          - const: fsl,imx53-ldb
+>
+> My DT bindings foo is not that great, but I would have expected something like this:
+> oneOf:
+>   - items:
+>       - const: fsl,imx53-ldb
 
-Agreed, but we can predict that. You can infer just from the current state
-of affairs. Today all machines based on soc X may need the quirk but the
-firmware may vary across machines with same SoC.
+enum is correct. if new single compatible string abc added
 
-> > > 
-> > > Well, yes but the solution would be to add multiple compatible on the
-> > > same quirk line, which is definitely less cumbersome than adding
-> > > multiple quirk defs for the same quirk but does NOT scale anyway....
-> > > 
-> > > ...anyway I will add that possibility..or I am missing something more ?
-> > 
-> > I was referring to the need to match on other compatible strings than
-> > the most specific one. For the ThinkPad T14s the strings are:
-> > 
-> > 	"lenovo,thinkpad-t14s-lcd", "lenovo,thinkpad-t14s",
-> > 	"qcom,x1e78100", "qcom,x1e80100"
-> > 
-> > Here you most certainly would not want to match on
-> > "lenovo,thinkpad-t14s-lcd" but rather on "lenovo,thinkpad-t14s" or one
-> > of the SoC compatibles.
-> > 
+    - item;
+        - const: fsl,imx53-ldb
+        - const: abc
 
-SoC compatibles is debatable but if we are sure, we can do that.
+    that means, we have to use two compatible string compatible = "fsl,imx53-ldb",
+"abc".
 
-> > For the FC quirk we may have to match on compatible and then a single
-> > SoC entry could cover tens of machines (and their SKU variants).
-> > 
+    but here
+    - enum:
+        - fsl,imx53-ldb
+        - abc
 
-Well theoretically I agree, but even if one machine based on that SoC
-doesn't need it we need to fall back to specific compatibles. That's the
-argument IIUC as the firmwares depend to be machine specific most of
-the time and also newer machines based on the same SoC may carry fixes
-that may remove the need for the quirks.
+means only need compatible = "abc"
 
-> > of_machine_is_compatible() can be used to match on any compatible
-> > string, but not sure if that fits with your current implementation.
-> > 
+>   - items:
+>       - enum:
+>           - fsl,imx6q-ldb
 
-I was thinking about the same when I looked at the code. Using it is
-more elegant IMO.
+Okay! this is little better when need add new compatible string, only need
+one line change.
 
-> 
-> Yes I know, it will need a bit of rework on my side...the problem is
-> that anyway does not scale at all, even though matching on SoC could be
-> less cumbersome ... and the reason is that it is fundamentally wrong
-> to match SCMI Quirks on anything different from the SCMI vendor/subv/impl_ver
-> since these are fixes/workarounds against quirks that are completely Vendor
-> and fw-version specific...
-> 
-
-Agree!
-
-> ...instead now we are considering using compatibles to overcome the fact
-> that the vendor probably messed (or will mess up) also the side of
-> the story related to SCMI fw versions management ... "quirking" SCMI stuff
-> on platform/sku compatibles is basically a quirk against their broken
-> fw release process...
-> 
-
-ðŸ˜„
-
-> ...moreover this kind of carpet-quirking that hides the issue on any possible
-> fw version gives ZERO incentives to the aforementioned vendor to fix its
-> firmware...(or it fw-release process)...
-> 
-
-+1
-
-> Indeed, cross posting from your other mail thread, as of now we cannot
-> even be sure if the Vendor has somehow already updated the SCMI-related
-> firmware NEITHER we can be sure about this in the future since it has not
-> even confirmed how they are (or they will) be handling the Impl_Version field...
-> 
-> Having said that, I would add that in this specific case (FC quirk) since the
-> only way to make use of all of this SCMI stuff from the MicroZoft/ACPI world
-> is having working FCs and, since it's clear that our lovely vendor wont
-> certainly break this other lovely OS way of working with SCMI, MAYBE it could
-> be safe to just apply the quirk to this Vendor forever no matter what the
-> platform or FW version will be in the future...(so not using compats at all)
-> 
-
-ðŸ¤£
-
-> ...but I will be very happy to leave all of these political/phylosophycal
-> decisions to Sudeep :P
-> 
-
-Nice! I am happy to have generic compatible if we are sure all the machines
-based on or using it needs it. We can fix it up in the future if required
-by dropping generic compatibles and add all the more specific ones if the
-generic compatible breaks(meaning it doesn't need quirk) on any of the
-machines based on it as it is always hard to predict such things.
-
-
-> Thanks,
-> Cristian
-
--- 
-Regards,
-Sudeep
+Frank
+>       - const: fsl,imx53-ldb
+>
+> Best regards,
+> Alexander
+>
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  '#address-cells':
+> > +    const: 1
+> > +
+> > +  '#size-cells':
+> > +    const: 0
+> > +
+> > +  gpr:
+> > +    $ref: /schemas/types.yaml#/definitions/phandle
+> > +    description:
+> > +      The phandle points to the iomuxc-gpr region containing the LVDS
+> > +      control register.
+> > +
+> > +  clocks:
+> > +    minItems: 6
+> > +    maxItems: 8
+> > +
+> > +  clock-names:
+> > +    items:
+> > +      - const: di0_pll
+> > +      - const: di1_pll
+> > +      - const: di0_sel
+> > +      - const: di1_sel
+> > +      - const: di0
+> > +      - const: di1
+> > +      - const: di2_sel
+> > +      - const: di3_sel
+> > +    minItems: 6
+> > +
+> > +  fsl,dual-channel:
+> > +    $ref: /schemas/types.yaml#/definitions/flag
+> > +    description:
+> > +      if it exists, only LVDS channel 0 should
+> > +      be configured - one input will be distributed on both outputs in dual
+> > +      channel mode
+> > +
+> > +patternProperties:
+> > +  '^lvds-channel@[0-1]$':
+> > +    type: object
+> > +    description:
+> > +      Each LVDS Channel has to contain either an of graph link to a panel device node
+> > +      or a display-timings node that describes the video timings for the connected
+> > +      LVDS display as well as the fsl,data-mapping and fsl,data-width properties.
+> > +
+> > +    properties:
+> > +      reg:
+> > +        maxItems: 1
+> > +
+> > +      '#address-cells':
+> > +        const: 1
+> > +
+> > +      '#size-cells':
+> > +        const: 0
+> > +
+> > +      display-timings:
+> > +        $ref: /schemas/display/panel/display-timings.yaml#
+> > +
+> > +      fsl,data-mapping:
+> > +        enum:
+> > +          - spwg
+> > +          - jeida
+> > +
+> > +      fsl,data-width:
+> > +        $ref: /schemas/types.yaml#/definitions/uint32
+> > +        description: should be <18> or <24>
+> > +        enum:
+> > +          - 18
+> > +          - 24
+> > +
+> > +    patternProperties:
+> > +      '^port@[0-4]$':
+> > +        $ref: /schemas/graph.yaml#/$defs/port-base
+> > +        unevaluatedProperties: false
+> > +        description:
+> > +          On i.MX5, the internal two-input-multiplexer is used. Due to hardware
+> > +          limitations, only one input port (port@[0,1]) can be used for each channel
+> > +          (lvds-channel@[0,1], respectively).
+> > +          On i.MX6, there should be four input ports (port@[0-3]) that correspond
+> > +          to the four LVDS multiplexer inputs.
+> > +          A single output port (port@2 on i.MX5, port@4 on i.MX6) must be connected
+> > +          to a panel input port. Optionally, the output port can be left out if
+> > +          display-timings are used instead.
+> > +
+> > +    additionalProperties: false
+> > +
+> > +required:
+> > +  - compatible
+> > +  - gpr
+> > +  - clocks
+> > +  - clock-names
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/clock/imx5-clock.h>
+> > +
+> > +    ldb@53fa8008 {
+> > +        compatible = "fsl,imx53-ldb";
+> > +        reg = <0x53fa8008 0x4>;
+> > +        #address-cells = <1>;
+> > +        #size-cells = <0>;
+> > +        gpr = <&gpr>;
+> > +        clocks = <&clks IMX5_CLK_LDB_DI0_SEL>,
+> > +                 <&clks IMX5_CLK_LDB_DI1_SEL>,
+> > +                 <&clks IMX5_CLK_IPU_DI0_SEL>,
+> > +                 <&clks IMX5_CLK_IPU_DI1_SEL>,
+> > +                 <&clks IMX5_CLK_LDB_DI0_GATE>,
+> > +                 <&clks IMX5_CLK_LDB_DI1_GATE>;
+> > +        clock-names = "di0_pll", "di1_pll",
+> > +                      "di0_sel", "di1_sel",
+> > +                      "di0", "di1";
+> > +
+> > +        /* Using an of-graph endpoint link to connect the panel */
+> > +        lvds-channel@0 {
+> > +                reg = <0>;
+> > +                #address-cells = <1>;
+> > +                #size-cells = <0>;
+> > +
+> > +                port@0 {
+> > +                    reg = <0>;
+> > +
+> > +                    endpoint {
+> > +                        remote-endpoint = <&ipu_di0_lvds0>;
+> > +                    };
+> > +                };
+> > +
+> > +                port@2 {
+> > +                    reg = <2>;
+> > +
+> > +                    endpoint {
+> > +                        remote-endpoint = <&panel_in>;
+> > +                    };
+> > +               };
+> > +        };
+> > +
+> > +        /* Using display-timings and fsl,data-mapping/width instead */
+> > +        lvds-channel@1 {
+> > +                reg = <1>;
+> > +                #address-cells = <1>;
+> > +                #size-cells = <0>;
+> > +                fsl,data-mapping = "spwg";
+> > +                fsl,data-width = <24>;
+> > +
+> > +                display-timings {/* ... */
+> > +                };
+> > +
+> > +                port@1 {
+> > +                     reg = <1>;
+> > +
+> > +                     endpoint {
+> > +                         remote-endpoint = <&ipu_di1_lvds1>;
+> > +                     };
+> > +                };
+> > +        };
+> > +    };
+> > diff --git a/Documentation/devicetree/bindings/display/imx/ldb.txt b/Documentation/devicetree/bindings/display/imx/ldb.txt
+> > deleted file mode 100644
+> > index 03653a291b549..0000000000000
+> > --- a/Documentation/devicetree/bindings/display/imx/ldb.txt
+> > +++ /dev/null
+> > @@ -1,146 +0,0 @@
+> > -Device-Tree bindings for LVDS Display Bridge (ldb)
+> > -
+> > -LVDS Display Bridge
+> > -===================
+> > -
+> > -The LVDS Display Bridge device tree node contains up to two lvds-channel
+> > -nodes describing each of the two LVDS encoder channels of the bridge.
+> > -
+> > -Required properties:
+> > - - #address-cells : should be <1>
+> > - - #size-cells : should be <0>
+> > - - compatible : should be "fsl,imx53-ldb" or "fsl,imx6q-ldb".
+> > -                Both LDB versions are similar, but i.MX6 has an additional
+> > -                multiplexer in the front to select any of the four IPU display
+> > -                interfaces as input for each LVDS channel.
+> > - - gpr : should be <&gpr> on i.MX53 and i.MX6q.
+> > -         The phandle points to the iomuxc-gpr region containing the LVDS
+> > -         control register.
+> > -- clocks, clock-names : phandles to the LDB divider and selector clocks and to
+> > -                        the display interface selector clocks, as described in
+> > -                        Documentation/devicetree/bindings/clock/clock-bindings.txt
+> > -        The following clocks are expected on i.MX53:
+> > -                "di0_pll" - LDB LVDS channel 0 mux
+> > -                "di1_pll" - LDB LVDS channel 1 mux
+> > -                "di0" - LDB LVDS channel 0 gate
+> > -                "di1" - LDB LVDS channel 1 gate
+> > -                "di0_sel" - IPU1 DI0 mux
+> > -                "di1_sel" - IPU1 DI1 mux
+> > -        On i.MX6q the following additional clocks are needed:
+> > -                "di2_sel" - IPU2 DI0 mux
+> > -                "di3_sel" - IPU2 DI1 mux
+> > -        The needed clock numbers for each are documented in
+> > -        Documentation/devicetree/bindings/clock/imx5-clock.yaml, and in
+> > -        Documentation/devicetree/bindings/clock/imx6q-clock.yaml.
+> > -
+> > -Optional properties:
+> > - - pinctrl-names : should be "default" on i.MX53, not used on i.MX6q
+> > - - pinctrl-0 : a phandle pointing to LVDS pin settings on i.MX53,
+> > -               not used on i.MX6q
+> > - - fsl,dual-channel : boolean. if it exists, only LVDS channel 0 should
+> > -   be configured - one input will be distributed on both outputs in dual
+> > -   channel mode
+> > -
+> > -LVDS Channel
+> > -============
+> > -
+> > -Each LVDS Channel has to contain either an of graph link to a panel device node
+> > -or a display-timings node that describes the video timings for the connected
+> > -LVDS display as well as the fsl,data-mapping and fsl,data-width properties.
+> > -
+> > -Required properties:
+> > - - reg : should be <0> or <1>
+> > - - port: Input and output port nodes with endpoint definitions as defined in
+> > -   Documentation/devicetree/bindings/graph.txt.
+> > -   On i.MX5, the internal two-input-multiplexer is used. Due to hardware
+> > -   limitations, only one input port (port@[0,1]) can be used for each channel
+> > -   (lvds-channel@[0,1], respectively).
+> > -   On i.MX6, there should be four input ports (port@[0-3]) that correspond
+> > -   to the four LVDS multiplexer inputs.
+> > -   A single output port (port@2 on i.MX5, port@4 on i.MX6) must be connected
+> > -   to a panel input port. Optionally, the output port can be left out if
+> > -   display-timings are used instead.
+> > -
+> > -Optional properties (required if display-timings are used):
+> > - - display-timings : A node that describes the display timings as defined in
+> > -   Documentation/devicetree/bindings/display/panel/display-timing.txt.
+> > - - fsl,data-mapping : should be "spwg" or "jeida"
+> > -                      This describes how the color bits are laid out in the
+> > -                      serialized LVDS signal.
+> > - - fsl,data-width : should be <18> or <24>
+> > -
+> > -example:
+> > -
+> > -gpr: iomuxc-gpr@53fa8000 {
+> > -	/* ... */
+> > -};
+> > -
+> > -ldb: ldb@53fa8008 {
+> > -	#address-cells = <1>;
+> > -	#size-cells = <0>;
+> > -	compatible = "fsl,imx53-ldb";
+> > -	gpr = <&gpr>;
+> > -	clocks = <&clks IMX5_CLK_LDB_DI0_SEL>,
+> > -		 <&clks IMX5_CLK_LDB_DI1_SEL>,
+> > -		 <&clks IMX5_CLK_IPU_DI0_SEL>,
+> > -		 <&clks IMX5_CLK_IPU_DI1_SEL>,
+> > -		 <&clks IMX5_CLK_LDB_DI0_GATE>,
+> > -		 <&clks IMX5_CLK_LDB_DI1_GATE>;
+> > -	clock-names = "di0_pll", "di1_pll",
+> > -		      "di0_sel", "di1_sel",
+> > -		      "di0", "di1";
+> > -
+> > -	/* Using an of-graph endpoint link to connect the panel */
+> > -	lvds-channel@0 {
+> > -		#address-cells = <1>;
+> > -		#size-cells = <0>;
+> > -		reg = <0>;
+> > -
+> > -		port@0 {
+> > -			reg = <0>;
+> > -
+> > -			lvds0_in: endpoint {
+> > -				remote-endpoint = <&ipu_di0_lvds0>;
+> > -			};
+> > -		};
+> > -
+> > -		port@2 {
+> > -			reg = <2>;
+> > -
+> > -			lvds0_out: endpoint {
+> > -				remote-endpoint = <&panel_in>;
+> > -			};
+> > -		};
+> > -	};
+> > -
+> > -	/* Using display-timings and fsl,data-mapping/width instead */
+> > -	lvds-channel@1 {
+> > -		#address-cells = <1>;
+> > -		#size-cells = <0>;
+> > -		reg = <1>;
+> > -		fsl,data-mapping = "spwg";
+> > -		fsl,data-width = <24>;
+> > -
+> > -		display-timings {
+> > -			/* ... */
+> > -		};
+> > -
+> > -		port@1 {
+> > -			reg = <1>;
+> > -
+> > -			lvds1_in: endpoint {
+> > -				remote-endpoint = <&ipu_di1_lvds1>;
+> > -			};
+> > -		};
+> > -	};
+> > -};
+> > -
+> > -panel: lvds-panel {
+> > -	/* ... */
+> > -
+> > -	port {
+> > -		panel_in: endpoint {
+> > -			remote-endpoint = <&lvds0_out>;
+> > -		};
+> > -	};
+> > -};
+> >
+>
+>
+> --
+> TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
+> Amtsgericht München, HRB 105018
+> Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
+> http://www.tq-group.com/
+>
+>
 
