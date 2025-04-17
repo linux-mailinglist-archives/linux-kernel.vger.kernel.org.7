@@ -1,687 +1,156 @@
-Return-Path: <linux-kernel+bounces-609488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BFD4A922CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 18:35:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD1A4A922D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 18:37:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CD8C16EC21
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 16:35:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B9537A4E6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 16:36:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E037254AF4;
-	Thu, 17 Apr 2025 16:35:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBDD2254AF2;
+	Thu, 17 Apr 2025 16:37:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uLR+wWbc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B8Ky6Pvh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64FCF2DFA36;
-	Thu, 17 Apr 2025 16:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E1C1254B14
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 16:37:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744907747; cv=none; b=nRygORWIHJenBDnt12gRO61TcGhuG9VsHxsx/UqIyERcXtpGXHt5jsxkynDkvzRs1lcWNXq0KlxXZ3tWzM6G4W2Y8sbY680I8dIpBGSbGJf90VcfDgf2D0vKFdsZO3CvUBXGcQ3b7elNQX1zEq6D4+QcKbIPQ/ug1JJZ7yhe4aI=
+	t=1744907822; cv=none; b=f931L3uwhO7c+eqiKWgteQiGk8gvFCH/oQI2Ifh9bwyHrV33oaC6lAONXGX52Lwv5pq08pgauBiUwBMDwasa/bp7Bfb9UIgYKLzcXUrT5kG2nLtGGsQmpmKuF16m5QWQhykGuDQDoB4TAT/IkUSs4/AnssZlWEYBTavq/KRiOCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744907747; c=relaxed/simple;
-	bh=uDSrfL35Zw/i3cF+c5QmMr7z6U+d1knQbbUxSTvkJUE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=uIsELjbc/cVOJmRgHxtv+bLFKSk/ahurd6I4hBfXx3UVJg0JxTH7zvIdBTJ4tOsgJrfbcd5FAW4O/AFJr478Oyc6RqkN7+/XStqGD3Ujq18hHVQJksD4XuPt+orB3PK+4tL+swiULIQ7wMW6s7Vm4N9XOotrverbtr3LlE/qOUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uLR+wWbc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C605EC4CEEA;
-	Thu, 17 Apr 2025 16:35:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744907746;
-	bh=uDSrfL35Zw/i3cF+c5QmMr7z6U+d1knQbbUxSTvkJUE=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=uLR+wWbcFD8Oo8r8pJtjyBC9+a3tBrz1JoEdnfAK2C3wD/gmLMKabDFFZWusZGTpD
-	 1lG30hz8KWpo4p25ucpQCReHmupoV9rf5OLvTedbhj7Gl4qVpwiGkEniilHnAVKrOD
-	 ZRQNfi3C24ZS3YMpiSLgoygzWMmc0iymIufLgwYuhS5RZu94myXs1Fph0+Fg4F15Qc
-	 pBE64pnVkNMk4oP0MQfLoYCnUEdyOrAz+O/nUE9CYW6CWQi4rrPCDIJMdKtcT6QsCw
-	 9LYovgRCdBXxgIcEgYqA4FcyzITdfUfx/Y7RGOejWICli6d9YUSF18J3si6FDU1/XU
-	 MhWSZPIsARWmg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6B28C369B2;
-	Thu, 17 Apr 2025 16:35:46 +0000 (UTC)
-From: Jens Glathe via B4 Relay <devnull+jens.glathe.oldschoolsolutions.biz@kernel.org>
-Date: Thu, 17 Apr 2025 18:35:44 +0200
-Subject: [PATCH v2] arm64: dts: qcom: x1e80100-lenovo-yoga-slim7x: add
- retimers, dp altmode support
+	s=arc-20240116; t=1744907822; c=relaxed/simple;
+	bh=ZB1x85E9TZSV27ACI1YbITPS8W7AaqTCmW3E93K4f0g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DZ9UTGHD+Dfo2zgbwCO8p7c8LueO9Hyhw1NU1/Da/UGDyXjiEcnftsPskX93S7kyrLQ8n1FYjxeWqtqi9j3KJ6tkmXlO5YJuYl80f8y/blCXbYhGsooZdz9c0pQfHFqagZTH6tKR/yuRrwC1q+u6OB0zSFoCyo0AGNBLTLlXNPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B8Ky6Pvh; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744907819;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LHtvPer+uhTnTZr30khXohx3R0vSZbxSNnylVoOnq58=;
+	b=B8Ky6PvhY5KN0EJ9JvwsbvGtOuJ7ydjjRIsI08di9nzIJSe1Gvx+6JyDsKKUrxx3xRb7Z8
+	itbWlFoEFVyUDaZMDXFgr1AEBpujReVd77bXq7Wykr27TSQuAHyaBW6L9tZmgYkZ0IKQyw
+	pt4K+kbGUX+8Ibmw+JXb6Qo6aJ9LM2I=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-44-t5j63oQ2PAmH5IVFq-QmPQ-1; Thu,
+ 17 Apr 2025 12:36:55 -0400
+X-MC-Unique: t5j63oQ2PAmH5IVFq-QmPQ-1
+X-Mimecast-MFC-AGG-ID: t5j63oQ2PAmH5IVFq-QmPQ_1744907812
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D6668182FF46;
+	Thu, 17 Apr 2025 16:35:57 +0000 (UTC)
+Received: from [10.44.33.28] (unknown [10.44.33.28])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C28A21956095;
+	Thu, 17 Apr 2025 16:35:52 +0000 (UTC)
+Message-ID: <76f668a7-1cd6-445b-9e62-cb314bdeefa9@redhat.com>
+Date: Thu, 17 Apr 2025 18:35:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 net-next 5/8] mfd: zl3073x: Add functions to work with
+ register mailboxes
+To: Lee Jones <lee@kernel.org>
+Cc: netdev@vger.kernel.org, Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+ Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+ Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Prathosh Satish <Prathosh.Satish@microchip.com>,
+ Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Michal Schmidt <mschmidt@redhat.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20250416162144.670760-1-ivecera@redhat.com>
+ <20250416162144.670760-6-ivecera@redhat.com>
+ <20250417161354.GF372032@google.com>
+Content-Language: en-US
+From: Ivan Vecera <ivecera@redhat.com>
+In-Reply-To: <20250417161354.GF372032@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250417-slim7x-retimer-v2-1-dbe2dd511137@oldschoolsolutions.biz>
-X-B4-Tracking: v=1; b=H4sIAN8tAWgC/13Oyw6CMBCF4Vchs7amUy5FV76HYcFllEkKNR0kK
- OHdrSRuXP4nmS+zglBgEjgnKwSaWdiPMcwhgbavxzsp7mKD0SbXGRZKHA92UYEmHigoqxukwjb
- YZQbi0SPQjZcdvFaxe5bJh9fuz/hdf5T9p2ZUqPIS09qWaX7S6cW7TtreeyfePaf4mRwbfkO1b
- dsHHgL0irkAAAA=
-X-Change-ID: 20250416-slim7x-retimer-70b1e67b1d42
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Rob Clark <robdclark@gmail.com>, 
- Jos Dehaes <jos.dehaes@gmail.com>, 
- Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744907745; l=13368;
- i=jens.glathe@oldschoolsolutions.biz; s=20240919;
- h=from:subject:message-id;
- bh=DZAL7KsODjdxeAcP8P2DJUA/Mx25qyBJ0Vx8psZ7vds=;
- b=2EULnk2gVDLoDqaB3tecLDRI7RkzGbg5Yc6MsO0J3K5iklmxatGVjTrOhJ7NAYygVDRuUbP88
- +roPjIJpjAOCg4T7UvDEw7Y0vL0oM3btG8sgZRSXHInyw5NdRJW7mUl
-X-Developer-Key: i=jens.glathe@oldschoolsolutions.biz; a=ed25519;
- pk=JcRJqJc/y8LsxOlPakALD3juGfOKmFBWtO+GfELMJVg=
-X-Endpoint-Received: by B4 Relay for
- jens.glathe@oldschoolsolutions.biz/20240919 with auth_id=216
-X-Original-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-Reply-To: jens.glathe@oldschoolsolutions.biz
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
 
-comparing with CRD and other dts for a more complete support of the 7X
-only retimers, gpios, regulators, dp outputs
 
-Tested-by: Rob Clark <robdclark@gmail.com>
-Tested-by: Jos Dehaes <jos.dehaes@gmail.com>
-Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
----
-This patch adds the required nodes to support DP Altmode on all three type-c
-ports. The definition is derived from the CRD. Since they are all marked 40Gbps,
-I assume there are 3 PS8830 retimers. 
-This modification is now for ~8 weeks in my tree with little to no complaints. I 
-don't have access to a Yoga Slim 7X, however many people on #aarch64-laptops do 
-and some are using this patch.
----
-Changes in v2:
-- removed changes not relevant to retimers and dp altmode (thanks Johan)
-- Link to v1: https://lore.kernel.org/r/20250417-slim7x-retimer-v1-1-5813a7835903@oldschoolsolutions.biz
----
- .../boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts  | 476 ++++++++++++++++++++-
- 1 file changed, 470 insertions(+), 6 deletions(-)
+On 17. 04. 25 6:13 odp., Lee Jones wrote:
+> On Wed, 16 Apr 2025, Ivan Vecera wrote:
+> 
+>> Registers present in page 10 and higher are called mailbox type
+>> registers. Each page represents a mailbox and is used to read and write
+>> configuration of particular object (dpll, output, reference & synth).
+>>
+>> The mailbox page contains mask register that is used to select an index of
+>> requested object to work with and semaphore register to indicate what
+>> operation is requested.
+>>
+>> The rest of registers in the particular register page are latch
+>> registers that are filled by the firmware during read operation or by
+>> the driver prior write operation.
+>>
+>> For read operation the driver...
+>> 1) ... updates the mailbox mask register with index of particular object
+>> 2) ... sets the mailbox semaphore register read bit
+>> 3) ... waits for the semaphore register read bit to be cleared by FW
+>> 4) ... reads the configuration from latch registers
+>>
+>> For write operation the driver...
+>> 1) ... writes the requested configuration to latch registers
+>> 2) ... sets the mailbox mask register for the DPLL to be updated
+>> 3) ... sets the mailbox semaphore register bit for the write operation
+>> 4) ... waits for the semaphore register bit to be cleared by FW
+>>
+>> Add functions to read and write mailboxes for all supported object types.
+>>
+>> All these functions as well as functions accessing mailbox latch registers
+>> (zl3073x_mb_* functions) have to be called with zl3073x_dev->mailbox_lock
+>> held and a caller is responsible to take this lock.
+>>
+>> Signed-off-by: Ivan Vecera <ivecera@redhat.com>
+>> v1->v3:
+>> * dropped ZL3073X_MB_OP macro usage
+>> ---
+>>   drivers/mfd/zl3073x-core.c       | 232 +++++++++++++++++++++++
+>>   include/linux/mfd/zl3073x.h      |  12 ++
+>>   include/linux/mfd/zl3073x_regs.h | 304 +++++++++++++++++++++++++++++++
+>>   3 files changed, 548 insertions(+)
+> 
+>> +/*
+>> + * Mailbox operations
+>> + */
+>> +int zl3073x_mb_dpll_read(struct zl3073x_dev *zldev, u8 index);
+>> +int zl3073x_mb_dpll_write(struct zl3073x_dev *zldev, u8 index);
+>> +int zl3073x_mb_output_read(struct zl3073x_dev *zldev, u8 index);
+>> +int zl3073x_mb_output_write(struct zl3073x_dev *zldev, u8 index);
+>> +int zl3073x_mb_ref_read(struct zl3073x_dev *zldev, u8 index);
+>> +int zl3073x_mb_ref_write(struct zl3073x_dev *zldev, u8 index);
+>> +int zl3073x_mb_synth_read(struct zl3073x_dev *zldev, u8 index);
+>> +int zl3073x_mb_synth_write(struct zl3073x_dev *zldev, u8 index);
+> 
+> Why aren't these being placed into drivers/mailbox?
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-index 445d97d67d325853b7dcd2060523e7469ed4e6ea..6f1a9eec0c48bdffb6cf60ff270dffa6bf64b710 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-@@ -72,7 +72,15 @@ port@1 {
- 					reg = <1>;
- 
- 					pmic_glink_ss0_ss_in: endpoint {
--						remote-endpoint = <&usb_1_ss0_qmpphy_out>;
-+						remote-endpoint = <&retimer_ss0_ss_out>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+
-+					pmic_glink_ss0_con_sbu_in: endpoint {
-+						remote-endpoint = <&retimer_ss0_con_sbu_out>;
- 					};
- 				};
- 			};
-@@ -101,7 +109,15 @@ port@1 {
- 					reg = <1>;
- 
- 					pmic_glink_ss1_ss_in: endpoint {
--						remote-endpoint = <&usb_1_ss1_qmpphy_out>;
-+						remote-endpoint = <&retimer_ss1_ss_out>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+
-+					pmic_glink_ss1_con_sbu_in: endpoint {
-+						remote-endpoint = <&retimer_ss1_con_sbu_out>;
- 					};
- 				};
- 			};
-@@ -130,7 +146,15 @@ port@1 {
- 					reg = <1>;
- 
- 					pmic_glink_ss2_ss_in: endpoint {
--						remote-endpoint = <&usb_1_ss2_qmpphy_out>;
-+						remote-endpoint = <&retimer_ss2_ss_out>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+
-+					pmic_glink_ss2_con_sbu_in: endpoint {
-+						remote-endpoint = <&retimer_ss2_con_sbu_out>;
- 					};
- 				};
- 			};
-@@ -226,6 +250,150 @@ vreg_nvme: regulator-nvme {
- 		regulator-boot-on;
- 	};
- 
-+	vreg_rtmr0_1p15: regulator-rtmr0-1p15 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR0_1P15";
-+		regulator-min-microvolt = <1150000>;
-+		regulator-max-microvolt = <1150000>;
-+
-+		gpio = <&pmc8380_5_gpios 8 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&usb0_pwr_1p15_reg_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
-+	vreg_rtmr0_1p8: regulator-rtmr0-1p8 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR0_1P8";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+
-+		gpio = <&pm8550ve_9_gpios 8 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&usb0_1p8_reg_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
-+	vreg_rtmr0_3p3: regulator-rtmr0-3p3 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR0_3P3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&pm8550_gpios 11 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&usb0_3p3_reg_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
-+	vreg_rtmr1_1p15: regulator-rtmr1-1p15 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR1_1P15";
-+		regulator-min-microvolt = <1150000>;
-+		regulator-max-microvolt = <1150000>;
-+
-+		gpio = <&tlmm 188 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&usb1_pwr_1p15_reg_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
-+	vreg_rtmr1_1p8: regulator-rtmr1-1p8 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR1_1P8";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+
-+		gpio = <&tlmm 175 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&usb1_pwr_1p8_reg_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
-+	vreg_rtmr1_3p3: regulator-rtmr1-3p3 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR1_3P3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&tlmm 186 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&usb1_pwr_3p3_reg_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
-+	vreg_rtmr2_1p15: regulator-rtmr2-1p15 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR2_1P15";
-+		regulator-min-microvolt = <1150000>;
-+		regulator-max-microvolt = <1150000>;
-+
-+		gpio = <&tlmm 189 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&usb2_pwr_1p15_reg_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
-+	vreg_rtmr2_1p8: regulator-rtmr2-1p8 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR2_1P8";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+
-+		gpio = <&tlmm 126 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&usb2_pwr_1p8_reg_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
-+	vreg_rtmr2_3p3: regulator-rtmr2-3p3 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR2_3P3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&tlmm 187 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&usb2_pwr_3p3_reg_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
- 	vph_pwr: regulator-vph-pwr {
- 		compatible = "regulator-fixed";
- 
-@@ -567,6 +735,178 @@ keyboard@3a {
- 	};
- };
- 
-+&i2c1 {
-+	clock-frequency = <400000>;
-+
-+	status = "okay";
-+
-+	typec-mux@8 {
-+		compatible = "parade,ps8830";
-+		reg = <0x08>;
-+
-+		clocks = <&rpmhcc RPMH_RF_CLK5>;
-+
-+		vdd-supply = <&vreg_rtmr2_1p15>;
-+		vdd33-supply = <&vreg_rtmr2_3p3>;
-+		vdd33-cap-supply = <&vreg_rtmr2_3p3>;
-+		vddar-supply = <&vreg_rtmr2_1p15>;
-+		vddat-supply = <&vreg_rtmr2_1p15>;
-+		vddio-supply = <&vreg_rtmr2_1p8>;
-+
-+		reset-gpios = <&tlmm 185 GPIO_ACTIVE_LOW>;
-+
-+		pinctrl-0 = <&rtmr2_default>;
-+		pinctrl-names = "default";
-+
-+		orientation-switch;
-+		retimer-switch;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+
-+				retimer_ss2_ss_out: endpoint {
-+					remote-endpoint = <&pmic_glink_ss2_ss_in>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+
-+				retimer_ss2_ss_in: endpoint {
-+					remote-endpoint = <&usb_1_ss2_qmpphy_out>;
-+				};
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+
-+				retimer_ss2_con_sbu_out: endpoint {
-+					remote-endpoint = <&pmic_glink_ss2_con_sbu_in>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&i2c3 {
-+	clock-frequency = <400000>;
-+
-+	status = "okay";
-+
-+	typec-mux@8 {
-+		compatible = "parade,ps8830";
-+		reg = <0x08>;
-+
-+		clocks = <&rpmhcc RPMH_RF_CLK3>;
-+
-+		vdd-supply = <&vreg_rtmr0_1p15>;
-+		vdd33-supply = <&vreg_rtmr0_3p3>;
-+		vdd33-cap-supply = <&vreg_rtmr0_3p3>;
-+		vddar-supply = <&vreg_rtmr0_1p15>;
-+		vddat-supply = <&vreg_rtmr0_1p15>;
-+		vddio-supply = <&vreg_rtmr0_1p8>;
-+
-+		reset-gpios = <&pm8550_gpios 10 GPIO_ACTIVE_LOW>;
-+
-+		pinctrl-0 = <&rtmr0_default>;
-+		pinctrl-names = "default";
-+
-+		retimer-switch;
-+		orientation-switch;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+
-+				retimer_ss0_ss_out: endpoint {
-+					remote-endpoint = <&pmic_glink_ss0_ss_in>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+
-+				retimer_ss0_ss_in: endpoint {
-+					remote-endpoint = <&usb_1_ss0_qmpphy_out>;
-+				};
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+
-+				retimer_ss0_con_sbu_out: endpoint {
-+					remote-endpoint = <&pmic_glink_ss0_con_sbu_in>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&i2c7 {
-+	clock-frequency = <400000>;
-+
-+	status = "okay";
-+
-+	typec-mux@8 {
-+		compatible = "parade,ps8830";
-+		reg = <0x8>;
-+
-+		clocks = <&rpmhcc RPMH_RF_CLK4>;
-+
-+		vdd-supply = <&vreg_rtmr1_1p15>;
-+		vdd33-supply = <&vreg_rtmr1_3p3>;
-+		vdd33-cap-supply = <&vreg_rtmr1_3p3>;
-+		vddar-supply = <&vreg_rtmr1_1p15>;
-+		vddat-supply = <&vreg_rtmr1_1p15>;
-+		vddio-supply = <&vreg_rtmr1_1p8>;
-+
-+		reset-gpios = <&tlmm 176 GPIO_ACTIVE_LOW>;
-+
-+		pinctrl-0 = <&rtmr1_default>;
-+		pinctrl-names = "default";
-+
-+		retimer-switch;
-+		orientation-switch;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+
-+				retimer_ss1_ss_out: endpoint {
-+					remote-endpoint = <&pmic_glink_ss1_ss_in>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+
-+				retimer_ss1_ss_in: endpoint {
-+					remote-endpoint = <&usb_1_ss1_qmpphy_out>;
-+				};
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+
-+				retimer_ss1_con_sbu_out: endpoint {
-+					remote-endpoint = <&pmic_glink_ss1_con_sbu_in>;
-+				};
-+			};
-+
-+		};
-+	};
-+};
-+
- &i2c8 {
- 	clock-frequency = <400000>;
- 
-@@ -614,6 +954,33 @@ &mdss {
- 	status = "okay";
- };
- 
-+&mdss_dp0 {
-+	status = "okay";
-+};
-+
-+&mdss_dp0_out {
-+	data-lanes = <0 1>;
-+	link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000 8100000000>;
-+};
-+
-+&mdss_dp1 {
-+	status = "okay";
-+};
-+
-+&mdss_dp1_out {
-+	data-lanes = <0 1>;
-+	link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000 8100000000>;
-+};
-+
-+&mdss_dp2 {
-+	status = "okay";
-+};
-+
-+&mdss_dp2_out {
-+	data-lanes = <0 1>;
-+	link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000 8100000000>;
-+};
-+
- &mdss_dp3 {
- 	compatible = "qcom,x1e80100-dp";
- 	/delete-property/ #sound-dai-cells;
-@@ -701,6 +1068,37 @@ &pcie6a_phy {
- 	status = "okay";
- };
- 
-+&pm8550_gpios {
-+	rtmr0_default: rtmr0-reset-n-active-state {
-+		pins = "gpio10";
-+		function = "normal";
-+		power-source = <1>; /* 1.8V */
-+		bias-disable;
-+		input-disable;
-+		output-enable;
-+	};
-+
-+	usb0_3p3_reg_en: usb0-3p3-reg-en-state {
-+		pins = "gpio11";
-+		function = "normal";
-+		power-source = <1>; /* 1.8V */
-+		bias-disable;
-+		input-disable;
-+		output-enable;
-+	};
-+};
-+
-+&pm8550ve_9_gpios {
-+	usb0_1p8_reg_en: usb0-1p8-reg-en-state {
-+		pins = "gpio8";
-+		function = "normal";
-+		power-source = <1>; /* 1.8V */
-+		bias-disable;
-+		input-disable;
-+		output-enable;
-+	};
-+};
-+
- &pmc8380_3_gpios {
- 	edp_bl_en: edp-bl-en-state {
- 		pins = "gpio4";
-@@ -711,6 +1109,17 @@ edp_bl_en: edp-bl-en-state {
- 	};
- };
- 
-+&pmc8380_5_gpios {
-+	usb0_pwr_1p15_reg_en: usb0-pwr-1p15-reg-en-state {
-+		pins = "gpio8";
-+		function = "normal";
-+		power-source = <1>; /* 1.8V */
-+		bias-disable;
-+		input-disable;
-+		output-enable;
-+	};
-+};
-+
- &qupv3_0 {
- 	status = "okay";
- };
-@@ -919,6 +1328,20 @@ wake-n-pins {
- 		};
- 	};
- 
-+	rtmr1_default: rtmr1-reset-n-active-state {
-+		pins = "gpio176";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	rtmr2_default: rtmr2-reset-n-active-state {
-+		pins = "gpio185";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
- 	tpad_default: tpad-default-state {
- 		pins = "gpio3";
- 		function = "gpio";
-@@ -940,6 +1363,47 @@ reset-n-pins {
- 		};
- 	};
- 
-+	usb1_pwr_1p15_reg_en: usb1-pwr-1p15-reg-en-state {
-+		pins = "gpio188";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	usb1_pwr_1p8_reg_en: usb1-pwr-1p8-reg-en-state {
-+		pins = "gpio175";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	usb1_pwr_3p3_reg_en: usb1-pwr-3p3-reg-en-state {
-+		pins = "gpio186";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	usb2_pwr_1p15_reg_en: usb2-pwr-1p15-reg-en-state {
-+		pins = "gpio189";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	usb2_pwr_1p8_reg_en: usb2-pwr-1p8-reg-en-state {
-+		pins = "gpio126";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	usb2_pwr_3p3_reg_en: usb2-pwr-3p3-reg-en-state {
-+		pins = "gpio187";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
- };
- 
- &uart21 {
-@@ -976,7 +1440,7 @@ &usb_1_ss0_dwc3_hs {
- };
- 
- &usb_1_ss0_qmpphy_out {
--	remote-endpoint = <&pmic_glink_ss0_ss_in>;
-+	remote-endpoint = <&retimer_ss0_ss_in>;
- };
- 
- &usb_1_ss1_hsphy {
-@@ -1008,7 +1472,7 @@ &usb_1_ss1_dwc3_hs {
- };
- 
- &usb_1_ss1_qmpphy_out {
--	remote-endpoint = <&pmic_glink_ss1_ss_in>;
-+	remote-endpoint = <&retimer_ss1_ss_in>;
- };
- 
- &usb_1_ss2_hsphy {
-@@ -1040,5 +1504,5 @@ &usb_1_ss2_dwc3_hs {
- };
- 
- &usb_1_ss2_qmpphy_out {
--	remote-endpoint = <&pmic_glink_ss2_ss_in>;
-+	remote-endpoint = <&retimer_ss2_ss_in>;
- };
+I think the only common thing of this with drivers/mailbox is only the
+name. Mailbox (this comes from datasheet) here is just an atomic way to
+read or write some range of registers.
 
----
-base-commit: f660850bc246fef15ba78c81f686860324396628
-change-id: 20250416-slim7x-retimer-70b1e67b1d42
+How can be that used here?
 
-Best regards,
--- 
-Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-
+Ivan
 
 
