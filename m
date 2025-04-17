@@ -1,140 +1,78 @@
-Return-Path: <linux-kernel+bounces-609538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD113A92363
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 19:06:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F435A9235B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 19:06:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C93E7B2796
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 17:05:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D67146595B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 17:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 787A2255E23;
-	Thu, 17 Apr 2025 17:06:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1AC9254AEC;
+	Thu, 17 Apr 2025 17:06:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="qZO7cEJ6"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nHfnZEoR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5902D2550C4
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 17:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C28135973;
+	Thu, 17 Apr 2025 17:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744909587; cv=none; b=ddMGEQ738CoHG6BkTZYgzFXvYz78MtWIRZ3TaiApIZ/ghMsjNAd7TWZEfJR4zF2eln99MunqJRi92GB//0+qrrTBd0LGBItUWtJcYJOxUcUE+0kSSxUxSLMRH0RNTE3jbwKwXzZ+jc5yCXQt2ssIwSy6I1vkR9idyi5FLwPNcJw=
+	t=1744909565; cv=none; b=SdGRkhw2F1m2fas0G9sqgd1gxzpC4CFkaZW11pqTF84eTl2NWyIRVya3r8Aib5b4mhi517T0ZfkG/JzxBf8xWzxrlC8U0Scm2SwIhPrdfZIxgpcxayrqh8tWw7t2zf+R7uxneBcgbukAV4TnLbfF0NSsDFJ0mOnb22wwhe4lHEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744909587; c=relaxed/simple;
-	bh=/rayCc9ocJT3K1N38tkBInMy2zbXnfq0bzNX+4YFKNs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DtVMqY+R7cJtfxkSUPOOzsQgoktnNmuxUEk/0MdwETSNX34gGx1BMZ/EH2cmtPC9SGgzp17rTA0kPkfufitITH2afu+5Iy3xRvfZQ0cR+4dsCAOtclUio6DKmMLIx69WSAudAyoHDp9ybn20fnlCa7qj1NkMBnhMxXl7+A1wICc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=qZO7cEJ6; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-736aa9d0f2aso1292496b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 10:06:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1744909585; x=1745514385; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4xXe/XCInddH4WV/KVFfoKsdbwZ1rzQJBQUNYtkK2yw=;
-        b=qZO7cEJ61kijisuzXtc7rEeQIPG/iMvwgr3lCSu75ur8oYjseyjrCQHWJz/tzP+V2y
-         6Ro0qfd2V2tKD+oaGnj2Mfi0dhJF2Uac0JXx/+yyetjj2rU0T46Yh2EtJ7sNxvcrSsuY
-         F6bsto+GohhwqfQoxu2bgUz/ddQcaBsrkRpz4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744909585; x=1745514385;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4xXe/XCInddH4WV/KVFfoKsdbwZ1rzQJBQUNYtkK2yw=;
-        b=Aq1ZphkqZ0vjfVrKnYuXFMLgO9aR0GhT5RnrYFpuaJFBZV6WLMw/tQNmNn8Qc9AhN7
-         s1W1sOW8Cqs3/5H+b1mZZpAWIQsulL6MhCsEhqANKWQShMFvY4tlo3QgLXgwFNWwkIp/
-         FWzfVbqdp6uzWX3Sn4fRnD9ElGg6Md+EXPdF85kOxewgJ4q76P7cxpOOi28Wxbrd5T5w
-         7jEI9QNw1l5colryBY2ZRqwbFQY9Lsi3FFAK4RZqg/Zw5xcSXV6hEhUwx98FvePYU3b7
-         ZhjTZsyu8UzF34rO85H/P0zqI3MZxF2CzKtx4LIX/ikrQivt9V1Pd8lupQlk6yNryIum
-         xXhA==
-X-Forwarded-Encrypted: i=1; AJvYcCXhRy567XrR51lGH9wOi7WQUz7SzPTNpo/WJYWyU5K1HC8RrJx+2NfbPMkIhw0s8/Z8oQRb8z820HzSl/o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6Q0cEBLYK9I72NVxULaPUNlisN/p0U1/cyEBC3kvmYU4L5nae
-	WIzji+RAnja3afiscObp25NxAXy8+9vjWnF15f6krt9CMovOuX+/Mkz5qqmWlcU=
-X-Gm-Gg: ASbGnctHIbukPMwM1J+JeABKR6Ifys9cXGNNYHWpDMG3Rmh4Mr3JvqDmcifvNhvfuH/
-	hhgaw8CU91STbooT3P6S7AAcvGQSgWjWOHKmICVLyfUObfFWw9lROY8qBrJOgr6yUKpEr2/bZ6P
-	Qb4aFU1CkFY4FfFOEA8kki4RN4xjAtP8UmAntzyzygAq1rLeM9hmMP4Ee3Mld1rc6BVE2XR4ArT
-	z59KsHeCTeNtOlZznPvUSbZtO48lNi9vSjf+ORkMPOEGRTuxV4vhlHZjz0lBaUc18ZFAYwD6P7x
-	sDKQHkU3H2eJvG1D8QcZNL58+WosIF39/iVSblYpp8AxjNIA8hsydKPPhE2dNpHJx8Z90uy6ckZ
-	90qjPwm1jA9nSlb5Hz78sI/M=
-X-Google-Smtp-Source: AGHT+IE7lJplDSFz7ARLg9Ar2ZAXnjAKyTmuyKanO9eaaZPdP2fa0Yk5XsKE81dhgmyhqhOavS+vQQ==
-X-Received: by 2002:a05:6a00:710d:b0:73c:3116:cf10 with SMTP id d2e1a72fcca58-73c3116d5f5mr4731684b3a.23.1744909585513;
-        Thu, 17 Apr 2025 10:06:25 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73dbf8bf5b9sm93861b3a.19.2025.04.17.10.06.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Apr 2025 10:06:25 -0700 (PDT)
-Date: Thu, 17 Apr 2025 10:06:22 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
-	"open list:XDP (eXpress Data Path):Keyword:(?:b|_)xdp(?:b|_)" <bpf@vger.kernel.org>
-Subject: Re: [PATCH net-next v2 4/4] selftests: drv-net: Test that NAPI ID is
- non-zero
-Message-ID: <aAE1DkYpvb1yUp5_@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
-	"open list:XDP (eXpress Data Path):Keyword:(?:b|_)xdp(?:b|_)" <bpf@vger.kernel.org>
-References: <20250417013301.39228-1-jdamato@fastly.com>
- <20250417013301.39228-5-jdamato@fastly.com>
- <20250417064615.10aba96b@kernel.org>
- <aAEvq_oLLzboJeIB@LQ3V64L9R2>
- <20250417095310.1adbcbc8@kernel.org>
+	s=arc-20240116; t=1744909565; c=relaxed/simple;
+	bh=SBU5oiFLZZUGSuqBBdeR7h27XUsKvGUBJIMbJBJwZWY=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=vF6gJEvBdiR2bRFGc/prVXpstYzhay83zRLBAck3B9mWwCm6I/1iKTMx3ITmoK6kmXNabk1st8be+VhAD2higMm0zRv6pNrTAr490S7VNgmkFPPYr0sLQ1oHHBPzI6fkVWk3e6J31rT57Q9ZHHXGHTTzvj66HOv6AUjQsIuoeDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nHfnZEoR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22AC5C4CEE4;
+	Thu, 17 Apr 2025 17:06:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744909565;
+	bh=SBU5oiFLZZUGSuqBBdeR7h27XUsKvGUBJIMbJBJwZWY=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=nHfnZEoRvS8Fk1gUBhd/HoCZQOzsQogHwyJVHexfHaa9DEEP3AB0HHOtUqp25fP8n
+	 y4nlk4jQUCFCtUM8Aj6Ydh0gKImBGuOiGNd+rJ1fwtguYLTHt8yt42G57LfYGuZGbU
+	 CuGzP7xZ/tF99rSSNJY/hOftr1klwAnWD1TrDseTthZTl5qDea920nmkAz2RNEoMIa
+	 h9qXiBOGL0sGBE0hslwdHbUz6W2hKzC64CPfcaKCedh5IsPF6o3O/DbUdJWKW/NF8H
+	 PBsTPKiDq+EgBOfzMjmTwMEqtnUntZVC1/KMGMUao8w7v85bOLrGEBY0tf2IEGj/qQ
+	 tPhDulR48q8xQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70DFE380664C;
+	Thu, 17 Apr 2025 17:06:44 +0000 (UTC)
+Subject: Re: [GIT PULL] Btrfs fixes for 6.15-rc3
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <cover.1744883021.git.dsterba@suse.com>
+References: <cover.1744883021.git.dsterba@suse.com>
+X-PR-Tracked-List-Id: <linux-btrfs.vger.kernel.org>
+X-PR-Tracked-Message-Id: <cover.1744883021.git.dsterba@suse.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.15-rc2-tag
+X-PR-Tracked-Commit-Id: 65f2a3b2323edde7c5de3a44e67fec00873b4217
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 0cb9ce06a682b251d350ded18965a3dfa5d13595
+Message-Id: <174490960310.4147514.14308348248878569495.pr-tracker-bot@kernel.org>
+Date: Thu, 17 Apr 2025 17:06:43 +0000
+To: David Sterba <dsterba@suse.com>
+Cc: torvalds@linux-foundation.org, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250417095310.1adbcbc8@kernel.org>
 
-On Thu, Apr 17, 2025 at 09:53:10AM -0700, Jakub Kicinski wrote:
-> On Thu, 17 Apr 2025 09:43:23 -0700 Joe Damato wrote:
-> > I think the main outstanding thing is Paolo's feedback which maybe
-> > (?) is due to a Python version difference? If you have any guidance
-> > on how to proceed on that, I'd appreciate it [1].
-> 
-> yes, it's a Python version, I made the same mistake in the past.
-> Older Pythons terminate an fstring too early.
-> Just switch from ' to " inside the fstring, like you would in bash
-> if you wanted to quote a quote character. The two are functionally
-> equivalent.
+The pull request you sent on Thu, 17 Apr 2025 11:49:55 +0200:
 
-OK thanks for the details. Sorry that I am learning Python via
-netdev ;)
+> git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.15-rc2-tag
 
-I did this so it matches the style of the other fstring a few lines
-below:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/0cb9ce06a682b251d350ded18965a3dfa5d13595
 
--    listen_cmd = f'{bin_remote} {cfg.addr_v['4']} {port}'
-+    listen_cmd = f"{bin_remote} {cfg.addr_v['4']} {port}"
+Thank you!
 
-Test works and passes for me on my system, so I'll send the v3
-tonight when I've hit 24 hrs.
-
-Thanks!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
