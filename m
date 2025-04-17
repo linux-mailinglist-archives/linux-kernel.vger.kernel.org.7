@@ -1,114 +1,117 @@
-Return-Path: <linux-kernel+bounces-609335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94F04A920F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 17:11:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B9CBA920FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 17:12:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9CA519E6A36
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:11:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2967188AFC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:11:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EC3B253345;
-	Thu, 17 Apr 2025 15:10:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B73B825332D;
+	Thu, 17 Apr 2025 15:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qPejttI5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="Ts9eJT5Y"
+Received: from cu-ua11p00im-quki07173001.ua.silu.net (cu-ua11p00im-quki07173001.ua.silu.net [123.126.78.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9719724E4D4;
-	Thu, 17 Apr 2025 15:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A007A1CB9F0
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 15:11:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=123.126.78.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744902657; cv=none; b=lwC/hkPkD26RxmamqeGh+WPOrvo7g0UKUO70+UViAMcQNc/VQdrDedWRlGH1Tx+Yd6SGSNnvKvqdqtmAb1nZdJeeqOQ6rd5uBh12tETa63LmQIYxg5BJ1bk08Rh55JZAGNUqmfTiieoEAMlVkbWJrnqp1gPqzs+EGTlAznw7OcI=
+	t=1744902686; cv=none; b=MPNMo2FJmHg83DhDJXMBUljm0hiHS4NW7jgiWh+ezEiQy01fHmh2TyDz9tGRgweQm/Gp2nIha3iU1LwQj3iPYHIcfpqUrMtn9hUuKrXTvxlJ/AsUNCDU/IIgSuVHyW49/5BkLtTQI4zOiIXSk5lZ4fyk7vOAzC+5bIb3hD9oyXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744902657; c=relaxed/simple;
-	bh=k9KzxT8RtT8j3vaMkxgHq/WZQBArYVHXFWM5CAfhicI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kFudnOeySeKoLQnpsRLerZ9DE9ZSffTqozLu5+pq1IfyHjvZ8G0NUOv0cCqt0jXJq6hFeh9h43o1NXcQdOX4NTKYvfmKXnmwA0mfHd3Hq4XfxlGgSihbCKc7+N88sKgr1bYTNDgnM1UbtPHoAat41wQORzI1FY7CpJxU72XUrb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qPejttI5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A143C4CEE4;
-	Thu, 17 Apr 2025 15:10:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744902657;
-	bh=k9KzxT8RtT8j3vaMkxgHq/WZQBArYVHXFWM5CAfhicI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qPejttI5AeQmQ210H5IK7GP2nZk1Lu3IhtfKUVo2lfCfjpV+D5LcW9X/KYQ0NX55Z
-	 Sd87CLpI0klQQpkfg3OzJv9YpNfxLEuBlXNByX2pe7TkIMWS6El/h9V5OeatNhAtbJ
-	 ZOGpfuEsNyUnQ/wYzJDAo8sNKJJUewOglfBsC0kXRIn581ucRmt+OrpaJuLA2ymSRr
-	 j6n9DsikYoUnOi/pvSRiYN/aQfP5KZJ4MtW5+tckyPPIGTDLAL3Khsa5ve7cF6IRi9
-	 BXJH1U2/p1lY0AevN2ZKY3l1tklGxf075KWiZ0ejZFtvhaB3J3DgN+YnpNopLDDRXJ
-	 6QjYLxDdQzzDQ==
-Date: Thu, 17 Apr 2025 08:10:55 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>,
- Lorenzo Bianconi <lorenzo@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Matthias Brugger
- <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>, Florian Fainelli
- <f.fainelli@gmail.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH net v2 4/5] net: ethernet: mtk_eth_soc: net: revise
- NETSYSv3 hardware configuration
-Message-ID: <20250417081055.1bda2ff6@kernel.org>
-In-Reply-To: <28929b5bb2bfd45e040a07c0efefb29e57a77513.1744764277.git.daniel@makrotopia.org>
-References: <8ab7381447e6cdcb317d5b5a6ddd90a1734efcb0.1744764277.git.daniel@makrotopia.org>
-	<28929b5bb2bfd45e040a07c0efefb29e57a77513.1744764277.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1744902686; c=relaxed/simple;
+	bh=3gBks0IDv5+bQ7f9oySXgiMRXgK7dls0NUMSTEFmLW4=;
+	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
+	 Cc:In-Reply-To:To; b=EqK3AVN/X45FQwoF7XBON7ubGUQ5e9SNTBYXFYJ79PxgGl8/PTOBEec15Av/B2apaxVC87rag7y70Bg9cI+3uGSSPJ/VajfOCygmQECxO+ovtg7GaXO7UoJjuIHc+rT5M9jIOMMMI5GcIsPIgZnO8U11qzpD4GkPOy1PyXrHhpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=Ts9eJT5Y; arc=none smtp.client-ip=123.126.78.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1ca1ba; t=1744902682;
+	bh=tbzU7uQeRtoWWJcQEx8UqorAm9YLdvKxFVfT04Erd6A=;
+	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:To;
+	b=Ts9eJT5Y9yksFWLCRM2LNqqUoUaXXLs1Ys4JSc2+W8F2cSFDng9y0keiiqcn00IF4
+	 j2b7BDJjIYQ6LUvPmmAVSZIRk9kKHcFusvgSDVC5JPvqOFqAWn3DKSuNTsW2mKMZzZ
+	 QyVwm/A+C8qvd6SauJU3YnUugJpLZlg8oZxF48x3dvO5U3sb1/0EVPZIwqNNIfiFK4
+	 LkqHbZHPjensMtlthMMFUE0Vn//+tTCsQR0mGswwCwKAU6i10Pif12aCqNYXP0d6PJ
+	 fvFMwNT2G8NUr0WecDGo1mZjsVSDJh5ymP5YNOsjDmPiSvR4kHYf+qkgOoLTSKdjzO
+	 yu2EHq/sjmzQA==
+Received: from smtpclient.apple (ua11p00im-asmtpcmvip.ua.silu.net [112.19.242.76])
+	by ua11p00im-quki07173001.ua.silu.net (Postfix) with ESMTPSA id 825B79A00D7;
+	Thu, 17 Apr 2025 15:11:21 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From: huzijun <zijun_hu@icloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v2 1/3] configfs: Delete semicolon from macro type_print() definition
+Date: Thu, 17 Apr 2025 23:11:10 +0800
+Message-Id: <CDCE55D6-2296-4B36-9A65-369EC13492DC@icloud.com>
+References: <aAEXAL3ypUn4G/oe@gmail.com>
+Cc: Joel Becker <jlbec@evilplan.org>,
+ Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+ Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org,
+ Zijun Hu <quic_zijuhu@quicinc.com>
+In-Reply-To: <aAEXAL3ypUn4G/oe@gmail.com>
+To: Breno Leitao <leitao@debian.org>
+X-Mailer: iPad Mail (22D72)
+X-Proofpoint-ORIG-GUID: Wbdowg9GmiZn-x5PaAjozZtqabDaIoQF
+X-Proofpoint-GUID: Wbdowg9GmiZn-x5PaAjozZtqabDaIoQF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-17_03,2025-04-17_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0 malwarescore=0
+ mlxscore=0 phishscore=0 bulkscore=0 suspectscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2504170089
 
-On Wed, 16 Apr 2025 01:51:42 +0100 Daniel Golle wrote:
-> +		/* PSE should not drop port8, port9 and port13 packets from WDMA Tx */
-> +		mtk_w32(eth, 0x00002300, PSE_DROP_CFG);
-> +
-> +		/* PSE should drop packets to port8, port9 and port13 on WDMA Rx ring full */
 
-nit: please try to wrap at 80 chars. There's really no need to go over
-on comments. Some of us stick to 80 char terminals. 
-
-> +		mtk_w32(eth, 0x00002300, PSE_PPE_DROP(0));
-> +		mtk_w32(eth, 0x00002300, PSE_PPE_DROP(1));
-> +		mtk_w32(eth, 0x00002300, PSE_PPE_DROP(2));
->  
->  		/* GDM and CDM Threshold */
-> -		mtk_w32(eth, 0x00000707, MTK_CDMW0_THRES);
-> +		mtk_w32(eth, 0x08000707, MTK_CDMW0_THRES);
->  		mtk_w32(eth, 0x00000077, MTK_CDMW1_THRES);
->  
->  		/* Disable GDM1 RX CRC stripping */
-> @@ -4064,7 +4076,7 @@ static int mtk_hw_init(struct mtk_eth *eth, bool reset)
->  		mtk_w32(eth, 0x00000300, PSE_DROP_CFG);
->  
->  		/* PSE should drop packets to port 8/9 on WDMA Rx ring full */
-> -		mtk_w32(eth, 0x00000300, PSE_PPE0_DROP);
-> +		mtk_w32(eth, 0x00000300, PSE_PPE_DROP(0));
->  
->  		/* PSE Free Queue Flow Control  */
->  		mtk_w32(eth, 0x01fa01f4, PSE_FQFC_CFG2);
-> diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.h b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
-> index 39709649ea8d1..eaa96c8483b70 100644
-> --- a/drivers/net/ethernet/mediatek/mtk_eth_soc.h
-> +++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
-> @@ -151,7 +151,12 @@
->  #define PSE_FQFC_CFG1		0x100
->  #define PSE_FQFC_CFG2		0x104
->  #define PSE_DROP_CFG		0x108
-> -#define PSE_PPE0_DROP		0x110
-> +#define PSE_PPE_DROP(x)		(0x110 + ((x) * 0x4))
-> +
-> +/* PSE Last FreeQ Page Request Control */
-> +#define PSE_DUMY_REQ		0x10C
-
-This really looks like misspelling of DUMMY, is it really supposed 
-to have one 'M' ?
+> =E5=9C=A8 2025=E5=B9=B44=E6=9C=8817=E6=97=A5=EF=BC=8C22:58=EF=BC=8CBreno L=
+eitao <leitao@debian.org> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+> =EF=BB=BFOn Tue, Apr 15, 2025 at 08:34:25PM +0800, Zijun Hu wrote:
+>> From: Zijun Hu <quic_zijuhu@quicinc.com>
+>>=20
+>> Macro type_print() definition ends with semicolon, so will cause
+>> the subsequent macro invocations end with two semicolons.
+>>=20
+>> Fix by deleting the semicolon from the macro definition.
+>>=20
+>> Reviewed-by: Joel Becker <jlbec@evilplan.org>
+>> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+>> ---
+>> fs/configfs/dir.c | 2 +-
+>> 1 file changed, 1 insertion(+), 1 deletion(-)
+>>=20
+>> diff --git a/fs/configfs/dir.c b/fs/configfs/dir.c
+>> index 7d10278db30d667d0ef7e1140e54961c5a440c41..0a011bdad98c492227859ff32=
+8d61aeed2071e24 100644
+>> --- a/fs/configfs/dir.c
+>> +++ b/fs/configfs/dir.c
+>> @@ -970,7 +970,7 @@ static void configfs_dump_one(struct configfs_dirent *=
+sd, int level)
+>> {
+>>    pr_info("%*s\"%s\":\n", level, " ", configfs_get_name(sd));
+>>=20
+>> -#define type_print(_type) if (sd->s_type & _type) pr_info("%*s %s\n", le=
+vel, " ", #_type);
+>> +#define type_print(_type) if (sd->s_type & _type) pr_info("%*s %s\n", le=
+vel, " ", #_type)
+>>    type_print(CONFIGFS_ROOT);
+>>    type_print(CONFIGFS_DIR);
+>>    type_print(CONFIGFS_ITEM_ATTR);
+>=20
+> As I've asked in V1. Is this macro being used?
+>=20
+yes. it is being used by those 3 statements which follows the macro definiti=
+on (^^)
+> --breno
 
