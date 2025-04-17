@@ -1,119 +1,89 @@
-Return-Path: <linux-kernel+bounces-609255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A524BA91FC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 16:34:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8141FA91FBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 16:33:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11F963B2560
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:34:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D3AD1883421
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F5BE2512E8;
-	Thu, 17 Apr 2025 14:34:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 718CE250C08;
+	Thu, 17 Apr 2025 14:32:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VW0X+a6M"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92AEB15A868;
-	Thu, 17 Apr 2025 14:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="1Zg4cd7M"
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FF5E199EB2
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 14:32:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744900489; cv=none; b=dahIYUhsKFJYN/ULGIUL40wMUYxZ6C38QkbfR1m5b9AyF73W+6pMGsv+0mqUijoqsP546mJPYFUY4oswpn+spHUrIlMa4wXehdZN24fT9yMhHjHkD8bHgW9/kb5afUN00nREeHEWLUIr+airppRuQ57WrhQ8QXc0pE+iWX/w//E=
+	t=1744900378; cv=none; b=CNooXWQG5az1xuc3wDM+GIkc1hCDlphR2f0fSJoT+PE3Hw2Vl8WQNKqFzqCHJ1CTl6RtkV/DipTcUsObBbCPAsA3/HU+Le0rMpiUbDalg2TQiXCeJr6iUp4gKAhS+rr3LS2nSaNHWjTM98YMR5uzq0gtqyQg7CGcJ0VWeVigkao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744900489; c=relaxed/simple;
-	bh=UAWbwn3OEwNZoN0Hj/TtDK0n2Rnxf+jEq7ZazqpZnGE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YDjKVZSBRWRgdIDtMK67zrdL2RZaHC2e0WZDMZKbsY/oOFAmIAKkvublJeuViZB6zEeFq29Fg/9joyUugeieXCJkq61KhoPHQqdBwOFRkMwfZr5vKVciMgXfppgsyKMElErXjtW5mPXg5asQGEvvrKClL/pFdsuQviI6vGrf1C8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VW0X+a6M; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6e8fd49b85eso13078906d6.0;
-        Thu, 17 Apr 2025 07:34:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744900486; x=1745505286; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=l+vcDWcINfOfJjicxisaFlx0tomPR1D579mnXzAv3jI=;
-        b=VW0X+a6MAcHE5egRIu7CJTxIDXkAfy8sZBl8awesEo1oFLE7pI+0t6UMLlNXBm63bB
-         wuh8o1+npYblh4erZkNsWwhZyyyEhhN+Fa//vNKTSN49pXteap6qnCB20CzRgjlYTpTz
-         yCN7DN4gfeTFKkfT0Zq7AstEAvpR3RMHBxeitwXjAiIt1esIKLIR3zKDao8OOHhPhKy0
-         SIROcGtNFxT1LqQi+kqNcaiKEPzwucYf8syO7D6A+jw60gsjfFOt46agEz3zjKc98m1V
-         QeuaPK7yTfUSi3caG2j4kAZ1yz6Cy1yOm27kyN5yNl1VYxwKQ46/mrXSPtMqj+cePscj
-         wgkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744900486; x=1745505286;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=l+vcDWcINfOfJjicxisaFlx0tomPR1D579mnXzAv3jI=;
-        b=iCDmU/xhHQgSN5TuPRPJyeIfiD7McL899bPcSJaNMY767SLYaRL3ESTlodDIT3MouV
-         /KTT/HSsU7K4If43p8Kfgxa6gUCa7rC2yWa8xRpNrz/3jq0d46ZpWZLOExKIB6+w2tFF
-         zCO3E69Ux/Na9F7QT0JLm095urQaL/Q4QUk7lHdIRTXeE4C80ryxRu8uQqMUNHvjYBZA
-         JXmBY9CiI7UTygs24i1p4hDAznEXxOOL+e/u3dF9FY4rvDaF//B/Q0E9RypbcpylMRFg
-         lLEhjCB8Zz9mZOb87jTKocxNnsudOT/LHqO2q94woWp1qUlDgeCX4Z9ILugOZAtbxisg
-         sf/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUdHkf7sxZ+3wOUtAMYNu9Kv0ZRD26Y1MFlp7vxUtU0vaEhn4SS4HBXRJCGSgT5HHjv4EEVgkfdv4M=@vger.kernel.org, AJvYcCUgZZr5QxJw1qb/nn6AbxlWbMVCDF7SpaV7gGrs8hyz4MahBJdW6MI9Yd/C+congDRmDksuUWKqAPPTot8h@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBa6Fj2QjHoIIsY1Uixy/uPkIzdAgJnoYCj/hVyppHmJpxoYNN
-	NioMBNpU//6AhNrilBP5jSolCKhSTRCTbf9KDq1s6plojYLrXSbq
-X-Gm-Gg: ASbGncvFCHp2CWYZpIpjURAkGxKgEBSBFkAQpoZCxuMAf41VtJV+yb5Ddwg4U5EAt/e
-	MqmAhX34KAPU6MkASh92pRUFvvDJ3qW7j6ztLErPnikGHEk6i/HBT41nCNJyqmWcjnUMki72Qun
-	EAcL+3LfufZAK2wLEH5yQWlrBnrhheprljuJhtzGH3Jy0qqPw33tG+QVDvMK7+M8Ex9ZGde0fgF
-	/rXXqSvh3cYj43LI7VSTFjv5rMmK5ifc8OrqthRAAjM55lSyyx93+qhShV1w7oEOfjTBrYcr04t
-	KYdTGmm3lgPp5aI+3rox0MUXgwyUHJgmrwcWQyZMug+Sons9nMqJ3LQOkv4im+gf+zPquCcBmit
-	B0bmheK1D30q79ZspQJU=
-X-Google-Smtp-Source: AGHT+IG9icZZSGylR/t9AWhZ7mftH5cb8yzalcC3BXZjiY6qJg9z16eiJpMA9UlK9w2SkTnLcK98IA==
-X-Received: by 2002:a05:6214:240b:b0:6e8:fbe2:2db0 with SMTP id 6a1803df08f44-6f2b3028031mr87470066d6.30.1744900486480;
-        Thu, 17 Apr 2025 07:34:46 -0700 (PDT)
-Received: from theriatric.mshome.net (c-73-123-232-110.hsd1.ma.comcast.net. [73.123.232.110])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f0de973552sm128069896d6.50.2025.04.17.07.34.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Apr 2025 07:34:46 -0700 (PDT)
-From: Gabriel Shahrouzi <gshahrouzi@gmail.com>
-To: gregkh@linuxfoundation.org,
-	jic23@kernel.org,
-	lars@metafoo.de,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	Michael.Hennerich@analog.com
-Cc: gshahrouzi@gmail.com,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev
-Subject: [PATCH] iio: frequency:: Remove unused parameter from data documentation
-Date: Thu, 17 Apr 2025 10:32:20 -0400
-Message-ID: <20250417143220.572261-1-gshahrouzi@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1744900378; c=relaxed/simple;
+	bh=Q+mwj/32JuAHr63URsZEX8BOgZe7uZgNegyO6iLCpxI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=izTg62Y7cAKrfx3mxZ0Us+OTIVZTzvP6mFvNeaD3Xu9p4mKs7ILNcoO4EWytquhq7CAN1GmLbnh09fC5DZLD7Jh3cQtH1p8aBoyoLCleo1GHPBl02y1cZ7QVzTh4EUudpTDptAUNyKZ6ua0hiBf6HsS1bxHcevnYMqoQjpgqSRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=1Zg4cd7M; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
+Received: from 8bytes.org (p4ffe03ae.dip0.t-ipconnect.de [79.254.3.174])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id 88463485A8;
+	Thu, 17 Apr 2025 16:32:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1744900376;
+	bh=Q+mwj/32JuAHr63URsZEX8BOgZe7uZgNegyO6iLCpxI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=1Zg4cd7MxwEdWaonBkKbZ8IizWLchUrGZSIFOk0sieuDy4nHgapkB672p67b0/oao
+	 Vv/kl6eXUjaWmnlpAw/5jT9+YUY+a0CbtCGfX4bZWy+mr+mjGSWjxo2H66a+aWYQ2r
+	 5DmtIWZnLMl9Z6PIeTiLgfZNSkpoKZXmnAQtFgVTPMzuNh5SoRYt+hmFNpE//ziG+V
+	 +a/O3u5vUYWgh6WyYxJjjtXEC3uS8TXl3XBu9mM/wdQqrfD0cTMmlAkOcbr+UL7Ivj
+	 u2KCydHWmfFAV0DXkiE8tFJ/FASNCTq7rFSMPWTlkOjker13cqoC7r+PlrZy4Pv2zE
+	 E+KlFh2Tlx5JQ==
+Date: Thu, 17 Apr 2025 16:32:53 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Rolf Eike Beer <eb@emlix.com>
+Cc: Will Deacon <will@kernel.org>, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Bert Karwatzki <spasswolf@web.de>,
+	Lu Baolu <baolu.lu@linux.intel.com>,
+	Jerry Snitselaar <jsnitsel@redhat.com>,
+	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+	Tomasz Jeznach <tjeznach@rivosinc.com>,
+	Nick Kossifidis <mick@ics.forth.gr>,
+	Sebastien Boeuf <seb@rivosinc.com>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Robin Murphy <robin.murphy@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>
+Subject: Re: [PATCHv2 0/6] make vendor specific subdirectory inclusion
+ conditional
+Message-ID: <aAERFUJj_6NuxAv3@8bytes.org>
+References: <12652899.O9o76ZdvQC@devpool47.emlix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <12652899.O9o76ZdvQC@devpool47.emlix.com>
 
-The AD9832 driver uses the Common Clock Framework (CCF) to obtain the
-master clock (MCLK) frequency rather than relying on a frequency value
-passed from platform data.
+On Thu, Mar 20, 2025 at 10:01:45AM +0100, Rolf Eike Beer wrote:
+> Changes in v2:
+> - clean up subdirectory Makefiles to use obj-y now
+> - add arm/arm-smmu-v3 and iommufd patches
 
-Signed-off-by: Gabriel Shahrouzi <gshahrouzi@gmail.com>
----
- drivers/staging/iio/frequency/ad9832.h | 1 -
- 1 file changed, 1 deletion(-)
+This conflicts with the core branch, can you please rebase once I pushed
+the updated tree?
 
-diff --git a/drivers/staging/iio/frequency/ad9832.h b/drivers/staging/iio/frequency/ad9832.h
-index 98dfbd9289ab8..d0d840edb8d27 100644
---- a/drivers/staging/iio/frequency/ad9832.h
-+++ b/drivers/staging/iio/frequency/ad9832.h
-@@ -13,7 +13,6 @@
- 
- /**
-  * struct ad9832_platform_data - platform specific information
-- * @mclk:		master clock in Hz
-  * @freq0:		power up freq0 tuning word in Hz
-  * @freq1:		power up freq1 tuning word in Hz
-  * @phase0:		power up phase0 value [0..4095] correlates with 0..2PI
--- 
-2.43.0
+Thanks,
+
+	Joerg
 
