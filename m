@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-609963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74ED7A92E54
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 01:30:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77921A92E5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 01:31:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95323467C76
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 23:30:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C9B81B61599
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 23:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91DB6222565;
-	Thu, 17 Apr 2025 23:30:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB90224894;
+	Thu, 17 Apr 2025 23:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NC4wC3iA"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EcedokKt"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811D01DF260;
-	Thu, 17 Apr 2025 23:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B6120E02A;
+	Thu, 17 Apr 2025 23:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744932648; cv=none; b=YwZcYFNDm8UkBMYDOpTT2wNRQun8XqN+9e4AmyWdUUQcAya0Wp3ukqiVUDMT4SzfnyH50/2blNnfH4rRZgEHQVdXJwpXP+y/MVRvTQmg2p78H4or3WFuGCTgoAX8OSSuN47sKcqBAjneklQlTqikskcwBgk5gNnzVKXmsIvZM7Q=
+	t=1744932650; cv=none; b=Dj4mesBOYZLKz5PNaH+gms0JiT3mPXs8GnkEwICeJjtTXgDTFDH6HCN8s6zyo1bl8WVbsXiTTchvmW4kxJFe5be2riwXMO5g33njiyFws64BhhvZq1eToPeVPUbTysF1EonoWFjU+5U2Qw+BBZ+udgjCUu/bjaxPAPTGnFUgwfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744932648; c=relaxed/simple;
-	bh=5zsOBMyKDRrYus2KS6jpmLIaZ3RdH7jmamJy8CjOZZ8=;
+	s=arc-20240116; t=1744932650; c=relaxed/simple;
+	bh=q43B7p3uClxu4DVuAKwWE6EdnhZUAtwoL5jvyr3rx1c=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EP0sQIXZ1BvZVGho69bfw0B54VHWS9DM45hYoQDbxVajGRDiEiTNgouxTOMsMWYeRi5CIQMbbHTvcizzkwrdAG27mQUP1AbA8VQGNb8Cr/F3opyoZqZE/RcB40o+yH4OimI7+141HPDZCsaJ3bYd60zOuRbX4Z+bgUQayhVuleo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=NC4wC3iA; arc=none smtp.client-ip=198.47.19.246
+	 MIME-Version:Content-Type; b=sRLNRysxl4XvRAbnHRmFrTsfIPAFhYlNdukNkaWxJ29J0ATZ5wZWBQuwwUSEZsIo/UKho1nyd67csKAffOrZlQR6tGtvKil8eGAZ70cJE92aiJeklHbTRxMDcqJgAPkTFhQVPkzcmQkzYtshXiCVWjLPjjN7rubFjCzYEg+uAZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=EcedokKt; arc=none smtp.client-ip=198.47.19.245
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53HNUeWv781174
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53HNUePH149455
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Thu, 17 Apr 2025 18:30:40 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1744932640;
-	bh=LlfNYEA3GcNF5ETHru+TFzjorIT8qkTiM1wG+X+ViQo=;
+	s=ti-com-17Q1; t=1744932641;
+	bh=Do5gyYIYR+XxRDrHM0vtw2Vw4BTYQBOwQE1WrrVFmw8=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=NC4wC3iAOVY5D0vY+Zm9YDvjshgfXj3KKiSscRdf/SBQqbmVZH3Bjhmbedp/RVbLL
-	 l/BIBhMmZP+9Pa2FrQ9Dj1xpITcZM+gfE9QyXZ2Zgtf8A/EyvWixvsEE7tC3YHD+Ts
-	 puh8nEE0TTEz/cPRY/LPHXZkUSnJh9/foQKttKa8=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53HNUekk003887
+	b=EcedokKty3i0FgcfhI7dzzE4UoQ3KxMcUm1FT8kEvTXhBFqsUSglerCKepwLhR5yl
+	 qQKOrUOjrsWxFmMZMgiia1+GMuTyKZGGTMOGR6k15zg8O7oC44WwPqnMEbLoqlvJFD
+	 1hbPFnzfYGnsgL/LAS5jwoDh5efIHAID32gD6zlQ=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53HNUeRe096098
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
 	Thu, 17 Apr 2025 18:30:40 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 17
  Apr 2025 18:30:40 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
  Frontend Transport; Thu, 17 Apr 2025 18:30:40 -0500
 Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53HNUePh023286;
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53HNUePi023286;
 	Thu, 17 Apr 2025 18:30:40 -0500
 From: Judith Mendez <jm@ti.com>
 To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
@@ -64,9 +64,9 @@ CC: Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
         Conor Dooley <conor+dt@kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, Moteen Shah <m-shah@ti.com>
-Subject: [PATCH v2 3/5] arm64: dts: ti: k3-am65-main: Add missing taps to sdhci0
-Date: Thu, 17 Apr 2025 18:30:38 -0500
-Message-ID: <20250417233040.3658761-4-jm@ti.com>
+Subject: [PATCH v2 4/5] arm64: dts: ti: k3-am62*: Add non-removable flag for eMMC
+Date: Thu, 17 Apr 2025 18:30:39 -0500
+Message-ID: <20250417233040.3658761-5-jm@ti.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250417233040.3658761-1-jm@ti.com>
 References: <20250417233040.3658761-1-jm@ti.com>
@@ -80,29 +80,53 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-For am65x, add missing ITAPDLYSEL values for Default Speed and High
-Speed SDR modes to sdhci0 node according to the device datasheet [0].
+EMMC device is non-removable so add 'non-removable' DT
+property to avoid having to redetect the eMMC after
+suspend/resume.
 
-Fixes: eac99d38f861 ("arm64: dts: ti: k3-am654-main: Update otap-del-sel values")
-[0] https://www.ti.com/lit/gpn/am6548
 Signed-off-by: Judith Mendez <jm@ti.com>
 ---
- arch/arm64/boot/dts/ti/k3-am65-main.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts | 1 +
+ arch/arm64/boot/dts/ti/k3-am62p5-sk.dts        | 1 +
+ arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi | 1 +
+ 3 files changed, 3 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-index 94a812a1355ba..5ebf7ada6e485 100644
---- a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-@@ -449,6 +449,8 @@ sdhci0: mmc@4f80000 {
- 		ti,otap-del-sel-mmc-hs = <0x0>;
- 		ti,otap-del-sel-ddr52 = <0x5>;
- 		ti,otap-del-sel-hs200 = <0x5>;
-+		ti,itap-del-sel-legacy = <0xa>;
-+		ti,itap-del-sel-mmc-hs = <0x1>;
- 		ti,itap-del-sel-ddr52 = <0x0>;
- 		dma-coherent;
- 		status = "disabled";
+diff --git a/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts b/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts
+index a5469f2712f09..1c8b4d13fb491 100644
+--- a/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts
++++ b/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts
+@@ -832,6 +832,7 @@ &main_spi2 {
+ 
+ &sdhci0 {
+ 	bootph-all;
++	non-removable;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&emmc_pins_default>;
+ 	disable-wp;
+diff --git a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
+index d29f524600af0..43fcb57b34ebf 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
++++ b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
+@@ -454,6 +454,7 @@ &main_i2c2 {
+ 
+ &sdhci0 {
+ 	status = "okay";
++	non-removable;
+ 	ti,driver-strength-ohm = <50>;
+ 	disable-wp;
+ 	bootph-all;
+diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
+index d52cb2a5a589a..561916c6e151c 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
+@@ -434,6 +434,7 @@ &main_i2c2 {
+ &sdhci0 {
+ 	bootph-all;
+ 	status = "okay";
++	non-removable;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&main_mmc0_pins_default>;
+ 	disable-wp;
 -- 
 2.49.0
 
