@@ -1,160 +1,118 @@
-Return-Path: <linux-kernel+bounces-608356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6564A91232
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 06:21:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 689C5A91353
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:54:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 921717AE56F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 04:20:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 847CE179D26
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 05:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C3F21C460A;
-	Thu, 17 Apr 2025 04:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=etehtsea.me header.i=@etehtsea.me header.b="vhp8GUSL"
-Received: from outbound.pv.icloud.com (p-west1-cluster1-host3-snip4-3.eps.apple.com [57.103.64.106])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB631E3DDE;
+	Thu, 17 Apr 2025 05:53:57 +0000 (UTC)
+Received: from mx2.usergate.com (unknown [46.229.79.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC057186E2E
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 04:21:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.64.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10975179A7;
+	Thu, 17 Apr 2025 05:53:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.229.79.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744863691; cv=none; b=NkjDvf8TPUQxsQ+ZHxdKfjjIMjzcORkbo/C8BAr0R5L3JtSFFJrgv/5kOMDNzJ+/XTXB3TPtvKoBN3jY6WI/nWS3DDiUjzjyRb51gGRErZrRMR0QPxRDK+zs7B2Dfl1IZknfJxUylWHiRJ2cLwnA8SVweCjOtbg+0SYTpBu6Z1w=
+	t=1744869236; cv=none; b=oiH5sS9L2j/deIZa4v6+e0YJTv/A12HKhIuallXsWF7pxiIWofnmC+o/jGq00/Ix2XwNF7STgXd4A9IjVKB8btSonDQNHy+tg7ywG/++cS+DklxsvPzyUS2Ev4UzFwXC+h6sX84TRv6QHaNFnzv1TCRhNqEvf/a9Z9GIP1IHhJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744863691; c=relaxed/simple;
-	bh=dfUslngHGbc7gvv9eDtyiO7iLzoXGlsWtq2BBf2ZBpA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Wt8uRautHjYMU36+S+BX1EPgRYImhvBSgzN13quRIih0oaeLhgSYKUGed1sAzBES5DMtfXxuhDnMzQUBudhCepkhP/Mlhm1Nj5EvwjKjakvnWnQ1iBKykob401Io20s8wpNR6VQipSefC+p6lCQUc8ku8o1+4Qr3JSkJ0t3H9uU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=etehtsea.me; spf=pass smtp.mailfrom=etehtsea.me; dkim=pass (2048-bit key) header.d=etehtsea.me header.i=@etehtsea.me header.b=vhp8GUSL; arc=none smtp.client-ip=57.103.64.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=etehtsea.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=etehtsea.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=etehtsea.me; s=sig1;
-	bh=s8Ze0YrAsRvM56Guf/YtrV37Q0EOqSVlsBXfjoOyn44=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:x-icloud-hme;
-	b=vhp8GUSLBS9mDgmUKnWpMptHb4zydL8N8Q+yPOxVFS09PTXCud15z3gPBzO3dX0tR
-	 D4wVQlPUv8ekGnXXgWTPArmYE6P2Y6kszaQHor1oci2Z/C9hnySBVEzGfLk3hBNe8q
-	 AC/QsW4+2F4JhMYw+Eu6KJIeJMpHTfz0x62ti+hy4zjPqqwxNXEXVpiReEFhK15o4j
-	 FkDWrllt0iUyfxzUfxKthOgXrLhnmgvdJb0pxbfuuzh5af/kGWDmqem406WC+lW6rJ
-	 GNjjuiW/KPBzFldVR55+nCT0DHzALxy5khBU+U60TmdYsBtoB0PkifETVNBABr2GmB
-	 EmaixC3zjIU5Q==
-Received: from localhost (pv-asmtp-me-k8s.p00.prod.me.com [17.56.9.36])
-	by outbound.pv.icloud.com (Postfix) with ESMTPSA id CF1A418000AF;
-	Thu, 17 Apr 2025 04:21:18 +0000 (UTC)
-From: Konstantin Shabanov <mail@etehtsea.me>
-To: Sandy Huang <hjc@rock-chips.com>,
-	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: Konstantin Shabanov <mail@etehtsea.me>,
-	Daniel Stone <daniel@fooishbar.org>,
-	Andy Yan <andyshrk@163.com>,
-	Dan Callaghan <djc@djc.id.au>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] drm/rockchip: Disable AFBC for res >2560 on rk3399
-Date: Thu, 17 Apr 2025 04:20:08 +0000
-Message-ID: <20250417042008.28536-1-mail@etehtsea.me>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250414095332.9674-1-mail@etehtsea.me>
-References: <20250414095332.9674-1-mail@etehtsea.me>
+	s=arc-20240116; t=1744869236; c=relaxed/simple;
+	bh=QUCSGN8Amri6gWsa/LlkBd+tPzIdUsEmXusdXXyHkxM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EfRBBd8IW94Wu2hSyK8/Usp/DY6+zITu9zak7fioY06rwgpENKy3zBsF8W6tWb4EY0CVhZ1hMDUaE40bnCVToA+7YKVPycgTlFJxInaeeNThPIbShD2AP/wJSdFj3k3xKv2e5CwbUwWhd7onLkL0bfpxK23757d6j2hhCJs96ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=usergate.com; spf=pass smtp.mailfrom=usergate.com; arc=none smtp.client-ip=46.229.79.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=usergate.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=usergate.com
+Received: from mail.usergate.com[192.168.90.36] by mx2.usergate.com with ESMTP id
+	 AADD522B2C1F47D286657FD680F32D36; Thu, 17 Apr 2025 11:20:30 +0700
+From: Boris Belyavtsev <bbelyavtsev@usergate.com>
+To: <hare@suse.org>
+CC: <linux-scsi@vger.kernel.org>,<linux-kernel@vger.kernel.org>,"Boris
+ Belyavtsev" <bbelyavtsev@usergate.com>
+Subject: [PATCH 0/3] aic79xx: Add some non-NULL checks
+Date: Thu, 17 Apr 2025 11:20:12 +0700
+Message-ID: <20250417042015.780823-1-bbelyavtsev@usergate.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: MXRK0RV78ZYYop4SgACsYfnc7XchLLpL
-X-Proofpoint-ORIG-GUID: MXRK0RV78ZYYop4SgACsYfnc7XchLLpL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-17_01,2025-04-15_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 suspectscore=0
- mlxlogscore=999 clxscore=1030 spamscore=0 malwarescore=0 mlxscore=0
- bulkscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2504170032
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: ESLSRV-EXCH-01.esafeline.com (192.168.90.36) To
+ nsk02-mbx01.esafeline.com (10.10.1.35)
+X-Message-Id: 579B4D696D264E8F9C373CB304E8B1F4
+X-MailFileId: 5A38F62B95BB487497B95A6370B49430
 
-As it isn't supported by hardware. At least, RK3399 doesn't support
-it. From the datasheet[1]
-("1.2.10 Video IN/OUT", "Display Interface", p. 17):
+Add non-NULL checks for ahd_lookup_scb return value.
+scb could be NULL if an attacker has special equipment to return
+certain values to the driver.
 
-  Support AFBC function co-operation with GPU
-    * support 2560x1600 UI
+Belyavtsev Boris (1):
+  scsi: aic79xx: check for non-NULL scb in ahd_handle_seqint
 
-Manually tested on RockPro64 (rk3399):
-- ARM_AFBC modifier is used for 1920x1080
-- DRM_FORMAT_MOD_LINEAR modifier us used for 3840x2160
-- No noise on the screen when sway is running in 4k
-- Dynamic resolution switching works correctly in sway
+Boris Belyavtsev (2):
+  scsi: aic79xx: check for non-NULL scb in ahd_handle_pkt_busfree
+  scsi: aic79xx: check for non-NULL scb in ahd_linux_queue_abort_cmd
 
-Signed-off-by: Konstantin Shabanov <mail@etehtsea.me>
-Cc: Daniel Stone <daniel@fooishbar.org>
-Cc: Andy Yan <andyshrk@163.com>
-Reported-by: Dan Callaghan <djc@djc.id.au>
-Closes: https://gitlab.freedesktop.org/mesa/mesa/-/issues/7968
+ drivers/scsi/aic7xxx/aic79xx_core.c | 15 +++++++++------
+ drivers/scsi/aic7xxx/aic79xx_osm.c  |  3 ++-
+ 2 files changed, 11 insertions(+), 7 deletions(-)
 
-[1]: https://opensource.rock-chips.com/images/d/d7/Rockchip_RK3399_Datasheet_V2.1-20200323.pdf
----
-V2 -> V3: Run check only on rk3399
-V1 -> V2: Move the check to the fb_create callback
-
-Hi Andy and Daniel!
-Thank you for the review!
-
-Best wishes,
-Konstantin
-
- drivers/gpu/drm/rockchip/rockchip_drm_fb.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-index dcc1f07632c3..6ca757f80a30 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-@@ -5,6 +5,7 @@
-  */
-
- #include <linux/kernel.h>
-+#include <linux/of.h>
-
- #include <drm/drm.h>
- #include <drm/drm_atomic.h>
-@@ -17,6 +18,9 @@
- #include "rockchip_drm_drv.h"
- #include "rockchip_drm_fb.h"
- #include "rockchip_drm_gem.h"
-+#include "rockchip_drm_vop.h"
-+
-+#define RK3399_AFBC_MAX_WIDTH		2560
-
- static const struct drm_framebuffer_funcs rockchip_drm_fb_funcs = {
- 	.destroy       = drm_gem_fb_destroy,
-@@ -52,6 +56,15 @@ rockchip_fb_create(struct drm_device *dev, struct drm_file *file,
- 	}
-
- 	if (drm_is_afbc(mode_cmd->modifier[0])) {
-+		if (of_machine_is_compatible("rockchip,rk3399")) {
-+			if (mode_cmd->width > RK3399_AFBC_MAX_WIDTH) {
-+				DRM_DEBUG_KMS("AFBC is not supported for the width %d (max %d)\n",
-+					      mode_cmd->width,
-+					      RK3399_AFBC_MAX_WIDTH);
-+				return ERR_PTR(-EINVAL);
-+			};
-+		}
-+
- 		int ret, i;
-
- 		ret = drm_gem_fb_afbc_init(dev, mode_cmd, afbc_fb);
-
-base-commit: 4890d68db651562ea80250f2c93205a5c0327a6a
 --
-2.48.1
+2.43.0
+
+=D0=9D=D0=B0=D1=81=D1=82=D0=BE=D1=8F=D1=89=D0=B5=D0=B5 =D1=8D=D0=BB=D0=B5=
+=D0=BA=D1=82=D1=80=D0=BE=D0=BD=D0=BD=D0=BE=D0=B5 =D1=81=D0=BE=D0=BE=D0=B1=
+=D1=89=D0=B5=D0=BD=D0=B8=D0=B5 =D1=81=D0=BE=D0=B4=D0=B5=D1=80=D0=B6=D0=B8=
+=D1=82 =D0=B8=D0=BD=D1=84=D0=BE=D1=80=D0=BC=D0=B0=D1=86=D0=B8=D1=8E =D0=BA=
+=D0=BE=D0=BD=D1=84=D0=B8=D0=B4=D0=B5=D0=BD=D1=86=D0=B8=D0=B0=D0=BB=D1=8C=D0=
+=BD=D0=BE=D0=B3=D0=BE =D1=85=D0=B0=D1=80=D0=B0=D0=BA=D1=82=D0=B5=D1=80=D0=
+=B0, =D0=B0 =D1=82=D0=B0=D0=BA=D0=B6=D0=B5 =D0=BC=D0=BE=D0=B6=D0=B5=D1=82 =
+=D1=81=D0=BE=D0=B4=D0=B5=D1=80=D0=B6=D0=B0=D1=82=D1=8C =D0=BA=D0=BE=D0=BC=
+=D0=BC=D0=B5=D1=80=D1=87=D0=B5=D1=81=D0=BA=D1=83=D1=8E =D1=82=D0=B0=D0=B9=
+=D0=BD=D1=83 =D0=9E=D0=9E=D0=9E =C2=AB=D0=AE=D0=B7=D0=B5=D1=80=D0=B3=D0=B5=
+=D0=B9=D1=82=C2=BB =D0=98=D0=9D=D0=9D 5408308256 (UserGate). =D0=9D=D0=B5=
+=D0=BF=D1=80=D0=B0=D0=B2=D0=BE=D0=BC=D0=B5=D1=80=D0=BD=D0=BE=D0=B5 =D0=B8=
+=D1=81=D0=BF=D0=BE=D0=BB=D1=8C=D0=B7=D0=BE=D0=B2=D0=B0=D0=BD=D0=B8=D0=B5 / =
+=D1=80=D0=B0=D1=81=D0=BA=D1=80=D1=8B=D1=82=D0=B8=D0=B5 =D1=82=D0=B0=D0=BA=
+=D0=BE=D0=B2=D0=BE=D0=B9 =D0=B8=D0=BD=D1=84=D0=BE=D1=80=D0=BC=D0=B0=D1=86=
+=D0=B8=D0=B8 =D0=B7=D0=B0=D0=BF=D1=80=D0=B5=D1=89=D0=B5=D0=BD=D0=BE. =D0=95=
+=D1=81=D0=BB=D0=B8 =D0=B2=D1=8B =D0=BF=D0=BE=D0=BB=D1=83=D1=87=D0=B8=D0=BB=
+=D0=B8 =D0=BD=D0=B0=D1=81=D1=82=D0=BE=D1=8F=D1=89=D0=B5=D0=B5 =D1=81=D0=BE=
+=D0=BE=D0=B1=D1=89=D0=B5=D0=BD=D0=B8=D0=B5 =D0=BF=D0=BE =D0=BE=D1=88=D0=B8=
+=D0=B1=D0=BA=D0=B5, =D0=BF=D0=BE=D0=B6=D0=B0=D0=BB=D1=83=D0=B9=D1=81=D1=82=
+=D0=B0, =D1=81=D0=B2=D1=8F=D0=B6=D0=B8=D1=82=D0=B5=D1=81=D1=8C =D1=81 =D0=
+=BE=D1=82=D0=BF=D1=80=D0=B0=D0=B2=D0=B8=D1=82=D0=B5=D0=BB=D0=B5=D0=BC =D0=
+=B8 =D1=83=D0=B4=D0=B0=D0=BB=D0=B8=D1=82=D0=B5 =D0=B2=D1=81=D0=B5 =D0=BA=D0=
+=BE=D0=BF=D0=B8=D0=B8 =D1=81=D0=BE=D0=BE=D0=B1=D1=89=D0=B5=D0=BD=D0=B8=D1=
+=8F. =D0=9D=D0=B0=D1=81=D1=82=D0=BE=D1=8F=D1=89=D0=B5=D0=B5 =D1=81=D0=BE=D0=
+=BE=D0=B1=D1=89=D0=B5=D0=BD=D0=B8=D0=B5 =D0=BD=D0=B5 =D1=8F=D0=B2=D0=BB=D1=
+=8F=D0=B5=D1=82=D1=81=D1=8F =D0=BE=D1=84=D0=B5=D1=80=D1=82=D0=BE=D0=B9. =D0=
+=A1=D0=B2=D0=B5=D0=B4=D0=B5=D0=BD=D0=B8=D1=8F =D0=BE =D0=BF=D0=BB=D0=B0=D0=
+=BD=D0=B8=D1=80=D1=83=D0=B5=D0=BC=D1=8B=D1=85 =D0=BA =D1=80=D0=B0=D0=B7=D1=
+=80=D0=B0=D0=B1=D0=BE=D1=82=D0=BA=D0=B5 =D1=82=D0=B5=D1=85=D0=BD=D0=BE=D0=
+=BB=D0=BE=D0=B3=D0=B8=D1=87=D0=B5=D1=81=D0=BA=D0=B8=D1=85 =D1=80=D0=B5=D1=
+=88=D0=B5=D0=BD=D0=B8=D1=8F=D1=85, =D1=86=D0=B5=D0=BD=D0=BE=D0=B2=D0=BE=D0=
+=B9 =D0=BF=D0=BE=D0=BB=D0=B8=D1=82=D0=B8=D0=BA=D0=B5, =D0=B8=D0=BD=D1=8B=D0=
+=B5 =D1=81=D0=BE=D0=B4=D0=B5=D1=80=D0=B6=D0=B0=D1=89=D0=B8=D0=B5=D1=81=D1=
+=8F =D0=B2 =D1=81=D0=BE=D0=BE=D0=B1=D1=89=D0=B5=D0=BD=D0=B8=D0=B8 =D1=81=D0=
+=B2=D0=B5=D0=B4=D0=B5=D0=BD=D0=B8=D1=8F =D0=B8=D0=BC=D0=B5=D1=8E=D1=82 =D0=
+=B8=D1=81=D0=BA=D0=BB=D1=8E=D1=87=D0=B8=D1=82=D0=B5=D0=BB=D1=8C=D0=BD=D0=BE=
+ =D0=B8=D0=BD=D1=84=D0=BE=D1=80=D0=BC=D0=B0=D1=86=D0=B8=D0=BE=D0=BD=D0=BD=
+=D1=8B=D1=85 =D1=85=D0=B0=D1=80=D0=B0=D0=BA=D1=82=D0=B5=D1=80 =D0=B8 =D0=BD=
+=D0=B5 =D0=B4=D0=BE=D0=BB=D0=B6=D0=BD=D1=8B =D0=B1=D1=8B=D1=82=D1=8C =D1=80=
+=D0=B0=D1=81=D1=86=D0=B5=D0=BD=D0=B5=D0=BD=D1=8B =D0=B2 =D0=BA=D0=B0=D1=87=
+=D0=B5=D1=81=D1=82=D0=B2=D0=B5 =D0=BE=D1=81=D0=BD=D0=BE=D0=B2=D0=B0=D0=BD=
+=D0=B8=D1=8F =D0=B4=D0=BB=D1=8F =D0=B2=D0=BE=D0=B7=D0=BD=D0=B8=D0=BA=D0=BD=
+=D0=BE=D0=B2=D0=B5=D0=BD=D0=B8=D1=8F =D0=BE=D0=B1=D1=8F=D0=B7=D0=B0=D1=82=
+=D0=B5=D0=BB=D1=8C=D1=81=D1=82=D0=B2 =D0=BB=D1=8E=D0=B1=D0=BE=D0=B3=D0=BE =
+=D1=81=D0=B2=D0=BE=D0=B9=D1=81=D1=82=D0=B2=D0=B0.
 
