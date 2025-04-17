@@ -1,84 +1,120 @@
-Return-Path: <linux-kernel+bounces-608623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 243F0A91600
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 10:00:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 096B3A91615
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 10:03:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40D1E173272
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:00:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9399D1906D87
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:04:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C37741D63C4;
-	Thu, 17 Apr 2025 08:00:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3885522D7BE;
+	Thu, 17 Apr 2025 08:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="cKHTtMp6"
-Received: from mail-24417.protonmail.ch (mail-24417.protonmail.ch [109.224.244.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hYwxILuk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5B422B8AC
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 08:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A2922423C;
+	Thu, 17 Apr 2025 08:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744876850; cv=none; b=Ck0gn1ogfkx41+5ZzRG7Jutq0wx4FqFcTTtFJv7O48ybEBI6QSX9YXUHGWh5Wg5O5XMWu+zvwYTy2vyO5XL8xZWB0yiMwkUt1QA2ZC5tYQdthFtvtaLtrYpfMP5uOBbCeuerTtp266ecFhyz9kv7dM/Fu4N/q57XTWXLjvUmVHk=
+	t=1744877030; cv=none; b=ci5TBMZTtLIBfDdpBbRRO4AR2AbNBJYznE5BuBNclBWagqSIgaF4sMzjyG8A9dNE2/CZVRmD383r8+2DBfhiNNHJWByWwPvTAUkQTSdgCQ+FB9B++JgAYwJ7XBdFUfAZvG2z6ERMPFouFb8lmfJp2uZ+YCZng4+7ZLE6B5rFRZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744876850; c=relaxed/simple;
-	bh=h3M8nRjVuDVmfNgSsps3kLl6ltkWfwPgNKiJY+3KBX4=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TCDm7imsxDJhpD9yKXG8Jbm4w44fLijNNw1Us89khWqKwD57Vlz0rBtBrmrP2YfpQyQeYxRarYNVBQUf6lseWCFYjfR+UrC/EnZdpKidb32C3GFEg88XHzXKR+llBWGADpWHFobWy8pksbdBay87CgDCeGBQ6jmqKsu0zaRmyI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=cKHTtMp6; arc=none smtp.client-ip=109.224.244.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=mo5kiaaxzzbulfrq7t524gy3u4.protonmail; t=1744876839; x=1745136039;
-	bh=h3M8nRjVuDVmfNgSsps3kLl6ltkWfwPgNKiJY+3KBX4=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=cKHTtMp6Nl4+wN4xDfq6H98VrQLHDVlci6//HiRQ8BHNReXmvAtYVxy6OehvofENJ
-	 XTeujO7jO+x96iupXZRLSVnoKBT/Hg67LA5vJs7qZqlvyNeQpQmaUgPLni4pEJjuZS
-	 QqjkQV3np8Xffo2/rGJLQ5EzAINzQajp/MMx+Wef+3lgsygugsi6OMPXXsO/v5LJEv
-	 AMWyFlkS9bfbDfjNmUradbjMR4FZ49pqH5MzHxjsIN+OwpQGcPfGjhMfOURgf8SHFK
-	 65ijvFFbLOPZFmDolRsjMSBf8v+83Jr5J/4uTfTfdW2dP+qdb3wbu/8XhM/4aOk7pf
-	 ZDjlJxev5jWng==
-Date: Thu, 17 Apr 2025 08:00:33 +0000
-To: Viresh Kumar <viresh.kumar@linaro.org>, Danilo Krummrich <dakr@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Danilo Krummrich <dakr@redhat.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>, rust-for-linux@vger.kernel.org, Manos Pitsidianakis <manos.pitsidianakis@linaro.org>, =?utf-8?Q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>, Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>, Yury Norov <yury.norov@gmail.com>, Burak Emir <bqe@google.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+	s=arc-20240116; t=1744877030; c=relaxed/simple;
+	bh=/hss0P/gPPDydOlWxQkzm7ADD0P5tj2HUtGEQ57EIhM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qe5tqz7Mf2wlO3mCEg8X3Ru6V62WnRQTXyg+XTpTzR816GaRoVIbxa6KzWgLOf9C3ac9/WzI/u7TJ1Sxyq3wkbDG7eZaVWlctdT2PlkH5v6eRryKjQiVQwgPPCJGOEztksDGf5CryYucsDB3tyrEY6VX6QyfCQN8N7Y87gQv3E8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hYwxILuk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAE5FC4CEE4;
+	Thu, 17 Apr 2025 08:03:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744877030;
+	bh=/hss0P/gPPDydOlWxQkzm7ADD0P5tj2HUtGEQ57EIhM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=hYwxILuk4Sz9tlsH3G54+Fj5sDipxOqnfv6fdd1gtZSBdcL275XE+ICi/r2d3ikN1
+	 sy+e8J9yXQz2+lwDt7NGLczIy4SBtmxlZBEhq9nm4u0FRgWtvGNt4L8Dgn7COPUL6q
+	 +qU9fdCWw559VaVJ8JLg5wJRY4LToZr6aaWpRU1Ogh0TIFao5i/0ffAQdSaazpnx5b
+	 rSexkDHLqfuElOw3YXQBfyKS9s438t9trhrupFGndagV+OQh+zLIhKue+8EZEaSzMY
+	 S9c52ie1waCiQX+C2GkY57tNQ6zaHBd+cBlSOqXlS0nadWFHq5vgpxJvHDopG0iXmu
+	 Bjurcs9n+UJnw==
+From: Philipp Stanner <phasta@kernel.org>
+To: schalla@marvell.com,
+	vattunuru@marvell.com,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	Shijith Thotton <sthotton@marvell.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Philipp Stanner <phasta@kernel.org>,
+	Satha Rao <skoteshwar@marvell.com>
+Cc: virtualization@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V10 11/15] rust: cpufreq: Add initial abstractions for cpufreq framework
-Message-ID: <D98R7PHH6TYX.2DUASKIXS5F8W@proton.me>
-In-Reply-To: <20250416093720.5nigxsirbvyiumcv@vireshk-i7>
-References: <cover.1744783509.git.viresh.kumar@linaro.org> <ac6854885277b23f100c6033fab51a080cdb70eb.1744783509.git.viresh.kumar@linaro.org> <Z_904KuBhKbO738_@pollux> <20250416093720.5nigxsirbvyiumcv@vireshk-i7>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: ae30b957bfe6b8526ed7c4f59e8cc1d7dfe15a54
+Subject: [PATCH] vdpa/octeon_ep: Use non-hybrid PCI devres API
+Date: Thu, 17 Apr 2025 10:02:12 +0200
+Message-ID: <20250417080211.19970-2-phasta@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed Apr 16, 2025 at 11:37 AM CEST, Viresh Kumar wrote:
-> On 16-04-25, 11:14, Danilo Krummrich wrote:
->> On Wed, Apr 16, 2025 at 12:09:28PM +0530, Viresh Kumar wrote:
->> > +#[allow(dead_code)]
->>=20
->> Why is this needed?
->
-> Looks like leftover from a previous version. Same for the other one.
->
-> I have also made a change to the cpufreq driver now to remove
-> `dead_code`, hope that is fine:
+octeon enables its PCI device with pcim_enable_device(). This,
+implicitly, switches the function pci_request_region() into managed
+mode, where it becomes a devres function.
 
-In the future, instead of using `allow`, you can try to use `expect`. It
-will warn, when the code is used.
+The PCI subsystem wants to remove this hybrid nature from its
+interfaces. To do so, users of the aforementioned combination of
+functions must be ported to non-hybrid functions.
 
+Moreover, since both functions are already managed in this driver, the
+calls to pci_release_region() are unnecessary.
+
+Remove the calls to pci_release_region().
+
+Replace the call to sometimes-managed pci_request_region() with one to
+the always-managed pcim_request_region().
+
+Signed-off-by: Philipp Stanner <phasta@kernel.org>
 ---
-Cheers,
-Benno
+ drivers/vdpa/octeon_ep/octep_vdpa_main.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/vdpa/octeon_ep/octep_vdpa_main.c b/drivers/vdpa/octeon_ep/octep_vdpa_main.c
+index f3d4dda4e04c..e0da6367661e 100644
+--- a/drivers/vdpa/octeon_ep/octep_vdpa_main.c
++++ b/drivers/vdpa/octeon_ep/octep_vdpa_main.c
+@@ -391,7 +391,7 @@ static int octep_iomap_region(struct pci_dev *pdev, u8 __iomem **tbl, u8 bar)
+ {
+ 	int ret;
+ 
+-	ret = pci_request_region(pdev, bar, OCTEP_VDPA_DRIVER_NAME);
++	ret = pcim_request_region(pdev, bar, OCTEP_VDPA_DRIVER_NAME);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to request BAR:%u region\n", bar);
+ 		return ret;
+@@ -400,7 +400,6 @@ static int octep_iomap_region(struct pci_dev *pdev, u8 __iomem **tbl, u8 bar)
+ 	tbl[bar] = pci_iomap(pdev, bar, pci_resource_len(pdev, bar));
+ 	if (!tbl[bar]) {
+ 		dev_err(&pdev->dev, "Failed to iomap BAR:%u\n", bar);
+-		pci_release_region(pdev, bar);
+ 		ret = -ENOMEM;
+ 	}
+ 
+@@ -410,7 +409,6 @@ static int octep_iomap_region(struct pci_dev *pdev, u8 __iomem **tbl, u8 bar)
+ static void octep_iounmap_region(struct pci_dev *pdev, u8 __iomem **tbl, u8 bar)
+ {
+ 	pci_iounmap(pdev, tbl[bar]);
+-	pci_release_region(pdev, bar);
+ }
+ 
+ static void octep_vdpa_pf_bar_shrink(struct octep_pf *octpf)
+-- 
+2.48.1
 
 
