@@ -1,154 +1,112 @@
-Return-Path: <linux-kernel+bounces-609334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 850B9A920F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 17:10:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85666A920F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 17:11:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17B8B19E6B17
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:10:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 573FE7B08BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:10:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F72253329;
-	Thu, 17 Apr 2025 15:10:29 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A87A125335D;
+	Thu, 17 Apr 2025 15:10:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b="H3yATVk1"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C92F252905
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 15:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A59A23E330
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 15:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744902628; cv=none; b=g0x5CZH8Q4JXMPkr/FjLmMHggfKZVWtcPhhu6RU2AGKJHT27ZjD/7CZcvJeHzJ3JikSG9S8v4h8mLbQv5PeJOi8j4yA5rsy/6QkTrLSFabq71kzT+hTYqFG36ovYvP42sOi03fTFn0VoRibcKQknUJ1GiM4J3jL60qqBnlPeT5I=
+	t=1744902658; cv=none; b=gHY9EWw77peBe6RhMM6C1Up1MTqVPNKzryEzN+MGBCfIa8t1oTim9VEi7TQbcK3Z0FETFn8PGXd8IJp+wNzDF2ZNFDLszIfaTfa1Tp9mjvL8kAQ7ifgj5cU0HV7jyW659oBxb0gk81tskLGHcsYq8M+FltncLNK38bNbd3WLlH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744902628; c=relaxed/simple;
-	bh=NMIIw60GZShTg37kMSUEMuZsYQy8pT1XRO1gez+5lBs=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Paz+2xjZQFpaHr+B8r0dSZ7t/J45itl1IwL2H31pvn83n1NlEDUkz+wTN48BXVLJIzhONVXFjlobweXTWiSsHYp+Jfiir0guDhSQc0elaZYAR8Zadr66lYL4jjYV0+IWI7u+SD2xIcYYyWTxacHUXmuTmBzFJ3Iz3JGN/mzShJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-851a991cf8bso165431539f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 08:10:26 -0700 (PDT)
+	s=arc-20240116; t=1744902658; c=relaxed/simple;
+	bh=LiZgga9x8uNn0x7WdTDXbakOF44Ru5INCev66F2o+Dc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JAsaq5LqmKVBDSY4L296UVe9Upfo5vlF2hb3YynJdvaeZC5HQDGJV0j6sMbUnQafvUAnZol9cvMDpczboQ5XyYN+QcbQrBoKow37ZpLjq2Fkp6gyWUpXQi4qnioaXC/o8JrSuFkQGDLTbJ/fwqqPAeTEgQ+PUI1l9oBBEDRRxWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org; spf=pass smtp.mailfrom=networkplumber.org; dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b=H3yATVk1; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=networkplumber.org
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-226185948ffso10126735ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 08:10:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1744902655; x=1745507455; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LiZgga9x8uNn0x7WdTDXbakOF44Ru5INCev66F2o+Dc=;
+        b=H3yATVk10aZqoRI+w4nNhDNAcSrm+D72kf09ipil/lhZBQVG98+L9kHkPcmnSnwazQ
+         2l2q7/rcLpNyHl7W14wjQCbWN87G0IAsm+Yej1cduBZyRY+bLzSw3rdEYxijZFieiE5K
+         4p9sZvZQrU1T5YW0n/Phw1rSXkT4kX9Je/Pl622+TtYHoFzbnncoMrFYet2UFNdX7dEZ
+         Kp5GDmv6d0PucyJocp1zYdAefTVH68d510dC+sFSGKo4O3dpzsf/SX5osPX6hm1NRhbn
+         mn8Q/7MwclR7BEHoMAaKF+jTuamIjIVUOtP2h2aefp90oQRbxnCBj4UUds3GxtLFjNgk
+         ZaBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744902626; x=1745507426;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TUjzBO5ydnB/W6FtODgX9yEBNVVZZQFEaYNiWI1bNw0=;
-        b=qgUudEjdfjGUzUoU8oqQIB47gTZGlfAQ+kMa1oOHaeOTz3X149Me64iOC2Tn0JF8Np
-         OB10YXKQGHCQLgQlR2afZYWI+t2Zs/6vZFiJgnD7ZN/822LJ6kc+vKfW3res8kBeRoL4
-         uV/YjXhEP8OxPH4yu2F5zgZdAhbdlgGvv3Xyd+5vG6ZXvO92JACqDpEm37fk7rwOze2n
-         IRTrR7E5CH3smCvEmhY4EqUtoC25QzQld0VAF2SEMCwQE/kQFqPdt8K9ft59ju7O1lVJ
-         83IdtgDKQWVxPws2HByAbj+T3r+yNRr01tDX9Q5AwXWEwuShqdQgCQv8f6Ve7lFauBvn
-         /rdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXgCKNkXg/qXhMVUwx33FLyrisCGZ6/R/D3YoAH7WOKRn8IhqlOjZjiLXclrK0G3Z0LU6oUq82fEtadz3Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqmRNG3Zk0i1rNzY3218IviDytGBnMhQj/uNWuqngNp+CQe1dq
-	M/xTBypVQSzZQkrrotfPkmJ88o4KNbEtJH2uW0aB8JaRRqdptakwU7W8oa57/4B2Tl4IpX+8z+B
-	m4EeoxktSMBqd0qoDFyTreIm2XFZBnwyivlsGT3BEtYKhmOm9GANuRv0=
-X-Google-Smtp-Source: AGHT+IGZU5H5xeXB3WqaLpJtOEzTMwvl9FOcphlngfzZaGtW+CRzNzUbjQZwcPyUIQN+JeoMHBCgGeib9R8pPPZIn/s4z4eUb2Yf
+        d=1e100.net; s=20230601; t=1744902655; x=1745507455;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LiZgga9x8uNn0x7WdTDXbakOF44Ru5INCev66F2o+Dc=;
+        b=Cd5z3vZ3JctX+ycfh3sSHzi/6vwnan8wnb2edRjKoFC6NPvNC3r3pfYCOihX5UMHlK
+         1QTE7u9J7QoYfvcIVxI/AQvu/B6BedjYnOH3yWrMdigutzijlxCjW3ia1lj2xnbM/edp
+         pK94eZya2DE87Ki/u1STyp3zsbljCJ9kehLc61UV/lRtvEBuRuaomt1hdwWguVa7HEeK
+         6KvIpdneWwD3uFgp0SQqBazNskU/cOAO4Dsil0VGRCV471+gUfXVV/dzIpupcuaQZY5N
+         Aoz7zrIxcZt0NPPcxCYGy7LM6D5eoThIxMm8oFH9sp337P/KPQZrkPap+xwXiN7otS2C
+         QHzw==
+X-Forwarded-Encrypted: i=1; AJvYcCVQBXh5WCboPmhOjrfnzAN2UwdzZKUGs0B6/ulvuyqYL6sHf7LP96wTHpgVsX5VXY9w3K540vf+vWD3QhI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8qOCj7QrlwigR9DQ5OxCyEjmbbzO8RcKJd2qHb1jofr98QTDZ
+	uZAeePmHdyGNaj9zv9oz2s8MiXq3uj6cmPGLQ2lVz83xEWvG/rRr8xazefDyQlg=
+X-Gm-Gg: ASbGncvInYNfwcC24xC6IogHKur1GWzP4e/dyMhqD4M0JCa8ohUC0svNc91GrX/nl6N
+	YsBdnZMZuxzVbHRPZrL/63Hl3UGMO34JcEXFgqoOcDZ7MxPPfI9YEpeXLnh5/AnQu7trD5E5Qj4
+	i/KYo4P05ZhYv5DVa1g1B3qcyhGd9XOpfjgiFGCk4A97055j+enjarZcPrwxT9fsY+91MMRrJcM
+	zHJlyZKD3+hKvSkcDoP5r7V9v6ud87eoFU6+3KF6aL9ITCdlEq0lOqF7+GP8SYF9N5NJs2I8udV
+	vG1TfVZQqHyoPjJymDnEpVeLfgehEqB7F5k+wZpPVwl4ri2YulysWPD82CCGBqNSLqg8uf9dJuF
+	JU8YgFZkHtsCn9Tpa
+X-Google-Smtp-Source: AGHT+IHIP5FBpE6QRyj07ov+jrBL6Cb9idEsBOVjWQ1/IColpF0qdvEnnkroDFpHC82/JIDmUgRLTQ==
+X-Received: by 2002:a17:902:f642:b0:220:c813:dfd1 with SMTP id d9443c01a7336-22c359734c3mr102186955ad.36.1744902655602;
+        Thu, 17 Apr 2025 08:10:55 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd21c210esm12348763b3a.41.2025.04.17.08.10.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Apr 2025 08:10:55 -0700 (PDT)
+Date: Thu, 17 Apr 2025 08:10:53 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ longli@microsoft.com, kotaranov@microsoft.com, horms@kernel.org,
+ kent.overstreet@linux.dev, brett.creeley@amd.com,
+ schakrabarti@linux.microsoft.com, shradhagupta@linux.microsoft.com,
+ ssengar@linux.microsoft.com, rosenp@gmail.com, paulros@microsoft.com,
+ linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org
+Subject: Re: [PATCH 2/3] net: mana: Add sched HTB offload support
+Message-ID: <20250417081053.5b563a92@hermes.local>
+In-Reply-To: <1744876630-26918-3-git-send-email-ernis@linux.microsoft.com>
+References: <1744876630-26918-1-git-send-email-ernis@linux.microsoft.com>
+	<1744876630-26918-3-git-send-email-ernis@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:c67:b0:3d2:ed3c:67a8 with SMTP id
- e9e14a558f8ab-3d821d3070emr2138045ab.4.1744902625994; Thu, 17 Apr 2025
- 08:10:25 -0700 (PDT)
-Date: Thu, 17 Apr 2025 08:10:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <680119e1.050a0220.243d89.0011.GAE@google.com>
-Subject: [syzbot] [dri?] [virt?] WARNING in virtio_gpu_queue_fenced_ctrl_buffer
-From: syzbot <syzbot+5afbc12ca70811c2bffb@syzkaller.appspotmail.com>
-To: airlied@redhat.com, dri-devel@lists.freedesktop.org, 
-	gurchetansingh@chromium.org, kraxel@redhat.com, linux-kernel@vger.kernel.org, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, olvaffe@gmail.com, 
-	simona@ffwll.ch, syzkaller-bugs@googlegroups.com, tzimmermann@suse.de, 
-	virtualization@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Thu, 17 Apr 2025 00:57:09 -0700
+Erni Sri Satya Vennela <ernis@linux.microsoft.com> wrote:
 
-syzbot found the following issue on:
+> Introduce support for HTB qdisc offload in the mana ethernet
+> controller. This controller can offload only one HTB leaf.
+> The HTB leaf supports clamping the bandwidth for egress traffic.
+> It uses the function mana_set_bw_clamp(), which internally calls
+> a HWC command to the hardware to set the speed.
 
-HEAD commit:    7cdabafc0012 Merge tag 'trace-v6.15-rc1' of git://git.kern..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=108e7870580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4c918722cb7e3d7
-dashboard link: https://syzkaller.appspot.com/bug?extid=5afbc12ca70811c2bffb
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-7cdabafc.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/0a779724c40f/vmlinux-7cdabafc.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/00583806b168/bzImage-7cdabafc.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5afbc12ca70811c2bffb@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 3 PID: 34 at drivers/gpu/drm/virtio/virtgpu_vq.c:414 virtio_gpu_queue_ctrl_sgs drivers/gpu/drm/virtio/virtgpu_vq.c:414 [inline]
-WARNING: CPU: 3 PID: 34 at drivers/gpu/drm/virtio/virtgpu_vq.c:414 virtio_gpu_queue_fenced_ctrl_buffer+0xbcf/0xfc0 drivers/gpu/drm/virtio/virtgpu_vq.c:497
-Modules linked in:
-CPU: 3 UID: 0 PID: 34 Comm: kworker/3:0 Not tainted 6.15.0-rc1-syzkaller-00325-g7cdabafc0012 #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: events drm_fb_helper_damage_work
-RIP: 0010:virtio_gpu_queue_ctrl_sgs drivers/gpu/drm/virtio/virtgpu_vq.c:414 [inline]
-RIP: 0010:virtio_gpu_queue_fenced_ctrl_buffer+0xbcf/0xfc0 drivers/gpu/drm/virtio/virtgpu_vq.c:497
-Code: df e8 a5 45 d5 fe 48 89 9c 24 a8 01 00 00 c7 44 24 30 02 00 00 00 48 c7 44 24 18 00 00 00 00 e9 4f f6 ff ff e8 f2 97 c3 fb 90 <0f> 0b 90 e9 02 fa ff ff e8 e4 97 c3 fb 90 0f 0b e8 dc 97 c3 fb 90
-RSP: 0018:ffffc900006df488 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: 00000000fffffffb RCX: ffffffff85f79f81
-RDX: ffff88801e2d4880 RSI: ffffffff85f7a57e RDI: 0000000000000005
-RBP: ffff888104ea7c00 R08: 0000000000000005 R09: 0000000000000000
-R10: 00000000fffffffb R11: 0000000000000000 R12: ffffed10209d4f85
-R13: ffff8880245976f8 R14: ffff888025553ac8 R15: 0000000000000001
-FS:  0000000000000000(0000) GS:ffff8880d6cb2000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fa4a49be440 CR3: 000000000e182000 CR4: 0000000000352ef0
-DR0: 00000000000007ff DR1: 0000000000000009 DR2: 0002000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- virtio_gpu_update_dumb_bo drivers/gpu/drm/virtio/virtgpu_plane.c:175 [inline]
- virtio_gpu_primary_plane_update+0xda0/0x1540 drivers/gpu/drm/virtio/virtgpu_plane.c:264
- drm_atomic_helper_commit_planes+0x954/0x1010 drivers/gpu/drm/drm_atomic_helper.c:2838
- drm_atomic_helper_commit_tail+0x69/0xf0 drivers/gpu/drm/drm_atomic_helper.c:1788
- commit_tail+0x35b/0x400 drivers/gpu/drm/drm_atomic_helper.c:1873
- drm_atomic_helper_commit+0x2fd/0x380 drivers/gpu/drm/drm_atomic_helper.c:2111
- drm_atomic_commit+0x231/0x300 drivers/gpu/drm/drm_atomic.c:1518
- drm_atomic_helper_dirtyfb+0x5fd/0x780 drivers/gpu/drm/drm_damage_helper.c:181
- drm_fbdev_shmem_helper_fb_dirty+0x1c9/0x340 drivers/gpu/drm/drm_fbdev_shmem.c:117
- drm_fb_helper_fb_dirty drivers/gpu/drm/drm_fb_helper.c:379 [inline]
- drm_fb_helper_damage_work+0x27b/0x5f0 drivers/gpu/drm/drm_fb_helper.c:402
- process_one_work+0x9cc/0x1b70 kernel/workqueue.c:3238
- process_scheduled_works kernel/workqueue.c:3319 [inline]
- worker_thread+0x6c8/0xf10 kernel/workqueue.c:3400
- kthread+0x3c2/0x780 kernel/kthread.c:464
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:153
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+A single leaf is just Token Bucket Filter (TBF).
+Are you just trying to support some vendor config?
 
