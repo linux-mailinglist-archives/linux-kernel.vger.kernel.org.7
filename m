@@ -1,154 +1,98 @@
-Return-Path: <linux-kernel+bounces-609272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0A99A91FF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 16:40:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 35CD9A91FF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 16:39:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E13A016731F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:40:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B3DB17BF17
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05EA12517AC;
-	Thu, 17 Apr 2025 14:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Nmpb0fb7"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D342517A3;
+	Thu, 17 Apr 2025 14:38:42 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F131AA7BA;
-	Thu, 17 Apr 2025 14:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 808062517AF;
+	Thu, 17 Apr 2025 14:38:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744900831; cv=none; b=MqR4zqnhnxfHhoLr6FQ3x8zsqHB3WEqtnIbkgz+C4pJsAbMZxVkLQNYgBep0P6Fz++vt4LLaOFnkEg02DTqzCG1zVKxkxvjIopXTTjxgqLEUIxfAuAYibanC1GJFMmj/ThzKnrZ6T0koLwll8QfL2gPNHIuWTXZdUaUpP0COy2g=
+	t=1744900721; cv=none; b=hwKJxIfVsKVCCKYd2iBBI7F+gDZ7R4Y/tiacju7Dxc/K91MuGCZ+n1PygIUpdAgLRKbwwE/pLCMeq8gVahMIAHA3HsOhbKKrhcTGU3K/KUtWjlbl7frV/DpXoUxKCos1c8rZEcMVqZBQVLjJ0Pn9rObsbPqpwpe8uSFyzIomv5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744900831; c=relaxed/simple;
-	bh=ZPvO57N3CWtxySw34yH/mDBNk6iD06GBs31p5atwMFM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HOxOOOn7g3CdJFA21/Tp3jHeS4bp68aINWCo85mDZAuFDLGBiHYV6F9hVCozxT4P9saLAm7KGpZ5HIlA6oWUPX8hg/chz42yyApF43L5+86oAIpwGeD1r5dkfLFbys657DfPYbeVsWIOB0kjJyOdMupbHINfbY0I8EgtAi89lzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Nmpb0fb7; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id B601225F8C;
-	Thu, 17 Apr 2025 16:40:27 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id ktOTxphCqx0Q; Thu, 17 Apr 2025 16:40:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1744900820; bh=ZPvO57N3CWtxySw34yH/mDBNk6iD06GBs31p5atwMFM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=Nmpb0fb72Zc6OMP5Igu4c63x5SOS8hlyqToQsxFeOSkBa1n/Vw+/jHgYI2heVUZBh
-	 xNi4zA8OMYbpUPs/SMVFWXSEC4GjRq5Lo90IBsjsxP7Qz5Av59BuogJVSQdcpitUvR
-	 5gipKJTpzG+WyiXVJOA1ccQieCe71aBflyUY78gpIQvIKpKUAgBrSs1LREenFUeNHz
-	 UgK8wwdYtqqfUKIROOpE4sgIKyF1/NuKbZwRjXKc1221Ug+TvI9oiay6HmgU8fbi11
-	 DOD3p0kbI96NkmELA+rG7XXdP77wfMLE4fld0MRXBRO1vmbz30XltpqQeIUqnbtb95
-	 NAVR6ovJqLAzg==
-From: Yao Zi <ziyao@disroot.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Shresth Prasad <shresthprasad7@gmail.com>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Chukun Pan <amadeus@jmu.edu.cn>
-Cc: linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Yao Zi <ziyao@disroot.org>
-Subject: [PATCH v4 5/5] arm64: dts: rockchip: Enable SD-card interface on Radxa E20C
-Date: Thu, 17 Apr 2025 14:40:05 +0000
-Message-ID: <20250417144005.43927-1-ziyao@disroot.org>
-In-Reply-To: <20250417143647.43860-1-ziyao@disroot.org>
-References: <20250417143647.43860-1-ziyao@disroot.org>
+	s=arc-20240116; t=1744900721; c=relaxed/simple;
+	bh=YmtnUeaLSZxV53krlcgNrrwtiIIegedBkZV17BMHwfA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=DM4wyLZQwEid50Gb+Z9fnetI2zhH6m50KqjzJIG26o1lMkr2t63WmLPTpXz0NRp1xHfQzpdaIvYaAIJwD08r711gbvNkAAfE+Vjp1x3LMR8HswDgRdzmnpmlSsi34Y38GffIAV81KeU2fHHkNqpc68+uwnCsEgCupn99oonX7sM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A014C4CEE4;
+	Thu, 17 Apr 2025 14:38:39 +0000 (UTC)
+Date: Thu, 17 Apr 2025 10:40:17 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
+ <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+Subject: [PATCH] ftrace: Initialize variables for
+ ftrace_startup/shutdown_subops()
+Message-ID: <20250417104017.3aea66c2@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-SD-card is available on Radxa E20C board.
+From: Steven Rostedt <rostedt@goodmis.org>
 
-Signed-off-by: Yao Zi <ziyao@disroot.org>
+The reworking to fix and simplify the ftrace_startup_subops() and the
+ftrace_shutdown_subops() made it possible for the filter_hash and
+notrace_hash variables to be used uninitialized in a way that the compiler
+did not catch it.
+
+Initialize both filter_hash and notrace_hash to the EMPTY_HASH as that is
+what they should be if they never are used.
+
+Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+Tested-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+Fixes: 0ae6b8ce200d ("ftrace: Fix accounting of subop hashes")
+Closes: https://lore.kernel.org/all/1db64a42-626d-4b3a-be08-c65e47333ce2@linux.ibm.com/
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- .../boot/dts/rockchip/rk3528-radxa-e20c.dts   | 30 +++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ kernel/trace/ftrace.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-index 57a446b5cbd6..09d917a0acc5 100644
---- a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-@@ -17,6 +17,7 @@ / {
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index 19b902b8de2b..66bf4512ec04 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -3490,8 +3490,8 @@ static int add_next_hash(struct ftrace_hash **filter_hash, struct ftrace_hash **
+  */
+ int ftrace_startup_subops(struct ftrace_ops *ops, struct ftrace_ops *subops, int command)
+ {
+-	struct ftrace_hash *filter_hash;
+-	struct ftrace_hash *notrace_hash;
++	struct ftrace_hash *filter_hash = EMPTY_HASH;
++	struct ftrace_hash *notrace_hash = EMPTY_HASH;
+ 	struct ftrace_hash *save_filter_hash;
+ 	struct ftrace_hash *save_notrace_hash;
+ 	int ret;
+@@ -3625,8 +3625,8 @@ static int rebuild_hashes(struct ftrace_hash **filter_hash, struct ftrace_hash *
+  */
+ int ftrace_shutdown_subops(struct ftrace_ops *ops, struct ftrace_ops *subops, int command)
+ {
+-	struct ftrace_hash *filter_hash;
+-	struct ftrace_hash *notrace_hash;
++	struct ftrace_hash *filter_hash = EMPTY_HASH;
++	struct ftrace_hash *notrace_hash = EMPTY_HASH;
+ 	int ret;
  
- 	aliases {
- 		mmc0 = &sdhci;
-+		mmc1 = &sdmmc;
- 	};
- 
- 	chosen {
-@@ -108,6 +109,18 @@ vcc5v0_sys: regulator-5v0-vcc-sys {
- 		regulator-min-microvolt = <5000000>;
- 		regulator-max-microvolt = <5000000>;
- 	};
-+
-+	vccio_sd: regulator-vccio-sd {
-+		compatible = "regulator-gpio";
-+		gpios = <&gpio4 RK_PB6 GPIO_ACTIVE_HIGH>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&sdmmc_vol_ctrl_h>;
-+		regulator-name = "vccio_sd";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+		states = <1800000 0x0>, <3300000 0x1>;
-+		vin-supply = <&vcc5v0_sys>;
-+	};
- };
- 
- &pinctrl {
-@@ -130,6 +143,12 @@ wan_led_g: wan-led-g {
- 			rockchip,pins = <4 RK_PC0 RK_FUNC_GPIO &pcfg_pull_none>;
- 		};
- 	};
-+
-+	sdmmc {
-+		sdmmc_vol_ctrl_h: sdmmc-vol-ctrl-h {
-+			rockchip,pins = <4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
- };
- 
- &saradc {
-@@ -148,6 +167,17 @@ &sdhci {
- 	status = "okay";
- };
- 
-+&sdmmc {
-+	bus-width = <4>;
-+	cap-mmc-highspeed;
-+	cap-sd-highspeed;
-+	disable-wp;
-+	sd-uhs-sdr104;
-+	vmmc-supply = <&vcc_3v3>;
-+	vqmmc-supply = <&vccio_sd>;
-+	status = "okay";
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0m0_xfer>;
+ 	if (unlikely(ftrace_disabled))
 -- 
-2.49.0
+2.47.2
 
 
