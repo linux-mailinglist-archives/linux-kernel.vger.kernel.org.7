@@ -1,92 +1,82 @@
-Return-Path: <linux-kernel+bounces-608964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EFCEA91B60
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:02:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F2C9A91B53
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:00:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E90A5A7428
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 12:01:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6150B3BB3F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 12:00:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A04AF2459C2;
-	Thu, 17 Apr 2025 12:00:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B66D24110F;
+	Thu, 17 Apr 2025 12:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="dGd3KEZd"
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013051.outbound.protection.outlook.com [52.101.72.51])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="IRNvrTBb"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2042.outbound.protection.outlook.com [40.107.237.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AECE241691;
-	Thu, 17 Apr 2025 12:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F6A18787A;
+	Thu, 17 Apr 2025 12:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.42
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744891248; cv=fail; b=D5Udjt7wi2gmGX44E8UsLtxK900vzcdkXmrrEfsKg94uVr/KXEvidek5ClXKq+sjqJdvV1I8/Rvi00ODIfa5vkTgEd2aAAFkI7dwtlrmsHFXOXnamjqF/Cs9/GqUDrjAFeAy4yuq2Bcmh5xDEBR4qEZH8B99gNbR32CfiQJSGiI=
+	t=1744891231; cv=fail; b=aZxSWVvnL47y9ZvU1+FD7mvQelXRbiTeSjZig2jgE/b2X+zT4mbce35SbZzkMWl0bS4sHIaT843KJhz2NOXsSiZad5Cx0SbZ1TSu8uUvrEmLq8zRyO+jbSJrCVyF7SP4b3vMOynvPGVL30r0EtQ8TQAET25aWEyQsEEmSGPVysk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744891248; c=relaxed/simple;
-	bh=UoS7tXu3HJ+aQ6lRYx1/rwCk+WS71bFlnQdJvH8yAQs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XysGHgc/U3N8+W0ZVUsYHyoPjwNgWIZdmhdnkP6raWLj5daKehy5ggbHFhWkx03lDrH2oIkPmDFo86Ma9IWT59w+52vgxMmyKlAkWMI/uL8DIXOrNfxbpdnRBmTZvDFtEh7O8BiylR+vFfI8DwYQXqfS2aoiVf8Kzf+yQ7WLCvM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=dGd3KEZd; arc=fail smtp.client-ip=52.101.72.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	s=arc-20240116; t=1744891231; c=relaxed/simple;
+	bh=H97AZeKk8aMPsvMg2d1Owz3W6Qmc2ON4dYSaiNOAJVg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=oNHAy8sIvRv1raeaJLHWrkSdX8P/o4yUgW2WAuLI3fXFpiI+trCsqdSqXtg4h+5xAUcPq9HW4TcNtXAyCxPbRzHUa/rWfU/exguj0+bKnobIwIW5iEsz3UiI70gBaias+fwhjs+E9YyK1gb1QnWyT6BSPEtZ9rXUoyNSR48bxa8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=IRNvrTBb; arc=fail smtp.client-ip=40.107.237.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ouGr9soiA81TJnPqLm4Km18FEdBwMHoUQuZZA/O1uKXbUMYU6NPZQEh7uRR9Ro9lQ+9y6FnJnbH+mxUwg1+dAAS+IlItlydhBYtCffpiFLGzabvLs+JiqP8lcyaQn8emosF8SGUNL/0F6fRM3Ap8A3MFKXUyZz+pLs+3xcpGncaTogAHqQ5Xr1HSY2wiBTILV760F/VmxtYQ4Tb255flXf0KaAKL8BrW/2+VGj+Fm4M52FfYD5jiw4LdLIqXjy5dHIQ9v1gYZfCgBBtoNr6ZswqYxccM4h8xc/2fxaAlwIGWaWtUE7jQqiK/J5MaidzLdNsfpbuR5ewl4SKHcoxcjA==
+ b=IUnZ4RUYOigF1FvYPkBP7pPe6HXQ03u5ifXrwiIA5x+EOja1dCbY9cgYMq4ZTbx7Cc/bJU0WDUTPSDr6lL1ftBoTXV2+lJn6sBGRMLe6SkB5Ni2NVvP8WNlu8Cgz3jFzLAb9+kQ0nVONVoprsizflDkVDEPu4heEKwgSjxzQ2ODhOke0gxtzUZL4NVjRoNzT9G+yx5i8XIsaqCTct4Otz/9OYWCxQIqG/HoAfrXunC7iQogfAqINQIFVkrN1jSDD9IgcFF2uszUFrKTCX5g6X+iujMrymP3Be2rxl/EsyNM+FNU6/C5ydcK4K/RveiK7IvWXAZcaS3o7nxoKFHT0ow==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4bz3domnVZmTP4CF6LSGVDsJyyc9LXfSQJyooCZ1Rug=;
- b=ee0/prFyjgEF06Dl216pgoKCcvVW7mMNcqwBXAdT0yYIa01F2rNJVQFxB494VqhtLff7nobva7g+xJZohdumgYmhoAhmmVbJzDxTkp2q0EPvg+BY3BrPB5sojaLdnWhBDmKvNI8QQOw3GHlum9qzCZpYKq1aCS79rWYjDGHwCCXpVfL7WFzDAMF70sj4cfrbovtaKt5Hg2jk0qJFTDha9BzWZelQOxcOZnX2TBa9PIv3pi8K31/yoD9nLU3w5wijVUHQDgErBUYqYz5kpcMpp4w6tjXwrjRUUFOhUsz/68lJuEH+dAHGCdvb6ISM1GxlBeu/LPm4EGdyC4lDpCVShg==
+ bh=J7hoZT4BxKvYWIgLPR1t8iQ2sfHMKaHcnvCWPkBurJM=;
+ b=Z5becw/y8BtVFmKkdYlYM9pBUPZ0WOvQaQmFFOUGLw5myyMQ4Dc62sSz3qe+VIynVt0oOEXzXhjY3ocsta+k12esYY65Tpnsfb7jOTRW+6ux2acUHbFJcqRTMwY9/UdDzfJrT0zj6RPYLPSgQZ57WyUCGX58UYCkjlUt85+D1VEafxBlSr7pmvwZF43ASXzwlSKAbyCajgoGMI2mKxnfK7Alb3YQnW1XFdMvhElrMK0uIpAmnTlPKQL0MgtZiQfta08K2fUOpAj2v+uHH2sTwIFeVRy0jOyhVDBeH908vv7j5LQxgoHqLfWfU227MhV/0E4TXLYJNWftVAxz2Sqjhw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4bz3domnVZmTP4CF6LSGVDsJyyc9LXfSQJyooCZ1Rug=;
- b=dGd3KEZdiXuSV1c5lzpRNtlklGh+fuPWrHhKzjYO+gTetKjfgIQhE18E94mOt+vBbSIlTg3215auN2ILZ1FOoTkNPGbMIvfem7xBItc+gTgvjcvS3uj8C4njdDnbI7/Noqaz04QW02Q959R9kCFTn4gYotGWLNPxnGi9rCfvwTHVv5pJaAGQHnYLuV0vBPpYoC8wnAwW3BDBWwvXVEaigsXACp5DUsA9jmhVWDsUpwflyHEsXcf+kUxlw9jqYxxZfIA40YGTq3F80nIKTJvgg+n3uYS7wNNKNrVqGAmOqTFp0KHRbN44BoIqdTb23UB76A/8ue1YDKicj2f5wU/R2Q==
+ bh=J7hoZT4BxKvYWIgLPR1t8iQ2sfHMKaHcnvCWPkBurJM=;
+ b=IRNvrTBbmrrdYvkTvi6OkTuHQzDCEZcxh5oQYgZVEJt5ISjOgCl0JrP7Gc6cQgmWqqfJEvG4Qy9Q54MWekBPoIQusNnyWjG2yzk8owBAlaPectYBMhB9v3Bi7+5iTjlvKijBGD+MXIWq0ihulGSC/uOkaZ5u2skt0BTb2P/pn74=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by GV1PR04MB10560.eurprd04.prod.outlook.com (2603:10a6:150:203::22) with
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CY5PR12MB6599.namprd12.prod.outlook.com (2603:10b6:930:41::11)
+ by SA0PR12MB4448.namprd12.prod.outlook.com (2603:10b6:806:94::21) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.22; Thu, 17 Apr
- 2025 12:00:42 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2%4]) with mapi id 15.20.8655.022; Thu, 17 Apr 2025
- 12:00:42 +0000
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: netdev@vger.kernel.org
-Cc: Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Wei Fang <wei.fang@nxp.com>,
-	Clark Wang <xiaoning.wang@nxp.com>,
-	Vlatko Markovikj <vlatko.markovikj@etas.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Toke Hoiland-Jorgensen <toke@redhat.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: [PATCH net 3/3] net: enetc: fix frame corruption on bpf_xdp_adjust_head/tail() and XDP_PASS
-Date: Thu, 17 Apr 2025 15:00:05 +0300
-Message-Id: <20250417120005.3288549-4-vladimir.oltean@nxp.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250417120005.3288549-1-vladimir.oltean@nxp.com>
-References: <20250417120005.3288549-1-vladimir.oltean@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: AS4PR09CA0023.eurprd09.prod.outlook.com
- (2603:10a6:20b:5d4::13) To AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14)
+ 2025 12:00:27 +0000
+Received: from CY5PR12MB6599.namprd12.prod.outlook.com
+ ([fe80::e369:4d69:ab4:1ba0]) by CY5PR12MB6599.namprd12.prod.outlook.com
+ ([fe80::e369:4d69:ab4:1ba0%5]) with mapi id 15.20.8632.035; Thu, 17 Apr 2025
+ 12:00:27 +0000
+Message-ID: <be31db14-9545-4d11-9392-458782e10b48@amd.com>
+Date: Thu, 17 Apr 2025 17:30:13 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 06/18] x86/apic: Add update_vector callback for Secure
+ AVIC
+To: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Cc: bp@alien8.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+ Thomas.Lendacky@amd.com, nikunj@amd.com, Santosh.Shukla@amd.com,
+ Vasant.Hegde@amd.com, Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com,
+ x86@kernel.org, hpa@zytor.com, peterz@infradead.org, seanjc@google.com,
+ pbonzini@redhat.com, kvm@vger.kernel.org, kirill.shutemov@linux.intel.com,
+ huibo.wang@amd.com, naveen.rao@amd.com, francescolavra.fl@gmail.com
+References: <20250417091708.215826-1-Neeraj.Upadhyay@amd.com>
+ <20250417091708.215826-7-Neeraj.Upadhyay@amd.com> <87a58frrj7.ffs@tglx>
+Content-Language: en-US
+From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+In-Reply-To: <87a58frrj7.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN4P287CA0105.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:c01:276::8) To CY5PR12MB6599.namprd12.prod.outlook.com
+ (2603:10b6:930:41::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,218 +84,331 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|GV1PR04MB10560:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1c715414-4e4b-4c41-28bd-08dd7da779e9
+X-MS-TrafficTypeDiagnostic: CY5PR12MB6599:EE_|SA0PR12MB4448:EE_
+X-MS-Office365-Filtering-Correlation-Id: 767106db-157e-4e43-97d7-08dd7da770c5
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|7416014|376014|38350700014;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?3bfM58tKnWDYFnUay9TaC8LmdBkh7ACdT2nv+4nUL6riWbFheWudB239Aw3f?=
- =?us-ascii?Q?p63/yoNcfrwhBMLcatxox5RgG9C+Jd55FWJ8qG4uXIAeSZre6B1DA4ucQL6B?=
- =?us-ascii?Q?Q8ep96WyJBrd1o6gSEUUrYDC15yoCO7dDTG+JdcqUimZpmXcv3O0TBJxODJx?=
- =?us-ascii?Q?JVc6Tfikn8BcanotlT9vN7PFCfndQ148O0oWgvYI9Cl7H2FGkY0xGr8fjc2o?=
- =?us-ascii?Q?6V6SLNd4fo5YA3ao0ZmCC4bZV1RFS4lebk9k4Q53l7OYJhEEpy8MuMb+cFAN?=
- =?us-ascii?Q?7EVmyNRPCNbldDx2licuPy5bS9WLs43lms9yw64PmZ3Yy+m8I8Z9gRUwIsk/?=
- =?us-ascii?Q?G/9Zv/WjmETeHG1iBmNwIgowN0Lcu8XQAijFhPV1QQCi/ZeR7Fb8fCz/Bx9V?=
- =?us-ascii?Q?cqgf3W3im4M+IFw+IBj86PCIzOqLPOG0QRBdOEISy9821ysrQ4o3DITrtAb0?=
- =?us-ascii?Q?wxotk3IkW3CdxgvWqMX6ObmoxpnyMIuMAkhG4JJuEpRShU5LSDjBGISpoOQJ?=
- =?us-ascii?Q?4Uin+IjaCog25o+pjATDH4Y+UovO+ZJZtsjk3rOAuURnVt5Db6FKcvDKWePS?=
- =?us-ascii?Q?kNufI1LCQgStd7pRcCINUnW3TTGdGWY8KdEJnMg8RkIOIKpaBzRPPDiIOIjP?=
- =?us-ascii?Q?Lt7IX++UhOOMhqPu0/YbYCdVG1s22gl8IEEk9MX2gYardF1j2daH+tcnVmoH?=
- =?us-ascii?Q?saHxlpUh09bbJ2mp/A7yYCVHlUSju11eVhSJ1BD+RSbyaJJggOR2lRtr1ztu?=
- =?us-ascii?Q?fpAvdsE2FU1yNzF3siTSnytzJSVuhMMR6qESmi4moknCfPbAkPg/GQuxUGMo?=
- =?us-ascii?Q?O5k1pZfLSNBeXh4OqERYxEedygD7eh8/agZeY89dnrY1wJtw4x53wS7HmNhz?=
- =?us-ascii?Q?iyHXiV/EUeYO/K4gBXfeKEDrllabl+bz/W6qs43sFj7kBALJXHJOef9N45YJ?=
- =?us-ascii?Q?x9HqPKkHv3ZioIEDmj2DZJyctvrVJQDdYaMJYpiAahrY2JIIePsYh1EWgiMg?=
- =?us-ascii?Q?+QPoddkZbk1lCvlw6RSbKTtVcJDNAMBQDYDbZZsMfBgcwWTApj2M8EXN+hPz?=
- =?us-ascii?Q?Mv25MaGU61X67w2WKBVdmiczX61bBpSiZH/LsKPYSSEXnSqRKm5WeR+RM8v/?=
- =?us-ascii?Q?bYppuXXhYKYHED8PHOQuqGhdfuvGvhSHPjtRACHeSn7A4RsyEmjSqVoov+hY?=
- =?us-ascii?Q?08xXcCN9Kaz0h++SLE2ZMJJx3mA/TGrgPgzuU1Bi/aTT6PMo03er7QkAjZPp?=
- =?us-ascii?Q?zrUuE+LNLePbxYzgyTroDh5wHOoBTEAxPjmpFYs0TMKi/EMVEkd1eK4V/9qW?=
- =?us-ascii?Q?Ew/GWJZlH7YfkfhdUDKpK08iWPDo45FIv6AK6yL4NpDTnlAANiezjEIaZ1px?=
- =?us-ascii?Q?d8Zr9jWktyNAYjQZ9Gw0mcFelbp8+4Ylar2ecaCOA+P8anVF1tDyoJxKDK3a?=
- =?us-ascii?Q?GZ5ZTCX4H7vNH6V44rolMGOUpGcgQOexJQIgNNI3pE77d+9YQXVXFw=3D=3D?=
+	=?utf-8?B?U3kzQkNVMmN4NzlMbEtmeE43Nk5OM1N0d1IyU2lzMWRwek9wWjltWi95Z2N0?=
+ =?utf-8?B?bTliSFk5MERodXh0VE0xdENCTG5qMVhXakZhU0FIampLVTYwcjRwdkZJTVQ4?=
+ =?utf-8?B?SjVJWlVtTmdya1VQaC9NRms3aXFkY0tieWFWVlRBUGp5NG80ME0yazB1NUo1?=
+ =?utf-8?B?cGg5MnVZYUN4YXpLN0ZaSkl1OGkzeElyZ1Z2ZGxaZ1dNWmVpMjM4VUxXM0kr?=
+ =?utf-8?B?ZGUxMUlvTlkvd1dSbWYxMU4zQWNTRWxDbHVjRlZ2L29WWGprN2M0N0F4NjAv?=
+ =?utf-8?B?V2l6c3Q1UVNzQWJua0pyWEs2dFY2S2xFWnhXc09HRmExUDJwUzE3bUpDMnZP?=
+ =?utf-8?B?L3VXb3VCdkFqUytjdFpqWXNBd05RZnQzTUxlNXFSdkl4VWN5SklJbVhVcU1w?=
+ =?utf-8?B?cGVGN1oyT2d5VVlJUUFhZ2U4OGMrWXFodDJ0QUpYSTk3M0R2dHVNQ01ocnkv?=
+ =?utf-8?B?b2hpY21RL3V4TUNweURJbCtRRHpLTDY4K1BhVGRYaHBUbFZ0d2xEVU0wcUZU?=
+ =?utf-8?B?SWNZeHJCVmE4d2dFMGJUOElodXpBeGgxYnBUVmFSM1VOdFh1bVFRYldBVWN3?=
+ =?utf-8?B?ZXBHUWI1UXQvQmtWelY4akd6YnIwSWZnRi9ZZU90ck8wYU9wemtJekMxaGRN?=
+ =?utf-8?B?ZGlkSmhibEVDZ24zTzVDV3lrNVdjTVpOUWZOMEZBU0JkK1l0TnM0SFJHSzdV?=
+ =?utf-8?B?MDI2RFZrcmNqU0xGbXFKYStJTXBlYW90VERDZmhxa2JxdENYamUrUks4QWJ3?=
+ =?utf-8?B?OXpQY29mVGg1Z3hwMnluRzFsV3NHbnk4UDZHSjBCblJNSHVMY0ZLNFBUNjBK?=
+ =?utf-8?B?OXVadWNoVDB6aDNmOG9FQzllUjQ0eTMwY3hENFpIazJVakg5bWhVeENYVVV4?=
+ =?utf-8?B?aHNNNU14Zmkvd0lEZnc4clZWUWpNWS9ZOHJ5ZllJaUV5eWpTQlJzd2JSbHFy?=
+ =?utf-8?B?RlNNVTUxdUJBZGFZdHAzZmo1dEdvbFMrR0loSDErZTF4bW9VZWpPQllYRnQz?=
+ =?utf-8?B?YU92VDcxWnpYRGJtZGVjZVRCYlA4Y3ZsU1hSZU9zWm02bFpOVEk2d1kzKzd2?=
+ =?utf-8?B?dFR4WXI3ZUR6Nlo0L2p0TFQyZEljUWo3YXF0Nk9KU0duU0FCL2toMERPSHdQ?=
+ =?utf-8?B?U01VbW1Tcmk1bHdhald6WmNEWDlvN0FyVFl2OFkvYlJPY3IvY0YyRGFrWVlQ?=
+ =?utf-8?B?SmE4Vk94b3hlNVRISk1qVFpoNEpyRjJVUFIybVEvZVJpaC9NUW5vaFN3emlw?=
+ =?utf-8?B?MFJ1UUpJRzNteHBCZjgvOTBCODFNMGVXU0FlakdjUklQOTM4dFhIRVgyVmtV?=
+ =?utf-8?B?dXF5UXVBUGZSR0ozR0JjNkYyQzVybG5NUkxHSTlOMUFaZEZ2V3Y0N21oNGJy?=
+ =?utf-8?B?Ny9sVktpUzExYWpkeE9hdHQxQ3grSlVOd1pWSmRseU9DZ0tyWTZjdVU5UW5B?=
+ =?utf-8?B?UVBKSUxxdjl0Ri9JcHYyeXorOEZuZkRLSHprakkrMUU5ZjRwMXJuYkY0TXll?=
+ =?utf-8?B?dG9LU01IMVNDbjV6bUhuTk1VaHJTMENmTlczNnFJZjk0WHg2TWhDVENISmVk?=
+ =?utf-8?B?cW1hTEFPeTFjZEdhNkFhZnR1UUcvdUlLdnoyTzFpR0NNTXlaQ1NaSFRlSmlE?=
+ =?utf-8?B?WW1yR3NIcmV5UkQ2bzllNFc1MjFRRjJLYkdVNlJLR1hCRkwyN2ZhVlVXT1Ns?=
+ =?utf-8?B?d3cwUk5tc1ROTUo4RFp5Y0FPZkNOU0J1N1Ezc3ZrYjUzcDNDZTRULzVydytq?=
+ =?utf-8?B?V0puS2Q0UllqcnNEL3B4bStEczhjSEpoQWVUL3ZwQjNiUjhlaWdOWEphUnI3?=
+ =?utf-8?B?UFl4VXFNQUw2ODFjWUFUUmJ6OUtRYk9HbTZEbTJja2htSnpRYm8xZUdjd0Rs?=
+ =?utf-8?Q?kM0EW3QPH3vDe?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(7416014)(376014)(38350700014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6599.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?6EsqalDqGpMZ17kwIsWjePO0yTuvwwif5IxW3hd8LPMMp/PCovgS2+nJZmgq?=
- =?us-ascii?Q?g7gDL/GwEELoyy3TJFCDJdwTzEwk1+e0RC4oHlfY0ThqsN/mIoLekJa1/QCP?=
- =?us-ascii?Q?07nf9V3Tth39hLOhUVd/QkHlhNx4qwRpqRCP8lubDMbP1HY1Bvo55a0uWAwA?=
- =?us-ascii?Q?f91fzGci9ScuxAXsu4zT0gnNNb1NlbH4u9VAsCQ+ZyKCBrv+7nQtsSLAZ8dH?=
- =?us-ascii?Q?OfltsPI78MZ8Qdwb9510aghUbB6DsIY5sJYaX/+vO3mZjlM1umFdlqboquzZ?=
- =?us-ascii?Q?5+ONt6Zu8gs8nQpcgfD0ava2AfQjCZSoIVwRpcZwq9ijKlm1IeKW+IWJiIk4?=
- =?us-ascii?Q?sOX04+8Y6KX8r+3d5uU1uQczfL2wthRUsFEWonuldBaHa9QWobYQcrLZgknO?=
- =?us-ascii?Q?DWlGtLmW2RZX981TrQ08JARZwQzAP7SjlM5cTfThi9Lz0uVzaXG3JtkIeqI8?=
- =?us-ascii?Q?eQU2LcN/OkZZctAE+z4O7wsNknPIk5suznWXkMi4sx7BJMUOUdZCJqqaixSj?=
- =?us-ascii?Q?Yc9LdW86jgog9IfMSPGUWtXlLEZ0oV+o5UJbrYBh5TGXu8pZrA71Wy2ToLow?=
- =?us-ascii?Q?OyE6zPeKP+tAGvSXA+To8PgIYNGqkmhRwGjMqqpEqWQwjtAh14nq46XgZXe2?=
- =?us-ascii?Q?NSvinfprkbCQvv88Rn+rfhHTSmLaKD1YNKM9ZpmyRvHjdRnSIsaeUs9Qllsn?=
- =?us-ascii?Q?R0w9CBjkkh2dwVoHTtRBLWQIznoUTtQgAKN9umRch9BJxli1H5pncJtmUs71?=
- =?us-ascii?Q?a4/TNlfnDX/h8W4Xre8sRsKgBozB01zaPGjonPpKJRiBJFW99Py7Xe9hAlVI?=
- =?us-ascii?Q?bU0tc3R3zdGXRU0Y5cO2O4lEDMeQnrbZS3TPsRKeuSNRX+TRq1R3YQcB5MUq?=
- =?us-ascii?Q?Uh2TVgm70m/FOVeidV3jJeANhGs5I207/VsGkLDfyUd9ERfdgW9iEU+9NTHH?=
- =?us-ascii?Q?/cbuzdcLeHXQWyD8OHo2S366YuzvpH/AQZe/L3yASfYQVhVepbEoVqi/GPkL?=
- =?us-ascii?Q?7l5qGyXLHrv/twwWVsc7xgxD8wUQHGxkINgJEtiqpb9eNmFGuYX0SVlsILH4?=
- =?us-ascii?Q?LAThdh5TBBO/OxKOcUCd1NfyVdZNtGGqSB260/U8v31icqyWgd+2S2Etka70?=
- =?us-ascii?Q?dW8ZSQ8rYiwvwk0p67peKolXMkcKTFz6SzdrAzGKP/vWjvUOx0XALbFHcxuH?=
- =?us-ascii?Q?L8pJ7ATvnoSPdR+t12OHhsRMZKJj2cQEyLY/eLOCMSElmwsipwX8qcSNpOoR?=
- =?us-ascii?Q?DmPu8DemxaAirB5zVM/vv5a3QBv5Ey0ClieSJscZG84WAUHnpVYIn+c1Vnm/?=
- =?us-ascii?Q?F35Ew2ckLUc5NOQ1ML8usZ1WKr80gWS7uhw5QUcjukcx7uDd1rjPWvLjW2tz?=
- =?us-ascii?Q?+CW72zcJuiZ6Wme2DLmUnZm+5Et5P/wZlqOYNrkcyFYjDbsHlfxZY1ORecej?=
- =?us-ascii?Q?FbooqlWYABoQXrk5kvCb+qbFjnEuTYOzKeE0x1XapCPxyfBvy8n89iAWUjux?=
- =?us-ascii?Q?/2wLrr86B/AS2zuhuLehsokancOYk/YY/Z5cBzhWe7IC7KgSNdoXkPX3k4Xz?=
- =?us-ascii?Q?vUm3jyRvbIRzdQYn6oTK3zaF3YGQzmndnyUyU+tQoNfk/HjIi1sKWgOEq6Xk?=
- =?us-ascii?Q?Zg=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1c715414-4e4b-4c41-28bd-08dd7da779e9
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
+	=?utf-8?B?RjdScEhQS1BpSnBTR0sxWlJvTVVlbHJ4OUVtSm03NUJoSTFwVHozQndOWG9N?=
+ =?utf-8?B?UWdzazl1SlcwNGdNZGs2MHpibDJNVUw0aVNIRG1mZ3lrOXJKZWFoNjJlTjFS?=
+ =?utf-8?B?SnY4aTEzR2xZUytPblhqTm81ZU5BZytpRE1QNkQvbGtMMVNxak5MSHp0YlF3?=
+ =?utf-8?B?UVQ2c1lQdndFcHlEL3pCeU0zZ0JzR0lkRUo4UEJTZGdTbkRVTXZrZHFwY0Rt?=
+ =?utf-8?B?R0pvTEdQbDhiN2oxUGJrNFIva29qMmZjdnVEcEg2cVJMWUFKOFhXaERTODQ4?=
+ =?utf-8?B?ZmpOSEFiZlBrQ0tweVU4VThXYXRSbWhrR004M2NYMThnSFZKaUtYcEIyQWN6?=
+ =?utf-8?B?UlFNYm04YWxySE1CVUdrL0Fack05dHFGaXVab3MvM1Y5bVlzeDBIN0FhZVlv?=
+ =?utf-8?B?VCtnUG9kTDErOXBLaWFsRS82ZVRDS2dpOTVNTllsQlZSUFByZWFSYXZMbzgx?=
+ =?utf-8?B?bk45MlRkVTFqVDJJTTlncFpBZSsvZjFxTjFNb1JYeG1lMnV3OFNRL05CamVp?=
+ =?utf-8?B?TjF1ak9WMlUyaDRUNUpDN21weC9nYlVlWHFBdC8yaTZnN201SjNmTlZMK2pG?=
+ =?utf-8?B?Smt1RzdUSFlEenVYTGRodDJackNjVnRUR2ExZk04MjNGVTR2OVJaVjkvd3M4?=
+ =?utf-8?B?MldEUEtaWEt5bVJVa0lscXZoTjhmUE9UTm5xeTVid2puOEVKVlZrTHdGRHRT?=
+ =?utf-8?B?bUYrbEpLcndJTFlianpXWittWFA0QjZ3WmVVT3dWNEtvR1ozUFA0cmllMHE2?=
+ =?utf-8?B?NTUzRThxRmM5aEJIa2VMblVDTUFNcnQ3eE1TQS9qbGZLT294Q2x3VVZ4b1R6?=
+ =?utf-8?B?OEsxaVdjUmdNaXZ3UVZDRzlGMU04S3pYRW5rUmxZTWwrV1hXNlkyeHpPZkR0?=
+ =?utf-8?B?MUF3YlRKV3RkZENKVWJrQWdyclNwU3lTSDhuc3V0SVNYUG42Yk92K1BVcWdl?=
+ =?utf-8?B?dzlhVXQ0MVozN293L3QrangrRDVVSisvMmU5aHF6MEV1MFNQNUhoUzcwNktU?=
+ =?utf-8?B?MGhrd3gyc2taWE50ZUZQaE9JSEVLaFBmeFE4eTczTHYxYWFWNU1oYnViRkty?=
+ =?utf-8?B?K214eUd1M3ZtWXNQWUZaUldCcjF6aS9VbjhVanhjMENNZk8rY3FDZi9HODFB?=
+ =?utf-8?B?NjZNdUxlYS9QSk15aG00N05uN3pIQzZQbXRwdmN0czVnSjZzcTdpZTJRVmRs?=
+ =?utf-8?B?RmdLMCtZb3oyV1ZFWnlrcXBFQkx5bWJ5MVJXZFNjaHV5L1dxWnVpQ0dVMDhW?=
+ =?utf-8?B?MjlNQXVSWTJjRVh1aEwybGVsY2xTQnVxcFllMkE0MGJVQjFra1p6TlgwbWhC?=
+ =?utf-8?B?bHQvYWtEdkcvL3V5RHRyL1U0b00zN2gxbnR1TFpGckcxVGJBRmxock5TL3Zw?=
+ =?utf-8?B?dGJ2YS84Q1NlQW13NFkyNnB3Nk5zZUduaVVDcW43eUdOZGhzeW1oUE5Na0s4?=
+ =?utf-8?B?cnlqcCtSaWJlOUtJeHhEOFFvTzZUQmJCdDRvR0R2bnNBK2UvYkFOKzlKTVp3?=
+ =?utf-8?B?K3BvOVhhSGVSYVM3SXFsSUxIM212K0FSeExVeHVINVVUM2xneW5TV0ZCMVc3?=
+ =?utf-8?B?Vkk3UXZEU0xDcllTWmdweVNsK003eEtGQ2dmRzM0bTZSdmVlRlpmZ1hiUUdB?=
+ =?utf-8?B?d1ZmRWR0aEdob3JjdE1GVEJadjM1WmhvSFNqeFpoVmhsM1U4eElGbDQxTlpJ?=
+ =?utf-8?B?RXg2b1BkazBSQUlSRHBKbFRpTVF3amN0MS9TQmRjcFhQWjlTeXJCSFZZc0ZF?=
+ =?utf-8?B?TS9jVmJTK0NGOGlZQVAvaEpyYXhKQk15T1FWdDBoekIxeEMyKzhIQ09jeS9U?=
+ =?utf-8?B?VWF6K043L2JSM1FwQnhwYytqT0l6RzJzNDlUT05LYTQyY2VVblFqalFIUVlT?=
+ =?utf-8?B?anUva3hFT3Z4QkRhWGVoTEF0WmJtSDltVnVQcXB2SVoxaGhPTHlkNU16a1Ar?=
+ =?utf-8?B?NkVBZUd5aXR4T3FXV2NxN3NZNytCMkNacnBDYitKanVLZGlQS0tDOFdvVE5B?=
+ =?utf-8?B?L3Zya2FOSnFHZ0FvN0dPY01xNkFYY0liaExBL0ZGSWdjLzlOcVpTZFFJV1NG?=
+ =?utf-8?B?NVR1dm42dDBWWjFJd3c1VVRtMWdJZkNRMVMzSlpEK1Z1Q25OYlpkR29ZY0du?=
+ =?utf-8?Q?jxhcdhtqsaqheBukud2QuRU0h?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 767106db-157e-4e43-97d7-08dd7da770c5
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6599.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2025 12:00:42.7770
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2025 12:00:26.7107
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: g2vd87/wmNJjD99mtw5SkGW+Uz7KgveSn/sLC4mPnyg6Wi5eWXitTIIoZHqU4AEViIHxpD2jBCFIHnd4x+s30Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10560
+X-MS-Exchange-CrossTenant-UserPrincipalName: XCsxZk8NYbXOTFAOyGGvuuQUJsF9NLapnOln9oeIBA2AgrZ6c0iZXiyu3l91hrVlbScFyByvudE1qViyVedVWQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4448
 
-Vlatko Markovikj reported that XDP programs attached to ENETC do not
-work well if they use bpf_xdp_adjust_head() or bpf_xdp_adjust_tail(),
-combined with the XDP_PASS verdict. A typical use case is to add or
-remove a VLAN tag.
 
-The resulting sk_buff passed to the stack is corrupted, because the
-algorithm used by the driver for XDP_PASS is to unwind the current
-buffer pointer in the RX ring and to re-process the current frame with
-enetc_build_skb() as if XDP hadn't run. That is incorrect because XDP
-may have modified the geometry of the buffer, which we then are
-completely unaware of. We are looking at a modified buffer with the
-original geometry.
 
-The initial reaction, both from me and from Vlatko, was to shop around
-the kernel for code to steal that would calculate a delta between the
-old and the new XDP buffer geometry, and apply that to the sk_buff too.
-We noticed that veth and generic xdp have such code.
+On 4/17/2025 4:20 PM, Thomas Gleixner wrote:
+> On Thu, Apr 17 2025 at 14:46, Neeraj Upadhyay wrote:
+>> Add update_vector callback to set/clear ALLOWED_IRR field in
+>> a vCPU's APIC backing page for external vectors. The ALLOWED_IRR
+>> field indicates the interrupt vectors which the guest allows the
+>> hypervisor to send (typically for emulated devices). Interrupt
+>> vectors used exclusively by the guest itself and the vectors which
+>> are not emulated by the hypervisor, such as IPI vectors, are part
+>> of system vectors and are not set in the ALLOWED_IRR.
+> 
+> Please structure changelogs properly in paragraphs:
+> 
+>   https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#changelog
+> 
 
-The headroom adjustment is pretty uncontroversial, but what turned out
-severely problematic is the tailroom.
+Ok
 
-veth has this snippet:
+>>  arch/x86/include/asm/apic.h         |  9 +++++
+>>  arch/x86/kernel/apic/vector.c       | 53 ++++++++++++++++++++++-------
+>>  arch/x86/kernel/apic/x2apic_savic.c | 35 +++++++++++++++++++
+> 
+> And split this patch up into two:
+> 
+>   1) Do the modifications in vector.c which is what the $Subject line
+>      says
+> 
+>   2) Add the SAVIC specific bits
+> 
 
-		__skb_put(skb, off); /* positive on grow, negative on shrink */
+Ok
 
-which on first sight looks decent enough, except __skb_put() takes an
-"unsigned int" for the second argument, and the arithmetic seems to only
-work correctly by coincidence. Second issue, __skb_put() contains a
-SKB_LINEAR_ASSERT(). It's not a great pattern to make more widespread.
-The skb may still be nonlinear at that point - it only becomes linear
-later when resetting skb->data_len to zero.
+>> @@ -471,6 +473,12 @@ static __always_inline bool apic_id_valid(u32 apic_id)
+>>  	return apic_id <= apic->max_apic_id;
+>>  }
+>>  
+>> +static __always_inline void apic_update_vector(unsigned int cpu, unsigned int vector, bool set)
+>> +{
+>> +	if (apic->update_vector)
+>> +		apic->update_vector(cpu, vector, set);
+>> +}
+> 
+> This is in the public header because it can?
+>
 
-To avoid the above, bpf_prog_run_generic_xdp() does this instead:
+apic_update_vector() is needed for some system vectors which are emulated/injected
+by Hypervisor. Patch 8 calls it for lapic timer. HYPERVISOR_CALLBACK_VECTOR would need
+it for hyperv. This patch series does not call apic_update_vector() for
+HYPERVISOR_CALLBACK_VECTOR though.
 
-		skb_set_tail_pointer(skb, xdp->data_end - xdp->data);
-		skb->len += off; /* positive on grow, negative on shrink */
-
-which is more open-coded, uses lower-level functions and is in general a
-bit too much to spread around in driver code.
-
-Then there is the snippet:
-
-	if (xdp_buff_has_frags(xdp))
-		skb->data_len = skb_shinfo(skb)->xdp_frags_size;
-	else
-		skb->data_len = 0;
-
-One would have expected __pskb_trim() to be the function of choice for
-this task. But it's not used in veth/xdpgeneric because the extraneous
-fragments were _already_ freed by bpf_xdp_adjust_tail() ->
-bpf_xdp_frags_shrink_tail() -> ... -> __xdp_return() - the backing
-memory for the skb frags and the xdp frags is the same, but they don't
-keep individual references.
-
-In fact, that is the biggest reason why this snippet cannot be reused
-as-is, because ENETC temporarily constructs an skb with the original len
-and the original number of frags. Because the extraneous frags are
-already freed by bpf_xdp_adjust_tail() and returned to the page
-allocator, it means the entire approach of using enetc_build_skb() is
-questionable for XDP_PASS. To avoid that, one would need to elevate the
-page refcount of all frags before calling bpf_prog_run_xdp() and drop it
-after XDP_PASS.
-
-There are other things that are missing in ENETC's handling of XDP_PASS,
-like for example updating skb_shinfo(skb)->meta_len.
-
-These are all handled correctly and cleanly in commit 539c1fba1ac7
-("xdp: add generic xdp_build_skb_from_buff()"), added to net-next in
-Dec 2024, and in addition might even be quicker that way. I have a very
-strong preference towards backporting that commit for "stable", and that
-is what is used to fix the handling bugs. It is way too messy to go
-this deep into the guts of an sk_buff from the code of a device driver.
-
-Fixes: d1b15102dd16 ("net: enetc: add support for XDP_DROP and XDP_PASS")
-Reported-by: Vlatko Markovikj <vlatko.markovikj@etas.com>
-Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
----
- drivers/net/ethernet/freescale/enetc/enetc.c | 26 +++++++++++---------
- 1 file changed, 15 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc.c b/drivers/net/ethernet/freescale/enetc/enetc.c
-index 74721995cb1f..3ee52f4b1166 100644
---- a/drivers/net/ethernet/freescale/enetc/enetc.c
-+++ b/drivers/net/ethernet/freescale/enetc/enetc.c
-@@ -1878,11 +1878,10 @@ static int enetc_clean_rx_ring_xdp(struct enetc_bdr *rx_ring,
+Given that currently this callback is not used outside of apic code,
+do I need to add it to arch/x86/kernel/apic/local.h or just remove it and use
+conditional call in current callsites?
  
- 	while (likely(rx_frm_cnt < work_limit)) {
- 		union enetc_rx_bd *rxbd, *orig_rxbd;
--		int orig_i, orig_cleaned_cnt;
- 		struct xdp_buff xdp_buff;
- 		struct sk_buff *skb;
-+		int orig_i, err;
- 		u32 bd_status;
--		int err;
- 
- 		rxbd = enetc_rxbd(rx_ring, i);
- 		bd_status = le32_to_cpu(rxbd->r.lstatus);
-@@ -1897,7 +1896,6 @@ static int enetc_clean_rx_ring_xdp(struct enetc_bdr *rx_ring,
- 			break;
- 
- 		orig_rxbd = rxbd;
--		orig_cleaned_cnt = cleaned_cnt;
- 		orig_i = i;
- 
- 		enetc_build_xdp_buff(rx_ring, bd_status, &rxbd, &i,
-@@ -1925,15 +1923,21 @@ static int enetc_clean_rx_ring_xdp(struct enetc_bdr *rx_ring,
- 			rx_ring->stats.xdp_drops++;
- 			break;
- 		case XDP_PASS:
--			rxbd = orig_rxbd;
--			cleaned_cnt = orig_cleaned_cnt;
--			i = orig_i;
--
--			skb = enetc_build_skb(rx_ring, bd_status, &rxbd,
--					      &i, &cleaned_cnt,
--					      ENETC_RXB_DMA_SIZE_XDP);
--			if (unlikely(!skb))
-+			skb = xdp_build_skb_from_buff(&xdp_buff);
-+			/* Probably under memory pressure, stop NAPI */
-+			if (unlikely(!skb)) {
-+				enetc_xdp_drop(rx_ring, orig_i, i);
-+				rx_ring->stats.xdp_drops++;
- 				goto out;
-+			}
-+
-+			enetc_get_offloads(rx_ring, orig_rxbd, skb);
-+
-+			/* These buffers are about to be owned by the stack.
-+			 * Update our buffer cache (the rx_swbd array elements)
-+			 * with their other page halves.
-+			 */
-+			enetc_bulk_flip_buff(rx_ring, orig_i, i);
- 
- 			napi_gro_receive(napi, skb);
- 			break;
--- 
-2.34.1
+   
+>> -static void apic_update_vector(struct irq_data *irqd, unsigned int newvec,
+>> -			       unsigned int newcpu)
+>> +static int irq_alloc_vector(const struct cpumask *dest, bool resvd, unsigned int *cpu)
+>> +{
+>> +	int vector;
+>> +
+>> +	vector = irq_matrix_alloc(vector_matrix, dest, resvd, cpu);
+> 
+>         int vector = irq_matrix_alloc(...);
+> 
+
+Ok
+
+>> +
+>> +	if (vector >= 0)
+>> +		apic_update_vector(*cpu, vector, true);
+>> +
+>> +	return vector;
+>> +}
+>> +
+>> +static int irq_alloc_managed_vector(unsigned int *cpu)
+>> +{
+>> +	int vector;
+>> +
+>> +	vector = irq_matrix_alloc_managed(vector_matrix, vector_searchmask, cpu);
+>> +
+>> +	if (vector >= 0)
+>> +		apic_update_vector(*cpu, vector, true);
+>> +
+>> +	return vector;
+>> +}
+> 
+> I completely fail to see the value of these two functions. Each of them
+> has exactly _ONE_ call site and both sites invoke apic_update_vector()
+
+Ok, this was done to associate apic->update_vector() calls with the
+setup (irq_matrix_alloc()) and teardown (irq_matrix_free()) of vector,
+which was my understanding from your suggestion here: 
+https://lore.kernel.org/lkml/87jz8i31dv.ffs@tglx/ . Given that there
+is single callsite for each and vector_configure_legacy() calls
+apic->update_vector() outside of alloc path, adding it to apic_update_irq_cfg(),
+as you suggest handles all callers.
+
+
+> when the allocation succeeded. Why can't you just do the obvious and
+> leave the existing code alone and add
+> 
+>       if (apic->update_vector)
+>       		apic->update_vector();
+> 
+> into apic_update_vector()? But then you have another place where you
+> need the update, which does not invoke apic_update_vector().
+> 
+> Now if you look deeper, then you notice that all places which invoke
+> apic_update_vector() invoke apic_update_irq_cfg(), which is also called
+> at this other place, no?
+> 
+
+Yes, makes sense. apic_update_irq_cfg() is called for MANAGED_IRQ_SHUTDOWN_VECTOR
+also. I am not aware of the use case of that vector. Whethere it is an interrupt
+which is injected by Hypervisor.
+
+
+static void vector_assign_managed_shutdown(struct irq_data *irqd)
+{
+        unsigned int cpu = cpumask_first(cpu_online_mask);
+
+        apic_update_irq_cfg(irqd, MANAGED_IRQ_SHUTDOWN_VECTOR, cpu);
+}
+
+
+>> +static void irq_free_vector(unsigned int cpu, unsigned int vector, bool managed)
+>> +{
+>> +	apic_update_vector(cpu, vector, false);
+>> +	irq_matrix_free(vector_matrix, cpu, vector, managed);
+>> +}
+> 
+> This one makes sense, but please name it: apic_free_vector()
+> 
+
+Ok
+
+> Something like the uncompiled below, no?
+> 
+
+Ok, makes sense. Looks good.
+
+
+- Neeraj
+
+> Thanks,
+> 
+>         tglx
+> ---
+> --- a/arch/x86/kernel/apic/vector.c
+> +++ b/arch/x86/kernel/apic/vector.c
+> @@ -134,9 +134,19 @@ static void apic_update_irq_cfg(struct i
+>  
+>  	apicd->hw_irq_cfg.vector = vector;
+>  	apicd->hw_irq_cfg.dest_apicid = apic->calc_dest_apicid(cpu);
+> +
+> +	if (apic->update_vector)
+> +		apic->update_vector(cpu, vector, true);
+> +
+>  	irq_data_update_effective_affinity(irqd, cpumask_of(cpu));
+> -	trace_vector_config(irqd->irq, vector, cpu,
+> -			    apicd->hw_irq_cfg.dest_apicid);
+> +	trace_vector_config(irqd->irq, vector, cpu, apicd->hw_irq_cfg.dest_apicid);
+> +}
+> +
+> +static void apic_free_vector(unsigned int cpu, unsigned int vector, bool managed)
+> +{
+> +	if (apic->update_vector)
+> +		apic->update_vector(cpu, vector, false);
+> +	irq_matrix_free(vector_matrix, cpu, vector, managed);
+>  }
+>  
+>  static void apic_update_vector(struct irq_data *irqd, unsigned int newvec,
+> @@ -174,8 +184,7 @@ static void apic_update_vector(struct ir
+>  		apicd->prev_cpu = apicd->cpu;
+>  		WARN_ON_ONCE(apicd->cpu == newcpu);
+>  	} else {
+> -		irq_matrix_free(vector_matrix, apicd->cpu, apicd->vector,
+> -				managed);
+> +		apic_free_vector(apicd->cpu, apicd->vector, managed);
+>  	}
+>  
+>  setnew:
+> @@ -183,6 +192,7 @@ static void apic_update_vector(struct ir
+>  	apicd->cpu = newcpu;
+>  	BUG_ON(!IS_ERR_OR_NULL(per_cpu(vector_irq, newcpu)[newvec]));
+>  	per_cpu(vector_irq, newcpu)[newvec] = desc;
+> +	apic_update_irq_cfg(irqd, newvec, newcpu);
+>  }
+>  
+>  static void vector_assign_managed_shutdown(struct irq_data *irqd)
+> @@ -261,8 +271,6 @@ assign_vector_locked(struct irq_data *ir
+>  	if (vector < 0)
+>  		return vector;
+>  	apic_update_vector(irqd, vector, cpu);
+> -	apic_update_irq_cfg(irqd, vector, cpu);
+> -
+>  	return 0;
+>  }
+>  
+> @@ -338,7 +346,6 @@ assign_managed_vector(struct irq_data *i
+>  	if (vector < 0)
+>  		return vector;
+>  	apic_update_vector(irqd, vector, cpu);
+> -	apic_update_irq_cfg(irqd, vector, cpu);
+>  	return 0;
+>  }
+>  
+> @@ -357,7 +364,7 @@ static void clear_irq_vector(struct irq_
+>  			   apicd->prev_cpu);
+>  
+>  	per_cpu(vector_irq, apicd->cpu)[vector] = VECTOR_SHUTDOWN;
+> -	irq_matrix_free(vector_matrix, apicd->cpu, vector, managed);
+> +	apic_free_vector(apicd->cpu, vector, managed);
+>  	apicd->vector = 0;
+>  
+>  	/* Clean up move in progress */
+> @@ -366,7 +373,7 @@ static void clear_irq_vector(struct irq_
+>  		return;
+>  
+>  	per_cpu(vector_irq, apicd->prev_cpu)[vector] = VECTOR_SHUTDOWN;
+> -	irq_matrix_free(vector_matrix, apicd->prev_cpu, vector, managed);
+> +	apic_free_vector(apicd->prev_cpu, vector, managed);
+>  	apicd->prev_vector = 0;
+>  	apicd->move_in_progress = 0;
+>  	hlist_del_init(&apicd->clist);
+> @@ -905,7 +912,7 @@ static void free_moved_vector(struct api
+>  	 *    affinity mask comes online.
+>  	 */
+>  	trace_vector_free_moved(apicd->irq, cpu, vector, managed);
+> -	irq_matrix_free(vector_matrix, cpu, vector, managed);
+> +	apic_free_vector(cpu, vector, managed);
+>  	per_cpu(vector_irq, cpu)[vector] = VECTOR_UNUSED;
+>  	hlist_del_init(&apicd->clist);
+>  	apicd->prev_vector = 0;
 
 
