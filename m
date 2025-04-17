@@ -1,104 +1,78 @@
-Return-Path: <linux-kernel+bounces-609755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 695F9A92B59
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 21:01:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26912A92B32
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 20:58:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 145B43B08BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 18:57:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F16D1890EE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 18:57:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40B3F253F22;
-	Thu, 17 Apr 2025 18:57:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7469E257AD5;
+	Thu, 17 Apr 2025 18:56:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mkRHpGBm"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LBZcVT+6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA941B3934
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 18:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27471CAA99;
+	Thu, 17 Apr 2025 18:56:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744916220; cv=none; b=EPRUcDMoLTpy6mseXMb/0ERQowpbN2et8pkgwZnVbujQHHP9wYLCwrO1w+Km+5DkIIUdXTRYRHleTlRB3uFWFvx7UtZjmuLhJodhCyG2McUWMEubEXcT+gfeTyFuvUgtmgugFBzRoW8DKjt+kNOyKtP9SlGo7cTebkq8+Do8EJY=
+	t=1744916188; cv=none; b=gfQrF8UqzTjhJuPC+dnOSMEDO5RKhm4vqc10fH+PExaz4Zbe/S7AaNc1IfcdXw8oKQ/VFwXAM7lbNmnaoV9Iv2PiLmcIWq/wKfbZHnF59iQP2MnMzoLJrP6+9c2H0E09T/DJtzTmBAZCZMvOtjo0etVKX93ugDbrB+KeZlmeWUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744916220; c=relaxed/simple;
-	bh=C14pC0oXB7Zebg4WCwH6Xn2IL1gFZUeYJTlBRPWxC1U=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=gwmWy6zsJlRO9hlcYXtMZ+ANfJzrmHIh552Nyf/+9YOHJ2G+PeI3Iassl6WCopq74wyrgn5Sf2ZZcl168TcZaoQbsYvXXEhpps4UkO3EolAQI9hsLI1tTTWbfEMX1r/43+eXYQh4CO9wwvXAzS4981hihd4uy0s/O2bTSUJTsi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mkRHpGBm; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744916219; x=1776452219;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=C14pC0oXB7Zebg4WCwH6Xn2IL1gFZUeYJTlBRPWxC1U=;
-  b=mkRHpGBmxR1aDh0L/d03ICqzIa7T8WhVLkAw8VB5pPD8k2JbHUDU7Gj5
-   cKL/IgnK1LTPEzPsMGNlvIB/hvI+BxGgWR08LrX4pvkLJOWxi2eXUlSHN
-   KBkiX56DvCEP42L6uZGLRewKOCZQsDcQfgEtjxWt6DDIy/VGWNuROtinQ
-   tV6PFHf0ltwW5Ml8XOjZ4/ZT1gHBbZik12lN5vWI2GQ7uxIO9NCcyMiD6
-   5XMYgCQ7BAUJ/Lnki7M/GisLNfVFHeB5Y7mqGbroRWCBs0PcZLLzEGDj7
-   4qU9CH52Xf0bA6tcveru+YZ5cqAxPSFOdIpvCvKIvjVqp+2m8kekJ9yya
-   A==;
-X-CSE-ConnectionGUID: AG8mFXv2RVSxelPa4B2Fzg==
-X-CSE-MsgGUID: AWASkwoRSlyzhnSLJWCQiA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11406"; a="46418700"
-X-IronPort-AV: E=Sophos;i="6.15,219,1739865600"; 
-   d="scan'208";a="46418700"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2025 11:56:58 -0700
-X-CSE-ConnectionGUID: Yr9HHAZLTNiJQiLQVisnrQ==
-X-CSE-MsgGUID: /HieA4FmTsa+a72CRmA2Mw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,219,1739865600"; 
-   d="scan'208";a="131878701"
-Received: from lkp-server01.sh.intel.com (HELO 61e10e65ea0f) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 17 Apr 2025 11:56:57 -0700
-Received: from kbuild by 61e10e65ea0f with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u5UPu-0001qB-0t;
-	Thu, 17 Apr 2025 18:56:54 +0000
-Date: Fri, 18 Apr 2025 02:56:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Paul Gazzillo <paul@pgazz.com>,
-	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
-	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: kismet: WARNING: unmet direct dependencies detected for
- DRM_BRIDGE_CONNECTOR when selected by DRM_IMX_PARALLEL_DISPLAY
-Message-ID: <202504180220.8GuWCBIw-lkp@intel.com>
+	s=arc-20240116; t=1744916188; c=relaxed/simple;
+	bh=WihgnsYkRics16oBTaeftRWOzimPo5NgaFpCm+Ogawc=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=qT6xqo/fBXtyRGrmZPbFOc9+7ASwnPn1IRcXtcgXF1OEhBLAcbhp07PvnIxf/a28qbqQBvOKVdv7AomYZpMf0dTNulRAozDGqKmgPwQOErLVjTJ41lm9jtpDgnQmMidHSH2MB60HCrqqDVcIhGn1vhtxZIINA3CHQEGJlzUx6Qg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LBZcVT+6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93407C4CEE7;
+	Thu, 17 Apr 2025 18:56:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744916188;
+	bh=WihgnsYkRics16oBTaeftRWOzimPo5NgaFpCm+Ogawc=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=LBZcVT+60FpVk9ucTRqlz088ZBy30wYF6YTWOKezVH1cY3/vZJf6ex2ZZIMVKyO2c
+	 /7o9zAVGd0HlStl5meO9JuzIw+uDSpb8S+WHhgAp0/oht83OuqsmJuXO470BJRiin4
+	 us0LvEnIhW3PxxhSfeCZjyJIsPGyP3/qUvXlZnOEn3IwRF5373JHpNeQHz0fpK9R22
+	 VCDJhxEFqB8JGLMvVPO4M8TqHEFZkPnSq5V8gORwRcqgfdvP1vX64wcyrIEFEI5Zu4
+	 kyjkw4kOlE9HLBagk8EaKxBUgL4Pr4rCNEi49jTNjDu/Ow5FpmRM0io1For8yFf7Gq
+	 51gf2+Kz04QGg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EBC85380AAEB;
+	Thu, 17 Apr 2025 18:57:07 +0000 (UTC)
+Subject: Re: [GIT PULL] Please pull FWCTL subsystem changes
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250417123610.GA1213102@nvidia.com>
+References: <20250417123610.GA1213102@nvidia.com>
+X-PR-Tracked-List-Id: <linux-cxl.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250417123610.GA1213102@nvidia.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git tags/for-linus-fwctl
+X-PR-Tracked-Commit-Id: c92ae5d4f53ebf9c32ace69c1f89a47e8714d18b
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: e2516abf1c88212d98af889070123469c28ca2fe
+Message-Id: <174491622658.4184086.1128830653739484820.pr-tracker-bot@kernel.org>
+Date: Thu, 17 Apr 2025 18:57:06 +0000
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-rdma@vger.kernel.org, linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Jiang <dave.jiang@intel.com>, Saeed Mahameed <saeedm@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   7adf8b1afc14832de099f9e178f08f91dc0dd6d0
-commit: f673055a46784ccea04465b9213e999f7bc5187e drm/imx: Add missing DRM_BRIDGE_CONNECTOR dependency
-date:   7 months ago
-config: sparc64-kismet-CONFIG_DRM_BRIDGE_CONNECTOR-CONFIG_DRM_IMX_PARALLEL_DISPLAY-0-0 (https://download.01.org/0day-ci/archive/20250418/202504180220.8GuWCBIw-lkp@intel.com/config)
-reproduce: (https://download.01.org/0day-ci/archive/20250418/202504180220.8GuWCBIw-lkp@intel.com/reproduce)
+The pull request you sent on Thu, 17 Apr 2025 09:36:10 -0300:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504180220.8GuWCBIw-lkp@intel.com/
+> git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git tags/for-linus-fwctl
 
-kismet warnings: (new ones prefixed by >>)
->> kismet: WARNING: unmet direct dependencies detected for DRM_BRIDGE_CONNECTOR when selected by DRM_IMX_PARALLEL_DISPLAY
-   WARNING: unmet direct dependencies detected for DRM_BRIDGE_CONNECTOR
-     Depends on [n]: HAS_IOMEM [=y] && DRM [=y] && DRM_DISPLAY_HELPER [=n]
-     Selected by [y]:
-     - DRM_IMX_PARALLEL_DISPLAY [=y] && HAS_IOMEM [=y] && DRM [=y] && DRM_IMX [=y]
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/e2516abf1c88212d98af889070123469c28ca2fe
+
+Thank you!
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
