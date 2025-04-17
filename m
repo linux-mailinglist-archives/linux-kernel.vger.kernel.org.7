@@ -1,229 +1,217 @@
-Return-Path: <linux-kernel+bounces-608913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55E2FA91A66
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 13:16:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D93ACA91A78
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 13:18:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B4C044615E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 11:16:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C86C19E53E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 11:18:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF34239095;
-	Thu, 17 Apr 2025 11:16:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E514823A985;
+	Thu, 17 Apr 2025 11:18:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TiEU+US0";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1bMq/iNW";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TiEU+US0";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1bMq/iNW"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="MuXm5JFC"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 421F7238D53
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 11:16:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744888611; cv=none; b=DeUhXDtmjvQPoLUaR4dMLcBxxtDje314GxlTgcq3j3oVUHESbmii0QeldBup1Qe/YWcqurbmGI0Wii4upoGtstrp66bnLCbZnM0aeorYOHiveCi4INxeUyBJqFD2H883ZHIJJ62txPRm5SanPwzOumVrQNmj1b5y2LNrAASiu8c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744888611; c=relaxed/simple;
-	bh=F8w/ZDS2nkOI75wDdKPnexYjMpSc59GF32Z6ZoUnxNg=;
-	h=Date:Message-ID:From:To:Cc:Subject:MIME-Version:Content-Type; b=Y6KHmPZlcVT0wjZkTJ4zjuwRKOpDKHr1uC+7CjXW+draK2USr5BRhv7FCvx0hvvCwb3ur+a3nQT3ZnkIivSsmu9p3sEmfL8hDNAoGLHGW0gELodX01KS0B9qxm8mO19EkMNifquCeRbcXgV7v1yC1LXtYFt7zV/FivKIgSvz3Og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TiEU+US0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1bMq/iNW; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TiEU+US0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1bMq/iNW; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 548151F391;
-	Thu, 17 Apr 2025 11:16:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744888608; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Y1tVHPHVoMIn93culRJCZCipp4hop9jS1mSJ9CFmsPQ=;
-	b=TiEU+US066TPaDZjL1VnXZyiAmZwk5io9gKsSrKdRl8LY7puZw9fUz/EGbB1foUZU/rw+c
-	Erf894t82WBpW8W0gLprrultYOV/rF6TlBTUbqNQoZUyvjkBdy2jcN26/LOA5XXF5ryP1n
-	5ZFd8DXCieIsOO74FNJLyUn/UFVLx1c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744888608;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Y1tVHPHVoMIn93culRJCZCipp4hop9jS1mSJ9CFmsPQ=;
-	b=1bMq/iNWG4d0bglcbqptIA8M5WhUdh/k12cNCkyNqvewlTdWZzT/aKz4tBkW5MIi5NWA60
-	ARBUgamV5pPqTGDg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=TiEU+US0;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="1bMq/iNW"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744888608; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Y1tVHPHVoMIn93culRJCZCipp4hop9jS1mSJ9CFmsPQ=;
-	b=TiEU+US066TPaDZjL1VnXZyiAmZwk5io9gKsSrKdRl8LY7puZw9fUz/EGbB1foUZU/rw+c
-	Erf894t82WBpW8W0gLprrultYOV/rF6TlBTUbqNQoZUyvjkBdy2jcN26/LOA5XXF5ryP1n
-	5ZFd8DXCieIsOO74FNJLyUn/UFVLx1c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744888608;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Y1tVHPHVoMIn93culRJCZCipp4hop9jS1mSJ9CFmsPQ=;
-	b=1bMq/iNWG4d0bglcbqptIA8M5WhUdh/k12cNCkyNqvewlTdWZzT/aKz4tBkW5MIi5NWA60
-	ARBUgamV5pPqTGDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2BBF01388F;
-	Thu, 17 Apr 2025 11:16:48 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id l9d6CSDjAGgRGQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 17 Apr 2025 11:16:48 +0000
-Date: Thu, 17 Apr 2025 13:16:47 +0200
-Message-ID: <87sem7ujfk.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Linux Sound Mailing List <linux-sound@vger.kernel.org>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] sound fixes for 6.15-rc3
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62377239588;
+	Thu, 17 Apr 2025 11:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744888705; cv=pass; b=aGCPsaHx0xyYp06Tkn0YMZ7KoBoglByFqpDjBlYHO5WrmOQ6tyYQvfR2lYM148bQSy+oyybaNNPBDUmNa+PA9lfTx9GvTZ9kepUB27S+QHSzHJ8VFN1XblmotMUkPvdi0mvCeiIMQdwYGN1AYbQPLuy9LrMhVpeYxOvj5+Xsz9U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744888705; c=relaxed/simple;
+	bh=g3n8qbuXH6LCUlQ+Gf+tgFZRbHSsQBpiI2ikcrzfzEE=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=jxBPSL5tMh05MelNDcyD630nPsrQ5V7ZIGk9mGjrvzQS1CCq7GZm3yPcUs3DkSOIZ/Fld1KtSwtuYZAhRIGOg2oTeRKDTaY7Qsun79LG5HLnIFYsQk1N2JFXr0QdtFRvILyWwS/bnGy8G324xnWbxRsz+Esu9SJ8WCaGruEpgGI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=MuXm5JFC; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1744888673; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=CQ18dQ3tN4r2M3/Ux1SXUdBjlzAw1Vt6vjawvhnvoOOV+mKFXfT6sHqe5qNVSwq/9cBbia7X3H828LbnathXiRIZeQBKaD2ezdx+6T8a09wDXaSTdB0wK8SdnZvuWv/n2CnwKSwOsQOixrSNPZhDPpO/hfIbsuC977FCLYv2+w0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1744888673; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=B3vHgcOcDvV9fe66m4M7950Oh2PXKr33rDoJYxpZcH8=; 
+	b=VSFVSVX4vZ3tyW72g/zUs9f7xOp3kvfn/oCn8zUZ6X1C5Tg0B0kJtf2lAGwlBX/C2QyUUCI5aADpWcafm48QppOwi2G5vWXHCgJK/5AEV5pb72BGzINergz9xVtdZiVVdxMqtjV4Ovs0lsihpQSWJpPSfVQn0lQBPglmAF77ZLU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1744888673;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=B3vHgcOcDvV9fe66m4M7950Oh2PXKr33rDoJYxpZcH8=;
+	b=MuXm5JFCd87w3ohq7nh0VmJ0vrTyQ39c1OCLAwrLsgXfE2KXKVCWF9h4h/6w9yH8
+	HbFPx/KGyi8eQDVBa4HyWax8ua/XyJbaSj73/u/aNdFlOvN9JN7YSNIBrmYlDfeE7MI
+	MhKwecRBasuEG0U3GDPd4oMRRYv1YJrreATPMZwo=
+Received: by mx.zohomail.com with SMTPS id 1744888670925391.69631041570995;
+	Thu, 17 Apr 2025 04:17:50 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=ISO-8859-2
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 548151F391
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_DN_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[kernel.org,gmail.com,vger.kernel.org];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.51
-X-Spam-Flag: NO
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
+Subject: Re: [PATCH v5 07/13] scripts: generate_rust_analyzer.py: avoid
+ optional arguments
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <CAJ-ks9=UwmdZqVnvJ8dzASG2hjtWFS=PAM2jAtWpEuZ9Lu5f+w@mail.gmail.com>
+Date: Thu, 17 Apr 2025 08:17:28 -0300
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Boris-Chengbiao Zhou <bobo1239@web.de>,
+ Kees Cook <kees@kernel.org>,
+ Fiona Behrens <me@kloenk.dev>,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Lukas Wirth <lukas.wirth@ferrous-systems.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <C58B27D5-7F61-46D1-84F3-CC69E01EF5C4@collabora.com>
+References: <20250325-rust-analyzer-host-v5-0-385e7f1e1e23@gmail.com>
+ <20250325-rust-analyzer-host-v5-7-385e7f1e1e23@gmail.com>
+ <CCB6D89D-D513-4514-8992-AC37313F5588@collabora.com>
+ <CAJ-ks9=UwmdZqVnvJ8dzASG2hjtWFS=PAM2jAtWpEuZ9Lu5f+w@mail.gmail.com>
+To: Tamir Duberstein <tamird@gmail.com>
+X-Mailer: Apple Mail (2.3826.400.131.1.6)
+X-ZohoMailClient: External
 
-Linus,
+Hi Tamir,
 
-please pull sound fixes for v6.15-rc3 from:
+> On 1 Apr 2025, at 10:34, Tamir Duberstein <tamird@gmail.com> wrote:
+>=20
+> On Tue, Apr 1, 2025 at 8:59=E2=80=AFAM Daniel Almeida
+> <daniel.almeida@collabora.com> wrote:
+>>=20
+>> Hi Tamir,
+>>=20
+>> This patch looks good to me but,
+>>=20
+>>> On 25 Mar 2025, at 17:06, Tamir Duberstein <tamird@gmail.com> wrote:
+>>>=20
+>>> Make all arguments required to reduce the probability of incorrect
+>>> implicit behavior. Use keyword arguments for clarity.
+>>>=20
+>>> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+>>> ---
+>>> scripts/generate_rust_analyzer.py | 90 =
++++++++++++++++++++++++++++------------
+>>> 1 file changed, 62 insertions(+), 28 deletions(-)
+>>>=20
+>>> diff --git a/scripts/generate_rust_analyzer.py =
+b/scripts/generate_rust_analyzer.py
+>>> index b37d8345486a..badcef4126cf 100755
+>>> --- a/scripts/generate_rust_analyzer.py
+>>> +++ b/scripts/generate_rust_analyzer.py
+>>> @@ -69,9 +69,10 @@ def generate_crates(
+>>>    def build_crate(
+>>>        display_name: str,
+>>>        root_module: pathlib.Path,
+>>> +        *,
+>>>        deps: List[str],
+>>> -        cfg: List[str] =3D [],
+>>> -        is_workspace_member: bool =3D True,
+>>> +        cfg: List[str],
+>>> +        is_workspace_member: bool,
+>>>    ) -> Crate:
+>>>        return {
+>>>            "display_name": display_name,
+>>> @@ -92,21 +93,34 @@ def generate_crates(
+>>>    def append_crate(
+>>>        display_name: str,
+>>>        root_module: pathlib.Path,
+>>> +        *,
+>>>        deps: List[str],
+>>> -        cfg: List[str] =3D [],
+>>> -        is_workspace_member: bool =3D True,
+>>> +        cfg: List[str],
+>>>    ) -> None:
+>>>        register_crate(
+>>> -            build_crate(display_name, root_module, deps, cfg, =
+is_workspace_member)
+>>> +            build_crate(
+>>> +                display_name,
+>>> +                root_module,
+>>> +                deps=3Ddeps,
+>>> +                cfg=3Dcfg,
+>>> +                is_workspace_member=3DTrue,
+>>> +            )
+>>>        )
+>>>=20
+>>>    def append_proc_macro_crate(
+>>>        display_name: str,
+>>>        root_module: pathlib.Path,
+>>> +        *,
+>>>        deps: List[str],
+>>> -        cfg: List[str] =3D [],
+>>> +        cfg: List[str],
+>>>    ) -> None:
+>>> -        crate =3D build_crate(display_name, root_module, deps, cfg)
+>>> +        crate =3D build_crate(
+>>> +            display_name,
+>>> +            root_module,
+>>> +            deps=3Ddeps,
+>>> +            cfg=3Dcfg,
+>>> +            is_workspace_member=3DTrue,
+>>> +        )
+>>>        proc_macro_dylib_name =3D (
+>>>            subprocess.check_output(
+>>>                [
+>>> @@ -133,66 +147,75 @@ def generate_crates(
+>>>=20
+>>>    def append_sysroot_crate(
+>>>        display_name: str,
+>>> +        *,
+>>>        deps: List[str],
+>>> -        cfg: List[str] =3D [],
+>>> +        cfg: List[str],
+>>>    ) -> None:
+>>> -        append_crate(
+>>> -            display_name,
+>>> -            sysroot_src / display_name / "src" / "lib.rs",
+>>> -            deps,
+>>> -            cfg,
+>>> -            is_workspace_member=3DFalse,
+>>> +        register_crate(
+>>> +            build_crate(
+>>> +                display_name,
+>>> +                sysroot_src / display_name / "src" / "lib.rs",
+>>> +                deps=3Ddeps,
+>>> +                cfg=3Dcfg,
+>>> +                is_workspace_member=3DFalse,
+>>> +            )
+>>>        )
+>>=20
+>> Why the change from append to register+build here? Maybe this change
+>> should be in another patch?
+>=20
+> The reason is that `append_crate` has lost its `is_workspace_member`
+> parameter, so the only way to pass `False` now is to use
+> `build_crate`. I chose to remove the argument from `append_crate`
+> because the alternative would have introduced many instances of
+> `is_workspace_member=3DTrue`, which I judged to be less-good than =
+this.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-6.15-rc3
+Fine with me.
 
-The topmost commit is 7338856257fc6ee0a06dddf1f0888f3cfc95dc60
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
 
-----------------------------------------------------------------
+>=20
+> Cheers.
+> Tamir
 
-sound fixes for 6.15-rc3
-
-A collection of small fixes since the previous PR.  All are
-device-specific like quirks, new IDs, and other safe (or rather
-boring) changes.
-
-----------------------------------------------------------------
-
-Amadeusz S³awiñski (1):
-      ASoC: Intel: avs: Constrain path based on BE capabilities
-
-Brady Norander (1):
-      ASoC: dwc: always enable/disable i2s irqs
-
-Charles Keepax (1):
-      ASoC: cs42l43: Reset clamp override on jack removal
-
-Chen Ni (1):
-      ALSA: hda/tas2781: Remove unnecessary NULL check before release_firmware()
-
-Evgeny Pimenov (1):
-      ASoC: qcom: Fix sc7280 lpass potential buffer overflow
-
-Henry Martin (1):
-      ASoC: Intel: avs: Fix null-ptr-deref in avs_component_probe()
-
-Herve Codina (1):
-      ASoC: fsl: fsl_qmc_audio: Reset audio data pointers on TRIGGER_START event
-
-Kailang Yang (1):
-      ALSA: hda/realtek - Fixed ASUS platform headset Mic issue
-
-Kuninori Morimoto (1):
-      ASoC: hdmi-codec: use RTD ID instead of DAI ID for ELD entry
-
-Peter Ujfalusi (1):
-      ASoC: Intel: sof_sdw: Add quirk for Asus Zenbook S16
-
-Richard Fitzgerald (2):
-      ALSA: hda/cirrus_scodec_test: Don't select dependencies
-      firmware: cs_dsp: test_bin_error: Fix uninitialized data used as fw version
-
-Shengjiu Wang (1):
-      ASoC: fsl_asrc_dma: get codec or cpu dai from backend
-
-Srinivas Kandagatla (4):
-      ASoC: codecs:lpass-wsa-macro: Fix vi feedback rate
-      ASoC: codecs:lpass-wsa-macro: Fix logic of enabling vi channels
-      MAINTAINERS: use kernel.org alias
-      mailmap: Add entry for Srinivas Kandagatla
-
-Thorsten Blum (1):
-      ALSA: azt2320: Replace deprecated strcpy() with strscpy()
-
-Weidong Wang (1):
-      ASoC: codecs: Add of_match_table for aw888081 driver
-
----
- .mailmap                                           |   2 +
- MAINTAINERS                                        |   8 +-
- .../firmware/cirrus/test/cs_dsp_mock_mem_maps.c    |  30 -----
- drivers/firmware/cirrus/test/cs_dsp_test_bin.c     |   2 +-
- .../firmware/cirrus/test/cs_dsp_test_bin_error.c   |   2 +-
- include/linux/firmware/cirrus/cs_dsp_test_utils.h  |   1 -
- sound/isa/azt2320.c                                |   4 +-
- sound/pci/hda/Kconfig                              |   4 +-
- sound/pci/hda/patch_realtek.c                      |  23 ++--
- sound/pci/hda/tas2781_hda_spi.c                    |   3 +-
- sound/soc/codecs/aw88081.c                         |  10 ++
- sound/soc/codecs/cs42l43-jack.c                    |   3 +
- sound/soc/codecs/hdmi-codec.c                      |  22 +++-
- sound/soc/codecs/lpass-wsa-macro.c                 | 139 ++++++++++++++-------
- sound/soc/dwc/dwc-i2s.c                            |  13 +-
- sound/soc/fsl/fsl_asrc_dma.c                       |  15 ++-
- sound/soc/fsl/fsl_qmc_audio.c                      |   3 +
- sound/soc/intel/avs/path.c                         |  72 +++++++++++
- sound/soc/intel/avs/path.h                         |   5 +
- sound/soc/intel/avs/pcm.c                          |  52 +++++++-
- sound/soc/intel/boards/sof_sdw.c                   |   1 +
- sound/soc/qcom/lpass.h                             |   3 +-
- 22 files changed, 307 insertions(+), 110 deletions(-)
-
+=E2=80=94 Daniel=
 
