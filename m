@@ -1,192 +1,126 @@
-Return-Path: <linux-kernel+bounces-608744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B913BA91781
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 11:18:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7229FA9161A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 10:07:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3370446344
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:17:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00FEF7A3CC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:06:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23F22226CFC;
-	Thu, 17 Apr 2025 09:17:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E872288C6;
+	Thu, 17 Apr 2025 08:07:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tXvJB1hL"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N6GoVa5G"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D154227EB1
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 09:17:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F52421D3F5
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 08:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744881461; cv=none; b=D0nXKt7UOiiERQowtkT+jFBGTEc/LCCCIQXTDLdSrsup/QW49hrxvG0TV/FzTREmWWi8w38xdOQOdKOYTeZqJ2NPM5IrWFRgUBTWhfKuDUP7Z/yQlNRdIBwZLaBNpjE3wy3tZFSacrMn3gPbXc5GqkKT/OjzGU9IqzAXF3rs1Lg=
+	t=1744877223; cv=none; b=UgZq7M+GNJX9NposdfbGrealhiZpGdYauvfLuSjdVm1Axf1WQhaA1imMd/gVSYUW1ISGLo3/q2P3qDh+4+gmsZsgDSxNBUU5ONzfGwALXvESkSHqMCMjcGaTQsWYrqFnmWnZb20uPe03cmncLQme33Orz/tYIop5t80EwONpp6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744881461; c=relaxed/simple;
-	bh=xJIneGHQFK1SKyGaskC9aNAvjinoc3j1fHHRtqNl3Sw=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=Id2uBCnOthooU73ZerYzH0xFn8JMJL8nAzlbLqO/TtVpG7BW3j8F749SeqT2Sy0yVx2Kh7nJ0ELgjeHjSO5sAEYNvixgnBEQJWnzfx6M6E5ME0twxF0wC5vuUJ24gXVRWdYbUd+t3Ne8tdPilE9D83ABe01JnGQgl+rrQDpq8Mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=tXvJB1hL; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250417091732epoutp022358df28f62eff3679024eab8341246d~3EG_Y1aFQ2034720347epoutp02g
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 09:17:32 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250417091732epoutp022358df28f62eff3679024eab8341246d~3EG_Y1aFQ2034720347epoutp02g
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1744881452;
-	bh=vTGzoo+jwwIa4vhDbzzqp28Av2O/B79ZMnl3txb9+EI=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=tXvJB1hL+77XVy6X4oCeju6K2EfekGSn/Bqg5dh5W4I74VERLz3kwrCmlDeme2wn7
-	 bSTHRJu2ebzLk0nG/Cb1PjR0xKGAoOhBBsIDrfzMIwgsBM/9zrrksrK2urA/wvh+pn
-	 chijUJzsMMo6+01WoKKN3yc+5kVeuRrF7rmh/EAY=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250417091731epcas5p30f62b25725ddc0e7d1bb574d56365a6a~3EG9_eMkR2653126531epcas5p3-;
-	Thu, 17 Apr 2025 09:17:31 +0000 (GMT)
-Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.181]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4ZdXNT27w6z6B9m4; Thu, 17 Apr
-	2025 09:17:29 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	07.80.19608.927C0086; Thu, 17 Apr 2025 18:17:29 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250417050330epcas5p296757d6cf79352bfdbcd38695c6f8f3d~3ApLjNhDf2151521515epcas5p2V;
-	Thu, 17 Apr 2025 05:03:30 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250417050330epsmtrp2bba4a97f42c7d4047c8ae4e36902ae5c~3ApLieM6h2966829668epsmtrp2J;
-	Thu, 17 Apr 2025 05:03:30 +0000 (GMT)
-X-AuditID: b6c32a50-225fa70000004c98-87-6800c7296980
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	23.F0.19478.2AB80086; Thu, 17 Apr 2025 14:03:30 +0900 (KST)
-Received: from INBRO000519 (unknown [107.122.1.150]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250417050328epsmtip129419b78204c6004c161bfd7be41e3d4~3ApJ0Oo7E3037630376epsmtip1j;
-	Thu, 17 Apr 2025 05:03:28 +0000 (GMT)
-From: "Faraz Ata" <faraz.ata@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <alim.akhtar@samsung.com>,
-	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-Cc: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<rosa.pila@samsung.com>, <dev.tailor@samsung.com>,
-	<suyash.bitti@samsung.com>
-In-Reply-To: <a52969f2-8ea2-41e5-b4c8-8a03220cbf51@kernel.org>
-Subject: RE: [PATCH v2] arm64: dts: exynos: Add DT node for all UART ports
-Date: Thu, 17 Apr 2025 10:33:12 +0530
-Message-ID: <06b501dbaf56$0fab3b90$2f01b2b0$@samsung.com>
+	s=arc-20240116; t=1744877223; c=relaxed/simple;
+	bh=oQW7F29atGBld5YpHbUvVkkrHeYES/dxTGRbEkLyYvQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J6wwtFCQW+HNSOE6a3X8CA6T4uM0Tt9JpHcAt3bkk2M3GUOAGxHjh0/IX25wvOJj7571nyOyaK3PpSuLum34u1iJNgLj3wQT7sBiNDi+dx6ItIE8hwnmTj06dASgW2ZFkbhWr0Vc1MdTydp3FIOtd00y1HOUtHKUFdsGROWWmC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N6GoVa5G; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2241053582dso7218735ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 01:07:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744877221; x=1745482021; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vbStn/1mMmnWgEwNfLXRh0m0K6lLNoUi7YPIyXHV8Io=;
+        b=N6GoVa5GgRHtKOg+65A/d16DuSfFzCPhjYU+xEzMy6acQfPrIJ/pxlJf6rCCITZKnL
+         NgFaajcOk9FVWDA9JWQ9fhB7Eq4ZNVJ4qKREa3gq0tKsgKyXE5lO39NgatufJJxfgEIN
+         xfykB7SC1pE4aQ73x+UkuBjVERaqTPXxvTTGCDjysMqRLUtEIHSfTnyzSqgiydtYJ3W0
+         +5/Rajn4N2VMHRYfqB1nZ1rUcgI90l9DEtLLgrdhRqQ4w9zbPpe9Ao+GEwtk0luRlPY5
+         aeMchopLh6ZRub2EWdJRqhSFviYy9AIyWL1YjAUVKlohMOsPtL3bSZ6OCeeyVh4Uux3A
+         +klg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744877221; x=1745482021;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vbStn/1mMmnWgEwNfLXRh0m0K6lLNoUi7YPIyXHV8Io=;
+        b=NgaXrGfD8m6y7W/fOosy3L/pmqMDDpO6XZEJZFyLjrdE7+KKCcWCa6mwpYz/1Q5/9I
+         FNWFjb3yK8YHPApX7FeKu9/DhqkAxhXanDf1bpqJ/DW1sDIrcCmJOQXFsOrUBg5f5WdI
+         YVmxbhX1WSSP28ctdlUC9U16b9ELCJ5dV/ivUDENvlHqDSANCqqv8sjENpJEA61OA8TE
+         FX8aJb4OdDM/g1xwkg8XVpfu0toe/uszSv3mELC3TFgkwhcQz6q54pl6WhszEcncN71P
+         OS9fJvrzCvUtqJXTgaYktTOHY2WNMBEI0H/QiBP1CxcYNXsSZfw35rtzHz0XkmZc+T/d
+         Jvug==
+X-Forwarded-Encrypted: i=1; AJvYcCVgnKQj4BwDtf4f5M9Eq3LLcdhVRagvw+jfvJOV9SIaw14nkDGe+sxTLxLT7yYJuVXMb4qi+hOW41CM3H8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6qi+reOYzjQC0UmAhTU/WtxqzUVftA2Ph/D3P1SGcg+joMb8W
+	d8q0V7qZAVtRgG7u92AGm6FYIeaC0CeEgFGqToCvLUJB7Y2lNUdoJlY4YEhMnB9j44kxBCNYW12
+	1
+X-Gm-Gg: ASbGncsvVzWHfTyQpxbSFShGzSkT2lHZx3KyRvXPf8F+0MLq6qS0hWjcQ3gMtXbJqYc
+	KmwNInRYFWsCYLTn4lI0eIDz33u9lYSROex3MFrMleipXDlVvP8f58vsD4Hzu85TQCY5u+StCtw
+	/XtBSy4jvY17w9XuXk9Y5zakNpgNUvYBNBrJmPvEJ9XW2mNNOavD4ZUnanzjGg4dkObWdUkPsTP
+	XV5+s8gobcl4fNbEuC7cW4BMBor2bSq6XWJKLQaI7pUuc1zv8PKxv5JKHNcZafgQRnUtpYif/UZ
+	BeoO7wZlhzHvT+pTipA8NsJqVYnMZFazHhm9ZCDr7A==
+X-Google-Smtp-Source: AGHT+IF8kAlRnm7dgvBGiP4dp8lCId2BiMHsLBv02PsMCD5r3qOQ9HE9u6StR0v7aFBT90CEbczcwQ==
+X-Received: by 2002:a17:903:41c5:b0:223:37ec:63d5 with SMTP id d9443c01a7336-22c35916c6fmr82576225ad.28.1744877221505;
+        Thu, 17 Apr 2025 01:07:01 -0700 (PDT)
+Received: from localhost ([122.172.83.32])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c33ef11a6sm27376855ad.23.2025.04.17.01.07.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Apr 2025 01:07:01 -0700 (PDT)
+Date: Thu, 17 Apr 2025 13:36:58 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	"Rob Herring (Arm)" <robh@kernel.org>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v3] cpufreq: fix compile-test defaults
+Message-ID: <20250417080658.dccdn6luc5ss7dgt@vireshk-i7>
+References: <20250417072838.734-1-johan+linaro@kernel.org>
+ <f151f848-d337-4bf3-b88d-8a032e843ae1@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIiLJ9Qel8GAkpX5i6PIbvAaC3kAAM/bP3AAeJrQQMCHSEhZgHUtyXcstGu3fA=
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFJsWRmVeSWpSXmKPExsWy7bCmuq7mcYYMg99TuC0ezNvGZrFm7zkm
-	i3s7lrFbzD9yjtXi5ax7bBbnz29gt9j0+BqrxeVdc9gsZpzfx2Txf88OdosvPx8wW8yeX+PA
-	47FpVSebx+Yl9R59W1YxenzeJBfAEpVtk5GamJJapJCal5yfkpmXbqvkHRzvHG9qZmCoa2hp
-	Ya6kkJeYm2qr5OIToOuWmQN0mJJCWWJOKVAoILG4WEnfzqYov7QkVSEjv7jEVim1ICWnwKRA
-	rzgxt7g0L10vL7XEytDAwMgUqDAhO2PhXe2CLv6KZ6tfMTcwLuPpYuTkkBAwkWhbeouti5GL
-	Q0hgD6NEx/U9bCAJIYFPjBLd06ohEkD2lr17mGA6Jl/fyAxRtJNRYsblWIiil4wSx44cYAVJ
-	sAloStz5/JQJJCEi0MUosfPBZFYQh1ngEaPEgU//WECqOAXsJH70/WIHsYUFvCT6mm4xdjFy
-	cLAIqEq8644ECfMKWEpM27aPCcIWlDg58wlYK7OAtsSyha+ZIS5SkPj5dBkrSKuIgJ/Evc1u
-	ECXiEi+PHmGHKFnLIXHqVCqE7SLxa8J9VghbWOLV8S1QNVISn9/tZYOwfSQmH/0Gdo2EQIbE
-	nbUiEGF7idULzoBtYgZ6cf0ufYiwrMTUU+uYILbySfT+fgINKl6JHfNgbGWJk3v2QG2VlDh0
-	+wXrBEalWUj+moXkr1lIHpiFsG0BI8sqRqnUguLc9NRk0wJD3bzUcnhsJ+fnbmIEJ1qtgB2M
-	qzf81TvEyMTBeIhRgoNZSYT3nPm/dCHelMTKqtSi/Pii0pzU4kOMpsDAnsgsJZqcD0z1eSXx
-	hiaWBiZmZmYmlsZmhkrivM07W9KFBNITS1KzU1MLUotg+pg4OKUamPJCq5Uc+os8XKL15J2m
-	RxjfKlCrkDg656VmhMBl/YdBb0qtepNMQxy+LM89LWa99z5H69Lvv+utlod4Tk20ftmxcuPu
-	C4/ez2ZeqtzcEnyYp0Jrs3r6S1kuW73yyM9T1rCV8UxTtF8vq9tqoTo/Z/1NsWkPVp184xl0
-	S/HT7/ysmPz5WZxCUy+GR34U/Jcgvr4uSTJlblRN2rtpkfIq12zzFqwtbxXfYm40/fKRP7v8
-	75lvb/C6WaGz/s7nDxm15jzWIiLPIr4u6ejgfLXBtGx2XsfutVOrOBd88G9T/c7mERvvufxk
-	+EOR8xc1eFc//a3Vc3t2fFXslD9Lrv6QPlq1agnbipwawTNuNcFnlViKMxINtZiLihMBpqyx
-	sj0EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEIsWRmVeSWpSXmKPExsWy7bCSnO6iboYMg7nTxS0ezNvGZrFm7zkm
-	i3s7lrFbzD9yjtXi5ax7bBbnz29gt9j0+BqrxeVdc9gsZpzfx2Txf88OdosvPx8wW8yeX+PA
-	47FpVSebx+Yl9R59W1YxenzeJBfAEsVlk5Kak1mWWqRvl8CVseLkKqaCD3wV079/Z25gbOHp
-	YuTkkBAwkZh8fSNzFyMXh5DAdkaJpubrTBAJSYnDT++yQtjCEiv/PWeHKHrOKPH5xjJmkASb
-	gKbEnc9PmUASIgITGCWmbNkI5jALvGCUeLLgBCtEywImiaWH1oLN5RSwk/jR94sdxBYW8JLo
-	a7rF2MXIwcEioCrxrjsSJMwrYCkxbds+JghbUOLkzCcsIDazgLbE05tP4exlC18zQ5ynIPHz
-	6TJWkDEiAn4S9za7QZSIS7w8eoR9AqPwLCSTZiGZNAvJpFlIWhYwsqxiFE0tKM5Nz00uMNQr
-	TswtLs1L10vOz93ECI42raAdjMvW/9U7xMjEwXiIUYKDWUmE95z5v3Qh3pTEyqrUovz4otKc
-	1OJDjNIcLErivMo5nSlCAumJJanZqakFqUUwWSYOTqkGJpeEmylPJjp/fr8+/qvY9qzX3m7e
-	l1lDJGPaf7685/v2lcC3XXd/Hq/+NuFUtMti4xcrJ519+qOj5GWZxgGNpIVaRoFPjDtXbNaZ
-	6lrUfdA66XKceqTGXZWSU8kC9eXbXprExBi4hBVkb5T0fCgvdCy3V3GG2Px2z/aEvTzy05sv
-	buxfGXH2YKn9zDVK1fa8Pm7nt5QK/z9ZNStsX4bY89CP3DPfLF9Umfv/kFnQqzw2Z9njlpaB
-	jKsYepd/+CjSrRSfslfjvPyxw4YngzgZRR3fR1Z/SZham+ry+Grk7No/xo63NmldcRZeJCTD
-	E7D6SCnD6j03NdiTVfbteZZqLb0jYOLt6r1rFCYXZ9blK7EUZyQaajEXFScCALtXOuclAwAA
-X-CMS-MailID: 20250417050330epcas5p296757d6cf79352bfdbcd38695c6f8f3d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250318074801epcas5p3de68627a3e64ebc2a95ed33a3f485e80
-References: <CGME20250318074801epcas5p3de68627a3e64ebc2a95ed33a3f485e80@epcas5p3.samsung.com>
-	<20250318075635.3372599-1-faraz.ata@samsung.com>
-	<befe7d30-1727-4540-9072-f21ef96ea504@kernel.org>
-	<03e501dbaab0$65bb47a0$3131d6e0$@samsung.com>
-	<a52969f2-8ea2-41e5-b4c8-8a03220cbf51@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f151f848-d337-4bf3-b88d-8a032e843ae1@linaro.org>
 
-Hello Krzysztof
+On 17-04-25, 09:56, Krzysztof Kozlowski wrote:
+> On 17/04/2025 09:28, Johan Hovold wrote:
+> > Commit 3f66425a4fc8 ("cpufreq: Enable COMPILE_TEST on Arm drivers")
+> > enabled compile testing of most Arm CPUFreq drivers but left the
+> > existing default values unchanged so that many drivers are enabled by
+> > default whenever COMPILE_TEST is selected.
+> > 
+> > This specifically results in the S3C64XX CPUFreq driver being enabled
+> > and initialised during boot of non-S3C64XX platforms with the following
+> > error logged:
+> > 
+> > 	cpufreq: Unable to obtain ARMCLK: -2
+> > 
+> > Commit d4f610a9bafd ("cpufreq: Do not enable by default during compile
+> > testing") recently fixed most of the default values, but two entries
+> > were missed and two could use a more specific default condition.
+> > 
+> > Fix the default values for drivers that can be compile tested and that
+> > should be enabled by default when not compile testing.
+> > 
+> > Fixes: 3f66425a4fc8 ("cpufreq: Enable COMPILE_TEST on Arm drivers")
+> 
+> I would not consider original code a bug, but a feature, however I am
+> fine with other choice as well, so to close discussion from my side:
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> Sent: Saturday, April 12, 2025 3:41 PM
-> To: Faraz Ata <faraz.ata=40samsung.com>; alim.akhtar=40samsung.com;
-> robh=40kernel.org; krzk+dt=40kernel.org; conor+dt=40kernel.org
-> Cc: devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org;=
- linux-
-> samsung-soc=40vger.kernel.org; linux-kernel=40vger.kernel.org;
-> rosa.pila=40samsung.com; dev.tailor=40samsung.com;
-> suyash.bitti=40samsung.com
-> Subject: Re: =5BPATCH v2=5D arm64: dts: exynos: Add DT node for all UART =
-ports
->=20
-> On 11/04/2025 09:07, Faraz Ata wrote:
-> > Hello Krzysztof
-> >
-> >> Subject: Re: =5BPATCH v2=5D arm64: dts: exynos: Add DT node for all UA=
-RT
-> >> ports
-> >>
-> >> On 18/03/2025 08:56, Faraz Ata wrote:
-> >>> +
-> >>> +		usi_17: usi=4010d800c0 =7B
-> >>
-> >> Messed order. Keep nodes sorted by unit address (see DTS coding style)=
-.
-> >>
-> >>
-> > Thanks for your review
-> > Based on the DTS coding style, it is acceptable to group nodes of the
-> > same type together, even if it breaks the unit address ordering.
->=20
-> That's accepted alternative because some subsystems do that way. I don't
-> think we ever applied such rule to Samsung? Do you have any prior
-> reference about this? I accepted mess in the past, but that does not mean
-> that mess is the rule.
->=20
-> > https://docs.kernel.org/6.12/devicetree/bindings/dts-coding-style.html
-> > Please let me know your opinion on this.
-> > Do you mean I should move all the USI_ node after pwm node?
->=20
-> Please it according to sorting by unit address.
->=20
-USI is spread across two blocks BLK_PERIC0 and BLK_PERIC1,
-USI00 to USI08 fall under BLK_PERIC0
-USI09 to USI17 fall under BLK_PERIC1.
-Will send another version with USI nodes sorted by unit address with respec=
-t to BLK_PERIC0 and BLK_PERIC1.
->=20
-> Best regards,
-> Krzysztof
+Applied. Thanks.
 
+-- 
+viresh
 
