@@ -1,105 +1,154 @@
-Return-Path: <linux-kernel+bounces-608598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0F2AA915BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:52:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F6B1A915C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:53:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDC351789ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:52:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B1E73AB16B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A8922155B;
-	Thu, 17 Apr 2025 07:52:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 559B6221556;
+	Thu, 17 Apr 2025 07:52:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C2bwkqlp"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aAyZopxZ"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21D5622068F
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 07:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43362221717;
+	Thu, 17 Apr 2025 07:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744876339; cv=none; b=Sf4Jw19ZJz/bwTnbaxiPM/3foaZ9vtLuh7tiE/gN2z8jvXqxAQW79SNwXg1qzdUrU91JcQ/z/w/fheixJ4uhNPQ4IpKyC7DX5/fyTKZ1+gjvR82TvOgWlr24VkTLzeaTbVauzi59pFi3dDQFHnlaad64nFY7E3iYv8loMsvEnxk=
+	t=1744876367; cv=none; b=dq2HOv8ZIp48fKaiNmoO4QWOb5u9PbmOLlyktqNR1jyZu3VY84Y9P76DnkXt4HDnxUxxDq5ikVvNkIVYY58/bN1wk+v+KFgA+n2DEldj3wneee00RpiRZBcTNSff9RnyNbAi40zOVzQIPqyMcBHVlvmxnK2ea9IRgxXXxjM4RlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744876339; c=relaxed/simple;
-	bh=SXMciIpogizc4tBQaQQyNO7iWTL7anFQVWebf4a2WWM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=otPJdOw17cicZMLdIlIsYtyjO3iKH2+s2nfXarfeO+zKCVdiDBbmBT0qBqMmIRrr8+pfdMp1CU1ggJlLCmrPWf/RqHtn7gZmGhR15lVVM6e1CcD0jGWFD+YsiqPwec10RIlyGFe/nqvMfCevXmBI8VM6O+U7Uym2ZhmCZEYvMhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C2bwkqlp; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30dd5a93b49so4504111fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 00:52:16 -0700 (PDT)
+	s=arc-20240116; t=1744876367; c=relaxed/simple;
+	bh=jSjQf0LL4J7XSdLfjv/tKoEHMcOwtnu91C0FyO/Ek64=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e85ue0krCRgJRIW8P46wpPjiWOqrTHxdG+g8s5aVQJ1c0V/fw42n0RrbQy7QTHWwFhIGBYWZg1yHi7TpjQq148j7cAQK4HvgCexP2o6xaP2cwbsvDSrRNIyfxKWu/lB8QgaGV7z9ICVD9GMJ6g7qNMMj5lqSmHo8O2Kuzhpr5n0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aAyZopxZ; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-22438c356c8so5476325ad.1;
+        Thu, 17 Apr 2025 00:52:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744876335; x=1745481135; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SXMciIpogizc4tBQaQQyNO7iWTL7anFQVWebf4a2WWM=;
-        b=C2bwkqlpq1LXBQFWZcVLMP1vheGoGAhIwCt68k05aHMLxKoEYWem24ysdjCARGkvtt
-         zZ7ZAuC1NpfqN3DRa3n8UfLK3mZxUKsPgxeRFAckxaDmnyc/mSPfWkjyo9NPYyFe3Iwe
-         Iafy0RwDYRyNLKYLAoV1bsnUYejO7bT0voBrFUWXi35qFsuxgdRi1Yf48iCd3Mr5Xgsv
-         DWML2/d2xpcM8SYj1Nz/49ALHFYYwFSP/Uzs2XE+eM/JYzD6Ot7YyqTJtXO1EyLqYbd+
-         JlBejyKVQND7yEDR+2ckwApNmfO5RpNJW2WjPfY7MhFBKP+9k7qW/fHbXdAgpCuZ2spt
-         d0Ug==
+        d=gmail.com; s=20230601; t=1744876365; x=1745481165; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4ZssPyP7r1aptpoME6vap7qJnyiEzwndArjYxrVKMoc=;
+        b=aAyZopxZrG8hL2TF/J3hC25V45otxZ+FNsWDUAP4GXLavORyE4Pn1WyGRc4AD5qUoR
+         oORxDEC5ruW+U527MnxRQj6cOW50/T0/1ZNSW6huosSZw3CQBXIwadGuquvTCLYNb3a3
+         4f3WJBX5bs3rymub6CwvxEO7hWcBsFoFvNIPk+uc58jwTYjz9Bv+fNqdW/kpcJYWI/dA
+         e7vK700BOnCxRQfkiE+biB4zHBxvpHAdmZ3XL1SJNe2DxmLl/DGcT/HvhGHyPBSkvSR8
+         AN1bvdObM9ChU3UnLdaPcTCzGu1RfOf9TOrpCggYhDKJ3ihIrws7TwDSeuAnNlfjKvJ4
+         hmPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744876335; x=1745481135;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SXMciIpogizc4tBQaQQyNO7iWTL7anFQVWebf4a2WWM=;
-        b=qQ8EGhM/3h/h9DD8hLDgdH1B5D3oao5IQgmzdk1DGCfaVBXg6fw31U9WMdz9N6P1h6
-         s39VVTve0lyTa7XaGozM8gHmgIXiDP7nCr5YoHDVAZ3026HCAg7ql85xIVpepDF6lmUn
-         eLB2R9CjCDupjSfo9dD//JlL7Uw9Y9Iaks43VD+LXgW1FqMuaHrpgW4ZENCAapnuHYIC
-         2si+lJOITUfSnX75w7YlseOXjTGy7P6F0XCcyFlD0W/YlFFUH40fJc1vPkLMaa5AYHzd
-         R+bHVjsG3J+8dGam9ATiguBpQH47NgzNrgggy9hDA8WpCY1NQwwvQ4EmXqDYyk1ub/+j
-         S3qw==
-X-Forwarded-Encrypted: i=1; AJvYcCV/oveBYUgB43iqyjcK+VU9TVWsRv3M6xMnkbMBUWmIO6i+YzQBxNJA7+Idl1moa8RHPJLhVbSfp02C+aE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBmDcJxRenwlMjWLFydoKOrib38QHGqeBDDeY7hI9F/3XIGADc
-	qtIFCWvRpvcBYvY1FvxdUJz/fniSp8x8op8b6yUNTcMRIcNUaefB9LhHQNfCu9SREQJ02i5c5qO
-	MOSTZxqenfa4HF5Uk/i49OaZctsTJy1DV3mC5Tg==
-X-Gm-Gg: ASbGncvo3gR9vEqoyXRpjicqBkpn0ZtHfcBWQvd8IkSl6FQPPgy63rp3GzK1Mj9cSYb
-	eSedqpGvvIxDi4ufua2NPFYZqeXtiWTg5QHejVJxgOV6kc05Sze//lXNvHAjLTEB8D23+IYid4P
-	+UsTwwR8W7K8vyI1iqyesZjA==
-X-Google-Smtp-Source: AGHT+IHJ9+FIBb1TWyrAVx2oUDniSfeXB/Oq3HnfMthWO0+aKUi8sMZxOnwo3TSSS1hKDknErn0vN0cWBKLzO/nllow=
-X-Received: by 2002:a2e:bea5:0:b0:30b:f2d6:8aab with SMTP id
- 38308e7fff4ca-3107f719dcamr21044461fa.32.1744876335142; Thu, 17 Apr 2025
- 00:52:15 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744876365; x=1745481165;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4ZssPyP7r1aptpoME6vap7qJnyiEzwndArjYxrVKMoc=;
+        b=BRjNWZ36y2c5OZODTjpKppn4+PHFPTrI9cqAgHC8acHzbLMJbWev1vtwJRRsJqyfSt
+         qMfnsU48uU1OJ9jlsmZNgKG8+6kg2LkPw4fouBAMU6as6+Sm5wW90UKo3jtnNtmGtosw
+         RT60jefIpKd768xvp7AA3soIQeDdalm2SkTwl0xPtT2Y7egSDSBFqmVuJdDvD9XLXS8d
+         VuJSv2e8M/S0TEENBP4eL2LNn8Jg3dPsL1FJIpqDNm9WlnC9YEgfIpDTbZYl5nkRwc7G
+         zt4qxEet2FV1bz+nwAkSLUg/Oi3bkC6TGyID11ewDWtDE/BUZDbxZ2EjhCpaNzmZxS+v
+         rKpw==
+X-Forwarded-Encrypted: i=1; AJvYcCVFCO5R6Ga5C70OyGCkWCyKF58tp3M+hlvGzf/GPw72i0PKUaVRJhD974RqiDxkwbnSyjP+8b+b9JAWTqA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtH4SOpK97Gg2a3f6dM6nTQcSd5QCuFRTWME31SKOSaJ/N9cel
+	DcMJpzD/KYJ/jk/O/tYaJfkbHJplf4dPAwtAkGGu1rMmyLd4XcOb
+X-Gm-Gg: ASbGncuGS7BxMICECvrNqphWGulDuNvxpr+t4WSKR26DaP25VjAEHAqZsG53gbB/q1N
+	n5lxn0PDLyOm5IQFtmZE77y8pJzOc35YxTceaPxkfwwHIdlwnzQAqWJL0HNaFbAC/zgTGyLba+I
+	CMCHeXX+GBeKxKOq15qC7nwnweVicmUDmRk2jM5n3Z4O7Qao9fqWZ+nnYAawbzPu5BIPnxt3SAI
+	Y7lxGlpEbzw65dd2JEeeQQwyreCK8boXHvigOIrIyED/povJ0HDEJlnXZv2gR9a/MgKk+U3yX4S
+	+KewwdCehcQ3qS6C3RNWji/bcHPSmlp4549L5A4gEv9/tNpZp0spctB/+ITykW0A1VRzeeM=
+X-Google-Smtp-Source: AGHT+IGg7mk2q02EkrNJj2cn6ix4tiECOBp4llx5PS+RF4nP0Vz96bv5xDiqFdl5R1DzMn546mJagQ==
+X-Received: by 2002:a17:903:1b6c:b0:227:e6b2:d989 with SMTP id d9443c01a7336-22c35983ce8mr85992745ad.44.1744876365449;
+        Thu, 17 Apr 2025 00:52:45 -0700 (PDT)
+Received: from purva-IdeaPad-Gaming-3-15IHU6.. ([14.139.108.62])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c33ef11e8sm27230485ad.11.2025.04.17.00.52.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Apr 2025 00:52:45 -0700 (PDT)
+From: Purva Yeshi <purvayeshi550@gmail.com>
+To: irenic.rajneesh@gmail.com,
+	david.e.box@intel.com,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com
+Cc: platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Purva Yeshi <purvayeshi550@gmail.com>
+Subject: [PATCH] platform/x86: intel_pmc_core: Fix uninitialized pmc/map in pmc_core_send_ltr_ignore
+Date: Thu, 17 Apr 2025 13:22:29 +0530
+Message-Id: <20250417075229.20540-1-purvayeshi550@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250416-aaeon-up-board-pinctrl-support-v3-0-9ca13aa57312@bootlin.com>
- <20250416-aaeon-up-board-pinctrl-support-v3-2-9ca13aa57312@bootlin.com>
-In-Reply-To: <20250416-aaeon-up-board-pinctrl-support-v3-2-9ca13aa57312@bootlin.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 17 Apr 2025 09:52:04 +0200
-X-Gm-Features: ATxdqUHuW6BLizFBmvxGJmtIAMW4yS0uo1YYLPFOyB_Zbz8jQMgx6GMVm8Zfpi0
-Message-ID: <CACRpkda5om6Uik+YnN4i1ePJr_NLGskdBe5GmYkrzU9bzN3+XA@mail.gmail.com>
-Subject: Re: [PATCH v3 02/10] pinctrl: core: add devm_pinctrl_register_mappings()
-To: Thomas Richard <thomas.richard@bootlin.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, 
-	DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 16, 2025 at 4:00=E2=80=AFPM Thomas Richard
-<thomas.richard@bootlin.com> wrote:
+Fix Smatch-detected issue:
 
-> Using devm_pinctrl_register_mappings(), the core can automatically
-> unregister pinctrl mappings.
->
-> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
+drivers/platform/x86/intel/pmc/core.c:501 pmc_core_send_ltr_ignore()
+error: uninitialized symbol 'pmc'.
 
-This is useful and good!
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+drivers/platform/x86/intel/pmc/core.c:501 pmc_core_send_ltr_ignore()
+error: uninitialized symbol 'map'.
 
-Yours,
-Linus Walleij
+drivers/platform/x86/intel/pmc/core.c:501 pmc_core_send_ltr_ignore()
+error: we previously assumed 'pmc' could be null (see line 479)
+
+
+Prevents uninitialized symbol warnings detected by smatch.
+
+Ensures map is not accessed if pmc is NULL, preventing dereferencing
+of uninitialized pointers
+
+Add defensive check for pmc and map to catch any unexpected edge cases
+and ensure all required pointers are valid.
+
+Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
+---
+ drivers/platform/x86/intel/pmc/core.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86/intel/pmc/core.c
+index 7a1d11f2914f..e674b940e29e 100644
+--- a/drivers/platform/x86/intel/pmc/core.c
++++ b/drivers/platform/x86/intel/pmc/core.c
+@@ -462,8 +462,8 @@ DEFINE_SHOW_ATTRIBUTE(pmc_core_pll);
+ 
+ int pmc_core_send_ltr_ignore(struct pmc_dev *pmcdev, u32 value, int ignore)
+ {
+-	struct pmc *pmc;
+-	const struct pmc_reg_map *map;
++	struct pmc *pmc = NULL;
++	const struct pmc_reg_map *map = NULL;
+ 	u32 reg;
+ 	unsigned int pmc_index;
+ 	int ltr_index;
+@@ -480,6 +480,9 @@ int pmc_core_send_ltr_ignore(struct pmc_dev *pmcdev, u32 value, int ignore)
+ 			continue;
+ 
+ 		map = pmc->map;
++		if (!map)
++			continue;
++
+ 		if (ltr_index <= map->ltr_ignore_max)
+ 			break;
+ 
+@@ -491,7 +494,7 @@ int pmc_core_send_ltr_ignore(struct pmc_dev *pmcdev, u32 value, int ignore)
+ 		ltr_index = ltr_index - (map->ltr_ignore_max + 2) - 1;
+ 	}
+ 
+-	if (pmc_index >= ARRAY_SIZE(pmcdev->pmcs) || ltr_index < 0)
++	if (pmc_index >= ARRAY_SIZE(pmcdev->pmcs) || ltr_index < 0 || !pmc || !map)
+ 		return -EINVAL;
+ 
+ 	pr_debug("ltr_ignore for pmc%d: ltr_index:%d\n", pmc_index, ltr_index);
+-- 
+2.34.1
+
 
