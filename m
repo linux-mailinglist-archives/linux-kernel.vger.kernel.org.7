@@ -1,171 +1,134 @@
-Return-Path: <linux-kernel+bounces-608813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62BC6A9185E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 11:52:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA15AA91865
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 11:54:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4FED3ADAE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:52:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52A5819E1E3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:54:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55F30228CAD;
-	Thu, 17 Apr 2025 09:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F8422A7EE;
+	Thu, 17 Apr 2025 09:54:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CO7BxkB4";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TpBVHMkc";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CO7BxkB4";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TpBVHMkc"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC39189B8C
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 09:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="a0dzhG81"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750AB22A1CB;
+	Thu, 17 Apr 2025 09:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744883562; cv=none; b=c8YElc/tczt+ok0SP6DiKBT2mRphciFB0rzfiy096Bhx+b+zaMwcn3Zy4S5ugUQGvz3s+haT4DMj9ZZe7AElRbMao7ww00YQhjzhc5NHdN8HoD7f70jtegY/o8brn26klFGG+9Vpv1lMYhoefQjV730ZXkF58D4G+b63C9aqcdg=
+	t=1744883673; cv=none; b=GMqrAEMM1i6JN/9ueaCzFJ/C/orbbiOOl8tOU9ZmU/fCdzHSDhIasJJIaTp2fEgUS/7g0Bd9Q8sPtOq83di6P9O/2G8jOzOVzdchFOPmoIH6OP8S/KpinDX2PsWUZzkzpV6vycGUTjKuXwnboLJ1fO2ngjJZLi6HWOCUn8vAAMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744883562; c=relaxed/simple;
-	bh=07tYIb+RUs3FMwXrZ34gZ25Wn+BtLeFIH+KE/W8subg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TMdcbvmoBU47shsN665oV+sgzdan5U0JGTk4uswONL3eLT+1zrylAWdksCv9U0e85EXQHJY6vbpnc/yWDvRRfbixmkp5eFHNCiD3JVnW5FIAo8e8CDv7ZdpIjt/tLLpKCMKofaYzQAytqVjtxdfs2ZkGVT9Y75mHvyQNBT51IS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CO7BxkB4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TpBVHMkc; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CO7BxkB4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TpBVHMkc; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4176F21188;
-	Thu, 17 Apr 2025 09:52:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744883558; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B9rqnyNyz33Bqk6MCIPWhbXscQcAY4IETP2JmrcSRvU=;
-	b=CO7BxkB4s/gT/8OFxmzDEQi4B34fWyr+K622QBdVyDMYJt3B4EC8Eabqd/8mOkUNOYcPsF
-	LxR9YfVfTA/c7modO/1/pV9M1NS3qgw4x1nx55pdnZBmuVlrBgLXaV1od5huYO7uLp1WVa
-	Hrr+ox/xHstTlePq/iVNkJB1cVwFXkM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744883558;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B9rqnyNyz33Bqk6MCIPWhbXscQcAY4IETP2JmrcSRvU=;
-	b=TpBVHMkcYuGjz9gxwKDbogTSGwK2rs9shxozPHDVd3BJ4bkgl0oA0e4aHVZXfy/U1wfvb8
-	gYs0SAtsZhgyX/Bw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=CO7BxkB4;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=TpBVHMkc
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744883558; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B9rqnyNyz33Bqk6MCIPWhbXscQcAY4IETP2JmrcSRvU=;
-	b=CO7BxkB4s/gT/8OFxmzDEQi4B34fWyr+K622QBdVyDMYJt3B4EC8Eabqd/8mOkUNOYcPsF
-	LxR9YfVfTA/c7modO/1/pV9M1NS3qgw4x1nx55pdnZBmuVlrBgLXaV1od5huYO7uLp1WVa
-	Hrr+ox/xHstTlePq/iVNkJB1cVwFXkM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744883558;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B9rqnyNyz33Bqk6MCIPWhbXscQcAY4IETP2JmrcSRvU=;
-	b=TpBVHMkcYuGjz9gxwKDbogTSGwK2rs9shxozPHDVd3BJ4bkgl0oA0e4aHVZXfy/U1wfvb8
-	gYs0SAtsZhgyX/Bw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D3327137CF;
-	Thu, 17 Apr 2025 09:52:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id tneQMWXPAGgXfgAAD6G6ig
-	(envelope-from <jdelvare@suse.de>); Thu, 17 Apr 2025 09:52:37 +0000
-Date: Thu, 17 Apr 2025 11:52:37 +0200
-From: Jean Delvare <jdelvare@suse.de>
-To: Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: Joel Stanley <joel@jms.id.au>, Henry Martin <bsdhenrymartin@gmail.com>,
- Patrick Rudolph <patrick.rudolph@9elements.com>, Andrew Geissler
- <geissonator@yahoo.com>, Ninad Palsule <ninad@linux.ibm.com>, Patrick
- Venture <venture@google.com>, Robert Lippert <roblip@gmail.com>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/7] soc: aspeed: lpc-snoop: Rearrange channel paths
-Message-ID: <20250417115231.3e5771ad@endymion>
-In-Reply-To: <20250411-aspeed-lpc-snoop-fixes-v1-6-64f522e3ad6f@codeconstruct.com.au>
-References: <20250411-aspeed-lpc-snoop-fixes-v1-0-64f522e3ad6f@codeconstruct.com.au>
-	<20250411-aspeed-lpc-snoop-fixes-v1-6-64f522e3ad6f@codeconstruct.com.au>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.43; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1744883673; c=relaxed/simple;
+	bh=Qfe/CBGkmZbL6EmYdCa433SjCrHvAu5pxnjtFrFLdkg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=O+fXhJSgBPm1So8n8NCKj3VzNvy23pmnV/8WD2BeLlNe+zZU8HlFKv7K7Df8Roh4GDkePSamHlovgZUF+8TaPmI6EPheAcZVQ8FuM98yQYnQoj1/K6WKPzfzUrLrFtf4j1Pxuc+JU6qILN3cZiql8fNABk5l6Da5LYyYFe0mkIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=a0dzhG81; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=brCIu
+	T7WOka4QsCGcvoP2O2amwg+o0P7EpSsxEuWZgs=; b=a0dzhG81c0zNMx5DKhCLf
+	0Ek45TfufCikzbBLn8u6S28Z4hrwb1mrQQja0/8SN952ruJkGL5TIoHHgQPrSOHk
+	AQ3yX/4n8ybG6b9rkw3M2o6VxIb3VIJrW/mH5Z+Vm0ce5YraRZgprxQA3LO4caiv
+	gwWtgBge3Lqp7LBRwP8kxA=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wDXH0hxzwBoI3LbAQ--.843S2;
+	Thu, 17 Apr 2025 17:52:51 +0800 (CST)
+From: Feng Yang <yangfeng59949@163.com>
+To: andrii.nakryiko@gmail.com
+Cc: andrii@kernel.org,
+	ast@kernel.org,
+	bpf@vger.kernel.org,
+	daniel@iogearbox.net,
+	eddyz87@gmail.com,
+	haoluo@google.com,
+	john.fastabend@gmail.com,
+	jolsa@kernel.org,
+	kpsingh@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	martin.lau@linux.dev,
+	mathieu.desnoyers@efficios.com,
+	mattbobrowski@google.com,
+	mhiramat@kernel.org,
+	rostedt@goodmis.org,
+	sdf@fomichev.me,
+	song@kernel.org,
+	yangfeng59949@163.com,
+	yonghong.song@linux.dev
+Subject: Re: [PATCH bpf-next v3] bpf: Remove redundant checks
+Date: Thu, 17 Apr 2025 17:52:45 +0800
+Message-Id: <20250417095245.388120-1-yangfeng59949@163.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <CAEf4Bzai7NL-3=1SVi4-WWYWEY6Lzrb8GBfKnt6FG8sNm2OMRQ@mail.gmail.com>
+References: <CAEf4Bzai7NL-3=1SVi4-WWYWEY6Lzrb8GBfKnt6FG8sNm2OMRQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 4176F21188
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	HAS_ORG_HEADER(0.00)[];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,yahoo.com];
-	FREEMAIL_CC(0.00)[jms.id.au,gmail.com,9elements.com,yahoo.com,linux.ibm.com,google.com,vger.kernel.org];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDXH0hxzwBoI3LbAQ--.843S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxJr45tw4fWr1xAFWfKr48JFb_yoW8WFWfp3
+	W7Ar15Ar4kGa4Ut3sxJrs5ZFyrur13X3yxJwnakas09FsrZFyUJry3ta12vF95Zr95Ga4x
+	ZanFqrW5tFyIqa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JUoOJnUUUUU=
+X-CM-SenderInfo: p1dqww5hqjkmqzuzqiywtou0bp/1tbiwgUyeGgAyKnWlwAAsF
 
-On Fri, 11 Apr 2025 10:38:36 +0930, Andrew Jeffery wrote:
-> Order assignments such that tests for conditions not involving resource
-> acquisition are ordered before those testing acquired resources, and
-> order managed resource acquisition before unmanaged where possible. This
-> way we minimise the amount of manual cleanup required.
+On Wed, 16 Apr 2025 14:55:43 -0700, Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
+
+[......]
+> I'm surprised these two are not part of bpf_base_func_proto, tbh...
+> maybe let's move them there while we are cleaning all this up?
 > 
-> In the process, improve readability of the code by introducing a channel
-> pointer that takes the place of the repeated object lookups.
+> pw-bot: cr
 > 
-> Signed-off-by: Andrew Jeffery <andrew@codeconstruct.com.au>
-> ---
->  drivers/soc/aspeed/aspeed-lpc-snoop.c | 47 ++++++++++++++++++++---------------
->  1 file changed, 27 insertions(+), 20 deletions(-)
-> (...)
+> > -       case BPF_FUNC_trace_printk:
+> > -               return bpf_get_trace_printk_proto();
+> >         case BPF_FUNC_get_smp_processor_id:
+> >                 return &bpf_get_smp_processor_id_proto;
+> 
+> this one should be cleaned up as well and
+> bpf_get_smp_processor_id_proto removed. All BPF programs either
+> disable CPU preemption or CPU migration, so bpf_base_func_proto's
+> implementation should work just fine (but please do it as a separate
+> patch)
+> 
 
-LGTM.
+BPF_CALL_0(bpf_get_smp_processor_id)
+{
+	return smp_processor_id();
+}
+const struct bpf_func_proto bpf_get_smp_processor_id_proto = {
+	.func		= bpf_get_smp_processor_id,
+	.gpl_only	= false,
+	.ret_type	= RET_INTEGER,
+	.allow_fastcall	= true,
+};
+When attempting to remove bpf_get_smp_processor_id_proto,
+it was observed that bpf_get_smp_processor_id is extensively used.
+Should we also replace all instances of bpf_get_smp_processor_id with bpf_get_raw_cpu_id in these cases?
 
-Acked-by: Jean Delvare <jdelvare@suse.de>
+For example:
+#define ___BPF_FUNC_MAPPER(FN, ctx...)			\
+        ......
+	FN(get_smp_processor_id, 8, ##ctx)		\
 
--- 
-Jean Delvare
-SUSE L3 Support
+samples/bpf/sockex3_kern.c:
+static struct globals *this_cpu_globals(void)
+{
+        u32 key = bpf_get_smp_processor_id();
+        return bpf_map_lookup_elem(&percpu_map, &key);
+}
+and so on......
+Thanks.
+> > -       case BPF_FUNC_get_numa_node_id:
+> > -               return &bpf_get_numa_node_id_proto;
+> >         case BPF_FUNC_perf_event_read:
+> >                 return &bpf_perf_event_read_proto;
+
 
