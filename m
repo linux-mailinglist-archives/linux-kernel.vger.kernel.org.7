@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-609854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5341A92C7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 23:06:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C819A92C7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 23:06:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E52264682B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 21:06:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E79F93AE56D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 21:06:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E6E20A5F3;
-	Thu, 17 Apr 2025 21:06:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A68D020E719;
+	Thu, 17 Apr 2025 21:06:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="JfsHvl8Y"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="UJlCPua9"
 Received: from smtp.smtpout.orange.fr (smtp-73.smtpout.orange.fr [80.12.242.73])
 	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1DAB1E5B79
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 21:06:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1820220A5C3
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 21:06:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744923969; cv=none; b=hajQCYZcwtXnElUN6vJTNaDD+YlLJDcZk/CSAhFkejwNaNPTkCBbTGzhEKzYTTQ4fdlBK46wOEBFyrPJ8oxuRJ/vlDO3R/ciR8RwwDUDpH5VsufCUls4WkVKPUK/xNBkdX0CaGTKuWn7usvvnXKk36VUx/r1t7T4s0dYcTAtFsw=
+	t=1744923972; cv=none; b=g6Ii18mZfZfOLe4PbGSy5K6YFNh2RJJoAUlBuZbtGS87Pnu+zbdC9fPm7A9ejIpmpStSmtddjmOGZT+bn4BU8/vGI+pvrB48FnnQ6cdTM1Xwx/kY74bbkGTwkSNYiK5F2A48m9HP5fi7uU5hGwpm2u5FvH2DuVo8j7sf4SMWx0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744923969; c=relaxed/simple;
-	bh=vPIGEDlFc0zzPeBFWuupPs3ug6A9789aSn4OaxK2n14=;
+	s=arc-20240116; t=1744923972; c=relaxed/simple;
+	bh=c90eBYcUytbvHTx30qrG/03FOXwBOODWH63LkdXpJPI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oIYqeFUGCeJCliTtdHS9Hb4NROt/gzjkJO1HGVJTLcL9LW+v/2C21GrSmiKoubpSWRu5MedpEBI4mSR7Z8fiD5a2Sss4D6UpMAtBd0emcc7nhC0tZJEljT2sNIvk8dtE9qNHTE0+QwnJ52jIqlbxO6JVqC77ReqVk+Gk/BRMxsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=JfsHvl8Y; arc=none smtp.client-ip=80.12.242.73
+	 MIME-Version; b=MNUdFLySCC5ktBSKqJd524zig68vGMS7uDBuDQt1loShISE7WNGnS9zAc+LSMJer2Tvd430zvao6XBv+zyFpXVyYELJ1hZsDP/3848HaOUEv9Mi3nrIUehyJP4Pp/ypXcJo/woXKIb/1eUCuqPVfvvti6tyvqyV7A796+HVUxWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=UJlCPua9; arc=none smtp.client-ip=80.12.242.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Received: from localhost.localdomain ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id 5WPju9RZpCZIm5WPvuOd2h; Thu, 17 Apr 2025 23:05:03 +0200
+	id 5WPju9RZpCZIm5WQ1uOdEQ; Thu, 17 Apr 2025 23:05:09 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1744923903;
-	bh=N2UZc3m989RpD3vfEzzJvND1JyZJERFewm0G2Iko3Ys=;
+	s=t20230301; t=1744923909;
+	bh=9B0EuenjQ9zP2HXkUxbNq6nKhRgcdF/8wpSLRR9fe24=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=JfsHvl8Yy9Pof/K2NYhq0aPNSoxiLzFs3HvKWSDJ1SY22D8PKSX5YnrOcBUdm/Co/
-	 GBN+6MFxbURDv4dOZrH0FZpwb0RdNzxH1OZQ0dGmh/tsIyQ+LrAp491InwJ04MINfd
-	 PVxAuKhVXeo5IL6JE0o2kJeJKVB4EobvprDVvqueoGC94QgM6oXhqxtPWDqudf71Dc
-	 D1nulPQ4+Xow1DCUMOw5ugtc7xljOjf7rgQ5GJSfXm2AnNIOV2+25CFszLp5Hm236i
-	 AHNTPCyq+fE5mHOVjlHnoe2yIlNJDvayKrhTHeSfgwkpm+zLJOzJ9eeqKTeGuHNDxd
-	 8vnRAMQi2IeJQ==
+	b=UJlCPua9/AiS6k3Dp2oK5zTkqe8m/AkjuzXyC5VZY27zR3y6SfrsUtZ9ZS8DHd2/v
+	 ZLzCNIH4K7S9GkwQW0TU1uKf2+4NM+CYJV11zJgHhA9+p0RhPyb1Z8/SgTCD2X+vDm
+	 HcNMECQKw+ILYgMhRlA9LZHaFNqgLt1+tOi4H47mJicEoKSjLaQknNGozKYuzOn29X
+	 H9doqILM4zMi6y0ph6f6ECPuYuN4gFENN/OXVyD1iX9nWg9DZwX48ou7XB1GRJYCTX
+	 gIKafY2AZet7rvwB0P4oLzGEWg2l3XYGJvLy6tCHHnWj4V07Z4gRv5hhjkKGKK3YIh
+	 mpCF4qJp5E7tQ==
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 17 Apr 2025 23:05:03 +0200
+X-ME-Date: Thu, 17 Apr 2025 23:05:09 +0200
 X-ME-IP: 90.11.132.44
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To: Stefani Seibold <stefani@seibold.net>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 2/3] kfifo: Fix the description of kfifo_init()
-Date: Thu, 17 Apr 2025 23:04:34 +0200
-Message-ID: <c2a93f172366696fcebf9ef421ff29abfa4ebd0f.1744923838.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 3/3] kfifo: Fix some white spaces issues
+Date: Thu, 17 Apr 2025 23:04:35 +0200
+Message-ID: <63513bef7d65f93829cd7c189ae16265c459def8.1744923838.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <e25c871bd379f0f3595c2045925d3d25731bb194.1744923838.git.christophe.jaillet@wanadoo.fr>
 References: <e25c871bd379f0f3595c2045925d3d25731bb194.1744923838.git.christophe.jaillet@wanadoo.fr>
@@ -66,34 +66,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Remove a useless comment related to kfifo_init().
+Some unneeded double spaces are used in some places, and 1 space is missing
+before a trailing \.
 
-The size of the buffer is expected to be a power of 2, as already stated a
-few liens above.
-
-There is no point is speaking of "the number of elements" here. If
-kfifo_init() is used, then the internal buffer is explicitly allocated
-using a memory allocation function such a kvalloc() and the needed context
-is stored in a struct kfifo. In such a case, the "size" of an element is
-defined a sizeof(unsigned char) which is 1.
+Make the needed clean-up for the sake of consistency.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- include/linux/kfifo.h | 1 -
- 1 file changed, 1 deletion(-)
+ include/linux/kfifo.h | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/include/linux/kfifo.h b/include/linux/kfifo.h
-index 54fbe2ae6fbd..707dd90138d2 100644
+index 707dd90138d2..9b13a733efa9 100644
 --- a/include/linux/kfifo.h
 +++ b/include/linux/kfifo.h
-@@ -389,7 +389,6 @@ __kfifo_int_must_check_helper( \
-  *
-  * This macro initializes a fifo using a preallocated buffer.
-  *
-- * The number of elements will be rounded-up to a power of 2.
-  * Return 0 if no error, otherwise an error code.
+@@ -132,9 +132,9 @@ struct kfifo_rec_ptr_2 __STRUCT_KFIFO_PTR(unsigned char, 2, void);
+ 	struct __kfifo *__kfifo = &__tmp->kfifo; \
+ 	__kfifo->in = 0; \
+ 	__kfifo->out = 0; \
+-	__kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : ARRAY_SIZE(__tmp->buf) - 1;\
++	__kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : ARRAY_SIZE(__tmp->buf) - 1; \
+ 	__kfifo->esize = sizeof(*__tmp->buf); \
+-	__kfifo->data = __is_kfifo_ptr(__tmp) ?  NULL : __tmp->buf; \
++	__kfifo->data = __is_kfifo_ptr(__tmp) ? NULL : __tmp->buf; \
+ })
+ 
+ /**
+@@ -268,7 +268,7 @@ __kfifo_int_must_check_helper(int val)
+ })
+ 
+ /**
+- * kfifo_is_empty_spinlocked_noirqsave  - returns true if the fifo is empty
++ * kfifo_is_empty_spinlocked_noirqsave - returns true if the fifo is empty
+  * using a spinlock for locking, doesn't disable interrupts
+  * @fifo: address of the fifo to be used
+  * @lock: spinlock to be used for locking
+@@ -679,7 +679,7 @@ __kfifo_uint_must_check_helper( \
+ 	const size_t __recsize = sizeof(*__tmp->rectype); \
+ 	struct __kfifo *__kfifo = &__tmp->kfifo; \
+ 	(__recsize) ? \
+-	__kfifo_from_user_r(__kfifo, __from, __len,  __copied, __recsize) : \
++	__kfifo_from_user_r(__kfifo, __from, __len, __copied, __recsize) : \
+ 	__kfifo_from_user(__kfifo, __from, __len, __copied); \
+ }) \
+ )
+@@ -784,7 +784,7 @@ __kfifo_int_must_check_helper( \
   */
- #define kfifo_init(fifo, buffer, size) \
+ #define	kfifo_dma_out_prepare_mapped(fifo, sgl, nents, len, dma) \
+ ({ \
+-	typeof((fifo) + 1) __tmp = (fifo);  \
++	typeof((fifo) + 1) __tmp = (fifo); \
+ 	struct scatterlist *__sgl = (sgl); \
+ 	int __nents = (nents); \
+ 	unsigned int __len = (len); \
 -- 
 2.49.0
 
