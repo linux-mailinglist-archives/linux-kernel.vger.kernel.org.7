@@ -1,86 +1,92 @@
-Return-Path: <linux-kernel+bounces-608768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00236A917C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 11:25:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0594CA917C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 11:26:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11E2A3B5937
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:23:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DADAA5A6315
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:25:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84ECC227E8A;
-	Thu, 17 Apr 2025 09:23:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C679E22578D;
+	Thu, 17 Apr 2025 09:25:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kQBQPf08"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UWbiXbiX"
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAC1922759C;
-	Thu, 17 Apr 2025 09:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D1B335BA
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 09:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744881834; cv=none; b=AkVdC1Veh6HjM45jC+vgNy112Gmt4OzY3yItO61YF5xtneZAn21+RKpzvDsF+17AllSRlFutdE1oUs1glyf9IICEoEXByvvTr/NVvzYZO9Yliz08HYZa5BSqjdRvVvonofB8U8Q1ihF9vKMAz9ewflhjIXOJX2JcdYQ7ayhdG9Q=
+	t=1744881930; cv=none; b=ogos1qD/XnM7rrONFW7ENxL2Vg3NA5fiwtehcecmvdOkortVnDRfkox3VDZIHPMZ/plcbn0VzpILWCHTbMEMJ5y/uTA7QvU0kipqzv6ywpPA15MHKPEm7CjolDJQjmC7wXfyU2QpGro2gqLcUdbaTsnEIo//rCkRZiSffPEEL0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744881834; c=relaxed/simple;
-	bh=YQUpCefNdvI8xpA5dQVESLiw7iqk9yusKmURdiL8tQk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=avGAkMzktepDFWR3UEYzi1drmwp8jSufAuY6Ey5Qarh1RtcTG5ubPxhloy1w+BNPhjLVO0WtbJLFiC3CpU4h6qNt7NClYJYg6EnU6t3vEILb+Iw3V3KmjPFTdrq8Nx8QmnELn7zMjWz8pXZcvNSjQ4yAkU0Tsvhwp8jIzs1CoDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kQBQPf08; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE65BC4CEE4;
-	Thu, 17 Apr 2025 09:23:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1744881833;
-	bh=YQUpCefNdvI8xpA5dQVESLiw7iqk9yusKmURdiL8tQk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kQBQPf08ZcVqf73uYBCJG9Wndk66wcIM2I8PRErtj1KdapZKGmXggrguLa2j4GFBW
-	 X9AbflVTWlrFclN53MInor6dmR2FEl2Bo46BU75GRIqCa/XPXW1SERyGNVeG+p295h
-	 pcpc9pGjMvA/9hpsMCBWbxvqV45mRQJuVfuW87YA=
-Date: Thu, 17 Apr 2025 11:23:50 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Paul =?iso-8859-1?Q?Retourn=E9?= <paul.retourne@orange.fr>
-Cc: dpenkler@gmail.com, dan.carpenter@linaro.org,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] staging: gpib: include: fixes multiline comments style
-Message-ID: <2025041748-opposing-macaroni-8a89@gregkh>
-References: <20250416210411.9300-2-paul.retourne@orange.fr>
+	s=arc-20240116; t=1744881930; c=relaxed/simple;
+	bh=K7AiGD8Wrma7f04yrEFvYmfkO2/F7mTbzH9eY+bJsBU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WfutbW4vkpg50s0A2oL95vvBZxoQZrolbpYjuV10H70meQfe/Df5hrBtbwmwdztUkzCOR1ANT+r8EYh3Gek6m6auMv3IcV554U2E0H0MAMS4aMeMtOkaRG5JkC6nAGHgzJHW2WKd5wpeMWqCba+IwqOCOwvAK0yyhA87yfeFdhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UWbiXbiX; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1744881924;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=SfwgROIDadVbaR4igOtSawlNRohOkl+zEoFeXeINbfI=;
+	b=UWbiXbiXvblAzIZ0n9b/4C4xtKxi50muEZGaj8aqV3broqUSyrylwL4vcvzbBhhIeZOSXa
+	2ejGRKHnzq+Ja7EbJxfJzQx18cRczNmw3k+PJ9D5mikCmJjlT3CPQ8vj2Z1dX9g81HJ1Bb
+	kZ52mqafbuIULvf9h2kHVs6MbpacrKg=
+From: Hao Ge <hao.ge@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Hao Ge <gehao@kylinos.cn>
+Subject: [PATCH] mm/vmscan: Modify the assignment logic of the scan and total_scan variables
+Date: Thu, 17 Apr 2025 17:24:22 +0800
+Message-Id: <20250417092422.1333620-1-hao.ge@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250416210411.9300-2-paul.retourne@orange.fr>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Apr 16, 2025 at 02:04:09PM -0700, Paul Retourné wrote:
-> Fixes the style of multiline comments to comply with the linux kernel
-> coding style.
-> 
-> Signed-off-by: Paul Retourné <paul.retourne@orange.fr>
+From: Hao Ge <gehao@kylinos.cn>
 
-I've applied this (took some manual intervention on my side), but:
+The scan and total_scan variables can be initialized to 0
+when they are defined, replacing the separate assignment statements.
 
-> @@ -37,11 +38,13 @@ struct gpib_board_config {
->  	unsigned int ibirq;
->  	/* dma channel to use for non-pnp cards (set by core, driver should make local copy) */
->  	unsigned int ibdma;
-> -	/* pci bus of card, useful for distinguishing multiple identical pci cards
-> +	/*
-> +	 * pci bus of card, useful for distinguishing multiple identical pci cards
->  	 * (negative means don't care)
->  	 */
->  	int pci_bus;
+Signed-off-by: Hao Ge <gehao@kylinos.cn>
+---
+ mm/vmscan.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-For these, and the other definitions in this file, can you move the
-comments to use the proper kerneldoc format for the structure, so that
-the tools can properly document the structures in here?  Having comments
-above the variables really is not the best way to do this.
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index b620d74b0f66..bf360ac4f1cf 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1725,13 +1725,11 @@ static unsigned long isolate_lru_folios(unsigned long nr_to_scan,
+ 	unsigned long nr_taken = 0;
+ 	unsigned long nr_zone_taken[MAX_NR_ZONES] = { 0 };
+ 	unsigned long nr_skipped[MAX_NR_ZONES] = { 0, };
+-	unsigned long skipped = 0;
+-	unsigned long scan, total_scan, nr_pages;
++	unsigned long skipped = 0, total_scan = 0, scan = 0;
++	unsigned long nr_pages;
+ 	unsigned long max_nr_skipped = 0;
+ 	LIST_HEAD(folios_skipped);
+ 
+-	total_scan = 0;
+-	scan = 0;
+ 	while (scan < nr_to_scan && !list_empty(src)) {
+ 		struct list_head *move_to = src;
+ 		struct folio *folio;
+-- 
+2.25.1
 
-thanks,
-
-greg k-h
 
