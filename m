@@ -1,64 +1,107 @@
-Return-Path: <linux-kernel+bounces-609534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FE2BA92359
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 19:04:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD113A92363
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 19:06:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 955D17A6620
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 17:03:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C93E7B2796
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 17:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090F425392C;
-	Thu, 17 Apr 2025 17:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 787A2255E23;
+	Thu, 17 Apr 2025 17:06:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ePQEbWRz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="qZO7cEJ6"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6472D35973;
-	Thu, 17 Apr 2025 17:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5902D2550C4
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 17:06:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744909477; cv=none; b=ImHfDiWHQ70LtYenFmj3+uNo6CdAxtFNonVut+2O2tJneG99JGDHBfrS58z8hL1mFWOgwlwUGN9/sdqlOq6g/uNeCU4L9VtXfFb7AyOIHC79yUGwqxarx/j8ALKr5/OdTFsTIAQPSBvxN3m1L4K719ntGOTYNK82fGMxvr16CWM=
+	t=1744909587; cv=none; b=ddMGEQ738CoHG6BkTZYgzFXvYz78MtWIRZ3TaiApIZ/ghMsjNAd7TWZEfJR4zF2eln99MunqJRi92GB//0+qrrTBd0LGBItUWtJcYJOxUcUE+0kSSxUxSLMRH0RNTE3jbwKwXzZ+jc5yCXQt2ssIwSy6I1vkR9idyi5FLwPNcJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744909477; c=relaxed/simple;
-	bh=RAgSqwP6v8XUqd0sIEMCAhSCHpxuahOcrR/OC8vTJJE=;
+	s=arc-20240116; t=1744909587; c=relaxed/simple;
+	bh=/rayCc9ocJT3K1N38tkBInMy2zbXnfq0bzNX+4YFKNs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mk1y/Ss4DoJhuCu5eqt9qcJDlWhbahLHBDAmVa2g77M90XCCUCRA+Tt1CQzcr7GbZLlB6xANlA7U61heAAqwVRVdcJT/fwcmIExYZtPFUc23sA8en/Qfsf2hq9rNS9/zE7nz7wOtgZEkgopV9xIDKT/J3c+N1o5z/b63vhBKsVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ePQEbWRz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA99AC4CEE4;
-	Thu, 17 Apr 2025 17:04:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744909476;
-	bh=RAgSqwP6v8XUqd0sIEMCAhSCHpxuahOcrR/OC8vTJJE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ePQEbWRzWefj/7Ht6qipf1HfTKXla7WSlFH3FZCWrp5rKQ0SHVy2GG8StxLrYpQ1I
-	 2BUQIDKLUacHMfI6+P7WOkAgPMPYwCf6jPNEtr2fM86ilRrqWPxyw7xZg5Bmr2Yc3u
-	 uybZlR7iTPE4RCK2neY51RGaFtOQVdRwVQSb8N7CebOZa6gIhvOMJUevncWiwlpnH8
-	 IMMzQ4P4Bl6FovKQA7ryBkS8hWACCl35WC13H8TEebi8OP2S/hncJMqhYtkfrCAguR
-	 s4EVKqXvQSg34RVUOx5rj5jXTdKyhdnzvvedgk+wRjxVASn3LJh60S754Y3AHQvclW
-	 QU3DzGsaym3Sw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1u5SfF-000000005Ch-1biL;
-	Thu, 17 Apr 2025 19:04:37 +0200
-Date: Thu, 17 Apr 2025 19:04:37 +0200
-From: Johan Hovold <johan@kernel.org>
-To: quic_sibis@quicinc.com
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org, sudeep.holla@arm.com,
-	james.quinlan@broadcom.com, f.fainelli@gmail.com,
-	vincent.guittot@linaro.org, peng.fan@oss.nxp.com,
-	michal.simek@amd.com, dan.carpenter@linaro.org, maz@kernel.org,
-	Cristian Marussi <cristian.marussi@arm.com>
-Subject: Re: [PATCH 4/4] [NOT FOR UPSTREAM] firmware: arm_scmi: quirk: Ignore
- FC bit in attributes
-Message-ID: <aAE0peT-Fk7TZGGo@hovoldconsulting.com>
-References: <20250415142933.1746249-1-cristian.marussi@arm.com>
- <20250415142933.1746249-5-cristian.marussi@arm.com>
- <Z__WyYWhelFwt-rQ@hovoldconsulting.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DtVMqY+R7cJtfxkSUPOOzsQgoktnNmuxUEk/0MdwETSNX34gGx1BMZ/EH2cmtPC9SGgzp17rTA0kPkfufitITH2afu+5Iy3xRvfZQ0cR+4dsCAOtclUio6DKmMLIx69WSAudAyoHDp9ybn20fnlCa7qj1NkMBnhMxXl7+A1wICc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=qZO7cEJ6; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-736aa9d0f2aso1292496b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 10:06:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1744909585; x=1745514385; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4xXe/XCInddH4WV/KVFfoKsdbwZ1rzQJBQUNYtkK2yw=;
+        b=qZO7cEJ61kijisuzXtc7rEeQIPG/iMvwgr3lCSu75ur8oYjseyjrCQHWJz/tzP+V2y
+         6Ro0qfd2V2tKD+oaGnj2Mfi0dhJF2Uac0JXx/+yyetjj2rU0T46Yh2EtJ7sNxvcrSsuY
+         F6bsto+GohhwqfQoxu2bgUz/ddQcaBsrkRpz4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744909585; x=1745514385;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4xXe/XCInddH4WV/KVFfoKsdbwZ1rzQJBQUNYtkK2yw=;
+        b=Aq1ZphkqZ0vjfVrKnYuXFMLgO9aR0GhT5RnrYFpuaJFBZV6WLMw/tQNmNn8Qc9AhN7
+         s1W1sOW8Cqs3/5H+b1mZZpAWIQsulL6MhCsEhqANKWQShMFvY4tlo3QgLXgwFNWwkIp/
+         FWzfVbqdp6uzWX3Sn4fRnD9ElGg6Md+EXPdF85kOxewgJ4q76P7cxpOOi28Wxbrd5T5w
+         7jEI9QNw1l5colryBY2ZRqwbFQY9Lsi3FFAK4RZqg/Zw5xcSXV6hEhUwx98FvePYU3b7
+         ZhjTZsyu8UzF34rO85H/P0zqI3MZxF2CzKtx4LIX/ikrQivt9V1Pd8lupQlk6yNryIum
+         xXhA==
+X-Forwarded-Encrypted: i=1; AJvYcCXhRy567XrR51lGH9wOi7WQUz7SzPTNpo/WJYWyU5K1HC8RrJx+2NfbPMkIhw0s8/Z8oQRb8z820HzSl/o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6Q0cEBLYK9I72NVxULaPUNlisN/p0U1/cyEBC3kvmYU4L5nae
+	WIzji+RAnja3afiscObp25NxAXy8+9vjWnF15f6krt9CMovOuX+/Mkz5qqmWlcU=
+X-Gm-Gg: ASbGnctHIbukPMwM1J+JeABKR6Ifys9cXGNNYHWpDMG3Rmh4Mr3JvqDmcifvNhvfuH/
+	hhgaw8CU91STbooT3P6S7AAcvGQSgWjWOHKmICVLyfUObfFWw9lROY8qBrJOgr6yUKpEr2/bZ6P
+	Qb4aFU1CkFY4FfFOEA8kki4RN4xjAtP8UmAntzyzygAq1rLeM9hmMP4Ee3Mld1rc6BVE2XR4ArT
+	z59KsHeCTeNtOlZznPvUSbZtO48lNi9vSjf+ORkMPOEGRTuxV4vhlHZjz0lBaUc18ZFAYwD6P7x
+	sDKQHkU3H2eJvG1D8QcZNL58+WosIF39/iVSblYpp8AxjNIA8hsydKPPhE2dNpHJx8Z90uy6ckZ
+	90qjPwm1jA9nSlb5Hz78sI/M=
+X-Google-Smtp-Source: AGHT+IE7lJplDSFz7ARLg9Ar2ZAXnjAKyTmuyKanO9eaaZPdP2fa0Yk5XsKE81dhgmyhqhOavS+vQQ==
+X-Received: by 2002:a05:6a00:710d:b0:73c:3116:cf10 with SMTP id d2e1a72fcca58-73c3116d5f5mr4731684b3a.23.1744909585513;
+        Thu, 17 Apr 2025 10:06:25 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73dbf8bf5b9sm93861b3a.19.2025.04.17.10.06.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Apr 2025 10:06:25 -0700 (PDT)
+Date: Thu, 17 Apr 2025 10:06:22 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
+	"open list:XDP (eXpress Data Path):Keyword:(?:b|_)xdp(?:b|_)" <bpf@vger.kernel.org>
+Subject: Re: [PATCH net-next v2 4/4] selftests: drv-net: Test that NAPI ID is
+ non-zero
+Message-ID: <aAE1DkYpvb1yUp5_@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
+	"open list:XDP (eXpress Data Path):Keyword:(?:b|_)xdp(?:b|_)" <bpf@vger.kernel.org>
+References: <20250417013301.39228-1-jdamato@fastly.com>
+ <20250417013301.39228-5-jdamato@fastly.com>
+ <20250417064615.10aba96b@kernel.org>
+ <aAEvq_oLLzboJeIB@LQ3V64L9R2>
+ <20250417095310.1adbcbc8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,28 +110,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z__WyYWhelFwt-rQ@hovoldconsulting.com>
+In-Reply-To: <20250417095310.1adbcbc8@kernel.org>
 
-Hi Sibi,
-
-On Wed, Apr 16, 2025 at 06:11:54PM +0200, Johan Hovold wrote:
-
-> Interestingly, I'm no longer seeing the crash on x1e without the quirk
-> enabled with 6.14 and 6.15-rc2.
+On Thu, Apr 17, 2025 at 09:53:10AM -0700, Jakub Kicinski wrote:
+> On Thu, 17 Apr 2025 09:43:23 -0700 Joe Damato wrote:
+> > I think the main outstanding thing is Paolo's feedback which maybe
+> > (?) is due to a Python version difference? If you have any guidance
+> > on how to proceed on that, I'd appreciate it [1].
 > 
-> I still hit it immediately with 6.12 and 6.13 when accessing the cpufreq
-> sysfs attributes (with patch 1/4 applied):
-> 
-> 	[   30.663577] arm-scmi arm-scmi.0.auto: timed out in resp(caller: do_xfer+0x164/0x564)
-> 
-> So presumably something changed in 6.14 that masks the earlier issue
-> when falling back to regular messaging.
+> yes, it's a Python version, I made the same mistake in the past.
+> Older Pythons terminate an fstring too early.
+> Just switch from ' to " inside the fstring, like you would in bash
+> if you wanted to quote a quote character. The two are functionally
+> equivalent.
 
-I just realised that this was due to a local change in the 6.14 and
-6.15-rc trees I used for testing. Without it the crash still happens
-with 6.15-rc2.
+OK thanks for the details. Sorry that I am learning Python via
+netdev ;)
 
-Sorry about the noise.
+I did this so it matches the style of the other fstring a few lines
+below:
 
-Johan
+-    listen_cmd = f'{bin_remote} {cfg.addr_v['4']} {port}'
++    listen_cmd = f"{bin_remote} {cfg.addr_v['4']} {port}"
+
+Test works and passes for me on my system, so I'll send the v3
+tonight when I've hit 24 hrs.
+
+Thanks!
 
