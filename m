@@ -1,125 +1,173 @@
-Return-Path: <linux-kernel+bounces-609151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3349A91DE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:26:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1D97A91DEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:27:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D0047B224C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 13:24:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E74D188AE0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 13:27:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B92424BBE3;
-	Thu, 17 Apr 2025 13:24:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92347245011;
+	Thu, 17 Apr 2025 13:26:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="g6QoP311";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3PHqCejP"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Z5w3AX3q"
+Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD132245011;
-	Thu, 17 Apr 2025 13:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7DB2250F8;
+	Thu, 17 Apr 2025 13:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744896272; cv=none; b=UabPgLCX7SybaJIUtSbdnmQiRoEHSuwwkjeoaI4Nnw5/xOXVVK/1iQPm69IwXVc9R+0j8EeA0y9kWuB7oB7DJKOsBPpRA3ZFrvXu2MjB59p8sO+s0329E/Bn9LnKkRFXsmn665VNsvjZUSl/VpzqPeZJ0pJfdeQfoDd8qQXoQyY=
+	t=1744896376; cv=none; b=ftrGBcD5sJx1C5SsMwGnXKQTv58ka28F7hVFfFxPdkA+7HcK0rvOJrY42hf2d9vcoAZfN0/ntHWeIHWEXjWDcQcKoHuYOPltzMJfk2lbvAHvaYu+WS7OXx0nRER/6XzZY+wWPfng0osxK+coviVEjKLn2h0g8tDTfIXGfBNtYMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744896272; c=relaxed/simple;
-	bh=1O27NFYPZ19IgzsREQln6IV5+vcG07b7Uu4J0pPD9hY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WoJr8lCwySE7hCZXKbEa5xFZ/jWmJIxD2M8+nuLGUxtzCRGpblPzHSvTt1QhwXVONB1KvelUlspC2zradPUDKM+ypGnW+o7ti6SvCHU/PvY/NezeSJ+YdoRAHFXd2aC5zhJitfXGEq6PxGplI4ZwU1318SkpUL7ouR0M84IdGk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=g6QoP311; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3PHqCejP; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744896269;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7qeA/MlLg5TVbU0397qorNcHIJah7W1zDQiEVoWGxtM=;
-	b=g6QoP311AeS6Mx1cg5R8FbGlIPKlDyonmDm7HQC5di/uZqWa5NMemkurzPCsuK1ygx4gs7
-	7xZlHAyAxpa2BjqzLAiXrdSpyG7K8cnfHF1v9R4tX+m7fbDkYqERgyhbCKNiWA98eFo9dA
-	rs9W1VEKHp4Rp92w+fGDOWgyCtuSS/Ovy8OJlNacqenWg2EM+sUjV65nMkzqf9v2sn0M+1
-	EhWA9GAV+sFd90YAbwpxcJ0S7faDeIgzAuDvKUB+uEoO2yavl8/Uzl/TWfdjdc1kcbRXKK
-	szOnXS7VLoPLgUbHla/WOiAMRQgpMQdZkaqbGZfMaq+Bs/bZbeCii9jktLQpow==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744896269;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7qeA/MlLg5TVbU0397qorNcHIJah7W1zDQiEVoWGxtM=;
-	b=3PHqCejP2SQSvoddhTitFoMUXI2U5NWhD1r/og0rnq8ykl4l7StGnf+hPP9a0v4aH017Bl
-	g39UzVDsYL5H75Ag==
-Date: Thu, 17 Apr 2025 15:24:02 +0200
-Subject: [PATCH net-next v2 2/2] net/mlx5: Don't use %pK through
- tracepoints
+	s=arc-20240116; t=1744896376; c=relaxed/simple;
+	bh=Fq7IdhdrnNct8iqWEVHnFE0MFeEMqOyDb8u/JYxncXo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ma39oz2YrOUd4qzVMdiR5HB3U43PB/60AQN2FqPK3Qe/ovJGaMb0a5vjlH68oB72UzqbfpD9qABU2Iyy1amuxKe928MHmxVYTPtU9FFTTub2hwLRDHcg0eSPMauHUd2xUuPhZE3KDYdmtzo6ZDvKo8po8s+9/7sOFEQs35MxjpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Z5w3AX3q; arc=none smtp.client-ip=18.132.163.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1744896350;
+	bh=XxR2ZHiLVR1ar1sC2oj9zb4tbB77P/btLN2y/3RrHb0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Z5w3AX3qNbWE9BHreocOXmzJj3A7K3JI4mwq6LyftTa+T+HZXoxNRGjNrqd/J45Iv
+	 61B4q5tvy7ycXFQgUgyvpwarl2k2qiDRU/G1FyxCeYMQLdT4W5J3BdAWjGXa+8b01j
+	 YpFjrB4eexSvbztrfL+WICpHSLBUW0xSKG7kzgAI=
+X-QQ-mid: zesmtpip2t1744896298t85e739b0
+X-QQ-Originating-IP: LtLexsaQxwKAHGWspoZ7PEzBQe1WlPqyohCnjpVi16s=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 17 Apr 2025 21:24:55 +0800 (CST)
+X-QQ-SSF: 0002000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 16509579133343517929
+EX-QQ-RecipientCnt: 20
+From: WangYuli <wangyuli@uniontech.com>
+To: corbet@lwn.net,
+	tsbogend@alpha.franken.de
+Cc: akpm@linux-foundation.org,
+	jeffxu@chromium.org,
+	lorenzo.stoakes@oracle.com,
+	kees@kernel.org,
+	Liam.Howlett@oracle.com,
+	wangyuli@uniontech.com,
+	hca@linux.ibm.com,
+	takumaw1990@gmail.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	thomas.weissschuh@linutronix.de,
+	tglx@linutronix.de,
+	namcao@linutronix.de,
+	zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	guanwentao@uniontech.com,
+	Erpeng Xu <xuerpeng@uniontech.com>
+Subject: [PATCH] mseal sysmap: enable mips with LOONGSON64
+Date: Thu, 17 Apr 2025 21:24:10 +0800
+Message-ID: <7EB087B72C4FBDD3+20250417132410.404043-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250417-restricted-pointers-net-v2-2-94cf7ef8e6ae@linutronix.de>
-References: <20250417-restricted-pointers-net-v2-0-94cf7ef8e6ae@linutronix.de>
-In-Reply-To: <20250417-restricted-pointers-net-v2-0-94cf7ef8e6ae@linutronix.de>
-To: Tony Nguyen <anthony.l.nguyen@intel.com>, 
- Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, 
- Tariq Toukan <tariqt@nvidia.com>
-Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
- Aleksandr Loktionov <aleksandr.loktionov@intel.com>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744896267; l=1753;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=1O27NFYPZ19IgzsREQln6IV5+vcG07b7Uu4J0pPD9hY=;
- b=WC7ZK4Hrm/09jUGuveXUDEo+yg1Ik/GZ/ozPjzk7bqcG8rwjI0WtWwjvGegAgrwKQQVmE6mxP
- tIYIHp8vJCrDD7rFXaoatFMXxgBKxvKuuCUaIpm9Kp86BgyBvjNtJS/
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MZqCzNCKZzA8shl6Scu7inVgMrHsqaT5zreO+30jgecaDaySn7iNzCTl
+	s6tHaTudRJU2DgB55bZaB79xuD5LVY0D9b4InOpMuKDwCGJIWkCKx48/9G5sCw4bM3Cp/zi
+	2CGjq0+tSj2dfek2Vbq/s2nkhOIBXN7LTZQK+dkneFAQwtHTr0RkGwAtvfJj4zDbT61XMF7
+	uUG2ly54lXpFd5aedYipi58xRylJdrTIxv7GNNGW76FFplKQx8jhzwSc1Oc1lHuwzsJ5UJE
+	DK2o2CZAcBKw+RWGjlvczWFiTX4XlA1ZoJZJ01nrJGnE5Q0Ra4yhA/eYBeyAfIcZeXwPmcg
+	07o3tnA8ffsLEvIybQAVzSf+T05cFpkZCN4iaPrZ5AwN1kalH3JHjsm/ZjUd+CbH6yIQeds
+	03eQnApVvtQH6XkF9sRpBfgZyDS8oaHJzpaF23w2YfcJNC2g+TlEsiaT62RpgQ1dBZO/F1c
+	PAQpDn48DeZZVWOc+ll++Uy26QetjTi1u5YeMyVQBX5fJLGeV32BEaD7k6x/Y8wHYNmSiHI
+	SrX5KzLZZpTjiIULPh2Ru7k65SEQTTmZmp4SlCzvFuH/06YBQRWxGx+MbyOx5V4WAAE9TGn
+	bXBLrYHQjrTz2kGxjMXF2pyJBJQwo0yMBy5JXRyufF0pLjoY6jkl72xDRi+Kv1O51QGJTx4
+	ylIoO4kvCGsTv65TSAbwblAVUpNTw34pWWOeTfaQz7nw9SvvfazADa1uO4bPScVM3KZy1wn
+	Erd2Ku8TwjcOxeAUXzpuN+ZFIogunOuC/9ruF65fdUbuS2UJc3xTVbaf2cd3PKAvFTyEH+A
+	rTt4n8Z5Bt+u0Y4FX4FJxBQBaxorChOep7YKcpAHVM0p8D3cwSVwzZ9Twnk/KLbrZBUUX2Z
+	vQ0BlaQ0jXXAv7cL+jkQ9WAKfScYRTc1yyW6cMJHNYY3w798E9PQ/Gt+RFV1/YUldZVhy2a
+	DC2isu3IakcsBQaVahlMuZHXIinn/9Tx0acd1tTJvcKtQPMEiORg7Tiff7d9oj+nCeecsLL
+	9wjk+DBzX/jMWApXUxtd4r0V8kFIt2eQ9BkxFSvMq1e0xYqv1sTdiAAzoMuP3Xn3S45d8Fz
+	YQUEwBKtk/L
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-RECHKSPAM: 0
 
-In the past %pK was preferable to %p as it would not leak raw pointer
-values into the kernel log.
-Since commit ad67b74d2469 ("printk: hash addresses printed with %p")
-the regular %p has been improved to avoid this issue.
-Furthermore, restricted pointers ("%pK") were never meant to be used
-through tracepoints. They can still unintentionally leak raw pointers or
-acquire sleeping looks in atomic contexts.
+Provide support for CONFIG_MSEAL_SYSTEM_MAPPINGS on mips with
+CPU_LOONGSON64, covering the vdso.
 
-Switch to the regular pointer formatting which is safer and
-easier to reason about.
-There are still a few users of %pK left, but these use it through seq_file,
-for which its usage is safe.
+NOTE:
+  There is significant diversity among devices within the MIPS
+architecture, which extends to their kernel code implementations.
+  My testing capabilities are limited to Loongson 3A4000/3B4000
+CPUs.
+  Consequently, I have not enabled mseal sysmap support for the
+entirety of mips64, as I lack the necessary devices for testing.
 
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
-Reviewed-by: Tariq Toukan <tariqt@nvidia.com>
+Tested-by: Erpeng Xu <xuerpeng@uniontech.com>
+Tested-by: WangYuli <wangyuli@uniontech.com>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/sf/dev/diag/dev_tracepoint.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+NOTE:
+  1. As I am unaware whether other 64-bit MIPS devices function
+properly, I have not yet modified the MIPS status in
+mseal_sys_mappings/arch-support.txt.
+  2. From my perspective, it appears that this architecture also
+does not rely on remapping the VDSO, VVAR, or any other special
+mapping. Nevertheless, I believe it would be best to get further
+confirmation from more expert individuals such as Lorenzo Stoakes
+and Thomas Bogendoerfer.
+---
+ Documentation/userspace-api/mseal.rst | 2 +-
+ arch/mips/Kconfig                     | 1 +
+ arch/mips/kernel/vdso.c               | 3 ++-
+ 3 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/sf/dev/diag/dev_tracepoint.h b/drivers/net/ethernet/mellanox/mlx5/core/sf/dev/diag/dev_tracepoint.h
-index 0537de86f9817dc80bd897688c539135b1ad37ac..9b0f44253f332aa602a84a1f6d7532a500dd4f55 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/sf/dev/diag/dev_tracepoint.h
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/sf/dev/diag/dev_tracepoint.h
-@@ -28,7 +28,7 @@ DECLARE_EVENT_CLASS(mlx5_sf_dev_template,
- 				   __entry->hw_fn_id = sfdev->fn_id;
- 				   __entry->sfnum = sfdev->sfnum;
- 		    ),
--		    TP_printk("(%s) sfdev=%pK aux_id=%d hw_id=0x%x sfnum=%u\n",
-+		    TP_printk("(%s) sfdev=%p aux_id=%d hw_id=0x%x sfnum=%u\n",
- 			      __get_str(devname), __entry->sfdev,
- 			      __entry->aux_id, __entry->hw_fn_id,
- 			      __entry->sfnum)
-
+diff --git a/Documentation/userspace-api/mseal.rst b/Documentation/userspace-api/mseal.rst
+index ea9b11a0bd89..968a6db8afb7 100644
+--- a/Documentation/userspace-api/mseal.rst
++++ b/Documentation/userspace-api/mseal.rst
+@@ -144,7 +144,7 @@ Use cases
+   architecture.
+ 
+   The following architectures currently support this feature: x86-64, arm64,
+-  loongarch and s390.
++  loongarch, mips64el (loongson3) and s390.
+ 
+   WARNING: This feature breaks programs which rely on relocating
+   or unmapping system mappings. Known broken software at the time
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index fc0772c1bad4..055a185deb07 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -25,6 +25,7 @@ config MIPS
+ 	select ARCH_USE_QUEUED_RWLOCKS
+ 	select ARCH_USE_QUEUED_SPINLOCKS
+ 	select ARCH_SUPPORTS_HUGETLBFS if CPU_SUPPORTS_HUGEPAGES
++	select ARCH_SUPPORTS_MSEAL_SYSTEM_MAPPINGS if CPU_LOONGSON64
+ 	select ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT if MMU
+ 	select ARCH_WANT_IPC_PARSE_VERSION
+ 	select ARCH_WANT_LD_ORPHAN_WARN
+diff --git a/arch/mips/kernel/vdso.c b/arch/mips/kernel/vdso.c
+index de096777172f..6221f2dcedb1 100644
+--- a/arch/mips/kernel/vdso.c
++++ b/arch/mips/kernel/vdso.c
+@@ -167,7 +167,8 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
+ 	/* Map VDSO image. */
+ 	vma = _install_special_mapping(mm, vdso_addr, image->size,
+ 				       VM_READ | VM_EXEC |
+-				       VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC,
++				       VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC |
++				       VM_SEALED_SYSMAP,
+ 				       &image->mapping);
+ 	if (IS_ERR(vma)) {
+ 		ret = PTR_ERR(vma);
 -- 
 2.49.0
 
