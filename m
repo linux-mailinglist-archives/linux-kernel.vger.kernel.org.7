@@ -1,136 +1,167 @@
-Return-Path: <linux-kernel+bounces-609600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7947AA92447
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 19:45:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFFBCA924EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 19:59:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D66528A1F25
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 17:45:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EADD1B61423
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 17:59:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C425D2566D3;
-	Thu, 17 Apr 2025 17:45:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C27CE25F7AF;
+	Thu, 17 Apr 2025 17:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rg9yC7Ql"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="X2CJ1eGD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251CE254B0A;
-	Thu, 17 Apr 2025 17:45:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2450C2566CE;
+	Thu, 17 Apr 2025 17:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744911917; cv=none; b=jh6tuXRKv+I7xzF2Rz5j8l/2Go3T5and40kz0873xzuXU2kGmEegA0jHrKkJJ+HQ7vUqu7rhusVtkfmyKHulxZdk0g2t0mRWA4McLbWHxWjR6GaEBatJcrjuPVacL7Z50UlgxAFNj4q06h64P1q3QOUfYcAJ9QsICTeIQEub9eU=
+	t=1744912582; cv=none; b=bHuZg4FOOSFiHsBMpR0lU/Po5Ul19qptVQ0Rq/KbxPPS4rNWB3r/k6MtNbbc68tri4e6zgj4GljsH+o+AYzXAHm5HgEdvZIyh6R2odmqH0bUpR7vIfCt5bGc3H4ejfSmtz6+jUDhb+x+qROPuRWela+5mcsG71TKdplbD0rHgXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744911917; c=relaxed/simple;
-	bh=6HqrhZNro99W4hlfSawIZ3bq362Egs1uCP6Vd2PPZEo=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OkbEq+zcM/xf1fh8GVq2ck5w8tNC/4wmvXtyecxTZwo8xP3SoaIRhCITRGhlfqRsd3yrTctczb/TSZp+cnOVXgHix11HYE8GvK4ChylLAkXUjPBPz/jsTF3tJFocvqG7UZDw+ZTuN80s5zS5mZ4YJF7EbnAKfZ4ZuN/ZkmrAlAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rg9yC7Ql; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87272C4CEE4;
-	Thu, 17 Apr 2025 17:45:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744911916;
-	bh=6HqrhZNro99W4hlfSawIZ3bq362Egs1uCP6Vd2PPZEo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Rg9yC7QlGIMHPKQ7WEUGcSXGLVG9wxf2u/ZQSNnkgiCyTxtBSESRPGDe+sRSX9zqE
-	 Yr6zKteWNfT21eUPrDzH3townbAbp+JNZoqjO8E9Btki0TkxaaNjeqnOFomOXxGsY9
-	 npxcqlAvOCfIOhiGpE7+KHL4yZ17Ea7yhnR7iLd/LuMwKNgaMfatKUoXU++iSE+yc4
-	 bCUeuLNT8zmRwNmWOd81ph5gMXXeKiDDW6+RZvyzte4ueYT3Dt2CGTpkNowMW9fKmZ
-	 kSD+ATjwqop+j6mDFplMVngOWwDoWMPy9UNGDtf1OWVrt4ZVExz07i9a69OinfacJU
-	 FCAJM3b+Ersgw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1u5TIY-006VUB-5A;
-	Thu, 17 Apr 2025 18:45:14 +0100
-Date: Thu, 17 Apr 2025 18:45:12 +0100
-Message-ID: <86mscek7h3.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Luo Jie <quic_luoj@quicinc.com>,
-	Yury Norov <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Julia Lawall <Julia.Lawall@inria.fr>,
-	Nicolas Palix <nicolas.palix@imag.fr>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
+	s=arc-20240116; t=1744912582; c=relaxed/simple;
+	bh=DFUBl5Ml1aGbqFNUB0aEGrMyI66kUjniylf329G+vOA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oTfiVVq/bC9A7xW/6gUF5c+Pp1Ht4+N49W3bGiTbovz2f2pZ9Ccc/WgiaGAFhSti3tpxE8PCyIGFAHTtqBXlx/kUmOVW7uY5b79xJQY+pVj+HHtDNF+Kte8EIle4SLZbmqI+zIyJeuJUwqclYqrmw0QhFMA05hBDg6SK9lhQM+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=X2CJ1eGD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A4F4C4CEE4;
+	Thu, 17 Apr 2025 17:56:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1744912582;
+	bh=DFUBl5Ml1aGbqFNUB0aEGrMyI66kUjniylf329G+vOA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=X2CJ1eGDY1dQOSaPQiynKfZqu0TacYwpxslPlnWxHi7GvzXGHJjIC9M0L4r05UCmH
+	 nGbU9hJxKEBDm/M3KYUUyc0PY/LrjZg44H/nhJQeDnCx75UeKq66Ox7U0f4quaYOWh
+	 nR5D2IW1lMSboohxwDkojWdnZkkG/YjL0qNEYfIw=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	Max Grobecker <max@grobecker.info>,
+	Ingo Molnar <mingo@kernel.org>,
 	linux-kernel@vger.kernel.org,
-	cocci@inria.fr,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	quic_kkumarcs@quicinc.com,
-	quic_linchen@quicinc.com,
-	quic_leiwei@quicinc.com,
-	quic_suruchia@quicinc.com,
-	quic_pavir@quicinc.com
-Subject: Re: [PATCH v3 0/6] Add FIELD_MODIFY() helper
-In-Reply-To: <0c97c659-bd28-45e0-8537-d9be2637cb22@lunn.ch>
-References: <20250417-field_modify-v3-0-6f7992aafcb7@quicinc.com>
-	<86sem7jb5t.wl-maz@kernel.org>
-	<0c97c659-bd28-45e0-8537-d9be2637cb22@lunn.ch>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	Borislav Petkov <bp@alien8.de>,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 6.14 057/449] x86/cpu: Dont clear X86_FEATURE_LAHF_LM flag in init_amd_k8() on AMD when running in a virtual machine
+Date: Thu, 17 Apr 2025 19:45:45 +0200
+Message-ID: <20250417175120.288922085@linuxfoundation.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250417175117.964400335@linuxfoundation.org>
+References: <20250417175117.964400335@linuxfoundation.org>
+User-Agent: quilt/0.68
+X-stable: review
+X-Patchwork-Hint: ignore
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: andrew@lunn.ch, quic_luoj@quicinc.com, yury.norov@gmail.com, linux@rasmusvillemoes.dk, Julia.Lawall@inria.fr, nicolas.palix@imag.fr, catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, linux-kernel@vger.kernel.org, cocci@inria.fr, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com, quic_leiwei@quicinc.com, quic_suruchia@quicinc.com, quic_pavir@quicinc.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, 17 Apr 2025 18:22:29 +0100,
-Andrew Lunn <andrew@lunn.ch> wrote:
-> 
-> On Thu, Apr 17, 2025 at 12:10:54PM +0100, Marc Zyngier wrote:
-> > On Thu, 17 Apr 2025 11:47:07 +0100,
-> > Luo Jie <quic_luoj@quicinc.com> wrote:
-> > > 
-> > > Add the helper FIELD_MODIFY() to the FIELD_XXX family of bitfield
-> > > macros. It is functionally similar as xxx_replace_bits(), but adds
-> > > the compile time checking to catch incorrect parameter type errors.
-> > > 
-> > > This series also converts the four instances of opencoded FIELD_MODIFY()
-> > > that are found in the core kernel files, to instead use the new
-> > > FIELD_MODIFY() macro. This is achieved with Coccinelle, by adding
-> > > the script field_modify.cocci.
-> > > 
-> > > The changes are validated on IPQ9574 SoC which uses ARM64 architecture.
-> > 
-> > We already have the *_replace_bits() functions (see
-> > include/linux/bitfield.h).
-> > 
-> > Why do we need extra helpers?
-> 
-> If you look at bitfield.h, the *_replace_bits() seem to be
-> undocumented internal macro magic, not something you are expected to
-> use. What you are expected to use in that file is however well
-> documented. The macro magic also means that cross referencing tools
-> don't find them.
+6.14-stable review patch.  If anyone has any objections, please let me know.
 
-$ git grep _replace_bits|  wc -l
-1514
+------------------
 
-I think a bunch of people have found them, tooling notwithstanding.
+From: Max Grobecker <max@grobecker.info>
 
-As for the documentation, the commit message in 00b0c9b82663ac would
-be advantageously promoted to full-fledged kernel-doc.
+[ Upstream commit a4248ee16f411ac1ea7dfab228a6659b111e3d65 ]
 
-Thanks,
+When running in a virtual machine, we might see the original hardware CPU
+vendor string (i.e. "AuthenticAMD"), but a model and family ID set by the
+hypervisor. In case we run on AMD hardware and the hypervisor sets a model
+ID < 0x14, the LAHF cpu feature is eliminated from the the list of CPU
+capabilities present to circumvent a bug with some BIOSes in conjunction with
+AMD K8 processors.
 
-	M.
+Parsing the flags list from /proc/cpuinfo seems to be happening mostly in
+bash scripts and prebuilt Docker containers, as it does not need to have
+additionals tools present – even though more reliable ways like using "kcpuid",
+which calls the CPUID instruction instead of parsing a list, should be preferred.
+Scripts, that use /proc/cpuinfo to determine if the current CPU is
+"compliant" with defined microarchitecture levels like x86-64-v2 will falsely
+claim the CPU is incapable of modern CPU instructions when "lahf_lm" is missing
+in that flags list.
 
+This can prevent some docker containers from starting or build scripts to create
+unoptimized binaries.
+
+Admittably, this is more a small inconvenience than a severe bug in the kernel
+and the shoddy scripts that rely on parsing /proc/cpuinfo
+should be fixed instead.
+
+This patch adds an additional check to see if we're running inside a
+virtual machine (X86_FEATURE_HYPERVISOR is present), which, to my
+understanding, can't be present on a real K8 processor as it was introduced
+only with the later/other Athlon64 models.
+
+Example output with the "lahf_lm" flag missing in the flags list
+(should be shown between "hypervisor" and "abm"):
+
+    $ cat /proc/cpuinfo
+    processor       : 0
+    vendor_id       : AuthenticAMD
+    cpu family      : 15
+    model           : 6
+    model name      : Common KVM processor
+    stepping        : 1
+    microcode       : 0x1000065
+    cpu MHz         : 2599.998
+    cache size      : 512 KB
+    physical id     : 0
+    siblings        : 1
+    core id         : 0
+    cpu cores       : 1
+    apicid          : 0
+    initial apicid  : 0
+    fpu             : yes
+    fpu_exception   : yes
+    cpuid level     : 13
+    wp              : yes
+    flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca
+                      cmov pat pse36 clflush mmx fxsr sse sse2 syscall nx rdtscp
+                      lm rep_good nopl cpuid extd_apicid tsc_known_freq pni
+                      pclmulqdq ssse3 fma cx16 sse4_1 sse4_2 x2apic movbe popcnt
+                      tsc_deadline_timer aes xsave avx f16c hypervisor abm
+                      3dnowprefetch vmmcall bmi1 avx2 bmi2 xsaveopt
+
+... while kcpuid shows the feature to be present in the CPU:
+
+    # kcpuid -d | grep lahf
+         lahf_lm             - LAHF/SAHF available in 64-bit mode
+
+[ mingo: Updated the comment a bit, incorporated Boris's review feedback. ]
+
+Signed-off-by: Max Grobecker <max@grobecker.info>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Cc: Borislav Petkov <bp@alien8.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/x86/kernel/cpu/amd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index ce71f49654ee3..4c9b20d028eb4 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -632,7 +632,7 @@ static void init_amd_k8(struct cpuinfo_x86 *c)
+ 	 * (model = 0x14) and later actually support it.
+ 	 * (AMD Erratum #110, docId: 25759).
+ 	 */
+-	if (c->x86_model < 0x14 && cpu_has(c, X86_FEATURE_LAHF_LM)) {
++	if (c->x86_model < 0x14 && cpu_has(c, X86_FEATURE_LAHF_LM) && !cpu_has(c, X86_FEATURE_HYPERVISOR)) {
+ 		clear_cpu_cap(c, X86_FEATURE_LAHF_LM);
+ 		if (!rdmsrl_amd_safe(0xc001100d, &value)) {
+ 			value &= ~BIT_64(32);
 -- 
-Without deviation from the norm, progress is not possible.
+2.39.5
+
+
+
 
