@@ -1,135 +1,205 @@
-Return-Path: <linux-kernel+bounces-608258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D07B6A910EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 02:49:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96187A910FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 03:02:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D33519E093A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 00:49:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 416CF7A4EDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 01:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB3C119AA63;
-	Thu, 17 Apr 2025 00:47:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044041922FB;
+	Thu, 17 Apr 2025 01:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Ls1F2Ggw"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="QZR3WKAq"
+Received: from out162-62-57-64.mail.qq.com (out162-62-57-64.mail.qq.com [162.62.57.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF1519066D
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 00:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44CE785626;
+	Thu, 17 Apr 2025 01:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744850820; cv=none; b=Hla6MSgkFmFhH0gMoEpd1K5QOuBPoBJfQ4TMibIFMCAPeeebsW+Rv1Wj9Y4EGkbeIiceQJL42upvPyLd9NTwzgU+o2f5oq1H7BgYJNTdAjkkAy+TAYXncaGVGTUgr37Q2UaoCkMiCXHEzdTDk4jq79GR7zxO8rH6Y7NgeH/9uHU=
+	t=1744851710; cv=none; b=fkBGKkiHMrzT8X0H1Vb+AJUUFeVpHIEHVuIb2zIN8MRmHrOfekQ+sRITPl3tbMgbGa5yHZAbgZYSQ/ppVI6gegvHwAHlKVXZuS0A4uk7U9iBiSF5U3Dofk+QdQYPuOEDGIk6SCX35rn1W0To+eeYgoIlmuGZMmirk6FP4T/WZFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744850820; c=relaxed/simple;
-	bh=XUmtoRl/zTq3N2IStVuDPBJnGirD2P1EZxJPZLsxgHw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nBfy4OuDOb1FrcOdqoy00JkBuPcL+R25D22uHCgZMRHoxC3BrfT72GdkDKO280BoPKk+Ct7Xx3/6Ho1etKuhAb8kZhp9DUjVlTAeQuN3AUoJ0VyzUt9tQ/5ujn/PTjCUSBZlwsLq+xxW0vLukG/EM6GhH7fwSAbwjSOoA8M6FI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Ls1F2Ggw; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43edecbfb94so2293615e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 17:46:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1744850816; x=1745455616; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PdUpoo83PnisgTtpWjy4DIw3N3dpKRphaHPr3f4GvEw=;
-        b=Ls1F2GgwJpyKERE0KoTUFpHHuPo2WVOuAWw7xXDiUzDIRkRH7QE5ZWw24RDWDKxJcn
-         2iJ8W6eJSzLrqJo9PyzalA7JSatVJMR3NJBExXpt8SSeacUnQgRkRVCn1MFqtQNccYxL
-         Tqp/pfbSiw7mv47mWX9ePfKKDIDeAgOs29AE9jvrN6YGGOgWNhpn0mFVom7Zkyp+E26U
-         jw+WGWHLl9rlbDU1QNxWvPqtTDyCuguqsvbO/wATe97Lym1bpWEmC7WzXAELYWp5ZCJy
-         Y+TKTBkk8y5MwJqyoYLReQGCpSx0LX8YigYD0ZAhCWjYO1G2g8Sxygv9jSR2vn9lwLpU
-         2ncQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744850816; x=1745455616;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PdUpoo83PnisgTtpWjy4DIw3N3dpKRphaHPr3f4GvEw=;
-        b=lN+v9RdyKvjuUbDDeN+MCuBh4UCzVh2phDDNXTp9HX8IeAL+BSgTXPkRoFXcSja0jL
-         YC8hkWBNeTb/pywgsxlmTyPooEaI2SwcDJPfRzCVhebOq4QwkjIfu0CoTURsv0k8IhpC
-         YkvubRRIOWPC7JC7yXN4UuTe8Ek+/2X+m2S1bdM5WdOdPHpBCVwh+1P1bajfQu49pl+Q
-         t+TWJr5DpLTNvIecP05J1feFscx2GBIJdaOM3oUq4qclBGAOKUEcsGs55H2RAPbeZ/S0
-         t8Qhm4f/YHFBCcyiBSJwgvuaUQ/UjypUlHkwyIdBJTLRwb+gWjhl2RRh/rWAo6ahFuvV
-         5oTw==
-X-Forwarded-Encrypted: i=1; AJvYcCU3CaNsRu7hSXBv99CoigAVtqwPUfIp38JgRNIP/jXYdMxCBptUIqgD6T00QxNwnzySdVzJI16xIIWufEY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGWXsmBl2NV0YMwSbKzYCNzCHZSuQtQ2VAd69F9FBCscc6wt2u
-	nt0AlxOhebghIx7EG8wTwJ9YSjULnojKVgswXp29dCmj5K1ODshcgKpX7B+btM5K2DxSxTEJJe2
-	tcv9nZbyTIZn/X7InaUHKExRsbkVsTbDG7Rw3Xg==
-X-Gm-Gg: ASbGncsTk4JpntYXjnXiUcxuGUkfXd5N1/ZKtw3W0CwaGLnEqe6GD7Fu4xDjw7VsUiV
-	Ll8ZD/azctRsppiEkfHZOwhFTccgldshE7YGTQCk2VvsEi93zD/1jdX87jw+irjW5PFobMMd8vc
-	J482HkGJFvMJ1W5th80+c8heXoDWU7Ngaihg==
-X-Google-Smtp-Source: AGHT+IFXOHl/7JXPbobdQ7qD8MWdBoGYOnaUH6HNs45B4ZXG9TK6FBTyG0XoTm8t8gs8sdEV4TzCUWKs5HK+V85zhgs=
-X-Received: by 2002:a05:600c:1d9e:b0:43d:fa59:bced with SMTP id
- 5b1f17b1804b1-4405d6cc4e5mr40574635e9.32.1744850816515; Wed, 16 Apr 2025
- 17:46:56 -0700 (PDT)
+	s=arc-20240116; t=1744851710; c=relaxed/simple;
+	bh=Z33tGbXNa/Z+ukflV9OKQZbiaePdJSU6ARsBUB0pew4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NapkQFLLHNuiDO/dXO5zOGArFWsf9NIE1PlQAqhC7AomnjKZK7kcYEwKwdkJwlXSo+jzpOkffQueUqThftOsf6PaftvpJls3v470wAvcmmej5RFZkIqAsjv6vn2YjDhzdD8Pk3NcbELAfQjbTkL9e+/i5dEs61vOPElH0idiAxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=QZR3WKAq; arc=none smtp.client-ip=162.62.57.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1744851394; bh=YD9f5yEVr2z0iCTLFWkQnJV5hp8mGuqx+T5Wt6TbArM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=QZR3WKAqcPbFhpl67xZTj2oDRsNGe/G5DKVo6XQldJ1vOGg/ZaWePV8vt/q/PSgpN
+	 /l38BcreoXlW4lzW/UmepVzRaueDjQ/QXGw2RVE1DvFdxJ5PgfJolsms9G76vbrpy6
+	 Ym3o3YX7nfSyJDeQvP6s96nkeqcsURWCsAtAMbL4=
+Received: from [IPV6:240e:469:644:c677:5cc9:79d:eef7:ec59] ([240e:469:644:c677:5cc9:79d:eef7:ec59])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id E20048E1; Thu, 17 Apr 2025 08:56:32 +0800
+X-QQ-mid: xmsmtpt1744851392tnxqa3qki
+Message-ID: <tencent_BBA191F51C3CDBF54EB8DFE592ECB1232107@qq.com>
+X-QQ-XMAILINFO: Mm0jDPjQYDdlyaklPYmsac73KLMPAUvWabU3YECQILwOKjt9sBhbRqduKFQI57
+	 O8Taee4gQYWoyeesyBSGTVedxqB85okCYo8cBXYTPyb4gWgTMH9YEERLbRgYzWW5ppWY4j0N0zq1
+	 WFuc048D8JJFpFLBNprv2kvvAqeG7dWniE+J1pXhKtXqpKt95UJz/7yYRl8XNtbaC1B0kYW0Hykx
+	 hT57fhgg2qZJFvRjo31FSzsZ+vJEjvN2SSDsrYG4TFItKk+eY8nUPclIZ6hCdSppK+hQOFWbTvYL
+	 5uTgpdCUFVKU0wEUtz9QfXFqXly9r9DHXuxk1sFBnwLUIC6arGN66vEs0LC7aMJAB+bGDQVF3DRG
+	 i1SaomXUXrVvl5g3nMKwPXTC1YxdzAZywQzjfuhE9KoIoRG2wLCa9lYWsvqvgd+gm/vwskMxKjZX
+	 KyPdun1W5+Q7FXDFd3MqR6tRqn32AqyOnpVNig+QcOnK3GBs3n9EXcNoUUUqNfB88YfKdT5uU6k9
+	 w4m3OJUyifDLJ7nI9n6p++hTHHC+IA3aNML3gdUPTAiiwyZ+Wpx24Xz9Tt+KAAWSJSSRQmC9gy+D
+	 YZLKtHn6FGXnrqfAgWJYjdPN0nrjGlXEBT8xWN/9cCw/kylxEzgIL2JhJcdGtmfsFhZu6WIosM2D
+	 cWgYxQ4IxiUBZw2hMZBphSHpt/cD40BezxuPAtipE631PuBMbVblmHljYFUVXPMi7h8sT5FDUIEn
+	 HnMKUVzV1EgW90XgJUKA3QxGoZbPySdszFT+kdl9aUoAR+wP28rm6KJ7PNhjsjS7E+arNx4sWhJA
+	 WIXvknqItmLvDAHHMovrB3/orpzKztY+NQd9+plvmNVzuWZA+bTT30PjujZLE5kn8IHQwvckt2lV
+	 nVyl5fDrJjU6U4Bx5IBmQjoAiRVRsR2CA1oZ24ynbMqieCF+z5Fx5gCMMnI6P1TsAdmyEEBitHHy
+	 PeiFeb3tjWbOTbrJ22Y6g/sw0kgVFmGJlJvZONe4QQUcktMKVwzSQKKc5BkG3s
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+X-OQ-MSGID: <d4dcc44e-90c8-41af-a1ec-7239cdd8bac9@qq.com>
+Date: Thu, 17 Apr 2025 08:56:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250324-tp4129-v1-0-95a747b4c33b@kernel.org> <20250324-tp4129-v1-3-95a747b4c33b@kernel.org>
- <20250410085137.GE1868505-mkhalfella@purestorage.com> <738a41ca-3e4a-48df-9424-2950e6efc082@grimberg.me>
- <4cd2cbb4-95ff-4f3b-b33b-9c066147d12b@flourine.local> <4c334216-74d7-4a30-add1-67b6e023d8d2@grimberg.me>
- <CAPpK+O0tmewK7pH458TOxjtimjO9on=4YDRFbS=FPTgM+KFTzQ@mail.gmail.com>
- <8ac6cc96-8877-4ddc-b57a-2a096f446a4c@grimberg.me> <CAPpK+O2SBm6-zqbiDbUB0yubVTvTrXWn1R+GAPne_+LGvVXp6g@mail.gmail.com>
- <945f4ee5-3d9b-4c4c-8d45-ec493a9dcb4c@grimberg.me>
-In-Reply-To: <945f4ee5-3d9b-4c4c-8d45-ec493a9dcb4c@grimberg.me>
-From: Randy Jennings <randyj@purestorage.com>
-Date: Wed, 16 Apr 2025 17:47:07 -0700
-X-Gm-Features: ATxdqUH1xwKOsh542pxYrVRq4ZpcISOHDqSJ1ufyC0_cIpqfJJyYlNd3i_cUs1Q
-Message-ID: <CAPpK+O2a8uWa7M-7Kk=2xdhjDjWtBisz7o0yGPpah=iWrQTnNw@mail.gmail.com>
-Subject: Re: [PATCH RFC 3/3] nvme: delay failover by command quiesce timeout
-To: Sagi Grimberg <sagi@grimberg.me>
-Cc: Daniel Wagner <dwagner@suse.de>, Mohamed Khalfella <mkhalfella@purestorage.com>, 
-	Daniel Wagner <wagi@kernel.org>, Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>, 
-	Hannes Reinecke <hare@suse.de>, John Meneghini <jmeneghi@redhat.com>, linux-nvme@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] PM: EM: Fix potential division-by-zero error in
+ em_compute_costs()
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: lukasz.luba@arm.com, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Yaxiong Tian <tianyaxiong@kylinos.cn>
+References: <tencent_EE27C7D1D6BDB3EE57A2C467CC59A866C405@qq.com>
+ <tencent_6D2374392DB66C9D23BF6E2546638A42EC08@qq.com>
+ <CAJZ5v0iE_iw+pSBppEWnJw=2=DFNa-J2VPDorTNF=Mve+0PNCg@mail.gmail.com>
+ <tencent_8E3A87C6D6A193F757BA846F0C41887CC405@qq.com>
+ <CAJZ5v0iq4bw3WAk1yQRP=B3zk-rRYwibKNRjSfu=PGqTt6RNYw@mail.gmail.com>
+Content-Language: en-US
+From: Yaxiong Tian <iambestgod@qq.com>
+In-Reply-To: <CAJZ5v0iq4bw3WAk1yQRP=B3zk-rRYwibKNRjSfu=PGqTt6RNYw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 16, 2025 at 3:15=E2=80=AFPM Sagi Grimberg <sagi@grimberg.me> wr=
-ote:
->
->
-> >> CQT comes from the controller, and if it is high, it effectively means
-> >> that the
-> >> controller cannot handle faster failover reliably. So I think we shoul=
-d
-> >> leave it
-> >> as is. It is the vendor problem.
-> > Okay, that is one way to approach it.  However, because of the hung
-> > task issue, we would be allowing the vendor to panic the initiator
-> > with a hung task.  Until CCR, and without implementing other checks
-> > (for events which might not happen), this hung task would happen on
-> > every messy disconnect with that vendor/array.
->
-> Its kind of pick your poison situation I guess.
-> We can log an error for controllers that expose overly long CQT...
-That sounds like a good idea.
 
-> Not sure we'll see a hung task here tho, its not like there is a kthread
-> blocking
-> on this, its a delayed work so I think the watchdog won't complain about
-> it...
-That is probably true with this patch set.
 
-I believe controller reset (for instance, requested through sysfs) is
-not supposed to finish until all the requests are no longer being
-processed (at least if it should have the semantics of a controller
-level reset from the spec).  This patch set may not tie the two
-together on a disconnected controller, but I think it should.  Also,
-if reconnection in error recovery is tied to this delay, as it is in
-the patches Mohamed posted (https://lkml.org/lkml/2025/3/24/1136),
-there were other things waiting on error recovery finishing.  Delaying
-reconnection in error recovery until the requests are dead makes a lot
-of sense to me.
+在 2025/4/16 19:58, Rafael J. Wysocki 写道:
+> On Wed, Apr 16, 2025 at 4:57 AM Yaxiong Tian <iambestgod@qq.com> wrote:
+>>
+>> 在 2025/4/16 01:17, Rafael J. Wysocki 写道:
+>>> On Mon, Apr 14, 2025 at 11:09 AM Yaxiong Tian <iambestgod@qq.com> wrote:
+>>>>
+>>>> From: Yaxiong Tian <tianyaxiong@kylinos.cn>
+>>>>
+>>>> When the device is of a non-CPU type, table[i].performance won't be
+>>>> initialized in the previous em_init_performance(), resulting in division
+>>>> by zero when calculating costs in em_compute_costs().
+>>>>
+>>>> Since the 'cost' algorithm is only used for EAS energy efficiency
+>>>> calculations and is currently not utilized by other device drivers, we
+>>>> should add the _is_cpu_device(dev) check to prevent this division-by-zero
+>>>> issue.
+>>>>
+>>>> Fixes: <1b600da51073> ("PM: EM: Optimize em_cpu_energy() and remove division")
+>>>
+>>> Please look at the Fixes: tags in the kernel git history.  They don't
+>>> look like the one above.
+>>>
+>> Yes, there's an extra '<>' here.
+>>
+>>>> Signed-off-by: Yaxiong Tian <tianyaxiong@kylinos.cn>
+>>>> ---
+>>>>    kernel/power/energy_model.c | 4 ++--
+>>>>    1 file changed, 2 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
+>>>> index d9b7e2b38c7a..fc972cc1fc12 100644
+>>>> --- a/kernel/power/energy_model.c
+>>>> +++ b/kernel/power/energy_model.c
+>>>> @@ -235,7 +235,7 @@ static int em_compute_costs(struct device *dev, struct em_perf_state *table,
+>>>>
+>>>>           /* Compute the cost of each performance state. */
+>>>>           for (i = nr_states - 1; i >= 0; i--) {
+>>>> -               unsigned long power_res, cost;
+>>>> +               unsigned long power_res, cost = 0;
+>>>>
+>>>>                   if ((flags & EM_PERF_DOMAIN_ARTIFICIAL) && cb->get_cost) {
+>>>>                           ret = cb->get_cost(dev, table[i].frequency, &cost);
+>>>> @@ -244,7 +244,7 @@ static int em_compute_costs(struct device *dev, struct em_perf_state *table,
+>>>>                                           cost, ret);
+>>>>                                   return -EINVAL;
+>>>>                           }
+>>>> -               } else {
+>>>> +               } else if (_is_cpu_device(dev)) {
+>>>
+>>> Can't you just check this upfront at the beginning of the function and
+>>> make it bail out if dev is not a CPU device?
+>>>
+>> Sure, But the current implementation applies em_compute_costs() to both
+>> non-CPU devices and CPU devices.
+> 
+> Maybe it shouldn't do that for non-CPU ones?
+> 
+>> After carefully reviewing the latest code,
+>> I've found this issue has expanded in scope.
+>>
+>> There are currently three call paths for invoking em_compute_costs():
+>>
+>> 1) Registering performance domains (for both non-CPU and CPU devices)
+>> em_dev_register_perf_domain() → em_create_pd() →
+>> em_create_perf_table() → em_compute_costs()
+>>
+>> 2)EM update paths (CPU devices only)
+>>
+>> Periodic 1000ms update check via em_update_work work item:
+>> em_check_capacity_update() → em_adjust_new_capacity() →
+>> em_recalc_and_update() → em_compute_costs()
+>>
+>> Exynos-chip initialization:
+>> em_dev_update_chip_binning() → em_recalc_and_update() → em_compute_costs()
+>>
+>> 3) Device cost computation (non-CPU devices only - currently unused)
+>> em_dev_compute_costs() → em_compute_costs()
+> 
+> So because this one is unused and AFAICS the cost values are never
+> used for non-CPU devices, it's better to just avoid computing them at
+> all.
+> 
+>> Note: In em_dev_compute_costs(), when calling em_compute_costs(),
+>> neither the callback (cb) nor flags are set.In fact, it either does
+>> nothing at all or performs incorrect operations.
+>>
+>> Therefore, should we mandate that non-CPU devices must provide a
+>> get_cost callback?
+> 
+> Why would that be an improvement?
+> 
+>> So Should we add a check at the beginning of the em_compute_costs() to:
+>>
+>>          if (!_is_cpu_device(dev) && !cb->get_cost) {
+>>                  dev_dbg(dev, "EM: No get_cost provided, cost unset.\n");
+>>                  return 0;
+>>          }
+>> And Modify em_dev_compute_costs() to require callers to provide the cb
+>> callback function,Also need to update its corresponding comments.
+>>
+>>
+>>>>                           /* increase resolution of 'cost' precision */
+>>>>                           power_res = table[i].power * 10;
+>>>>                           cost = power_res / table[i].performance;
+>>>> --
+> 
+> I think until there is a user of em_dev_compute_costs() this is all
+> moot and hard to figure out.
+> 
+> I would drop em_dev_compute_costs() altogether for now and put a
+> _is_cpu_device(dev) upfront check into em_compute_costs().
 
-Sincerely,
-Randy Jennings
+Yes, I agree with your point. Currently no non-CPU devices are using
+'cost'. The best approach would be to just add the _is_cpu_device check. 
+I'll update it in V4.
+
+By the way, em_dev_compute_costs should only apply to CPU devices. I was
+mistaken earlier—it’s really hard to tell just from the function name.
+
 
