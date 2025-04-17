@@ -1,174 +1,124 @@
-Return-Path: <linux-kernel+bounces-608369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69F11A91256
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 06:46:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A117A9124A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 06:41:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB637189CF2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 04:46:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F6DE44493E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 04:41:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D49C1DE3AC;
-	Thu, 17 Apr 2025 04:46:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB74D1DDC2B;
+	Thu, 17 Apr 2025 04:41:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dadbc207"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wc9NaWYy"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62E87E1
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 04:46:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA53D1DB958
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 04:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744865162; cv=none; b=g3/JlhFKauayJJalVuzrthxb+85W9Mgn8JnHtcKULms114+xg1s0129AKEXa7P8IZXd7oQDalGlDJlqQYbZ8uw3CkDZe2KwCkhzX1mDVNaahpoS1ZNjOXUynA0rXQpv/YE7LUpap3EUhozpDRUlSnkk6wpR74eSe6mTwu/blKwU=
+	t=1744864875; cv=none; b=AlUF7JekUnVf9ea4jiWjmA+IpbPHFQEVWM1/tUfnS9tDMyunahuX7owvgV/CJTD0TtPWK/sWOGUE6lRHe48ivCiaJbO0l9L7bpiEq992qaExkH1cr19lkkoGw3Ulyl5bfc3NrXW+nV1PStKZxbHTSFH1dV1iqJbVm1j7l4GY7Dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744865162; c=relaxed/simple;
-	bh=RPXZU/aP7WbMdeCTfBXzeiUmIUu7vsCmakN5UMy60VY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NVKOEzu+DoYmQFdkXk6m/+NxMdAuaPcKKQjy19leq9Uurdmt/eimncEYi175RjRCR2Pzl/X6+VFev+HFyEBW56LrIYiymIeLfh9W+Pt904OYS8F6cr1ANo70zHitxVM5CmPEDKj5BHwfetP++s4Q4rqtAYvUWnrgjVqKyVo0NpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dadbc207; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1744865158;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nu1ItUoeTVNPAi+YTEKwfobNfHWy8BGxvV0+PknfgOw=;
-	b=dadbc20747aMlX8LMCtS5SYSYUTdkPiGHsSI6lEfGvJj2rbyiu+A3PunbjxwBYDyBkz1U/
-	kGYmuiyI/o3Yf5ojMol3I/3PeRSmtj4SnMR5iTmswvexNWeXbtgUis/gZFUR4Yr8l77mMN
-	6p33ZxbLaFvUAdPAg6Gl+eZjgN2nZDk=
-From: Jiayuan Chen <jiayuan.chen@linux.dev>
-To: andrii@kernel.org,
-	martin.lau@linux.dev,
-	bpf@vger.kernel.org
-Cc: alexis.lothore@bootlin.com,
-	mrpre@163.com,
-	Jiayuan Chen <jiayuan.chen@linux.dev>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH bpf-next v1 2/2] selftests/bpf: Add link update test for cgroup_storage
-Date: Thu, 17 Apr 2025 12:40:15 +0800
-Message-ID: <20250417044041.252874-3-jiayuan.chen@linux.dev>
-In-Reply-To: <20250417044041.252874-1-jiayuan.chen@linux.dev>
-References: <20250417044041.252874-1-jiayuan.chen@linux.dev>
+	s=arc-20240116; t=1744864875; c=relaxed/simple;
+	bh=SPeJW8O/RdyKgGzZdcpOtGY1BN9HvfKy7ydyqtr/PlM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nAvqAoqOrKu8VVmf1mw8XAJITj2DRAYAzyMVIeXKigFSyyAVJpXvrVk2ZpYbKCvKShY22x/W3yNDKuXKD5tHTm8UqM3YDeQum64Kbs+QjC3/fRBXU5CRCIHkEOpeFBmJ3/GS/7h4LmUCOo4j3zarVPU0MYnvZeY+FB5dmnSsV2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Wc9NaWYy; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-30572effb26so282971a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 21:41:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744864872; x=1745469672; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=StTtcZEL8yuxE8J2mkGpzTNue0dDQ/MJGGswTzHY9b8=;
+        b=Wc9NaWYydXVPhnfu4GiffbN/Qhn7zlGN4oeKKFZ3Wgm/Ep0W5+Nnsobc7nTwUZC4y+
+         nsM6WpK1u7kP37SHWpZhje2qBLaq/kXOGctU692HUeA6efi3r7pKA4Eh5x9yZ796GVQH
+         eD294EUGl4F/zSqzhntB/oqG6sbL6i9cb3MGFQ6b9zHYFHhRuMoEz0FIAib1gOlyIqKo
+         1qBi6apBOA+UEZEMzq+14uzW6dhk0TIQd/gYTJe4YSE5cpSArKByQ63/CJpdoimnLtED
+         5aHFFIj5JlxYRrsQBKPDAstYVR4/SZ5G+0J8cwo2pVIEppc0hZ4eA2DRHkhThWrrVm1L
+         G5jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744864872; x=1745469672;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=StTtcZEL8yuxE8J2mkGpzTNue0dDQ/MJGGswTzHY9b8=;
+        b=RxZ8Q18DYIv41+1oYEl2tGlw8X9lJ131BYNZBW1g0gry4z1+7jpfZntNGCwRJmZvBQ
+         mL4T7JevYhuy+a11CY+i8qIfYpyaj2oXNMmZa6s8vEAMDzc44N8uL/G0QpO6qy0moYli
+         JH8kM3gHJ+3nJgSeBsCMMZKrwWMly6/tENYM8xFZKq+GZT5L0AbUH4vvCbJnS52nIQHJ
+         y0FjnNdzCZpMGDWlAvtQF7Wd7dNvz0BDPs3tHAoa2odEYmpH/56ndaLfp+752Si0D96y
+         FfPw9zqYAYJj1Pial+I0ZNMzHC1s/UEt8w9aj0/G9nmG2H/+G2sMSVz1cJROWKuMuAiI
+         jlMA==
+X-Forwarded-Encrypted: i=1; AJvYcCUvdLP8UEWmwBwnvE4Owai26i1wKTFWGrE0VninhxBAK6L/Gq+t/GRMEoSaNIRMwtIg8E27bLS2T8D+M0g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsLjFACHkjZ/izeZWz7PpbUzvg0bhg54SO6ZabGo4YkouGgr6K
+	uyjk+Uk78ynzJExkMdqGWsvsyV1qkU5TslanHe6oTlvQZiW43jlknNFISBeOk8A=
+X-Gm-Gg: ASbGncudnyHkvVLkW9lPmK7yPzEXehEefNiIK20qqOdftpUchPM8abFKjP2rSLYCaHd
+	MBgU2hFJyoUSkv6fWiH1L5k7+Jku3+iZ2Z6zyBJB09kw3RnSoZB19pzPklYYrmsbY+H39lhBHiB
+	/4IcsO99bYamhznHMrEK6MJI+Mxxpy33lp4Yj5P56VZCkr6E7dt24QfsduF4sRRExZByscDMhZm
+	ZzXowdL1hLEjx78+AfRI4xIRif+EGrnAVpWqEmk1QkUhd9W9WxXlRkgni5Tt4D7FcQ5Hl/Xg9hC
+	n+c1XMMP8hn0rMdcZerDemu+Gi2Z7NP2ok5W0pT7kw==
+X-Google-Smtp-Source: AGHT+IHSwNZXRlBErUquc9s/KXGJ/tJ0ZSJY//U3+xrEDFrzroEcRYfbd88YerCo8sKgIpeIi1M9yQ==
+X-Received: by 2002:a17:90b:5864:b0:2fe:b470:dde4 with SMTP id 98e67ed59e1d1-30863f198c7mr8175815a91.12.1744864872142;
+        Wed, 16 Apr 2025 21:41:12 -0700 (PDT)
+Received: from localhost ([122.172.83.32])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-308613cb765sm2573852a91.43.2025.04.16.21.41.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Apr 2025 21:41:11 -0700 (PDT)
+Date: Thu, 17 Apr 2025 10:11:09 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: Re: [PATCH] docs: rust: explain that `///` vs. `//` applies to
+ private items too
+Message-ID: <20250417044109.3enslespfaifjw7o@vireshk-i7>
+References: <20250416112454.2503872-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250416112454.2503872-1-ojeda@kernel.org>
 
-Add link update test for cgroup_storage.
+On 16-04-25, 13:24, Miguel Ojeda wrote:
+> Sometimes kernel developers use `//` for documenting private items,
+> since those do not get rendered at the moment.
+> 
+> That is reasonable, but the intention behind `///` (and `//!`) vs. `//`
+> is to convey the distinction between documentation and other kinds of
+> comments, such as implementation details or TODOs.
+> 
+> It also increases consistency with the public items and thus e.g. allows
+> to change visibility of an item with less changed involved.
 
-'./test_progs -a cgroup_storage_update'
-test_cgroup_storage_update:PASS:create cgroup 0 nsec
-setup_network:PASS:ip netns add cgroup_storage_ns 0 nsec
-setup_network:PASS:open netns 0 nsec
-setup_network:PASS:ip link set lo up 0 nsec
-test_cgroup_storage_update:PASS:setup network 0 nsec
-test_cgroup_storage_update:PASS:load program 0 nsec
-test_cgroup_storage_update:PASS:attach no map program 0 nsec
-test_cgroup_storage_update:PASS:bpf_link_update 0 nsec
-test_cgroup_storage_update:PASS:first ping 0 nsec
-test_cgroup_storage_update:PASS:second ping 0 nsec
-test_cgroup_storage_update:PASS:third ping 0 nsec
-61      cgroup_storage_update:OK
-Summary: 1/0 PASSED, 0 SKIPPED, 0 FAILED
+                                            changes ?
 
-Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
----
- .../selftests/bpf/prog_tests/cgroup_storage.c | 45 +++++++++++++++++++
- .../selftests/bpf/progs/cgroup_storage.c      |  6 +++
- 2 files changed, 51 insertions(+)
+> It is not just useful for human readers, but also tooling. For instance,
+> we may want to eventually generate documentation for private items
+> (perhaps as a toggle in the HTML UI). On top of that, `rustdoc` lints
+> as usual for those, too, so we may want to do it even if we do not use
+> the result.
+> 
+> Thus document this explicitly.
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/cgroup_storage.c b/tools/testing/selftests/bpf/prog_tests/cgroup_storage.c
-index cf395715ced4..8478b08aa62a 100644
---- a/tools/testing/selftests/bpf/prog_tests/cgroup_storage.c
-+++ b/tools/testing/selftests/bpf/prog_tests/cgroup_storage.c
-@@ -94,3 +94,48 @@ void test_cgroup_storage(void)
- 	close(cgroup_fd);
- 	cleanup_cgroup_environment();
- }
-+
-+void test_cgroup_storage_update(void)
-+{
-+	struct cgroup_storage *skel;
-+	struct nstoken *ns = NULL;
-+	int cgroup_fd;
-+	int err;
-+
-+	cgroup_fd = cgroup_setup_and_join(TEST_CGROUP);
-+	if (!ASSERT_OK_FD(cgroup_fd, "create cgroup"))
-+		return;
-+
-+	if (!ASSERT_OK(setup_network(&ns), "setup network"))
-+		goto cleanup_cgroup;
-+
-+	skel = cgroup_storage__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "load program"))
-+		goto cleanup_network;
-+
-+	skel->links.bpf_prog_no_map =
-+		bpf_program__attach_cgroup(skel->progs.bpf_prog_no_map,
-+					   cgroup_fd);
-+	if (!ASSERT_OK_PTR(skel->links.bpf_prog_no_map, "attach no map prog"))
-+		goto cleanup_progs;
-+
-+	err = bpf_link_update(bpf_link__fd(skel->links.bpf_prog_no_map),
-+			      bpf_program__fd(skel->progs.bpf_prog), NULL);
-+	if (!ASSERT_OK(err, "bpf_link_update"))
-+		goto cleanup_progs;
-+
-+	err = SYS_NOFAIL(PING_CMD);
-+	ASSERT_OK(err, "first ping");
-+	err = SYS_NOFAIL(PING_CMD);
-+	ASSERT_NEQ(err, 0, "second ping");
-+	err = SYS_NOFAIL(PING_CMD);
-+	ASSERT_OK(err, "third ping");
-+
-+cleanup_progs:
-+	cgroup_storage__destroy(skel);
-+cleanup_network:
-+	cleanup_network(ns);
-+cleanup_cgroup:
-+	close(cgroup_fd);
-+	cleanup_cgroup_environment();
-+}
-diff --git a/tools/testing/selftests/bpf/progs/cgroup_storage.c b/tools/testing/selftests/bpf/progs/cgroup_storage.c
-index db1e4d2d3281..33a6013ca806 100644
---- a/tools/testing/selftests/bpf/progs/cgroup_storage.c
-+++ b/tools/testing/selftests/bpf/progs/cgroup_storage.c
-@@ -21,4 +21,10 @@ int bpf_prog(struct __sk_buff *skb)
- 	return (*counter & 1);
- }
- 
-+SEC("cgroup_skb/egress")
-+int bpf_prog_no_map(struct __sk_buff *skb)
-+{
-+	return 1;
-+}
-+
- char _license[] SEC("license") = "GPL";
+Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
+
 -- 
-2.47.1
-
+viresh
 
