@@ -1,98 +1,78 @@
-Return-Path: <linux-kernel+bounces-609971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 232C9A92E63
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 01:33:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AAB6A92E51
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 01:29:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33DA9467CD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 23:33:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 413DB467681
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 23:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A6212040B2;
-	Thu, 17 Apr 2025 23:33:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A442222D2;
+	Thu, 17 Apr 2025 23:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="thYIlQJ7"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD5A20896E;
-	Thu, 17 Apr 2025 23:33:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="jEv6yVEb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41783204583;
+	Thu, 17 Apr 2025 23:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744932795; cv=none; b=FFbVxoNu9zQoXYJBxO3ExR4jTEPs5AnLwF1o+jkIfWPxm69N8jrvPbrhqQiF+g0c78cizScpvD4rjLC0DBMTWiOz1cV8e90c1vhHdtXJtr0bkFcGA36FnJX/yHPIjdDHV9K86fHMD6TwHgKXaHvgXAA7+FnsNqQoUaqL7LG2zWQ=
+	t=1744932569; cv=none; b=LNcw/r0lq7By8gZU1GYMo14vIswet9Z0Ji3y6WFP3n98m040fCzQlnOMc56GnnUAAbqCP1+/WJWy4c5cEUa1yWqmV687Gznd+d4q7JelzodjUtYnd/tdjGVjPLSvoEQMfJcSGP5itAaV022SQwuxbG0k1zDGSSTwHdDdB5On1K8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744932795; c=relaxed/simple;
-	bh=erZofjZhCWmZmRiwoxBvNBUbwiHNIsVy4EpyGf6PUVk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QyeJAP1qUrPI6ANXEJcGlpYKxAi5AD2sCk45gZXwVnwFbFZ+hlPb5IiFnvOGLlEq3+xet2/PL3GrVH4dt4Qhr4gCZUjM2WOm2ejgrsYpaU0Zqu4X7FWGQP5yVm41aSucMt7lJ+v3BH0lGzf7B8yAR8Dv8LQFnr5tr8eMra3HzoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=thYIlQJ7; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description;
-	bh=tGvXsJp/LowZicDO/bSfzJCHWFfJAHzlFFxjaLMPbDQ=; b=thYIlQJ7VkCBcw8BfHqh/4KjzR
-	TWN2oAUvkZ9h8rSC0mZgEOQ9jZ8LzhZNj9dc5ZbRHLrEU4aDaxgUti4rkUbxf8tGYfZfj8Q5ANn8u
-	x5q7SDFesLmNOD2qhDylDrEimxtTetBL/q4cVQcqUL4h6rvt0eUnaP/0/H7LVtgow5tLFFThfftk1
-	9xC3EinUBJeqtvojeIMoDRWwxbp7Qlv9xnIgBdnMcNWzZMu3zckKobPXSgnifhOwPImSIn8eCkIH8
-	Cmeh/xAy4tCIcjYob2XR/F+Obzc9HD5zg1x5cInLZF/Xq3ktKE6DWUMluEQkhkyCfKsmpXDo7U9tx
-	87ltfq+w==;
-Received: from [50.39.124.201] (helo=[192.168.254.17])
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1u5YeK-0000000Bpcf-1whY;
-	Thu, 17 Apr 2025 23:28:06 +0000
-Message-ID: <b0450e23-2556-489f-8f4e-cca7aed9d975@infradead.org>
-Date: Thu, 17 Apr 2025 16:28:01 -0700
+	s=arc-20240116; t=1744932569; c=relaxed/simple;
+	bh=wjYgKY975jAFrgsX+2PJ2j8ySX7rgcB8HC8tFI9lXTI=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=kPNj2lCAr5/17Ww71QF2mjD8KCeDM+GsimmFPlGrICxgpbnZU46Yc/i7HQm2R2S5bKHBYsiNn4vhdASECqTE1nP0ASBNh4KMkhkbNd0f8gZ7MysA3P2zG4DrXWaJA51Iw4WpdJpW/olpIApGk8LZ4GeOGa/dY6Hqf7yqtSHaWys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=jEv6yVEb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22DB6C4CEE4;
+	Thu, 17 Apr 2025 23:29:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1744932568;
+	bh=wjYgKY975jAFrgsX+2PJ2j8ySX7rgcB8HC8tFI9lXTI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jEv6yVEba3ZswWp5mklpexfv2IRZvURZ4QIWTMv3cmgl009NEq7N4/lK7oDJkdnvj
+	 cftSMi3Se1rZgYH+IORieYtFEyXrqUocKStYDWE/iZL6IlLBkpmAvgc8Tu28esR5ou
+	 vIsQXBfxjNjMaVRWnnbYHVxpCgE59YAvrJCczFEY=
+Date: Thu, 17 Apr 2025 16:29:27 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrii Nakryiko <andrii.nakryiko@gmail.com>, Mykyta Yatsenko
+ <mykyta.yatsenko5@gmail.com>
+Subject: Re: [PATCH] tracing: Fix filter string testing
+Message-Id: <20250417162927.e1117ce02e612e29a34985ef@linux-foundation.org>
+In-Reply-To: <20250417183003.505835fb@gandalf.local.home>
+References: <20250417183003.505835fb@gandalf.local.home>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: Tree for Apr 17 (drivers/pinctrl/pinctrl-sx150x.o)
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20250417174117.014a23d2@canb.auug.org.au>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250417174117.014a23d2@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
+On Thu, 17 Apr 2025 18:30:03 -0400 Steven Rostedt <rostedt@goodmis.org> wrote:
 
-
-On 4/17/25 12:41 AM, Stephen Rothwell wrote:
-> Hi all,
+> From: Steven Rostedt <rostedt@goodmis.org>
 > 
-> News: there will be no linux-next releases tomorrow or Monday, next
-> Friday.
-> 
-> Changes since 20250416:
-> 
+> The filter string testing uses strncpy_from_kernel/user_nofault() to
+> retrieve the string to test the filter against. The if() statement was
+> incorrect as it considered 0 as a fault, when it is only negative that it
+> faulted.
 
-on x86_64:
-CONFIG_PINCTRL_SX150X=y
-CONFIG_I2C=m
-CONFIG_COMPILE_TEST=y
+changelog forgot to describe the userspace-visible effects of the bug?
 
+> Cc: stable@vger.kernel.org
 
-ld: drivers/pinctrl/pinctrl-sx150x.o: in function `sx150x_regmap_reg_read':
-/home/rdunlap/lnx/next/linux-next-20250417/X64/drivers/pinctrl/pinctrl-sx150x.c:1061:(.text+0xff2): undefined reference to `i2c_smbus_read_byte_data'
-ld: drivers/pinctrl/pinctrl-sx150x.o: in function `sx150x_probe':
-/home/rdunlap/lnx/next/linux-next-20250417/X64/drivers/pinctrl/pinctrl-sx150x.c:1138:(.text+0x12ce): undefined reference to `i2c_get_match_data'
-ld: drivers/pinctrl/pinctrl-sx150x.o: in function `sx150x_regmap_reg_write':
-/home/rdunlap/lnx/next/linux-next-20250417/X64/drivers/pinctrl/pinctrl-sx150x.c:1087:(.text+0x22cf): undefined reference to `i2c_smbus_write_byte_data'
-ld: drivers/pinctrl/pinctrl-sx150x.o: in function `sx150x_init':
-/home/rdunlap/lnx/next/linux-next-20250417/X64/drivers/pinctrl/pinctrl-sx150x.c:1266:(.init.text+0xa): undefined reference to `i2c_register_driver'
+Which is more important when proposing this!
 
-
-
--- 
-~Randy
 
 
