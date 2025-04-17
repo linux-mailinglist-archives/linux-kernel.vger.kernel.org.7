@@ -1,126 +1,106 @@
-Return-Path: <linux-kernel+bounces-609192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6299EA91EF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:57:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A31FA91EEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:55:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 808554652FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 13:57:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2340C19E82AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 13:55:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDD1B250C1B;
-	Thu, 17 Apr 2025 13:57:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E10F250C1D;
+	Thu, 17 Apr 2025 13:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lmVzUG5F"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="pTnm5dB7"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2648250F8;
-	Thu, 17 Apr 2025 13:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18E19250BEE;
+	Thu, 17 Apr 2025 13:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744898229; cv=none; b=e7UuxQ2FDHa6pksTQtADwHG6S+KJtGAxkqcKo0ekt1ppfr7MbiharPjfqBhSKsRwTVL4HQm+tGGZ478ffi+inXN75m/28wV2HGGIHRblHhFhF5NM4KrxRIRrZiqPGj1ZwtCDvd/NIY/1Ea+TK5Cpi4DExxoYV1XAbvG1tONYte4=
+	t=1744898120; cv=none; b=HSxayQEOmrErAn4cF5Qyc5qaDPmi2V3Z3UUnGKMJymXaWjjRYSeXOWqoDXLYkylNshrTJbFtMNmYg4SJv4V0iBNZUzHAGmLQiAOAhjdoiG5l1v4kBrLNGCsjv8taWnJWKpt1UtbL8Ps0z5wkmq6+JQ2encLN82uRF46q3/gfHCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744898229; c=relaxed/simple;
-	bh=G7cQA1vbU7ME82rND+ta8qnI8kBAvliO793si5bKvhw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nMyZieCCK0nyuwiWdRIAqb7DDelmN8elvYaY1VyXqafVucVTYY332/UoYpyVDLg7cZ17Lbjpzkj4PO1h1sCOMhdXUkOYYlMdDva1IH25fdWYIRVc+Z74odyRY6EJVQgilGB+T0nOwBHxMzF8YdFAUPUCzkUf6OOT65RBLbP9FP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lmVzUG5F; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-476b89782c3so8630331cf.1;
-        Thu, 17 Apr 2025 06:57:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744898227; x=1745503027; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YwMHB2nUwzNcRVsw3OgexWqiEt8JRdlA5caQ8STPGxo=;
-        b=lmVzUG5FLO6vR+FXkBzI9j7O9C4z6avPpDQGsVryYp11dSpfcQNMIeKOgn+caYlaG/
-         IDF0+Nzvnm3usWeWhd0ET872DB+qrjtHv/fjcuUe7zjbPikrHXl04N7tundIDt40Aoja
-         KJ4Bg9uM0iD5zXInJuDoO6WC67PKQTI7JzSkYUN4joSF8x48aRR3VWc5VCeJcSOEBWmp
-         BBj9fNO7zqLKs6n7/+UqzGUN1sJxePsWlMF/WM45hD4ZZyxDDJfQjNkW5zJR9ToQ7pWC
-         VNC/EvgKzQrFK5fSJTv5BVGcl4bYrTcQassxKTplGCbT2DR15+lQRQES3MkqPZweea8Q
-         /hVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744898227; x=1745503027;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YwMHB2nUwzNcRVsw3OgexWqiEt8JRdlA5caQ8STPGxo=;
-        b=tGNRJJ328nQoalJxZegMyY8i6vWTWP1BlFeKBpnJKzsi3Zq0DooSdL0yGWWmEHFzwr
-         Hq4j0zNPxOzxpyT42NUDtXEsJ6/eppa19di0/xEYey82JOT3pxDON53aP01RStJ0wa6W
-         GOd1QuPW6r2B0nSIkLhOvSUTjYICZ+lTi0MIN1pHbgokv9GyCXVZYgkkUKqXpLl/h+ef
-         wjOQ4MfKByuwy6b4bnSiid1ohgIWRoGTNkgFTXte9MlZGejFcAG5VBlvrp6U4P75DxTZ
-         HedHCaIxi080a0MKbGFZZJ7hjfGVumFFcfHHwvtX+bFI1IvDcG/A9p/wU+JmsOFbv3z3
-         XmHA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4AUBdOt8dvzZ7SC0OuF5SgT8vfI+ZW5yC/+p+7RwKcXeYQlqz3CnE0UNX/uX01LvMrP52Y6ym900=@vger.kernel.org, AJvYcCXZFoP37xNM8XeT1UrxeErWTT/V6zgOhQ9gBWth7hB6v7+f3GZ5OcWNhX0EzRfDnl/ESdTrH8ByLAVKAO18@vger.kernel.org, AJvYcCXbsaETCLxFLy7QZ3NOxkht0ETLqaW+AVb/9Ayj+HgVYBe+ERFpak4D43Son1qBu9Yhj3ITbJJM@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPfThJ8mi7p5al0FE5CUcvwTGO9tKCkbMO7uIsj/Hy8xcEJFUn
-	dZgnSy3T/L2XffCTn126hkyKuZPRc4t/Bh5DFkwekEqs9vo1qBax
-X-Gm-Gg: ASbGncujF3BK4mKqVju73MnWPpbWzHnWPZSFDDsy2nRKpHrWinGULkePnt5Q1Z3h0sh
-	GOHeXoHyhvjwhVekRBco7F5fpI6KFRnMIESm7yITXgguuPa/yELtiIeMAO+xVbc7LZitwK/yR2H
-	cpwLwP5NRu69oGZ3TB28+fuOaJI3vWeI462++aMykcQ97cHBErY9VBnGoPZN0ZcjD9UgN8fqrRQ
-	PI3zlhRXoZaEz7irrTdoq3RzZ6Yu6siSZMxhPRyLvvaVQUPuxzHIr7c39nIcB9YBW0mWQ9/0LLd
-	fic7ugztTS/fEFaOUa2Ddau26HUgIxUYo3EWviGAmqJZD9qwlWzMqrk=
-X-Google-Smtp-Source: AGHT+IFpHKVkjhlZ2LiXbe/zb9N60JY4GEaQaJZQLQFFebUwv++hYDlp9uFWUHivYUzVd+h22h7CHQ==
-X-Received: by 2002:a05:622a:134f:b0:471:cdae:ac44 with SMTP id d75a77b69052e-47ad816958emr97415331cf.47.1744898226511;
-        Thu, 17 Apr 2025 06:57:06 -0700 (PDT)
-Received: from theriatric.mshome.net ([73.123.232.110])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4796eb2b8dbsm123152491cf.41.2025.04.17.06.57.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Apr 2025 06:57:06 -0700 (PDT)
-From: Gabriel Shahrouzi <gshahrouzi@gmail.com>
-To: gregkh@linuxfoundation.org,
-	jic23@kernel.org,
-	lars@metafoo.de,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	Michael.Hennerich@analog.com
-Cc: gshahrouzi@gmail.com,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	stable@vger.kernel.org
-Subject: [PATCH] iio: frequency: Use SLEEP bit instead of RESET to disable output
-Date: Thu, 17 Apr 2025 09:54:34 -0400
-Message-ID: <20250417135434.568007-1-gshahrouzi@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1744898120; c=relaxed/simple;
+	bh=5lzD0TshOdrR27H/jD0A3Zp1OSldjowmx/m925ghKvg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GVBY+08xWT9Eb0RWH2J+00qxxFKuMooS3VOqo93Hg2PmbtOTV+2hAQLS9ls542zGuVpNm1UQJRbWRepA4ce639LzK34KN+TxdH2myXayWmVC7PaMBpayneqeGw/TobId6glql3fP8Wqu4YGO90SQrXOhyFiNad/l2kFmYN6tPgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=pTnm5dB7; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=MfEXm04TR9hSAuPlSBHlDuFQXlICktBrJoOYKmYwNLE=; b=pTnm5dB7K/QYer3+j7qstl9t2m
+	u2mHR3vFF6A70hv4G+0XqpgYbW5aFq90v+P45JkGylwl9eejYw7PIr+FiZrDVtJ4ho7EGqdE1g2yr
+	pYH4yrq67wGX8hDraLxcMH9f/micPho+mv8Deg0ldzXBv/b9R/3+ZUWUQK0fX3ZITMrs=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1u5Phk-009n2J-NR; Thu, 17 Apr 2025 15:55:00 +0200
+Date: Thu, 17 Apr 2025 15:55:00 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Qingfang Deng <dqfext@gmail.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	"Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
+	Nathan Sullivan <nathan.sullivan@ni.com>,
+	Josh Cartwright <josh.cartwright@ni.com>,
+	Zach Brown <zach.brown@ni.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Chuanhong Guo <gch981213@gmail.com>,
+	Qingfang Deng <qingfang.deng@siflower.com.cn>,
+	Hao Guan <hao.guan@siflower.com.cn>
+Subject: Re: [PATCH net] net: phy: leds: fix memory leak
+Message-ID: <f9f60754-ef84-483f-bd77-b7bc99aadb27@lunn.ch>
+References: <20250417032557.2929427-1-dqfext@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250417032557.2929427-1-dqfext@gmail.com>
 
-According to the AD9832 datasheet (Table 10, D12 description), setting
-the RESET bit forces the phase accumulator to zero, which corresponds to
-a full-scale DC output, rather than disabling the output signal.
+On Thu, Apr 17, 2025 at 11:25:56AM +0800, Qingfang Deng wrote:
+> From: Qingfang Deng <qingfang.deng@siflower.com.cn>
+> 
+> A network restart test on a router led to an out-of-memory condition,
+> which was traced to a memory leak in the PHY LED trigger code.
+> 
+> The root cause is misuse of the devm API. The registration function
+> (phy_led_triggers_register) is called from phy_attach_direct, not
+> phy_probe, and the unregister function (phy_led_triggers_unregister)
+> is called from phy_detach, not phy_remove. This means the register and
+> unregister functions can be called multiple times for the same PHY
+> device, but devm-allocated memory is not freed until the driver is
+> unbound.
+> 
+> This also prevents kmemleak from detecting the leak, as the devm API
+> internally stores the allocated pointer.
+> 
+> Fix this by replacing devm_kzalloc/devm_kcalloc with standard
+> kzalloc/kcalloc, and add the corresponding kfree calls in the unregister
+> path.
+> 
+> Fixes: 3928ee6485a3 ("net: phy: leds: Add support for "link" trigger")
+> Fixes: 2e0bc452f472 ("net: phy: leds: add support for led triggers on phy link state change")
+> Signed-off-by: Hao Guan <hao.guan@siflower.com.cn>
+> Signed-off-by: Qingfang Deng <qingfang.deng@siflower.com.cn>
 
-The correct way to disable the output and enter a low-power state is to
-set the AD9832_SLEEP bit (Table 10, D13 description), which powers down
-the internal DAC current sources and disables internal clocks.
+Thanks for the fix. I agree with Maxime, this looks correct.
 
-Fixes: ea707584bac1 ("Staging: IIO: DDS: AD9832 / AD9835 driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Gabriel Shahrouzi <gshahrouzi@gmail.com>
----
- drivers/staging/iio/frequency/ad9832.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-diff --git a/drivers/staging/iio/frequency/ad9832.c b/drivers/staging/iio/frequency/ad9832.c
-index db42810c7664b..0872ff4ec4896 100644
---- a/drivers/staging/iio/frequency/ad9832.c
-+++ b/drivers/staging/iio/frequency/ad9832.c
-@@ -232,7 +232,7 @@ static ssize_t ad9832_write(struct device *dev, struct device_attribute *attr,
- 			st->ctrl_src &= ~(AD9832_RESET | AD9832_SLEEP |
- 					AD9832_CLR);
- 		else
--			st->ctrl_src |= AD9832_RESET;
-+			st->ctrl_src |= AD9832_SLEEP;
- 
- 		st->data = cpu_to_be16((AD9832_CMD_SLEEPRESCLR << CMD_SHIFT) |
- 					st->ctrl_src);
--- 
-2.43.0
+The use of devm_free() should trigger any reviewer to take a closer
+look because it generally means something is wrong.
+
+    Andrew
 
