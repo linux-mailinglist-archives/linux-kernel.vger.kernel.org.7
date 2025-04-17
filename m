@@ -1,240 +1,191 @@
-Return-Path: <linux-kernel+bounces-608788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F98AA917FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 11:33:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EF11A91804
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 11:34:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FA213AD85D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:33:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCE9C19E1C32
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:34:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE99C227B9F;
-	Thu, 17 Apr 2025 09:33:14 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B56F6229B32;
+	Thu, 17 Apr 2025 09:33:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mUR/szGh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F3E225417
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 09:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50ED622578D
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 09:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744882394; cv=none; b=eeibc8wLbJHImwzuwCIxBxoLe/8rBaXMWgCZ9AUHXLxZsWpdQIzeRX9At1wnqlqBfkfcC2a48Ustey1JFLgQrpCeiNRjlh9Jz62L3ShoPVUOTBEhcRmzN+fsXAKVqeBiuRXc5CLLJRjz3O49DFvJXkPgH83mrydCVLq4PNrwPJU=
+	t=1744882430; cv=none; b=i5McZw8zZrCvdCQ7LW3X2U6m4YQ21X0aETVa4X4QwSvZCpZlsh7TaFN5L1w5HPVFSUPNDBkJterVOvBen84EXIwU1UcccccqlCD/JcvBx2DgSjjFUpVHQ7M8LHbZgVmYKtnJEQxeUSFoQMDUWUPjZy9lj5NGCpiB4Z9xxoG6IRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744882394; c=relaxed/simple;
-	bh=5HxR8csm8fyNJrtqHHIIMUwA5KzfJLvNOgVPXyjfE2o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r+Haa2YTQXr6hFRHx28Ap+7uk74F3FTBCREVflbBiVV5RxerIaR3MAHFUpWEa2CGbuiAtyfhMY63eaAbLSlLV/747IDqWcp/Uhss/A2afzAk5I2R0nNY0IrawF/mj8mIbE9eWCRWOPkozIJ8Htmd0kyBMDE+MhOT4orXIjof0lU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1u5Lc8-0001sN-Hw; Thu, 17 Apr 2025 11:32:56 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1u5Lc7-000j6u-3B;
-	Thu, 17 Apr 2025 11:32:56 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1u5Lc7-005taT-2m;
-	Thu, 17 Apr 2025 11:32:55 +0200
-Date: Thu, 17 Apr 2025 11:32:55 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Piotr Kubik <piotr.kubik@adtran.com>
-Cc: Kory Maincent <kory.maincent@bootlin.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] net: pse-pd: Add Si3474 PSE controller driver
-Message-ID: <aADKx3sAiWO_2KG3@pengutronix.de>
-References: <a92be603-7ad4-4dd3-b083-548658a4448a@adtran.com>
- <93d3bbf0-742c-41d4-83c6-6d94a0dd779c@adtran.com>
+	s=arc-20240116; t=1744882430; c=relaxed/simple;
+	bh=ufQQBl4yiqfztI0ePKqmADbmuBRErCp02cxIUaHidiw=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=k8wpfrKW44smPyiOYyxmd5GDpeDzkuNozq0p/vM4hryVQOlFngYuRIAWrgoatUfAm7RTPXpEc90ORcLnWpIn448+5HSBPySqv7lp1xnhsWwoCvXeRmFKcDVDXXVLSAS8kQ/OjO6zXziFoo3m3KJs1zpMu+R7ujAvklKLYdtQcNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mUR/szGh; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744882428; x=1776418428;
+  h=date:from:to:cc:subject:message-id;
+  bh=ufQQBl4yiqfztI0ePKqmADbmuBRErCp02cxIUaHidiw=;
+  b=mUR/szGhgkjnJHCVbCfqZZXKP6KPCL/FYUNgO+UQEtkxXEl7vJcGSx21
+   m2/CHh7mb4KS6LqjMClNdnbN2pbxeshHdO2WKe4l+dp/OhHP6At5IB/g8
+   AumANl9pf2rvpxH241rdutOonKec5Mz3uE2aallww1DBZd7XkDIwCGw5m
+   fGuks8UHK8aY9DWAx1ntOUK+BrE+P849RyT4i6wrVN2fHIh+9fT66Z72A
+   W84/Q8sIga4PuBImpm3wjY00BHchMT7gMqv+YNhP5cn0rpufV3RE61KT1
+   M3+hwjrfHOamNA9hnlIxcGUwYTbieO2zv7wd4NlupUwCD3FUTaGoh+dEn
+   w==;
+X-CSE-ConnectionGUID: Hff4eUtvRwaXXgurIzVY/A==
+X-CSE-MsgGUID: 6lj4+sQvTzGcKbS7RfaXbQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11405"; a="46626560"
+X-IronPort-AV: E=Sophos;i="6.15,218,1739865600"; 
+   d="scan'208";a="46626560"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2025 02:33:48 -0700
+X-CSE-ConnectionGUID: 7ttnbjcbT+OACKUGxdkdtA==
+X-CSE-MsgGUID: DMyIULxCRYCmKZ54yvpl9Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,218,1739865600"; 
+   d="scan'208";a="135562456"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 17 Apr 2025 02:33:47 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u5Lcu-000MBT-22;
+	Thu, 17 Apr 2025 09:33:44 +0000
+Date: Thu, 17 Apr 2025 17:33:11 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/fpu] BUILD SUCCESS
+ de8304c319bc020ef79d109909ad40e944d82c82
+Message-ID: <202504171705.q0qTBnvL-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <93d3bbf0-742c-41d4-83c6-6d94a0dd779c@adtran.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Piotr,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/fpu
+branch HEAD: de8304c319bc020ef79d109909ad40e944d82c82  x86/fpu: Rename fpu_reset_fpregs() to fpu_reset_fpstate_regs()
 
-Thanks again for the patch! Looking a bit deeper into the Si3474
-architecture based on the datasheet and thinking about future
-extensions, there's a challenge with how the chip mixes shared resources
-with its two-quad/two-address I2C setup that we should probably tackle
-architecturally.
+elapsed time: 1450m
 
-The current approach, common for multi-address devices, is to treat each
-I2C address (and thus each quad) as a separate i2c_client handled by
-potentially independent driver instances. This works for the basic port
-access implemented here, but might get complicated quickly for the
-Si3474.
+configs tested: 99
+configs skipped: 1
 
-The Si3474 has several key resources that are inherently shared across
-the whole chip package, not just per-quad:
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-- Single RESETb pin
-- Single INTb pin
-- Firmware Update
-- Global Status (Temperature, VDD/VPWR UVLO)
-- OSS Pin
-- ... and likely others.
+tested configs:
+alpha                             allnoconfig    gcc-14.2.0
+alpha                            allyesconfig    gcc-14.2.0
+arc                              allmodconfig    gcc-14.2.0
+arc                               allnoconfig    gcc-14.2.0
+arc                              allyesconfig    gcc-14.2.0
+arc                   randconfig-001-20250417    gcc-13.3.0
+arc                   randconfig-002-20250417    gcc-13.3.0
+arm                              allmodconfig    gcc-14.2.0
+arm                               allnoconfig    clang-21
+arm                              allyesconfig    gcc-14.2.0
+arm                   randconfig-001-20250417    gcc-7.5.0
+arm                   randconfig-002-20250417    clang-16
+arm                   randconfig-003-20250417    gcc-10.5.0
+arm                   randconfig-004-20250417    gcc-6.5.0
+arm64                            allmodconfig    clang-19
+arm64                             allnoconfig    gcc-14.2.0
+arm64                 randconfig-001-20250417    gcc-7.5.0
+arm64                 randconfig-002-20250417    gcc-5.5.0
+arm64                 randconfig-003-20250417    clang-21
+arm64                 randconfig-004-20250417    gcc-9.5.0
+csky                              allnoconfig    gcc-14.2.0
+csky                  randconfig-001-20250416    gcc-14.2.0
+csky                  randconfig-002-20250416    gcc-14.2.0
+hexagon                          allmodconfig    clang-17
+hexagon                           allnoconfig    clang-21
+hexagon                          allyesconfig    clang-21
+hexagon               randconfig-001-20250416    clang-21
+hexagon               randconfig-002-20250416    clang-21
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20250416    clang-20
+i386        buildonly-randconfig-002-20250416    gcc-12
+i386        buildonly-randconfig-003-20250416    gcc-12
+i386        buildonly-randconfig-004-20250416    gcc-11
+i386        buildonly-randconfig-005-20250416    clang-20
+i386        buildonly-randconfig-006-20250416    clang-20
+i386                                defconfig    clang-20
+loongarch                        allmodconfig    gcc-14.2.0
+loongarch                         allnoconfig    gcc-14.2.0
+loongarch             randconfig-001-20250416    gcc-14.2.0
+loongarch             randconfig-002-20250416    gcc-14.2.0
+m68k                             allmodconfig    gcc-14.2.0
+m68k                              allnoconfig    gcc-14.2.0
+m68k                             allyesconfig    gcc-14.2.0
+microblaze                       allmodconfig    gcc-14.2.0
+microblaze                        allnoconfig    gcc-14.2.0
+microblaze                       allyesconfig    gcc-14.2.0
+mips                              allnoconfig    gcc-14.2.0
+nios2                             allnoconfig    gcc-14.2.0
+nios2                 randconfig-001-20250416    gcc-6.5.0
+nios2                 randconfig-002-20250416    gcc-14.2.0
+openrisc                          allnoconfig    gcc-14.2.0
+parisc                            allnoconfig    gcc-14.2.0
+parisc                randconfig-001-20250416    gcc-11.5.0
+parisc                randconfig-002-20250416    gcc-7.5.0
+powerpc                           allnoconfig    gcc-14.2.0
+powerpc               randconfig-001-20250416    gcc-8.5.0
+powerpc               randconfig-002-20250416    clang-21
+powerpc               randconfig-003-20250416    clang-21
+powerpc64             randconfig-001-20250416    clang-21
+powerpc64             randconfig-002-20250416    clang-21
+powerpc64             randconfig-003-20250416    gcc-6.5.0
+riscv                             allnoconfig    gcc-14.2.0
+riscv                 randconfig-001-20250416    clang-20
+riscv                 randconfig-002-20250416    gcc-8.5.0
+s390                             allmodconfig    clang-18
+s390                              allnoconfig    clang-21
+s390                             allyesconfig    gcc-14.2.0
+s390                  randconfig-001-20250416    clang-21
+s390                  randconfig-002-20250416    gcc-6.5.0
+sh                               allmodconfig    gcc-14.2.0
+sh                                allnoconfig    gcc-14.2.0
+sh                               allyesconfig    gcc-14.2.0
+sh                    randconfig-001-20250416    gcc-14.2.0
+sh                    randconfig-002-20250416    gcc-6.5.0
+sparc                            allmodconfig    gcc-14.2.0
+sparc                             allnoconfig    gcc-14.2.0
+sparc                 randconfig-001-20250416    gcc-11.5.0
+sparc                 randconfig-002-20250416    gcc-11.5.0
+sparc64               randconfig-001-20250416    gcc-5.5.0
+sparc64               randconfig-002-20250416    gcc-11.5.0
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-21
+um                               allyesconfig    gcc-12
+um                    randconfig-001-20250416    clang-21
+um                    randconfig-002-20250416    clang-20
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20250416    gcc-12
+x86_64      buildonly-randconfig-002-20250416    gcc-12
+x86_64      buildonly-randconfig-003-20250416    gcc-12
+x86_64      buildonly-randconfig-004-20250416    clang-20
+x86_64      buildonly-randconfig-005-20250416    clang-20
+x86_64      buildonly-randconfig-006-20250416    clang-20
+x86_64                              defconfig    gcc-11
+xtensa                            allnoconfig    gcc-14.2.0
+xtensa                randconfig-001-20250416    gcc-7.5.0
+xtensa                randconfig-002-20250416    gcc-9.3.0
 
-Trying to manage these shared aspects across two potentially independent
-driver instances would a bit challenging :)
-
-Proposed Architectural Change:
-
-It seems much more robust to treat the entire Si3474 package as one
-logical device within the driver. A possible approach could be:
-
-1. The driver instance probed for the primary address (Quad 0)
-takes ownership.
-2. It finds/acquires the i2c_client for the secondary address (Quad
-1).
-3. The primary instance handles all shared resources (IRQ, global
-state, etc.).
-4. PSE controller registration (devm_pse_controller_register) happens
-only once for all 8 logical PIs.
-5. Internal functions use the "correct" i2c_client based on the target
-channel/PI.
-
-Search for i2c_new_ancillary_device()
-
-Naming Conventions:
-
-- Regarding naming, the goal is to align with IEEE 802.3 terminology where
-  possible. Exzeption are register and bit names.
-
-Regarding naming: Could you please rename `priv->port` (and similar variables
-representing the logical PSE port/`id`) to `priv->pi`? This aligns better with
-the IEEE 802.3 term 'PI' (Power Interface) for the logical port, avoiding the
-datasheet's overloaded use of 'port'. We can stick with 'channel' internally
-for the physical Si3474 control paths (0-7) ('ports'). Adding the introductory
-comment explaining this would still be great too.
-
-Regarding the current patch:
-- The `PB_POWER_ENABLE_REG` seems to be 8-bit register, but the driver
-  is using i2c_smbus_write_word_data(). Please use i2c_smbus_write_byte_data()
-  or add a comment explaining why 'word' version is used.
-
-A comment like this on the top of this driver would be helpful:
-
-/*
- * Driver for the Skyworks Si3474 PoE PSE Controller
- *
- * Chip Architecture & Terminology:
- *
- * The Si3474 is a single-chip PoE PSE controller managing 8 physical power
- * delivery channels. Internally, it's structured into two logical "Quads".
- *
- * Quad 0: Manages physical channels ('ports' in datasheet) 0, 1, 2, 3
- * Quad 1: Manages physical channels ('ports' in datasheet) 4, 5, 6, 7
- *
- * Each Quad is accessed via a separate I2C address. The base address range is
- * set by hardware pins A1-A4, and the specific address selects Quad 0 (usually
- * the lower/even address) or Quad 1 (usually the higher/odd address).
- * See datasheet Table 2.2 for the address mapping.
- *
- * While the Quads manage channel-specific operations, the Si3474 package has
- * several resources shared across the entire chip:
- * - Single RESETb input pin.
- * - Single INTb output pin (signals interrupts from *either* Quad).
- * - Single OSS input pin (Emergency Shutdown).
- * - Global I2C Address (0x7F) used for firmware updates.
- * - Global status monitoring (Temperature, VDD/VPWR Undervoltage Lockout).
- *
- * Driver Architecture:
- *
- * To handle the mix of per-Quad access and shared resources correctly, this
- * driver treats the entire Si3474 package as one logical device. The driver
- * instance associated with the primary I2C address (Quad 0) takes ownership.
- * It discovers and manages the I2C client for the secondary address (Quad 1).
- * This primary instance handles shared resources like IRQ management and
- * registers a single PSE controller device representing all logical PIs.
- * Internal functions route I2C commands to the appropriate Quad's i2c_client
- * based on the target channel or PI.
- *
- * Terminology Mapping:
- *
- * - "PI" (Power Interface): Refers to the logical PSE port as defined by
- * IEEE 802.3 (typically corresponds to an RJ45 connector). This is the
- * `id` (0-7) used in the pse_controller_ops.
- * - "Channel": Refers to one of the 8 physical power control paths within
- * the Si3474 chip itself (hardware channels 0-7). This terminology is
- * used internally within the driver to avoid confusion with 'ports'.
- * - "Quad": One of the two internal 4-channel management units within the
- * Si3474, each accessed via its own I2C address.
- *
- * Relationship:
- * - A 2-Pair PoE PI uses 1 Channel.
- * - A 4-Pair PoE PI uses 2 Channels.
- *
- * ASCII Schematic:
- *
- * +-----------------------------------------------------+
- * |                    Si3474 Chip                      |
- * |                                                     |
- * | +---------------------+     +---------------------+ |
- * | |      Quad 0         |     |      Quad 1         | |
- * | | Channels 0, 1, 2, 3 |     | Channels 4, 5, 6, 7 | |
- * | +----------^----------+     +-------^-------------+ |
- * | I2C Addr 0 |                        | I2C Addr 1    |
- * |            +------------------------+               |
- * | (Primary Driver Instance) (Managed by Primary)      |
- * |                                                     |
- * | Shared Resources (affect whole chip):               |
- * |  - Single INTb Output -> Handled by Primary         |
- * |  - Single RESETb Input                              |
- * |  - Single OSS Input   -> Handled by Primary         |
- * |  - Global I2C Addr (0x7F) for Firmware Update       |
- * |  - Global Status (Temp, VDD/VPWR UVLO)              |
- * +-----------------------------------------------------+
- *        |   |   |   |        |   |   |   |
- *        Ch0 Ch1 Ch2 Ch3      Ch4 Ch5 Ch6 Ch7  (Physical Channels)
- *
- * Example Mapping (Logical PI to Physical Channel(s)):
- * * 2-Pair Mode (8 PIs):
- * PI 0 -> Ch 0
- * PI 1 -> Ch 1
- * ...
- * PI 7 -> Ch 7
- * * 4-Pair Mode (4 PIs):
- * PI 0 -> Ch 0 + Ch 1  (Managed via Quad 0 Addr)
- * PI 1 -> Ch 2 + Ch 3  (Managed via Quad 0 Addr)
- * PI 2 -> Ch 4 + Ch 5  (Managed via Quad 1 Addr)
- * PI 3 -> Ch 6 + Ch 7  (Managed via Quad 1 Addr)
- * (Note: Actual mapping depends on Device Tree and PORT_REMAP config)
- */
-
-Best Regards,
-Oleksij
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
