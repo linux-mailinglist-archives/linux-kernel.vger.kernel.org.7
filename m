@@ -1,195 +1,168 @@
-Return-Path: <linux-kernel+bounces-609035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35ABBA91C5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:34:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B19B2A91C5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:34:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D3F019E59F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 12:34:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50AEA19E6018
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 12:34:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EFC1244186;
-	Thu, 17 Apr 2025 12:33:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627A52405F6;
+	Thu, 17 Apr 2025 12:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SM0nEeY7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LAnlnd8E"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D6A1C27;
-	Thu, 17 Apr 2025 12:33:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19BD1EB2F;
+	Thu, 17 Apr 2025 12:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744893216; cv=none; b=Aqpsl7m1AAzO2slYLwWbLPj2ip0mpFH2awY75hwWv4Lvt3KgN2H8GnNUlMh69b5n9R+Kfv3Qztj08uhRxiwAjuVePCOpNCToJcJxNW40UE/LaZ6wfNucUUl0oRnY40VbqrXRgORjdIEJuzT+DlQVlfmXxelLUbcjFrXHP5QHe60=
+	t=1744893267; cv=none; b=pJNWv3QnX6vn4CAD+OoURHg5WezmSULjNISycDO9EeccMggkPMsXKrIILkXmKSJZHoS7f0/ZFiyqGily6vl2lNSpUgViq6vtUBvEH3wDkW/ZCopSEIoAKcYJUA3zcBXXu/A6U+PerMSGATxgF4JpOFLJob4GR/DA3d3E7UVShd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744893216; c=relaxed/simple;
-	bh=FDErxuFL1wK6kbPUAEjtU+rfiDMxx23rRpdS+uMtd/w=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=YSLL6sloqkwM53hGV8G2VCtpKj/SZJmiQuQJrBrBX8i3MnShBdGC4lXK24sfWfXsh6e7h6FfJseIgr7j9TzOKrNF8SMrjz6GI1J/o8Qqm/pKtEWw882rBn3IhSSQ7/wDv7oKivNnWVRd0cnJdykiX9S5eRLTBxSBPDH2Tgjuv4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SM0nEeY7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA465C4CEE4;
-	Thu, 17 Apr 2025 12:33:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744893214;
-	bh=FDErxuFL1wK6kbPUAEjtU+rfiDMxx23rRpdS+uMtd/w=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=SM0nEeY7jvsOvq/cHvFBCTnXMjgpLsUEv0R7oN3PuA2Ciojm8VCh8NdVId+ddg7ep
-	 qN1zatvbev/E/8h43ut2tuWPL4d/5h4VABXPVF5RIlJ5wwyccV3dGrkQh0xrPp9BgQ
-	 t4urY7eXJpYxwovCAkFYix+S05yaZ7fta7IU73o2p1IBTSTb1FoJcV6JK9WZhzwdwE
-	 u8rgJNkw/bwOW6wNoAqJTzOgb9IhTkevdSLgZe70eAyOZK7dNIKV8fSNMXnxU9yF2t
-	 YGUxBaLL5Da8I9XMuiMPA1AE+zJfwkStduak8uM3/Ki9NObMcYKGSppkp6Rk6Ed3tD
-	 8LuzLSgdzFX5A==
-Date: Thu, 17 Apr 2025 07:33:33 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1744893267; c=relaxed/simple;
+	bh=ewChGJa/pDA64ON1Mo3kLbC08r17HE39rm6/OVxBAes=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J88VQMKhK1sRUDwOMPjX90UPeye+1oI3vzqt3rlfPMzsH7bcMWxUsejsbdASL29BFJu8nIEB3LVwuxLCk2uMicYxvixiETNAQDqAdhQRZ71fvExFdwLixFb+B2bdZurBTIoMO+nu1Gv67lVnRR2zbZgjBBK0e5aCOiixvyK8NXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LAnlnd8E; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53HCYJGR012975
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 17 Apr 2025 07:34:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1744893259;
+	bh=Zv6Sg9oriYz3cRSUGKqGu91FELTk5ukWJXCsL2561ks=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=LAnlnd8EbLuvdd7fbUuERIsjsKa4/3mayZu1noNOj+C1FaX9fijMPbi9j3ORA9zR2
+	 GPQibpOCT5bQolJTqUYgIZ2fZOqd3RvvIxYbxMzztSjOPL8W2jIsyiKfqdA8/Jb31g
+	 tN7Es/8joOFgvkaPwMhM6b3mOLLkIx1cAznw6Uuk=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53HCYJKT095064
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 17 Apr 2025 07:34:19 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 17
+ Apr 2025 07:34:19 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 17 Apr 2025 07:34:19 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.113])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53HCYICZ038854;
+	Thu, 17 Apr 2025 07:34:18 -0500
+Date: Thu, 17 Apr 2025 18:04:17 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Nishanth Menon <nm@ti.com>
+CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <vigneshr@ti.com>,
+        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <u-kumar1@ti.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <srk@ti.com>
+Subject: Re: [PATCH 0/2] J722S: DT Node cleanup for serdes0 and serdes1
+Message-ID: <c952d708-fd56-408b-ad16-15c1c013c396@ti.com>
+References: <20250412052712.927626-1-s-vadapalli@ti.com>
+ <20250414120930.m7x7zfmyby22urpo@ultimate>
+ <79ef7f50-22d5-4c40-ae28-02bf297ca79c@ti.com>
+ <20250414143916.zhskssezbffmvnsz@dragonfly>
+ <4106b4b8-6ca7-400f-8862-a45214284326@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Abel Vesa <abel.vesa@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, 
- devicetree@vger.kernel.org, maud_spierings@hotmail.com, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- linux-kernel@vger.kernel.org, dmitry.baryshkov@oss.qualcomm.com, 
- linux-usb@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Bjorn Andersson <andersson@kernel.org>
-To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-In-Reply-To: <20250416232345.5240-1-alex.vinarskis@gmail.com>
-References: <20250416232345.5240-1-alex.vinarskis@gmail.com>
-Message-Id: <174489319505.1442449.5614787992702738392.robh@kernel.org>
-Subject: Re: [PATCH v3 0/4] X1E Asus Zenbook A14 support
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <4106b4b8-6ca7-400f-8862-a45214284326@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-
-On Thu, 17 Apr 2025 01:20:47 +0200, Aleksandrs Vinarskis wrote:
-> Introduce support for the mentioned laptop.
+On Mon, Apr 14, 2025 at 08:13:19PM +0530, Siddharth Vadapalli wrote:
+> On Mon, Apr 14, 2025 at 09:39:16AM -0500, Nishanth Menon wrote:
+> > On 18:30-20250414, Siddharth Vadapalli wrote:
+> > > On Mon, Apr 14, 2025 at 07:09:30AM -0500, Nishanth Menon wrote:
+> > > 
+> > > Hello Nishanth,
+> > > 
+> > > > On 10:57-20250412, Siddharth Vadapalli wrote:
+> > > > > Hello,
+> > > > > 
+> > > > > This series is based on the following series:
+> > > > > https://patchwork.kernel.org/project/linux-arm-kernel/cover/20250408103606.3679505-1-s-vadapalli@ti.com/
+> > > > > Based on the discussion in the above series which disabled 'serdes_wiz0'
+> > > > > and 'serdes_wiz1' nodes in the SoC file and enabled them in the board
+> > > > > file, Udit pointed out that it wasn't necessary to disable 'serdes0' and
+> > > > > 'serdes1' in the SoC file anymore, since that is not a working
+> > > > > configuration - serdes_wizX enabled and serdesX disabled doesn't work.
+> > > > > 
+> > > > > Hence, this series aims to cleanup the serdesX nodes after the changes
+> > > > > made by the above series.
+> > > > > 
+> > > > > Regards,
+> > > > > Siddharth.
+> > > > > 
+> > > > > Siddharth Vadapalli (2):
+> > > > >   arm64: dts: ti: k3-j722s-main: don't disable serdes0 and serdes1
+> > > > >   arm64: dts: ti: k3-j722s-evm: drop redundant status within
+> > > > >     serdes0/serdes1
+> > > > > 
+> > > > >  arch/arm64/boot/dts/ti/k3-j722s-evm.dts   | 2 --
+> > > > >  arch/arm64/boot/dts/ti/k3-j722s-main.dtsi | 4 ----
+> > > > >  2 files changed, 6 deletions(-)
+> > > > > 
+> > > > > -- 
+> > > > > 2.34.1
+> > > > > 
+> > > > 
+> > > > 
+> > > > I do not understand the logic here. serdes cannot operate without wiz
+> > > > nodes, correct? why would we leave serdes on by default?
+> > > 
+> > > Yes, serdesX requires serdes_wizX, but at the same time, serdesX is the
+> > > child node of serdes_wizX. Therefore, without enabling serdes_wizX, we
+> > > cannot enable serdesX.
+> > > 
+> > > Prior to this series, but with the dependent series at:
+> > > https://patchwork.kernel.org/project/linux-arm-kernel/cover/20250408103606.3679505-1-s-vadapalli@ti.com/
+> > > applied, the nodes look like:
+> > > 
+> > > 	serdes_wizX {
+> > > 		...
+> > > 		status = "disabled";
+> > > 
+> > > 		serdesX {
+> > > 			...
+> > > 			status = "disabled";
+> > > 		};
+> > > 	};
+> > > 
+> > > The dependent series fixes 'serdes_wizX' by disabling it in the SoC file
+> > > k3-j722s-main.dtsi. But after the fix, we have a 'status = "disabled";'
+> > > within the serdesX node which isn't required since:
+> > > a) serdes_wizX enabled but serdesX disabled is non-functional and
+> > > unusable
+> > > b) serdes_wizX disabled in DT implies that serdesX is also disabled
+> > 
+> > 
+> > Can we handle all of this in one series instead of two series?
 > 
-> Particular device exists in two model numbers:
-> * UX3407QA: X1P-42-100 or X1-26-100 (as tested)
-> * UX3407RA: X1E-78-100
+> The idea behind splitting it was that the dependent series is a "Fix":
+> - Fix to follow the convention of disabling nodes in SoC file and enable
+>   them in the board file.
+> while the current series is a "cleanup":
+> - No fixes are introduced by this series and therefore it doesn't
+>   require a backport.
 > 
-> Mostly similar to other X1-based laptops. Notable differences are:
-> * Wifi/Bluetooth combo being Qualcomm FastConnect 6900 on UX3407QA
->   and Qualcomm FastConnect 7800 on UX3407RA
-> * USB Type-C retimers are Parade PS8833, appear to behave identical
->   to Parade PS8830
-> * gpio90 is TZ protected
-> 
-> When comparing device firmware between UX3407QA, UX3407RA, it seems
-> that only ADSP firmware is different, CDSP and GPU firmware appears to
-> be the same. (At least assuming the GPU firmware name in both cases is
-> `qcdxkmsuc8380.mbn`). Since at least some blobs are different betweeen
-> X1E and X1/X1P, define new firmware directory for `qcom/x1p42100`. This
-> also makes it easier for distros to automatically extract firmware from
-> Windows and place all blobs for the model under the same path. If/When
-> firmware blobs make it to linux-firmware, same blobs can be easily
-> symlinked between `qcom/x1e80100` and `qcom/x1p42100`.
-> 
-> NVMe SSD depends on [1]. USB Type-A over USB MP controller  depends on
-> [2], or equivalent proposed solution.
-> 
-> Qualcomm FastConnect 6900 on UX3407QA did not work out of the box, and
-> additionally required both newer firmware and patches to `board-2.bin`.
-> I added a short how-to [3], as it is not exactly trivial.
-> 
-> ACPI dumps can be found on aarch64-laptops' github [4]. HWids on
-> dtbloader's github [5].
-> 
-> [1] https://lore.kernel.org/linux-arm-msm/20250319094544.3980357-1-quic_wenbyao@quicinc.com/
-> [2] https://lore.kernel.org/all/20250318-xps13-fingerprint-v1-1-fbb02d5a34a7@oss.qualcomm.com/
-> [3] https://github.com/alexVinarskis/linux-x1e80100-zenbook-a14?tab=readme-ov-file#wcn688x-wifi
-> [4] https://github.com/aarch64-laptops/build/pull/134/files
-> [5] https://github.com/TravMurav/dtbloader/pull/4/files
-> 
-> Changes to v1:
-> * Fix/re-add PS8833 as fallback
-> * Add EC's i2c address
-> * Add pwrseq for wcn6855, placeholder for wcn7850 until its tested
-> * Rename x1-zenbook.dtsi to x1-asus-zenbook.dtsi
-> Link to v2: https://lore.kernel.org/all/20250402084646.10098-1-alex.vinarskis@gmail.com/
-> 
-> Changes to v1:
-> * Drop PS8833 variant, fallback to PS8830 as they behave the same
-> * Drop wrong pcie6a_phy compatible revert
-> * Drop redundant comments, fix order of properties in the device-tree
-> * Fix device name bindings, express in model names instead of the soc
-> * Fix GPU firmware name for UX3407QA
-> * Fix model string, enclose variant in parenthesis
-> * Added missing new lines before 'status = "okay";'
-> * Updated cover letter to reflect some of the above changes
-> * Left SPI10 disabled as it is unknown how/what for to use it as of now
-> Link to v1: https://lore.kernel.org/all/20250331215720.19692-1-alex.vinarskis@gmail.com/
-> 
-> Aleksandrs Vinarskis (4):
->   dt-bindings: usb: Add Parade PS8833 Type-C retimer variant
->   dt-bindings: arm: qcom: Add Asus Zenbook A14
->   firmware: qcom: scm: Allow QSEECOM on Asus Zenbook A14
->   arm64: dts: qcom: Add support for X1-based Asus Zenbook A14
-> 
->  .../devicetree/bindings/arm/qcom.yaml         |    2 +
->  .../bindings/usb/parade,ps8830.yaml           |    7 +-
->  arch/arm64/boot/dts/qcom/Makefile             |    2 +
->  .../boot/dts/qcom/x1-asus-zenbook-a14.dtsi    | 1307 +++++++++++++++++
->  .../dts/qcom/x1e80100-asus-zenbook-a14.dts    |   44 +
->  .../dts/qcom/x1p42100-asus-zenbook-a14.dts    |  137 ++
->  drivers/firmware/qcom/qcom_scm.c              |    2 +
->  7 files changed, 1499 insertions(+), 2 deletions(-)
->  create mode 100644 arch/arm64/boot/dts/qcom/x1-asus-zenbook-a14.dtsi
->  create mode 100644 arch/arm64/boot/dts/qcom/x1e80100-asus-zenbook-a14.dts
->  create mode 100644 arch/arm64/boot/dts/qcom/x1p42100-asus-zenbook-a14.dts
-> 
-> --
-> 2.45.2
-> 
-> 
-> 
+> I can squash the two series and post them as a v2 if that helps.
 
+I have squashed the series and have posted it at:
+https://lore.kernel.org/r/20250417123246.2733923-1-s-vadapalli@ti.com
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: tags/next-20250416 (exact match)
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250416232345.5240-1-alex.vinarskis@gmail.com:
-
-arch/arm64/boot/dts/qcom/x1e80100-asus-zenbook-a14.dtb: bluetooth (qcom,wcn7850-bt): 'vddrfacmn-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-asus-zenbook-a14.dtb: bluetooth (qcom,wcn7850-bt): 'vddaon-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-asus-zenbook-a14.dtb: bluetooth (qcom,wcn7850-bt): 'vddwlcx-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-asus-zenbook-a14.dtb: bluetooth (qcom,wcn7850-bt): 'vddwlmx-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-asus-zenbook-a14.dtb: bluetooth (qcom,wcn7850-bt): 'vddrfa0p8-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-asus-zenbook-a14.dtb: bluetooth (qcom,wcn7850-bt): 'vddrfa1p2-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-asus-zenbook-a14.dtb: bluetooth (qcom,wcn7850-bt): 'vddrfa1p8-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
-
-
-
-
-
+Regards,
+Siddharth.
 
