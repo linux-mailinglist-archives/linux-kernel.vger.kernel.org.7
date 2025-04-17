@@ -1,85 +1,109 @@
-Return-Path: <linux-kernel+bounces-609121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A8C6A91D82
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:15:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FCFFA91D89
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:16:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9355F189D22A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 13:15:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC520462A42
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 13:15:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265F024BC17;
-	Thu, 17 Apr 2025 13:13:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B6224BC18;
+	Thu, 17 Apr 2025 13:13:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="o11hbEXW"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2050.outbound.protection.outlook.com [40.107.223.50])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iLqfeWIl"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FDC6185B67;
-	Thu, 17 Apr 2025 13:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E6624CED7
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 13:13:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744895614; cv=fail; b=NZnRE4Zl/Qh9SxvR34UXRkXDF/l7A+tr8ncmgiFHTn05B5YEiVANYx4hqbJCQZbuSoRSV+fV4yZ93BKDAcnj5SbhbLbmwOGn2Bcg1HapdV7Xezmj5Be0riZlmIYFi7E1pOiFj11W28AjHndgORHg3F/bmZMyzWUZUB3QmsyfiGw=
+	t=1744895625; cv=fail; b=VIxrE2QG9ZQtJXqxj7KZ1Xm3OKGD8xsuML4w5sE8tJbeByHdJJaerpInwNz4okQ/TVEtOa9MAHxCAXClsfWWXiZ6Es6K1jzTZZDGMhrHlOnpLUSCdQI8Z9Mbe29Ka4mvAD+RZjrHtKskclqJEVZhoi2A54n4+T1xEasZUrsJPrg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744895614; c=relaxed/simple;
-	bh=qL0A5Hl7dcQAvH9GkZ2DE8HWhBDeVBxdNCXgAJ4COuE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=X7MPprMz4TRmrySxTNN0nMfPS6tGVRSaxEjabE//ToT6eRcbjwuoOQEUwlrKgcgXkQkoQyYl21c8uxuZn3El2T1caWAzhzBFOFCV5VlkrqkdCK14uQIhsSJlphbqr729oP2fkf2eEPXYYUqv3pmiSosFqeTLp6vXhA1CpSUD8vk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=o11hbEXW; arc=fail smtp.client-ip=40.107.223.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1744895625; c=relaxed/simple;
+	bh=Q+2SBRj/D5Y2ulAgGoyPKixyRLnPQsljFplCNAUstYY=;
+	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=ToasTHeVWw0KuJ+c0wFEx87+L+rhp0725ZJCk8oeni5LtqdyTMzoavRBTNklpMo6W2NEDcADi7xlzN6dwd739Y4rulJ+dGMzpjBOamm6u5u9pFrofQc2fE0Rm+HKWEHz9pQbDvceCeAUJgdgbX3oTaLcadQht85XXNZrfH/5K5E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iLqfeWIl; arc=fail smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744895623; x=1776431623;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=Q+2SBRj/D5Y2ulAgGoyPKixyRLnPQsljFplCNAUstYY=;
+  b=iLqfeWIlC4FP0rqCYC0etnDh0AXl/S8gk+kZJ58JR+f5LnJ0knqXIyjM
+   sSvDMMbEpcZiAaj5eoDHOgPjf13g5quUCH2ucM8RrBvDwQ6+/tRWAAFwc
+   3kyJYxqh8GQRV5g527QgDyySkBk6qj+7v4k9nbnuX1GC0SG+0ADyLU5G7
+   u0UvBSJZPOZpdZLuhA2QmcqBaBnxz3GV9WU00LpTbO7iYkbN6SbFo6KUa
+   9Jd9vcrHZvzrQCyc7aLT2e1wxR6re88T4yRPI+gnlHvZU8h+8S7czvdof
+   4ZeiJciO69e7N/Rn18AbYy8nn6FRDG4+/KJfsTCB0DMDy2RpwsXcjLcCJ
+   g==;
+X-CSE-ConnectionGUID: 7s/811y0QLeXRLf7XtNwbw==
+X-CSE-MsgGUID: CR/Q96pOSk+GBb131tu/vQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11405"; a="63890403"
+X-IronPort-AV: E=Sophos;i="6.15,219,1739865600"; 
+   d="scan'208";a="63890403"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2025 06:13:43 -0700
+X-CSE-ConnectionGUID: uN7ESt2FRcCPLiFmpWhoDQ==
+X-CSE-MsgGUID: oU1ybXjyS1eIYBz1ezc//w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,219,1739865600"; 
+   d="scan'208";a="130655236"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2025 06:13:43 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Thu, 17 Apr 2025 06:13:42 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Thu, 17 Apr 2025 06:13:42 -0700
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (104.47.57.45) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Thu, 17 Apr 2025 06:13:41 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=auAmMEuJaNkgssyU5FwmpnSKGacxemfw+DUzWCXfhOLPtMcCvEuRyfMOLUnycSrxKn8ax0l3UCqeeIsJ1MY64j3oL2Z8Y9kFKJKZnEyg8R+/OjAwSgecasb/x1+tUDX6LpRPhxsFaPDLnLUN5+bwC+wgSzXwj5DiEmNhDTLd8y1HI9irY+2N4LuTbWVGf7Rb2WkxLsfNwLGCxX7tGcaOYudUjj6S2lHk1dzHsfy5lkTj6cNcDCn50wgdmAd7CMp6WLDd8LUeDrKU8NCIdBEs42xpzfgl3RWSfrmzFh1gecr/oNwaGLU9UbL8gx3+Up4rpVHMTmyDMac7OvZ5ymksww==
+ b=Itk+VwmvhJzUXPND2pfrT1QoRlcTvpN+SeRl1GOLxNQ6IC98eeedGGuaJl39zYrFurtOkF44krqb0zjzP3EWBeqP+aXF9ooKj85EMjohdbPOj0v3Gs68FRaLSt9EYKo3MbQuah8ARzd9pdIyaqNNIKRoZs8yTURYtiwr4LmebSbzSVyKFJJYlLDsveMCB2HMCyDpGfKpRPMnpFLg7vt/CV+OYa2zk2VJIoTTpKHMHYiT6rOJJbugIQjZ32ljJYYrUCukDykfzsh/qb4D33lhpFL18LwlbBImXN/VRh3fZdP9dJzYhmsOkDk5neDKC5Q5JT3SzvYWH5IMEADlgyOl1w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OLkW+qkvrD07wURMyzDMyI0BJDEh3w9X1doOQ29jHBU=;
- b=ddc+J4/AotsGBJqv7Qfxua0AD7MlmzhsdWixlai6vAOxi1/Ct3TQcoLBMUqOmZca7dGs8VdBatvi8gl8Dc5dHqZK9FYlXNIG3WFeZqtzMtlwCoezXYQNaQD5WC6EvqouOJc2MTmaIcK2MwmgS3KsxMh1bmOycvYCZBX5r0IMuiM83oc4v1mfXSonJoczNZXaQ9dI//uN8tjoQmAJKFejwnNfIxWpjOMfegDYN9//1VD8kLq4nv7NjC37U++cfW+yrphA5LgxbjA6VSmmW6rkRO7gklYhWixP6xm9dCHo5OypNWxOThzmskScrq3pR18VTKzzaLuzsZi9c1G6VOuNXQ==
+ bh=cL3VhGhTB3u+WUqsfniVtHmvGM8RMHGCs6IwRd022Ug=;
+ b=pSrfMFK23Y5EWDZi9DHEWSOZPCCMEp54I0Yjh4/DrLry7VneTs4faN3XfYf+By9qiHodUeueMZYMOoNdcO77lXnN+dsswlIZjvhN5kkCf/J9o/jrV8OJ9RF1by7tWafFaii2If6hLu+S0NTMzkdIs3wmdJ4aphKp5Ol8dqvN/16V3+MeRxIjDjcUNKRBMhMKpINkQms+1PsU6DUzHX/1PvbZ4bdyPYkqpAjvbCoXoytGRjxBzST7UmbF7DWrQUjbFfHWLNv1hlmRPsrn2P+vUQC8RjF/thMVUSm6FSBslCtagxCcq5+BBkJpop9Zt1upKzpgk+/LMrb8L7Rsb11RFA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OLkW+qkvrD07wURMyzDMyI0BJDEh3w9X1doOQ29jHBU=;
- b=o11hbEXWMZHSK6rBggs552XH91NZBsqMWxUNDdYpRDT/KrM2PrxSlch12wZWGfpVQV19gjuO1ExNE8HHjJQ87bFmcpkG0d3WW6dMrLUkJ5brPE+283efqrIX3rE+awrLj/98ctR9hej5qojupKsYHAPyqu5X0rLelfml9pC4NLIwaH0xLLi2hWQH3ceXXprIGcyCl6FopBBLXxgZHXwlA8prqkQdrYGJHl52fKa3mBH1mOz4sUQZA7SgCSjdY/bMqanyAv6UBboqP6ngrFDAI0s0nNK8AtK3r1OfX6XJXjikDtu9FI/uKSgtBYVykgRvuKBPkapvzG+kBE6Ecxzk1Q==
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by PH7PR12MB6881.namprd12.prod.outlook.com (2603:10b6:510:1b7::10) with
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
+ by SA2PR11MB4780.namprd11.prod.outlook.com (2603:10b6:806:11d::21) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.22; Thu, 17 Apr
- 2025 13:13:27 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%3]) with mapi id 15.20.8655.022; Thu, 17 Apr 2025
- 13:13:27 +0000
-Message-ID: <05316a07-2546-4c07-9bda-b609a290d6d0@nvidia.com>
-Date: Thu, 17 Apr 2025 14:13:23 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] clocksource/drivers/timer-tegra186: add
- WDIOC_GETTIMELEFT support
-To: Robert Lin <robelin@nvidia.com>,
- "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
- "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
- "tglx@linutronix.de" <tglx@linutronix.de>, Pohsun Su <pohsuns@nvidia.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
- Sumit Gupta <sumitg@nvidia.com>
-References: <20250417093110.2751877-1-robelin@nvidia.com>
- <20250417093110.2751877-2-robelin@nvidia.com>
- <6456eb35-3771-4820-b316-3b5ba6c74453@nvidia.com>
- <PH7PR12MB641816B01C956C123FDC5C09D9BC2@PH7PR12MB6418.namprd12.prod.outlook.com>
-Content-Language: en-US
-From: Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <PH7PR12MB641816B01C956C123FDC5C09D9BC2@PH7PR12MB6418.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO3P265CA0002.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:bb::7) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+ 2025 13:13:38 +0000
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c%4]) with mapi id 15.20.8632.035; Thu, 17 Apr 2025
+ 13:13:38 +0000
+Date: Thu, 17 Apr 2025 21:13:28 +0800
+From: kernel test robot <oliver.sang@intel.com>
+To: Peter Zijlstra <peterz@infradead.org>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
+	<x86@kernel.org>, Ingo Molnar <mingo@kernel.org>, Andy Lutomirski
+	<luto@kernel.org>, Rik van Riel <riel@surriel.com>, "H. Peter Anvin"
+	<hpa@zytor.com>, Linus Torvalds <torvalds@linux-foundation.org>, "Andrew
+ Morton" <akpm@linux-foundation.org>, <oliver.sang@intel.com>
+Subject: [tip:x86/alternatives] [x86/mm]  4873f494bb:
+ WARNING:at_arch/x86/mm/tlb.c:#switch_mm_irqs_off
+Message-ID: <202504171640.c81d6f67-lkp@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+X-ClientProxiedBy: SGXP274CA0021.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::33)
+ To LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,221 +111,210 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|PH7PR12MB6881:EE_
-X-MS-Office365-Filtering-Correlation-Id: db87f263-9248-4a71-8b6f-08dd7db1a424
+X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|SA2PR11MB4780:EE_
+X-MS-Office365-Filtering-Correlation-Id: 663f35ea-cb48-49ca-e098-08dd7db1aa4a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?U0x3MlZJdUJtZmlMQVhMOGxIdjhwWUtGSm0vNDNlMkFNWHV5VkcvMlVJaDJx?=
- =?utf-8?B?ZEdGbHFqLzFCaDdJcGxZRi82dUMzNlRHU3d2ODBCMFd6aHh1ekNpZm92UHo3?=
- =?utf-8?B?MmhKRU9mZWRlb1BnL3ducWMzQlllRDhWT2ZjWlJhd3BLR3RhOWR1K0dGMVdk?=
- =?utf-8?B?bmJZbXgzekgzVGJHdlc3R2ZUY0J1REFQWlcxL2kyN1RvcGFUQXZCeFFiRzZp?=
- =?utf-8?B?QUVPTW52R2hoQzV1d1NpNnV2V3l5VjIraFUyY0wyRVQ2cTI3aXpmWmVrNlYx?=
- =?utf-8?B?UFFDSzNWVFFBNU1TMElJK3BBMUh5bWo0LzkxeTJWRmlmYlpYV3BVdmdMMGxO?=
- =?utf-8?B?NDFaY1RZZW5jYkpqS1VXU3BLbVRwVlcvdzgvR1Q1UVdGMUVSK25qb2ZxK0tT?=
- =?utf-8?B?Ykdidm9RYjllY09SOWM1cXpNRUd6Y1gxclA5Q2VvaFB4ckI3d0ZySHBxUUZX?=
- =?utf-8?B?cU9PNXRVb3djMEl1L095MVF6R0lnbitXdlV3eUFGZHkzeXRWUHA3ZzNHL0JR?=
- =?utf-8?B?M01FK3YvTEM3bUg0a3NtNnRweUVVeVRpR29ZRzVqd0I1U0QxMDRpRzN1cm95?=
- =?utf-8?B?YmZZeDdkK2JleEc3cU56VXZxbTN5Rm1rbDZ4bUFHaVZZNVdydGFrT045WVpG?=
- =?utf-8?B?cUNnYWxUbWUxYzRWd3hHd3hpRHZ6SnEyY3VoZjNEc0lKaVpyZ1d1a1orYncy?=
- =?utf-8?B?VE4weXhSNmFESmNJRE52VGdjL0EvZ0dNVGRYWW02eHhrYUZiZ3BaeFRwMUF3?=
- =?utf-8?B?SUFodFNsUTR3ZzJreGdhZWZZRXpDL3lpV29rU0tlUjZZdVlqR2hsRmc0WllG?=
- =?utf-8?B?YkdjZEZDRmFpZTJyWkliUU1UVE80djhzc1Z4cmhUa09aTUZ2ajlrcVAxUVcv?=
- =?utf-8?B?NDByMU9KWlJ3RHNpb000VnRCMmNPUWUzaHNTNWJyOFhsU3lzTFNKbFZmZy9i?=
- =?utf-8?B?SWlHbExRbFdzOEpUTUxLaWVHbjFOamtRTmVNc3dqei9QcXRHQTBvVjdSNXZY?=
- =?utf-8?B?cW5MR05nNWE3NzVqSkxTbW9JckVoRFZZRDgwamdYMHdwa1Y2V21PUU9TQlN6?=
- =?utf-8?B?Z1phRTRLWUFMTUdheGxUR1FXc1M4M3NWRHlOUDNXejhEYm1GQ05zSkRBRFpi?=
- =?utf-8?B?QXR1THFlNXdDaExUR1U4K3VwMnVYcEQzdUg3L3NCNTNxRkRiaXlScTdjQitq?=
- =?utf-8?B?Q1N5SEZ5WjJGMVd0RkVWN3dhMElqTFVFY2FMNTRFREZVNjlPUkVqR2NMQk9h?=
- =?utf-8?B?TjhveFRGOHNwRWc2SVcxbWJhRXpONkNOQzFPQmtidm16bVZiN3ltc2lvOHM4?=
- =?utf-8?B?MnM4MnBpTlVGR0pBdWVqMStRcUJVSmh3cVZRaUV3SGl5YmxZTmV6N2tEYUg2?=
- =?utf-8?B?cnpEeGYraXRidCsxeHV0NEVrbEwvY1B0ZVNvanNMa2dpUC9oZ1kvc2p3Q1Ar?=
- =?utf-8?B?TzdqTDE5TVJOTmkxZVhUY3dzZVZUQjNoQmo4Vm5ENkdPQzNMeEF2NWZzMDRy?=
- =?utf-8?B?cmtrSkh5am0wUHdPOFdZUjcrWkIva09pU1Q5MW42bDNSUGxGb1hDbm1wc2RC?=
- =?utf-8?B?UU45Wmo4N0tHNzJGdUpQVDFEOW5BQ3V3cWJSWEZLYkY0TFp3Um9rbEdyMDE2?=
- =?utf-8?B?c0M1VjR1OTFSZ0Y2MllJTXIzeXJnZWE2UDU0bTZDaDUzMHo4YlZ3ZnV5SzU0?=
- =?utf-8?B?RkRqM215YWduamRPbHNEN2xkYkpkdko0bWRJL2lSTGJiYU9tSjh1eEhQcXln?=
- =?utf-8?B?OVhIU0dkQy9Td2dDZWpVK0EydzJrU1RrUk9HRE9TZ2NlWldkNEhLZnYya0hV?=
- =?utf-8?B?YUtxUVorOWJPTUVSUDFJTGw3OEZNNVVBVXRwTWVaVnl5MWpXZHZ3Kzk0ck8w?=
- =?utf-8?B?YUdPampYSmxpRkpzU3dJb1llWXN2RFN1QXpxcjh6TnZQSXh6clNFU1RFd2xr?=
- =?utf-8?Q?Ri9vezU0Pv8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?zt293jeGBWLWD5cyfhIwqLwT0OZvyHSQM7uVmEgIEObpTzRahslXv7QaVM+8?=
+ =?us-ascii?Q?HnQFTVvMeSgEmwbvwc3rKFoM0Bwxz2Yt9Y/zQewz3ZN293/ihHflc9qu5Rk+?=
+ =?us-ascii?Q?0Gbc5GQ5n0yIk0ukJbX/jJ2O2vWl0g2YU5V91JeXaTeBW/zk5aS5rDPF1clZ?=
+ =?us-ascii?Q?I6XWncvaUuQYatczYxA2LuiGpqgqijiIvJUirjVRzA6X9WJ9FVRpx0L70chf?=
+ =?us-ascii?Q?ggktALMTbRLimZLiB7yO9GKvHaArh2o9PbFMOlbUntiMe58vLKGU+AmoVhLp?=
+ =?us-ascii?Q?wQRKm5PRg51qpjTLqttUfs96paC3BGcyso7qCj7lKq9x9SQ3EOg/4WIx4SG2?=
+ =?us-ascii?Q?AcfAs0gt1uhgshqLl8yQ0tpIZAFrQ5GbNG0lq2ZSRJ+8vz09IGG0ufTKwNZV?=
+ =?us-ascii?Q?mii6TDMWI/AQK1XhKC6iiP8EAsn5pBui6qsA9Lw025NunS1YWg51fJitlZsq?=
+ =?us-ascii?Q?+MsarYqrxlcuZ7SoQslGkYEs93aYLJh+iJ2xnAZ3AUoHyJGEOg0fPAJW0zqd?=
+ =?us-ascii?Q?CmVJqCjCiMVvjEddJERQp4nGU881G3elszKhIQBIMMQ644tG9/tmSwS6sSZZ?=
+ =?us-ascii?Q?XMEy6YSnM2DETO70g3RmeuRYc65Rv0H5t+vGWRGlwr8dFDNwkh/+TiVRCN8y?=
+ =?us-ascii?Q?jRgYROAO+pbwthNZlbSvHkM1Ll50WpQ+2JAiVKHRbv9V6kdFjPh/IPu2oBaD?=
+ =?us-ascii?Q?rAdH4DVSop6qrp/cMH1+7g5tfNcR9wq1v8pl1GBmCYcUzRCRrk1q80o7jRYa?=
+ =?us-ascii?Q?6z26nOiKads/Csrd4O5a/rGHkw1GSyv6xM2lPko4EJGqKicnWhUu0c4WC0rC?=
+ =?us-ascii?Q?P2Yq5f7Mx+U/r98ZVwQC08N2GaDIMluN/zswD6bq8MpuAGSD99YaC7NLzVkZ?=
+ =?us-ascii?Q?Dv2jbYtDRze4VIyQLU6lbH+BYp0akVzNwTs7hGlmPPpT7vjs4uO1SmutTAJA?=
+ =?us-ascii?Q?+2Ik92rCEKDiFZqp7N5mwTZVKovyIxAp4V+DW99+CeNy6nPaREOCiNplo6zX?=
+ =?us-ascii?Q?kVO5Ttgn88tNQFO2VB/27RjuDjjQo9LPB7kYecSWRSh4VU0mwqqzooN3kT0/?=
+ =?us-ascii?Q?1/Pmc80M82QeH3gps5XS3ZZiJVcBy0acaoSmpKUVhD98qTC7trCjbVPCTEEH?=
+ =?us-ascii?Q?8tbkk5GwVANjoF2ViJlJOayvtWT1QG1AfRcxyewD4EJGLmka/fxrb+VkchHt?=
+ =?us-ascii?Q?q4oFfBeajOywaoa2zXkqBnr6smNrV7YqiQBqqA6d7sMWzs1hH7cctnWHzeVS?=
+ =?us-ascii?Q?7Fk5SXTG1eR5OHo9ZLsTBZ46EpJ+68vv7SEPTtoWHId2F6UWAofYe+M4Pbyv?=
+ =?us-ascii?Q?uvD6jDjPv3HfvkSwOs+nRu7nxcDnc0Yymda2X8peuoCZvMcriLYdZvQ2dxbP?=
+ =?us-ascii?Q?dDiUgN+8jMdT4FvGRWcF/OC6sNz9?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bWJlMUh0K1JpVEJqaDlBdmt1ZmZ2V1QvV0YvSjVXcS91bEpHZk52aFc2WFRH?=
- =?utf-8?B?b2EvTFlqcTZQNTdUWlJnSlorMTVjN1ZOZlVLQWRVRDFJVFZrUTdaR3lWWDcy?=
- =?utf-8?B?cHI5U2VaRXNldVJxNEN1NlRhVVNYQ1pJRzBIMnJ2SUlKVlppc0xSSHRXZnhq?=
- =?utf-8?B?MUd6SG1QamlZcWhMMmdkQms3OFB4a1RYTUlWUldSR1JRMi9NNmJVeU1KTzFt?=
- =?utf-8?B?aXp4ai9tMWdmUENvM1VKSk5kbURnYkhqcG1rYmVkSXYva3VjU3BDMFpONG9W?=
- =?utf-8?B?NS9XUEphQldKSlJxek5ZSlpvdUNxS1pBUUdNMWRWeVRkczRzRTZoUDNyelpp?=
- =?utf-8?B?cmlyUng1cTN3aDRiek5WNjQ3c0I1bGJpZHJPV2l4V3dobk1iZ0x6SWs4Z2Fj?=
- =?utf-8?B?TXphb2pqNDJJTHNEenNIVitjelNHMTdFcTlTdVM4bWY2bGsralU0dTRxNVdv?=
- =?utf-8?B?Y1BEL1lQcnFLZGlEMVZrV3lDSTlnNUpkZTNZZHdkV01sQnVtaEJvUk9MQWFi?=
- =?utf-8?B?WHhBaWxESEt0US80TkNlVVEzalhtcktIaEMwRVpHQ3ZzV1oxeGNLenFTdnhU?=
- =?utf-8?B?Tk10S0RNTGdXZk45Sjl4dlcrSkxYODB3TnZBcitKeXk4TmtXM3VCMFdqbjN4?=
- =?utf-8?B?Y0lxVVRGRWxoVFhoTFFNUmp1YnBRenFCZTRsZ2p3MXpaT0phcjJMMXBRWmdI?=
- =?utf-8?B?djIzT2ZvNE5hb3RzZzUxUDdjVXVrS1dZTE8rbXJrbWc5djhZQXp0bnJSREIv?=
- =?utf-8?B?NVJTb0M4U3QyQkFTV0ZuYmtNazFKMlhJMWhTTFhoZ3R2UnlOL056cXNxZDdB?=
- =?utf-8?B?RmFpUk0xWldyMTdFcTRPbWsrVllrMFk5bVBIUk8wbjM4V1p4d3J1c05iUmNM?=
- =?utf-8?B?L0NGUzRmdittUzF6dkZraWtpZW94Y2dvZkdMb0tpenF0WnpCeGhpc21ybXN4?=
- =?utf-8?B?anFTbFhHVTVnbWxHazRRaUdPV2p2Q0NzWFh4R3RxK242Y3p5YUVWOUFKTElJ?=
- =?utf-8?B?a1p1L2pTSG9Jb1RLelhBa01BUjZ2LytudWJBYlBMcGdlMHZqa05HVlYwZWRl?=
- =?utf-8?B?VlJvc25qUDBuc25IUzlaZjJmQk9Eclh4M0NrSFBNWnpIWGNQK0RxdTdnYkZp?=
- =?utf-8?B?QUxiYUkzMkhiQndRWWRnTEt6OFE0MUNrR3BJdnRtRmFKY1oreUdaQllvRUho?=
- =?utf-8?B?VC9NbFVZSVJBUW44QmhPa1FGM2g2K3BKREg0cXd4a0NaRk01eGFXSEUrZlEx?=
- =?utf-8?B?QnNkMGVuSld1aEE2Vkg2VEZ3WEdpRWVwNDc0QlpTdU51dHdVSjNFNllKeU9p?=
- =?utf-8?B?UVkwdkVMWmpnZElORDFraDdSTWVzaDZkSzFSQ3JVdk5uVmtRb3pqVGhCWlhr?=
- =?utf-8?B?RVduN25lZXpUN1hwYUVXVk8rcWFUUTRZS3RpQ2JqbmpqZU0zYzR6UTFsY2Ev?=
- =?utf-8?B?TWg0dEkrKytmL3V2bzdrUEZtWm5sVDZOTkdOMTlaSThvbGlFY3ZUcGRYbjZS?=
- =?utf-8?B?SXIybzZRQXEvd0l0dU5YbFN1NGM0WkR5WGs3dmxmYUhxVmdWZEIvczZmbnQ4?=
- =?utf-8?B?WEdmQU5OWndjYTFyS0JrQkZRNlI3SXFVL0tGMk8vNDdBSGZzbDVqWmxmdEJw?=
- =?utf-8?B?dVFzSnhzMGVIZXc1ZXp0d0Z6bmhNMWtZSHJpOFpqK1lVUkVKWWZKZVlXaC9v?=
- =?utf-8?B?bnFBSHBPaUN1c1NCR2U1RHVZYmhRczFLNThNWVBNaVRaT0l3WVhPb2YzMGpx?=
- =?utf-8?B?U0VmNlV2WHo0MHVvUERFZ3pYMUVKL1RtWHNLRExTbDR6Q3hVODdsdGxpeU9G?=
- =?utf-8?B?bm96bjY3VWY5SUIzNXRvV1U4WHNvRGlTNzZHdlZjY1ZkU3l0bkpUNWZISkU2?=
- =?utf-8?B?VHRiYjdDQnBhZ0NodmlHQkswZnNndnVEb1p5MVVXUStiZ0RWQUJwQ01PcERN?=
- =?utf-8?B?enRQV212WUEydDl1VnZ5elI4ditPNmFxTmFBWDdTSzZ4Z0h4TWhlMXRpaTdZ?=
- =?utf-8?B?eE5kRDAyRTRKem8wRkZ6SXpvNDRIVEMvaXh5Y2srSHc4RnpFTTJqQWxxRFFO?=
- =?utf-8?B?WDZYS0FnbVhNamFBZnJVTnhubEYwMUlQQWpTYjd2M0RrRTRMWkNzNm9jcWVn?=
- =?utf-8?B?RDN3eWRJZFNxZExXQjBOckNPYU45YktjdHkxL3lpOVRkeko4OHIwem1PeGpi?=
- =?utf-8?B?dXc9PQ==?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: db87f263-9248-4a71-8b6f-08dd7db1a424
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?TLVPHryzrq8TDBdZlI7GkPOz+oFfVRRpVQ2JuVblbZcg+T5Gkbn1+5IClf2q?=
+ =?us-ascii?Q?4Jk/MyObmsWVZAiETT3zeYbahvEQ2670eZi3Pj/G5DblWWA7Lh0GZiUVwFIm?=
+ =?us-ascii?Q?mfxBE2Jhkfpj3N6wYhTG7F6sLOrwZ62gk53QFOIlqVvs6qsNUnQ3Agsa/EJB?=
+ =?us-ascii?Q?gfBuq7wBraJloKWJ300vs5+MJ473NuM6hQfWUyAExyYkpr8ISY1g7J27l7XD?=
+ =?us-ascii?Q?Oq8VBLiKv3nNV54Jxyodx1LsTjy0YLorBs2zlmlaE1KZBefYGo+qhV0YP4Yc?=
+ =?us-ascii?Q?tbc5wTrwWdYR00xrbREpRGWEgK3WhgyQcR8L5RJNKPiYhhnam8Iz/QPDMbz6?=
+ =?us-ascii?Q?0W5QXdKux0SdQm16oIsqy/g2ANKctMs1qdS/Ly3pK+YM8q343FSrkupnCA9/?=
+ =?us-ascii?Q?BiS4N1BJtwKDF4ck3hs4AR/ggYwDjAgmDrgwmTk38S43G+OFx4G5Oh3VIC7z?=
+ =?us-ascii?Q?Ym/sHh2h8SeWE2KemSRlhe6OKrwrPndFlmuWrtW4dZyv4QoWy1hcgTfC5iv8?=
+ =?us-ascii?Q?PA8QLGDWAFos8YpSY+dYV96q4Kc0LAi/GeXNz5HvS8wvC/fY82LgeASXp4Ks?=
+ =?us-ascii?Q?A31IpinguO9lzyrrUQ9RpSf+pR3YRSuYp9rLp+9FyHG+zoOt5wImuYaRzkYu?=
+ =?us-ascii?Q?upZREbFqRehVEu4QTgBczPHZICotTzUAE2UX5ec/3rzUyvuZEPiV1HJmkrG0?=
+ =?us-ascii?Q?xFCt6dR2QtbzGIELjhEfjuy2jSu7nx8Lq70Opj6eyz2UJsyuHO2OQV6QV3Df?=
+ =?us-ascii?Q?sctbmdOIilj2QRG34kr05MI1CxMCgF2mLFh7CQwmlSv1AzYeodLs3fnc1K1a?=
+ =?us-ascii?Q?+bCwY0P3AeIaAmFuv8C1WG0wklaedXAC4f2ROj1S2fdgxtOSTGoOuMoUpIRK?=
+ =?us-ascii?Q?CwMM43hjInk2GJhupYifb1sBHu6kMd0KB4orJ7yz30eODnso/zQDlsH2d82u?=
+ =?us-ascii?Q?X/CgsNa/YoQ+p6ehf9frBegKetdgrT1VP30tXP2fX5Vyc4iRyxGytBB9N6wx?=
+ =?us-ascii?Q?4f3pBAEO54lInljshNqSwyKjj0huaji1F4MeBH9f6q4MJrCWXBY9MgRzLIgn?=
+ =?us-ascii?Q?YY+vm9jN3QNImfD+XZxQMI9e2IMxDhT7vw8FNNVA0n8rkWWd0oqSX8jXeFW+?=
+ =?us-ascii?Q?HMSGtcQh3uD/SRUNZ2qDlPWPBCBW+w+ylqcvqmkmhqaiA54g/Vhnw2dnrtqe?=
+ =?us-ascii?Q?MViRnFZXZ0Q5hgLyPzCtdieQigyeuZF8fF+CkPlJX0c8fkKR3k+SFuh2pVe+?=
+ =?us-ascii?Q?bu9cTqu1OcFkifPD+xt3zSRk1k0A6Sx4Mfkj98nbFSlZF6RLkg4pmLZI1qWN?=
+ =?us-ascii?Q?H4uHnpYpMVsyMd00YPOLi7gjVQQkrMltwQoVM+T5nbZSHUvaV1mEbqjLSwhF?=
+ =?us-ascii?Q?oAzZj6B9aiIK7Tre99ywBPUkqUy1vJh49i7MAVU9gPrcQ/Lo23RCwFlTfKt1?=
+ =?us-ascii?Q?JGxLk7q6cwMDJri6Qz3Xp1dQ5bIVTS3ol9at1UY4iZ9+LPXjvNBbcqR8cHhw?=
+ =?us-ascii?Q?HmSc7ue1633g1CB2Boi7rXzke3xsPEBR90ITZYzbnDAyIfr04owrU+QTyW28?=
+ =?us-ascii?Q?x9Domi+6jPVFy6FwDjA0WuFikZkLH0DZIqdLZzzjkbLIm3SVtwxS/5AWxjTi?=
+ =?us-ascii?Q?8Q=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 663f35ea-cb48-49ca-e098-08dd7db1aa4a
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2025 13:13:27.4905
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2025 13:13:37.9932
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bwEtQMCDz4ksjh/Zp5OqQ3V/WJPateo6LXknJmK13t24Ecwq4U7YJ+LHyZJgWxdXM6BJEeFwabYptDbmFch54A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6881
+X-MS-Exchange-CrossTenant-UserPrincipalName: XL4v2mQyfBuepQzfEe7H+QCH4mqB/yxwuwaLo4GvJxAfSt19o29ShzTxnUTlnksC4LIfCIZPexvO3pN/vwP17w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB4780
+X-OriginatorOrg: intel.com
 
 
-On 17/04/2025 12:34, Robert Lin wrote:
-> 
-> 
->> -----Original Message-----
->> From: Jon Hunter <jonathanh@nvidia.com>
->> Sent: Thursday, April 17, 2025 7:10 PM
->> To: Robert Lin <robelin@nvidia.com>; thierry.reding@gmail.com;
->> daniel.lezcano@linaro.org; tglx@linutronix.de; Pohsun Su
->> <pohsuns@nvidia.com>
->> Cc: linux-kernel@vger.kernel.org; linux-tegra@vger.kernel.org; Sumit Gupta
->> <sumitg@nvidia.com>
->> Subject: Re: [PATCH v4 1/3] clocksource/drivers/timer-tegra186: add
->> WDIOC_GETTIMELEFT support
->>
->>
->> On 17/04/2025 10:31, Robert Lin wrote:
->>> From: Pohsun Su <pohsuns@nvidia.com>
->>>
->>> This change adds support for WDIOC_GETTIMELEFT so userspace programs
->>> can get the number of seconds before system reset by the watchdog
->>> timer via ioctl.
->>>
->>> Signed-off-by: Pohsun Su <pohsuns@nvidia.com>
->>> Signed-off-by: Robert Lin <robelin@nvidia.com>
->>> ---
->>>    drivers/clocksource/timer-tegra186.c | 56
->> +++++++++++++++++++++++++++-
->>>    1 file changed, 55 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/clocksource/timer-tegra186.c
->>> b/drivers/clocksource/timer-tegra186.c
->>> index ea742889ee06..201b24ca59f4 100644
->>> --- a/drivers/clocksource/timer-tegra186.c
->>> +++ b/drivers/clocksource/timer-tegra186.c
->>> @@ -1,8 +1,9 @@
->>>    // SPDX-License-Identifier: GPL-2.0-only
->>>    /*
->>> - * Copyright (c) 2019-2020 NVIDIA Corporation. All rights reserved.
->>> + * Copyright (c) 2019-2025 NVIDIA Corporation. All rights reserved.
->>>     */
->>>
->>> +#include <linux/bitfield.h>
->>>    #include <linux/clocksource.h>
->>>    #include <linux/module.h>
->>>    #include <linux/interrupt.h>
->>> @@ -30,6 +31,7 @@
->>>
->>>    #define TMRSR 0x004
->>>    #define  TMRSR_INTR_CLR BIT(30)
->>> +#define  TMRSR_PCV GENMASK(28, 0)
->>>
->>>    #define TMRCSSR 0x008
->>>    #define  TMRCSSR_SRC_USEC (0 << 0)
->>> @@ -46,6 +48,9 @@
->>>    #define  WDTCR_TIMER_SOURCE_MASK 0xf
->>>    #define  WDTCR_TIMER_SOURCE(x) ((x) & 0xf)
->>>
->>> +#define WDTSR 0x004
->>> +#define  WDTSR_CURRENT_EXPIRATION_COUNT GENMASK(14, 12)
->>> +
->>>    #define WDTCMDR 0x008
->>>    #define  WDTCMDR_DISABLE_COUNTER BIT(1)
->>>    #define  WDTCMDR_START_COUNTER BIT(0) @@ -235,12 +240,61 @@
->> static
->>> int tegra186_wdt_set_timeout(struct watchdog_device *wdd,
->>>    	return 0;
->>>    }
->>>
->>> +static unsigned int tegra186_wdt_get_timeleft(struct watchdog_device
->>> +*wdd) {
->>> +	struct tegra186_wdt *wdt = to_tegra186_wdt(wdd);
->>> +	u32 timeleft, expiration, val;
->>> +
->>> +	if (!watchdog_active(&wdt->base)) {
->>> +		/* return zero if the watchdog timer is not activated. */
->>> +		return 0;
->>> +	}
->>> +
->>> +	/*
->>> +	 * Reset occurs on the fifth expiration of the
->>> +	 * watchdog timer and so when the watchdog timer is configured,
->>> +	 * the actual value programmed into the counter is 1/5 of the
->>> +	 * timeout value. Once the counter reaches 0, expiration count
->>> +	 * will be increased by 1 and the down counter restarts.
->>> +	 * Hence to get the time left before system reset we must
->>> +	 * combine 2 parts:
->>> +	 * 1. value of the current down counter
->>> +	 * 2. (number of counter expirations remaining) * (timeout/5)
->>> +	 */
->>> +
->>> +	/* Get the current number of counter expirations. Should be a
->>> +	 * value between 0 and 4
->>> +	 */
->>> +	val = readl_relaxed(wdt->regs + WDTSR);
->>> +	expiration = FIELD_GET(WDTSR_CURRENT_EXPIRATION_COUNT, val);
->>
->> The above says 'should be between 0 and 4', however, we never check.
->>
->> I am wondering if we should ...
->>
->> if (WARN_ON(expiration > 4)
->>       expiration = 4;
->>
->> To avoid any overflow later on.
->>
-> 
-> Warning for the bad value seems to be good. But for the part to forcibly bound the value to 4, I'm not sure if this makes sense. Using the bad value from WDTSR or 4 both lead to wrong timeleft value at the end.
+
+Hello,
+
+kernel test robot noticed "WARNING:at_arch/x86/mm/tlb.c:#switch_mm_irqs_off" on:
+
+commit: 4873f494bbe4670f353a9b76ce44e6028c811cbb ("x86/mm: Remove 'mm' argument from unuse_temporary_mm() again")
+https://git.kernel.org/cgit/linux/kernel/git/tip/tip.git x86/alternatives
+
+in testcase: boot
+
+config: x86_64-randconfig-161-20250413
+compiler: gcc-12
+test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
+
+(please refer to attached dmesg/kmsg for entire log/backtrace)
 
 
-I was looking at the code, and if it is 4, then the following ...
++--------------------------------------------------+------------+------------+
+|                                                  | d376972c98 | 4873f494bb |
++--------------------------------------------------+------------+------------+
+| WARNING:at_arch/x86/mm/tlb.c:#switch_mm_irqs_off | 0          | 12         |
+| RIP:switch_mm_irqs_off                           | 0          | 12         |
++--------------------------------------------------+------------+------------+
 
-timeleft += wdt->base.timeout * (4 - expiration) / 5;
 
-... becomes 0. However, given that in this case something very bad has 
-happened, then the other alternative may be to just ...
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <oliver.sang@intel.com>
+| Closes: https://lore.kernel.org/oe-lkp/202504171640.c81d6f67-lkp@intel.com
 
-     if (WARN_ON(expiration > 4)
-             return 0;
 
-Jon
+[    1.746877][    T9] ------------[ cut here ]------------
+[ 1.747460][ T9] WARNING: CPU: 0 PID: 9 at arch/x86/mm/tlb.c:913 switch_mm_irqs_off (kbuild/obj/consumer/x86_64-randconfig-161-20250413/arch/x86/mm/tlb.c:913) 
+[    1.748353][    T9] Modules linked in:
+[    1.748774][    T9] CPU: 0 UID: 0 PID: 9 Comm: kworker/0:0 Not tainted 6.15.0-rc1-00055-g4873f494bbe4 #1 PREEMPT(undef)  e8aa378fdd0841698e07350fa58f890f8e93d36c
+[    1.749754][    T9] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+[    1.749754][    T9] Workqueue: events once_deferred
+[ 1.749754][ T9] RIP: 0010:switch_mm_irqs_off (kbuild/obj/consumer/x86_64-randconfig-161-20250413/arch/x86/mm/tlb.c:913) 
+[ 1.749754][ T9] Code: 44 8b 6c 24 14 be 08 00 00 00 4c 89 e8 48 c1 e8 06 49 8d bc c4 00 07 00 00 e8 66 1d 6e 00 4d 0f a3 ac 24 00 07 00 00 72 04 90 <0f> 0b 90 48 81 fb 40 af 65 86 74 2f 44 8b 6c 24 14 4c 8d b3 00 07
+All code
+========
+   0:	44 8b 6c 24 14       	mov    0x14(%rsp),%r13d
+   5:	be 08 00 00 00       	mov    $0x8,%esi
+   a:	4c 89 e8             	mov    %r13,%rax
+   d:	48 c1 e8 06          	shr    $0x6,%rax
+  11:	49 8d bc c4 00 07 00 	lea    0x700(%r12,%rax,8),%rdi
+  18:	00 
+  19:	e8 66 1d 6e 00       	call   0x6e1d84
+  1e:	4d 0f a3 ac 24 00 07 	bt     %r13,0x700(%r12)
+  25:	00 00 
+  27:	72 04                	jb     0x2d
+  29:	90                   	nop
+  2a:*	0f 0b                	ud2		<-- trapping instruction
+  2c:	90                   	nop
+  2d:	48 81 fb 40 af 65 86 	cmp    $0xffffffff8665af40,%rbx
+  34:	74 2f                	je     0x65
+  36:	44 8b 6c 24 14       	mov    0x14(%rsp),%r13d
+  3b:	4c                   	rex.WR
+  3c:	8d                   	.byte 0x8d
+  3d:	b3 00                	mov    $0x0,%bl
+  3f:	07                   	(bad)
+
+Code starting with the faulting instruction
+===========================================
+   0:	0f 0b                	ud2
+   2:	90                   	nop
+   3:	48 81 fb 40 af 65 86 	cmp    $0xffffffff8665af40,%rbx
+   a:	74 2f                	je     0x3b
+   c:	44 8b 6c 24 14       	mov    0x14(%rsp),%r13d
+  11:	4c                   	rex.WR
+  12:	8d                   	.byte 0x8d
+  13:	b3 00                	mov    $0x0,%bl
+  15:	07                   	(bad)
+[    1.749754][    T9] RSP: 0000:ffff888103e779f8 EFLAGS: 00010046
+[    1.749754][    T9] RAX: 0000000000000001 RBX: ffffffff8665af40 RCX: 0000000000000000
+[    1.749754][    T9] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+[    1.749754][    T9] RBP: 1ffff110207cef42 R08: 0000000000000000 R09: 0000000000000000
+[    1.749754][    T9] R10: 0000000000000000 R11: 0000000000000000 R12: ffff888100058040
+[    1.749754][    T9] R13: 0000000000000000 R14: 0000000000000000 R15: ffff888103e68490
+[    1.749754][    T9] FS:  0000000000000000(0000) GS:0000000000000000(0000) knlGS:0000000000000000
+[    1.749754][    T9] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    1.749754][    T9] CR2: ffff88843ffff000 CR3: 000000010005c000 CR4: 00000000000406f0
+[    1.749754][    T9] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[    1.749754][    T9] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[    1.749754][    T9] Call Trace:
+[    1.749754][    T9]  <TASK>
+[ 1.749754][ T9] ? cr4_update_pce (kbuild/obj/consumer/x86_64-randconfig-161-20250413/arch/x86/mm/tlb.c:778) 
+[ 1.749754][ T9] unuse_temporary_mm (kbuild/obj/consumer/x86_64-randconfig-161-20250413/arch/x86/include/asm/debugreg.h:115 (discriminator 31) kbuild/obj/consumer/x86_64-randconfig-161-20250413/arch/x86/mm/tlb.c:1034 (discriminator 31)) 
+[ 1.749754][ T9] ? serial8250_isa_init_ports (kbuild/obj/consumer/x86_64-randconfig-161-20250413/arch/x86/include/asm/jump_label.h:46 kbuild/obj/consumer/x86_64-randconfig-161-20250413/drivers/tty/serial/8250/8250_platform.c:104) 
+[ 1.749754][ T9] __text_poke (kbuild/obj/consumer/x86_64-randconfig-161-20250413/arch/x86/kernel/alternative.c:2221) 
+[ 1.749754][ T9] ? add_nop (kbuild/obj/consumer/x86_64-randconfig-161-20250413/arch/x86/kernel/alternative.c:2119) 
+[ 1.749754][ T9] ? optimize_nops (kbuild/obj/consumer/x86_64-randconfig-161-20250413/arch/x86/kernel/alternative.c:2132) 
+[ 1.749754][ T9] ? serial8250_isa_init_ports (kbuild/obj/consumer/x86_64-randconfig-161-20250413/arch/x86/include/asm/jump_label.h:46 kbuild/obj/consumer/x86_64-randconfig-161-20250413/drivers/tty/serial/8250/8250_platform.c:104) 
+[ 1.749754][ T9] smp_text_poke_batch_finish (kbuild/obj/consumer/x86_64-randconfig-161-20250413/arch/x86/kernel/alternative.c:2563 (discriminator 3)) 
+[ 1.749754][ T9] ? mutex_trylock (kbuild/obj/consumer/x86_64-randconfig-161-20250413/kernel/locking/mutex.c:901) 
+[ 1.749754][ T9] ? mutex_lock_io_nested (kbuild/obj/consumer/x86_64-randconfig-161-20250413/kernel/locking/mutex.c:745) 
+[ 1.749754][ T9] ? smp_text_poke_sync_each_cpu (kbuild/obj/consumer/x86_64-randconfig-161-20250413/arch/x86/kernel/alternative.c:2527) 
+[ 1.749754][ T9] arch_jump_label_transform_apply (kbuild/obj/consumer/x86_64-randconfig-161-20250413/arch/x86/kernel/jump_label.c:147) 
+[ 1.749754][ T9] static_key_disable_cpuslocked (kbuild/obj/consumer/x86_64-randconfig-161-20250413/kernel/jump_label.c:32 kbuild/obj/consumer/x86_64-randconfig-161-20250413/kernel/jump_label.c:241) 
+[ 1.749754][ T9] once_deferred (kbuild/obj/consumer/x86_64-randconfig-161-20250413/lib/once.c:21 (discriminator 5)) 
+[ 1.749754][ T9] process_one_work (kbuild/obj/consumer/x86_64-randconfig-161-20250413/kernel/workqueue.c:3243) 
+[ 1.749754][ T9] ? process_one_work (kbuild/obj/consumer/x86_64-randconfig-161-20250413/kernel/workqueue.c:3245) 
+[ 1.749754][ T9] ? show_cpu_pools_hogs (kbuild/obj/consumer/x86_64-randconfig-161-20250413/kernel/workqueue.c:3140) 
+[ 1.749754][ T9] ? assign_work (kbuild/obj/consumer/x86_64-randconfig-161-20250413/kernel/workqueue.c:1200) 
+[ 1.749754][ T9] worker_thread (kbuild/obj/consumer/x86_64-randconfig-161-20250413/kernel/workqueue.c:3313 kbuild/obj/consumer/x86_64-randconfig-161-20250413/kernel/workqueue.c:3400) 
+[ 1.749754][ T9] ? rescuer_thread (kbuild/obj/consumer/x86_64-randconfig-161-20250413/kernel/workqueue.c:3346) 
+[ 1.749754][ T9] kthread (kbuild/obj/consumer/x86_64-randconfig-161-20250413/kernel/kthread.c:464) 
+[ 1.749754][ T9] ? local_clock_noinstr (kbuild/obj/consumer/x86_64-randconfig-161-20250413/kernel/sched/clock.c:270 kbuild/obj/consumer/x86_64-randconfig-161-20250413/kernel/sched/clock.c:306) 
+[ 1.749754][ T9] ? kthread_is_per_cpu (kbuild/obj/consumer/x86_64-randconfig-161-20250413/kernel/kthread.c:413) 
+[ 1.749754][ T9] ? ret_from_fork (kbuild/obj/consumer/x86_64-randconfig-161-20250413/arch/x86/kernel/process.c:152) 
+[ 1.749754][ T9] ? lockdep_hardirqs_on_prepare (kbuild/obj/consumer/x86_64-randconfig-161-20250413/kernel/locking/lockdep.c:472 kbuild/obj/consumer/x86_64-randconfig-161-20250413/kernel/locking/lockdep.c:4412) 
+[ 1.749754][ T9] ? kthread_is_per_cpu (kbuild/obj/consumer/x86_64-randconfig-161-20250413/kernel/kthread.c:413) 
+[ 1.749754][ T9] ret_from_fork (kbuild/obj/consumer/x86_64-randconfig-161-20250413/arch/x86/kernel/process.c:159) 
+[ 1.749754][ T9] ? kthread_is_per_cpu (kbuild/obj/consumer/x86_64-randconfig-161-20250413/kernel/kthread.c:413) 
+[ 1.749754][ T9] ret_from_fork_asm (kbuild/obj/consumer/x86_64-randconfig-161-20250413/arch/x86/entry/entry_64.S:258) 
+[    1.749754][    T9]  </TASK>
+[    1.749754][    T9] irq event stamp: 68
+[ 1.749754][ T9] hardirqs last enabled at (67): _raw_spin_unlock_irq (kbuild/obj/consumer/x86_64-randconfig-161-20250413/arch/x86/include/asm/paravirt.h:686 kbuild/obj/consumer/x86_64-randconfig-161-20250413/include/linux/spinlock_api_smp.h:159 kbuild/obj/consumer/x86_64-randconfig-161-20250413/kernel/locking/spinlock.c:202) 
+[ 1.749754][ T9] hardirqs last disabled at (68): __text_poke (kbuild/obj/consumer/x86_64-randconfig-161-20250413/arch/x86/kernel/alternative.c:2179 (discriminator 1)) 
+[ 1.749754][ T9] softirqs last enabled at (0): copy_process (kbuild/obj/consumer/x86_64-randconfig-161-20250413/kernel/fork.c:2375) 
+[ 1.749754][ T9] softirqs last disabled at (0): 0x0 
+[    1.749754][    T9] ---[ end trace 0000000000000000 ]---
+[    1.754021][    T1] Performance Events: unsupported CPU family 6 model 42 no PMU driver, software events only.
+
+
+The kernel config and materials to reproduce are available at:
+https://download.01.org/0day-ci/archive/20250417/202504171640.c81d6f67-lkp@intel.com
+
+
 
 -- 
-nvpublic
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
