@@ -1,147 +1,107 @@
-Return-Path: <linux-kernel+bounces-608591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEF2FA915D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:56:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14EC6A915B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85C221895376
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:56:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42E9A1904D52
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:49:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5237721D3F1;
-	Thu, 17 Apr 2025 07:48:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0FF421ADDE;
+	Thu, 17 Apr 2025 07:49:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u713mKvd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q9FueUks"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD24F21CFEF;
-	Thu, 17 Apr 2025 07:48:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B78921ADC2
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 07:49:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744876107; cv=none; b=jgSR802Ovr2gjiL80Lzmusk7PiVw05em2/6n/GK8BW9G2GfSb2arVUOcUbKQiXzKH9O/7b8Mv/Qz4XlYRIdRWBzPSMacKTNZ4JOjEtcX7EM4fFNWCgu2wSnbSQ2ZhaDlbQ98ClrmQaGN51j+gibd7CNIPcyKKynBXtkNYtv0psw=
+	t=1744876143; cv=none; b=ip4duc27XRKKDrfLOz13FlFcbrAFdKhxXjARrFPIbLIkld7ZcQdFAHweV3k03MCnKR/4zbTVN53UVMEI7u7QduiDJ4t4bJ99Hl9jth21cm/COP/jFLmAl7VAo4g6u7onWBUw38mOweP88yRKGbXvCe0wUrVF3sH3Hy+2P9Lfp8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744876107; c=relaxed/simple;
-	bh=q2pCfnUhdQWEZrucc/vgzT+PdUvSVSafzjmIF1npPYk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eGhXev811e3+EDzuZpqxfOojVF4xVjpy4XLTsKNZZDB0ESs65ZADS8ZgAEzF8eraZkKJaHNwe2VyZdNYjCUBlMP890b1K12gSPOOE5IhCSpawhOYDjl1T1t2T1+RHggzlBhqDHZZntvy85YlAz7T2cYLmhZ3FMn/2TsmMI4s2Yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u713mKvd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 756D7C4CEE7;
-	Thu, 17 Apr 2025 07:48:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744876107;
-	bh=q2pCfnUhdQWEZrucc/vgzT+PdUvSVSafzjmIF1npPYk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=u713mKvdg1fU9fuM2e/uK122DMnJ1N1s9DQZW74R+/KLguTJh+HCUiusUeAiR5BQM
-	 sT0u7RAt5f+mTwEjdUnFAQ2NLTcmGe9oLu79YRw/Mp4sWbaQjrdfn2OlpA+/RT4K/k
-	 xkmQ6YMT7d2CF9ba53oDI34xHEuYQrBCwp/iGjBtqDuzaOMXakvi+danSK30Zhqf2n
-	 9hZmdhWH3wnj48enNVMbdQF8vrgoWvmJR7x7BD7STPzkHa/btO35d7klHy4m79307v
-	 OJ0xZ27+25pLnB1oC8upWx68RQtBJ1pawyfE0T0o66WkD9UJuRsJdkIODbN2oKCnIE
-	 mXoqJ0yATKUPQ==
-Date: Thu, 17 Apr 2025 09:48:22 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Hans Zhang <18255117159@163.com>, lpieralisi@kernel.org, kw@linux.com,
-	bhelgaas@google.com, heiko@sntech.de,
-	manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	jingoohan1@gmail.com, thomas.richard@bootlin.com,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH] PCI: dw-rockchip: Configure max payload size on host init
-Message-ID: <aACyRp8S9c8azlw9@ryzen>
-References: <20250416151926.140202-1-18255117159@163.com>
- <aACoEpueUHBLjgbb@ryzen>
- <85643fe4-c7df-4d64-e852-60b66892470a@rock-chips.com>
- <aACsJPkSDOHbRAJM@ryzen>
- <ca283065-a48c-3b39-e70d-03d4c6c8a956@rock-chips.com>
+	s=arc-20240116; t=1744876143; c=relaxed/simple;
+	bh=7RxzX09exhIzgLmhmiaw9DLQIcUyhzaVuL7SP9vsi7Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QFZPBGb2xNz6PhO5wP21Rc2bJ7t0GJivEh3pX8zHBvsRSUa/TJyQ4XsCMvjYYqjySz5RnoQWvHQrh+HUTDx0sE/H+hrDSm48abQEXf1yWTK53Y8XYKeiexuuPPvrsPGTyfDGEb/E1ZVV19LwcvS9Gjn+o90guGvha9HimqnZBxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q9FueUks; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-54ac9b3ddf6so471522e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 00:49:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744876139; x=1745480939; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7RxzX09exhIzgLmhmiaw9DLQIcUyhzaVuL7SP9vsi7Q=;
+        b=q9FueUksayySWoqRwKZrn//UQh0pQL/1CNZQI1shj3c9N4+1roq8nL7j27UksRppiM
+         pF2GRqraXlaKjFd0TCAeQLCFueE2VIYI2P5ZiM6L/leWh9awboL0fuCtqB97p3NvRnaS
+         Sk2f4mASYb0kPx6a2Ix2Bq6YsW/18PjRbFdvO+UO6x3LVXI/FX6X6hwLyPvW8tx1P5u0
+         uNgEG6PbgQ8zBs2gsr17FlCtJ0A1hWpexEBVru0ykg05vk8e/4sR6nd2KHPptSWRrOOA
+         R6YhuFqsYSSwHZGTbW7yNIURNSHol4IuT6WVtk5HNfmrhDn03aUPTzVIUnTVbOg0mVoN
+         arMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744876139; x=1745480939;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7RxzX09exhIzgLmhmiaw9DLQIcUyhzaVuL7SP9vsi7Q=;
+        b=gVyYeRyLjoDYzLyZYK4N0ioR99gXwq5JViaxMalnNHrIt2IzLS5WVw71PiX2iIPwPq
+         n7YFrYyUkJdjnZZAuJ07fmeupTJ83Xp7eBSOkkidGHMXwgkdKONWst98sf9Ysyxai5kS
+         s9VNe9y3i3sGsuflxb83XYemMUZJM47qVLK2uhhncumRRuP3cVwTU329EmBJg/IwxzyP
+         /yi8zR5ldip7RqUmO1okKaEKjiIbgHzKrpVhrfd8U9i0IwMEx1LoZJC/XFXED7j6gZ4f
+         i8GwIInLk70aLuYbeMll59tmdZH8yRNe3IZu10fDDqDQiXsC6FrHI7dh5ETreuy8AFZe
+         eqmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWDcX0OiB/bQwz5oxRgX1fdvDhyru1iP5nHGVGm4pooDvENuqEZmHGLZ7krYcA+fijf8uTwm7yfyxILf6c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyh1qK8d7ZY1QTKPzISt3hc7defnye4eEc0eNj2i1K9tX7PUBsu
+	PHfWZJpbELHyLkRIvWPcXcho/Q+sN8nch9znr7genz9ubWBXHXJsV+9Qn5e2IUTUfwj+Q508ZHy
+	E8lTlkR1mV3RK4xI5B2+XNE8VPfId7OLzfVQgYA==
+X-Gm-Gg: ASbGncuTNLflldO4lDYlBcjyeiDaX6t/928vu0EpibcfOyIHbW950k2XzDIekJnBZW8
+	GDbWuCFlv2k4baeBH8RNJ1jtM7iAJt/RdWKAVJZxdgBw+bSRdIa6XwYs7WmbxVfpcGHR6FsScs+
+	kv1dKDNMInh+o3sAuKxLMqWUFcqPSIjbVf
+X-Google-Smtp-Source: AGHT+IGl0yTbl1NfzL+pnA73vcbs4ZATHO5t0DMm0OPz1AIrbTpPp3OJ9FYZF3EeE/MV9ivlE2ZNC0B+frJYLn4K+3A=
+X-Received: by 2002:a05:6512:3a87:b0:545:2ab1:3de with SMTP id
+ 2adb3069b0e04-54d64a98d9amr1453654e87.13.1744876139576; Thu, 17 Apr 2025
+ 00:48:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ca283065-a48c-3b39-e70d-03d4c6c8a956@rock-chips.com>
+References: <20240814061315.112564-1-manikandan.m@microchip.com>
+ <20240814061315.112564-3-manikandan.m@microchip.com> <605ff021-0770-4363-9734-ad8114a429f9@tuxon.dev>
+ <fcdb9283-07aa-4d50-ac4d-317b0a4e5f7e@pengutronix.de>
+In-Reply-To: <fcdb9283-07aa-4d50-ac4d-317b0a4e5f7e@pengutronix.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 17 Apr 2025 09:48:48 +0200
+X-Gm-Features: ATxdqUH-NaQn7pZOyf2E47r3u7Tt7v9sT__5pjl_S36lgww88eFiiLrSfCpmg08
+Message-ID: <CACRpkdarmBy1nd903SmyXPNhS+hxxRSyKNOxdXg51Emr9MgRQQ@mail.gmail.com>
+Subject: Re: [PATCH v4 2/4] ARM: dts: microchip: Remove additional compatible
+ string from PIO3 pinctrl nodes
+To: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Cc: claudiu beznea <claudiu.beznea@tuxon.dev>, 
+	Manikandan Muralidharan <manikandan.m@microchip.com>, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, nicolas.ferre@microchip.com, 
+	alexandre.belloni@bootlin.com, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, lsc@pengutronix.de, 
+	"kernel@pengutronix.de" <kernel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 17, 2025 at 03:25:06PM +0800, Shawn Lin wrote:
-> 在 2025/04/17 星期四 15:22, Niklas Cassel 写道:
-> > On Thu, Apr 17, 2025 at 03:08:34PM +0800, Shawn Lin wrote:
-> > > 在 2025/04/17 星期四 15:04, Niklas Cassel 写道:
-> > > > Hello Hans,
-> > > > 
-> > > > On Wed, Apr 16, 2025 at 11:19:26PM +0800, Hans Zhang wrote:
-> > > > > The RK3588's PCIe controller defaults to a 128-byte max payload size,
-> > > > > but its hardware capability actually supports 256 bytes. This results
-> > > > > in suboptimal performance with devices that support larger payloads.
-> > > > 
-> > > > Patch looks good to me, but please always reference the TRM when you can.
-> > > > 
-> > > > Before this patch:
-> > > > 		DevCap: MaxPayload 256 bytes
-> > > > 		DevCtl: MaxPayload 128 bytes
-> > > > 
-> > > > 
-> > > > As per rk3588 TRM, section "11.4.3.8 DSP_PCIE_CAP Detail Registers Description"
-> > > > 
-> > > > DevCap is per the register description of DSP_PCIE_CAP_DEVICE_CAPABILITIES_REG,
-> > > > field PCIE_CAP_MAX_PAYLOAD_SIZE.
-> > > > Which claims that the value after reset is 0x1 (256B).
-> > > > 
-> > > > DevCtl is per the register description of
-> > > > DSP_PCIE_CAP_DEVICE_CONTROL_DEVICE_STATUS, field PCIE_CAP_MAX_PAYLOAD_SIZE_CS.
-> > > > Which claims that the reset value is 0x0 (128B).
-> > > > 
-> > > > Both of these match the values above.
-> > > > 
-> > > > As per the description of PCIE_CAP_MAX_PAYLOAD_SIZE_CS:
-> > > > "Permissible values that
-> > > > can be programmed are indicated by the Max_Payload_Size
-> > > > Supported field (PCIE_CAP_MAX_PAYLOAD_SIZE) in the Device
-> > > > Capabilities (DEVICE_CAPABILITIES_REG) register (for more
-> > > > details, see section 7.5.3.3 of PCI Express Base Specification)."
-> > > > 
-> > > > So your patch looks good.
-> > > > 
-> > > > I guess I'm mostly surprised that the e.g. pci_configure_mps() does not
-> > > > already set DevCtl to the max(DevCap.MPS of the host, DevCap.MPS of the
-> > > > endpoint).
-> > > > 
-> > > > Apparently pci_configure_mps() only decreases MPS from the reset values?
-> > > > It never increases it?
-> > > > 
-> > > 
-> > > Actually it does:
-> > > 
-> > > https://github.com/torvalds/linux/blob/master/Documentation/admin-guide/kernel-parameters.txt#L4757
-> > 
-> > If that is the case, then explain the before/after with Hans lspci output here:
-> > https://lore.kernel.org/linux-pci/bb40385c-6839-484c-90b2-d6c7ecb95ba9@163.com/
-> > 
-> > His patch changes the default value of DevCtl.MPS (from 128B to 256B), but if
-> > pci_configure_mps() can bump DevCtl.MPS to a higher value, his patch should not
-> > be needed, since the EP (an NVMe SSD in his case) has DevCap.MPS 512B, and the
-> > RC itself has DevCap.MPS 256B.
-> > 
-> > Seems like we are missing something here.
-> 
-> So Hans, could you please help set pci=pcie_bus_safe or
-> pci=pcie_bus_perf in your cmdline, and see how lspci dump different
-> without your patch?
+On Wed, Apr 16, 2025 at 4:04=E2=80=AFPM Ahmad Fatoum <a.fatoum@pengutronix.=
+de> wrote:
 
-It seems that the default MPS strategy can be set using Kconfigs:
-https://github.com/torvalds/linux/blob/v6.15-rc2/drivers/pci/pci.c#L126-L136
-https://github.com/torvalds/linux/blob/v6.15-rc2/include/linux/pci.h#L1110-L1116
+> The correct resolution would be to add an extra compatible to the
+> binding instead of breaking non-Linux users of the device tree.
 
-Note that the these Kconfigs are hidden behind CONFIG_EXPERT.
-So unless you have explicitly set one of these Kconfigs, the default should be:
-PCIE_BUS_DEFAULT,	/* Ensure MPS matches upstream bridge */
+Ahmad is right, the patch needs to be reverted.
 
-
-Kind regards,
-Niklas
+Yours,
+Linus Walleij
 
