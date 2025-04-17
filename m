@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-609924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30ED2A92DAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 01:08:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF69CA92DAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 01:08:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3762E8A6A2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 23:07:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 147134A1456
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 23:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649BD21D599;
-	Thu, 17 Apr 2025 23:07:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 640842222DA;
+	Thu, 17 Apr 2025 23:08:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Tatps3Ue"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qBrxRa1+"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43ADE221544
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 23:07:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4103421D3EE
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 23:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744931278; cv=none; b=e4hccWgfRL5kACNNpp4gLYn2TuRXNYWgFSL42VGa8UGJkZqr9crogZINPk6lLdVVgf/f/qG9kv1Z8L8nmY9w0DpBFyeuTUmq26gMEb4BsCEEmlsyMhiPdec1x/gs5V1oHXK0cWxgBzjN9jlmAuv6EVfkvtZejD85tu7jRzysgKc=
+	t=1744931280; cv=none; b=LEIDkBrapcL0+aipQ3texqKndygIaMIaWKAzkNpL9i+GwgacZ7u8gZ5QtcR2/zSdfhvE7TwMqRvmjT18vPSTr16bIUN9zLxv84BOq0tj1qKOQc3YEZ1TeADQMgHv4aFHeNETZtTlI9+uq6KbMKqeNM0otyDDptq+j0ocxtQvQks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744931278; c=relaxed/simple;
-	bh=DUhmjAhpzI4glFlJFVyHh6Dy0isdHfkiubMes37ZCtA=;
+	s=arc-20240116; t=1744931280; c=relaxed/simple;
+	bh=mJQVFLCm9ty84JCDlLg5++0OwAqRrW5FDC64ClqBhO8=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=SbC5l0TH+aT9yBPtKTRRZ5p9Txgr1h6RKsoXR8WXKghFmVOP5Ms375i4UB6SUjNiw+w6S1zuHeJ1UkPG5W+CReNM2KkbASx9EmFhxwx/Cr9+f28M8l3g+kt2gfJXU5iqgXi6IjrR0XeR4DbbbWrWDaT+Uh+gXCzy88rwMl6QknI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Tatps3Ue; arc=none smtp.client-ip=209.85.214.202
+	 To:Content-Type; b=Z7RCAXmGvqsY1VpEkn9ePo/0DChXgrC3ts1MOakwV7H4lhSJXOKelxlE1L+xGA+MywF7geWeGbu3t7WlpnzlL6Ue9h9lgdA7IkoSqH4dUb8pmIpS52KLTH6oj6Vsnql7Fdi/I0TxdVZ3G7XJiAlq9gmVITjQ9U5ky0ZZcaYpXKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qBrxRa1+; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2264e5b2b7cso11878865ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 16:07:57 -0700 (PDT)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ff605a7a43so1883965a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 16:07:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744931276; x=1745536076; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1744931278; x=1745536078; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=qnICyJ2RGS0Y400AqNRs1KksXFmr5hh/vv3vYVQnBHQ=;
-        b=Tatps3UeOf3aVg+3xmw+Ju+O8rdbwyVWbCD32mkYDDwu7ibuc/j4wotSFOrASJSFQZ
-         eaNO+oRAD82RTlqH+Cxqe8w6QJCd8WJ/0uVVOhG2PCTrqbygl4immiLzgtzlTVvaFmP/
-         +ET3q0RiWqjkj03aJ+uS0Rcory8jkt3EbXsrbzb+GjsSUoNDUfea8CGncx29InN3wJnN
-         Wxj8GTNYkUG2/79z7HSHIprwC8NhBySAk1SS5rq3xO3b/5eWtHq42dSz3k/G8dcW6fTP
-         64H4J0GBlewWDWE0+nBSik8eDIQK+4b/JUlE9AiSZUY2wa/wI3XrmcRKrx43UtauIjTO
-         o7Nw==
+        bh=PaI5u9A1ZK2E6Bx2qH0e5jW/HFuv3lmW4guRFbw3gqw=;
+        b=qBrxRa1+ec9Ws5tbhZ5R2CKAnzVXDEeFJP3B6jGs+HI0iYWUEGJozfy8MqMkuCvm30
+         LNOTriykQ+VIw+5RpRWZDNTburKjCrilgYLM8o1Cgf55zOp5SyuMohATP88D+1p8oDY3
+         QoIBPiNyELe1l8s/+mhLwro4zdxuSWo7HF7Vz15o+PX1Wht69PY/8bv6M4xZsXGwsosd
+         LoEWRbXP2/PfBrbSu25tyUi+8FJtzqeS1s8hoELNJI7j7NDim2EhUR6+czjC6v+ESEQW
+         eU7wd5tC5nO+D3X9EI0BMQZPkCYxyet01tI6vxVFm38q1WM+3B0EU5ANIYGnHlEWywqt
+         8yow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744931276; x=1745536076;
+        d=1e100.net; s=20230601; t=1744931278; x=1745536078;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qnICyJ2RGS0Y400AqNRs1KksXFmr5hh/vv3vYVQnBHQ=;
-        b=beuRqYoReeEBw6FSPfBbJP198eEln9UvaiYXbqTf7F3iA317iU65fOCOEWwNJ22Ljx
-         XD7KuNoQ4oxb03UD/5KkSbGQQh2xm42YYY/1mrUqGZJpG9QFcUQQ2CBl/5k5bF88sKzO
-         /WfMfGIms3kyVJda3Hm7wmmJnFuIvAwGBY9LXE1lPbxY/JDcBiFFgiuTHKNWFfmwdA6+
-         u91MhGz7rXkhmjU9edQBj++dh5erNL5dmReTrm6hV7OcXF6y/AJ45bvW0ahWckYhpzmd
-         LbPSSyycf7viUBNZYcih2Z5quEm3zPNz9Mgu0iDCnYJ5AHVksmYbOjvgeQoY01PhCxue
-         XL6w==
-X-Forwarded-Encrypted: i=1; AJvYcCWlUPegljkURC+OCJoi4qhe4VSfm7W9XQ729e4sTvPvG2Vkd8rfc5q4beTnVD9MxKL9z65vPB1EFLkagnU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxw1hmjgBhDdgXW7BNONAW8Giqn+zLYpjy7A1u1jcueLavC31ud
-	k2769BWnnkRTw2wtmboPx3FevQaYD24WXZ9dtyDR9fhrnqYL/AMUoAp/1ECuqx3ZhqUnLzZYMhb
-	lqlHLMg==
-X-Google-Smtp-Source: AGHT+IEwa/KfQTqntEV82qp0baymPwWs4os7wo5Uctj1zdlTuJFxSq6S5ewEmLz+IORlKXcqOKBHo7BSNgld
-X-Received: from plkj8.prod.google.com ([2002:a17:902:6908:b0:220:d79f:a9bd])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ecd1:b0:226:5dbf:373f
- with SMTP id d9443c01a7336-22c53379f8amr10249835ad.10.1744931276358; Thu, 17
- Apr 2025 16:07:56 -0700 (PDT)
-Date: Thu, 17 Apr 2025 16:07:22 -0700
+        bh=PaI5u9A1ZK2E6Bx2qH0e5jW/HFuv3lmW4guRFbw3gqw=;
+        b=gym7aJnWY3CgGDXxzOy+I7M3IxqrbaY0BEjkPuW0UTYMZZxvkbWuBlaQAApaENq1rS
+         LYCLoJpd+caxmGEwflgLH2O5tiHFFAr+PhHyMJPr6ZhZ7yPgaZatUwWmB9jW+1wUJm7r
+         HfQfMf0Or/VHYpHjqGQHrGX2LJwgVFTtVTV1oSwqCFbMMMwOAcDMkUcyeR9BpIsa81Js
+         FfPAovyiIiI3avhWbWLvZWUypNtNDwmxA7U9JBPdz7nt7W70INn0nZt94iwuNkrASECq
+         VllwGg7tU8+tmQklggN0I13vryKu9oteVdQTkV/8Ukemv/7YeEAXm3o6z14RaZLXu5/A
+         I2UQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWJUd8j/jeL2qRhiSVBu/Aa5S24CAVfkMHEw55ailEgos3U5stX5RK8kGRcbABjdKGNv5fYUgYdIW8Tkvc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqKd6Gts54/7cJ0DY1hSBsbMjExUBFEA/3IqW8FEzctlCAOFu8
+	gGzfM624fqkhgcYKlybLw5o4dRsvwVnmTeMrgZYIh5jYdM+ir8ALw33eMDIT33huONEfh27ecjD
+	rqD5kAg==
+X-Google-Smtp-Source: AGHT+IF4TiTN8mIjFeWYyjcvH+QxpKzHnUuvBCtLoCycCssQ0z2iMetyKW3xvnPKYvVbL7H/8N/Pe+HdGEeN
+X-Received: from pjbsf15.prod.google.com ([2002:a17:90b:51cf:b0:2fa:1fac:2695])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3a4b:b0:2fe:b774:3ec8
+ with SMTP id 98e67ed59e1d1-3087bcc7f59mr819081a91.23.1744931278619; Thu, 17
+ Apr 2025 16:07:58 -0700 (PDT)
+Date: Thu, 17 Apr 2025 16:07:23 -0700
 In-Reply-To: <20250417230740.86048-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250417230740.86048-1-irogers@google.com>
 X-Mailer: git-send-email 2.49.0.805.g082f7c87e0-goog
-Message-ID: <20250417230740.86048-2-irogers@google.com>
-Subject: [PATCH v4 01/19] perf build: Remove libtracefs configuration
+Message-ID: <20250417230740.86048-3-irogers@google.com>
+Subject: [PATCH v4 02/19] perf map: Constify objdump offset/address conversion APIs
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -94,40 +94,95 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	Song Liu <song@kernel.org>, bpf@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-libtracefs isn't used by perf but not having it installed causes build
-warnings. Given the library isn't used, there is no need for the
-configuration or warnings so remove.
+Make the map argument const as the conversion act won't modify the map
+and this allows other callers to use a const struct map.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/Makefile.config | 14 --------------
- 1 file changed, 14 deletions(-)
+ tools/perf/util/map.c | 19 +++++++++++++++----
+ tools/perf/util/map.h |  6 +++---
+ 2 files changed, 18 insertions(+), 7 deletions(-)
 
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index 9f08a6e96b35..f31b240cd23e 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -1176,20 +1176,6 @@ ifneq ($(NO_LIBTRACEEVENT),1)
-   else
-     $(error ERROR: libtraceevent is missing. Please install libtraceevent-dev/libtraceevent-devel and/or set LIBTRACEEVENT_DIR or build with NO_LIBTRACEEVENT=1)
-   endif
--
--  ifeq ($(feature-libtracefs), 1)
--    CFLAGS +=  $(shell $(PKG_CONFIG) --cflags libtracefs)
--    LDFLAGS += $(shell $(PKG_CONFIG) --libs-only-L libtracefs)
--    EXTLIBS += $(shell $(PKG_CONFIG) --libs-only-l libtracefs)
--    LIBTRACEFS_VERSION := $(shell $(PKG_CONFIG) --modversion libtracefs).0.0
--    LIBTRACEFS_VERSION_1 := $(word 1, $(subst ., ,$(LIBTRACEFS_VERSION)))
--    LIBTRACEFS_VERSION_2 := $(word 2, $(subst ., ,$(LIBTRACEFS_VERSION)))
--    LIBTRACEFS_VERSION_3 := $(word 3, $(subst ., ,$(LIBTRACEFS_VERSION)))
--    LIBTRACEFS_VERSION_CPP := $(shell expr $(LIBTRACEFS_VERSION_1) \* 255 \* 255 + $(LIBTRACEFS_VERSION_2) \* 255 + $(LIBTRACEFS_VERSION_3))
--    CFLAGS += -DLIBTRACEFS_VERSION=$(LIBTRACEFS_VERSION_CPP)
--  else
--    $(warning libtracefs is missing. Please install libtracefs-dev/libtracefs-devel)
--  endif
- endif
+diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
+index d729438b7d65..a22a423792d7 100644
+--- a/tools/perf/util/map.c
++++ b/tools/perf/util/map.c
+@@ -514,6 +514,8 @@ void srccode_state_free(struct srccode_state *state)
+ 	state->line = 0;
+ }
  
- # Among the variables below, these:
++static const struct kmap *__map__const_kmap(const struct map *map);
++
+ /**
+  * map__rip_2objdump - convert symbol start address to objdump address.
+  * @map: memory map
+@@ -525,9 +527,9 @@ void srccode_state_free(struct srccode_state *state)
+  *
+  * Return: Address suitable for passing to "objdump --start-address="
+  */
+-u64 map__rip_2objdump(struct map *map, u64 rip)
++u64 map__rip_2objdump(const struct map *map, u64 rip)
+ {
+-	struct kmap *kmap = __map__kmap(map);
++	const struct kmap *kmap = __map__const_kmap(map);
+ 	const struct dso *dso = map__dso(map);
+ 
+ 	/*
+@@ -570,7 +572,7 @@ u64 map__rip_2objdump(struct map *map, u64 rip)
+  *
+  * Return: Memory address.
+  */
+-u64 map__objdump_2mem(struct map *map, u64 ip)
++u64 map__objdump_2mem(const struct map *map, u64 ip)
+ {
+ 	const struct dso *dso = map__dso(map);
+ 
+@@ -587,7 +589,7 @@ u64 map__objdump_2mem(struct map *map, u64 ip)
+ }
+ 
+ /* convert objdump address to relative address.  (To be removed) */
+-u64 map__objdump_2rip(struct map *map, u64 ip)
++u64 map__objdump_2rip(const struct map *map, u64 ip)
+ {
+ 	const struct dso *dso = map__dso(map);
+ 
+@@ -619,6 +621,15 @@ struct kmap *__map__kmap(struct map *map)
+ 	return (struct kmap *)(&RC_CHK_ACCESS(map)[1]);
+ }
+ 
++static const struct kmap *__map__const_kmap(const struct map *map)
++{
++	const struct dso *dso = map__dso(map);
++
++	if (!dso || !dso__kernel(dso))
++		return NULL;
++	return (struct kmap *)(&RC_CHK_ACCESS(map)[1]);
++}
++
+ struct kmap *map__kmap(struct map *map)
+ {
+ 	struct kmap *kmap = __map__kmap(map);
+diff --git a/tools/perf/util/map.h b/tools/perf/util/map.h
+index 4262f5a143be..768501eec70e 100644
+--- a/tools/perf/util/map.h
++++ b/tools/perf/util/map.h
+@@ -133,13 +133,13 @@ static inline u64 map__unmap_ip(const struct map *map, u64 ip_or_rip)
+ }
+ 
+ /* rip/ip <-> addr suitable for passing to `objdump --start-address=` */
+-u64 map__rip_2objdump(struct map *map, u64 rip);
++u64 map__rip_2objdump(const struct map *map, u64 rip);
+ 
+ /* objdump address -> memory address */
+-u64 map__objdump_2mem(struct map *map, u64 ip);
++u64 map__objdump_2mem(const struct map *map, u64 ip);
+ 
+ /* objdump address -> rip */
+-u64 map__objdump_2rip(struct map *map, u64 ip);
++u64 map__objdump_2rip(const struct map *map, u64 ip);
+ 
+ struct symbol;
+ struct thread;
 -- 
 2.49.0.805.g082f7c87e0-goog
 
