@@ -1,190 +1,272 @@
-Return-Path: <linux-kernel+bounces-608536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C336BA914EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:20:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C70B9A91443
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:44:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34EE23B362E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:20:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33C9E5A0C2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 06:44:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED207219A7C;
-	Thu, 17 Apr 2025 07:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="ESDZnh8a"
-Received: from mail-m21468.qiye.163.com (mail-m21468.qiye.163.com [117.135.214.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C5BE2066DD;
+	Thu, 17 Apr 2025 06:44:24 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71ECD2147FB;
-	Thu, 17 Apr 2025 07:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.214.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81671DE889
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 06:44:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744874435; cv=none; b=rJ52OnGA012bf3DVSlq7vNWQRPEhmkbVPxGExegPPVAjN4ZgnR4gcRa1BpKZ/QoCmnUx1R+yFqYCwS6aKSveGqcoLOJw6v6jZoeQ9aFZ2sYem39nhU4g+rpZWjXk8ZnVCkw7Scj6TO93t8PdXNXtGEN3mtY3yWrB9Fo8BYcaeX0=
+	t=1744872263; cv=none; b=baiST2Epfp12/ileIsJQggqCGDLcvIZq9UkYBzS9klKDm9oFnwLmA5Qk/7cgqJ1NOJRku0RI1jfKC2h+hJw3aF/DL8DILHZyaQ7E8UXAUL8T6WwmxjEfZEuf11BsYIwbVMTX2aQGaP5J7PlEHwN2F0S+YrkPYyHvivm+G0A+kWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744874435; c=relaxed/simple;
-	bh=RlL5RNTTt9RTjRUIgbyuAwTkkmOCTYDBtWrqbJ8spd4=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=MlLbaPptIV1xM5Y9PTdIB0twN2O1Dxh3uMkM8f77lP72NxqRvKZb6bola3bT7vQkHbFpm/xJaaiNQZgwy/QiPflEOgKJePLHJlHYcXPbpp0U7+yIkc4jj9oBFNwR9r0nWSmCehM7JBwdv+h+JC/mNTWGD0/sMFQMZwA6LqNawW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=ESDZnh8a; arc=none smtp.client-ip=117.135.214.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.129] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1231f10fc;
-	Thu, 17 Apr 2025 14:44:54 +0800 (GMT+08:00)
-Message-ID: <b9db4ac1-4657-236a-3cf1-6672961b2199@rock-chips.com>
-Date: Thu, 17 Apr 2025 14:44:19 +0800
+	s=arc-20240116; t=1744872263; c=relaxed/simple;
+	bh=If+ezqJJzVKuOBv/yLDBPkAxZAF7Q4lO+E5PwuZ1O/I=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=gdAQb3D6a7BsGD1BZ9ON99fuT3txzYQMzctR/lPZFeCRxhZ5XJ3c6ZkD9Y5+3X5CXBmgo78m3iY3XBldeEAPdBMQQTVRSC72Wpvk91DB59ikFtIkfiUCZwUp6w97ZeKyg2qLcSONxgzCq86+QxjL1f7P4xQDZnfnwRWJkvVeuHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3d5b38276deso8680465ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 23:44:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744872261; x=1745477061;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=80vIA7ap+8Y3mbiZvd1Ac5OwnLScEEXHJZpjQ6o29cM=;
+        b=wVlJZVwYxJajeTimkxipBoocDRckMFG2pEaccZDk1jhbtuFIaDkYSA7EJ/bsfPf05/
+         YLPdl9lweOAWf2aRGbE9TNL/X2WofV08ortpUt2jzR42ensIJDzHHthI5I4qobOFGrKe
+         DRDwBfjZ8dG/Kw6mj/yAlEysOZNafcqAyhyFCf2zYKKv7cKUYkEQNDShgyMi+juulhBv
+         rK84jbwh5oRrNwOWiqRlpcJ3fYDBleFJKSjSwipZCeZad9O1NnWQuRL/18m+iSSHTggN
+         uWeILGaWAMYtsAv0hFJFttDQrka3LnaIofBp/iqXZ3ePJiVQocc0PZTSUSnueOJotqlA
+         MnDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVPqp8PD+KfWnE03NZCw8K9cYm0bZ43Fays4Azwp4xLkYIw1JNdsVyL0RO+jh2zNkzKGbVZdFKhY+I/N2M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzU4IbFF2xZRipXnT4Fcg6ovAFi49YtOrsobHcdg3U4882YGoHi
+	JqzmVI27FhNj6pmp95rHTd8K+qLb0fucAvcnpX5kwgolE3MFBnpKCuf/RBtNO5+aOpBdJSTYwQ6
+	UD7Dqf02K0Yu5jNKgTnA6FurmSpr4sjjYP8ajNa0slsUPenCRjAZoelI=
+X-Google-Smtp-Source: AGHT+IElS9UcrUsD9qBSZfJWImK9txvdQ9mVCJUsQUEiZlsvorY3+4alHVP4YhtjNflvBEOHRMUn9vI2hHt+U+OD5oP+G/kymE+s
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Cc: shawn.lin@rock-chips.com, Detlev Casanova
- <detlev.casanova@collabora.com>, linux-pm@vger.kernel.org,
- linux-mmc@vger.kernel.org,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
- kernel@collabora.com, linux-arm-kernel@lists.infradead.org,
- Ulf Hansson <ulf.hansson@linaro.org>, Heiko Stuebner <heiko@sntech.de>,
- Elaine Zhang <zhangqing@rock-chips.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Finley Xiao <finley.xiao@rock-chips.com>,
- "jon.lin@rock-chips.com" <jon.lin@rock-chips.com>
-Subject: Re: [PATCH v2] mmc: sdhci-of-dwcmshc: add PD workaround on RK3576
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-References: <20250412-rk3576-emmc-fix-v2-1-830e653ad4f0@collabora.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-In-Reply-To: <20250412-rk3576-emmc-fix-v2-1-830e653ad4f0@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGRhJQlZPGR8eGhhJTE5PS0hWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a96427e485009cckunm1231f10fc
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MVE6TRw6HjJJDhAxSAlOS08X
-	NSMKFAxVSlVKTE9PQ0xJSUJNT01DVTMWGhIXVQgTGgwVVRcSFTsJFBgQVhgTEgsIVRgUFkVZV1kS
-	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQU1LTkg3Bg++
-DKIM-Signature:a=rsa-sha256;
-	b=ESDZnh8aikfHaiq7IYfnOrYeq/BkvCKQAqvo4IVcY0+CXNTby3f/4GuZNdzUdwpK9O2L1cEzqORm0A8kFleCu/E2GV/q6pZcjEkyPHJzPCEa2G1aUKdKpWqnOQ6CUVF1q5eq5nZYTA/H44Z9DXUezOY9Nf9OpTC9VcaKWrsDEqc=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=mOf8GWaAUa3y0Ll4tMagrn3LdiJZ5rNNldT2O6sNcvU=;
-	h=date:mime-version:subject:message-id:from;
+X-Received: by 2002:a05:6e02:16c5:b0:3d3:d067:73f8 with SMTP id
+ e9e14a558f8ab-3d815b1cda5mr39072505ab.11.1744872260897; Wed, 16 Apr 2025
+ 23:44:20 -0700 (PDT)
+Date: Wed, 16 Apr 2025 23:44:20 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6800a344.050a0220.5cdb3.000d.GAE@google.com>
+Subject: [syzbot] [afs?] BUG: sleeping function called from invalid context in __xfs_write_fault
+From: syzbot <syzbot+764108b2012ab7b1aad2@syzkaller.appspotmail.com>
+To: dhowells@redhat.com, linux-afs@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, marc.dionne@auristor.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-+ Jon, who may have some comment on FSPI0 part as mentioned below.
+Hello,
 
-在 2025/04/13 星期日 4:45, Nicolas Frattaroli 写道:
-> RK3576's power domains have a peculiar problem where the PD_NVM
-> power domain, of which the sdhci controller is a part, seemingly does
-> not have idempotent disable/enable. The end effect is that if PD_NVM
-> gets turned off by the generic power domain logic because all the
-> devices depending on it are suspended, then the next time the sdhci
-> device is unsuspended, it'll hang the SoC as soon as it tries accessing
-> the CQHCI registers.
-> 
-> RK3576's UFS support needed a new dev_pm_genpd_rpm_always_on function
-> added to the generic power domains API to handle what appears to be a
-> similar hardware issue.
-> 
-> Use this new function to ask for the same treatment in the sdhci
-> controller by giving rk3576 its own platform data with its own postinit
-> function. The benefit of doing this instead of marking the power domains
-> always on in the power domain core is that we only do this if we know
-> the platform we're running on actually uses the sdhci controller. For
-> others, keeping PD_NVM always on would be a waste, as they won't run
-> into this specific issue. The only other IP in PD_NVM that could be
-> affected is FSPI0. If it gets a mainline driver, it will probably want
-> to do the same thing.
-> 
-> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> ---
-> Changes in v2:
-> - Rewrite patch to use dev_pm_genpd_rpm_always_on in sdhci driver
->    instead, after Ulf Hansson made me aware of its existence
-> - Link to v1: https://lore.kernel.org/r/20250408-rk3576-emmc-fix-v1-1-3009828b1b31@collabora.com
-> ---
->   drivers/mmc/host/sdhci-of-dwcmshc.c | 39 +++++++++++++++++++++++++++++++++++++
->   1 file changed, 39 insertions(+)
-> 
-> diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
-> index 09b9ab15e4995f0bddf57dd309c010c849be40d9..a00aec05eff2da8197cc64690ba9665be756e54a 100644
-> --- a/drivers/mmc/host/sdhci-of-dwcmshc.c
-> +++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
-> @@ -17,6 +17,7 @@
->   #include <linux/module.h>
->   #include <linux/of.h>
->   #include <linux/platform_device.h>
-> +#include <linux/pm_domain.h>
->   #include <linux/pm_runtime.h>
->   #include <linux/reset.h>
->   #include <linux/sizes.h>
-> @@ -745,6 +746,28 @@ static void dwcmshc_rk35xx_postinit(struct sdhci_host *host, struct dwcmshc_priv
->   	}
->   }
->   
-> +static void dwcmshc_rk3576_postinit(struct sdhci_host *host, struct dwcmshc_priv *dwc_priv)
-> +{
-> +	struct device *dev = mmc_dev(host->mmc);
-> +	int ret;
-> +
-> +	/*
-> +	 * This works around what appears to be a silicon bug, which makes the
-> +	 * PD_NVM power domain, which the sdhci controller on the RK3576 is in,
-> +	 * never come back the same way once it's turned off once. This can
-> +	 * happen during early kernel boot if no driver is using either PD_NVM
-> +	 * or its child power domain PD_SDGMAC for a short moment, leading to it
-> +	 * being turned off to save power. By keeping it on, sdhci suspending
-> +	 * won't lead to PD_NVM becoming a candidate for getting turned off.
-> +	 */
-> +	ret = dev_pm_genpd_rpm_always_on(dev, true);
-> +	if (ret && ret != -EOPNOTSUPP)
-> +		dev_warn(dev, "failed to set PD rpm always on, SoC may hang later: %pe\n",
-> +			 ERR_PTR(ret));
-> +
-> +	dwcmshc_rk35xx_postinit(host, dwc_priv);
-> +}
-> +
->   static int th1520_execute_tuning(struct sdhci_host *host, u32 opcode)
->   {
->   	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> @@ -1176,6 +1199,18 @@ static const struct dwcmshc_pltfm_data sdhci_dwcmshc_rk35xx_pdata = {
->   	.postinit = dwcmshc_rk35xx_postinit,
->   };
->   
-> +static const struct dwcmshc_pltfm_data sdhci_dwcmshc_rk3576_pdata = {
-> +	.pdata = {
-> +		.ops = &sdhci_dwcmshc_rk35xx_ops,
-> +		.quirks = SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN |
-> +			  SDHCI_QUIRK_BROKEN_TIMEOUT_VAL,
-> +		.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
-> +			   SDHCI_QUIRK2_CLOCK_DIV_ZERO_BROKEN,
-> +	},
-> +	.init = dwcmshc_rk35xx_init,
-> +	.postinit = dwcmshc_rk3576_postinit,
-> +};
-> +
->   static const struct dwcmshc_pltfm_data sdhci_dwcmshc_th1520_pdata = {
->   	.pdata = {
->   		.ops = &sdhci_dwcmshc_th1520_ops,
-> @@ -1274,6 +1309,10 @@ static const struct of_device_id sdhci_dwcmshc_dt_ids[] = {
->   		.compatible = "rockchip,rk3588-dwcmshc",
->   		.data = &sdhci_dwcmshc_rk35xx_pdata,
->   	},
-> +	{
-> +		.compatible = "rockchip,rk3576-dwcmshc",
-> +		.data = &sdhci_dwcmshc_rk3576_pdata,
-> +	},
->   	{
->   		.compatible = "rockchip,rk3568-dwcmshc",
->   		.data = &sdhci_dwcmshc_rk35xx_pdata,
-> 
-> ---
-> base-commit: 64e9fdfc89a76fed38d8ddeed72d42ec71957ed9
-> change-id: 20250317-rk3576-emmc-fix-7dc81a627422
-> 
-> Best regards,
+syzbot found the following issue on:
+
+HEAD commit:    7cdabafc0012 Merge tag 'trace-v6.15-rc1' of git://git.kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=103bd398580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fb8650d88e9fb80f
+dashboard link: https://syzkaller.appspot.com/bug?extid=764108b2012ab7b1aad2
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/0f9317cc7b92/disk-7cdabafc.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b9e0f7e75505/vmlinux-7cdabafc.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/5c11cc51cada/bzImage-7cdabafc.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+764108b2012ab7b1aad2@syzkaller.appspotmail.com
+
+BUG: sleeping function called from invalid context at ./include/linux/percpu-rwsem.h:50
+in_atomic(): 0, irqs_disabled(): 0, non_block: 0, pid: 6258, name: syz.2.54
+preempt_count: 0, expected: 0
+RCU nest depth: 1, expected: 0
+4 locks held by syz.2.54/6258:
+ #0: ffff88807c041b38 (&f->f_pos_lock){+.+.}-{4:4}, at: fdget_pos+0x247/0x310 fs/file.c:1213
+ #1: ffff88804d208148 (&type->i_mutex_dir_key#18){++++}-{4:4}, at: iterate_dir+0x4a6/0x760 fs/readdir.c:101
+ #2: ffffffff8ed3dfa0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ #2: ffffffff8ed3dfa0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
+ #2: ffffffff8ed3dfa0 (rcu_read_lock){....}-{1:3}, at: afs_dynroot_readdir+0x466/0xbe0 fs/afs/dynroot.c:351
+ #3: ffff88803143dbe0 (&mm->mmap_lock){++++}-{4:4}, at: mmap_read_trylock include/linux/mmap_lock.h:203 [inline]
+ #3: ffff88803143dbe0 (&mm->mmap_lock){++++}-{4:4}, at: get_mmap_lock_carefully mm/memory.c:6346 [inline]
+ #3: ffff88803143dbe0 (&mm->mmap_lock){++++}-{4:4}, at: lock_mm_and_find_vma+0x32/0x2f0 mm/memory.c:6406
+CPU: 1 UID: 0 PID: 6258 Comm: syz.2.54 Not tainted 6.15.0-rc1-syzkaller-00325-g7cdabafc0012 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ __might_resched+0x558/0x6c0 kernel/sched/core.c:8818
+ percpu_down_read include/linux/percpu-rwsem.h:50 [inline]
+ __sb_start_write include/linux/fs.h:1783 [inline]
+ sb_start_pagefault include/linux/fs.h:1948 [inline]
+ __xfs_write_fault+0x1cd/0x8f0 fs/xfs/xfs_file.c:1718
+ xfs_write_fault+0x1a1/0x640 fs/xfs/xfs_file.c:1777
+ do_page_mkwrite+0x159/0x340 mm/memory.c:3287
+ wp_page_shared mm/memory.c:3688 [inline]
+ do_wp_page+0x2bbc/0x5e00 mm/memory.c:3907
+ handle_pte_fault+0xfaf/0x61c0 mm/memory.c:6013
+ __handle_mm_fault mm/memory.c:6140 [inline]
+ handle_mm_fault+0x1030/0x1aa0 mm/memory.c:6309
+ do_user_addr_fault arch/x86/mm/fault.c:1388 [inline]
+ handle_page_fault arch/x86/mm/fault.c:1480 [inline]
+ exc_page_fault+0x2bb/0x920 arch/x86/mm/fault.c:1538
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+RIP: 0010:filldir+0x2c4/0x6a0 fs/readdir.c:292
+Code: 87 55 02 00 00 0f 01 cb 0f ae e8 48 8b 44 24 30 49 89 46 08 48 8b 4c 24 10 48 8b 44 24 60 48 89 01 48 8b 44 24 18 8b 6c 24 3c <66> 89 41 10 48 98 40 88 6c 01 ff 48 89 44 24 30 4d 63 f5 42 c6 44
+RSP: 0018:ffffc90003d8fbe0 EFLAGS: 00050283
+RAX: 0000000000000018 RBX: 0000200000002008 RCX: 0000200000001ff0
+RDX: 0000000000000000 RSI: 0000200000001fd8 RDI: 0000200000002008
+RBP: 0000000000000004 R08: ffffffff82429e7d R09: 1ffff11005dcf780
+R10: dffffc0000000000 R11: ffffed1005dcf781 R12: ffff8881432bfb41
+R13: 0000000000000003 R14: 0000200000001fd8 R15: 00007ffffffff000
+ dir_emit include/linux/fs.h:3861 [inline]
+ afs_dynroot_readdir_cells fs/afs/dynroot.c:310 [inline]
+ afs_dynroot_readdir+0x814/0xbe0 fs/afs/dynroot.c:352
+ iterate_dir+0x5a9/0x760 fs/readdir.c:108
+ __do_sys_getdents fs/readdir.c:322 [inline]
+ __se_sys_getdents+0x1ff/0x4e0 fs/readdir.c:308
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f74f7f8d169
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f74f8d45038 EFLAGS: 00000246 ORIG_RAX: 000000000000004e
+RAX: ffffffffffffffda RBX: 00007f74f81a6080 RCX: 00007f74f7f8d169
+RDX: 00000000000000b8 RSI: 0000200000001fc0 RDI: 000000000000000e
+RBP: 00007f74f800e990 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f74f81a6080 R15: 00007fff9d606378
+ </TASK>
+
+=============================
+[ BUG: Invalid wait context ]
+6.15.0-rc1-syzkaller-00325-g7cdabafc0012 #0 Tainted: G        W          
+-----------------------------
+syz.2.54/6258 is trying to lock:
+ffff88807b5f2f98 (&xfs_nondir_ilock_class
+){++++}-{4:4}, at: xfs_fs_dirty_inode+0x19d/0x260 fs/xfs/xfs_super.c:714
+other info that might help us debug this:
+context-{5:5}
+6 locks held by syz.2.54/6258:
+ #0: ffff88807c041b38 (&f->f_pos_lock){+.+.}-{4:4}, at: fdget_pos+0x247/0x310 fs/file.c:1213
+ #1: ffff88804d208148 (&type->i_mutex_dir_key#18){++++}-{4:4}, at: iterate_dir+0x4a6/0x760 fs/readdir.c:101
+ #2: ffffffff8ed3dfa0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ #2: ffffffff8ed3dfa0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
+ #2: ffffffff8ed3dfa0 (rcu_read_lock){....}-{1:3}, at: afs_dynroot_readdir+0x466/0xbe0 fs/afs/dynroot.c:351
+ #3: ffff88803143dbe0 (&mm->mmap_lock){++++}-{4:4}, at: mmap_read_trylock include/linux/mmap_lock.h:203 [inline]
+ #3: ffff88803143dbe0 (&mm->mmap_lock){++++}-{4:4}, at: get_mmap_lock_carefully mm/memory.c:6346 [inline]
+ #3: ffff88803143dbe0 (&mm->mmap_lock){++++}-{4:4}, at: lock_mm_and_find_vma+0x32/0x2f0 mm/memory.c:6406
+ #4: ffff88807f006518 (sb_pagefaults#2){.+.+}-{0:0}, at: xfs_write_fault+0x1a1/0x640 fs/xfs/xfs_file.c:1777
+ #5: ffff88807f006610 (sb_internal#2){.+.+}-{0:0}, at: xfs_fs_dirty_inode+0x15a/0x260 fs/xfs/xfs_super.c:712
+stack backtrace:
+CPU: 1 UID: 0 PID: 6258 Comm: syz.2.54 Tainted: G        W           6.15.0-rc1-syzkaller-00325-g7cdabafc0012 #0 PREEMPT(full) 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_lock_invalid_wait_context kernel/locking/lockdep.c:4831 [inline]
+ check_wait_context kernel/locking/lockdep.c:4903 [inline]
+ __lock_acquire+0xc30/0xd80 kernel/locking/lockdep.c:5185
+ lock_acquire+0x116/0x2f0 kernel/locking/lockdep.c:5866
+ down_write_nested+0xa2/0x220 kernel/locking/rwsem.c:1693
+ xfs_fs_dirty_inode+0x19d/0x260 fs/xfs/xfs_super.c:714
+ __mark_inode_dirty+0x2ee/0xe90 fs/fs-writeback.c:2527
+ generic_update_time+0xad/0xc0 fs/inode.c:2064
+ xfs_vn_update_time+0x2a7/0x600 fs/xfs/xfs_iops.c:1136
+ inode_update_time fs/inode.c:2076 [inline]
+ __file_update_time fs/inode.c:2305 [inline]
+ file_update_time+0x314/0x450 fs/inode.c:2335
+ __xfs_write_fault+0x2ff/0x8f0 fs/xfs/xfs_file.c:1719
+ xfs_write_fault+0x1a1/0x640 fs/xfs/xfs_file.c:1777
+ do_page_mkwrite+0x159/0x340 mm/memory.c:3287
+ wp_page_shared mm/memory.c:3688 [inline]
+ do_wp_page+0x2bbc/0x5e00 mm/memory.c:3907
+ handle_pte_fault+0xfaf/0x61c0 mm/memory.c:6013
+ __handle_mm_fault mm/memory.c:6140 [inline]
+ handle_mm_fault+0x1030/0x1aa0 mm/memory.c:6309
+ do_user_addr_fault arch/x86/mm/fault.c:1388 [inline]
+ handle_page_fault arch/x86/mm/fault.c:1480 [inline]
+ exc_page_fault+0x2bb/0x920 arch/x86/mm/fault.c:1538
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+RIP: 0010:filldir+0x2c4/0x6a0 fs/readdir.c:292
+Code: 87 55 02 00 00 0f 01 cb 0f ae e8 48 8b 44 24 30 49 89 46 08 48 8b 4c 24 10 48 8b 44 24 60 48 89 01 48 8b 44 24 18 8b 6c 24 3c <66> 89 41 10 48 98 40 88 6c 01 ff 48 89 44 24 30 4d 63 f5 42 c6 44
+RSP: 0018:ffffc90003d8fbe0 EFLAGS: 00050283
+RAX: 0000000000000018 RBX: 0000200000002008 RCX: 0000200000001ff0
+RDX: 0000000000000000 RSI: 0000200000001fd8 RDI: 0000200000002008
+RBP: 0000000000000004 R08: ffffffff82429e7d R09: 1ffff11005dcf780
+R10: dffffc0000000000 R11: ffffed1005dcf781 R12: ffff8881432bfb41
+R13: 0000000000000003 R14: 0000200000001fd8 R15: 00007ffffffff000
+ dir_emit include/linux/fs.h:3861 [inline]
+ afs_dynroot_readdir_cells fs/afs/dynroot.c:310 [inline]
+ afs_dynroot_readdir+0x814/0xbe0 fs/afs/dynroot.c:352
+ iterate_dir+0x5a9/0x760 fs/readdir.c:108
+ __do_sys_getdents fs/readdir.c:322 [inline]
+ __se_sys_getdents+0x1ff/0x4e0 fs/readdir.c:308
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f74f7f8d169
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f74f8d45038 EFLAGS: 00000246 ORIG_RAX: 000000000000004e
+RAX: ffffffffffffffda RBX: 00007f74f81a6080 RCX: 00007f74f7f8d169
+RDX: 00000000000000b8 RSI: 0000200000001fc0 RDI: 000000000000000e
+RBP: 00007f74f800e990 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f74f81a6080 R15: 00007fff9d606378
+ </TASK>
+----------------
+Code disassembly (best guess):
+   0:	87 55 02             	xchg   %edx,0x2(%rbp)
+   3:	00 00                	add    %al,(%rax)
+   5:	0f 01 cb             	stac
+   8:	0f ae e8             	lfence
+   b:	48 8b 44 24 30       	mov    0x30(%rsp),%rax
+  10:	49 89 46 08          	mov    %rax,0x8(%r14)
+  14:	48 8b 4c 24 10       	mov    0x10(%rsp),%rcx
+  19:	48 8b 44 24 60       	mov    0x60(%rsp),%rax
+  1e:	48 89 01             	mov    %rax,(%rcx)
+  21:	48 8b 44 24 18       	mov    0x18(%rsp),%rax
+  26:	8b 6c 24 3c          	mov    0x3c(%rsp),%ebp
+* 2a:	66 89 41 10          	mov    %ax,0x10(%rcx) <-- trapping instruction
+  2e:	48 98                	cltq
+  30:	40 88 6c 01 ff       	mov    %bpl,-0x1(%rcx,%rax,1)
+  35:	48 89 44 24 30       	mov    %rax,0x30(%rsp)
+  3a:	4d 63 f5             	movslq %r13d,%r14
+  3d:	42                   	rex.X
+  3e:	c6                   	.byte 0xc6
+  3f:	44                   	rex.R
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
