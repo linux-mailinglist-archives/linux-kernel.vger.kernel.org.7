@@ -1,112 +1,128 @@
-Return-Path: <linux-kernel+bounces-608974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E79F5A91B7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:05:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BF92A91B80
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:05:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1C435A7072
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 12:03:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4418F7A89ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 12:04:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59B924A07D;
-	Thu, 17 Apr 2025 12:02:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9366245033;
+	Thu, 17 Apr 2025 12:04:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="lgc1Ii9q"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZviCbdEN"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F93124A042;
-	Thu, 17 Apr 2025 12:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81EF01E1E1D
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 12:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744891334; cv=none; b=XadWkl9Rv2y+5oI8kCchEpcYKP+z8aW9uIp8cNlxmaL0/MGWWm0Kiz6ag5xfBp1xxkmGpjmMzCgNbFU6OOmM7O7G11sY+NTUBsV2T7osDNwoAYax3zw21aexVUe2fn9gqii3Job4B03VwW/rrNbg3mBX5BlMA24cfAjhBvp0VLE=
+	t=1744891469; cv=none; b=qXG+rxlhHFJPrrFnA/y9s9MH+vMk30R4npteVWrjTiH1l8S2XYQYF0LiNIg+h8O1Zpql+q07fH4QlmHzLuOwIK5Rb9kei+VD/qWl6IWSvRY+dZ6jZ9TZYk9t0XpTUsnS+IhVXSuMUfGTzLxip0NxaVUQ7MBzqaNA0nfNV42NJ/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744891334; c=relaxed/simple;
-	bh=6ZXpOpKFXe3BQmkcz2CtFn5gZTsYclZ9GbD4T6xOKbg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JczrSAXovPJnJsfm+WFJ/Xq2zZTZPsj9vrLE+d3aJ75Jf9lnc29H46l/mbk88MlxU0w0aTL7pm8JdgoJzSjbeULyrym2OfRXOVvgBMs85SHsUVpyAeZzkGdgiluzYXYVkRJd4g67cLvgRfYNcRPNKxxQKEgrft9SzM749OdWWwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=lgc1Ii9q; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id D18A925DFF;
-	Thu, 17 Apr 2025 14:02:10 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id RTLTMcTzHm4d; Thu, 17 Apr 2025 14:02:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1744891330; bh=6ZXpOpKFXe3BQmkcz2CtFn5gZTsYclZ9GbD4T6xOKbg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=lgc1Ii9q+HCq0tjO48u2cSjz4lhYMGVyVIMDSO6MRA67ndnRauaK9TG3tDkwVQbB9
-	 uJEYAJGAlL3+CLPSC0rxF4BXuJuH4YtY4aHemKLf/mArgpb9Xtoh981ORsFWZfd/P/
-	 uRJR8Dk9Tm5moIfbFNcO6+/5ajtEYrDiT/AiWe8tvAr/UMeKAeQ97ZRwRYO3Eo1O3i
-	 Dkh7MLvi2z/tHiBuAoTAkGG1giLyTa9AGiP4jTFo4ciswujMBxllwjqIHAAcHVD9nB
-	 22m7bEHlbH4jU8okBEr8mZ7cNzAQUPbVZK3UGd4zUAxJlkT4Aot8glBxQa1+Lb+UxS
-	 E0vpi2H/D2AJQ==
-From: Yao Zi <ziyao@disroot.org>
-To: Heiko Stuebner <heiko@sntech.de>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Yao Zi <ziyao@disroot.org>,
-	Chukun Pan <amadeus@jmu.edu.cn>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	s=arc-20240116; t=1744891469; c=relaxed/simple;
+	bh=ksUyW653NyIT3lvyAI4RmnyliHyVSS70xVKOoNyhJjc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VCR6Xvpb/yiBBO7INz1krYPMl6krFyhejDZJsvsDxRPcIr80/aUTg5iW2uAh0SFw2PRBwrel4I0r1rHvKE33Z41+Ib6EccpLmsXJLMoX+fT26M05LYkMzuBoQpVTemUZvupwuPUlcJ6mPvAHdAxVQBDdwrR/DV8PVh9yjl5wS4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZviCbdEN; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=+whgyZ8F2+lZPSX5+w+V/eDEdox87Gze8zZrqLkwGPU=; b=ZviCbdENme03fTvAVQk21bV0fX
+	rWdf4FYIr5BDCugkJfSdj41Y7AHmTBC8ZCCMpKFbyxLxKqcM7g/mVn/wgAC4OvEjzLQR3u5OC3b4V
+	bdAL+s9ho0JXor+HXerVgS1GzBCff2QHDw/A9qpSxsr1qCoYDKRaaWg65m2JOkpon3ngn5NUn2442
+	0Y4EUPbypDBCiKP1Ik5dS5iAWmvBS/KlZLpymTdCMsSyYfXSNnvGM1IdUlH0ZGEJ1Avz9nF3PLtHJ
+	WnCXRe/frN642WHeCjGFjLMSG/DvUGGZexFw/f01TWAMjXhibq1ndO07WbffcpHqyPeVUfpZu8ccb
+	IuuLonWA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1u5Nx5-0000000BM53-2U3f;
+	Thu, 17 Apr 2025 12:03:22 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id DDC2D300619; Thu, 17 Apr 2025 14:01:30 +0200 (CEST)
+Date: Thu, 17 Apr 2025 14:01:30 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>,
+	Shrikanth Hegde <sshegde@linux.ibm.com>,
+	"Chen, Yu C" <yu.c.chen@intel.com>,
+	Tim Chen <tim.c.chen@linux.intel.com>,
+	Ingo Molnar <mingo@kernel.org>, Doug Nelson <doug.nelson@intel.com>,
+	Mohini Narkhede <mohini.narkhede@intel.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] arm64: dts: rockchip: Add onboard EEPROM for Radxa E20C
-Date: Thu, 17 Apr 2025 12:01:19 +0000
-Message-ID: <20250417120118.17610-6-ziyao@disroot.org>
-In-Reply-To: <20250417120118.17610-3-ziyao@disroot.org>
-References: <20250417120118.17610-3-ziyao@disroot.org>
+Subject: Re: [PATCH] sched: Skip useless sched_balance_running acquisition if
+ load balance is not due
+Message-ID: <20250417120130.GE17910@noisy.programming.kicks-ass.net>
+References: <20250416035823.1846307-1-tim.c.chen@linux.intel.com>
+ <fbe29b49-92af-4b8c-b7c8-3c15405e5f15@linux.ibm.com>
+ <667f2076-fbcd-4da7-8e4b-a8190a673355@intel.com>
+ <5e191de4-f580-462d-8f93-707addafb9a2@linux.ibm.com>
+ <517b6aac-7fbb-4c28-a0c4-086797f5c2eb@linux.ibm.com>
+ <CAKfTPtBF353mFXrqdm9_QbfhDJKsvOpjvER+p+X61XEeAd=URA@mail.gmail.com>
+ <7a5a5f1f-0bbc-4a63-b2aa-67bc6c724b2d@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7a5a5f1f-0bbc-4a63-b2aa-67bc6c724b2d@amd.com>
 
-Radxa E20C ships an onboard I2C EEPROM for storing production
-information. Enable it in devicetree.
+On Thu, Apr 17, 2025 at 05:01:37PM +0530, K Prateek Nayak wrote:
+> On 4/16/2025 3:17 PM, Vincent Guittot wrote:
+> > > 
+> > > Sorry, forgot to add.
+> > > 
+> > > Do we really need newidle running all the way till NUMA? or if it runs till PKG is it enough?
+> > > the regular (idle) can take care for NUMA by serializing it?
+> > > 
+> > > -               if (sd->flags & SD_BALANCE_NEWIDLE) {
+> > > +               if (sd->flags & SD_BALANCE_NEWIDLE && !(sd->flags & SD_SERIALIZE)) {
+> > 
+> > Why not just clearing SD_BALANCE_NEWIDLE in your sched domain when you
+> > set SD_SERIALIZE
+> 
+> I've some questions around "sched_balance_running":
+> 
+> o Since this is a single flag across the entire system, it also implies
+>   CPUs cannon concurrently do load balancing across different NUMA
+>   domains which seems reasonable since a load balance at lower NUMA
+>   domain can potentially change the "nr_numa_running" and
+>   "nr_preferred_running" stats for the higher domain but if this is the
+>   case, a newidle balance at lower NUMA domain can interfere with a
+>   concurrent busy / newidle load balancing at higher NUMA domain.
+>   Is this expected? Should newidle balance be serialized too?
 
-Signed-off-by: Yao Zi <ziyao@disroot.org>
----
- arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Serializing new-idle might create too much idle time.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-index 57a446b5cbd6..6e77f7753ff7 100644
---- a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-@@ -110,6 +110,20 @@ vcc5v0_sys: regulator-5v0-vcc-sys {
- 	};
- };
- 
-+&i2c1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c1m0_xfer>;
-+	status = "okay";
-+
-+	eeprom@50 {
-+		compatible = "belling,bl24c16a", "atmel,24c16";
-+		reg = <0x50>;
-+		pagesize = <16>;
-+		read-only;
-+		vcc-supply = <&vcc_3v3>;
-+	};
-+};
-+
- &pinctrl {
- 	gpio-keys {
- 		user_key: user-key {
--- 
-2.49.0
+>   (P.S. I copied over the serialize logic from sched_balance_domains()
+>    into sched_balance_newidle() and did not see any difference in my
+>    testing but perhaps there are benchmarks out there that care for
+>    this)
+> 
+> o If the intention of SD_SERIALIZE was to actually "serializes
+>   load-balancing passes over large domains (above the NODE topology
+>   level)" as the comment above "sched_balance_running" states, and
+>   this question is specific to x86 - when enabling SNC on Intel or
+>   NPS on AMD servers, the first NUMA domain is in fact as big as the
+>   NODE (now PKG domain) if not smaller. Is it okay to clear
+>   SD_SERIALIZE for these domains since they are small enough now?
 
+You'll have to dive into the history here, but IIRC it was from SGI back
+in the day, where NUMA factors were quite large and load-balancing
+across numa was a pain.
+
+Small really isn't the criteria, but inter-node latency might be, we
+also have this node_reclaim_distance thing.
+
+Not quite sure what makes sense, someone should tinker I suppose, see
+what works with today's hardare.
 
