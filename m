@@ -1,214 +1,430 @@
-Return-Path: <linux-kernel+bounces-609658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEA88A926E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 20:17:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 597B7A9270A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 20:19:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF3124A12E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 18:17:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF9131906AE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 18:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C498F2550C2;
-	Thu, 17 Apr 2025 18:17:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16E8255E20;
+	Thu, 17 Apr 2025 18:19:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kUM4Lyd6";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="0Vfa17Wr"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="HKA654X8"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12olkn2065.outbound.protection.outlook.com [40.92.21.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B111DB148
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 18:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF931A3178
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 18:18:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.21.65
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744913841; cv=fail; b=ols6PNhli6AjXCQQezjDcCK+yR3VuJswZ/5XNYl0+F4nJQp9GgSPVtHFGvXY2sV1nk0KftR2c/2WPN3sqkSPyMppP6gHLffsY0+XkwO85NVQt0sfIsrtM8R3+Uq8kbyPwukyvxk6TRTStsfwip4Od7j/zfhcp/uiqgJlN8CB0s4=
+	t=1744913940; cv=fail; b=SW9O1QMEwn0ljmoa4rX/5cBfoo6mi5OxB/RXqYk7WmyJpUaZfOpMfbaFmP2XTn5HHLRo+af8m+HV0Wktu0WblxJRVgYYhqpq+2pvEPk/iZaSCLzfw81nxwmFK1iIBJAOVqoN7flvHYtLr52MtkA0+BMjR2bOWNgryvEAi7rOQn0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744913841; c=relaxed/simple;
-	bh=GpJYDKEB7MdinHnCu6uIuDCvnUBBUXEn5YGRtMWPgIM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Niu6qMO0GEe0aIqyNNb2doenFED9v3mgD04MQDNVpV+LSN67SUFBYqgbTdEq7eA329oL+haOKApey3/LybhJCssfqRmWF1h4MqCSIfDT7QG99TLltWgO0Xrj9PPqEYruHryYekKZ1DWDUKlgZwcCNoIfavQ9kuayUGqGGckCp/s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=kUM4Lyd6; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=0Vfa17Wr; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53HGMrEK004824;
-	Thu, 17 Apr 2025 18:16:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=GpJYDKEB7MdinHnCu6
-	uIuDCvnUBBUXEn5YGRtMWPgIM=; b=kUM4Lyd6o68AjJJWyt/TpcORJWkfIbv8Wj
-	rvpm54VdO45g7Y6QkbKZeqONG0QWeqS/OWrExoyhMnDQd+camItQBlSbCsfW5i1x
-	cRxiC0JVuEPS785R2+LSkFL4jnEo/omFgK3O3er26BdKQkWVcj7/qlHucIruOuEv
-	dnLXrP/VUbNmfOdyjRDo4HJrfhklhMctkW9K/zwBx7k7mDX4li84SU8CX8TduIxE
-	OTkcrsHuUnkK78X2B1AmVbw3ebRJvvbIvweTICVk8UpRIj8qz9chBbERZMCnyL/p
-	FxQ3IKxEqB8nWRk7XCBqLrCmxmGZf+P7PHW6WjMbRe+etq0bkFwQ==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46185mxxk7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 17 Apr 2025 18:16:49 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 53HIFHsC009252;
-	Thu, 17 Apr 2025 18:16:48 GMT
-Received: from cy3pr05cu001.outbound.protection.outlook.com (mail-westcentralusazlp17013076.outbound.protection.outlook.com [40.93.6.76])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 460d3nm4wq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 17 Apr 2025 18:16:48 +0000
+	s=arc-20240116; t=1744913940; c=relaxed/simple;
+	bh=cdUK4X/hWXjmd5f7Ho3JVh9586qa1JBi4HigciycRMc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=iBZm+Au096BKcmoC9nCFfponr0RwsMrsTh6jweF35neNIBYuf4jQ2qZFfYdeSccaW+pKIMrv+wpGsqwRxN3LntkkLNEEI9n5P6zoOALrHAKKPtsfCAlI3ri3lOpGyitNa6kiggIEtwq/f7BwB4aX2DmOiQDcRKgZnsR96gug4Sg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=HKA654X8; arc=fail smtp.client-ip=40.92.21.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cFCVyds2U0V0XTV4d+OhULzBSwo7KSwj+1U19eQIBoST44QmEpGnJbWryMk2lkp91blxwVl4dvMGudW8YvjYLrjEv/tUfSR3sBYcRVVA4mApckWAVX2vh//J9S4EHX9D5/LQ4jFAg+g7U4jCobBb/S4dbhtpHYx9ZGY+uf6QZRnlOjGcY82Aa5dDleNfn5mvts0S94N4fuMUIWQJmJtPhhxPWyuYDVmWt0GdjnmMS0TOwIbOa3unBuu/frUVOkV2C8VvFN1dK9F0CgtwRStFOvC+PYOtzKk5TosmJ4TXQ77HMqsP2tXw1bQKmeARkxpKMyRptc6AiLgKHgH4EUtj8w==
+ b=ADusY2ehZ76SX+gY8rypmBg7U4Myus9Y0uQHZ15VjgEarwibbZO+12n/iuZVxSaSmba4i/4/cFGf09i3jgq5acOfhPXr3P7M+9IuN03u1N/bFqAzTf7csuyqdVH+fDCQUpCMY9IE3FNS5L5SXYChB9TE8uP9BvRNgJOE13cmWHa258hdv3QH2GdqY3ij+sndp0Y/47KDMr3jR3ExMP9TQ5t0WydomQXuNZ8XXGAMmnrOIKdgNnIaykpDhBCj7KWWwGUfXxnEKO1L+L2LJqPaOHZZ3B2TcrDpLh9ZrhBr8TSYka2GwaTMcZ+QlqFMP93JkuciVewhVP9J8nwKoq6ohw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GpJYDKEB7MdinHnCu6uIuDCvnUBBUXEn5YGRtMWPgIM=;
- b=xa9z9agzUw4H5i3+34LCi3LKYU3iO9pPodM1uMnHmzMK17LrBy/mJZWn2jgSjU67yVk4fYDpgwUuTgVp5UZVtCXTDrdK02sAJGI++T3Zlhb3RBGRFRfhUbbWFYeGKd84JiJhkAUeXiR7pZywjN0KTn05FmODOOSENDpyDuNWuRUb4s94CtTAvhnXt7NikgUeM2JwKxqTD2mpLWQE3pEY/VEegL70Zk1VhN1jrKSdoFWTNlHUzfsSnaEw8pV87BGDuY9BfVnwFn4GynINidu09lIItfPUQGEUgOhtWI4AtocJs4t4MjhhRDowqKCs9g2TofbY9gL7yXh/2cJaJL1bTw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ bh=evnX8/HbExGr1bQtrPZk3rNNmFOnTnMkrXpyi/HN0Rw=;
+ b=s2kQnAMTkvbwazCSRiUBdUAOHx4/lVsrNEdVLma4jIIMj8dwV64lQF4C3UsQtKWMnHweJb3Qt94bjRUK8aMC2SZxQqwnrk7uKEHkszo0G9o+NRcu3VYpjMyY2PNCepPyHqMdKznADIM/ZhGTjCQyhC6WWbewvCWYBw2RwImJtxixRbZXS71MIizrFGpeXwj99fMnpNESpizNkkC1CTD8aoWQc0PrAIflEE42Ja2v3cQG8kBTiZDjHC2JNCQfikGoMWpgB4qBk8XhL7zC93UwydUTHYLA61U7pAVPxyTSKck+emtTtRVJKiHJeKQcXTSgwUWn87nTNuhjvCpDyYJeAA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GpJYDKEB7MdinHnCu6uIuDCvnUBBUXEn5YGRtMWPgIM=;
- b=0Vfa17WrePXw2vUY2+q7GMVpj/hZAcoEYWY8oiq6Geih+mlO5r/mDNTZQeOfv/kXk3/4mE+FCsyowwhSzJPnZXZHjQ0mJJIhQK2tW3uBi9u0etEjVr3mQDk2bxtud9LJGozLe3gCFjDIpEXBM/7lXQxjnKo9ssl9ISOh30h4Y48=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by PH3PPF0A29BA37B.namprd10.prod.outlook.com (2603:10b6:518:1::787) with
+ bh=evnX8/HbExGr1bQtrPZk3rNNmFOnTnMkrXpyi/HN0Rw=;
+ b=HKA654X8qp5mMZqO9VRQUfVdhZJq8aRHNm7CFlvj05JN216JueRs72yTo8SBXscKYCkhDBT1igeGR0jwMvSkc5IgL2pJPHac1XlhEbgqR4nkP1kQIGvnpA+R3nyxF2md1rO7XdsddFD99O2cMussNmypp1E2VhmcOZtH/S8kG6d6oyn4QyKy0tJZzdOnPD7+IKg38mh6au3/vNkGCZbGPctatsFBHweDWL3VjdnqIVu3CIPoPVK8jbA3QVbj1/GjVszb9/OcxACOUo/Gy+v5WJGNyRAUkqN1FxpgaoY33wlydwj9ZzadPktShimMTpuPJckFebf5dz1e67N50H836g==
+Received: from LV3P220MB1815.NAMP220.PROD.OUTLOOK.COM (2603:10b6:408:1d6::19)
+ by SJ0P220MB0461.NAMP220.PROD.OUTLOOK.COM (2603:10b6:a03:3ac::6) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.22; Thu, 17 Apr
- 2025 18:16:46 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.8632.042; Thu, 17 Apr 2025
- 18:16:46 +0000
-Date: Thu, 17 Apr 2025 19:16:43 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Rik van Riel <riel@surriel.com>
-Cc: David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Harry Yoo <harry.yoo@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Hugh Dickins <hughd@google.com>
-Subject: Re: [PATCH] MAINTAINERS: add reverse mapping section
-Message-ID: <27dadf2f-fbc8-4286-ac4e-2cc7d7185df2@lucifer.local>
-References: <20250417084904.16806-1-lorenzo.stoakes@oracle.com>
- <eb71267a-80ce-49f9-a475-5260df607458@redhat.com>
- <a2c887eb489e4a7b9e52010fb5b3c7f85286e8ae.camel@surriel.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a2c887eb489e4a7b9e52010fb5b3c7f85286e8ae.camel@surriel.com>
-X-ClientProxiedBy: LNXP265CA0004.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:5e::16) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.21; Thu, 17 Apr
+ 2025 18:18:55 +0000
+Received: from LV3P220MB1815.NAMP220.PROD.OUTLOOK.COM
+ ([fe80::6590:3e70:cb56:d25c]) by LV3P220MB1815.NAMP220.PROD.OUTLOOK.COM
+ ([fe80::6590:3e70:cb56:d25c%4]) with mapi id 15.20.8632.030; Thu, 17 Apr 2025
+ 18:18:55 +0000
+From: Marty Kareem <MartyKareem@outlook.com>
+To: Peter Xu <peterx@redhat.com>
+CC: "linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>, "shuah@kernel.org" <shuah@kernel.org>
+Subject: Re: [PATCH v2] mm/selftest: Fix race condition in userfaultfd dynamic
+ address allocation
+Thread-Topic: [PATCH v2] mm/selftest: Fix race condition in userfaultfd
+ dynamic address allocation
+Thread-Index: AQHbn5BYchljhlDG60CnvXtzsPyaybOoSuuu
+Date: Thu, 17 Apr 2025 18:18:55 +0000
+Message-ID:
+ <LV3P220MB1815EE1BD144C6613F164511BABC2@LV3P220MB1815.NAMP220.PROD.OUTLOOK.COM>
+References: <Z9rQU64AAnrGlATV@x1.local>
+ <LV3P220MB1815E7BF036FFA1B1D19D38BBAA02@LV3P220MB1815.NAMP220.PROD.OUTLOOK.COM>
+In-Reply-To:
+ <LV3P220MB1815E7BF036FFA1B1D19D38BBAA02@LV3P220MB1815.NAMP220.PROD.OUTLOOK.COM>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: LV3P220MB1815:EE_|SJ0P220MB0461:EE_
+x-ms-office365-filtering-correlation-id: 3fa33fb6-7105-4d60-a41d-08dd7ddc5077
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199028|15080799006|19110799003|8062599003|15030799003|8060799006|102099032|13041999003|3412199025|41001999003|440099028;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?MXwHrmWYusQKsdYr4qMzPyP4OzJ228n03NatRS7m14bsvKe48E3ATucnLsrc?=
+ =?us-ascii?Q?Ejq7RFiXRzJVTRrRd4b5taVUonWSW3jIfCF7BPHNeJTUkRwiyWU9nNbUbbdE?=
+ =?us-ascii?Q?YB2/nbegbC0LizutYNKOvEiHFVi2B2ezAtryGLLtZbcTmQ7m+irXgHulrLU/?=
+ =?us-ascii?Q?vC+93HzHgQsn7atMYnWlLPKGUNsOoed+UgYcYcpuOztaYRbDsNW16FOPDD9l?=
+ =?us-ascii?Q?jF80kgUeSJbgMvoCbm2GIgRS7FLnrmKICRPsFrExJWhHjcOi7m4BNdXB19Ai?=
+ =?us-ascii?Q?UxwisstRDpD1An6p8Smzxnk5Zq1CilKZwFtM2uWdn/MezoCWJOZzZicb3AY4?=
+ =?us-ascii?Q?/B6hxMb/uLD5p6/rO/rwIowwZC4KKm6coOKpZ/9ruMoZtm3GDHHwfvOqPg4E?=
+ =?us-ascii?Q?q+pQkSb/lV3ArzWynjBMEFQBsbZpUcD2NWbQQtm9EzvMYrGjax7POaAPNs8p?=
+ =?us-ascii?Q?g4378ZMBcUsIald5RR3GK6WxtSoCSXO4Im8EycSXBhzOorIa5SyugNpH0Rx8?=
+ =?us-ascii?Q?wIU+HfVGa1i3TQi8UiAXbkyg3vuaQAikT/+jHUX43tfrF5zRrd84CAPLpnR+?=
+ =?us-ascii?Q?JiOLZNAKT3VBJ2mPPd7Ni5/KhGV2+6NYRi/G9egQ0wJeZA6NRX1c7woFKiKf?=
+ =?us-ascii?Q?La4DVDUAun9g1fiisngeSInG6sU1LiOji1DBsEFLdR2ShZMC6Q5iIrd9URdB?=
+ =?us-ascii?Q?m4wmi/3IZXSWIa9OaFUzsCUc8VR6eMQJKRYA55cvAeNT7NU7ex/AsEcbivOU?=
+ =?us-ascii?Q?Aa93bJAM85/epRUWf/Ng+e/iGeseO9KBoLp9Bx0Xh/XibwTYiQCFqabQEwkm?=
+ =?us-ascii?Q?q4krQcIPnOIrHWZ5aEkbjeCR714mlhR2eSeq6Ff1XSW7MFD3+RrM5b7Wl9E8?=
+ =?us-ascii?Q?/ZB2cLtbpGUXiGTM/a9gNr8/LXpW8+PyZLQbqs+ekrFqItjSf0kchbivxupT?=
+ =?us-ascii?Q?bc2LYqefUWr5EzykDf9TO/q5uq9JtcN98gbqjvp0EJzRrox8ABtqsbnl21Xp?=
+ =?us-ascii?Q?NAkHm0intRbTwMkMgRLWoSH2sOcTCkTnCgW4djK6pTN9fJuR/PL/V4p8Yu+l?=
+ =?us-ascii?Q?o1WjrBl9/rQAVidohNQOc+PIG15h3Gpc9Q4bURgIlNosux83Pbc18lin+sMO?=
+ =?us-ascii?Q?WZgQvsiDkQoQUrFFuRRAjG19pLETbS3+SeWIpZervmJ8wih33F6c57f1Sji9?=
+ =?us-ascii?Q?OgT2mtNn8+I+kSUG?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?LqrE3y2sPANXWkA2MlOyTpIVku3spQYXKdZP4uJAlGWVCjf+g0tqzhhheyA5?=
+ =?us-ascii?Q?K09W0tp9KWC+m7wj60zNeuNldp25Fjdfwp++rjNZmOZiXuCPC3PssO/9q3OL?=
+ =?us-ascii?Q?H38FOigSDzh8rjgsXp4zGzSNb4hzrV8uJnQJ1s7t+fl4FJdB5bziTH24qPNi?=
+ =?us-ascii?Q?TugjrKGNmVuW24yAZQskk9Rni5ftjH8RqwSRAuBZjAsCFNkBd7xagjCGpLk9?=
+ =?us-ascii?Q?Sni6Z33cjXOM3gS7QBgGJJOSdXS0And4t7kIob0qoZpFv8g9rbof6jG+Vkot?=
+ =?us-ascii?Q?n8rgOioUwgCebkMrggjAOz3iaK7aHBk9IJpUY4jtN8ARyUXFHZxjeYB8DY68?=
+ =?us-ascii?Q?cTYJx60dUIUMzFsMMhlmjjwPwqdZvewuwf3/CDyVBr1ivfO6rOySjADph3zp?=
+ =?us-ascii?Q?/Ee+xfljbHiVdGH0uTqf5sMmKKpauy/LAUoeGMtf6JdzJ/+la/NnOGgF0iUe?=
+ =?us-ascii?Q?tVBTkYiXNnl29oW31jTj4XaaAkk18QS5XiA79YZCcI4T8EzFR38C9CJB2Ph/?=
+ =?us-ascii?Q?SOXpdOfAP+s133/e4o50kiYtijrCEx4gLAoGHraJXIpA6VLSPfGyLdO0sLLW?=
+ =?us-ascii?Q?NuMROhJBV3ecYffeNougmHwTS49skvQlPlyxYY/1HC5AtGelFs42ntiqfIKw?=
+ =?us-ascii?Q?Z7s1tOFxl9Hul5jYDTrtbcJI5MIupdauToF0UmQBI2IWbYDi4pQDyeT4h7PG?=
+ =?us-ascii?Q?eHPLnzAo1/++dRBSU3GiywrR6m9Qz0QFQlYTO2aX3otqtYsJmhjvs7ctS3UF?=
+ =?us-ascii?Q?/M9p1g6FBbjRSAiL1jnLkVZTNqYRDkirKt+2YgAJhLchDBHEtTVEdhGqDFBf?=
+ =?us-ascii?Q?9B6vRaIP8tOSFmDewGNF1O2cdbIHTTSZcnMASfVsOOAfqK69zBmpXkQhBsDd?=
+ =?us-ascii?Q?Qil7hbukPxF/0wqhG4cr95M/JqR3lN5E6wTDGv5hpe1L7yDc6vD8VKSsLWOj?=
+ =?us-ascii?Q?HDBF+y7YyScTUUtYakpuNFR8/nCjy0dnLXTr3TmnwszH82M1gFSX3UF5Kvzo?=
+ =?us-ascii?Q?y5t6ngtAH670geaR4e8XVDLsXGTROfCJIWhc1Vz2W2c/CIY7XjMQvodf+3b+?=
+ =?us-ascii?Q?YwdLG3gxxWRsFPTauh79H7vnMYXTNcU8ma674zMciCz3+T9v8snf7XNdNDDg?=
+ =?us-ascii?Q?kbva8vd6a1bY3zeH3/1Ncsc8ViFPs08gxCRui+lceYFvHWRG9pbXg7nxxId9?=
+ =?us-ascii?Q?Zht9mTZIT+jTA7Sej/7iWuzkkQvATBfZzt69WMarAhANp8B9uloxP5pmWBk?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|PH3PPF0A29BA37B:EE_
-X-MS-Office365-Filtering-Correlation-Id: d8fee922-cc64-4d6b-a0e8-08dd7ddc0377
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?hI1T/FWCGJvtVFrO+To2hTkDQlBvFU/ZoqqAy71vUPL3p5RRt+soyb5e/pRi?=
- =?us-ascii?Q?0Bj9J/8qW5JrnAuwt++F2LR7WuPZBzXqZXfYKK24Ts/Vp+iwExiltEIK4BOp?=
- =?us-ascii?Q?v+6eZT6lTEx6tUW3zHq5h2D7Nh95h5Q6Xavd3anweCdGS1oRs5GNlnjR6tEx?=
- =?us-ascii?Q?REAN3rrPS6R9K8an52I4vjSCQIgskxlfpMSlI4zt7IAFLYXsZA4vw36nspc1?=
- =?us-ascii?Q?AGmG7FG0tV+BBits52HwikGom+B2gOefnn+yURAOGZyaCSw5BZvet1w6Z03O?=
- =?us-ascii?Q?Ff0YFZ3bFx5RI/pBIMEoWK90X+hDYItanEeKvIMX0COTJTj/gj7jhg2F7nHX?=
- =?us-ascii?Q?eq+vCB7veQ8MZzI4hyrz9/Wo79mnn9lFRTIPfR3y/6GQMpRs91LJGSzs2PKB?=
- =?us-ascii?Q?2TkbpgVyRQ1buuOrWroEWIVXKn0S0yWhVMtKH4ReRl9fjO9Zf8lMJztJ38Ml?=
- =?us-ascii?Q?cYrStxoEeOMej54klMcf60DrZPc9Q23Wz2YLQRoKXWyA1vmh99iTVwaloTR1?=
- =?us-ascii?Q?c2L0l0+6WXWVSSiws1ZHsQzsc4L6ica7k/e9yYwh5PHC9ZVEBVcT2UHjKv56?=
- =?us-ascii?Q?FrF9qeuCCFoJpZrc//br68ypxYF5B8bVbVog9Z9spReasxRdeEoGfZRNn45K?=
- =?us-ascii?Q?WGgKvNHzEUSBj+sPbcGNT0rYx+HH5qWj6/S91LecMY5++oOkXkwXdQu81anN?=
- =?us-ascii?Q?Z++WbkqxXK072bAH32v3bw2eWG2jJLImbMZEhNoTcHvqQi+5akNRrqkadyTi?=
- =?us-ascii?Q?uo+eLAaoadIxYFmiPNyBU2NUsoe4CgdcXLbSBf3w0bazcYtA+hvD5fJvUGIB?=
- =?us-ascii?Q?XzR6WKQU9n382WCH6A+w40ITW6X8OGpmjZrimMxv1Mc45wtvjdu7AGjpKmqW?=
- =?us-ascii?Q?ZAGpHRvNWf8Z1h7E8drPPVpuB2oIpk48LjWcb42qzLjV6FG0/uvFrWzd89Uj?=
- =?us-ascii?Q?X2N3eVKFlQ2E+4LYJ7wyoAdA/vu6gRxUSfklx2B+O66yyfZVjeSld1INZe9W?=
- =?us-ascii?Q?QgZ6R1+qedkOrDq+qqk9hUByOyyUXZ00sBNjiHHgVbGghthWjYu9V2l5Jwsv?=
- =?us-ascii?Q?HknbfMk1MXGklRF3ZoDxNGQ+HXWgEA7Ik9lO556e1QnliIkJPYDav3k3xXDh?=
- =?us-ascii?Q?moJd3jlFaC4avguWLZW9e/Kf80y3WArx/KvFfF7ROa/8l7v5E+O2RZ91Upil?=
- =?us-ascii?Q?HGaTECzg6XDI/ol+q+mTqaEmXCERHZ7oR7/VsKIB+j/4ddwnsUHfUM8oh531?=
- =?us-ascii?Q?80T+/jD7L9F4XxIIH4oXxS1Bk4GWU5YLHK7aGFQUTXariHdk3WkdLut3XK4g?=
- =?us-ascii?Q?AE+dpOt3jlnyF0Zzspmy9gUdt9HPbhzRU9ppjlEj5MWb7GZtzx3QtrYx5Nfv?=
- =?us-ascii?Q?jS42b+YA3TzfK1RsU8ElJVZeHsZAQRkaC829eRwNSW3+pHAjgyU7fNnlcGr6?=
- =?us-ascii?Q?wmRLNLxzCsA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?pVJqk8n27dlwys5AHSUDxBabb+wo8UUTtFtoQeQRw7mMDAzMZPUl4WxMbmtS?=
- =?us-ascii?Q?5SlRyFkBxoIbkKDn6Aa0esTcndOIakZ8njHOnYubXKS8et3EsexrX0Y9ZTK2?=
- =?us-ascii?Q?hrZkDPYfBJ6Kx+/6ciA3GFnUGIhYuN+xOnsPZQ3YQVmxxVzEijNH/fIfkd/1?=
- =?us-ascii?Q?Oh1DPBfpy0RVhJtq2DpFkVbruQTYHuarzKcIxCTjTNfwoO+tsrn90W6gVzLK?=
- =?us-ascii?Q?p9IINJPUxnFqYTpKG7zMw7fBKBAeghVCpb143SevFDosEncPhtw9BXk2eT5n?=
- =?us-ascii?Q?zkB1B6K+ymh4b+pwiUy1nzm9X62NRFW2Q8mwBRY5GYS+aXEHdLOXR9inzlSK?=
- =?us-ascii?Q?sUjv1pkB21N7xFow0oO9NT+NmDeGTLPML52Y09qxZJwp7/x3+faJ6eLbl5nT?=
- =?us-ascii?Q?RjD9fRhjsiWHq8BtWWAkCZvSx5TRRe/3SnSCCvMtvojKR22oienVgs3F8jhg?=
- =?us-ascii?Q?eGIJH5oTKEyZQ13FTFccuzXDE3bTs7yxBF5o5zr0HxC7LNGP+faUNtB7yCij?=
- =?us-ascii?Q?RiS/BqIGL0KRqiV19/+pURcJm64Kyhgm+5J6eYiDwShhQ7Q1/oZ4VYog3ScZ?=
- =?us-ascii?Q?d2rilhXiG8iOlOT/hpeavnJsLN+Ct+seU4dI4Cn4HDPHn37FG2Llna+WPERw?=
- =?us-ascii?Q?e8S1xP9WEkfEsKvzSa8PVebj5K1WZ+7J7DBNeOr4C1uTah7RaiyFRZznctGF?=
- =?us-ascii?Q?FIkxePmOxQqo8g8WnqboVINnQDewU3UPWiZPOWrqceKvOA0NCQ3QTkl6CL1t?=
- =?us-ascii?Q?K/TV7tbhiQOsHIaiIZvTUKp7ZlwpyhVC6vA3DWZlFx0ZZX/k5YPqzF60WXjz?=
- =?us-ascii?Q?+BeOWfWe+96j6XlufA2s0Qm3seLyKwj6hKOIgAuJ7W3PG5lOo9wciD9vljCC?=
- =?us-ascii?Q?gsq6raXT2jkG9yDEGQy1B65HcV+eziiW8udOpi7Q88NRWU1sJVIQs/DQDQCm?=
- =?us-ascii?Q?VwoFgI6QSm66jLZTelweryteylTr2W+m/aIGRtRog1uomqfnODBaZy8AYk2t?=
- =?us-ascii?Q?DbdtuSRLUg+lpT0Kn9XEn+eJIMCL9NUvXTJ60zLmuMyvJOgb/Dmkt1M+TO51?=
- =?us-ascii?Q?eTUrIgBUyiB+9zTt8N4UtmbM1d1hNSmP2pU30GjK/R2A8cCZi2Q/txCZHwAO?=
- =?us-ascii?Q?cqGM41IY/5J5NyMZjQISph9NnSTqhrUHe6xMfRMiuw4IudjGrwlqqN42WPil?=
- =?us-ascii?Q?916aMrExQNu2qv9GVztLizES7LPRg1CKjZvg7axsatVJmadccwxfnOWXTPSo?=
- =?us-ascii?Q?33toWPG62a9k2blxlXrKU6bqbYeBhbPAC0S53Bsf5PXn0YXWMmanJcP2U4El?=
- =?us-ascii?Q?uN3eZZvSDg8LIGcnvyS4wtmi7xa5emdkIiyjFOI6+dFC1QYzjwdNOaTDkskz?=
- =?us-ascii?Q?zZdqmhczKPW/mUVUl6gy8fQpdECvfEGP1OjzUE5FQ33REKfQXN5lrh1K4Iyn?=
- =?us-ascii?Q?iVT2fggTF3Nz72jiFfZZLLKXIDQjCD1yp9fKicv5dqoszowJZCZjRYuG1OQb?=
- =?us-ascii?Q?C4GKsbzgUQZUih0s29b9UsLHfrkD4fe+YBe+Yegr/8p2JZXoNZhn3wczRUff?=
- =?us-ascii?Q?mtDOSwYx5embcqcWL5CLyvFn85G1rkQCrwgR56GvEIEwvLba26TcohQgSXtL?=
- =?us-ascii?Q?ow=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	1C3ZlG4qC9/a2RntT+7zP6aDhNRd7Jck7VNp8BrPSBqiDqTv83Xy0M11c6+FdbpmNi+SOqIlFBrfG8SSbDWDmbcnEM/wrR5PTNJte96ewIJBYXfoX/7zmQ7NHQr9ijIljLiYkIlbUIuiTa/fQBhHKz/DC7Nk3NYM+iR97NMJ1pnn3AAPZUQ4R2APW74s2olTg49JD5ac87Se+LwmvE4MhzzKo7fJp/2lHtJjAacV9KDoky2GRVK2oZp0OAJ7uacmBZDEV98Yh773wt7tkXNBJa7wjMzh+N+e+a8Nkltko6v5CNt0M1bsCsDiEEmWPGhKaSlgrQWapUE9N0Okwq1wBFJj/akcJflFcPida+P7hi4YwPGujZ3fwZp2Cb9wfqENIiUn0jbdQdmQtO9W+kGpBUxcKhJnNjA99q5uM7GXpzCVQfNxerJCySRSIubPjkwODePqPuYCw65lOJo9VF1wJrsOpalkkEwtD/CBu76+BCNl8DNZOmzxLsVYrobZ48F1wx6f7JwZAN6Qe29eQt6rPexm3lzA5UCWy0QifyvTeRvyiqQSOUu81rZtHq+niIt8Lvq1dOE3/9EBVLzX/GzcCwPkCfAPcB4vtf8qSPsybbw=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d8fee922-cc64-4d6b-a0e8-08dd7ddc0377
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-OriginatorOrg: outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2025 18:16:46.1856
+X-MS-Exchange-CrossTenant-AuthSource: LV3P220MB1815.NAMP220.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3fa33fb6-7105-4d60-a41d-08dd7ddc5077
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Apr 2025 18:18:55.2688
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: s3eheeluK+FHC/CXA8hd6PZNyPak9nKYh6Pb/JrEFyqSd9TAglixnXwFhcyHv8mnc/I/LJAZhEH01c8AiVAjxKEljxZlySlJJ6xJWPCGVvo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH3PPF0A29BA37B
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-17_06,2025-04-17_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 bulkscore=0 malwarescore=0
- mlxlogscore=806 phishscore=0 suspectscore=0 spamscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502280000
- definitions=main-2504170134
-X-Proofpoint-ORIG-GUID: ahl4w0GOBRDRbGdBaiPuS6Paz7QY_VHd
-X-Proofpoint-GUID: ahl4w0GOBRDRbGdBaiPuS6Paz7QY_VHd
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0P220MB0461
 
-On Thu, Apr 17, 2025 at 02:06:40PM -0400, Rik van Riel wrote:
-> On Thu, 2025-04-17 at 10:53 +0200, David Hildenbrand wrote:
-> > On 17.04.25 10:49, Lorenzo Stoakes wrote:
-> >
-> >
-> > Acked-by: David Hildenbrand <david@redhat.com>
-> >
-> > Let me CC Rik and Hugh, if they also have interest + capacity.
-> >
-> Sure, sign me up.
+Hello,
 
-Sounds good, did you want an M or an R? :)
+I'm writing to follow up on the patch I submitted regarding improved dynami=
+c address allocation in userfaultfd tests. The patch aims to prevent race c=
+onditions by keeping temporary PROT_NONE reservations active until they can=
+ be atomically replaced with MAP_FIXED mappings.
 
-Cheers, Lorenzo
+I sent the patch through git send and I was wondering if you've had a chanc=
+e to review this submission and if you have any feedback or questions about=
+ the implementation. As mentioned in the original submission, this approach=
+ makes the tests more reliable, especially when running in parallel, with m=
+inimal performance impact.
 
->
->
-> --
-> All Rights Reversed.
+Thank you for your time. I look forward to hearing from you.
+
+Best regards,
+Marty Kareem
+
+________________________________________
+From: Marty Kareem <martykareem@outlook.com>
+Sent: Thursday, March 27, 2025 11:20 PM
+To: Peter Xu
+Cc: linux-mm@kvack.org; linux-kernel@vger.kernel.org; akpm@linux-foundation=
+.org; shuah@kernel.org; MrMartyK
+Subject: [PATCH v2] mm/selftest: Fix race condition in userfaultfd dynamic =
+address allocation
+
+This patch improves the dynamic address allocation in userfaultfd tests to
+prevent potential race conditions. Instead of unmapping the PROT_NONE
+reservation before mapping to that area, we now keep the temporary
+reservation active until we can atomically replace it with MAP_FIXED.
+
+Key changes:
+1. Keep PROT_NONE reservation active until ready to use
+2. Use MAP_FIXED to atomically replace reservation
+3. Remove MAP_FIXED_NOREPLACE conditionals since atomic replacement works
+   on all kernel versions
+4. Simplify overall implementation while maintaining robustness
+
+This approach prevents race conditions where another thread might grab the
+memory area between unmapping and remapping, making the tests more reliable
+especially when running in parallel.
+
+Performance impact is minimal (approximately 1.3x overhead vs static
+addressing) while significantly improving reliability.
+---
+ tools/testing/selftests/mm/uffd-common.c | 113 ++++++++---------------
+ 1 file changed, 39 insertions(+), 74 deletions(-)
+
+diff --git a/tools/testing/selftests/mm/uffd-common.c b/tools/testing/selft=
+ests/mm/uffd-common.c
+index 56a69c6cc7c4..fab3b79abc15 100644
+--- a/tools/testing/selftests/mm/uffd-common.c
++++ b/tools/testing/selftests/mm/uffd-common.c
+@@ -123,54 +123,22 @@ static void shmem_release_pages(char *rel_area)
+ }
+
+ /**
+- * Structure to hold the reservation and aligned address information
+- * This helps prevent race conditions by keeping the original reservation
+- * active until it can be atomically replaced with the real mapping.
+- */
+-struct addr_mapping {
+-       void *reservation;   /* The original memory reservation */
+-       void *aligned_addr;  /* The aligned address for actual use */
+-       size_t size;         /* Size of the reservation */
+-};
+-
+-/**
+- * Find a suitable virtual address area of the requested size and alignmen=
+t
++ * Find a suitable virtual address area of the requested size
+  *
+- * This function obtains a hint from the OS about where a good place to ma=
+p
+- * memory might be, creates a temporary reservation to hold the space, and
+- * calculates an aligned address within that reservation.
++ * This function creates a temporary reservation with PROT_NONE to hold
++ * the address space. This reservation prevents other threads from taking
++ * the address range until we can atomically replace it with our real mapp=
+ing.
+  *
+- * IMPORTANT: The caller must eventually unmap the reservation when done
+- * or replace it with MAP_FIXED to prevent memory leaks.
++ * IMPORTANT: The caller must eventually replace this reservation with MAP=
+_FIXED
++ * or munmap it to prevent memory leaks.
+  *
+- * @param mapping    Pointer to addr_mapping struct that will receive the =
+results
+  * @param size       Size of the memory area needed
+- * @param alignment  Alignment requirement (typically huge page size)
+- * @return           0 on success, -1 on failure
++ * @return           Reserved memory area or NULL on failure
+  */
+-static int find_suitable_area(struct addr_mapping *mapping, size_t size, s=
+ize_t alignment)
++static void *find_suitable_area(size_t size)
+ {
+-       void *addr;
+-       uintptr_t aligned_addr;
+-
+-       if (!mapping)
+-               return -1;
+-
+-       /* First create a reservation with PROT_NONE to hold the address sp=
+ace */
+-       addr =3D mmap(NULL, size, PROT_NONE,
+-                   MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+-       if (addr =3D=3D MAP_FAILED)
+-               return -1;
+-
+-       /* Calculate an aligned address within this reservation */
+-       aligned_addr =3D ((uintptr_t)addr + alignment - 1) & ~(alignment - =
+1);
+-
+-       /* Store both the reservation and the aligned address */
+-       mapping->reservation =3D addr;
+-       mapping->aligned_addr =3D (void *)aligned_addr;
+-       mapping->size =3D size;
+-
+-       return 0;
++       /* Create a reservation with PROT_NONE to hold the address space */
++       return mmap(NULL, size, PROT_NONE, MAP_PRIVATE | MAP_ANONYMOUS, -1,=
+ 0);
+ }
+
+ static int shmem_allocate_area(void **alloc_area, bool is_src)
+@@ -179,13 +147,12 @@ static int shmem_allocate_area(void **alloc_area, boo=
+l is_src)
+        size_t bytes =3D nr_pages * page_size, hpage_size =3D read_pmd_page=
+size();
+        unsigned long offset =3D is_src ? 0 : bytes;
+        int mem_fd =3D uffd_mem_fd_create(bytes * 2, false);
+-       struct addr_mapping addr_map =3D {0};
+-       struct addr_mapping alias_map =3D {0};
+-       int ret;
++       void *reserved_area =3D NULL;
++       void *reserved_alias =3D NULL;
+
+-       /* Get a suitable address space with reservation */
+-       ret =3D find_suitable_area(&addr_map, bytes, hpage_size);
+-       if (ret < 0) {
++       /* Get a suitable address reservation */
++       reserved_area =3D find_suitable_area(bytes);
++       if (reserved_area =3D=3D MAP_FAILED) {
+                /* Couldn't get a reservation, but we can still try without=
+ hints */
+                *alloc_area =3D mmap(NULL, bytes, PROT_READ | PROT_WRITE,
+                                  MAP_SHARED, mem_fd, offset);
+@@ -195,21 +162,22 @@ static int shmem_allocate_area(void **alloc_area, boo=
+l is_src)
+                        return -errno;
+                }
+        } else {
+-               void *target_addr =3D addr_map.aligned_addr;
++               void *target_addr =3D reserved_area;
+
+                /* If this is dst area, add offset to prevent overlap with =
+src area */
+                if (!is_src) {
++                       /* Unmap the original reservation since we're using=
+ a different address */
++                       munmap(reserved_area, bytes);
++
+                        /* Calculate new address with the same spacing as o=
+riginal code */
+                        /* src map + alias + interleaved hpages */
+-                       uintptr_t new_addr =3D (uintptr_t)target_addr +
+-                               2 * (bytes + hpage_size);
+-
+-                       /* Unmap the original reservation since we're using=
+ a different address */
+-                       munmap(addr_map.reservation, addr_map.size);
++                       target_addr =3D (char *)reserved_area + 2 * (bytes =
++ hpage_size);
+
+                        /* Create a new reservation at the offset location =
+*/
+-                       ret =3D find_suitable_area(&addr_map, bytes, hpage_=
+size);
+-                       if (ret < 0) {
++                       reserved_area =3D mmap(target_addr, bytes, PROT_NON=
+E,
++                                             MAP_PRIVATE | MAP_ANONYMOUS, =
+-1, 0);
++
++                       if (reserved_area =3D=3D MAP_FAILED) {
+                                /* Fallback to non-fixed mapping if we can'=
+t reserve space */
+                                *alloc_area =3D mmap(NULL, bytes, PROT_READ=
+ | PROT_WRITE,
+                                                MAP_SHARED, mem_fd, offset)=
+;
+@@ -220,7 +188,7 @@ static int shmem_allocate_area(void **alloc_area, bool =
+is_src)
+                                }
+                        } else {
+                                /* Use our new reservation */
+-                               target_addr =3D addr_map.aligned_addr;
++                               target_addr =3D reserved_area;
+                        }
+                }
+
+@@ -233,14 +201,11 @@ static int shmem_allocate_area(void **alloc_area, boo=
+l is_src)
+                *alloc_area =3D mmap(target_addr, bytes, PROT_READ | PROT_W=
+RITE,
+                                  MAP_SHARED | MAP_FIXED, mem_fd, offset);
+
+-               /* Check if the mapping succeeded at our target address */
+-               if (*alloc_area =3D=3D MAP_FAILED || *alloc_area !=3D targe=
+t_addr) {
++               if (*alloc_area =3D=3D MAP_FAILED) {
+                        /* If fixed mapping failed, clean up and try anywhe=
+re */
+-                       if (*alloc_area !=3D MAP_FAILED)
+-                               munmap(*alloc_area, bytes);
+-
+-                       /* Clean up the reservation if it's still around */
+-                       munmap(addr_map.reservation, addr_map.size);
++                       /* Explicitly munmap the reservation since our map =
+failed */
++                       if (reserved_area !=3D MAP_FAILED)
++                               munmap(reserved_area, bytes);
+
+                        /* Fall back to letting the kernel choose an addres=
+s */
+                        *alloc_area =3D mmap(NULL, bytes, PROT_READ | PROT_=
+WRITE,
+@@ -254,12 +219,12 @@ static int shmem_allocate_area(void **alloc_area, boo=
+l is_src)
+        }
+
+        /* Calculate a good spot for the alias mapping with space to preven=
+t merging */
+-       ret =3D find_suitable_area(&alias_map, bytes, hpage_size);
+-       if (ret < 0) {
++       void *p_alias =3D (char *)((uintptr_t)*alloc_area + bytes + hpage_s=
+ize);
++
++       /* Reserve space for alias mapping */
++       reserved_alias =3D find_suitable_area(bytes);
++       if (reserved_alias =3D=3D MAP_FAILED) {
+                /* Fallback to using an offset from the first mapping */
+-               void *p_alias =3D (char *)((uintptr_t)*alloc_area + bytes +=
+ hpage_size);
+-
+-               /* No reservation, map directly */
+                area_alias =3D mmap(p_alias, bytes, PROT_READ | PROT_WRITE,
+                                MAP_SHARED | MAP_FIXED, mem_fd, offset);
+
+@@ -270,14 +235,14 @@ static int shmem_allocate_area(void **alloc_area, boo=
+l is_src)
+                }
+        } else {
+                /* Use our reservation for the alias mapping */
+-               area_alias =3D mmap(alias_map.aligned_addr, bytes, PROT_REA=
+D | PROT_WRITE,
++               area_alias =3D mmap(reserved_alias, bytes, PROT_READ | PROT=
+_WRITE,
+                                MAP_SHARED | MAP_FIXED, mem_fd, offset);
+
+-               /* Whether it succeeded or failed, we need to clean up the =
+reservation */
+-               if (area_alias !=3D alias_map.aligned_addr)
+-                       munmap(alias_map.reservation, alias_map.size);
+-
++               /* If mapping failed, try without specific address */
+                if (area_alias =3D=3D MAP_FAILED) {
++                       /* Clean up the reservation since it didn't get rep=
+laced */
++                       munmap(reserved_alias, bytes);
++
+                        /* If fixed mapping failed, try anywhere */
+                        area_alias =3D mmap(NULL, bytes, PROT_READ | PROT_W=
+RITE,
+                                        MAP_SHARED, mem_fd, offset);
+--
+2.43.0
+
 
