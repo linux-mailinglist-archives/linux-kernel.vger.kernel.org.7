@@ -1,198 +1,82 @@
-Return-Path: <linux-kernel+bounces-609290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAADEA92025
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 16:48:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B4AAA92010
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 16:46:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4001D19E70AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:48:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC2F719E3150
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:46:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA58B2528FB;
-	Thu, 17 Apr 2025 14:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Yjg5SSfw";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Yjg5SSfw"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 648D325179E;
+	Thu, 17 Apr 2025 14:46:34 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA7A252284
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 14:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05CA814037F;
+	Thu, 17 Apr 2025 14:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744901295; cv=none; b=NG36DLyfkTRMfqFwQQkaKooj0o2RtqlJUloud5Wz2lj/z8153N9CtZ33y8ePYcTcR/COqV+QqSi/m8VXIftL4NNXPLzjix19DZDMdhhgLRkoTSMfcubwxT3V6qpG8MRXYhQYQvg8GA3rPRKbWBCd9wxeLtfJFxQrXXnwOUMvNOk=
+	t=1744901194; cv=none; b=QWC6n9K6jamJnCt5a6AhxjyIoHhnPfFaCxfjFfKe71dYapHcp06j0SjSoPAXa5PpK4axODV0nnXcDD5TMJG2d1/4CSZ7ji82JYkgrNrpAj7bBWI4R2vVZcPym7tts2IljfSnxVEiqHiSrwRDO2r73nOiseMwGiKD1Py/q7+exv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744901295; c=relaxed/simple;
-	bh=RY5mdWHGD5kfzWhvtf5E8Sp/to3iuvXGYpo1Vpthnn4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YGHC894dNmHLSOsl/V/z7PBIbW6AtUOuM3a18QHIzq0WpqVRobuFORs2emiz/1yDlV6Z04MrHQ3KqLHZHCXRW4pb7HMeRxtwlWJHInRrBcbZJ4m9jew8H/2j9oQHxi+HnStsEPDMqNK5nc/KRpjzr7+jnM2gsJBXj8jMgDpOvUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Yjg5SSfw; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Yjg5SSfw; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 71F7A2116B;
-	Thu, 17 Apr 2025 14:48:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1744901291; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=URyoU8ysBuk6krIvolEQ5LBEHfOYYs9TThhoUc7ox78=;
-	b=Yjg5SSfw++a9DxyJ9eE+LRLtw2f2jldBH7kwe0Lj8DyyBj4pXJ3S3tg2yXEiSaZnJ7u5SQ
-	cgiglz969Lm0kvpv2bY119Q0s4lLv8jZ/+lK7QxwUBWmEM91vPNiMdvnNDsJy238foJ8ds
-	7MiBgJmCfmr7vKFsdwwjpK1rr2pj+7Y=
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1744901291; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=URyoU8ysBuk6krIvolEQ5LBEHfOYYs9TThhoUc7ox78=;
-	b=Yjg5SSfw++a9DxyJ9eE+LRLtw2f2jldBH7kwe0Lj8DyyBj4pXJ3S3tg2yXEiSaZnJ7u5SQ
-	cgiglz969Lm0kvpv2bY119Q0s4lLv8jZ/+lK7QxwUBWmEM91vPNiMdvnNDsJy238foJ8ds
-	7MiBgJmCfmr7vKFsdwwjpK1rr2pj+7Y=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0F5F8137CF;
-	Thu, 17 Apr 2025 14:48:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 36JCAqsUAWjaWQAAD6G6ig
-	(envelope-from <jgross@suse.com>); Thu, 17 Apr 2025 14:48:11 +0000
-From: Juergen Gross <jgross@suse.com>
-To: linux-kernel@vger.kernel.org,
-	x86@kernel.org
-Cc: Juergen Gross <jgross@suse.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	=?UTF-8?q?Petr=20Van=C4=9Bk?= <arkamar@atlas.cz>,
-	stable@vger.kernel.org
-Subject: [PATCH] x86/mm: fix _pgd_alloc() for Xen PV mode
-Date: Thu, 17 Apr 2025 16:48:08 +0200
-Message-ID: <20250417144808.22589-1-jgross@suse.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1744901194; c=relaxed/simple;
+	bh=60nlQ13YV+FsAbd90MFcqmmoghPcWG/rWq+3sENGxNc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=X480xlzOrqQ2bpTizS5Gt/0fgQMo/Qn3JufNOmFdKn1Tn/Mze/hM8s9Phz783gjQ5q1tFvoFI6DhE8wzMicCRTVylXGfXrK5xA0zeidcvCm/jFpHNwJC7wUYxzCYsYx90B0yptglt7OznYDxQMxuOwoPH+r4ywXVK6jsS2tnOwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B294CC4CEE4;
+	Thu, 17 Apr 2025 14:46:32 +0000 (UTC)
+Date: Thu, 17 Apr 2025 10:48:11 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: kernel test robot <oliver.sang@intel.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, <oe-lkp@lists.linux.dev>,
+ <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
+ <linux-trace-kernel@vger.kernel.org>
+Subject: Re: [linus:master] [tracing]  a3dc2983ca:
+ WARNING:suspicious_RCU_usage
+Message-ID: <20250417104811.38a4bb88@gandalf.local.home>
+In-Reply-To: <202504172239.4a2422e2-lkp@intel.com>
+References: <202504172239.4a2422e2-lkp@intel.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -3.30
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Recently _pgd_alloc() was switched from using __get_free_pages() to
-pagetable_alloc_noprof(), which might return a compound page in case
-the allocation order is larger than 0.
+On Thu, 17 Apr 2025 22:42:55 +0800
+kernel test robot <oliver.sang@intel.com> wrote:
 
-On x86 this will be the case if CONFIG_MITIGATION_PAGE_TABLE_ISOLATION
-is set, even if PTI has been disabled at runtime.
+> Hello,
+> 
+> kernel test robot noticed "WARNING:suspicious_RCU_usage" on:
+> 
+> commit: a3dc2983ca7b90fd35f978502de6d4664d965cfb ("tracing: fprobe: Cleanup fprobe hash when module unloading")
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+> 
+> [test failed on linus/master      834a4a689699090a406d1662b03affa8b155d025]
+> [test failed on linux-next/master b425262c07a6a643ebeed91046e161e20b944164]
+> 
+> in testcase: boot
+> 
+> config: x86_64-randconfig-r052-20250414
+> compiler: gcc-12
+> test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
+> 
+> (please refer to attached dmesg/kmsg for entire log/backtrace)
 
-When running as a Xen PV guest (this will always disable PTI), using
-a compound page for a PGD will result in VM_BUG_ON_PGFLAGS being
-triggered when the Xen code tries to pin the PGD.
+There's already a fix for this:
 
-Fix the Xen issue together with the not needed 8k allocation for a
-PGD with PTI disabled by using a variable holding the PGD allocation
-order in case CONFIG_MITIGATION_PAGE_TABLE_ISOLATION is set.
+  https://lore.kernel.org/linux-trace-kernel/20250410-fprobe-v1-1-068ef5f41436@debian.org
 
-Reported-by: Petr Vaněk <arkamar@atlas.cz>
-Fixes: a9b3c355c2e6 ("asm-generic: pgalloc: provide generic __pgd_{alloc,free}")
-Cc: stable@vger.kernel.org
-Signed-off-by: Juergen Gross <jgross@suse.com>
----
- arch/x86/include/asm/pgalloc.h | 7 ++++++-
- arch/x86/mm/pgtable.c          | 4 ++++
- arch/x86/mm/pti.c              | 3 +++
- 3 files changed, 13 insertions(+), 1 deletion(-)
+Masami,
 
-diff --git a/arch/x86/include/asm/pgalloc.h b/arch/x86/include/asm/pgalloc.h
-index a33147520044..754f95bddf98 100644
---- a/arch/x86/include/asm/pgalloc.h
-+++ b/arch/x86/include/asm/pgalloc.h
-@@ -34,8 +34,13 @@ static inline void paravirt_release_p4d(unsigned long pfn) {}
-  * Instead of one PGD, we acquire two PGDs.  Being order-1, it is
-  * both 8k in size and 8k-aligned.  That lets us just flip bit 12
-  * in a pointer to swap between the two 4k halves.
-+ *
-+ * As PTI can be runtime disabled (either via boot parameter or due to
-+ * running as a Xen PV guest), store the actually needed allocation
-+ * order in a global variable.
-  */
--#define PGD_ALLOCATION_ORDER 1
-+#define PGD_ALLOCATION_ORDER pgd_allocation_order
-+extern unsigned int pgd_allocation_order;
- #else
- #define PGD_ALLOCATION_ORDER 0
- #endif
-diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
-index a05fcddfc811..f61b2d6be311 100644
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -12,6 +12,10 @@ phys_addr_t physical_mask __ro_after_init = (1ULL << __PHYSICAL_MASK_SHIFT) - 1;
- EXPORT_SYMBOL(physical_mask);
- #endif
- 
-+#ifdef CONFIG_MITIGATION_PAGE_TABLE_ISOLATION
-+unsigned int pgd_allocation_order = 0;
-+#endif
-+
- pgtable_t pte_alloc_one(struct mm_struct *mm)
- {
- 	return __pte_alloc_one(mm, GFP_PGTABLE_USER);
-diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
-index 5f0d579932c6..44b7120c63e3 100644
---- a/arch/x86/mm/pti.c
-+++ b/arch/x86/mm/pti.c
-@@ -38,6 +38,7 @@
- #include <asm/desc.h>
- #include <asm/sections.h>
- #include <asm/set_memory.h>
-+#include <asm/pgalloc.h>
- 
- #undef pr_fmt
- #define pr_fmt(fmt)     "Kernel/User page tables isolation: " fmt
-@@ -97,6 +98,8 @@ void __init pti_check_boottime_disable(void)
- 	if (pti_mode == PTI_AUTO && !boot_cpu_has_bug(X86_BUG_CPU_MELTDOWN))
- 		return;
- 
-+	pgd_allocation_order = 1;
-+
- 	setup_force_cpu_cap(X86_FEATURE_PTI);
- }
- 
--- 
-2.43.0
+Are you going to pick this up?
 
+-- Steve
 
