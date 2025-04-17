@@ -1,134 +1,129 @@
-Return-Path: <linux-kernel+bounces-609147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 621DEA91DD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:24:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E849BA91D9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:20:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E99F119E649F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 13:24:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F5533BD288
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 13:20:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC1024CECE;
-	Thu, 17 Apr 2025 13:23:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A59178395;
+	Thu, 17 Apr 2025 13:20:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="vbs1VLFt"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dx+USYBa";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Qaj+PmDO"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76AD824C065;
-	Thu, 17 Apr 2025 13:23:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418782F24;
+	Thu, 17 Apr 2025 13:20:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744896211; cv=none; b=FMaGfJBG2RFb0BHiSF03+eb35g3An1p9LOxXtFC0RMdF1TGv7IxOllyIM2cgM4msGZMAzj+3KK/e2pzdbNtg4PN3LQhl4BmfdxRVFDWLrZvo9za1qNxbUWmINbJOJgGS7KjDUijvqXo3q82+Uwg/YjZRvdVP1TQw5q7f+/Fyak4=
+	t=1744896031; cv=none; b=qVaVKQcpKL+WcLOuUEDhWuc3I6tPS8KyBTM6goSezlMW3ISQjc5g5Lox2SHBkymGLNP3gZ9abH4t2EovWxHutq3PeqgEFxVp1p1obVPm1BhGbUZ5mqV2OtwmZUwGkOATp8gB1sKMx8rhmiCHdh7ftUJCeF9CfsDWtyi5rSC9gVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744896211; c=relaxed/simple;
-	bh=SAogXjErmnUKWUV3LPeC/KcgOjnw/QZRkCVS8VQvp7g=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SOVNRZ89da/13P/CkQpVH5nlE9NEyTg082cLVqWqi2mTazUZ0dFfmv3OPsOLuJ/QXTXuhGqcU8pB+QuiMZ1bjEONF4EtBA9jVHMpHZSYSfvVcGcDDxrzryOESh5ZAyP4dmFjYBu6j7hx1qxH76W7m/YwMO923ogWbMwE4T/f7rM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=vbs1VLFt; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53HB3H6o007078;
-	Thu, 17 Apr 2025 15:22:50 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	D1vrqcKSTo7wXwCZBje6dgQBk+XJl1AKFrrz1y87N6A=; b=vbs1VLFtptaUArvg
-	0+ANFYsmT+kBHV3k25Ygtk3S9LVXM4ypToKl/IRszAxx+hV9hST9tbaubPR4+mA1
-	AupFrloIdQCXTwqi3dea7N+lqmoO0/1FCJGBZbJtujw+pg4Ep6SyvnM2vgquIEbb
-	TsE0nrgU9uu4gEpA0iI98ILECGrgE7lCqmSdpQhl1RM6GAck5lp1gDGYrtnEYq+2
-	6UiaUR4Tl1O70f6qmYBmOO4fUklhunS5R9Zir4bM0REF2t8uCZ8VRFn79/v8Vokz
-	uWOXmbLm7WpaOd+tm9nnet4xZa+ALT+D4sBTQAiyk4r+4pD3yqMGUQ1HPRWhJg1X
-	M6gp0Q==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4601r4pc06-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Apr 2025 15:22:50 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 6B93B4004A;
-	Thu, 17 Apr 2025 15:21:25 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 84E2D9927DE;
-	Thu, 17 Apr 2025 15:20:14 +0200 (CEST)
-Received: from localhost (10.130.77.120) by SHFDAG1NODE3.st.com (10.75.129.71)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 17 Apr
- 2025 15:20:14 +0200
-From: Christian Bruel <christian.bruel@foss.st.com>
-To: <christian.bruel@foss.st.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
-        <p.zabel@pengutronix.de>, <thippeswamy.havalige@amd.com>,
-        <shradha.t@samsung.com>, <quic_schintav@quicinc.com>,
-        <cassel@kernel.org>, <johan+linaro@kernel.org>
-CC: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v6 9/9] arm64: dts: st: Enable PCIe on the stm32mp257f-ev1 board
-Date: Thu, 17 Apr 2025 15:18:33 +0200
-Message-ID: <20250417131833.3427126-10-christian.bruel@foss.st.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250417131833.3427126-1-christian.bruel@foss.st.com>
-References: <20250417131833.3427126-1-christian.bruel@foss.st.com>
+	s=arc-20240116; t=1744896031; c=relaxed/simple;
+	bh=USJc9JCGJMae1BOrGUqYC9Qw2zxqsi9K4Px5b2V9oIE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=SQCeLqjkRqZ3RKfCFLVSXYNZYhB/w3EOvYehfBvAYO0QZ5b/BzWFiBn6SEFMwkT7gdPlmqcCvN1DJ9Ado3Cbtc5uPHRqPM2rxmpO4ESVhGcppQJeiXJ0gSlqsCxMBS/dsIPOVKqRXIfGHElJ27ANJKKAAaPjbfCscUuuvi/+g/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dx+USYBa; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Qaj+PmDO; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744896028;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ax4rJeZalogOj8wIoY/TFwkI03ahXbhPQLwzXY9UpSs=;
+	b=dx+USYBaLx2I8Gdx4jaFGW21JHYSvZVQrMa5rF24bMOqGyQaCRgOzg0x0adtoH5JsOf47v
+	2hJnYdYFooJcZxCWeTw2EPrM4awrBlwYJW2xB5R5gYeSnqutuy2HT9AwFj8PqePW5X34C3
+	NqLOaNdSQv97cS0V2073siV4AMC/9KiZA1RP5999vF5i99jwHTR0VwpD6HpAolWxL2W4eb
+	PPm2n0L+wUt9QO1jEe3nthl4ZXhQyYMLM1sBmPvS+T5q3lcUazqEogUeikY/16l71r+tc4
+	nVLZ9cHWKGQqqsO8t4usyVnssXaNuO1fcSf78zFdsP3LUrWJ/Sk27C0zCwyqZQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744896028;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ax4rJeZalogOj8wIoY/TFwkI03ahXbhPQLwzXY9UpSs=;
+	b=Qaj+PmDOxeik8no8OOe9lbHhu7DdF7oqPucBcoWuTLQSfomc8hZvaWFmgzLnJx/muwN01O
+	PloGeSH7pFB+TZDw==
+Subject: [PATCH ath-next 0/4] wifi: ath: Don't use %pK through printk
+Date: Thu, 17 Apr 2025 15:19:06 +0200
+Message-Id: <20250417-restricted-pointers-ath-v1-0-4e9a04dbe362@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-17_03,2025-04-17_01,2024-11-22_01
+X-B4-Tracking: v=1; b=H4sIAMr/AGgC/x2MwQqDQAwFf0VybmDd1Ur7K8WDuM+ayypJKIL47
+ 932ODAzJxlUYPRsTlJ8xGQrFdpbQ/M6lTdYcmWKIfahawdWmKvMjsz7JsWhxpOv3C1xePQppHT
+ PVOtdscjxP7/oJxQcTuN1fQHjFTh/cwAAAA==
+X-Change-ID: 20250417-restricted-pointers-ath-4f279530336d
+To: Jeff Johnson <jjohnson@kernel.org>, 
+ Loic Poulain <loic.poulain@oss.qualcomm.com>, ath10k@lists.infradead.org, 
+ ath11k@lists.infradead.org, ath12k@lists.infradead.org, 
+ wcn36xx@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
+ Aleksandr Loktionov <aleksandr.loktionov@intel.com>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744896028; l=2034;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=USJc9JCGJMae1BOrGUqYC9Qw2zxqsi9K4Px5b2V9oIE=;
+ b=4aoFpAS7vIBaF9DayfeaPUa3K8Y5PLpmCpvBRYmcVCoc+zcl7IawUrjWZAlS1Ft2aLcp1igtX
+ zxE18fWrB/kCfXWYMg4nMCS/vnn8USOet1o2Ez+oHcqdiricl6fnoxv
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-Add PCIe RC and EP support on stm32mp257f-ev1 board.
-Default to RC mode.
+In the past %pK was preferable to %p as it would not leak raw pointer
+values into the kernel log.
+Since commit ad67b74d2469 ("printk: hash addresses printed with %p")
+the regular %p has been improved to avoid this issue.
+Furthermore, restricted pointers ("%pK") were never meant to be used
+through printk(). They can still unintentionally leak raw pointers or
+acquire sleeping locks in atomic contexts.
 
-Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
+Switch to the regular pointer formatting which is safer and
+easier to reason about.
+
+These patches were originally part of
+https://lore.kernel.org/lkml/20250414-restricted-pointers-net-v1-0-12af0ce46cdd@linutronix.de/
+
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 ---
- arch/arm64/boot/dts/st/stm32mp257f-ev1.dts | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+Thomas Weißschuh (4):
+      wifi: ath10k: Don't use %pK through printk
+      wifi: ath11k: Don't use %pK through printk
+      wifi: ath12k: Don't use %pK through printk
+      wifi: wcn36xx: Don't use %pK through printk
 
-diff --git a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-index 1b88485a62a1..a7646503d6b2 100644
---- a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-+++ b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-@@ -225,6 +225,27 @@ scmi_vdd_sdcard: regulator@23 {
- 	};
- };
- 
-+&pcie_ep {
-+	pinctrl-names = "default", "init";
-+	pinctrl-0 = <&pcie_pins_a>;
-+	pinctrl-1 = <&pcie_init_pins_a>;
-+	reset-gpios = <&gpioj 8 GPIO_ACTIVE_LOW>;
-+	status = "disabled";
-+};
-+
-+&pcie_rc {
-+	pinctrl-names = "default", "init", "sleep";
-+	pinctrl-0 = <&pcie_pins_a>;
-+	pinctrl-1 = <&pcie_init_pins_a>;
-+	pinctrl-2 = <&pcie_sleep_pins_a>;
-+	status = "okay";
-+
-+	pcie@0,0 {
-+		 reset-gpios = <&gpioj 8 GPIO_ACTIVE_LOW>;
-+		 wake-gpios = <&gpioh 5 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
-+	};
-+};
-+
- &sdmmc1 {
- 	pinctrl-names = "default", "opendrain", "sleep";
- 	pinctrl-0 = <&sdmmc1_b4_pins_a>;
+ drivers/net/wireless/ath/ath10k/ahb.c       |  2 +-
+ drivers/net/wireless/ath/ath10k/bmi.c       |  6 +++---
+ drivers/net/wireless/ath/ath10k/ce.c        |  4 ++--
+ drivers/net/wireless/ath/ath10k/core.c      |  4 ++--
+ drivers/net/wireless/ath/ath10k/htc.c       |  6 +++---
+ drivers/net/wireless/ath/ath10k/htt_rx.c    |  2 +-
+ drivers/net/wireless/ath/ath10k/mac.c       | 22 +++++++++++-----------
+ drivers/net/wireless/ath/ath10k/pci.c       |  2 +-
+ drivers/net/wireless/ath/ath10k/testmode.c  |  4 ++--
+ drivers/net/wireless/ath/ath10k/txrx.c      |  2 +-
+ drivers/net/wireless/ath/ath10k/usb.c       |  4 ++--
+ drivers/net/wireless/ath/ath10k/wmi.c       |  4 ++--
+ drivers/net/wireless/ath/ath11k/testmode.c  |  2 +-
+ drivers/net/wireless/ath/ath12k/testmode.c  |  4 ++--
+ drivers/net/wireless/ath/wcn36xx/testmode.c |  2 +-
+ 15 files changed, 35 insertions(+), 35 deletions(-)
+---
+base-commit: cfb2e2c57aef75a414c0f18445c7441df5bc13be
+change-id: 20250417-restricted-pointers-ath-4f279530336d
+
+Best regards,
 -- 
-2.34.1
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
 
