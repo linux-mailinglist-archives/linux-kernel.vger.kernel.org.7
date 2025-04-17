@@ -1,160 +1,113 @@
-Return-Path: <linux-kernel+bounces-608658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28CD8A9165F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 10:24:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2B94A9161C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 10:07:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE6B819E13FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:24:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A3853A83D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:07:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E0122E00E;
-	Thu, 17 Apr 2025 08:24:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9C622D7B5;
+	Thu, 17 Apr 2025 08:07:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="SUs8xg1q"
-Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.7])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B5B91E32C6;
-	Thu, 17 Apr 2025 08:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.7
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IUo0/6RT"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B06142288C6
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 08:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744878242; cv=none; b=c9csnkG8MOAow+nvwczqsY/Kh9Lnf/cKbAk98vCWXvvC4smJzQSze5YGZoawuSH6ztiw0pNRNPJsc9k6/jsHnzdzBaWXpPfpkm0xKRlcTwdLn2pijuOiEmi0ZZ69AN7tZA9WJCw0Y3K+v9iiBD6Cpe9E3C2rog/SOA078ixk4To=
+	t=1744877254; cv=none; b=rX2K8DuiPpYW659ThgWhhrbkS2TtzNz/kl7JasLNE5VA3qwZkpM9x8lhIiCCOHVtdHrBUpFpGxIDQuZu+C2sIUlqrTnY8dX1ERcSi9rvShzjC7jbTIDIBTbmnkWbsQzHSDfcH4Oj1jMuPkKAqL4k4zKPBPLXjT4mJuSu0FZuBv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744878242; c=relaxed/simple;
-	bh=Y6Z4afIZtGTgRIsjZPTRPzfVIH3uURQDQpZm5viEsCY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NloojBohwjkM+ZqZCnwRoQtTdLJNo7SpkckBE/InU9W7SQ3bBuYcjIdwDLq3Gu6XRKs2FCYLBYGQ/Xl3cOh1OEFXjr0ysYbL0ceeuQHgq7ACbLVKMoQuI/yXHinO1Dd3L90HBz36+UItqAs+QjojFwC3nPbUuzdX7OvEKEl3TvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=SUs8xg1q; arc=none smtp.client-ip=220.197.31.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=9Zbu0
-	Bn8ucZxU/MoGWQXy6dhCsJ9+kls++yzpY7XwdA=; b=SUs8xg1qSBitQTO1b/43C
-	zYm/dMLDzAfbE50tcs32Nhl1jS5gxcdL6T6/xTO193NOPcYyWZXoe1d57JwRH9jd
-	+YshmTteLtq4nq35LHMdQfFSEM2cL3JTxEC2t8SsUw+9o0vCrkqhOvPKiWis4yOU
-	5YS/7clPJ09Fb3xTmIzbNA=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wD3BxOttgBoy+aUBA--.4732S4;
-	Thu, 17 Apr 2025 16:07:14 +0800 (CST)
-From: Honglei Wang <jameshongleiwang@126.com>
-To: tj@kernel.org,
-	void@manifault.com,
-	arighi@nvidia.com,
-	changwoo@igalia.com
-Cc: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	joshdon@google.com,
-	brho@google.com,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	jameshongleiwang@126.com
-Subject: [PATCH 2/2] sched_ext: add helper for refill task with default slice
-Date: Thu, 17 Apr 2025 16:07:08 +0800
-Message-Id: <20250417080708.1333-3-jameshongleiwang@126.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250417080708.1333-1-jameshongleiwang@126.com>
-References: <20250417080708.1333-1-jameshongleiwang@126.com>
+	s=arc-20240116; t=1744877254; c=relaxed/simple;
+	bh=x9LMdxHZpAEx4PNf/gdpp8em2fU/lqPJLt3cmhXzTaI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ym+1S/OnPdB4r6mWoqjto86H8/4n3klMf1f4XN0S0zj9snNjgQ1VYxq1GSUctzVJlKQJTPNiOlSqvMstUeLh51FMtaW3p24xxHnIv9q5m0YNCwcYBSobr1v3HJ21Jxwwv4htQNLhv+8kEYWM5RgvQonk1JY7ViuP5scvcpqrWhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IUo0/6RT; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=KOu8JOEUA3JnELEMWzclUZ+7+kcbuCwzlYrc2GUSPQ0=; b=IUo0/6RTxXKwJSeMSgv9WT+rrR
+	t76M5tHWas9BsL3xbMSsL+n7dVomMiXIVD50ihYBgOeZtkUrMVKeBTn8TVoTzn8gCjdv7kzgWIJNi
+	KtKxWACrywe/7zt/2YWLoQ+X8OC5DncRq/OVXYORsA3Mc02GjEN8tAVsjWMTeZsIiF9xuamXcXa7t
+	AuYxvZnn9Ja+sWmBl9O/8i1gWL8Ep1UypfBSIqdiswKHAi1COW+qnpzS8P6WiVmAl1z9s0TDIXAsr
+	/jFkMm2VSBsIAJ0mG33ggq6Y7cW73PqGboRkLewQPsER730NdOb9rbcXnQqKd/cdrok9TanQi84Nv
+	LsQIPV0A==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1u5KHN-0000000AF0J-49G3;
+	Thu, 17 Apr 2025 08:07:26 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 90017300619; Thu, 17 Apr 2025 10:07:25 +0200 (CEST)
+Date: Thu, 17 Apr 2025 10:07:25 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+Cc: mingo@kernel.org, ravi.bangoria@amd.com, lucas.demarchi@intel.com,
+	linux-kernel@vger.kernel.org, acme@kernel.org, namhyung@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, james.clark@linaro.org
+Subject: Re: [PATCH v3 7/7] perf: Make perf_pmu_unregister() useable
+Message-ID: <20250417080725.GH38216@noisy.programming.kicks-ass.net>
+References: <20250307193305.486326750@infradead.org>
+ <20250307193723.525402029@infradead.org>
+ <a0e3eccd-314a-4073-a570-0fe7b27c25c8@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3BxOttgBoy+aUBA--.4732S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Ww1xZFyDWFy5Aw1rCrWxWFg_yoW5Jr18p3
-	Zaya45XF48Ja12vayIqrWkC3Wa9ws3A34UCrZ5t397trsrtwnYvFyrJw43try5Xr909a1x
-	tF4jgF13Jr4DZrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UwVysUUUUU=
-X-CM-SenderInfo: 5mdpv2pkrqwzphlzt0bj6rjloofrz/1tbirwUyrWgArS3H+wAEsl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a0e3eccd-314a-4073-a570-0fe7b27c25c8@linux.intel.com>
 
-Add helper for refilling task with default slice and event
-statistics accordingly.
+On Mon, Apr 14, 2025 at 08:37:07AM +0800, Mi, Dapeng wrote:
 
-Signed-off-by: Honglei Wang <jameshongleiwang@126.com>
+> It seems this patch would break the task attached events counting like the
+> below command shows.
+> 
+
+Right, found another report for that yesterday.
+
 ---
- kernel/sched/ext.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+Subject: perf: Fix perf-stat / read()
+From: Peter Zijlstra <peterz@infradead.org>
+Date: Wed Apr 16 20:50:27 CEST 2025
 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 594087ac4c9e..df7319bd9079 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -1815,6 +1815,12 @@ static void dsq_mod_nr(struct scx_dispatch_q *dsq, s32 delta)
- 	WRITE_ONCE(dsq->nr, dsq->nr + delta);
- }
- 
-+static void refill_task_slice_dfl(struct task_struct *p)
-+{
-+	p->scx.slice = SCX_SLICE_DFL;
-+	__scx_add_event(SCX_EV_REFILL_SLICE_DFL, 1);
-+}
-+
- static void dispatch_enqueue(struct scx_dispatch_q *dsq, struct task_struct *p,
- 			     u64 enq_flags)
- {
-@@ -2196,16 +2202,14 @@ static void do_enqueue_task(struct rq *rq, struct task_struct *p, u64 enq_flags,
- 	 * higher priority it becomes from scx_prio_less()'s POV.
- 	 */
- 	touch_core_sched(rq, p);
--	p->scx.slice = SCX_SLICE_DFL;
--	__scx_add_event(SCX_EV_REFILL_SLICE_DFL, 1);
-+	refill_task_slice_dfl(p);
- local_norefill:
- 	dispatch_enqueue(&rq->scx.local_dsq, p, enq_flags);
- 	return;
- 
- global:
- 	touch_core_sched(rq, p);	/* see the comment in local: */
--	p->scx.slice = SCX_SLICE_DFL;
--	__scx_add_event(SCX_EV_REFILL_SLICE_DFL, 1);
-+	refill_task_slice_dfl(p);
- 	dispatch_enqueue(find_global_dsq(p), p, enq_flags);
- }
- 
-@@ -3294,10 +3298,8 @@ static struct task_struct *pick_task_scx(struct rq *rq)
- 	 */
- 	if (keep_prev) {
- 		p = prev;
--		if (!p->scx.slice) {
--			p->scx.slice = SCX_SLICE_DFL;
--			__scx_add_event(SCX_EV_REFILL_SLICE_DFL, 1);
--		}
-+		if (!p->scx.slice)
-+			refill_task_slice_dfl(p);
- 	} else {
- 		p = first_local_task(rq);
- 		if (!p) {
-@@ -3312,8 +3314,7 @@ static struct task_struct *pick_task_scx(struct rq *rq)
- 						p->comm, p->pid, __func__);
- 				scx_warned_zero_slice = true;
- 			}
--			p->scx.slice = SCX_SLICE_DFL;
--			__scx_add_event(SCX_EV_REFILL_SLICE_DFL, 1);
-+			refill_task_slice_dfl(p);
- 		}
- 	}
- 
-@@ -3397,9 +3398,8 @@ static int select_task_rq_scx(struct task_struct *p, int prev_cpu, int wake_flag
- 
- 		cpu = scx_select_cpu_dfl(p, prev_cpu, wake_flags, 0);
- 		if (cpu >= 0) {
--			p->scx.slice = SCX_SLICE_DFL;
-+			refill_task_slice_dfl(p);
- 			p->scx.ddsp_dsq_id = SCX_DSQ_LOCAL;
--			__scx_add_event(SCX_EV_REFILL_SLICE_DFL, 1);
- 		} else {
- 			cpu = prev_cpu;
- 		}
--- 
-2.45.2
+In the zeal to adjust all event->state checks to include the new
+REVOKED state, one adjustment was made in error. Notably it resulted
+in read() on the perf filedesc to stop working for any state lower
+than ERROR, specifically EXIT.
 
+This leads to problems with (among others) perf-stat, which wants to
+read the counts after a program has finished execution.
+
+Fixes: da916e96e2de ("perf: Make perf_pmu_unregister() useable")
+Reported-by: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+Reported-by: James Clark <james.clark@linaro.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/77036114-8723-4af9-a068-1d535f4e2e81@linaro.org
+---
+ kernel/events/core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -6023,7 +6023,7 @@ __perf_read(struct perf_event *event, ch
+ 	 * error state (i.e. because it was pinned but it couldn't be
+ 	 * scheduled on to the CPU at some point).
+ 	 */
+-	if (event->state <= PERF_EVENT_STATE_ERROR)
++	if (event->state == PERF_EVENT_STATE_ERROR)
+ 		return 0;
+ 
+ 	if (count < event->read_size)
 
