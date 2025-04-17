@@ -1,254 +1,356 @@
-Return-Path: <linux-kernel+bounces-608311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9C73A9119A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 04:19:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1187A9119E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 04:20:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21CA13BC4DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 02:18:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 505023A9B7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 02:19:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5641C3C18;
-	Thu, 17 Apr 2025 02:19:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3494F1C3C18;
+	Thu, 17 Apr 2025 02:20:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lqkVWNJy"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2CD03FD4;
-	Thu, 17 Apr 2025 02:18:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="TxHfXf0J"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67EA33FD4;
+	Thu, 17 Apr 2025 02:20:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744856340; cv=none; b=nIgW57VoZcGV2EWiAXcNiBrKxcL1oFf6S/xm0BLe0nTFwY3pL4h+O7EZF39ys+D5ykIukWJ7RQ1Pfq6ZxTyGuMEZrkhJwq6rASEheR2nGsdhPFImzliD4k708+WokGhMiXnXFzq2NhbEw0OjxpVg1tHSYQHigDqsRM0k4HN7xVI=
+	t=1744856405; cv=none; b=n09Y0G4edwXdGDai1k4OkGTAAv67LgaclUHa10OovwuPSJkE0nX44RMyghgYDV2FOa1r/OMZ2kInED5i49A9Zb3/eteHLG23emWMXs54ys6vx/L9KDwAwQQ2uQXHuGR8E0U9ClNe9ytbAk4a3Xrgt5pQD6CkC5gJq32HRn3/KLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744856340; c=relaxed/simple;
-	bh=16Oa1q9y+9XkxlsV4Oxqr1zIWMw7KbWTyGMYkvFZyxw=;
-	h=From:Date:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=V7hLjCl60pAhFb2FViaPj5RaDJ4yITEDjd3xztworNDiZ81jFMllE6VqTzqIaUQPe448o/dC5Gp57CJ7l191FDX4NyzrBwoFnYK3YFSpwtpvKvI3rLXVhwi1wkpXlhjh+ip/FXQk7lfDjJfdjBtuzbuqVDSaQ4NUAPePs2EOSKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lqkVWNJy; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-227a8cdd241so3767255ad.3;
-        Wed, 16 Apr 2025 19:18:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744856338; x=1745461138; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:date:from
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=C8p7/NM2DCHM9rmByNHzZ+tqh5X5fRWqqOeEIB2TbDY=;
-        b=lqkVWNJyP/OzwCsZgVuYK8/cc3fB1JMjpnVUgWV0eZ1XpxcBLlLpZTdnfQxtXyjRD7
-         9C+AJWUABci+hH1k5sPfwDYyG3Z1jfG0Wq+cSgFNFEQopTHBzWoCEysIdJvFwQXg1B3F
-         5WkbiBMdT/IZSoSEIYaqA/8qgStTiX8V+Uey8T8cMZEckSrR4wph6LDe0WiCaI1StRrB
-         RjN1b/dP2qt9yRdONVuRm0XQAF2jvovRs617GNpT2MLv/Mf4oXPaBt3tIUXPPJzAJSM6
-         J/BU1V/TMb2PjrAXdKOKODxdIm1NpkI3lMzxdV6rJOwK8saQsKmNG4kyEk8aixxiLOTN
-         pEaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744856338; x=1745461138;
-        h=content-disposition:mime-version:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=C8p7/NM2DCHM9rmByNHzZ+tqh5X5fRWqqOeEIB2TbDY=;
-        b=TU/kFEBtQCxN4tud5ka9tSQMs6IXZXvcI+QesDlNAYeEof9YExkTAuaImBE0bPRld/
-         dqQwdld4dYz/Z7KR+v5ppMNNthJeYl3QsGuk4SyI4JuWciwsVcd1/u1NezDLzl6MLRRf
-         oFUZ12aVeyQVG3q/yk9vzwKmJoTP1d5pw2V8Z0LhDSzDly4DcKTtZOu4KogQKmfD26AX
-         o7+AhLQv7ohqTsvqYaVL9xNvJXZzE1FcPuiWOamDpizjvqakY3sa8RF/7IbicnWXO/9W
-         wW771piFGBYAqUxdXJF7cpmd33ztpFRBqvuJETptvjcLkjj/tFHyJiwfgQPg8gwT2nsy
-         NSgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUTwJ6KafbqBJm05zm9ldD4VnuzTKEBemldtmjSFHKWN6/+sLDKiedT8uKu3idMqvQdC10CgQ+kZICC2dY=@vger.kernel.org, AJvYcCWc/0Dh7QXZaK9OsSUYX/rxoKoBrDQAAvcwbxpvfZ78oIQ1lm0twfkWEccyOMT5KxI7EXMdwp85MnZ9zRebOKrUKw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXipodZm1HqvKu3Jya0VzW8dHQpxwW0DUzzPexBQIXb8LmbpVS
-	iHWPgcMh9nykQqM7bLCTLHi7WsyXBWEX3xhU48weuqKiKKI8m1TX
-X-Gm-Gg: ASbGncuVAVT51x13IaXrJ0p4joAJbzFvC6nfuTn1LahUMzYfPssA5aeva6drCJ3CM+m
-	4yRfRp1T5bpYGLXRXyiHsYmxZPCMw8eobgaRsp9H7zjbA2zdcNQ9b/pVAU1BZisEV+xWGZEdasA
-	ZlVfMqUjreTH8I8YbbNA8uVEaNhr3QC+0jKXQXKwDO6XXGmpLCqam4ohXblJUm/zma5qbJZZjpU
-	hEAgVTMwLBlqszQs/ospPryoU4Fh04IjL+n5IBhMoOCsvxnWp1LaboOeeTdC+KoopMnCwHS44Vf
-	tUBnJbPoGbXYSckg3VHVMoa9HgtAIKm+Lv9Q87M=
-X-Google-Smtp-Source: AGHT+IG+yCgFBeh9vlR+BFs229WzadUXdK+fn/TPcOb8QzgLTfWNM8G/X+74i9tJPATHhVAQaZ3ByA==
-X-Received: by 2002:a17:903:2a8e:b0:21f:b483:2ad5 with SMTP id d9443c01a7336-22c358db5edmr55632345ad.20.1744856338108;
-        Wed, 16 Apr 2025 19:18:58 -0700 (PDT)
-Received: from localhost ([189.89.54.57])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c33f1c1e6sm21851005ad.63.2025.04.16.19.18.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Apr 2025 19:18:57 -0700 (PDT)
-From: arnaldo.melo@gmail.com
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>
-Date: Wed, 16 Apr 2025 23:18:55 -0300
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-	Ian Rogers <irogers@google.com>,
-	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Quentin Monnet <qmo@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH 1/1] tools build: Remove libbfd from the set of expected
- libraries to build perf
-Message-ID: <aABlDyhAYz95vOM1@x1>
+	s=arc-20240116; t=1744856405; c=relaxed/simple;
+	bh=rlNva0zZfOVGnog08WGFYUTdJb3a2xmL3Xt3dmFFj88=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XP5IjpSL78fyLp4kZYScCtVfXNoTnlCTKLhLwu4kog9C/JqbBeodauoP6U8UKbQsQQSn8Z1A1yvDtVXrmysP9+k8ziUojXKH2rmDqUjrjxgOSmYZ0bB38Y1txZXDBYD4YPofFDAdx4h48W/IgKlZr9hr4fkaPkEXhlIQ/+l8LSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=TxHfXf0J; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=wrKLwquI8zlHwCmcvYouUws+LNMJVPBRxnJSH3TqZEo=;
+	b=TxHfXf0JNkDJq28oDhfkuSjz3NcQoj1Jh1u0c3idb0dCKsdxpeC39NTfPjeCqX
+	rXyyizFUt+M5nFntEaPeVIdpJcnk5IM7tGum9evxpnx4yb986HMrIjKbhrcpQkMQ
+	oHBPqNC0HJT2V+MjJsmkpLov3bZqG5ToAl4l1r6Ld2vUg=
+Received: from [192.168.142.52] (unknown [])
+	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wD3Xw0eZQBoZg1+AQ--.60903S2;
+	Thu, 17 Apr 2025 10:19:13 +0800 (CST)
+Message-ID: <bb40385c-6839-484c-90b2-d6c7ecb95ba9@163.com>
+Date: Thu, 17 Apr 2025 10:19:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] PCI: dw-rockchip: Configure max payload size on host init
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com,
+ heiko@sntech.de, manivannan.sadhasivam@linaro.org, robh@kernel.org,
+ jingoohan1@gmail.com, thomas.richard@bootlin.com, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org
+References: <20250416204051.GA78956@bhelgaas>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <20250416204051.GA78956@bhelgaas>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_____wD3Xw0eZQBoZg1+AQ--.60903S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3uFyrXF4DZrWkKF1rXFW5KFg_yoWDuw4kpF
+	WqqFsrKrW8JayagFs2yF48CF4Utrn2yay3Kr9xW34Uta12grWDt3sI9rn8Z3WxAr1F93W2
+	yrWDt3yIqrn8JaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Uq0PhUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWwUyo2gAY2hPoAAAsD
 
-The tools/build/feature/test-all.c file tries to build with the most
-common set of libraries expected to be present to build perf, and these
-days libbfd (binutils) isn't one since it was made opt-in via
-BUILD_NONDISTRO=1 on the make command line as it has license issues.
+On 2025/4/17 04:40, Bjorn Helgaas wrote:
+> On Wed, Apr 16, 2025 at 11:19:26PM +0800, Hans Zhang wrote:
+>> The RK3588's PCIe controller defaults to a 128-byte max payload size,
+>> but its hardware capability actually supports 256 bytes. This results
+>> in suboptimal performance with devices that support larger payloads.
+>>
+>> Signed-off-by: Hans Zhang <18255117159@163.com>
+>> ---
+>>   drivers/pci/controller/dwc/pcie-dw-rockchip.c | 18 ++++++++++++++++++
+>>   1 file changed, 18 insertions(+)
+>>
+>> diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+>> index c624b7ebd118..5bbb536a2576 100644
+>> --- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+>> +++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+>> @@ -477,6 +477,22 @@ static irqreturn_t rockchip_pcie_ep_sys_irq_thread(int irq, void *arg)
+>>   	return IRQ_HANDLED;
+>>   }
+>>   
+>> +static void rockchip_pcie_set_max_payload(struct rockchip_pcie *rockchip)
+>> +{
+>> +	struct dw_pcie *pci = &rockchip->pci;
+>> +	u32 dev_cap, dev_ctrl;
+>> +	u16 offset;
+>> +
+>> +	offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
+>> +	dev_cap = dw_pcie_readl_dbi(pci, offset + PCI_EXP_DEVCAP);
+>> +	dev_cap &= PCI_EXP_DEVCAP_PAYLOAD;
+>> +
+>> +	dev_ctrl = dw_pcie_readl_dbi(pci, offset + PCI_EXP_DEVCTL);
+>> +	dev_ctrl &= ~PCI_EXP_DEVCTL_PAYLOAD;
+>> +	dev_ctrl |= dev_cap << 5;
+>> +	dw_pcie_writel_dbi(pci, offset + PCI_EXP_DEVCTL, dev_ctrl);
+>> +}
+> 
+> I can't really complain too much about this since meson does basically
+> the same thing, but there are some things I don't like about this:
+> 
+>    - I don't think it's safe to set MPS higher in all cases.  If we set
+>      the Root Port MPS=256, and an Endpoint only supports MPS=128, the
+>      Endpoint may do a 256-byte DMA read (assuming its MRRS>=256).  In
+>      that case the RP may respond with a 256-byte payload the Endpoint
+>      can't handle.  The generic code in pci_configure_mps() might be
+>      smart enough to avoid that situation, but I'm not confident about
+>      it.  Maybe I could be convinced.
+> 
 
-Fix this by removing the tests from there.
+Dear Bjorn,
 
-Fixes: dd317df072071903 ("perf build: Make binutil libraries opt in")
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: James Clark <james.clark@linaro.org>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Quentin Monnet <qmo@kernel.org>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/build/Makefile.feature   | 12 ------------
- tools/build/feature/Makefile   |  2 +-
- tools/build/feature/test-all.c | 19 -------------------
- tools/perf/Makefile.config     |  1 +
- 4 files changed, 2 insertions(+), 32 deletions(-)
+Thank you very much for your reply. If we set the Root Port MPS=256, and 
+an Endpoint only supports MPS=128. Finally, Root Port is also set to 
+MPS=128 in pci_configure_mps.
 
-diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
-index 57bd995ce6afa318..da025a8040a9a154 100644
---- a/tools/build/Makefile.feature
-+++ b/tools/build/Makefile.feature
-@@ -42,17 +42,12 @@ endef
- #
- #   All the others should have lines in tools/build/feature/test-all.c like:
- #
--#    #define main main_test_disassembler_init_styled
--#    # include "test-disassembler-init-styled.c"
--#    #undef main
--#
- #    #define main main_test_libzstd
- #    # include "test-libzstd.c"
- #    #undef main
- #
- #    int main(int argc, char *argv[])
- #    {
--#      main_test_disassembler_four_args();
- #      main_test_libzstd();
- #      return 0;
- #    }
-@@ -60,7 +55,6 @@ endef
- #    If the sample above works, then we end up with these lines in the FEATURE-DUMP
- #    file:
- #
--#    feature-disassembler-four-args=1
- #    feature-libzstd=1
- #
- FEATURE_TESTS_BASIC :=                  \
-@@ -71,8 +65,6 @@ FEATURE_TESTS_BASIC :=                  \
-         get_current_dir_name            \
-         gettid				\
-         glibc                           \
--        libbfd                          \
--        libbfd-buildid			\
-         libelf                          \
-         libelf-getphdrnum               \
-         libelf-gelf_getnote             \
-@@ -102,8 +94,6 @@ FEATURE_TESTS_BASIC :=                  \
-         setns				\
-         libaio				\
-         libzstd				\
--        disassembler-four-args		\
--        disassembler-init-styled	\
-         file-handle
- 
- # FEATURE_TESTS_BASIC + FEATURE_TESTS_EXTRA is the complete list
-@@ -119,8 +109,6 @@ FEATURE_TESTS_EXTRA :=                  \
-          hello                          \
-          libbabeltrace                  \
-          libcapstone                    \
--         libbfd-liberty                 \
--         libbfd-liberty-z               \
-          libopencsd                     \
-          cxx                            \
-          llvm                           \
-diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
-index b8b5fb183dd40693..76724931f68e1b92 100644
---- a/tools/build/feature/Makefile
-+++ b/tools/build/feature/Makefile
-@@ -110,7 +110,7 @@ all: $(FILES)
- __BUILD = $(CC) $(CFLAGS) -MD -Wall -Werror -o $@ $(patsubst %.bin,%.c,$(@F)) $(LDFLAGS)
-   BUILD = $(__BUILD) > $(@:.bin=.make.output) 2>&1
-   BUILD_BFD = $(BUILD) -DPACKAGE='"perf"' -lbfd -ldl
--  BUILD_ALL = $(BUILD) -fstack-protector-all -O2 -D_FORTIFY_SOURCE=2 -ldw -lelf -lnuma -lelf -lslang $(FLAGS_PERL_EMBED) $(FLAGS_PYTHON_EMBED) -DPACKAGE='"perf"' -lbfd -ldl -lz -llzma -lzstd
-+  BUILD_ALL = $(BUILD) -fstack-protector-all -O2 -D_FORTIFY_SOURCE=2 -ldw -lelf -lnuma -lelf -lslang $(FLAGS_PERL_EMBED) $(FLAGS_PYTHON_EMBED) -lz -llzma -lzstd
- 
- __BUILDXX = $(CXX) $(CXXFLAGS) -MD -Wall -Werror -o $@ $(patsubst %.bin,%.cpp,$(@F)) $(LDFLAGS)
-   BUILDXX = $(__BUILDXX) > $(@:.bin=.make.output) 2>&1
-diff --git a/tools/build/feature/test-all.c b/tools/build/feature/test-all.c
-index 03ddaac6f4c4dfa2..1010f233d9c1ad49 100644
---- a/tools/build/feature/test-all.c
-+++ b/tools/build/feature/test-all.c
-@@ -66,14 +66,6 @@
- # include "test-libslang.c"
- #undef main
- 
--#define main main_test_libbfd
--# include "test-libbfd.c"
--#undef main
--
--#define main main_test_libbfd_buildid
--# include "test-libbfd-buildid.c"
--#undef main
--
- #define main main_test_backtrace
- # include "test-backtrace.c"
- #undef main
-@@ -158,14 +150,6 @@
- # include "test-reallocarray.c"
- #undef main
- 
--#define main main_test_disassembler_four_args
--# include "test-disassembler-four-args.c"
--#undef main
--
--#define main main_test_disassembler_init_styled
--# include "test-disassembler-init-styled.c"
--#undef main
--
- #define main main_test_libzstd
- # include "test-libzstd.c"
- #undef main
-@@ -193,8 +177,6 @@ int main(int argc, char *argv[])
- 	main_test_libelf_gelf_getnote();
- 	main_test_libelf_getshdrstrndx();
- 	main_test_libslang();
--	main_test_libbfd();
--	main_test_libbfd_buildid();
- 	main_test_backtrace();
- 	main_test_libnuma();
- 	main_test_numa_num_possible_cpus();
-@@ -213,7 +195,6 @@ int main(int argc, char *argv[])
- 	main_test_setns();
- 	main_test_libaio();
- 	main_test_reallocarray();
--	main_test_disassembler_four_args();
- 	main_test_libzstd();
- 	main_test_libtraceevent();
- 	main_test_libtracefs();
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index 9f08a6e96b351707..7e9aa3d910c2cdcc 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -917,6 +917,7 @@ ifneq ($(NO_JEVENTS),1)
- endif
- 
- ifdef BUILD_NONDISTRO
-+  $(call feature_check,libbfd)
-   ifeq ($(feature-libbfd), 1)
-     EXTLIBS += -lbfd -lopcodes
-   else
--- 
-2.49.0
+
+lspci information before the patch was submitted:
+
+root@firefly:~# lspci -vvv
+00:00.0 PCI bridge: Fuzhou Rockchip Electronics Co., Ltd Device 3588 
+(rev 01) (prog-if 00 [Normal decode])
+         Control: I/O+ Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- 
+ParErr- Stepping- SERR+ FastB2B- DisINTx+
+         Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- 
+<TAbort- <MAbort- >SERR- <PERR- INTx-
+         Latency: 0
+         Interrupt: pin A routed to IRQ 73
+         Bus: primary=00, secondary=01, subordinate=ff, sec-latency=0
+         I/O behind bridge: 0000f000-00000fff [disabled]
+         Memory behind bridge: f0200000-f02fffff [size=1M]
+         Prefetchable memory behind bridge: 
+00000000fff00000-00000000000fffff [disabled]
+         Secondary status: 66MHz- FastB2B- ParErr- DEVSEL=fast >TAbort- 
+<TAbort- <MAbort- <SERR- <PERR-
+         Expansion ROM at f0300000 [virtual] [disabled] [size=64K]
+         BridgeCtl: Parity- SERR+ NoISA- VGA- VGA16- MAbort- >Reset- 
+FastB2B-
+                 PriDiscTmr- SecDiscTmr- DiscTmrStat- DiscTmrSERREn-
+         Capabilities: [40] Power Management version 3
+                 Flags: PMEClk- DSI- D1+ D2+ AuxCurrent=375mA 
+PME(D0+,D1+,D2-,D3hot+,D3cold-)
+                 Status: D0 NoSoftRst+ PME-Enable- DSel=0 DScale=0 PME-
+         Capabilities: [50] MSI: Enable+ Count=16/32 Maskable+ 64bit+
+                 Address: 00000000fe670040  Data: 0000
+                 Masking: fffffeff  Pending: 00000000
+         Capabilities: [70] Express (v2) Root Port (Slot-), MSI 08
+                 DevCap: MaxPayload 256 bytes, PhantFunc 0
+                         ExtTag+ RBE+
+                 DevCtl: CorrErr- NonFatalErr- FatalErr- UnsupReq-
+                         RlxdOrd+ ExtTag+ PhantFunc- AuxPwr- NoSnoop-
+                         MaxPayload 128 bytes, MaxReadReq 512 bytes
+
+
+01:00.0 Non-Volatile memory controller: Samsung Electronics Co Ltd 
+Device a80c (prog-if 02 [NVM Express])
+         Subsystem: Samsung Electronics Co Ltd Device a801
+         Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- 
+ParErr- Stepping- SERR- FastB2B- DisINTx+
+         Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- 
+<TAbort- <MAbort- >SERR- <PERR- INTx-
+         Latency: 0
+         Interrupt: pin A routed to IRQ 72
+         Region 0: Memory at f0200000 (64-bit, non-prefetchable) [size=16K]
+         Capabilities: [40] Power Management version 3
+                 Flags: PMEClk- DSI- D1- D2- AuxCurrent=0mA 
+PME(D0-,D1-,D2-,D3hot-,D3cold-)
+                 Status: D0 NoSoftRst+ PME-Enable- DSel=0 DScale=0 PME-
+         Capabilities: [50] MSI: Enable- Count=1/32 Maskable- 64bit+
+                 Address: 0000000000000000  Data: 0000
+         Capabilities: [70] Express (v2) Endpoint, MSI 00
+                 DevCap: MaxPayload 512 bytes, PhantFunc 0, Latency L0s 
+unlimited, L1 unlimited
+                         ExtTag+ AttnBtn- AttnInd- PwrInd- RBE+ FLReset+ 
+SlotPowerLimit 0.000W
+                 DevCtl: CorrErr- NonFatalErr- FatalErr- UnsupReq-
+                         RlxdOrd+ ExtTag+ PhantFunc- AuxPwr- NoSnoop+ 
+FLReset-
+                         MaxPayload 128 bytes, MaxReadReq 512 bytes
+
+
+
+lspci information after the patch was submitted:
+root@firefly:~# lspci -vvv
+00:00.0 PCI bridge: Fuzhou Rockchip Electronics Co., Ltd Device 3588 
+(rev 01) (prog-if 00 [Normal decode])
+         Control: I/O+ Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- 
+ParErr- Stepping- SERR+ FastB2B- DisINTx+
+         Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- 
+<TAbort- <MAbort- >SERR- <PERR- INTx-
+         Latency: 0
+         Interrupt: pin A routed to IRQ 73
+         Bus: primary=00, secondary=01, subordinate=ff, sec-latency=0
+         I/O behind bridge: 0000f000-00000fff [disabled]
+         Memory behind bridge: f0200000-f02fffff [size=1M]
+         Prefetchable memory behind bridge: 
+00000000fff00000-00000000000fffff [disabled]
+         Secondary status: 66MHz- FastB2B- ParErr- DEVSEL=fast >TAbort- 
+<TAbort- <MAbort- <SERR- <PERR-
+         Expansion ROM at f0300000 [virtual] [disabled] [size=64K]
+         BridgeCtl: Parity- SERR+ NoISA- VGA- VGA16- MAbort- >Reset- 
+FastB2B-
+                 PriDiscTmr- SecDiscTmr- DiscTmrStat- DiscTmrSERREn-
+         Capabilities: [40] Power Management version 3
+                 Flags: PMEClk- DSI- D1+ D2+ AuxCurrent=375mA 
+PME(D0+,D1+,D2-,D3hot+,D3cold-)
+                 Status: D0 NoSoftRst+ PME-Enable- DSel=0 DScale=0 PME-
+         Capabilities: [50] MSI: Enable+ Count=16/32 Maskable+ 64bit+
+                 Address: 00000000fe670040  Data: 0000
+                 Masking: fffffeff  Pending: 00000000
+         Capabilities: [70] Express (v2) Root Port (Slot-), MSI 08
+                 DevCap: MaxPayload 256 bytes, PhantFunc 0
+                         ExtTag+ RBE+
+                 DevCtl: CorrErr- NonFatalErr- FatalErr- UnsupReq-
+                         RlxdOrd+ ExtTag+ PhantFunc- AuxPwr- NoSnoop-
+                         MaxPayload 256 bytes, MaxReadReq 512 bytes
+
+01:00.0 Non-Volatile memory controller: Samsung Electronics Co Ltd 
+Device a80c (prog-if 02 [NVM Express])
+         Subsystem: Samsung Electronics Co Ltd Device a801
+         Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- 
+ParErr- Stepping- SERR- FastB2B- DisINTx+
+         Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- 
+<TAbort- <MAbort- >SERR- <PERR- INTx-
+         Latency: 0
+         Interrupt: pin A routed to IRQ 72
+         Region 0: Memory at f0200000 (64-bit, non-prefetchable) [size=16K]
+         Capabilities: [40] Power Management version 3
+                 Flags: PMEClk- DSI- D1- D2- AuxCurrent=0mA 
+PME(D0-,D1-,D2-,D3hot-,D3cold-)
+                 Status: D0 NoSoftRst+ PME-Enable- DSel=0 DScale=0 PME-
+         Capabilities: [50] MSI: Enable- Count=1/32 Maskable- 64bit+
+                 Address: 0000000000000000  Data: 0000
+         Capabilities: [70] Express (v2) Endpoint, MSI 00
+                 DevCap: MaxPayload 512 bytes, PhantFunc 0, Latency L0s 
+unlimited, L1 unlimited
+                         ExtTag+ AttnBtn- AttnInd- PwrInd- RBE+ FLReset+ 
+SlotPowerLimit 0.000W
+                 DevCtl: CorrErr- NonFatalErr- FatalErr- UnsupReq-
+                         RlxdOrd+ ExtTag+ PhantFunc- AuxPwr- NoSnoop+ 
+FLReset-
+                         MaxPayload 256 bytes, MaxReadReq 512 bytes
+
+
+
+Here are my tests and the NVMe SSD worked fine.
+
+root@firefly:~# df -h
+Filesystem           Size  Used Avail Use% Mounted on
+......
+/dev/nvme0n1         916G   28K  870G   1% /root/nvme
+......
+root@firefly:~#
+root@firefly:~# ls -l nvme/
+total 16
+drwx------ 2 root root 16384 Dec 24 06:34 lost+found
+root@firefly:~#
+root@firefly:~# cd nvme/
+root@firefly:~/nvme# time dd if=/dev/zero of=test bs=1M count=1024
+1024+0 records in
+1024+0 records out
+1073741824 bytes (1.1 GB, 1.0 GiB) copied, 0.875072 s, 1.2 GB/s
+
+real    0m0.881s
+user    0m0.001s
+sys     0m0.874s
+root@firefly:~/nvme# ls -l
+total 1048596
+drwx------ 2 root root      16384 Dec 24 06:34 lost+found
+-rw-r--r-- 1 root root 1073741824 Apr 17 02:11 test
+root@firefly:~/nvme# time cp -rf test test1
+
+real    0m0.901s
+user    0m0.005s
+sys     0m0.889s
+root@firefly:~/nvme# ls -lh
+total 2.1G
+drwx------ 2 root root  16K Dec 24 06:34 lost+found
+-rw-r--r-- 1 root root 1.0G Apr 17 02:11 test
+-rw-r--r-- 1 root root 1.0G Apr 17 02:12 test1
+
+
+
+>    - There's nothing rockchip-specific about this.
+> 
+>    - It's very similar to meson_set_max_payload(), so it'd be nice to
+>      share that code somehow.
+
+The next version will be added to DWC.
+
+> 
+>    - The commit log is specific about Max_Payload_Size Supported being
+>      256 bytes, but the patch actually reads the value from Device
+>      Capabilities.
+The commit log will be modified.
+
+> 
+>    - I'd like to see FIELD_PREP()/FIELD_GET() used when possible.
+>      PCIE_LTSSM_STATUS_MASK is probably the only other place.
+> 
+
+Will change.
+
+> These would be material for a separate patch:
+> 
+
+Thank you very much for your reminding and advice. I will submit another 
+patch separately for modification.
+
+>    - The #defines for register offsets and bits are kind of a mess,
+>      e.g., PCIE_SMLH_LINKUP, PCIE_RDLH_LINKUP, PCIE_LINKUP,
+>      PCIE_L0S_ENTRY, and PCIE_LTSSM_STATUS_MASK are in
+>      PCIE_CLIENT_LTSSM_STATUS, but you couldn't tell that from the
+>      names, and they're not even defined together.
+> 
+>    - Same for PCIE_RDLH_LINK_UP_CHGED, PCIE_LINK_REQ_RST_NOT_INT,
+>      PCIE_RDLH_LINK_UP_CHGED, which are in
+>      PCIE_CLIENT_INTR_STATUS_MISC.
+> 
+>    - PCIE_LTSSM_ENABLE_ENHANCE is apparently in
+>      PCIE_CLIENT_HOT_RESET_CTRL?  Sure wouldn't guess that from the
+>      names or the order of #defines.
+> 
+>    - PCIE_CLIENT_GENERAL_DEBUG isn't used at all.
+
+Will delete.
+
+
+Best regard,
+Hans
+
+> 
+>>   static int rockchip_pcie_configure_rc(struct platform_device *pdev,
+>>   				      struct rockchip_pcie *rockchip)
+>>   {
+>> @@ -511,6 +527,8 @@ static int rockchip_pcie_configure_rc(struct platform_device *pdev,
+>>   	pp->ops = &rockchip_pcie_host_ops;
+>>   	pp->use_linkup_irq = true;
+>>   
+>> +	rockchip_pcie_set_max_payload(rockchip);
+>> +
+>>   	ret = dw_pcie_host_init(pp);
+>>   	if (ret) {
+>>   		dev_err(dev, "failed to initialize host\n");
+>>
+>> base-commit: a24588245776dafc227243a01bfbeb8a59bafba9
+>> -- 
+>> 2.25.1
+>>
 
 
