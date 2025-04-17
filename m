@@ -1,123 +1,149 @@
-Return-Path: <linux-kernel+bounces-609165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91159A91E2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:37:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B886A91E30
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:38:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 392E519E71E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 13:37:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BADC75A3E12
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 13:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C4F9248871;
-	Thu, 17 Apr 2025 13:37:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EACA24A053;
+	Thu, 17 Apr 2025 13:38:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bwX44Z2K"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c+R6HWFH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90B1245029;
-	Thu, 17 Apr 2025 13:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71ED624A048
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 13:38:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744897046; cv=none; b=WZHRavQsSm2u0UYz53G0BsTtLBAoWb/TnvrT+neiHzr392tg2JIIRy517RznQoDNBEpItvw2sTGPplUB6m/rT71DcAy8M1sV8eGKex04Nuj1UDpleT7Z9R62H59IeXfvtUXmuhB2/htsoNN6skkZq2wU2kE9duurcNTXil1fxOo=
+	t=1744897097; cv=none; b=DKUH7hBL33sQK9B+qkTJDmFiClg5ytOIcRZsaWIvnssxu+zOVGRq/wKDtpd/PDcMSjqtVTVWMLsO2pm4FMfkRk2jY9iLfbdDnHqUFRVrz6+Iih8cg6B+MUqQY6A/42//P0ZUf9bqVlG8MnyEbVT6uh2vkMEFSc/OrGdYxfx/3PM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744897046; c=relaxed/simple;
-	bh=fUyLr8YgHE9WXqKlS1L6XVZ6KXlv9caX9LxOVPeiOJo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sWeejBpPtzVKVcqzIZkuJbEvRlU8H9xZI/Mxs6VXNRIZSB8xjdXRIgFDDC2ewrkfJ9shNvJHdOZ6Fj3dluxg636keMc9pNOSiEz2PgZRarBGNmi0Jqam2iT3rQrIJlbbT6I2EywVXr6C08s++11HmLsfjLW8eNoQsFIUjXh+c0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bwX44Z2K; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1744897097; c=relaxed/simple;
+	bh=ETopMke5PHHy3YIM/A1ZvA4xnBwvhq4N+QoZj2FDa1w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Fceknwg22s9+QiW6aiKUXIfQWYcNAJqUSZMLCRbkXd94Tx22qBKhyCRbod3vanL8PNPw4O/0dD76bJwaJqHLeVoT819yM6xUz9EAQ6F0MtEwyGzGo3yYr6niFJSxPZXtCUL2gCquDX7s+kNHcsB4xLiDugA6rITAf8LycOGnUuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c+R6HWFH; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744897044; x=1776433044;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=fUyLr8YgHE9WXqKlS1L6XVZ6KXlv9caX9LxOVPeiOJo=;
-  b=bwX44Z2Kp1uKT4HMF5NnTKl6eM3ZXq+auEXx3wXv97mvLyCknv19ZrfV
-   l+IS1YnhEluN/wlyKwi2ODuTx0tUkTKuv6x/45LfFXEs8QzGRkaUjEDSI
-   WHwg7M5ZHHMQJxtD5atgAMeuq2dWrGAUiJHdMqqlBLs/llOWffsJ8govB
-   6q7WUwihJeVi6jrRn10xneA+3zo6iNeI3HeLHtGNItG/wIEPfgxspdoOT
-   5BcWvZYnXldjTsLxoMqIr4Y07xmxfVLflr+cQaMki4fEAXIvusBhJawGF
-   1e5qmdS1BMCU2rM8wF0tQjZb3d7O2PQ4AHkw9UmflS4SqZk4ElKrMjN0d
-   w==;
-X-CSE-ConnectionGUID: lqvrhAA1T7KMy3sTjiI8Hw==
-X-CSE-MsgGUID: vpZna2sUTLiw1UvN2OoXPQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11405"; a="57477612"
+  t=1744897096; x=1776433096;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ETopMke5PHHy3YIM/A1ZvA4xnBwvhq4N+QoZj2FDa1w=;
+  b=c+R6HWFHTtuK95GfbEYvSVA86Pj87BIZ+YEHO1g07e4CGeC/whDaJMSD
+   QkBuepPz0QL/3+dplX9AmdYZy1OFV55PwnubqV+5nJ0MZYQiWI4QApixl
+   vXXorS65AB7eVSINq8c9Q1Iz9illAh+zfvAATmAT+rbXiwSYcv8cDX74o
+   osQnEqkX6BbVAZ5XVbg8sTqFHmIQPWdb+WA9eOm8qXHYXf96cbERCKN4s
+   y1i5OrNbx4F9Ngu3ZpZR8ivs6iIM4TbdXvvPKQNgTgBJMZmUza9ENRplh
+   cBBREMAc41obK5WFv80ySl8fhxOV51mm1feiNSudt/J2Bp+XiccG508iU
+   A==;
+X-CSE-ConnectionGUID: AOPPNC0MSKyF8Z12t5v7cQ==
+X-CSE-MsgGUID: 6K9b/vKfSRu9nTB6uAE1Fw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11405"; a="46612583"
 X-IronPort-AV: E=Sophos;i="6.15,219,1739865600"; 
-   d="scan'208";a="57477612"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2025 06:37:03 -0700
-X-CSE-ConnectionGUID: x3HdXonzSD6GKnSQB1/slw==
-X-CSE-MsgGUID: pEpsii+HTtSbi9Pb5NZRNQ==
+   d="scan'208";a="46612583"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2025 06:38:15 -0700
+X-CSE-ConnectionGUID: baR2Ov3SSwebyhDro9zGIQ==
+X-CSE-MsgGUID: Vq9A87d6S3ymHTZmjv16Xw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,219,1739865600"; 
-   d="scan'208";a="131346918"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by fmviesa010.fm.intel.com with SMTP; 17 Apr 2025 06:36:59 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 17 Apr 2025 16:36:58 +0300
-Date: Thu, 17 Apr 2025 16:36:58 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Pengyu Luo <mitltlatltl@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: typec: ucsi: huawei_gaokun: add error checking
-Message-ID: <aAED-hlyVvbSXoJn@kuha.fi.intel.com>
-References: <20250415172006.126740-1-mitltlatltl@gmail.com>
+   d="scan'208";a="131341801"
+Received: from tfalcon-desk.amr.corp.intel.com (HELO [10.124.223.103]) ([10.124.223.103])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2025 06:38:14 -0700
+Message-ID: <e408cae6-0c40-44e6-b66e-53dbd6a2d854@intel.com>
+Date: Thu, 17 Apr 2025 06:38:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250415172006.126740-1-mitltlatltl@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] x86: Disable image size check for test builds
+To: Guenter Roeck <linux@roeck-us.net>, x86@kernel.org
+Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+ Alexander Potapenko <glider@google.com>,
+ Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>,
+ Vincenzo Frascino <vincenzo.frascino@arm.com>,
+ Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com,
+ linux-kernel@vger.kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+References: <20250417123627.2223800-1-linux@roeck-us.net>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250417123627.2223800-1-linux@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 16, 2025 at 01:20:05AM +0800, Pengyu Luo wrote:
-> 'cci' may be uninitialized, adding error checking to fix it.
-> 
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/all/Z_44zoTyLLdXNkKT@stanley.mountain
-> Fixes: 00327d7f2c8c ("usb: typec: ucsi: add Huawei Matebook E Go ucsi driver")
-> Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
+On 4/17/25 05:36, Guenter Roeck wrote:
+> Solve the build problem by disabling the image size check for test
+> builds.
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+What _actually_ breaks when this assertion is in play? I assume upon
+decompression that the kernel image overflows into the fixmap area and
+then the fun begins.
 
-> ---
->  drivers/usb/typec/ucsi/ucsi_huawei_gaokun.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/typec/ucsi/ucsi_huawei_gaokun.c b/drivers/usb/typec/ucsi/ucsi_huawei_gaokun.c
-> index 344aa7aeaf..7b5222081b 100644
-> --- a/drivers/usb/typec/ucsi/ucsi_huawei_gaokun.c
-> +++ b/drivers/usb/typec/ucsi/ucsi_huawei_gaokun.c
-> @@ -359,6 +359,7 @@ static int gaokun_ucsi_notify(struct notifier_block *nb,
->  			      unsigned long action, void *data)
->  {
->  	u32 cci;
-> +	int ret;
->  	struct gaokun_ucsi *uec = container_of(nb, struct gaokun_ucsi, nb);
->  
->  	switch (action) {
-> @@ -368,7 +369,10 @@ static int gaokun_ucsi_notify(struct notifier_block *nb,
->  		return NOTIFY_OK;
->  
->  	case EC_EVENT_UCSI:
-> -		gaokun_ucsi_read_cci(uec->ucsi, &cci);
-> +		ret = gaokun_ucsi_read_cci(uec->ucsi, &cci);
-> +		if (ret)
-> +			return NOTIFY_DONE;
-> +
->  		ucsi_notify_common(uec->ucsi, cci);
->  		if (UCSI_CCI_CONNECTOR(cci))
->  			gaokun_ucsi_handle_no_usb_event(uec, UCSI_CCI_CONNECTOR(cci) - 1);
-> -- 
-> 2.49.0
+Does anything useful come out of the kernel or is it just a fabulous crash?
 
--- 
-heikki
+Because COMPILE_TEST sounds pretty benign:
+
+>           If you are a developer and want to build everything available, say Y
+>           here. If you are a user/distributor, say N here to exclude useless
+>           drivers to be distributed.
+
+at the *LEAST* if we are going to go down this road, can we make the
+help text more scary and tell users that they might end up with an
+unbootable kernel?
 
