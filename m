@@ -1,87 +1,86 @@
-Return-Path: <linux-kernel+bounces-608606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66FBCA915CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:55:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66704A915A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:47:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3F737AF93B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:53:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8341117F17F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:47:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B20932222B8;
-	Thu, 17 Apr 2025 07:54:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E04821CC55;
+	Thu, 17 Apr 2025 07:46:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EeBuegOp"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="liuwXAUu"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BDE1221F3C
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 07:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9D1221F34
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 07:46:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744876483; cv=none; b=j5kBKzZhI76Ow+k+oTHitpQZ5N8U45Y+BRyqhsRFEHGidlkE/Qc9V+nqwkGErV++URo6VoKZTTT7cJtp6DSawvK5DRCZDZNeS5PVWjixKWmz78o26+gdm3WbjhSzgPapmpGSMc0Im1emWWGb/ZRGnXTTdafSosGUOcBLGLpojX4=
+	t=1744876016; cv=none; b=mgtMpA/68C9/GvuroWPQ0N4QhaX4KgRWKIePFw2crO6gf5xLi9AHb452hHUeX6+ZJXhD52mR/sz3F/6whljzF/4fYbIgaOwmVQoboCR2/1fMDeQI/qVdem11cRpBJFfSE3hrJ8h8rN6BvA2CGGVWeENBnlvULFdcHOCghWR/piU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744876483; c=relaxed/simple;
-	bh=jgYEQR/CMvM1QLqc8LJB3Y0zD6umdnkq3sJIRc1ppUA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OErImdU3HQDrRRhUvtGhCW7458yeYNsEPvXKnO+XcNfYR6RqL6K6hSOpH62W4dRIHajKX0bIUjmO8H+q+2aq+Jwt/LhHCKhSbmLvzaMucJ11dAAvDRQWXn0VdqhjmPt0GfZx84quV2dK63crtrAoc2YBfHeaX4fOz5SnDXTUouQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EeBuegOp; arc=none smtp.client-ip=209.85.167.47
+	s=arc-20240116; t=1744876016; c=relaxed/simple;
+	bh=zotOVX0GKcJhB9q8CrlCdh+sHyQP9XdYbY/hluH4ZmM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R9xIHOsGiQL3TP4LvgSKkNr+q6SqCrI5UN8JM1+hf9B6FtK5scbVJLjw91NaNCishzg3NSVim6p0voBGizNyeKudC/FY2STc4nOUcgLk9eUCyTdX0IcQRudoxDudkDxMplMxdSrlocjWAIhSKhYcpdqZvCtYKma9uEpGDkeJSHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=liuwXAUu; arc=none smtp.client-ip=209.85.221.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-54989702b36so102941e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 00:54:40 -0700 (PDT)
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3913290f754so83923f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 00:46:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744876479; x=1745481279; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1744876013; x=1745480813; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZMSnHiDuLiHAtM0smyVAG+glICjNKIJrdV+6F8Gol3U=;
-        b=EeBuegOphzvoM44XQ6mhJBH8wZFd22dRpVBDIDuEcOGIO6fLfSOsTfnyzjtCkTFoW0
-         9AWLTw0jNR47XH//qPC5kCR1S073Iq/wZ5v3vc0PBtDakoeB+dprTFPk7VQU92AB4k/C
-         5KX2C3GFF0jIjPRfVoWoP9ToFdg7f3pDMgkqnspnsCWN1rV1cmZyNrbwdNcL1UaOjypp
-         +/yPv3GT2I8EWn7BydgRujVwu/hGxIdtrqpdrLkFmF5jcgAQvsPsbpCcsheq9Z/2BctP
-         u1XtgyFeEDlyG+sQ8Jn5o/aR0XfyBa8RtzYnpCJ9y8T0lvLAoXHVJBxKSf4zd5dTM0PH
-         ANiw==
+        bh=6mRl6BLXH5K84xhTJUJU2+Misv0b0a4XYQFm5AwA7mY=;
+        b=liuwXAUurUD2lTGbGqmvs4pyYh1kwb7dCRFxXLelH6TqkJ/hbde29ix//0m1YyQ0uC
+         rmTtfsVAMw3CUIPwu61oU+iTXpIHHnHlXYK/LaGWe0v/272P9oNH1qKJ1Xy2prfaj2pq
+         CF9qcDGx9XyMJSays/7Y25Tp+csAvLSwbCkMUNKdV0mix8Q3fqhJ2IQ3ro/0a4dB9Sri
+         ABst3LQkmIh/7WCiUMMW/L6Vri7yv4wkK/XEbhJAcm2v+Ov02YPHLxKmH5fvkQdoxnOI
+         ZLus9haAguM84dyh5Dt81o/6Iw/5txt3ToiE5ST6euSC9EzAQ0DeCf0LTJjZuWDKwfR6
+         IYxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744876479; x=1745481279;
+        d=1e100.net; s=20230601; t=1744876013; x=1745480813;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ZMSnHiDuLiHAtM0smyVAG+glICjNKIJrdV+6F8Gol3U=;
-        b=vBhf86C7TGXN9bneuAbGR2PQxUMl43Hfm32liUB2H77o/YaWEd/Z+Fj7Z4zeogyiy8
-         viaLc7fQ4D+/bZrjvEw/3fz+Xe2aTroKOibZ8AztQePCkeTb5k2u2InOuwI0umdl6IN6
-         MbO0isvkVttaaV22Apqi8sfzAyiRexNERpILD2QhKXH5wfCGGJOa2M/bWaeJ6PjenhP3
-         lDBaHR1t0J73QqUaQTwGSCc74ROk3PbJsvngIkQluNLN1AXb6eAn60GfQAV+y+TSQeNc
-         NaubmdcSiYymR/2sMzcNHsSKPDUu//Fh+Rmy0O8QA683tmpQb2Mq6+47N+PBUH86L4yy
-         ivuw==
-X-Forwarded-Encrypted: i=1; AJvYcCWItFe/uRR1kSixjOnU1+1F2J0Jb8U0fnDGbvr+2dQNPd9F9bZh0QfuA/tLObU0tIT+tcZqe8UM2ByIFtM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yym8JGjBM3oM+op3ak08r+JqAABhgZRTOYxI84QXLd7DEnxvpHv
-	aoG/PMamNQ6OZWQyeu0awuJ+pKgNqWQV5X8B8dgOQZzjoFaUKtxWal3TG2OhBpGKD1WCvv/TZeR
-	W
-X-Gm-Gg: ASbGncsYhYOShdihOYmEELD06V57byF73uDq+8Tn9e6SRH8QBmVMj+mFyDTM6FHjNV/
-	mp9MXUAxI4MTW05fuGT8GXAZ18byhqyRM1xeULdWw7IobtFalr4shYGl5veov6YSwThLn6VRWMl
-	rXItIPo4dKkXao7lXGcvdXF345fAUxf5eRA1NtMOUjW6aipbKalds1gCZEQ8SfjiUFXL454+wzP
-	zqYFGMDvLVRGE572WtKZHoOsngL70R30nMT7gGKTIKGtRwX9aR6rlPj5yBsaJWlaHBapPImwbZM
-	7j2Z0ph8wdSssTCUEelaX5T2WRjhY2zvCva5GYURMrnW6Mzej+3424tzV8jfKbc6jresJXSQ6MV
-	l/om6eQ==
-X-Google-Smtp-Source: AGHT+IHB4jQhQTTFHjUKBspn82NOI75eRRcHHbv5F89JQH4b2AzbEMH2AEUaXUx/aXMiln+9GOMQbw==
-X-Received: by 2002:a05:6000:1ac5:b0:391:319c:193f with SMTP id ffacd0b85a97d-39ee900296dmr630621f8f.13.1744876010118;
-        Thu, 17 Apr 2025 00:46:50 -0700 (PDT)
+        bh=6mRl6BLXH5K84xhTJUJU2+Misv0b0a4XYQFm5AwA7mY=;
+        b=JTCpsM1AmiLVPjM9weqAKyZaza+nFah4L9cC6wbc3QSDqX8QLLl0mdc9IQ4i5QZ10B
+         4Bbk4Rxq4OZBbNx1dtWEWhsuu6q9KKWiCvAYCOd1INaQ38XPChE5r1qxxjbxCOZCwDPn
+         R6C8FDtSkN2QhVuGmpQR7hN2QxeHICHButYEjMuyJeKrjs985y+nIg6uwlePOn6NazoR
+         lWFPSkR+3QoO6A5kWGZQvHRLl50CXjbTUjMZ+3UAh10kaeji15A1Kt4NUzhqho7OHEut
+         R++aRskcT6QOOSUVRac1TFA88BgdEvQnpLhrGDspe+pyq5RKTMwlHmPZsyKQdPYCtduF
+         Oz5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXes7wae9u1hzkCSyfg7cGhiyyTyHNjhMBdoQ85GITk24Fi79kva5OnQYy08W8W9V3JTbN/z+l40S7zWig=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtGIjvsZDgMDUn1nY8hDjUeGAGKQi+V2pfEHmHQ2fmjAQJWG23
+	rjKEYkO0gKubb+hTgh5Ov0jYX9mNk7JMaxSKQcVCkkmdhW+C72bzUBO/JZNOkzmetBfks7Y3TMW
+	+
+X-Gm-Gg: ASbGncui2Miq7aDJJXFZBHsb6cFMucm/pftXnSyvD142CaPxNXSMRSUPmAlaIt/e+38
+	6NYS6JEzPlWlyKwp8ojcLO8/xCXlG0wd4eHqKUOBBGDykeX+w0CggbvOPtCymeMKnIX89zFyC14
+	NglVM2Fa97npHrKyE16NYkl/ciBe4Zlbl30HmLTDYLGfD+3RA8ewQNf95eyMvPZLEqCfQf7wKHo
+	WoYqmu9poaC3uAlHupP1chMNBm91GdGZyB+uCvudP7NzZUKjlTTvfPg81Iprtb+ITEhshSgOinN
+	uQC2jl/W9SOk23hK5HXj5PEQDRnD4BwNgs+RLLiolUhcrxPOFEYMlFp/G1umXy1Lpz7Y3u5gXVJ
+	NiNSH2Q==
+X-Google-Smtp-Source: AGHT+IHLmIpfEcWfWbVkxDsxe2X44HIa3xR8bweYVogbYXiAiMnpleL2yNH6D8LfGendAwXp5oxeGQ==
+X-Received: by 2002:a05:600c:46cc:b0:439:a3df:66f3 with SMTP id 5b1f17b1804b1-44061eb67a3mr8079575e9.6.1744876012631;
+        Thu, 17 Apr 2025 00:46:52 -0700 (PDT)
 Received: from kuoka.. (46.150.74.144.lvv.nat.volia.net. [46.150.74.144])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eaf43cb29sm19265954f8f.76.2025.04.17.00.46.48
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4405b526ee9sm44037705e9.32.2025.04.17.00.46.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Apr 2025 00:46:49 -0700 (PDT)
+        Thu, 17 Apr 2025 00:46:52 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
-	Maximilian Luz <luzmaximilian@gmail.com>,
-	platform-driver-x86@vger.kernel.org,
+To: Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] platform: Do not enable by default during compile testing
-Date: Thu, 17 Apr 2025 09:46:47 +0200
-Message-ID: <20250417074648.81528-1-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] perf: Do not enable by default during compile testing
+Date: Thu, 17 Apr 2025 09:46:50 +0200
+Message-ID: <20250417074650.81561-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -101,50 +100,22 @@ Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 For longer rationale:
 https://lore.kernel.org/all/191543a8-2e2e-4ac4-9b2b-d253820a0c9f@app.fastmail.com/
 ---
- drivers/platform/arm64/Kconfig    | 2 +-
- drivers/platform/surface/Kconfig  | 2 +-
- drivers/platform/x86/dell/Kconfig | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/perf/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/platform/arm64/Kconfig b/drivers/platform/arm64/Kconfig
-index 0abe5377891b..06288aebc559 100644
---- a/drivers/platform/arm64/Kconfig
-+++ b/drivers/platform/arm64/Kconfig
-@@ -6,7 +6,7 @@
- menuconfig ARM64_PLATFORM_DEVICES
- 	bool "ARM64 Platform-Specific Device Drivers"
- 	depends on ARM64 || COMPILE_TEST
--	default y
-+	default ARM64
- 	help
- 	  Say Y here to get to see options for platform-specific device drivers
- 	  for arm64 based devices, primarily EC-like device drivers.
-diff --git a/drivers/platform/surface/Kconfig b/drivers/platform/surface/Kconfig
-index b629e82af97c..f775c6ca1ec1 100644
---- a/drivers/platform/surface/Kconfig
-+++ b/drivers/platform/surface/Kconfig
-@@ -6,7 +6,7 @@
- menuconfig SURFACE_PLATFORMS
- 	bool "Microsoft Surface Platform-Specific Device Drivers"
- 	depends on ARM64 || X86 || COMPILE_TEST
--	default y
-+	default y if ARM64 || X86
- 	help
- 	  Say Y here to get to see options for platform-specific device drivers
- 	  for Microsoft Surface devices. This option alone does not add any
-diff --git a/drivers/platform/x86/dell/Kconfig b/drivers/platform/x86/dell/Kconfig
-index f8a0dffcaab7..641276753bfa 100644
---- a/drivers/platform/x86/dell/Kconfig
-+++ b/drivers/platform/x86/dell/Kconfig
-@@ -171,7 +171,7 @@ config DELL_SMBIOS_SMM
- 
- config DELL_SMO8800
- 	tristate "Dell Latitude freefall driver (ACPI SMO88XX)"
+diff --git a/drivers/perf/Kconfig b/drivers/perf/Kconfig
+index 4e268de351c4..278c929dc87a 100644
+--- a/drivers/perf/Kconfig
++++ b/drivers/perf/Kconfig
+@@ -202,7 +202,7 @@ config THUNDERX2_PMU
+ 	tristate "Cavium ThunderX2 SoC PMU UNCORE"
+ 	depends on ARCH_THUNDER2 || COMPILE_TEST
+ 	depends on NUMA && ACPI
 -	default m
-+	default m if ACPI
- 	depends on I2C
- 	depends on ACPI || COMPILE_TEST
++	default m if ARCH_THUNDER2
  	help
+ 	   Provides support for ThunderX2 UNCORE events.
+ 	   The SoC has PMU support in its L3 cache controller (L3C) and
 -- 
 2.45.2
 
