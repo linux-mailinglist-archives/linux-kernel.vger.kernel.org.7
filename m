@@ -1,93 +1,145 @@
-Return-Path: <linux-kernel+bounces-608324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22A0DA911BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 04:45:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95E79A911C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 04:50:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C610446A6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 02:45:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2666F1905534
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 02:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 604831AA1D5;
-	Thu, 17 Apr 2025 02:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9AF01C3F30;
+	Thu, 17 Apr 2025 02:50:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VNw4K9qu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="APOFH1mX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC8B6A927;
-	Thu, 17 Apr 2025 02:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7816A8248C
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 02:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744857932; cv=none; b=nEb287QnJBlJ9+NzBUURamtEy20qgwz/LdfBNH6Kc2MqXdHv4qxHzfw/j9qJGR11fPSvRxArtaJFHyqcYs3WTrUmiV2CI7NEVr7Q9UATi2X/Xdbjm+6GZ7oyIF/jksfTjxIk+WbQOCDtUi0m7rUnwRNm0A5sHc3GXTp1EMzoqIc=
+	t=1744858235; cv=none; b=gToa++xu+jHUyuTAzzXnnP70G7mRC9rLzmKpPJyOCgN9W6WEel5ASYbqSZO6qa+YdZ0O/NBqwOrp2Urt/jl9xoqokI7v9uUuEFI387K/ark7vqJOduAlrHrDxHJWbpQ3qKb/ruYhqCCz3HBk812idOB6Tk6N3xh0Pk2qulfld30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744857932; c=relaxed/simple;
-	bh=LO1sxmeX8+aRntyiPEodIDK3ro74wS/bcDYyEkeA/HU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FCLaVVsHmo9PZ/7BpHhOu7efpuDocWWvZHjbpMp003SpbzXhKV8k9gvN0Sd8tFkLYP7pUuT68qo+t75hAn8ru9T20D4X4I7spA2qXCUA+AJOgrQfzNL5fFAdQKIIjwwcI8WxTNj1rXFlx7meOejo57ksWzCrb40mF4zWbQw/wXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VNw4K9qu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD735C4CEE2;
-	Thu, 17 Apr 2025 02:45:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744857932;
-	bh=LO1sxmeX8+aRntyiPEodIDK3ro74wS/bcDYyEkeA/HU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VNw4K9qu7feF3DKI7InZwYS6glPX4TM+DeLFUseC2+KeA24xbxVj1BzBFKizm9EhY
-	 ZaJt9VOUBbdhQzS+wK79/o3FskE3PaOSqTch+qGYNtoH89iqBW7OYt/er4p2ohendm
-	 09CUzLYB/FXyHL1h5ITTI/2+mcQOQctXwrCieoZuSXRBit/PZxA5CKM7Pe0CmLUs5t
-	 S21FsU23OdP7Vv57j/KefoiGKcfnSlfcI+oxo/GcnKkBxtlJT6AEwontq37TNmSNEE
-	 rveAc92/FDDnfKB/dEreV+J2iAe20X6vpmnAbCRbg9WScFVIr7PIp1MlIPlx5KrjyE
-	 TScN5KS8ETWBg==
-Date: Wed, 16 Apr 2025 23:45:29 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: jiang.peng9@zte.com.cn
-Cc: venkat88@linux.ibm.com, atrajeev@linux.ibm.com, namhyung@kernel.org,
-	linux-perf-users@vger.kernel.org, maddy@linux.ibm.com,
-	mingo@kernel.org, linux-kernel@vger.kernel.org,
-	shao.mingyin@zte.com.cn, tglx@linutronix.de
-Subject: Re: [mainline]tools/perf build warnings
-Message-ID: <aABrSclgXsyzGo_g@x1>
-References: <40981d32-72f4-4935-a62c-444ad78ce336@linux.ibm.com>
- <20250417100118733FrbRcKrZFI5AZsN2G6nyr@zte.com.cn>
+	s=arc-20240116; t=1744858235; c=relaxed/simple;
+	bh=eUYT3dpebgx2Vo1FupbAiZMiDngB2nyBleDr/EMzWtY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aJrCKF1JmQfYFdeqVZNFAqq/UsqL6KAYOgzkZnx5Bix+RUrtoz3MgBGKNGQR2Ngc3A+MFcUkRGqpOYcUuln+uiOrofJTOIIxqKYIde5RLdA0HF8xU5u6HSi1oeJ5/68jL4MxTqWn7RLfsHLsmeoZER4LkGIMkjfJqr4jQVhEXYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=APOFH1mX; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744858234; x=1776394234;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=eUYT3dpebgx2Vo1FupbAiZMiDngB2nyBleDr/EMzWtY=;
+  b=APOFH1mXleCNn7SlbN19fPEEieq4U6B4l2YU/2AZNtxdUueYjTLrd+ZF
+   +H5I36y+TjpNVvX0/OQ/1b3o90PrGhwvKmBX4FDgO6xhZ48PTO2bh0zh5
+   081NmtS7CtOK2BOSs8TtymzptEVxgND1VbGN0+pN5DWbJCjihTvsVjduv
+   sZhGMjrn3rtMHPhEVHI0waHsNYwoZc0UbBH2AJWv7MN7yEGoaXHg02Hdl
+   dnJ5+NbL8zyXRYPlEyycnOLhh7Z/Rvc0PCH5KgA3O3sI1mTgtS4fJC5bc
+   Y79EaP/DaXXVd4MbxdqKSRxIzT66yCiU0XApD+7r2UthMc28s1RGCKXIk
+   g==;
+X-CSE-ConnectionGUID: 7B/tHwR+TvKvApBW5gpAng==
+X-CSE-MsgGUID: ToCOKMuQTpmru6JsGksjDw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11405"; a="63966262"
+X-IronPort-AV: E=Sophos;i="6.15,217,1739865600"; 
+   d="scan'208";a="63966262"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 19:50:34 -0700
+X-CSE-ConnectionGUID: O4OaXdwwQCyMWGJ/4a5kOg==
+X-CSE-MsgGUID: gHkg0ZW/R5WheBCX3AGC6g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,217,1739865600"; 
+   d="scan'208";a="130634454"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 19:50:32 -0700
+Message-ID: <ee1d26c2-4e14-42f2-8dc0-d57a49490c9e@linux.intel.com>
+Date: Thu, 17 Apr 2025 10:46:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250417100118733FrbRcKrZFI5AZsN2G6nyr@zte.com.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] iommu/vt-d: Revert ATS timing change to fix boot
+ failure
+To: "Tian, Kevin" <kevin.tian@intel.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Cc: "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250416073608.1799578-1-baolu.lu@linux.intel.com>
+ <BN9PR11MB5276F6889D36DD7238E3BBB28CBC2@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <BN9PR11MB5276F6889D36DD7238E3BBB28CBC2@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Apr 17, 2025 at 10:01:18AM +0800, jiang.peng9@zte.com.cn wrote:
-> > I verified with perf-tools-next repo on both branches namely
-> > tmp.perf-tools-next and perf-tools-next, and I think this warning got
-> > recently introduced.
+On 4/17/25 10:23, Tian, Kevin wrote:
+>> From: Lu Baolu <baolu.lu@linux.intel.com>
+>> Sent: Wednesday, April 16, 2025 3:36 PM
+>>
+>> Commit <5518f239aff1> ("iommu/vt-d: Move scalable mode ATS enablement
+>> to
+>> probe path") changed the PCI ATS enablement logic to run earlier,
+>> specifically before the default domain attachment.
+>>
+>> On some client platforms, this change resulted in boot failures, causing
+>> the kernel to panic with the following message and call trace:
+>>
+>>   Kernel panic - not syncing: DMAR hardware is malfunctioning
+>>   CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.14.0-rc3+ #175
+>>   Call Trace:
+>>    <TASK>
+>>    dump_stack_lvl+0x6f/0xb0
+>>    dump_stack+0x10/0x16
+>>    panic+0x10a/0x2b7
+>>    iommu_enable_translation.cold+0xc/0xc
+>>    intel_iommu_init+0xe39/0xec0
+>>    ? trace_hardirqs_on+0x1e/0xd0
+>>    ? __pfx_pci_iommu_init+0x10/0x10
+>>    pci_iommu_init+0xd/0x40
+>>    do_one_initcall+0x5b/0x390
+>>    kernel_init_freeable+0x26d/0x2b0
+>>    ? __pfx_kernel_init+0x10/0x10
+>>    kernel_init+0x15/0x120
+>>    ret_from_fork+0x35/0x60
+>>    ? __pfx_kernel_init+0x10/0x10
+>>    ret_from_fork_asm+0x1a/0x30
+>>   RIP: 1f0f:0x0
+>>   Code: Unable to access opcode bytes at 0xffffffffffffffd6.
+>>   RSP: 0000:0000000000000000 EFLAGS: 841f0f2e66 ORIG_RAX:
+>>        1f0f2e6600000000
+>>   RAX: 0000000000000000 RBX: 1f0f2e6600000000 RCX:
+>>        2e66000000000084
+>>   RDX: 0000000000841f0f RSI: 000000841f0f2e66 RDI:
+>>        00841f0f2e660000
+>>   RBP: 00841f0f2e660000 R08: 00841f0f2e660000 R09:
+>>        000000841f0f2e66
+>>   R10: 0000000000841f0f R11: 2e66000000000084 R12:
+>>        000000841f0f2e66
+>>   R13: 0000000000841f0f R14: 2e66000000000084 R15:
+>>        1f0f2e6600000000
+>>    </TASK>
+>>   ---[ end Kernel panic - not syncing: DMAR hardware is malfunctioning ]---
+>>
+>> Fix this by reverting the timing change for ATS enablement introduced by
+>> the offending commit and restoring the previous behavior.
+>>
+> 
+> it's unclear how this timing is related to the dumped stack. Is there
+> more detail how they are related?
+> 
 
-> > Git Bisect is pointing to acea9943271b62905033f2f8ca571cdd52d6ea7b as
-> > first bad commit.
- 
-> Hi everyone,
- 
-> I apologize for the oversight. My commit
-> (acea9943271b62905033f2f8ca571cdd52d6ea7b) updated
-> include/vdso/unaligned.h but I forgot to sync it with
-> tools/include/vdso/unaligned.h. I'll be more careful in the future to
-> avoid such mistakes.
+I'm not sure, but I'm trying to find a machine and get more information.
+Anyway, let's revert the change and remove the boot regression first.
 
-Hey, please take a look at:
-
-tools/include/uapi/README
-
-More importantly this paragraph:
-
-"So its important not to touch the copies in tools/ when doing changes in
-the original kernel headers, that will be done later, when
-check-headers.sh inform about the change to the perf tools hackers."
-
-Cheers,
-
-- Arnaldo
+Thanks,
+baolu
 
