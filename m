@@ -1,212 +1,224 @@
-Return-Path: <linux-kernel+bounces-609723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08BFEA92956
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 20:41:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 126B2A92998
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 20:43:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DFF34A5154
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 18:40:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F2894A43B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 18:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5449C259CA7;
-	Thu, 17 Apr 2025 18:38:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2C825742E;
+	Thu, 17 Apr 2025 18:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xdTAhRvu"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M2FZoojk"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0219E2594BD
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 18:38:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2EE2566CF;
+	Thu, 17 Apr 2025 18:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744915105; cv=none; b=JJW86dPkvtts6qyZI0Tr6FowtB34bfFR7HSNpwrWZRWtHmkRR1TaqMwYAoSvPLS9wzwl4pEWFFWYPuECVfmF/zBKP14rLW9fwQ9HKglIV9fNhB5T7eNdffr5atlfGvSDcUCcucPPMETvXXzsTzRWNrcBtl3uFUJwrb+lzNPvPeM=
+	t=1744915240; cv=none; b=AYjhMoD4WqZhRV35ngAbAGRziAxPbljSDRjCPPit+SO+yp6rKTOycjCGr1H6Hcb4b/5GYOh5mVlTjxsMc1LgR4tMZILgGMyRfwQmdc+3Ka9pQEwUF+g7RjU9/5Vuu9qjF1M/MZvOrhrC1zkb47dCz3RS87Ya2bMjCT3IgOwIFwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744915105; c=relaxed/simple;
-	bh=3P/lKRUjkBu/fy5Z7T2mEOXxxqgm4H6nkQ5J//FtU0w=;
+	s=arc-20240116; t=1744915240; c=relaxed/simple;
+	bh=phQHYai+8w3V/h695X+78EB/wpe3P53UQdp1xEFlryc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h/tRSZPy/vQGDNBgOCFAHUGclNyQ+rFNFdJ1B5AUIKlSi0jdU5vf5hb3gDJYjcxLIGb69roPl8CQ6LU/TXkOO+DY40B+CBVxYmUgYBt4tYSbwdCoadWe1Y3KSiQBwyOrA4U8CyL7zTT28d1PjyVpkA1UhTeOwt2skWx87eTtT+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xdTAhRvu; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-47666573242so64821cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 11:38:23 -0700 (PDT)
+	 To:Cc:Content-Type; b=pltbtLpP8VNNTqvzIAzbNmaFGyAkIVuyVE8x+XuGMnrlrfRdMKIOc7P+ZXluRCxZXOnMhxDyqcfunLV1IERJvroeTf/J+OSFlTsWV8/Fmu517hZ9DHTo9EHyAKMSr0PvjwMhT2IgLkp/fvEFP814JuDkg4tTdXPFqv6haHHT9sI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M2FZoojk; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-301a6347494so192738a91.3;
+        Thu, 17 Apr 2025 11:40:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744915103; x=1745519903; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Bza0S7y0BSrOZcrZPdnoUbcyu9+YRt1jcvBqpA00DmQ=;
-        b=xdTAhRvuFB1x9ep7dOcWDUCLsheoreFNmC5nHH4LYZo50wOZjn5S++/2pjJBQD4yY4
-         lvAsdxRjjWVAyDFGBVrwQIazk574lvjpBzb1r+pi89mgSpUwL5fknM3swgC82VbWnfEv
-         6rV9fzl5dQHO84DSFHs2xxpNxAPhPtHFuo/mklRovTWmhOo8tNOeB/cEf6bhu1yspJrB
-         mjwlWH275PF18vEfB3ECPaGayZO0vviHXCEEh+nLLsakDFfsXi2EMSClu3i8frS0MBcd
-         Ixyr8NyzN0BdCchShp33hsBuXe4zQswJZZs9/8BFnL8rYu2fIQV13+cFU4Qn3+Wf+bCM
-         ABvA==
+        d=gmail.com; s=20230601; t=1744915237; x=1745520037; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=AJXFv/uh2CkmNYOfLVF+jSs12YduHnlm2R0/XL3XVAc=;
+        b=M2FZoojkhpJfJBpKG3DQN3jSgJuh5I7E69rMBo0LPLiO7tqLBGHCwmCibK/sEPe/At
+         SnXUO7endYeG01r7s0IkyVNchQsPHT7rParvPY3DBTzwLKR1bJa9Ub8VagiuCYA6ZQdD
+         nbWcGIBCptFYgh49JEGy87XUdpNoc7LupWCqWPBLbkfmDwLe6hWv5/P8wORm4wtVrdr0
+         oyeoU4JK5nrG55c3couFfP1j2BT2LwM9jH7FTCvCdLJObwQXu9xpA1I3PmaBHunKxD4m
+         eVatYC7BHUj1sy6ryqtLaBsv4v6Ct/ZTSyzeIPxs5M+PfSrR6YIpsPnonVnldLOWjQ6R
+         vl7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744915103; x=1745519903;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Bza0S7y0BSrOZcrZPdnoUbcyu9+YRt1jcvBqpA00DmQ=;
-        b=WkvMytJc4TvMhvkpbGa+Oe6e7fcjU00b7JjTmoozINuAMkO8czmuoMenid/xBhqMF9
-         rCusNMmWGd1ihys5ANLmLKs6XmkgyRzk0SMoRegqYa92dUI5bRQIcKyI5ceHC2CaC5za
-         4x1zpTg/3UUI2ELRKOSFTglg5Ek1/xZ6t4iH75+KBP/ZKvBgf43JamDORTVhMmGKZTyK
-         Qf0FvTblf0LQ224YU3BdFexbmnUN8M705yLfxGkYbD5ICyyi0merquTu1PYvvBjMtVLb
-         c/21Ek7TAclKJPKNI7W4EGE9EWz7Jr5UJF2Qm3iaCojZxjS1U75Tyz6a9oGa5Oqd2WOe
-         2yAw==
-X-Forwarded-Encrypted: i=1; AJvYcCWeXGVnqHmrI7Ju6Ic/5HHe0QhBoB8wMllpqzkt/xIGt5/auBYDmHf6Wn0AuuewTw3+/iqDigzx7NAdloM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpVkM2LGY4is3G1cK/2S7ynYpQ3AsIvA6QeriF0z1LkAjpwaAS
-	2PWmuZuju6aWev0G3utt65e2nFB5WsMqNRCufXIcpYNKrCgGzetvQtm10Rb9pWmQBx7+lbXyM3N
-	eM++W9uHYcXNz/m30BbIyPdDAOK5qRFGz/F8+
-X-Gm-Gg: ASbGncs5B+5mHBJ+Diow7lalTTgGeS6x2osVXWttUE4oq+DEwX4/NEpCBxt57fqrUmF
-	4C1qtjnZIEoLgXZL6YwX/kDSXafvY/Vyp5WC/b2HG89BP21+IG3+uOfwhJRUElqw/7HY01Q3gHa
-	NtUv/uiK/It+U543GzDI1ZeKIbeYaq69hwxQToHS5pytr5m6rW6jcy
-X-Google-Smtp-Source: AGHT+IHPnBHaTnH4LH3+4icCSqdkLnMYV5wERvYGA8h5jD/C6G9mBEm5V+Q6IeuGnI7YYsrtpxa55AmNXnsj9m62eso=
-X-Received: by 2002:a05:622a:1486:b0:467:8416:d99e with SMTP id
- d75a77b69052e-47aeb502cb2mr304241cf.21.1744915102519; Thu, 17 Apr 2025
- 11:38:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744915237; x=1745520037;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AJXFv/uh2CkmNYOfLVF+jSs12YduHnlm2R0/XL3XVAc=;
+        b=VGiOuTMiLtvLH1WGCw9GtX5uVEJfIXiyQR4FrHJOOaXs98OUJ/WvpHFJInvXpLwTTT
+         /On1vb5/dDubED7Z8pWbIL/vnR7PDegrTH6lM+77VftIdK7Vrxf+SxfUBzxgNcXPlRBu
+         vrRWWdg1i9ehqNrbAc0+HCJrwtxUw8kXWUWVZR6ARofk+O96q5E5Z9xRxQtex0Gx73M8
+         NYy0UIXfJECfAfFgJ6CrXYTZU/72Y3Qpsf8t5tTW4oqBzIAZ5/HOaIIzR7ZU3sYIhhlo
+         8Wff6zvPFT9ardINrNX4oU/guhawlOALirqyH/osKKUwRrG5sw+Xvz6C2eEx2EeJnkf8
+         dcDw==
+X-Forwarded-Encrypted: i=1; AJvYcCVSPmQOVlnXM7hA4Vkc7ssc+CI2CZJoqXj8bLIoBk3bvrIhduBaxNo3OFx/CJxOix3rU7j6k5MQEJ2VlXpDg0o=@vger.kernel.org, AJvYcCX3JFNmbM+dGJUj4t2YrdnpdgUzv4yM0PZkIuixVGtpABKVR/qdtkkF+nVy9oJHIeBTHXQo1dN42Ovdww8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLX/UhfhDBbOEcOhXj7Lk4gU+4uePsqXojCchJQZ1L4z4UtI8B
+	eCDz/rNHrN8ebgFjWKHiUdghoPEQhneKxvr2+sQDzFFD4yuCGGHnmkSsyxGblXJR1oDX9QKHLkY
+	fNdduxnOxQc4g7/cWDNgjEAGiTNk=
+X-Gm-Gg: ASbGncuW7Irl2SnTmUUWHP7K87ejQMhzTlSqKsnDhMGCGZfhHlqF+rcklp9oXfJpteA
+	bl1xB54PekUKTmKC3MMQ2/wlR0oyJNgkhRBiOyetTupeCmJPVTAA6qJlZmmLIz5NpWsRkGbgsCX
+	ikasoCWAziibK8fqxik1FT6w==
+X-Google-Smtp-Source: AGHT+IH8aEonqKPoSyA9bIyV8LFkUk4EhzfTy08nmIpoOn6HXaWivtFYQGpywzxjlcRLvwBouWFibvp1JymiFrFtnJY=
+X-Received: by 2002:a17:90b:38cc:b0:2fe:91d0:f781 with SMTP id
+ 98e67ed59e1d1-3087bb3f2c3mr34484a91.2.1744915237717; Thu, 17 Apr 2025
+ 11:40:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250416180653.3438158-1-usamaarif642@gmail.com>
- <CAJuCfpEKrX+1_SJ5fOyT6JLDSNcDxjcfBMj9_siVZt-rX5WQ=w@mail.gmail.com>
- <72pac6pkjebt6xo7engiuuu7r3zr7fu6fh6bj77f22m7gslxgr@3gjawofplas2>
- <CAJuCfpHcUfXb8RaGCExLc5U2HK3xcA0CjY1diM=S6DDqNFFykg@mail.gmail.com>
- <ogiahgnqihzg6nfew6oifgzjvetiwo25utp6jwskrhw4axdevp@rwqbgeraivym>
- <CAJuCfpE3JgJVB3+-ZZPU3kFDjPSJyo4WFtwmtMUnXJ6q0E09dA@mail.gmail.com>
- <25ac1d9c-c7e4-4dcf-b297-254fa51c6f2a@gmail.com> <33632210-6de3-445b-8f9c-d0fbcf3deab2@gmail.com>
-In-Reply-To: <33632210-6de3-445b-8f9c-d0fbcf3deab2@gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 17 Apr 2025 11:38:11 -0700
-X-Gm-Features: ATxdqUFS3lRu_At297sjMidDhBkDhQYSgQMk39ymxl8qM8ITyYvaVFMBMGhJouA
-Message-ID: <CAJuCfpHyWqgq112rkuaV8Rpmi1yFdoYycbj5ZGL97+ROD6K4Gw@mail.gmail.com>
-Subject: Re: [PATCH] alloc_tag: introduce Kconfig option for default
- compressed profiling
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-mm@kvack.org, hannes@cmpxchg.org, linux-kernel@vger.kernel.org, 
-	kernel-team@meta.com
+References: <20250410124526.GB9833@noisy.programming.kicks-ass.net>
+ <20250410130944.GA9003@noisy.programming.kicks-ass.net> <CANiq72=k+tZ3ACEB5k9qwJ8ZYu-dXkA3=Lisg1b8ze-2D0STog@mail.gmail.com>
+ <20250410132649.GE9833@noisy.programming.kicks-ass.net> <CANiq72=Q_Z8KfV+n4z9wWVJsZwVevag=Vh3URe71XkUuWuqEDg@mail.gmail.com>
+ <20250410133446.GF9833@noisy.programming.kicks-ass.net> <CAH5fLghrcqSYwkqbC4SSp6oYCny0riMRGA6W+oqQ69aA=NwYWw@mail.gmail.com>
+ <CANiq72k0AM3v9JZe=8mDN6T1ToiAt1-1e1zJ3z0Oh6ZWfchzag@mail.gmail.com>
+ <20250416202040.GD38216@noisy.programming.kicks-ass.net> <202504161442.66CE2596@keescook>
+ <20250417081818.GJ38216@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250417081818.GJ38216@noisy.programming.kicks-ass.net>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 17 Apr 2025 20:40:24 +0200
+X-Gm-Features: ATxdqUFjllzBrLR26e1HbjrffvuB-1hcrLPaeoQhX8sCVVDtZwVcoE8SgPj4-eM
+Message-ID: <CANiq72kjDM0cKALVy4POEzhfdT4nO7tqz0Pm7xM+3=_0+L1t=A@mail.gmail.com>
+Subject: Re: [PATCH] x86/Kconfig: make CFI_AUTO_DEFAULT depend on !RUST
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Kees Cook <kees@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	=?UTF-8?Q?Pawe=C5=82_Anikiel?= <panikiel@google.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Ingo Molnar <mingo@redhat.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Nathan Chancellor <nathan@kernel.org>, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	Matthew Maurer <mmaurer@google.com>, Ramon de C Valle <rcvalle@google.com>
+Content-Type: multipart/mixed; boundary="000000000000e86c9a0632fdbc8b"
+
+--000000000000e86c9a0632fdbc8b
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 17, 2025 at 11:35=E2=80=AFAM Usama Arif <usamaarif642@gmail.com=
-> wrote:
+On Thu, Apr 17, 2025 at 10:18=E2=80=AFAM Peter Zijlstra <peterz@infradead.o=
+rg> wrote:
 >
+> Urgh, yeah, reading hard :-/
 >
->
-> On 17/04/2025 18:50, Usama Arif wrote:
-> >
-> >
-> > On 17/04/2025 17:00, Suren Baghdasaryan wrote:
-> >> On Thu, Apr 17, 2025 at 8:47=E2=80=AFAM Shakeel Butt <shakeel.butt@lin=
-ux.dev> wrote:
-> >>>
-> >>> On Wed, Apr 16, 2025 at 05:11:11PM -0700, Suren Baghdasaryan wrote:
-> >>>> On Wed, Apr 16, 2025 at 2:41=E2=80=AFPM Shakeel Butt <shakeel.butt@l=
-inux.dev> wrote:
-> >>>>>
-> >>>>> On Wed, Apr 16, 2025 at 02:08:31PM -0700, Suren Baghdasaryan wrote:
-> >>>>>> On Wed, Apr 16, 2025 at 11:06=E2=80=AFAM Usama Arif <usamaarif642@=
-gmail.com> wrote:
-> >>>>>>>
-> >>>>>>> With this Kconfig option enabled, the kernel stores allocation ta=
-g references
-> >>>>>>> in the page flags by default.
-> >>>>>>>
-> >>>>>>> There are 2 reasons to introduce this:
-> >>>>>>> - As mentioned in [1], compressed tags dont have system memory ov=
-erhead
-> >>>>>>> and much lower performance overhead. It would be preferrable to h=
-ave this as
-> >>>>>>> the default option, and to be able to switch it at compile time. =
-Another
-> >>>>>>> option is to just declare the static key as true by default?
-> >>>>>>> - As compressed option is the best one, it doesn't make sense to =
-have to
-> >>>>>>> change both defconfig and command line options to enable memory
-> >>>>>>> allocation profiling. Changing commandline across a large number =
-of services
-> >>>>>>> can result in signifcant work, which shouldn't be needed if the k=
-ernel
-> >>>>>>> defconfig needs to be changed anyways.
-> >>>>>>
-> >>>>>> The reason tag compression is not the default option is because it
-> >>>>>> works only if there are enough free bits in the page flags to stor=
-e a
-> >>>>>> tag index. If you configure it to use page flags and your build do=
-es
-> >>>>>> not have enough free bits, the profiling will be disabled (see
-> >>>>>> alloc_tag_sec_init()).
-> >>>>>
-> >>>>> Is it possible to fail the build in that case i.e. check the page f=
-lags
-> >>>>> availability at build time?
-> >>>>
-> >>>> The difficulty is finding out the number of allocation tags in the
-> >>>> kernel before it gets built. Maybe there is a way to add an addition=
-al
-> >>>> post-build stage to run that check.
-> >>>
-> >>> Yeah that would be good to have.
-> >>>
-> >>>> But even then making this option
-> >>>> default and causing build failures does not seem like a good idea to
-> >>>> me but maybe I'm being too cautious?
-> >>>
-> >>> Oh my question was orthogonal to the patch. Basically some users may
-> >>> want build time guarantee for this and they can enable such
-> >>> build-failing opt-in config/check.
-> >>
-> >> Yes, that would require the post-build step to check the number of
-> >> tags vs the number of available page flag bits. I'll add it to my TODO
-> >> list but it won't be at the top, sorry :) Volunteers to help with that
-> >> would be highly appreciated.
-> >
-> > Hi Suren,
-> >
-> > A question orthogonal to the patch, the defconfig entry is defined as b=
-elow:
-> >
-> > config MEM_ALLOC_PROFILING
-> >       bool "Enable memory allocation profiling"
-> >       default n
-> >       depends on MMU
-> >       depends on PROC_FS
-> >       depends on !DEBUG_FORCE_WEAK_PER_CPU
-> >       select CODE_TAGGING
-> >       select PAGE_EXTENSION
-> >       select SLAB_OBJ_EXT
-> >
-> > i.e. we select PAGE_EXTENSION even if we use compressed profiling and u=
-se page flags
-> > instead of page extension. Which means the 0.2% (8 bytes per struct pag=
-e) memory overhead
-> > will still exist even when we dont need it?
-> >
-> > Should we have some defconfig option (happy with any other way) that on=
-ly allows compressed
-> > profiling (otherwise nothing), so that we don't have the dependency on =
-page extension
-> > and thus not have the overhead if we only plan to use compressed profil=
-ing?
-> >
-> > Thanks
->
->
-> Johannes pointed out the .need function of page_alloc_tagging_ops, i.e. n=
-eed_page_alloc_tagging,
-> so page extensions wouldn't be enabled and hopefully there is no memory o=
-verhead when
-> mem_profiling_compressed is true. Let me know if my understanding is wron=
-g.
-> And sorry for the noise!
+> OK, Ack
 
-Sorry for the delay. Meetings...
-Yep, Johannes is right, need_page_alloc_tagging() should disable that overh=
-ead.
+Thanks Peter (and Kees for clarifying) -- not sure how you/others
+prefer to route this patch or if you expect a v2, but I got the
+following (attached). I converted your Ack.
+
+Cheers,
+Miguel
+
+--000000000000e86c9a0632fdbc8b
+Content-Type: text/x-patch; charset="UTF-8"; 
+	name="0001-x86-Kconfig-make-CFI_AUTO_DEFAULT-depend-on-RUST-or-.patch"
+Content-Disposition: attachment; 
+	filename="0001-x86-Kconfig-make-CFI_AUTO_DEFAULT-depend-on-RUST-or-.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_m9lpbbt90>
+X-Attachment-Id: f_m9lpbbt90
+
+RnJvbSAyYzY2MzZjODJmOGM2YzE4ZTE4YzA4NWZlNjlkMGNkM2RiZTNiOTkxIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiA9P1VURi04P3E/UGF3ZT1DNT04Mj0yMEFuaWtpZWw/PSA8cGFu
+aWtpZWxAZ29vZ2xlLmNvbT4KRGF0ZTogVGh1LCAxMCBBcHIgMjAyNSAxMTo1NDoyMCArMDAwMApT
+dWJqZWN0OiBbUEFUQ0hdIHg4Ni9LY29uZmlnOiBtYWtlIENGSV9BVVRPX0RFRkFVTFQgZGVwZW5k
+IG9uICFSVVNUIG9yIFJ1c3QgPj0KIDEuODgKTUlNRS1WZXJzaW9uOiAxLjAKQ29udGVudC1UeXBl
+OiB0ZXh0L3BsYWluOyBjaGFyc2V0PVVURi04CkNvbnRlbnQtVHJhbnNmZXItRW5jb2Rpbmc6IDhi
+aXQKCkNhbGxpbmcgY29yZTo6Zm10Ojp3cml0ZSgpIGZyb20gcnVzdCBjb2RlIHdoaWxlIEZpbmVJ
+QlQgaXMgZW5hYmxlZApyZXN1bHRzIGluIGEga2VybmVsIHBhbmljOgoKWyA0NjE0LjE5OTc3OV0g
+a2VybmVsIEJVRyBhdCBhcmNoL3g4Ni9rZXJuZWwvY2V0LmM6MTMyIQpbIDQ2MTQuMjA1MzQzXSBP
+b3BzOiBpbnZhbGlkIG9wY29kZTogMDAwMCBbIzFdIFBSRUVNUFQgU01QIE5PUFRJClsgNDYxNC4y
+MTE3ODFdIENQVTogMiBVSUQ6IDAgUElEOiA2MDU3IENvbW06IGRtYWJ1Zl9kdW1wIFRhaW50ZWQ6
+IEcgICAgIFUgICAgIE8gICAgICAgNi4xMi4xNy1hbmRyb2lkMTYtMC1nNmFiMzhjNTM0YTQzICMx
+IDlkYTA0MGYyNzY3M2VjMzk0NWUyM2I5OThhMGY4YmQ2NGM4NDY1OTkKWyA0NjE0LjIyNzgzMl0g
+VGFpbnRlZDogW1VdPVVTRVIsIFtPXT1PT1RfTU9EVUxFClsgNDYxNC4yNDEyNDddIFJJUDogMDAx
+MDpkb19rZXJuZWxfY3BfZmF1bHQrMHhlYS8weGYwClsgNDYxNC4yNDY2MjFdIENvZGU6IGM2IDE1
+IDhkIGFkIGFjIDQ4IDBmIDQ0IGYxIDQ4IDhkIDA0IDgwIDQ4IDhkIDE0IDQ1IGQwIDM3IDQyIGFj
+IDQ4IGM3IGM3IDIyIDk5IGJiIGFjIGU4IDlmIDdhIDA1IDAwIDBmIDBiIGViIDlhIDY3IDBmIGI5
+IDQwIDEyIDwwZj4gMGIgY2MgY2MgY2MgY2MgNjYgMGYgMWYgMDAgNDEgODEgZWEgMDAgMDAgMDAg
+MDAgNzQgMDMgMGYgMGIgOTAKWyA0NjE0LjI2NzYwNl0gUlNQOiAwMDE4OmZmZmZiOTVhY2ZhNGI5
+NzggRUZMQUdTOiAwMDAxMDA5NwpbIDQ2MTQuMjczNDY0XSBSQVg6IDAwMDAwMDAwMDAwMDAwNTcg
+UkJYOiBmZmZmYjk1YWNmYTRiOWI4IFJDWDogM2ZmMWM4MTNjYjU3NjMwMApbIDQ2MTQuMjgxNDI2
+XSBSRFg6IGZmZmY5YTUwYjc5MmI4ZDAgUlNJOiBmZmZmOWE1MGI3OTFkNTQ4IFJESTogZmZmZjlh
+NTBiNzkxZDU0OApbIDQ2MTQuMjg5NDA4XSBSQlA6IGZmZmZiOTVhY2ZhNGI5ODAgUjA4OiAwMDAw
+MDAwMDAwMDAwZDdjIFIwOTogZmZmZmZmZmZhZDQ1ZDUwMApbIDQ2MTQuMjk3Mzk5XSBSMTA6IDAw
+MDAwMDAwMDAwMDI4NzQgUjExOiAwMDAwMDAwMDAwMDAwMDA0IFIxMjogMDAwMDAwMDAwMDAwMDAw
+MApbIDQ2MTQuMzA1MzY5XSBSMTM6IDAwMDAwMDAwMDAwMDAwMDAgUjE0OiAwMDAwMDAwMDAwMDAw
+MDAwIFIxNTogMDAwMDAwMDAwMDAwMDAwMwpbIDQ2MTQuMzEzMzQ1XSBGUzogIDAwMDA3NmZhMTA2
+ZGNmZTgoMDAwMCkgR1M6ZmZmZjlhNTBiNzkwMDAwMCgwMDAwKSBrbmxHUzowMDAwMDAwMDAwMDAw
+MDAwClsgNDYxNC4zMjIzODZdIENTOiAgMDAxMCBEUzogMDAwMCBFUzogMDAwMCBDUjA6IDAwMDAw
+MDAwODAwNTAwMzMKWyA0NjE0LjMyODgwNl0gQ1IyOiAwMDAwNzZmOGZjMjA3YmQwIENSMzogMDAw
+MDAwMDIyNzI0MjAwMCBDUjQ6IDAwMDAwMDAwMDBmNTJlYjAKWyA0NjE0LjMzNjc3N10gUEtSVTog
+NTU1NTU1NTQKWyA0NjE0LjMzOTc4Nl0gQ2FsbCBUcmFjZToKWyA0NjE0LjM0MjUyNF0gIDxUQVNL
+PgpbIDQ2MTQuMzQ0ODY3XSAgPyBfX2RpZV9ib2R5KzB4NjkvMHhiMApbIDQ2MTQuMzQ4Nzg2XSAg
+PyBkaWUrMHhhOS8weGQwClsgNDYxNC4zNTIwMDBdICA/IGRvX3RyYXArMHg4OS8weDE2MApbIDQ2
+MTQuMzU1NzIxXSAgPyBkb19rZXJuZWxfY3BfZmF1bHQrMHhlYS8weGYwClsgNDYxNC4zNjA0MTNd
+ICA/IGhhbmRsZV9pbnZhbGlkX29wKzB4NjkvMHg5MApbIDQ2MTQuMzY0OTg1XSAgPyBkb19rZXJu
+ZWxfY3BfZmF1bHQrMHhlYS8weGYwClsgNDYxNC4zNjk2NTRdICA/IGV4Y19pbnZhbGlkX29wKzB4
+MzYvMHg2MApbIDQ2MTQuMzczOTU5XSAgPyBhc21fZXhjX2ludmFsaWRfb3ArMHgxZi8weDMwClsg
+NDYxNC4zNzg2NDNdICA/IGRvX2tlcm5lbF9jcF9mYXVsdCsweGVhLzB4ZjAKWyA0NjE0LjM4MzMz
+NV0gID8gZG9fa2VybmVsX2NwX2ZhdWx0KzB4MzEvMHhmMApbIDQ2MTQuMzg4MDA1XSAgZXhjX2Nv
+bnRyb2xfcHJvdGVjdGlvbisweDQ5LzB4NzAKWyA0NjE0LjM5Mjg3MV0gIGFzbV9leGNfY29udHJv
+bF9wcm90ZWN0aW9uKzB4MmIvMHg2MApbIDQ2MTQuMzk4MTQ0XSBSSVA6IDAwMTA6X1JOdlhzNV9O
+dE50TnRDczNvMnRHc3VIeW91XzRjb3JlM2ZtdDNudW0zaW1weU50QjlfN0Rpc3BsYXkzZm10KzB4
+MC8weDIwClsgNDYxNC40MDc3OTJdIENvZGU6IDQ4IGY3IGRmIDQ4IDBmIDQ4IGY5IDQ4IDg5IGYy
+IDg5IGM2IDVkIGU5IDE4IGZkIGZmIGZmIDBmIDFmIDg0IDAwIDAwIDAwIDAwIDAwIGYzIDBmIDFl
+IGZhIDQxIDgxIGVhIDE0IDYxIGFmIDJjIDc0IDAzIDBmIDBiIDkwIDw2Nj4gMGYgMWYgMDAgNTUg
+NDggODkgZTUgNDggODkgZjIgNDggOGIgM2YgYmUgMDEgMDAgMDAgMDAgNWQgZTkgZTcKWyA0NjE0
+LjQyODc3NV0gUlNQOiAwMDE4OmZmZmZiOTVhY2ZhNGJhNjggRUZMQUdTOiAwMDAxMDI0NgpbIDQ2
+MTQuNDM0NjA5XSBSQVg6IDAwMDAwMDAwMDAwMDAwMDAgUkJYOiAwMDAwMDAwMDAwMDAwMDEwIFJD
+WDogMDAwMDAwMDAwMDAwMDAwMApbIDQ2MTQuNDQyNTg3XSBSRFg6IDAwMDAwMDAwMDAwMDAwMDcg
+UlNJOiBmZmZmYjk1YWNmYTRiYTcwIFJESTogZmZmZmI5NWFjZmE0YmM4OApbIDQ2MTQuNDUwNTU3
+XSBSQlA6IGZmZmZiOTVhY2ZhNGJhZTAgUjA4OiBmZmZmMGEwMGZmZmZmZjA1IFIwOTogMDAwMDAw
+MDAwMDAwMDA3MApbIDQ2MTQuNDU4NTI3XSBSMTA6IDAwMDAwMDAwMDAwMDAwMDAgUjExOiBmZmZm
+ZmZmZmFiNjdlYWYwIFIxMjogZmZmZmI5NWFjZmE0YmNjOApbIDQ2MTQuNDY2NDkzXSBSMTM6IGZm
+ZmZmZmZmYWM1ZDUwZjAgUjE0OiAwMDAwMDAwMDAwMDAwMDAwIFIxNTogMDAwMDAwMDAwMDAwMDAw
+MApbIDQ2MTQuNDc0NDczXSAgPyBfX2NmaV9fUk52WHM1X050TnROdENzM28ydEdzdUh5b3VfNGNv
+cmUzZm10M251bTNpbXB5TnRCOV83RGlzcGxheTNmbXQrMHgxMC8weDEwClsgNDYxNC40ODQxMThd
+ICA/IF9STnZOdENzM28ydEdzdUh5b3VfNGNvcmUzZm10NXdyaXRlKzB4MWQyLzB4MjUwCgpUaGlz
+IGhhcHBlbnMgYmVjYXVzZSBjb3JlOjpmbXQ6OndyaXRlKCkgY2FsbHMKY29yZTo6Zm10OjpydDo6
+QXJndW1lbnQ6OmZtdCgpLCB3aGljaCBjdXJyZW50bHkgaGFzIENGSSBkaXNhYmxlZDoKCmxpYnJh
+cnkvY29yZS9zcmMvZm10L3J0LnJzOgoxNzEgICAgIC8vIEZJWE1FOiBUcmFuc211dGluZyBmb3Jt
+YXR0ZXIgaW4gbmV3IGFuZCBpbmRpcmVjdGx5IGJyYW5jaGluZyB0by9jYWxsaW5nCjE3MiAgICAg
+Ly8gaXQgaGVyZSBpcyBhbiBleHBsaWNpdCBDRkkgdmlvbGF0aW9uLgoxNzMgICAgICNbYWxsb3co
+aW5saW5lX25vX3Nhbml0aXplKV0KMTc0ICAgICAjW25vX3Nhbml0aXplKGNmaSwga2NmaSldCjE3
+NSAgICAgI1tpbmxpbmVdCjE3NiAgICAgcHViKHN1cGVyKSB1bnNhZmUgZm4gZm10KCZzZWxmLCBm
+OiAmbXV0IEZvcm1hdHRlcjwnXz4pIC0+IFJlc3VsdCB7CgpUaGlzIGNhdXNlcyBhIENvbnRyb2wg
+UHJvdGVjdGlvbiBleGNlcHRpb24sIGJlY2F1c2UgRmluZUlCVCBoYXMgc2VhbGVkCm9mZiB0aGUg
+b3JpZ2luYWwgZnVuY3Rpb24ncyBlbmRicjY0LgoKVGhpcyBtYWtlcyBydXN0IGN1cnJlbnRseSBp
+bmNvbXBhdGlibGUgd2l0aCBGaW5lSUJULiBBZGQgYSBLY29uZmlnCmRlcGVuZGVuY3kgdGhhdCBw
+cmV2ZW50cyBGaW5lSUJUIGZyb20gZ2V0dGluZyB0dXJuZWQgb24gYnkgZGVmYXVsdAppZiBydXN0
+IGlzIGVuYWJsZWQuCgpbIFJ1c3QgMS44OC4wIChzY2hlZHVsZWQgZm9yIDIwMjUtMDYtMjYpIHNo
+b3VsZCBoYXZlIHRoaXMgZml4ZWQgWzFdLAogIGFuZCB0aHVzIHdlIHJlbGF4ZWQgdGhlIGNvbmRp
+dGlvbiB3aXRoIFJ1c3QgPj0gMS44OC4KCiAgV2hlbiBgb2JqdG9vbGAgbGFuZHMgY2hlY2tpbmcg
+Zm9yIHRoaXMgd2l0aCBlLmcuIFsyXSwgdGhlIHBsYW4gaXMKICB0byBpZGVhbGx5IHJ1biB0aGF0
+IGluIHVwc3RyZWFtIFJ1c3QncyBDSSB0byBwcmV2ZW50IHJlZ3Jlc3Npb25zCiAgZWFybHkgWzNd
+LCBzaW5jZSB3ZSBkbyBub3QgY29udHJvbCBgY29yZWAncyBzb3VyY2UgY29kZS4KCiAgQWxpY2Ug
+dGVzdGVkIHRoZSBSdXN0IFBSIGJhY2twb3J0ZWQgdG8gYW4gb2xkZXIgY29tcGlsZXIuCgogICAg
+LSBNaWd1ZWwgXQoKU2lnbmVkLW9mZi1ieTogUGF3ZcWCIEFuaWtpZWwgPHBhbmlraWVsQGdvb2ds
+ZS5jb20+ClJldmlld2VkLWJ5OiBBbGljZSBSeWhsIDxhbGljZXJ5aGxAZ29vZ2xlLmNvbT4KQWNr
+ZWQtYnk6IFBldGVyIFppamxzdHJhIDxwZXRlcnpAaW5mcmFkZWFkLm9yZz4KTGluazogaHR0cHM6
+Ly9naXRodWIuY29tL3J1c3QtbGFuZy9ydXN0L3B1bGwvMTM5NjMyIFsxXQpMaW5rOiBodHRwczov
+L2xvcmUua2VybmVsLm9yZy9ydXN0LWZvci1saW51eC8yMDI1MDQxMDE1NDU1Ni5HQjkwMDNAbm9p
+c3kucHJvZ3JhbW1pbmcua2lja3MtYXNzLm5ldC8gWzJdCkxpbms6IGh0dHBzOi8vZ2l0aHViLmNv
+bS9ydXN0LWxhbmcvcnVzdC9wdWxsLzEzOTYzMiNpc3N1ZWNvbW1lbnQtMjgwMTk1MDg3MyBbM10K
+TGluazogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvci8yMDI1MDQxMDExNTQyMC4zNjYzNDktMS1w
+YW5pa2llbEBnb29nbGUuY29tClNpZ25lZC1vZmYtYnk6IE1pZ3VlbCBPamVkYSA8b2plZGFAa2Vy
+bmVsLm9yZz4KLS0tCiBhcmNoL3g4Ni9LY29uZmlnIHwgMSArCiAxIGZpbGUgY2hhbmdlZCwgMSBp
+bnNlcnRpb24oKykKCmRpZmYgLS1naXQgYS9hcmNoL3g4Ni9LY29uZmlnIGIvYXJjaC94ODYvS2Nv
+bmZpZwppbmRleCA0YjlmMzc4ZTA1ZjYuLjU4NzNjOWUzOTkxOSAxMDA2NDQKLS0tIGEvYXJjaC94
+ODYvS2NvbmZpZworKysgYi9hcmNoL3g4Ni9LY29uZmlnCkBAIC0yMzY4LDYgKzIzNjgsNyBAQCBj
+b25maWcgU1RSSUNUX1NJR0FMVFNUQUNLX1NJWkUKIGNvbmZpZyBDRklfQVVUT19ERUZBVUxUCiAJ
+Ym9vbCAiQXR0ZW1wdCB0byB1c2UgRmluZUlCVCBieSBkZWZhdWx0IGF0IGJvb3QgdGltZSIKIAlk
+ZXBlbmRzIG9uIEZJTkVJQlQKKwlkZXBlbmRzIG9uICFSVVNUIHx8IFJVU1RDX1ZFUlNJT04gPj0g
+MTA4ODAwCiAJZGVmYXVsdCB5CiAJaGVscAogCSAgQXR0ZW1wdCB0byB1c2UgRmluZUlCVCBieSBk
+ZWZhdWx0IGF0IGJvb3QgdGltZS4gSWYgZW5hYmxlZCwKCmJhc2UtY29tbWl0OiBjMWI0MDcxZWMz
+YTZhNTk0ZGY2YzQ5YmY4ZjA0YTYwYTg4MDcyNTI1Ci0tIAoyLjQ5LjAKCg==
+--000000000000e86c9a0632fdbc8b--
 
