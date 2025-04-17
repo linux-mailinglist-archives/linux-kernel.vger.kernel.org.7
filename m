@@ -1,147 +1,78 @@
-Return-Path: <linux-kernel+bounces-609261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 487F5A91FD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 16:37:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67177A91FF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 16:38:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FCB419E1DC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:37:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A61E87AF091
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC54252290;
-	Thu, 17 Apr 2025 14:37:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 601DE2528EF;
+	Thu, 17 Apr 2025 14:37:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pk/gCEDN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5664A15A868;
-	Thu, 17 Apr 2025 14:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="BG7gUTR0"
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A9325178D;
+	Thu, 17 Apr 2025 14:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744900622; cv=none; b=AmguU0Vr1kI+Ck5Ma6ruCmvIGsQd64jUatC4RSZ3PK4OrzPos4BGSfV1BybeKAjPb+2Bo7mG7pdXWwojzL3QtZxuZYQtd6qVGofvksCxcySJiXHn2BpcEUu1lNkN6E9+UuA+Ps9VtnCtAjWHilSLCnsGbFE7A2sboMqiowoITLw=
+	t=1744900669; cv=none; b=Atn+xEAQsejJ08Q2OHRjvsMXmcK0uB3sBMRl//HUSUtiVEEK0bIa9QZuQ2DBfotOG74eRebE0sw6449y5DQXt6d2eHJarMUuFDRdyJzo3p0BL3f15d8fXdr5841bPFnAmG/b9+iYE1HCkXsDxD1P1dYq2T3hhFuAgn43PbVAH3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744900622; c=relaxed/simple;
-	bh=Y4mpXQaMpeWkp9waH3d1fmjKivjlRtPJBQfXTXDaeJ4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=nohxYweQQs0VUw3UnDk0UXXNz97K8ZTiD8bZxdAXWitwvBTa3pD4Bk3p2Z4Xe68TH7Y1Mm5ZhcSes4SNw9hMB6ieMXHVrlCH8++viUg1on8yBbfh40kDP355LMwGNkErhy53+xhoBGuFY3JMnmtwILIFhEMEkU5Pa+SV9yuNcls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pk/gCEDN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DC85C4CEE4;
-	Thu, 17 Apr 2025 14:36:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744900621;
-	bh=Y4mpXQaMpeWkp9waH3d1fmjKivjlRtPJBQfXTXDaeJ4=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=Pk/gCEDN3KXb+CZF1QvEJUAvh9nRY6NrrEa8/7jELTpIsCHhIeVANNRXwRsPlom3y
-	 5sMATAS9SnbzXQOkwUuSc336pG71/heINr8gpHxoSmf2Qxsi0scfFnZgbH9hRPEsv+
-	 zXfQhVogmRxtc1idbHw3RGq9xyQPNfnPzO1orVQ5uZk1dXIteP8Dvxf4sylzY70nKq
-	 hC1dMSHyza6cX2qButHjFd5/RKkN9nJR7mC15M91yGK6Y12W6WK9A+qxG8elgC/R+z
-	 A7Zfa4GAGsMmAC77bQ4oFWm7NCYKRy4hbpBDoedWQInC/ye0YQkA/zTrhCjZDQHllV
-	 j0NSbWRo342PA==
-Message-ID: <c6d3e343-7005-48a9-a133-bf39cb6790ee@kernel.org>
-Date: Thu, 17 Apr 2025 16:36:57 +0200
+	s=arc-20240116; t=1744900669; c=relaxed/simple;
+	bh=TUnWqrGCNuu0kp3HQLe+J7RkhciGbYiemq03Z4bFMzA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cpiK1nzhnivu5QLKa9Izz9bcThm5GnT0rMw5vTdSK5+P/ZHn/nYDb7rtjW5Shd3ozZeRG51yUi9v3jxTYx79gIEq0F3qiYjrpjFYp2Cl0xv5mTJ7KJD7Nmu1c+Cb6sog2W+O6TlTf0wj0L/wOQz9chkKfjllVmAgQjyZ/+1kLfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=BG7gUTR0; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
+Received: from 8bytes.org (p4ffe03ae.dip0.t-ipconnect.de [79.254.3.174])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id E58A648667;
+	Thu, 17 Apr 2025 16:37:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1744900667;
+	bh=TUnWqrGCNuu0kp3HQLe+J7RkhciGbYiemq03Z4bFMzA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BG7gUTR09SCxCajindITMjvEuNZ4CXxJdHqSfSMCjxaN/FQm0HgQKq1r+H7qcg9Se
+	 kzYfWcW7QkjpgTF0Cq1lYxy0V1BxzDQosNFwQ19E3SD/eTOHH0a+sOOnvlHpdyU+nM
+	 bfu1bBgsBiTmQPOjsb/rpRiwz7ywlCo2SaSCa4X2j7Qoh4+Djy/ek8VR+ruUThlM8B
+	 WFOypkOAuRdtwi+BVM3KTjIviNwcFvpDFXh7iLUFan7p/y0+kjpm3M4y4YC3qdklaV
+	 BW6wp5kAnSRM7gcEJ+48J3GUWS2SmMZ8q2o35dTTALhJD1k92IWbUX5cFk+fXxNN1F
+	 hdgAREQj1RGZA==
+Date: Thu, 17 Apr 2025 16:37:45 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Pavel Paklov <Pavel.Paklov@cyberprotect.ru>
+Cc: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Wan Zongshun <Vincent.Wan@amd.com>, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] iommu/amd: Fix potential buffer overflow in
+ parse_ivrs_acpihid
+Message-ID: <aAESOQ5xlTZewgo5@8bytes.org>
+References: <20250325092259.392844-1-Pavel.Paklov@cyberprotect.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] arm64: dts: rockchip: Add I2C controllers for
- RK3528
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Yao Zi <ziyao@disroot.org>, Heiko Stuebner <heiko@sntech.de>,
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
- Chukun Pan <amadeus@jmu.edu.cn>
-Cc: linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250417120118.17610-3-ziyao@disroot.org>
- <20250417120118.17610-5-ziyao@disroot.org>
- <ff583eb3-d01d-4850-9f9b-f6b15ddaf137@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <ff583eb3-d01d-4850-9f9b-f6b15ddaf137@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250325092259.392844-1-Pavel.Paklov@cyberprotect.ru>
 
-On 17/04/2025 16:36, Krzysztof Kozlowski wrote:
-> On 17/04/2025 14:01, Yao Zi wrote:
->> Describe I2C controllers shipped by RK3528 in devicetree. For I2C-2,
->> I2C-4 and I2C-7 which come with only a set of possible pins, a default
->> pin configuration is included.
->>
->> Signed-off-by: Yao Zi <ziyao@disroot.org>
->> ---
->>  arch/arm64/boot/dts/rockchip/rk3528.dtsi | 110 +++++++++++++++++++++++
->>  1 file changed, 110 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
->> index 826f9be0be19..2c9780069af9 100644
->> --- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
->> +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
->> @@ -24,6 +24,14 @@ aliases {
->>  		gpio2 = &gpio2;
->>  		gpio3 = &gpio3;
->>  		gpio4 = &gpio4;
->> +		i2c0 = &i2c0;
->> +		i2c1 = &i2c1;
->> +		i2c2 = &i2c2;
->> +		i2c3 = &i2c3;
->> +		i2c4 = &i2c4;
->> +		i2c5 = &i2c5;
->> +		i2c6 = &i2c6;
->> +		i2c7 = &i2c7;
-> Aliases are not properties of the SoC but boards.
+On Tue, Mar 25, 2025 at 09:22:44AM +0000, Pavel Paklov wrote:
+> Fixes: ca3bf5d47cec ("iommu/amd: Introduces ivrs_acpihid kernel parameter")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Pavel Paklov <Pavel.Paklov@cyberprotect.ru>
+> ---
+>  drivers/iommu/amd/init.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 
-Of course this should be: Bus/interface aliases are not...
-
-Best regards,
-Krzysztof
+Applied for -rc, thanks.
 
