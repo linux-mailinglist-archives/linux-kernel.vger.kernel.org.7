@@ -1,132 +1,81 @@
-Return-Path: <linux-kernel+bounces-609942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DF24A92DCF
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 01:12:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79E51A92DD4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 01:13:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 231A68A70A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 23:12:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFD948A00B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 23:12:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705CD21E0AC;
-	Thu, 17 Apr 2025 23:08:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9542221727;
+	Thu, 17 Apr 2025 23:09:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ssB2vQJy"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="O+EkSq1c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31305222564
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 23:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8829221568;
+	Thu, 17 Apr 2025 23:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744931316; cv=none; b=uA0hPBAxGLHpdeWf/KmDJTpFK/OdCfTYVUy8nCJ1r+DxTUIS31hIcZBN9ixXdYqVqDBlgDnwXihO4UPrqjhqXj+zoZwYV4M07CMUtxKYc2IsMTHyFlgT+FnnXI3QC021EOPn6xRQogcujDkFDspMsXjMdv0EvKAKTiud/MrFPBA=
+	t=1744931384; cv=none; b=REd1rNepViEIDGX80nGnsFRVg8B+92q9nsjIPAtplAqs2LTLf0k61SomXLYEqZ1CXYjzT9PD3qbupPHn4QeNAP4S8wUaHARlYZe2spsNKwHBTIdj36JEelxIvavcAf0UBRVXNknNVC5+fkDtIWj9iPJLyyljcjVWXQDIL+18uZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744931316; c=relaxed/simple;
-	bh=BMIYhQe06B1m/m1VG1ijiI+0phHw0fLo69Q/i9qHTls=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=EHQyA0y+dRyccXsvdFwWf6mM4T6YN4ZYMRuyGf5/2ADVVZD6RrBh6yYhMCi1I9s0+k+XdIzwfLGioCk7XS58hDxQR5mEXoO9dk3RY6gEbuv5eT14ZXKvJyJQnZs12NfQDffBfDI7eaq9VunNZNkLSRO2kCQC87g3cGvujkJ1EaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ssB2vQJy; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b06b29fee16so1323517a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 16:08:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744931314; x=1745536114; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OWFtkFZGIqy5t/lwfSWZdekY1UZ0W7H50S3h5IILNr0=;
-        b=ssB2vQJybKGPyWCD1t5Y+aDP5S7146o8l6tysGdfMLs9s0zRCjBh41+tNHGXTkc8JA
-         sqXk0S8GLNpS6rQmKBflWXV3h4FGGxhoP/khDjHqKrS5UjBTxp7g2u0hVDQsiPLxlgnZ
-         Ev6aMU/ZTo6eYyMIxB1dUaT+y2yb9y3hhPtTKBqjxv3yT2ZCIC/jwp/P1XrfP5p3sX++
-         aHC3JxvUGxI1RUZm6oPvyqTouuc1y+8qInjnvmp2gRDrhWImgFniLyvLGR7+VoRGXwW5
-         EtVUNk0ccSJXVSG00EjgcJojpcVNfHfFysqDVcDsYkZOCKj33sFvyGzyjyolJRqWyd8s
-         D4yQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744931314; x=1745536114;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OWFtkFZGIqy5t/lwfSWZdekY1UZ0W7H50S3h5IILNr0=;
-        b=wnaYewX2dO+G77/xi5UVOKp25hAL6MvJMY8YccjYDanPhyTkPBGx6g3g/3kFw8AK4p
-         nM05e/N7X9mo9atxewhAvCxA1ueVOnajOQYl1/674fcxTxscFJpEVuj2g/V5pz62ugd5
-         T3N5VkOHL6HfPNXJawV/HHYVKsPo0IHs8ZX+mDChzafDWJTZ5tf3D5xqOsoa+y+yR6tY
-         JlUIp04G7o5j5QREdMYlzo1QMjaHtV0llgJJVhrYVptaQl3qstSKsbihUtKVmpBgjaiQ
-         sO6GJKN+AGw7MzBo4m71wNvaVDbJr727+fFIfhMfPT+JeGFpu/FwxXjbCxVLUQfe+am8
-         ufEg==
-X-Forwarded-Encrypted: i=1; AJvYcCXVUGdrS/9UXCuaAgleZeuqXxzuQtmJEknwfAb5EAKCwtu4Pxa4F8DdFNXPUbxR21R0wUeXSIpuPQQuSp0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzflLXUzaIV0ohvAebMP49TlQDZ9AsRbVqnqdA7NHTpZTZuKFuQ
-	AQxIzJI7/JSz7Il189QCrPNSY6Fe477bmmbgImswxZTlfKD+MtE86AS/cikebdoX0cjOW7Job5j
-	3MPCk/w==
-X-Google-Smtp-Source: AGHT+IEViYHLkFOWXw+5kwQsGXZZ/Zsx+Y2Lhd4vhaB6w7nKZkxVtdfZ8HyaZrzD+J1xMdknmkgOW1xEQGPK
-X-Received: from plbaz2.prod.google.com ([2002:a17:902:a582:b0:220:eaf6:fcbf])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d4cd:b0:21f:35fd:1b6c
- with SMTP id d9443c01a7336-22c5364235fmr8482205ad.45.1744931314420; Thu, 17
- Apr 2025 16:08:34 -0700 (PDT)
-Date: Thu, 17 Apr 2025 16:07:40 -0700
-In-Reply-To: <20250417230740.86048-1-irogers@google.com>
+	s=arc-20240116; t=1744931384; c=relaxed/simple;
+	bh=1wudyAEeo9ZxUBCPzH6bp44SfvfV/MxkFpdCzNjXyRM=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=GrBMvAbACi2y6qGb34yHDzk3B/xUMMpaGVHfgsBJv1MrMMj+SbjGaswIPRYh4hQ5sSn7Gp2olmiM9J/zYFJQGkaWe+/UIzzyGvQLH2an0RLVf36G+JcE1fn3gX1KGU/XpCBmBZWGyW+YGPoKxThVS0mLq6LfnAFqpJEHXEtZu74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=O+EkSq1c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1F4AC4CEE4;
+	Thu, 17 Apr 2025 23:09:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1744931383;
+	bh=1wudyAEeo9ZxUBCPzH6bp44SfvfV/MxkFpdCzNjXyRM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=O+EkSq1cerYI3SpW1BKN3OV+bECvq47aHuz2MTB9FCJJh3Zc0iyAcMhgnoQLf8GsG
+	 rg0WsCP6Euyo8wqA/81nTZZxdd8h7TjePa48hqZpHBc+161kj6UfS+k1+YUp+ykIbs
+	 fKpGjG1PHuo18A46Jib3VtwI4DaHai+6pSEKjDuI=
+Date: Thu, 17 Apr 2025 16:09:41 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Nico Pache <npache@redhat.com>
+Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org,
+ mathieu.desnoyers@efficios.com, david@redhat.com, baohua@kernel.org,
+ baolin.wang@linux.alibaba.com, ryan.roberts@arm.com, willy@infradead.org,
+ peterx@redhat.com, shuah@kernel.org, ziy@nvidia.com,
+ wangkefeng.wang@huawei.com, usamaarif642@gmail.com, sunnanyong@huawei.com,
+ vishal.moola@gmail.com, thomas.hellstrom@linux.intel.com,
+ yang@os.amperecomputing.com, kirill.shutemov@linux.intel.com,
+ aarcange@redhat.com, raquini@redhat.com, dev.jain@arm.com,
+ anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de,
+ will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
+ jglisse@google.com, surenb@google.com, zokeefe@google.com,
+ hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
+ rdunlap@infradead.org
+Subject: Re: [PATCH v4 3/4] khugepaged: add defer option to mTHP options
+Message-Id: <20250417160941.5e6c8063c990e1acf0c0ef2e@linux-foundation.org>
+In-Reply-To: <20250417001846.81480-4-npache@redhat.com>
+References: <20250417001846.81480-1-npache@redhat.com>
+	<20250417001846.81480-4-npache@redhat.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250417230740.86048-1-irogers@google.com>
-X-Mailer: git-send-email 2.49.0.805.g082f7c87e0-goog
-Message-ID: <20250417230740.86048-20-irogers@google.com>
-Subject: [PATCH v4 19/19] perf disasm: Remove unused evsel from annotate_args
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Aditya Gupta <adityag@linux.ibm.com>, 
-	"Steinar H. Gunderson" <sesse@google.com>, Charlie Jenkins <charlie@rivosinc.com>, 
-	Changbin Du <changbin.du@huawei.com>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
-	James Clark <james.clark@linaro.org>, Kajol Jain <kjain@linux.ibm.com>, 
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>, Li Huafei <lihuafei1@huawei.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Andi Kleen <ak@linux.intel.com>, 
-	Chaitanya S Prakash <chaitanyas.prakash@arm.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, llvm@lists.linux.dev, 
-	Song Liu <song@kernel.org>, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Set in symbol__annotate but never used.
+On Wed, 16 Apr 2025 18:18:45 -0600 Nico Pache <npache@redhat.com> wrote:
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/util/annotate.c | 1 -
- tools/perf/util/disasm.h   | 1 -
- 2 files changed, 2 deletions(-)
+> Now that we have defer to globally disable THPs at fault time, lets add
+> a defer setting to the mTHP options. This will allow khugepaged to
+> operate at that order, while avoiding it at PF time.
 
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index 264a212b47df..a2a2849a5b79 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -1013,7 +1013,6 @@ int symbol__annotate(struct map_symbol *ms, struct evsel *evsel,
- 	struct symbol *sym = ms->sym;
- 	struct annotation *notes = symbol__annotation(sym);
- 	struct annotate_args args = {
--		.evsel		= evsel,
- 		.options	= &annotate_opts,
- 	};
- 	struct arch *arch = NULL;
-diff --git a/tools/perf/util/disasm.h b/tools/perf/util/disasm.h
-index 09c86f540f7f..d2cb555e4a3b 100644
---- a/tools/perf/util/disasm.h
-+++ b/tools/perf/util/disasm.h
-@@ -98,7 +98,6 @@ struct ins_ops {
- struct annotate_args {
- 	struct arch		  *arch;
- 	struct map_symbol	  ms;
--	struct evsel		  *evsel;
- 	struct annotation_options *options;
- 	s64			  offset;
- 	char			  *line;
--- 
-2.49.0.805.g082f7c87e0-goog
-
+khugepaged.c has changed somewhat in mm.git's mm-new branch.  Can you
+pleae take a look?
 
