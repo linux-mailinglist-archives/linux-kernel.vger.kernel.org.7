@@ -1,185 +1,165 @@
-Return-Path: <linux-kernel+bounces-609333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BB3BA920EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 17:10:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F1E8A920DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 17:08:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A001443E37
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:10:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 831747A11D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:07:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FB2C253F04;
-	Thu, 17 Apr 2025 15:09:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E1B25334A;
+	Thu, 17 Apr 2025 15:07:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OIfd5xhx"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="k72PNw5+"
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 412B1253B78;
-	Thu, 17 Apr 2025 15:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520FC24EA86
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 15:07:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744902568; cv=none; b=PVXLSZZ14kEWiRX9er0LIUlXOiNxtvsPXy3VmE/REVpOhbL2lx9F9hYIu3shqq/10XipmPmCuti62qNdFLbrWzqk1QsQ8bvcVK/IAk4bbKl2U7/Bbnglx7R2r9zPPZbAxs/AmbjIZn3qpkgo1RGYYTPNvLcAo8M39Nq7hfUnMmc=
+	t=1744902476; cv=none; b=GWFZSAAD3GOV33V3baLD64/B2o488WxJWkAzNXkuYJRImri+YAnTB717MYA8Ro/ifX3lB2ddkyx6H6z3YTfSWck8TQTFaQQ1RJsu9dDB6r/GdlFIhBBghs1pUKN2wUVOGqYx3SdZ+Z/QbaFkTI+rRmcFpQefmAsMr9I/dKJDAFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744902568; c=relaxed/simple;
-	bh=AdFC9QPAdrG+ZuiF0LMjbfb7m0Ibpa1So+c1GMQJ9Zc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fbEBockRAhHBbiS7JUQjNJ+eCr+BagbbuFTfir6wsQZYkDBoLVv3CcJt35Ne8t1i/nkIzcNlS3cxeqMwA9nb0Yx9CEJHFdzd2b6BMYeL5g2p65afpV46jg4UE8F0m6+kVRCEsB2QYAMiUzVBk4szdyPtIUseo9dep77vhipk8eY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OIfd5xhx; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744902567; x=1776438567;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=AdFC9QPAdrG+ZuiF0LMjbfb7m0Ibpa1So+c1GMQJ9Zc=;
-  b=OIfd5xhxf8vDbgbr31zSFqxCHDLhIUJpxasKBLdWqfdykwTFwNa98UMX
-   +1wT9LN92MPNbuoA+kvXzHjQrKleFFJEq8jKC1A4MWaxxEIRIzMjWnNVs
-   HYW7JDZqms7C5Jas60jtrWxgKzjYvw+25y93b49zwDnLJ+tHOZaEebtPW
-   zw2MmtHikTyVRhlEH2Aka7yoD7g4i/fLlUUpEOeTpGc1AxRQy6vBSxEB4
-   mTdR59Ggwky0QnIGPQAwiRi7XwMKESx3S2dkQaYwMrqQ6x5itCE2NLdjC
-   eMx+Z68b/z73wvVE6wX0PabMmsTQN+xaG73d1VV5/OeYoj39T0tRWuc3+
-   Q==;
-X-CSE-ConnectionGUID: atWwOe9GTiikVPDfalxlYw==
-X-CSE-MsgGUID: 4MyW9Dx+TO+9sdNr6qjhgw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11406"; a="57488756"
-X-IronPort-AV: E=Sophos;i="6.15,219,1739865600"; 
-   d="scan'208";a="57488756"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2025 08:09:27 -0700
-X-CSE-ConnectionGUID: BXXrn+CxTlak/hFwHn9DmA==
-X-CSE-MsgGUID: 8thGXoyRTOeuF5R7/Ihm/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,219,1739865600"; 
-   d="scan'208";a="161876948"
-Received: from qiuxu-clx.sh.intel.com ([10.239.53.109])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2025 08:09:24 -0700
-From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-To: Tony Luck <tony.luck@intel.com>
-Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-	Feng Xu <feng.f.xu@intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>,
-	Yi Lai <yi1.lai@intel.com>,
-	Shawn Fan <shawn.fan@intel.com>,
-	linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 7/7] EDAC/{skx_common,i10nm}: Add RRL support for Intel Granite Rapids server
-Date: Thu, 17 Apr 2025 23:07:24 +0800
-Message-ID: <20250417150724.1170168-8-qiuxu.zhuo@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250417150724.1170168-1-qiuxu.zhuo@intel.com>
-References: <20250417150724.1170168-1-qiuxu.zhuo@intel.com>
+	s=arc-20240116; t=1744902476; c=relaxed/simple;
+	bh=Y7sBMJl9huCoJbTO8M1vR4VKFo+G40GzBvX0w6rClRQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LaBf2UO/wexlHF53kWr1XZcjfBSjfwRVwY3uSt/0eLJru6GWXdq2rcSkyOQTUSlOQrVE/D1HyKjNhZjLT3SJNkrGuJ8Cwmqa+ws9MSWcfHNIqkZPor6GcqDFYamsHEWx/9srymrrseowDum6ymkFEw/DGv2i2ov22+tPUvZBTxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=k72PNw5+; arc=none smtp.client-ip=209.85.210.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-72ecc30903cso479381a34.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 08:07:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1744902472; x=1745507272; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fO4PGom8r+nn+/7wCMZh1CHX3FkJE/YgsW+Sw+QFjaI=;
+        b=k72PNw5+q0fYh1Ii9h+u2kScdyU9nAN+fbiTPZeQrCDmJOO5I2917xkd6mM0KZt+M2
+         dyBFDCUW/svxMQadEE+GPC0cEZpee+UrHvWKei8KB3liNZ102VsOn0uaKhtjl7PYWuoO
+         cjWsycULv95/gdurn8e1IyyCybDohAAo6q16CDvgZlMubFe8hlY1K33/1eONMZmSAzU6
+         AKV0zO4nakjyeWilMsf1j6qeEQLL4b/cQPNzD3KXE0NUOJe5z0WlzOJQPvUBukF95wI9
+         ZPbkRCPh0B4chRR8nUUZOPhBXv3eMQPgy2ahElv4Z5zOrG8Mihfdl5kmcOP1kLDW6Nvs
+         AKJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744902472; x=1745507272;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fO4PGom8r+nn+/7wCMZh1CHX3FkJE/YgsW+Sw+QFjaI=;
+        b=JYMeOHtceV+eZLqwb7P8e1bVFmUG6dJXidDOaCu0DGywbLELfHsuYJJQ1kodYBA7/T
+         KvAUkC/HMdGspM58SU0A0h1CLE9inQP7/5zfSpl87/uJudo4TGAxWsmFc9s3v7XrcTBG
+         cY0WfxJQn6BP9A0wtEcd1Ky2bvvQK/xdAVf0xS6zmnpIVfPIY7iE12z78ut97U1cfghZ
+         wgnfDV1IaxsN+KCV9cAs0KsQ7dup3CcTqG+bzB73u1BDyLlW8oIxg/dIy1USp3uM/P+l
+         s18gcMLyF4nCjP15yNMAhXQlCDxg5BrCrkpCvfevQSqg7L2RS5wMieXgT3m3A+GLdAcy
+         Xx7g==
+X-Forwarded-Encrypted: i=1; AJvYcCXexzfSC+RyKO9gCXJ3zHIU6n9vr0bjXdA773Obro+O0PyOQGzQPU3/nmIrOiExo8/WhKK64+E53Kj8UYo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSkxKrw4cjbycco//vbuXed/KyJmK7GGVnb+8S1HPTz9p9IRqq
+	rc2N3evL6ff1M9piimkIk+6+qGvP7NCE9zYx3GnT+17eewx/sJqs6/qMuWtisPQ=
+X-Gm-Gg: ASbGncvc9EbHZvwc/Y39y2fFvjI2ikmX01XDLiaE8NwyyAsoSXhbTXL7BGkc6AvU+WC
+	wCsSihLjClk63x9TEXh+GZIFgB8iamUXMyQtuiXXMFtlxltcpWg4oRu9r+d2dVD0lwTPYJ5SEC7
+	vg4nzdpc55H3UNCABp09HrMZvxn5GuuSYPQyg+tH32k+SrJV/1wZ4bngAD7loqEWVaF8p2zV90w
+	j0kME5lz+/13gI51BVgL22JPgDuR8KjSq28tZtOUKufbEmxHMuCQkuGaEJwz5FoFbQpGDF1HqOE
+	dCg+xdc8JKlmQIi2H6l7IDQPFXLyKpuebnfqnzpHPPvexCC1QtMi9tHMjZYbfKnrmkua4o2MacA
+	aEYwp6W4RxSI/MyGmcA==
+X-Google-Smtp-Source: AGHT+IEYK1dnPkBo/RCRsPA4Fw4LOSVoCMCliXwjzRUw7NtO1yHMkAzC2RAg+ysD2YBbHrA5uY1uvg==
+X-Received: by 2002:a05:6808:800e:b0:401:bcaa:c52f with SMTP id 5614622812f47-401bcaad927mr147985b6e.38.1744902472319;
+        Thu, 17 Apr 2025 08:07:52 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:c91b:eea3:7afd:2dee? ([2600:8803:e7e4:1d00:c91b:eea3:7afd:2dee])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-400763bab7bsm3121606b6e.45.2025.04.17.08.07.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Apr 2025 08:07:51 -0700 (PDT)
+Message-ID: <d6a636c7-36df-4648-92a1-2db1ff4754e6@baylibre.com>
+Date: Thu, 17 Apr 2025 10:07:50 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 02/14] dt-bindings: iio: adc: ad7768-1: add
+ trigger-sources property
+To: 3027a9b0-cf4a-4e55-80a7-7f0dd2a008e4@baylibre.com
+Cc: Jonathan Santos <Jonathan.Santos@analog.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org, lars@metafoo.de, Michael.Hennerich@analog.com,
+ marcelo.schmitt@analog.com, jic23@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, marcelo.schmitt1@gmail.com,
+ linus.walleij@linaro.org, brgl@bgdev.pl, lgirdwood@gmail.com,
+ broonie@kernel.org
+References: <cover.1744325346.git.Jonathan.Santos@analog.com>
+ <35481552e9ce39a24a0257ab001c0bcfea1a23be.1744325346.git.Jonathan.Santos@analog.com>
+ <3027a9b0-cf4a-4e55-80a7-7f0dd2a008e4@baylibre.com>
+ <aABJ4UuFWDsJX6vT@JSANTO12-L01.ad.analog.com>
+From: David Lechner <dlechner@baylibre.com>
+Content-Language: en-US
+In-Reply-To: <aABJ4UuFWDsJX6vT@JSANTO12-L01.ad.analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Compared to previous generations, Granite Rapids defines the RRL control
-bits {en_patspr, noover, en} in different positions, adds an extra RRL set
-for the new mode of the first patrol-scrub read error, and extends the
-number of CORRERRCNT registers from 4 to 8, encoding one counter per
-CORRERRCNT register.
+On 4/16/25 7:22 PM, Jonathan Santos wrote:
+> On 04/11, David Lechner wrote:
+>> On 4/11/25 10:56 AM, Jonathan Santos wrote:
+>>> In addition to GPIO synchronization, The AD7768-1 also supports
+>>> synchronization over SPI, which use is recommended when the GPIO
+>>> cannot provide a pulse synchronous with the base MCLK signal. It
+>>> consists of looping back the SYNC_OUT to the SYNC_IN pin and send
+>>> a command via SPI to trigger the synchronization.
+>>>
+>>> Introduce the 'trigger-sources' property to support SPI-based
+>>> synchronization, along with additional optional entries for the SPI
+>>> offload trigger and the START signal via GPIO3.
+>>>
+>>> While at it, add description to the interrupts property.
+>>>
+>>> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
+>>> ---
+>>
+>> ...
+>>
+>>> @@ -57,6 +80,15 @@ properties:
+>>>    "#io-channel-cells":
+>>>      const: 1
+>>>  
+>>> +  "#trigger-source-cells":
+>>> +    description: |
+>>> +      Indicates the trigger source type for each entry:
+>>> +      0 = Synchronization GPIO-based trigger
+>>> +      1 = Synchronization device trigger (e.g., another ad7768-1)
+>>> +      2 = GPIO3 pin acting as START signal
+>>> +      3 = DRDY pin acting as SPI offload trigger
+>>> +    const: 1
+>>> +
+>>
+>> 0 and 1 don't sound like trigger outputs that this ADC is providing, so don't
+>> seem appropriate here. But the SYNC_OUT pin is missing from this list.
+>>
+>> Also, outputs could be used to trigger anything, not just SPI offload, so don't
+>> need to mention that.
+> 
+> You mean like this:
+> 
+> ...
+>   "#trigger-source-cells":
+>     description: |
+>       Cell indicates the trigger output signal: 0 = SYNC_OUT, 1 = GPIO3,
+>       2 = DRDY.
+> 
+>     const: 1
+> ...
+> 
+> It would be like interfacing those output pins for a generic trigger
+> usage?
+> 
+>>
 
-Add a Granite Rapids reg_rrl configuration table and adjust the code to
-accommodate the differences mentioned above for RRL support.
+Yes this looks correct now.
 
-Tested-by: Feng Xu <feng.f.xu@intel.com>
-Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
----
- drivers/edac/i10nm_base.c | 37 +++++++++++++++++++++++++++++++++++--
- drivers/edac/skx_common.h |  4 ++--
- 2 files changed, 37 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/edac/i10nm_base.c b/drivers/edac/i10nm_base.c
-index aefc448283d3..8863f1fb4caf 100644
---- a/drivers/edac/i10nm_base.c
-+++ b/drivers/edac/i10nm_base.c
-@@ -164,6 +164,29 @@ static struct reg_rrl spr_reg_rrl_hbm_pch1 = {
- 	.cecnt_widths	= {4, 4, 4, 4},
- };
- 
-+static struct reg_rrl gnr_reg_rrl_ddr = {
-+	.set_num = 4,
-+	.reg_num = 6,
-+	.modes = {FRE_SCRUB, FRE_DEMAND, LRE_SCRUB, LRE_DEMAND},
-+	.offsets = {
-+		{0x2f10, 0x2f20, 0x2f30, 0x2f50, 0x2f60, 0xba0},
-+		{0x2f14, 0x2f24, 0x2f38, 0x2f54, 0x2f64, 0xba8},
-+		{0x2f18, 0x2f28, 0x2f40, 0x2f58, 0x2f68, 0xbb0},
-+		{0x2f1c, 0x2f2c, 0x2f48, 0x2f5c, 0x2f6c, 0xbb8},
-+	},
-+	.widths		= {4, 4, 8, 4, 4, 8},
-+	.v_mask		= BIT(0),
-+	.uc_mask	= BIT(1),
-+	.over_mask	= BIT(2),
-+	.en_patspr_mask	= BIT(14),
-+	.noover_mask	= BIT(15),
-+	.en_mask	= BIT(12),
-+
-+	.cecnt_num	= 8,
-+	.cecnt_offsets	= {0x2c10, 0x2c14, 0x2c18, 0x2c1c, 0x2c20, 0x2c24, 0x2c28, 0x2c2c},
-+	.cecnt_widths	= {4, 4, 4, 4, 4, 4, 4, 4},
-+};
-+
- static u64 read_imc_reg(struct skx_imc *imc, int chan, u32 offset, u8 width)
- {
- 	switch (width) {
-@@ -353,8 +376,17 @@ static void show_retry_rd_err_log(struct decoded_addr *res, char *msg,
- 			width = rrl->cecnt_widths[i];
- 			corr = read_imc_reg(imc, ch, offset, width);
- 
--			n += snprintf(msg + n, len - n, "%.4llx %.4llx ",
--				      corr & 0xffff, corr >> 16);
-+			/* CPUs {ICX,SPR} encode two counters per 4-byte CORRERRCNT register. */
-+			if (res_cfg->type <= SPR) {
-+				n += snprintf(msg + n, len - n, "%.4llx %.4llx ",
-+					      corr & 0xffff, corr >> 16);
-+			} else {
-+			/* CPUs {GNR} encode one counter per CORRERRCNT register. */
-+				if (width == 4)
-+					n += snprintf(msg + n, len - n, "%.8llx ", corr);
-+				else
-+					n += snprintf(msg + n, len - n, "%.16llx ", corr);
-+			}
- 		}
- 
- 		/* Move back one space. */
-@@ -985,6 +1017,7 @@ static struct res_config gnr_cfg = {
- 	.uracu_bdf		= {0, 0, 1},
- 	.ddr_mdev_bdf		= {0, 5, 1},
- 	.sad_all_offset		= 0x300,
-+	.reg_rrl_ddr		= &gnr_reg_rrl_ddr,
- };
- 
- static const struct x86_cpu_id i10nm_cpuids[] = {
-diff --git a/drivers/edac/skx_common.h b/drivers/edac/skx_common.h
-index 8f0f4af2cb27..ec4966f7ea40 100644
---- a/drivers/edac/skx_common.h
-+++ b/drivers/edac/skx_common.h
-@@ -80,11 +80,11 @@
- #define MCACOD_EXT_MEM_ERR	0x280
- 
- /* Max RRL register sets per {,sub-,pseudo-}channel. */
--#define NUM_RRL_SET		3
-+#define NUM_RRL_SET		4
- /* Max RRL registers per set. */
- #define NUM_RRL_REG		6
- /* Max correctable error count registers. */
--#define NUM_CECNT_REG		4
-+#define NUM_CECNT_REG		8
- 
- /* Modes of RRL register set. */
- enum rrl_mode {
--- 
-2.43.0
-
+I don't think this is the case, but in general, if GPIO3 could be programmed
+to have different trigger signals, then we would need a 2nd cell. But IIRC,
+it can only be the START signal, so 1 cell should be sufficient in this case.
 
