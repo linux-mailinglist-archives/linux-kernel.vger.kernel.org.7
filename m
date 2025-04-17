@@ -1,87 +1,61 @@
-Return-Path: <linux-kernel+bounces-608446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77345A9138F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:09:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 26368A913CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:15:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92A04443D07
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 06:09:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3FBA444EAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 06:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12EBD1F418B;
-	Thu, 17 Apr 2025 06:09:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0DD11DE2B5;
+	Thu, 17 Apr 2025 06:15:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="FhOkpxSp"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R8UJKG25"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2E692DFA4B
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 06:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A0019EED3;
+	Thu, 17 Apr 2025 06:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744870186; cv=none; b=ftAETNKYjfNyaNmrDkXmY+t/UMZMFt3EBAXVzpgdsDPE7PZvNn3ikw9UUHvJNgkF5V3zBgotrZGK8xwfEdgVGH2jxgR8+Jb5ZPoPfF6q7xuaa47vbZ5ewCxuS5Lzm3XC87H4ApY6a/svNBtr4H0wvSDNqpYUXMMEHfrd1LNExTU=
+	t=1744870517; cv=none; b=deTz2IqwZ6yIdg+MMi/evPgqcmajHXecS1vRS3zOusUcceKutd5MP4n73oAnSQ+HG1iLxUP6uTP9gyueIfibgh/92goj1WwFY4lYXtX/bF0MS+LXAc7k1lChz84bBjSadZTTUjpPp+nYLg+yr59+4UbY4ymHAIon6jO2HzZm1uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744870186; c=relaxed/simple;
-	bh=lXDEFZjhpvjtK8iiYDFuw+tF0cAOWt6YH0wCwA0iPg8=;
+	s=arc-20240116; t=1744870517; c=relaxed/simple;
+	bh=C8arQBwpPkSffq/LZellazFh1S9XbpPVP05/qcryMf8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WJ+qJb2PX4zDIiZl2b1w/7pR2OhRJahQnCjaInmON0azdCIs1mmqhYoe2w5gMvbQqK6KPIVTFtApJkfFZ0xLhMrki5JU40PWo4J4lLOMJdYMqQR+azGAzRvRCSlPJ+OjN3bbBzqHsuTXYdl08y1wRRDBCvUE9rfGTQnekgQle4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=FhOkpxSp; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53GNlAqZ019278;
-	Thu, 17 Apr 2025 06:09:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=OibXNJCHuU82A+EwGowd4e3lnAlwTB
-	ETZ7mbg5uTl+o=; b=FhOkpxSpmgICINQ0SP8mU9hZrbuIeTDnx8lpswj1QNafVH
-	DlxjyeGnHMkvG7Ior+JiVeOD5v69rRYMGIERnw6h3Q1wJYl5I2Xikg/H7BMbefer
-	JIfsx9gzdmGZ9QvIrwuUlQACJcSNCMjtKXuK37HsePn70VDxqUIn7kyJNCW9BYfe
-	QMGUuvQ14zve2fa8sgDOUrEBL/Mpgv7kEw7tKAqWE3sJoNut0FyUoB5e4sBi6mmS
-	CF7Qvb2DzkwidK7UfLsA6uTD1Rn0aFhpvDcI73YHIMls4onsSpF58lri+v1bt7rh
-	mv3tnKeC4G1ulH7mZPx0gTMvDvX5PJdF65mIkwOA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 462ph09amt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Apr 2025 06:09:31 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 53H69UCn013794;
-	Thu, 17 Apr 2025 06:09:30 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 462ph09amq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Apr 2025 06:09:30 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53H23KSh017207;
-	Thu, 17 Apr 2025 06:09:29 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46040m46b9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Apr 2025 06:09:29 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53H69Qfo51052878
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 17 Apr 2025 06:09:26 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F18AD20040;
-	Thu, 17 Apr 2025 06:09:25 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7E73420043;
-	Thu, 17 Apr 2025 06:09:24 +0000 (GMT)
-Received: from li-e1dea04c-3555-11b2-a85c-f57333552245.ibm.com (unknown [9.109.207.139])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 17 Apr 2025 06:09:24 +0000 (GMT)
-Date: Thu, 17 Apr 2025 11:39:20 +0530
-From: Mukesh Kumar Chaurasiya <mchauras@linux.ibm.com>
-To: Misbah Anjum N <misanjum@linux.ibm.com>
-Cc: linuxppc-dev@lists.ozlabs.org, maddy@linux.ibm.com, mpe@ellerman.id.au,
-        npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] arch/powerpc: Remove redundant typedef for bool
-Message-ID: <jwhxcpjsikjfwmeibpssbc3mvr7dhkd225bfgp4pukr3caugxd@mdruiivxfhod>
-References: <20250323163607.537270-1-misanjum@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EiCR5JDN28ziigCeehjI604QWNndvlpRYQe/3Wr5468r6pjjQ1JlZ+26QZHGovmsJQa1UjkS4ugsvL2MgFyLwmQ6gv8extVLOio+AIiE5xxtg1xqFR/PzkRw4Se6GN0q7z7Yyvn446UNTkDd9cVoA/6WrD7RFvnMd6vG0OCh5vI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R8UJKG25; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C634C4CEE4;
+	Thu, 17 Apr 2025 06:15:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744870516;
+	bh=C8arQBwpPkSffq/LZellazFh1S9XbpPVP05/qcryMf8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R8UJKG25Ug4NxP/Ok4v38Ldu6w6o0hc7q1TeqpUGYGPXHP0B/efrcSlhqj6w0FWkv
+	 ZDY2AnR1kqn02I1irKH1vkQVkU55XN6a0gzEkJDl6bGOy4b3ZkWWP3dHJqQ13n/1k1
+	 UzOE500wVoLxwsB3v7sq80DMNOBK8dB35T2RJElV8doEsFx9tRHykTrTiR5tGhYAXs
+	 7Mcti3H0eD1tpgDqJj5q1aO+jOCsYINBMEw2ttscd0xJhuMtCa8MGM5lxKONAGv5Ox
+	 bAf9RewDOTCAKV1cm6+42YHVZ1dZoyO0XGKmbvO2KUshOg0HMI1+dcBXALvUhh4pYN
+	 W3b+F5Jf0S5hA==
+Date: Wed, 16 Apr 2025 20:15:15 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Tamir Duberstein <tamird@gmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	helpdesk@kernel.org
+Subject: Re: linux-next: build failure after merge of the workqueues tree
+Message-ID: <aACcc6VmbON_fy3J@slm.duckdns.org>
+References: <20250415140116.13544ac6@canb.auug.org.au>
+ <CAJ-ks9kUBCX6PjOeOSVQNXYGcy9gkYw++BEmHZ0eFbsyZeBZcQ@mail.gmail.com>
+ <Z_50QbWczACrwL5f@slm.duckdns.org>
+ <20250417142636.0e73728a@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,61 +64,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250323163607.537270-1-misanjum@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=QJdoRhLL c=1 sm=1 tr=0 ts=68009b1b cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=WN4RLpz-Xj6QzkEfG4QA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: nwZmyqO5dRddaamJ3gdckl7Dq4Uca1t_
-X-Proofpoint-ORIG-GUID: 9vC7EEff8svzUx1zPm7V4x-nUUs2J2NH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-17_01,2025-04-15_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
- adultscore=0 mlxlogscore=833 priorityscore=1501 mlxscore=0
- lowpriorityscore=0 bulkscore=0 suspectscore=0 clxscore=1015 malwarescore=0
- impostorscore=0 classifier=spam authscore=0 adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2502280000 definitions=main-2504170045
+In-Reply-To: <20250417142636.0e73728a@canb.auug.org.au>
 
-On Sun, Mar 23, 2025 at 11:36:06AM -0500, Misbah Anjum N wrote:
-> Hi,
-> 
-> I noticed that a patch addressing the same issue has been proposed by
-> Michal Suchanek:
-> https://lore.kernel.org/linuxppc-dev/Z86liwlwP5WvrEkw@kitsune.suse.cz/T/#t
-> 
-> The existing patch addresses the compilation error by modifying the Makefile
-> to use `gnu11` with `BOOTTARGETFLAGS`. This is a practical approach to avoid
-> the error in the short term.
-> 
-> This patch builds on that work by providing a long-term solution that ensures
-> compatibility with C23 while maintaining backward compatibility. Specifically:
->     - It uses `__STDC_VERSION__` to conditionally define the `bool` typedef only
->     for pre-C23 standards.
->     - It ensures that the code is future-proof and ready for upcoming C23 standards,
->     where `bool`, `true`, and `false` are reserved keywords.
->     - It avoids reliance on compiler-specific flags, making the code more portable
->     and standards-compliant.
-> 
-> Changlog:
->     - Adding version check via __STDC_VERSION__
->     - If  __STDC_VERSION__ < C23, 'typedef int bool' is defined as usual
->     - If __STDC_VERSION__ >= C23, the typedef redundancy is removed
-> 
-> The patch has been tested with:
->     - gcc (GCC) 15.0.1 20250228 (Red Hat 15.0.1-0)
->     - gcc (GCC) 14.2.1 20250110 (Red Hat 14.2.1-7)
-> 
-> Thanks,
-> Misbah Anjum N
-> 
-> 
-> Misbah Anjum N (1):
->   arch/powerpc: Remove redundant typedef for bool
-> 
->  arch/powerpc/boot/types.h | 2 ++
->  1 file changed, 2 insertions(+)
->
-Reviewed-by: Mukesh Kumar Chaurasiya <mchauras@linux.ibm.com>
-> -- 
-> 2.49.0
-> 
+Hello,
+
+On Thu, Apr 17, 2025 at 02:26:36PM +1000, Stephen Rothwell wrote:
+...
+> I am still seeing this failure.  Forgot to push out?
+
+Hah, we might be seeing some caching problem.
+
+  htejun@slm ~/o/wq (for-next)> git rev-list for-next \^master --oneline
+  24cdab5787a0 workqueue: Better document teardown for delayed_work
+  htejun@slm ~/o/wq (for-next)> git push git@gitolite.kernel.org:pub/scm/linux/kernel/git/tj/wq.git for-next:for-next
+  Everything up-to-date
+  htejun@slm ~/o/wq (for-next)> git fetch -f git@gitolite.kernel.org:pub/scm/linux/kernel/git/tj/wq.git for-next:tmp 
+  htejun@slm ~/o/wq (for-next)> git rev-list tmp \^master --oneline
+  24cdab5787a0 workqueue: Better document teardown for delayed_work
+  htejun@slm ~/o/wq (for-next)> git fetch https://git.kernel.org/pub/scm/linux/kernel/git/tj/wq.git for-next:tmp2                                                    
+  From https://git.kernel.org/pub/scm/linux/kernel/git/tj/wq
+   * [new branch]                for-next   -> tmp2
+  htejun@slm ~/o/wq (for-next)> git rev-list tmp2 \^master --oneline
+  2762750ac5c6 workqueue: Better document teardown for delayed_work
+  345e029b561e rust: workqueue: remove HasWork::OFFSET
+
+Cc'ing helpdesk@kernel.org. Imma leave the tree as-is for debugging. The
+tree only has a documentation patch, so it's fine to skip for linux-next for
+now. I'll wait a couple days and if the problem doesn't get resolved, I'll
+try to update the branch and see whether the stale cache clears.
+
+Thanks.
+
+-- 
+tejun
 
