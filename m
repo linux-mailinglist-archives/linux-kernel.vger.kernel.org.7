@@ -1,116 +1,149 @@
-Return-Path: <linux-kernel+bounces-609180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58CB9A91E75
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:45:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 481D0A91E8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:46:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA61946477B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 13:45:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 937958A103F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 13:46:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F0A24EA91;
-	Thu, 17 Apr 2025 13:45:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53CFA24E4A8;
+	Thu, 17 Apr 2025 13:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kSmoT154"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MTwdbrmV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6656924E4AC;
-	Thu, 17 Apr 2025 13:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9523384D2B;
+	Thu, 17 Apr 2025 13:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744897516; cv=none; b=mncLCWwRG7o+sX9YshEPh8Txfsixo22nyQ8FHCxC0pOwmp/t/LpFSIYvixMPHPCTZOJ6kwHmwKfO5SwVDGMmgnmU7EXvyyidZHzNxCfZSJPhw+bHgVg5/DrwIFyVpM713DcmF9TkRTKmUE23iR8sa7J9jnAiTO1QFCcVfIEE8sY=
+	t=1744897577; cv=none; b=BKdSom44jUB+xOqszNVUgK9dfSM13lvqESxu7/VTaL+PLb17n0UsRwiINZi8CVeewdCPjhsBgLLF0AHGFK5HW0B/lH7d5T2W/FX+gM6SnJnlhWwnrYeRZGDJUHBHQFd3PrINdRG/Lz3lA2YYV9RqRPIkuNJMrPsWfPidQcIFSbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744897516; c=relaxed/simple;
-	bh=GfrGivUvSyZvK9pSC84UfaaLk0j/HWC/JTBmpVfsaDM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kpCRyrZi/xq4uRMxy4lI7Y3T6ofHLYW7BZp8qKvJEUmkVCAf4X13iXZyRRR9Fffs73Z++H1aapgsp6o01mwGLpLsKK6RHqUtDPdYndT1XU+CJc1NTkN3C/+R3F5kPx6z4UMfME6tiOIuKW1HZQuQLQ2e8pyFrEKt5P5owQ/8jnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kSmoT154; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744897514; x=1776433514;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GfrGivUvSyZvK9pSC84UfaaLk0j/HWC/JTBmpVfsaDM=;
-  b=kSmoT154udohMjvnfPf8kvSqj9nM5h18nTMSuW09AjWcEL0YxOv+Ds1n
-   9wZLRPCY5d8bHgWwGyoHYRYVfJCJ0qYdL5zldb/CnGBqcKXHgDj/SQal/
-   gbcxY0/Jetrt6i4OzRw52JliCf3H2qkpTkrQvkqTpKKPp2uOhA+92q9OK
-   CGY640axKKAdhV9SW5Umhb6cN5F7Rn/OBJA4nTcgR90K0YkCtwn1uPnbb
-   RXnuzEeW4fwZbZPstxvz5I9UWrPQn1w6NXq0nTD6CJAdBeMB/sRURptJy
-   2CjEAxF6xpqsh0dV+ItYyBfZ67a10kUuweIx2SSFtG+z4GFJJ8K+i9uZy
-   g==;
-X-CSE-ConnectionGUID: qCfUI0X5SGSYI1yjPV63Pw==
-X-CSE-MsgGUID: rVzMJLrASYGPEA/tIW2akA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11405"; a="46380072"
-X-IronPort-AV: E=Sophos;i="6.15,219,1739865600"; 
-   d="scan'208";a="46380072"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2025 06:44:51 -0700
-X-CSE-ConnectionGUID: I4Tp8mqQTvSd7+eZ4SF+UQ==
-X-CSE-MsgGUID: O5JZ8IM+Rtq27GyBFX3KHg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,219,1739865600"; 
-   d="scan'208";a="135771240"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by orviesa004.jf.intel.com with SMTP; 17 Apr 2025 06:44:49 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 17 Apr 2025 16:44:47 +0300
-Date: Thu, 17 Apr 2025 16:44:47 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Yue Haibing <yuehaibing@huawei.com>
-Cc: gregkh@linuxfoundation.org, mitltlatltl@gmail.com,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] usb: typec: ucsi: Fix unmet dependencies for
- UCSI_HUAWEI_GAOKUN
-Message-ID: <aAEFz_Jf8aqgzBcY@kuha.fi.intel.com>
-References: <20250417122843.2667008-1-yuehaibing@huawei.com>
+	s=arc-20240116; t=1744897577; c=relaxed/simple;
+	bh=Jp3P1IDKrogJGTyaRjCD0IYiY+Sdkq83T+tFKxCJJQ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SE16Eiul40UqpIwMGttoebrHgzUIHlqaHdRpgZtLBXg+OA3fIvgbPS2sOMIkQ1cfokQJD+SLwqnG/zexZXBg9jzEw+styEm8TRdHUIlSNwGfmsV3JamFMhfSo+N1wSbqSsHRIC7HkNZncuqqvS1X0BRP5I9vHTiTfortEouiQM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MTwdbrmV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA693C4CEEA;
+	Thu, 17 Apr 2025 13:46:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744897577;
+	bh=Jp3P1IDKrogJGTyaRjCD0IYiY+Sdkq83T+tFKxCJJQ0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MTwdbrmVnx/M2TbvYbZ1GVcbtAT0j+KoA5FAy3SJuooWpGRktgfCWNigxhu9BEAp6
+	 /5lMiXr2O9F6XsfL2P8GppZp/cknJHc5pg77zkVv1rCK8c2o8VdBJOz3YfGDtMP3+0
+	 GYL0SHYq9V8X/mH58MQAi4h8urcpYfwblYninyUILl8B8fya2kbFTJA0H4rnbCjwp4
+	 ZpI9QH4ppUDY1tZ/dV4fsDty1hXctTShuEpmCwzIrHilcBGNG/JoVTeNFcBEGnji8K
+	 nU0fRLK2sJACJwDkK8aaE04rYAjGxoOk2ktwDuFFKfNKYjmCgGWL3eHiLf1iILyxJe
+	 OMUvaQvq2Dr3g==
+Date: Thu, 17 Apr 2025 06:46:15 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Joe Damato <jdamato@fastly.com>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, Alexei
+ Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend
+ <john.fastabend@gmail.com>, linux-kernel@vger.kernel.org (open list),
+ linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK),
+ bpf@vger.kernel.org (open list:XDP (eXpress Data
+ Path):Keyword:(?:\b|_)xdp(?:\b|_))
+Subject: Re: [PATCH net-next v2 4/4] selftests: drv-net: Test that NAPI ID
+ is non-zero
+Message-ID: <20250417064615.10aba96b@kernel.org>
+In-Reply-To: <20250417013301.39228-5-jdamato@fastly.com>
+References: <20250417013301.39228-1-jdamato@fastly.com>
+	<20250417013301.39228-5-jdamato@fastly.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250417122843.2667008-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Apr 17, 2025 at 08:28:43PM +0800, Yue Haibing wrote:
-> WARNING: unmet direct dependencies detected for DRM_AUX_HPD_BRIDGE
->   Depends on [n]: HAS_IOMEM [=y] && DRM [=n] && DRM_BRIDGE [=n] && OF [=n]
->   Selected by [m]:
->   - UCSI_HUAWEI_GAOKUN [=m] && USB_SUPPORT [=y] && TYPEC [=m] && TYPEC_UCSI [=m] && EC_HUAWEI_GAOKUN [=m]
+On Thu, 17 Apr 2025 01:32:42 +0000 Joe Damato wrote:
+> Test that the SO_INCOMING_NAPI_ID of a network file descriptor is
+> non-zero. This ensures that either the core networking stack or, in some
+> cases like netdevsim, the driver correctly sets the NAPI ID.
 > 
-> DRM_AUX_HPD_BRIDGE depends on DRM_BRIDGE and OF, only select it with
-> both for UCSI_HUAWEI_GAOKUN.
-> 
-> Fixes: 00327d7f2c8c ("usb: typec: ucsi: add Huawei Matebook E Go ucsi driver")
-> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
-
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-
+> Signed-off-by: Joe Damato <jdamato@fastly.com>
 > ---
->  drivers/usb/typec/ucsi/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  .../testing/selftests/drivers/net/.gitignore  |  1 +
+>  tools/testing/selftests/drivers/net/Makefile  |  6 +-
+>  .../testing/selftests/drivers/net/napi_id.py  | 24 ++++++
+>  .../selftests/drivers/net/napi_id_helper.c    | 83 +++++++++++++++++++
+>  4 files changed, 113 insertions(+), 1 deletion(-)
+>  create mode 100755 tools/testing/selftests/drivers/net/napi_id.py
+>  create mode 100644 tools/testing/selftests/drivers/net/napi_id_helper.c
 > 
-> diff --git a/drivers/usb/typec/ucsi/Kconfig b/drivers/usb/typec/ucsi/Kconfig
-> index e94956d27325..8bf8fefb4f07 100644
-> --- a/drivers/usb/typec/ucsi/Kconfig
-> +++ b/drivers/usb/typec/ucsi/Kconfig
-> @@ -94,7 +94,7 @@ config UCSI_LENOVO_YOGA_C630
->  config UCSI_HUAWEI_GAOKUN
->  	tristate "UCSI Interface Driver for Huawei Matebook E Go"
->  	depends on EC_HUAWEI_GAOKUN
-> -	select DRM_AUX_HPD_BRIDGE
-> +	select DRM_AUX_HPD_BRIDGE if DRM_BRIDGE && OF
->  	help
->  	  This driver enables UCSI support on the Huawei Matebook E Go tablet,
->  	  which is a sc8280xp-based 2-in-1 tablet.
-> -- 
-> 2.34.1
+> diff --git a/tools/testing/selftests/drivers/net/.gitignore b/tools/testing/selftests/drivers/net/.gitignore
+> index ec746f374e85..71bd7d651233 100644
+> --- a/tools/testing/selftests/drivers/net/.gitignore
+> +++ b/tools/testing/selftests/drivers/net/.gitignore
+> @@ -1,2 +1,3 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+>  xdp_helper
+> +napi_id_helper
 
--- 
-heikki
+sort alphabetically, pls
+
+> diff --git a/tools/testing/selftests/drivers/net/Makefile b/tools/testing/selftests/drivers/net/Makefile
+> index 0c95bd944d56..47247c2ef948 100644
+> --- a/tools/testing/selftests/drivers/net/Makefile
+> +++ b/tools/testing/selftests/drivers/net/Makefile
+> @@ -6,9 +6,13 @@ TEST_INCLUDES := $(wildcard lib/py/*.py) \
+>  		 ../../net/net_helper.sh \
+>  		 ../../net/lib.sh \
+>  
+> -TEST_GEN_FILES := xdp_helper
+> +TEST_GEN_FILES := \
+> +	napi_id_helper \
+> +	xdp_helper \
+
+like you did here
+
+> +# end of TEST_GEN_FILES
+>  
+>  TEST_PROGS := \
+> +	napi_id.py \
+>  	netcons_basic.sh \
+>  	netcons_fragmented_msg.sh \
+>  	netcons_overflow.sh \
+> diff --git a/tools/testing/selftests/drivers/net/napi_id.py b/tools/testing/selftests/drivers/net/napi_id.py
+> new file mode 100755
+> index 000000000000..aee6f90be49b
+> --- /dev/null
+> +++ b/tools/testing/selftests/drivers/net/napi_id.py
+> @@ -0,0 +1,24 @@
+> +#!/usr/bin/env python3
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +from lib.py import ksft_run, ksft_exit
+> +from lib.py import ksft_eq, NetDrvEpEnv
+> +from lib.py import bkg, cmd, rand_port, NetNSEnter
+> +
+> +def test_napi_id(cfg) -> None:
+> +    port = rand_port()
+> +    listen_cmd = f'{cfg.test_dir / "napi_id_helper"} {cfg.addr_v['4']} {port}'
+
+you need to deploy, in case test is running with a real remote machine
+and the binary has to be copied over:
+
+	bin_remote = cfg.remote.deploy(cfg.test_dir / "napi_id_helper")
+	listen_cmd = f'{bin_remote} {cfg.addr_v['4']} {port}' 
+
+> +    with bkg(listen_cmd, ksft_wait=3) as server:
+> +        with NetNSEnter('net', '/proc/self/ns/'):
+> +          cmd(f"echo a | socat - TCP:{cfg.addr_v['4']}:{port}", host=cfg.remote, shell=True)
+
+Like Xiao Liang said, just host=cfg.remote should work.
+
+> +    ksft_eq(0, server.ret)
+> +
 
