@@ -1,174 +1,151 @@
-Return-Path: <linux-kernel+bounces-609156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1D97A91DEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:27:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E1BBA91DEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:27:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E74D188AE0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 13:27:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7649A7A8CA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 13:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92347245011;
-	Thu, 17 Apr 2025 13:26:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 615AC2376E6;
+	Thu, 17 Apr 2025 13:25:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Z5w3AX3q"
-Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fDTJcQ0q"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7DB2250F8;
-	Thu, 17 Apr 2025 13:26:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDEF32459D3
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 13:25:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744896376; cv=none; b=ftrGBcD5sJx1C5SsMwGnXKQTv58ka28F7hVFfFxPdkA+7HcK0rvOJrY42hf2d9vcoAZfN0/ntHWeIHWEXjWDcQcKoHuYOPltzMJfk2lbvAHvaYu+WS7OXx0nRER/6XzZY+wWPfng0osxK+coviVEjKLn2h0g8tDTfIXGfBNtYMg=
+	t=1744896313; cv=none; b=O3/bqfLcB0YCHMkQZOrXd0+wRH/kNM1QEOU33F9yr413SZvcSy6cy3QP6MCY3uTKvM9i+UUknZTcuB9MqLblKrN8ViGNgDku5IU4odHdlU0AMO/Dkqvgz5r9OiRSI/713qkyUfRxATC6kl4CkuTxWpHPftGg//yic/nYizOjQWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744896376; c=relaxed/simple;
-	bh=Fq7IdhdrnNct8iqWEVHnFE0MFeEMqOyDb8u/JYxncXo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ma39oz2YrOUd4qzVMdiR5HB3U43PB/60AQN2FqPK3Qe/ovJGaMb0a5vjlH68oB72UzqbfpD9qABU2Iyy1amuxKe928MHmxVYTPtU9FFTTub2hwLRDHcg0eSPMauHUd2xUuPhZE3KDYdmtzo6ZDvKo8po8s+9/7sOFEQs35MxjpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Z5w3AX3q; arc=none smtp.client-ip=18.132.163.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1744896350;
-	bh=XxR2ZHiLVR1ar1sC2oj9zb4tbB77P/btLN2y/3RrHb0=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Z5w3AX3qNbWE9BHreocOXmzJj3A7K3JI4mwq6LyftTa+T+HZXoxNRGjNrqd/J45Iv
-	 61B4q5tvy7ycXFQgUgyvpwarl2k2qiDRU/G1FyxCeYMQLdT4W5J3BdAWjGXa+8b01j
-	 YpFjrB4eexSvbztrfL+WICpHSLBUW0xSKG7kzgAI=
-X-QQ-mid: zesmtpip2t1744896298t85e739b0
-X-QQ-Originating-IP: LtLexsaQxwKAHGWspoZ7PEzBQe1WlPqyohCnjpVi16s=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 17 Apr 2025 21:24:55 +0800 (CST)
-X-QQ-SSF: 0002000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 16509579133343517929
-EX-QQ-RecipientCnt: 20
-From: WangYuli <wangyuli@uniontech.com>
-To: corbet@lwn.net,
-	tsbogend@alpha.franken.de
-Cc: akpm@linux-foundation.org,
-	jeffxu@chromium.org,
-	lorenzo.stoakes@oracle.com,
-	kees@kernel.org,
-	Liam.Howlett@oracle.com,
-	wangyuli@uniontech.com,
-	hca@linux.ibm.com,
-	takumaw1990@gmail.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	thomas.weissschuh@linutronix.de,
-	tglx@linutronix.de,
-	namcao@linutronix.de,
-	zhanjun@uniontech.com,
-	niecheng1@uniontech.com,
-	guanwentao@uniontech.com,
-	Erpeng Xu <xuerpeng@uniontech.com>
-Subject: [PATCH] mseal sysmap: enable mips with LOONGSON64
-Date: Thu, 17 Apr 2025 21:24:10 +0800
-Message-ID: <7EB087B72C4FBDD3+20250417132410.404043-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1744896313; c=relaxed/simple;
+	bh=uPx/gCmeGJxZJPFsRmqNBUDw0IV9MPk4j42a+Nwd25A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VGrxAXCYHI9YKLC/CVyPuGH7nDwEuFyUfIFZYiJGkjIinUwmkr5BQnrn5Eo4VQDPO6or0k1rmUXJFXdY9jioiKpcxlwQbNpjcBV9Oea2gT4oAmYAWV6g1jLzlNre2LkLbKhiF+/JcWwZA8BsnyiNUs3a/994YBjEtZ227xll1uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fDTJcQ0q; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e614da8615so1638725a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 06:25:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744896310; x=1745501110; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kpNf6w6GnEUetZaJA+rqBWn6AFuG6sqOCwucLcmthoc=;
+        b=fDTJcQ0qtdG7fsKjGgQfcDJha/U8r1uT6mJ+uA7i656kepTDNJQ/Hey0k6HlTlwn0c
+         Npih6h4nYAzRPLj6tMzetqPlGecJcPHJQ1d6ZNuC8N3oRd5NjRJaBexoOEuBV3PTaXEz
+         mHqD6yku7yrQv5NE1jlDy2UjAAIVbW1zB4z5EC3ztI0u0x5Ky7hoXsecLTD/W/l4EJfZ
+         +mAqUFlpcnb+xkK64WEJ2xbUNl/WV1bspmvRy9M16UTR72NHDn0DYdoIv1JoxNmlNv3p
+         ZG3pMZx+FcauXLUmauPBp86SRcY461+5SRUERZa+mUpmzcl2/lBV97etK/gZDd+vK+Iw
+         X6cQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744896310; x=1745501110;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kpNf6w6GnEUetZaJA+rqBWn6AFuG6sqOCwucLcmthoc=;
+        b=PHFxoAINxs7eiF0FiFKFynLF873XKJE90LwqcH13yqUefesU8TXmulGOLu9GvWTD1U
+         bHuVlK3MRMxyHth58FpQuP2e6bnm3i42VYhps3uotQFXL6R1rxHJosjx4LAfa9j9ntSI
+         jzD7xmDdBGO2O24o9eK83xAVxFNGfYAU6RDaQC9Pq85BR1AXe8SATQ1mY+cdpcULHhUZ
+         uO/jOxTId62MhV9ZNZdoedHedTGJeeSFhIcP0IwFi2BGgeQP6C99tcvYkBrbedwUPYci
+         2u8BkoQTuu059DWsqvm1Kj2+rx25yiMvfIpLOleEtj+errrjHOfxlusMQFB0pSHwqcMB
+         z40Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUkS9Pz/TAW9HkpjWN/pdhTgIzWiQ4LkyRw3YiIdTeOUaeGbU8fUqAG7wxoSZPgZx00m1EovrV5nDGMowo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2uPHWL1IbiWfzBeRfbhjaQAjVnakaAVAQg+QavdVuR59pHWon
+	QHvSJu0SIcvoPkcqZ6pkTL1Qn31toUYPy5f8tewbkHHCEU3CIn2nSe6EQyIFUScbf1/eRGmtX4A
+	um33fNThabf836C72Lq3WDdw67RQ=
+X-Gm-Gg: ASbGncvr9rbWZtCNiHQ1JFf77fismhpY+THyj+bjtGyvaxnzovrZheUJgsgwskuC+fD
+	/ykjx7fyYnPD/zDv1EVju3dqZrKxG81iQIOlSlXnGqH3pCpaRfMCfgSGYmRC7M9oP9FsDdxQoM8
+	nRNVBkyzK7V1fRc7BYSWi1fQ==
+X-Google-Smtp-Source: AGHT+IE4wbCf7TezOopemIV0fOYus0Gx4w/ZoyD0bBV1TFMSzOb8alw5GhhnENcFKPzNOqWxc/bAQglhq8CL9qZtIs4=
+X-Received: by 2002:a05:6402:520f:b0:5e0:752a:1c7c with SMTP id
+ 4fb4d7f45d1cf-5f4d1377d11mr2619228a12.1.1744896310073; Thu, 17 Apr 2025
+ 06:25:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MZqCzNCKZzA8shl6Scu7inVgMrHsqaT5zreO+30jgecaDaySn7iNzCTl
-	s6tHaTudRJU2DgB55bZaB79xuD5LVY0D9b4InOpMuKDwCGJIWkCKx48/9G5sCw4bM3Cp/zi
-	2CGjq0+tSj2dfek2Vbq/s2nkhOIBXN7LTZQK+dkneFAQwtHTr0RkGwAtvfJj4zDbT61XMF7
-	uUG2ly54lXpFd5aedYipi58xRylJdrTIxv7GNNGW76FFplKQx8jhzwSc1Oc1lHuwzsJ5UJE
-	DK2o2CZAcBKw+RWGjlvczWFiTX4XlA1ZoJZJ01nrJGnE5Q0Ra4yhA/eYBeyAfIcZeXwPmcg
-	07o3tnA8ffsLEvIybQAVzSf+T05cFpkZCN4iaPrZ5AwN1kalH3JHjsm/ZjUd+CbH6yIQeds
-	03eQnApVvtQH6XkF9sRpBfgZyDS8oaHJzpaF23w2YfcJNC2g+TlEsiaT62RpgQ1dBZO/F1c
-	PAQpDn48DeZZVWOc+ll++Uy26QetjTi1u5YeMyVQBX5fJLGeV32BEaD7k6x/Y8wHYNmSiHI
-	SrX5KzLZZpTjiIULPh2Ru7k65SEQTTmZmp4SlCzvFuH/06YBQRWxGx+MbyOx5V4WAAE9TGn
-	bXBLrYHQjrTz2kGxjMXF2pyJBJQwo0yMBy5JXRyufF0pLjoY6jkl72xDRi+Kv1O51QGJTx4
-	ylIoO4kvCGsTv65TSAbwblAVUpNTw34pWWOeTfaQz7nw9SvvfazADa1uO4bPScVM3KZy1wn
-	Erd2Ku8TwjcOxeAUXzpuN+ZFIogunOuC/9ruF65fdUbuS2UJc3xTVbaf2cd3PKAvFTyEH+A
-	rTt4n8Z5Bt+u0Y4FX4FJxBQBaxorChOep7YKcpAHVM0p8D3cwSVwzZ9Twnk/KLbrZBUUX2Z
-	vQ0BlaQ0jXXAv7cL+jkQ9WAKfScYRTc1yyW6cMJHNYY3w798E9PQ/Gt+RFV1/YUldZVhy2a
-	DC2isu3IakcsBQaVahlMuZHXIinn/9Tx0acd1tTJvcKtQPMEiORg7Tiff7d9oj+nCeecsLL
-	9wjk+DBzX/jMWApXUxtd4r0V8kFIt2eQ9BkxFSvMq1e0xYqv1sTdiAAzoMuP3Xn3S45d8Fz
-	YQUEwBKtk/L
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-X-QQ-RECHKSPAM: 0
+References: <20250417124908.58543-1-ioworker0@gmail.com> <a825b3c3-55f7-4d90-a318-e20acf55e0cd@redhat.com>
+In-Reply-To: <a825b3c3-55f7-4d90-a318-e20acf55e0cd@redhat.com>
+From: Lance Yang <ioworker0@gmail.com>
+Date: Thu, 17 Apr 2025 21:24:33 +0800
+X-Gm-Features: ATxdqUED3wkrDBOxfYANPvf-Dj0nW7Nq8Qoxfvbu9oI8rK9kDfgiQD8DT1tprds
+Message-ID: <CAK1f24mkswwY71EKourpw1y-KiFi08OkGzZSBkutoj+UCgbLMg@mail.gmail.com>
+Subject: Re: [PATCH 1/1] mm/rmap: add CONFIG_MM_ID guard for folio_test_large_maybe_mapped_shared()
+To: David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Mingzhe Yang <mingzhe.yang@ly.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Provide support for CONFIG_MSEAL_SYSTEM_MAPPINGS on mips with
-CPU_LOONGSON64, covering the vdso.
+Hi David,
 
-NOTE:
-  There is significant diversity among devices within the MIPS
-architecture, which extends to their kernel code implementations.
-  My testing capabilities are limited to Loongson 3A4000/3B4000
-CPUs.
-  Consequently, I have not enabled mseal sysmap support for the
-entirety of mips64, as I lack the necessary devices for testing.
+Thanks for taking the time to review!
 
-Tested-by: Erpeng Xu <xuerpeng@uniontech.com>
-Tested-by: WangYuli <wangyuli@uniontech.com>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
-NOTE:
-  1. As I am unaware whether other 64-bit MIPS devices function
-properly, I have not yet modified the MIPS status in
-mseal_sys_mappings/arch-support.txt.
-  2. From my perspective, it appears that this architecture also
-does not rely on remapping the VDSO, VVAR, or any other special
-mapping. Nevertheless, I believe it would be best to get further
-confirmation from more expert individuals such as Lorenzo Stoakes
-and Thomas Bogendoerfer.
----
- Documentation/userspace-api/mseal.rst | 2 +-
- arch/mips/Kconfig                     | 1 +
- arch/mips/kernel/vdso.c               | 3 ++-
- 3 files changed, 4 insertions(+), 2 deletions(-)
+On Thu, Apr 17, 2025 at 8:56=E2=80=AFPM David Hildenbrand <david@redhat.com=
+> wrote:
+>
+> On 17.04.25 14:49, Lance Yang wrote:
+> > Add a compile-time check to make sure folio_test_large_maybe_mapped_sha=
+red()
+> > is only used with CONFIG_MM_ID enabled, as it directly accesses the _mm=
+_ids
+> > field that only works under CONFIG_MM_ID.
+> >
+> > Suggested-by: David Hildenbrand <david@redhat.com>
+> > Signed-off-by: Mingzhe Yang <mingzhe.yang@ly.com>
+>
+> ^ should that be here?
 
-diff --git a/Documentation/userspace-api/mseal.rst b/Documentation/userspace-api/mseal.rst
-index ea9b11a0bd89..968a6db8afb7 100644
---- a/Documentation/userspace-api/mseal.rst
-+++ b/Documentation/userspace-api/mseal.rst
-@@ -144,7 +144,7 @@ Use cases
-   architecture.
- 
-   The following architectures currently support this feature: x86-64, arm64,
--  loongarch and s390.
-+  loongarch, mips64el (loongson3) and s390.
- 
-   WARNING: This feature breaks programs which rely on relocating
-   or unmapping system mappings. Known broken software at the time
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index fc0772c1bad4..055a185deb07 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -25,6 +25,7 @@ config MIPS
- 	select ARCH_USE_QUEUED_RWLOCKS
- 	select ARCH_USE_QUEUED_SPINLOCKS
- 	select ARCH_SUPPORTS_HUGETLBFS if CPU_SUPPORTS_HUGEPAGES
-+	select ARCH_SUPPORTS_MSEAL_SYSTEM_MAPPINGS if CPU_LOONGSON64
- 	select ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT if MMU
- 	select ARCH_WANT_IPC_PARSE_VERSION
- 	select ARCH_WANT_LD_ORPHAN_WARN
-diff --git a/arch/mips/kernel/vdso.c b/arch/mips/kernel/vdso.c
-index de096777172f..6221f2dcedb1 100644
---- a/arch/mips/kernel/vdso.c
-+++ b/arch/mips/kernel/vdso.c
-@@ -167,7 +167,8 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
- 	/* Map VDSO image. */
- 	vma = _install_special_mapping(mm, vdso_addr, image->size,
- 				       VM_READ | VM_EXEC |
--				       VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC,
-+				       VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC |
-+				       VM_SEALED_SYSMAP,
- 				       &image->mapping);
- 	if (IS_ERR(vma)) {
- 		ret = PTR_ERR(vma);
--- 
-2.49.0
+Yep, that's my email too ;p
 
+>
+> > Signed-off-by: Lance Yang <ioworker0@gmail.com>
+> > ---
+> >   include/linux/page-flags.h | 2 ++
+> >   1 file changed, 2 insertions(+)
+> >
+> > diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+> > index d3909cb1e576..6bd9b9043976 100644
+> > --- a/include/linux/page-flags.h
+> > +++ b/include/linux/page-flags.h
+> > @@ -1232,6 +1232,8 @@ static inline int folio_has_private(const struct =
+folio *folio)
+> >
+> >   static inline bool folio_test_large_maybe_mapped_shared(const struct =
+folio *folio)
+> >   {
+> > +     /* This function should never be called without CONFIG_MM_ID enab=
+led. */
+> > +     BUILD_BUG_ON(!IS_ENABLED(CONFIG_MM_ID));
+> >       return test_bit(FOLIO_MM_IDS_SHARED_BITNUM, &folio->_mm_ids);
+> >   }
+> >   #undef PF_ANY
+>
+> That should work. I can throw this into a cross-compile setup later if I
+> get to it.
+>
+
+Yeah, just built kernels with and without both CONFIG_MM_ID and
+CONFIG_TRANSPARENT_HUGEPAGE -- no issues either way ;p
+
+> Acked-by: David Hildenbrand <david@redhat.com>
+
+Thanks again for your time,
+Lance
+
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
