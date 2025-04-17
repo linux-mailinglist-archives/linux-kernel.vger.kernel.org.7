@@ -1,113 +1,135 @@
-Return-Path: <linux-kernel+bounces-608395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72B36A912AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:30:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ECAFDA912B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:35:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06CAC1906440
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 05:30:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 825A2190678C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 05:35:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 409F81DEFEC;
-	Thu, 17 Apr 2025 05:30:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7D41DB933;
+	Thu, 17 Apr 2025 05:35:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t4QUFk4Z"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="QucMYgwf";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CAnFn2N0"
+Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5841DE4FC
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 05:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA9B2DFA2F;
+	Thu, 17 Apr 2025 05:35:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744867800; cv=none; b=neu150SSAmlz8IrMeh61KwA5G4580BmvcVUrimfruxWReQPzYCAs9QQ7aT/u8hs5yxMwWG2awg5pvtSWnM0eP651esPmc8rOpozmXBpHvEgIhrK/u8RyztkZRuyr74JnLjynal2DFhvwaMGq5/Oq7lGN/ybSYtbsPoRIXBRVuO8=
+	t=1744868136; cv=none; b=UpAFlDFNeoA7POxuFE+WoBVN2mvzuwbyndFBW5IQW+y4GpEKGDUnlbP4rhs+57xNwc0BnBbx2GD6OfnE4mcmD4m7WNzfDPFWvK6VlKtoC1tFVWFqfWnYzHxzj74wtWVq1C9/xpbTrgJX2vB/rLtBC0t5J8VHGOOsUMAJQeLZ+ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744867800; c=relaxed/simple;
-	bh=TEUTdEEXTmy8ALJVhENgaSqDviDpkYjUlBkULiXDmpY=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=TZ1gxEQfvOCJGd6BynnivfklozZ5Qe+ZNqIRgDEnf1HaMnQJKstQz8ysfRcpZq9vLbX2YH8mDOQ4ZX5cxXfDZTpgdbq+5ANMffnk+9z6iU3z7YMZNMbYSdV64u/gROq1QVEg9r894lVBYMtmxmxxSH0W3ce67OXbZI3Ee+/KA4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t4QUFk4Z; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7376dd56f8fso446552b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 22:29:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744867798; x=1745472598; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=K2/0NuQSzNOebXOyA98ZePT7hD/9RuG1jjaeZ69P3hY=;
-        b=t4QUFk4ZS3g5ItE+QDoKTJSz2it5OBo1++YQyi3DJ7BjfTS8ml1Vv8N2hzYlkxXB5g
-         CR+ipxjoDgYFm2edpJGs4ZN2aq6K6Ll21rqp4kyrLSqhTdn0KCIkK5iI4pa7al3RRV5q
-         BpKY9hH5vMUuWbY2CoSRGYVEsjcEMVHuw9YXJFO5oo/oclv+ueAXIhO3wiuB81KJIyvk
-         Ecy2KKpKiZnt60PRJADrrTdC5khTJABmiBfhL/Qfy/JQTaUwQVIX/W7Acq7fZXVgUaYg
-         nDmwOLue+LmasxfQhLkBYGYQBWVJfqgIvX7gUBS9V70Ao0Ajp5a5+NLbb0mRbCXZtT6n
-         O3xA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744867798; x=1745472598;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=K2/0NuQSzNOebXOyA98ZePT7hD/9RuG1jjaeZ69P3hY=;
-        b=Eq7cw+hd+23sWXezT8rJEDyOPr0TPvuFF5PwUvaQoqzGiBMYDuG95hk4Nc+vuQd8e0
-         2ITmjkkB13mW1xprNZiNo8aDn7WgFRJc0krlE1yB4Q9h+RJ31mCgjeA83TkXxy9CE6Dl
-         I2NCfYLMdtco8aCNxJWa+9gUpDdhHyARJ3nTtDGXsH7UW0Up4HAxkQs3nROpqJFYD30+
-         KeG8H0ERFrYNgPrlE+uUyNbv8Xq04z/o6uqwvLz4e7MjLoTV+RS6ovaDysfU8HkgXKqP
-         IBRKaDavAngfMIoywWCusTT5uJSfFkpzT6KLJ1Ov4TAonzBO0ERVW7bx1cu1qNSzbJJK
-         lVIw==
-X-Forwarded-Encrypted: i=1; AJvYcCWFFo3wjcb9cH3lInVBxdw+CdCScDs5wpWtrNEX6zlsgRlBnx20XI1QNq2y/NI4rmRnvdOZPNtYllWnvGI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQ2Hagvs0yUx23+YBM0a8JVIV+AegbDKtatpV3L7el98jFWNfT
-	EHJWdYDh7aBHDpP8FSTTiTIQxh1bwxdEVMPPSitMm5alz7c3XXdDcuYBp2bdcw==
-X-Gm-Gg: ASbGncuTv8f2vDt4LZNYmHNovPAIcyZpNQmZB+nkK61sv2guK9+vb2DPkhk8IN+QiSO
-	cJVOWMJfVUizOkjrsMX8REjR3r4Osaw+kS3i5T+M9kRI51kOfESRKP8TyeOtr20kpDRtaLG834G
-	TzFmSjNdrJQoPX7wCvJPq7088CRxESELekibAbcIRcb+1riV2l4IK2j1Tw4PelNHjaIsTitpbEr
-	7Af3QTVs1BQcCa8VbREOjdAvz80aT57ux3rAzLsz5WV11XbV0y4QBgvWSpzQRi5wfl2aV4qBdNc
-	oZCc3hFh98zNqQgGB6rTswR/nnir3ZijEaC6cTWwOlq9CmgDG28PK9AmmU4Fs2AslqCJ3lINMII
-	3w5LEJl9VJVojjuq53cbCOKqc
-X-Google-Smtp-Source: AGHT+IEqPmJ2V0Q5TenmE86WICH2IRs1S6rt1lUDyy3mX17Qt4m9speStiJo+O/DmW1SnrqjigDtJw==
-X-Received: by 2002:a05:6a00:180f:b0:736:6d4d:ffa6 with SMTP id d2e1a72fcca58-73c267e1deamr6189297b3a.15.1744867798384;
-        Wed, 16 Apr 2025 22:29:58 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd230e32dsm11452046b3a.150.2025.04.16.22.29.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Apr 2025 22:29:57 -0700 (PDT)
-Date: Wed, 16 Apr 2025 22:29:56 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: Zi Yan <ziy@nvidia.com>
-cc: Gavin Guo <gavinguo@igalia.com>, linux-mm@kvack.org, 
-    akpm@linux-foundation.org, willy@infradead.org, linmiaohe@huawei.com, 
-    hughd@google.com, revest@google.com, david@redhat.com, 
-    kernel-dev@igalia.com, linux-kernel@vger.kernel.org, 
-    Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Subject: Re: [PATCH] mm/huge_memory: fix dereferencing invalid pmd migration
- entry
-In-Reply-To: <C055C822-0CE9-4455-9849-7242F31515EB@nvidia.com>
-Message-ID: <95e543dd-6b93-9507-d383-1ae91e2e6640@google.com>
-References: <20250414072737.1698513-1-gavinguo@igalia.com> <A049A15F-1287-4943-8EE4-833CEEC4F988@nvidia.com> <83629774-981b-44cb-a106-d549f1a43db9@igalia.com> <C055C822-0CE9-4455-9849-7242F31515EB@nvidia.com>
+	s=arc-20240116; t=1744868136; c=relaxed/simple;
+	bh=Slvx1D6twob46gSrZLqBdVv7oyktOZCDbUx61Hxl6Ww=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GLjlQEjsIS1k6GrYzIHoJwXNlYIR5GSqOqL1IUU5T3AdETgMYmX4/ldV5BjwD1gq/XVUDwvmDxpxg/Fd4pF/Fxma0whuMcPVrWHJ7Xb8tR5jI1jj0WqqnG1k4cs95nJ+UPQ5E1bmUNBhG8iyctZ0yAOux32Ms3vYaPKWeHBVrZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=QucMYgwf; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CAnFn2N0; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 64EA11140295;
+	Thu, 17 Apr 2025 01:35:32 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-01.internal (MEProxy); Thu, 17 Apr 2025 01:35:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1744868132; x=1744954532; bh=C646+KxKq2
+	N5WzwP+wIgUiP5cHyRP6fbp7IlKQwHZFc=; b=QucMYgwf3pY1sSSCnjYILzHnnt
+	qePWQYLwJfie+AjYhohu6ZP9iCjCQ4XnRJmrA7be5d/VB+9eykScL00D5iog1ffu
+	SW78cCUJx3ArrYHx8vtQ1rX/R2/6OhgkS+DGZXW4pRA5szAgtderV0xqoNjk1NTC
+	tOuiamgnfrrV0+zhnynZcnclFV7PyNvwJj9zWi7kjDZPpacK/RlG32LJ4m+JpGtH
+	bCrdGUMnjxdE+GS1WGkXOw3ug8NmDaklbxeFOIDrA8tzM/GxB5Fg5UK8fZ7ed1DU
+	wByMKHwrpxoyFW1xgbq+iEFNn6V+vhPVS8aTxWxLLMnIxcNGKTbm6dssruQA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1744868132; x=1744954532; bh=C646+KxKq2N5WzwP+wIgUiP5cHyRP6fbp7I
+	lKQwHZFc=; b=CAnFn2N0oWSeY5NaTQaUlm5W7RKbUILrpY9OBEc3OQEZnnftgu5
+	HyFNtQDbL9Ezs+UtAWN971AyUgyFaEoTMqDOGBF8sp1FxdqJWa8Jxspu3WiI9rUH
+	Z/MDW6QZ2LY65S29mB/NvyC4edbaTxNNiOBJSU6X9b7j2GJVL9qnNzkc6s+AAQs9
+	FAFVssKk6cCCaTr1NMCVRKuDgRi6ox2WoTVXW3G4FjVoRhRj0L7sRbSuKFndH/bi
+	vpx+VSrn7G86URTUmFiAQ8rBhKFgIM/EPq2qy3Gishk95S6c7/GZP81MEbYTn4zj
+	JyLeYHpTu27mYcSnIwremb5+hCOTn0lFjHQ==
+X-ME-Sender: <xms:I5MAaD3k_2bZXeDhJkI5FlvC3FsSG92RZTYpK-P75cF41z6sTrxheA>
+    <xme:I5MAaCEYNVj-F9n-AMFx_hE6kuDlx1bMM93v-sJoXeblrsRL6QrcoL0EMuX2hR4H2
+    wjEwscWGD0a5w>
+X-ME-Received: <xmr:I5MAaD5EFRaFO1xeMyZNsw2BOL7CMSMLQC713ds3aAm4xlwZcc21AGM74RScdejZWFX5ACXx_O-dp0Ipkp4CXSOC83jbRbI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvdekgeefucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
+    vdenucfhrhhomhepifhrvghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecugg
+    ftrfgrthhtvghrnhepheegvdevvdeljeeugfdtudduhfekledtiefhveejkeejuefhtdeu
+    fefhgfehkeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepghhrvghgsehkrhhorghhrdgtohhmpdhnsggprhgtphhtthhopeduvddpmhhouggv
+    pehsmhhtphhouhhtpdhrtghpthhtohepshhfrhestggrnhgsrdgruhhughdrohhrghdrrg
+    hupdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehgvggv
+    rhhtodhrvghnvghsrghssehglhhiuggvrhdrsggvpdhrtghpthhtoheplhhinhhugidqkh
+    gvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidq
+    nhgvgihtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfihsrgdorhgvnh
+    gvshgrshesshgrnhhgqdgvnhhgihhnvggvrhhinhhgrdgtohhm
+X-ME-Proxy: <xmx:I5MAaI0uaXQfzFA3lmVHO3CzgR9PeE-6o5jHyu96t0a8ZUTsn5PCKw>
+    <xmx:I5MAaGFE23yzfHu9SBnYAhUdJ33bcCTnyPLwiLjmLh8XJN7gf4yiYQ>
+    <xmx:I5MAaJ_fHdEw3fIBfg9TsEMBbdUpQtfe1CwY8zYTus6kEka0Y-q4NA>
+    <xmx:I5MAaDmi0lv5lk2fiN3IfLxVTTyF7Ef-3ZD9m1tZvVA2STiw4UYu4w>
+    <xmx:JJMAaHwem31P8l6yFRaTsnbO05vMOzAUvqyS9C0AHDYYSgpkpY4_1HYR>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 17 Apr 2025 01:35:31 -0400 (EDT)
+Date: Thu, 17 Apr 2025 07:33:55 +0200
+From: Greg KH <greg@kroah.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Rob Herring <robh@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: linux-next: manual merge of the tty tree with the devicetree tree
+Message-ID: <2025041745-swifter-dove-7095@gregkh>
+References: <20250417144625.4be32ba7@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250417144625.4be32ba7@canb.auug.org.au>
 
-On Tue, 15 Apr 2025, Zi Yan wrote:
+On Thu, Apr 17, 2025 at 02:46:25PM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Anyway, we need to figure out why both THP migration and deferred_split_scan()
-> hold the THP lock first, which sounds impossible to me. Or some other execution
-> interleaving is happening.
+> Today's linux-next merge of the tty tree got a conflict in:
+> 
+>   Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
+> 
+> between commit:
+> 
+>   672da444fccd ("dt-bindings: remove RZ/N1S bindings")
+> 
+> from the devicetree tree and commit:
+> 
+>   0ed228275485 ("dt-bindings: serial: snps-dw-apb-uart: Simplify DMA-less RZ/N1 rule")
+> 
+> from the tty tree.
+> 
+> I fixed it up (Ijust used the latter) and can carry the fix as
+> necessary. This is now fixed as far as linux-next is concerned, but any
+> non trivial conflicts should be mentioned to your upstream maintainer
+> when your tree is submitted for merging.  You may also want to consider
+> cooperating with the maintainer of the conflicting tree to minimise any
+> particularly complex conflicts.
 
-I think perhaps you're missing that an anon_vma lookup points to a
-location which may contain the folio of interest, but might instead
-contain another folio: and weeding out those other folios is precisely
-what the "folio != pmd_folio((*pmd)" check (and the "risk of replacing
-the wrong folio" comment a few lines above it) is for.
+Looks good, thanks!
 
-The "BUG: unable to handle page fault" comes about because that other
-folio might actually be being migrated at this time, so we encounter
-a PMD migration entry instead of a valid PMD entry.  But if it's the
-folio we're looking for, our folio lock excludes a racing migration,
-so it would never be a PMD migration entry for our folio.
-
-Hugh
+greg k-h
 
