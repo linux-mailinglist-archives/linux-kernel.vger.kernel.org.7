@@ -1,199 +1,186 @@
-Return-Path: <linux-kernel+bounces-608546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C682A9151D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:28:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6DDBA91540
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:31:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D177444E02
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:28:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 140545A031B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:31:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 616CC219A8C;
-	Thu, 17 Apr 2025 07:28:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CDCF21E0AC;
+	Thu, 17 Apr 2025 07:30:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="AqhSeuSv";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="AsmHGf9q";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="AqhSeuSv";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="AsmHGf9q"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fx1ff+N0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188AB19F133
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 07:28:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E371B4153
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 07:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744874902; cv=none; b=mFSTzl/bQVx6y51Rhea2L4GkfisrTAgJQztAvmKGKeH0du/AC8grE9S5U1i7/CNfu292R8m1VfNZYrHRrc3fssdwZ4At3NcfCZR2b+CX19Y740KXw90o/OKOyWHbZbRnMlLzy4mM9dv7V0+4tp2MCkV/H4UP+mtyPlcmGuGuOsY=
+	t=1744875002; cv=none; b=IPzpomqSSg/reVy6NzS7WepAxTnC8j5WiXg4UdDvHXNyluy3eECKaivTM3Lh+SPJGxxo0UYV2S6bxv8wJaJ8BB5DnNBreZY8o83W4baCEvPuF7wMjgUxBRu+r3+PKNwZUnZQtBGjORb6/QNyOQmh5gUkN0aJD89N3rCWAF/TXlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744874902; c=relaxed/simple;
-	bh=mCObUeB9b6DaNoG0QvmnjJCXEEJJvJPWP6zrmz0Z40Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZrWC2RZ+Wmnw1Q2Cru1IZZuxVGxRteH783Vb/TRWw7ZkLtsD7yjwm9VNxmn63OhFUq4h2EpXvAMBWi4QA7EhI2ob7C53Rudm3KJylBg0+nnE18RRLceabK5vqB3Zd0y14ZkfAxLQ+yVeMcI4lnCqk8QuiHDWzROQ4nWiZNPdLPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=AqhSeuSv; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=AsmHGf9q; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=AqhSeuSv; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=AsmHGf9q; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3B5C6211A3;
-	Thu, 17 Apr 2025 07:28:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744874899; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6dSncrwBO8AkU7U883YKLKGYF1Otz1wvxPOVFx6BArc=;
-	b=AqhSeuSvdZCHTyRuVkiWNpzqRCvgiUX7jp0tfVUEwzJpktRA88TI/inSuODB9iAojPniO+
-	tU/7UXAGBLljRqlvGqKHilNhKfrzbp70IlhkTjy+0YqTHG814ZzY1uxSX43j2fdimaovmw
-	IUv/TmsH9MLidxD9hVkMN5uhJh/jtXg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744874899;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6dSncrwBO8AkU7U883YKLKGYF1Otz1wvxPOVFx6BArc=;
-	b=AsmHGf9qffU36YMtxAYWDX1q8xJL/xtH7j6TXHorg6UWvJJfONfBpy0Ls4pY1Lf+pCKCPc
-	7aVJ4j12fgYrTCBA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744874899; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6dSncrwBO8AkU7U883YKLKGYF1Otz1wvxPOVFx6BArc=;
-	b=AqhSeuSvdZCHTyRuVkiWNpzqRCvgiUX7jp0tfVUEwzJpktRA88TI/inSuODB9iAojPniO+
-	tU/7UXAGBLljRqlvGqKHilNhKfrzbp70IlhkTjy+0YqTHG814ZzY1uxSX43j2fdimaovmw
-	IUv/TmsH9MLidxD9hVkMN5uhJh/jtXg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744874899;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6dSncrwBO8AkU7U883YKLKGYF1Otz1wvxPOVFx6BArc=;
-	b=AsmHGf9qffU36YMtxAYWDX1q8xJL/xtH7j6TXHorg6UWvJJfONfBpy0Ls4pY1Lf+pCKCPc
-	7aVJ4j12fgYrTCBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C58E8137CF;
-	Thu, 17 Apr 2025 07:28:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 2F0aLpKtAGjGTgAAD6G6ig
-	(envelope-from <hare@suse.de>); Thu, 17 Apr 2025 07:28:18 +0000
-Message-ID: <cb868bc8-ded2-4635-afbb-098f378f74db@suse.de>
-Date: Thu, 17 Apr 2025 09:28:18 +0200
+	s=arc-20240116; t=1744875002; c=relaxed/simple;
+	bh=W5dO5+1iQDL11I67wwgPDyxZ3fBJwPwBYC8gQq8nxhw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bp6e/+A66gz6J+pFHG1p8LO87EtXyzgoFz5tXMYRVoDVtopIDSIXPmGV6/WbYe8oo314OZ8k4QzNlqw0gMoPaKnNO4B92nVGA+lkAg/emltw7kh/95RcP7Zb6rVgJgc6DIgTLD1nIbcRldnZcY9/zSBMC5Rlecj/KQkS9km/G80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fx1ff+N0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F3F3C4CEE4;
+	Thu, 17 Apr 2025 07:30:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744875001;
+	bh=W5dO5+1iQDL11I67wwgPDyxZ3fBJwPwBYC8gQq8nxhw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Fx1ff+N0lInqZBtgczz/K8jggjODkehaathKdT1rdrulLjfP3XbIkkdvbJnaovMK+
+	 cbqPiF6m7V7Wva8E4yP0N8hVqIF0khMlBcGqPzXX89kMWxYanV6xZz7QZ6XcV8ny+W
+	 FaKLAY0520ssGOwYyaM1aLjXwFqVbXoyqRXDfHc4OnUoXFTOrwpssWoEOArqKbdHFp
+	 gQD3GpD5Oqz7QY+lksDAopFwy6Wlq2Axhu4o1m02CZU4Qf3MYI/VOsOMb9S3XEUhCe
+	 t9o2zCvP02kMrequCOWk9WocV/jL1QDYKb1lQ52azbCKMG9NF4V2z1xxCIJkoVv87G
+	 a4P8bwlCQ4LxQ==
+Date: Thu, 17 Apr 2025 12:58:22 +0530
+From: Naveen N Rao <naveen@kernel.org>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: dave.hansen@linux.intel.com, Ingo Molnar <mingo@kernel.org>, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] x86/devmem: Remove duplicate range_is_allowed()
+ definition
+Message-ID: <ucdjz2mytjsndtkoroadd7r7grsi4hwpqd47v752zwo6rn5bg7@a7pq6ah4tdai>
+References: <174433453526.924142.15494575917593543330.stgit@dwillia2-xfh.jf.intel.com>
+ <174433454327.924142.13014632539194148381.stgit@dwillia2-xfh.jf.intel.com>
+ <s6fek3k3zsgf74yuppzckhcnud67pgfitz66n6uwkky7gvjcpc@rp4pxvie2dpb>
+ <6800205d86e73_71fe294e4@dwillia2-xfh.jf.intel.com.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 3/3] nvme: delay failover by command quiesce timeout
-To: Mohamed Khalfella <mkhalfella@purestorage.com>,
- Sagi Grimberg <sagi@grimberg.me>
-Cc: Daniel Wagner <dwagner@suse.de>, Daniel Wagner <wagi@kernel.org>,
- Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>,
- John Meneghini <jmeneghi@redhat.com>, randyj@purestorage.com,
- linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250324-tp4129-v1-0-95a747b4c33b@kernel.org>
- <20250324-tp4129-v1-3-95a747b4c33b@kernel.org>
- <20250410085137.GE1868505-mkhalfella@purestorage.com>
- <6f0d50b2-7a16-4298-8129-c3a0b1426d26@flourine.local>
- <20250416004016.GC78596-mkhalfella@purestorage.com>
- <3dad09ce-151d-41fc-8137-56a931c4c224@flourine.local>
- <20250416135318.GI1868505-mkhalfella@purestorage.com>
- <df6cd26e-551a-4bc1-bdc6-9c715e502aa8@grimberg.me>
- <20250416225913.GA2476975-mkhalfella@purestorage.com>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20250416225913.GA2476975-mkhalfella@purestorage.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6800205d86e73_71fe294e4@dwillia2-xfh.jf.intel.com.notmuch>
 
-On 4/17/25 00:59, Mohamed Khalfella wrote:
-> On 2025-04-17 01:21:08 +0300, Sagi Grimberg wrote:
->>
->>
->> On 16/04/2025 16:53, Mohamed Khalfella wrote:
->>> On 2025-04-16 10:30:11 +0200, Daniel Wagner wrote:
->>>> On Tue, Apr 15, 2025 at 05:40:16PM -0700, Mohamed Khalfella wrote:
->>>>> On 2025-04-15 14:17:48 +0200, Daniel Wagner wrote:
->>>>>> Pasthrough commands should fail immediately. Userland is in charge here,
->>>>>> not the kernel. At least this what should happen here.
->>>>> I see your point. Unless I am missing something these requests should be
->>>>> held equally to bio requests from multipath layer. Let us say app
->>>>> submitted write a request that got canceled immediately, how does the app
->>>>> know when it is safe to retry the write request?
->>>> Good question, but nothing new as far I can tell. If the kernel doesn't
->>>> start to retry passthru IO commands, we have to figure out how to pass
->>>> additional information to the userland.
->>>>
->>> nvme multipath does not retry passthru commands. That is said, there is
->>> nothing prevents userspace from retrying canceled command immediately
->>> resulting in the unwanted behavior these very patches try to address.
->>
->> userspace can read the controller cqt and implement the retry logic on
->> its own.
->> If it doesn't/can't, it should use normal fs io. the driver does not
->> handle passthru retries.
+On Wed, Apr 16, 2025 at 02:25:49PM -0700, Dan Williams wrote:
+> Naveen N Rao wrote:
+> > On Thu, Apr 10, 2025 at 06:22:23PM -0700, Dan Williams wrote:
+> > > It looks like x86 has a local re-implementation of range_is_allowed()
+> > > just to add a pat_enabled() check for the strong symbol override of
+> > > phys_mem_access_prot_allowed() from drivers/char/mem.c.
+> > > 
+> > > In preparation for updating range_is_allowed() logic, arrange for there
+> > > to be only one shared instance of "range_is_allowed()" in the kernel by
+> > > moving a common helper to include/linux/io.h.
+> > > 
+> > > Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> > > Cc: Ingo Molnar <mingo@kernel.org>
+> > > Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> > > ---
+> > >  arch/x86/mm/pat/memtype.c |   31 ++++---------------------------
+> > >  drivers/char/mem.c        |   18 ------------------
+> > >  include/linux/io.h        |   21 +++++++++++++++++++++
+> > >  3 files changed, 25 insertions(+), 45 deletions(-)
+> > > 
+> > > diff --git a/arch/x86/mm/pat/memtype.c b/arch/x86/mm/pat/memtype.c
+> > > index 72d8cbc61158..c97b6598f187 100644
+> > > --- a/arch/x86/mm/pat/memtype.c
+> > > +++ b/arch/x86/mm/pat/memtype.c
+> > > @@ -38,6 +38,7 @@
+> > >  #include <linux/kernel.h>
+> > >  #include <linux/pfn_t.h>
+> > >  #include <linux/slab.h>
+> > > +#include <linux/io.h>
+> > >  #include <linux/mm.h>
+> > >  #include <linux/highmem.h>
+> > >  #include <linux/fs.h>
+> > > @@ -773,38 +774,14 @@ pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
+> > >  	return vma_prot;
+> > >  }
+> > >  
+> > > -#ifdef CONFIG_STRICT_DEVMEM
+> > > -/* This check is done in drivers/char/mem.c in case of STRICT_DEVMEM */
+> > > -static inline int range_is_allowed(unsigned long pfn, unsigned long size)
+> > > -{
+> > > -	return 1;
+> > > -}
+> > 
+> > It looks like no checks were done here if CONFIG_STRICT_DEVMEM was set, 
+> > so this patch changes that.
 > 
-> passthru requests are not very different from normal IO. If the driver
-> holds normal IO requests to prevent corruption, it should hold passthru
-> requests too, for the same reason, no?
+> Yes, but this still matches the historical intent, and the historical
+> intent is a tad messy.
 > 
-> IMO, keeping the request holding logic in the driver makes more sense
-> than implementing it in userspace. One reason is that CCR can help
-> release requests held requests faster.
+> The pat_enabled check was originally added as a *bypass* of additional
+> logic in phys_mem_access_prot_allowed() [1] to validate that /dev/mem was
+> establishing compatible mappings of "System-RAM" via /dev/mem. This
+> patch maintains that expectation that phys_mem_access_prot_allowed()
+> returns immediately when there is no potential cache conflict.
+
+Thanks for the background, that makes sense.
+
+Do we also no longer need the devmem_is_allowed() checks in pat.c if PAT 
+is enabled and !CONFIG_STRICT_DEVMEM?
+
 > 
-One thing to keep in mind: We cannot hold requests during controller 
-reset. Requests are an index into a statically allocated array from
-the request queue, which gets deleted when the request queue is
-removed during controller teardown.
+> However, the point is moot in current code because [2] and [3] removed
+> all cache type validation from phys_mem_access_prot_allowed() in favor
+> track_pfn_remap().
+> 
+> According to:
+> Commit 9e41bff2708e ("x86: fix /dev/mem mmap breakage when PAT is disabled") [1]
+> Commit 1886297ce0c8 ("x86/mm/pat: Fix BUG_ON() in mmap_mem() on QEMU/i386") [2]
+> Commit 0c3c8a18361a ("x86, PAT: Remove duplicate memtype reserve in devmem mmap") [3]
+> 
+> > > -#else
+> > > -/* This check is needed to avoid cache aliasing when PAT is enabled */
+> > > -static inline int range_is_allowed(unsigned long pfn, unsigned long size)
+> > > -{
+> > > -	u64 from = ((u64)pfn) << PAGE_SHIFT;
+> > > -	u64 to = from + size;
+> > > -	u64 cursor = from;
+> > > -
+> > > -	if (!pat_enabled())
+> > > -		return 1;
+> > > -
+> > > -	while (cursor < to) {
+> > > -		if (!devmem_is_allowed(pfn))
+> > > -			return 0;
+> > > -		cursor += PAGE_SIZE;
+> > > -		pfn++;
+> > > -	}
+> > > -	return 1;
+> > > -}
+> > > -#endif /* CONFIG_STRICT_DEVMEM */
+> > > -
+> > >  int phys_mem_access_prot_allowed(struct file *file, unsigned long pfn,
+> > >  				unsigned long size, pgprot_t *vma_prot)
+> > >  {
+> > >  	enum page_cache_mode pcm = _PAGE_CACHE_MODE_WB;
+> > >  
+> > > +	if (!pat_enabled())
+> > > +		return 1;
+> > > +
+> > 
+> > Shouldn't this test for pat_enabled() (perhaps only if 
+> > CONFIG_STRICT_DEVMEM is set) and continue with the rest of the function 
+> > otherwise?
+> 
+> No because, per above, the check is here to short-circuit the rest of
+> phys_mem_access_prot_allowed() when PAT is disabled.
+> 
+> I will add some notes to the changelog to save the next person from
+> needing to find the history here.
+> 
+> I found it interesting that Venki suggested that the duplicated
+> "range_is_allowed()" be cleaned up back in 2008 [4], so this is a
+> cleanup 17 years (almost to the day) in the making:
+> 
+> Commit 0124cecfc85a ("x86, PAT: disable /dev/mem mmap RAM with PAT") [4]
 
-So I _really_ would like to exclude handling of admin and passthrough
-commands for now, as there are extremely few commands which are not
-idempotent. If we really care we can just error them out upon submission
-until error recovery is done.
-But I'm not sure if it's worth the hassle; at this time we don't even
-handle admin commands correctly (admin commands should not be affected
-by the ANA status, yet they are).
+Indeed!
 
-Cheers,
 
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+Thanks,
+Naveen
 
