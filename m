@@ -1,119 +1,111 @@
-Return-Path: <linux-kernel+bounces-609386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA800A9219A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 17:30:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B9DAA921A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 17:31:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67A7D19E848E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:30:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A4FC7AED25
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:30:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84D4B25335B;
-	Thu, 17 Apr 2025 15:30:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC16F253F03;
+	Thu, 17 Apr 2025 15:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tINTPSUk"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LODFsi85"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B99F253B64
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 15:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A8424339D
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 15:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744903807; cv=none; b=K4/kueL+SYGd/D0Cfn7eolmjgiFyU2/JNAFOyClfv/0FHK98wNIhG2Oqk/yvMsDdBuUbjI4kZ/BZLy/OYymEkGkyHh09VTG07pJk+82Y5AzzD6TkeMOccYRK/br/9/KLO5d+drkKqrNfPphzMvkzyKzyQNMe5Nf0mcS+e0RI+zY=
+	t=1744903868; cv=none; b=OZj/HyjAHDcJAmpzLYDsvbcj5Uvg8cb0D+vkLSPmmY/QWvfdyJFbWVUR1oftzs1ILqZL0lE3qyuP5ZnTEJQUaBZZffObMbil2cZoZkHuNe/09K08Q7NXXOmaEeaob+2ZzhdQvsAT8WKAOsXyrSAvDFvWyp0gKuUI2b8G1aJghIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744903807; c=relaxed/simple;
-	bh=7yHU2zMjXO7YHcDIN5XLl9irHpMX2LD+Z4RtW8tNBNg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oszZ2eVq2q81j7ltg2kEAHZgMxwwBhg4uSKNOFIh6BPximCA78BGEddPj0Ug6NRIBRDMRutjHB/D7QGaOQuzbsqBAJEcy9RwK08b6Ho2orqd31WK5kn/68TH+gfkKlX+JGX0DcoQrKXYo7AmQzzvp0m5ULxuJ/kRMl8Wu6SAR9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tINTPSUk; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <8d6c8f72-a8bd-43a8-b1e6-a20cafddf804@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1744903792;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jkOBPoUk+xFY5ZKRx/7lO+ZCCZvZu8C4v3s/LGW1qvM=;
-	b=tINTPSUkz+lDh2u0qbUCc7IvYTHB0jtNBVFJ9GpvC7Xs047gwS9jy1iPUq6aP0+0OMpGTQ
-	tDohhgUbbIgxhRG1BUFLBUe7j3DUUn7RwmiDGwOgZZ3tjEdqYt3iISZp4y0PSgaEgSxpjz
-	LfFic1XsdEQ7osExW7l1Z8p7PX0VEsU=
-Date: Thu, 17 Apr 2025 11:29:38 -0400
+	s=arc-20240116; t=1744903868; c=relaxed/simple;
+	bh=3MTw73aWbpQzR3zLxh074LLgFqiSGsDZ+BvoCWuIAxw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YtesPWM5zNOQQiSAPUryZE3nbGv46DGrL1FRbIx55eeVN0xlRB7Ake0WhAFmOQQZpciVX/qDD7l2S9FbdpPIztaryLdJ3y+L41HNAaiTTVyZbrer6KqkE7aKbvB5nLAAqHrWACYL2fstLpLkI+7V86LCJsiLoFeX44XCzDkNGb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LODFsi85; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-736b34a71a1so1109936b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 08:31:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744903865; x=1745508665; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XXwpinCtXrQvhLFQnEd9La7w+QdiN4cwUhD38eo9LNI=;
+        b=LODFsi85tgbMUDw0Nm88zSqBmx4rhswrQ5H3rnffDWhkC8FwJCJNf/KU09sMzlfl4I
+         ooXGUVsxGPjX/DaioXghsBFB64lfTq31M5DYP3h25iI85UFVOlejufZrw9qUEQ6ggjHD
+         Ac6/BQ6UVcp1feoKUg++oJ1/MbR2ovQj9BygmXufKO8moH80jAAFGJfsw5eWzFLzgxrl
+         F62TyvC47wxwU4rzn/LCCN0Xq4rd8LuPh/iYwCFGq3VG3gq6pVU3CVHHMw7glDQUg4re
+         JHC0yXuwp7/Qkeswsxu53kVGoKoKBjLghuN5dZnxWY7A46Bf+OhqgA/MmGLexs9N6SVS
+         ogkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744903865; x=1745508665;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XXwpinCtXrQvhLFQnEd9La7w+QdiN4cwUhD38eo9LNI=;
+        b=f0TPvynXscHaRucXWf85WjqqtxHX4WmFep+IQSEF/vX9wRWLRLtk939ZMW9vnx0xeZ
+         7rwXTHp6gr98gE1jpMZNvBmK9IwmU5U18D6mGtmFEGFCTnIMEKLLyNN+4x1qSpzWpo6p
+         9aTKcPLpo4smjE3LTMUFt04hCRyo0N0wDvudxTDflQKUzXR+XkxB+yV3vd5pm9IgC2mF
+         V0Yc8eHVsjR360pY0INW+bEiRYPgG85UcdYtbN4A51WcRPiSQSyK6W7NRumUp2Kgb5wY
+         RHSdrwBmbNP6EHQBcW8zg9h57IKLkW7CudWUEUC3ljWTE8QBGjBaC2G7GxOZ4Oic7wvc
+         A/Qw==
+X-Gm-Message-State: AOJu0YwwTn6K1fmIW2CXUFA8yja88cQoRsdKKgTjACEg9G2sc9iPv6Hz
+	GS1DqQ8WD+R8zA3OKankypuxr9a1i6i/dTKISpboxnvVznefd8fe+N3mhQope68=
+X-Gm-Gg: ASbGncutx/jgVWy2Js0oYxd98ph9+9AZkavTjsOt+hKlynzuUdkWNRfyVpWmTC3hSar
+	jjMiwQWmtTlcet0zkvCidnnRUBJyD0Wqt+8AsgAoRtDf1ieL7OeGR+VNPwnMo5fzx1rt7VqDHR1
+	Dm5HHBPjfqL/Dp+R+fMdzbSbJftUJZYYJMch7KQw2tBZlMtvbXqaUPG1w8tuTUFeOFv4zahvmsT
+	0WuUn+u2I93TBLe27NCjLq8HPM7juroJyQ70mQqxvPxbhMz19ojquUL+T0I5xAmUvWPlefHLYMd
+	qu3NyPR35tKjow7eM8zWd8Ivk/v1HxiT4uY9P0HCYxBXT/fqvg==
+X-Google-Smtp-Source: AGHT+IE0sBXnqQrNTr8mqqzWhCy8FSHFzIaWJzOqJ+xuokGfrBfxkKaNMG2Iw9cpsrZlSEbD0KDPbg==
+X-Received: by 2002:a05:6a00:198c:b0:736:a638:7f9e with SMTP id d2e1a72fcca58-73c26700979mr10339783b3a.8.1744903865528;
+        Thu, 17 Apr 2025 08:31:05 -0700 (PDT)
+Received: from localhost.localdomain ([43.129.202.66])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd22fa730sm12829030b3a.94.2025.04.17.08.31.04
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 17 Apr 2025 08:31:05 -0700 (PDT)
+From: Lance Yang <ioworker0@gmail.com>
+X-Google-Original-From: Lance Yang <lance.yang@linux.dev>
+To: akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	Lance Yang <lance.yang@linux.dev>
+Subject: [PATCH 1/1] mailmap: add entries for Lance Yang
+Date: Thu, 17 Apr 2025 23:30:41 +0800
+Message-ID: <20250417153041.38977-1-lance.yang@linux.dev>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [net-next PATCH v3 00/11] Add PCS core support
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, upstream@airoha.com,
- Christian Marangi <ansuelsmth@gmail.com>, linux-kernel@vger.kernel.org,
- Kory Maincent <kory.maincent@bootlin.com>,
- Heiner Kallweit <hkallweit1@gmail.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Clark Wang <xiaoning.wang@nxp.com>,
- Claudiu Beznea <claudiu.beznea@microchip.com>,
- Claudiu Manoil <claudiu.manoil@nxp.com>, Conor Dooley <conor+dt@kernel.org>,
- Ioana Ciornei <ioana.ciornei@nxp.com>, Jonathan Corbet <corbet@lwn.net>,
- Joyce Ooi <joyce.ooi@intel.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Madalin Bucur <madalin.bucur@nxp.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Michal Simek <michal.simek@amd.com>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
- Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Robert Hancock <robert.hancock@calian.com>,
- Saravana Kannan <saravanak@google.com>, UNGLinuxDriver@microchip.com,
- Vladimir Oltean <vladimir.oltean@nxp.com>, Wei Fang <wei.fang@nxp.com>,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com
-References: <20250415193323.2794214-1-sean.anderson@linux.dev>
- <aADzVrN1yb6UOcLh@shell.armlinux.org.uk>
- <13357f38-f27f-45b5-8c6a-9a7aca41156f@linux.dev>
- <aAEdQVd5Wn7EaxXp@shell.armlinux.org.uk>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <aAEdQVd5Wn7EaxXp@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On 4/17/25 11:24, Russell King (Oracle) wrote:
-> On Thu, Apr 17, 2025 at 10:22:09AM -0400, Sean Anderson wrote:
->> Hi Russell,
->> 
->> On 4/17/25 08:25, Russell King (Oracle) wrote:
->> > On Tue, Apr 15, 2025 at 03:33:12PM -0400, Sean Anderson wrote:
->> >> This series adds support for creating PCSs as devices on a bus with a
->> >> driver (patch 3). As initial users,
->> > 
->> > As per previous, unless I respond (this response not included) then I
->> > haven't had time to look at it - and today is total ratshit so, not
->> > today.
->> 
->> Sorry if I resent this too soon. I had another look at the request for
->> #pcs-cells [1], and determined that a simpler approach would be
->> possible. So I wanted to resend with that change since it would let me
->> drop the fwnode_property_get_reference_optional_args patches.
-> 
-> Please can you send them as RFC so I don't feel the pressure to say
-> something before they get merged (remember, non-RFC patches to netdev
-> get queued up in patchwork for merging.)
+I'm moving to @linux.dev and mapping my old addresses to it.
 
-This series is marked "changes requested" in patchwork, so I don't think
-it should get merged automatically. I won't send a v4 until you've had a
-chance to review it.
+Signed-off-by: Lance Yang <lance.yang@linux.dev>
+---
+ .mailmap | 2 ++
+ 1 file changed, 2 insertions(+)
 
---Sean
+diff --git a/.mailmap b/.mailmap
+index 6efaee6537e4..52571145a869 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -447,6 +447,8 @@ Luca Ceresoli <luca.ceresoli@bootlin.com> <luca@lucaceresoli.net>
+ Luca Weiss <luca@lucaweiss.eu> <luca@z3ntu.xyz>
+ Lukasz Luba <lukasz.luba@arm.com> <l.luba@partner.samsung.com>
+ Luo Jie <quic_luoj@quicinc.com> <luoj@codeaurora.org>
++Lance Yang <lance.yang@linux.dev> <ioworker0@gmail.com>
++Lance Yang <lance.yang@linux.dev> <mingzhe.yang@ly.com>
+ Maciej W. Rozycki <macro@mips.com> <macro@imgtec.com>
+ Maciej W. Rozycki <macro@orcam.me.uk> <macro@linux-mips.org>
+ Maharaja Kennadyrajan <quic_mkenna@quicinc.com> <mkenna@codeaurora.org>
+-- 
+2.49.0
 
 
