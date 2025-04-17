@@ -1,150 +1,157 @@
-Return-Path: <linux-kernel+bounces-609120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 464EAA91D83
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:15:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A6A7A91D85
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:15:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD5B8462E65
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 13:15:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 547EF19E40C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 13:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1428124A07D;
-	Thu, 17 Apr 2025 13:13:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61DAF24C096;
+	Thu, 17 Apr 2025 13:13:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YBA9X9Ts"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="GzO0IxHX"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A5417A30C;
-	Thu, 17 Apr 2025 13:13:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2829524BC18;
+	Thu, 17 Apr 2025 13:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744895597; cv=none; b=E7NqIOT2iEb+4i7R+45Q0XhWUG04pwCHMsYG7QP818riST0KSGu3REybOMXEMmtkubg8qFmcATxePBNlXab0v2e5KTXUdrW1eXqAZFO5f5zD7r7hMGPN8qGBd4iz6w1NcHZ7PbYn5NtB1nv2lhmRdZ/8WdUuZhD2f3EBanoKNXo=
+	t=1744895617; cv=none; b=K3I73XM1OG2EurnkJNoUu75uudC4SQGeqqj5c6sAzhnI/BWDI+PTPQd5O7wZiB65Lsw56xVc+/11c/2KfrO82SQJF4NDTr2lQTRHYR+fN4ArfTvy05ee7MHyQv2028tGSq1GIw8wYwTVyAucINixAaWK0wQCBmTmW65qOzwTf2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744895597; c=relaxed/simple;
-	bh=xS9haWivXOrYvXrbE0+xVmjp1D8AU3MxcKTOGFhicDo=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=s6fD+tfqzj5uJHyL47iXoENn95/PWrz+rnsxLI/tOqC382+itUj7vl2nKn0NqUDv/ogGdbkkH5QmZPNeUUr+Vuv/+x0oaq0+5o5F5oaQ22mpi0+uhoXTLZLuXTkDIgZq1HVWcimjPHe6gxoG6o5D/7jCcaGNiH0GvaTaICAf6Fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YBA9X9Ts; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744895596; x=1776431596;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=xS9haWivXOrYvXrbE0+xVmjp1D8AU3MxcKTOGFhicDo=;
-  b=YBA9X9TsLWAHMLzL4WqC5yqgGJDC1iJZcNOPpawz7gYiCAwBMBsheZZA
-   VmLpUaY6umCD8vAN7Pr6/Ulg486VanFggqGvLedC37ToTRdK+sgH9Joue
-   IYNpLnVMUZhzXSkNS9cfPZ1lft32oqG4IRy02jwISPcIDjTl4SOEWNcjF
-   AUSz4wsyocFzqXjdHt3Wg8LqhuJrcSoEwA6BRkK6JKE/LNmv633eRIJ8a
-   civJOS1HHZfibdNZ0C0uDqgdS+97Ij+02P+vY8DpKdKtXpZgbnJRD8/IV
-   bUHr84ww25888FVjmso1GFafDm2k2BpnObDvJ1NwcucB1LDPVsxCxacol
-   g==;
-X-CSE-ConnectionGUID: LUL9K+pvQhiMP3xHUHS3pw==
-X-CSE-MsgGUID: /PJHkXaOSJSVKM0dh1bGhQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11405"; a="63890361"
-X-IronPort-AV: E=Sophos;i="6.15,219,1739865600"; 
-   d="scan'208";a="63890361"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2025 06:13:15 -0700
-X-CSE-ConnectionGUID: ahEHEBz2Qqex81VSXF754A==
-X-CSE-MsgGUID: mp/GT/N8RAe8YHBMK1zlLw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,219,1739865600"; 
-   d="scan'208";a="161838593"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.144])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2025 06:13:12 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 17 Apr 2025 16:13:08 +0300 (EEST)
-To: Purva Yeshi <purvayeshi550@gmail.com>
-cc: irenic.rajneesh@gmail.com, david.e.box@intel.com, 
-    Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] platform/x86: intel_pmc_core: Fix uninitialized pmc/map
- in pmc_core_send_ltr_ignore
-In-Reply-To: <20250417075229.20540-1-purvayeshi550@gmail.com>
-Message-ID: <2b6412f7-28d7-e7c4-6c61-aac9be6dd84c@linux.intel.com>
-References: <20250417075229.20540-1-purvayeshi550@gmail.com>
+	s=arc-20240116; t=1744895617; c=relaxed/simple;
+	bh=DzWIUMgO/0aqjQKZLGHzjTpbRlPFNCqYf5Es4PwWA00=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I+encc8OXags7JTMhyKuZcu3S/sMTYufXKCh1f3+9U66/JUXkE0SALEQlpBpiRbHWdbxUCnngsVVxNt8qhWp6dK27YZ4D1xr/xu3Y92gMMV+Th4nned+/lCt57TBQytRqiCfaHKW9TdRefvzlNNTdIQLkrkIVPh/FX/ET+39BEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=GzO0IxHX; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=kqSGBFvBco4jOMm/RXWM5jN0BSdqtnNtjafj4ponO5E=; b=Gz
+	O0IxHXQWLgWcGyU7z2o4uuOqx/kIuEPNQdLAVlq0CotfEkWnsIPQTIuvoCEKb4Of9OSgaLZidYGav
+	aQeF/gRXD9syYuO/WRiLA60LEu+NEYuFCqu3dDhxsJQ0ltZ4TL9c4RNPRVyGh6mJtsM7hu9PJUc/+
+	KG963Pq+b22gzAg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1u5P3J-009mjg-HR; Thu, 17 Apr 2025 15:13:13 +0200
+Date: Thu, 17 Apr 2025 15:13:13 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Ivan Vecera <ivecera@redhat.com>
+Cc: netdev@vger.kernel.org, Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+	Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Prathosh Satish <Prathosh.Satish@microchip.com>,
+	Lee Jones <lee@kernel.org>, Kees Cook <kees@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Michal Schmidt <mschmidt@redhat.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v3 net-next 3/8] mfd: Add Microchip ZL3073x support
+Message-ID: <894d4209-4933-49bf-ae4c-34d6a5b1c9f1@lunn.ch>
+References: <20250416162144.670760-1-ivecera@redhat.com>
+ <20250416162144.670760-4-ivecera@redhat.com>
+ <8fc9856a-f2be-4e14-ac15-d2d42efa9d5d@lunn.ch>
+ <CAAVpwAsw4-7n_iV=8aXp7=X82Mj7M-vGAc3f-fVbxxg0qgAQQA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAAVpwAsw4-7n_iV=8aXp7=X82Mj7M-vGAc3f-fVbxxg0qgAQQA@mail.gmail.com>
 
-On Thu, 17 Apr 2025, Purva Yeshi wrote:
+On Wed, Apr 16, 2025 at 08:19:25PM +0200, Ivan Vecera wrote:
+> On Wed, Apr 16, 2025 at 7:11 PM Andrew Lunn <andrew@lunn.ch> wrote:
+> 
+>     > +++ b/include/linux/mfd/zl3073x_regs.h
+>     > @@ -0,0 +1,105 @@
+>     > +/* SPDX-License-Identifier: GPL-2.0-only */
+>     > +
+>     > +#ifndef __LINUX_MFD_ZL3073X_REGS_H
+>     > +#define __LINUX_MFD_ZL3073X_REGS_H
+>     > +
+>     > +#include <asm/byteorder.h>
+>     > +#include <linux/lockdep.h>
+> 
+>     lockdep?
+> 
+> 
+> lockdep_assert*() is used in later introduced helpers.
 
-> Fix Smatch-detected issue:
-> 
-> drivers/platform/x86/intel/pmc/core.c:501 pmc_core_send_ltr_ignore()
-> error: uninitialized symbol 'pmc'.
-> 
-> drivers/platform/x86/intel/pmc/core.c:501 pmc_core_send_ltr_ignore()
-> error: uninitialized symbol 'map'.
-> 
-> drivers/platform/x86/intel/pmc/core.c:501 pmc_core_send_ltr_ignore()
-> error: we previously assumed 'pmc' could be null (see line 479)
-> 
-> 
-> Prevents uninitialized symbol warnings detected by smatch.
-> 
-> Ensures map is not accessed if pmc is NULL, preventing dereferencing
-> of uninitialized pointers
-> 
-> Add defensive check for pmc and map to catch any unexpected edge cases
-> and ensure all required pointers are valid.
-> 
-> Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
-> ---
->  drivers/platform/x86/intel/pmc/core.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86/intel/pmc/core.c
-> index 7a1d11f2914f..e674b940e29e 100644
-> --- a/drivers/platform/x86/intel/pmc/core.c
-> +++ b/drivers/platform/x86/intel/pmc/core.c
-> @@ -462,8 +462,8 @@ DEFINE_SHOW_ATTRIBUTE(pmc_core_pll);
->  
->  int pmc_core_send_ltr_ignore(struct pmc_dev *pmcdev, u32 value, int ignore)
->  {
-> -	struct pmc *pmc;
-> -	const struct pmc_reg_map *map;
-> +	struct pmc *pmc = NULL;
-> +	const struct pmc_reg_map *map = NULL;
->  	u32 reg;
->  	unsigned int pmc_index;
->  	int ltr_index;
-> @@ -480,6 +480,9 @@ int pmc_core_send_ltr_ignore(struct pmc_dev *pmcdev, u32 value, int ignore)
->  			continue;
->  
->  		map = pmc->map;
-> +		if (!map)
-> +			continue;
+nitpicking, but you generally add headers as they are needed.
 
-How can this happen?? If pmc is created, it should have a valid ->map 
-AFAICT. Did you even read that code at all???
+>     > +#include <linux/mfd/zl3073x.h>
+>     > +#include <linux/regmap.h>
+>     > +#include <linux/types.h>
+>     > +#include <linux/unaligned.h>
+>     > +
+>     > +/* Registers are mapped at offset 0x100 */
+>     > +#define ZL_RANGE_OFF        0x100
+>     > +#define ZL_PAGE_SIZE        0x80
+>     > +#define ZL_REG_ADDR(_pg, _off) (ZL_RANGE_OFF + (_pg) * ZL_PAGE_SIZE +
+>     (_off))
+>     > +
+>     > +/**************************
+>     > + * Register Page 0, General
+>     > + **************************/
+>     > +
+>     > +/*
+>     > + * Register 'id'
+>     > + * Page: 0, Offset: 0x01, Size: 16 bits
+>     > + */
+>     > +#define ZL_REG_ID ZL_REG_ADDR(0, 0x01)
+>     > +
+>     > +static inline __maybe_unused int
+>     > +zl3073x_read_id(struct zl3073x_dev *zldev, u16 *value)
+>     > +{
+>     > +     __be16 temp;
+>     > +     int rc;
+>     > +
+>     > +     rc = regmap_bulk_read(zldev->regmap, ZL_REG_ID, &temp, sizeof
+>     (temp));
+>     > +     if (rc)
+>     > +             return rc;
+>     > +
+>     > +     *value = be16_to_cpu(temp);
+>     > +     return rc;
+>     > +}
+> 
+>     It seems odd these are inline functions in a header file.
+> 
+> 
+> There are going to be used by dpll_zl3073x sub-driver in series part 2.
 
-> +
->  		if (ltr_index <= map->ltr_ignore_max)
->  			break;
->  
-> @@ -491,7 +494,7 @@ int pmc_core_send_ltr_ignore(struct pmc_dev *pmcdev, u32 value, int ignore)
->  		ltr_index = ltr_index - (map->ltr_ignore_max + 2) - 1;
->  	}
->  
-> -	if (pmc_index >= ARRAY_SIZE(pmcdev->pmcs) || ltr_index < 0)
-> +	if (pmc_index >= ARRAY_SIZE(pmcdev->pmcs) || ltr_index < 0 || !pmc || !map)
+The subdriver needs to know the ID, firmware version, etc?
 
-What are the situations pmc_index >= ARRAY_SIZE(pmcdev->pmcs) check 
-didn't catch where these new checks do something useful??
+Anyway, look around. How many other MFD, well actually, any sort of
+driver at all, have a bunch of low level helpers as inline functions
+in a header? You are aiming to write a plain boring driver which looks
+like every other driver in Linux....
 
-Lots of noise but little real substance in this patch?
+Think about your layering. What does the MFD need to offer to sub
+drivers so they can work? For lower registers, maybe just
+zl3073x_read_u8(), zl3073x_read_u16() & zl3073x_read_read_u32(). Write
+variants as well. Plus the API needed to safely access the mailbox.
+Export these using one of the EXPORT_SYMBOL_GPL() variants, so the sub
+drivers can access them. The #defines for the registers numbers can be
+placed into a shared header file.
 
--- 
- i.
+The MFD needs to read the ID, firmware version etc, so it can have
+local implementations of these, but if the sub drivers don't need
+them, don't make them global scope.
 
+	Andrew
 
