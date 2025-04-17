@@ -1,55 +1,74 @@
-Return-Path: <linux-kernel+bounces-609268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5083AA91FF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 16:38:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B38BA91FF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 16:39:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E083C19E805F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:39:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E24767B0FEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:38:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0472512C1;
-	Thu, 17 Apr 2025 14:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ldan3gmy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C710252288;
+	Thu, 17 Apr 2025 14:38:59 +0000 (UTC)
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3456C25178D
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 14:37:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D917524EF79
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 14:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744900674; cv=none; b=tKbMSonR1+Whnu8idxZDynQ6CgvmbARXrnzux8go7NIONevT2qjYhjnJYKXnzrGpd1hVL7Iyqu7B1dl7DlEtVttXnO/8Va0XbSZeGb7Y6h+u2K5znXKnjnYLyb9FA5CXKYzl2x7AF5kCSmfm/HYABVtdBo8bM12AwkoqPwnb+qM=
+	t=1744900738; cv=none; b=bPmb8i6bQuHlPR24SndF/GZo25WWkUz2tsw8HZS9F0R7POBrHX8lobV9LS2o+kbsWID8WA5S5f4Yd34bzSdWDhnN/fxLgiYbpTQwlUEkYMSvHSyunoR1jwQjd0gT9kYdADcbTTdwi4+lefGgdF1lSvlPHnuPSBC4wy8n/UVGw7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744900674; c=relaxed/simple;
-	bh=ZWtyqLd0KUu/OoDp0pkKasAAbUekLA45tdG3GN70TXk=;
+	s=arc-20240116; t=1744900738; c=relaxed/simple;
+	bh=+/4OIRG1mgIFyKcEzT8MzBUT8UyTa8AoP35zj9hv3n8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mo7Cy+wNbtCSUvmD8raVHu+tIB1ppB1yslBeAh9d8KmlQ1dGz66vmuUNX1B9CSNgfngadNBhfEnHRdw1blyarBDCrCB/vSKwALr1ZnD6cN6igCmChlRL7XCPqkXtYspVatGt0+gVvZzW5H9DTSZRV0XhWb6v5NZ7UYAhgFe4sxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ldan3gmy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31EA6C4CEE4;
-	Thu, 17 Apr 2025 14:37:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1744900673;
-	bh=ZWtyqLd0KUu/OoDp0pkKasAAbUekLA45tdG3GN70TXk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ldan3gmyFwSi2sUoFtPU7hdmwJnkjkTi1EHKo/6jMQxEdshQ70jazaY5OsSO+5TNV
-	 p3Rk1NmsklcOSNHQI0BS63hKn2PBiID127QbwT6p42r6gcA+okuNh/44l0cNuMJkFR
-	 aeOJX+p2kBI7TLq5peBnzxgv9GgM/lgmNiNwSvGQ=
-Date: Thu, 17 Apr 2025 16:37:50 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Cal Peake <cp@absolutedigital.net>
-Cc: Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Vishal Annapurve <vannapurve@google.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>
-Subject: Re: [STABLE] 6.12.23: vfio error (was: arch/x86/coco/tdx/tdx.c build
- error)
-Message-ID: <2025041738-rocklike-undergrad-14d6@gregkh>
-References: <eb5a1df4-95f8-2784-8f4e-8460f33f8f4d@absolutedigital.net>
- <808e1111-27b7-f35b-6d5c-5b275e73677b@absolutedigital.net>
- <66f3e1b3-6165-4a2e-f34c-de6fef86e441@absolutedigital.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cRxqBgdmBHB82IDq3Z1LgOCPFo7wch/tb9YNmdHhG9d1FcN1UFe7shVYvx0X4OCoxsQ0n2/BaER7e1rZUsOaUREkbsIhQHb1ZU2r4JsMjt4x0yQ47XLHGWn2lYMtpT7XkKgpRciMGgIFcRyFaF8Rg+f9UM/naC5LKeNTlr4fC2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-acacb8743a7so148719766b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 07:38:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744900735; x=1745505535;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zi7zFVkaGameQCQElY8z6qfvV5cVBlJOJVieQTjHZdw=;
+        b=xTp07lkdNvqWfNJffQbGMjydBydLF1UTbV+jefz7mJejl6VOM9/9ihAfyMUzz/wrNm
+         SOzXSwExcyvyIsv11XY2DaMaiXcnJEWxPDpHB9khBHs8kCm8RWxjLJbrWsm0QNykrLKx
+         NtJKR71tLL7XOdXwgeMmcof0d3Nz5cnnHXzGnSlYsNEtsc7Yv33SOdQ10hRIW6O+zzPv
+         cfbVQTFOIWdIMXwpayg/9SkowkgQ3xQJYm53GE4ZatjXAcroNc4jw+JfT01YVj0r7bcD
+         ZhRijGIqVPiq1E06dK84yK452IwIN9KC+x1J/Z3cRKER3cUZg3X9PbiJ+ZbbWznjXS+W
+         I7IA==
+X-Forwarded-Encrypted: i=1; AJvYcCVF3GiUFr/nXR0gK12eVxCmgrn6MkyLET4OGyUGV9SyBBPuQvBc1AEuNe9T7gAfsvn3QaCHTO6JBv7tby4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3yk507Y3UBo9mVqkuYY7/cGBM39vJDtWR2fSNFASxhBuztXS1
+	GWkG6A2IxtQd6YTy/SNb5f+xN/9BaZcIFVEe8rYFsvOmPDlxWWj7p3JgOw==
+X-Gm-Gg: ASbGncs8qWq6wl+6/K7GXpPU3vFxhxPZSnfkH9dFSy6sisFKbMDR3B/rpnVdKSqrt03
+	Z3gQBZ//kUkbX/oOJ38ytt1FX3XzISJwB55hiji+FUbGTdbSJ+uP1nPdoOv2nDJruVp5yK1JTLO
+	nolDhs7UUXwKOQJSyaGoXH7u0prwjxgIk3msjUW1RU43RKA1Ki50wEcDPqt0JTA8sLt52NyWhbF
+	pxIn4CKDg/Xl9FmzR2Qbp79vYma98xtvlmx/grURE7n5+P/c7HcVAT/YGvZoDdm0+HIHBOGS2OL
+	mWBG7ertTeJwyNNG0TlLBqsVSSr0FZs=
+X-Google-Smtp-Source: AGHT+IH2FaJ1yPWDr+BeheIyMDzY5poAhbMf+kr6PY+cZP7Z2qrrqQ+2zbvzaFbssHyM7fxsxjInQQ==
+X-Received: by 2002:a17:907:94c8:b0:acb:1165:9a93 with SMTP id a640c23a62f3a-acb6ec0f778mr12255466b.3.1744900734798;
+        Thu, 17 Apr 2025 07:38:54 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:3::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb6ef47ecesm1686366b.159.2025.04.17.07.38.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Apr 2025 07:38:54 -0700 (PDT)
+Date: Thu, 17 Apr 2025 07:38:52 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: Joel Becker <jlbec@evilplan.org>,
+	Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+	Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org,
+	Zijun Hu <quic_zijuhu@quicinc.com>
+Subject: Re: [PATCH 1/4] configfs: Delete semicolon from macro type_print()
+ definition
+Message-ID: <aAESfDy5M26hQ7CY@gmail.com>
+References: <20250408-fix_configfs-v1-0-5a4c88805df7@quicinc.com>
+ <20250408-fix_configfs-v1-1-5a4c88805df7@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,25 +77,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <66f3e1b3-6165-4a2e-f34c-de6fef86e441@absolutedigital.net>
+In-Reply-To: <20250408-fix_configfs-v1-1-5a4c88805df7@quicinc.com>
 
-On Mon, Apr 14, 2025 at 07:55:06PM -0400, Cal Peake wrote:
-> On Sun, 13 Apr 2025, Cal Peake wrote:
+Hello Zijun,
+
+On Tue, Apr 08, 2025 at 09:26:07PM +0800, Zijun Hu wrote:
+> From: Zijun Hu <quic_zijuhu@quicinc.com>
 > 
-> > After booting the new kernel, I get errors trying to do vfio passthrough:
-> > 
-> > qemu-8.2-system-x86_64: vfio: Cannot reset device 0000:14:00.3, no available reset mechanism.
-> > qemu-8.2-system-x86_64: vfio: Cannot reset device 0000:14:00.2, no available reset mechanism.
-> > qemu-8.2-system-x86_64: vfio: Cannot reset device 0000:14:00.1, no available reset mechanism.
-> > qemu-8.2-system-x86_64: vfio: Cannot reset device 0000:14:00.0, no available reset mechanism.
-> 
-> This was resolved by Alex Williamson, with his patch:
-> 
-> https://lore.kernel.org/lkml/20250414211828.3530741-1-alex.williamson@redhat.com/
+> Macro type_print() definition ends with semicolon, so will cause
+> the subsequent macro invocations end with two semicolons.
 
-Is this in Linus's tree yet?
+where is the type_print() macro invoked today?
 
-thanks,
+I haven't found any reference for it in fs/configfs/dir.c
 
-greg k-h
+Thanks
+--breno
 
