@@ -1,176 +1,190 @@
-Return-Path: <linux-kernel+bounces-609579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82371A923F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 19:27:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8214FA92431
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 19:39:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31AB5189C7C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 17:27:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC7FE8A2527
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 17:39:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BFC22561C7;
-	Thu, 17 Apr 2025 17:27:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F032561B7;
+	Thu, 17 Apr 2025 17:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mWrw2ZQl"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="Qjda+O8l"
+Received: from sonic309-21.consmr.mail.gq1.yahoo.com (sonic309-21.consmr.mail.gq1.yahoo.com [98.137.65.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0786D255E58;
-	Thu, 17 Apr 2025 17:27:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD139253928
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 17:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.65.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744910831; cv=none; b=sVAPZyyKdsaoOq1BryQrKrb1FnOK5cv0nRtwx8KyqpDwMinhYgoA94TzylsFtFpTEGZ3GCmUKLdQR3AFD/fKMTrkV8Um1S+/uRpVLicEvoJyuMXpW7vvr4K837TrX1CFk7F5Gt9AHLfUFzScePUAje0O3qVZuUFeVN18bPENVNc=
+	t=1744911554; cv=none; b=jWuykx7ksvf6a2gSgGi1m9uGHgU9zV2ANXPDWR1olCGd1Iv6gjBfkpjOozu+k10mi4CFkrzx9V6mm3lKtqUz6iTQVoMWQJJWQ7fSET4NGs+YQsuGfpOIlGgkC9HhVesGDRgec8lzQCepfoa+8QBrs5GR8omnV9B+/Osw5XSH/O0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744910831; c=relaxed/simple;
-	bh=sxkHYuOsrWQh8lOFfo/eXoJm5KYUTxqvZBDoPd6T/GA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o4kGq1e94cytI5dLl1ERra6919CAw76Zz2vXJvF/2O557igVGgzmhZ7L73422bdrD+6DaGNP7K7yXi42cQcwSlmKfP1bybpJAFlxiwAauspYdY4hiGdulctSaYUCCTf8JBiq3LDSvlfAISNSW1hP7drvTkK/FhjrNCK9oaZbhcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mWrw2ZQl; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3914aba1ce4so803884f8f.2;
-        Thu, 17 Apr 2025 10:27:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744910828; x=1745515628; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=wixJu71NKSByWZRqz3ES0mQxxXn96JrVSVxJlIUxh48=;
-        b=mWrw2ZQltygjybO13Zo6M+RsV/opDKzy0707ccqrHXdJ6MuQWrxzNtOt3CqIpec39F
-         fD+Ohl71nbwo5y0niDbTQFtgISx1STyU58AiOv6ZvNAKnKV2GrhGws5PpBQNKshoos6G
-         +EAr6Ydw7PloRacom8SS1irnBhfutK9Jqt7oozqm4/Hzlp3krkj8YbNVGvaq2ViP45mO
-         cEb4dezP0VzLX3OMdCzd3IMKEy/Uo9OBYOk72u6C0bVpoTD7chh6S/jR25rZrpZgYJ8z
-         f7UcoiM59fJZRyCzwsAZut0JagOqWRHtOdvNqdH/52wMGlOw716HqD3N2XvUAn/qRPoz
-         uNrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744910828; x=1745515628;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wixJu71NKSByWZRqz3ES0mQxxXn96JrVSVxJlIUxh48=;
-        b=Rd2VdHecl7GNBcVMSgsG7QPvOGdGMfFu1TaqmnOOuHMU9d5M+pmTAogQb4mBVWiTN2
-         nER25WyNzzgEsTH6mjXaa7ULTAWP46XrtWCSJxq6r+56CD4ikmfXSiy4gqclXx5s+SEv
-         09zWEjLOjia0piTrf0AMvj9RdsUaJKi8lBffhGVwTrW9I7gYAt2GWu9nuMs1k+4wXnN1
-         ryxhcrkqcTAM80IMImGe2270jtuWQqjlKYYTgmGGqhb569euzEzQpUaTncv+qRXTx4jz
-         WnhI6CF8eZT7CqkROmsH7eLLKnFTdj4xtR4IP2v2bHjitJT8kldAnZWZHFrGrB4TzsGa
-         inPA==
-X-Forwarded-Encrypted: i=1; AJvYcCUdYbe/9N5VF6wslVMoerIhRwEdVK26vZksg56lXi6me6vdcJafkuz0pQov0dwwURY3vA1i2H6T3gxgYLE=@vger.kernel.org, AJvYcCVkpgLK5qoeBoDDajq2YKL18pQq7EWhdb5V+DJYaW5kyCmAE+5nST9G4Pc5rjQWv/+7tjIAfNH8@vger.kernel.org, AJvYcCX7LpZ4jSF0LkZLUZUDOeKXmyah8UTKaG4pwFK+m/gOi9g+qzGMdMEo9liKAOIhxHJ4iHu95GsVZR0y@vger.kernel.org, AJvYcCXa7CsPXJbQIS7q22pzQih0ivLpfF0pKqlrj5RwqemJvsv4wStM4tEr+QsfKY39UhfPHRGWa11N@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIHHfXIu2F4H+1M1qS57CeaGALFzoOufw8acbv1B0CfaaiR5Ey
-	UNGjMjehgmgrZItVanw8y+ZD2GSU79TaaGWyule85mMzNZAvDKEG
-X-Gm-Gg: ASbGncuA+FuUWCo9DjVzoCjGr4AYtclo44A6GdcYiW5h0q7H1QFFTh0LLxIkdcURomq
-	+GUJszcrceZiFiPS4NmTDW9vA/2xlC7dZuKyKToASLj9kdzl6jhnBSlMqSujxR/6paR2y9CFEak
-	ZTupRTeu0MZa+UU2SkC4x+R3JAMD11f3+hjvVaz0lgtk0kEY2cqcvQUY7DT24WnnQTkaC3ByVXE
-	qcIiWE6DzDaxcSHjytQq5gv6z12xG7IiB1oyCs4qXrfhDsfsOFeomeAx5bua5niDeJalgZ6c8/e
-	UDrdML2Z34exE24buN5hr0Wf7EFn2+yX55Gieg==
-X-Google-Smtp-Source: AGHT+IFj6moxoKvW3/0bIkk3LxXfaTi6KALUQz1SQ2f4BX4nkO2V9Ua92HwQT5Vm8Zv6SFZvNZOQxQ==
-X-Received: by 2002:a5d:6d87:0:b0:391:2e31:c7e1 with SMTP id ffacd0b85a97d-39ee5b10f8cmr6323677f8f.4.1744910828006;
-        Thu, 17 Apr 2025 10:27:08 -0700 (PDT)
-Received: from gmail.com ([2a02:c7c:6696:8300:1efa:2230:869a:758])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa43c079sm240413f8f.50.2025.04.17.10.27.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Apr 2025 10:27:07 -0700 (PDT)
-Date: Thu, 17 Apr 2025 18:27:04 +0100
-From: Qasim Ijaz <qasdev00@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Jakub Kicinski <kuba@kernel.org>, davem@davemloft.net,
-	edumazet@google.com, pabeni@redhat.com, horms@kernel.org,
-	linux-usb@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+3361c2d6f78a3e0892f9@syzkaller.appspotmail.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 5/5] net: ch9200: avoid triggering NWay restart on
- non-zero PHY ID
-Message-ID: <aAE5wmi6MoYMzui7@gmail.com>
-References: <20250412183829.41342-1-qasdev00@gmail.com>
- <20250412183829.41342-6-qasdev00@gmail.com>
- <b49e6c21-8e0a-4e54-86eb-c18f1446c430@lunn.ch>
- <20250415205230.01f56679@kernel.org>
- <20250415205648.4aa937c9@kernel.org>
- <aAD-RDUdJaL_sIqQ@gmail.com>
- <b492cef9-7cdd-464e-80fe-8ce3276395a4@lunn.ch>
+	s=arc-20240116; t=1744911554; c=relaxed/simple;
+	bh=87u6W1TihUzP8Z4D1g73cGTWePCPzbowKmmvBeLq2Bg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=TEngV3cFRaCWA4XcWFgEZaWYL3WpNZM2IwJd/ucGIo3XkFsP+rDTiEXOnudotClAnwn5eC4qS3NA/aojx6LAoX3b8YS1WALA+dLaK7VaHNMPeHbSEF0e3Sg0/Ky8l76Jw7EnpsaqU/Y3F9Mb2M6t65P3JokUHloFosPVbTYiLdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com; spf=pass smtp.mailfrom=aol.com; dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b=Qjda+O8l; arc=none smtp.client-ip=98.137.65.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aol.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1744911552; bh=B5EIQ+T8gzw3O3ySM34rCVBGg45rFyrTsDX/Alk2S/s=; h=Subject:From:To:Cc:Date:In-Reply-To:References:From:Subject:Reply-To; b=Qjda+O8lrR8EX0/IVevUX/lXWrc0mmEaVV/VgW5wymZJykuhbcquwu7Lhs3G2DqjxnIEEAIOpKeEr4yHjR6A3JJnHklXB9fLRBdY4bC6m7ytc70NNdqKb9VGOL6BVNEyVnb1xhNK3ug+j9nu42ohiRHG+5uWTL3NAKs4MrWUO6oeXJKHU9mjNwDxfkD7pwU2gbxuh21TnoWBFM+u8ChTmEmURLkRXhGrx34GF8lFjSxmEgOVEAmVQ8rxZ90tnRlfVfgbij62H7dF0mmw5ycfe/doJaZ1Zql8HnZzBvDnOiAD337OUIcH4Z/rH/2Msvqu2hd9PrKEqRaTkZKmkgu+ow==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1744911552; bh=RpLlX+z86ZK7nJeDffV+a8x5TCvgtfnTQNtezAsvgPD=; h=X-Sonic-MF:Subject:From:To:Date:From:Subject; b=sXIDXTJ7TdSZvuLyhwD4SSoN7y1JVVThPitBeG9oRvqJ9gWI4s33zLpm3uwsvvcqCJA3N8iSQgsOJ/C84cI7fvOCIk9zh3wlWUju4bLgi9J7W27SQNd1Sw15wj49qPLGqnfnKwUMY7VsiSlluck1msrOLwg7R90g7/vhxjwhdEi2FcFYScyd1F/BQkmFDvQ9/D+cqmD8/LR8+w+/qvUVkOoptuJh+yPMGrCIRMhdOUx5m9aeqiLIqM1f38JHvlN360ei3iqOh28Bb4TDepksE4MUOmrqBtv6mJib+bS6u0bqKJ7Wh3g/sz19PEVirtx7+aS4EbFdaFGcOpfc7GS61g==
+X-YMail-OSG: ZRGNm8wVM1nSCMBiOomP0Kf7VL1XYubqDjRsawjuIqNj_0vYGbqGIf247rDcTou
+ y0IBQxgbjx_5WLjNVwP.hm33RsTgZSuPQWrzt7C.QS9PnlqvUNWAIo4g3wGP4hDWaDDcGrUyEo9j
+ LbdSBxnZiS_vY7EQs0oL64VVWDi65djzPnUCiwrnIc0GBZR8VftG_lYjadUpvmSfnnokXU8x6.Wg
+ sTvzHpPlBA57hUuE5AoDP.VkKvWW2rViKLxMiiUfed3q423lLJUGXT3_p.62x5qNxeRC9SmtKbU2
+ evnGPOvORBqlNlsK6lCTaL2qU9TBtUbhAssLh_ieHaFuuqlNPrDopgqE6hZw6lLaq4WKQf_e32LU
+ eLKnYfnkehhp3KmWLTIDZZtXbkgDcCgxZJRr_g_Cxrb3Q_2IN71XprlvtKYy2WdkeOzuu7a52d_m
+ W.kvHDbIXDdBLCn6YniSHZIW7pIMhXjv1EH.XvvxOk5ZPIfFv9EpakDXZsLg7REtSfziLH3_DQ1W
+ VxnIHqs2f5gy_mEkeZ3JxvnvIqNMgLexkvgq.Yb56WDVHjMNy0JLnRg0h79s_uhyfCC5oSfiJ6M2
+ LAeAzoW_8uLCFJEf_lATEihIrunINqvWJr8GXvOeWCGo3JPRxx_DyU.nbRfb5SdQay0b30LwV4GZ
+ 3M26XvIIoyRC70zy0.sUhLMV8M6hMiFDuRc2KXwwqM4FUOP3RG04i8QKOq.eZugF14rWjBTpPY44
+ ea7HppiSbp_hv6R9ozyFEqzV5hYc3n.CHxsX1JGPv6WP1qSMYpbgOVS3GJBd0K4FVCqMcGKbCb8O
+ 2qDFItxMhUhmxWJ2RdZL13cRCqqvVbfTT21joCsa9Mdl9x5AAQmAiyv8QIS_BTuVhMOa3oJwY7ql
+ pRIdvyStF996t50JlcQrnj0CInYioWV8ce9lfO9x7cig0IcTqHedbtyqcPl3QrMP7u2CN7xa6Zki
+ GU0OzViYqAhyl7_UyJv5fx.mIJBuhlyWjGXpuYEsbGIIQZRvDMaQWdNN97_A8D5sQGXUFqFA_t9N
+ PahFpkPbL9nTwASnZCIg.PiKSEBXq1hSJjDhmwisLbwk6N5oyVIq5JfYa_nEDCUGC4kqcBlMa4WX
+ gRWxRo7kyfZqW3zcYzREDGVABWU_EPYDuQf1jaG1lnbAkeMzc0Fb.wgy75CAv.TeF5smO8Y9Frcx
+ j7jDXa9HTzw4nhhAVStyOMIblZkm5FdxHs31JKQ7qRQnRfGyAUIh.W.Qcmj4kVUyJKhy4w6czzb5
+ DVaqTWGA.UK7aL5PNxGl5xzOoV3yBUxhDHLgH2uMLMQ.IrHdd0p5pckr0CbVoUUebTenqNfRru6t
+ kqqcPv1DBG8.bsl6zfzR6cAIv9tV_E61ztq3yx._.g84CTmrtN3e2siKvDRkYirvmvbT7i13JgIh
+ ln.cLziX9Tmy28NTAhMtyn1S16I36kxhMVBei1nsboqze3myIGfVbQ.rNWZG3ZUO92ZLwCsfaZ8B
+ 1XUr5xnIbFNJyA_cS44do9_M1yTnsHkVtxWZ83Z60qogYmn2kVbL3RGWnywR_t5HlzPTjBw.AMnR
+ C.De_zWcEs.uE2bWfuYKm3zs3nHeNF4kXiR6A3AsGQnkFfm2ymw7HLkUjrU_J3R2owUTOW8Vgalz
+ paS.1GLsGrdnGCc_Vfiyjcd6rhyWnHeW1BUAOtvo3qofQUtnSFAwy2U7v9bUmRgwlqznFD.vCnr9
+ GZnPwELe2xY0q0ZqKHtZNYkIIQtqA8emWZoQ07W5x3QNIovMWCh.EmAijmHaieqiOIdWN6eFCfxe
+ bkpGlRhl9SCIUmKv_5TbDw5WqOl.GwEA.oXs8Q2m9o48MuLMrYukRE1WYoU8doqPLxbyvkGRfgnl
+ ldKGO2W7QhhnTxipccCnjUeQniPnC704zibYtIzzAkWncdDFNz0.GTRh7GpDfh_Fca9o8nJkIOsd
+ MculkKYU_kbhIlGhA809PoMcyU412p8AyknQRMdaeZwkwY_TopwzDC.p2Zkvg8GOY1pgwE9H7EJi
+ RrF3hn2STcyeavp.8KztzgDVckJaLKMNfrxdva34qm866fe66eIX770BWaMaV91zGWRXHdIa47Lw
+ oYN3Qa.TH030zhjzromLhjOn0Rdbe0QCbEbHWZDDRSkdkMb79xXFAprAUEt0hccik0buf4m__AaX
+ bRITRdVzb8B7BJzjmgEH.SbL276IcwdP8cOMGk1IKtXUW.zhppz4YD6xs7usSDiaaULXUo_F_13U
+ ome4kZNZoXpc7Pf_4DivfKG6nTbhjju57zF8yfQ1gSnupFL.wiKVahv.LsQ--
+X-Sonic-MF: <rubenru09@aol.com>
+X-Sonic-ID: acb42ab2-e095-4176-a93b-893fd3fd75f2
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.gq1.yahoo.com with HTTP; Thu, 17 Apr 2025 17:39:12 +0000
+Received: by hermes--production-ir2-858bd4ff7b-rtzhj (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID a26aee031807310d262ca66c92894fe7;
+          Thu, 17 Apr 2025 17:28:58 +0000 (UTC)
+Message-ID: <6ec1fa494ee823549fb97a48121cb28e37f1cc4d.camel@aol.com>
+Subject: Re: [PATCH] staging: sm750fb: fix instances of camel case
+From: Ruben Wauters <rubenru09@aol.com>
+To: Greg Korah-Hartman <gregkh@linuxfoundation.org>
+Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Teddy Wang
+	 <teddy.wang@siliconmotion.com>, Sudip Mukherjee
+	 <sudip.mukherjee@codethink.co.uk>, linux-fbdev@vger.kernel.org, 
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Date: Thu, 17 Apr 2025 18:28:07 +0100
+In-Reply-To: <2025041758-mounting-populace-458f@gregkh>
+References: <20250417153101.353645-1-rubenru09.ref@aol.com>
+	 <20250417153101.353645-1-rubenru09@aol.com>
+	 <2025041758-mounting-populace-458f@gregkh>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.2-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b492cef9-7cdd-464e-80fe-8ce3276395a4@lunn.ch>
+X-Mailer: WebService/1.1.23665 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.aol
 
-On Thu, Apr 17, 2025 at 04:08:08PM +0200, Andrew Lunn wrote:
-> On Thu, Apr 17, 2025 at 02:12:36PM +0100, Qasim Ijaz wrote:
-> > On Tue, Apr 15, 2025 at 08:56:48PM -0700, Jakub Kicinski wrote:
-> > > On Tue, 15 Apr 2025 20:52:30 -0700 Jakub Kicinski wrote:
-> > > > On Tue, 15 Apr 2025 03:35:07 +0200 Andrew Lunn wrote:
-> > > > > > @@ -182,7 +182,7 @@ static int ch9200_mdio_read(struct net_device *netdev, int phy_id, int loc)
-> > > > > >  		   __func__, phy_id, loc);
-> > > > > >  
-> > > > > >  	if (phy_id != 0)
-> > > > > > -		return -ENODEV;
-> > > > > > +		return 0;    
-> > > > > 
-> > > > > An actually MDIO bus would return 0xffff is asked to read from a PHY
-> > > > > which is not on the bus. But i've no idea how the ancient mii code
-> > > > > handles this.
-> > > > > 
-> > > > > If this code every gets updated to using phylib, many of the changes
-> > > > > you are making will need reverting because phylib actually wants to
-> > > > > see the errors. So i'm somewhat reluctant to make changes like this.  
-> > > > 
-> > > > Right.
-> > > > 
-> > > > I mean most of the patches seem to be adding error checking, unlike
-> > > > this one, but since Qasim doesn't have access to this HW they are
-> > > > more likely to break stuff than fix. I'm going to apply the first
-> > > > patch, Qasim if you'd like to clean up the rest I think it should
-> > > > be done separately without the Fixes tags, if at all.
-> > > 
-> > > Ah, no, patch 1 also does return 0. Hm. Maybe let's propagate the real
-> > > error to silence the syzbot error and if someone with access to the HW
-> > 
-> > Hi Andrew and Jakub
-> > 
-> > Since there is uncertainty on whether these patches would break things 
-> > how about I refactor the patches to instead return what the function 
-> > already returns, this way we include error handling but maintain consistency 
-> > with what the function already returns and does so there is no chance of 
-> > breaking stuff. I think including the error handling would be a good idea
-> > overall because we have already seen 1 bug where the root cause is insufficient 
-> > error handling right? Furthermore this driver has not been updated in 4 years, 
-> > so for the near‑term surely improving these aspects can only be a good thing.
-> 
-> It is not a simple thing to decided if we should make changes or not,
-> if we don't have the hardware. The test robot is saying things are
-> potentially wrong, but we don't have any users complaining it is
-> broken. If we make the test robot happy, without testing the changes,
-> we can make users unhappy by breaking it. And that is the opposite of
-> what we want.
+On Thu, 2025-04-17 at 18:58 +0200, Greg Korah-Hartman wrote:
+> On Thu, Apr 17, 2025 at 04:27:47PM +0100, Ruben Wauters wrote:
+> > As per the kernel style guidelines, and as reported by
+> > checkpatch.pl,
+> > replaced instances of camel case with snake_case where appropriate
+> > and
+> > aligned names in the header with those in the c file.
+> >=20
+> > Signed-off-by: Ruben Wauters <rubenru09@aol.com>
+> > ---
+> > =C2=A0drivers/staging/sm750fb/ddk750_sii164.c | 113 ++++++++++++-------=
+-
+> > ----
+> > =C2=A0drivers/staging/sm750fb/ddk750_sii164.h |=C2=A0 26 +++---
+> > =C2=A02 files changed, 69 insertions(+), 70 deletions(-)
+> >=20
+> > diff --git a/drivers/staging/sm750fb/ddk750_sii164.c
+> > b/drivers/staging/sm750fb/ddk750_sii164.c
+> > index 89700fc5dd2e..20c2f386220c 100644
+> > --- a/drivers/staging/sm750fb/ddk750_sii164.c
+> > +++ b/drivers/staging/sm750fb/ddk750_sii164.c
+> > @@ -12,11 +12,11 @@
+> > =C2=A0#define USE_HW_I2C
+> > =C2=A0
+> > =C2=A0#ifdef USE_HW_I2C
+> > -=C2=A0=C2=A0=C2=A0 #define i2cWriteReg sm750_hw_i2c_write_reg
+> > -=C2=A0=C2=A0=C2=A0 #define i2cReadReg=C2=A0 sm750_hw_i2c_read_reg
+> > +=C2=A0=C2=A0=C2=A0 #define I2C_WRITE_REG sm750_hw_i2c_write_reg
+> > +=C2=A0=C2=A0=C2=A0 #define I2C_READ_REG=C2=A0 sm750_hw_i2c_read_reg
+>=20
+> Close, but these are really a function name, not a macro, right?
+>=20
+> And what sets this #define?=C2=A0 If it's always enabled, then unwrap thi=
+s
+> indirection instead of keeping it around
 
-For patch 2 the kernel test robot said it is missing a Cc stable tag in
-the sign-off area, it didnt highlight any build or functional errors so
-I don't understand what you mean there.
+Will take a look into it, if it turns out that this is in fact actually
+used/different, what would be the best way to name this? checkpatch.pl
+doesn't like the camelCase that's currently there.
 
-> 
-> We also need to think about "return on investment". Is anybody
-> actually using this device still? Would it be better to spend our time
-> on other devices we know are actually used?
-> 
-> If you can find a board which actually has this device, or can find
-> somebody to run tests, then great, we are likely to accept them. But
-> otherwise please focus on minimum low risk changes which are obviously
+> > =C2=A0#else
+> > -=C2=A0=C2=A0=C2=A0 #define i2cWriteReg sm750_sw_i2c_write_reg
+> > -=C2=A0=C2=A0=C2=A0 #define i2cReadReg=C2=A0 sm750_sw_i2c_read_reg
+> > +=C2=A0=C2=A0=C2=A0 #define I2C_WRITE_REG sm750_sw_i2c_write_reg
+> > +=C2=A0=C2=A0=C2=A0 #define I2C_READ_REG=C2=A0 sm750_sw_i2c_read_reg
+> > =C2=A0#endif
+> > =C2=A0
+> > =C2=A0/* SII164 Vendor and Device ID */
+> > @@ -25,7 +25,7 @@
+> > =C2=A0
+> > =C2=A0#ifdef SII164_FULL_FUNCTIONS
+> > =C2=A0/* Name of the DVI Controller chip */
+> > -static char *gDviCtrlChipName =3D "Silicon Image SiI 164";
+> > +static char *dvi_controller_chip_name =3D "Silicon Image SiI 164";
+>=20
+> This is a totally different thing.
 
-So going forward what should we do? I gave my thoughts for each
-patch above and how I think we should change it to minimise
-breaking things while adding error handling, which ones do you 
-agree/ don't agree with?
+It is, however I believe it is somewhat more descriptive, I suppose it
+doesn't really matter though and if it should be the same, just made
+snake_case, I can do that.
+>=20
+> > =C2=A0#endif
+> > =C2=A0
+> > =C2=A0/*
+> > @@ -37,14 +37,14 @@ static char *gDviCtrlChipName =3D "Silicon Image
+> > SiI 164";
+> > =C2=A0 */
+> > =C2=A0unsigned short sii164_get_vendor_id(void)
+> > =C2=A0{
+> > -	unsigned short vendorID;
+> > +	unsigned short vendor;
+>=20
+> Why change this?
 
-Thanks
-Qasim
-> correct, or just leave the test robot unhappy.
-> 
-> 	Andrew
+Again removing camelCase, kernel style guide says that shorter names
+are preferred (unless I misinterpreted that), I could make it vendor_id
+if that is preferred, I believe the same would be with device_id below
+it.
+
+> This is a mix of lots of different changes, please break things up
+> into
+> "one logical change per patch"
+
+Would it be best to split each rename (function or variable) into a
+separate patch? I do agree it is quite a lot and I was a little unsure
+when sending this one, but I also don't want to make a lot of different
+patches and spam your email with 100 patches at once.
+
+I suppose I could make one rename per patch and do them a few at a
+time, that may take longer though.
+>=20
+> thanks,
+>=20
+> greg k-h
+
 
