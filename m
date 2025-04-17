@@ -1,129 +1,105 @@
-Return-Path: <linux-kernel+bounces-608955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63FDAA91B43
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 13:52:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D365BA91B4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 13:57:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 276E77A91CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 11:51:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E62DB460C8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 11:57:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3BF923FC6D;
-	Thu, 17 Apr 2025 11:52:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2DF6241665;
+	Thu, 17 Apr 2025 11:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Izcs6Pd+"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="VlawjmWU"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B413215061;
-	Thu, 17 Apr 2025 11:52:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71984241132
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 11:57:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744890738; cv=none; b=UambGLveOwKNGoXL5XJJl/Cq+rRd6nbM185pAf8C7zCeO0plbGmi+lxVlT33eijCLkuoN5T1W+UN+jDmFOFiZ+5j8t813OHtbE8YpJmdqbMZua8c44zq7zlWOhnf5dns5ZMvSHaPsII/wZ+bUMeoh/AZC77BjcE6UtTILHQ/mVM=
+	t=1744891062; cv=none; b=KndGEVZGiZeO9HUCrbZNOcN7vac3sV+pigP2VfwW6rDTazFk6/93oLN3lg9vRLncQrWas0u4JHC4S18jfzu3B3+bXFKZx+QNqduznBmuRymITtl/lfTanX5q6gNCtJGsXjLBC8MvYgeXsLtBOtXvdNBcyZRaSuTrdP7GZgjnl04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744890738; c=relaxed/simple;
-	bh=TiDNvMnp0IugLxAqC2JocJtrOHqZw8rkUQ+/eq3NByo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mpKZukr2H43qv1725G4Wk5w0xSeeBBYYa9XBMflHOoBUv48GPREjW46/MR81gYcrE8uOIVh0UnhHrxx9e90lFgLCAM7xz4rL8F4BTh1CNgz7CM2EVuJYsBqLW8VZf+ODLBDPhlP9iPNJhil4L57KZY/zV335p9AdMrLuCC2vi5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Izcs6Pd+; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53HA4B0q002812;
-	Thu, 17 Apr 2025 11:52:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=ur8BoTvqIlCkziFmeuS6AZYBF/JO6n
-	z1/deh12WLJkQ=; b=Izcs6Pd+/XtYuSOI6JkebZQtpiR+k9Ax1z8ZMfAgWQdoYf
-	68Kujc65cPNNUVk8HsLdVUvBxeA0VTL8tskF0Qk3T6KZeT9Qqqn+VSWgIE/SAlMh
-	dbhpRDDFv//G3Ftx8kSSpGKJ8AS6Aw6VngkqtPVhsrqVk7R3qI/v5mBEgEnw4PnM
-	Oze9xfOT8YNLjrxN5G1Xqyx5bIPFG1RwJbAwetLLRdnrdFFoSgwNghxGm+SSDDl/
-	KeLMcwdCqDNexUe35y8hwfeMi7pY6qUf1uDTz3z8URb4Nq0OxzKPDljWTAAh8joy
-	W1AW/VFYmSHHHFJAaPT112ht/mDZGC8M1Rkp1fJg==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 462yjj8f8r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Apr 2025 11:52:11 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53HBUjh4017195;
-	Thu, 17 Apr 2025 11:52:10 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46040m5c57-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Apr 2025 11:52:10 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53HBq6YX32768416
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 17 Apr 2025 11:52:06 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A9DEA20043;
-	Thu, 17 Apr 2025 11:52:06 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1E3F420040;
-	Thu, 17 Apr 2025 11:52:06 +0000 (GMT)
-Received: from osiris (unknown [9.87.137.75])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 17 Apr 2025 11:52:06 +0000 (GMT)
-Date: Thu, 17 Apr 2025 13:52:04 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Thomas Richter <tmricht@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, acme@kernel.org, namhyung@kernel.org,
-        agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com
-Subject: Re: [PATCH] perf/tests: Fix tests 84 and 86 Add --metric-only on s390
-Message-ID: <20250417115204.12521Ef5-hca@linux.ibm.com>
-References: <20250415134553.3089594-1-tmricht@linux.ibm.com>
+	s=arc-20240116; t=1744891062; c=relaxed/simple;
+	bh=KVx8WKmih6vKKGr4uNwkQTb7gVMYZFyBqGp+HrNkqYE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EmTk4+w+3v1YdXm65lPkd3JzO6uWRQMRd6dX2bjCRvnUi5Sda+Ysba8fPgmASy2c8PWwBzdQwTmhN0v38ci61hHVoNQfAC7tv3Ubvt1uXdIen5GfIltdEE3c8KUWZQly1/V7ArdCrJh3krFP5meob86fvPghpBjeY7aZOIPqkIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=VlawjmWU; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-54b166fa41bso832252e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 04:57:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744891058; x=1745495858; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KVx8WKmih6vKKGr4uNwkQTb7gVMYZFyBqGp+HrNkqYE=;
+        b=VlawjmWUD0F5zybVoDShijiY/XUMKaPVg0BrgS6F9huR/tVsgQCbFqwy9WIjj/F7q/
+         w9yXJ9oceYQIr5nEycrXWpxogw7Gj0II9dES3ViXLIGphRCO7V2r40IxLyvhIw7/7v1s
+         7I/jjMK+5fAtgA6OX2TMEzRkVX9bsV156Nob+1IR9xzfrbqej/IzlYV5qP+EvMOaofVe
+         6QacPUi9TUUVMr3pTYNAEQhNvrU7kyXmFiCrx9kRIhnYyd7auFyHrsNsf3+nmP4RoZvF
+         ux8wwVcpJCfbi2i0YXWVEURhaMETYrcteWT9fnIx/PilhBcMpWHFWUUYey5x4Px5MuVf
+         75mQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744891058; x=1745495858;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KVx8WKmih6vKKGr4uNwkQTb7gVMYZFyBqGp+HrNkqYE=;
+        b=P2dn5bN4lVPhxG1NDWhE+cCSmYzm9Axl2l1OUb1RrLUbgQ5OHo77OV/6s07lDycQqO
+         g91Mo1FOOZSJJs15hg/A6OZ913EuMmTv1MdhPgo19Wf22n1DreAr6t99KMIaEAWju5oH
+         gLWtmY20yrEjMJx4tZOGwFAGNIcPfBZ2FV1k7LYeN3rYSnPHP6iPVXIUJPxdyG/nY0Ww
+         mRNHeM/7cWrsMhuHJMtwZkNE0ZvIjgD/tgIHtRrPv14tB4RRvhD8o/UybP4KmOwPWCt7
+         /mpZ4Wm7Awk6Q0SdNl9oMz//WDdET1lYBF+GB5p9N+QUkkbjXQw11o8ImxtKnVjo/ee7
+         eE6A==
+X-Forwarded-Encrypted: i=1; AJvYcCWiTNt9d1eoaoZe25P/vmeLIQR22WA/wb2AA3wYdQMAfGNLFLW5bdtnIORhOBDCMBe3I53GiLn5Jk33eig=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZGJ2D27zAD0Z0mIWRq+uWKQl6/h63uhYELclzITEqB2C/gm5l
+	3Hxzdv5+niienSfMyPfmfNW4k6yIh0hzrcGrPjE226MrO+rJgiyPeuBxt2m1i6dUajJyqD5nql8
+	ad1Z0/X9NLl7zzDNSulvT+Rw40uo9n8xo0iJcUacOM9Mh40DzZvw=
+X-Gm-Gg: ASbGncvuQ0QupoIGU1ZO/7XNtoBvK994m+z0W9Zb7FBDPWxEQ4oiHXJP3DeQ1uqSv8C
+	IRuyohHOdy3EWKFjICBDF1Y1YuxqQrtIlIp7NbxcsEgqo1Yv/nx3/Eh3NpGFLbJRFY+fEsVSYI1
+	9XZL+bDv+I8IKgMV//+MM3Fyvy2OBVWe25LyfPzKjdxxksztnUSiV1caA=
+X-Google-Smtp-Source: AGHT+IEeiYtk0HBTKuDVztlupwWSfRuUo8RT61pDnZJPmFsX2h7TOOidEy7m9hfQetu7dYH1CnLuFFBE5Q3c8cKQfhk=
+X-Received: by 2002:a05:651c:b06:b0:30b:c91d:35cb with SMTP id
+ 38308e7fff4ca-3107f68c2cfmr12267491fa.4.1744891058255; Thu, 17 Apr 2025
+ 04:57:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250415134553.3089594-1-tmricht@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 3T4M7v_4x5QBVKGq313W6NGnx1rRdfNb
-X-Authority-Analysis: v=2.4 cv=MsNS63ae c=1 sm=1 tr=0 ts=6800eb6b cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=pkdV3G2aDOTQtP1BiC4A:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: 3T4M7v_4x5QBVKGq313W6NGnx1rRdfNb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-17_03,2025-04-15_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
- suspectscore=0 priorityscore=1501 phishscore=0 mlxscore=0
- lowpriorityscore=0 spamscore=0 clxscore=1015 bulkscore=0 impostorscore=0
- malwarescore=0 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2504170086
+References: <20250407-gpiochip-set-rv-gpio-part1-v1-0-78399683ca38@linaro.org> <20250407-gpiochip-set-rv-gpio-part1-v1-5-78399683ca38@linaro.org>
+In-Reply-To: <20250407-gpiochip-set-rv-gpio-part1-v1-5-78399683ca38@linaro.org>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 17 Apr 2025 13:57:25 +0200
+X-Gm-Features: ATxdqUEK3uu-LOdkchvLQaZrXxJG2L5aKVumzM127nWeg-RbcMIq1bU1r2_Kqrk
+Message-ID: <CAMRc=Md6Bi6ZT4tuyzRq3YfNe3FreMW7Yz77xy0tYcdaAqjWKQ@mail.gmail.com>
+Subject: Re: [PATCH 05/12] gpio: allow building port-mapped GPIO drivers with COMPILE_TEST=y
+To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Chunyan Zhang <zhang.lyra@gmail.com>, Andy Shevchenko <andy@kernel.org>, Peter Tyser <ptyser@xes-inc.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 15, 2025 at 03:45:53PM +0200, Thomas Richter wrote:
-> On s390x z/VM machines the CPU Measurement Facility is not available.
-> Events cycles and instructions do not exist.
-> Running above tests on s390 z/VM always fails with this error:
-> 
->  # ./perf test 84 86
->  84: perf stat JSON output linter          : FAILED!
->  86: perf stat STD output linter           : FAILED!
->  #
+On Mon, Apr 7, 2025 at 9:13=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl> =
+wrote:
+>
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> Extend the build coverage by allowing the port-mapped drivers to be
+> build with COMPILE_TEST enabled.
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
 
-I would guess this fails also for KVM guests?
+This caused numerous problems in next so I'm dropping it.
 
-> diff --git a/tools/perf/tests/shell/lib/stat_output.sh b/tools/perf/tests/shell/lib/stat_output.sh
-> index 4d4aac547f01..a708dedf7d9d 100644
-> --- a/tools/perf/tests/shell/lib/stat_output.sh
-> +++ b/tools/perf/tests/shell/lib/stat_output.sh
-> @@ -151,6 +151,11 @@ check_per_socket()
->  check_metric_only()
->  {
->  	echo -n "Checking $1 output: metric only "
-> +	if [ "$(uname -m)" = "s390x" ] && grep -q z/VM /proc/sysinfo
-> +	then
-> +		echo "[Skip] not supported on z/VM"
-> +		return
-> +	fi
-
-Wouldn't it be better to test for the availability of the CPU-measurement
-counter facility? That is: test if facility number 67 is present in the
-facilities field of /proc/cpuinfo.
+Bartosz
 
