@@ -1,172 +1,178 @@
-Return-Path: <linux-kernel+bounces-608321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F02AA911B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 04:34:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92536A911BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 04:43:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B3F35A1118
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 02:34:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06C785A20ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 02:43:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C22461DB958;
-	Thu, 17 Apr 2025 02:34:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 137F61BBBD4;
+	Thu, 17 Apr 2025 02:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rQcDxOlK"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VhMPw/80"
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 433E21D47C7
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 02:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A37320F
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 02:43:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744857265; cv=none; b=geTne14e7Tku/9MSGb3APY7sm1ZSCohIV8m9OtaCpecHKYScX36TPCWzRpuLJMweBCbmyRuDZjPEXfCyD/d5Q/MgrZ9iefY2IIpPyZyE7Ixfkr36gMvrJTGuA2ztASEi96Ln7nHxf71kNXbAIXCu+7+XflfiM6nH6dRqJvLAYZU=
+	t=1744857814; cv=none; b=e2+Uq4GKhxY5itqroSUQfKk1dsZOfuCGVjQlH3L03n5GY8YYx73w23Hey8Om5cp4U250w5MXIuAkybj4MfVW6tGgWVE9+Ki1+S3r9uVR2Ze0/u0mP/PBj7D6mSJLPooFwyDk4uVmeDh4I3ftUTbj7EK/9+K68wuYM/XyaU+Y0Qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744857265; c=relaxed/simple;
-	bh=BZYIN/wc4dm29ISVSErFEEJ3a+s6ZEzUJgEaB3VLrWU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=oJuHYU//LkuqXL5owCINn1kJqxt6l4YlpPp+wCs6ijcOkhhEX2hJW0gM5zC32HCzb7UjGgTntr1r96sgu4Nh8H5r2kYDYd82Sn9uw2Xy99Oz0EpaJg2PAkep//LKI3i5I2Ul6GbGxAfVjy8cP08mvAt4p3aR0VW5LXZgwia7DBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=rQcDxOlK; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250417023421epoutp010d3c1cbaeabe91ae9003da974e1a27fc~2_m8w1reR2368423684epoutp01c
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 02:34:21 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250417023421epoutp010d3c1cbaeabe91ae9003da974e1a27fc~2_m8w1reR2368423684epoutp01c
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1744857261;
-	bh=aFlWlI2qNQdbQ8T9Cyy0pL+6w9hLyxVwaXZP/iPl2xA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rQcDxOlKlsPBuJhYm/DvRh3+nlJABElOS7IpPRf1EZGxBhnmpyYXyxQhOq3/aaE1M
-	 TpVF1QfHJJLsZ6MxXW3XT0jMSQFQn8L2Z2JknGiNziOBgkQW+Qr4Hdh7g8U70Vu9z/
-	 LgvzIFWg14wuKmgRKxtf5yaU1CbogmrYFQ4GR2KY=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas1p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250417023420epcas1p2519893cd385f425967d7eec53e2354e3~2_m8Fh6cL1363113631epcas1p2a;
-	Thu, 17 Apr 2025 02:34:20 +0000 (GMT)
-Received: from epsmgec1p1.samsung.com (unknown [182.195.36.224]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4ZdMRH5Yj4z6B9m7; Thu, 17 Apr
-	2025 02:34:19 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-	epsmgec1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	45.41.09912.BA860086; Thu, 17 Apr 2025 11:34:19 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250417023419epcas1p343060855c4470f8056116a207a584956~2_m7G3W821513415134epcas1p36;
-	Thu, 17 Apr 2025 02:34:19 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250417023419epsmtrp14b8fb0824a85c785f21529ad334a98f0~2_m7EaiUZ2422224222epsmtrp1D;
-	Thu, 17 Apr 2025 02:34:19 +0000 (GMT)
-X-AuditID: b6c32a36-27feb700000026b8-8c-680068ab467d
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	D6.43.07818.BA860086; Thu, 17 Apr 2025 11:34:19 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.253.101.61]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250417023418epsmtip2f5859b918d60b37c2895346c75ca8b25~2_m6yMtzM2733927339epsmtip28;
-	Thu, 17 Apr 2025 02:34:18 +0000 (GMT)
-From: DooHyun Hwang <dh0421.hwang@samsung.com>
-To: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
-	James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
-	peter.wang@mediatek.com, manivannan.sadhasivam@linaro.org,
-	quic_mnaresh@quicinc.com
-Cc: grant.jung@samsung.com, jt77.jang@samsung.com, junwoo80.lee@samsung.com,
-	jangsub.yi@samsung.com, sh043.lee@samsung.com, cw9316.lee@samsung.com,
-	sh8267.baek@samsung.com, wkon.kim@samsung.com, DooHyun Hwang
-	<dh0421.hwang@samsung.com>
-Subject: [PATCH 2/2] scsi: ufs: core: Add a trace function calling when uic
- command error occurs
-Date: Thu, 17 Apr 2025 11:34:04 +0900
-Message-ID: <20250417023405.6954-3-dh0421.hwang@samsung.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250417023405.6954-1-dh0421.hwang@samsung.com>
+	s=arc-20240116; t=1744857814; c=relaxed/simple;
+	bh=Ei3R5xrKd9GZkyaNL0k185+WrRBNfaGzOK8MX9DZxdQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P+2HWCAObtROxUz2AyJjEenhNEkQfc5o8YQx63GgWw/KX7k1SDCtjpoUZo4TXFwsJ47ryvrlevp089qBU1VoXMMtXa5/8QlrXDlxKnZHqTRZZdDO0ihY+6XAfm1bUmNvlAIyOPyCkSZ6G+i/GiFjdDL7mgJTbp8Pnu8s8Y1JnyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VhMPw/80; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-523f670ca99so129313e0c.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 19:43:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744857811; x=1745462611; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Od8k6LZA8WtpjFMRC9gzixGp04UToT1Q0Y0i08AB8fY=;
+        b=VhMPw/80xcRZWzeMcYB+cOZuHn8e81ySravgUEgDkvKCTZEEH7rTxmpgk/LiM7Gh2L
+         vzPbS4GDFrjMVKaSKEoTAgKR6HX28w6qxGZjWROb1ejEOzG5HekHruPY3459a67ufh/b
+         a5rgchuTNzo/sRYaZc+5s3Ft50HJx31F+OapdbO1RXUVDAZK0IKrFrJOLtfTdVZU7kZx
+         1m8V2Gn4u33DwK7bnA3zMGKaCm7qVq1NNLNH8GJhzbaImH4f7PfCWWbuwHAW2NHeOL9M
+         5DW+3tUOQXUWjmgoe3JR6tFSQ9UtiI8FuQOsCWTOF0ktklLT4Z2GGafsSsE7rxR2uWo/
+         j+Mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744857811; x=1745462611;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Od8k6LZA8WtpjFMRC9gzixGp04UToT1Q0Y0i08AB8fY=;
+        b=Ldd3gEU+oGOQvvXcI7F//JOkFlz66vjHijrnNltCBrF2eZl1f0RHAszs9eTXkvvVJi
+         Y8BrXrixZ/5+A/doi3FRurwRjvGJ3RyVp47vAXpp2flCHyd3X3KGVjGX7Rszsf0dzU5T
+         jG0XKMaELuwvoxw5YdByeA5nvSVvMqpw/L0J+WJUta7DvCBE4cfVciaJgKsqzHNmfyAs
+         Zdyz2NqDaQKuf0UpUDS9TrpeOMkjyK3Rc3ilM7Z+lciFeaGoblhxde47gjuSHWTeFKlL
+         Yt7EoqolIHedjeAL9ETW4mN9EBFrJCNgzCzgIGPZC0aOQdhzaXiRg+BPotbBuype2mlO
+         FM4w==
+X-Forwarded-Encrypted: i=1; AJvYcCUt50znx8Ou/7nMLi4CdiQfQwsL6I8Stb6unsqXc2CAYQpkV2bPNzAXgVVOz8xku5VFqLIh32fCDhI3uAY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxeyjd40BqB098JMJplS4hxDPSSXWf/eWbTWG2DjZLBX/gewkvk
+	81xZFlvs9b5zakSrfiJzkCUogy42lMK2wmCGIIlgKG+lJ6Izsams+r7wTlxiXUv9ggQyT9ExmDR
+	Xfgh5Wd5YEegFg35fQwqYW8iF9D0=
+X-Gm-Gg: ASbGncudsvbbeWRER6n8IJywPa4+Da6Aeozbv1PdFC+Xm2b4L1ISNzOhpi6hEIYkRP0
+	/bOrkSLb99hXncqcqt4i3y+CbFybo6ubcXNY2tJMx8EGc4oSZYUttUTvB6H2GB8bPQOy1y971lU
+	6z3W2MKicNOIocVZP7wigHcOc=
+X-Google-Smtp-Source: AGHT+IEHwZwvERM6glWbYYwwzYCetfMHvG7kmqhssfc8GIXRgzL7p4OSea/eLcMf7tOLmQquK2cEHkkUW6DbI/qKOVg=
+X-Received: by 2002:a05:6122:2b47:b0:529:1a6a:cd48 with SMTP id
+ 71dfb90a1353d-5291a6b07bemr170223e0c.6.1744857811522; Wed, 16 Apr 2025
+ 19:43:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLJsWRmVeSWpSXmKPExsWy7bCmvu7qDIYMg1U7tCwezNvGZvHy51U2
-	i2kffjJbzDjVxmqx79pJdotff9ezW2zs57Do2DqZyWLH8zPsFrv+NjNZXN41h82i+/oONou7
-	LZ2sFsuP/2Oy2PrpN6vFt74n7BZNf/axWFw7c4LVYvOlbywOwh6Xr3h7TJt0is3jzrU9bB4t
-	J/ezeHx8eovFY+KeOo++LasYPT5vkvNoP9DNFMAZlW2TkZqYklqkkJqXnJ+SmZduq+QdHO8c
-	b2pmYKhraGlhrqSQl5ibaqvk4hOg65aZA/STkkJZYk4pUCggsbhYSd/Opii/tCRVISO/uMRW
-	KbUgJafArECvODG3uDQvXS8vtcTK0MDAyBSoMCE7Y8XMRYwFazkqHn/pYm1g/M3WxcjJISFg
-	IjGreQlLFyMXh5DADkaJmes+skM4nxgl1n2fywzhfGOUOHu6mQWmZXfHIjaIxF5GicP73oMl
-	hAQ+M0oc3wlmswnoSezpXcUKUiQiMI9JovMSxBJmgY+MEgtvvQbbLiyQJLH41G1mEJtFQFXi
-	4MuTYN28AjYS0zb+hLpQXuJSVxs7iM0pYCtx9OltqBpBiZMzn4DZzEA1zVtng90qIXCDQ2Lm
-	7pmsEM0uEr+ufmOEsIUlXh3fwg5hS0m87G+Dsoslrpw7C7WshVHiUUcGhG0v0dzaDBTnAFqg
-	KbF+lz7ELj6Jd197WEHCEgK8Eh1tQhDVahKL/30H2sQOZMtINHJDRD0krk99xQgJqwmMEvt2
-	L2OfwCg/C8kDs5A8MAth1wJG5lWMYqkFxbnpqcWGBUbwWE3Oz93ECE7XWmY7GCe9/aB3iJGJ
-	g/EQowQHs5II7znzf+lCvCmJlVWpRfnxRaU5qcWHGE2BwTuRWUo0OR+YMfJK4g1NLA1MzIxM
-	LIwtjc2UxHn3fHyaLiSQnliSmp2aWpBaBNPHxMEp1cCks+UO/+ONcz+fuaP7auU7NneBV+7X
-	Tv/7du2eFkPGiiM5caszf02WZovqNrrlt/+D/+3Z7wr3OkZu8PXj3q9x7M2+JX5fpm4//7qi
-	tr5pfq31032red7+Ss7kPLXhd8V/decZ4ks+XH7tpbUp3rC5d/GZdb8W9VgdSPh87KOR07lf
-	13f+l1yyXK/OwIDrS9SEqjfv3ss9EVw0129K1dbji62+L+1Zy8a32uqNQTlDxYZvedL+l075
-	6y5pVHIodWq4fGeCl3jBWU6fn1suM9+SPrjj+7s1yTY/7d68fhTPufe+mYZ+7bFUTS933sbz
-	SRvLF70qNC1QWWMeet7grEOtu/tSH96U7zmH7wktqnn78Y4SS3FGoqEWc1FxIgD/TieBYAQA
-	AA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKIsWRmVeSWpSXmKPExsWy7bCSvO7qDIYMg8Y+bosH87axWbz8eZXN
-	YtqHn8wWM061sVrsu3aS3eLX3/XsFhv7OSw6tk5mstjx/Ay7xa6/zUwWl3fNYbPovr6DzeJu
-	SyerxfLj/5gstn76zWrxre8Ju0XTn30sFtfOnGC12HzpG4uDsMflK94e0yadYvO4c20Pm0fL
-	yf0sHh+f3mLxmLinzqNvyypGj8+b5DzaD3QzBXBGcdmkpOZklqUW6dslcGWsmLmIsWAtR8Xj
-	L12sDYy/2boYOTkkBEwkdncsArK5OIQEdjNKnPvUwQ6RkJHovr8XyOYAsoUlDh8uhqj5yChx
-	fHsLM0gNm4CexJ7eVawgCRGBFUwS8299ZAdxmAV+M0pM+tEMNklYIEHi5/n1jCA2i4CqxMGX
-	J1lAbF4BG4lpG39CnSEvcamrDayeU8BW4ujT22A1QkA107+2skPUC0qcnPkELM4MVN+8dTbz
-	BEaBWUhSs5CkFjAyrWKUTC0ozk3PTTYsMMxLLdcrTswtLs1L10vOz93ECI45LY0djO++Nekf
-	YmTiYDzEKMHBrCTCe878X7oQb0piZVVqUX58UWlOavEhRmkOFiVx3pWGEelCAumJJanZqakF
-	qUUwWSYOTqkGJhuvVCn5ySeNqjhk5XYfCzF5qntWTPbupveMpbevf531yvvAdsb7Ys//uz5h
-	b1s150Ni3V+z2qrwOf9EdFuF56vOLohcJRl+95PnnH7NdVu0KizCON+ErCm59ObLIVHdjVvX
-	v96X19gpIthVvqS55XjK7L3Md9ncn5zK2/RP8WfsgWDHfz53Jt6vzbgbfl1g0uQnX1s+PyhX
-	3yJ59ltOwYWPC55GxP2uYhcxZF39yanW+8DaV/oVO5y/tzdpfityl7271naKaPaXNp9XzXKs
-	XNdXbHyu81m40arfSuZb9s/n+4X7ft8LC55z5Lry/Mul06IeRGraVrXMWPxEZnlkiOoVsShb
-	JzeWsL7IM06bTJRYijMSDbWYi4oTARIjzrYoAwAA
-X-CMS-MailID: 20250417023419epcas1p343060855c4470f8056116a207a584956
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250417023419epcas1p343060855c4470f8056116a207a584956
-References: <20250417023405.6954-1-dh0421.hwang@samsung.com>
-	<CGME20250417023419epcas1p343060855c4470f8056116a207a584956@epcas1p3.samsung.com>
+References: <20250412085852.48524-1-21cnbao@gmail.com> <34c54df6-9a7c-475d-9b91-0f8acb118231@redhat.com>
+ <CAGsJ_4yUUK8LoejaUrXWscpPSQevq8jB4eFwpd6+Gw3T5JxdNg@mail.gmail.com>
+ <6259cc1d-93a8-4293-9009-a6119166f023@redhat.com> <CAGsJ_4wnqyaZntmtOvtTZRq2XuKsKRTokwf1GeX91FpfqW_nzw@mail.gmail.com>
+ <d5cd2055-62ea-4534-b5e2-c6a5bfa9b1c4@redhat.com> <20250416141531.GD741145@cmpxchg.org>
+ <239cfe47-9826-402b-8008-de707faa160e@redhat.com> <20250416181835.GA779666@cmpxchg.org>
+ <CAGsJ_4zt2Yuornri1bO=3o7myey1Q2dmvtjn2baD0ahxOyoNjw@mail.gmail.com> <20250416235849.GA780688@cmpxchg.org>
+In-Reply-To: <20250416235849.GA780688@cmpxchg.org>
+From: Barry Song <21cnbao@gmail.com>
+Date: Thu, 17 Apr 2025 10:43:20 +0800
+X-Gm-Features: ATxdqUEl8W05zT5OxxPD2alBle_1_ftAsTtwTrAsPphv_p55QZdh8rSZJeOtuLE
+Message-ID: <CAGsJ_4wfWLbDC5SruF5TtH-VXE08OWxan12qNYSV3vGzBfe5Bg@mail.gmail.com>
+Subject: Re: [RFC PATCH] mm: don't promote exclusive file folios of dying processes
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Matthew Wilcox <willy@infradead.org>, 
+	Oscar Salvador <osalvador@suse.de>, Ryan Roberts <ryan.roberts@arm.com>, Zi Yan <ziy@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When a uic command error occurs, there is no trace function calling.
-Therefore, trace function calls are added when a uic command error happens.
+On Thu, Apr 17, 2025 at 7:58=E2=80=AFAM Johannes Weiner <hannes@cmpxchg.org=
+> wrote:
+>
+> On Thu, Apr 17, 2025 at 05:54:57AM +0800, Barry Song wrote:
+> > On Thu, Apr 17, 2025 at 2:18=E2=80=AFAM Johannes Weiner <hannes@cmpxchg=
+.org> wrote:
+> > > Right, I'm more broadly objecting to the patch and its premise, but
+> > > thought the exclusive filtering would at least mitigate its downsides
+> > > somewhat. You raise good points that it's not as clear cut.
+> > >
+> > > IMO this is too subtle and unpredictable for everybody else. The
+> > > kernel can't see the future, but access locality and recent use is a
+> > > proven predictor. We generally don't discard access information,
+> > > unless the user asks us to, and that's what the madvise calls are for=
+.
+> >
+> > David pointed out some exceptions - the recency of dying processes migh=
+t
+> > still be useful to new processes, particularly in cases like:
+> >
+> >   while true; do app; done
+> >
+> > Here, 'app' is repeatedly restarted but always maintains a single runni=
+ng
+> > instance. I agree this seems correct.
+> >
+> > However, we can also find many cases where a dying process means its fo=
+lios
+> > instantly become cold. For example:
+>
+> Of course, there are many of them. Just like any access could be the
+> last one to that page for the next hour. But you don't know which ones
+> they are. Just like you don't know if I'm shutting down firefox
+> because that's enough internet for one day, or if I'm just restarting
+> it to clear out the 107 tabs I've lost track off.
 
-Signed-off-by: DooHyun Hwang <dh0421.hwang@samsung.com>
----
- drivers/ufs/core/ufshcd.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Typically, we focus on scenarios where multiple applications switch
+seamlessly=E2=80=94for instance, on a phone, when transitioning between
+different apps. The smoothness of these transitions matters most,
+Immediately restarting a just-terminated app isn't problematic since
+its memory footprint often persists before being reclaimed.
 
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index ab98acd982b5..baac1ae94efc 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -2534,6 +2534,9 @@ ufshcd_wait_for_uic_cmd(struct ufs_hba *hba, struct uic_command *uic_cmd)
- 	hba->active_uic_cmd = NULL;
- 	spin_unlock_irqrestore(hba->host->host_lock, flags);
- 
-+	if (ret)
-+		ufshcd_add_uic_command_trace(hba, uic_cmd, UFS_CMD_ERR);
-+
- 	return ret;
- }
- 
-@@ -4306,6 +4309,8 @@ static int ufshcd_uic_pwr_ctrl(struct ufs_hba *hba, struct uic_command *cmd)
- 	}
- out:
- 	if (ret) {
-+		ufshcd_add_uic_command_trace(hba, hba->active_uic_cmd,
-+					     UFS_CMD_ERR);
- 		ufshcd_print_host_state(hba);
- 		ufshcd_print_pwr_info(hba);
- 		ufshcd_print_evt_hist(hba);
--- 
-2.48.1
+>
+> > I agree that "access locality and recent use" is generally a good heuri=
+stic,
+> > but it must have some correlation (strong or weak) with the process lif=
+ecycle.
+>
+> I don't agree. It's a cache shared between past, present and future
+> processes. The lifecycle of an individual processes is not saying much.
+>
+> Unless you know something about userspace, and the exact data at hand,
+> that the kernel doesn't, which is why the Android usecase of MADV_COLD
+> or PAGEOUT for background apps makes sense to me, but generally tying
+> it to a process death does not.
 
+I agree that MADV_COLD or PAGEOUT makes sense for background apps,
+but I still believe process death is somewhat underestimated by you :-) In
+Android, process death is actually a strong signal that an app is inactive =
+and
+consuming much memory=E2=80=94leading to its termination by either userspac=
+e or
+the kernel's OOM mechanism.
+
+We actually took a more aggressive approach by implementing a hook to demot=
+e
+exclusive folios of dying apps, which yielded good results=E2=80=94reducing=
+ kswapd
+overhead, refaults, and thrashing. Of course, it is even much more controve=
+rsial
+than this patch.
+
+While I acknowledge that counter-examples to my described pattern can alway=
+s
+be found, our observations clearly show that process death is a big event -=
+ far
+from being just a trivial unmap operation.
+
+Anyway, not trying to push the patch as obviously it seems quite hard :-)
+
+Thanks
+Barry
 
