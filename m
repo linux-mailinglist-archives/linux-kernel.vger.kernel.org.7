@@ -1,133 +1,165 @@
-Return-Path: <linux-kernel+bounces-609407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A081A921DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 17:43:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C581A9220E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 17:56:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14D721B60A8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:43:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC7973BB617
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:55:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0525C254863;
-	Thu, 17 Apr 2025 15:43:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C9A253B4E;
+	Thu, 17 Apr 2025 15:56:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TPMBTYJg"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f+KtSTh+"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A6B253F1A
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 15:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DBF253B7E
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 15:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744904599; cv=none; b=UoDIfQaMn9b1KH/95iK6wq2nRhXMCFaALC3WqOiIU1gY14Aexd/4MkJc+J47I3Wd2xkgpvEkvBHlFL/ROTFShhXtev3i6p7UcmBugUITFpfahkG/TS8Ihv23XSzgBu9uU0WIvk/kw+KVXwnRRg5+p6GzUCsOnDnjhb6GJErBcwQ=
+	t=1744905366; cv=none; b=i6wGzm1zPDWK7FkOdoxiDB8+BPb72Mc5YiSJMkZiGbLMLJwLhc89elIGpJqpXRb9q0YG/KV0jVpYW1GzkgiGU0kESI9JAczCIL4fz5eAhvSJmFbK4rzLnfqexdUiS/NAQUxa1/Nf4OZjqqXdkpHb1TCTwSoOokf4zTvCjlK/1qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744904599; c=relaxed/simple;
-	bh=3xZTPoJDnTR2ZNrT+amq61JFizgrmqJzF9AZziFoneI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Vda2+bpFqzxq7igo3ojl93szlHDf8tCSBqvnDYrIEXeONA4SQ4dvATj0fVYHyxrHG7ZHpysHAGYZEuq38TO/n3lZXLKp3v5sr5EF/mufGh2Qm1i5RGeqdJW6qeenlxfjcgG+Z0+vaJXWt5fLbHbTq09RLJFG5/zTFpUxZ2VFWhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TPMBTYJg; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-39ee57c0b8cso965973f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 08:43:16 -0700 (PDT)
+	s=arc-20240116; t=1744905366; c=relaxed/simple;
+	bh=cglmHNvZ8r5E0j/Phkt+cDETnp5cQeP+d6bnKmyWuog=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=bddA2hYoaokixXtfaQNc+rf5rOFWLfA2vL3q2Om8NWslfpM7fl4KTTWRCGPvsmQFW38DDdgDi9MJPujamAkfqwJ/H9kRt0dVllfcf8WyngopRd6Nj4e8GPhCteOWWqxH4VTbeSZmQqH+0ez0VG1VTSubqqA8qnBFR8jh9VQFrsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f+KtSTh+; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-224019ad9edso16211645ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 08:56:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744904595; x=1745509395; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1744905364; x=1745510164; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nS+iMVPzLszyvK1ef5pz0a8ecHJhiCbYxQ8pLZG1LMM=;
-        b=TPMBTYJgAjSzATlJfHgBwIVZqLa1xAqDVSpHmavzbZaNoUJwmTF0Dwt/NxXD7hV3jP
-         jJI+fOCQHK3lf1YW91/SkUuxVlHfh9olXpe6vZZmqLgXEqQC5KnaN27cXTeQzRc9xrTN
-         o1VIP+EddNy/6ds11ujuzpHR5f5iMsQKunqVx3g0MKAQEaXyWYSDhnm/f4yyW0seKuAg
-         rk2LoLIGJF4L6DJHUBpfbPMikZ7pTWUlHJpHRG8FiMI2mKIY/t3klxN1aU+qwIGUKIsR
-         LA4qh4iEdoCpThvIgkqK6FMzJHaa/8loB8BOL71AP5JA0MiTAzDkWledLBheC67YgFVY
-         HNLg==
+        bh=oSEcAr/Nninfs8xf/2CKsjzTEjL1N076YIJRTQ8WFqg=;
+        b=f+KtSTh+JXooFoIAJDioMzjAd7LU/snOC7D+8tYF5B2M6jTvKahTnFDNxMU9rCCb1V
+         +R70TIFqw97xjsfoS//NinQJgGjSqXvTfxysjUPrlsgNcd5CsN4lIz8+zsKZ2YpVFyM4
+         ayulSm9BLuuDv9DTIUnK7mUnHMvhXRuRDqEGOKewPUJD2sHAt0mAKP5lGAno38sszEzU
+         MkYFiXa9rNOQEtMSGv0Q0zvW/otkJPpeisjFXWAF7TtMcrqNBdsufjBwBnHHM06LtT2I
+         v49QaAJdPAnyPkaTzlNJiVHAirA36c1QeFHYYQpHwFbtc5u7A4KIyvEmBtkOzMkp7uz9
+         Qm4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744904595; x=1745509395;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1744905364; x=1745510164;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nS+iMVPzLszyvK1ef5pz0a8ecHJhiCbYxQ8pLZG1LMM=;
-        b=M+0S1zVka4zM8hMlu7fAyC8vsMtVgkQYUqvCAX5dMBcw7rf2TEozlX6GKdodd/w+bx
-         4xfnWZFDnNKKVns0h5+VkonLnUwf6Iu8YdveZ3mF6A4jsNXxxnV9xCdAWnbNXn6ySBLK
-         gaFjjWj6YhNtih23Rgtbzhh9cPIsMgZW5igX/Cj6LCcy1sQdZ8nbXlmlkycdsctRZtxu
-         OY38CvUIJt9xfQWOXn/XdUAVpkVaZGOShdZyb+vflQiA0YuD0WRMnNhVY2Z0X6CoHhAz
-         jWhHy2NdlGyS6CDxpHKdulp7rfvgF6sZCD8tETIeyv8SRzGfPcL3nXZiae9D5dfpgOWL
-         y2iA==
-X-Forwarded-Encrypted: i=1; AJvYcCX9GBOd5MyEL7iQbEL10EYCQvjUqnTWhCAFRqnHyHFcPLY63ZTy/g/nRadKh9e/LDZgnm2GG+IWrC6qpKM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVzI9/zTmx/QDPgdPC4esVbKJlYFAIW/57GLKMhzdPjwotOg5u
-	uFm8AXsuytAN903XRHv52DN0CFqwgL73//vEp77oeWcOx3wlKFzeMiH/ZawCRlzK6FfFvRkodbS
-	Z
-X-Gm-Gg: ASbGnctRE5Kgy50QQZXKsdK7E42fLoaNeGwR/SmEz2YWFmVIC4yf5ngQB1SAl0S1uqE
-	0/5aKKCvkR4cVQ43c6CGbL1KX2fkyjEsvI+SX4B+GeZXNlGUbXIVpcO5AAfSD15pO2hJiaf+hcS
-	2h5R85KRyvDRLTK0DgxE5YJtEJxEJ4Qt7MJ22f6eIReGZghnegDEJm/yf5MWV0k5XzV2Ua9lXFg
-	1iycUwBi2uBNEra/xJdmwX1tqTQN+8RWTPC1HeXO+/Y+Uw2JdKezmmQBnRdh/NPVKsyV7gjRrcW
-	OiG0jYSzuUE0/OMe+CkCmGSC7vcyIul+uVKZoIlAhV3Z7iW+V/iTqiF3g2oElg==
-X-Google-Smtp-Source: AGHT+IGryh9t6uhy66lrT8gQ3EODPyMha/2rPVIOWr8w58yUILTFXYIOWehquSJJiWUu1ku4BKDX9w==
-X-Received: by 2002:a05:6000:2505:b0:39a:c9fe:f069 with SMTP id ffacd0b85a97d-39ee5b373d3mr5516764f8f.30.1744904594884;
-        Thu, 17 Apr 2025 08:43:14 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eaf44577dsm20773640f8f.94.2025.04.17.08.43.14
+        bh=oSEcAr/Nninfs8xf/2CKsjzTEjL1N076YIJRTQ8WFqg=;
+        b=D0vw1a6L/9hiYNvBzwwRnDZTGFIg6GqeBRJtqmS69E1mkun3c64/zN///tzz/ds/nN
+         +rqO+tKdOUpkVQGbSZmoMz9C0HwILhY92hVI503qL4zL9fG5wTGaLF7qFYzxNcxA5N9r
+         WERxuBB40iFq7ICqVF460CySMrHf/BQAb62I1J2xIkO/kZvjxZDzW4G1Z/9lfjxy8KJY
+         kXhq6QXJK3PTVePcf8ygDRD5Xy4TX1PuuDE9I1oP7vu5HAY4fKnaTvB+HC9Iy3YkuX/f
+         UBT5IotDof9unhRQvPQr6wxaqftYYpsEy0cRv5LlTWhfgDvpF5Wdgc5JfEG0u3deQwP1
+         Q2ag==
+X-Forwarded-Encrypted: i=1; AJvYcCXXDs7059khSx8SIAg6ciHi/adr5/bC2f+GvyVgK5y/rj+0tVOui2LZ4Ivd3gY3VMjGD3QFxSt1fpDLLvY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrkfE8QxsEqlwPFwbkS3kYQ4FpZ1DcL/pvmMMeT5dmJjB4Az+d
+	1hTc2AHFoReJOLgdtqHFqg7yicsk9Hg6/CyJq59e5ZghZ5DgdyMB
+X-Gm-Gg: ASbGnct/bMqM6d6GtyC+QaFi4D5JmjmNxwpEJRoDphE/tcAx1mG9e+Sst4b1kKYz4Ev
+	Z85XLVS3t+/ySjLpPwWtS3KRuzFYvjsMmpbuJcb7HeNB3CHSS12AWIDtYPVNO3/Tu23Tq0Gmbel
+	Ji8x1WqIYb87dEZusYyoX1kpK+e22GX98GTd7u6lI/dkRD5yGULt38deibCeXT4vTvL9dAvjBqR
+	Cm1C8gdyVkkR9wHKmdhs9eWZkmN4acNMwr25BW/4jPzjYTbon5s+xPQo4WgjYm/3QVGY6ho0DwL
+	5CBPR4rvKHp1x3mgGiDji95uCs7+p+lQPfEsrEdn88dOTeLQ4xXX6jdA1TBxOSO/AJDg
+X-Google-Smtp-Source: AGHT+IFJwKldYasU+o6JJFWYYy0XlsU/CWvQYjmAL/nLwbGDvCRVFchUBxwoQWEx+LafDXC37seMbQ==
+X-Received: by 2002:a17:902:e542:b0:224:7a4:b2a with SMTP id d9443c01a7336-22c358c50e6mr100309045ad.11.1744905363815;
+        Thu, 17 Apr 2025 08:56:03 -0700 (PDT)
+Received: from localhost.localdomain ([2601:646:8f03:9fee:5e33:e006:dcd5:852d])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50bdaae7sm1636085ad.36.2025.04.17.08.56.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Apr 2025 08:43:14 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: quic_jesszhan@quicinc.com, airlied@gmail.com, simona@ffwll.ch, 
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel@collabora.com, pablo.sun@mediatek.com, 
- christophe.jaillet@wanadoo.fr
-In-Reply-To: <20250414082918.30298-1-angelogioacchino.delregno@collabora.com>
-References: <20250414082918.30298-1-angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH v4 0/3] Add driver for Himax HX8279 DriverIC panels
-Message-Id: <174490459408.1152288.4538582198698733279.b4-ty@linaro.org>
-Date: Thu, 17 Apr 2025 17:43:14 +0200
+        Thu, 17 Apr 2025 08:56:03 -0700 (PDT)
+From: nifan.cxl@gmail.com
+To: muchun.song@linux.dev,
+	willy@infradead.org
+Cc: mcgrof@kernel.org,
+	a.manzanares@samsung.com,
+	dave@stgolabs.net,
+	akpm@linux-foundation.org,
+	david@redhat.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Fan Ni <fan.ni@samsung.com>
+Subject: [PATCH 2/3] mm/hugetlb: Refactor unmap_hugepage_range() to take folio instead of page
+Date: Thu, 17 Apr 2025 08:43:14 -0700
+Message-ID: <20250417155530.124073-2-nifan.cxl@gmail.com>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250417155530.124073-1-nifan.cxl@gmail.com>
+References: <20250417155530.124073-1-nifan.cxl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
 
-Hi,
+From: Fan Ni <fan.ni@samsung.com>
 
-On Mon, 14 Apr 2025 10:29:15 +0200, AngeloGioacchino Del Regno wrote:
-> Changes in v4:
->  - Changed hx8279_set_page() and all other utilities to void (Neil)
->  - Changed hx8279_{on,prepare,unprepare}() to return dsi_ctx.accum_err (Neil)
->  - Switched to devm_drm_panel_alloc() as suggested (Neil)
-> 
-> Changes in v3:
->  - Added support for setting digital gamma parameters and validity check
->  - Added support for setting analog gamma parameters
->  - Changed gout_{l,r} to a structure and added a description
->  - Fixed DSI LPM/HS setting in prepare/unprepare callbacks
->  - Remove forced panel off in probe function as that was simply
->    useless
->  - Renamed function hx8279_check_config to hx8279_check_params
->    as that is actually checking multiple parameters and not just
->    basic DDIC configuration
->  - Moved the GMUX and GOA validation to their own functions to
->    improve readability
-> 
-> [...]
+The function unmap_hugepage_range() has two kinds of users:
+1) unmap_ref_private(), which passes in the head page of a folio.  Since
+   unmap_ref_private() already takes folio and there are no other uses
+   of the folio struct in the function, it is natural for
+   unmap_hugepage_range() to take folio also.
+2) All other uses, which pass in NULL pointer.
 
-Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
+In both cases, we can pass in folio. Refactor unmap_hugepage_range() to
+take folio.
 
-[1/3] dt-bindings: vendor-prefixes: Add Shenzhen Aoly Technology Co., Ltd.
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/a1958a56e52c87aea94c5cb0c08fe61ede929e7c
-[2/3] dt-bindings: display: panel: Add Himax HX8279/HX8279-D DDIC panels
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/a424c93db7ea8ffd18c6c170501bb898abf05932
-[3/3] drm: panel: Add driver for Himax HX8279 DDIC panels
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/38d42c261389985e8dd4739dbd97e2dc855e8dd0
+Signed-off-by: Fan Ni <fan.ni@samsung.com>
+---
+ include/linux/hugetlb.h | 2 +-
+ mm/hugetlb.c            | 7 ++++---
+ 2 files changed, 5 insertions(+), 4 deletions(-)
 
+diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+index a57bed83c657..b7699f35c87f 100644
+--- a/include/linux/hugetlb.h
++++ b/include/linux/hugetlb.h
+@@ -128,7 +128,7 @@ int move_hugetlb_page_tables(struct vm_area_struct *vma,
+ int copy_hugetlb_page_range(struct mm_struct *, struct mm_struct *,
+ 			    struct vm_area_struct *, struct vm_area_struct *);
+ void unmap_hugepage_range(struct vm_area_struct *,
+-			  unsigned long, unsigned long, struct page *,
++			  unsigned long, unsigned long, struct folio *folio,
+ 			  zap_flags_t);
+ void __unmap_hugepage_range(struct mmu_gather *tlb,
+ 			  struct vm_area_struct *vma,
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index b5d1ac8290a7..3181dbe0c4bb 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -6039,7 +6039,7 @@ void __hugetlb_zap_end(struct vm_area_struct *vma,
+ }
+ 
+ void unmap_hugepage_range(struct vm_area_struct *vma, unsigned long start,
+-			  unsigned long end, struct page *ref_page,
++			  unsigned long end, struct folio *ref_folio,
+ 			  zap_flags_t zap_flags)
+ {
+ 	struct mmu_notifier_range range;
+@@ -6051,7 +6051,8 @@ void unmap_hugepage_range(struct vm_area_struct *vma, unsigned long start,
+ 	mmu_notifier_invalidate_range_start(&range);
+ 	tlb_gather_mmu(&tlb, vma->vm_mm);
+ 
+-	__unmap_hugepage_range(&tlb, vma, start, end, ref_page, zap_flags);
++	__unmap_hugepage_range(&tlb, vma, start, end,
++			       folio_page(ref_folio, 0), zap_flags);
+ 
+ 	mmu_notifier_invalidate_range_end(&range);
+ 	tlb_finish_mmu(&tlb);
+@@ -6109,7 +6110,7 @@ static void unmap_ref_private(struct mm_struct *mm, struct vm_area_struct *vma,
+ 		if (!is_vma_resv_set(iter_vma, HPAGE_RESV_OWNER))
+ 			unmap_hugepage_range(iter_vma, address,
+ 					     address + huge_page_size(h),
+-					     folio_page(folio, 0), 0);
++					     folio, 0);
+ 	}
+ 	i_mmap_unlock_write(mapping);
+ }
 -- 
-Neil
+2.47.2
 
 
