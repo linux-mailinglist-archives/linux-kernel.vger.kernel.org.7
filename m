@@ -1,131 +1,174 @@
-Return-Path: <linux-kernel+bounces-609127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BED59A91D93
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:17:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52A0CA91DBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:23:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EE14177DE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 13:17:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB51F188E01E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 13:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF394241698;
-	Thu, 17 Apr 2025 13:17:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDBE724C06E;
+	Thu, 17 Apr 2025 13:22:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dYapBYM7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Ydx9/yYy"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2AA32F24
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 13:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C14D24A048;
+	Thu, 17 Apr 2025 13:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744895840; cv=none; b=kYf1ibjA9GpylKbBQzqBU9mB4B82EQEtd3buXN1Jb3TQcm2qooY2OQFCjVtUfwsQWmU81E2T4tBw1QVM7ueiqL9D+olc4rbzb5YA7NeoJjqd4KWwwB+szRpamS+sYdeYiLA3ryda4FCuIDYo0xqGKUlWAPN57g4h4S85y2zNEGE=
+	t=1744896144; cv=none; b=nkAgCZDmxZ3ekoXOIVuFsB5sGr4G3MemOGQ7kU82ul/qzhwMAmXyyzKoqUkXi7EDtw/HivkEjJ7AEXj94SkHcPJW2YniRQ5TzIvKzhg7C6Q/3PCyzPWCYGI+hBljKtSlPxPgi8oVVnxxr/bQvUxnLHjgAQbshOi3dCmQX/hkaHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744895840; c=relaxed/simple;
-	bh=w1gNiTdtro19oJd8N1VuhyxJwViS9e9fOs1UAKkND3w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p0yTjV26eR6feAItARjuk2IPbxuTHwRiQn975QMV23EuVc9Bbt1QEUAg25euho+2zlv5BhHKfdqF9emQ3cgl4nkmPro2VywW+lDEEc3OobH41X9fDug8sV9E+gLR8ngIVEKGuLpVQE8a//2Hv5yIY6xeVE6kN0DP8pfqSdJcjoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dYapBYM7; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744895835;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zhyHByvuNmnkzLLWMwyPda0e7IshL4F1qmQONxtFvxA=;
-	b=dYapBYM7MkkBOICjjLk+/sC1NA90l1LXZl+P0FwAHWcY4xmygHI5xw111fJTXxka4QjjnH
-	FeClbplEke+b1Aap1oUP6HDy4GMgYKc9P9YMYw2x920RHT/cnPGAMAgVb6kpKELb4HtSPs
-	iQrBSPwfJ53Nz83EZ31uJLLT0ylXvUE=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-80-nQeRKg42MuqtvS4s0bhR4A-1; Thu, 17 Apr 2025 09:17:10 -0400
-X-MC-Unique: nQeRKg42MuqtvS4s0bhR4A-1
-X-Mimecast-MFC-AGG-ID: nQeRKg42MuqtvS4s0bhR4A_1744895830
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-476664bffbeso13144571cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 06:17:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744895830; x=1745500630;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zhyHByvuNmnkzLLWMwyPda0e7IshL4F1qmQONxtFvxA=;
-        b=bmQ+x6WC//Gac47Kt0NAm2uDbe4NABb2q1VlvTv/+4gYM1XmJtnhANfKZW/OFkPCOV
-         HY3QVgQDVgD4guCTPC4R4bfkQGiwuV5tvv+AfdMmAAVSR/uJsMBEskTjt1/RxbQKEzkD
-         O2KKQeVB+XqxWmhQaMrwjlOd0SsrqwWU23DLJXMLLgSdH+ZABXreMeaZ2evID7jbjXBI
-         P9bBwUXQ+Et3U5X1Q0aTVKg8+PMPjMwFILMjiC1nlR4tYKnsiN7Ddr+s7CpOXGCfzHOA
-         Zer8H8E+oRL4GEW68BVZrcE2v3iclJ0QSVj4k7ddio0v3a3TBxi0imgIs2j2d7B+s6nI
-         l3Ow==
-X-Forwarded-Encrypted: i=1; AJvYcCXav+pw2i1gQAEBNn6vyXM/q1uTKWUyJafKXUqG+vKkUy5nYuQgXm/O547kV5FjOL0KnI56r2wifvrZs8U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwR7QC7O2dqcFXr2wQAiNa1ciImtXiOJAoHHZ6G3Ko7hp89LZLZ
-	iTU9W6PiyuyJZgc+6760uqXZBYfbPaXntNMr8rihw56zaY05GOY8kV+tIn1MQjPG6r1AlpkYIBX
-	iqSDDEJnVwAvmEt+kyfwrRcUO4P/4Q+X9/IFFEJwyBwmHvbvx2fnZcts94qdHNw==
-X-Gm-Gg: ASbGnctfblMR5RU7SqKccah61X/fnCIDtPuCjvgu4OIXrWvFkN09lGe+T/RttGAWSuI
-	PsT62im6MLqtsMT9J4wj9YRwbw9MoMJVl1Dj1V7SJ3gTaMVBLBAINeqL8sQ28seNo+FI9iU6cjf
-	0orwcEAHhx6Nz7IjMS4rR1WLCQMXey8TWkf/cpuHJ9JJHFiugpdJjw5qixHn9yyLLY2dX7Dc/UC
-	n+pzRvhiH7XzJ+wn9lm26nPaKnZKkL7q8bb6UqDFT/KnjCOxzrWGxQGc610e5tIVHT56azDapkI
-	Gu/WCjb+LwQ8CDSEIVfOCE3W9LT8gKzbY01+fBzNfg==
-X-Received: by 2002:a05:6214:238b:b0:6e8:efd0:2dad with SMTP id 6a1803df08f44-6f2b2f4290amr78455786d6.12.1744895829916;
-        Thu, 17 Apr 2025 06:17:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEAmv1LbYEq+ryV1sjdA7s1b6xi/JjBxP7J1Dpv+giy9IaehE8vpbhOIDRrQSohSJsu2RT5dQ==
-X-Received: by 2002:a05:6214:238b:b0:6e8:efd0:2dad with SMTP id 6a1803df08f44-6f2b2f4290amr78455536d6.12.1744895829629;
-        Thu, 17 Apr 2025 06:17:09 -0700 (PDT)
-Received: from [192.168.88.253] (146-241-55-253.dyn.eolo.it. [146.241.55.253])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f0de973221sm126961266d6.42.2025.04.17.06.17.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Apr 2025 06:17:09 -0700 (PDT)
-Message-ID: <0f67e414-d39a-4b71-9c9e-7dc027cc4ac3@redhat.com>
-Date: Thu, 17 Apr 2025 15:17:05 +0200
+	s=arc-20240116; t=1744896144; c=relaxed/simple;
+	bh=5U3UrzFnptGIbs2ZhDDsM9SQVH1N9HEWCrAtV8YWiM0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AmXWeCXXxsQ2CzuxSocZg+Hme7aqoywy9CbNLjiJXCs92OoMz9gP96ytBP4MrGxDNv9DCkdj3GtshMsfc78voP+esYmAvyvO1VpHkCFAbET/rLaEGRbHaiT42xeEaqUvv/fzhnBT7bdZ5FPxtFYZEc76UvR6IszmNo8tBgi0ukY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Ydx9/yYy; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53HBu0Du019646;
+	Thu, 17 Apr 2025 15:21:29 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=a+SqbWwSg+dJtFZUTdULLy
+	cswshSy3wfCDpEoCoQiF4=; b=Ydx9/yYyOzT1htdYBN9C6qNoz9f8zDAjHjhKEC
+	HxeGDNnGhEH79ybYsQBeq8ztO3uNvKNDmPsJYg75kDxwZ+EW4KeN/fkKjYz1e4Jj
+	TyeQtDB+qY8k/6uTu/S51KiM7SOJXibx3kDF8mIni50qjTljp3KO7L9rfhF3dvcz
+	I1wq4GfL5r8Uph3wblbvMPRYrJiaQU7HhCo3/6Wf818BbLZZ825TV8aqHtyI8pcs
+	B9mcmnn+CvRCj7u/2ZbZgLcL0d2jC1IEFQFgYAyVrIp2jw/QespuspGO8SXy4cMw
+	TITjH/Gitoy7DCUmAPkPrj+jmR2gzs0c/MjH60c+7A7y/HWw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45yda9gb31-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Apr 2025 15:21:29 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 736B040050;
+	Thu, 17 Apr 2025 15:20:00 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9DAE5996A44;
+	Thu, 17 Apr 2025 15:18:42 +0200 (CEST)
+Received: from localhost (10.130.77.120) by SHFDAG1NODE3.st.com (10.75.129.71)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 17 Apr
+ 2025 15:18:42 +0200
+From: Christian Bruel <christian.bruel@foss.st.com>
+To: <christian.bruel@foss.st.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
+        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
+        <bhelgaas@google.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
+        <p.zabel@pengutronix.de>, <thippeswamy.havalige@amd.com>,
+        <shradha.t@samsung.com>, <quic_schintav@quicinc.com>,
+        <cassel@kernel.org>, <johan+linaro@kernel.org>
+CC: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v6 0/9] Add STM32MP25 PCIe drivers
+Date: Thu, 17 Apr 2025 15:18:24 +0200
+Message-ID: <20250417131833.3427126-1-christian.bruel@foss.st.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] udp: Add tracepoint for udp_sendmsg()
-To: Breno Leitao <leitao@debian.org>
-Cc: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Simon Horman <horms@kernel.org>, kuniyu@amazon.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- yonghong.song@linux.dev, song@kernel.org, kernel-team@meta.com
-References: <20250416-udp_sendmsg-v1-1-1a886b8733c2@debian.org>
- <67a977bc-a4b9-4c8b-bf2f-9e9e6bb0811e@redhat.com>
- <aADnW6G4X2GScQIF@gmail.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <aADnW6G4X2GScQIF@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-17_03,2025-04-17_01,2024-11-22_01
 
-On 4/17/25 1:34 PM, Breno Leitao wrote:
-> On Thu, Apr 17, 2025 at 08:57:24AM +0200, Paolo Abeni wrote:
->> On 4/16/25 9:23 PM, Breno Leitao wrote:
->>> Add a lightweight tracepoint to monitor UDP send message operations,
->>> similar to the recently introduced tcp_sendmsg_locked() trace event in
->>> commit 0f08335ade712 ("trace: tcp: Add tracepoint for
->>> tcp_sendmsg_locked()")
->>
->> Why is it needed? what would add on top of a plain perf probe, which
->> will be always available for such function with such argument, as the
->> function can't be inlined?
-> 
-> Why this function can't be inlined? 
+this patch depends on patch 
+https://patchwork.kernel.org/project/linux-arm-kernel/list/?series=953545
 
-Because the kernel need to be able find a pointer to it:
+Changes in v6:
+   - Call device_wakeup_enable() to fix WAKE# wakeup.
+   Address comments from Manivanna:
+   - Fix/Add Comments
+   - Fix DT indents
+   - Remove dw_pcie_ep_linkup() in EP start link
+   - Add PCIE_T_PVPERL_MS delay in RC PERST# deassert
+   
+Changes in v5:
+   Address driver comments from Manivanna:
+   - Use dw_pcie_{suspend/resume}_noirq instead of private ones.
+   - Move dw_pcie_host_init() to probe
+   - Add stm32_remove_pcie_port cleanup function
+   - Use of_node_put in stm32_pcie_parse_port
+   - Remove wakeup-source property
+   - Use generic dev_pm_set_dedicated_wake_irq to support wake# irq
+   
+Changes in v4:
+   Address bindings comments Rob Herring
+   - Remove phy property form common yaml
+   - Remove phy-name property
+   - Move wake_gpio and reset_gpio to the host root port
+   
+Changes in v3:
+   Address comments from Manivanna, Rob and Bjorn:
+   - Move host wakeup helper to dwc core (Mani)
+   - Drop num-lanes=<1> from bindings (Rob)
+   - Fix PCI address of I/O region (Mani)
+   - Moved PHY to a RC rootport subsection (Bjorn, Mani)
+   - Replaced dma-limit quirk by dma-ranges property (Bjorn)
+   - Moved out perst assert/deassert from start/stop link (Mani)
+   - Drop link_up test optim (Mani)
+   - DT and comments rephrasing (Bjorn)
+   - Add dts entries now that the combophy entries has landed
+   - Drop delaying Configuration Requests
 
-	.sendmsg		= udp_sendmsg,
+Changes in v2:
+   - Fix st,stm32-pcie-common.yaml dt_binding_check	
 
-I'll be really curious to learn how the compiler could inline that.
+Changes in v1:
+   Address comments from Rob Herring and Bjorn Helgaas:
+   - Drop st,limit-mrrs and st,max-payload-size from this patchset
+   - Remove single reset and clocks binding names and misc yaml cleanups
+   - Split RC/EP common bindings to a separate schema file
+   - Use correct PCIE_T_PERST_CLK_US and PCIE_T_RRS_READY_MS defines
+   - Use .remove instead of .remove_new
+   - Fix bar reset sequence in EP driver
+   - Use cleanup blocks for error handling
+   - Cosmetic fixes
 
-/P
+Christian Bruel (9):
+  dt-bindings: PCI: Add STM32MP25 PCIe Root Complex bindings
+  PCI: stm32: Add PCIe host support for STM32MP25
+  dt-bindings: PCI: Add STM32MP25 PCIe Endpoint bindings
+  PCI: stm32: Add PCIe Endpoint support for STM32MP25
+  MAINTAINERS: add entry for ST STM32MP25 PCIe drivers
+  arm64: dts: st: add PCIe pinctrl entries in stm32mp25-pinctrl.dtsi
+  arm64: dts: st: Add PCIe Rootcomplex mode on stm32mp251
+  arm64: dts: st: Add PCIe Endpoint mode on stm32mp251
+  arm64: dts: st: Enable PCIe on the stm32mp257f-ev1 board
+
+ .../bindings/pci/st,stm32-pcie-common.yaml    |  33 ++
+ .../bindings/pci/st,stm32-pcie-ep.yaml        |  67 +++
+ .../bindings/pci/st,stm32-pcie-host.yaml      | 112 +++++
+ MAINTAINERS                                   |   7 +
+ arch/arm64/boot/dts/st/stm32mp25-pinctrl.dtsi |  20 +
+ arch/arm64/boot/dts/st/stm32mp251.dtsi        |  57 +++
+ arch/arm64/boot/dts/st/stm32mp257f-ev1.dts    |  21 +
+ drivers/pci/controller/dwc/Kconfig            |  24 +
+ drivers/pci/controller/dwc/Makefile           |   2 +
+ drivers/pci/controller/dwc/pcie-stm32-ep.c    | 417 ++++++++++++++++++
+ drivers/pci/controller/dwc/pcie-stm32.c       | 370 ++++++++++++++++
+ drivers/pci/controller/dwc/pcie-stm32.h       |  16 +
+ 12 files changed, 1146 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pci/st,stm32-pcie-common.yaml
+ create mode 100644 Documentation/devicetree/bindings/pci/st,stm32-pcie-ep.yaml
+ create mode 100644 Documentation/devicetree/bindings/pci/st,stm32-pcie-host.yaml
+ create mode 100644 drivers/pci/controller/dwc/pcie-stm32-ep.c
+ create mode 100644 drivers/pci/controller/dwc/pcie-stm32.c
+ create mode 100644 drivers/pci/controller/dwc/pcie-stm32.h
+
+-- 
+2.34.1
 
 
