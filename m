@@ -1,188 +1,513 @@
-Return-Path: <linux-kernel+bounces-608470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4012A91427
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:37:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06F96A9142F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:39:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B44E7AC9EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 06:36:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CC205A13F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 06:39:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3E2F1FBC94;
-	Thu, 17 Apr 2025 06:37:21 +0000 (UTC)
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022088.outbound.protection.outlook.com [40.107.75.88])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79BD2205ACF;
+	Thu, 17 Apr 2025 06:39:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="U6tYYwjY";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="biMYgslo"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B019319EED3;
-	Thu, 17 Apr 2025 06:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.88
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744871841; cv=fail; b=ZTfueYis9EPWV0osYhxG3VygukrrlAcK+INL0cSa2YrUEvlkrx2KSeOI7h2pf/CjK2B1v6bPrjDD4zpIOG4ZxZoZSVkco+GVi+hh8T4Qh8+F8QIJ+wnOpGHgvb2pxkPQsjmpId47z0ElX4tv8uQ6AtK6Q7d8UMH0mKh2qvYbzSo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744871841; c=relaxed/simple;
-	bh=MrfkoF1s4wTEQNyqvGRzeRzMb9qYLkP/Ucxb0zxgHUY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ikEfbkdJHjjEl4MUssJjIQHqrmwz2FJYZLSdSF6QOMypULa3dLCYykv+CYh3HKUYWVUwc57qymtNxQ6et74+TntifEsUZX+Tx/mrDWAgurcTUy1kBwD2fZgPy+e7H0c2L3mglef5dJCpPahj1ktCUfMAAFx0VVDFA0+PK25t3j0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.75.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=npb2DQS78Y/nnDgb6N321ggoeyyrk90268c5NbFSuMNzMIHyUgIQNQ5J9rveVCHTw2k74rQOCI7kpZxcuD6VuWUleAQjGfsn8OgVbBdruD2LGi4RdiARm9DbKqmSpNXwj4HzPE1bu8D3NSmmMqbvJsxrXZfb7cfo3GacDTVcOXr/Q74hs95ji+r02AjArcXC81W6UNCjHQ5H6+VSOaG5OQ+AW4+zQ/wSjn8MQ1bGUKutIwr+mt+AHf0C1At8rqfONOBNXjDg5L9S3YkG3vLRbBHxisL9xvA3NftpHw0QWIbUgYclza4yQ/ExAXrOIvt43z9Ak0rnsdmNcgkhSNEUHg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lkzqgZ0l8sLcIoBbfUoUdzkUZq/uyzIcAK1bqXHbP1g=;
- b=iF1/kuW+rR+kWYqRwcRx/vOVVeGNPdZIGH8hkmvY1Ilggr5vPBdhbcUiUCk/b5wSpCj67uTp1seYAUmnz9cBNCHoqr0f5YIq+YFofEyJ7Sh05S420qdVw7Ll+I2Cd1f6HPeWAWPpOIYfBV6GgNg8M/p7J6AaAH+lAJsg3liIDxR3eZyc0QoQMKXjJ8iKsiHn5Tpb/GPv6K42Upnh/3/8H9VWlT/mwIHAjZGX7cv+ATGbnx4wKB+0h3KbfcC+HkdjnJKTst4kqRdd2JVLR0+eSo4eCMH0bStgOFfjqYuvxcnlSOeCUF3vpOOb5mFAf2M25ym+wPua8mt4vGIL3K5PIA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 222.71.101.198) smtp.rcpttodomain=arm.com smtp.mailfrom=cixtech.com;
- dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
- not signed); arc=none (0)
-Received: from TYAPR01CA0099.jpnprd01.prod.outlook.com (2603:1096:404:2a::15)
- by TY0PR06MB5834.apcprd06.prod.outlook.com (2603:1096:400:32e::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.32; Thu, 17 Apr
- 2025 06:37:12 +0000
-Received: from TY2PEPF0000AB84.apcprd03.prod.outlook.com
- (2603:1096:404:2a:cafe::39) by TYAPR01CA0099.outlook.office365.com
- (2603:1096:404:2a::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.22 via Frontend Transport; Thu,
- 17 Apr 2025 06:37:12 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
- smtp.mailfrom=cixtech.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
- 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
-Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- TY2PEPF0000AB84.mail.protection.outlook.com (10.167.253.9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8655.12 via Frontend Transport; Thu, 17 Apr 2025 06:37:11 +0000
-Received: from nchen-desktop (unknown [172.16.64.25])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 9FBE841C0A00;
-	Thu, 17 Apr 2025 14:37:10 +0800 (CST)
-Date: Thu, 17 Apr 2025 14:37:05 +0800
-From: Peter Chen <peter.chen@cixtech.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: soc@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, catalin.marinas@arm.com, will@kernel.org,
-	arnd@arndb.de, jassisinghbrar@gmail.com,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, cix-kernel-upstream@cixtech.com,
-	maz@kernel.org, kajetan.puchalski@arm.com,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Fugang Duan <fugang.duan@cixtech.com>,
-	Guomin Chen <Guomin.Chen@cixtech.com>,
-	Gary Yang <gary.yang@cixtech.com>
-Subject: Re: [PATCH v6 09/10] arm64: dts: cix: add initial CIX P1(SKY1) dts
- support
-Message-ID: <aAChkWPn4ThMx44A@nchen-desktop>
-References: <20250415072724.3565533-1-peter.chen@cixtech.com>
- <20250415072724.3565533-10-peter.chen@cixtech.com>
- <74b9fc25-0815-4ece-845a-5f730c87fe78@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD0C1204090;
+	Thu, 17 Apr 2025 06:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744871954; cv=none; b=EpfNrDiTrij2YQ+0NaPKyMDjm62Hg2/dchPkVOGvM81jDW2j8pguJkok6CGYYmqUo/wQVxECK5+SEGgmz/Rw+C9eBtT6eREsfNkwfaDQZS7XXKs5Wvum+BveTyA38FlTs5+QlTG/InGkxSjDXox0alTAPtIcjU8VJhWjaAZqpCs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744871954; c=relaxed/simple;
+	bh=peHTTsxBFSa6Jdp4XIFMvH0WV8caGlWnOYqbEHFv97c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lFXmYzEj8F1v0Fhjt2tJBNMiZEGCc0Dq+XYNd6vLWkUZcHnrwggeMkgWfVMcJKsI1DtmX45PjiejvzBH1A0yD/hWQw42flrj/5LXjyGQhlHNPMc3aPaZkgeLp3jrNDYZdBSs9KL8ClnEkqG2wJXEzle5f8fO4D/2XVyHqEWOmO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=U6tYYwjY; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=biMYgslo reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1744871952; x=1776407952;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=0uoJATyqcQrQSMZvw44Xp0gRE9A+lcSGKNpT/0B43S8=;
+  b=U6tYYwjYD68GDaVC2lkdDrXnO0BYYEWD8rLA9d2VK3u6D4pcK2DCHA4Y
+   hiReLXrV9hl6FoFxtPhQB4HjBZ7K8sE6snecCgJTDRV9BgGpp5slnxxPl
+   OJ4Teg21Lhpv4XtftJxXlNsHz1wWPMHgwpEOR935rppm8QlAc0ITsBssz
+   u3l8DrDlHNyj3KXX4TsLNr6B8TZXi8WxNWFRjGEWErNad3vRAmWk/xV+n
+   UUrWA938StbZd8eZHpm2vtLROUu0sh9Uom8nwe7MvDtIAHOSM7oFUhfs8
+   y1ePMieKpPwszuB4bwUPuBHsB1QiqAbqIOr3Pr8RGe19fFlZMTn5JtGUZ
+   Q==;
+X-CSE-ConnectionGUID: hqLQ5uwsTgyys5AiJv9tPA==
+X-CSE-MsgGUID: iEj/ubU5TvmL4Wi3uOYGvA==
+X-IronPort-AV: E=Sophos;i="6.15,218,1739833200"; 
+   d="scan'208";a="43583950"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 17 Apr 2025 08:37:59 +0200
+X-CheckPoint: {6800A1C6-29-7141A0B0-E6EDEC14}
+X-MAIL-CPID: 36C074C3F2A1B9B0CE2A889E02FB02E6_3
+X-Control-Analysis: str=0001.0A006378.6800A1C6.0038,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 50B7116169D;
+	Thu, 17 Apr 2025 08:37:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1744871873;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0uoJATyqcQrQSMZvw44Xp0gRE9A+lcSGKNpT/0B43S8=;
+	b=biMYgslofK0d6rk0y53PzqwfBiViYBM2gICLIMa3h5u0Ghqtpuc95VnxPn5ZTiHQhJiUH3
+	7EnblQ8k0d2Rgst1bUtjDmzR2EQqpSINcdDUugieb94ue/X2W80uvHAxPyzRJ+LZlFy33V
+	LCkZieAN53FPBHCAEhsla6WFzX8Is1+drdjJIH5bjETWHPenGrdNxr0UM8iQQzuRjeKxJ/
+	iLpHdm1Y6cPdVJO/gQD3lb3A2VEcyy0lc4/U2GzOk/V2Pjyozrramp0X0Yu9UPPnnUS5eV
+	rSk0QPASFgGKRzJe7sHMQkQjs72W+av3SG9EeoTq17FJcIkVDlpY+ZdmiF+tAQ==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>,
+ "open list:DRM DRIVERS FOR FREESCALE IMX 5/6"
+ <dri-devel@lists.freedesktop.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>,
+ "open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
+ "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+Cc: imx@lists.linux.dev, Frank Li <Frank.Li@nxp.com>
+Subject:
+ Re: [PATCH 1/1] dt-bindings: display: imx: convert ldb.txt to yaml format
+Date: Thu, 17 Apr 2025 08:37:49 +0200
+Message-ID: <2987529.e9J7NaK4W3@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20250416211929.3502902-1-Frank.Li@nxp.com>
+References: <20250416211929.3502902-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <74b9fc25-0815-4ece-845a-5f730c87fe78@kernel.org>
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY2PEPF0000AB84:EE_|TY0PR06MB5834:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9b9f5131-c90c-4ed1-d8b1-08dd7d7a48db
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|1800799024|376014|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?JYCyQJRS2UvDwZDNryQGOw1LcnWQCpuu7Mq/Aak1Y1qOPP4alrncDma/Epwf?=
- =?us-ascii?Q?u99SV4QJ7VxjayCHj9UOUmDf9KBJCVDc2ZLof0LE0RLZWT7kopwllF7HZD7W?=
- =?us-ascii?Q?E/6s1om7GJaohpUa4nR7It50p8ru/mF8BRsUdliksIUJVWDHCCVACyp9jFnj?=
- =?us-ascii?Q?zGootYcRhH7OOzeh2qpf1BjsTtCeD4dDL11/BgkMrVzs09y7JdJ7geRC0O73?=
- =?us-ascii?Q?XLU6vaYcwnLc6vk5BbLjE8Z6YT8lCbHHI75/KBMX3+XINe0ygsMNWH2ENUVC?=
- =?us-ascii?Q?OfMVSp4rv35J8TXOP3lcEv7dycmaBrHeb2T19/Iicqd9mfsPRc2/1uV73EhL?=
- =?us-ascii?Q?vhI3VN7DcJJ0aeQ7ANCvuGB2Fc56nn/ienYsSLh0vxaeDjrHR0ABbSDFDNkZ?=
- =?us-ascii?Q?PLhmYMQmIezEECXWmh0cLqiLrXj4HJ17HFDa8WPUwAOh0q4DIhRqIHTVNSrD?=
- =?us-ascii?Q?4JkNSUPWhtWY4LknuKZqhXxxP5PidjWt9koeOMJw6sGjrw19KBmdFEvwQ68V?=
- =?us-ascii?Q?QF0vEvZrH2AytlMqkUgoNOQ08mvZOd8FJsg1H9rb2Pc4wmLFsgEFjBscztdv?=
- =?us-ascii?Q?ebZzoOyrv47nXwUeILKW10HMQwAp/qUcxWdGu/wCZzPUkxl0W75UedZv/1g0?=
- =?us-ascii?Q?B/2xNo3cIy5negdJRjCK82j4gJMhAoPRPxKSuOaJU/aMkzmvu3hl+PRp7P1+?=
- =?us-ascii?Q?oqAyIIQfASHwolSFo9l8KmQOWufSgmhx5A8ws6JlkK7PXuDBDQm5QUnhAnod?=
- =?us-ascii?Q?8qe92csNk9r2kdZav1U0TsuJutxvlRSfH1Hwgqsgx9aQDvsR08dHRqYlgb5o?=
- =?us-ascii?Q?h7WaAjfn8t1qbLhmm+ePayxLPXUcix+5P2NzaBak9xV76hH8YCQ5rzUYGvtL?=
- =?us-ascii?Q?Y3lQNAYTbk2H1rL6CKypPNIVdrZxxvYfDOfZm0lw9jJB6Vf1lw0qX18lF3WC?=
- =?us-ascii?Q?FEtSZQ8Ou8fJPVpoZ8micYmzxXZWR0alUz/im7ivxbrqfMZouQPXEXomvkub?=
- =?us-ascii?Q?y0OWghYmUQCutXsZSFCPf7zZNnZ8/BFQnixuQYrUswgrh8Dgt2FWsivQhC8q?=
- =?us-ascii?Q?NuMjUgyMdBnNDueZk5f051HPWgoaRJfmyZPrcnYX0RIF5MrynekFsD0AiObd?=
- =?us-ascii?Q?MR89OafCITN359xSAc+eEzqMS8Kw7aIu3Mk+8z8ESl2UkGyd0w3C5kSXcL1r?=
- =?us-ascii?Q?NolmpwzrM08/1V987+JpuN9Iyi3jrG/nQClcOnd1q2XZVf5Xqk8RqwyE3zaP?=
- =?us-ascii?Q?hNrF2Kf3v2ubQdI42wcIscaW5w0LEjjDL7DRMC4k8/b7BoVhqlhSPkSiPJW9?=
- =?us-ascii?Q?CKcF/UI+oW2UXoHKhdekC5p1U/Q4gohvvaLKKkp71DhW4qukyKxbQ0D5B5UT?=
- =?us-ascii?Q?y8s8z/8lIA5J/o/ggDMLzkLIp34NTEkw9mkF1ApzZqjqQfx+rYftG5nH2OFG?=
- =?us-ascii?Q?HwBzY30LKufZGL6P3lgGadbCjuha4n3cHDLMzyoopl8xNgjmVcsI6C/zLgM9?=
- =?us-ascii?Q?jog3h5pSUkfEDr4HDFrWZr5Ze2DGKcxySEAu?=
-X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1102;
-X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2025 06:37:11.5983
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9b9f5131-c90c-4ed1-d8b1-08dd7d7a48db
-X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
-X-MS-Exchange-CrossTenant-AuthSource: TY2PEPF0000AB84.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR06MB5834
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 25-04-17 08:18:44, Krzysztof Kozlowski wrote:
-> EXTERNAL EMAIL
-> 
-> On 15/04/2025 09:27, Peter Chen wrote:
-> > +
-> > +             mbox_ap2pm: mailbox@6590080 {
-> > +                     compatible = "cix,sky1-mbox";
-> > +                     reg = <0x0 0x06590080 0x0 0xff80>;
-> > +                     interrupts = <GIC_SPI 363 IRQ_TYPE_LEVEL_HIGH 0>;
-> > +                     #mbox-cells = <1>;
-> > +                     cix,mbox-dir = "tx";
-> > +             };
-> > +
-> > +             pm2ap_scmi_mem: pm2ap-shmem@65a0000 {
-> > +                     compatible = "arm,scmi-shmem";
-> > +                     #address-cells = <2>;
-> > +                     #size-cells = <2>;
-> > +                     reg-io-width = <4>;
-> > +                     reg = <0x0 0x065a0000 0x0 0x80>;
-> 
-> Messed order of properties. Keep it consistent (see DTS conding style).
-> Other nodes also have oddly placed reg.
+Am Mittwoch, 16. April 2025, 23:19:27 CEST schrieb Frank Li:
+> Convert ldb.txt to yaml format.
+>=20
+> Additional changes
+> - fix clock-names order to match existed dts file.
+> - remove lvds-panel and iomuxc-gpr node in examples.
+> - fsl,imx6q-ldb fail back to fsl,imx53-ldb.
+>=20
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  .../bindings/display/imx/fsl,imx6q-ldb.yaml   | 182 ++++++++++++++++++
+>  .../devicetree/bindings/display/imx/ldb.txt   | 146 --------------
+>  2 files changed, 182 insertions(+), 146 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx=
+6q-ldb.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/display/imx/ldb.txt
+>=20
+> diff --git a/Documentation/devicetree/bindings/display/imx/fsl,imx6q-ldb.=
+yaml b/Documentation/devicetree/bindings/display/imx/fsl,imx6q-ldb.yaml
+> new file mode 100644
+> index 0000000000000..7edd5f28b1372
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/imx/fsl,imx6q-ldb.yaml
+> @@ -0,0 +1,182 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/imx/fsl,imx6q-ldb.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Freescale LVDS Display Bridge (ldb)
+> +
+> +description:
+> +  The LVDS Display Bridge device tree node contains up to two lvds-chann=
+el
+> +  nodes describing each of the two LVDS encoder channels of the bridge.
+> +
+> +maintainers:
+> +  - Frank Li <Frank.Li@nxp.com>
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - enum:
+> +          - fsl,imx53-ldb
+> +      - items:
+> +          - const: fsl,imx6q-ldb
+> +          - const: fsl,imx53-ldb
 
-Thanks for your reviewing, Krzysztof.
-
-All the nodes mailbox and shmem (in mailbox) are on the same bus, so
-I keep it by unit address in ascending order like DTS coding sytle
-says. I think below rules are two options, isn't it?
-
-
-1. Nodes on any bus, thus using unit addresses for children, shall be
-   ordered by unit address in ascending order.
-   Alternatively for some subarchitectures, nodes of the same type can be
-   grouped together, e.g. all I2C controllers one after another even if this
-   breaks unit address ordering.
-
-> 
-> 
-> 
-> Best regards,
-> Krzysztof
-
-
--- 
+My DT bindings foo is not that great, but I would have expected something l=
+ike this:
+oneOf:
+  - items:
+      - const: fsl,imx53-ldb
+  - items:
+      - enum:
+          - fsl,imx6q-ldb
+      - const: fsl,imx53-ldb
 
 Best regards,
-Peter
+Alexander
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
+> +
+> +  gpr:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      The phandle points to the iomuxc-gpr region containing the LVDS
+> +      control register.
+> +
+> +  clocks:
+> +    minItems: 6
+> +    maxItems: 8
+> +
+> +  clock-names:
+> +    items:
+> +      - const: di0_pll
+> +      - const: di1_pll
+> +      - const: di0_sel
+> +      - const: di1_sel
+> +      - const: di0
+> +      - const: di1
+> +      - const: di2_sel
+> +      - const: di3_sel
+> +    minItems: 6
+> +
+> +  fsl,dual-channel:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description:
+> +      if it exists, only LVDS channel 0 should
+> +      be configured - one input will be distributed on both outputs in d=
+ual
+> +      channel mode
+> +
+> +patternProperties:
+> +  '^lvds-channel@[0-1]$':
+> +    type: object
+> +    description:
+> +      Each LVDS Channel has to contain either an of graph link to a pane=
+l device node
+> +      or a display-timings node that describes the video timings for the=
+ connected
+> +      LVDS display as well as the fsl,data-mapping and fsl,data-width pr=
+operties.
+> +
+> +    properties:
+> +      reg:
+> +        maxItems: 1
+> +
+> +      '#address-cells':
+> +        const: 1
+> +
+> +      '#size-cells':
+> +        const: 0
+> +
+> +      display-timings:
+> +        $ref: /schemas/display/panel/display-timings.yaml#
+> +
+> +      fsl,data-mapping:
+> +        enum:
+> +          - spwg
+> +          - jeida
+> +
+> +      fsl,data-width:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        description: should be <18> or <24>
+> +        enum:
+> +          - 18
+> +          - 24
+> +
+> +    patternProperties:
+> +      '^port@[0-4]$':
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          On i.MX5, the internal two-input-multiplexer is used. Due to h=
+ardware
+> +          limitations, only one input port (port@[0,1]) can be used for =
+each channel
+> +          (lvds-channel@[0,1], respectively).
+> +          On i.MX6, there should be four input ports (port@[0-3]) that c=
+orrespond
+> +          to the four LVDS multiplexer inputs.
+> +          A single output port (port@2 on i.MX5, port@4 on i.MX6) must b=
+e connected
+> +          to a panel input port. Optionally, the output port can be left=
+ out if
+> +          display-timings are used instead.
+> +
+> +    additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - gpr
+> +  - clocks
+> +  - clock-names
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/imx5-clock.h>
+> +
+> +    ldb@53fa8008 {
+> +        compatible =3D "fsl,imx53-ldb";
+> +        reg =3D <0x53fa8008 0x4>;
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <0>;
+> +        gpr =3D <&gpr>;
+> +        clocks =3D <&clks IMX5_CLK_LDB_DI0_SEL>,
+> +                 <&clks IMX5_CLK_LDB_DI1_SEL>,
+> +                 <&clks IMX5_CLK_IPU_DI0_SEL>,
+> +                 <&clks IMX5_CLK_IPU_DI1_SEL>,
+> +                 <&clks IMX5_CLK_LDB_DI0_GATE>,
+> +                 <&clks IMX5_CLK_LDB_DI1_GATE>;
+> +        clock-names =3D "di0_pll", "di1_pll",
+> +                      "di0_sel", "di1_sel",
+> +                      "di0", "di1";
+> +
+> +        /* Using an of-graph endpoint link to connect the panel */
+> +        lvds-channel@0 {
+> +                reg =3D <0>;
+> +                #address-cells =3D <1>;
+> +                #size-cells =3D <0>;
+> +
+> +                port@0 {
+> +                    reg =3D <0>;
+> +
+> +                    endpoint {
+> +                        remote-endpoint =3D <&ipu_di0_lvds0>;
+> +                    };
+> +                };
+> +
+> +                port@2 {
+> +                    reg =3D <2>;
+> +
+> +                    endpoint {
+> +                        remote-endpoint =3D <&panel_in>;
+> +                    };
+> +               };
+> +        };
+> +
+> +        /* Using display-timings and fsl,data-mapping/width instead */
+> +        lvds-channel@1 {
+> +                reg =3D <1>;
+> +                #address-cells =3D <1>;
+> +                #size-cells =3D <0>;
+> +                fsl,data-mapping =3D "spwg";
+> +                fsl,data-width =3D <24>;
+> +
+> +                display-timings {/* ... */
+> +                };
+> +
+> +                port@1 {
+> +                     reg =3D <1>;
+> +
+> +                     endpoint {
+> +                         remote-endpoint =3D <&ipu_di1_lvds1>;
+> +                     };
+> +                };
+> +        };
+> +    };
+> diff --git a/Documentation/devicetree/bindings/display/imx/ldb.txt b/Docu=
+mentation/devicetree/bindings/display/imx/ldb.txt
+> deleted file mode 100644
+> index 03653a291b549..0000000000000
+> --- a/Documentation/devicetree/bindings/display/imx/ldb.txt
+> +++ /dev/null
+> @@ -1,146 +0,0 @@
+> -Device-Tree bindings for LVDS Display Bridge (ldb)
+> -
+> -LVDS Display Bridge
+> -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> -
+> -The LVDS Display Bridge device tree node contains up to two lvds-channel
+> -nodes describing each of the two LVDS encoder channels of the bridge.
+> -
+> -Required properties:
+> - - #address-cells : should be <1>
+> - - #size-cells : should be <0>
+> - - compatible : should be "fsl,imx53-ldb" or "fsl,imx6q-ldb".
+> -                Both LDB versions are similar, but i.MX6 has an addition=
+al
+> -                multiplexer in the front to select any of the four IPU d=
+isplay
+> -                interfaces as input for each LVDS channel.
+> - - gpr : should be <&gpr> on i.MX53 and i.MX6q.
+> -         The phandle points to the iomuxc-gpr region containing the LVDS
+> -         control register.
+> -- clocks, clock-names : phandles to the LDB divider and selector clocks =
+and to
+> -                        the display interface selector clocks, as descri=
+bed in
+> -                        Documentation/devicetree/bindings/clock/clock-bi=
+ndings.txt
+> -        The following clocks are expected on i.MX53:
+> -                "di0_pll" - LDB LVDS channel 0 mux
+> -                "di1_pll" - LDB LVDS channel 1 mux
+> -                "di0" - LDB LVDS channel 0 gate
+> -                "di1" - LDB LVDS channel 1 gate
+> -                "di0_sel" - IPU1 DI0 mux
+> -                "di1_sel" - IPU1 DI1 mux
+> -        On i.MX6q the following additional clocks are needed:
+> -                "di2_sel" - IPU2 DI0 mux
+> -                "di3_sel" - IPU2 DI1 mux
+> -        The needed clock numbers for each are documented in
+> -        Documentation/devicetree/bindings/clock/imx5-clock.yaml, and in
+> -        Documentation/devicetree/bindings/clock/imx6q-clock.yaml.
+> -
+> -Optional properties:
+> - - pinctrl-names : should be "default" on i.MX53, not used on i.MX6q
+> - - pinctrl-0 : a phandle pointing to LVDS pin settings on i.MX53,
+> -               not used on i.MX6q
+> - - fsl,dual-channel : boolean. if it exists, only LVDS channel 0 should
+> -   be configured - one input will be distributed on both outputs in dual
+> -   channel mode
+> -
+> -LVDS Channel
+> -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> -
+> -Each LVDS Channel has to contain either an of graph link to a panel devi=
+ce node
+> -or a display-timings node that describes the video timings for the conne=
+cted
+> -LVDS display as well as the fsl,data-mapping and fsl,data-width properti=
+es.
+> -
+> -Required properties:
+> - - reg : should be <0> or <1>
+> - - port: Input and output port nodes with endpoint definitions as define=
+d in
+> -   Documentation/devicetree/bindings/graph.txt.
+> -   On i.MX5, the internal two-input-multiplexer is used. Due to hardware
+> -   limitations, only one input port (port@[0,1]) can be used for each ch=
+annel
+> -   (lvds-channel@[0,1], respectively).
+> -   On i.MX6, there should be four input ports (port@[0-3]) that correspo=
+nd
+> -   to the four LVDS multiplexer inputs.
+> -   A single output port (port@2 on i.MX5, port@4 on i.MX6) must be conne=
+cted
+> -   to a panel input port. Optionally, the output port can be left out if
+> -   display-timings are used instead.
+> -
+> -Optional properties (required if display-timings are used):
+> - - display-timings : A node that describes the display timings as define=
+d in
+> -   Documentation/devicetree/bindings/display/panel/display-timing.txt.
+> - - fsl,data-mapping : should be "spwg" or "jeida"
+> -                      This describes how the color bits are laid out in =
+the
+> -                      serialized LVDS signal.
+> - - fsl,data-width : should be <18> or <24>
+> -
+> -example:
+> -
+> -gpr: iomuxc-gpr@53fa8000 {
+> -	/* ... */
+> -};
+> -
+> -ldb: ldb@53fa8008 {
+> -	#address-cells =3D <1>;
+> -	#size-cells =3D <0>;
+> -	compatible =3D "fsl,imx53-ldb";
+> -	gpr =3D <&gpr>;
+> -	clocks =3D <&clks IMX5_CLK_LDB_DI0_SEL>,
+> -		 <&clks IMX5_CLK_LDB_DI1_SEL>,
+> -		 <&clks IMX5_CLK_IPU_DI0_SEL>,
+> -		 <&clks IMX5_CLK_IPU_DI1_SEL>,
+> -		 <&clks IMX5_CLK_LDB_DI0_GATE>,
+> -		 <&clks IMX5_CLK_LDB_DI1_GATE>;
+> -	clock-names =3D "di0_pll", "di1_pll",
+> -		      "di0_sel", "di1_sel",
+> -		      "di0", "di1";
+> -
+> -	/* Using an of-graph endpoint link to connect the panel */
+> -	lvds-channel@0 {
+> -		#address-cells =3D <1>;
+> -		#size-cells =3D <0>;
+> -		reg =3D <0>;
+> -
+> -		port@0 {
+> -			reg =3D <0>;
+> -
+> -			lvds0_in: endpoint {
+> -				remote-endpoint =3D <&ipu_di0_lvds0>;
+> -			};
+> -		};
+> -
+> -		port@2 {
+> -			reg =3D <2>;
+> -
+> -			lvds0_out: endpoint {
+> -				remote-endpoint =3D <&panel_in>;
+> -			};
+> -		};
+> -	};
+> -
+> -	/* Using display-timings and fsl,data-mapping/width instead */
+> -	lvds-channel@1 {
+> -		#address-cells =3D <1>;
+> -		#size-cells =3D <0>;
+> -		reg =3D <1>;
+> -		fsl,data-mapping =3D "spwg";
+> -		fsl,data-width =3D <24>;
+> -
+> -		display-timings {
+> -			/* ... */
+> -		};
+> -
+> -		port@1 {
+> -			reg =3D <1>;
+> -
+> -			lvds1_in: endpoint {
+> -				remote-endpoint =3D <&ipu_di1_lvds1>;
+> -			};
+> -		};
+> -	};
+> -};
+> -
+> -panel: lvds-panel {
+> -	/* ... */
+> -
+> -	port {
+> -		panel_in: endpoint {
+> -			remote-endpoint =3D <&lvds0_out>;
+> -		};
+> -	};
+> -};
+>=20
+
+
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
+
 
