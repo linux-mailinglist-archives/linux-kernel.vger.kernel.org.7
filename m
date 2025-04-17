@@ -1,65 +1,54 @@
-Return-Path: <linux-kernel+bounces-608295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 777BDA9115B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 03:51:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C39D1A91158
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 03:50:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 885A2446101
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 01:51:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 325FB5A310B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 01:50:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C121C84D3;
-	Thu, 17 Apr 2025 01:51:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="H6j4Z3ZQ"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B378185935;
-	Thu, 17 Apr 2025 01:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3342F1A5B98;
+	Thu, 17 Apr 2025 01:50:23 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E14C1172A;
+	Thu, 17 Apr 2025 01:50:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744854683; cv=none; b=RJ07XYNSVB6UgqG3tyFdnDG++4eOHyDm3uru80HeYPcjJdeUdX5cOB1VhRKKy8alQ3FCaI7ljGlOwQbg3NhyvW0g95AVSOZCQ+OjFby+g4uYwyqOlLGEsREN7J8ehRi17CkoFTEldlhwIl/vMfiWMg1KXcpwFBlsUTJkwzhFGe8=
+	t=1744854622; cv=none; b=sEnT3BBleJbhGes0Or3M44XG73EDhTHnT3mxrv05Pu/pv8UNLYS+ignuJ+ZNwzu+DURGvTpRgh71CyerLQzWjTjJvaOQwrETUm90e0E0rnoB579NhFqlkZCvaC5r+OT3GwpxlTQn4f/c+0x8lohF+PEAGwEslIfXpWQGo7RXk+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744854683; c=relaxed/simple;
-	bh=ejenr1IlbFkwAZlQzP67Mm+QohganpUA2+i6veMbS8c=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mnWcTaJZlQrdeGT/iCYjdwDJCwT+sb3SdKvvz+bUYtIDXUzM9TOs9rXxL1s0WrzaKNvfAHEKJJavMwCvdlfL4YeuxFWSxU+wnbJNxPb5IGBAgzpgYVJ20oOyEm68024JfnZRtEZ4tbN46nFF3lDPqqzwzMkDv3p2L1ZdrQPiM+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=H6j4Z3ZQ; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=EjXsv
-	QkFD1by3AcR8i+7PjuCNVtIggElZ4f9qddqVTs=; b=H6j4Z3ZQmGePk01xlioxO
-	qbr5+9KQEN3Nh5daiJwM2/6og+Y4ZUigHKy9PRvtusDt1WubDKsSPFc+IOkQdWIw
-	B2s5tQ040QLFQ2q5oXKvjKskreBaZUPaajL0U5LZwXNq5KoJMI6ljRKvUBDwtu1X
-	Rbz5APqDu7oCQ7q3WhLuCw=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp5 (Coremail) with SMTP id QCgvCgA3kaEGXgBopyyzAg--.31710S5;
-	Thu, 17 Apr 2025 09:49:00 +0800 (CST)
-From: Feng Yang <yangfeng59949@163.com>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	hengqi.chen@gmail.com,
-	olsajiri@gmail.com
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 bpf-next 3/3] selftests/bpf: Add test for attaching kprobe with long event names
-Date: Thu, 17 Apr 2025 09:48:48 +0800
-Message-Id: <20250417014848.59321-4-yangfeng59949@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250417014848.59321-1-yangfeng59949@163.com>
-References: <20250417014848.59321-1-yangfeng59949@163.com>
+	s=arc-20240116; t=1744854622; c=relaxed/simple;
+	bh=X71LVokWEWz+T20vPZCEQZFivCkXXJKdbRQ5XPf+lBQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=uNOPltuGDQzZmIqsggHkbsB8B6XdxjqvVZIeYlGK8RTnGiMdJ+V0IXuokT1/+oYc0x9+a3KIKxrnFshHq6JgWrNfvujktHccmPleeF9BJRhYDIonoTIySGNpIrPnWZDCyHamK1fbjSHDOlKDX6yyCkMUAAWyoN8dBYjqxKlhzk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-681ff7000002311f-18-68005e54eb85
+From: Rakie Kim <rakie.kim@sk.com>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: gourry@gourry.net,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-cxl@vger.kernel.org,
+	joshua.hahnjy@gmail.com,
+	ying.huang@linux.alibaba.com,
+	david@redhat.com,
+	Jonathan.Cameron@huawei.com,
+	osalvador@suse.de,
+	kernel_team@skhynix.com,
+	honggyu.kim@sk.com,
+	yunjeong.mun@sk.com,
+	rakie.kim@sk.com,
+	akpm@linux-foundation.org
+Subject: Re: [PATCH v8 1/3] mm/mempolicy: Fix memory leaks in weighted interleave sysfs
+Date: Thu, 17 Apr 2025 10:49:38 +0900
+Message-ID: <20250417015009.650-1-rakie.kim@sk.com>
+X-Mailer: git-send-email 2.48.1.windows.1
+In-Reply-To: <6800270845306_1302d294a4@dwillia2-xfh.jf.intel.com.notmuch>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,93 +56,339 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:QCgvCgA3kaEGXgBopyyzAg--.31710S5
-X-Coremail-Antispam: 1Uf129KBjvJXoWxXF1DGw18Zr18Ary3Kr1rJFb_yoW5ZF1Upa
-	yDZ34Ykr4rX3W7WF98G34UZr4Fvr1kur17CF1Dtrn8ZF4UWw1xXF17tF4jyrn8JrZaq3Wa
-	va1Utry5uayxZFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jSOJ5UUUUU=
-X-CM-SenderInfo: p1dqww5hqjkmqzuzqiywtou0bp/1tbiwhUyeGgAXDhKBAAAsf
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBLMWRmVeSWpSXmKPExsXC9ZZnkW5IHEOGwa4vNhZz1q9hs5g+9QKj
+	xdf1v5gtft49zm6xauE1NovjW+exW5yfdYrF4vKuOWwW99b8Z7U4M63IYvWaDAduj52z7rJ7
+	dLddZvdoOfKW1WPxnpdMHps+TWL3ODHjN4vHzoeWHu/3XWXz2Hy62uPzJrkArigum5TUnMyy
+	1CJ9uwSujBer+Qv2ulY0rP/B1sD4w6SLkZNDQsBEYueGaeww9pW3E1i7GDk42ASUJI7tjQEJ
+	iwhoS0ycc5C5i5GLg1ngCZPE3CNL2UASwgLhErte/wazWQRUJZ41NDKC2LwCxhL3Nl+Fmqkp
+	0XDpHhOIzSngKXFi8WFWEFtIgEfi1Yb9UPWCEidnPmEBsZkF5CWat84GWyYh8J1NovvcLUaI
+	QZISB1fcYJnAyD8LSc8sJD0LGJlWMQpl5pXlJmbmmOhlVOZlVugl5+duYgSG/7LaP9E7GD9d
+	CD7EKMDBqMTDe2LR/3Qh1sSy4srcQ4wSHMxKIrznzP+lC/GmJFZWpRblxxeV5qQWH2KU5mBR
+	Euc1+laeIiSQnliSmp2aWpBaBJNl4uCUamBkeMz/MG61tu2twj9ic+fe3mEof8LonKJfWs6L
+	G56FyjeaYl/PyvVtdy9Yu9tre7Txy0OlqtuclW5VW5QdD9BZ9Pmy4tSZJX0tKu997aJfSNfx
+	zbMzu+hX8fHv98sXI5iydPL45LbfmXNF4ubCxLZytfPJlXO6KlMERJz19r0rqfulG5PMZ6fE
+	UpyRaKjFXFScCAAg+EhBewIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrELMWRmVeSWpSXmKPExsXCNUNNSzckjiHD4Mc9A4s569ewWUyfeoHR
+	4uv6X8wWP+8eZ7f4/Ow1s8WqhdfYLI5vncducXjuSVaL87NOsVhc3jWHzeLemv+sFmemFVkc
+	uvac1WL1mgyL39tWsDnwe+ycdZfdo7vtMrtHy5G3rB6L97xk8tj0aRK7x4kZv1k8dj609Hi/
+	7yqbx7fbHh6LX3xg8th8utrj8ya5AJ4oLpuU1JzMstQifbsErowXq/kL9rpWNKz/wdbA+MOk
+	i5GTQ0LAROLK2wmsXYwcHGwCShLH9saAhEUEtCUmzjnI3MXIxcEs8IRJYu6RpWwgCWGBcIld
+	r3+D2SwCqhLPGhoZQWxeAWOJe5uvskPM1JRouHSPCcTmFPCUOLH4MCuILSTAI/Fqw36oekGJ
+	kzOfsIDYzALyEs1bZzNPYOSZhSQ1C0lqASPTKkaRzLyy3MTMHFO94uyMyrzMCr3k/NxNjMCQ
+	X1b7Z+IOxi+X3Q8xCnAwKvHwnlj0P12INbGsuDL3EKMEB7OSCO8583/pQrwpiZVVqUX58UWl
+	OanFhxilOViUxHm9wlMThATSE0tSs1NTC1KLYLJMHJxSDYwPzlQGuve/r9z4yd1zVeOcg08X
+	rgzbpZ099+gkwbLneifarKRYrhtPeGGq9kDFP7Rqw+Uz3dLZNg++lB/gXGC7aFfw0cNlXy3E
+	d17gZWL43J3au9H4lZqrt/0iDY6Tvxj8byxv58z57fWmQ9MqXOK5ZNHnL0vzGP5dKvrVWX7z
+	b8XkCGu1/7lKLMUZiYZazEXFiQD6h9JQdQIAAA==
+X-CFilter-Loop: Reflected
 
-From: Feng Yang <yangfeng@kylinos.cn>
+On Wed, 16 Apr 2025 14:54:16 -0700 Dan Williams <dan.j.williams@intel.com> wrote:
+> Rakie Kim wrote:
+> > +
+> > +static void iw_table_free(void)
+> > +{
+> > +	u8 *old;
+> > +
+> > +	mutex_lock(&iw_table_lock);
+> > +	old = rcu_dereference_protected(iw_table,
+> > +					lockdep_is_held(&iw_table_lock));
+> > +	if (old) {
+> > +		rcu_assign_pointer(iw_table, NULL);
+> > +		mutex_unlock(&iw_table_lock);
+> > +
+> > +		synchronize_rcu();
+> > +		kfree(old);
+> > +	} else
+> > +		mutex_unlock(&iw_table_lock);
+> 
+> This looks correct. I personally would not have spent the effort to
+> avoid the synchronize_rcu() because this is an error path that rarely
+> gets triggered, and kfree(NULL) is already a nop, so no pressing need to be
+> careful there either:
+> 
+> 	mutex_lock(&iw_table_lock);
+> 	old = rcu_dereference_protected(iw_table,
+> 					lockdep_is_held(&iw_table_lock));
+> 	rcu_assign_pointer(iw_table, NULL);
+> 	mutex_unlock(&iw_table_lock);
+> 	synchronize_rcu();
+> 	kfree(old);
 
-This test verifies that attaching kprobe/kretprobe with long event names
-does not trigger EINVAL errors.
+I will modify the structure as you suggested.
 
-Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
----
- .../selftests/bpf/prog_tests/attach_probe.c   | 35 +++++++++++++++++++
- .../selftests/bpf/test_kmods/bpf_testmod.c    |  4 +++
- 2 files changed, 39 insertions(+)
+> 
+> > +}
+> > +
+> > +static void wi_kobj_release(struct kobject *wi_kobj)
+> > +{
+> > +	iw_table_free();
+> 
+> This memory can be freed as soon as node_attrs have been deleted. By
+> waiting until final wi_kobj release it confuses the lifetime rules.
+> 
+> > +	kfree(node_attrs);
+> 
+> This memory too can be freed as soon as the attributes are deleted.
+> 
+> ...the rationale for considering these additional cleanups below:
+> 
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/attach_probe.c b/tools/testing/selftests/bpf/prog_tests/attach_probe.c
-index 9b7f36f39c32..cabc51c2ca6b 100644
---- a/tools/testing/selftests/bpf/prog_tests/attach_probe.c
-+++ b/tools/testing/selftests/bpf/prog_tests/attach_probe.c
-@@ -168,6 +168,39 @@ static void test_attach_uprobe_long_event_name(void)
- 	test_attach_probe_manual__destroy(skel);
+I created a new function named wi_cleanup(), as you proposed.
+static void wi_cleanup(struct kobject *wi_kobj) {
+	sysfs_wi_node_delete_all(wi_kobj);
+	iw_table_free();
+	kfree(node_attrs);
+}
+And I changed the error handling code to call this function.
+static int add_weighted_interleave_group(struct kobject *root_kobj)
+{
+...
+err_cleanup_kobj:
+	wi_cleanup(wi_kobj);
+	kobject_del(wi_kobj);
+err_put_kobj:
+	kobject_put(wi_kobj);
+	return err;
+}
+
+However, I have one question.
+With this change, iw_table and node_attrs will not be freed at system
+shutdown. Is it acceptable to leave this memory unfreed on shutdown?
+(As you previously noted, the sysfs files in this patch are also
+not removed during system shutdown.)
+
+> > +	kfree(wi_kobj);
+> >  }
+> >  
+> >  static const struct kobj_type wi_ktype = {
+> >  	.sysfs_ops = &kobj_sysfs_ops,
+> > -	.release = sysfs_wi_release,
+> > +	.release = wi_kobj_release,
+> >  };
+> >  
+> >  static int add_weight_node(int nid, struct kobject *wi_kobj)
+> > @@ -3525,41 +3548,42 @@ static int add_weighted_interleave_group(struct kobject *root_kobj)
+> >  	struct kobject *wi_kobj;
+> >  	int nid, err;
+> >  
+> > +	node_attrs = kcalloc(nr_node_ids, sizeof(struct iw_node_attr *),
+> > +			     GFP_KERNEL);
+> > +	if (!node_attrs)
+> > +		return -ENOMEM;
+> > +
+> >  	wi_kobj = kzalloc(sizeof(struct kobject), GFP_KERNEL);
+> > -	if (!wi_kobj)
+> > +	if (!wi_kobj) {
+> > +		kfree(node_attrs);
+> >  		return -ENOMEM;
+> > +	}
+> >  
+> >  	err = kobject_init_and_add(wi_kobj, &wi_ktype, root_kobj,
+> >  				   "weighted_interleave");
+> 
+> If you fix wi_kobj_release() to stop being responsible to free memory
+> that should have been handled in the delete path (@node_attrs,
+> iw_table_free()), then you can also drop the wi_ktype and
+> wi_kobj_release() callback altogether.
+
+I understand your suggestion about simplifying the kobject
+handling.
+If we only consider Patch1, then replacing kobject_init_and_add
+with kobject_create_and_add would be the right choice.
+
+However, in Patch2, the code changes as follows:
+struct sysfs_wi_group {
+	struct kobject wi_kobj;
+	struct iw_node_attr *nattrs[];
+};
+static struct sysfs_wi_group *wi_group;
+...
+static void wi_kobj_release(struct kobject *wi_kobj)
+{
+	kfree(wi_group);
+}
+...
+static int __init add_weighted_interleave_group(struct kobject *mempolicy_kobj)
+{
+	int nid, err;
+
+	wi_group = kzalloc(struct_size(wi_group, nattrs, nr_node_ids),
+			   GFP_KERNEL);
+
+In this case, wi_kobj_release() is responsible for freeing the
+container struct wi_group that includes the kobject.
+Therefore, it seems more appropriate to use kobject_init_and_add
+in this context.
+I would appreciate your thoughts on this.
+
+> 
+> I.e. once releasing @wi_kobj is just "kfree(wi_kobj)", then this
+> sequence:
+> 
+> 	wi_kobj = kzalloc(...)
+> 	kobject_init_and_add(wi_kob, &wi_ktype, ...)
+> 
+> Can simply become:
+> 
+> 	wi_kobj = kobject_create_and_add("weighted_interleave", root_kobj);
+> 
+> > -	if (err) {
+> > -		kfree(wi_kobj);
+> > -		return err;
+> > -	}
+> > +	if (err)
+> > +		goto err_put_kobj;
+> >  
+> >  	for_each_node_state(nid, N_POSSIBLE) {
+> >  		err = add_weight_node(nid, wi_kobj);
+> >  		if (err) {
+> >  			pr_err("failed to add sysfs [node%d]\n", nid);
+> > -			break;
+> > +			goto err_cleanup_kobj;
+> >  		}
+> >  	}
+> > -	if (err)
+> > -		kobject_put(wi_kobj);
+> > +
+> >  	return 0;
+> > +
+> > +err_cleanup_kobj:
+> > +	sysfs_wi_node_delete_all(wi_kobj);
+> > +	kobject_del(wi_kobj);
+> > +err_put_kobj:
+> > +	kobject_put(wi_kobj);
+> > +	return err;
+> >  }
+> >  
+> >  static void mempolicy_kobj_release(struct kobject *kobj)
+> >  {
+> > -	u8 *old;
+> > -
+> > -	mutex_lock(&iw_table_lock);
+> > -	old = rcu_dereference_protected(iw_table,
+> > -					lockdep_is_held(&iw_table_lock));
+> > -	rcu_assign_pointer(iw_table, NULL);
+> > -	mutex_unlock(&iw_table_lock);
+> > -	synchronize_rcu();
+> > -	kfree(old);
+> > -	kfree(node_attrs);
+> >  	kfree(kobj);
+> >  }
+> >  
+> > @@ -3573,37 +3597,24 @@ static int __init mempolicy_sysfs_init(void)
+> >  	static struct kobject *mempolicy_kobj;
+> >  
+> >  	mempolicy_kobj = kzalloc(sizeof(*mempolicy_kobj), GFP_KERNEL);
+> > -	if (!mempolicy_kobj) {
+> > -		err = -ENOMEM;
+> > -		goto err_out;
+> > -	}
+> > -
+> > -	node_attrs = kcalloc(nr_node_ids, sizeof(struct iw_node_attr *),
+> > -			     GFP_KERNEL);
+> > -	if (!node_attrs) {
+> > -		err = -ENOMEM;
+> > -		goto mempol_out;
+> > -	}
+> > +	if (!mempolicy_kobj)
+> > +		return -ENOMEM;
+> >  
+> >  	err = kobject_init_and_add(mempolicy_kobj, &mempolicy_ktype, mm_kobj,
+> >  				   "mempolicy");
+> 
+> Similar comment as above, now that mempolicy_kobj_release() is simply
+> kfree(@kobj), you can use kobject_create_and_add() and make this all
+> that much simpler.
+
+For the mempolicy_kobj, I will update the code as you suggested
+and use kobject_create_and_add().
+
+With all your recommendations applied, Patch1 would now look like this:
+@@ -3488,20 +3488,21 @@ static void iw_table_free(void)
+        mutex_lock(&iw_table_lock);
+        old = rcu_dereference_protected(iw_table,
+                                        lockdep_is_held(&iw_table_lock));
+-       if (old) {
+-               rcu_assign_pointer(iw_table, NULL);
+-               mutex_unlock(&iw_table_lock);
++       rcu_assign_pointer(iw_table, NULL);
++       mutex_unlock(&iw_table_lock);
+
+-               synchronize_rcu();
+-               kfree(old);
+-       } else
+-               mutex_unlock(&iw_table_lock);
++       synchronize_rcu();
++       kfree(old);
  }
- 
-+/* attach kprobe/kretprobe long event name testings */
-+static void test_attach_kprobe_long_event_name(void)
-+{
-+	DECLARE_LIBBPF_OPTS(bpf_kprobe_opts, kprobe_opts);
-+	struct bpf_link *kprobe_link, *kretprobe_link;
-+	struct test_attach_probe_manual *skel;
-+
-+	skel = test_attach_probe_manual__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "skel_kprobe_manual_open_and_load"))
-+		return;
-+
-+	/* manual-attach kprobe/kretprobe */
-+	kprobe_opts.attach_mode = PROBE_ATTACH_MODE_LEGACY;
-+	kprobe_opts.retprobe = false;
-+	kprobe_link = bpf_program__attach_kprobe_opts(skel->progs.handle_kprobe,
-+						      "bpf_testmod_looooooooooooooooooooooooooooooong_name",
-+						      &kprobe_opts);
-+	if (!ASSERT_OK_PTR(kprobe_link, "attach_kprobe_long_event_name"))
-+		goto cleanup;
-+	skel->links.handle_kprobe = kprobe_link;
-+
-+	kprobe_opts.retprobe = true;
-+	kretprobe_link = bpf_program__attach_kprobe_opts(skel->progs.handle_kretprobe,
-+							 "bpf_testmod_looooooooooooooooooooooooooooooong_name",
-+							 &kprobe_opts);
-+	if (!ASSERT_OK_PTR(kretprobe_link, "attach_kretprobe_long_event_name"))
-+		goto cleanup;
-+	skel->links.handle_kretprobe = kretprobe_link;
-+
-+cleanup:
-+	test_attach_probe_manual__destroy(skel);
+
+-static void wi_kobj_release(struct kobject *wi_kobj)
+-{
++static void wi_cleanup(struct kobject *wi_kobj) {
++       sysfs_wi_node_delete_all(wi_kobj);
+        iw_table_free();
+        kfree(node_attrs);
 +}
 +
- static void test_attach_probe_auto(struct test_attach_probe *skel)
- {
- 	struct bpf_link *uprobe_err_link;
-@@ -371,6 +404,8 @@ void test_attach_probe(void)
- 
- 	if (test__start_subtest("uprobe-long_name"))
- 		test_attach_uprobe_long_event_name();
-+	if (test__start_subtest("kprobe-long_name"))
-+		test_attach_kprobe_long_event_name();
- 
- cleanup:
- 	test_attach_probe__destroy(skel);
-diff --git a/tools/testing/selftests/bpf/test_kmods/bpf_testmod.c b/tools/testing/selftests/bpf/test_kmods/bpf_testmod.c
-index f38eaf0d35ef..2e54b95ad898 100644
---- a/tools/testing/selftests/bpf/test_kmods/bpf_testmod.c
-+++ b/tools/testing/selftests/bpf/test_kmods/bpf_testmod.c
-@@ -134,6 +134,10 @@ bpf_testmod_test_arg_ptr_to_struct(struct bpf_testmod_struct_arg_1 *a) {
- 	return bpf_testmod_test_struct_arg_result;
- }
- 
-+__weak noinline void bpf_testmod_looooooooooooooooooooooooooooooong_name(void)
++static void wi_kobj_release(struct kobject *wi_kobj)
 +{
-+}
-+
- __bpf_kfunc void
- bpf_testmod_test_mod_kfunc(int i)
- {
--- 
-2.43.0
+        kfree(wi_kobj);
+ }
 
+@@ -3575,45 +3576,30 @@ static int add_weighted_interleave_group(struct kobject *root_kobj)
+        return 0;
+
+ err_cleanup_kobj:
+-       sysfs_wi_node_delete_all(wi_kobj);
++       wi_cleanup(wi_kobj);
+        kobject_del(wi_kobj);
+ err_put_kobj:
+        kobject_put(wi_kobj);
+        return err;
+ }
+
+-static void mempolicy_kobj_release(struct kobject *kobj)
+-{
+-       kfree(kobj);
+-}
+-
+-static const struct kobj_type mempolicy_ktype = {
+-       .release = mempolicy_kobj_release
+-};
+-
+ static int __init mempolicy_sysfs_init(void)
+ {
+        int err;
+        static struct kobject *mempolicy_kobj;
+
+-       mempolicy_kobj = kzalloc(sizeof(*mempolicy_kobj), GFP_KERNEL);
++       mempolicy_kobj = kobject_create_and_add("mempolicy", mm_kobj);
+        if (!mempolicy_kobj)
+                return -ENOMEM;
+
+-       err = kobject_init_and_add(mempolicy_kobj, &mempolicy_ktype, mm_kobj,
+-                                  "mempolicy");
+-       if (err)
+-               goto err_put_kobj;
+-
+        err = add_weighted_interleave_group(mempolicy_kobj);
+        if (err)
+-               goto err_del_kobj;
++               goto err_kobj;
+
+        return 0;
+
+-err_del_kobj:
++err_kobj:
+        kobject_del(mempolicy_kobj);
+-err_put_kobj:
+        kobject_put(mempolicy_kobj);
+        return err;
+ }
+
+Rakie
+
+> 
+> So the patch looks technically correct as is, but if you make those
+> final cleanups I will add my review tag.
 
