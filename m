@@ -1,213 +1,118 @@
-Return-Path: <linux-kernel+bounces-608910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE1FFA91A3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 13:13:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B35E9A91A1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 13:11:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E254B19E2A43
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 11:13:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 597D819E4EF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 11:11:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3870D238163;
-	Thu, 17 Apr 2025 11:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC25C236458;
+	Thu, 17 Apr 2025 11:10:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PkcX4A24"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zwe8MN7g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DABDD236455;
-	Thu, 17 Apr 2025 11:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3050C2356BB;
+	Thu, 17 Apr 2025 11:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744888400; cv=none; b=uDsW3LiHqOVRD7hII2NHmBLFFLIg9HTbgmf4DLmJlypJ6rayO/IpEeU/j/WdrP3mxsNZTmNQUfRNhxt6OlgfEVToaQMlOd5w0AZgxzacxd5EGOEZVz9VMJua7h4mHfbwg+i7abVjDFnV/K5rCTfQSEW2epgBNUHgGRXnJi4yglg=
+	t=1744888259; cv=none; b=RLXtI+tpHioxFimnG4FyYCGw86XR4OaLlmLCkBDRruLRETK5N4pEaRn2cwJIx25ZaYRw+/73A2ZtNObkzvcnlIkiDekIxaXkoliosZpF0QCWYQkyhmj4zepSfFuRV94rbdUM5QobmR/dPPl2R+HeLmaOwQrL8CIAFmHyE7z/CeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744888400; c=relaxed/simple;
-	bh=AlFyJTLGxn1D+5PMXQ3ld2oF8OOdvCw6hjycbBt+5gY=;
-	h=From:To:Cc:Date:Subject:Message-ID:MIME-Version:Content-Type; b=LjS27MWIK+dYchc0Ie0YKAlKTreu+oOkXcYGF4mDFWYs/Vfr6DAQXKfKYelu+U+aiLt3i8JLEEWtyCsAZLIEjIf2Rh3zbBhGtjwf1hQMxoIhuCYQFL8UZg3I5VmSmvRV2nqzdxbT6Nrz0rMelSyxxKBMl+mnPRBMljCQtXZB7jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PkcX4A24; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744888399; x=1776424399;
-  h=from:to:cc:date:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=AlFyJTLGxn1D+5PMXQ3ld2oF8OOdvCw6hjycbBt+5gY=;
-  b=PkcX4A24ajUN7+IyFy5PSkfp1REy7QIMujRx3NSuclayPti17mmSEX3n
-   pBYfdNaTB2ZCltHTgPUlIrwikZCDTU68aTkumU8G2rCTKJXNH0fTlc4r9
-   sz+CUJDU+kAzo5p9hdto+LSczj1wd11ifsiH7VtE4k5D3h+ML9DqPDTV2
-   OC7jaMJIrbxV/PQE9bLQI00JhjK8ER6Nkz9SjeB2zfySg1zuPaIWpxZ0c
-   k9pcCq3IlL+O2/GyN+qUw2lp+s/EeCu8QHtH4+HOY00LK1FeBCdSLT2Tx
-   Ud8MQKsG/lxtDVPt39OtkU5zJ5WH3Ejw+LiawXFS4kuUKssJK6zGvnREe
-   A==;
-X-CSE-ConnectionGUID: CsyKQ4pwQA2fhIO5NppoDA==
-X-CSE-MsgGUID: 2Pt2lQ/9RKmL4liGAb5vDg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11405"; a="57854313"
-X-IronPort-AV: E=Sophos;i="6.15,218,1739865600"; 
-   d="scan'208";a="57854313"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2025 04:13:18 -0700
-X-CSE-ConnectionGUID: yZsAbgyTQzKZkI2FLB3tzw==
-X-CSE-MsgGUID: KIqVJwZwQouEnyUhqBXERg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,218,1739865600"; 
-   d="scan'208";a="130633840"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.144])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2025 04:13:16 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, PDx86 <platform-driver-x86@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@kernel.org>
-Date: Thu, 17 Apr 2025 14:10:51 +0300
-Subject: [GIT PULL] platform-drivers-x86 for v6.15-3
-Message-ID: <pdx86-pr-20250417141051-263296082@linux.intel.com>
+	s=arc-20240116; t=1744888259; c=relaxed/simple;
+	bh=fEBqhxlmx82BtM/AlDZZ5wzx7wCNw1G9R+pxLG8DyL8=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SxesTiBJX3hP6wqo79tnKDBDMDSN+fJvDrglIhwxyVxrto98jpPHfMnoZkvZWMZSNM0FVVuFNQO1vtwKzBUMBcKD55fPYL7DHlaf16j7NMF24PUi4Nb5pAYsdeXldbEKPSClt8iBCVPWlo5QAQ6Mj4uedCHrPgr13wOTnBa1+Ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zwe8MN7g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB080C4CEE7;
+	Thu, 17 Apr 2025 11:10:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744888258;
+	bh=fEBqhxlmx82BtM/AlDZZ5wzx7wCNw1G9R+pxLG8DyL8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Zwe8MN7gY9/fyNSI6M4egF4DqTK6cOa74cIgePtVm5SxlHrH+BFGILB3SU+THyiY4
+	 Y5zhBRJoX5lB6AJEvE2UyTUvrVAQQWJQpG5QB+/oxiv85AL6oeI7Ef3KZAX6LHi03p
+	 3UcOsaKtnGf6MlDb9qqcOJYbWNLKJYBOa6HGAuh149UD5wQrwIa7APBHfo57SolIPz
+	 iuEmJavhra38nemTtJ9MJyy41GvkjLD3zSJpPTiuWJA+/HCIrte5XzncA7QeFyTe12
+	 /LfO983iZHYkOPkerszOlBINL8FzDe75AdGD155w/tvxk8A1h12DUOJiYNKqGYoXsm
+	 S648FervPhCuA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1u5N8y-006ONV-Cd;
+	Thu, 17 Apr 2025 12:10:56 +0100
+Date: Thu, 17 Apr 2025 12:10:54 +0100
+Message-ID: <86sem7jb5t.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Luo Jie <quic_luoj@quicinc.com>
+Cc: Yury Norov <yury.norov@gmail.com>,
+	Rasmus Villemoes
+	<linux@rasmusvillemoes.dk>,
+	Julia Lawall <Julia.Lawall@inria.fr>,
+	"Nicolas\
+ Palix" <nicolas.palix@imag.fr>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Oliver Upton
+	<oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose
+	<suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	<linux-kernel@vger.kernel.org>,
+	<cocci@inria.fr>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<kvmarm@lists.linux.dev>,
+	<andrew@lunn.ch>,
+	<quic_kkumarcs@quicinc.com>,
+	<quic_linchen@quicinc.com>,
+	<quic_leiwei@quicinc.com>,
+	<quic_suruchia@quicinc.com>,
+	<quic_pavir@quicinc.com>
+Subject: Re: [PATCH v3 0/6] Add FIELD_MODIFY() helper
+In-Reply-To: <20250417-field_modify-v3-0-6f7992aafcb7@quicinc.com>
+References: <20250417-field_modify-v3-0-6f7992aafcb7@quicinc.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: quic_luoj@quicinc.com, yury.norov@gmail.com, linux@rasmusvillemoes.dk, Julia.Lawall@inria.fr, nicolas.palix@imag.fr, catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, linux-kernel@vger.kernel.org, cocci@inria.fr, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, andrew@lunn.ch, quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com, quic_leiwei@quicinc.com, quic_suruchia@quicinc.com, quic_pavir@quicinc.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hi Linus,
+On Thu, 17 Apr 2025 11:47:07 +0100,
+Luo Jie <quic_luoj@quicinc.com> wrote:
+> 
+> Add the helper FIELD_MODIFY() to the FIELD_XXX family of bitfield
+> macros. It is functionally similar as xxx_replace_bits(), but adds
+> the compile time checking to catch incorrect parameter type errors.
+> 
+> This series also converts the four instances of opencoded FIELD_MODIFY()
+> that are found in the core kernel files, to instead use the new
+> FIELD_MODIFY() macro. This is achieved with Coccinelle, by adding
+> the script field_modify.cocci.
+> 
+> The changes are validated on IPQ9574 SoC which uses ARM64 architecture.
 
-Here is a platform-drivers-x86 fixes PR for v6.15.
+We already have the *_replace_bits() functions (see
+include/linux/bitfield.h).
 
-Fixes:
+Why do we need extra helpers?
 
- - amd/pmf: Fix STT limits
+	M.
 
- - asus-laptop: Fix an uninitialized variable
-
- - intel_pmc_ipc: Allow building without ACPI
-
- - mlxbf-bootctl: Use sysfs_emit_at() in secure_boot_fuse_state_show()
-
- - msi-wmi-platform: Add locking to workaround ACPI firmware bug
-
-New HW support:
-
- - alienware-wmi-wmax:
-   - Extended thermal control support to:
-     - Alienware Area-51m R2
-     - Alienware m16 R1
-     - Alienware m16 R2
-     - Dell G16 7630
-     - Dell G5 5505 SE
-   - G-Mode support to Alienware m16 R1
-
- - x86-android-tablets: Add Vexia Edu Atla 10 tablet 5V data
-
-Regards, i.
-
-
-The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
-
-  Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-v6.15-3
-
-for you to fetch changes up to baf2f2c2b4c8e1d398173acd4d2fa9131a86b84e:
-
-  platform/x86: msi-wmi-platform: Workaround a ACPI firmware bug (2025-04-16 11:15:22 +0300)
-
-----------------------------------------------------------------
-platform-drivers-x86 for v6.15-3
-
-Fixes:
-
- - amd/pmf: Fix STT limits
-
- - asus-laptop: Fix an uninitialized variable
-
- - intel_pmc_ipc: Allow building without ACPI
-
- - mlxbf-bootctl: Use sysfs_emit_at() in secure_boot_fuse_state_show()
-
- - msi-wmi-platform: Add locking to workaround ACPI firmware bug
-
-New HW support:
-
- - alienware-wmi-wmax:
-   - Extended thermal control support to:
-     - Alienware Area-51m R2
-     - Alienware m16 R1
-     - Alienware m16 R2
-     - Dell G16 7630
-     - Dell G5 5505 SE
-   - G-Mode support to Alienware m16 R1
-
- - x86-android-tablets: Add Vexia Edu Atla 10 tablet 5V data
-
-The following is an automated shortlog grouped by driver:
-
-alienware-wmi-wmax:
- -  Add G-Mode support to Alienware m16 R1
- -  Extend support to more laptops
-
-amd: pmf:
- -  Fix STT limits
-
-asus-laptop:
- -  Fix an uninitialized variable
-
-intel_pmc_ipc:
- -  add option to build without ACPI
-
-mlxbf-bootctl:
- -  use sysfs_emit_at() in secure_boot_fuse_state_show()
-
-msi-wmi-platform:
- -  Rename "data" variable
- -  Workaround a ACPI firmware bug
-
-x86-android-tablets:
- -  Add "9v" to Vexia EDU ATLA 10 tablet symbols
- -  Add Vexia Edu Atla 10 tablet 5V data
-
-----------------------------------------------------------------
-Armin Wolf (2):
-      platform/x86: msi-wmi-platform: Rename "data" variable
-      platform/x86: msi-wmi-platform: Workaround a ACPI firmware bug
-
-David E. Box (1):
-      platform/x86: intel_pmc_ipc: add option to build without ACPI
-
-David Thompson (1):
-      mlxbf-bootctl: use sysfs_emit_at() in secure_boot_fuse_state_show()
-
-Denis Arefev (1):
-      asus-laptop: Fix an uninitialized variable
-
-Hans de Goede (2):
-      platform/x86: x86-android-tablets: Add "9v" to Vexia EDU ATLA 10 tablet symbols
-      platform/x86: x86-android-tablets: Add Vexia Edu Atla 10 tablet 5V data
-
-Kurt Borja (2):
-      platform/x86: alienware-wmi-wmax: Add G-Mode support to Alienware m16 R1
-      platform/x86: alienware-wmi-wmax: Extend support to more laptops
-
-Mario Limonciello (1):
-      platform/x86: amd: pmf: Fix STT limits
-
- Documentation/wmi/devices/msi-wmi-platform.rst     |   4 +
- drivers/platform/mellanox/mlxbf-bootctl.c          |   4 +-
- drivers/platform/x86/amd/pmf/auto-mode.c           |   4 +-
- drivers/platform/x86/amd/pmf/cnqf.c                |   8 +-
- drivers/platform/x86/amd/pmf/core.c                |  14 +++
- drivers/platform/x86/amd/pmf/pmf.h                 |   1 +
- drivers/platform/x86/amd/pmf/sps.c                 |  12 +-
- drivers/platform/x86/amd/pmf/tee-if.c              |   6 +-
- drivers/platform/x86/asus-laptop.c                 |   9 +-
- drivers/platform/x86/dell/alienware-wmi-wmax.c     |  48 ++++++++
- drivers/platform/x86/msi-wmi-platform.c            |  99 ++++++++++------
- drivers/platform/x86/x86-android-tablets/dmi.c     |  14 ++-
- drivers/platform/x86/x86-android-tablets/other.c   | 124 +++++++++++++++------
- .../x86/x86-android-tablets/x86-android-tablets.h  |   3 +-
- include/linux/platform_data/x86/intel_pmc_ipc.h    |   4 +
- 15 files changed, 267 insertions(+), 87 deletions(-)
+-- 
+Without deviation from the norm, progress is not possible.
 
