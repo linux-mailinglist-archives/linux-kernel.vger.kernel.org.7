@@ -1,142 +1,119 @@
-Return-Path: <linux-kernel+bounces-608815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 398B4A91863
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 11:54:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DA37A91867
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 11:54:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B9653B0311
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:54:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D44323B4FF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:54:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B9322A7EE;
-	Thu, 17 Apr 2025 09:54:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E27229B1A;
+	Thu, 17 Apr 2025 09:54:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ID35VpLh"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UcHcbGbB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C007F2288CC
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 09:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3322288CC;
+	Thu, 17 Apr 2025 09:54:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744883653; cv=none; b=K7LaDfd2nwOL/XOz+H6KcH1ddQJEPUlF2KuohuCB2rtm20l2YI0OUrfPQpUfY35YMkvO+lQhDMXpsZgWSxn1mEzNF7CiA/Rc+9FBYSoeG1C/e24JvQI0n7nYYg5ShVg0gGGjNo4qIkRAJQ2uBORxuZOAtL8Cc4MjzfePQP97bUg=
+	t=1744883686; cv=none; b=JOeCtiCvKTV8VskwiZjEtpC9t1DGfvzvcfvYsdIdvUH55hD2waCAahyC5HiOQ7GnNTlA37nQzZuChhm0VTKWrnyBmOyNlzt1i+mjNjz+dHJxpg0L5eijp+iHGrByOlZK28smJPgVxZen9hNWN+AnOnhiPTLn7fwV5Jsz+yrfrS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744883653; c=relaxed/simple;
-	bh=3BhkDRy9UEw8pUROqk03rHaQpLsP1EoR2Hnqbktpafc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lFccyN2v8NEHpJGis/2Wq8jKXZrxeLDILlTk1LwNaMGPX70HhTYZ8bDxTMD6C5w0/q6iN8WhxPIsQ7PnBPk+4mp/AUW989dPuOh6U43F/QuuLzo2a/iHhKMDsTKNeqFOqwS9k1IdbBtvO7Hr3d9onIhL5/a3z4m3/QLKH5+7toE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ID35VpLh; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744883649;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8frcNR3d7ivP4NC+vlhr7MJ2cYU39BpSTQEOAw1o4aU=;
-	b=ID35VpLhWpwaVM1r4/KrdZ43hdh212IgE1YbxcUtmx7YmqAS2Hk0S9ZqtAC8KIV9B5D0eC
-	4+5tdUXWAh0nWhidC4SFkNTfTMoiBp0o5CYeOIe+03Sw1eoFDwjFvEMVoq2q7+SBgkuCmy
-	8pUtK3bpXUtZBqmNB5cpvBvp1NLmtBU=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-484-foE3jpxyPRO-QhjqDyRgqA-1; Thu, 17 Apr 2025 05:54:07 -0400
-X-MC-Unique: foE3jpxyPRO-QhjqDyRgqA-1
-X-Mimecast-MFC-AGG-ID: foE3jpxyPRO-QhjqDyRgqA_1744883646
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-391492acb59so322891f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 02:54:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744883646; x=1745488446;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8frcNR3d7ivP4NC+vlhr7MJ2cYU39BpSTQEOAw1o4aU=;
-        b=v55Td9v0npAoakjKavLXanR5ycQrCE71rbas5krwhBMjBI+oyPETdE+s5cjZenSm9K
-         415iMP1il4XhHOQNX+6ETuqzJzO9PvkVPBkdCDsQRTRNuQ7YXzsOthHDtc90FtK8CCFX
-         NfxgJG16L4IIN8ku3cSVMNOmSnUJLtF3fb3Ip6AIkWX8nSNyua87cvOsombkFbPtYbp0
-         DvU7Zy1YIS1/GIrNodFQ59thOxMQ/dhcDh8mqaTbvfH5o0KdUR7Vp7bewXoZPG5nDauG
-         jaD7x4jMLP+Q6hhSPI11PBpYCv1cBGBE4vibdebnSVbg+6js7oX8jsBkFUrYFMYBkPN1
-         t79A==
-X-Forwarded-Encrypted: i=1; AJvYcCUl4GjRwqC6YhsZIPXp2IrCnkxzF2DnB+gFW/ptp2NH74BwKYX+kOt3d+c6O81viwYBbi/VpWbm3qGVo3w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8/rw7pyuTBBI1QKQHzXsNgTugJ/8uNmhJqqIh8eIxwjrjEkB3
-	R/xonA0XNYiT6/lnQHGOasxtFVFmb57fzHPebXbH80n8OVWeee9h9CMCkgsptHuS7Q+lTpPEhZt
-	Be2oj1iqyIqJ5RMoHj2jz/rPGUVYvSguPR4eXjVUQlASCDzwa9/ZuS4NDhvdfRdjki7VLOSZoYT
-	XIWefACJH5Nww+XTj0OJLvpAljvMRltEN78eSH
-X-Gm-Gg: ASbGnct695O458XlJwW6I+Px+n6Rd7seuWPerItINh7ftzgXh7iSmss085ykcbryVrl
-	veN+DmgGcGCTe902sENlsYJIkkiQX64DI01kbKqF0R8uyUAb4UuULjvzAeCytox5rR3JRJw==
-X-Received: by 2002:a05:6000:40c7:b0:398:fd9b:b935 with SMTP id ffacd0b85a97d-39ee5b9ff8fmr4783291f8f.53.1744883646461;
-        Thu, 17 Apr 2025 02:54:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGaUAX5A8zAgw7el/T3YwRV3GZLvfWnuHeaTHfLO1ACdU3siatVem4dbx0XtRNKUnrmhQD+B5DLQ7edX2knUB0=
-X-Received: by 2002:a05:6000:40c7:b0:398:fd9b:b935 with SMTP id
- ffacd0b85a97d-39ee5b9ff8fmr4783241f8f.53.1744883646039; Thu, 17 Apr 2025
- 02:54:06 -0700 (PDT)
+	s=arc-20240116; t=1744883686; c=relaxed/simple;
+	bh=vAhYR0DxNYTjOSzwAc2fvxm9d0b4bcwj8L5gWZR5QS8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rAa9divgBB428DFfG8a5QjS313qMoWo6QWLjjwna9e/FxkmMTHKDd76f4a13u8cCPLTUSVxT5+qjww1cS/dVZX5lal7h9UFZ4cRDsnkch91KLBL4GJq+I/eXRGjv51ZZK9kwXHnYfi2iqV+n1EpPx7B3APQrUcpN5oQH+rH8eeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UcHcbGbB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15D29C4CEE4;
+	Thu, 17 Apr 2025 09:54:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744883685;
+	bh=vAhYR0DxNYTjOSzwAc2fvxm9d0b4bcwj8L5gWZR5QS8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UcHcbGbBno1NM6VGd/kWkWEc0O9+cEg0+k7nrMTYrN1TpBGrPb3u5LPztWhYLn5bp
+	 dvJ+8Hy4Gyz1nLpiyNAYO3nzeGmMYRBZtBTVQRfFJMwCPuphKiQg7KAIEwHBbmycdU
+	 Z1DdujIfnC+zCPPj51MMTdviv8BNdzYeuqZPPydCdHj0QGRtJEptj+KUQjqWt4ZmCl
+	 JK18Dwqr9xGceHLH5jI1GjPC2PvOLtfZ7vakGOgS/opSpbp764yjIyUuUSZ5TjRjHM
+	 1L81SKYKL0QkGQ2UUbNyyJy1Sq4cIZXhBg5FG8UwUWGFI5n57GeD9wcmUDsXO2bdHW
+	 rUP9UGK6Sl1WQ==
+Date: Thu, 17 Apr 2025 11:54:40 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Hans Zhang <18255117159@163.com>
+Cc: Shawn Lin <shawn.lin@rock-chips.com>, lpieralisi@kernel.org,
+	kw@linux.com, bhelgaas@google.com, heiko@sntech.de,
+	manivannan.sadhasivam@linaro.org, robh@kernel.org,
+	jingoohan1@gmail.com, thomas.richard@bootlin.com,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH] PCI: dw-rockchip: Configure max payload size on host init
+Message-ID: <aADP4JZmSVACXKwd@ryzen>
+References: <20250416151926.140202-1-18255117159@163.com>
+ <aACoEpueUHBLjgbb@ryzen>
+ <85643fe4-c7df-4d64-e852-60b66892470a@rock-chips.com>
+ <aACsJPkSDOHbRAJM@ryzen>
+ <ca283065-a48c-3b39-e70d-03d4c6c8a956@rock-chips.com>
+ <aACyRp8S9c8azlw9@ryzen>
+ <52a2f6dc-1e13-4473-80f2-989379df4e95@163.com>
+ <aAC-VTqJpCqcz6NK@ryzen>
+ <4c2a94b4-e483-426f-b7d8-ed98ac474c63@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250409014136.2816971-1-mlevitsk@redhat.com> <20250409014136.2816971-3-mlevitsk@redhat.com>
- <20250410081640.GX9833@noisy.programming.kicks-ass.net> <60b7607b-8ada-447d-9dcb-034d93b9abe8@redhat.com>
- <20250416185001.GA38216@noisy.programming.kicks-ass.net>
-In-Reply-To: <20250416185001.GA38216@noisy.programming.kicks-ass.net>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Thu, 17 Apr 2025 11:53:54 +0200
-X-Gm-Features: ATxdqUE3EOhyuH0suu9pJLVTpoJVqiaHW5bjmzNK_nqhnV7Z7kL2fl3XehvCGu8
-Message-ID: <CABgObfbH6JAh0Puu6gTKfkLd+e5uqSyHHP5i86W-=G6x5zr1wg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] KVM: x86: move sev_lock/unlock_vcpus_for_migration
- to kvm_main.c
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Maxim Levitsky <mlevitsk@redhat.com>, kvm@vger.kernel.org, 
-	Alexander Potapenko <glider@google.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, kvm-riscv@lists.infradead.org, 
-	Oliver Upton <oliver.upton@linux.dev>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Jing Zhang <jingzhangos@google.com>, Waiman Long <longman@redhat.com>, x86@kernel.org, 
-	Kunkun Jiang <jiangkunkun@huawei.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Anup Patel <anup@brainfault.org>, Albert Ou <aou@eecs.berkeley.edu>, kvmarm@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Zenghui Yu <yuzenghui@huawei.com>, 
-	Borislav Petkov <bp@alien8.de>, Alexandre Ghiti <alex@ghiti.fr>, 
-	Keisuke Nishimura <keisuke.nishimura@inria.fr>, Sebastian Ott <sebott@redhat.com>, 
-	Atish Patra <atishp@atishpatra.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Randy Dunlap <rdunlap@infradead.org>, Will Deacon <will@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org, 
-	Marc Zyngier <maz@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	Joey Gouly <joey.gouly@arm.com>, Ingo Molnar <mingo@redhat.com>, 
-	Andre Przywara <andre.przywara@arm.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Sean Christopherson <seanjc@google.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4c2a94b4-e483-426f-b7d8-ed98ac474c63@163.com>
 
-On Wed, Apr 16, 2025 at 8:50=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
-> > For the ARM case, which is the actual buggy one (it was complaining
-> > about too high a depth) it still needs mutex_trylock_nest_lock();
-> > the nest_lock is needed to avoid bumping the depth on every
-> > mutex_trylock().
->
-> Got a link to the ARM code in question ?
+On Thu, Apr 17, 2025 at 05:48:04PM +0800, Hans Zhang wrote:
+> 
+> 
+> On 2025/4/17 16:39, Niklas Cassel wrote:
+> > On Thu, Apr 17, 2025 at 04:07:51PM +0800, Hans Zhang wrote:
+> > > On 2025/4/17 15:48, Niklas Cassel wrote:
+> > > 
+> > > Hi Niklas and Shawn,
+> > > 
+> > > Thank you very much for your discussion and reply.
+> > > 
+> > > I tested it on RK3588 and our platform. By setting pci=pcie_bus_safe, the
+> > > maximum MPS will be automatically matched in the end.
+> > > 
+> > > So is my patch no longer needed? For RK3588, does the customer have to
+> > > configure CONFIG_PCIE_BUS_SAFE or pci=pcie_bus_safe?
+> > > 
+> > > Also, for pci-meson.c, can the meson_set_max_payload be deleted?
+> > 
+> > I think the only reason why this works is because
+> > pcie_bus_configure_settings(), in the case of
+> > pcie_bus_config == PCIE_BUS_SAFE, will walk the bus and set MPS in
+> > the bridge to the lowest of the downstream devices:
+> > https://github.com/torvalds/linux/blob/v6.15-rc2/drivers/pci/probe.c#L2994-L2999
+> > 
+> > 
+> > So Hans, if you look at lspci for the other RCs/bridges that don't
+> > have any downstream devices connected, do they also show DevCtl.MPS 256B
+> > or do they still show 128B ?
+> > 
+> 
+> Hi Niklas,
+> 
+> It will show DevCtl.MPS 256B.
 
-lock_all_vcpus() in arch/arm64/kvm/arm.c:
+Ok.
 
-        lockdep_assert_held(&kvm->lock);
-        kvm_for_each_vcpu(c, tmp_vcpu, kvm) {
-                if (!mutex_trylock(&tmp_vcpu->mutex)) {
-                        unlock_vcpus(kvm, c - 1);
-                        return false;
-                }
-        }
+I guess that just means that the bridge itself is included in pci_walk_bus().
 
-> And I'm assuming you're talking about task_struct::lockdep_depth ?
-> The nest lock annotation does not in fact increment depth beyond
-> one of each type. It does a refcount like thing.
+Let's wait and see what people think about my proposal earlier in the thread,
+or if someone can think of something better.
 
-Yes, exactly - mutex_trylock_nest_lock() is needed so that the
-code above counts per-lock instead of using the per-task depth.
 
-Paolo
-
+Kind regards,
+Niklas
 
