@@ -1,152 +1,151 @@
-Return-Path: <linux-kernel+bounces-608422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FFDAA9133F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:48:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12798A91343
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:49:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB48D3B78C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 05:48:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC0E67A438E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 05:48:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A7B1DED6F;
-	Thu, 17 Apr 2025 05:48:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77811DEFD9;
+	Thu, 17 Apr 2025 05:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NmMUgnFq"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FQCq3C4u"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E674B1DE2DB;
-	Thu, 17 Apr 2025 05:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5022DFA4B
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 05:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744868930; cv=none; b=mHcoCt6Oek7zsBfJauDxfWnIqeZ9X1pjFXON66w2+X4pUXuZbE2Fu4+7axwBYupzGcqkhqpbiqHrD2WfMdv/+N+Rn13rX93WCeb3ItxYDTlTpy6tJgGCC5OEblrjDBzlCr7dd3nALStDlmwFttFMbfeVzB8f29Ihl2Gozei6kcU=
+	t=1744868973; cv=none; b=NwZWal0oQYLuYsNNJNxpPsU9bYsorPw50xolSZvlmKTGEtRmR7xEbENc6xgsu6Jz+oQaUHJ+DP5g6dnusWWkeX08skq9ADGzNMWgn2/zz59ymnXBX+prtQpdZMSzT8I2ILA03T5k1iU46gAWAcoxOuF37RJegh9vRXCwfKiBas8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744868930; c=relaxed/simple;
-	bh=j1ZBYuVBrZJCmWxUwT77cthlWHAR/U5idBaQjE3I0oE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QHeVsiUPQJ5dpPjL8d6v+hram5NjNenDBmL1Rm8ubNVifyBDulkYxOsSzBHPEtcig3DOSTYXb5rjDbpwOa/gWDhrWFwA332PS9mSK3ptCx0FHYaLQGHXH9iyxaCLq1e9WjZFXZbAa5yjEqsP3TP87ZqKewRawTnrpe8ffUlvjLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NmMUgnFq; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-22c33e4fdb8so4274215ad.2;
-        Wed, 16 Apr 2025 22:48:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744868928; x=1745473728; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cNsf6WXByV5kGLNoh4Utq0sYrI3KSxAvmYlZ4eczIl4=;
-        b=NmMUgnFqhXXRZh1NwEfzAtz2A/zfPZNQ1W2AWpOP8Pr56JW5EEM+PCK79W6JBeiWQK
-         SuQlZR6CcXa5Vvf+okA53/D/Wfu+rngAMfxeijtwsLyhn5m1OJwjQzIMHdgPVhkPYF93
-         m4vy09LKg6M54XbHJud+DKm5PK46atVAxof3CfplyafoTXfYFSSnzgK4Jd1V0VHAEUUZ
-         ZOazRTs6Zqd7Ruhjm3mZKqEQFcXid2JSrLjMBHfx2VvOaavqXl4Z3+dkeaejEB6i3ZYU
-         LCKTWTGAHDaIdpzwLB2HVkFd4fNEbEASl5uAGpwqC0Y50a1Vu//BH2MVGDXQA6zpltg4
-         nteA==
+	s=arc-20240116; t=1744868973; c=relaxed/simple;
+	bh=j/2ieG9iQ2+8oAb6WoUUUdyZGzYbIIGcpPfkfihw2rM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=BZnqxFQvkhOKlA0x6lCWkJHCogJ4uunfq8okeORjQpjgyvFd5t1mJUOm/PBz9j0MlATmcU6cj+nRTx0OTfGi8i33NSZ2tnYYzHSxRe6FJcRYGIa7FrjUlUASCWAo+9FH9zZH6QjDlh6Iky326yc+hR71XFnjPgbtkhQOs58cps8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FQCq3C4u; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53H5l50s022808
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 05:49:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=ttTa73WkTcOZWGbKb5821p
+	i0YyqaxdkghvCg4Lt9j84=; b=FQCq3C4uV9KhOrAJY6H/88PwYhZw34zur04L/Y
+	K7zGc07Pcr1w1VozWLCUVYS3713a+eJlRryQ8G8Fm0RJvpmFqtNJbW0H/JDGCpbd
+	Hs/XV7to2wtjnF3VeIHrC2843xms++071ikrZJIlu/ScYHjITiJDrkns/7yeqFCL
+	JPUG961AQuHS/Zd5y6wh0N1+RStSG2x1GzluzblUYBwWrueb8Lm+wPVlYnkdqLpT
+	5XQFPpo80R7DWvLZ1IJn+MEzWlykbDt+hO8TysnjCwICCu6mEZgniHS8TI6ehPmA
+	A7ItO5UuPBQwfy1sVA4x95kPQtKSj67TaIfHka97wlEwGWDA==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ygj9dryt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 05:49:30 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2ff798e8c90so411453a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 22:49:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744868928; x=1745473728;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cNsf6WXByV5kGLNoh4Utq0sYrI3KSxAvmYlZ4eczIl4=;
-        b=kigWe2CuRum5XdwtFWI3lhIKOPylwAaaNX+QLoEdiIEY05jKsOceWbcizvvO4BtCLn
-         VedP5CJf1cUMPgtROrCY2Y2+cURd3qo7lWAGVNbxufltHByd7vsxjdld43YZd/IY/a11
-         +8JjcHCdxLLfmyzEo883Dxz8I3p//XARBaM+Ps82H2iwAMpYlayT0SJnf/x9/naIsdnS
-         TZjqx0mZ8pL0aCzNWDcdzBYbuKLDPySMUGDWbU1hXbLzLXA1rA5Y1+Ze/c2EFAIBT3qE
-         gxITvaEwuX8yusn2UWYHPq5vDDSUB6SxK9AA5pVRNTr9vgccjdjgpWUQNLuw7T9cxIJ/
-         H82g==
-X-Forwarded-Encrypted: i=1; AJvYcCVqsBiAy+dI9b1+PtVzxqYaeuzKULnvZ6WV7cvQX2f2Ho0O6utooMlA2eI+44W0d9LRPNWxZQFKZDg=@vger.kernel.org, AJvYcCVrFRvHus5H8sNMjLjbpWERRe4feElvaCKJeFidJqO1xHS0nmWYwfSnY72mBFgs1Fbt4E8eqL/HPIQbkV6F@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZJ7aqYoW0u9xDGZ+pHML6qXAAcPex1mjANjPYt8bQWkMuNwtu
-	tOeTgJIkiw+Bxe/AV+taPPBpSMMw2TaStPSRZKbT5ejZX2VmdcimlXGBsxmQ
-X-Gm-Gg: ASbGnctU56sXzl+4Dx8D29VfRVFujHmqL1u0U6T6+QEiYOYYLWh4Q8QIj16wiugCxeh
-	0Cd7reSM4DNdqNeou+Ks+e68Zd6FeRyDrujoOMgWTVuDCttg5H8y1qqSMqf6y7Fi8SWPYQIEoTD
-	sb/SFWipWWAUFZITWgReqJvpJVLP76I+GzBP3YPYCCaCHwbWYeHDSCoR87PdDjCapC/c1LD45Ae
-	2er4ezJogxAi0vvDgbpG197Fj1acsRyqPkmZ7dNJ0DvmezZ5Y8V4eL/6lZ5W9iNBrvX5uOFArpR
-	RcNQhAhaICdQnqXXjyrnGXKC/BVLomcEjEOKZHQ2aYn1eIgJdP4Z7EOcJ3/f
-X-Google-Smtp-Source: AGHT+IHezBF0z9ROPg31/enyGAUOnxCTQmX38YqiUYlSWdkhSgmUwXaiD6iT9D/Ho+BmJm9yeUyJ/g==
-X-Received: by 2002:a17:903:2409:b0:21f:bd66:cafa with SMTP id d9443c01a7336-22c358db577mr64486325ad.17.1744868928047;
-        Wed, 16 Apr 2025 22:48:48 -0700 (PDT)
-Received: from [192.168.0.161] ([14.139.108.62])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd21c388fsm11881651b3a.54.2025.04.16.22.48.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Apr 2025 22:48:47 -0700 (PDT)
-Message-ID: <471d32cb-89d2-4abe-bfbd-772466184d0d@gmail.com>
-Date: Thu, 17 Apr 2025 11:18:43 +0530
+        d=1e100.net; s=20230601; t=1744868969; x=1745473769;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ttTa73WkTcOZWGbKb5821pi0YyqaxdkghvCg4Lt9j84=;
+        b=l6RZn1+hlev7TUwSEj63KX+hV7Wz2ARe61Wq8RbY9NtJKIMW+XAnbiCzAlTBF+8Dak
+         h6kxTLShSjsZlY9wEOR0RXi0GgHY4JAQswk38SKAakMH+cKs4950Qh8ZtULltdtraz7j
+         oS1SYTQrDoRDRe+QJXaTeAp3dKNQpxv6CgRHou3fHv6Xppn/gIyqZqb15fylAgAJcNUs
+         kuTrp6jIcv1Oer7SDi+CPIsT75V+1WhfWUW+s2tjloCBa5gonZbWxVHG8eAV7BIBUPJ0
+         u/w6C5CTLwzpJILk4xODrrn6IGq7ZLbT2d0Spmoh/B37AQnrvat4ms9ncTfqOcP4C7Z5
+         KC4g==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ0wiib7vZ//MRSPuws75KJQJqIKLpAny1DbeWf48gdNGa2Q5ffa87YHbyCB8ks+ehwN4iwMlnaapqr1A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywpsoc1LZNx9tf3rIkhyrDqhthsqIwoLQ5feBZw6ThIIg/qx3UP
+	ZIoYWXMJt39rCpXYSIH4uRnUMCk46jcO6gpiL+9H9rfzzbLQ1GonVn/bBso5EZmS1GoTQhGy3C6
+	7L5ocydDLna81/9ptzI/OP90QLNSA+9hvRDN/ulQMbbEtDqAHd7LBfltuXv+7lS0=
+X-Gm-Gg: ASbGncuE4Q7Oeez1ctEWkO6heq7a/bzhActi3a9hDqucG5uelJMij/jF9EmrdjruOlL
+	UujUg1b+ECsM3gukDz94IXzmveUcIxBeZ08PHaUWlGN64ZuYloghdPVBWzwgExcoSAP/E6UdCW4
+	j3n1Kr3VDFzgrtAgsJ+MZrVidOUDDs8zNeaBmiFN+9iXMYOo/bzfmm0AvwhDqRdP9k7TzDUQlVW
+	PhTZkcfxtQDTwBEE9YY5hXufDitgdDkUcsRlE+wEfbAw9+ToSRfcQefdiBKQcLoCkCcrIWN92QJ
+	FzRaOAKC1RgSk5TobOmwOTtgSz3G3fHhvtyiJypmZmfEoIkd6x4/FXUdfvl6lPEOeXBcEwD+MnW
+	AlB5ZZhwubnp3o4uL2ZyKDn0u/ZhJkxFTEAyc
+X-Received: by 2002:a17:90b:4ec6:b0:2ee:f677:aa14 with SMTP id 98e67ed59e1d1-30863f1a0admr6945423a91.13.1744868969099;
+        Wed, 16 Apr 2025 22:49:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFK3GAi2aYavpOLGvxBAktOxHdMPkHBYyy0K0QhpFaR5OgCOTt0l+Kzx3QK0O86NXB8BoUAEg==
+X-Received: by 2002:a17:90b:4ec6:b0:2ee:f677:aa14 with SMTP id 98e67ed59e1d1-30863f1a0admr6945393a91.13.1744868968679;
+        Wed, 16 Apr 2025 22:49:28 -0700 (PDT)
+Received: from hu-adisi-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c33fc47e0sm24745715ad.167.2025.04.16.22.49.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Apr 2025 22:49:28 -0700 (PDT)
+From: Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
+Subject: [PATCH ath-next v3 0/2] wifi: ath12k: handle scan vdev
+ consistently
+Date: Thu, 17 Apr 2025 11:19:12 +0530
+Message-Id: <20250417-fix_scan_vdev_handling-v3-0-9ec42513d26b@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] iio: adc: ad_sigma_delta: Fix use of uninitialized
- status_pos
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250410170408.8585-1-purvayeshi550@gmail.com>
- <20250412180046.62f9eab4@jic23-huawei>
-Content-Language: en-US
-From: Purva Yeshi <purvayeshi550@gmail.com>
-In-Reply-To: <20250412180046.62f9eab4@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFiWAGgC/43PzYrCMBAH8FeRnDeSj4lpPe17LFLSZLQBTbWpw
+ UX67jsUDx4M7GXgz8z8hnmyjFPEzPabJ5uwxBzHREF/bZgfXDohj4EyU0IZAULxY3x02bvUlYC
+ lo5FwjunE8Wh6BKP6FlpGy9cJaXKFf5ibB57wMbMDdYaY53H6XS8WvfZfuK7hRXPBLTbWWRChc
+ eZ7zHl7u7uzHy+XLZVVLvCu2aoGpGlwDsFjMEJWNPmmSVnVJGnChqYHZ4JsQ0VT/9MUaf2O3mz
+ anZcAH7RlWf4Aaa+bNLcBAAA=
+X-Change-ID: 20250402-fix_scan_vdev_handling-ef5be452b949
+To: Jeff Johnson <jjohnson@kernel.org>
+Cc: ath12k@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-wireless@vger.kernel.org,
+        Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>,
+        Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Proofpoint-ORIG-GUID: 892VQy7V-NhsOs38SObaJaamHcpwcsxi
+X-Authority-Analysis: v=2.4 cv=PruTbxM3 c=1 sm=1 tr=0 ts=6800966a cx=c_pps a=0uOsjrqzRL749jD1oC5vDA==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=HtmLlQNqzqJkp9_W5pEA:9 a=QEXdDO2ut3YA:10
+ a=mQ_c8vxmzFEMiUWkPHU9:22
+X-Proofpoint-GUID: 892VQy7V-NhsOs38SObaJaamHcpwcsxi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-17_01,2025-04-15_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
+ priorityscore=1501 malwarescore=0 adultscore=0 lowpriorityscore=0
+ impostorscore=0 clxscore=1015 spamscore=0 mlxscore=0 mlxlogscore=975
+ phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504170043
 
-On 12/04/25 22:30, Jonathan Cameron wrote:
-> On Thu, 10 Apr 2025 22:34:08 +0530
-> Purva Yeshi <purvayeshi550@gmail.com> wrote:
-> 
->> Fix Smatch-detected issue:
->> drivers/iio/adc/ad_sigma_delta.c:604 ad_sd_trigger_handler() error:
->> uninitialized symbol 'status_pos'.
->>
->> The variable `status_pos` was only initialized in specific switch cases
->> (1, 2, 3, 4), which could leave it uninitialized if `reg_size` had an
->> unexpected value.
->>
->> Fix by adding a default case to the switch block to catch unexpected
->> values of `reg_size`. Use `dev_err_ratelimited()` for error logging and
->> `goto irq_handled` instead of returning early.
->>
->> Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
-> Seems like reasonable hardening of the code.
-> 
-> Applied.
-> 
-> Thanks,
+This series of patches addresses the handling of scan links in the ath12k
+driver to improve consistency and functionality. The changes ensure that
+link ID 15 is correctly used for scan operations across both ML and non-ML
+interfaces. Additionally, the patches prevent scan failures by fetching
+link_conf only when the link ID is valid and setting appropriate default
+values for scan vdevs.
 
-Hi Jonathan,
+Currently, no issues have been observed; these changes are intended as a
+cleanup and to ensure proper handling. For split-mac these changes are
+pre-req change.
 
-Thank you for reviewing and applying the patch.
+---
+Changes in v3:
+- Rebased on ToT.
+- Link to v2: https://lore.kernel.org/r/20250411-fix_scan_vdev_handling-v2-0-b6740896c144@oss.qualcomm.com
 
-> 
->> ---
->> V1 - https://lore.kernel.org/all/20250409200151.201327-1-purvayeshi550@gmail.com/
->> V2 - Moved the reg_size validation inside the switch statement using a default case,
->> replaced dev_err() with dev_err_ratelimited(), and replaced return IRQ_HANDLED
->> with goto irq_handled;
->>
->>   drivers/iio/adc/ad_sigma_delta.c | 4 ++++
->>   1 file changed, 4 insertions(+)
->>
->> diff --git a/drivers/iio/adc/ad_sigma_delta.c b/drivers/iio/adc/ad_sigma_delta.c
->> index 6c37f8e21120..4c5f8d29a559 100644
->> --- a/drivers/iio/adc/ad_sigma_delta.c
->> +++ b/drivers/iio/adc/ad_sigma_delta.c
->> @@ -587,6 +587,10 @@ static irqreturn_t ad_sd_trigger_handler(int irq, void *p)
->>   		 * byte set to zero. */
->>   		ad_sd_read_reg_raw(sigma_delta, data_reg, transfer_size, &data[1]);
->>   		break;
->> +
->> +	default:
->> +		dev_err_ratelimited(&indio_dev->dev, "Unsupported reg_size: %u\n", reg_size);
->> +		goto irq_handled;
->>   	}
->>   
->>   	/*
-> 
+Changes in v2:
+- CCed linux-wireless list as well.
+- No other changes.
 
-Best regards,
-Purva
+---
+Aditya Kumar Singh (2):
+      wifi: ath12k: handle scan link during vdev create
+      wifi: ath12k: Use scan link ID 15 for all scan operations
+
+ drivers/net/wireless/ath/ath12k/mac.c | 60 ++++++++++++++++-------------------
+ 1 file changed, 28 insertions(+), 32 deletions(-)
+---
+base-commit: d0bcc5eaaa611aacbffe6b2cc2fb64bfc3bdfcbc
+change-id: 20250402-fix_scan_vdev_handling-ef5be452b949
+
 
