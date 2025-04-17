@@ -1,155 +1,132 @@
-Return-Path: <linux-kernel+bounces-608809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4458A9184E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 11:50:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C150CA91857
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 11:51:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C2B01902362
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:50:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 359913ACC49
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB96227EB4;
-	Thu, 17 Apr 2025 09:50:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711042288FE;
+	Thu, 17 Apr 2025 09:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z2ifBvHF"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XJNeDJ5a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11341189B8C
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 09:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8588189B8C;
+	Thu, 17 Apr 2025 09:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744883406; cv=none; b=cLc3Tde8jHwY2slz7V6BdJQ3JXfiNx7MxxX6OqLMtOoosRoPYjxiz7iwZFp56QhDfSnXoSLTvQoUq7eBBZTn40VY8IajlsmlxHqc0X4fbyPvQ7V0i0B+0bcSoMT+BpKcSZCCXRCatxs+Oap1VnNSJp5KerROYVNvweneYORU1Po=
+	t=1744883463; cv=none; b=Dhh4xch1MqYY3f9RYDwHAWUk/+kFbtkHOIveGCP32J2gvOL9IipwTSBL4fEKFbQITJbR/6e5c0fWRQjnyyhcDseLJTZ4ncjOfqzynjwNPHZw39GLTb4yaDzgKmc4qhZ+BTryKZy0/STE9w7QH3xkZl1gCC+bAJQL7TQok/YAtgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744883406; c=relaxed/simple;
-	bh=mNKS1ThIMK9sL7OpJ0Pq/t3emuB0Q9NPwGbtSCIlblM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nLcGK8+3u9ye9/bFMLnoVLGEZunD0WNWyHUzCZSxcZu48Gml85MGxHl5tC24exKuXlF6TrWsbOkdJi6YPyDyvVRNYvrakUrnFU5WQ7dwKyHrCgkRbL0PQKT04bayvklEotxDHGgxknQ0mrYARVWzfwPp9gf6vi4WDjxZksvaZ8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z2ifBvHF; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-301c4850194so398261a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 02:50:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744883404; x=1745488204; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xaPJLxjZQzO6WPICu5Fd6vdGKGk6l1RenIAqdzuK74M=;
-        b=Z2ifBvHFXQnKU/jUnVv/eGWL40yOnNMLaANQESOlT2qI1ekrqRAJfq71qY33LSHJAg
-         Vs9J0xG/QhfH7ETxV5Flo4fBbyGcxtSUbilxGNGvKSS7/8wLD4HB3DnaWqGwxyK2qBEI
-         G1wv1APBQXI+HxapXOT4cjESAIpvu1vuwnlsBts5M0UYZr6e7cY5zyN+Vm8kWzlN4ebD
-         n4l6jraTp4rf2f/oBtT2hsdKKOnqjHnSFNMH98DPXJogo42D1AXshJSLVaixu90u66us
-         /LBBuBr6Ma7PW9Z0Mw2Hv65J4hrtz0C05RsmXRl8a23f52Xf7nhj6ktBfbjVvGN8yhFg
-         MHvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744883404; x=1745488204;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xaPJLxjZQzO6WPICu5Fd6vdGKGk6l1RenIAqdzuK74M=;
-        b=YoingDMbI+/0J21e8mpHftMdLXp4Ezv8WD1p1a2n8ttVkNFycBH/ui2HOpcMt0n9rk
-         iI17Znyk325TIYLSkugHr4o0uLr5WuCgLHf0Hybpbm3gcwMhgsh8AmIbwTczutYfPFKe
-         MiMK8Temunk+rxW7BBT1uCOy4mvaIscV4j5pgxSKQPw+X7KWahVUfzdWfAaIIm9b4S+y
-         Z9poxb/c1c9TLeXdpksRRRQnSWDLA8aXKM7tLbw6FwsOqzFgAWNmjyuS6zJHgItungFN
-         B+Tz4GNKIc6o6jYrC9pMAmAUAaGpFz557YSLCMF56OyidRpuMKq4O95nmbYzpZ1V5pry
-         QHyA==
-X-Forwarded-Encrypted: i=1; AJvYcCWxrYlMm2Kp33W4qNw9ysZ6ZmZTUiyN3MUWBVxSPrM8sOjbImjmhWK+pvK2ZpM3SPz+/U3aeFEy12jigBs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2KDZtc8twcnliEeD3ScqqNOk4suOUuYYxADdmpyWE9YLtvqV8
-	LA7mxNCT0mhcgiJEDGWOi/1KqbTzRtk9e2N3LCcOEOYIRvhjNvus
-X-Gm-Gg: ASbGncuoQRCDKKeI19aQN+5LpbNOLQPVVvrfR96itV9/JJiz3epn9SH5u8CVFLaoDay
-	cnrhJBq5DVWEzvbrikrfvDuzKfCTpj7hPsrUZhT1hpQDXdW9tWqc/QPrF8NmlKAlu7s4rnOLr7M
-	o1dItNJY4A/IdGsEDY1GSWf5ABLRuf5Vs7s/2xdpJJPv79lnQdmp0om0/05o/d9+UXhGkia4VSH
-	qrp1Wc8kyECz4P+ITTaT6Aa8+RnF+d9dOqLg+j684LEIyfpC5wgznuIQLwLLlZ0VmBNG0WhtUCc
-	K87il93qk4O7IhQJdbQLAp1UOyK+qOV1N1Ul8kcb51OUyhkWvg==
-X-Google-Smtp-Source: AGHT+IG+WOEsN1LmJFiT/mzJmJwNWQ5XF0sNlAZUKFlAahuiD7DpiUrQfZYFyHw4sgCPgHxAYCVweQ==
-X-Received: by 2002:a17:90a:d603:b0:2ff:796b:4d05 with SMTP id 98e67ed59e1d1-30863f19942mr7493340a91.11.1744883404174;
-        Thu, 17 Apr 2025 02:50:04 -0700 (PDT)
-Received: from [192.168.0.161] ([14.139.108.62])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-308613cb6fesm3155801a91.41.2025.04.17.02.50.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Apr 2025 02:50:03 -0700 (PDT)
-Message-ID: <d5e06499-781a-4bc0-a43b-8ef2aa89930b@gmail.com>
-Date: Thu, 17 Apr 2025 15:19:58 +0530
+	s=arc-20240116; t=1744883463; c=relaxed/simple;
+	bh=L8o2PSkGeZxi2mBoFN19BApuLbghB6wGeSWpWaGCaTE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NztdZFaTxbgYqv2wEry9SX23Bybauq4dzeHUUGaGRlrww6M3eOxSX7p/psZagXUMdrsUFfTyiMnMjqLkDhlginn+Bn9j38IGOMZ/57PPsJGM8X4qvQWz7g5darCp5H/91MFCbXisbfAHUboXKiIc2JNjnx6QDI4BYHajjKYuFuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XJNeDJ5a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48A01C4CEE7;
+	Thu, 17 Apr 2025 09:51:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744883463;
+	bh=L8o2PSkGeZxi2mBoFN19BApuLbghB6wGeSWpWaGCaTE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XJNeDJ5a7rXZB3aV5DxX/MCGa77oE21mxbt+dYjy8W71i8SMQO9lI+JRJj1MuTNeK
+	 PDtBEUTxmJ2BNwI3Fd7DLt8En85mkjUdTsW1S86vhnxYwRLFYQb3E3QwE5q93BSl6L
+	 NbLhvoO+haS/iQAhYM2pjNLjdiOhjb4kvMDApTd/EAXCqOChB23jnwFoM0tF4Ubg5E
+	 gfR8iVWMe3lQ0+NwEzvn9TttR8k586DAsrO5dff9ZU5JaRpMVosi2yM+0yKkAZdUma
+	 2etP+icr4Mq/WjSeZ6JK96g0XYbgGXjrkrSTQmZLk7TB8FMKmdk+avpl4VxsuzShhr
+	 2VEUUKsMosSrw==
+Date: Thu, 17 Apr 2025 11:51:01 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, linux-pwm@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, Biju Das <biju.das.au@gmail.com>
+Subject: Re: [PATCH v24 3/4] pwm: Add support for RZ/G2L GPT
+Message-ID: <wapp2p55vrdpgwy7dpnrbxallcdu4yvk6a3nqimbyb565crqg2@7ljkanddwmjz>
+References: <20250226144531.176819-1-biju.das.jz@bp.renesas.com>
+ <20250226144531.176819-4-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] char: mwave: smapi: Fix signedness of SmapiOK variable
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: arnd@arndb.de, linux-kernel@vger.kernel.org
-References: <20250417091018.29767-1-purvayeshi550@gmail.com>
- <2025041728-calamity-unsuited-4ba9@gregkh>
-Content-Language: en-US
-From: Purva Yeshi <purvayeshi550@gmail.com>
-In-Reply-To: <2025041728-calamity-unsuited-4ba9@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="oo3vkt6iyksbvgcq"
+Content-Disposition: inline
+In-Reply-To: <20250226144531.176819-4-biju.das.jz@bp.renesas.com>
 
-On 17/04/25 15:08, Greg KH wrote:
-> On Thu, Apr 17, 2025 at 02:40:18PM +0530, Purva Yeshi wrote:
->> Smatch warning:
->> drivers/char/mwave/smapi.c:69 smapi_request() warn:
->> assigning (-5) to unsigned variable 'usSmapiOK'
->>
->> Fix Smatch warning caused by assigning -EIO to an unsigned short.
->>
->> Smatch detected a warning due to assigning -EIO (a negative value) to an
->> unsigned short variable, causing a type mismatch and potential issues.
->>
->> In v1, the type was changed to short, which resolved the warning, but
->> retained the misleading "us" prefix in the variable name.
->>
->> In v2, update the type to s16 and rename the variable to SmapiOK,
->> removing the "us" (unsigned short) prefix as per Greg KH suggestion.
->>
->> This change ensures type correctness, avoids confusion, and improves
->> overall code readability.
->>
->> Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
->> ---
->> V1 - https://lore.kernel.org/all/20250409211929.213360-1-purvayeshi550@gmail.com/
->> V2 - Use s16 type and rename variable to remove misleading "us" prefix.
->>
->>   drivers/char/mwave/smapi.c | 10 +++++-----
->>   1 file changed, 5 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/char/mwave/smapi.c b/drivers/char/mwave/smapi.c
->> index f8d79d393b69..65bc7e1ea6cf 100644
->> --- a/drivers/char/mwave/smapi.c
->> +++ b/drivers/char/mwave/smapi.c
->> @@ -66,7 +66,7 @@ static int smapi_request(unsigned short inBX, unsigned short inCX,
->>   	unsigned short myoutDX = 5, *pmyoutDX = &myoutDX;
->>   	unsigned short myoutDI = 6, *pmyoutDI = &myoutDI;
->>   	unsigned short myoutSI = 7, *pmyoutSI = &myoutSI;
->> -	unsigned short usSmapiOK = -EIO, *pusSmapiOK = &usSmapiOK;
->> +	s16 SmapiOK = -EIO, *pSmapiOK = &SmapiOK;
-> 
-> Do you think that "SmapiOK" is a valid kernel variable name?  Doesn't
-> look ok to me, what does checkpatch.pl say?  :)
-> 
-> thanks,
-> 
-> greg k-h
 
-Hi Greg,
+--oo3vkt6iyksbvgcq
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH v24 3/4] pwm: Add support for RZ/G2L GPT
+MIME-Version: 1.0
 
-Thank you for the feedback.
+Hello Biju,
 
-I ran checkpatch.pl on the patch, and it reports 0 errors and 0 
-warnings, so the variable name "SmapiOK" is valid in this context.
+On Wed, Feb 26, 2025 at 02:45:22PM +0000, Biju Das wrote:
+> RZ/G2L General PWM Timer (GPT) composed of 8 channels with 32-bit timer
+> (GPT32E). It supports the following functions
+>  * 32 bits x 8 channels
+>  * Up-counting or down-counting (saw waves) or up/down-counting
+>    (triangle waves) for each counter.
+>  * Clock sources independently selectable for each channel
+>  * Two I/O pins per channel
+>  * Two output compare/input capture registers per channel
+>  * For the two output compare/input capture registers of each channel,
+>    four registers are provided as buffer registers and are capable of
+>    operating as comparison registers when buffering is not in use.
+>  * In output compare operation, buffer switching can be at crests or
+>    troughs, enabling the generation of laterally asymmetric PWM waveforms.
+>  * Registers for setting up frame cycles in each channel (with capability
+>    for generating interrupts at overflow or underflow)
+>  * Generation of dead times in PWM operation
+>  * Synchronous starting, stopping and clearing counters for arbitrary
+>    channels
+>  * Starting, stopping, clearing and up/down counters in response to input
+>    level comparison
+>  * Starting, clearing, stopping and up/down counters in response to a
+>    maximum of four external triggers
+>  * Output pin disable function by dead time error and detected
+>    short-circuits between output pins
+>  * A/D converter start triggers can be generated (GPT32E0 to GPT32E3)
+>  * Enables the noise filter for input capture and external trigger
+>    operation
 
-Regarding the "usSmapiOK" variable, it was used only within the smapi.c 
-file. Therefore, I have renamed it consistently throughout the file to 
-avoid the misleading "us" prefix.
+I now finally looked over this patch and I'm ok with it. So I will apply
+patches 1 and 3 to
 
-Let me know if you have any further suggestions.
+https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-next
 
-Best regards,
-Purva
+for now. Note this doesn't mean 2 and 4 are bad, just I
+didn't find the time yet to look into these.
+
+I will send a patch on top of this for a low-hanging improvement.
+
+Best regards
+Uwe
+
+--oo3vkt6iyksbvgcq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmgAzwIACgkQj4D7WH0S
+/k6F3wf+Noa4373MKa5MYVacKyVz7WLzOdwsr3d/DMwV1+M3hE4L2euGaaZS85+U
+k3G4c/LqIoOFFQUFF/qYiIQADWKNoRY269Rj0c3jFKwzs0ZoW6GKROlSv7FOLvJN
+5BIqudas5hvjTmuOmFivMyRfc3s/nMoABNgkpZvZ7PEa7FKkQyF+KMdpE8VCgaZQ
+6g1y9IC7sgzYUmIZL3HBbEgJ2zefddY0h2WFxqvZ5F9MNXnXxhxg5sEr2Sf3RFkS
+BgkebDoyXdo3l14GhfVunSdggvHYpWaKfX4ad3Zkox+vyp76SEhRIr9fRh0yXfZL
+3S8/sMk9wxwxvQg6raINc5lHW6XZdA==
+=z9MA
+-----END PGP SIGNATURE-----
+
+--oo3vkt6iyksbvgcq--
 
