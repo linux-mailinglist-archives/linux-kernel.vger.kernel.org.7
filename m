@@ -1,159 +1,105 @@
-Return-Path: <linux-kernel+bounces-608714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C8EAA91724
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 10:59:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8306A91736
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 11:04:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68D41162922
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:58:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09C403B263B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:03:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1FF226193;
-	Thu, 17 Apr 2025 08:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2726721C193;
+	Thu, 17 Apr 2025 09:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KONCHHu0"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="ZyZ432YF"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990E6225771
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 08:58:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6992E320F;
+	Thu, 17 Apr 2025 09:03:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744880321; cv=none; b=dJzpprXtJQOfeH9J7ikhulWc1UHB8TWEfefhB3xzM5WpykPo9sWzQ2OVjgxwA8yg0FVdhy+28aU9/kJ1rrkG8syoE/SC+Nr4FPq0Q0EH9WT0ytzlg7H6CufMe8QbvU6HYS4Loz2cwLCKcCwp4vJjfjhWEIUd2xuU1w3Ad667fT4=
+	t=1744880641; cv=none; b=pe2HG/S7e1ARmb/zC6nfPAMeVSDR8HJOlIK7kHPTF/qAZ70vrqkYwBNokkHpEyYq296XxhAMxS1k2POBhCv94YVF2ux1jgdzyqXyggARo8FzC4E8gQBuWxmtPmAtva/vyxZukORxy7eKgXMvCcu+AejDuyxNEZD/KDufYW+AiCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744880321; c=relaxed/simple;
-	bh=r1FjPDPkdRR2v2mM9JWjJvN0mbwzm6QYZ2Q9DLtMY7k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XRbAKuCMpJ03J0SeMVlQkymxTscOVOBMjwt0ZeJXGxvV7+VdldiGmyTx2JQIAqOX7FUu+mqNjPnl1WsPPBJftDU5Nk9OtAEq3WRsxF6ZclpTT8PEBzpT3rsDY/AHlJIPIHo3Sj1pNgtGWHEFhtMVMsx3/pnw6laZMGGn1YU40lA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KONCHHu0; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43cf848528aso3992215e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 01:58:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744880318; x=1745485118; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GP9CJN50tERxm6yE1CuNeHA83a3ivox+fButPu97ez4=;
-        b=KONCHHu0/ixD9FxcFkwSj4Gl/noiidGTT/qniwhrkg1ptG/8f/PDDM8am4vL9O4U1W
-         CBFyPWNyNSjI/j5yJ+AS9zjgzzNzpHR1hnnqmfkjtwK0mEFQawmJKL8odhj/hR06aUw/
-         HemnfBoDrh3xWGVCQQVFoSjT+hO3Uxy5NFlNfXwRTugxgoSGxots6yBqvh5CEWlcwcJa
-         CYRZ1YnAAYlwNv0G3Dg8URTG8NaK8X3+nQNW0zv4u3sQzWlULYOujRzOEf0ZsIz/8cBa
-         GyV7B6Zp88wX/UgIu4A7dFAkt685/ox45cpWi5Y9E9RYgx0E9MNnrYYjdmTmkIZksTba
-         MYOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744880318; x=1745485118;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GP9CJN50tERxm6yE1CuNeHA83a3ivox+fButPu97ez4=;
-        b=CGhK2lbyGEIxL5KrFQOZc2l7tLnCuPbTow5/Tu/SorL6wEY4dwwPHx8ThR/wA8roDk
-         E/6nvuONgTEALk3pM4BFkDshfOoLyzWt2A4fqXoSFKMPu3aoaiOvWuGlM07sgWa7WmJK
-         +gmh//wVMykrwD15qedz9Akgj3WDpU8aiJqqZbbuiP3UXLRG2aJNg8KzN45/+PPQKKPN
-         XHsMo0Nf+5lchqOqkgVoLst0RNezwWmfYhvbSRgu9twyvgh1hGY4fGY9ae70pZpsI4O2
-         i3MZCIQ7YggOSN7n18NBg7EgKIdmras+HHDYj420bS0p8irqdS6FK5IkJkCfHMTGupYu
-         LigQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVFBpitayhJt/mKWxD1lCvtaZz2wvOiKuPwxSm+fC8L9kUCOG9eYKnDbV4t9l7lJEjVdgy3ML2eWmcmQck=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoguqZXBfysrl3VMI5XFQ37NhH8m8Pt0FBqSXw8BM5mi6MI18/
-	6rWMsGENfY2JMZb+Q/1T/Sy5EIQwF1MObNzjeUPG+EUDO1XVYyfuyAR4r5BqiHI=
-X-Gm-Gg: ASbGncu0Gqcy29LWk/EhaVl54d1SJ0zJxwJ5dodAe9uT5/NIdPHcjsOSZGPQtco5nq6
-	4LOkSdMqxMYqZimXsXHzOBvRCHdb1RxvqHB4FQaNdw0IzUFL0wjJOwbNZtBJz7rlGYD0I/tRE2u
-	zie5v8VrgHxUJAUSMwVo5riGla+r4NYcG1LKFT/RjwAFJRmmgIdCm0RrcfFtemzToAaOhLUYrjl
-	eZ8LEFT9DObYNQFEeTP4SaS3kjp3+KeOWTcSzHdoE/6Zx0MKoTgBugy9vFKim/i2BkFbkhPLzXK
-	a1pJdt9/+Qc2p8X/9cTLQTDMYAH6ifPPkB4nfXlZuKKgdNSoAoWD/g==
-X-Google-Smtp-Source: AGHT+IH6CNSHBn38pTz3KSqiHQKjYubJUpsb2xFQLAfw5wd+m9vVmQ9WStqNZ9vJMOreqvzejAJH0w==
-X-Received: by 2002:a05:600c:698e:b0:43c:f470:7605 with SMTP id 5b1f17b1804b1-4405d624e32mr53383385e9.12.1744880317933;
-        Thu, 17 Apr 2025 01:58:37 -0700 (PDT)
-Received: from [192.168.1.3] ([77.81.75.81])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eae96c0d9sm19859259f8f.32.2025.04.17.01.58.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Apr 2025 01:58:37 -0700 (PDT)
-Message-ID: <72b016c4-3959-49d1-8964-0927eee101bf@linaro.org>
-Date: Thu, 17 Apr 2025 09:58:36 +0100
+	s=arc-20240116; t=1744880641; c=relaxed/simple;
+	bh=7MMNhztDV8UGTuOPRC7v8gW6Lz4xX15N+7tLV2xsNdM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Nh5Q5JkNHDWmQaT3PcRhpqnkim+Hc5B7KAYKOepJvuXP/puPn4Vi8wGwKuEUGpMfFsenQdWtADspzaZFxLPUwoUk+ZmwAtgODbjV62EKgy880Po3s8da10ELs6GEd8Yak+n9iZ5SW2TrpD3Q8PCvQkt7d3G6Ot/WdAuP386DNE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=ZyZ432YF; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Ncoo+8tS1G2HLx7lql71IkSO6kq6VOzIS3CcwjeAEHM=; t=1744880638; x=1745485438; 
+	b=ZyZ432YFMGAGk5M7qSEAWFavIASRSprCswLaiYZV4A2d29n/DDoW58hyzJVI7TeTKR9yPJr4eX1
+	yolZ/g9EJN0tDsk0IgolyIgO4H15Nrc2UVUtyymCdBb19iLDq0clGqODqNImRjMEWg1wFKLKJjzNT
+	Znn1dn5/vlORBw9/7lzY3jS412/g4M70w6+U08PMV3BWS0BIsqMlirDu72mTN5VrJ4gJw3QNgOrJq
+	FlpctjUsnlRJ7Xut30e3awmBj8xUw18MEA10kpFsmnfJIME9S1FiVAEY/XCIIg+KSayseclqIkhCa
+	9C2FJmHejtDSYBEIiX1ENWG9WTAEiwafZSug==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1u5L67-00000002a4q-3Xu3; Thu, 17 Apr 2025 10:59:51 +0200
+Received: from ip1f11bac0.dynamic.kabel-deutschland.de ([31.17.186.192] helo=[192.168.178.82])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1u5L67-000000015Qt-2f1L; Thu, 17 Apr 2025 10:59:51 +0200
+Message-ID: <dffbad05874662697a74a4799b61ac068ec17a55.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH] hfs{plus}: add deprecation warning
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Christian Brauner <brauner@kernel.org>, linux-fsdevel
+	 <linux-fsdevel@vger.kernel.org>
+Cc: David Sterba <dsterba@suse.cz>, Linus Torvalds	
+ <torvalds@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, Jan
+ Kara	 <jack@suse.com>, Al Viro <viro@zeniv.linux.org.uk>, Josef Bacik	
+ <josef@toxicpanda.com>, Sandeen <sandeen@redhat.com>, linux-kernel	
+ <linux-kernel@vger.kernel.org>
+Date: Thu, 17 Apr 2025 10:59:50 +0200
+In-Reply-To: <20250415-orchester-robben-2be52e119ee4@brauner>
+References: <20250415-orchester-robben-2be52e119ee4@brauner>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.0 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [tip:perf/core] [perf] da916e96e2:
- BUG:KASAN:null-ptr-deref_in_put_event
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Oliver Sang <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
- lkp@intel.com, linux-kernel@vger.kernel.org, x86@kernel.org,
- Ravi Bangoria <ravi.bangoria@amd.com>, linux-perf-users@vger.kernel.org,
- Mark Rutland <mark.rutland@arm.com>, Frederic Weisbecker <fweisbec@gmail.com>
-References: <202504131701.941039cd-lkp@intel.com>
- <20250414190138.GB13096@noisy.programming.kicks-ass.net>
- <Z/3krxHJLaWJTj4R@xsang-OptiPlex-9020>
- <5bc5f54b-ce6a-4834-86d4-5014d44c7217@linaro.org>
- <20250415100840.GM5600@noisy.programming.kicks-ass.net>
- <20250415131446.GN5600@noisy.programming.kicks-ass.net>
- <77036114-8723-4af9-a068-1d535f4e2e81@linaro.org>
- <20250416084610.GI4031@noisy.programming.kicks-ass.net>
- <20250416190817.GD6580@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20250416190817.GD6580@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
+Hello Christian,
 
+On Tue, 2025-04-15 at 09:51 +0200, Christian Brauner wrote:
+> Both the hfs and hfsplus filesystem have been orphaned since at least
+> 2014, i.e., over 10 years. It's time to remove them from the kernel as
+> they're exhibiting more and more issues and no one is stepping up to
+> fixing them.
 
-On 16/04/2025 8:08 pm, Peter Zijlstra wrote:
-> On Wed, Apr 16, 2025 at 10:46:10AM +0200, Peter Zijlstra wrote:
->> On Tue, Apr 15, 2025 at 04:52:56PM +0100, James Clark wrote:
->>> Unrelated to the pointer deref issue, I'm also seeing perf stat not working
->>> due to this commit. And that's both with and without this fixup:
->>>
->>>   -> perf stat -- true
->>>
->>>   Performance counter stats for 'true':
->>>
->>>       <not counted> msec task-clock
->>>
->>>       <not counted>      context-switches
->>>
->>>       <not counted>      cpu-migrations
->>>
->>>       <not counted>      page-faults
->>>
->>>       <not counted>      armv8_cortex_a53/instructions/
->>>
->>>       <not counted>      armv8_cortex_a57/instructions/
->>>
->>>       <not counted>      armv8_cortex_a53/cycles/
->>>
->>>       <not counted>      armv8_cortex_a57/cycles/
->>>
->>>       <not counted>      armv8_cortex_a53/branches/
->>>
->>>       <not counted>      armv8_cortex_a53/branch-misses/
->>>
->>>       <not counted>      armv8_cortex_a57/branch-misses/
->>>
->>>
->>>         0.074139992 seconds time elapsed
->>>
->>>         0.000000000 seconds user
->>>         0.054797000 seconds sys
->>>
->>> Didn't look into it more other than bisecting it to this commit, but I can
->>> dig more unless the issue is obvious. This is on Arm big.LITTLE, although I
->>> didn't test it elsewhere so I'm not sure if that's relevant or not.
->>
->> I can reproduce on x86 alderlake (first machine I tried), so let me go
->> have a quick poke.
-> 
-> Could you please try queue.git/perf/core ? I've fixed this and found
-> another problem.
-> 
-> I'll post the patches tomorrow, after the robot has had a go.
+I might be willing to take over maintainership as we definitely need this
+driver to stay for Debian Ports as otherwise we won't be able to boot
+PowerMacs using GRUB.
 
-Yep that's all working now, thanks.
+Developers on the grub-devel mailing list might be interested in this
+discussion as well as GRUB won't be usable anymore on PowerMacs with
+HFS/HFS+ being removed from the kernel.
 
+Adrian
+
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
