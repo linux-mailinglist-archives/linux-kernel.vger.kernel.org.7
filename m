@@ -1,121 +1,180 @@
-Return-Path: <linux-kernel+bounces-609406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 211AFA921DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 17:43:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 508B4A92211
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 17:56:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE8D95A69B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:43:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 306AC3BD44C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC8825485C;
-	Thu, 17 Apr 2025 15:43:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A536A25484A;
+	Thu, 17 Apr 2025 15:56:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pJ1ibxZf"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EiZSKqc1"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77CAD253F11
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 15:43:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F92B254846
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 15:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744904599; cv=none; b=gzEP8dJan0V8+x9RxHjzSe5aPdoh4AM8qosn7LpdpzDEKr8xHCXRl3bwB1iQoNq8SBxV2x+0VrMN+GnXIpf11k+Xp1I02X6xvL3fK158U4BJsN3F1DDcHdu/bjLWAfnbThvvix+OdyWW5bJOa38rrOX64fXhdmX0Ly/E/l0+ztc=
+	t=1744905368; cv=none; b=hE4fRg6HMQadsusScVX7KCAPdu76lKPXPG8ORILSUWXLhsC1PCBds0UF4To7zNk6icGB39stWVF6t2V65kySwRgttT8FIZy8f7UIIIKYqI5MhB8AHDfE69kxk8ByOidggTdirLdOcGGGMA27UTsf5lqUQC232eap8dtpyykrmaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744904599; c=relaxed/simple;
-	bh=/ls7sBWqBfSenr7asANJeNgAWf1apqx+Udo/DkYWxjI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Tw+Kx17ODnnwfNzForasLuCbYMSBOcaxyYJG044vwTlu6W0+cy843KnGyn+NZXiWKkC3tQP3Tb5sWNIoKButgNGc1zPncyBXoP5gx0lUDeb4TR+Z+3UkR26MSvVze29Ki6EjOkLi3awYpaZ25OCschlpTKa5C9DdhIbI3lhSMmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pJ1ibxZf; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3913958ebf2so911610f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 08:43:17 -0700 (PDT)
+	s=arc-20240116; t=1744905368; c=relaxed/simple;
+	bh=XIy1TETct7ceQFwt/R5rYqGgneBGQXVAVFHkIGpP8EQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=F2c/TawFje4E05s2ybMFLeQzHL01Avoi2ym1Lu0TavhxFZDq/99QakPr3d0EawNyXl2G/fQKTqbAriMcmJwq47Ow0GgYJGHUIUcJlz2Ac3wCTrlC2QJQpLckCIVIP297CmvQBB3eYuNyIM6TJbTu5P1CR5Pq8nTMntGkvHIThH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EiZSKqc1; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2241053582dso14870375ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 08:56:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744904596; x=1745509396; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1744905366; x=1745510166; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pcmDyccsNttBk1NEg+6hG3KCFS05A9O/iwmE0/V4rHM=;
-        b=pJ1ibxZf1j/j9xQVMHMv6417BciZLIY0ejjgdAkmDi9j6/EOEVgZq3Gq/a7k5/zDQ3
-         RwLlQiI2lyGv4vL+cHNiDPCjlbnjsSvBwA5NMRs7vgZ5v5cVcoivXFYJSatFma7ZGLy6
-         sPhuWzyi13jQEx6LVQ/gsJKogLIHoJOVpe8ydvpkqu52C6q183uXp4MCx2fjtq6sllNg
-         gzs/DBAA3jlH5lGgkgjNOLb+HTElqEFI9OgbyKa4X8kse/X7GKF0VYyCKZ01tKlhZkpg
-         0sMDe0LpoDnNoSUnviOe+2ZOkCTepL1icUD0IFEYb2yK8Z0TvfVZ/wZa2N7wOw3q/VAA
-         RkDw==
+        bh=MNo4trKsSrAblzJZ1AtMfvORrQgIvx7kTybovwOHbKI=;
+        b=EiZSKqc12oQgDZp36xpbx5Sk/bcuHWCJBJUGhVN7My7f2i6EeWnllbPBXmKcZvsOzM
+         Ju1gfT0LZBaB8HL89qOXWIh5GA4w65nN8v9u56o+0vcuZhXRzrQYkq0/bIsA/Ppnjit2
+         lyEIdB00OZm701mQvGDqS1r1W+YYBMY6Tt+xnA+1aNI4XMBNv5g/2kO/SJ9MkaZXWUfk
+         Dg2UDlrY4dOLiBGqcjjInVqfmTW7kGuC7GW9pNnRkQHnD2TLjP83ShsyNYwjoFdBqPh1
+         SUKEr/K70gFuxtQaqwQ8FgEEnsGieVTAsQ35W6wEmZY3ekY7FkWNYVk/UmNQLVVW6Bz9
+         6b6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744904596; x=1745509396;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1744905366; x=1745510166;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pcmDyccsNttBk1NEg+6hG3KCFS05A9O/iwmE0/V4rHM=;
-        b=G55dwBs8qtZTNWFCUyLXkaYJ9+oO+l/QvJjOW5guo14V7zH8ZorGYbsa5dl57OwRry
-         ZNNk1hnce4wfTSJpZtWf5i8gnUQanyUCU39yO3rf4TT847hWJNuoUfmvMCol/GPqagqv
-         Ax/lVG72BL5HRMS+IjoqMsm5txPf9Alb3NeTIKIHneZVJTyKeOn8H6mZsBqatGqtVvXB
-         WgmzDG5j40QZC2z3CswxqnqtwymGL9PVOjwY6vd7M5Nrrg7nj9CWRR+/7iMuU0Yi9G19
-         XemBiYLxkCYHU3Oj2xIZBdhOdXzoc0Litoa00jdmw9CV4PS3bktRVUpe6UZq34vOpGbb
-         znUw==
-X-Forwarded-Encrypted: i=1; AJvYcCU8SU6Gp5XeAgjqm6zmV8JHaVVhsXxFc/YyByxj6jmGIsggBVPJSMj8b6JQWk9T+aYNncF1KCMULNTaOeI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyf7kQmHslkGxdYvTL40DHn5klJlbPkEaiXufZxS13Yl8vQ89kE
-	kiCBJV4SHhPGewGEgMgqJxZd8fzAzr988Fx4j8RJEG5uzhO0LyzR56SRz1HLpfQHnBMWRj62c53
-	x
-X-Gm-Gg: ASbGncuyuWHV+yIHD25sHHPxcVOJAgOH7QBX+q21XkLN5lFpwIsnVa0hNNGzR9tQAxa
-	NSv3dlGneSeq2fmC70Af5BqwYuiJzfkN3bLUzyhfCeiV2uEnhQfvL4Sbi6SSoa1TBTtrryGVl+C
-	Kj2CgqyIDwRX3ozFjcZZxXyDyIxnq0AtGiNVEU4BdDhWpefBnQBBxPSv22C4bDBCArLBGTposAX
-	rOJSBNBsxKgPvELkv8qH5jio6KonNEro//969LQLXd+wuXsn7SWF2TckK+iadotlufiD4+XJkZz
-	nwQ7aC6YdxAFDFhZU7dYrm10sF1GhoHqew0wT4uGjqCS6/VIa/2VlGDanWV9Kg==
-X-Google-Smtp-Source: AGHT+IEU5hSJ6PQyOtWU4JcRiIyUToVqInBdR55ONV+0tTCpl+QOvuCPnUHp/XeMa+65tSD1j+KrnQ==
-X-Received: by 2002:a05:6000:1867:b0:391:2a9a:478c with SMTP id ffacd0b85a97d-39ee5b1618dmr5694942f8f.23.1744904595706;
-        Thu, 17 Apr 2025 08:43:15 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eaf44577dsm20773640f8f.94.2025.04.17.08.43.15
+        bh=MNo4trKsSrAblzJZ1AtMfvORrQgIvx7kTybovwOHbKI=;
+        b=miT0GxOvK+xH3PmUp4DqMGR5KwnkbUG412HOwywbD4r6bMcZJW+hMbb+HUcmgCJJuh
+         tClDnsg1Oakkn58CV48JJcE8sYCWph0TG1JNtxMESNt//iHeFmVMEzBQY+ZFAdI7rpAN
+         tK/j6p02KZFvAe0GjxArYKMhptc+tnZUienp27EcZP3w5DS1YZhaXipRd8AwFME3dY1j
+         sKz4nZxKWt70IXjb1kovvrpePnEzyBJtri1sYSL+2yaBjksQCWVoj8vV6xZa1nbLUYmd
+         B3oK049rhbYbDDD4u2juFjwy54Je3LoWeIWanuTEqLHCOr7sTi/Ct0HtG5EgSGPUiYWR
+         APHA==
+X-Forwarded-Encrypted: i=1; AJvYcCWdwYMaRRnOhb5Iy6psQwUFfXpfgxtNkPkhFK7WtjT0X2k0RZRmlqwpTSTTU3ojaBIdaGRfY3MhnBPlKTo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1dMMTMY7pIqnko5GKo30+OqWPAEDidsJvMBsF9Q4132ILQVZQ
+	qBPfV8C5z0G9KFglzL9Z4MtGza4mZjzYLNNl0nAZCbsA2PmD/ki7
+X-Gm-Gg: ASbGnctXeaCiVkchiVeczpFYszLO9V2QjMwxHybvR8i/K8H3Ylx5erkRmstFcDa+rnw
+	pDx9uQOmfekUoovcqmwLfbrpQx0TnkSbgVC+4Zupt01c510CX4B2fzNaBmkV3GdQCCxrh7Oir5M
+	FCQjqEngdpSiPI5RSD5dDehvAJN0hK6P1+uC+23dJRFFmXD7v7UhQPnYxPFb529TzmntvIlLyjO
+	vOD7qwnr1ks4kJrCf0Xq+74FWsCb8ZL2OWbeQqWLqzG0QntLIp/2iBx2rlGHbE5fgT1E7TmOA8L
+	6aKHEf66kYX6towRPx/3kLgJi6oSkY6eR2s4qBAVWSx3zJtElfJZfiGkEQ==
+X-Google-Smtp-Source: AGHT+IH6hPLhTkRRuAmzXBkZvtr/mvV00mkfy9wR3j+cWFOfhtUSnXbr8ajdUurTGsVz18KRAbX+mQ==
+X-Received: by 2002:a17:902:d491:b0:216:3c36:69a7 with SMTP id d9443c01a7336-22c359a2687mr85665945ad.45.1744905366545;
+        Thu, 17 Apr 2025 08:56:06 -0700 (PDT)
+Received: from localhost.localdomain ([2601:646:8f03:9fee:5e33:e006:dcd5:852d])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50bdaae7sm1636085ad.36.2025.04.17.08.56.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Apr 2025 08:43:15 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-To: quic_jesszhan@quicinc.com, maarten.lankhorst@linux.intel.com, 
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
- Alexander Baransky <sanyapilot496@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250414172637.197792-1-sanyapilot496@gmail.com>
-References: <20250414172637.197792-1-sanyapilot496@gmail.com>
-Subject: Re: [PATCH v3 0/2] Add Visionox G2647FB105 panel support
-Message-Id: <174490459500.1152288.2148667843889329004.b4-ty@linaro.org>
-Date: Thu, 17 Apr 2025 17:43:15 +0200
+        Thu, 17 Apr 2025 08:56:06 -0700 (PDT)
+From: nifan.cxl@gmail.com
+To: muchun.song@linux.dev,
+	willy@infradead.org
+Cc: mcgrof@kernel.org,
+	a.manzanares@samsung.com,
+	dave@stgolabs.net,
+	akpm@linux-foundation.org,
+	david@redhat.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Fan Ni <fan.ni@samsung.com>
+Subject: [PATCH 3/3] mm/hugetlb: Refactor __unmap_hugepage_range() to take folio instead of page
+Date: Thu, 17 Apr 2025 08:43:15 -0700
+Message-ID: <20250417155530.124073-3-nifan.cxl@gmail.com>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250417155530.124073-1-nifan.cxl@gmail.com>
+References: <20250417155530.124073-1-nifan.cxl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
 
-Hi,
+From: Fan Ni <fan.ni@samsung.com>
 
-On Mon, 14 Apr 2025 20:26:30 +0300, Alexander Baransky wrote:
-> This patch series adds support for the Visionox G2647FB105 panel, used in:
-> - Xiaomi Mi Note 10 / CC9 Pro (sm7150-xiaomi-tucana)
-> - Xiaomi Mi Note 10 Lite (sm7150-xiaomi-toco)
-> 
-> Testing has been done by me on sm7150-xiaomi-tucana. According to the
-> downstream DTS, this driver should be fully compatible with the
-> sm7150-xiaomi-toco (unfortunately not tested) without requiring any
-> modifications.
-> 
-> [...]
+The function __unmap_hugepage_range() has two kinds of users:
+1) unmap_hugepage_range(), which passes in the head page of a folio.
+   Since unmap_hugepage_range() already takes folio and there are no other
+   uses of the folio struct in the function, it is natural for
+   __unmap_hugepage_range() to take folio also.
+2) All other uses, which pass in NULL pointer.
 
-Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
+In both cases, we can pass in folio. Refactor __unmap_hugepage_range() to
+take folio.
 
-[1/2] dt-bindings: display: panel: Add Visionox G2647FB105
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/7a5d0cbd8b19403ededbe84f21780f70632d1e09
-[2/2] drm/panel: Add Visionox G2647FB105 panel driver
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/3d55aebe257ec49f577deb7c8e4acb40dabc05e4
+Signed-off-by: Fan Ni <fan.ni@samsung.com>
+---
 
+Question: If the change in the patch makes sense, should we try to convert all
+"page" uses in __unmap_hugepage_range() to folio?
+
+---
+ include/linux/hugetlb.h |  2 +-
+ mm/hugetlb.c            | 10 +++++-----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+index b7699f35c87f..d6c503dd2f7d 100644
+--- a/include/linux/hugetlb.h
++++ b/include/linux/hugetlb.h
+@@ -133,7 +133,7 @@ void unmap_hugepage_range(struct vm_area_struct *,
+ void __unmap_hugepage_range(struct mmu_gather *tlb,
+ 			  struct vm_area_struct *vma,
+ 			  unsigned long start, unsigned long end,
+-			  struct page *ref_page, zap_flags_t zap_flags);
++			  struct folio *ref_folio, zap_flags_t zap_flags);
+ void hugetlb_report_meminfo(struct seq_file *);
+ int hugetlb_report_node_meminfo(char *buf, int len, int nid);
+ void hugetlb_show_meminfo_node(int nid);
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 3181dbe0c4bb..7d280ab23784 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -5833,7 +5833,7 @@ int move_hugetlb_page_tables(struct vm_area_struct *vma,
+ 
+ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
+ 			    unsigned long start, unsigned long end,
+-			    struct page *ref_page, zap_flags_t zap_flags)
++			    struct folio *ref_folio, zap_flags_t zap_flags)
+ {
+ 	struct mm_struct *mm = vma->vm_mm;
+ 	unsigned long address;
+@@ -5910,8 +5910,8 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
+ 		 * page is being unmapped, not a range. Ensure the page we
+ 		 * are about to unmap is the actual page of interest.
+ 		 */
+-		if (ref_page) {
+-			if (page != ref_page) {
++		if (ref_folio) {
++			if (page != folio_page(ref_folio, 0)) {
+ 				spin_unlock(ptl);
+ 				continue;
+ 			}
+@@ -5977,7 +5977,7 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
+ 		/*
+ 		 * Bail out after unmapping reference page if supplied
+ 		 */
+-		if (ref_page)
++		if (ref_folio)
+ 			break;
+ 	}
+ 	tlb_end_vma(tlb, vma);
+@@ -6052,7 +6052,7 @@ void unmap_hugepage_range(struct vm_area_struct *vma, unsigned long start,
+ 	tlb_gather_mmu(&tlb, vma->vm_mm);
+ 
+ 	__unmap_hugepage_range(&tlb, vma, start, end,
+-			       folio_page(ref_folio, 0), zap_flags);
++			       ref_folio, zap_flags);
+ 
+ 	mmu_notifier_invalidate_range_end(&range);
+ 	tlb_finish_mmu(&tlb);
 -- 
-Neil
+2.47.2
 
 
