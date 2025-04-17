@@ -1,150 +1,139 @@
-Return-Path: <linux-kernel+bounces-608617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FA62A915F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:59:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABAD5A91606
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 10:01:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3CE83A3134
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:58:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7629A7AD546
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0DAE2222B9;
-	Thu, 17 Apr 2025 07:58:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56BB322256D;
+	Thu, 17 Apr 2025 07:59:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dl8W6d1O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TQ82/fUK"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B421A264A;
-	Thu, 17 Apr 2025 07:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA53C226CF0;
+	Thu, 17 Apr 2025 07:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744876683; cv=none; b=ibOZEzoEkt7sODt208YeCMM/mAkrEqd9rDU4mpuefsBgwSnbvVagD2rZ3Dcfihpy0zQaTP5g6E4Dho7bnPHS/HSKMu/sb5DF5BfmvfTk37No+it5h1KZ4j+dX+DKjmv/fWQZA8mV2PPjN3S6hp9HpeDMbuiisgtC9f14mchNFEo=
+	t=1744876778; cv=none; b=Jaa64iCPVYKFUhx5pjqmhB/B64sJcn8Zu6vzxgyAipErcWLCYBQTWHLL9q0QD8NQLQMENuWkABFaQsh1Jub/B8hNFrvqt7qGLDTFG44vsR4IdQyQaI/ErNow0iMJ1nW1hDBfpvuLbk3XURyiyeJid+XsCLdIM0rPbzBlUgScYQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744876683; c=relaxed/simple;
-	bh=Js9PnPh53l/RPMmQHOE+NlNbkf8vxe/CykSrXM0XUvI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Xgz2MAdCGiSn9GFloaKEN3FRoOZ4R+qpkjMSaVBp9bKns5M9h9D4vq+cuwyPzjU3xrIrzIf/GLJ9EV6BgUNhHajysJcMBC5uZDFNoxfEGpZ6pYVeV+30pr3JoAy1O1cPG0pFnNqpDlkJ+2dYamIMslKE24YvDYInA3iujrnC3HA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dl8W6d1O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF1B8C4CEED;
-	Thu, 17 Apr 2025 07:58:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744876682;
-	bh=Js9PnPh53l/RPMmQHOE+NlNbkf8vxe/CykSrXM0XUvI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=dl8W6d1OQwhWGF25I4N4e6NJW72zHAeiYIqcjLe2tToWXg1OKEnqDpfvAEsg2dAu8
-	 fDAxoFvmrqNyKeZZZStUPGUBkOJ3Z94enWTerGPEMd1L1pKmllqe3XdCNPMsVHMfqG
-	 jVEBBwHfOqWOn+WA5kSKNMTfWyJOipzAUK5Ah/LJmoTqKceDZ/qFboE+NiAUqSsKk4
-	 SnfSxuyUH/pUEjW+vHz/DQrXrMZknUriuIn1WpafWTo7uqvBwX//cIriR8KY78bylH
-	 F6yXL52XDD2jOoVhGyOXVZF//eDi0zjboVNXg2FhcQE4HxgkQAsSXqbFvmBFnM6mnN
-	 dfl8GuLta+Rrg==
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-54963160818so575449e87.2;
-        Thu, 17 Apr 2025 00:58:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVExhFkcVUtDKt7oK/8H6Ue3y7c7YatMNeT0n2C2vMzQQYyHnVm2e9lmnj1chBtEqz02joMh5n247PsUxI=@vger.kernel.org, AJvYcCWCGMQQ7pygBLPWN/SdBOQ1v3t+L96Z8MkvCVgrvk1NLhMw7yoo0ltqqw/A85jCeLAV6vEOGGAjDqN5tnMy@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8GpebpTu6koNw+50hTY0+7WXS5UrmgARgQ0CgExYpKWjf5Ovp
-	kkz7/UZV+8AsUtHGqdWLnJeaul5Xus3vWtcnlcokKsZUKCNkY9tMwJSzJH9qZ7eJYzOm9WHqe6p
-	wgsxeSWTeDNckBolZzcJvf3zcfoU=
-X-Google-Smtp-Source: AGHT+IH+UGf3TCV/ileu1EuOqc6i/WlofQ6d6d2XoOO/gySbI9Xvr1O2nr7dG2avGasJMuGSvjsQhU5N69R4KoqhLdg=
-X-Received: by 2002:a05:6512:3c87:b0:54a:cc11:9cc6 with SMTP id
- 2adb3069b0e04-54d64a99ffcmr1827489e87.19.1744876681141; Thu, 17 Apr 2025
- 00:58:01 -0700 (PDT)
+	s=arc-20240116; t=1744876778; c=relaxed/simple;
+	bh=xNxT5Re1oftjzyxR5Ank9LUV80Pp7dElP2hd70zAJT8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f0vv8Ds5QKXGi8ccETqh6+iKHbzvTra2jVbVCEudyoyD5LGScz/4t0hCnnHXn4pyAkcqgUzEgBDB1kbgyLwlPrjq2TquQeX7FdVtnTbipcoxQilnORodHp2plNtQnOvCmeJ+xNtZRFl1oNYoYXoXH+TDkBugWFBm2QY/xN7Tmbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TQ82/fUK; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744876776; x=1776412776;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xNxT5Re1oftjzyxR5Ank9LUV80Pp7dElP2hd70zAJT8=;
+  b=TQ82/fUKuwUT4pertC8O+jnp1kzIgKa5/PAM/QExOfl+mOVBb3QcXEtA
+   8yF9FAMyZNU2EsIv1Wf3ABu0zv0cxn+jaBons77PGuncYRgbcSlEMbWSz
+   FQswj9VJ+g3J3OXHWCbEZ3iYDBY8emCIjMMiVpBu4gu4vkFDIWh/qvox9
+   LS5VmMcGW8Rt/+KgCQQ81yQF5MY5U92VS1bEjrOP+6TJWc0zyG3cEaQsJ
+   XxiJoYJP06Q6HPna+P5lrf1rh98ZhpWT8+XyIErnAipkv+8CSTTjvoxs1
+   8VexPY+talRGOeIjQmdaObF4Z0kHcRQth3nHwr3SizCCSudbcFMNvJf4A
+   w==;
+X-CSE-ConnectionGUID: wAVowEOaR+CghCy1O4bAzQ==
+X-CSE-MsgGUID: 4wT+pqRxRYCHK4KHYArr5A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11405"; a="68944176"
+X-IronPort-AV: E=Sophos;i="6.15,218,1739865600"; 
+   d="scan'208";a="68944176"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2025 00:59:35 -0700
+X-CSE-ConnectionGUID: 8VKL1ubsSFSs14j6RVHMcw==
+X-CSE-MsgGUID: mYT5ZLBjQ8iTNwGWZY/5mg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,218,1739865600"; 
+   d="scan'208";a="134825813"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 17 Apr 2025 00:59:29 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u5K9f-000LsM-0P;
+	Thu, 17 Apr 2025 07:59:27 +0000
+Date: Thu, 17 Apr 2025 15:58:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@intel.com>,
+	David Airlie <airlied@gmail.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Maxime Ripard <mripard@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] scripts/kernel-doc.py: don't create *.pyc files
+Message-ID: <202504171512.FiYw2rGC-lkp@intel.com>
+References: <4ad5eb8d4b819997c1615d2401581c22a32bb2c1.1744789777.git.mchehab+huawei@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250417064940.68469-1-dqfext@gmail.com> <CAMj1kXFPAVXOtPoETKvHB49kjZUPYrsAqsJwdL7p5Cu4xk75Rg@mail.gmail.com>
- <CALW65jY=LnVBYoKPOQnSKgGSA0brKzmo0vqoRDcqF_=jofLAng@mail.gmail.com>
-In-Reply-To: <CALW65jY=LnVBYoKPOQnSKgGSA0brKzmo0vqoRDcqF_=jofLAng@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 17 Apr 2025 09:57:49 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXH-u7hiKGQfgYHj_16V4ATN_aHmA_wkvMSyLh+E3+QaAA@mail.gmail.com>
-X-Gm-Features: ATxdqUFMmNbL_QaqhzIxzv2O_oKF8Akp0R3BbKtNgh9uwgL4T2xnWwluVDekAc8
-Message-ID: <CAMj1kXH-u7hiKGQfgYHj_16V4ATN_aHmA_wkvMSyLh+E3+QaAA@mail.gmail.com>
-Subject: Re: [RFC PATCH] crypto: riscv: scalar accelerated GHASH
-To: Qingfang Deng <dqfext@gmail.com>
-Cc: Eric Biggers <ebiggers@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	"David S. Miller" <davem@davemloft.net>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, linux-crypto@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	=?UTF-8?Q?Christoph_M=C3=BCllner?= <christoph.muellner@vrull.eu>, 
-	Heiko Stuebner <heiko.stuebner@vrull.eu>, Qingfang Deng <qingfang.deng@siflower.com.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4ad5eb8d4b819997c1615d2401581c22a32bb2c1.1744789777.git.mchehab+huawei@kernel.org>
 
-On Thu, 17 Apr 2025 at 09:25, Qingfang Deng <dqfext@gmail.com> wrote:
->
-> Hi Ard,
->
-> On Thu, Apr 17, 2025 at 2:58=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org> =
-wrote:
-> >
-> > (cc Eric)
-> >
-> > On Thu, 17 Apr 2025 at 08:49, Qingfang Deng <dqfext@gmail.com> wrote:
-> > >
-> > > From: Qingfang Deng <qingfang.deng@siflower.com.cn>
-> > >
-> > > Add a scalar implementation of GHASH for RISC-V using the Zbc (carry-=
-less
-> > > multiplication) and Zbb (bit-manipulation) extensions. This implement=
-ation
-> > > is adapted from OpenSSL but rewritten in plain C for clarity.
-> > >
-> > > Unlike the OpenSSL one that rely on bit-reflection of the data, this
-> > > version uses a pre-computed (reflected and multiplied) key, inspired =
-by
-> > > the approach used in Intel's CLMUL driver, to avoid reflections durin=
-g
-> > > runtime.
-> > >
-> > > Signed-off-by: Qingfang Deng <qingfang.deng@siflower.com.cn>
-> >
-> > What is the use case for this? AIUI, the scalar AES instructions were
-> > never implemented by anyone, so how do you expect this to be used in
-> > practice?
->
-> The use case _is_ AES-GCM, as you mentioned. Without this, computing
-> GHASH can take a considerable amount of CPU time (monitored by perf).
->
+Hi Mauro,
 
-I see. But do you have a particular configuration in mind? Does it
-have scalar AES too? I looked into that a while ago but I was told
-that nobody actually incorporates that. So what about these
-extensions? Are they commonly implemented?
+kernel test robot noticed the following build errors:
 
-[0] https://web.git.kernel.org/pub/scm/linux/kernel/git/ardb/linux.git/log/=
-?h=3Driscv-scalar-aes
+[auto build test ERROR on lwn/docs-next]
+[also build test ERROR on drm-i915/for-linux-next drm-i915/for-linux-next-fixes linus/master v6.15-rc2 next-20250416]
+[cannot apply to masahiroy-kbuild/for-next masahiroy-kbuild/fixes]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> > ...
-> > > +static __always_inline __uint128_t get_unaligned_be128(const u8 *p)
-> > > +{
-> > > +       __uint128_t val;
-> > > +#ifdef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
-> >
-> > CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS means that get_unaligned_xxx()
-> > helpers are cheap. Casting a void* to an aligned type is still UB as
-> > per the C standard.
->
-> Technically an unaligned access is UB but this pattern is widely used
-> in networking code.
->
+url:    https://github.com/intel-lab-lkp/linux/commits/Mauro-Carvalho-Chehab/scripts-kernel-doc-py-don-t-create-pyc-files/20250416-155336
+base:   git://git.lwn.net/linux.git docs-next
+patch link:    https://lore.kernel.org/r/4ad5eb8d4b819997c1615d2401581c22a32bb2c1.1744789777.git.mchehab%2Bhuawei%40kernel.org
+patch subject: [PATCH v3 1/2] scripts/kernel-doc.py: don't create *.pyc files
+config: csky-randconfig-001-20250417 (https://download.01.org/0day-ci/archive/20250417/202504171512.FiYw2rGC-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 13.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250417/202504171512.FiYw2rGC-lkp@intel.com/reproduce)
 
-Of course. But that is no reason to keep doing it.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504171512.FiYw2rGC-lkp@intel.com/
 
-> >
-> > So better to drop the #ifdef entirely, and just use the
-> > get_unaligned_be64() helpers for both cases.
->
-> Currently those helpers won't generate rev8 instructions, even if
-> HAVE_EFFICIENT_UNALIGNED_ACCESS and RISCV_ISA_ZBB is set, so I have to
-> implement my own version of this to reduce the number of instructions,
-> and to align with the original OpenSSL implementation.
->
+All errors (new ones prefixed by >>):
 
-So fix the helpers.
+>> /bin/sh: 1: -none: not found
+   make[3]: *** [scripts/Makefile.build:203: scripts/mod/empty.o] Error 127 shuffle=2754938148
+   make[3]: *** Deleting file 'scripts/mod/empty.o'
+   make[3]: Target 'scripts/mod/' not remade because of errors.
+   make[2]: *** [Makefile:1276: prepare0] Error 2 shuffle=2754938148
+   make[2]: Target 'prepare' not remade because of errors.
+   make[1]: *** [Makefile:248: __sub-make] Error 2 shuffle=2754938148
+   make[1]: Target 'prepare' not remade because of errors.
+   make: *** [Makefile:248: __sub-make] Error 2 shuffle=2754938148
+   make: Target 'prepare' not remade because of errors.
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
