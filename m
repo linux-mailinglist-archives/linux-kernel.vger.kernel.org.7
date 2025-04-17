@@ -1,167 +1,145 @@
-Return-Path: <linux-kernel+bounces-608808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00F08A91849
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 11:49:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8847EA9184F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 11:50:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E599445B18
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:49:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1ABFE1902413
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95FA6229B37;
-	Thu, 17 Apr 2025 09:49:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47EB522A1D5;
+	Thu, 17 Apr 2025 09:50:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="iCgWg4Nl"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F65189B8C;
-	Thu, 17 Apr 2025 09:49:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Dgqexjx7";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="usVT6zTx"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E66225A3B
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 09:50:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744883357; cv=none; b=UYBqqU+IOFcWE23XmhweNlElfyzXq1JwdvIJiBMykbQnK7dc5EteGMS8883NoatS8dqXoZMc7dFaEYFboULTwvsZ6ouBM7+bkXbWZUP8u42Rzm5snDqRh1GSb18rk3fH9j5vLygH5ug34IpOwR8MdYKKflQDWzthrwS2q3sd0tE=
+	t=1744883416; cv=none; b=Tw7YG3J64Vw7BZAOuXagWNxDN9xqk+Lmf3DLlRX9+Ine1/M5F9FxGd+r11FeA6iGYpGwnl+9Z0GH6Z5/ree9VkbWNY27OvTwQuHhjUIN22/9EYdQNYB09sMqnNxkkuTiQzqaBq59wlojHmT1ivaT+Tq4xCtJ2qDq12TmWl0wb0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744883357; c=relaxed/simple;
-	bh=q/55UHq6/1jiQ0EDhmM8zKPPjfUQ7XHvpmwEISmA0/E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m46DbbBuodKgASN107vApO64SeipyoeDG341nRIsg1/qV921k74obFQvL9l6uaRzA6Fd3Z4s4MyMmyxObHZdEMubbxEE99VKZHqgvFEA3hv/BFMGKNXu94GeC8ykmutv/eHvtJ3DG4UIAXZM3tudPLnxwlltasuCc0Gsp/JAmQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=iCgWg4Nl; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=hL2lxyNLK9Lw4I33AnMedhe2Sg2bxSiO1M7Cg/oEGJ4=;
-	b=iCgWg4Nl0Gcm7cXFrN1Rp8Xwwn2SKnMrvwUHYk/cEwmHbwPOl6cpJKmFwMZJPs
-	lyn4MS/HYP+bHx8pgmz3s/HnqwSp3dQz91/nhA4eD9y6O4n5byZAtdZLLkYcwGvx
-	x9LJt2GB+AsfDZF0frdf66ZWReyiHBUXXD1I8I8Es9FAk=
-Received: from [192.168.142.52] (unknown [])
-	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wD3_+lVzgBo48jBAQ--.33700S2;
-	Thu, 17 Apr 2025 17:48:07 +0800 (CST)
-Message-ID: <4c2a94b4-e483-426f-b7d8-ed98ac474c63@163.com>
-Date: Thu, 17 Apr 2025 17:48:04 +0800
+	s=arc-20240116; t=1744883416; c=relaxed/simple;
+	bh=8ZUxKLXf9vq9waQbjl+f4Y4qonVQkqHJNmtY+21wbqA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BpqJRcQGFgD060M/DzjSf6Hp0Uci5ZCS73T8/H38h/NzNYMuGtyn2DmdbLLOmo1j8hZIDclKQZClVRXHcfANv/b85aEO0fixA3Ktgu3jLnUzPjnblV3mthlxIVAfGsA1ikT9Ebm3WgjwGFojtn/uTchGkdINzoNBaB1uBJQ/7Zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Dgqexjx7; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=usVT6zTx; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id EF0E621175;
+	Thu, 17 Apr 2025 09:50:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1744883413; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=qfiQ6961dCOMHWEgtdCh51TFHLHOvYD1aDKH/ZVB6EQ=;
+	b=Dgqexjx7F4p1y7vIUY2/G3UUl51EuhLLHJbmpORHHB4zAIszVMy1Fifp7qf4YOMyrrwI0X
+	cm/NEXTmrdCldHsEe+JktI4REYg0IDei6pD3iuz78JcCta9F9dn20WoCIyxUVv8heP6EP2
+	9Opqlm5yI05lwjt1EFUQMdxNq5x72lA=
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1744883412; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=qfiQ6961dCOMHWEgtdCh51TFHLHOvYD1aDKH/ZVB6EQ=;
+	b=usVT6zTx4R7T88BgkQ2hodjrbVwlrPNWqsIbfr5WwXxOnb7HipYLeIiScQ3DEnLaM9Kpok
+	VgJFVBSn2mcTRZMG+sQ6ROH7MbTGTVM3J52PRftnFBWLmL2IFzYQeyMFDg/zq+OqR+DHYe
+	nEJ5EO9TUjHrnIoidfe/oUCn7Y2P4/s=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DDC1F137CF;
+	Thu, 17 Apr 2025 09:50:12 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Ww0eNtTOAGhqfQAAD6G6ig
+	(envelope-from <dsterba@suse.com>); Thu, 17 Apr 2025 09:50:12 +0000
+From: David Sterba <dsterba@suse.com>
+To: torvalds@linux-foundation.org
+Cc: David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Btrfs fixes for 6.15-rc3
+Date: Thu, 17 Apr 2025 11:49:55 +0200
+Message-ID: <cover.1744883021.git.dsterba@suse.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI: dw-rockchip: Configure max payload size on host init
-To: Niklas Cassel <cassel@kernel.org>
-Cc: Shawn Lin <shawn.lin@rock-chips.com>, lpieralisi@kernel.org,
- kw@linux.com, bhelgaas@google.com, heiko@sntech.de,
- manivannan.sadhasivam@linaro.org, robh@kernel.org, jingoohan1@gmail.com,
- thomas.richard@bootlin.com, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org
-References: <20250416151926.140202-1-18255117159@163.com>
- <aACoEpueUHBLjgbb@ryzen>
- <85643fe4-c7df-4d64-e852-60b66892470a@rock-chips.com>
- <aACsJPkSDOHbRAJM@ryzen>
- <ca283065-a48c-3b39-e70d-03d4c6c8a956@rock-chips.com>
- <aACyRp8S9c8azlw9@ryzen> <52a2f6dc-1e13-4473-80f2-989379df4e95@163.com>
- <aAC-VTqJpCqcz6NK@ryzen>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <aAC-VTqJpCqcz6NK@ryzen>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wD3_+lVzgBo48jBAQ--.33700S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxGrykWF1rZrWrAryDGr1rZwb_yoW5uFy7pF
-	Z0gF45Kr48XayIgr4kAa18KFyUtr9xAFWaqr98W3yqvw17uryrKryq9a90ya4Uurn3Ja4f
-	ArWkZrWYqF15AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Uf739UUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWxoyo2gAxuH92gAAs4
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid,imap1.dmz-prg2.suse.org:helo];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Score: -2.80
+X-Spam-Flag: NO
 
+Hi,
 
+please pull a few fixes, thanks.
 
-On 2025/4/17 16:39, Niklas Cassel wrote:
-> On Thu, Apr 17, 2025 at 04:07:51PM +0800, Hans Zhang wrote:
->> On 2025/4/17 15:48, Niklas Cassel wrote:
->>
->> Hi Niklas and Shawn,
->>
->> Thank you very much for your discussion and reply.
->>
->> I tested it on RK3588 and our platform. By setting pci=pcie_bus_safe, the
->> maximum MPS will be automatically matched in the end.
->>
->> So is my patch no longer needed? For RK3588, does the customer have to
->> configure CONFIG_PCIE_BUS_SAFE or pci=pcie_bus_safe?
->>
->> Also, for pci-meson.c, can the meson_set_max_payload be deleted?
-> 
-> I think the only reason why this works is because
-> pcie_bus_configure_settings(), in the case of
-> pcie_bus_config == PCIE_BUS_SAFE, will walk the bus and set MPS in
-> the bridge to the lowest of the downstream devices:
-> https://github.com/torvalds/linux/blob/v6.15-rc2/drivers/pci/probe.c#L2994-L2999
-> 
-> 
-> So Hans, if you look at lspci for the other RCs/bridges that don't
-> have any downstream devices connected, do they also show DevCtl.MPS 256B
-> or do they still show 128B ?
-> 
+- handle encoded read ioctl returning EAGAIN so it does not mistakenly
+  free the work structure
 
-Hi Niklas,
+- escape subvolume path in mount option list so it cannot be wrongly
+  parsed when the path contains ","
 
-It will show DevCtl.MPS 256B.
+- remove folio size assertions when writing super block to device with
+  enabled large folios
 
+----------------------------------------------------------------
+The following changes since commit 35fec1089ebb5617f85884d3fa6a699ce6337a75:
 
-oot@firefly:~# lspci
-00:00.0 PCI bridge: Fuzhou Rockchip Electronics Co., Ltd Device 3588 
-(rev 01)
-root@firefly:~# lspci -vvv
-00:00.0 PCI bridge: Fuzhou Rockchip Electronics Co., Ltd Device 3588 
-(rev 01) (prog-if 00 [Normal decode])
-         Control: I/O+ Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- 
-ParErr- Stepping- SERR+ FastB2B- DisINTx+
-         Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- 
-<TAbort- <MAbort- >SERR- <PERR- INTx-
-         Latency: 0
-         Interrupt: pin A routed to IRQ 79
-         Bus: primary=00, secondary=01, subordinate=ff, sec-latency=0
-         I/O behind bridge: 0000f000-00000fff [disabled]
-         Memory behind bridge: fff00000-000fffff [disabled]
-         Prefetchable memory behind bridge: 
-00000000fff00000-00000000000fffff [disabled]
-         Secondary status: 66MHz- FastB2B- ParErr- DEVSEL=fast >TAbort- 
-<TAbort- <MAbort- <SERR- <PERR-
-         Expansion ROM at f0200000 [virtual] [disabled] [size=64K]
-         BridgeCtl: Parity- SERR+ NoISA- VGA- VGA16- MAbort- >Reset- 
-FastB2B-
-                 PriDiscTmr- SecDiscTmr- DiscTmrStat- DiscTmrSERREn-
-         Capabilities: [40] Power Management version 3
-                 Flags: PMEClk- DSI- D1+ D2+ AuxCurrent=375mA 
-PME(D0+,D1+,D2-,D3hot+,D3cold-)
-                 Status: D0 NoSoftRst+ PME-Enable- DSel=0 DScale=0 PME-
-         Capabilities: [50] MSI: Enable+ Count=16/32 Maskable+ 64bit+
-                 Address: 00000000fe670040  Data: 0000
-                 Masking: fffffeff  Pending: 00000000
-         Capabilities: [70] Express (v2) Root Port (Slot-), MSI 08
-                 DevCap: MaxPayload 256 bytes, PhantFunc 0
-                         ExtTag+ RBE+
-                 DevCtl: CorrErr- NonFatalErr- FatalErr- UnsupReq-
-                         RlxdOrd+ ExtTag+ PhantFunc- AuxPwr- NoSnoop-
-                         MaxPayload 256 bytes, MaxReadReq 512 bytes
+  btrfs: zoned: fix zone finishing with missing devices (2025-03-18 20:35:57 +0100)
 
-Best regards,
-Hans
+are available in the Git repository at:
 
-> 
-> One could argue that for all policies (execept for maybe PCIE_BUS_TUNE_OFF),
-> pcie_bus_configure_settings() should start off by initializing DevCtl.MPS to
-> DevCap.MPS (for the bridge itself), and after that pcie_bus_configure_settings()
-> can override it depending on policy, e.g. set MPS to 128B in case of
-> pcie_bus_config == PCIE_BUS_PEER2PEER, or walk the bus in case of
-> pcie_bus_config == PCIE_BUS_SAFE.
-> 
-> That way, we should be able to remove the setting for pci-meson.c as well.
-> 
-> Bjorn, thoughts?
-> 
-> 
-> Kind regards,
-> Niklas
+  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.15-rc2-tag
 
+for you to fetch changes up to 65f2a3b2323edde7c5de3a44e67fec00873b4217:
+
+  btrfs: remove folio order ASSERT()s in super block writeback path (2025-04-01 01:02:42 +0200)
+
+----------------------------------------------------------------
+Johannes Kimmel (1):
+      btrfs: correctly escape subvol in btrfs_show_options()
+
+Qu Wenruo (1):
+      btrfs: remove folio order ASSERT()s in super block writeback path
+
+Sidong Yang (1):
+      btrfs: ioctl: don't free iov when btrfs_encoded_read() returns -EAGAIN
+
+ fs/btrfs/disk-io.c | 2 --
+ fs/btrfs/ioctl.c   | 2 ++
+ fs/btrfs/super.c   | 3 +--
+ 3 files changed, 3 insertions(+), 4 deletions(-)
 
