@@ -1,133 +1,127 @@
-Return-Path: <linux-kernel+bounces-608592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83FCAA915B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:49:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CCD2A9158A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:45:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 851335A4625
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:48:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6ACC617DE8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D88E321CFEA;
-	Thu, 17 Apr 2025 07:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B8DF20E01B;
+	Thu, 17 Apr 2025 07:45:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="r3T5zzQ4"
-Received: from out203-205-221-245.mail.qq.com (out203-205-221-245.mail.qq.com [203.205.221.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XXditUeo"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1401DE3BA;
-	Thu, 17 Apr 2025 07:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44572A937;
+	Thu, 17 Apr 2025 07:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744876122; cv=none; b=pUOByE+iCS9Y7k1EbxNgZmuoy9dQIkFf7ZIwFpvSrhW9HN3p8TO2PBhlPdTPI6k7Or0f7scQcdu6BEMcisrCM2BL52Yaq099IBiRgGg6SfJeUqWukxcBAi7//jrDAtLQFR5zHv1A9wEsDMYACdrlO7JFfaNbcRcmaGBb8Oe2FX0=
+	t=1744875915; cv=none; b=m1Z9nXKl3i9AYYwgiidjHkWrBy+EJosCAVfcnRYqnCdfGSHH/ygdadfJlU1x11jY/LcIwjQCJ2XmsLwegw6/yQAGC35LKdFJzqWwGf6kYLrzsJVChgctgXBUaIvImHVtbJZFVzujG7GTMfIf0EVmvE0NIu+9imewwTZSjUcxHUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744876122; c=relaxed/simple;
-	bh=V4ZdTBOdAnf4x7XHdVxrwP0So59hsxD4auzKQf4usvk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ar1iiYGjrInJC41/fe6Nm6NxXE/x9U77e+SA9OaPeDV6Cd6OiL9Hv0i4tbc63HbIZ3e8jDs6Mnm632alDgkhQZO+7MhBNUXb/MSaC9OWkww/3lk3R5YhUpdbhjMeI+0ktTygVbRee+qOBDCqsuTG+Xt6juIah3kLnLVr69BTJ7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=r3T5zzQ4; arc=none smtp.client-ip=203.205.221.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1744875809; bh=Rke5HdMYnCS5otM+F4H5jVE6Nq1snFf9qz3WwCRGqLo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=r3T5zzQ4lmFfYnBYGCgiZJsmbOYxQWg5C8NupnZ2APMHQnsP/6wzelMQH0R9dv2Bl
-	 dv9usTv9TEopl22q8p6k4qLSrMTKkJTCx7O2ob3jwMVJhzFu4wVZrR/DDQL3cPyusW
-	 f1ncq+HcFJMxd0P5faF/ym45aEO4lB2OHf+9RKzo=
-Received: from [10.42.13.21] ([116.128.244.169])
-	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
-	id ADB3D0D2; Thu, 17 Apr 2025 15:43:27 +0800
-X-QQ-mid: xmsmtpt1744875807t45ml89rq
-Message-ID: <tencent_91D93A837FF94A06C7FE8492461472B86D09@qq.com>
-X-QQ-XMAILINFO: MQAOa38Yz/8/BA9r/BqbKbAVwM4a+i7NBmueZEdzdR6KAMU83k+uzKboJDM7RH
-	 JAOFbIkJgZ1G8J1UbJmuPMoEWGQwVRoAIYMz0OxwGF7/8Ea7nuOaw/oiYVQ2wLr/0HRfny9o36U4
-	 gxxrrv4q1TyWGM0/BilAoRkLGF/7OLk+py5OAn/4qHpjmsnYHJGpMbs0kj+pez01BgA1xjCIa7+/
-	 EByBvWaFegItErpEMcKGG5Tg2fqQAnyj6tk6/kyUXu2f22DrduMPEtpOoZsbjGvAGBsCXn+BqXnS
-	 iQ8IPWuQZHwiY5MNnmotAz2/GldyxAO7RjMFpWt+4Y1dbGaBe5FYfRseUZVxumTU4xYWOxxhA+0L
-	 NqZxX5WOF2Rv5dvq7trlYd+du8Tzwe8wlr4HadNSY0q3MFofMv+vmGi4XVjYgxDyiEU/v1J85TGS
-	 CGEGwb2HlJbLQpDI1nq04/xYBKGbbLQnakAnj6cQz7OZ0JI8udsNzERg+JYKfRFAVyPIGvixV/1V
-	 RO2+31BlgGRZrVbov5zLEZdtGFZxBq/Lgl/XOv1jlCnel5s3Z8UGLxxYvhu0kiCWpVeSZHppfsAx
-	 SQmFdu9CkZ5qhOaP0mxzZ9htD6hwWeRhQMvmEzj9gcXkDEC32+dm4owApFv1umu/nQXqJSsBaP2R
-	 bY4QJc0c5ndaAps0DDCgqHDB+7ihSNErOKXi47YaO97BVO+i1WnB1g4dv2z+3srx2nLLAHraEsTc
-	 je12hgvY+mQI9Bw2dLvbFG7Hlu3ise1sQISIcZYkLujVoLKKaQZvmJ2QBjAKGqdVNq+AjlTJSITq
-	 lhqPOxzrIMRd/SEYz9+O+KLiTD0fgx6wHJZ0DdxUtQj9Usp1xgzzJs3TKn96WXaZ1UC5AspI3clH
-	 rMziZsQFJKNldETx3JbGDY3SqgFCPlSf0mPPw3reaBiur1VV3WWFpPDaKdp0N13BkbJwyGBbqm3B
-	 WtgGCisVqwhV+GI/SQ6GOXm6QtTJXFaD21DuRezLzedNirTRtZ6368tXolkGABclvLybirWE8wIW
-	 qY/KOvnAgcXkNoA8is
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-X-OQ-MSGID: <c1261f4a-2b57-445b-bac8-d199a162bc25@qq.com>
-Date: Thu, 17 Apr 2025 15:43:27 +0800
+	s=arc-20240116; t=1744875915; c=relaxed/simple;
+	bh=Vkng84A1VO7UZA2qLJswMZFcaLIzTAdafSby743weXM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=khlFELxhPSvq7EFBtcXDlPQqF3yVriAv32w3V86UMKsk/muUZ3OUXP0BQkHsGL92QOal9kY2EgcJmMdKe5FfVXFX1pLxO31Udo8FWSga3pCbxC7AE9Q/lR0L7kvUSYFEIeZI6gP0vzgrW8PrhHCyv61Ikaia3d6rO2ESITAU8Ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XXditUeo; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e589c258663so460522276.1;
+        Thu, 17 Apr 2025 00:45:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744875913; x=1745480713; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mcssgBbbVj+a/uBXXE9RC1cUGNGu+ygdY+cVqccmccM=;
+        b=XXditUeoyk7dipu+sb8he/ySrTaDQAj8ujg8Uy+FNJ8dWc/sUWE4lAtrVOVIL6pbaN
+         aDxXShdQzQtr8cY6SxRzB5FOa34QYmQSu6j76XW6eVlHNhe0iFgzMKpvyAmELFsUFuxw
+         RozhFq4lenJJctcSi8tix/60dHhbdGtMOx59/Vcg2KsY7tlbBuhsomba/UYQ3EYdyI6t
+         VUP80EjJ/tRRAjbxq/q8UOdn2QBA0N7DQgJEf6wlSDctK7V+ogp9NuB3awmIjpvq6jKE
+         MJ+zCr8VqUwtWaK6V1dWUmpvEwliSiejVmB58kICpBJCTYgag7DSkmiY2vB2yrcxNIMY
+         fAzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744875913; x=1745480713;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mcssgBbbVj+a/uBXXE9RC1cUGNGu+ygdY+cVqccmccM=;
+        b=IvpAkgj0oWwgEkD72qIBIccxWCR8DIb0xQby3A52OzAcfvWF3cz8fUKtdkWyPLgMLq
+         IxUrUN5MJzDyPyWecrcn4sx/jNTCxhsRm6H2QrBnCQtvuomozXSFSME+z+XH/i9wLiIM
+         gMinzJjTGkT+SxW++rYzQswvpoGwHJFzGo+KzQC7tVboNA2Jyq+XQUqGk8S77RezZ3iR
+         oeYlrJWPBR5Zqd3xTOISjvN39WdHQDkCRZzMb6IN08x9DgFtJCpwA2SgDfCLvKk6b2+u
+         s+DmP871FJ0YaQp2eLukkLGqVjMzxhFc1AM1bKFx+VBgGWtnQ/FP6IU9kNgQbtEoBhCy
+         OWjg==
+X-Forwarded-Encrypted: i=1; AJvYcCU7dmY3XE0jQu0+1AwNbv3LTY9zIhFPfoTYivKPY4LlBig3SrlZusj8kFeV9yltwY+ej0I2+N9ZKF7Teng=@vger.kernel.org, AJvYcCUw00xAWDJ/8+JCVPC/HM9/iU5ysGoz7Bzo4ieq1OIpLe1AKYlom8g7Ly4P2fImg7WXBvyhx/LFamWORdTe@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2RHTE6GFtQYxvTDzkNarrFVqO3RuzraUeEPpH0dZzyrG9Yam4
+	/VL0j2ndeMwIr7e76ERzTNmtBxwOvvz4oX7H2r/wDF/RYGU3hcRJnlCCBHTFs+0iTA4wKAw6xtY
+	zXEuaX9rtieMUgXbsKM/8TXor1E8=
+X-Gm-Gg: ASbGncsfb28jiQWi0prw+fb0S5IVRN03jNCbhAV1VldK+O+G2l2rFk7eMCjkGqcOCoz
+	Fp9xS07wL3+BEbITHkQRxLeQdwom84AO1tEx++OmK945H69dLYLV9JvKmT7DGO4wPhdRXRnIbQc
+	9CQnslKoMz6Xk7INEFE+9i4mJAc7k82WJQg1lPCA==
+X-Google-Smtp-Source: AGHT+IGAR6lg2fMrbxA05CvZYcwcoxr2wuX/4XKhCG2jkWZV60uluWoRnjmCRD/x3C4szfiM33Qvp74JQs4FBRcBiiE=
+X-Received: by 2002:a05:6902:10c4:b0:e6e:b3d:6f87 with SMTP id
+ 3f1490d57ef6-e7275f2995bmr6717565276.40.1744875913212; Thu, 17 Apr 2025
+ 00:45:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] PM: EM: Fix potential division-by-zero error in
- em_compute_costs()
-To: Lukasz Luba <lukasz.luba@arm.com>, rafael@kernel.org
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Yaxiong Tian <tianyaxiong@kylinos.cn>
-References: <tencent_EE27C7D1D6BDB3EE57A2C467CC59A866C405@qq.com>
- <tencent_2256A7C02F7849F1D89390E488704E826D06@qq.com>
- <1ca192e6-3a45-45c6-b4f0-be6a89eaf192@arm.com>
-Content-Language: en-US
-From: Yaxiong Tian <iambestgod@qq.com>
-In-Reply-To: <1ca192e6-3a45-45c6-b4f0-be6a89eaf192@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250417064940.68469-1-dqfext@gmail.com> <CAMj1kXFPAVXOtPoETKvHB49kjZUPYrsAqsJwdL7p5Cu4xk75Rg@mail.gmail.com>
+ <CALW65jY=LnVBYoKPOQnSKgGSA0brKzmo0vqoRDcqF_=jofLAng@mail.gmail.com> <CAH8yC8=9u42jK0-FrHOXvWDM-Z3jUKSSSFznTMVWUiPAgCFcTA@mail.gmail.com>
+In-Reply-To: <CAH8yC8=9u42jK0-FrHOXvWDM-Z3jUKSSSFznTMVWUiPAgCFcTA@mail.gmail.com>
+From: Qingfang Deng <dqfext@gmail.com>
+Date: Thu, 17 Apr 2025 15:45:03 +0800
+X-Gm-Features: ATxdqUH8LtN62wtWOBNCijYJvfLyDx2fGZykb1xFl1cR53g-9tp1DwUwsjdUDSI
+Message-ID: <CALW65jZvieqvHei31Ufikz4SVEGvDZwGyLGf=9Myqw1hS9m-sg@mail.gmail.com>
+Subject: Re: [RFC PATCH] crypto: riscv: scalar accelerated GHASH
+To: noloader@gmail.com
+Cc: Ard Biesheuvel <ardb@kernel.org>, Eric Biggers <ebiggers@kernel.org>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, linux-crypto@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	=?UTF-8?Q?Christoph_M=C3=BCllner?= <christoph.muellner@vrull.eu>, 
+	Qingfang Deng <qingfang.deng@siflower.com.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Jeffrey,
 
+On Thu, Apr 17, 2025 at 3:40=E2=80=AFPM Jeffrey Walton <noloader@gmail.com>=
+ wrote:
+>
+> On Thu, Apr 17, 2025 at 3:25=E2=80=AFAM Qingfang Deng <dqfext@gmail.com> =
+wrote:
+> >
+> > Hi Ard,
+> >
+> > On Thu, Apr 17, 2025 at 2:58=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org=
+> wrote:
+> > > [...]
+> > >
+> > > Also, do you need to test for int128 support? Or is that guaranteed
+> > > for all compilers that are supported by the RISC-V port?
+> >
+> > I believe int128 support is available for all 64-bit targets.
+>
+> You can verify the compiler supports int128 with the following macro:
+>
+>     #if (__SIZEOF_INT128__ >=3D 16)
+>     ...
+>     #endif
+>
+> Also see <https://gcc.gnu.org/pipermail/gcc-help/2015-August/124862.html>=
+.
 
-在 2025/4/17 13:57, Lukasz Luba 写道:
-> 
-> 
-> On 4/17/25 02:07, Yaxiong Tian wrote:
->> From: Yaxiong Tian <tianyaxiong@kylinos.cn>
->>
->> When the device is of a non-CPU type, table[i].performance won't be
->> initialized in the previous em_init_performance(), resulting in division
->> by zero when calculating costs in em_compute_costs().
->>
->> Since the 'cost' algorithm is only used for EAS energy efficiency
->> calculations and is currently not utilized by other device drivers, we
->> should add the _is_cpu_device(dev) check to prevent this division-by-zero
->> issue.
->>
->> Fixes: 1b600da51073 ("PM: EM: Optimize em_cpu_energy() and remove 
->> division")
->> Signed-off-by: Yaxiong Tian <tianyaxiong@kylinos.cn>
->> ---
->>   kernel/power/energy_model.c | 4 ++++
->>   1 file changed, 4 insertions(+)
->>
->> diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
->> index d9b7e2b38c7a..41606247c277 100644
->> --- a/kernel/power/energy_model.c
->> +++ b/kernel/power/energy_model.c
->> @@ -233,6 +233,10 @@ static int em_compute_costs(struct device *dev, 
->> struct em_perf_state *table,
->>       unsigned long prev_cost = ULONG_MAX;
->>       int i, ret;
->> +    /* This is needed only for CPUs and EAS skip other devices */
->> +    if (!_is_cpu_device(dev))
->> +        return 0;
->> +
->>       /* Compute the cost of each performance state. */
->>       for (i = nr_states - 1; i >= 0; i--) {
->>           unsigned long power_res, cost;
-> 
-> 
-> Please stop for a while. I have to check what happened that you
-> faced the issue in the first place. I have been testing the GPU
-> EMs and there was no issues...
-> 
-> Let me debug that today.
+There is a Kconfig symbol ARCH_SUPPORTS_INT128. I may switch to that.
 
-Of course. Since I don't have actual hardware, I can only logically
-deduce that this issue might exist.
-
+>
+> Jeff
 
