@@ -1,115 +1,195 @@
-Return-Path: <linux-kernel+bounces-608590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 679C2A915AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:49:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC22EA91581
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:42:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF48E3A7A27
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:48:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CEBD3B34BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:42:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E69422087;
-	Thu, 17 Apr 2025 07:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F8521ADC2;
+	Thu, 17 Apr 2025 07:42:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="bvJrstqz"
-Received: from out203-205-221-210.mail.qq.com (out203-205-221-210.mail.qq.com [203.205.221.210])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wQqR4Pm8"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 574D01DE3BA;
-	Thu, 17 Apr 2025 07:48:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627A2219E99
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 07:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744876102; cv=none; b=fKJOCiKNZfuAZPsL71r+6jnUecfgjaZvxRnbf/43zdAO7pob4uIBnq4C7zt0eIkzAkgZv4ZvHtItjQx26vFp0WcjJ+aajJlSFXZKoFCsH+9Gbg9a9wKOrRfga9AFMGmAymLJbMqcnNECWPEcB6W5t4aQFdNUSbyEt7kX27OVeLY=
+	t=1744875738; cv=none; b=GcYW9lRFDnpEjsr5hEh5YIUWD+0JfP+oBIL3VMKguM6eiUN3bX5JmX8cxmF7Hpbwi8bYgyNo/PtM9JTIcraOwpTc/LDAo91MNYFlX0kylNW5Tpd3ynKtLPIntLs/ikmCDI1pelvyEbl9aLkn9CNW11eoF8e5h6RCz5lwkfsXna0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744876102; c=relaxed/simple;
-	bh=g69U3MXxWXrTcJzezoDF5hQtVmdFyUMPr2vui6AhBd8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ona6zFl/TL55hSSS90gg13onWzhAP3c3GW72EsKUM5jhFfC7ZeR90VV8khQy9zq+yzZ0IpacidDC9MAMXxtT29ccaTrMsaeljuBGL/QSWsNbu7Ia+njtB+b3mlA5LyzLxNNMayfuocHOdNHxPF8kv5MLkYZ0t+zj++9Vrx3gfE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=bvJrstqz; arc=none smtp.client-ip=203.205.221.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1744876088; bh=jtLqqxgkkS7hjzhrNQSkLpeFrvyKORWwVkpEiRFM2y8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=bvJrstqzWSBhPkVWeMYuT4HIziUbUr2BmpzDrBQUj9Aj+f6SdLWVxoUWR/PA7X7E/
-	 XaF3W1MVMkWlEOwAt1sYQiXWyQqe+vD9rXwHI7L92zGR6FIOYqeHiGkhd/c/PPfPrn
-	 /SawPI1AAUjKf5cOPHXoG+dyDSMW9pCf4JHBEdW0=
-Received: from [10.42.13.21] ([116.128.244.169])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id A7A83A38; Thu, 17 Apr 2025 15:41:58 +0800
-X-QQ-mid: xmsmtpt1744875718tyr8k8gfy
-Message-ID: <tencent_7F0AB62F9DA4BF9F250063A7421F23AC3908@qq.com>
-X-QQ-XMAILINFO: Ntt/5q+SsafOsnPnwUxg9cH2jNPvQoJzy31D/qLKszyBC1og0zhcJchIQtlALw
-	 yhx15RO9RGMw20WtvpxUWUQo20XfMgAfPdLgw+wKOYbTvty1D9A3BPY5mDdcZXA8kGUlQ6MeoRQz
-	 /ZJC81lKrRE2ViL5gjYfMb/V8y5poj4OG6byl/wOFmwWyiRah8joVvZF5bQjJ3J3DRbIYtmG2Kiv
-	 2qRyNkjpH6fN6uv9TuCakoF7A1yolmQ0z6hhsHEWNPDp/R/VxQp2GkLFA9q7VIx0P0XbQG7E/Ekj
-	 OvY/BSzVoOelpQJ/tZHl5TAmOaN5mH2/l/xZQhvA4bxlIPtqWhJ5lUZzOTBG23CH6XU28+RtGodS
-	 0jMRKlUefrQD4Z6MCcB1yA247Rn8egl9Un4AzfRIAyZ8DHUE56yF4Lxhcyvmv8gp6lZP7E9x7Ixt
-	 bObvD8JGkmjRr8nWbVgnFMUkVWgQHJBEiPF4IA+z5csJGd7KrUHPWtpqXLtonmRMd+H6e6dmNERX
-	 vbsNV74B+BAT8pOsMs9wqmTotDoBPjzV3WjjykVFFcL3Z8cBO1M2M/4Jm+kMl6tKuGEU02Vjsc5K
-	 R8lBwCeXRgYRTgOwH0YlP3a815PNuFzmc3O6AKENw6nJULxm1G2T0J6yPjDLia5ZIqhMA7WouB3c
-	 yM7yCLhagWCeicBWMhWdwnThoKWfJVCXttrr577B2vvHWrJgmDN13AtxiC4YwsjiRdZ78aNPTiT9
-	 TsWsu3TAvz8q1QkKBlEpZTowIQYUNJe8bXSnJ6YcbaljQYTpMUtxhQzseIp3WKLni4gMZDmeMdqG
-	 MAo/xIaxinbMgSKdL9BcyzDcKOUW5BmpPUELmQcBo0HRxZOAIvMmH7TmVmSdrSvbTVEMiKSuiDPC
-	 X4+PF7yY9M3CV50P9eCCZ9HPb0TbvyeHZxu+mFLPa4WeITYu/BSs3caw0yjgrLAA7RZ4+yGlTlU7
-	 7a8FCGy9crh+Aeg6wyA5aT8wGTtgfgTvFgLOCBRKxwzGnYQf4HoEDqvF7ZJgXnEDvCPXj3zPYUvM
-	 d4azrXsp5PxJmD9HPDKx5CEXsYHzU=
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-X-OQ-MSGID: <e7ecc530-af6e-4ac5-92ea-b3976aa0f13d@qq.com>
-Date: Thu, 17 Apr 2025 15:41:58 +0800
+	s=arc-20240116; t=1744875738; c=relaxed/simple;
+	bh=mVQwtEZSIlgHa/mm1mmUYoeDx30+E8QTcMPkDxPlNF8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PxsITIIbQVd48gwBe+9Ycm1x8XBHV4CqwqGvEnc03pwLQdriUp3ZRJciwnQUzqsIUNsG+KCXy8aO7XmaGaLzhTMkNCVsSi1BwjHxttVCSuCHW2RCgRz2yOckF/RC42zEXeDcRuCN1ypk0Z9QhPd/wKwj9EgZdsXAlDytxTu8tsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wQqR4Pm8; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-22401f4d35aso6025115ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 00:42:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744875735; x=1745480535; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=eDgB7wJ22ie3HmeLXVm86GHefERwHEPMmaPgZUtFTeM=;
+        b=wQqR4Pm8rBZKdlxXyseRgKtd9U9JpvKFaxiVpgCLU69FG7KhNy3kcP064s6ki0Cabx
+         H3nhgMN3CavkbM0vZ7svGG+PzM4ZLYWrVwNOz7OvR4KLKbMcOs/r8IMyumx+MJL5xa2h
+         B7s7sCeZGLgfKdh0KWN5LXfqzfHSmYwYp1drtgqYeELQVcyk5PvKv2qDZfQWcXCkdGf8
+         K47PsP2JXVDe7YjntJMr5OgyHcR8hWbCu0A27Qto6czighlnSyqIsoZOdEJra60xtudP
+         8+90v6WsznqbIFsIbmQZrKki8WdDv7E3kzTJd4Uk8iuMtfsM/NvC/Tyk6o67AVJVg/Bw
+         G+EQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744875735; x=1745480535;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eDgB7wJ22ie3HmeLXVm86GHefERwHEPMmaPgZUtFTeM=;
+        b=EzQ20x0eJbbv4WIdXPW6LnjaPfzbDGpJRVvnCn16BSgUdltcdYXucm++K4XpQOtC1l
+         S4YukaSmOngsizSTNVAa7cZzXRd44iG2Z9ca9GuUvBc3YcFx6QRTEEpWmWsp/FyEJoTa
+         9reHS85F1W6nOaWbTzEuWJiAUAFH1DqLZ4+Gn7xlrkpmH7pial5pmMSHEuwiJcNzOMs4
+         km4Be8vqnnGYtXG1zw3agYZ0qWCXNIa4+AFQVEOY8JI2HznhNtArQVCfoxiujQTtwWPW
+         pUIGC8Gx3m+5I2rXsr6xF/NXUBZcZRVei0JUJolkdJqv20f4sP8tD+N3KaceZm7u2h3F
+         FysA==
+X-Forwarded-Encrypted: i=1; AJvYcCWJW0yLP47FAOcXOxOVXFyh/C1zqMOLD43jsvkUOwE80yIAydXccc/wChP5WWisZbQDWWrNdetv9BdXqaA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiKpPbmy1M4biG98DpypoSxnukv2v/siViSN28YeIY+hlsvWBb
+	GyDxvHeo+UIDkkSIltbCdDxAVVTf/rk8hiJ4DKx/Xqm8p/dXdqhf9RaoypVgsQ==
+X-Gm-Gg: ASbGnctdqta3n+CJMmoJ5ek/rba3WCprm6Iv8aVdihTA0msI5Sq8uy3x5Y1jCFAbUoa
+	J1tmEPv/0u0gQUMvEDjA5xSael9VCFuod3iZYe9TWY9I0+AUdYx0DT7+rnQ8PX3beLfltsCWWv5
+	M0IAk1PdCTIRg8Ap8C4Ds+VGXIFvDq2ZHZYqLXCb632s0rgoQ6c0N+R3Thbs5J0vz14j4jVgz36
+	x02uO0lEaCXuWLHgOixNZbxKafqd+xsJqf6H6RCyPhXqgek5B0t6uZso+JG2pSZJIxS/van3AY7
+	IL9Dj2mTFc7IuSPsPNC0PwR+5So2Ngx47ccameO0euNjxGIlLCjQRj6NlZY=
+X-Google-Smtp-Source: AGHT+IG/Yi/qk4YGrJvgZRoRnXd14pk5pi5diwpsqtszPlC13bqbgZFlocoYN6rPXNF0yZn07MCGQQ==
+X-Received: by 2002:a17:902:dacc:b0:223:35cb:e421 with SMTP id d9443c01a7336-22c35985d1dmr68962035ad.49.1744875735660;
+        Thu, 17 Apr 2025 00:42:15 -0700 (PDT)
+Received: from thinkpad ([120.60.54.0])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c3e0e19d2sm15264935ad.91.2025.04.17.00.42.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Apr 2025 00:42:15 -0700 (PDT)
+Date: Thu, 17 Apr 2025 13:12:08 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
+	Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof Wilczy??ski <kw@linux.com>, 
+	Rob Herring <robh@kernel.org>, dingwei@marvell.com, cassel@kernel.org, 
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] PCI: Add link down handling for host bridges
+Message-ID: <doyt4kcaffgjm5u5notcjnqur7ydim3dpo4se5em2an36wa3rp@xzntx4sa47dl>
+References: <20250416-pcie-reset-slot-v2-0-efe76b278c10@linaro.org>
+ <20250416-pcie-reset-slot-v2-3-efe76b278c10@linaro.org>
+ <Z__hZ2M8wDHn2XSn@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] PM: EM: Fix potential division-by-zero error in
- em_compute_costs()
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Yaxiong Tian <tianyaxiong@kylinos.cn>,
- rafael@kernel.org, Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-References: <tencent_EE27C7D1D6BDB3EE57A2C467CC59A866C405@qq.com>
- <143378b0-5740-4f2b-9a79-f04cf9ef1f77@arm.com>
- <tencent_C16C813B177E434BEAC73E842C46D872BC09@qq.com>
- <CAMuHMdVAvMuzmn48aVB-xshMjbENXFc1MmYB=r7iPrMvfDZjDg@mail.gmail.com>
-Content-Language: en-US
-From: Yaxiong Tian <iambestgod@qq.com>
-In-Reply-To: <CAMuHMdVAvMuzmn48aVB-xshMjbENXFc1MmYB=r7iPrMvfDZjDg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z__hZ2M8wDHn2XSn@wunner.de>
 
+On Wed, Apr 16, 2025 at 06:57:11PM +0200, Lukas Wunner wrote:
+> On Wed, Apr 16, 2025 at 09:59:05PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> > --- a/drivers/pci/pcie/err.c
+> > +++ b/drivers/pci/pcie/err.c
+> > @@ -270,3 +270,30 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
+> >  
+> >  	return status;
+> >  }
+> > +
+> > +static pci_ers_result_t pcie_do_slot_reset(struct pci_dev *dev)
+> > +{
+> > +	int ret;
+> > +
+> > +	ret = pci_bus_error_reset(dev);
+> > +	if (ret) {
+> > +		pci_err(dev, "Failed to reset slot: %d\n", ret);
+> > +		return PCI_ERS_RESULT_DISCONNECT;
+> > +	}
+> > +
+> > +	pci_info(dev, "Slot has been reset\n");
+> > +
+> > +	return PCI_ERS_RESULT_RECOVERED;
+> > +}
+> > +
+> > +void pcie_do_recover_slots(struct pci_host_bridge *host)
+> > +{
+> > +	struct pci_bus *bus = host->bus;
+> > +	struct pci_dev *dev;
+> > +
+> > +	for_each_pci_bridge(dev, bus) {
+> > +		if (pci_is_root_bus(bus))
+> > +			pcie_do_recovery(dev, pci_channel_io_frozen,
+> > +					 pcie_do_slot_reset);
+> > +	}
+> > +}
+> 
+> Since pcie_do_slot_reset(), pcie_do_recover_slots() and
+> pcie_do_recover_slots() are only needed on platforms with a
+> specific host controller (and not, say, on x86), it would be good
+> if they could be kept e.g. in a library in drivers/pci/controller/
+> to avoid unnecessarily enlarging the .text section for everyone else.
+> 
+> One option would be the existing pci-host-common.c, another a
+> completely new file.
+> 
 
+I don't like introducing a new file, so I'll make pci-host-common as a common
+library for host controller drivers and move this code there.
 
-在 2025/4/17 15:20, Geert Uytterhoeven 写道:
-> Hi Yaxiong,
+> > --- a/drivers/pci/pci.h
+> > +++ b/drivers/pci/pci.h
+> > @@ -966,6 +966,7 @@ int pci_aer_clear_status(struct pci_dev *dev);
+> >  int pci_aer_raw_clear_status(struct pci_dev *dev);
+> >  void pci_save_aer_state(struct pci_dev *dev);
+> >  void pci_restore_aer_state(struct pci_dev *dev);
+> > +void pcie_do_recover_slots(struct pci_host_bridge *host);
+> >  #else
+> >  static inline void pci_no_aer(void) { }
+> >  static inline void pci_aer_init(struct pci_dev *d) { }
+> > @@ -975,6 +976,26 @@ static inline int pci_aer_clear_status(struct pci_dev *dev) { return -EINVAL; }
+> >  static inline int pci_aer_raw_clear_status(struct pci_dev *dev) { return -EINVAL; }
+> >  static inline void pci_save_aer_state(struct pci_dev *dev) { }
+> >  static inline void pci_restore_aer_state(struct pci_dev *dev) { }
+> > +static inline void pcie_do_recover_slots(struct pci_host_bridge *host)
+> > +{
+> > +	struct pci_bus *bus = host->bus;
+> > +	struct pci_dev *dev;
+> > +	int ret;
+> > +
+> > +	if (!host->reset_slot)
+> > +		dev_warn(&host->dev, "Missing reset_slot() callback\n");
+> > +
+> > +	for_each_pci_bridge(dev, bus) {
+> > +		if (!pci_is_root_bus(bus))
+> > +			continue;
+> > +
+> > +		ret = pci_bus_error_reset(dev);
+> > +		if (ret)
+> > +			pci_err(dev, "Failed to reset slot: %d\n", ret);
+> > +		else
+> > +			pci_info(dev, "Slot has been reset\n");
+> > +	}
+> > +}
+> >  #endif
 > 
-> On Mon, 14 Apr 2025 at 11:14, Yaxiong Tian <iambestgod@qq.com> wrote:
->> I wasn’t sure whether the new patch should reuse the current Message-ID
->> or create a new one, so I checked with ChatGPT and kept the original
->> Message-ID for v2. If a new Message-ID is required, I can resend the
->> email.
+> Unusual to have such a large inline function in a header.
+> Can this likewise be moved to some library file and separated
+> from the other version via #ifdef please?
 > 
-> Different (revisions of) patches must have different Message-IDs,
-> else they can no longer be distinguished by our tooling.
-> Fortunately it seems like you didn't succeed (which is good ;-),
-> as all four revisions do have different Message-IDs:
-> 
-> https://lore.kernel.org/all/tencent_8478BF8F2549630842D323E7394CB6F49D08@qq.com/
-> https://lore.kernel.org/all/tencent_EE27C7D1D6BDB3EE57A2C467CC59A866C405@qq.com/
-> https://lore.kernel.org/all/tencent_6D2374392DB66C9D23BF6E2546638A42EC08@qq.com/
-> https://lore.kernel.org/all/tencent_2256A7C02F7849F1D89390E488704E826D06@qq.com/
-> 
-> Gr{oetje,eeting}s,
-> 
->                          Geert
-> 
-Thank you for your explanation. My previous description might have been
-a bit unclear. Actually, what I meant was whether it should be --in-
-reply-to=original Message-ID. I think if it's a patch, replying to the
-  original Message-ID would be better.
 
+Sure.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
