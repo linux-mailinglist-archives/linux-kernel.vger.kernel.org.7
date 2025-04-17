@@ -1,316 +1,188 @@
-Return-Path: <linux-kernel+bounces-609240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E26C5A91FA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 16:29:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22607A91F1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 16:07:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7C7E464D7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:29:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 311DF44140C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF5C2528EC;
-	Thu, 17 Apr 2025 14:26:51 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C855251792;
-	Thu, 17 Apr 2025 14:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744900010; cv=none; b=niorls2Du6jL8LbUt5FXWSk/2HD5CxXPf0FfE8de2Ks4BgUC2qqfLBpRo3BE28gJOp1d+lWZEsJT4Fq4Hwt7orMU3TrGdPmA9eJPvuvyu4sLiAa9fqa5v2xVnw6f8//6TtH2GJ2VO+yNAJG5thAhYH02Hqk3qkq2mdOhpP20F3g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744900010; c=relaxed/simple;
-	bh=0HQf6FJU32krnLiqr4S/lTsMFbdUqi6Uw6Nofsn+azA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jq8AtQWQnHefS36zuM1ymzDZULcL80XdlCwPjmteyhMCaE43p+rrnFg1CW0tNkThCdQYSJdK5H6GqaGRB+ff6Qdz4u1AfEOS6S3dNXKQA18qJvUT4Qz/1AS2sH+pcyqdau1GzxCRMdSD0ElalXlEoFQTGZZ5RGlI3ohd6t10yyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 44A9E1515;
-	Thu, 17 Apr 2025 07:26:45 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0448C3F694;
-	Thu, 17 Apr 2025 07:26:44 -0700 (PDT)
-Date: Thu, 17 Apr 2025 15:26:42 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Peng Fan <peng.fan@nxp.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Aisheng Dong <aisheng.dong@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
-	Jacky Bai <ping.bai@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>
-Subject: Re: [PATCH 1/4] firmware: arm_scmi: bus: Bypass setting fwnode for
- scmi cpufreq
-Message-ID: <20250417-diligent-anteater-of-felicity-70bff3@sudeepholla>
-References: <Z87UJdhiTWhssnbl@bogus>
- <Z87sGF_jHKau_FMe@bogus>
- <PAXPR04MB8459EA5C7898393E51C246AD88D12@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <PAXPR04MB8459A73179FFF0ED0C9A51E488D12@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <Z9AdICiyaCmzKh-N@bogus>
- <Z9FnZzBQuZ1j5k3I@bogus>
- <Z9Fv9JPdF5OWUHfk@bogus>
- <20250313052309.GA11131@nxa18884-linux>
- <20250409035029.GC27988@nxa18884-linux>
- <20250409-incredible-attentive-scorpion-fa9def@sudeepholla>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD26824EF6C;
+	Thu, 17 Apr 2025 14:07:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="M0LXN8C2"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013013.outbound.protection.outlook.com [40.107.44.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83DE33FD;
+	Thu, 17 Apr 2025 14:07:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744898842; cv=fail; b=a64DkDEqDrbFUnNhFqEgYLzPRVJ07o6YYsGCZjIXtXiyJs2LW9CEcZOpQQQ2RV813/aX6OFvzuNib8m8CYz3qc16PGOeYiziEjI9duuyK9wet9EBUGfGFmruQd6f5D8XrrqCk0cnSLx1fN38Axlq8kCe8og1G17t5wkeAOcV3Gg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744898842; c=relaxed/simple;
+	bh=tNkoVIJE16dmSSuC48hJrIOR6UP38GLDOTSIlzb7l0I=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Xxq4e/7UdNe/vZX2MIG4cZroLX38bw2abtOVLtNVl0hfRYf8hLMw6ZdgdwlXQQnIb9lNz7nlFk2RZCLA/vNJFb3wsxWV6LS9zrD4nHidLOrAgGXDwwvSqkr07SfmxPpCxNP5xwYIW0P3j0z3fg1Q+qtCLGEbrQZmcB8TdmrnYWo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=M0LXN8C2; arc=fail smtp.client-ip=40.107.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wQFYgFnhZV9n+EmFcJSc4iAw+wyGPKoW1R0HesZczs7zKIIswXzUv7ZANqBbCDNPT0y2qg5xOVIJ7NnPQfWRxVjPbAMfDFGEkdWc4U/nc0d3Lv/JlEZA9b/I8TYmHNLuInSm2q6RPDDRePfuVk3RAZH/5GdCHNhf/YPUX903vv9SdM1HxWOQXujVq8bL+tCVUf7olMTpkUHyFaWl32vH7KaESWswphVzW1fuRcBgG8Z9Ue7uy+UkeuQx7yqcz3gBnf3HXMQGn96UVfA+8bdaQiGkmzvBFXqVaY0A+runl/yMzUFfmewHrzlvU8ITmNOk9YxhqNKqywIP6LhGjxwXNg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jm+OnGjz0Zre1FvZk56i4mu1N0oc2QN1pi0V0tMw8lE=;
+ b=prCzGdGZ6BXPlbBmueXWNAX8fsmu/X8ZZe0pQJr07v9m018jZu2+f/pKEb3KVpSAWuZv1GVz7h8xRxR5gC8BAhy68DyLEI03HRzxZfRoWB9mbSWLq59SfzlQsUJ7APbUbXzpOtmxG4m76v1wtsZOER28rc7VQ2fXvAiAL1I9yu7D6BAA70vYABtHQV0bSVarCEC0KthiYgLoUNA+L2EY2MCDHho70nq03Z4zIyWhCaK0E7INdzfOv4Ocl9AiuoJSxv7pN94Kp6zwwUIWsYYxecNrnykgN3YAD+teG/JXlgxvVK82NXrRxc/iuMpxGBch7bID2FoYWAE2Yw1KQPVm8w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jm+OnGjz0Zre1FvZk56i4mu1N0oc2QN1pi0V0tMw8lE=;
+ b=M0LXN8C2OErogBbWAdL5TpaDWubEJS1Jw3ZVY4FwqvYOVTwsWp/uhnpS7dt4oQW2Yh2JPq7lIVWnzHa3abmus+h0U8TItcVOP3Vpv/V8zTlllorz85PIHFbkrW3l/dfgQrjnAb4Hc+oA+l6huNjp+ENw9gozIIqqmoiJCf0IXscBipdEq0siu7TETMiK5eyE0yElxgo8ejyjGmD9jAAs9DfCxc8AXxM1LavJK8AH8uhPjkoX8eV33pmVGxZlujGyDf/q07yKJ0cxVi9PC8PirQHIy6txVkj64Zu99Uv902NkC84jghxt5M/gR74bnauofB0Jp5CJ0JMarPvDQ/BK5A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
+ by SEYPR06MB6585.apcprd06.prod.outlook.com (2603:1096:101:172::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.31; Thu, 17 Apr
+ 2025 14:07:14 +0000
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::8c74:6703:81f7:9535]) by SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::8c74:6703:81f7:9535%6]) with mapi id 15.20.8632.030; Thu, 17 Apr 2025
+ 14:07:14 +0000
+From: Yangtao Li <frank.li@vivo.com>
+To: clm@fb.com,
+	josef@toxicpanda.com,
+	dsterba@suse.com
+Cc: linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yangtao Li <frank.li@vivo.com>
+Subject: [PATCH v2] btrfs: remove BTRFS_REF_LAST from btrfs_ref_type
+Date: Thu, 17 Apr 2025 08:26:49 -0600
+Message-Id: <20250417142655.1284388-1-frank.li@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR02CA0113.apcprd02.prod.outlook.com
+ (2603:1096:4:92::29) To SEZPR06MB5269.apcprd06.prod.outlook.com
+ (2603:1096:101:78::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250409-incredible-attentive-scorpion-fa9def@sudeepholla>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|SEYPR06MB6585:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9cb9007d-7e69-495e-aa04-08dd7db92743
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|1800799024|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?L4lQ71iQcvq8x8ASTzTXyatXJ89DgaAqTajpya1QXQgcsV54GGlqrA0PhhxJ?=
+ =?us-ascii?Q?7SacIc0vfZaRBHpXIYn6bk+zyII1g6UncaX56Ua4n4OFL2aAtxaQgv8sYI9X?=
+ =?us-ascii?Q?xMA3nr05tZ5BKgH/nROyYERt54mfLKEecnp4VOOdvwz+lohjYz6vV14zIUqG?=
+ =?us-ascii?Q?877HuLwSI8udUNHt2W/hypn1+c6Nm9nWXKvwmIo5kew1veDI2+JpBIJPvc7l?=
+ =?us-ascii?Q?xT2gOuYeuNMvRNGzq3iU/NLnEXl6TtRHlBInxe8Xde329aX/c39NYNjoRyM+?=
+ =?us-ascii?Q?zRtsJYzAArpjc2om54Rs6YaHc1p6GuCpCnBJD+GJ5ntbvexhwVt+JPlw7LMb?=
+ =?us-ascii?Q?nSgtUvT6zH2iYyAgwbz1huubqY8ACGj671ONgQ7PeuNuRq/pnzYJDvQN3hKm?=
+ =?us-ascii?Q?MeISZjwixQp9rwYZZPy/STHTkGX08XAAiHPB2Gfq3XtMpaswkNeL0MCRXRxX?=
+ =?us-ascii?Q?HtVQap5t13mvOIWeIExt6cWws+zLnFVQ4UG/kS9wxLKADsX54m0o+NICl0kd?=
+ =?us-ascii?Q?wMSApjGCvUo/91OUvm1UDoZf7ZoWNVxz4c9aCz4QRThxJK51qqhUIdSuCgjr?=
+ =?us-ascii?Q?2tNZxUgpyBcjnQWqS+HVEd+j+JO2/JfhakTRKkFQ5QSUOwpueGD3Xdbc1TjT?=
+ =?us-ascii?Q?KvIlVoJGhLj0Xu9l/N/XSLdEoNBbn61HZxZjLS0RWY7VKZZU2Qyk3u6tFpWG?=
+ =?us-ascii?Q?ZOg5itKctkQKO3ukQL78NfiY2567BLAIoKoftC4PvRcgB0GH0jkfyTZHco5m?=
+ =?us-ascii?Q?yTaIkT6VFJjS46mgcQgUBd9LS4OBK8TDLwyjPG7kl9BfxMNsJqDeK1n9mDi/?=
+ =?us-ascii?Q?7Re+Bpp92QFH5kXAicD8Jasbg8Bh0zrD7nWPzd6TVNo4rGlkTzVThZI8Rn8Y?=
+ =?us-ascii?Q?TfzvP9ncmKhIAFpfSH/1i3tNzXzAOnsHrrAQq7gU0asnLSffyGT8UFgAwR8q?=
+ =?us-ascii?Q?tyUKQzNprfpJVoLWkSyP54YbEJd/EZr51P+F4rwVi7bJ73kYhk4o5izCv7lU?=
+ =?us-ascii?Q?egqk5TxtcXYZIFw1tTufhwUtsm8ZXMNnW//p8A5I1BpIOEwBFdqQ5D97V0Gq?=
+ =?us-ascii?Q?gzh5S2/F+ceCkaAVrVWrGk1P1qndjdet9Ej9z0YBpUyn/JL0oeV1LGcz1MOn?=
+ =?us-ascii?Q?6uawVuvMdBLtUkKweFEzEN6h3pTXdeyp75WsaopIEZHe8bsNterYVoULJV/6?=
+ =?us-ascii?Q?TXM/F01yaBuxMcJ5iTcCNiWISGmM0oz40MA3HsVw41RiIPBS71HJHLMFWdQ1?=
+ =?us-ascii?Q?g7h3L6FDVVJIKj++CqDj1rT46ZCVMB+yS1OlI+Ss+76fRjtOmPXJ4QY4PaxL?=
+ =?us-ascii?Q?gfEeO+1yZQCbbZlGqVMW5FVi82h6LzU7W/ttT6sIzwf70aYjr4SsJooCpa1i?=
+ =?us-ascii?Q?sQf8tnINCn3HEQJPV9+fzM9tCoVFhRUNke90YYckc2C4+/zgYBS0kYOfwVVC?=
+ =?us-ascii?Q?cNWsGKSH6YmQ8fsfGqS3ooWUYzsxxHMCZGr7VHoscOCx+Ebul3JJrQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?eq3iWTC3CiUO1dnaMnrfB70GZYfz8kFBGs6as+uquXuPmd/BglGT4ZEU3bwD?=
+ =?us-ascii?Q?JaAv2FyJh09g21+iEI1RCJjs5vv2i27X5S4cU4WRzJMDTNPwJih+3MaxXRMO?=
+ =?us-ascii?Q?Vdm6wSWckLhTjlxKfmEMC2DOnrf8/mI90CbDnsqfkvGNpr4LZfWCirQlmCq/?=
+ =?us-ascii?Q?Kr3zwKRWGgHJmgjg+X/C3Hz5ovxM8HxwTwJmeKslNltiatHxk7AzHVIEHBB1?=
+ =?us-ascii?Q?17Nlk7Av9gy8vzurA96u3o3+1zP4uVcYakFn1mr0Y1uFPCFdcXxpmYRyPiVf?=
+ =?us-ascii?Q?zJwKjxzUCrdcWrJRyZIEJwxO5vDfGqGJdbZgVxcwRJ6T0jk1cWwLHlr9eeeP?=
+ =?us-ascii?Q?BdnqFGEwPn73prgZfGoeu/GgaM2k9TvOeli3blzSWA/ksIIxXj9E7iw4AZz1?=
+ =?us-ascii?Q?iUiUhiTO34mhyPQ4iVHk/P2cj0VWr7U/h3GDjqQkC6cg+kHYIm0b/muzwET+?=
+ =?us-ascii?Q?F4phupoofjfB79ldUki1SITk6/of7rgwRKYWggGb8jnmyw/Aav/KoTjGkx7i?=
+ =?us-ascii?Q?jA4UYT274mV41RBtEJP6aO0tEnA1GuakqoVsZJEKwcGt1l5lzNGAA33Mxkhb?=
+ =?us-ascii?Q?QmusSCqeskgdGlQ+JsIwwC6czNZrGkzAZ32eRewcJcWeZ1k8vjskCsmLUlYL?=
+ =?us-ascii?Q?46RKre80leZw7uDMn+VMaRJU7IQl4/TAQqMIUrenCtwoQTN9vPxKC+74RzD0?=
+ =?us-ascii?Q?xaCHuj+i1HL276mKFP/sjR21fhTWDOot3CTwSj+FRky95XK8Ndv5fLCE8nUb?=
+ =?us-ascii?Q?ptRyCWQlolBcViJbFqcdg56ELwQHjVsaqoL9MLUVsoHOVIHsiwo36hjjy7VQ?=
+ =?us-ascii?Q?9sScRtOTK1s1HL+GvgnrcKj9KxkqCH76ZxDs/qh1AT6gIvSz1pgkL/LWiw6c?=
+ =?us-ascii?Q?kiJ5QDlPPWEmZFk5KKnrSJaCW1Zmd77BbttfGWlspOEAvm1kXxiyPABuv6Fw?=
+ =?us-ascii?Q?7Pex2ekYRg1zWTM3mZY2xQcjwiBbj6IZjVKJniogNJCIxDx/yaZCs4d97ZMn?=
+ =?us-ascii?Q?ltZ5+8ubdqUuajWhkIjv6rtXmt/jQnBcMjlZj5HkuXs6qA+ZTC0rJzp1eV1n?=
+ =?us-ascii?Q?/bcBU/6F1STrTtcTKXk8xbb/nEsE/E9NrCY3YV/P1SMvzG0z4bjzwQwYsIrr?=
+ =?us-ascii?Q?+9qF6O4WJtLYRF+AbtEz372aa4hR4RdJezs8ZQ2uXuC3IS39aRzJWo88BICx?=
+ =?us-ascii?Q?Ire+48VO/AduQX1Vd3Pjo02zlzMciDPByp+yY3uMNteLf1FS/9YqRrmkJcyV?=
+ =?us-ascii?Q?5UaE3GSEnDReLhUh9f2gPwoKDIITwKG+LvwPCcfIHQsKmmoCX+5hEmbAGRHp?=
+ =?us-ascii?Q?VJFg1cSMoY46uM/A4//B6zUgjcEvlsnwatv+OWTZWH/+6vQByVZd1YFuu0nN?=
+ =?us-ascii?Q?TD0inSY6Qx1RW+BRqhPynv/O3hP6cnBiknwop8Hob/j8VjtWGOmL6omfm5Wd?=
+ =?us-ascii?Q?2J+jjjHtT9Cbxy34m/nKfbFTtVr2NofUI9XjMvBxjAh+a/OYIrxSSLSK16UN?=
+ =?us-ascii?Q?g0ezC9LWW3WOWoQapmr4ItHJ3BYD+8o0dtc34yitsy+F77DsjZASYzd0XXpk?=
+ =?us-ascii?Q?O8EIOpOthZy2tCZmpHyHWF7GZeCwN5T/QYuccUkG?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9cb9007d-7e69-495e-aa04-08dd7db92743
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2025 14:07:14.0698
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BAfAWK/6urR/wzx6k7MukQr0ywCSUTzyAXMIB9rqeFjvQmZzAHbnEjUxh92k9731WkLCih4gWy9iXCTqMAIOiQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6585
 
-On Wed, Apr 09, 2025 at 12:14:00PM +0100, Sudeep Holla wrote:
-> On Wed, Apr 09, 2025 at 11:50:29AM +0800, Peng Fan wrote:
-> > Hi Sudeep, Cristian
-> > 
-> > On Thu, Mar 13, 2025 at 01:23:27PM +0800, Peng Fan wrote:
-> > >On Wed, Mar 12, 2025 at 11:28:52AM +0000, Sudeep Holla wrote:
-> > >>On Wed, Mar 12, 2025 at 10:52:23AM +0000, Sudeep Holla wrote:
-> > >>> On Tue, Mar 11, 2025 at 11:23:12AM +0000, Sudeep Holla wrote:
-> > >>> > On Tue, Mar 11, 2025 at 11:12:45AM +0000, Peng Fan wrote:
-> > >>> > >
-> > >>> > > So it is clear that wrong fw_devlink is created, it is because scmi cpufreq device is
-> > >>> > > created earlier and when device_add, the below logic makes the fwnode pointer points
-> > >>> > > to scmi cpufreq device.
-> > >>> > >         if (dev->fwnode && !dev->fwnode->dev) {
-> > >>> > >                 dev->fwnode->dev = dev;
-> > >>> > >                 fw_devlink_link_device(dev);
-> > >>> > >         }
-> > >>> > >
-> > >>> >
-> > >>> > Thanks, looks like simple way to reproduce the issue. I will give it a try.
-> > >>> >
-> > >>> 
-> > >>> I could reproduce but none of my solution solved the problem completely
-> > >>> or properly. And I don't like the DT proposal you came up with. I am
-> > >>> not inclined to just drop this fwnode setting in the scmi devices and
-> > >>> just use of_node.
-> > >>>
-> > >>
-> > >>Sorry for the typo that changes the meaning: s/not/now
-> > >>
-> > >>I meant "I am now inclined ..", until we figure out a way to make this
-> > >>work with devlinks properly.
-> > >
-> > >when you have time, please give a look at
-> > >https://github.com/MrVan/linux/commit/b500c29cb7f6f32a38b1ed462e333db5a3e301e4
-> > >
-> > >The upper patch was to follow Cristian's and Dan's suggestion in V2[1] to use
-> > >a flag SCMI_DEVICE_NO_FWNODE for scmi device.
-> > >
-> > >I could post out the upper patch as V3 if it basically looks no design flaw.
-> > >I will drop the pinctrl patch in v3, considering we are first going
-> > >to resolve the fw_devlink issue for cpufreq/devfreq.
-> > >
-> > >[1] https://lore.kernel.org/all/Z6SgFGb4Z88v783c@pluto/
-> > 
-> > Not sure you gave a look on this or not. I am thinking to bring this V3
-> > out to mailing list later this week. Please raise if you have any concern.
-> > 
-> 
-> Yes I had some thoughts. I will take a look and refresh my memories first.
-> 
+Commit b28b1f0ce44c ("btrfs: delayed-ref: Introduce better documented
+delayed ref structures") introduced BTRFS_REF_LAST, which can be used
+for sanity checking.
 
-OK, I will post it separately(may be next week) but I wanted this way.
-Revert to old behaviour and driver request fw_devlink dependencies to
-be created if they rely on them. I am not sure if that is better approach.
+In btrfs_ref_type() there was an assertion
 
-Regards,
-Sudeep
+ASSERT(ref->type == BTRFS_REF_DATA || ref->type == BTRFS_REF_METADATA);
 
+to validate the value. 
 
--->8
+And there is currently no enum or switch to use the upper limit,
+so let's remove it.
 
-From: Sudeep Holla <sudeep.holla@arm.com>
-Date: Thu, 17 Apr 2025 10:59:10 +0100
-Subject: [PATCH] firmware: arm_scmi: Add flag to control setting of fwnode
- handle
-
-Currently, when multiple SCMI devices share the same protocol,
-their fwnode->dev all reference the same device tree node. Depending
-on the order of device creation, fwnode->dev ends up pointing to one
-of the SCMI devices, causing fw_devlink to incorrectly establish
-supplier-consumer relationships treating the first-created device as
-the supplier for all others.
-
-To address this, introduce a flag that enables explicit control over
-whether the fwnode handle should be set. This allows only those devices
-that require fw_devlink support to request it explicitly.
-
-By default, only the of_node is set, which is sufficient for most SCMI
-drivers.
-
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Signed-off-by: Yangtao Li <frank.li@vivo.com>
 ---
- drivers/firmware/arm_scmi/bus.c    | 19 ++++++++++++-------
- drivers/firmware/arm_scmi/common.h |  2 +-
- drivers/firmware/arm_scmi/driver.c | 12 ++++++------
- include/linux/scmi_protocol.h      |  4 ++++
- 4 files changed, 23 insertions(+), 14 deletions(-)
+ fs/btrfs/delayed-ref.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/firmware/arm_scmi/bus.c b/drivers/firmware/arm_scmi/bus.c
-index 1adef0389475..eeab5de03a1e 100644
---- a/drivers/firmware/arm_scmi/bus.c
-+++ b/drivers/firmware/arm_scmi/bus.c
-@@ -389,7 +389,7 @@ static void __scmi_device_destroy(struct scmi_device *scmi_dev)
+diff --git a/fs/btrfs/delayed-ref.h b/fs/btrfs/delayed-ref.h
+index f5ae880308d3..78cc23837610 100644
+--- a/fs/btrfs/delayed-ref.h
++++ b/fs/btrfs/delayed-ref.h
+@@ -262,7 +262,6 @@ enum btrfs_ref_type {
+ 	BTRFS_REF_NOT_SET,
+ 	BTRFS_REF_DATA,
+ 	BTRFS_REF_METADATA,
+-	BTRFS_REF_LAST,
+ } __packed;
  
- static struct scmi_device *
- __scmi_device_create(struct device_node *np, struct device *parent,
--		     int protocol, const char *name)
-+		     int protocol, const char *name, u32 flags)
- {
- 	int id, retval;
- 	struct scmi_device *scmi_dev;
-@@ -439,11 +439,15 @@ __scmi_device_create(struct device_node *np, struct device *parent,
- 	scmi_dev->id = id;
- 	scmi_dev->protocol_id = protocol;
- 	scmi_dev->dev.parent = parent;
--	device_set_node(&scmi_dev->dev, of_fwnode_handle(np));
- 	scmi_dev->dev.bus = &scmi_bus_type;
- 	scmi_dev->dev.release = scmi_device_release;
- 	dev_set_name(&scmi_dev->dev, "scmi_dev.%d", id);
- 
-+	if (flags & SCMI_DEV_SET_FWNODE)
-+		device_set_node(&scmi_dev->dev, of_fwnode_handle(np));
-+	else
-+		scmi_dev->dev.of_node = np;
-+
- 	retval = device_register(&scmi_dev->dev);
- 	if (retval)
- 		goto put_dev;
-@@ -461,11 +465,11 @@ __scmi_device_create(struct device_node *np, struct device *parent,
- 
- static struct scmi_device *
- _scmi_device_create(struct device_node *np, struct device *parent,
--		    int protocol, const char *name)
-+		    int protocol, const char *name, u32 flags)
- {
- 	struct scmi_device *sdev;
- 
--	sdev = __scmi_device_create(np, parent, protocol, name);
-+	sdev = __scmi_device_create(np, parent, protocol, name, flags);
- 	if (!sdev)
- 		pr_err("(%s) Failed to create device for protocol 0x%x (%s)\n",
- 		       of_node_full_name(parent->of_node), protocol, name);
-@@ -498,14 +502,14 @@ _scmi_device_create(struct device_node *np, struct device *parent,
-  */
- struct scmi_device *scmi_device_create(struct device_node *np,
- 				       struct device *parent, int protocol,
--				       const char *name)
-+				       const char *name, u32 flags)
- {
- 	struct list_head *phead;
- 	struct scmi_requested_dev *rdev;
- 	struct scmi_device *scmi_dev = NULL;
- 
- 	if (name)
--		return _scmi_device_create(np, parent, protocol, name);
-+		return _scmi_device_create(np, parent, protocol, name, flags);
- 
- 	mutex_lock(&scmi_requested_devices_mtx);
- 	phead = idr_find(&scmi_requested_devices, protocol);
-@@ -521,7 +525,8 @@ struct scmi_device *scmi_device_create(struct device_node *np,
- 
- 		sdev = _scmi_device_create(np, parent,
- 					   rdev->id_table->protocol_id,
--					   rdev->id_table->name);
-+					   rdev->id_table->name,
-+					   rdev->id_table->flags);
- 		if (sdev)
- 			scmi_dev = sdev;
- 	}
-diff --git a/drivers/firmware/arm_scmi/common.h b/drivers/firmware/arm_scmi/common.h
-index dab758c5fdea..c948c4d88332 100644
---- a/drivers/firmware/arm_scmi/common.h
-+++ b/drivers/firmware/arm_scmi/common.h
-@@ -151,7 +151,7 @@ extern struct blocking_notifier_head scmi_requested_devices_nh;
- 
- struct scmi_device *scmi_device_create(struct device_node *np,
- 				       struct device *parent, int protocol,
--				       const char *name);
-+				       const char *name, u32 flags);
- void scmi_device_destroy(struct device *parent, int protocol, const char *name);
- 
- int scmi_protocol_acquire(const struct scmi_handle *handle, u8 protocol_id);
-diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-index f6c9e4491240..433b057ec0d9 100644
---- a/drivers/firmware/arm_scmi/driver.c
-+++ b/drivers/firmware/arm_scmi/driver.c
-@@ -436,11 +436,11 @@ EXPORT_SYMBOL_GPL(scmi_protocol_unregister);
-  *	  for the specified protocol.
-  */
- static void scmi_create_protocol_devices(struct device_node *np,
--					 struct scmi_info *info,
--					 int prot_id, const char *name)
-+					 struct scmi_info *info, int prot_id,
-+					 const char *name, u32 flags)
- {
- 	mutex_lock(&info->devreq_mtx);
--	scmi_device_create(np, info->dev, prot_id, name);
-+	scmi_device_create(np, info->dev, prot_id, name, flags);
- 	mutex_unlock(&info->devreq_mtx);
- }
- 
-@@ -2668,7 +2668,7 @@ static int scmi_chan_setup(struct scmi_info *info, struct device_node *of_node,
- 	snprintf(name, 32, "__scmi_transport_device_%s_%02X",
- 		 idx ? "rx" : "tx", prot_id);
- 	/* Create a uniquely named, dedicated transport device for this chan */
--	tdev = scmi_device_create(of_node, info->dev, prot_id, name);
-+	tdev = scmi_device_create(of_node, info->dev, prot_id, name, 0);
- 	if (!tdev) {
- 		dev_err(info->dev,
- 			"failed to create transport device (%s)\n", name);
-@@ -2865,7 +2865,7 @@ static int scmi_device_request_notifier(struct notifier_block *nb,
- 	switch (action) {
- 	case SCMI_BUS_NOTIFY_DEVICE_REQUEST:
- 		scmi_create_protocol_devices(np, info, id_table->protocol_id,
--					     id_table->name);
-+					     id_table->name, id_table->flags);
- 		break;
- 	case SCMI_BUS_NOTIFY_DEVICE_UNREQUEST:
- 		scmi_destroy_protocol_devices(info, id_table->protocol_id,
-@@ -3244,7 +3244,7 @@ static int scmi_probe(struct platform_device *pdev)
- 		}
- 
- 		of_node_get(child);
--		scmi_create_protocol_devices(child, info, prot_id, NULL);
-+		scmi_create_protocol_devices(child, info, prot_id, NULL, 0);
- 	}
- 
- 	return 0;
-diff --git a/include/linux/scmi_protocol.h b/include/linux/scmi_protocol.h
-index 688466a0e816..2546b7977fe3 100644
---- a/include/linux/scmi_protocol.h
-+++ b/include/linux/scmi_protocol.h
-@@ -947,9 +947,13 @@ struct scmi_device {
- 
- #define to_scmi_dev(d) container_of_const(d, struct scmi_device, dev)
- 
-+/* The scmi device needs fwnode handle */
-+#define SCMI_DEV_SET_FWNODE		BIT(0)
-+
- struct scmi_device_id {
- 	u8 protocol_id;
- 	const char *name;
-+	u32 flags;
- };
- 
- struct scmi_driver {
+ struct btrfs_ref {
 -- 
-2.34.1
+2.39.0
 
 
