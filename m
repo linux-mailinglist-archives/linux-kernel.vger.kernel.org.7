@@ -1,223 +1,155 @@
-Return-Path: <linux-kernel+bounces-609086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 982E9A91D27
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:01:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7377FA91D21
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:01:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76A444458EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 13:01:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26E337A8BD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 13:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB132247286;
-	Thu, 17 Apr 2025 13:01:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B4622B594;
+	Thu, 17 Apr 2025 13:01:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f/NqAhlg";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fThLx9Eo"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fYC9e/a9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D17219ED;
-	Thu, 17 Apr 2025 13:01:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01A115FA7B;
+	Thu, 17 Apr 2025 13:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744894893; cv=none; b=CV257twA/mhoCCMzZkO1I4vZqVDyfejqm7QDYj9ixtAO1jwG3gXVdBr6Dv/JpWDmvew9LSjAXX52ojtihlrrv0gZYux4MHDGz2nTOY9bTcIC/EH1/G6JkvWVniuY9yfGTcQBhu/tbkmvPjvd9ygspY7XQbBktF+xP5R+d02+wf0=
+	t=1744894886; cv=none; b=Qzb9IN+ZLodIaa4iGH1S8R0Vu9JwnQJ7hDcbkTUuuebtB3K9L+k8zsLdq8L/xdLlxvg21K948jeoDTBs1XcWrj0VdXvESNQs2PnTEpbHIfqAfGQiMrWCYTmvKqBayy352k4nIMrXXfgvgj+D4xBm6SLgry1fQZmenMDkUmiNz44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744894893; c=relaxed/simple;
-	bh=8zeE6ER9thbn7uu/b37reA219Y6MgvfM9bjMdLqurAo=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=p6kxtIf1ONfW54Uyc92HcyHl/3saAHmO22jm9uRjL/c7LtCeMQhmT2UGj7UIUniUYt91gZ8ZlF4IfNStTYx8+2XlnxMbXDG90sU4WgdWKYXtao/cGwp77ZSX/kbP32n7jaYWOEHF/bYkHT1RxXGNCsY0xNcQBXsewnpmtjED3oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f/NqAhlg; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fThLx9Eo; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 17 Apr 2025 13:00:59 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744894888;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QZH2VcIDwIcZCakpFsRp1is/pE0QNjTjWITgokiFpI8=;
-	b=f/NqAhlgqLZVKNHogPUeobtEVqUux5WzRZc74hDU25fjizTukEPhpkMkcj1z1xXVpdsUOf
-	x2+Xwcg2TcwVAATFt+bAM7M61saKWWsHe7Z0EWHzVGp71CtdihNQ5ztNby2TqwkKv0wf7/
-	xQssj7yJx7H57/zm+VZS5CLzKr6+DxhevD3TItgcY8IcDtRMKhYygLBBKcBWlcqqrXu6Cn
-	bLj9HUrmWn89eOrzmLgYC2COSNjkQGIoBbJRZn6fcZTtwL0lx9Qb5d/lqvSDMoaspLPQdY
-	TUz+mdioBbCYEyFRtDBfUmrsSxeDAshzA4xRjPYLfA9gPhyUP7jhNt1pB/nlLA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744894888;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QZH2VcIDwIcZCakpFsRp1is/pE0QNjTjWITgokiFpI8=;
-	b=fThLx9Eop9ezLd/MRCk/qtnvo6sSxK+S4TjQUfl1N4VT5T5i1i9WSVDrK4rWXuRGOVRAul
-	td4B5XdAW3QDxvCQ==
-From: "tip-bot2 for Dapeng Mi" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf/x86/intel: Introduce pairs of PEBS static calls
-Cc: Peter Zijlstra <peterz@infradead.org>,
- Dapeng Mi <dapeng1.mi@linux.intel.com>, Ingo Molnar <mingo@kernel.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250415114428.341182-7-dapeng1.mi@linux.intel.com>
-References: <20250415114428.341182-7-dapeng1.mi@linux.intel.com>
+	s=arc-20240116; t=1744894886; c=relaxed/simple;
+	bh=KWnWVfOA8c1Wv+4gBL063mnR9c9nhvCmbY4Ut2JRHDU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OHQJr0v5HG2iZYAP0r3VNNmpguKjAEYjOrfEF6grDw3S3s/fRr50/tSuIRb9q20bOLv+0IG1bd5ZbivGK2Q+2HV3+YTsXT55nq1pdzIpaeVzQVfNIqNy2NUsRyLZFHeauqr06h19I4rQXDOPCO3eA5s7yzoFEthpMN40bk4V63I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fYC9e/a9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE41BC4CEEA;
+	Thu, 17 Apr 2025 13:01:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744894885;
+	bh=KWnWVfOA8c1Wv+4gBL063mnR9c9nhvCmbY4Ut2JRHDU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fYC9e/a9vcPImM0qEXijPfQ1ABcyZ/YSN0M5omRfHnQdKjTQ/MTG1pAZ0gcZOjxmf
+	 gJgBXfQsGVUa+gFtKGaWb9jxY+bxpsUkvgwmPKGxwaEYGtwY5tHXLyYDYueE9Wznfe
+	 mogT4qQpQN93bCm/kSx771bVkBG9QkVUanbzbbcCYpOiqyDxWCcbWr8+NBBXbtdwYJ
+	 l+TEgSazXJ6xudLSSaIpWoaQ3Y64azRqpZEpv8VzEqj+dmYoPrt0xZMY3h35zwSDmA
+	 /DPNiFTmT/exx4m+vkS3irGJNU3sAfYWDfGsJw+hMiri2Bkv64q1lfCkD/q4KNbDv4
+	 nb8vOAFmnJs9A==
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2c6ed7efb1dso450793fac.2;
+        Thu, 17 Apr 2025 06:01:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU9YPgSltNvq77+BfybfPkL7PCBzFGKxYtlOewq7YMGJzzdGLgW/1tCZm2gJriCAuEUfRyEWQIixB4jPKY=@vger.kernel.org, AJvYcCWkavvn50GOR1WKHI/EcWll8VogSTKqaQ/kKaFgdHYXnXqgkQyVIcePG0NffiEfTs1L1IqAkoAcSXE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0Qnl9C/PUSGeYMXZAgKaztigRYk04ka8WREDGvUtuWx0TsMCi
+	wctaHeKR1cyJ+zHvNreTpNg0kbLUsmLo8hVq7CDoqyjvNb46LGIyeIhzkyNDKBKr5faXI7F5q4p
+	DTAtSTgS7tfrh/3YlcApHFp+s/LU=
+X-Google-Smtp-Source: AGHT+IHOwV/UB7P82bRaQrXpDMI4M9ZvLUWLgqZFXu0lDZJnl1aeIwkdOWHX+F3XBWb05sq3u4gNN+OwtYP4tLLq6bo=
+X-Received: by 2002:a05:6870:1708:b0:2bc:7d6f:fa86 with SMTP id
+ 586e51a60fabf-2d4d2d58f98mr3838358fac.35.1744894883674; Thu, 17 Apr 2025
+ 06:01:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174489486019.31282.15944561064958141287.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <3344336.aeNJFYEL58@rjwysocki.net> <8554829.NyiUUSuA9g@rjwysocki.net>
+ <e439a75c-fe36-4fba-b394-c154adeff15a@arm.com>
+In-Reply-To: <e439a75c-fe36-4fba-b394-c154adeff15a@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 17 Apr 2025 15:01:12 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jxoKaGOsXqUqd=n95ATxzDTueSy_je_ktxOdm6B=+20A@mail.gmail.com>
+X-Gm-Features: ATxdqUFqVAGSUxvggDc1DQyXBFEDUMLQGnrSY7wE1mYSzgRkQRC0XbcSOOwjyZ4
+Message-ID: <CAJZ5v0jxoKaGOsXqUqd=n95ATxzDTueSy_je_ktxOdm6B=+20A@mail.gmail.com>
+Subject: Re: [RFT][PATCH v1 3/8] cpufreq/sched: Allow .setpolicy() cpufreq
+ drivers to enable EAS
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Peter Zijlstra <peterz@infradead.org>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Morten Rasmussen <morten.rasmussen@arm.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, 
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>, 
+	Pierre Gondois <pierre.gondois@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the perf/core branch of tip:
+On Thu, Apr 17, 2025 at 2:19=E2=80=AFPM Christian Loehle
+<christian.loehle@arm.com> wrote:
+>
+> On 4/16/25 19:01, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > Some cpufreq drivers, like intel_pstate, have built-in governors that
+> > are used instead of regular cpufreq governors, schedutil in particular,
+> > but they can work with EAS just fine, so allow EAS to be used with
+> > those drivers.
+> >
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> >
+> > v0.3 -> v1
+> >      * Rebase on top of the new [1-2/8].
+> >      * Update the diagnostic message printed if the conditions are not =
+met.
+> >
+> > This patch is regarded as a cleanup for 6.16.
+> >
+> > ---
+> >  drivers/cpufreq/cpufreq.c |   13 +++++++++++--
+> >  1 file changed, 11 insertions(+), 2 deletions(-)
+> >
+> > --- a/drivers/cpufreq/cpufreq.c
+> > +++ b/drivers/cpufreq/cpufreq.c
+> > @@ -3054,7 +3054,16 @@
+> >
+> >       guard(cpufreq_policy_read)(policy);
+> >
+> > -     return sugov_is_governor(policy);
+> > +     /*
+> > +      * For EAS compatibility, require that either schedutil is the po=
+licy
+> > +      * governor or the policy is governed directly by the cpufreq dri=
+ver.
+> > +      *
+> > +      * In the latter case, it is assumed that EAS can only be enabled=
+ by the
+> > +      * cpufreq driver itself which will not enable EAS if it does not=
+ meet
+> > +      * the EAS' expectations regarding performance scaling response.
+> > +      */
+> > +     return sugov_is_governor(policy) || (!policy->governor &&
+> > +             policy->policy !=3D CPUFREQ_POLICY_UNKNOWN);
+> >  }
+> >
+> >  bool cpufreq_ready_for_eas(const struct cpumask *cpu_mask)
+> > @@ -3064,7 +3073,7 @@
+> >       /* Do not attempt EAS if schedutil is not being used. */
+> >       for_each_cpu(cpu, cpu_mask) {
+> >               if (!cpufreq_policy_is_good_for_eas(cpu)) {
+> > -                     pr_debug("rd %*pbl: schedutil is mandatory for EA=
+S\n",
+> > +                     pr_debug("rd %*pbl: EAS requirements not met\n",
+> >                                cpumask_pr_args(cpu_mask));
+>
+> I'd prefer to have at least "EAS cpufreq requirements" printed here.
 
-Commit-ID:     4a3fd13054a98c43dfcfcbdb93deb43c7b1b9c34
-Gitweb:        https://git.kernel.org/tip/4a3fd13054a98c43dfcfcbdb93deb43c7b1b9c34
-Author:        Dapeng Mi <dapeng1.mi@linux.intel.com>
-AuthorDate:    Tue, 15 Apr 2025 11:44:12 
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Thu, 17 Apr 2025 14:21:24 +02:00
+Sure.
 
-perf/x86/intel: Introduce pairs of PEBS static calls
+> with that caveat
+> Reviewed-by: Christian Loehle <christian.loehle@arm.com>
+>
+> Maybe we should amend the EAS documentation to reflect this?
 
-Arch-PEBS retires IA32_PEBS_ENABLE and MSR_PEBS_DATA_CFG MSRs, so
-intel_pmu_pebs_enable/disable() and intel_pmu_pebs_enable/disable_all()
-are not needed to call for ach-PEBS.
+Yes, the documentation should be updated.  Which piece of it in
+particular I need to look at?
 
-To make the code cleaner, introduce static calls
-x86_pmu_pebs_enable/disable() and x86_pmu_pebs_enable/disable_all()
-instead of adding "x86_pmu.arch_pebs" check directly in these helpers.
+> (And also emphasise that EAS will make cpufreq assumptions as if sugov
+> was the governor regardless.)
 
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lkml.kernel.org/r/20250415114428.341182-7-dapeng1.mi@linux.intel.com
----
- arch/x86/events/core.c       | 10 ++++++++++
- arch/x86/events/intel/core.c |  8 ++++----
- arch/x86/events/intel/ds.c   |  5 +++++
- arch/x86/events/perf_event.h |  8 ++++++++
- 4 files changed, 27 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index cae2132..995df8f 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -95,6 +95,11 @@ DEFINE_STATIC_CALL_NULL(x86_pmu_filter, *x86_pmu.filter);
- 
- DEFINE_STATIC_CALL_NULL(x86_pmu_late_setup, *x86_pmu.late_setup);
- 
-+DEFINE_STATIC_CALL_NULL(x86_pmu_pebs_enable, *x86_pmu.pebs_enable);
-+DEFINE_STATIC_CALL_NULL(x86_pmu_pebs_disable, *x86_pmu.pebs_disable);
-+DEFINE_STATIC_CALL_NULL(x86_pmu_pebs_enable_all, *x86_pmu.pebs_enable_all);
-+DEFINE_STATIC_CALL_NULL(x86_pmu_pebs_disable_all, *x86_pmu.pebs_disable_all);
-+
- /*
-  * This one is magic, it will get called even when PMU init fails (because
-  * there is no PMU), in which case it should simply return NULL.
-@@ -2049,6 +2054,11 @@ static void x86_pmu_static_call_update(void)
- 	static_call_update(x86_pmu_filter, x86_pmu.filter);
- 
- 	static_call_update(x86_pmu_late_setup, x86_pmu.late_setup);
-+
-+	static_call_update(x86_pmu_pebs_enable, x86_pmu.pebs_enable);
-+	static_call_update(x86_pmu_pebs_disable, x86_pmu.pebs_disable);
-+	static_call_update(x86_pmu_pebs_enable_all, x86_pmu.pebs_enable_all);
-+	static_call_update(x86_pmu_pebs_disable_all, x86_pmu.pebs_disable_all);
- }
- 
- static void _x86_pmu_read(struct perf_event *event)
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 7bbc7a7..cd63292 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -2306,7 +2306,7 @@ static __always_inline void __intel_pmu_disable_all(bool bts)
- static __always_inline void intel_pmu_disable_all(void)
- {
- 	__intel_pmu_disable_all(true);
--	intel_pmu_pebs_disable_all();
-+	static_call_cond(x86_pmu_pebs_disable_all)();
- 	intel_pmu_lbr_disable_all();
- }
- 
-@@ -2338,7 +2338,7 @@ static void __intel_pmu_enable_all(int added, bool pmi)
- 
- static void intel_pmu_enable_all(int added)
- {
--	intel_pmu_pebs_enable_all();
-+	static_call_cond(x86_pmu_pebs_enable_all)();
- 	__intel_pmu_enable_all(added, false);
- }
- 
-@@ -2595,7 +2595,7 @@ static void intel_pmu_disable_event(struct perf_event *event)
- 	 * so we don't trigger the event without PEBS bit set.
- 	 */
- 	if (unlikely(event->attr.precise_ip))
--		intel_pmu_pebs_disable(event);
-+		static_call(x86_pmu_pebs_disable)(event);
- }
- 
- static void intel_pmu_assign_event(struct perf_event *event, int idx)
-@@ -2948,7 +2948,7 @@ static void intel_pmu_enable_event(struct perf_event *event)
- 	int idx = hwc->idx;
- 
- 	if (unlikely(event->attr.precise_ip))
--		intel_pmu_pebs_enable(event);
-+		static_call(x86_pmu_pebs_enable)(event);
- 
- 	switch (idx) {
- 	case 0 ... INTEL_PMC_IDX_FIXED - 1:
-diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-index 1d6b3fa..e216622 100644
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -2679,6 +2679,11 @@ void __init intel_pebs_init(void)
- 		if (format < 4)
- 			x86_pmu.intel_cap.pebs_baseline = 0;
- 
-+		x86_pmu.pebs_enable = intel_pmu_pebs_enable;
-+		x86_pmu.pebs_disable = intel_pmu_pebs_disable;
-+		x86_pmu.pebs_enable_all = intel_pmu_pebs_enable_all;
-+		x86_pmu.pebs_disable_all = intel_pmu_pebs_disable_all;
-+
- 		switch (format) {
- 		case 0:
- 			pr_cont("PEBS fmt0%c, ", pebs_type);
-diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-index 2ef407d..d201e6a 100644
---- a/arch/x86/events/perf_event.h
-+++ b/arch/x86/events/perf_event.h
-@@ -808,6 +808,10 @@ struct x86_pmu {
- 	int		(*hw_config)(struct perf_event *event);
- 	int		(*schedule_events)(struct cpu_hw_events *cpuc, int n, int *assign);
- 	void		(*late_setup)(void);
-+	void		(*pebs_enable)(struct perf_event *event);
-+	void		(*pebs_disable)(struct perf_event *event);
-+	void		(*pebs_enable_all)(void);
-+	void		(*pebs_disable_all)(void);
- 	unsigned	eventsel;
- 	unsigned	perfctr;
- 	unsigned	fixedctr;
-@@ -1120,6 +1124,10 @@ DECLARE_STATIC_CALL(x86_pmu_set_period, *x86_pmu.set_period);
- DECLARE_STATIC_CALL(x86_pmu_update,     *x86_pmu.update);
- DECLARE_STATIC_CALL(x86_pmu_drain_pebs,	*x86_pmu.drain_pebs);
- DECLARE_STATIC_CALL(x86_pmu_late_setup,	*x86_pmu.late_setup);
-+DECLARE_STATIC_CALL(x86_pmu_pebs_enable, *x86_pmu.pebs_enable);
-+DECLARE_STATIC_CALL(x86_pmu_pebs_disable, *x86_pmu.pebs_disable);
-+DECLARE_STATIC_CALL(x86_pmu_pebs_enable_all, *x86_pmu.pebs_enable_all);
-+DECLARE_STATIC_CALL(x86_pmu_pebs_disable_all, *x86_pmu.pebs_disable_all);
- 
- static __always_inline struct x86_perf_task_context_opt *task_context_opt(void *ctx)
- {
+Right.
 
