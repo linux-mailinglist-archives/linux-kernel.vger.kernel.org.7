@@ -1,74 +1,90 @@
-Return-Path: <linux-kernel+bounces-609307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79DFFA92071
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 16:58:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E842A9208C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 16:58:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0605019E7AEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:58:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A7435A68AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:58:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E74252915;
-	Thu, 17 Apr 2025 14:58:14 +0000 (UTC)
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E63A9253345;
+	Thu, 17 Apr 2025 14:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="QhOpWc30"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939AA252904
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 14:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA152522A4
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 14:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744901894; cv=none; b=VPqTcmH/WocLG5//Pbyq8Jg+QZFsRf7EiNiM6DGdtk7ZdRkpA/6xyyacEDeGse3NFExkoC+ofc0I8f0IJG4I+1D+NIGr+gyE9iSZAlQeNkIWrT3aeoMECXOd2tgivvPBEPyO7KG9o+KuBHx56NW0Y+L5i6HF9BFJo2GHUMS0d+0=
+	t=1744901912; cv=none; b=FWRDJ36ZXVXVy6xm5rJKbgKgJHx5tucoLiVMIvAZZVSa4tE0g2ZwvjTsl6P3l1GF9tBVu9Z2WVu1dYifIvdKLtevUyQ4Ii50cCtnZvhCKKbh7Ez+7FUMfh0Xdhv4D6D8V/ReHt1wSvGXdhfNdp369EmcLJGh9iDeWMve3eBmyfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744901894; c=relaxed/simple;
-	bh=8+8dDVPsGTjvaNlBqSWhIuGS5l09fQswVeqnQK5RknA=;
+	s=arc-20240116; t=1744901912; c=relaxed/simple;
+	bh=769yCdBlANwbmRIbTWde2f3Il2Ej+D8N39f2RDuMZf4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TKPUJ4HcxOrhXS5hRllRm8ScHU/jwNG3us72CoYsLb/9RyJJad3BXbB/8mQ6Y7VvYzGKdv6xy1y/w0UgxdTTSXMxEjFW/9bDWLduDDnW04D50Pxlm7QhAEiYVTPvhH10a4qdf2BNYzsX7mW09/XEIfiJuvvwOA5JPEG2KmD0Gfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5ed43460d6bso1404542a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 07:58:12 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=qnZIo4hwWn9NVCzuCLSgq3Fxs5pGWstfbCDC24RtOKi4X4Mtcu9hhwGfxcefDV3Fd8jhWCN23LnzhbmsxWPB83oaS979+KZu55E8mEZ0FCoGZAS5GjImqbsvPxpIeF3biODfobihUdnXLX+fqOxmnhVR6u3i9AyOpoUd2rn7dSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=QhOpWc30; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7c54b651310so111650485a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 07:58:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1744901908; x=1745506708; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=j3gbCW+iQwhJd4DkAbGAG43g6uYzMnLXJAizDgyDC2w=;
+        b=QhOpWc30txO2afWq9hNHPiiyFQTWO5MP9nXWwQM8qAZjnRO6BJwSknzy6MLlEcqCfU
+         ntaKNO3HCuBzwVVfPLG3IY+LLnxo+DzJkNTccTAjKP9I5V12B1D0ZkH4ni0AQCaRfbw3
+         xj/uhcVcIZWwRJ8jGH3L2+0+2tCONw0g3czIPH/s2wA/xZzoUunqUOl6m+oibUfApd0C
+         a5ydjgpjBJYvmpBlEavn2Qc3F51MDM0dPru1PbhdR1fbPXhNNCtezFe1GGt+cvsKuREX
+         HKBbS9m/Zzl7mYL91tJM45faIWB4N8ModB1ekT0fhqcjmVSnRaQxAsmQJMuRtfFJseKN
+         ISuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744901891; x=1745506691;
+        d=1e100.net; s=20230601; t=1744901908; x=1745506708;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0CNFD08BeMzbg4hwkJS8XJhriC15vmKuRUjtQqHE0o4=;
-        b=nEy07MQEItBTczLnCXRLWfFDIKSwIl8JqST66/8Qdr/PURDOtsaan/zpVoOdNJUuB8
-         x5aj3aWL9k7BZQ2IhWFlWOEjQyZBCIP0cOXNDuW+fsxuzGRaBedSrcYyc3Gaa5d4LQ7L
-         FVekcXd/0fHcYVLDNNHNWz1TeLzObrk6LKxUZFK3v3HAG5F6dhpUlMSccCAsliMYvdpv
-         VUbpKDnpMEZzyTYDyXZwekBoBBossSV4FmbYJFSCxH64w/KWs9MZ9+SSPzmgzTVD9b4e
-         ZekjXIcpsdVo47+Z5DNqqaf94F8VHemyNPsb9+Zhp3YJ+5Kyue/K0cjEkNoiTB2IV0mS
-         St8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVJ10iLmthPbEnO07phAiFZz4nazZD0wIlwdUvisWT+4ocgcG1IcUP5RHyZT6MHxuuUARpfbYSVITe0W0Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8qjApPS8uR0h0Fa1ZuS/PiOg78w9TiD+KJ6CVC4cuLqPjAIps
-	68aS7d/NVIpD82lXPyVaTXMQu6iOl5q6qk4KsaIdUABLxRUNDKJb
-X-Gm-Gg: ASbGncse400O3XNDpBG4/Az0lyA6+rNgjN6AXaGdHv3Hk5FzksG2VhUW7cEb4SpzD3s
-	qx7YoTjedmYSPAUI5NEfClo0XqpYQpc8zZ/PGjTdXTn9zqOO5a+MRaEa5f1TUSDyvxYduAKODBS
-	+n3PVTV6Swd0I3SLIb0yREMctLgVjsLAGZgdTwToU2+UkEU7qD/1kSmtkf5ZIzWwr7ghfLQA4nd
-	JYMNhLd0X4kIf8b1hnCwB6Dm0NHmByJeJPz+ww5y9BJrJ2NvIDT8W+JVsNf2OmgkFfBmUdTMwmw
-	TwQ1XjHhpU1EgX0EdHktMkYW6f8HkbXv
-X-Google-Smtp-Source: AGHT+IHV0hcDe3LadzqyLp2r2xBk9W9WYpfkAZzY9lBcQKTzetzjgYFoUcGBEzLpejQOhOfdVj7e+Q==
-X-Received: by 2002:a17:907:1c18:b0:abf:6cc9:7ef5 with SMTP id a640c23a62f3a-acb42add32bmr608289766b.47.1744901890541;
-        Thu, 17 Apr 2025 07:58:10 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:74::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb6ec13a5bsm5275966b.27.2025.04.17.07.58.09
+        bh=j3gbCW+iQwhJd4DkAbGAG43g6uYzMnLXJAizDgyDC2w=;
+        b=MIncFXwUxLgG4+Spc58iUeS9q+HPkKoZisqa8BWZfzfYNP0gZyTBW1zBjk3u6NEvIA
+         mNyyv+8Fstg4t2smgBsd5fEjLBMLYVMQSwu+pCV3THA2PBjWKqVBer+AEPTUGe6czzoe
+         7iTISW2QPa9CgxOcQTuvEWelTXrgGPpapaIq9axuf7600LEazVmVeRMGDqy4cBS5Yh4m
+         xxgKAy4eBHTQ1pJs9vu0Zz5uKjWYVxPYaI5R/5h9UosC6iIqH/HJws8KJDP5oZwI6GnW
+         Y/QUs1ufHGWpeAaf+P/6aWdTIuijM1QLp0k2JUkkDjD3m0aL4cQT6wbLVq+MLFj3YuZh
+         gFzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUt3ux6bWC145LUAPsmXcxU1oJYjsGSfO/kZve/3yQUJ9rAwNY4/uWnSenRnkEL4JkeYd+iGmMxLFWElL4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxl/tGgqRpXtlhkHxL5E5Xk/tmjSYw/N6xVVhohtLIwrfuGc0lJ
+	8u5eftXH8z1vcnEKj14tkq83fuigW1pnEE5OvaPtsKmDdgQqsPw1MOgyM3QBjF8=
+X-Gm-Gg: ASbGncvscGD53KvMWi4y2f60XLBkZB01r0WcxehvezdX7WLl0KB6t/uoTGIuTOSZiwK
+	lEDht0b3HvuzkpdFEyhcXTR+DPVKmGKOdAOtGtWh/mp3GKPL+mxK6C/RI4/+75I01YF7TZRrDty
+	c+pGWGpm2X3MktZll9Ld3rdT8x1zvTvim6kb8A5RRXCmVA9aGurpXr/66P6LssmjGd63KwRZ4k/
+	wdV/7NEVXDQRKGl2HrOQSg1ph3CENgbt94gENj5VtZfuIn2inMfexWbnQysYluTOJZ/CGsfvCmZ
+	jYJWJtg41KE2JIuz34c7oWs2DW6WKc3hAdptntg=
+X-Google-Smtp-Source: AGHT+IG8pal8ArDJIAxk4zvmDxxTaWHTgc3rlYOQmxwiOrJrTtp4R4yKIBkfKdWD1Cu1lEd1pdGILQ==
+X-Received: by 2002:a05:620a:472c:b0:7c5:562d:ccf4 with SMTP id af79cd13be357-7c918fcecfcmr833341285a.4.1744901907842;
+        Thu, 17 Apr 2025 07:58:27 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:365a:60ff:fe62:ff29])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c925a6ea26sm824585a.7.2025.04.17.07.58.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Apr 2025 07:58:10 -0700 (PDT)
-Date: Thu, 17 Apr 2025 07:58:08 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: Joel Becker <jlbec@evilplan.org>,
-	Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-	Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org,
-	Zijun Hu <quic_zijuhu@quicinc.com>
-Subject: Re: [PATCH v2 1/3] configfs: Delete semicolon from macro
- type_print() definition
-Message-ID: <aAEXAL3ypUn4G/oe@gmail.com>
-References: <20250415-fix_configfs-v2-0-fcd527dd1824@quicinc.com>
- <20250415-fix_configfs-v2-1-fcd527dd1824@quicinc.com>
+        Thu, 17 Apr 2025 07:58:27 -0700 (PDT)
+Date: Thu, 17 Apr 2025 10:58:26 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Muchun Song <songmuchun@bytedance.com>
+Cc: mhocko@kernel.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+	muchun.song@linux.dev, akpm@linux-foundation.org,
+	david@fromorbit.com, zhengqi.arch@bytedance.com,
+	yosry.ahmed@linux.dev, nphamcs@gmail.com, chengming.zhou@linux.dev,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+	linux-mm@kvack.org, hamzamahfooz@linux.microsoft.com,
+	apais@linux.microsoft.com
+Subject: Re: [PATCH RFC 06/28] mm: thp: introduce folio_split_queue_lock and
+ its variants
+Message-ID: <20250417145826.GI780688@cmpxchg.org>
+References: <20250415024532.26632-1-songmuchun@bytedance.com>
+ <20250415024532.26632-7-songmuchun@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,37 +93,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250415-fix_configfs-v2-1-fcd527dd1824@quicinc.com>
+In-Reply-To: <20250415024532.26632-7-songmuchun@bytedance.com>
 
-On Tue, Apr 15, 2025 at 08:34:25PM +0800, Zijun Hu wrote:
-> From: Zijun Hu <quic_zijuhu@quicinc.com>
+On Tue, Apr 15, 2025 at 10:45:10AM +0800, Muchun Song wrote:
+> In future memcg removal, the binding between a folio and a memcg may change,
+> making the split lock within the memcg unstable when held.
 > 
-> Macro type_print() definition ends with semicolon, so will cause
-> the subsequent macro invocations end with two semicolons.
+> A new approach is required to reparent the split queue to its parent. This
+> patch starts introducing a unified way to acquire the split lock for future
+> work.
 > 
-> Fix by deleting the semicolon from the macro definition.
+> It's a code-only refactoring with no functional changes.
 > 
-> Reviewed-by: Joel Becker <jlbec@evilplan.org>
-> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-> ---
->  fs/configfs/dir.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/configfs/dir.c b/fs/configfs/dir.c
-> index 7d10278db30d667d0ef7e1140e54961c5a440c41..0a011bdad98c492227859ff328d61aeed2071e24 100644
-> --- a/fs/configfs/dir.c
-> +++ b/fs/configfs/dir.c
-> @@ -970,7 +970,7 @@ static void configfs_dump_one(struct configfs_dirent *sd, int level)
->  {
->  	pr_info("%*s\"%s\":\n", level, " ", configfs_get_name(sd));
->  
-> -#define type_print(_type) if (sd->s_type & _type) pr_info("%*s %s\n", level, " ", #_type);
-> +#define type_print(_type) if (sd->s_type & _type) pr_info("%*s %s\n", level, " ", #_type)
->  	type_print(CONFIGFS_ROOT);
->  	type_print(CONFIGFS_DIR);
->  	type_print(CONFIGFS_ITEM_ATTR);
+> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
 
-As I've asked in V1. Is this macro being used?
-
---breno
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
 
