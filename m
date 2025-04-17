@@ -1,243 +1,146 @@
-Return-Path: <linux-kernel+bounces-609454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B970DA92269
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 18:14:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE025A9226C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 18:14:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F62B5A651C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 16:13:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2B1C8A169C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 16:13:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D43EA25485F;
-	Thu, 17 Apr 2025 16:13:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AB7E254AE7;
+	Thu, 17 Apr 2025 16:14:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UxaLAkcp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZOG+tyDm"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F50D251785;
-	Thu, 17 Apr 2025 16:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23041251785;
+	Thu, 17 Apr 2025 16:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744906408; cv=none; b=da5CUv8WCY6zja8uFRCxvtSTKg16IaE64madOImRVe3vixSaRi9qmXJMOWkdP7PcVKxnncghUqCaiCj3XnHzVRP5MPTqP/ysR+8Y5zPgQsBLXvjD/IgVmrcBAM+HCugjl+6cGBHGJbSUMm+40rsqcflRZb4dL2fSu+3cmf5781Q=
+	t=1744906441; cv=none; b=VrdR7WqmgL0WSQgMtoOXefiHCfbuW+tgl/qwvCJVVQT6L/lnf6Bw+lbBnG2A6WVx5yfc3XmZrhdk2jk/z85JYAUSm3qfXlmkfT3Behij1zixBeDS93m2dTuHrjzAlsXTxtHG7i/KgC0NNixQu1M1lk5bYD9QnUlfKXvatR2ZYWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744906408; c=relaxed/simple;
-	bh=B2jx6RLRF1IkGKeilRDgu5BJ5hcrH20ogEfV5LNYn+4=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PSFCa3R4zNjhybLsnZKwSNJsCCyf+qVovtQAZgUl7GNs3PD8ub2sUds/HTZeb3dYOClRwMKdIBeY83FBqcSgCiDYEjnkWkXaRsVTM2MufQINAN2akqdd7fn0137kY7BgEiqFqAuGpaBXEJEbQQr3wCHwzmb/lhu8D1Ic3Vhg20E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UxaLAkcp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F49BC4CEEA;
-	Thu, 17 Apr 2025 16:13:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744906407;
-	bh=B2jx6RLRF1IkGKeilRDgu5BJ5hcrH20ogEfV5LNYn+4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UxaLAkcpBpFYZB41WTPpqXXc+KpvKi9sfsG8Kkr5Jo+QD+Hx1Fdmwh0HoerQYDcPb
-	 NWAWipXBTWmihgJkq+ZoTX/0cAaLO1TA3qFbauX1gGg3+O/Bi5X1hwHOk6uDxUuRLt
-	 +PVUOTq9eetFMY1WXx24MuNGjVPQt4dqhNeVgoSWYfIIwsU3ZQUmzTxILCw0NsQO8e
-	 2Q1q1D3uzTWpScVjJNwBPyYL4U5qUBQUpruZqpQgvAwiZKpbqsUH1vzx1woyO8xwSO
-	 xuP37ozwYvL3XxLuQ2Yx4W5rXRqEFiqitHwXV2gX+dmFv0b6CQj5Qn4GVaVUhv39XO
-	 hdKuUUh1/aOXA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1u5Rrf-006Tml-PF;
-	Thu, 17 Apr 2025 17:13:24 +0100
-Date: Thu, 17 Apr 2025 17:13:23 +0100
-Message-ID: <86plhakbq4.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: D Scott Phillips <scott@os.amperecomputing.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Joey Gouly
- <joey.gouly@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K
- Poulose <suzuki.poulose@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Zenghui
- Yu <yuzenghui@huawei.com>,
-	kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] KVM: arm64: fix config.hcr used uninitialized in __kvm_at_s1e01_fast
-In-Reply-To: <86sem7yanc.fsf@scott-ph-mail.amperecomputing.com>
-References: <20250415154656.1698522-1-scott@os.amperecomputing.com>
-	<8634e9l1y8.wl-maz@kernel.org>
-	<86sem7yanc.fsf@scott-ph-mail.amperecomputing.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1744906441; c=relaxed/simple;
+	bh=qA+Gh7X5rveDAj2t+W2EEufL+HSqQ3+BiSPrQjMFRZ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i1rxLw2ULzY9OrpNKbwV4uqHoebqfmCgGKpUowMuqMzncHHvJPCneRCG6yyR5rXs2bkyVXpFhPQmeSzeHHTz9uDanmob2wCs/9X9Yvu3D5CPTbBjwa6uY1UFhDZinReLsNsF8UeXTlPptXEysanFjtwhwW++UV7oWuHTc3NLpM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZOG+tyDm; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744906439; x=1776442439;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=qA+Gh7X5rveDAj2t+W2EEufL+HSqQ3+BiSPrQjMFRZ4=;
+  b=ZOG+tyDmW9OVaj/9D9eZIKLT4OV4XWEiYpttF1Ojps5kqnaR5ze9h2G9
+   OeB3XD+AOywO/EGd8LBqdamplQbOkfDpyIBb5C4m+fWACAsIBTtVKyxYh
+   eLmWgaqNDHcoqvNTqJAGJTgfsETcY8lkMpiMOx+E0jBMSbFoI73yaUUyW
+   Qw3NlXYZKdCVXu3LUy7CMTuoUwnDc1wQI6XQyk8NjbBj2CS/OTR4Y/1u6
+   fEFZgFHyOc1jBllGUcZCnud+CE6n1ETwBIVkamXMP40Xc64N9itv08B+c
+   PCDwJWKEvgjkqolB3qY4r9Bq0Yk0VtbEBGDbvWqAUgQFxxe44k0zN//Mj
+   g==;
+X-CSE-ConnectionGUID: kkKBu5HcQX2yp50rB/xjHw==
+X-CSE-MsgGUID: pKp2UuuhTeWt/eYEC3FvFw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11406"; a="57148557"
+X-IronPort-AV: E=Sophos;i="6.15,219,1739865600"; 
+   d="scan'208";a="57148557"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2025 09:13:37 -0700
+X-CSE-ConnectionGUID: oy6monnuT7a3uw5gl4+EeQ==
+X-CSE-MsgGUID: b4x1RGelRk+4OeMvaniUzA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,219,1739865600"; 
+   d="scan'208";a="135669925"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2025 09:13:35 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1u5Rro-0000000DFV6-1Y2S;
+	Thu, 17 Apr 2025 19:13:32 +0300
+Date: Thu, 17 Apr 2025 19:13:31 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Thomas Richard <thomas.richard@bootlin.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	thomas.petazzoni@bootlin.com, DanieleCleri@aaeon.eu,
+	GaryWang@aaeon.com.tw
+Subject: Re: [PATCH v3 02/10] pinctrl: core: add
+ devm_pinctrl_register_mappings()
+Message-ID: <aAEoq6t8Tnts1eFY@smile.fi.intel.com>
+References: <20250416-aaeon-up-board-pinctrl-support-v3-0-f40776bd06ee@bootlin.com>
+ <20250416-aaeon-up-board-pinctrl-support-v3-2-f40776bd06ee@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: scott@os.amperecomputing.com, catalin.marinas@arm.com, joey.gouly@arm.com, oliver.upton@linux.dev, suzuki.poulose@arm.com, will@kernel.org, yuzenghui@huawei.com, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250416-aaeon-up-board-pinctrl-support-v3-2-f40776bd06ee@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, 17 Apr 2025 00:00:39 +0100,
-D Scott Phillips <scott@os.amperecomputing.com> wrote:
->=20
-> Marc Zyngier <maz@kernel.org> writes:
->=20
-> > On Tue, 15 Apr 2025 16:46:55 +0100,
-> > D Scott Phillips <scott@os.amperecomputing.com> wrote:
-> >>=20
-> >> In the skip_mmu_switch case, config.hcr was used uninitialized. On my
-> >> machine that caused garbage to be written to HCR_EL2 and then the CPU
-> >> got stuck at the synchronous exception handler. Also, the restore of
-> >> HCR_EL2 was missing at the end of the function in the same case.
-> >
-> > Huh, how embarrassing. Thanks for spotting this one.
-> >
-> >>=20
-> >> In skip_mmu_switch case, initialize config.hcr with HCR_HOST_VHE_FLAGS.
-> >>=20
-> >> Signed-off-by: D Scott Phillips <scott@os.amperecomputing.com>
-> >> ---
-> >>  arch/arm64/kvm/at.c | 8 ++++++--
-> >>  1 file changed, 6 insertions(+), 2 deletions(-)
-> >>=20
-> >> diff --git a/arch/arm64/kvm/at.c b/arch/arm64/kvm/at.c
-> >> index f74a66ce3064b..ff4b06ce661af 100644
-> >> --- a/arch/arm64/kvm/at.c
-> >> +++ b/arch/arm64/kvm/at.c
-> >> @@ -1233,8 +1233,10 @@ static u64 __kvm_at_s1e01_fast(struct kvm_vcpu =
-*vcpu, u32 op, u64 vaddr)
-> >>  	 * the right one (as we trapped from vEL2). If not, save the
-> >>  	 * full MMU context.
-> >>  	 */
-> >> -	if (vcpu_el2_e2h_is_set(vcpu) && vcpu_el2_tge_is_set(vcpu))
-> >> +	if (vcpu_el2_e2h_is_set(vcpu) && vcpu_el2_tge_is_set(vcpu)) {
-> >> +		config.hcr =3D read_sysreg(hcr_el2);
-> >>  		goto skip_mmu_switch;
-> >> +	}
-> >> =20
-> >>  	/*
-> >>  	 * Obtaining the S2 MMU for a L2 is horribly racy, and we may not
-> >> @@ -1299,7 +1301,9 @@ static u64 __kvm_at_s1e01_fast(struct kvm_vcpu *=
-vcpu, u32 op, u64 vaddr)
-> >>  	if (!fail)
-> >>  		par =3D read_sysreg_par();
-> >> =20
-> >> -	if (!(vcpu_el2_e2h_is_set(vcpu) && vcpu_el2_tge_is_set(vcpu)))
-> >> +	if (vcpu_el2_e2h_is_set(vcpu) && vcpu_el2_tge_is_set(vcpu))
-> >> +		write_sysreg(config.hcr, hcr_el2);
-> >> +	else
-> >>  		__mmu_config_restore(&config);
-> >> =20
-> >>  	return par;
-> >
-> > I think the diff below should do the trick (and incidently matches
-> > your commit message).
->=20
-> Looks good Marc, thanks
->=20
-> Reviewed-by: D Scott Phillips <scott@os.amperecomputing.com>
+On Wed, Apr 16, 2025 at 04:08:10PM +0200, Thomas Richard wrote:
+> Using devm_pinctrl_register_mappings(), the core can automatically
+> unregister pinctrl mappings.
 
-Actually, we can do much better, because the more I look at this, the
-more I find it silly. How about the patch below? It also fixes a
-latent issue where HCR_PTW was never set... I quickly tested it on my
-Q box, and nothing exploded. But at the same time, nothing exploded
-with the buggy code...
+...
 
-Thanks,
+> +int devm_pinctrl_register_mappings(struct device *dev,
+> +				   const struct pinctrl_map *maps,
+> +				   unsigned int num_maps)
+> +{
+> +	const struct pinctrl_map **ptr;
+> +	int ret;
+> +
+> +	ptr = devres_alloc(devm_pinctrl_unregister_mappings, sizeof(*ptr),
+> +			   GFP_KERNEL);
+> +	if (!ptr)
+> +		return -ENOMEM;
+> +
+> +	ret = pinctrl_register_mappings(maps, num_maps);
+> +	if (!ret) {
+> +		*ptr = maps;
+> +		devres_add(dev, ptr);
+> +	} else {
+> +		devres_free(ptr);
+> +	}
+> +
+> +	return ret;
 
-	M.
+Why not devm_add_action_or_reset()?
 
-=46rom 0191a6dfbeb52b41b2c8aa81edf7812b56a3612f Mon Sep 17 00:00:00 2001
-From: Marc Zyngier <maz@kernel.org>
-Date: Thu, 17 Apr 2025 16:24:29 +0100
-Subject: [PATCH] KVM: arm64: Don't feed uninitialised data to HCR_EL2
+> +}
 
-When the guest executes an AT S1E{0,1} from EL2, and that its
-HCR_EL2.{E2H,TGE}=3D=3D{1,1}, then this is a pure S1 translation
-that doesn't involve a guest-supplied S2, and the full S1
-context is already in place. This allows us to take a shortcut
-and avoid save/restoring a bunch of registers.
+...
 
-However, we set HCR_EL2 to a value suitable for the use of AT
-in guest context. And we do so by using the value that we saved.
-Or not. In the case described above, we restore whatever junk
-was on the stack, and carry on with it until the next entry.
+>  extern int pinctrl_register_mappings(const struct pinctrl_map *map,
+>  				     unsigned int num_maps);
+> +extern int devm_pinctrl_register_mappings(struct device *dev,
+> +					  const struct pinctrl_map *map,
+> +					  unsigned int num_maps);
 
-Needless to say, this is completely broken.
+No extern, please. Perhaps a clean up patch to remove existing ones?
 
-But this also triggers the realisation that saving HCR_EL2 is
-a bit pointless. We are always in host context at the point where
-reach this code, and what we program to enter the guest is a known
-value (vcpu->arch.hcr_el2).
+>  extern void pinctrl_unregister_mappings(const struct pinctrl_map *map);
+>  extern void pinctrl_provide_dummies(void);
 
-Drop the pointless save/restore, and wrap the AT operations with
-writes that switch between guest and host values for HCR_EL2.
+...
 
-Reported-by: D Scott Phillips <scott@os.amperecomputing.com>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
----
- arch/arm64/kvm/at.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+Test robot wants you to add a forward declaration
 
-diff --git a/arch/arm64/kvm/at.c b/arch/arm64/kvm/at.c
-index ea497ffbd1b19..da5359668b9c9 100644
---- a/arch/arm64/kvm/at.c
-+++ b/arch/arm64/kvm/at.c
-@@ -464,7 +464,6 @@ struct mmu_config {
- 	u64	sctlr;
- 	u64	vttbr;
- 	u64	vtcr;
--	u64	hcr;
- };
-=20
- static void __mmu_config_save(struct mmu_config *config)
-@@ -487,13 +486,10 @@ static void __mmu_config_save(struct mmu_config *conf=
-ig)
- 	config->sctlr	=3D read_sysreg_el1(SYS_SCTLR);
- 	config->vttbr	=3D read_sysreg(vttbr_el2);
- 	config->vtcr	=3D read_sysreg(vtcr_el2);
--	config->hcr	=3D read_sysreg(hcr_el2);
- }
-=20
- static void __mmu_config_restore(struct mmu_config *config)
- {
--	write_sysreg(config->hcr,	hcr_el2);
--
- 	/*
- 	 * ARM errata 1165522 and 1530923 require TGE to be 1 before
- 	 * we update the guest state.
-@@ -1248,8 +1244,8 @@ static u64 __kvm_at_s1e01_fast(struct kvm_vcpu *vcpu,=
- u32 op, u64 vaddr)
- 	__load_stage2(mmu, mmu->arch);
-=20
- skip_mmu_switch:
--	/* Clear TGE, enable S2 translation, we're rolling */
--	write_sysreg((config.hcr & ~HCR_TGE) | HCR_VM,	hcr_el2);
-+	/* Temporarily switch back to guest context */
-+	write_sysreg(vcpu->arch.hcr_el2, hcr_el2);
- 	isb();
-=20
- 	switch (op) {
-@@ -1281,6 +1277,8 @@ static u64 __kvm_at_s1e01_fast(struct kvm_vcpu *vcpu,=
- u32 op, u64 vaddr)
- 	if (!fail)
- 		par =3D read_sysreg_par();
-=20
-+	write_sysreg(HCR_HOST_VHE_FLAGS, hcr_el2);
-+
- 	if (!(vcpu_el2_e2h_is_set(vcpu) && vcpu_el2_tge_is_set(vcpu)))
- 		__mmu_config_restore(&config);
-=20
---=20
-2.39.2
+struct device;
 
 
---=20
-Without deviation from the norm, progress is not possible.
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
