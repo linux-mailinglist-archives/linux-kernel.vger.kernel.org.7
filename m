@@ -1,204 +1,207 @@
-Return-Path: <linux-kernel+bounces-609544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9EA5A9237E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 19:09:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19313A92384
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 19:09:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1528465F40
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 17:09:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49AE446356F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 17:09:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AEB6255232;
-	Thu, 17 Apr 2025 17:08:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE4525523D;
+	Thu, 17 Apr 2025 17:09:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ll90lX7t"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KKmwGtAX"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625B22550DA;
-	Thu, 17 Apr 2025 17:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE45919DF9A;
+	Thu, 17 Apr 2025 17:09:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744909700; cv=none; b=paflypCcBsN1+zNg+IhJI7wlnJjnjOjFoxmCQX3Ww1/MnYaccK8lrm9i/vYqVdiljx3WBPrh/CLjM87ebzVNP1EUIdNWwfV/FJC5u5qXhVySmy6sbSCRxF6D5RIDn7gZgoDuOprg6y0hkLqfh3W7DZ/Qx/CLg93ToFaJJVr6JM0=
+	t=1744909755; cv=none; b=KQCJWpeH5um9s0UOfkMcFmtT2C1PUa8orxSdmQnOodLtm6ZPdQ+rEdwBDw1MH9bknax2twdu2GRn/ndvtjmOQh8UvVgYBYMDru3er7SW76nYnZpZdEt8tgrAZzZnwml87muCwwdLZThOHrnmzHPWvXjugjP27oPxz6JZyPQrosw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744909700; c=relaxed/simple;
-	bh=m3aPf9fEZvWgieEvC2AE8MNhaBWCaX85XrEYnaNqaqw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=M8E46/iuL0aokaPG5UrRODX6pH5VsCMnHntdvIG+nUBjdsL8a3CLGx1GbZOWdZoJy2ncdscT/IDGxT3g77nKeEiUNb4XCK69xIJtIpvKo96n+MkTPyjFWVO5xHGXC9indwY3YPvDPqv5WAqFUIRxaTSdfeQ7bBEg3202bAv8SGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ll90lX7t; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53HCm4YM030108;
-	Thu, 17 Apr 2025 17:08:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	M9Wb3BerGiFvqVbiTQ2J4pKV0SFqt/reDrOeADQQ13E=; b=Ll90lX7tVWCAycAJ
-	qPO5ow8nKWjE8OvKkBUSKrtAFvvxxMX1ZGtKYETEaRjPbr13r/cRMLRkQkQp4LV3
-	fhhVi85Bh433MDOdm1l9SbXjL1YPucp/7TPMvDJszraa2FyD5H00aMA/4apUgOI4
-	8mb00y8jRYQE5okrXXGau5MqFWnZDKRU0HdWmcrz6IbTDBFzw/vCKNUWiWoAiI5a
-	GpZM5to7M8CNLdfgv1fZb0reTMMpzynNlEMOm7FeYsPU9EMmg7Ga+bzV5kjGYrvR
-	YJKl+IUCxj1Q6OyPp2p5KkwJbrXqurZSk0SZWbAbhUHZfmBNh0l3ukobKLI43kLr
-	Avb9KQ==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ygj9fn3g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Apr 2025 17:08:12 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53HH8BRc019457
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Apr 2025 17:08:11 GMT
-Received: from hu-ajipan-hyd.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 17 Apr 2025 10:08:07 -0700
-From: Ajit Pandey <quic_ajipan@quicinc.com>
-Date: Thu, 17 Apr 2025 22:37:41 +0530
-Subject: [PATCH 3/3] arm64: dts: qcom: sm4450: Add RPMh power domains
- support
+	s=arc-20240116; t=1744909755; c=relaxed/simple;
+	bh=cL8O9si/E+RgkCImblOqbPznISwWiwgiE1yb1CY5L44=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pCFtBwU5YIdUywv62PP/dY8Eow3qhGRiskrYDImYilo2WQx27M03918hTTUnJNQM2n4DWIiKeMiiyuTotkmJBOkg3eFq+G+Z/KmJnrcxaq9Vuagfy797teeW6N10MNets0Iig6o8J6DQ1TORRQ8zq5Qk/FQzKZaFDSDfFyEuuz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KKmwGtAX; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6e8efefec89so9521746d6.3;
+        Thu, 17 Apr 2025 10:09:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744909753; x=1745514553; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YVRsxMaaoRzI3A0BHWMdKaDAL/C7tvFz+AMzRlmVe60=;
+        b=KKmwGtAXjGUjDbLF0hmMsez/t03bAU/wnieHt3MnJvrtNytSuRxMxBaXysYJk60NV+
+         JmsET0UDxd6qa5bqyHgOpWn3qEG2zvn5zeDjiGiEdzpJXWBaGP158qxB6DwpxLoV3dl4
+         05AtF6bw2VBE9NdSR86SbEq5z2ybRwNZ1LHcM3HAM/0krQEvkXShxfYD0fxh0Y1+pZYy
+         eNlTjqmKDKs+ZAUUpvOLwjk62SUGlQkNP6nMJFl7WFYzzXGfovrLApXBHow5sSeugQU8
+         XF0Ry1kMl3MyT9UfRX3f6vMqVjYc+/w8SweYUNmC0MN2D5ZApuuOzgaV4F3dD5UVqiQ3
+         IxqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744909753; x=1745514553;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YVRsxMaaoRzI3A0BHWMdKaDAL/C7tvFz+AMzRlmVe60=;
+        b=KkCTVGuKnfIW6I/WY/8nXRjRc/bdOX+8x9P7k3ncE/eaxapenPMSlr4wWMNCcYZqWg
+         61LKcDQW+DJ47U3PGR7O2RaRIRFIjLB+v+1C+P77t/rUFXwUkAoe6ynlw5W5/rQET0cA
+         QnPynghCdFnn50BEwylCENwboZyA7h68ngtRQE+SRvSvtHWDhWhtpPoe41dIRB82/Wj4
+         KHYXbBFiDjXddUFkyelIFvfQFU1LgBx2BQzhaefK6ZhM1mY9b9fj7mz/3akCGwjC2rJ5
+         qmiV/aFzQ1e6GMG5Y/krGErghgz7k/L5/KWc/PXhS4jA+NHXDFT/a42ax+fc33lATGFc
+         am1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCULBZuTKEONeEJT436HudJJKyQuHb5714iGxurZV9N71eyIsp5VsInMQeZM+WN4YYbHHXD1Q1El4+0h2LUU@vger.kernel.org, AJvYcCUO5XbttCM8Uml7O/+KgfmSa3+pmObmV4Nx3sBNafAFYn1dKhowtA5JEUYr+rYBd1qwokgL6tGQQYc=@vger.kernel.org, AJvYcCW2eO2GeWcyZpeeAwkT+3AXX9NiRasjSgl3t37Tlbbj9XL9Xz+Ck+8DC2IqUDxYqG2H2Qijv/Lb@vger.kernel.org
+X-Gm-Message-State: AOJu0YxE364O54bOrnNOO8rRzlPHjoN8/cBR03XmPwAdOc6L3Hg58CYS
+	+SV/xSYeC5yNxouf5PSMPKVEahsvQRilHvkZod5SxqA6quz0M50jBjTXnehh+slTwjYMK5B6h3y
+	NHsJiV/21f8dN3uwDRD3BLvfU9RvmRp+sBGM=
+X-Gm-Gg: ASbGncvJwbg23mrr2JqpF0UfKflVbpEgTvTmT3Yp5rZgfJH+30Z2/h2XzOLgW6NxxB3
+	gXgxMsdYerxlJJyFdRQk88NKTkiJTD4xFkgfnRmkD3EparzDaGQE8i+HcQwnQY2E7LVS8jxt1RP
+	5yvIiC5yVFH7mHHc3HViq/BF3doveOvmDbC4jycLr2kFYdjMoaEY8+zg==
+X-Google-Smtp-Source: AGHT+IH3sgWNRxjJ7ML6vojQwEfQKL7ty9akA1LDmRGoufnBtH8OXUnb5G1KQUGP7NM/X1dbIaA6SvGTj/qLhpHImwk=
+X-Received: by 2002:a05:622a:15d4:b0:476:8825:99bf with SMTP id
+ d75a77b69052e-47ae9e5fcb5mr6420891cf.27.1744909752744; Thu, 17 Apr 2025
+ 10:09:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250417-sm4450_rpmhpd-v1-3-361846750d3a@quicinc.com>
-References: <20250417-sm4450_rpmhpd-v1-0-361846750d3a@quicinc.com>
-In-Reply-To: <20250417-sm4450_rpmhpd-v1-0-361846750d3a@quicinc.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: Imran Shaik <quic_imrashai@quicinc.com>,
-        Taniya Das
-	<quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        "Satya
- Priya Kakitapalli" <quic_skakitap@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        Ajit Pandey
-	<quic_ajipan@quicinc.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: _r5eBLgmYSoKCdr_vdJP8-Co2CF6ETwI
-X-Authority-Analysis: v=2.4 cv=PruTbxM3 c=1 sm=1 tr=0 ts=6801357c cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=oB8RqyVHaUcM_b3HlZAA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: _r5eBLgmYSoKCdr_vdJP8-Co2CF6ETwI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-17_05,2025-04-17_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
- priorityscore=1501 malwarescore=0 adultscore=0 lowpriorityscore=0
- impostorscore=0 clxscore=1011 spamscore=0 mlxscore=0 mlxlogscore=519
- phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504170125
+References: <20250415182038.523186-1-gshahrouzi@gmail.com> <fb712c034eda0d5d711a90a00b6382315fb5f929.camel@gmail.com>
+ <CAKUZ0zL88AyuRxzhoAv2iZO7N7qOMy1G3yKscqG3rQiiOS0gog@mail.gmail.com> <e8b24cf22c87e5b5ce0cc8919eca79f6e60ab6e3.camel@gmail.com>
+In-Reply-To: <e8b24cf22c87e5b5ce0cc8919eca79f6e60ab6e3.camel@gmail.com>
+From: Gabriel Shahrouzi <gshahrouzi@gmail.com>
+Date: Thu, 17 Apr 2025 13:08:00 -0400
+X-Gm-Features: ATxdqUG5PIHgIXbjSs34LLkZR6qQAIThR_w05scHyE-4Vxq0gd7frAOFZ8J-594
+Message-ID: <CAKUZ0z+FKxHcYTYiGvrZ3RLiMKT1P4gtTdq8d7=+ZFC0RMQzqA@mail.gmail.com>
+Subject: Re: [PATCH] iio: adc: Revoke valid channel for error path
+To: =?UTF-8?B?TnVubyBTw6E=?= <noname.nuno@gmail.com>
+Cc: gregkh@linuxfoundation.org, jic23@kernel.org, lars@metafoo.de, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-staging@lists.linux.dev, Michael.Hennerich@analog.com, 
+	sonic.zhang@analog.com, vapier@gentoo.org, skhan@linuxfoundation.org, 
+	kernelmentees@lists.linuxfoundation.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add device node for RPMh power domains on Qualcomm SM4450 platform.
+On Thu, Apr 17, 2025 at 10:02=E2=80=AFAM Nuno S=C3=A1 <noname.nuno@gmail.co=
+m> wrote:
+>
+> On Thu, 2025-04-17 at 08:53 -0400, Gabriel Shahrouzi wrote:
+> > On Thu, Apr 17, 2025 at 6:06=E2=80=AFAM Nuno S=C3=A1 <noname.nuno@gmail=
+.com> wrote:
+> > >
+> > > On Tue, 2025-04-15 at 14:20 -0400, Gabriel Shahrouzi wrote:
+> > > > According to the datasheet on page 9 under the channel selection ta=
+ble,
+> > > > all devices (AD7816/7/8) are able to use the channel marked as 7. T=
+his
+> > > > channel is used for diagnostic purposes by routing the internal 1.2=
+3V
+> > > > bandgap source through the MUX to the input of the ADC.
+> > > >
+> > > > Replace checking for string equality with checking for the same chi=
+p ID
+> > > > to reduce time complexity.
+> > > >
+> > > > Group invalid channels for all devices together because they are
+> > > > processed the same way.
+> > > >
+> > > > Fixes: 7924425db04a ("staging: iio: adc: new driver for AD7816 devi=
+ces")
+> > > > Cc: stable@vger.kernel.org
+> > > > Signed-off-by: Gabriel Shahrouzi <gshahrouzi@gmail.com>
+> > > > ---
+> > > >  drivers/staging/iio/adc/ad7816.c | 15 +++++----------
+> > > >  1 file changed, 5 insertions(+), 10 deletions(-)
+> > > >
+> > > > diff --git a/drivers/staging/iio/adc/ad7816.c
+> > > > b/drivers/staging/iio/adc/ad7816.c
+> > > > index 6c14d7bcdd675..d880fe0257697 100644
+> > > > --- a/drivers/staging/iio/adc/ad7816.c
+> > > > +++ b/drivers/staging/iio/adc/ad7816.c
+> > > > @@ -186,17 +186,12 @@ static ssize_t ad7816_store_channel(struct de=
+vice
+> > > > *dev,
+> > > >       if (ret)
+> > > >               return ret;
+> > > >
+> > > > -     if (data > AD7816_CS_MAX && data !=3D AD7816_CS_MASK) {
+> > > > -             dev_err(&chip->spi_dev->dev, "Invalid channel id %lu =
+for
+> > > > %s.\n",
+> > > > -                     data, indio_dev->name);
+> > > > -             return -EINVAL;
+> > > > -     } else if (strcmp(indio_dev->name, "ad7818") =3D=3D 0 && data=
+ > 1) {
+> > > > -             dev_err(&chip->spi_dev->dev,
+> > > > -                     "Invalid channel id %lu for ad7818.\n", data)=
+;
+> > > > -             return -EINVAL;
+> > > > -     } else if (strcmp(indio_dev->name, "ad7816") =3D=3D 0 && data=
+ > 0) {
+> > > > +     if (data !=3D AD7816_CS_MASK &&
+> > > > +         (data > AD7816_CS_MAX ||
+> > > > +         (chip->id =3D=3D ID_AD7818 && data > 1) ||
+> > > > +         (chip->id =3D=3D ID_AD7816 && data > 0))) {
+> > > >               dev_err(&chip->spi_dev->dev,
+> > > > -                     "Invalid channel id %lu for ad7816.\n", data)=
+;
+> > > > +                     "Invalid channel id %lu for %s.\n", data, ind=
+io_dev-
+> > > > > name);
+> > > >               return -EINVAL;
+> > > >       }
+> > >
+> > > Hmm, maybe I'm missing something but the code just looks the same as =
+before
+> > > (from a functionality point of view)? I'm really not seeing any fix..=
+.
+> > I might have to change it for readability. From my understanding, if
+> > channel 7 is selected (AD7816_CS_MASK), it never enters the error path
+> > whereas in the old code, if the chip were either ad7816 or ad7818, it w=
+ould
+> > end up returning an error because it skips all channels above either 0
+> > or 1.
+>
+> Ahh, right!
+>
+> One good refactor is to add a chip_info struct (renaming the existing one=
+) with
+> let's say a name and max_channels. Then, the condition could be reduced t=
+o:
+>
+> if (data > st->chip->max_channel && data !=3D AD7816_CS_MASK {
+>         dev_err(...);
+>         return -EINVAL;
+> }
+Makes sense. I sent a V2 with the updates. Also included enum
+ad7816_type as a member for chip_info but not sure if it is necessary.
+Renamed the existing one to ad7816_state.
+>
+> Being this in staging, I guess we don't care much about having the fix as=
+ the
+> first patch to make it easier to backport.
+In other words, combining the refactoring and fix into one patch is
+fine but normally they would be split?
 
-Signed-off-by: Ajit Pandey <quic_ajipan@quicinc.com>
----
- arch/arm64/boot/dts/qcom/sm4450.dtsi | 68 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 68 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sm4450.dtsi b/arch/arm64/boot/dts/qcom/sm4450.dtsi
-index 27453771aa68a1c4dbd2a986af6785fa05db147d..d217d922811e84420f0f31008e939337b07bc38b 100644
---- a/arch/arm64/boot/dts/qcom/sm4450.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm4450.dtsi
-@@ -10,6 +10,8 @@
- #include <dt-bindings/clock/qcom,sm4450-gpucc.h>
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/power/qcom,rpmhpd.h>
-+#include <dt-bindings/power/qcom-rpmpd.h>
- #include <dt-bindings/soc/qcom,rpmh-rsc.h>
- 
- / {
-@@ -591,6 +593,72 @@ rpmhcc: clock-controller {
- 				clocks = <&xo_board>;
- 				clock-names = "xo";
- 			};
-+
-+			rpmhpd: power-controller {
-+				compatible = "qcom,sm4450-rpmhpd";
-+				#power-domain-cells = <1>;
-+				operating-points-v2 = <&rpmhpd_opp_table>;
-+
-+				rpmhpd_opp_table: opp-table {
-+					compatible = "operating-points-v2";
-+
-+					rpmhpd_opp_ret: opp-16 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_RETENTION>;
-+					};
-+
-+					rpmhpd_opp_min_svs: opp-48 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_MIN_SVS>;
-+					};
-+
-+					rpmhpd_opp_low_svs_d1: opp-56 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS_D1>;
-+					};
-+
-+					rpmhpd_opp_low_svs: opp-64 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS>;
-+					};
-+
-+					rpmhpd_opp_low_svs_l1: opp-80 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS_L1>;
-+					};
-+
-+					rpmhpd_opp_low_svs_l2: opp-96 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS_L2>;
-+					};
-+
-+					rpmhpd_opp_svs: opp-128 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_SVS>;
-+					};
-+
-+					rpmhpd_opp_svs_l1: opp-192 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
-+					};
-+
-+					rpmhpd_opp_svs_l2: opp-224 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_SVS_L2>;
-+					};
-+
-+					rpmhpd_opp_nom: opp-256 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_NOM>;
-+					};
-+
-+					rpmhpd_opp_nom_l1: opp-320 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_NOM_L1>;
-+					};
-+
-+					rpmhpd_opp_nom_l2: opp-336 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_NOM_L2>;
-+					};
-+
-+					rpmhpd_opp_turbo: opp-384 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_TURBO>;
-+					};
-+
-+					rpmhpd_opp_turbo_l1: opp-416 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_TURBO_L1>;
-+					};
-+				};
-+			};
- 		};
- 
- 		cpufreq_hw: cpufreq@17d91000 {
-
--- 
-2.25.1
-
+>
+> - Nuno S=C3=A1
+>
+> >
+> > >
+> > > Having said the above, not sure if grouping helps with readability. B=
+ut I do
+> > > agree with moving from string comparison to use chip->id. And we also=
+ have
+> > > redundants 'else'
+> > >
+> > > - Nuno S=C3=A1
+> > >
 
