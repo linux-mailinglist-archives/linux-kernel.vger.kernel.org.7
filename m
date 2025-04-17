@@ -1,106 +1,88 @@
-Return-Path: <linux-kernel+bounces-609366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CE4AA9214C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 17:21:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BCBEA9212A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 17:18:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 177328A2642
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:20:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FD4546473E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:18:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0D43253F17;
-	Thu, 17 Apr 2025 15:20:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C28253359;
+	Thu, 17 Apr 2025 15:18:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="irTgFLfZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dnALV8g+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDBB52522A1;
-	Thu, 17 Apr 2025 15:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C595513B284;
+	Thu, 17 Apr 2025 15:18:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744903206; cv=none; b=OGqaHMEGe+J3IyA8waxTTT1yj7lI1NymepxJanY2IwCdLt1exe/O5Lck1RqCnygcX/QrQemGlb1fbCKF4hrDT5HHg+L2l1ySpIChPkXsIYHPnBp/jaZGimT0jbJQdxGKx5ELT99wppF+IdtLeaIu9QOeofJjoD53GTTBsDG/Llo=
+	t=1744903109; cv=none; b=hNq2Hnh0QaW57yL/GODUC4wg7YzFrzz8HQ4bwIA3V1JFn6qW/Tyb/O70YI5BXauppzJsmTU5EYsfkNiLLNsCf+NWcsSNDctNnJSAobrisdsyQRSXbc6IGPfT3QtsASJ/7MjT4YwcmXGPHwhb4LEWjCppJrxQ1agSBPVhk/DMfR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744903206; c=relaxed/simple;
-	bh=YNzxg2Cgltshvv/jkfeOT+fz/8OO2VlMUUBbnoXm6YE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gXdiKQ7UNaEWtkXN7HBu2IDYuKmPqiVUlIbJ3s0PWHcmEV/s9BfsjVLwXLbImBNOSEeVvCAPnfOJlTv8fm3dFB5XU62sWkzSKblxkEb8f8XGn6VIR/7ZclNfc6L4Cfa3NMbUnZgr6NfvqybDde5ERiu8NBBffAz8T2BnB/Mw7YY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=irTgFLfZ; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744903205; x=1776439205;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=YNzxg2Cgltshvv/jkfeOT+fz/8OO2VlMUUBbnoXm6YE=;
-  b=irTgFLfZmUxxF1yl/JgbQkkdKX2nedBOMntocv1kO/hJhwdCMz6H8RxX
-   a0+CEIME9Jcb589P7Ys7xTEnT1ccT1xBbXk7/OayLlgsypEkPTJF3/Btk
-   oWVKfeSHPq/UUxTeZskaAolsb7wdfHceysuVrd4Npijmxz6Va74rrOuaT
-   3hVNdfShxHtwsUWdnf1XCYM8h2wXvSoznwDEzE41Mz4Z40K7/XhGsIMYb
-   1mZY1fLNg0kk4hoZVWqgTzEwPW0No8d2NVMvNJUfeqTrWgS70CamJqGUL
-   rHeKuDpmIBOkJ1DaEQq/U0zIaZKzx8AAyxBj9uT7SJ5qDEQPrzih/z87O
-   Q==;
-X-CSE-ConnectionGUID: wPJZXfGDSf2Ee374kTH7XA==
-X-CSE-MsgGUID: JAKE0oURTVGFxwd77emmOw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11406"; a="46625084"
-X-IronPort-AV: E=Sophos;i="6.15,219,1739865600"; 
-   d="scan'208";a="46625084"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2025 08:20:03 -0700
-X-CSE-ConnectionGUID: ++tyDu/rQJGkQTAhSZPRtA==
-X-CSE-MsgGUID: xnLGGuCDQWuzcg5sX7AnmQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,219,1739865600"; 
-   d="scan'208";a="130689870"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa006.fm.intel.com with ESMTP; 17 Apr 2025 08:20:01 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 0B7498D1; Thu, 17 Apr 2025 18:20:00 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mark Brown <broonie@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: David Lechner <dlechner@baylibre.com>
-Subject: [PATCH v2 2/2] spi: dw: Use spi_bpw_to_bytes() helper
-Date: Thu, 17 Apr 2025 18:17:53 +0300
-Message-ID: <20250417151958.490174-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250417151958.490174-1-andriy.shevchenko@linux.intel.com>
-References: <20250417151958.490174-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1744903109; c=relaxed/simple;
+	bh=9xbu6E/U6HUbkBFAwogCVcgb21ggpZRFCP7r2JkLozQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=CAtJKz8kC9jdXPS1dDfHKPkbtSzT6gT22f3b0fFRPqEiCfyBmd/M2g+xeF7EaZKbKdTldD633C3HMmLa4FsNgohti/PxXoNIbY2ntY9kZczHxsEWawdunUydfr8H9AR8y07xydjaTfRRIIJhO1TwGlJ4AGbl/d+bNYbXoEgNWcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dnALV8g+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDFE9C4CEE4;
+	Thu, 17 Apr 2025 15:18:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744903109;
+	bh=9xbu6E/U6HUbkBFAwogCVcgb21ggpZRFCP7r2JkLozQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=dnALV8g+98scmC+MRQCl3LSxHNSi0iLze1U+d4aY3kuR5gTE2Grjrjkc3UXDT+22r
+	 +C70ux/D77/k9v4dJaGWo2rVmossDVD0OlgaRoX+UtPSzeTBUKB3/ykC2zeSTSfABE
+	 POwu4WjDh0EZgBskMtDysU92K4EU5dz8YzdD9UxJHHI4yFrxWM3F/5PTzZTPKbnmem
+	 CIJ2HOPoMxKPO6BMmHIO3TnHcEAWzPmApeiBXg6DxCSDpdokcBKNYlWF00f2oiW1ED
+	 eLQNyPgSU60nsCOFh0qK58qFT6LS8JWjqQy+RRoeYI+ufA2RpKw2Fer5Zoqw2UY8GP
+	 Wq3KAYsdWBktg==
+From: Vinod Koul <vkoul@kernel.org>
+To: vinicius.gomes@intel.com, dave.jiang@intel.com, 
+ Purva Yeshi <purvayeshi550@gmail.com>
+Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250410110216.21592-1-purvayeshi550@gmail.com>
+References: <20250410110216.21592-1-purvayeshi550@gmail.com>
+Subject: Re: [PATCH] dma: idxd: cdev: Fix uninitialized use of sva in
+ idxd_cdev_open
+Message-Id: <174490310744.238609.16595322952378683226.b4-ty@kernel.org>
+Date: Thu, 17 Apr 2025 20:48:27 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-Use existing helper to get amount of bytes (as power-of-two value)
-from bits per word.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/spi/spi-dw-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, 10 Apr 2025 16:32:16 +0530, Purva Yeshi wrote:
+> Fix Smatch-detected issue:
+> drivers/dma/idxd/cdev.c:321 idxd_cdev_open() error:
+> uninitialized symbol 'sva'.
+> 
+> 'sva' pointer may be used uninitialized in error handling paths.
+> Specifically, if PASID support is enabled and iommu_sva_bind_device()
+> returns an error, the code jumps to the cleanup label and attempts to
+> call iommu_sva_unbind_device(sva) without ensuring that sva was
+> successfully assigned. This triggers a Smatch warning about an
+> uninitialized symbol.
+> 
+> [...]
 
-diff --git a/drivers/spi/spi-dw-core.c b/drivers/spi/spi-dw-core.c
-index 941ecc6f59f8..b3b883cb9541 100644
---- a/drivers/spi/spi-dw-core.c
-+++ b/drivers/spi/spi-dw-core.c
-@@ -423,7 +423,7 @@ static int dw_spi_transfer_one(struct spi_controller *host,
- 	int ret;
- 
- 	dws->dma_mapped = 0;
--	dws->n_bytes = roundup_pow_of_two(BITS_TO_BYTES(transfer->bits_per_word));
-+	dws->n_bytes = spi_bpw_to_bytes(transfer->bits_per_word);
- 	dws->tx = (void *)transfer->tx_buf;
- 	dws->tx_len = transfer->len / dws->n_bytes;
- 	dws->rx = transfer->rx_buf;
+Applied, thanks!
+
+[1/1] dma: idxd: cdev: Fix uninitialized use of sva in idxd_cdev_open
+      commit: 97994333de2b8062d2df4e6ce0dc65c2dc0f40dc
+
+Best regards,
 -- 
-2.47.2
+~Vinod
+
 
 
