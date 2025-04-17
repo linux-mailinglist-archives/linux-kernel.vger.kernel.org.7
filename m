@@ -1,122 +1,168 @@
-Return-Path: <linux-kernel+bounces-608638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9FCBA9162F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 10:09:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EB03A91627
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 10:09:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB240440199
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:09:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E68231908138
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D58CB22DFFA;
-	Thu, 17 Apr 2025 08:09:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA08A22FDE7;
+	Thu, 17 Apr 2025 08:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="dpP/pLMS"
-Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F8621ADDB
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 08:09:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="RYGvreS4"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 513EA22DF86;
+	Thu, 17 Apr 2025 08:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744877354; cv=none; b=L+A0vQAsIGr4fmY08s9j0+p7xqUdN9rILIvlW+tNTvShKht5iK+xyc2y6TVSbDCI0RzFPrAEu+XdGgnJd5h0t9fIJM/P+h9sIOEJm2gQCkcz/ocaG+XAr3znq53bOhfaYNfD//PRS153JiqA3pQh3OoLnYb5X0A6bwLtQnAjwxE=
+	t=1744877315; cv=none; b=a7U88fl7f3/JoXMXggFAnxbb5u8aNxWvjljcgOcjwSIa/93brVfQFZNoGlvNGt0K0jol/2lOnjVIMtZipIbdQsig+HU7OkAdH4v0zsw1nLJWVXzLAF+nWkBKUzFNm16WTwjdK+6xsR64lDtVo3xrZeyDa9AYoQFQnYXiK6prcmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744877354; c=relaxed/simple;
-	bh=LvPXnh51V+FxKza9w5I8Oa/g8MHXOgAa70guwTdd9x4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EstyvMUkpB8Hr301IdeaOhNXuiDVXIBtIxscawZOa5tnu9IQcZrKm5TWNhy5VMmEKFNl1ek6gY7xd/Y2i2YrZEYv+FT7jucNIVDaDQn1xK84df+O45U91LIysKQs+IUdpT9MNB274Bm1krCbdkgmzZk4GHnRimXfwQd482hFYmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=dpP/pLMS; arc=none smtp.client-ip=54.206.16.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1744877292;
-	bh=BXpHJIusXX/IjXfyhBs6rYyVHN78GVwZVH7M4sTBy4I=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=dpP/pLMS94WMcr29wC5e3TMBL4p/3MasyT8JtRZ4LYme0zOsxvdFx/ZvFM1B6sJAa
-	 uEQ9iNK1+XdqcXbEvNnNR5ip9wUPeLvjrzwH46asES0rfjllNnaeFZnOgf4FiA18Rh
-	 A8jUr/jr9W5kbHJl9+ElHm9+GYjn6qErxEFSgeEg=
-X-QQ-mid: zesmtpip2t1744877281ta446f0d2
-X-QQ-Originating-IP: KgSWvsVE5LlZFuuA8sg1K79V3p+hHggUJiMUP3zDgVU=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 17 Apr 2025 16:07:59 +0800 (CST)
-X-QQ-SSF: 0002000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 8397205687042694865
-EX-QQ-RecipientCnt: 12
-From: WangYuli <wangyuli@uniontech.com>
-To: chenhuacai@kernel.org,
-	kernel@xen0n.name
-Cc: loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	jiaxun.yang@flygoat.com,
-	liuyun@loongson.cn,
-	chenhuacai@loongson.cn,
-	zhanjun@uniontech.com,
-	niecheng1@uniontech.com,
-	guanwentao@uniontech.com,
-	WangYuli <wangyuli@uniontech.com>,
-	Erpeng Xu <xuerpeng@uniontech.com>
-Subject: [PATCH] LoongArch: Select ARCH_USE_MEMTEST
-Date: Thu, 17 Apr 2025 16:07:46 +0800
-Message-ID: <CC80F694AAFA2099+20250417080746.352276-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1744877315; c=relaxed/simple;
+	bh=wsSYuEeEfzcuxI4QZjsSIfleahK+9e1G2ym2wIqY87M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VJwcGBtw99HkDTY4fdUUTzRW/mrazFBp9OFEw30hbGTi2SsYrHtuCPUQgWPOKckogzcEVeApWQj8GJCLhu1iPTKua2yEvPzSiCOA+OpvGD4IK6h8bwJO/TnAzYHOvgLBvWnBdSE3niwmB46E5S2VuHglOL2rAimNRcHOOtqehf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=RYGvreS4; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=HlgWpR09t/bSRSkE9n5lqQqIokkyYXuy0tioT6D2/gU=;
+	b=RYGvreS4Se2WbeLN10BDpFsbNJdMWqT3wCNTLrz8G2chlNdbl9oubsIcSiZp09
+	zKFwqAeB1t2wfiAGmwsN8s6b+irHTW/vvx8X+7ra05p6uoOxwLQpeVAzHA8VGUcq
+	sVA8EuQdLYybGjyc3Tk1jt/NssiajnDWEm1DjQg7z+GUk=
+Received: from [192.168.142.52] (unknown [])
+	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wAX613XtgBo09yjAg--.7973S2;
+	Thu, 17 Apr 2025 16:07:53 +0800 (CST)
+Message-ID: <52a2f6dc-1e13-4473-80f2-989379df4e95@163.com>
+Date: Thu, 17 Apr 2025 16:07:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] PCI: dw-rockchip: Configure max payload size on host init
+To: Niklas Cassel <cassel@kernel.org>, Shawn Lin <shawn.lin@rock-chips.com>
+Cc: lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com,
+ heiko@sntech.de, manivannan.sadhasivam@linaro.org, robh@kernel.org,
+ jingoohan1@gmail.com, thomas.richard@bootlin.com, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org
+References: <20250416151926.140202-1-18255117159@163.com>
+ <aACoEpueUHBLjgbb@ryzen>
+ <85643fe4-c7df-4d64-e852-60b66892470a@rock-chips.com>
+ <aACsJPkSDOHbRAJM@ryzen>
+ <ca283065-a48c-3b39-e70d-03d4c6c8a956@rock-chips.com>
+ <aACyRp8S9c8azlw9@ryzen>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <aACyRp8S9c8azlw9@ryzen>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: ODtOp3q7LZp1JSPzBJGD3Nmsc+fXMszNTto8IS0/OJqetBWt48vcnATg
-	aQB5A8b1bReT0/+0KfnXe1dv35vZVNOAbGFT4f04TnjV25RZ+c1LDcA/K5bIdO5Cyi506PR
-	pDA5x3I7dlXaSWhj/hrv+ooYjTVkubLDf+1HA1dfkSc0sSonvKIu3cQTWnSYAr41gK2VWSY
-	B9DnPZCP6KJJu4CFzlLW5tahR4bjkVqdXvxfPy+rNWal2Rw42LL8G9QmLB0oSdBikxR4lFt
-	/1eHTNoeGxMW8NfsRIzdqQx5GvSz4FweUbmnC0+EHY3CByVwS01Z5eYoaPu27Ef/2kiGFV9
-	7Dt3Z/Jco6SVUXwCvtW0h2B51Q/FChX51pk/oIvkTZzmdRKP0dja96j94JQFCEnaViq38eG
-	MgH6wtc0NSZo0OyEAnmn+uxsleWre05nZ32HLigliNyuHEr2fpRfcQV4dIkdUhrIXCyU16D
-	ZiTVBKYx/9O2t8fuHXPkuVpHH+fvHSJMJeNyZvN3DpmYqbp+9vSTv5f+U4I5tH1vK6+Ic29
-	hreRlzKdCY9exlf7Co/Tjw3MDbZvg0bxEzTtJYWeZYMI/k13Shxqr11W6ebUGnJP/bVzFHQ
-	ryJz3FRwA7/Nat/NCpWoU+KUyumNDCdwPhh1dS09rx54N4fI1kdNIA9DLxziM2DcFkrS9Eo
-	V97kATnuVAmwKizq7otIEGd4CZ1hLTBsvPcvLPUGnqW8MGqvtXdaquZ0M14N4AQDnovtdOD
-	U7rP2ZQ1qy3pRtAQ0sEb71llSxj4UKd4egupVXmIMwA16juJznJwcJCWKVsA0Bcpluqcfmv
-	vsU94Hho3DM7a8r9+dsluiSvzs1rPIE5bVbUfm/MLbvwSX8dmqlUM963WH9t8NQC0bOojZM
-	dmQ3rdzd0Is/HxDxT0z+lxPEKklBjSb90HGmh26M80I98+6f6cZgRXb7skh2WX2h60izQzj
-	Xacs9OLhKFhQhBCEJWckJipfytDGkctaaNv5iIhnC6cM6uL0AWtVJaSmawKBdhbEpM762I/
-	HlF2kBU4Lfaczr1Z7ScHyZMFOrIwj5uVfUz0tpHrOqwEZZGMMt
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-QQ-RECHKSPAM: 0
+X-CM-TRANSID:_____wAX613XtgBo09yjAg--.7973S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxCr4kCr47Jw4rArWrXryrZwb_yoWrGF18p3
+	y5Xa1Ykrs8tw45Jrs7t3Wv9rWYyFsxXFy5Wwn8JryUJwn0kr13tr4vkr4UKF17Xr4rGF4j
+	qFyUJryfX3WDAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UHrWwUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWxcyo2gAsnuqcwAAsl
 
-As of commit dce44566192e ("mm/memtest: add ARCH_USE_MEMTEST"),
-architectures must select ARCH_USE_MEMTESET to enable CONFIG_MEMTEST.
 
-Commit 628c3bb40e9a ("LoongArch: Add boot and setup routines") added
-support for early_memtest but did not select ARCH_USE_MEMTESET.
 
-Fixes: 628c3bb40e9a ("LoongArch: Add boot and setup routines")
-Tested-by: Erpeng Xu <xuerpeng@uniontech.com>
-Tested-by: Yuli Wang <wangyuli@uniontech.com>
-Signed-off-by: Yuli Wang <wangyuli@uniontech.com>
----
- arch/loongarch/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+On 2025/4/17 15:48, Niklas Cassel wrote:
+> On Thu, Apr 17, 2025 at 03:25:06PM +0800, Shawn Lin wrote:
+>> 在 2025/04/17 星期四 15:22, Niklas Cassel 写道:
+>>> On Thu, Apr 17, 2025 at 03:08:34PM +0800, Shawn Lin wrote:
+>>>> 在 2025/04/17 星期四 15:04, Niklas Cassel 写道:
+>>>>> Hello Hans,
+>>>>>
+>>>>> On Wed, Apr 16, 2025 at 11:19:26PM +0800, Hans Zhang wrote:
+>>>>>> The RK3588's PCIe controller defaults to a 128-byte max payload size,
+>>>>>> but its hardware capability actually supports 256 bytes. This results
+>>>>>> in suboptimal performance with devices that support larger payloads.
+>>>>>
+>>>>> Patch looks good to me, but please always reference the TRM when you can.
+>>>>>
+>>>>> Before this patch:
+>>>>> 		DevCap: MaxPayload 256 bytes
+>>>>> 		DevCtl: MaxPayload 128 bytes
+>>>>>
+>>>>>
+>>>>> As per rk3588 TRM, section "11.4.3.8 DSP_PCIE_CAP Detail Registers Description"
+>>>>>
+>>>>> DevCap is per the register description of DSP_PCIE_CAP_DEVICE_CAPABILITIES_REG,
+>>>>> field PCIE_CAP_MAX_PAYLOAD_SIZE.
+>>>>> Which claims that the value after reset is 0x1 (256B).
+>>>>>
+>>>>> DevCtl is per the register description of
+>>>>> DSP_PCIE_CAP_DEVICE_CONTROL_DEVICE_STATUS, field PCIE_CAP_MAX_PAYLOAD_SIZE_CS.
+>>>>> Which claims that the reset value is 0x0 (128B).
+>>>>>
+>>>>> Both of these match the values above.
+>>>>>
+>>>>> As per the description of PCIE_CAP_MAX_PAYLOAD_SIZE_CS:
+>>>>> "Permissible values that
+>>>>> can be programmed are indicated by the Max_Payload_Size
+>>>>> Supported field (PCIE_CAP_MAX_PAYLOAD_SIZE) in the Device
+>>>>> Capabilities (DEVICE_CAPABILITIES_REG) register (for more
+>>>>> details, see section 7.5.3.3 of PCI Express Base Specification)."
+>>>>>
+>>>>> So your patch looks good.
+>>>>>
+>>>>> I guess I'm mostly surprised that the e.g. pci_configure_mps() does not
+>>>>> already set DevCtl to the max(DevCap.MPS of the host, DevCap.MPS of the
+>>>>> endpoint).
+>>>>>
+>>>>> Apparently pci_configure_mps() only decreases MPS from the reset values?
+>>>>> It never increases it?
+>>>>>
+>>>>
+>>>> Actually it does:
+>>>>
+>>>> https://github.com/torvalds/linux/blob/master/Documentation/admin-guide/kernel-parameters.txt#L4757
+>>>
+>>> If that is the case, then explain the before/after with Hans lspci output here:
+>>> https://lore.kernel.org/linux-pci/bb40385c-6839-484c-90b2-d6c7ecb95ba9@163.com/
+>>>
+>>> His patch changes the default value of DevCtl.MPS (from 128B to 256B), but if
+>>> pci_configure_mps() can bump DevCtl.MPS to a higher value, his patch should not
+>>> be needed, since the EP (an NVMe SSD in his case) has DevCap.MPS 512B, and the
+>>> RC itself has DevCap.MPS 256B.
+>>>
+>>> Seems like we are missing something here.
+>>
+>> So Hans, could you please help set pci=pcie_bus_safe or
+>> pci=pcie_bus_perf in your cmdline, and see how lspci dump different
+>> without your patch?
+> 
+> It seems that the default MPS strategy can be set using Kconfigs:
+> https://github.com/torvalds/linux/blob/v6.15-rc2/drivers/pci/pci.c#L126-L136
+> https://github.com/torvalds/linux/blob/v6.15-rc2/include/linux/pci.h#L1110-L1116
+> 
+> Note that the these Kconfigs are hidden behind CONFIG_EXPERT.
+> So unless you have explicitly set one of these Kconfigs, the default should be:
+> PCIE_BUS_DEFAULT,	/* Ensure MPS matches upstream bridge */
 
-diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-index 54ed5b59a690..1ce9b8f5fd03 100644
---- a/arch/loongarch/Kconfig
-+++ b/arch/loongarch/Kconfig
-@@ -74,6 +74,7 @@ config LOONGARCH
- 	select ARCH_SUPPORTS_RT
- 	select ARCH_USE_BUILTIN_BSWAP
- 	select ARCH_USE_CMPXCHG_LOCKREF
-+	select ARCH_USE_MEMTEST
- 	select ARCH_USE_QUEUED_RWLOCKS
- 	select ARCH_USE_QUEUED_SPINLOCKS
- 	select ARCH_WANT_DEFAULT_BPF_JIT
--- 
-2.49.0
+
+Hi Niklas and Shawn,
+
+Thank you very much for your discussion and reply.
+
+I tested it on RK3588 and our platform. By setting pci=pcie_bus_safe, 
+the maximum MPS will be automatically matched in the end.
+
+So is my patch no longer needed? For RK3588, does the customer have to 
+configure CONFIG_PCIE_BUS_SAFE or pci=pcie_bus_safe?
+
+Also, for pci-meson.c, can the meson_set_max_payload be deleted?
+
+
+Best regards,
+Hans
+
 
 
