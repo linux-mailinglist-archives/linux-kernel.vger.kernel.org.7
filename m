@@ -1,154 +1,165 @@
-Return-Path: <linux-kernel+bounces-609545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97483A9237F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 19:09:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 260ECA92386
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 19:10:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02EB25A78DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 17:09:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4475C17B175
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 17:10:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B4D32550DE;
-	Thu, 17 Apr 2025 17:09:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA9842550BE;
+	Thu, 17 Apr 2025 17:10:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="by+shk2p"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="xRrOkl+q"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9564917A30E;
-	Thu, 17 Apr 2025 17:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B2B186E2E
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 17:10:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744909746; cv=none; b=hnL+TR64QRiQKce3Kgyj8mUDFVjNY7IRRpuuQ5kooFHJL90J122N6qPnfsPuL5AVmcH9buGEoi1HrMGHknrHWLm5RX0VbtNdDPNh3iv8RhnnUuVVc15zpoDvAmS4tOvfdz7CZxXoZDN2XJkv/9Nd4lTWowe8aUnLPB3tnmJZOtk=
+	t=1744909810; cv=none; b=BgIZJuPF8yIQUipGddS/9uxNWcY7mdAxf6QzT6i8YqYW3aqhB1bIQXncKCSN7el1mHU7h9K0vTViudJcMl+NYBLGe2cVHuHFX3hoegBKT/ovCLSycYoZo5Ljzpjyus62sceWx3NgdJVQzrp9AfHUg/oVk3HjFhMglP2/3ZGLbDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744909746; c=relaxed/simple;
-	bh=aXl1F7DYGZK/3+f9nUBSaSrK3fpSv8lUhV4sdPl1Pzo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=USniXFoOSQYGofXE8xjJ4aJNTjX/p34e1eiUlQqDaEqc/xUm5JeLTLXY7g314Kr/DEBv2QriTGVA6kYNeCQjMh1PnDjb+q0TgcJKxKz1Ptcb4BHRrK2glqnPqmBIqmckF3OwnOgsisoLx+ZFEAWkaui3Ei8eXCw+Mh8pWbDf+pE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=by+shk2p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51871C4CEE4;
-	Thu, 17 Apr 2025 17:09:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744909746;
-	bh=aXl1F7DYGZK/3+f9nUBSaSrK3fpSv8lUhV4sdPl1Pzo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=by+shk2pyqFJi+oU8vs4I6gsrXz3huX4Z9IWciIC6ih2uPa6SHpEsEEPCAodQvdLg
-	 ugshnCu9bMRvUWjP2sOA4TGQbNtmN9wnnEK6P80HzEdeDOVmsnqx+Gz8mRfXTMfL6g
-	 OHsN+ebMBW2CDMz/Ud8cWVuxMv9cwnajxiy7D2S6zD6Q63Gm5P51HaE1uf2LmUp+CO
-	 KF/n7h2PfNE+2BrIE82RrEmMNqruQ/AIaGTDsGLBbxkD/Jy4Rs1swBWhECQaiguYSN
-	 Y0r5XkaTlb+sEYNa3gfO42r0JRDj7rCLmkIc6S2wYGtzmmYedOUWfOmKrD4jGYiaEE
-	 /aDFiuUcgpEXw==
-Date: Thu, 17 Apr 2025 10:09:02 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Qingfang Deng <dqfext@gmail.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	linux-crypto@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Christoph =?iso-8859-1?Q?M=FCllner?= <christoph.muellner@vrull.eu>,
-	Heiko Stuebner <heiko.stuebner@vrull.eu>,
-	Qingfang Deng <qingfang.deng@siflower.com.cn>
-Subject: Re: [RFC PATCH] crypto: riscv: scalar accelerated GHASH
-Message-ID: <20250417170902.GC800@quark.localdomain>
-References: <20250417064940.68469-1-dqfext@gmail.com>
+	s=arc-20240116; t=1744909810; c=relaxed/simple;
+	bh=+KCwB4S1lB26w346UYpwjYOn/QTHi7mLnh8nbljjSZI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=qnvGSnDEzXl1+Yj7UU03tSEcPDKOsIEyuCbAUQCZdxecY6vKQ48DGiUhHDgp29/4MeHa33YTNGTl7EGpYgSVwZyex6eer0fG5QnXKj39jp52z0MhjJflauFmx3ktGJ5h7YLFBW+RbdncM+Su5hiZ5tflYFIDvATK5p/ki9CPd/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=xRrOkl+q; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250417064940.68469-1-dqfext@gmail.com>
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1744909795;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6U4ILFAnnROWvWpXm91/wKuzpauoiAfG10LJOtDhws0=;
+	b=xRrOkl+qGnYLA+AOqsbB9LjK1LWPYQy1oz8Y+rZWCD7iABshDYz1KUdZGcAdgbdurKya1R
+	CmI/fAI+abH5jKptTBlaXXuXzSzy6WA+8jcjmfT+qaoYMFx0A0F2590ib3Hghb/4DXHC1a
+	x++yxn2UC73tCT1BpT6bXu0j5HzYItmFsvENg9YCryIlHXRk6Fg7QnpXXpzvYxs6IxVc7W
+	c8sXsnDjKc4Bov2fkxDKx03WqPOEpfKUFS6Ak0zhV8nC0c2fEoLWUtuyP4rJPeFaeL0Hlf
+	VFVppXokdY6+zL3p+ey2gDqA+uAtsN12AQMFYGmk3QCLVkMdtAfVm2vN+mo5Tg==
+Content-Type: multipart/signed;
+ boundary=9beec6f5477ababb2ae9d3e4220a4e06ab7f2fafa941ec7e9fa069b1c762;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Thu, 17 Apr 2025 19:09:46 +0200
+Message-Id: <D992W9V9ZH2J.2Z2OLK00N0FIU@cknow.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+To: "Dragan Simic" <dsimic@manjaro.org>
+Cc: "Lorenzo Pieralisi" <lpieralisi@kernel.org>,
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, "Bjorn Helgaas"
+ <bhelgaas@google.com>, "Heiko Stuebner" <heiko@sntech.de>, "Manivannan
+ Sadhasivam" <manivannan.sadhasivam@linaro.org>, "Rob Herring"
+ <robh@kernel.org>, "Shawn Lin" <shawn.lin@rock-chips.com>, "Niklas Cassel"
+ <cassel@kernel.org>, <linux-pci@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>,
+ <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <stable@vger.kernel.org>
+Subject: Re: [PATCH] PCI: dw-rockchip: Fix function call sequence in
+ rockchip_pcie_phy_deinit
+References: <20250417142138.1377451-1-didi.debian@cknow.org>
+ <3e000468679b4371a7942a3e07d99894@manjaro.org>
+In-Reply-To: <3e000468679b4371a7942a3e07d99894@manjaro.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Apr 17, 2025 at 02:49:38PM +0800, Qingfang Deng wrote:
-> +static __always_inline u64 riscv_zbb_swab64(u64 val)
-> +{
-> +	asm (".option push\n"
-> +	     ".option arch,+zbb\n"
-> +	     "rev8 %0, %1\n"
-> +	     ".option pop\n"
-> +	     : "=r" (val) : "r" (val));
-> +	return val;
-> +}
-> +
-> +static __always_inline __uint128_t get_unaligned_be128(const u8 *p)
-> +{
-> +	__uint128_t val;
-> +#ifdef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
-> +	val = *(__uint128_t *)p;
-> +	val = riscv_zbb_swab64(val >> 64) | (__uint128_t)riscv_zbb_swab64(val) << 64;
-> +#else
-> +	val = (__uint128_t)p[0] << 120;
-> +	val |= (__uint128_t)p[1] << 112;
-> +	val |= (__uint128_t)p[2] << 104;
-> +	val |= (__uint128_t)p[3] << 96;
-> +	val |= (__uint128_t)p[4] << 88;
-> +	val |= (__uint128_t)p[5] << 80;
-> +	val |= (__uint128_t)p[6] << 72;
-> +	val |= (__uint128_t)p[7] << 64;
-> +	val |= (__uint128_t)p[8] << 56;
-> +	val |= (__uint128_t)p[9] << 48;
-> +	val |= (__uint128_t)p[10] << 40;
-> +	val |= (__uint128_t)p[11] << 32;
-> +	val |= (__uint128_t)p[12] << 24;
-> +	val |= (__uint128_t)p[13] << 16;
-> +	val |= (__uint128_t)p[14] << 8;
-> +	val |= (__uint128_t)p[15];
-> +#endif
-> +	return val;
-> +}
-> +
-> +static __always_inline void put_unaligned_be128(__uint128_t val, u8 *p)
-> +{
-> +#ifdef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
-> +	*(__uint128_t *)p = riscv_zbb_swab64(val >> 64) | (__uint128_t)riscv_zbb_swab64(val) << 64;
-> +#else
-> +	p[0] = val >> 120;
-> +	p[1] = val >> 112;
-> +	p[2] = val >> 104;
-> +	p[3] = val >> 96;
-> +	p[4] = val >> 88;
-> +	p[5] = val >> 80;
-> +	p[6] = val >> 72;
-> +	p[7] = val >> 64;
-> +	p[8] = val >> 56;
-> +	p[9] = val >> 48;
-> +	p[10] = val >> 40;
-> +	p[11] = val >> 32;
-> +	p[12] = val >> 24;
-> +	p[13] = val >> 16;
-> +	p[14] = val >> 8;
-> +	p[15] = val;
-> +#endif
-> +}
+--9beec6f5477ababb2ae9d3e4220a4e06ab7f2fafa941ec7e9fa069b1c762
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-Please help properly optimize swab*() and {get,put}_unaligned_* for RISC-V
-first, before considering random hacks like this.
+Hi Dragan,
 
-https://lore.kernel.org/r/20250403-riscv-swab-v3-0-3bf705d80e33@iencinas.com
-is working on swab*().
+On Thu Apr 17, 2025 at 6:20 PM CEST, Dragan Simic wrote:
+> On 2025-04-17 16:21, Diederik de Haas wrote:
+>> The documentation for the phy_power_off() function explicitly says
+>>=20
+>>   Must be called before phy_exit().
+>>=20
+>> So let's follow that instruction.
+>>=20
+>> Fixes: 0e898eb8df4e ("PCI: rockchip-dwc: Add Rockchip RK356X host
+>> controller driver")
+>> Cc: stable@vger.kernel.org	# v5.15+
+>> Signed-off-by: Diederik de Haas <didi.debian@cknow.org>
+>> ---
+>>  drivers/pci/controller/dwc/pcie-dw-rockchip.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>=20
+>> diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+>> b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+>> index c624b7ebd118..4f92639650e3 100644
+>> --- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+>> +++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+>> @@ -410,8 +410,8 @@ static int rockchip_pcie_phy_init(struct
+>> rockchip_pcie *rockchip)
+>>=20
+>>  static void rockchip_pcie_phy_deinit(struct rockchip_pcie *rockchip)
+>>  {
+>> -	phy_exit(rockchip->phy);
+>>  	phy_power_off(rockchip->phy);
+>> +	phy_exit(rockchip->phy);
+>>  }
+>>=20
+>>  static const struct dw_pcie_ops dw_pcie_ops =3D {
+>
+> Thanks for the patch, it's looking good to me.  The current state
+> of the rockchip_pcie_phy_deinit() function might actually not cause
+> issues because the rockchip_pcie_phy_deinit() function is used only
+> in the error-handling path in the rockchip_pcie_probe() function,
+> so having no runtime errors leads to no possible issues.
+>
+> However, it doesn't mean it shouldn't be fixed, and it would actually
+> be good to dissolve the rockchip_pcie_phy_deinit() function into the
+> above-mentioned error-handling path.  It's a short, two-line function
+> local to the compile unit, used in a single place only, so dissolving
+> it is safe and would actually improve the readability of the code.
 
-> +		/* Multiplication (without Karatsuba) */
-> +		t0 = clmul128(p_lo, k_lo);
-> +		t1 = clmul128(p_lo, k_hi);
-> +		t2 = clmul128(p_hi, k_lo);
-> +		t3 = clmul128(p_hi, k_hi);
-> +		mid = t1 ^ t2;
-> +		lo = t0 ^ (mid << 64);
-> +		hi = t3 ^ (mid >> 64);
+This patch came about while looking at [1] "PCI: dw-rockchip: Add system
+PM support", which would be the 2nd consumer of the
+rockchip_pcie_phy_deinit() function. That patch's commit message has the
+following: "tries to reuse possible exist(ing) code"
 
-There is no need to explicitly XOR 'mid << 64' into lo and 'mid >> 64' into hi.
-Take a look at how arch/x86/crypto/aes-gcm-*.S do it.
+Being a fan of the DRY principle, that sounds like an excellent idea :-)
 
-Also, since this is only doing one block at a time and does not use Karatsuba
-multiplication, the single-step reduction would work well here.  See
-aes-gcm-aesni-x86_64.S.
+So while you're right if there would only be 1 consumer, which is the
+case *right now*, given that a 2nd consumer is in the works, I think
+it's better to keep it as I've done it now.
+Let me know if you disagree (including why).
 
-- Eric
+[1] https://lore.kernel.org/linux-rockchip/1744352048-178994-1-git-send-ema=
+il-shawn.lin@rock-chips.com/
+
+> Thus, please feel free to include
+>
+> Reviewed-by: Dragan Simic <dsimic@manjaro.org>
+
+Thanks :-)
+
+Cheers,
+  Diederik
+
+> and please consider dissolving the rockchip_pcie_phy_deinit() function
+> in the possible v2 of this patch, as suggested above.
+
+
+--9beec6f5477ababb2ae9d3e4220a4e06ab7f2fafa941ec7e9fa069b1c762
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaAE13QAKCRDXblvOeH7b
+buluAQCEIjcEnqtZwClOAqM8s1LvfqUaaPSSbkWDSy6SYsLWAwEAofWwHxa8G5nC
+MgjHBOJT/8MsTjFkhLaeM2uzEV2YXQE=
+=VbT8
+-----END PGP SIGNATURE-----
+
+--9beec6f5477ababb2ae9d3e4220a4e06ab7f2fafa941ec7e9fa069b1c762--
 
