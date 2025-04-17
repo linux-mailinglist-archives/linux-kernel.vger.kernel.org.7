@@ -1,67 +1,67 @@
-Return-Path: <linux-kernel+bounces-609789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47B5DA92BA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 21:21:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 24AF6A92BAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 21:22:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A47C81B6527A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 19:21:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6A5E1B656B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 19:22:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D334A20013A;
-	Thu, 17 Apr 2025 19:21:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0FB202988;
+	Thu, 17 Apr 2025 19:21:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ivbcAs0e"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="j7BzJDCM"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5112BA926;
-	Thu, 17 Apr 2025 19:21:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB24204F6F;
+	Thu, 17 Apr 2025 19:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744917697; cv=none; b=u8MTc2OFVm/qELqgHSB+N1NNlk8jocjFGl+a71UQy56KNIftFSBRTpMhN4Uhei5JY6wIUAvsYNU+ZoKmo0qSHysgbt0/w0eyxKPhwiMrJGiQmnLaPhTMUCRalp3KYNVIzcWuhlV7v2kCp3zx7AClxMCIO2ACUm30eKa8TWSArz0=
+	t=1744917707; cv=none; b=QT5RgMpJmzLBzrR9iU3nyiCv6D3rXAx4hTkdbFidlPn2MtumS0OYvJM+10d9Y5xFPqHqYKHgDhe71fIXuQjoWgmfVq8otK0f6+/Nez+5ruW8ZfmIpKhmBIaclJfMX/lYYnvdbnFTpLHpqgZqk+3jBGoNKhDPxWGIDN7LZPwsO30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744917697; c=relaxed/simple;
-	bh=S8dLOsj0JQS/K9xCZ6WOy1r+UdtN9mec32qE58CjvCw=;
+	s=arc-20240116; t=1744917707; c=relaxed/simple;
+	bh=+CJrjIh4/VkCR9Ybqlx3vcctOMBAaHCVFAGSaZdoljE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PV4HkWU4hCU67ytiO8i7xI+/Rep0KONLjguerr9WM6rx6njmoQ0TXg6J0seU501oJKasY2le++wThtgNdqwR7/6lDxMHGjr66IRgAelxXYOVKHfwxmmTU8Evvrfo4oPdyqLUHuWdg2UKg2aJSiMuY64c1+V+JXtc3G3EdKKX2bM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ivbcAs0e; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Fg2BJXRb6S31qKrgfk0IRXZ2sI+nMSB2CJWe2sxF3Ac=; b=ivbcAs0ektzTOXoU4fr3v+s6n0
-	Tu9qfSHBhDBO58pm3o8Gzmy1iUmpaQZi6JwIFYEhG6NVJ4sTuYoX5rKfptzFWBdM7mwaiPvBJEx9O
-	qGCMNknuOyGb5KD/dBSZwgOFC+o41+ixwIHuh5uMzy+JEf2VCETZhe8K2A4YTcjE+Vws=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1u5Unc-009p4j-8a; Thu, 17 Apr 2025 21:21:24 +0200
-Date: Thu, 17 Apr 2025 21:21:24 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: dimitri.fedrau@liebherr.com
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=omU5z5A6OhizlvMiDbyn+rwuHTf32Hhsmh59BkCNuHy1K3HEjg9F0zIAq8oI0egYRFP0tsXywi8eM0BLwQgl+fp+FSFAri5Rb5BoyKMv7gokdGaC3b5KAL34F4OPmL1GGphq/ft1LEFOywm7opEogx7mHeyMWo4eDCjUcu8vsOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=j7BzJDCM; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 2DA271F92A;
+	Thu, 17 Apr 2025 21:21:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1744917703;
+	bh=SmTfEmql7viKQprPI4sVhC3SKjpRUpkDnqbejsbLIq4=;
+	h=Received:From:To:Subject;
+	b=j7BzJDCMxWpkhLzVc+rQ0qe0zbtPv3utjuB7ZRYficnRyKbMkzdFhg4YqTuq67Iiq
+	 DeDEFr1hTOkfDEzz/4oYC20/xUtPFtAPgPBuDx5k2bp1/ej9QFtbXzSkvYiuYVSbdW
+	 5tvYdGat0vGvZpdSrjBmM07OBDYOLme77osH5oqnUtpAXlENetU3a+M3Gj0L4THxz6
+	 wqDFbdc3tZ2GUmsiAGzG3ha66fvBtLkyeLtVEHXWE+F9Logb+wAud+KS16e+AYB6qM
+	 +l4YiCGHIKRHhbq5ZW2ILVrzYR1v5Sp5/9uDKGOBDbYw5K03FAn76caDXwak2634TY
+	 oEx8q8dI62t8Q==
+Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
+	id DA19A7F823; Thu, 17 Apr 2025 21:21:42 +0200 (CEST)
+Date: Thu, 17 Apr 2025 21:21:42 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Judith Mendez <jm@ti.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, Andrew Davis <afd@ti.com>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dimitri Fedrau <dima.fedrau@gmail.com>
-Subject: Re: [PATCH net-next v3 2/4] dt-bindings: net: dp83822: add
- constraints for mac-termination-ohms
-Message-ID: <4e69a33c-56ee-4712-8b01-225fdfacee07@lunn.ch>
-References: <20250416-dp83822-mac-impedance-v3-0-028ac426cddb@liebherr.com>
- <20250416-dp83822-mac-impedance-v3-2-028ac426cddb@liebherr.com>
+	Conor Dooley <conor+dt@kernel.org>, linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Josua Mayer <josua@solid-run.com>, Moteen Shah <m-shah@ti.com>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	Hiago De Franco <hiagofranco@gmail.com>
+Subject: Re: [PATCH v2 1/2] mmc: sdhci_am654: Add
+ sdhci_am654_start_signal_voltage_switch
+Message-ID: <aAFUxuhn_5RlbjdQ@gaggiata.pivistrello.it>
+References: <20250417182652.3521104-1-jm@ti.com>
+ <20250417182652.3521104-2-jm@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,17 +70,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250416-dp83822-mac-impedance-v3-2-028ac426cddb@liebherr.com>
+In-Reply-To: <20250417182652.3521104-2-jm@ti.com>
 
-On Wed, Apr 16, 2025 at 07:14:48PM +0200, Dimitri Fedrau via B4 Relay wrote:
-> From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+Hello Judith,
+
+On Thu, Apr 17, 2025 at 01:26:51PM -0500, Judith Mendez wrote:
+> The sdhci_start_signal_voltage_switch function sets
+> V1P8_SIGNAL_ENA by default after switching to 1v8 signaling.
+> V1P8_SIGNAL_ENA has a timing component where it determines
+> whether to launch cmd/data on neg edge (half cycle timing)
+> or pos edge (full cycle timing) of clock. V1P8_SIGNAL_ENA also
+> has a voltage switch component where if there exists an internal
+> LDO, for SD this bit is used to switch from 3.3V to 1.8V IO
+> signal voltage.
 > 
-> Property mac-termination-ohms is defined in ethernet-phy.yaml. Add allowed
-> values for the property.
+> The sequence is to switch to 1.8 IO voltage, set V1P8_SIGNAL_ENA,
+> change bus width, then update HIGH_SPEED_ENA & UHS_MODE_SELECT.
+> During bus width change is when eMMC failures are seen with
+> Kingston eMMC and various types SD cards across Sitara K3 SoCs.
 > 
-> Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+> So, add a quirk to suppress V1P8_SIGNAL_ENA and do not enable by
+> default for eMMC since it is anyways optional for this interface
+> and parse DT property: ti,fails-without-test-cd to apply the quirk
+> for SD cards.
+> 
+> Signed-off-by: Judith Mendez <jm@ti.com>
+> Suggested-by: Hiago De Franco <hiago.franco@toradex.com>
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Fixes: ac5a41b472b4 ("Revert "mmc: sdhci_am654: Add sdhci_am654_start_signal_voltage_switch"")
+Fixes: 941a7abd4666 ("mmc: sdhci_am654: Add sdhci_am654_start_signal_voltage_switch")
+Cc:stable@vger.kernel.org
 
-    Andrew
 
