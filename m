@@ -1,146 +1,137 @@
-Return-Path: <linux-kernel+bounces-608516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E426A914BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:06:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED500A91514
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:25:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A32183B891E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:06:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15ABB444DE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:25:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E6BD218589;
-	Thu, 17 Apr 2025 07:06:28 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2952F21ABAC;
+	Thu, 17 Apr 2025 07:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="M7cFYtq9"
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C151E4929;
-	Thu, 17 Apr 2025 07:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DBE319F133
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 07:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744873587; cv=none; b=eSb/8RkGA2uCCscewwF8lME8yGQV64h/7qwvX2ACLrLhqi0gG6w7cyGITR95cqRkdpVclR8ROw/ELXEqR2/JwBJn04JrEjrin6b903tRmrC8oPdUN6Lcp7IIqjh/Qx7RtvMyQT+7+nbJgrbYTMDNpawiul3IOTcmNCRQUTC2A64=
+	t=1744874736; cv=none; b=oC27H1hfy//7fbjPbJNbIZGPdvZ7Bq0jz5gGsq7trUIFDTcZvdIjkvnEpNvh9h7+H0zaAIQnOGwPlgKF1rs5exEp6lSnvAXEPi3zi9b7roJbjzIVxDdsE8/zYJhcCRgEGaKeulXmyTIX6Zh+foNTG58LPTpn/fthhEzjh31ZQiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744873587; c=relaxed/simple;
-	bh=D4WDT+HfXbAerAjkuEcCYbswy7cp7J2BzO7vNLERtIY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Yt5559rsgKJJBGxl5URf9O5abFINECf8AxoT2THOfroOOceNAXhA/IGJ4LwHrG8W6Qc09gggczG4zjeK7eQ/qOEm8o+4lrZG28+xLbwMM6k7x3PuZPFs61FKFPOhQaCMV4NwM6Ensyoc8i7S2vuSb+dOtHk5I2lkGmOdXE3Swow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4ZdTNX59rDz2CdZR;
-	Thu, 17 Apr 2025 15:02:20 +0800 (CST)
-Received: from kwepemg500017.china.huawei.com (unknown [7.202.181.81])
-	by mail.maildlp.com (Postfix) with ESMTPS id 62163140142;
-	Thu, 17 Apr 2025 15:05:47 +0800 (CST)
-Received: from huawei.com (10.175.127.227) by kwepemg500017.china.huawei.com
- (7.202.181.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 17 Apr
- 2025 15:05:46 +0800
-From: Li Lingfeng <lilingfeng3@huawei.com>
-To: <trondmy@kernel.org>, <anna@kernel.org>, <jlayton@kernel.org>,
-	<bcodding@redhat.com>
-CC: <linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yukuai1@huaweicloud.com>, <houtao1@huawei.com>, <yi.zhang@huawei.com>,
-	<yangerkun@huawei.com>, <lilingfeng@huaweicloud.com>,
-	<lilingfeng3@huawei.com>
-Subject: [PATCH] nfs: handle failure of nfs_get_lock_context in unlock path
-Date: Thu, 17 Apr 2025 15:25:08 +0800
-Message-ID: <20250417072508.3850532-1-lilingfeng3@huawei.com>
-X-Mailer: git-send-email 2.31.1
+	s=arc-20240116; t=1744874736; c=relaxed/simple;
+	bh=CAvDAZwfGLBI/HItNzkiNR1FoMJ30j2kia+vuCfBV2U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Cn7wO8NQ+yQeJbLhEqz9XhjAl6HCDdgzo2GV8pgUE59f3BXZXLUzpyhgHrjrDtReDusIDXc9eGP7NjdGQnin1wjLaL3Zj/fkats8BuC3k1z8W0HVv7d7jqjCuoHelxZW3fFxt3u1lynCBrd/2FZk04l2qAQ9V0RIRgbLW99NRGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu; spf=pass smtp.mailfrom=umich.edu; dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b=M7cFYtq9; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=umich.edu
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e643f0933afso1310477276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 00:25:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umich.edu; s=google-2016-06-03; t=1744874732; x=1745479532; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dCSw/es2iR8/yNVw4J5gJ8YTwX58btUZLp0G7enr38c=;
+        b=M7cFYtq99BiMTuc3lZQh8R3w7URZBjK19DcAfDJ9GBrlDoTyJc7OeLOX6GqbGDl4to
+         uE+Za1l1ViEZbfNlBqTIzrefp/0TjXbUmGobLBXRWViFa03xcAjfhHDKP2sNwSlOeayN
+         pNrbrf5PvfoYfmfdpzj2DUtN1Eh0Dv3xQ9QUD8+ZvLa+IvLjNJAjdubQtMvUEgQnw2Mu
+         h7TMf9h2tNX0jT+35UjKjReAYKg3P4InchqgVx4f7i0QEjvBTh1YXzv203BNWxB27BOi
+         ovEAraPbQztyNmvmHW5ZxZSHFvtx8irEWYf/QiJ8pbmj1IBdDPPPhqBLtHoADm11IADP
+         TD7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744874732; x=1745479532;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dCSw/es2iR8/yNVw4J5gJ8YTwX58btUZLp0G7enr38c=;
+        b=BXPrjif9Kck3vQDF0u2ckklUTBe9XBL06wGsGuKl0/FCo0P71C/GoBU9YakmnnMfht
+         TpKLjQwClJzad0SLlt4v3g14zyMtmJ/ojBeF8bBS5q1/js0cMDb2YFT9Ft57BpfRw/Gd
+         NUiYlVSmhcEKi3w6EGGiXXO9nRIhQnERMgbIZRgZAmPbT9831tMCpZ8b+yo48TnxYKUI
+         yEtHPzj0ehhWwV14GQa16MxXxy3V/D8C7hTTaCahtnTyn8l1OoZ/lvTrxN4X5Yy6lVFO
+         bHWhetLyPob+qAGs1gFTEV2nltg2RSgZir97vRW/Fz/Lokyg94idsGYa9/Fw3Z8h9fLC
+         qxTg==
+X-Forwarded-Encrypted: i=1; AJvYcCWycZWhcsBl5WK70E606z3ZDQxS62xW1wy2+5AlqiSy0GO4phSpne65FRwVKA3n5sN93kWHrZ35uHPR144=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzERe/GMUPZ7Gpbzlwfcm45X+LlY8Rp3MLkBjgP6XR3d60RHgTn
+	STs79XcVWqoGplufc033xHQ5auc3a6xKIUHzI1azmTQd7KB5+ZnlxUanwqFQiGGCea7bHhWz2fq
+	QPoMVRErpn/wdLUVg56crXVK9mCE7bYqkieGe4g==
+X-Gm-Gg: ASbGncsjxFK5DMVOLHESq/5oYdp9wOhzTMueggv0DAhKriPmeFF/1idcoJ7md7+XNFs
+	VurRxsFNGSru6AKpDYyH8z6EIV1mUXVsNN3dnt9XABR5d+f0wDhVk/7M+WNTa8f5Tg3lueTPsjq
+	VgS5/9bKBWr0SnbPmJz2zLKGx+Pd+eb4oC
+X-Google-Smtp-Source: AGHT+IE+p2PW3ydbONwQRu4rSA2EsOCb+RSOH2X4Csb3G9CdLF2TBoaq+QSeCw64kVxVVt90nJDanY3G9zyLsMtv34M=
+X-Received: by 2002:a05:6902:240b:b0:e6b:723f:bcf with SMTP id
+ 3f1490d57ef6-e7282a769b0mr2670551276.21.1744874732296; Thu, 17 Apr 2025
+ 00:25:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemg500017.china.huawei.com (7.202.181.81)
+References: <20250325-rust-analyzer-host-v5-0-385e7f1e1e23@gmail.com> <20250325-rust-analyzer-host-v5-12-385e7f1e1e23@gmail.com>
+In-Reply-To: <20250325-rust-analyzer-host-v5-12-385e7f1e1e23@gmail.com>
+From: Trevor Gross <tmgross@umich.edu>
+Date: Thu, 17 Apr 2025 02:25:21 -0500
+X-Gm-Features: ATxdqUGfByujakoDWsaF_GHACD1pGmqrbiR7ZbZczWOGW_x4V9XFFfDIb1tbrFk
+Message-ID: <CALNs47sy7fcQoOaxQ0moyRt5TJOi4VWc8AxXHzPgouccPP4N7A@mail.gmail.com>
+Subject: Re: [PATCH v5 12/13] scripts: generate_rust_analyzer.py: define scripts
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Danilo Krummrich <dakr@kernel.org>, 
+	Boris-Chengbiao Zhou <bobo1239@web.de>, Kees Cook <kees@kernel.org>, Fiona Behrens <me@kloenk.dev>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Lukas Wirth <lukas.wirth@ferrous-systems.com>, 
+	Daniel Almeida <daniel.almeida@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When memory is insufficient, the allocation of nfs_lock_context in
-nfs_get_lock_context() fails and returns -ENOMEM. If we mistakenly treat
-an nfs4_unlockdata structure (whose l_ctx member has been set to -ENOMEM)
-as valid and proceed to execute rpc_run_task(), this will trigger a NULL
-pointer dereference in nfs4_locku_prepare. For example:
+On Tue, Mar 25, 2025 at 3:07=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
+ wrote:
+>
+> Generate rust-project.json entries for scripts written in Rust. This is
+> possible now that we have a definition for `std` built for the host.
+>
+> Use `str::rstrip` for consistency.
+>
+> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+> Tested-by: Daniel Almeida <daniel.almeida@collabora.com>
+> Reviewed-by: Fiona Behrens <me@kloenk.dev>
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+> ---
+>  scripts/generate_rust_analyzer.py | 16 +++++++++++++++-
+>  1 file changed, 15 insertions(+), 1 deletion(-)
 
-BUG: kernel NULL pointer dereference, address: 000000000000000c
-PGD 0 P4D 0
-Oops: Oops: 0000 [#1] SMP PTI
-CPU: 15 UID: 0 PID: 12 Comm: kworker/u64:0 Not tainted 6.15.0-rc2-dirty #60
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-2.fc40
-Workqueue: rpciod rpc_async_schedule
-RIP: 0010:nfs4_locku_prepare+0x35/0xc2
-Code: 89 f2 48 89 fd 48 c7 c7 68 69 ef b5 53 48 8b 8e 90 00 00 00 48 89 f3
-RSP: 0018:ffffbbafc006bdb8 EFLAGS: 00010246
-RAX: 000000000000004b RBX: ffff9b964fc1fa00 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: fffffffffffffff4 RDI: ffff9ba53fddbf40
-RBP: ffff9ba539934000 R08: 0000000000000000 R09: ffffbbafc006bc38
-R10: ffffffffb6b689c8 R11: 0000000000000003 R12: ffff9ba539934030
-R13: 0000000000000001 R14: 0000000004248060 R15: ffffffffb56d1c30
-FS: 0000000000000000(0000) GS:ffff9ba5881f0000(0000) knlGS:00000000
-CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000000000c CR3: 000000093f244000 CR4: 00000000000006f0
-Call Trace:
- <TASK>
- __rpc_execute+0xbc/0x480
- rpc_async_schedule+0x2f/0x40
- process_one_work+0x232/0x5d0
- worker_thread+0x1da/0x3d0
- ? __pfx_worker_thread+0x10/0x10
- kthread+0x10d/0x240
- ? __pfx_kthread+0x10/0x10
- ret_from_fork+0x34/0x50
- ? __pfx_kthread+0x10/0x10
- ret_from_fork_asm+0x1a/0x30
- </TASK>
-Modules linked in:
-CR2: 000000000000000c
----[ end trace 0000000000000000 ]---
+> +    with open(scripts / "Makefile") as f:
+> +        makefile =3D f.read()
 
-Free the allocated nfs4_unlockdata when nfs_get_lock_context() fails and
-return NULL to terminate subsequent rpc_run_task, preventing NULL pointer
-dereference.
+Since we are using pathlib, this can be `makefile =3D (scripts /
+"Makefile").open().read()`
 
-Fixes: f30cb757f680 ("NFS: Always wait for I/O completion before unlock")
-Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
----
- fs/nfs/nfs4proc.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+> +    for path in scripts.glob("*.rs"):
+> +        name =3D path.name.rstrip(".rs")
 
-diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-index 970f28dbf253..9f5689c43a50 100644
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -7074,10 +7074,18 @@ static struct nfs4_unlockdata *nfs4_alloc_unlockdata(struct file_lock *fl,
- 	struct nfs4_unlockdata *p;
- 	struct nfs4_state *state = lsp->ls_state;
- 	struct inode *inode = state->inode;
-+	struct nfs_lock_context *l_ctx;
- 
- 	p = kzalloc(sizeof(*p), GFP_KERNEL);
- 	if (p == NULL)
- 		return NULL;
-+	l_ctx = nfs_get_lock_context(ctx);
-+	if (!IS_ERR(l_ctx)) {
-+		p->l_ctx = l_ctx;
-+	} else {
-+		kfree(p);
-+		return NULL;
-+	}
- 	p->arg.fh = NFS_FH(inode);
- 	p->arg.fl = &p->fl;
- 	p->arg.seqid = seqid;
-@@ -7085,7 +7093,6 @@ static struct nfs4_unlockdata *nfs4_alloc_unlockdata(struct file_lock *fl,
- 	p->lsp = lsp;
- 	/* Ensure we don't close file until we're done freeing locks! */
- 	p->ctx = get_nfs_open_context(ctx);
--	p->l_ctx = nfs_get_lock_context(ctx);
- 	locks_init_lock(&p->fl);
- 	locks_copy_lock(&p->fl, fl);
- 	p->server = NFS_SERVER(inode);
--- 
-2.31.1
+`stem` should provide the file name without extension, so
 
+    name =3D path.stem
+
+> @@ -267,7 +281,7 @@ def generate_crates(
+>      for folder in extra_dirs:
+>          for path in folder.rglob("*.rs"):
+>              logging.info("Checking %s", path)
+> -            name =3D path.name.replace(".rs", "")
+> +            name =3D path.name.rstrip(".rs")
+
+The above applies here too.
+
+A couple of optional nits if you resend but nothing to block on:
+
+Reviewed-by: Trevor Gross <tmgross@umich.edu>
 
