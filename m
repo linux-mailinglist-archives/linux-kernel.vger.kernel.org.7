@@ -1,204 +1,333 @@
-Return-Path: <linux-kernel+bounces-608653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5483A91657
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 10:22:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0004A9165A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 10:22:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D335016E38B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:22:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ECEC3B6471
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:22:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A4A3218845;
-	Thu, 17 Apr 2025 08:21:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5406E22E403;
+	Thu, 17 Apr 2025 08:22:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="don8ttsG"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YLIy3IaG"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4A021D5BF
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 08:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB5522D4EB;
+	Thu, 17 Apr 2025 08:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744878113; cv=none; b=qoqzenf+R1hg5iGf1p2YpdJLhl+74y+xaZcDAAvIkUiBdA2KXhnv4f6OYqqTpZnbGMv05QhgSRQMtfdhGmJx5AVvL4pjb2Ugmkn7PZNSxz2v09p2WHx+rFS8tYkh/NLOqnqAa4SHGCk4tLVgZxUUqbnUauTpvKlGRrk0cf9FkVg=
+	t=1744878144; cv=none; b=XwIKvTP9W9+IflhpOhdp0sXVjF8dynb2P7yThsuhSQTzH2AGv+im2tQLOX3GyDzk2Zw5FqPAoUYNqp8M+JftYN4jPr7AfPKGS440Ty/3VmaUTH+WJ+wusHL8qxs0849ccV8jJjGF1UUpyMI3LNx6vDzDf2+5gNs1mMD2hThmBdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744878113; c=relaxed/simple;
-	bh=/O9PzffT0UkF38g6YsQfm2ehvWBdBRlM1qDTFBNKPcg=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=uCXuni0/+B/OkxkDi3KMgn0FjCJM2aH5BFiG0VPowXWw3lGFsXKfAucrXoQgASiRBtGVwj3uMF+aJU7ScC7EV1wuyb3gmhiF/qjbzTnX7OsL9z+LsX5roqk9UrrUeS6mVspP+kCClWJ8kHkjMKBcYhbxgkMxwwHW6xX9deqovKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=don8ttsG; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250417082141epoutp031844842df57d9f390ff022dff6ace393~3DWN5BRi02007320073epoutp03r
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 08:21:41 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250417082141epoutp031844842df57d9f390ff022dff6ace393~3DWN5BRi02007320073epoutp03r
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1744878101;
-	bh=nKe4i8h6okYt25emOV7WfFmaZZU5uL7Xb8zHj/J4a4c=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=don8ttsGE+XWMOQjR52294VgyDel9rFbIaPPQdh91Fh61M+vR9+ELCtYhSt+bbkKS
-	 yL0zslYAsIVsuiIVk2uDDVfoyiTDJgEm9UkdhLV9lTQ5LAS1440OwRsvr0mRuE5eLt
-	 u2K0gdeWc61v1wI4g+WocIc2xqX2u0NZ+Y/1r/74=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas1p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250417082140epcas1p48d7a4439fa3773be1ee9784e78e6fd63~3DWNCgvbu2991529915epcas1p4F;
-	Thu, 17 Apr 2025 08:21:40 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.36.226]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4ZdW841mrLz6B9m5; Thu, 17 Apr
-	2025 08:21:40 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-	epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-	3B.72.10191.41AB0086; Thu, 17 Apr 2025 17:21:40 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250417082139epcas1p3ca8595055b368abd970300e9422e3515~3DWMJPt_01730217302epcas1p38;
-	Thu, 17 Apr 2025 08:21:39 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250417082139epsmtrp2dc85a27f3e86f17c5141280daa730411~3DWMH6Rta1656716567epsmtrp2M;
-	Thu, 17 Apr 2025 08:21:39 +0000 (GMT)
-X-AuditID: b6c32a39-0213c240000027cf-84-6800ba146716
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	D7.F2.08805.31AB0086; Thu, 17 Apr 2025 17:21:39 +0900 (KST)
-Received: from dh0421hwang02 (unknown [10.253.101.58]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250417082139epsmtip2d388a92515101398af77802a15043ec1~3DWL6ohPs1317113171epsmtip2w;
-	Thu, 17 Apr 2025 08:21:39 +0000 (GMT)
-From: "DooHyun Hwang" <dh0421.hwang@samsung.com>
-To: "'Avri Altman'" <Avri.Altman@sandisk.com>, <linux-scsi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <alim.akhtar@samsung.com>,
-	<avri.altman@wdc.com>, <bvanassche@acm.org>,
-	<James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>,
-	<peter.wang@mediatek.com>, <manivannan.sadhasivam@linaro.org>,
-	<quic_mnaresh@quicinc.com>
-Cc: <grant.jung@samsung.com>, <jt77.jang@samsung.com>,
-	<junwoo80.lee@samsung.com>, <jangsub.yi@samsung.com>,
-	<sh043.lee@samsung.com>, <cw9316.lee@samsung.com>,
-	<sh8267.baek@samsung.com>, <wkon.kim@samsung.com>
-In-Reply-To: <PH7PR16MB6196EF7F7A1862B48B66C5C5E5BC2@PH7PR16MB6196.namprd16.prod.outlook.com>
-Subject: RE: [PATCH 1/2] scsi: ufs: Add an enum for ufs_trace to check ufs
- cmd error
-Date: Thu, 17 Apr 2025 17:21:39 +0900
-Message-ID: <055d01dbaf71$be2da7f0$3a88f7d0$@samsung.com>
+	s=arc-20240116; t=1744878144; c=relaxed/simple;
+	bh=PzkIBzvinUW2oPWntBhM6dLX4AXexyJnbByjvs0DJ94=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iAabUR+HpOqKHLNxfOJxCMeJNMksh0Zel2DAFMfKR3rMaZP4sHZsXhlifFqx0ygK/k1ID1uRFChSHCxcuTncKPKDoyB658AGA5R+W0fhO3YLhxK4ovuGMYBU7rUt9kv7wyXB5tF8zHzLyR9zSRy/cQ/7hH/R9LOwTpfgLkS293w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YLIy3IaG; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53H7wdRp015008;
+	Thu, 17 Apr 2025 08:22:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=6Xx+Qq
+	lGnemhmirWT8bkH9kSx479Ey0v4BVTqYKjZfs=; b=YLIy3IaGvGp8JgylzRVYXD
+	LnqGzbXVSdlqqXA9wbI88OiWmFG1D+bdy4s24ioA3bDYjLASM37FOjuRUvVQ6yVz
+	KC6lcGiRHt1f8FPneIfd1UYgF3rOz2sMAboUhH1YAU9J9vntK2xifSn0xDm7JjoN
+	/CSJ5zXlG/BHTxYpCKivBjFd5IG6iSQULqGzHtTqxxAtSpQRt3QYPIvi6tvHrjsn
+	nOXc00LUw7+Ch4nzbmWrKlZjG1GBpRxsEu6LX+KUEF0u+0jwr4D8a9Z/mtdN4/0b
+	NhaeirB+xeLYGC6aviJHbTEdioCEAo7Q+h3Lo/I2KgC+MIMUtHwquAFAdhajokxQ
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 462mn7tc53-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Apr 2025 08:22:07 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 53H8Fo4m003626;
+	Thu, 17 Apr 2025 08:22:07 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 462mn7tc52-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Apr 2025 08:22:07 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53H7GYIY010415;
+	Thu, 17 Apr 2025 08:22:06 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4604qkcg5j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Apr 2025 08:22:05 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53H8M49Q34865888
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 17 Apr 2025 08:22:04 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 45B472004B;
+	Thu, 17 Apr 2025 08:22:04 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9CECE20040;
+	Thu, 17 Apr 2025 08:22:00 +0000 (GMT)
+Received: from [9.109.199.221] (unknown [9.109.199.221])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 17 Apr 2025 08:22:00 +0000 (GMT)
+Message-ID: <cfc1576a-6c69-4047-890d-3f51e8a5995b@linux.ibm.com>
+Date: Thu, 17 Apr 2025 13:51:59 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQEmYeTjtFjYRI1QNWxgWL0Y7ybfIwITLn2gAaoUPAICNqyVwLTieWog
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOJsWRmVeSWpSXmKPExsWy7bCmga7ILoYMg78ruCwezNvGZvFu/RYm
-	i5c/r7JZTPvwk9lixqk2Votff9ezW2zs57Do2DqZyWLH8zPsFrv+NjNZXN41h82i+/oONou7
-	LZ2sFsuP/2Oy2PrpN6vFt74n7BZNf/axWFw7c4LVYvOlbywOwh6Xr3h7TJt0is3jzrU9bB4t
-	J/ezeHx8eovFY+KeOo++LasYPaatOc/k8XmTnEf7gW6mAK6obJuM1MSU1CKF1Lzk/JTMvHRb
-	Je/geOd4UzMDQ11DSwtzJYW8xNxUWyUXnwBdt8wcoMeUFMoSc0qBQgGJxcVK+nY2RfmlJakK
-	GfnFJbZKqQUpOQVmBXrFibnFpXnpenmpJVaGBgZGpkCFCdkZMy5FFUwQquidt5m5gbGPt4uR
-	k0NCwETi5sppLCC2kMAORok1m3W6GLmA7E+MEltuXmCCcL4xSjw98ZkFpuP2rZfMEIm9jBL3
-	ft1hh3BeM0ocnDWLHaSKTcBAYvKxN2wgCRGB+0wSXU9vgrUwC1xnlPh57wsTSBWnQKzErXs7
-	gDo4OIQFwiQe/jYCCbMIqEos//eQDcTmFbCU2He0mx3CFpQ4OfMJ2BnMAvIS29/OYYY4SUHi
-	59NlrCC2iICbxJsTa6BqRCRmd7aB7ZUQmMwp0fR4IyNEg4vE5P/H2SFsYYlXx7dA2VISn9/t
-	ZYOwiyWunDsLZbcwSjzqyICw7SWaW5vZQG5mFtCUWL9LH2IXn8S7rz2sIGEJAV6JjjYhiGo1
-	icX/vgNtZQeyZSQauSGiHhKP296wTGBUnIXkr1lI/pqF5P5ZCKsWMLKsYhRLLSjOTU8tNiww
-	hUd1cn7uJkZwitey3ME4/e0HvUOMTByMhxglOJiVRHjPmf9LF+JNSaysSi3Kjy8qzUktPsRo
-	CgzpicxSosn5wCyTVxJvaGJpYGJmZGJhbGlspiTOu+fj03QhgfTEktTs1NSC1CKYPiYOTqkG
-	Jv4jm4/0qb0y++Aa1bQ0bW3t56mchv/+HXNYpFJ20N133iXn6uObTx63VNRmdIm9f+AmU8zj
-	e1VLvXx9t29w3jHnQ0r3z4kdjaInV7t/Ndn88cFnyzdG3m9F1lkGKj1a8ufqbG+rZGtHk1Kt
-	zybOUYnB1ef37V4xf/OiS5fVpb5zx97hKYotO/47bNYMxl8LHTI0X1lHWadPuFTuP/HCjsw/
-	DL+naDUWTv0gqnD1hOtZYdV19/fPP6d89/MugVPC6ts0/P5Zsk3cJjtV8IhNUuGtiphJM7w3
-	vJIWTmhplq1u4PydvZQrQ1lgTfL0w7v+M/Hz5ce92pVSr/Pb1Hp5f9aywK3VIj7ZmTNPZe0J
-	t1ZiKc5INNRiLipOBADTcn9megQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCIsWRmVeSWpSXmKPExsWy7bCSvK7wLoYMg5/blSwezNvGZvFu/RYm
-	i5c/r7JZTPvwk9lixqk2Votff9ezW2zs57Do2DqZyWLH8zPsFrv+NjNZXN41h82i+/oONou7
-	LZ2sFsuP/2Oy2PrpN6vFt74n7BZNf/axWFw7c4LVYvOlbywOwh6Xr3h7TJt0is3jzrU9bB4t
-	J/ezeHx8eovFY+KeOo++LasYPaatOc/k8XmTnEf7gW6mAK4oLpuU1JzMstQifbsErowZl6IK
-	JghV9M7bzNzA2MfbxcjJISFgInH71kvmLkYuDiGB3YwS++avZoFIyEh039/L3sXIAWQLSxw+
-	XAxR85JR4um3NrAaNgEDicnH3rCBJEQEXjJJLLvzlxHEYRa4zyixaNtUdoiWCUwSqy5cZAdp
-	4RSIlbh1bweYLSwQInH820Ewm0VAVWL5v4dsIDavgKXEvqPd7BC2oMTJmU9YQM5gFtCTaNvI
-	CBJmFpCX2P52DjPEpQoSP58uYwWxRQTcJN6cWMMCUSMiMbuzjXkCo/AsJJNmIUyahWTSLCQd
-	CxhZVjFKphYU56bnFhsWGOWllusVJ+YWl+al6yXn525iBEe8ltYOxj2rPugdYmTiYDzEKMHB
-	rCTCe878X7oQb0piZVVqUX58UWlOavEhRmkOFiVx3m+ve1OEBNITS1KzU1MLUotgskwcnFIN
-	TDxpP+/q/b9TFPlkpaXFBIWtogtq31+Zk7HeJHuptuVGmWhJp56m2PLHt40lixUb5yZL7Plv
-	a2R6jbVC53jFQalLpcl71vHWTNwgGie9JE75o4HiG4ui8yvvGNrpmQcW5smXZJ/lKefOMN9z
-	wbrnhumi9i1ruHMdzunmxh+5nNOdeDXVh6/7K4v6pL7OnQsPv87Z7We3TfSvvoSjiKjno2ua
-	Z3JCd1sVFPoHq2qa9HsIW/9LYZNOCX8oY/vnQGGyhN9tgToTrfna8bO3t+gcCJ13aGpDHesC
-	ZYGT0pPNGjzmqFyW485/K79L2Mqr9fzV0twPbXlszZ4s+06nBK18qBkTd630n9jym/s8y5RY
-	ijMSDbWYi4oTAQswajtnAwAA
-X-CMS-MailID: 20250417082139epcas1p3ca8595055b368abd970300e9422e3515
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250417023417epcas1p31338c05e70e61b0a5e96d0ac0910713d
-References: <20250417023405.6954-1-dh0421.hwang@samsung.com>
-	<CGME20250417023417epcas1p31338c05e70e61b0a5e96d0ac0910713d@epcas1p3.samsung.com>
-	<20250417023405.6954-2-dh0421.hwang@samsung.com>
-	<PH7PR16MB6196EF7F7A1862B48B66C5C5E5BC2@PH7PR16MB6196.namprd16.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] perf trace: Speed up startup time by bypassing the
+ creation of kernel maps
+To: Howard Chu <howardchu95@gmail.com>, peterz@infradead.org
+Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+        jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+        kan.liang@linux.intel.com, james.clark@linaro.org,
+        charlie@rivosinc.com, mpetlan@redhat.com, vmolnaro@redhat.com,
+        linux@treblig.org, mhiramat@kernel.org, leo.yan@arm.com,
+        dima@secretsauce.net, linux-perf-users@vger.kernel.org,
+        linux-kernel@vger.kernel.org, krzysztof.m.lopatowski@gmail.com
+References: <20250405031213.3502708-1-howardchu95@gmail.com>
+Content-Language: en-US
+From: Aditya Bodkhe <adityab1@linux.ibm.com>
+In-Reply-To: <20250405031213.3502708-1-howardchu95@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=ANnAolku c=1 sm=1 tr=0 ts=6800ba2f cx=c_pps a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17 a=uy4nFIpy6xwnJLC1:21 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=tCK5g1jhulg5S5MmH4MA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: Ba7M40Aj1pI70ftrUMu9u645IQUyqRSY
+X-Proofpoint-ORIG-GUID: 0b94XlSJsJyIPCKyZC7rLrl6nQ0FJVbI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-17_01,2025-04-15_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ mlxlogscore=999 adultscore=0 spamscore=0 mlxscore=0 bulkscore=0
+ suspectscore=0 phishscore=0 clxscore=1015 impostorscore=0
+ priorityscore=1501 lowpriorityscore=0 classifier=spam authscore=0 adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504170062
 
-> > There is no trace when a ufs uic cmd error occurs.
-> > So, add "UFS_CMD_ERR" enumeration to ufs_trace_str_t.
-> >
-> > Signed-off-by: DooHyun Hwang <dh0421.hwang@samsung.com>
-> > ---
-> >  drivers/ufs/core/ufs_trace.h | 1 +
-> >  include/ufs/ufs.h            | 2 +-
-> >  2 files changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/ufs/core/ufs_trace.h b/drivers/ufs/core/ufs_trace.h
-> index
-> > caa32e23ffa5..43830a092637 100644
-> > --- a/drivers/ufs/core/ufs_trace.h
-> > +++ b/drivers/ufs/core/ufs_trace.h
-> > @@ -41,6 +41,7 @@
-> >  #define UFS_CMD_TRACE_STRINGS                                  \
-> >         EM(UFS_CMD_SEND,        "send_req")                     \
-> >         EM(UFS_CMD_COMP,        "complete_rsp")                 \
-> > +       EM(UFS_CMD_ERR,         "req_complete_err")             \
-> >         EM(UFS_DEV_COMP,        "dev_complete")                 \
-> >         EM(UFS_QUERY_SEND,      "query_send")                   \
-> >         EM(UFS_QUERY_COMP,      "query_complete")               \
-> > diff --git a/include/ufs/ufs.h b/include/ufs/ufs.h index
-> > c0c59a8f7256..7f2d418bdd86 100644
-> > --- a/include/ufs/ufs.h
-> > +++ b/include/ufs/ufs.h
-> > @@ -631,7 +631,7 @@ struct ufs_dev_info {
-> >   * This enum is used in string mapping in ufs_trace.h.
-> >   */
-> >  enum ufs_trace_str_t {
-> > -       UFS_CMD_SEND, UFS_CMD_COMP, UFS_DEV_COMP,
-> > +       UFS_CMD_SEND, UFS_CMD_COMP, UFS_CMD_ERR, UFS_DEV_COMP,
-> >         UFS_QUERY_SEND, UFS_QUERY_COMP, UFS_QUERY_ERR,
-> >         UFS_TM_SEND, UFS_TM_COMP, UFS_TM_ERR  };
-> It seems strange to me that scsi & uic commands are designated by the same
-> enum.
-> Has it been considered to add UFS_UIC_SEND, UFS_UIC_COMP, UFS_UIC_ERR to
-> enum ufs_trace_str_t ?
-> Also looks like UFS_DEV_COMP is unused ?
-> 
-> Thanks,
-> Avri
-It is correct that the same enumeration is used for both SCSI and UIC
-commands.
-However, the trace function differs for SCSI and UIC commands.
-The enum is solely for handling the sending and completion of each command
-within the respective trace functions.
+Hi Howard
 
-Therefore, I think there is no need to add new enums like "UFS_UIC_SEND".
+I tested this patch on powerpc platform and got following results
 
-It seems better to discuss "UFS_DEV_COMP" in another commit.
+Average real time over 10 runs : 2.130 Seconds (Without Patch)
+
+Average real time over 10 runs : 2.062 Secomds (With Patch)
+
+Am i missing something here
+
+Thanks
+
+Aditya
 
 
-Thank you.
-DooHyun Hwang.
-> > --
-> > 2.48.1
-> 
-
-
+On 05/04/25 8:42 am, Howard Chu wrote:
+> If perf trace isn't run with '--call-graph' and '--kernel-syscall-graph'
+> options, e.g.
+>
+> sudo ./perf trace --call-graph fp --kernel-syscall-graph -a
+>
+> there is no need for creating kernel maps.
+>
+> before:
+>
+> perf $ time sudo ./perf trace -- sleep 1
+>           ? (         ): sleep/3462908  ... [continued]: execve())                                           = 0
+> 	 ...
+>    1001.459 (         ): sleep/3463166 exit_group()                                                          = ?
+>
+> real    0m2.834s
+> user    0m0.011s
+> sys     0m0.012s
+>
+> after:
+>
+> perf $ time sudo ./perf trace -- sleep 1
+>           ? (         ): sleep/3459948  ... [continued]: execve())                                           = 0
+> 	 ...
+>    1001.471 (         ): 3459948 exit_group()                                                          = ?
+>
+> real    0m1.810s
+> user    0m0.008s
+> sys     0m0.015s
+>
+> I also want to express my gratitude to Krzysztof Łopatowski—his
+> profiling of the perf trace [1] inspired this patch. I'm not sure why
+> the discussion stalled, and I apologize for not being able to answer his
+> questions. Since his findings significantly improve the startup time of
+> perf trace, I don't want to take credit for that. So Krzysztof, please
+> let me know if you'd like a Suggested-by: or anything else.
+>
+> [1]: https://lore.kernel.org/linux-perf-users/CAOQCU67EsHyw_FsqGbRuityahZTSAtWzffU=hLUJ7K=aZ=1hhA@mail.gmail.com/
+> Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> Cc: "Krzysztof Łopatowski" <krzysztof.m.lopatowski@gmail.com>
+> ---
+>   tools/perf/builtin-buildid-list.c     | 2 +-
+>   tools/perf/builtin-trace.c            | 2 +-
+>   tools/perf/tests/code-reading.c       | 2 +-
+>   tools/perf/tests/dlfilter-test.c      | 2 +-
+>   tools/perf/tests/dwarf-unwind.c       | 2 +-
+>   tools/perf/tests/mmap-thread-lookup.c | 2 +-
+>   tools/perf/tests/symbols.c            | 2 +-
+>   tools/perf/util/machine.c             | 6 +++---
+>   tools/perf/util/machine.h             | 2 +-
+>   tools/perf/util/probe-event.c         | 2 +-
+>   10 files changed, 12 insertions(+), 12 deletions(-)
+>
+> diff --git a/tools/perf/builtin-buildid-list.c b/tools/perf/builtin-buildid-list.c
+> index 52dfacaff8e3..357201d8ef0c 100644
+> --- a/tools/perf/builtin-buildid-list.c
+> +++ b/tools/perf/builtin-buildid-list.c
+> @@ -47,7 +47,7 @@ static void buildid__show_kernel_maps(void)
+>   {
+>   	struct machine *machine;
+>   
+> -	machine = machine__new_host();
+> +	machine = machine__new_host(true);
+>   	machine__for_each_kernel_map(machine, buildid__map_cb, NULL);
+>   	machine__delete(machine);
+>   }
+> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> index f55a8a6481f2..39f23ce39842 100644
+> --- a/tools/perf/builtin-trace.c
+> +++ b/tools/perf/builtin-trace.c
+> @@ -1963,7 +1963,7 @@ static int trace__symbols_init(struct trace *trace, struct evlist *evlist)
+>   	if (err)
+>   		return err;
+>   
+> -	trace->host = machine__new_host();
+> +	trace->host = machine__new_host(callchain_param.enabled && trace->kernel_syscallchains);
+>   	if (trace->host == NULL)
+>   		return -ENOMEM;
+>   
+> diff --git a/tools/perf/tests/code-reading.c b/tools/perf/tests/code-reading.c
+> index cf6edbe697b2..17c7b9f95532 100644
+> --- a/tools/perf/tests/code-reading.c
+> +++ b/tools/perf/tests/code-reading.c
+> @@ -654,7 +654,7 @@ static int do_test_code_reading(bool try_kcore)
+>   
+>   	pid = getpid();
+>   
+> -	machine = machine__new_host();
+> +	machine = machine__new_host(true);
+>   	machine->env = &perf_env;
+>   
+>   	ret = machine__create_kernel_maps(machine);
+> diff --git a/tools/perf/tests/dlfilter-test.c b/tools/perf/tests/dlfilter-test.c
+> index 54f59d1246bc..11f70ebabacf 100644
+> --- a/tools/perf/tests/dlfilter-test.c
+> +++ b/tools/perf/tests/dlfilter-test.c
+> @@ -352,7 +352,7 @@ static int test__dlfilter_test(struct test_data *td)
+>   		return test_result("Failed to find program symbols", TEST_FAIL);
+>   
+>   	pr_debug("Creating new host machine structure\n");
+> -	td->machine = machine__new_host();
+> +	td->machine = machine__new_host(true);
+>   	td->machine->env = &perf_env;
+>   
+>   	td->fd = creat(td->perf_data_file_name, 0644);
+> diff --git a/tools/perf/tests/dwarf-unwind.c b/tools/perf/tests/dwarf-unwind.c
+> index 4803ab2d97ba..b76712f68403 100644
+> --- a/tools/perf/tests/dwarf-unwind.c
+> +++ b/tools/perf/tests/dwarf-unwind.c
+> @@ -203,7 +203,7 @@ noinline int test__dwarf_unwind(struct test_suite *test __maybe_unused,
+>   	struct thread *thread;
+>   	int err = -1;
+>   
+> -	machine = machine__new_host();
+> +	machine = machine__new_host(true);
+>   	if (!machine) {
+>   		pr_err("Could not get machine\n");
+>   		return -1;
+> diff --git a/tools/perf/tests/mmap-thread-lookup.c b/tools/perf/tests/mmap-thread-lookup.c
+> index ddd1da9a4ba9..194b5affaa41 100644
+> --- a/tools/perf/tests/mmap-thread-lookup.c
+> +++ b/tools/perf/tests/mmap-thread-lookup.c
+> @@ -167,7 +167,7 @@ static int mmap_events(synth_cb synth)
+>   	 */
+>   	TEST_ASSERT_VAL("failed to create threads", !threads_create());
+>   
+> -	machine = machine__new_host();
+> +	machine = machine__new_host(true);
+>   
+>   	dump_trace = verbose > 1 ? 1 : 0;
+>   
+> diff --git a/tools/perf/tests/symbols.c b/tools/perf/tests/symbols.c
+> index ee20a366f32f..6b22a451211a 100644
+> --- a/tools/perf/tests/symbols.c
+> +++ b/tools/perf/tests/symbols.c
+> @@ -19,7 +19,7 @@ struct test_info {
+>   
+>   static int init_test_info(struct test_info *ti)
+>   {
+> -	ti->machine = machine__new_host();
+> +	ti->machine = machine__new_host(true);
+>   	if (!ti->machine) {
+>   		pr_debug("machine__new_host() failed!\n");
+>   		return TEST_FAIL;
+> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+> index 55d4977b9913..b1828e3922f2 100644
+> --- a/tools/perf/util/machine.c
+> +++ b/tools/perf/util/machine.c
+> @@ -125,14 +125,14 @@ int machine__init(struct machine *machine, const char *root_dir, pid_t pid)
+>   	return 0;
+>   }
+>   
+> -struct machine *machine__new_host(void)
+> +struct machine *machine__new_host(bool create_kmaps)
+>   {
+>   	struct machine *machine = malloc(sizeof(*machine));
+>   
+>   	if (machine != NULL) {
+>   		machine__init(machine, "", HOST_KERNEL_ID);
+>   
+> -		if (machine__create_kernel_maps(machine) < 0)
+> +		if (create_kmaps && machine__create_kernel_maps(machine) < 0)
+>   			goto out_delete;
+>   
+>   		machine->env = &perf_env;
+> @@ -146,7 +146,7 @@ struct machine *machine__new_host(void)
+>   
+>   struct machine *machine__new_kallsyms(void)
+>   {
+> -	struct machine *machine = machine__new_host();
+> +	struct machine *machine = machine__new_host(true);
+>   	/*
+>   	 * FIXME:
+>   	 * 1) We should switch to machine__load_kallsyms(), i.e. not explicitly
+> diff --git a/tools/perf/util/machine.h b/tools/perf/util/machine.h
+> index ae3e5542d57d..e6faf8cd06e7 100644
+> --- a/tools/perf/util/machine.h
+> +++ b/tools/perf/util/machine.h
+> @@ -163,7 +163,7 @@ struct thread *machine__findnew_guest_code(struct machine *machine, pid_t pid);
+>   void machines__set_id_hdr_size(struct machines *machines, u16 id_hdr_size);
+>   void machines__set_comm_exec(struct machines *machines, bool comm_exec);
+>   
+> -struct machine *machine__new_host(void);
+> +struct machine *machine__new_host(bool create_kmaps);
+>   struct machine *machine__new_kallsyms(void);
+>   int machine__init(struct machine *machine, const char *root_dir, pid_t pid);
+>   void machine__exit(struct machine *machine);
+> diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+> index 307ad6242a4e..6b5b5542f454 100644
+> --- a/tools/perf/util/probe-event.c
+> +++ b/tools/perf/util/probe-event.c
+> @@ -94,7 +94,7 @@ int init_probe_symbol_maps(bool user_only)
+>   	if (symbol_conf.vmlinux_name)
+>   		pr_debug("Use vmlinux: %s\n", symbol_conf.vmlinux_name);
+>   
+> -	host_machine = machine__new_host();
+> +	host_machine = machine__new_host(true);
+>   	if (!host_machine) {
+>   		pr_debug("machine__new_host() failed.\n");
+>   		symbol__exit();
 
