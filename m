@@ -1,39 +1,78 @@
-Return-Path: <linux-kernel+bounces-608434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCA5AA91367
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:58:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AC1C9A91369
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:59:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A4263ABDFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 05:57:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 241A53A958C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 05:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 640FE1E7C38;
-	Thu, 17 Apr 2025 05:57:56 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1EF1B4223;
-	Thu, 17 Apr 2025 05:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72191E1DEB;
+	Thu, 17 Apr 2025 05:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jeH+NcaQ"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3CE1B4223
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 05:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744869476; cv=none; b=pt/DKvC4QUiWPLZtvLFuIQLwiixTfE2YFRhMWj0KBGWTx3Fx8qmvg+tCtGOnq1+QARqSU0NowXUOMozOe6pQv7URu7UXaj1lxDqpyM+cNhTFbALTUDEY85JWwgF+185dy8ROu6sm0T0pOl6riEj95dAul3FKR0Q09aTGMXGrDKA=
+	t=1744869567; cv=none; b=mmi5/Lo4nEB6u1lNvMSfGEDfAyHBJgJtK3fAZHg+vgB8D08Jc+1n95ZNW7GjLLRRzFVqZxpLAjBqF1Iu1ZCA+iBbpaSEsBLF6Y8OP7XF6T0MghxSaJvM/A62POzaal6msmP9sNst9S+dpNtRuwUBi1X8J93dpEhhXr2XLAiZivU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744869476; c=relaxed/simple;
-	bh=u8zjkPFaeKGDmMPx2SMuPTj91LKk5AD9oTuAIaEtfBw=;
+	s=arc-20240116; t=1744869567; c=relaxed/simple;
+	bh=0iFoUgnREDBc/ZlkVrSYb4nxLYJIRHF5kS2B/alzlVc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VsJUhj8CZtaH1+YcIZ9koTPGb8rlZsprIlCX1ZZM503kJ6hN4/ltFlW5ji8oZm1pB2xYhi3hRbaX/unSRFDjYE9414yWjN5GpzjFI7BamgbAufWmALqkc60j6Q2OOI2BuAXv1q5rJaR5LJQ4GZIOxPa3ZCbzMu37p5i8k/olKYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B65F02B;
-	Wed, 16 Apr 2025 22:57:50 -0700 (PDT)
-Received: from [10.57.72.153] (unknown [10.57.72.153])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 20F1A3F694;
-	Wed, 16 Apr 2025 22:57:51 -0700 (PDT)
-Message-ID: <1ca192e6-3a45-45c6-b4f0-be6a89eaf192@arm.com>
-Date: Thu, 17 Apr 2025 06:57:50 +0100
+	 In-Reply-To:Content-Type; b=jeHJlwKOEcguQI6VzXHzAEygXwIz01YvkZVDLV16rv5FXDRxo3ssbcdWYmX3n1j2DZVFjFd3hX1YOYTUY1q17q8s91r2WNvd6YOpsSn2lZj9jtlW+kEn/2ZkHtlgwHqcELiGTn+BAICpvCLibNYGRe4xYHzQRHj6YeDaPc+mJ3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jeH+NcaQ; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2241053582dso6027775ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 22:59:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744869565; x=1745474365; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Gf5v6WUNE0KkGFompqgKh9fVytzNPfs6PdhAhx8i7h8=;
+        b=jeH+NcaQ136Cny5JE6BzgT/yh9Y+QiMe7/XWlZ82ZplqgFqPpUJmLv+BcHd1m8iAAm
+         Kuaiq7ZwZSlBV+HlCEiikFvX/C1hEhW6DcoJva8Rzzl3wpYxgBI1je3kEzh1Qj46trqR
+         ACV4KSaG6ax0QLeftv1OvUxH5oZ8bYWwjwuZoDubu0hWr1olXL3PXqc7IRd0YYrczNfC
+         D7d7UcqH94khR5vgQ65voGX3RhRpvp8LAjgrL8gdt+RfKTLBPGbq1csU0IbWzzlcY76l
+         huFoFRz5bUmjHl65GAdWUHFUQRnUsHhj/zKfUqWJi0lxi8cX9fV3+SBFMkjmVkk9pKOU
+         fUEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744869565; x=1745474365;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Gf5v6WUNE0KkGFompqgKh9fVytzNPfs6PdhAhx8i7h8=;
+        b=KDfTq+2h0NWv8eOzlurgVMZOcepJGGqKPgpBrr+1VX7KSSAUw7oSLqJMrQn6HcqFyF
+         32cYM/wqBqruOibGQ9tJr5m/yoZGvUnAT6OAkP60NR6CDSLerxICdvPsl7I/ZKz3bjmg
+         l3C6wqgnD1kDn/O+3iN6brePJHDmtbDLrkjPU/g259WxGZ82rF9qTWh+LXXEpE5xk+5K
+         20ua5ed2NmrdfsDrNgjYaHXzeDn7cWGpMUPArIzLSHRPbHzxDvSODRCGhdJvyns2WiQ3
+         5z1mYazWjWcFlXqGIU82W2DooslXUBJC9JNMjpCSobJgH+EidFFaz1BMrYXE4ERfEuIw
+         ViCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUxX4fu6V0ysGfybf9EDQ85caqJYqwer9lRHuU+9eqeOI1NctUJiJIn4zJ7fKQLzVbSCWrY2/0pEfVi1l8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzy711yjR/zA+D8IY5ZCHjk/Ljt+vjDFDUWXNIHTRs1TeEUp7wS
+	QUo+baV+10B/MDBjrk2I59XTFVYvdGpBxZn0+h9ymSkrA2gOndsUuc6pP4Jd
+X-Gm-Gg: ASbGnctbbM6Gd0DKQJAfwlehnKkzMGfOiaoG7BOz7nMxxIKCsEmpnO6KdELIIz40aRi
+	lYQtlZFBSNnIJrG3rnOILHf01Qy7mhTrqCZlz+U08vCKNkBe50FoecEPvsbBndKNB2Jum5klkso
+	BK/WkzNWW7+iIRYn5/GWeFQqr+Fk1ESCbotdnePsmCjvMuk2BE1Kp7uari8a1TqrlZzTh/hkseG
+	f8JuejPuAWFjxkwdDvBVwmtxvQx3BhrEZvBTkLmAw/n/MCwAk9GGv6w6jH4kmoAn5JP4r5L8jls
+	K6nWyolDdExn7NnLan/pkiG0AOujLMcuajg3JIuL2nPFL6Kzng==
+X-Google-Smtp-Source: AGHT+IGOpIi8n49rg5GPxgP5C8C9KBM2mgfe0CKcnaU5ra4euhedv6ChDXYp2gZNQ30AVod4qdgISA==
+X-Received: by 2002:a17:902:d48e:b0:224:5a8:ba29 with SMTP id d9443c01a7336-22c359a22c0mr69420315ad.43.1744869565054;
+        Wed, 16 Apr 2025 22:59:25 -0700 (PDT)
+Received: from [192.168.0.161] ([14.139.108.62])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c33fe6df9sm25021375ad.231.2025.04.16.22.59.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Apr 2025 22:59:24 -0700 (PDT)
+Message-ID: <927ff3f8-8814-4f95-ab85-0e0c14c6ed85@gmail.com>
+Date: Thu, 17 Apr 2025 11:29:20 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,59 +80,64 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] PM: EM: Fix potential division-by-zero error in
- em_compute_costs()
-To: Yaxiong Tian <iambestgod@qq.com>, rafael@kernel.org
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Yaxiong Tian <tianyaxiong@kylinos.cn>
-References: <tencent_EE27C7D1D6BDB3EE57A2C467CC59A866C405@qq.com>
- <tencent_2256A7C02F7849F1D89390E488704E826D06@qq.com>
+Subject: Re: [PATCH] char: mwave: smapi: Make usSmapiOK signed to fix warning
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: arnd@arndb.de, linux-kernel@vger.kernel.org
+References: <20250409211929.213360-1-purvayeshi550@gmail.com>
+ <2025041520-culinary-obsessive-1dc3@gregkh>
 Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <tencent_2256A7C02F7849F1D89390E488704E826D06@qq.com>
+From: Purva Yeshi <purvayeshi550@gmail.com>
+In-Reply-To: <2025041520-culinary-obsessive-1dc3@gregkh>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-
-
-On 4/17/25 02:07, Yaxiong Tian wrote:
-> From: Yaxiong Tian <tianyaxiong@kylinos.cn>
+On 15/04/25 20:22, Greg KH wrote:
+> On Thu, Apr 10, 2025 at 02:49:29AM +0530, Purva Yeshi wrote:
+>> Fix Smatch-detected warning:
+>> drivers/char/mwave/smapi.c:69 smapi_request() warn:
+>> assigning (-5) to unsigned variable 'usSmapiOK'
+>>
+>> Assigning a negative value (-EIO, which is -5) to an unsigned short
+>> (usSmapiOK) causes a Smatch warning because negative values cannot
+>> be correctly represented in an unsigned type, leading to unexpected
+>> behavior.
+>>
+>> Change the type of usSmapiOK from unsigned short to short to allow
+>> storing negative values like -EIO without causing a type mismatch or
+>> logic error.
+>>
+>> Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
+>> ---
+>>   drivers/char/mwave/smapi.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/char/mwave/smapi.c b/drivers/char/mwave/smapi.c
+>> index f8d79d393b69..37da1339357e 100644
+>> --- a/drivers/char/mwave/smapi.c
+>> +++ b/drivers/char/mwave/smapi.c
+>> @@ -66,7 +66,7 @@ static int smapi_request(unsigned short inBX, unsigned short inCX,
+>>   	unsigned short myoutDX = 5, *pmyoutDX = &myoutDX;
+>>   	unsigned short myoutDI = 6, *pmyoutDI = &myoutDI;
+>>   	unsigned short myoutSI = 7, *pmyoutSI = &myoutSI;
+>> -	unsigned short usSmapiOK = -EIO, *pusSmapiOK = &usSmapiOK;
+>> +	short usSmapiOK = -EIO, *pusSmapiOK = &usSmapiOK;
 > 
-> When the device is of a non-CPU type, table[i].performance won't be
-> initialized in the previous em_init_performance(), resulting in division
-> by zero when calculating costs in em_compute_costs().
+> This no longer a "us" variable type :(
 > 
-> Since the 'cost' algorithm is only used for EAS energy efficiency
-> calculations and is currently not utilized by other device drivers, we
-> should add the _is_cpu_device(dev) check to prevent this division-by-zero
-> issue.
+> The joy of using this type of notation, ick.  Please fix this up to use
+> an explicit type (like s16), and fix the variable name at the same time.
 > 
-> Fixes: 1b600da51073 ("PM: EM: Optimize em_cpu_energy() and remove division")
-> Signed-off-by: Yaxiong Tian <tianyaxiong@kylinos.cn>
-> ---
->   kernel/power/energy_model.c | 4 ++++
->   1 file changed, 4 insertions(+)
+> thanks,
 > 
-> diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
-> index d9b7e2b38c7a..41606247c277 100644
-> --- a/kernel/power/energy_model.c
-> +++ b/kernel/power/energy_model.c
-> @@ -233,6 +233,10 @@ static int em_compute_costs(struct device *dev, struct em_perf_state *table,
->   	unsigned long prev_cost = ULONG_MAX;
->   	int i, ret;
->   
-> +	/* This is needed only for CPUs and EAS skip other devices */
-> +	if (!_is_cpu_device(dev))
-> +		return 0;
-> +
->   	/* Compute the cost of each performance state. */
->   	for (i = nr_states - 1; i >= 0; i--) {
->   		unsigned long power_res, cost;
+> greg k-h
 
+Hi Greg,
 
-Please stop for a while. I have to check what happened that you
-faced the issue in the first place. I have been testing the GPU
-EMs and there was no issues...
+Thanks for the feedback.
 
-Let me debug that today.
+I’ll update the patch to use an explicit s16 type and rename the 
+usSmapiOK with SmapiOK to match the new type. I’ll send a v2 shortly.
+
+Best regards,
+Purva
 
