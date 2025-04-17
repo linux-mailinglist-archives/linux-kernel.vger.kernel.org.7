@@ -1,187 +1,160 @@
-Return-Path: <linux-kernel+bounces-608477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4964A9143D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:42:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BA1CA91441
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:42:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F568189F546
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 06:42:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EC981906609
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 06:42:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB662066DD;
-	Thu, 17 Apr 2025 06:42:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB7D207DEE;
+	Thu, 17 Apr 2025 06:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="OdOtCuUM"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k5GZxjam"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F049A205E2F
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 06:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F4001207A03
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 06:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744872124; cv=none; b=ITTaI1tX3jSS9C2gYxgpk2ufqbNbHOgdlyk3Lv/rubGJXbNkaIDrnPOfioluayUDLBZrxvWBvhijvPl4qxkH90Sa/bftdDgcYPrZo4zcQCn+Bao3bb101R/BrhkmQdH6of9355AfK7GkRBPE4Wg3l9UrzobHKLOWsJsW/QTus5A=
+	t=1744872140; cv=none; b=VtHeWq0gKahYcpMts64U2hI6aFwTLAqOD5H0ExqPjHYT1SFtEkU7+Q4Qj1BwEt9vwrO+XI/KFqHmv7TbqgqxkQmFwBfLM49mASDyf5TeB33+8YNdbCloxXFvUzTR0OdP/aEMeSveQ2+wcmKMLAsPlK16uCrgIbjtcWXUPGZc7i0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744872124; c=relaxed/simple;
-	bh=yaD0o/MpljrBAEdWES6QdpQZ4K0dI6XiiBkGI8DT78w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nepN4CcrjEpBDDeTrK+sLiDJ98Rw2jSuaPiXXXfpgCh2b400kh8xhlPQ0VFQ7ElcjIyBqLs9vEblKE43FRjBlUjEoyxarLU0ghcHyYue0gDcElwbXyczmp2YjofACXj333cdEGp14IA6HxFneeqaAtv63yC0Fn1XEB+avQ8qNE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=OdOtCuUM; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3914bc3e01aso201863f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 23:42:00 -0700 (PDT)
+	s=arc-20240116; t=1744872140; c=relaxed/simple;
+	bh=HAa5MK3MthDMPQcfWVF6XuiMcrrT9amfqYJR+OXWJMY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Lml6uN73BMFgLD1si0UtHlfkGQb1nL6INhHuTXyr51LN8Xj52gu2xcpCncaTO+aRA88OgV4h4/HunP0C209Si4IWyEzdO+3gjZe3WwvIhJzt2fOMtV51Hng8EhaFH4uwRFseUG59AvrUGcJBzOTbbD/yC7jtFfxlaEwoKcx/u7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=k5GZxjam; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ac29fd22163so59722666b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 23:42:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1744872119; x=1745476919; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eein+VHADvsikPAdoVCtfDd2FF1ntTUl8Rt/ykT+erM=;
-        b=OdOtCuUMJfGy4mEIcZmFEUSKclsXdDfbF6uEuEt4FpFlTU8tcg4FfkZ6xYi2gX6lhg
-         +K+UuX5z+VnupaVbUY5BxvYk33vmKYs5H9GaJRF+woJOYFUHOkxaNKm0Xq5ked8EMkPV
-         aFEMUipUSx2C+SpszFg/x27MouGy9xGR0wcdXwfR9dZPvNH2DR8ODLEuMD3c3uUNRGpD
-         icRV137RUrEmzE5OV9RHWeNcv08Gg0QDb16W7hlB/m5oT5gNmoq+46qGJbWn3VauiVsd
-         D63dTqGDlGhrm9Wf8ggCIZJDQ9VBVK/Kb75LXTWGOA+1GQrINj02JxhxU8XYxUjZ+QZS
-         JqtQ==
+        d=linaro.org; s=google; t=1744872136; x=1745476936; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=dhOBMdnj48blKw6YV7gc/9oneYA+xqS2pjcS4PzI4lw=;
+        b=k5GZxjamvB1VlpBLHUxLbpp0Xxii78JsqYyhvfNsrpXNhc31zOdEwFtdvCO1NCpH92
+         6h+asjjM8hdIoipjTZAJoq49gSFyY3/zq5BA8z7Tu8bFELFqF7p8tIOnF2hBRchHvKdQ
+         TYYNSWv/MRz6YBrp0U3UXODXWGUSAN1PRJnFN2gXh0NNCwSMJY3x/OyQGFjNCpwOv/j/
+         nj3gdWacYJ0h3yMygb/u8TCjfozASmTHT6X89IeEgEFnWbLCvMpCwznwe61lhujtpjqR
+         tj79ZA/YMz722OH3bdV2DycL1HL/dKiabBIYPHaoQ+g67XAyzRx/iO8MCWCZHoJ44ntK
+         4b3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744872119; x=1745476919;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eein+VHADvsikPAdoVCtfDd2FF1ntTUl8Rt/ykT+erM=;
-        b=BtjiEExMKYYUXIa14Xa6M8RZRKbp/PJp3cHKXjeeZzmhN4LkV5Chn4FlkLxee7S92v
-         zjhhX1YdKCKRbSjtxCMuGxDpBFNKyWneA3hBo6FR39tYrS6mZ9zDLlw2G1npx73Z9IFP
-         52XdXhIy5opHUZsWK7AH2YIFUtkuiwru7aSA3+lpZawYasu1GtBKWA1hIJxNTJCEcNOv
-         J3TwErwQepeEDwTnU3tR5Uai5C7bdEs1aDiHhtNoYoxO0rAmH+dIwWN7sn7jX4Qcxkjw
-         XScdou03aaKE3HUMCEPpHg3qSrJGovSNvqlk0spAb4oG4hG26+Aq+w1vsc6k1cKDQN2j
-         BRjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX1x6tMWIggYbPLU+7S5o6QDvemX4gsxTlinnIyTeBHfZiNzhVdXa6OUsnT1KzD2niCUSh/cfB5eXy1XUY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjvX/JGTpFk1TnGyFvvrATYlBVyR7L8FMhFZPGnNRKfQzDwyjJ
-	VOyo/vEApOp64+E3balbtTx0MA/cYhSoJckF0uhOYe7pg5X71ZQlpc2t3xeXomZ/r59bJ59TKlu
-	5p0U=
-X-Gm-Gg: ASbGncud6UkAIgSrb8PEAKoyTC/xEY9XCTHMD/Kqd8+wCu8IougKLeVudtQaWuOxjWR
-	aCv7l7rsXTA0Ga8d6yLGjz5VIqVkjonz3kAAPHjoEUs0aPpA/iSiCQi1LFfv4u8X8vh5/fZ6/7Q
-	dD8mFpfHTbGqCDUQ9G1JoyaKFeNZcu63h6IoPTrc6hBovTjg3mXxP7eE8Q5/TcvwhSird4XurBW
-	ULsCXla2LctpCneev9yWzGmvV0/c6LcMIzDosc4sigWQO66/YmkgfIUeDQ8VOJl7n2+3bRnE/XH
-	KVHOk/4DQzV5iONFcd+rfW9x41WCkv2jAwf6nKYIhoKPYGGx4U/rF/KYP83m6/gP4gG4E/COIeM
-	20KQIwiY=
-X-Google-Smtp-Source: AGHT+IFJ0pZYptu4DVUIO71f1H12GuK7CCEW5DL1wtqm6TS2q2pKQQSbrZ1BBYTaYvxv2udBZzesLQ==
-X-Received: by 2002:a5d:5849:0:b0:39c:1257:dba9 with SMTP id ffacd0b85a97d-39ee5baea43mr3966148f8f.57.1744872118879;
-        Wed, 16 Apr 2025 23:41:58 -0700 (PDT)
-Received: from localhost (p200300f65f13aa0400000000000001b9.dip0.t-ipconnect.de. [2003:f6:5f13:aa04::1b9])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39eae96e912sm19370710f8f.31.2025.04.16.23.41.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Apr 2025 23:41:58 -0700 (PDT)
-Date: Thu, 17 Apr 2025 08:41:57 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: linux-pwm@vger.kernel.org, Kent Gibson <warthog618@gmail.com>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7] pwm: Add support for pwmchip devices for faster and
- easier userspace access
-Message-ID: <twtne72vhwnwwyvld6ipwk6ilszgncgfqtbb53ldfl2hhvns7v@f6vmuburt47q>
-References: <20250416094316.2494767-2-u.kleine-koenig@baylibre.com>
- <147fa354-e1fe-46ec-9c47-59794f37bfb7@baylibre.com>
+        d=1e100.net; s=20230601; t=1744872136; x=1745476936;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dhOBMdnj48blKw6YV7gc/9oneYA+xqS2pjcS4PzI4lw=;
+        b=LmYjvnt4pwBxw2DZyJGM3cd/pzBoHcHwRgOp8vtymSIDd/MESuPl1xaa8W6NEsz5eH
+         t09C7XDlcypkhFGd9QDI5MxbU1icjJwgtbOBTuoqv1Df+Op3ONXy07O2PQKtiq7uY7L5
+         wm7PxwU2Mg6jqonCIaAo0vm7VXVnJKKQRlrh2inu0nk5rdGmN8hlqtULIltPchQWD0Ch
+         G2TAOzqi7zFXnRKKyFZlA4WrEigAct1J7VIkuwJ7pd2BPdOvHF53tbXcU2jgXjAGvlnR
+         HbCYoOgnredPfbs9oeLhK9cifDdRSfSLCjERdHj370Gi2+nggGSd/R7uAO8mrHecUGKP
+         D8eg==
+X-Forwarded-Encrypted: i=1; AJvYcCWCLCHLH0blcxGzLus8l64CSXTrzLzYFSEuOrpfP3dCjRvWrhu95RyOxSkoz35zV1uzJgBQUmeScmmfNIc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwM1GMVtg2YoWRkQfb3+8Cq+BEmYOqZFtGhHs6HU0GjZwir6viY
+	zcdUvtEe7bHtZZjHB7GUAx2Ee0Ah7bjasFV1NFFpLTjf2RE676oN4b64ZffmoGa/qtRfpRciZoH
+	ZTWu4/C73bnckj/wvsvo1lpdDxmLSE/0+g33WPw==
+X-Gm-Gg: ASbGncvpS+8UeBPn9QJRNdDCbR1vszg/byF0V1co2n9rz6Jl0CUDq0cp3qrPE8xEcU2
+	97nDxtueg3n5uwZn8s74B9gqKfMAIuF66mn2bVVlgbgrjRKgtcN9NtMhDInaxpP/Xq+M/VwIp8t
+	NDbDuKsDQPZkRZCAjJcAUVWV1bnMg9FRTAqI6SioEvGzvrU2IsKPnDdQ==
+X-Google-Smtp-Source: AGHT+IHwQmW4uLoxd4O86s85PWQDVE6I5QgHoOdxvS68frFgXriQWYv526JyoVIGGquD0xEBBdrZTykIPd6kRqLVJVs=
+X-Received: by 2002:a17:907:2cc4:b0:abf:4bde:51b1 with SMTP id
+ a640c23a62f3a-acb4298011emr405993166b.21.1744872136202; Wed, 16 Apr 2025
+ 23:42:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zgofz546aqvg5vxb"
-Content-Disposition: inline
-In-Reply-To: <147fa354-e1fe-46ec-9c47-59794f37bfb7@baylibre.com>
+References: <20250408-gpiochip-set-rv-pinctrl-part1-v1-0-c9d521d7c8c7@linaro.org>
+ <20250408-gpiochip-set-rv-pinctrl-part1-v1-7-c9d521d7c8c7@linaro.org> <20250416223706.GA3230303@ax162>
+In-Reply-To: <20250416223706.GA3230303@ax162>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Date: Thu, 17 Apr 2025 08:42:05 +0200
+X-Gm-Features: ATxdqUEdk8B4qOm49Z3JjfkRT6lA8RuMaY_llvKtObT7Pr4tgUtNyFqCuqU8FYk
+Message-ID: <CACMJSevPHdo9ZGaOyGV8rrhJHTN4+-0UB0+sz=Z5jc_eZybjcA@mail.gmail.com>
+Subject: Re: [PATCH 07/10] pinctrl: sx150x: enable building modules with COMPILE_TEST=y
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Ludovic Desroches <ludovic.desroches@microchip.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+	Xianwei Zhao <xianwei.zhao@amlogic.com>, Patrick Rudolph <patrick.rudolph@9elements.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Thu, 17 Apr 2025 at 00:37, Nathan Chancellor <nathan@kernel.org> wrote:
+>
+> Hi Bartosz,
+>
+> On Tue, Apr 08, 2025 at 09:17:44AM +0200, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > Increase the build coverage by enabling the sx150x modules with
+> > COMPILE_TEST=y.
+> >
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > ---
+> >  drivers/pinctrl/Kconfig | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+> > index 464cc9aca157..94eb41bb9cf2 100644
+> > --- a/drivers/pinctrl/Kconfig
+> > +++ b/drivers/pinctrl/Kconfig
+> > @@ -541,7 +541,7 @@ config PINCTRL_STMFX
+> >
+> >  config PINCTRL_SX150X
+> >       bool "Semtech SX150x I2C GPIO expander pinctrl driver"
+> > -     depends on I2C=y
+> > +     depends on I2C=y || COMPILE_TEST
+> >       select PINMUX
+> >       select PINCONF
+> >       select GENERIC_PINCONF
+> >
+> > --
+> > 2.45.2
+> >
+>
+> This appears to break allmodconfig with
+>
+>   ld.lld: error: undefined symbol: i2c_get_match_data
+>   >>> referenced by pinctrl-sx150x.c
+>   >>>               drivers/pinctrl/pinctrl-sx150x.o:(sx150x_probe) in archive vmlinux.a
+>
+>   ld.lld: error: undefined symbol: i2c_smbus_write_byte_data
+>   >>> referenced by pinctrl-sx150x.c
+>   >>>               drivers/pinctrl/pinctrl-sx150x.o:(sx150x_probe) in archive vmlinux.a
+>   >>> referenced by pinctrl-sx150x.c
+>   >>>               drivers/pinctrl/pinctrl-sx150x.o:(sx150x_probe) in archive vmlinux.a
+>   >>> referenced by pinctrl-sx150x.c
+>   >>>               drivers/pinctrl/pinctrl-sx150x.o:(sx150x_regmap_reg_write) in archive vmlinux.a
+>
+>   ld.lld: error: undefined symbol: i2c_smbus_read_byte_data
+>   >>> referenced by pinctrl-sx150x.c
+>   >>>               drivers/pinctrl/pinctrl-sx150x.o:(sx150x_regmap_reg_read) in archive vmlinux.a
+>
+>   ld.lld: error: undefined symbol: i2c_register_driver
+>   >>> referenced by pinctrl-sx150x.c
+>   >>>               drivers/pinctrl/pinctrl-sx150x.o:(sx150x_init) in archive vmlinux.a
+>   make[4]: *** [scripts/Makefile.vmlinux:91: vmlinux] Error 1
+>
+> I don't think this change makes much sense in light of this error,
+> unless the driver was converted to tristate.
+>
+> Cheers,
+> Nathan
 
---zgofz546aqvg5vxb
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v7] pwm: Add support for pwmchip devices for faster and
- easier userspace access
-MIME-Version: 1.0
+Makes sense. Linus: Can you just drop this or do you prefer a formal revert?
 
-Hello David,
-
-On Wed, Apr 16, 2025 at 11:29:50AM -0500, David Lechner wrote:
-> the passed wf according to hardware constraints. All parameters are
-> > + * rounded down to the next possible value, unless there is no such va=
-lue, then
-> > + * values are rounded up. Note that zero isn't considered for rounding=
- down
-> > + * period_length_ns.
-> > + */
-> > +#define PWM_IOCTL_ROUNDWF	_IOWR(0x75, 3, struct pwmchip_waveform)
->=20
-> Should this return 1 if exact could not be met to match the other functio=
-ns?
-
-Currently only PWM_IOCTL_SETEXACTWF has that semantic. Adding that
-information to PWM_IOCTL_SETROUNDEDWF has to involve calling
-=2Eread_waveform + .round_waveform_fromhw which makes it a bit more
-expensive, maybe for little gain.
-
-> > +/* Get the currently implemented waveform */
-> > +#define PWM_IOCTL_GETWF		_IOWR(0x75, 4, struct pwmchip_waveform)
-> > +
-> > +/* Like PWM_IOCTL_ROUNDWF + PWM_IOCTL_SETEXACTWF in one go. */
-> > +#define PWM_IOCTL_SETROUNDEDWF	_IOW(0x75, 5, struct pwmchip_waveform)
-> > +
-> > +/*
-> > + * Program the PWM to emit exactly the passed waveform, subject only t=
-o rounding
-> > + * down each value less than 1 ns. Returns 0 on success, 1 if the wave=
-form
-> > + * cannot be implemented exactly, or other negative error codes.
->=20
-> It doesn't make sense to me that PWM_IOCTL_SETEXACTWF could return 1 mean=
-ing
-> that the exact request could not be met. Isn't that the point of
-> PWM_IOCTL_SETEXACTWF?
-
-Yes it is. Returning 1 is an error indicator and then the HW state isn't
-modified.
-
-> To either do exactly as requested (with 1 ns precision)
-> or return negative error code without changing the output state?
-
-Returning 1 was my conclusion of our discussion that -EINVAL and -ERANGE
-are both bad. The former because there could be other reasons for
--EINVAL during hw register writing and -ERANGE (also) because the
-semantic doesn't fit nicely.
-
-So I gave up finding a -ESOMETHING that has both the right semantic and
-could be returned without being confused with a different problem during
-hardware access. Inventing a new error code seems wrong to me, so only
-the positive number range is left.
-
-> It seems like only PWM_IOCTL_SETROUNDEDWF should be able to return 1. My =
-natural
-> expectation is that negative error would mean that the hardware output wa=
-s not
-> modified and non-negative value means that hardware output was modified.
-
-I'm also not entirely happy with the semantics, but still I have no idea
-for an improvement.
-
-Best regards
-Uwe
-
---zgofz546aqvg5vxb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmgAorIACgkQj4D7WH0S
-/k7nBwgAm/us9BA2PUkKA2MhpxD+658r51N+iBy1O2cmpJ3mISA/LmAT2PuNXYU7
-l0LzbVLFngwJLBcb7UrKaUxFAtmpkIE4eQDy0lDZC7xPZsT4QhoHOB1/fDAZQdAY
-mVUyiYM0+7EZAnmR9jrDTTGk62cbNtEHI5ykaaJNbnMmMRAiyF3k4lv7RO8VCQLW
-ozIlL/6ATjVTFKUa5UzBqiLaXqppUyWoyzg2Cz6Hyn05dTRYT06nJE9CxGihk7dS
-dNPfDd3rfaaw3CUfYbic8c1ZC1Er6yg/yyzbUPj+pKcK/Pkm+SxsBzf8Ugzcp4ks
-lsr4R0OrlLwdGTQu90qdNBQ/pJVnPQ==
-=OSru
------END PGP SIGNATURE-----
-
---zgofz546aqvg5vxb--
+Bart
 
