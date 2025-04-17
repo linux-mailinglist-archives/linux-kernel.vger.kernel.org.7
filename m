@@ -1,150 +1,322 @@
-Return-Path: <linux-kernel+bounces-608185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47635A91035
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 02:22:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47250A91024
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 02:20:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61996447264
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 00:22:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53898446D64
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 00:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51CAC1CAA81;
-	Thu, 17 Apr 2025 00:20:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47B5518E025;
+	Thu, 17 Apr 2025 00:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VsC5z/lv"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DsDFPJnX"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202351B6CE5
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 00:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400EE70810
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 00:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744849226; cv=none; b=YJ8NQYEW+EFVXhM2Cb2JOddMWG3PHer3LUgFwS/MgvJdhCea0y/Bv5CDX5u2BLjKzI7xiHIIqgAOAtFWd/Bk0ThwBMinVuOvRVkTw7tFBnPHalofqS+bEmhB4TiDJsnZYrN0cVzBh4yc6bvxWQb1W+4MRkw5n+MJL2XN/BRQeoE=
+	t=1744849219; cv=none; b=QDDSQhJxg4dSTFMb07xN4A+uA065jUguLy78bNcxWW9NJkW1tmWcU9FA775Us4tQESVzP2K1ohoI8/Z01oRpnxXMB/QhhfYn8q+PuyowbuCl5MfUeJEJr2bbiJ2CltXF1DPwP7iHXnXPbTRI7Ac68lB7u9gWEsBkd8h9LpS2bak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744849226; c=relaxed/simple;
-	bh=al6SKl71NAiNJnVYkq84dOJI0VdWszLtxLtJW6ZOVVk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OpbxudxVs7xg7rUZA5qlVleUh6xlyO9fSVLVpNHTY+3Lt21tlo+OsX5jVq0ErcnHUQ1XP0zwyJgAuF4EGCwgF+FFL/qCp2DtCa2EAR4Kdn+LvMSLqjnxdOqyFTuOf8N9u1JiMw8AJ2DmgLdamqc+iIYMuFYUcAuhkzVwLNdioyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VsC5z/lv; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744849224;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7n76Fvpmfa8LN30y0qvCHdYcw71Um4Eimev9X0oBxqU=;
-	b=VsC5z/lvZYqSwvJeTAoIVqma8ocNGtEkO4DEbDOt7+x1dda+vcMGSSDiXY6e18c9UV6WzP
-	16QrCqTj2tkVKbUduw9C1WSSkJU/bQpuxKR2y4UC3mHBaVmdf58hKqIrB5gHzyeyF6WZG8
-	sIeCtVi0OXPkrWAmGnM7YVRpSl3DZvw=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-533-CvnZAHuzPYSmoVkEBRTivg-1; Wed,
- 16 Apr 2025 20:20:22 -0400
-X-MC-Unique: CvnZAHuzPYSmoVkEBRTivg-1
-X-Mimecast-MFC-AGG-ID: CvnZAHuzPYSmoVkEBRTivg_1744849219
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9A02A1800264;
-	Thu, 17 Apr 2025 00:20:18 +0000 (UTC)
-Received: from h1.redhat.com (unknown [10.22.88.34])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3796119560A3;
-	Thu, 17 Apr 2025 00:20:08 +0000 (UTC)
-From: Nico Pache <npache@redhat.com>
-To: linux-mm@kvack.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: akpm@linux-foundation.org,
+	s=arc-20240116; t=1744849219; c=relaxed/simple;
+	bh=VIhQDfOv4IpfLi52JRSPPyC9HdVrUMOh8rCGdLv9FZg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YJ2dsDN/ZLH8eI1Dm0DduwaWPN+E/nTynoR2OZ95QwvljodNl+vgtNa6yBaLDQYMDBrDeNMuBvuw7wNqIblfQgELBIb7C3nr1J8qSXQXNFQhWoHVyAjO1OouAhaJaMV/cPT5Y/IXAKhjwYC3BL8Z+wlVpPiqnzbFMtWhq9KKByU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=DsDFPJnX; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2295d78b45cso3653695ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 17:20:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1744849215; x=1745454015; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0LpL1W/MZ3a7Wv8qXchE+uWbYiPFTnb2TuJIHKKI9cg=;
+        b=DsDFPJnXfoZSTJjyzBHBFOv3EOLrR55q4TZ/7My6E1qAvmajiw2PvCWcsUYfBPM7fH
+         Fi+grNcZL5SPFeZ5cVjPYrobHSuaPAYMa63EyteLBjvmc7YgW6JvQSe1nsiUIU8fQGbC
+         28hXwSQ1JI0UpfLinw7y37CjoQqaA3ZB09NC0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744849215; x=1745454015;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0LpL1W/MZ3a7Wv8qXchE+uWbYiPFTnb2TuJIHKKI9cg=;
+        b=oun1yrSahNBmrKWdNye35zWOmDBbxwv2zqBdH/SwDhtfQx9qrk53/yX/XyLyJVzf2T
+         Gtf7GHmeaJSTbzgRTqDlHFpZJ0KSukEO9MLXKaASJM0LP8A2o7pOSYJyo2l3TVqhZWfW
+         gcUnSnorVgY+GHhuGdWhP9cl5u+yiMMdtm3rq4VYbas1qNsOaT8lcAePQB76co5E2zgY
+         4/f5BR2aldErflYerIL/5yAU/teoHqMEHzp9iLCqBskZ1ox2qXpRwLMsh2IZiHaq8Uz0
+         /AaxJAElYEv98q/g8ZISRHYM8sTh+YvHphaTr0l8+c/gGtdIlGsbVxdTLWrlmK9ZIBXn
+         ntSA==
+X-Forwarded-Encrypted: i=1; AJvYcCVXZYGzrHCnaYL4awmQ7qzw+AKni1kyZYHjbPjep2SvQR73aVZIZdVlDTe2myeczRUztt35JM/4VK6mzRE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbYy6UfrtRCrzoCmUgo0zC/zuV92jOQRhz5ixNAz17n1TcPvp0
+	B+3CPo40npjsu+JUb8y6yDOfc63JpEyezk5fIrAf8TyJ8po/pJnCRGRnjmFveA==
+X-Gm-Gg: ASbGncsT/sItJLqD8Ws+HmonzPmXeH+0XkE/5WL3a7DjOukfEWp054WKgfmklcu6TSC
+	zGpLCSufLkI/tbiaKIEke0P8XpYM33ku+fqUEihtGu1p0VX2mrAwwRF7ItS0m774XMWPrEkhnj1
+	ePYu3BxIgczdMYwAxkLVeF7CC039W74iwt46N7Q0w+z147LhEjCOcBpYE514beY5CVsD4jLhCxc
+	tNi/D306B3FnGR290a85nr1Lci81RsRm/z7YkA5eYVmQxdpxBx05FtN9JP4FxFWppeWWMzofK4T
+	kn8JRNniztvq6D03KlDgSKkVuoIDP8ff3UOsDoNunVC3kkxWza7UMfQUGwiws4YyXv6jxcJ3YCo
+	iHLPZ9SX+wfCT1L+wcKlAXIkjSLd6cVMygwdTZnrAQVs=
+X-Google-Smtp-Source: AGHT+IE7067i0aLqVkLUhlivNU388j1/WhiH6agXwQW0hoDF6BSFOxE4tA0UJ/fMOqUGaVIpti23Bg==
+X-Received: by 2002:a17:902:ccc2:b0:220:efc8:60b1 with SMTP id d9443c01a7336-22c3597ee16mr60558635ad.39.1744849215364;
+        Wed, 16 Apr 2025 17:20:15 -0700 (PDT)
+Received: from li-cloudtop.c.googlers.com.com (132.197.125.34.bc.googleusercontent.com. [34.125.197.132])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c33f1cd87sm20719205ad.73.2025.04.16.17.20.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Apr 2025 17:20:14 -0700 (PDT)
+From: Li Li <dualli@chromium.org>
+To: dualli@google.com,
 	corbet@lwn.net,
-	rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com,
-	david@redhat.com,
-	baohua@kernel.org,
-	baolin.wang@linux.alibaba.com,
-	ryan.roberts@arm.com,
-	willy@infradead.org,
-	peterx@redhat.com,
-	shuah@kernel.org,
-	ziy@nvidia.com,
-	wangkefeng.wang@huawei.com,
-	usamaarif642@gmail.com,
-	sunnanyong@huawei.com,
-	vishal.moola@gmail.com,
-	thomas.hellstrom@linux.intel.com,
-	yang@os.amperecomputing.com,
-	kirill.shutemov@linux.intel.com,
-	aarcange@redhat.com,
-	raquini@redhat.com,
-	dev.jain@arm.com,
-	anshuman.khandual@arm.com,
-	catalin.marinas@arm.com,
-	tiwai@suse.de,
-	will@kernel.org,
-	dave.hansen@linux.intel.com,
-	jack@suse.cz,
-	cl@gentwo.org,
-	jglisse@google.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	donald.hunter@gmail.com,
+	gregkh@linuxfoundation.org,
+	arve@android.com,
+	tkjos@android.com,
+	maco@android.com,
+	joel@joelfernandes.org,
+	brauner@kernel.org,
+	cmllamas@google.com,
 	surenb@google.com,
-	zokeefe@google.com,
-	hannes@cmpxchg.org,
-	rientjes@google.com,
-	mhocko@suse.com,
-	rdunlap@infradead.org
-Subject: [PATCH v4 4/4] selftests: mm: add defer to thp setting parser
-Date: Wed, 16 Apr 2025 18:18:46 -0600
-Message-ID: <20250417001846.81480-5-npache@redhat.com>
-In-Reply-To: <20250417001846.81480-1-npache@redhat.com>
-References: <20250417001846.81480-1-npache@redhat.com>
+	omosnace@redhat.com,
+	shuah@kernel.org,
+	arnd@arndb.de,
+	masahiroy@kernel.org,
+	bagasdotme@gmail.com,
+	horms@kernel.org,
+	tweek@google.com,
+	paul@paul-moore.com,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	netdev@vger.kernel.org,
+	selinux@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	hridya@google.com
+Cc: smoreland@google.com,
+	ynaffit@google.com,
+	kernel-team@android.com
+Subject: [PATCH RESEND v17 0/3] binder: report txn errors via generic netlink
+Date: Wed, 16 Apr 2025 17:20:01 -0700
+Message-ID: <20250417002005.2306284-1-dualli@chromium.org>
+X-Mailer: git-send-email 2.49.0.805.g082f7c87e0-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-add the defer setting to the selftests library for reading thp settings.
+From: Li Li <dualli@google.com>
 
-Signed-off-by: Nico Pache <npache@redhat.com>
----
- tools/testing/selftests/mm/thp_settings.c | 1 +
- tools/testing/selftests/mm/thp_settings.h | 1 +
- 2 files changed, 2 insertions(+)
+=== Notes for resending the patchset ===
 
-diff --git a/tools/testing/selftests/mm/thp_settings.c b/tools/testing/selftests/mm/thp_settings.c
-index ad872af1c81a..b2f9f62b302a 100644
---- a/tools/testing/selftests/mm/thp_settings.c
-+++ b/tools/testing/selftests/mm/thp_settings.c
-@@ -20,6 +20,7 @@ static const char * const thp_enabled_strings[] = {
- 	"always",
- 	"inherit",
- 	"madvise",
-+	"defer",
- 	NULL
- };
- 
-diff --git a/tools/testing/selftests/mm/thp_settings.h b/tools/testing/selftests/mm/thp_settings.h
-index fc131d23d593..0d52e6d4f754 100644
---- a/tools/testing/selftests/mm/thp_settings.h
-+++ b/tools/testing/selftests/mm/thp_settings.h
-@@ -11,6 +11,7 @@ enum thp_enabled {
- 	THP_ALWAYS,
- 	THP_INHERIT,
- 	THP_MADVISE,
-+	THP_DEFER,
- };
- 
- enum thp_defrag {
+Resend the v17 patchset (no code change) to linux-security-module per request.
+https://lore.kernel.org/all/9a4b0f45-1eb5-4eb7-b120-6b50ea0d4835@schaufler-ca.com/
+
+In short, the kernel patchset includes 3 patches and a cover letter:
+ - [PATCH v17 0/3] binder: report txn errors via generic netlink
+ - [PATCH v17 1/3] lsm, selinux: Add setup_report permission to binder
+ - [PATCH v17 2/3] binder: report txn errors via generic netlink
+ - [PATCH v17 3/3] binder: transaction report binder_features flag
+
+The corresponding test (for https://github.com/SELinuxProject/selinux-testsuite)
+and its dependency (for https://github.com/SELinuxProject/refpolicy):
+ - [PATCH] binder: add setup_report permission
+ - [PATCH v2] policy,tests: add test for new permission binder:setup_report
+
+=== Notes END ===
+
+It's a known issue that neither the frozen processes nor the system
+administration process of the OS can correctly deal with failed binder
+transactions. The reason is that there's no reliable way for the user
+space administration process to fetch the binder errors from the kernel
+binder driver.
+
+Android is such an OS suffering from this issue. Since cgroup freezer
+was used to freeze user applications to save battery, innocent frozen
+apps have to be killed when they receive sync binder transactions or
+when their async binder buffer is running out.
+
+This patch introduces the Linux generic netlink messages into the binder
+driver so that the Linux/Android system administration process can
+listen to important events and take corresponding actions, like stopping
+a broken app from attacking the OS by sending huge amount of spamming
+binder transactiions.
+
+The 1st version uses a global generic netlink for all binder contexts,
+raising potential security concerns. There were a few other feedbacks
+like request to kernel docs and test code. The thread can be found at
+https://lore.kernel.org/lkml/20240812211844.4107494-1-dualli@chromium.org/
+
+The 2nd version fixes those issues and has been tested on the latest
+version of AOSP. See https://r.android.com/3305462 for how userspace is
+going to use this feature and the test code. It can be found at
+https://lore.kernel.org/lkml/20241011064427.1565287-1-dualli@chromium.org/
+
+The 3rd version replaces the handcrafted netlink source code with the
+netlink protocal specs in YAML. It also fixes the documentation issues.
+https://lore.kernel.org/lkml/20241021182821.1259487-1-dualli@chromium.org/
+
+The 4th version just containsi trivial fixes, making the subject of the
+patch aligned with the subject of the cover letter.
+https://lore.kernel.org/lkml/20241021191233.1334897-1-dualli@chromium.org/
+
+The 5th version incorporates the suggested fixes to the kernel doc and
+the init function. It also removes the unsupported uapi-header in YAML
+that contains "/" for subdirectory.
+https://lore.kernel.org/lkml/20241025075102.1785960-1-dualli@chromium.org/
+
+The 6th version has some trivial kernel doc fixes, without modifying
+any other source code.
+https://lore.kernel.org/lkml/20241028101952.775731-1-dualli@chromium.org/
+
+The 7th version breaks the binary struct netlink message into individual
+attributes to better support automatic error checking. Thanks Jakub for
+improving ynl-gen.
+https://lore.kernel.org/all/20241031092504.840708-1-dualli@chromium.org/
+
+The 8th version solves the multi-genl-family issue by demuxing the
+messages based on a new context attribute. It also improves the YAML
+spec to be consistent with netlink tradition. A Huge 'Thank You' to
+Jakub who taught me a lot about the netlink protocol!
+https://lore.kernel.org/all/20241113193239.2113577-1-dualli@chromium.org/
+
+The 9th version only contains a few trivial fixes, removing a redundant
+pr_err and unnecessary payload check. The ynl-gen patch to allow uapi
+header in sub-dirs has been merged so it's no longer included in this
+patch set.
+https://lore.kernel.org/all/20241209192247.3371436-1-dualli@chromium.org/
+
+The 10th version renames binder genl to binder netlink, improves the
+readability of the kernel doc and uses more descriptive variable names.
+The function binder_add_device() is moved out to a new commit per request.
+It also fixes a warning about newline used in NL_SET_ERR_MSG.
+Thanks Carlos for his valuable suggestions!
+https://lore.kernel.org/all/20241212224114.888373-1-dualli@chromium.org/
+
+The 11th version simplifies the yaml filename to avoid redundant words in
+variable names. This also makes binder netlink yaml more aligned with
+other existing netlink specs. Another trivial change is to use reverse
+xmas tree for function variables.
+https://lore.kernel.org/all/20241218203740.4081865-1-dualli@chromium.org/
+
+The 12th version makes Documentation/admin-guide/binder_netlink.rst aligned
+with the binder netlink yaml change introduced in the 11th revision. It
+doesn't change any source code.
+https://lore.kernel.org/all/20241218212935.4162907-1-dualli@chromium.org/
+
+The 13th version removes the unnecessary dependency to binder file ops.
+Now the netlink configuration is reset using sock_priv_destroy. It also
+requires CAP_NET_ADMIN to send commands to the driver. One of the
+patches ("binderfs: add new binder devices to binder_devices") has been
+merged to linux-next. To avoid conflict, switch to linux-next master
+branch and remove the merged one. Adding sock_priv into netlink spec
+results in CFI failure, which is fixed by the new trampoline patches.
+https://lore.kernel.org/all/20250115102950.563615-1-dualli@chromium.org/
+
+The 14th version fix the code style issue by wrapping the sock priv
+in a separate struct, as suggested by Jakub. The other 2 patches are
+no longer included in this patchset as the equvilent fix has already
+been merged to upstream linux master branch, as well as net & net-next.
+This version has already been rebased to TOT of linux-next.
+https://lore.kernel.org/all/20250118080939.2835687-1-dualli@chromium.org/
+
+The 15th version switches from unicast to multicast per feedback and
+feature requriements from binder users. With this change, multiple user
+space processes can listen to the binder reports from the kernel driver
+at the same time. To receive the multicast messages, those user space
+processs should query the mcast group id and join the mcast group. In
+the previous unicast solution, a portid is saved in the kernel driver to
+prevent unauthorized process to send commands to the kernel driver. In
+this multicast solution, this is replaced by a new "setup_report"
+permission in the "binder" class. Meanwhile, the sock_priv_destroy
+callback and CAP_NET_ADMIN restriction are no longer required in favor
+of the multicast solution and the new "setup_report" permission.
+https://lore.kernel.org/all/20250226192047.734627-1-dualli@chromium.org/
+
+The 16th version fixes the build error when CONFIG_SECURITY is disabled.
+There's no other changes. Thank you, kernel test robot <lkp@intel.com>!
+https://lore.kernel.org/all/20250303200212.3294679-1-dualli@chromium.org/
+
+The 17th version corrects the issue in binder_find_proc() that multiple
+binder_proc instances might match the same pid. It also simplifies the
+parameters of binder_netlink_report(). This patchset also includes a
+patch to SELinuxProject/refpolicy for the new permission and another
+patch to SELinuxProject/selinux-testsuite to test this new permission.
+
+v1: add a global binder genl socket for all contexts
+v2: change to per-context binder genl for security reason
+    replace the new ioctl with a netlink command
+    add corresponding doc Documentation/admin-guide/binder_genl.rst
+    add user space test code in AOSP
+v3: use YNL spec (./tools/net/ynl/ynl-regen.sh)
+    fix documentation index
+v4: change the subject of the patch and remove unsed #if 0
+v5: improve the kernel doc and the init function
+    remove unsupported uapi-header in YAML
+v6: fix some trivial kernel doc issues
+v7: break the binary struct binder_report into individual attributes
+v8: use multiplex netlink message in a unified netlink family
+    improve the YAML spec to be consistent with netlink tradition
+v9: remove unnecessary check to netlink flags and message payloads
+v10: improve the readability of kernel doc and variable names
+v11: rename binder_netlinnk.yaml to binder.yaml
+     use reverse xmas tree for function variables
+v12: make kernel doc aligned with source code
+v13: use sock_priv_destroy to cleanup netlink
+     require CAP_NET_ADMIN to send netlink commands
+     add trampolines in ynl-gen to fix CFI failure
+v14: wrap the sock priv in a separate struct
+v15: switch from unicast to multicast netlink message
+     add a "setup_report" permission in the "binder" class
+     add generic_netlink to binder_features
+v16: fix build error with CONFIG_SECURITY disabled
+v17: deal with multiple binder_proc with the same pid
+     simplify parameters of binder_netlink_report()
+     add test for the new permission binder:setup_report
+
+Li Li (2):
+  binder: report txn errors via generic netlink
+  binder: transaction report binder_features flag
+
+Thiébaud Weksteen (1):
+  lsm, selinux: Add setup_report permission to binder
+
+ Documentation/admin-guide/binder_netlink.rst  | 108 +++++++++
+ Documentation/admin-guide/index.rst           |   1 +
+ Documentation/netlink/specs/binder.yaml       | 116 ++++++++++
+ drivers/android/Kconfig                       |   1 +
+ drivers/android/Makefile                      |   2 +-
+ drivers/android/binder.c                      | 215 +++++++++++++++++-
+ drivers/android/binder_internal.h             |  16 ++
+ drivers/android/binder_netlink.c              |  46 ++++
+ drivers/android/binder_netlink.h              |  23 ++
+ drivers/android/binder_trace.h                |  35 +++
+ drivers/android/binderfs.c                    |   8 +
+ include/linux/lsm_hook_defs.h                 |   1 +
+ include/linux/security.h                      |   6 +
+ include/uapi/linux/android/binder_netlink.h   |  57 +++++
+ security/security.c                           |  13 ++
+ security/selinux/hooks.c                      |   7 +
+ security/selinux/include/classmap.h           |   3 +-
+ .../filesystems/binderfs/binderfs_test.c      |   1 +
+ 18 files changed, 653 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/admin-guide/binder_netlink.rst
+ create mode 100644 Documentation/netlink/specs/binder.yaml
+ create mode 100644 drivers/android/binder_netlink.c
+ create mode 100644 drivers/android/binder_netlink.h
+ create mode 100644 include/uapi/linux/android/binder_netlink.h
+
+
+base-commit: 5b37f7bfff3b1582c34be8fb23968b226db71ebd
 -- 
-2.48.1
+2.49.0.805.g082f7c87e0-goog
 
 
