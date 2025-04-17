@@ -1,107 +1,114 @@
-Return-Path: <linux-kernel+bounces-609466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F261A92284
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 18:19:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D607CA9227E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 18:17:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AE2319E5276
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 16:19:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB8221675F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 16:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E2D2550A9;
-	Thu, 17 Apr 2025 16:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CD9F25486F;
+	Thu, 17 Apr 2025 16:17:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eDiC7S6N"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="I08ChHFl"
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF59254AE1
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 16:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725141B4153
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 16:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744906747; cv=none; b=PxLEYwoySzeeHzkdrRoiHtpQmYm/ICfAaTD4ovpG89UHaTygJfhg7BCbNfN9LHUh1LDAKrFF3pFZKwGXsDLJXVvYKOx02dcHOtABYBdDDZZKwhdsuIOKPQa8eGll9CrDq9CyuXrdN1TqpGd+pALSCgWML+gcx+VWd+Y5q7jf9vY=
+	t=1744906662; cv=none; b=VwBwxy1yFhBqMfqPhSDw4wIxQGmMye4oT8lKFD4kw6t4sltkkoSLNPPimgk9KiEMdViWCEBpL+kxM0AHv+H9Il1aGEZyYxxvog/NvVMKXjbjzBcl7Xw5B0N4TWCwZQE/wp+6PtcWQSv9YETOo9U+4Vzzn0+lP5vg/mscSiE4IcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744906747; c=relaxed/simple;
-	bh=4UOX7EbCCJODBGK9+4Xd5RU9+8jQhPYd9IB6Nt0fjd4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pF4+/ju9pneJkwhuj3zK37NgvsRUO8+uSl6X1vXk6Xn6LhX1chR+yaGMlacCAXW8q1IfZ/Qzhmi6kmNcvnVGTXUhQ+vkhn/CGKUUsecfMc1gclBTEJile20VNfdsltWPcyvHAEz+cWSiQzW8INy679zQxYGRVM/rufZPPe/yvho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eDiC7S6N; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744906745; x=1776442745;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=4UOX7EbCCJODBGK9+4Xd5RU9+8jQhPYd9IB6Nt0fjd4=;
-  b=eDiC7S6NLfygPRb16rWbET5ABPQcZiF3bnEwsZlW222HUN6vEay3bthy
-   VH8fZroPJUctaO6Qvvz72di9xjBxML9aiyzJpdOMOPfuzyMHDNRGqRiae
-   /33wlALBSti6VwQiL/fzk5zl+moUUPNVPRSoOt1eQA9kRX/sFvSUV9/aq
-   sumBvsLztqETbjU//5kPmJdFyuxrdH3qelDY3dGmTjhJ9oac569QNBf/F
-   Lmm4geLwgPXEeJ12/YD3t15JNGG3fWTs5lNmHZOLiu2GU4N07Trfrtro0
-   tMGIE/7ikdJnjwcA/yCfjQEmPgbNsAVe6BRPYX1u5MznGHool+WsCLmXn
-   g==;
-X-CSE-ConnectionGUID: 0ASV+WSySW+EmrnB6qgZ1g==
-X-CSE-MsgGUID: yGy0X3cxSQO162YXOz+uCw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11406"; a="46390259"
-X-IronPort-AV: E=Sophos;i="6.15,219,1739865600"; 
-   d="scan'208";a="46390259"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2025 09:19:02 -0700
-X-CSE-ConnectionGUID: tKBHTmeZRMOKW4ucISomfA==
-X-CSE-MsgGUID: HzIFqthERd2xCzMLxq7Mjw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,219,1739865600"; 
-   d="scan'208";a="131743879"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa009.fm.intel.com with ESMTP; 17 Apr 2025 09:19:01 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 2AFAD85E; Thu, 17 Apr 2025 19:19:00 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Cc: Yury Norov <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH v3 2/2] bitmap-str: Add missing header(s)
-Date: Thu, 17 Apr 2025 19:17:16 +0300
-Message-ID: <20250417161858.611211-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250417161858.611211-1-andriy.shevchenko@linux.intel.com>
-References: <20250417161858.611211-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1744906662; c=relaxed/simple;
+	bh=YdyGYQvJPxptB7Ud1K9823h/vEclrujKLrEKCBQa44w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jh+fha7b+rKBKL0yJqsLsocYyEOKK0/r0PTl5WZbLEwCPuRdNrC3xNUFMsGaNOEhg3E9sgr2GOQZSfYCSpdUS9VWVB5DWoTxCpfOgOg/FH8gMdz7ru4Mx2V3PPZwTm2su/3dMcmQb8mjjsjUFyRwtkfgoLeqa0pg8h+9uGiqPc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=I08ChHFl; arc=none smtp.client-ip=209.85.161.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-603f54a6cb5so472078eaf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 09:17:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1744906659; x=1745511459; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uJ86ga6RjrBQ4jtVg7iGsvEs2Pk/5xuTneiTlVnUO0k=;
+        b=I08ChHFl421jGUWX3hDKOeCEnaE2W6myEHnSc/t5arLr/NjtnLLOb/6WQqjUeLO1lN
+         Ykzpa0tDs7OOL15YMenVo6fimibiO27iVp3tNFmKtoUFjNTDPBRpv2Y1JNkY6uspB8rE
+         m+D3e7Glzdtpc0Hpe+UmFVcXFgjM1XsSIM9f6wlVC4Eh6VC1kD6suIBnKgt6SPFQUTT0
+         7V2vzSKFf1+MJiEG8R2g1iQzw5S2aX47IKFPAudL5k9x7ZkzC/0Gpgt+E5V4tf7ChoR2
+         mJK50Oyb9CZx27ZbOcCUL/focZmNQTZt6VXq1L8c9Rj6NEGyaFtlO58rQYBKWgDXOvRq
+         em2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744906659; x=1745511459;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uJ86ga6RjrBQ4jtVg7iGsvEs2Pk/5xuTneiTlVnUO0k=;
+        b=wvaU6gAgq0Sh/8X5/n6hnUfQ3T7+OHS4vQUv0tEF5CO1nJoyF6LdIoMDPmuUAHYoDs
+         pqdY2ZygbeZ45RMJIll6MfDRtBzsWbWXszPqewroLMLIC0RO3cWdOyopYtJDGr9zTboT
+         lrGdREiuzNUBd1s5cOvat4EOrZCNn3P5wf5PWUEVEdY8ei3SMVX+lHnITA3BJSiBy8CP
+         sAi81PA9Ylkwi8BKXGbvjAsfBeb6Enr1X6pb8VmsokWIOiio5M+2imusaZiohbCiUpCL
+         hdSQDJ+RUiRKcjVgpJ5xlUvSPUF50BEcnbVsBRw6CMy3EPNdsB3GXAE8xgIiNS4vW+as
+         J6/g==
+X-Forwarded-Encrypted: i=1; AJvYcCUqw7TpE3DpEhrouc2wQzNE7G0xz5Cob98DdrpDuUYrIdqL0eOOLLo+CzRV8NBWmrKAg738FrtWETLDIdM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGxinalxgBI3M/JhjwVudeyk55K41Pp6Eg9xpuTBGbSqsSzIFZ
+	eBj9xaYUs+MO+jACiHMGFoeOiCIoceonKt1orDUTuZE84EnF7bH8yLb1sW2JoMo=
+X-Gm-Gg: ASbGncvMOE8YOeNVgWPAOFvbzT7ZzQA40J8xBHICdwitmPlmpetB59DFkIRsVWaU71w
+	SxPkvP2SydzGNLKetMMdDyQ3zTXCvEaEaQRLGhzcfkeheEZFbimgyxD0SBbkLPeZsXL1GTj5DnN
+	oNNLH+fr3dDCd7paX/B1CtOm6it0VAiVxdrgidsBaRL0o/QnSbQcfxRll+9iM9RZz6y4fbLrfVu
+	5drPOfENDiVDUHP/C3t61JVqDsjEZcBNVjuQL75oiKnVOCUvijN+3ZxMyw+Qo1EHBIeMtQIYafx
+	h6+v9ioi/4UObofLfMOVR1ivUavov1wZLgckadnOGdPZgiluFZap0meTcsD7HpqPYWq5BiPpzLq
+	rwIUryjkF0+V88sgUYw==
+X-Google-Smtp-Source: AGHT+IGBBgE75fsVkLXxYoZqV19j+mS6o4e4vTLZSbr9DKTQoVtLZ0+RYC5g8QIKrdP0fbpy7FLYJQ==
+X-Received: by 2002:a05:6820:1e13:b0:604:6b0:c259 with SMTP id 006d021491bc7-604a931e696mr3952610eaf.4.1744906659563;
+        Thu, 17 Apr 2025 09:17:39 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:c91b:eea3:7afd:2dee? ([2600:8803:e7e4:1d00:c91b:eea3:7afd:2dee])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-605ff6aacf5sm12896eaf.39.2025.04.17.09.17.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Apr 2025 09:17:39 -0700 (PDT)
+Message-ID: <cd50b4eb-ef6c-4842-88cd-932042ca2629@baylibre.com>
+Date: Thu, 17 Apr 2025 11:17:37 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iio: frequency:: Remove unused parameter from data
+ documentation
+To: Gabriel Shahrouzi <gshahrouzi@gmail.com>, gregkh@linuxfoundation.org,
+ jic23@kernel.org, lars@metafoo.de, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
+ Michael.Hennerich@analog.com
+Cc: skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
+References: <20250417143220.572261-1-gshahrouzi@gmail.com>
+From: David Lechner <dlechner@baylibre.com>
+Content-Language: en-US
+In-Reply-To: <20250417143220.572261-1-gshahrouzi@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-bitmap-str.h is not self-contained, it uses bool type that is provided
-in types.h and it uses __user annotation that is guaranteed to be included
-with types.h. Add missing header(s) to follow IWYU (Include What You Use)
-principle.
+On 4/17/25 9:32 AM, Gabriel Shahrouzi wrote:
+> The AD9832 driver uses the Common Clock Framework (CCF) to obtain the
+> master clock (MCLK) frequency rather than relying on a frequency value
+> passed from platform data.
+> 
+> Signed-off-by: Gabriel Shahrouzi <gshahrouzi@gmail.com>
+> ---
+>  drivers/staging/iio/frequency/ad9832.h | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+Please include the driver name in your patch subjects. Otherwise readers will
+assume that this is something that affects all IIO frequency drivers. I noticed
+you are doing this on all of the patches you are sending, not just this one.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- include/linux/bitmap-str.h | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/include/linux/bitmap-str.h b/include/linux/bitmap-str.h
-index d758b4809a3a..53d3e1b32d3d 100644
---- a/include/linux/bitmap-str.h
-+++ b/include/linux/bitmap-str.h
-@@ -2,6 +2,8 @@
- #ifndef __LINUX_BITMAP_STR_H
- #define __LINUX_BITMAP_STR_H
- 
-+#include <linux/types.h>
-+
- int bitmap_parse_user(const char __user *ubuf, unsigned int ulen, unsigned long *dst, int nbits);
- int bitmap_print_to_pagebuf(bool list, char *buf, const unsigned long *maskp, int nmaskbits);
- int bitmap_print_bitmask_to_buf(char *buf, const unsigned long *maskp, int nmaskbits,
--- 
-2.47.2
-
+[PATCH] iio: frequency: ad9832: Remove unused parameter from data documentation
 
