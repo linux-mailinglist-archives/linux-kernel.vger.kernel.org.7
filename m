@@ -1,115 +1,100 @@
-Return-Path: <linux-kernel+bounces-609901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7612CA92D3C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 00:21:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98F92A92D4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 00:37:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DF17173F0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 22:21:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5581D7B4C77
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 22:36:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9228218AAF;
-	Thu, 17 Apr 2025 22:21:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8588B21ABB3;
+	Thu, 17 Apr 2025 22:37:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iPSYlW6W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="A3bMACpV"
+Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062771FBEA2;
-	Thu, 17 Apr 2025 22:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0C020FAA4;
+	Thu, 17 Apr 2025 22:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744928485; cv=none; b=dW2X4MpE4n1eA2pIFnrHlA1Imr8sgtdineSDQDL4lOrDx5a5LUdSSR6nb2UhM80MtCHNXix9PUTMSu1glBJkAa4KDB7VJeJZ588p2Ify7YP5kkDTvXV+p4DWPicLFWLqoxd5363YXK7UbxCy7sMYSGyEBBSP4HJYOB4Urc7M6bQ=
+	t=1744929436; cv=none; b=WcE3I0dfb/XewB6Z6oKkZYRH1KiYpECR+zyumM7GfCCVV78pdIFv7Ah35qMJuHnUauCHIo4RQK/fN/VIsu4VPnig3Ch4FrJoo27dmnFnpgps6BgC6vyoXINKvGeeGR9r2mE90jXYJftgWRXAybHeECpDvMoT4wcCXiExpwMZxW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744928485; c=relaxed/simple;
-	bh=rifZs371J9y3PzHkAueCCLOOVhwOjcVeezNKgfb6d+Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OsZCbnfB4tpR34sUOp1R+KPDgy0U7KWffypnWJTf/njciY6EI1nxdtbdPImLbb6Sfl/UJvxdg4clUiCwlqkJeH0cO+4pgg/C5bw1+h0ieyz27BNZCcy0HBTB7QtrR8z0yZuyS0xuFdzS12W323gsYOsV42MmOB8MZRTYOYo8hB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iPSYlW6W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 757B6C4CEE4;
-	Thu, 17 Apr 2025 22:21:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744928484;
-	bh=rifZs371J9y3PzHkAueCCLOOVhwOjcVeezNKgfb6d+Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iPSYlW6WkzOffe5pK81qoPx1OGu4qem2WanAYmCUY4OiDkgdjE5R/R/FZib4L1GiX
-	 jMStGSxs2IPB72Gr08fQ7lffbnIiAJQ3+HjB2G6qeJ17eAfrmG7/S/iaYHOC0QWTg1
-	 tLpEM6IQcYwxr1GRZxhKtz3aubCNl+tFIBfUXL1xfEXlZgFp7q98l1OTsOnkY85vAP
-	 TdJYlvCKL4mh/uHEUfHVTKAaJCA38KQYX57ua3YfYIbf2h99omr573Evv7dwb77crK
-	 UsspGp5utK8I00vW/noz+prYtCF196ufrt/EDLXeApC0WSJ9ddwZO1CNIYpdCfUffU
-	 DhJnhq1EZ3/fw==
-Message-ID: <8562d6b5-3b81-40e2-9cda-f202ab85d5a9@kernel.org>
-Date: Thu, 17 Apr 2025 17:21:22 -0500
+	s=arc-20240116; t=1744929436; c=relaxed/simple;
+	bh=0C1IbJciboKJBLSmDSL2zFC6VQpBwexg4CkdM4KE5v4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uhlqRurXOmp8ttKP4VmbNm74z7WvLH9HLTYGej8XCkSsKeUSAmFxqbJ+CVxvAomwHeumXKq5OC2yNa/ooDl5CP5i0r2ANw50sFAT9nRFxY7ezZNHReOj5lc6OEbYevnQo9vCywv216x36xSp3V17CfKDXj1TTqzN/uMMl7pzsIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=A3bMACpV; arc=none smtp.client-ip=80.12.242.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from localhost.localdomain ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id 5XiQuDWqjETiN5XiTu2OP2; Fri, 18 Apr 2025 00:28:19 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1744928899;
+	bh=s81pV5jIkn/GlgtQ08lcgCCxshbcpxyENaufyDqFoXU=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=A3bMACpVFPDO5ND/TN1ebf1eXSQbRYcajI4fSEkK2EuoyaXRJJCMQ0DKuRg2pLwbo
+	 VS1SzNTDU/QGlLRK48q+hfy70nXkrjVOqvXJKy6cLUbuEmyYjeKVb4yZiNp4q4xI9z
+	 b0dPos/V77rW4wUyHfKM78m5ODsUUU5X9kN0umDf6ayTHUVAoBfriVwuJe26uXzeSx
+	 IUjLF5Hup2fcvgXBmGKCEY1Oslxt/Kb+scpWif99qpgTVtRXPtI6FNJkgekmY1blZT
+	 Bj0fQxlre8TwyfBdis+sqsWCTNYZkwGVlZXi4+paEie7bjPRQMN1PR2mw+jQefOL/+
+	 jJjypGAjhMriA==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 18 Apr 2025 00:28:19 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Felix Fietkau <nbd@nbd.name>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Ryder Lee <ryder.lee@mediatek.com>,
+	Shayne Chen <shayne.chen@mediatek.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-wireless@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH] wifi: mt76: Remove an unneeded local variable in mt76x02_dma_init()
+Date: Fri, 18 Apr 2025 00:28:01 +0200
+Message-ID: <e86d5602bdd8b6bd22258ee69536992f39470bf5.1744928865.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/5] i2c: piix4: Depends on X86
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>, Jean Delvare <jdelvare@suse.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Jonathan Corbet <corbet@lwn.net>,
- Mario Limonciello <mario.limonciello@amd.com>,
- Yazen Ghannam <yazen.ghannam@amd.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
- "H . Peter Anvin" <hpa@zytor.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Hans de Goede <hdegoede@redhat.com>,
- "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:I2C/SMBUS CONTROLLER DRIVERS FOR PC" <linux-i2c@vger.kernel.org>,
- "open list:AMD PMC DRIVER" <platform-driver-x86@vger.kernel.org>,
- kernel test robot <lkp@intel.com>, Ingo Molnar <mingo@kernel.org>
-References: <20250415002658.1320419-1-superm1@kernel.org>
- <20250415002658.1320419-3-superm1@kernel.org>
- <p25szqqrnvvcut7bbmbhjhxjpqj4wgzvxfqigiopwnv4sspid3@caru7peqpvwz>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <p25szqqrnvvcut7bbmbhjhxjpqj4wgzvxfqigiopwnv4sspid3@caru7peqpvwz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 4/17/2025 5:16 PM, Andi Shyti wrote:
-> Hi Mario,
-> 
-> On Mon, Apr 14, 2025 at 07:26:55PM -0500, Mario Limonciello wrote:
->> PIIX4 and compatible controllers are only for X86. As some headers are
->> being moved into x86 specific headers PIIX4 won't compile on non-x86.
->>
->> Reported-by: kernel test robot <lkp@intel.com>
->> Closes: https://lore.kernel.org/oe-kbuild-all/202504120558.sq3IpWdH-lkp@intel.com/
->> Closes: https://lore.kernel.org/oe-kbuild-all/202504120432.0F8lOF3k-lkp@intel.com/
-> 
-> givent that the next patch is not merged anywhere yet, the above
-> three tags are not needed.
+Remove 't' which is unneeded since commit f3950a414143 ("mt76: set
+txwi_size according to the driver value")
 
-Ah, thanks for clarifying this.  I'll strip them for the next version.
+This slightly simplifies the code.
 
-> 
-> BTW, can I already take the two i2c patches?
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/wireless/mediatek/mt76/mt76x02_mmio.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-If you don't mind I think it would be better to leave Acked-by tags for 
-them and let these go through tip.
-
-A few reasons:
-1) The header rename this fits into happened on tip already.
-2) Patch 5 which would go through tip depends on these two patches, so 
-it would mean you need to provide an immutable branch for tip to merge.
-
-But if you would rather do the immutable branch dance and take them now 
-that's of course possible too.
-
-> 
-> Thanks,
-> Andi
-> 
->> Suggested-by: Ingo Molnar <mingo@kernel.org>
->> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+diff --git a/drivers/net/wireless/mediatek/mt76/mt76x02_mmio.c b/drivers/net/wireless/mediatek/mt76/mt76x02_mmio.c
+index a82c75ba26e6..a683d53c7ceb 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt76x02_mmio.c
++++ b/drivers/net/wireless/mediatek/mt76/mt76x02_mmio.c
+@@ -174,7 +174,6 @@ static int mt76x02_poll_tx(struct napi_struct *napi, int budget)
+ 
+ int mt76x02_dma_init(struct mt76x02_dev *dev)
+ {
+-	struct mt76_txwi_cache __maybe_unused *t;
+ 	int i, ret, fifo_size;
+ 	struct mt76_queue *q;
+ 	void *status_fifo;
+-- 
+2.49.0
 
 
