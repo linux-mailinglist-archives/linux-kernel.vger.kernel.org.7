@@ -1,115 +1,96 @@
-Return-Path: <linux-kernel+bounces-609461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 505A3A9227B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 18:17:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FF7BA92281
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 18:19:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E0B016ABDF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 16:17:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12DB419E5206
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 16:19:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0778D254865;
-	Thu, 17 Apr 2025 16:16:59 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9ED7254AE9;
+	Thu, 17 Apr 2025 16:19:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ce6bWUHX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1981C22371B;
-	Thu, 17 Apr 2025 16:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F68A254843
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 16:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744906618; cv=none; b=svbW/QcVDPrZemd3kZEETtY1t4RmjJrmoB0dCSZY3jwGmSQHH/mStYNX1gUJP2T0trxZ3AbKzQhkL6snpB/ILLVH50CaZz4a656HznyOq9sBN2dZyeOM7SzPkcFKVkJUWYvux+E1fTHVoa94e6v1HyiYlkNdeoJsk7GUfk1Lwqo=
+	t=1744906745; cv=none; b=mWVUnGSNsidr7lB3rDNh2QGUzCk8558DbOiCYKqkFUAvGP0VFPFoDtht5gs9wbOdbWiE9cbEF4ZJ3uWnp4uCJXaESTsok+uRnP6WGVZCeLTcwaYrWq+Zbrrf9Gz0dGk4D1mg/o+d4Sl3/8frmjOZ/G04OabvO7FMrdwb+cEaUYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744906618; c=relaxed/simple;
-	bh=FgUEG+umn1PfV0jboJ5wL1UISyXSNMwvwys2ha0CKWc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YP3vqFrA7vpS/sYzgq+eizUKWZv8a0W7GnY0PBV6fV4VJA8FDN2Q+Au7jQfoQ4ipgflm07UUwlzkwRy0Kymv3Y0PlWcRzS9TMx7xh4xmCz7SD56U+Qm9pemuSw3dKVv5ThHzmu6pEoygMfBKcebQbm/j58nf6qoOt5NiMje5+2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98.2)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1u5RsR-000000002Q4-0DCF;
-	Thu, 17 Apr 2025 16:16:49 +0000
-Date: Thu, 17 Apr 2025 17:16:45 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH net v2 4/5] net: ethernet: mtk_eth_soc: net: revise
- NETSYSv3 hardware configuration
-Message-ID: <aAEpbV-IvbfaPwwL@makrotopia.org>
-References: <8ab7381447e6cdcb317d5b5a6ddd90a1734efcb0.1744764277.git.daniel@makrotopia.org>
- <28929b5bb2bfd45e040a07c0efefb29e57a77513.1744764277.git.daniel@makrotopia.org>
- <20250417081055.1bda2ff6@kernel.org>
- <aAEiCjdJdsqH6EAU@makrotopia.org>
- <20250417085948.35b0ec5a@kernel.org>
+	s=arc-20240116; t=1744906745; c=relaxed/simple;
+	bh=Wh2a2rqlKP4QwZVx4samQLvnqm7K1UwdarpkI7KqCWo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RATdzuxT4RoebCDPuDugVQhoGqLcP2dNxjO/30F362Nr+LyHAoZ09kh8GMyddd2uolz86s96HnrarL8WjUdff2nD6tTYPwdy0aIbd7n+PqVEY+vUWxIs+oiNEydjXolb+M98wHUJ2oUPHxpOEICFZt1bqifQLv97tI0MPBTYGdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ce6bWUHX; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744906743; x=1776442743;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Wh2a2rqlKP4QwZVx4samQLvnqm7K1UwdarpkI7KqCWo=;
+  b=ce6bWUHXyBt5c2Qfsupk3pTHq1eVWeHk1TFNHiV5o+Q8/mAzzZWKBi1/
+   ZWg2nJVYju3g3k0uD9Nu/FzvQZMYhc0BctAzYjr9TOEVkhpSu0qx3v6Fn
+   PKOvWN5P4p0hzvSohsF7BInRqhCcMLvrRAbOBUKFtsdoCI39x1xi0Jjs2
+   N0LmVx4cTsMxYY+SB3SRApCZf8WsToqkZTRv973N6TnYcC+Fv7mS+CDMD
+   U0yo6qI7wv9aVbjHsHX3/1reTKNNMJggaPv6lNE3rThQLL9GOCK4KvEdc
+   L+0x11a2QCggvGbw+hHQFbHwgVotT932TDvjG0DFifXYUgdPv9jvJFi5c
+   g==;
+X-CSE-ConnectionGUID: PMLM0YQxRNOitnoJ+WZaJQ==
+X-CSE-MsgGUID: H9l6lQAoT9WVMWCM1o9qLg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11406"; a="46390256"
+X-IronPort-AV: E=Sophos;i="6.15,219,1739865600"; 
+   d="scan'208";a="46390256"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2025 09:19:02 -0700
+X-CSE-ConnectionGUID: 8XK+OKTgSraXLMesx2k44w==
+X-CSE-MsgGUID: wzJnKge5QVy9mxXcwAKpAA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,219,1739865600"; 
+   d="scan'208";a="131743878"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa009.fm.intel.com with ESMTP; 17 Apr 2025 09:19:01 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 0F36A5D9; Thu, 17 Apr 2025 19:18:59 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-kernel@vger.kernel.org
+Cc: Yury Norov <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: [PATCH v3 0/2] bitmap-str: A couple of cleanups
+Date: Thu, 17 Apr 2025 19:17:14 +0300
+Message-ID: <20250417161858.611211-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250417085948.35b0ec5a@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Apr 17, 2025 at 08:59:48AM -0700, Jakub Kicinski wrote:
-> On Thu, 17 Apr 2025 16:45:14 +0100 Daniel Golle wrote:
-> > On Thu, Apr 17, 2025 at 08:10:55AM -0700, Jakub Kicinski wrote:
-> > > On Wed, 16 Apr 2025 01:51:42 +0100 Daniel Golle wrote:  
-> > > > +		/* PSE should not drop port8, port9 and port13 packets from WDMA Tx */
-> > > > +		mtk_w32(eth, 0x00002300, PSE_DROP_CFG);
-> > > > +
-> > > > +		/* PSE should drop packets to port8, port9 and port13 on WDMA Rx ring full */  
-> > > 
-> > > nit: please try to wrap at 80 chars. There's really no need to go over
-> > > on comments. Some of us stick to 80 char terminals.   
-> > 
-> > Too late now to send another revision...
-> 
-> I only applied the first 3 :)
+A couple of simple cleanups to the bitmap-str.h.
 
-Perfect, so I'll roll up the remaining two with the changes suggested.
+In v3:
+- elaborated even more what is missing and why it's good to have (Yury)
 
-> 
-> > > > [...]
-> > > > diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.h b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
-> > > > index 39709649ea8d1..eaa96c8483b70 100644
-> > > > --- a/drivers/net/ethernet/mediatek/mtk_eth_soc.h
-> > > > +++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
-> > > > @@ -151,7 +151,12 @@
-> > > >  #define PSE_FQFC_CFG1		0x100
-> > > >  #define PSE_FQFC_CFG2		0x104
-> > > >  #define PSE_DROP_CFG		0x108
-> > > > -#define PSE_PPE0_DROP		0x110
-> > > > +#define PSE_PPE_DROP(x)		(0x110 + ((x) * 0x4))
-> > > > +
-> > > > +/* PSE Last FreeQ Page Request Control */
-> > > > +#define PSE_DUMY_REQ		0x10C  
-> > > 
-> > > This really looks like misspelling of DUMMY, is it really supposed 
-> > > to have one 'M' ?  
-> > 
-> > I also thought that when I first saw that and have told MediaTek engineers
-> > about it, they told me that the register is called like that also in their
-> > datasheet and hence they want the name to be consistent in the driver.
-> 
-> Hm, maybe add a comment ? It confused both of us, probably going 
-> to confuse most people later on
+In v2:
+- filled the commit messages (Yury)
 
-Ok, will do and send v3.
+Andy Shevchenko (2):
+  bitmap-str: Get rid of 'extern' for function prototypes
+  bitmap-str: Add missing header(s)
 
-Thank you!
+ include/linux/bitmap-str.h | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+-- 
+2.47.2
+
 
