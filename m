@@ -1,100 +1,93 @@
-Return-Path: <linux-kernel+bounces-609908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98F92A92D4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 00:37:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91263A92D3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 00:28:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5581D7B4C77
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 22:36:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EFF74A2369
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 22:28:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8588B21ABB3;
-	Thu, 17 Apr 2025 22:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="A3bMACpV"
-Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78475215055;
+	Thu, 17 Apr 2025 22:28:26 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0C020FAA4;
-	Thu, 17 Apr 2025 22:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF571FBEA2;
+	Thu, 17 Apr 2025 22:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744929436; cv=none; b=WcE3I0dfb/XewB6Z6oKkZYRH1KiYpECR+zyumM7GfCCVV78pdIFv7Ah35qMJuHnUauCHIo4RQK/fN/VIsu4VPnig3Ch4FrJoo27dmnFnpgps6BgC6vyoXINKvGeeGR9r2mE90jXYJftgWRXAybHeECpDvMoT4wcCXiExpwMZxW4=
+	t=1744928906; cv=none; b=S8baYGCSHJmJsJkQ37URv1XF+ELnMQ4knNRrPOrR4LqQcwAzOSnQlk1wy9D8dVINpE1OksIrov9w+UB04IVu04KRKW+crFn4J7fBPZs3T1/XFuH+9GIWQJqmiX+hUEuC8s/jOQQyAz8/LxV/iD1tz4fuML3xaB3PzJ2dEU4TnOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744929436; c=relaxed/simple;
-	bh=0C1IbJciboKJBLSmDSL2zFC6VQpBwexg4CkdM4KE5v4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uhlqRurXOmp8ttKP4VmbNm74z7WvLH9HLTYGej8XCkSsKeUSAmFxqbJ+CVxvAomwHeumXKq5OC2yNa/ooDl5CP5i0r2ANw50sFAT9nRFxY7ezZNHReOj5lc6OEbYevnQo9vCywv216x36xSp3V17CfKDXj1TTqzN/uMMl7pzsIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=A3bMACpV; arc=none smtp.client-ip=80.12.242.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from localhost.localdomain ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id 5XiQuDWqjETiN5XiTu2OP2; Fri, 18 Apr 2025 00:28:19 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1744928899;
-	bh=s81pV5jIkn/GlgtQ08lcgCCxshbcpxyENaufyDqFoXU=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=A3bMACpVFPDO5ND/TN1ebf1eXSQbRYcajI4fSEkK2EuoyaXRJJCMQ0DKuRg2pLwbo
-	 VS1SzNTDU/QGlLRK48q+hfy70nXkrjVOqvXJKy6cLUbuEmyYjeKVb4yZiNp4q4xI9z
-	 b0dPos/V77rW4wUyHfKM78m5ODsUUU5X9kN0umDf6ayTHUVAoBfriVwuJe26uXzeSx
-	 IUjLF5Hup2fcvgXBmGKCEY1Oslxt/Kb+scpWif99qpgTVtRXPtI6FNJkgekmY1blZT
-	 Bj0fQxlre8TwyfBdis+sqsWCTNYZkwGVlZXi4+paEie7bjPRQMN1PR2mw+jQefOL/+
-	 jJjypGAjhMriA==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 18 Apr 2025 00:28:19 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Felix Fietkau <nbd@nbd.name>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Ryder Lee <ryder.lee@mediatek.com>,
-	Shayne Chen <shayne.chen@mediatek.com>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-wireless@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH] wifi: mt76: Remove an unneeded local variable in mt76x02_dma_init()
-Date: Fri, 18 Apr 2025 00:28:01 +0200
-Message-ID: <e86d5602bdd8b6bd22258ee69536992f39470bf5.1744928865.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1744928906; c=relaxed/simple;
+	bh=LUxes0u84hfgI+/C68y4xKDFHbrXB3K7ZMDX8LMqB7Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=BDij/prZWlPV/fHrNuOdcbbvUrNLT/pn07NACoynzmJUCQuvcI+2fWlfkd4Iy/eQDpA0FzApDNA7GNlcd/SNKVK/ianJDrq1deQjVHdLzc9khqL8U4wT1Zep1+AXi0XQWx4bM+REjhUUNT0rybDdJ/W5psAxFhCGSSawfU3dCfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFF04C4CEE4;
+	Thu, 17 Apr 2025 22:28:23 +0000 (UTC)
+Date: Thu, 17 Apr 2025 18:30:03 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Andrii Nakryiko
+ <andrii.nakryiko@gmail.com>, Mykyta Yatsenko <mykyta.yatsenko5@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH] tracing: Fix filter string testing
+Message-ID: <20250417183003.505835fb@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Remove 't' which is unneeded since commit f3950a414143 ("mt76: set
-txwi_size according to the driver value")
+From: Steven Rostedt <rostedt@goodmis.org>
 
-This slightly simplifies the code.
+The filter string testing uses strncpy_from_kernel/user_nofault() to
+retrieve the string to test the filter against. The if() statement was
+incorrect as it considered 0 as a fault, when it is only negative that it
+faulted.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Link: https://lore.kernel.org/all/CAEf4BzbVPQ=BjWztmEwBPRKHUwNfKBkS3kce-Rzka6zvbQeVpg@mail.gmail.com/
+
+Cc: stable@vger.kernel.org
+Fixes: 77360f9bbc7e5 ("tracing: Add test for user space strings when filtering on string pointers")
+Reported-by: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Reported-by: Mykyta Yatsenko <mykyta.yatsenko5@gmail.com>
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- drivers/net/wireless/mediatek/mt76/mt76x02_mmio.c | 1 -
- 1 file changed, 1 deletion(-)
+ kernel/trace/trace_events_filter.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt76x02_mmio.c b/drivers/net/wireless/mediatek/mt76/mt76x02_mmio.c
-index a82c75ba26e6..a683d53c7ceb 100644
---- a/drivers/net/wireless/mediatek/mt76/mt76x02_mmio.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt76x02_mmio.c
-@@ -174,7 +174,6 @@ static int mt76x02_poll_tx(struct napi_struct *napi, int budget)
+diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
+index 0993dfc1c5c1..2048560264bb 100644
+--- a/kernel/trace/trace_events_filter.c
++++ b/kernel/trace/trace_events_filter.c
+@@ -808,7 +808,7 @@ static __always_inline char *test_string(char *str)
+ 	kstr = ubuf->buffer;
  
- int mt76x02_dma_init(struct mt76x02_dev *dev)
- {
--	struct mt76_txwi_cache __maybe_unused *t;
- 	int i, ret, fifo_size;
- 	struct mt76_queue *q;
- 	void *status_fifo;
+ 	/* For safety, do not trust the string pointer */
+-	if (!strncpy_from_kernel_nofault(kstr, str, USTRING_BUF_SIZE))
++	if (strncpy_from_kernel_nofault(kstr, str, USTRING_BUF_SIZE) < 0)
+ 		return NULL;
+ 	return kstr;
+ }
+@@ -827,7 +827,7 @@ static __always_inline char *test_ustring(char *str)
+ 
+ 	/* user space address? */
+ 	ustr = (char __user *)str;
+-	if (!strncpy_from_user_nofault(kstr, ustr, USTRING_BUF_SIZE))
++	if (strncpy_from_user_nofault(kstr, ustr, USTRING_BUF_SIZE) < 0)
+ 		return NULL;
+ 
+ 	return kstr;
 -- 
-2.49.0
+2.47.2
 
 
