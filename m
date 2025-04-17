@@ -1,123 +1,194 @@
-Return-Path: <linux-kernel+bounces-608633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E0A2A91623
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 10:08:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 533EAA91631
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 10:10:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2514A1907A1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:08:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 298CB3BFDD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:09:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E939F22E3E7;
-	Thu, 17 Apr 2025 08:08:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F1A22FDEF;
+	Thu, 17 Apr 2025 08:08:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XIW1+F8c"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2OdyfI2w"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5CD322DFB0
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 08:08:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB512309A8
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 08:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744877305; cv=none; b=N2ESJAiJvj6IhyBjKAKweCnil2LAyldZwQRzeWHmhltrNQWt40vLwZEUQmILcvvS+YzYWLozwQhrSslykLARi6esJFBnlk9FY08YAzrB7icoOz6XrAYGEQlKWNiVnEI76j2CzKsa0Gtvv+bp15+TfSrMyQseC3kehUho0/BMlug=
+	t=1744877323; cv=none; b=aD67QIUuh9k0sCL/AViJNq2KXwJoM0duZW4UEZn9woy9KUpOs+Gd4BRHhVfK5NlulOx2D5YGIZlLIzPhbbU+l7FMCkYxJDECc107bz/hBh/PcXPftAaFX1apprs77lgFZehMu0KnDjkpkP2k9m7+PieHJwUTmpjepbNaTPiei84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744877305; c=relaxed/simple;
-	bh=4cF367okumOtMyrY+/1TraFd2LxC9LrQ9zF2MGTBNSI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lFYKS74sOEi4mY08sdeqWunEdVLBA+1w7csIvMRgTlK/zroz2yfiAAmNhgePDfzNzABROvYvsETq5lr0KH2RvLdgVQA986Cb/vLUqIBDD1Y3sBsL2E+t++qRrXSRF6LYy+CcGabr94bLY7lgMOkRrZGhokCpOvNk4VitGsfNtOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XIW1+F8c; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-227a8cdd241so6454555ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 01:08:23 -0700 (PDT)
+	s=arc-20240116; t=1744877323; c=relaxed/simple;
+	bh=vkyoWugRoTksrbmWHNnd8BkwVMcRxQLEaw53gk79Rvs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BWBxwNkTARix1uMDsvtLxE80XR3R7A2KV0FdH75mXno1+CZWEJqUxzFIVzTFDe8wwAPYgeANv1Pg6V1pMUEHjvi39Rr4O+EcSrSM6Lmq538Iu2bgr+Djj+NXLo/vyrfErX5RPcQKbsf3QwoBoFCbVsQ4j1q+M5GJ9TGS/+cO5b0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2OdyfI2w; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ac41514a734so68581966b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 01:08:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744877303; x=1745482103; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QEswYqyGTpfH/GkJDbyZKkriSMlUpRORadm4MA53jxA=;
-        b=XIW1+F8c/RmcAocej3ZzD/IboDijfcNsukkc252fAakXKYywZFa/q2sUDPMMo6QGsW
-         hfY8sCcvw6b2ucsIWaiHuM7pL7zLTqhIigZW3ic20aeAP8X7/HA9DRCcXqApUgkSaWgP
-         Nx38T7la54YWktmAKPRLyuRgDpxzmUu3foag4V/T7HSYau/Gm2OoeeB6j9UPZhWYTT/8
-         Pu3ftnaOKwX3T3VOvxP6fKutbHCIIw244Rp48wf+FDmNZpxLkHsJgZ2N2qbxUi9me+/U
-         gETu6hHk//hz5i8ZsDoQKVZ5Q4biGenvnIfWiQ+RKFtWxc7h78dYdJYO4CONmPsaMlWN
-         l/Fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744877303; x=1745482103;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1744877319; x=1745482119; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QEswYqyGTpfH/GkJDbyZKkriSMlUpRORadm4MA53jxA=;
-        b=k0avurzb8UDXmwTYm0hanhCPkTD97eDdnyUxofoJd2pEaIwZsR/nWVTUgxH+W1fFXl
-         kZmjF7GuZj9N+qJCAWcSAckA4hvt0cdjm7RrtdvG3o4MYoDDsKJHI6KUxkAgvfDj2wha
-         zkRwZUVaz5hQEHvtlToXzCk1ejjLoGrM28kDWOLV6hfwaE/4Vb4HABRlzXBE2JTUO4KC
-         Azgds3GCf+6tbJXBnqMYRjQf9ufDqPiWPTjek2E9Sld6I7fVYVgWAAAO1qav0+hUkKTK
-         WuMrX6a56sBT+mTt9zETp9ziabWyznz4TOd0GpR/BI5vZB4HGhEPxkmjd82N+NQyHLiN
-         Jtig==
-X-Forwarded-Encrypted: i=1; AJvYcCWiQXCg3dM2mYNfspgcvyvN1g6bInLHIQg47P2yjF6Yw0Th0WLk1sR/ezUfbu7F+TwpbAcRvWdPFQRgEno=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmhxHXwEvUFYvsn7ZjFOXuL+E++6W8gPXv81yJFMYzEalxfcEI
-	+HcSMzR4TxPbn4X/SOnxnq7eoveijUY/X2zdqyDaVpHHgFa6t9it3wiQXChsCow=
-X-Gm-Gg: ASbGncuI/PRZ7QQWTlYooTIeaYATax+RjEs6yNV5eZAns+LyxiJh8F7JAAR6RsOp/fD
-	VomuaTSMgOVtvFq/PMbJRSIT5AxDcS0dNTSJTA6RD80328AXA31K0x4Fl5WUSv7Ijpd7yCuCek9
-	Zlb83PpUt/bidjf7T3Wq4NaK5b4JTKEb9u3SCeRsIV7ElnA3rDlWVybUeljSIEsWlNThi81Kj0D
-	8jYfqWFYkZ2o3VTFOuO1HOACy/4F2N4tWiBbUYKb+/z3hGG5HDsrnQoM54AWYR+zKhKEgMzd5jV
-	shkBgdGQQ8Nhq22Vas4M0TNpS37oWkAcF0+qu2oe3Q==
-X-Google-Smtp-Source: AGHT+IGbQUi7VXIrD1diQICyOW/Hg7ynTMZy+UxNRxvbnJKiuF+BWnPMCK+kOiADSqf+l9bWIgL3Uw==
-X-Received: by 2002:a17:903:3d06:b0:220:c164:6ee1 with SMTP id d9443c01a7336-22c3596beebmr89236705ad.32.1744877303213;
-        Thu, 17 Apr 2025 01:08:23 -0700 (PDT)
-Received: from localhost ([122.172.83.32])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c33fe98d9sm27413715ad.250.2025.04.17.01.08.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Apr 2025 01:08:22 -0700 (PDT)
-Date: Thu, 17 Apr 2025 13:38:20 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Danilo Krummrich <dakr@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Danilo Krummrich <dakr@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	linux-pm@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-	rust-for-linux@vger.kernel.org,
-	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
-	Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
-	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
-	Yury Norov <yury.norov@gmail.com>, Burak Emir <bqe@google.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V10 11/15] rust: cpufreq: Add initial abstractions for
- cpufreq framework
-Message-ID: <20250417080820.zl4354gsmlmup4lv@vireshk-i7>
-References: <cover.1744783509.git.viresh.kumar@linaro.org>
- <ac6854885277b23f100c6033fab51a080cdb70eb.1744783509.git.viresh.kumar@linaro.org>
- <Z_904KuBhKbO738_@pollux>
- <20250416093720.5nigxsirbvyiumcv@vireshk-i7>
- <D98R7PHH6TYX.2DUASKIXS5F8W@proton.me>
+        bh=wtHyIUQ7PPZmcAeyFR/vgm01NmNP155YBbbcOUPlqcw=;
+        b=2OdyfI2wtcznKDXY8x8i7Aa7BBQNIELl0cHWq5D7BfPM5JiwrCxPc5Of6ByjbVYbFv
+         IXGCaQd3rF/PDPSiGY3w/BDWZy8aX+l1ZTCBxLtT97569l6ek/OHjGIS0j3Bii1kNNKL
+         wRY9YIJ5y5ni7jsV+AYeBSxT486SVA5HmLJl9XQDp4S/t4qhzZAs7CyaLRe4FBts4I3+
+         StvFmSgenO7Wr/Tgz6dBRHWfTR1c6iEW1XJV7DQd5qm2GEWpZ+2f/mYT3ELawkAFLvS1
+         ISdJVWLdvYUfjHjdz+fTKaQrmWAhVk2PN8vi/jt5M5W0sbhbfuZYvXYgWB2OZWjJBVYJ
+         1K7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744877319; x=1745482119;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wtHyIUQ7PPZmcAeyFR/vgm01NmNP155YBbbcOUPlqcw=;
+        b=rgLI/nNvuhxSbkiVfgYrVe+KsmzLk4qq3XiTZ4dZjM3o9cjqlo1KiE1uQ3XgffX46E
+         NpZtinFXNPtuKAQOEQhKEqPqGv9NSi5h8ujeGqkYCMaKxMeM7UrQ2xqBVOJBzfhtYwmy
+         x24oUbL/vDqAb87tIrkx1H9o2DRW9XCTz7/8xcmcNFFT3FnwCCZ48t2IKr0ThAfPHpN0
+         CfeH7FS310LwOJG86sGuAQqbovN+qMUHIwHdFKMG6rF57OMBVtXr8dlH5sU1zlan4Ksi
+         RUtCuXkLqSJQP6FuNkwmKKAM7AYcny3PN6ZP3c07J0YD+lacAfjIGEOEFJfe8/fvmYVK
+         Rrkg==
+X-Forwarded-Encrypted: i=1; AJvYcCUw3aWAG/dtXzmUy7SahTQczDZNuJ6Y/mrE5Ns5yHYRCaOFE67mtGBFQGAp3OWFgX48Ikr6OiBBM2Z/1Mg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEOLmksHLhHO1YCIu3Nv5UblJ6h9/mveb19nT69pj9qlrtyLZZ
+	40AcokA1dAf9EoOi7Z28pcrwYsGAXYbLqHC15i9k+TfBwnXxZeD43RXt4rFwGCCNUT1m9ZAE1Vx
+	KgCriaC0SawvqzsPtghMMZKr9EtCeKBWcHBO8
+X-Gm-Gg: ASbGncs/oxCcKGIzx7TfUFIt3SZgi8u1fABNj1rn15wQR8dpRsGavuKO16hXj6HXNAY
+	34RtxmwZq5svwr9jYYx497UPp6YXUIPQP0m8uVnV0xeqAYxkfpRes4yR1H/jqMRH9BB0FfNIDJ0
+	JOKpvaV5C3j/yiYZxkzgjydTs8AHvSz15pI0ymZBNdItJPJAnm
+X-Google-Smtp-Source: AGHT+IGpESoslQHTK0ogEW6yQ7GTAZkJZOLnAr+AoJwj8UFQjOudRmdKb0q0bSeFruID8VwGWPn9BWN2wlym/51A+Ok=
+X-Received: by 2002:a17:906:9f91:b0:ac2:9683:ad25 with SMTP id
+ a640c23a62f3a-acb429f1deamr444633566b.34.1744877319462; Thu, 17 Apr 2025
+ 01:08:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D98R7PHH6TYX.2DUASKIXS5F8W@proton.me>
+References: <20250403183638.3386628-1-korneld@google.com> <38049b58-a504-4223-9f6d-537609931fb4@arm.com>
+ <CACF_fqnevOo9NSRwDAh7KVQZTHTkP0pc2NKEXrWFapMYLf0Wkw@mail.gmail.com> <6f1af7bf-a354-4b90-bf82-edc8cc6e71fe@arm.com>
+In-Reply-To: <6f1af7bf-a354-4b90-bf82-edc8cc6e71fe@arm.com>
+From: =?UTF-8?Q?Kornel_Dul=C4=99ba?= <korneld@google.com>
+Date: Thu, 17 Apr 2025 10:08:27 +0200
+X-Gm-Features: ATxdqUHWXjxt6FKkLeRswNUzasHECz8dNyCr3yjMNkHFGcVaT-gsxFCFilKbj7I
+Message-ID: <CACF_fq=yFLUO2P0qrZFizUJe8J2FGYUK7w3DykKL3x7_R87UQA@mail.gmail.com>
+Subject: Re: [PATCH] arm64: Support ARM64_VA_BITS=52 when setting ARCH_MMAP_RND_BITS_MAX
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Steve Capper <steve.capper@arm.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, ssradjacoumar@google.com, 
+	chromeos-krk-upstreaming@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 17-04-25, 08:00, Benno Lossin wrote:
-> In the future, instead of using `allow`, you can try to use `expect`. It
-> will warn, when the code is used.
+On Thu, Apr 17, 2025 at 7:15=E2=80=AFAM Anshuman Khandual
+<anshuman.khandual@arm.com> wrote:
+>
+>
+>
+> On 4/4/25 22:16, Kornel Dul=C4=99ba wrote:
+> > On Thu, Apr 3, 2025 at 11:46=E2=80=AFPM Anshuman Khandual
+> > <anshuman.khandual@arm.com> wrote:
+> >>
+> >>
+> >>
+> >> On 4/4/25 00:06, Kornel Dul=C4=99ba wrote:
+> >>> When the 52-bit virtual addressing was enabled the select like
+> >>> ARCH_MMAP_RND_BITS_MAX logic was never updated to account for it.
+> >>> Because of that the rnd max bits would be set to the default value of
+> >>> 18 when ARM64_VA_BITS=3D52.
+> >>> Fix this by setting ARCH_MMAP_RND_BITS_MAX to the same value that wou=
+ld
+> >>> be used if 48-bit addressing was used. That's because the 52-bit
+> >>> addressing is used only if the caller provides a hint to mmap, with a
+> >>> fallback to 48-bit addressing.
+> >>
+> >> Why should ARCH_MMAP_RND_BITS_MAX value be same for both 48 bits and 5=
+2
+> >> bits VA in case the user does request for 52 bit VA via mmap() hint an=
+d
+> >> the HW supports it ?
+> >
+> > Two reasons really.
+> > 1. The whole behavior is controlled through a global knob -
+> > /proc/sys/vm/mmap_rnd_bits. ARCH_MMAP_RND_BITS_MAX is used as an upper
+> > bound for the value that can be set to that knob.
+> > So we have a single setting for all processes. Some might want 52 bit
+> > addressing, others will stick with 48.
+> > 2. Quoting the documentation for this knob:
+> >
+> > """
+> > mmap_rnd_bits
+> > This value can be used to select the number of bits to use to
+> > determine the random offset to the base address of vma regions
+> > resulting from mmap allocations on architectures which support tuning
+> > address space randomization. This value will be bounded by the
+> > architecture=E2=80=99s minimum and maximum supported values.
+> > """
+> >
+> > I suppose that it's legal for some calls to mmap from the same process
+> > to request a 52 bit VA, while other calls will want only 48 bits.
+> > Because of that the random offset can't be larger than what would work
+> > for the 48 bit case.
+>
+> Agreed but should not this rationale also be added in the commit
+> message as well ?
 
-Sure. Thanks.
+Sure, I will update this in v2.
+>
+>
+> >
+> >>
+> >>>
+> >>> Fixes: b6d00d47e81a ("arm64: mm: Introduce 52-bit Kernel VAs")
+>
+> Correct commit to be attributed for this fix.
 
--- 
-viresh
+What commit would you like me to point at? I selected b6d00d47e81a,
+because it introduced "ARM64_VA_BITS=3D52".
+Looking at git blame, ARCH_MMAP_RND_BITS_MAX logic was introduced back
+in 2016 in 8f0d3aa9de57 ("arm64: mm: support ARCH_MMAP_RND_BITS"),
+which is before "ARM64_VA_BITS=3D52" was a thing.
+I suppose that there's also 3cb7e662a930 ("arm64: Kconfig: Fix
+indentation and add comments"), but that's just some whitespace
+adjustments.
+
+>
+>
+> >>> Signed-off-by: Kornel Dul=C4=99ba <korneld@google.com>
+> >>> ---
+> >>>  arch/arm64/Kconfig | 6 +++---
+> >>>  1 file changed, 3 insertions(+), 3 deletions(-)
+> >>>
+> >>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> >>> index 748c34dc953c..38e0bac567f5 100644
+> >>> --- a/arch/arm64/Kconfig
+> >>> +++ b/arch/arm64/Kconfig
+> >>> @@ -332,9 +332,9 @@ config ARCH_MMAP_RND_BITS_MAX
+> >>>       default 24 if ARM64_VA_BITS=3D39
+> >>>       default 27 if ARM64_VA_BITS=3D42
+> >>>       default 30 if ARM64_VA_BITS=3D47
+> >>> -     default 29 if ARM64_VA_BITS=3D48 && ARM64_64K_PAGES
+> >>> -     default 31 if ARM64_VA_BITS=3D48 && ARM64_16K_PAGES
+> >>> -     default 33 if ARM64_VA_BITS=3D48
+> >>> +     default 29 if (ARM64_VA_BITS=3D48 || ARM64_VA_BITS=3D52) && ARM=
+64_64K_PAGES
+> >>> +     default 31 if (ARM64_VA_BITS=3D48 || ARM64_VA_BITS=3D52) && ARM=
+64_16K_PAGES
+> >>> +     default 33 if (ARM64_VA_BITS=3D48 || ARM64_VA_BITS=3D52)
+> >>>       default 14 if ARM64_64K_PAGES
+> >>>       default 16 if ARM64_16K_PAGES
+> >>>       default 18
+>
+> Otherwise LGTM.
+>
+> Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
 
