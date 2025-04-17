@@ -1,149 +1,158 @@
-Return-Path: <linux-kernel+bounces-608266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5176A91103
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 03:10:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4960EA91109
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 03:15:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 505CA3BECE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 01:09:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF6BF1901537
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 01:15:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31B318FDAB;
-	Thu, 17 Apr 2025 01:09:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE871494BB;
+	Thu, 17 Apr 2025 01:15:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YQNbjydI"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AqnsX7qO"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA362DFA56
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 01:09:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C31184E;
+	Thu, 17 Apr 2025 01:15:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744852197; cv=none; b=Mmso4upS3k64G1kJNGvF/mwRQSQN1dRTetXHIoUhSIrDblicsYvjuydDGtoh7sk2dVlOklGRz7HC2pLf6x5R6Rm8H2WPBsqlx2nbySM4nbc39bCgD4yAL6tfIvgACvL0PlqLF0ffUtcO2S9VRToKO+RJqPN9B6A99HxbjW/o7Go=
+	t=1744852525; cv=none; b=LLcjAa+0ggOmT4PbL8nLzsabpjcILbQ3J2SvtV9P4IJRyavin/YRb5bGdgAKX3kDsktdMFHR3Wz0mCMNjs+tHSb9R9BDCUgFKaf/UN1v6s0w6ENRfF19ya14KhOcvZ+b2DSXwEJuNyi22fY69M7hMXmC7rIB4FG4Ly4NwFmiNpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744852197; c=relaxed/simple;
-	bh=F5llYk/jvz/itdeLiJyPvg4xOwWa9USvY293RU1USxA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GbuqfEMqNrKGNzTutu70McaxZ6JL5902FNnY5teeDy6GQNZ+UAqeKpAdo/6YHo73caPd2mfZIH4IItO7KbPIOhmRjegn3N7/7uv9hopAcFVYg4EeklzPTtcMqRSzKcwyx50HytCq6nV+mWFfVATUIzIWExQTT8G1aTseKa6vVRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YQNbjydI; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-223fb0f619dso3148265ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 18:09:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744852195; x=1745456995; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=KsBDMVl4tNJg6O1Gee8OEApious2Fe54yEWMkZNyBdY=;
-        b=YQNbjydIS7q28aN+yxVDUhxjM/wiHkw2Lo0PD8sOCOSAnKU1ENCC/jGVFG2xHqGCh5
-         a5IRJyWzxdZu7A+I4yNDvFDmhlAQicmyLOwEcqS9JhkK7H2OgyiOd8Hpw6FfiV4WfeMb
-         l4jpNZtqNS6MZqmWz3QRLWHolBrGgzzD+wH43OjaRpKI7dV/cIhzoaNF7Flzo7unor7c
-         8kaaE/WMXBg9llpJKWfQTUGe9l3tei3RSfM+tBGgGqZpadvSjMjb9NftyKRzocRrfLQo
-         mT0ANtsdGPbKjuO/vfYJ3AlSIurZCspmAyWH99Xf7eBDNPY0ne2WZvdR5UWsJwguyoTi
-         nygw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744852195; x=1745456995;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KsBDMVl4tNJg6O1Gee8OEApious2Fe54yEWMkZNyBdY=;
-        b=PMo2oSWPdaPsDLUfCxe7lg9PStbcnT7L69YVvHFURYXzK56EgWAAJwUbP48z8P+TRO
-         nMp2oKuaOrUZ9o7bmm3AXlxKw3iS+hhfZ8foNVi1/xMrhnMLww45DKevrANpDSdvxYX3
-         jROeEbymles7zZAaoD+LQuQA36O59/wPwXokOCcKZX5/dM89B4y4/38nRHAK2dXx9a+8
-         IIy9aOatg85oiENWBAiOK1EhRgvBgNzVcasfJv6E7S/xAn8ujNn55ZVQ8Kqxj8QfH6Uj
-         9C1Jg1xv4lFcPzXKF1WddFtHE8eI2ja/DpPmX/d8Cie8Q4bgj2DV6jXPGF/lNkh0js8R
-         jyug==
-X-Forwarded-Encrypted: i=1; AJvYcCWXEwjxrfT4o59Xy3OLsTvrB5LaSMrdekof51gpCR+QkGWXVRNFWRe95trbNEVP2c49bRpopw+GWs1WYys=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiU7aA6jJmt7AL5Nj+P8qP/+c6GjShR/7Id1jyPw9uiM/J7DjS
-	nmNzIOPmfBwJrm01XFu4i44DGwTJwwDc4Jb7pqlQ1uXpYPSYTIZh
-X-Gm-Gg: ASbGnctRRv8jBlK4OT6VRlrNxVMWSqmgd9h/hHx5+mwG0cvXqPGhtter+64rcLGrUpl
-	qiVicY0BYQegtRtmIZ8f9J8BdVtSrU4uWB8MtbJbIiQksIrF9sXQKve7F0xJbRH9c37XS46Sing
-	2m/bWStKCrWY9bpKX94iBiu03vF7eaeU4py6cuPCukOmeGAdUxTYTAuT15m+Yc4Dl3YpTf4Dg+f
-	BiKfKX6mPiVh1MyalS7d/fuDfXicaQkkbXbI4xDNd9kFAXz2+E4G7E6wkU4/KnUesaufLKlAnY+
-	BQ/iXiHxBZYWXi6CIPmC7mpsHXSmNcS03A80Xqxl5Te60mrdNE9CRQ==
-X-Google-Smtp-Source: AGHT+IEZL6pI4Ex/keg3vUL8nPRfLGBdHObS4FhlH+oHXonnYx6padUDmkTxJiGZ5TDCOtBhUrbTkw==
-X-Received: by 2002:a17:903:40ce:b0:223:fb3a:8631 with SMTP id d9443c01a7336-22c358ebfe1mr71952975ad.24.1744852194837;
-        Wed, 16 Apr 2025 18:09:54 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd21949e5sm11110095b3a.4.2025.04.16.18.09.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Apr 2025 18:09:54 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-From: Guenter Roeck <linux@roeck-us.net>
-To: x86@kernel.org
-Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	kasan-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH v3] x86: Disable image size check for test builds
-Date: Wed, 16 Apr 2025 18:09:50 -0700
-Message-ID: <20250417010950.2203847-1-linux@roeck-us.net>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1744852525; c=relaxed/simple;
+	bh=amr6vgsdm/bR4XZmhanRpSp3TvMOJseVw7y8GlsWa0Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Gz9ZIp9pseyytoqMQAPvvu00VcmC4Bz8vnxhzJIZESUvIWkAs+e2djyhhE6ffgv9t0KGkkWf9W1AaXAO521QAKEKiJu3QBzHPI1tkKWuSC6M2iQKoT5/pxdbgNfi4lsqCjVEVPV4RlAZpkdK4nh3wUQJXPCO4NXTMFF64u6nASo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AqnsX7qO; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744852524; x=1776388524;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=amr6vgsdm/bR4XZmhanRpSp3TvMOJseVw7y8GlsWa0Y=;
+  b=AqnsX7qOjs4k5a18RFVnjwzT19GsxDtMuxVzbEUm5TieTL0y6ERnNNTB
+   OVUhx1+hztZOpOgdCCg5v8NTa8P4n19vQmQNcyH3CyL+O3rXxZYafuKqV
+   YPTw3l8Vowdq7H11MhZKQB8ue/NcyqL4z40E+vgF7r5hDOxbf1Ribx3gS
+   +Z/CwRsQLLoxqZXDs8mBP30imIn9Fv5jNeU828TbDvilkgUsxQVF/07Yl
+   3UD8HSC7n2y9qCfMOQr2HXVMimARgVzDJOyocJxnPX4d6Lfv2+nWE0cUa
+   Qfpa1zW0lycy6EmqYu9Ui94n2miVroJMKqZ2ogdt6USe9DntSg3bS1cAX
+   g==;
+X-CSE-ConnectionGUID: lMBcJ1PRT0WlAqn9Tkk8yg==
+X-CSE-MsgGUID: 55PC6qRITfqILUTUFFPiAQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11405"; a="50247421"
+X-IronPort-AV: E=Sophos;i="6.15,217,1739865600"; 
+   d="scan'208";a="50247421"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 18:15:23 -0700
+X-CSE-ConnectionGUID: ANCZp8RaQqiMsZfscb+Vlw==
+X-CSE-MsgGUID: XVHW47IARmGHPAmZtw11og==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,217,1739865600"; 
+   d="scan'208";a="153831948"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.128]) ([10.124.245.128])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 18:15:19 -0700
+Message-ID: <3989d25c-2961-46b4-8f77-3c1eab63866a@linux.intel.com>
+Date: Thu, 17 Apr 2025 09:15:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v3 12/22] perf/x86/intel: Update dyn_constranit base on
+ PEBS event precise level
+To: "Liang, Kan" <kan.liang@linux.intel.com>,
+ Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
+ <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+ Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Andi Kleen <ak@linux.intel.com>, Eranian Stephane <eranian@google.com>,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ Dapeng Mi <dapeng1.mi@intel.com>
+References: <20250415114428.341182-1-dapeng1.mi@linux.intel.com>
+ <20250415114428.341182-13-dapeng1.mi@linux.intel.com>
+ <20250415135323.GC4031@noisy.programming.kicks-ass.net>
+ <607b1f13-1d5d-4ea7-b0ab-f4c7f4fa319b@linux.intel.com>
+ <a3269f8a-aff3-4f9e-8f43-b00fee03121a@linux.intel.com>
+ <a998c0c3-1ec5-4dbe-95fa-fd37648de96a@linux.intel.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <a998c0c3-1ec5-4dbe-95fa-fd37648de96a@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-64-bit allyesconfig builds fail with
 
-x86_64-linux-ld: kernel image bigger than KERNEL_IMAGE_SIZE
+On 4/16/2025 9:59 PM, Liang, Kan wrote:
+>
+> On 2025-04-15 9:46 p.m., Mi, Dapeng wrote:
+>> On 4/16/2025 12:31 AM, Liang, Kan wrote:
+>>> On 2025-04-15 9:53 a.m., Peter Zijlstra wrote:
+>>>> On Tue, Apr 15, 2025 at 11:44:18AM +0000, Dapeng Mi wrote:
+>>>>> arch-PEBS provides CPUIDs to enumerate which counters support PEBS
+>>>>> sampling and precise distribution PEBS sampling. Thus PEBS constraints
+>>>>> should be dynamically configured base on these counter and precise
+>>>>> distribution bitmap instead of defining them statically.
+>>>>>
+>>>>> Update event dyn_constraint base on PEBS event precise level.
+>>>> What if any constraints are there on this? 
+>>> Do you mean the static constraints defined in the
+>>> event_constraints/pebs_constraints?
+>>>
+>>>> CPUID is virt host
+>>>> controlled, right, so these could be the most horrible masks ever.
+>>>>
+>>> Yes, it could be changed by VMM. A sanity check should be required if
+>>> abad mask is given.
+>> Yes, we need a check to restrict the PEBS counter mask into the valid
+>> counter mask, and just realized that we can't use hybrid(event->pmu,
+>> intel_ctrl) to check counter mask and need a minor tweak since it includes
+>> the GLOBAL_CTRL_EN_PERF_METRICS bit.
+>>
+>> How about this?
+>>
+>>         if (x86_pmu.arch_pebs) {
+>>             u64 cntr_mask = hybrid(event->pmu, intel_ctrl) &
+>>                         ~GLOBAL_CTRL_EN_PERF_METRICS;
+>>             u64 pebs_mask = event->attr.precise_ip >= 3 ?
+>>                         pebs_cap.pdists : pebs_cap.counters;
+>>             if (pebs_mask != cntr_mask)
+>>                 event->hw.dyn_constraint = pebs_mask & cntr_mask;
+>>         }
+>>
+> The mask isn't changed after boot. The sanity check should only be done
+> once. I think it can be done in the update_pmu_cap() when perf retrieves
+> the value. If a bad mask is detected, the PEBS should be disabled.
 
-Bisect points to commit 6f110a5e4f99 ("Disable SLUB_TINY for build
-testing") as the responsible commit. Reverting that patch does indeed
-fix the problem. Further analysis shows that disabling SLUB_TINY enables
-KASAN, and that KASAN is responsible for the image size increase.
+Yeah, it makes sense. Would do.
 
-Solve the build problem by disabling the image size check for test
-builds.
 
-Fixes: 6f110a5e4f99 ("Disable SLUB_TINY for build testing")
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
----
-v3: Disabled image size check instead of disabling KASAN
-    Updated subject to match change
-    Updated Cc: list to reflect affected maintainers
-
-v2: Disabled KASAN unconditionally for test builds
-    Link: https://lore.kernel.org/lkml/20250416230559.2017012-1-linux@roeck-us.net/
-
-Link to RFC:
-    https://lore.kernel.org/lkml/20250414011345.2602656-1-linux@roeck-us.net/
-
- arch/x86/kernel/vmlinux.lds.S | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-index ccdc45e5b759..647d4f47486d 100644
---- a/arch/x86/kernel/vmlinux.lds.S
-+++ b/arch/x86/kernel/vmlinux.lds.S
-@@ -468,8 +468,10 @@ SECTIONS
- /*
-  * The ASSERT() sink to . is intentional, for binutils 2.14 compatibility:
-  */
-+#ifndef CONFIG_COMPILE_TEST
- . = ASSERT((_end - LOAD_OFFSET <= KERNEL_IMAGE_SIZE),
- 	   "kernel image bigger than KERNEL_IMAGE_SIZE");
-+#endif
- 
- /* needed for Clang - see arch/x86/entry/entry.S */
- PROVIDE(__ref_stack_chk_guard = __stack_chk_guard);
--- 
-2.45.2
-
+>
+> Thanks,
+> Kan>
+>>>> This can land us in EVENT_CONSTRAINT_OVERLAP territory, no?The dyn_constraint is a supplement of the static constraints. It doesn't
+>>> overwrite the static constraints.
+>>>
+>>> In the intel_get_event_constraints(), perf always gets the static
+>>> constraints first. If the dyn_constraint is defined, it gets the common
+>>> mask of the static constraints and the dynamic constraints. All
+>>> constraint rules will be complied.
+>>>
+>>> 	if (event->hw.dyn_constraint != ~0ULL) {
+>>> 		c2 = dyn_constraint(cpuc, c2, idx);
+>>> 		c2->idxmsk64 &= event->hw.dyn_constraint;
+>>> 		c2->weight = hweight64(c2->idxmsk64);
+>>> 	}
+>>>
+>>> Thanks,
+>>> Kan
+>>>
+>
 
