@@ -1,235 +1,270 @@
-Return-Path: <linux-kernel+bounces-609078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FF66A91D0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:54:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D399A91CFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:53:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8ED7719E6809
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 12:54:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E0153B2474
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 12:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45BFE199384;
-	Thu, 17 Apr 2025 12:53:45 +0000 (UTC)
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63C01242909;
+	Thu, 17 Apr 2025 12:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="G2XWn26E"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6640F242909;
-	Thu, 17 Apr 2025 12:53:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AEEC17A311
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 12:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744894424; cv=none; b=P8A4wXwXrqdwtdXjBulPXFPXIqi5WStQxnpcMk24luZiHLcT+bfvp3OtDOEtJmxCqQ9r6I4TyIiTj6ofjGFZn3CfzYi3kK7XdCbBr3qQaq/3NifZCoAhji8Ui+WOIUkG+p9SgbgEWJcmaMLryVWf8Q/s/yThhE+xou1SrBxSbAE=
+	t=1744894403; cv=none; b=HV8eARzCI2+PVzure7G1EMLxm1iMK+YEGF1vGWNt3O8fZ+s5NkEboTXZENmGJCt7VlkbLGd/ucMlDzev7kJh7eFiOwEhZbxd7E7pzcbMTLZEKiCLwnOn+eR18YcSnnKaC4bIoQui2LoJE3lc5vAEKcNqV07gmGcOv2jjF8cXyZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744894424; c=relaxed/simple;
-	bh=7Ghv2Relpj6xANbnDq/uykm+0aM5uRnidbKep0j/t4E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kpE6cdxeNqt9htGOlkTbAK9cJi2pG2eEdYc0y+cXDnN1i0tK3FSzJRiXVpUrnGjPBvqL5y7owv2bDiPIsEqdCu36gb1PWlTgcjrrXdJlcqTcbuXnNZ19cRNqX0SiGol+kRnjj9/rUoXsApKsYHGYMq4F+H4w9Cn6ZDi2bieGkuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-523f670ca99so300326e0c.1;
-        Thu, 17 Apr 2025 05:53:42 -0700 (PDT)
+	s=arc-20240116; t=1744894403; c=relaxed/simple;
+	bh=v8LtHKR8VDn4kPK84X0FXJ6nB0e+9YdOgZbGZtUwquw=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HcKJfyIj93vojTDUeqnQa6UDhAMtsonSxyzsdcE1PrzGNTv1+z+/Rxlbexe6Jy0UrVEbYL17qx3sCMpE6fqO5ohh/vnmdeivkohEU9ahOJUKn++jTqHb0uvfVyfDXaz7CYcD1vYa4c4mhf0ZQxrUfwVhFme0p2aaQhpRL7UxDs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=G2XWn26E; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-39c1ef4ae3aso480314f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 05:53:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1744894399; x=1745499199; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zjC36ZPf50aHqfa2Se7VHPLUpGAe6Mh0Hz/kXCMF/9A=;
+        b=G2XWn26EqLH50fNBd1W7q9+CB2rGh9Z6gL2BcTlPPg3VIboifASmLxcPtnvqvowk8+
+         ijqcakHn5Givk4+4Jz4ITTaKEsfVdW2TmXXhplepkmuxZw+6rBiUNWQcUPOiY5Z5dJEJ
+         kkv6ZWym61zXcno06dKSs4OH6Q+GmhOs6PWr0TazSTV0s8GELltaNHCYnoJDM+a5PV1x
+         SRSYoaUGyL0T5figz7B9CSMFFj5v2Bhuyi94PnmxK8p/8DYcAtnohfQMU5f/9yybuwZe
+         WIuLq3ytl60JolwqwDsX5AJhRlgFVWYwLJzumypeAStFjxXGFKV0DBe3Ex569LfoI/dE
+         j5Rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744894421; x=1745499221;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Zvjcsb6AOpM3K3pVY6lsnpTQFXcAQ1Kjw9zu0dMXyec=;
-        b=OQa7V/0mrz183UtZ1be+D1rxPAUuTlNLHDA59IFYVG9Oq1gkXM2SnklWyjEbCDl3zP
-         ZfhU52WzKm9PzxqPWpdjjyi8KHPhCzKGGky3F/1COTp6DAqa2rq+0fUA+SLIYYjLM+Jl
-         YJmwpEWvT3UrERVs3wGO33I87T7VirG1z/km/lXxCvprSzO92+x5iYZGC5Ta+rV73FTj
-         Y9NLUG8UJlcTPnSYrjcw/BlXneRBmEdfLQNn3Pe9kuLYVgZICOGLxFZ1g8ZfoZEEiLbl
-         +cbk4LHWYVAoUxJB6BIR1s4ULBlnBNBGUUXYsjwc7CYkY49LbMrkDzr6WzSSpmz2qLM0
-         GCsA==
-X-Forwarded-Encrypted: i=1; AJvYcCVPSzoxzR1MdNueyLtaWh6Jbd62Cd3O3SbMEkzH3w340imjnO3k68860VVz0Qtlm5u1Jys+39U4+EbzO2FO@vger.kernel.org, AJvYcCWl4MNxoeF+++Zkmm68P1BTtKxWxy1oVvuDCcF2zGcYlSl1HIi05Q/VMbjFVWIjy8Dwr33NsLXsKbQrHSg=@vger.kernel.org, AJvYcCXRREurooyXyhIMd/oPWUEAx960viCW3tv7QoDdF5ILMuFvg8S2qD6ZNGw8lbLJJU8QdhYDJ03E7pyAw0U74OKNIkg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3kpWC1w/tjVUZsjegEMiVGw6BieCQjfk0x+0Lj6KHwV0LIY+u
-	vGfPyKN+whBmdoQMRe+hbSIMB0mdLPQvjxvRdJrxp0hwqsYwYptA7dR0JRdb
-X-Gm-Gg: ASbGncvaSmpjHM/QsBVRzaVZj9QS08nP88pYBNVXBXiwiktnWSCdf6fauDWzrApex77
-	OofhV7j36AB8dvExzsxw8hH6jGX+7g3GWISI4Lf4GNBV0X8P2ZD0hgyOTTnLSQmAPhOgcxiKSUY
-	71g53EW8UcRLlJ8nSOjGeDcJfdcyHywRyTDuWbIy1IyExgO9eZanrx/c4kX2DbOMLu5dXnOneWZ
-	KM6xeKaPHHK9P7ISh61iEgY5/cAtSDU8cV7JLQ/UsXiN829rFCd9U+XwBfw5uwM2nbQmPKGErAQ
-	YMGDqwzGCwD2aVR5pB8pJij6scwesON5X4cD5o3mNoAv3wofKNq4ckqElYVgHbSDLF4iPX9wty3
-	3DXxE940=
-X-Google-Smtp-Source: AGHT+IFulP1HXVSEkuZX/SMsL784To439HCOj1IhURB5pK20fbcGGWJEKHup48O9eC9X6w224gD9NA==
-X-Received: by 2002:a05:6122:3193:b0:529:c87:e4a5 with SMTP id 71dfb90a1353d-5290de97dbamr5102004e0c.4.1744894420964;
-        Thu, 17 Apr 2025 05:53:40 -0700 (PDT)
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com. [209.85.221.179])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-87557280076sm3562130241.21.2025.04.17.05.53.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Apr 2025 05:53:40 -0700 (PDT)
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-51eb18130f9so356762e0c.3;
-        Thu, 17 Apr 2025 05:53:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUQw0QAN/2tTPlw3806bIwvt6Md3KnPJ72OBIKqk4bNJZpYDKiOZGw3URO8LJ8XNmNdlvU7zD1fBg8fZQFPkZaXps4=@vger.kernel.org, AJvYcCWZjYqRhQ3sGFpnHMWZDOgoFMcu5YHYsBQMmkR4ywtIHWm2qUQa/pTyTeNlsSYWgEsX5N/bZenBQkkgY1Ew@vger.kernel.org, AJvYcCXkEqmRN35g4s+Y7BDLp3REwl7dgA5sxcBlFgN+7XQmBLfJTUHW8tPqlYahhTmoKuL0ohaxJ5DZSy1VpZA=@vger.kernel.org
-X-Received: by 2002:a05:6122:1d51:b0:518:965c:34a with SMTP id
- 71dfb90a1353d-5290dd66f87mr4647385e0c.2.1744894420505; Thu, 17 Apr 2025
- 05:53:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744894399; x=1745499199;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zjC36ZPf50aHqfa2Se7VHPLUpGAe6Mh0Hz/kXCMF/9A=;
+        b=je+sFRIbHCtL1jPKcKtbdmXJZkHIOwpWiyF2v2TXVpWZlqLe8IqWFlQRcSZX0iuzck
+         i78tUHt5rJbIJ8lIIwLRhwHhK1N+XU/8tqQoJCWLdtaXV1ZL/9yTYP/OfvrUFV0W6mEj
+         aWqNpAu0ZmDK76CPyJLiWir+OkWfW9LHAxpk4hrqvicABIzEihyMXH2zkMRMg9AgRMH1
+         gaxsZchLiYyvxIq4XN0l7sQJjh91T92Urf3/lqmg32SSWQojXbZBYUXONKbQ30c9lkp/
+         1oXs0+WeW/1CNbBOoKKx7/7/i4wplszWwWx07Z4CtKPgubjZuOZx8giDMcPyX6yW+m5h
+         Jg+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWyh+boHEHR2uSVJqG4MtOP4R7osdm0PMukPNcCq0Rv8EiNE9CrI5s0Tu8gdPHyt/VaBxVloAgevq+il9c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLAqAYwop/aDc20LC4+BPwhFXZfVE/5EjBvMuk5JrBGaq//hvG
+	N+h5wXY4D5PxOvm3egH2JAYfy4oVQtYyybir7ktfx8kawYYRnRlPx/LprcYJS78=
+X-Gm-Gg: ASbGnctXtOMSrWaVWx/KYdiYzTmjXdBBXFOxxSv8zy9SgzYBni4bJhhAB08DhEJUxoq
+	JvvEHh5rRC5KUM6oP5oFS52wQfvBHeIeQzSyZQGzcrBzr/WGCfo3JYwZ0/MHMpe6tW1EJdNE7ln
+	Ii2OG1ud6/Z9ZSiTgrb/FyQWbxav3onhHqUWiMq732nZ6gYTNAoYj7z4E/guet4DVASyB+7wjSO
+	akpvjKRbdD8vGYZ5khc7QUImnaMpU57/7aMm3GAkMVMKmygGTdlLuzWfUspmSXZB5eTj2o4/vYH
+	5fl0fqTLwoYQqRTrFzML3vYMhUwf/Xy5u2a//NOaR2ORteKyaf/v0F4ykMExBzytQ56EGNI=
+X-Google-Smtp-Source: AGHT+IHj3kvQNQuwygBClqqZbgOyKaiMJWyTf63buy+7wpnebSi6rnr/xD4tdoeaaLdERbXgJbSGpw==
+X-Received: by 2002:a5d:47a9:0:b0:39c:30d8:32a4 with SMTP id ffacd0b85a97d-39eea30b9e0mr2135444f8f.26.1744894398838;
+        Thu, 17 Apr 2025 05:53:18 -0700 (PDT)
+Received: from localhost (93-44-188-26.ip98.fastwebnet.it. [93.44.188.26])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eaf447914sm20097393f8f.97.2025.04.17.05.53.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Apr 2025 05:53:18 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Thu, 17 Apr 2025 14:54:41 +0200
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>,
+	kernel-list@raspberrypi.com
+Subject: Re: [PATCH v8 05/13] clk: rp1: Add support for clocks provided by RP1
+Message-ID: <aAD6EXrav161J0vS@apocalypse>
+References: <cover.1742418429.git.andrea.porta@suse.com>
+ <370137263691f4fc14928e4b378b27f75bfd0826.1742418429.git.andrea.porta@suse.com>
+ <23ac3d05-5fb7-4cd8-bb87-cf1f3eab521d@gmx.net>
+ <Z__alTyVJOwu_1gR@apocalypse>
+ <CAPY8ntD2W5xAHGCD+uBL-0QgyYNj6k9MExns=DFvxU1WGYtO5g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250403212919.1137670-1-thierry.bultel.yh@bp.renesas.com> <20250403212919.1137670-11-thierry.bultel.yh@bp.renesas.com>
-In-Reply-To: <20250403212919.1137670-11-thierry.bultel.yh@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 17 Apr 2025 14:53:28 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXTKXkROsPWfUWtJuOEDwgR=bFiN8+y7BEokBXLsVunrg@mail.gmail.com>
-X-Gm-Features: ATxdqUHPi3SELs0o3s_1xW5YtJuZraG9vDa5YI6FnA8mpnb3ru4ddmh1iW0rkoQ
-Message-ID: <CAMuHMdXTKXkROsPWfUWtJuOEDwgR=bFiN8+y7BEokBXLsVunrg@mail.gmail.com>
-Subject: Re: [PATCH v7 10/13] serial: sh-sci: Add support for RZ/T2H SCI
-To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-Cc: thierry.bultel@linatsea.fr, linux-renesas-soc@vger.kernel.org, 
-	paul.barker.ct@bp.renesas.com, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-kernel@vger.kernel.org, 
-	linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPY8ntD2W5xAHGCD+uBL-0QgyYNj6k9MExns=DFvxU1WGYtO5g@mail.gmail.com>
 
-Hi Thierry,
+Hi Dave,
 
-On Thu, 3 Apr 2025 at 23:30, Thierry Bultel
-<thierry.bultel.yh@bp.renesas.com> wrote:
-> Define a new RSCI port type, and the RSCI 32 bits registers set.
-> The RZ/T2H SCI has a a fifo, and a quite different set of registers
-> from the orginal SH SCI ones.
-> DMA is not supported yet.
->
-> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-> ---
-> Changes v6->v7:
->   - Renamed compatible string to r9a09g077-rsci
+On 11:48 Thu 17 Apr     , Dave Stevenson wrote:
+> Hi Andrea & Stefan.
+> 
+> On Wed, 16 Apr 2025 at 17:26, Andrea della Porta <andrea.porta@suse.com> wrote:
+> >
+> > Hi Stefan,
+> >
+> > On 14:09 Mon 14 Apr     , Stefan Wahren wrote:
+> > > Hi Andrea,
+> > >
+> > > Am 19.03.25 um 22:52 schrieb Andrea della Porta:
+> > > > RaspberryPi RP1 is an MFD providing, among other peripherals, several
+> > > > clock generators and PLLs that drives the sub-peripherals.
+> > > > Add the driver to support the clock providers.
+> > > >
+> > > > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> > > > ---
+> > > >   MAINTAINERS           |    5 +
+> > > >   drivers/clk/Kconfig   |    9 +
+> > > >   drivers/clk/Makefile  |    1 +
+> > > >   drivers/clk/clk-rp1.c | 1512 +++++++++++++++++++++++++++++++++++++++++
+> > > >   4 files changed, 1527 insertions(+)
+> > > >   create mode 100644 drivers/clk/clk-rp1.c
+> > > >
+> > > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > > index 896a307fa065..75263700370d 100644
+> > > > --- a/MAINTAINERS
+> > > > +++ b/MAINTAINERS
+> > > > @@ -19748,6 +19748,11 @@ S: Maintained
+> > > >   F:        Documentation/devicetree/bindings/media/raspberrypi,rp1-cfe.yaml
+> > > >   F:        drivers/media/platform/raspberrypi/rp1-cfe/
+> > > >
+> > > > +RASPBERRY PI RP1 PCI DRIVER
+> > > > +M: Andrea della Porta <andrea.porta@suse.com>
+> > > > +S: Maintained
+> > > > +F: drivers/clk/clk-rp1.c
+> > > > +
+> > > >   RC-CORE / LIRC FRAMEWORK
+> > > >   M:        Sean Young <sean@mess.org>
+> > > >   L:        linux-media@vger.kernel.org
+> > > > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> > > > index 713573b6c86c..cff90de71409 100644
+> > > > --- a/drivers/clk/Kconfig
+> > > > +++ b/drivers/clk/Kconfig
+> > > > @@ -88,6 +88,15 @@ config COMMON_CLK_RK808
+> > > >       These multi-function devices have two fixed-rate oscillators, clocked at 32KHz each.
+> > > >       Clkout1 is always on, Clkout2 can off by control register.
+> > > >
+> > > > +config COMMON_CLK_RP1
+> > > > +   tristate "Raspberry Pi RP1-based clock support"
+> > > > +   depends on MISC_RP1 || COMPILE_TEST
+> > > > +   default MISC_RP1
+> > > > +   help
+> > > > +     Enable common clock framework support for Raspberry Pi RP1.
+> > > > +     This multi-function device has 3 main PLLs and several clock
+> > > > +     generators to drive the internal sub-peripherals.
+> > > > +
+> > > >   config COMMON_CLK_HI655X
+> > > >     tristate "Clock driver for Hi655x" if EXPERT
+> > > >     depends on (MFD_HI655X_PMIC || COMPILE_TEST)
+> > > > diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> > > > index bf4bd45adc3a..ff3993ed7e09 100644
+> > > > --- a/drivers/clk/Makefile
+> > > > +++ b/drivers/clk/Makefile
+> > > > @@ -84,6 +84,7 @@ obj-$(CONFIG_CLK_LS1028A_PLLDIG)  += clk-plldig.o
+> > > >   obj-$(CONFIG_COMMON_CLK_PWM)              += clk-pwm.o
+> > > >   obj-$(CONFIG_CLK_QORIQ)                   += clk-qoriq.o
+> > > >   obj-$(CONFIG_COMMON_CLK_RK808)            += clk-rk808.o
+> > > > +obj-$(CONFIG_COMMON_CLK_RP1)            += clk-rp1.o
+> > > >   obj-$(CONFIG_COMMON_CLK_HI655X)           += clk-hi655x.o
+> > > >   obj-$(CONFIG_COMMON_CLK_S2MPS11)  += clk-s2mps11.o
+> > > >   obj-$(CONFIG_COMMON_CLK_SCMI)           += clk-scmi.o
+> > > > diff --git a/drivers/clk/clk-rp1.c b/drivers/clk/clk-rp1.c
+> > > > new file mode 100644
+> > > > index 000000000000..72c74e344c1d
+> > > > --- /dev/null
+> > > > +++ b/drivers/clk/clk-rp1.c
+> > > > @@ -0,0 +1,1512 @@
+> > > > +// SPDX-License-Identifier: GPL-2.0
+> > > ...
+> > > > +
+> > > > +static int rp1_pll_divider_set_rate(struct clk_hw *hw,
+> > > > +                               unsigned long rate,
+> > > > +                               unsigned long parent_rate)
+> > > > +{
+> > > > +   struct rp1_clk_desc *divider = container_of(hw, struct rp1_clk_desc, div.hw);
+> > > > +   struct rp1_clockman *clockman = divider->clockman;
+> > > > +   const struct rp1_pll_data *data = divider->data;
+> > > > +   u32 div, sec;
+> > > > +
+> > > > +   div = DIV_ROUND_UP_ULL(parent_rate, rate);
+> > > > +   div = clamp(div, 8u, 19u);
+> > > > +
+> > > > +   spin_lock(&clockman->regs_lock);
+> > > > +   sec = clockman_read(clockman, data->ctrl_reg);
+> > > > +   sec &= ~PLL_SEC_DIV_MASK;
+> > > > +   sec |= FIELD_PREP(PLL_SEC_DIV_MASK, div);
+> > > > +
+> > > > +   /* Must keep the divider in reset to change the value. */
+> > > > +   sec |= PLL_SEC_RST;
+> > > > +   clockman_write(clockman, data->ctrl_reg, sec);
+> > > > +
+> > > > +   /* TODO: must sleep 10 pll vco cycles */
+> > > Is it possible to implement this with some kind of xsleep or xdelay?
+> >
+> > I guess so... unless anyone knows a better method such as checking
+> > for some undocumented register flag which reveals when the clock is stable
+> > so it can be enabled (Phil, Dave, please feel free to step in with advice
+> > if you have any), I think this line could solve the issue:
+> >
+> > ndelay (10 * div * NSEC_PER_SEC / parent_rate);
+> 
+> I've checked with those involved in the hardware side.
+> There's no hardware flag that the clock is stable, so the ndelay is
+> probably the best option. The VCO can go as low as 600MHz, so the max
+> delay would be 166ns.
 
-Thanks for the update!
+Perfect, I'll use ndelay then. However, shouldn't this be 16ns max?
+I think this formula should give a good estimate:
 
-Just some cosmetic comments...
+10ULL * div * NSEC_PER_SEC / parent_rate
 
-> --- a/drivers/tty/serial/Kconfig
-> +++ b/drivers/tty/serial/Kconfig
-> @@ -675,6 +675,13 @@ config SERIAL_SH_SCI_DMA
->         depends on SERIAL_SH_SCI && DMA_ENGINE
->         default ARCH_RENESAS
->
-> +config SERIAL_RSCI
-> +       tristate "Support for Renesas RZ/T2H SCI variant"
-> +       depends on SERIAL_SH_SCI
-> +       help
-> +         Support for the RZ/T2H SCI variant with fifo.
+and has the advantage of not depending on hard coded values.
 
-FIFO
+> 
+> Thanks for your continuing work on this.
 
-> +         Say Y if you want to be able to use the RZ/T2H SCI serial port.
-> +
->  config SERIAL_HS_LPC32XX
->         tristate "LPC32XX high speed serial port support"
->         depends on ARCH_LPC32XX || COMPILE_TEST
+Thank you for checking.
 
-> --- /dev/null
-> +++ b/drivers/tty/serial/rsci.c
+Regards,
+Andrea
 
-> +static u32 rzsci_serial_in(struct uart_port *p, int offset)
-
-rsci_* (everywhere)
-
-> +{
-> +       return readl(p->membase + offset);
-> +}
-
-> +static void rzsci_prepare_console_write(struct uart_port *port, u32 ctrl)
-> +{
-> +       struct sci_port *s = to_sci_port(port);
-> +       u32 ctrl_temp =
-> +               s->params->param_bits->rxtx_enable |
-> +               CCR0_TIE |
-> +               s->hscif_tot;
-
-        u32 ctrl_temp = s->params->param_bits->rxtx_enable | CCR0_TIE |
-                        s->hscif_tot;
-
-> +       rzsci_serial_out(port, CCR0, ctrl_temp);
-> +}
-
-> +static const struct uart_ops rzt2_sci_uart_ops = {
-
-rsci_uart_ops
-
-> +       .tx_empty       = rzsci_tx_empty,
-> +       .set_mctrl      = rzsci_set_mctrl,
-> +       .get_mctrl      = rzsci_get_mctrl,
-> +       .start_tx       = rzsci_start_tx,
-> +       .stop_tx        = rzsci_stop_tx,
-> +       .stop_rx        = rzsci_stop_rx,
-> +       .startup        = sci_startup,
-> +       .shutdown       = sci_shutdown,
-> +       .set_termios    = rzsci_set_termios,
-> +       .pm             = sci_pm,
-> +       .type           = rzsci_type,
-> +       .release_port   = sci_release_port,
-> +       .request_port   = sci_request_port,
-> +       .config_port    = sci_config_port,
-> +       .verify_port    = sci_verify_port,
-> +};
-> +
-> +static const struct sci_port_ops rzsci_port_ops = {
-
-rsci_port_ops
-
-> +       .read_reg               = rzsci_serial_in,
-> +       .write_reg              = rzsci_serial_out,
-> +       .clear_SCxSR            = rzsci_clear_SCxSR,
-> +       .transmit_chars         = rzsci_transmit_chars,
-> +       .receive_chars          = rzsci_receive_chars,
-> +       .poll_put_char          = rzsci_poll_put_char,
-> +       .prepare_console_write  = rzsci_prepare_console_write,
-> +       .suspend_regs_size      = rzsci_suspend_regs_size,
-> +};
-> +
-> +struct sci_of_data of_sci_r9a09g077_data = {
-
-of_sci_rsci_data
-
-> +       .type = PORT_RSCI,
-> +       .regtype = SCIx_RZT2H_SCI_REGTYPE,
-> +       .ops = &rzsci_port_ops,
-> +       .uart_ops = &rzt2_sci_uart_ops,
-> +       .params = &rzsci_port_params,
-> +};
-> +
-> +#ifdef CONFIG_SERIAL_SH_SCI_EARLYCON
-> +
-> +static int __init rzt2hsci_early_console_setup(struct earlycon_device *device,
-> +                                              const char *opt)
-
-rsci_early_console_setup
-
-> +{
-> +       return scix_early_console_setup(device, &of_sci_r9a09g077_data);
-> +}
-> +
-> +OF_EARLYCON_DECLARE(rzsci, "renesas,r9a09g077-rsci", rzt2hsci_early_console_setup);
-> +
-> +#endif /* CONFIG_SERIAL_SH_SCI_EARLYCON */
-
-> --- a/drivers/tty/serial/sh-sci.c
-> +++ b/drivers/tty/serial/sh-sci.c
-> --- a/include/linux/serial_sci.h
-> +++ b/include/linux/serial_sci.h
-> @@ -38,6 +38,7 @@ enum {
->         SCIx_HSCIF_REGTYPE,
->         SCIx_RZ_SCIFA_REGTYPE,
->         SCIx_RZV2H_SCIF_REGTYPE,
-> +       SCIx_RZT2H_SCI_REGTYPE,
-
-SCIx_RSCI_REGTYPE?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> 
+>   Dave
+> 
+> > Many thanks,
+> > Andrea
+> >
+> > > > +   sec &= ~PLL_SEC_RST;
+> > > > +   clockman_write(clockman, data->ctrl_reg, sec);
+> > > > +   spin_unlock(&clockman->regs_lock);
+> > > > +
+> > > > +   return 0;
+> > > > +}
+> > > > +
+> > > >
 
