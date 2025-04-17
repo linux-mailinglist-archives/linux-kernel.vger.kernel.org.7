@@ -1,114 +1,130 @@
-Return-Path: <linux-kernel+bounces-608273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44073A9111B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 03:25:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC429A91106
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 03:10:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56692445D02
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 01:25:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D9123BEDC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 01:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F011A2567;
-	Thu, 17 Apr 2025 01:25:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC3DA199237;
+	Thu, 17 Apr 2025 01:10:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ApUjwn2+"
-Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="n86RXRgp"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB30D85626;
-	Thu, 17 Apr 2025 01:25:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F1C1547C9;
+	Thu, 17 Apr 2025 01:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744853150; cv=none; b=o7r5/ntMCWO0fX2qIzPEIzd7qTcnBGW3E7XSsf+v9K2F62UFru9ZU+el/WZm0kJ2DBOkZO3oxTM8TD6TsIIXGLw7AfM4MC7sULLEBZcEgS9qV8cDYoHSMn48X2tOc6nXLy3WzZ5TcV+l5Ug+kt0HTNEcGwyK3FCoiKzeELuYKyY=
+	t=1744852208; cv=none; b=qA6Pda2msgauAxAqtpQfdfHyTxdxS1a4H3Gv41ZBWdgkdNpxxzVlUCH7ttTKMxjUzrLxgPn/hTWcTSL2mtzheL+BVO1WfCvJ5hZS/e/knq/kiu2adCmEmtwXmzW/8opVgkeEiK5X+YjKNxV0bL+PtzuiUQHDf45DDrnw4oIR5Cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744853150; c=relaxed/simple;
-	bh=MW/1w69LxsY/ZlXgwNfWYQNsueiopBbrWp7cKxsWHf8=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=t/V4TPQvc2VczWQOpMptem6d83N0uAR9F+mqx6QijXKChpqBEnSw+bNpst6ADPY+axeWxCoZWmqTasdjgSf3xGb4QM0ewuRQzNWoSbBIyEeHAC6qv93yXyE21FXjJXZqHz3U7Yi1+QngKEC9vZdHTJP82D2ztqaQb18Rv9cC/jA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ApUjwn2+; arc=none smtp.client-ip=162.62.57.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1744852835; bh=WytLDcIscOys9VXwbtWnKSguFKL4JVReAaierqjjO3M=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=ApUjwn2+apbEcxoUtLbDa0OUZAuvvdTWLBgg+XhtromFv7kuhg3tuzbbII2uMoJMY
-	 1JWmF18OGsQYIICeqX+siDQvxhXVrhuuSpTGS9Uj2dkaxpBJySuVimn12bytGESuzu
-	 5neQxaQTCsIllneZ3mgAWE1QbL7K4rYmlhPm0KOU=
-Received: from localhost.localdomain ([240e:469:644:c677:5cc9:79d:eef7:ec59])
-	by newxmesmtplogicsvrszc16-0.qq.com (NewEsmtp) with SMTP
-	id 1F33603E; Thu, 17 Apr 2025 09:07:51 +0800
-X-QQ-mid: xmsmtpt1744852071tyzdrfhhy
-Message-ID: <tencent_2256A7C02F7849F1D89390E488704E826D06@qq.com>
-X-QQ-XMAILINFO: OZsapEVPoiO65gZWpYOMukzoC77AjG1v5S4dj2z/CvWXhfJ19Yq9J5ESu170C5
-	 FjoTLfUZySmGyu3c1b1C3NH4fXfG1b4gy7qpPeragCyo4sTmgbIZ5+OOcP35HbLa5qRPDrzcCWD9
-	 opzCcapHALhBLi+kWXdbX8jgZ9M6dzuatLWjxiudaOBFU39gsQLUdPChW7OAg0mFfOibYjRpoz4F
-	 wn3mhxHgUZ00SbFX7lxxN8pzFkQx1Wiq7qE/btPURHvfKryK/E+TIVuZpoToZOnR78ssEuRtEtaT
-	 vOWL8ezgUnFKWVdR1dDPRmahefWuNFm64a8w2H4fHKrMvVIEco9s0TZMZO+W1io3WaJh6AgeYZXH
-	 MInHA7Y8toD2B5kaLM5x0u6Pr2WREado9GBYA+NNuxIiZ8XbEeSX5BUSSd3TGBoX907RSiwRMLlX
-	 CA1et1xkl9qW82DJ8PGpq44gFHlyGgj9hfHIV7ISrq4VNszKAONWRtOzwVdpTqx+GdOhLVjuWtTC
-	 PPFPyqT4J3tMjG2zHhxaObooLlK0WVC8NxhSW2MShfKgX8DI1lwjbJfDKBsX+xFgMiZBSSx4MEXY
-	 HW+RE992wQPFB8rps0rlsiKygYbe0H7IfSUcmG90EFhDiBxn2ATjEbmxMCj3zwVQwydlIguTTpFY
-	 Kq7xYWW0fLji9n2kojCuz9e+oDYMXIExzolEKL8SsAEmHW58W6d4tf/ayPpHDU3XjBAqi3Efaz5y
-	 t3hY5Tfo4BZFjmkaaDrVYoHxiQY87rO/Btnw6Rp75Q0NzsRqxkPOBsCc73fVngYrM0EA1grvL4RL
-	 h7Alt70qTUDBiHxAEGzTuPjSbjhLZMTybaav7+nQe1WdCWzXGfSTZlHPdJDaRJykL+BwDMksxrSC
-	 Icks81nKBqgcWK1ojPhR1FqAHKiEUunzPikuVYxRzfKzXW/D0j5imiFwlo2IEFVWqYOpYFf5XC+/
-	 ff5k4G/BPODx/cF3m1VV0NkjuBKjFV2awoC9apY829hg1DOAR3GDOHvHxoZN2V
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: Yaxiong Tian <iambestgod@qq.com>
-To: rafael@kernel.org,
-	lukasz.luba@arm.com
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yaxiong Tian <tianyaxiong@kylinos.cn>
-Subject: [PATCH v4] PM: EM: Fix potential division-by-zero error in em_compute_costs()
-Date: Thu, 17 Apr 2025 09:07:50 +0800
-X-OQ-MSGID: <20250417010750.85106-1-iambestgod@qq.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <tencent_EE27C7D1D6BDB3EE57A2C467CC59A866C405@qq.com>
-References: <tencent_EE27C7D1D6BDB3EE57A2C467CC59A866C405@qq.com>
+	s=arc-20240116; t=1744852208; c=relaxed/simple;
+	bh=sCk4s2BEvqzj6Ctkri/ogbGb7GtmwjvsewhjBHtEO70=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kz4SvGp531L9HMUkO0o8Yp4SOGBXlWPbf8BSaMjARdialJrRKe/XsqLDYX+kPhwG3inCC1e6L1T7DBehWlMH/+byuzNgkgBWt9SNutXJWodH/ajUBqf+hEpjwZP0Wi13VMWUeo/pXgkO+2Z3YsC+EJ1MWEhT/Azk/mVSJo+zsyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=n86RXRgp; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53GLW826019008;
+	Thu, 17 Apr 2025 01:09:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=ah/lLz
+	BmfOIHy5wOwIFiZy+sp117fbDDGICRD88/xh8=; b=n86RXRgper66X0nQGr/SIC
+	rYc7HochvI/iHrEML50CySpLEsaptWcfK7HSgDf7O8qS6C/zNnQPxwfo4pgb6+eX
+	AkQxleDMoK8rlIxBFadOqGo2jcEr4rie3dbIIax0MMF++ZMn6pd0zad6QNsvFpZx
+	/0fSVrfPEJLBVnApDjCByVBoqWCvNyqec4O5LUGn4DvyKYCUyG7xKmK24f0qfszi
+	hQAonjj02jIGh2uAOBqZQy5tHmE96XC2phK+ohnOB0X9wmvLcUwp4SoheHCcLnKg
+	2b1tARm921vHxIxNAf0JizkFpHIPUNgWVtNyCYPGmfBx29Pn784UoflR7LhTwiSQ
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 462mhu0r9h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Apr 2025 01:09:28 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53GNSmTf010392;
+	Thu, 17 Apr 2025 01:09:27 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4604qkaym2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Apr 2025 01:09:27 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53H19QBm24380138
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 17 Apr 2025 01:09:27 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 96C895805F;
+	Thu, 17 Apr 2025 01:09:26 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DADCF5805A;
+	Thu, 17 Apr 2025 01:09:24 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 17 Apr 2025 01:09:24 +0000 (GMT)
+Message-ID: <4a2f7fde-99ee-4bcd-a97d-fe0db418fd5f@linux.ibm.com>
+Date: Wed, 16 Apr 2025 21:09:24 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 0/9] ima: kexec: measure events between kexec load and
+ execute
+To: steven chen <chenste@linux.microsoft.com>, zohar@linux.ibm.com,
+        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
+        code@tyhicks.com, bauermann@kolabnow.com,
+        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+        James.Bottomley@HansenPartnership.com, bhe@redhat.com,
+        vgoyal@redhat.com, dyoung@redhat.com
+References: <20250416021028.1403-1-chenste@linux.microsoft.com>
+Content-Language: en-US
+From: Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20250416021028.1403-1-chenste@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=Hvd2G1TS c=1 sm=1 tr=0 ts=680054c8 cx=c_pps a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=yMhMjlubAAAA:8 a=VnNF1IyMAAAA:8 a=KXIcZCm0EDoHl9fo71cA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: j6fdTeznLc-rslj-Y7d3L1utxejtCVup
+X-Proofpoint-GUID: j6fdTeznLc-rslj-Y7d3L1utxejtCVup
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-16_09,2025-04-15_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ lowpriorityscore=0 spamscore=0 mlxlogscore=999 suspectscore=0
+ malwarescore=0 bulkscore=0 clxscore=1015 impostorscore=0 mlxscore=0
+ phishscore=0 priorityscore=1501 classifier=spam authscore=0 adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504170006
 
-From: Yaxiong Tian <tianyaxiong@kylinos.cn>
 
-When the device is of a non-CPU type, table[i].performance won't be
-initialized in the previous em_init_performance(), resulting in division
-by zero when calculating costs in em_compute_costs().
 
-Since the 'cost' algorithm is only used for EAS energy efficiency
-calculations and is currently not utilized by other device drivers, we
-should add the _is_cpu_device(dev) check to prevent this division-by-zero
-issue.
+On 4/15/25 10:10 PM, steven chen wrote:
+> From: Steven Chen <chenste@linux.microsoft.com>
+> 
+> The current kernel behavior is IMA measurements snapshot is taken at
+> kexec 'load' and not at kexec 'execute'.  IMA log is then carried
+> over to the new kernel after kexec 'execute'.
+> 
+> Currently, the kernel behavior during kexec load is to fetch the IMA
+> measurements log from TPM PCRs and store it in a buffer. When a kexec
+> reboot is triggered, this stored log buffer is carried over to the second
+> kernel. However, the time gap between kexec load and kexec reboot can be
+> very long. During this time window, new events extended into TPM PCRs miss
+> the chance to be carried over to the second kernel. This results in
+> mismatch between TPM PCR quotes and the actual IMA measurements list after
+> kexec soft reboot, which in turn results in remote attestation failure.
 
-Fixes: 1b600da51073 ("PM: EM: Optimize em_cpu_energy() and remove division")
-Signed-off-by: Yaxiong Tian <tianyaxiong@kylinos.cn>
----
- kernel/power/energy_model.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
-index d9b7e2b38c7a..41606247c277 100644
---- a/kernel/power/energy_model.c
-+++ b/kernel/power/energy_model.c
-@@ -233,6 +233,10 @@ static int em_compute_costs(struct device *dev, struct em_perf_state *table,
- 	unsigned long prev_cost = ULONG_MAX;
- 	int i, ret;
- 
-+	/* This is needed only for CPUs and EAS skip other devices */
-+	if (!_is_cpu_device(dev))
-+		return 0;
-+
- 	/* Compute the cost of each performance state. */
- 	for (i = nr_states - 1; i >= 0; i--) {
- 		unsigned long power_res, cost;
--- 
-2.25.1
+Tested-by: Stefan Berger <stefanb@linux.ibm.com> # ppc64/kvm
 
 
