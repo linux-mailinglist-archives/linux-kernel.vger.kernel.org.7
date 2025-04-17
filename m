@@ -1,92 +1,89 @@
-Return-Path: <linux-kernel+bounces-609788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EFC0A92BA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 21:19:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D1EEA92BA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 21:22:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E8CF1B60B55
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 19:19:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A58C1B6567F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 19:22:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D4371FF61D;
-	Thu, 17 Apr 2025 19:19:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341341FFC6D;
+	Thu, 17 Apr 2025 19:21:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="uanQeqYx"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BWHZHfaI"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8700DA926;
-	Thu, 17 Apr 2025 19:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BAD72046A9
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 19:21:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744917556; cv=none; b=ssXUplkZ0H5rzgyTLHWndd4osnEIfkRbyr7fAQ/99pcCfGpf5LoAyVkSPB8kLMTP5JxAuxOc0enG0JYDNgl+aeBcS8wEAiFsINDoR3lKuewGRw6fOJcogBmcc9CpxFmr8nd6YGo7kJTy5Cx9leB1zEMCP4H5JFt9hpsPMBP6n+c=
+	t=1744917702; cv=none; b=JILV131/A3mK7bxCb/sfjexNABm8ReSAHQhM9T5sa54QSqCGo/cqRIoCeNRApwdc2vHG27lL1GAAXKnJIDgidBhmp2TXxFRwjq6ZTm7TDy7mKx2M2pecHrmc2sVYsvw4CgiJMT4KPx94xch9ez8aq/9pyRxCSb7Qww+YE1OJtfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744917556; c=relaxed/simple;
-	bh=/nj1y7uyNI0Hnabe58fvjjxo0vJvoqiHg99tGLJatBY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=evJjSTm+EYAN3uEMZqRbOWGG+P0P8r986iW9jJa1AJcayQJkP/p9RBi+7Yf+XZ6DCtV1pKtrVf1rqP1jpazBnAslk6QIS/Shj099rshfkq+zbKzNBYqFdVI96xoJGImDdzMPTAJjNO4UAcfoq+HBCCA/5E1iahPS403IsuLxJI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=uanQeqYx; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 03BDF1F92A;
-	Thu, 17 Apr 2025 21:19:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1744917550;
-	bh=/nj1y7uyNI0Hnabe58fvjjxo0vJvoqiHg99tGLJatBY=;
-	h=Received:From:To:Subject;
-	b=uanQeqYxqFvRax/3xVgk6FJqoBYuHcHoxtfhxY0qI8WkQnxQedkcq+ft0paGowzPf
-	 eSUwM0LOXEiwm8f9c1A+3eJ3oC78++iF7Xwn6vD5vBcv1KQJi3s1IDsxdzvDN2zQH1
-	 ME/IyObB2Gpo3hlBQKT7j0Q/9S37pCi4lamJPX4qyCUmSVSjo+jgVUQpipgi2WIW3Q
-	 EMzJl0GO3K7eKjwbu6JDPnhxZSxEvDnw8YS8c0CEjkmXeYrOkr4k6QEvoNbyd5E6g9
-	 8ig/j1kqcXKy3/rjMxEaIThKV1ViztAOfjuzX5YnwSytWrUcBnwlCLNieNM0YfcdS6
-	 aZ2Foix3DSeIg==
-Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
-	id A8A237F823; Thu, 17 Apr 2025 21:19:09 +0200 (CEST)
-Date: Thu, 17 Apr 2025 21:19:09 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Judith Mendez <jm@ti.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Josua Mayer <josua@solid-run.com>, Moteen Shah <m-shah@ti.com>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	Hiago De Franco <hiagofranco@gmail.com>
-Subject: Re: [PATCH v2 2/2] dt-bindings: mmc: sdhci-am654: Add
- ti,suppress-v1p8-ena
-Message-ID: <aAFULUo9BMf306s3@gaggiata.pivistrello.it>
-References: <20250417182652.3521104-1-jm@ti.com>
- <20250417182652.3521104-3-jm@ti.com>
+	s=arc-20240116; t=1744917702; c=relaxed/simple;
+	bh=QEDo5h9HZXac5uo5Oxegl4cZxwuq6drwyTIoNXKUOW0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TW9Z/p89P9ZulDDhJxjReqCxcnt9SxJVRFw+JlilLsC4TsoA4BsPfva8Laufbe4j5ZlHz0yiADE7PWn6eXl7nr6kefa8XM1Hq1z5T5JjSE/bko43fawdmKBVdlhJxcnPVlkUENldyang72S41jiaMkfiw1D0pC5k60WI75w+Fbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BWHZHfaI; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1744917688;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=m4nhPsAXq16l8mLZ2dp76RiRIb0Pdz76My5DfrqpHO0=;
+	b=BWHZHfaIMXwcSms3RZgM9SPl7nhvp3t7K6eG02JK+9YkLr2+/ItWbAzB3ynV+FZHTybERv
+	3N4fflNbIglkt5lFr/q1x3rg9cZvH3uxTNiiRnwKGKOeph3OJ1yA6VgdKs4U6WCWQVMtYd
+	/iWO2wvuK2ZqMKPknR8fIhmY6NMf5sk=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Richard Henderson <richard.henderson@linaro.org>,
+	Matt Turner <mattst88@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-hardening@vger.kernel.org,
+	linux-alpha@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] smp: Replace deprecated strcpy() with strscpy()
+Date: Thu, 17 Apr 2025 21:20:52 +0200
+Message-ID: <20250417192054.69663-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250417182652.3521104-3-jm@ti.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hello Judith,
-thanks for the patch.
+strcpy() is deprecated; use strscpy() instead.
 
-On Thu, Apr 17, 2025 at 01:26:52PM -0500, Judith Mendez wrote:
-> This patch documents ti,suppress-v1p8-ena which is a flag
-> used to suppress V1P8_SIGNAL_ENA in sdhci_am654 driver. This
-> quirk is necessary to fix fail init issues across various
-> types of SD cards tested on Sitara K3 SoCs.
+Link: https://github.com/KSPP/linux/issues/88
+Cc: linux-hardening@vger.kernel.org
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ arch/alpha/kernel/smp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-bindings are supposed to describe the hardware, not the driver.
-
-You should rephrase the commit message and the description of the property with
-this in mind.
-
-In addition, I think that the dt-bindings is supposed to be before the driver
-patch in the series.
+diff --git a/arch/alpha/kernel/smp.c b/arch/alpha/kernel/smp.c
+index ed06367ece57..56155b988b9c 100644
+--- a/arch/alpha/kernel/smp.c
++++ b/arch/alpha/kernel/smp.c
+@@ -262,7 +262,7 @@ recv_secondary_console_msg(void)
+ 
+ 		cnt = cpu->ipc_buffer[0] >> 32;
+ 		if (cnt <= 0 || cnt >= 80)
+-			strcpy(buf, "<<< BOGUS MSG >>>");
++			strscpy(buf, "<<< BOGUS MSG >>>");
+ 		else {
+ 			cp1 = (char *) &cpu->ipc_buffer[1];
+ 			cp2 = buf;
+-- 
+2.49.0
 
 
