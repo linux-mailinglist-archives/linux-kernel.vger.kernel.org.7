@@ -1,235 +1,104 @@
-Return-Path: <linux-kernel+bounces-609297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C356A92039
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 16:51:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 312FDA92045
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 16:52:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF4583B69BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:50:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C126219E818B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8916A252900;
-	Thu, 17 Apr 2025 14:50:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A842522B7;
+	Thu, 17 Apr 2025 14:52:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aPfXkfuJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="HTOV9jk8"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF36974BED
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 14:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888D12517A7
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 14:52:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744901442; cv=none; b=b8yBmXkLhPRir4/3bdMnXefr4/I9av/3RKptvK5/qOuNQkI42i4UJD7ooNUBc0FQRQlvSKLZ1+hRIVLxy16LXVehOVz0ebywYHIMpemAAk28S1akj9WGI8sLPiw9ziFGxL5/0XmCGQ3pkE3xFu7IP7KLMsFfLWlvHdQrwH6P5yA=
+	t=1744901554; cv=none; b=OpMYD+5mvr1yLPjPRUQNtuqkJFK55fzwiUAVWsR8JJnX6TMCmtJw7D3WnQCr00KqG5l0F9U0gsR2bCrMjX5pG+pywzxvqgPPgRVZNXGG2pLeS4YvvklTc1ZvdVlw7ohycnL8eM3W6THNqyBZ+pe59r7m1fcgIvS2NvZkQhGkem4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744901442; c=relaxed/simple;
-	bh=lfFcddiYY0f2/ajdCn13Ssqz/6k7ckZ4gPrPUQzxMQg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P4i0kMpsaN0XIiCWwNi2hC0I6RFLfe3C7g5SygOYm6J28scaI4T2wNQlq5xtcp0brMbsWGYVH1bXr0B59aLj9efidV3IqvY1nm/JiGTwF7l8vV73m4wZAPSiCq+ZcBhcEyM6OrwRcyiEyjvRVkukhX+TVVwuMtyu+2rcYoBMFhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aPfXkfuJ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744901438;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n69F12b8gb5rkYnrsYjWLffA9DRH6Ubd/djGhMzPmIg=;
-	b=aPfXkfuJG4wLNN0frXzQgXp8hYJhexfwfA7NGu2xGeJyM3jVmfiYJllwTStQ/1A0pEwvhP
-	eErgtegkz/aHVVrAKLxjO4sgZNbqZ15Uw3SJhdEuTMFbwYoCOIo5OgBV8PIqLGQ2wttORb
-	x/abiBjWHml7pNpk57QqggHWEMdQm04=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-541-0BTaddYTPTi8ReVuyeNSuw-1; Thu,
- 17 Apr 2025 10:50:35 -0400
-X-MC-Unique: 0BTaddYTPTi8ReVuyeNSuw-1
-X-Mimecast-MFC-AGG-ID: 0BTaddYTPTi8ReVuyeNSuw_1744901433
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C42B719560AD;
-	Thu, 17 Apr 2025 14:50:32 +0000 (UTC)
-Received: from [10.44.33.28] (unknown [10.44.33.28])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4AE8E19560A3;
-	Thu, 17 Apr 2025 14:50:27 +0000 (UTC)
-Message-ID: <03afdbe9-8f55-4e87-bec4-a0e69b0e0d86@redhat.com>
-Date: Thu, 17 Apr 2025 16:50:25 +0200
+	s=arc-20240116; t=1744901554; c=relaxed/simple;
+	bh=C0ii3df6urNS96a7DeEXtF7upeoeedD2PihrrtmFsI0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S41b5ko/N4hYJzij3mEzCzUjDW+THECQuwIlM3/VLKE59yeZADaW12oH+1cTJh/DsgB3DVX8L0d2Slnm0FF9c2FTIhw/fFyVr0zZz1cim9f3uBBF98a3hJWZmVzQO6BhQMuWBRaRpSHK7CsaS1RXGmziQ9T83gq7gNxVc27Qgi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=HTOV9jk8; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4774d68c670so12277351cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 07:52:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1744901551; x=1745506351; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cNdlL3P+kB6sb+uZFj+Sde9hgZanWGCpbxTUw3Vgows=;
+        b=HTOV9jk8mMaieAnUrzOEvJKeHfaESJ+Hw9RUtomS1Q8g3KU34xFrO08/BqyE55fegy
+         IwTWsvsDOSDABBpv4gCixQinLOMAA5B+zrwCw8/jOauyToycwLRrCvm5rnKodgR/PSaJ
+         iWnXuBeaEP9BUC9oE5SbY1U/nGIq3i913KW/X4cbJ7mYV3HNKk0ICS8pBAD7x3hzV6Ar
+         xc7i/YSOdYsVXaF7YzR4xlSSamAtz5f2u6+xoeebNyg3ueOGdEhA2NEvrwUJbkCoLMER
+         4ODwme264l0BCym33Qr35pWzHcmCi3g/zQYrK0aghOWbfPC1UeEeMNYU9bmqnIFaV/Up
+         mz7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744901551; x=1745506351;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cNdlL3P+kB6sb+uZFj+Sde9hgZanWGCpbxTUw3Vgows=;
+        b=rm/MJ5AUaivnpBbpJcC00tf3jX5JLncbFBnDzOJOh8QW5jUr5xXYoIxbbfTiZ3uW2B
+         0Ez1rEMLandHPH06V1uuvYfT92I0G6cqgWb0GV8W9q8M52OZeG+uk38VAaXzgX7Gsg5O
+         8y11fk8CMY6JMPxOTQ7sUuaCqks4WrkpZwOeHqZDfjk/ffrJ0BckvlaGpNerSKzXolEx
+         xotCiP6UK07gjDe6f+KcIyHplaXxX2QnpQt7c/75arnB4YtdVJT8P9mAhWd+kwn00m1w
+         h4JjLZBLZTIfv8tCeggslMCBxHANgWTrY4tLozZKRP13HTTZ06hGbSBC7W+OLqQ1Syk9
+         6r9g==
+X-Forwarded-Encrypted: i=1; AJvYcCUmylsZ6aSURKLWW29ERLAGK+RyDLVLUURe2MbikMl2L2Xc5RI713UQSuUJlZunGtxaQ88gh90yyDEdCKo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvGw62UU8DzZ/nkfPR2mfPTX3j6e3e6gk5YHWABlN204qPd70t
+	tsm6U5ciirxcmx30+NAhX/4EBtmUIXxod8ZVw6jELf19j8soz1vWf1mM0JKbqxY=
+X-Gm-Gg: ASbGnctVvE4sqOpuE+MyD4OSIIow1dQnqvqSEIPwTtczpptLn/EZ6jdWtPLgOJhX8v6
+	jXihdYs+88VaKatvX46RHCnSHDEoCMk1KvP4nHxeKKwYeURjszzUY26gEaNEIWzUw/pkrbU4wdT
+	7IPkti0/eWAcMlzftwLX6XYPCEqR6JliwbInhTeb+APVP9CvxovUqC6VudNAwLfp7faMsWPydJH
+	aG611Day5bFbqZyN+rF+xPvvpXFgan7YhB/soKOk71+5vnFstohB3Z15X0qbTZ8/mHHR4U/HpaL
+	eUrfQYkkY9Gn6JmXlK33dWWlnFCTsU5uYYaspNo=
+X-Google-Smtp-Source: AGHT+IFoM28HUMMSsl9CsOqS/2wRZ/w4+IJS7bMDbtZm7rzCvcmmOo+0hBtEKG+MS4hlQt+J9+2Pfw==
+X-Received: by 2002:a05:6214:410e:b0:6e8:f17e:e00d with SMTP id 6a1803df08f44-6f2b2f426d1mr89621206d6.14.1744901551363;
+        Thu, 17 Apr 2025 07:52:31 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:365a:60ff:fe62:ff29])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6f0de98224asm127756826d6.65.2025.04.17.07.52.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Apr 2025 07:52:30 -0700 (PDT)
+Date: Thu, 17 Apr 2025 10:52:29 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Muchun Song <songmuchun@bytedance.com>
+Cc: mhocko@kernel.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+	muchun.song@linux.dev, akpm@linux-foundation.org,
+	david@fromorbit.com, zhengqi.arch@bytedance.com,
+	yosry.ahmed@linux.dev, nphamcs@gmail.com, chengming.zhou@linux.dev,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+	linux-mm@kvack.org, hamzamahfooz@linux.microsoft.com,
+	apais@linux.microsoft.com
+Subject: Re: [PATCH RFC 03/28] mm: workingset: use folio_lruvec() in
+ workingset_refault()
+Message-ID: <20250417145229.GF780688@cmpxchg.org>
+References: <20250415024532.26632-1-songmuchun@bytedance.com>
+ <20250415024532.26632-4-songmuchun@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 net-next 3/8] mfd: Add Microchip ZL3073x support
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: netdev@vger.kernel.org, Vadim Fedorenko <vadim.fedorenko@linux.dev>,
- Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
- Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Prathosh Satish <Prathosh.Satish@microchip.com>,
- Lee Jones <lee@kernel.org>, Kees Cook <kees@kernel.org>,
- Andy Shevchenko <andy@kernel.org>, Andrew Morton
- <akpm@linux-foundation.org>, Michal Schmidt <mschmidt@redhat.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <20250416162144.670760-1-ivecera@redhat.com>
- <20250416162144.670760-4-ivecera@redhat.com>
- <8fc9856a-f2be-4e14-ac15-d2d42efa9d5d@lunn.ch>
- <CAAVpwAsw4-7n_iV=8aXp7=X82Mj7M-vGAc3f-fVbxxg0qgAQQA@mail.gmail.com>
- <894d4209-4933-49bf-ae4c-34d6a5b1c9f1@lunn.ch>
-Content-Language: en-US
-From: Ivan Vecera <ivecera@redhat.com>
-In-Reply-To: <894d4209-4933-49bf-ae4c-34d6a5b1c9f1@lunn.ch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250415024532.26632-4-songmuchun@bytedance.com>
 
-
-
-On 17. 04. 25 3:13 odp., Andrew Lunn wrote:
-> On Wed, Apr 16, 2025 at 08:19:25PM +0200, Ivan Vecera wrote:
->> On Wed, Apr 16, 2025 at 7:11 PM Andrew Lunn <andrew@lunn.ch> wrote:
->>
->>      > +++ b/include/linux/mfd/zl3073x_regs.h
->>      > @@ -0,0 +1,105 @@
->>      > +/* SPDX-License-Identifier: GPL-2.0-only */
->>      > +
->>      > +#ifndef __LINUX_MFD_ZL3073X_REGS_H
->>      > +#define __LINUX_MFD_ZL3073X_REGS_H
->>      > +
->>      > +#include <asm/byteorder.h>
->>      > +#include <linux/lockdep.h>
->>
->>      lockdep?
->>
->>
->> lockdep_assert*() is used in later introduced helpers.
+On Tue, Apr 15, 2025 at 10:45:07AM +0800, Muchun Song wrote:
+> Use folio_lruvec() to simplify the code.
 > 
-> nitpicking, but you generally add headers as they are needed.
+> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
 
-+1
-
-
->>      > +#include <linux/mfd/zl3073x.h>
->>      > +#include <linux/regmap.h>
->>      > +#include <linux/types.h>
->>      > +#include <linux/unaligned.h>
->>      > +
->>      > +/* Registers are mapped at offset 0x100 */
->>      > +#define ZL_RANGE_OFF        0x100
->>      > +#define ZL_PAGE_SIZE        0x80
->>      > +#define ZL_REG_ADDR(_pg, _off) (ZL_RANGE_OFF + (_pg) * ZL_PAGE_SIZE +
->>      (_off))
->>      > +
->>      > +/**************************
->>      > + * Register Page 0, General
->>      > + **************************/
->>      > +
->>      > +/*
->>      > + * Register 'id'
->>      > + * Page: 0, Offset: 0x01, Size: 16 bits
->>      > + */
->>      > +#define ZL_REG_ID ZL_REG_ADDR(0, 0x01)
->>      > +
->>      > +static inline __maybe_unused int
->>      > +zl3073x_read_id(struct zl3073x_dev *zldev, u16 *value)
->>      > +{
->>      > +     __be16 temp;
->>      > +     int rc;
->>      > +
->>      > +     rc = regmap_bulk_read(zldev->regmap, ZL_REG_ID, &temp, sizeof
->>      (temp));
->>      > +     if (rc)
->>      > +             return rc;
->>      > +
->>      > +     *value = be16_to_cpu(temp);
->>      > +     return rc;
->>      > +}
->>
->>      It seems odd these are inline functions in a header file.
->>
->>
->> There are going to be used by dpll_zl3073x sub-driver in series part 2.
-> 
-> The subdriver needs to know the ID, firmware version, etc?
-
-No
-
-> Anyway, look around. How many other MFD, well actually, any sort of
-> driver at all, have a bunch of low level helpers as inline functions
-> in a header? You are aiming to write a plain boring driver which looks
-> like every other driver in Linux....
-
-Well, I took inline functions approach as this is safer than macro usage
-and each register have own very simple implementation with type and
-range control (in case of indexed registers).
-
-It is safer to use:
-zl3073x_read_ref_config(..., &v);
-...
-zl3073x_read_ref_config(..., &v);
-
-than:
-zl3073x_read_reg8(..., ZL_REG_REF_CONFIG, &v);
-...
-zl3073x_read_reg16(..., ZL_REG_REF_CONFIG, &v); /* wrong */
-
-With inline function defined for each register the mistake in the 
-example cannot happen and also compiler checks that 'v' has correct type.
-
-> Think about your layering. What does the MFD need to offer to sub
-> drivers so they can work? For lower registers, maybe just
-> zl3073x_read_u8(), zl3073x_read_u16() & zl3073x_read_read_u32(). Write
-> variants as well. Plus the API needed to safely access the mailbox.
-> Export these using one of the EXPORT_SYMBOL_GPL() variants, so the sub
-> drivers can access them. The #defines for the registers numbers can be
-> placed into a shared header file.
-
-Would it be acceptable for you something like this:
-
-int zl3073x_read_reg{8,16,32,48}(..., unsigned int reg, u{8,16,32,64} *v);
-int zl3073x_write_reg{8,16,32,48}(..., unsigned int reg, u{8,16,32,64} v);
-int zl3073x_read_idx_reg{8,16,32,48}(..., unsigned int reg, unsigned int 
-idx, unsigned int max_idx, unsigned int stride, u{8,16,32,64} *v);
-int zl3073x_write_idx_reg{8,16,32,48}(..., unsigned int reg, unsigned 
-int idx, unsigned int max_idx, unsigned int stride, u{8,16,32,64} v);
-
-/* Simple non-indexed register */
-#define ZL_REG_ID	ZL_REG_ADDR(0 /* page */, 0x01 /* offset */
-#define ZL_REG_ID_BITS	8
-
-/* Simple indexed register */
-#define ZL_REG_REF_STATUS	ZL_REG_ADDR(2, 0x44)
-#define ZL_REG_REF_STATUS_BITS	16
-#define ZL_REG_REF_STATUS_ITEMS	10
-#define ZL_REG_REF_STATUS_STRIDE 2
-
-/* Read macro for non-indexed register */
-#define ZL3073X_READ_REG(_zldev, _reg, _v)	\
-	__PASTE(zl3073x_read_reg, _reg##_BITS)(_zldev, _reg, _v)
-
-/* For indexed one */
-#define ZL3073X_READ_IDX_REG(_zldev, _reg, _idx, _v)	\
-	__PASTE(zl3073x_read_idx_reg, _reg##_BITS)(_zldev, _reg, _v,
-						   _idx, \
-						   _reg##_ITEMS, \
-						   _reg##_STRIDE, _v)
-
-This would allow to call simply
-ZL3073X_READ_REG(zldev, ZL_REG_ID, &val);
-or
-ZL3073X_READ_IDX_REG(zldev, ZL_REG_REF_STATUS, 4);
-
-and caller does not need to know register size and range constraints.
-
-WDYT?
-
-Thanks,
-Ivan
-
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
 
