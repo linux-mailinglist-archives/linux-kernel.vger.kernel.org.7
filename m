@@ -1,164 +1,154 @@
-Return-Path: <linux-kernel+bounces-608413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACDACA912E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:42:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B956A912C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:39:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51BA17AED01
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 05:41:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31E201900DF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 05:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E77A20A5F5;
-	Thu, 17 Apr 2025 05:39:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2995E1DB148;
+	Thu, 17 Apr 2025 05:39:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cOJB4ZiR"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ye7w7YYE"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B84C1DEFC5;
-	Thu, 17 Apr 2025 05:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AFC52DFA2F;
+	Thu, 17 Apr 2025 05:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744868385; cv=none; b=C6fO54FeK6EcRze5PhBcf5PJhmZcjOUqP0aXw1ZpmRhWQZclzS1kyT8qb6c7lCQz5NjsGFTOvZHRoilIUBruTJgOn0QGdSWKz5WPvlmdryTKDncF+KWhLGqQ6RWdOMMcbHCzZNOj/ykE60XUbg7fc3GHv06aNNT0CycAneFtac0=
+	t=1744868362; cv=none; b=M9dr53hx4vis/2DWuQrk2qjsJUmy4Eldrj7UXrYOEGfT2i+DErYyUsVHhFyy93OeMWMiVTE8K9gpT2D8aT1wXppr1GCjeGLPrUAFo1Gz8PelCf+w+uwphIvBvYE42pb/U7rOYQpENGg85XpXua/jC8R1ZHprH9BIXUm/plT8sek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744868385; c=relaxed/simple;
-	bh=Yuyjus0LQVpAFwdjQxMQDi6sUsGpYsZoeuhkm7vBU4E=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PhS4Mc8cC4fqCxuCPP4TPIaKOWP1SBN8/6GdO78B/DXMekzMMt4WkjT7Aqz1hD3U/0OwPj0w/ntazPOmjH+zmoZUnIxkHrC/wAYoq0+Jkutvxz5c/zA2NAQ++2+aZalBrfiZ2teMCl9tffayAaQ5InR+LBGse7sLKx0JhFRnoD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qti.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cOJB4ZiR; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qti.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53GLfwjW020919;
-	Thu, 17 Apr 2025 05:39:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=FcHfKRd2faO
-	EI6ZqeZo5Jj61vy3go1jGp/L+XdNQtWs=; b=cOJB4ZiRDPmnKEqD81CtzX81L1W
-	g8sxd48i4HoM2232mDKbyzxCkBpHQMVRCMLhP3KmkmH2zy+bH8Xcu0PntrWhjFcj
-	4bgRGbWpw5O5RKbn7c0jVS03VdOSIFyN10uVUYcKz6nkzunvn/FGoovIs+DA/hEb
-	NgyuttxLwO+RDWxk/HYFdgDHOUaLQqcjmWTus9TEvt2SzGgeJnLMRUoAG5pCV44t
-	jSjLX97OTQ1r8G0VWZmF9KEARzOunPwUwhLraD2+DLxlH9atSAMr/KgIeGWheRpN
-	/4n2kXOerdmeKKUIaQEGT4nT6o87GwzLNrlbXMCouES2qlornsMD5tQh5qA==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45yhbpwjsd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Apr 2025 05:39:20 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 53H5aYaB021454;
-	Thu, 17 Apr 2025 05:39:17 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 462f5dnuh9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Apr 2025 05:39:16 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 53H5dE8f023909;
-	Thu, 17 Apr 2025 05:39:16 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-amakhija-hyd.qualcomm.com [10.213.99.91])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 53H5dFif023991
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Apr 2025 05:39:16 +0000
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 4090850)
-	id D1A125A0; Thu, 17 Apr 2025 11:09:13 +0530 (+0530)
-From: Ayushi Makhija <amakhija@qti.qualcomm.com>
-To: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Ayushi Makhija <quic_amakhija@quicinc.com>, robdclark@gmail.com,
-        dmitry.baryshkov@oss.qualcomm.com, sean@poorly.run,
-        marijn.suijten@somainline.org, andersson@kernel.org, robh@kernel.org,
-        robh+dt@kernel.org, krzk+dt@kernel.org, konradybcio@kernel.org,
-        conor+dt@kernel.org, andrzej.hajda@intel.com,
-        neil.armstrong@linaro.org, rfoss@kernel.org,
-        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
-        jernej.skrabec@gmail.com, quic_abhinavk@quicinc.com,
-        quic_rajeevny@quicinc.com, quic_vproddut@quicinc.com,
-        quic_jesszhan@quicinc.com,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: [PATCH v4 11/11] drm/bridge: anx7625: change the gpiod_set_value API
-Date: Thu, 17 Apr 2025 11:09:09 +0530
-Message-Id: <20250417053909.1051416-12-amakhija@qti.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250417053909.1051416-1-amakhija@qti.qualcomm.com>
-References: <20250417053909.1051416-1-amakhija@qti.qualcomm.com>
+	s=arc-20240116; t=1744868362; c=relaxed/simple;
+	bh=Rzd2yE0g4gqaFtFYIhYtHCRfy1E0nHomvZgN21JrlzQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SsU7ztnB6P/YF6CCtCpWCww/g2TmdXH+dMjAlZLhuH7vm309nSIK0Qfm/+MFZY685AG5ueNaAiZhx3xaG3l954tywX2611L6LGN9Yd1QZpSEB6sh2Nb87QnZrLffBHa6eRpKHSE36I/INWUMnDGfeFjmDRncz+OlErTfYwSw+9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ye7w7YYE; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-225df540edcso16549965ad.0;
+        Wed, 16 Apr 2025 22:39:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744868358; x=1745473158; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=24x0GQ0PkA6+zr9zBlahx+1SY3PmBt3xsKYJkkmlKZ0=;
+        b=Ye7w7YYEyPxR1TaB91AkeVoisCd2bel5Wrw8GvTSH3PJUn/yXeIkLNhRL0HMZFLbGw
+         uGmn+w6woPJk6E+NAID0HYGgc6JEtDh8Ae738w6RuLIKK1MS0sIepTO5qChDgV9OaBBG
+         D8AwHDAlaFwvvN7A2yyv/F79GNTt0HY9PMVHCcNd+UETp+Nwx0AZYfPZn7tnWiDWeQp6
+         vZtWO0zZBtci1wtXeZMqhKwjAB+IviJnuEq/2wFa2yMwBkjWRT+Vl2QESOIWFVZCy12K
+         gH23xASSOF4HBRN8eQz+D+HKqo8q+EQw0M8/Fgi/xxoIvCxZ2d0t9F/cE2zflB4V25qL
+         1F4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744868358; x=1745473158;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=24x0GQ0PkA6+zr9zBlahx+1SY3PmBt3xsKYJkkmlKZ0=;
+        b=DzvXHEq4SIOBymT1flpwjJ053+bkzDJFiyfLPUexmrW2IsC1u7uTxCIrbtURWytld3
+         3/nS6kFdBHKkiHWgzvbmM5lkFpqaAvc23x+vK0UDuczRO1rOwAqv51zjoxr3U/K2aUu5
+         liGKqTwKwQpIV3G/n9+SebCvXCO+EbSd728ivepvQR/8x7dPTN7DfDIubkIqCzAFPGeD
+         qrdxLhRvHLERfNHkNNhBgQ69nXt676TQCOKK/HPnlVwLWnywlEaDY3AoIRS1VWzQ2ZTI
+         Oxm1a/eoxyeCsvsQ2vAQ9sP0ZXGW9o9InSRnBdpywnQscP2FPsCXXRSWGCsDCQro1d4u
+         PqyA==
+X-Forwarded-Encrypted: i=1; AJvYcCWcn9zMTa7pDoYL4GnXGY0+2wZA3EznUWxSBkBA8ZmoCvolhflF4lIfZkeeobOQOpkfZJnhZQAE2Ik75qI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx69h1NEOcwCn7L00CamwtPstwyc5shTf62F452xBkoIAKXsFeY
+	8hUiavqb7PyH6FbiiiItbwgcBi+w/3f6oCriz20VX1pmMZizyryTImO0f8H1
+X-Gm-Gg: ASbGncs8qa7LpFzqoUYavz505W+Tp4Ez0SxQ/4ObVJmnPWotmrJrQMvHp+mLuvPGSIf
+	pBMYGgfWvhlMrawHlPBiY4pVi57h1yEfCsSHg42UYuGHL7IigQK6zHA5OM3MaPm2u73BPZ7rJFX
+	fJRi8/1pNl4j0+egJbZLQJGfZgM/4DhhTcigFq03pj6aY/hq3quhLbRR40kljd/XfXinKL2C3Qn
+	lAgCWBgSHsr2Tn84cfW1HWUPlQtUWsnvpwyYwUHiHH7rMijhTBzbw985S0SM0imcoHHG9TPHOOn
+	C6X8RSO766hbcqtqdySio1Zez4cMS72cfzmKXJD7/Zpd8V+nsQ==
+X-Google-Smtp-Source: AGHT+IEYI2mZ5pqppiYJEHMxeSskqOZW/A6Fj6tplgWB4OIO//BTRKIAqK+VzAW9q8NYNjUr/OKCnQ==
+X-Received: by 2002:a17:902:d587:b0:223:607c:1d99 with SMTP id d9443c01a7336-22c41b65eeemr27176765ad.0.1744868358225;
+        Wed, 16 Apr 2025 22:39:18 -0700 (PDT)
+Received: from [192.168.0.161] ([14.139.108.62])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c33f1d199sm24591105ad.90.2025.04.16.22.39.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Apr 2025 22:39:17 -0700 (PDT)
+Message-ID: <f0f6604f-30aa-471a-9f21-40d423285499@gmail.com>
+Date: Thu, 17 Apr 2025 11:09:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 37IJIajygxg7f7sQ-shj8ohX5OLj6xbL
-X-Proofpoint-GUID: 37IJIajygxg7f7sQ-shj8ohX5OLj6xbL
-X-Authority-Analysis: v=2.4 cv=I+plRMgg c=1 sm=1 tr=0 ts=68009408 cx=c_pps a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=KKAkSRfTAAAA:8 a=qu7jSu7UeuI-ykz2460A:9 a=TjNXssC_j7lpFel5tvFf:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-17_01,2025-04-15_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
- phishscore=0 adultscore=0 priorityscore=1501 mlxscore=0 lowpriorityscore=0
- bulkscore=0 mlxlogscore=999 clxscore=1011 impostorscore=0 malwarescore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504170042
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dma: idxd: cdev: Fix uninitialized use of sva in
+ idxd_cdev_open
+To: Dave Jiang <dave.jiang@intel.com>, vinicius.gomes@intel.com,
+ vkoul@kernel.org
+Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250410110216.21592-1-purvayeshi550@gmail.com>
+ <23417f4a-05fe-44d3-b257-7a5991d252cb@intel.com>
+Content-Language: en-US
+From: Purva Yeshi <purvayeshi550@gmail.com>
+In-Reply-To: <23417f4a-05fe-44d3-b257-7a5991d252cb@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Ayushi Makhija <quic_amakhija@quicinc.com>
+On 11/04/25 02:30, Dave Jiang wrote:
+> 
+> 
+> On 4/10/25 4:02 AM, Purva Yeshi wrote:
+>> Fix Smatch-detected issue:
+>> drivers/dma/idxd/cdev.c:321 idxd_cdev_open() error:
+>> uninitialized symbol 'sva'.
+>>
+>> 'sva' pointer may be used uninitialized in error handling paths.
+>> Specifically, if PASID support is enabled and iommu_sva_bind_device()
+>> returns an error, the code jumps to the cleanup label and attempts to
+>> call iommu_sva_unbind_device(sva) without ensuring that sva was
+>> successfully assigned. This triggers a Smatch warning about an
+>> uninitialized symbol.
+>>
+>> Initialize sva to NULL at declaration and add a check using
+>> IS_ERR_OR_NULL() before unbinding the device. This ensures the
+>> function does not use an invalid or uninitialized pointer during
+>> cleanup.
+>>
+>> Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
+> 
+> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
 
-Use gpiod_set_value_cansleep() instead of gpiod_set_value()
-to fix the below call trace in the boot log:
+Hi Dave,
 
-[    5.690534] Call trace:
-[    5.690536]  gpiod_set_value+0x40/0xa4
-[    5.690540]  anx7625_runtime_pm_resume+0xa0/0x324 [anx7625]
-[    5.690545]  __rpm_callback+0x48/0x1d8
-[    5.690549]  rpm_callback+0x6c/0x78
+Thank you for the review and the Reviewed-by tag.
 
-Certain GPIO controllers require access via message-based buses
-such as I2C or SPI, which may cause the GPIOs to enter a sleep
-state. Therefore, use the gpiod_set_value_cansleep().
+>> ---
+>>   drivers/dma/idxd/cdev.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/dma/idxd/cdev.c b/drivers/dma/idxd/cdev.c
+>> index ff94ee892339..7bd031a60894 100644
+>> --- a/drivers/dma/idxd/cdev.c
+>> +++ b/drivers/dma/idxd/cdev.c
+>> @@ -222,7 +222,7 @@ static int idxd_cdev_open(struct inode *inode, struct file *filp)
+>>   	struct idxd_wq *wq;
+>>   	struct device *dev, *fdev;
+>>   	int rc = 0;
+>> -	struct iommu_sva *sva;
+>> +	struct iommu_sva *sva = NULL;
+>>   	unsigned int pasid;
+>>   	struct idxd_cdev *idxd_cdev;
+>>   
+>> @@ -317,7 +317,7 @@ static int idxd_cdev_open(struct inode *inode, struct file *filp)
+>>   	if (device_user_pasid_enabled(idxd))
+>>   		idxd_xa_pasid_remove(ctx);
+>>   failed_get_pasid:
+>> -	if (device_user_pasid_enabled(idxd))
+>> +	if (device_user_pasid_enabled(idxd) && !IS_ERR_OR_NULL(sva))
+>>   		iommu_sva_unbind_device(sva);
+>>   failed:
+>>   	mutex_unlock(&wq->wq_lock);
+> 
 
-Signed-off-by: Ayushi Makhija <quic_amakhija@quicinc.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/gpu/drm/bridge/analogix/anx7625.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/analogix/anx7625.c b/drivers/gpu/drm/bridge/analogix/anx7625.c
-index 365d1c871028..f6f730262511 100644
---- a/drivers/gpu/drm/bridge/analogix/anx7625.c
-+++ b/drivers/gpu/drm/bridge/analogix/anx7625.c
-@@ -1257,10 +1257,10 @@ static void anx7625_power_on(struct anx7625_data *ctx)
- 	usleep_range(11000, 12000);
- 
- 	/* Power on pin enable */
--	gpiod_set_value(ctx->pdata.gpio_p_on, 1);
-+	gpiod_set_value_cansleep(ctx->pdata.gpio_p_on, 1);
- 	usleep_range(10000, 11000);
- 	/* Power reset pin enable */
--	gpiod_set_value(ctx->pdata.gpio_reset, 1);
-+	gpiod_set_value_cansleep(ctx->pdata.gpio_reset, 1);
- 	usleep_range(10000, 11000);
- 
- 	DRM_DEV_DEBUG_DRIVER(dev, "power on !\n");
-@@ -1280,9 +1280,9 @@ static void anx7625_power_standby(struct anx7625_data *ctx)
- 		return;
- 	}
- 
--	gpiod_set_value(ctx->pdata.gpio_reset, 0);
-+	gpiod_set_value_cansleep(ctx->pdata.gpio_reset, 0);
- 	usleep_range(1000, 1100);
--	gpiod_set_value(ctx->pdata.gpio_p_on, 0);
-+	gpiod_set_value_cansleep(ctx->pdata.gpio_p_on, 0);
- 	usleep_range(1000, 1100);
- 
- 	ret = regulator_bulk_disable(ARRAY_SIZE(ctx->pdata.supplies),
--- 
-2.34.1
-
+Best regards,
+Purva
 
