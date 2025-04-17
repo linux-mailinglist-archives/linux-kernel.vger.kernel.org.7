@@ -1,158 +1,130 @@
-Return-Path: <linux-kernel+bounces-609745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2269A92AB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 20:53:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CD83A92ADA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 20:55:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF2FF1B64F6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 18:53:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D72E7B2362
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 18:53:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5FD25A659;
-	Thu, 17 Apr 2025 18:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E960F2571B3;
+	Thu, 17 Apr 2025 18:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S0p7/yyS"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="b7d5S4Mf"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CEAD2571A1;
-	Thu, 17 Apr 2025 18:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9D21D5CCD;
+	Thu, 17 Apr 2025 18:54:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744915872; cv=none; b=hIrmCL74hsPFWL/3MX/a+otBwzx2/MdZp7a8UtbR9w0C6Cs72IKhcRBaCbVIgqGNS15EdeImsXEWq/JT9vyqUT784eSVR009MDb28PybO5gk6MfM6D4S7cyABxuRXe0xN7pMJnLfiqPvKqCfrNtlbI/rONkKzJ8uCwDm2jWWYaM=
+	t=1744916078; cv=none; b=Bu1GigM1QqNwhsCWtZoRqLbnJjdMvGgeSbDA2CVQCkN2glnFm9R0xJwzzSoqO4eZt0LICyYkhTU8azy8gS8KHw2UHS0QiSR1qTT62/izT9s9/33ZVSszT/nIOIEZsNEQqpYZcnzz+a8grItMgGiNLtqkl3lQ904ekhtUzWHANHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744915872; c=relaxed/simple;
-	bh=65Vd07+eu4sGros2pqdClyFy6VqYsYQhxtJYsLClcvY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d59m1GZwzxyP6B7Du8TFyP4hc4m9zKkeYqW2rRymG24c5DrJLJEzljqB1Hy5VXU8eKLJVtK4xe4Q7PXSDxi0wlOqh7Nd2mmXvA66izbzti8AY37fHevuEFu6mJTXooi1f5MjrX+PjYfD43SovxIJaZDbDPrxiSGh4NxWD04FMH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S0p7/yyS; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-af589091049so897767a12.1;
-        Thu, 17 Apr 2025 11:51:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744915870; x=1745520670; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EbHnfA5ct33ORVZ7TPi/aq+sM7vHxqt+w+RbszLa+gE=;
-        b=S0p7/yySlbVOyHTzdRIheW5hGa3TSTccneyTvBMap0y6Rp+icg1/lmUanOq+JUD4Wo
-         gCFU54RwMiFtql6BFjbnVQchqdQFBEKXqDjT5qh4k0tZOQ/x20mM7SJ9Rk4SWhwR6XgD
-         QXh4iMDW0fbPqRDRn6vN0IZxfoOEsMPXwJPbxjSERjBpKrBGqr5nj0QFl8IkmeJLJjbf
-         AivQd48/tHoPpXX00ZDgbeYPfynnSNgEjlm5tOSIWQd0PN/2ZONd05rtGQrjJKDskjvi
-         Suyi6xS4yWQOq7Ygo8wMeAzVNXEgT5inbFj5ivpLBoSr/HZ6TjlMcZL9fD0LYHLfGuVm
-         jTZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744915870; x=1745520670;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EbHnfA5ct33ORVZ7TPi/aq+sM7vHxqt+w+RbszLa+gE=;
-        b=h95f8U0myTiUvCM1SBXaqDGPtVugPVbZbQvU2dDN/ZfW6uXzPPsdvq7VCQBn2MZKCS
-         hIsiBn9EQEoMMYC0tL+f/iSLd1BJ9Ih9DSAprB21vPnz3yFuIUMXGyQFI+JnHjqjXNsX
-         HYV/wHYLliRcmKl2plBmh0+z2nkvvV+Bt1WT7rLhWdPBexY2ABwpUEGRsRabslFAI2Qq
-         PuwOpplJaM+4uyano7Z6ko++oH+2ZVQ04gcrvXnzI1HezSH7eYuegXLdPBiPYIMIvxwQ
-         pmcylIC2Tt0QN2ZrFs8/LszG0wzTTC9Az2ambG83JYU9uJUpB8viPcHTkrAfDdKD1oj4
-         qq6A==
-X-Forwarded-Encrypted: i=1; AJvYcCUJM1t2QloonbE2FvvyPEv5I2uvlQvZ+CvvLeRwja4RPeRmTYenU2fFQy8p+Lr/HcqLFHGaNp3C@vger.kernel.org, AJvYcCV+j7KyN0mcEN36xD2NK5EK1m9jQEzL5kw1kxO7f7hmHEQH8h69/vGK8Hq79Q21P1CJhHpYwzv2kuBUMQsYuDYOusrJ@vger.kernel.org, AJvYcCWlNcxt0mQKzfZQBZSEs3/7wch9o44Wat64xxP4d2tL/bLTTJrAazkFhLFD0rSHN7uqngr8otJT4Cu7Yn0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSe4sno406GiFyUqdYJvhqShlJaNrlOEH8oSgcT7QC/yNb+U4U
-	4v7DNs6FjURArKXFF4lJa9vkQDd74pXEePJRML/rbZ1BImWD3+qd4Vp5xEur2Fs=
-X-Gm-Gg: ASbGncsqE9rklzLMcuVTNUa/++JjdGx/jspAumQRyrgB3sRGj2i5StqTFeBFnAnP7r/
-	xmnZTmiyNnR/vEYuD4RxzIP8hG7OGyi1IgGJF9xr9wNa5In6Z87dX2suZKrL+LrB+r7fPZtM/Iy
-	LPeORJzSX2On13Nibqvv6npOh1aFlVCvQ1gk2KG7D0U0CXiOJYnO5qyNkUoXTprcb6w7c+AovZG
-	CzNfZBsIAe6kVljKKg/a+vv6SAIScRNgEyU7GqafEWGl9U53OAnhswRFMYXi+fpXT+puwtfH+D8
-	1xXA1JBSV4eOsHQTS7cQZTqPVaiXOcjY9c0gKYDnMmLK
-X-Google-Smtp-Source: AGHT+IFvPh3/w+OkOXKkRlC6hIs8p5S4OKSna69ZSXyEm+nJ0unq0K6ZwOVCOOEtJ2ttLK51bu4ktg==
-X-Received: by 2002:a17:90b:6ce:b0:2f6:dcc9:38e0 with SMTP id 98e67ed59e1d1-3087ba51b57mr233223a91.0.1744915870440;
-        Thu, 17 Apr 2025 11:51:10 -0700 (PDT)
-Received: from localhost ([129.210.115.104])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50bdaad1sm3615545ad.28.2025.04.17.11.51.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Apr 2025 11:51:09 -0700 (PDT)
-Date: Thu, 17 Apr 2025 11:51:09 -0700
-From: Cong Wang <xiyou.wangcong@gmail.com>
-To: Jiayuan Chen <jiayuan.chen@linux.dev>
-Cc: bpf@vger.kernel.org, mrpre@163.com,
-	Jakub Sitnicki <jakub@cloudflare.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next v3 1/2] bpf, sockmap: Introduce tracing
- capability for sockmap
-Message-ID: <aAFNna3T2tzj9VZt@pop-os.localdomain>
-References: <20250414161153.14990-1-jiayuan.chen@linux.dev>
+	s=arc-20240116; t=1744916078; c=relaxed/simple;
+	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o/u0095bo04vfgm4fiLgbA9AOjZzvpB3uxUHV21PByBKo0zxNCKM/Z2jsIm7n5yia9nnPFuMye4xoAomTqF8PFYsy9LHXGUG8pDGieU/NJ43L5KHoUYfK3qCzsdY38Usr/HCzUjuT+qgn8P6MI5gvVyPYKRILqVRrZBJ49HoDX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=b7d5S4Mf; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1744916039; x=1745520839; i=rwarsow@gmx.de;
+	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=b7d5S4Mflgv1rTEuxygYly2z8bV8WFlH9NTloWscIxMZ4kvizbdxwUQmr6tcSJGN
+	 qmqQCGoT6kxRZPWGzVC1g3PAsN+tFNbP/NrDtX7YyVfgwfhphbL8vO3S68SZ1Cp+7
+	 9Sw4dyuGy4pVh5P27YC4NsNFEGzkgVy7faKTzjaOCeJtDL3GQzgiAdWLOLZr4/Z5U
+	 AodU459KMRBmZIufA/8RAmxVyu16pcidw8+bPxnOzqCnEKxV/n0YztGHFPLI94nt9
+	 eSnnfnJm38z5o3Mw+m2xL/81JVjFgE2D0oAGTqXfZe9IqJPjCwNSdqKkO0tWlUBNs
+	 2wOeFCySS9oJC+JiAA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.200.20] ([46.142.33.101]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1Mr9Bu-1utidd2Y9G-00obIB; Thu, 17
+ Apr 2025 20:53:59 +0200
+Message-ID: <81faa8d1-7d9a-4768-b89f-113bb4672218@gmx.de>
+Date: Thu, 17 Apr 2025 20:53:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250414161153.14990-1-jiayuan.chen@linux.dev>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.14 000/449] 6.14.3-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250417175117.964400335@linuxfoundation.org>
+From: Ronald Warsow <rwarsow@gmx.de>
+Content-Language: de-DE, en-US
+In-Reply-To: <20250417175117.964400335@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:K2bz+hU+yYyhtfq0Xs6zbG3IAfa5jcz0szI3T8pte1fJMPcMrSK
+ uKqd513uAfNmfZDoHp7kkZmCwi9tMCxbcT+l80ZSQjIZE/IljpHcY4RjyBXXUNxc7iYm4Sh
+ 27BVG0t3ugTPeodhlCQ91kxrTt9OHjCznfBdgBu1LLtbDt2XOYsNW57trfEp2+b876gJF/G
+ EeLwVskc88jS8JdQGQAtA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:j+gokKn2/9E=;hTWiISN0CNnoZp9vz2+NNlLH/oZ
+ 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
 
-On Tue, Apr 15, 2025 at 12:11:45AM +0800, Jiayuan Chen wrote:
-> Sockmap has the same high-performance forwarding capability as XDP, but
-> operates at Layer 7.
-> 
-> Introduce tracing capability for sockmap, to trace the execution results
-> of BPF programs without modifying the programs themselves, similar to
-> the existing trace_xdp_redirect{_map}.
-> 
-> It is crucial for debugging sockmap programs, especially in production
-> environments.
-> 
-> Additionally, the new header file has to be added to bpf_trace.h to
-> automatically generate tracepoints.
-> 
-> Test results:
-> $ echo "1" > /sys/kernel/tracing/events/sockmap/enable
-> 
-> msg/skb:
-> '''
-> sockmap_redirect: sk=000000000ec02a93, netns=4026531840, inode=318, \
-> family=2, protocol=6, prog_id=59, len=8192, type=msg, action=REDIRECT, \
-> redirect_type=ingress
-> 
-> sockmap_redirect: sk=00000000d5d9c931, netns=4026531840, inode=64731, \
-> family=2, protocol=6, prog_id=91, len=8221, type=skb, action=REDIRECT, \
-> redirect_type=egress
-> 
-> sockmap_redirect: sk=00000000106fc281, netns=4026531840, inode=64729, \
-> family=2, protocol=6, prog_id=94, len=8192, type=msg, action=PASS, \
-> redirect_type=none
-> '''
-> 
-> strparser:
-> '''
-> sockmap_strparser: sk=00000000f15fc1c8, netns=4026531840, inode=52396, \
-> family=2, protocol=6, prog_id=143, in_len=1000, full_len=10
-> '''
-> 
-> Suggested-by: Jakub Sitnicki <jakub@cloudflare.com>
-> Suggested-by: Cong Wang <xiyou.wangcong@gmail.com>
-> Suggested-by: Steven Rostedt <rostedt@goodmis.org>
-> Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
-> 
+Hi Greg
 
-Reviewed-by: Cong Wang <xiyou.wangcong@gmail.com>
+no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
 
-Thanks!
+Thanks
+
+Tested-by: Ronald Warsow <rwarsow@gmx.de>
+
 
