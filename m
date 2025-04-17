@@ -1,152 +1,158 @@
-Return-Path: <linux-kernel+bounces-608736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3799A91759
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 11:10:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61993A9175F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 11:11:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B36E1904512
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:11:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70B3E17EC1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:11:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625F5229B13;
-	Thu, 17 Apr 2025 09:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99196227BA9;
+	Thu, 17 Apr 2025 09:11:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b="N3HnwOcJ"
-Received: from mx07-00376f01.pphosted.com (mx07-00376f01.pphosted.com [185.132.180.163])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mk9YljVP"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69593225A3E;
-	Thu, 17 Apr 2025 09:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.180.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866C7225A47
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 09:11:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744881034; cv=none; b=NmrSozU+dMovKCPbbCatSyeBtXgs2ot7Qjf54ecqqwbwZ4vdDvp9Us9mx/apy+CIliLY2Q65CrlHkeiOAAXT9uKJtVE3Dmd1eH5rXN84qI+AtFRHA8AGeHaQLiaG2GNi6v4sNo9ffpUm8G7rujuHNrVCCY1xJM40avwvlsbZYuk=
+	t=1744881068; cv=none; b=VmsG0l1KlixWNvcUoYkqqumUb213Z838bClSOZPWxt59lT/pw2BYMsF/HiUMQ4xQlM+gbXKJOyfd9wypzan6vJSFvoJOn+X0/Z2ERmEmh3zuSv6+0/CcC1PDuBsM9NFVplhyajJ3ws9IFDKoKiPOBVW67yDWyzUGZUqYfYg8dZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744881034; c=relaxed/simple;
-	bh=epqyuI3DQyygM6mV3YXhwwbA6yUu0pXFY8MTDFxg8s0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=UMrFd2PdP/GB/q4qwjy+2J08umjByHUtFeZ480BIT0KwDt1beQ7sE30zb0aanu+XhsdaEpoRpP3MliOriEsgpE/FSPIEWImmzfDW1bmZpEVcBAku3FHl3Ht7WLrBa044YljjFhtnsqORlulNGhThWRKs7xIiE/76RNF3T0aeh0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com; spf=pass smtp.mailfrom=imgtec.com; dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b=N3HnwOcJ; arc=none smtp.client-ip=185.132.180.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=imgtec.com
-Received: from pps.filterd (m0168889.ppops.net [127.0.0.1])
-	by mx07-00376f01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53H503lL018418;
-	Thu, 17 Apr 2025 10:10:17 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=imgtec.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=dk201812; bh=s
-	4lUq4QP/mULXqetmOHgz7na8g0BDkjUVC/tFT/LXig=; b=N3HnwOcJTklvsv3jy
-	yChAsXJHm9joMR1dtWI9jbh+OADXcWA2RgmeJ1TZj1c4P13zYbq5g2YaR7crg2Sr
-	DrnXqznea+O2WQEAOyyyo80qBJ/GAdBE3avSYcoKkjy7gl2iOO8OP0a7JmpUTxCy
-	J/pMo5bXZ1Ci8h6oNdFkJ7SeOSImrlxqA8o+oR1qaSMAPAV23I3YBzCFSskGikto
-	rHGnhDK7aGgETAkqtH76VYUZrVg1/IYKH/N7Dj7tsrmLxdxTp6Jh+fdCQoPEa2+k
-	qpti9NsJyHtHpsizxEpwqINoHeEJkG+AKKnH0YNWPJwEnE0OIJpOZ6QS03VkriTL
-	QpDww==
-Received: from hhmail05.hh.imgtec.org (83-244-153-141.cust-83.exponential-e.net [83.244.153.141])
-	by mx07-00376f01.pphosted.com (PPS) with ESMTPS id 461y2mh4tg-3
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Thu, 17 Apr 2025 10:10:17 +0100 (BST)
-Received: from Matts-MacBook-Pro.local (172.25.7.98) by HHMAIL05.hh.imgtec.org
- (10.100.10.120) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Thu, 17 Apr
- 2025 10:10:16 +0100
-From: Matt Coster <matt.coster@imgtec.com>
-Date: Thu, 17 Apr 2025 10:10:03 +0100
-Subject: [PATCH v2 2/2] arm64: dts: ti: k3-j721s2: Add GPU node
+	s=arc-20240116; t=1744881068; c=relaxed/simple;
+	bh=6qEf6tknothqnZPYROJE0lwlLRqhlJZGju5uXaeHv3s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FJoo+Lh2vZR3sG00IVSYbcn60dq+qIC/sewKty2eqKASZoa5poJvB4emS1RuIMiisSVDEb5s+e0WN/xlSPifAyMry5tP11j2QIy8fxneCiyKZShCRpA+APmfrCEkHeyiVSAJcJpAH/fPASOyqje5rVJ0MRpacyKLLHyJKWyiq3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mk9YljVP; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b061a775ac3so443914a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 02:11:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744881065; x=1745485865; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FrdRs2Eh7ktuYmlRKgxrpPSv2pa5H5A5RLvNhTrGAUw=;
+        b=mk9YljVPp7/VFybMWJKQ+ccGDVrNow3J6oaKEwBDAnWlvr4yvW3n0olRgcIqHxhNeC
+         XPDvVKNLke+BO2n5vGOf7XmfiB0VbKI/E/Z2SAvnHEYrNmOvRkL9YN+kV7OGg+U/ehxh
+         U93qet8vIYE1trh14qoAp48vokunPg6rZi5PYCzSF5txa77rJltyvZFQpFmBymFYaFkh
+         ySemubGj0UVAtsuieBu9UploDy/TzFo7jf0rxqqBYBq9R0UdUBeH/G+nLwon3bEuN1nL
+         sMR65JNj1eaysokNDA+oL/Rxal6hY735UtjUoLkKmvRlNPdAokmXKM3/wdP0ujVRFlS9
+         I9wQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744881065; x=1745485865;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FrdRs2Eh7ktuYmlRKgxrpPSv2pa5H5A5RLvNhTrGAUw=;
+        b=gD2eSl639IjpEQwl4G7b+/pVHoXCoX2TNR+5JIi5mWqSUQDhPmAfNHXMi2j5b5BDnM
+         pDad1wKBjw+LtrIInt2El/yJjjWxwv9klYluhOGY48conbvucwIWfcAqVF1U/GoO1whK
+         T75b4o/KzeOAzkeWYH/729fyRRGoXPVjVPmRERKOBbxWuRwgTrcGPeOxvAsxQ29eST7o
+         f4raQGatBTFCwO+jPtmXtdiPgBtOHybvhEbjIwC1ejtF9odduU2YAPWKwQe5P74a6yZC
+         Q2IOVNnIgo5yw6h3USFAY63/abTFGL84qt1eyQWN1serIcCtUoAdShYLRGwp/eIhOmCH
+         aM8Q==
+X-Gm-Message-State: AOJu0YxIsJJc51I647hYw/T0jve69MxDwlnFrpPAavLsPZeh+ckmPP6x
+	LQoewXL2uJwAM6MVEHujfF+t/ZX75yA3izc0GAWtlcRBfdNdkbK4
+X-Gm-Gg: ASbGncvzS9WRosiF+Ar/MT1w+vU3vTGIFRZY30DH0u9zWlEeUtfirOMtnTIo/1BEbrE
+	k8RrrEjFVQDh7A1/ca1PHHISerljfsGKGp119+A7Q7cYlYS+MGHrN5q2f6KEn0IB6+E9XyfvvRB
+	R15ReWKq2iriul72fzJ1UtujZ0gLW3nvzVgN7CYkmvCBZ1psyCSuLu6enDpiIkHMb2MEXJm9n0k
+	/M6HJ81pMTDFWZbpx+A9qWT+medO8F3kRyGo55zafyQs0cIVTY1Wb3I/wd/tbS7wkAmsVDzHueD
+	M3jSXpBjxDvUZiYKKA2zbzLa7izz9BGHWmaqrO76YTiC45Gmi/6+94N5dU7fyA3OV2Vif1s=
+X-Google-Smtp-Source: AGHT+IG5eS9uYvfmaM+p8MiDaKbdVNNX9evxXDH5dXvK+7En0/2gb54c8hs7hbHHJ5/VfXabTYoeIA==
+X-Received: by 2002:a17:90b:1cc4:b0:2ff:6a5f:9b39 with SMTP id 98e67ed59e1d1-30863f2f777mr8488935a91.18.1744881064670;
+        Thu, 17 Apr 2025 02:11:04 -0700 (PDT)
+Received: from purva-IdeaPad-Gaming-3-15IHU6.. ([14.139.108.62])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3086122a8absm3131134a91.35.2025.04.17.02.11.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Apr 2025 02:11:04 -0700 (PDT)
+From: Purva Yeshi <purvayeshi550@gmail.com>
+To: arnd@arndb.de,
+	gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	Purva Yeshi <purvayeshi550@gmail.com>
+Subject: [PATCH v2] char: mwave: smapi: Fix signedness of SmapiOK variable
+Date: Thu, 17 Apr 2025 14:40:18 +0530
+Message-Id: <20250417091018.29767-1-purvayeshi550@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250417-bxs-4-64-dts-v2-2-9f8c09233114@imgtec.com>
-References: <20250417-bxs-4-64-dts-v2-0-9f8c09233114@imgtec.com>
-In-Reply-To: <20250417-bxs-4-64-dts-v2-0-9f8c09233114@imgtec.com>
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        "Tero
- Kristo" <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Frank Binns <frank.binns@imgtec.com>,
-        "Alessio Belle" <alessio.belle@imgtec.com>,
-        Alexandru Dadu
-	<alexandru.dadu@imgtec.com>,
-        Luigi Santivetti <luigi.santivetti@imgtec.com>,
-        Randolph Sapp <rs@ti.com>, Darren Etheridge <detheridge@ti.com>,
-        Matt Coster
-	<matt.coster@imgtec.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2039;
- i=matt.coster@imgtec.com; h=from:subject:message-id;
- bh=epqyuI3DQyygM6mV3YXhwwbA6yUu0pXFY8MTDFxg8s0=;
- b=owGbwMvMwCFWuUfy8817WRsYT6slMWQwHC1/K/fLX7GfPfbh102+RRnW7FM/uP2ICQrsezZ/z
- weZXezJHaUsDGIcDLJiiiw7VliuUPujpiVx41cxzBxWJpAhDFycAjCRxLOMDJMn+n4XWMny+9f1
- Lwu/7fe42REoLmk6MaQj3brMzr5/Uy4jQ6NB4/6WNa8fPTnuxd7+4fU3uf07dz7ge536p7aX627
- hBH4A
-X-Developer-Key: i=matt.coster@imgtec.com; a=openpgp;
- fpr=05A40CFCE7269D61D97100A1747F0A9036F90DFA
-X-EXCLAIMER-MD-CONFIG: 15a78312-3e47-46eb-9010-2e54d84a9631
-X-Authority-Analysis: v=2.4 cv=LbU86ifi c=1 sm=1 tr=0 ts=6800c579 cx=c_pps a=AKOq//PuzOIrVTIF9yBwbA==:117 a=AKOq//PuzOIrVTIF9yBwbA==:17 a=6pm0VhuFVbIA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=sozttTNsAAAA:8 a=VwQbUJbxAAAA:8 a=r_1tXGB3AAAA:8
- a=Ff_bzIi4o_8fsuxLidAA:9 a=QEXdDO2ut3YA:10 a=S-JV1fTmrHgA:10 a=j2-svP0xy3wA:10 a=t8nPyN_e6usw4ciXM-Pk:22
-X-Proofpoint-GUID: T5O5va56PNOO4qYhBwZnCAj8j75CCx2r
-X-Proofpoint-ORIG-GUID: T5O5va56PNOO4qYhBwZnCAj8j75CCx2r
+Content-Transfer-Encoding: 8bit
 
-The J721S2 binding is based on the TI downstream binding in commit
-54b0f2a00d92 ("arm64: dts: ti: k3-j721s2-main: add gpu node") from [1]
-but with updated compatible strings.
+Smatch warning:
+drivers/char/mwave/smapi.c:69 smapi_request() warn:
+assigning (-5) to unsigned variable 'usSmapiOK'
 
-The clock[2] and power[3] indices were verified from HTML docs, while
-the intterupt index comes from the TRM[4] (appendix
-"J721S2_Appendix_20241106_Public.xlsx", "Interrupts (inputs)",
-"GPU_BXS464_WRAP0_GPU_SS_0_OS_IRQ_OUT_0").
+Fix Smatch warning caused by assigning -EIO to an unsigned short.
 
-[1]: https://git.ti.com/cgit/ti-linux-kernel/ti-linux-kernel
-[2]: https://downloads.ti.com/tisci/esd/latest/5_soc_doc/j721s2/clocks.html
-[3]: https://downloads.ti.com/tisci/esd/latest/5_soc_doc/j721s2/devices.html
-[4]: https://www.ti.com/lit/zip/spruj28 (revision E)
+Smatch detected a warning due to assigning -EIO (a negative value) to an
+unsigned short variable, causing a type mismatch and potential issues.
 
-Reviewed-by: Randolph Sapp <rs@ti.com>
-Signed-off-by: Matt Coster <matt.coster@imgtec.com>
+In v1, the type was changed to short, which resolved the warning, but
+retained the misleading "us" prefix in the variable name.
+
+In v2, update the type to s16 and rename the variable to SmapiOK,
+removing the "us" (unsigned short) prefix as per Greg KH suggestion.
+
+This change ensures type correctness, avoids confusion, and improves
+overall code readability.
+
+Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
 ---
-Changes in v2:
-- Add interrupt reference details
-- Add Randolph's Rb
-- Link to v1: https://lore.kernel.org/r/20250415-bxs-4-64-dts-v1-2-f7d3fa06625d@imgtec.com
+V1 - https://lore.kernel.org/all/20250409211929.213360-1-purvayeshi550@gmail.com/
+V2 - Use s16 type and rename variable to remove misleading "us" prefix.
 
-This patch was previously sent as [DO NOT MERGE]:
-https://lore.kernel.org/r/20250410-sets-bxs-4-64-patch-v1-v6-18-eda620c5865f@imgtec.com
----
- arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/char/mwave/smapi.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi b/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
-index 92bf48fdbeba45ecca8c854db5f72fd3666239c5..a79ac41b2c1f51b7193e6133864428bd35a5e835 100644
---- a/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
-@@ -2048,4 +2048,16 @@ watchdog8: watchdog@23f0000 {
- 		/* reserved for MAIN_R5F1_1 */
- 		status = "reserved";
- 	};
-+
-+	gpu: gpu@4e20000000 {
-+		compatible = "ti,j721s2-gpu", "img,img-bxs-4-64", "img,img-rogue";
-+		reg = <0x4e 0x20000000 0x00 0x80000>;
-+		clocks = <&k3_clks 130 1>;
-+		clock-names = "core";
-+		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
-+		power-domains = <&k3_pds 130 TI_SCI_PD_EXCLUSIVE>,
-+				<&k3_pds 373 TI_SCI_PD_EXCLUSIVE>;
-+		power-domain-names = "a", "b";
-+		dma-coherent;
-+	};
- };
-
+diff --git a/drivers/char/mwave/smapi.c b/drivers/char/mwave/smapi.c
+index f8d79d393b69..65bc7e1ea6cf 100644
+--- a/drivers/char/mwave/smapi.c
++++ b/drivers/char/mwave/smapi.c
+@@ -66,7 +66,7 @@ static int smapi_request(unsigned short inBX, unsigned short inCX,
+ 	unsigned short myoutDX = 5, *pmyoutDX = &myoutDX;
+ 	unsigned short myoutDI = 6, *pmyoutDI = &myoutDI;
+ 	unsigned short myoutSI = 7, *pmyoutSI = &myoutSI;
+-	unsigned short usSmapiOK = -EIO, *pusSmapiOK = &usSmapiOK;
++	s16 SmapiOK = -EIO, *pSmapiOK = &SmapiOK;
+ 	unsigned int inBXCX = (inBX << 16) | inCX;
+ 	unsigned int inDISI = (inDI << 16) | inSI;
+ 	int retval = 0;
+@@ -102,15 +102,15 @@ static int smapi_request(unsigned short inBX, unsigned short inCX,
+ 			    "=m"(*(unsigned short *) pmyoutDX),
+ 			    "=m"(*(unsigned short *) pmyoutDI),
+ 			    "=m"(*(unsigned short *) pmyoutSI),
+-			    "=m"(*(unsigned short *) pusSmapiOK)
++			    "=m"(*(unsigned short *) pSmapiOK)
+ 			    :"m"(inBXCX), "m"(inDISI), "m"(g_usSmapiPort)
+ 			    :"%eax", "%ebx", "%ecx", "%edx", "%edi",
+ 			    "%esi");
+ 
+ 	PRINTK_8(TRACE_SMAPI,
+-		"myoutAX %x myoutBX %x myoutCX %x myoutDX %x myoutDI %x myoutSI %x usSmapiOK %x\n",
++		"myoutAX %x myoutBX %x myoutCX %x myoutDX %x myoutDI %x myoutSI %x SmapiOK %x\n",
+ 		myoutAX, myoutBX, myoutCX, myoutDX, myoutDI, myoutSI,
+-		usSmapiOK);
++		SmapiOK);
+ 	*outAX = myoutAX;
+ 	*outBX = myoutBX;
+ 	*outCX = myoutCX;
+@@ -118,7 +118,7 @@ static int smapi_request(unsigned short inBX, unsigned short inCX,
+ 	*outDI = myoutDI;
+ 	*outSI = myoutSI;
+ 
+-	retval = (usSmapiOK == 1) ? 0 : -EIO;
++	retval = (SmapiOK == 1) ? 0 : -EIO;
+ 	PRINTK_2(TRACE_SMAPI, "smapi::smapi_request exit retval %x\n", retval);
+ 	return retval;
+ }
 -- 
-2.49.0
+2.34.1
 
 
