@@ -1,177 +1,119 @@
-Return-Path: <linux-kernel+bounces-608601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9811A915C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:53:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93DA2A915C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:54:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1215B17FAE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:53:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FA127ABC6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ACCC22170A;
-	Thu, 17 Apr 2025 07:52:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94C82222B9;
+	Thu, 17 Apr 2025 07:53:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="xN4EnJrd"
-Received: from mxout4.routing.net (mxout4.routing.net [134.0.28.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VFkf4dvL"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8E352206BD;
-	Thu, 17 Apr 2025 07:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813B1221F30
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 07:53:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744876378; cv=none; b=PtAx5aBIKaQajAFmfcXY380DZfxDep9532lEl2smUYNCMeRoO0vHsPitJKZwMWAmHnskqWNIUNOF1UV+hwnUqpqS/MkTRwRcI3uq1NgLVOIrVNTve0iPfmS3COu1sNEtogkKy1NsQbLBClJ/nMZ0MCLpo6sxGh8aVvvm96ujANE=
+	t=1744876411; cv=none; b=kevw21RBl35v/b6OIieNUxfKIH7YeQHRPUl/YUSlrZ8tTrzkPc7UY4n39IlKXssa5XQYHD7AsDE4ewq/lpW43Zajti3TrX5QpnmyzibaU1mRQCg8a1ULlF32CkWiuIs9A9aWIGrAMxZFc4F3vBkOEwbgzCKNPUO+0d1y63ucnjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744876378; c=relaxed/simple;
-	bh=Se+Pb5gvAeaBxEvyD3+E41BEMYCQFUvRfuCjMCS7ljI=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=aRjRJBqDcPtOON21TeYax5192/p6VJTy5GZCoFbqptSORzfhcMvpb6pwQXIfXG2TShXLvE7qgrP+gs5e3uAFg1y/c6N40YFq9+nlghdMMNcswASITlOC39Ron4V3chpW4PXY6R+Shwx5xeOg3Iof9gTqN4YEr5Fv6YVBnYsCRMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=xN4EnJrd; arc=none smtp.client-ip=134.0.28.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
-Received: from mxbox3.masterlogin.de (unknown [192.168.10.78])
-	by mxout4.routing.net (Postfix) with ESMTP id A4E8A1008FA;
-	Thu, 17 Apr 2025 07:52:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1744876372;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q82aXZ96SkZQkHH0ZlbXPXUKG4cthRJar29R9w4dfJE=;
-	b=xN4EnJrdVeEEGXY1Uw/cWRtXIx7OgNpTRak8FB9wUaT8xQr96zt6iiIs4H9BNit/k7AFpA
-	b/qa0UTAJVIKjhaGbOTXYxIEWwUqXAj2F399mutRq8k0GBh+apnsVIRCShTmXp9AtFQk/0
-	oZ53q8OoA7fc3ycuuJLtOCKM6Kzq6aE=
-Received: from webmail.hosting.de (unknown [134.0.26.148])
-	by mxbox3.masterlogin.de (Postfix) with ESMTPSA id C3E213605AA;
-	Thu, 17 Apr 2025 07:52:51 +0000 (UTC)
+	s=arc-20240116; t=1744876411; c=relaxed/simple;
+	bh=Q3+YaSQtPKXC0cuE5RjCpyH+Pf71thLokmXHjSKya4A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XBe7CAviEDieRh842abjG6meVgigDtoRQSNKDMAzaWe1ea9C0me344MW1ucXiNBxuDZ5jAhniPsblgYCNpVxDOBojsH5+W8e+UOx6yM1/y9Vq9hQM60OcM8c+lHaBJJRyW1bQU6r8wTZNtCW+L0qR2tR66OGdW0pQf0lRyR5AEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VFkf4dvL; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-3105ef2a070so4756371fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 00:53:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744876408; x=1745481208; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q3+YaSQtPKXC0cuE5RjCpyH+Pf71thLokmXHjSKya4A=;
+        b=VFkf4dvLKxbatPWImfVfFhvjNhlfjCdJu7/w1DE/80tzosAQTYLLi89ink/uzEnaIo
+         r0vA+MsYx5HR0C/6oUwgGNuR41Oo1+qP5QiOPA8eMcEqCYav84trJCq2k6Ga9u+CdltA
+         RgINGCtHhm2WTDKsuxMiVM7vOPEP5zyClelnQ/vyvrrrbcfTNDLS+bpLx7RFkv3nE868
+         nOAljNlMP3F437YD7qkAuJZ0VOVig8ZXIMmqaND6hSqsTjedZqvdAJyIrWXW/J8xS2be
+         C6GPVc+i5gJsl9q0/Jm6WI8vo5phXiHz8QvNQT22k3ZBlmJj7qpAK9w6N+wBxss1mF1z
+         MeFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744876408; x=1745481208;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Q3+YaSQtPKXC0cuE5RjCpyH+Pf71thLokmXHjSKya4A=;
+        b=UEfvSuim8QaAOqQu2tKX9x4M2HJ8D7Ag2gIQ+lzkkCUFXA03ycS7IReJgPCrymvIvG
+         nYblh9VkrkFu6Y7DuYxgbLita3FcItC+ATw7nuprxQ9anmqDjgbeTkDswRMIxcZ3ahC7
+         UIIVpQs5DwTk4jHb6G8+Qe+ebf8/vpRCLTnqqC9PGlXfPu0jjMV4gd9B2t8B4LfR+d/H
+         jkZUlyBN0XPCOQ1kzEM8HD6eX4c2JoRClP0H1xYnl3xsuOAyUeyG3RosbZIyR/0bpBHf
+         IwQLA7FJb9xanQxwOi744QHRlm9dWWortzLJm5pCZiUKSewooh1C+B0EVfTGh8YJNr3d
+         u4Yw==
+X-Forwarded-Encrypted: i=1; AJvYcCVlfs4SsicVg/GI8rGYdsigE2P2c5rnTH9HstUtbrnPgKSIkdcbahTAwhXHtG2hOSzWpzSoBva6TpRVeqk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsIWemdtx3F5nWQ2C/UyuedCYFfBz8+U8Y+4u90VErS4f7dh0u
+	TSeERtfkePwyAvHpqvTPiW/JBHXfCfcGYdR5Id+i8kT2WoxD659er69rZ9iJAt4Y68vdL4xhJj9
+	rnP6d4yQuJTC03es1b5hKv+9PP4RAGw2xTb/E8g==
+X-Gm-Gg: ASbGnctCDILTf3lqmuF3nPuH90IebIyIAu9mFDK4FCZbe1OZiPTEYdhhyLTaTwX4iQm
+	8Dtb6XmRCjTfYjAEMk8pK84suqIBLb1WShV8RrDE+se3MqbQrfDAdnuzJzOCw1b3JxQ5QLrad0x
+	UiNViYNRrqp3dasn541WZsZg==
+X-Google-Smtp-Source: AGHT+IG6fH8i73HZcByMHNF5RXrO9SAK28PBO/AFODMukbnw4fFfbSNlkijjqFOir4rIjJV1QWIs7u0W5Rh/Tw30EAQ=
+X-Received: by 2002:a2e:be1c:0:b0:30b:e983:9ba0 with SMTP id
+ 38308e7fff4ca-3107f6cd893mr18106361fa.23.1744876407724; Thu, 17 Apr 2025
+ 00:53:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 17 Apr 2025 09:52:51 +0200
-From: "Frank Wunderlich (linux)" <linux@fw-web.de>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, Chunfeng Yun
- <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>, Kishon Vijay
- Abraham I <kishon@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Frank
- Wunderlich <frank-w@public-files.de>, =?UTF-8?Q?Rafa=C5=82_Mi=C5=82eck?=
- =?UTF-8?Q?i?= <rafal@milecki.pl>, Daniel Golle <daniel@makrotopia.org>, Sean
- Wang <sean.wang@mediatek.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-phy@lists.infradead.org
-Subject: Re: [PATCH v3 4/8] dt-bindings: phy: mtk-xs-phy: support type switch
- by pericfg
-In-Reply-To: <20250417-competent-rattlesnake-of-intensity-98d6ff@kuoka>
-References: <20250416095402.90543-1-linux@fw-web.de>
- <20250416095402.90543-5-linux@fw-web.de>
- <20250417-competent-rattlesnake-of-intensity-98d6ff@kuoka>
-Message-ID: <d2da81ccb6b9b267288a3d2f5b1bb977@fw-web.de>
-X-Sender: linux@fw-web.de
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-X-Mail-ID: ffcf56f2-7a7a-4451-b290-b3cd6b547b72
+References: <20250416-aaeon-up-board-pinctrl-support-v3-0-9ca13aa57312@bootlin.com>
+In-Reply-To: <20250416-aaeon-up-board-pinctrl-support-v3-0-9ca13aa57312@bootlin.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 17 Apr 2025 09:53:16 +0200
+X-Gm-Features: ATxdqUHbFi-Z7SI6e_TKuBrx9cROKcb5-SqU1LRW63Sr0A6JqXuYgLtul-_YeLE
+Message-ID: <CACRpkdYo8bHYKdkFLLqkCTZzy44pk=xPri=E3ogXP=BiywL9zQ@mail.gmail.com>
+Subject: Re: [PATCH v3 00/10] Add pinctrl support for the AAEON UP board FPGA
+To: Thomas Richard <thomas.richard@bootlin.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, 
+	DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Krzysztof,
+On Wed, Apr 16, 2025 at 4:00=E2=80=AFPM Thomas Richard
+<thomas.richard@bootlin.com> wrote:
 
-thanks for review.
+> This is the third version of this series (rebased on v6.15-rc2).
+>
+> The gpiolib part has been reworked, the gpiochip_add_pin_range() was
+> renamed to gpiochip_add_pin_range_with_pins() and a new pins parameter wa=
+s
+> addded. Two stubs were created to add consecutive or sparse pin range.
+>
+> For the forwarder library, a namespace was added and patches were splitte=
+d
+> to more simpler changes.
+>
+> In the pinctrl core, the function devm_pinctrl_register_mappings() was
+> created.
+>
+> No big changes in the upboard pinctrl driver, only few fixes and
+> improvements.
+>
+> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
 
-basicly i used the same binding like for tphy.
+From a pin control view this looks fine, I expect the whole thing
+to be merged into the GPIO tree, so I'll just ACK the pinctrl
+patches.
 
-Am 2025-04-17 08:56, schrieb Krzysztof Kozlowski:
-> On Wed, Apr 16, 2025 at 11:53:56AM GMT, Frank Wunderlich wrote:
->> From: Frank Wunderlich <frank-w@public-files.de>
->> 
->> Add support for type switch by pericfg register between USB3/PCIe.
->> 
->> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
->> ---
->>  .../devicetree/bindings/phy/mediatek,xsphy.yaml  | 16 
->> ++++++++++++++++
->>  1 file changed, 16 insertions(+)
->> 
->> diff --git a/Documentation/devicetree/bindings/phy/mediatek,xsphy.yaml 
->> b/Documentation/devicetree/bindings/phy/mediatek,xsphy.yaml
->> index 3b5253659e6f..5033d77c1239 100644
->> --- a/Documentation/devicetree/bindings/phy/mediatek,xsphy.yaml
->> +++ b/Documentation/devicetree/bindings/phy/mediatek,xsphy.yaml
->> @@ -151,6 +151,22 @@ patternProperties:
->>          minimum: 1
->>          maximum: 31
->> 
->> +      mediatek,syscon-type:
->> +        $ref: /schemas/types.yaml#/definitions/phandle-array
->> +        maxItems: 1
->> +        description:
->> +          A phandle to syscon used to access the register of type 
->> switch,
->> +          the field should always be 3 cells long.
->> +        items:
->> +          items:
-> 
-> Missing -, because you have one phandle.
-
-ok, then i need to drop MaxItems and indent 2 spaces more, but no 
-problem
-
->> +            - description:
->> +                The first cell represents a phandle to syscon
-> 
-> Don't repeat constraints in free form text. "Foo bar system controller"
-> or "Phandle to foo bar system controller"
-
-i would write only "phandle to system controller". on mt7988 it is the 
-topmisc syscon, but maybe on
-other SoC it is different name.
-
->> +            - description:
->> +                The second cell represents the register offset
-> 
-> "Baz register offset"
-
-same here, only "register offset".
-
->> +            - description:
->> +                The third cell represents the index of config segment
-> 
-> "Index of config segment", but what is index of config?
-
-unfortunately we have no detailed documentation here, but based on 
-driver (i guess daniel ported it
-from SDK) this value is multiplied with BITS_PER_BYTE so it can handle 
-up to 4 config-segments in
-the 32bit register (maybe configuring 4 phys). But on mt7988 we use only 
-the first config-segment
-(last cell=0 in dts-patch).
-
-at the end it will look like this:
-
-       mediatek,syscon-type:
-         $ref: /schemas/types.yaml#/definitions/phandle-array
-         description:
-           A phandle to syscon used to access the register of type 
-switch,
-           the field should always be 3 cells long.
-         items:
-           - items:
-               - description:
-                   Phandle to system controller
-               - description:
-                   Register offset
-               - description:
-                   Index of config segment
-                 enum: [0, 1, 2, 3]
-
-would this be ok?
-
-> Best regards,
-> Krzysztof
-
-regards Frank
+Yours,
+Linus Walleij
 
