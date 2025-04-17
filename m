@@ -1,63 +1,63 @@
-Return-Path: <linux-kernel+bounces-608882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB787A919B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 12:49:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A11B0A919AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 12:48:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99C5A173DAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 10:49:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 085E93BA559
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 10:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19CB9232373;
-	Thu, 17 Apr 2025 10:49:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171FE2309A6;
+	Thu, 17 Apr 2025 10:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dmx5oJ6J"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cplR2MAF"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A67F2309AD
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 10:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEDD2230988
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 10:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744886941; cv=none; b=EkR65zMLO6rEKEnQ5PbFzb5Fju4u4K1q5bf4eExj1Kl0XxJ/7XSTG139uMVnC2tMXYdi/10wJ4Q5me3vsj7MA91bAwZTBQHauqQq6XlrETDnYvVbTgWWL+Q0RMri/U5J22didCno6OikaHZA8Xr2kwgGDw5OaSdHfLSSZPm1xW0=
+	t=1744886888; cv=none; b=IXThcoNMxaFt9jLQxzPNUY2ZPEieS0rawcg+xNdP57pSY71QBakPsAgdT2r6WbrBMehodko8AfsdiI2muYI0Ei1CnCvoY5IhBZxAsWrqp57g3wgHcwI2XCpMAqx8oljnephcuD3pJ3xq51VWMcWtyWnuVUrBONW/AsgMNeb3160=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744886941; c=relaxed/simple;
-	bh=gqGzOX65dgUloUXBiDM2uUofMMrXchcJwN/9t+iSb7k=;
+	s=arc-20240116; t=1744886888; c=relaxed/simple;
+	bh=cvVlxw6voFepum5B3j7VuYklAnJvwlbit3ZxBrFCeuY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=LX1wl1W0LrpaUt4jG5vQLBO3MQCerF2v81ztwDlyJ+tLz4uXZl8oYwmeUVXempJNlwj2bp9EUWCg0GE3XIepkSOYW11bCTdZwOpX1WFUR0vR+b51fnp2vtlj0XeemfMbYaHPKb360M1VZCIygGTyEcCVDBRTyHxpbWlNjHHlYWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dmx5oJ6J; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:To:CC; b=suYjEjTFdHYaU5ITXfL6IWuoZ3rdTH5lRlenf6cvODOEvwyF1QwUWKbpjZbLv+kKizldelpAtdhaqJBKSqy479siL7rlHOAckM+y5qh6Fe+dzRyHvMuuhjPf31WvU0A5tlkvEz35WGzULhYUCqCbZgci3eSG4i2eKyUDFfubI8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cplR2MAF; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53H5l5Ml009309;
-	Thu, 17 Apr 2025 10:47:36 GMT
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53H5l3CY022761;
+	Thu, 17 Apr 2025 10:47:41 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	dTr8jPcJDG1ssEC02tHjuO+8nyj5jMrX7M1nMqoPipQ=; b=dmx5oJ6JtpYkEYa/
-	L0Vyz/KnttUzx2cqqWQYLeTWaUVL4XmR58nnaXOAePWW/gdcYyg6h3EUnPCmjkBv
-	R7s6G1p3W9uZuCobNfASQi2UgwC686Ds9UK1bpo2iffENDzgTH7U88JppoWaQy2j
-	XtF/S64aYGs1bf2wOGjlw6kcP8M1o8Wpt2UtE/etIJDBhGYDoid9GXAC8itkgk2e
-	cPjaCNM1MbsmZ5wDkoogdYJWQcBJi6F8bQEPDDH8plelucItKSZuw02n0Mc14DDf
-	CcILIbR5SjsRr/BHFie+zFcb9xTc6n5DcLXKN3kwklyvPE6aRDX5CaZEWq60DP75
-	LGg5fw==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4628rvbuw0-1
+	fl2qado12sJSasEZ85EejccDkasGJOzdpdf5GWKzGqc=; b=cplR2MAFgNtv3jkf
+	m+BRgiGkeT9kLkC1/OH+hhbQKyLBSzNrn1MhJdBy+nxwG2iwbYCCKRpAO4hnIChy
+	JDqapvRlSx7n7zRMn7R3XpNfi9rqPyl99jxj7t3+fWo/+aDsYApOMVLQptPohpJU
+	hqhf2V1SQKKemmR8heOEpRj4eCJwBbGif+/YYOduQZBqtnuURg2tqntSmmTsX694
+	eUij9Fo2ZHzG46/MR0L1VJqV/JHxlwD/DNz9hLd+GEzvytwlbQhS5FjaRN1YdO4f
+	B/YN5o9cGmb86vURCxL6GqTuaty60SnOwqxk+0H/fBDNV0q0otTroBX1oFxu0ZSZ
+	4nTTbA==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ygj9ek0e-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Apr 2025 10:47:36 +0000 (GMT)
+	Thu, 17 Apr 2025 10:47:41 +0000 (GMT)
 Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53HAlZHQ011208
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53HAleh0018259
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Apr 2025 10:47:35 GMT
+	Thu, 17 Apr 2025 10:47:40 GMT
 Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
  nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 17 Apr 2025 03:47:31 -0700
+ 15.2.1544.9; Thu, 17 Apr 2025 03:47:35 -0700
 From: Luo Jie <quic_luoj@quicinc.com>
-Date: Thu, 17 Apr 2025 18:47:10 +0800
-Subject: [PATCH v3 3/6] arm64: tlb: Convert the opencoded field modify
+Date: Thu, 17 Apr 2025 18:47:11 +0800
+Subject: [PATCH v3 4/6] arm64: nvhe: Convert the opencoded field modify
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,7 +66,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20250417-field_modify-v3-3-6f7992aafcb7@quicinc.com>
+Message-ID: <20250417-field_modify-v3-4-6f7992aafcb7@quicinc.com>
 References: <20250417-field_modify-v3-0-6f7992aafcb7@quicinc.com>
 In-Reply-To: <20250417-field_modify-v3-0-6f7992aafcb7@quicinc.com>
 To: Yury Norov <yury.norov@gmail.com>,
@@ -90,29 +90,29 @@ CC: <linux-kernel@vger.kernel.org>, <cocci@inria.fr>,
         <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
         Luo Jie <quic_luoj@quicinc.com>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744886837; l=1071;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744886837; l=1077;
  i=quic_luoj@quicinc.com; s=20250209; h=from:subject:message-id;
- bh=gqGzOX65dgUloUXBiDM2uUofMMrXchcJwN/9t+iSb7k=;
- b=sxhXTdsE+Z/QAYZZpILNncmv9BD3WHP8C30/OyBTr9mtTkJJhDV22A9VJlIMxz87/nnKD69Ta
- SFmrL05AyupA38N88nqL6ZzChWDnb8DsQhi7Z9hD9tVAMrP2JnglnZT
+ bh=cvVlxw6voFepum5B3j7VuYklAnJvwlbit3ZxBrFCeuY=;
+ b=GTL0dCoHat+xXHUQb1fat8JsWpoJ4Y5akSpsWuWFztDiVKGbhBiItuLWg0KHJfcY3W7NleQZM
+ qh+d+klpWIfDh0G12O8Y+QNqzV0cvncGSj5hNd48sXgS2CAjsQzaQyL
 X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
  pk=pzwy8bU5tJZ5UKGTv28n+QOuktaWuriznGmriA9Qkfc=
 X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nasanex01b.na.qualcomm.com (10.46.141.250)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: AtLGZHnrWsYSQEjPsUo0tJffbaXJLcWr
-X-Authority-Analysis: v=2.4 cv=RbSQC0tv c=1 sm=1 tr=0 ts=6800dc48 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=ZOzjf2MOAAAA:8 a=COk6AnOGAAAA:8 a=C2vL1j-_i977Atbg1qQA:9
+X-Proofpoint-ORIG-GUID: 5C9jqgUTuZmSpnBBeYGCWvUM3h1fRkyj
+X-Authority-Analysis: v=2.4 cv=PruTbxM3 c=1 sm=1 tr=0 ts=6800dc4d cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=ZOzjf2MOAAAA:8 a=COk6AnOGAAAA:8 a=SCSGtF1BeqTgPpDbPWsA:9
  a=QEXdDO2ut3YA:10 a=1Mhi-5-LkjG4w5oc0yAU:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: AtLGZHnrWsYSQEjPsUo0tJffbaXJLcWr
+X-Proofpoint-GUID: 5C9jqgUTuZmSpnBBeYGCWvUM3h1fRkyj
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-04-17_03,2025-04-15_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=542
- suspectscore=0 adultscore=0 impostorscore=0 clxscore=1015 bulkscore=0
- phishscore=0 priorityscore=1501 spamscore=0 mlxscore=0 lowpriorityscore=0
- malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
+ priorityscore=1501 malwarescore=0 adultscore=0 lowpriorityscore=0
+ impostorscore=0 clxscore=1015 spamscore=0 mlxscore=0 mlxlogscore=421
+ phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
  definitions=main-2504170080
 
 Replaced below code with the wrapper FIELD_MODIFY(MASK, &reg, val)
@@ -126,23 +126,23 @@ https://coccinelle.gitlabpages.inria.fr/website
 
 Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
 ---
- arch/arm64/include/asm/tlbflush.h | 3 +--
+ arch/arm64/kvm/hyp/include/nvhe/memory.h | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
-index eba1a98657f1..0d250ef4161c 100644
---- a/arch/arm64/include/asm/tlbflush.h
-+++ b/arch/arm64/include/asm/tlbflush.h
-@@ -112,8 +112,7 @@ static inline unsigned long get_trans_granule(void)
- 	    level >= 0 && level <= 3) {					\
- 		u64 ttl = level & 3;					\
- 		ttl |= get_trans_granule() << 2;			\
--		arg &= ~TLBI_TTL_MASK;					\
--		arg |= FIELD_PREP(TLBI_TTL_MASK, ttl);			\
-+		FIELD_MODIFY(TLBI_TTL_MASK, &arg, ttl);			\
- 	}								\
- 									\
- 	__tlbi(op, arg);						\
+diff --git a/arch/arm64/kvm/hyp/include/nvhe/memory.h b/arch/arm64/kvm/hyp/include/nvhe/memory.h
+index 34233d586060..b2af748964d0 100644
+--- a/arch/arm64/kvm/hyp/include/nvhe/memory.h
++++ b/arch/arm64/kvm/hyp/include/nvhe/memory.h
+@@ -30,8 +30,7 @@ enum pkvm_page_state {
+ static inline enum kvm_pgtable_prot pkvm_mkstate(enum kvm_pgtable_prot prot,
+ 						 enum pkvm_page_state state)
+ {
+-	prot &= ~PKVM_PAGE_STATE_PROT_MASK;
+-	prot |= FIELD_PREP(PKVM_PAGE_STATE_PROT_MASK, state);
++	FIELD_MODIFY(PKVM_PAGE_STATE_PROT_MASK, &prot, state);
+ 	return prot;
+ }
+ 
 
 -- 
 2.34.1
