@@ -1,128 +1,166 @@
-Return-Path: <linux-kernel+bounces-608718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE554A9172C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 11:02:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85E07A91730
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 11:03:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 335605A065D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:02:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51A223BF3CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D2C2040BF;
-	Thu, 17 Apr 2025 09:02:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="x1/g2sst"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 295C5320F;
-	Thu, 17 Apr 2025 09:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F350B2139A4;
+	Thu, 17 Apr 2025 09:03:10 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FDC2199E9A
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 09:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744880546; cv=none; b=SBo167LDsZ2tp7xYdn606Lm8EcMVx/zWakBtUDxHKHJd3mcSohvSawQtHmcXlieguvwAQyn7+2oizaCTy7RxQSG0YDdePnWg5MaorQM4siAXwjRB9OQ0Pr8qXYgs1rTDv5fk1srHlJutwffp2sIx2S1bubBI0smgAZx4ENQVXjQ=
+	t=1744880590; cv=none; b=Xhl2QpayXTYRLis8xuivXQ/44HRH4RHM/DZ4GG0x//z+2/lmgSY9IMZL9mMktGR7hrg4DreEsjfKQZxGwXDo7SWC80uqBh5m3aAXWfj1a2UYcPZnspw4CuI7XwkihNz31YrpItoqyJbdSyCy4AsH/pHfwj5xcUfHqhy5h64M0do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744880546; c=relaxed/simple;
-	bh=fZETOokQ9yFz5Am7vbAdLFemx+/IfN9pgm5+YJu498k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ePPhNZRzMGzVIUplv2PzF8k19WTsThbxasLGdUJlZaFsfmuVavkcL4tALz46/FZKEw7WgbZHCisuHoHciia0ItqqqQhSKRXoay+pTwzABxyaa0FRVaE3qFcZlaBBccDHHS9YkoQpYjYexivSJ79oMgUwDtiVNV1zMX0iHoh31ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=x1/g2sst; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D552C4CEE4;
-	Thu, 17 Apr 2025 09:02:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1744880545;
-	bh=fZETOokQ9yFz5Am7vbAdLFemx+/IfN9pgm5+YJu498k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=x1/g2sstuMxXaVbkzKi82RGV/P3AtOFE4jG1y68kXLyJl4kN52GYC/VIx9UhzGTT+
-	 dlr32bhDh4bRnJURs2wFzwRJ/m6O8LJCb9RsNajXw+8OIbhxvtXAM9L/P0HEOmpz+n
-	 JnpiLaTKElZuKWp83xftpAgrJqSqJpZTjzvy/8IE=
-Date: Thu, 17 Apr 2025 11:02:22 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Jules Irenge <jbi.octave@gmail.com>
-Cc: dpenkler@gmail.com, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: gpib: Fix Kconfig
-Message-ID: <2025041704-unmoved-foam-c8c4@gregkh>
-References: <Z_-rcegWISUc6zhk@octinomon>
+	s=arc-20240116; t=1744880590; c=relaxed/simple;
+	bh=chPNgJWlAJIYfoVhPSe8B7wibkLIdRt+TN7BeZpBL3A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D4j4HUAMP+WXfV4KrW+Dty9RPRt4YTqAwrnDdxg3COMJ5PXA4sp+0Jb4Bn4+RP1QKyvE6LxO3t1KWQdqnXStNv9saFgURed6fku+678OJbyRzR1Q+SwppqbPjG/V+3NNbhZe/4CWG0eptS3hSDSU362VHAp3pofIyHL/pEAohxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D1DAB1516;
+	Thu, 17 Apr 2025 02:02:58 -0700 (PDT)
+Received: from [10.163.48.140] (unknown [10.163.48.140])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3B3C13F59E;
+	Thu, 17 Apr 2025 02:02:57 -0700 (PDT)
+Message-ID: <ac7b1117-76cc-4eac-8975-f0dc3cbbe398@arm.com>
+Date: Thu, 17 Apr 2025 14:32:55 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z_-rcegWISUc6zhk@octinomon>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: Support ARM64_VA_BITS=52 when setting
+ ARCH_MMAP_RND_BITS_MAX
+To: =?UTF-8?Q?Kornel_Dul=C4=99ba?= <korneld@google.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Steve Capper <steve.capper@arm.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, ssradjacoumar@google.com,
+ chromeos-krk-upstreaming@google.com
+References: <20250403183638.3386628-1-korneld@google.com>
+ <38049b58-a504-4223-9f6d-537609931fb4@arm.com>
+ <CACF_fqnevOo9NSRwDAh7KVQZTHTkP0pc2NKEXrWFapMYLf0Wkw@mail.gmail.com>
+ <6f1af7bf-a354-4b90-bf82-edc8cc6e71fe@arm.com>
+ <CACF_fq=yFLUO2P0qrZFizUJe8J2FGYUK7w3DykKL3x7_R87UQA@mail.gmail.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <CACF_fq=yFLUO2P0qrZFizUJe8J2FGYUK7w3DykKL3x7_R87UQA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 16, 2025 at 02:07:44PM +0100, Jules Irenge wrote:
-> Chekpatch reports a warning in Kconfig
+
+
+On 4/17/25 13:38, Kornel Dulęba wrote:
+> On Thu, Apr 17, 2025 at 7:15 AM Anshuman Khandual
+> <anshuman.khandual@arm.com> wrote:
+>>
+>>
+>>
+>> On 4/4/25 22:16, Kornel Dulęba wrote:
+>>> On Thu, Apr 3, 2025 at 11:46 PM Anshuman Khandual
+>>> <anshuman.khandual@arm.com> wrote:
+>>>>
+>>>>
+>>>>
+>>>> On 4/4/25 00:06, Kornel Dulęba wrote:
+>>>>> When the 52-bit virtual addressing was enabled the select like
+>>>>> ARCH_MMAP_RND_BITS_MAX logic was never updated to account for it.
+>>>>> Because of that the rnd max bits would be set to the default value of
+>>>>> 18 when ARM64_VA_BITS=52.
+>>>>> Fix this by setting ARCH_MMAP_RND_BITS_MAX to the same value that would
+>>>>> be used if 48-bit addressing was used. That's because the 52-bit
+>>>>> addressing is used only if the caller provides a hint to mmap, with a
+>>>>> fallback to 48-bit addressing.
+>>>>
+>>>> Why should ARCH_MMAP_RND_BITS_MAX value be same for both 48 bits and 52
+>>>> bits VA in case the user does request for 52 bit VA via mmap() hint and
+>>>> the HW supports it ?
+>>>
+>>> Two reasons really.
+>>> 1. The whole behavior is controlled through a global knob -
+>>> /proc/sys/vm/mmap_rnd_bits. ARCH_MMAP_RND_BITS_MAX is used as an upper
+>>> bound for the value that can be set to that knob.
+>>> So we have a single setting for all processes. Some might want 52 bit
+>>> addressing, others will stick with 48.
+>>> 2. Quoting the documentation for this knob:
+>>>
+>>> """
+>>> mmap_rnd_bits
+>>> This value can be used to select the number of bits to use to
+>>> determine the random offset to the base address of vma regions
+>>> resulting from mmap allocations on architectures which support tuning
+>>> address space randomization. This value will be bounded by the
+>>> architecture’s minimum and maximum supported values.
+>>> """
+>>>
+>>> I suppose that it's legal for some calls to mmap from the same process
+>>> to request a 52 bit VA, while other calls will want only 48 bits.
+>>> Because of that the random offset can't be larger than what would work
+>>> for the 48 bit case.
+>>
+>> Agreed but should not this rationale also be added in the commit
+>> message as well ?
 > 
-> WARNING: please write a help paragraph that fully describes the config symbol
->          with at least 4 lines
+> Sure, I will update this in v2.
+>>
+>>
+>>>
+>>>>
+>>>>>
+>>>>> Fixes: b6d00d47e81a ("arm64: mm: Introduce 52-bit Kernel VAs")
+>>
+>> Correct commit to be attributed for this fix.
 > 
-> To fix this , more accurate description is added.
+> What commit would you like me to point at? I selected b6d00d47e81a,
+> because it introduced "ARM64_VA_BITS=52".
+> Looking at git blame, ARCH_MMAP_RND_BITS_MAX logic was introduced back
+> in 2016 in 8f0d3aa9de57 ("arm64: mm: support ARCH_MMAP_RND_BITS"),
+> which is before "ARM64_VA_BITS=52" was a thing.
+> I suppose that there's also 3cb7e662a930 ("arm64: Kconfig: Fix
+> indentation and add comments"), but that's just some whitespace
+> adjustments.
+
+It was just a statement confirming that the commit ID chosen here in
+this patch is the right one indeed. Apologies for the confusion.
+
 > 
-> Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
-> ---
->  drivers/staging/gpib/Kconfig | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/staging/gpib/Kconfig b/drivers/staging/gpib/Kconfig
-> index aa01538d5beb..1255035a995a 100644
-> --- a/drivers/staging/gpib/Kconfig
-> +++ b/drivers/staging/gpib/Kconfig
-> @@ -41,10 +41,11 @@ config GPIB_AGILENT_82357A
->  	select GPIB_COMMON
->  	depends on USB
->  	help
-> -	  Enable support for Agilent/Keysight 82357x USB dongles.
-> +	  Enable support for the Agilent/Keysight 82357A and 82357B USB-to-GPIB adapters.
-> +	  This device allows GPIB instruments to be controlled over a USB connection.
->  
-> -	  To compile this driver as a module, choose M here: the module will be
-> -	  called agilent_82357a.
-> +	  To compile this driver as a module, choose M here. The resulting module will be
-> +	  named agilent_82357a.
->  
->  config GPIB_CEC_PCI
->  	tristate "CEC PCI board"
-> -- 
-> 2.49.0
-> 
-> 
-
-Hi,
-
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
-
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- You did not specify a description of why the patch is needed, or
-  possibly, any description at all, in the email body.  Please read the
-  section entitled "The canonical patch format" in the kernel file,
-  Documentation/process/submitting-patches.rst for what is needed in
-  order to properly describe the change.
-
-- You did not write a descriptive Subject: for the patch, allowing Greg,
-  and everyone else, to know what this patch is all about.  Please read
-  the section entitled "The canonical patch format" in the kernel file,
-  Documentation/process/submitting-patches.rst for what a proper
-  Subject: line should look like.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
+>>
+>>
+>>>>> Signed-off-by: Kornel Dulęba <korneld@google.com>
+>>>>> ---
+>>>>>  arch/arm64/Kconfig | 6 +++---
+>>>>>  1 file changed, 3 insertions(+), 3 deletions(-)
+>>>>>
+>>>>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+>>>>> index 748c34dc953c..38e0bac567f5 100644
+>>>>> --- a/arch/arm64/Kconfig
+>>>>> +++ b/arch/arm64/Kconfig
+>>>>> @@ -332,9 +332,9 @@ config ARCH_MMAP_RND_BITS_MAX
+>>>>>       default 24 if ARM64_VA_BITS=39
+>>>>>       default 27 if ARM64_VA_BITS=42
+>>>>>       default 30 if ARM64_VA_BITS=47
+>>>>> -     default 29 if ARM64_VA_BITS=48 && ARM64_64K_PAGES
+>>>>> -     default 31 if ARM64_VA_BITS=48 && ARM64_16K_PAGES
+>>>>> -     default 33 if ARM64_VA_BITS=48
+>>>>> +     default 29 if (ARM64_VA_BITS=48 || ARM64_VA_BITS=52) && ARM64_64K_PAGES
+>>>>> +     default 31 if (ARM64_VA_BITS=48 || ARM64_VA_BITS=52) && ARM64_16K_PAGES
+>>>>> +     default 33 if (ARM64_VA_BITS=48 || ARM64_VA_BITS=52)
+>>>>>       default 14 if ARM64_64K_PAGES
+>>>>>       default 16 if ARM64_16K_PAGES
+>>>>>       default 18
+>>
+>> Otherwise LGTM.
+>>
+>> Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
 
