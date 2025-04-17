@@ -1,106 +1,101 @@
-Return-Path: <linux-kernel+bounces-609387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E164A9219E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 17:30:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5B36A921A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 17:31:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03A6D1B6019C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:30:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6456B3BD370
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C13624339D;
-	Thu, 17 Apr 2025 15:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 079FF253B79;
+	Thu, 17 Apr 2025 15:31:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="duBEkN2d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="r7fnejSH";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RhJ9nZiM"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76FE7139CE3;
-	Thu, 17 Apr 2025 15:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C132F24339D;
+	Thu, 17 Apr 2025 15:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744903823; cv=none; b=ikUA4Je5BiLwzdSDNHQQrJEhx/qK2bm3XGtEtjDh2aLhAcSiGhBLITOdpU2faapM4CEP/1VjARxA1td8b8XAZMLpHEEev4WchJFrp7o8459uB+RGeyS04FssGX1aNN4IQCt6Wbl8o1qKBS6rv3vss0FTtXWa2lzjv733H2a1EeM=
+	t=1744903891; cv=none; b=L7dnOpph1uJ3I7+wvZpkxqbV5U4rqqejpFj/45VuOnFaC9B9GoJLwKo8kEJUWsfHhOVWPGIamry27DiZMJjt2mOmOT7UNL6nvN0vRGr0lusH3mqK8hZjBiilvA/BlCnJ7c0MQe/6VWWO7vLxhJYL8q3jLsRAn3KvegT1mSLAYIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744903823; c=relaxed/simple;
-	bh=iIwq3SepiLZOW3+bHC9Ee86Ar1qvIl3ZCPXcm+Gnlxs=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=V7j6nj7rNe0Svyf+Og4iEn+NG935F2Pz4qw/jGO0NbmJPo/0qqJYK/zPpC+grADrfEPeh/k+OG2Mh2xbo7QtANil63+OVy4g5ClIE6h+14/0LgHEuBXnG/TC240G6ouXaxHppaZ+jVgSWczmk6KF8C8jG9R4Q61dxdf7UWmbmy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=duBEkN2d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E67DEC4CEE4;
-	Thu, 17 Apr 2025 15:30:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744903823;
-	bh=iIwq3SepiLZOW3+bHC9Ee86Ar1qvIl3ZCPXcm+Gnlxs=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=duBEkN2dyHx6WeI6lWcGRUk+VJbfJ9TusBkSmL0/DqZyPtXuwuOyRI3ldPAOk76/i
-	 FpU2MNJsPf2EYmm13g+MjUWTt1x9VF96ROOr+szjwtj9zmEpO0lQvzysJ5OiPxbJjh
-	 aSPHSbR0J0lR2JrBv8nopXjiuIe/HGeIvP+Q4yT1tqqpgLkSCugkjvmAzJai9EAJWd
-	 dGHvsQzMW/LgmAcdTbMfy4j8RHqNfSg7QyL/CYMv7kH7E1KrnrjreAHuFsuydK1Y1r
-	 nX0X7499t3/a6siu49RylwDl5hk1KX+fmE8NdeABD94VA1q7XQ2b9YVd7LKazr9O5K
-	 eI5tMLEqtBlnw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33E47380664C;
-	Thu, 17 Apr 2025 15:31:02 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1744903891; c=relaxed/simple;
+	bh=wH4xbnF0tJ+lpv6tI2RocL517peQVILv0bdOqBny/aM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t4BHXW1yceZsdboNkkQpgWO05bSt1DMQBwUh/wf7J7hNGbRQRddtvaoYrU12aGXGJkw/l3US5c6anBzgy+etDQfrVpPNvY/b3ZXiYHv4oxhPj/ZKPXq6ERBIahZ+FgaCVOVsDM2GQviR2iQ2batmFuF8LlZnmBMlDpzkzNXjmT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=r7fnejSH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RhJ9nZiM; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 17 Apr 2025 17:31:26 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744903888;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jPz1GvAsRDSeWCTqbiCwXpDsU6owFfdI+6h+yJOwEN8=;
+	b=r7fnejSHrmuXZG3gkKO6oax4/vQkB0tYQslhdQS4NLgWa1Qg7ycLsssCP3Achi+GJeFvY8
+	mAD+Vw4zPOSbHJvK8L5trOLqdaiASJhiAjpLesCPTAwbA/wjDeSr4waGGTXgmVaDB5jsXp
+	jRxWplPFXqCFcWlwldZDA7wsDXWrEyNROGH0xgQJfdZj0vjQ+RYBgpLJpAbQVfJvYsg7lm
+	zUuZxst0QJmcuxO3F91W3/Mh6cubMsrvp5XUOv6sWuSefQt0ECKxHGLzJD5V6wCR5aUpjF
+	3MhWFRX+Zx4PIIBnsG1BG1iYhCKP4txp1uahOX39RtEzxo9S3ZlzAP+ehhXthg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744903888;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jPz1GvAsRDSeWCTqbiCwXpDsU6owFfdI+6h+yJOwEN8=;
+	b=RhJ9nZiMb5QGNDaj87nqAmzhO5W3mAIsyA/Z0DzqINI7yVN+20Qn/BOe6+bj3GyNENvfiJ
+	YrSPRn/ltCnQImBg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Ian Kent <raven@themaw.net>, Mark Brown <broonie@kernel.org>,
+	Eric Chanudet <echanude@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>, Ian Kent <ikent@redhat.com>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev,
+	Alexander Larsson <alexl@redhat.com>,
+	Lucas Karpinski <lkarpins@redhat.com>, Aishwarya.TCV@arm.com
+Subject: Re: [PATCH v4] fs/namespace: defer RCU sync for MNT_DETACH umount
+Message-ID: <20250417153126.QrVXSjt-@linutronix.de>
+References: <20250408210350.749901-12-echanude@redhat.com>
+ <fbbafa84-f86c-4ea4-8f41-e5ebb51173ed@sirena.org.uk>
+ <20250417-wolfsrudel-zubewegt-10514f07d837@brauner>
+ <fb566638-a739-41dc-bafc-aa8c74496fa4@themaw.net>
+ <20250417-abartig-abfuhr-40e558b85f97@brauner>
+ <20250417-outen-dreihundert-7a772f78f685@brauner>
+ <20250417-zappeln-angesagt-f172a71839d3@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2 1/5] net: ethernet: mtk_eth_soc: reapply mdc divider
- on reset
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174490386075.4117078.7252062901146226930.git-patchwork-notify@kernel.org>
-Date: Thu, 17 Apr 2025 15:31:00 +0000
-References: <8ab7381447e6cdcb317d5b5a6ddd90a1734efcb0.1744764277.git.daniel@makrotopia.org>
-In-Reply-To: <8ab7381447e6cdcb317d5b5a6ddd90a1734efcb0.1744764277.git.daniel@makrotopia.org>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: nbd@nbd.name, sean.wang@mediatek.com, lorenzo@kernel.org,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, matthias.bgg@gmail.com,
- angelogioacchino.delregno@collabora.com, f.fainelli@gmail.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250417-zappeln-angesagt-f172a71839d3@brauner>
 
-Hello:
-
-This series was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Wed, 16 Apr 2025 01:50:46 +0100 you wrote:
-> From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
+On 2025-04-17 17:28:20 [+0200], Christian Brauner wrote:
+> >     So if there's some userspace process with a broken NFS server and it
+> >     does umount(MNT_DETACH) it will end up hanging every other
+> >     umount(MNT_DETACH) on the system because the dealyed_mntput_work
+> >     workqueue (to my understanding) cannot make progress.
 > 
-> In the current method, the MDC divider was reset to the default setting
-> of 2.5MHz after the NETSYS SER. Therefore, we need to reapply the MDC
-> divider configuration function in mtk_hw_init() after reset.
-> 
-> Fixes: c0a440031d431 ("net: ethernet: mtk_eth_soc: set MDIO bus clock frequency")
-> Signed-off-by: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> 
-> [...]
+> Ok, "to my understanding" has been updated after going back and reading
+> the delayed work code. Luckily it's not as bad as I thought it is
+> because it's queued on system_wq which is multi-threaded so it's at
+> least not causing everyone with MNT_DETACH to get stuck. I'm still
+> skeptical how safe this all is. 
 
-Here is the summary with links:
-  - [net,v2,1/5] net: ethernet: mtk_eth_soc: reapply mdc divider on reset
-    https://git.kernel.org/netdev/net/c/6bc2b6c6f16d
-  - [net,v2,2/5] net: ethernet: mtk_eth_soc: correct the max weight of the queue limit for 100Mbps
-    https://git.kernel.org/netdev/net/c/6b02eb372c67
-  - [net,v2,3/5] net: ethernet: mtk_eth_soc: revise QDMA packet scheduler settings
-    https://git.kernel.org/netdev/net/c/1b66124135f5
-  - [net,v2,4/5] net: ethernet: mtk_eth_soc: net: revise NETSYSv3 hardware configuration
-    (no matching commit)
-  - [net,v2,5/5] net: ethernet: mtk_eth_soc: convert cap_bit in mtk_eth_muxc struct to u64
-    (no matching commit)
+I would (again) throw system_unbound_wq into the game because the former
+will remain on the CPU on which has been enqueued (if speaking about
+multi threading).
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Sebastian
 
