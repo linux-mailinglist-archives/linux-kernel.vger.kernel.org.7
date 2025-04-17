@@ -1,131 +1,132 @@
-Return-Path: <linux-kernel+bounces-608539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B369A914F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:22:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FC7FA9150E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:23:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95D8F189F59F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:22:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 034B13ACFDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2914321A458;
-	Thu, 17 Apr 2025 07:22:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3852C219A8C;
+	Thu, 17 Apr 2025 07:22:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NpvjqSLw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="GyCobIhu"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3C5218EBA;
-	Thu, 17 Apr 2025 07:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43A0217F36;
+	Thu, 17 Apr 2025 07:22:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744874538; cv=none; b=iwOltyeZJmZ2VDga3tTLu5zGPEUjlT7PAkOlrvGXoqt9opbVUwZj14/ZovcwF0klhkgZ1S/+fnxNgGnGoM64K4X6LCsHhH454YkFu19ma9n41Ugv4auhNhrfLxOhotb4YWDB9L7Wc8bBsVcb1r9pgOBwaoxI8PzdvCHii5/5OBM=
+	t=1744874575; cv=none; b=J+E2i6VnWKfTuWiOarBObLB/rn32Hex5UqhoLD3RftwMjyeyb3xVlwyqZVvVWtx0VP2WJ74ef0VrFaQeNpFC0IjcQhuJCguAHwiDGVLKO7oumT5H8SO4iGtQSgTtuiDWgT6n5BUe6lU+ldjYVH7TmZwHVzW8v3KKqtJ4+KRWm70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744874538; c=relaxed/simple;
-	bh=njd0Ctie5/NJ/u0nIFo0b6CFaL7VXTbcT9S6B/AcLZ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KyqT65NwdppDitsStT37MoST3ULHZz7+v8TNWEfQDU3Wnamy3BC1dyHh/60VBl/sE4ZTXyn3BsCrJJvslWG61lAcjof6NNb2Oc9E2/HLGHYprGPpBLn3AxaRINJW1IVO4vn1nuRd9ph6DaBVdgazErASpGJFJ5FpN15tJ2CcTy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NpvjqSLw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F4F0C4CEE4;
-	Thu, 17 Apr 2025 07:22:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744874537;
-	bh=njd0Ctie5/NJ/u0nIFo0b6CFaL7VXTbcT9S6B/AcLZ8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NpvjqSLwnO5P4oov6RnrAJXFvg5T2B5X5w7SVvL3sYujMH5bf0IpFDTcWNfIXY8sH
-	 ISYUjs240LTbyzWxSlvk3SclXPnsjL3106pN+tJLAWjKmn3VHFF7Dkv7sLwEFGnaQL
-	 jbPsZicrvOsj6AzaMl8u9RifyRNNSY+vQLaAqOVjKE6IaSyVRqwQKv1FBYREQLvizv
-	 6Qlexqzlh8L17ECPL6ZfzNikEUw2Vq+xekJevwisVsuJUZ75bXsBYkN4RMqBao9HPu
-	 XjXV4gJprVmX3DLafD6kKfmLB3oyRheCLo9FBevmpnsY5IZ2zaxzsMPIxv3HYCxZNi
-	 xjti22U8Axj/Q==
-Date: Thu, 17 Apr 2025 09:22:12 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Hans Zhang <18255117159@163.com>, lpieralisi@kernel.org, kw@linux.com,
-	bhelgaas@google.com, heiko@sntech.de,
-	manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	jingoohan1@gmail.com, thomas.richard@bootlin.com,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH] PCI: dw-rockchip: Configure max payload size on host init
-Message-ID: <aACsJPkSDOHbRAJM@ryzen>
-References: <20250416151926.140202-1-18255117159@163.com>
- <aACoEpueUHBLjgbb@ryzen>
- <85643fe4-c7df-4d64-e852-60b66892470a@rock-chips.com>
+	s=arc-20240116; t=1744874575; c=relaxed/simple;
+	bh=Icm1Q/omv7sI1TZB8AuErbOKaaYlIRqQXQFkerJZWsY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ecVm5xSenabeHpQVtLbfTPfKEl5G68SOgocKGHu/R0AHmWxUxV0tyVxO+ahMjl1tNTLpzRgJo00c9QBmVoZAW79KIUCDyIX8Dw3sJXNbdzu1hEvF8PhOqaqwJnOcZAR7YGc00oO+dNIbBmsA3gPZaMLiF0DolZcKQpGHPFF6G5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=GyCobIhu; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4ZdTr36YZ2z9sny;
+	Thu, 17 Apr 2025 09:22:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1744874563; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Icm1Q/omv7sI1TZB8AuErbOKaaYlIRqQXQFkerJZWsY=;
+	b=GyCobIhuKB7LCnXJEhw+MhBLztlAJb7i6P9QYi4Y9lJBzLe297YxQb4u9dCOzzxxOSoJ1k
+	q+5eNzS5YEj6+bvysd6ZjtU9uN5Z/H89cw1z+fAQJg8LdhVW7NeVSMKdrEvY0OrbCeAnvr
+	5Ov/Af4E85NITU7T9QBj1bPI5drnyDfbgTcnYdO0ILQsQMFSjxQjsgmewdzyClYwl0/yO+
+	dA74hADEOyOUbUb8dKPrO6hDIpcT78zhdds2BRVeORXpV1pco94WzpyYXFlF1ZwtiKrA3q
+	s6AIM6DqzDDUqAi/COLDzevpeNYHFTVsLrr7t/OdKgpqaw9tLuVK90hagbTF3Q==
+Message-ID: <59c1e09a5c47a60e26c5fb10c3305356328a98a6.camel@mailbox.org>
+Subject: Re: [PATCH] workqueue: rust: add creation of workqueues
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Tejun Heo <tj@kernel.org>, Alice Ryhl <aliceryhl@google.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Philipp Stanner <phasta@kernel.org>,
+  Miguel Ojeda <ojeda@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,  Gary Guo <gary@garyguo.net>,
+ =?ISO-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,  Benno
+ Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Trevor Gross <tmgross@umich.edu>, Daniel Almeida
+ <daniel.almeida@collabora.com>, Tamir Duberstein <tamird@gmail.com>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 17 Apr 2025 09:22:40 +0200
+In-Reply-To: <aAALmSjLyWqrcQ45@slm.duckdns.org>
+References: <20250411-create-workqueue-v1-1-f7dbe7f1e05f@google.com>
+	 <Z_1QzTdV8mHJYdQ6@cassiopeiae> <Z_4gb8ZAlbfhobgW@google.com>
+	 <Z_45kDv_wAHIBNpI@cassiopeiae> <Z_-f7Bgjw35iXkui@google.com>
+	 <CAH5fLgiKxDpWg=dDsTJsrB6Kmkw32GZ9WPO-SrpWm4TZDxGVtg@mail.gmail.com>
+	 <aAALmSjLyWqrcQ45@slm.duckdns.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <85643fe4-c7df-4d64-e852-60b66892470a@rock-chips.com>
+X-MBO-RS-ID: 3218d200813b166295e
+X-MBO-RS-META: fzqsgiezkr1gbya8r381es4aho6jiypf
 
-On Thu, Apr 17, 2025 at 03:08:34PM +0800, Shawn Lin wrote:
-> 在 2025/04/17 星期四 15:04, Niklas Cassel 写道:
-> > Hello Hans,
-> > 
-> > On Wed, Apr 16, 2025 at 11:19:26PM +0800, Hans Zhang wrote:
-> > > The RK3588's PCIe controller defaults to a 128-byte max payload size,
-> > > but its hardware capability actually supports 256 bytes. This results
-> > > in suboptimal performance with devices that support larger payloads.
-> > 
-> > Patch looks good to me, but please always reference the TRM when you can.
-> > 
-> > Before this patch:
-> > 		DevCap: MaxPayload 256 bytes
-> > 		DevCtl: MaxPayload 128 bytes
-> > 
-> > 
-> > As per rk3588 TRM, section "11.4.3.8 DSP_PCIE_CAP Detail Registers Description"
-> > 
-> > DevCap is per the register description of DSP_PCIE_CAP_DEVICE_CAPABILITIES_REG,
-> > field PCIE_CAP_MAX_PAYLOAD_SIZE.
-> > Which claims that the value after reset is 0x1 (256B).
-> > 
-> > DevCtl is per the register description of
-> > DSP_PCIE_CAP_DEVICE_CONTROL_DEVICE_STATUS, field PCIE_CAP_MAX_PAYLOAD_SIZE_CS.
-> > Which claims that the reset value is 0x0 (128B).
-> > 
-> > Both of these match the values above.
-> > 
-> > As per the description of PCIE_CAP_MAX_PAYLOAD_SIZE_CS:
-> > "Permissible values that
-> > can be programmed are indicated by the Max_Payload_Size
-> > Supported field (PCIE_CAP_MAX_PAYLOAD_SIZE) in the Device
-> > Capabilities (DEVICE_CAPABILITIES_REG) register (for more
-> > details, see section 7.5.3.3 of PCI Express Base Specification)."
-> > 
-> > So your patch looks good.
-> > 
-> > I guess I'm mostly surprised that the e.g. pci_configure_mps() does not
-> > already set DevCtl to the max(DevCap.MPS of the host, DevCap.MPS of the
-> > endpoint).
-> > 
-> > Apparently pci_configure_mps() only decreases MPS from the reset values?
-> > It never increases it?
-> > 
-> 
-> Actually it does:
-> 
-> https://github.com/torvalds/linux/blob/master/Documentation/admin-guide/kernel-parameters.txt#L4757
+On Wed, 2025-04-16 at 09:57 -1000, Tejun Heo wrote:
+> Hello, Alice.
+>=20
+> On Wed, Apr 16, 2025 at 09:41:21PM +0200, Alice Ryhl wrote:
+> ...
+> > I thought about implementation approaches. The first thought that
+> > sprang to mind is add a list of all delayed work items, but now I
+> > think we can do better. We can have an atomic counter tracking the
+> > number of delayed work items, and have destroy_workqueue() do this:
+> >=20
+> > retry:
+> > drain_workqueue(wq);
+> > if (has_delayed_work_items(wq)) {
+> > =C2=A0=C2=A0=C2=A0 wait_for_delayed_to_be_scheduled(wq);
+> > =C2=A0=C2=A0=C2=A0 goto retry;
+> > }
+> >=20
+> > where wait_for_delayed_to_be_scheduled() either waits for the
+> > counter
+> > to hit zero, or waits for at least waits for one of them to be
+> > scheduled. For example, maybe wait_for_delayed_to_be_scheduled()
+> > could
+> > add a dummy work item *without* waking up the worker threads, and
+> > then
+> > wait for that work item to get executed, which would effectively
+> > mean
+> > that it sleeps until something else wakes up a worker.
+>=20
+> I suppose that can work too but the delays can be pretty long, so
+> while
+> correct, I'm not sure it'd be very pleasant to use. If we per-cpu
+> lists, I
+> don't think the overhead would be all that noticeable, so may as well
+> do
+> that?
 
-If that is the case, then explain the before/after with Hans lspci output here:
-https://lore.kernel.org/linux-pci/bb40385c-6839-484c-90b2-d6c7ecb95ba9@163.com/
+I assume you, ultimately, mean that the list of delayed_work's would be
+accessible through workqueue_struct, correct?
 
-His patch changes the default value of DevCtl.MPS (from 128B to 256B), but if
-pci_configure_mps() can bump DevCtl.MPS to a higher value, his patch should not
-be needed, since the EP (an NVMe SSD in his case) has DevCap.MPS 512B, and the
-RC itself has DevCap.MPS 256B.
+And then destroy_workqueue() could loop over all of them with
+cancel_delayed_work_sync()?
 
-Seems like we are missing something here.
+I think that would be the cleanest possible solution.
 
+P.
 
-Kind regards,
-Niklas
+>=20
+> Thanks.
+>=20
+
 
