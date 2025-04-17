@@ -1,149 +1,107 @@
-Return-Path: <linux-kernel+bounces-609353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55DB4A92128
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 17:17:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0206BA9214B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 17:21:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0A4E3B9A66
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:17:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B4888A1276
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:20:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA75253B41;
-	Thu, 17 Apr 2025 15:17:12 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D7EE253326;
-	Thu, 17 Apr 2025 15:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A150253B66;
+	Thu, 17 Apr 2025 15:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l1fuFtYz"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32308253B46;
+	Thu, 17 Apr 2025 15:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744903032; cv=none; b=CFuAUwDDkjyORoYsZLPpjvAVxTwFvKkUnw1Ge2us5jgy+fmivyCzsE06KVOnRa2OQPFK5dOe3ojaGmYe/E5c5mG5GYVcPCgcR+ZuJodYx3RLHQDy4MQKyMswiF5BEvF9w4miPSaSXqSXAKvl8P8sGfjTpw/CrE3sf+DADkH5kXM=
+	t=1744903204; cv=none; b=IEJndcAgz7xbKj+eJUKzlJv7O7W3swTOESHlR2wu0vsJ4gw3Gj9UghLYUEtYtBo12/8jy8/cG4c9eE9sxf8uFmRGeBi0AQo/SkPfsEkIops1cPzBBCGpDpCzm5BA+jF/luXxQKH86LSh83BPnQt7TgKaC9YnpWGS9fEVBtuatCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744903032; c=relaxed/simple;
-	bh=/DN/ywHfF7hTddel9ytyHlbN3f9UVyhmg5vwqY6t3DI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UOB1B86BIsKEv4VpU+UoJF4I24Gpuic+ZqQ/ZOi2CGZL4wjm4NtPRRMUJqv8bkUuzmZP+5vcmAC1LK/6wBDQv8JL1NvSvZS/wI9GGy5mkWUtC0mcrDmaFdVpjtJdF3aOA8uUBdicECY+tZBVBYreLgBodmaDYq+ABZIB0/3mxfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2B5071515;
-	Thu, 17 Apr 2025 08:17:07 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EFCC93F59E;
-	Thu, 17 Apr 2025 08:17:07 -0700 (PDT)
-Message-ID: <2cb2d9af-460e-481d-81cc-b189948f4e8c@arm.com>
-Date: Thu, 17 Apr 2025 16:17:05 +0100
+	s=arc-20240116; t=1744903204; c=relaxed/simple;
+	bh=iF0MFNdSqNf+d8zIASv5RomdNLV7tGRC5qSAGQtei6s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pyu5/Tz6fmqGsCWfnHI5/yI+FHSB4oFHBUx92RDXqd11O3ER6EkuqxUAH84cZZDt/v+7gFKTPVtykiLC8YPaiCMb3Z/NTQ5Z+/D6UK+nx2OhU9EGeOaJ57wts4ownexDmw1gAP2coWC7fJ//ugx38uKgHOZ7JXK1934mbM9bwlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l1fuFtYz; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744903203; x=1776439203;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=iF0MFNdSqNf+d8zIASv5RomdNLV7tGRC5qSAGQtei6s=;
+  b=l1fuFtYzUWUNuuiOqWUVDCRLPlE8aMXf5SRsmbw19g66cpGbrEN51VDM
+   DUzshMKpTlKYiF2qNVLepYBmsf2QbzCEwu7eKtHTB1SyBIdi9jCEZL1Zu
+   /nf/5zrQKN4aWvGkBGTxJSL5BbhEk39ml025DwbOQYB7d6YAurJyqbnpq
+   HAVoyhoRzfvL/a6ss5ICFGXTDsMF/GuvFSulqWcyX9znZHjpWL8udnLhL
+   DsttNvkMpWd4Q+UqZTZ9P1RhWJ5sTU1Z263WRT196I9HIwx/FHtcIY9ZL
+   nuHhep3tTnks/GBcoj2kVKyKbbOKFSRa8xYiWQwRVD02VxjGmGKYzPDaQ
+   w==;
+X-CSE-ConnectionGUID: JUsv5irySo+n04BaI1rMjg==
+X-CSE-MsgGUID: sERTl/3+T6meWxZX8GWjGw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11406"; a="46625080"
+X-IronPort-AV: E=Sophos;i="6.15,219,1739865600"; 
+   d="scan'208";a="46625080"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2025 08:20:03 -0700
+X-CSE-ConnectionGUID: Tlt1Fk2nQ/OQgo63fGVrxQ==
+X-CSE-MsgGUID: pODSp18WQcO3fPjhgp67OQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,219,1739865600"; 
+   d="scan'208";a="130689869"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa006.fm.intel.com with ESMTP; 17 Apr 2025 08:20:01 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id E2EC75D9; Thu, 17 Apr 2025 18:19:59 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mark Brown <broonie@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: David Lechner <dlechner@baylibre.com>
+Subject: [PATCH v2 0/2] spi: Introduce and use spi_bpw_to_bytes()
+Date: Thu, 17 Apr 2025 18:17:51 +0300
+Message-ID: <20250417151958.490174-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] perf/amlogic: Replace smp_processor_id() with
- raw_smp_processor_id() in meson_ddr_pmu_create()
-To: Will Deacon <will@kernel.org>, Anand Moon <linux.amoon@gmail.com>
-Cc: Jiucheng Xu <jiucheng.xu@amlogic.com>, Mark Rutland
- <mark.rutland@arm.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- "open list:AMLOGIC DDR PMU DRIVER" <linux-amlogic@lists.infradead.org>,
- "moderated list:ARM PMU PROFILING AND DEBUGGING"
- <linux-arm-kernel@lists.infradead.org>,
- "open list:ARM PMU PROFILING AND DEBUGGING"
- <linux-perf-users@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-References: <20250407063206.5211-1-linux.amoon@gmail.com>
- <20250417132033.GA12863@willie-the-truck>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250417132033.GA12863@willie-the-truck>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 17/04/2025 2:20 pm, Will Deacon wrote:
-> On Mon, Apr 07, 2025 at 12:02:03PM +0530, Anand Moon wrote:
->> The Amlogic DDR PMU driver meson_ddr_pmu_create() function incorrectly uses
->> smp_processor_id(), which assumes disabled preemption. This leads to kernel
->> warnings during module loading because meson_ddr_pmu_create() can be called
->> in a preemptible context.
->>
->> Following kernel warning and stack trace:
->> [   31.745138] [   T2289] BUG: using smp_processor_id() in preemptible [00000000] code: (udev-worker)/2289
->> [   31.745154] [   T2289] caller is debug_smp_processor_id+0x28/0x38
->> [   31.745172] [   T2289] CPU: 4 UID: 0 PID: 2289 Comm: (udev-worker) Tainted: GW 6.14.0-0-MANJARO-ARM #1 59519addcbca6ba8de735e151fd7b9e97aac7ff0
->> [   31.745181] [   T2289] Tainted: [W]=WARN
->> [   31.745183] [   T2289] Hardware name: Hardkernel ODROID-N2Plus (DT)
->> [   31.745188] [   T2289] Call trace:
->> [   31.745191] [   T2289]  show_stack+0x28/0x40 (C)
->> [   31.745199] [   T2289]  dump_stack_lvl+0x4c/0x198
->> [   31.745205] [   T2289]  dump_stack+0x20/0x50
->> [   31.745209] [   T2289]  check_preemption_disabled+0xec/0xf0
->> [   31.745213] [   T2289]  debug_smp_processor_id+0x28/0x38
->> [   31.745216] [   T2289]  meson_ddr_pmu_create+0x200/0x560 [meson_ddr_pmu_g12 8095101c49676ad138d9961e3eddaee10acca7bd]
->> [   31.745237] [   T2289]  g12_ddr_pmu_probe+0x20/0x38 [meson_ddr_pmu_g12 8095101c49676ad138d9961e3eddaee10acca7bd]
->> [   31.745246] [   T2289]  platform_probe+0x98/0xe0
->> [   31.745254] [   T2289]  really_probe+0x144/0x3f8
->> [   31.745258] [   T2289]  __driver_probe_device+0xb8/0x180
->> [   31.745261] [   T2289]  driver_probe_device+0x54/0x268
->> [   31.745264] [   T2289]  __driver_attach+0x11c/0x288
->> [   31.745267] [   T2289]  bus_for_each_dev+0xfc/0x160
->> [   31.745274] [   T2289]  driver_attach+0x34/0x50
->> [   31.745277] [   T2289]  bus_add_driver+0x160/0x2b0
->> [   31.745281] [   T2289]  driver_register+0x78/0x120
->> [   31.745285] [   T2289]  __platform_driver_register+0x30/0x48
->> [   31.745288] [   T2289]  init_module+0x30/0xfe0 [meson_ddr_pmu_g12 8095101c49676ad138d9961e3eddaee10acca7bd]
->> [   31.745298] [   T2289]  do_one_initcall+0x11c/0x438
->> [   31.745303] [   T2289]  do_init_module+0x68/0x228
->> [   31.745311] [   T2289]  load_module+0x118c/0x13a8
->> [   31.745315] [   T2289]  __arm64_sys_finit_module+0x274/0x390
->> [   31.745320] [   T2289]  invoke_syscall+0x74/0x108
->> [   31.745326] [   T2289]  el0_svc_common+0x90/0xf8
->> [   31.745330] [   T2289]  do_el0_svc+0x2c/0x48
->> [   31.745333] [   T2289]  el0_svc+0x60/0x150
->> [   31.745337] [   T2289]  el0t_64_sync_handler+0x80/0x118
->> [   31.745341] [   T2289]  el0t_64_sync+0x1b8/0x1c0
->>
->> Changes replaces smp_processor_id() with raw_smp_processor_id() to
->> ensure safe CPU ID retrieval in preemptible contexts.
->>
->> Cc: Jiucheng Xu <jiucheng.xu@amlogic.com>
->> Fixes: 2016e2113d35 ("perf/amlogic: Add support for Amlogic meson G12 SoC DDR PMU driver")
->> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
->> ---
->>   drivers/perf/amlogic/meson_ddr_pmu_core.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/perf/amlogic/meson_ddr_pmu_core.c b/drivers/perf/amlogic/meson_ddr_pmu_core.c
->> index 07446d784a1a..c1e755c356a3 100644
->> --- a/drivers/perf/amlogic/meson_ddr_pmu_core.c
->> +++ b/drivers/perf/amlogic/meson_ddr_pmu_core.c
->> @@ -511,7 +511,7 @@ int meson_ddr_pmu_create(struct platform_device *pdev)
->>   
->>   	fmt_attr_fill(pmu->info.hw_info->fmt_attr);
->>   
->> -	pmu->cpu = smp_processor_id();
->> +	pmu->cpu = raw_smp_processor_id();
->>   
->>   	name = devm_kasprintf(&pdev->dev, GFP_KERNEL, DDR_PERF_DEV_NAME);
->>   	if (!name)
-> 
-> 
-> Bah, this follows what the other drivers are doing but I continue to
-> dislike the races we have between CPU hotplug and perf PMU registration.
-> 
-> Robin -- did you have a crack at fixing that or did I dream it?
+Recently in the discussion with David the idea of having
+a common helper popped up. The helper converts the given
+bits per word to bytes. The result will always be power-of-two
+(e.g. for 37 bits it returns 8 bytes) or 0 for 0 input.
+More details are in the respective code comment.
 
-I've had "Perf core should do cpu hotplug!" written on the whiteboard 
-behind my desk for about 5 years now, does that count? :)
+This mini-series introduces it and replaces current users
+under drivers/spi and we expect more (and possibly some
+lurking in other subsystems).
 
-However my initial plan was to at least factor out some of this common 
-boilerplate within drivers/perf itself - I currently have one WIP patch 
-from last year making a start on that, but I reckon I can find a way to 
-make it crucial for the other PMU driver work I've already got scheduled 
-this quarter (assuming I win the game of whack-a-mole against IOMMU race 
-conditions soon enough...)
+Mark, if you okay with the idea, please, make this to be
+an immutable branch or tag for others to pull.
 
-Cheers,
-Robin.
+In v2:
+- improved examples in the code comment and commit message (David)
+
+Andy Shevchenko (2):
+  spi: Add spi_bpw_to_bytes() helper and use it
+  spi: dw: Use spi_bpw_to_bytes() helper
+
+ drivers/spi/spi-dw-core.c |  2 +-
+ drivers/spi/spi.c         |  2 +-
+ include/linux/spi/spi.h   | 25 +++++++++++++++++++++++++
+ 3 files changed, 27 insertions(+), 2 deletions(-)
+
+-- 
+2.47.2
+
 
