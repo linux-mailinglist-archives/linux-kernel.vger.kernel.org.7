@@ -1,61 +1,82 @@
-Return-Path: <linux-kernel+bounces-608628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 096B3A91615
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 10:03:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DA744A9160B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 10:02:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9399D1906D87
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:04:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C8E11906BED
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:03:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3885522D7BE;
-	Thu, 17 Apr 2025 08:03:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56BB622DF82;
+	Thu, 17 Apr 2025 08:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hYwxILuk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PurnAwqO"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A2922423C;
-	Thu, 17 Apr 2025 08:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC55223323;
+	Thu, 17 Apr 2025 08:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744877030; cv=none; b=ci5TBMZTtLIBfDdpBbRRO4AR2AbNBJYznE5BuBNclBWagqSIgaF4sMzjyG8A9dNE2/CZVRmD383r8+2DBfhiNNHJWByWwPvTAUkQTSdgCQ+FB9B++JgAYwJ7XBdFUfAZvG2z6ERMPFouFb8lmfJp2uZ+YCZng4+7ZLE6B5rFRZc=
+	t=1744876970; cv=none; b=FyMumVxx6l4a4BPIYFTmqLOos3nY6pow2SN+WTzJCifHg930xr0+9YOLj0v0uMux60IZ7YkzXCQOifR0qYdkTiND+O3VPMHDbvpgHj8MHW9mHTtwm4PCylCw8zde+4OlqP1JvtlAGjwVrJitqzydjkexzP0rffN1ea2iBGdpSiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744877030; c=relaxed/simple;
-	bh=/hss0P/gPPDydOlWxQkzm7ADD0P5tj2HUtGEQ57EIhM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qe5tqz7Mf2wlO3mCEg8X3Ru6V62WnRQTXyg+XTpTzR816GaRoVIbxa6KzWgLOf9C3ac9/WzI/u7TJ1Sxyq3wkbDG7eZaVWlctdT2PlkH5v6eRryKjQiVQwgPPCJGOEztksDGf5CryYucsDB3tyrEY6VX6QyfCQN8N7Y87gQv3E8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hYwxILuk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAE5FC4CEE4;
-	Thu, 17 Apr 2025 08:03:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744877030;
-	bh=/hss0P/gPPDydOlWxQkzm7ADD0P5tj2HUtGEQ57EIhM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=hYwxILuk4Sz9tlsH3G54+Fj5sDipxOqnfv6fdd1gtZSBdcL275XE+ICi/r2d3ikN1
-	 sy+e8J9yXQz2+lwDt7NGLczIy4SBtmxlZBEhq9nm4u0FRgWtvGNt4L8Dgn7COPUL6q
-	 +qU9fdCWw559VaVJ8JLg5wJRY4LToZr6aaWpRU1Ogh0TIFao5i/0ffAQdSaazpnx5b
-	 rSexkDHLqfuElOw3YXQBfyKS9s438t9trhrupFGndagV+OQh+zLIhKue+8EZEaSzMY
-	 S9c52ie1waCiQX+C2GkY57tNQ6zaHBd+cBlSOqXlS0nadWFHq5vgpxJvHDopG0iXmu
-	 Bjurcs9n+UJnw==
-From: Philipp Stanner <phasta@kernel.org>
-To: schalla@marvell.com,
-	vattunuru@marvell.com,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-	Shijith Thotton <sthotton@marvell.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Philipp Stanner <phasta@kernel.org>,
-	Satha Rao <skoteshwar@marvell.com>
-Cc: virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] vdpa/octeon_ep: Use non-hybrid PCI devres API
-Date: Thu, 17 Apr 2025 10:02:12 +0200
-Message-ID: <20250417080211.19970-2-phasta@kernel.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1744876970; c=relaxed/simple;
+	bh=wiPWrUhGj00o1lWQzH91MZMqqRNzqRZfWVe0JK/I1Rs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZLv051+GcxLRwaBuEy7+CQTGGUIgdzH93cPDIMuL4UlcW1whXEH/th5eCnAQxvusno1IevkNG3TQacrZG1oUHcjuqMiE1UbKdi1wCPulypOZ0VEu8Pl7mWM0C1JHzzP2oQEYY39CVNEAJiAEhWYZSJ1O4kTyrcsigYJaxbxEQFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PurnAwqO; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43edecbfb46so3160595e9.0;
+        Thu, 17 Apr 2025 01:02:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744876966; x=1745481766; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=B3jRal4Jn7vaNumBAt7rfXcFuMG2Mrpl8kHbOKtDn3g=;
+        b=PurnAwqOgWAWxNFANfgZpKs4h9MY/m4avljyP6nWhh34kThBKqFQLP8VP/ch0RduBF
+         KX91dZy9hckhbZ0+jxuVjjR8PMIg9jYdLYrdDBeSMg5JYUfuM9AGeLxix4kHWNqkgpYd
+         S7Dq/WaxEEa0TDvF14E2brN20xh0v2oYcn4EbmsG4RUKXC5HFH7d7+mAcvYxBVVvqCyD
+         qNhkwlAENKIkILrl6s5QAfvxmbj5BpBymNEUuwZzYwCr35934uDeijrWWiwaVBCyOcEv
+         ODwyi7iqcE/KNR4LkEX6H12XdNfsyLSEu9NMljnyyIAZp5n17xmCyCEMLJEPrDCSGto6
+         969A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744876966; x=1745481766;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=B3jRal4Jn7vaNumBAt7rfXcFuMG2Mrpl8kHbOKtDn3g=;
+        b=mEPdA1IaLivibCJntSlJaH6xaG6XH8lPMCVHUeJzG9Bo2hxz0kpItInObEvMKpcM0o
+         srKnBFOklBpKX+4JO/KG7+2mRcoPDcbm8OQ3dBCosR/Uty+bQR48bkltXsm5Ed35bCZR
+         RNGcmZb9IevW1NeJD7chw7dW3DWWFIEHO9N9AGjmUDzIwW2xrXRrHb+lTUXRG4UhIOtk
+         W3c5rha++BYR9Sb8IXC5pa2Ek/pQEWBbInhkVn0nd9Ps/16d+cZlRDZiROwPCYpBGepq
+         vOHSxq4MAk2mINwHmMR+0RLuozSgQ3BoDgg8DmiNnZ88uKBU9HO7UWTBbLtR1stOBlKU
+         wu5g==
+X-Gm-Message-State: AOJu0YzRkH24Dv1pyAbkqXSfQ6R1LRNEG0NTGNMeJst83Fr1h8vs28jE
+	kZ/wmeMi5tNQX/htrXwPGB6ZKEFLIMBFzVW00p5oc1x3uI0wk8sfB6adpQ==
+X-Gm-Gg: ASbGnctIBum8lZfCNDISerhdCeo2V+Wa1JDkEVz0+rftxQgYjLjbFug392USCrdQjxE
+	Pw+ibeQ6WK5lUCnmjQKqZh4kd/JuJ/KkzKQRVXVxc1j+Myl3bZnzCdWx9dGrEEcwuJGrpORu8k/
+	DzL3yhU6cWu1wJxcC9HzL7GHGmxrhdQfNOKy192J0rx6sMkslIFrlB7DP4jH9HlNx5UPv4ffkgT
+	IMWQnoDv30fL+ePc15A2uNOpj5gMCZzMdyloYiM2g049Xc3gqyID9JOk3Pbw4bk+dizaekR7BQF
+	tvayY7Jx2oyUMUEMFp8pj2YfaaE4gMEtdYEunf+eSR756Z8zywOaGO3iYrs0Cyfh947EP5/j2f8
+	tVNQ/
+X-Google-Smtp-Source: AGHT+IH5OKa5afzPi32/16/OV2y6Ec4xor63cnp26lhNOVp1/F7kmjRKREcEYTwkZY1Dq496mdbCag==
+X-Received: by 2002:a5d:47af:0:b0:38d:de45:bf98 with SMTP id ffacd0b85a97d-39ee5b13061mr3776453f8f.8.1744876966458;
+        Thu, 17 Apr 2025 01:02:46 -0700 (PDT)
+Received: from localhost (cpc1-brnt4-2-0-cust862.4-2.cable.virginm.net. [86.9.131.95])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4405f583bcesm32200525e9.3.2025.04.17.01.02.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Apr 2025 01:02:45 -0700 (PDT)
+From: Stafford Horne <shorne@gmail.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Linux OpenRISC <linux-openrisc@vger.kernel.org>,
+	Stafford Horne <shorne@gmail.com>
+Subject: [PATCH 0/2] OpenRISC documentation updates
+Date: Thu, 17 Apr 2025 09:02:30 +0100
+Message-ID: <20250417080236.4021257-1-shorne@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,57 +85,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-octeon enables its PCI device with pcim_enable_device(). This,
-implicitly, switches the function pci_request_region() into managed
-mode, where it becomes a devres function.
+Update OpenRISC docs to point to the correct mailing list and
+a new toolchain release page.
 
-The PCI subsystem wants to remove this hybrid nature from its
-interfaces. To do so, users of the aforementioned combination of
-functions must be ported to non-hybrid functions.
+Note for others, the https://openrisc.io/software page was also updated
+to point to bootlin toolchains which are created to the buildroot team.
 
-Moreover, since both functions are already managed in this driver, the
-calls to pci_release_region() are unnecessary.
+Stafford Horne (2):
+  Documentation: openrisc: Update mailing list
+  Documentation: openrisc: Update toolchain binaries URL
 
-Remove the calls to pci_release_region().
+ Documentation/arch/openrisc/openrisc_port.rst        | 12 ++++++------
+ .../zh_CN/arch/openrisc/openrisc_port.rst            | 12 ++++++------
+ .../zh_TW/arch/openrisc/openrisc_port.rst            | 12 ++++++------
+ 3 files changed, 18 insertions(+), 18 deletions(-)
 
-Replace the call to sometimes-managed pci_request_region() with one to
-the always-managed pcim_request_region().
-
-Signed-off-by: Philipp Stanner <phasta@kernel.org>
----
- drivers/vdpa/octeon_ep/octep_vdpa_main.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/vdpa/octeon_ep/octep_vdpa_main.c b/drivers/vdpa/octeon_ep/octep_vdpa_main.c
-index f3d4dda4e04c..e0da6367661e 100644
---- a/drivers/vdpa/octeon_ep/octep_vdpa_main.c
-+++ b/drivers/vdpa/octeon_ep/octep_vdpa_main.c
-@@ -391,7 +391,7 @@ static int octep_iomap_region(struct pci_dev *pdev, u8 __iomem **tbl, u8 bar)
- {
- 	int ret;
- 
--	ret = pci_request_region(pdev, bar, OCTEP_VDPA_DRIVER_NAME);
-+	ret = pcim_request_region(pdev, bar, OCTEP_VDPA_DRIVER_NAME);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to request BAR:%u region\n", bar);
- 		return ret;
-@@ -400,7 +400,6 @@ static int octep_iomap_region(struct pci_dev *pdev, u8 __iomem **tbl, u8 bar)
- 	tbl[bar] = pci_iomap(pdev, bar, pci_resource_len(pdev, bar));
- 	if (!tbl[bar]) {
- 		dev_err(&pdev->dev, "Failed to iomap BAR:%u\n", bar);
--		pci_release_region(pdev, bar);
- 		ret = -ENOMEM;
- 	}
- 
-@@ -410,7 +409,6 @@ static int octep_iomap_region(struct pci_dev *pdev, u8 __iomem **tbl, u8 bar)
- static void octep_iounmap_region(struct pci_dev *pdev, u8 __iomem **tbl, u8 bar)
- {
- 	pci_iounmap(pdev, tbl[bar]);
--	pci_release_region(pdev, bar);
- }
- 
- static void octep_vdpa_pf_bar_shrink(struct octep_pf *octpf)
 -- 
-2.48.1
+2.47.0
 
 
