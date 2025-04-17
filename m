@@ -1,302 +1,211 @@
-Return-Path: <linux-kernel+bounces-608448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC542A91391
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:10:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D7B5A91381
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:07:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E7233A9570
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 06:10:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73C043AF934
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 06:06:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75CE71F418B;
-	Thu, 17 Apr 2025 06:10:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD591F098D;
+	Thu, 17 Apr 2025 06:06:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="LOtTnpuE"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2082.outbound.protection.outlook.com [40.107.96.82])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=osandov-com.20230601.gappssmtp.com header.i=@osandov-com.20230601.gappssmtp.com header.b="WgGisocv"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E083D1EFFA8
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 06:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744870226; cv=fail; b=QPBs4mp8emXgVw55mF41waPP0KYyGIQX8YkleuFY+j/uZDu66WPoQJfmvXnfJqBBovynGPdRDDqsnTdIxUiDLSbFO7fjCwnycWUuJ+NG838CdGGjBBVjmB9nrxwp5O2WnNJFvisg3gYfCZ9Z/Zpfr6fX7G/cqnFGtH7J4QhNPb0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744870226; c=relaxed/simple;
-	bh=1RR9r1DqNr5V6pa+IRUG2zgCsYfajGzCe3zaOy9hm6A=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=se0pJLZtYmSQpQfXzzLwjukBZRe4eh/akk1YPtoiqMDs2BINCsWyVIvrunvoOIwstafpSuyVfWphHdb8+o7CCfCfCYhxOjPNYaYmbgRsfGqybLiSkIOjyZ+YRF0+VxIIhEi0FQr3axva053pr70FIUHy2aNRpsbzH4CrcjOkDxU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=LOtTnpuE; arc=fail smtp.client-ip=40.107.96.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BopvfqRXp6+d5IZX25j8V70GfERtOIM6ayd0aSKO44XrO9swgyt75Fsk/pQ2EwmP/R8oyXWAUjO1Tbw6HazZjQZqfeEJbtEfnjVe6qr05Kcs03DRntifIzNMdcbD0fYkz9kHhYUUrQFzgqIebSIQ7HZXtEJrFTQhHaLqF7fVaShgjlDnUg7ikD+ILX60KkiTx1AWq3WTvySDxChfP1jUET9h5rjlUAU/Sz5aqDAUjA81LYVwFsfYifcyBRRuIYMm363vEfEBWVPLBubu53yHMY1fyt7z0pgCqT4igHx0JzmmNPFCMu7ou5QXy3SEWi+d6cWGk320XknnXAMOtiiWwA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=y7QQ4PRCsUbYHEX8v5XuML6LSHV9JQqcocqGFMNAD4Q=;
- b=IW31mlwTKJEkex/Kcrr3mdceHe8deOiQo2vLwCAWqKXXQwKnJXuexH5vNFyuA+egpPwsAiDMBUlzDX1a3ZvUUc+RO8NSzrG00sl3mlurV2FeNsOS6JnnLpM6sQ5o+iNEZGLBZ+DtODszk/9SFRdYZlPy3BN0583Gsk7flHLyPSAvmpifx1dQ1Bjh3OHzpwGP31iG1Na/6sR0FxJo82AsG3TKVh3I2ZdfuG/ZuJRMR492A9/cYeR0mZArUYT5xDTNmnVGBQemuW3dsxVW8wZm9oeYkuDhO8M33SKRq6zznzA9YMXrXimcBqEKOS9WIZndX76vqTw3gHrXE05cS0R1pA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=y7QQ4PRCsUbYHEX8v5XuML6LSHV9JQqcocqGFMNAD4Q=;
- b=LOtTnpuEB8d7eBcFoRCztiBokv1R9Q2K6EivJmY78tnf/egnenEn3eJ2AZXskcr19EtdhfdNL9gvymcsXauSQaOSdyUYy+mkG0aNt1u8bk5RKrTmFnl8chNaVm/Y+oj2smBQ8+/tW/+TPFTEph/FZKLvJs4SGu19n0K+VBadfR0=
-Received: from CYZPR17CA0010.namprd17.prod.outlook.com (2603:10b6:930:8c::12)
- by SJ0PR12MB6927.namprd12.prod.outlook.com (2603:10b6:a03:483::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.22; Thu, 17 Apr
- 2025 06:10:19 +0000
-Received: from CY4PEPF0000E9DC.namprd05.prod.outlook.com
- (2603:10b6:930:8c:cafe::91) by CYZPR17CA0010.outlook.office365.com
- (2603:10b6:930:8c::12) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.22 via Frontend Transport; Thu,
- 17 Apr 2025 06:10:19 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CY4PEPF0000E9DC.mail.protection.outlook.com (10.167.241.75) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8655.12 via Frontend Transport; Thu, 17 Apr 2025 06:10:18 +0000
-Received: from kaveri.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 17 Apr
- 2025 01:10:12 -0500
-From: Shivank Garg <shivankg@amd.com>
-To: <shaggy@kernel.org>, <akpm@linux-foundation.org>
-CC: <willy@infradead.org>, <shivankg@amd.com>, <david@redhat.com>,
-	<wangkefeng.wang@huawei.com>, <jane.chu@oracle.com>, <ziy@nvidia.com>,
-	<donettom@linux.ibm.com>, <apopple@nvidia.com>,
-	<jfs-discussion@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <syzbot+8bb6fd945af4e0ad9299@syzkaller.appspotmail.com>
-Subject: [PATCH V3 2/2] jfs: implement migrate_folio for jfs_metapage_aops
-Date: Thu, 17 Apr 2025 06:06:34 +0000
-Message-ID: <20250417060630.197278-3-shivankg@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250417060630.197278-1-shivankg@amd.com>
-References: <20250417060630.197278-1-shivankg@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169C31EB5DA
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 06:06:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744870018; cv=none; b=gAgk32YMKCxlP+b1z225v4xAmjhBe/cDWz6rRPj3w28tm4EOCandWeu9KWKtbIl7+vher5l/XPhTnUqKsunJ+dVPLGUwNpx5ixiGxKb/Cx/zPA4nP1PK3760HjBrdxCrDZoCul+5/VqzIlY7UNWw8l+h+66+e9L/1h8QiYYkpxs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744870018; c=relaxed/simple;
+	bh=5GeC+qK8YG8hgshw/Vsza4sHAJzWnvUNdAHYih3+axA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pQftjH4DyeG7xWR2TSmUqt8oMFKCwK4WyVJkb+x7xbtgf1PoEeGvbO3UXrxKzyGMMkVYSYWh8t03J/0ARydJ0YFss6owQqL7wLkxHbSIi4thDN1TgwgFXgZxUpD6z1IadpoD73PlasreTzq5h70fJrbOzA9qPgJzBybk1zm08Y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com; spf=none smtp.mailfrom=osandov.com; dkim=pass (2048-bit key) header.d=osandov-com.20230601.gappssmtp.com header.i=@osandov-com.20230601.gappssmtp.com header.b=WgGisocv; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=osandov.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-223f7b10cbbso702965ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 23:06:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=osandov-com.20230601.gappssmtp.com; s=20230601; t=1744870016; x=1745474816; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=zGJ5OgB+eNLxh6yjEt0KC7v1R+HDpylF2/CRuaG8Yrs=;
+        b=WgGisocvmA3jKVz9PrveiD2/TTFfl0vYTGnNgfwWolUuGHCu5Ky0gO8/+3XCqygLA1
+         zAL23Aw3WEfnkR+Fs1lpqF1+P9p39p/KxmLqyNqIQX61GuED7s9XFuBsn0Xv4SN32rzv
+         9RmtTRDLQpUgd6LI1jLp8qQRnYVaHhi5Tb4IpEJjN/goTkKRfIUcDaCONskt0cDYHheG
+         b8A6R01nL75wZMWrNKnQaQTe9d6GOYTJmRVMvxGZQtodshYYUV4gxrdqxn4JPCrORYbf
+         rbWgNXbEvO/Az5xXGlFguH0imRtDJWGd2zPy9c/ois6GeazOkBOey7Hoqz0xr/NecHWN
+         /IrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744870016; x=1745474816;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zGJ5OgB+eNLxh6yjEt0KC7v1R+HDpylF2/CRuaG8Yrs=;
+        b=djJ9cqjVsfhLyLaNhEmFKoxyVBlm5RNJyKfXmqoljLyKaXXxDHfAv6d0ejwGxSoI2p
+         hwLYF1Y3GQhVJtW2rUkLUtTyCnY9qjHI5UuiG+Xfl1JBF/e7Tl9qcv2wX4QOotzn9h5N
+         rICGCi+SX6rlbcUG6G0tjH16yM05zV6R5ESsCaBI74wdhOPttHrQx2ftjoOAVYThNl4a
+         00OE58YaW3/FfJBSC9uAg5GwoWRW6s0168LdaQwRa/abBXy85ZyqAhHw2K90c6KqMv/2
+         TN4zLLun7+TrSjB3UxEUAgrg6ku2rBjEhLGRnI9oTFYyqlRw8OsGD0ArsqOkccNsEJUm
+         /j7g==
+X-Forwarded-Encrypted: i=1; AJvYcCUUmsdWRN5+/ZN9UA2MIYU7kVJh+wUcFs120hrjkkAQYfbhSf1p73oXLsUBHO1HgPNN3CUhlobeb8hM4gE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZVHJHelizXoUWq1CLBsyaSUqYf7BJgowTaIqu/MHJmj9BoiBH
+	j6HaetBfmLI56hj6KSgUOy1gU3/t5h7mkOf4h7ZrSWfc+7ZKj4HjswYC7Z290IA=
+X-Gm-Gg: ASbGncvfuHC2THFYRCfo0h4nimqsDu/lhcHP9cDaqWRBBPnDNYQabdwUSM17QTNKGKo
+	EB0V1Eh7W7XAnJUOQzPEKAU6VTmbhjqovgFmGoAe/drOWw6uskMv5dtKMQvN4924Tx3QyoD2zDJ
+	0uXYhPS3Ff7K0JNthv8h2p6KN2c2ta0+7h0nNtSdsIfQzvbK3OCs9s/qrYQ8QopBz4wxsYKiDS7
+	8bNjrNTkwybp7XHiaY+YHX9+z8k9+1TAwfxWWdXGaU11lMS9THcWz5nURK8pEdpDyfUf5N+D1TA
+	Fzz2XXCaSN+dgRYs/z+4H+FMg0dg8fGKEg==
+X-Google-Smtp-Source: AGHT+IGvvbEfuoj36uDT6iQfRvoVP/jlgaCQTj7ZxRBDmsIUR69H6fHHglU0zTLVf9g+bVwMLde9mw==
+X-Received: by 2002:a17:903:1251:b0:223:28a8:610b with SMTP id d9443c01a7336-22c412adbaamr10708135ad.14.1744870016272;
+        Wed, 16 Apr 2025 23:06:56 -0700 (PDT)
+Received: from telecaster ([2601:602:8980:9170::9098])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c33f1d118sm25050395ad.86.2025.04.16.23.06.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Apr 2025 23:06:55 -0700 (PDT)
+Date: Wed, 16 Apr 2025 23:06:55 -0700
+From: Omar Sandoval <osandov@osandov.com>
+To: Ye Liu <ye.liu@linux.dev>
+Cc: paulmck@kernel.org, Sweet Tea Dorminy <sweettea-kernel@dorminy.me>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, linux-toolchains@vger.kernel.org,
+	linux-mm@kvack.org, Ye Liu <liuye@kylinos.cn>,
+	linux-debuggers@vger.kernel.org
+Subject: Re: [PATCH] tools/drgn: Add script to display page state for a given
+ PID and VADDR
+Message-ID: <aACaf4_molKromnT@telecaster>
+References: <20250415075024.248232-1-ye.liu@linux.dev>
+ <20250415191414.a64de2d228ab5f43a5390acf@linux-foundation.org>
+ <42f50a48-10da-4739-9e51-f865fbf04bdd@linux.dev>
+ <098e977c-55cd-498b-bd36-725333c06210@dorminy.me>
+ <7e45afc8-dde0-481a-b0bf-0237f551ebe0@paulmck-laptop>
+ <665652ac-2e94-48b4-bf47-32870b823464@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9DC:EE_|SJ0PR12MB6927:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4df3a607-488c-4968-b090-08dd7d76878b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014|7416014|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?llVlJuyOhC0d2yV9c0yIG9ftgooYdUDZPFJND89RECUKc0iIlUnFLeDnKa5h?=
- =?us-ascii?Q?x4Sth66NEyzOs4Sb5yELKXsvUI4Bo1/hAQ4yCM5iX3ArgjDPM+c834JUOtYO?=
- =?us-ascii?Q?zqx13ARmNirG2B1AiVbNqbspVnqi7QW1Q761HKhHKhhy3udjztBTJqH1Hf/q?=
- =?us-ascii?Q?MYxr2x8m6xKwwxWG/JqwcvLlb+GxnI7ZQh46XqW+7FkVUPmmRWeJYTyzgHV/?=
- =?us-ascii?Q?Evt9RjzDw9/ASV4qveYWjbe9/6QtdGW45lpSMtfEGGamZ/VsAX8nLylH/XnX?=
- =?us-ascii?Q?MeVZuPYLhG1yVB+gPg+R1ZJyWDv+GV5Jl/JMNUdKPfOrO46qTTuVnM/tfJ9P?=
- =?us-ascii?Q?C6zFXO+7k+X6OwQh2faDWYC/pmi/lvfaVTtU++EhLuEkW8aH0WlgakrvlkmZ?=
- =?us-ascii?Q?9DhDFI8qMjGfFr/39DPlslFzKrMv9n+o/rvNBR2n4YPAVbk0w40o7JG8IiiT?=
- =?us-ascii?Q?h6SRWwWPgkv+VrVWv1RqV5IKlETRJjE2K3qRUuDINg5VbKsmO9Rg9Zpdx935?=
- =?us-ascii?Q?D/dzYzi6sxNovld6EXsYVHQUOeQtBCx2G8nI3JuzJAXdsX0O8PYP/6VYrpFc?=
- =?us-ascii?Q?7+rth7DSAINqRofskiu62Whd91BzGmGfEEx8izvaMXEsVPHuud56Oi0mUPiZ?=
- =?us-ascii?Q?e2y8f8Yug4Dndj84+VxpQvzm38IqyVnr5JPSx+MxdkmTA0CDZKYLxs1RaiLP?=
- =?us-ascii?Q?NIiWpEz+bCM5Qlpa5lBzFY+IUcWyuQjK4BHrIcOxfx1dGZRFSq1vLrZC5Fa0?=
- =?us-ascii?Q?gTgm67VSigOUacAF42dnf1R2thWUmEjKeD13Q+MXZBDrXksjNpc74STyubfk?=
- =?us-ascii?Q?xW1P+Jfjkp/fJyQQoe4pR8jJjckWbiAV1pqLKDe8TQPqaOPXVgA6S+f/sK0K?=
- =?us-ascii?Q?tBYnjDaxxi9FuJkdtbRwxT9rYW9ANVWCLia3EtX+2a+wuLQuhmy5J5jg9QQH?=
- =?us-ascii?Q?iUdNmqBnr8VDxFEowpFn+PdIiWeDSzuY8IDyGbs3uMBTLm1LbJSggZUgLJqX?=
- =?us-ascii?Q?+h0OkiAP+oGfalnHZ5d+c9u3DC9ycQYXJAE7G5CHN3FwikNQKcmnfFU/E6co?=
- =?us-ascii?Q?FadAo7nZTTMPZoxwtq3TxL87bRhIFvX4gHWtIrcnTfxMu3aD7t+hAFnHhlsb?=
- =?us-ascii?Q?8aDRAK2gRT1O6/xzhiD0dOO+lpF7iqXSO8S/8V00PhGAmLKmVUgBWIx5XYnr?=
- =?us-ascii?Q?dBtn+LnVHKYgPkT0E6R1qBLkzkvGq5la05y6B/Ij2LajDt4sSv3Bg7XxP5ed?=
- =?us-ascii?Q?PSjstar8wD6IQrruQukj1TWSz1Ivt7cm5u4CA6PqAKXbyKKz6D9TA8iT0v8Z?=
- =?us-ascii?Q?jvHwWWDlD0osOVRfyNG7X30tQyi3z8ZtvhOoQerYiymwaPa21X7JieRCQK+C?=
- =?us-ascii?Q?huk0K0aHGDyfK9TKSXRg51S90dwB+NuMGBhIkCNaNgG4+1AxQ0+P3EDXzpM7?=
- =?us-ascii?Q?0n0zGOYMmWTwhWFKixK+TzjL6LFWPrradn2mKR+eBiQ/nBmc4Ei7gwt9Tzk0?=
- =?us-ascii?Q?wnTkAv5d2bUdjcTJPhjiWKinkn4VSCbBOlW4fhoG1X0Lp9EEdqGWSzhPuA?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014)(7416014)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2025 06:10:18.8607
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4df3a607-488c-4968-b090-08dd7d76878b
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000E9DC.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6927
+In-Reply-To: <665652ac-2e94-48b4-bf47-32870b823464@linux.dev>
 
-Add the missing migrate_folio operation to jfs_metapage_aops to fix
-warnings during memory compaction. These warnings were introduced by
-commit 7ee3647243e5 ("migrate: Remove call to ->writepage") which
-added explicit warnings when filesystems don't implement migrate_folio.
+On Thu, Apr 17, 2025 at 09:29:23AM +0800, Ye Liu wrote:
+> 
+> 在 2025/4/16 12:02, Paul E. McKenney 写道:
+> > On Tue, Apr 15, 2025 at 11:28:41PM -0400, Sweet Tea Dorminy wrote:
+> >>
+> >> On 4/15/25 10:46 PM, Ye Liu wrote:
+> >>> 在 2025/4/16 10:14, Andrew Morton 写道:
+> >>>> On Tue, 15 Apr 2025 15:50:24 +0800 Ye Liu <ye.liu@linux.dev> wrote:
+> >>>>
+> >>>>> From: Ye Liu <liuye@kylinos.cn>
+> >>>>>
+> >>>>> Introduces a new drgn script, `show_page_info.py`, which allows users
+> >>>>> to analyze the state of a page given a process ID (PID) and a virtual
+> >>>>> address (VADDR). This can help kernel developers or debuggers easily
+> >>>>> inspect page-related information in a live kernel or vmcore.
+> >>>>>
+> >>>>> The script extracts information such as the page flags, mapping, and
+> >>>>> other metadata relevant to diagnosing memory issues.
+> >>>>>
+> >>>>> Currently, there is no specific maintainer entry for `tools/drgn/` in the
+> >>>>> MAINTAINERS file. Therefore, this patch is sent to the general kernel and
+> >>>>> tools mailing lists for review.
+> >>>> Help.  My copy of linux has no tools/drgn/
+> >>> I noticed that the current upstream Linux tree doesn't contain a
+> >>> `tools/drgn/` directory.
+> >>>
+> >>> I'm interested in contributing a drgn script tool as well.
+> >>> Given that this directory does not yet exist in mainline, where would
+> >>> be the appropriate place to add new drgn scripts? Would it make sense
+> >>> to create a new `tools/drgn/` directory, or is there a preferred
+> >>> location for such debugging scripts?
+> >>>
+> >>> Thanks,
+> >>> Ye
+> >> I believe the traditional thing to do with new drgn scripts is to add them
+> >> to the contrib directory in drgn via pull request:
+> >> https://github.com/osandov/drgn/blob/main/contrib/README.rst
+> > I have an RCU-related drgn script in tools/rcu, so maybe this one should
+> > go in tools/mm.
+> 
+> 
+> To determine the most appropriate place to submit this script, I looked
+> 
+> into existing drgn-based tooling in the kernel tree. Several drgn scripts
+> have already been added under `tools/`, such as:
+> 
+> - `tools/sched_ext/scx_show_state.py`
+> - `tools/cgroup/iocost_monitor.py`
+> - `tools/cgroup/memcg_slabinfo.py`
+> - `tools/writeback/wb_monitor.py`
+> - `tools/rcu/rcu-cbs.py`
+> - `tools/workqueue/wq_dump.py`
+> - `tools/workqueue/wq_monitor.py`
+> 
+> Given this precedent, I believe it would be reasonable to place
+> `show_page_info.py` under `tools/mm/`, since it's focused on memory
+> subsystem internals and would follow a similar organizational pattern
+> to the above.
+> 
+> I'd appreciate any input on whether this is a suitable direction.
+> I'm happy to send the script for review once the location is agreed upon.
+> 
+> Thanks,  
+> 
+> Ye Liu
 
-System reports following warnings:
-  jfs_metapage_aops does not implement migrate_folio
-  WARNING: CPU: 0 PID: 6870 at mm/migrate.c:955 fallback_migrate_folio mm/migrate.c:953 [inline]
-  WARNING: CPU: 0 PID: 6870 at mm/migrate.c:955 move_to_new_folio+0x70e/0x840 mm/migrate.c:1007
+Hi,
 
-Implement metapage_migrate_folio which handles both single and multiple
-metapages per page configurations.
+The drgn repository and the kernel tools directory are both valid places
+to put drgn scripts, and it's ultimately up to you where you'd prefer to
+put it. Here are some factors to consider, though:
 
-Fixes: 35474d52c605 ("jfs: Convert metapage_writepage to metapage_write_folio")
-Reported-by: syzbot+8bb6fd945af4e0ad9299@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/67faff52.050a0220.379d84.001b.GAE@google.com
-Signed-off-by: Shivank Garg <shivankg@amd.com>
----
- fs/jfs/jfs_metapage.c | 94 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 94 insertions(+)
+1. Reusability: if your script is very generic and would be widely
+   useful, the ideal is to add it as a helper to drgn upstream. For
+   scripts that are less generic but could still be useful to many
+   people, I'd personally prefer for them to go into the drgn
+   repository's tools or contrib directories. At the other extreme, if
+   your script is only useful to a handful of developers of a specific
+   subsystem, the kernel tools directory makes more sense.
+2. Kernel version coupling: there are a couple of options for dealing
+   with kernel changes that require drgn scripts to be updated (e.g.,
+   struct member renames, data structure changes).  Scripts in the
+   kernel tools directory tend to only handle the current version. This
+   is simpler, but it also means that sometimes you can't use features
+   from a new version of the script on old kernels. On the other hand,
+   the drgn repository supports every kernel version that's still
+   meaningfully deployed. This can complicate scripts with
+   version-dependent logic, but it means you can always use the latest
+   and greatest features on any kernel version. I prefer the latter
+   approach, but the choice is yours (except for drgn helpers upstream,
+   which are required to support all kernel versions).
+3. Maintainership: who wants to own the script? A lot of the current
+   drgn scripts in the kernel tools directory are written and maintained
+   by the relevant subsystem maintainers, so it's a no-brainer for them
+   to own it without any involvement from the drgn project. It's not as
+   obvious for other contributors. If the subsystem maintainer is
+   willing to own a drgn script in the kernel repo, then I won't
+   complain. I'm willing to take just about anything for the drgn
+   repository's contrib directory, and I'm slightly more selective for
+   helpers and tools.
 
-diff --git a/fs/jfs/jfs_metapage.c b/fs/jfs/jfs_metapage.c
-index df575a873ec6..8bf33c0a1b8c 100644
---- a/fs/jfs/jfs_metapage.c
-+++ b/fs/jfs/jfs_metapage.c
-@@ -15,6 +15,7 @@
- #include <linux/mempool.h>
- #include <linux/seq_file.h>
- #include <linux/writeback.h>
-+#include <linux/migrate.h>
- #include "jfs_incore.h"
- #include "jfs_superblock.h"
- #include "jfs_filsys.h"
-@@ -151,6 +152,54 @@ static inline void dec_io(struct folio *folio, blk_status_t status,
- 		handler(folio, anchor->status);
- }
- 
-+static int __metapage_migrate_folio(struct address_space *mapping, struct folio *dst,
-+				    struct folio *src, enum migrate_mode mode)
-+{
-+	struct meta_anchor *src_anchor = src->private;
-+	struct metapage *mps[MPS_PER_PAGE] = {0};
-+	struct metapage *mp;
-+	int i, rc;
-+
-+	for (i = 0; i < MPS_PER_PAGE; i++) {
-+		mp = src_anchor->mp[i];
-+		if (mp && metapage_locked(mp))
-+			return -EAGAIN;
-+	}
-+
-+	rc = filemap_migrate_folio(mapping, dst, src, mode);
-+	if (rc != MIGRATEPAGE_SUCCESS)
-+		return rc;
-+
-+	for (i = 0; i < MPS_PER_PAGE; i++) {
-+		mp = src_anchor->mp[i];
-+		if (!mp)
-+			continue;
-+		if (unlikely(insert_metapage(dst, mp))) {
-+			/* If error, roll-back previosly inserted pages */
-+			for (int j = 0 ; j < i; j++) {
-+				if (mps[j])
-+					remove_metapage(dst, mps[j]);
-+			}
-+			return -EAGAIN;
-+		}
-+		mps[i] = mp;
-+	}
-+
-+	/* Update the metapage and remove it from src */
-+	for (i = 0; i < MPS_PER_PAGE; i++) {
-+		mp = mps[i];
-+		if (mp) {
-+			int page_offset = mp->data - folio_address(src);
-+
-+			mp->data = folio_address(dst) + page_offset;
-+			mp->folio = dst;
-+			remove_metapage(src, mp);
-+		}
-+	}
-+
-+	return MIGRATEPAGE_SUCCESS;
-+}
-+
- #else
- static inline struct metapage *folio_to_mp(struct folio *folio, int offset)
- {
-@@ -175,6 +224,32 @@ static inline void remove_metapage(struct folio *folio, struct metapage *mp)
- #define inc_io(folio) do {} while(0)
- #define dec_io(folio, status, handler) handler(folio, status)
- 
-+static int __metapage_migrate_folio(struct address_space *mapping, struct folio *dst,
-+				    struct folio *src, enum migrate_mode mode)
-+{
-+	struct metapage *mp;
-+	int page_offset;
-+	int rc;
-+
-+	mp = folio_to_mp(src, 0);
-+	if (mp && metapage_locked(mp))
-+		return -EAGAIN;
-+
-+	rc = filemap_migrate_folio(mapping, dst, src, mode);
-+	if (rc != MIGRATEPAGE_SUCCESS)
-+		return rc;
-+
-+	if (unlikely(insert_metapage(dst, mp)))
-+		return -EAGAIN;
-+
-+	page_offset = mp->data - folio_address(src);
-+	mp->data = folio_address(dst) + page_offset;
-+	mp->folio = dst;
-+	remove_metapage(src, mp);
-+
-+	return MIGRATEPAGE_SUCCESS;
-+}
-+
- #endif
- 
- static inline struct metapage *alloc_metapage(gfp_t gfp_mask)
-@@ -554,6 +629,24 @@ static bool metapage_release_folio(struct folio *folio, gfp_t gfp_mask)
- 	return ret;
- }
- 
-+/**
-+ * metapage_migrate_folio - Migration function for JFS metapages
-+ */
-+static int metapage_migrate_folio(struct address_space *mapping, struct folio *dst,
-+				  struct folio *src, enum migrate_mode mode)
-+{
-+	int expected_count;
-+
-+	if (!src->private)
-+		return filemap_migrate_folio(mapping, dst, src, mode);
-+
-+	/* Check whether page does not have extra refs before we do more work */
-+	expected_count = folio_expected_refs(mapping, src);
-+	if (folio_ref_count(src) != expected_count)
-+		return -EAGAIN;
-+	return __metapage_migrate_folio(mapping, dst, src, mode);
-+}
-+
- static void metapage_invalidate_folio(struct folio *folio, size_t offset,
- 				    size_t length)
- {
-@@ -570,6 +663,7 @@ const struct address_space_operations jfs_metapage_aops = {
- 	.release_folio	= metapage_release_folio,
- 	.invalidate_folio = metapage_invalidate_folio,
- 	.dirty_folio	= filemap_dirty_folio,
-+	.migrate_folio	= metapage_migrate_folio,
- };
- 
- struct metapage *__get_metapage(struct inode *inode, unsigned long lblock,
--- 
-2.34.1
+All that being said, your script looks pretty widely useful, so I think
+it'd make sense in the drgn repository's contrib directory (or even the
+tools directory if you want to make it a full-fledged tool with test
+cases, support for all kernel versions, documentation, etc., but contrib
+is fine).
 
+Thanks,
+Omar
 
