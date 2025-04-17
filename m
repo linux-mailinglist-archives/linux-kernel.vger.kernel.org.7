@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-608180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABEC6A91021
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 02:20:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47635A91035
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 02:22:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6913C1905EE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 00:20:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61996447264
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 00:22:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E6E12C499;
-	Thu, 17 Apr 2025 00:20:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51CAC1CAA81;
+	Thu, 17 Apr 2025 00:20:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H/9NxhtH"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VsC5z/lv"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258E339ACC
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 00:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202351B6CE5
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 00:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744849218; cv=none; b=gooCjI3SprCAjZmGRgvlf1HivcmAZyuHdNL6N5qVo0FmTvEMXDAKAwklcpOVX9KWcDk6o19+tCc+RWNEVbJXCD2x3gLBbRhtyu27RUskgq7IQk94gumdzyaJ3AiQCQSxuePoiQkufgryGrGqOoJwMSUhevjvZl9D9F79D98oibU=
+	t=1744849226; cv=none; b=YJ8NQYEW+EFVXhM2Cb2JOddMWG3PHer3LUgFwS/MgvJdhCea0y/Bv5CDX5u2BLjKzI7xiHIIqgAOAtFWd/Bk0ThwBMinVuOvRVkTw7tFBnPHalofqS+bEmhB4TiDJsnZYrN0cVzBh4yc6bvxWQb1W+4MRkw5n+MJL2XN/BRQeoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744849218; c=relaxed/simple;
-	bh=XISuESK73OE0cGQUSmH3MWiiWeZkzQzLF/btVh6CIG4=;
+	s=arc-20240116; t=1744849226; c=relaxed/simple;
+	bh=al6SKl71NAiNJnVYkq84dOJI0VdWszLtxLtJW6ZOVVk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=r1vGkqPYFfq530d2oNkxaLC/zITlw/Bq3KDmKv5ZEHC1zVdt9fl0bDtGdPu345QiglBZ7B0qXitcWsbzBxsHCAZ0WEvp3p+Jo7q8FphV8kbJuEN5FJNfUi7FKPkQxW3g2CC20iH8CDiHaQ988+vR65Q1AHRXkiWQVsUz7j625xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H/9NxhtH; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=OpbxudxVs7xg7rUZA5qlVleUh6xlyO9fSVLVpNHTY+3Lt21tlo+OsX5jVq0ErcnHUQ1XP0zwyJgAuF4EGCwgF+FFL/qCp2DtCa2EAR4Kdn+LvMSLqjnxdOqyFTuOf8N9u1JiMw8AJ2DmgLdamqc+iIYMuFYUcAuhkzVwLNdioyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VsC5z/lv; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744849215;
+	s=mimecast20190719; t=1744849224;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=m/aa301+ZC5m1Jmr7HKjW+aJT0ZB78SKeCvyWSDZD8g=;
-	b=H/9NxhtHSUNdxvaKRo3w3sPbcX0k9ILGizR2OaT0k3WQfxqYf43TmFUP2qkY+j23uzW+p5
-	vF6HOvFh2a3kabPQNApTxJi8UxusUQJ0NUAFMmI4Xa3XV2J5UdmEjb77yn/FY40ndkomh5
-	TkPihwViTzqtT2DpNmlosurgTyzPjj0=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+	bh=7n76Fvpmfa8LN30y0qvCHdYcw71Um4Eimev9X0oBxqU=;
+	b=VsC5z/lvZYqSwvJeTAoIVqma8ocNGtEkO4DEbDOt7+x1dda+vcMGSSDiXY6e18c9UV6WzP
+	16QrCqTj2tkVKbUduw9C1WSSkJU/bQpuxKR2y4UC3mHBaVmdf58hKqIrB5gHzyeyF6WZG8
+	sIeCtVi0OXPkrWAmGnM7YVRpSl3DZvw=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-195-XyJ2qnAJPimeKMMSR_u8JQ-1; Wed,
- 16 Apr 2025 20:20:12 -0400
-X-MC-Unique: XyJ2qnAJPimeKMMSR_u8JQ-1
-X-Mimecast-MFC-AGG-ID: XyJ2qnAJPimeKMMSR_u8JQ_1744849208
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-533-CvnZAHuzPYSmoVkEBRTivg-1; Wed,
+ 16 Apr 2025 20:20:22 -0400
+X-MC-Unique: CvnZAHuzPYSmoVkEBRTivg-1
+X-Mimecast-MFC-AGG-ID: CvnZAHuzPYSmoVkEBRTivg_1744849219
 Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CED4019560BB;
-	Thu, 17 Apr 2025 00:20:07 +0000 (UTC)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9A02A1800264;
+	Thu, 17 Apr 2025 00:20:18 +0000 (UTC)
 Received: from h1.redhat.com (unknown [10.22.88.34])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id BEB1519560B9;
-	Thu, 17 Apr 2025 00:19:57 +0000 (UTC)
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3796119560A3;
+	Thu, 17 Apr 2025 00:20:08 +0000 (UTC)
 From: Nico Pache <npache@redhat.com>
 To: linux-mm@kvack.org,
 	linux-doc@vger.kernel.org,
@@ -98,9 +98,9 @@ Cc: akpm@linux-foundation.org,
 	rientjes@google.com,
 	mhocko@suse.com,
 	rdunlap@infradead.org
-Subject: [PATCH v4 3/4] khugepaged: add defer option to mTHP options
-Date: Wed, 16 Apr 2025 18:18:45 -0600
-Message-ID: <20250417001846.81480-4-npache@redhat.com>
+Subject: [PATCH v4 4/4] selftests: mm: add defer to thp setting parser
+Date: Wed, 16 Apr 2025 18:18:46 -0600
+Message-ID: <20250417001846.81480-5-npache@redhat.com>
 In-Reply-To: <20250417001846.81480-1-npache@redhat.com>
 References: <20250417001846.81480-1-npache@redhat.com>
 Precedence: bulk
@@ -112,221 +112,38 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Now that we have defer to globally disable THPs at fault time, lets add
-a defer setting to the mTHP options. This will allow khugepaged to
-operate at that order, while avoiding it at PF time.
+add the defer setting to the selftests library for reading thp settings.
 
 Signed-off-by: Nico Pache <npache@redhat.com>
 ---
- include/linux/huge_mm.h |  5 +++++
- mm/huge_memory.c        | 38 +++++++++++++++++++++++++++++++++-----
- mm/khugepaged.c         | 10 +++++-----
- 3 files changed, 43 insertions(+), 10 deletions(-)
+ tools/testing/selftests/mm/thp_settings.c | 1 +
+ tools/testing/selftests/mm/thp_settings.h | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index b88cc3154ec0..a4c87d80badc 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -96,6 +96,7 @@ extern struct kobj_attribute thpsize_shmem_enabled_attr;
- #define TVA_SMAPS		(1 << 0)	/* Will be used for procfs */
- #define TVA_IN_PF		(1 << 1)	/* Page fault handler */
- #define TVA_ENFORCE_SYSFS	(1 << 2)	/* Obey sysfs configuration */
-+#define TVA_IN_KHUGEPAGE	((1 << 2) | (1 << 3)) /* Khugepaged defer support */
+diff --git a/tools/testing/selftests/mm/thp_settings.c b/tools/testing/selftests/mm/thp_settings.c
+index ad872af1c81a..b2f9f62b302a 100644
+--- a/tools/testing/selftests/mm/thp_settings.c
++++ b/tools/testing/selftests/mm/thp_settings.c
+@@ -20,6 +20,7 @@ static const char * const thp_enabled_strings[] = {
+ 	"always",
+ 	"inherit",
+ 	"madvise",
++	"defer",
+ 	NULL
+ };
  
- #define thp_vma_allowable_order(vma, vm_flags, tva_flags, order) \
- 	(!!thp_vma_allowable_orders(vma, vm_flags, tva_flags, BIT(order)))
-@@ -182,6 +183,7 @@ extern unsigned long transparent_hugepage_flags;
- extern unsigned long huge_anon_orders_always;
- extern unsigned long huge_anon_orders_madvise;
- extern unsigned long huge_anon_orders_inherit;
-+extern unsigned long huge_anon_orders_defer;
+diff --git a/tools/testing/selftests/mm/thp_settings.h b/tools/testing/selftests/mm/thp_settings.h
+index fc131d23d593..0d52e6d4f754 100644
+--- a/tools/testing/selftests/mm/thp_settings.h
++++ b/tools/testing/selftests/mm/thp_settings.h
+@@ -11,6 +11,7 @@ enum thp_enabled {
+ 	THP_ALWAYS,
+ 	THP_INHERIT,
+ 	THP_MADVISE,
++	THP_DEFER,
+ };
  
- static inline bool hugepage_global_enabled(void)
- {
-@@ -306,6 +308,9 @@ unsigned long thp_vma_allowable_orders(struct vm_area_struct *vma,
- 	/* Optimization to check if required orders are enabled early. */
- 	if ((tva_flags & TVA_ENFORCE_SYSFS) && vma_is_anonymous(vma)) {
- 		unsigned long mask = READ_ONCE(huge_anon_orders_always);
-+
-+		if ((tva_flags & TVA_IN_KHUGEPAGE) == TVA_IN_KHUGEPAGE)
-+			mask |= READ_ONCE(huge_anon_orders_defer);
- 		if (vm_flags & VM_HUGEPAGE)
- 			mask |= READ_ONCE(huge_anon_orders_madvise);
- 		if (hugepage_global_always() || hugepage_global_defer() ||
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 568ae2363959..f10d307091d8 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -81,6 +81,7 @@ unsigned long huge_zero_pfn __read_mostly = ~0UL;
- unsigned long huge_anon_orders_always __read_mostly;
- unsigned long huge_anon_orders_madvise __read_mostly;
- unsigned long huge_anon_orders_inherit __read_mostly;
-+unsigned long huge_anon_orders_defer __read_mostly;
- static bool anon_orders_configured __initdata;
- 
- static inline bool file_thp_enabled(struct vm_area_struct *vma)
-@@ -505,13 +506,15 @@ static ssize_t anon_enabled_show(struct kobject *kobj,
- 	const char *output;
- 
- 	if (test_bit(order, &huge_anon_orders_always))
--		output = "[always] inherit madvise never";
-+		output = "[always] inherit madvise defer never";
- 	else if (test_bit(order, &huge_anon_orders_inherit))
--		output = "always [inherit] madvise never";
-+		output = "always [inherit] madvise defer never";
- 	else if (test_bit(order, &huge_anon_orders_madvise))
--		output = "always inherit [madvise] never";
-+		output = "always inherit [madvise] defer never";
-+	else if (test_bit(order, &huge_anon_orders_defer))
-+		output = "always inherit madvise [defer] never";
- 	else
--		output = "always inherit madvise [never]";
-+		output = "always inherit madvise defer [never]";
- 
- 	return sysfs_emit(buf, "%s\n", output);
- }
-@@ -527,25 +530,36 @@ static ssize_t anon_enabled_store(struct kobject *kobj,
- 		spin_lock(&huge_anon_orders_lock);
- 		clear_bit(order, &huge_anon_orders_inherit);
- 		clear_bit(order, &huge_anon_orders_madvise);
-+		clear_bit(order, &huge_anon_orders_defer);
- 		set_bit(order, &huge_anon_orders_always);
- 		spin_unlock(&huge_anon_orders_lock);
- 	} else if (sysfs_streq(buf, "inherit")) {
- 		spin_lock(&huge_anon_orders_lock);
- 		clear_bit(order, &huge_anon_orders_always);
- 		clear_bit(order, &huge_anon_orders_madvise);
-+		clear_bit(order, &huge_anon_orders_defer);
- 		set_bit(order, &huge_anon_orders_inherit);
- 		spin_unlock(&huge_anon_orders_lock);
- 	} else if (sysfs_streq(buf, "madvise")) {
- 		spin_lock(&huge_anon_orders_lock);
- 		clear_bit(order, &huge_anon_orders_always);
- 		clear_bit(order, &huge_anon_orders_inherit);
-+		clear_bit(order, &huge_anon_orders_defer);
- 		set_bit(order, &huge_anon_orders_madvise);
- 		spin_unlock(&huge_anon_orders_lock);
-+	} else if (sysfs_streq(buf, "defer")) {
-+		spin_lock(&huge_anon_orders_lock);
-+		clear_bit(order, &huge_anon_orders_always);
-+		clear_bit(order, &huge_anon_orders_inherit);
-+		clear_bit(order, &huge_anon_orders_madvise);
-+		set_bit(order, &huge_anon_orders_defer);
-+		spin_unlock(&huge_anon_orders_lock);
- 	} else if (sysfs_streq(buf, "never")) {
- 		spin_lock(&huge_anon_orders_lock);
- 		clear_bit(order, &huge_anon_orders_always);
- 		clear_bit(order, &huge_anon_orders_inherit);
- 		clear_bit(order, &huge_anon_orders_madvise);
-+		clear_bit(order, &huge_anon_orders_defer);
- 		spin_unlock(&huge_anon_orders_lock);
- 	} else
- 		ret = -EINVAL;
-@@ -1002,7 +1016,7 @@ static char str_dup[PAGE_SIZE] __initdata;
- static int __init setup_thp_anon(char *str)
- {
- 	char *token, *range, *policy, *subtoken;
--	unsigned long always, inherit, madvise;
-+	unsigned long always, inherit, madvise, defer;
- 	char *start_size, *end_size;
- 	int start, end, nr;
- 	char *p;
-@@ -1014,6 +1028,8 @@ static int __init setup_thp_anon(char *str)
- 	always = huge_anon_orders_always;
- 	madvise = huge_anon_orders_madvise;
- 	inherit = huge_anon_orders_inherit;
-+	defer = huge_anon_orders_defer;
-+
- 	p = str_dup;
- 	while ((token = strsep(&p, ";")) != NULL) {
- 		range = strsep(&token, ":");
-@@ -1053,18 +1069,28 @@ static int __init setup_thp_anon(char *str)
- 				bitmap_set(&always, start, nr);
- 				bitmap_clear(&inherit, start, nr);
- 				bitmap_clear(&madvise, start, nr);
-+				bitmap_clear(&defer, start, nr);
- 			} else if (!strcmp(policy, "madvise")) {
- 				bitmap_set(&madvise, start, nr);
- 				bitmap_clear(&inherit, start, nr);
- 				bitmap_clear(&always, start, nr);
-+				bitmap_clear(&defer, start, nr);
- 			} else if (!strcmp(policy, "inherit")) {
- 				bitmap_set(&inherit, start, nr);
- 				bitmap_clear(&madvise, start, nr);
- 				bitmap_clear(&always, start, nr);
-+				bitmap_clear(&defer, start, nr);
-+			} else if (!strcmp(policy, "defer")) {
-+				bitmap_set(&defer, start, nr);
-+				bitmap_clear(&madvise, start, nr);
-+				bitmap_clear(&always, start, nr);
-+				bitmap_clear(&inherit, start, nr);
- 			} else if (!strcmp(policy, "never")) {
- 				bitmap_clear(&inherit, start, nr);
- 				bitmap_clear(&madvise, start, nr);
- 				bitmap_clear(&always, start, nr);
-+				bitmap_clear(&defer, start, nr);
-+
- 			} else {
- 				pr_err("invalid policy %s in thp_anon boot parameter\n", policy);
- 				goto err;
-@@ -1075,6 +1101,8 @@ static int __init setup_thp_anon(char *str)
- 	huge_anon_orders_always = always;
- 	huge_anon_orders_madvise = madvise;
- 	huge_anon_orders_inherit = inherit;
-+	huge_anon_orders_defer = defer;
-+
- 	anon_orders_configured = true;
- 	return 1;
- 
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index 38643a681ba5..f9faff6917d3 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -491,7 +491,7 @@ void khugepaged_enter_vma(struct vm_area_struct *vma,
- {
- 	if (!test_bit(MMF_VM_HUGEPAGE, &vma->vm_mm->flags) &&
- 	    hugepage_pmd_enabled()) {
--		if (thp_vma_allowable_order(vma, vm_flags, TVA_ENFORCE_SYSFS,
-+		if (thp_vma_allowable_order(vma, vm_flags, TVA_IN_KHUGEPAGE,
- 					    PMD_ORDER))
- 			__khugepaged_enter(vma->vm_mm);
- 	}
-@@ -955,7 +955,7 @@ static int hugepage_vma_revalidate(struct mm_struct *mm, unsigned long address,
- 				   struct collapse_control *cc, int order)
- {
- 	struct vm_area_struct *vma;
--	unsigned long tva_flags = cc->is_khugepaged ? TVA_ENFORCE_SYSFS : 0;
-+	unsigned long tva_flags = cc->is_khugepaged ? TVA_IN_KHUGEPAGE  : 0;
- 
- 	if (unlikely(khugepaged_test_exit_or_disable(mm)))
- 		return SCAN_ANY_PROCESS;
-@@ -1430,7 +1430,7 @@ static int khugepaged_scan_pmd(struct mm_struct *mm,
- 	bool writable = false;
- 	int chunk_none_count = 0;
- 	int scaled_none = khugepaged_max_ptes_none >> (HPAGE_PMD_ORDER - KHUGEPAGED_MIN_MTHP_ORDER);
--	unsigned long tva_flags = cc->is_khugepaged ? TVA_ENFORCE_SYSFS : 0;
-+	unsigned long tva_flags = cc->is_khugepaged ? TVA_IN_KHUGEPAGE : 0;
- 	VM_BUG_ON(address & ~HPAGE_PMD_MASK);
- 
- 	result = find_pmd_or_thp_or_none(mm, address, &pmd);
-@@ -2550,7 +2550,7 @@ static int khugepaged_collapse_single_pmd(unsigned long addr,
- {
- 	int result = SCAN_FAIL;
- 	struct mm_struct *mm = vma->vm_mm;
--	unsigned long tva_flags = cc->is_khugepaged ? TVA_ENFORCE_SYSFS : 0;
-+	unsigned long tva_flags = cc->is_khugepaged ? TVA_IN_KHUGEPAGE : 0;
- 
- 	if (thp_vma_allowable_order(vma, vma->vm_flags,
- 					tva_flags, PMD_ORDER)) {
-@@ -2635,7 +2635,7 @@ static unsigned int khugepaged_scan_mm_slot(unsigned int pages, int *result,
- 			break;
- 		}
- 		if (!thp_vma_allowable_order(vma, vma->vm_flags,
--					TVA_ENFORCE_SYSFS, PMD_ORDER)) {
-+					TVA_IN_KHUGEPAGE, PMD_ORDER)) {
- skip:
- 			progress++;
- 			continue;
+ enum thp_defrag {
 -- 
 2.48.1
 
