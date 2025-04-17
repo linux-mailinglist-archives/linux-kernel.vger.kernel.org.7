@@ -1,121 +1,174 @@
-Return-Path: <linux-kernel+bounces-609218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9487CA91F5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 16:19:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAF07A91F65
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 16:21:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D24CE1771AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:19:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AEF27AF682
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:20:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51212517A4;
-	Thu, 17 Apr 2025 14:19:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE4A2512D3;
+	Thu, 17 Apr 2025 14:21:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="IcEvn5P7"
-Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="UwnBzE7k"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B8922687C
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 14:18:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98001ACECB
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 14:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744899540; cv=none; b=kD1xv2tMW8ovHBLeJwq6UfqM5SsDUdwTFyIIEhL1rtvlv7tpsyx2iakjlLPB+IJnttH7EpI5PL4zUAt56jmMb4ohQRGNTSwfArmYnXTG/FHtZkNHj1ALcBZwfECr7MRyx+NUEL3ThSe8jzeKNFLtfx94K6S4GO4s2lQh2zL+rbw=
+	t=1744899668; cv=none; b=mAvuYDe5BMDqDzG5Ep/5b6F21ukZWakAi3O2bZmCXKKIph8JzrnZzxTS+3UVeUe5/nKnXZdvE642Fc4feaFw5eI9W7zKAUW6GBcQ3/vGEw93/Bh40pKnA2ZedHoQ89zYwpEjIxDn5SZTyc1bw0cmOO63YYJ3k2K4ggfQyMIHs0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744899540; c=relaxed/simple;
-	bh=PrJVLP5f8fwnGGlUkRAHMFELfuQEh6br7KhpaFyfBEg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g4FxUSxdfO2JjbePTOoz70FaMCVijqhq2NnqYO54e93e64e33cEaRdBaxv0GwAdKxFWtmqFzGe/TkzajHD2a95cdkzmAenvUp6ljUzkcxmXfHEL5crHQE9RKmQ4vEy44B5Ys9KMAacRebrmnOeQn6wmILtQGyXWjyFmWER2blAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=IcEvn5P7; arc=none smtp.client-ip=185.67.36.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout02.posteo.de (Postfix) with ESMTPS id 79714240101
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 16:18:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
-	t=1744899531; bh=PrJVLP5f8fwnGGlUkRAHMFELfuQEh6br7KhpaFyfBEg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:From;
-	b=IcEvn5P7CPvR3WM212MVKLuhSZCSaIZzkri4rgqml2phktYxIjWjN0vJACvsJVfIz
-	 CtBFwykipg7y1p5DEvXTxHjhm8F1eErOcyPUlhlVUFFj30F0VFDddFDgAzpRokljY+
-	 oXh0uIFlk68wZEUf3WreCJGGJK1rVgoSyxpb9SzgzGQKO94IAg0M1+a3oHvAXOOayn
-	 1yp1Ak1zdr5Jk/v2kLIAswnvTyNtxppCrmBePqvhfBc8GuCW6A9fWoK/JrBuYJh1ks
-	 +6MsvGJlVzCexLxExnb3wo2fim/XWGDqBn4Uy49+8sdVBa6e3EsLeAW2bxzEOhQ+c3
-	 DLQzlMpvIdnoA==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4Zdg491zWsz6tyf;
-	Thu, 17 Apr 2025 16:18:49 +0200 (CEST)
-Date: Thu, 17 Apr 2025 14:18:49 +0000
-From: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-To: Rob Herring <robh@kernel.org>
-Cc: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>,
-	Crystal Wood <oss@buserror.net>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linuxppc-dev@lists.ozlabs.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] dt-bindings: powerpc: Convert fsl/pmc.txt to YAML
-Message-ID: <aAENyZObpPCmm1m9@probook>
-References: <20250412-fslpmc-yaml-v2-1-98c0948a2921@posteo.net>
- <20250412183732.GA1442430-robh@kernel.org>
+	s=arc-20240116; t=1744899668; c=relaxed/simple;
+	bh=Qga/Sq+dY4LTlciqz8z3S6H86UWJJiLqOSO602bWIFs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YzBPCLauEGE6XNYgJjSMFXGwspurNNL3/tfnm2jUYZ0ryKMU5EbK6hvjhEB1hfsfIDsw5xXMZNDsIw7f8DGd9V2SzQdK9WXxPqZg+Lt/Vq479m4Wp75t2ZSSy7fVyLMGZkihOArf92uXvAiVRtyd2F8GN/nwUF7APwbyWeFydxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=UwnBzE7k; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=SrHLvNcniYohE8XO+5XRKCxxfp6aOiTWHwmdhysUG3Y=; b=UwnBzE7k6TePTiVU0Uf1b110ys
+	mASwtReo6tJ3z9BNQAM6v1eddR8ss2JGtr8qZoWHBlsHRFavqSR46ZiW/+4AMKnmlFlvubvUigBSf
+	pzF3klYWXB0Sg4RVBANpVJsUDZ5Cy3R3lsvC/womdbtnlMb4+CBW9nMLvJo+9dgFID/JwjDawHmy3
+	QudsRAp/K0UkziM5EgXe97F6AuDSBcwicBsxNCA9N6TaX7zUrTZmdrdLbD2Go5gk2RpHhyFq2IBYb
+	30OZpf2mWLliXXM60WJrxbCXMr06oJsIzSR0g9ICWlz0o+Boq26kcH4DBOn2c9w5Hh0vVdBTsSt1/
+	pzx296AQ==;
+Received: from [90.241.98.187] (helo=[192.168.0.101])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1u5Q6f-000qCP-Ta; Thu, 17 Apr 2025 16:20:45 +0200
+Message-ID: <83758ca7-8ece-433e-b904-3d21690ead23@igalia.com>
+Date: Thu, 17 Apr 2025 15:20:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/5] drm/sched: Warn if pending list is not empty
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: phasta@kernel.org, Lyude Paul <lyude@redhat.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Matthew Brost <matthew.brost@intel.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20250407152239.34429-2-phasta@kernel.org>
+ <20250407152239.34429-5-phasta@kernel.org>
+ <9607e5a54b8c5041dc7fc134425cc36c0c70b5f3.camel@mailbox.org>
+ <3ac34c84-fd84-4598-96e1-239418b7109f@igalia.com> <aADv4ivXZoJpEA7k@pollux>
+Content-Language: en-GB
+From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+In-Reply-To: <aADv4ivXZoJpEA7k@pollux>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250412183732.GA1442430-robh@kernel.org>
 
-On Sat, Apr 12, 2025 at 01:37:32PM -0500, Rob Herring wrote:
-> On Sat, Apr 12, 2025 at 02:49:38PM +0200, J. Neuschäfer wrote:
-> > This patch rewrites pmc.txt into YAML format. Descriptive texts are
-> > expanded or shortened in a few places to better fit today's conventions.
-> > 
-> > The list of compatible strings (and combinations of them) is based on
-> > existing device trees in arch/powerpc as well as compatible strings
-> > already mentioned in the plain-text version of the binding.
-> > 
-> > One thing I didn't handle are soc-clk@... nodes as seen in
-> > Documentation/devicetree/bindings/powerpc/fsl/pmc.yaml.
-> > 
-> > Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
-> > ---
-> > Changes in v2:
-> > - Rebase on v6.15-rc1
-> > - Link to v1: https://lore.kernel.org/r/20250315-fslpmc-yaml-v1-1-10ba354a85c2@posteo.net
-> > ---
-> > 
-> > Note: The examples include a consumer (sata@19000), to demonstrate how
-> > sleep specifiers work. I've heard that "unrelated" nodes in examples are
-> > generally discouraged, but I'm not sure if it's better to keep it or to
-> > drop it in this example.
+
+On 17/04/2025 13:11, Danilo Krummrich wrote:
+> On Thu, Apr 17, 2025 at 12:27:29PM +0100, Tvrtko Ursulin wrote:
+>>
+>> On 17/04/2025 08:45, Philipp Stanner wrote:
+>>> On Mon, 2025-04-07 at 17:22 +0200, Philipp Stanner wrote:
+>>
+>> Problem exactly is that jobs can outlive the entities and the scheduler,
+>> while some userspace may have a dma fence reference to the job via sync
+>> file. This new callback would not solve it for xe, but if everything
+>> required was reference counted it would.
 > 
-> I'd drop. Unless you want to fix the error. There's nothing really 
-> unique with how 'sleep' property works.
-
-Okay.
-
-> > +properties:
-> > +  compatible:
-> > +    oneOf:
-[...]
-> > +      - const: fsl,mpc8548-pmc
-> > +
-> > +      - const: fsl,mpc8641d-pmc
+> I think you're mixing up the job and the dma_fence here, if a job outlives the
+> scheduler, it clearly is a bug, always has been.
 > 
-> 1 enum for these 2.
+> AFAIK, Xe reference counts it's driver specific job structures *and* the driver
+> specific scheduler structure, such that drm_sched_fini() won't be called before
+> all jobs have finished.
 
-Will do.
+Yes, sorry, dma fence. But it is not enough to postpone drm_sched_fini 
+until the job is not finished. Problem is exported dma fence holds the 
+pointer to drm_sched_fence (and so oopses in 
+drm_sched_fence_get_timeline_name on fence->sched->name) *after* job had 
+finished and driver was free to tear everything down.
 
+That is what the "fini callback" wouldn't solve but reference counting 
+would.
 
-Thanks,
-J. Neuschäfer
+I don't see that any other driver which can export a fence couldn't 
+suffer from the same problem, and even if I agree this maybe isn't 
+strictly a scheduler problem, I cannot see it solvable without involving 
+the scheduler, and in any other way than reference counting. And if 
+reference counting could solve both problems then it feels attractive.
+
+> The reference counting solution, however, potentially creates subsequent
+> lifetime problems, which I think have been discussed already in a different
+> thread already. Philipp can probably link in the corresponding discussion.
+
+I don't doubt it causes problems but maybe there will be no other way 
+than to tackle them.
+
+>> On the design level it feels like it adds too much state machine and makes
+>> things hard to follow/maintain. It would be nice to find a solutiuon where
+>> we end up with less state machine and not more.
+> 
+> Multiple solutions have been discussed already, e.g. just wait for the pending
+> list to be empty, reference count the scheduler for every pending job. Those all
+> had significant downsides, which I don't see with this proposal.
+> 
+> I'm all for better ideas though -- what do you propose?
+
+I think we need to brainstorm both issues and see if there is a solution 
+which solves them both, with bonus points for being elegant.
+
+Use after free is IMO even a worse problem so if reference counting is 
+the only way then lets try that. But I will wait for those links to 
+catch up on the past discussions.
+
+>>>> diff --git a/drivers/gpu/drm/scheduler/sched_main.c
+>>>> b/drivers/gpu/drm/scheduler/sched_main.c
+>>>> index 6b72278c4b72..ae3152beca14 100644
+>>>> --- a/drivers/gpu/drm/scheduler/sched_main.c
+>>>> +++ b/drivers/gpu/drm/scheduler/sched_main.c
+>>>> @@ -1465,6 +1465,10 @@ void drm_sched_fini(struct drm_gpu_scheduler
+>>>> *sched)
+>>>>    	sched->ready = false;
+>>>>    	kfree(sched->sched_rq);
+>>>>    	sched->sched_rq = NULL;
+>>>> +
+>>>> +	if (!list_empty(&sched->pending_list))
+>>>> +		dev_err(sched->dev, "%s: Tearing down scheduler
+>>>> while jobs are pending!\n",
+>>>> +			__func__);
+>>
+>> It isn't fair to add this error since it would out of the blue start firing
+>> for everyone expect nouveau, no? Regardless if there is a leak or not.
+> 
+> I think it is pretty fair to warn when detecting a guaranteed bug, no?
+> 
+> If drm_sched_fini() is call while jobs are still on the pending_list, they won't
+> ever be freed, because all workqueues are stopped.
+
+Is it a guaranteed bug for drivers are aware of the drm_sched_fini() 
+limitation and are cleaning up upon themselves?
+
+In other words if you apply the series up to here would it trigger for 
+nouveau? Reportedly it triggers for the mock scheduler which also has no 
+leak.
+
+Also, I asked in my initial reply if we have a list of which of the 
+current drivers suffer from memory leaks. Is it all or some etc.
+
+Regards,
+
+Tvrtko
+
 
