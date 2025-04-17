@@ -1,145 +1,185 @@
-Return-Path: <linux-kernel+bounces-608988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04548A91BA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:08:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F94FA91B7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:04:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 337858A01EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 12:06:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27E791893707
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 12:04:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D77124C096;
-	Thu, 17 Apr 2025 12:04:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3222024113A;
+	Thu, 17 Apr 2025 12:04:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="haR2lQSF"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A+BXfnyd"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8511C242907;
-	Thu, 17 Apr 2025 12:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8852C23AE7C
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 12:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744891485; cv=none; b=jDWF5Q33gVvpiLwUsLtJpS8ClKgDR2Nqxret2yDgSp5BnapfoTINNy4sXD5hHUTlOPhWRRjQBnHA8juZFvixn5n4TngR/noPdny7vdwfO0ghQ+yUi5csM9LdPSm2A3q2cLwqZvpKda3RpAg0xS7LIj+FzcCECU4HIBYBF96uPSo=
+	t=1744891455; cv=none; b=rcsCLQWKOWVfy7c1KKyNSnJ6rGx9qYMfXrbVLWXd3Oe7uuxhAz+d1+x7O3jh4IX1SW8/MUGcXfXJ6clvScylP4zmVvP8wPFfdNs9zTySm/QMWoRc12m7mPXuHPFkVSjQri0imVtZDLFQkSBGp4adi/BqiVBfR5zaL+ufDw+5sTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744891485; c=relaxed/simple;
-	bh=avD1NpbsEJIlK9wWblnST/7Y9qFyEs5xLtYFXFF5HqI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TAOO+0p1DTWG/LVGnswPdZnd1e/6ITDFsVGUyQR5T782oDK4/HWd1U2QpdmLrlUvOVrDiswUe62R8BUuLVzfjOBeT4EZZo6RdNdrJ1TegSNyFYwJIeD9GUwQDZ2dMR/wb/MI6C0prk/BxBoN3bPpThm2k0YIba82nvsx+nwsTOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=haR2lQSF; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53HC4Zng3094834
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 17 Apr 2025 07:04:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1744891475;
-	bh=bNb2Dq3nRm0e9cZYsstRIDuGhQAYPxcy2C0B5OtXSxA=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=haR2lQSFJFH6A+nCi48gmimFDOkgu4Gk9bRGANzDO8ngRqPZt87jtFL1swhmWEOjx
-	 io3FAjcSpr6XzyBNhyXSUgnHU8nDHUoPS3+7nPvKU37LvzgH4WjbXF2a++uQ8gGbuz
-	 V7E2uLRSw5i4NM7IGLK+BGrtE9tcIVZxYPJYgtxE=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53HC4Z6F083673
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 17 Apr 2025 07:04:35 -0500
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 17
- Apr 2025 07:04:35 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 17 Apr 2025 07:04:35 -0500
-Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [10.24.72.113])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53HC47VP004789;
-	Thu, 17 Apr 2025 07:04:32 -0500
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        <s-vadapalli@ti.com>
-Subject: [PATCH 7/7] arm64: dts: ti: k3-j784s4-j742s2-main-common: switch to 64-bit address space for PCIe0 and PCIe1
-Date: Thu, 17 Apr 2025 17:34:07 +0530
-Message-ID: <20250417120407.2646929-8-s-vadapalli@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250417120407.2646929-1-s-vadapalli@ti.com>
-References: <20250417120407.2646929-1-s-vadapalli@ti.com>
+	s=arc-20240116; t=1744891455; c=relaxed/simple;
+	bh=dnPw/6WDA5NvkvubmkIBTjNuGbUeGZwq+sspzVMsaT8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J8U/KqfNBFMw9sTfs+XXTl5dpQ6EE2laCVwxCRfy76k7SH3qmuInUOkbUTkoyIqxehySYvDyUuR+CrXHCbpkqZdbG2naausB/ccB2j1GrZCuOssw+JJpQO8pB3KCZFE1rabxiPSDb4mcJR0XQhFp+U0k+805VCunTwY/KrXcVgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A+BXfnyd; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43ce4e47a85so855285e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 05:04:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744891451; x=1745496251; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=AIdCl/5qC9ELUd0iM51tsEop4bjwaQ4gO/Adiu/i0gc=;
+        b=A+BXfnydeJSmilbhCgUlt9Cas6WVbTGg5FNU6cmMIER8ahwL1W2MbPOchTSqhbXTri
+         MpPYU2mgXlm53uPBL1Jsj2xJ2BAAJrDyzYW2FxdulIS4q0S4T9RRiatyo1w0f3+m9ssV
+         wVX46kNraOd2BIfnom48kcGkDKT+CA47/LzE41orX47h1vprISGgskaZ6zSM6wJywfn0
+         PEWtcMsegHyODpIbGLxQIP16C/ZmhokhhoiqaOFYptW8mKsy0E+Q2RgPtHvNc8xDeltp
+         4cR+EX/0W1mUzk5rUNJBiHiRSz/acoUmNuqDj68yzDy5sHVpLd7zzX0ciCiZ009CENna
+         owVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744891451; x=1745496251;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AIdCl/5qC9ELUd0iM51tsEop4bjwaQ4gO/Adiu/i0gc=;
+        b=TGxZzNVxi8BxfFUuszw0u3ZzhJMoqtZdqGy6t5ZvHfc2oD1FSx5+gdcWcydJskA/fL
+         FxkU9F45E3WfishQD7s5+84RngEI25jW6PlHiZb6Ld2hbn85iMR0n6F4nFIig7Y4cPax
+         YkugWth49UTibpUAbBwHCOr2QXDGNd7dns7l7pgNgB39qW1ONIkuYIhXZuqjKdIyAZ1Q
+         Z3XBR+y6jzhP62lYHqOwikloFNvNYJE6L5kAKzfWxXXxORacMJBAeVzRpyVUm3TsvD0a
+         Qmc2rGg75+WJUOkb3BMIgzRjX3wEsT2vOmy17RDeT/ms09uXe7wQ/uG+vJ0txUuhwwdJ
+         Cnfw==
+X-Forwarded-Encrypted: i=1; AJvYcCVPPRtPBUzRiCIDJn2X9ehjqOUK+VhsvicqJ6VT+nsvGeovnBDzhfC3Oog7QV67pdh+HXSApigYkvJkQAw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZ09BgkjPBz38UxMBJGP+JsQUie1Bz1yfW/KOX8OVxqKp659Mg
+	VziXIm84r2Aa0kqwwFt6oO+mTuTS9fOkeeq9/PILBzmsjz7VlTUPTf60wmDa/wE=
+X-Gm-Gg: ASbGncusKJQJM96eU9KCto3RCrKWgk8TmF2fugcudZIjEBucGD6fu2vZ4NYebYb0Zwu
+	OEFPulEu70lLD+x/8aWi5XeI3sitejixruDVONeb/+M1ylMHTbjISM+PwEPaBytDwOpqgXz7INv
+	pRGg1B8BrERXfLuDdpm7lOBYwqWm4662xntvnp1k9cGpmkuf3tKBSxlsd8AzzeHIbPvCZ4y6te+
+	09W9yxH5AqvlzeUu2Vzo2GgoScZ4iz9BkY0oz/E+RLAn2asHf27zDdbgFRrkAaQKvwjUO4sZLkq
+	V7ppHYuRsZhPW+qljlbdTV6rlR9COD4Y4porWKoHL3pnKgr7jDVACvj5xBksSmEwZg5sPthr1Er
+	isKa3XZ+UIWyNd/VJ
+X-Google-Smtp-Source: AGHT+IED1Xnj9v0JnQwcOVttYnoHyhkKM/R+mA/Fw2SQCf/1dnCXdY6vmR1cIpyP4BRWLBv6GiuwYA==
+X-Received: by 2002:a05:6000:4026:b0:391:c42:dae with SMTP id ffacd0b85a97d-39ee8fa23e1mr1035766f8f.4.1744891450761;
+        Thu, 17 Apr 2025 05:04:10 -0700 (PDT)
+Received: from [192.168.0.101] (46.150.74.144.lvv.nat.volia.net. [46.150.74.144])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eae96c5f2sm20184959f8f.34.2025.04.17.05.04.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Apr 2025 05:04:10 -0700 (PDT)
+Message-ID: <a8f7f571-e81a-49d6-a40d-895960165039@linaro.org>
+Date: Thu, 17 Apr 2025 14:04:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 01/10] dt-bindings: display/msm: dp-controller:
+ describe SAR2130P
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar
+ <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <lumag@kernel.org>,
+ Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>,
+ Krishna Manikandan <quic_mkrishn@quicinc.com>,
+ Jonathan Marek <jonathan@marek.ca>, Bjorn Andersson <andersson@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+References: <20250417-sar2130p-display-v4-0-b91dd8a21b1a@oss.qualcomm.com>
+ <20250417-sar2130p-display-v4-1-b91dd8a21b1a@oss.qualcomm.com>
+ <20250417-arboreal-turkey-of-acumen-e1e3da@shite>
+ <7b559f03-f131-435e-95de-b5faee37b4d5@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <7b559f03-f131-435e-95de-b5faee37b4d5@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The PCIe0 and PCIe1 instances of PCIe in J742S2 and J784S4 SoCs support:
-1. 128 MB address region in the 32-bit address space
-2. 4 GB address region in the 64-bit address space
+On 17/04/2025 13:12, Konrad Dybcio wrote:
+> On 4/17/25 8:03 AM, Krzysztof Kozlowski wrote:
+>> On Thu, Apr 17, 2025 at 02:16:31AM GMT, Dmitry Baryshkov wrote:
+>>> From: Dmitry Baryshkov <lumag@kernel.org>
+>>>
+>>> Describe DisplayPort controller present on Qualcomm SAR2130P platform.
+>>>
+>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>
+>> Addresses do not match. You re-authored the commit, so now everywhere is
+>> mess.
+> 
+> It's git's fault with replacing the linaro address based on .mailmap
+No. You can easily see:
+$ git show 51a6256b00008a3c520f6f31bcd62cd15cb05960
+top author is like you say - mailmapped, but Sob is my @samsung.com
 
-The default configuration is that of a 128 MB address region in the
-32-bit address space. While this might be sufficient for most use-cases,
-it is insufficient for supporting use-cases which require larger address
-spaces. Therefore, switch to using the 64-bit address space with a 4 GB
-address region.
+$ git format-patch 51a6256b00008a3c520f6f31bcd62cd15cb05960 -1
+What is in "From" field? Samsung, not mailmapped.
 
-Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
----
- .../boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi  | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+I believe that's a known problem in b4, already reported. I don't
+remember if this was fixed, but till it is - you need to use some sort
+of workaround.
 
-diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-index 1944616ab357..0cbf0fba9112 100644
---- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-@@ -1055,7 +1055,7 @@ pcie0_rc: pcie@2900000 {
- 		reg = <0x00 0x02900000 0x00 0x1000>,
- 		      <0x00 0x02907000 0x00 0x400>,
- 		      <0x00 0x0d000000 0x00 0x00800000>,
--		      <0x00 0x10000000 0x00 0x00001000>;
-+		      <0x40 0x00000000 0x00 0x00001000>;
- 		reg-names = "intd_cfg", "user_cfg", "reg", "cfg";
- 		interrupt-names = "link_state";
- 		interrupts = <GIC_SPI 318 IRQ_TYPE_EDGE_RISING>;
-@@ -1073,8 +1073,9 @@ pcie0_rc: pcie@2900000 {
- 		device-id = <0xb012>;
- 		msi-map = <0x0 &gic_its 0x0 0x10000>;
- 		dma-coherent;
--		ranges = <0x01000000 0x0 0x10001000 0x0 0x10001000 0x0 0x0010000>,
--			 <0x02000000 0x0 0x10011000 0x0 0x10011000 0x0 0x7fef000>;
-+		ranges = <0x01000000 0x00 0x00001000 0x40 0x00001000 0x00 0x00100000>, /* IO (1 MB) */
-+			 <0x02000000 0x00 0x00101000 0x40 0x00101000 0x00 0x08000000>, /* 32-bit Non-Prefetchable MEM (128 MB) */
-+			 <0x43000000 0x40 0x08101000 0x40 0x08101000 0x00 0xf7eff000>; /* 64-bit Prefetchable MEM (4 GB - (129 MB + 4 KB)) */
- 		dma-ranges = <0x02000000 0x0 0x0 0x0 0x0 0x10000 0x0>;
- 		status = "disabled";
- 	};
-@@ -1084,7 +1085,7 @@ pcie1_rc: pcie@2910000 {
- 		reg = <0x00 0x02910000 0x00 0x1000>,
- 		      <0x00 0x02917000 0x00 0x400>,
- 		      <0x00 0x0d800000 0x00 0x00800000>,
--		      <0x00 0x18000000 0x00 0x00001000>;
-+		      <0x41 0x00000000 0x00 0x00001000>;
- 		reg-names = "intd_cfg", "user_cfg", "reg", "cfg";
- 		interrupt-names = "link_state";
- 		interrupts = <GIC_SPI 330 IRQ_TYPE_EDGE_RISING>;
-@@ -1102,8 +1103,9 @@ pcie1_rc: pcie@2910000 {
- 		device-id = <0xb012>;
- 		msi-map = <0x0 &gic_its 0x10000 0x10000>;
- 		dma-coherent;
--		ranges = <0x01000000 0x0 0x18001000  0x00 0x18001000  0x0 0x0010000>,
--			 <0x02000000 0x0 0x18011000  0x00 0x18011000  0x0 0x7fef000>;
-+		ranges = <0x01000000 0x00 0x00001000 0x41 0x00001000 0x00 0x00100000>, /* IO (1 MB) */
-+			 <0x02000000 0x00 0x00101000 0x41 0x00101000 0x00 0x08000000>, /* 32-bit Non-Prefetchable MEM (128 MB) */
-+			 <0x43000000 0x41 0x08101000 0x41 0x08101000 0x00 0xf7eff000>; /* 64-bit Prefetchable MEM (4 GB - (129 MB + 4 KB)) */
- 		dma-ranges = <0x02000000 0x0 0x0 0x0 0x0 0x10000 0x0>;
- 		status = "disabled";
- 	};
--- 
-2.34.1
-
+Best regards,
+Krzysztof
 
