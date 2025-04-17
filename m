@@ -1,155 +1,142 @@
-Return-Path: <linux-kernel+bounces-608940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1267AA91AF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 13:31:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BAF2A91AF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 13:32:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F0C817F44D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 11:31:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB3F55A743C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 11:32:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22F623ED76;
-	Thu, 17 Apr 2025 11:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T3WNnHf0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA0923FC40;
+	Thu, 17 Apr 2025 11:32:02 +0000 (UTC)
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B57922B8A0;
-	Thu, 17 Apr 2025 11:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9866A23956D;
+	Thu, 17 Apr 2025 11:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744889506; cv=none; b=QseI0mkm8RvpLiLGGdZ6qJT7CtEZ6SGcvVOAfGOwiHjRy4Zr+Beeu8JB/ccMOnrCM8n7cc9duO8/5oNQoTYct1RW6LW5W6RsKjpLSXiqGzcNVYYp+hS25NACOu9vw7GhD5AOHlxC4xeeZlnA8eQTqfyOk8qC87wdRvfQV3RDS1o=
+	t=1744889522; cv=none; b=iSHluGr9sTU2GccCatgxrqxvTueEM4oPmosg4DTfikdOm+LzQlSZe+un3M9egm3XP1t0Hn2C0lLpNPnUYVHhL7rJ5RFNchMA5PEL1vDHhTUQUDLcibuiVI0n60nckTo0VFbWyfDGoH2APw/H6cdPMRJ3WbLy+oywADTb01Cv7CY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744889506; c=relaxed/simple;
-	bh=JlRulFzNFZtoQaYZU/WuQDk588L61tWLNXlAY7Ox9wo=;
+	s=arc-20240116; t=1744889522; c=relaxed/simple;
+	bh=CtN2uHgb1NyUBudgvvRWzNh1KaO46exRTxvJdTqFaPQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g3q4k5tIPtSHib/qYXFgodPZ2BB8MvTzxNF5te2HNfGjKxGy4T6r5AQ5Yy8NioUhgIyGo3T/9OqkPy7VB2qArqEcq54Zx6mHLsR+ISzloijPUwvnVTf5fXjKvLaHOYHL9FFUvDJ5Ic733GT/ARbgsVwJ6Df6SpT5/X8PRaTZfj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T3WNnHf0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98141C4CEEB;
-	Thu, 17 Apr 2025 11:31:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744889506;
-	bh=JlRulFzNFZtoQaYZU/WuQDk588L61tWLNXlAY7Ox9wo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T3WNnHf0xvRbrBaSFtv3tjay2+MZVXycQPXt4mcXCst5UGPueBDlD/K+rU5w3tXu3
-	 R5v/ODDvUNtbnhlKYQtzilhW7LY0Ci00gMfBvaBKM3nVxsJcFFJcx9N/sbd+rzzH/8
-	 W0Qtw0aKJOBgoTHtcD3djZjDfCZtgYIQ3/qHTa5DyA45Z8MDUZkdByv6eSXdKFxfjJ
-	 Q8cti5FB33kq0gpdTM2nJQDluXi+Xf55lEt4ue6MZnh5blFaCwv9HYaYBcuQhEPMV/
-	 DRZeLzYpnwuGh5d0YgxmPAAQ6g6KbE+dVTU2AhpcW1EEn7mIOHU9VBzUD0deeviChk
-	 AeIE6uhKOx8vA==
-Date: Thu, 17 Apr 2025 13:31:40 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Ian Kent <raven@themaw.net>
-Cc: Mark Brown <broonie@kernel.org>, Eric Chanudet <echanude@redhat.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ian Kent <ikent@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
-	Alexander Larsson <alexl@redhat.com>, Lucas Karpinski <lkarpins@redhat.com>, Aishwarya.TCV@arm.com
-Subject: Re: [PATCH v4] fs/namespace: defer RCU sync for MNT_DETACH umount
-Message-ID: <20250417-abartig-abfuhr-40e558b85f97@brauner>
-References: <20250408210350.749901-12-echanude@redhat.com>
- <fbbafa84-f86c-4ea4-8f41-e5ebb51173ed@sirena.org.uk>
- <20250417-wolfsrudel-zubewegt-10514f07d837@brauner>
- <fb566638-a739-41dc-bafc-aa8c74496fa4@themaw.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DY4en8m61j42xqjM2g4wT1Uc07O/avZTT0t/kOue2eJ2RZmZrQ6zmYM0nmwjg5tDJ6AS3ZSivJkSjQRLAzmCQcQHg2K3n3YKsBDU5dcEWWBN49KnFdNkpdn53xWRc5zBJ+xI/XhH4BGRMuU1h6UO4+BaR1InZ5OfnBi04V9CBGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5ed43460d6bso1074864a12.0;
+        Thu, 17 Apr 2025 04:32:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744889519; x=1745494319;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jrCgsSPeTbv6ZtB0KQCzqyqRTg9cqGn94RPdFydJybE=;
+        b=e5n1pPCEIFTgkLhxN0/CmRA+bx2nRT3g1wARyMeK5zpWrdhAqlteNGkwc8RcgYi+CP
+         6LjhJDaGvAlg6Ge6+lz1Uhn0vfwGlxS4WwPAKhX/GsCrswc23U1ZQ2gtVD1fCUPekNS0
+         WSMLMWxfNXQXO1FwcoaxQiybk94eG8cHcAefl0uWQ2Jsop5x3ZUVyfM0s6f5MhG+w//r
+         J/Up3r2B06t6hTADroJ5S7dEBQVZ9TGNs65CnsL9GR4zP+VVAFGwuk5zqvHiX8+4357E
+         vo5LgDbRb2iGEnw11HdQ+2Oophz1nSJ0f3ThfKPYZSwX/Ttm6ks71yCU7W1xlWZxy8NT
+         MIEA==
+X-Forwarded-Encrypted: i=1; AJvYcCXTXNJV/UQFeG6Ebhe5dRu6/Vvzd2WCy4mNKOFxFln91bkXP0l0su0+oHAIW1PYHMwz8aBDLqx6LULepLg=@vger.kernel.org, AJvYcCXZW/Bf+ElBFRWX6CMa29Wk8zjPDobFKOS5ZaNNoE8wz0Pfr2dcNASruMCDNCFr+GlGIqxD42+J@vger.kernel.org, AJvYcCXr/Sf3MdX9lBZGTnQlY9Wdd1cbAXzGfm2w637mc8ec5H/yhs9wHJx8D1Ib77c+Jq8J78cqQoIsIVudkJyExaxfEHXL@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDpMLFMzTttE7TJpGGDHl5nCewbXvMnCXRgBBrJkKTD3ccXJFg
+	p0dhEjcgDWRTxYhA60ELieV30l0O4NT4bToHFgNaWeeKtOG55rqY
+X-Gm-Gg: ASbGnctmpqDWhitVgMYSc3GcU+gT8stsXAHHdytUVAzfN3YG3wl+QyYNwKinJhJLSe0
+	V4T4J5JExZowp6k8cySbpPGZn3hYnjy1yPBQ69nK5/5QsYbgIUYpJd5pTi0hGxbbfUNvoCanbnA
+	UWtIeivOWqUCnxQNyj5cHhtgU2Q74s+B7mtVTN9Me3rCPmy7hFhiJAv1dQQ4sAA1/a734COreIz
+	gvS4MWzzKC6LNjoXvHFzuHhnBrXwyqrdAUQSmR5dFj26Gp9OgLThr/gfVGwAIogXB5uPsgUQ/Bw
+	7wlhhYuD9LlnkdeKvfwweKxPmdsobem7WOjtg8sRDQ==
+X-Google-Smtp-Source: AGHT+IGxA9Hf/ORmBiX3EsGsQ+lHUMmc7HAeGV3DKGvVn28b9CeYys7216ndWydAeCXQyTKeEGtb3g==
+X-Received: by 2002:a05:6402:2387:b0:5f4:d22e:28c3 with SMTP id 4fb4d7f45d1cf-5f4d22e29a8mr1391178a12.4.1744889518572;
+        Thu, 17 Apr 2025 04:31:58 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:6::])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f36ee54fa9sm9886770a12.1.2025.04.17.04.31.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Apr 2025 04:31:58 -0700 (PDT)
+Date: Thu, 17 Apr 2025 04:31:55 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, kuniyu@amazon.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, yonghong.song@linux.dev,
+	song@kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH net-next] udp: Add tracepoint for udp_sendmsg()
+Message-ID: <aADmq6cGLe3yD9Qx@gmail.com>
+References: <20250416-udp_sendmsg-v1-1-1a886b8733c2@debian.org>
+ <6800064ea440f_fc9d7294c4@willemb.c.googlers.com.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fb566638-a739-41dc-bafc-aa8c74496fa4@themaw.net>
+In-Reply-To: <6800064ea440f_fc9d7294c4@willemb.c.googlers.com.notmuch>
 
-On Thu, Apr 17, 2025 at 06:17:01PM +0800, Ian Kent wrote:
-> 
-> On 17/4/25 17:01, Christian Brauner wrote:
-> > On Wed, Apr 16, 2025 at 11:11:51PM +0100, Mark Brown wrote:
-> > > On Tue, Apr 08, 2025 at 04:58:34PM -0400, Eric Chanudet wrote:
-> > > > Defer releasing the detached file-system when calling namespace_unlock()
-> > > > during a lazy umount to return faster.
-> > > > 
-> > > > When requesting MNT_DETACH, the caller does not expect the file-system
-> > > > to be shut down upon returning from the syscall. Calling
-> > > > synchronize_rcu_expedited() has a significant cost on RT kernel that
-> > > > defaults to rcupdate.rcu_normal_after_boot=1. Queue the detached struct
-> > > > mount in a separate list and put it on a workqueue to run post RCU
-> > > > grace-period.
-> > > For the past couple of days we've been seeing failures in a bunch of LTP
-> > > filesystem related tests on various arm64 systems.  The failures are
-> > > mostly (I think all) in the form:
-> > > 
-> > > 20101 10:12:40.378045  tst_test.c:1833: TINFO: === Testing on vfat ===
-> > > 20102 10:12:40.385091  tst_test.c:1170: TINFO: Formatting /dev/loop0 with vfat opts='' extra opts=''
-> > > 20103 10:12:40.391032  mkfs.vfat: unable to open /dev/loop0: Device or resource busy
-> > > 20104 10:12:40.395953  tst_test.c:1170: TBROK: mkfs.vfat failed with exit code 1
-> > > 
-> > > ie, a failure to stand up the test environment on the loopback device
-> > > all happening immediately after some other filesystem related test which
-> > > also used the loop device.  A bisect points to commit a6c7a78f1b6b97
-> > > which is this, which does look rather relevant.  LTP is obviously being
-> > > very much an edge case here.
-> > Hah, here's something I didn't consider and that I should've caught.
-> > 
-> > Look, on current mainline no matter if MNT_DETACH/UMOUNT_SYNC or
-> > non-MNT_DETACH/UMOUNT_SYNC. The mntput() calls after the
-> > synchronize_rcu_expedited() calls will end up in task_work():
-> > 
-> >          if (likely(!(mnt->mnt.mnt_flags & MNT_INTERNAL))) {
-> >                  struct task_struct *task = current;
-> >                  if (likely(!(task->flags & PF_KTHREAD))) {
-> >                          init_task_work(&mnt->mnt_rcu, __cleanup_mnt);
-> >                          if (!task_work_add(task, &mnt->mnt_rcu, TWA_RESUME))
-> >                                  return;
-> >                  }
-> >                  if (llist_add(&mnt->mnt_llist, &delayed_mntput_list))
-> >                          schedule_delayed_work(&delayed_mntput_work, 1);
-> >                  return;
-> >          }
-> > 
-> > because all of those mntput()s are done from the task's contect.
-> > 
-> > IOW, if userspace does umount(MNT_DETACH) and the task has returned to
-> > userspace it is guaranteed that all calls to cleanup_mnt() are done.
-> > 
-> > With your change that simply isn't true anymore. The call to
-> > queue_rcu_work() will offload those mntput() to be done from a kthread.
-> > That in turn means all those mntputs end up on the delayed_mntput_work()
-> > queue. So the mounts aren't cleaned up by the time the task returns to
-> > userspace.
-> > 
-> > And that's likely problematic even for the explicit MNT_DETACH use-case
-> > because it means EBUSY errors are a lot more likely to be seen by
-> > concurrent mounters especially for loop devices.
-> > 
-> > And fwiw, this is exactly what I pointed out in a prior posting to this
-> > patch series.
-> 
-> And I didn't understand what you said then but this problem is more
-> 
-> understandable to me now.
-> 
-> 
-> > 
-> > But we've also worsened that situation by doing the deferred thing for
-> > any non-UMOUNT_SYNC. That which includes namespace exit. IOW, if the
-> > last task in a new mount namespace exits it will drop_collected_mounts()
-> > without UMOUNT_SYNC because we know that they aren't reachable anymore,
-> > after all the mount namespace is dead.
-> > 
-> > But now we defer all cleanup to the kthread which means when the task
-> > returns to userspace there's still mounts to be cleaned up.
-> 
-> Correct me if I'm wrong but the actual problem is that the mechanism used
-> 
-> to wait until there are no processes doing an rcu-walk on mounts in the
-> 
-> discard list is unnecessarily long according to what Eric has seen. So a
+Hello Willem,
 
-I think that the current approach is still salvagable but I need to test
-this and currently LTP doesn't really compile for me.
+On Wed, Apr 16, 2025 at 03:34:38PM -0400, Willem de Bruijn wrote:
+> Breno Leitao wrote:
+> > Add a lightweight tracepoint to monitor UDP send message operations,
+> > similar to the recently introduced tcp_sendmsg_locked() trace event in
+> > commit 0f08335ade712 ("trace: tcp: Add tracepoint for
+> > tcp_sendmsg_locked()")
+> > 
+> > This implementation uses DECLARE_TRACE instead of TRACE_EVENT to avoid
+> > creating extensive trace event infrastructure and exporting to tracefs,
+> > keeping it minimal and efficient.
+> > 
+> > Since this patch creates a rawtracepoint, it can be accessed using
+> > standard tracing tools like bpftrace:
+> > 
+> >     rawtracepoint:udp_sendmsg_tp {
+> >         ...
+> >     }
+> 
+> What does this enable beyond kfunc:udp_sendmsg?
+
+A few things come to mind when evaluating the use of tracepoints.
+
+One significant advantage is that tracepoints provide a stable API where
+programs can hook into, making it easier for users to interact with key
+functions.
+
+However, kfunc/kprobes has some notable disadvantages. For instance,
+partial or total inlining can cause hooks to fail, which is not ideal
+and can lead to issues (mainly when we have partial inlines, and the
+hook works _sometimes_).
+
+In contrast, tracepoints create a more stable API for users to hook
+into, eliminating the need to patch the kernel with noinline function
+attributes. This solution may be ugly, but it is a common practice.
+(and this is my main goal with it, remove `noinline` from our internal
+kernel)
+
+While tracepoints are not officially considered stable APIs, they tend
+to be "more stable" in practice due to their deliberate and strategic
+placement. As a result, they are less likely to get renamed or changed
+frequently.
+
+Additionally, tracepoints offer performance benefits, being faster than
+both kfunc and kprobes. 
+
+For further discussion on this topic, please refer to same discussion in
+VFS:
+
+https://lore.kernel.org/bpf/20250118033723.GV1977892@ZenIV/T/#m4c2fb2d904e839b34800daf8578dff0b9abd69a0
+
+Thanks
+--breno
 
