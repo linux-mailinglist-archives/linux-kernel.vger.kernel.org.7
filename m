@@ -1,100 +1,138 @@
-Return-Path: <linux-kernel+bounces-608645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C164A91641
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 10:14:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC78FA91648
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 10:15:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DDD419E1300
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:14:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67DF27A8DFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:14:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F99922DFB0;
-	Thu, 17 Apr 2025 08:14:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346D022E00E;
+	Thu, 17 Apr 2025 08:15:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cld+u/Jc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="NH1Zpqg2";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="HeF5QlDw"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31FC225785;
-	Thu, 17 Apr 2025 08:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226F523AD;
+	Thu, 17 Apr 2025 08:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744877644; cv=none; b=CdnLV2dBjOtpmTnbJtwEGZN+VJ19/SjoAcSLeC0vzoxEPJXAd7Lt3kXVz5e9H22xVBv/y3Gdpa1DmcOIGPTGTXKnnd/NPa6bKcxwspuXOeF/XZm6SlTlJG6YXT0Su8TK89UBzlClFqLPr+Gd7VGavufOGTJouJKhgUbUje12sEY=
+	t=1744877742; cv=none; b=M8r9WYdtkDLH++DyaxnRVcy5I46tY2BfLwljuOVH9JVKQMkTfBgZ6/tyxChYmRbIsbGj7KRBnAdYQP8IFXoNY7Q84waBsceFNXTyt8OqgRBPB71IPJxpqouzJjhi0yfFl0FvsISjblwfe5W9SmfLmWtqVAt3jL+4ZhIgXHaDUvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744877644; c=relaxed/simple;
-	bh=MwepOx7zs2heluVdedWctNgQH1Q2ccAbcwPdl6bA4tw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fTo5XhYMM+t6vky5pnzcFeE92fcMImw2anAm8+0GPAHXNcqnjkV++JWvKC7B+kc/Tn8HjUXP3tDkJkZx8HUASjVCRjiia8ea17BQTzFiJ3Glab4sPdp+Nvios2hfXpnMYYqq9+xaKw1C+cl3sOv8bub4guNWE2TPZQHm3kUbco0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cld+u/Jc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BE08C4CEE4;
-	Thu, 17 Apr 2025 08:14:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744877643;
-	bh=MwepOx7zs2heluVdedWctNgQH1Q2ccAbcwPdl6bA4tw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Cld+u/JcLCjQWyrbdYUIkrIg1xfu7iOwxBuvjfwhvqCVcPHsz/LMH28VMEpv/8TqL
-	 NIORsv1kGbMwhKtx8lFXopYH1tJUpqLqK5dwFT+oTfokwGgSHAgRliQJh37bE8A0YJ
-	 wnxNTGWwF0bhH+4TqxuJylD0cuyd+i0AJPtvMZY94gmeacL6ZlZYhrjgJOWOvTBsHk
-	 GBMNhSKM1WjQuslSganp33+9nl4+IWnolDyHfrEhvt+4dHXysan2LC22CirdgTNTSJ
-	 HpwXfS05v3BgJl0fbRuOHTDx6xR8WmDy89GVwXRbnnq2qsug3QFHTbaiThsvwcee5m
-	 1dCKgFX8SFp4A==
-From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>,
-	Kees Cook <kees@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Paulo Alcantara <pc@manguebit.com>,
-	netfs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1744877742; c=relaxed/simple;
+	bh=bn7qdLHjpjUpxFpYyWM5B5ZbrSKSWf2Plz00LtQaGdg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mHIWjLl6vkru7xnXVgtJpFkIuqZ5D5J4RsyEih0PMGpQszLbnwxyPo6N5IhlErOm00pru9lflxX3wpfyWnlHyjUYtZAXjJynuzjXDgw+gUV+QRf9HiVjOvZzZSGfhLBoaUBcP1icQm+y6G9rKoQq+2NaYfWFAf9nsqyW7xiQtuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=NH1Zpqg2; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=HeF5QlDw reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1744877738; x=1776413738;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=OUfdnwQK75xEOyLEAX2T30UB5/q9/2vSMT4xlE66UAY=;
+  b=NH1Zpqg22IWgyCzTHWoJUIM9zApygv+BUP39C3P5Pwwbl4wBEtmJWvoM
+   XED0ZdWliu63DuOcxaKwoYIBTw4ZFYRjSL8KusYAtvJM4V6kdXM09ZGzL
+   GXwCxvcB6DZTruLNyjFJ4rtVB7y/uhM+36lXBZsVPvjV25Tm3wMtHYos4
+   /oPC2bv4bIk8lNOT7rJ9FD/3nTiXaHW9eOYEIVj0CHuuzAXDWfPqOzo8P
+   VyPZQf9RXuz+3LlOnRUUmZjqpfoD7txVnSubp9G6FctiWM9e/gU8O4GKK
+   tj64WG8/39M2HP9D3+VU2LFCz3nZ4aTIrOHHeUqcRY364kDonZvS7/vhC
+   Q==;
+X-CSE-ConnectionGUID: XLCD0ENZRx6bO9HNeywYxg==
+X-CSE-MsgGUID: zxdC4JQvQT+UyZB3RB/1oA==
+X-IronPort-AV: E=Sophos;i="6.15,218,1739833200"; 
+   d="scan'208";a="43587413"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 17 Apr 2025 10:15:35 +0200
+X-CheckPoint: {6800B8A7-10-903EAEAC-E04C76C8}
+X-MAIL-CPID: EE051AB59F033E25D47D34B959E4ACC2_5
+X-Control-Analysis: str=0001.0A006377.6800B8A2.00B1,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5177616CEA0;
+	Thu, 17 Apr 2025 10:15:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1744877731;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=OUfdnwQK75xEOyLEAX2T30UB5/q9/2vSMT4xlE66UAY=;
+	b=HeF5QlDwg56iwpNFx3JZmcmovkaABpbjxwOmRGPbJrM6ifMbepCmrDe/PffvC/tx2kPINi
+	6sR4pbhBVtnUldBrJ8uai6rcU+745Mo0rn4DO4jul4dxiprZqxTdF8DYcdWs2jXgG7Nc1h
+	LfXXgN9JO4YsPdEquktyiOkg0fLK1Neo3/tfEnH+2IYY/NsJWXtYgYLN4ii7Iffdv3VJQx
+	WLxFekE38EG4d8UAXwp/tqxlgdGxXnEmQCT8LvTqpLNrCnGvmJrD4u2pqLOCwvnPECaWuD
+	rMVwFVTX4MSDhmju2prPgSnjcIs0/Il4ciGcI8WSUXuwvriJqXefdbdMceXrFA==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: Markus Niebel <Markus.Niebel@ew.tq-group.com>,
+	linux@ew.tq-group.com,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] netfs: Mark __nonstring lookup tables
-Date: Thu, 17 Apr 2025 10:13:57 +0200
-Message-ID: <20250417-manchmal-verbal-7f84877a2c63@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250416221654.work.028-kees@kernel.org>
-References: <20250416221654.work.028-kees@kernel.org>
+	Alexander Stein <alexander.stein@ew.tq-group.com>
+Subject: [PATCH 1/2] Revert "arm64: dts: imx93-tqma9352-mba93xxca: enable Open Drain for MDIO"
+Date: Thu, 17 Apr 2025 10:15:19 +0200
+Message-ID: <20250417081522.1145586-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1839; i=brauner@kernel.org; h=from:subject:message-id; bh=MwepOx7zs2heluVdedWctNgQH1Q2ccAbcwPdl6bA4tw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQw7HDzmua4Xa0lvovN5u2fGmlee4v3aQs+ya7dvmHP9 v0J9fccOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACYio8Pw33OzUMSFtfrJGuun rtU1KT7U/Yrvfr3W78DfSt92vb82rZiR4VpwYe+Gtau6o9f/Nay6ZfXz2d+uh8oXKmau8WIUeK1 +jRsA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, 16 Apr 2025 15:16:55 -0700, Kees Cook wrote:
-> GCC 15's new -Wunterminated-string-initialization notices that the
-> character lookup tables "fscache_cache_states" and "fscache_cookie_states"
-> (which are not used as a C-String) need to be marked as "nonstring":
-> 
-> fs/netfs/fscache_cache.c:375:67: warning: initializer-string for array of 'char' truncates NUL terminator but destination lacks 'nonstring' attribute (6 chars into 5 available) [-Wunterminated-string-initialization]
->   375 | static const char fscache_cache_states[NR__FSCACHE_CACHE_STATE] = "-PAEW";
->       |                                                                   ^~~~~~~
-> fs/netfs/fscache_cookie.c:32:69: warning: initializer-string for array of 'char' truncates NUL terminator but destination lacks 'nonstring' attribute (11 chars into 10 available) [-Wunterminated-string-initialization]
->    32 | static const char fscache_cookie_states[FSCACHE_COOKIE_STATE__NR] = "-LCAIFUWRD";
->       |                                                                     ^~~~~~~~~~~~
-> 
-> [...]
+From: Markus Niebel <Markus.Niebel@ew.tq-group.com>
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+Using the MDIO pins with Open Drain causes spec violations of the
+signals. Revert the changes.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+This reverts commit 9015397c2f2d9d327c0cf88d74e39c4858cb4912.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Signed-off-by: Markus Niebel <Markus.Niebel@ew.tq-group.com>
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+ .../arm64/boot/dts/freescale/imx93-tqma9352-mba93xxca.dts | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+diff --git a/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxca.dts b/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxca.dts
+index 1ff2754255fa7..994be4e649343 100644
+--- a/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxca.dts
++++ b/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxca.dts
+@@ -649,8 +649,8 @@ pinctrl_eqos: eqosgrp {
+ 		fsl,pins = <
+ 			/* PD | FSEL_2 | DSE X4 */
+ 			MX93_PAD_ENET1_MDC__ENET_QOS_MDC			0x51e
+-			/* SION | HYS | ODE | FSEL_2 | DSE X4 */
+-			MX93_PAD_ENET1_MDIO__ENET_QOS_MDIO			0x4000191e
++			/* SION | HYS | FSEL_2 | DSE X4 */
++			MX93_PAD_ENET1_MDIO__ENET_QOS_MDIO			0x4000111e
+ 			/* HYS | FSEL_0 | DSE no drive */
+ 			MX93_PAD_ENET1_RD0__ENET_QOS_RGMII_RD0			0x1000
+ 			MX93_PAD_ENET1_RD1__ENET_QOS_RGMII_RD1			0x1000
+@@ -681,8 +681,8 @@ pinctrl_fec: fecgrp {
+ 		fsl,pins = <
+ 			/* PD | FSEL_2 | DSE X4 */
+ 			MX93_PAD_ENET2_MDC__ENET1_MDC			0x51e
+-			/* SION | HYS | ODE | FSEL_2 | DSE X4 */
+-			MX93_PAD_ENET2_MDIO__ENET1_MDIO			0x4000191e
++			/* SION | HYS | FSEL_2 | DSE X4 */
++			MX93_PAD_ENET2_MDIO__ENET1_MDIO			0x4000111e
+ 			/* HYS | FSEL_0 | DSE no drive */
+ 			MX93_PAD_ENET2_RD0__ENET1_RGMII_RD0		0x1000
+ 			MX93_PAD_ENET2_RD1__ENET1_RGMII_RD1		0x1000
+-- 
+2.43.0
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] netfs: Mark __nonstring lookup tables
-      https://git.kernel.org/vfs/vfs/c/58db1c3cd0ce
 
