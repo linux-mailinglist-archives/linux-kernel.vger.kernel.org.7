@@ -1,190 +1,112 @@
-Return-Path: <linux-kernel+bounces-608976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62096A91B75
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:04:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E79F5A91B7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:05:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8ADF819E5A49
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 12:04:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1C435A7072
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 12:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1752417F9;
-	Thu, 17 Apr 2025 12:02:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59B924A07D;
+	Thu, 17 Apr 2025 12:02:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Xpe1E9ar"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="lgc1Ii9q"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4805F2405F5
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 12:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F93124A042;
+	Thu, 17 Apr 2025 12:02:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744891362; cv=none; b=ZnN5wYbdQXWJmq+WETes4lhqsECvnJGrVR4BZhswa1A+n3sQuOeI6AB4GrX5RtbNhJJCCJcgcx+eSaVX2FQmmGpV/l3Uxgb9PSZkLFPe0lfRfF1Q51kGNPRX+le/FqHT47f8pTN9Bo5kliyoQ3uNdbCfeHLUcSuxKrdfSuYfk7M=
+	t=1744891334; cv=none; b=XadWkl9Rv2y+5oI8kCchEpcYKP+z8aW9uIp8cNlxmaL0/MGWWm0Kiz6ag5xfBp1xxkmGpjmMzCgNbFU6OOmM7O7G11sY+NTUBsV2T7osDNwoAYax3zw21aexVUe2fn9gqii3Job4B03VwW/rrNbg3mBX5BlMA24cfAjhBvp0VLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744891362; c=relaxed/simple;
-	bh=ZdAAJZEMS2lx65rAt/T+b4Q1b4vWvh0/tPImgbmMuTc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E5/ZzT9/VrcvRNjDefTCoElfCaDtngbG6puKbS8cZXM//O491pTlu/xtoRtZRhYUAbYt3ZwHu7672QP1BEVdOve8M0myApW+mCsrHhn3iAtmZmk5sSlq9UPnalqg6Qr4aohVkecH7Z/EjSXVNKm82Xnu1o2ZhG6RQ5qlX/GN61o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Xpe1E9ar; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=NRpqZn3xmGYP9OsNgVoADYvzcsi/0ghTFp6KfLY5hhA=; b=Xpe1E9arCgNAsu++BcdEUDFEmR
-	O/ZrpRhw8xi0s7ovvVoom57PQ3yaqQt1yyiAAeG4NdNO3dWHgLpxPJ2EfWpxV7oN2GXHibfEA/hHR
-	X2wZHsd9dTps9WTBHScwscfFEpgi7dypoL8THYu1Oa2kNifXkVgviX02xKHGakl2bK/3Osbfuvksd
-	a0r0ZgG7NENtNA5Kpqi/2u6r7kdlx7VnugplGSDxQtLrmS1cD2jZ42zgDBFeq3pOzP2MM3fn40CLl
-	my+WGMiUo04bnqMZ1IFtskElp/geHY90YdlStw0JD7scj7tBx9BGTsVuMsVr/cfBxsdMwJGkW4Fon
-	8vJIEgsA==;
-Received: from 39-14-49-133.adsl.fetnet.net ([39.14.49.133] helo=[192.168.220.43])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1u5Nwj-000nG0-2Z; Thu, 17 Apr 2025 14:02:21 +0200
-Message-ID: <667354f3-7076-4e64-9506-56e81e7d9234@igalia.com>
-Date: Thu, 17 Apr 2025 20:02:14 +0800
+	s=arc-20240116; t=1744891334; c=relaxed/simple;
+	bh=6ZXpOpKFXe3BQmkcz2CtFn5gZTsYclZ9GbD4T6xOKbg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=JczrSAXovPJnJsfm+WFJ/Xq2zZTZPsj9vrLE+d3aJ75Jf9lnc29H46l/mbk88MlxU0w0aTL7pm8JdgoJzSjbeULyrym2OfRXOVvgBMs85SHsUVpyAeZzkGdgiluzYXYVkRJd4g67cLvgRfYNcRPNKxxQKEgrft9SzM749OdWWwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=lgc1Ii9q; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id D18A925DFF;
+	Thu, 17 Apr 2025 14:02:10 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id RTLTMcTzHm4d; Thu, 17 Apr 2025 14:02:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1744891330; bh=6ZXpOpKFXe3BQmkcz2CtFn5gZTsYclZ9GbD4T6xOKbg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=lgc1Ii9q+HCq0tjO48u2cSjz4lhYMGVyVIMDSO6MRA67ndnRauaK9TG3tDkwVQbB9
+	 uJEYAJGAlL3+CLPSC0rxF4BXuJuH4YtY4aHemKLf/mArgpb9Xtoh981ORsFWZfd/P/
+	 uRJR8Dk9Tm5moIfbFNcO6+/5ajtEYrDiT/AiWe8tvAr/UMeKAeQ97ZRwRYO3Eo1O3i
+	 Dkh7MLvi2z/tHiBuAoTAkGG1giLyTa9AGiP4jTFo4ciswujMBxllwjqIHAAcHVD9nB
+	 22m7bEHlbH4jU8okBEr8mZ7cNzAQUPbVZK3UGd4zUAxJlkT4Aot8glBxQa1+Lb+UxS
+	 E0vpi2H/D2AJQ==
+From: Yao Zi <ziyao@disroot.org>
+To: Heiko Stuebner <heiko@sntech.de>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Yao Zi <ziyao@disroot.org>,
+	Chukun Pan <amadeus@jmu.edu.cn>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 3/3] arm64: dts: rockchip: Add onboard EEPROM for Radxa E20C
+Date: Thu, 17 Apr 2025 12:01:19 +0000
+Message-ID: <20250417120118.17610-6-ziyao@disroot.org>
+In-Reply-To: <20250417120118.17610-3-ziyao@disroot.org>
+References: <20250417120118.17610-3-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/huge_memory: fix dereferencing invalid pmd migration
- entry
-To: Zi Yan <ziy@nvidia.com>
-Cc: David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>,
- linux-mm@kvack.org, akpm@linux-foundation.org, willy@infradead.org,
- linmiaohe@huawei.com, revest@google.com, kernel-dev@igalia.com,
- linux-kernel@vger.kernel.org
-References: <20250414072737.1698513-1-gavinguo@igalia.com>
- <27d13454-280f-4966-b694-d7e58d991547@redhat.com>
- <6787d0ea-a1b9-08cf-1f48-e361058eec20@google.com>
- <83f17b85-c9fa-43a0-bec1-22c8565b67ad@redhat.com>
- <98d1d195-7821-4627-b518-83103ade56c0@redhat.com>
- <7d0ef7b5-043b-beca-72a9-6ae98b0d55fb@google.com>
- <05a7d51e-f065-445a-af0e-481f3461a76e@redhat.com>
- <f344d741-962c-48d3-84b7-ce3de5619122@igalia.com>
- <412E70A4-4775-4AF7-A878-7FEBF9A122D8@nvidia.com>
-Content-Language: en-US
-From: Gavin Guo <gavinguo@igalia.com>
-In-Reply-To: <412E70A4-4775-4AF7-A878-7FEBF9A122D8@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 4/17/25 19:32, Zi Yan wrote:
-> On 17 Apr 2025, at 7:21, Gavin Guo wrote:
-> 
->> On 4/17/25 17:04, David Hildenbrand wrote:
->>> On 17.04.25 10:55, Hugh Dickins wrote:
->>>> On Thu, 17 Apr 2025, David Hildenbrand wrote:
->>>>> On 17.04.25 09:18, David Hildenbrand wrote:
->>>>>> On 17.04.25 07:36, Hugh Dickins wrote:
->>>>>>> On Wed, 16 Apr 2025, David Hildenbrand wrote:
->>>>>>>>
->>>>>>>> Why not something like
->>>>>>>>
->>>>>>>> struct folio *entry_folio;
->>>>>>>>
->>>>>>>> if (folio) {
->>>>>>>>    if (is_pmd_migration_entry(*pmd))
->>>>>>>>        entry_folio = pfn_swap_entry_folio(pmd_to_swp_entry(*pmd)));
->>>>>>>>    else
->>>>>>>>     entry_folio = pmd_folio(*pmd));
->>>>>>>>
->>>>>>>>    if (folio != entry_folio)
->>>>>>>>          return;
->>>>>>>> }
->>>>>>>
->>>>>>> My own preference is to not add unnecessary code:
->>>>>>> if folio and pmd_migration entry, we're not interested in entry_folio.
->>>>>>> But yes it could be written in lots of other ways.
->>>>>>
->>>>>> While I don't disagree about "not adding unnecessary code" in general,
->>>>>> in this particular case just looking the folio up properly might be the
->>>>>> better alternative to reasoning about locking rules with conditional
->>>>>> input parameters :)
->>>>>>
->>>>>
->>>>> FWIW, I was wondering if we can rework that code, letting the caller to the
->>>>> checking and getting rid of the folio parameter. Something like this
->>>>> (incomplete, just to
->>>>> discuss if we could move the TTU_SPLIT_HUGE_PMD handling).
->>>>
->>>> Yes, I too dislike the folio parameter used for a single case, and agree
->>>> it's better for the caller who chose pmd to check that *pmd fits the folio.
->>>>
->>>> I haven't checked your code below, but it looks like a much better way
->>>> to proceed, using the page_vma_mapped_walk() to get pmd lock and check;
->>>> and cutting out two or more layers of split_huge_pmd obscurity.
->>>>
->>>> Way to go.  However... what we want right now is a fix that can easily
->>>> go to stable: the rearrangements here in 6.15-rc mean, I think, that
->>>> whatever goes into the current tree will have to be placed differently
->>>> for stable, no seamless backports; but Gavin's patch (reworked if you
->>>> insist) can be adapted to stable (differently for different releases)
->>>> more more easily than the future direction you're proposing here.
->>>
->>> I'm fine with going with the current patch and looking into cleaning it up properly (if possible).
->>>
->>> So for this patch
->>>
->>> Acked-by: David Hildenbrand <david@redhat.com>
->>>
->>> @Gavin, can you look into cleaning that up?
->>
->> Thank you for your review. Before I begin the cleanup, could you please
->> confirm the following action items:
->>
->> Zi Yan's suggestions for the patch are:
->> 1. Replace the page fault with an invalid address access in the commit
->>     description.
->>
->> 2. Simplify the nested if-statements into a single if-statement to
->>     reduce indentation.
-> 
-> 3. Can you please add Huge’s explanation below in the commit log?
-> That clarifies the issue. Thank you for the fix.
+Radxa E20C ships an onboard I2C EEPROM for storing production
+information. Enable it in devicetree.
 
-Sure, will send out another patch for your review. Thank you for the review.
+Signed-off-by: Yao Zi <ziyao@disroot.org>
+---
+ arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-> 
-> “
-> an anon_vma lookup points to a
-> location which may contain the folio of interest, but might instead
-> contain another folio: and weeding out those other folios is precisely
-> what the "folio != pmd_folio((*pmd)" check (and the "risk of replacing
-> the wrong folio" comment a few lines above it) is for.
-> ”
-> 
-> With that, Acked-by: Zi Yan <ziy@nvidia.com>
-> 
->>
->> David, based on your comment, I understand that you are recommending the
->> entry_folio implementation. Also, from your discussion with Hugh, it
->> appears you agreed with my original approach of returning early when
->> encountering a PMD migration entry, thereby avoiding unnecessary checks.
->> Is that correct? If so, I will keep the current logic. Do you have any
->> additional cleanup suggestions?
->>
->> I will start the cleanup work after confirmation.
->>
->>>
->>>>
->>>> (Hmm, that may be another reason for preferring the reasoning by
->>>> folio lock: forgive me if I'm misremembering, but didn't those
->>>> page migration swapops get renamed, some time around 5.11?)
->>>
->>> I remember that we did something to PTE handling stuff in the context of PTE markers. But things keep changing all of the time .. :)
->>>
-> 
-> 
-> Best Regards,
-> Yan, Zi
+diff --git a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
+index 57a446b5cbd6..6e77f7753ff7 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
+@@ -110,6 +110,20 @@ vcc5v0_sys: regulator-5v0-vcc-sys {
+ 	};
+ };
+ 
++&i2c1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c1m0_xfer>;
++	status = "okay";
++
++	eeprom@50 {
++		compatible = "belling,bl24c16a", "atmel,24c16";
++		reg = <0x50>;
++		pagesize = <16>;
++		read-only;
++		vcc-supply = <&vcc_3v3>;
++	};
++};
++
+ &pinctrl {
+ 	gpio-keys {
+ 		user_key: user-key {
+-- 
+2.49.0
 
 
