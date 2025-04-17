@@ -1,144 +1,125 @@
-Return-Path: <linux-kernel+bounces-609135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27432A91DA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:22:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2DBCA91DB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:22:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6671C447AFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 13:21:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B11FE5A7D1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 13:22:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691E024CED6;
-	Thu, 17 Apr 2025 13:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62DA42451F1;
+	Thu, 17 Apr 2025 13:22:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K7ppWavk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MeOblCg/";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZHCL3HKn"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50D21474B8;
-	Thu, 17 Apr 2025 13:20:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EAA82376E6;
+	Thu, 17 Apr 2025 13:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744896040; cv=none; b=jWNx+zcJYY3bGa833O9NcTChracgfHHmrNIa8bpxb4weEFZbY5K5RErvgGCFC3EQZ1gXOFedw2aX1Sds5PYvqRKQ+WhbBf/hkin3Gjg4GXTVG4mK2tVPpoyvylREJjZg3Aj3R3aTfpny5/QFX20BPsA+C44gVOC99R4hNOms66c=
+	t=1744896140; cv=none; b=moVbkS4EgN8PViuF9OCHTYdVhcSSRRvZiTxXs+HSWrOIoCcGh3ucbaKJTrPj32ZoHs+N7hltyMNaZSqxRAloD5TGxuqkpFrrPb8RvyzPbYkA7SmGbv6AhGwENKc8xGUNfwI4vaeYEgnDk4KcYfnT+dg35+BVWGu9KC9L5J1JJe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744896040; c=relaxed/simple;
-	bh=n/8uGpNsdYKNqMW7uwcOgz9sLAMdb7HkWpu8m8iysi8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EmVx9SyaOqUq/iui+yAv9zeZ2wc2eWHeBZhAsAPRzpfAs3ucbTAptQGbyOYbIB+G52Wr2iMj3x8ykscNAvf1vNhJjbcqaKA3Rz9XAkudj1mvDj948wRXUOUdVd+7YQw97EvWQxFWFLEhzsMB3o1b8D0fONc4I7mSPG279BuaGYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K7ppWavk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 153EAC4CEEA;
-	Thu, 17 Apr 2025 13:20:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744896040;
-	bh=n/8uGpNsdYKNqMW7uwcOgz9sLAMdb7HkWpu8m8iysi8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=K7ppWavk6lr4JAY5bawvUBCnzuQcrTunyBN/tnKILpTtYSccMY0mTT9vFvhNRTrRu
-	 wzs8yoWkHFf58L/OJARbE2FnbdpoXe5ngV8TYcbTVK1JUjJp46ONdw9qkYKnWE8Pb0
-	 2fY90QaG1heFMmwZ1Qb23/FLufKI8jX3E4Wp1CVyZBGpEblySKuzw3roxIzDnQsVcY
-	 twKsp6njYzsOfv/YidoyE82JDAsKqpWySPCRe1whhrwR7B9LqkzLMFZkjLx6nN1RHQ
-	 SmcLOF1qP6trPHywxG3HOQWlbiKs3ZlZK3uWc4iNl7cdn0aj+Fhmi2a9c49JNkKsam
-	 rTialmrbSX3pA==
-Date: Thu, 17 Apr 2025 14:20:34 +0100
-From: Will Deacon <will@kernel.org>
-To: Anand Moon <linux.amoon@gmail.com>, robin.murphy@arm.com
-Cc: Jiucheng Xu <jiucheng.xu@amlogic.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	"open list:AMLOGIC DDR PMU DRIVER" <linux-amlogic@lists.infradead.org>,
-	"moderated list:ARM PMU PROFILING AND DEBUGGING" <linux-arm-kernel@lists.infradead.org>,
-	"open list:ARM PMU PROFILING AND DEBUGGING" <linux-perf-users@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1] perf/amlogic: Replace smp_processor_id() with
- raw_smp_processor_id() in meson_ddr_pmu_create()
-Message-ID: <20250417132033.GA12863@willie-the-truck>
-References: <20250407063206.5211-1-linux.amoon@gmail.com>
+	s=arc-20240116; t=1744896140; c=relaxed/simple;
+	bh=ik4yyhcU8jgswd+NtfzGVUXGJUNQisUDoA4lQE9/eno=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JzG34WHkjCeKYlB6M7oI9xnGK9gjEOUhDRiuHzBmahRjdBcRYXiyQsMM9uSAyMDa6lU5+kOpQwH9wr4/3AklqIQWk96/12c/pLpbeTkxK2ih6tQQUVCSh5dbhQVmjGYygH8TCsUL3fcHD5uiG4tIN9qLyfv/SbjuX7HfK71I5io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MeOblCg/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZHCL3HKn; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744896137;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=LL3Om1CQV7/B9h3iAO3+lpGzVzoHmKfBTyBvybZrEYo=;
+	b=MeOblCg/RNRK11gQcdDVTxWd2Xn2Q3u3wG+CQj86SDs8fByW3TkGZvnQlJ8Gepmvn0FyR+
+	kQrxQjXXkW/4eG5P7gKOXxxH6AcFINz+58itRC3IItpWPrcujqQmWa7no85MYoX5t1L5EM
+	RpoyNKGW4z2zvyasoxum/WL9YZttEEW9hMRoc4Qkfyg0BtlmgW/RuXKa+5KgXxupicTtBK
+	eSVEUdaZiT0zZ2fUlOqj2GMrSUTHIVCW4qV2W3efP9+chyDEmYc1K+gAS7oB3EW2PTJKHz
+	ZaoTiRhVGAD7WLU0BE3B/+FYO/SduFfAX91tgR9yJEXDm/jcef0g3LGdVTogLA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744896137;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=LL3Om1CQV7/B9h3iAO3+lpGzVzoHmKfBTyBvybZrEYo=;
+	b=ZHCL3HKno7ya0Efm59ULAjGN59waN3eS+WTKRJK/OezcqJmiLegK5j4BkV7dAeFYYdsEp4
+	49gACDe4VDg12FDg==
+Date: Thu, 17 Apr 2025 15:21:54 +0200
+Subject: [PATCH wireless-next] wifi: mwifiex: Don't use %pK through printk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250407063206.5211-1-linux.amoon@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250417-restricted-pointers-wifi-v1-1-b79cdaae5579@linutronix.de>
+X-B4-Tracking: v=1; b=H4sIAHEAAWgC/x3MwQqDMBBF0V+RWXdAg63QXyldSPLSPihRZkIVx
+ H9v6PIs7j3EYYTLvTvE8KVzKQ3DpZP4nssLytQsoQ/XfhwmNXg1xoqk68JSYa4bMzVMc5zHfEs
+ xQFq+GjL3//ohGw0fuGvBXuV5nj8fVTRYeQAAAA==
+X-Change-ID: 20250417-restricted-pointers-wifi-27aca4f6dc2e
+To: Brian Norris <briannorris@chromium.org>, 
+ Francesco Dolcini <francesco@dolcini.it>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+ Aleksandr Loktionov <aleksandr.loktionov@intel.com>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744896137; l=1819;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=ik4yyhcU8jgswd+NtfzGVUXGJUNQisUDoA4lQE9/eno=;
+ b=FSHEuH9ei3I4nUx1dSzL2AxG0vO2/VuXuOigPV+CjdMcXBA/6UeZFhuofn6Wt0IDGFC1hhEUO
+ 6cvosipEIEACw153QAx6AKEtQoPfwdzaXqijuRZEdjd2xJutB0wI57l
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-On Mon, Apr 07, 2025 at 12:02:03PM +0530, Anand Moon wrote:
-> The Amlogic DDR PMU driver meson_ddr_pmu_create() function incorrectly uses
-> smp_processor_id(), which assumes disabled preemption. This leads to kernel
-> warnings during module loading because meson_ddr_pmu_create() can be called
-> in a preemptible context.
-> 
-> Following kernel warning and stack trace:
-> [   31.745138] [   T2289] BUG: using smp_processor_id() in preemptible [00000000] code: (udev-worker)/2289
-> [   31.745154] [   T2289] caller is debug_smp_processor_id+0x28/0x38
-> [   31.745172] [   T2289] CPU: 4 UID: 0 PID: 2289 Comm: (udev-worker) Tainted: GW 6.14.0-0-MANJARO-ARM #1 59519addcbca6ba8de735e151fd7b9e97aac7ff0
-> [   31.745181] [   T2289] Tainted: [W]=WARN
-> [   31.745183] [   T2289] Hardware name: Hardkernel ODROID-N2Plus (DT)
-> [   31.745188] [   T2289] Call trace:
-> [   31.745191] [   T2289]  show_stack+0x28/0x40 (C)
-> [   31.745199] [   T2289]  dump_stack_lvl+0x4c/0x198
-> [   31.745205] [   T2289]  dump_stack+0x20/0x50
-> [   31.745209] [   T2289]  check_preemption_disabled+0xec/0xf0
-> [   31.745213] [   T2289]  debug_smp_processor_id+0x28/0x38
-> [   31.745216] [   T2289]  meson_ddr_pmu_create+0x200/0x560 [meson_ddr_pmu_g12 8095101c49676ad138d9961e3eddaee10acca7bd]
-> [   31.745237] [   T2289]  g12_ddr_pmu_probe+0x20/0x38 [meson_ddr_pmu_g12 8095101c49676ad138d9961e3eddaee10acca7bd]
-> [   31.745246] [   T2289]  platform_probe+0x98/0xe0
-> [   31.745254] [   T2289]  really_probe+0x144/0x3f8
-> [   31.745258] [   T2289]  __driver_probe_device+0xb8/0x180
-> [   31.745261] [   T2289]  driver_probe_device+0x54/0x268
-> [   31.745264] [   T2289]  __driver_attach+0x11c/0x288
-> [   31.745267] [   T2289]  bus_for_each_dev+0xfc/0x160
-> [   31.745274] [   T2289]  driver_attach+0x34/0x50
-> [   31.745277] [   T2289]  bus_add_driver+0x160/0x2b0
-> [   31.745281] [   T2289]  driver_register+0x78/0x120
-> [   31.745285] [   T2289]  __platform_driver_register+0x30/0x48
-> [   31.745288] [   T2289]  init_module+0x30/0xfe0 [meson_ddr_pmu_g12 8095101c49676ad138d9961e3eddaee10acca7bd]
-> [   31.745298] [   T2289]  do_one_initcall+0x11c/0x438
-> [   31.745303] [   T2289]  do_init_module+0x68/0x228
-> [   31.745311] [   T2289]  load_module+0x118c/0x13a8
-> [   31.745315] [   T2289]  __arm64_sys_finit_module+0x274/0x390
-> [   31.745320] [   T2289]  invoke_syscall+0x74/0x108
-> [   31.745326] [   T2289]  el0_svc_common+0x90/0xf8
-> [   31.745330] [   T2289]  do_el0_svc+0x2c/0x48
-> [   31.745333] [   T2289]  el0_svc+0x60/0x150
-> [   31.745337] [   T2289]  el0t_64_sync_handler+0x80/0x118
-> [   31.745341] [   T2289]  el0t_64_sync+0x1b8/0x1c0
-> 
-> Changes replaces smp_processor_id() with raw_smp_processor_id() to
-> ensure safe CPU ID retrieval in preemptible contexts.
-> 
-> Cc: Jiucheng Xu <jiucheng.xu@amlogic.com>
-> Fixes: 2016e2113d35 ("perf/amlogic: Add support for Amlogic meson G12 SoC DDR PMU driver")
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> ---
->  drivers/perf/amlogic/meson_ddr_pmu_core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/perf/amlogic/meson_ddr_pmu_core.c b/drivers/perf/amlogic/meson_ddr_pmu_core.c
-> index 07446d784a1a..c1e755c356a3 100644
-> --- a/drivers/perf/amlogic/meson_ddr_pmu_core.c
-> +++ b/drivers/perf/amlogic/meson_ddr_pmu_core.c
-> @@ -511,7 +511,7 @@ int meson_ddr_pmu_create(struct platform_device *pdev)
->  
->  	fmt_attr_fill(pmu->info.hw_info->fmt_attr);
->  
-> -	pmu->cpu = smp_processor_id();
-> +	pmu->cpu = raw_smp_processor_id();
->  
->  	name = devm_kasprintf(&pdev->dev, GFP_KERNEL, DDR_PERF_DEV_NAME);
->  	if (!name)
+In the past %pK was preferable to %p as it would not leak raw pointer
+values into the kernel log.
+Since commit ad67b74d2469 ("printk: hash addresses printed with %p")
+the regular %p has been improved to avoid this issue.
+Furthermore, restricted pointers ("%pK") were never meant to be used
+through printk(). They can still unintentionally leak raw pointers or
+acquire sleeping looks in atomic contexts.
 
+Switch to the regular pointer formatting which is safer and
+easier to reason about.
+There are still a few users of %pK left, but these use it through seq_file,
+for which its usage is safe.
 
-Bah, this follows what the other drivers are doing but I continue to
-dislike the races we have between CPU hotplug and perf PMU registration.
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
+---
+This was originally part of
+https://lore.kernel.org/lkml/20250414-restricted-pointers-net-v1-0-12af0ce46cdd@linutronix.de/
+---
+ drivers/net/wireless/marvell/mwifiex/pcie.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Robin -- did you have a crack at fixing that or did I dream it?
+diff --git a/drivers/net/wireless/marvell/mwifiex/pcie.c b/drivers/net/wireless/marvell/mwifiex/pcie.c
+index dd2a42e732f2398892915e1a3ac88b7d3fb4ed3f..a760de191fce7340040b1bc74efb35cf52ce8368 100644
+--- a/drivers/net/wireless/marvell/mwifiex/pcie.c
++++ b/drivers/net/wireless/marvell/mwifiex/pcie.c
+@@ -2971,7 +2971,7 @@ static int mwifiex_init_pcie(struct mwifiex_adapter *adapter)
+ 		goto err_iomap2;
+ 	}
+ 
+-	pr_notice("PCI memory map Virt0: %pK PCI memory map Virt2: %pK\n",
++	pr_notice("PCI memory map Virt0: %p PCI memory map Virt2: %p\n",
+ 		  card->pci_mmap, card->pci_mmap1);
+ 
+ 	ret = mwifiex_pcie_alloc_buffers(adapter);
 
-Will
+---
+base-commit: cfb2e2c57aef75a414c0f18445c7441df5bc13be
+change-id: 20250417-restricted-pointers-wifi-27aca4f6dc2e
+
+Best regards,
+-- 
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+
 
