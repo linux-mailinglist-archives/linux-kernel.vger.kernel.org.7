@@ -1,88 +1,108 @@
-Return-Path: <linux-kernel+bounces-608440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFD8AA91380
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:05:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C65EFA91394
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:11:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BAC2441816
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 06:05:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D22683A665A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 06:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28221F417F;
-	Thu, 17 Apr 2025 06:05:16 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC441F4720;
+	Thu, 17 Apr 2025 06:11:41 +0000 (UTC)
+Received: from out28-1.mail.aliyun.com (out28-1.mail.aliyun.com [115.124.28.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A811DE4C8;
-	Thu, 17 Apr 2025 06:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334A32DFA4B;
+	Thu, 17 Apr 2025 06:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744869916; cv=none; b=qJ59up96KGHqgKJrpStRfjxGGeTyNr3i+LvpNxX0PElEuFuXDG9DvzyTm5FJE2ugVkaQ3NBPsY9XukakTKgZh1RpI4wDxPmUu45Vu2zuPIob21YQUG13QOU2shIJkncvXmhdE4ZRZc1z9mTUkKGOHAkOE6W20NdSH++/9qDSZdY=
+	t=1744870301; cv=none; b=PVnaUd2jamsgCrV65C1sppbw67acBk6qXXjaMvVM1HtSUKMYEFXFLvy2D6QTTqRnyurS7NQf5F/rbV4GXjeVr/TN7eH0jJBFBRlfwes6CE8nJpWu75q5JVzBkv27sNc97IpzCbc1qkK7srCSYsSOgTwMB6mfwDeGtVTyn7+vfvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744869916; c=relaxed/simple;
-	bh=d1bITkSF/1KWQgNW4k9o5k35hPOn5MgTtZiEbflkd+I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qb74GFPYfgeKyzfBQthksmrjt2olwHsProQCMoh1ejMNhyCgrIReB9+d1pOJRW7P22xWWsA2qcJtGNSQWODVKAJmYRvUYGR+vc/ZQaGRS8SZPKzxXCMczgF4slegTfrwT/Ll9FEf6NBF3+KO9R/mdubOKWsKpsDW7DvVjZG++JA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45A2AC4CEE4;
-	Thu, 17 Apr 2025 06:05:15 +0000 (UTC)
-Date: Thu, 17 Apr 2025 08:05:13 +0200
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, maud_spierings@hotmail.com, dmitry.baryshkov@oss.qualcomm.com
-Subject: Re: [PATCH v3 1/4] dt-bindings: usb: Add Parade PS8833 Type-C
- retimer variant
-Message-ID: <20250417-quick-aardwark-of-art-abdcb5@shite>
-References: <20250416232345.5240-1-alex.vinarskis@gmail.com>
- <20250416232345.5240-2-alex.vinarskis@gmail.com>
+	s=arc-20240116; t=1744870301; c=relaxed/simple;
+	bh=kgZhkApVvXyr4ZTTDLeZEnQIzIKe2sIDfbZoq5Z1UpE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CESLL0mMJzmfrjyM2mPM7zu/TVpQghy74aZxRDnezN9rSV34uZ+yBG6uXavbqmN4x+Jz2NGDueN45+52vq/Jdx3hEA7VY4i3jtC322CCo0w16bQ/8B325zDwk16Cjq9q9Qpg6059HS/XpwxHXnIbKoaJQV/zsJ6neNrHXbbsgHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motor-comm.com; spf=pass smtp.mailfrom=motor-comm.com; arc=none smtp.client-ip=115.124.28.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motor-comm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=motor-comm.com
+Received: from 10.0.2.15(mailfrom:Frank.Sae@motor-comm.com fp:SMTPD_---.cPFBVRS_1744869966 cluster:ay29)
+          by smtp.aliyun-inc.com;
+          Thu, 17 Apr 2025 14:06:07 +0800
+Message-ID: <4ad68dae-311f-4cdd-a6f8-0229f069ece3@motor-comm.com>
+Date: Thu, 17 Apr 2025 14:06:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250416232345.5240-2-alex.vinarskis@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v4 00/14] yt6801: Add Motorcomm yt6801 PCIe
+ driver
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Heiner Kallweit <hkallweit1@gmail.com>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, netdev@vger.kernel.org,
+ Masahiro Yamada <masahiroy@kernel.org>, Parthiban.Veerasooran@microchip.com,
+ linux-kernel@vger.kernel.org,
+ "andrew+netdev @ lunn . ch" <andrew+netdev@lunn.ch>, lee@trager.us,
+ horms@kernel.org, linux-doc@vger.kernel.org, corbet@lwn.net,
+ geert+renesas@glider.be, xiaogang.fan@motor-comm.com,
+ fei.zhang@motor-comm.com, hua.sun@motor-comm.com
+References: <20250408092835.3952-1-Frank.Sae@motor-comm.com>
+ <Z_T6vv013jraCzSD@shell.armlinux.org.uk>
+ <da434f13-fb08-4036-96ed-7de579cb9ddc@motor-comm.com>
+ <4fac4c4f-543b-4887-ace9-d264a0e5b0f2@lunn.ch>
+Content-Language: en-US
+From: Frank Sae <Frank.Sae@motor-comm.com>
+In-Reply-To: <4fac4c4f-543b-4887-ace9-d264a0e5b0f2@lunn.ch>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Apr 17, 2025 at 01:20:48AM GMT, Aleksandrs Vinarskis wrote:
-> Appears to behave similarly to Parade PS8830. Found on some Qualcomm
-> Snapdragon X1 devices, such as Asus Zenbook A14.
+
+
+On 2025/4/14 04:33, Andrew Lunn wrote:
+> On Fri, Apr 11, 2025 at 05:50:55PM +0800, Frank Sae wrote:
+>>
+>>
+>> On 2025/4/8 18:30, Russell King (Oracle) wrote:
+>>> On Tue, Apr 08, 2025 at 05:28:21PM +0800, Frank Sae wrote:
+>>>> This series includes adding Motorcomm YT6801 Gigabit ethernet driver
+>>>>  and adding yt6801 ethernet driver entry in MAINTAINERS file.
+>>>> YT6801 integrates a YT8531S phy.
+>>>
+>>> What is different between this and the Designware GMAC4 core supported
+>>> by drivers/net/ethernet/stmicro/stmmac/ ?
+>>>
+>>
+>> We support more features: NS, RSS, wpi, wol pattern and aspm control.
 > 
-> Signed-off-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-> ---
->  Documentation/devicetree/bindings/usb/parade,ps8830.yaml | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
+> Details please as to why these preventing the stmmac driver from being
+> used? Our default opinion will be that you will extend that stmmac
+> driver. In order to change that, you need to give us deep technical
+> arguments why it cannot be done.
+> 
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+After internal discussion, we have decided to temporarily suspend upstream.
+Thanks again!
 
----
-
-<form letter>
-This is an automated instruction, just in case, because many review tags
-are being ignored. If you know the process, you can skip it (please do
-not feel offended by me posting it here - no bad intentions intended).
-If you do not know the process, here is a short explanation:
-
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions of patchset, under or above your Signed-off-by tag, unless
-patch changed significantly (e.g. new properties added to the DT
-bindings). Tag is "received", when provided in a message replied to you
-on the mailing list. Tools like b4 can help here. However, there's no
-need to repost patches *only* to add the tags. The upstream maintainer
-will do that for tags received on the version they apply.
-
-https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
-</form letter>
-
-Best regards,
-Krzysztof
-
+>>> Looking at the register layout, it looks very similar. The layout of the
+>>> MAC control register looks similar. The RX queue and PMT registers are
+>>> at the same relative offset. The MDIO registers as well.
+>>>
+>>> Can you re-use the stmmac driver?
+>>>
+>>
+>> I can not re-use the stmmac driver, because pcie and ephy can not work well on
+>> the stmmac driver.
+> 
+> Please could you explain that in detail. What exactly does not work?
+> What is stmmac_pci.c about if not PCI?
+> 
+> 	Andrew
 
