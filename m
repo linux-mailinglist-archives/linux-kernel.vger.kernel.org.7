@@ -1,225 +1,97 @@
-Return-Path: <linux-kernel+bounces-609964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69FFAA92E55
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 01:31:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60023A92E5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 01:32:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D950A1B614BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 23:31:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03D1F188D13B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 23:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06FA422259B;
-	Thu, 17 Apr 2025 23:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BD4C222560;
+	Thu, 17 Apr 2025 23:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="pIR5UDzY"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="yk3Nt81H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85DD81DF733;
-	Thu, 17 Apr 2025 23:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F82222564;
+	Thu, 17 Apr 2025 23:31:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744932649; cv=none; b=jMuavr1fsv+92M83XTDOVUn6av6liFewBQt8bc+fbuU8eQjoPWNZV0IFalHI92ifonf2TYEeWP8Fms27QFNyyik1ACGi6MOPlNxmPKX9SZM2vb0IdJsZQ/bv+ELSVDMxiwBND+agrXdAlAzT+MAfHyPeI94kU3Xzp/0He/fcLDk=
+	t=1744932711; cv=none; b=o21Ho89Hgj2Sz6qY9NNq7sK1uj0sX4XxZLNW1T+WfsN5dR8S8ZAkSgbcblI/U4JFQR9PPaAX6PdIutz8qtmEuiFBsy0XZ9FGKAZRmU2Ot2oMvYNTn7oapNjUyLUawK9GZRbi7Qh0HFq0Cy1hiHZbwOFfzruU/MILa1SyvOGMS/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744932649; c=relaxed/simple;
-	bh=NF8epsqffT7Xcm1m72JpMyi7GmRCxlzRfM461HZti5g=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uYNqeu9WeEHws+MdNr7YqVwnmZeYWL6/vKo+8SqmEW1EMRk30T/5A2lEy5J3NViMRccsIjeGYFCMKurt3vnqEgeljdydoiZgDtiRZyRpiTM1grZAb3kcs2JQhRcAr3GCq5VWWFLygdV6qjpZbQFIQo2eT9FoqDiQFS33TNk8G1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=pIR5UDzY; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53HNUfUc840819
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 17 Apr 2025 18:30:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1744932641;
-	bh=Ezw0oVY+Gf5J7znU3tUIb+6QERgbVOh4hOKr9iJ3yCc=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=pIR5UDzYYqpkioMFcQ5PsMpgm12YDDXhPV6bzx9u2RVIqFAzvMyaFMeI2DkhxZrZt
-	 FCR6XPQL1JcjQVBsyzHt8Mile9RbQJqyZ0WdHIVES0VexIF+eWpOiINxyKClHlJp6S
-	 DXfpCByu3EKFCStPT59xGrweN4PlxueK3DSDrZJM=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53HNUf6K127957
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 17 Apr 2025 18:30:41 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 17
- Apr 2025 18:30:40 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 17 Apr 2025 18:30:40 -0500
-Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53HNUePj023286;
-	Thu, 17 Apr 2025 18:30:40 -0500
-From: Judith Mendez <jm@ti.com>
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
-CC: Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Moteen Shah <m-shah@ti.com>
-Subject: [PATCH v2 5/5] arm64: dts: ti: k3-am6*: Remove disable-wp for eMMC
-Date: Thu, 17 Apr 2025 18:30:40 -0500
-Message-ID: <20250417233040.3658761-6-jm@ti.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250417233040.3658761-1-jm@ti.com>
-References: <20250417233040.3658761-1-jm@ti.com>
+	s=arc-20240116; t=1744932711; c=relaxed/simple;
+	bh=voDmLeRkXhnBh06zKO+SDWJ4p+ieK+pSNyDhd0/wngs=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=EDwSoBFFsD+qmL8O8SJPcMkfu4+ZSFcogIenNo4P/RVTHxBQjFTibGP5YwxyVYswGxO4HSvX7FyTXWcUnsQvccYyOw5qhjPnfig7SY4lpFumqvthhDLCzne5Y/KrTw+NBO7oWeUwPs7Rm/QWY1sHWcS1ZSOdHp2nM8nKgXijFvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=yk3Nt81H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CB59C4CEE4;
+	Thu, 17 Apr 2025 23:31:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1744932710;
+	bh=voDmLeRkXhnBh06zKO+SDWJ4p+ieK+pSNyDhd0/wngs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=yk3Nt81HyWt8AB2Z4Zy0KzCNdCaAaL+E4nyoP35V0A8XO5tprE9Aj0S6sKaTHdo6U
+	 RFNu9nPpT9lIEJFybkOlWDTRVvoRjfNZgieypSBpLEkmXWTLm76bTbPxbaRGOmtNjM
+	 YtHmij0mEPrRJ7/ELuHB222LXFbe6X+NZTwGhLno=
+Date: Thu, 17 Apr 2025 16:31:49 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Rakie Kim <rakie.kim@sk.com>, <gourry@gourry.net>, <linux-mm@kvack.org>,
+ <linux-kernel@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
+ <joshua.hahnjy@gmail.com>, <ying.huang@linux.alibaba.com>,
+ <david@redhat.com>, <Jonathan.Cameron@huawei.com>, <osalvador@suse.de>,
+ <kernel_team@skhynix.com>, <honggyu.kim@sk.com>, <yunjeong.mun@sk.com>
+Subject: Re: [PATCH v9 0/3] Enhance sysfs handling for memory hotplug in
+ weighted interleave
+Message-Id: <20250417163149.c918137ef2f9742daf79083f@linux-foundation.org>
+In-Reply-To: <6801839a2481_71fe29462@dwillia2-xfh.jf.intel.com.notmuch>
+References: <20250417072839.711-1-rakie.kim@sk.com>
+	<20250417081106.732-1-rakie.kim@sk.com>
+	<20250417153505.c921f75a035089906bb38fe6@linux-foundation.org>
+	<6801839a2481_71fe29462@dwillia2-xfh.jf.intel.com.notmuch>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Remove disable-wp flag for eMMC nodes since this flag is
-only applicable to SD according to the binding doc
-(mmc/mmc-controller-common.yaml).
+On Thu, 17 Apr 2025 15:41:30 -0700 Dan Williams <dan.j.williams@intel.com> wrote:
 
-For eMMC, this flag should be ignored but lets remove
-anyways to cleanup sdhci nodes.
+> Andrew Morton wrote:
+> > On Thu, 17 Apr 2025 17:10:08 +0900 Rakie Kim <rakie.kim@sk.com> wrote:
+> > 
+> > > I sincerely apologize for causing repeated inconvenience. The series of
+> > > patches version v8 that was merged into -mm, mm-new today needs
+> > > additional corrections.
+> > > Link: https://lore.kernel.org/all/6800742de6315_130fd2949c@dwillia2-mobl3.amr.corp.intel.com.notmuch/
+> > > Therefore, I have updated a new version v9, in which the problems have
+> > > been addressed.
+> > 
+> > No probs, this is why mm.git workflow (mm-new -> mm-unstable ->
+> > mm-stable -> mainline) operates as it does - to easily permit revisions
+> > and replacements as patches move towards their final state.
+> > 
+> > Please note that I added a cc:stable to your [1/N] patch - sysfs leaks
+> > should be fixed in earlier kernels.  I considered this to be low
+> > priority - if it's higher priority than this patch should best have
+> > been separated from the series, so it can take a different merge path
+> > from the other patches.  
+> 
+> The risk of leak is low because it only appears to trigger if setup
+> fails. Setup only fails due to -ENOMEM which is unlikely to happen from
+> a late_initcall() when memory pressure is low.
 
-Signed-off-by: Judith Mendez <jm@ti.com>
----
- arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi               | 1 -
- arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts                | 1 -
- arch/arm64/boot/dts/ti/k3-am62a-phycore-som.dtsi              | 1 -
- arch/arm64/boot/dts/ti/k3-am62a7-sk.dts                       | 1 -
- arch/arm64/boot/dts/ti/k3-am62p5-sk.dts                       | 1 -
- arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi                | 1 -
- arch/arm64/boot/dts/ti/k3-am642-evm.dts                       | 1 -
- arch/arm64/boot/dts/ti/k3-am654-base-board.dts                | 1 -
- arch/arm64/boot/dts/ti/k3-am6548-iot2050-advanced-common.dtsi | 1 -
- arch/arm64/boot/dts/ti/k3-am69-sk.dts                         | 1 -
- 10 files changed, 10 deletions(-)
+Oh, OK, thanks.  I added the above paragraph to the changelog and
+removed the cc:stable.
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi b/arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi
-index 55ed418c023bc..e5be92aa12189 100644
---- a/arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi
-@@ -381,7 +381,6 @@ serial_flash: flash@0 {
- &sdhci0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&main_mmc0_pins_default>;
--	disable-wp;
- 	non-removable;
- 	bootph-all;
- 	status = "okay";
-diff --git a/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts b/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts
-index 1c8b4d13fb491..72b09f9c69d8c 100644
---- a/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts
-@@ -835,7 +835,6 @@ &sdhci0 {
- 	non-removable;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&emmc_pins_default>;
--	disable-wp;
- 	status = "okay";
- };
- 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62a-phycore-som.dtsi b/arch/arm64/boot/dts/ti/k3-am62a-phycore-som.dtsi
-index 147d56b879843..0d4115590b9c3 100644
---- a/arch/arm64/boot/dts/ti/k3-am62a-phycore-som.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62a-phycore-som.dtsi
-@@ -338,7 +338,6 @@ serial_flash: flash@0 {
- &sdhci0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&main_mmc0_pins_default>;
--	disable-wp;
- 	non-removable;
- 	bootph-all;
- 	status = "okay";
-diff --git a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-index 7de4a9f139ad4..625ce8f8958b7 100644
---- a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-@@ -615,7 +615,6 @@ &sdhci0 {
- 	non-removable;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&main_mmc0_pins_default>;
--	disable-wp;
- 	bootph-all;
- };
- 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-index 43fcb57b34ebf..1025062c77d57 100644
---- a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-@@ -456,7 +456,6 @@ &sdhci0 {
- 	status = "okay";
- 	non-removable;
- 	ti,driver-strength-ohm = <50>;
--	disable-wp;
- 	bootph-all;
- };
- 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-index 561916c6e151c..9d933e837dd4b 100644
---- a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-@@ -437,7 +437,6 @@ &sdhci0 {
- 	non-removable;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&main_mmc0_pins_default>;
--	disable-wp;
- };
- 
- &sdhci1 {
-diff --git a/arch/arm64/boot/dts/ti/k3-am642-evm.dts b/arch/arm64/boot/dts/ti/k3-am642-evm.dts
-index f8ec40523254b..5c6197ba842e4 100644
---- a/arch/arm64/boot/dts/ti/k3-am642-evm.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am642-evm.dts
-@@ -597,7 +597,6 @@ &sdhci0 {
- 	status = "okay";
- 	non-removable;
- 	ti,driver-strength-ohm = <50>;
--	disable-wp;
- 	bootph-all;
- };
- 
-diff --git a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-index aa7139cc8a92b..c30425960398e 100644
---- a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-@@ -456,7 +456,6 @@ &sdhci0 {
- 	bus-width = <8>;
- 	non-removable;
- 	ti,driver-strength-ohm = <50>;
--	disable-wp;
- };
- 
- /*
-diff --git a/arch/arm64/boot/dts/ti/k3-am6548-iot2050-advanced-common.dtsi b/arch/arm64/boot/dts/ti/k3-am6548-iot2050-advanced-common.dtsi
-index ae842b85b70de..12af6cb7f65cf 100644
---- a/arch/arm64/boot/dts/ti/k3-am6548-iot2050-advanced-common.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am6548-iot2050-advanced-common.dtsi
-@@ -50,5 +50,4 @@ &sdhci0 {
- 	bus-width = <8>;
- 	non-removable;
- 	ti,driver-strength-ohm = <50>;
--	disable-wp;
- };
-diff --git a/arch/arm64/boot/dts/ti/k3-am69-sk.dts b/arch/arm64/boot/dts/ti/k3-am69-sk.dts
-index b85227052f97e..f28375629739c 100644
---- a/arch/arm64/boot/dts/ti/k3-am69-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am69-sk.dts
-@@ -940,7 +940,6 @@ &main_sdhci0 {
- 	status = "okay";
- 	non-removable;
- 	ti,driver-strength-ohm = <50>;
--	disable-wp;
- };
- 
- &main_sdhci1 {
--- 
-2.49.0
-
+Generally, we assume that -ENOMEM doesn't happen in __init code.  If it
+does, the kernel is totally messed up anyway)
 
