@@ -1,44 +1,53 @@
-Return-Path: <linux-kernel+bounces-608676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4DD2A91695
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 10:39:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E927BA9169C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 10:40:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F11E3B7E55
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:39:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96BF07B036C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA719225A29;
-	Thu, 17 Apr 2025 08:39:05 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E56722424D;
+	Thu, 17 Apr 2025 08:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LrF02IEJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA921F3FE3
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 08:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 026E321B9E5;
+	Thu, 17 Apr 2025 08:39:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744879145; cv=none; b=c4bNkifhero3QIuW+MgSLaM6nbt8q9LeQs5qC0gMcQqB7MOOAWT27OfBiY7DClyg7OO+dusVXVZZTrODOSdRKRL28ykknM4h10RcpAPkuik0RIl+4xumXaFw6ZuQSVQod0Rqo88O3WTpHFmu8TB25nhHGvD25v23+PZ5Y0OyMk0=
+	t=1744879177; cv=none; b=JEn2A02D986iywhHEc+h1BBlx5bh1BewW/XlEU4pMI3+UD1LywjVW/5q95sOpgiapfinEXMv+ApHux8aLx29ImVx9A7KgsxRWIa+4wiysFkFfWm1do4sOUhk+iXQx28HcOZE5cb3I+RXoTLFwNa8ms0A3pixtgbrJNrOv1ELprA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744879145; c=relaxed/simple;
-	bh=roVPv8OjVfBI7qZDFvWUBhng+U4m821lTmU3vfQ+cJ4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IH0jVHOqZYbnJ7HSR804+mFGRkPDr13umCZP2hiM20/9RLlkuY5bE97kgNnkq5teiSyXYKPRuso7oi/JFxMH1jRirTARJwpz/b2USYNAFgOrC51Ti4i9qspOcYi8lF+QywG95bi0LEAeRCe7yzv0v5oFALfocX9tIf5Gq944kUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-03 (Coremail) with SMTP id rQCowACHNUIXvgBokIaACQ--.7289S2;
-	Thu, 17 Apr 2025 16:38:47 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: agruenba@redhat.com
-Cc: gfs2@lists.linux.dev,
+	s=arc-20240116; t=1744879177; c=relaxed/simple;
+	bh=K0f+JOXWGi4vrHLeSyyv7b7BSq3YVVIQ43kBiZpnSSM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MKBVGNPQWR+ycU3VQtL+ri46B5lvMEvRixg6S8qOwYvT8k0EH6ce6I6h6SojMGLhQB5Ry0IWIKnZnjKgLtJ+emgpEGV3ojjH65ABTvfhY0Hf/pfXZxBW6OH+0Gaego9uqRNdUsIBHgqPFg6FKCnwJVH5rmN6sntiqwVpJSm81r8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LrF02IEJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CF6FC4CEE4;
+	Thu, 17 Apr 2025 08:39:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744879176;
+	bh=K0f+JOXWGi4vrHLeSyyv7b7BSq3YVVIQ43kBiZpnSSM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=LrF02IEJjTTBTcx/O1v8IT11OBNP/xXZFOQJtRypB9LIp9x7URQcwFWRzvm+MGD4E
+	 CIMEyGo+F6W0qw7HkfFaG2dQeEYfuHqAbPTPhP7x5iRWfsjeNgAjaDwCWLM8xzTFCl
+	 7tW1dEPiUtI7KY0jLxfLYBmjr7UfBYrHxokKtzsVKmojwlk0iXiXUEnouX6b3NzSZ1
+	 2oFWiavlwB2uBwXqZ6U063Shc/ifXNIgkm2MIUomd3g4PJc1FtILTlnrxc1a6dg31B
+	 ETu/Qhl6wTEAoZdDnYdU5Whp1/bw3nfJhaB7t16k+YJjDq8Gj3dBSBlqywVyapitNc
+	 FnkPqgxs0O49w==
+From: Philipp Stanner <phasta@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-spi@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] gfs2: Remove unnecessary NULL check before free_percpu()
-Date: Thu, 17 Apr 2025 16:38:39 +0800
-Message-Id: <20250417083839.937319-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	Philipp Stanner <phasta@kernel.org>
+Subject: [PATCH 1/2] spi: spi-cavium-thunderx: Use non-hybrid PCI devres API
+Date: Thu, 17 Apr 2025 10:39:02 +0200
+Message-ID: <20250417083902.23483-2-phasta@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,46 +55,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowACHNUIXvgBokIaACQ--.7289S2
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUY-7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E
-	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
-	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8I
-	cVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87
-	Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
-	6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVWxJVW8Jr1lOx
-	8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIF
-	xwCY1x0262kKe7AKxVWUAVWUtwCY02Avz4vE14v_GFyl42xK82IYc2Ij64vIr41l4I8I3I
-	0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWU
-	GVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI
-	0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0
-	rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r
-	4UYxBIdaVFxhVjvjDU0xZFpf9x0JUf8nOUUUUU=
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-free_percpu() checks for NULL pointers internally.
-Remove unneeded NULL check here.
+cavium-thunderx enables its PCI device with pcim_enable_device(). This,
+implicitly, switches the function pci_request_regions() into managed
+mode, where it becomes a devres function.
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+The PCI subsystem wants to remove this hybrid nature from its
+interfaces. To do so, users of the aforementioned combination of
+functions must be ported to non-hybrid functions.
+
+Moreover, since both functions are already managed in this driver, the
+calls to pci_release_regions() are unnecessary.
+
+Remove the calls to pci_release_regions().
+
+Replace the call to sometimes-managed pci_request_regions() with one to
+the always-managed pcim_request_all_regions().
+
+Signed-off-by: Philipp Stanner <phasta@kernel.org>
 ---
- fs/gfs2/ops_fstype.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/spi/spi-cavium-thunderx.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/fs/gfs2/ops_fstype.c b/fs/gfs2/ops_fstype.c
-index ea5b3c5c6e1c..8f9bb6677db7 100644
---- a/fs/gfs2/ops_fstype.c
-+++ b/fs/gfs2/ops_fstype.c
-@@ -64,8 +64,7 @@ static void gfs2_tune_init(struct gfs2_tune *gt)
+diff --git a/drivers/spi/spi-cavium-thunderx.c b/drivers/spi/spi-cavium-thunderx.c
+index 337aef12abcc..367ae7120bb3 100644
+--- a/drivers/spi/spi-cavium-thunderx.c
++++ b/drivers/spi/spi-cavium-thunderx.c
+@@ -34,7 +34,7 @@ static int thunderx_spi_probe(struct pci_dev *pdev,
+ 	if (ret)
+ 		goto error;
  
- void free_sbd(struct gfs2_sbd *sdp)
- {
--	if (sdp->sd_lkstats)
--		free_percpu(sdp->sd_lkstats);
-+	free_percpu(sdp->sd_lkstats);
- 	kfree(sdp);
+-	ret = pci_request_regions(pdev, DRV_NAME);
++	ret = pcim_request_all_regions(pdev, DRV_NAME);
+ 	if (ret)
+ 		goto error;
+ 
+@@ -78,7 +78,6 @@ static int thunderx_spi_probe(struct pci_dev *pdev,
+ 	return 0;
+ 
+ error:
+-	pci_release_regions(pdev);
+ 	spi_controller_put(host);
+ 	return ret;
  }
+@@ -92,7 +91,6 @@ static void thunderx_spi_remove(struct pci_dev *pdev)
+ 	if (!p)
+ 		return;
  
+-	pci_release_regions(pdev);
+ 	/* Put everything in a known state. */
+ 	writeq(0, p->register_base + OCTEON_SPI_CFG(p));
+ }
 -- 
-2.25.1
+2.48.1
 
 
