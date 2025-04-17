@@ -1,205 +1,155 @@
-Return-Path: <linux-kernel+bounces-608264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96187A910FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 03:02:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FCA9A910EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 02:57:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 416CF7A4EDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 01:00:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14393446D98
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 00:57:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044041922FB;
-	Thu, 17 Apr 2025 01:01:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC9F7185B67;
+	Thu, 17 Apr 2025 00:57:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="QZR3WKAq"
-Received: from out162-62-57-64.mail.qq.com (out162-62-57-64.mail.qq.com [162.62.57.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b="Gxu924AY"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44CE785626;
-	Thu, 17 Apr 2025 01:01:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD04313AD3F
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 00:57:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744851710; cv=none; b=fkBGKkiHMrzT8X0H1Vb+AJUUFeVpHIEHVuIb2zIN8MRmHrOfekQ+sRITPl3tbMgbGa5yHZAbgZYSQ/ppVI6gegvHwAHlKVXZuS0A4uk7U9iBiSF5U3Dofk+QdQYPuOEDGIk6SCX35rn1W0To+eeYgoIlmuGZMmirk6FP4T/WZFA=
+	t=1744851434; cv=none; b=I1mgDx1C5XEb27wSJMGv4S2k5FXd3YtKsQe5AK93K7S+VnFoJtZIeGL5TURlwehbmhQemeCb22raPMscUsmG72T6pN+AvlvHEPzjHIqmEW0Uk+McSygQOKtye5+kujI2V/XgMs9NZf467jlnCfLP7wPscn9lgcYRBua6mi0SNEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744851710; c=relaxed/simple;
-	bh=Z33tGbXNa/Z+ukflV9OKQZbiaePdJSU6ARsBUB0pew4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NapkQFLLHNuiDO/dXO5zOGArFWsf9NIE1PlQAqhC7AomnjKZK7kcYEwKwdkJwlXSo+jzpOkffQueUqThftOsf6PaftvpJls3v470wAvcmmej5RFZkIqAsjv6vn2YjDhzdD8Pk3NcbELAfQjbTkL9e+/i5dEs61vOPElH0idiAxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=QZR3WKAq; arc=none smtp.client-ip=162.62.57.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1744851394; bh=YD9f5yEVr2z0iCTLFWkQnJV5hp8mGuqx+T5Wt6TbArM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=QZR3WKAqcPbFhpl67xZTj2oDRsNGe/G5DKVo6XQldJ1vOGg/ZaWePV8vt/q/PSgpN
-	 /l38BcreoXlW4lzW/UmepVzRaueDjQ/QXGw2RVE1DvFdxJ5PgfJolsms9G76vbrpy6
-	 Ym3o3YX7nfSyJDeQvP6s96nkeqcsURWCsAtAMbL4=
-Received: from [IPV6:240e:469:644:c677:5cc9:79d:eef7:ec59] ([240e:469:644:c677:5cc9:79d:eef7:ec59])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id E20048E1; Thu, 17 Apr 2025 08:56:32 +0800
-X-QQ-mid: xmsmtpt1744851392tnxqa3qki
-Message-ID: <tencent_BBA191F51C3CDBF54EB8DFE592ECB1232107@qq.com>
-X-QQ-XMAILINFO: Mm0jDPjQYDdlyaklPYmsac73KLMPAUvWabU3YECQILwOKjt9sBhbRqduKFQI57
-	 O8Taee4gQYWoyeesyBSGTVedxqB85okCYo8cBXYTPyb4gWgTMH9YEERLbRgYzWW5ppWY4j0N0zq1
-	 WFuc048D8JJFpFLBNprv2kvvAqeG7dWniE+J1pXhKtXqpKt95UJz/7yYRl8XNtbaC1B0kYW0Hykx
-	 hT57fhgg2qZJFvRjo31FSzsZ+vJEjvN2SSDsrYG4TFItKk+eY8nUPclIZ6hCdSppK+hQOFWbTvYL
-	 5uTgpdCUFVKU0wEUtz9QfXFqXly9r9DHXuxk1sFBnwLUIC6arGN66vEs0LC7aMJAB+bGDQVF3DRG
-	 i1SaomXUXrVvl5g3nMKwPXTC1YxdzAZywQzjfuhE9KoIoRG2wLCa9lYWsvqvgd+gm/vwskMxKjZX
-	 KyPdun1W5+Q7FXDFd3MqR6tRqn32AqyOnpVNig+QcOnK3GBs3n9EXcNoUUUqNfB88YfKdT5uU6k9
-	 w4m3OJUyifDLJ7nI9n6p++hTHHC+IA3aNML3gdUPTAiiwyZ+Wpx24Xz9Tt+KAAWSJSSRQmC9gy+D
-	 YZLKtHn6FGXnrqfAgWJYjdPN0nrjGlXEBT8xWN/9cCw/kylxEzgIL2JhJcdGtmfsFhZu6WIosM2D
-	 cWgYxQ4IxiUBZw2hMZBphSHpt/cD40BezxuPAtipE631PuBMbVblmHljYFUVXPMi7h8sT5FDUIEn
-	 HnMKUVzV1EgW90XgJUKA3QxGoZbPySdszFT+kdl9aUoAR+wP28rm6KJ7PNhjsjS7E+arNx4sWhJA
-	 WIXvknqItmLvDAHHMovrB3/orpzKztY+NQd9+plvmNVzuWZA+bTT30PjujZLE5kn8IHQwvckt2lV
-	 nVyl5fDrJjU6U4Bx5IBmQjoAiRVRsR2CA1oZ24ynbMqieCF+z5Fx5gCMMnI6P1TsAdmyEEBitHHy
-	 PeiFeb3tjWbOTbrJ22Y6g/sw0kgVFmGJlJvZONe4QQUcktMKVwzSQKKc5BkG3s
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-X-OQ-MSGID: <d4dcc44e-90c8-41af-a1ec-7239cdd8bac9@qq.com>
-Date: Thu, 17 Apr 2025 08:56:31 +0800
+	s=arc-20240116; t=1744851434; c=relaxed/simple;
+	bh=bvnrkExgcIJ3mH71DX3lJFkQNmbMFSdk6PKkTeJMU/E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d+MMBk2CS7izjLsqn4noL20LxcP7naCeGBBBDdX16YKIw8be6Bd1DnaiV/D43JXJZUmUnwHG9L0gzo4JLzootnzihfQy14CJ9En0kud2i2l65iLIWTrjlFjiBcJ37F1WAV/M2Stq4XVuLO/r73VPa+VebgRJvJbCLZIxdbhY9Uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=neverthere.org; spf=pass smtp.mailfrom=neverthere.org; dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b=Gxu924AY; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=neverthere.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neverthere.org
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-227d6b530d8so2787785ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 17:57:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=neverthere.org; s=google; t=1744851432; x=1745456232; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OqMi74owdbjJ4GxEtEoAoxlT+JzRCaJ0xkE6rbcBBmo=;
+        b=Gxu924AYbxu/VL5NijTyL9zmEFoUzMk8gGx1BPbY0rCk1aqkzmQWJL+Ri/18Gfjplt
+         WmNi75YHx/RLsUKdzx0tIiYPawVMJOEUD7wgSBp8OM+AvM8JQy/duVekMgbj+jn9qtm5
+         AdKgTUeDsdrzu7oDp24slqCdi5V4fYYl5ywykf7yKtMSVfRBk2Dme1rXFmlAM6jg0z7i
+         CkDiTpXV8VfxU9zb2ZeaclHq4+tqeY8bviVfGFiB+7s6TD29HcuUuxvVYl4IMAHnJ/7G
+         Ii57b8CPLaiG2En8wCboZ2JrtS8/o6RwlU0MsqSp4vE+JJrErw13DPDkEJ2q72GuPiw5
+         555Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744851432; x=1745456232;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OqMi74owdbjJ4GxEtEoAoxlT+JzRCaJ0xkE6rbcBBmo=;
+        b=kcRsZvMlnRGQj5YKXhffX4lpEzf4vIYeRazyCgjb/xlXzEWmBRGlGHYzOI1a3ic/pb
+         gTXHnZOmU6+AUbhtisx33MOfr26xCW0M5BL9J8HgE5c6z6yLBlpc1UIzri1Li14DePa8
+         6I1yPXeJSStDjsiwfEpBX7kXynGUlgZ/fKEYEC5guj3WAfoSizBUkp3EDoy1N0+wgLxH
+         U3k/gqPUKJc8TauHlrPKT20KKoH7mCpgpg3dF+K+YHgUDGxAk5cC/jocwNHEMvHG9PpY
+         jkP0v6ifYr2/1ja8ufNY0FT7M8PF+rTDEPo+DffKq7hn1MA8KdcxZOw24YKI4ZRdKLjE
+         UtEA==
+X-Forwarded-Encrypted: i=1; AJvYcCUYIy07ZYhDoNLwann4vL2Yup3i/C6oiEAInu7hCRLAWjP6UB00Q9W2RjrGG1se0Jauefe7Ia/LUTvfZec=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9gG6I5aJPpn3z976LaG/athAm9Nhzq6bUnQnGFMZNu0Ea3Gqi
+	oV6VMn0EaphqSzong3uTBs/su8NiI9BmWMMdF6ZbvnEm5kmrVU7IPON+5DFURQ==
+X-Gm-Gg: ASbGncv9bfLk/UYjld04zsXyd3MeJv0bp4TPIr2VUMGpiy6RHsrWOZLFNnulvssk2Uv
+	pcV45Z5EHlQprt+5q77QcHPa+KeMRwYmovlSKmpInNPT1SgeINfiNaajpmMfbRMwdG52L6qGZef
+	drW3lBqcBvtDK69LRrIoPzEsy/2fMp8N9UY0xfwNWDOcWSwwnSNL1hBdEbZeh497PnYgDZ3k1sP
+	NuG1kmgqUgfdsPi6l95ZHHvWlovH6eoe12SqYji44Q/1ffhZYza4NRllpRB1CQoiiG7PHw3b8kg
+	xfxk3pA0Xi4//3WnAM8mso8VJvcuv+12N6GmR/veewfbGmGQ5lqT83bSVkb5JW6unWs/d9ThwFB
+	vKq9z9Q==
+X-Google-Smtp-Source: AGHT+IHAineX5/E3p8aip+x16qwlR/Pv+CEyZMgvoH/E9C7b0jUlNJ17aQboLMM60Vu5iSE2N3U/DA==
+X-Received: by 2002:a17:902:f642:b0:224:26fd:82e5 with SMTP id d9443c01a7336-22c359a248emr63796785ad.48.1744851431911;
+        Wed, 16 Apr 2025 17:57:11 -0700 (PDT)
+Received: from tiamat (c-69-181-214-135.hsd1.ca.comcast.net. [69.181.214.135])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c3e0e19d2sm9328595ad.91.2025.04.16.17.57.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Apr 2025 17:57:11 -0700 (PDT)
+Date: Thu, 17 Apr 2025 00:57:09 +0000
+From: Michael Rubin <matchstick@neverthere.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: dpenkler@gmail.com, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] staging: gpib: Removing unused function CFGn
+Message-ID: <aABR5Ykv5lawt_BE@tiamat>
+References: <20250409181809.401724-1-matchstick@neverthere.org>
+ <2025041522-startling-parlor-aa65@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] PM: EM: Fix potential division-by-zero error in
- em_compute_costs()
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: lukasz.luba@arm.com, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Yaxiong Tian <tianyaxiong@kylinos.cn>
-References: <tencent_EE27C7D1D6BDB3EE57A2C467CC59A866C405@qq.com>
- <tencent_6D2374392DB66C9D23BF6E2546638A42EC08@qq.com>
- <CAJZ5v0iE_iw+pSBppEWnJw=2=DFNa-J2VPDorTNF=Mve+0PNCg@mail.gmail.com>
- <tencent_8E3A87C6D6A193F757BA846F0C41887CC405@qq.com>
- <CAJZ5v0iq4bw3WAk1yQRP=B3zk-rRYwibKNRjSfu=PGqTt6RNYw@mail.gmail.com>
-Content-Language: en-US
-From: Yaxiong Tian <iambestgod@qq.com>
-In-Reply-To: <CAJZ5v0iq4bw3WAk1yQRP=B3zk-rRYwibKNRjSfu=PGqTt6RNYw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025041522-startling-parlor-aa65@gregkh>
 
+On Tue, Apr 15, 2025 at 04:47:34PM +0200, Greg KH wrote:
+> On Wed, Apr 09, 2025 at 06:18:09PM +0000, Michael Rubin wrote:
+> Already in my tree?  I'm confused, this didn't apply at all.
 
+Sorry for the hassle here. I will be keeping my tree much closer to yours
+going forward.
 
-在 2025/4/16 19:58, Rafael J. Wysocki 写道:
-> On Wed, Apr 16, 2025 at 4:57 AM Yaxiong Tian <iambestgod@qq.com> wrote:
->>
->> 在 2025/4/16 01:17, Rafael J. Wysocki 写道:
->>> On Mon, Apr 14, 2025 at 11:09 AM Yaxiong Tian <iambestgod@qq.com> wrote:
->>>>
->>>> From: Yaxiong Tian <tianyaxiong@kylinos.cn>
->>>>
->>>> When the device is of a non-CPU type, table[i].performance won't be
->>>> initialized in the previous em_init_performance(), resulting in division
->>>> by zero when calculating costs in em_compute_costs().
->>>>
->>>> Since the 'cost' algorithm is only used for EAS energy efficiency
->>>> calculations and is currently not utilized by other device drivers, we
->>>> should add the _is_cpu_device(dev) check to prevent this division-by-zero
->>>> issue.
->>>>
->>>> Fixes: <1b600da51073> ("PM: EM: Optimize em_cpu_energy() and remove division")
->>>
->>> Please look at the Fixes: tags in the kernel git history.  They don't
->>> look like the one above.
->>>
->> Yes, there's an extra '<>' here.
->>
->>>> Signed-off-by: Yaxiong Tian <tianyaxiong@kylinos.cn>
->>>> ---
->>>>    kernel/power/energy_model.c | 4 ++--
->>>>    1 file changed, 2 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
->>>> index d9b7e2b38c7a..fc972cc1fc12 100644
->>>> --- a/kernel/power/energy_model.c
->>>> +++ b/kernel/power/energy_model.c
->>>> @@ -235,7 +235,7 @@ static int em_compute_costs(struct device *dev, struct em_perf_state *table,
->>>>
->>>>           /* Compute the cost of each performance state. */
->>>>           for (i = nr_states - 1; i >= 0; i--) {
->>>> -               unsigned long power_res, cost;
->>>> +               unsigned long power_res, cost = 0;
->>>>
->>>>                   if ((flags & EM_PERF_DOMAIN_ARTIFICIAL) && cb->get_cost) {
->>>>                           ret = cb->get_cost(dev, table[i].frequency, &cost);
->>>> @@ -244,7 +244,7 @@ static int em_compute_costs(struct device *dev, struct em_perf_state *table,
->>>>                                           cost, ret);
->>>>                                   return -EINVAL;
->>>>                           }
->>>> -               } else {
->>>> +               } else if (_is_cpu_device(dev)) {
->>>
->>> Can't you just check this upfront at the beginning of the function and
->>> make it bail out if dev is not a CPU device?
->>>
->> Sure, But the current implementation applies em_compute_costs() to both
->> non-CPU devices and CPU devices.
-> 
-> Maybe it shouldn't do that for non-CPU ones?
-> 
->> After carefully reviewing the latest code,
->> I've found this issue has expanded in scope.
->>
->> There are currently three call paths for invoking em_compute_costs():
->>
->> 1) Registering performance domains (for both non-CPU and CPU devices)
->> em_dev_register_perf_domain() → em_create_pd() →
->> em_create_perf_table() → em_compute_costs()
->>
->> 2)EM update paths (CPU devices only)
->>
->> Periodic 1000ms update check via em_update_work work item:
->> em_check_capacity_update() → em_adjust_new_capacity() →
->> em_recalc_and_update() → em_compute_costs()
->>
->> Exynos-chip initialization:
->> em_dev_update_chip_binning() → em_recalc_and_update() → em_compute_costs()
->>
->> 3) Device cost computation (non-CPU devices only - currently unused)
->> em_dev_compute_costs() → em_compute_costs()
-> 
-> So because this one is unused and AFAICS the cost values are never
-> used for non-CPU devices, it's better to just avoid computing them at
-> all.
-> 
->> Note: In em_dev_compute_costs(), when calling em_compute_costs(),
->> neither the callback (cb) nor flags are set.In fact, it either does
->> nothing at all or performs incorrect operations.
->>
->> Therefore, should we mandate that non-CPU devices must provide a
->> get_cost callback?
-> 
-> Why would that be an improvement?
-> 
->> So Should we add a check at the beginning of the em_compute_costs() to:
->>
->>          if (!_is_cpu_device(dev) && !cb->get_cost) {
->>                  dev_dbg(dev, "EM: No get_cost provided, cost unset.\n");
->>                  return 0;
->>          }
->> And Modify em_dev_compute_costs() to require callers to provide the cb
->> callback function,Also need to update its corresponding comments.
->>
->>
->>>>                           /* increase resolution of 'cost' precision */
->>>>                           power_res = table[i].power * 10;
->>>>                           cost = power_res / table[i].performance;
->>>> --
-> 
-> I think until there is a user of em_dev_compute_costs() this is all
-> moot and hard to figure out.
-> 
-> I would drop em_dev_compute_costs() altogether for now and put a
-> _is_cpu_device(dev) upfront check into em_compute_costs().
+I just did a comparison of your tree and mine with the following commands:
 
-Yes, I agree with your point. Currently no non-CPU devices are using
-'cost'. The best approach would be to just add the _is_cpu_device check. 
-I'll update it in V4.
+$ git fetch origin
+$ git rebase origin/staging-testing
+Current branch work-next is up to date.
+$ git log --oneline origin/staging-testing..HEAD
+01bb7ebee650 (HEAD -> work-next) staging: gpib: tnt4882: u8 over uint8_t
+b362526c049a staging: gpib: lpvo_usb_gpib: u8 over uint8_t
+c0086ac9f8c6 staging: gpib: gpib_ioctl: u64 over uint64_t
+dfde322a6458 staging: gpib: pc2: u8 over uint8_t
+0d68978f157c staging: gpib: ni_usb: u8 over uint8_t
+6c1d83dae00e staging: gpib: hp_82341: u8 over uint8_t
+6e47dd2b355e staging: gpib: hp_82335: u8 over uint8_t
+066df8151ebc staging: gpib: gpib_bitbang: u8 over uint8_t
+e2f98401b6cc staging: gpib: gpib_os: u8 over uint8_t
+d39283e31564 staging: gpib: cec: u8 over uint8_t
+76ca6178f5ac staging: gpib: agilent_82357a: u8 over uint8_t
+83a4047b9a77 staging: gpib: agilent_82350b: u8 over uint8_t
+e3e09b3c0b18 staging: gpib: gpib_user: u8 over uint8_t
+7de94cbc8071 staging: gpib: gpib_ioctl: u8 over uint8_t
+98b2ae8ac973 staging: gpib: Removing typedef gpib_interface_t
+9d1d6dfa3871 staging: gpib: tnt4882: struct gpib_interface
+914975f8fc96 staging: gpib: pc2: struct gpib_interface
+64c745a7adb7 staging: gpib: ni_usb: struct gpib_interface
+c303323266fe staging: gpib: lpvo_usb: struct gpib_interface
+576eb9e6c1fa staging: gpib: ines: struct gpib_interface
+5f2fb6ca422e staging: gpib: gpibP: struct gpib_interface
+0033454014c8 staging: gpib: hp2341: struct gpib_interface
+b1ab383f5d09 staging: gpib: hp_82335: struct gpib_interface
+41ebb7c070bf staging: gpib: gpio: struct gpib_interface
+ef391db774c0 staging: gpib: fmh: struct gpib_interface
+701c5a45b91a staging: gpib: fluke: struct gpib_interface
+88d5e0847f06 staging: gpib: common: struct gpib_interface
+77b611bf3468 staging: gpib: cec: struct gpib_interface
+803d5bfacf86 staging: gpib: cb7210: struct gpib_interface
+294e66a9b7bc staging: gpib: agilent_82357a: gpib_interface
+6eafa79e636a staging: gpib: agilent_82350b: gpib_interface
+7a309862d53f staging: gpib: struct typing for gpib_interface
+b248b9d75062 staging: gpib: uapi: Fix CamelCase and IBA Dup
+$
 
-By the way, em_dev_compute_costs should only apply to CPU devices. I was
-mistaken earlier—it’s really hard to tell just from the function name.
+I sent over the following series:
 
+1) v2: u8 and u64 remaining patches
+
+2) v3: the gpib_interface_t series (I broke the tree with v2).
+
+3) The IBA Camel Case patch.
+
+See if you can apply the CFGn patch after all the clean up. Not sure why that
+does not apply cleanly. It does in my tree right now after the sync and rebase.
+
+Michael Rubin
+
+When th
 
