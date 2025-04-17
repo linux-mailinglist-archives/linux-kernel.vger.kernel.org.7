@@ -1,121 +1,118 @@
-Return-Path: <linux-kernel+bounces-609134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A1C5A91DA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:21:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FFEBA91D96
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 15:20:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6B44189B0CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 13:21:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54424441052
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 13:20:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F84424BBE5;
-	Thu, 17 Apr 2025 13:20:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443D823E22B;
+	Thu, 17 Apr 2025 13:20:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TNMKyZYk";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qmZ5eJ2J"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DFWyXApu"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 362F624500E;
-	Thu, 17 Apr 2025 13:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F11F2F24;
+	Thu, 17 Apr 2025 13:20:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744896033; cv=none; b=WSb5Et+z3BhWyt23MYt0bdhI6ttk/sgPpXG3lMIOl/6AGIhWbmY7WR2bKL0u+Zt97eNASrpmlOYVEHKw1P8I3Ld38mgjR63kOB0c+PEBj95+ftGpDuauwLgzBCejWicygyVKDGUIsOe9BpTOT9cVa5wGqKT1VmsCkP55XR+ixEU=
+	t=1744896002; cv=none; b=JIQM2Kn4QNj+E8JgSHXukF3Cm6p0ABkv8Tghmr79RGYf9wkx/Tn5D6/3LCXbWhMoB6L3TQ7xxPGsTODuoZMog9fbapTMoTph+PBmvj1csVOJVkzD2Wzk2I/CvF6udn2QbqifYE+NtyE6nSPlJYWeVSC7HgXGnehdA2mLQCLvUqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744896033; c=relaxed/simple;
-	bh=OPNAC8Z0G8ITTpc1DdLDRC3Y4E82qIDfQhRitc5zvvE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UPzrcV8yQxMkzpq+C8eBuqrgnNDrHmgcXxsenytED5s7fH9rOLODeibwitJUJFFiPtNyMdIPwNlYv2kGIE/3XPju/WDvCxDj3yScd9Ejj35se2JzwyVh5BnQld/8U8lgXPZ2WEVAZu5tV735DtuM9JOb9XxOSlC7gLNoEO6YJ/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TNMKyZYk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qmZ5eJ2J; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744896030;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wl2sntL2foeXMHL68yZgS6j+JHjIlWFLQNY02bMKsA0=;
-	b=TNMKyZYkQFCGx2hlGy222xN+FSM05lqYzc9pkB40Pkfm4GK62M6Pw+SyfP5vbk5GiGUH0Z
-	QfyCYye3jK5B6KULY93cm/HodU8W2ttU0DpwNQIIQLEX7P8mo9o6/dLtlf+f3bRozAm9yE
-	KRsyDn649Yds6WaoxiLfb8/N0RAhqooUkSq1L1XEUypxXDi+f8qCY/aI9hkl+f09KwqRgv
-	Oh5oC2IBwb7oHqGyGvuhrSXLWdqxCEwt6425X3Al8gOJwuXC+DwDjL8hpFk2seSnYF8wp2
-	CSFqc2pbJafDIno01pJJCH8DUCg0SdZhG+k3C/fHx8uPRpAB7gHorUdIJpNdFA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744896030;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wl2sntL2foeXMHL68yZgS6j+JHjIlWFLQNY02bMKsA0=;
-	b=qmZ5eJ2JxK+q0AnKD+06vInxzCTLBW0rJFJbzJHcfKRjvWEPBo9Ljeo8tW5yud7+SCR3Mb
-	73wS1UuLpExbkpAA==
-Date: Thu, 17 Apr 2025 15:19:10 +0200
-Subject: [PATCH ath-next 4/4] wifi: wcn36xx: Don't use %pK through printk
+	s=arc-20240116; t=1744896002; c=relaxed/simple;
+	bh=R74eHFU/0VM0qbwM8f66kxjCo3hJufj/0OcqrSIi1L0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VcGXS8i2RAyqKaBgMu7kp01hRUbRfftacKS6yX1aCkeKWiJkkfpDdEKOu0urNQJKN10uLPixMDR4P4+h4QTLjGoQJ/674zPtRk8jZXhuGHFu9cutUiW5xY4GwPIKQhTZ+Ulb3OLgL2oEb8wUohRewgRyNsgXfH2ktd/RSaXz/K0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DFWyXApu; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744896001; x=1776432001;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=R74eHFU/0VM0qbwM8f66kxjCo3hJufj/0OcqrSIi1L0=;
+  b=DFWyXApuPTU+5dFPKPI4xUvZ/MICU6tBM8W4V9ZKvc8oU6IVaMqzYkTI
+   jXrsUOOLrn9bAQOyjiZXqI8CFV351aJEBxGHhuk0l/Tp15qzQW2GSIp+r
+   Opx4+l9upM8qdcn44ydWA/C/CTfy3G/qrFRq5cilik1kKPFoD88dobqlb
+   omeubPAD+QlXdketvcqtSAFs6it7mCrhANpcmnLTtOSPJXKc9uTn+apCY
+   EXoGR7c+58YLHblCnCXkb7T2saHyiPA+g6J/jcOGZP4thA8y25XmYbq8P
+   avXFBsZBktU/nhU8P/PFv2JMN+70fQRPMo42yxsp4r+o8Xyzw5Ct6WJht
+   g==;
+X-CSE-ConnectionGUID: WMQYCGAUQNqzesXtkRIqnA==
+X-CSE-MsgGUID: X3mWUISGSkObRY+lm+qyMw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11405"; a="57852575"
+X-IronPort-AV: E=Sophos;i="6.15,219,1739865600"; 
+   d="scan'208";a="57852575"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2025 06:20:00 -0700
+X-CSE-ConnectionGUID: 8ZRz2hgfSsOlWB4FrE2wUg==
+X-CSE-MsgGUID: 5WcKwC7uQ9StrXfXBcVVxA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,219,1739865600"; 
+   d="scan'208";a="131708171"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO ahunter-VirtualBox.ger.corp.intel.com) ([10.245.254.135])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2025 06:19:56 -0700
+From: Adrian Hunter <adrian.hunter@intel.com>
+To: pbonzini@redhat.com,
+	seanjc@google.com
+Cc: mlevitsk@redhat.com,
+	kvm@vger.kernel.org,
+	rick.p.edgecombe@intel.com,
+	kirill.shutemov@linux.intel.com,
+	kai.huang@intel.com,
+	reinette.chatre@intel.com,
+	xiaoyao.li@intel.com,
+	tony.lindgren@linux.intel.com,
+	binbin.wu@linux.intel.com,
+	isaku.yamahata@intel.com,
+	linux-kernel@vger.kernel.org,
+	yan.y.zhao@intel.com,
+	chao.gao@intel.com
+Subject: [PATCH V2 0/1] KVM: TDX: Decrease TDX VM shutdown time
+Date: Thu, 17 Apr 2025 16:19:44 +0300
+Message-ID: <20250417131945.109053-1-adrian.hunter@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250417-restricted-pointers-ath-v1-4-4e9a04dbe362@linutronix.de>
-References: <20250417-restricted-pointers-ath-v1-0-4e9a04dbe362@linutronix.de>
-In-Reply-To: <20250417-restricted-pointers-ath-v1-0-4e9a04dbe362@linutronix.de>
-To: Jeff Johnson <jjohnson@kernel.org>, 
- Loic Poulain <loic.poulain@oss.qualcomm.com>, ath10k@lists.infradead.org, 
- ath11k@lists.infradead.org, ath12k@lists.infradead.org, 
- wcn36xx@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
- Aleksandr Loktionov <aleksandr.loktionov@intel.com>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744896028; l=1588;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=OPNAC8Z0G8ITTpc1DdLDRC3Y4E82qIDfQhRitc5zvvE=;
- b=T9JbjQdhxZNU/5ra4J11M4K9RgxRQecAuFkyV/yXCB395zBURy5tiBfy5Y2S/5H8Fwnlxqbzh
- N3oXHE6uPafAuOx65sdfN4UN5MCYPBHgzjjQ0yXzQcuzxd341OlPjft
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-In the past %pK was preferable to %p as it would not leak raw pointer
-values into the kernel log.
-Since commit ad67b74d2469 ("printk: hash addresses printed with %p")
-the regular %p has been improved to avoid this issue.
-Furthermore, restricted pointers ("%pK") were never meant to be used
-through printk(). They can still unintentionally leak raw pointers or
-acquire sleeping looks in atomic contexts.
+Hi
 
-Switch to the regular pointer formatting which is safer and
-easier to reason about.
-There are still a few users of %pK left, but these use it through seq_file,
-for which its usage is safe.
+The version 1 RFC:
 
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-Acked-by: Loic Poulain <loic.poulain@oss.qualcomm.com>
-Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
----
- drivers/net/wireless/ath/wcn36xx/testmode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+	https://lore.kernel.org/all/20250313181629.17764-1-adrian.hunter@intel.com/
 
-diff --git a/drivers/net/wireless/ath/wcn36xx/testmode.c b/drivers/net/wireless/ath/wcn36xx/testmode.c
-index e5142c052985ddf629b93d7b9687e6ba63a48e8b..d7a2a483cbc486308032709a99bba9a52ed0ff59 100644
---- a/drivers/net/wireless/ath/wcn36xx/testmode.c
-+++ b/drivers/net/wireless/ath/wcn36xx/testmode.c
-@@ -56,7 +56,7 @@ static int wcn36xx_tm_cmd_ptt(struct wcn36xx *wcn, struct ieee80211_vif *vif,
- 	msg = buf;
- 
- 	wcn36xx_dbg(WCN36XX_DBG_TESTMODE,
--		    "testmode cmd wmi msg_id 0x%04X msg_len %d buf %pK buf_len %d\n",
-+		    "testmode cmd wmi msg_id 0x%04X msg_len %d buf %p buf_len %d\n",
- 		   msg->msg_id, msg->msg_body_length,
- 		   buf, buf_len);
- 
+listed 3 options and implemented option 2.  Sean replied with code for
+option 1, which tested out OK, so here it is plus a commit log.
 
--- 
-2.49.0
+It depends upon kvm_trylock_all_vcpus(kvm) which is the assumed result
+of Maxim's work-in-progress here:
 
+      https://lore.kernel.org/all/20250409014136.2816971-1-mlevitsk@redhat.com/
+
+Note it is assumed that kvm_trylock_all_vcpus(kvm) follows the return value
+semantics of mutex_trylock() i.e. 1 means locks have been successfully
+acquired, 0 means not succesful.
+
+
+Sean Christopherson (1):
+      KVM: TDX: Add sub-ioctl KVM_TDX_TERMINATE_VM
+
+ Documentation/virt/kvm/x86/intel-tdx.rst | 16 ++++++++
+ arch/x86/include/uapi/asm/kvm.h          |  1 +
+ arch/x86/kvm/vmx/tdx.c                   | 63 ++++++++++++++++++++++----------
+ 3 files changed, 61 insertions(+), 19 deletions(-)
+
+
+Regards
+Adrian
 
