@@ -1,135 +1,165 @@
-Return-Path: <linux-kernel+bounces-608832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B4D5A918E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 12:13:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B3CCA918F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 12:15:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BF3E5A2DA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 10:13:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AB7A5A3307
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 10:14:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EAC622AE6B;
-	Thu, 17 Apr 2025 10:13:23 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA67C2343C5;
+	Thu, 17 Apr 2025 10:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="izOz1iOt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13971D63D6;
-	Thu, 17 Apr 2025 10:13:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7003122B587;
+	Thu, 17 Apr 2025 10:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744884803; cv=none; b=IhF0w8dGToMUpwYFc/2gb69zPdLi7Sh2SXZPIJdlZ17qoyzkA4bj7FXbqvDKfuYWIeC/1sr5Dq1H/bGNc0yKeF9aVjd/4weV71bs4OWBwAWyjRoubsvDpgdZrezfD21LVLOfxjM4kP/eaPn0D8ERdRRbyCqpfPSIqSV9rxLwNEY=
+	t=1744884850; cv=none; b=Z9gAJdycoEO6Ih11xcRNM2MlQyb1wX6SCdtseHf0aXdlxkKnexyvQdzeZehtsO1eflm6eRKyycmKstv+M9ngrVLwrd0zX8KsTQ3TsAq59Ycla89YsQMsg9nyc7OpAvrRKbUGqUBV+RQ7RTIG5VzBKPo01MPWXU2sngSr4g34T8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744884803; c=relaxed/simple;
-	bh=/i89Akd76Mhyz5w3Hye3H1Pj5d4OFWyxCf/sdlT3SQc=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=onrlgo1kG7teguSzRBr7cRgBWsGOwsmwFJjo2MlJOPcggAlhyFNKmhcU9LN+QPClqIxhWXoCZykR2iLrqAVtUBEjLKxcantownsPEls5gRzrDCHTMK7Rsz3NLn5ufBoFG1zZAt9UeHIKQEKBfmWELfGYYprz084cVy9D35Utcac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZdYWp4Wvwz6K9Kg;
-	Thu, 17 Apr 2025 18:08:54 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5C46B14050C;
-	Thu, 17 Apr 2025 18:13:11 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 17 Apr
- 2025 12:13:10 +0200
-Date: Thu, 17 Apr 2025 11:13:09 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: "Bowman, Terry" <terry.bowman@amd.com>
-CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-pci@vger.kernel.org>, <nifan.cxl@gmail.com>, <dave@stgolabs.net>,
-	<dave.jiang@intel.com>, <alison.schofield@intel.com>,
-	<vishal.l.verma@intel.com>, <dan.j.williams@intel.com>,
-	<bhelgaas@google.com>, <mahesh@linux.ibm.com>, <ira.weiny@intel.com>,
-	<oohall@gmail.com>, <Benjamin.Cheatham@amd.com>, <rrichter@amd.com>,
-	<nathan.fontenot@amd.com>, <Smita.KoralahalliChannabasappa@amd.com>,
-	<lukas@wunner.de>, <ming.li@zohomail.com>,
-	<PradeepVineshReddy.Kodamati@amd.com>
-Subject: Re: [PATCH v8 16/16] CXL/PCI: Disable CXL protocol errors during
- CXL Port cleanup
-Message-ID: <20250417111309.00000672@huawei.com>
-In-Reply-To: <97a53556-4e01-40ed-80da-0369f401ceda@amd.com>
-References: <20250327014717.2988633-1-terry.bowman@amd.com>
-	<20250327014717.2988633-17-terry.bowman@amd.com>
-	<20250404180427.00007602@huawei.com>
-	<97a53556-4e01-40ed-80da-0369f401ceda@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1744884850; c=relaxed/simple;
+	bh=OH7eZX54zgQCjVVOYI4sEIr2A+p5IQRMKEHQ5gWO4Vo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CieopJK+PS/fwYzUefJskf1z7WH56pcGrKy5fzxV3VHmfn7lTH9E+aq+XnK88oMcj/PZAkPOz368eQDim2Rg6bv0qitgXmBWzpoKro/0twFaQxqHxYIFu1z4CJKLMR8S4BtJVOsn6uFoZSLnebVpYprsesCOERtAZt+QX8E5PxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=izOz1iOt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B9806C4CEE4;
+	Thu, 17 Apr 2025 10:14:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744884849;
+	bh=OH7eZX54zgQCjVVOYI4sEIr2A+p5IQRMKEHQ5gWO4Vo=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=izOz1iOtENuLuSw9CLjDanuuvIB3V5jiQVKbGjuen6UaSZDHqzSL9tM3DqdQ2X4vm
+	 XHg4r4hM7AT+UaS2U2l4AHzSWoi6p4lcPT7M914rtWSAA/ctwdjzG4b5dOQjteqom4
+	 UAtTQ+V7Lqque7Grti0lWtfEOG/LqByuoOCquR6e/74JZqCLfb4AvMjHlDd6et+oZB
+	 phY/FqqVGLTcMVDRo8i4kGEEJXVRS+N/yEiWX+g/ynljgrt/Ii7xwaDZyKn+s44kdR
+	 L9XRxhjot8JB5u/obVu9YdD3MJ0LqDHDOCXXfRmIdpYy4A/nYCEZQ0JFkb2vN56wJ+
+	 /w+AkH9TQbm8Q==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A569CC369B2;
+	Thu, 17 Apr 2025 10:14:09 +0000 (UTC)
+From: Maud Spierings via B4 Relay <devnull+maudspierings.gocontroll.com@kernel.org>
+Subject: [PATCH v6 0/8] arm64: dts: freescale: Add support for the
+ GOcontroll Moduline Display
+Date: Thu, 17 Apr 2025 12:14:01 +0200
+Message-Id: <20250417-initial_display-v6-0-3c6f6d24c7af@gocontroll.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
- frapeml500008.china.huawei.com (7.182.85.71)
+X-B4-Tracking: v=1; b=H4sIAGnUAGgC/3XNzYrDIBSG4Vsprseix59oV72PMgzGaHsgE4uGM
+ KXk3sd204Lp8v3gPOdOSsgYCjns7iSHBQumqYb+2hF/cdM5UBxqE2CgGICkOOGMbvwZsFxHd6P
+ RGQBuAtNBkXp1zSHi31M8fde+YJlTvj0fLPyxfrYWThlV3vd91FwoKY7n5NM05zSOe59+yQNc4
+ B3RLQIVARFddFwww7tNRLwQAV2LiIrIYGxwXHfa9ZuIfCGSQYvIithorDHCOKPlJqLeEK5aRFU
+ kCladoePS2gZZ1/UfpAYd6scBAAA=
+X-Change-ID: 20250224-initial_display-fa82218e06e5
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ Maud Spierings <maudspierings@gocontroll.com>, Frank Li <Frank.Li@nxp.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744884848; l=3701;
+ i=maudspierings@gocontroll.com; s=20250214; h=from:subject:message-id;
+ bh=OH7eZX54zgQCjVVOYI4sEIr2A+p5IQRMKEHQ5gWO4Vo=;
+ b=E5KfrkxKT4ITztZE9VHXJ1UMy+TBUFwiIVRtGdhi8AJLHgzFtO3Ti6Xk8d9b702xDuV1xwg5h
+ GkQi4hhLOy8DXbqlcFul8IeIjVDMQ1b8ruDaiEGXhckZivbPWmsZnbf
+X-Developer-Key: i=maudspierings@gocontroll.com; a=ed25519;
+ pk=7chUb8XpaTQDvWhzTdHC0YPMkTDloELEC7q94tOUyPg=
+X-Endpoint-Received: by B4 Relay for maudspierings@gocontroll.com/20250214
+ with auth_id=341
+X-Original-From: Maud Spierings <maudspierings@gocontroll.com>
+Reply-To: maudspierings@gocontroll.com
 
-Hi Terry,
+Add inital support for 2 variants of the Moduline Display controller.
+This system is powered by the Ka-Ro Electronics tx8p-ml81 COM, which
+features an imx8mp SoC.
 
-> >> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> >> index d3068f5cc767..d1ef0c676ff8 100644
-> >> --- a/drivers/pci/pcie/aer.c
-> >> +++ b/drivers/pci/pcie/aer.c
-> >> @@ -977,6 +977,31 @@ void pci_aer_unmask_internal_errors(struct pci_dev *dev)
-> >>  }
-> >>  EXPORT_SYMBOL_NS_GPL(pci_aer_unmask_internal_errors, "CXL");
-> >>  
-> >> +/**
-> >> + * pci_aer_mask_internal_errors - mask internal errors
-> >> + * @dev: pointer to the pcie_dev data structure
-> >> + *
-> >> + * Masks internal errors in the Uncorrectable and Correctable Error
-> >> + * Mask registers.
-> >> + *
-> >> + * Note: AER must be enabled and supported by the device which must be
-> >> + * checked in advance, e.g. with pcie_aer_is_native().
-> >> + */
-> >> +void pci_aer_mask_internal_errors(struct pci_dev *dev)
-> >> +{
-> >> +	int aer = dev->aer_cap;
-> >> +	u32 mask;
-> >> +
-> >> +	pci_read_config_dword(dev, aer + PCI_ERR_UNCOR_MASK, &mask);
-> >> +	mask |= PCI_ERR_UNC_INTN;
-> >> +	pci_write_config_dword(dev, aer + PCI_ERR_UNCOR_MASK, mask);
-> >> +  
-> > It does an extra clear we don't need, but....
-> > 	pci_clear_and_set_config_dword(dev, aer + PCI_ERR_UNCOR_MASK,
-> > 				       0, PCI_ERR_UNC_INTN);
-> >
-> > 	is at very least shorter than the above 3 lines.  
-> Doing so will overwrite the existing mask. CXL normally only uses AER UIE/CIE but if the device
-> happens to lose alternate training and no longer identifies as a CXL device than this mask
-> value would be critical for reporting PCI AER errors and would need UCE/CE enabled (other
-> than UIE/CIE).
-I'm not seeing that.  Implementation of pci_clear_and_set_config_dword() is:
-void pci_clear_and_set_config_dword(const struct pci_dev *dev, int pos,
-				    u32 clear, u32 set)
-{
-	u32 val;
+Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+---
+Changes in v6:
+- Fix spi cs formatting in baseboard dts
+- Add model to baseboard dts
+- Fix commit typo in karo tx8p ml81 dtsi
+- Link to v5: https://lore.kernel.org/r/20250415-initial_display-v5-0-f309f8d71499@gocontroll.com
 
-	pci_read_config_dword(dev, pos, &val);
-	val &= ~clear;
-	val |= set;
-	pci_write_config_dword(dev, pos, val);
-}
+Changes in v5:
+- Merge the makefile patch into the two dtso patches
+- Fix references to the root node in the dtso patches
+- Enable the USB bus going to the adapter board in the mainboard dts
+- Fix some formatting issues in the mainboard dts
+- Fix some formatting issues in the COM dts
+- Change a clock as suggested in the COM dts
+- Fix the maintainers entries, remove devicetree list and imx list
+- Rebase on latest linux-next
+- Link to v4: https://lore.kernel.org/r/20250402-initial_display-v4-0-9f898838a864@gocontroll.com
 
-With clear parameter as zero it will do the same the open coded
-version you have above as the ~clear will be all 1s and hence
-&= ~clear has no affect.
+Changes in v4:
+- Add imx mailing list to ka-ro tx8p maintainer entry
+- Fix several small indentation and ordering issues in devicetrees
+- Change the two display adapter boards to overlays
+- Add the missing patch for the Makefile to actually be able to build
+  the new devicetrees
+- Link to v3: https://lore.kernel.org/r/20250327-initial_display-v3-0-4e89ea1676ab@gocontroll.com
 
-Arguably we could add pci_clear_config_dword() and pci_set_config_dword()
-that both take one fewer parameter but I guess that is not worth
-the bother.
+Changes in v3:
+- Set regulator-boot-on and always-on on LDO5 of the pmic, after 20 ish
+  seconds it auto disabled this LDO causing weird behaviour like
+  ethernet droping out, wifi not working anymore. This LDO can control
+  the IO voltage level of certain pins, just let it keep the u-boot
+  value.
+- Fix the comment style in imx8mp-pinfunc.h
+- Rebase on newest next tag
+- Link to v2: https://lore.kernel.org/r/20250226-initial_display-v2-0-23fafa130817@gocontroll.com
 
-Jonathan
+Changes in v2:
+- Dropped the trivial-devices patch
+- Added a patch with bindings for the gocontroll,moduline-module-slot
+- Added a patch to spidev.c to enable the spidev driver for the module
+  slot
+- Added a missing usb-c connector in the av101hdt-a10 variant dts
+- Switched to the new bindings for the module slots in the base dts
+- Fixed some commit typos
+- Link to v1: https://lore.kernel.org/r/20250224-initial_display-v1-0-5ccbbf613543@gocontroll.com
 
+---
+Maud Spierings (8):
+      dt-bindings: arm: fsl: Add GOcontroll Moduline Display
+      arm64: dts: imx8mp: Add pinctrl config definitions
+      MAINTAINERS: add maintainer for the Ka-Ro tx8p-ml81 COM module
+      MAINTAINERS: add maintainer for the GOcontroll Moduline controllers
+      arm64: dts: freescale: add Ka-Ro Electronics tx8p-ml81 COM
+      arm64: dts: freescale: Add the GOcontroll Moduline Display baseboard
+      arm64: dts: freescale: Add the BOE av101hdt-a10 variant of the Moduline Display
+      arm64: dts: freescale: Add the BOE av123z7m-n17 variant of the Moduline Display
+
+ Documentation/devicetree/bindings/arm/fsl.yaml     |   1 +
+ MAINTAINERS                                        |  12 +
+ arch/arm64/boot/dts/freescale/Makefile             |   8 +
+ arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h     |  33 ++
+ ...x8p-ml81-moduline-display-106-av101hdt-a10.dtso |  94 ++++
+ ...x8p-ml81-moduline-display-106-av123z7m-n17.dtso | 139 ++++++
+ .../imx8mp-tx8p-ml81-moduline-display-106.dts      | 526 ++++++++++++++++++++
+ .../arm64/boot/dts/freescale/imx8mp-tx8p-ml81.dtsi | 548 +++++++++++++++++++++
+ 8 files changed, 1361 insertions(+)
+---
+base-commit: fb44e19e78df2950877a9f7b4f24b58db790d293
+change-id: 20250224-initial_display-fa82218e06e5
+
+Best regards,
+-- 
+Maud Spierings <maudspierings@gocontroll.com>
 
 
 
