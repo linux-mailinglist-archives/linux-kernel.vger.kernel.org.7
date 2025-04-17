@@ -1,117 +1,90 @@
-Return-Path: <linux-kernel+bounces-609894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F0BBA92D1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 00:08:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1597A92D2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 00:16:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0014A465589
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 22:08:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B9A18E0F59
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 22:16:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2DE921019E;
-	Thu, 17 Apr 2025 22:08:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC6392153D3;
+	Thu, 17 Apr 2025 22:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d7/HSPDa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687A72066C3
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 22:08:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 241BFA927;
+	Thu, 17 Apr 2025 22:16:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744927713; cv=none; b=gdy+zeD/5DHkyaPyhaTD0B8+CDs9WsYc2oUf/Z/thCyGk/gGobJY/3D9khdD8EGJsVxQIdY7UMCzVIG686oJbKQuaG8i7AD2Y/9HKAyw5wMA2ZiPSreZlu+SDwfVWDgiaTV5VBxwMPBd/8umxtz6Kuh/0isRZIsn5fHnulkbD1E=
+	t=1744928197; cv=none; b=GEAxMHgcEVSwB6VKu0RsxWPxJaKrrPBqDFsvcRv3cuSvOySMg8zT0E128GEPmSSJj7FTd29vmam4WchcvR5I+i4TnFJcQZR5Fv1fzlLlV3A/JfiMb6PCYJkt7svClrNuRMGkQa0UM9oaUHi8i7rEW8M6SJrZwuAIca2cYmxO8zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744927713; c=relaxed/simple;
-	bh=o+qo/RvZDtevq0UAYNWCAjxyhgQu3FqtGxBbcECxZ4c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GbvercMfIdjivB/8ADCK0L4/BViRehMyKcf1wrxfLIbYKm4YJR698WOja5iyq4vtHIsdfDFCf2wIFtNsOOvdpLKhqcVPjGIx7ny/5cqLnAEX+1gGJ67KkeFLsyBqUv/s/PB41dcl4W16Lmm1iF0S225BxKYMZpO7fHXC285MDd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C14C6C4CEE4;
-	Thu, 17 Apr 2025 22:08:31 +0000 (UTC)
-Date: Thu, 17 Apr 2025 18:10:10 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Mykyta Yatsenko <mykyta.yatsenko5@gmail.com>, akpm@linux-foundation.org,
- linux-mm@kvack.org, mhiramat@kernel.org, andrii@kernel.org,
- kernel-team@meta.com, linux-kernel@vger.kernel.org, Mykyta Yatsenko
- <yatsenko@meta.com>
-Subject: Re: [PATCH mm] maccess: fix strncpy_from_user_nofault empty string
- handling
-Message-ID: <20250417181010.3cc5777f@gandalf.local.home>
-In-Reply-To: <CAEf4BzbVPQ=BjWztmEwBPRKHUwNfKBkS3kce-Rzka6zvbQeVpg@mail.gmail.com>
-References: <20250417152808.722409-1-mykyta.yatsenko5@gmail.com>
-	<CAEf4BzbVPQ=BjWztmEwBPRKHUwNfKBkS3kce-Rzka6zvbQeVpg@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1744928197; c=relaxed/simple;
+	bh=CXMpZCl5Wu/tLvmsWoMbeqnU6gAzWcoiyyA72jODzX4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U1gSCQLFSjxnbe72TjndDm1ASwTF6Zr2IKMonuUaFyob//u1W5PN87VPy9AMNESA8SKQPgtbPPXRV6cKD4EzbbsDYfbUELvXSkbwmwYGegGyqebgyR4ijrTkrsj3qMM4aEdb1ZwkEU2YtaSltfm6dK3csFRf+YQlDm3N9b7Ol1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d7/HSPDa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93B88C4CEE4;
+	Thu, 17 Apr 2025 22:16:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744928196;
+	bh=CXMpZCl5Wu/tLvmsWoMbeqnU6gAzWcoiyyA72jODzX4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d7/HSPDaumbLgqxH1r9FzCH2ruApgckzrDuuqNGEgMT2Yv/tYfA3K10EUtGX8NQyZ
+	 uQZMcJo3WYFCXoqkhjGIeNYY6yx03lKC9o/752srvTjg8ziOx/1/oHCDnId8YmYcpP
+	 lmMhSIBVWqO5Qbos/hKzttPM5HowAqM1wsrMuzoLDigRtNrLDHIWoWAXUO0w34X4nI
+	 KDpwi0b/2T9Y5xS+RnTcxQX4aT11+3/Zzz3rxuawMAD0ZTS2V2BpHqm4zcvWhUK0S6
+	 pjDjqjxXVRuUPlXFZ6ALof9xoVWAqHuegT/StO6CREqi+6X6GFClgcMKxVSKuf0yIL
+	 I8wNk914utzyA==
+Date: Fri, 18 Apr 2025 00:16:31 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Mario Limonciello <superm1@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>, Jean Delvare <jdelvare@suse.com>, 
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Mario Limonciello <mario.limonciello@amd.com>, Yazen Ghannam <yazen.ghannam@amd.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, 
+	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, 
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Hans de Goede <hdegoede@redhat.com>, 
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:I2C/SMBUS CONTROLLER DRIVERS FOR PC" <linux-i2c@vger.kernel.org>, "open list:AMD PMC DRIVER" <platform-driver-x86@vger.kernel.org>, 
+	kernel test robot <lkp@intel.com>, Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH v4 2/5] i2c: piix4: Depends on X86
+Message-ID: <p25szqqrnvvcut7bbmbhjhxjpqj4wgzvxfqigiopwnv4sspid3@caru7peqpvwz>
+References: <20250415002658.1320419-1-superm1@kernel.org>
+ <20250415002658.1320419-3-superm1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250415002658.1320419-3-superm1@kernel.org>
 
-On Thu, 17 Apr 2025 13:44:48 -0700
-Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
+Hi Mario,
 
-> > @@ -808,7 +809,9 @@ static __always_inline char *test_string(char *str)
-> >         kstr = ubuf->buffer;
-> >
-> >         /* For safety, do not trust the string pointer */
-> > -       if (!strncpy_from_kernel_nofault(kstr, str, USTRING_BUF_SIZE))
-> > +       cnt = strncpy_from_kernel_nofault(kstr, str, USTRING_BUF_SIZE);
-> > +       /* Return null if empty string or error */
-> > +       if (cnt <= 1)
-> >                 return NULL;  
+On Mon, Apr 14, 2025 at 07:26:55PM -0500, Mario Limonciello wrote:
+> PIIX4 and compatible controllers are only for X86. As some headers are
+> being moved into x86 specific headers PIIX4 won't compile on non-x86.
 > 
-> I wouldn't touch this part and leave it up to Steven to fix (if he
-> agrees it needs fixing). Current logic seems wrong already, as it
-> won't correctly handle -EFAULT. And, on the other hand, there is
-> nothing wrong or special about empty string, so I don't think it needs
-> special handling. Let's drop these changes in trace_events_filter.c?
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202504120558.sq3IpWdH-lkp@intel.com/
+> Closes: https://lore.kernel.org/oe-kbuild-all/202504120432.0F8lOF3k-lkp@intel.com/
 
-Bah, it is wrong. I don't usually use filtering on strings much, but come
-to think of it, the last time I tried, it didn't work, but I found another
-way to get what I was looking for, and didn't look deeper into it.
+givent that the next patch is not merged anywhere yet, the above
+three tags are not needed.
 
-I only care if it faulted or not. I don't care about it just copying zero
-bytes. It should have been:
+BTW, can I already take the two i2c patches?
 
-	if (strncpy_from_kernel_nofault(kstr, str, USTRING_BUF_SIZE) < 0)
+Thanks,
+Andi
 
-> 
-> >         return kstr;
-> >  }
-> > @@ -818,6 +821,7 @@ static __always_inline char *test_ustring(char *str)
-> >         struct ustring_buffer *ubuf;
-> >         char __user *ustr;
-> >         char *kstr;
-> > +       int cnt;
-> >
-> >         if (!ustring_per_cpu)
-> >                 return NULL;
-> > @@ -827,7 +831,9 @@ static __always_inline char *test_ustring(char *str)
-> >
-> >         /* user space address? */
-> >         ustr = (char __user *)str;
-> > -       if (!strncpy_from_user_nofault(kstr, ustr, USTRING_BUF_SIZE))
-
-This is broken too.
-
-As this isn't relying on the other change in this patch, I'll just fix it
-myself. I'm getting a pull request ready anyway.
-
-Thanks!
-
--- Steve
-
-
-> > +       cnt = strncpy_from_user_nofault(kstr, ustr, USTRING_BUF_SIZE);
-> > +       /* Return null if empty string or error */
-> > +       if (cnt <= 1)
-> >                 return NULL;  
-> 
-> ditto
-> 
-> >
+> Suggested-by: Ingo Molnar <mingo@kernel.org>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
 
