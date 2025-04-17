@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-609721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BAA0A928EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 20:38:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17935A92AE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 20:55:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC0991B61BB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 18:38:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D4134A7191
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 18:54:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309FB263F51;
-	Thu, 17 Apr 2025 18:33:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16220257AE4;
+	Thu, 17 Apr 2025 18:53:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cQnCTOcd"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="lDPlYaBA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0AC263C7B;
-	Thu, 17 Apr 2025 18:33:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6989925525C;
+	Thu, 17 Apr 2025 18:53:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744914809; cv=none; b=NZR93j4kIb3omIgMJriwbIticxdtiJsyt+ihMOScDMhvU7KfedP3bc6RxZ4stBQhM+QHVE+t3KLNnwODbDQf/Vz4Vi9cpWq0/yty84N4cDLIU2G/fjLfnWI2AjzI5ZxozT9yy1KIrDKv2Eh7wLnW1O+h+moYlFVe6BKJWpEBCEU=
+	t=1744916022; cv=none; b=US3Ikgnd2qFs34vF/YrKoSlEk0J9MlzpH/orp2onu0DRfBelgofAYSJKFWkTHoOHfuSUq4nT97ZXKaSp9FZ8L7PrMcPlvufVQclZOHaRt7dZJFoXuCg/rBFpsSjNa/IOFh9pZg3+7x+Cvi55K6UCctdAyhA5nY4onAFOs5xw5XE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744914809; c=relaxed/simple;
-	bh=Km2icXNqXx7o4xq6KE28SzZPWTGc5lNPBFy4x6Ap7EU=;
+	s=arc-20240116; t=1744916022; c=relaxed/simple;
+	bh=3y3PMm0tVQAUjU/Xvmx+6nF/hzWgLIoEsPBnM6eDK2Y=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nDDtMrCO9VOWLoEo5WfDgXls8RWZOJYZXUSI4Cry+dXQi3kRu6l0jKVURIuvfdzb6nD9SSvevB2GWbxn6aTOCZIsgeC6OoYAk6VxoPjM9+VH3DCiY7Gwy9wClseyQ5ifGC7FVBxKHfBcGPIdrfSoy8i7aYUwt06XD7v+tsugDks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cQnCTOcd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD737C4CEE4;
-	Thu, 17 Apr 2025 18:33:28 +0000 (UTC)
+	 MIME-Version; b=m4CVPOCBhWxEWHbfOqUnEkn0BsFAoKHCOEIyuySQMLHjiGsfK1TaQpyGskcir5RyoDD/1wGT554t4TOHjHaEfLy5IINJybvyXzDd0P6Z1hLLxYVn8NnvoOVcoMEUuP/vhwnY2pYay/vZRbw0gXb4imP8+jRjEqcdBilCvEkMENc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=lDPlYaBA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4F6BC4CEE4;
+	Thu, 17 Apr 2025 18:53:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1744914809;
-	bh=Km2icXNqXx7o4xq6KE28SzZPWTGc5lNPBFy4x6Ap7EU=;
+	s=korg; t=1744916022;
+	bh=3y3PMm0tVQAUjU/Xvmx+6nF/hzWgLIoEsPBnM6eDK2Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cQnCTOcd/YdhA4019iU8AxnJ8X761CfmfDxs1MzpLdZerZladc00/U9sg7AbYDpds
-	 SL5L9PGa8W9phwB2xU/cfSFErqMB/kKs7yD6yNjRaLUuUIUxy052BIc0XIACLPuIqu
-	 eWCaE+aKc4miOtN6wKNdiSbz2WRgVHNufywT8eRk=
+	b=lDPlYaBAIXnnGU6aorURM3OEqnYWj54w5J3kUByi8NL/MiwdRd62JrxKXcrluBUFW
+	 vGmz+Ht0U2ysCjNOjK+njeXPRy2DpoKwjeJmsCRRFYxiyILxbGg+xXrLzBH7kL8Cfe
+	 uJuPxd3qD3LvujnbM235bR8OG7kP5AbNZoYp2Xtk=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org,
 	Rob Herring <robh@kernel.org>,
@@ -55,12 +55,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	kernel-team@android.com,
 	willmcvicker@google.com,
 	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 6.13 310/414] arm64: dts: exynos: gs101: disable pinctrl_gsacore node
-Date: Thu, 17 Apr 2025 19:51:08 +0200
-Message-ID: <20250417175123.902965434@linuxfoundation.org>
+Subject: [PATCH 6.12 288/393] arm64: dts: exynos: gs101: disable pinctrl_gsacore node
+Date: Thu, 17 Apr 2025 19:51:37 +0200
+Message-ID: <20250417175119.199687812@linuxfoundation.org>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250417175111.386381660@linuxfoundation.org>
-References: <20250417175111.386381660@linuxfoundation.org>
+In-Reply-To: <20250417175107.546547190@linuxfoundation.org>
+References: <20250417175107.546547190@linuxfoundation.org>
 User-Agent: quilt/0.68
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -72,7 +72,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-6.13-stable review patch.  If anyone has any objections, please let me know.
+6.12-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
