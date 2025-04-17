@@ -1,128 +1,186 @@
-Return-Path: <linux-kernel+bounces-608981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BF92A91B80
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:05:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AD0EA91B83
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:05:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4418F7A89ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 12:04:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18FF05A7CBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 12:03:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9366245033;
-	Thu, 17 Apr 2025 12:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BDC624290D;
+	Thu, 17 Apr 2025 12:02:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZviCbdEN"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R25X+7HL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81EF01E1E1D
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 12:04:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE483233126;
+	Thu, 17 Apr 2025 12:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744891469; cv=none; b=qXG+rxlhHFJPrrFnA/y9s9MH+vMk30R4npteVWrjTiH1l8S2XYQYF0LiNIg+h8O1Zpql+q07fH4QlmHzLuOwIK5Rb9kei+VD/qWl6IWSvRY+dZ6jZ9TZYk9t0XpTUsnS+IhVXSuMUfGTzLxip0NxaVUQ7MBzqaNA0nfNV42NJ/o=
+	t=1744891361; cv=none; b=dHHOrAjkxswh2Hv2GMa2RmJjK9wX3yh4fTL3d77kzKzqQJM2szU6fbTPpOU05yBIgg3cQDfpmtjepHNJ6snTeISsUMsg8jrSmudyk7ZtRcevM+f/O+B8OGF1CWuknYp2cMtJNB6MsX2dJO4cGVa2DfRG1HXbz86Dz0uh0IkBaIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744891469; c=relaxed/simple;
-	bh=ksUyW653NyIT3lvyAI4RmnyliHyVSS70xVKOoNyhJjc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VCR6Xvpb/yiBBO7INz1krYPMl6krFyhejDZJsvsDxRPcIr80/aUTg5iW2uAh0SFw2PRBwrel4I0r1rHvKE33Z41+Ib6EccpLmsXJLMoX+fT26M05LYkMzuBoQpVTemUZvupwuPUlcJ6mPvAHdAxVQBDdwrR/DV8PVh9yjl5wS4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZviCbdEN; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=+whgyZ8F2+lZPSX5+w+V/eDEdox87Gze8zZrqLkwGPU=; b=ZviCbdENme03fTvAVQk21bV0fX
-	rWdf4FYIr5BDCugkJfSdj41Y7AHmTBC8ZCCMpKFbyxLxKqcM7g/mVn/wgAC4OvEjzLQR3u5OC3b4V
-	bdAL+s9ho0JXor+HXerVgS1GzBCff2QHDw/A9qpSxsr1qCoYDKRaaWg65m2JOkpon3ngn5NUn2442
-	0Y4EUPbypDBCiKP1Ik5dS5iAWmvBS/KlZLpymTdCMsSyYfXSNnvGM1IdUlH0ZGEJ1Avz9nF3PLtHJ
-	WnCXRe/frN642WHeCjGFjLMSG/DvUGGZexFw/f01TWAMjXhibq1ndO07WbffcpHqyPeVUfpZu8ccb
-	IuuLonWA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1u5Nx5-0000000BM53-2U3f;
-	Thu, 17 Apr 2025 12:03:22 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id DDC2D300619; Thu, 17 Apr 2025 14:01:30 +0200 (CEST)
-Date: Thu, 17 Apr 2025 14:01:30 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>,
-	Shrikanth Hegde <sshegde@linux.ibm.com>,
-	"Chen, Yu C" <yu.c.chen@intel.com>,
-	Tim Chen <tim.c.chen@linux.intel.com>,
-	Ingo Molnar <mingo@kernel.org>, Doug Nelson <doug.nelson@intel.com>,
-	Mohini Narkhede <mohini.narkhede@intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched: Skip useless sched_balance_running acquisition if
- load balance is not due
-Message-ID: <20250417120130.GE17910@noisy.programming.kicks-ass.net>
-References: <20250416035823.1846307-1-tim.c.chen@linux.intel.com>
- <fbe29b49-92af-4b8c-b7c8-3c15405e5f15@linux.ibm.com>
- <667f2076-fbcd-4da7-8e4b-a8190a673355@intel.com>
- <5e191de4-f580-462d-8f93-707addafb9a2@linux.ibm.com>
- <517b6aac-7fbb-4c28-a0c4-086797f5c2eb@linux.ibm.com>
- <CAKfTPtBF353mFXrqdm9_QbfhDJKsvOpjvER+p+X61XEeAd=URA@mail.gmail.com>
- <7a5a5f1f-0bbc-4a63-b2aa-67bc6c724b2d@amd.com>
+	s=arc-20240116; t=1744891361; c=relaxed/simple;
+	bh=ETJagbOOXP2BonGVzZfEgxqHeNpE2T6R8uNA00WJ9bs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tvpsFMbjwVQK7n0nyMEPCDG3Z2ggqmFc3E9Nk2lieIbrHiycFg6d0MOHQHarZr4dvLm5Ag7pjLlHhth97iW/LnvMd4FE8pFHqX+tH0T3Lw/9ERkDcqQMpNaAdhjAe3qh1F20Z7HT6PdifL6MjUrPYTooQxr1JLMrXhZ45kTLuEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R25X+7HL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F841C4CEEA;
+	Thu, 17 Apr 2025 12:02:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744891360;
+	bh=ETJagbOOXP2BonGVzZfEgxqHeNpE2T6R8uNA00WJ9bs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=R25X+7HLu4h8lsLnxPQH9AUpCHFrjoyZ8ftDZimv3JoeCv7dMeB+8n0yydvjLk+5h
+	 HlSj0spgD8M5RFQGhBcQgllBBgSYSTDGl0vZ8l0proq7sIjDZ2npaDSgsM6KhedwnF
+	 I3FpxU8NXmGS8FCmqJQJigHzTv3nXhSG8OoLhHD1eddrZlkBgIkAnnAwfXhxRyt7IV
+	 zHQdJskUp5us+zItvy2WbIHUQw7pAvz0YqVbZ3/5pJZhLjDVyxqJBYELJRR0tqzf1C
+	 /5TR1vyM4vtfPiEqmHlIxoXFz+6/pFUHWO0Cz9FILdXSW8jT3/zYuApQjtVANVZ9Xm
+	 1NLVPcNLrM/Cw==
+Message-ID: <eb9a50c0-6bbe-4fcb-af30-bfddf6a00619@kernel.org>
+Date: Thu, 17 Apr 2025 07:02:38 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7a5a5f1f-0bbc-4a63-b2aa-67bc6c724b2d@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] Input: Add a Kconfig to emulate KEY_SCREENLOCK
+ with META + L
+To: Hans de Goede <hdegoede@redhat.com>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..."
+ <linux-input@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+ "open list:AMD PMF DRIVER" <platform-driver-x86@vger.kernel.org>,
+ Mario Limonciello <mario.limonciello@amd.com>, Armin Wolf <W_Armin@gmx.de>
+References: <20250417013722.435751-1-superm1@kernel.org>
+ <b9d8244a-df90-4bd2-bfd4-3539b4ad6d5e@redhat.com>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <b9d8244a-df90-4bd2-bfd4-3539b4ad6d5e@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Apr 17, 2025 at 05:01:37PM +0530, K Prateek Nayak wrote:
-> On 4/16/2025 3:17 PM, Vincent Guittot wrote:
-> > > 
-> > > Sorry, forgot to add.
-> > > 
-> > > Do we really need newidle running all the way till NUMA? or if it runs till PKG is it enough?
-> > > the regular (idle) can take care for NUMA by serializing it?
-> > > 
-> > > -               if (sd->flags & SD_BALANCE_NEWIDLE) {
-> > > +               if (sd->flags & SD_BALANCE_NEWIDLE && !(sd->flags & SD_SERIALIZE)) {
-> > 
-> > Why not just clearing SD_BALANCE_NEWIDLE in your sched domain when you
-> > set SD_SERIALIZE
+
+
+On 4/17/25 05:48, Hans de Goede wrote:
+> Hi Mario,
 > 
-> I've some questions around "sched_balance_running":
+> On 17-Apr-25 3:37 AM, Mario Limonciello wrote:
+>> From: Mario Limonciello <mario.limonciello@amd.com>
+>>
+>> In the PC industry KEY_SCREENLOCK isn't used as frequently as it used
+>> to be. Modern versions of Windows [1], GNOME and KDE support "META" + "L"
+>> to lock the screen. Modern hardware [2] also sends this sequence of
+>> events for keys with a silkscreen for screen lock.
+>>
+>> Introduced a new Kconfig option that will change KEY_SCREENLOCK when
+>> emitted by driver to META + L.
+>>
+>> Link: https://support.microsoft.com/en-us/windows/keyboard-shortcuts-in-windows-dcc61a57-8ff0-cffe-9796-cb9706c75eec [1]
+>> Link: https://www.logitech.com/en-us/shop/p/k860-split-ergonomic.920-009166 [2]
+>> Suggested-by: Armin Wolf <W_Armin@gmx.de>
+>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>> ---
+>> v3:
+>>   * Emulation in the input core instead
+>>
+>>   drivers/input/Kconfig |  8 ++++++++
+>>   drivers/input/input.c | 19 +++++++++++++++++++
+>>   2 files changed, 27 insertions(+)
+>>
+>> diff --git a/drivers/input/Kconfig b/drivers/input/Kconfig
+>> index 88ecdf5218ee9..ffb4163fe315f 100644
+>> --- a/drivers/input/Kconfig
+>> +++ b/drivers/input/Kconfig
+>> @@ -174,6 +174,14 @@ config INPUT_APMPOWER
+>>   	  To compile this driver as a module, choose M here: the
+>>   	  module will be called apm-power.
+>>   
+>> +config INPUT_SCREENLOCK_EMULATION
+>> +	bool "Pass KEY_SCREENLOCK as META + L"
+>> +	help
+>> +	  Say Y here if you want KEY_SCREENLOCK to be passed to userspace as
+>> +	  META + L.
+>> +
+>> +	  If unsure, say Y.
+>> +
+>>   comment "Input Device Drivers"
+>>   
+>>   source "drivers/input/keyboard/Kconfig"
+>> diff --git a/drivers/input/input.c b/drivers/input/input.c
+>> index dfeace85c4710..08a857cea0c5d 100644
+>> --- a/drivers/input/input.c
+>> +++ b/drivers/input/input.c
+>> @@ -370,6 +370,13 @@ void input_handle_event(struct input_dev *dev,
+>>   	}
+>>   }
+>>   
+>> +static void handle_screenlock_as_meta_l(struct input_dev *dev, unsigned int type,
+>> +					int value)
+>> +{
+>> +	input_handle_event(dev, type, KEY_LEFTMETA, value);
+>> +	input_handle_event(dev, type, KEY_L, value);
+>> +}
+>> +
+>>   /**
+>>    * input_event() - report new input event
+>>    * @dev: device that generated the event
+>> @@ -392,6 +399,12 @@ void input_event(struct input_dev *dev,
+>>   {
+>>   	if (is_event_supported(type, dev->evbit, EV_MAX)) {
+>>   		guard(spinlock_irqsave)(&dev->event_lock);
+>> +#ifdef CONFIG_INPUT_SCREENLOCK_EMULATION
+>> +		if (code == KEY_SCREENLOCK) {
+>> +			handle_screenlock_as_meta_l(dev, type, value);
+>> +			return;
+>> +		}
+>> +#endif
+>>   		input_handle_event(dev, type, code, value);
+>>   	}
+>>   }
+>> @@ -2134,6 +2147,12 @@ void input_set_capability(struct input_dev *dev, unsigned int type, unsigned int
+>>   
+>>   	switch (type) {
+>>   	case EV_KEY:
+>> +#ifdef CONFIG_INPUT_SCREENLOCK_EMULATION
+>> +		if (code == KEY_SCREENLOCK) {
+>> +			__set_bit(KEY_L, dev->keybit);
+>> +			__set_bit(KEY_LEFTMETA, dev->keybit);
+>> +		}
 > 
-> o Since this is a single flag across the entire system, it also implies
->   CPUs cannon concurrently do load balancing across different NUMA
->   domains which seems reasonable since a load balance at lower NUMA
->   domain can potentially change the "nr_numa_running" and
->   "nr_preferred_running" stats for the higher domain but if this is the
->   case, a newidle balance at lower NUMA domain can interfere with a
->   concurrent busy / newidle load balancing at higher NUMA domain.
->   Is this expected? Should newidle balance be serialized too?
-
-Serializing new-idle might create too much idle time.
-
->   (P.S. I copied over the serialize logic from sched_balance_domains()
->    into sched_balance_newidle() and did not see any difference in my
->    testing but perhaps there are benchmarks out there that care for
->    this)
+> Shouldn't there be a "break;" inside the if?
 > 
-> o If the intention of SD_SERIALIZE was to actually "serializes
->   load-balancing passes over large domains (above the NODE topology
->   level)" as the comment above "sched_balance_running" states, and
->   this question is specific to x86 - when enabling SNC on Intel or
->   NPS on AMD servers, the first NUMA domain is in fact as big as the
->   NODE (now PKG domain) if not smaller. Is it okay to clear
->   SD_SERIALIZE for these domains since they are small enough now?
+> Since KEY_SCREENLOCK events will never get reported when
+> CONFIG_INPUT_SCREENLOCK_EMULATION is set, I think it would
+> be netter to not set it in dev->keybit ?
+> 
+> Regards,
 
-You'll have to dive into the history here, but IIRC it was from SGI back
-in the day, where NUMA factors were quite large and load-balancing
-across numa was a pain.
+This is something I wasn't sure about.
 
-Small really isn't the criteria, but inter-node latency might be, we
-also have this node_reclaim_distance thing.
+I was worried there might be other parts of the kernel that check for a 
+capability of a specific keycode and conditionalize behavior.
 
-Not quite sure what makes sense, someone should tinker I suppose, see
-what works with today's hardare.
+If that isn't a concern yes I could add a break into this block in the 
+next version.
+
+> 
+> Hans
+> 
+> 
+> 
+> 
+>> +#endif
+>>   		__set_bit(code, dev->keybit);
+>>   		break;
+>>   
+> 
+
 
