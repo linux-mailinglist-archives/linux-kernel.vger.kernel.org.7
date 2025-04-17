@@ -1,344 +1,178 @@
-Return-Path: <linux-kernel+bounces-609871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57E20A92CD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 23:46:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3966DA92CDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 23:52:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 650534A0301
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 21:46:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C4468A65D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 21:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61BBD20A5C2;
-	Thu, 17 Apr 2025 21:45:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C502320F087;
+	Thu, 17 Apr 2025 21:52:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fWi9QmVW"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="JEUxuBQN"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2081.outbound.protection.outlook.com [40.107.220.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 893E91CEADB
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 21:45:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744926354; cv=none; b=jhLXGM7TTQqUpFzGpEGC6M/6uIviu+Du3kKVANSyuW4zhJMvglWhH4POkqhT4KNZDTR4JnpzEwiw3WPWzqgEGhAiBHBVLwlVXKpPFViWMwytfBwy1KaDdhz8BeKNeH1GfypFrthKFby5PDs0Y04iW/0e3PGIieJo8q94ESfJfDs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744926354; c=relaxed/simple;
-	bh=xHJ0U/NNew0D9559C+9DS7UY5fxxKEpGxBszJk6LAB4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DiZ+pJHrBti9ad5dN7xZeTcGhBgWoXjXFcK5N1adLNlfrriFoD7aq3+OeozAsWWM0cXJuxqSk32P8SV99xaojPbqKzU7nublssgOsEIZyRLhE+webPJQROUZZKbCJ6OD/Q9uxLSoCy6nCVaJFNjyUNFpVMilIwkTbLfhNvC0wNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fWi9QmVW; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 17 Apr 2025 21:45:29 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1744926337;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YyL22TIdx0Q5a8q6LIr4f7OFCQiot5vdD9q+5r2Pq1M=;
-	b=fWi9QmVWTQXLS+cHrsXzp9VdFCl1Wu6eF3gWaUI/LYpxjL8da362t/2VrISfu29y/nqiFp
-	7ppv8G5hA1hR6BA2OWNgdTxsQc/elTxKxO3iQ+TP9ZtPCI050IpT+KTUCT2gOJ1a/ZG7Xv
-	Rvu6+PRuCarcI1mA0/+dFIUbp5DvO5Q=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Kairui Song <ryncsn@gmail.com>
-Cc: Muchun Song <muchun.song@linux.dev>,
-	Muchun Song <songmuchun@bytedance.com>, hannes@cmpxchg.org,
-	mhocko@kernel.org, shakeel.butt@linux.dev,
-	akpm@linux-foundation.org, david@fromorbit.com,
-	zhengqi.arch@bytedance.com, yosry.ahmed@linux.dev,
-	nphamcs@gmail.com, chengming.zhou@linux.dev,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	linux-mm@kvack.org, hamzamahfooz@linux.microsoft.com,
-	apais@linux.microsoft.com, yuzhao@google.com
-Subject: Re: [PATCH RFC 00/28] Eliminate Dying Memory Cgroup
-Message-ID: <aAF2eUG26_xDYIDU@google.com>
-References: <20250415024532.26632-1-songmuchun@bytedance.com>
- <CAMgjq7BAfh-op06++LEgXf4UM47Pp1=ER+1WvdOn3-6YYQHYmw@mail.gmail.com>
- <F9BDE357-C7DA-4860-A167-201B01A274FC@linux.dev>
- <CAMgjq7D+GXce=nTzxPyR+t6YZSLWf-8eByo+0NpprQf61gXjPA@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BA218D63E;
+	Thu, 17 Apr 2025 21:52:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744926722; cv=fail; b=UnPiRCrq4XZC2x6ctfEz5OIOF12AiN7Xoesmv2KFp9nbGRBp2GJY6oymI40t8s9X8vFSDKZbL9zdPx+Uk2f+2J4VckYQQeD8OihamutrqMCSuXHg9ZNGge1InZWCiBkX0uQLi3Cw7aiZM6OD8sdgVfn9e+EkZlTWwH5cwjCTX24=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744926722; c=relaxed/simple;
+	bh=ZDoA19B28phZLbCWKhqW3v5Hjb97FwbrBZMSuV7iJJE=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=i6mP6wobp6nb+dh8yR3kQMBpp9VLNdjBPe6CCx3V5fZ3iyBuao1aW2/LDYwhIcnyfepiF6A3Y31e9xnkky5c1y+e1tHMWhqiWH2WkU+wnGlgVuZf1IRdQzREaz/dYFruyNPc3ddslsdNkuldngUfgyxleXAqloN2t/9HOMIqyHE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=JEUxuBQN; arc=fail smtp.client-ip=40.107.220.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Yb831lkeLwnzWUKrYsrQdxraNgPGrsAL3NhJ84mRpboMvUdjdpkrI/4VnWvEx1+x47C+81oAfsl4QDPm+rZrNUH5kw/gjQXyPANFCRbSkfwphPkPfoQPrY6u1OlzSu52Wk8GBNk6PZy5elzbrH3lGESYEdyo4MMSmu8iRMPxW02f8MIGjPfv4In+Nd82GxYh59HZFxsJPU3qmKb/d3GA7WAzuTzP+d6eIlYHBnudUvV8xAXLZTbX1K0N+6dCzM0bOx1HYDswu9Kocpt0xmeXoDbwgn9RisGzMCYgXFRw9/sgbNuu/iptkHeWHMJ+DWIkG57z6FYVG9gLIXL+9DI8xg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=naNUxmbofIheLcc/hz7/cy2QGhHAewc4tPZ5YbI8esI=;
+ b=yz5Pif24Tt1gau7AIsvgNGANGiG5PKtW9+V2XevdHk9Rw8rqI5wgfeUugMgiKylstO48ECHPhaxIowtsiKhtn/SIK/VSDi9tdbgJg2F+gKvB4tAIHOS9ATygfQejQKy17HDryhL/I45E+QEpIc467+f3GiGQCfAzEmOv5e6a1h0UqMi37DWnxzudtqCSh4rvVr6H1hnp2vnbAvBH/pC8aaOeZG8SVAu21D++T+8yl2EGwMS5OE7l9kgaV61pVW50celgPh3lnx1sH3ui/vVWjoArH2YAgA6KlkFQZGdsTeuEVIs7HNvjWL+AHkSjClvRClc0zBWyzC0gWz5IPgaWaQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=naNUxmbofIheLcc/hz7/cy2QGhHAewc4tPZ5YbI8esI=;
+ b=JEUxuBQNyaQEEx5liskjRdnHjJn+ph32q2Vh+mls2UdDqlqyZU+QQ+Kzs7+oXmcEkKIE9Qc9YmhljAtDWcxukDUr4ACkW4X9zYEUiITlGLqfkZKQ4uIa3sSe2LuEJ/AQ+6k6Z2ZUMeWg2uKC14LpgY//P6rRCFW4/mpjIe9gToo=
+Received: from MW4PR04CA0360.namprd04.prod.outlook.com (2603:10b6:303:8a::35)
+ by PH7PR12MB7455.namprd12.prod.outlook.com (2603:10b6:510:20e::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.35; Thu, 17 Apr
+ 2025 21:51:56 +0000
+Received: from SJ5PEPF000001D7.namprd05.prod.outlook.com
+ (2603:10b6:303:8a:cafe::1e) by MW4PR04CA0360.outlook.office365.com
+ (2603:10b6:303:8a::35) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8632.34 via Frontend Transport; Thu,
+ 17 Apr 2025 21:51:56 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ5PEPF000001D7.mail.protection.outlook.com (10.167.242.59) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8655.12 via Frontend Transport; Thu, 17 Apr 2025 21:51:55 +0000
+Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 17 Apr
+ 2025 16:51:54 -0500
+From: Nathan Lynch <nathan.lynch@amd.com>
+To: Henry Martin <bsdhenrymartin@gmail.com>, <peter.ujfalusi@gmail.com>,
+	<vkoul@kernel.org>
+CC: <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Henry Martin
+	<bsdhenrymartin@gmail.com>
+Subject: Re: [PATCH v1] dmaengine: ti: Add NULL check in udma_probe()
+In-Reply-To: <20250402023900.43440-1-bsdhenrymartin@gmail.com>
+References: <20250402023900.43440-1-bsdhenrymartin@gmail.com>
+Date: Thu, 17 Apr 2025 16:51:53 -0500
+Message-ID: <87fri6lame.fsf@AUSNATLYNCH.amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMgjq7D+GXce=nTzxPyR+t6YZSLWf-8eByo+0NpprQf61gXjPA@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001D7:EE_|PH7PR12MB7455:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7932c90b-0709-4457-bfde-08dd7dfa123a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|1800799024|82310400026|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?p65ri/5MskqL/Z/e2AOQur01oX5B6YTcJU9Ebcd6l75nZUAGnCzzbe2jRiys?=
+ =?us-ascii?Q?Af+GihCRXNdKbC+ASsh5BW2KBGpVqgEixT3saLgLgcpTxq1Fr2lw1Nu+AfXM?=
+ =?us-ascii?Q?yLmCWLYox14COFHl/bzBoZRiiTeIRo4Y+uJnA4/pjMOpLvMN7sjWlBENG2s/?=
+ =?us-ascii?Q?dHuMpUnJPKQy1qBkUSGXcog8rLAEuJEXSXp7bFtzRZy9q2FmMj87o4cuu7T5?=
+ =?us-ascii?Q?IiernAzq41udjBlxg1UIFxJt8B14V6syiURt5Tc34s/G+wGX81GkSjPhcWCC?=
+ =?us-ascii?Q?a0PmZwcIdKhGpC0TVHHDmOpU87MxCIuHDUSQNHhogNVeXjA+knuYdh96uHHN?=
+ =?us-ascii?Q?h8tYkxnjY2NRnYCr4cre0kn9+sKVvdmMQxrXCnL2e8nHOFNdVrMunVUC9fSr?=
+ =?us-ascii?Q?GgqlwbXoBCIQVbJa70EKBa/X8h/H79OKZPfnNrduU69Y1dU+K2mn+n5Tt0pQ?=
+ =?us-ascii?Q?fthzXF7ANSEwDOJC65tYjiD2E7hbPK5PwfJDfcuDiFVsdrC6pHbTiGaRGSpU?=
+ =?us-ascii?Q?Z/rLsRwEKtzvMqRxunfNsugwWO+ZnF3c04inqo/oXlrIFaBdgc6RWW9ZbPsL?=
+ =?us-ascii?Q?AWF+c0gMxdgBh8MpvEXzkVjrPq8dzQElda4wp9cbarm87C7oHfWVrU3dTEMH?=
+ =?us-ascii?Q?2rcWVF2G2EkOhHb97V9MX7x8g41I5Ecl0WptFMtVOi/Jq4Xn7t2GDJU1lbTg?=
+ =?us-ascii?Q?PfttBS3JU6nJVc+hNnSuEpvUurdgmNvv699YyARV7ee2EEHr3fe5MxL9MGhl?=
+ =?us-ascii?Q?Z0VRGgScnyj3sX5UL7xW+e56rOOZW32w+DPsTdKIoUSMdo/PszJFizcRnw3k?=
+ =?us-ascii?Q?m5a5S+nYcV4v7buSRXACKZBSxkhGRY7//+570iDBdaQTvN7CE4oaaAIMjO2/?=
+ =?us-ascii?Q?qUBXIXD1U8oP1Mlf/xW9b5ee1KqdswCDIkyU+s4Mjz8G46SW9TQq5cPu3Btb?=
+ =?us-ascii?Q?uoa/HMNhgWHthr6fjpqpsTgQWXUWZREluxgkpVgdk5GMnognvr7Tw1RZGLtE?=
+ =?us-ascii?Q?evencRNkzbzfIR1IY1BMeSLXsb5H95Si8N7srGRYLjE7U+Rv7t0mpWJ4Ayr9?=
+ =?us-ascii?Q?w4UKDCA8J/PLzKOkwKNE73q+rtrp72j530/e91uJpp2kQha3LL8lYux6u490?=
+ =?us-ascii?Q?9j2Q2Gaa4fG3Xf0s9gwbYU5uzSKSQ+pyJfTvvb+hMlsBenjnxj9+SY9S0OMY?=
+ =?us-ascii?Q?GP9pNxKx8RoqhtgVjcNtri09uSquyD8r9ySofNBS+uMNxGrjvO3Pk5qdnaxo?=
+ =?us-ascii?Q?H63IKDAyyeyxt5agXHVxO05hli+wvPI4DByXBqeICy4xuyp/rohNog0MBcIB?=
+ =?us-ascii?Q?pVjDgnVrJy0flPLvXBQ3a7DffqepRVkZveApLNLJOllf2pUl59hcv4bQBLII?=
+ =?us-ascii?Q?XoI8FZR7g3oIsIuWd0tdroOaDx3YWOMlpIbl7oAIatvJs2uyGvwSyBJrcGOA?=
+ =?us-ascii?Q?d8cs57ht/FAdGDsIgLQUlVbW37chwc9zgWK335dKfFZpWD+ZE9VT33KPtgE0?=
+ =?us-ascii?Q?rP/Xvc50gUPryhJynTC5ZcUYA4RDIqnTpSoC?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(1800799024)(82310400026)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2025 21:51:55.6208
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7932c90b-0709-4457-bfde-08dd7dfa123a
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001D7.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7455
 
-On Fri, Apr 18, 2025 at 02:22:12AM +0800, Kairui Song wrote:
-> On Tue, Apr 15, 2025 at 4:02 PM Muchun Song <muchun.song@linux.dev> wrote:
-> >
-> >
-> >
-> > > On Apr 15, 2025, at 14:19, Kairui Song <ryncsn@gmail.com> wrote:
-> > >
-> > > On Tue, Apr 15, 2025 at 10:46 AM Muchun Song <songmuchun@bytedance.com> wrote:
-> > >>
-> > >> This patchset is based on v6.15-rc2. It functions correctly only when
-> > >> CONFIG_LRU_GEN (Multi-Gen LRU) is disabled. Several issues were encountered
-> > >> during rebasing onto the latest code. For more details and assistance, refer
-> > >> to the "Challenges" section. This is the reason for adding the RFC tag.
-> > >>
-> > >> ## Introduction
-> > >>
-> > >> This patchset is intended to transfer the LRU pages to the object cgroup
-> > >> without holding a reference to the original memory cgroup in order to
-> > >> address the issue of the dying memory cgroup. A consensus has already been
-> > >> reached regarding this approach recently [1].
-> > >>
-> > >> ## Background
-> > >>
-> > >> The issue of a dying memory cgroup refers to a situation where a memory
-> > >> cgroup is no longer being used by users, but memory (the metadata
-> > >> associated with memory cgroups) remains allocated to it. This situation
-> > >> may potentially result in memory leaks or inefficiencies in memory
-> > >> reclamation and has persisted as an issue for several years. Any memory
-> > >> allocation that endures longer than the lifespan (from the users'
-> > >> perspective) of a memory cgroup can lead to the issue of dying memory
-> > >> cgroup. We have exerted greater efforts to tackle this problem by
-> > >> introducing the infrastructure of object cgroup [2].
-> > >>
-> > >> Presently, numerous types of objects (slab objects, non-slab kernel
-> > >> allocations, per-CPU objects) are charged to the object cgroup without
-> > >> holding a reference to the original memory cgroup. The final allocations
-> > >> for LRU pages (anonymous pages and file pages) are charged at allocation
-> > >> time and continues to hold a reference to the original memory cgroup
-> > >> until reclaimed.
-> > >>
-> > >> File pages are more complex than anonymous pages as they can be shared
-> > >> among different memory cgroups and may persist beyond the lifespan of
-> > >> the memory cgroup. The long-term pinning of file pages to memory cgroups
-> > >> is a widespread issue that causes recurring problems in practical
-> > >> scenarios [3]. File pages remain unreclaimed for extended periods.
-> > >> Additionally, they are accessed by successive instances (second, third,
-> > >> fourth, etc.) of the same job, which is restarted into a new cgroup each
-> > >> time. As a result, unreclaimable dying memory cgroups accumulate,
-> > >> leading to memory wastage and significantly reducing the efficiency
-> > >> of page reclamation.
-> > >>
-> > >> ## Fundamentals
-> > >>
-> > >> A folio will no longer pin its corresponding memory cgroup. It is necessary
-> > >> to ensure that the memory cgroup or the lruvec associated with the memory
-> > >> cgroup is not released when a user obtains a pointer to the memory cgroup
-> > >> or lruvec returned by folio_memcg() or folio_lruvec(). Users are required
-> > >> to hold the RCU read lock or acquire a reference to the memory cgroup
-> > >> associated with the folio to prevent its release if they are not concerned
-> > >> about the binding stability between the folio and its corresponding memory
-> > >> cgroup. However, some users of folio_lruvec() (i.e., the lruvec lock)
-> > >> desire a stable binding between the folio and its corresponding memory
-> > >> cgroup. An approach is needed to ensure the stability of the binding while
-> > >> the lruvec lock is held, and to detect the situation of holding the
-> > >> incorrect lruvec lock when there is a race condition during memory cgroup
-> > >> reparenting. The following four steps are taken to achieve these goals.
-> > >>
-> > >> 1. The first step  to be taken is to identify all users of both functions
-> > >>   (folio_memcg() and folio_lruvec()) who are not concerned about binding
-> > >>   stability and implement appropriate measures (such as holding a RCU read
-> > >>   lock or temporarily obtaining a reference to the memory cgroup for a
-> > >>   brief period) to prevent the release of the memory cgroup.
-> > >>
-> > >> 2. Secondly, the following refactoring of folio_lruvec_lock() demonstrates
-> > >>   how to ensure the binding stability from the user's perspective of
-> > >>   folio_lruvec().
-> > >>
-> > >>   struct lruvec *folio_lruvec_lock(struct folio *folio)
-> > >>   {
-> > >>           struct lruvec *lruvec;
-> > >>
-> > >>           rcu_read_lock();
-> > >>   retry:
-> > >>           lruvec = folio_lruvec(folio);
-> > >>           spin_lock(&lruvec->lru_lock);
-> > >>           if (unlikely(lruvec_memcg(lruvec) != folio_memcg(folio))) {
-> > >>                   spin_unlock(&lruvec->lru_lock);
-> > >>                   goto retry;
-> > >>           }
-> > >>
-> > >>           return lruvec;
-> > >>   }
-> > >>
-> > >>   From the perspective of memory cgroup removal, the entire reparenting
-> > >>   process (altering the binding relationship between folio and its memory
-> > >>   cgroup and moving the LRU lists to its parental memory cgroup) should be
-> > >>   carried out under both the lruvec lock of the memory cgroup being removed
-> > >>   and the lruvec lock of its parent.
-> > >>
-> > >> 3. Thirdly, another lock that requires the same approach is the split-queue
-> > >>   lock of THP.
-> > >>
-> > >> 4. Finally, transfer the LRU pages to the object cgroup without holding a
-> > >>   reference to the original memory cgroup.
-> > >>
-> > >
-> > > Hi, Muchun, thanks for the patch.
-> >
-> > Thanks for your reply and attention.
-> >
-> > >
-> > >> ## Challenges
-> > >>
-> > >> In a non-MGLRU scenario, each lruvec of every memory cgroup comprises four
-> > >> LRU lists (i.e., two active lists for anonymous and file folios, and two
-> > >> inactive lists for anonymous and file folios). Due to the symmetry of the
-> > >> LRU lists, it is feasible to transfer the LRU lists from a memory cgroup
-> > >> to its parent memory cgroup during the reparenting process.
-> > >
-> > > Symmetry of LRU lists doesn't mean symmetry 'hotness', it's totally
-> > > possible that a child's active LRU is colder and should be evicted
-> > > first before the parent's inactive LRU (might even be a common
-> > > scenario for certain workloads).
-> >
-> > Yes.
-> >
-> > > This only affects the performance not the correctness though, so not a
-> > > big problem.
-> > >
-> > > So will it be easier to just assume dying cgroup's folios are colder?
-> > > Simply move them to parent's LRU tail is OK. This will make the logic
-> > > appliable for both active/inactive LRU and MGLRU.
-> >
-> > I think you mean moving all child LRU list to the parent memcg's inactive
-> > list. It works well for your case. But sometimes, due to shared page cache
-> > pages, some pages in the child list may be accessed more frequently than
-> > those in the parent's. Still, it's okay as they can be promoted quickly
-> > later. So I am fine with this change.
-> >
-> > >
-> > >>
-> > >> In a MGLRU scenario, each lruvec of every memory cgroup comprises at least
-> > >> 2 (MIN_NR_GENS) generations and at most 4 (MAX_NR_GENS) generations.
-> > >>
-> > >> 1. The first question is how to move the LRU lists from a memory cgroup to
-> > >>   its parent memory cgroup during the reparenting process. This is due to
-> > >>   the fact that the quantity of LRU lists (aka generations) may differ
-> > >>   between a child memory cgroup and its parent memory cgroup.
-> > >>
-> > >> 2. The second question is how to make the process of reparenting more
-> > >>   efficient, since each folio charged to a memory cgroup stores its
-> > >>   generation counter into its ->flags. And the generation counter may
-> > >>   differ between a child memory cgroup and its parent memory cgroup because
-> > >>   the values of ->min_seq and ->max_seq are not identical. Should those
-> > >>   generation counters be updated correspondingly?
-> > >
-> > > I think you do have to iterate through the folios to set or clear
-> > > their generation flags if you want to put the folio in the right gen.
-> > >
-> > > MGLRU does similar thing in inc_min_seq. MGLRU uses the gen flags to
-> > > defer the actual LRU movement of folios, that's a very important
-> > > optimization per my test.
-> >
-> > I noticed that, which is why I asked the second question. It's
-> > inefficient when dealing with numerous pages related to a memory
-> > cgroup.
-> >
-> > >
-> > >>
-> > >> I am uncertain about how to handle them appropriately as I am not an
-> > >> expert at MGLRU. I would appreciate it if you could offer some suggestions.
-> > >> Moreover, if you are willing to directly provide your patches, I would be
-> > >> glad to incorporate them into this patchset.
-> > >
-> > > If we just follow the above idea (move them to parent's tail), we can
-> > > just keep the folio's tier info untouched here.
-> > >
-> > > For mapped file folios, they will still be promoted upon eviction if
-> > > their access bit are set (rmap walk), and MGLRU's table walker might
-> > > just promote them just fine.
-> > >
-> > > For unmapped file folios, if we just keep their tier info and add
-> > > child's MGLRU tier PID counter back to the parent. Workingset
-> > > protection of MGLRU should still work just fine.
-> > >
-> > >>
-> > >> ## Compositions
-> > >>
-> > >> Patches 1-8 involve code refactoring and cleanup with the aim of
-> > >> facilitating the transfer LRU folios to object cgroup infrastructures.
-> > >>
-> > >> Patches 9-10 aim to allocate the object cgroup for non-kmem scenarios,
-> > >> enabling the ability that LRU folios could be charged to it and aligning
-> > >> the behavior of object-cgroup-related APIs with that of the memory cgroup.
-> > >>
-> > >> Patches 11-19 aim to prevent memory cgroup returned by folio_memcg() from
-> > >> being released.
-> > >>
-> > >> Patches 20-23 aim to prevent lruvec returned by folio_lruvec() from being
-> > >> released.
-> > >>
-> > >> Patches 24-25 implement the core mechanism to guarantee binding stability
-> > >> between the folio and its corresponding memory cgroup while holding lruvec
-> > >> lock or split-queue lock of THP.
-> > >>
-> > >> Patches 26-27 are intended to transfer the LRU pages to the object cgroup
-> > >> without holding a reference to the original memory cgroup in order to
-> > >> address the issue of the dying memory cgroup.
-> > >>
-> > >> Patch 28 aims to add VM_WARN_ON_ONCE_FOLIO to LRU maintenance helpers to
-> > >> ensure correct folio operations in the future.
-> > >>
-> > >> ## Effect
-> > >>
-> > >> Finally, it can be observed that the quantity of dying memory cgroups will
-> > >> not experience a significant increase if the following test script is
-> > >> executed to reproduce the issue.
-> > >>
-> > >> ```bash
-> > >> #!/bin/bash
-> > >>
-> > >> # Create a temporary file 'temp' filled with zero bytes
-> > >> dd if=/dev/zero of=temp bs=4096 count=1
-> > >>
-> > >> # Display memory-cgroup info from /proc/cgroups
-> > >> cat /proc/cgroups | grep memory
-> > >>
-> > >> for i in {0..2000}
-> > >> do
-> > >>    mkdir /sys/fs/cgroup/memory/test$i
-> > >>    echo $$ > /sys/fs/cgroup/memory/test$i/cgroup.procs
-> > >>
-> > >>    # Append 'temp' file content to 'log'
-> > >>    cat temp >> log
-> > >>
-> > >>    echo $$ > /sys/fs/cgroup/memory/cgroup.procs
-> > >>
-> > >>    # Potentially create a dying memory cgroup
-> > >>    rmdir /sys/fs/cgroup/memory/test$i
-> > >> done
-> > >>
-> > >> # Display memory-cgroup info after test
-> > >> cat /proc/cgroups | grep memory
-> > >>
-> > >> rm -f temp log
-> > >> ```
-> > >>
-> > >> ## References
-> > >>
-> > >> [1] https://lore.kernel.org/linux-mm/Z6OkXXYDorPrBvEQ@hm-sls2/
-> > >> [2] https://lwn.net/Articles/895431/
-> > >> [3] https://github.com/systemd/systemd/pull/36827
-> > >
-> > > How much overhead will it be? Objcj has some extra overhead, and we
-> > > have some extra convention for retrieving memcg of a folio now, not
-> > > sure if this will have an observable slow down.
-> >
-> > I don't think there'll be an observable slowdown. I think objcg is
-> > more effective for slab objects as they're more sensitive than user
-> > pages. If it's acceptable for slab objects, it should be acceptable
-> > for user pages too.
-> 
-> We currently have some workloads running with `nokmem` due to objcg
-> performance issues. I know there are efforts to improve them, but so
-> far it's still not painless to have. So I'm a bit worried about
-> this...
+Henry Martin <bsdhenrymartin@gmail.com> writes:
+> devm_kasprintf() returns NULL when memory allocation fails. Currently,
+> udma_probe() does not check for this case, which results in a NULL
+> pointer dereference.
 
-Do you mind sharing more details here?
+Yes, it does look like this would happen when uc->name is eventually
+passed to dma_pool_create(), at least.
 
-Thanks!
+>
+> Add NULL check after devm_kasprintf() to prevent this issue.
+>
+> Fixes: 25dcb5dd7b7c ("dmaengine: ti: New driver for K3 UDMA")
+> Signed-off-by: Henry Martin <bsdhenrymartin@gmail.com>
+> ---
+>  drivers/dma/ti/k3-udma.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/dma/ti/k3-udma.c b/drivers/dma/ti/k3-udma.c
+> index 7ed1956b4642..f1c2f8170730 100644
+> --- a/drivers/dma/ti/k3-udma.c
+> +++ b/drivers/dma/ti/k3-udma.c
+> @@ -5582,7 +5582,8 @@ static int udma_probe(struct platform_device *pdev)
+>  		uc->config.dir = DMA_MEM_TO_MEM;
+>  		uc->name = devm_kasprintf(dev, GFP_KERNEL, "%s chan%d",
+>  					  dev_name(dev), i);
+> -
+> +		if (!uc->name)
+> +			return -ENOMEM;
+>  		vchan_init(&uc->vc, &ud->ddev);
+>  		/* Use custom vchan completion handling */
+>  		tasklet_setup(&uc->vc.task, udma_vchan_complete);
+
+Returning -ENOMEM directly seems fine, even though this is in a loop
+200+ lines into udma_probe(). I don't see any unmanaged device resources
+that need to be released before returning, and if I missed one, all the
+error paths this code precedes would have the same problem.
+
+Reviewed-by: Nathan Lynch <nathan.lynch@amd.com>
 
