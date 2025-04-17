@@ -1,79 +1,143 @@
-Return-Path: <linux-kernel+bounces-609443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFB8AA92247
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 18:08:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 935CFA9224E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 18:10:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78F831897936
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 16:09:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 319597AFB65
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 16:09:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178F2254AE7;
-	Thu, 17 Apr 2025 16:08:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE8B225485B;
+	Thu, 17 Apr 2025 16:10:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pu+5Oevj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dgeHBa3r"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7622225485D;
-	Thu, 17 Apr 2025 16:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB95347B4;
+	Thu, 17 Apr 2025 16:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744906123; cv=none; b=KKvNyuLAyFAHgTmgtAxmTUjV81Ba/yt9mzaSxhMiAj/Eecx8cX7PjbpxRYvQXPpDXQ8MVG5jYTjXSAeCoSFurNYZxl+AMjpbBh5pCoJ1vJUrSVo8LeK/p1lKMwtFfl4id+S3xFs3QeLX7LfQBcc6+YvKl01OcBuWDQep2sAcsBc=
+	t=1744906243; cv=none; b=U94IRt4VQYk/VHaNRXhw04uXnEtTr7n6aXr56UN2fOlJO8w877QlecASKVIKqf623Os2FrYK4MExY9mjHHbEzEX8IlOOFIe6F4E6ReaESJjgJKbrPtG7ZUpEOtm6Qtz+dp0jaEeSAC0pYp+sRrwAu2EJV/C3qTD0+LT+v6z3wpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744906123; c=relaxed/simple;
-	bh=5P/fK1tsHJhnyaMTuBiMf8Zin/Aete3BdacTSOwEOiA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MtKaIh8eK7LCX/UKQmgk0O2ULHpSBLHpwrpT2Hl/LEd/qiMpGtqbnfM0bpPVTV50XtDvRKlc34b7kgIC35EFD0d+7Cuv2+KDGQBeRKXBMZsy5YHAlo2FSGkbv7KeXZtIjaimgRwjly9HIckWzCOXJdSCWABAjebp6qovHXiQUxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pu+5Oevj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B2DBC4CEE4;
-	Thu, 17 Apr 2025 16:08:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744906122;
-	bh=5P/fK1tsHJhnyaMTuBiMf8Zin/Aete3BdacTSOwEOiA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Pu+5OevjUBKHPuXZE8V+/eRoPTgH8gmSnWUwAhndzCgmGAbuDD+dJNW/SaI+08glw
-	 K8NQq2mHZEqKvDFq0rYI4ernuZf4tbjjAmPM1OwbzfTa/IIp9Vpz/2jPqaM+J9jaZR
-	 EiC7S75qIYz35AOxbNfNvQFpRTqMsiCYMGrcWxYRqF+RVTLemw8hyfi3h+d3Mt0oLY
-	 iE1tr9Y4XfU30HaVUvsvzCuRMrTuC9uzLoBZleC7C3kglGhmZuG0pZXVVlRFNqVMev
-	 WtY28ieQnGebWEePLNWxTX516NnUhN6JyoAoEecuqOL2NX6obBpCixXRcS4bvig3MM
-	 WHHA4zPhdMuBQ==
-Date: Thu, 17 Apr 2025 18:08:38 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Markus Elfring <Markus.Elfring@web.de>, 
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v14 0/1] i2c: octeon: add block-mode r/w
-Message-ID: <ii7ditpkwb6w5d436ql7fxxo7kvrn7megtchv2lqyixtg6bn7z@msj34kx7lbcm>
-References: <20250324192946.3078712-1-aryan.srivastava@alliedtelesis.co.nz>
+	s=arc-20240116; t=1744906243; c=relaxed/simple;
+	bh=HkAdHd8gpS42Z7HDfjzr3JCk7eoCi2Sb1S8krTF/8pk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HwlC53OAPCANddMo0ekL1PGxMzVmRi0YxS3NsH4b2PdwwFMbTvctJLqvq3CcIE8/mO05dwx0HvXVBACc3a1tOEIB5zmaX65wb7/1KoMzsNR9zPDE2xvO3+C8xB2tfCn/pSa0AWaojYxLJoYjhDnFUsruu/MHBf5C5KWXpjA7jrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dgeHBa3r; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-acb415dd8faso148543466b.2;
+        Thu, 17 Apr 2025 09:10:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744906240; x=1745511040; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tbPve1uvYPOzo7umjR855m+N4T3daG9Z1kh0/VM2qUA=;
+        b=dgeHBa3r5nHmuGuoPCGPu7mhUgq+rtDDDdqphxS3eWFvPSs9Z1E8PokATEUnKssLhL
+         3HX9cFErFCp5eKKzpWjPYLDAHFPPJqkDBhSljCUzoqDUKq6jGeU2xdaMs4KT+s8BVAHg
+         Ns68s48DTgSQR0PHPY34GfvvxN6F07eLOAYo/PebUhL05X8pe0AmTDFNN51TVhGGKU8P
+         2b37l9gMguslxRvqWKe/lNj5M+1WguaL7fqTNYSJVi4XaxNHRgY3YHtvn9RB8SMvjfAy
+         bf4tZpem1h3CBCNyDD4ZJDjWMATSKGz0J4bZ6hNh8Maem2C7czDGyf6rGf1oO8Qwg9yM
+         OYhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744906240; x=1745511040;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tbPve1uvYPOzo7umjR855m+N4T3daG9Z1kh0/VM2qUA=;
+        b=Jy8gaNrJxbQflNcZLHt+yQtoq1E2VAZJSLrgbqKfrUmzurtThaudFqrthWdVAC2gqx
+         odmRU5y/rMuJUOhcmaC8QORb3i4cx2RglUPFexamUap5qk23mMaRis5JOPOYufmSFgdC
+         WIwyeg2yxTPwba9Q7rc37/Sw5/km+aH5eMAEoXubCZfrWxG0QPXK4kByUYAzMCu//MKw
+         3g76HfNw22qhIbilrA0BqpDhtDlbHloatsah7Mow96W5IVPAi/YPzlAmL+nsjLCTaCmR
+         Go767VVaaZTJzuscCWhJimoTqOyFcf9qgk53AXCggNNh31qCD9XhpseOJlw8MAS0O9bc
+         jXRg==
+X-Forwarded-Encrypted: i=1; AJvYcCX7m0MBurc0FI1GgbgPfPBud2brGxxxe/QwSxhpxo1pf/DqT0Iaw4Y3iv7ZNBFTrpA1rxXa/wh4OLg=@vger.kernel.org, AJvYcCXgDEu+qdZQ5DqPSjpeV2h/dW3Z+pWsVuudLHvfolCd28mbdxd45bNmNJEMUVDQ9YOq/YkBKZtKIlOphZuX@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRsdToBmsyNFuFyLY0vRc7tWFD/YEdENFFr2LRFeOBCgdt1vR3
+	z62cQPT5KLiq/BRGnoINKyRQtV6CtBaO//eH0la74bbM/nrKLguEhFSBQUQEZ4hCjgf8zUQVkhn
+	Oy03ueJacDK1kGNLvNvg7N0YNJiE=
+X-Gm-Gg: ASbGncvfyrealMFBlxdRlWqIT9MMftVNEuuh0m8Bib6ffbfBlV9qcp3UFttDAXIOTph
+	bB/UKvl8kwhM9CXRcGrQweA6HL+I9uU8+49x9hg0lLQZQg7DDIVO6pplY/HSQSebfKw3kOgQqnb
+	xMrs6uUKpgHCgr2wpBBz71fptv
+X-Google-Smtp-Source: AGHT+IFoGx7J9uYtzFyupfPUt8X32SjyduVEB58JftV7nr+5ZGIrPbnKu7I7scjxL3eiTU2jZ/pKfKkaTV7WedmdHLU=
+X-Received: by 2002:a17:906:f5a9:b0:ac2:cf0b:b809 with SMTP id
+ a640c23a62f3a-acb429ed4d2mr702253466b.31.1744906239458; Thu, 17 Apr 2025
+ 09:10:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250324192946.3078712-1-aryan.srivastava@alliedtelesis.co.nz>
+References: <20250415-losd-3-inv-icm42600-add-wom-support-v2-0-de94dfb92b7e@tdk.com>
+ <20250415-losd-3-inv-icm42600-add-wom-support-v2-1-de94dfb92b7e@tdk.com>
+ <CAHp75VdZDovPuRqQMpP=TkjeBr9AgRssPFJfmsjnXC=wUXxFHg@mail.gmail.com> <FR3P281MB17570E56798219E17F8C0814CEBC2@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
+In-Reply-To: <FR3P281MB17570E56798219E17F8C0814CEBC2@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 17 Apr 2025 19:10:03 +0300
+X-Gm-Features: ATxdqUHBRj8Mee1rXojwcphqLoRKp5e4YGtOJLfRaG7565FqHXoTW72eOrKA1PM
+Message-ID: <CAHp75VeUYyjZqLsxS8BQn0K9uRGCibKsNTgrCdf58ukCrMgSsA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] iio: imu: inv_icm42600: add WoM support
+To: Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Aryan,
+On Thu, Apr 17, 2025 at 5:25=E2=80=AFPM Jean-Baptiste Maneyrol
+<Jean-Baptiste.Maneyrol@tdk.com> wrote:
+> > On Tue, Apr 15, 2025 at 5:47=E2=80=AFPM Jean-Baptiste Maneyrol via B4 R=
+elay
+> > <devnull+jean-baptiste.maneyrol.tdk.com@kernel.org> wrote:
 
-On Tue, Mar 25, 2025 at 08:29:45AM +1300, Aryan Srivastava wrote:
-> Add support for block mode read/write operations on
-> Thunderx chips.
-> 
-> -Refactor common code for i2c transactions (merged in v11).
-> -Correct function docs (merged in v13).
-> -Remove 10-bit addressing considerations (merged in v13).
-> -Add block mode transaction functionality.
-> 
-> Signed-off-by: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
+...
 
-merged to i2c/i2c-host.
+> > > +       /* 1000/256mg per LSB converted in m/s=C2=B2 in micro (100000=
+0) */
+> >
+> > That 1000000 is redundant, just properly spell the units.
+>
+> I will use um/s=C2=B2
 
-Thanks,
-Andi
+FWIW, you may even use a Greek MU letter, kernel is UTF-8 compatible :-)
+=CE=BCm/s=C2=B2
+
+...
+
+> > > +       /* limit value to 8 bits and prevent 0 */
+> > > +       return min(255, max(1, value));
+> >
+> > Reinvention of the clamp() ?
+>
+> It was a copy-paste of an older driver, at the time clamp was not here.
+> I will replace by clamp, it is much more readable.
+
+For the curious, read this https://lwn.net/Articles/983965/.
+The min(max()) may have really unexpected side effects :-)
+
+...
+
+> > > +       if (sleep_ms)
+> >
+> > Do you need this check?
+>
+> We need this check in the case sleep_ms is 0. It will happen if accel is
+> already on. msleep(0) was usually doing a sleep before. I don't know if i=
+t
+> is still the case.
+
+I'm wondering if it's documented anywhere, do we need to update /
+improve a documentation?
+
+> > > +               msleep(sleep_ms);
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
