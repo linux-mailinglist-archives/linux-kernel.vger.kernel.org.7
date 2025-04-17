@@ -1,118 +1,116 @@
-Return-Path: <linux-kernel+bounces-608596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D601A915B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:51:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1FD0A915C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:52:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E772174C5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:51:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFD087AD814
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688DA2206BD;
-	Thu, 17 Apr 2025 07:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e0c2iG8d"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88B77221572;
+	Thu, 17 Apr 2025 07:52:45 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4F021B1BC
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 07:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEEAF2206B8;
+	Thu, 17 Apr 2025 07:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744876287; cv=none; b=J/bE4CHEDG+A3+kou7bjUO1jjMMmuvqokmR/kNH5Zx934zp6c9ZKytik0wYJrGxoTjuEdtHcDOcGc1xXQnziLUVYnd66Sqk6+A5uNvo2dq8ZhT1nlbCGVtaB+E0RR3AKkrB1+iJCEHxv8gnARA3Hd9E7bx6AOHHW89qPT2IfiYY=
+	t=1744876365; cv=none; b=VU0vEusXeggC3A6BbPQESBt/FuqCMDlfRn4JjoKDUtoJG2yvHiAQQ9cFT6RgNc3xuYIZyuc0msPXSx6iD9LEDQPnrUFMx9wWkhiSuG7GPrm6D2OFuKj5yb6LsL1I0e49Nyl8v06oeuN/Ey+fuFbKy2EDs1NK/r8qZp17rWagaMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744876287; c=relaxed/simple;
-	bh=Lfh3obR/cWEw2XOsXVoh2BjkSwas37Gs2qVr6+P3ZiA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NRYEbUlfNGwQvg47athlgKbwuab82WBSRCj89uSEh94eme+N8bvlpp7nl+E2idbZb0wKfP3u72fr7//IMk1woqZaDTZ8Bj9eyYq3apNrAGSh42P7lnP0uHBJdOcnMz5L6HCi39nuPTegeUHP+Jtbw9fOciSDLFv8AcSfblRhwSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=e0c2iG8d; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30f30200b51so5317071fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 00:51:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744876283; x=1745481083; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Lfh3obR/cWEw2XOsXVoh2BjkSwas37Gs2qVr6+P3ZiA=;
-        b=e0c2iG8dFrOe2p2heowtbTtGPiM+CTsWs64KgsndGHoIcugzkK2IoQUr/wJ4D+xoXB
-         5lluTtWwIkImfOkbs0jTe0ZgzTY3oIsJmfsv8Nj0h18qmmLZ1BtYto6itNpzGoQ3XIh3
-         0Lbj7EqiWCjdECWED+Eoj5VuQ945kU8Yl2FDTkYunhOTN82Z88k3p8/ySR2OEGpAqXWT
-         mEFjdCglhDlYJovPx2jzilC6/2PMgjjt6lgqQnrTvZDA+AV9AfEagUMP35FRbkjlojLi
-         n1SBQQkPDachSil6eaIsgr4mQheQvvKJ9DKe7j0KI66Gx//pT5FU4rEHny6whztkWCw7
-         Kvdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744876283; x=1745481083;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Lfh3obR/cWEw2XOsXVoh2BjkSwas37Gs2qVr6+P3ZiA=;
-        b=fh/WnxlJLvTlFqlgQ2d4kHa2hafXYZswVUbOw/WT4MfJ133LVfgelgxP0F3r4wZ//0
-         2aoPZnnkvN7/WjUG2n8+pCCxXhdQmUxetk8pngYM3MHpMVpnMkAVXGNl7aqOpFL9HEqx
-         keKKwELjDt7Ota01YuqSF2iTUvhBqG/z9c+FD7CGJSyde54dhxf/vFn03C46DwXIcxjj
-         vwKysyYpUVkcS91IOfTZBw6LUV28NYcMG3jNnyDCkge8L40yc+PUD4UWUXgL1qWfNtRu
-         P6i5kx47p0aMDXNyx1Rn0h9yCN2m7g2L09B572Wl7VFUsfOWv+8/htJPyR2i1jlvEzZT
-         p2ig==
-X-Forwarded-Encrypted: i=1; AJvYcCXFljioaIGDo7ZjkHK1iQbYUgiTOzBKnOnMqfmJlVUqeNarFIgrQtwRKGoo8FWKRuQF6emfAZCnwpXQ1bQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/Am2qFQRiCCUsQsSrtqektNQ6dKJd60Hh2uwI6dGh0yuC1zs6
-	RHvdFVASZasneOLTyG7PLnepPkBotFJmXQDznRhS2yZ8qrFzIoSZzLAVgh2zObzR+VqlGeDEEOv
-	15yzEiJNeknNd+tUjicadwblpmvsAZuSf73jzoc5zC2oL3/8q0Rk=
-X-Gm-Gg: ASbGncuYDUHP8Q6dPy7R0yx9QIsxtjykSFA4APZGCgUBhVu9KEjCyCxq+9r3QDAh1Ai
-	VEvdd52INOb8c97Ba2K5rL39MtOQqIISGTz1DWX00E9Y2qu5hJR3z/I/wremIjUYLPdC541I4DF
-	Twh+esAcx3Yy7r0eHkEdrrIA==
-X-Google-Smtp-Source: AGHT+IF22vTCfimAhXspSKxNw20fTEOO+Y5j7ipBjFCQZlR3SJUnkLoVgGpm+KXLc0G/KFFZHy1BLVHF2mbakXnE4D0=
-X-Received: by 2002:a2e:bd15:0:b0:30b:cd68:b6a6 with SMTP id
- 38308e7fff4ca-3107f68a9b2mr23447381fa.6.1744876283329; Thu, 17 Apr 2025
- 00:51:23 -0700 (PDT)
+	s=arc-20240116; t=1744876365; c=relaxed/simple;
+	bh=vAS/7HrbMdGDLRFHygkOO/AhYxPfFTm/pThX7WtCmnQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=n9DrPlYAO0QjkXLQbDZWdqbk+eP+C8yHIlCWtHU80/dsWcg4Hle/B7gMDplN8hqnYchFCx5Z1nLW7YkpilryU6LmR3RcWNxuxLHpd/6j7iSUYRC+aaaXssN4I1HH9593D2inSazMB3Opx3RylMk+j1LEc4unAf2/EjJ3i9aQdCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53H6A2ot001881;
+	Thu, 17 Apr 2025 00:51:51 -0700
+Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 45ykf3nuc4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Thu, 17 Apr 2025 00:51:51 -0700 (PDT)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Thu, 17 Apr 2025 00:51:50 -0700
+Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Thu, 17 Apr 2025 00:51:47 -0700
+From: <jianqi.ren.cn@windriver.com>
+To: <gregkh@linuxfoundation.org>, <stable@vger.kernel.org>
+CC: <sfrench@samba.org>, <linux-cifs@vger.kernel.org>,
+        <samba-technical@lists.samba.org>, <pc@manguebit.com>,
+        <stfrench@microsoft.com>, <patches@lists.linux.dev>,
+        <linux-kernel@vger.kernel.org>, <jianqi.ren.cn@windriver.com>
+Subject: [PATCH 5.10.y 2/2] smb: client: fix potential UAF in cifs_stats_proc_show()
+Date: Thu, 17 Apr 2025 15:51:47 +0800
+Message-ID: <20250417075147.1721726-1-jianqi.ren.cn@windriver.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250416-aaeon-up-board-pinctrl-support-v3-0-9ca13aa57312@bootlin.com>
- <20250416-aaeon-up-board-pinctrl-support-v3-1-9ca13aa57312@bootlin.com>
-In-Reply-To: <20250416-aaeon-up-board-pinctrl-support-v3-1-9ca13aa57312@bootlin.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 17 Apr 2025 09:51:11 +0200
-X-Gm-Features: ATxdqUEzrSa8wQrPj-_TFVtVAQv-K8f-maneQ4kuW4K86GYPU_CNe9bbfkx_wMg
-Message-ID: <CACRpkdaqw8o80=coMHv6esa-fVQHc408_==7iaBd3M0VFazEGA@mail.gmail.com>
-Subject: Re: [PATCH v3 01/10] gpiolib: add support to register sparse pin range
-To: Thomas Richard <thomas.richard@bootlin.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, 
-	DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: HBHwV9Q37oEnOb8dwRTD4S7SxSCdijA6
+X-Authority-Analysis: v=2.4 cv=Wd0Ma1hX c=1 sm=1 tr=0 ts=6800b317 cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=XR8D0OoHHMoA:10 a=Li1AiuEPAAAA:8 a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8 a=t7CeM3EgAAAA:8 a=i5IeLDUB_GyS7Qvew-AA:9
+ a=qGKPP_lnpMOaqR3bcYHU:22 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-GUID: HBHwV9Q37oEnOb8dwRTD4S7SxSCdijA6
+X-Sensitive_Customer_Information: Yes
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-17_01,2025-04-15_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ lowpriorityscore=0 priorityscore=1501 spamscore=0 clxscore=1015
+ impostorscore=0 suspectscore=0 malwarescore=0 adultscore=0 phishscore=0
+ mlxlogscore=999 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.21.0-2502280000
+ definitions=main-2504170060
 
-On Wed, Apr 16, 2025 at 4:00=E2=80=AFPM Thomas Richard
-<thomas.richard@bootlin.com> wrote:
+From: Paulo Alcantara <pc@manguebit.com>
 
-> Add support to register for GPIO<->pin mapping using a list of non
-> consecutive pins. The core already support sparse pin range (pins member
-> of struct pinctrl_gpio_range), but it was not possible to register one. I=
-f
-> pins is not NULL the core uses it, otherwise it assumes that a consecutiv=
-e
-> pin range was registered and it uses pin_base.
->
-> The function gpiochip_add_pin_range() which allocates and fill the struct
-> pinctrl_gpio_range was renamed to gpiochip_add_pin_range_with_pins() and
-> the pins parameter was added.
->
-> Two new functions were added, gpiochip_add_pin_range() and
-> gpiochip_add_sparse_pin_range() to register a consecutive or sparse pins
-> range. Both use gpiochip_add_pin_range_with_pins().
->
-> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
+commit 0865ffefea197b437ba78b5dd8d8e256253efd65 upstream.
 
-This looks correct, useful API and nice naming too!
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Skip sessions that are being teared down (status == SES_EXITING) to
+avoid UAF.
 
-Yours,
-Linus Walleij
+Cc: stable@vger.kernel.org
+Signed-off-by: Paulo Alcantara (Red Hat) <pc@manguebit.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+[ cifs_debug.c was moved from fs/cifs to fs/smb/client since
+38c8a9a52082 ("smb: move client and server files to common directory fs/smb").
+The cifs_ses_exiting() was introduced to cifs_debug.c since
+ca545b7f0823 ("smb: client: fix potential UAF in cifs_debug_files_proc_show()")
+ which has been sent to upstream already.]
+Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
+Signed-off-by: He Zhe <zhe.he@windriver.com>
+---
+Verified the build test
+---
+ fs/cifs/cifs_debug.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/fs/cifs/cifs_debug.c b/fs/cifs/cifs_debug.c
+index 8b88b0705481..257eae4673d2 100644
+--- a/fs/cifs/cifs_debug.c
++++ b/fs/cifs/cifs_debug.c
+@@ -593,6 +593,8 @@ static int cifs_stats_proc_show(struct seq_file *m, void *v)
+ 		list_for_each(tmp2, &server->smb_ses_list) {
+ 			ses = list_entry(tmp2, struct cifs_ses,
+ 					 smb_ses_list);
++			if (cifs_ses_exiting(ses))
++				continue;
+ 			list_for_each(tmp3, &ses->tcon_list) {
+ 				tcon = list_entry(tmp3,
+ 						  struct cifs_tcon,
+-- 
+2.34.1
+
 
