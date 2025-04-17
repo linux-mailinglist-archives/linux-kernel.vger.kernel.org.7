@@ -1,134 +1,249 @@
-Return-Path: <linux-kernel+bounces-608749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04D94A9178A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 11:19:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E4FBA91793
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 11:20:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 367CE169EE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:19:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5F824458A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:20:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 334A618BC0C;
-	Thu, 17 Apr 2025 09:19:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B67F22A1CD;
+	Thu, 17 Apr 2025 09:19:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dKY5sdtA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Gi9qwnLt"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69534225A3B;
-	Thu, 17 Apr 2025 09:18:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC98A2288C3
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 09:19:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744881539; cv=none; b=iDPRQj4VrvAxiRskmM7L47Uuj0+iy8k7wo1A3Y1B8pqC1GIQfO4awzHtAREPfB6R/tkUOXSxFqpjrkIuvw10YHIG4/UoHDtYNsTPOaHGbyySVjXAn0LSAAaTQJjCfCvEW9bcqVYwwFibu2aW870JOyptdbvtjg+ri7vYA665MBQ=
+	t=1744881579; cv=none; b=OAObK1xxI3lZx6KfHTZerFpzB+sLeKImCBmaQgIOGo65UCi92KLjjFw7Wb5YhpCcdoWD3CecY/1AVwO7t7Xm02rxuwpc/P+nALeoTPB0j8W02DX+8YQGwitGmQV3PQKpbfxXDgxfgx2B115kXPRKGpQJGWR/m8PR8yVSJedmD4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744881539; c=relaxed/simple;
-	bh=aknegXEf98rEXjC2Ndf2yjXBbMR/+0vD9gZhC4mdjVk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rxd1wdmvkdNCic5yXaVqp0GDFUBFp/tPR78rh+PrtNPO9M5YEh5Kz9BKh7I+fPRxOPWkZsPd2bMyFQUUO5h6kYgN9XBvIChYGAhm5ONCrCSu3qlPhdLpl80PpZARAnpX/tzl6Qezhl245DLkNKC5Jch3lQk67uCTSfozLYitGbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dKY5sdtA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C70CC4CEE4;
-	Thu, 17 Apr 2025 09:18:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744881538;
-	bh=aknegXEf98rEXjC2Ndf2yjXBbMR/+0vD9gZhC4mdjVk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dKY5sdtAnmOmvl33aEwoCgVtEYSSsSev4+VX1DQ2WI9hq49GdmuVK74G/015suRam
-	 JJCtiavrobOiHjE3coN1AOk+iQC/TgVFELp40tPDVVoHtM81OBrMH1sKujfWUmSr4a
-	 hw2KCDrf4AIY4viR3bXT/53IVkA41Lzbr2d8f3J5sGE5Nz489DHgskX+JIG52O/7vd
-	 zgpd91JEPhiy02IMmAIjPVVzyVBdoVdQJUeQuijJ9p2Wv7RaFwN/tvTRofhcbjfz6t
-	 kLF9YweRODJQ9Ud2QjBIcFvb9PLbaTAmfPMulb+tnSc6P5mPyio40S26LB8rRLr695
-	 b5petkuythfQQ==
-Date: Thu, 17 Apr 2025 11:18:56 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the pwm tree
-Message-ID: <bzrjh7hlofv2sgyqy77wiyads3kjxxogr7donv4tqhqolg5o26@klgeciz6jobi>
-References: <20250417162700.728e14e5@canb.auug.org.au>
+	s=arc-20240116; t=1744881579; c=relaxed/simple;
+	bh=Ylf0Ip+j+wp+NQRSGRA5HQfnG83N9uNyl5OVFc/4JbU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZUgHpCQW5VFzNjtO0NUgkYDkzAWLFrxiVgfV8eWXOzr7UXfwL5HTnkKM+jNm/BCa4uAubZ7Pu66jX6UK/01A0B3ePilOOFmZDWT48c9nOp7mh+VTUo/Vil8vghaCs5+SJ+xXE8ObCqoZZWBy0m4TwlSOt74ghoudAcdHxih5N4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Gi9qwnLt; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53GLdEHw016618;
+	Thu, 17 Apr 2025 09:19:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=c8WnN0
+	y0wFJKqb7B3e+6L+n496yH9B+pysfyySy9kJc=; b=Gi9qwnLtm1FL3FemqBl1gp
+	BiBQstU5PEj6uriKWajZO7PAufz5xvcKurJTtfjRAuxrSJgbrlM0EoNK/Np/Ms53
+	Ve+mVWLzWipUmM3mN2+scTNkoc9SqgRA1+ys1KetAlJndeE6pAg+YAR6lToooEU8
+	cnSh0jb91z69/eWgAtWtbI1iF1vzq1RQMz7eGoZYpsE5CV3mIR2jPdCw4xWVM8lM
+	SecN2FbOYFkDIkQxStIqzzoBkDZLZ4qDRpifnizys5FjkwqMW8jKA0aqTJQJtn0u
+	3Ccvpum8yJJ67oLGoYH4asUMDercd5Gzoox0CVXuWTchrrdguwOHLmw3QjyzRFNQ
+	==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 462mn7tkvy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Apr 2025 09:19:28 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53H8e8RH024874;
+	Thu, 17 Apr 2025 09:19:27 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4602gtn8ja-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Apr 2025 09:19:27 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53H9JQXl33817338
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 17 Apr 2025 09:19:26 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0121A20043;
+	Thu, 17 Apr 2025 09:19:26 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4A68120040;
+	Thu, 17 Apr 2025 09:19:24 +0000 (GMT)
+Received: from [9.39.24.204] (unknown [9.39.24.204])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 17 Apr 2025 09:19:24 +0000 (GMT)
+Message-ID: <82baaf6c-f3d9-4c3e-be69-24389eadb18c@linux.ibm.com>
+Date: Thu, 17 Apr 2025 14:49:23 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="conccmqenup45jqy"
-Content-Disposition: inline
-In-Reply-To: <20250417162700.728e14e5@canb.auug.org.au>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sched: Skip useless sched_balance_running acquisition if
+ load balance is not due
+To: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>,
+        Doug Nelson <doug.nelson@intel.com>,
+        Mohini Narkhede <mohini.narkhede@intel.com>,
+        linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>, "Chen, Yu C" <yu.c.chen@intel.com>
+References: <20250416035823.1846307-1-tim.c.chen@linux.intel.com>
+ <fbe29b49-92af-4b8c-b7c8-3c15405e5f15@linux.ibm.com>
+ <667f2076-fbcd-4da7-8e4b-a8190a673355@intel.com>
+ <5e191de4-f580-462d-8f93-707addafb9a2@linux.ibm.com>
+ <23e05939e7a19151d9b17d011e48a85d650b4e8a.camel@linux.intel.com>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <23e05939e7a19151d9b17d011e48a85d650b4e8a.camel@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=ANnAolku c=1 sm=1 tr=0 ts=6800c7a0 cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=j9ACozpduBSlqxEhICoA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: daWXHAUEoCY0nVC9eRDj_emvx_je2tLs
+X-Proofpoint-ORIG-GUID: daWXHAUEoCY0nVC9eRDj_emvx_je2tLs
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-17_02,2025-04-15_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ mlxlogscore=999 adultscore=0 spamscore=0 mlxscore=0 bulkscore=0
+ suspectscore=0 phishscore=0 clxscore=1015 impostorscore=0
+ priorityscore=1501 lowpriorityscore=0 classifier=spam authscore=0 adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504170070
 
 
---conccmqenup45jqy
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: linux-next: build warning after merge of the pwm tree
-MIME-Version: 1.0
 
-hello,
+On 4/16/25 21:49, Tim Chen wrote:
+> On Wed, 2025-04-16 at 14:46 +0530, Shrikanth Hegde wrote:
+>>
 
-On Thu, Apr 17, 2025 at 04:27:00PM +1000, Stephen Rothwell wrote:
-> After merging the pwm tree, today's linux-next build (htmldocs) produced
-> this warning:
->=20
-> ocumentation/driver-api/miscellaneous:47: drivers/pwm/core.c:232: WARNING=
-: Inline emphasis start-string without end-string. [docutils]
->=20
-> Introduced by commit
->=20
->   bde5547f2e87 ("pwm: Better document return value of pwm_round_waveform_=
-might_sleep()")
+>>
+> You mean doing a should_we_balance() check?  I think we should not
+> even consider that if balance time is not due and this balance due check should
+> come first.
+> 
+Hi Tim.
 
-I squashed a fix into that commit:
+This is the code I was suggesting.
 
-$ git range-diff bde5547f2e87...fbf1880bada0
-1:  bde5547f2e87 ! 1:  fbf1880bada0 pwm: Better document return value of pw=
-m_round_waveform_might_sleep()
-    @@ Commit message
+---
 
-         Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
-         Link: https://lore.kernel.org/r/db84abf1e82e4498fc0e7c318d2673771d=
-0039fe.1744120697.git.ukleinek@kernel.org
-    +    [ukleinek: Fix a rst formatting issue reported by Stephen Rothwell]
-         Signed-off-by: Uwe Kleine-K=F6nig <ukleinek@kernel.org>
-
-      ## drivers/pwm/core.c ##
-    @@ drivers/pwm/core.c: static int __pwm_write_waveform(struct pwm_chip =
-*chip, struc
-       *
-     - * Returns 0 on success, 1 if there is no valid hardware configuratio=
-n matching
-     - * the input waveform under the PWM rounding rules or a negative errn=
-o.
-    -+ * Usually all values passed in *wf are rounded down to the nearest p=
-ossible
-    ++ * Usually all values passed in @wf are rounded down to the nearest p=
-ossible
-     + * value (in the order period_length_ns, duty_length_ns and then
-     + * duty_offset_ns). Only if this isn't possible, a value might grow.
-     + *
-
-Thanks for the report (and all the work you do to notice these issues)!
-
-Best regards
-Uwe
-
---conccmqenup45jqy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmgAx30ACgkQj4D7WH0S
-/k5JQAgAkXAYbewh3OX9X1zMPJdVp/PuyApZTR/NIKegpZXm7LhRETDCC1OX4E8d
-SrmRwRh59UHgHmSuCJC4sPWICsIy2tR2cZN/EkgzSgKQy8GRTBWg65Z2MC2fV1Yj
-0/nC0vPTPvfevKknl457G9JZ0XFMFGV4fWtYRjMox7jPC/MdCrSOCrXNuJztX930
-LIFjVZgwc4hTdvqS7ZCNtZQeQhcFplaYu+7fC4a1rX3nm2+M4OtPSUrIjlxka1Eh
-vTCDYuzRdQIbC6K5jm4LnDHHN+FubfHvXnrKzgx0BiHpMAMcR5LXfhZcM0YZrj3P
-pFwdkeu3uIQX+0uXx4jYWUwl6pGWyQ==
-=3QSp
------END PGP SIGNATURE-----
-
---conccmqenup45jqy--
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 0c19459c8042..e712934973e7 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -11723,6 +11723,21 @@ static void update_lb_imbalance_stat(struct lb_env *env, struct sched_domain *sd
+                 break;
+         }
+  }
++/*
++ * This flag serializes load-balancing passes over large domains
++ * (above the NODE topology level) - only one load-balancing instance
++ * may run at a time, to reduce overhead on very large systems with
++ * lots of CPUs and large NUMA distances.
++ *
++ * - Note that load-balancing passes triggered while another one
++ *   is executing are skipped and not re-tried.
++ *
++ * - Also note that this does not serialize rebalance_domains()
++ *   execution, as non-SD_SERIALIZE domains will still be
++ *   load-balanced in parallel.
++ */
++static atomic_t sched_balance_running = ATOMIC_INIT(0);
++
+  
+  /*
+   * Check this_cpu to ensure it is balanced within domain. Attempt to move
+@@ -11738,6 +11753,7 @@ static int sched_balance_rq(int this_cpu, struct rq *this_rq,
+         struct rq *busiest;
+         struct rq_flags rf;
+         struct cpumask *cpus = this_cpu_cpumask_var_ptr(load_balance_mask);
++       int need_serialize = 0;
+         struct lb_env env = {
+                 .sd             = sd,
+                 .dst_cpu        = this_cpu,
+@@ -11760,6 +11776,12 @@ static int sched_balance_rq(int this_cpu, struct rq *this_rq,
+                 goto out_balanced;
+         }
+  
++       need_serialize = (idle!=CPU_NEWLY_IDLE) && sd->flags & SD_SERIALIZE;
++       if (need_serialize) {
++               if (atomic_cmpxchg_acquire(&sched_balance_running, 0, 1))
++                       return ld_moved;
++       }
++
+         group = sched_balance_find_src_group(&env);
+         if (!group) {
+                 schedstat_inc(sd->lb_nobusyg[idle]);
+@@ -11884,6 +11906,8 @@ static int sched_balance_rq(int this_cpu, struct rq *this_rq,
+                         if (!cpumask_subset(cpus, env.dst_grpmask)) {
+                                 env.loop = 0;
+                                 env.loop_break = SCHED_NR_MIGRATE_BREAK;
++                               if (need_serialize)
++                                       atomic_set_release(&sched_balance_running, 0);
+                                 goto redo;
+                         }
+                         goto out_all_pinned;
+@@ -12000,6 +12024,9 @@ static int sched_balance_rq(int this_cpu, struct rq *this_rq,
+             sd->balance_interval < sd->max_interval)
+                 sd->balance_interval *= 2;
+  out:
++       if (need_serialize)
++               atomic_set_release(&sched_balance_running, 0);
++
+         return ld_moved;
+  }
+  
+@@ -12124,21 +12151,6 @@ static int active_load_balance_cpu_stop(void *data)
+         return 0;
+  }
+  
+-/*
+- * This flag serializes load-balancing passes over large domains
+- * (above the NODE topology level) - only one load-balancing instance
+- * may run at a time, to reduce overhead on very large systems with
+- * lots of CPUs and large NUMA distances.
+- *
+- * - Note that load-balancing passes triggered while another one
+- *   is executing are skipped and not re-tried.
+- *
+- * - Also note that this does not serialize rebalance_domains()
+- *   execution, as non-SD_SERIALIZE domains will still be
+- *   load-balanced in parallel.
+- */
+-static atomic_t sched_balance_running = ATOMIC_INIT(0);
+-
+  /*
+   * Scale the max sched_balance_rq interval with the number of CPUs in the system.
+   * This trades load-balance latency on larger machines for less cross talk.
+@@ -12188,7 +12200,7 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
+         /* Earliest time when we have to do rebalance again */
+         unsigned long next_balance = jiffies + 60*HZ;
+         int update_next_balance = 0;
+-       int need_serialize, need_decay = 0;
++       int need_decay = 0;
+         u64 max_cost = 0;
+  
+         rcu_read_lock();
+@@ -12213,12 +12225,6 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
+  
+                 interval = get_sd_balance_interval(sd, busy);
+  
+-               need_serialize = sd->flags & SD_SERIALIZE;
+-               if (need_serialize) {
+-                       if (atomic_cmpxchg_acquire(&sched_balance_running, 0, 1))
+-                               goto out;
+-               }
+-
+                 if (time_after_eq(jiffies, sd->last_balance + interval)) {
+                         if (sched_balance_rq(cpu, rq, sd, idle, &continue_balancing)) {
+                                 /*
+@@ -12232,9 +12238,7 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
+                         sd->last_balance = jiffies;
+                         interval = get_sd_balance_interval(sd, busy);
+                 }
+-               if (need_serialize)
+-                       atomic_set_release(&sched_balance_running, 0);
+-out:
++
+                 if (time_after(next_balance, sd->last_balance + interval)) {
+                         next_balance = sd->last_balance + interval;
+                         update_next_balance = 1;
 
