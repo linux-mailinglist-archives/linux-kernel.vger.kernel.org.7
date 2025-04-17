@@ -1,160 +1,130 @@
-Return-Path: <linux-kernel+bounces-608737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89317A9175E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 11:11:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 572ECA91774
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 11:15:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74F38190765B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:11:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58A7E4457CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F52226D05;
-	Thu, 17 Apr 2025 09:11:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 791D8226CFD;
+	Thu, 17 Apr 2025 09:15:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RL1UkUBR"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="v4ADDzSW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C16C225A48;
-	Thu, 17 Apr 2025 09:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9E3225A22;
+	Thu, 17 Apr 2025 09:15:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744881066; cv=none; b=mRC2GBhy7IXk4i6caWhq5CvWpriEHmFNX4ltNh3Zj37gWDODzrZmYT9veV/cWXQns8qCDRoLZaBf65KpeV0rqqJv50dGuc4khQMSuo8Njm5BimvT0bznpUxyX8hHAF4Tqwa5XQh115nm/eENOjbQe8vyukwo/c/SEUTJzBLZlv0=
+	t=1744881302; cv=none; b=PYUU7J2P44OwoLaeY4ju1m3gvqQjUWa1omIhSxCFV+jhVgWRMGAaFXUtDhnqEDhMBFx0/u2FPFXFcPL02o9U3P514GTpC2GgE349HhEjeMnyU6vsJiZxMokeGMG1lBUBoaZNb6NX7ggsZPGmaU4xlL1py75nXfz44EdthNYRjEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744881066; c=relaxed/simple;
-	bh=g6qWYF9fRCguGYNnvuNycVi9fJqLV8ieZ9+PXG727ds=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=my/6BVkJV/2Z392tWn+DJvruWuGVaViTxm1SzBcGhOLpIicoB8EIaSk4DhcFXwWF3UvgtKGNmhTZERrYaq4ReOqlmH9JfupKK0s1dxYJQo9yB/9iPosj6orH2C4Yi8DmtyO/9kAmqChgkzWkVPjhCIT6MhSkxP//fc0ikI1Skyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RL1UkUBR; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ac2bdea5a38so77998766b.0;
-        Thu, 17 Apr 2025 02:11:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744881063; x=1745485863; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tlw8IubkA1Fytzto3zBIrK47zrZk5iptIwAZJpMwpqM=;
-        b=RL1UkUBRiydApGD8JNckyMcsc1bFiT1emUVuOc2DWILBfTiARL3HJ56ar4hwAXbRSQ
-         c5qizg9nKC7n59lxKmoje6NXaaLPcw04qvLFnCKlrckX5SmmSylFuCnTmasYFY0Rocs3
-         6jCjQ7SYOPphegqYDdC2EyQ0BulAVNnGjnv0HZQfjzSWXv4gISQ2Wni6df12DFoNtRPW
-         TLUrlRps/2/97isXVZ5itOD3u+gI50hLiqarCrKiCNp3q0pDczcZHBscg8vnHcTmW4Z8
-         ohtOuvkx7wtgQ3ycgnB9F6wjuxzZuN0I9F27gj84A1tpwKO6i6qgeXZ4jXBra00uSIWu
-         x1qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744881063; x=1745485863;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tlw8IubkA1Fytzto3zBIrK47zrZk5iptIwAZJpMwpqM=;
-        b=bWV0Xtfr0qrNsDvCpvXXouXEGRuwjik6c44TwTX6ghs5d0gLD9yk2GlTLban68z8Rg
-         ktixZWhd4eVMAq5u/b7yNugjeRoUgURopGik3+M2aOe1DaeSxQZV39DNs9ZApHqAPVcx
-         1bR8OkksqeKwvKdeR6kDPG5cysoNDYV4/Y9Mm5S2yNru8bXHtHQnr1S9img0dLakjOeP
-         PprC0b5MEMa7F3QiuxTvF5dy8mKPu3/8ZGob/12B0r/X50PFAyS2zR+jUCuokJrvanu/
-         xr9MDz7lxUn0667TjKy0mecEyadV9tiybTEQCaaCKOm+dhglKbpYHqYLPDWTG2rwNFGz
-         5ZwA==
-X-Forwarded-Encrypted: i=1; AJvYcCW4VxT15wo2n2LBcByL0o1WsHC1k7DazBn48uQ5AkKadMxE9tg3yeDKwnJsf290CWhmV1b7n3nMxWCFo16p@vger.kernel.org, AJvYcCWcz/kGoOJVK5km5rbcF5ncm01PbuWokLGOcKmnxsmhjgqOpUd2Uu0KnmUU5sODo6AGEUFnP+g1ZA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJm5io7f8dvfIz2GGJMmdK/5xMh1yiUCvIHj+3AWPNdxw42wWY
-	oCgtFFlbwRYYZln2iNHgbCQG1iwkbLTCo2RwK7SKmWiMIHIkBpvJ
-X-Gm-Gg: ASbGncthA88GBDpS10TTDh+jsQfoSKy1CY3UZ9iP6jO8qDu6z4oGLtc64lagoO+1hLm
-	RXgTlpoQWQ484y2SRo+EIG/gEENkqhLMsYT0ecs0UpepU8suGmRvt6sZOMkiPdUlftHhxm//0Ph
-	PzGOoKMW8qkglN5V+YwjXoLRiGvkOUKhr+BxkjkpEXvKrhorqnNAgkIjxe3afSkfZ0b2xPC/N/X
-	+2xp2q4eYFF/4PZRS6rKpJrjThGiGF6wUHXim0QtoIFprI2YnlRHGBPoPEow3sDe01w0xqdhW+X
-	J2eIT1HxuPAVL0qYkE1nQYPlmTGThvPU98WwKn7bqu+J2dGI2xTpvA==
-X-Google-Smtp-Source: AGHT+IHXIdxkv/J0ofIt2VqBBFQLmxoeid17ZAV7HbUHjv5Bu87J3Ffr5hMPd5oI21IEC8N1/X0jEA==
-X-Received: by 2002:a17:906:9fd2:b0:ac2:a5c7:7fc9 with SMTP id a640c23a62f3a-acb42ba2587mr437054966b.51.1744881063021;
-        Thu, 17 Apr 2025 02:11:03 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325::1e4? ([2620:10d:c092:600::1:c8e6])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb3d1c8685sm261725066b.144.2025.04.17.02.11.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Apr 2025 02:11:02 -0700 (PDT)
-Message-ID: <87cacc12-03d5-4d9d-a1b1-5a1da231be2d@gmail.com>
-Date: Thu, 17 Apr 2025 10:12:18 +0100
+	s=arc-20240116; t=1744881302; c=relaxed/simple;
+	bh=Z7NTpZ0nEG3ynbwc2X/V/VqBUTzzuWAmCSR5JVqRIQw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LqitTP/OAN0OeWT/ZOJI0gkoWyfjIqq+/b33KhYc14iRlVTmIyCJZsw8FkWODuqPJ8VtSzQkn8EdzznybFcGotEza3WnvV1UggOKmx5X4Hv+/8uXDShWHtPBDxw0jl+bwlUZjXhwyrJ6LFYxQ509ZGgSRwrJUvF321Al7ESvfdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=v4ADDzSW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B240DC4CEE4;
+	Thu, 17 Apr 2025 09:15:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1744881302;
+	bh=Z7NTpZ0nEG3ynbwc2X/V/VqBUTzzuWAmCSR5JVqRIQw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=v4ADDzSWCqGjjDj88whX+Y9ipXj/9Qbrt8PbWuAAqz0Jzqre5F+QeiFHm+SQYxNJq
+	 Rk6l1Fb27DiUDOOnLZS2kFvGxxVi8fEjv4YpAoRgn1wkFp/KddI2i9Kr4mRHilzLIg
+	 25foBpkVOIIWLyaDqvndE70UW6zvZvZThl6k0xM0=
+Date: Thu, 17 Apr 2025 11:14:54 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Michael Rubin <matchstick@neverthere.org>
+Cc: dpenkler@gmail.com, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] staging: gpib: Removing unused function CFGn
+Message-ID: <2025041717-unnatural-scaling-f4d7@gregkh>
+References: <20250409181809.401724-1-matchstick@neverthere.org>
+ <2025041522-startling-parlor-aa65@gregkh>
+ <aABR5Ykv5lawt_BE@tiamat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring/rsrc: send exact nr_segs for fixed buffer
-To: Jens Axboe <axboe@kernel.dk>, Nitesh Shetty <nitheshshetty@gmail.com>
-Cc: Nitesh Shetty <nj.shetty@samsung.com>, gost.dev@samsung.com,
- io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CGME20250416055250epcas5p25fa8223a1bfeea5583ad8ba88c881a05@epcas5p2.samsung.com>
- <20250416054413.10431-1-nj.shetty@samsung.com>
- <98f08b07-c8de-4489-9686-241c0aab6acc@gmail.com>
- <37c982b5-92e1-4253-b8ac-d446a9a7d932@kernel.dk>
- <40a0bbd6-10c7-45bd-9129-51c1ea99a063@kernel.dk>
- <CAOSviJ3MNDOYJzJFjQDCjc04pGsktQ5vjQvDotqYoRwC2Wf=HQ@mail.gmail.com>
- <c9838a68-7443-40d8-a1b7-492a12e6f9dc@kernel.dk>
- <a2e8ba49-7d6f-4619-81a8-5a00b9352e9a@gmail.com>
- <a263d544-f153-4918-acea-5ce9db6d0d60@kernel.dk>
- <951a5f20-2ec4-40c3-8014-69cd6f4b9f0f@gmail.com>
- <fe9043f2-6f80-4dab-aba1-e51577ef2645@kernel.dk>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <fe9043f2-6f80-4dab-aba1-e51577ef2645@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aABR5Ykv5lawt_BE@tiamat>
 
-On 4/16/25 23:23, Jens Axboe wrote:
-...
-> Theoretically it is, but it always makes me a bit nervous as there are
-> some _really_ odd iov_iter use cases out there. And passing down known
-> wrong segment counts is pretty wonky.
+On Thu, Apr 17, 2025 at 12:57:09AM +0000, Michael Rubin wrote:
+> On Tue, Apr 15, 2025 at 04:47:34PM +0200, Greg KH wrote:
+> > On Wed, Apr 09, 2025 at 06:18:09PM +0000, Michael Rubin wrote:
+> > Already in my tree?  I'm confused, this didn't apply at all.
 > 
->> Btw, where exactly does it stumble in there? I'd assume we don't
+> Sorry for the hassle here. I will be keeping my tree much closer to yours
+> going forward.
 > 
-> Because segments != 1, and then that hits the slower path.
-
-Right, but walking over entire bvec is not fast either. Sounds
-like you're saying it's even more expensive and that's slightly
-concerning.
-
->> need to do the segment correction for kbuf as the bio splitting
->> can do it (and probably does) in exactly the same way?
+> I just did a comparison of your tree and mine with the following commands:
 > 
-> It doesn't strictly need to, but we should handle that case too. That'd
-> basically just be the loop addition I already did, something ala the
-> below on top for both of them:
+> $ git fetch origin
+> $ git rebase origin/staging-testing
+> Current branch work-next is up to date.
+> $ git log --oneline origin/staging-testing..HEAD
+> 01bb7ebee650 (HEAD -> work-next) staging: gpib: tnt4882: u8 over uint8_t
+> b362526c049a staging: gpib: lpvo_usb_gpib: u8 over uint8_t
+> c0086ac9f8c6 staging: gpib: gpib_ioctl: u64 over uint64_t
+> dfde322a6458 staging: gpib: pc2: u8 over uint8_t
+> 0d68978f157c staging: gpib: ni_usb: u8 over uint8_t
+> 6c1d83dae00e staging: gpib: hp_82341: u8 over uint8_t
+> 6e47dd2b355e staging: gpib: hp_82335: u8 over uint8_t
+> 066df8151ebc staging: gpib: gpib_bitbang: u8 over uint8_t
+> e2f98401b6cc staging: gpib: gpib_os: u8 over uint8_t
+> d39283e31564 staging: gpib: cec: u8 over uint8_t
+> 76ca6178f5ac staging: gpib: agilent_82357a: u8 over uint8_t
+> 83a4047b9a77 staging: gpib: agilent_82350b: u8 over uint8_t
+> e3e09b3c0b18 staging: gpib: gpib_user: u8 over uint8_t
+> 7de94cbc8071 staging: gpib: gpib_ioctl: u8 over uint8_t
+> 98b2ae8ac973 staging: gpib: Removing typedef gpib_interface_t
+> 9d1d6dfa3871 staging: gpib: tnt4882: struct gpib_interface
+> 914975f8fc96 staging: gpib: pc2: struct gpib_interface
+> 64c745a7adb7 staging: gpib: ni_usb: struct gpib_interface
+> c303323266fe staging: gpib: lpvo_usb: struct gpib_interface
+> 576eb9e6c1fa staging: gpib: ines: struct gpib_interface
+> 5f2fb6ca422e staging: gpib: gpibP: struct gpib_interface
+> 0033454014c8 staging: gpib: hp2341: struct gpib_interface
+> b1ab383f5d09 staging: gpib: hp_82335: struct gpib_interface
+> 41ebb7c070bf staging: gpib: gpio: struct gpib_interface
+> ef391db774c0 staging: gpib: fmh: struct gpib_interface
+> 701c5a45b91a staging: gpib: fluke: struct gpib_interface
+> 88d5e0847f06 staging: gpib: common: struct gpib_interface
+> 77b611bf3468 staging: gpib: cec: struct gpib_interface
+> 803d5bfacf86 staging: gpib: cb7210: struct gpib_interface
+> 294e66a9b7bc staging: gpib: agilent_82357a: gpib_interface
+> 6eafa79e636a staging: gpib: agilent_82350b: gpib_interface
+> 7a309862d53f staging: gpib: struct typing for gpib_interface
+> b248b9d75062 staging: gpib: uapi: Fix CamelCase and IBA Dup
+> $
 > 
-> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-> index d8fa7158e598..767ac89c8426 100644
-> --- a/io_uring/rsrc.c
-> +++ b/io_uring/rsrc.c
-> @@ -1032,6 +1032,25 @@ static int validate_fixed_range(u64 buf_addr, size_t len,
->   	return 0;
->   }
->   
-> +static int io_import_kbuf(int ddir, struct iov_iter *iter,
-> +			  struct io_mapped_ubuf *imu, size_t len, size_t offset)
-> +{
-> +	iov_iter_bvec(iter, ddir, iter->bvec, imu->nr_bvecs, len + offset);
-> +	iov_iter_advance(iter, offset);
-> +
-> +	if (len + offset < imu->len) {
+> I sent over the following series:
+> 
+> 1) v2: u8 and u64 remaining patches
+> 
+> 2) v3: the gpib_interface_t series (I broke the tree with v2).
+> 
+> 3) The IBA Camel Case patch.
 
-It should always be less or equal, are you trying to handle
-the latter?
+I've taken all of these now, thanks!
 
-> +		const struct bio_vec *bvec = iter->bvec;
-> +
-> +		while (len > bvec->bv_len) {
-> +			len -= bvec->bv_len;
-> +			bvec++;
-> +		}
-> +		iter->nr_segs = bvec - iter->bvec;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
+> See if you can apply the CFGn patch after all the clean up. Not sure why that
+> does not apply cleanly. It does in my tree right now after the sync and rebase.
 
--- 
-Pavel Begunkov
+Can you resend the CFGn patch, it's long-gone from my patch review
+queue.
 
+After that, I think I'm caught up, right?
+
+thanks,
+
+greg k-h
 
