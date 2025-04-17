@@ -1,129 +1,147 @@
-Return-Path: <linux-kernel+bounces-608588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0152A915A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:48:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEF2FA915D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:56:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D8215A0EF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:47:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85C221895376
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:56:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0AF21CFF6;
-	Thu, 17 Apr 2025 07:47:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5237721D3F1;
+	Thu, 17 Apr 2025 07:48:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gcgnfpm9"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u713mKvd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F3E1DB37B
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 07:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD24F21CFEF;
+	Thu, 17 Apr 2025 07:48:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744876021; cv=none; b=W/+8sALwurrD6TBmGb+xpwT+ko0B/qstmWRFf/PwYYfBANyqa/bTkwlFHvTLdg6O52/a0pGY9NwFIecafyGqYOVAId8xIRvkpEKz6MDw2vGxFYPWY1SFqRYCWLk6+9pzeWCPtyXFz3kBgCd0UXRXY52DjhTG1xGgLa77PWc/77E=
+	t=1744876107; cv=none; b=jgSR802Ovr2gjiL80Lzmusk7PiVw05em2/6n/GK8BW9G2GfSb2arVUOcUbKQiXzKH9O/7b8Mv/Qz4XlYRIdRWBzPSMacKTNZ4JOjEtcX7EM4fFNWCgu2wSnbSQ2ZhaDlbQ98ClrmQaGN51j+gibd7CNIPcyKKynBXtkNYtv0psw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744876021; c=relaxed/simple;
-	bh=VfUJWNXRAdPQmpRhxM5fhbACYIFrjEZEGf0083dQb08=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hoK/uNkafEAR8VDxCCJEwwwKNVFZnbkHQVj/yqW8HxVCv0qJZEubR7NsmXpluuGfJl44He/GX4itCbMqWczxpgSk58h55xKiPhnlC+J8bZ31mHkRYIw+T6/uCVWV2A8+18uAs+bvAktIli+FlJpqprmiK2jmXP1PPc6AINxr3gY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gcgnfpm9; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3912ebb8e88so71489f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 00:46:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744876018; x=1745480818; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kQygXXjOvP6zFryL01i6DHpfHx1syZgEKrRCnclIt18=;
-        b=gcgnfpm9KRnjSz4t3LxSGJ2aeZL6c+p1rdBPGhlFBaeZ63MXWxuna7mKT6N8GYGzJP
-         8JvsGSy6fr/dMAF18ibVJcHZX8IO6eYTnR2OFo2bDoQEB3vAVysrHaj9a2TioNJLsQmY
-         KtBrwqqx7Eu2/ePASOatNF9xi7ENaRX8DwEKUnF8hReWC9CXO36Lf4A48JNt8jx7SW29
-         b89qXVV7q8ruZuNy48SS11URJEOwyleiwTOk4OeubrjjabY61zCMqgcZ9ZUJ3/DDILC4
-         yiyRpQUUS/WCule2PGlTM2DJHu8HxQq9Oye+YnCoYMfok/GAmrZ+AgUrmik9gW5uY5Sa
-         2Dzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744876018; x=1745480818;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kQygXXjOvP6zFryL01i6DHpfHx1syZgEKrRCnclIt18=;
-        b=t7nQPPrFFTl498Pc5x3E8xFuS06TbYN6edrWWQWEx7lu8dtuANXBEomzxNYdZi/Rax
-         kc7mRnD7+mwTJ72AEUE6gIIqFV7VtD2FXfDO7b/4P8qyU+/gLaOFKFrYR91PjFbOAvD0
-         VkaScd0qPvKhhrTh3WNRiWHuTk/TCFFaiHMapcQ+wnxZ4NYDpj5nVVb/tuGkkDGhKvyY
-         blXv0GPW+wE1Z9wP9BJlrg1hT+3UvCFoB0HeM/vu/NhwcdjrVqjlHlUuwnwBPvixAShj
-         9XI8FIL2lIZshsVnFA8GOhPu6UATxorGYy5o4Vg+IiGrXuDElolqeahuyx5lmT5uDRDD
-         Z3qA==
-X-Forwarded-Encrypted: i=1; AJvYcCX9yUoz3scrrCgxViKUil5ExgNmM9O4V+8wYovzPnwpfVy4u+z0owYX7dYmw9qoEe0G1EQadDxEYxi7IDQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysEYwC90pZmyTZHdm4TuTK6kP6j3VQA/SN8OHzC6TVa64B5Fp6
-	kiAGdFpOsNZMSHUnzhh+FlumRJQNo+1GJfLQL4hZZ46ZL6mT5WzF+E4wf8Y8FFg=
-X-Gm-Gg: ASbGncuZlWgd9v/MFTseLEFlw6YAGTiZs9ltxfIx/csC/j9+aPazuM5x4xcmcU4EX/z
-	0/eVeiXjDSoBxDj8WKcaaThFzz6Y3PAnAhhhuMjXZDaLs4o/Guuw08My0xp5kZ6R9TYLSZadeyX
-	KYTkyPBzTuZFO/2CfkR2Ba84tRzewH8wwIf4pU/ufomVLi6k0XCrSi66WTUYiCliWATZ9aKKrHx
-	GTZ2uIlbJgSL9defSr/zXiIyq0OAsHUsVj2wngGD0Lhi9vOut9U5H9DoXQc+DCmW8ijGdu0eTTz
-	P22Z68GijJ3sz2qktiVcfnQlB0vmXVR42BDiJUchZwkKyDtDXIBO6eAYkKi46Ct9P+nnu7//Wgg
-	evMQjyw==
-X-Google-Smtp-Source: AGHT+IG/Ti5uRMFgrnm9lDxH8A1EGSvNAdEZO1mK0GxpdKH8aALTdnnu3mTzhGSyWkdAN7OmEx7OMA==
-X-Received: by 2002:a5d:584d:0:b0:39c:1258:2c31 with SMTP id ffacd0b85a97d-39ee5bafe20mr1509665f8f.15.1744876018396;
-        Thu, 17 Apr 2025 00:46:58 -0700 (PDT)
-Received: from kuoka.. (46.150.74.144.lvv.nat.volia.net. [46.150.74.144])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eaf445270sm18949243f8f.81.2025.04.17.00.46.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Apr 2025 00:46:57 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] leds: Do not enable by default during compile testing
-Date: Thu, 17 Apr 2025 09:46:56 +0200
-Message-ID: <20250417074656.81626-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1744876107; c=relaxed/simple;
+	bh=q2pCfnUhdQWEZrucc/vgzT+PdUvSVSafzjmIF1npPYk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eGhXev811e3+EDzuZpqxfOojVF4xVjpy4XLTsKNZZDB0ESs65ZADS8ZgAEzF8eraZkKJaHNwe2VyZdNYjCUBlMP890b1K12gSPOOE5IhCSpawhOYDjl1T1t2T1+RHggzlBhqDHZZntvy85YlAz7T2cYLmhZ3FMn/2TsmMI4s2Yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u713mKvd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 756D7C4CEE7;
+	Thu, 17 Apr 2025 07:48:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744876107;
+	bh=q2pCfnUhdQWEZrucc/vgzT+PdUvSVSafzjmIF1npPYk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u713mKvdg1fU9fuM2e/uK122DMnJ1N1s9DQZW74R+/KLguTJh+HCUiusUeAiR5BQM
+	 sT0u7RAt5f+mTwEjdUnFAQ2NLTcmGe9oLu79YRw/Mp4sWbaQjrdfn2OlpA+/RT4K/k
+	 xkmQ6YMT7d2CF9ba53oDI34xHEuYQrBCwp/iGjBtqDuzaOMXakvi+danSK30Zhqf2n
+	 9hZmdhWH3wnj48enNVMbdQF8vrgoWvmJR7x7BD7STPzkHa/btO35d7klHy4m79307v
+	 OJ0xZ27+25pLnB1oC8upWx68RQtBJ1pawyfE0T0o66WkD9UJuRsJdkIODbN2oKCnIE
+	 mXoqJ0yATKUPQ==
+Date: Thu, 17 Apr 2025 09:48:22 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Hans Zhang <18255117159@163.com>, lpieralisi@kernel.org, kw@linux.com,
+	bhelgaas@google.com, heiko@sntech.de,
+	manivannan.sadhasivam@linaro.org, robh@kernel.org,
+	jingoohan1@gmail.com, thomas.richard@bootlin.com,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH] PCI: dw-rockchip: Configure max payload size on host init
+Message-ID: <aACyRp8S9c8azlw9@ryzen>
+References: <20250416151926.140202-1-18255117159@163.com>
+ <aACoEpueUHBLjgbb@ryzen>
+ <85643fe4-c7df-4d64-e852-60b66892470a@rock-chips.com>
+ <aACsJPkSDOHbRAJM@ryzen>
+ <ca283065-a48c-3b39-e70d-03d4c6c8a956@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <ca283065-a48c-3b39-e70d-03d4c6c8a956@rock-chips.com>
 
-Enabling the compile test should not cause automatic enabling of all
-drivers, but only allow to choose to compile them.
+On Thu, Apr 17, 2025 at 03:25:06PM +0800, Shawn Lin wrote:
+> 在 2025/04/17 星期四 15:22, Niklas Cassel 写道:
+> > On Thu, Apr 17, 2025 at 03:08:34PM +0800, Shawn Lin wrote:
+> > > 在 2025/04/17 星期四 15:04, Niklas Cassel 写道:
+> > > > Hello Hans,
+> > > > 
+> > > > On Wed, Apr 16, 2025 at 11:19:26PM +0800, Hans Zhang wrote:
+> > > > > The RK3588's PCIe controller defaults to a 128-byte max payload size,
+> > > > > but its hardware capability actually supports 256 bytes. This results
+> > > > > in suboptimal performance with devices that support larger payloads.
+> > > > 
+> > > > Patch looks good to me, but please always reference the TRM when you can.
+> > > > 
+> > > > Before this patch:
+> > > > 		DevCap: MaxPayload 256 bytes
+> > > > 		DevCtl: MaxPayload 128 bytes
+> > > > 
+> > > > 
+> > > > As per rk3588 TRM, section "11.4.3.8 DSP_PCIE_CAP Detail Registers Description"
+> > > > 
+> > > > DevCap is per the register description of DSP_PCIE_CAP_DEVICE_CAPABILITIES_REG,
+> > > > field PCIE_CAP_MAX_PAYLOAD_SIZE.
+> > > > Which claims that the value after reset is 0x1 (256B).
+> > > > 
+> > > > DevCtl is per the register description of
+> > > > DSP_PCIE_CAP_DEVICE_CONTROL_DEVICE_STATUS, field PCIE_CAP_MAX_PAYLOAD_SIZE_CS.
+> > > > Which claims that the reset value is 0x0 (128B).
+> > > > 
+> > > > Both of these match the values above.
+> > > > 
+> > > > As per the description of PCIE_CAP_MAX_PAYLOAD_SIZE_CS:
+> > > > "Permissible values that
+> > > > can be programmed are indicated by the Max_Payload_Size
+> > > > Supported field (PCIE_CAP_MAX_PAYLOAD_SIZE) in the Device
+> > > > Capabilities (DEVICE_CAPABILITIES_REG) register (for more
+> > > > details, see section 7.5.3.3 of PCI Express Base Specification)."
+> > > > 
+> > > > So your patch looks good.
+> > > > 
+> > > > I guess I'm mostly surprised that the e.g. pci_configure_mps() does not
+> > > > already set DevCtl to the max(DevCap.MPS of the host, DevCap.MPS of the
+> > > > endpoint).
+> > > > 
+> > > > Apparently pci_configure_mps() only decreases MPS from the reset values?
+> > > > It never increases it?
+> > > > 
+> > > 
+> > > Actually it does:
+> > > 
+> > > https://github.com/torvalds/linux/blob/master/Documentation/admin-guide/kernel-parameters.txt#L4757
+> > 
+> > If that is the case, then explain the before/after with Hans lspci output here:
+> > https://lore.kernel.org/linux-pci/bb40385c-6839-484c-90b2-d6c7ecb95ba9@163.com/
+> > 
+> > His patch changes the default value of DevCtl.MPS (from 128B to 256B), but if
+> > pci_configure_mps() can bump DevCtl.MPS to a higher value, his patch should not
+> > be needed, since the EP (an NVMe SSD in his case) has DevCap.MPS 512B, and the
+> > RC itself has DevCap.MPS 256B.
+> > 
+> > Seems like we are missing something here.
+> 
+> So Hans, could you please help set pci=pcie_bus_safe or
+> pci=pcie_bus_perf in your cmdline, and see how lspci dump different
+> without your patch?
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+It seems that the default MPS strategy can be set using Kconfigs:
+https://github.com/torvalds/linux/blob/v6.15-rc2/drivers/pci/pci.c#L126-L136
+https://github.com/torvalds/linux/blob/v6.15-rc2/include/linux/pci.h#L1110-L1116
 
----
+Note that the these Kconfigs are hidden behind CONFIG_EXPERT.
+So unless you have explicitly set one of these Kconfigs, the default should be:
+PCIE_BUS_DEFAULT,	/* Ensure MPS matches upstream bridge */
 
-For longer rationale:
-https://lore.kernel.org/all/191543a8-2e2e-4ac4-9b2b-d253820a0c9f@app.fastmail.com/
----
- drivers/leds/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index a104cbb0a001..b107dbe1fa90 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -735,7 +735,7 @@ config LEDS_NS2
- 	tristate "LED support for Network Space v2 GPIO LEDs"
- 	depends on LEDS_CLASS
- 	depends on MACH_KIRKWOOD || MACH_ARMADA_370 || COMPILE_TEST
--	default y
-+	default y if MACH_KIRKWOOD || MACH_ARMADA_370
- 	help
- 	  This option enables support for the dual-GPIO LEDs found on the
- 	  following LaCie/Seagate boards:
-@@ -750,7 +750,7 @@ config LEDS_NETXBIG
- 	depends on LEDS_CLASS
- 	depends on MACH_KIRKWOOD || COMPILE_TEST
- 	depends on OF_GPIO
--	default y
-+	default MACH_KIRKWOOD
- 	help
- 	  This option enables support for LEDs found on the LaCie 2Big
- 	  and 5Big Network v2 boards. The LEDs are wired to a CPLD and are
--- 
-2.45.2
-
+Kind regards,
+Niklas
 
