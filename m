@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-609079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 211A4A91D0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:56:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58196A91D11
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 14:57:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98D2B7A82B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 12:55:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61ECA167A3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 12:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8977123E22B;
-	Thu, 17 Apr 2025 12:56:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 478C3199384;
+	Thu, 17 Apr 2025 12:57:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ronb4LvM"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YivGESnD"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 294A135979
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 12:56:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1469435979
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 12:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744894583; cv=none; b=cq6KHIiuaDWJuVBwKxGjy/ZAhaLsdeDjQGjLpSwwNCyhl74+wRwfWqsumUJkkLEjxyQivM3dbNykik/fB/WhG04ZRNCFufXrx24/7OO0H5tPI+dMMwQzRr49QomQNkv2Z7yW+JEAUziCfFVXrebVWDyfL4QWIHz9sXockKWWrMI=
+	t=1744894665; cv=none; b=SmyOSPtJv97EtOb6AwKxqMf0eWzebz5myn4soG7dPBZUn3MuubofDWD8KHHh108bnfUXgR/BE4Fjmo0f3BtylYuNKOhEgxdNP4UZlDHK+h2HwqxL1bX5y/Bkuag9FwWTFdlnJyQUnkzgdFEwElZMBOyySb9fbTHu6hoO2nnYFiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744894583; c=relaxed/simple;
-	bh=g+daQNX4dTaJc60JSp8lrCqBN98a2sXsIUmhEpU1d/c=;
+	s=arc-20240116; t=1744894665; c=relaxed/simple;
+	bh=j40MC1IRFipvXP2iTh3veqgGOlxOwSObMJodG1sCghA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=St852ckjHz9Jk2srakTUIe33AXgoo1c/IhvRZpH14/a19uQ0eIn9xVqoxQrC7imQ6ULCbOHeP3cGB2s1h4PsHMtQumQjiQ3QrUm3VG8w8KC7ZB771wr+c1gLA8MI9d1eyzLc+g8O1zOZ7tk8lUe3fnLMpFWsi59M7ZAJRufRn/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ronb4LvM; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=oCrokQ3JICfOEtvTvBUD6jEnD96tMlie7GhN2UJoVmdrYZe0SiBvRbkxNHU7c0Q369Z6kIMWp4KG8RytzYKnOO2BNjB/NvlvQErMjN6QM4c+1Ii1oUqsPi1gXUKuJk09OkG8XjSzk4NMA5yX1N+rDS8ruQ4jqOXGZu1z1ZyW6AM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YivGESnD; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744894580;
+	s=mimecast20190719; t=1744894662;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=PP6r3Tc0odzOLdnN1Mh6zo2XTeq4+ZCWbhdNqWqpYfQ=;
-	b=Ronb4LvMk81ikeW+CIg7+9jrxyPucAzyc5EBxkObGgRD6TdmVImB1jD3cS950U1RJzOe+Q
-	ejywBgGRX0s0DSrhxr5+m/h5Ftx5/qMaqRO3nu8QhjDKuwPsFwctpJD+kXvFO21KKJyY/s
-	5x44qtgKBSU0rRwi01nGbde9oDskaZc=
+	bh=AWVn7l1qCNosboH6p23Qk6I8+GCdGtMM64KWAgWkDwA=;
+	b=YivGESnD+M3+vMrtfXcSGMAKVMVy1jP+VpSD1E0n+uEimBamLzWbm3e6i8pXW4gRuEqyIR
+	S3E4R8kfUU9CRRcd7DDT+rlxui+n7/FSlssPyE1RcL9SKl8t7scJkIDwcsZ86AE69kqrRt
+	YHxHlBezx9keOF0jwtzqjXJVBkbaeic=
 Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
  [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-256-cQ2lCdl4OPm96BBdn0QkvA-1; Thu, 17 Apr 2025 08:56:18 -0400
-X-MC-Unique: cQ2lCdl4OPm96BBdn0QkvA-1
-X-Mimecast-MFC-AGG-ID: cQ2lCdl4OPm96BBdn0QkvA_1744894577
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3912fc9861cso242312f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 05:56:18 -0700 (PDT)
+ us-mta-586-1bUQ30ZiMxuwsdxS_gel0w-1; Thu, 17 Apr 2025 08:57:40 -0400
+X-MC-Unique: 1bUQ30ZiMxuwsdxS_gel0w-1
+X-Mimecast-MFC-AGG-ID: 1bUQ30ZiMxuwsdxS_gel0w_1744894659
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-39135d31ca4so364046f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 05:57:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744894577; x=1745499377;
+        d=1e100.net; s=20230601; t=1744894659; x=1745499459;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PP6r3Tc0odzOLdnN1Mh6zo2XTeq4+ZCWbhdNqWqpYfQ=;
-        b=t+KMjNrX9xctXZE66brXQV4nHcbXRLPYiWtI0Ff0u23vVYyt4X6S83kPaTAZxr552r
-         uW3VRS/QYeRIwxtpOcJqapMCPdAyOy6FAvdYFdgHqXx4viEIN224VDbf+0CXPjUylIkl
-         k0TB+B5PqFFdUd/2ErnoS9aXCK1k1Sb/71S7m52PA1i58IiUf61XVK584h+76aEHpRHO
-         iJwuSrrt2o6TnpqsOioUWphxSXHEo1GXRL+C2py9+8nL3cvRWRkWD9cYQBjMYTBN9oiH
-         ax6Je4kcopUfwLCJ3c1o0K3SmEE45ryRDMiJ42yRQsg4bDasQztJHwvVn3KMaqU3z89a
-         OiTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUT99E/RNGvpG0dmlTdjwbUYZEkk9WXmZygqKQYSpKNAynMHt2KLslkOcMTGFJUcE7di55IWDY8x650Tx4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbI+CiDGoakm9f8Adl3oM0CxCOnJsNkE1v0soYvXKMfeF5Faaq
-	KCegSfOCwAQadmkXZn3CWbjVilf0pEK9bWBGTpnzek20WaKoV7C6f/tOJevt8aZcWQab2M0q51e
-	YDd+PN/Xglql4dyVDYPGFXYW8nRC27dfXRkqUali+GNfD1rb/8K791vFnlHdAvQ==
-X-Gm-Gg: ASbGnctctd4hTKWCa/ve8L0HGLq5zM08vR2kr6wDidDTFu86XfTX60LUiDVv8eGbKpy
-	vi168/JD96A3FSyQ/R86upVSC24ev2EI1np2euY3yQbSozh+D+3r1B59hTIaLvZ7vpE6u9b3dab
-	Xz1tPBB98FjFgQ8eyFBpWQ0yqFxeSZJuTNlpIzu5wchgo3wG+pPocQHfi7W18XPJsved1PTVrZE
-	VnpmufAerg49fEOtZScCI0xVFpH+oaCP7J+o7f+2azS24GfqRAQ3t+Z2KF50QLxKF6+Sd2zTqL/
-	wQc1dGVFHJSh9/OGg8EKqszBe3LnLxYDMvzDaiWJiyYU+TZ0VPR4J4Nig/m4sVc4XOFIvOQqsZb
-	1CCCTRnShQflBjSoaoHa+RfNWkpI3UpCjJGwdjeM=
-X-Received: by 2002:a05:6000:22ca:b0:391:4999:778b with SMTP id ffacd0b85a97d-39ee5b37b2dmr5018839f8f.28.1744894577323;
-        Thu, 17 Apr 2025 05:56:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFhcDh+lOBj95mWyR4xq7n9fZ9ItU2YUKtea/qun2d7Jab+8iRIylTGcc/lV2a/wDdAT6UsCA==
-X-Received: by 2002:a05:6000:22ca:b0:391:4999:778b with SMTP id ffacd0b85a97d-39ee5b37b2dmr5018824f8f.28.1744894577007;
-        Thu, 17 Apr 2025 05:56:17 -0700 (PDT)
+        bh=AWVn7l1qCNosboH6p23Qk6I8+GCdGtMM64KWAgWkDwA=;
+        b=P4umrcV7xybZuQSghYd2LDNzIufm7qj4YgTuknOOo52uH1UdrgtGb0gGVAzd01JH7c
+         OnTF2/L0EWhiHEtle3uTwYvYzSTLBtS7uWH6jpSZjAJ8pBXJGk50Qpc4Rd96LNaF5PCl
+         nA3dK4TqMtqGCqaI54PXwNBTGg1Y+MV3GArPEdhMCEkpUCdEak54rt/mzL9JnEnn2r8w
+         Jj/WeY8CI09DT7UaLbIe9nEDJCpt/jDrW28RdDbBUZ4GhnuGBOirijChS+wtEyBLDW1+
+         4ygdKQCD/GU4LB7qvETpZxQNprURpN39svYqBp14BvF6/pky5YOxOg5+I3WcXujsckY7
+         8W1g==
+X-Forwarded-Encrypted: i=1; AJvYcCXwDtftBWGvMr9/iMt2xo2r88/z+yK6OLyNUbhDyt85mh7U+1abejzEPFIRqmV/Jk8hOukoZkc9RvaJw1c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaTTKeA2etkfvBdndU0CAc3zFu0JtWL/hsFtDdPZ6lgbHI9WT4
+	20csNY+2ZFpgCRC1TFe4zX8N5zqAGHAswp6EZpTz5M1uofd+TNIz7XlZ7Nz/jKp2A8PeySu/jN3
+	pSynmPck9qCvYhsBQqgfwSogsfhpproxxB7C7J/eFr0q4TeEjhaZ+4KH9LEh24g==
+X-Gm-Gg: ASbGncsuoUAf191OmEUZTYEYnk9PbrimIClmR4VUZvsXFFJT81Dp7usR0FW+VqQBLJi
+	MhRgYdhCjCty8Q1XSCTgsqEBB1pHB3zNhjrL5ojF7hRfhntkj/931tpGnEBVSd50cW/EBlaNquX
+	grPqY+/XMLcRfa1YUxrVA9JAPiOI0h8f3S4YKqkorKzce+5ELbnoOIlvk03K6pSSbyWNsefIoB7
+	ZuIig9r8PH/CMl6UmT1fELR9gu3IJsvr6DUGuyFVlICyazVpwynF/zuft6QS/6Lt2rcRXWtT5xE
+	6EKNWbpn5ijjHnllVH5XP891Fl2yGES59mtkPNBSLqxPozQCSoN8PBgb6+PX73zSk6KSjcIZNxp
+	dqncldv5uYo4nNZD9s1E59GdanEPNvZ2C7OBU8GI=
+X-Received: by 2002:a5d:64a5:0:b0:39e:e3c5:ee7b with SMTP id ffacd0b85a97d-39eea09ea40mr2138052f8f.5.1744894659549;
+        Thu, 17 Apr 2025 05:57:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHvVMOVbjaKAiQzCvaCj/WiZZyjaqHAQ7cGAYU1hFI9aOYC9D9g8jCTJnA4I+PUlb/7z9VgLA==
+X-Received: by 2002:a5d:64a5:0:b0:39e:e3c5:ee7b with SMTP id ffacd0b85a97d-39eea09ea40mr2138037f8f.5.1744894659223;
+        Thu, 17 Apr 2025 05:57:39 -0700 (PDT)
 Received: from ?IPV6:2003:cb:c706:2700:abf9:4eac:588c:adab? (p200300cbc7062700abf94eac588cadab.dip0.t-ipconnect.de. [2003:cb:c706:2700:abf9:4eac:588c:adab])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eaf43ce30sm20586336f8f.62.2025.04.17.05.56.16
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-44043529fdbsm50334475e9.1.2025.04.17.05.57.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Apr 2025 05:56:16 -0700 (PDT)
-Message-ID: <a825b3c3-55f7-4d90-a318-e20acf55e0cd@redhat.com>
-Date: Thu, 17 Apr 2025 14:56:15 +0200
+        Thu, 17 Apr 2025 05:57:38 -0700 (PDT)
+Message-ID: <3b665ef9-d773-476c-826c-8729056c611c@redhat.com>
+Date: Thu, 17 Apr 2025 14:57:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,12 +89,25 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] mm/rmap: add CONFIG_MM_ID guard for
- folio_test_large_maybe_mapped_shared()
-To: Lance Yang <ioworker0@gmail.com>, akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Mingzhe Yang <mingzhe.yang@ly.com>
-References: <20250417124908.58543-1-ioworker0@gmail.com>
+Subject: Re: [RFC PATCH] mm: don't promote exclusive file folios of dying
+ processes
+To: Johannes Weiner <hannes@cmpxchg.org>, Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Matthew Wilcox <willy@infradead.org>, Oscar Salvador <osalvador@suse.de>,
+ Ryan Roberts <ryan.roberts@arm.com>, Zi Yan <ziy@nvidia.com>
+References: <CAGsJ_4yUUK8LoejaUrXWscpPSQevq8jB4eFwpd6+Gw3T5JxdNg@mail.gmail.com>
+ <6259cc1d-93a8-4293-9009-a6119166f023@redhat.com>
+ <CAGsJ_4wnqyaZntmtOvtTZRq2XuKsKRTokwf1GeX91FpfqW_nzw@mail.gmail.com>
+ <d5cd2055-62ea-4534-b5e2-c6a5bfa9b1c4@redhat.com>
+ <20250416141531.GD741145@cmpxchg.org>
+ <239cfe47-9826-402b-8008-de707faa160e@redhat.com>
+ <20250416181835.GA779666@cmpxchg.org>
+ <CAGsJ_4zt2Yuornri1bO=3o7myey1Q2dmvtjn2baD0ahxOyoNjw@mail.gmail.com>
+ <20250416235849.GA780688@cmpxchg.org>
+ <CAGsJ_4wfWLbDC5SruF5TtH-VXE08OWxan12qNYSV3vGzBfe5Bg@mail.gmail.com>
+ <20250417121755.GB780688@cmpxchg.org>
 Content-Language: en-US
 From: David Hildenbrand <david@redhat.com>
 Autocrypt: addr=david@redhat.com; keydata=
@@ -142,43 +155,21 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <20250417124908.58543-1-ioworker0@gmail.com>
+In-Reply-To: <20250417121755.GB780688@cmpxchg.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 17.04.25 14:49, Lance Yang wrote:
-> Add a compile-time check to make sure folio_test_large_maybe_mapped_shared()
-> is only used with CONFIG_MM_ID enabled, as it directly accesses the _mm_ids
-> field that only works under CONFIG_MM_ID.
+>> We actually took a more aggressive approach by implementing a hook to demote
+>> exclusive folios of dying apps, which yielded good results—reducing kswapd
+>> overhead, refaults, and thrashing. Of course, it is even much more controversial
+>> than this patch.
 > 
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Mingzhe Yang <mingzhe.yang@ly.com>
-
-^ should that be here?
-
-> Signed-off-by: Lance Yang <ioworker0@gmail.com>
-> ---
->   include/linux/page-flags.h | 2 ++
->   1 file changed, 2 insertions(+)
+> That doesn't sound wrong to me for Android apps.
 > 
-> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-> index d3909cb1e576..6bd9b9043976 100644
-> --- a/include/linux/page-flags.h
-> +++ b/include/linux/page-flags.h
-> @@ -1232,6 +1232,8 @@ static inline int folio_has_private(const struct folio *folio)
->   
->   static inline bool folio_test_large_maybe_mapped_shared(const struct folio *folio)
->   {
-> +	/* This function should never be called without CONFIG_MM_ID enabled. */
-> +	BUILD_BUG_ON(!IS_ENABLED(CONFIG_MM_ID));
->   	return test_bit(FOLIO_MM_IDS_SHARED_BITNUM, &folio->_mm_ids);
->   }
->   #undef PF_ANY
+> How about a prctl() to request the behavior for those specific app
+> processes where you have clear usage signal?
 
-That should work. I can throw this into a cross-compile setup later if I 
-get to it.
-
-Acked-by: David Hildenbrand <david@redhat.com>
+I was thinking about the same, so likely that might be a viable solution.
 
 -- 
 Cheers,
