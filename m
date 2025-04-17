@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-609968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB0E8A92E5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 01:31:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACB86A92E59
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 01:31:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DCAA8E186A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 23:31:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49D997ABC7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 23:30:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D6C225A31;
-	Thu, 17 Apr 2025 23:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B434D224238;
+	Thu, 17 Apr 2025 23:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="M6F16maQ"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Bf+sOS8P"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCFB821171B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE9B2040B2;
 	Thu, 17 Apr 2025 23:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744932651; cv=none; b=ljFNByKdaUanc+cAbZ56H3GCR9dt0JtRyqgaJrjPJfaytx/E7IvPyxF+19tvcUD0gHxLU+lrA+RhU+TfaypcfGCvbOKCtV9MDWf5L/pObWmTSe1pk9Gm4wMXdhe+6P8oDZvYTYWrccrwUWMsGnOoFZdlmpGs1vtcgWE2xYKo6Dk=
+	t=1744932650; cv=none; b=eWPK/7hAY2N/5QlRngrXkgPvPwwS2XHAwhCR9qKTwrjwvO6cxHZMm4FJEl7jTd5Ou0o+fKn6xZHj0EQMgkYVUmrGfg+8F8geN6caG33fH4NFfPif6ePYtshen7Z3zbx2P6G+4IzxinjOWggOHr6cjU5anxWtsgCvLFSjwFGDEqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744932651; c=relaxed/simple;
-	bh=BfJiwkLkvySlUqXwGm3ZKtU3x3W4JG5MrgirFZNZ8pE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=o++DN4Lt8OInIwfV64JKQtFrQGtzavtGZvecy/xvZOE4u8XY3cq8jczONzschl3u+QyvNxCqtieLsW1Nz0m89RIkroBzK2Ph+Ren34AGvKoeEwjFczLNtb/sojn0SbXDNeQb2dX2VR4jQ2qBQpiy5YT3nj7KNB1PKhC4j670vGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=M6F16maQ; arc=none smtp.client-ip=198.47.23.234
+	s=arc-20240116; t=1744932650; c=relaxed/simple;
+	bh=JF+w8wmf10+jcWDvzLRc7NzcG6KMv0F4Ct0bjQsGJgU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ENxS8DG+1XC/XxVb8QZuIXQkuXVnVaXF8RMEEuZCkgPz/cBJByTv82xbjPoSOjrc1EcnfMRaq8SCcHgD15JOwtAuaMpPVhhIQO0a68mXhsn+M7kZIsXRrvXIrhcstg4YdjtNolrYjybOYAgMnej8vAB8/oVKRgbHU+1kTR8RiK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Bf+sOS8P; arc=none smtp.client-ip=198.47.19.246
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53HNUeWG136184
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53HNUe2A781170
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Thu, 17 Apr 2025 18:30:40 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
 	s=ti-com-17Q1; t=1744932640;
-	bh=Y7z9JvDramw6cqnxYpFzhEM432yH7Ax9tg4umCAmI7w=;
-	h=From:To:CC:Subject:Date;
-	b=M6F16maQrI/tO2YKeE6kYIaoXwZ0OCK/bjBA+EnB7XOP64Vizv3C1+iRZtgnQVkwV
-	 yh2Omw80GXjG1OB7YN47ImPbweluHaqs3/gWRt4EGuAw+68Mw92EhoubS1n1O6/kDr
-	 iFF38jTGwGkccm0rcU2W4/yiaFLYa76X3QgpVZ+k=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53HNUeg6096091
+	bh=9nJp0mD9Fz2Zcm3q8ukJFhKlX3gPM3uekDV5Vo0ilmc=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=Bf+sOS8PT6glExPtEr3RHEdxortS9MoCHMBv7L+Fa5w2Pcpb95Cy+FOdsyor4T5lD
+	 fUeCPCEe7D4eH7938zwr1YsQLeTx1md4PDiuRwACdz2dpRDZKBkWZhqMAWxRuYF6OQ
+	 bUGjOLbXeXQviUuOTjukGAr4PxmIc4jTLvhYcmU0=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53HNUe9v096088
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
 	Thu, 17 Apr 2025 18:30:40 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 17
- Apr 2025 18:30:39 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ Apr 2025 18:30:40 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
  Frontend Transport; Thu, 17 Apr 2025 18:30:40 -0500
 Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53HNUePe023286;
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53HNUePf023286;
 	Thu, 17 Apr 2025 18:30:40 -0500
 From: Judith Mendez <jm@ti.com>
 To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
@@ -63,10 +64,12 @@ CC: Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
         Conor Dooley <conor+dt@kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, Moteen Shah <m-shah@ti.com>
-Subject: [PATCH v2 0/5] Misc MMC updates
-Date: Thu, 17 Apr 2025 18:30:35 -0500
-Message-ID: <20250417233040.3658761-1-jm@ti.com>
+Subject: [PATCH v2 1/5] arm64: dts: ti: k3-am6*: Set eMMC clock parents to default
+Date: Thu, 17 Apr 2025 18:30:36 -0500
+Message-ID: <20250417233040.3658761-2-jm@ti.com>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250417233040.3658761-1-jm@ti.com>
+References: <20250417233040.3658761-1-jm@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,50 +80,61 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-This patch series includes updates for eMMC and SD nodes across
-Sitara K3 SoC boards:
+Set eMMC clock parents to the defaults which is MAIN_PLL0_HSDIV5_CLKOUT
+for eMMC. This change is necessary since DM is not implementing the
+correct procedure to switch PLL clock source for eMMC and we have a
+non-glich-free mux. To remove any potential issues, lets switch back to
+the defaults.
 
-Set eMMC clock parents to default to avoid any potential issues with
-non-glitch free muxes when switching eMMC PLL source.
-Add boot phase flag to MMC nodes and dependency nodes to support SD and
-eMMC boot. 
-Add missing itapdlysel for default speed and high speed SDR modes on
-am65x SoC. 
-Add non-removable flag to eMMC nodes to void having to redetect
-eMMC after suspend/resume.
-Remove disable-wp for eMMC nodes since property is specific to SD.
+Fixes: c37c58fdeb8a ("arm64: dts: ti: k3-am62: Add more peripheral nodes")
+Fixes: d3ae4e8d8b6a ("arm64: dts: ti: k3-am62a-main: Add sdhci0 instance")
+Fixes: b5080c7c1f7e ("arm64: dts: ti: k3-am62p: Add nodes for more IPs")
+Signed-off-by: Judith Mendez <jm@ti.com>
+---
+ arch/arm64/boot/dts/ti/k3-am62-main.dtsi               | 2 --
+ arch/arm64/boot/dts/ti/k3-am62a-main.dtsi              | 2 --
+ arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi | 2 --
+ 3 files changed, 6 deletions(-)
 
-Changes since v1:
-- Add patch 1 and 2
-- remove disable-wp for more boards with eMMCs
-
-Link to v1:
-- https://lore.kernel.org/linux-devicetree/20241014194722.358444-1-jm@ti.com/
-
-Judith Mendez (5):
-  arm64: dts: ti: k3-am6*: Set eMMC clock parents to default
-  arm64: dts: ti: k3-am6*: Add boot phase flag to support MMC boot
-  arm64: dts: ti: k3-am65-main: Add missing taps to sdhci0
-  arm64: dts: ti: k3-am62*: Add non-removable flag for eMMC
-  arm64: dts: ti: k3-am6*: Remove disable-wp for eMMC
-
- arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts             | 12 ++++++++++++
- arch/arm64/boot/dts/ti/k3-am62-main.dtsi             |  2 --
- arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi      |  1 -
- arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts       |  2 +-
- arch/arm64/boot/dts/ti/k3-am62a-main.dtsi            |  2 --
- arch/arm64/boot/dts/ti/k3-am62a-phycore-som.dtsi     |  1 -
- arch/arm64/boot/dts/ti/k3-am62a7-sk.dts              |  3 ++-
- .../boot/dts/ti/k3-am62p-j722s-common-main.dtsi      |  2 --
- arch/arm64/boot/dts/ti/k3-am62p5-sk.dts              |  2 +-
- arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi       |  2 +-
- arch/arm64/boot/dts/ti/k3-am642-evm.dts              |  1 -
- arch/arm64/boot/dts/ti/k3-am65-main.dtsi             |  2 ++
- arch/arm64/boot/dts/ti/k3-am654-base-board.dts       |  1 -
- .../dts/ti/k3-am6548-iot2050-advanced-common.dtsi    |  1 -
- arch/arm64/boot/dts/ti/k3-am69-sk.dts                |  1 -
- 15 files changed, 19 insertions(+), 16 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/ti/k3-am62-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62-main.dtsi
+index 7d355aa73ea21..0c286f600296c 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62-main.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62-main.dtsi
+@@ -552,8 +552,6 @@ sdhci0: mmc@fa10000 {
+ 		power-domains = <&k3_pds 57 TI_SCI_PD_EXCLUSIVE>;
+ 		clocks = <&k3_clks 57 5>, <&k3_clks 57 6>;
+ 		clock-names = "clk_ahb", "clk_xin";
+-		assigned-clocks = <&k3_clks 57 6>;
+-		assigned-clock-parents = <&k3_clks 57 8>;
+ 		bus-width = <8>;
+ 		mmc-ddr-1_8v;
+ 		mmc-hs200-1_8v;
+diff --git a/arch/arm64/boot/dts/ti/k3-am62a-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62a-main.dtsi
+index a1daba7b1fad5..455ccc770f16a 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62a-main.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62a-main.dtsi
+@@ -575,8 +575,6 @@ sdhci0: mmc@fa10000 {
+ 		power-domains = <&k3_pds 57 TI_SCI_PD_EXCLUSIVE>;
+ 		clocks = <&k3_clks 57 5>, <&k3_clks 57 6>;
+ 		clock-names = "clk_ahb", "clk_xin";
+-		assigned-clocks = <&k3_clks 57 6>;
+-		assigned-clock-parents = <&k3_clks 57 8>;
+ 		bus-width = <8>;
+ 		mmc-hs200-1_8v;
+ 		ti,clkbuf-sel = <0x7>;
+diff --git a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
+index 6e3beb5c2e010..f9b5c97518d68 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
+@@ -564,8 +564,6 @@ sdhci0: mmc@fa10000 {
+ 		power-domains = <&k3_pds 57 TI_SCI_PD_EXCLUSIVE>;
+ 		clocks = <&k3_clks 57 1>, <&k3_clks 57 2>;
+ 		clock-names = "clk_ahb", "clk_xin";
+-		assigned-clocks = <&k3_clks 57 2>;
+-		assigned-clock-parents = <&k3_clks 57 4>;
+ 		bus-width = <8>;
+ 		mmc-ddr-1_8v;
+ 		mmc-hs200-1_8v;
 -- 
 2.49.0
 
