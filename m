@@ -1,122 +1,93 @@
-Return-Path: <linux-kernel+bounces-608507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D2C2A91495
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:00:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95C8CA91498
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:00:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC850166E20
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:00:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CC52188E7BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A15A223709;
-	Thu, 17 Apr 2025 06:57:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749D721CC56;
+	Thu, 17 Apr 2025 06:57:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NcqLBxSg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r0XnOR9/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58065215762
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 06:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E8C218ADC;
+	Thu, 17 Apr 2025 06:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744873051; cv=none; b=DK6Q+LtreH0lCMj3tSuHrFVnHbpx2E7EDuQ3F7v6Wxn7/FcF2W1PL9Bmf0nZbX6lgodCIELivyRtkn+QQ0ViVHaCNdqX+KnlKdBgY7i0H77lvzHnZ+PjHBxqZbi6KQc4Y05EKxH8ehn9APa2yTZRCZW/RpXJGDLv80swoKQQRdc=
+	t=1744873067; cv=none; b=bDLy5lRWH1wTt2bp25vJGWyI2DcS2iwF3FHiU89fXObTZuf2HSIH+fhy24+aofs7Bck9P/DGzFmHwMHJfTXQpWfLuJuxcIQHgrpHgdowmro7WeAUPnXo95GE/PpTv6sJ4DyuaFqLn0wdj68XfVT8XXzI7kIACYRYaKJGKhczAr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744873051; c=relaxed/simple;
-	bh=jjODyzoHgOaSkMOizAfMka0/yn10076bTRY95dAS8m8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q157LE68VurGF/9eBoxgwPr/2Z/vDo+OlgjJEfn03ks5Zb3zYEkouxBnXo4ieQVLeip8yYteIBdBLw9rBpFmR5iAHluAkuBDEU8KvTnLMfeVhMSJcSI4CZAB+Q8Dy4zuulyiE/bZhkxP43H1RD7zIZSVA8/uPOLtEyUh7SFl8RI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NcqLBxSg; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744873049;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jjODyzoHgOaSkMOizAfMka0/yn10076bTRY95dAS8m8=;
-	b=NcqLBxSgsicmKMUpmjdlDHIM6vhtiSlWWZKlcxU9QRHildA+z8tZUrFlXDjuDk9Meod/4B
-	m3WBdJO0eL2iR4Oi2gAdwtV36qBRC61GbgtVax8CTdUnkOfb9LJH0Wyq6la27xni2AtEVP
-	dpT+wB5Yt7XNcYTJ4baVpdB/kwFD760=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-424-jIrHH3dcP620McbZONzgiw-1; Thu, 17 Apr 2025 02:57:27 -0400
-X-MC-Unique: jIrHH3dcP620McbZONzgiw-1
-X-Mimecast-MFC-AGG-ID: jIrHH3dcP620McbZONzgiw_1744873046
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-391315098b2so143254f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 23:57:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744873046; x=1745477846;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jjODyzoHgOaSkMOizAfMka0/yn10076bTRY95dAS8m8=;
-        b=LtKz3fjLcgd/o2xwrO4GUh2lckIpn0DlmSvTpUs23hxZROdfVTaLmITKnnqD3mJ2Cu
-         lcYjRl+pnSbihZ5+JwqcFLNPXwiQvCeuQeM035HITlZ+FcV4nYkIfGzHa+aeSnk0WnR/
-         xCCBKM8BF8gtXhFK3FaT4/rkDeKRyeLDiZDFdLs8WJxny/qslmoBZ9ZGGMN3sRs5DLEk
-         elfRzEC4gaVs8TU87jzL/zuzmilIgmwafLigXCuil0YHAuXzKkxLB4gBDgUVquW4+Ctw
-         Hjf3kIa21fsUopD9snOgg5f9fm6Du4549GK7mctgr1IKAyIAnMbgWZ8EBfGR9doga/Kn
-         IccQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+M4mXfPD3yfT2+S+RlkJz2r+k4Afv1AsW3gJqXwOuQBHJ3T74APArSI5kC5q2VyVcWu9FsvLFRBH+448=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0wMFsybUFQeY95pm6CXYxk8zK/EOvLZyM6XDGBRgTuG8OYi1D
-	jouU/tuXlNR/mbIETt7evDO5yczWBadMNSKtO2xuUDRDhv17OJNPgKyBDP++PTXgFV5o+H5IFLH
-	o6svWn5LnRNFuNC7hWRDFu2O64yLXJhG0uCSXPDzW9m4kqg3JvRzROgReIy6zJg==
-X-Gm-Gg: ASbGncsmdMbDJ01/e92zn9jPZL+ftCuJc/+3Esg8Sp/6Zfp7JBSxNISgQrpE3J+1DZ0
-	yTc5vHiQ3e8TqwnTe3AUxbqCxh8evDmMNVY+n0RFxyt+J+KN4CuOaT3sK/rb5VgNi57p4zOcmQH
-	35Rp3b0zQ02MR66e51RwsR1xh5IL6rMb9GHe38SnM4gurHb5xlASmfJmMKs46rFyvAP7Sj6lGF4
-	ZXaQHfXATCI+JFZyZkRNYuJYDb/ziGahEC40cz6zYHCXioLR8q/ejgimKrX3VAadWAh2HVX+Wy1
-	PrcbnHidN5D8gh1yYji6shJP0HT0afrQ2CUfo0yC6g==
-X-Received: by 2002:a5d:598e:0:b0:39e:e557:7d9 with SMTP id ffacd0b85a97d-39ee5b12f6amr4246217f8f.5.1744873046361;
-        Wed, 16 Apr 2025 23:57:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGxeneD4PU1badohm8V9WmJtKj9YkZnOXQdqdLY0Y/Fs91DJ14HKRGByKHiwMz/4SXoc3HdGw==
-X-Received: by 2002:a5d:598e:0:b0:39e:e557:7d9 with SMTP id ffacd0b85a97d-39ee5b12f6amr4246204f8f.5.1744873046049;
-        Wed, 16 Apr 2025 23:57:26 -0700 (PDT)
-Received: from [192.168.88.253] (146-241-55-253.dyn.eolo.it. [146.241.55.253])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eaf43ce3bsm19526728f8f.66.2025.04.16.23.57.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Apr 2025 23:57:25 -0700 (PDT)
-Message-ID: <67a977bc-a4b9-4c8b-bf2f-9e9e6bb0811e@redhat.com>
-Date: Thu, 17 Apr 2025 08:57:24 +0200
+	s=arc-20240116; t=1744873067; c=relaxed/simple;
+	bh=/PWTZEMbGQ3UyfVIdX4FNP9ZBka66rFtLWONMckbvtw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cn3H5csQjC4ws2TmbrJBrre12CZc2o2WP6ZcjtosoEes1risvIHqYHAt5/hescAJNHOv0AZ5yv8DxCJ9GK3bBLG9UiaLP5o0qS1/hjKgFea0Rz+vSqckJ37fAr7jIsdDcnHnJ1lDARJkIZkhPHC+YGw8sC9zIfLolWGygHOqsp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r0XnOR9/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40478C4CEE4;
+	Thu, 17 Apr 2025 06:57:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744873066;
+	bh=/PWTZEMbGQ3UyfVIdX4FNP9ZBka66rFtLWONMckbvtw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=r0XnOR9/FN+oBxAAWd3Otn81xxSI2Q5irmhAr1XxFzVIq814mcDLYt94hs4pwPiLw
+	 SZcKH8MOaJjy3CeF7zkDqcQXFdli21Y8rau3sEXKExbpS7tHKwOrqB8zTr0RjZW8rA
+	 q7tpGBsKMp/5ikyjaEUgqRZ6nB4lwMSGaSlXVY5WrGki9JaCi3SP/tzYIjaZgU4Spa
+	 gibhvZyeHj/UkWbMjmYEKpoZwUjphoBh5UGgxlhcVJaKqpU9vI5Gk1uzFSwOmIesTQ
+	 Fz68Q+hoIeWm644WUz25F9jLOdS33dK7M49L89dGxe4VSTpWM6oW/1AEa4tQwwXkBA
+	 zAYTLM9GgmQuQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1u5JBx-000000005bs-3Dzg;
+	Thu, 17 Apr 2025 08:57:45 +0200
+Date: Thu, 17 Apr 2025 08:57:45 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	"Rob Herring (Arm)" <robh@kernel.org>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: fix compile-test defaults
+Message-ID: <aACmabdI0o_TxuNk@hovoldconsulting.com>
+References: <20250416134331.7604-1-johan+linaro@kernel.org>
+ <20250417042500.tbuupp3jdpfkk7kh@vireshk-i7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] udp: Add tracepoint for udp_sendmsg()
-To: Breno Leitao <leitao@debian.org>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Simon Horman <horms@kernel.org>, kuniyu@amazon.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, yonghong.song@linux.dev,
- song@kernel.org, kernel-team@meta.com
-References: <20250416-udp_sendmsg-v1-1-1a886b8733c2@debian.org>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20250416-udp_sendmsg-v1-1-1a886b8733c2@debian.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250417042500.tbuupp3jdpfkk7kh@vireshk-i7>
 
-On 4/16/25 9:23 PM, Breno Leitao wrote:
-> Add a lightweight tracepoint to monitor UDP send message operations,
-> similar to the recently introduced tcp_sendmsg_locked() trace event in
-> commit 0f08335ade712 ("trace: tcp: Add tracepoint for
-> tcp_sendmsg_locked()")
+On Thu, Apr 17, 2025 at 09:55:00AM +0530, Viresh Kumar wrote:
+> On 16-04-25, 15:43, Johan Hovold wrote:
+> > Commit 3f66425a4fc8 ("cpufreq: Enable COMPILE_TEST on Arm drivers")
+> > enabled compile testing of most Arm CPUFreq drivers but left the
+> > existing default values unchanged so that many drivers are enabled by
+> > default whenever COMPILE_TEST is selected.
 
-Why is it needed? what would add on top of a plain perf probe, which
-will be always available for such function with such argument, as the
-function can't be inlined?
+> > Fix the default values for drivers that can be compile tested and that
+> > should be enabled by default when not compile testing.
+> > 
+> > Fixes: 3f66425a4fc8 ("cpufreq: Enable COMPILE_TEST on Arm drivers")
 
-Thanks,
+> I have already applied a similar patch:
+> 
+> https://lore.kernel.org/all/20250404124006.362723-1-krzysztof.kozlowski@linaro.org/
+> 
+> Can you rebase over that please ?
 
-Paolo
+Ah, sorry, I forgot to check linux-next.
 
+Just sent a rebased v2 here:
+
+	https://lore.kernel.org/lkml/20250417065535.21358-1-johan+linaro@kernel.org/
+
+Johan
 
