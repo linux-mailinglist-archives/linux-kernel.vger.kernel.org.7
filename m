@@ -1,105 +1,121 @@
-Return-Path: <linux-kernel+bounces-608419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 397C0A91325
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:45:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3E45A9133B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:47:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 563C3171236
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 05:45:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFECB44117D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 05:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13AA71E25E1;
-	Thu, 17 Apr 2025 05:44:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC7D91EFFA8;
+	Thu, 17 Apr 2025 05:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="C+DJRvEn"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="MpbBw2fg"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E93195FE8;
-	Thu, 17 Apr 2025 05:44:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34255179A7;
+	Thu, 17 Apr 2025 05:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744868695; cv=none; b=bFmo4AJbk939Ik72S+xswO9PekbJ1JVxNwYI9y2Ex40JR+tLhh2iiDXEFpgGs2SkiAZMwujXw9lGTd7hPLBUMk+I46vRcDr9eL13q69lin+X75LZdHmNvYxf8NFFcE1FmtqTat4Nw45n2aWSuIpe9/M8ebp5UML9p6fG7PI2aZY=
+	t=1744868818; cv=none; b=rKSWU6yLo2XIjyrbKVb+1BKeFWUYDgXbEzFM0PgnSK8+BFKmvfiuhljP8XboxaDWtyInDMDNYAeGudL3hjD3QK+BRQ2IDVx2EKiB7a9pVdgH8oPryXmKqhFb3YmVyuFprNqlHgQPFW8vtAp19zi8GV6T3nrc8PjbLk+Hto181Ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744868695; c=relaxed/simple;
-	bh=Si3AfpSIXUZWHEBNXUEisWaaiZp9N8CK2LqUyKMe1sw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=LXWsERFPxZZhvGztPbRVLsUxgJQ5PQWLQpChFnH7ACZeiMRVaAFsB0nI9ihINbZ4zJl8Hn43rbHL1CLliN+4m/brFgHZ4yuvGQDLV7IKNR095r19TfjILNzjMGMNYUE3ee4/NSFRA4BTKR8In0WhCl9K0xcUkBvaiP2QRecgCxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=C+DJRvEn; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1744868688;
-	bh=+G/l/IR8gz7cAHFKnICiUwkMBvH+qUera4e3n1Le9+c=;
-	h=Date:From:To:Cc:Subject:From;
-	b=C+DJRvEn0uGPHYSTXZhLiLPTgjeYgj4aUoKfc9CXEgCyFmAu4sNxWpXKtMCuhzaBp
-	 HNOtf7hnIkm4QAg/1mXST26JFO1ZdhJll51DIneKOAZ28jdLocJJo0oIZYuDK++131
-	 bYmBCjgCfdx0jn7BGOKL155lvCLNdTZpHMWNgclJBItsjukJtbLhsvyVYZdweNlNm9
-	 LpmNO3hf/wmfIMB60Pv0Ob+Us22aL4/k9uQWtIHoetbdo5ELDqOHHcN8UWvoM/u9LB
-	 274uzKk6HWRiCN8IapD7Bi/7HzBS0vx5o1XXuE0SMX/X2If2bpH/IvX1UspyPH5gsq
-	 UGrI1N3a8UR/w==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZdRg41jGlz4x5k;
-	Thu, 17 Apr 2025 15:44:47 +1000 (AEST)
-Date: Thu, 17 Apr 2025 15:44:47 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Bartosz Golaszewski
- <brgl@bgdev.pl>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the gpio-intel tree
-Message-ID: <20250417154447.642f2ec4@canb.auug.org.au>
+	s=arc-20240116; t=1744868818; c=relaxed/simple;
+	bh=4oYgM5MCWKU1QZFM9ucaKlFA+1SLFEymDkr9y2UXtGo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=uKUHpK/pdTDswzAH77Mm5fu7ldOfsOC9nOtRb6um3A7rsDMzcvxS/nHRv8EjHOaod0mKdudMgIs1YZb1AOBZUYCS/zr1MWaqVdmxoDPUcQoYRrsEWmsetws0YYH7n5F/f6EwCmbKwRuiu/xT3FFWb2XAVUUzOOERleKx6bkDOY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=MpbBw2fg; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 53H5kBp05370839, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1744868772; bh=4oYgM5MCWKU1QZFM9ucaKlFA+1SLFEymDkr9y2UXtGo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=MpbBw2fg9mpTniqSkEyHgL/8joTtsTmpyLO8dB3WBpt7RKwNFSEeYPsKPmyLP+tKt
+	 0YbXRYxYZMeIYbDl/aGdK6z0jMzyJ2Rkp2cxx3i1QwUY1L20a2vcfxOSzuGU5ESdqx
+	 s4mQ5Vqao7Dwh6wJxXywnvx4BFtPOeHvT8aSD+aKxF92q1fcvMFsD1+YgDzdZy0RoI
+	 JkhJNFRllmbeKlf4MNtA1fWl+8y7KWk7fYMg8pn23BLsUI9I7ItoH2fGEMM5JbqlNB
+	 ILKjaJacNJdheY5jpLR0Iw7cQE8+TRkaFj1UKbWUAFJZFI+7ojWmYbPLPexg2Z1VSi
+	 XHgkOzQ22MRGw==
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 53H5kBp05370839
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 17 Apr 2025 13:46:11 +0800
+Received: from RTEXMBS06.realtek.com.tw (172.21.6.99) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 17 Apr 2025 13:46:12 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS06.realtek.com.tw (172.21.6.99) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Thu, 17 Apr 2025 13:46:11 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622]) by
+ RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622%5]) with mapi id
+ 15.01.2507.035; Thu, 17 Apr 2025 13:46:11 +0800
+From: Justin Lai <justinlai0215@realtek.com>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: "kuba@kernel.org" <kuba@kernel.org>,
+        "davem@davemloft.net"
+	<davem@davemloft.net>,
+        "edumazet@google.com" <edumazet@google.com>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "andrew+netdev@lunn.ch"
+	<andrew+netdev@lunn.ch>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>,
+        "horms@kernel.org" <horms@kernel.org>,
+        Ping-Ke Shih
+	<pkshih@realtek.com>,
+        Larry Chiu <larry.chiu@realtek.com>,
+        kernel test robot
+	<lkp@intel.com>
+Subject: RE: [PATCH net v2 1/3] rtase: Fix the compile error reported by the kernel test robot
+Thread-Topic: [PATCH net v2 1/3] rtase: Fix the compile error reported by the
+ kernel test robot
+Thread-Index: AQHbrs2Kq1M05GT8LEGJNWsOuQL6jbOl0KSAgAGJHbA=
+Date: Thu, 17 Apr 2025 05:46:11 +0000
+Message-ID: <ae94b522ec23485e88f8a01a3e09c57c@realtek.com>
+References: <20250416124534.30167-1-justinlai0215@realtek.com>
+ <20250416124534.30167-2-justinlai0215@realtek.com>
+ <152c9566-a1bd-4082-9f66-6bbe8ab1eb47@lunn.ch>
+In-Reply-To: <152c9566-a1bd-4082-9f66-6bbe8ab1eb47@lunn.ch>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Cg0v1yfqYb36Wgsb=RoL6Ym";
- protocol="application/pgp-signature"; micalg=pgp-sha256
 
---Sig_/Cg0v1yfqYb36Wgsb=RoL6Ym
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+>=20
+> On Wed, Apr 16, 2025 at 08:45:32PM +0800, Justin Lai wrote:
+> > Fix the following compile error reported by the kernel test robot by
+> > modifying the condition used to detect overflow in
+> > rtase_calc_time_mitigation.
+>=20
+> The Subject: line is not very useful. It is better to talk about what you=
+ are fixing,
+> not that a robot reported an issue.
+>=20
+>     Andrew
+>=20
+> ---
+> pw-bot: cr
 
-Hi all,
+Hi Andrew,
 
-The following commits are also in the gpio-brgl tree as different commits
-(but the same patches):
+Thank you for your response. I will modify the subject and post a new
+version.
 
-  8f4543e980ff ("gpio: ich: use new line value setter callbacks")
-  b7a49fd57be3 ("gpio: graniterapids: use new line value setter callbacks")
-
-These are commits
-
-  69e230a0a288 ("gpio: ich: use new line value setter callbacks")
-  04eaa41eb8eb ("gpio: graniterapids: use new line value setter callbacks")
-
-in the gpio-bgrl tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Cg0v1yfqYb36Wgsb=RoL6Ym
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgAlU8ACgkQAVBC80lX
-0Gy9oAf+Lb5Rm5+EF8v0d8fHHFwP+bYZJ8zkautSLRV9acQ9owluHk6umU/4p1VR
-sZtSEbUD2lv9ETnj5Ia3Xt/MyjT/E+vdpmYCrjbAAh2KCC/5JR7aJROV3WnbA9j5
-eDmfLJAQppgWV/R5vJUWgLeGgjMn44mRL83Amvcff2mrEJOQ/su9zuEIr7BAbj9w
-ejjU6jHhmmYFoVY5rbPQ0HswzTZ6L6F+3jYlj2x8vFrL6gOBRgcKEzsfUUbft/el
-80ffYpXy3qXcalSpOreGpPFdLCQ2gG+3dYNbJZL5ptHNvH/W3H/2rZc3rQEH1nZT
-d2fFyMKVoWF381sBooQWm79D9hKvwg==
-=Q1JZ
------END PGP SIGNATURE-----
-
---Sig_/Cg0v1yfqYb36Wgsb=RoL6Ym--
+Thanks,
+Justin
 
