@@ -1,87 +1,256 @@
-Return-Path: <linux-kernel+bounces-608515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9E40A914B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:05:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BA54A914BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 09:08:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D89919076E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:05:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5E7D3A17C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:07:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C7012185AA;
-	Thu, 17 Apr 2025 07:05:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87F3021638C;
+	Thu, 17 Apr 2025 07:07:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jI+pvAHp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1fF3agDF";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7PqzR5Rz";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1fF3agDF";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7PqzR5Rz"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 856882063FD;
-	Thu, 17 Apr 2025 07:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65386214A6C
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 07:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744873537; cv=none; b=afdLsWuXMlej4epzxFlyVDe46LMcr4avKVoUtRg6DDaPclCAK7QPlPay9vNrDPHWtsMzlSLAwIuOM4yj0rkQG/tGOTs4nFDBgiottu6EarQJjhk2TzLjhuKT8kZmlSk7vXC+1NP7QKuhGr1YQzAoTWlX36fh8GTmATKNkHhQQy0=
+	t=1744873664; cv=none; b=Dj9Q7TsAUNXSiDIPTqMCV+35NQ5zhZHKVNC7rRBcKsNZjgxC2zVBL85glIrLB/3kTXoKuqiJLRM74/bjzhDscd+qUn6G5Vog6MRpiMtvCX02FHx8CU4YTIU2Eh7rwHJz/UBpYcerbEsL3K8dZUYQ2N5MEZEC2SKZNe3NzH3rkOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744873537; c=relaxed/simple;
-	bh=HXk4O8PMWonZDVGYsC+GG/p3eTnTGqZeZARIUtOwmWs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KZR1a1ekdapLFVzWlmYSo78FIqnhMhigjY3R/vuQsABkEq6DjrQRufrvoHlDXNMTqeoGWqEDftNQbhwbvKFDvTYuvU3m1Ng3XriKhxqK0LH0ivzbeOFrUOSr4h5yB9DFhx3wAwnqhBLQ6k+8gSbPJ04MEZiJkUMiLjStQXChCd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jI+pvAHp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6D0CC4CEE4;
-	Thu, 17 Apr 2025 07:05:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744873537;
-	bh=HXk4O8PMWonZDVGYsC+GG/p3eTnTGqZeZARIUtOwmWs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jI+pvAHpmd7VY5o+w0aJbKAF+X3uQwMXqELGRlHY+4ARFRGmaQ6Zpr2WrlBdLZe1y
-	 RJckbMt7Ltg9ebBPcqyUn1NxiXygdUkDKWA4C3AS6y/eeEa/NCIra+UZqmqEdDDTLK
-	 KtOy7Pm6swIFMqu5VGIPDMAm37adJEBw5xWmd/wVjXTYaU44LY/5xIcV2uMRKtQprN
-	 75l00jZaVGDBKKB/nmidNcO4pLtKxc3SXcxUgMbr79NBshBTujFAwaWPtFto/PbHEL
-	 2fPzUWNiSjruyYrFaZe7nmMb1L0UGg2FdjmdwWMbyI+br0iz2ahVRBReQxLlpI0AZZ
-	 pt9agOJIn0BJg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1u5JJY-000000005lf-2mza;
-	Thu, 17 Apr 2025 09:05:36 +0200
-Date: Thu, 17 Apr 2025 09:05:36 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Dmitry Nikiforov <Dm1tryNk@yandex.ru>
-Cc: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
-Subject: Re: [PATCH v3] media: davinci: vpif: Fix memory leak in probe error
- path
-Message-ID: <aACoQJbpN5v_UGrj@hovoldconsulting.com>
-References: <20250416205121.2348-1-Dm1tryNk@yandex.ru>
+	s=arc-20240116; t=1744873664; c=relaxed/simple;
+	bh=VcH901qcljndDAkf6FKG0mL6ZW97IUPuNheWF2bFrwA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dqbWsIFrFTTgvgWKnIHE1WJzLhxbjc8CZcc7S9bi4slPhCURnHmu4G5uGT5UnoQHPL2Lr8WvGx10VB4870vy4jDWBPYngIrUXNtRyPJ1Pod2b9wctHjeC3cykSqBF28ZgQk7o+jXkwUOSxjGu2w+vSyF3/g6H+TmWEXN3CFgkgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1fF3agDF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7PqzR5Rz; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1fF3agDF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7PqzR5Rz; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 1390C1F457;
+	Thu, 17 Apr 2025 07:07:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1744873655; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=w+J/9yJ67aCLrPoS8RxKMt4E/7nOHMoej776qBrTYZE=;
+	b=1fF3agDF2wSsAzGB5ey594HlOXQH2H5zofC+ZaKlmURmcWFxMpADn/oOxCEdBD2exQ5UKC
+	R6i6zr+5Wd2Zd2/26Md9qZQygObkxXiuSNwwhajeqzq0uutdpoku478Ib4p/BAQea2Rc3w
+	08k/1x9zUq2NbUvExAEHkyLj/8//KcY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1744873655;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=w+J/9yJ67aCLrPoS8RxKMt4E/7nOHMoej776qBrTYZE=;
+	b=7PqzR5Rzfe3fMt1/sgxADxY3KNP9StqUImSAI1B1kNJZp/+iu5FzLZVbOlm79FvST0DZKz
+	tLZpDKNfHzfu8xDQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=1fF3agDF;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=7PqzR5Rz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1744873655; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=w+J/9yJ67aCLrPoS8RxKMt4E/7nOHMoej776qBrTYZE=;
+	b=1fF3agDF2wSsAzGB5ey594HlOXQH2H5zofC+ZaKlmURmcWFxMpADn/oOxCEdBD2exQ5UKC
+	R6i6zr+5Wd2Zd2/26Md9qZQygObkxXiuSNwwhajeqzq0uutdpoku478Ib4p/BAQea2Rc3w
+	08k/1x9zUq2NbUvExAEHkyLj/8//KcY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1744873655;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=w+J/9yJ67aCLrPoS8RxKMt4E/7nOHMoej776qBrTYZE=;
+	b=7PqzR5Rzfe3fMt1/sgxADxY3KNP9StqUImSAI1B1kNJZp/+iu5FzLZVbOlm79FvST0DZKz
+	tLZpDKNfHzfu8xDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9CA9F137CF;
+	Thu, 17 Apr 2025 07:07:34 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Lb5mJLaoAGjGSAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Thu, 17 Apr 2025 07:07:34 +0000
+Message-ID: <d6315206-6ef5-4c44-8450-85aac01946c9@suse.de>
+Date: Thu, 17 Apr 2025 09:07:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250416205121.2348-1-Dm1tryNk@yandex.ru>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] virtgpu: don't reset on shutdown
+To: Gerd Hoffmann <kraxel@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Eric Auger <eric.auger@redhat.com>,
+ Eric Auger <eauger@redhat.com>, Jocelyn Falempe <jfalempe@redhat.com>,
+ David Airlie <airlied@redhat.com>,
+ Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
+ <olvaffe@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Simona Vetter <simona@ffwll.ch>,
+ Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ dri-devel@lists.freedesktop.org, virtualization@lists.linux.dev
+References: <8490dbeb6f79ed039e6c11d121002618972538a3.1744293540.git.mst@redhat.com>
+ <ge6675q3ahypfncrwbiodtcjnoftuza6ele5fhre3jmdeifsez@yy53fbwoulgo>
+ <20250415095922-mutt-send-email-mst@kernel.org>
+ <lgizdflxcku5ew2en55ux3r72u37d6aycuoosn5i5a5wagz6sc@d2kha7ycmmpy>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <lgizdflxcku5ew2en55ux3r72u37d6aycuoosn5i5a5wagz6sc@d2kha7ycmmpy>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 1390C1F457
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	URIBL_BLOCKED(0.00)[suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[vger.kernel.org,redhat.com,chromium.org,gmail.com,linux.intel.com,kernel.org,ffwll.ch,linux.alibaba.com,lists.freedesktop.org,lists.linux.dev];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-On Wed, Apr 16, 2025 at 11:51:19PM +0300, Dmitry Nikiforov wrote:
-> If an error occurs during the initialization of `pdev_display`,
-> the allocated platform device `pdev_capture` is not released properly,
-> leading to a memory leak.
-> 
-> Adjust error path handling to fix the leak.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
-> 
-> Fixes: 43acb728bbc4 ("media: davinci: vpif: fix use-after-free on driver unbind")
-> Signed-off-by: Dmitry Nikiforov <Dm1tryNk@yandex.ru>
+Hi
+
+Am 16.04.25 um 15:57 schrieb Gerd Hoffmann:
+> On Tue, Apr 15, 2025 at 10:00:48AM -0400, Michael S. Tsirkin wrote:
+>> On Tue, Apr 15, 2025 at 01:16:32PM +0200, Gerd Hoffmann wrote:
+>>>    Hi,
+>>>
+>>>> +static void virtio_gpu_shutdown(struct virtio_device *vdev)
+>>>> +{
+>>>> +	/*
+>>>> +	 * drm does its own synchronization on shutdown.
+>>>> +	 * Do nothing here, opt out of device reset.
+>>>> +	 */
+>>> I think a call to 'drm_dev_unplug()' is what you need here.
+>>>
+>>> take care,
+>>>    Gerd
+>> My patch reverts the behaviour back to what it was, so pls go
+>> ahead and send a patch on top? I won't be able to explain
+>> what it does and why it's needed.
+> See below.  Untested.
+>
+> Eric, can you give this a spin?
+>
+> thanks,
+>    Gerd
+>
+> ----------------------- cut here -------------------------------
+>  From f3051dd52cb2004232941e6d2cbc0c694e290534 Mon Sep 17 00:00:00 2001
+> From: Gerd Hoffmann <kraxel@redhat.com>
+> Date: Wed, 16 Apr 2025 15:53:04 +0200
+> Subject: [PATCH] drm/virtio: implement virtio_gpu_shutdown
+>
+> Calling drm_dev_unplug() is the drm way to say the device
+> is gone and can not be accessed any more.
+>
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 > ---
-> v2: also fix of_graph_get_endpoint_by_regs() error path.
-> v3: Rework incorrect error handling added in v2.
-> Also fix missing platform_device_del() in another error path (Johan Hovold).
+>   drivers/gpu/drm/virtio/virtgpu_drv.c | 8 ++++----
+>   1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.c b/drivers/gpu/drm/virtio/virtgpu_drv.c
+> index e32e680c7197..71c6ccad4b99 100644
+> --- a/drivers/gpu/drm/virtio/virtgpu_drv.c
+> +++ b/drivers/gpu/drm/virtio/virtgpu_drv.c
+> @@ -130,10 +130,10 @@ static void virtio_gpu_remove(struct virtio_device *vdev)
+>   
+>   static void virtio_gpu_shutdown(struct virtio_device *vdev)
+>   {
+> -	/*
+> -	 * drm does its own synchronization on shutdown.
+> -	 * Do nothing here, opt out of device reset.
+> -	 */
+> +	struct drm_device *dev = vdev->priv;
+> +
+> +	/* stop talking to the device */
+> +	drm_dev_unplug(dev);
+>   }
 
-Thanks for the update. Looks good:
+It's the correct approach but also requires drm_dev_enter() and 
+drm_dev_exit() around all of the driver's hardware access.
 
-Reviewed-by: Johan Hovold <johan@kernel.org>
+Best regards
+Thomas
+
+>   
+>   static void virtio_gpu_config_changed(struct virtio_device *vdev)
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
 
