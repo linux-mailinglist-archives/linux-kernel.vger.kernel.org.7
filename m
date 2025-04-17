@@ -1,276 +1,210 @@
-Return-Path: <linux-kernel+bounces-608671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DA1AA9168A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 10:36:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D21E0A9168F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 10:38:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 686BD7AEA99
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:35:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0505444B5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:38:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A75BB224891;
-	Thu, 17 Apr 2025 08:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O6TjEa+W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C5C22541D;
+	Thu, 17 Apr 2025 08:38:28 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24E9184E;
-	Thu, 17 Apr 2025 08:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C51215F4C
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 08:38:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744878965; cv=none; b=ZAL1jLp/q4XBdmsdQeC2774+R8VFfc0baWAjU3EZbWiwJSuNWqv1KiXWFWGLmjoTPr0wkVZ8ZGMfNLnOmC0me7bRewto5sMpr5SI0of9jhhDceyZmB23JxPDivY/8shpg3zsTqYxE6Z67TdNF8c9AZshgClMCgRZ5ME6NiuEYNI=
+	t=1744879108; cv=none; b=c1/A3JoaNimH08PtJRbxfVOeE8OEOlueHP7A3WO0YkQcxUQ7eKbaBFNVETpDastn5DEHcP6T5vItOxwGlr3jhiZa6T4RhVTBv8LCMLrsomJH9qsR8aVoryM0uGVcFsCPUy15IjTKmJBHVx91LrwKBt41r0QBTw3RYlcnogw3d0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744878965; c=relaxed/simple;
-	bh=s2y/8+X4byijBsMJhdGFgV9G5Ctuj92CsBaLWWFN71A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nzIfb3xO+otfsUskv6XfI9Vdck1oHopiuZA68i9QDUSs2a8ev3Lpg4GqQhIw/WRd+SvVIEU2IVi0TxW4X5plkSlQ/IzC2x3WtGuU/u68SkTDzU239DQoYPEJocS7qzyR/i5gACrA07rphD9YyX6S8oXTFpNDINnzJKpwa7ihbXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O6TjEa+W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E264C4CEE4;
-	Thu, 17 Apr 2025 08:36:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744878964;
-	bh=s2y/8+X4byijBsMJhdGFgV9G5Ctuj92CsBaLWWFN71A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O6TjEa+WFy2S09KaAMFKRDF6Z5a4jwkvLna42rnYi2b3nD1w+j9N53hy48xnuq1Iv
-	 x9pegG6ClmcDBD8lmw3+lUv3JaHQcy6V++AF4VyfZL/YKKCxTa/IrIeDkxseklmwVZ
-	 m9JCcTTZQz30DwkqGOiI5aoT1a3frAKU3tFJc8WiHj5GTcuYyptBMm7IgXJvpyRJvT
-	 /FLzieSpDgmTZv4HzEo5ZlXzHeQKu/fZilcvxkf5eTpCWAsJZvKaU9Rh/AjowKGhMt
-	 nMRJBqD1BoIK9mPsLoX7kHE4ljb/K57LzNG9NcAzl6yJDJibRwTvXcKUnc20a03c2V
-	 Uv8KhFHsvLkGA==
-Date: Thu, 17 Apr 2025 09:35:59 +0100
-From: Simon Horman <horms@kernel.org>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>, upstream@airoha.com,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-Subject: Re: [net-next PATCH v3 03/11] net: pcs: Add subsystem
-Message-ID: <20250417083559.GA2430521@horms.kernel.org>
-References: <20250415193323.2794214-1-sean.anderson@linux.dev>
- <20250415193323.2794214-4-sean.anderson@linux.dev>
+	s=arc-20240116; t=1744879108; c=relaxed/simple;
+	bh=Jl5p97JvPpMNZZjBLdrKm3tf2nl8KAnKjiywqyDPw+A=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=f/AZ2C9KQv8Qw+wOMZd/51eG2WE5fywne5kIr8ngHzNrEShFeI1osdH54KSdZXKNfn0S7WWsAwOyd3kHHRDTBJFJ4kBQLhfVp+ju4s4l8+eJVX3XsTGrCWQqYiiXBDj+xD5NwHb6cYlmLgXyRjgG7WZAeDPNXjwDiiiDeHFUDSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3d6c613bd79so5439575ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 01:38:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744879105; x=1745483905;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iH3dpMhc2OuwjjSn4Sybu2yIZvU0GI3H4i2RSnK3ygE=;
+        b=h2Zic0etHOrT7WWgjXRoNcSX5E0KKNftQPXpKGQhNfMTAb3wETtjxkVeLFzVgXhv/c
+         EVbfWpayHaFK1x4xgD1hRRlrVupAG1bIoQ+JOzAevbHUMUamIWS7OiZPES+dXMRRyL9h
+         uUGfN86P4W+zBUsWEQOMASUQjbykXF1Dmdjpw+gLNmLVg+7bbRR2IZuEipGyweRSat/c
+         98vGgjEdGMgkBp+ARAT5RV1FMFkNvtHmmugJHHlrr8u958NONk0FqZ5nqRJyaewX0UIy
+         ZTm7b72h0NdZcp9xodeH0Jyx/nW49/OvJpM/1x3DBROiOV48t1+AIenoTNB8yvEHSi+b
+         5+5A==
+X-Gm-Message-State: AOJu0Yz8wTzvg+gvuxiPdVukOC200iwA3X6xFciZbF/Qdqowg9ex3Sum
+	vf/jcNSGL4W2Re9XJkVDymr2UwgC0ivROk3CzxMK0GLKYb/BEqMigbxsOqQnb02oq9Pyk3Vj8ZS
+	SIFvC65ZjgfvmXEBJjjP3zRoU0WBaDYOUWHaYu/xOoZA6VujA5YXEV3fvDw==
+X-Google-Smtp-Source: AGHT+IE8cR2SOT5xQKZZ7FDy0oHNspZw/dhWylqFY1H6OT0UEAd6ZzfN99DWJbsEMrvCA2zkodkmSPA/FHwKraiJksNqQCvZbIMy
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250415193323.2794214-4-sean.anderson@linux.dev>
+X-Received: by 2002:a05:6e02:1a2f:b0:3d8:1231:5ddf with SMTP id
+ e9e14a558f8ab-3d815b6d7f1mr54268575ab.22.1744879105701; Thu, 17 Apr 2025
+ 01:38:25 -0700 (PDT)
+Date: Thu, 17 Apr 2025 01:38:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6800be01.050a0220.243d89.000e.GAE@google.com>
+Subject: [syzbot] [trace?] KASAN: slab-out-of-bounds Write in tracing_splice_read_pipe
+From: syzbot <syzbot+c8cd2d2c412b868263fb@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	mathieu.desnoyers@efficios.com, mhiramat@kernel.org, rostedt@goodmis.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Apr 15, 2025 at 03:33:15PM -0400, Sean Anderson wrote:
-> This adds support for getting PCS devices from the device tree. PCS
-> drivers must first register with phylink_register_pcs. After that, MAC
-> drivers may look up their PCS using phylink_get_pcs.
-> 
-> We wrap registered PCSs in another PCS. This wrapper PCS is refcounted
-> and can outlive the wrapped PCS (such as if the wrapped PCS's driver is
-> unbound). The wrapper forwards all PCS callbacks to the wrapped PCS,
-> first checking to make sure the wrapped PCS still exists. This design
-> was inspired by Bartosz Golaszewski's talk at LPC [1].
-> 
-> pcs_get_by_fwnode_compat is a bit hairy, but it's necessary for
-> compatibility with existing drivers, which often attach to (devicetree)
-> nodes directly. We use the devicetree changeset system instead of
-> adding a (secondary) software node because mdio_bus_match calls
-> of_driver_match_device to match devices, and that function only works on
-> devicetree nodes.
-> 
-> [1] https://lpc.events/event/17/contributions/1627/
-> 
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+Hello,
 
-Hi Sean,
+syzbot found the following issue on:
 
-Overall this looks quite clean to me.
-Please find minor some nits flagged by tooling below.
+HEAD commit:    3bde70a2c827 Merge tag 'v6.15-rc1-smb3-client-fixes' of gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1724ca3f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7a4e108575159039
+dashboard link: https://syzkaller.appspot.com/bug?extid=c8cd2d2c412b868263fb
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-> +/**
-> + * struct pcs_wrapper - Wrapper for a registered PCS
-> + * @pcs: the wrapping PCS
-> + * @refcnt: refcount for the wrapper
-> + * @list: list head for pcs_wrappers
-> + * @dev: the device associated with this PCS
-> + * @fwnode: this PCS's firmware node; typically @dev.fwnode
-> + * @wrapped: the backing PCS
-> + */
-> +struct pcs_wrapper {
-> +	struct phylink_pcs pcs;
-> +	refcount_t refcnt;
-> +	struct list_head list;
-> +	struct device *dev;
-> +	struct fwnode_handle *fwnode;
-> +	struct phylink_pcs *wrapped;
-> +};
+Unfortunately, I don't have any reproducer for this issue yet.
 
-I think that wrapped needs an __rcu annotation.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/385544917b90/disk-3bde70a2.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/8e29d15e8394/vmlinux-3bde70a2.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/2dbcc4712371/bzImage-3bde70a2.xz
 
-Flagged by Sparse.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c8cd2d2c412b868263fb@syzkaller.appspotmail.com
 
-...
+==================================================================
+BUG: KASAN: slab-out-of-bounds in trace_seq_to_buffer kernel/trace/trace.c:1830 [inline]
+BUG: KASAN: slab-out-of-bounds in tracing_splice_read_pipe+0x6be/0xdd0 kernel/trace/trace.c:6822
+Write of size 4507 at addr ffff888032b6b000 by task syz.2.320/7260
 
-> +static int pcs_post_config(struct phylink_pcs *pcs,
-> +			   phy_interface_t interface)
-> +{
-> +	struct pcs_wrapper *wrapper = pcs_to_wrapper(pcs);
+CPU: 1 UID: 0 PID: 7260 Comm: syz.2.320 Not tainted 6.15.0-rc1-syzkaller-00301-g3bde70a2c827 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:408 [inline]
+ print_report+0xc3/0x670 mm/kasan/report.c:521
+ kasan_report+0xe0/0x110 mm/kasan/report.c:634
+ check_region_inline mm/kasan/generic.c:183 [inline]
+ kasan_check_range+0xef/0x1a0 mm/kasan/generic.c:189
+ __asan_memcpy+0x3c/0x60 mm/kasan/shadow.c:106
+ trace_seq_to_buffer kernel/trace/trace.c:1830 [inline]
+ tracing_splice_read_pipe+0x6be/0xdd0 kernel/trace/trace.c:6822
+ do_splice_read fs/splice.c:979 [inline]
+ do_splice_read+0x282/0x370 fs/splice.c:953
+ splice_file_to_pipe+0x109/0x120 fs/splice.c:1289
+ do_sendfile+0x400/0xe50 fs/read_write.c:1374
+ __do_sys_sendfile64 fs/read_write.c:1429 [inline]
+ __se_sys_sendfile64 fs/read_write.c:1415 [inline]
+ __x64_sys_sendfile64+0x1d8/0x220 fs/read_write.c:1415
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x260 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f85c958d169
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f85ca40d038 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
+RAX: ffffffffffffffda RBX: 00007f85c97a5fa0 RCX: 00007f85c958d169
+RDX: 0000000000000000 RSI: 0000000000000003 RDI: 0000000000000001
+RBP: 00007f85c960e990 R08: 0000000000000000 R09: 0000000000000000
+R10: 000000007ffff000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f85c97a5fa0 R15: 00007ffc310a92e8
+ </TASK>
 
-The line above dereferences pcs.
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff888032b6b1e0 pfn:0x32b6b
+flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+raw: 00fff00000000000 0000000000000000 dead000000000122 0000000000000000
+raw: ffff888032b6b1e0 0000000000000000 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0xcc0(GFP_KERNEL), pid 7260, tgid 7258 (syz.2.320), ts 218621238352, free_ts 218426213422
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x181/0x1b0 mm/page_alloc.c:1717
+ prep_new_page mm/page_alloc.c:1725 [inline]
+ get_page_from_freelist+0x1193/0x39b0 mm/page_alloc.c:3652
+ __alloc_frozen_pages_noprof+0x263/0x23a0 mm/page_alloc.c:4934
+ alloc_pages_mpol+0x1fb/0x550 mm/mempolicy.c:2301
+ alloc_frozen_pages_noprof mm/mempolicy.c:2372 [inline]
+ alloc_pages_noprof+0x131/0x390 mm/mempolicy.c:2392
+ tracing_splice_read_pipe+0x38b/0xdd0 kernel/trace/trace.c:6815
+ do_splice_read fs/splice.c:979 [inline]
+ do_splice_read+0x282/0x370 fs/splice.c:953
+ splice_file_to_pipe+0x109/0x120 fs/splice.c:1289
+ do_sendfile+0x400/0xe50 fs/read_write.c:1374
+ __do_sys_sendfile64 fs/read_write.c:1429 [inline]
+ __se_sys_sendfile64 fs/read_write.c:1415 [inline]
+ __x64_sys_sendfile64+0x1d8/0x220 fs/read_write.c:1415
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x260 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+page last free pid 5857 tgid 5857 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1262 [inline]
+ __free_frozen_pages+0x69d/0xff0 mm/page_alloc.c:2680
+ discard_slab mm/slub.c:2720 [inline]
+ __put_partials+0x16d/0x1c0 mm/slub.c:3189
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x4e/0x120 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x195/0x1e0 mm/kasan/quarantine.c:286
+ __kasan_slab_alloc+0x69/0x90 mm/kasan/common.c:329
+ kasan_slab_alloc include/linux/kasan.h:250 [inline]
+ slab_post_alloc_hook mm/slub.c:4151 [inline]
+ slab_alloc_node mm/slub.c:4200 [inline]
+ kmem_cache_alloc_noprof+0x1cb/0x3b0 mm/slub.c:4207
+ getname_flags.part.0+0x48/0x540 fs/namei.c:146
+ getname_flags+0x93/0xf0 include/linux/audit.h:322
+ getname include/linux/fs.h:2852 [inline]
+ do_sys_openat2+0xb8/0x1d0 fs/open.c:1423
+ do_sys_open fs/open.c:1444 [inline]
+ __do_sys_openat fs/open.c:1460 [inline]
+ __se_sys_openat fs/open.c:1455 [inline]
+ __x64_sys_openat+0x174/0x210 fs/open.c:1455
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x260 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-> +	struct phylink_pcs *wrapped;
-> +	int ret, idx;
-> +
-> +	idx = srcu_read_lock(&pcs_srcu);
-> +
-> +	wrapped = srcu_dereference(wrapper->wrapped, &pcs_srcu);
-> +	if (pcs && wrapped->ops->pcs_post_config)
+Memory state around the buggy address:
+ ffff888032b6bf00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff888032b6bf80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffff888032b6c000: 00 00 00 00 00 00 00 00 00 00 fc fc fc fc 00 00
+                                                 ^
+ ffff888032b6c080: 00 00 00 00 00 00 00 00 fc fc fc fc 00 00 00 00
+ ffff888032b6c100: 00 00 00 00 00 00 fc fc fc fc 00 00 00 00 00 00
+==================================================================
 
-But here it is assumed that pcs may be NULL.
-This does not seem consistent.
 
-Flagged by Smatch.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-> +		ret = wrapped->ops->pcs_post_config(wrapped, interface);
-> +	else
-> +		ret = 0;
-> +
-> +	srcu_read_unlock(&pcs_srcu, idx);
-> +	return ret;
-> +}
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-...
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-> +/**
-> + * pcs_unregister() - unregister a PCS
-> + * @pcs: a PCS previously registered with pcs_register()
-> + */
-> +void pcs_unregister(struct phylink_pcs *pcs)
-> +{
-> +	struct pcs_wrapper *wrapper;
-> +
-> +	mutex_lock(&pcs_mutex);
-> +	list_for_each_entry(wrapper, &pcs_wrappers, list) {
-> +		if (wrapper->wrapped == pcs)
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-Assuming that rcu_access_pointer() works with srcu,
-I think that this should be:
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-		if (rcu_access_pointer(wrapper->wrapped) == pcs)
-
-Also flagged by Sparse
-
-> +			goto found;
-> +	}
-> +
-> +	mutex_unlock(&pcs_mutex);
-> +	WARN(1, "trying to unregister an already-unregistered PCS\n");
-> +	return;
-> +
-> +found:
-> +	list_del(&wrapper->list);
-> +	mutex_unlock(&pcs_mutex);
-> +
-> +	put_device(wrapper->dev);
-> +	fwnode_handle_put(wrapper->fwnode);
-> +	rcu_replace_pointer(wrapper->wrapped, NULL, true);
-> +	synchronize_srcu(&pcs_srcu);
-> +
-> +	if (!wrapper->pcs.poll)
-> +		phylink_pcs_change(&wrapper->pcs, false);
-> +	if (refcount_dec_and_test(&wrapper->refcnt))
-> +		kfree(wrapper);
-> +}
-> +EXPORT_SYMBOL_GPL(pcs_unregister);
-> +
-> +static void devm_pcs_unregister(void *pcs)
-> +{
-> +	pcs_unregister(pcs);
-> +}
-> +
-> +/**
-> + * devm_pcs_register - resource managed pcs_register()
-
-nit: devm_pcs_register_full
-
-     Flagged by W=1 builds, and ./scripts/kernel-doc -none
-
-> + * @dev: device that is registering this PCS
-> + * @fwnode: The PCS's firmware node; typically @dev.fwnode
-> + * @pcs: the PCS to register
-> + *
-> + * Managed pcs_register(). For PCSs registered by this function,
-> + * pcs_unregister() is automatically called on driver detach. See
-> + * pcs_register() for more information.
-> + *
-> + * Return: 0 on success, or -errno on failure
-> + */
-> +int devm_pcs_register_full(struct device *dev, struct fwnode_handle *fwnode,
-
-...
-
-> +/**
-> + * pcs_find_fwnode() - Find a PCS's fwnode
-> + * @mac_node: The fwnode referencing the PCS
-> + * @id: The name of the PCS to get. May be %NULL to get the first PCS.
-> + * @fallback: An optional fallback property to use if pcs-handle is absent
-> + * @optional: Whether the PCS is optional
-> + *
-> + * Find a PCS's fwnode, as referenced by @mac_node. This fwnode can later be
-> + * used with _pcs_get_tail() to get the actual PCS. ``pcs-handle-names`` is
-> + * used to match @id, then the fwnode is found using ``pcs-handle``.
-> + *
-> + * This function is internal to the PCS subsystem from a consumer
-> + * point-of-view. However, it may be used to implement fallbacks for legacy
-> + * behavior in PCS providers.
-> + *
-> + * Return: %NULL if @optional is set and the PCS cannot be found. Otherwise,
-> + * *       returns a PCS if found or an error pointer on failure.
-> + */
-> +struct fwnode_handle *pcs_find_fwnode(const struct fwnode_handle *mac_node,
-> +				      const char *id, const char *fallback,
-> +				      bool optional)
-> +{
-> +	int index;
-> +	struct fwnode_handle *pcs_fwnode;
-
-Reverse xmas tree here please.
-
-Edward Cree's xmastree tool can be helpful:
-https://github.com/ecree-solarflare/xmastree
-
-> +
-> +	if (!mac_node)
-> +		return optional ? NULL : ERR_PTR(-ENODEV);
-> +
-> +	if (id)
-> +		index = fwnode_property_match_string(mac_node,
-> +						     "pcs-handle-names", id);
-> +	else
-> +		index = 0;
-> +
-> +	if (index < 0) {
-> +		if (optional && (index == -EINVAL || index == -ENODATA))
-> +			return NULL;
-> +		return ERR_PTR(index);
-> +	}
-> +
-> +	/* First try pcs-handle, and if that doesn't work try the fallback */
-> +	pcs_fwnode = fwnode_find_reference(mac_node, "pcs-handle", index);
-> +	if (PTR_ERR(pcs_fwnode) == -ENOENT && fallback)
-> +		pcs_fwnode = fwnode_find_reference(mac_node, fallback, index);
-> +	if (optional && !id && PTR_ERR(pcs_fwnode) == -ENOENT)
-> +		return NULL;
-> +	return pcs_fwnode;
-> +}
-> +EXPORT_SYMBOL_GPL(pcs_find_fwnode);
-
-...
+If you want to undo deduplication, reply with:
+#syz undup
 
