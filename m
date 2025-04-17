@@ -1,51 +1,52 @@
-Return-Path: <linux-kernel+bounces-608838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C001A918F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 12:15:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A3A5A918EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 12:14:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1E6546095D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 10:15:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 584BC17D725
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 10:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8C1233D97;
-	Thu, 17 Apr 2025 10:14:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F1422DFE8;
+	Thu, 17 Apr 2025 10:14:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MDM3rGhe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vBkojFrg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7008C22B594;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B78E226548;
 	Thu, 17 Apr 2025 10:14:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744884850; cv=none; b=JO00QvkiaJZCrDuo0moK0QP4XQMkfEi3i7wH++onEwPt/e9rBJOdcdXUvgl+jyEPwsVFkC/eFZXkYZ0ev7QXZRyuaqJgoMLatwVUHg5aIrHMCmRCSxIOjZ9icq9tfU7YR5LZKTQL5oAiDS9Z9wEOyTD+whvMa7Y6wqN0oKAUyGA=
+	t=1744884850; cv=none; b=NdxSPPd1JuT3QwHjLxfB64AKjcz1klEGiErO8SLh7G40N4atuie+BLozLBMdnkho/pW9xLxk8+00AhI8wK3WBnMKh7pSWt5wNVP9m98BGhwP6twJOVthvcDJ+oIoEkVlrsRdJ7/BD8QeT0CELEcYYyFtY3v3Dmc95476f3e0IGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1744884850; c=relaxed/simple;
-	bh=6Ng+hdOoNno07pilCVpRF8PT7c6ejjDq52moQll8qjg=;
+	bh=gJf5CbBqH0C0nOOWFRC8Iyrhov631LfP4YHpR5pnMYo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kN4lsEVg0nHuslYuWDuAkl+hEqwDxa9FjzSsZhST6YfZeQzu/2L2laj+OMVrTGx3IHpr1Inp6ShNsSlJNXrrlu4cjSyJcj6TdqisAs/OXMN8g/K4DkychRDQ87dm+QguvGJJQq9aESY006SFglDj29Ll+CnKetGi9C7UJKtwJoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MDM3rGhe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D6893C4CEE7;
+	 In-Reply-To:To:Cc; b=d+Nh4q//sXlxRLJcqhwiRm+Jz32v/TT7AQQGel69umyNOv3kZiJV8zmpBgma7A5ldUgDp9JgFLa4VxgjhL+ZKUQkgEmUKSwc3RfmN+e0S9RKEUP1ORhigjAgHYU2Ep6BsFs95f0T2bMddpm4Vgu4KNeb0trVg0m5fSp1jNqAjrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vBkojFrg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E109EC4CEF0;
 	Thu, 17 Apr 2025 10:14:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744884849;
-	bh=6Ng+hdOoNno07pilCVpRF8PT7c6ejjDq52moQll8qjg=;
+	s=k20201202; t=1744884850;
+	bh=gJf5CbBqH0C0nOOWFRC8Iyrhov631LfP4YHpR5pnMYo=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=MDM3rGheKEd7ZBQQ+GFUj2mQHHr9IYfKvyriw3gNogHemj5n3Pfbjt1iKPIxQTb9x
-	 ukfiSndhUn1LasmsqJ0uC43sR3RZgtHLWWsGvtNhnQpzJHs1820bOS+HUhl03uo2OW
-	 u82JytCmf+fHDlceGq2JHJiDyvtbLqE0KoovMbvJWlS/YpesfmbYS4Hnj+PQtZj8GR
-	 g91/ErVKiyg1SbjnMdMtCmfrgcVs76/AXG2zx8WJN0Q7IrhJ0yiShQlompY1htquAV
-	 deBEYOSOIdfwWkcxSHq7elrSLEWmBprfNLmYfhUIDhoRQzAueKaQzQFUPz5ccIRO8x
-	 FcDwZLnrksj+w==
+	b=vBkojFrg4AEg4so30RGYfvlsDQE7CBEPArs6DSBUdTUch2H8dlh22CaGmKqL3/6yg
+	 eoIjelENFzHA3gcRa/QbVuJs9G/fX9d1SWMDDJxzc2NWaH+d8aBTTzmeMIqUvv6ycO
+	 BHKCzj5EV7bZAsEBjBydd4xXjNJfI8IlXMe7PI2Mrfb7YfvytL4vPA51FzoI9uxHVz
+	 QbwxRlBBSdPO8pQ+5uRmpeZZd8KmwgbIACEhrs4m1WjbgCLRi7VZgG0IsBhmBYUHe5
+	 sCMJlaE8HLQSCr33GCCPpAH1B7PSqJHt5+R+UE3I92yFPCOrVlmE0o9LbEAxwgjvKo
+	 J1wQe7K0WXbGw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5B41C369CC;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D44BBC369C2;
 	Thu, 17 Apr 2025 10:14:09 +0000 (UTC)
 From: Maud Spierings via B4 Relay <devnull+maudspierings.gocontroll.com@kernel.org>
-Date: Thu, 17 Apr 2025 12:14:03 +0200
-Subject: [PATCH v6 2/8] arm64: dts: imx8mp: Add pinctrl config definitions
+Date: Thu, 17 Apr 2025 12:14:04 +0200
+Subject: [PATCH v6 3/8] MAINTAINERS: add maintainer for the Ka-Ro tx8p-ml81
+ COM module
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250417-initial_display-v6-2-3c6f6d24c7af@gocontroll.com>
+Message-Id: <20250417-initial_display-v6-3-3c6f6d24c7af@gocontroll.com>
 References: <20250417-initial_display-v6-0-3c6f6d24c7af@gocontroll.com>
 In-Reply-To: <20250417-initial_display-v6-0-3c6f6d24c7af@gocontroll.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -64,13 +65,13 @@ To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Fabio Estevam <festevam@gmail.com>
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- Maud Spierings <maudspierings@gocontroll.com>, Frank Li <Frank.Li@nxp.com>
+ Maud Spierings <maudspierings@gocontroll.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744884848; l=2170;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744884848; l=931;
  i=maudspierings@gocontroll.com; s=20250214; h=from:subject:message-id;
- bh=mrxqwhYhMzGSTJWlhyHKyT15kZQ0Bh3K/pqX9Brfdms=;
- b=Duiy2FJpf/467KoOQuvL2ZRGwF3ccD7XSuco07NCbofgNjQSHqDt0ApsBjczMoS0J1GMuriWm
- coGJkzMWtGPA2lFHwjzBO6RCeR5Dv/BDgyJe564/qeUh1yZWlfo1xsb
+ bh=45G3DurvF3CmLAxUTF3brxzwuPgV1THWsW5gIgc1doQ=;
+ b=0kemfNwDDmojOXuR2EA4p8QrxOPQQI2uOJ3WFTeJ+/MfRuNalD12U8xbLbIKAWo6SN40/aVrc
+ 02vQ909PeDTAdomIAjNm1ZMg2+q0nG56/7VOCJTSQ1eeYiphIMJhM9z
 X-Developer-Key: i=maudspierings@gocontroll.com; a=ed25519;
  pk=7chUb8XpaTQDvWhzTdHC0YPMkTDloELEC7q94tOUyPg=
 X-Endpoint-Received: by B4 Relay for maudspierings@gocontroll.com/20250214
@@ -80,68 +81,34 @@ Reply-To: maudspierings@gocontroll.com
 
 From: Maud Spierings <maudspierings@gocontroll.com>
 
-Currently to configure each IOMUXC_SW_PAD_CTL_PAD the raw value of this
-register is written in the dts, these values are not obvious. Add defines
-which describe the fields of this register which can be or-ed together to
-produce readable settings.
+Add GOcontroll as unofficial maintainers of the Ka-Ro tx8p-ml81 COM
+module bindings.
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+This support is not officially done by Ka-Ro electronics, if they at
+some point will supporting mainline, this should be changed to them.
+
 Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
 ---
-This patch has already been sent in a different group of patches: [1]
-It was requested there to submit it along with a user, this series also
-includes some users for it.
+ MAINTAINERS | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-[1]: https://lore.kernel.org/all/20250218-pinctrl_defines-v2-2-c554cad0e1d2@gocontroll.com/
----
- arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h | 33 ++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h b/arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h
-index 0fef066471ba607be02d0ab15da5a048a8a213a7..19a23d148246f4fb990050a9d06d20b6e769f254 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h
-@@ -6,6 +6,39 @@
- #ifndef __DTS_IMX8MP_PINFUNC_H
- #define __DTS_IMX8MP_PINFUNC_H
+diff --git a/MAINTAINERS b/MAINTAINERS
+index b5acf50fc6af4322dec0dad2169b46c6a1903e3c..1ca022081bcf564c8ec91fb6431570045495ec23 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12779,6 +12779,12 @@ S:	Maintained
+ F:	Documentation/hwmon/k8temp.rst
+ F:	drivers/hwmon/k8temp.c
  
-+/* Drive Strength */
-+#define MX8MP_DSE_X1 0x0
-+#define MX8MP_DSE_X2 0x4
-+#define MX8MP_DSE_X4 0x2
-+#define MX8MP_DSE_X6 0x6
++KA-RO TX8P COM MODULE
++M:	Maud Spierings <maudspierings@gocontroll.com>
++L:	imx@lists.linux.dev
++S:	Maintained
++F:	arch/arm64/boot/dts/freescale/imx8mp-tx8p-ml81.dtsi
 +
-+/* Slew Rate */
-+#define MX8MP_FSEL_FAST 0x10
-+#define MX8MP_FSEL_SLOW 0x0
-+
-+/* Open Drain */
-+#define MX8MP_ODE_ENABLE 0x20
-+#define MX8MP_ODE_DISABLE 0x0
-+
-+#define MX8MP_PULL_DOWN 0x0
-+#define MX8MP_PULL_UP 0x40
-+
-+/* Hysteresis */
-+#define MX8MP_HYS_CMOS 0x0
-+#define MX8MP_HYS_SCHMITT 0x80
-+
-+#define MX8MP_PULL_ENABLE 0x100
-+#define MX8MP_PULL_DISABLE 0x0
-+
-+/* SION force input mode */
-+#define MX8MP_SION 0x40000000
-+
-+/* long defaults */
-+#define MX8MP_USDHC_DATA_DEFAULT (MX8MP_FSEL_FAST | MX8MP_PULL_UP | \
-+								  MX8MP_HYS_SCHMITT | MX8MP_PULL_ENABLE)
-+#define MX8MP_I2C_DEFAULT (MX8MP_DSE_X6 | MX8MP_PULL_UP | MX8MP_HYS_SCHMITT | \
-+						   MX8MP_PULL_ENABLE | MX8MP_SION)
-+
- /*
-  * The pin function ID is a tuple of
-  * <mux_reg conf_reg input_reg mux_mode input_val>
+ KASAN
+ M:	Andrey Ryabinin <ryabinin.a.a@gmail.com>
+ R:	Alexander Potapenko <glider@google.com>
 
 -- 
 2.49.0
