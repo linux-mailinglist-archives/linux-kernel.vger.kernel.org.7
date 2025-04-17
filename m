@@ -1,148 +1,150 @@
-Return-Path: <linux-kernel+bounces-608443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2025A91389
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:07:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77345A9138F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:09:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EE02190688F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 06:08:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92A04443D07
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 06:09:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 208EB1F55E0;
-	Thu, 17 Apr 2025 06:07:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12EBD1F418B;
+	Thu, 17 Apr 2025 06:09:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B3L/KVTG"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="FhOkpxSp"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0FC01F1526
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 06:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2E692DFA4B
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 06:09:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744870065; cv=none; b=PND3ro+dHosmuJ6sMAAN1MZ5OiNJuIZVPcJt8QX2y27uRDfJQyOI+JAI8AR2CR2TtogoTi2Y9/kV6S8Fnmjy16xIawABaYwagyA8uFop8CCLGuiSlj9RSM8KsBoZODfeu+J9OHTyDDXFCVKYOeL4GEsiSppT+iZvQlWShRxuSek=
+	t=1744870186; cv=none; b=ftAETNKYjfNyaNmrDkXmY+t/UMZMFt3EBAXVzpgdsDPE7PZvNn3ikw9UUHvJNgkF5V3zBgotrZGK8xwfEdgVGH2jxgR8+Jb5ZPoPfF6q7xuaa47vbZ5ewCxuS5Lzm3XC87H4ApY6a/svNBtr4H0wvSDNqpYUXMMEHfrd1LNExTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744870065; c=relaxed/simple;
-	bh=SJ5pp2PEFU9Mosrf8HZCUtQXVnazURuiUC73cKCZalg=;
+	s=arc-20240116; t=1744870186; c=relaxed/simple;
+	bh=lXDEFZjhpvjtK8iiYDFuw+tF0cAOWt6YH0wCwA0iPg8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OB9xLh8XVoME29354bgpSf++2mzQ4cUjTzk4sp+VkPk40uCLP3ci4UtqKlBocl11YLZymOEIjVK3wATX+QfMaGOGZS9YOkIjLxi3jLLWH1EiH70Bl/qCTrUGsIpUNEVsmhp2tjZa35Z1vnYSKytmAmHL5sLvEJEbkux/zdiWJP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B3L/KVTG; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-73bf1cef6ceso331332b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Apr 2025 23:07:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744870063; x=1745474863; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Pd6OOWCuIIKAwnNGxCiRtg0jiUDcshaa45Tlc/bukVw=;
-        b=B3L/KVTGfswXOANfd8zfHIHCi2/25FkO3qJf9/Ju8b8fvrUzjuK6ZjErL1neYzsJXz
-         dkVU4OnqlgHmFjbuMxHYCH+g1a6PyR9lJflK+CeI3lJE/xrycUNIaMaPgQ9WHiAHf7wp
-         EEECLJa9tEVoKrBqTmq7lLoyeFhpJgXbogr3Pw6iR+sSI0nuRaORIBEPih/lZgaeITf1
-         ZgTODtNrugc4IU5cZ0ZFkiZGVES8B4hc9UYznpJlwJPZ815QBKbWQ3XfF+kE8bER/fnR
-         YXrCAfCuh+43sZxbfFxOaQ4wqX0h7WqPjbIruEc4NgzvX3+CSLegN73HNAZY+VMVdb+4
-         UKPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744870063; x=1745474863;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pd6OOWCuIIKAwnNGxCiRtg0jiUDcshaa45Tlc/bukVw=;
-        b=uG6P7VEO8LYLSHKCCHjgCmHF/DY3HuYfWU739rC+ioqBGTsPp/BShpvNInP2XU2B3C
-         fIKfSPNS+cz85DGVuqpvRJ9mVcSbV9rHRn2FxebLbf5PGiCJyNUDTcXnUjtSrACyeYFh
-         nvpU1bdT497QkyUjxp8bNfmSRnaFl39pJW0eTY/LZdQaxVFRM3uEXHELLLtM2jM1/zhL
-         cHV66wponDHVN71X+KvLhBwDCTOm4CwoMHdK6/MjnSo3R2EZ89pqU2y+WHa/82Zi+3QO
-         gbRD9PrAC7V/yBZPoqsBntdBCFmFAWJpLQWQjCm29nYS6O0mGkttSvuvOoU2oYyO5Pd+
-         Dh+g==
-X-Forwarded-Encrypted: i=1; AJvYcCUbilpqZZ7gfuyn8tMEs7ktLGbQSEGm9UrFTv54TIvSdv/iOgnxlGTpWNz26Eswwd/UBw5qMkFg9jDEPmE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwE+owjn91Dh9i7vNYQEeja4f7TPVYyckgnNiHTgD3grhCvrrsp
-	uUhGWiL1uYYBrage9btrMlevwVhhgFiGwMvZmBGBCa/Q4p0WAIAM6c3rbrsDY2yRKvV/tCHgYGM
-	=
-X-Gm-Gg: ASbGncuTKNVRw1rwlV83839aDiYlzEF0gSso3dhvHvOV4p1sEHuYouT3caoKFoaZgBa
-	OzVh56zTIiwL8hKbJl+DaNCD5HxsJ1cLet2sG927wiuoXiw/ZJ2dIA+Mlyl5GxTUn/+k8Jd/5tn
-	dEg8po+/OSC65Gqj7BGf8+PZ/wvIV3prb/L0IA62r4sWOY0nrJawhiYP2ypYYC0pk4Yfb/y5qj0
-	kIGQxHpRh2ENxPy271rHjfmsSlndbLpI2FEDwHeqxKBcj/CbmDPSN8F+jlVy393UXO5sr3sXX4z
-	GH1uxXdCEWvdvH8dXVDvM3RNLUrwbyTKxeulN3H6J8M6WG8K
-X-Google-Smtp-Source: AGHT+IEGKe8IgUll51m3XVZ/pKTgzfl3xR85lF+5Mw9zim0JsXl11h/TRDH0YYgMcdLUzmlGXqar4A==
-X-Received: by 2002:a05:6a00:240c:b0:736:5725:59b4 with SMTP id d2e1a72fcca58-73c266b5fcfmr7618028b3a.3.1744870062780;
-        Wed, 16 Apr 2025 23:07:42 -0700 (PDT)
-Received: from thinkpad ([120.60.54.0])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd23351fbsm11902923b3a.171.2025.04.16.23.07.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Apr 2025 23:07:42 -0700 (PDT)
-Date: Thu, 17 Apr 2025 11:37:38 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Veerabhadrarao Badiganti <quic_vbadigan@quicinc.com>
-Cc: Vivek Pernamitta <quic_vpernami@quicinc.com>, mhi@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] bus: mhi: host: pci: Disable runtime PM for QDU100
-Message-ID: <o7rv3xgg3btaoqjlzfenbfkrp3fuw54cx6zqojclcfslfg3ha4@c3sqaqqdjdjv>
-References: <20250414-vdev_next-20250411_pm_disable-v1-1-e963677636ca@quicinc.com>
- <ec99379e-fd54-42b0-a383-8ed212072396@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WJ+qJb2PX4zDIiZl2b1w/7pR2OhRJahQnCjaInmON0azdCIs1mmqhYoe2w5gMvbQqK6KPIVTFtApJkfFZ0xLhMrki5JU40PWo4J4lLOMJdYMqQR+azGAzRvRCSlPJ+OjN3bbBzqHsuTXYdl08y1wRRDBCvUE9rfGTQnekgQle4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=FhOkpxSp; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53GNlAqZ019278;
+	Thu, 17 Apr 2025 06:09:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=OibXNJCHuU82A+EwGowd4e3lnAlwTB
+	ETZ7mbg5uTl+o=; b=FhOkpxSpmgICINQ0SP8mU9hZrbuIeTDnx8lpswj1QNafVH
+	DlxjyeGnHMkvG7Ior+JiVeOD5v69rRYMGIERnw6h3Q1wJYl5I2Xikg/H7BMbefer
+	JIfsx9gzdmGZ9QvIrwuUlQACJcSNCMjtKXuK37HsePn70VDxqUIn7kyJNCW9BYfe
+	QMGUuvQ14zve2fa8sgDOUrEBL/Mpgv7kEw7tKAqWE3sJoNut0FyUoB5e4sBi6mmS
+	CF7Qvb2DzkwidK7UfLsA6uTD1Rn0aFhpvDcI73YHIMls4onsSpF58lri+v1bt7rh
+	mv3tnKeC4G1ulH7mZPx0gTMvDvX5PJdF65mIkwOA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 462ph09amt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Apr 2025 06:09:31 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 53H69UCn013794;
+	Thu, 17 Apr 2025 06:09:30 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 462ph09amq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Apr 2025 06:09:30 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53H23KSh017207;
+	Thu, 17 Apr 2025 06:09:29 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46040m46b9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Apr 2025 06:09:29 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53H69Qfo51052878
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 17 Apr 2025 06:09:26 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F18AD20040;
+	Thu, 17 Apr 2025 06:09:25 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7E73420043;
+	Thu, 17 Apr 2025 06:09:24 +0000 (GMT)
+Received: from li-e1dea04c-3555-11b2-a85c-f57333552245.ibm.com (unknown [9.109.207.139])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 17 Apr 2025 06:09:24 +0000 (GMT)
+Date: Thu, 17 Apr 2025 11:39:20 +0530
+From: Mukesh Kumar Chaurasiya <mchauras@linux.ibm.com>
+To: Misbah Anjum N <misanjum@linux.ibm.com>
+Cc: linuxppc-dev@lists.ozlabs.org, maddy@linux.ibm.com, mpe@ellerman.id.au,
+        npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] arch/powerpc: Remove redundant typedef for bool
+Message-ID: <jwhxcpjsikjfwmeibpssbc3mvr7dhkd225bfgp4pukr3caugxd@mdruiivxfhod>
+References: <20250323163607.537270-1-misanjum@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ec99379e-fd54-42b0-a383-8ed212072396@quicinc.com>
+In-Reply-To: <20250323163607.537270-1-misanjum@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=QJdoRhLL c=1 sm=1 tr=0 ts=68009b1b cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=WN4RLpz-Xj6QzkEfG4QA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-GUID: nwZmyqO5dRddaamJ3gdckl7Dq4Uca1t_
+X-Proofpoint-ORIG-GUID: 9vC7EEff8svzUx1zPm7V4x-nUUs2J2NH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-17_01,2025-04-15_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
+ adultscore=0 mlxlogscore=833 priorityscore=1501 mlxscore=0
+ lowpriorityscore=0 bulkscore=0 suspectscore=0 clxscore=1015 malwarescore=0
+ impostorscore=0 classifier=spam authscore=0 adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2502280000 definitions=main-2504170045
 
-On Thu, Apr 17, 2025 at 10:00:38AM +0530, Veerabhadrarao Badiganti wrote:
+On Sun, Mar 23, 2025 at 11:36:06AM -0500, Misbah Anjum N wrote:
+> Hi,
 > 
-> On 4/14/2025 1:17 PM, Vivek Pernamitta wrote:
-> > The QDU100 device does not support the MHI M3 state, necessitating the
-> > disabling of runtime PM for this device. Since the PCIe core framework
-> > enables runtime PM by default for all clients, it is essential to disable
-> > runtime PM if the device does not support Low Power Mode (LPM).
-> > 
-> > Signed-off-by: Vivek Pernamitta<quic_vpernami@quicinc.com>
-> > ---
-> >   drivers/bus/mhi/host/pci_generic.c | 10 ++++++++++
-> >   1 file changed, 10 insertions(+)
-> > 
-> > diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
-> > index 03aa887952098661a488650053a357f883d1559b..a011fd2d48c57cf9d1aec74040153267a206d797 100644
-> > --- a/drivers/bus/mhi/host/pci_generic.c
-> > +++ b/drivers/bus/mhi/host/pci_generic.c
-> > @@ -43,6 +43,7 @@
-> >    * @mru_default: default MRU size for MBIM network packets
-> >    * @sideband_wake: Devices using dedicated sideband GPIO for wakeup instead
-> >    *		   of inband wake support (such as sdx24)
-> > + * @pm_disable: disables runtime PM (optional)
-> >    */
-> >   struct mhi_pci_dev_info {
-> >   	const struct mhi_controller_config *config;
-> > @@ -54,6 +55,7 @@ struct mhi_pci_dev_info {
-> >   	unsigned int dma_data_width;
-> >   	unsigned int mru_default;
-> >   	bool sideband_wake;
-> > +	bool pm_disable;
-> >   };
-> >   #define MHI_CHANNEL_CONFIG_UL(ch_num, ch_name, el_count, ev_ring) \
-> > @@ -295,6 +297,7 @@ static const struct mhi_pci_dev_info mhi_qcom_qdu100_info = {
-> >   	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
-> >   	.dma_data_width = 32,
-> >   	.sideband_wake = false,
-> > +	.pm_disable = true,
+> I noticed that a patch addressing the same issue has been proposed by
+> Michal Suchanek:
+> https://lore.kernel.org/linuxppc-dev/Z86liwlwP5WvrEkw@kitsune.suse.cz/T/#t
 > 
-> |no_m3|orno_|m3_support|would be more suitable than|pm_disable|
-
-Yes!
-
-But does the device not supporting M3 only or D3Hot also? If the former, then we
-should prevent MHI host to enter/exit M3 state in mhi_pm_suspend/ mhi_pm_resume.
-There is an incentive in allowing D3Hot if the device supports it.
-
-Also, is there a way we could probe M3 support in the device so that we can
-check it during runtime?
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+> The existing patch addresses the compilation error by modifying the Makefile
+> to use `gnu11` with `BOOTTARGETFLAGS`. This is a practical approach to avoid
+> the error in the short term.
+> 
+> This patch builds on that work by providing a long-term solution that ensures
+> compatibility with C23 while maintaining backward compatibility. Specifically:
+>     - It uses `__STDC_VERSION__` to conditionally define the `bool` typedef only
+>     for pre-C23 standards.
+>     - It ensures that the code is future-proof and ready for upcoming C23 standards,
+>     where `bool`, `true`, and `false` are reserved keywords.
+>     - It avoids reliance on compiler-specific flags, making the code more portable
+>     and standards-compliant.
+> 
+> Changlog:
+>     - Adding version check via __STDC_VERSION__
+>     - If  __STDC_VERSION__ < C23, 'typedef int bool' is defined as usual
+>     - If __STDC_VERSION__ >= C23, the typedef redundancy is removed
+> 
+> The patch has been tested with:
+>     - gcc (GCC) 15.0.1 20250228 (Red Hat 15.0.1-0)
+>     - gcc (GCC) 14.2.1 20250110 (Red Hat 14.2.1-7)
+> 
+> Thanks,
+> Misbah Anjum N
+> 
+> 
+> Misbah Anjum N (1):
+>   arch/powerpc: Remove redundant typedef for bool
+> 
+>  arch/powerpc/boot/types.h | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+Reviewed-by: Mukesh Kumar Chaurasiya <mchauras@linux.ibm.com>
+> -- 
+> 2.49.0
+> 
 
