@@ -1,149 +1,161 @@
-Return-Path: <linux-kernel+bounces-608466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03E51A91419
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:32:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 62FD9A91440
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 08:42:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69E865A07D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 06:32:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2FCE5A1A8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 06:42:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40B9C1DFD86;
-	Thu, 17 Apr 2025 06:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6626C2066D9;
+	Thu, 17 Apr 2025 06:42:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i1X0TxiQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="afXSZzFL"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951E13208;
-	Thu, 17 Apr 2025 06:32:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1432C205E2F;
+	Thu, 17 Apr 2025 06:42:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744871536; cv=none; b=L9ZrwICK7GfpPg8hXZUVCx4LYQVxbyqAv9hPUZB035rQ0UnFU3CQCb6v+xnZu29dCByy9o3TzCxtLzFrVDBIXXJYnOF6Z7i1XWaheDayo3zHZq5xZ4YfRi3zsiy5zgXygJyH9VukVcCZc5/IFFBLoBx0njdlvPE5B4I/YcGogOk=
+	t=1744872132; cv=none; b=OKEKF2BG/JXT3pkkbTkVsoi15t+ynt/W4AmUT9xMkimIII7hLzpQClu07ihIZoZwfDL26jWzEqsZeSSQNKe1EWQ/5SVK/0Ivh7/7/jTYRMN20apAdM+khOfYat1lal7kDnOTmuafVxO6wamKcaXZkQ4cXvdjK3EI6UEiF/b6908=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744871536; c=relaxed/simple;
-	bh=ynTXwFihEEN4bWQSiOjx5PziQ0jr0xeEIjU1wRMCN5s=;
+	s=arc-20240116; t=1744872132; c=relaxed/simple;
+	bh=qBPeov2ee89LdDp4bu5sttFc3P5GRCw9vxvmNL6dVTg=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ya0uGGdQ+WtXGmoQUg7IQP1m6WNiiikYVD9BQsOkTglnVktDcCYVYpNorYUAqEwIN6egCtkDmg6HWJQU8vtj+GWPtPxRl4t9OLL7H1UzZjrSGqj41dyWc0XH7m2nOfMuVXy4PZ6J0bCWKpeCO+zs7gQBPEuRMV/bLVeh5C9mIGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i1X0TxiQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3796AC4CEE4;
-	Thu, 17 Apr 2025 06:32:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744871535;
-	bh=ynTXwFihEEN4bWQSiOjx5PziQ0jr0xeEIjU1wRMCN5s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=i1X0TxiQOZSCNkdxdA84ZA0me1j+dxbHbsBHgMZp5Be5+ygw6IfsQbY/N2W4/VcBx
-	 dr3KbLsUdqif2zDHKAFKmH0y3i5/88KAw30eAVb9fUYsmaIkCTfl6GBIkF6E9OAASQ
-	 WpFagCAj69cBVVoN2EjPstIrVOEhHz8io9ETBiGIpbPGi0cvjbqAN5stIvibK0z8az
-	 87dl5WDaXXlE5wDQImRmf/Ma9g4wPoOYBBgLuWAI4CpJizOin1q2upAlpeHfIivRWv
-	 VI+Uh3FaHhdZXNaNT2E8z2k9YVc1dMc5G6HztFRXQfajDSlYn6D1z+8uuaZsWXw9C2
-	 GBe9TWNwNhY8Q==
-Date: Thu, 17 Apr 2025 14:31:52 +0800
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>, Linux Doc Mailing List
- <linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, David Airlie
- <airlied@gmail.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Masahiro Yamada
- <masahiroy@kernel.org>, Maxime Ripard <mripard@kernel.org>, Nathan
- Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Simona Vetter <simona@ffwll.ch>,
- Thomas Zimmermann <tzimmermann@suse.de>, Tvrtko Ursulin
- <tursulin@ursulin.net>, dri-devel@lists.freedesktop.org,
- intel-gfx@lists.freedesktop.org, linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] scripts/kernel-doc.py: don't create *.pyc files
-Message-ID: <20250417143152.24371d26@sal.lan>
-In-Reply-To: <Z_96BpMMOzcotJqI@smile.fi.intel.com>
-References: <cover.1744789777.git.mchehab+huawei@kernel.org>
-	<4ad5eb8d4b819997c1615d2401581c22a32bb2c1.1744789777.git.mchehab+huawei@kernel.org>
-	<87tt6opks7.fsf@intel.com>
-	<20250416171917.0985c0eb@sal.lan>
-	<20250416172901.60104103@sal.lan>
-	<Z_96BpMMOzcotJqI@smile.fi.intel.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	 MIME-Version:Content-Type; b=eTFE8h8shdD0NpbskUqJ5VgfOtLEX25V53xkX91SgcgZT1FC6BGylnq1clcGxcK7SQzYJ7W7X2wEjneiVf915AZ+/O71cJ9pVsuqjqR0JpvDeiNbIrDiPfL5QTrODho2R58ECbqhk/vRHtrJ6uRuzeKXyWP9EKw3rmXaM0tuvuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=afXSZzFL; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 88C5E1039EF2C;
+	Thu, 17 Apr 2025 08:33:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1744871623; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=pWQQRs0tNulqLLtU6X0X0rTBDfrE7GYWj3CFIceXYpw=;
+	b=afXSZzFLb1a2k7ibreW8JrPnIz18s/tOxCEP8LPHLrvqzy7iC3k+Sb54OJvH8lETFgRDws
+	34fOPk2HzF0pgqCpoaZj4GK/KcG+B8/i7PjxYjji8r94LTopk9GdDHreJXLjlNFKYgX++X
+	ftVu6jWGAkW5Ijbq8gyaGCeCeGFVMQQHgF0ZS8pH0TN4/CUecPt1GPR38DhPVmTC75+xA2
+	Xm+sQEE3XkfYb7055LhVq397AIuuz2aha661U55f2VUaUn2YhENdEu+uIWDpBEBMbD+az8
+	sjOiiHPy/sWtJ1noGDjo0NJWR0kMBfLSSq2SbhO92Qmzx1Z3CuCZ/YmJRlufoQ==
+Date: Thu, 17 Apr 2025 08:33:34 +0200
+From: Lukasz Majewski <lukma@denx.de>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Stefan Wahren <wahrenst@gmx.net>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ davem@davemloft.net, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Richard Cochran
+ <richardcochran@gmail.com>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, Simon Horman
+ <horms@kernel.org>
+Subject: Re: [net-next v5 2/6] ARM: dts: nxp: mxs: Adjust the imx28.dtsi L2
+ switch description
+Message-ID: <20250417083334.69b565b0@wsk>
+In-Reply-To: <2c9a5438-40f1-4196-ada9-bfb572052122@lunn.ch>
+References: <20250414140128.390400-1-lukma@denx.de>
+	<20250414140128.390400-3-lukma@denx.de>
+	<06c21281-565a-4a2e-a209-9f811409fbaf@gmx.net>
+	<2c9a5438-40f1-4196-ada9-bfb572052122@lunn.ch>
+Organization: denx.de
+X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/4vV2OQm1rnprx1JCFrQMEAC";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+X-Last-TLS-Session-Version: TLSv1.3
+
+--Sig_/4vV2OQm1rnprx1JCFrQMEAC
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-Em Wed, 16 Apr 2025 12:36:06 +0300
-Andy Shevchenko <andriy.shevchenko@intel.com> escreveu:
+Hi Andrew,
 
-> On Wed, Apr 16, 2025 at 05:29:01PM +0800, Mauro Carvalho Chehab wrote:
-> > Em Wed, 16 Apr 2025 17:19:17 +0800
-> > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> escreveu:  
-> > > Em Wed, 16 Apr 2025 11:34:16 +0300
-> > > Jani Nikula <jani.nikula@linux.intel.com> escreveu:  
-> > > > On Wed, 16 Apr 2025, Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:  
-> 
-> ...
-> 
-> > > > >  quiet_cmd_hdrtest = HDRTEST $(patsubst %.hdrtest,%.h,$@)
-> > > > >        cmd_hdrtest = \
-> > > > >  		$(CC) $(c_flags) -fsyntax-only -x c /dev/null -include $< -include $<; \
-> > > > > -		$(srctree)/scripts/kernel-doc -none $(if $(CONFIG_WERROR)$(CONFIG_DRM_WERROR),-Werror) $<; \
-> > > > > +		 PYTHONDONTWRITEBYTECODE=1 $(KERNELDOC) -none $(if $(CONFIG_WERROR)$(CONFIG_DRM_WERROR),-Werror) $<; \    
-> > > > 
-> > > > KERNELDOC is not set here.  
-> > >   
-> > > > 
-> > > > /bin/sh: 1: -none: not found  
-> > > 
-> > > Weird. This is set on Documentation/Makefile:
-> > > 
-> > > 	$ grep KERNELDOC Documentation/Makefile 
-> > > 	KERNELDOC       = $(srctree)/scripts/kernel-doc.py
-> > > 	...
-> > > 
-> > > drivers/gpu/drm/Makefile should be able to see this variable there...  
-> > 
-> > I suspect that the building system tries to confine variables to
-> > sub-directories, so maybe one solution would be to move it to the
-> > main makefile.
-> > 
-> > could you please check if this patch solves the issue?
-> > 
-> > [PATCH] Makefile: move KERNELDOC macro to the main Makefile
-> > 
-> > As kernel-doc script is used not only on Documentation, but
-> > also on scripts and drivers/drm Makefiles, move it to the
-> > main makefile, as otherwise sub-makefiles may not have it.
-> > 
-> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> > 
-> > diff --git a/Documentation/Makefile b/Documentation/Makefile
-> > index c022b97c487e..7a2069e87dbd 100644
-> > --- a/Documentation/Makefile
-> > +++ b/Documentation/Makefile
-> > @@ -60,7 +60,6 @@ endif #HAVE_LATEXMK
-> >  # Internal variables.
-> >  PAPEROPT_a4     = -D latex_paper_size=a4
-> >  PAPEROPT_letter = -D latex_paper_size=letter
-> > -KERNELDOC       = $(srctree)/scripts/kernel-doc.py
-> >  KERNELDOC_CONF  = -D kerneldoc_srctree=$(srctree) -D kerneldoc_bin=$(KERNELDOC)  
-> 
-> In this case the _CONF makes sense to move together as they are coupled
-> semantically.
+> > > -		eth_switch: switch@800f8000 {
+> > > -			reg =3D <0x800f8000 0x8000>;
+> > > +		eth_switch: switch@800f0000 {
+> > > +			compatible =3D "nxp,imx28-mtip-switch";
+> > > +			reg =3D <0x800f0000 0x20000>;
+> > > +			interrupts =3D <100>, <101>, <102>;
+> > > +			clocks =3D <&clks 57>, <&clks 57>, <&clks
+> > > 64>, <&clks 35>;
+> > > +			clock-names =3D "ipg", "ahb", "enet_out",
+> > > "ptp"; status =3D "disabled"; =20
+> > from my understanding of device tree this file should describe the
+> > hardware, not the software implementation. After this change the
+> > switch memory region overlaps the existing mac0 and mac1 nodes.
+> >=20
+> > Definition in the i.MX28 reference manual:
+> > ENET MAC0 ENET 0x800F0000 - 0x800F3FFF 16KB
+> > ENET MAC1 ENET 0x800F4000 - 0x800F7FFF 16KB
+> > ENT Switch SWITCH 0x800F8000 - 0x800FFFFF 32KB
+> >=20
+> > I'm not the expert how to solve this properly. Maybe two node
+> > references to mac0 and mac1 under eth_switch in order to allocate
+> > the memory regions separately. =20
+>=20
+> I get what you are saying about describing the hardware, but...
+>=20
+> The hardware can be used in two different ways.
+>=20
+> 1) Two FEC devices, and the switch it left unused.
+>=20
+> For this, it makes sense that each FEC has its own memory range, there
+> are two entries, and each has a compatible, since there are two
+> devices.
+>=20
+> 2) A switch and MAC conglomerate device, which makes use of all three
+>    blocks in a single driver.
+>=20
+> The three hardware blocks have to be used as one consistent whole, by
+> a single driver. There is one compatible for the whole. Given the
+> ranges are contiguous, it makes little sense to map them individually,
+> it would just make the driver needlessly more complex.
+>=20
+> It should also be noted that 1) and 2) are mutually exclusive, so i
+> don't think it matters the address ranges overlap. Bad things are
+> going to happen independent of this if you enable both at once.
+>=20
 
-In a matter of fact, it doesn't...
++1
 
-> >  ALLSPHINXOPTS   =  $(KERNELDOC_CONF) $(PAPEROPT_$(PAPER)) $(SPHINXOPTS)
+>       Andrew
 
-This is just part of ALLSPHINXOPTS, where it places two definitions
-to be used by the Sphinx kerneldoc extension. I need to double-check
-it, but I suspect that this is not even used there anymore. If it is
-still used, it can be cleaned up after we remove the Perl version.
 
-So, I prefer to keep this (perhaps with a different name) at the
-documentation makefile.
+Best regards,
 
-Regards,
-Mauro
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH,      Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
+
+--Sig_/4vV2OQm1rnprx1JCFrQMEAC
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmgAoL8ACgkQAR8vZIA0
+zr1dXAf+KoIdy7wyBtKjBP15Tbe4F8OveobBmbcJKV0P6JQ5JNNxIFEwSKWjtTuk
+BY6L/6XG6JF1r/k/kHMe6/RemX45J3eVx0YJlUDNo/ESLK6Eez9YZIkgcfuNom3w
+XwkUNjydQLSEbB+tkY1fizdyBqIGBRiTLq0A2ZHuvklpu9TsgHoLZ7ebuvJaFANd
+9ov3lp9/PRK7+0fQ13XMFoPoDv0Svu4LN0yXwR4d8uhYCxmy8bQbs2Ec40Cb2puN
+DZcrSwXFw9GCgTMXW5NgoAR9Gx/SaOSmS9lBBqR1wIeu0QrPZ6bTsf/zIj8LO8HC
+uiEW59nmY3d05Emg0PG7Wa9MIou19A==
+=SqyS
+-----END PGP SIGNATURE-----
+
+--Sig_/4vV2OQm1rnprx1JCFrQMEAC--
 
