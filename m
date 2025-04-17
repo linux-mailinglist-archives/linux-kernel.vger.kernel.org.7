@@ -1,145 +1,123 @@
-Return-Path: <linux-kernel+bounces-608386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-608388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88EE5A91290
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:17:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E070A91296
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 07:19:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 011503BC8A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 05:17:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6933417F71F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Apr 2025 05:19:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F161D6DA1;
-	Thu, 17 Apr 2025 05:17:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BDB61DE2B0;
+	Thu, 17 Apr 2025 05:19:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hXjS/Tsu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RTTqQuX8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A0DA94A;
-	Thu, 17 Apr 2025 05:17:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1CE0A94A;
+	Thu, 17 Apr 2025 05:19:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744867053; cv=none; b=JB5HbDTEk6mzI+xMue2xHUWEhM+vYIvrO4Kxg3xm534cwkUmKFkZRvNIexoGetprqKR7xrj5nXuChQW6ZlHCKqNdUgBlKvXuBBNAWsTRS1aUigoWfcJdKZJKh687Mg0jBOxwk37kRr1YfosJIeAPWhu0hj1Jbow91YQTxw07rOY=
+	t=1744867182; cv=none; b=jqR48uaY5cTZHCDdgcifFnfAP9aDSKSKHPTwejazmS8rfMnxHkPnIdlEbu/dPq0ROlakq1MS8VBYayPj9fUO97+BqsdmohQH3BSMgBjfujtCHCBxMfuf6kUf0DEhZ6ijrPMUhaWp2UXhM4d1/56i76jg00gDyZHBc+g35nC7u0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744867053; c=relaxed/simple;
-	bh=6EgLG4gGOWWwoixoJY8+Na03ZmFU57CDaO0m9BfGgV0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=czvXSUi1qNO5DEzJ8Cw4jLLgN7HqXSH743+lL6VvzQ5EJtB/t2IZf2O5E/Z+qBQs7Xx86NfSWkReZzPAPTPVtkRf32GE1dzGOTWzzclzYU9KKo8OlHeAFEOzphwOLZq9Vw6wBwdFco6aoYN1c1m46H6kACMkEwxaEs7qxxQ5t68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hXjS/Tsu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EA7CC4CEE7;
-	Thu, 17 Apr 2025 05:17:32 +0000 (UTC)
+	s=arc-20240116; t=1744867182; c=relaxed/simple;
+	bh=QPxSx4yidprMLvv54dKHSCW92kEUm/y+VzKczOa8+DQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o8yDTgkU8dk44bPRKT9iOtPcIb4AfkZX2nWDKBsysir0zJF3oR8ALJ5sUDwjcLW4vTQK3K64DL6wcMF2Lf2mpUeF0z+HOk9Zq8U27TENEXeZq4ZERpvU1NNlYnj5GXgXJAdjHrSjOsClOEPvxScSrm/ZGbJ5vVtJONb0l2qwp9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RTTqQuX8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17BA2C4CEE4;
+	Thu, 17 Apr 2025 05:19:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744867053;
-	bh=6EgLG4gGOWWwoixoJY8+Na03ZmFU57CDaO0m9BfGgV0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=hXjS/Tsu1IvtdZEHvu8TmVrAsXFEuQVk4fMFoefDfUD/nzpO3lPdbnsNnCKFJlxdF
-	 1w40F759jSMvC58vkprQcGOy6tZLKmqL2Su/1XPNiFXEGoRMflm6ypGrmiYRMAc2Cv
-	 LZAPAnkD+5Niv8Xmitvym96CtJgVXZEWLzHyTwXlipm0h+G1FfmuEubzDQufAI7L+R
-	 5AFna/DFZbJ23eDwKbZd2sAkqrv8oP7VzVAQYP8wp3sp7ls4AZTTu58ps7UbikReri
-	 uM+jyVUXTsIO/OHF9d5qalRVwabOq+DevdY0Ox0yxh1BwqDbWGAcT7J2oh9EOMFgQ5
-	 3fMl09dZu45NQ==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH v2] tracing: Record trace_clock and recover when reboot
-Date: Thu, 17 Apr 2025 14:17:29 +0900
-Message-ID:  <174486704950.3973933.810283141514120282.stgit@mhiramat.tok.corp.google.com>
-X-Mailer: git-send-email 2.49.0.777.g153de2bbd5-goog
-User-Agent: StGit/0.19
+	s=k20201202; t=1744867182;
+	bh=QPxSx4yidprMLvv54dKHSCW92kEUm/y+VzKczOa8+DQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RTTqQuX8MAlG5fiQIEpIiMaVd9qZzzuWgGbcP04UgVT6tyAqaT7GjcIkIIIfcp69P
+	 wRNAX4Y5d6ixlzyJarpB720VDTKNZlq0VHJ9tcIfrIR4nFzEbIraSz/NshNh/EBBnY
+	 byj6phy+ef0gnzHTQLhZ7S+XNO7cv0Ip79Zm67f3Ef/pG7w4n7fiSbkqeEhNNn4IGL
+	 vLf31Ap7hBqlY3+ABcQ5u2bf6xmSjdToZyJGgdAH+HrV0xPQTl2/O+yyn8acx62gHM
+	 EiGhBS3GxQDc4jwq5QZj1AnOry9yKiwtR6cG8+HAk+9u/16N4nScKrWSb8URsFGiQS
+	 uK5xkARF5JqBg==
+Message-ID: <d350841c-3560-4511-a866-9490737e48f7@kernel.org>
+Date: Thu, 17 Apr 2025 07:19:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] tty: serial: samsung_tty: support 18 uart ports
+To: Faraz Ata <faraz.ata@samsung.com>, alim.akhtar@samsung.com,
+ gregkh@linuxfoundation.org, jirislaby@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+ dev.tailor@samsung.com, rosa.pila@samsung.com
+References: <CGME20250417042427epcas5p2df3d35803adcb24da7d83e5df586380d@epcas5p2.samsung.com>
+ <20250417043427.1205626-1-faraz.ata@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250417043427.1205626-1-faraz.ata@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On 17/04/2025 06:34, Faraz Ata wrote:
+> ExynosAutov920 SoC supports 18 UART ports, update
+> the value of UART_NR to accommodate the same.
+> 
+> Signed-off-by: Faraz Ata <faraz.ata@samsung.com>
+> ---
+> Changes in v3:
+> - Fixed review comments from Krzysztof
 
-Record trace_clock information in the trace_scratch area and recover
-the trace_clock when boot, so that reader can docode the timestamp
-correctly.
-Note that since most trace_clocks records the timestamp in nano-
-seconds, this is not a bug. But some trace_clock, like counter and
-tsc will record the counter value. Only for those trace_clock user
-needs this information.
+Which ones? What changed?
 
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- Changes in v2:
-   - instead of exposing it via last_boot_info, set the current
-     trace_clock as the same clock we used in the last boot.
----
- include/linux/trace_clock.h |    2 ++
- kernel/trace/trace.c        |   17 +++++++++++++++++
- 2 files changed, 19 insertions(+)
 
-diff --git a/include/linux/trace_clock.h b/include/linux/trace_clock.h
-index 00e8f98c940f..2245848270d2 100644
---- a/include/linux/trace_clock.h
-+++ b/include/linux/trace_clock.h
-@@ -15,6 +15,8 @@
- 
- #include <asm/trace_clock.h>
- 
-+#define TRACE_CLOCK_NAME_MAX 16
-+
- extern u64 notrace trace_clock_local(void);
- extern u64 notrace trace_clock(void);
- extern u64 notrace trace_clock_jiffies(void);
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 8ddf6b17215c..6ce5d05ec64d 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -6004,6 +6004,7 @@ struct trace_mod_entry {
- };
- 
- struct trace_scratch {
-+	char			clock[TRACE_CLOCK_NAME_MAX];
- 	unsigned long		text_addr;
- 	unsigned long		nr_entries;
- 	struct trace_mod_entry	entries[];
-@@ -6114,6 +6115,8 @@ static void update_last_data(struct trace_array *tr)
- 	if (tr->scratch) {
- 		struct trace_scratch *tscratch = tr->scratch;
- 
-+		strscpy(tscratch->clock, trace_clocks[tr->clock_id].name,
-+			TRACE_CLOCK_NAME_MAX);
- 		memset(tscratch->entries, 0,
- 		       flex_array_size(tscratch, entries, tscratch->nr_entries));
- 		tscratch->nr_entries = 0;
-@@ -7289,6 +7292,12 @@ int tracing_set_clock(struct trace_array *tr, const char *clockstr)
- 	tracing_reset_online_cpus(&tr->max_buffer);
- #endif
- 
-+	if (tr->scratch && !(tr->flags & TRACE_ARRAY_FL_LAST_BOOT)) {
-+		struct trace_scratch *tscratch = tr->scratch;
-+
-+		strscpy(tscratch->clock, trace_clocks[i].name, TRACE_CLOCK_NAME_MAX);
-+	}
-+
- 	mutex_unlock(&trace_types_lock);
- 
- 	return 0;
-@@ -9514,6 +9523,14 @@ static void setup_trace_scratch(struct trace_array *tr,
- 
- 	/* Scan modules to make text delta for modules. */
- 	module_for_each_mod(make_mod_delta, tr);
-+
-+	/* Set trace_clock as the same of the previous boot. */
-+	if (tscratch->clock[0]) {
-+		if (tracing_set_clock(tr, tscratch->clock) < 0) {
-+			pr_info("the previous trace_clock info is not valid.");
-+			goto reset;
-+		}
-+	}
- 	return;
-  reset:
- 	/* Invalid trace modules */
-
+Best regards,
+Krzysztof
 
