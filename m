@@ -1,142 +1,90 @@
-Return-Path: <linux-kernel+bounces-610610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25FCFA936EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 14:18:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F7A2A936F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 14:19:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B44E17B2B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 12:18:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8A5B8A72B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 12:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEEFA274FD3;
-	Fri, 18 Apr 2025 12:18:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28D027465F;
+	Fri, 18 Apr 2025 12:18:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="kYuliqOH"
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jjvk5QoY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 008538F6B
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 12:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372F91B4145;
+	Fri, 18 Apr 2025 12:18:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744978687; cv=none; b=eKjDnrxpV8YDmvbYlKROp4csD0Am4161rhcsT8ujVrBxD0SGMArFgJ8kXnUEmYYBEvp6/7PK3txfYp5OHSl7Hn6SqL46z+0C4pcMz54iL+fDqY/34On19EMWAqn1KgL9xkvTmMydls+9+VF6kw3ai8vnkDCd672uwQMNipXxq0w=
+	t=1744978728; cv=none; b=NgppPqCwClqm1Lq8gXr8P+16vAw4LweYRdA627YrH5QASpkucRFukWX6hn4+zy+vNbIZpeRWwBJGevCg7BOIuz70tgfT2a4gCaoEPKuPSte6w7YOA+ow85SjbwL69X1htsp8wephjAfa9woIcD0z2R+H04S6ZWRkQ1YgouILrlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744978687; c=relaxed/simple;
-	bh=4jk7QVt4nEFg1SlsP3hvz8KbPKus02m6kD3C19TAsa4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bSuQ/ejr1F7q5+wVjS3eWgZj4tJ7V6xfH1jZgJ3bcDZDCelh/xiJy/IuJO5mUaeL4d43ulENnAFtEyWuQU6bwmR6UdXc8GqJtTIk3d01CTgopdxaaCmUPO5pzHVDQnuoaVDIrtrR2qiFoMCNLbQ7BQhN94OFuM0mLsNlPqCKVUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=kYuliqOH; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3d5bb2ae4d3so6460645ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 05:18:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1744978683; x=1745583483; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NgbC0Ho51LBhNAGrJS6KpfvBsql1IBS8J1NX4yoaH+M=;
-        b=kYuliqOHk3mRA4mXePaSY8dgwweD7WW/SC5yc3QV2aDjLvws7kU+ZZHqPe3MbSj74N
-         atDSlGOwDBlJMIANHQtGRoQzeqZrJ59sYQ5XXHKQlYpAOa62EyNlMpcK+mt+vqo2K76P
-         hq4pSeX2Gt+mwwBXB+Y3Ela4B7P2in6BQBn9c/2MqdF9qt8u50E5enVkZW+WtUG8MkdP
-         cuT4L/hku7YnT9DlxtJhXxgYdfW67MiA4s/QQNEvX/gNvTpjGDBzZ+xyLymW6DYLZ5u/
-         MSiqOrNr0J5oCxIRyrvXXI9s+Jrff5lxiYZIgsCUY49B1IG0hijoIseUO14Jcdpdtq/2
-         a8oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744978683; x=1745583483;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NgbC0Ho51LBhNAGrJS6KpfvBsql1IBS8J1NX4yoaH+M=;
-        b=HLIEh1ry/jiSOB3tarS8EuCi7dkZqWqyEZXGOscmcwWGX2Dsju/zo1iuyDVZJgii2e
-         Y1DiKfGPofGBpi3o8HN6+kqdXEkfzTQIhAiyV2e4r6Xbi/lpIDGzEzFlbhOSxLUzZ7HH
-         izWXtIQk4hdvYcWnQymcW69QhsiX3MashOL6GKiABjKMIsp2vLYvkcciS9AmI95trXhj
-         xUaCRYWYKPDAP+j7vOfIopUNwJ0L5tFVRa6bSwKZ239ye9tUV5laWl8zLnWJVRyK3heh
-         itOdkwOgVo7HlM3zd3O2Y5vy2oS0UuXVZFIZuyrbkXMdRZmrMJkJECWowQwhW7jYv8Em
-         I5YQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWMF1ZF0Gt2wPH4+GZU3ShMWfD6MPI2bedNQxuliIx0jRSyOIzz9DGLmR4LltaBG1oxgX8VhFZOx5CK1rQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwGggOzhh3fL0psa2DgZbvkgMWI01hXZxd0aNvWaX2Sfpfxn2R
-	9zJuggO5KS5V46dbRjrq3BcKXgQYlt1DFGBm0NNxJCbIby1KVe17Gapw/jlwxYE=
-X-Gm-Gg: ASbGncvTKDIaqeDTsz0FQgNUOxzAQ/qE3dcdkQQdjrDNBnb20SsqawopljD9ccx6zwW
-	5TQttX+vVHTk2W5fTA6tEqvWes/k/nTeAE5MXIuq7/Ru1feujoF68K3q1xDE3zrBD4bbmoE46bf
-	I9uhN0FCT7U0eDZ/exkzdxoJP+wHUisT2IOa7X5TyvmikbR6KmDz9tM6D8j9afD9aPFCIJYCgiF
-	vKFq5SEnp4xECVP0fiTQCgPvo/0MoavXYAQhZFMXtOyozkC4FdI0idYtKlXsTxy8dAZc3XyzQSw
-	7rLaD/dn/Ngw/eFupdfblhuppXqiWXNpaLB1pCG1iYAGT6Me
-X-Google-Smtp-Source: AGHT+IEcKW8yUly7My6VmHwOUQO6x2LKb/qwvAEzz9JLvNvB2Bo85wGWvtKeixpJ/OLzr9zB/iMeqQ==
-X-Received: by 2002:a05:6e02:17cd:b0:3d8:211c:9891 with SMTP id e9e14a558f8ab-3d88ed7c3fcmr25688805ab.2.1744978682766;
-        Fri, 18 Apr 2025 05:18:02 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f6a3957613sm406821173.120.2025.04.18.05.18.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Apr 2025 05:18:02 -0700 (PDT)
-Message-ID: <93ef8629-4040-4773-beac-03c62f848727@kernel.dk>
-Date: Fri, 18 Apr 2025 06:18:00 -0600
+	s=arc-20240116; t=1744978728; c=relaxed/simple;
+	bh=9SK70E7929mT6SYZygI4BwxZ2Vh/2y0vyBLbyfLsegA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=EtA4bm1BRv1SaJ2rWAIF8pqFweDpgbPg8dOWHF3kIGDcULXXBS2IywVeu8FYUDwvTnH4+/yZKXJm8xDkr29IMYwAtaprTqvmtVDYQEnqzlM50tyPAjyLJM+XVKQa+ZK+8vDtLSmlU549lN5d0BQNz1LKPgKec4+WPf3Ae1uq81o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jjvk5QoY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C034FC4CEE2;
+	Fri, 18 Apr 2025 12:18:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744978727;
+	bh=9SK70E7929mT6SYZygI4BwxZ2Vh/2y0vyBLbyfLsegA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=jjvk5QoYQOkxdCHXMhTrvXH37XF8cEF4CFCvpMeDDlr9zk+uf9g7mngNtH1u2nm8w
+	 5gmtOd48jSHIWeamx107cep58/QEog2nhfIv/QrNY15YdF/0fDW9rrx58mG5s7SeRi
+	 p2OhO7X+L6L6Rq3dtjwJnp3+g1LgW+ZRsFfrPp4cBiW/+BS509i6NLzvtZRW8yoNpQ
+	 S6MmDLmUfLHBHhBFAOfWQTidCUHf5xDRkiLDkvL5xhhRja5+VAmR8upfRY7Yg9qe/Q
+	 ola8y2MMe9kdfxA+9mr939xrL2pdvZSW2JPrUfUtFELgjrM8PvIPButhhy9FQ4rt40
+	 G02O41kIFLv7g==
+Date: Fri, 18 Apr 2025 14:18:43 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c <linux-i2c@vger.kernel.org>, 
+	lkml <linux-kernel@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>
+Subject: [GIT PULL] i2c-host-fixes for v6.15-rc3
+Message-ID: <mtqiyp7mtyuivs7snzfp3dcinr2u5jw63afxqto4s2rnqe6nyc@ozaxoxvtvdxt>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 00/24] Provide a new two step DMA mapping API
-To: Leon Romanovsky <leon@kernel.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>, Christoph Hellwig <hch@lst.de>,
- Keith Busch <kbusch@kernel.org>
-Cc: Jake Edge <jake@lwn.net>, Jonathan Corbet <corbet@lwn.net>,
- Jason Gunthorpe <jgg@ziepe.ca>, Zhu Yanjun <zyjzyj2000@gmail.com>,
- Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
- Bjorn Helgaas <bhelgaas@google.com>, Logan Gunthorpe <logang@deltatee.com>,
- Yishai Hadas <yishaih@nvidia.com>,
- Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
- Kevin Tian <kevin.tian@intel.com>,
- Alex Williamson <alex.williamson@redhat.com>,
- =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
- linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
- linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
- kvm@vger.kernel.org, linux-mm@kvack.org,
- Niklas Schnelle <schnelle@linux.ibm.com>,
- Chuck Lever <chuck.lever@oracle.com>, Luis Chamberlain <mcgrof@kernel.org>,
- Matthew Wilcox <willy@infradead.org>, Dan Williams
- <dan.j.williams@intel.com>, Kanchan Joshi <joshi.k@samsung.com>,
- Chaitanya Kulkarni <kch@nvidia.com>
-References: <cover.1744825142.git.leon@kernel.org>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <cover.1744825142.git.leon@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 4/18/25 12:47 AM, Leon Romanovsky wrote:
-> Following recent on site LSF/MM 2025 [1] discussion, the overall
-> response was extremely positive with many people expressed their
-> desire to see this series merged, so they can base their work on it.
-> 
-> It includes, but not limited:
->  * Luis's "nvme-pci: breaking the 512 KiB max IO boundary":
->    https://lore.kernel.org/all/20250320111328.2841690-1-mcgrof@kernel.org/
->  * Chuck's NFS conversion to use one structure (bio_vec) for all types
->    of RPC transports:
->    https://lore.kernel.org/all/913df4b4-fc4a-409d-9007-088a3e2c8291@oracle.com
->  * Matthew's vision for the world without struct page:
->    https://lore.kernel.org/all/20250320111328.2841690-1-mcgrof@kernel.org/
->  * Confidential computing roadmap from Dan:
->    https://lore.kernel.org/all/6801a8e3968da_71fe29411@dwillia2-xfh.jf.intel.com.notmuch
-> 
-> This series is combination of effort of many people who contributed ideas,
-> code and testing and I'm gratefully thankful for them.
+Hi Wolfram,
 
-Since I previously complained about performance regressions from this
-series, I re-tested the current code. I no longer see a performance
-regression on a AMD EPYC 9754 256 core box, nor on AMD EPYC 7763 128
-core box.
+one fix for this week which prevents a potential NULL pointer
+dereference by adding an extra check in probe.
 
-Tested-by: Jens Axboe <axboe@kernel.dk>
+Have a good weekend,
+Andi
 
--- 
-Jens Axboe
+The following changes since commit 8ffd015db85fea3e15a77027fda6c02ced4d2444:
+
+  Linux 6.15-rc2 (2025-04-13 11:54:49 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags/i2c-host-fixes-6.15-rc3
+
+for you to fetch changes up to 424eafe65647a8d6c690284536e711977153195a:
+
+  i2c: cros-ec-tunnel: defer probe if parent EC is not present (2025-04-13 21:33:44 +0200)
+
+----------------------------------------------------------------
+i2c-host-fixes for v6.15-rc3
+
+- ChromeOS EC tunnel: fix potential NULL pointer dereference
+
+----------------------------------------------------------------
+Thadeu Lima de Souza Cascardo (1):
+      i2c: cros-ec-tunnel: defer probe if parent EC is not present
+
+ drivers/i2c/busses/i2c-cros-ec-tunnel.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
