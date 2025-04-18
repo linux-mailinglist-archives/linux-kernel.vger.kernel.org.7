@@ -1,131 +1,142 @@
-Return-Path: <linux-kernel+bounces-610326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 068C5A93387
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 09:33:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FA9FA9337A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 09:31:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69BF4188EFEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 07:33:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7FEC18924D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 07:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFE7C26E173;
-	Fri, 18 Apr 2025 07:32:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D85E26A1B8;
+	Fri, 18 Apr 2025 07:31:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=huaqian.li@siemens.com header.b="ew0/N7SV"
-Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YSTvotwP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663F326A0AB
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 07:32:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.227
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E894A26A0B9
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 07:31:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744961522; cv=none; b=KLx57O6MoLHoSmrjp5fiiCFgDQ+w13g0QY7bRU6eYZX/u7+iMKuMO9rGTem3MI/4X4qThSexyxEdklwCsr65UVkC4K7t/5jkiHDfKaERIX0yb1RpwG8GrlWLMB4siSNL5IU7J/KjZeQO+P7DE2zfLcj5hLObhtxyUr1eAyN5ssI=
+	t=1744961482; cv=none; b=gO8RpvrMi6U35bVxcrfgYfWCo7YqcvZEMhOdPeVQgnArLcfEHVAnFkec1TDqr1JUajzKnXXm2/unqyeHDS8akCWDwjfdr6PRN2BxSMFGYpPm0pY1pcjZgK3snUqsZv0UTo0hs8wdjD5ifOiLHqBg0f3eNx/tMd+BCXZAV0+s6RU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744961522; c=relaxed/simple;
-	bh=UcdEpiXFzC8AsBaOTOkXbBE+EOhb8L2+7Sb0WBfailQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=vGdMiooNhIA3Srqg7qBOyH5jzRvaVspZ9ldLj2KOGCZmtU7oVDPAugwIp8SeV6Kvj6udABmsZS2yOv0KGWZR+ofCP92ZuDQLBuq9gW9bq/e3sAHzVy1vLFHCv/i/t/HpdyunWP7xb9zrQ7j3fuea1n35zjTh39mNppO3qPgT0Oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=huaqian.li@siemens.com header.b=ew0/N7SV; arc=none smtp.client-ip=185.136.64.227
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 20250418073158816ebb358a89d088e2
-        for <linux-kernel@vger.kernel.org>;
-        Fri, 18 Apr 2025 09:31:58 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
- d=siemens.com; i=huaqian.li@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=nt46wyX3vInf9nEJO3STUSubJKhNa7Mq0IAjgmyGm+I=;
- b=ew0/N7SV8ocpPGEhZTz/xQ+DyeZbuMX14POxCPjdsGVFWNSMS5S1mPfkMH7o7gJKLlwyY/
- pCvAEvD3KsHwOU59DVCIcMKh169q3voszK33WG4F50eYslAn71Ysc+19mNiaTuYCLlHgaeNT
- 1JF3popdz30s9xnL7PFitb8uNE3CUTgUBY9DOa9pX0eSzAa3jZpbaqDfPJUdiwUzedHiqz2U
- a5RdyNEKx/yvTrDixV27oUAiLeXHaMxOxg+KMqW55TVYD4A8jNV8nu5FuJug6KIPfH86NzUI
- xVBSPIHs2Xj34+25AhFfWpvYf21V4Kue+T/64+g/fCusrFI+EvBvOWMg==;
-From: huaqian.li@siemens.com
-To: helgaas@kernel.org,
-	m.szyprowski@samsung.com,
-	robin.murphy@arm.com
-Cc: baocheng.su@siemens.com,
-	bhelgaas@google.com,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	diogo.ivo@siemens.com,
-	huaqian.li@siemens.com,
-	jan.kiszka@siemens.com,
-	kristo@kernel.org,
-	krzk+dt@kernel.org,
-	kw@linux.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	lpieralisi@kernel.org,
-	nm@ti.com,
-	robh@kernel.org,
-	s-vadapalli@ti.com,
-	ssantosh@kernel.org,
-	vigneshr@ti.com,
-	iommu@lists.linux.dev
-Subject: [PATCH v7 8/8] swiotlb: Make IO_TLB_SEGSIZE configurable
-Date: Fri, 18 Apr 2025 15:30:26 +0800
-Message-Id: <20250418073026.2418728-9-huaqian.li@siemens.com>
-In-Reply-To: <20250418073026.2418728-1-huaqian.li@siemens.com>
-References: <20241030205703.GA1219329@bhelgaas>
- <20250418073026.2418728-1-huaqian.li@siemens.com>
+	s=arc-20240116; t=1744961482; c=relaxed/simple;
+	bh=d4UBkY2la6/3RAILDwAbbTryW5C4vVzM3FviVjTGwqU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cHhRY3xeHsd+tFH1Nw6Dygi2pjwSwEb9MQj/gBpEk0GCzipnOKUZzxXqynoAGt6Nv4E1IBBo+cSMc5Fbl6s6SPakpW8I2z8323/xzP6EatcdXaP39ZH/Tx9L9B4UDYB5ppIGWxEYesQL8yip0ZdTWQQF6qsDlomiP6hDWivN2Zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YSTvotwP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6018C4CEE7;
+	Fri, 18 Apr 2025 07:31:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744961480;
+	bh=d4UBkY2la6/3RAILDwAbbTryW5C4vVzM3FviVjTGwqU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YSTvotwP+bQHy6Aiy0jIkKgw976YfNL9JnYtYAkp1LSZVZ+0O0UUCii9BmBW0Tc6C
+	 bIw0ouQXC1yvWcKjcWBaKm3gsp3nnt5P4DnY0kVHkOjt9J2E6QbMErlveCojPExySL
+	 3KV4wqqodwo+T5qDYSDPKEs8zcOK9JVLon+c6giIEm7I4q8EDywBx2OEoDYRWEAf0V
+	 80HgjZkY9qICV+MuCn2sWcx0vaGBDpmfJlVEDgxLaqRhCU8wEoyMEgXaayMY6Woz1g
+	 Ksy3tjlOoPmMUgvgyUW+tN3ehALF5LA/LEc1C2eEWWfJ9RAar8wqh5IkWa1+2c9hbX
+	 jkJBUK605j5Mg==
+Date: Fri, 18 Apr 2025 09:31:16 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH -v2 00/10] timers: Simple cleanup of the timer API
+ namespace
+Message-ID: <aAH_xCECRV75M6ON@gmail.com>
+References: <20250416090544.3311613-1-mingo@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-959203:519-21489:flowmailer
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250416090544.3311613-1-mingo@kernel.org>
 
-From: Li Hua Qian <huaqian.li@siemens.com>
 
-In some applications, the default value of 128 is not sufficient for
-memory allocation and can cause runtime errors. This change makes
-IO_TLB_SEGSIZE configurable, allowing it to be increased if needed.
+* Ingo Molnar <mingo@kernel.org> wrote:
 
-Signed-off-by: Li Hua Qian <huaqian.li@siemens.com>
----
- include/linux/swiotlb.h | 2 +-
- kernel/dma/Kconfig      | 7 +++++++
- 2 files changed, 8 insertions(+), 1 deletion(-)
+> [ Changes since -v1:
+>    - Exclude the 6 APIs that need further work, keep 9 APIs/symbols
+>    - timer_init_on_stack_key() -> timer_init_key_on_stack()
+>    - Fixes
+>    - Rebase to -rc2
+> ]
 
-diff --git a/include/linux/swiotlb.h b/include/linux/swiotlb.h
-index 3dae0f592063..145c71f8329d 100644
---- a/include/linux/swiotlb.h
-+++ b/include/linux/swiotlb.h
-@@ -23,7 +23,7 @@ struct scatterlist;
-  * must be a power of 2.  What is the appropriate value ?
-  * The complexity of {map,unmap}_single is linearly dependent on this value.
-  */
--#define IO_TLB_SEGSIZE	128
-+#define IO_TLB_SEGSIZE CONFIG_SWIOTLB_SEGSIZE
- 
- /*
-  * log of the size of each IO TLB slab.  The number of slabs is command line
-diff --git a/kernel/dma/Kconfig b/kernel/dma/Kconfig
-index 31cfdb6b4bc3..38bfa84b96b6 100644
---- a/kernel/dma/Kconfig
-+++ b/kernel/dma/Kconfig
-@@ -102,6 +102,13 @@ config SWIOTLB_DYNAMIC
- 
- 	  If unsure, say N.
- 
-+config SWIOTLB_SEGSIZE
-+	int "SWIOTLB segment size"
-+	default 128
-+	help
-+	  Set the maximum allowable number of contiguous slabs to map.
-+	  Must be a power of 2.
-+
- config DMA_BOUNCE_UNALIGNED_KMALLOC
- 	bool
- 	depends on SWIOTLB
--- 
-2.34.1
+> Ingo Molnar (10):
+>   rust: Rename timer_container_of() to hrtimer_container_of()
+>   treewide, timers: Rename from_timer() => timer_container_of()
+>   treewide, timers: Rename try_to_del_timer_sync() => timer_delete_sync_try()
+>   treewide, timers: Rename destroy_timer_on_stack() => timer_destroy_on_stack()
+>   treewide, timers: Rename init_timer_key() => timer_init_key()
+>   treewide, timers: Rename init_timer_on_stack_key() => timer_init_key_on_stack()
+>   treewide, timers: Rename __init_timer() => __timer_init()
+>   treewide, timers: Rename __init_timer_on_stack() => __timer_init_on_stack()
+>   treewide, timers: Rename NEXT_TIMER_MAX_DELTA => TIMER_NEXT_MAX_DELTA
+>   treewide, timers: Rename init_timers() => timers_init()
 
+>  708 files changed, 997 insertions(+), 997 deletions(-)
+
+Thomas, if these changes are broadly acceptable to you as a first step, 
+I'd like to propose the following merge order:
+
+These 7 patches with a low -next cross section could go into 
+tip:timer/core the regular way, if they pass review & testing:
+
+  rust: Rename timer_container_of() to hrtimer_container_of()
+     5 files changed, 6 insertions(+), 6 deletions(-)
+
+  timers: Rename init_timer_key() => timer_init_key()
+     2 files changed, 8 insertions(+), 8 deletions(-)
+
+  timers: Rename init_timer_on_stack_key() => timer_init_key_on_stack()
+     2 files changed, 6 insertions(+), 6 deletions(-)
+
+  timers: Rename __init_timer() => __timer_init()
+     2 files changed, 4 insertions(+), 4 deletions(-)
+
+  timers: Rename __init_timer_on_stack() => __timer_init_on_stack()
+     2 files changed, 4 insertions(+), 4 deletions(-)
+
+  timers: Rename NEXT_TIMER_MAX_DELTA => TIMER_NEXT_MAX_DELTA
+     3 files changed, 11 insertions(+), 11 deletions(-)
+
+  timers: Rename init_timers() => timers_init()
+     3 files changed, 3 insertions(+), 3 deletions(-)
+
+( Note that I've removed the 'treewide' prefix for these patches, as 
+  these really are mostly timer subsystem internal changes. )
+
+The three largest changes, which patches I've already ordered to be at 
+the tail of the series in the latest mingo/tip.git/WIP.timers/core 
+tree, would go to Linus separately, two days before -rc1 or so, 
+assuming everything passes review & testing:
+
+  treewide, timers: Rename try_to_del_timer_sync() => timer_delete_sync_try()
+     7 files changed, 17 insertions(+), 17 deletions(-)
+
+  treewide, timers: Rename destroy_timer_on_stack() => timer_destroy_on_stack()
+     26 files changed, 35 insertions(+), 35 deletions(-)
+
+  treewide, timers: Rename from_timer() => timer_container_of()
+     697 files changed, 923 insertions(+), 923 deletions(-)
+
+In addition to this I'll also work on the timer_start_*() API cleanup & 
+restructuring you suggested. Please send me the prelimary cocci script 
+you had for this that you mentioned in the previous mail and I'll try 
+dusting it all off. (Or I'll write new scripts if you cannot find 
+them.)
+
+Thanks,
+
+	Ingo
 
