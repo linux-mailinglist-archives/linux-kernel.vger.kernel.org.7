@@ -1,127 +1,92 @@
-Return-Path: <linux-kernel+bounces-611200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA74CA93EC1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 22:18:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98D37A93EC5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 22:19:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9147B1B67BF8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 20:18:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 423C61B67C4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 20:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BECDB22F17B;
-	Fri, 18 Apr 2025 20:18:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF0F23ED58;
+	Fri, 18 Apr 2025 20:18:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NCzJ1JyW"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="C4Hwted9"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B57B1FF1C9
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 20:18:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7424F2A1C9;
+	Fri, 18 Apr 2025 20:18:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745007520; cv=none; b=FaLkUkWHN4nzGwkO4rG6OEOPDXlIvGL/0MSFzAhhhtoU9lDHQGQUmqZPCmLAfzl9n8Yq6mvQteCECGEQU9A7CAjaPdRKDp6Kk2OiHhlmB/fRA5+KvOFRpnYw4oLMfCyqXluZCOGSKehX+u2+8Mjna97Z/YphQP7bQCxwVmSOBZo=
+	t=1745007521; cv=none; b=Qt20eBUowZvegcdjvyu2Hg8qNWZNr+BGyKHbgdjI08eGkYqjwZqZtHM+m6DRQ/8QQVh/p/Tcm7kBv1CQZYCDikCy3qv07jL+o2zLFhM24RhiElPGx24RQHHrBrGG2cIzGhZr8EpOHAUalhrHrPUT6QY40GaHfDh+4KsnUi5bHvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745007520; c=relaxed/simple;
-	bh=+gExOPpVQD+TPcximZ18kwEUIasrdH/8AW2aqjpYadI=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Ej2CCc/MmPdoNng9rY+ln01SAfgFTqXyKUfUQtrR3BlNXFBd95IMSw48usKqV8ETB+0oKvOqefi/DbwL8cpXAEGGE0AvgjqZSB5RrTCJxKQr62C872/rXN1HzstEDvtjODU/cT9LASynBWIRJDLWG6Q+7+qcvdY7CqY914TbMpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NCzJ1JyW; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1745007505;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m267KMnh11eY/E2lG6dYUeTKE5+TBuSQ9Wkb2jjQV1Q=;
-	b=NCzJ1JyWUOzC/SID6RwGjFZRyL7Rm5u7wEbRL58XWGTJKGDv+LvXmu3Vi1Crn81LURoGbq
-	A1IGuzdZ6VOydFo2PkzHBvBwjqCbOYQbz+y9QSM2Yz2GLIb7C1RbIowBs5XUh8iF2wFktd
-	CrykejhEKsgWsdkQRh5TvtQ8dOjlqt4=
+	s=arc-20240116; t=1745007521; c=relaxed/simple;
+	bh=c8nxojaQOgQcyXY1gD2OR0f7FP2pwNRSCMcMPyqrfEA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dLYDa6Bf4zkBDCABDSa+mEKd4Oc+0kpiDr+TLt6Q0JtjLKeXsnJd8soiv9lRozAZvXyGMn7rGxS0iAW7lLMiIME0ZIoskpBSrUSKAjniH9L/bsQkKceKYWAHol3+dValmWTM09Ic3b1TzNCBTjiZJXfDr/6ATLm7bDwm+KLBAnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=C4Hwted9; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=QwFKe2ISZRDD95Kaksh0NVFyftzgKAb4kAfOTZyXfEY=; b=C4Hwted9QqiCwBlRns8C6ZEFw/
+	tIIAU0L98GYbB6GCZr21h9IL/Qwu0SLqQSVk2ZQa8OcCU7ugu5bcerksfMNb19KVO8uHnw3ZWNkYd
+	hQIWV2G3n0bwhnJJMoreBk8hlXEd9WJV8kE5H6WAjPg063RVGpDIU5JZYkEFuBQ2gI94=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1u5sAI-009w9h-4G; Fri, 18 Apr 2025 22:18:22 +0200
+Date: Fri, 18 Apr 2025 22:18:22 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Ivan Vecera <ivecera@redhat.com>
+Cc: netdev@vger.kernel.org, Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+	Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Prathosh Satish <Prathosh.Satish@microchip.com>,
+	Lee Jones <lee@kernel.org>, Kees Cook <kees@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Michal Schmidt <mschmidt@redhat.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v3 net-next 3/8] mfd: Add Microchip ZL3073x support
+Message-ID: <5a360c39-405c-4108-9800-0f71307804a0@lunn.ch>
+References: <20250416162144.670760-1-ivecera@redhat.com>
+ <20250416162144.670760-4-ivecera@redhat.com>
+ <8fc9856a-f2be-4e14-ac15-d2d42efa9d5d@lunn.ch>
+ <CAAVpwAsw4-7n_iV=8aXp7=X82Mj7M-vGAc3f-fVbxxg0qgAQQA@mail.gmail.com>
+ <894d4209-4933-49bf-ae4c-34d6a5b1c9f1@lunn.ch>
+ <03afdbe9-8f55-4e87-bec4-a0e69b0e0d86@redhat.com>
+ <eb4b9a30-0527-4fa0-b3eb-c886da31cc80@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.2\))
-Subject: Re: [PATCH v2] MIPS: Fix MAX_REG_OFFSET and remove zero-length struct
- member
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Thorsten Blum <thorsten.blum@linux.dev>
-In-Reply-To: <alpine.DEB.2.21.2504181608420.18253@angie.orcam.me.uk>
-Date: Fri, 18 Apr 2025 22:18:10 +0200
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Oleg Nesterov <oleg@redhat.com>,
- linux-mips@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <9F6CA7CB-B36A-4F79-B78C-7ED63E39260D@linux.dev>
-References: <20250417174712.69292-2-thorsten.blum@linux.dev>
- <aAIF_kEFlOOVNDaE@alpha.franken.de>
- <DAD22E95-6D33-43D5-B5E5-3A7B45A63944@linux.dev>
- <alpine.DEB.2.21.2504181108170.18253@angie.orcam.me.uk>
- <EC98BAE8-8269-4169-B3A2-5F426E77C223@linux.dev>
- <alpine.DEB.2.21.2504181337350.18253@angie.orcam.me.uk>
- <B71034AC-B0FC-4C5F-8562-661D6AD11056@linux.dev>
- <alpine.DEB.2.21.2504181608420.18253@angie.orcam.me.uk>
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eb4b9a30-0527-4fa0-b3eb-c886da31cc80@redhat.com>
 
-On 18. Apr 2025, at 17:14, Maciej W. Rozycki wrote:
-> On Fri, 18 Apr 2025, Thorsten Blum wrote:
->>>> Does regs_get_register() even work for CPU_CAVIUM_OCTEON when =
-accessing
->>>> the last two registers because they're both ULL, not UL? =
-(independent of
->>>> my patch)
->>>=20
->>> Or rather two arrays of registers.  With 32-bit configurations their=20=
+> > > Anyway, look around. How many other MFD, well actually, any sort of
+> > > driver at all, have a bunch of low level helpers as inline functions
+> > > in a header? You are aiming to write a plain boring driver which looks
+> > > like every other driver in Linux....
+> > 
+> > Well, I took inline functions approach as this is safer than macro usage
+> > and each register have own very simple implementation with type and
+> > range control (in case of indexed registers).
 
->>> contents have to be retrieved by pieces.  I don't know if it's =
-handled by=20
->>> the caller(s) though as I'm not familiar with this interface.
->>=20
->> Ah, CPU_CAVIUM_OCTEON seems to be 64-bit only, so there's no =
-difference
->> between UL and ULL. Then both my patch and your suggestion:
->=20
-> So it seems odd to use `long long int' here, but I can't be bothered =
-to=20
-> check history.  There could be a valid reason or it could be just =
-sloppy=20
-> coding.
->=20
->> I still prefer my approach without '__last[0]' because it also =
-silences
->> the following false-positive Coccinelle warning, which is how I =
-stumbled
->> upon this in the first place:
->>=20
->>  ./ptrace.h:51:15-21: WARNING use flexible-array member instead
->=20
-> So make `__last' a flexible array instead?  With a separate patch.
+Sorry, i was a bit ambiguous. Why inline? Why not just plain
+functions. Are there lots of other drivers with a large number of
+inline functions? No. inline functions are typically only used for
+stubs when code is not being built due to CONFIG_ settings.
 
-No, '__last[0]' is a fake flexible array and the Coccinelle warning is
-wrong. We should either ignore the warning or silence it by removing the
-marker, but turning it into a real flexible array doesn't make sense.
-I'd prefer to just remove it from the struct.
-
-Stefan or Oleg, do you have any preference?
-
-> Would it make sense to also change the register arrays 'mpl' and 'mtp'
->> from ULL to UL? ULL seems unnecessarily confusing to me.
->=20
-> Maybe, but I'm not familiar enough with the Cavium Octeon platform to=20=
-
-> decide offhand and I won't dive into it, sorry.
-
-Everything I've found about Cavium Octeon indicates it's 64-bit only, so
-whether we use UL or ULL doesn't matter - they're both 64-bit values.
-
-Thorsten
-
+	Andrew
 
