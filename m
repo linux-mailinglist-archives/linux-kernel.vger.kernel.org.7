@@ -1,89 +1,81 @@
-Return-Path: <linux-kernel+bounces-610524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BAA7A935E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 12:16:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F351A935EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 12:18:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 654628E316D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 10:16:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 892BB1B606D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 10:18:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D912E26FDB0;
-	Fri, 18 Apr 2025 10:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K5HAevjk"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D443E270EB0;
+	Fri, 18 Apr 2025 10:18:23 +0000 (UTC)
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9071D211A0E
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 10:16:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705362528EA;
+	Fri, 18 Apr 2025 10:18:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744971387; cv=none; b=Q+JO34GBGLyKsJW79MjKxciQND+738kXEl0E25Ve2hG1qQsSJErtfxT4OGW/7AruFhw6ZsB2lSxYsgFz219jCt8629QBNDaFBnkI43RWzQRHfzcvS1sXKAd4JaM3zfNqjPChfiS0UpoOxa205KsXEzx9z9AuXhYpTaxH2V8jYm8=
+	t=1744971503; cv=none; b=ooyNJkog19saXSMPGfPaTDsv1rriiJqvah9MCSYcWyB+QRx/M4atq3zkEyFe2Wi77eFnRE+5xWbSb6BkbF3PZDA7F2xKH9KNJDq/NjaGprqbHQgT6z9e23eZBQtCeTsdvmewEHngEsRJxRk+C/0Xwbomxf1U/uUSAQF+hFtl4QQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744971387; c=relaxed/simple;
-	bh=Lp5BhMcVKSsFsdsphNab3vl7zSMQBiTnGPfS7Mtuwdc=;
+	s=arc-20240116; t=1744971503; c=relaxed/simple;
+	bh=CmVPON/iatRsPZzG29/bxbUZ8IXBQNJaac+12CrXTFo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p+XheM1INKZQwAKVbfHLm732IqlZnIyKmHpPlFq9lSl4TbtWwkq8KICg/my5QoS8Pdgv2FFefo2o9Zo+WRJhwvCoV+J7AgesJKog5t95Vn8WD+Wn29ZvyshmFLWDp8sY3gX7m3lFBJy9TnLvQZSHV40yajDXm+sw2Iz8LvEOLqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K5HAevjk; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-39c1efc457bso991312f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 03:16:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744971383; x=1745576183; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IiDBnIbN2ErdrAZnJdVTPEl8ORr2jBX+0bJeY940wkA=;
-        b=K5HAevjkTyQM0IciGnF879tXYoqLCjZwCbSJhjpnUzPYRigEcshKpxtPK6eqVJV8fY
-         hzRnN7hMi3AM25VpthXqc/Jr5mccamj/GhsJhPr0a1o36a0lz2gU080UIYrQ4mg1tav+
-         6Bem6u9QXEnomNqjSxPWichvjGh0cbpFrXUB7ef/G3F0wxxaFH/4bAnVSvswH69eduB/
-         jRfrspbD1LYa6UVfE9d6EAbC56D6ejt79Y2rW8bo+CDRVaGgG9SNFpTL1eDMPeXHeyi5
-         +vUAxo9Jty9tfG1eTE0oWLSEmgnurmJKG0/BhMD8nral04/Ic7u8iJ2roGGTZyhHwCdJ
-         rKcw==
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZZfc8DKxXE2JwAi7nJ2yZT62vSEOhNRr3y+Awy256arX57HtzZ+EZ9NIAgxYy2ILDNSqkrqzIupos0MeMCgOUHVbI6m6a0JDFnDGyP1GGQjLxKoyzmaQPJtq1BBhjufnbio6es/h0TymYfI1103MHZ0GT9qqSdKHrtnJbs4TNQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kerneltoast.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kerneltoast.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-224100e9a5cso21056305ad.2;
+        Fri, 18 Apr 2025 03:18:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744971383; x=1745576183;
+        d=1e100.net; s=20230601; t=1744971501; x=1745576301;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IiDBnIbN2ErdrAZnJdVTPEl8ORr2jBX+0bJeY940wkA=;
-        b=Gt6+FGqTKcv3kEBxZ8Tfbr1rRt1F1zILP19DdiBe0ttVAAPEuz0GfkOYNVxTBcD3NC
-         UEtuG5w949gPVwPcER6UIw3bHaXZtUOCQv/w5wH3W6GpXAS2nv6JUSQYH4bQ12nYoZTz
-         sZgGAZWGSmetsNpbKudUXMArejY7kGV/e5FhMngE/yYeP8BPLrJyl+tg9KHmyQD6nOWA
-         irzzicSnEYUzNswal13RDFTt2lEtS+gzaekPfa7Sp7YoFULyyN+YAoUqWV10jvUX/v34
-         gBeY12neKEiRo75f7HJsBGpsCTVIkafcN5YVN3v0DfJQaMOJMd/AUQQrb+D02z/2o4dz
-         Hnaw==
-X-Forwarded-Encrypted: i=1; AJvYcCWB4uyJPi6yOzpO6R77eHzheDobufk6dNzAr0whcp8AZPDqvfHs3S5b1JLhNeTujbmiaW5Wh0/JqqZHqR4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yywkg330C85VyOzrUK1HpTH99ChOqx3vWU+jpyb8VakWDC2N5d+
-	vwIZJtA3gg29DhHd3j4CL7fZ2S7OnESH5yFWJG8FRfX/OUWzsV+7D2z7JOpxFSM=
-X-Gm-Gg: ASbGncsWfO26ecz40IUX6DCLJCdHZ77en9+EKa+U1Odlx26QPTeA+DZzK0y8z8y9uBO
-	fMMT3/wYc1Z23jDQnMOyJqXQrhdtG3XP+ow/qjSadjMFPj7V7cKWkQyNCGSPZgOxHJO3iCOJ1DP
-	aGSmJZNFsNvGOIagHNjvzLPIT+KnENQ8ljWTe+iMhJ058W6Uh5QC467iRVv6pCfPp9M43yaG51s
-	wde/jy64+u5FvEjQ4p24V/kcsZb6U5YdyNVw0xJkDRF+jPNBctmfZRkCP4CwuPwpUPKjNS3i9ze
-	2K4nqAmLOx52aKsJaLujYY2miVfXzKbEldwMYlLD2mKXZRsmYYlUCIa6NFYsW6oPgZUhuF5N/y7
-	L+sG3d+0nlGClsQ==
-X-Google-Smtp-Source: AGHT+IEhVsv0Ij1c7fYpfyCnxhTynvdaKQ/MYv7KemDDNjedaaUCumCbBnsf/IltIZ7kk3yXig1l8w==
-X-Received: by 2002:a05:6000:2489:b0:39c:11c0:eb95 with SMTP id ffacd0b85a97d-39efba460e6mr1527952f8f.17.1744971382884;
-        Fri, 18 Apr 2025 03:16:22 -0700 (PDT)
-Received: from mai.linaro.org (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa493377sm2340627f8f.62.2025.04.18.03.16.22
+        bh=BWu+8ChlXVy38S6xmpYuUF0tvb7WzX0hMNuvI4KykjE=;
+        b=u4jlLO6doqu34b28eg0esbEiMMRltf/tUhMj+xVDSsEyOSvzyQbF5MO5Y2gkhSh57b
+         nZ+yf/xTg+oz5QrXWXFWMiD4EVP8AmODBegnjXpW6sRQbB3YlkybJ0mdfAfQUzXd3sYc
+         ddhTw1l69ntQK8jXAm6ny6Ug/5cW5ds5roaLISIAnylpDiRNDZznzSJqzESQTG/2TSi1
+         VNzCRcSnMHq7lktfioOZnSoA3ONyGdzTHre/FCxnYLRF5zy8OMqrZVsc0yZiL+3HB0Kf
+         CW4/jTfEIn5z8QLHzGE5fjoJtB6ToukQN7USScJH/dxd/Z9RCWrLbrfA3HRUydGGweKB
+         taaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWIyuXN1vQA/k0lN3fDqYc5lg+rzm+R94R5dAdoXPWNrI+m/4xJQekYr0vGdXPsEnvqBKKOtyRS7FHhDic=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXNBbyAbPYTBthMD0J7iYdWnUv5JvCQorXyxDdweku+/2tRDCB
+	e7AXkwndUat2fZBK7PGwOfQOTCn24AMLRg9DBBCARinSnM8NUjzYurLtb3Fk
+X-Gm-Gg: ASbGncsFP4J7mTzn1e2fnBvFDTApXzWTrE2QEwdSIrLqD4eEW3emHmDeNdmItkJT3Ur
+	l0vBIJxCf4+ElBJzGes6SmULGBne9jKZVFX78F6tUWrVXlxEZYaXQZhhzNVpWB7OZgk4N1ETga9
+	gn+bJtBRP7GQCDr/dsALNkVkDGo3xZ5PbkqGVxv5+SZMRenFd58TGIPwLQLgYAVqy63ebTmYa1P
+	T2ldMqrqNQ41A1ncpswqGVrzLbGeRQ/wvklYZel9yZRqqOMbeUJGDFrlGCqYFqubqShqV6vkKz5
+	SsAUmrwpom6E+f5I1p0SMQWYBIeLK+z0mVyhpPixD6wjG4+9YvRkMRadouCZOkHJ3aHRJsjkOIr
+	Bv+C01kMOIJItRIoSqRNj9AT93aJc
+X-Google-Smtp-Source: AGHT+IEsjgW/1z/jDp+j/0gbGgsoTmvWeHA8/861Tm7YHQ56kuNSS6q7YrFe9pB+7RJFBiq1SfqSRQ==
+X-Received: by 2002:a17:902:e747:b0:225:b718:4dff with SMTP id d9443c01a7336-22c5361b4cfmr32304705ad.53.1744971500576;
+        Fri, 18 Apr 2025 03:18:20 -0700 (PDT)
+Received: from sultan-box.localdomain (n122-107-215-46.sbr1.nsw.optusnet.com.au. [122.107.215.46])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73dbfaee68bsm1305632b3a.175.2025.04.18.03.18.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Apr 2025 03:16:22 -0700 (PDT)
-Date: Fri, 18 Apr 2025 12:16:20 +0200
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: rafael@kernel.org, rui.zhang@intel.com, lukasz.luba@arm.com,
-	matthias.bgg@gmail.com, npitre@baylibre.com, jpanis@baylibre.com,
-	nfraprado@collabora.com, wenst@chromium.org, bchihi@baylibre.com,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, kernel@collabora.com
-Subject: Re: [PATCH] thermal/drivers/mediatek/lvts: Fix debugfs unregister on
- failure
-Message-ID: <aAImdJFvfLTKe-TY@mai.linaro.org>
-References: <20250402083852.20624-1-angelogioacchino.delregno@collabora.com>
+        Fri, 18 Apr 2025 03:18:20 -0700 (PDT)
+Date: Fri, 18 Apr 2025 20:18:11 +1000
+From: Sultan Alsawaf <sultan@kerneltoast.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux PM <linux-pm@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Christian Loehle <christian.loehle@arm.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH v2 5/6] cpufreq: Avoid using inconsistent policy->min and
+ policy->max
+Message-ID: <aAIm48RPmm1d_Y6u@sultan-box.localdomain>
+References: <6171293.lOV4Wx5bFT@rjwysocki.net>
+ <9458818.CDJkKcVGEf@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,28 +84,132 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250402083852.20624-1-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <9458818.CDJkKcVGEf@rjwysocki.net>
 
-On Wed, Apr 02, 2025 at 10:38:52AM +0200, AngeloGioacchino Del Regno wrote:
-> When running the probe function for this driver, the function
-> lvts_debugfs_init() gets called in lvts_domain_init() which, in
-> turn, gets called in lvts_probe() before registering threaded
-> interrupt handlers.
+On Tue, Apr 15, 2025 at 12:04:21PM +0200, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> Even though it's unlikely, the last call may fail and, if it does,
-> there's nothing removing the already created debugfs folder and
-> files.
+> Since cpufreq_driver_resolve_freq() can run in parallel with
+> cpufreq_set_policy() and there is no synchronization between them,
+> the former may access policy->min and policy->max while the latter
+> is updating them and it may see intermediate values of them due
+> to the way the update is carried out.  Also the compiler is free
+> to apply any optimizations it wants both to the stores in
+> cpufreq_set_policy() and to the loads in cpufreq_driver_resolve_freq()
+> which may result in additional inconsistencies.
 > 
-> In order to fix that, instead of calling the lvts debugfs cleanup
-> function upon failure, register a devm action that will take care
-> of calling that upon failure or driver removal.
+> To address this, use WRITE_ONCE() when updating policy->min and
+> policy->max in cpufreq_set_policy() and use READ_ONCE() for reading
+> them in cpufreq_driver_resolve_freq().  Moreover, rearrange the update
+> in cpufreq_set_policy() to avoid storing intermediate values in
+> policy->min and policy->max with the help of the observation that
+> their new values are expected to be properly ordered upfront.
 > 
-> Since devm was used, also delete the call to lvts_debugfs_exit()
-> in the lvts_remove() callback, as now that's done automatically.
+> Also modify cpufreq_driver_resolve_freq() to take the possible reverse
+> ordering of policy->min and policy->max, which may happen depending on
+> the ordering of operations when this function and cpufreq_set_policy()
+> run concurrently, into account by always honoring the max when it
+> turns out to be less than the min (in case it comes from thermal
+> throttling or similar).
 > 
-> Fixes: f5f633b18234 ("thermal/drivers/mediatek: Add the Low Voltage Thermal Sensor driver")
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Fixes: 151717690694 ("cpufreq: Make policy min/max hard requirements")
+> Cc: 5.16+ <stable@vger.kernel.org> # 5.16+
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > ---
+> 
+> v1 -> v2: Minor edit in the subject
+> 
+> ---
+>  drivers/cpufreq/cpufreq.c |   46 ++++++++++++++++++++++++++++++++++++----------
+>  1 file changed, 36 insertions(+), 10 deletions(-)
+> 
+> --- a/drivers/cpufreq/cpufreq.c
+> +++ b/drivers/cpufreq/cpufreq.c
+> @@ -490,14 +490,12 @@
+>  }
+>  EXPORT_SYMBOL_GPL(cpufreq_disable_fast_switch);
+>  
+> -static unsigned int clamp_and_resolve_freq(struct cpufreq_policy *policy,
+> -					   unsigned int target_freq,
+> -					   unsigned int relation)
+> +static unsigned int __resolve_freq(struct cpufreq_policy *policy,
+> +				   unsigned int target_freq,
+> +				   unsigned int relation)
+>  {
+>  	unsigned int idx;
+>  
+> -	target_freq = clamp_val(target_freq, policy->min, policy->max);
+> -
+>  	if (!policy->freq_table)
+>  		return target_freq;
+>  
+> @@ -507,6 +505,15 @@
+>  	return policy->freq_table[idx].frequency;
+>  }
+>  
+> +static unsigned int clamp_and_resolve_freq(struct cpufreq_policy *policy,
+> +					   unsigned int target_freq,
+> +					   unsigned int relation)
+> +{
+> +	target_freq = clamp_val(target_freq, policy->min, policy->max);
+> +
+> +	return __resolve_freq(policy, target_freq, relation);
+> +}
+> +
+>  /**
+>   * cpufreq_driver_resolve_freq - Map a target frequency to a driver-supported
+>   * one.
+> @@ -521,7 +528,22 @@
+>  unsigned int cpufreq_driver_resolve_freq(struct cpufreq_policy *policy,
+>  					 unsigned int target_freq)
+>  {
+> -	return clamp_and_resolve_freq(policy, target_freq, CPUFREQ_RELATION_LE);
+> +	unsigned int min = READ_ONCE(policy->min);
+> +	unsigned int max = READ_ONCE(policy->max);
+> +
+> +	/*
+> +	 * If this function runs in parallel with cpufreq_set_policy(), it may
+> +	 * read policy->min before the update and policy->max after the update
+> +	 * or the other way around, so there is no ordering guarantee.
+> +	 *
+> +	 * Resolve this by always honoring the max (in case it comes from
+> +	 * thermal throttling or similar).
+> +	 */
+> +	if (unlikely(min > max))
+> +		min = max;
+> +
+> +	return __resolve_freq(policy, clamp_val(target_freq, min, max),
+> +			      CPUFREQ_RELATION_LE);
+>  }
+>  EXPORT_SYMBOL_GPL(cpufreq_driver_resolve_freq);
+>  
+> @@ -2632,11 +2654,15 @@
+>  	 * Resolve policy min/max to available frequencies. It ensures
+>  	 * no frequency resolution will neither overshoot the requested maximum
+>  	 * nor undershoot the requested minimum.
+> +	 *
+> +	 * Avoid storing intermediate values in policy->max or policy->min and
+> +	 * compiler optimizations around them because them may be accessed
+> +	 * concurrently by cpufreq_driver_resolve_freq() during the update.
+>  	 */
+> -	policy->min = new_data.min;
+> -	policy->max = new_data.max;
+> -	policy->min = clamp_and_resolve_freq(policy, policy->min, CPUFREQ_RELATION_L);
+> -	policy->max = clamp_and_resolve_freq(policy, policy->max, CPUFREQ_RELATION_H);
+> +	WRITE_ONCE(policy->max, __resolve_freq(policy, new_data.max, CPUFREQ_RELATION_H));
+> +	new_data.min = __resolve_freq(policy, new_data.min, CPUFREQ_RELATION_L);
+> +	WRITE_ONCE(policy->min, new_data.min > policy->max ? policy->max : new_data.min);
 
-Applied, thanks
+I don't think this is sufficient, because this still permits an incoherent
+policy->min and policy->max combination, which makes it possible for schedutil
+to honor the incoherent limits; i.e., schedutil may observe old policy->min and
+new policy->max or vice-versa.
+
+We also can't permit a wrong freq to be propagated to the driver and then send
+the _right_ freq afterwards; IOW, we can't let a bogus freq slip through and
+just correct it later.
+
+How about using a seqlock?
+
+Sultan
 
