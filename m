@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-610937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16D88A93AA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 18:22:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37D8AA93ABB
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 18:24:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 072AD17C2E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 16:22:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DE129A0944
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 16:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D813822ACE3;
-	Fri, 18 Apr 2025 16:17:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA6321B9E9;
+	Fri, 18 Apr 2025 16:17:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="gCzi6F1h"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2049.outbound.protection.outlook.com [40.107.94.49])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="rnQpJ84i"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2046.outbound.protection.outlook.com [40.107.93.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08BA227B9F
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 16:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 427F422A4E6
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 16:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.46
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744993069; cv=fail; b=OHnNntqRDYXtWmtgdYy6Q2gp92LlwEdUCxex1nPpbPU9rwHD4yKD8q63e8rANInFWD2YihC+oUtjsP36nLexv+KBnZ5DzQeSWULh4gP7cKBlzQZ8TeODk27lykQPT3o0CmOvdy3I/ScgtXvhLJWmImhmr1qTG0+Kj0MZds8YrbA=
+	t=1744993071; cv=fail; b=NNKP9VkGu61eeu1EyJ8Bl7g0/qobyKaRghnid7/MkFQe/qLJ4BkOpYNoYDG6Bj8DPncLLA3KV6Poz9G3mAoVaIyg6c+s9z+PBoUTlqzXfOqRGPkrukxdzBht/Q6NlnQSpUkzM8fOOXrQjHGrMlEztBYtvL0aMAA+w+GJ0zINAac=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744993069; c=relaxed/simple;
-	bh=1EMTUJCQlg2JFmKioKYUBd1PIUgKF0XpX38xcVeWlWE=;
+	s=arc-20240116; t=1744993071; c=relaxed/simple;
+	bh=DQvOfo8t7TDenDPkFIcVdzXEPG3STtAPnjGvsrkfcp8=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gd+5f2JTtIrmkVcwN3CpNJOlB6FD+4PkpoyxQD8MSHRGgSu8BxT7lVMaQtEra56vbrfun4ZZaitnt11h65wuAoLBQLcBFhwSioRNlSxokuFRweOAORNoLU+i//rprmuW3/b0GhHDCwq44VcNhDRm3fF4KY3iOvYdBLdRkM6Tq14=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=gCzi6F1h; arc=fail smtp.client-ip=40.107.94.49
+	 MIME-Version:Content-Type; b=M9o9/gcrqrtGBOUNwERHKxLIs/Cig1rsv54boE59IDe+muaQkuZg8sjEMqDPqkS1UiVWTZUtnX/Bf9/mJTcRyxydcIPriru9u+OBoOq13MkpXF51k1/2qIeuA4TTa696BGjdl5e4WX+AMyCqYfvGI3sQ18XnqG3Vi5lHosJY+Ao=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=rnQpJ84i; arc=fail smtp.client-ip=40.107.93.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=O3huL/cGDWFUXMS0hs7ji8Sj2dr05QR3A3l8X+AINQo6+7zkOnREBzRcrwKaDStX+Ax2uvjPnuJ9fPKbQZMVGUrOaZM2M48KF2teb6NQKUGkmmWVB2yA+08ag3OIj31CrzRHQqW5VZeSHAiAhHQkufFQ8acH+MnNJphS33nUbg3KKSipP/CJIAXcC1Wl48+1cHfZjmiiqdXJG4CSyitk4QD5oouBdRsBAKIZKQ+pXkxzYalKrSH/QfvGrg6/6PWYTQ3khe2fH2TdWejAtiZrx3j7cOBQWFeWdrzaAqmFsxqIHY6feMft7aWc3IUnFs39YjuiEiPUFKnR1GGi1MuKiA==
+ b=GgB2Mr/rEmJnYEzPn7XYIOdRlzgKCJK6oCW74i0SYc04lqDGvpNUqRdWXYmBXzJSyEoNpykn6LFb5Ug+TzWOTPWBHw642KClhGeXEP5Vo+47hyvtx9Hzr1p4qp0YYaMfbrJ38VEFvwfLcRzzlKljhze4V7VeW7NqizkJonoCHaQNa7necqhth45lK7oCd04Wc4MXWE4u3Wp6UFby0afquYKZmUX7gW9nMy8bJY0MgVsnP3s0V3xchXDThhNLY2sO8g8fSnOrR24dBKnPz9alZBRKIzA+YiO8KaAAIk20L6+cHl7J8KBqNH4RxuDZ9HMLY59VIzfYxoVwaqcAZFhlJw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=10yYG6gKaUANWGlxJ2IzT+O+5mV1AsInBsVtGWzwogU=;
- b=fKFSP17grcNkeN0+i86JDdTNO2OFyGXRbqne6stUe09E0rPfu62yfn1LvN21811b3ObTZFUDaVrpDlmdL8l0If1hwjpKV7d2Xch35PGmPVUL1UaL168StgjYWUXNUxoYHntcy4ntvIMCdVlZ6M6yEw7R2hCl03GmYEfclSDhxx1Rm4OQYKkxAjKnw+xfYGibBPRcMsCR4OWlEQZKeEmV6EnmOL1ksk7yNtzaI+YVomGkwpUU4UeVDaOyYhNFd61n1IId6No8G/CjEFTOIYXrohMpEETypKcR6/r+fJfUhtlinLSzq2WIHEcAoGoJfF+Dh44N5h+lUzXCn6qHJ7+41Q==
+ bh=a1HN7Y5qtZzRBQ83vfYgRP67JShEHlYvn+lR4IhYG2s=;
+ b=x+jqnMIAl2A+Pg5Y2ITqaKaSTCvBV1DUdnZOPZ+3vIbXAMoimA/hVfoUSlpemY6Oh+/3Ov4WUkVIttaNTd5I1m9DAzpL03V3GRinyBlcbY2LDRp+zqwB+z7DReeQNdG37oXlmXepuawRtl+zPzxJ46xOpXNP8lET4lhS/vgwb8jXRfSMZ0V2TLkzZ1VfA0NhytHJBLCoCg1pQxeRxzN8szaA5irpwQMHBvU8rpMCOeIuTDQ8GvvjOMkck2NpAbgjYBF/0ZErRR974v+qD9a5zukvsGMU3APFBqG2wbDNbOetiqLKK7hiJxeHUV7wua6QIB/AagCo690EUZc9t4kcAQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=10yYG6gKaUANWGlxJ2IzT+O+5mV1AsInBsVtGWzwogU=;
- b=gCzi6F1hnlOY/CQiFYvuIVXRH5nZpI3Q8hQx7HckEO/BqSiZKnoQZEFNmkORXOwaw4pTXOdOSVQULqmFKDQnbbDycBXTLqMjSGatNFDTHNRTWl59mePDizNhZvlCokbUNAU+N1RnYSVWxbdRlEwuoO/MioadV42c2gfNBnF7PUc=
-Received: from CH0P220CA0013.NAMP220.PROD.OUTLOOK.COM (2603:10b6:610:ef::9) by
- IA1PR12MB7614.namprd12.prod.outlook.com (2603:10b6:208:429::16) with
+ bh=a1HN7Y5qtZzRBQ83vfYgRP67JShEHlYvn+lR4IhYG2s=;
+ b=rnQpJ84iY5PNTQ3Gwx5JAsDbWK4iHay+q2nrf0r1VcY0SapzE1LF7rcGMUnxjaIaYNUiYy/PK8qQmWClsQoWxsAWLVDgAXsHnTGBAHJV3EeAKvWC9U414wP8eUNbVO38YOFvzWt/vqkhdjZQqNiA5cb5Wti+RqwhssRFo6zWZA4=
+Received: from CH0P220CA0001.NAMP220.PROD.OUTLOOK.COM (2603:10b6:610:ef::19)
+ by DM3PR12MB9434.namprd12.prod.outlook.com (2603:10b6:0:4b::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.43; Fri, 18 Apr
- 2025 16:17:43 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.35; Fri, 18 Apr
+ 2025 16:17:45 +0000
 Received: from DS2PEPF0000343E.namprd02.prod.outlook.com
- (2603:10b6:610:ef:cafe::8a) by CH0P220CA0013.outlook.office365.com
- (2603:10b6:610:ef::9) with Microsoft SMTP Server (version=TLS1_3,
+ (2603:10b6:610:ef:cafe::dd) by CH0P220CA0001.outlook.office365.com
+ (2603:10b6:610:ef::19) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.23 via Frontend Transport; Fri,
- 18 Apr 2025 16:17:43 +0000
+ 18 Apr 2025 16:17:45 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -64,11 +64,11 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
  DS2PEPF0000343E.mail.protection.outlook.com (10.167.18.41) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8655.12 via Frontend Transport; Fri, 18 Apr 2025 16:17:43 +0000
+ 15.20.8655.12 via Frontend Transport; Fri, 18 Apr 2025 16:17:45 +0000
 Received: from tiny.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 18 Apr
- 2025 11:17:39 -0500
+ 2025 11:17:40 -0500
 From: David Kaplan <david.kaplan@amd.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
 	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
@@ -76,9 +76,9 @@ To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
 	<mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
 	<x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>
 CC: <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 15/16] x86/bugs: Restructure L1TF mitigation
-Date: Fri, 18 Apr 2025 11:17:20 -0500
-Message-ID: <20250418161721.1855190-16-david.kaplan@amd.com>
+Subject: [PATCH v5 16/16] x86/bugs: Restructure SRSO mitigation
+Date: Fri, 18 Apr 2025 11:17:21 -0500
+Message-ID: <20250418161721.1855190-17-david.kaplan@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250418161721.1855190-1-david.kaplan@amd.com>
 References: <20250418161721.1855190-1-david.kaplan@amd.com>
@@ -94,166 +94,385 @@ X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PEPF0000343E:EE_|IA1PR12MB7614:EE_
-X-MS-Office365-Filtering-Correlation-Id: e57001c0-1d57-416a-7d2e-08dd7e948ca2
+X-MS-TrafficTypeDiagnostic: DS2PEPF0000343E:EE_|DM3PR12MB9434:EE_
+X-MS-Office365-Filtering-Correlation-Id: 70e79413-2245-473c-8dfa-08dd7e948d86
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|36860700013|7416014|82310400026;
+	BCL:0;ARA:13230040|36860700013|1800799024|376014|7416014|82310400026;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?QGvDEPCc8kPktOWDJiRVpkxKBaJkxsv7JfYWLHqjeoR7ttx+bhfAlDq9dE0V?=
- =?us-ascii?Q?LoF47eBbGhr6Vd6nvdoUyWVSdNvBHUNCZNefFdjCxnoeIZrQ6jlG/oSj0iyw?=
- =?us-ascii?Q?fHhuUY29wcoOcZRvcJyVUC8UGV+IWr74NyKM/RUF5j3iAg8JYYpMKQ6IzrvZ?=
- =?us-ascii?Q?QfWKEQGpLrxGbCZN/1du68f1FVX+XnwvWFs486aYhqAw/tSst6yIgWU0wdZd?=
- =?us-ascii?Q?Ch+jAhQmWtwTfLs4qgCiYRF8PolF3Pkke7MYDP3Ix+djayg9WnUx3v5tDIUz?=
- =?us-ascii?Q?8aav4l0+R63Xg0CFJR21KrJA13vw3qZiUxbKheA/PfCRWHnZfPmBzIhVd2OQ?=
- =?us-ascii?Q?xNgNw3GltzHBI0GR5QxarLg83lo7TwWw48Zj8VybGvw7o82CDKeDIX1aGNbK?=
- =?us-ascii?Q?AONUJ4QHBM0JcTds3Yd2QPaUnwFQ7XPNWImaNisZu0OgkZ2Zsv/E+Pb1ti+7?=
- =?us-ascii?Q?hmvMfd8IgPiIgl+RGl2wX84tbOEftBDDDfrRhWJzSfGJjNsKaaZU0Ze8GRE+?=
- =?us-ascii?Q?w0h9gW9fN6sl1cxqHGQ7jFrH3fhrjXkvpaAw3fz4WH9k5YJgptY34UrJ2HLo?=
- =?us-ascii?Q?PdoQQ1/x4x0FXtvG+d1fOn6UpKWR0ReIQmLi1WAZ/n27c26FdbCHaCwdWIkX?=
- =?us-ascii?Q?pYWBtDrHP4ptCP5594i1VADxRTcEq69I5zr/Ey6+aCSbVSXD9SGvWqNF4koD?=
- =?us-ascii?Q?a+AiChayA2ngPMwN4UrgRit5xAqu37+i9uc9rbAppaFd6NUgucf8EIuNWuQ4?=
- =?us-ascii?Q?dvliHdcXhevF18O7vBHxsN1yK4lBQNKV0yiBTzty/5Wh8XBQeZrD2bAyeAvv?=
- =?us-ascii?Q?Zg6sM+rtH6NiwPksC0GO1Yej6fl4nPbB62ZGnHFLVgNB00LbyxhkAL7mRY/2?=
- =?us-ascii?Q?MRlLBkUai/RVuMHt34X1SlOtQmpfUnOZpjMoV2iKxfk1sM3+xzYdM0sBqfgH?=
- =?us-ascii?Q?32L8HZbuQ0UI1xQ6Il9daNm7KytV3c65eyXzaEaUldzEMP4E3k0Eg+wpSGUd?=
- =?us-ascii?Q?YFCLB/ViPOt+CvZMEmKIY8+o1erefTl4ELztnpVd8hI+aFLDXD4tfwnaQk4b?=
- =?us-ascii?Q?B+K3H4Zf2AHmruJ2rlapnvB4vaJrsU7UDbKthS/x2pRYIvZKk92zacdrtV/p?=
- =?us-ascii?Q?vwuyRkkYbwTD6CjKLI9uwh3FK+9B4LlfkKokbbUeG5UeGG+DkI3r86+Sg+e0?=
- =?us-ascii?Q?n18Flu37uGPmNveENxt5NCTbOSdWPK+FyieFQoLrVZuKSgC8EiGCxfdtipsL?=
- =?us-ascii?Q?Kwcazp4pNiF/Ig6+txg04erEDKrX8CQHWsR6rUHBOUA7zPzZQ9PxpzRJI4WV?=
- =?us-ascii?Q?J+r/Yzlua6ByGKCnEfUgtspR9KpbMVs4nFiWUEvP+aoT6r77WwrbHB/ol2MD?=
- =?us-ascii?Q?rpKem2xytfeDUdd4G3IkZlb0185pnIul9RAntTOwBP1mXVJhGb7MCIfTFVXL?=
- =?us-ascii?Q?j3gbPmgq+YilnllPB6vaxGYoVug9Bdep68xMwheb1GFGoxdUCYAf1TYfS0y1?=
- =?us-ascii?Q?znv6sdHihsOZWE6vbMKBjPhMLHMmhBKEjQGn?=
+	=?us-ascii?Q?VsalWUfc2TYmQO2uqEATSMkMIepaLU12pltEkRSNWQLUnQi/2zVbhzYpnUXg?=
+ =?us-ascii?Q?+IpVChX5RDkQFtOYue6Lr4ltjodDOnBmTeIaiEin0RD6g+WI4Z146PDXymui?=
+ =?us-ascii?Q?RxOuysw5dogAGEb/EwVZ93InK9dYIK7RY+w/4g5hb6QSexxxPLkNg/nIxwpP?=
+ =?us-ascii?Q?Nn8+U0pKhni579oB/ZRGdaBLULU3a8LfLEMNxwZ0BVNuBHW+pHjIYr7BdIF2?=
+ =?us-ascii?Q?Qpwar3f6naI6MSvdKTMp/a8OldU0YjXoCm1YwEdMUyVlwhS3qnmyI4zL/4tG?=
+ =?us-ascii?Q?uDhK5dSn554Wxlb/fgueBPe396uFGaJ9XRgM/YIcM4ZxacFoqakfgdERa+Xy?=
+ =?us-ascii?Q?GoLnldprmjk8NR6Dx17CJ+WIXUXivL1wAIGEPdhJYTt79AJM4TDEoYmhC0Ug?=
+ =?us-ascii?Q?6PalTTk9uZBIvHJcyfukkqRnlz4AESOk2hFbsDcSE7x9oj93T21zb+erQ+Mr?=
+ =?us-ascii?Q?Jav4+OQjkUIpijqTLyOEEBfuj0lU5WfCFQnO1KSOgh+Gung1pA1+VmKXFNI4?=
+ =?us-ascii?Q?YZV7lCsHPAqQMN4o0jxhq49nM32xpGZNPV8vVoHrcg09nbPymn66xhn6DfIq?=
+ =?us-ascii?Q?PllCyWPMPLTwzZt6dlJZW+Dz8h2CoQx/gLW4H2pbRqfEnVyBflyG423AYuoW?=
+ =?us-ascii?Q?SrPA3z9b0vnCMVADF9zAYKLN5t6ZRCvDA/ROQDt0NIkOt8RDmYbCzhYY2cml?=
+ =?us-ascii?Q?Oxq07Ds8ye3gVJW7+kMv5Hjty+zI1c4hk0x5nUbnvaGi77ZKPVsHjibHCEs0?=
+ =?us-ascii?Q?nsY2OOBcElZiHcB2pARR71mGJfaK8LAaIZi5PPj9wG7L+QOPiCIna9j3x4Lj?=
+ =?us-ascii?Q?XSuTlTkBS97NILyt60McIC7AORf5Fo03YNelKMrqq0DkT2yoMF4XWkOvk33I?=
+ =?us-ascii?Q?hZNaMqrdxR6dQBunpy+3XyJTu3GEA28tvNWggfMFE+06EWD5K1GPcjxP6Bfr?=
+ =?us-ascii?Q?k4E1dEGANNiZKehePHCc9Eq5sZNzBf0MaxkxMj05OSltVSbjqLU43iHb7EWd?=
+ =?us-ascii?Q?l6DSu1zSDOhFA1EHAomDHo5QOpSTt3hx2LcLnIYW92l4Aw94jqxXorfaSHE/?=
+ =?us-ascii?Q?ClevEwH7DGKgJx+CaMwvyHQ+0/M9QryUno/ZAm3hrSa1HCUWu8gEk98UiwmS?=
+ =?us-ascii?Q?20Oclg9MQHjg9XWXTmkby9YnGEkA0cyOAKZk2CkSPmIOXHndbfN5n/1X8UC8?=
+ =?us-ascii?Q?xUHzQD6rTAfMl/x/gLG5xRg8rXtVMX9d1yO1CkYKLtwPL6clpkz2BMjR2vnu?=
+ =?us-ascii?Q?+auZEA/l7NvzsfpbfguoDa0M/AsyT60kCplGgQKT5pm9jkbyj9cX6blrDqvV?=
+ =?us-ascii?Q?LTlXXx5H66N6tzKB0jvF87AIycu3ErVnGMFR8OJl66snamWWDn41QVTFhCeH?=
+ =?us-ascii?Q?WYLepiir1XbDuSk+oepqHTMwvEvb6u2UxiEnPTDyG65Ve5sex91XfbScXpco?=
+ =?us-ascii?Q?d86dX11TDHEE50c9MXJ3c95c0ZOzYCiMRMVZIkfRHAwly7tTAi43j57fW4+4?=
+ =?us-ascii?Q?ednEbCYO6SXIn3+QdAPLgE67wIaLc7LHFpxv?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(7416014)(82310400026);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(7416014)(82310400026);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Apr 2025 16:17:43.5364
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Apr 2025 16:17:45.0299
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e57001c0-1d57-416a-7d2e-08dd7e948ca2
+X-MS-Exchange-CrossTenant-Network-Message-Id: 70e79413-2245-473c-8dfa-08dd7e948d86
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
 	DS2PEPF0000343E.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7614
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR12MB9434
 
-Restructure L1TF to use select/apply functions to create consistent
-vulnerability handling.
-
-Define new AUTO mitigation for L1TF.
+Restructure SRSO to use select/update/apply functions to create
+consistent vulnerability handling.  Like with retbleed, the command line
+options directly select mitigations which can later be modified.
 
 Signed-off-by: David Kaplan <david.kaplan@amd.com>
 ---
- arch/x86/include/asm/processor.h |  1 +
- arch/x86/kernel/cpu/bugs.c       | 25 +++++++++++++++++++------
- arch/x86/kvm/vmx/vmx.c           |  2 ++
- 3 files changed, 22 insertions(+), 6 deletions(-)
+ arch/x86/kernel/cpu/bugs.c | 212 +++++++++++++++++--------------------
+ 1 file changed, 99 insertions(+), 113 deletions(-)
 
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index eaa7214d6953..62705783ca3c 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -735,6 +735,7 @@ void store_cpu_caps(struct cpuinfo_x86 *info);
- 
- enum l1tf_mitigations {
- 	L1TF_MITIGATION_OFF,
-+	L1TF_MITIGATION_AUTO,
- 	L1TF_MITIGATION_FLUSH_NOWARN,
- 	L1TF_MITIGATION_FLUSH,
- 	L1TF_MITIGATION_FLUSH_NOSMT,
 diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index e526d06171cd..5f718537ba70 100644
+index 5f718537ba70..85d27ba2c83c 100644
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -67,6 +67,7 @@ static void __init spectre_v2_user_apply_mitigation(void);
- static void __init ssb_select_mitigation(void);
- static void __init ssb_apply_mitigation(void);
- static void __init l1tf_select_mitigation(void);
-+static void __init l1tf_apply_mitigation(void);
- static void __init mds_select_mitigation(void);
- static void __init mds_update_mitigation(void);
- static void __init mds_apply_mitigation(void);
-@@ -243,6 +244,7 @@ void __init cpu_select_mitigations(void)
- 	retbleed_apply_mitigation();
- 	spectre_v2_user_apply_mitigation();
- 	ssb_apply_mitigation();
-+	l1tf_apply_mitigation();
- 	mds_apply_mitigation();
- 	taa_apply_mitigation();
+@@ -84,6 +84,8 @@ static void __init srbds_select_mitigation(void);
+ static void __init srbds_apply_mitigation(void);
+ static void __init l1d_flush_select_mitigation(void);
+ static void __init srso_select_mitigation(void);
++static void __init srso_update_mitigation(void);
++static void __init srso_apply_mitigation(void);
+ static void __init gds_select_mitigation(void);
+ static void __init gds_apply_mitigation(void);
+ static void __init bhi_select_mitigation(void);
+@@ -208,11 +210,6 @@ void __init cpu_select_mitigations(void)
+ 	rfds_select_mitigation();
+ 	srbds_select_mitigation();
+ 	l1d_flush_select_mitigation();
+-
+-	/*
+-	 * srso_select_mitigation() depends and must run after
+-	 * retbleed_select_mitigation().
+-	 */
+ 	srso_select_mitigation();
+ 	gds_select_mitigation();
+ 	bhi_select_mitigation();
+@@ -238,6 +235,8 @@ void __init cpu_select_mitigations(void)
+ 	mmio_update_mitigation();
+ 	rfds_update_mitigation();
+ 	bhi_update_mitigation();
++	/* srso_update_mitigation() depends on retbleed_update_mitigation(). */
++	srso_update_mitigation();
+ 
+ 	spectre_v1_apply_mitigation();
+ 	spectre_v2_apply_mitigation();
+@@ -250,6 +249,7 @@ void __init cpu_select_mitigations(void)
  	mmio_apply_mitigation();
-@@ -2543,7 +2545,7 @@ EXPORT_SYMBOL_GPL(itlb_multihit_kvm_mitigation);
- 
- /* Default mitigation for L1TF-affected CPUs */
- enum l1tf_mitigations l1tf_mitigation __ro_after_init =
--	IS_ENABLED(CONFIG_MITIGATION_L1TF) ? L1TF_MITIGATION_FLUSH : L1TF_MITIGATION_OFF;
-+	IS_ENABLED(CONFIG_MITIGATION_L1TF) ? L1TF_MITIGATION_AUTO : L1TF_MITIGATION_OFF;
- #if IS_ENABLED(CONFIG_KVM_INTEL)
- EXPORT_SYMBOL_GPL(l1tf_mitigation);
- #endif
-@@ -2590,23 +2592,34 @@ static void override_cache_bits(struct cpuinfo_x86 *c)
+ 	rfds_apply_mitigation();
+ 	srbds_apply_mitigation();
++	srso_apply_mitigation();
+ 	gds_apply_mitigation();
+ 	bhi_apply_mitigation();
  }
+@@ -2679,6 +2679,7 @@ early_param("l1tf", l1tf_cmdline);
  
- static void __init l1tf_select_mitigation(void)
+ enum srso_mitigation {
+ 	SRSO_MITIGATION_NONE,
++	SRSO_MITIGATION_AUTO,
+ 	SRSO_MITIGATION_UCODE_NEEDED,
+ 	SRSO_MITIGATION_SAFE_RET_UCODE_NEEDED,
+ 	SRSO_MITIGATION_MICROCODE,
+@@ -2688,14 +2689,6 @@ enum srso_mitigation {
+ 	SRSO_MITIGATION_BP_SPEC_REDUCE,
+ };
+ 
+-enum srso_mitigation_cmd {
+-	SRSO_CMD_OFF,
+-	SRSO_CMD_MICROCODE,
+-	SRSO_CMD_SAFE_RET,
+-	SRSO_CMD_IBPB,
+-	SRSO_CMD_IBPB_ON_VMEXIT,
+-};
+-
+ static const char * const srso_strings[] = {
+ 	[SRSO_MITIGATION_NONE]			= "Vulnerable",
+ 	[SRSO_MITIGATION_UCODE_NEEDED]		= "Vulnerable: No microcode",
+@@ -2707,8 +2700,7 @@ static const char * const srso_strings[] = {
+ 	[SRSO_MITIGATION_BP_SPEC_REDUCE]	= "Mitigation: Reduced Speculation"
+ };
+ 
+-static enum srso_mitigation srso_mitigation __ro_after_init = SRSO_MITIGATION_NONE;
+-static enum srso_mitigation_cmd srso_cmd __ro_after_init = SRSO_CMD_SAFE_RET;
++static enum srso_mitigation srso_mitigation __ro_after_init = SRSO_MITIGATION_AUTO;
+ 
+ static int __init srso_parse_cmdline(char *str)
+ {
+@@ -2716,15 +2708,15 @@ static int __init srso_parse_cmdline(char *str)
+ 		return -EINVAL;
+ 
+ 	if (!strcmp(str, "off"))
+-		srso_cmd = SRSO_CMD_OFF;
++		srso_mitigation = SRSO_MITIGATION_NONE;
+ 	else if (!strcmp(str, "microcode"))
+-		srso_cmd = SRSO_CMD_MICROCODE;
++		srso_mitigation = SRSO_MITIGATION_MICROCODE;
+ 	else if (!strcmp(str, "safe-ret"))
+-		srso_cmd = SRSO_CMD_SAFE_RET;
++		srso_mitigation = SRSO_MITIGATION_SAFE_RET;
+ 	else if (!strcmp(str, "ibpb"))
+-		srso_cmd = SRSO_CMD_IBPB;
++		srso_mitigation = SRSO_MITIGATION_IBPB;
+ 	else if (!strcmp(str, "ibpb-vmexit"))
+-		srso_cmd = SRSO_CMD_IBPB_ON_VMEXIT;
++		srso_mitigation = SRSO_MITIGATION_IBPB_ON_VMEXIT;
+ 	else
+ 		pr_err("Ignoring unknown SRSO option (%s).", str);
+ 
+@@ -2738,130 +2730,80 @@ static void __init srso_select_mitigation(void)
+ {
+ 	bool has_microcode = boot_cpu_has(X86_FEATURE_IBPB_BRTYPE);
+ 
+-	if (!boot_cpu_has_bug(X86_BUG_SRSO) ||
+-	    cpu_mitigations_off() ||
+-	    srso_cmd == SRSO_CMD_OFF) {
+-		if (boot_cpu_has(X86_FEATURE_SBPB))
+-			x86_pred_cmd = PRED_CMD_SBPB;
+-		goto out;
+-	}
++	if (!boot_cpu_has_bug(X86_BUG_SRSO) || cpu_mitigations_off())
++		srso_mitigation = SRSO_MITIGATION_NONE;
++
++	if (srso_mitigation == SRSO_MITIGATION_NONE)
++		return;
++
++	if (srso_mitigation == SRSO_MITIGATION_AUTO)
++		srso_mitigation = SRSO_MITIGATION_SAFE_RET;
+ 
+ 	if (has_microcode) {
+ 		/*
+ 		 * Zen1/2 with SMT off aren't vulnerable after the right
+ 		 * IBPB microcode has been applied.
+-		 *
+-		 * Zen1/2 don't have SBPB, no need to try to enable it here.
+ 		 */
+ 		if (boot_cpu_data.x86 < 0x19 && !cpu_smt_possible()) {
+ 			setup_force_cpu_cap(X86_FEATURE_SRSO_NO);
+-			goto out;
+-		}
+-
+-		if (retbleed_mitigation == RETBLEED_MITIGATION_IBPB) {
+-			srso_mitigation = SRSO_MITIGATION_IBPB;
+-			goto out;
++			srso_mitigation = SRSO_MITIGATION_NONE;
++			return;
+ 		}
+ 	} else {
+ 		pr_warn("IBPB-extending microcode not applied!\n");
+ 		pr_warn(SRSO_NOTICE);
+-
+-		/* may be overwritten by SRSO_CMD_SAFE_RET below */
+-		srso_mitigation = SRSO_MITIGATION_UCODE_NEEDED;
+ 	}
+ 
+-	switch (srso_cmd) {
+-	case SRSO_CMD_MICROCODE:
+-		if (has_microcode) {
+-			srso_mitigation = SRSO_MITIGATION_MICROCODE;
+-			pr_warn(SRSO_NOTICE);
+-		}
+-		break;
+-
+-	case SRSO_CMD_SAFE_RET:
+-		if (boot_cpu_has(X86_FEATURE_SRSO_USER_KERNEL_NO))
++	switch (srso_mitigation) {
++	case SRSO_MITIGATION_SAFE_RET:
++		if (boot_cpu_has(X86_FEATURE_SRSO_USER_KERNEL_NO)) {
++			srso_mitigation = SRSO_MITIGATION_IBPB_ON_VMEXIT;
+ 			goto ibpb_on_vmexit;
++		}
+ 
+-		if (IS_ENABLED(CONFIG_MITIGATION_SRSO)) {
+-			/*
+-			 * Enable the return thunk for generated code
+-			 * like ftrace, static_call, etc.
+-			 */
+-			setup_force_cpu_cap(X86_FEATURE_RETHUNK);
+-			setup_force_cpu_cap(X86_FEATURE_UNRET);
+-
+-			if (boot_cpu_data.x86 == 0x19) {
+-				setup_force_cpu_cap(X86_FEATURE_SRSO_ALIAS);
+-				x86_return_thunk = srso_alias_return_thunk;
+-			} else {
+-				setup_force_cpu_cap(X86_FEATURE_SRSO);
+-				x86_return_thunk = srso_return_thunk;
+-			}
+-			if (has_microcode)
+-				srso_mitigation = SRSO_MITIGATION_SAFE_RET;
+-			else
+-				srso_mitigation = SRSO_MITIGATION_SAFE_RET_UCODE_NEEDED;
+-		} else {
++		if (!IS_ENABLED(CONFIG_MITIGATION_SRSO)) {
+ 			pr_err("WARNING: kernel not compiled with MITIGATION_SRSO.\n");
++			srso_mitigation = SRSO_MITIGATION_NONE;
+ 		}
+-		break;
+ 
+-	case SRSO_CMD_IBPB:
+-		if (IS_ENABLED(CONFIG_MITIGATION_IBPB_ENTRY)) {
+-			if (has_microcode) {
+-				setup_force_cpu_cap(X86_FEATURE_ENTRY_IBPB);
+-				setup_force_cpu_cap(X86_FEATURE_IBPB_ON_VMEXIT);
+-				srso_mitigation = SRSO_MITIGATION_IBPB;
+-
+-				/*
+-				 * IBPB on entry already obviates the need for
+-				 * software-based untraining so clear those in case some
+-				 * other mitigation like Retbleed has selected them.
+-				 */
+-				setup_clear_cpu_cap(X86_FEATURE_UNRET);
+-				setup_clear_cpu_cap(X86_FEATURE_RETHUNK);
+-
+-				/*
+-				 * There is no need for RSB filling: write_ibpb() ensures
+-				 * all predictions, including the RSB, are invalidated,
+-				 * regardless of IBPB implementation.
+-				 */
+-				setup_clear_cpu_cap(X86_FEATURE_RSB_VMEXIT);
+-			}
+-		} else {
+-			pr_err("WARNING: kernel not compiled with MITIGATION_IBPB_ENTRY.\n");
+-		}
++		if (!has_microcode)
++			srso_mitigation = SRSO_MITIGATION_SAFE_RET_UCODE_NEEDED;
+ 		break;
+-
+ ibpb_on_vmexit:
+-	case SRSO_CMD_IBPB_ON_VMEXIT:
++	case SRSO_MITIGATION_IBPB_ON_VMEXIT:
+ 		if (boot_cpu_has(X86_FEATURE_SRSO_BP_SPEC_REDUCE)) {
+ 			pr_notice("Reducing speculation to address VM/HV SRSO attack vector.\n");
+ 			srso_mitigation = SRSO_MITIGATION_BP_SPEC_REDUCE;
+ 			break;
+ 		}
+-
+-		if (IS_ENABLED(CONFIG_MITIGATION_IBPB_ENTRY)) {
+-			if (has_microcode) {
+-				setup_force_cpu_cap(X86_FEATURE_IBPB_ON_VMEXIT);
+-				srso_mitigation = SRSO_MITIGATION_IBPB_ON_VMEXIT;
+-
+-				/*
+-				 * There is no need for RSB filling: write_ibpb() ensures
+-				 * all predictions, including the RSB, are invalidated,
+-				 * regardless of IBPB implementation.
+-				 */
+-				setup_clear_cpu_cap(X86_FEATURE_RSB_VMEXIT);
+-			}
+-		} else {
++		fallthrough;
++	case SRSO_MITIGATION_IBPB:
++		if (!IS_ENABLED(CONFIG_MITIGATION_IBPB_ENTRY)) {
+ 			pr_err("WARNING: kernel not compiled with MITIGATION_IBPB_ENTRY.\n");
++			srso_mitigation = SRSO_MITIGATION_NONE;
+ 		}
++
++		if (!has_microcode)
++			srso_mitigation = SRSO_MITIGATION_UCODE_NEEDED;
+ 		break;
+ 	default:
+ 		break;
+ 	}
++}
+ 
+-out:
++static void __init srso_update_mitigation(void)
 +{
-+	if (!boot_cpu_has_bug(X86_BUG_L1TF) || cpu_mitigations_off()) {
-+		l1tf_mitigation = L1TF_MITIGATION_OFF;
++	/* If retbleed is using IBPB, that works for SRSO as well */
++	if (retbleed_mitigation == RETBLEED_MITIGATION_IBPB &&
++	    boot_cpu_has(X86_FEATURE_IBPB_BRTYPE))
++		srso_mitigation = SRSO_MITIGATION_IBPB;
++
++	if (boot_cpu_has_bug(X86_BUG_SRSO) && !cpu_mitigations_off())
++		pr_info("%s\n", srso_strings[srso_mitigation]);
++}
++
++static void __init srso_apply_mitigation(void)
++{
+ 	/*
+ 	 * Clear the feature flag if this mitigation is not selected as that
+ 	 * feature flag controls the BpSpecReduce MSR bit toggling in KVM.
+@@ -2869,8 +2811,52 @@ static void __init srso_select_mitigation(void)
+ 	if (srso_mitigation != SRSO_MITIGATION_BP_SPEC_REDUCE)
+ 		setup_clear_cpu_cap(X86_FEATURE_SRSO_BP_SPEC_REDUCE);
+ 
+-	if (srso_mitigation != SRSO_MITIGATION_NONE)
+-		pr_info("%s\n", srso_strings[srso_mitigation]);
++	if (srso_mitigation == SRSO_MITIGATION_NONE) {
++		if (boot_cpu_has(X86_FEATURE_SBPB))
++			x86_pred_cmd = PRED_CMD_SBPB;
 +		return;
 +	}
 +
-+	if (l1tf_mitigation == L1TF_MITIGATION_AUTO) {
-+		if (cpu_mitigations_auto_nosmt())
-+			l1tf_mitigation = L1TF_MITIGATION_FLUSH_NOSMT;
-+		else
-+			l1tf_mitigation = L1TF_MITIGATION_FLUSH;
-+	}
-+}
++	switch (srso_mitigation) {
++	case SRSO_MITIGATION_SAFE_RET:
++	case SRSO_MITIGATION_SAFE_RET_UCODE_NEEDED:
++		/*
++		 * Enable the return thunk for generated code
++		 * like ftrace, static_call, etc.
++		 */
++		setup_force_cpu_cap(X86_FEATURE_RETHUNK);
++		setup_force_cpu_cap(X86_FEATURE_UNRET);
 +
-+static void __init l1tf_apply_mitigation(void)
- {
- 	u64 half_pa;
++		if (boot_cpu_data.x86 == 0x19) {
++			setup_force_cpu_cap(X86_FEATURE_SRSO_ALIAS);
++			x86_return_thunk = srso_alias_return_thunk;
++		} else {
++			setup_force_cpu_cap(X86_FEATURE_SRSO);
++			x86_return_thunk = srso_return_thunk;
++		}
++		break;
++	case SRSO_MITIGATION_IBPB:
++		setup_force_cpu_cap(X86_FEATURE_ENTRY_IBPB);
++		/*
++		 * IBPB on entry already obviates the need for
++		 * software-based untraining so clear those in case some
++		 * other mitigation like Retbleed has selected them.
++		 */
++		setup_clear_cpu_cap(X86_FEATURE_UNRET);
++		setup_clear_cpu_cap(X86_FEATURE_RETHUNK);
++		fallthrough;
++	case SRSO_MITIGATION_IBPB_ON_VMEXIT:
++		setup_force_cpu_cap(X86_FEATURE_IBPB_ON_VMEXIT);
++		/*
++		 * There is no need for RSB filling: entry_ibpb() ensures
++		 * all predictions, including the RSB, are invalidated,
++		 * regardless of IBPB implementation.
++		 */
++		setup_clear_cpu_cap(X86_FEATURE_RSB_VMEXIT);
++		break;
++	default:
++		break;
++	}
+ }
  
- 	if (!boot_cpu_has_bug(X86_BUG_L1TF))
- 		return;
- 
--	if (cpu_mitigations_off())
--		l1tf_mitigation = L1TF_MITIGATION_OFF;
--	else if (cpu_mitigations_auto_nosmt())
--		l1tf_mitigation = L1TF_MITIGATION_FLUSH_NOSMT;
--
- 	override_cache_bits(&boot_cpu_data);
- 
- 	switch (l1tf_mitigation) {
- 	case L1TF_MITIGATION_OFF:
- 	case L1TF_MITIGATION_FLUSH_NOWARN:
- 	case L1TF_MITIGATION_FLUSH:
-+	case L1TF_MITIGATION_AUTO:
- 		break;
- 	case L1TF_MITIGATION_FLUSH_NOSMT:
- 	case L1TF_MITIGATION_FULL:
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 1547bfacd40f..1b2a783f9ad9 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -273,6 +273,7 @@ static int vmx_setup_l1d_flush(enum vmx_l1d_flush_state l1tf)
- 		case L1TF_MITIGATION_OFF:
- 			l1tf = VMENTER_L1D_FLUSH_NEVER;
- 			break;
-+		case L1TF_MITIGATION_AUTO:
- 		case L1TF_MITIGATION_FLUSH_NOWARN:
- 		case L1TF_MITIGATION_FLUSH:
- 		case L1TF_MITIGATION_FLUSH_NOSMT:
-@@ -7704,6 +7705,7 @@ int vmx_vm_init(struct kvm *kvm)
- 		case L1TF_MITIGATION_FLUSH_NOWARN:
- 			/* 'I explicitly don't care' is set */
- 			break;
-+		case L1TF_MITIGATION_AUTO:
- 		case L1TF_MITIGATION_FLUSH:
- 		case L1TF_MITIGATION_FLUSH_NOSMT:
- 		case L1TF_MITIGATION_FULL:
+ #undef pr_fmt
 -- 
 2.34.1
 
