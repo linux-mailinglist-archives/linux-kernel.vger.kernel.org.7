@@ -1,177 +1,106 @@
-Return-Path: <linux-kernel+bounces-610518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C9F9A935D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 12:08:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07665A935E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 12:15:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0206019E532B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 10:08:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70AFB7B10DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 10:14:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABAC26FDA1;
-	Fri, 18 Apr 2025 10:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MHcTT8YH"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1B9270ECD;
+	Fri, 18 Apr 2025 10:15:13 +0000 (UTC)
+Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DD120C037
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 10:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4382741AE;
+	Fri, 18 Apr 2025 10:15:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744970920; cv=none; b=d86Oejzan+CCKcKiiNCt9TBvqgOGLpz6Tebp93dcGatTCxAKEstJcHs+V8QsUvTmAcRi8edUPNxs+T3TL6FS2Wob/Sc9N7+cO1MIgucWXy8GjFl2Ki6Tj6qj50jm7LaufSPwmnBJ7CO9LG8rdFGv8acwR6n+Cmq1UZMMW/YNrvo=
+	t=1744971313; cv=none; b=uSSB2/OR/UY+wfnOOKo6tWg1M4kA+AQ8tZOeqjaJt09nOB/l9EiE8hgNMyhFhbd79jJewESSpc72lOEqYkgxSjOJLk5gmg7C4tXO/g+SGCOVKB4+RicQKCP+aCrs3NKK2x5HIMtewxPNAmnDtcxSbSPneAhTpgNJhyEmmVvFjTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744970920; c=relaxed/simple;
-	bh=+RdKaGSYUCfEJiJFPdvtZA8GDr+MXvsxZc3B1z2ldAc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F9U57MXa/PNHHoQ12YSrdqIPVtZawRII2eP3y8BgFwKSt5DERrb/H21OuGlN9xqlqTMR7g12UZFUFcx8UoOsgrzpBB8pUSOqq5WqG29M7Yc6fbRw5WdAZmn8Mybq8ARSFUeRNqagnfEr0grPJmRWSNhVHoA+C+IxSdj5QjKNUUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MHcTT8YH; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-39c1ef4acf2so1076644f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 03:08:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744970917; x=1745575717; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=S/qSOlMwG1tBEqwfJZ1I0Em2NJMBVmrSeT8vIpdwl2s=;
-        b=MHcTT8YHqz0sPIsVXD3PjHYlZOJYmOSryhjogdewJJh/JRO/PPQEfABxDHFbvXi2z/
-         TxSJ2GVuBkflbuZF7FZDkphpx7k0tlWQrr34twF3Bzt9HG497z2zFqaf/eOZGo/m2tS0
-         c0kj+c29EqVoTgAgOATw0xgb+uwucPZrO7NX7qmOq1CbsphQQvlu+UsV0RTWJjt4UHoR
-         dVaB5GbGhPT8xIBh5fe6PCHMaLVPW9MR6+hL+kLLib5xzbJVi0mISRG1w+/U/iri6xGI
-         sKM0NXpXqyIOmScvXHoeLpfYRwL11ocwK8AuYrp14HpLc3L2ek5zTly0vsym/qAQkYqi
-         jwLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744970917; x=1745575717;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S/qSOlMwG1tBEqwfJZ1I0Em2NJMBVmrSeT8vIpdwl2s=;
-        b=IvlNVA2n6woD4mTPx7vL2py5ACNDFz/g3reorsrJYMYq6DUuCJxLkppTN5snus9Jcv
-         uCUH3sxA2v6W6Wdek9nImUyE5zBv3q4Mfu6ljXjJykG7SILQN0Yzvi7acHABHkxlBrKh
-         0oU9DO2kdn3QD5/wg/Fw5O/8KLaOronp8B+Z3fAKPP+9riiBFiOjp1O9DUalzPbN43DC
-         gDlct0R8kCHzzeB/YtYW3hTIVQzlV+SMbpOcsgh8tCI250EtjmXBUdzRR8W8Tvb85hzD
-         /j77275OCRsP+CixEXlzxdn/xSjU9RzxJeND8UjZ3pWY4q2bULhs4OprEJYFItJ/cS0M
-         enqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXGkh/atlfkw3UCLu5V7+OzX7RNBq+I1KkQu/9qvPuZE3BKSIOLDeAl4WfkqbAM5QQc0JJrzBQ70Gf6M/c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEsThgoWWCVpNfQ9uW6OupFELZvFppWrshF5ZI13lDKGx8YJpP
-	2zzmODdxAz3DJMDekQxn+vKHeKFt1u6bbXCXYc8+KyT/cTppQFl3wkCGQrVTuOI=
-X-Gm-Gg: ASbGncuQQC+X23NUlvMXutwV9eSaT9fQouMRDMa1x6w5SdMRWET2vFgu9KESb4TVYQy
-	gSMb3uairOd4c6807MMidB6Ora/BC/sHicrCzdYyD2y+dijmK6TOvab0qBMzUN+pBCl9GpNqjN/
-	CoK2ccNwKafcHL1RI6AYCEG8lG3R6ANXEgUEafp3/jWz8ieX4olVL7MnGjAteWivqJ3yO58xFXo
-	Kn1nV8cq4bFvbnY5pOyG0v7ugKJbX9t7FsfxmVBgFP0pCQPxcx1RaxgtK77UAw/3rmYMbfEw15C
-	VyLgI7/gosstgG0f7sVBBk1w8VAD8DT+YQmB+wrqNG/SHkGz/g50AFR7eeaTMcDCCSzdGesH9mr
-	0YIg=
-X-Google-Smtp-Source: AGHT+IG1L3VfWz9J+obAaFerB2Z59MsSd2dFbffUprl7yAb1d+1L7oSTlRW/aqUm+C4DsUsSsv8Z1w==
-X-Received: by 2002:a5d:6da1:0:b0:39e:e259:91fd with SMTP id ffacd0b85a97d-39efba3cbbbmr1721753f8f.17.1744970916627;
-        Fri, 18 Apr 2025 03:08:36 -0700 (PDT)
-Received: from mai.linaro.org (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa4207fcsm2342052f8f.19.2025.04.18.03.08.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Apr 2025 03:08:36 -0700 (PDT)
-Date: Fri, 18 Apr 2025 12:08:34 +0200
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alex Shi <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>,
-	Binbin Zhou <zhoubinbin@loongson.cn>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Liu Ying <victor.liu@nxp.com>, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] vsprintf: remove redundant and unused %pCn format
- specifier
-Message-ID: <aAIkouhM_ePdhgJY@mai.linaro.org>
-References: <20250311-vsprintf-pcn-v2-0-0af40fc7dee4@bootlin.com>
- <20250311-vsprintf-pcn-v2-2-0af40fc7dee4@bootlin.com>
- <Z9BKW_06nLAOzYfY@pathway.suse.cz>
- <20250407184647.3b72de47@booty>
- <Z_TRZSxwzfAZ9u6I@pathway.suse.cz>
+	s=arc-20240116; t=1744971313; c=relaxed/simple;
+	bh=qWN0NjjRcW9BA2sX0INR3SpjPZCsWlki9/tPSA1YspY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Kq7xmJP46gR4bLZRbiclIRGNMhbZFl3OlP6T9tiollfJil4TVeaXLHqsR/mJFUtUlWuD+aP/5IHzlZM89/eKQHcyzrA8iR8okkohWmp+VwQ/N2nSfZfWo0gbgqz7Np+XGRY3eQzFvQlpHoLBBEKnWzDCLccXXwe2nqmMx6Oh93o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
+Received: from arnaudlcm-X570-UD.. (unknown [IPv6:2a01:e0a:3e8:c0d0:6288:2946:7ed8:5612])
+	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id 07D882CAC61;
+	Fri, 18 Apr 2025 10:09:49 +0000 (UTC)
+Authentication-Results: Plesk;
+	spf=pass (sender IP is 2a01:e0a:3e8:c0d0:6288:2946:7ed8:5612) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=arnaudlcm-X570-UD..
+Received-SPF: pass (Plesk: connection is authenticated)
+From: Arnaud Lecomte <contact@arnaud-lcm.com>
+To: syzbot+5405d1265a66aa313343@syzkaller.appspotmail.com
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: syz test
+Date: Fri, 18 Apr 2025 12:09:43 +0200
+Message-ID: <20250418100943.108533-1-contact@arnaud-lcm.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <680205df.050a0220.297747.0004.GAE@google.com>
+References: <680205df.050a0220.297747.0004.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z_TRZSxwzfAZ9u6I@pathway.suse.cz>
+X-PPP-Message-ID: <174497098935.10837.3585531367737464735@Plesk>
+X-PPP-Vhost: arnaud-lcm.com
 
-On Tue, Apr 08, 2025 at 09:33:57AM +0200, Petr Mladek wrote:
-> On Mon 2025-04-07 18:46:47, Luca Ceresoli wrote:
-> > Hello Petr, Daniel,
-> > 
-> > On Tue, 11 Mar 2025 15:36:11 +0100
-> > Petr Mladek <pmladek@suse.com> wrote:
-> > 
-> > > On Tue 2025-03-11 10:21:23, Luca Ceresoli wrote:
-> > > > %pC and %pCn print the same string, and commit 900cca294425 ("lib/vsprintf:
-> > > > add %pC{,n,r} format specifiers for clocks") introducing them does not
-> > > > clarify any intended difference. It can be assumed %pC is a default for
-> > > > %pCn as some other specifiers do, but not all are consistent with this
-> > > > policy. Moreover there is now no other suffix other than 'n', which makes a
-> > > > default not really useful.
-> > > > 
-> > > > All users in the kernel were using %pC except for one which has been
-> > > > converted. So now remove %pCn and all the unnecessary extra code and
-> > > > documentation.
-> > > > 
-> > > > Acked-by: Stephen Boyd <sboyd@kernel.org>
-> > > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>  
-> > > 
-> > > Makes sense. Looks and works well, so:
-> > > 
-> > > Reviewed-by: Petr Mladek <pmladek@suse.com>
-> > > Tested-by: Petr Mladek <pmladek@suse.com>
-> > > 
-> > > Daniel, if I get it correctly, you have already taken the 1st patch.
-> > > Would you mind to take also this patch using the same tree, please?
-> > > Otherwise, we would need to coordinate pull requests in the upcoming
-> > > merge window ;-)
-> > 
-> > I see none of these two patches in linux-next.
-> 
-> I see.
-> 
-> > Anything I should do? Resend? Or just wait a bit more?
-> 
-> Daniel,	Rafael, Zhang, Lukasz,
-> 
-> would you like to take both patches via the linux-pm.git thermal tree?
-> Or should I take both patches via the printk tree?
-> Both ways work for me.
-
-I'll take care of them now
-
-Thanks for the heads up
-
-  -- Daniel
-
+#syz test
+diff --git a/fs/hfs/bnode.c b/fs/hfs/bnode.c
+index 6add6ebfef89..e8d7431ce178 100644
+--- a/fs/hfs/bnode.c
++++ b/fs/hfs/bnode.c
+@@ -15,7 +15,7 @@
+ 
+ #include "btree.h"
+ 
+-void hfs_bnode_read(struct hfs_bnode *node, void *buf, int off, int len)
++int hfs_bnode_read(struct hfs_bnode *node, void *buf, int off, int len)
+ {
+ 	struct page *page;
+ 	int pagenum;
+@@ -37,13 +37,16 @@ void hfs_bnode_read(struct hfs_bnode *node, void *buf, int off, int len)
+ 		pagenum++;
+ 		off = 0; /* page offset only applies to the first page */
+ 	}
++
++	return bytes_to_read;
+ }
+ 
+ u16 hfs_bnode_read_u16(struct hfs_bnode *node, int off)
+ {
+-	__be16 data;
++	__be16 data = 0;
+ 	// optimize later...
+-	hfs_bnode_read(node, &data, off, 2);
++	if(hfs_bnode_read(node, &data, off, 2) < sizeof(u16))
++		return 0;
+ 	return be16_to_cpu(data);
+ }
+ 
+diff --git a/fs/hfs/btree.h b/fs/hfs/btree.h
+index 0e6baee93245..54f310c52643 100644
+--- a/fs/hfs/btree.h
++++ b/fs/hfs/btree.h
+@@ -94,7 +94,7 @@ extern struct hfs_bnode * hfs_bmap_alloc(struct hfs_btree *);
+ extern void hfs_bmap_free(struct hfs_bnode *node);
+ 
+ /* bnode.c */
+-extern void hfs_bnode_read(struct hfs_bnode *, void *, int, int);
++extern int hfs_bnode_read(struct hfs_bnode *, void *, int, int);
+ extern u16 hfs_bnode_read_u16(struct hfs_bnode *, int);
+ extern u8 hfs_bnode_read_u8(struct hfs_bnode *, int);
+ extern void hfs_bnode_read_key(struct hfs_bnode *, void *, int);
 -- 
 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
 
