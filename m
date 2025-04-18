@@ -1,287 +1,157 @@
-Return-Path: <linux-kernel+bounces-610591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 759A5A936B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 13:49:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCCABA936C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 14:02:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF4BF1B6409F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 11:50:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D29284636A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 12:02:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53662741CC;
-	Fri, 18 Apr 2025 11:49:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CFCB2749E7;
+	Fri, 18 Apr 2025 12:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="GFiW2Fbm"
-Received: from ixit.cz (ip-89-177-23-149.bb.vodafone.cz [89.177.23.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="VPvbn4nB"
+Received: from sonic313-19.consmr.mail.gq1.yahoo.com (sonic313-19.consmr.mail.gq1.yahoo.com [98.137.65.82])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FFAF199947;
-	Fri, 18 Apr 2025 11:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.177.23.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139A82741AD
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 12:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.65.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744976989; cv=none; b=dG8+MGUUshnpmnOXV+M5NokGmVsbuL/EgfoxZS5daaCxNn+/vkWrF2nshNUI7cG6DAM9ZY7HJAxVD/CXE7CXFVuXFYdeUkXsXbbsz51VVfkkU47GRSfAxzzDaheAih5dS4Zx3R5Z1UiyuvvDJHOgIATggt4oUgL3O5OEASVFaK4=
+	t=1744977746; cv=none; b=m49izWLXItU39jNWNhN1iYb62doTY8Fc3d2hYdLfw3YIFIttTSdtIHd/8F/C03908wPWEnvGgMPMm4odP72g/ordka87fDWlESe2DuKGuxT9bwJEoh6QTuwx0rrDGL+lN3hS5yX0DWXbuKALLYA72N8vY2kOevBrG+wpv4rPmNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744976989; c=relaxed/simple;
-	bh=0xqfItQyN6ROhVXcQYA8qrLVNEC/rcSRqgoktrpt8MA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S0yqynB5rSCqZASe1bLdNkD48Cd4evivhEq5XHvqGVjx0XDREnRrbw0LLQi0HXNMeSVlInepCGzqgw1VNyBsu/GdhO0lnqbJoDzqdqfLTVnHpzP65of7CWfKcr1Tfr8rajBC+RQMNZYQ70xXgkNPG5UDdELmP2V4fS33CdB0nSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=GFiW2Fbm; arc=none smtp.client-ip=89.177.23.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
-Received: from [10.0.0.185] (unknown [10.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id A5947166598;
-	Fri, 18 Apr 2025 13:42:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1744976521;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5uRv3rAKMiUBBg+1+0mXz1mGMZQOP4uPKMKJVmKxbCQ=;
-	b=GFiW2FbmlbicCZXJfrIJG7I75y49Jdzrt0L4YwIxh8auJP7c/Out8+Yz9zT9rKQOp46Lr1
-	kcEAlTmznogxdB3SRadvHWJ0jMYLHBo0dSrRx68oUCVacjxfsIWQs44t35ye/Mxr6P6ucP
-	r8aNwRixDO65HkQAbcgR5Ly8XbBKnRc=
-Message-ID: <7ae72214-3f91-4bd7-b5f0-07391006f531@ixit.cz>
-Date: Fri, 18 Apr 2025 13:42:01 +0200
+	s=arc-20240116; t=1744977746; c=relaxed/simple;
+	bh=I2lH+oxrrZ3geS4M0/OvRqpbgSvTGX+dG4TmkaMlJ3k=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=G7u9Pj6EfLqbJojwpcn3l5mk6BIP1x1+CI6xwmkpag7vZviGZRJpsby1xDtYNZfIL6LPtKx7abbQYrA5zUXexJJhrYTKM9fnXhnZUEHL1SmfF8NRtYAppR3q0q/vFIoNkuUV0ujQeR3jwIB7P8CcQoSDP/xS57CpT5aeRXVMbcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com; spf=pass smtp.mailfrom=aol.com; dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b=VPvbn4nB; arc=none smtp.client-ip=98.137.65.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aol.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1744977744; bh=I2lH+oxrrZ3geS4M0/OvRqpbgSvTGX+dG4TmkaMlJ3k=; h=Subject:From:To:Cc:Date:In-Reply-To:References:From:Subject:Reply-To; b=VPvbn4nB6Xf19ncZD9kt3HwOnwxFxB8Cdlb/4yzg25tRyGoc+qcQcf3GR0miB7tjuxlsN8bQXgUsI4EqdckPTW8Cm1wqSt7RxRKy/+kKGKQHoDzhZKIf97quPeTS0IvZ0xYwU+hYTZZi9UiQAb9FCaLaWBgE4cfFrY80oz5RjHO89PPb/2AFxB0G3YPmwWVKzkMaE9AxUlWgbE88JSR4xrNP3EtAWnmKTg8b++yzP0K9HLRW6a4JztJr2ECdpbob1Rxe/GmshD/U3F2sPcLevUcp6mgoAHCH6mIt9oPBz1m+b+VStCleUhz39CuKOiHMp0MdBEm6goiPyqHZhmohMA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1744977744; bh=S7o6rAG823U04mmBDxRhlYBPx0XeLv4+R7yqpv84I1q=; h=X-Sonic-MF:Subject:From:To:Date:From:Subject; b=LLSecIm+XxfWCdvssg8wCUIE9m1YTK3Dp2b80m/Ns4CHJd0NacwZ/Rd+TosXVP++/lBTogCzVIEo8oKAPmLjASzd5IurmWbpGQjHTBo1GJ+2aS2TdPFB//2X2mcv85G/M2pRC+9QMvyM2UXStTIjtQj4yKU0m1dPN0BcYFj3HZHL3rdoapMGI5E9gwqfaU+uGpO2MQj5tWVlHbm5wwIDIkdqX9WVLaEEbYOrRUL5lvQr8QHIp8AyWC0+3pFXjWYRxzZOlyDk3iow54+3+nIvmirCvQR56Og7jk/X/mz/70AUgVlMkYHptm6R5TS2jusd+jUguUbhMze8H9IVjs8S3g==
+X-YMail-OSG: DImzLQ4VM1mqs2GbH8Z4.pTTSndfsaKSdnOPbuCwRJhnENM1vnR8YBwYRj.Y9Gg
+ DQIPg7HSJtclQObiNnUgy9RBGwFB.6Pezc57jcapCBXDy9pysJQDj0pipqg1Hr66a1zg9YFpi4Z2
+ MeFnC2lgHdlggiHlyeDDuWs3rctfjTu9vH84ZB3Dhu21zmtf7yTA9GAxqOeofKuFZPY.ToxagttP
+ FgZJEnCCc5Ly48HvYj5.CfRTFPTjIeR8XbXLCahyT1ibbQELdKecnUQCsXqpUx.FiUsPht.5idZa
+ YOBQfOFsmwrsYnN4HaKkDXk1zQk_QXjs6hXzrxL11Dk2Mz8edEsJCzMJY4auMTHVmHwMRPtd9Uwc
+ __xw.vbpsJjK0rXo_AetTY3i9W9OTL7njHKQzrfy__688d24zDOE21QN.GJDv_vL6lVLeRkMQVGP
+ YOLtOngU4UfIGR5lQ6QmE2TlCCUSpSp8utO7qLJinxI9lu5cKuUZoGEb47p6ua8p.JlJybuZclVG
+ vfTUXOzoMEnuJ_7EJYED91ibSZR7nepSLTiW3kuEs.LAWA_kYjYhgWLhKPU1Co9FPMN29faXT1XE
+ OBeOIUPAsYsopTaXIJoUIqpVrIeq3pbr5XRGq2MoBKU29rPkGuXLpai_i4VUmKF2L3VujdIBw_DC
+ t2gDeiXP9TrNG5PiXnDQyep1I3HSAL4xD8_k0CYP8y6SIRjdTM9SW.4iEJyDTkjmHQr4mXpsG6Be
+ af8ivAKc50zSoyRwPRzZMxjvV2kjnnDxCfgbXUPR28JcoD5RYOELQ4NmnGxl.Rj3kZ7GDzv27uiX
+ .0z7hgeQQpP4Y3EHsWPzqBrfxbVmIfWFqOR9fAFrRn9EKJ9apL9eCWl8.l5TmZyiW6i7P2eOWeWg
+ d4HVx0UHO5pL9BOAXloPYothJLUsD_PSauAJPxr0OjCIsGD_KpIoAiJpkRyueVesUO6RHQzqn.tL
+ HNXbtsRevls1Qccyh6BZxYkKR2kYZSJYoVpqUo3GTQe2gq3gcQSQEXXSWUX6ABdzK8527ktILMNZ
+ 4q4CUK.UC9kFO2pwhlctiimpYnH3sL3H6B8_9eTMcnaih4gxgFdAGtmxxoCChur3.qMWqoLdZq4E
+ Gicf2hjuJp72DcVFkUvdKuFS0lIl_.RTNltgJ3KY9qIvNcmXZMFAkNJMJnezNHgnURvP9h9lfR5T
+ fgPUWuRv5EJZqrEr7.SzNEaASPoCSh1cFKZ5EylS7pjGxoXQMquTF5tGhAR0vVFOOi0s83G1i0KW
+ t9BpDQ89o91nLib4fAejt2XAWEx9SKcwRHkINo5nIFRtf.O5apUxgTb.KIbbw71789jODdncdBAG
+ wLm_KBMCcZo6X7xgXoPR4f8ARJJZJU0NgrGIzEj_j9wqO2hiuB_.0VAEcC8f.I34rL3Fx1Y2Rn6y
+ Ih3pwvROnV6UBCcv1KZASqOBMBblK65t6bB5Mv9lcJWdWEjdyyYxv0NgJPVFKQ.gWpOp6jMBHl9M
+ qjciFxCis9U9eeo8UjYR7RHkDJZrSYZrTd3DYUwZm00_kFyFLCInHTG2uETLQcX_FeoxzuSP6Ysb
+ 042iK2b4mRCs4Hfy0awRfYX_JMWZAUCs2jYrNS0mn8C42LuEoBihUaZpOfvFMxPd4O3PnPJ.wM.o
+ mNjimlbwqD6qG0ye.viXucaXPcCZcfQLJHGXi1xf8BBZGli_kmhLKtsCcOGu.CfXyti8DyW8TUbQ
+ KrMQYTYo8fBWzKszwE4SxGflXZ3xl._wvn4xkMDRGPCgE2FqPHuP8Uyes7Y7AFLw06CcdWG_0bcy
+ p5u6S.3nmI0Mlee8_TqefxMHRXTMbAcz2VhFxncCvS8Uuo6JJFdtnVzWvwq.8e0GwcJoYTDo.smd
+ _MV5nFvkDzcd6pnK7neG567w2Jj40a0dzYcGIvQhJWUnec9X.YsiZe7fRv_5SyjFtXsmVewTwJR8
+ BLrDIR9DpAPFQZrCDmjo_kTI6s3BjmDo9o5jqHzHB37.B6Xd8t1zGMcu.0YTK9Y4.B31Zotkyzar
+ Vh74wetnja80aL4cATF428h_wru8.xgEeYmJNrCIf3Ymynm3_bts_oK7YXBbZ__oJ0dQPisk3THy
+ t2VTZMmSMkRuCR9Xr0UahsIRC6PdjdckDp5CELrGFo.AnWxAnz2R6SjllK40GqTRmKrtHjsw682r
+ m0FXFcDr.GUfi.1weJJIERcEM913eb7VpKq2h2_xJwf3tgTZV5HdQhlVhcEEEiSUeteuuzgLNXa_
+ fjMIHcTC5ej9IIqKZAI7YElD4jhKAbt3ozOnVuBv76dEldk3obENMimGx4sQbIFyc
+X-Sonic-MF: <rubenru09@aol.com>
+X-Sonic-ID: cab1b94c-8fb7-4666-8a03-bcc63274388a
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.gq1.yahoo.com with HTTP; Fri, 18 Apr 2025 12:02:24 +0000
+Received: by hermes--production-ir2-858bd4ff7b-2xfhr (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 84328671808db76a19f22e88f900a3de;
+          Fri, 18 Apr 2025 11:42:07 +0000 (UTC)
+Message-ID: <ec791e981505d3c8e1d14e6d68eb616ffa4aea71.camel@aol.com>
+Subject: Re: [PATCH 1/8] staging: sm250fb: remove USE_HW_I2C check
+From: Ruben Wauters <rubenru09@aol.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Teddy Wang
+	 <teddy.wang@siliconmotion.com>, Sudip Mukherjee
+	 <sudip.mukherjee@codethink.co.uk>, linux-fbdev@vger.kernel.org, 
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Date: Fri, 18 Apr 2025 12:42:05 +0100
+In-Reply-To: <2025041836-debug-unstopped-9a88@gregkh>
+References: <20250417190302.13811-1-rubenru09@aol.com>
+	 <20250417190302.13811-2-rubenru09@aol.com>
+	 <2025041836-debug-unstopped-9a88@gregkh>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.0-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] media: dt-bindings: Convert Analog Devices ad5820 to
- DT schema
-To: Rob Herring <robh@kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Pavel Machek <pavel@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>, Pavel Machek <pavel@ucw.cz>,
- linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250414-b4-ad5820-dt-yaml-v3-1-39bbb5db7b2b@ixit.cz>
- <20250415223557.GA940473-robh@kernel.org>
-Content-Language: en-US
-From: David Heidelberg <david@ixit.cz>
-Autocrypt: addr=david@ixit.cz; keydata=
- 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
-In-Reply-To: <20250415223557.GA940473-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.23665 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.aol
 
-On 16/04/2025 00:35, Rob Herring wrote:
-> On Mon, Apr 14, 2025 at 06:04:01PM +0200, David Heidelberg wrote:
->> Convert the Analog Devices ad5820 to DT schema format.
->>
->> Added the io-channel-cells property, because it's already used by the
-> 
-> You mean #io-channel-cells?
-> 
->> Nokia N900 device-tree and defines ad5820 as having only single output.
->>
->> Acked-by: Pavel Machek <pavel@ucw.cz>
->> Signed-off-by: David Heidelberg <david@ixit.cz>
->> ---
->> Changes in v3:
->> - Removed documentation of io-channel-cells property. Now it's 1:1 to
->>    the original binding. The reference to it from the Nokia N900 dts
->>    was removed in the -next.
-> 
-> Added or removed? I'm confused.
-> 
->> - Link to v2: https://lore.kernel.org/r/20250314-b4-ad5820-dt-yaml-v2-1-287958c3c07c@ixit.cz
->>
->> Changes in v2:
->> - added MAINTAINERS entry for the binding
->> - documented why io-channel-cells got added into the binding.
->> - dropped io-channel-cells in required properties.
->> - adjusted example indentation to 4 spaces.
->> - Link to v1: https://lore.kernel.org/r/20250209203940.159088-1-david@ixit.cz
->> ---
->>   .../devicetree/bindings/media/i2c/ad5820.txt       | 28 ----------
->>   .../devicetree/bindings/media/i2c/adi,ad5820.yaml  | 59 ++++++++++++++++++++++
->>   MAINTAINERS                                        |  1 +
->>   3 files changed, 60 insertions(+), 28 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/media/i2c/ad5820.txt b/Documentation/devicetree/bindings/media/i2c/ad5820.txt
->> deleted file mode 100644
->> index 5764cbedf9b73387ad1bfa9acf99c643f959b84a..0000000000000000000000000000000000000000
->> --- a/Documentation/devicetree/bindings/media/i2c/ad5820.txt
->> +++ /dev/null
->> @@ -1,28 +0,0 @@
->> -* Analog Devices AD5820 autofocus coil
->> -
->> -Required Properties:
->> -
->> -  - compatible: Must contain one of:
->> -		- "adi,ad5820"
->> -		- "adi,ad5821"
->> -		- "adi,ad5823"
->> -
->> -  - reg: I2C slave address
->> -
->> -  - VANA-supply: supply of voltage for VANA pin
->> -
->> -Optional properties:
->> -
->> -   - enable-gpios : GPIO spec for the XSHUTDOWN pin. The XSHUTDOWN signal is
->> -active low, a high level on the pin enables the device.
->> -
->> -Example:
->> -
->> -       ad5820: coil@c {
->> -               compatible = "adi,ad5820";
->> -               reg = <0x0c>;
->> -
->> -               VANA-supply = <&vaux4>;
->> -               enable-gpios = <&msmgpio 26 GPIO_ACTIVE_HIGH>;
->> -       };
->> -
->> diff --git a/Documentation/devicetree/bindings/media/i2c/adi,ad5820.yaml b/Documentation/devicetree/bindings/media/i2c/adi,ad5820.yaml
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..93349e7daf262fc8939f984fbe93cf064a0cbaf8
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/media/i2c/adi,ad5820.yaml
->> @@ -0,0 +1,59 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/media/i2c/adi,ad5820.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Analog Devices AD5820 autofocus coil
->> +
->> +maintainers:
->> +  - Pavel Machek <pavel@ucw.cz>
->> +
->> +description:
->> +  The AD5820 is a current sink driver designed for precise control of
->> +  voice coil motors (VCMs) in camera autofocus systems.
->> +
->> +allOf:
->> +  - $ref: /schemas/iio/iio.yaml#
-> 
-> You have the ref, so #io-channel-cells is allowed, but you need to say
-> what the value for it should be for *this* binding. IOW, you still need
-> to list it explicitly.
+On Fri, 2025-04-18 at 12:33 +0200, Greg Kroah-Hartman wrote:
+> On Thu, Apr 17, 2025 at 08:02:49PM +0100, Ruben Wauters wrote:
+> > Removes the USE_HW_I2C check and function defines in
+> > ddk750_sii164.c.
+> >=20
+> > The software equivalents were never used due to
+> > USE_HW_I2C being defined just before the ifdef, meaning
+> > the hardware versions were always used.
+> >=20
+> > The define names were also triggering checkpatch.pl's
+> > camel case check.
+> >=20
+> > Signed-off-by: Ruben Wauters <rubenru09@aol.com>
+> >=20
+> > ---
+> >=20
+> > I am somewhat unsure whether this is the way to go or
+> > the correct way would be to add an option/opportunity for
+> > the software version to be used. Currently the hardware
+> > version is always used, but I am unsure if there ever even
+> > would be a case where you would want to use the software
+> > version over the hardware version.
+>=20
+> Then the code can be added back, not an issue.
+>=20
+> But you forgot this same check in
+> drivers/staging/sm750fb/ddk750_hwi2c.c, right?
 
-I considered to keep the previous and new binding 1:1 and drop 
-#io-channel-chells with the all references to it (missed this one).
+This check can indeed be removed I suppose, might be worth also
+removing the USE_DVICHIP checks also, especially when defined
 
-Would that be ok for v4?
+There's also a USE_HW_I2C check in ddk750.h, which defines which header
+to use, however I'm somewhat unsure exactly what the best way to go
+about addressing that is, since it's not defined before including it
+does make me wonder whether the HW files are even used at all.
 
-> 
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - adi,ad5820
->> +      - adi,ad5821
->> +      - adi,ad5823
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  enable-gpios:
->> +    maxItems: 1
->> +    description:
->> +      GPIO spec for the XSHUTDOWN pin. The XSHUTDOWN signal is active low,
->> +      a high level on the pin enables the device.
->> +
->> +  VANA-supply:
->> +    description: supply of voltage for VANA pin
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - VANA-supply
->> +
->> +unevaluatedProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/gpio/gpio.h>
->> +
->> +    i2c {
->> +        #address-cells = <1>;
->> +        #size-cells = <0>;
->> +        coil@c {
->> +            compatible = "adi,ad5820";
->> +            reg = <0x0c>;
->> +
->> +            enable-gpios = <&msmgpio 26 GPIO_ACTIVE_HIGH>;
->> +            VANA-supply = <&vaux4>;
->> +        };
->> +    };
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index af3537005de35dfd0ded11bdc2b9c63e10c70e93..366ed4905fc9b32862a4fd665cf5f4e09fafc989 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -17274,6 +17274,7 @@ M:	Pavel Machek <pavel@kernel.org>
->>   M:	Sakari Ailus <sakari.ailus@iki.fi>
->>   L:	linux-media@vger.kernel.org
->>   S:	Maintained
->> +F:	Documentation/devicetree/bindings/media/i2c/adi,ad5820.yaml
->>   F:	drivers/media/i2c/ad5820.c
->>   F:	drivers/media/i2c/et8ek8
->>   
->>
->> ---
->> base-commit: b425262c07a6a643ebeed91046e161e20b944164
->> change-id: 20250314-b4-ad5820-dt-yaml-3220bf2f1e40
->>
->> Best regards,
->> -- 
->> David Heidelberg <david@ixit.cz>
->>
+Something about this seems entirely wrong to me, again I don't have the
+hardware to test, but why would SW files be used when the HW files work
+fine? Is it intended that the HW files are used instead? it's a bit
+inconsistent, especially since in ddk750_sii164.c the HW ones are
+explicitly used over the SW ones
+Why is the SW files preferred in sm750_hw.c then?
+I believe this is something of an oversight and the files should
+probably use the HW ones instead of the SW ones.
 
--- 
-David Heidelberg
+I am curious to know your thoughts on this (and anyone else's)
 
+> Also, what about removing the sm750_sw_i2c_write_reg() and other
+> functions that are now never referenced?=C2=A0 Can you add that to this
+> patch
+> series?=C2=A0 A single series that just removes the use of USE_HW_I2C and
+> the
+> now unneeded functions would be best, as it's not really a "coding
+> style" fix, but rather a code cleanup thing, right?
+
+I will create a separate patch series for removing unneeded code, since
+it does look like a lot more code removal might be needed than I
+originally thought.
+
+> thanks,
+>=20
+> greg k-h
 
