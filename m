@@ -1,96 +1,88 @@
-Return-Path: <linux-kernel+bounces-610786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1312CA938FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 16:57:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45687A93906
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 16:59:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A90B81897A41
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 14:57:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D19104672AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 14:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 029881D618E;
-	Fri, 18 Apr 2025 14:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB2571DE4FB;
+	Fri, 18 Apr 2025 14:59:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="by2Ul9l2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lEDQnsKa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9BFEEC8;
-	Fri, 18 Apr 2025 14:57:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225371D54FA;
+	Fri, 18 Apr 2025 14:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744988258; cv=none; b=bNyVFWXkQ3cPt7cAl8e3pdv91ww59LBSFC1Dk5NUyhEBMk9MzIL+Mcep1NdrPnq5feWPAsHvwtTiZIqFpg2jG1kKodmmQOAZRbNNbJ8rYzOkQwCH7esPtAVO5EruSlTNYN1Q5f8U3pANqeXbZYIBao34ufm1HMsxSL5B+dyIX9M=
+	t=1744988388; cv=none; b=EW50aHDLXKDNxKhNxugt0QdugaAVVSTeOD2m5Sb9Vdn4InCBMX6omg9jYb/YWsPYdnMfJtrdzGMQ4UGlwvvpm6ysUHswNpKu2P8vhjaJ6wqrGSMp8P6OQgJtUB44CKJNNhf6f5TlgHPYPYTvvSm2I82AFJLllSAxeCr1Z9rUqqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744988258; c=relaxed/simple;
-	bh=oTujeQS8sarIls3zP15tI7er8VCZ7VJRqM5QzlZPIFY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G05wmehIU2y1EMBKLMajf8Lg6pKzBWK3x1lKjvt6iTDArcOpdTrff/VwSKeIdiBQfXhsaz599SJnHcr5YOMCYLkmpqQMumXlliq1mEZ/JBu0Il7D/TleaSnAEshXCu4fdrlAr2B35WTNxCsh1hLY7ND3oVWq8eLvr5sLuknH5zM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=by2Ul9l2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA5C9C4CEE2;
-	Fri, 18 Apr 2025 14:57:31 +0000 (UTC)
+	s=arc-20240116; t=1744988388; c=relaxed/simple;
+	bh=xkTUgC6sK3DseH4P4/XIAmlFMPEA3HoZdDU7mdTWKF8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=spHDTEjeNVmEApvSvfkLWRpChJ3ILdNrLoaz2Co7FmvUVRqeIZt9DWa1SQxeJ7Yt7QDCNxsgyAz7+vijrK3WSgzY5G3utNEZEZWJyMYeRpfxYT34M9T+JBDWWKUpLRXA5cANF8/bmXuFWlpWznTFjSA+DyR5duwFtps7nJumgz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lEDQnsKa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38AC3C4CEE2;
+	Fri, 18 Apr 2025 14:59:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744988257;
-	bh=oTujeQS8sarIls3zP15tI7er8VCZ7VJRqM5QzlZPIFY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=by2Ul9l2z5ymQ17ajZmbp9iqGHpbsHrnzPyg65f/C0hBFCh0xGEmIRcftdss7w3I0
-	 EETLSE8Rh3oOzQaGv1t9e8tYDdBo2IFDZAIZg+4h3FDBdHFpsZsWXR/FbEw7a6MqRu
-	 Z2rbb8DT3dR/1mLnvY+PkYB//AdUMcZ3HqJ65fPaVjo/NKnWEpHOXLLcbEcg0uC7fz
-	 H4jt51kGuWIskAvsEAtVciLkPly/Icj+hrKkfc61c1w30Wa3bR9iMwLeSKo2z6rFOO
-	 +OspogI21J7VVLxRJVxoB5MPAFVaCG9Gh1CMcROf6I6PGpFNcb/EHgbT8kyIQjKq6M
-	 3oETvyrsirg4w==
-Date: Fri, 18 Apr 2025 15:57:27 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andy Shevchenko <andy@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Cosmin
- Tanislav <cosmin.tanislav@analog.com>, Tomasz Duszynski
- <tduszyns@gmail.com>, Jean-Baptiste Maneyrol
- <jean-baptiste.maneyrol@tdk.com>, Andreas Klinger <ak@it-klinger.de>, Petre
- Rodan <petre.rodan@subdimension.ro>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 0/8] iio: more timestamp alignment
-Message-ID: <20250418155727.21f65050@jic23-huawei>
-In-Reply-To: <aAFC9FsTRNya6eDU@smile.fi.intel.com>
-References: <20250417-iio-more-timestamp-alignment-v1-0-eafac1e22318@baylibre.com>
-	<aAEz2ZD0Ipd1Xuy6@smile.fi.intel.com>
-	<20250417184716.000044bb@huawei.com>
-	<aAFC9FsTRNya6eDU@smile.fi.intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=k20201202; t=1744988387;
+	bh=xkTUgC6sK3DseH4P4/XIAmlFMPEA3HoZdDU7mdTWKF8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lEDQnsKaOzWYLFnGKIw2Q3T36cmvSrB8guYoOcxkq/ArdOrycc9qReIH8FQRGv8Sv
+	 cFCsNJjsOBwDwe064lzJLJqemNDkNQEzAvewY3bLP3/mdh0+IR8y/6AvtmsrTY7nah
+	 0i5wkxS/4O+n1vy6Il+3gnLxWUtz7+I9TCFIBnZxRrBLUwoK04xYz9qClIR1tWWhKN
+	 rDWq3X3NvSiJScIIkYA/v8gWCD5vGbOFULC/hsqWENWx65hzUtp80qTVT8gsvHPl+k
+	 4fUwov6cimurbGaDeNy8pVpj5wo/gl5S6vhlEJrHPk+x3OC/B5vWs5OZnKk78XDSLK
+	 G2YTmUKLP1SCg==
+Date: Fri, 18 Apr 2025 07:59:45 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Daniel Palmer <daniel@0x0f.com>
+Cc: herbert@gondor.apana.org.au, davem@davemloft.net, Jason@zx2c4.com,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Daniel Palmer <daniel@thingy.jp>
+Subject: Re: [PATCH] lib/crypto: blake2s: Disable self test if CONFIG_CRYPTO
+ isn't enabled
+Message-ID: <20250418145945.GA1890@quark.localdomain>
+References: <20250418120216.2968994-1-daniel@0x0f.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250418120216.2968994-1-daniel@0x0f.com>
 
-On Thu, 17 Apr 2025 21:05:40 +0300
-Andy Shevchenko <andy@kernel.org> wrote:
-
-> On Thu, Apr 17, 2025 at 06:47:16PM +0100, Jonathan Cameron wrote:
-> > On Thu, 17 Apr 2025 20:01:13 +0300
-> > Andy Shevchenko <andy@kernel.org> wrote:  
-> > > On Thu, Apr 17, 2025 at 11:52:32AM -0500, David Lechner wrote:  
+On Fri, Apr 18, 2025 at 09:02:16PM +0900, Daniel Palmer wrote:
+> From: Daniel Palmer <daniel@thingy.jp>
 > 
-> ...
+> Currently CONFIG_CRYPTO_MANAGER_DISABLE_TESTS is used to remove
+> the self test code. CONFIG_CRYPTO_MANAGER_DISABLE_TESTS depends on
+> CONFIG_CRYPTO so its impossible to disable the self test without
+> enabling CONFIG_CRYPTO.
 > 
-> > > > Signed-off-by: David Lechner <dlechner@baylibre.com>    
-> > Also no need to sign off on cover letters as they don't end up in git.  
+> If you don't want CONFIG_CRYPTO you probably don't want self tests
+> so remove the self tests in that case too.
 > 
-> It depends if you use `b4 shazam` or not. I like that feature.
+> Fixes: 66d7fb94e4ff ("crypto: blake2s - generic C library implementation and selftest")
 > 
-Definitely don't add what you did here though in a reply!
+> Signed-off-by: Daniel Palmer <daniel@thingy.jp>
+> ---
+>  lib/crypto/blake2s.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 
-That adds: 
+Acked-by: Eric Biggers <ebiggers@kernel.org>
 
-    + Link: URL [1] :-)
+This is okay as a quick fix, but really the lib/crypto/ tests should be
+refactored into KUnit tests that aren't dependent on CRYPTO.  FWIW, I recently
+fixed this for the CRC functions: lib/tests/crc_kunit.c.
 
-
+- Eric
 
