@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-610308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39C09A93352
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 09:15:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3961CA9334D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 09:15:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5C81189A137
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 07:15:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E2AF1727EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 07:15:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2679326A086;
-	Fri, 18 Apr 2025 07:14:46 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41EB26A1AF;
+	Fri, 18 Apr 2025 07:14:41 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5418626AAB7;
-	Fri, 18 Apr 2025 07:14:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7502116E0;
+	Fri, 18 Apr 2025 07:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744960485; cv=none; b=mYjBc2A5AwBHkwdj7+ouVAbu2c/COk/2c7U29MX0cU/xBp1fuiaXetpKiJDJxQZX8k1jNtS8fx1tdPdq++Bfe5NqISe8d5mkgMsEVw/d1uBgTemCW2atjI9dYuFgYlIXPDHVC7mSLxtRIdXXrSntlvG+I/fry6tv907PSgInj6I=
+	t=1744960481; cv=none; b=oCinowcN8Ku2NiVAwQnFPjHbhxJEySyh58GUUNhi90opu1+/5PEBfFgr/0DWj4hWaTl5THMvspPSSrjPKEal7q4cFbKv0HsSRm1IYdByGqmLuYoCA/DpJTLOn9OlHiFXG/qZ0StOi9y31dWOXPaNbaZvUgb/Y1bwnB9rYAkRa2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744960485; c=relaxed/simple;
-	bh=TXfqXhEswk5Q1AKwsmLi9EY1plg8goxgfhuNtpCkBNk=;
+	s=arc-20240116; t=1744960481; c=relaxed/simple;
+	bh=8nzMiHFhsEDXAXJl6okHeaYLpnZZCY4MUEh2Ho3c3iY=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I0XH0nc3fQRRDQo/rLXlERS+6++iuX9tpDyRVaB9WYOwPsIIeiilpIWr7Id3mXpWXOOpuZGM7lJglrT5AoQ1k159f7TyDUxcVJ4/sdSmRqPqhqfTOpltlaPbGyE56Vc8pQ7P978cyFs5hE+bgoXsNHf03jNvSoQI4qq8uNHhySc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+	 MIME-Version:Content-Type; b=HDIFvAj3htejWL10SB92+t+jm4asqTfrGxw+T79mOMY6VCkZsEuKJcCPuZqKoUse0aH7r+/gy1r9vRfsleOGMKEFdPIDCygAWmLrJRNsO9Par5KsEqYt4X1mbulzb5VCFCesieaZ4YCsXVH5nPbE379rrsNZ82rcdU5VgHCNPRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Zf5c13Xhnz1j5tc;
-	Fri, 18 Apr 2025 15:14:25 +0800 (CST)
-Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0D99F18001B;
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Zf5bC47Ynz1DKZJ;
+	Fri, 18 Apr 2025 15:13:43 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+	by mail.maildlp.com (Postfix) with ESMTPS id CBCD718006C;
 	Fri, 18 Apr 2025 15:14:35 +0800 (CST)
 Received: from kwepemn500004.china.huawei.com (7.202.194.145) by
- dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 18 Apr 2025 15:14:34 +0800
+ 15.2.1544.11; Fri, 18 Apr 2025 15:14:35 +0800
 Received: from localhost.localdomain (10.90.30.45) by
  kwepemn500004.china.huawei.com (7.202.194.145) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 18 Apr 2025 15:14:33 +0800
+ 15.2.1544.11; Fri, 18 Apr 2025 15:14:34 +0800
 From: Junhao He <hejunhao3@huawei.com>
 To: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
 	<namhyung@kernel.org>, <mark.rutland@arm.com>,
@@ -52,9 +52,9 @@ To: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
 CC: <linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<linuxarm@huawei.com>, <hejunhao3@huawei.com>,
 	<linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v2 1/3] perf vendor events arm64: Fill up Desc field for Hisi hip08 hha pmu
-Date: Fri, 18 Apr 2025 15:08:10 +0800
-Message-ID: <20250418070812.3771441-2-hejunhao3@huawei.com>
+Subject: [PATCH v2 2/3] perf vendor events arm64: Drop hip08 PublicDescription if same as BriefDescription
+Date: Fri, 18 Apr 2025 15:08:11 +0800
+Message-ID: <20250418070812.3771441-3-hejunhao3@huawei.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20250418070812.3771441-1-hejunhao3@huawei.com>
 References: <20250418070812.3771441-1-hejunhao3@huawei.com>
@@ -69,143 +69,248 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
  kwepemn500004.china.huawei.com (7.202.194.145)
 
-In the same PMU, when some JSON events have the "BriefDescription" field
-populated while others do not, the cmp_sevent() function will split these
-two types of events into separate groups. As a result, when using perf
-list to display events, the two types of events cannot be grouped together
-in the output.
-
-before patch:
- $ perf list pmu
- ...
- uncore hha:
-   hisi_sccl1_hha2/sdir-hit/
-   hisi_sccl1_hha2/sdir-lookup/
- ...
- uncore hha:
-   edir-hit
-      [Count of The number of HHA E-Dir hit operations. Unit: hisi_sccl1_hha2]
- ...
-
-after patch:
- $ perf list pmu
- ...
- uncore hha:
-   edir-hit
-      [Count of The number of HHA E-Dir hit operations. Unit: hisi_sccl1_hha2]
-   sdir-hit
-      [Count of The number of HHA S-Dir hit operations. Unit: hisi_sccl1_hha2]
-   sdir-lookup
-      [Count of the number of HHA S-Dir lookup operations. Unit: hisi_sccl1_hha2]
- ...
+If BriefDescription and PublicDescription are the same, only
+BriefDescription is needed. It will be used for both long and
+short format outputs.
 
 Signed-off-by: Junhao He <hejunhao3@huawei.com>
-Reviewed-by: James Clark <james.clark@linaro.org>
 ---
- .../arch/arm64/hisilicon/hip08/uncore-hha.json   | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ .../arch/arm64/hisilicon/hip08/uncore-ddrc.json     |  8 --------
+ .../arch/arm64/hisilicon/hip08/uncore-hha.json      | 10 ----------
+ .../arch/arm64/hisilicon/hip08/uncore-l3c.json      | 13 -------------
+ 3 files changed, 31 deletions(-)
 
+diff --git a/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-ddrc.json b/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-ddrc.json
+index 2b3cb55df288..014454d78293 100644
+--- a/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-ddrc.json
++++ b/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-ddrc.json
+@@ -3,56 +3,48 @@
+ 	    "ConfigCode": "0x00",
+ 	    "EventName": "flux_wr",
+ 	    "BriefDescription": "DDRC total write operations",
+-	    "PublicDescription": "DDRC total write operations",
+ 	    "Unit": "hisi_sccl,ddrc"
+    },
+    {
+ 	    "ConfigCode": "0x01",
+ 	    "EventName": "flux_rd",
+ 	    "BriefDescription": "DDRC total read operations",
+-	    "PublicDescription": "DDRC total read operations",
+ 	    "Unit": "hisi_sccl,ddrc"
+    },
+    {
+ 	    "ConfigCode": "0x02",
+ 	    "EventName": "flux_wcmd",
+ 	    "BriefDescription": "DDRC write commands",
+-	    "PublicDescription": "DDRC write commands",
+ 	    "Unit": "hisi_sccl,ddrc"
+    },
+    {
+ 	    "ConfigCode": "0x03",
+ 	    "EventName": "flux_rcmd",
+ 	    "BriefDescription": "DDRC read commands",
+-	    "PublicDescription": "DDRC read commands",
+ 	    "Unit": "hisi_sccl,ddrc"
+    },
+    {
+ 	    "ConfigCode": "0x04",
+ 	    "EventName": "pre_cmd",
+ 	    "BriefDescription": "DDRC precharge commands",
+-	    "PublicDescription": "DDRC precharge commands",
+ 	    "Unit": "hisi_sccl,ddrc"
+    },
+    {
+ 	    "ConfigCode": "0x05",
+ 	    "EventName": "act_cmd",
+ 	    "BriefDescription": "DDRC active commands",
+-	    "PublicDescription": "DDRC active commands",
+ 	    "Unit": "hisi_sccl,ddrc"
+    },
+    {
+ 	    "ConfigCode": "0x06",
+ 	    "EventName": "rnk_chg",
+ 	    "BriefDescription": "DDRC rank commands",
+-	    "PublicDescription": "DDRC rank commands",
+ 	    "Unit": "hisi_sccl,ddrc"
+    },
+    {
+ 	    "ConfigCode": "0x07",
+ 	    "EventName": "rw_chg",
+ 	    "BriefDescription": "DDRC read and write changes",
+-	    "PublicDescription": "DDRC read and write changes",
+ 	    "Unit": "hisi_sccl,ddrc"
+    }
+ ]
 diff --git a/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-hha.json b/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-hha.json
-index 9a7ec7af2060..b52f056d0255 100644
+index b52f056d0255..b2b895fa670e 100644
 --- a/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-hha.json
 +++ b/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-hha.json
-@@ -30,15 +30,18 @@
-    {
- 	    "ConfigCode": "0x4",
- 	    "EventName": "rx_wbi",
-+	    "BriefDescription": "Count of the number of WriteBackI operations that HHA has received",
+@@ -3,28 +3,24 @@
+ 	    "ConfigCode": "0x00",
+ 	    "EventName": "rx_ops_num",
+ 	    "BriefDescription": "The number of all operations received by the HHA",
+-	    "PublicDescription": "The number of all operations received by the HHA",
  	    "Unit": "hisi_sccl,hha"
     },
     {
- 	    "ConfigCode": "0x5",
- 	    "EventName": "rx_wbip",
-+	    "BriefDescription": "Count of the number of WriteBackIPtl operations that HHA has received",
+ 	    "ConfigCode": "0x01",
+ 	    "EventName": "rx_outer",
+ 	    "BriefDescription": "The number of all operations received by the HHA from another socket",
+-	    "PublicDescription": "The number of all operations received by the HHA from another socket",
  	    "Unit": "hisi_sccl,hha"
     },
     {
- 	    "ConfigCode": "0x11",
-+	    "BriefDescription": "Count of the number of WriteThruIStash operations that HHA has received",
- 	    "EventName": "rx_wtistash",
+ 	    "ConfigCode": "0x02",
+ 	    "EventName": "rx_sccl",
+ 	    "BriefDescription": "The number of all operations received by the HHA from another SCCL in this socket",
+-	    "PublicDescription": "The number of all operations received by the HHA from another SCCL in this socket",
  	    "Unit": "hisi_sccl,hha"
     },
-@@ -87,66 +90,79 @@
+    {
+ 	    "ConfigCode": "0x03",
+ 	    "EventName": "rx_ccix",
+ 	    "BriefDescription": "Count of the number of operations that HHA has received from CCIX",
+-	    "PublicDescription": "Count of the number of operations that HHA has received from CCIX",
+ 	    "Unit": "hisi_sccl,hha"
+    },
+    {
+@@ -49,42 +45,36 @@
+ 	    "ConfigCode": "0x1c",
+ 	    "EventName": "rd_ddr_64b",
+ 	    "BriefDescription": "The number of read operations sent by HHA to DDRC which size is 64 bytes",
+-	    "PublicDescription": "The number of read operations sent by HHA to DDRC which size is 64bytes",
+ 	    "Unit": "hisi_sccl,hha"
+    },
+    {
+ 	    "ConfigCode": "0x1d",
+ 	    "EventName": "wr_ddr_64b",
+ 	    "BriefDescription": "The number of write operations sent by HHA to DDRC which size is 64 bytes",
+-	    "PublicDescription": "The number of write operations sent by HHA to DDRC which size is 64 bytes",
+ 	    "Unit": "hisi_sccl,hha"
+    },
+    {
+ 	    "ConfigCode": "0x1e",
+ 	    "EventName": "rd_ddr_128b",
+ 	    "BriefDescription": "The number of read operations sent by HHA to DDRC which size is 128 bytes",
+-	    "PublicDescription": "The number of read operations sent by HHA to DDRC which size is 128 bytes",
+ 	    "Unit": "hisi_sccl,hha"
+    },
+    {
+ 	    "ConfigCode": "0x1f",
+ 	    "EventName": "wr_ddr_128b",
+ 	    "BriefDescription": "The number of write operations sent by HHA to DDRC which size is 128 bytes",
+-	    "PublicDescription": "The number of write operations sent by HHA to DDRC which size is 128 bytes",
+ 	    "Unit": "hisi_sccl,hha"
+    },
+    {
+ 	    "ConfigCode": "0x20",
+ 	    "EventName": "spill_num",
+ 	    "BriefDescription": "Count of the number of spill operations that the HHA has sent",
+-	    "PublicDescription": "Count of the number of spill operations that the HHA has sent",
+ 	    "Unit": "hisi_sccl,hha"
+    },
+    {
+ 	    "ConfigCode": "0x21",
+ 	    "EventName": "spill_success",
+ 	    "BriefDescription": "Count of the number of successful spill operations that the HHA has sent",
+-	    "PublicDescription": "Count of the number of successful spill operations that the HHA has sent",
+ 	    "Unit": "hisi_sccl,hha"
+    },
+    {
+diff --git a/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-l3c.json b/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-l3c.json
+index e3479b65be9a..d83c22eb1d15 100644
+--- a/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-l3c.json
++++ b/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-l3c.json
+@@ -3,91 +3,78 @@
+ 	    "ConfigCode": "0x00",
+ 	    "EventName": "rd_cpipe",
+ 	    "BriefDescription": "Total read accesses",
+-	    "PublicDescription": "Total read accesses",
+ 	    "Unit": "hisi_sccl,l3c"
+    },
+    {
+ 	    "ConfigCode": "0x01",
+ 	    "EventName": "wr_cpipe",
+ 	    "BriefDescription": "Total write accesses",
+-	    "PublicDescription": "Total write accesses",
+ 	    "Unit": "hisi_sccl,l3c"
+    },
+    {
+ 	    "ConfigCode": "0x02",
+ 	    "EventName": "rd_hit_cpipe",
+ 	    "BriefDescription": "Total read hits",
+-	    "PublicDescription": "Total read hits",
+ 	    "Unit": "hisi_sccl,l3c"
+    },
+    {
+ 	    "ConfigCode": "0x03",
+ 	    "EventName": "wr_hit_cpipe",
+ 	    "BriefDescription": "Total write hits",
+-	    "PublicDescription": "Total write hits",
+ 	    "Unit": "hisi_sccl,l3c"
+    },
+    {
+ 	    "ConfigCode": "0x04",
+ 	    "EventName": "victim_num",
+ 	    "BriefDescription": "l3c precharge commands",
+-	    "PublicDescription": "l3c precharge commands",
+ 	    "Unit": "hisi_sccl,l3c"
+    },
+    {
+ 	    "ConfigCode": "0x20",
+ 	    "EventName": "rd_spipe",
+ 	    "BriefDescription": "Count of the number of read lines that come from this cluster of CPU core in spipe",
+-	    "PublicDescription": "Count of the number of read lines that come from this cluster of CPU core in spipe",
+ 	    "Unit": "hisi_sccl,l3c"
+    },
+    {
+ 	    "ConfigCode": "0x21",
+ 	    "EventName": "wr_spipe",
+ 	    "BriefDescription": "Count of the number of write lines that come from this cluster of CPU core in spipe",
+-	    "PublicDescription": "Count of the number of write lines that come from this cluster of CPU core in spipe",
+ 	    "Unit": "hisi_sccl,l3c"
+    },
+    {
+ 	    "ConfigCode": "0x22",
+ 	    "EventName": "rd_hit_spipe",
+ 	    "BriefDescription": "Count of the number of read lines that hits in spipe of this L3C",
+-	    "PublicDescription": "Count of the number of read lines that hits in spipe of this L3C",
+ 	    "Unit": "hisi_sccl,l3c"
+    },
     {
  	    "ConfigCode": "0x23",
- 	    "EventName": "bi_num",
-+	    "BriefDescription": "Count of the number of HHA BackInvalid operations",
- 	    "Unit": "hisi_sccl,hha"
+ 	    "EventName": "wr_hit_spipe",
+ 	    "BriefDescription": "Count of the number of write lines that hits in spipe of this L3C",
+-	    "PublicDescription": "Count of the number of write lines that hits in spipe of this L3C",
+ 	    "Unit": "hisi_sccl,l3c"
     },
     {
- 	    "ConfigCode": "0x32",
- 	    "EventName": "mediated_num",
-+	    "BriefDescription": "Count of the number of Mediated operations that the HHA has forwarded",
- 	    "Unit": "hisi_sccl,hha"
-    },
-    {
- 	    "ConfigCode": "0x33",
- 	    "EventName": "tx_snp_num",
-+	    "BriefDescription": "Count of the number of Snoop operations that the HHA has sent",
- 	    "Unit": "hisi_sccl,hha"
-    },
-    {
- 	    "ConfigCode": "0x34",
- 	    "EventName": "tx_snp_outer",
-+	    "BriefDescription": "Count of the number of Snoop operations that the HHA has sent to another socket",
- 	    "Unit": "hisi_sccl,hha"
-    },
-    {
- 	    "ConfigCode": "0x35",
- 	    "EventName": "tx_snp_ccix",
-+	    "BriefDescription": "Count of the number of Snoop operations that the HHA has sent to CCIX",
- 	    "Unit": "hisi_sccl,hha"
-    },
-    {
- 	    "ConfigCode": "0x38",
- 	    "EventName": "rx_snprspdata",
-+	    "BriefDescription": "Count of the number of SnprspData flit operations that HHA has received",
- 	    "Unit": "hisi_sccl,hha"
-    },
-    {
- 	    "ConfigCode": "0x3c",
- 	    "EventName": "rx_snprsp_outer",
-+	    "BriefDescription": "Count of the number of SnprspData operations that HHA has received from another socket",
- 	    "Unit": "hisi_sccl,hha"
+ 	    "ConfigCode": "0x29",
+ 	    "EventName": "back_invalid",
+ 	    "BriefDescription": "Count of the number of L3C back invalid operations",
+-	    "PublicDescription": "Count of the number of L3C back invalid operations",
+ 	    "Unit": "hisi_sccl,l3c"
     },
     {
  	    "ConfigCode": "0x40",
- 	    "EventName": "sdir-lookup",
-+	    "BriefDescription": "Count of the number of HHA S-Dir lookup operations",
- 	    "Unit": "hisi_sccl,hha"
+ 	    "EventName": "retry_cpu",
+ 	    "BriefDescription": "Count of the number of retry that L3C suppresses the CPU operations",
+-	    "PublicDescription": "Count of the number of retry that L3C suppresses the CPU operations",
+ 	    "Unit": "hisi_sccl,l3c"
     },
     {
  	    "ConfigCode": "0x41",
- 	    "EventName": "edir-lookup",
-+	    "BriefDescription": "Count of the number of HHA E-Dir lookup operations",
- 	    "Unit": "hisi_sccl,hha"
+ 	    "EventName": "retry_ring",
+ 	    "BriefDescription": "Count of the number of retry that L3C suppresses the ring operations",
+-	    "PublicDescription": "Count of the number of retry that L3C suppresses the ring operations",
+ 	    "Unit": "hisi_sccl,l3c"
     },
     {
  	    "ConfigCode": "0x42",
- 	    "EventName": "sdir-hit",
-+	    "BriefDescription": "Count of the number of HHA S-Dir hit operations",
- 	    "Unit": "hisi_sccl,hha"
-    },
-    {
- 	    "ConfigCode": "0x43",
- 	    "EventName": "edir-hit",
-+	    "BriefDescription": "Count of the number of HHA E-Dir hit operations",
- 	    "Unit": "hisi_sccl,hha"
-    },
-    {
- 	    "ConfigCode": "0x4c",
- 	    "EventName": "sdir-home-migrate",
-+	    "BriefDescription": "Count of the number of HHA S-Dir read home migrate operations",
- 	    "Unit": "hisi_sccl,hha"
-    },
-    {
- 	    "ConfigCode": "0x4d",
- 	    "EventName": "edir-home-migrate",
-+	    "BriefDescription": "Count of the number of HHA E-Dir read home migrate operations",
- 	    "Unit": "hisi_sccl,hha"
+ 	    "EventName": "prefetch_drop",
+ 	    "BriefDescription": "Count of the number of prefetch drops from this L3C",
+-	    "PublicDescription": "Count of the number of prefetch drops from this L3C",
+ 	    "Unit": "hisi_sccl,l3c"
     }
  ]
 -- 
