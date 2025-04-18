@@ -1,80 +1,85 @@
-Return-Path: <linux-kernel+bounces-610598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5216EA936C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 14:02:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D46B1A936CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 14:03:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37DFE7B0E23
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 12:01:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B78D8A58B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 12:03:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E95DE274665;
-	Fri, 18 Apr 2025 12:02:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D9C82741B6;
+	Fri, 18 Apr 2025 12:03:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=0x0f.com header.i=@0x0f.com header.b="A1nb2Mcd"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kwF+2W0d"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62E516D4E6
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 12:02:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA7916D4E6;
+	Fri, 18 Apr 2025 12:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744977745; cv=none; b=OSp8+W7Vs6Cad3rNCZjH+b3huzId7AugK7KdEX0TTNuZHL2Q4/puOugXvjY4Lxdaz+drfhJ8UEnWbGBJNQKVwbuXK1pT/FR2o+DODSlXSFatNOsuVfCQcbUiAleQbySBPiwPrdWHQuBE2U8aQylaNRN2K1Ukg+LuCOTlQ0VbnsU=
+	t=1744977820; cv=none; b=OAGFmYm+NmlDRCwztOX8PjyO5oc30BjVGdYKW5m4eosw1jUbaMNC4NYN1VL0OqRYZtQgIFfvWQ6/3l7PZSheiShViuNlsFVNCs/j5QgSAQ11qXrPxktRPTNuDnCEXorRom5I0tBFSjSUpRi/NjxUZ8rQms18h32eKMJ51d77oHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744977745; c=relaxed/simple;
-	bh=okIH6WbPZVZPbyGI/bgYthp0N4LC7Kg0Jr4TKc+EL+I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fA9HSlP28340tlYpKu3hbyIp7y1k1JdkujA0ePUgHbMAOICSAOB0LvSfVRYjXyh/WSE8QJCxtGcoWlck5By+4fu0VVQ8AA9WsuxGIVuFtXXb5fHNvLosic2o5pV4wZ0Kd4TaB4xdN0JTsKDQQ1a5XPDRGHwIUDzZA5QAqpe67LQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0x0f.com; spf=pass smtp.mailfrom=0x0f.com; dkim=pass (1024-bit key) header.d=0x0f.com header.i=@0x0f.com header.b=A1nb2Mcd; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0x0f.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0x0f.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-736a7e126c7so1549266b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 05:02:22 -0700 (PDT)
+	s=arc-20240116; t=1744977820; c=relaxed/simple;
+	bh=GCAaP2+eMhfUK6n+4NMxhLdL3oro7ICzZjWNUc+/L0c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PrMJurHITJx5Hl1hW0gcE99G9YONDEPMMbXxgeSiEcLuZhN3tVLPT6v/KlUCVTccirUOKGHLN5y2y/YEakiySYuH5tzfKBR1A8FviD6ssRvMSu1Kx7JtokxGIyCsw7F/Qb0x2k4npL8O1CI+amy/8U+IUp8c+02Xav0r1V4f/as=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kwF+2W0d; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-39c0dfad22aso1172772f8f.2;
+        Fri, 18 Apr 2025 05:03:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=0x0f.com; s=google; t=1744977742; x=1745582542; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1744977817; x=1745582617; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=w3kDTMjlwG5mlvODlNU3Vuna7nwkZQjPuFA/SSJxKpw=;
-        b=A1nb2McdJMQv3fkm7dUNhUfglrWS5OwIJkLCEf6GkE5rFPQvgzBiIJ3JtQJTem1eMb
-         61Bxw8UIYLYXvLBX2RN/+A/fUhL3lo1erBsDLaYfB7mLWNwcumvxraKiLImVvzEzD9fy
-         ylQgMMG8DPcDudgfd2Km8pDwgbaMh5HXPhaqU=
+        bh=hzDXI54x1X0eS48ybGkFqIAbabffOZuzEsqDECgMj8s=;
+        b=kwF+2W0dU2bdwtNtXXp+9VUz7EdWS9wENJvoTt/o+23qCKFA0ydbU3tKR6JkqPIhl3
+         wTCWcstO1Fhal7lkSpEi3e5AXTak2Qz7TNhv4F+OAnzZQA+XBOherj+BS1An8bXA1ufq
+         +SvlCKz2SFGWDPGbUA6IwqCYMm2SPKyC9V/bsIpwxaDZQj6fTYwY1w0Am8y+DhoHh6DP
+         NKLJDpPum6BVSuAq4xPf6YHWYdCP4h4AHYSdvfve5gD/Jff3BjTULRocWFhS4uIbb/fn
+         ufw6vNJS9KU4n6pTAdc50rMJ+sEW0hZbMJmPwqJIn329Aygwhvhre3aMWnTOzxs1RIPm
+         WQXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744977742; x=1745582542;
+        d=1e100.net; s=20230601; t=1744977817; x=1745582617;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=w3kDTMjlwG5mlvODlNU3Vuna7nwkZQjPuFA/SSJxKpw=;
-        b=I7k7ufC3gPjvon+Hva0RvtJg7XjySMeWeINyzlDDaqVYxBZqtG1yDTL1srqvUpEj+I
-         3oDwofhJ+45kt0GGbzruPu8b5D/4vhgMsc+2xxbD5S1tXZyQH+ZznOdXVnDeyAlev+IJ
-         1n5akLzRanp0x+tfILkVuyIdA//GBGXfW1z/ms+i7t7Pw3rlWQQharLcRYvexA519Acc
-         qgy78oPv5N7VwFZo8YKTRIXTPLSrVnPAm9tarRbWYpK0n8xybxZH029xBGYp4fNuVilN
-         bD2z03HDYlj3vf++9TPbgohvTJP6LtHNQ3C9krVc0oUjr7DDLHgPsI/wSQP7xs0dojob
-         9FuA==
-X-Gm-Message-State: AOJu0YyFU7kW+A9pIdzO8J6jBf7atvSOXBsJRKvyUhLhmqr4H9P4hyqe
-	JZOkNevQnG03Yddk4OsZENpGxjLT3kTj4ISahbRuEkwSetnh00s02YqqMefaTJ4=
-X-Gm-Gg: ASbGncstQzwysvUlocK6ydjS65r6sF/azix83EfXWLvhUL2IFDLn6gvWQg/pYl15IyL
-	EtsPaWFM/VxjHt9k1HgrJclbNJIaKt+5ldqGF0Ib+COeayDheokKufj6MyBp/9aU2mfOixQf16o
-	RdyZldoos97doVAYM4FQLaPZ1Sdarwt4y0D1oeISkyQyRAcNCyZ26DRDaM1EvimjfdJcV8mUFMH
-	f4McN5NsMnSwgNROStiAUUFHcfKV7OysG95CDi4CVajFQqycKE03IpB1sFikxJLE054/ksVz1F/
-	dXT4TvH9h+1/+7jIgLYn4vU8CI3Na7/DJIjJ0d/ZLUCza7Ty9/n0Vw==
-X-Google-Smtp-Source: AGHT+IHMVfvcx7X/GlwdgGieimVGcGQRA/rOeqM8mfDwONUl8FjNrAWRK7izWxkk+tE3wNtHelkKcw==
-X-Received: by 2002:a05:6a00:279f:b0:736:5438:ccc with SMTP id d2e1a72fcca58-73dc149d9ddmr2988086b3a.9.1744977741984;
-        Fri, 18 Apr 2025 05:02:21 -0700 (PDT)
-Received: from shiro.work.home.arpa. ([2400:4162:2428:2ffe:8f9a:ceb1:54c8:1717])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-73dbfa595e4sm1432887b3a.88.2025.04.18.05.02.20
+        bh=hzDXI54x1X0eS48ybGkFqIAbabffOZuzEsqDECgMj8s=;
+        b=d5703lyqpBpDP62aLO1yDbQueJUkmLjpjKrdT7TzceHvHSgETMiuR8wydtLe1hlXXx
+         Uc+PKhKau7qKdcQBSHdaRavn9kfK/QUt4mSZZkcq/zgLIcn1TMDmNfORZwrfS0nNkBV2
+         l3YXUt097afHrWSuy69HkdCcvtT1pkSa2ugqa4f9NU82mp/APF6+QFDfoxx8RCdabQ+w
+         tqUNrVW04X2p0hENtnuHIK0Ca3wg7jq8/jn8WBCDZZ9VNYblUfdLQUA4AavUyl0VY5CY
+         LdKukT6/+qunYmM1UfKn5yBQz8xxpHbFVvnUbB2o/NBcRoldsMF4p/i3dWX+0B5/n5e6
+         yqIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVuSfg+PoBSWUzUAVKgRzCGiWsS8j61NbdczsJVIfwsUxag+PrZ+Fkp57hb++YJHbCYmgRBMqYPv8BK7+E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmA1ywkxqLoWAZM2I4Y52b2nBii7qZDQHP46o6C958G74bc1RJ
+	o/efqdiRpzFihmnHL7ulMQB8AmXrpnVY9R2xshlfy392L3Mb7aFy
+X-Gm-Gg: ASbGncuIOmYmZjVDQ6M6Mfdhfwg0LYqVBmD9qTEbaxgLmaqQkJd43wt9ELCCf0UMM0e
+	xQPIOGs6w+SgMwYyMAhb/4wGmGpTl7NQ4ns49nDYWF3J+PamB4qQEg6nQ97EbaNrJkdTF3+8m0N
+	/wapxisYs2IMOYRPzV/pFLnCHwcKywS+cLpaMZ2kpQJNJevD/TuXNhXuXbiBo2A1cPjLfFC7p/f
+	x+ghLBev9RbHrQIh9iK+Ws6zxC+fRfxxzx9GJPOGi/ycxZdJiQKusY3fUWzzJah32OsMn8mJXbZ
+	wZ6QgHkW7e9zOkbD7EpzxGscDWktS166iJ90eBLpWA==
+X-Google-Smtp-Source: AGHT+IEUD6k4QSc4ti7eTCFJXkgL+r1yKTaYIn7Oc+8OU8G5Fg7lgwr9Er+zG0ZcUkbsPplX9I1p4g==
+X-Received: by 2002:a05:6000:400d:b0:39c:cc7:3c5f with SMTP id ffacd0b85a97d-39efbae03a2mr1985961f8f.45.1744977817031;
+        Fri, 18 Apr 2025 05:03:37 -0700 (PDT)
+Received: from localhost ([194.120.133.58])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39efa4931e7sm2586839f8f.67.2025.04.18.05.03.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Apr 2025 05:02:21 -0700 (PDT)
-From: Daniel Palmer <daniel@0x0f.com>
-To: herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	Jason@zx2c4.com,
-	linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Daniel Palmer <daniel@thingy.jp>
-Subject: [PATCH] lib/crypto: blake2s: Disable self test if CONFIG_CRYPTO isn't enabled
-Date: Fri, 18 Apr 2025 21:02:16 +0900
-Message-ID: <20250418120216.2968994-1-daniel@0x0f.com>
+        Fri, 18 Apr 2025 05:03:36 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>,
+	Vivek Goyal <vgoyal@redhat.com>,
+	Dave Young <dyoung@redhat.com>,
+	kexec@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] crash: Fix spelling mistake "crahskernel" -> "crashkernel"
+Date: Fri, 18 Apr 2025 13:03:31 +0100
+Message-ID: <20250418120331.535086-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -82,40 +87,30 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: Daniel Palmer <daniel@thingy.jp>
+There is a spelling mistake in a pr_warn message. Fix it.
 
-Currently CONFIG_CRYPTO_MANAGER_DISABLE_TESTS is used to remove
-the self test code. CONFIG_CRYPTO_MANAGER_DISABLE_TESTS depends on
-CONFIG_CRYPTO so its impossible to disable the self test without
-enabling CONFIG_CRYPTO.
-
-If you don't want CONFIG_CRYPTO you probably don't want self tests
-so remove the self tests in that case too.
-
-Fixes: 66d7fb94e4ff ("crypto: blake2s - generic C library implementation and selftest")
-
-Signed-off-by: Daniel Palmer <daniel@thingy.jp>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- lib/crypto/blake2s.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ kernel/crash_reserve.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/crypto/blake2s.c b/lib/crypto/blake2s.c
-index 71a316552cc5..89d54e462fb5 100644
---- a/lib/crypto/blake2s.c
-+++ b/lib/crypto/blake2s.c
-@@ -60,7 +60,8 @@ EXPORT_SYMBOL(blake2s_final);
- 
- static int __init blake2s_mod_init(void)
- {
--	if (!IS_ENABLED(CONFIG_CRYPTO_MANAGER_DISABLE_TESTS) &&
-+	if (IS_ENABLED(CONFIG_CRYPTO) &&
-+	    !IS_ENABLED(CONFIG_CRYPTO_MANAGER_DISABLE_TESTS) &&
- 	    WARN_ON(!blake2s_selftest()))
- 		return -ENODEV;
- 	return 0;
+diff --git a/kernel/crash_reserve.c b/kernel/crash_reserve.c
+index aff7c0fdbefa..acb6bf42e30d 100644
+--- a/kernel/crash_reserve.c
++++ b/kernel/crash_reserve.c
+@@ -131,7 +131,7 @@ static int __init parse_crashkernel_mem(char *cmdline,
+ 			cur++;
+ 			*crash_base = memparse(cur, &tmp);
+ 			if (cur == tmp) {
+-				pr_warn("crahskernel: Memory value expected after '@'\n");
++				pr_warn("crashkernel: Memory value expected after '@'\n");
+ 				return -EINVAL;
+ 			}
+ 		}
 -- 
-2.47.2
+2.49.0
 
 
