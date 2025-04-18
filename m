@@ -1,271 +1,117 @@
-Return-Path: <linux-kernel+bounces-610424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1DA0A934E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 10:47:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E5BCA934FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 10:57:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E76958A7BD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 08:47:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB6BD3A835F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 08:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3617F26FA5A;
-	Fri, 18 Apr 2025 08:47:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C5F26FA6C;
+	Fri, 18 Apr 2025 08:57:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M2oyB14X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="PpCQ89bE"
+Received: from out203-205-221-173.mail.qq.com (out203-205-221-173.mail.qq.com [203.205.221.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F9725A2C8;
-	Fri, 18 Apr 2025 08:47:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91240204C0D
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 08:57:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744966037; cv=none; b=TY00PAUmyTmz7Dg6nOOtLh/p3xOq4ExvULr2P9Uf0YSQPVojJabfuM4jGZfMY9lqBZpPamBvxuAmef+/T0SYeCV2R5Cdt7X91Sh98n1NpZDoBkD2C8Q6BtFl95X8AI5ag3Pjkg7JVsvbsqzjLBMA05gP/Psggz4C88z7uOodmaU=
+	t=1744966672; cv=none; b=fS5cnoxmO1VfwXNFoobNEeqYXenC0vk+CNjkt11lX5EAMkqSqv+foX2n3bt8mGMil795EJLhhgoVbSvMB+nLCunIUVNTkN14DERn6SzQ0x5c3DGv6YVOsDduQB8pCrnz6ZkhFgfl0CZ6N+kpw2cP5uydCzDr8OW/5XvWCVU1+X4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744966037; c=relaxed/simple;
-	bh=W2tEL1iRqKZDZdoiAfbT8zNHiW9SPhUffLkWsQ3asFw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=apYL1RDJJV9aMiOf7oRltwDqLsBtZew4fSHaKIsmQ4xcpbOJaQSlQ6b0+QJ4zGDutNtlJ0PS8Ow7Os8ccPaf24mkMSyE4CUjZKY1ANPIHIw1raG9X2SpHKZvTNZWcaoxLP5OqYKV+nIzmOaPp9znemrqsc+JtTCrm3cp/ZGvsa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M2oyB14X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45997C4CEE2;
-	Fri, 18 Apr 2025 08:47:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744966036;
-	bh=W2tEL1iRqKZDZdoiAfbT8zNHiW9SPhUffLkWsQ3asFw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M2oyB14XIoQ2A7cJ1BV+dQLW2dPeV3HUffI1RrCXLH4tKd4qBbzvvr6uFulxv+yrj
-	 hZDiYKL8BXqG9OaFMFI+NwkDUTN98/D+RmpJHDMp4rwSb5QfhRlumE7/tiwPewc7bq
-	 mSBPWb+8sl1zsQmSrYrjHvbMdB5KeCf5I9ZCjupcZsbD2QawsuLmNHg2VShMtIzCHS
-	 HMa4Y+dIRvm9NeyRbrbWk0VfGXk/Bu9nf0tx1ZiwKzOKh4YvyMU6qFzL9T7GsAmnDQ
-	 qGbFcAVsiLVSZk3ntzS2N59ht/r2epcjFjFamHz1gv49ktfsjiVmQpAEESLrefTe3z
-	 xICf7LMwhF0Iw==
-Date: Fri, 18 Apr 2025 10:47:10 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Ian Kent <raven@themaw.net>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Mark Brown <broonie@kernel.org>, Eric Chanudet <echanude@redhat.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Clark Williams <clrkwllms@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ian Kent <ikent@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
-	Alexander Larsson <alexl@redhat.com>, Lucas Karpinski <lkarpins@redhat.com>, Aishwarya.TCV@arm.com
-Subject: Re: [PATCH v4] fs/namespace: defer RCU sync for MNT_DETACH umount
-Message-ID: <20250418-razzia-fixkosten-0569cf9f7b9d@brauner>
-References: <fbbafa84-f86c-4ea4-8f41-e5ebb51173ed@sirena.org.uk>
- <20250417-wolfsrudel-zubewegt-10514f07d837@brauner>
- <fb566638-a739-41dc-bafc-aa8c74496fa4@themaw.net>
- <20250417-abartig-abfuhr-40e558b85f97@brauner>
- <20250417-outen-dreihundert-7a772f78f685@brauner>
- <20250417-zappeln-angesagt-f172a71839d3@brauner>
- <20250417153126.QrVXSjt-@linutronix.de>
- <20250417-pyrotechnik-neigung-f4a727a5c76b@brauner>
- <39c36187-615e-4f83-b05e-419015d885e6@themaw.net>
- <125df195-5cac-4a65-b8bb-8b1146132667@themaw.net>
+	s=arc-20240116; t=1744966672; c=relaxed/simple;
+	bh=1VBWD+pr1gDwz1nhhp79tshupOUilvdxBmYkOXGpHbw=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=qq+JxO3XYOvglAnvB7J4Jp8Q+eyGwm9Enlbc+y51OvG5xflZ7j1JzH6RungfyhZS0ceBeTmhFGSpW4g0T257jyaibmRa6e91Y6+y2mvOXgvmfDHW6brptxkwSEmJ2MuisuEPHVD+Xm8n30s6zda+C+jAkwi3JSECxAzppL3GCig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=PpCQ89bE; arc=none smtp.client-ip=203.205.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1744966666;
+	bh=X4jkvVHMspO7XnGg8sDV2xlWadaOaoxQGrWlQefT+Qk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=PpCQ89bEHPGrpfqn1ChLjBexL7oDn6Zvfy0NtWVdS0bZHTcPquF+tDoLsM7iD320q
+	 AcBjNn4r6eTtIMdjjbUprQNMbFh9IE7PosFP764Wop0CbbaouwrC65WtI2b7W9floY
+	 Ye07k/LY10bOakISPLbtyO46OFiM595rx26vWn0U=
+Received: from localhost.localdomain ([116.128.244.169])
+	by newxmesmtplogicsvrszgpua8-1.qq.com (NewEsmtp) with SMTP
+	id CD9B2CDC; Fri, 18 Apr 2025 16:51:25 +0800
+X-QQ-mid: xmsmtpt1744966285th1u4dd4r
+Message-ID: <tencent_8024B8D7E209E31C8E2B5AC411B70C551106@qq.com>
+X-QQ-XMAILINFO: MR/iVh5QLeieI0g5xoRW0AIzl3BHfJuwK+mHjMJNFCaXlHpQfHiyKJFzNZ6ISw
+	 U+lL2HfNmfXrHGq25nPN6W4dTHN8m7lQIanARoQArPJtMWHx8dWedVehVkmPc1qAm0nENEm5C/An
+	 tni2g2HQ81aZwKhIZXTonpo5SsCtGe2QCeZRGmxAKGEGF+q85JS2FQiD2LPlf3Zo1Cfe+RB97WU4
+	 cir0JL1SoTLZv9K6ODtXO9TrzfaRApDVvrQFKjDkhti95v0otJuJZQY8i+Zt5yTsnKgx5HtSK3P+
+	 kMdv9f0y3/voG7WoInUdMK7FAaF/fM9gEtoSNSUilm4zD/LkGgCDfth0/f33BupP8d9C/Xk1LlFW
+	 h2xJHw+YYTVSaA4xPNsHVanDmyKhFqLHEFx99JkccU3j9SozjCTJhQhyQXc19S4eMvlFz1DjvBQj
+	 /dyLM7urzy4UeqsN9EujP030PtpKAz9DJZUPo6SNdfZ+zs7FU+w06yZ0M954O2QkQBQK321YIkLR
+	 0lKDZSIGbS/E/Lki1t1HqghN5edciIUTPCxJcFpPPScxV661d9+T0ZUnfRKgZ4+8p6cx0Wn/6Nu3
+	 +mwNj/HLPrLLwVHnbwCCR0jU8fnWzDhnfp4KAv3fGD+aZsevAKI0qdCMHcpWBCg8Pu8nGvUzpl83
+	 RJAFjxa+PBFAox/jNRH9jKZs2cWD6VQWCGl1V/4FxiR4icFSu0uhPymIaCGqphehf9Tq77Qo+btk
+	 df0371OMnL459dxYHeY8MgoE4PODVTiAvXpD0NdBhCOO4FRMTr/NIpgsp/gfJ6wzF1p9SFWx7xuc
+	 MZwL+ENkA+y1timnM2pOZw1mRRowFs2WQ4QmwODOO5NopYo2UNH6sMo5IXp/Fu7O02JiVrnfXkCp
+	 ftVL31yLG7O3bJ0+gD427g9mC4/e39iYtA+OzdxnTC6ClNTpME2Ung1+JUnYzqEwALQu6hPWTmi+
+	 RUdRCDCT35sDATT2kbkoNGwYAMdj0yyDW6g5EuSo1Ke+iIzEdW3TVXSaTAFcw7
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+From: xiaopeitux@foxmail.com
+To: linux-kernel@vger.kernel.org,
+	f.fangjian@huawei.com,
+	robh@kernel.org,
+	john.g.garry@oracle.com,
+	andriy.shevchenko@linux.intel.com,
+	xuwei5@hisilicon.com
+Cc: Pei Xiao <xiaopei01@kylinos.cn>
+Subject: [PATCH 1/2] bus: hisi_lpc: remove unused head file in hisi_lpc.c
+Date: Fri, 18 Apr 2025 16:51:23 +0800
+X-OQ-MSGID: <3d4093ed1eacc6a8b75f6115ba5d149e8860a62c.1744964101.git.xiaopei01@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1744964101.git.xiaopei01@kylinos.cn>
+References: <cover.1744964101.git.xiaopei01@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <125df195-5cac-4a65-b8bb-8b1146132667@themaw.net>
 
-On Fri, Apr 18, 2025 at 09:20:52AM +0800, Ian Kent wrote:
-> On 18/4/25 09:13, Ian Kent wrote:
-> > 
-> > On 18/4/25 00:28, Christian Brauner wrote:
-> > > On Thu, Apr 17, 2025 at 05:31:26PM +0200, Sebastian Andrzej Siewior
-> > > wrote:
-> > > > On 2025-04-17 17:28:20 [+0200], Christian Brauner wrote:
-> > > > > >      So if there's some userspace process with a broken
-> > > > > > NFS server and it
-> > > > > >      does umount(MNT_DETACH) it will end up hanging every other
-> > > > > >      umount(MNT_DETACH) on the system because the dealyed_mntput_work
-> > > > > >      workqueue (to my understanding) cannot make progress.
-> > > > > Ok, "to my understanding" has been updated after going back
-> > > > > and reading
-> > > > > the delayed work code. Luckily it's not as bad as I thought it is
-> > > > > because it's queued on system_wq which is multi-threaded so it's at
-> > > > > least not causing everyone with MNT_DETACH to get stuck. I'm still
-> > > > > skeptical how safe this all is.
-> > > > I would (again) throw system_unbound_wq into the game because
-> > > > the former
-> > > > will remain on the CPU on which has been enqueued (if speaking about
-> > > > multi threading).
-> > > Yes, good point.
-> > > 
-> > > However, what about using polled grace periods?
-> > > 
-> > > A first simple-minded thing to do would be to record the grace period
-> > > after umount_tree() has finished and the check it in namespace_unlock():
-> > > 
-> > > diff --git a/fs/namespace.c b/fs/namespace.c
-> > > index d9ca80dcc544..1e7ebcdd1ebc 100644
-> > > --- a/fs/namespace.c
-> > > +++ b/fs/namespace.c
-> > > @@ -77,6 +77,7 @@ static struct hlist_head *mount_hashtable
-> > > __ro_after_init;
-> > >   static struct hlist_head *mountpoint_hashtable __ro_after_init;
-> > >   static struct kmem_cache *mnt_cache __ro_after_init;
-> > >   static DECLARE_RWSEM(namespace_sem);
-> > > +static unsigned long rcu_unmount_seq; /* protected by namespace_sem */
-> > >   static HLIST_HEAD(unmounted);  /* protected by namespace_sem */
-> > >   static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
-> > >   static DEFINE_SEQLOCK(mnt_ns_tree_lock);
-> > > @@ -1794,6 +1795,7 @@ static void namespace_unlock(void)
-> > >          struct hlist_head head;
-> > >          struct hlist_node *p;
-> > >          struct mount *m;
-> > > +       unsigned long unmount_seq = rcu_unmount_seq;
-> > >          LIST_HEAD(list);
-> > > 
-> > >          hlist_move_list(&unmounted, &head);
-> > > @@ -1817,7 +1819,7 @@ static void namespace_unlock(void)
-> > >          if (likely(hlist_empty(&head)))
-> > >                  return;
-> > > 
-> > > -       synchronize_rcu_expedited();
-> > > +       cond_synchronize_rcu_expedited(unmount_seq);
-> > > 
-> > >          hlist_for_each_entry_safe(m, p, &head, mnt_umount) {
-> > >                  hlist_del(&m->mnt_umount);
-> > > @@ -1939,6 +1941,8 @@ static void umount_tree(struct mount *mnt,
-> > > enum umount_tree_flags how)
-> > >                   */
-> > >                  mnt_notify_add(p);
-> > >          }
-> > > +
-> > > +       rcu_unmount_seq = get_state_synchronize_rcu();
-> > >   }
-> > > 
-> > >   static void shrink_submounts(struct mount *mnt);
-> > > 
-> > > 
-> > > I'm not sure how much that would buy us. If it doesn't then it should be
-> > > possible to play with the following possibly strange idea:
-> > > 
-> > > diff --git a/fs/mount.h b/fs/mount.h
-> > > index 7aecf2a60472..51b86300dc50 100644
-> > > --- a/fs/mount.h
-> > > +++ b/fs/mount.h
-> > > @@ -61,6 +61,7 @@ struct mount {
-> > >                  struct rb_node mnt_node; /* node in the ns->mounts
-> > > rbtree */
-> > >                  struct rcu_head mnt_rcu;
-> > >                  struct llist_node mnt_llist;
-> > > +               unsigned long mnt_rcu_unmount_seq;
-> > >          };
-> > >   #ifdef CONFIG_SMP
-> > >          struct mnt_pcp __percpu *mnt_pcp;
-> > > diff --git a/fs/namespace.c b/fs/namespace.c
-> > > index d9ca80dcc544..aae9df75beed 100644
-> > > --- a/fs/namespace.c
-> > > +++ b/fs/namespace.c
-> > > @@ -1794,6 +1794,7 @@ static void namespace_unlock(void)
-> > >          struct hlist_head head;
-> > >          struct hlist_node *p;
-> > >          struct mount *m;
-> > > +       bool needs_synchronize_rcu = false;
-> > >          LIST_HEAD(list);
-> > > 
-> > >          hlist_move_list(&unmounted, &head);
-> > > @@ -1817,7 +1818,16 @@ static void namespace_unlock(void)
-> > >          if (likely(hlist_empty(&head)))
-> > >                  return;
-> > > 
-> > > -       synchronize_rcu_expedited();
-> > > +       hlist_for_each_entry_safe(m, p, &head, mnt_umount) {
-> > > +               if (!poll_state_synchronize_rcu(m->mnt_rcu_unmount_seq))
-> > > +                       continue;
+From: Pei Xiao <xiaopei01@kylinos.cn>
 
-This has a bug. This needs to be:
+linux/console.h,linux/io.h,linux/pci.h,linux/slab.h
+are not used, this patch removes it.
 
-	/* A grace period has already elapsed. */
-	if (poll_state_synchronize_rcu(m->mnt_rcu_unmount_seq))
-		continue;
+Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+---
+ drivers/bus/hisi_lpc.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-	/* Oh oh, we have to pay up. */
-	needs_synchronize_rcu = true;
-	break;
+diff --git a/drivers/bus/hisi_lpc.c b/drivers/bus/hisi_lpc.c
+index 53dd1573e323..1fcc3f51f9ca 100644
+--- a/drivers/bus/hisi_lpc.c
++++ b/drivers/bus/hisi_lpc.c
+@@ -7,17 +7,13 @@
+  */
+ 
+ #include <linux/acpi.h>
+-#include <linux/console.h>
+ #include <linux/delay.h>
+-#include <linux/io.h>
+ #include <linux/logic_pio.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_platform.h>
+-#include <linux/pci.h>
+ #include <linux/platform_device.h>
+ #include <linux/serial_8250.h>
+-#include <linux/slab.h>
+ 
+ #define DRV_NAME "hisi-lpc"
+ 
+-- 
+2.25.1
 
-which I'm pretty sure will eradicate most of the performance gain you've
-seen because fundamentally the two version shouldn't be different (Note,
-I drafted this while on my way out the door. r.
-
-I would test the following version where we pay the cost of the
-smb_mb() from poll_state_synchronize_rcu() exactly one time:
-
-diff --git a/fs/mount.h b/fs/mount.h
-index 7aecf2a60472..51b86300dc50 100644
---- a/fs/mount.h
-+++ b/fs/mount.h
-@@ -61,6 +61,7 @@ struct mount {
-                struct rb_node mnt_node; /* node in the ns->mounts rbtree */
-                struct rcu_head mnt_rcu;
-                struct llist_node mnt_llist;
-+               unsigned long mnt_rcu_unmount_seq;
-        };
- #ifdef CONFIG_SMP
-        struct mnt_pcp __percpu *mnt_pcp;
-diff --git a/fs/namespace.c b/fs/namespace.c
-index d9ca80dcc544..dd367c54bc29 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -1794,6 +1794,7 @@ static void namespace_unlock(void)
-        struct hlist_head head;
-        struct hlist_node *p;
-        struct mount *m;
-+       unsigned long mnt_rcu_unmount_seq = 0;
-        LIST_HEAD(list);
-
-        hlist_move_list(&unmounted, &head);
-@@ -1817,7 +1818,10 @@ static void namespace_unlock(void)
-        if (likely(hlist_empty(&head)))
-                return;
-
--       synchronize_rcu_expedited();
-+       hlist_for_each_entry_safe(m, p, &head, mnt_umount)
-+               mnt_rcu_unmount_seq = max(m->mnt_rcu_unmount_seq, mnt_rcu_unmount_seq);
-+
-+       cond_synchronize_rcu_expedited(mnt_rcu_unmount_seq);
-
-        hlist_for_each_entry_safe(m, p, &head, mnt_umount) {
-                hlist_del(&m->mnt_umount);
-@@ -1923,8 +1927,10 @@ static void umount_tree(struct mount *mnt, enum umount_tree_flags how)
-                        }
-                }
-                change_mnt_propagation(p, MS_PRIVATE);
--               if (disconnect)
-+               if (disconnect) {
-+                       p->mnt_rcu_unmount_seq = get_state_synchronize_rcu();
-                        hlist_add_head(&p->mnt_umount, &unmounted);
-+               }
-
-                /*
-                 * At this point p->mnt_ns is NULL, notification will be queued
-
-If this doesn't help I had considered recording the rcu sequence number
-during __legitimize_mnt() in the mounts. But we likely can't do that
-because get_state_synchronize_rcu() is expensive because it inserts a
-smb_mb() and that would likely be noticable during path lookup. This
-would also hinge on the notion that the last store of the rcu sequence
-number is guaranteed to be seen when we check them in namespace_unlock().
-
-Another possibly insane idea (haven't fully thought it out but throwing
-it out there to test): allocate a percpu counter for each mount and
-increment it each time we enter __legitimize_mnt() and decrement it when
-we leave __legitimize_mnt(). During umount_tree() check the percpu sum
-for each mount after it's been added to the @unmounted list.
-
-If we see any mount that has a non-zero count we set a global
-@needs_synchronize_rcu to true and stop counting for the other mounts
-(saving percpu summing cycles). Then call or elide
-synchronize_rcu_expedited() based on the @needs_synchronize_rcu boolean
-in namespace_unlock().
-
-The percpu might make this cheap enough for __legitimize_mnt() to be
-workable (ignoring any other pitfalls I've currently not had time to
-warp my head around).
 
