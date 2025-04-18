@@ -1,218 +1,170 @@
-Return-Path: <linux-kernel+bounces-611101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 941EDA93CDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 20:35:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6501EA93D23
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 20:39:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 217A41B651A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 18:35:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E852A1B66295
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 18:40:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20746225A4F;
-	Fri, 18 Apr 2025 18:34:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2123A22423F;
+	Fri, 18 Apr 2025 18:39:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KvjHq0QD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nO/3e+XN"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6900222541C;
-	Fri, 18 Apr 2025 18:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0765521B9E7;
+	Fri, 18 Apr 2025 18:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745001260; cv=none; b=ts1i9G/o1qgomJnw4gtQUJKAaV88ayj4xPxv7/O+6tK0s6R5oaLxyAF1AHUPMPK5vN0HuA3CN49dix6bGJMgBAeJL0AoamSNGeQ9wSOblyT54VyIPEvrtmn/YxEVGKYFwvfainkYwS628WnPzsUhq4zEBlULWQ5ms5ERRBdMGv8=
+	t=1745001589; cv=none; b=EZHe+E6oclBrbO12w09juaSZMVVx6bIFeLHMJoZoWBvPEbARrTjI0pbRPK3D3aOf+A/AzdXz3cyyN8T/QVRwl/1wj0Y8hjpAZyTzbMxyZcNVr01bGRpOvRt1ZuRtS+kDaglQOBY2WjCYh6MndgsByyPf3UxBsuLB34S4cuUxnno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745001260; c=relaxed/simple;
-	bh=FIXqyEgN8djbMnz6M52LLP9Fcc8mMMOnGHMLKvGIrF0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cTN8uZQEqxMdx3ied5aEloeWrVRGfifuLo1dSxfkmMtPb9tXJCOAn36uftidZ/5cSDPy4TaUHaP1XHFHJIqWMifP4HuXKVBxEQl48FNAvm0BXyRHhAUyjK7H43kMXglowVA+59Lh9dBA704X1ef6M4gLnmZTPQeQSvMlG7w4dvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KvjHq0QD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36338C4CEE2;
-	Fri, 18 Apr 2025 18:34:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745001259;
-	bh=FIXqyEgN8djbMnz6M52LLP9Fcc8mMMOnGHMLKvGIrF0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KvjHq0QDPF/hR500jhetMspxBZuSG7SCq1YxUsD+wXrBB7GQDq5jDVirp5RlAMChT
-	 Pztiuefxw9ChrQzuNpC8VgOIrQ952P4bMMOgdgm9t+43PydglthgoGdCMzY7vNumn5
-	 CKsZ88rEyPMDvN4z40R6sC9uMgZI9lHIZ4LzB4sAW8G3w1M9ePrxa0Djd/StLFPPfn
-	 uYbKQqCoOiEfWF2n+1wXdq+bawsmHmkcjVwMH7a7qU0YB2Jw1j7wWViqinT7oCRMHG
-	 +CK8iohchoN8giBh/X+bsZVPdVcX+s42k3XQB6wkqofWUdMC1z93m5GP673Vf6mF9Z
-	 M2/Zg/pttkcfw==
-Date: Fri, 18 Apr 2025 19:34:11 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- eraretuya@gmail.com
-Subject: Re: [PATCH v6 09/11] iio: accel: adxl345: add inactivity feature
-Message-ID: <20250418193411.406bd974@jic23-huawei>
-In-Reply-To: <20250414184245.100280-10-l.rubusch@gmail.com>
-References: <20250414184245.100280-1-l.rubusch@gmail.com>
-	<20250414184245.100280-10-l.rubusch@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1745001589; c=relaxed/simple;
+	bh=iVUaD1HmlHhqp5RNnB8H/wmafvbDegbiqzqranowsMo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AvCGwd/AO8sxgPRCrj0kB7MDqji0pIwXwxLVLvQnGV5o/wVaYb+QmdgqIShn4ZNI2+5VrzwvKVJ88VjvIfoCltSE4JKRg0QobhYr10fJ5H0K/TB6QAsE6s39/9N6NuPcUY2Gh+h81YSgkasmehLRpKDcoBnWjkuheCgeo1iMhe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nO/3e+XN; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-22c33e4fdb8so23711505ad.2;
+        Fri, 18 Apr 2025 11:39:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745001587; x=1745606387; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Goqo2j6Sp0E4BTDR+tbGqecfRzssVKsfJF5DD6KEUQU=;
+        b=nO/3e+XNIMqcEjSDIo5qXAN1PbuMAMQO43DNpc2Z/+eu05YULuvdOHqTXiSTOWcIT9
+         OEc3NdgLAw4bFcKv12LnEHtCrjZw5PHqg1rFDNpzNw46NUx7AtFjJUPt+XFayI2SOab5
+         sNjZCfV3EHSHfRT5EJ3TbQCAFMrWVhFvJLstqBUEYJSUGWFuN7/7xvYZJYO3iRWdjQ8l
+         KWPi6QaWL0t9M9nkPNB7rhsDt5cwfsy+tYxADTB6hpMFVfX9+GiBpx5pScw2UoGoOdQY
+         NP/Vd0g52MLuHKIzflGu7H2bv+Spo1g3StANqIWl6leQO9MGevNTbV9WFD7j03SXfuJr
+         KGVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745001587; x=1745606387;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Goqo2j6Sp0E4BTDR+tbGqecfRzssVKsfJF5DD6KEUQU=;
+        b=ZRqMdvOQ+z7Gy/aBagzFLSvcPboJWONn/8tqJSpL/MLFABbMnMJ6cF4didpqdsIDw1
+         jkajJO/opb9iT524qEaAgAqbBUwG1ZfMglSQlSVeCMpFhk+EJnH6WGcTJi4pov7GnJOu
+         QPJNuqSYrVpgqLhk2pZMCN+pywrHfJ8b7qHM8uPN2fXWA2K22Tcgh7T118b+HQgHuLB9
+         JWzTFmJMZei84I6aNi0vxTnfmUDVe6+0649cf7nROcUKNtJvsG8u2p6ZpNztxqJBHVFp
+         3yr2yBCXyXLLwvW+HgD7bPzf9izxamD+0g6pLWIGJ04HqqqfapG77Sj6thgokHBdO+iw
+         GM3g==
+X-Forwarded-Encrypted: i=1; AJvYcCXDyGxhKX86zU/lJ9+33IVe/cKehkprWGYbNZRsf9Thyq8sD/QHLQy2fyJMa8jS3eQxjN5d47X7Vw+tnIrci928s70N@vger.kernel.org, AJvYcCXKWWo7NYivvs1jJFfFv3jf9P74gXyOWah6zFd5V9lAo6WWRDygYRe3UNF63XsNsa3BeH1R9sgoqafZNtw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxH1XVXtVAJOnGwliVt8XXUJZTeDzQIjYJlGa5nUTLy2Ohi9L2i
+	bcD+nTHxzDLdL1crSfcLE3hwlTXTLLbS/GpdvQXLVw66a0gsPsN0
+X-Gm-Gg: ASbGncu4tsmqzKqwY/k/oLHEd2M+ry9lv87p1J6eqptdFMZs+itizOqzXfNUsC1tKvH
+	MroxH2ePz2/xd089Qv5haBmM/wXkUoAUTMFYY569fj/JGtxPGxcadpkTopd8RtBk19UZQgDHyHL
+	Hg/Ne3q+KIVPdfLHeCFTbMv6jS8uP559uWiYbQ8Cjk5NM+WZj7bIoD+O5dyaRsBWWhKgDkVzML3
+	nmwnmncenllSl0kpJZe1FpeDoVgNaE8W1Y0qHs3GksaF5bGoNlWCT3ZVEt8+X/MkNJIe1UQjJ/X
+	pw+QMRMtNRnSiveSA+XQqe0gl+wvRp37AMGNMZ6M9WNwHBRPKSo7t2kgZw==
+X-Google-Smtp-Source: AGHT+IHRJWWaKfQtg/yMVMqCi+pENNAPIR5/EfTc8Fd4qzR2x2UpCcVE/69Mn2/dX/6szddjaNNghQ==
+X-Received: by 2002:a17:902:ecc7:b0:220:d79f:60f1 with SMTP id d9443c01a7336-22c536151f7mr54362385ad.42.1745001587053;
+        Fri, 18 Apr 2025 11:39:47 -0700 (PDT)
+Received: from localhost.localdomain ([2601:646:8f03:9fee:5e33:e006:dcd5:852d])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50eb463asm19865975ad.141.2025.04.18.11.39.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Apr 2025 11:39:46 -0700 (PDT)
+From: nifan.cxl@gmail.com
+To: rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	willy@infradead.org
+Cc: akpm@linux-foundation.org,
+	david@redhat.com,
+	fan.ni@samsung.com,
+	yang@os.amperecomputing.com,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	npache@redhat.com,
+	mcgrof@kernel.org,
+	a.manzanares@samsung.com,
+	dave@stgolabs.net,
+	nifan.cxl@gmail.com,
+	Baolin Wang <baolin.wang@linux.alibaba.com>
+Subject: [PATCH v2 1/2] khugepaged: Refactor trace_mm_collapse_huge_page_isolate() to take folio instead of page
+Date: Fri, 18 Apr 2025 11:34:20 -0700
+Message-ID: <20250418183920.273154-1-nifan.cxl@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Mon, 14 Apr 2025 18:42:43 +0000
-Lothar Rubusch <l.rubusch@gmail.com> wrote:
+From: Fan Ni <fan.ni@samsung.com>
 
-> Add the inactivity feature of the sensor. When activity and inactivity
-> are enabled, a link bit will be set linking activity and inactivity
-> handling. Additionally, the auto-sleep mode will be enabled. Due to the
-> link bit the sensor is going to auto-sleep when inactivity was
-> detected.
-> 
-> Inactivity detection needs a threshold to be configured, and a time
-> after which it will go into inactivity state if measurements under
-> threshold.
-> 
-> When a ODR is configured this time for inactivity is adjusted with a
-> corresponding reasonable default value, in order to have higher
-> frequencies and lower inactivity times, and lower sample frequency but
-> give more time until inactivity. Both with reasonable upper and lower
-> boundaries, since many of the sensor's features (e.g. auto-sleep) will
-> need to operate beween 12.5 Hz and 400 Hz. This is a default setting
-> when actively changing sample frequency, explicitly setting the time
-> until inactivity will overwrite the default.
-> 
-> Similarly, setting the g-range will provide a default value for the
-> activity and inactivity thresholds. Both are implicit defaults, but
-> equally can be overwritten to be explicitly configured.
-> 
-> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
-Hi Lothar,
+trace_mm_collapse_huge_page_isolate() is only used in
+__collapse_huge_page_isolate(), which passes in the head page of a
+folio, so refactor it to take folio directly.
 
-Patches 6-8 look good to me.
+Signed-off-by: Fan Ni <fan.ni@samsung.com>
+Reviewed-by: Nico Pache <npache@redhat.com>
+Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+---
+v2: 
+Picked up Reviewed-by tags;
+v1:
+https://lore.kernel.org/linux-mm/CAA1CXcB06JD9Fp4c7GGU3NHEm4W-aV7TS7JW7eWxshJEM4t2_w@mail.gmail.com/T/
+---
+ include/trace/events/huge_memory.h | 6 +++---
+ mm/khugepaged.c                    | 4 ++--
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-This runs into a similar issue to the freefall one. I haven't dug into
-the datasheet but does it report on one channel going inactive, or
-all being inactive at the same time?  I checked and it is the all
-case so we should be both on a pseudo channel to describe it right
-and reporting IIO_MOD_X_AND_Y_AND_Z not the OR form.
+diff --git a/include/trace/events/huge_memory.h b/include/trace/events/huge_memory.h
+index 9d5c00b0285c..a73699f000de 100644
+--- a/include/trace/events/huge_memory.h
++++ b/include/trace/events/huge_memory.h
+@@ -116,10 +116,10 @@ TRACE_EVENT(mm_collapse_huge_page,
+ 
+ TRACE_EVENT(mm_collapse_huge_page_isolate,
+ 
+-	TP_PROTO(struct page *page, int none_or_zero,
++	TP_PROTO(struct folio *folio, int none_or_zero,
+ 		 int referenced, bool  writable, int status),
+ 
+-	TP_ARGS(page, none_or_zero, referenced, writable, status),
++	TP_ARGS(folio, none_or_zero, referenced, writable, status),
+ 
+ 	TP_STRUCT__entry(
+ 		__field(unsigned long, pfn)
+@@ -130,7 +130,7 @@ TRACE_EVENT(mm_collapse_huge_page_isolate,
+ 	),
+ 
+ 	TP_fast_assign(
+-		__entry->pfn = page ? page_to_pfn(page) : -1;
++		__entry->pfn = folio ? folio_pfn(folio) : -1;
+ 		__entry->none_or_zero = none_or_zero;
+ 		__entry->referenced = referenced;
+ 		__entry->writable = writable;
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index b8838ba8207a..950d147cd95e 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -696,13 +696,13 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
+ 		result = SCAN_LACK_REFERENCED_PAGE;
+ 	} else {
+ 		result = SCAN_SUCCEED;
+-		trace_mm_collapse_huge_page_isolate(&folio->page, none_or_zero,
++		trace_mm_collapse_huge_page_isolate(folio, none_or_zero,
+ 						    referenced, writable, result);
+ 		return result;
+ 	}
+ out:
+ 	release_pte_pages(pte, _pte, compound_pagelist);
+-	trace_mm_collapse_huge_page_isolate(&folio->page, none_or_zero,
++	trace_mm_collapse_huge_page_isolate(folio, none_or_zero,
+ 					    referenced, writable, result);
+ 	return result;
+ }
+-- 
+2.47.2
 
-Sorry again that I'm only realising this on v6 :(
-
-Difference is for Activity the definition is:
-"The activity bit is set when acceleration greater than the value
-stored in the THRESH_ACT register (Address 0x24) is experienced
-on _any_ participating axis, set by the ACT_INACT_CTL register
-(Address 0x27)."
-vs Inactivity:
-"The inactivity bit is set when acceleration of less than the value
-stored in the THRESH_INACT register (Address 0x25) is experienced
-for more time than is specified in the TIME_INACT
-register (Address 0x26) on _all_ participating axes, as set by the
-ACT_INACT_CTL register (Address 0x27). "
-
-So all vs any.
-
-> +
-> +/**
-> + * adxl345_set_inact_time_s - Configure inactivity time explicitly or by ODR.
-> + * @st: The sensor state instance.
-> + * @val_s: A desired time value, between 0 and 255.
-> + *
-> + * Inactivity time can be configured between 1 and 255 sec. If a val_s of 0
-> + * is configured by a user, then a default inactivity time will be computed.
-> + *
-> + * In such case, it should take power consumption into consideration. Thus it
-> + * shall be shorter for higher frequencies and longer for lower frequencies.
-> + * Hence, frequencies above 255 Hz shall default to 10 s and frequencies below
-> + * 10 Hz shall result in 255 s to detect inactivity.
-> + *
-> + * The approach simply subtracts the pre-decimal figure of the configured
-> + * sample frequency from 255 s to compute inactivity time [s]. Sub-Hz are thus
-> + * ignored in this estimation. The recommended ODRs for various features
-> + * (activity/inactivity, sleep modes, free fall, etc.) lie between 12.5 Hz and
-> + * 400 Hz, thus higher or lower frequencies will result in the boundary
-> + * defaults or need to be explicitly specified via val_s.
-> + *
-> + * Return: 0 or error value.
-> + */
-> +static int adxl345_set_inact_time_s(struct adxl345_state *st, u32 val_s)
-> +{
-> +	unsigned int max_boundary = 255;
-> +	unsigned int min_boundary = 10;
-> +	unsigned int val = min(val_s, max_boundary);
-> +	enum adxl345_odr odr;
-> +	unsigned int regval;
-> +	int ret;
-> +
-> +	if (val == 0) {
-> +		ret = regmap_read(st->regmap, ADXL345_REG_BW_RATE, &regval);
-> +		if (ret)
-> +			return ret;
-> +		odr = FIELD_GET(ADXL345_BW_RATE_MSK, regval);
-> +
-> +		val = (adxl345_odr_tbl[odr][0] > max_boundary)
-> +			? min_boundary : max_boundary -	adxl345_odr_tbl[odr][0];
-> +	}
-> +
-> +	return regmap_write(st->regmap, ADXL345_REG_TIME_INACT, val);
->  }
->  
->  /* tap */
-> @@ -837,6 +943,13 @@ static int adxl345_read_event_config(struct iio_dev *indio_dev,
->  			if (ret)
->  				return ret;
->  			return int_en;
-> +		case IIO_EV_DIR_FALLING:
-> +			ret = adxl345_is_act_inact_en(st, chan->channel2,
-
-Does it makes sense to allow inactivity detection on a subset of channels but then
-report it as XYZ?  I guess it didn't matter when it was and OR, but if we
-change to AND as suggested that is going to be misleading.
-
-we might have to allow separate enables but report an event as the combination
-of channels that are enabled X_AND_Y, X_AND_Z etc  I guess we can improve activity
-channel case as well by doing that with the X_OR_Y etc
-
-
-
-> +						      ADXL345_INACTIVITY,
-> +						      &int_en);
-> +			if (ret)
-> +				return ret;
-> +			return int_en;
->  		default:
->  			return -EINVAL;
->  		}
-> @@ -881,6 +994,9 @@ static int adxl345_write_event_config(struct iio_dev *indio_dev,
->  		case IIO_EV_DIR_RISING:
->  			return adxl345_set_act_inact_en(st, chan->channel2,
->  							ADXL345_ACTIVITY, state);
-> +		case IIO_EV_DIR_FALLING:
-> +			return adxl345_set_act_inact_en(st, chan->channel2,
-> +							ADXL345_INACTIVITY, state);
->  		default:
->  			return -EINVAL;
->  		}
-
-> @@ -1314,6 +1458,17 @@ static int adxl345_push_event(struct iio_dev *indio_dev, int int_stat,
->  			return ret;
->  	}
->  
-> +	if (FIELD_GET(ADXL345_INT_INACTIVITY, int_stat)) {
-> +		ret = iio_push_event(indio_dev,
-> +				     IIO_MOD_EVENT_CODE(IIO_ACCEL, 0,
-> +							IIO_MOD_X_OR_Y_OR_Z,
-
-So this is our open question. Similar to the free fall case. Do we have the boolean
-logic right way around?
-
-> +							IIO_EV_TYPE_THRESH,
-> +							IIO_EV_DIR_FALLING),
-> +				     ts);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
 
