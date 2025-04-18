@@ -1,119 +1,156 @@
-Return-Path: <linux-kernel+bounces-611100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30570A93CDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 20:35:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67F91A93D22
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 20:39:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75AF317475B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 18:34:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB09B1B6614F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 18:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7C422B8B0;
-	Fri, 18 Apr 2025 18:33:49 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62AC8224236;
+	Fri, 18 Apr 2025 18:39:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="px+AmD9r"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6698E226D0C
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 18:33:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B7A186E2E
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 18:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745001227; cv=none; b=t0Qfc+g2tSqfNSUXg5mrE60RXy7cfG4DsMEhiI4cShW+AXmpvoyno9tuOtk75WyVCXCBGWM9evnKly09jC6TiF7CgNzrgIMJKDD2iy9EkztB9yanqgJbpLf9ni6QnpG6nwr/Ai8RN5Vxrir5LE3YxiEVQixhl9vatYOcGz4nZGQ=
+	t=1745001548; cv=none; b=cLtwbAeBtI5kUC+ulKN8D8oq/SnX9+pySnsFMD6LQMZYprXyxtktBFv1eqQgzKOUCTGfvHI7YH1aKWc5G+zeUY6OMG8hF2wkh3+4xmwZ2qsuofFdCWceWrkgsurudA7x/bw/cvMscew4KhClbS/8rEwdNTStevVS0+R+MVr+7bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745001227; c=relaxed/simple;
-	bh=OKDiqgB2pHuTCBxmEQy3/PZJ7f0jyGYq49naXeGmkh4=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=eDq2Ru5m+37M/78N3uTLM/eaRGs+qPZEjdfClU7EablJK1+6soOtVrCbjFnhxuRIYOQoMNitfu7V0Fn9RMhW2EvC8dKArc/wwhczFE5vgayOpZoLZTQLEY6EyasWrd0C5vu0xUzykjKU1T7OLnY8PJaGCbwmpLTWOD/kyeLwTqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DFF7C4CEEC;
-	Fri, 18 Apr 2025 18:33:47 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1u5qYj-0000000DbA9-1Jes;
-	Fri, 18 Apr 2025 14:35:29 -0400
-Message-ID: <20250418183529.162957172@goodmis.org>
-User-Agent: quilt/0.68
-Date: Fri, 18 Apr 2025 14:34:53 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Shuah Khan <skhan@linuxfoundation.org>
-Subject: [for-linus][PATCH 7/7] tracing: selftests: Add testing a user string to filters
-References: <20250418183446.383784216@goodmis.org>
+	s=arc-20240116; t=1745001548; c=relaxed/simple;
+	bh=Bv/8pmkVSLEHKs/mav/QyQx2gx+A9OyyTn67MfrVslE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=IrhixjY2MB//X25VpAcOwXDKUYLxyh2WdFse/P6Skpk4swVHdFSmq/5TCNWCUgztUlyWt1jCFZULQG/hQtbrJzU4XemMyGhJTT520LjfopKIhdwjGELEikV7a9jt5r6RTDRiEf77dyWUVYC1fFcLAPgZiYIuuuu/uhvzptNZsa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=px+AmD9r; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43cf848528aso16408465e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 11:39:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1745001545; x=1745606345; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fdOyOpClnf46r1G0w0n1z533KfjfW03By15fERgN3ao=;
+        b=px+AmD9rvf6F1yCAvzy0GdYQb5BJWDgK/eoaPubZs7HClc1OQ++HiHlsXg7RNKq25d
+         agjhT1dz/aR/rQeGtA/MHkGQdrJ6zRh5EkCN+QOJGbrHnMa6bIzGS8bgy83fwsmyDiDU
+         1UPwO4RxifOTEYFxoxKgyyYXvPObzIpZiGmsXhHyjEdD9kZkMXMNLMnphRNA2z0WKBih
+         dC8cEQqOQ+cnGWzdl1gyC9v/+jzfz+AjLAj50TLSb1XUj40fhHvI80K5zIowfi2cwS4L
+         oZv1oTQooaykylXvagdc8uBqlowLgAd2AGMJXRdBxuDna+CF7Z4cIws+pH53cC+7YJmj
+         GPqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745001545; x=1745606345;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fdOyOpClnf46r1G0w0n1z533KfjfW03By15fERgN3ao=;
+        b=UC6Phz+vX6DWWCUg6DwYnaz4i24rLtLzYQLgigjAEFAszSTNp9C+iwtoVPKFZw8ejL
+         LUgN2CsiziPvM4kpcB/YRjroYXsu8rUZ6t1xWjL+HH1shHQ/muqoH1Q1iHDfjNwdPoFw
+         zI2TAXXC49qfohE0yNtKzs59e0RwNpVTcWVbSkqhH3tfP7jWDBK/lG5m96aucLEP/bL4
+         3hHhS/epYCxnsxIzucIri2TEmHaTwApShDN4Nx+bzoijt2oU34juMatBEdtvwNp1gc+q
+         HYRNq/RZstzIFlcBaoiV99o0RkwvdoQxYRDoWs9SQ0DZ8BPlZlzxCF6DHerS22wx/TwH
+         iRyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXaZh4cLBbg3Q4LtfIhU3wMZ1YBRCA+HsXDkiaMS9bjTlqm09rRlV2r/irfUDQIdDusjWMvjmnOpKguaOc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKi8ZXCJWaTpDkbElmPok0K10mlN24wnLggU7gkJwpi4DhtALR
+	jupEDd2sKhcC584MHKNK4SrMyDxBFc2WN4Q3bEdflEyuCJQvzp3DUdcEbAVQjio=
+X-Gm-Gg: ASbGncstCdE9Rcli6sJT0Ib9pI3dTlJ826X6+0HeZnNVTbVjgaiDoWExE4SSLVC+G9S
+	1QyA6xPNAS8/n9ItkC27/rQqHXvPovLaZm6ihrjDgsD6UEbr6uehoYpHqotZzVHCDprnV17dxJT
+	+HuxKXnye7M+0gAc5aleckGnCrjeU/LgSmkw/3kwOcOon8nXL+TJTVeVGe0aK6MnFhauLwS97dt
+	0BRXZt0arDML1OpMCVLbjCHrvMAJFMZTsgTYhrmoS2DSeWw5fnu9hDa0YHfyRx/gKEGsIRxEwFh
+	yWTDqgwpqFVi0hwyb+4SXLCTM8zYr8wi5N3oA7BURY2rRKl2Bc2Jh3QY9ljebuQEQTVOvUr/Rhd
+	aHOJ4pnXLauCLeCjIKg==
+X-Google-Smtp-Source: AGHT+IG5u79osLOJyjW/HnZsIL0/4QcAMEJjPNjmGPE4qL92+wsrfxd5ANNR1y0fi/i1c5rfxy70Qw==
+X-Received: by 2002:a05:600c:524f:b0:43c:fb8e:aec0 with SMTP id 5b1f17b1804b1-4406ab7ff18mr30012915e9.1.1745001544822;
+        Fri, 18 Apr 2025 11:39:04 -0700 (PDT)
+Received: from [192.168.0.2] (host-87-15-70-119.retail.telecomitalia.it. [87.15.70.119])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4406d6db117sm31044565e9.26.2025.04.18.11.39.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Apr 2025 11:39:04 -0700 (PDT)
+From: Angelo Dureghello <adureghello@baylibre.com>
+X-Google-Original-From: Angelo Dureghello <adureghello@baylibre.org>
+Date: Fri, 18 Apr 2025 20:37:53 +0200
+Subject: [PATCH v3] iio: adc: ad7606: fix serial register access
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250418-wip-bl-ad7606-fix-reg-access-v3-1-d5eeb440c738@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIAACcAmgC/43NTQ6CMBCG4auQrh3TKT+trryHcVGGAZogkNagh
+ HB3CyvjRpfvl8kziwjsHQdxThbheXLBDX2M9JAIam3fMLgqtlBS5TJDDU83QtmBrXQhC6jdCzw
+ 3YIk4BNDqRAozbSqsRSRGz/Fi56+32K0Lj8HP+7cJt/VPeEJAkMRphnVKNaWX0s6dKz0fabiLz
+ Z7Up2d+eCp6pkRbcaEZTf7lrev6BotFIgMbAQAA
+X-Change-ID: 20250417-wip-bl-ad7606-fix-reg-access-729c21478d1f
+To: Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>, Beniamin Bia <beniamin.bia@analog.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Angelo Dureghello <adureghello@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1587;
+ i=adureghello@baylibre.com; h=from:subject:message-id;
+ bh=xDLDsBY+0buT4niZ2UTLenrevFoj/yl6I/WTIFIhTHE=;
+ b=owGbwMvMwCXGf3bn1e/btlsznlZLYshgmsP4u1lm3beujIUdU/Z2dtl4rzwYlR76I+fqBOXSx
+ Avx5i3/OkpZGMS4GGTFFFnqEiNMQm+HSikvYJwNM4eVCWQIAxenAExk32VGhmeTJv3Vsb5WJCfU
+ fOivUN+GuO1SP1m/rbnzaVG2lVfQw0OMDB0fd0aes757MIeb9cy8piOyx5gyTARP7p0SOk1D/F/
+ tR1YA
+X-Developer-Key: i=adureghello@baylibre.com; a=openpgp;
+ fpr=703CDFAD8B573EB00850E38366D1CB9419AF3953
 
-From: Steven Rostedt <rostedt@goodmis.org>
+From: Angelo Dureghello <adureghello@baylibre.com>
 
-Running the following commands was broken:
+Fix register read/write routine as per datasheet.
 
-  # cd /sys/kernel/tracing
-  # echo "filename.ustring ~ \"/proc*\"" > events/syscalls/sys_enter_openat/filter
-  # echo 1 > events/syscalls/sys_enter_openat/enable
-  # ls /proc/$$/maps
-  # cat trace
+When reading multiple consecutive registers, only the first one is read
+properly. This is due to missing chip select deassert and assert again
+between first and second 16bit transfer, as shown in the datasheet
+AD7606C-16, rev 0, figure 110.
 
-And would produce nothing when it should have produced something like:
-
-      ls-1192    [007] .....  8169.828333: sys_openat(dfd: ffffffffffffff9c, filename: 7efc18359904, flags: 80000, mode: 0)
-
-Add a test to check this case so that it will be caught if it breaks
-again.
-
-Link: https://lore.kernel.org/linux-trace-kernel/20250417183003.505835fb@gandalf.local.home/
-
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Shuah Khan <skhan@linuxfoundation.org>
-Link: https://lore.kernel.org/20250418101208.38dc81f5@gandalf.local.home
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Fixes: f2a22e1e172f ("iio: adc: ad7606: Add support for software mode for ad7616")
+Reviewed-by: David Lechner <dlechner@baylibre.com>
+Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
 ---
- .../test.d/filter/event-filter-function.tc    | 20 +++++++++++++++++++
- 1 file changed, 20 insertions(+)
+Changes in v3:
+- fix typo in commit descritpion.
+- Link to v2: https://lore.kernel.org/r/20250418-wip-bl-ad7606-fix-reg-access-v2-1-8b1ade67e185@baylibre.com
 
-diff --git a/tools/testing/selftests/ftrace/test.d/filter/event-filter-function.tc b/tools/testing/selftests/ftrace/test.d/filter/event-filter-function.tc
-index 118247b8dd84..c62165fabd0c 100644
---- a/tools/testing/selftests/ftrace/test.d/filter/event-filter-function.tc
-+++ b/tools/testing/selftests/ftrace/test.d/filter/event-filter-function.tc
-@@ -80,6 +80,26 @@ if [ $misscnt -gt 0 ]; then
- 	exit_fail
- fi
- 
-+# Check strings too
-+if [ -f events/syscalls/sys_enter_openat/filter ]; then
-+	DIRNAME=`basename $TMPDIR`
-+	echo "filename.ustring ~ \"*$DIRNAME*\"" > events/syscalls/sys_enter_openat/filter
-+	echo 1 > events/syscalls/sys_enter_openat/enable
-+	echo 1 > tracing_on
-+	ls /bin/sh
-+	nocnt=`grep openat trace | wc -l`
-+	ls $TMPDIR
-+	echo 0 > tracing_on
-+	hitcnt=`grep openat trace | wc -l`;
-+	echo 0 > events/syscalls/sys_enter_openat/enable
-+	if [ $nocnt -gt 0 ]; then
-+		exit_fail
-+	fi
-+	if [ $hitcnt -eq 0 ]; then
-+		exit_fail
-+	fi
-+fi
-+
- reset_events_filter
- 
- exit 0
+Changes in v2:
+- improve bug description.
+- Link to v1: https://lore.kernel.org/r/20250417-wip-bl-ad7606-fix-reg-access-v1-1-0ce341f3cfc3@baylibre.com
+---
+ drivers/iio/adc/ad7606_spi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iio/adc/ad7606_spi.c b/drivers/iio/adc/ad7606_spi.c
+index 997be483ebb93293481b922e13ece4edb47e940a..bd05357a542cf7234d5bb6b718829d6b720262cd 100644
+--- a/drivers/iio/adc/ad7606_spi.c
++++ b/drivers/iio/adc/ad7606_spi.c
+@@ -103,7 +103,7 @@ static int ad7606_spi_reg_read(struct ad7606_state *st, unsigned int addr)
+ 		{
+ 			.tx_buf = &st->d16[0],
+ 			.len = 2,
+-			.cs_change = 0,
++			.cs_change = 1,
+ 		}, {
+ 			.rx_buf = &st->d16[1],
+ 			.len = 2,
+
+---
+base-commit: 8dc6b228d746b1a900bed28568defb2266fa4c43
+change-id: 20250417-wip-bl-ad7606-fix-reg-access-729c21478d1f
+
+Best regards,
 -- 
-2.47.2
-
+Angelo Dureghello <adureghello@baylibre.com>
 
 
