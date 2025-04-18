@@ -1,210 +1,220 @@
-Return-Path: <linux-kernel+bounces-611063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9565EA93C54
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 19:52:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1276A93C57
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 19:52:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD17546108F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 17:52:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B5E5920CF0
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 17:52:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E553622686B;
-	Fri, 18 Apr 2025 17:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3325220699;
+	Fri, 18 Apr 2025 17:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AZqb7kPy"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="rNiJphm8"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A97822540F
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 17:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E307F228C9D
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 17:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744998624; cv=none; b=ozpAPLcdhasdEZNgFZzPfNcZ6u2JtcjNOHjbZbDyZ6Cp6KIUrWw/sXh8WZ7mzz3KwvCx15Qu1mp9+WgWvaWtqBkNc1uHThyNMd19+Q0IljXOtnwzFwvcbLgGs8o2KLOPtOiegbUz2bEfxGSH6eC7wN6/FOOXc460YnQ52qMiC3M=
+	t=1744998631; cv=none; b=ipmJAJzDih21U7oJ5vCjq7aFoHZrMZfHkv9GHpihyTPFg017o1KeYfNbxA+7eIR0kwLROR2JPWWpm0qA9PUdAkuMCMmbggYGGKl3CFCeYtOeU3CNchyVjLU8UAPOiNadne7zMYkZcvJVhZmmTx+NxhIX/gnuhDzd4nIAXhRi8G4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744998624; c=relaxed/simple;
-	bh=sKg7f329Zs3O82Sqp+e8qxPxOZ/t4mW6H6H8eA3C9lA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=DHUg2oNg7LGIbF3FwKrpxD1RfW72+nSdEPR8FzexZC+/4gdOyFvey5Ozqv8j0Jw2GeuNb8SqIxwbdFagYh/JMRrad2uqnklYsuwa6fJmxNsfTILpJ43rNNFFo3KCNqJwuZabz64Kq6k7UIB8bTd7LcZqNRdit/G7fosEnxdwNUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AZqb7kPy; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2242ade807fso33216835ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 10:50:21 -0700 (PDT)
+	s=arc-20240116; t=1744998631; c=relaxed/simple;
+	bh=AzeVQAOnRtcbGIrt74vKKg1t+G+1IlWiUF0f/IMwOvY=;
+	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID; b=YEdeBH9KdsAqBSf1isOS3ODMPhO6RniKzw9phul7zk5RdtUz/zzX6ga/vkuxPTjQgHtNXGmhdM/1SHDMt02dRyJQXjqfkK/ZbINOSFz3hkjNKanV8wl9GWZH3zRwVaIY1VFzOPMg2fCb2/J14vuiThyRNC1NOSd+guO82zzniJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=rNiJphm8; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-22423adf751so24673705ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 10:50:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744998621; x=1745603421; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GDNsq3YX7eW5e3apKRRmkWWvDDDuWE0xbjvQjwBgCsE=;
-        b=AZqb7kPy/oRHhVyW00nvGWJKO6OQN2L0ukhaFp7qXyDPXhS+GR+w5FMSEtkQa/zcZZ
-         dw+GmEy1385+mbG1El3VlhBm2rn6nwWEwg8YHBz3fKKQPMecS+cJiz7tHTUDW0Qsqj9t
-         mE4If8izxzVDtWRnhsr+DEHlGTFNgFTEwADD41JxWYc+VnaDBqUST4v0Yw1hdqY0f2gq
-         ny+ySQxHj3mGDwHrK2kzMl83Vm/5IzHPJE3USmbUKHK2TjEwu1VvTdMl3yDgwrVlNqjC
-         Px0Ezpd8E/c730HRLMwGA+zNHLeiZVxDYWjAAzwkMnWb5aVJ57Kr2hbR0jlJ1M/R+U2G
-         qoSw==
+        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1744998628; x=1745603428; darn=vger.kernel.org;
+        h=message-id:to:from:cc:in-reply-to:subject:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=xitBrw85Cpa/PH99l1OqltSYYTa4EEM01UtrGh+UZZU=;
+        b=rNiJphm8duOFgq6fY8LWfc4D1iONPxu1H7i0MNHYxtwgxPNdD3kJcvIi6To+ZsBfKQ
+         K39iwYzygNtLkY+mRH5CTJeRHWm85WrOxQXHk/PtkJW53j2/F7Yl6L+7RQ8GMNiIqXie
+         nF9gkCu/IPPH2xyeSMC/QEGOpizuxFfwzDWQpLMQZL2Pzj2Tyl4n6bq5VkxrLUW2tgiT
+         vpzP5YT+CAqsQVZ1ZW2cxlF+ii69k8o8RztIXXFNYlYERdCoVtGeGNn5y0tVoAiknCxb
+         shJ7BEaPcCc64rTSkc2dTI1BLvrxrNmTfXguc+Hb2vTBN6jDl/K1hdRoNq2ndjHwwqzB
+         +sNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744998621; x=1745603421;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GDNsq3YX7eW5e3apKRRmkWWvDDDuWE0xbjvQjwBgCsE=;
-        b=myHUvnQPK3ffydZs6R4zX2VVoj0CjeboiaZ/bmcNbCu0XFVK2cLJsImxdRA6iUhbp0
-         mjBPe8VLJh7Ct4OftSlz71a/P8eKjZrXds5OBMOePw+9jsC6NjeKNsEXb6CIio5quNnE
-         djVFM2+J/QTLFF+k37/sAAp5d+Ns3tiCvIJb0KPzWuRGuKPhOic3fX0x7av7lPKNlkTY
-         9AgRlxY9G7wghqWbmC7eNsgSIoClZhAXXzCm3kTvG3HKdZuOhrZ9ZLYGNnM70gfAkB1x
-         j893ZP67t578sjEiu+tY3hOcA78nI/HT1ha8LgcGehOGr4LMDK1lyMlqYAF/v52pOYtu
-         oEWw==
-X-Forwarded-Encrypted: i=1; AJvYcCX6A9INieU+r4lW9xMUORKbIN0HtQ2c4Y84O7++l8zkGfIsGTZHarLw0V+wAz+UgPPuEVmMfnHac31obZo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPH22/QSDTBIRt6vBDcKQpTL1jzDNMkvGjQHyhSPuWIS1j10Yq
-	2UkJh5UiRbTs5TJhEMS4bvLZTGGlVcRRdQZ2UrxNerVBkltv5il99xau5wyyxQTKFJGxjj1tuwv
-	5BQ==
-X-Google-Smtp-Source: AGHT+IH4SzFcgriEZeEyINeEOYHsKsBduZvh1a8UF65TGxe4ng4DHNhTgv3meBOCFXGKpW1iswhVW2S93bM=
-X-Received: from plrd9.prod.google.com ([2002:a17:902:aa89:b0:223:225b:3d83])
- (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:19cc:b0:224:24d5:f20a
- with SMTP id d9443c01a7336-22c53620caamr57870345ad.48.1744998620802; Fri, 18
- Apr 2025 10:50:20 -0700 (PDT)
-Date: Fri, 18 Apr 2025 10:49:59 -0700
-In-Reply-To: <20250418174959.1431962-1-surenb@google.com>
+        d=1e100.net; s=20230601; t=1744998628; x=1745603428;
+        h=message-id:to:from:cc:in-reply-to:subject:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xitBrw85Cpa/PH99l1OqltSYYTa4EEM01UtrGh+UZZU=;
+        b=wmJW8ldsacWRSxKt07OSROh6ap7FZetToZTj6pEE32dEHKSPwgmBcmNE2ejDsZI5e7
+         cn+Hz43my8TeoHsa+yRfrVFzhufv6brAlwE8A3JYbj9pppa5tuRlFOylAynDePbGGfWu
+         TNF1hlT6sw1TCON69eyhK9TFDU1mBi7wwpC/qP48nKNUKk+LSh/+Pq8kweCkaiR8zeb1
+         E4qIy1mVlkop7332efiKAriAeWOk2V00sONc1C99W8i/81TXH+A6fAnQAoHy6cdEeMGe
+         RwJi312/8mByPqmdl72q/P9iK8Pw6Y62a6BIurNKBOxz/i7n2Bp1T6ZEyy0QCPnkmG0d
+         2azA==
+X-Forwarded-Encrypted: i=1; AJvYcCVQq2LOVgXK6BjdxsicZaiuAXo58hDPUntdRK3sadFfM/abzRbp9Zk5qr/wRQUt8K/okGwRkHKaULuvojE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3FdtzPkMq6wTKv9tVsfIlEP02Dx+6IE6uHB+ar7GducuUVhT0
+	2pTXaoLDqV2OgRHwrjeQdbXmAhRuuT6qR2+0gYAm4xiG3chsSU5XyxE5OlTaIfA=
+X-Gm-Gg: ASbGncv4dYAhS92nEqNG50BY/laBDbUKhe/hslkfviHYmIjxMAULJm1E4+7gp9xe/6P
+	B1ocHIiCvXKAdOSrgW1Hn8fPk6YpDKXz2KfhDiXL1R+6FfebnamHeeiuQ0NKNLd2aR4F+lyHku+
+	XJ9Qtd8p/CD6zZGZFQ8ZHTFEucCqK8t5ECRQvJxAzxhNQ+lXB3/cNUcAfTFtn4ehSSxVufBVQeC
+	XPB8ImPQXQCmiBTrvBByYYj6zwxJNQyiqgVa7em1I6zirCFn4JiGNWVxgihuUD0Gc4NfvC61Acs
+	fecWkJwuYH01VNdP8BI/jbQzJo0TvORgrQ==
+X-Google-Smtp-Source: AGHT+IHTtFpIUh9V1D/hgIg7h0JnpsXp9Bovo24GVumcqsEBZfrWrJPuzOPDear/0hml7HCNfS1GQA==
+X-Received: by 2002:a17:903:98f:b0:221:7eae:163b with SMTP id d9443c01a7336-22c53627298mr52330365ad.46.1744998628042;
+        Fri, 18 Apr 2025 10:50:28 -0700 (PDT)
+Received: from localhost ([50.145.13.30])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50fde845sm19513745ad.236.2025.04.18.10.50.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Apr 2025 10:50:27 -0700 (PDT)
+Date: Fri, 18 Apr 2025 10:50:27 -0700 (PDT)
+X-Google-Original-Date: Fri, 18 Apr 2025 10:50:25 PDT (-0700)
+Subject:     Re: [PATCH 08/15] crypto: riscv - remove CRYPTO dependency of library functions
+In-Reply-To: <20250417182623.67808-9-ebiggers@kernel.org>
+CC: linux-crypto@vger.kernel.org, linux-arch@vger.kernel.org,
+  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
+  linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+  linux-s390@vger.kernel.org, sparclinux@vger.kernel.org, x86@kernel.org, Jason@zx2c4.com,
+  Ard Biesheuvel <ardb@kernel.org>
+From: Palmer Dabbelt <palmer@dabbelt.com>
+To: ebiggers@kernel.org
+Message-ID: <mhng-78030c23-f066-4b83-8d7b-c1720725199d@palmer-ri-x1c9a>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250418174959.1431962-1-surenb@google.com>
-X-Mailer: git-send-email 2.49.0.805.g082f7c87e0-goog
-Message-ID: <20250418174959.1431962-9-surenb@google.com>
-Subject: [PATCH v3 8/8] mm/maps: execute PROCMAP_QUERY ioctl under RCU
-From: Suren Baghdasaryan <surenb@google.com>
-To: akpm@linux-foundation.org
-Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, david@redhat.com, 
-	vbabka@suse.cz, peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org, 
-	mhocko@kernel.org, paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com, 
-	brauner@kernel.org, josef@toxicpanda.com, yebin10@huawei.com, 
-	linux@weissschuh.net, willy@infradead.org, osalvador@suse.de, 
-	andrii@kernel.org, ryan.roberts@arm.com, christophe.leroy@csgroup.eu, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kselftest@vger.kernel.org, surenb@google.com
-Content-Type: text/plain; charset="UTF-8"
 
-Utilize speculative vma lookup to find and snapshot a vma without
-taking mmap_lock during PROCMAP_QUERY ioctl execution. Concurrent
-address space modifications are detected and the lookup is retried.
-While we take the mmap_lock for reading during such contention, we
-do that momentarily only to record new mm_wr_seq counter.
-This change is designed to reduce mmap_lock contention and prevent
-PROCMAP_QUERY ioctl calls (often a low priority task, such as
-monitoring/data collection services) from blocking address space
-updates.
+On Thu, 17 Apr 2025 11:26:16 PDT (-0700), ebiggers@kernel.org wrote:
+> From: Eric Biggers <ebiggers@google.com>
+>
+> Continue disentangling the crypto library functions from the generic
+> crypto infrastructure by removing the unnecessary CRYPTO dependency of
+> CRYPTO_CHACHA_RISCV64.  To do this, make arch/riscv/crypto/Kconfig be
+> sourced regardless of CRYPTO, and explicitly list the CRYPTO dependency
+> in the symbols that do need it.
+>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+>  arch/riscv/Kconfig        |  2 ++
+>  arch/riscv/crypto/Kconfig | 12 ++++++------
+>  crypto/Kconfig            |  3 ---
+>  3 files changed, 8 insertions(+), 9 deletions(-)
+>
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index bbec87b79309..baa7b8d98ed8 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -1349,8 +1349,10 @@ source "drivers/cpuidle/Kconfig"
+>
+>  source "drivers/cpufreq/Kconfig"
+>
+>  endmenu # "CPU Power Management"
+>
+> +source "arch/riscv/crypto/Kconfig"
+> +
+>  source "arch/riscv/kvm/Kconfig"
+>
+>  source "drivers/acpi/Kconfig"
+> diff --git a/arch/riscv/crypto/Kconfig b/arch/riscv/crypto/Kconfig
+> index 27a1f26d41bd..08547694937c 100644
+> --- a/arch/riscv/crypto/Kconfig
+> +++ b/arch/riscv/crypto/Kconfig
+> @@ -2,11 +2,11 @@
+>
+>  menu "Accelerated Cryptographic Algorithms for CPU (riscv)"
+>
+>  config CRYPTO_AES_RISCV64
+>  	tristate "Ciphers: AES, modes: ECB, CBC, CTS, CTR, XTS"
+> -	depends on 64BIT && RISCV_ISA_V && TOOLCHAIN_HAS_VECTOR_CRYPTO
+> +	depends on CRYPTO && 64BIT && RISCV_ISA_V && TOOLCHAIN_HAS_VECTOR_CRYPTO
+>  	select CRYPTO_ALGAPI
+>  	select CRYPTO_LIB_AES
+>  	select CRYPTO_SKCIPHER
+>  	help
+>  	  Block cipher: AES cipher algorithms
+> @@ -25,43 +25,43 @@ config CRYPTO_CHACHA_RISCV64
+>  	select CRYPTO_LIB_CHACHA_GENERIC
+>  	default CRYPTO_LIB_CHACHA_INTERNAL
+>
+>  config CRYPTO_GHASH_RISCV64
+>  	tristate "Hash functions: GHASH"
+> -	depends on 64BIT && RISCV_ISA_V && TOOLCHAIN_HAS_VECTOR_CRYPTO
+> +	depends on CRYPTO && 64BIT && RISCV_ISA_V && TOOLCHAIN_HAS_VECTOR_CRYPTO
+>  	select CRYPTO_GCM
+>  	help
+>  	  GCM GHASH function (NIST SP 800-38D)
+>
+>  	  Architecture: riscv64 using:
+>  	  - Zvkg vector crypto extension
+>
+>  config CRYPTO_SHA256_RISCV64
+>  	tristate "Hash functions: SHA-224 and SHA-256"
+> -	depends on 64BIT && RISCV_ISA_V && TOOLCHAIN_HAS_VECTOR_CRYPTO
+> +	depends on CRYPTO && 64BIT && RISCV_ISA_V && TOOLCHAIN_HAS_VECTOR_CRYPTO
+>  	select CRYPTO_SHA256
+>  	help
+>  	  SHA-224 and SHA-256 secure hash algorithm (FIPS 180)
+>
+>  	  Architecture: riscv64 using:
+>  	  - Zvknha or Zvknhb vector crypto extensions
+>  	  - Zvkb vector crypto extension
+>
+>  config CRYPTO_SHA512_RISCV64
+>  	tristate "Hash functions: SHA-384 and SHA-512"
+> -	depends on 64BIT && RISCV_ISA_V && TOOLCHAIN_HAS_VECTOR_CRYPTO
+> +	depends on CRYPTO && 64BIT && RISCV_ISA_V && TOOLCHAIN_HAS_VECTOR_CRYPTO
+>  	select CRYPTO_SHA512
+>  	help
+>  	  SHA-384 and SHA-512 secure hash algorithm (FIPS 180)
+>
+>  	  Architecture: riscv64 using:
+>  	  - Zvknhb vector crypto extension
+>  	  - Zvkb vector crypto extension
+>
+>  config CRYPTO_SM3_RISCV64
+>  	tristate "Hash functions: SM3 (ShangMi 3)"
+> -	depends on 64BIT && RISCV_ISA_V && TOOLCHAIN_HAS_VECTOR_CRYPTO
+> +	depends on CRYPTO && 64BIT && RISCV_ISA_V && TOOLCHAIN_HAS_VECTOR_CRYPTO
+>  	select CRYPTO_HASH
+>  	select CRYPTO_LIB_SM3
+>  	help
+>  	  SM3 (ShangMi 3) secure hash function (OSCCA GM/T 0004-2012)
+>
+> @@ -69,11 +69,11 @@ config CRYPTO_SM3_RISCV64
+>  	  - Zvksh vector crypto extension
+>  	  - Zvkb vector crypto extension
+>
+>  config CRYPTO_SM4_RISCV64
+>  	tristate "Ciphers: SM4 (ShangMi 4)"
+> -	depends on 64BIT && RISCV_ISA_V && TOOLCHAIN_HAS_VECTOR_CRYPTO
+> +	depends on CRYPTO && 64BIT && RISCV_ISA_V && TOOLCHAIN_HAS_VECTOR_CRYPTO
+>  	select CRYPTO_ALGAPI
+>  	select CRYPTO_SM4
+>  	help
+>  	  SM4 block cipher algorithm (OSCCA GB/T 32907-2016,
+>  	  ISO/IEC 18033-3:2010/Amd 1:2021)
+> diff --git a/crypto/Kconfig b/crypto/Kconfig
+> index 2467dba73372..8c334c9f2081 100644
+> --- a/crypto/Kconfig
+> +++ b/crypto/Kconfig
+> @@ -1424,13 +1424,10 @@ endmenu
+>
+>  config CRYPTO_HASH_INFO
+>  	bool
+>
+>  if !KMSAN # avoid false positives from assembly
+> -if RISCV
+> -source "arch/riscv/crypto/Kconfig"
+> -endif
+>  if S390
+>  source "arch/s390/crypto/Kconfig"
+>  endif
+>  if SPARC
+>  source "arch/sparc/crypto/Kconfig"
 
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
----
- fs/proc/task_mmu.c | 63 ++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 55 insertions(+), 8 deletions(-)
+Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
 
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index f9d50a61167c..28b975ddff26 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -525,9 +525,53 @@ static int pid_maps_open(struct inode *inode, struct file *file)
- 		PROCMAP_QUERY_VMA_FLAGS				\
- )
- 
--static int query_vma_setup(struct mm_struct *mm)
-+#ifdef CONFIG_PER_VMA_LOCK
-+
-+static int query_vma_setup(struct proc_maps_private *priv)
- {
--	return mmap_read_lock_killable(mm);
-+	if (!mmap_lock_speculate_try_begin(priv->mm, &priv->mm_wr_seq)) {
-+		int ret = mmap_read_lock_killable(priv->mm);
-+
-+		if (ret)
-+			return ret;
-+
-+		/* mmap_lock_speculate_try_begin() succeeds when holding mmap_read_lock */
-+		mmap_lock_speculate_try_begin(priv->mm, &priv->mm_wr_seq);
-+		mmap_read_unlock(priv->mm);
-+	}
-+
-+	memset(&priv->vma_copy, 0, sizeof(priv->vma_copy));
-+	rcu_read_lock();
-+
-+	return 0;
-+}
-+
-+static void query_vma_teardown(struct mm_struct *mm, struct vm_area_struct *vma)
-+{
-+	rcu_read_unlock();
-+}
-+
-+static struct vm_area_struct *query_vma_find_by_addr(struct proc_maps_private *priv,
-+						     unsigned long addr)
-+{
-+	struct vm_area_struct *vma;
-+
-+	vma_iter_init(&priv->iter, priv->mm, addr);
-+	vma = vma_next(&priv->iter);
-+	if (!vma)
-+		return NULL;
-+
-+	vma = get_stable_vma(vma, priv, addr);
-+
-+	/* The only possible error is EINTR, just pretend we found nothing */
-+	return IS_ERR(vma) ? NULL : vma;
-+}
-+
-+#else /* CONFIG_PER_VMA_LOCK */
-+
-+static int query_vma_setup(struct proc_maps_private *priv)
-+{
-+	return mmap_read_lock_killable(priv->mm);
- }
- 
- static void query_vma_teardown(struct mm_struct *mm, struct vm_area_struct *vma)
-@@ -535,18 +579,21 @@ static void query_vma_teardown(struct mm_struct *mm, struct vm_area_struct *vma)
- 	mmap_read_unlock(mm);
- }
- 
--static struct vm_area_struct *query_vma_find_by_addr(struct mm_struct *mm, unsigned long addr)
-+static struct vm_area_struct *query_vma_find_by_addr(struct proc_maps_private *priv,
-+						     unsigned long addr)
- {
--	return find_vma(mm, addr);
-+	return find_vma(priv->mm, addr);
- }
- 
--static struct vm_area_struct *query_matching_vma(struct mm_struct *mm,
-+#endif /* CONFIG_PER_VMA_LOCK */
-+
-+static struct vm_area_struct *query_matching_vma(struct proc_maps_private *priv,
- 						 unsigned long addr, u32 flags)
- {
- 	struct vm_area_struct *vma;
- 
- next_vma:
--	vma = query_vma_find_by_addr(mm, addr);
-+	vma = query_vma_find_by_addr(priv, addr);
- 	if (!vma)
- 		goto no_vma;
- 
-@@ -622,13 +669,13 @@ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
- 	if (!mm || !mmget_not_zero(mm))
- 		return -ESRCH;
- 
--	err = query_vma_setup(mm);
-+	err = query_vma_setup(priv);
- 	if (err) {
- 		mmput(mm);
- 		return err;
- 	}
- 
--	vma = query_matching_vma(mm, karg.query_addr, karg.query_flags);
-+	vma = query_matching_vma(priv, karg.query_addr, karg.query_flags);
- 	if (IS_ERR(vma)) {
- 		err = PTR_ERR(vma);
- 		vma = NULL;
--- 
-2.49.0.805.g082f7c87e0-goog
-
+I'm assuming you want to take this with the rest, thanks!
 
