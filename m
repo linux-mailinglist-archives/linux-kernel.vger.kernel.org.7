@@ -1,179 +1,255 @@
-Return-Path: <linux-kernel+bounces-610007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C714A92F14
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 03:13:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BC85A92F18
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 03:16:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 017C71B6217A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 01:13:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E0DF467278
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 01:16:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373B72E628;
-	Fri, 18 Apr 2025 01:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Dx+aYuOz"
-Received: from CY4PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11020091.outbound.protection.outlook.com [40.93.198.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A855464E;
+	Fri, 18 Apr 2025 01:16:15 +0000 (UTC)
+Received: from smtp01.aussiebb.com.au (smtp01.aussiebb.com.au [121.200.0.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DEEB208A7;
-	Fri, 18 Apr 2025 01:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.91
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744938796; cv=fail; b=CLv/CVu/bCCRJS3em+WngJgrip09C/HI3o3qhVB8sb5H0AYAq+kEbPzO7ldOd+odDZHWpSjNCXeqp4ufAKbVFMsJNrICwbmAQcWUPFsMCPLO3xKoCCEMYMvqTffBEg65lmtYRpA8I1G4LISj7pfx5kd0CMy28rh+j1Ek+53UlKQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744938796; c=relaxed/simple;
-	bh=qcBC4PAEBRqQBEqRcgCx9LoehRIDDFuHbDmTJ//+yQk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=g7rcjyumPKGlUGD7mxmpsYv/lFtbPeTgW/XzF0YEny9IkFNz/duieCZTjlGXANhGFJutPS7DNDdkwFZep7fC5gjvIKxhwGS7531whGtJYGY0WL6rpGczXCC9O/5OnfscTjwMph9UnbNhubp5L/jIdE5/pNgsI2aIgBDsZTVh7ck=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=Dx+aYuOz; arc=fail smtp.client-ip=40.93.198.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xSq1fvgx2+WyW6uQgc965ZXYsVl8wzxiNVziziSJ91ECsarQgjv8OBHqlSZEtE2q7SzI1zXpBMc3CRkNy43EXPXy+R2VMJib+OoH7TK489CpwmiNWESCzRrySwds+RK5rc/bkZMUlquPJq2ZQGGKvowa6CiyiR30eSk2fb/XO470VKR2mmIshGbk0vaE2naut4JPbpHgDtij8im4NYcs8Cm3oGhgDzjq38s09NSc7f2dgbNnqGB8Oeoavm+eyLYwwVHSGSxTUZ5aL46ISJ2snQ82qhpwZgJLbBWhUjs/hzzM6ttJiZRhQYu+1bbtnG68WpuHHQlmaczFIA3oxnTqdA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qcBC4PAEBRqQBEqRcgCx9LoehRIDDFuHbDmTJ//+yQk=;
- b=ynmF/RbBNVkFiaSnmQKxmBOYiYlwpC5UQchzqRbPn+KmXmPDuGH6Hn/7d3iAc1/Po0Fl5EkqMgy7yoFMAo+2ry0Fhbc3x/N5VWYONZkBC37Lspnb+LmL8wTPmCnIzePZt4qeYJZOOFKrSUBILAz59Uu79pmqIEfP/H4rgMNR06tgroGMjx7Cp/b07qEXmQjeLkUd7/xmvEXefoWcF5l/deVYdOpLDZY242AHzpl1qTX0+WH0ERnV9YuDwGmQwwG6fue08+O2BaRlnnJLZXFSrJY5dX/vB0G9YwNoUKWnj0dJk54nZS5fSkYy1a1QQXuHR4ibbJY6f9MowsljS70dTQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qcBC4PAEBRqQBEqRcgCx9LoehRIDDFuHbDmTJ//+yQk=;
- b=Dx+aYuOzu9dl0C3/tLdO7UjEuiy0BC2wzRHP3fRn0aX0jAXEZ9DMmlvrSiqeg7a/0n/So1UaL1+poZng47oAh5A81ywDS97e9eLdscSKxGQctf5tFHYCl3ym4eBw/Wq/AML884oAdamFqKlhBhoL/1rZQx2I1xZORDhVRj2g52A=
-Received: from BL4PR21MB4627.namprd21.prod.outlook.com (2603:10b6:208:585::7)
- by MN2PR21MB1438.namprd21.prod.outlook.com (2603:10b6:208:20c::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.10; Fri, 18 Apr
- 2025 01:13:12 +0000
-Received: from BL4PR21MB4627.namprd21.prod.outlook.com
- ([fe80::7cb1:a2d1:137b:34fb]) by BL4PR21MB4627.namprd21.prod.outlook.com
- ([fe80::7cb1:a2d1:137b:34fb%7]) with mapi id 15.20.8678.011; Fri, 18 Apr 2025
- 01:13:12 +0000
-From: Dexuan Cui <decui@microsoft.com>
-To: Naman Jain <namjain@linux.microsoft.com>, KY Srinivasan
-	<kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu
-	<wei.liu@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Stephen Hemminger <stephen@networkplumber.org>
-CC: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"stable@kernel.org" <stable@kernel.org>, Saurabh Sengar
-	<ssengar@linux.microsoft.com>, Michael Kelley <mhklinux@outlook.com>
-Subject: RE: [PATCH v5 2/2] Drivers: hv: Make the sysfs node size for the ring
- buffer dynamic
-Thread-Topic: [PATCH v5 2/2] Drivers: hv: Make the sysfs node size for the
- ring buffer dynamic
-Thread-Index: AQHbriXCp7c6RnUv7UaONdK+rUmJG7OooSaA
-Date: Fri, 18 Apr 2025 01:13:12 +0000
-Message-ID:
- <BL4PR21MB4627622A03EB8E5D68EC20E4BFBF2@BL4PR21MB4627.namprd21.prod.outlook.com>
-References: <20250415164452.170239-1-namjain@linux.microsoft.com>
- <20250415164452.170239-3-namjain@linux.microsoft.com>
-In-Reply-To: <20250415164452.170239-3-namjain@linux.microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=a3ba185b-74c0-4b7a-a4d0-3a03a59ec9a0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2025-04-18T01:10:49Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10,
- 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BL4PR21MB4627:EE_|MN2PR21MB1438:EE_
-x-ms-office365-filtering-correlation-id: 9e6c6465-8b50-4116-3a90-08dd7e16304d
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?rvTkl3sgIW9yGmBI/X8/vbC3FOGxq/EelfxBTkAc7XJro8zbNuU5Pf/9oTcV?=
- =?us-ascii?Q?thog4N61GabOQ6kTRtD4HAJkuOKI3ZuziQ1e6AezXdM1jGX4npcqANw88n/n?=
- =?us-ascii?Q?h6PfS9bqarzdCkwBtw09G6IpE7NnNFD7Kbx/VmEJKx5UvxEpW13QYadlysiS?=
- =?us-ascii?Q?diqyu/hgzMbAozao8WqS76UaLCxQggHDWFQA+z+RPFmqcCn0tgpGLrlK0c7z?=
- =?us-ascii?Q?Z7kL1BUkKR8LWuASM71rhofT5H9nRMbLgNwrXcA26LSaQMDXdbKPr3T5nR9h?=
- =?us-ascii?Q?dbsQCSaXa+i2w/OGKT0LVEuEgY/ES6qOOcMSiTrbM6DU3PrpT62J5CNmXK7F?=
- =?us-ascii?Q?3xp1NRx5I9qH2wqrlkwOABvFuZZdyk3Z8a+8q+1B1oZz7JmVA330Vjc3UPYe?=
- =?us-ascii?Q?eVK/63WvllSJd62rUwq+TJzCStBK4oVDXuw/YnX4Z4f0pM70biYoTz4jEFwB?=
- =?us-ascii?Q?7VBkXnrx0IIByJ7GTj0DE8cwh9G8sX4Xend4ph0RVuRfNub+vcjE+MWgkYOu?=
- =?us-ascii?Q?ddO1mS7xlVf53BvR9d5Gjv7GNG2tAnIb57EJI7lRtCoUTcK+x6jtV8fzBiG4?=
- =?us-ascii?Q?wMLQf0YiNtaDIiMMEKqBlxsNVXrvhJj7raD6zehry8OSDf3R3Hv0J0YP5/EB?=
- =?us-ascii?Q?5nExwABjgoNtWDVVz44QjalOzh1KZkX6dCcV+1IWUfnfWNQU/y81HkyW2YU/?=
- =?us-ascii?Q?q+V7yugca/uqI7U88lQ4gfHHHvM24joqUnIx94kSp3BZqkKw+onPOrNTohmt?=
- =?us-ascii?Q?ixa8O6fZOKFhzNnvRY5mo4QSznurQCsgr28JTIF9K9PjVq4cmMjru/rH311M?=
- =?us-ascii?Q?KT/Mq8sSpHWaAi1tj0fMeUdBd1qNYyglZYUNHNh8cdcRYiT18VNeO5A+dfbM?=
- =?us-ascii?Q?MN8KZTuW5RwOkboQ5l8LFOj9Fkm/a+9iEqqgKZgUqz37jT/OZXXgES75CY79?=
- =?us-ascii?Q?F7gw6MxmNCAps2C5iUQBHYix5cqSq32eViQ2P8Bb638EVZh7zv877MoItjny?=
- =?us-ascii?Q?uz8baDvwLSjlN+4ltr5/3uPzZk1OBpwuHGgFC01pjUlYB7Vd4jhzX4zaRG+H?=
- =?us-ascii?Q?fN6TYWvNz8VUX/HiOsopdRiUkZAKyjtiiijcCjL1CyOTiN+/rS7uk7BdOtpz?=
- =?us-ascii?Q?CgpE8ibVAOXzTX4MCQuE2Wmi8qzVCXRugePS6hTBDvKlnOlOoHOqgs672iCM?=
- =?us-ascii?Q?BoNpPwZyNNeXAu61IpH7oGKiiA9DsKbBz973FLppcEq/djshtfiNHCNTTtCq?=
- =?us-ascii?Q?1Gu7Ealv8cREHrMyves0bxWPtGQT3W+cvDZSa63iAMdKW+eIr3Es/+AInWWB?=
- =?us-ascii?Q?kh6MiM0aKOE6PlnNUWcCBYzcY8GGXKMhgqItj08mdz/0Kvrg8fpi2v1VMw/O?=
- =?us-ascii?Q?3U7SRYJDrJm4AeOGBEO2nPxUilMPRdkmGbL2BhxJDku8Y6BQwXiy2ffCM/U4?=
- =?us-ascii?Q?7t7OZlKxEvnLX6B04230t9Cw5eUAf6UJwmBqAAsn9teBo34wfT7raF9qO6RB?=
- =?us-ascii?Q?lAGRbuINuLoFhHE=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL4PR21MB4627.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?NJenlh/8S0P6MctHR+hclBEvZ/wxCe2MmSrRKD1qoh9EjlsTkahxPi4L6Wal?=
- =?us-ascii?Q?mZsSTfbPSdU/FEnd/bnMgSfOeoKzIlhjI4C42uUXmdlpR1SdlMJ7yt4H2eWw?=
- =?us-ascii?Q?k+HJatgm/+ZjkWWaYGz3kw3VguvZl08dXiL/qXizcRe6NCUc2hQl3ocFtKR8?=
- =?us-ascii?Q?OMBFMtZ8X3IQNxrDyTCBacyevcN4HccTERGiiZatR958l0v7iFWj9VeJI1lx?=
- =?us-ascii?Q?ohHAP4mlRKbcs+t0vrwNP0FhwLPWFDHVHsGvY4UtJ4M91Z4EoAPhBTt6y8Vm?=
- =?us-ascii?Q?4aa9sbOC+FLH2RbnZUCQfK53RLwhjg4xv6flMoWlwMeNRTGU+Uyj/X5RMCHa?=
- =?us-ascii?Q?H1wwF7ULqxfI5a4YkL6m2m53YonWZZM+jty/bRyD+8YE26U1Sm+XnnSziN8S?=
- =?us-ascii?Q?j44VYbLt5URiF7E4kfhVUgyu93ef9+eq2j0crIuh1Yb7mITrMHHA5UDuklHM?=
- =?us-ascii?Q?qzSkjL6KKGs+zsfyKr5M7gSOTFMqVDl60MuLfIBrONvijGHdao1qM1YGpT08?=
- =?us-ascii?Q?0zeyWo229vgR5WmTQvJj++rOYMwacOAV7u7je72oLXxhp8bkJ5dV8GjDEJs2?=
- =?us-ascii?Q?HHYhlYVCK6/h8z4sNj/dqFdwjUXQS9jS5EqshddiBwhF9ndT30EVgjT3yQZb?=
- =?us-ascii?Q?4P3tUS4h7zXy9lb/kdaT+kJsF3Duja8hmNlD8+E+2kWSGXy3FRDuBxYEF2CT?=
- =?us-ascii?Q?jzY0sWX71bZEtMzbbtwU9iJu4ZrRuFvI75bMjOQoCYTgvd2LTpwnrFDbxzB9?=
- =?us-ascii?Q?rS7Uxp4b2Iefid5+wLc3uD3sU5qQfP3TuZONlE74zYzrxXa0MiFszaus0NB+?=
- =?us-ascii?Q?6cT7VK+QFKaiUKC1aH++PGrF/tvihLMvso5XvzYVpMJl9m5sj/2joKkJUTpk?=
- =?us-ascii?Q?ZZDqeJ0VVakNIibSyHMm3Bs2wbdcwwQWoeqC21ffYzbzhQxOYLLXII+gJfAY?=
- =?us-ascii?Q?HASfwzry5eAJFqiGyA5QsnUeG4H2C/Xe4TaKGMpZ8Ir08FqWVRVj+yXkKUbo?=
- =?us-ascii?Q?z7FU8dDog2CrovL4YzfzOe0IX+UEYF0FjmGbi9z2plTkrLmiK5RQQm0HZFZE?=
- =?us-ascii?Q?U4H28Ljsr2xLeA2EG5v9sNDsfEQH/s8D21vzPfOs0mLeY3a/G/aZ9xvkhZZ2?=
- =?us-ascii?Q?bvDBxfKLTq90hAIMjZKlIBblZfzK8FcmRAKQ2SbdePWtnJjXWB5rhVqcc0Ic?=
- =?us-ascii?Q?IsEgrT1UYFJQ17NxDEMliuzLCAG7Pryscx6rpjtDsPBZy39mP173EpyN3/g6?=
- =?us-ascii?Q?1rJGcTi5DjkeI2O6xWDnswVf22Sj08Hx50nemaS0bq+8LcBNzdqMCLQiLX2h?=
- =?us-ascii?Q?WGA3ZAdhNLV/25dqNaazLwOyg/gbL/TWqcLZc9wjRxNbZfGt2yQhkuZMAf5s?=
- =?us-ascii?Q?Z0JKB5KMWnqEuc5KqsGHLhjVnrGeLatEMtGR6hw+7brHV86S5ACFMbV4o4gF?=
- =?us-ascii?Q?G0Oan59tHej9puJqiFnttz0oHLkjVndHZMXcRle0P5qoAakPDqQOkbMwKyKB?=
- =?us-ascii?Q?r8T8Xt9WSacoW5NSBgLc3QTnMBgrq2NMgiLarS0g9GeTcJ4d7Ul7AiYoSIRT?=
- =?us-ascii?Q?Hw/VgFuFdi5Nk/0agOp/YgbMeVddpzD7ZIielsSs?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80AF4A2D;
+	Fri, 18 Apr 2025 01:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.200.0.92
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744938975; cv=none; b=ux+WYrfak7hnkZpm0ZHS8Yk68Y9MjJDnFZPnNcBr+z4fqANE2ZRaBadhIl1S2Romw2hCNvljK5/ubA9WT4j16SrENwNhWElyUoakOggWX7r+uxEsEfWU8CNcmFtEG4BVlJUdRn+MAmOmP8A+EbV3XS0J+RJQRozzAS4zYzAkttk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744938975; c=relaxed/simple;
+	bh=aVocHCPluh5mlEYDx8v4VnbUAFdAHkPNq7nKru36XdM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OSBI/kZfaB1WZy2XjEI+AVnrf23+gjL8ZzBbOPEx2o59o5J2SkMStrMYmcTi2BX9StK5spoCWZv2EnP7JoGJeRN53+KYhTQi5oL6lGLlXQjNGkghGjlLKoXdItf60i6u7Uv3vqt+Erh3F6M8xuacu4xKoO4L/dG/NtWMJmrX3hY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net; spf=fail smtp.mailfrom=themaw.net; arc=none smtp.client-ip=121.200.0.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=themaw.net
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by smtp01.aussiebb.com.au (Postfix) with ESMTP id C72011007AD;
+	Fri, 18 Apr 2025 11:13:33 +1000 (AEST)
+X-Virus-Scanned: Debian amavisd-new at smtp01.aussiebb.com.au
+Received: from smtp01.aussiebb.com.au ([127.0.0.1])
+	by localhost (smtp01.aussiebb.com.au [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id n_jriYJCLkVZ; Fri, 18 Apr 2025 11:13:33 +1000 (AEST)
+Received: by smtp01.aussiebb.com.au (Postfix, from userid 116)
+	id C09E11008E7; Fri, 18 Apr 2025 11:13:31 +1000 (AEST)
+X-Spam-Level: 
+Received: from [192.168.0.229] (159-196-82-144.9fc452.per.static.aussiebb.net [159.196.82.144])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: ian146@aussiebb.com.au)
+	by smtp01.aussiebb.com.au (Postfix) with ESMTPSA id ACA541005A1;
+	Fri, 18 Apr 2025 11:13:28 +1000 (AEST)
+Message-ID: <39c36187-615e-4f83-b05e-419015d885e6@themaw.net>
+Date: Fri, 18 Apr 2025 09:13:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BL4PR21MB4627.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9e6c6465-8b50-4116-3a90-08dd7e16304d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Apr 2025 01:13:12.1206
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 0kQsenMKH8coTElUeVtst8slPcqAqBN+9ZbLqbqpjt54t5l0KvyYCBKnbI8+FgbXjY48tpEYFXjJOT2KtkjxhA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR21MB1438
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] fs/namespace: defer RCU sync for MNT_DETACH umount
+To: Christian Brauner <brauner@kernel.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Mark Brown <broonie@kernel.org>, Eric Chanudet <echanude@redhat.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+ Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+ Ian Kent <ikent@redhat.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+ Alexander Larsson <alexl@redhat.com>, Lucas Karpinski <lkarpins@redhat.com>,
+ Aishwarya.TCV@arm.com
+References: <20250408210350.749901-12-echanude@redhat.com>
+ <fbbafa84-f86c-4ea4-8f41-e5ebb51173ed@sirena.org.uk>
+ <20250417-wolfsrudel-zubewegt-10514f07d837@brauner>
+ <fb566638-a739-41dc-bafc-aa8c74496fa4@themaw.net>
+ <20250417-abartig-abfuhr-40e558b85f97@brauner>
+ <20250417-outen-dreihundert-7a772f78f685@brauner>
+ <20250417-zappeln-angesagt-f172a71839d3@brauner>
+ <20250417153126.QrVXSjt-@linutronix.de>
+ <20250417-pyrotechnik-neigung-f4a727a5c76b@brauner>
+Content-Language: en-US
+From: Ian Kent <raven@themaw.net>
+Autocrypt: addr=raven@themaw.net; keydata=
+ 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
+In-Reply-To: <20250417-pyrotechnik-neigung-f4a727a5c76b@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> From: Naman Jain <namjain@linux.microsoft.com>
-> Sent: Tuesday, April 15, 2025 9:45 AM
-> [...]
-> actual ring buffer size for each channel. This will ensure that
-> fstat() on ring sysfs node always return the correct size of
-s/return/returns/
-> [...]
 
-Reviewed-by: Dexuan Cui <decui@microsoft.com>
+On 18/4/25 00:28, Christian Brauner wrote:
+> On Thu, Apr 17, 2025 at 05:31:26PM +0200, Sebastian Andrzej Siewior wrote:
+>> On 2025-04-17 17:28:20 [+0200], Christian Brauner wrote:
+>>>>      So if there's some userspace process with a broken NFS server and it
+>>>>      does umount(MNT_DETACH) it will end up hanging every other
+>>>>      umount(MNT_DETACH) on the system because the dealyed_mntput_work
+>>>>      workqueue (to my understanding) cannot make progress.
+>>> Ok, "to my understanding" has been updated after going back and reading
+>>> the delayed work code. Luckily it's not as bad as I thought it is
+>>> because it's queued on system_wq which is multi-threaded so it's at
+>>> least not causing everyone with MNT_DETACH to get stuck. I'm still
+>>> skeptical how safe this all is.
+>> I would (again) throw system_unbound_wq into the game because the former
+>> will remain on the CPU on which has been enqueued (if speaking about
+>> multi threading).
+> Yes, good point.
+>
+> However, what about using polled grace periods?
+>
+> A first simple-minded thing to do would be to record the grace period
+> after umount_tree() has finished and the check it in namespace_unlock():
+>
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index d9ca80dcc544..1e7ebcdd1ebc 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -77,6 +77,7 @@ static struct hlist_head *mount_hashtable __ro_after_init;
+>   static struct hlist_head *mountpoint_hashtable __ro_after_init;
+>   static struct kmem_cache *mnt_cache __ro_after_init;
+>   static DECLARE_RWSEM(namespace_sem);
+> +static unsigned long rcu_unmount_seq; /* protected by namespace_sem */
+>   static HLIST_HEAD(unmounted);  /* protected by namespace_sem */
+>   static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
+>   static DEFINE_SEQLOCK(mnt_ns_tree_lock);
+> @@ -1794,6 +1795,7 @@ static void namespace_unlock(void)
+>          struct hlist_head head;
+>          struct hlist_node *p;
+>          struct mount *m;
+> +       unsigned long unmount_seq = rcu_unmount_seq;
+>          LIST_HEAD(list);
+>
+>          hlist_move_list(&unmounted, &head);
+> @@ -1817,7 +1819,7 @@ static void namespace_unlock(void)
+>          if (likely(hlist_empty(&head)))
+>                  return;
+>
+> -       synchronize_rcu_expedited();
+> +       cond_synchronize_rcu_expedited(unmount_seq);
+>
+>          hlist_for_each_entry_safe(m, p, &head, mnt_umount) {
+>                  hlist_del(&m->mnt_umount);
+> @@ -1939,6 +1941,8 @@ static void umount_tree(struct mount *mnt, enum umount_tree_flags how)
+>                   */
+>                  mnt_notify_add(p);
+>          }
+> +
+> +       rcu_unmount_seq = get_state_synchronize_rcu();
+>   }
+>
+>   static void shrink_submounts(struct mount *mnt);
+>
+>
+> I'm not sure how much that would buy us. If it doesn't then it should be
+> possible to play with the following possibly strange idea:
+>
+> diff --git a/fs/mount.h b/fs/mount.h
+> index 7aecf2a60472..51b86300dc50 100644
+> --- a/fs/mount.h
+> +++ b/fs/mount.h
+> @@ -61,6 +61,7 @@ struct mount {
+>                  struct rb_node mnt_node; /* node in the ns->mounts rbtree */
+>                  struct rcu_head mnt_rcu;
+>                  struct llist_node mnt_llist;
+> +               unsigned long mnt_rcu_unmount_seq;
+>          };
+>   #ifdef CONFIG_SMP
+>          struct mnt_pcp __percpu *mnt_pcp;
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index d9ca80dcc544..aae9df75beed 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -1794,6 +1794,7 @@ static void namespace_unlock(void)
+>          struct hlist_head head;
+>          struct hlist_node *p;
+>          struct mount *m;
+> +       bool needs_synchronize_rcu = false;
+>          LIST_HEAD(list);
+>
+>          hlist_move_list(&unmounted, &head);
+> @@ -1817,7 +1818,16 @@ static void namespace_unlock(void)
+>          if (likely(hlist_empty(&head)))
+>                  return;
+>
+> -       synchronize_rcu_expedited();
+> +       hlist_for_each_entry_safe(m, p, &head, mnt_umount) {
+> +               if (!poll_state_synchronize_rcu(m->mnt_rcu_unmount_seq))
+> +                       continue;
+> +
+> +               needs_synchronize_rcu = true;
+> +               break;
+> +       }
+> +
+> +       if (needs_synchronize_rcu)
+> +               synchronize_rcu_expedited();
+>
+>          hlist_for_each_entry_safe(m, p, &head, mnt_umount) {
+>                  hlist_del(&m->mnt_umount);
+> @@ -1923,8 +1933,10 @@ static void umount_tree(struct mount *mnt, enum umount_tree_flags how)
+>                          }
+>                  }
+>                  change_mnt_propagation(p, MS_PRIVATE);
+> -               if (disconnect)
+> +               if (disconnect) {
+> +                       p->mnt_rcu_unmount_seq = get_state_synchronize_rcu();
+>                          hlist_add_head(&p->mnt_umount, &unmounted);
+> +               }
+>
+>                  /*
+>                   * At this point p->mnt_ns is NULL, notification will be queued
+>
+> This would allow to elide synchronize rcu calls if they elapsed in the
+> meantime since we moved that mount to the unmounted list.
+
+This last patch is a much better way to do this IMHO.
+
+The approach is so much more like many other places we have "rcu check 
+before use" type code.
+
+Ian
+
 
