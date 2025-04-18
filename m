@@ -1,126 +1,144 @@
-Return-Path: <linux-kernel+bounces-610531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6467A935F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 12:23:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D174BA935EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 12:23:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF2F58E3875
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 10:23:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F26264682C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 10:23:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA3712741A8;
-	Fri, 18 Apr 2025 10:23:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5ECE270EBD;
+	Fri, 18 Apr 2025 10:22:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="jd/zPRsI"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE520270EB0
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 10:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zkmtQaSk"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6864F26FDB0
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 10:22:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744971821; cv=none; b=OMJIvlup4zNZZgbUlkYe5N7Np4oYV4PZzmogQz4v8Kxej69JVTiNjAttWOxwDEe1vD4NOv6H0N7yFnuq11rygAlcsOAaJeQr+jOIndPjOvgEAS/wlTf2D+V6MW0bNECylsw5ZlSakWT4rLjeAcseb9gmUXwiBZwW1ZQKOg4J79Y=
+	t=1744971777; cv=none; b=HAZvkiwT8beANz97ciJlJ0bhrsWrpiNR/+jsD8SRaIFqI8yhzQ+fTXRzbno0lIpadOlcSisOjyWeAp0443e4W/8+CGmrvrnG0J8YsgUWKLYZgY8DMHypwEFBFYOP24b3VTxSmZkgdsjLNLhuMTFrusAy9X9aDx5fIbvpnThVVS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744971821; c=relaxed/simple;
-	bh=pLoJ/wWOxF4hATPeF+S4+nCAv8GTTfh4Rs7e8Jmkcbk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hdLI8CRqXMLer4ypuNcPMu7tLHciNrT2hE2vg0uN8wVARPfOZgQryfO43N0srPqMqVJ/iGn+6cCrPsHw4Y9SfE3DFI9D3lnU0gv/5CNrk5idZsv/PNVloN41hH85jd+v+rLcp0FKWoZXvKuiMNoseyglI3vEeqd8XuF2Dwv4Tt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=jd/zPRsI; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=I2pfP
-	RHCfMx1686AqGSEqHuKYU80CCi4N80MO83xG7I=; b=jd/zPRsIE1TnNrVaNhTM3
-	kxcd/WDZo5qmtQApC/AuzVD8stjDK5bIc5qM73pEmuttirjVkRsB2l5B/FHaXf3f
-	1RfwQg+PvUXykIQDPNX0krnoA4YyKv2PWcw80fsxHCAv/0DrHKxyzdT9XnwiuoAp
-	stDuu4DnxfMpKe+tJXWgS4=
-Received: from node-1.domain.tld (unknown [])
-	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wDX34b+JwJoXuTCAw--.12581S3;
-	Fri, 18 Apr 2025 18:22:58 +0800 (CST)
-From: Jiayuan Liang <ljykernel@163.com>
-To: Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>
-Cc: Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Jiayuan Liang <ljykernel@163.com>
-Subject: [RFC PATCH 1/1]     KVM: arm: Optimize cache flush by only flushing on vcpu0
-Date: Fri, 18 Apr 2025 18:22:44 +0800
-Message-ID: <20250418102244.2182975-2-ljykernel@163.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250418102244.2182975-1-ljykernel@163.com>
-References: <20250418102244.2182975-1-ljykernel@163.com>
+	s=arc-20240116; t=1744971777; c=relaxed/simple;
+	bh=kdcZo7k40rdzUo4iOEDODFuxSFIAmXugWOJxYj68wOQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H+ARt3QQtzLfSThhWRxIRQ8zuNj1rdW+7RuMN6hqe3OKtRRWDM2ZKsz7DeXXjVilH6wglUN8V7rvQ6QKfpBWPZN7U0pnwaZRScLBYKPs+S2ZnfIl0zNMSwsmY9Xftjiuey9QTtvBURM4fOZv8nJ2JbEENU0gx0zhS3EGtaJwxUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zkmtQaSk; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43d0359b1fcso11425725e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 03:22:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744971774; x=1745576574; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/k0Y0aoMA2GBez0xVc7/5fQuBfWbJDDhwqoAabodniI=;
+        b=zkmtQaSkONnWKoe3Lk3IQcZtBDYyiiVoOV0AACyTUGAL5BMnfEbe0ybHqE/XHBPVH9
+         OWqPC+xC1oHeDEw4UzLkG1Ziulenj9Udyyp34ps0/cAJDZSXpHt20Mmco3R1Dz9la1Hy
+         rr7XabZEvJ76dXvifA7Vx1nm1ePcYXRmRVjRG1uNve/K2cGWsL8xXSIg18uypEIWmKsJ
+         QPtzfKv3PYdAwkPleWUnUfyU5cU+z+ezaWTQWfC3r0O84RF+xRRFdolK9DzQISRCWvXa
+         FNIJ2bucZA0fSFP1m04CBwKOZGbin/pIRSsxAGTz9KXuVAvFV2GamJm8rz59P48F6wGj
+         WhgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744971774; x=1745576574;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/k0Y0aoMA2GBez0xVc7/5fQuBfWbJDDhwqoAabodniI=;
+        b=VD3rsOixx1fYCNNQnfuVL/Mq2R4cksLD1ao3udPo/6d4bOERQ0Z25PxsKxUPD1/4/I
+         d+CKLkzrwl5cGWgpNmqWQhrKkhL+hV7muGYGEE+F+8wbFLUGcKzJmD7B9VBGkMKAXwAI
+         RYkyvF82Iff0ehuopusJC2qMSpeQOGrbXOPhRcQba+7grEsJRoEXkrtNj/UyqG5Z6SN9
+         PslmSfepselmG6RbTeDypNh34zhZ1R6llBFKAHalc2ueawMy9f55HkQGe+v9nPnhTdjO
+         /VMqItD1q1V41Cuo7bWXpMG+z9RLAs3lFZDuUllPrwMr2N3pQSS41CMSjN7M/Q0iwYT/
+         4HuA==
+X-Forwarded-Encrypted: i=1; AJvYcCUC7w1BmqJf1/oQ/2WUx22V4qJ0U0+I1ahLlYvOs9/u33gO8cukuaYe66nEt/Tyszpx13N3V2DeUkLOE8Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztlaFltDxobg16onr8e6GA08/A51o41UtEyiUhG/GTEqiFrkv1
+	g1ABnFbg3ORwA+lIraR4N2LWyzuipd6r0q5b1Z/dX+4J4WCEHVm20XUP/9EmMLk=
+X-Gm-Gg: ASbGnculX2cmrlFLAqdROnhJ/koSGac0IPbfIeTp+Mkt/xeji5pT8wm9XcI91OtAbwQ
+	bjtksZzp8MQ8xGo8aHobfsX/0QOyM8h/i65d27VvXbGzVu4SSwq+k0fpOQ4xgj0MimuklBdFv6/
+	sQ9wXH6bHQaokbr8ZQtDDvDoytaitE7mftQY5g4curYQOBxd7hhJPZ+U0txPOjWOt313gy+lcfz
+	TXjwlnpkg2YI0dhXRFww9SG9J1RkedlNd4z+V/XHRHFGVWNcLcGGfrCyourv92FQafx0D7KVZXa
+	20h32ucH9Hn+63VkV/LnRKBiHw7ZO5nTQgdLDIwFamdR7AqTk+g2xVowJUOCnVX6J9aVy+N3oZB
+	Lnl6imA==
+X-Google-Smtp-Source: AGHT+IEV+ngZedvb1G9GddVsd006y6aowAa3golTbSy0UL6/dPU7ikOlFtQiwJbx/8C4Y2tbwGajLA==
+X-Received: by 2002:a05:600c:43d4:b0:440:67d4:ec70 with SMTP id 5b1f17b1804b1-44069732095mr22695595e9.8.1744971773715;
+        Fri, 18 Apr 2025 03:22:53 -0700 (PDT)
+Received: from [192.168.0.34] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa4a4c8fsm2264681f8f.89.2025.04.18.03.22.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Apr 2025 03:22:53 -0700 (PDT)
+Message-ID: <a6689177-0f82-4b1e-b1c5-c50751d0f0bf@linaro.org>
+Date: Fri, 18 Apr 2025 11:22:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDX34b+JwJoXuTCAw--.12581S3
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Zry8Aw4UWrWrtF1xZr47Jwb_yoW8Cw4UpF
-	Z3Cw1kKw4kW34xGay7J395ur1rW395JFs8tF98Gw10vwn8Z34q9r9Yk34UAFWDGryxtF4f
-	tFWavF1UZrs8ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zic4S8UUUUU=
-X-CM-SenderInfo: 5om1yvhuqhzqqrwthudrp/1tbiYBAzbmgCJ0IXGAAAst
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] dt-bindings: media: qcom,sm8550-iris: document
+ QCS8300 IRIS accelerator
+To: Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250418-qcs8300_iris-v2-0-1e01385b90e9@quicinc.com>
+ <20250418-qcs8300_iris-v2-1-1e01385b90e9@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20250418-qcs8300_iris-v2-1-1e01385b90e9@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-    When toggling cache state in a multi-vCPU guest, we currently flush the VM's
-    stage2 page tables on every vCPU that transitions cache state. This leads to
-    redundant cache flushes during guest boot, as each vCPU performs the same
-    flush operation.
+On 18/04/2025 07:28, Vikash Garodia wrote:
+> Document the IRIS video decoder and encoder accelerator found in the
 
-    In a typical guest boot sequence, vcpu0 is the first to enable caches, and
-    other vCPUs follow afterward. By the time secondary vCPUs enable their caches,
-    the flush performed by vcpu0 has already ensured cache coherency for the
-    entire VM.
+Document the IRIS video "encoder/decoder" or "transcoder"
 
-    Optimize this by only performing the stage2_flush_vm() operation on vcpu0,
-    which is sufficient to maintain cache coherency while eliminating redundant
-    flushes on other vCPUs. This can improve performance during guest boot in
-    multi-vCPU configurations.
 
-    Testing with a 64-core VM with 128GB memory using hugepages shows dramatic
-    performance improvements, reducing busybox boot time from 33s to 5s.
+> QCS8300 platform. QCS8300 is a downscaled version of SM8550, thereby
 
-    Test command:
-    qemu-kvm \
-        -nographic \
-        -m 128G \
-        -mem-path /dev/hugepages \
-        -mem-prealloc \
-        -cpu host -M virt \
-        -smp 64 \
-        -kernel ./Image \
-        -append "root=/dev/ram earlycon=pl011,0x9000000 console=ttyAMA0 init=/linuxrc systemd.unified_cgroup_hierarchy=1 psi=1"
+is a down-scaled version of the SM8550.
 
-    Signed-off-by: Jiayuan Liang <ljykernel@163.com>
----
- arch/arm64/kvm/mmu.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+QCS8300 has a fewer capabilities compared to SM8550.
 
-diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
-index 754f2fe0cc67..fbc736657666 100644
---- a/arch/arm64/kvm/mmu.c
-+++ b/arch/arm64/kvm/mmu.c
-@@ -2300,8 +2300,10 @@ void kvm_toggle_cache(struct kvm_vcpu *vcpu, bool was_enabled)
- 	 * If switching it off, need to clean the caches.
- 	 * Clean + invalidate does the trick always.
- 	 */
--	if (now_enabled != was_enabled)
--		stage2_flush_vm(vcpu->kvm);
-+	if (now_enabled != was_enabled) {
-+		if (vcpu->vcpu_id == 0)
-+			stage2_flush_vm(vcpu->kvm);
-+	}
- 
- 	/* Caches are now on, stop trapping VM ops (until a S/W op) */
- 	if (now_enabled)
--- 
-2.43.0
+Note: It might be nice to give a brief overview of what the differences 
+are since you mention them or instead of making it a diff of 8550 just 
+to state what the QCS8300 can do.
 
+> have different(lower) capabilities when compared to SM8550.
+> 
+> This patch depends on patch 20250225-topic-sm8x50-iris-v10-a219b8a8b477
+> 
+> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+> ---
+>   Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml b/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
+> index f567f84bd60d439b151bb1407855ba73582c3b83..3dee25e99204169c6c80f7db4bad62775aaa59b5 100644
+> --- a/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
+> +++ b/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
+> @@ -24,6 +24,7 @@ properties:
+>         - enum:
+>             - qcom,sm8550-iris
+>             - qcom,sm8650-iris
+> +          - qcom,qcs8300-iris
+>   
+>     power-domains:
+>       maxItems: 4
+> 
+Otherwise looks good an applies, please update your commit long and add:
+
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
