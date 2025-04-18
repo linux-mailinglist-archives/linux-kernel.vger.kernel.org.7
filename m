@@ -1,154 +1,156 @@
-Return-Path: <linux-kernel+bounces-610423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29FABA934E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 10:46:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ABC9A934DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 10:46:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CF5C4A05C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 08:46:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37BEC18802A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 08:46:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26B21270EA1;
-	Fri, 18 Apr 2025 08:46:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A81CC26F44D;
+	Fri, 18 Apr 2025 08:46:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="T3FYYYiJ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="gX4axkBs";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="T3FYYYiJ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="gX4axkBs"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eZT46yAr";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Pmp51lon"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC08326FD8C
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 08:46:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67DD726B953;
+	Fri, 18 Apr 2025 08:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744965991; cv=none; b=GwCPUtRegg8jbCS/h2PNQ6LGY3Tw8hNAv52HFV7LsSu4xOYdYvN/TSIoleeE1aIc/TOSfwm97f4Tt05XEFZvT0EfhSmXjQmi7999LopNIMVZWc0jd6/Z2aGWhhfqvd4/97HL1YMUh0CTPlzRjsoKmag0o5ueqMfp2U1sXgNXCgE=
+	t=1744965988; cv=none; b=q2SMonbeNipzjwlsKGvRF4ZAe2fp919Y+r7nDRW7kR0tcA97HOfullxibcFn+duRoa9YdLgdhGlhlMDzt5aLc67kQf2v4QWWS8B6odi25UbXS4YTupw1GBzLer24KYUkUB6//EZxsRiI1U6tPSrEMPo/9QMcSF6fB5xYOD/fs5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744965991; c=relaxed/simple;
-	bh=UXAui8PSoN+tcCQIAgw467tqrz581u6GiUivBzLJ0U8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=boZF9RqgHbGzWE/BbMdeb95KOPr8MC23WW6voS5l64RbMNv4O7pUkZ3k2eQ94++xrTzijip+NLuU4Th8rd3v4X3qx1tdhCABMPg5DhrlmRD9cNURQn5d+/e9uWB+1uQS4ZHrotBbHehvOZnwzpDihoS50mbcPGuXnsYw+jQbHuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=T3FYYYiJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=gX4axkBs; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=T3FYYYiJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=gX4axkBs; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 528D71F74A;
-	Fri, 18 Apr 2025 08:46:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744965981; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1744965988; c=relaxed/simple;
+	bh=+Cc25vvKy+5mvNPyRyTVbOhsN/ihcuZDTwoJBOaM+4s=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=jUmp57YiJ0j09LZYBXJVJbKtlqPpbYr+jBeExUdbxT7VdTG4RSi3Pc9wOdB/fcJRKdkWsiFitcryBlBtfMYSJncc3m5Oxka+Lgrwq84qhyDXzBRrUlmwkag9oSeHQKeCl3LMcuhDKjPc3f0nvct5j8LD69RnuQpioU+pUwO6llQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eZT46yAr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Pmp51lon; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 18 Apr 2025 08:46:23 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744965984;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=5wdUlcaGLNsNghYvAL7kfmJ/bZlynjprr5aMzitHMc8=;
-	b=T3FYYYiJl0NGNNWzgoO5mvwYVfutq+m9Pse/zfQD1ndce/ixsHQ51ALzN17Mtg4qS7Hoio
-	oTUdacBKtyzLfzERRmvKB+3y+r+nlkkCLzoofdKi2fKzkF8JRuTDE8JJtCxw9/1SW5NoqZ
-	iao0aOYyleT+NnBfU8mNsC/C/aaxpUU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744965981;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	bh=9dO084SNAiu318Zmp1NSoQBV6HFjNGRBAP7yjcnBm9E=;
+	b=eZT46yArxyGCALFERkZQWZa+brY90986N+TKK244p9gcnkKQYVv4xPKLYftkdJaE+vN7Aq
+	es0xcFm3NXr+WuSQCBnjony5o4fXIEai9cPV1a6hGhKIwUIi1FbNeGcmXYAHlOwcrYPaDp
+	XT70ZBUWhjgGZ9tdnLVA4Hus35JCBnTawJuHRsf7+rRqQStiIGt//K10UkogElzs0zFQXO
+	y+gDRfPlNGoYnGGbmng77hxtWYW9ddzuJG2qV2cwb1OG8QDqZwa9Y43W7MbE2hGo5ZfMm7
+	07R/e5QQdCmHH8+4t9ffXOhsqaxa3Kn9ZTNXRApWAoI6DZJ7ZJYihHvAd2O7TA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744965984;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=5wdUlcaGLNsNghYvAL7kfmJ/bZlynjprr5aMzitHMc8=;
-	b=gX4axkBsC2WW5RVYIdyOVlYvXKWEXi2/SpH7vaiZdoRUyKMcGs3cP1kzaLz7y+tRtkThPz
-	Rz6L9LgAGhPtCDCA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=T3FYYYiJ;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=gX4axkBs
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744965981; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5wdUlcaGLNsNghYvAL7kfmJ/bZlynjprr5aMzitHMc8=;
-	b=T3FYYYiJl0NGNNWzgoO5mvwYVfutq+m9Pse/zfQD1ndce/ixsHQ51ALzN17Mtg4qS7Hoio
-	oTUdacBKtyzLfzERRmvKB+3y+r+nlkkCLzoofdKi2fKzkF8JRuTDE8JJtCxw9/1SW5NoqZ
-	iao0aOYyleT+NnBfU8mNsC/C/aaxpUU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744965981;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5wdUlcaGLNsNghYvAL7kfmJ/bZlynjprr5aMzitHMc8=;
-	b=gX4axkBsC2WW5RVYIdyOVlYvXKWEXi2/SpH7vaiZdoRUyKMcGs3cP1kzaLz7y+tRtkThPz
-	Rz6L9LgAGhPtCDCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D2F3313942;
-	Fri, 18 Apr 2025 08:46:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 5F9ZMFwRAmh7EgAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Fri, 18 Apr 2025 08:46:20 +0000
-Date: Fri, 18 Apr 2025 10:46:03 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Wupeng Ma <mawupeng1@huawei.com>, mike.kravetz@oracle.com,
-	david@redhat.com, joshua.hahnjy@gmail.com, muchun.song@linux.dev,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: hugetlb: Fix incorrect fallback for subpool
-Message-ID: <aAIRSzTThAETw9BT@localhost.localdomain>
-References: <20250410062633.3102457-1-mawupeng1@huawei.com>
- <20250417200327.ef9d1aed59e198aa2c8b046e@linux-foundation.org>
+	bh=9dO084SNAiu318Zmp1NSoQBV6HFjNGRBAP7yjcnBm9E=;
+	b=Pmp51lonOg7EFK1Jy318Jc3dnckDkwPay9Cr7IV+7/awmwko+oQL4bmp6uJZlU732UYONZ
+	eqEmo0sw5lOjhSDg==
+From: "tip-bot2 for Uros Bizjak" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/asm] x86/asm: Rename rep_nop() to native_pause()
+Cc: David Laight <david.laight.linux@gmail.com>,
+ Uros Bizjak <ubizjak@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250418080805.83679-1-ubizjak@gmail.com>
+References: <20250418080805.83679-1-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250417200327.ef9d1aed59e198aa2c8b046e@linux-foundation.org>
-X-Rspamd-Queue-Id: 528D71F74A
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[huawei.com,oracle.com,redhat.com,gmail.com,linux.dev,kvack.org,vger.kernel.org];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Message-ID: <174496598375.31282.2315987383086713800.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Thu, Apr 17, 2025 at 08:03:27PM -0700, Andrew Morton wrote:
-> This has been in mm-hotfixes since April 1.  Do we have any reviwers?
+The following commit has been merged into the x86/asm branch of tip:
 
-Sorry, this slipped through the cracks.
-I plan to review this but I will not ne able to do so until middle of
-the next week.
+Commit-ID:     3ce4b1f1f24bbd9f1c349ecb6641dfa038bd0b5a
+Gitweb:        https://git.kernel.org/tip/3ce4b1f1f24bbd9f1c349ecb6641dfa038bd0b5a
+Author:        Uros Bizjak <ubizjak@gmail.com>
+AuthorDate:    Fri, 18 Apr 2025 10:07:43 +02:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Fri, 18 Apr 2025 10:19:26 +02:00
 
+x86/asm: Rename rep_nop() to native_pause()
+
+Rename rep_nop() function to what it really does.
+
+No functional change intended.
+
+Suggested-by: David Laight <david.laight.linux@gmail.com>
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Link: https://lore.kernel.org/r/20250418080805.83679-1-ubizjak@gmail.com
+---
+ arch/x86/include/asm/vdso/processor.h | 4 ++--
+ arch/x86/kernel/apic/io_apic.c        | 2 +-
+ arch/x86/lib/delay.c                  | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/include/asm/vdso/processor.h b/arch/x86/include/asm/vdso/processor.h
+index 240d761..7000aeb 100644
+--- a/arch/x86/include/asm/vdso/processor.h
++++ b/arch/x86/include/asm/vdso/processor.h
+@@ -8,14 +8,14 @@
+ #ifndef __ASSEMBLER__
  
-
--- 
-Oscar Salvador
-SUSE Labs
+ /* PAUSE is a good thing to insert into busy-wait loops. */
+-static __always_inline void rep_nop(void)
++static __always_inline void native_pause(void)
+ {
+ 	asm volatile("pause" ::: "memory");
+ }
+ 
+ static __always_inline void cpu_relax(void)
+ {
+-	rep_nop();
++	native_pause();
+ }
+ 
+ struct getcpu_cache;
+diff --git a/arch/x86/kernel/apic/io_apic.c b/arch/x86/kernel/apic/io_apic.c
+index eebc360..ba5a4cc 100644
+--- a/arch/x86/kernel/apic/io_apic.c
++++ b/arch/x86/kernel/apic/io_apic.c
+@@ -1486,7 +1486,7 @@ static void __init delay_with_tsc(void)
+ 	 * 1 GHz == 40 jiffies
+ 	 */
+ 	do {
+-		rep_nop();
++		native_pause();
+ 		now = rdtsc();
+ 	} while ((now - start) < 40000000000ULL / HZ &&	time_before_eq(jiffies, end));
+ }
+diff --git a/arch/x86/lib/delay.c b/arch/x86/lib/delay.c
+index e86eda2..eb2d2e1 100644
+--- a/arch/x86/lib/delay.c
++++ b/arch/x86/lib/delay.c
+@@ -75,7 +75,7 @@ static void delay_tsc(u64 cycles)
+ 
+ 		/* Allow RT tasks to run */
+ 		preempt_enable();
+-		rep_nop();
++		native_pause();
+ 		preempt_disable();
+ 
+ 		/*
 
