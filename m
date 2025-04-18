@@ -1,195 +1,240 @@
-Return-Path: <linux-kernel+bounces-610051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-609998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47A18A92F99
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 04:00:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B87ADA92EEC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 02:44:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9B1919E6EB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 02:00:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36B791B63371
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 00:44:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1709527726;
-	Fri, 18 Apr 2025 02:00:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0728C3C47B;
+	Fri, 18 Apr 2025 00:44:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Tk//MLA5"
-Received: from mail-m19731113.qiye.163.com (mail-m19731113.qiye.163.com [220.197.31.113])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="WaScAnM5"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2071.outbound.protection.outlook.com [40.107.223.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800872641EC;
-	Fri, 18 Apr 2025 02:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.113
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744941619; cv=none; b=jnwkfe0QtQfP9KPPygbZM+LxUDJrS6+MWOUAtPE2dhimLcwgLbv2IB72+tD3dmLTCYz04ts/LJggbfrq3Qen3XY8KyN54IN3Vy7ETOHC9tCb5bWNTdPxK/d7M4yrfJDPwttd08VCSdPT36+6Js/GUCJQSxZs932TkYdTJPqIORk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744941619; c=relaxed/simple;
-	bh=1+ScBvG+oLMlHepXE4HuFUNDLPQ6s7vDAMcdM2Q9ubE=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=VqU9kqhKxbQbURvmRDGdwtNRWjJvf1Pqv5iuEVd34kkUb7Rf7wz+m7a2FJURWZJF88HVREm82gDi7mtet4fvcat1GPDmHOeWX7s9KX0Pd8ugswBXLLbl/nChI7IWVIGlor+wqxEVqDmeWLwgkhEiHeCYhFfDD4YPzrXui85lnlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Tk//MLA5; arc=none smtp.client-ip=220.197.31.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.129] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 12477934f;
-	Fri, 18 Apr 2025 08:44:31 +0800 (GMT+08:00)
-Message-ID: <c70cef1b-9f37-5a73-faf3-4d1cac6bcdde@rock-chips.com>
-Date: Fri, 18 Apr 2025 08:43:54 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8118E1BDCF
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 00:44:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744937075; cv=fail; b=ha1/NpYBEm/5vSjBkoj5bHwsRCNIrWiJ4fNu128ThdQvYuNbD0WOmLPqRGaUxsifiVZH9ElVaAqSiEFGs/xeEBdL+13te3zNMRYLJBPx9IdU5vMGUcbkXh4/xWH/w3sU9toqYM7q8Lgkx2iCSsAvFvE3+2lPoq4RS9eWBE2madk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744937075; c=relaxed/simple;
+	bh=jnz7ahzEEwghuMaZeeYWWj1KcCN8XSd8ezX1XoFuehY=;
+	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Q22aVF1RlhLb+5q7LB7jC/nivQdopTCDSmyEFztC1/9sbjaFaxSKKXZtPY/iNEGbia8QPJQ13AMXZRzZjL63Rcfp1jGbNgyFJGzKNvV7x5ShxfWAkLFRLAJecb6Nbjr5PRFzglxMioO+ofEAfXxrOM+F9xze/59j30pMkD7o2oE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=WaScAnM5; arc=fail smtp.client-ip=40.107.223.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XPkx65oULViMU0EAvLWNQ0CdSXNKhzjBpls2W4qtmUQapp2wCHEtYd8Q6sKO/BRS/MLh1KTnPdJPA9t0kfqbuyTDFhZY/9XqZVZ+CtQwtxpq2J86U55eZR7VFM3ZiTYRN6gcIL44rehtWk3ynTD66El6+l76DpczLigX2pTE/7+JqPvR1hM1yUbYqe3tzQtxF4xafWYg2vsVBbM4MSOtNPg7UcDjoc8HbOOsxZGz5CicsJkCc87mdL68T/eCP4qJq5L/JCCSwITG0ry2AgXP5h22/gQpMl3i8SGox1VxkzKbimBdgjcPBUq8e0HjQRqkWb0UWV7uwvzq1rd7OLu7RA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Zj7SA8XTfyliCMtLnN7oHHCsLb2xUOfnYdZUGceuJjE=;
+ b=xGGTTRna/oW7p/mYfVo2ikT1P1qXyS3Ek2rng+gp71UpNPcK6YDlNEGe3rc2gZ2Lav0Y/pImYunuMsEBv/IjZ5TnB8gQQ7rTcKQFLM0Xkk/4lBzayHo9i8OqwEStEVfaJhLHiypUovbdPPk8ULLeZWHarA990Sg6pd2rrOh2Xz3jGP2PuM48tXBdEilr43wGgEMPX9wOrRlN7fULuANUNut7Yi7hKWRcIQUMcdTlEZHjBGA4gHAn+s4gV/mJM2wV2TGN8mySz/3OWDj32Q9pRBNNewIVggDURjlR7M4TvluAEEDSaM2QZF7RA0O03kOb4+T2mrb/53qJTKUYc0gt9A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Zj7SA8XTfyliCMtLnN7oHHCsLb2xUOfnYdZUGceuJjE=;
+ b=WaScAnM5Lp809VfsUErHsStuS10k2kxSvuOyRUy6Z/ykK4hXrI11ha/4PXsB11dysDH/iRkkYxZqMUaxczQZTAoei6EV4QHPg/mp6mBFiRc0FCpN6+XYTzsLVihHmn8wFE6mQe03y4iLyldtADGa5X+fiXneoZUZk+IJ0l61Z1c=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB8476.namprd12.prod.outlook.com (2603:10b6:8:17e::15)
+ by IA0PR12MB8694.namprd12.prod.outlook.com (2603:10b6:208:488::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.22; Fri, 18 Apr
+ 2025 00:44:30 +0000
+Received: from DM4PR12MB8476.namprd12.prod.outlook.com
+ ([fe80::2ed6:28e6:241e:7fc1]) by DM4PR12MB8476.namprd12.prod.outlook.com
+ ([fe80::2ed6:28e6:241e:7fc1%5]) with mapi id 15.20.8655.022; Fri, 18 Apr 2025
+ 00:44:30 +0000
+Message-ID: <9205d9b5-498d-4089-84f5-2d561bee48c1@amd.com>
+Date: Thu, 17 Apr 2025 18:44:25 -0600
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/amd/display: do not copy invalid CRTC timing info
+From: Alex Hung <alex.hung@amd.com>
+To: Gergo Koteles <soyer@irl.hu>, Harry Wentland <harry.wentland@amd.com>,
+ Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <siqueira@igalia.com>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ Tom Chung <chiahsuan.chung@amd.com>, Sunil Khatri <sunil.khatri@amd.com>,
+ Aurabindo Pillai <aurabindo.pillai@amd.com>, Hersen Wu
+ <hersenxs.wu@amd.com>, Melissa Wen <mwen@igalia.com>,
+ Maxime Ripard <mripard@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, regressions@lists.linux.dev
+References: <24439c13a014e1cd200785db6f3dcf08f4773eb3.1743612701.git.soyer@irl.hu>
+ <11d589f0-3671-417f-8911-7bfb3be88802@amd.com>
+Content-Language: en-US
+In-Reply-To: <11d589f0-3671-417f-8911-7bfb3be88802@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: YQZPR01CA0131.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:87::19) To DM4PR12MB8476.namprd12.prod.outlook.com
+ (2603:10b6:8:17e::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Cc: shawn.lin@rock-chips.com, Detlev Casanova
- <detlev.casanova@collabora.com>, linux-pm@vger.kernel.org,
- linux-mmc@vger.kernel.org,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
- kernel@collabora.com, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] mmc: sdhci-of-dwcmshc: add PD workaround on RK3576
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
- Ulf Hansson <ulf.hansson@linaro.org>, Heiko Stuebner <heiko@sntech.de>,
- Elaine Zhang <zhangqing@rock-chips.com>,
- Finley Xiao <finley.xiao@rock-chips.com>,
- Adrian Hunter <adrian.hunter@intel.com>
-References: <20250412-rk3576-emmc-fix-v2-1-830e653ad4f0@collabora.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-In-Reply-To: <20250412-rk3576-emmc-fix-v2-1-830e653ad4f0@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQkpITlZNGk9PHRhKT0hNH05WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a96465ab30c09cckunm12477934f
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NiI6Tio5GjJNFhU4Mg8fS0ks
-	NTUwCRBVSlVKTE9PQkhMS0xJQ09IVTMWGhIXVQgTGgwVVRcSFTsJFBgQVhgTEgsIVRgUFkVZV1kS
-	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQU1KTkk3Bg++
-DKIM-Signature:a=rsa-sha256;
-	b=Tk//MLA56Ghww08hBdr9vFuE8XaqrrlB+sMy2CcuqZJ3Ion+u7E9rGD/rlImMVOzl/RJ1cGe5d/e6fGfqh5LKM5ABl2DSUs6liUiPPBhBSXaeBm77NSls+uwEOj4zX9UlsU1xyrp7rIE+06HHojiLnttWKb5J/whbh7OB6+Tfs0=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=Lcb43dSZS3+Y/L9GUNHVrV5chNZ/V2WVLs/FwGaCc1s=;
-	h=date:mime-version:subject:message-id:from;
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB8476:EE_|IA0PR12MB8694:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6f9f2ad7-3d33-4bd6-28ba-08dd7e122dfe
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|921020|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MHRYL3lWMXBvUGRmRHBrT2FjTms0eVE3eU5rTWZhYWFERzF6T1J4cHFjWmFp?=
+ =?utf-8?B?NmFjWjRJanNIandON3ZFSTl2dGxzd2FCZzhrSS9rQVVsdHJvTCtNdkN4Nlo1?=
+ =?utf-8?B?azBMYTMwdUhPdTdSbmR4c3RBMXhzQ2VySnhyZHNRWjZIZElsbE93blhkNk05?=
+ =?utf-8?B?RTF2VTEyeEpxaXRSSjdUVjJocFZ4UUk4NWVwdGo5N1krR29FZ21YQ3ltc0hL?=
+ =?utf-8?B?QmRlSUVLeHRzREx0QnBiMHdCeTdsOUpWb2FuNkJiQ0ZLNnpHM0paUXRtUzlq?=
+ =?utf-8?B?aFdhTzFyTnk3a2RSN2hmQWg4enJjd3pSbjFTalN4T1pJNkVRbG9RbkxscDJp?=
+ =?utf-8?B?dzc3bFdHcWdKNkpiRFU0ZE5BcVFkZE1xdm1tY0NPck5KT1RlZUF4eGxsUStk?=
+ =?utf-8?B?L0N6RmFpSy85L3NrYUZhL1NBQ0h6d1JQRHFPbWdiVSt2U3phNkE3VjBkUkN6?=
+ =?utf-8?B?SWxhelh6RjNYMTJkZStXVndSbC9oSCs5clZwWThvVkFDQ0ppZE9oWG9EZEp3?=
+ =?utf-8?B?K3l2b3IxaXFiUTNBaW0yR0x3REhtMTRmbE8vUFdoTnRja29zVWp6dDdqZ09z?=
+ =?utf-8?B?cDM4VWNadThRK0cwVGQ1RjNYWE0yclZxKzZ0Y2p6U3BIWThFVXVYWmtBMUJR?=
+ =?utf-8?B?TWxGdDM4STB0ZEFlVlFNY1BYakIzbjlpMjJwZ3RKdUdHZUo0WkZIdWdRRzh2?=
+ =?utf-8?B?R1ErUjZ1MFhiSC9VSytjZlZvQlhlNVp1NUlQYnRiL0dRR1NFZVNET3JQNk1O?=
+ =?utf-8?B?c24vOUxEaCs3ZW9iVnY1cForSW1GN1NCY1IzSGJHaVMrQyt4TlFIQVlMOUZQ?=
+ =?utf-8?B?YkZaMmdxL0Q4UFhqZ2dlUU9qd3BZaWxoQXVkWS9HSGR1VzNqVFA3NkJvZHBx?=
+ =?utf-8?B?UllJdDJ4dlovSW5kTENNV2s3aWJyUGxyUkcvSE4yVnlwSzJ1MkJVcUxHK3lr?=
+ =?utf-8?B?WkxQV01yT3kyakxGMFdyUzRZMlpQOUloOE1QUHROSkFFN1E5azlobzhFRWFs?=
+ =?utf-8?B?Y0ZhQ3ZLdXZVdkZGckR4Si9aV2dJVFQ1bGpBVTZLdGg2ZTdLZll6aWI2NWhH?=
+ =?utf-8?B?a0ZhM1RIdVRjNXo3WTBJMnhkMDRLc3BONUNIbk9QK2RVRHplTzd0cjlGcm9v?=
+ =?utf-8?B?ZnBYaElOdWJiKytaU3dtcng3S0w4bEZrVTJialdHa2YrVmh1VEx1Wkc2Qjdk?=
+ =?utf-8?B?ZVJPZ2tRVXd3S25naG1vSTVhc1NwQ2xCQ3FKbVJRNFplcHF6N0hNQzRGWXBB?=
+ =?utf-8?B?SUZXS0NxbmM4eEY0ZnRmcDdtdDlSKy9wSnRIQjdxZ2p5VmVkQll3WTB2d0RJ?=
+ =?utf-8?B?ZW45NUZ5RU55SXJsZFhkOUptVXR5UEtWcGUzdHEvOGswa0psaHFrbkhGN0d5?=
+ =?utf-8?B?b3hLeGo3NjZJUC93VFpGWkhnMmE5RHVtMExObXNiNUxWUDF5TWJyZjVJbjVH?=
+ =?utf-8?B?ODk4NFRCaG8yRUVVcS9TMlFNS2hQWTZQNTRoTlhmSGYwYndEaFRjUU9LOSs2?=
+ =?utf-8?B?RUFuZDByQ0p5VjhqN3ZnRXg4RFRGWGhKYzBFeXNqc1FQVExjaGh3NnZOazNk?=
+ =?utf-8?B?eW1QV3lKRzRjaytaQnRKUStSTG5uZFd4NnhLL2dPYXh5cUpNeXA3VHN5UjFx?=
+ =?utf-8?B?MHE4ZEpvTXd2KzdzR2Z4S2JEMkpsbUVwQWZBQWJ4dm5Ld3N1TW5tZjF0bGJH?=
+ =?utf-8?B?bVJPWDdVMFhNK0ZRS213Um9oN09LV2NXeWI4Njd1OE91L2djakpveElkWlhz?=
+ =?utf-8?B?dE1EeUJ6K0V2NU1MNlVxYUNHUkZvMGlTcE1vZU45WXQ0U2owNllDUHdoODEy?=
+ =?utf-8?B?WnhycEtMWE12bTZEcVJ6Vm1TSjN6SHB0ZVRNbEtLVU04OHJOTGo5WXhqUXVj?=
+ =?utf-8?B?VFZXSnZhdDd0L2sxT0VwTWpGamdDS2pPNlBWSkpvZzRTa2c9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB8476.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(921020)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NU1uNUZCY29MVWVwVVhzZ01WbzkrTTlibEgrVWQyOUs2bzV6ZE0xbFdrTFQr?=
+ =?utf-8?B?UXo3MS9UdEZ3WC92YnpmMnlMdlZhZlMyajUyL0NHR0lNM0E0SmlaQlVQWENT?=
+ =?utf-8?B?ZVpqQURwOWxYQW5YL3l6VllkNmxpVEgySlIwS21HNnRqYSs4eUxwc3dVUnEz?=
+ =?utf-8?B?MDBlKzFSOURmR3VaSFdsOWRxU3ArOHB2dmc1T3NYU1JzRExyNUJLMDR0OGhM?=
+ =?utf-8?B?UlpNTHVsNjlzQXpUTkFGWm52V1NjK3gyenc2bFQvS2VEWDNYR29zNlJFOTEr?=
+ =?utf-8?B?ZGQydXBLclo3cCt3L0ZBQnRmdnFSRDNaVktTYXdmdTdrY1pUZmMzK3dxSExz?=
+ =?utf-8?B?enhza2I2UC9BRkRyVEJNMmJWb3Z1N0JDcmZkVlVScE5ZNXJRUHpNM0JxdFo0?=
+ =?utf-8?B?K1NYTHlEdkdtd25WejV1TUp0WUF1NUc2MHpCcmFGS29EL21Cd216MUgzK3A2?=
+ =?utf-8?B?TEdHM1k2RUIwMFNYL29qWGRUZkx0T0FBZmRpall4RCtsWnBvMWhQWXp1ZW5F?=
+ =?utf-8?B?cnE2WnpJM0pVZmJCbDN2cUd2VDdyS2QwVndpdkd2MzhoNkFiUlVQNGk2SE5r?=
+ =?utf-8?B?eGFaYnp1OUo3TWhOWkFNekljay9tMS9UWDA5Mnl2VWFtVGRxc0IwNzJEOElq?=
+ =?utf-8?B?QWFJM2t0VlBQZ2QyY3FoQzV2a3NPazJPQzlXZlhXeldnVkpSRU5sOWx5VEtJ?=
+ =?utf-8?B?WXhvMXh4QXNtdmlpT0RoUUNBTnRjZi94aWQ1Z3RTaElzTUZTTUhHM1ZUZmg2?=
+ =?utf-8?B?RTJYdlJOY2V1azJzTVRCbCtaLzVUQUtyL2JOU3ZTdzgwajJKYXpqSjhiUE9N?=
+ =?utf-8?B?dVVkeGtPek9iSWYrS3N5L1FsRFVCMWptOVA1UVdHcnNtY3ZkQ3V2M2hsdzhh?=
+ =?utf-8?B?cDhRRUNtZFNsUDBURnpoRUZ0dlZvbkQ4WXdHTHdrSnpGbGg2eVRBQ3o0NENh?=
+ =?utf-8?B?enFOMUxheXhOSVpuZHNTSVR4Zm1kcmR4WnpDZGZvekxTbnU2UE10dkcyWWhi?=
+ =?utf-8?B?ZHBjeE1rSnlFREpjT3hVaGZjaXNHYXN4ZWw1UHR5Ri9hMWRsM3BnWE94V1Vt?=
+ =?utf-8?B?RVdhejBkaHc4R0FhSGVJMGQ0UXgxbGo0M2pLcHdseXlaYjJ0d3ZYVUt4eFBq?=
+ =?utf-8?B?UXFCUmVpcDN1RFEyVFBNSE5pdWZLaUNzRWxiSnppdnFHMmh3dWtJTWJPRTl1?=
+ =?utf-8?B?TTV2MDdBdHZuaDVUd1dDbXZvZ0lQK2U1RzFmaDNRTmdkNXZwZkhMSk9ZQ2ph?=
+ =?utf-8?B?NHFTWXl1QzhoVk5ucWY2Ynk4QlVCUWxGSEdHU2YrQTFVVmNEb2hJRThVbW50?=
+ =?utf-8?B?bnhuaENvSndTZkNTY2NHK1lpRHdGbkxTTVpqNU5vVFV3WTFNSnRzYzZRemlu?=
+ =?utf-8?B?YTFkM3Z1bHk2Sm5rbEtDclJpdzVoSGNGOEpTZzZZUlRmYyswZlQ3V3RSOW82?=
+ =?utf-8?B?eGtSeWVvVzBmVVFmL2Q0NUZqNjAzUUFKMXNmNGc0QUFTRHBBdk1EWitvTWx0?=
+ =?utf-8?B?MDhDZEFsdDhTRjRLYTc3c05FaW5lTDh4SWw4UkQ4WjM0SE1zQlA4c3dITm9o?=
+ =?utf-8?B?ekcyTlRzcmgvbVdxN2FzbTc5b3JqYTJ5b0prdEFPSjkrVVRCL21GQldFQlJj?=
+ =?utf-8?B?Ykc1UmNtNlFIaXRaSzBMNThwRTZGV2UrRGU4S1BaYnNvR1JDWkRZQ2E1WkNv?=
+ =?utf-8?B?THlyb05yV21pWjZvRVRGcC9qb2tGU1ZMdWtpOC9acWJ6bnpPWVV3OUpnQW1O?=
+ =?utf-8?B?Tk1jblFaalNNa25hclF3NkRWckJac1ZiTDFGakVpSmtYRDl2YWpqM09jME5N?=
+ =?utf-8?B?cURDY1hZYnk5ZzFPY0RLRnMyVTZneWhzVTkrNVBzRkwyeGl6R0NGMjJsRXZR?=
+ =?utf-8?B?YXNYM21YOEMzRlFNZ3FmTjlwYUQ2bWpPMUNYN0ZGZ1pQc2NaSHFldWNGeTdK?=
+ =?utf-8?B?TjlRK2pvb0dLZmhEaGhWM3EwWjI2ZlN5anpoYnJ0TkI2ZWRaTUtROW1ZMVhm?=
+ =?utf-8?B?YUtSQ0NRT0ZqczJaRzRKU3pQVTcyalUxcnppWnBIUlg0TXlUYXlMa3pvN3Rr?=
+ =?utf-8?B?YlA5Vy9nc0lKRENna0JnUW5FR0ZNUGtoUEdYbko0akc5cC9WR0djZi9UK1VI?=
+ =?utf-8?Q?SAJRpqt9hFNlsMnMTvgrjDZ6x?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6f9f2ad7-3d33-4bd6-28ba-08dd7e122dfe
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB8476.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Apr 2025 00:44:30.4735
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7Cqmka8TuNNUA5oOVA7/NwiyvhZGQA4FuZWC1zxij3ev8lNeFLNK79b2r4YXJDRPFrH6lssplCh8k3KWENGj+w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8694
 
-Hi Nicolas,
+No issues from promotion tests.
 
-在 2025/04/13 星期日 4:45, Nicolas Frattaroli 写道:
-> RK3576's power domains have a peculiar problem where the PD_NVM
-> power domain, of which the sdhci controller is a part, seemingly does
-> not have idempotent disable/enable. The end effect is that if PD_NVM
-> gets turned off by the generic power domain logic because all the
-> devices depending on it are suspended, then the next time the sdhci
-> device is unsuspended, it'll hang the SoC as soon as it tries accessing
-> the CQHCI registers.
-> 
-> RK3576's UFS support needed a new dev_pm_genpd_rpm_always_on function
-> added to the generic power domains API to handle what appears to be a
-> similar hardware issue.
-> 
-> Use this new function to ask for the same treatment in the sdhci
-> controller by giving rk3576 its own platform data with its own postinit
-> function. The benefit of doing this instead of marking the power domains
-> always on in the power domain core is that we only do this if we know
-> the platform we're running on actually uses the sdhci controller. For
-> others, keeping PD_NVM always on would be a waste, as they won't run
-> into this specific issue. The only other IP in PD_NVM that could be
-> affected is FSPI0. If it gets a mainline driver, it will probably want
-> to do the same thing.
-> 
-> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> ---
-> Changes in v2:
-> - Rewrite patch to use dev_pm_genpd_rpm_always_on in sdhci driver
->    instead, after Ulf Hansson made me aware of its existence
-> - Link to v1: https://lore.kernel.org/r/20250408-rk3576-emmc-fix-v1-1-3009828b1b31@collabora.com
-> ---
->   drivers/mmc/host/sdhci-of-dwcmshc.c | 39 +++++++++++++++++++++++++++++++++++++
->   1 file changed, 39 insertions(+)
-> 
-> diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
-> index 09b9ab15e4995f0bddf57dd309c010c849be40d9..a00aec05eff2da8197cc64690ba9665be756e54a 100644
-> --- a/drivers/mmc/host/sdhci-of-dwcmshc.c
-> +++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
-> @@ -17,6 +17,7 @@
->   #include <linux/module.h>
->   #include <linux/of.h>
->   #include <linux/platform_device.h>
-> +#include <linux/pm_domain.h>
->   #include <linux/pm_runtime.h>
->   #include <linux/reset.h>
->   #include <linux/sizes.h>
-> @@ -745,6 +746,28 @@ static void dwcmshc_rk35xx_postinit(struct sdhci_host *host, struct dwcmshc_priv
->   	}
->   }
->   
-> +static void dwcmshc_rk3576_postinit(struct sdhci_host *host, struct dwcmshc_priv *dwc_priv)
-> +{
-> +	struct device *dev = mmc_dev(host->mmc);
-> +	int ret;
-> +
-> +	/*
-> +	 * This works around what appears to be a silicon bug, which makes the
+Reviewed-by: Alex Hung <alex.hung@amd.com>
 
-After discussion with Finley, we agree with this patch which is
-basically the same way we handle it on vendor tree. But it's not a
-silicon bug to us, so maybe the comments need a bit of adjustment.
-
-
-> +	 * PD_NVM power domain, which the sdhci controller on the RK3576 is in,
-> +	 * never come back the same way once it's turned off once. This can
-> +	 * happen during early kernel boot if no driver is using either PD_NVM
-> +	 * or its child power domain PD_SDGMAC for a short moment, leading to it
-> +	 * being turned off to save power. By keeping it on, sdhci suspending
-> +	 * won't lead to PD_NVM becoming a candidate for getting turned off.
-> +	 */
-> +	ret = dev_pm_genpd_rpm_always_on(dev, true);
-> +	if (ret && ret != -EOPNOTSUPP)
-> +		dev_warn(dev, "failed to set PD rpm always on, SoC may hang later: %pe\n",
-> +			 ERR_PTR(ret));
-> +
-> +	dwcmshc_rk35xx_postinit(host, dwc_priv);
-> +}
-> +
->   static int th1520_execute_tuning(struct sdhci_host *host, u32 opcode)
->   {
->   	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> @@ -1176,6 +1199,18 @@ static const struct dwcmshc_pltfm_data sdhci_dwcmshc_rk35xx_pdata = {
->   	.postinit = dwcmshc_rk35xx_postinit,
->   };
->   
-> +static const struct dwcmshc_pltfm_data sdhci_dwcmshc_rk3576_pdata = {
-> +	.pdata = {
-> +		.ops = &sdhci_dwcmshc_rk35xx_ops,
-> +		.quirks = SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN |
-> +			  SDHCI_QUIRK_BROKEN_TIMEOUT_VAL,
-> +		.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
-> +			   SDHCI_QUIRK2_CLOCK_DIV_ZERO_BROKEN,
-> +	},
-> +	.init = dwcmshc_rk35xx_init,
-> +	.postinit = dwcmshc_rk3576_postinit,
-> +};
-> +
->   static const struct dwcmshc_pltfm_data sdhci_dwcmshc_th1520_pdata = {
->   	.pdata = {
->   		.ops = &sdhci_dwcmshc_th1520_ops,
-> @@ -1274,6 +1309,10 @@ static const struct of_device_id sdhci_dwcmshc_dt_ids[] = {
->   		.compatible = "rockchip,rk3588-dwcmshc",
->   		.data = &sdhci_dwcmshc_rk35xx_pdata,
->   	},
-> +	{
-> +		.compatible = "rockchip,rk3576-dwcmshc",
-> +		.data = &sdhci_dwcmshc_rk3576_pdata,
-> +	},
->   	{
->   		.compatible = "rockchip,rk3568-dwcmshc",
->   		.data = &sdhci_dwcmshc_rk35xx_pdata,
+On 4/8/25 10:55, Alex Hung wrote:
+> Hi Gergo,
 > 
-> ---
-> base-commit: 64e9fdfc89a76fed38d8ddeed72d42ec71957ed9
-> change-id: 20250317-rk3576-emmc-fix-7dc81a627422
+> Thanks for the patch. I am sending this patch for testing and I will 
+> update test result next week.
 > 
-> Best regards,
+> 
+> On 4/2/25 11:03, Gergo Koteles wrote:
+>> Since b255ce4388e0, it is possible that the CRTC timing
+>> information for the preferred mode has not yet been
+>> calculated while amdgpu_dm_connector_mode_valid() is running.
+>>
+>> In this case use the CRTC timing information of the actual mode.
+>>
+>> Fixes: b255ce4388e0 ("drm/amdgpu: don't change mode in 
+>> amdgpu_dm_connector_mode_valid()")
+>> Closes: https://lore.kernel.org/all/ 
+>> ed09edb167e74167a694f4854102a3de6d2f1433.camel@irl.hu/
+>> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/4085
+>> Signed-off-by: Gergo Koteles <soyer@irl.hu>
+>> ---
+>>   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 12 ++++++------
+>>   1 file changed, 6 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/ 
+>> drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+>> index bae83a129b5f..0eb25cdcb52f 100644
+>> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+>> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+>> @@ -6500,12 +6500,12 @@ decide_crtc_timing_for_drm_display_mode(struct 
+>> drm_display_mode *drm_mode,
+>>                       const struct drm_display_mode *native_mode,
+>>                       bool scale_enabled)
+>>   {
+>> -    if (scale_enabled) {
+>> -        copy_crtc_timing_for_drm_display_mode(native_mode, drm_mode);
+>> -    } else if (native_mode->clock == drm_mode->clock &&
+>> -            native_mode->htotal == drm_mode->htotal &&
+>> -            native_mode->vtotal == drm_mode->vtotal) {
+>> -        copy_crtc_timing_for_drm_display_mode(native_mode, drm_mode);
+>> +    if (scale_enabled || (
+>> +        native_mode->clock == drm_mode->clock &&
+>> +        native_mode->htotal == drm_mode->htotal &&
+>> +        native_mode->vtotal == drm_mode->vtotal)) {
+>> +        if (native_mode->crtc_clock)
+>> +            copy_crtc_timing_for_drm_display_mode(native_mode, 
+>> drm_mode);
+>>       } else {
+>>           /* no scaling nor amdgpu inserted, no need to patch */
+>>       }
+> 
+
 
