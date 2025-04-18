@@ -1,197 +1,153 @@
-Return-Path: <linux-kernel+bounces-611090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63876A93CCB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 20:31:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82FD2A93CD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 20:33:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0AF98E160C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 18:31:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AD0B44766F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 18:33:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8E642248B9;
-	Fri, 18 Apr 2025 18:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BFEF22576C;
+	Fri, 18 Apr 2025 18:33:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xqiS7Kwe"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="L5O7QZ+e"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16E8224228
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 18:31:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19DF222592
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 18:33:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745001091; cv=none; b=e8q9pYqGs03+QV199jscWqJdocfINAMZigVaXz0k20NFDJYPDKVTfhz/Hdv2MDedXZ0uDWzk1z2r3Kw1ADg492pIAFyRuoU23fYIfOA4Pmy2wuHDxtoBMlX4/3QAXuA1i8gYjFFP13suADdzGSFm2ZecaZiDVDAEPFAdwl5EMJU=
+	t=1745001195; cv=none; b=nm8po6LH3yuVAdl78leaQhcP3nLpVaJ2jOJZ8lBAvIZZCoNQ8/nZhw/WwGyC6Ibd18K5tvFb81OipT5jGl38ovyzu3YjG9r5p+0WDiLOHsAS6UU2lMs65UVs4DLtblTGAuxEA87hWMpHeLWZFNv406xbRSkTz7lMwsdCUq8YRKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745001091; c=relaxed/simple;
-	bh=2taYhddMq9lQ/8Z3JTMNETe26ib85UWNUSe1GA+eGfo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Zn2Hf+gQLzhbmQfugEyyZ4uNg3/EpQxu9kFRbIIg5i4wGhX8DJbaOLLS/k7eBXwC3i4geMonQHhKWe2fMFVfcn3ZUyFvCnTHZ7I0nI2vfgGSTka15ZNIXLOGEC2V7B9PYzp7nD/H58vmterFXiJq2G6RhNalWjPC9QmeWT35YxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xqiS7Kwe; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ff6aaa18e8so1895385a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 11:31:29 -0700 (PDT)
+	s=arc-20240116; t=1745001195; c=relaxed/simple;
+	bh=BFNfCAXgfDy1H6nRZLQIbFDRB827dsSp/614b/HrH88=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=oeYSGd7BVtml3FbIGo4oKRZhHh/KTv334e3KN4F/VHIXAdp4HJ/P/LZpCFFSRxKTmzMhynILehEB5xqcnz7rW7Wbt1FXsBQWmKwLCfPamUoIRAtGbxF4OcrZqHjxYVY7+dTtxWYCf5vVGYmiTKcZ7nigwZ3rhr4d77VbomQf448=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=L5O7QZ+e; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43cfe63c592so24598155e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 11:33:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745001089; x=1745605889; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=R7DfmVsirgcNwyXXhOnkR2OGGl5DWqAfaV1SkVbAhuI=;
-        b=xqiS7Kwevj1HZKPQdCHxR6AxFzi02GraH7CH3PjQGrWLlxyYpez3TBP9Rt0s3fTDVI
-         2oF9eMBi+M3XM4fA5WqH2LkQJvyhhE5fyXfzoZNYf0c7bmIOVwUDKIlvcFQJs02J+lXK
-         aTU3V81XS71LVo4+n+24oRxujFUTQT0Fo3p0/ihmzMs1isfBN4Fv8Nx0caY3tMm5s05q
-         Xl45VD71MUKr2ns5sKaaTpv/tniFTrsVEsALJPzdkjLShGGnFQD86c5pifaLpoNHem80
-         Nqbt7r5zN3jDJkLRoYGslZlkhxX6ReH9g5HBrSw9hV36kOq7gxEbvXHxAGVUDoYdB0ET
-         cdJw==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1745001191; x=1745605991; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iRZ+jgVFwgume6BxLPo2873YNqsDxYM/0lRV47dPLIo=;
+        b=L5O7QZ+eyONOJo3fkO4oGPPllKpO31RSaxKnWXDX391kNnevMrmQoKPV5fdAshyEmb
+         sLNtGaSV/7P8MVeFLyWex8isy2SpVpmqGE/8HN8bdAIafrWa/W1lkKDZJLXr3aSZjITz
+         uSgLEfHYoIJmk18823Cq1GES5mCbkeKFh+a4cTOv8+91KSN3kWpr0pwjCgwraoOE+t7r
+         W+xrfuy+Ivh+9fnzZOQcwS4IKcML9EnRBMqkeEaDlxCr/ZTl12LHTWNxrgPL9GiXLGOP
+         plMonwmoCJnHsPz8gk11GjjG51KhDCGrCsMrMCLbCdJr2eWaas7awOhZbkN5Knjmcbv/
+         66sA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745001089; x=1745605889;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R7DfmVsirgcNwyXXhOnkR2OGGl5DWqAfaV1SkVbAhuI=;
-        b=ZmPyfz6B+o8HEHm6mv61eTzJt14rDwvKnqqsf3dK508qcrnqcgiywZscSCOoOBrRGa
-         ovAAc3i6/PofZtJVXTVr0PGN54A807kv7zWD8C1qhF35VDVPs2iT418NfZUOv1fN65E5
-         IhFhtltrAXeAcAnFM3r7XWRZWLyBR0Do2rqOL1HgVoTYTNVhZC/ebp7NAtESOph/eb9b
-         oOyZcxdqU3GUtb70FEYFgGON6DlmQu03YR2VP29VF8BMWvjIRH42Q4zTEQPKRUHKSNMU
-         TvY1IBsLUScczItujsc65dLqz7wQARcxuFmyIKxk/+6dS8TvytGByNabjkO+bz1j5AOx
-         9Ubw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOqIgTeUskfVqEjrRJTQ8hjU/eYkguEv0XBVh2ubdH2P3o3lazuiZJ6Km9wOfd+0nhD5DDZ21QQ3QD7M8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTJduULNRh4MpmC7MEal4v07pA7RkxsF7iK/bGF8OV4xPMZ9B7
-	W3VXHyvS+uOWJjxGts36PifRMyN9o/lQll1eMxWNyzSfoRz6LKAqDJLEP0CVE7TnKttgoCi4ywp
-	ZTg==
-X-Google-Smtp-Source: AGHT+IEpNnwFWShkgziIFpbN6+F14jL/9zInzy8RZBxLo+hx7H5u1bpirdSXSr81pJ98zQK1RP0G511Zo2w=
-X-Received: from pjbcz8.prod.google.com ([2002:a17:90a:d448:b0:2fa:15aa:4d1e])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:6ce:b0:2f6:dcc9:38e0
- with SMTP id 98e67ed59e1d1-3087ba51b57mr7146208a91.0.1745001089075; Fri, 18
- Apr 2025 11:31:29 -0700 (PDT)
-Date: Fri, 18 Apr 2025 11:31:27 -0700
-In-Reply-To: <20250418173643.GEaAKNq_1Nq9PAYf4_@fat_crate.local>
+        d=1e100.net; s=20230601; t=1745001191; x=1745605991;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iRZ+jgVFwgume6BxLPo2873YNqsDxYM/0lRV47dPLIo=;
+        b=WgsyRmH8OkHAvmLCFAaxjv4VwCFpHL8mQmiZ00H3GpND33/DufvNL4nxXB6/vtuwWM
+         mz1PVyQnuWW6BMNDvFs53TbxDPESYFaWY7xwq9hYM0imhpdNJB0W5nyHb7eSfMvksJtp
+         SS7QuU3dN4ldBLBKqlzG17bLEg0EM0rSGENZOSxHRNFnBToDppV2SrjQ/3uMP1OH2UOg
+         JXZjovxqvP9+xzZIIbLZ/dvDnn1Fq2Z7lMSbpZpxrgn4ZsSOQcIasQQHNjgUH3XPBq+s
+         ReGaSGKf7epjcQrL4a6RP7mhcbeRW+p8BGY+0O2UiU7U2qvnWFJXMiGLmxc63YhjYNdV
+         krFA==
+X-Forwarded-Encrypted: i=1; AJvYcCWfebbJq5ye37o83ciMIHIqG+Etp0p1JTlxdBBbcLcq1ytxhzCAcPE3sWyvnTzU2V7piYsnRilDAb9W2IU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6ftf0Hx12heydE5TI1ve85UNoKY6XoJNtB5GS7+Gf1aaGMds+
+	fwlqbMeqdwQSMfDNRaxuBlxBIMaDE7Y8AscqnYW5QjE1ReS87USu1l+/kBj/Ey7JprA9RWCZLvf
+	R
+X-Gm-Gg: ASbGncvPE7s+GuYQffTKTGF3yVFVUPPRB/cayKRJDDaHHLu+l75EhnRzdus9U7WcgBm
+	dAdGqVXM/GIDFRKaO/Mtr0J+ioXLT/NV+J3pBfCvTBAuNI36tA2qcR98ABTGBytwhx18hJIkCc7
+	xQ0mu4ba1I0JDGk4Nq7F5bldniGsAafH6E47iEY/cQNtLAiaGUFSqSNd/8D2CaByE2pSZ33OSqB
+	P3FwBVUHWYszC4XAfuqCr+hnUiQsI6qbveuUsQ36QaEnFR4OeqR/RcQhB5qYaf6pVrYjSmO4jNI
+	z9GT0tAfk83l3G8BJTgJOHTj2xg3ah/wimzXU5kJXfsqOh0s2yhzzy1B7wdLliDEITxbeV7XpH7
+	paixkinWsFL5ah5zRnQ==
+X-Google-Smtp-Source: AGHT+IGj9S4WRUKZtNodHl0GH1cTBRYlYX+0W8A4QD6dvdXuglhWcvb+rdy1DdVJlqow/SR2YziSIA==
+X-Received: by 2002:a05:600c:190d:b0:43c:ee3f:2c3 with SMTP id 5b1f17b1804b1-4406ab67e15mr30991265e9.7.1745001191034;
+        Fri, 18 Apr 2025 11:33:11 -0700 (PDT)
+Received: from [192.168.0.2] (host-87-15-70-119.retail.telecomitalia.it. [87.15.70.119])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa433429sm3472343f8f.37.2025.04.18.11.33.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Apr 2025 11:33:10 -0700 (PDT)
+From: Angelo Dureghello <adureghello@baylibre.com>
+X-Google-Original-From: Angelo Dureghello <adureghello@baylibre.org>
+Date: Fri, 18 Apr 2025 20:31:59 +0200
+Subject: [PATCH v2] iio: adc: ad7606: fix serial register access
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250331143710.1686600-1-sashal@kernel.org> <20250331143710.1686600-2-sashal@kernel.org>
- <aAKDyGpzNOCdGmN2@duo.ucw.cz> <aAKJkrQxp5on46nC@google.com> <20250418173643.GEaAKNq_1Nq9PAYf4_@fat_crate.local>
-Message-ID: <aAKaf1liTsIA81r_@google.com>
-Subject: Re: [PATCH AUTOSEL 5.10 2/6] x86/cpu: Don't clear X86_FEATURE_LAHF_LM
- flag in init_amd_k8() on AMD when running in a virtual machine
-From: Sean Christopherson <seanjc@google.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Pavel Machek <pavel@denx.de>, Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org, Max Grobecker <max@grobecker.info>, Ingo Molnar <mingo@kernel.org>, 
-	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com, 
-	x86@kernel.org, thomas.lendacky@amd.com, perry.yuan@amd.com, 
-	mario.limonciello@amd.com, riel@surriel.com, mjguzik@gmail.com, 
-	darwi@linutronix.de
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250418-wip-bl-ad7606-fix-reg-access-v2-1-8b1ade67e185@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIAJ6aAmgC/42NQQ6CMBBFr0Jm7Zi2IFVW3sOwKMMUJkEgrUEJ4
+ e5WTuDyvfy8v0HkIByhyjYIvEiUaUxgThlQ78aOUdrEYJS5qEJbfMuMzYCutaUq0csHA3foiDh
+ GtOZGRhf22moPKTEHTosj/6gT9xJfU1iPt0X/7J/hRaNGRZwX2ufkKb83bh2kCXym6Qn1vu9fV
+ PkFAssAAAA=
+X-Change-ID: 20250417-wip-bl-ad7606-fix-reg-access-729c21478d1f
+To: Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>, Beniamin Bia <beniamin.bia@analog.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Angelo Dureghello <adureghello@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1424;
+ i=adureghello@baylibre.com; h=from:subject:message-id;
+ bh=c/1c0SGQH8ay28jUfCcMDnmohaa6iaUAM5O7MoDjGZU=;
+ b=owGbwMvMwCXGf3bn1e/btlsznlZLYshgmjX/c7dNWIjfl3+tj1cnh6wsft6y9Pwj7nlqdmsOz
+ uh6eMtVqKOUhUGMi0FWTJGlLjHCJPR2qJTyAsbZMHNYmUCGMHBxCsBEuEUZ/kdczX5jdP38+7Dw
+ 18xCbPNl9COs2b7tXjJltbU9r0Vt+C6G/16HeHar6LxZYvIwz2PvEilzy1Wle66Hv+ldKNRit7m
+ Bnw8A
+X-Developer-Key: i=adureghello@baylibre.com; a=openpgp;
+ fpr=703CDFAD8B573EB00850E38366D1CB9419AF3953
 
-On Fri, Apr 18, 2025, Borislav Petkov wrote:
-> On Fri, Apr 18, 2025 at 10:19:14AM -0700, Sean Christopherson wrote:
-> > Uh, and the hypervisor too?  Why is the hypervisor enumerating an old K8 CPU for
-> > what appears to be a modern workload?
-> > 
-> > > I'd say this is not good stable candidate.
-> > 
-> > Eh, practically speaking, there's no chance of this causing problems.  The setup
-> > is all kinds of weird, but AIUI, K8 CPUs don't support virtualization so there's
-> > no chance that the underlying CPU is actually affected by the K8 bug, because the
-> > underlying CPU can't be K8.  And no bare metal CPU will ever set the HYPERVISOR
-> > bit, so there won't be false positives on that front.
-> > 
-> > I personally object to the patch itself; it's not the kernel's responsibility to
-> > deal with a misconfigured VM.  But unless we revert the commit, I don't see any
-> > reason to withhold this from stable@.
-> 
-> I objected back then but it is some obscure VM migration madness (pasting the
-> whole reply here because it didn't land on any ML):
-> 
-> Date: Tue,  17 Dec 2024 21:32:21 +0100
-> From: Max Grobecker <max@grobecker.info>
-> To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
->  Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: Max Grobecker <max@grobecker.info>, x86@kernel.org
-> Subject: Re: [PATCH v2] Don't clear X86_FEATURE_LAHF_LM flag in init_amd_k8()
->  on AMD when running in a virtual machine
-> Message-ID: <d77caeea-b922-4bf5-8349-4b5acab4d2eb>
-> MIME-Version: 1.0
-> Content-Transfer-Encoding: 8bit
-> Content-Type: text/plain; charset=utf-8
-> 
-> Hi,
-> 
-> sorry for my late response, was hit by a flu last days.
-> 
-> On Tue, 10 Dec 2024 13:51:50 +0100, Borislav Petkov wrote:
-> > Lemme get this straight: you - I don't know who "we" is - are running K8
-> > models in guests? Why?
-> 
-> Oh, I see, I missed to explain that, indeed.
-> 
-> This error happens, when I start a virtual machine using libvirt/QEMU while 
-> not passing through the host CPU. I do this, because I want to be 
-> able to live-migrate the VM between hosts, that have slightly different CPUs.
-> Migration works, but only if I choose the generic "kvm64" CPU preset to be
-> used with QEMU using the "-cpu kvm64" parameter:
->  
->   qemu-system-x86_64 -cpu kvm64
->  
-> I also explicitly enabled additional features like SSE4.1 or AXV2 to have as
-> most features as I can but still being able to do live-migration between hosts.
->   
-> By using this config, the CPU is identified as "Common KVM processor"
-> inside the VM:
-> 
->   processor       : 0
->   vendor_id       : AuthenticAMD
->   cpu family      : 15
->   model           : 6
->   model name      : Common KVM processor
-> 
-> Also, the model reads as 0x06, which is set by that kvm64 CPU preset,
-> but usually does not pose a problem.
+From: Angelo Dureghello <adureghello@baylibre.com>
 
-IMO, this is blatantly a QEMU bug (I verified the behavior when using "kvm64" on AMD).
-As per QEMU commit d1cd4bf419 ("introduce kvm64 CPU"), the vendor + FMS enumerates
-an Intel P4:
+Fix register read/write routine as per datasheet.
 
-        .name = "kvm64",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 15,
-        .model = 6,
+When reading multiple consecutive registers, only the first one is read
+properly. This is due to missing chip select deassert and assert again
+between first and second 16bit transferm as shown in the datasheet
+AD7606C-16, rev 0, figure 110.
 
-Per x86_cpu_load_model(), QEMU overrides the vendor when using KVM (at a glance,
-I can't find the code that actually overrides the vendor, gotta love QEMU's object
-model):
+Fixes: f2a22e1e172f ("iio: adc: ad7606: Add support for software mode for ad7616")
+Reviewed-by: David Lechner <dlechner@baylibre.com>
+Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+---
+Changes in v2:
+- improve bug description.
+- Link to v1: https://lore.kernel.org/r/20250417-wip-bl-ad7606-fix-reg-access-v1-1-0ce341f3cfc3@baylibre.com
+---
+ drivers/iio/adc/ad7606_spi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-    /*
-     * vendor property is set here but then overloaded with the
-     * host cpu vendor for KVM and HVF.
-     */
-    object_property_set_str(OBJECT(cpu), "vendor", def->vendor, &error_abort);
+diff --git a/drivers/iio/adc/ad7606_spi.c b/drivers/iio/adc/ad7606_spi.c
+index 997be483ebb93293481b922e13ece4edb47e940a..bd05357a542cf7234d5bb6b718829d6b720262cd 100644
+--- a/drivers/iio/adc/ad7606_spi.c
++++ b/drivers/iio/adc/ad7606_spi.c
+@@ -103,7 +103,7 @@ static int ad7606_spi_reg_read(struct ad7606_state *st, unsigned int addr)
+ 		{
+ 			.tx_buf = &st->d16[0],
+ 			.len = 2,
+-			.cs_change = 0,
++			.cs_change = 1,
+ 		}, {
+ 			.rx_buf = &st->d16[1],
+ 			.len = 2,
 
-Overriding the vendor but using Intel's P4 FMS is flat out wrong.  IMO, QEMU
-should use the same FMS as qemu64 for kvm64 when running on AMD.
+---
+base-commit: 8dc6b228d746b1a900bed28568defb2266fa4c43
+change-id: 20250417-wip-bl-ad7606-fix-reg-access-729c21478d1f
 
-        .name = "qemu64",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_AMD,
-        .family = 15,
-        .model = 107,
-        .stepping = 1,
-
-Yeah, scraping FMS information is a bad idea, but what QEMU is doing is arguably
-far worse.
-
-> The original vendor id of the host CPU is still visible to the guest, and in
-> case the host uses an AMD CPU the combination of "AuthenticAMD" and model 0x06
-> triggers the bug and the lahf_lm flag vanishes.
-> If the guest is running with the same settings on an Intel CPU and therefore 
-> reads "GenuineIntel" as the vendor string, the model is still 0x06, but also 
-> the lahf_lm flag is still listed in /proc/cpuinfo.
-> 
-> The CPU is mistakenly identified to be an AMD K8 model, while, in fact, nearly
-> all features a modern Epyc or Xeon CPU is offering, are available.
+Best regards,
+-- 
+Angelo Dureghello <adureghello@baylibre.com>
 
 
