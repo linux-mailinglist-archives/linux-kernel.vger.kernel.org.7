@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-611308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CE2DA94016
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 00:59:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49044A94017
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 00:59:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2BFE7A7B6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 22:58:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62CED461794
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 22:59:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB114253B75;
-	Fri, 18 Apr 2025 22:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB41C254841;
+	Fri, 18 Apr 2025 22:59:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="TPuQTPt6"
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="O5NQWVHM"
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A22E6253925
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 22:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5808D25393D
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 22:59:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745017159; cv=none; b=WMuDmE4OG7ZRMkIB+tPat4OPhrMuHvQfGWbaOaPU6s0CM3A64X0y7o/GeGGiQW/7UGeMQuwwmImbwMeh0lGHuyJCPr4Qg3twv37+mmN00dZu3xkXCCfjktcDAO+gCMdfusFDYyS0qH+KD19Qlhhm57VGNDaxm374ZtLahq26lCI=
+	t=1745017160; cv=none; b=uofpjPYiCXhK+3fUaQJP3m+Zgp1+J/5fY0oEAudc8aa9Ze7i9ZhyMN0JJvIHGtBaZG4bMMYX3JcUcvsYfilx4wB5y2MkWAMrRRMKrsaeCQsbJl2F0eZRBWR2ixC/V1dmzGUSmCQf08Z55rHnxsblc0TJ3hs0k044/kudj8ma4/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745017159; c=relaxed/simple;
-	bh=yR1qdfXVdfkGN0fnFpgmDF3GpryusLxet4K3aH/uiM0=;
+	s=arc-20240116; t=1745017160; c=relaxed/simple;
+	bh=AhweVhEH25d8wvLOV8U3tgjVpTfYu6HqQRzrCrL17tE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LEdS+HDrqqDmV64l3RX0Qm3tqVQvJwOFUJCwEKREqpyPNLY48z20EMrngYXf6jsZ0lL6/Mc2KLGtVoBmu8ZV8KAFNBf+xjQM7+nnJVfLrAIPuL8Dj1gxivmBO/Yi9xCu29A+Y4mDmc/kKAWths0KDizeF8RORayuYzT0JsdTFOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=TPuQTPt6; arc=none smtp.client-ip=209.85.210.51
+	 In-Reply-To:To:Cc; b=AiRX/Y0keAbmSxQ5vQYE0PswdBl3HxHObUZ0JiZZ7XY7g62NE8jdZnMgtnrMlcyBDW40tPgdj+/QuxFEeGeBJKAX64Y3fHn4NwyY6Hs+TheEKpDiXqrzigt5l3Foybuo9ktMTvVO135A5W+lnUjL/Lc1RlUCumAaVYuM03mKQd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=O5NQWVHM; arc=none smtp.client-ip=209.85.161.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-7272f9b4132so1745712a34.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 15:59:16 -0700 (PDT)
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-605f7d3215cso878543eaf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 15:59:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1745017155; x=1745621955; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1745017157; x=1745621957; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=fDNMT7Ge9Z+4YSxWHFq5/Umu+PV5vrF6xXnHGQ6evEA=;
-        b=TPuQTPt6xO7TX1JnW/lyOBF7K5v7kVYDs7bK2DQKc3h1IsaLzjV9S/bA1y+lNWy5ZT
-         zaJcGc0p+R3Mw2NWc/944qMNsE+1SZu7lXS3zEybb9CVYsJA7iiuhuc9KWDYnYTEVfEH
-         Bbz7xPmKixlxaRHdg/GM8N5oDQyI6PogQciHvpJUYT5YviWz42N+BXbvdAls5kk/lHiS
-         55oPPTjY2NiB8EIFVSmzgfDV6xGIxvl/jiwYjXX/530wWnX/+658Bs2WGGZE37EDvwWl
-         GWxXMTW4Ief4Bw+yqVjRdvarmKIwudEF2o6wRFih7hmsvo5Tyam3HveWVTUIHj9JSstV
-         bokw==
+        bh=Qcd8b+sFJozfLFSGqyv9tVesse4R4meJLMxQxoDs5cY=;
+        b=O5NQWVHMQB3pz0Hxer+nJY2ILrk4n7S9Nrd+2Lntx/1EG0BRuIeFcuCmygnie05r9z
+         RIsKgCyizuscR5q9h3UWNxT/citM4rvNzVrY4kLwMA97s/OY85aNIXnipu3xlLf3SWmg
+         9sAP7ZkynEaptmX7hZy75vBWhS+IfvRzehSMzRO1i+DYb+DjCp5KdB3NFKWj1N5t2lAx
+         btxMX3UvzH/ILh/U9xI9ZV+F7yyefdD29zJAAtot8XJhCDIAu993ZqTiphgsDa5iU9pO
+         Lwv3v4dIGs5JjvHkO9s5J4TlIPg8LH4SuHe9gzoNhFd+4HoHU6TTHNx0P5C6MBCsiKDV
+         s8ZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745017155; x=1745621955;
+        d=1e100.net; s=20230601; t=1745017157; x=1745621957;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fDNMT7Ge9Z+4YSxWHFq5/Umu+PV5vrF6xXnHGQ6evEA=;
-        b=mKCxiqMVcdnmyGSreviC0U/x7eli4D54n9UtyqY1pvS/GOCSKfpqA8qAekjg0TeLzj
-         ppjEyV5HJNBa+eOLUrHxoHqkm7B5va1VkiG8N2gc5uXjbfMe72H3+pMwNhgX71LMKTAK
-         4saO61fPLoIwGh0MtOfOowsawBm9Bon79UKaXd4DXGXPgMzJi5XeWS3uowX3Y1kYuYS1
-         /4Jt7Ks5/D4FJo1ziMWlkLViqiHb1jzdodoB0ewhykp2eD1ScZGdNgGz0Ph/3/Cmdc7x
-         /sOojc5bQGjQU4BmdLq7TZ+6R/V6KP8bEFSrPznlk0Z0H3ekVV66uVVd7eUX6baUkkmO
-         9USQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVwwGaWkhUp0wh4t8yrrGik6/uw4f7RDZQuei3qpAxapIP4kshS4HvR37lEe76J3Oq0hLmxNfIwyhjduyg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/kafUXTcqNQj+k9tNILV+dVZTkgpDCq38tyW5LVNNIaGnuPvI
-	hLcWJxyoGeFw7Eqt7J/phVz22RgOMeARPnS4mx+UPCxmN0IhoBvPxhL0/82las0=
-X-Gm-Gg: ASbGncum8mZoLfOhaiGrdqhFYgiBzSBA6ptuW6gQUx0PYJ3I3p1OmUiQFV2VBnf5kaW
-	sQ3hvSeEnR+BCaGci+VY9i3eLKEqy7S3XD5oxWpLyZ6QkO1em9T4PJlL+bmcG/KmWCDj/EbAF+I
-	XUdd05QVloKOmLGh4+2YZgQD0gfxxvS7FBx3Gu1hbVoK1L6s85C7VULwlPwHl3v2S1+dstdLG47
-	/eBI59wqE+YIcXBWzIvFJb3mphE0y+AC+isK5R9shOTaIdiIquUFSJdg/nyxVnHmicwpwkAo2tF
-	M1vM5FBwmXyN0W5gEViJMDJcLuAlN2CP3McFb4OZg6QUzHS85y2XZ8DIbQ==
-X-Google-Smtp-Source: AGHT+IFdZWM25OSHAtQes7EmpuJa7tXiSJHLyfFyew45Pxr9CuiS609PKuCNaI5AO0LYucuoFbpSlQ==
-X-Received: by 2002:a05:6830:6003:b0:72b:782a:56d7 with SMTP id 46e09a7af769-7300634a804mr2571319a34.23.1745017155668;
-        Fri, 18 Apr 2025 15:59:15 -0700 (PDT)
+        bh=Qcd8b+sFJozfLFSGqyv9tVesse4R4meJLMxQxoDs5cY=;
+        b=enlrUhqifxMvrEHttX6SNTKNN4/9Nc0UdQFR3mXLMzDvcQ1Kd8l1rb8CwphMovqrhS
+         4Nbxo/PLHy0KCejRhglheUvu6guyp06YblsTiHvOhvNsHZXCuc4uMby1Jeka3L3pck8b
+         YrVgqoudeoX87BzjoEK2JMHAHQZWQvqaWydSDpgQTEfYlgl8AUKl/cyGV4l94dgoDWP0
+         8EHSp2A4jVE1BUO9pT57CR2p3ixoPhjQas3zEG01V5c0OuwAN0UZ8wdUWTaHJbH1pdKX
+         sxusO3b9QQiQXkwMJyEdptfzVhTC+JZalZ/5je5VhwmA+ZMi/kEuC2UTnQEq8yjCg9+9
+         R7AQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWtMmUAd2V3Hw3P12AWFEflnN0GhY8i3pv30xzpPxZEhYyFtFxF0IP3tIAyd3ppcIlEYC4tDFtxOlflIaA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlLZv2pyWn85nVbHyTgv869gPpPoOzXNie3iS244fHmY1YKa01
+	PMppTOWDwkSxcFjhINxZiSQyNbO2ojTTYf6WcoAVDKcyzWKENyKx6Af4hBLVGGk=
+X-Gm-Gg: ASbGnctlbpliAj45If36Y58Fbt+0YmI5gpqlR7e5oWQMQ6XyESevt4rsuzKnwOuBMKm
+	4Fe6LQe3SU3XM73i7tsQGAF+yn3wrmuUzaP3HQAEy0ZNGqP0w6FfVtaGYic3XjvgM6BN/rV3aBB
+	qJUpJrIrWaVORr6+59JX4V9F2K7lanEqc7K0bytVoqGv0KKyZgNIrVgB+M72eSUqJlNFXyUwaym
+	mnAokjlbMFhrPpPLitLZ74BrziqrFWgxxPCl6+DHLSCOrfQDOcAeb3PkW/BxE/HTRUR9BiCGsSN
+	CTquV9ecaF/bh4R9HJKNk3rk2NI9yEBsBCttV40yh8nPXfg=
+X-Google-Smtp-Source: AGHT+IEqI7qvS/d0QPEDtMVFvFJPfknYM8BmtKsJXX8Dihq16YiQi+FdZpmjzCPfTelnznsjB0NpXw==
+X-Received: by 2002:a05:6870:830e:b0:2d5:296d:4ed4 with SMTP id 586e51a60fabf-2d5296d5a3bmr2074062fac.28.1745017157331;
+        Fri, 18 Apr 2025 15:59:17 -0700 (PDT)
 Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:dcdf:46e0:18e5:c279])
         by smtp.gmail.com with ESMTPSA id 46e09a7af769-730047ca051sm500187a34.36.2025.04.18.15.59.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Apr 2025 15:59:15 -0700 (PDT)
+        Fri, 18 Apr 2025 15:59:16 -0700 (PDT)
 From: David Lechner <dlechner@baylibre.com>
-Date: Fri, 18 Apr 2025 17:58:32 -0500
-Subject: [PATCH 1/4] iio: introduce IIO_DECLARE_BUFFER_WITH_TS
+Date: Fri, 18 Apr 2025 17:58:33 -0500
+Subject: [PATCH 2/4] iio: adc: ad4695: use IIO_DECLARE_BUFFER_WITH_TS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,7 +82,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250418-iio-introduce-iio_declare_buffer_with_ts-v1-1-ee0c62a33a0f@baylibre.com>
+Message-Id: <20250418-iio-introduce-iio_declare_buffer_with_ts-v1-2-ee0c62a33a0f@baylibre.com>
 References: <20250418-iio-introduce-iio_declare_buffer_with_ts-v1-0-ee0c62a33a0f@baylibre.com>
 In-Reply-To: <20250418-iio-introduce-iio_declare_buffer_with_ts-v1-0-ee0c62a33a0f@baylibre.com>
 To: Jonathan Cameron <jic23@kernel.org>, 
@@ -92,62 +92,58 @@ To: Jonathan Cameron <jic23@kernel.org>,
  Michael Hennerich <Michael.Hennerich@analog.com>
 Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1828; i=dlechner@baylibre.com;
- h=from:subject:message-id; bh=yR1qdfXVdfkGN0fnFpgmDF3GpryusLxet4K3aH/uiM0=;
- b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBoAtkqyXb9vDxQstUInEUU743mIZXYVXrEgfvzc
- ak8VdCOqC6JATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaALZKgAKCRDCzCAB/wGP
- wDZFB/90kaHk9mlw5yS5cTge2wjVVMXABttc+mogszsnZWm1GtEfulL8mUuzhfYg+SWsxdkA/oH
- pv0LXPUHJQoQGeC7BBpLdJ3DE1G8n5PeTEfMUqGCNt0oyF2yuq6yk1MYHWuDz1Lb+sF9A7T/ZhT
- a+iD6i86h2EADCy/GXNzs62lqcT3Qor9HeLcFzFFMqb71N2ShhOVecLdNdVnikmy+JZfHuvSd4b
- YM6vJf9QO2RBccB9lLCUjyRcYNDqEAYQbtsKNf9nqCmVE2woGQTprHrMt8btY9RuB0RRKxCijMO
- 3wjgARlY2jxqGUNK2lpUB/pDiSxFoz+/ZAyUlhGnb3nay+j1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1621; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=AhweVhEH25d8wvLOV8U3tgjVpTfYu6HqQRzrCrL17tE=;
+ b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBoAtkwbaokaUxwrPZaLomgNtqgyv4GS7ATOqORj
+ 0P+ER/gwqaJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaALZMAAKCRDCzCAB/wGP
+ wFEaB/9kNMjrqZsGk4OBPqABJHXa9sFYcNgxYZ2NRZNHahhqWZTGvAnhd3VEGXSd7fSGIRIQhga
+ 7AXUpuemh2Vi4EfeFeqwsQpLK6tkDk/9WiU0SbUqU9T6gaZb+bRvy7ws/QEduYEBZUR6peuPa07
+ xs8tFTOXjWlNhf2SgeVO1YGSZmuJL+TepRK4TzmqKuH5Nzy7Z8xBHFW+T5HdV3m8lP/UbuWj/kp
+ 6iMmxNtFOY4pCueCqHyGHG7YEL29rH+VbNfN3AZkFRyzxGFV1f7yIBwgNh8zg36Zer++S7xuzV5
+ ALMD9JKMw5wg4pzqXjpKFe+DQtHhh6H7vs3esTIAbsDaVsNr
 X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
  fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-Add a new macro to help with the common case of declaring a buffer that
-is safe to use with iio_push_to_buffers_with_ts(). This is not trivial
-to do correctly because of the alignment requirements of the timestamp.
-This will make it easier for both authors and reviewers.
+Use IIO_DECLARE_BUFFER_WITH_TS to declare the buffer that gets used with
+iio_push_to_buffers_with_ts(). This makes the code a bit easier to read
+and understand.
+
+AD4695_MAX_CHANNEL_SIZE macro is dropped since it was making the line
+too long and didn't add that much value.
+
+AD4695_MAX_CHANNELS + 2 is changed to AD4695_MAX_CHANNELS + 1 because
+previously we were overallocating. AD4695_MAX_CHANNELS is the number of
+of voltage channels and + 1 is for the temperature channel.
 
 Signed-off-by: David Lechner <dlechner@baylibre.com>
 ---
- include/linux/iio/iio.h | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/iio/adc/ad4695.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/iio/iio.h b/include/linux/iio/iio.h
-index 638cf2420fbd85cf2924d09d061df601d1d4bb2a..f523b046c627037c449170b7490ce2a351c6b9c0 100644
---- a/include/linux/iio/iio.h
-+++ b/include/linux/iio/iio.h
-@@ -7,6 +7,7 @@
- #ifndef _INDUSTRIAL_IO_H_
- #define _INDUSTRIAL_IO_H_
+diff --git a/drivers/iio/adc/ad4695.c b/drivers/iio/adc/ad4695.c
+index 68c6625db0d75f4cade7cb029e94191118dbcaa0..9862ff99642b61db42b16b797ae046efd99c2811 100644
+--- a/drivers/iio/adc/ad4695.c
++++ b/drivers/iio/adc/ad4695.c
+@@ -106,8 +106,6 @@
  
-+#include <linux/align.h>
- #include <linux/device.h>
- #include <linux/cdev.h>
- #include <linux/compiler_types.h>
-@@ -770,6 +771,21 @@ static inline void *iio_device_get_drvdata(const struct iio_dev *indio_dev)
- 	return dev_get_drvdata(&indio_dev->dev);
- }
+ /* Max number of voltage input channels. */
+ #define AD4695_MAX_CHANNELS		16
+-/* Max size of 1 raw sample in bytes. */
+-#define AD4695_MAX_CHANNEL_SIZE		2
  
-+/**
-+ * IIO_DECLARE_BUFFER_WITH_TS() - Declare a buffer with timestamp
-+ * @type: element type of the buffer
-+ * @name: identifier name of the buffer
-+ * @count: number of elements in the buffer
-+ *
-+ * Declares a buffer that is safe to use with iio_push_to_buffer_with_ts(). In
-+ * addition to allocating enough space for @count elements of @type, it also
-+ * allocates space for a s64 timestamp at the end of the buffer and ensures
-+ * proper alignment of the timestamp.
-+ */
-+#define IIO_DECLARE_BUFFER_WITH_TS(type, name, count) \
-+	type name[ALIGN((count), sizeof(s64) / sizeof(type)) \
-+		  + sizeof(s64)/ sizeof(type)] __aligned(sizeof(s64))
-+
- /*
-  * Used to ensure the iio_priv() structure is aligned to allow that structure
-  * to in turn include IIO_DMA_MINALIGN'd elements such as buffers which
+ enum ad4695_in_pair {
+ 	AD4695_IN_PAIR_REFGND,
+@@ -162,8 +160,8 @@ struct ad4695_state {
+ 	struct spi_transfer buf_read_xfer[AD4695_MAX_CHANNELS * 2 + 3];
+ 	struct spi_message buf_read_msg;
+ 	/* Raw conversion data received. */
+-	u8 buf[ALIGN((AD4695_MAX_CHANNELS + 2) * AD4695_MAX_CHANNEL_SIZE,
+-		     sizeof(s64)) + sizeof(s64)] __aligned(IIO_DMA_MINALIGN);
++	IIO_DECLARE_BUFFER_WITH_TS(u8, buf, (AD4695_MAX_CHANNELS + 1) * 2)
++		__aligned(IIO_DMA_MINALIGN);
+ 	u16 raw_data;
+ 	/* Commands to send for single conversion. */
+ 	u16 cnv_cmd;
 
 -- 
 2.43.0
