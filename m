@@ -1,99 +1,140 @@
-Return-Path: <linux-kernel+bounces-610497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4FFCA935A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 11:56:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17616A935A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 11:57:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DDC77AE80D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 09:55:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A1E3465C6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 09:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20790270ED5;
-	Fri, 18 Apr 2025 09:56:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C9E2741C5;
+	Fri, 18 Apr 2025 09:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nV2Dgi2j"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b="eQYHPr/f"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57170270EAF
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 09:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7887426FA7D
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 09:56:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744970179; cv=none; b=bfzUQVEDJsL061EsIXtB3z6OsnPn8r1P465nUVYa8RnDCi9Wx4/puXMR6fyTW8JyQg+pVPJOHkZyVpiNsiVql1nDqHadgqks/C56S6AIOwTPAp23TV2UUhehCVaB1ohrKz5g7wFNPenfmymaKNiuDpDw/ej6xbY0WhpIDmmDeLA=
+	t=1744970197; cv=none; b=PTF1IpvZ+IlSj+jN5+RCs2Uy2bzrVPUaUZDOdfgWpWkTNpszf7fUFbxs3efa02E21Gl5nEBzVtF1nD2KXeiXGoqiusShOp8Xk7mLOIZKyluXz8T8pLZ1gBdkcsQcIJ9xbeuCvI0mmHvZ+TArLRbAcetUry6vWaUbTK1aLOtMsDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744970179; c=relaxed/simple;
-	bh=iIlIRJaJ8Nk9baLTAldhAKHTfIUQ0a8HFvaz7lfJOqM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ubLJalwgw/VF9kGF209UuBniVEs4GmGp1QNMCC/4BrKoDAyEJAzuEgL/lu1sf9WMzSuWt61qVoV67vlYuVn25UHeeh4bsYCVBkX45s9xsbdsBNOkQI3BkTSpjGUCJsklbDM4cm1h7eEmMdvJGnAZuXpEoecrX0xCIG9crklsGyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nV2Dgi2j; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1744970175;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oGO08xLxOYFwCfCougkQzxDVIQkhT4UpNDlADOdXRwg=;
-	b=nV2Dgi2jGfZeEa/GVr3gLRUCxK0hfFB3KQB52i0/xewU0X2qg90lCUqafrPQ1jdjDA/q/a
-	IXA6abaerCkiLduWWL09cymItVyH2TSF1JMDiEVOBU79YjSuQrM0mAjAAIwxNNaWRwfFut
-	5vSsZWlsbnYoUItGRJiDPmaD5b+OUL8=
-From: Ye Liu <ye.liu@linux.dev>
-To: akpm@linux-foundation.org,
-	nao.horiguchi@gmail.com,
-	linmiaohe@huawei.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com,
-	david@redhat.com,
-	harry.yoo@oracle.com,
-	riel@surriel.com,
-	vbabka@suse.cz,
-	liuye@kylinos.cn,
-	ye.liu@linux.dev
-Subject: [PATCH v2 2/2] mm/rmap: fix typo in comment in page_address_in_vma
-Date: Fri, 18 Apr 2025 17:56:00 +0800
-Message-Id: <20250418095600.721989-3-ye.liu@linux.dev>
-In-Reply-To: <20250418095600.721989-1-ye.liu@linux.dev>
-References: <20250418095600.721989-1-ye.liu@linux.dev>
+	s=arc-20240116; t=1744970197; c=relaxed/simple;
+	bh=hM1nua8IMu7YUoSgs1TX0rQTKLFRsIjo49Zlk4QyWcM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JS1DoxQ/9zGjcdK4Zs2S4AWoFPsJy07fQdLslIj8Z4NiO8IgHzv3QJUZH+7fq0Q7rKLVZHSfsO9yQywwDvaxg0jGRlSdc+xR0/FAyHsGBEldLLQ/n9fcsykrVMfK0jyTzfikM5llDTnBbEPm3qWBRSoT21tohns3eaM1IUvzhUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at; spf=pass smtp.mailfrom=sigma-star.at; dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b=eQYHPr/f; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigma-star.at
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43d0782d787so12047865e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 02:56:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sigma-star.at; s=google; t=1744970192; x=1745574992; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wKwnVUZzWyLWE8JyyGAoHutnjyrjVjeY7Q2Qvd5+NgI=;
+        b=eQYHPr/ftDkNpgn41kCCRqmwO7GpyO9TE1asGYnHyzOmIKzsv3i0Vp52o/2M/93yTn
+         NaCBp+9jLdgm7bn8xeXow7IJMxJbmoaLEwAaPtR0UNKDdQWRsEXOvBoKcwrAGguC7cKg
+         zHNnXxreTyDXmed0Lq+ULpZF9F6miRrPtlOn9tsRhRCwLjYGMfq6dPm28nAIYWq2VIXP
+         RWrO13RibQorbDa3wbDP+CcSs/IYF3HeoevPH4CP1jmc2g437epN4UvpqhtTb5OB041H
+         HHTP+XTdk9LyrTGgX7XBjpV6tB2U5/QDeWJYXfF0ZXu/zFmwDENe5xvyfPeabLYf96Sf
+         cPnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744970192; x=1745574992;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wKwnVUZzWyLWE8JyyGAoHutnjyrjVjeY7Q2Qvd5+NgI=;
+        b=SQWm++3VUTYqm8tfFNyYgpU7y+2LTZApCOFabO9dLGEz7fl+B530FRpPIGo1yb2qQm
+         VviCKJumsMpbubJZxk/CfWNZ5lrV0MJqkwrX/NcijJeoWqvaxQMfS2xWQ6roCzSlBKB9
+         TkWOisiKmzgrjORPBpObpe2m+n6SVVjatE+yNM9YYCzGeJRXRo/92FPC4AuVftelJegB
+         N5wUnjsFl0o1bDRkx8MEEf/xvfIyXJoFldL2H5xoA+mtcNSb/gpX+ZyvPvJLidr5ssQJ
+         4GAqskGA9A3HQY+v1bjJDUaSz8A6vCKiudwkJJnDYSOX64NdY8ZxIScERKoy1Z3tBBz6
+         1oDA==
+X-Forwarded-Encrypted: i=1; AJvYcCXvRjiJfpXDsyp91IIUmrpkfcMSId2FMEer84Qm621RBW7OB48PrUpwT0TkTP5OqZimBjiy7pTlzv8p8u0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuDUstcycAbFz5+HBanNqkR9oKycZpinuxIj/NdWbGygRevG2K
+	MrDlO7WBQn7/b+NtRdf96zr/OvPhRoSflYXTxAtinoO1NlItj3LTzXwathGYCv0=
+X-Gm-Gg: ASbGncvzjLVyxqVE2lD/bHq6F2OvAKOKRotea7m9fessWvV6PIUQ1WBW8Ryb7BEEUmD
+	ROTACF8M1wJhqEF163qLuJnYJZSnh+tKcSewzmohM1Z2CaWy/bKdmYZHo+H8YPgNFe9uHcFcx6X
+	HFyY1jkFyvtDx2f1CC7t2RBqpaEEN3irAfQq6PWN2rzxE6xJRojd92SKi2tuyKmi0x4kBptQLjI
+	5sNfI0O2WByyFluLVzGFKg5Zcww34TheHAQRiNEqgdzNR+8ORS0mmhUEE10hrwApKTnHGJTauR5
+	Fkztl4iSmW/vG+vnnl/Fk1JuDHPHkgeZwdOAUYG+Ro9QIp63rD5RjVkNoBTE6reHwdxZmCv2hgd
+	dbDuWHglwJ6pUHbz4aDw=
+X-Google-Smtp-Source: AGHT+IG9b1OB3VsBXUNUUdwj0UHGJGJRVzsWYf3XpNWMufy6eEpIMx2UZrm1XP7AbfDFr7UroQvA0A==
+X-Received: by 2002:a5d:6d88:0:b0:39c:2669:d7f4 with SMTP id ffacd0b85a97d-39efbad7d40mr1549867f8f.43.1744970192344;
+        Fri, 18 Apr 2025 02:56:32 -0700 (PDT)
+Received: from somecomputer (84-115-238-41.cable.dynamic.surfer.at. [84.115.238.41])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa493124sm2269912f8f.68.2025.04.18.02.56.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Apr 2025 02:56:32 -0700 (PDT)
+From: Richard Weinberger <richard@sigma-star.at>
+To: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Richard Weinberger <richard@nod.at>, kch@nvidia.com, sagi@grimberg.me,
+ hch@lst.de, upstream+nvme@sigma-star.at, Damien Le Moal <dlemoal@kernel.org>
+Subject: Re: [RFC PATCH] nvmet: Make blksize_shift configurable
+Date: Fri, 18 Apr 2025 11:56:30 +0200
+Message-ID: <8418057.aG60p0z9Xu@anvil>
+In-Reply-To: <0e61c6e9-10bc-4272-b446-31e0d67547ce@kernel.org>
+References:
+ <20250418090834.2755289-1-richard@nod.at>
+ <0e61c6e9-10bc-4272-b446-31e0d67547ce@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-From: Ye Liu <liuye@kylinos.cn>
+On Freitag, 18. April 2025 11:37 'Damien Le Moal' via upstream wrote:
+> > +	if (!ns->blksize_shift)
+> > +		ns->blksize_shift =3D blksize_bits(bdev_logical_block_size(ns->bdev)=
+);
+>=20
+> If the user set logical block size is smaller than the block dev logical =
+block
+> size, this is not going to work... No ? Am I missing something ?
 
-Fixes a minor typo in the comment above page_address_in_vma():
-"responsibililty" → "responsibility"
+Likely, yes.
+TBH, I'm not sure whether it makes actually sense for the bdev case to make
+blksize_shift configurable.
+The case I see most benefit is the backing file case.
 
-Signed-off-by: Ye Liu <liuye@kylinos.cn>
----
- mm/rmap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> > +	if (!ns->blksize_shift) {
+> > +		/*
+> > +		 * i_blkbits can be greater than the universally accepted
+> > +		 * upper bound, so make sure we export a sane namespace
+> > +		 * lba_shift.
+> > +		 */
+> > +		ns->blksize_shift =3D min_t(u8,
+> > +				file_inode(ns->file)->i_blkbits, 12);
+>=20
+> This will work for any block size, regardless of the FS block size, but o=
+nly if
+> ns->buffered_io is true. Doesn't this require some more checks with regar=
+ds to
+> O_DIRECT (!ns->buffered_io case) ?
 
-diff --git a/mm/rmap.c b/mm/rmap.c
-index b509c226e50d..a9eed8981e18 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -774,7 +774,7 @@ static bool should_defer_flush(struct mm_struct *mm, enum ttu_flags flags)
-  * @vma: The VMA we need to know the address in.
-  *
-  * Calculates the user virtual address of this page in the specified VMA.
-- * It is the caller's responsibililty to check the page is actually
-+ * It is the caller's responsibility to check the page is actually
-  * within the VMA.  There may not currently be a PTE pointing at this
-  * page, but if a page fault occurs at this address, this is the page
-  * which will be accessed.
--- 
-2.25.1
+Good catch. I'll add a check.
+
+It's also worth discussing whether we should limit blksize_shift to a speci=
+fic
+range. Right now, any shift is accepted, and it is up to the user to
+use a sane value.
+
+Thanks,
+//richard
+
+=2D-=20
+=E2=80=8B=E2=80=8B=E2=80=8B=E2=80=8B=E2=80=8Bsigma star gmbh | Eduard-Bodem=
+=2DGasse 6, 6020 Innsbruck, AUT UID/VAT Nr:
+ATU 66964118 | FN: 374287y
+
 
 
