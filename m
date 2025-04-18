@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-610234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53100A93220
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 08:34:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94543A93221
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 08:34:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC2208E10C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 06:33:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E9C78E5316
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 06:33:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E7C26FD91;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4358626FD9F;
 	Fri, 18 Apr 2025 06:31:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="Grow0Jbu"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="cKH8Jjz3"
 Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B66A1268FC9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C90FD26F44D;
 	Fri, 18 Apr 2025 06:31:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744957887; cv=none; b=SSPPuDYfWYFwMK4xvjipV4AHNC4xuW+bk5clxNaiHZQ6lAVMNu0hD5AFyHzPTGANtgksSVCOBi1MhO+3Q4rmwqcDFvrznxNwjkjpbK52AZ+iD54+qsRRtO1Gkutg5+gkXjb5f/ZHnil5iolZ/FUl8tjAQrWdZaVoMZexmPJYp0o=
+	t=1744957887; cv=none; b=eW1IkYuZFjRBnWqj0XdYGE9XPeqvEgNXy9zotZBVqnB+KJN0ULEh6rBu9NrDNhr8w/X6go1bAn0BI5jipBKRQRdQMsoVaTjyJgWb00yDYNfImXJ8kZ8c7WuTdn8gUiJyh0HUhh7JE7GUCt72dUMPdipbhfx/vIy9SJrGxugtEtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1744957887; c=relaxed/simple;
-	bh=o5WlUluG5sRWhuQLUlkVHvte88HklkoFbiwPMFunw0M=;
+	bh=r/Ex6zbqfmmSqV6pPOofSWL8wLYsy0vJ40McfaddmnA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kGJuyU/5F4VTQ5kjMKEOaP3x69GQpspwR4dZuRsMeZQxPjrs34uF87Xqu61nqSt1MZuNTPuZg3Vusi1tEdYvTFrKlYRNZ6epqi8FJXnKkynju+LNBdoRovtgMFYKWK9efcq9fbHFoF4AURgHSDPWsEVxnqq/OkZI24S0hnH/sGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=Grow0Jbu; arc=none smtp.client-ip=46.19.9.99
+	 MIME-Version; b=p0QZJKKeKkCpobwi0AqH4+7sccAjP4el1gAOQYQKNFXdl1tCZKAhua6guOOaob7rLWLGLip+qU4jP2cUVD5xKXa70IEWUDBiVFv5TmN5gETeiLUDfG6qi49MaVsVjHwZuqN6+mMAp/4xrjOPQ1a+hNHGfjSNs9Vk16NNymYqp70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=cKH8Jjz3; arc=none smtp.client-ip=46.19.9.99
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
@@ -36,17 +36,17 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=759BT16GeVELagkUCkvhmhAR2ZnlXpPZ5Yu7sTegWZ4=; b=Grow0JbuewNI5GGpb0UyrOlb3h
-	YRum+PWbfbUCPdldU2eq5jF1T6v2g+A4ClZnvBL9x8N20dKuxCVDz2+0Td8cZFZl4WzGX7c2Ds36o
-	tQ5wtvr9xU4/Jc/gRTbPdLXfFkNmY8Iw+F3eUD7OLv+JXXBW3/4grsHGCWqP35juHaHBLs7FFNH0L
-	fzfcbK26exbuiHzdD2keWjux5K87+7uCCTVHWTNxltPzn0i4QKbFD3kdRB48z9o1Z8dLQ2yhbJ58N
-	Wl2CZGPFdJdOXujB7v9tUGh4Brg1O8sEHm1CWPSZoAgBLto988j8WJHtOZ/2gcIG/6UW2E3YFC2SD
-	1+tmu2+Q==;
+	bh=oTg5xlBMV3ZpioVnQMKMCNtn41a6TiUkCbtv/ticY0Q=; b=cKH8Jjz3UhDIikWoDUs9Pr6GlI
+	Mmz/6GL+pGzQYRY4NUFxkPQ1reeW+aRqBnalYDxz5Cs/EBek0U2vd9bYn3wnMVO9bcz7K6nvF8a8y
+	vZ03y5b1HiShBsMyWEt/U56nCsO4sNA2kIgj17dyWhsUnjVS0Lug+UUFVqVMkWM+vgi9oHHr1CpC3
+	u/PxqDkEA+4KxZd1OM8JjV0tL7PKohBHdlAp7guW4A9Dh4Ii6FkbCo1ybIlEqu9YT73lbykd/uyPq
+	6lgqy2uq2Pj9oAYd1IP0qumexjCyfEGGNJtKkWmG7S+eMaVoK9mq5Pp93074AtyBlQDRSkxrgG5fz
+	SV6z8cgw==;
 Received: from [89.212.21.243] (port=56446 helo=localhost.localdomain)
 	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <primoz.fiser@norik.com>)
-	id 1u5fG0-00AbM0-1K;
+	id 1u5fG0-00AbM0-1a;
 	Fri, 18 Apr 2025 08:31:24 +0200
 From: Primoz Fiser <primoz.fiser@norik.com>
 To: Rob Herring <robh@kernel.org>,
@@ -61,9 +61,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	upstream@lists.phytec.de
-Subject: [PATCH v3 14/15] arm64: dts: freescale: imx93-phyboard-segin: Add EQOS Ethernet
-Date: Fri, 18 Apr 2025 08:31:03 +0200
-Message-Id: <20250418063104.2202085-15-primoz.fiser@norik.com>
+Subject: [PATCH v3 15/15] arm64: dts: freescale: imx93-phyboard-segin: Order node alphabetically
+Date: Fri, 18 Apr 2025 08:31:04 +0200
+Message-Id: <20250418063104.2202085-16-primoz.fiser@norik.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250418063104.2202085-1-primoz.fiser@norik.com>
 References: <20250418063104.2202085-1-primoz.fiser@norik.com>
@@ -85,72 +85,50 @@ X-Source:
 X-Source-Args: 
 X-Source-Dir: 
 
-Add support for the carrier-board Micrel KSZ8081 Ethernet PHY. This is a
-10/100Mbit PHY connected to the EQOS interface and shares MDIO bus with
-the Ethernet PHY located on the SoM (FEC interface).
+Move pinctrl_uart1 to keep nodes in alphabetical order. No functional
+changes.
 
 Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
 Reviewed-by: Frank Li <Frank.Li@nxp.com>
 ---
 Changes in v3:
-- no changes
+- add Reviewed-by tag
 
- .../dts/freescale/imx93-phyboard-segin.dts    | 35 +++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ .../boot/dts/freescale/imx93-phyboard-segin.dts    | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts b/arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts
-index 54e084e69706..c62cc06fad4b 100644
+index c62cc06fad4b..0c55b749c834 100644
 --- a/arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts
 +++ b/arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts
-@@ -89,6 +89,28 @@ dailink_master: simple-audio-card,codec {
+@@ -228,13 +228,6 @@ MX93_PAD_I2C2_SDA__LPI2C2_SDA		0x40000b9e
+ 		>;
  	};
- };
  
-+/* Ethernet */
-+&eqos {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_eqos>;
-+	phy-mode = "rmii";
-+	phy-handle = <&ethphy2>;
-+	assigned-clock-parents = <&clk IMX93_CLK_SYS_PLL_PFD1_DIV2>,
-+				 <&clk IMX93_CLK_SYS_PLL_PFD1_DIV2>;
-+	assigned-clock-rates = <100000000>, <50000000>;
-+	status = "okay";
-+};
-+
-+&mdio {
-+	ethphy2: ethernet-phy@2 {
-+		compatible = "ethernet-phy-id0022.1561";
-+		reg = <2>;
-+		clocks = <&clk IMX93_CLK_ENET_REF_PHY>;
-+		clock-names = "rmii-ref";
-+		micrel,led-mode = <1>;
-+	};
-+};
-+
- /* CAN */
- &flexcan1 {
- 	pinctrl-names = "default";
-@@ -173,6 +195,19 @@ &usdhc2 {
- };
+-	pinctrl_uart1: uart1grp {
+-		fsl,pins = <
+-			MX93_PAD_UART1_RXD__LPUART1_RX		0x31e
+-			MX93_PAD_UART1_TXD__LPUART1_TX		0x30e
+-		>;
+-	};
+-
+ 	pinctrl_reg_usdhc2_vmmc: regusdhc2vmmcgrp {
+ 		fsl,pins = <
+ 			MX93_PAD_SD2_RESET_B__GPIO3_IO07	0x31e
+@@ -257,6 +250,13 @@ MX93_PAD_SAI1_RXD0__SAI1_RX_DATA00	0x1402
+ 		>;
+ 	};
  
- &iomuxc {
-+	pinctrl_eqos: eqosgrp {
++	pinctrl_uart1: uart1grp {
 +		fsl,pins = <
-+			MX93_PAD_ENET1_TD2__CCM_ENET_QOS_CLOCK_GENERATE_REF_CLK	0x4000050e
-+			MX93_PAD_ENET1_RD0__ENET_QOS_RGMII_RD0		0x57e
-+			MX93_PAD_ENET1_RD1__ENET_QOS_RGMII_RD1		0x57e
-+			MX93_PAD_ENET1_TD0__ENET_QOS_RGMII_TD0		0x50e
-+			MX93_PAD_ENET1_TD1__ENET_QOS_RGMII_TD1		0x50e
-+			MX93_PAD_ENET1_RX_CTL__ENET_QOS_RGMII_RX_CTL	0x57e
-+			MX93_PAD_ENET1_TX_CTL__ENET_QOS_RGMII_TX_CTL	0x50e
-+			MX93_PAD_ENET1_RXC__ENET_QOS_RX_ER		0x57e
++			MX93_PAD_UART1_RXD__LPUART1_RX		0x31e
++			MX93_PAD_UART1_TXD__LPUART1_TX		0x30e
 +		>;
 +	};
 +
- 	pinctrl_flexcan1: flexcan1grp {
+ 	pinctrl_usdhc2_cd: usdhc2cdgrp {
  		fsl,pins = <
- 			MX93_PAD_PDM_BIT_STREAM0__CAN1_RX	0x139e
+ 			MX93_PAD_SD2_CD_B__GPIO3_IO00		0x31e
 -- 
 2.34.1
 
