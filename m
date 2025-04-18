@@ -1,116 +1,173 @@
-Return-Path: <linux-kernel+bounces-611024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43D53A93BD8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 19:17:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13A60A93BDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 19:19:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03C2D1892AC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 17:17:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F3AF464F30
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 17:19:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F057E218EB1;
-	Fri, 18 Apr 2025 17:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F79B218EB0;
+	Fri, 18 Apr 2025 17:18:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="fTgd9o6T"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hLERQRAq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989AD217734;
-	Fri, 18 Apr 2025 17:17:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744996645; cv=pass; b=bAs9mCJTUOYrPFWqiCTGBoEKjADnV51Tt38yLvECwvJGZoP5RJ/KYmzYwIdlN+oJxslFCFuM98Az3pzgeE+29P6x4GVsRq/bb4TFNBITU/e/DWhVHwg4B/tMEcSGa+XRBEVhJstZhhLKgp2Ry4cTKIETplowOesbwwpnpwwLHKE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744996645; c=relaxed/simple;
-	bh=HWgRPEwVKkFmhhWiBm636+TJP5nBR6E34XlvIZtv6P4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QI29kC/t4FusBUveKnxYxJ6T0x6Jyx9upGJlvyNBBVzUqFtfJ5jSfWBq5Xtv5p92GqULvW3MT6foTlqV0XATRckq1tC6IZWJKJQ2LB0c/J2zkV7hKiyKymZ3NpeIlH+ly8oN4WKc+5b5y0KU6v6s179DjK4XjdlLj1dRcv3Dncw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=fTgd9o6T; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1744996609; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=jxWkA9U9NSgJbmAJUXRHn0QNZ4IAW9AQoexfk/8Dhec7cY2AbkjMrmhOTK6evP9mbB3cXu2p4yoFygKVuBmubKQKYMb8F/qhOomsIOkMbEkunmsF0+CQdTVhnU5qxvR5ThAr/WLZ1ERTgBDYixv2Ax+2KftBlNBM7cXDVao5iTA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1744996609; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=J44kw+gzo5uLXPwGBO4pqJKAwwerl0rrlLnx0kM7WsI=; 
-	b=Gf/c0WxKvpJtNDtYxf8wQEcUUqr0iaKCvPIoGjGKAB1G4P1LlDyoTNt7zg1cnAXm4B75gsCDL8go7T7pOqWL1C/tJHRlt6iYd3YKkfnE3hIbV+ZkMK9Lmt73bYSrUpmB4GU7EoUkcZvPpyjWwCnZ/SbKuurp6CZZhrPxJnkYz6g=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
-	dmarc=pass header.from=<usama.anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1744996609;
-	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=J44kw+gzo5uLXPwGBO4pqJKAwwerl0rrlLnx0kM7WsI=;
-	b=fTgd9o6TJ+HrN8kHIcyp7p8HWq2OGZAut8+9bw/SLk+wXodfeJH9aUNfImvqukp9
-	xWW0cOlJ7O+bjjHIrMIY659F+070RBTKsjjrwVG/uXkOFzWDkQDQW0raxSCtqeePze/
-	QoKXh8nh8XbxWczBkx+pI28bPv+9yWUUIfRGnHxY=
-Received: by mx.zohomail.com with SMTPS id 1744996608012662.4463860725073;
-	Fri, 18 Apr 2025 10:16:48 -0700 (PDT)
-Message-ID: <447d6f10-a04b-4492-8cc0-cac317f7c6c7@collabora.com>
-Date: Fri, 18 Apr 2025 22:16:42 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0347621504F
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 17:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744996738; cv=none; b=KVN1VVSopLH2Am6pk7Gtq/9FvNgkrrVZL4pIZahs7yoebazT+YhyvVaqlxZ737/XQSSddkjTmQYpMBG3QBwMsXa0kiQIIrdRBGcngW1m8jnKxXsPyXhtlRhbidA+TIgF4lWlffND9A5LNLJQ+xYXaXmgdnd9QPX4W0AKr+s9twc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744996738; c=relaxed/simple;
+	bh=+a1M5i9PKv67XR80Jx0OMOovmU/sGspbAiljC2qwxuE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JP0COKirgOShRwM1rpjWjVoUbTQma8WWfZ+Vpp6rhZIN1JUT3sH4BgSs7pwIOAMo87wwmczZnFn6zv8/K6RxZS4w86FvGHxsaMJVq7mI3Ht1InBo72KpIqbXvk1EhPQhOcsqKSnFilvgBL/GGgizWSKpgnng5/poAqHPTJVT3/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hLERQRAq; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744996729;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gkdw8gsBY7I9in1XRxPqFzuV9M+R9WrhUEzgOn2phl0=;
+	b=hLERQRAqsmykt2ZCV2DnQAHUMSVkzyAV0a2YnP3VyDb8WwwAT+PIuQLDL7VyGk96pcUIfE
+	vDHUnVt1HuG24q2ZAwAuuyl3gkAQxPhJwLfEt8jSmuZVNp+4iIVzLIpJZlqq7mUG1j2JaP
+	4yh+GipQBavM+kNYTC7xgj3C2U3e8SE=
+Received: from mail-yb1-f200.google.com (mail-yb1-f200.google.com
+ [209.85.219.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-150-3YA8FvvTOWu6gqiYyeghdg-1; Fri, 18 Apr 2025 13:18:45 -0400
+X-MC-Unique: 3YA8FvvTOWu6gqiYyeghdg-1
+X-Mimecast-MFC-AGG-ID: 3YA8FvvTOWu6gqiYyeghdg_1744996723
+Received: by mail-yb1-f200.google.com with SMTP id 3f1490d57ef6-e6ddf3f05easo3219399276.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 10:18:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744996723; x=1745601523;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gkdw8gsBY7I9in1XRxPqFzuV9M+R9WrhUEzgOn2phl0=;
+        b=k+2G2ozY/uXyrWamBJxD6yHd3yvxC4U1UC59FJxykBZ0EgFKWK52cXLxYPuMxEhkdP
+         9BaAS31wDkdr4SVHr4Kk4428AbVJXtVyHZEIM0CU+ZcM0xccPzhtAdpONhwkelyqOGTH
+         UYTd4fzQdUQFj21lfq9rymwjBvWuSfNmsRj1FKfznw2H54E4ab6cX9vDA/hm6DlBeLAO
+         fKCrfXzsmb4U5+s+jwtDFvxxTNYtoJi+y6j+WolhhkgJQLa41UKnlzYC9QVwKd2MrEE9
+         6c+F0SEtWlEqqBY+JAGbow9vLC1DbNgLyeTkWGC7mfE4K9Y9hNzWEEByrvzbJl3Oqeml
+         J/Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCUi5bpw/QKNrYAylmhAYeTkbZhSWMh3ogfpw+yDOeVDYM3w4ZwEaCcGjeAZDmunN3VystyZWp87xV5vORg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhXgNZBCrgH7xZojen0BCFkmbbml44MGukJTjcrqAV7WULasSU
+	9ew01QOI5mj/Z3CknflbKHvgQtAaVqk4nfdwo7X8OWuUoa60iHak6fTIutXFY4ua24coZeI1tra
+	kLOgE/hD1ZwbdM18kWzrgZ9EXBW/LXHU7wGB2bgXvzmx9ZqvW+7Z1cE1le/watU4JIAR5esc4Qk
+	apK5pAgahN5dsnw9TZlvi0VzNluWYDUYVxrSS2
+X-Gm-Gg: ASbGncuv0s14eWSU6YwsI3w68Kd4gdnxZw6XMRt/eMq3ie2UCgdXGfs+xtrN7gxEIfO
+	ZMrgWAjsJkvN/+tvCr55J7WspTCZZBkKrQF84JeAEql0SAlYV5TuWlivN1voreBDfZS5PeKBVam
+	qL83xvQBg=
+X-Received: by 2002:a05:6902:1685:b0:e6d:eea7:35c3 with SMTP id 3f1490d57ef6-e7297dcb74emr4915471276.11.1744996723385;
+        Fri, 18 Apr 2025 10:18:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHgO3yGvbKJV4mk2YjiCklYNqNWcRnEs03RKhS2nZ9xH55/2YEz6HN6ctlOeQ69EMUsvvUuE8HxshphvDhfc0s=
+X-Received: by 2002:a05:6902:1685:b0:e6d:eea7:35c3 with SMTP id
+ 3f1490d57ef6-e7297dcb74emr4915431276.11.1744996723007; Fri, 18 Apr 2025
+ 10:18:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 06/32] selftests: harness: Remove dependency on
- libatomic
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
- Shuah Khan <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>,
- Willy Tarreau <w@1wt.eu>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?=
- <linux@weissschuh.net>, Kees Cook <kees@kernel.org>
-Cc: Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20250411-nolibc-kselftest-harness-v3-0-4d9c0295893f@linutronix.de>
- <20250411-nolibc-kselftest-harness-v3-6-4d9c0295893f@linutronix.de>
-Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <20250411-nolibc-kselftest-harness-v3-6-4d9c0295893f@linutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+References: <20250417171758.142745-1-nifan.cxl@gmail.com>
+In-Reply-To: <20250417171758.142745-1-nifan.cxl@gmail.com>
+From: Nico Pache <npache@redhat.com>
+Date: Fri, 18 Apr 2025 11:18:17 -0600
+X-Gm-Features: ATxdqUHGLN0lFeajQ8s0PmbZ6wgOIx5rwI7HcqHdz6FT6fADQxCAu1ui4DqSWqY
+Message-ID: <CAA1CXcB06JD9Fp4c7GGU3NHEm4W-aV7TS7JW7eWxshJEM4t2_w@mail.gmail.com>
+Subject: Re: [PATCH] khugepaged: Refactor trace_mm_collapse_huge_page_isolate()
+ to take folio instead of page
+To: nifan.cxl@gmail.com
+Cc: rostedt@goodmis.org, mhiramat@kernel.org, willy@infradead.org, 
+	akpm@linux-foundation.org, david@redhat.com, fan.ni@samsung.com, 
+	yang@os.amperecomputing.com, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org, mcgrof@kernel.org, 
+	a.manzanares@samsung.com, dave@stgolabs.net
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 4/11/25 2:00 PM, Thomas Weißschuh wrote:
-> __sync_bool_compare_and_swap() is deprecated and requires libatomic on
-> GCC. Compiler toolchains don't necessarily have libatomic available, so
-> avoid this requirement by using atomics that don't need libatomic.
-> 
-> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+On Thu, Apr 17, 2025 at 11:18=E2=80=AFAM <nifan.cxl@gmail.com> wrote:
+>
+> From: Fan Ni <fan.ni@samsung.com>
+>
+> trace_mm_collapse_huge_page_isolate() is only used in
+> __collapse_huge_page_isolate(), which passes in the head page of a
+> folio, so refactor it to take folio directly.
+>
+> Signed-off-by: Fan Ni <fan.ni@samsung.com>
+Looks good!
+
+Reviewed-by: Nico Pache <npache@redhat.com>
 
 > ---
->  tools/testing/selftests/kselftest_harness.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
-> index 222a4f51a8d704c41597e09a241ad887ef787139..7ec4f66d0e3d7f129f6c2a45ff58310dabe5d03f 100644
-> --- a/tools/testing/selftests/kselftest_harness.h
-> +++ b/tools/testing/selftests/kselftest_harness.h
-> @@ -439,12 +439,12 @@
->  		} \
->  		if (child == 0) { \
->  			if (_metadata->setup_completed && !fixture_name##_teardown_parent && \
-> -					__sync_bool_compare_and_swap(teardown, false, true)) \
-> +					!__atomic_test_and_set(teardown, __ATOMIC_RELAXED)) \
->  				fixture_name##_teardown(_metadata, self, variant->data); \
->  			_exit(0); \
->  		} \
->  		if (_metadata->setup_completed && fixture_name##_teardown_parent && \
-> -				__sync_bool_compare_and_swap(teardown, false, true)) \
-> +				!__atomic_test_and_set(teardown, __ATOMIC_RELAXED)) \
->  			fixture_name##_teardown(_metadata, self, variant->data); \
->  		munmap(teardown, sizeof(*teardown)); \
->  		if (self && fixture_name##_teardown_parent) \
-> 
+>  include/trace/events/huge_memory.h | 6 +++---
+>  mm/khugepaged.c                    | 4 ++--
+>  2 files changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/include/trace/events/huge_memory.h b/include/trace/events/hu=
+ge_memory.h
+> index 9d5c00b0285c..a73699f000de 100644
+> --- a/include/trace/events/huge_memory.h
+> +++ b/include/trace/events/huge_memory.h
+> @@ -116,10 +116,10 @@ TRACE_EVENT(mm_collapse_huge_page,
+>
+>  TRACE_EVENT(mm_collapse_huge_page_isolate,
+>
+> -       TP_PROTO(struct page *page, int none_or_zero,
+> +       TP_PROTO(struct folio *folio, int none_or_zero,
+>                  int referenced, bool  writable, int status),
+>
+> -       TP_ARGS(page, none_or_zero, referenced, writable, status),
+> +       TP_ARGS(folio, none_or_zero, referenced, writable, status),
+>
+>         TP_STRUCT__entry(
+>                 __field(unsigned long, pfn)
+> @@ -130,7 +130,7 @@ TRACE_EVENT(mm_collapse_huge_page_isolate,
+>         ),
+>
+>         TP_fast_assign(
+> -               __entry->pfn =3D page ? page_to_pfn(page) : -1;
+> +               __entry->pfn =3D folio ? folio_pfn(folio) : -1;
+>                 __entry->none_or_zero =3D none_or_zero;
+>                 __entry->referenced =3D referenced;
+>                 __entry->writable =3D writable;
+> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> index b8838ba8207a..950d147cd95e 100644
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -696,13 +696,13 @@ static int __collapse_huge_page_isolate(struct vm_a=
+rea_struct *vma,
+>                 result =3D SCAN_LACK_REFERENCED_PAGE;
+>         } else {
+>                 result =3D SCAN_SUCCEED;
+> -               trace_mm_collapse_huge_page_isolate(&folio->page, none_or=
+_zero,
+> +               trace_mm_collapse_huge_page_isolate(folio, none_or_zero,
+>                                                     referenced, writable,=
+ result);
+>                 return result;
+>         }
+>  out:
+>         release_pte_pages(pte, _pte, compound_pagelist);
+> -       trace_mm_collapse_huge_page_isolate(&folio->page, none_or_zero,
+> +       trace_mm_collapse_huge_page_isolate(folio, none_or_zero,
+>                                             referenced, writable, result)=
+;
+>         return result;
+>  }
+> --
+> 2.47.2
+>
 
-
--- 
-Regards,
-Usama
 
