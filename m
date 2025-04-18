@@ -1,103 +1,95 @@
-Return-Path: <linux-kernel+bounces-611314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA69BA94023
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 01:02:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4AE7A9402D
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 01:06:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FD03461E89
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 23:02:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5289F1B670EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 23:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258D9253B60;
-	Fri, 18 Apr 2025 23:02:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B2A253B4C;
+	Fri, 18 Apr 2025 23:05:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="b9qyvpnG"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hAnD0l4J"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0621A2DFA4B
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 23:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7BF4253347
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 23:05:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745017338; cv=none; b=RgPxjl7/u2JMufgyEtE8GOpCZYoZFXsY70QDtaHkSXT7cocyGBmCs+IVaMu/NHaq00FIQ6/Cmw4HM47Olkj7QkWvqfMj1XQxdf5RR8ffvCCHLRzl0iSlEwBhCbZJf8fwohsFACSvM6oxsQrBuSKj71+cP7T/bR8oA9jTAM8Kw28=
+	t=1745017553; cv=none; b=d9uUWv7Ywe8kZsC0rlXEAMBCZylWVXOowsOFCYIp7vmeh+P+m3lzckMar/Ygpu1ifz/STzblyE6zZsZ9tFwDElqAZtnpVu0fY7/e8aytV/aVb/8Pfi0drkFLjAv/WUdsp8JBWrrwYla/XO956SRYum3cyi5QIEUUkwnOtxzsdi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745017338; c=relaxed/simple;
-	bh=Cqy9wXz4Md2dDfVYMq63yQ8yoiIG7qVCmGKjhWNBpRg=;
+	s=arc-20240116; t=1745017553; c=relaxed/simple;
+	bh=hEJgUS8qfyBdIBBy1jMSOghOaaiuoTU40a3fcivZFtk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p96l2OnIeHkOdLCmJOcqyhiY5K3LJ+cddFaVWWtPkcq1X0zVQ2Lnl73WXmamRVVqbyulCPum8lybWxAlnqJPXqyCHnkWzLSueVP10DjZYAvEoqTqsmzHuZ/27efIAAghwpuWgbQ1HVnLj5sc6clV3KNko8u5BBmdbRR6hzYh6yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=b9qyvpnG; arc=none smtp.client-ip=205.220.168.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=DPQsObm4iWxrg3eBHJB9a5U44rEGI2+Bl7Wil8LskCEXELVD4q818gfrTS9513WO/yzoy9aLpdVED7oVJnMeuSJwgO9IkpfuBv9/iK/mwDrEOTP2Zf+/NEwshxhvH04FuESw04pP1+Rz5snV+8WAN9bt839v2IQ0nZsWolgT4Ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hAnD0l4J; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53IFcZlp015286
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 23:02:15 GMT
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53IFuGG1013115
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 23:05:45 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=A/rCdii3k99QNyH4v5GZVV/R
-	W4IUX5b1L2951avVf88=; b=b9qyvpnGQUYzs2i7Mvx3EouHvPtEV06WOmwA/7FQ
-	Pr5fPVwJ+mNV6x9NS/Sy7Wdz8ur5/zJ4uVxdYLTnCEIJY/J1kIfNZqgNTkdrJ07v
-	3eiN+0Nkc3qAV+G6puOnH6538Ns3hMTLp62ddy0ffTkrKOQwj4S9ns+IgQ3rgOcs
-	dVTBxatJdDzh6kEDZL/npaMw/3zHQ3UKbYSz5/GN+o+jwjVvr2ai4HepTDcTMg6a
-	ImRpewDN+O19KA9PCHF3MibhHh4Xh+iqhmYeKdNqm/+DpMzIKXlwDlrlbR/+LVgT
-	0mgQkQada8idVQsx0h0tAC03cvX9xcuoYYERsS85BNKEWw==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ygd6u67j-1
+	:references:subject:to; s=qcppdkim1; bh=V8QJgEdBBmdXG00IRKFSzJ2Q
+	lscxaEHZ/g5OcrgAEXw=; b=hAnD0l4JvW6vvYR9/nEtwghNNnBudR/3MMl0Rv/s
+	2sKLvJdo5E1i50B3jfKpUXyR8e3BguEcErmZ6xLmH2i3e3TuCw0+OBb35tcOpga6
+	jPxc4vBDu3KwOib7IkIwbzh0WeggUVhTIoLVkBB5ngwpO1A/kLDJoSd7qilvqkoO
+	EFEF4M1J6zXguFsaODwAXvewCm3Qf1g60AteSI6e3DwQ5syfyPOaDusv0TYN1rJr
+	fa1eLuDvI5ghSGV/VfEVljreu4AQlCZ954gssG8q+VM25Faui6CQly6uSpuqlPac
+	pQ1Y+p5rPc/0pgbT6/lBjFOihEuPH8jHAn+zRbF6qJe9WA==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45yfgju02q-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 23:02:14 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c7c30d8986so687134685a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 16:02:14 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 23:05:45 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6f2c94f8f11so21550786d6.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 16:05:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745017333; x=1745622133;
+        d=1e100.net; s=20230601; t=1745017543; x=1745622343;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=A/rCdii3k99QNyH4v5GZVV/RW4IUX5b1L2951avVf88=;
-        b=t6YXIFTIv1zWxMZAYxT8GXyiEWrV61xdqRQtIJcMUsSZmGK0PCT3WXxZge+zakIfdI
-         QnIuz1rOhXFanmeBtsgnwdI1l5WStkZDYyqzlZizlfP3tCSmoblUr3t4iTtkAKC4CL0C
-         xeSnjYoMzX0WvojRXoXaVpKv1sc8f4AY55tyz1Smxku/wS8CKqjJ/ZHjy1ylNbSKwYHJ
-         aDA/+XT88eHlhWf2Z3PYik0jLmDN5PqZPehlJEgpMbXZR/POuH1OKJ5G2Jx3jLz23Epe
-         bB+HBDF+05Sse09N3lzwNHYHVsjaq8Fp3ggmYgC3fFkeDBJGm2SOK1C1YmTeb92cad3u
-         zOYg==
-X-Forwarded-Encrypted: i=1; AJvYcCVs1j5JoQX8ajaDvVaIrWigBM8gFGu4NarLxaAIDlVIeV/CvncOFsH3O/QTuHHz1nA9AtDFKiWKUB4YJTQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/EVESC+3vl0yHT0n1DYbtDp4atsUg7gQJbI2dIG/Iy0OFuVuN
-	pJUKFxbK8EwGvigZjm+yybZh+ebJJzQGXlNrWXNcDARaWw/VOMAtfan81vn8Vb1jWT8rllNgdGx
-	2MsNOUki1Xeh5KeGKrV/sN+2BdA2Zx5Azq+YK3b9eXphS050Qq2tBnITYTj4Jrgk=
-X-Gm-Gg: ASbGncsEQK4bg9gXxlji0r9FTrt9R7M5+KAX9ugnjiSoAzUbN5iRhyGujvx5FCJ6dIU
-	YShUjkG6f7EzQH5A5QTIBjPElsgV/kzBJhd8DiH/rFEBTFu+BAyP1kvDds45kjLb+WQIExwD7ee
-	hBiu6h75MhE3CsIfsHeMTUtmIwv9e9ebQxEmFRlSxx66KgQ27lZ88QPJd3/AKJ8pQO6ccEcNBO/
-	kSART6iGrV63V0IbH8m0vS4X2dxVWmvqI9QZTXPgi+alky2V3vclVRsoYOuUbSbayQ5Hf4An+a+
-	yAEnER/RzeNYkcy9cWCIMQzQA+saj8Zqs5hHPwNEBuPAPl6pe0ziPpOKI1beyjy0+UuLul+S5Kg
+        bh=V8QJgEdBBmdXG00IRKFSzJ2QlscxaEHZ/g5OcrgAEXw=;
+        b=p5M//FSL6rz8BQGDOmY26oNs7dKT71DnTVOwOLtkg1gtgbb8Q+BYX3CVXeUkN8Ykxt
+         OB/km8HwawfzM3SkM/C5Az6Chy4KQqB409SqZcCkJD9DUVkAEmKLMuUSokKAklvSYdFY
+         K3AXuHHrVPu0vgbvGpcHZ+N7QCI6sDoRgk8zjSnIpAyPE31GaK8V6Kw/lndPmOZ48hbT
+         IRz0aOyW7GmPXVTOA950uvhurRPE0JWP+wPoCe+9I0ULeVkRwYTOLg1j5LBm5WLwLtYm
+         FHsjDwBk3g/lOm3ey43H8Z5tE8u1oTqSZ2YJ2A8LM7QfuQ4s8A87kwzhkovRbrxmhvrW
+         e3kA==
+X-Forwarded-Encrypted: i=1; AJvYcCWROe3bE+NSP/Zo0VNpLxxfo8phNCxkDHtc13dowSvGbEkmhn56gd4t9fYmOPXAeVrOxK3o14AuMAV4oZQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/QamTZOfgR0aRSX7fATKLIh6wat7NMHeBUbAAm/yDW9KklzMz
+	fNSuZX8gNg/filqM0mB5bh8Dob2MvvBtrI+9UDR71LEtxj0qwEeVRsyNkrfL0r8ehydmrwMcyGy
+	oet2M5X2YnRydgOaOOgJ3+H783P7R/7bOJh1k/BcdvEI7ZI9epDZqs+lCyjRlaliKQ5ql/Zw=
+X-Gm-Gg: ASbGnctWRRE3YHpVhCOV572ZsD9YqWQ/uey4NtRFrC6S14o6ST95gyvyJtZmBQ6GCjE
+	OzUgv4Z4GOfPbHpB3mqVj68hvYlDu0wsX5WygUF+kHxbOFBgEnN9JUz49eY9pcsf2Ye3gVZAK0Q
+	+iyCTkx5jNIn/NkWZp69bylZ0Tm01Br8Kb7Y80CYxVT0dIw+2h18cKJ84Mj/SPZA2u23+O1xnEJ
+	/uyjhutrJx8suWCHSL7eNTjtXtT1sH25yK9uF84X1HJBt4RSPoQCGpgkaHDBeWue16EsijkfMIT
+	blcJOZIjJfDJ4EacEDDF2PlmbEV03NRexZA7y6ipCfr7bDpvYGz/gbAPNh6EFYg8Vah++QaGkiQ
 	=
-X-Received: by 2002:a05:620a:170d:b0:7c5:5e69:4450 with SMTP id af79cd13be357-7c927f80556mr697466685a.17.1745017333606;
-        Fri, 18 Apr 2025 16:02:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEOvHKeAZS5vASogCzZeo+qEyJxQ15QLGhBMc3CRYTpJqeXQEMRI79G+EUi5azW028Wqu1vaA==
-X-Received: by 2002:a05:620a:170d:b0:7c5:5e69:4450 with SMTP id af79cd13be357-7c927f80556mr697461685a.17.1745017333209;
-        Fri, 18 Apr 2025 16:02:13 -0700 (PDT)
+X-Received: by 2002:a05:6214:5185:b0:6d4:1ea3:981d with SMTP id 6a1803df08f44-6f2c4678a3amr65315756d6.43.1745017543575;
+        Fri, 18 Apr 2025 16:05:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEf26KzMLQvj2MKIJpjhCLfMiXPBJMSzk9JeFklWtqtVydsNaw/jNQAzTgwl2B8HD3Bgw+5bQ==
+X-Received: by 2002:a05:6214:5185:b0:6d4:1ea3:981d with SMTP id 6a1803df08f44-6f2c4678a3amr65315506d6.43.1745017543272;
+        Fri, 18 Apr 2025 16:05:43 -0700 (PDT)
 Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54d6e5e5163sm290371e87.184.2025.04.18.16.02.12
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-310907a6736sm3482341fa.51.2025.04.18.16.05.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Apr 2025 16:02:12 -0700 (PDT)
-Date: Sat, 19 Apr 2025 02:02:10 +0300
+        Fri, 18 Apr 2025 16:05:42 -0700 (PDT)
+Date: Sat, 19 Apr 2025 02:05:40 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Dmitry Baryshkov <lumag@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
         Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v2 0/3] Fairphone 5 DisplayPort over USB-C support
-Message-ID: <j3xylbgcvamtiumndssy73h646vwwdfyxju3t6wtpfhcd4f6fw@qgmbrcz6njgk>
-References: <20250312-fp5-pmic-glink-dp-v2-0-a55927749d77@fairphone.com>
- <y7dfv4mmtzkv2umvverkn6qvjt3tg7cz4jj4zsb4t6vu4heh4d@64zpkjihjc23>
- <D8V75HO8O4CO.33RMUJLKQ7UG5@fairphone.com>
- <D99SSJAOJE3V.ENIEJ9IWFZLF@fairphone.com>
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: qcom: sm8650: add iris DT node
+Message-ID: <asfwnyn5grm426vq5qatrxfffv3wmbuzx6266rblanzqepffzx@7773dcxfaqe4>
+References: <20250418-topic-sm8x50-upstream-iris-8650-dt-v1-1-80a6ae50bf10@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,114 +98,90 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <D99SSJAOJE3V.ENIEJ9IWFZLF@fairphone.com>
-X-Proofpoint-ORIG-GUID: YQg7OBhkOHIPmIGVX_M710sqpqdI6fwj
-X-Proofpoint-GUID: YQg7OBhkOHIPmIGVX_M710sqpqdI6fwj
-X-Authority-Analysis: v=2.4 cv=ANaQCy7k c=1 sm=1 tr=0 ts=6802d9f7 cx=c_pps a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=gEfo2CItAAAA:8 a=VwQbUJbxAAAA:8 a=6H0WHjuAAAAA:8 a=eUQzuGhTgxr9iOTw7QAA:9 a=CjuIK1q_8ugA:10
- a=bTQJ7kPSJx9SKPbeHEYW:22 a=sptkURWiP4Gy88Gu7hUp:22 a=Soq9LBFxuPC4vsCAQt-j:22
+In-Reply-To: <20250418-topic-sm8x50-upstream-iris-8650-dt-v1-1-80a6ae50bf10@linaro.org>
+X-Proofpoint-GUID: m9FKgJnE26bvtn8R9nfLNomytN8YUtWf
+X-Proofpoint-ORIG-GUID: m9FKgJnE26bvtn8R9nfLNomytN8YUtWf
+X-Authority-Analysis: v=2.4 cv=Cve/cm4D c=1 sm=1 tr=0 ts=6802dac9 cx=c_pps a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=KKAkSRfTAAAA:8 a=CGpxOeS8x3tCTpWUsd8A:9 a=CjuIK1q_8ugA:10 a=iYH6xdkBrDN1Jqds4HTS:22
+ a=cvBusfyB2V15izCimMoJ:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-04-18_09,2025-04-17_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
- mlxlogscore=981 suspectscore=0 clxscore=1015 lowpriorityscore=0
- phishscore=0 impostorscore=0 spamscore=0 priorityscore=1501 malwarescore=0
- bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
+ malwarescore=0 lowpriorityscore=0 bulkscore=0 spamscore=0 phishscore=0
+ suspectscore=0 impostorscore=0 mlxlogscore=999 mlxscore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
  definitions=main-2504180176
 
-On Fri, Apr 18, 2025 at 03:27:22PM +0200, Luca Weiss wrote:
-> Hi Krzysztof, hi Dmitry,
+On Fri, Apr 18, 2025 at 03:20:35PM +0200, Neil Armstrong wrote:
+> Add DT entries for the sm8650 iris decoder.
 > 
-> Any feedback on the below proposed patch?
+> Since the firmware is required to be signed, only enable
+> on Qualcomm development boards where the firmware is
+> available.
 > 
-> I can also send out a v3 with this patch included soon if that makes it
-> easier to review.
-> 
-> Regards
-> Luca
-> 
-> On Tue Apr 1, 2025 at 11:32 AM CEST, Luca Weiss wrote:
-> > Hi Dmitry,
-> >
-> > On Wed Mar 12, 2025 at 8:06 PM CET, Dmitry Baryshkov wrote:
-> >> On Wed, Mar 12, 2025 at 01:05:07PM +0100, Luca Weiss wrote:
-> >>> This series adds all the necessary bits to enable DisplayPort-out over
-> >>> USB-C on Fairphone 5.
-> >>> 
-> >>> There's currently a dt validation error with this, not quite sure how to
-> >>> resolve this:
-> >>> 
-> >>>   arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dtb: typec-mux@42: port:endpoint: Unevaluated properties are not allowed ('data-lanes' was unexpected)
-> >>>           from schema $id: http://devicetree.org/schemas/usb/fcs,fsa4480.yaml#
-> >>
-> >> This comes from usb-switch.yaml, it requires that 'port' adheres to the
-> >> /schemas/graph.yaml#/properties/port (which forbids extra properties).
-> >> The usb-switch.yaml needs to be fixed to use port-base for that node.
-> >
-> > Thanks, do you think the attached patch would be suitable? It does fix
-> > the warning for me, but not sure if it's too lax or doing the wrong
-> > thing.
-> >
-> > diff --git a/Documentation/devicetree/bindings/usb/usb-switch.yaml b/Documentation/devicetree/bindings/usb/usb-switch.yaml
-> > index da76118e73a5..9598c1748d35 100644
-> > --- a/Documentation/devicetree/bindings/usb/usb-switch.yaml
-> > +++ b/Documentation/devicetree/bindings/usb/usb-switch.yaml
-> > @@ -26,11 +26,15 @@ properties:
-> >      type: boolean
-> >  
-> >    port:
-> > -    $ref: /schemas/graph.yaml#/properties/port
-> > +    $ref: /schemas/graph.yaml#/$defs/port-base
-> >      description:
-> >        A port node to link the device to a TypeC controller for the purpose of
-> >        handling altmode muxing and orientation switching.
-> >  
-> > +    patternProperties:
-> > +      "^endpoint(@[0-9a-f]+)?$":
-> > +        $ref: /schemas/graph.yaml#/$defs/endpoint-base
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sm8650-hdk.dts |  5 ++
+>  arch/arm64/boot/dts/qcom/sm8650-mtp.dts |  5 ++
+>  arch/arm64/boot/dts/qcom/sm8650-qrd.dts |  5 ++
 
-Please document that the only permitted property here is data-lanes.
+I'd say that these are 4 commits.
 
-> > +
-> >    ports:
-> >      $ref: /schemas/graph.yaml#/properties/ports
-> >      properties:
-> >
-> >
-> > Regards
-> > Luca
-> >
-> >>
-> >>> 
-> >>> See also this mail plus replies:
-> >>> * https://lore.kernel.org/linux-arm-msm/D0H3VE6RLM2I.MK2NT1P9N02O@fairphone.com/
-> >>> 
-> >>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> >>> ---
-> >>> Changes in v2:
-> >>> - Move adding "*-switch;" properties already in earlier patches
-> >>> - Move wiring up SS USB & DP to SoC instead of being done in device
-> >>> - Pick up tags
-> >>> - Link to v1: https://lore.kernel.org/r/20250226-fp5-pmic-glink-dp-v1-0-e6661d38652c@fairphone.com
-> >>> 
-> >>> ---
-> >>> Luca Weiss (3):
-> >>>       arm64: dts: qcom: qcm6490-fairphone-fp5: Add PTN36502 redriver
-> >>>       arm64: dts: qcom: qcm6490-fairphone-fp5: Add OCP96011 audio switch
-> >>>       arm64: dts: qcom: qcm6490-fairphone-fp5: Hook up DisplayPort over USB-C
-> >>> 
-> >>>  arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts | 103 +++++++++++++++++++--
-> >>>  arch/arm64/boot/dts/qcom/sc7280.dtsi               |   9 +-
-> >>>  2 files changed, 104 insertions(+), 8 deletions(-)
-> >>> ---
-> >>> base-commit: dcb11dc4740372cd4cce0b763a4a8ec4e9f347a6
-> >>> change-id: 20231208-fp5-pmic-glink-dp-216b76084bee
-> >>> 
-> >>> Best regards,
-> >>> -- 
-> >>> Luca Weiss <luca.weiss@fairphone.com>
-> >>> 
+>  arch/arm64/boot/dts/qcom/sm8650.dtsi    | 94 +++++++++++++++++++++++++++++++++
+>  4 files changed, 109 insertions(+)
 > 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8650-hdk.dts b/arch/arm64/boot/dts/qcom/sm8650-hdk.dts
+> index d0912735b54e5090f9f213c2c9341e03effbbbff..69db971d9d2d32cdee7bb1c3093c7849b94798a0 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8650-hdk.dts
+> +++ b/arch/arm64/boot/dts/qcom/sm8650-hdk.dts
+> @@ -894,6 +894,11 @@ &ipa {
+>  	status = "okay";
+>  };
+>  
+> +&iris {
+> +	firmware-name = "qcom/vpu/vpu33_p4.mbn";
+
+You shouldn't need to specify this, it matches the default one.
+
+> +	status = "okay";
+> +};
+> +
+>  &gpu {
+>  	status = "okay";
+>  
+> diff --git a/arch/arm64/boot/dts/qcom/sm8650-mtp.dts b/arch/arm64/boot/dts/qcom/sm8650-mtp.dts
+> index 76ef43c10f77d8329ccf0a05c9d590a46372315f..04108235d9bc6f977e9cf1b887b0c89537723387 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8650-mtp.dts
+> +++ b/arch/arm64/boot/dts/qcom/sm8650-mtp.dts
+> @@ -585,6 +585,11 @@ vreg_l7n_3p3: ldo7 {
+>  	};
+>  };
+>  
+> +&iris {
+> +	firmware-name = "qcom/vpu/vpu33_p4.mbn";
+> +	status = "okay";
+> +};
+> +
+>  &lpass_tlmm {
+>  	spkr_1_sd_n_active: spkr-1-sd-n-active-state {
+>  		pins = "gpio21";
+> diff --git a/arch/arm64/boot/dts/qcom/sm8650-qrd.dts b/arch/arm64/boot/dts/qcom/sm8650-qrd.dts
+> index 71033fba21b56bc63620dca3e453c14191739675..58bdc6619ac55eda122f3fe6e680e0e61967d019 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8650-qrd.dts
+> +++ b/arch/arm64/boot/dts/qcom/sm8650-qrd.dts
+> @@ -824,6 +824,11 @@ &ipa {
+>  	status = "okay";
+>  };
+>  
+> +&iris {
+> +	firmware-name = "qcom/vpu/vpu33_p4.mbn";
+> +	status = "okay";
+> +};
+> +
+>  &gpu {
+>  	status = "okay";
+>  
 
 -- 
 With best wishes
