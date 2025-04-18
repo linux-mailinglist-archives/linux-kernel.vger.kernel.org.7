@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-611300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66BC7A93FE7
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 00:37:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6F52A93FE9
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Apr 2025 00:38:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABCC78E4631
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 22:37:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E42E1B665EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 22:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 995AD253B57;
-	Fri, 18 Apr 2025 22:37:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4897252919;
+	Fri, 18 Apr 2025 22:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JwFa5vH2"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Kq2ZHjCy"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45ECF1E49F
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 22:37:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E789253F1B
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 22:37:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745015845; cv=none; b=GdKJZMcBWk5EmtImyjdvYm3hC85TG16lBnRDZNSaezviQ1wQSWGcqRF3BW+JIBZ9JMR2f0wfNsptiLp9Zc74j8qkRNpe/PUGfqZDEBhlPOVUMnjJZUZOpF60w8x1iwUvRvblN6BxYoNf2kplAzrFw4URdRVjIezRfOceYDb6bCU=
+	t=1745015849; cv=none; b=Hv1ro3+zGpxbxFckoKA0Uj3uNaHQShdAcacRPVrp6h32/uXzM03jzKQ3BXNTRZFdFpd4P136ECbNCsgwam237vt/f2JpxvI2Ew0iJo0p+289c8az9hCcoU3AMA0QF18H5lY88rhPPIPSjoU7E1fKFj1XFsAhgHtLZn7TcDsjiQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745015845; c=relaxed/simple;
-	bh=UBlASDVwjb3xq+74DdLIUbYJqk15ElEF6MeTXvgIAtU=;
+	s=arc-20240116; t=1745015849; c=relaxed/simple;
+	bh=8BwZsnVdR8miAoiDxdE54co2xvNhNwAiNXUjNPp92dA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-type; b=ZcT44JlmURp1OzeekQWdkb5c8DXiKsT4bKo3QT29m5qJfSU6RXgQvpl/1Soro7osCSMRui0D2EmKw32W9JomTZLelRIjvT20GkjzABZw9zZjY5sss0WsNJ22nBZfeEwbGU7yogbhcOwMicri012dnJJO2tvnT4RVIuy0+1IyUFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JwFa5vH2; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version:Content-type; b=AlRtNXszHbjUlBMt0GOESG+VEreEj4aa1QexO441XYvL6VvrBUJIjBIFJsavNghAeyUPoniXEy6k43GsuVJ5y5vK627I/ouhC/dE0TlwCsnQ5VwmkO0c4wYYszXW/BpInyqqT2xigqflJSIRg2nS97hW8IAn6uFFqFR52CcTN/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Kq2ZHjCy; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745015842;
+	s=mimecast20190719; t=1745015846;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=5CqaNyVqh6Pco3lRKN4a8MRDCkCUASVHhS+U1Kf4kAE=;
-	b=JwFa5vH2SuJAAACjT4KwdEO9imnqdonJUTIFS1j+RRIQOsQHnGLBWPxbMh57h9otDiSDrn
-	G0kGGr+30X5VVSM9BIHCt4+iZJxMmFXWAqoYHYHnRu+vvuCLfBa/Ncxwy1b3fJzRFRbMd5
-	DTSko060e73Am+NaYfiZpPQ7V5tgMBA=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+	bh=ZGf05WSXfY+l3YCUw1WKme5A0IS/vcfpVKsXA2Mq+zc=;
+	b=Kq2ZHjCyUKSsTbbEzDVpYyTZfTQlbMLMEM66IzDDHsihxjE4NNtlV+/lZMMIyX25V4CuKH
+	ONfU3zFdnTXiC9ztIidfVI4VlmRf3zOM7o9pIpHgvrNS8CWGugqzV68KnMpAJ7jiUEMQNj
+	EvWyvH/eO5C86sLYDByFoAdvtPWuQXY=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-447-SpM8dBtoNYK9z96TxEmhJw-1; Fri,
- 18 Apr 2025 18:37:17 -0400
-X-MC-Unique: SpM8dBtoNYK9z96TxEmhJw-1
-X-Mimecast-MFC-AGG-ID: SpM8dBtoNYK9z96TxEmhJw_1745015835
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-437-Hyg7DzC2MiKoUIJ60zMYKQ-1; Fri,
+ 18 Apr 2025 18:37:23 -0400
+X-MC-Unique: Hyg7DzC2MiKoUIJ60zMYKQ-1
+X-Mimecast-MFC-AGG-ID: Hyg7DzC2MiKoUIJ60zMYKQ_1745015842
 Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 998D31800263;
-	Fri, 18 Apr 2025 22:37:15 +0000 (UTC)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EA72D1956086;
+	Fri, 18 Apr 2025 22:37:21 +0000 (UTC)
 Received: from MiWiFi-R3L-srv.redhat.com (unknown [10.72.112.18])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EF78A1801770;
-	Fri, 18 Apr 2025 22:37:11 +0000 (UTC)
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id CE2E81801770;
+	Fri, 18 Apr 2025 22:37:16 +0000 (UTC)
 From: Baoquan He <bhe@redhat.com>
 To: linux-mm@kvack.org
 Cc: akpm@linux-foundation.org,
@@ -64,9 +64,9 @@ Cc: akpm@linux-foundation.org,
 	vishal.moola@gmail.com,
 	linux-kernel@vger.kernel.org,
 	Baoquan He <bhe@redhat.com>
-Subject: [PATCH v2 3/5] mm/vmalloc.c: optimize code in decay_va_pool_node() a little bit
-Date: Sat, 19 Apr 2025 06:36:51 +0800
-Message-ID: <20250418223653.243436-4-bhe@redhat.com>
+Subject: [PATCH v2 4/5] mm/vmalloc: optimize function vm_unmap_aliases()
+Date: Sat, 19 Apr 2025 06:36:52 +0800
+Message-ID: <20250418223653.243436-5-bhe@redhat.com>
 In-Reply-To: <20250418223653.243436-1-bhe@redhat.com>
 References: <20250418223653.243436-1-bhe@redhat.com>
 Precedence: bulk
@@ -79,76 +79,32 @@ Content-type: text/plain
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-When purge lazily freed vmap areas, VA stored in vn->pool[] will also be
-taken away into free vmap tree partially or completely accordingly, that
-is done in decay_va_pool_node(). When doing that, for each pool of node,
-the whole list is detached from the pool for handling. At this time,
-that pool is empty. It's not necessary to update the pool size each time
-when one VA is removed and addded into free vmap tree.
-
-Here change code to update the pool size when attaching the pool back.
+Remove unneeded local variables and replace them with values.
 
 Signed-off-by: Baoquan He <bhe@redhat.com>
+Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+Reviewed-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+Reviewed-by: Shivank Garg <shivankg@amd.com>
 ---
- mm/vmalloc.c | 23 +++++++++++------------
- 1 file changed, 11 insertions(+), 12 deletions(-)
+ mm/vmalloc.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
 diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 76ab4d3ce616..cd654cc35d2b 100644
+index cd654cc35d2b..39e043ba969b 100644
 --- a/mm/vmalloc.c
 +++ b/mm/vmalloc.c
-@@ -2133,7 +2133,7 @@ decay_va_pool_node(struct vmap_node *vn, bool full_decay)
- 	LIST_HEAD(decay_list);
- 	struct rb_root decay_root = RB_ROOT;
- 	struct vmap_area *va, *nva;
--	unsigned long n_decay;
-+	unsigned long n_decay, pool_len;
- 	int i;
- 
- 	for (i = 0; i < MAX_VA_SIZE_PAGES; i++) {
-@@ -2147,22 +2147,20 @@ decay_va_pool_node(struct vmap_node *vn, bool full_decay)
- 		list_replace_init(&vn->pool[i].head, &tmp_list);
- 		spin_unlock(&vn->pool_lock);
- 
--		if (full_decay)
--			WRITE_ONCE(vn->pool[i].len, 0);
-+		pool_len = n_decay = vn->pool[i].len;
-+		WRITE_ONCE(vn->pool[i].len, 0);
- 
- 		/* Decay a pool by ~25% out of left objects. */
--		n_decay = vn->pool[i].len >> 2;
-+		if (!full_decay)
-+			n_decay >>= 2;
-+		pool_len -= n_decay;
- 
- 		list_for_each_entry_safe(va, nva, &tmp_list, list) {
-+			if (!n_decay--)
-+				break;
-+
- 			list_del_init(&va->list);
- 			merge_or_add_vmap_area(va, &decay_root, &decay_list);
+@@ -2915,10 +2915,7 @@ static void _vm_unmap_aliases(unsigned long start, unsigned long end, int flush)
+  */
+ void vm_unmap_aliases(void)
+ {
+-	unsigned long start = ULONG_MAX, end = 0;
+-	int flush = 0;
 -
--			if (!full_decay) {
--				WRITE_ONCE(vn->pool[i].len, vn->pool[i].len - 1);
--
--				if (!--n_decay)
--					break;
--			}
- 		}
+-	_vm_unmap_aliases(start, end, flush);
++	_vm_unmap_aliases(ULONG_MAX, 0, 0);
+ }
+ EXPORT_SYMBOL_GPL(vm_unmap_aliases);
  
- 		/*
-@@ -2171,9 +2169,10 @@ decay_va_pool_node(struct vmap_node *vn, bool full_decay)
- 		 * can populate the pool therefore a simple list replace
- 		 * operation takes place here.
- 		 */
--		if (!full_decay && !list_empty(&tmp_list)) {
-+		if (!list_empty(&tmp_list)) {
- 			spin_lock(&vn->pool_lock);
- 			list_replace_init(&tmp_list, &vn->pool[i].head);
-+			WRITE_ONCE(vn->pool[i].len, pool_len);
- 			spin_unlock(&vn->pool_lock);
- 		}
- 	}
 -- 
 2.41.0
 
