@@ -1,101 +1,117 @@
-Return-Path: <linux-kernel+bounces-611265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64B18A93F78
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 23:29:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C975A93F7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 23:29:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8778C8E4116
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 21:29:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF1F08E5279
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 21:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F320924397B;
-	Fri, 18 Apr 2025 21:29:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0DE24337D;
+	Fri, 18 Apr 2025 21:29:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NcpWPQTt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s8VvVNqj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59FB22405F8;
-	Fri, 18 Apr 2025 21:29:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01DA6224B13;
+	Fri, 18 Apr 2025 21:29:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745011762; cv=none; b=Z5OOrhzU01Zpru8Txm0DT+7nq/yO7UU6ha3Q/nZs5hQr4lFconGh0PXSRMYefK9mCi5Biutj9qVuD71v/tXekvFF/iGT5SuXA4BJ6UYPl7irtye5x2U0IKX7atl2Phu2pNxoiticAyT5h3FdbMjhS8lxGFpUMo8DcJgONABHt3k=
+	t=1745011777; cv=none; b=L04P1qC58OrIKiHe01RMPCZotnYahbxyFrtNUuZJLvCWuWpwB7hMwRzBc1aUk9GKA9szlQMULz4pLaJv9jqPmGWDUr7o4ThDeEUnA+GgDlp4y6S6O1BIMKq7rWk7tEqjF6NzKF1BPEMZOg9rbp1B+NL5tb6ZtQeOKLh/fLOFD04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745011762; c=relaxed/simple;
-	bh=02K1TDhrRJCLo86IW3OtYhpy9D7KIuQr59mXQAg0Ti4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nqdFbqB5A24vptA/o//H5Zbo49AUf7y1qqNaG9dKQvn4ATVjLRVwsCMOAthnyTKGjXbct5ryKNWh3BiX7A5F1VVxs+5bcuUckclqck2rHfI31GWZuH3GVubeLmJsUY+LEclh1K942K8f21VyiFy34O6hTACrDFthk8AlN+yEiYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NcpWPQTt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B66DCC4CEE7;
-	Fri, 18 Apr 2025 21:29:20 +0000 (UTC)
+	s=arc-20240116; t=1745011777; c=relaxed/simple;
+	bh=aNvVE4xobOPS1x9QLfzVQTej6ekYYNlRct7l/vLeYyA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mxB9E+xg7r9kAiO+5GdSsIf5V09vS4XU6XY6Vw+hOy0hlZvGgKa4F+rX53+PlibWJwd8xrKnY5Q23QPK+6qs4siWndxTJBN7DbC6EKMHeRyGt9WL4okolKiSoacFn9eDXqc4de8VXN+d57Gpj36IdPhkrV7+1f8lQ/Ek0URtt0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s8VvVNqj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 630B9C4CEE2;
+	Fri, 18 Apr 2025 21:29:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745011761;
-	bh=02K1TDhrRJCLo86IW3OtYhpy9D7KIuQr59mXQAg0Ti4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=NcpWPQTtaQHQALpouJZo8DT6Tg7wTRi8Q+zX4sCbF+IjMpJgi2sc0ZHXuOTda7SLH
-	 BAfLY8UUK4OY8RCPTprI5pY4GRRZ6lUhvYn15o8CqJ9mMNFM4Thn1SJeNEKcPTNpYk
-	 vaKQT/CfCSHf1wjoKXXAguQFnkfe+bxRKPsZZfiVEcfDTv7twlyBKsE9hpcdDNezik
-	 WUDcGwoRueJZypiejw3nkueR0lxz4RlKSpVtgQU34ZshKLw226Yai8hEhJpf5iE+5r
-	 fuASnFhuwa1d+CMYNRBAdaBCk49w4ryG0ctwIv5UK52Yk6I42NyNdaG4LN83aHxwtp
-	 bE2eq0RsdUvOg==
-Message-ID: <8454a55d-bfcc-441a-837e-157123e881fe@kernel.org>
-Date: Sat, 19 Apr 2025 06:29:19 +0900
+	s=k20201202; t=1745011776;
+	bh=aNvVE4xobOPS1x9QLfzVQTej6ekYYNlRct7l/vLeYyA=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=s8VvVNqjrPcmwur3BUFAD/DarQSH+es47t86ZbHJGNum0q1/TLyhMXMlHiQ37v87C
+	 dB2rPY13XwwvLZEfqw/VVPjQ3MFfyAjoYqEQPytnXMjgWih1/TMIiEhrC45LhUJV+3
+	 +xwS1/EIiNOdKEhUg+3EOCQEqPJbuSBx976nJUIbtWC6AcTTbUm5xKHCwBGUslStpT
+	 UmPxOhCJK2DENq48V4Rr1WgagUKEGPWZRZyMwrdMG90G9M98t8MxsB1W9JnS9Ft7Hp
+	 rT0U7fv6I07Kl/R6pIhCesSzYRgq3hhFAkLTapQa/Xg1tS47y5+QM2riEvkia83qBN
+	 KpwA6D1AgCrnw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id F1C2CCE095D; Fri, 18 Apr 2025 14:29:35 -0700 (PDT)
+Date: Fri, 18 Apr 2025 14:29:35 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 0/6] tools/nolibc: fix some undefined behaviour and
+ enable UBSAN
+Message-ID: <0527399b-acff-4452-a982-10f49144e099@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250416-nolibc-ubsan-v1-0-c4704bb23da7@weissschuh.net>
+ <acffaf72-aca5-4301-ade4-ea12571e4392@paulmck-laptop>
+ <44ef9e15-d7dd-4079-93c1-5f9cf79d675b@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: sd_zbc: Limit the report zones buffer size to
- UIO_MAXIOV
-To: SSiwinski@atto.com, Christoph Hellwig <hch@infradead.org>
-Cc: bgrove@atto.com, James.Bottomley@hansenpartnership.com,
- linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
- martin.petersen@oracle.com, Steve Siwinski <stevensiwinski@gmail.com>
-References: <20250411203600.84477-1-ssiwinski@atto.com>
- <Z_yinytV0e_BbNrF@infradead.org>
- <OFA5AB0241.ED5C089D-ON85258C70.0068BDE0-85258C70.00721A7A@atto.com>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <OFA5AB0241.ED5C089D-ON85258C70.0068BDE0-85258C70.00721A7A@atto.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <44ef9e15-d7dd-4079-93c1-5f9cf79d675b@t-8ch.de>
 
-On 4/19/25 05:46, SSiwinski@atto.com wrote:
+On Fri, Apr 18, 2025 at 11:20:29PM +0200, Thomas Weiﬂschuh wrote:
+> Hi Paul,
 > 
-> "Christoph Hellwig" <hch@infradead.org> wrote on 04/14/2025 01:52:31 AM:
+> On 2025-04-18 10:32:27-0700, Paul E. McKenney wrote:
+> > On Wed, Apr 16, 2025 at 08:40:15PM +0200, Thomas Weiﬂschuh wrote:
+> > > Fix some issues uncovered by UBSAN and enable UBSAN for nolibc-test to
+> > > avoid regressions.
+> > > 
+> > > Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
+> > 
+> > Thank you, Thomas!  Are these intended to go into the current v6.15
+> > release, or are you instead thinking in terms of the v6.16 merge window?
+> > Either works for me, but left to myself, I would assume the v6.16
+> > merge window.  ;-)
 > 
->> On Fri, Apr 11, 2025 at 04:36:00PM -0400, Steve Siwinski wrote:
->>> The report zones buffer size is currently limited by the HBA's
->>> maximum segment count to ensure the buffer can be mapped. However,
->>> the user-space SG_IO interface further limits the number of iovec
->>> entries to UIO_MAXIOV when allocating a bio.
->>
->> Why does the userspace SG_IO interface matter here?
->> sd_zbc_alloc_report_buffer is only used for the in-kernel
->> ->report_zones call.
-> 
-> I was referring to the userspace SG_IO limitation (UIO_MAXIOV) in
-> bio_kmalloc(), which gets called when the report zones command is
-> executed and the buffer mapped in bio_map_kern().
-> 
-> Perhaps my wording here was poor and this is really a limitation of bio?
+> They are intended for v6.16 through the normal process.
 
-sd_zbc_alloc_report_buffer() is called only from sd_zbc_report_zones() which is
-the disk ->report_zones() operations, which is NOT called for passthrough
-commands. So modifying sd_zbc_alloc_report_buffer() will not help in any way
-solving your issue with an SG_IO passthrough report zones command issued by the
-user.
+Sounds good, and thank you for the clarification.  Plus good show on
+getting them out early.  ;-)
 
-For reference, libzbc uses ioctl(SG_GET_SG_TABLESIZE) * sysconf(_SC_PAGESIZE) as
-the max buffer size and allocates page aligned buffers to avoid these SG_IO
-buffer mapping limitations.
+							Thanx, Paul
 
--- 
-Damien Le Moal
-Western Digital Research
+> Thomas
+> 
+> > 
+> > > ---
+> > > Thomas Weiﬂschuh (6):
+> > >       tools/nolibc: add __nolibc_has_feature()
+> > >       tools/nolibc: disable function sanitizer for _start_c()
+> > >       tools/nolibc: properly align dirent buffer
+> > >       tools/nolibc: fix integer overflow in i{64,}toa_r() and
+> > >       selftests/nolibc: disable ubsan for smash_stack()
+> > >       selftests/nolibc: enable UBSAN if available
+> > > 
+> > >  tools/include/nolibc/compiler.h              |  6 ++++++
+> > >  tools/include/nolibc/crt.h                   |  5 +++++
+> > >  tools/include/nolibc/dirent.h                |  1 +
+> > >  tools/include/nolibc/stdlib.h                | 24 ++++++++----------------
+> > >  tools/testing/selftests/nolibc/Makefile      |  3 ++-
+> > >  tools/testing/selftests/nolibc/nolibc-test.c |  1 +
+> > >  6 files changed, 23 insertions(+), 17 deletions(-)
+> > > ---
+> > > base-commit: 7c73c10b906778384843b9d3ac6c2224727bbf5c
+> > > change-id: 20250416-nolibc-ubsan-028401698654
+> > > 
+> > > Best regards,
+> > > -- 
+> > > Thomas Weiﬂschuh <linux@weissschuh.net>
+> > > 
 
