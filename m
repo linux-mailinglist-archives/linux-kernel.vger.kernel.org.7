@@ -1,140 +1,122 @@
-Return-Path: <linux-kernel+bounces-610982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8ED4A93B7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 18:57:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FAC3A93B81
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 18:58:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC8DF3BABF8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 16:57:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C78A81B6315E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 16:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D101218E99;
-	Fri, 18 Apr 2025 16:57:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA927217651;
+	Fri, 18 Apr 2025 16:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="dHGfvd+a"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="XZzV/m7D"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49DD71A8F68;
-	Fri, 18 Apr 2025 16:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744995442; cv=none; b=TneKCFjROgLZe9LGs/OpOBbNo529lU3fR0rEDoYfQMmFrrOExj4Bc2zs2zDliRJ6lBVkLcQhs4+v3oyv6PZXPvclHc+Iihjtu7W2BebedR0N7vTyWwx3pwK4jRxcjgLHkdvc1Tjimde2G0AMFqowtUowgVsDb8S55WUftlRtWlM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744995442; c=relaxed/simple;
-	bh=TDuKAiO/Ql1pcO7Mfl5k5VKkVM7MYI46i4hq6UPJUVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uq4HrjlqKQ7RFpY40b1aYZx6YzJChGJgJG1WpIbfdRlszsqKN9lAgYtz022ZZk/EKe3To9MNHY32uz1X+2GQd9X4NvKSoRHw0356jJrsZv25KzCiDtjzxPJFertvqx2wqn9TMh1kpNF1L3J8Bq0lQGMuCs5H0YDwXLGtfcRGa6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=dHGfvd+a; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E0ABF102E6336;
-	Fri, 18 Apr 2025 18:57:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1744995437; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=pNwV8wF/f0cfEaYXtGKzXaf9WE3h64XoNFuFJfyDHNU=;
-	b=dHGfvd+aI3PWFI4S72fOF2+mh7dLV8lxtdiaWzoc0nyeJOqFGAocnEvxxyWK/lgoI+SVWj
-	/b9IK8t2OmLL6MsuVouhqpTUaGt7orcHTaMwXQnHKUUskStuE10gXl5WntPmVxvACYhkRS
-	p2UQqMHePKhQqI3ND0sARlRUSedeN1Vs87lmaqOYdFiZuIFARFkYv2ajX8xFx+dtwkNPyH
-	LeoiAMyRhNFV9Hg/MaGd3tVf56YY5gDjOk7sofsXLk9e6Ft+CtyXKPH+YXPia3/uDXXypS
-	meVJ38ej6R8uZbOqA4DEodK1NqDVNtOUGIRblvAJm6XU9SCYSznr9+ay6uwVkA==
-Date: Fri, 18 Apr 2025 18:57:11 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Sasha Levin <sashal@kernel.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Tomasz =?utf-8?Q?Paku=C5=82a?= <forest10pl@gmail.com>,
-	Nolan Nicholson <nolananicholson@gmail.com>,
-	Tomasz =?utf-8?Q?Paku=C5=82a?= <tomasz.pakula.oficjalny@gmail.com>,
-	=?utf-8?B?TWljaGHFgiBLb3BlxIc=?= <michal@nozomi.space>,
-	Paul Dino Jones <paul@spacefreak18.xyz>,
-	=?iso-8859-1?Q?Crist=F3ferson?= Bueno <cbueno81@gmail.com>,
-	Pablo Cisneros <patchkez@protonmail.com>,
-	Jiri Kosina <jkosina@suse.com>, jikos@kernel.org,
-	bentiss@kernel.org, linux-usb@vger.kernel.org,
-	linux-input@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 5.10 3/5] HID: pidff: Fix null pointer
- dereference in pidff_find_fields
-Message-ID: <aAKEZwyixI01sJmk@duo.ucw.cz>
-References: <20250331145716.1706253-1-sashal@kernel.org>
- <20250331145716.1706253-3-sashal@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5F421764B;
+	Fri, 18 Apr 2025 16:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744995492; cv=pass; b=UoYKmZXDeG1Jw0rfSbR5lSEZMVmDJBD+/9pHTirFsE9eGGFj6SoBbiLwmlci26SGEr4/z6JpoSRBl1w8NQBIrMCFUOdQ9G1RTr22tOhRsavca2uF/xEksXnWF68knUCTs1VUII4aAIksWYPOEGRHb1A2GaY9GAVkCJYYVohjLhI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744995492; c=relaxed/simple;
+	bh=wjXubvx8JdOcTVPixIIdePGjVK2RbRf8Og/Dj3+hU8g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o5P7OFz+7gC/vqDJJExAN5v0R987NAdlUGLddKfXPtYKcv0pXNVeA1IzfIvYBGLfKtFLnYX0DB1Cn4OP9nTOrvkvmXzJF6t/anKBeI/kN9q1Vaf7mpuwu9S457trLqgKm8UuI58R4HqI/VtQB4mk1+Oufiuj7CI+uCbpZsOZQLk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=XZzV/m7D; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1744995453; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=USiBPdEpIaKO0CbACHG6igaTEaDKjvYXvQ0hlvgU3wFZeRZw/gW9wVGyfjJVx8CXbhBW7U7FQpFlCbEpWo+nop85X7ci5ZnioPneF21FiX2+g+pUtGkt5bd3ir57UmGHz0EIJWD0ZK50xCo27gRIL6/6hZ3NSJXdtEZSmwiD0+o=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1744995453; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=sJKFImHbw53BXlav6D+YRkt/sKudnU5/GTTAs3xOorc=; 
+	b=jQYb2zQXf5xpAgdByb+D24KpdVkBod13UI56ONYAF01f1sL5Aar9CJaqUzkheQHJYaYZXYH78EMOucVgYTxHK+6i9yb4evpRMxPuqyFQYad/K8xuVyBrxqLtiY9hjBSioiWuv3Msa/mNPZl0NtvmBq2no6UjUW4mWuJRf5HkaOo=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
+	dmarc=pass header.from=<usama.anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1744995453;
+	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=sJKFImHbw53BXlav6D+YRkt/sKudnU5/GTTAs3xOorc=;
+	b=XZzV/m7DpHsxsJMpWL1ySqTDbJUfSWhmkB/oBsAo00vi4jQHoOOrqaNgMVDrrtkJ
+	da1hqv4I59zZfMSnJz6Ish0DV9TFBtAoh+O7zXC5F4rq2F1kd4iuBcdsJB53kWTVJ4H
+	8HfklXZ4CaUC7NX7AJhcg+/9fGRumikEYIl3L0pI=
+Received: by mx.zohomail.com with SMTPS id 1744995452055136.0748644471705;
+	Fri, 18 Apr 2025 09:57:32 -0700 (PDT)
+Message-ID: <746df70d-b8de-465a-86a5-44a23486af40@collabora.com>
+Date: Fri, 18 Apr 2025 21:57:26 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="z0qow5r4EomdxsV3"
-Content-Disposition: inline
-In-Reply-To: <20250331145716.1706253-3-sashal@kernel.org>
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 03/32] selftests: harness: Ignore unused variant
+ argument warning
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ Shuah Khan <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>,
+ Willy Tarreau <w@1wt.eu>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?=
+ <linux@weissschuh.net>, Kees Cook <kees@kernel.org>
+Cc: Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20250411-nolibc-kselftest-harness-v3-0-4d9c0295893f@linutronix.de>
+ <20250411-nolibc-kselftest-harness-v3-3-4d9c0295893f@linutronix.de>
+Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <20250411-nolibc-kselftest-harness-v3-3-4d9c0295893f@linutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
+
+On 4/11/25 2:00 PM, Thomas Weißschuh wrote:
+> For tests without fixtures the variant argument is unused.
+> This is intentional, prevent to compiler from complaining.
+> 
+> Example warning:
+> 
+>     harness-selftest.c: In function 'wrapper_standalone_pass':
+>     ../kselftest_harness.h:181:52: error: unused parameter 'variant' [-Werror=unused-parameter]
+>       181 |                 struct __fixture_variant_metadata *variant) \
+>           |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+>     ../kselftest_harness.h:156:25: note: in expansion of macro '__TEST_IMPL'
+>       156 | #define TEST(test_name) __TEST_IMPL(test_name, -1)
+>           |                         ^~~~~~~~~~~
+>     harness-selftest.c:15:1: note: in expansion of macro 'TEST'
+>        15 | TEST(standalone_pass) {
+>           | ^~~~
+> 
+> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+
+> ---
+>  tools/testing/selftests/kselftest_harness.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
+> index bac4327775ea65dbe977e9b22ee548bedcbd33ff..2b350ed60b2bf1cbede8e3a9b4ac5fe716900144 100644
+> --- a/tools/testing/selftests/kselftest_harness.h
+> +++ b/tools/testing/selftests/kselftest_harness.h
+> @@ -174,7 +174,7 @@
+>  	static void test_name(struct __test_metadata *_metadata); \
+>  	static inline void wrapper_##test_name( \
+>  		struct __test_metadata *_metadata, \
+> -		struct __fixture_variant_metadata *variant) \
+> +		struct __fixture_variant_metadata __attribute__((unused)) *variant) \
+>  	{ \
+>  		_metadata->setup_completed = true; \
+>  		if (setjmp(_metadata->env) == 0) \
+> 
 
 
---z0qow5r4EomdxsV3
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-> From: Tomasz Paku=C5=82a <forest10pl@gmail.com>
->=20
-> [ Upstream commit 22a05462c3d0eee15154faf8d13c49e6295270a5 ]
->=20
-> This function triggered a null pointer dereference if used to search for
-> a report that isn't implemented on the device. This happened both for
-> optional and required reports alike.
-
-Ok.
-
-> +++ b/drivers/hid/usbhid/hid-pidff.c
-> @@ -770,6 +770,11 @@ static void pidff_set_autocenter(struct input_dev *d=
-ev, u16 magnitude)
->  static int pidff_find_fields(struct pidff_usage *usage, const u8 *table,
->  			     struct hid_report *report, int count, int strict)
->  {
-> +	if (!report) {
-> +		pr_debug("pidff_find_fields, null report\n");
-> +		return -1;
-> +	}
-> +
->  	int i, j, k, found;
-> =20
->  	for (k =3D 0; k < count; k++) {
-> @@ -883,6 +888,11 @@ static int pidff_reports_ok(struct pidff_device *pid=
-ff)
->  static struct hid_field *pidff_find_special_field(struct hid_report *rep=
-ort,
->  						  int usage, int enforce_min)
->  {
-> +	if (!report) {
-> +		pr_debug("pidff_find_special_field, null report\n");
-> +		return NULL;
-> +	}
-> +
->  	int i;
-
-
-But this is quite strange. Normally declarations go first. Not sure if
-old compilers can handle this?
-
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---z0qow5r4EomdxsV3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaAKEZwAKCRAw5/Bqldv6
-8tJBAKCBurItwDdwVzRZ7HmySaIoV8YiWACghrPsYdQt5Vdys1Al1ITKXM7SOrs=
-=nFy1
------END PGP SIGNATURE-----
-
---z0qow5r4EomdxsV3--
+-- 
+Regards,
+Usama
 
