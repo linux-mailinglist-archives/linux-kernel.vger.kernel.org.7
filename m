@@ -1,114 +1,146 @@
-Return-Path: <linux-kernel+bounces-611234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C22DAA93F08
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 22:45:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E176A93F26
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 22:51:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 787FA189507C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 20:45:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A36898A855C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 20:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 457A222FE06;
-	Fri, 18 Apr 2025 20:45:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B7F023F422;
+	Fri, 18 Apr 2025 20:50:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="c2aZCiO3"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KTh0ni4X"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D542868B;
-	Fri, 18 Apr 2025 20:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 292752356B1;
+	Fri, 18 Apr 2025 20:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745009122; cv=none; b=LkAteoECgNh7vsILrf5pYmIp5xjJn+FK70v/WqhkqcE9tFNxrO+NL+D+nnLXC5FJzm6snS5fjnPWwNrf+yvpw51s5U66G9w0y7y90wHzlDKXj4KRQ1lcPS9IwB46plU7KdQ6r+b4kdHQTyZwY5TDWb/GZa8ZZZryI1HBLbpQBQc=
+	t=1745009426; cv=none; b=J0RZBiM0yjFSRA14syTyY+CAnxEc8RAW7FiHErERQqHvTxi23BrJqFy1K4turGNUPGbZjAgUdLQSvBfB8KU6j9655qwU1C2u/lZ2tqmzu0gHwtyC4tqnPFQ2uQz9V5jGocHiy7HavLr7FHePk0PLWqMVO6eOo5vUg3TxQP/WIJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745009122; c=relaxed/simple;
-	bh=SWhMq7EEykkiSLh6AkXVMXflLkia3IhfyNr+kjedS54=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uoz68elrKdKmWxya32+U7Yu7G49OxsEx58H2v0lmEI7iMAvlGL1u4aeNA6MWxmU7FXjNecySmivwIDVZObK/TRAZyixK9F/IlVIoIfjdVkxnVjR//uTFdfuqQwkP09Tg/4uj8eUr3IkcXpECASLMfhY3IT3FS/QUm1pLDi8hIhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=c2aZCiO3; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D294F40E0200;
-	Fri, 18 Apr 2025 20:45:17 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Z9dMenDm3W3E; Fri, 18 Apr 2025 20:45:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1745009113; bh=F6o7Xb9qIamzCoDoNgbWH9E8jO17VFIup3c2wRj3x/Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c2aZCiO3haWNBlhN4vQLIQRtHigrEytnFdFJgsRE/ChIinHzljvnUDKwLufdIK0Pk
-	 PVpyUCi1XHEvx1UKmHfd9X/aocWCVpRVetelBhgga0GVLOe3et6mGwkikNG71c9KUJ
-	 3iUO/D01my+P44PZj7ixDt52sYIsbwWTdqoozT2+iSG7iKeD287zIC0CNifUSQ7PzP
-	 0OClCxlnVSCCI9POuJkftE4PJx/b3A1b197QLuJRXdvCD6h5F8VRStdtr+0HRg2LnS
-	 Kj1namUha1cWGgVbOKObs9Eg2v/0vkf+G8NK6iC98uYKCCOJwQ1H47kDwRr01s3L1d
-	 FIKBX+lo6l7qdqO7beCNX04iJaEBN0eq7l1lVBoHw0WFig4a8uV0Lc28iBRho02CQb
-	 CXlVybkOvsmbA4iCNgybbxLrFnAuuNKZx6VjwG005zg4DBJiadgEF0GwyZ3GLUvO2R
-	 cHTPjc7RQ2etTLjD3/+UHkeEeOjyJSotDeKxqcuIYfAz9bHqOZ8XYVXDcyPgJoOOIf
-	 qa9YjHcCLtPHYFuz1twtOEpXIMEBakfPq7L4TDg2VAf09Nw+1pMuH854B4wLbt6YSl
-	 WWLkq3BY/TYZyu7x38+XT/CGiB3u+opLI5DLUJ9wTCjdp63OhVLlqb554lzIjCsrdr
-	 cYLYu8DX4QY12gfcKiAoTIe8=
-Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id F2D4F40E0214;
-	Fri, 18 Apr 2025 20:45:03 +0000 (UTC)
-Date: Fri, 18 Apr 2025 22:45:02 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Matthew Gerlach <matthew.gerlach@altera.com>
-Cc: dinguyen@kernel.org, tony.luck@intel.com, james.morse@arm.com,
-	mchehab@kernel.org, rric@kernel.org, linux-edac@vger.kernel.org,
+	s=arc-20240116; t=1745009426; c=relaxed/simple;
+	bh=W9segW3cJMe7VP3WKWL2Rpm9z+MOBA5Bz2bhSFPcUHc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hsbvRF+p6J5FkTIrKZPl/F6/jFDeMByu9/CvV6qnxGiA9SdMZpof/tFfE3W+jyOKMV9+dDiuvZ8cpe2LQfQawrt7tQyA48ZtkABC4xyOiY93K9DrfKsQsPQn3MOevfJVN3XeQWkCpvhEwHivfRlyhl74/rDo4uKH/bVOgojz+yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KTh0ni4X; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7c55500d08cso218412485a.0;
+        Fri, 18 Apr 2025 13:50:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745009423; x=1745614223; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zBS+gMuCbxo0lQQXgb/9PCP46mLZ8s4XB03eoOWWGew=;
+        b=KTh0ni4XoZTckpz2941ZQBGdpxgBNKRnVM48cPUjcw3AXlXLLgqJVlpd/dEZjb/NTr
+         ovpMYt8i+NlRFzIISlGh35E9Ohb03muKpCUqVKD7reWY5BddLOC9n/uQMZYAiqsMOwue
+         H2Cxlbkmbb7GLd+qK3iA0YBbTqTNTZmDSHEzJ/pCoE7sra4moOEvwDP08w6hCaynTqHB
+         b7mimYoLhKRU7oqp6MKFClEY1gTnsqjtF1HQAuq1dqdNwoeIsU4gzYdvodJAXXghNOTH
+         o8SdmzFbyyAKLpW1XClyGpRZzBj1SlAm+VZZ2NCUgBwIicfq8ajm4vC/OM6TaEBhXdZg
+         xOcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745009423; x=1745614223;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zBS+gMuCbxo0lQQXgb/9PCP46mLZ8s4XB03eoOWWGew=;
+        b=QMqcmw6DcGcMENrQg987/AW0SNEwpI6eGiC1GXBSifvXXNTmimBczf+MJyPKbyz3GK
+         rAzPuiDIOxeFpdw5dXpLaGt3EaFKtWiMmYALs3P/TFvrQn0LpvncxEa3IBQcOfVd+r0r
+         7o2sH6eMvWh4YrAMMxfkI9ANoKqpkGbCHbkYfhkRXM9WS4uoEqn84i5g5ME6smppNdDC
+         ok3bWeBXrEh2DSIbB5FnePIKvMtAXTYX5PsZFNcORsYNn7bvu0UXB7nDjL54LIPm8LUo
+         seQlprXzU+HLC5373JuchDxTede1RMusR7VhnMJUV1wHRR/gCQxLZIFPhkdp+2nZND8O
+         oC7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUme1mQv02l/cNnLB451OVhRXbajOVHKj79+B0a1p+v12vMPm67YGvKqqmY+lsvK51UFYIwzj2rynADdyaX@vger.kernel.org, AJvYcCXjWt7GGMomBCVZSl8z6vkTuhVAyeP0pe+NKmuUIyDH3wyzZJDDCmQvp51qMGm0osYPdzAqaqcFUgs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzoq5Ltc4l7hVs2eeLuJU4G6dgmSlfN9sK0XH/QwKmi4pn+K56A
+	aRFAKx3WMx4/fhPjjRkaGyD/6hTbv+aI/ehnqjjL8qcavpzTk8dO
+X-Gm-Gg: ASbGncvGRaJVqBK2c9RWT6SGtfilrsxf1742AwkDc1RJPe8ytTmsmYqSWLob0z944df
+	6d3/3/myHWwtm4HNSusZe2Am11UdDfXpU3Hjemkg9CxF9HzyGPBrhjQHxs3rpwH2X1Ym5AK/4PJ
+	bTeA9DzBnm922td5gR3IdrmRCkJ/c+ryTNZ5jF8MUAuT5jQXqHlzRB83pCqnvWG7z4SInvaZkWF
+	p2JobfOgWUa7P6Bq37yEi2otZ2GNGtRCNS7d7l/dmEESUawPijPVIhP/nLewtqzav8pxpXcs9kT
+	d9ZhEAO//a073tEoEyJCSIVfRfv8BfdF8rV1fv7OBQim/GJdFGv4VERcFwhPgrMgk9x3q9huL4X
+	AN6Yn9lnco6+8BRBBVNhOXypEVKP0gw==
+X-Google-Smtp-Source: AGHT+IGfxKsSAmrL28HNu5yl4e6s2vMKqHnmp5LNwavPA9VlB2hFWprDYSQDcjsuRTkffTYQCc6V5w==
+X-Received: by 2002:a05:6214:20a7:b0:6d8:99cf:d2db with SMTP id 6a1803df08f44-6f2c4687fc9mr82895486d6.38.1745009422700;
+        Fri, 18 Apr 2025 13:50:22 -0700 (PDT)
+Received: from theriatric.mshome.net (c-73-123-232-110.hsd1.ma.comcast.net. [73.123.232.110])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f2c2af11d7sm14355906d6.6.2025.04.18.13.50.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Apr 2025 13:50:22 -0700 (PDT)
+From: Gabriel Shahrouzi <gshahrouzi@gmail.com>
+To: gregkh@linuxfoundation.org,
+	jic23@kernel.org,
+	lars@metafoo.de,
+	linux-iio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Niravkumar L Rabara <niravkumar.l.rabara@altera.com>
-Subject: Re: [PATCH 1/2] EDAC/altera: fix cut and paste error
-Message-ID: <20250418204502.GGaAK5zt0verzZOQAd@fat_crate.local>
-References: <20250418143052.38593-1-matthew.gerlach@altera.com>
- <20250418143052.38593-2-matthew.gerlach@altera.com>
+	linux-staging@lists.linux.dev,
+	Michael.Hennerich@analog.com,
+	sonic.zhang@analog.com,
+	vapier@gentoo.org
+Cc: gshahrouzi@gmail.com,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev
+Subject: [PATCH v3 0/5] staging: iio: adc: ad7816: Fix channel handling
+Date: Fri, 18 Apr 2025 16:47:34 -0400
+Message-ID: <cover.1745007964.git.gshahrouzi@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250418143052.38593-2-matthew.gerlach@altera.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Apr 18, 2025 at 07:30:51AM -0700, Matthew Gerlach wrote:
-> From: Niravkumar L Rabara <niravkumar.l.rabara@altera.com>
-> 
-> Fix bug testing the wrong structure member, ecc_uecnt_offset, before using
+The original patch combined a functional fix (allowing channel 7) with
+several refactoring steps (introducing chip_info, renaming structs,
+improving validation). As requested, these have now been separated.
 
-A lot of patches "fix bug". Just write "Test the correct structure member..."
+The series proceeds as follows:
+1. Fix: Allow diagnostic channel 7 for all device variants.
+2. Refactor: Rename the main state structure for clarity before introducing
+   the new chip_info struct.
+3. Refactor: Introduce struct ad7816_chip_info to hold static per-variant
+   data, update ID tables to store pointers, and switch to using
+   device_get_match_data() for firmware-independent identification.
+   This removes the old enum/id mechanism.
+4. Refactor: Add has_busy_pin to chip_info and use this flag to
+   determine BUSY pin handling, replacing pointer comparisons.
+5. Refactor: Simplify channel validation logic using 
+   chip_info->max_channels, removing strcmp() checks.
 
-> ecc_cecnt_offset.
-> 
-> Signed-off-by: Niravkumar L Rabara <niravkumar.l.rabara@altera.com>
-> Signed-off-by: Matthew Gerlach <matthew.gerlach@altera.com>
-> ---
->  drivers/edac/altera_edac.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Regarding the 'fixes' tag: I've applied it only to the first commit
+containing the core fix, primarily to make backporting easier. Is this
+the standard practice, or should the tag typically be applied to
+subsequent commits that build upon or are related to the fix as well?
 
-Any
+Chainges in v3:
+	- Split the patch into smaller patches. Make the fix first
+	  followed by clean up.
+	- Include missing channel for channel selection.
+	- Address specific feedback regarding enums vs. chip_info data.
+	- Use device_get_match_data() for device identification.
+	- Move BUSY pin capability check into chip_info data.
+	- Simplify channel validation using chip_info data.
+Changes in v2:
+        - Refactor by adding chip_info struct which simplifies
+          conditional logic.
 
-Fixes:
-Cc: <stable@kernel.org>
+Gabriel Shahrouzi (5):
+  staging: iio: adc: ad7816: Allow channel 7 for all devices
+  staging: iio: adc: ad7816: Rename state structure
+  staging: iio: adc: ad7816: Introduce chip_info and use pointer
+    matching
+  staging: iio: adc: ad7816: Use chip_info for device capabilities
+  staging: iio: adc: ad7816: Simplify channel validation using chip_info
 
-tags for this one?
-
-You probably want this propagated to the affected trees no?
-
-Thx.
+ drivers/staging/iio/adc/ad7816.c | 94 ++++++++++++++++++--------------
+ 1 file changed, 54 insertions(+), 40 deletions(-)
 
 -- 
-Regards/Gruss,
-    Boris.
+2.43.0
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
