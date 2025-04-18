@@ -1,159 +1,132 @@
-Return-Path: <linux-kernel+bounces-610817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C791FA93964
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 17:16:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D5D6A93973
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 17:17:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF86D1B664ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 15:16:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52F293BD9AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 15:16:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19CDC211278;
-	Fri, 18 Apr 2025 15:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 930B2213E6A;
+	Fri, 18 Apr 2025 15:15:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i+pfFv3d"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T2YyVS0+"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0358F20E310
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 15:14:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B53220C023
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 15:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744989293; cv=none; b=h3krHPRW5BXwKe+u0sPfUeuEX+bAQzfOWATpmXtwcuNX37N2KoGsC3lRLp1fcl3JTs1FEV/0Jc9rQdre5kREF/lhpzuKTvhn8W8A8bQSMwHhqzDFnkoWiqpVAfwngVg8dNrZp8D3xRDwA88QKnTQJxjYTm2Hfysof/jc4MJMZpQ=
+	t=1744989353; cv=none; b=IEg90Ko+phLZ1hmFjQqukjToeMCxHpCsSO+UMvSLeDjql9LBL476lr2ISLLfmtiuDr6odDhdH9R5a/5rLpLolgmJkkOkytSVrbCTubeaGYByzBcrc4Cr7PhFFbPJpJjQhipU5oH3uOx3wwT7qlLdvtLaTBEmtn8eNBt5X0ELN7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744989293; c=relaxed/simple;
-	bh=I8AmJAfFB1Br3VQWNtM8JST0BsY+1YK7YX16yQJsJTo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hrFiso7kTtMar8WTa5x11c1sV6AXTO4vGzh1w2ZneE4aubjRd+MQPwU71W4liEcYeyJGURZPj0dTBbQKhZiiA5WkLYBks3OwaNLkUMnWj8xFmQFX2Gw3czB9U0QCMEemWyB+ZzICnugeOZX16etjk2KklT7gaeKDSzw788D6qZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i+pfFv3d; arc=none smtp.client-ip=209.85.214.172
+	s=arc-20240116; t=1744989353; c=relaxed/simple;
+	bh=KMMnOkwQVuDdX52tnm6wptnXExZOwL/CGPn4GnxI0X0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z/GqYsSQllNvoUPZ07Y5thGSWpMCumYoz5uwIjYoAAg6MDAUzn1brHfZMcayB5DOkE9My/1qhlz5XLV8qAftoFNvcU1UORJ3GMWVGoULG07rOz+3oEvkDAysaX3yaEbW5gu66xxo5xBeTbMTkN2DLOrAFixw6kQYkanHzsuoeWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T2YyVS0+; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-227914acd20so25108325ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 08:14:51 -0700 (PDT)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-22622ddcc35so30572425ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 08:15:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744989291; x=1745594091; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8tlr+U+ggvV9b6qUUYsEDpFnGs799KYouZS0u/xqDZw=;
-        b=i+pfFv3dYiq/r/jmHge7o+I10NWya1G3bggXhn7OaIAHDKdfDMn0ILF9wgJ00fQrEB
-         MYlXBDhNqQF9752hSK3xm4UACBHfn8NWAaQ1d3HYWoFiV/E1Kx8NcpYn8FAAGrGQdUS8
-         XY71sCK5aWDEMlvtMQjSkxxJKo3z+KOLPsLc87G2u7FXGRvhkJ5PCynd5muK9GAT88Fq
-         RzTmZ0fqUAjm1wAo0YmFPwHKU8FpYGE8z138fUi0eFOnrCqwtP/dFk7y2QSDICxxBup8
-         2Lw3tzt32ts5KiTxjwe4EINmZ1WV1Eu4Mne6XOrIO/iCafxYd9L/sIzyhcOkmIqT3wGR
-         FKXg==
+        d=gmail.com; s=20230601; t=1744989351; x=1745594151; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=y7d429vs3u0Qa+Gq2VNqRuv23PSOaLSv/cnB0hDELhM=;
+        b=T2YyVS0+rISSs8hiJzqzKc3XUY4LY4kskFZomtfz1fq6LWC5xXyAZaalkSheBMz+al
+         zlR/42nSZSs8S53Ce3eVFcMU1qP6c0KIIyc+nD/PSMcs1o/HN+oVPpYi6bvwdD9KrhAs
+         Y1wnOR6eGrqgCZO67Z6lcKko3ndZPdm7fEPD/gekwk89nT/AQ96grKmE9NsrSVHflXOX
+         K/7o+TWkK3WcJtcTGNqCBX3BlpjZMQIoap0s4EF5u7L6+XNzuObSqdKlw+LFw3Ed/Nkc
+         06BEO282eSMBHcSUYkl91ivCAcRNvsgqDzHlBbtS80IfIxKXXIe3aFDrYdDEsqzQQ/Gl
+         QH3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744989291; x=1745594091;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8tlr+U+ggvV9b6qUUYsEDpFnGs799KYouZS0u/xqDZw=;
-        b=vAZB+ygQHbMyOEYw5l77WStSbiUdrWyJuO6UXpeXt6jymLlx7rf22hcfCNA7Qp7Ulx
-         TIz3uziJJRvqbxbyzyPHqPfQKI7uKN6VtiXZcR7RCaAnOFj/4N8uxHVl7R4ahS1wlY28
-         X5/t0aAF8hCZus9GykpnUehxuvcx8adsA62UoQyE8qGZwVt9o6WDCFOgI1/7a/2ioDP5
-         zWjAqoXC4gMpivIZEyRPH6HUDUESfJIleM5in90v3fZuRDr+8j2z//Y6sXLbVHT4zZ5Q
-         TvrG27L3F6ttxtkvBl6oi6WKYkKRWUPQuBVKuw98Xof1niFFFEcXm05F3yccohKKfnFf
-         VceQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX3a0D63ZZk9u3G1E2nsGoMdff6kaYF4H2n6/inE9SE7TCpN76QuI83FYCj+9XhdWDjqTFgawZw2ZBDZpk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyab1CCEVIP3R4laFHWBanR94FUc0B0H57HbfPMs0dy1WcIRtYx
-	HFSO/qT6zBirLMGeLvt6Wwv0MOopUHIehAXEppDvxGtNHPdrhjuz
-X-Gm-Gg: ASbGncvmWCJTkssviUL/MpgJcfjiQt7WShPRoTdP2zjGdEKJAThzLR2W3H7comSgGlL
-	zC298YHT/MfGnBkXeQJvkxruXgOBlXF60/fOjukAgV6PsFJTyDb2ROGXz3/05N6cEn14myQ1Mqx
-	xjN3FewUm7TTpEA+plFjKF4O6hvAFNr3v+TALOYf/yOb8iHGIMA9IpOhFS/hncHTO3OvKf51ccV
-	ouTRnI9WQUKOsypX6Wy5CJgvMnojyNyyPS3DSFkcWQOenQYvLvBVZs6SxkZS3P2cKk7HxRkwLUd
-	CWD8k8wLcZp94QS8dHnpTkmW5NhVuG02h3mM4eg0
-X-Google-Smtp-Source: AGHT+IFgH6kH8q8Ukkj38k3Ycwx8mgsM0+PlhclwOyMownQr5Lp6Z8YsDqQFALXwipkdJoGcEZeG3A==
-X-Received: by 2002:a17:902:fc4d:b0:225:abd2:5e5a with SMTP id d9443c01a7336-22c50bd610fmr55082235ad.4.1744989291024;
-        Fri, 18 Apr 2025 08:14:51 -0700 (PDT)
-Received: from localhost ([216.228.127.131])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50eb64fbsm17891505ad.158.2025.04.18.08.14.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Apr 2025 08:14:50 -0700 (PDT)
-Date: Fri, 18 Apr 2025 11:14:48 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Luo Jie <quic_luoj@quicinc.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Julia Lawall <Julia.Lawall@inria.fr>,
-	Nicolas Palix <nicolas.palix@imag.fr>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>, linux-kernel@vger.kernel.org,
-	cocci@inria.fr, linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev, andrew@lunn.ch, quic_kkumarcs@quicinc.com,
-	quic_linchen@quicinc.com, quic_leiwei@quicinc.com,
-	quic_suruchia@quicinc.com, quic_pavir@quicinc.com
-Subject: Re: [PATCH v3 4/6] arm64: nvhe: Convert the opencoded field modify
-Message-ID: <aAJsaNdznnz-1qap@yury>
-References: <20250417-field_modify-v3-0-6f7992aafcb7@quicinc.com>
- <20250417-field_modify-v3-4-6f7992aafcb7@quicinc.com>
- <86r01rjald.wl-maz@kernel.org>
+        d=1e100.net; s=20230601; t=1744989351; x=1745594151;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=y7d429vs3u0Qa+Gq2VNqRuv23PSOaLSv/cnB0hDELhM=;
+        b=bBZzRhTwyvZWvc5pXlYy/WOPRsry2j8yiEOZT0DXbojRFzyEWThICnc4PPbnqefrNg
+         Z7p1AWgjCd/51NminKaRo16OVf7j1icuZeUYMnAzKJON4TKag3IM8x2qDCSSL2DzeRfg
+         krh89j15pmm84fj4baD2H2DQz4ggdtikofzyPV8WHsDeD2KvwyTcxsLPfrK42IqCZA2m
+         w4gnBU8W36hjpHs4RJv7CUVNWtvL5s0dG86iet6VVjwQjaMuxBJWcebrkPnyajIPc3uc
+         89QHzKuu2vBAXPf6+kJLth/xjyIHE2klMrOYSmVJ45G71gB4KBMT5e4rhFaCDyCvcEHR
+         Wc5w==
+X-Forwarded-Encrypted: i=1; AJvYcCWk0W10vE783NA5+I5dghnD7IgMhzwEclIqpmd5+F18lYtQmgVOTcvwC8cCe1I/iX6BZHOOBPotQvl6jG0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4a/RqsNZDPwxiZTeXdrpKD+yuVGb8CpczTuSUKrg0dWaTdhq7
+	fd2CWR1UNRi+jg+KEg0vodQS4TYHUv5Nw7IC8AWw1oHZ/rmN3vT4
+X-Gm-Gg: ASbGncuL1jKgpRqx8OUKxI1OGk6MlQ/1N5g+rIUMPT1i8sDJ1tjHesAJQwGCmQoXsv1
+	ZZTqXPEcy4WhYj0b5n0BInoSDzz6yr/hPYrOpdAfjfo9cTZ7T/QzgAjtlWhFZ/mWFIo3Oyh45Oa
+	u7o4lbnEMPV8SocvYL9wYZkS0qang283fMnqeJ0j65lbXs86GbYD95RVf1GldrnFj3EZmlVRSOx
+	hbeSbHzDjRI1FsC+l18Mo8WWl7AcQ/Y9Mk/CPb1+Ts3XjDRAwD5EvsFYsTCvgQvFmFrnZJMukf4
+	gTAVu+v7jWN833eBu9hOu8pBOR2b5VWH25mwQABf15uqDm+Pvw==
+X-Google-Smtp-Source: AGHT+IGEscJcgtAIszZfwRLpspqoP3lhJKDr0lTbKFdf5IfgHXsSLhT8pfuCbUq5Yiu/dAxQNQxevA==
+X-Received: by 2002:a17:902:ea07:b0:224:7a4:b2a with SMTP id d9443c01a7336-22c5357a664mr41632685ad.11.1744989350792;
+        Fri, 18 Apr 2025 08:15:50 -0700 (PDT)
+Received: from localhost.localdomain ([43.129.202.66])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50eb48f7sm17920105ad.138.2025.04.18.08.15.48
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Fri, 18 Apr 2025 08:15:50 -0700 (PDT)
+From: Lance Yang <ioworker0@gmail.com>
+X-Google-Original-From: Lance Yang <lance.yang@linux.dev>
+To: akpm@linux-foundation.org
+Cc: mingzhe.yang@ly.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Lance Yang <ioworker0@gmail.com>,
+	David Hildenbrand <david@redhat.com>,
+	Lance Yang <lance.yang@linux.dev>
+Subject: [PATCH v2 1/1] mm/rmap: add CONFIG_MM_ID guard for folio_test_large_maybe_mapped_shared()
+Date: Fri, 18 Apr 2025 23:15:00 +0800
+Message-ID: <20250418151500.14967-1-lance.yang@linux.dev>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <86r01rjald.wl-maz@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Apr 17, 2025 at 12:23:10PM +0100, Marc Zyngier wrote:
-> On Thu, 17 Apr 2025 11:47:11 +0100,
-> Luo Jie <quic_luoj@quicinc.com> wrote:
-> > 
-> > Replaced below code with the wrapper FIELD_MODIFY(MASK, &reg, val)
-> > - reg &= ~MASK;
-> > - reg |= FIELD_PREP(MASK, val);
-> > The semantic patch that makes this change is available
-> > in scripts/coccinelle/misc/field_modify.cocci.
-> > 
-> > More information about semantic patching is available at
-> > https://coccinelle.gitlabpages.inria.fr/website
-> > 
-> > Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
-> > ---
-> >  arch/arm64/kvm/hyp/include/nvhe/memory.h | 3 +--
-> >  1 file changed, 1 insertion(+), 2 deletions(-)
-> > 
-> > diff --git a/arch/arm64/kvm/hyp/include/nvhe/memory.h b/arch/arm64/kvm/hyp/include/nvhe/memory.h
-> > index 34233d586060..b2af748964d0 100644
-> > --- a/arch/arm64/kvm/hyp/include/nvhe/memory.h
-> > +++ b/arch/arm64/kvm/hyp/include/nvhe/memory.h
-> > @@ -30,8 +30,7 @@ enum pkvm_page_state {
-> >  static inline enum kvm_pgtable_prot pkvm_mkstate(enum kvm_pgtable_prot prot,
-> >  						 enum pkvm_page_state state)
-> >  {
-> > -	prot &= ~PKVM_PAGE_STATE_PROT_MASK;
-> > -	prot |= FIELD_PREP(PKVM_PAGE_STATE_PROT_MASK, state);
-> > +	FIELD_MODIFY(PKVM_PAGE_STATE_PROT_MASK, &prot, state);
-> >  	return prot;
-> >  }
-> 
-> Following up on my suggestion to *not* add anything new, this patch
-> could be written as:
-> 
-> diff --git a/arch/arm64/kvm/hyp/include/nvhe/memory.h b/arch/arm64/kvm/hyp/include/nvhe/memory.h
-> index 34233d5860607..08cb6ba0e0716 100644
-> --- a/arch/arm64/kvm/hyp/include/nvhe/memory.h
-> +++ b/arch/arm64/kvm/hyp/include/nvhe/memory.h
-> @@ -30,9 +30,8 @@ enum pkvm_page_state {
->  static inline enum kvm_pgtable_prot pkvm_mkstate(enum kvm_pgtable_prot prot,
->  						 enum pkvm_page_state state)
->  {
-> -	prot &= ~PKVM_PAGE_STATE_PROT_MASK;
-> -	prot |= FIELD_PREP(PKVM_PAGE_STATE_PROT_MASK, state);
-> -	return prot;
-> +	u64 p = prot;
-> +	return u64_replace_bits(p, state, PKVM_PAGE_STATE_PROT_MASK);
->  }
+From: Lance Yang <ioworker0@gmail.com>
 
-This is a great example where u64_replace_bit() should NOT be used. 
+From: Lance Yang <lance.yang@linux.dev>
 
-Thanks,
-Yury
+To prevent folio_test_large_maybe_mapped_shared() from being used without
+CONFIG_MM_ID, we add a compile-time check rather than wrapping it in
+'#ifdef', avoiding even more #ifdef in callers that already use
+IS_ENABLED(CONFIG_MM_ID).
+
+Also, we used plenty of IS_ENABLED() on purpose to keep the code free of
+'#ifdef' mess.
+
+Suggested-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Lance Yang <lance.yang@linux.dev>
+Acked-by: David Hildenbrand <david@redhat.com>
+---
+v1 -> v2:
+ * Update the changelog, suggested by Andrew and David
+ * https://lore.kernel.org/linux-mm/20250417124908.58543-1-ioworker0@gmail.com
+
+ include/linux/page-flags.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+index d3909cb1e576..6bd9b9043976 100644
+--- a/include/linux/page-flags.h
++++ b/include/linux/page-flags.h
+@@ -1232,6 +1232,8 @@ static inline int folio_has_private(const struct folio *folio)
+ 
+ static inline bool folio_test_large_maybe_mapped_shared(const struct folio *folio)
+ {
++	/* This function should never be called without CONFIG_MM_ID enabled. */
++	BUILD_BUG_ON(!IS_ENABLED(CONFIG_MM_ID));
+ 	return test_bit(FOLIO_MM_IDS_SHARED_BITNUM, &folio->_mm_ids);
+ }
+ #undef PF_ANY
+-- 
+2.49.0
+
 
