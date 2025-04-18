@@ -1,160 +1,106 @@
-Return-Path: <linux-kernel+bounces-610125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8341DA930C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 05:27:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76464A930CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 05:28:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D5BD1B65C8A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 03:27:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3BB73ABCF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 03:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8B3426869F;
-	Fri, 18 Apr 2025 03:27:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FCF0268691;
+	Fri, 18 Apr 2025 03:28:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="QMKeyD2x"
-Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.8])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D8BE1DAC81;
-	Fri, 18 Apr 2025 03:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.8
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S90kDL67"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C0552101BD;
+	Fri, 18 Apr 2025 03:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744946842; cv=none; b=ua/p+udniLWQWxRoEc9qXzPZ1vy1fm77CKOf+iEMP3PMcIbBMzKtpEUGP/PPR/Vve/pmcwwwPN4IKU3SgQBjJA5CrLmSNlqmi3PQIPjYLTmY8/eIg4O47T5pfZrLo3rX+b9FbVzhLBidm6hePjYz3yxvCwWpVKFbgeh6I1NqosI=
+	t=1744946928; cv=none; b=S3KnTAXw5l9AK8KwqD1jwM/tNhfcKPfnIG6TcOH7mTs/GMUd7MIQI6fa3bcg1yiF2A7dtxgqeSJ63MydzhScu4/syVvIZiqTKy4pZkY4OZfmpOSnQJDF3u5UTm+ljSOTitD9aHu7vvseTrsOkRpcGWtwlvNWKvDOMh9mV6tLGpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744946842; c=relaxed/simple;
-	bh=EkaPxG0GHnoemmotLyW6dmFrJma2k7EB4KK2UrrPSds=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NgJx8lULJFQUNQbqpbmUx4MTR6KkIYV2ek32RrvzjHZBwU8C25W3hncEv5cbab+IeIrhuDNr7m4RYh5Fu9NEcIkRA5PpgQCODwuFEWMQJX9WKi8z2CtNIgh0qFMgqFb679Lpp3jEuP9OjhjpqVMMsBaDLMuEvACkiXM8ZZdCols=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=QMKeyD2x; arc=none smtp.client-ip=220.197.31.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=LfMB4
-	/ZZZnzaabPKTMQe0oEWWhOGgmuyjQA6Yi6xzcE=; b=QMKeyD2x+bUlvciJ87MVS
-	xqUbbjctXWOOvLkqe2I00pW1SObzUbbzPliL8E2q0TZDaKiFkAQCckGQlievyae7
-	UyRKXRo989dM0OEC9XKNv5ciMI6fjjYmx6wR5EvPbpLl/Ji/pa7Dfac3iXZG2dym
-	HvM1FqSpYw7YgtMSnoDIns=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp4 (Coremail) with SMTP id PykvCgD3l2pNxgFodOZBDA--.38467S4;
-	Fri, 18 Apr 2025 11:26:10 +0800 (CST)
-From: Honglei Wang <jameshongleiwang@126.com>
-To: tj@kernel.org,
-	void@manifault.com,
-	arighi@nvidia.com,
-	changwoo@igalia.com
-Cc: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	joshdon@google.com,
-	brho@google.com,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	jameshongleiwang@126.com
-Subject: [PATCH v2 2/2] sched_ext: add helper for refill task with default slice
-Date: Fri, 18 Apr 2025 11:26:03 +0800
-Message-Id: <20250418032603.61803-3-jameshongleiwang@126.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250418032603.61803-1-jameshongleiwang@126.com>
-References: <20250418032603.61803-1-jameshongleiwang@126.com>
+	s=arc-20240116; t=1744946928; c=relaxed/simple;
+	bh=paa/9NZKZKpdwfQILoGguW2nvATTkdoCMaZ8TYAofx0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qvJBVczevmBOR1RQqi8dyOKX2Tn3TWeC7Ulckhpp1lsBiM3IhDKOt4/4YE+UlDNQvkJ0i9MPzdB9W5cWNzV9vskcfS/KMvDoDACdUGD3bmCjhQ19MPHUYz6/b/w24t4Hp8iAMB+iy6VYIPPlktJ/7pxX1GVnflbjbHphJt8mDT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S90kDL67; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17CD9C4CEE2;
+	Fri, 18 Apr 2025 03:28:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744946927;
+	bh=paa/9NZKZKpdwfQILoGguW2nvATTkdoCMaZ8TYAofx0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=S90kDL67H31uSpEv4ZrQD4HD18zmryec0gLnj6+7QnaMN47KnnOiTpqryL9vUNJ0A
+	 OOlF1S+mKh49+xCZJuOOZXg0mYOqjU0Q39rMBTaO7x4ZZ6rpyfpPUNEX8HBVkfOsLD
+	 EY0RfFI9paylTf22uMjv+BqRmKRkmXOwmB9ECQuP3FNHB5Wy7t4nZwSuepETOw2lRW
+	 Qz6m6UZdgJj7wiKuWat9qhSWie5OoLWjIimkGMx6zHjaxZh+mzrUBzik42/Ul41jJB
+	 R4/dQdFwKtEZseJeVkLQbr6lQOpHAW5m/VQwglLYHWTuPTm5l0lXEg+EXy1tPH0mfa
+	 VY0mvYrHgNZ8g==
+Date: Thu, 17 Apr 2025 20:28:45 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-crypto@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
+	x86@kernel.org, Jason@zx2c4.com, ardb@kernel.org,
+	Alexander Potapenko <glider@google.com>
+Subject: Re: [PATCH 01/15] crypto: arm - remove CRYPTO dependency of library
+ functions
+Message-ID: <20250418032845.GA38960@quark.localdomain>
+References: <20250417182623.67808-2-ebiggers@kernel.org>
+ <aAHCIL_sYIS_1JQH@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PykvCgD3l2pNxgFodOZBDA--.38467S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Ww1xZFyDWFy5Aw1rCrWxWFg_yoW5Jr18p3
-	Zaya45XF48J3W2vay0qrWkC3Wa9ws3A34UCrZ5J397trsrtwnYvFyrJw43try5Xr9093Wx
-	tF4j9F13tr1DZrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UwVysUUUUU=
-X-CM-SenderInfo: 5mdpv2pkrqwzphlzt0bj6rjloofrz/1tbiJBIzrWgBwvdNFAAAst
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aAHCIL_sYIS_1JQH@gondor.apana.org.au>
 
-Add helper for refilling task with default slice and event
-statistics accordingly.
+On Fri, Apr 18, 2025 at 11:08:16AM +0800, Herbert Xu wrote:
+> Eric Biggers <ebiggers@kernel.org> wrote:
+> >
+> > diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> > index 25ed6f1a7c7a..86fcce738887 100644
+> > --- a/arch/arm/Kconfig
+> > +++ b/arch/arm/Kconfig
+> > @@ -1753,5 +1753,7 @@ config ARCH_HIBERNATION_POSSIBLE
+> >        bool
+> >        depends on MMU
+> >        default y if ARCH_SUSPEND_POSSIBLE
+> > 
+> > endmenu
+> > +
+> > +source "arch/arm/crypto/Kconfig"
+> 
+> ...
+> 
+> > diff --git a/crypto/Kconfig b/crypto/Kconfig
+> > index 9322e42e562d..cad71f32e1e3 100644
+> > --- a/crypto/Kconfig
+> > +++ b/crypto/Kconfig
+> > @@ -1424,13 +1424,10 @@ endmenu
+> > 
+> > config CRYPTO_HASH_INFO
+> >        bool
+> > 
+> > if !KMSAN # avoid false positives from assembly
+> > -if ARM
+> > -source "arch/arm/crypto/Kconfig"
+> > -endif
+> 
+> So this removes the KMSAN check.  Is it still needed or not?
+> 
 
-Signed-off-by: Honglei Wang <jameshongleiwang@126.com>
----
- kernel/sched/ext.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+Only x86 and s390 support KMSAN.
 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 2a091ea23328..579dc0e9443a 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -1815,6 +1815,12 @@ static void dsq_mod_nr(struct scx_dispatch_q *dsq, s32 delta)
- 	WRITE_ONCE(dsq->nr, dsq->nr + delta);
- }
- 
-+static void refill_task_slice_dfl(struct task_struct *p)
-+{
-+	p->scx.slice = SCX_SLICE_DFL;
-+	__scx_add_event(SCX_EV_REFILL_SLICE_DFL, 1);
-+}
-+
- static void dispatch_enqueue(struct scx_dispatch_q *dsq, struct task_struct *p,
- 			     u64 enq_flags)
- {
-@@ -2196,16 +2202,14 @@ static void do_enqueue_task(struct rq *rq, struct task_struct *p, u64 enq_flags,
- 	 * higher priority it becomes from scx_prio_less()'s POV.
- 	 */
- 	touch_core_sched(rq, p);
--	p->scx.slice = SCX_SLICE_DFL;
--	__scx_add_event(SCX_EV_REFILL_SLICE_DFL, 1);
-+	refill_task_slice_dfl(p);
- local_norefill:
- 	dispatch_enqueue(&rq->scx.local_dsq, p, enq_flags);
- 	return;
- 
- global:
- 	touch_core_sched(rq, p);	/* see the comment in local: */
--	p->scx.slice = SCX_SLICE_DFL;
--	__scx_add_event(SCX_EV_REFILL_SLICE_DFL, 1);
-+	refill_task_slice_dfl(p);
- 	dispatch_enqueue(find_global_dsq(p), p, enq_flags);
- }
- 
-@@ -3294,10 +3298,8 @@ static struct task_struct *pick_task_scx(struct rq *rq)
- 	 */
- 	if (keep_prev) {
- 		p = prev;
--		if (!p->scx.slice) {
--			p->scx.slice = SCX_SLICE_DFL;
--			__scx_add_event(SCX_EV_REFILL_SLICE_DFL, 1);
--		}
-+		if (!p->scx.slice)
-+			refill_task_slice_dfl(p);
- 	} else {
- 		p = first_local_task(rq);
- 		if (!p) {
-@@ -3312,8 +3314,7 @@ static struct task_struct *pick_task_scx(struct rq *rq)
- 						p->comm, p->pid, __func__);
- 				scx_warned_zero_slice = true;
- 			}
--			p->scx.slice = SCX_SLICE_DFL;
--			__scx_add_event(SCX_EV_REFILL_SLICE_DFL, 1);
-+			refill_task_slice_dfl(p);
- 		}
- 	}
- 
-@@ -3397,9 +3398,8 @@ static int select_task_rq_scx(struct task_struct *p, int prev_cpu, int wake_flag
- 
- 		cpu = scx_select_cpu_dfl(p, prev_cpu, wake_flags, 0);
- 		if (cpu >= 0) {
--			p->scx.slice = SCX_SLICE_DFL;
-+			refill_task_slice_dfl(p);
- 			p->scx.ddsp_dsq_id = SCX_DSQ_LOCAL;
--			__scx_add_event(SCX_EV_REFILL_SLICE_DFL, 1);
- 		} else {
- 			cpu = prev_cpu;
- 		}
--- 
-2.45.2
-
+- Eric
 
