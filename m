@@ -1,236 +1,164 @@
-Return-Path: <linux-kernel+bounces-611163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A41FBA93E5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 21:42:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9CDEA93E64
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 21:45:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE8833B534D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 19:42:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3F2C7B2360
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 19:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BD3F22D4C8;
-	Fri, 18 Apr 2025 19:42:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF8D322D4FD;
+	Fri, 18 Apr 2025 19:44:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j44HsLKw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=hefring-com.20230601.gappssmtp.com header.i=@hefring-com.20230601.gappssmtp.com header.b="ZMnnfyMp"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45DD4217654;
-	Fri, 18 Apr 2025 19:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8B12253AE
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 19:44:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745005348; cv=none; b=Gc6jYf2a5/ycZJzBT8T/VMgDp560RmbbN/Ago1EVnBgc5PmSufmGDgshCPay9Ev7myxgszWlranX5g+nG7/AgYu5dj6rhjabm9ItRldn2Y3vk0B32/fJFLc9gYWI3vRzwQOjm6uwCb8Ocum3XV6YMJWaibRdgem5RzqAGpZ41t4=
+	t=1745005489; cv=none; b=uSS1WVy5NuKZZnInTasgLM83M56uSwI974NyU+l7AeBNWNETFxwhzvuwYT+/q+8bBHzIaOjy54ikmBywzYoZ7A+dihIOWBJLPpErbhEIgP8OOW4Gklr0M3RBeorQKoMpfNQVfxvuoaWnbhOd1molrpFXzkE12xEpIqYchu5cwNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745005348; c=relaxed/simple;
-	bh=hsZc2Jrdk3ZQU6oGB8uLyQMj60LyoYdoedZoeCoBLbM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d4EiVWJCHmtgo5dviExz4yOCQJDboU4n7gBab5/LGeKF8IC3d4mHJshyzYyVS0LWX49muOtiQ1tUfrMfsgFOH/W7ytA9FZbsRR8WHcqzJl2nQJbSGr8By96I6s9vQhJPgg1pPVoBRD6L2Pn4ruFXGqf7zeUruXGFQd9TG8ZvKTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j44HsLKw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC742C4AF09;
-	Fri, 18 Apr 2025 19:42:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745005347;
-	bh=hsZc2Jrdk3ZQU6oGB8uLyQMj60LyoYdoedZoeCoBLbM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=j44HsLKwwgkR9k2Vtqd/rzm7RgTcbMdrX2gR0JK0ZxoFaX8ckSltT+4CPyi+xA8ix
-	 C3t4XwFlluNp7g4cjHpjrXQ1/pW2WH63q7KLtKjBU7YzXFt9NREIuHwc1TEqRJyzfR
-	 NvjuMQBnM+kWfApCCGGp8C4SeHAyUxNvT7065mJ280Gk2L2eVbzL4IimREBN2aZeBs
-	 HCX8+L6KQUYotxd7jLQ8yqe2qRDsaiXaSwc9eYG/MAe15Eio5MD5kLT4GSmy6xuEz8
-	 jkDyp4JGGG76eq5NfcH2sGzIqOXbLbQSBYrO/ufqMKOtGpzmzD9HUVNwvkO2F3eX7Z
-	 tuo/dJWgsjKXA==
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-2d540239367so103868fac.0;
-        Fri, 18 Apr 2025 12:42:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUNUDo/WvxosGa4kcXrbWmL3AdkMR9ccci39gJCLLjrjS+q5Vuq17xrk2kasVkTSXoN8Vhdb2BmcbI=@vger.kernel.org, AJvYcCXn2MQsNUWqAaFUOaYS2sv29Bp8SH/QKFMnIcKug1E3/O/UQBcUYigoMyOvdPpFK71Wy9exCRwjnIf+0do=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXISvxZWs1Gnk1LzGqdpRrfKKkqrSdB4ZAa/2vVVYpNb1GvXUa
-	aNOgPVyQj289g0WJPcmOoYKhxmsouRmpk/Bo1ikYEIUE0QKWm2oAphxzl4w/QGi8ARAuGp08Etq
-	l888A0hdxnRtfIX1ml51TEsjDgEQ=
-X-Google-Smtp-Source: AGHT+IGaMyJkOtfdVBIZXsi9oIA4F721iQBvUNXd6UeiFN2Jf9LHo/6zITV9MiO24JowGNjVtCUW70mLnVtuqHgeRpA=
-X-Received: by 2002:a05:6870:9195:b0:29e:2ce2:94d with SMTP id
- 586e51a60fabf-2d526a654cemr2312301fac.14.1745005346942; Fri, 18 Apr 2025
- 12:42:26 -0700 (PDT)
+	s=arc-20240116; t=1745005489; c=relaxed/simple;
+	bh=VmITldUAVN4yeDbRisnT/KKRuBjKNTaek+ixSS4e5/M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MTgQ4DmrEvNEIuk0yqv9rB4dZscVHqpNVNe8Q3vnDx31JVpTCFzTuwbKeUWXdD4EsvdjLBTYLPw5MtyPGU5hRxLzUzbnln6Srd9ZbxhJpDNFBNG25iG8U5QzwIYzPSBSRsnhvLfbY0glS9zR+c/MuVxwqTFgcqNDw3i3kg2QZEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hefring.com; spf=none smtp.mailfrom=hefring.com; dkim=pass (2048-bit key) header.d=hefring-com.20230601.gappssmtp.com header.i=@hefring-com.20230601.gappssmtp.com header.b=ZMnnfyMp; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hefring.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=hefring.com
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7c922169051so84761485a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 12:44:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=hefring-com.20230601.gappssmtp.com; s=20230601; t=1745005486; x=1745610286; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=SLauaaAIMDgGRmgJvUInjJwX+d3UVwdMW/GukaI+OmY=;
+        b=ZMnnfyMp+VyxkgEwIIqKCYfnMlOgzYMfgd0BiXmhy54bzSUN1C61DZVI5Msptbs3MZ
+         XU6tnoQW2EfNMMmPuHFfS+07mabg30BH2bHFAc8UMUZ1+fI6jMQqMUsiJA3rjw6AEWHW
+         RDtF3Yr5LANc1Qyr4sGHc+qf/BkmI4QlyhjMl8YaGPVR7Z3IBHlTMradDqSgdctvMJRS
+         Ii+hmyCreHwhGC0TOVxY6oKcVFF7+7Wa6f+/d6vK7WCOPwLnezvOxCyvz40SeQBQcUV8
+         SM9FVM3Mv1jJT3cF5kcHAaDmrokkVJmt/ajoqab8zXkNcGOVEMfGW5p5nbxRzt/zCxAl
+         4BUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745005486; x=1745610286;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SLauaaAIMDgGRmgJvUInjJwX+d3UVwdMW/GukaI+OmY=;
+        b=IyzUYOWxm/g0sgSiCXyGSKH7dPT7EIHaGnBkG5qnOHdxPsYAQs8Sb/M8v50V8FEdsk
+         cRk+rqVNXBErSVqC8ezajSG70IspFL1najV+maUlcwpCzZJdoaRwJ3ll6lxDg5dZBr5k
+         D2Sny3pjJ6bghjgNWyCTxYu6iFRCOEzekSnTTakntMy8nh/C3Y+SmYoha4hi6f+nroJy
+         wlmLwtKxT0FVjyYOvUim1G3bZwEauA6l5ZyXxfepYANWuZBqEmE8mi5GgPGCTa46kmXx
+         JI3RZiPXy53/6RFEMMzdW+6ltLAH15u2HBZMggL2JDZU2IVx19TivzJQgJx5tTotQnSH
+         umIg==
+X-Forwarded-Encrypted: i=1; AJvYcCUcug85St3MNNzo0yMdm+q3hE8KY5yJyVd0W95oIb1WKFv+2sDba7qY+qnQAoiiIf3HmYLolr8LZ1ZB7E4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxba8ii75Wuo0+BSRa6I6A9r+MporqiBbwTvUVSgX3+t7jh6Bek
+	waS9UCp8G4ZyQea8lhVO9U5TK0fwaRwJIKlwQ6pkTvMBgGGdNSK8d1q8+cqwrx8=
+X-Gm-Gg: ASbGncu8J1G51bC/ThyaBqi4fMcZYvU9+XXh1dE8rNp03yYPjIEDr4Tm/Z+unmFFhpm
+	bjB1WUlsctiY0KdCLvYk7qADU6OddgqOJ+rjA0uLbgnPD69SHTi/xhoAXkRJdJZQ9MMvuuxByJr
+	giGZJPWOmqlstjztHDJJ2ikJareZv8X7M34T5EITIaHZUrelWWlUL30ju4MzEfJ3dwcIOJcr+uO
+	fd6Bbplrt9MYFWmJ1InSdms6MNzD1d4ufMRTQIbGArH9KXxktGfNQfimV0EtToAgLslXsFcc28n
+	cRPXJluzSpoSvRfGTwbxchsTaYLLg1XF5RFfBXlRH1wnX+ucWniI63sVVA==
+X-Google-Smtp-Source: AGHT+IHi1qEGGO/9pcvHTp0Xydqxo04Oz9IXipqF7+K166+yoLclI0eNGI7rSM4ss05GvLdt3ykMpw==
+X-Received: by 2002:a05:620a:1923:b0:7c9:23c7:a92b with SMTP id af79cd13be357-7c927f55148mr672289585a.8.1745005486577;
+        Fri, 18 Apr 2025 12:44:46 -0700 (PDT)
+Received: from dell-precision-5540 ([50.212.55.90])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c925ac131asm138758985a.56.2025.04.18.12.44.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Apr 2025 12:44:46 -0700 (PDT)
+Date: Fri, 18 Apr 2025 15:44:43 -0400
+From: Ben Wolsieffer <ben.wolsieffer@hefring.com>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Christian Schrrefl <chrisi.schrefl@gmail.com>,
+	Russell King <rmk+kernel@armlinux.org.uk>,
+	Rudraksha Gupta <guptarud@gmail.com>,
+	Alice Ryhl <aliceryhl@google.com>, Ard Biesheuvel <ardb@kernel.org>,
+	anders.roxell@linaro.org, arnd@arndb.de, dan.carpenter@linaro.org,
+	laura.nao@collabora.com, linux-kernel@vger.kernel.org,
+	lkft-triage@lists.linaro.org, regressions@lists.linux.dev,
+	rust-for-linux@vger.kernel.org, torvalds@linux-foundation.org,
+	Nick Clifton <nickc@redhat.com>,
+	Richard Earnshaw <richard.earnshaw@arm.com>,
+	Ramana Radhakrishnan <ramanara@nvidia.com>
+Subject: Re: Build: arm rustgcc unknown argument '-mno-fdpic'
+Message-ID: <aAKrq2InExQk7f_k@dell-precision-5540>
+References: <CA+G9fYvOanQBYXKSg7C6EU30k8sTRC0JRPJXYu7wWK51w38QUQ@mail.gmail.com>
+ <20250407183716.796891-1-ojeda@kernel.org>
+ <CA+G9fYt4otQK4pHv8pJBW9e28yHSGCDncKquwuJiJ_1ou0pq0w@mail.gmail.com>
+ <CANiq72napRCGp3Z-xZJaA9zcgREe3Xy5efW8VW=NEZ13DAy+Xw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6171293.lOV4Wx5bFT@rjwysocki.net> <9458818.CDJkKcVGEf@rjwysocki.net>
- <aAIm48RPmm1d_Y6u@sultan-box.localdomain>
-In-Reply-To: <aAIm48RPmm1d_Y6u@sultan-box.localdomain>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 18 Apr 2025 21:42:15 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iAmutVUQtMP_yThRx2J39Ng96osv1BMHX0gRf-8oJ3TA@mail.gmail.com>
-X-Gm-Features: ATxdqUH8iL8v0BTCOD0WXMq4RC0-Tvvyp0rra5OoZR26RcOX4bWhBzgPIqRilNo
-Message-ID: <CAJZ5v0iAmutVUQtMP_yThRx2J39Ng96osv1BMHX0gRf-8oJ3TA@mail.gmail.com>
-Subject: Re: [PATCH v2 5/6] cpufreq: Avoid using inconsistent policy->min and policy->max
-To: Sultan Alsawaf <sultan@kerneltoast.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
-	Mario Limonciello <mario.limonciello@amd.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Christian Loehle <christian.loehle@arm.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Valentin Schneider <vschneid@redhat.com>, Ingo Molnar <mingo@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72napRCGp3Z-xZJaA9zcgREe3Xy5efW8VW=NEZ13DAy+Xw@mail.gmail.com>
 
-On Fri, Apr 18, 2025 at 12:18=E2=80=AFPM Sultan Alsawaf <sultan@kerneltoast=
-.com> wrote:
->
-> On Tue, Apr 15, 2025 at 12:04:21PM +0200, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Tue, Apr 15, 2025 at 05:38:54PM +0200, Miguel Ojeda wrote:
+> On Tue, Apr 15, 2025 at 1:40 PM Naresh Kamboju
+> <naresh.kamboju@linaro.org> wrote:
 > >
-> > Since cpufreq_driver_resolve_freq() can run in parallel with
-> > cpufreq_set_policy() and there is no synchronization between them,
-> > the former may access policy->min and policy->max while the latter
-> > is updating them and it may see intermediate values of them due
-> > to the way the update is carried out.  Also the compiler is free
-> > to apply any optimizations it wants both to the stores in
-> > cpufreq_set_policy() and to the loads in cpufreq_driver_resolve_freq()
-> > which may result in additional inconsistencies.
+> > On Tue, 8 Apr 2025 at 00:07, Miguel Ojeda <ojeda@kernel.org> wrote:
+> > >
+> > > On Mon, 07 Apr 2025 22:58:02 +0530 Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+> > > >
+> > > > Regressions on arm build with config rustgcc-lkftconfig-kselftest on the
+> > > > Linux mainline and next failed with CONFIG_RUST=y enabled.
+> > >
+> > > > Bad: next-20250327
+> > > > Good: next-20250326
+> > >
+> > > > Unable to generate bindings: clang diagnosed error: error: unknown
+> > > > argument: '-mno-fdpic'
+> > >
+> > > I assume this is the arm support, i.e. commit ccb8ce526807 ("ARM: 9441/1:
+> > > rust: Enable Rust support for ARMv7").
+> > >
+> > > Clang does not seem to support `-mno-fdpic`, thus you probably need to add it to
+> > > `bindgen_skip_c_flags` in `rust/Makefile` so that it gets skipped when the C
+> > > compiler is GCC.
+> > >
+> > > If you do so, please double-check if the flag could potentially alter the ABI in
+> > > a way that `bindgen` would generate the wrong bindings.
 > >
-> > To address this, use WRITE_ONCE() when updating policy->min and
-> > policy->max in cpufreq_set_policy() and use READ_ONCE() for reading
-> > them in cpufreq_driver_resolve_freq().  Moreover, rearrange the update
-> > in cpufreq_set_policy() to avoid storing intermediate values in
-> > policy->min and policy->max with the help of the observation that
-> > their new values are expected to be properly ordered upfront.
-> >
-> > Also modify cpufreq_driver_resolve_freq() to take the possible reverse
-> > ordering of policy->min and policy->max, which may happen depending on
-> > the ordering of operations when this function and cpufreq_set_policy()
-> > run concurrently, into account by always honoring the max when it
-> > turns out to be less than the min (in case it comes from thermal
-> > throttling or similar).
-> >
-> > Fixes: 151717690694 ("cpufreq: Make policy min/max hard requirements")
-> > Cc: 5.16+ <stable@vger.kernel.org> # 5.16+
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >
-> > v1 -> v2: Minor edit in the subject
-> >
-> > ---
-> >  drivers/cpufreq/cpufreq.c |   46 ++++++++++++++++++++++++++++++++++++-=
----------
-> >  1 file changed, 36 insertions(+), 10 deletions(-)
-> >
-> > --- a/drivers/cpufreq/cpufreq.c
-> > +++ b/drivers/cpufreq/cpufreq.c
-> > @@ -490,14 +490,12 @@
-> >  }
-> >  EXPORT_SYMBOL_GPL(cpufreq_disable_fast_switch);
-> >
-> > -static unsigned int clamp_and_resolve_freq(struct cpufreq_policy *poli=
-cy,
-> > -                                        unsigned int target_freq,
-> > -                                        unsigned int relation)
-> > +static unsigned int __resolve_freq(struct cpufreq_policy *policy,
-> > +                                unsigned int target_freq,
-> > +                                unsigned int relation)
-> >  {
-> >       unsigned int idx;
-> >
-> > -     target_freq =3D clamp_val(target_freq, policy->min, policy->max);
-> > -
-> >       if (!policy->freq_table)
-> >               return target_freq;
-> >
-> > @@ -507,6 +505,15 @@
-> >       return policy->freq_table[idx].frequency;
-> >  }
-> >
-> > +static unsigned int clamp_and_resolve_freq(struct cpufreq_policy *poli=
-cy,
-> > +                                        unsigned int target_freq,
-> > +                                        unsigned int relation)
-> > +{
-> > +     target_freq =3D clamp_val(target_freq, policy->min, policy->max);
-> > +
-> > +     return __resolve_freq(policy, target_freq, relation);
-> > +}
-> > +
-> >  /**
-> >   * cpufreq_driver_resolve_freq - Map a target frequency to a driver-su=
-pported
-> >   * one.
-> > @@ -521,7 +528,22 @@
-> >  unsigned int cpufreq_driver_resolve_freq(struct cpufreq_policy *policy=
-,
-> >                                        unsigned int target_freq)
-> >  {
-> > -     return clamp_and_resolve_freq(policy, target_freq, CPUFREQ_RELATI=
-ON_LE);
-> > +     unsigned int min =3D READ_ONCE(policy->min);
-> > +     unsigned int max =3D READ_ONCE(policy->max);
-> > +
-> > +     /*
-> > +      * If this function runs in parallel with cpufreq_set_policy(), i=
-t may
-> > +      * read policy->min before the update and policy->max after the u=
-pdate
-> > +      * or the other way around, so there is no ordering guarantee.
-> > +      *
-> > +      * Resolve this by always honoring the max (in case it comes from
-> > +      * thermal throttling or similar).
-> > +      */
-> > +     if (unlikely(min > max))
-> > +             min =3D max;
-> > +
-> > +     return __resolve_freq(policy, clamp_val(target_freq, min, max),
-> > +                           CPUFREQ_RELATION_LE);
-> >  }
-> >  EXPORT_SYMBOL_GPL(cpufreq_driver_resolve_freq);
-> >
-> > @@ -2632,11 +2654,15 @@
-> >        * Resolve policy min/max to available frequencies. It ensures
-> >        * no frequency resolution will neither overshoot the requested m=
-aximum
-> >        * nor undershoot the requested minimum.
-> > +      *
-> > +      * Avoid storing intermediate values in policy->max or policy->mi=
-n and
-> > +      * compiler optimizations around them because them may be accesse=
-d
-> > +      * concurrently by cpufreq_driver_resolve_freq() during the updat=
-e.
-> >        */
-> > -     policy->min =3D new_data.min;
-> > -     policy->max =3D new_data.max;
-> > -     policy->min =3D clamp_and_resolve_freq(policy, policy->min, CPUFR=
-EQ_RELATION_L);
-> > -     policy->max =3D clamp_and_resolve_freq(policy, policy->max, CPUFR=
-EQ_RELATION_H);
-> > +     WRITE_ONCE(policy->max, __resolve_freq(policy, new_data.max, CPUF=
-REQ_RELATION_H));
-> > +     new_data.min =3D __resolve_freq(policy, new_data.min, CPUFREQ_REL=
-ATION_L);
-> > +     WRITE_ONCE(policy->min, new_data.min > policy->max ? policy->max =
-: new_data.min);
->
-> I don't think this is sufficient, because this still permits an incoheren=
-t
-> policy->min and policy->max combination, which makes it possible for sche=
-dutil
-> to honor the incoherent limits; i.e., schedutil may observe old policy->m=
-in and
-> new policy->max or vice-versa.
+> > I tested this idea and it works but I don't know enough about
+> > rust to double-check if the flag could potentially alter the
+> > ABI in a way that `bindgen` would generate the wrong bindings.
+> 
+> Yeah, it would be nice to have someone knowledgeable about the
+> arch/GCC/flag confirm or not -- I don't think Rust knowledge is
+> needed, i.e. it is mostly about how GCC behaves with/without the flag
+> and vs. Clang (since `bindgen` uses libclang to parse code).
+> 
+> The original commit adding it to arm (and similar ones for sh and xtensa) says:
+> 
+>     When building with an arm-*-uclinuxfdpiceabi toolchain, the FDPIC ABI is
+>     enabled by default but should not be used to build the kernel.
+> 
+> So it sounds like it is only an issue for particular toolchains/targets anyway?
+> 
+> Cc'ing Ben who introduced it, and the arm port GCC maintainers in case
+> they may be able to tell us more -- thanks in advance, and sorry for
+> any potential noise!
 
-Yes, it may, as stated in the new comment in cpufreq_driver_resolve_freq().
+FDPIC is only relevant with no-MMU targets, and then only for userspace.
+When configured for the arm-*-uclinuxfdpiceabi target, GCC enables FDPIC
+by default to facilitate compiling userspace programs. FDPIC is never
+used for the kernel, and we pass -mno-fdpic when building the kernel to
+override the default and make sure FDPIC is disabled.
 
-> We also can't permit a wrong freq to be propagated to the driver and then=
- send
-> the _right_ freq afterwards; IOW, we can't let a bogus freq slip through =
-and
-> just correct it later.
+Therefore, it is perfectly safe to omit that flag for kernel builds with
+Clang.
 
-The frequency is neither wrong nor bogus, it is only affected by one
-of the limits that were in effect previously or will be in effect
-going forward.  They are valid limits in either case.
-
-> How about using a seqlock?
-
-This would mean extra overhead in the scheduler path pretty much for no gai=
-n.
+Ben
 
