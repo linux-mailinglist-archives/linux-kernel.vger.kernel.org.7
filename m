@@ -1,247 +1,168 @@
-Return-Path: <linux-kernel+bounces-610590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 853FDA936B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 13:49:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47BA8A936B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 13:50:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0958F1B63FD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 11:49:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C36F51B640B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 11:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 431C325F7BC;
-	Fri, 18 Apr 2025 11:49:32 +0000 (UTC)
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3551D2741BB;
+	Fri, 18 Apr 2025 11:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Vp+kISfm"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E57D4199947
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 11:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E4C212D8A;
+	Fri, 18 Apr 2025 11:50:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744976971; cv=none; b=Xdl54yNixnPrXqBsE/X2/KnSilE7sD1X0CQRGSMdlBI2OC9kGTurc9fAPMdqEL22nfgrA8+odfgizTL6k5svqh+elK9hM9WEVLs1I3I+AeezZS1nbWoN/JuMGpvWxMU2rSXM9Eo6wyl6hyukLpIt5K+HX/+h6y+4kp/egg+FBXQ=
+	t=1744977031; cv=none; b=l+TsewaDCTSX1ZJBJRUjCMhH5DGLXNjeQOL4vCWf3fNI8CzxEiCUxS3ISbq59vFwn4u1JAkn0I6JkU/S4+rVP+Gv8fmDd/lCeJhIr7IPoFbCwvKT2scr1RHDFI8VOaoc9317iWUTCRanigx7Sf+GNd/7dq+zmatk0ajlD1Ko0hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744976971; c=relaxed/simple;
-	bh=1uzu1kv2ZLD67E6okRuI51JM7knTFomsz1LXCyXqN/w=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=PpRZkAW2npTA7WKq8FxszOeZqMKe1jtizRyFCsa++dlNfYQsPx610H663p/wktwTAbDFQ6R4K+J+rLGaNev8prBGlwS1JaTPh//PaMQ5FzuanfDcm4p7fKlGA8lawleH87C4zp+8AtAuW87wLwR30/NLGtaO92f0AQgunNqUJ1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cfe63c592so20651765e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 04:49:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744976968; x=1745581768;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EVAZkueF6TO3vmEWTnRcjkq4LoD47LWe63XR/UPIPzA=;
-        b=rSii8sNALiReKqaJtZTG+ZiL3jeN1F6Lo8d0rkqcO3nq4dZESjWMX0T2wYHly+z/3I
-         Sed6RyZGnuaL/VZ52m8EOkOY4kfEp0/zmSxHai7OBzlsCzB+NYXR3k9S6qh0wjNyBbwb
-         8m2sc615WctHzqynsohmGYjSQ1WPdDVJJg28rcPsiaVMIth+dzvUd4BZ2CIj2cq1dXe0
-         ZepEEZdVOi47XAOaboSvWNNMRjQBm7t5vNec4NjfZjIRlURsVzl/Gn0flX2EPLmvRojM
-         CY+ykOX+x39t1n45NUQMitpYBsQBl+if6Bwgtn+E2V/p1pikpkiLh+WGkU0ZvELgJs5J
-         3/vg==
-X-Forwarded-Encrypted: i=1; AJvYcCWfB0wus8yZmXfr5kMgQIdEy3Ks+nJUyCzT5kfvq9p6n4oAut//ktvhduQKfpxU/jRAv7dgBdfvAK6ufLw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyP7OCSlGtqRRLg0qzRWjwPJWvTe2iDFOrsIl6w5yeutdgGmtq7
-	VqZoJnktx8LoiLkOqOOErQj7P+7iRKelQEJ7CuHsbOninLNSL7S9
-X-Gm-Gg: ASbGncujwZxszJGyUfGIyi4aVTiiT8suSpaL7/eHSGOPA8vHaQqwVo7Foek+dUDkyFf
-	TcDHYmwY2+Dtji0n/GO4JsDac6EDq5T9JKTxOmeZk5agqA2ab5UmW7/vQ/YxPf+S6pr2CC42J3w
-	HIOFgEYYtQn444srn8dtnGdrKN8idE9QqFNSXX/JlX/cyG1/TCOts938pQRyoXXr3CfLz8+Eujq
-	eJLcUquREIgHi4al1R7zMmXmiZBSnJkQh/Hi4A7zb7Eyp+gOf4sSZ3iegPm8KduJtSComtPo+SV
-	aG1J7IC7ZJEiFKBIp/SKtUyYsRQsb7K4eXSoibe41vTGgX/CbOU=
-X-Google-Smtp-Source: AGHT+IHAD5tCrAKdlb+hKiBaU767bCq+juH84w7mFehf7472CiKBwwZN5Ga2ogjoWSPneMEPliij4w==
-X-Received: by 2002:a5d:5987:0:b0:39e:e438:8e4b with SMTP id ffacd0b85a97d-39efbaf6e96mr1812477f8f.50.1744976967991;
-        Fri, 18 Apr 2025 04:49:27 -0700 (PDT)
-Received: from [10.100.102.67] ([95.35.174.203])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4406d6db117sm19288545e9.26.2025.04.18.04.49.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Apr 2025 04:49:27 -0700 (PDT)
-Message-ID: <4683e355-166f-4b9a-a3ea-529f7b058a84@grimberg.me>
-Date: Fri, 18 Apr 2025 14:49:25 +0300
+	s=arc-20240116; t=1744977031; c=relaxed/simple;
+	bh=yPdsexh0RBmoEGSGoqi0jhSZ+wMfPYGmhgJMXRTvWpw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=SXzwz4xJTTtGv126w3bYGaVpW2PjLZ5CnbTAWwylBS3UtZQjSbAn1Y4IZNecnbfMBmBVcS3GDeRCIocVftYrNDm7rgCdn4+RzlMKsS/ptHwhdqizqufG9St6U+U3oNOc6kKlPBx7gjAMdpXZl05E+4Pq+AxOTq2h3w+TuoaPmRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Vp+kISfm; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53I2tAu6013274;
+	Fri, 18 Apr 2025 11:50:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=U4E12rCwVb3hlnjsHyB8Nx
+	tgtGwFnoxCqbeAXkbWhZk=; b=Vp+kISfmpUaTpCqz2MvIKZJZbhRwsAREIgWorg
+	IY9upyUbTgnYugCS5r2hST8d0WFBA5jsSbOi35tkD65cNevSqX6+g3vHLTPyRqaI
+	hA2HuJ/mS2L25jpkPRBXA6wpVh/VjKvrSCiHaFcqFTZ6iWfYBVEOx4dJqL/e53tX
+	Rt9NRkHIG5l7fpnwpXRmMGWV3KzOtBUbpdyQsFelkvkv6XQOsUcqVMpjGOY6RdYn
+	0D10pLdwTsjqHFcU9NazUgzkRMUd+SutdKQzHZg6mFnpFLXsLX3I4LP9VrBuR5e+
+	ZKL4Ra8MkQZc6165t5r2tOxAsYvwhu59kqPTiEyczYwMn2ew==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4628rvf5kc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 18 Apr 2025 11:50:27 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53IBoRtn026066
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 18 Apr 2025 11:50:27 GMT
+Received: from [10.213.96.82] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 18 Apr
+ 2025 04:50:25 -0700
+From: Vivek Pernamitta <quic_vpernami@quicinc.com>
+Date: Fri, 18 Apr 2025 17:20:15 +0530
+Subject: [PATCH v2] bus: mhi: host: pci: Disable runtime PM for QDU100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] nvme-tcp: wait socket wmem to drain in queue stop
-From: Sagi Grimberg <sagi@grimberg.me>
-To: Michael Liang <mliang@purestorage.com>, Keith Busch <kbusch@kernel.org>,
- Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>
-Cc: Mohamed Khalfella <mkhalfella@purestorage.com>,
- Randy Jennings <randyj@purestorage.com>, linux-nvme@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250417071359.iw3fangcfcuopjza@purestorage.com>
- <acc46429-6228-475e-8fd8-bc3d43c7f710@grimberg.me>
-Content-Language: en-US
-In-Reply-To: <acc46429-6228-475e-8fd8-bc3d43c7f710@grimberg.me>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20250418-vdev_next-20250411_pm_disable-v2-1-27dd8d433f3b@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAHY8AmgC/42NQQ6CMBBFr0JmbQ0tFKIr7mEIqe0ok0iLLTYY0
+ rtbiQdw85P3Fu9vENATBjgXG3iMFMjZDOJQgB6VvSMjkxlEKWRZ85pFg3GwuC7sp/gwT4OhoK4
+ PZLIyErnSppYIuTF7vNG69y995pHC4vx7v4v8a/8tR844w1NTNW2bR6vu+SJNVh+1m6BPKX0AP
+ otPYMwAAAA=
+X-Change-ID: 20250414-vdev_next-20250411_pm_disable-53d5e1acd45e
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+CC: <mhi@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Vivek Pernamitta <quic_vpernami@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744977024; l=2583;
+ i=quic_vpernami@quicinc.com; s=20241114; h=from:subject:message-id;
+ bh=yPdsexh0RBmoEGSGoqi0jhSZ+wMfPYGmhgJMXRTvWpw=;
+ b=UQkIZ57cKdGGer5Q7jHpOiw9vV7If4osrB+Nv5sj5Kex6FyC/oCHvDN7L3FenBH+wEqaDn9aG
+ ZUDDR0ixl+rBF/IsG5JZ9c5B1FwXHT9pb9DhgkD1nGjKCnDJO4oJOR2
+X-Developer-Key: i=quic_vpernami@quicinc.com; a=ed25519;
+ pk=HDwn8xReb8K52LA6/CJc6S9Zik8gDCZ5LO4Cypff71Y=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: tJ2ikZoE9w6gDi1dq8C0zXL1S73RCQEg
+X-Authority-Analysis: v=2.4 cv=RbSQC0tv c=1 sm=1 tr=0 ts=68023c83 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=BwJktTEAC3VXUIAVO-kA:9
+ a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: tJ2ikZoE9w6gDi1dq8C0zXL1S73RCQEg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-18_03,2025-04-17_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ suspectscore=0 adultscore=0 impostorscore=0 clxscore=1015 bulkscore=0
+ phishscore=0 priorityscore=1501 spamscore=0 mlxscore=0 lowpriorityscore=0
+ malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504180087
 
+The QDU100 device does not support the MHI M3 state, necessitating the
+disabling of runtime PM for this device. It is essential to disable
+runtime PM if the device does not support Low Power Mode (LPM).
 
+Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
+---
+Changes in v2:
+- Updated device from getting runtime suspended by avoid skipping autosuspend.
+- Updated commit message.
+- Link to v1: https://lore.kernel.org/r/20250414-vdev_next-20250411_pm_disable-v1-1-e963677636ca@quicinc.com
+---
+ drivers/bus/mhi/host/pci_generic.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-On 4/18/25 14:30, Sagi Grimberg wrote:
->
->
-> On 4/17/25 10:13, Michael Liang wrote:
->> This patch addresses a data corruption issue observed in nvme-tcp during
->> testing.
->>
->> Issue description:
->> In an NVMe native multipath setup, when an I/O timeout occurs, all 
->> inflight
->> I/Os are canceled almost immediately after the kernel socket is shut 
->> down.
->> These canceled I/Os are reported as host path errors, triggering a 
->> failover
->> that succeeds on a different path.
->>
->> However, at this point, the original I/O may still be outstanding in the
->> host's network transmission path (e.g., the NIC’s TX queue). From the
->> user-space app's perspective, the buffer associated with the I/O is 
->> considered
->> completed since they're acked on the different path and may be reused 
->> for new
->> I/O requests.
->>
->> Because nvme-tcp enables zero-copy by default in the transmission path,
->> this can lead to corrupted data being sent to the original target, 
->> ultimately
->> causing data corruption.
->>
->> We can reproduce this data corruption by injecting delay on one path and
->> triggering i/o timeout.
->>
->> To prevent this issue, this change ensures that all inflight 
->> transmissions are
->> fully completed from host's perspective before returning from queue
->> stop. To handle concurrent I/O timeout from multiple namespaces under
->> the same controller, always wait in queue stop regardless of queue's 
->> state.
->>
->> This aligns with the behavior of queue stopping in other NVMe fabric 
->> transports.
->>
->> Reviewed-by: Mohamed Khalfella <mkhalfella@purestorage.com>
->> Reviewed-by: Randy Jennings <randyj@purestorage.com>
->> Signed-off-by: Michael Liang <mliang@purestorage.com>
->> ---
->>   drivers/nvme/host/tcp.c | 16 ++++++++++++++++
->>   1 file changed, 16 insertions(+)
->>
->> diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
->> index 26c459f0198d..62d73684e61e 100644
->> --- a/drivers/nvme/host/tcp.c
->> +++ b/drivers/nvme/host/tcp.c
->> @@ -1944,6 +1944,21 @@ static void __nvme_tcp_stop_queue(struct 
->> nvme_tcp_queue *queue)
->>       cancel_work_sync(&queue->io_work);
->>   }
->>   +static void nvme_tcp_stop_queue_wait(struct nvme_tcp_queue *queue)
->> +{
->> +    int timeout = 100;
->> +
->> +    while (timeout > 0) {
->> +        if (!sk_wmem_alloc_get(queue->sock->sk))
->> +            return;
->> +        msleep(2);
->> +        timeout -= 2;
->> +    }
->> +    dev_warn(queue->ctrl->ctrl.device,
->> +         "qid %d: wait draining sock wmem allocation timeout\n",
->> +         nvme_tcp_queue_id(queue));
->> +}
->> +
->>   static void nvme_tcp_stop_queue(struct nvme_ctrl *nctrl, int qid)
->>   {
->>       struct nvme_tcp_ctrl *ctrl = to_tcp_ctrl(nctrl);
->> @@ -1961,6 +1976,7 @@ static void nvme_tcp_stop_queue(struct 
->> nvme_ctrl *nctrl, int qid)
->>       /* Stopping the queue will disable TLS */
->>       queue->tls_enabled = false;
->>       mutex_unlock(&queue->queue_lock);
->> +    nvme_tcp_stop_queue_wait(queue);
->>   }
->>     static void nvme_tcp_setup_sock_ops(struct nvme_tcp_queue *queue)
->
-> This makes sense. But I do not want to pay this price serially.
-> As the concern is just failover, lets do something like: diff --git 
-> a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c index 
-> 5041cbfd8272..d482a8fe2c4b 100644 --- a/drivers/nvme/host/tcp.c +++ 
-> b/drivers/nvme/host/tcp.c @@ -2031,6 +2031,8 @@ static void 
-> nvme_tcp_stop_io_queues(struct nvme_ctrl *ctrl) for (i = 1; i < 
-> ctrl->queue_count; i++) nvme_tcp_stop_queue(ctrl, i); + for (i = 1; i 
-> < ctrl->queue_count; i++) + 
-> nvme_tcp_stop_queue_wait(&ctrl->queues[i]); } static int 
-> nvme_tcp_start_io_queues(struct nvme_ctrl *ctrl, @@ -2628,8 +2630,10 
-> @@ static void nvme_tcp_complete_timed_out(struct request *rq) { 
-> struct nvme_tcp_request *req = blk_mq_rq_to_pdu(rq); struct nvme_ctrl 
-> *ctrl = &req->queue->ctrl->ctrl; + int idx = 
-> nvme_tcp_queue_id(req->queue); - nvme_tcp_stop_queue(ctrl, 
-> nvme_tcp_queue_id(req->queue)); + nvme_tcp_stop_queue(ctrl, idx); + 
-> nvme_tcp_stop_queue_wait(&ctrl->queues[idx]); 
-> nvmf_complete_timed_out_request(rq); }
+diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
+index 03aa887952098661a488650053a357f883d1559b..bec1ca17ad69ac89e2ea9142024fef8bded258b6 100644
+--- a/drivers/bus/mhi/host/pci_generic.c
++++ b/drivers/bus/mhi/host/pci_generic.c
+@@ -43,6 +43,7 @@
+  * @mru_default: default MRU size for MBIM network packets
+  * @sideband_wake: Devices using dedicated sideband GPIO for wakeup instead
+  *		   of inband wake support (such as sdx24)
++ * @pm_disable: disables runtime PM (optional)
+  */
+ struct mhi_pci_dev_info {
+ 	const struct mhi_controller_config *config;
+@@ -54,6 +55,7 @@ struct mhi_pci_dev_info {
+ 	unsigned int dma_data_width;
+ 	unsigned int mru_default;
+ 	bool sideband_wake;
++	bool pm_disable;
+ };
+ 
+ #define MHI_CHANNEL_CONFIG_UL(ch_num, ch_name, el_count, ev_ring) \
+@@ -295,6 +297,7 @@ static const struct mhi_pci_dev_info mhi_qcom_qdu100_info = {
+ 	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+ 	.dma_data_width = 32,
+ 	.sideband_wake = false,
++	.pm_disable = true,
+ };
+ 
+ static const struct mhi_channel_config mhi_qcom_sa8775p_channels[] = {
+@@ -1270,8 +1273,11 @@ static int mhi_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	/* start health check */
+ 	mod_timer(&mhi_pdev->health_check_timer, jiffies + HEALTH_CHECK_PERIOD);
+ 
+-	/* Only allow runtime-suspend if PME capable (for wakeup) */
+-	if (pci_pme_capable(pdev, PCI_D3hot)) {
++	/**
++	 * Disable Runtime PM if device doesn't support MHI M3 state
++	 * and Allow runtime-suspend if PME capable (for wakeup)
++	 */
++	if (pci_pme_capable(pdev, PCI_D3hot) && !(info->pm_disable)) {
+ 		pm_runtime_set_autosuspend_delay(&pdev->dev, 2000);
+ 		pm_runtime_use_autosuspend(&pdev->dev);
+ 		pm_runtime_mark_last_busy(&pdev->dev);
 
-Or perhaps something like:
---
-diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
-index 5041cbfd8272..3e206a2cbbf3 100644
---- a/drivers/nvme/host/tcp.c
-+++ b/drivers/nvme/host/tcp.c
-@@ -1944,7 +1944,7 @@ static void __nvme_tcp_stop_queue(struct 
-nvme_tcp_queue *queue)
-         cancel_work_sync(&queue->io_work);
-  }
+---
+base-commit: 01c6df60d5d4ae00cd5c1648818744838bba7763
+change-id: 20250414-vdev_next-20250411_pm_disable-53d5e1acd45e
 
--static void nvme_tcp_stop_queue(struct nvme_ctrl *nctrl, int qid)
-+static void nvme_tcp_stop_queue_nowait(struct nvme_ctrl *nctrl, int qid)
-  {
-         struct nvme_tcp_ctrl *ctrl = to_tcp_ctrl(nctrl);
-         struct nvme_tcp_queue *queue = &ctrl->queues[qid];
-@@ -1963,6 +1963,29 @@ static void nvme_tcp_stop_queue(struct nvme_ctrl 
-*nctrl, int qid)
-         mutex_unlock(&queue->queue_lock);
-  }
+Best regards,
+-- 
+Vivek Pernamitta <quic_vpernami@quicinc.com>
 
-+static void nvme_tcp_wait_queue(struct nvme_ctrl *nctrl, int qid)
-+{
-+       struct nvme_tcp_ctrl *ctrl = to_tcp_ctrl(nctrl);
-+       struct nvme_tcp_queue *queue = ctrl->queues[qid];
-+       int timeout = 100;
-+
-+       while (timeout > 0) {
-+               if (!sk_wmem_alloc_get(queue->sock->sk))
-+                       return;
-+               msleep(2);
-+               timeout -= 2;
-+       }
-+       dev_warn(queue->ctrl->ctrl.device,
-+                "qid %d: timeout draining sock wmem allocation expired\n",
-+                nvme_tcp_queue_id(queue));
-+}
-+
-+static void nvme_tcp_stop_queue(struct nvme_ctrl *nctrl, int qid)
-+{
-+       nvme_tcp_stop_queue_nowait(nctrl, qid);
-+       nvme_tcp_wait_queue(nctrl, qid);
-+}
-+
-  static void nvme_tcp_setup_sock_ops(struct nvme_tcp_queue *queue)
-  {
-write_lock_bh(&queue->sock->sk->sk_callback_lock);
-@@ -2030,7 +2053,9 @@ static void nvme_tcp_stop_io_queues(struct 
-nvme_ctrl *ctrl)
-         int i;
-
-         for (i = 1; i < ctrl->queue_count; i++)
--               nvme_tcp_stop_queue(ctrl, i);
-+               nvme_tcp_stop_queue_nowait(ctrl, i);
-+       for (i = 1; i < ctrl->queue_count; i++)
-+               nvme_tcp_wait_queue(ctrl, i);
-  }
-
-  static int nvme_tcp_start_io_queues(struct nvme_ctrl *ctrl,
---
 
