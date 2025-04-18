@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-611236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF50AA93F0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 22:49:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF645A93F38
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 22:52:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B48C7A96EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 20:48:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEF94188C113
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 20:52:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8B223ED60;
-	Fri, 18 Apr 2025 20:49:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D7D2417D4;
+	Fri, 18 Apr 2025 20:50:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="cJJTnzWb"
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="uLEl1W9M"
 Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03DC521127E;
-	Fri, 18 Apr 2025 20:49:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838FC23F40C;
+	Fri, 18 Apr 2025 20:50:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745009350; cv=none; b=l27D5PFhfPQoKc2WmZw76+1TJR8lrKZTMKB67k/wPtmytetQK/TuE0XqZBSo8qTSVm9AIg3O5vsqqJpJRy4a1yjRWioV3OklYBi0DOxVjz4JHsAdMRbDGoeDqbMGAPR3slOFlpgTO8tVC+hvbNQmyVi3FIDsEKdeMRzLdS4HjOk=
+	t=1745009454; cv=none; b=ZlGGjdwmqGMY/npHC72PguSKjobUSSTAjmpufAV7WQ9u2pzMV2I7KUiwe5R4jIInN/BpsK+v7YzCCHJ97bFttGOQcYP4oyiyrZQyKkv9xgJ4sWtQDTquirC2cTt7KPr/qAagZzrpX493WPllkMydSUWCJPnpQZvAGwb40gNoQ/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745009350; c=relaxed/simple;
-	bh=IDXLCWhe3B9fOmtjZw3mD4GasXsPcTYWgh1iEMR39vk=;
+	s=arc-20240116; t=1745009454; c=relaxed/simple;
+	bh=s604y+jSpRja418fLKbVJ1sTm8zE6+galCsWG2VMoy0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bc2x/k5IOE2/ZhOnwp2xCFzq5G69SW0w1Cn3bConApSBm6GIjaoo+60piH0HqV3lVyYVWgH2jPLllpYUuyuaG4NUM1kYKdXlf5i5r5qlTBpiwOpVF+w3ZPBDfXF14J99hRaeLe/ep7GiluW+Z5sUh7gx+IQaLR/W3RiknGAhWeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=cJJTnzWb; arc=none smtp.client-ip=156.67.10.101
+	 Content-Type:Content-Disposition:In-Reply-To; b=A0Z3RSgBwY9DtY/8tT+uOkpuPqVXdfHyur4lDSs/3jZKTt6icsysM6F9wZpXr6WoCoWx29o82ehxRSeFEIwxEv7U3CaJ5aL1YL/78hNfikE2gQQB4t4SeYp9GLeXtDxWbG2boXL6Yey9GzURkx34UzdM+pF8aoXgkbRkZGeND1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=uLEl1W9M; arc=none smtp.client-ip=156.67.10.101
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
@@ -35,13 +35,13 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
 	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
 	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=v26kdZJuDullQdaeIF02DAn4bkJ0oZUrA6h5X1L9724=; b=cJJTnzWbpGOGLdjntuuBlONbCO
-	PObxKf6qSECUeqVv9ArshIVoxarXkz2EDiFQMRWINZOh3Jkbp3lzE9y+EbZm06SEp+FCtd+Qpbr/C
-	O1IwwnSTyqRr7nBcCc2cbQSnF0Yf1d87e1ZuDO22/8GSrHtFWy0RuVCQtO6zAC20bdwA=;
+	bh=/v3QL+G5zaPyaE53yVFfZOdUwwCtReQpm5k2VMtZqCU=; b=uLEl1W9MfUHkLSR6I7jk6x78Wm
+	LgzFMhI65aGl6JkW5UojK1pcRGsijitUGJfWXg902VdbAYv6QxjYDg3tCfKB1fxUBH0QH4j4dQz9X
+	DG92+bgCDA/LY10KyLYrCNuj+7Syl13h0oK8Jf9ER6D+cdDuyYjJOepDnxxgPo1d+o1s=;
 Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
 	(envelope-from <andrew@lunn.ch>)
-	id 1u5sdr-009wIw-Ic; Fri, 18 Apr 2025 22:48:55 +0200
-Date: Fri, 18 Apr 2025 22:48:55 +0200
+	id 1u5sfY-009wLs-LW; Fri, 18 Apr 2025 22:50:40 +0200
+Date: Fri, 18 Apr 2025 22:50:40 +0200
 From: Andrew Lunn <andrew@lunn.ch>
 To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
 Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
@@ -61,11 +61,11 @@ Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
 	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
 	netdev@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, linux@ew.tq-group.com
-Subject: Re: [PATCH net-next 2/4] dt-bindings: net: ti: k3-am654-cpsw-nuss:
- update phy-mode in example
-Message-ID: <2cf14499-6ce8-42e0-98bb-3669aa0ed1fe@lunn.ch>
+Subject: Re: [PATCH net-next 3/4] net: ethernet: ti: am65-cpsw: fixup PHY
+ mode for fixed RGMII TX delay
+Message-ID: <9c00ff66-a2c6-4d7e-979b-f5e8abc42dee@lunn.ch>
 References: <cover.1744710099.git.matthias.schiffer@ew.tq-group.com>
- <4216050f7b33ce4e5ce54f32023ec6ce093bd83c.1744710099.git.matthias.schiffer@ew.tq-group.com>
+ <32e0dffa7ea139e7912607a08e391809d7383677.1744710099.git.matthias.schiffer@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,41 +74,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4216050f7b33ce4e5ce54f32023ec6ce093bd83c.1744710099.git.matthias.schiffer@ew.tq-group.com>
+In-Reply-To: <32e0dffa7ea139e7912607a08e391809d7383677.1744710099.git.matthias.schiffer@ew.tq-group.com>
 
-On Tue, Apr 15, 2025 at 12:18:02PM +0200, Matthias Schiffer wrote:
-> k3-am65-cpsw-nuss controllers have a fixed internal TX delay, so RXID
-> mode is not actually possible and will result in a warning from the
-> driver going forward.
+On Tue, Apr 15, 2025 at 12:18:03PM +0200, Matthias Schiffer wrote:
+> All am65-cpsw controllers have a fixed TX delay, so the PHY interface
+> mode must be fixed up to account for this.
+> 
+> Modes that claim to a delay on the PCB can't actually work. Warn people
+> to update their Device Trees if one of the unsupported modes is specified.
 > 
 > Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-> ---
->  .../devicetree/bindings/net/ti,k3-am654-cpsw-nuss.yaml          | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/ti,k3-am654-cpsw-nuss.yaml b/Documentation/devicetree/bindings/net/ti,k3-am654-cpsw-nuss.yaml
-> index b11894fbaec47..c8128b8ca74fb 100644
-> --- a/Documentation/devicetree/bindings/net/ti,k3-am654-cpsw-nuss.yaml
-> +++ b/Documentation/devicetree/bindings/net/ti,k3-am654-cpsw-nuss.yaml
-> @@ -282,7 +282,7 @@ examples:
->                      ti,syscon-efuse = <&mcu_conf 0x200>;
->                      phys = <&phy_gmii_sel 1>;
->  
-> -                    phy-mode = "rgmii-rxid";
-> +                    phy-mode = "rgmii-id";
-
-It would be good to enforce the phy-modes which are valid, which i
-think are:
-
-        case PHY_INTERFACE_MODE_RGMII_ID:
-        case PHY_INTERFACE_MODE_RGMII_TXID:
-        case PHY_INTERFACE_MODE_RMII:
-        case PHY_INTERFACE_MODE_QSGMII:
-        case PHY_INTERFACE_MODE_SGMII:
-        case PHY_INTERFACE_MODE_USXGMII:
-
-Anyway, this can be a follow up patch, it should not block this
-patchset.
 
 Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
