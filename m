@@ -1,141 +1,177 @@
-Return-Path: <linux-kernel+bounces-610311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B3BDA93358
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 09:16:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7450CA93363
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 09:18:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 581B9460619
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 07:16:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9AFD3BD082
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 07:18:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5E526A0F3;
-	Fri, 18 Apr 2025 07:15:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B633325524F;
+	Fri, 18 Apr 2025 07:18:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QJXI6gaR";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZOJQ6wGQ"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CgbAIxTi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A5C2571CF;
-	Fri, 18 Apr 2025 07:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36FAC1FC0ED
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 07:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744960506; cv=none; b=RIiOBAEd+OePP2+jBZGL8dAC1jYUu1JRtf5bOWZtbso8M4vHWnQUaxZEGhFytkhxN8Byh6ntvXwhTsueuG2DwSWmSwuGfnlIYV8lmV4fZhBuw8CuAyyOp6TOUZ4cDLZOFyPCAhN5Sv4nCamqSe2mN6FsZRf+I/kARRNSdWYbPsU=
+	t=1744960702; cv=none; b=XvbkuwSNZ7t1K9xl6ExG6+CrASzS4vOvMq7hJ76crBHmfturVL2xUbK4LuzEr7MDhGGXqNejjW7R6TiVoNUSLlqZgyRkErto1a7UA/14TghJVrVBO4GE6bc+vQkvJicyRkXz7WffEf7BJ/hpUjsRLY19OQDLQYGOdlwhnr8vsaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744960506; c=relaxed/simple;
-	bh=Wtw/oNtZGlPn5EsTcIh48DpbmWA8Wfaotp9jT9wOB0w=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Xlzx7jSE6U+fFRKT3j67iFdEOfjUcBDYIiazzXKaQKaNOEshyBMuCF30+dka8udAqwdXpS6vgrgq8Kbi4bDu4adBBKoSDDjMP+9FInvYGKofXdNvd2s+qC/IUTwwYa0+M9qRlWHue0IlN++QevFjsEgGy2LCoiwddxU+6VmAI1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QJXI6gaR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZOJQ6wGQ; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 18 Apr 2025 07:15:02 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744960503;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
+	s=arc-20240116; t=1744960702; c=relaxed/simple;
+	bh=UxxJbI70WFUZO2h44e3ERkdZpKJKIdNmQ8xjFJN5Aq4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tx++Dx86a5OIL7KB7Q00jxXr3TjfS8iv345vzFCUfhm5mEzjky4FDWDZp0O0+QSJBYiSJCP0+hJI4zFMH2lBtpGbusIp2R0J2xcAH83BN6OaGnUIXL2EnJ0hjjihh8Gx65vL5EHwg3yt4ahnPnu6xsr4jnyFAb4MzcMuC5PIkQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CgbAIxTi; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744960699;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=e4PB6JDxuxq+bT4QOlcDzuE+mYx5gAr1KJ5ZJ4k85cU=;
-	b=QJXI6gaRxZ62aocjUacWd4y1gW+X9AEIESID+285j5AIlIXlARBCUfkxwjcqgZ7/P6ywPk
-	6V3XY0LZn2+yuOyAyP5xaOyijlZlAUKRqTKovCEFSTgS2q6rslLUF4gCnUldCtYWq5tR4q
-	56d3ZqfNqdUVXWkwPR9mDkX68lUV90Qe7XHN/UhyEEgjx60dtPiiJI46ikjC5ZWoga0AIB
-	m4AC5kty8BOmWCIKpUt69eW7aTJvMQ04ymA8yWeu69EjVmAML+67+qSLiZfPtHrWKfrjZI
-	4B3uS+IIy0fM5fLu4rlcfAxZeJSWITuhkvuWsfQwkNq8Bmiwu77W+B0jf6R45g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744960503;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e4PB6JDxuxq+bT4QOlcDzuE+mYx5gAr1KJ5ZJ4k85cU=;
-	b=ZOJQ6wGQvEjAyWQhIDDoA5FnbQVdh1n61KbW4tE9Og+XFaYos8CqUhk8z2a63PZ1LUXuxP
-	waFiaO37fzVKtICA==
-From: "tip-bot2 for Jiri Olsa" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] uprobes/x86: Add support to emulate NOP instructions
-Cc: Oleg Nesterov <oleg@redhat.com>, Andrii Nakryiko <andrii@kernel.org>,
- Jiri Olsa <jolsa@kernel.org>, Ingo Molnar <mingo@kernel.org>,
- Alan Maguire <alan.maguire@oracle.com>, Hao Luo <haoluo@google.com>,
- John Fastabend <john.fastabend@gmail.com>,
- Masami Hiramatsu <mhiramat@kernel.org>, Song Liu <songliubraving@fb.com>,
- Steven Rostedt <rostedt@goodmis.org>, Yonghong Song <yhs@fb.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250414083647.1234007-1-jolsa@kernel.org>
-References: <20250414083647.1234007-1-jolsa@kernel.org>
+	bh=SBvOY+KIVYCWmz8ChQpOOnAPgtwHKhjsmW1X1/QP+K8=;
+	b=CgbAIxTiQZNNirhaNzEyDZx98m3yH6tar/7HfzLo8nLRCuVuLzVNHyz9oaWS0u8nQsUAqg
+	wROcYcTakITVCj+HCyXyxwoxHesU4c1uEgFTk1B0Rccr4rLvwyfR0S0jWiV4trYOP3CiRf
+	bQxUbj2ynt3d/1Cw3nBI6qUIjL4EgtM=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-626-Rpp0CUgmOeSBaVn_dDqPoA-1; Fri, 18 Apr 2025 03:18:17 -0400
+X-MC-Unique: Rpp0CUgmOeSBaVn_dDqPoA-1
+X-Mimecast-MFC-AGG-ID: Rpp0CUgmOeSBaVn_dDqPoA_1744960696
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-ac6ce5fe9bfso165518666b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 00:18:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744960696; x=1745565496;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SBvOY+KIVYCWmz8ChQpOOnAPgtwHKhjsmW1X1/QP+K8=;
+        b=om4ngmgbqvsqSvn3VSQZ+M3GE0T/TiiIOgBhF7ipg/dGj0/7BEJNy64oNrNaHP2YOt
+         X0tOgqfScm2p0ORMIi6whgczkmYA7BNOp0y31bOSIELSqFpO5D6fUpxf9ces7iqWUk3z
+         nZ8GC+3XyCd2iCx/woZ2Y25xXrqhtCOzx8WP8zp6FWKxVAVM9F7WRLugYzrZ/qMIOAUG
+         2SD0quD0pLB0rYro4ZZh2BAnmJEsWBbQbKq9qFk8TADvnpQYvpPafbjgzYdBItEJUDMe
+         TZkAjI3PXvAXBgF4fZPvObA0J1+gJaYjcmm7LkG3SWif6hgZeUsNjlNIyhfRMXmfsIyh
+         vJTw==
+X-Forwarded-Encrypted: i=1; AJvYcCVcOi6PM5ZJjr00zz5zIvRJEISc7u019EsknhV3Odu9rK/VKmP8/7OknhqLuZpDyQZWhUkRN5gsrPO6Zwg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yytwa1A5QQKjtFiLHhmt1sS5rqZsn5eZ/Ys+eVzir5PRaDksByW
+	i5PhHQ3VTiJI4uESFF82lP4m6P+DtJvzQ6+BBT0WbtBSpAdE7SrqrDgHq+flptT12ypGHaajYaY
+	ZDnSchtZBtw4cZsBT5IigekvDiHV5Muh84B48UxwYLfn9lpDmRimaKz4ZWiPpzA==
+X-Gm-Gg: ASbGncup+gzxq3XuG5TjQlkoHUscqBWiPQ3caXwKecXyf39jONiLoyxFPseBqkLQeUx
+	kO3t9KjUFhwYvhGSW89fdf6Gk2hZSjMGqVjPzcUwuuFyot95sSQzWYoQJXDCKGa1K5oo9u5ot7Z
+	plonIUFJ60YaMDvM1omMy2XP6mOw8/aAGSFaDs407uPWWZ07R0iOJz2YSsE/xg0WO4O639LXG5o
+	j6d8Fh1TJ+QLX8U7GKnet2ak0qRchWzhgRD7nCQCEKdpCYPLxE0kmS1Mph+SnN1R41TNfhRTaKE
+	EyZhYACRqNxwejBFtvSSKXDg7nM091sdZu893iiS253o+fRzAm4ZBjPVNxLsHqDdxjYaGtWkghK
+	eVS83tYnGh6PoiAZJfV1q+lIWX+RQ+Ul7gfA9DhdG7Naj8T0UIN9e1dhIM1s0yQ==
+X-Received: by 2002:a17:907:868f:b0:ac7:33d0:db1 with SMTP id a640c23a62f3a-acb74b360cbmr157295466b.13.1744960696276;
+        Fri, 18 Apr 2025 00:18:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEtrkvjZyXXYQsQnfrUeZMnIU+8sJdRtJSwGgDibzeN+FprjKwSINxCeKLSZg8mXKUc2RXXIg==
+X-Received: by 2002:a17:907:868f:b0:ac7:33d0:db1 with SMTP id a640c23a62f3a-acb74b360cbmr157292866b.13.1744960695878;
+        Fri, 18 Apr 2025 00:18:15 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb6efadd68sm85263766b.185.2025.04.18.00.18.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Apr 2025 00:18:15 -0700 (PDT)
+Message-ID: <1d6d1ff1-7290-4c41-8f2d-6fb07f8d7efb@redhat.com>
+Date: Fri, 18 Apr 2025 09:18:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174496050221.31282.986459648353750898.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv6] platform/x86: ideapad-laptop: added support for some
+ new buttons
+To: =?UTF-8?Q?Ga=C5=A1per_Nemgar?= <gasper.nemgar@gmail.com>,
+ ikepanhc@gmail.com
+Cc: ilpo.jarvinen@linux.intel.com, linux-kernel@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org
+References: <20250418070738.7171-1-gasper.nemgar@gmail.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20250418070738.7171-1-gasper.nemgar@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the perf/core branch of tip:
+Hi,
 
-Commit-ID:     610f6e14c29dc7f9637e8d9481e9f241f355e2e4
-Gitweb:        https://git.kernel.org/tip/610f6e14c29dc7f9637e8d9481e9f241f355e2e4
-Author:        Jiri Olsa <jolsa@kernel.org>
-AuthorDate:    Mon, 14 Apr 2025 10:36:46 +02:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 18 Apr 2025 09:03:05 +02:00
+On 18-Apr-25 9:07 AM, Gašper Nemgar wrote:
+> Added entries to unsupported wmi codes in ideapad_keymap[]
+> and one check in wmi_nofify in order to get wmi code 0x13d to trigger platform_profile_cycle
+> 
+> Signed-off-by: Gašper Nemgar <gasper.nemgar@gmail.com>"
 
-uprobes/x86: Add support to emulate NOP instructions
+Thanks, patch looks good to me:
 
-Add support to emulate all NOP instructions as the original uprobe
-instruction.
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
-This change speeds up uprobe on top of all NOP instructions and is a
-preparation for usdt probe optimization, that will be done on top of
-NOP5 instructions.
+Regards,
 
-With this change the usdt probe on top of NOP5s won't take the performance
-hit compared to usdt probe on top of standard NOP instructions.
+Hans
 
-Suggested-by: Oleg Nesterov <oleg@redhat.com>
-Suggested-by: Andrii Nakryiko <andrii@kernel.org>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Oleg Nesterov <oleg@redhat.com>
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
-Cc: Alan Maguire <alan.maguire@oracle.com>
-Cc: Hao Luo <haoluo@google.com>
-Cc: John Fastabend <john.fastabend@gmail.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Song Liu <songliubraving@fb.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Yonghong Song <yhs@fb.com>
-Link: https://lore.kernel.org/r/20250414083647.1234007-1-jolsa@kernel.org
----
- arch/x86/kernel/uprobes.c | 5 +++++
- 1 file changed, 5 insertions(+)
 
-diff --git a/arch/x86/kernel/uprobes.c b/arch/x86/kernel/uprobes.c
-index 9194695..6d38383 100644
---- a/arch/x86/kernel/uprobes.c
-+++ b/arch/x86/kernel/uprobes.c
-@@ -840,6 +840,11 @@ static int branch_setup_xol_ops(struct arch_uprobe *auprobe, struct insn *insn)
- 	insn_byte_t p;
- 	int i;
- 
-+	/* x86_nops[insn->length]; same as jmp with .offs = 0 */
-+	if (insn->length <= ASM_NOP_MAX &&
-+	    !memcmp(insn->kaddr, x86_nops[insn->length], insn->length))
-+		goto setup;
-+
- 	switch (opc1) {
- 	case 0xeb:	/* jmp 8 */
- 	case 0xe9:	/* jmp 32 */
+
+> ---
+> Changes in v6:
+>  - Minor changes like typos
+> Changes in v5:
+>  - Changed performance button to KE_KEY 
+> Changes in v4:
+>  - Changed performace button to KE_IGNORE
+> Changes in v3:
+>  - Minor changes
+> Changes in v2:
+>  - Added more codes that trigger with key combos (Fn+N, Fn+M, ...)
+>  - Added performence toggle in wmi_notify()
+> Changes in v1:
+>  - Added codes for buttons on laptop(performance, star, ...)
+> ---
+>  drivers/platform/x86/ideapad-laptop.c | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+> 
+> diff --git a/drivers/platform/x86/ideapad-laptop.c b/drivers/platform/x86/ideapad-laptop.c
+> index 17a09b778..532efb9d1 100644
+> --- a/drivers/platform/x86/ideapad-laptop.c
+> +++ b/drivers/platform/x86/ideapad-laptop.c
+> @@ -1294,6 +1294,16 @@ static const struct key_entry ideapad_keymap[] = {
+>  	/* Specific to some newer models */
+>  	{ KE_KEY,	0x3e | IDEAPAD_WMI_KEY, { KEY_MICMUTE } },
+>  	{ KE_KEY,	0x3f | IDEAPAD_WMI_KEY, { KEY_RFKILL } },
+> +	/* Star- (User Assignable Key) */
+> +	{ KE_KEY,	0x44 | IDEAPAD_WMI_KEY, { KEY_PROG1 } },
+> +	/* Eye */
+> +	{ KE_KEY,	0x45 | IDEAPAD_WMI_KEY, { KEY_PROG3 } },
+> +	/* Performance toggle also Fn+Q, handled inside ideapad_wmi_notify() */
+> +	{ KE_KEY,	0x3d | IDEAPAD_WMI_KEY, { KEY_PROG4 } },
+> +	/* shift + prtsc */
+> +	{ KE_KEY,   0x2d | IDEAPAD_WMI_KEY, { KEY_CUT } },
+> +	{ KE_KEY,   0x29 | IDEAPAD_WMI_KEY, { KEY_TOUCHPAD_TOGGLE } },
+> +	{ KE_KEY,   0x2a | IDEAPAD_WMI_KEY, { KEY_ROOT_MENU } },
+>  
+>  	{ KE_END },
+>  };
+> @@ -2080,6 +2090,14 @@ static void ideapad_wmi_notify(struct wmi_device *wdev, union acpi_object *data)
+>  		dev_dbg(&wdev->dev, "WMI fn-key event: 0x%llx\n",
+>  			data->integer.value);
+>  
+> +		/* performance button triggered by 0x3d */
+> +		if (data->integer.value == 0x3d) {
+> +			if (priv->dytc) {
+> +				platform_profile_cycle();
+> +				break;
+> +			}
+> +		}
+> +
+>  		/* 0x02 FnLock, 0x03 Esc */
+>  		if (data->integer.value == 0x02 || data->integer.value == 0x03)
+>  			ideapad_fn_lock_led_notify(priv, data->integer.value == 0x02);
+
 
