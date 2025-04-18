@@ -1,166 +1,121 @@
-Return-Path: <linux-kernel+bounces-610842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 967FCA939AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 17:35:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FD0CA939B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 17:36:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1E217A54F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 15:34:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DBB88A76CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 15:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C4AF213E66;
-	Fri, 18 Apr 2025 15:35:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C55021129A;
+	Fri, 18 Apr 2025 15:36:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uqzjTsEn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xH+/z9Gs"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9E164A8F;
-	Fri, 18 Apr 2025 15:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FF87F9EC
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 15:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744990518; cv=none; b=RAg6N7ih6IKx6vfRpOYvu+DcjD4uXFseaULoqWAoGsR9tj2etso5aLh5egtuaCN9slROzqV9BVxq7/+XjSr7o09RLy2vPKw0pVvaRGDRQ6xE9ULvi3XkHRDhxZgaezate51oE8Z+2AuATtUQhhHQuuhyDk0rlY+yGz/O6oE5ayM=
+	t=1744990610; cv=none; b=AtV/SL6EHQiGNUFM5uDmfafnWFST9HDL5hcIgXS9+pzcxzxh7tH91o+x0am1WlVhFPiSS8+rBCyRQMsTRaWNoFxvqF9HeViraKoYw6C/U+dw696fG7w3o5o5SJ0OqFi7kdRVD8ntbdqY14ixDzrFdaeSg821FQhz0OknveY8J8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744990518; c=relaxed/simple;
-	bh=7NHab62RZtPj0Np+h3D9F3dxP/sVC+/JnFk6D/PUpPQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EqJWLVqMyojI56Edhdj1Q0F9+7wa6xJhIEGM0I6nzrdoH3oKAPkCOB1RQm4ZB/8uGxpDUv8AcA5qpJM3zq8Ayx0ujDzIorqEnN7iZjKoDz4ZOnbGfq5u0rb87+itnUO9xPb8x4T1H5OBrkU+bBwhthBtY0P1rzqSlu5MWTcXF08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uqzjTsEn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1863CC4CEEA;
-	Fri, 18 Apr 2025 15:35:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744990518;
-	bh=7NHab62RZtPj0Np+h3D9F3dxP/sVC+/JnFk6D/PUpPQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uqzjTsEnt9rDe+ksBBlT3BLXDvD6oHj/oGnFMl4wzPOE/y7OsfkdibxQnus0m3BAT
-	 +Z2qaFSGhZq07whzJPZjt5WArxUXWXyOeLky4XMAa6ay+xm5WOX/17eKfxr4cxsuEX
-	 JaJTxU+shymgO6NAmDcbCDNuZZparjTo6TcQRUt+Sb6pylRsSYd1lK97CI4B93LuVb
-	 3wxLctZljW/x2jALr2c/dFwan9BRHFdFT+eNLM/5Uv+63xjEL/CVdzt4hRIOCvcGvi
-	 7ZeABxWyYURO/vSJMWJE1tAx4ebji6fO4/FNg7uqS7KtaVU7TgmWnY3r2xP107RcjZ
-	 kJ8+DBdQdreQA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=lobster-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1u5nkJ-006krU-QT;
-	Fri, 18 Apr 2025 16:35:15 +0100
-Date: Fri, 18 Apr 2025 16:35:22 +0100
-Message-ID: <87plh9xz2d.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-	Luo Jie <quic_luoj@quicinc.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Julia Lawall <Julia.Lawall@inria.fr>,
-	Nicolas Palix <nicolas.palix@imag.fr>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-kernel@vger.kernel.org,
-	cocci@inria.fr,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	quic_kkumarcs@quicinc.com,
-	quic_linchen@quicinc.com,
-	quic_leiwei@quicinc.com,
-	quic_suruchia@quicinc.com,
-	quic_pavir@quicinc.com
-Subject: Re: [PATCH v3 0/6] Add FIELD_MODIFY() helper
-In-Reply-To: <aAJq9mGswYsnAOS8@yury>
-References: <20250417-field_modify-v3-0-6f7992aafcb7@quicinc.com>
-	<86sem7jb5t.wl-maz@kernel.org>
-	<0c97c659-bd28-45e0-8537-d9be2637cb22@lunn.ch>
-	<86mscek7h3.wl-maz@kernel.org>
-	<aAJq9mGswYsnAOS8@yury>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1744990610; c=relaxed/simple;
+	bh=C5fq7l2Ahsb27LgEO4/lHCMuhJMXpnJ8WZoqeYkZ6ms=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JH4bCV69IwmWmqJQ9PNSx5hPLmTsECjZPz59tgb94ELWes3QD38qEqVj9Ba41DwjKTB5hLI3nDXKIV6cWUOcLGU0AIsyuakWvX5oDtFnKS8kJIWBeUr1uiA+k7qAa0f4jOgm/PA+A886+IkXHiioC6NwkNqhTFaeVumHMZ4tyC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xH+/z9Gs; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 18 Apr 2025 21:05:53 +0530
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1744990605;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6wrOfCKY3zK3SNy182P4/7XcrrLA8TgpWNc3DXhpeIc=;
+	b=xH+/z9GsJZEtYeFxQtwc/KttJRMlMezXrO8YZel9QR5V1rmv6P8jisb5twwnwlzBfl/zpY
+	iWYTbBg45EN7xMq5hfdxG1geMyRIcXyOc6wlAlw/N5iiM/6+/OMwoaXCf0k2Gdir5XB9Xs
+	nulXxfdQUhW4YM4oOpnv6HGHSJjSeds=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Jai Luthra <jai.luthra@linux.dev>
+To: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, mripard@kernel.org, mchehab@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, devarsht@ti.com, vaishnav.a@ti.com, 
+	r-donadkar@ti.com, u-kumar1@ti.com
+Subject: Re: [PATCH v6 2/2] media: cadence: csi2rx: Enable csi2rx_err_irq
+ interrupt and add support for VIDIOC_LOG_STATUS
+Message-ID: <see7ve2j7hxqt7c4vqlowprsptjjl5dpfuaagqzj6uk73mhzcu@lhl7qvtwjd2q>
+X-PGP-Key: http://jailuthra.in/files/public-key.asc
+References: <20250416121938.346435-1-y-abhilashchandra@ti.com>
+ <20250416121938.346435-3-y-abhilashchandra@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: yury.norov@gmail.com, andrew@lunn.ch, quic_luoj@quicinc.com, linux@rasmusvillemoes.dk, Julia.Lawall@inria.fr, nicolas.palix@imag.fr, catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, linux-kernel@vger.kernel.org, cocci@inria.fr, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com, quic_leiwei@quicinc.com, quic_suruchia@quicinc.com, quic_pavir@quicinc.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="vgb7ndcpx6r2z555"
+Content-Disposition: inline
+In-Reply-To: <20250416121938.346435-3-y-abhilashchandra@ti.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, 18 Apr 2025 16:08:38 +0100,
-Yury Norov <yury.norov@gmail.com> wrote:
-> 
-> On Thu, Apr 17, 2025 at 06:45:12PM +0100, Marc Zyngier wrote:
-> > On Thu, 17 Apr 2025 18:22:29 +0100,
-> > Andrew Lunn <andrew@lunn.ch> wrote:
-> > > 
-> > > On Thu, Apr 17, 2025 at 12:10:54PM +0100, Marc Zyngier wrote:
-> > > > On Thu, 17 Apr 2025 11:47:07 +0100,
-> > > > Luo Jie <quic_luoj@quicinc.com> wrote:
-> > > > > 
-> > > > > Add the helper FIELD_MODIFY() to the FIELD_XXX family of bitfield
-> > > > > macros. It is functionally similar as xxx_replace_bits(), but adds
-> > > > > the compile time checking to catch incorrect parameter type errors.
-> > > > > 
-> > > > > This series also converts the four instances of opencoded FIELD_MODIFY()
-> > > > > that are found in the core kernel files, to instead use the new
-> > > > > FIELD_MODIFY() macro. This is achieved with Coccinelle, by adding
-> > > > > the script field_modify.cocci.
-> > > > > 
-> > > > > The changes are validated on IPQ9574 SoC which uses ARM64 architecture.
-> > > > 
-> > > > We already have the *_replace_bits() functions (see
-> > > > include/linux/bitfield.h).
-> > > > 
-> > > > Why do we need extra helpers?
-> > > 
-> > > If you look at bitfield.h, the *_replace_bits() seem to be
-> > > undocumented internal macro magic, not something you are expected to
-> > > use. What you are expected to use in that file is however well
-> > > documented. The macro magic also means that cross referencing tools
-> > > don't find them.
-> > 
-> > $ git grep _replace_bits|  wc -l
-> > 1514
-> 
-> FIELD_PREP() only is used 10 times more.
 
-And? I'm sure that if you count "+", you'll find it to be yet a few
-order of magnitudes more.
+--vgb7ndcpx6r2z555
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v6 2/2] media: cadence: csi2rx: Enable csi2rx_err_irq
+ interrupt and add support for VIDIOC_LOG_STATUS
+MIME-Version: 1.0
 
->  
-> > I think a bunch of people have found them, tooling notwithstanding.
-> > 
-> > As for the documentation, the commit message in 00b0c9b82663ac would
-> > be advantageously promoted to full-fledged kernel-doc.
-> 
-> The FIELD_MODIFY() and uxx_replace_bits() are simply different things.
-> 
-> FIELD_MODIFY() employs __BF_FIELD_CHECK(), which allows strict
-> parameters checking at compile time. And people like it. See
-> recent fixed-size GENMASK() series:
-> 
-> https://patchwork.kernel.org/comment/26283604/
+Hi Abhilash,
 
-I don't care much for what people like or not. I don't see this
-FIELD_MODIFY() as a particular improvement on *_replace_bits().
+Thanks for the patch.
 
-> The _replace_bits() functions return fixed-width values, and intended
-> for: "manipulating bitfields both in host- and fixed-endian", as the
-> very first line in the commit message says.
-> 
-> Those using _replace_bits() for something else abuse the API, and
-> should switch to FIELD_MODIFY().
+On Wed, Apr 16, 2025 at 05:49:38PM +0530, Yemike Abhilash Chandra wrote:
+> Enable the csi2rx_err_irq interrupt to record any errors during streaming
+> and also add support for VIDIOC_LOG_STATUS ioctl. This allows users to
+> retrieve detailed error information during streaming, including FIFO
+> overflow, packet errors, and ECC errors.
+>=20
+> Signed-off-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
 
-Or not.
+Tested-by: Jai Luthra <jai.luthra@linux.dev>
 
-	M.
+> ---
+>  drivers/media/platform/cadence/cdns-csi2rx.c | 131 +++++++++++++++++++
+>  1 file changed, 131 insertions(+)
+>=20
+[snip]
 
--- 
-Jazz isn't dead. It just smells funny.
+--
+Jai
+
+--vgb7ndcpx6r2z555
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEETeDYGOXVdejUWq/FQ96R+SSacUUFAmgCcVkACgkQQ96R+SSa
+cUWBsRAA0slrHvDhdrNsjQEhqpC5jjgl3FD2acCj5VLsgpp9wIq+AXSt8ZxFYdgb
+W+UhPJVoI+tVt2GgdBNhLFuFGdxZXIRv+crzPKh0t8wdgXm7Go7gEHmAA+pa313m
+Cxzx2vQtyoRUOrQU3fjvPVDuwjBEmxnfwyyAfxmCpxLpNOc0Khk2VzRTkWmkRy3b
+32o7TLq3rrokHbIzLT/wnRICkMAwaZ8QB/2IyTzBziA9TBOh7Md2A2OgZ7K4FzIs
+cBFmJskdEmw56TMwKndFjkp1AjkhxnJx3zNJ5H0rki3pVn8M54wNHKjWSz6aBUQ2
+EwvjoCD8RLBWz6XbLyAWVyEQmIOI00ZirgenkDonK5Gh4RhGjpBrHiAF7V4lswfr
+2sov+efU3n8+fyFW4lgskLvZkoSwUMRQYocGC4L/LtiuiEJUJw28gyAYpghN2CU2
+DXOnECSPBNEyvCuaAtGP00My9EVLQthL2fbeWcd3+rKrEVbi4gXthMQCJUJemL8n
+IhUvmeGk2hR/wMjzKPDI6K9XZSuH2gC6PQvvhebbYEn1ALETkL1e8Dd9a+9kcUX3
+uDEeef4R5ZS+OxgANGIyYiGndLdm5Ds0edsCIYOvV50LkAoCQyghIocWCz/kKZMt
+X4rhiMuAMSTTZ3GLLQqAii4Is74zUv4+DQYi9OBgLJu5b5YDx2k=
+=xyFP
+-----END PGP SIGNATURE-----
+
+--vgb7ndcpx6r2z555--
 
