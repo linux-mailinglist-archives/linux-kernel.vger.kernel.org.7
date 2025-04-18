@@ -1,97 +1,143 @@
-Return-Path: <linux-kernel+bounces-610494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58D05A9359F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 11:52:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AB30A935AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 11:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B6E7447B32
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 09:52:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2925B189B3FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 09:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E3B26989D;
-	Fri, 18 Apr 2025 09:52:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7169C270EA0;
+	Fri, 18 Apr 2025 09:56:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="A8865jdi"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4C3204F6F
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 09:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="QWT88Hbv"
+Received: from mail-m1973174.qiye.163.com (mail-m1973174.qiye.163.com [220.197.31.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B962026FA5A;
+	Fri, 18 Apr 2025 09:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744969956; cv=none; b=pgvc9Qd0xSpJMlbUDfj/7vpPo/j0SeDSvByseoSCFfvVzGeqMb0rkNbYKEzRnmZ9iV57DAQ908bxirhrT2TVdDK66K4iGgsC11UXNb40c1bXM2ThEWW2KczlgrHo9krxaqtuDhb8zN2eCx1LCD/TW/I4jKS357t54m85zP1B/Ew=
+	t=1744970195; cv=none; b=daYpd9CrEx9eE/HstpZcYjCDQSsToemF5S92NPTERA2JrO9LZ1uPa7VWptdqeRFbxvatJCwMB07nA2B56oV5LZap+3Ll30QOkd7466ItT14RSe2P783uYeiWUFA6juJYT9bw22DfOdVASvSMtx///SGUaXB+6s6vEpqeYQToW2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744969956; c=relaxed/simple;
-	bh=/othrA++ZqQt3O9bGvixisrtGcHr5UiV2VOX048mnVM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=cTcDym1v1ccN5yev4/qoQ9DE7DZV9aBrz3+ZDPDCPyupqmVvnpCOHfHJiUU9aP/pPvjt9aX+iHozrs+eDQwNRy4V2UWhpGUSqGD09ruEa8lb4XDHU0cHgelnCpHVv3jfyC+dxOJm2wUhpOxRbHJdDnVVUre0Gl5zZpLnK9Mdnr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=A8865jdi reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=/lz4kzDd+Ofx/tYRxsAmzeEQiMcP0P6DAZ6wk+IAMqs=; b=A
-	8865jdie+Au4JHglYjTkQ0ldqnWZIR0oMh3m5Aq/jB2eTyOPM8AyGa1VWuNqhcUD
-	B7FesdBs1MfaNnT9h2TYICN4dqOb0tOTn9Cg9v1bBk91R7PgLB64tSazJSStNfou
-	663VV4GGjYsCwW1VpVVnNniDfMaUqKkXTBnrn3+3lI=
-Received: from andyshrk$163.com ( [58.22.7.114] ) by
- ajax-webmail-wmsvr-40-120 (Coremail) ; Fri, 18 Apr 2025 17:50:55 +0800
- (CST)
-Date: Fri, 18 Apr 2025 17:50:55 +0800 (CST)
-From: "Andy Yan" <andyshrk@163.com>
-To: "Daniel Stone" <daniel@fooishbar.org>
-Cc: "Konstantin Shabanov" <mail@etehtsea.me>,
-	"Sandy Huang" <hjc@rock-chips.com>,
-	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-	"Andy Yan" <andy.yan@rock-chips.com>,
-	"Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
-	"Maxime Ripard" <mripard@kernel.org>,
-	"Thomas Zimmermann" <tzimmermann@suse.de>,
-	"David Airlie" <airlied@gmail.com>,
-	"Simona Vetter" <simona@ffwll.ch>, "Dan Callaghan" <djc@djc.id.au>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re:Re: [PATCH v4] drm/rockchip: Disable AFBC for res >2560 on
- rk3399
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <CAPj87rNDsyBfy=P=0SzTm7u6Na6BpeZSpEt1mRPhLCd6rHXzTA@mail.gmail.com>
-References: <20250414095332.9674-1-mail@etehtsea.me>
- <20250417065759.5948-1-mail@etehtsea.me>
- <17402f2e.360.1964640c3d3.Coremail.andyshrk@163.com>
- <CAPj87rNDsyBfy=P=0SzTm7u6Na6BpeZSpEt1mRPhLCd6rHXzTA@mail.gmail.com>
-X-NTES-SC: AL_Qu2fBvWdtkAu4yadYOkfmkcVgOw9UcO5v/Qk3oZXOJF8jDLp/j0HdmVSAWfk9OO0GyOzmgmGQhZw7+16UYtfUYcQTnngy+GPTIlCzbjsNbhLSQ==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1744970195; c=relaxed/simple;
+	bh=D4pUJoAC83w3hP6IO7jcxTh2sIPQedcy5b/8ool7+og=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=j0M/FP0V6oX4AS+FRGbVhJZNtO/wyunBaFERC9U1IcHv4Pt0WxfoKJENkbtSBJEpG3Sh/gRzcQzJ3NdzfLlNHBeWoGWO1M2j7K8bxg4721yKQ+b3ffzDy+UuSQ46yT0A3Vioqp1qS81HJNFLSq4Ea/KEE6E7OTNrH9OCG3gcfx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=QWT88Hbv; arc=none smtp.client-ip=220.197.31.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from localhost.localdomain (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 125a9718a;
+	Fri, 18 Apr 2025 17:51:16 +0800 (GMT+08:00)
+From: Kever Yang <kever.yang@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	devicetree@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Rob Herring <robh@kernel.org>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	David Wu <david.wu@rock-chips.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 1/3] dt-bindings: net: Add support for rk3562 dwmac
+Date: Fri, 18 Apr 2025 17:51:12 +0800
+Message-Id: <20250418095114.271562-1-kever.yang@rock-chips.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <a893834.9206.196484ef2ab.Coremail.andyshrk@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:eCgvCgD3P7Z_IAJowZyaAA--.49852W
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0hkzXmgCGhqq-gACsa
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGRpKSVZDT00ZSUsfTBpDQkxWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+X-HM-Tid: 0a96484f455003afkunm125a9718a
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MRQ6GTo4DDIMAgouIk4UI0lO
+	PzcwCjNVSlVKTE9PQk1CQ0xDTUhOVTMWGhIXVRAeDR4JVQIaFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFISUNLNwY+
+DKIM-Signature:a=rsa-sha256;
+	b=QWT88HbvamFv90XR9yBLMFnQCm6eCs3/nVDkf5NLLpqNUvkbt1AIkBqXuAaCQDsRrcdrxFk3ooh0W8cI/yLSCihrnL+6gPNC59XfMc8GygwNI6zOfG+hNkmYwnUuKyXDaKEnBAqMGyIAsvvyANtXWZ2Pe0Bis8nHGBiLrzj+wPA=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=+3Zq6GxI1QoLvi6Yw419evhTpUoxkex9H7YRQ3ne+wo=;
+	h=date:mime-version:subject:message-id:from;
 
-CkhpIApBdCAyMDI1LTA0LTE4IDE3OjQzOjE5LCAiRGFuaWVsIFN0b25lIiA8ZGFuaWVsQGZvb2lz
-aGJhci5vcmc+IHdyb3RlOgo+SGkgQW5keSwKPgo+T24gRnJpLCAxOCBBcHIgMjAyNSBhdCAwMTox
-NiwgQW5keSBZYW4gPGFuZHlzaHJrQDE2My5jb20+IHdyb3RlOgo+PiBJIHByZWZlciB0aGUgVjEg
-dmVyc2lvbiBQQVRDSFswXS4gVGhpcyBpcyBiZWNhdXNlIHdlIGRvIG5vdCBkZWFsIHdpdGggaGFy
-ZHdhcmUtcmVsYXRlZAo+PiBkaWZmZXJlbmNlcyBhdCB0aGlzIGxldmVsLiAgSXQgaW52b2x2ZXMg
-YSBWT1AtcmVsYXRlZCByZXN0cmljdGlvbiBhbmQgd2UgYWx3YXlzICBoYW5kbGUKPj4gbGltaXRp
-YXRpb24gbGlrZSB0aGlzICB3aXRoaW4gdGhlIFZPUCBkcml2ZXIgLgo+Cj5BcyBzYWlkIGluIHRo
-ZSByZXZpZXcgZm9yIHYxLCB0aGlzIGlzIG5vdCBlbm91Z2ggZm9yIGdlbmVyaWMgdXNlcnNwYWNl
-Lgo+Cj5JZiBkcm1Nb2RlQWRkRkIyV2l0aE1vZGlmaWVycygpIGZhaWxzLCB1c2Vyc3BhY2Uga25v
-d3MgdGhhdCB0aGUgYnVmZmVyCj5jYW4gbmV2ZXIgd29yayBpbiB0aGF0IGNvbmZpZ3VyYXRpb24s
-IGFuZCBpdCBzaG91bGQgZmFsbCBiYWNrLiBJZgo+ZHJtTW9kZUF0b21pY0NvbW1pdChEUk1fTU9E
-RV9BVE9NSUNfVEVTVF9PTkxZKSBmYWlscywgdXNlcnNwYWNlIGRvZXMKPm5vdCBrbm93IHRoYXQg
-dGhlIGJ1ZmZlciBjYW4gX25ldmVyXyB3b3JrLCBiZWNhdXNlIHRoZSBmYWlsdXJlIG1heSBiZQo+
-dHJhbnNpZW50IG9yIGR1ZSB0byBhIGNvbWJpbmF0aW9uIG9mIHRoaW5ncy4KPgo+UmV0dXJuaW5n
-IHRoZSBtb3JlIGxvY2FsaXNlZCBlcnJvciBzYXZlcyB1c2Vyc3BhY2UgYSBsb3Qgb2Ygd29yayBh
-bmQKPmVuYWJsZXMgYSBtb3JlIG9wdGltYWwgc3lzdGVtLgoKT2theSwgIGZpbmUsIEFDSy4KCj4K
-PkNoZWVycywKPkRhbmllbAo=
+Add a rockchip,rk3562-gmac compatible for supporting the 2 gmac
+devices on the rk3562.
+rk3562 only has 4 clocks available for gmac module.
+
+Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+---
+
+Changes in v3:
+- Collect ack tag
+- rebase to v6.15-rc1
+
+Changes in v2:
+- Fix schema entry and add clocks minItem change
+
+ Documentation/devicetree/bindings/net/rockchip-dwmac.yaml | 3 +++
+ Documentation/devicetree/bindings/net/snps,dwmac.yaml     | 1 +
+ 2 files changed, 4 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/net/rockchip-dwmac.yaml b/Documentation/devicetree/bindings/net/rockchip-dwmac.yaml
+index 0ac7c4b47d6b..a0814e807bd5 100644
+--- a/Documentation/devicetree/bindings/net/rockchip-dwmac.yaml
++++ b/Documentation/devicetree/bindings/net/rockchip-dwmac.yaml
+@@ -25,6 +25,7 @@ select:
+           - rockchip,rk3368-gmac
+           - rockchip,rk3399-gmac
+           - rockchip,rk3528-gmac
++          - rockchip,rk3562-gmac
+           - rockchip,rk3568-gmac
+           - rockchip,rk3576-gmac
+           - rockchip,rk3588-gmac
+@@ -51,6 +52,7 @@ properties:
+       - items:
+           - enum:
+               - rockchip,rk3528-gmac
++              - rockchip,rk3562-gmac
+               - rockchip,rk3568-gmac
+               - rockchip,rk3576-gmac
+               - rockchip,rk3588-gmac
+@@ -149,6 +151,7 @@ allOf:
+             contains:
+               enum:
+                 - rockchip,rk3528-gmac
++                - rockchip,rk3562-gmac
+     then:
+       properties:
+         clocks:
+diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+index 78b3030dc56d..7498bcad895a 100644
+--- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
++++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+@@ -83,6 +83,7 @@ properties:
+         - rockchip,rk3328-gmac
+         - rockchip,rk3366-gmac
+         - rockchip,rk3368-gmac
++        - rockchip,rk3562-gmac
+         - rockchip,rk3576-gmac
+         - rockchip,rk3588-gmac
+         - rockchip,rk3399-gmac
+-- 
+2.25.1
+
 
