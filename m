@@ -1,149 +1,145 @@
-Return-Path: <linux-kernel+bounces-610208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0464EA931DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 08:16:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B670DA931E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 08:19:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0AB08A77C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 06:15:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2025447F15
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 06:19:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 781DC269823;
-	Fri, 18 Apr 2025 06:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396D71FBE87;
+	Fri, 18 Apr 2025 06:19:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="l96kI/HA"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="EW1d9dJ/"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30EC0268FDA
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 06:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 665CE2E40B
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 06:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744956924; cv=none; b=MOH62B7IhK8zJPCPJyvP3zD2b++D7DG4jKKx3xnAJxTcj9H8fd1xxAX1vmK26N+L3OqrdvbWZpaJYpH1VORaJ0faKKh6kO7kqKOfYDAVII9Z6HXKnUb9lvaRdat/ZnKpU1+o/b7ywG8NpGabkunWs6MHgAGFJN9UKEuKHxYI94Q=
+	t=1744957161; cv=none; b=dOGkIaLsL718VdJxK3ZhDCcWlvoz4d9RuG7+nU6b7Q7uEYR1NJC4yWq7XaDN/i6wFYfSYawpGMGEyWh21t3Z5EW5GSrUtGE9+AFE1z4wVYUXzRNCKhCcLzsfbprAG1D6JMj15ivNEKdmqVLdPzVmSvpFyAEeJ1CzXzd+cO+61qQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744956924; c=relaxed/simple;
-	bh=cwnLe2mq5+OXES0FW/bDBHXRCMTUeur7l11Kj/h4KeQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=dElRAGD1YnYxphRxWi0sFRSjYwsHCkqZbf8Rcw/YsUs2TPvqy9BG9Sefh/5cKsJL0cZP67Gc4YkSjjshxJtOmb0iTPNv1x+OkKR+qeV2RI1mtQkPxYPlwCn4TMd8ihnGV6aen0JRaH6q+QEl2Q4dE0MJALbO4aekvJUGrHEuEDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=l96kI/HA; arc=none smtp.client-ip=203.254.224.34
+	s=arc-20240116; t=1744957161; c=relaxed/simple;
+	bh=WcVXQNppAfOyvpsjjFd5FhPEFnm/FQJNMa2Z2XpGJ4M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=eR0rZZmy7sXzLV+PRhPH7CgCC+sEh+KqQgLGpQpfLKs8+W1YUAZurps1hqJs264g9IGhwduKYthjGbb1GG+YpDjvr7FZn127mKXy6hHNJQ/jk8NpHvp+SLcaznWtmRcK92WCGKECoSu2DUcg11qb/tfgOYl+M69gRdcCgT4sNSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=EW1d9dJ/; arc=none smtp.client-ip=210.118.77.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250418061517epoutp0465a436824e6a655236d9e075b822e89b~3VRI1fLx_1895818958epoutp04R
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 06:15:17 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250418061517epoutp0465a436824e6a655236d9e075b822e89b~3VRI1fLx_1895818958epoutp04R
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250418061916euoutp01d9211a70e4f75fcd0215495add735ea4~3VUn19_7K2746927469euoutp01L
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 06:19:16 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250418061916euoutp01d9211a70e4f75fcd0215495add735ea4~3VUn19_7K2746927469euoutp01L
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1744956917;
-	bh=aprxRbYtZUgT14V1ldVJXfUniZKweln6d8PJOcyQRPI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=l96kI/HA+/nGMwQgnhxnCS7ssD5dQcb8Mw7wNakMgGjrCVNkRo6B5fXbBjmz5/BnI
-	 oN8wHDSt0+8g7qoOjtdXmYA8qBP+BHncD2Ld/9zlefUPvR7xRTJ6qQV43eW7LOxTHe
-	 oKSJTqcrbgEhUJvvtAqVJ8hXkfLxdGBl35UBN1/A=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250418061516epcas2p28e6360f3275261b0a94b81b5b23e5b6c~3VRIGdylb2985129851epcas2p2v;
-	Fri, 18 Apr 2025 06:15:16 +0000 (GMT)
-Received: from epcas2p2.samsung.com (unknown [182.195.36.69]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4Zf4Hm15wzz3hhTQ; Fri, 18 Apr
-	2025 06:15:16 +0000 (GMT)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250418061515epcas2p4b57102967b07d665051a6297ab451a3c~3VRHC5SAh1705317053epcas2p4G;
-	Fri, 18 Apr 2025 06:15:15 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250418061515epsmtrp2c0ae88fd3cdaf7ba493614b214ef55be~3VRHCAeOk0714207142epsmtrp24;
-	Fri, 18 Apr 2025 06:15:15 +0000 (GMT)
-X-AuditID: b6c32a52-40bff70000004c16-2a-6801edf39277
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	03.69.19478.3FDE1086; Fri, 18 Apr 2025 15:15:15 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.229.9.60]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250418061515epsmtip1f43ce5fffd017095a3771ce1c5ea011c~3VRGwVB420416704167epsmtip1w;
-	Fri, 18 Apr 2025 06:15:15 +0000 (GMT)
-From: Shin Son <shin.son@samsung.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki
-	<s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar
-	<alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Sunyeal Hong <sunyeal.hong@samsung.com>
-Cc: Shin Son <shin.son@samsung.com>, linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] arm64: dts: exynosautov920: add cpucl0 clock DT nodes
-Date: Fri, 18 Apr 2025 15:15:00 +0900
-Message-ID: <20250418061500.1629200-4-shin.son@samsung.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250418061500.1629200-1-shin.son@samsung.com>
+	s=mail20170921; t=1744957156;
+	bh=S2JQV1AgO14R7WYcM0wLJaSuv7E1N9Zgr1tZNZPzywA=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=EW1d9dJ/o0awh/qaVhCVolpSf05CQt3nV30Z5/VTJtitbsCE/zN+V1Py2GJ4FtaGT
+	 jskgT18y3Wn5BSPkGCNJAH/dcZdbWtPHhz4HVl+ZCPTJR278EIk+AqiO57vig1i/3X
+	 SK/2rqhj+1TOrvgD5Xzy+HPzg2hwUaacz98QXDnY=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20250418061916eucas1p17df1db26f6fc0b019fd374af9ff5a3b1~3VUndX11c1817818178eucas1p1l;
+	Fri, 18 Apr 2025 06:19:16 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id 51.9D.20821.4EEE1086; Fri, 18
+	Apr 2025 07:19:16 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250418061915eucas1p275a0d6e23c262981277109d6d0db95d6~3VUnGOa8s0841508415eucas1p2Z;
+	Fri, 18 Apr 2025 06:19:15 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250418061915eusmtrp14968a24dcc40da86089721a35449a276~3VUnFqBUV3118131181eusmtrp1e;
+	Fri, 18 Apr 2025 06:19:15 +0000 (GMT)
+X-AuditID: cbfec7f2-b09c370000005155-f8-6801eee41dfe
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id F3.C1.19654.3EEE1086; Fri, 18
+	Apr 2025 07:19:15 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250418061915eusmtip2e899d892d07912e35aebee8f28071eec~3VUmmCK0n2270222702eusmtip20;
+	Fri, 18 Apr 2025 06:19:15 +0000 (GMT)
+Message-ID: <304860b1-cd01-4d27-92eb-0bf6e30398fb@samsung.com>
+Date: Fri, 18 Apr 2025 08:19:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGLMWRmVeSWpSXmKPExsWy7bCSnO7nt4wZBhcnCFg8mLeNzWLN3nNM
-	Fte/PGe1mH/kHKvF+fMb2C02Pb7GavGx5x6rxeVdc9gsZpzfx2Rx8ZSrxf89O9gtDr9pZ7X4
-	d20ji8Xk42tZLZqWrWdy4Pd4f6OV3WPTqk42j81L6j36tqxi9Pi8SS6ANYrLJiU1J7MstUjf
-	LoEro312F3PBEY6KafcvsjUwfmPrYuTkkBAwkXh7dzt7FyMXh5DAdkaJ93fvsEAkJCQOz5jA
-	CGELS9xvOcIKUfSeUaLt3wqgIg4ONgFViU2/5UHiIgJvmSSW/z/ABNLALHCaUWLnGRmQGmEB
-	L4m3K0RAwixA5dvfXWMGsXkFrCVWHNnKBFIiISAv0d8hARLmFLCRWLpvFhtIWAioZOGLOohq
-	QYmTM5+wQAyXl2jeOpt5AqPALCSpWUhSCxiZVjGKphYU56bnJhcY6hUn5haX5qXrJefnbmIE
-	R4VW0A7GZev/6h1iZOJgPMQowcGsJMJ7zvxfuhBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFe5ZzO
-	FCGB9MSS1OzU1ILUIpgsEwenVAPTumTp1X+CLvr18N/Uul3Xp/n4z/8vWvKN8ck+Z06K68/Y
-	t527au8v9n7LwnNtin8Mt7Z31acxNpid+zh5zQOn2xOfXmMR2ZV0jPXI9/6/z658vSQl+urS
-	pxV2Sptj0kRqPBgT1CbO2d8d9biwfvvT4zP4NZNNOScFXVu+7TqL/k6ZlTUust7m2V9WXEgM
-	PqF59sLrZd8O1vHd5Y24cm2PKUty94rjXk2F/YcuXxG/byd7efFxBtPNFoenZ9h0f7v/PNBn
-	yt6S8rS89vNKmfbNfY2r0z+Y/PkW/eZFpe2nOamnr3xZHJP5ck/F4469f1wfht1eLJclZvi/
-	/P+SjQXzD/K6uLZ91V6y5kaAd+VDQyWW4oxEQy3mouJEAL/9fE/5AgAA
-X-CMS-MailID: 20250418061515epcas2p4b57102967b07d665051a6297ab451a3c
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dma-mapping: avoid potential unused data compilation
+ warning
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org, Christoph Hellwig
+	<hch@lst.de>, Robin Murphy <robin.murphy@arm.com>, netdev@vger.kernel.org,
+	Jakub Kicinski <kuba@kernel.org>
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <Z_4pZm_tQ6qmmj35@smile.fi.intel.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Se2xLYRzNd+/t3V2jc3Xob5tnGUF0xug1zCNERQQRxDwbvbqyddJumJA1
+	xKvzbM2jG5sitlra2ZhtItJlVFM6amqW2ZIZw1J0s5htxtbrsf/OOb/zfed3vnwULjTzwimV
+	OoXVqOWJYpJPlDz6UTW56TNKmFJ8fyBz4sB5jMm/+RBjOr8xzLOSkzzmRXk2yTzKHcrYvzbx
+	5gXJCi4XIFmR5Rgpu+xcKftQfBHJ7r3WkbK2ohEryHj+bAWbqNrFaqLitvATGrqOop0HeXv0
+	heeQDp0l9CiYAjoGDvzy8PSITwnpPATe+seII98Q5LZ8JjnShuCNrgP9PfKl3YBzgxsIjl/3
+	YRzxI2h2dwb1uQR0HOT528k+TNCRcCfrBsHpg8B5sSmAh9AjoaH2QsAfSq+CDGdZQB9MS8Fq
+	MAeicbocQY+3PDDAaRHUNuVgfZiko0Hv0wcCgumpYH7/Aec8I+GuLzuwHtB1FFhe3SK5vRdC
+	Zrc1iMOh8Mlx+w8eBi7jcYI7cKS3dVcDxpHTCHTNtX9az4I6d2fvTVRvxASwlUdx8nzIyv6O
+	9clAh0CNbxC3RAgYSs7jnCyAo4eFnHscmBzWf7H2Zx78NBKb+r2LqV9NU786pv+5uYiwIBGb
+	qk1SstpoNbtbopUnaVPVSsnW5KQi1PuNXD2O1lJ06ZNfUoEwClUgoHDxYIFb2qMUChTytL2s
+	JnmzJjWR1VagCIoQiwTmB4eUQlopT2F3sOxOVvN3ilHB4TpMv9h9b5G845B6f/IQiRVfd+3t
+	rzGW0KuilO5dY8uuF4Yw4kJjRiX/xXdfZKbdjtfPGhj5xYlU80MzjOvF69NjLMyaGT8zUhXd
+	PYpWSvR0S75Laq6Km3vNK2rRuJ9Pjx8/2/Rm25MIwlY9Nv/C6lFJYY7ilzlxDZcOx2ywpX11
+	GbqDTtV4lxdsLIkarS99MunkuxHSxvBRlcJlr/wenc5lD/uoG1CWJy311PCVRr5E7MBr91YN
+	7eywVXsah+1/neZtvEPFLjHGqwoX4BGb0vc5ISw23dBeN23hnIq1/pwzzZU8Y2P1zQWyd/XD
+	w7O2b6xZ+iNTlZ210qaY2WIjr1jFhDZBHj0R12jlvwFGFXTBtQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCIsWRmVeSWpSXmKPExsVy+t/xe7qP3zFmGHRON7PobZrOZLFy9VEm
+	i19fLCwubOtjtbi8aw6bxbEFYhYHPzxhdWD3WDNvDaPHplWdbB7zTgZ6vNg8k9Fj980GNo/P
+	m+QC2KL0bIryS0tSFTLyi0tslaINLYz0DC0t9IxMLPUMjc1jrYxMlfTtbFJSczLLUov07RL0
+	Mu7/7mAsaGat6NowjbGBcQpLFyMnh4SAicT7r5OYuxi5OIQEljJKzOi4xASRkJE4Oa2BFcIW
+	lvhzrYsNoug9o8Tv27vBErwCdhIrPn5lA7FZBFQlts5ezgIRF5Q4OfMJmC0qIC9x/9YMdhBb
+	WCBYovvkTrC4iIC5xLpJi8CGMgvsYpTYsegXI8QGIOde61JmkCpmAXGJW0/mg53EJmAo0fW2
+	C2wbp4CRxKJnL6BqzCS6tnYxQtjyEtvfzmGewCg0C8khs5CMmoWkZRaSlgWMLKsYRVJLi3PT
+	c4uN9IoTc4tL89L1kvNzNzECo2/bsZ9bdjCufPVR7xAjEwfjIUYJDmYlEd5z5v/ShXhTEiur
+	Uovy44tKc1KLDzGaAkNjIrOUaHI+MP7zSuINzQxMDU3MLA1MLc2MlcR52a6cTxMSSE8sSc1O
+	TS1ILYLpY+LglGpg4s4sOf1S+PbliOmXvGdNVhGZ5dX4feWh2+wrHuQ8uhmRGTfP7ivrtbBI
+	JWHhFHcj5tRXSh8ql1/3Ebg340vOiZrfq9Kfe5fL6bt8KDSTy/g4yUHp8rvVP5Nup31IsuJ0
+	3jfhcVxsfYvhse1d5ZeOzvhTKOChEnVxF5+FvriEZ33hSevjlotnaBpEMztor98j3NbrVZ9d
+	ftJao7rHRtxIJ51Xq2JW9LLVc33//ShzqDjFf2vJ/OdTKpSnWikdTeAMkL2w+qL5/ao1UksZ
+	XBq5b751j+Nu2Rvu9Eb8xuR5Z+Umvpvz+pllPeNZwRTFI19uFLm633gX/ri7QpXt/9mr5jG2
+	R/+2Gz8PeTshgalBiaU4I9FQi7moOBEAGYc69kcDAAA=
+X-CMS-MailID: 20250418061915eucas1p275a0d6e23c262981277109d6d0db95d6
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-cpgsPolicy: CPGSC10-234,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250418061515epcas2p4b57102967b07d665051a6297ab451a3c
-References: <20250418061500.1629200-1-shin.son@samsung.com>
-	<CGME20250418061515epcas2p4b57102967b07d665051a6297ab451a3c@epcas2p4.samsung.com>
+X-RootMTR: 20250415075716eucas1p1a5343f5dec617f82f5adca300eb47485
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20250415075716eucas1p1a5343f5dec617f82f5adca300eb47485
+References: <CGME20250415075716eucas1p1a5343f5dec617f82f5adca300eb47485@eucas1p1.samsung.com>
+	<20250415075659.428549-1-m.szyprowski@samsung.com>
+	<Z_4pZm_tQ6qmmj35@smile.fi.intel.com>
 
-Add cmu_cpucl0 clocks for switch, cluster, and dbg domains respectively.
+On 15.04.2025 11:39, Andy Shevchenko wrote:
+> On Tue, Apr 15, 2025 at 09:56:59AM +0200, Marek Szyprowski wrote:
+>> When CONFIG_NEED_DMA_MAP_STATE is not defined, dma-mapping clients might
+>> report unused data compilation warnings for dma_unmap_*() calls
+>> arguments. Redefine macros for those calls to let compiler to notice that
+>> it is okay when the provided arguments are not used.
+> Tested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>
+> (GCC on default i386_defconfig with `make W=1` on v6.15-rc2)
 
-Signed-off-by: Shin Son <shin.son@samsung.com>
----
- arch/arm64/boot/dts/exynos/exynosautov920.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Applied to dma-mapping-fixes branch.
 
-diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-index fc6ac531d597..d1528633adfe 100644
---- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-@@ -582,6 +582,21 @@ pinctrl_aud: pinctrl@1a460000 {
- 			compatible = "samsung,exynosautov920-pinctrl";
- 			reg = <0x1a460000 0x10000>;
- 		};
-+
-+		cmu_cpucl0: clock-controller@1ec00000 {
-+			compatible = "samsung,exynosautov920-cmu-cpucl0";
-+			reg = <0x1EC00000 0x8000>;
-+			#clock-cells = <1>;
-+
-+			clocks = <&xtcxo>,
-+				<&cmu_top DOUT_CLKCMU_CPUCL0_SWITCH>,
-+				<&cmu_top DOUT_CLKCMU_CPUCL0_CLUSTER>,
-+				<&cmu_top DOUT_CLKCMU_CPUCL0_DBG>;
-+			clock-names = "oscclk",
-+				      "switch",
-+				      "cluster",
-+				      "dbg";
-+		};
- 	};
- 
- 	timer {
+Best regards
 -- 
-2.49.0
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
 
