@@ -1,153 +1,141 @@
-Return-Path: <linux-kernel+bounces-611092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82FD2A93CD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 20:33:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9B54A93CE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 20:35:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AD0B44766F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 18:33:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 367AD1B65115
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 18:35:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BFEF22576C;
-	Fri, 18 Apr 2025 18:33:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C46D0226D00;
+	Fri, 18 Apr 2025 18:34:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="L5O7QZ+e"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U6s/4g4+"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19DF222592
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 18:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B66215F48;
+	Fri, 18 Apr 2025 18:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745001195; cv=none; b=nm8po6LH3yuVAdl78leaQhcP3nLpVaJ2jOJZ8lBAvIZZCoNQ8/nZhw/WwGyC6Ibd18K5tvFb81OipT5jGl38ovyzu3YjG9r5p+0WDiLOHsAS6UU2lMs65UVs4DLtblTGAuxEA87hWMpHeLWZFNv406xbRSkTz7lMwsdCUq8YRKM=
+	t=1745001284; cv=none; b=jiX9Os9rj2G0NmezKyvijtBi4nRkhDyNpbhFKJ2F0tfUPbwe9xQiWoCARTV3ZOmX4t9TCkIA1pCwriG6IeFQg3JrFjVLuiEX6JaCvE6nErxAwP0tkjsvEnxux/WBGH8OuR4OfhruYIwpvcLdAk1o64VeIV+hu2m08cF5+aYznaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745001195; c=relaxed/simple;
-	bh=BFNfCAXgfDy1H6nRZLQIbFDRB827dsSp/614b/HrH88=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=oeYSGd7BVtml3FbIGo4oKRZhHh/KTv334e3KN4F/VHIXAdp4HJ/P/LZpCFFSRxKTmzMhynILehEB5xqcnz7rW7Wbt1FXsBQWmKwLCfPamUoIRAtGbxF4OcrZqHjxYVY7+dTtxWYCf5vVGYmiTKcZ7nigwZ3rhr4d77VbomQf448=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=L5O7QZ+e; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43cfe63c592so24598155e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 11:33:12 -0700 (PDT)
+	s=arc-20240116; t=1745001284; c=relaxed/simple;
+	bh=GEL5hwj4ZcKmQgInqqPjANGqLqKJKFxTEKIu2C+lufU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Z5VQ6eNkh8Du/Jn5JCUUzpaj3cxWEyCTq6D9dd9WzHvdiFigLzgySZV1yDfH7Zw7WXEfl4rTW0V0OVzhswxJZylKFvV7ux9YKAcUPIXjbY0ErUrkAFHQDAI2+r+qK+3imO7NlnKeYPl7AekcPlumyNKB7lgzeMqgQKq2qujN3NM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U6s/4g4+; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-22c336fcdaaso23706115ad.3;
+        Fri, 18 Apr 2025 11:34:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1745001191; x=1745605991; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iRZ+jgVFwgume6BxLPo2873YNqsDxYM/0lRV47dPLIo=;
-        b=L5O7QZ+eyONOJo3fkO4oGPPllKpO31RSaxKnWXDX391kNnevMrmQoKPV5fdAshyEmb
-         sLNtGaSV/7P8MVeFLyWex8isy2SpVpmqGE/8HN8bdAIafrWa/W1lkKDZJLXr3aSZjITz
-         uSgLEfHYoIJmk18823Cq1GES5mCbkeKFh+a4cTOv8+91KSN3kWpr0pwjCgwraoOE+t7r
-         W+xrfuy+Ivh+9fnzZOQcwS4IKcML9EnRBMqkeEaDlxCr/ZTl12LHTWNxrgPL9GiXLGOP
-         plMonwmoCJnHsPz8gk11GjjG51KhDCGrCsMrMCLbCdJr2eWaas7awOhZbkN5Knjmcbv/
-         66sA==
+        d=gmail.com; s=20230601; t=1745001282; x=1745606082; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GEL5hwj4ZcKmQgInqqPjANGqLqKJKFxTEKIu2C+lufU=;
+        b=U6s/4g4+OAhScfCPQVSkzf5GFYCy/K00wCXYO6NAyVRvYF++yX4obR8cU7nujjjT+4
+         bDlHiQgD/05x8BLqqKSUPoQMg06qAqbwyAP45QGSU9BIk5jVxaVWcePtEN2C8LFgrlL+
+         tyvyzUvBkTMcto1EIY9fXHIOSjRIubsBnC1tcMH+a40jHEGf/ZoNbefatodtsZuM47Cr
+         lTVBbWX9cFwZdgzFkt6wR8qhA+kQCjRY7kWs2s4F29vyJh6WDBi4wDYQaPKHqugS5uvq
+         3Yno6Nu27mYJzBnomeZr8qLGuB+YH12qPyUbEhDrE06vZVXjONutfsKdoBc+au8ZLIbg
+         u87g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745001191; x=1745605991;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iRZ+jgVFwgume6BxLPo2873YNqsDxYM/0lRV47dPLIo=;
-        b=WgsyRmH8OkHAvmLCFAaxjv4VwCFpHL8mQmiZ00H3GpND33/DufvNL4nxXB6/vtuwWM
-         mz1PVyQnuWW6BMNDvFs53TbxDPESYFaWY7xwq9hYM0imhpdNJB0W5nyHb7eSfMvksJtp
-         SS7QuU3dN4ldBLBKqlzG17bLEg0EM0rSGENZOSxHRNFnBToDppV2SrjQ/3uMP1OH2UOg
-         JXZjovxqvP9+xzZIIbLZ/dvDnn1Fq2Z7lMSbpZpxrgn4ZsSOQcIasQQHNjgUH3XPBq+s
-         ReGaSGKf7epjcQrL4a6RP7mhcbeRW+p8BGY+0O2UiU7U2qvnWFJXMiGLmxc63YhjYNdV
-         krFA==
-X-Forwarded-Encrypted: i=1; AJvYcCWfebbJq5ye37o83ciMIHIqG+Etp0p1JTlxdBBbcLcq1ytxhzCAcPE3sWyvnTzU2V7piYsnRilDAb9W2IU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6ftf0Hx12heydE5TI1ve85UNoKY6XoJNtB5GS7+Gf1aaGMds+
-	fwlqbMeqdwQSMfDNRaxuBlxBIMaDE7Y8AscqnYW5QjE1ReS87USu1l+/kBj/Ey7JprA9RWCZLvf
-	R
-X-Gm-Gg: ASbGncvPE7s+GuYQffTKTGF3yVFVUPPRB/cayKRJDDaHHLu+l75EhnRzdus9U7WcgBm
-	dAdGqVXM/GIDFRKaO/Mtr0J+ioXLT/NV+J3pBfCvTBAuNI36tA2qcR98ABTGBytwhx18hJIkCc7
-	xQ0mu4ba1I0JDGk4Nq7F5bldniGsAafH6E47iEY/cQNtLAiaGUFSqSNd/8D2CaByE2pSZ33OSqB
-	P3FwBVUHWYszC4XAfuqCr+hnUiQsI6qbveuUsQ36QaEnFR4OeqR/RcQhB5qYaf6pVrYjSmO4jNI
-	z9GT0tAfk83l3G8BJTgJOHTj2xg3ah/wimzXU5kJXfsqOh0s2yhzzy1B7wdLliDEITxbeV7XpH7
-	paixkinWsFL5ah5zRnQ==
-X-Google-Smtp-Source: AGHT+IGj9S4WRUKZtNodHl0GH1cTBRYlYX+0W8A4QD6dvdXuglhWcvb+rdy1DdVJlqow/SR2YziSIA==
-X-Received: by 2002:a05:600c:190d:b0:43c:ee3f:2c3 with SMTP id 5b1f17b1804b1-4406ab67e15mr30991265e9.7.1745001191034;
-        Fri, 18 Apr 2025 11:33:11 -0700 (PDT)
-Received: from [192.168.0.2] (host-87-15-70-119.retail.telecomitalia.it. [87.15.70.119])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa433429sm3472343f8f.37.2025.04.18.11.33.09
+        d=1e100.net; s=20230601; t=1745001282; x=1745606082;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GEL5hwj4ZcKmQgInqqPjANGqLqKJKFxTEKIu2C+lufU=;
+        b=nVzbG4031Fvs2RI4yr1Sbo3RO5sUsszYPSehF/0H98ZlXQ80AOL6g55Uqvf2FDs8uc
+         xO7UezIiAAwmc7OCWoDwhGdHOZIM4wheP0SFKsfJB9U8ieXLZlgiy1uT9lPMwi9Hoyoc
+         jjTz3WRCePJe4v5+eRuNynu663okd2Y7yCEyyLRtCE5ExPVoZFj3kAeOWhi4vENwtnoH
+         km737XOuimpatgBAWWT9rPjvLsjW+e2oO+xXctDmyGQXbR5YIGRY6InqnPEtfhEmWwML
+         /dexrptLT3Gbq3IDGbrP7xXogsUhLF632D5O5m9Kd7WOufkkSn6DRLszVZ8CdFt6Xsx+
+         cIrg==
+X-Forwarded-Encrypted: i=1; AJvYcCUmHGFzEc9cuBRvHGXSH4dqAcuLJ9jJGtlNs0Xs+4l/cWhUduZVY23JcPNoqyE/TZuStoGkDxfGSA7EiJ+/@vger.kernel.org, AJvYcCXunhfd9RWmDaLNSJIMoQlR+WI+Hfy5FaPKd+1dHTsWSbhcIDETpdq3X5GBKAewDNOAy60jQOn/9vcmJIAd@vger.kernel.org
+X-Gm-Message-State: AOJu0YyT/gOk+wzzJdwlZjuicrz+GtY2Xy/V7XT5WdvqXtwNeWFenuVB
+	84LIbpmOyaCjtZtZ3MwwhV8/dx6DwVPxljnJdeG5oCKJSg7uGDuJ
+X-Gm-Gg: ASbGncsO+Izojz+KM1TPU1Y5Js+8pijMVFAcvEZg0aF6AHVWaExJFIs3OX2zKUDPNYJ
+	4Dx7WqU4Rydw1F4IAh+0j0dAX7X5u24zx+Qur7WVrmMaf2oANh5Va9sfL+RYdoGd4XC5ZLgX/t/
+	7wP3q156Q9d7QEZYqWmBaJwJ0MCWMRH7OWvs24NmPu7wECwAsixJ9TrbWLZalNhrvFfVTRLraE7
+	8OVK01q/w+KEmMlDRE7qwbXE4zw4KVPvSMxmTL60SLt6Gx+JFfSPzdahErA0b0TxfR1xz1hHXNB
+	FWC2I6TjtC2CDBaq3jSpJiYt9peGM4iWQ8Q4hh8=
+X-Google-Smtp-Source: AGHT+IGAg/lnXCq2oW7mJKwA03rXOp9bjmqxNymxHwT8OBsAUwilnAGzFjMlghfXVPNRrh8L2LFXNg==
+X-Received: by 2002:a17:90b:1f8c:b0:2ff:5ed8:83d0 with SMTP id 98e67ed59e1d1-3087bb631d7mr5824623a91.16.1745001281749;
+        Fri, 18 Apr 2025 11:34:41 -0700 (PDT)
+Received: from nuvole.. ([144.202.86.13])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3087dee325bsm1774222a91.9.2025.04.18.11.34.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Apr 2025 11:33:10 -0700 (PDT)
-From: Angelo Dureghello <adureghello@baylibre.com>
-X-Google-Original-From: Angelo Dureghello <adureghello@baylibre.org>
-Date: Fri, 18 Apr 2025 20:31:59 +0200
-Subject: [PATCH v2] iio: adc: ad7606: fix serial register access
+        Fri, 18 Apr 2025 11:34:41 -0700 (PDT)
+From: Pengyu Luo <mitltlatltl@gmail.com>
+To: jun.nie@linaro.org
+Cc: airlied@gmail.com,
+	dmitry.baryshkov@linaro.org,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	marijn.suijten@somainline.org,
+	quic_abhinavk@quicinc.com,
+	quic_jesszhan@quicinc.com,
+	robdclark@gmail.com,
+	sean@poorly.run,
+	simona@ffwll.ch
+Subject: Re: [PATCH v8 00/15] drm/msm/dpu: Support quad pipe with dual-DSI
+Date: Sat, 19 Apr 2025 02:32:36 +0800
+Message-ID: <20250418183236.209236-1-mitltlatltl@gmail.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250303-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v8-0-eb5df105c807@linaro.org>
+References: <20250303-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v8-0-eb5df105c807@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250418-wip-bl-ad7606-fix-reg-access-v2-1-8b1ade67e185@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIAJ6aAmgC/42NQQ6CMBBFr0Jm7Zi2IFVW3sOwKMMUJkEgrUEJ4
- e5WTuDyvfy8v0HkIByhyjYIvEiUaUxgThlQ78aOUdrEYJS5qEJbfMuMzYCutaUq0csHA3foiDh
- GtOZGRhf22moPKTEHTosj/6gT9xJfU1iPt0X/7J/hRaNGRZwX2ufkKb83bh2kCXym6Qn1vu9fV
- PkFAssAAAA=
-X-Change-ID: 20250417-wip-bl-ad7606-fix-reg-access-729c21478d1f
-To: Lars-Peter Clausen <lars@metafoo.de>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>, Beniamin Bia <beniamin.bia@analog.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Angelo Dureghello <adureghello@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1424;
- i=adureghello@baylibre.com; h=from:subject:message-id;
- bh=c/1c0SGQH8ay28jUfCcMDnmohaa6iaUAM5O7MoDjGZU=;
- b=owGbwMvMwCXGf3bn1e/btlsznlZLYshgmjX/c7dNWIjfl3+tj1cnh6wsft6y9Pwj7nlqdmsOz
- uh6eMtVqKOUhUGMi0FWTJGlLjHCJPR2qJTyAsbZMHNYmUCGMHBxCsBEuEUZ/kdczX5jdP38+7Dw
- 18xCbPNl9COs2b7tXjJltbU9r0Vt+C6G/16HeHar6LxZYvIwz2PvEilzy1Wle66Hv+ldKNRit7m
- Bnw8A
-X-Developer-Key: i=adureghello@baylibre.com; a=openpgp;
- fpr=703CDFAD8B573EB00850E38366D1CB9419AF3953
+Content-Transfer-Encoding: 8bit
 
-From: Angelo Dureghello <adureghello@baylibre.com>
+On Mon, 03 Mar 2025 23:14:29 +0800 Jun Nie <jun.nie@linaro.org> wrote:
+> 2 or more SSPPs and dual-DSI interface are need for super wide panel.
+> And 4 DSC are preferred for power optimal in this case due to width
+> limitation of SSPP and MDP clock rate constrain. This patch set
+> extends number of pipes to 4 and revise related mixer blending logic
+> to support quad pipe. All these changes depends on the virtual plane
+> feature to split a super wide drm plane horizontally into 2 or more sub
+> clip. Thus DMA of multiple SSPPs can share the effort of fetching the
+> whole drm plane.
+>
+> The first pipe pair co-work with the first mixer pair to cover the left
+> half of screen and 2nd pair of pipes and mixers are for the right half
+> of screen. If a plane is only for the right half of screen, only one
+> or two of pipes in the 2nd pipe pair are valid, and no SSPP or mixer is
+> assinged for invalid pipe.
+>
+> For those panel that does not require quad-pipe, only 1 or 2 pipes in
+> the 1st pipe pair will be used. There is no concept of right half of
+> screen.
+>
+> For legacy non virtual plane mode, the first 1 or 2 pipes are used for
+> the single SSPP and its multi-rect mode.
+>
+> To test bonded DSI on SM8650, the 5 patches for active-CTL improvement
+> are needed:
+> https://gitlab.freedesktop.org/lumag/msm/-/commits/dpu-4k?ref_type=heads
+>
 
-Fix register read/write routine as per datasheet.
+[...]
 
-When reading multiple consecutive registers, only the first one is read
-properly. This is due to missing chip select deassert and assert again
-between first and second 16bit transferm as shown in the datasheet
-AD7606C-16, rev 0, figure 110.
+> base-commit: b44251a8c179381b9f3ed3aa49be04fe1d516903
 
-Fixes: f2a22e1e172f ("iio: adc: ad7606: Add support for software mode for ad7616")
-Reviewed-by: David Lechner <dlechner@baylibre.com>
-Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
----
-Changes in v2:
-- improve bug description.
-- Link to v1: https://lore.kernel.org/r/20250417-wip-bl-ad7606-fix-reg-access-v1-1-0ce341f3cfc3@baylibre.com
----
- drivers/iio/adc/ad7606_spi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi, Jun. The display of my sm8650 device requires 4:4:2(lm, dsc, intf)
+topology, I want to test this series, these patches can't be applied to
+the latest linux-next tree, and I can't find the commit id in linux-next
+or msm-next. Where can I fetch the tree?
 
-diff --git a/drivers/iio/adc/ad7606_spi.c b/drivers/iio/adc/ad7606_spi.c
-index 997be483ebb93293481b922e13ece4edb47e940a..bd05357a542cf7234d5bb6b718829d6b720262cd 100644
---- a/drivers/iio/adc/ad7606_spi.c
-+++ b/drivers/iio/adc/ad7606_spi.c
-@@ -103,7 +103,7 @@ static int ad7606_spi_reg_read(struct ad7606_state *st, unsigned int addr)
- 		{
- 			.tx_buf = &st->d16[0],
- 			.len = 2,
--			.cs_change = 0,
-+			.cs_change = 1,
- 		}, {
- 			.rx_buf = &st->d16[1],
- 			.len = 2,
-
----
-base-commit: 8dc6b228d746b1a900bed28568defb2266fa4c43
-change-id: 20250417-wip-bl-ad7606-fix-reg-access-729c21478d1f
-
-Best regards,
--- 
-Angelo Dureghello <adureghello@baylibre.com>
-
+Best wishes,
+Pengyu
 
