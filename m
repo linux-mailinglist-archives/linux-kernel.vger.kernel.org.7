@@ -1,86 +1,89 @@
-Return-Path: <linux-kernel+bounces-610522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0144AA935E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 12:15:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BAA7A935E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 12:16:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24763466FB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 10:15:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 654628E316D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 10:16:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D8B26FDA4;
-	Fri, 18 Apr 2025 10:15:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D912E26FDB0;
+	Fri, 18 Apr 2025 10:16:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vtFZUBCw"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K5HAevjk"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D90EA270EC5
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 10:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9071D211A0E
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 10:16:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744971306; cv=none; b=mZUNhlDAFc6xtIkEUJO/8+eCzeDFGTX2lnOPkeCdYJAsgqI+jJ5JiKUp1ujoFjxMRmLkjreAoB+NDP9aLQkjcLhAY7oOWtxdDHQd6Ul5CCEVXuhcwYtD0Qy9psS8BK64PdXTFB/BrOOt/D5XS9lIxiuumm1ZYwM+EpkOj95NdMA=
+	t=1744971387; cv=none; b=Q+JO34GBGLyKsJW79MjKxciQND+738kXEl0E25Ve2hG1qQsSJErtfxT4OGW/7AruFhw6ZsB2lSxYsgFz219jCt8629QBNDaFBnkI43RWzQRHfzcvS1sXKAd4JaM3zfNqjPChfiS0UpoOxa205KsXEzx9z9AuXhYpTaxH2V8jYm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744971306; c=relaxed/simple;
-	bh=FDL0XuqWdCNXKCV6rHzlLDqABeeuPDwzCJF2k8OG2Lw=;
+	s=arc-20240116; t=1744971387; c=relaxed/simple;
+	bh=Lp5BhMcVKSsFsdsphNab3vl7zSMQBiTnGPfS7Mtuwdc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nt6i6L5mzi0nc0nTR6/papor/qLgnagKFs4RUsvtwS9tqGaM/MVbK1cXzopxivSQY2FOD7DufgxxkB+oERBajzrRjk4kjivSjPNoo6bGfaoYoZA+fS72CZqc6u8LHNcyToSvpX/yz6NJco3rK8unOEqo/0rHO0MTN0YeivmnhwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vtFZUBCw; arc=none smtp.client-ip=209.85.128.43
+	 Content-Type:Content-Disposition:In-Reply-To; b=p+XheM1INKZQwAKVbfHLm732IqlZnIyKmHpPlFq9lSl4TbtWwkq8KICg/my5QoS8Pdgv2FFefo2o9Zo+WRJhwvCoV+J7AgesJKog5t95Vn8WD+Wn29ZvyshmFLWDp8sY3gX7m3lFBJy9TnLvQZSHV40yajDXm+sw2Iz8LvEOLqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K5HAevjk; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43690d4605dso12944295e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 03:15:04 -0700 (PDT)
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-39c1efc457bso991312f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 03:16:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744971303; x=1745576103; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1744971383; x=1745576183; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Brm5STyxzbguEtMeEkkW8xOR3kBb6To3TGxKet6+640=;
-        b=vtFZUBCwab7lW7w367P/fF3aFzK+uRlrsco+e5slPu2ySl0iJ478Wjt+CovRi87a4o
-         R31qOA1CqokQxSdD7V64wtHMaiCSYdMkuma/kcfKNl+j3rTyucX5HRLBK78fwVu3Ztu0
-         hYVnCQklXKdWCaVUip1twl5p07ppKWnn5IzbX51BKH7C+Td8L8vHDbuvncBd77j4Tu3M
-         V4R7HigEfhiMS5KLmqAGs21aXjv8YzK+aVG2YCa8BFwxVruWxm7+jDYk1tQ3O4wYv0Nf
-         7PV54OEx0txN+qA7VO+VunTR6YOP6cl/CaT35aTWz48sbFUW25bAAIGQIITJ0AiEwsES
-         bb7w==
+        bh=IiDBnIbN2ErdrAZnJdVTPEl8ORr2jBX+0bJeY940wkA=;
+        b=K5HAevjkTyQM0IciGnF879tXYoqLCjZwCbSJhjpnUzPYRigEcshKpxtPK6eqVJV8fY
+         hzRnN7hMi3AM25VpthXqc/Jr5mccamj/GhsJhPr0a1o36a0lz2gU080UIYrQ4mg1tav+
+         6Bem6u9QXEnomNqjSxPWichvjGh0cbpFrXUB7ef/G3F0wxxaFH/4bAnVSvswH69eduB/
+         jRfrspbD1LYa6UVfE9d6EAbC56D6ejt79Y2rW8bo+CDRVaGgG9SNFpTL1eDMPeXHeyi5
+         +vUAxo9Jty9tfG1eTE0oWLSEmgnurmJKG0/BhMD8nral04/Ic7u8iJ2roGGTZyhHwCdJ
+         rKcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744971303; x=1745576103;
+        d=1e100.net; s=20230601; t=1744971383; x=1745576183;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Brm5STyxzbguEtMeEkkW8xOR3kBb6To3TGxKet6+640=;
-        b=wQUqa5nyZY3AFLIkrZyyjD+7bEaJm4+FdYLerYtbaiX/1Md3OamaoVgBo2HDWcnMxi
-         IMyZCINDq9ch2ls6jep6FQ8lj73SoBkMdQn53oVw8fdRdooTiBgiA40iot8Zh4yxrFZb
-         FhRVpLxa9kOdIIz5KTkeInI2YsvZ6dTIhBBq2mYOCBZnf8fdNQX6Z2WQA2kmCG2tCnFM
-         cAjQGrhbnkB4PtLOj7p2oTplbQ27DvdP91xlwhssDsT/FeRG01p/VI9+unL7enIEN7i5
-         QS4YD4t6wNDgqOsZJEDAFReTMoPCfaZDJItdn1V+d0/7/KxzzfOi7ZWFnhXU9J19G2xU
-         cGwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV341kQ6mYLQjalbqN6tLIxwoiG4DDVNabWtcokmhFua0opBsMyFdmRfCSR0/72lwq3YukL0x9DHzehFKI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwoZJ7ugB4an/dCVvMi7dj5uXFvVV5jK+d65/Quy2JNjIFBwZT
-	t0eFuFasx2FVSYSPQE5M9vRaCcPtcyo4UXARKzuudnS3KAsxFnuxSEY0BKl0pyI=
-X-Gm-Gg: ASbGncuGcmRZJqQiu507/HV7R6Wm89rx2c6j5FO9C8nnowyi+OdJSlPfDfXnXf+sCYi
-	DKAzIKKSvcba3ffbtgjzzQNo0ibg56Bdp0cK4y7Fs3pB2dJXb1KogS3gV1NBu463uN5syP4rSsM
-	wXZNjM0crBV+9X8hS9HwE65P+sbZJIJJ/1QV00RTDKY+Dx6OP3e2Q8DI8rSqRsghQrYtX3XfEdh
-	VFNoNUXpwZDp6OtMyzbgE/e0bNqfnVTTSrGTbbNG5efK3vqGingkR7/XLm/Vmq7mYmZdzpBRTim
-	IQ6/0U9VsR+jUoX61qQfi247Z8WoGr0axqxjWoZ3kVUsEEmOXtbMDd6diz2q/WrhjB8omVwkur7
-	sdNc=
-X-Google-Smtp-Source: AGHT+IEcKk9KGrLL6sDXqR3gMjy5WEdmXo67OfFx7M6ZB2w1ef+PTXxi1HWDOSvixA62VlDaDy3SRw==
-X-Received: by 2002:a05:600c:4e8f:b0:43d:47e:3205 with SMTP id 5b1f17b1804b1-4406ab99521mr16674895e9.11.1744971303184;
-        Fri, 18 Apr 2025 03:15:03 -0700 (PDT)
+        bh=IiDBnIbN2ErdrAZnJdVTPEl8ORr2jBX+0bJeY940wkA=;
+        b=Gt6+FGqTKcv3kEBxZ8Tfbr1rRt1F1zILP19DdiBe0ttVAAPEuz0GfkOYNVxTBcD3NC
+         UEtuG5w949gPVwPcER6UIw3bHaXZtUOCQv/w5wH3W6GpXAS2nv6JUSQYH4bQ12nYoZTz
+         sZgGAZWGSmetsNpbKudUXMArejY7kGV/e5FhMngE/yYeP8BPLrJyl+tg9KHmyQD6nOWA
+         irzzicSnEYUzNswal13RDFTt2lEtS+gzaekPfa7Sp7YoFULyyN+YAoUqWV10jvUX/v34
+         gBeY12neKEiRo75f7HJsBGpsCTVIkafcN5YVN3v0DfJQaMOJMd/AUQQrb+D02z/2o4dz
+         Hnaw==
+X-Forwarded-Encrypted: i=1; AJvYcCWB4uyJPi6yOzpO6R77eHzheDobufk6dNzAr0whcp8AZPDqvfHs3S5b1JLhNeTujbmiaW5Wh0/JqqZHqR4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yywkg330C85VyOzrUK1HpTH99ChOqx3vWU+jpyb8VakWDC2N5d+
+	vwIZJtA3gg29DhHd3j4CL7fZ2S7OnESH5yFWJG8FRfX/OUWzsV+7D2z7JOpxFSM=
+X-Gm-Gg: ASbGncsWfO26ecz40IUX6DCLJCdHZ77en9+EKa+U1Odlx26QPTeA+DZzK0y8z8y9uBO
+	fMMT3/wYc1Z23jDQnMOyJqXQrhdtG3XP+ow/qjSadjMFPj7V7cKWkQyNCGSPZgOxHJO3iCOJ1DP
+	aGSmJZNFsNvGOIagHNjvzLPIT+KnENQ8ljWTe+iMhJ058W6Uh5QC467iRVv6pCfPp9M43yaG51s
+	wde/jy64+u5FvEjQ4p24V/kcsZb6U5YdyNVw0xJkDRF+jPNBctmfZRkCP4CwuPwpUPKjNS3i9ze
+	2K4nqAmLOx52aKsJaLujYY2miVfXzKbEldwMYlLD2mKXZRsmYYlUCIa6NFYsW6oPgZUhuF5N/y7
+	L+sG3d+0nlGClsQ==
+X-Google-Smtp-Source: AGHT+IEhVsv0Ij1c7fYpfyCnxhTynvdaKQ/MYv7KemDDNjedaaUCumCbBnsf/IltIZ7kk3yXig1l8w==
+X-Received: by 2002:a05:6000:2489:b0:39c:11c0:eb95 with SMTP id ffacd0b85a97d-39efba460e6mr1527952f8f.17.1744971382884;
+        Fri, 18 Apr 2025 03:16:22 -0700 (PDT)
 Received: from mai.linaro.org (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4403605892fsm59513175e9.2.2025.04.18.03.15.02
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa493377sm2340627f8f.62.2025.04.18.03.16.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Apr 2025 03:15:02 -0700 (PDT)
-Date: Fri, 18 Apr 2025 12:15:00 +0200
+        Fri, 18 Apr 2025 03:16:22 -0700 (PDT)
+Date: Fri, 18 Apr 2025 12:16:20 +0200
 From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: Enrique Isidoro Vazquez Ramos <kike.correo99.f@gmail.com>
-Cc: glaroque@baylibre.com, rafael@kernel.org, rui.zhang@intel.com,
-	lukasz.luba@arm.com, linux-pm@vger.kernel.org,
-	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] thermal: amlogic: Rename Uptat to uptat to follow kernel
- coding style
-Message-ID: <aAImJGYXFDx_q8D_@mai.linaro.org>
-References: <Z-MEZNMLUmj75uxN@debian.debian>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: rafael@kernel.org, rui.zhang@intel.com, lukasz.luba@arm.com,
+	matthias.bgg@gmail.com, npitre@baylibre.com, jpanis@baylibre.com,
+	nfraprado@collabora.com, wenst@chromium.org, bchihi@baylibre.com,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, kernel@collabora.com
+Subject: Re: [PATCH] thermal/drivers/mediatek/lvts: Fix debugfs unregister on
+ failure
+Message-ID: <aAImdJFvfLTKe-TY@mai.linaro.org>
+References: <20250402083852.20624-1-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,17 +92,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z-MEZNMLUmj75uxN@debian.debian>
+In-Reply-To: <20250402083852.20624-1-angelogioacchino.delregno@collabora.com>
 
-On Tue, Mar 25, 2025 at 01:30:44PM -0600, Enrique Isidoro Vazquez Ramos wrote:
-> The variable Uptat uses CamelCase, which violates the kernel's coding
-> style that mandates snake_case for variable names. This is a purely
-> cosmetic change with no functional impact.
+On Wed, Apr 02, 2025 at 10:38:52AM +0200, AngeloGioacchino Del Regno wrote:
+> When running the probe function for this driver, the function
+> lvts_debugfs_init() gets called in lvts_domain_init() which, in
+> turn, gets called in lvts_probe() before registering threaded
+> interrupt handlers.
 > 
-> Compilation tested with:
-> - checkpatch.pl --strict passed (no new warnings/errors).
+> Even though it's unlikely, the last call may fail and, if it does,
+> there's nothing removing the already created debugfs folder and
+> files.
 > 
-> Signed-off-by: Enrique Isidoro Vazquez Ramos <kike.correo99.f@gmail.com>
+> In order to fix that, instead of calling the lvts debugfs cleanup
+> function upon failure, register a devm action that will take care
+> of calling that upon failure or driver removal.
+> 
+> Since devm was used, also delete the call to lvts_debugfs_exit()
+> in the lvts_remove() callback, as now that's done automatically.
+> 
+> Fixes: f5f633b18234 ("thermal/drivers/mediatek: Add the Low Voltage Thermal Sensor driver")
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 > ---
 
 Applied, thanks
