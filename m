@@ -1,233 +1,257 @@
-Return-Path: <linux-kernel+bounces-610943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FC9AA93AB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 18:24:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCA43A93AB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 18:24:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 620AA170CA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 16:23:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AA84176D27
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 16:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF680214A7F;
-	Fri, 18 Apr 2025 16:19:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E51217670;
+	Fri, 18 Apr 2025 16:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N8e7P7sf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RBVJNQVz"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DEC81C5F2C;
-	Fri, 18 Apr 2025 16:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1608213E97;
+	Fri, 18 Apr 2025 16:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744993152; cv=none; b=CMRzsAlz36vcs+j8p/M9eodzaDA4kjBOFXU/+z7VckfrAEZAzifFRhQFTEwBhQF6qNnb1/mpUdSTjbdFDsdDj6+4WWEy9Gf5vP7apysiNR363fMpig36DQH4fnCNh/IfUXX1F6Fu7I3pgc3s/lo0drUckLA9OQNeLJKcSFOs6tg=
+	t=1744993219; cv=none; b=Etej9utsAk86nN0tnJQzRwG3ijzD36o85xSDdH+Oq1e1urTwNWv1ac2YNYQGOkpzJ1LpaVkrwSrDqipKdFgIbwOmOm/OiE0s4/tLX/nZ3DS2aO1lQWfuaMTfyLGs0OuVv9Adr7b4ORcyJWSw0Hx81C2Jw3LRsU64dYLNacaxmxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744993152; c=relaxed/simple;
-	bh=L2H2qwEikwOMKTi1crbWBetmTg4lpjWT87FK3LEBMHE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=p12ZaggJjUn5UVAZYX3OQdhUyWfjhEBMsaajlcevEJHqdbOlRJ5sVzJG6GhoTQ72EYNxUGOmSd1JkryV/WYvTd3Is3/kPKit44s/lEDZzXxYscer6HSf+u093astk9kpnBs/9sNM2hqpOqsDrKm2hSTCtfdHiLzIdAvBNKRQK90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N8e7P7sf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B9F0DC4CEED;
-	Fri, 18 Apr 2025 16:19:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744993151;
-	bh=L2H2qwEikwOMKTi1crbWBetmTg4lpjWT87FK3LEBMHE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=N8e7P7sfnJQT1A9qpyVmkNlOqpKVXwnBeq5viNTmihhLJ1aybr/vP0iz0Me8BV3oc
-	 eIGSiSjNPSF6TfvnkW2q0dOUxGmHE9WjMIaRFMci2FAiT4abKFGWQoqj8YihIiN6SX
-	 K8KDF2xaGHdvWRGx7HsMBKbN2wUnioMaH4uHM9Ws0UPUt4Ddal7T0gAvNIXV1s5bj9
-	 YxM7op73jKrOeYMmAVJ069jjzJMjXXqA+jP/5fN3IoKJcWytmS4n3akXzY6sqLJa+q
-	 DhGeNbGKCX2k73lG0YwMxZUeQKl4Cd+hPh4/BEUyn5jhEkjQA5sBmM8hE/cuglKA+C
-	 e60fhJOaV4ZIg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9E2CC369D0;
-	Fri, 18 Apr 2025 16:19:11 +0000 (UTC)
-From: Jean-Baptiste Maneyrol via B4 Relay <devnull+jean-baptiste.maneyrol.tdk.com@kernel.org>
-Date: Fri, 18 Apr 2025 18:19:03 +0200
-Subject: [PATCH v3 2/2] iio: imu: inv_icm42600: add wakeup functionality
- for Wake-on-Motion
+	s=arc-20240116; t=1744993219; c=relaxed/simple;
+	bh=I2VhVRCgiNFctECKZ2afmPrwUUdZbmuKc1mrvxhU3Nw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z5HeAyjGZlOEJe6CWl80AkQ4Ex//C0Liekf/WmGTCAbEi+qob63izkil7AKpm7c0x+fxyrz6EReOXU+GaUC7GVGey4BmOkBRPvgvoi4qdXkjecXh+6khCynp8YAyoHS64KNT0QMKXbT79fuQvzCtqnZ8zKVaUvWP5757PMLmzVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RBVJNQVz; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-39c13fa05ebso1346266f8f.0;
+        Fri, 18 Apr 2025 09:20:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744993216; x=1745598016; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lg2nEDrkhUSorPX1TF01jndQPRc7b/tFFfdzWj6Yd3c=;
+        b=RBVJNQVzur7JnHaJEu6CdmOKGdsWQ9xpXc4VDFrbJ2WO2YyvxKtlOVF+q+vgh5iKN9
+         dQZH2n2ppgGpGKhY+GkikqhCUZAJSIymLYDeAL1yuusHCZTcBvWsH33HsOSRzW1B6VTQ
+         uRFygJYE/G5pQIMpGmNPEpOs/W7tSpVltvWhh7RTVVQsKbXGHIgF/iKJ5si+lJISCJ4V
+         u1rO6ZmbxLQMjB4mYCrRPBE3KtmU/cHTUp6U0ZJKV8AjIBHvyNVKI8pTbV/xx6VBZRsd
+         0wPEEE9iELtym5TWyI+mLs+rxp1JCU9S4IRhTT76gWNm2E62ZGc+M1NAJxp2X/ckAgo+
+         uf/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744993216; x=1745598016;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lg2nEDrkhUSorPX1TF01jndQPRc7b/tFFfdzWj6Yd3c=;
+        b=FEJTg6f0s4rSCOiOyURX77yqADtekMX8dfnuH9qpvUjbk1uktRyDxaTBsKywvNiptj
+         x+F1Gpd1GxqpJufKsSmF70TVCK+he/j03DFKbYfc2G0XsEZ6Rptz6PgLDbJltLwTR/hs
+         mVYFjrG/LHlhs00tKDYhPAvEcDZMgQybUUtWi4LsLThGPDhNoSwFYKo+eOBTVIAjhNwo
+         jlAg7kcw5WjHnRcbQFzp8SJkKuiGetrBFEN2k1Wi3W2kP0A4OPXcLqpy2LzM4DVLMMz3
+         p6Wh4mTAwjGczG+YFMixN/6YS2Gs/MuxWHSG1xNt4xM5PBYQfafqIAm4U1kcte0DzV29
+         DQ9w==
+X-Forwarded-Encrypted: i=1; AJvYcCU+UFKBS+nKsxZmhJxQf9rRJdgFz1O6vfcaZ7nsbFtP5iWjjnuyluOjFiIXkfx4i2QWQCfULX5hgj83wIMi@vger.kernel.org, AJvYcCU93dT/yu+vkahfc0r5ZBR5YsILIVeP4UzcILwPyccjYVjWoaBCU0lKRVgROxSfAMMN/6zPQtDDRI3z7NHYC/jHPXM=@vger.kernel.org, AJvYcCUaKnzWEsERdNrzDWGw29OloUQlMGnHWDe4vnVADWvb3n7WHR3MKtib46pBE467Y0rs1qYAbG+YYrED@vger.kernel.org, AJvYcCXASRb3RQhJWFs7IaduokdfRNZ8DgRD5DgLkMbkrsNgDGiNEdlySKFlP8/6KYIA/b2lZrVp356PvXP6@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDY5/trR5G1MPijDlOlLKiuknJ/a/58EfvNEja8Nie8y03nTKd
+	5l9m5G+aVcqihuHKcTaHy1y08ifsVdm06DlMLLEBGleCJBCqtXyO9YnpxuWwZg0g7pKvN0vysAQ
+	dox+iAeDFR8RZ1JxzTTeaPDGgsUg=
+X-Gm-Gg: ASbGncvMd6r+jO3OnPu/81cUodQ4Hgiq/bbrw1vn+5+FOJD0Sj3j40adr56QO9lcEYI
+	aTPlbAtX4FffXYf8YMJH5w5RFlJukkpb6YA17n3X8nEEhFvWuGRrW1m34KEP01D7L1Ekgdlj7Z8
+	dyvcWZvoHflgeeiLD1C0W0VpADbFCgf0rGAmx6r/Cfv7+4RUwQ2pl4e3Y=
+X-Google-Smtp-Source: AGHT+IEV8nQTdx71bXcsntH0008bnHpQrtXie8jNHCgnnEl5r+L0tBJL/zzaH6f3dMSiz8NUoJhMEwSZKKUKtHX5/lU=
+X-Received: by 2002:a05:6000:2913:b0:39e:f641:c43 with SMTP id
+ ffacd0b85a97d-39efbaf689bmr2593076f8f.53.1744993215679; Fri, 18 Apr 2025
+ 09:20:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250418-losd-3-inv-icm42600-add-wom-support-v3-2-7a180af02bfe@tdk.com>
-References: <20250418-losd-3-inv-icm42600-add-wom-support-v3-0-7a180af02bfe@tdk.com>
-In-Reply-To: <20250418-losd-3-inv-icm42600-add-wom-support-v3-0-7a180af02bfe@tdk.com>
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, David Lechner <dlechner@baylibre.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744993145; l=5298;
- i=jean-baptiste.maneyrol@tdk.com; s=20240923; h=from:subject:message-id;
- bh=l+/OriOlddQy/5l7bvQyqKy4EbXw047VAx/9mPsXfSc=;
- b=k5iydP5CdiiQGlCc4VZdZzv78qGOH+5y9JiLpAyCDBzxgV/BggVZEm2FQ2LaG63C2ujSIJUZG
- 5Vt51QKWSCJBSW9zbdwqy+3tHCxDoJlKukOvDfeNucRVdQrygRsiGYj
-X-Developer-Key: i=jean-baptiste.maneyrol@tdk.com; a=ed25519;
- pk=bRqF1WYk0hR3qrnAithOLXSD0LvSu8DUd+quKLxCicI=
-X-Endpoint-Received: by B4 Relay for
- jean-baptiste.maneyrol@tdk.com/20240923 with auth_id=218
-X-Original-From: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
-Reply-To: jean-baptiste.maneyrol@tdk.com
+References: <20250408200916.93793-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250408200916.93793-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVjVEVh+dHKG_afZwyqsXwHj2FR7enHNrfuE9HJ0ELjEA@mail.gmail.com>
+In-Reply-To: <CAMuHMdVjVEVh+dHKG_afZwyqsXwHj2FR7enHNrfuE9HJ0ELjEA@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 18 Apr 2025 17:19:49 +0100
+X-Gm-Features: ATxdqUEv6B6wG3-yJDLbiPWcjxc0fko3GJZ2QYvMG7cMut2VaxrivVkJC_7m9sY
+Message-ID: <CA+V-a8sqpv=Gbj+TDgkayx9ya_YfYQ=-v0-9J+GDEjHzyWEbJg@mail.gmail.com>
+Subject: Re: [PATCH v2 01/15] clk: renesas: rzv2h-cpg: Add support for DSI clocks
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
+Hi Geert,
 
-When Wake-on-Motion is on, enable system wakeup and keep the chip on
-for waking up the system with an interrupt.
+On Wed, Apr 16, 2025 at 10:27=E2=80=AFAM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+>
+> Hi Prabhakar, Fabrizio,
+>
+> Thanks for your patch!
+>
+> On Tue, 8 Apr 2025 at 22:09, Prabhakar <prabhakar.csengg@gmail.com> wrote=
+:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add support for PLLDSI and PLLDSI divider clocks.
+> >
+> > The `renesas-rzv2h-dsi.h` header file is added to share the PLL divider
+> > algorithm between the CPG and DSI drivers.
+>
+> Please explain here why the DSI driver needs access to this algorithm.
+>
+> > Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> > --- a/drivers/clk/renesas/rzv2h-cpg.c
+> > +++ b/drivers/clk/renesas/rzv2h-cpg.c
+>
+> > @@ -196,6 +225,253 @@ static int rzv2h_cpg_pll_clk_enable(struct clk_hw=
+ *hw)
+> >         return ret;
+> >  }
+> >
+> > +static unsigned long rzv2h_cpg_plldsi_div_recalc_rate(struct clk_hw *h=
+w,
+> > +                                                     unsigned long par=
+ent_rate)
+> > +{
+> > +       struct rzv2h_plldsi_div_clk *dsi_div =3D to_plldsi_div_clk(hw);
+> > +       struct rzv2h_cpg_priv *priv =3D dsi_div->priv;
+> > +       struct ddiv ddiv =3D dsi_div->ddiv;
+> > +       u32 div;
+> > +
+> > +       div =3D readl(priv->base + ddiv.offset);
+> > +       div >>=3D ddiv.shift;
+> > +       div &=3D ((2 << ddiv.width) - 1);
+>
+> Shouldn't that "2" be "1"?
+> GENMASK(ddiv.width - 1, 0), or even better: clk_div_mask(ddiv.width).
+>
+> > +
+> > +       div =3D dsi_div->dtable[div].div;
+> > +
+> > +       return DIV_ROUND_CLOSEST_ULL(parent_rate, div);
+> > +}
+> > +
+> > +static int rzv2h_cpg_plldsi_div_determine_rate(struct clk_hw *hw,
+> > +                                              struct clk_rate_request =
+*req)
+> > +{
+> > +       struct rzv2h_plldsi_div_clk *dsi_div =3D to_plldsi_div_clk(hw);
+> > +       struct rzv2h_cpg_priv *priv =3D dsi_div->priv;
+> > +       struct rzv2h_plldsi_parameters *dsi_dividers =3D &priv->plldsi_=
+div_parameters;
+> > +       unsigned long long rate_mhz;
+>
+> u64?
+> Please use "millihz" instead of "mhz" everywhere, so it becomes very
+> clear this is really "mHz" and not "MHz".
+>
+> > +
+> > +       /*
+> > +        * Adjust the requested clock rate (`req->rate`) to ensure it f=
+alls within
+> > +        * the supported range of 5.44 MHz to 187.5 MHz.
+> > +        */
+> > +       req->rate =3D clamp(req->rate, 5440000UL, 187500000UL);
+> > +
+> > +       rate_mhz =3D req->rate * MILLI * 1ULL;
+> > +       if (rate_mhz =3D=3D dsi_dividers->error_mhz + dsi_dividers->fre=
+q_mhz)
+> > +               goto exit_determine_rate;
+> > +
+> > +       if (!rzv2h_dsi_get_pll_parameters_values(priv->dsi_limits,
+> > +                                                dsi_dividers, rate_mhz=
+)) {
+> > +               dev_err(priv->dev,
+> > +                       "failed to determine rate for req->rate: %lu\n"=
+,
+> > +                       req->rate);
+> > +               return -EINVAL;
+> > +       }
+> > +
+> > +exit_determine_rate:
+> > +       req->best_parent_rate =3D req->rate * dsi_dividers->csdiv;
+> > +
+> > +       return 0;
+> > +};
+> > +
+> > +static int rzv2h_cpg_plldsi_div_set_rate(struct clk_hw *hw,
+> > +                                        unsigned long rate,
+> > +                                        unsigned long parent_rate)
+> > +{
+> > +       struct rzv2h_plldsi_div_clk *dsi_div =3D to_plldsi_div_clk(hw);
+> > +       struct rzv2h_cpg_priv *priv =3D dsi_div->priv;
+> > +       struct rzv2h_plldsi_parameters *dsi_dividers =3D &priv->plldsi_=
+div_parameters;
+> > +       struct ddiv ddiv =3D dsi_div->ddiv;
+> > +       const struct clk_div_table *clkt;
+> > +       u32 reg, shift, div;
+> > +
+> > +       div =3D dsi_dividers->csdiv;
+> > +       for (clkt =3D dsi_div->dtable; clkt->div; clkt++) {
+> > +               if (clkt->div =3D=3D div)
+> > +                       break;
+> > +       }
+> > +
+> > +       if (!clkt->div && !clkt->val)
+> > +               return -EINVAL;
+>
+> No need to check clkt->dev.
+>
+> > +
+> > +       shift =3D ddiv.shift;
+> > +       reg =3D readl(priv->base + ddiv.offset);
+> > +       reg &=3D ~(GENMASK(shift + ddiv.width, shift));
+> > +
+> > +       writel(reg | (clkt->val << shift) |
+> > +              DDIV_DIVCTL_WEN(shift), priv->base + ddiv.offset);
+> > +
+> > +       return 0;
+>
+> This function is very similar to the existing rzv2h_ddiv_set_rate().
+> If you can't re-use it as-is, please consider factoring out the common
+> part, or at least follow the same style of RMW-operation.
+>
+> > +};
+>
+>
+> > +static long rzv2h_cpg_plldsi_round_rate(struct clk_hw *hw,
+> > +                                       unsigned long rate,
+> > +                                       unsigned long *parent_rate)
+> > +{
+> > +       return clamp(rate, 25000000UL, 375000000UL);
+>
+> This only rounds rates outside the range from 25 to 375 MHz.
+> What about rates between 25 and 375 MHz?
+>
+My intention was to clamp it and let the PLL DSI DIV determine_rate
+handle rejecting the rates if they dont get best dividers. Let's take
+this discussion to v3.
 
-Signed-off-by: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
----
- drivers/iio/imu/inv_icm42600/inv_icm42600.h       |  2 +
- drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c |  3 ++
- drivers/iio/imu/inv_icm42600/inv_icm42600_core.c  | 53 +++++++++++++++++------
- 3 files changed, 45 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600.h b/drivers/iio/imu/inv_icm42600/inv_icm42600.h
-index bcf588a048836f909c26908f0677833303a94ef9..dcdacc21f0a7f0bdc305f1fded4ec69bc68f5955 100644
---- a/drivers/iio/imu/inv_icm42600/inv_icm42600.h
-+++ b/drivers/iio/imu/inv_icm42600/inv_icm42600.h
-@@ -151,6 +151,7 @@ struct inv_icm42600_apex {
-  *  @map:		regmap pointer.
-  *  @vdd_supply:	VDD voltage regulator for the chip.
-  *  @vddio_supply:	I/O voltage regulator for the chip.
-+ *  @irq:		chip irq, required to enable/disable and set wakeup
-  *  @orientation:	sensor chip orientation relative to main hardware.
-  *  @conf:		chip sensors configurations.
-  *  @suspended:		suspended sensors configuration.
-@@ -168,6 +169,7 @@ struct inv_icm42600_state {
- 	struct regmap *map;
- 	struct regulator *vdd_supply;
- 	struct regulator *vddio_supply;
-+	int irq;
- 	struct iio_mount_matrix orientation;
- 	struct inv_icm42600_conf conf;
- 	struct inv_icm42600_suspended suspended;
-diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
-index 9c21d0855f95ec0c085d29bb67da934ca1a8d339..a4aeee972cd773e85129fd11568e382f613fd4db 100644
---- a/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
-+++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
-@@ -1161,6 +1161,9 @@ struct iio_dev *inv_icm42600_accel_init(struct inv_icm42600_state *st)
- 	if (ret)
- 		return ERR_PTR(ret);
- 
-+	/* accel events are wakeup capable */
-+	device_set_wakeup_capable(&indio_dev->dev, true);
-+
- 	return indio_dev;
- }
- 
-diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
-index 9a2150ab9e874f17d7fda731cb131c3f688a75a3..0809561b8119d1ff5cf4b36ff571f9c8dc4050a0 100644
---- a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
-+++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
-@@ -765,6 +765,7 @@ int inv_icm42600_core_probe(struct regmap *regmap, int chip,
- 	mutex_init(&st->lock);
- 	st->chip = chip;
- 	st->map = regmap;
-+	st->irq = irq;
- 
- 	ret = iio_read_mount_matrix(dev, &st->orientation);
- 	if (ret) {
-@@ -843,6 +844,9 @@ EXPORT_SYMBOL_NS_GPL(inv_icm42600_core_probe, "IIO_ICM42600");
- static int inv_icm42600_suspend(struct device *dev)
- {
- 	struct inv_icm42600_state *st = dev_get_drvdata(dev);
-+	struct device *accel_dev;
-+	bool wakeup;
-+	int accel_conf;
- 	int ret;
- 
- 	mutex_lock(&st->lock);
-@@ -863,20 +867,32 @@ static int inv_icm42600_suspend(struct device *dev)
- 			goto out_unlock;
- 	}
- 
--	/* disable APEX features */
--	if (st->apex.wom.enable) {
--		ret = inv_icm42600_disable_wom(st);
--		if (ret)
--			goto out_unlock;
-+	/* keep chip on and wake-up capable if APEX and wakeup on */
-+	accel_dev = &st->indio_accel->dev;
-+	wakeup = st->apex.on && device_may_wakeup(accel_dev);
-+	if (wakeup) {
-+		/* keep accel on and setup irq for wakeup */
-+		accel_conf = st->conf.accel.mode;
-+		enable_irq_wake(st->irq);
-+		disable_irq(st->irq);
-+	} else {
-+		/* disable APEX features and accel if wakeup disabled */
-+		if (st->apex.wom.enable) {
-+			ret = inv_icm42600_disable_wom(st);
-+			if (ret)
-+				goto out_unlock;
-+		}
-+		accel_conf = INV_ICM42600_SENSOR_MODE_OFF;
- 	}
- 
- 	ret = inv_icm42600_set_pwr_mgmt0(st, INV_ICM42600_SENSOR_MODE_OFF,
--					 INV_ICM42600_SENSOR_MODE_OFF, false,
--					 NULL);
-+					 accel_conf, false, NULL);
- 	if (ret)
- 		goto out_unlock;
- 
--	regulator_disable(st->vddio_supply);
-+	/* disable vddio regulator if chip is sleeping */
-+	if (!wakeup)
-+		regulator_disable(st->vddio_supply);
- 
- out_unlock:
- 	mutex_unlock(&st->lock);
-@@ -892,13 +908,24 @@ static int inv_icm42600_resume(struct device *dev)
- 	struct inv_icm42600_state *st = dev_get_drvdata(dev);
- 	struct inv_icm42600_sensor_state *gyro_st = iio_priv(st->indio_gyro);
- 	struct inv_icm42600_sensor_state *accel_st = iio_priv(st->indio_accel);
-+	struct device *accel_dev;
-+	bool wakeup;
- 	int ret;
- 
- 	mutex_lock(&st->lock);
- 
--	ret = inv_icm42600_enable_regulator_vddio(st);
--	if (ret)
--		goto out_unlock;
-+	/* check wakeup capability */
-+	accel_dev = &st->indio_accel->dev;
-+	wakeup = st->apex.on && device_may_wakeup(accel_dev);
-+	/* restore irq state or vddio if cut off */
-+	if (wakeup) {
-+		enable_irq(st->irq);
-+		disable_irq_wake(st->irq);
-+	} else {
-+		ret = inv_icm42600_enable_regulator_vddio(st);
-+		if (ret)
-+			goto out_unlock;
-+	}
- 
- 	pm_runtime_disable(dev);
- 	pm_runtime_set_active(dev);
-@@ -911,8 +938,8 @@ static int inv_icm42600_resume(struct device *dev)
- 	if (ret)
- 		goto out_unlock;
- 
--	/* restore APEX features */
--	if (st->apex.wom.enable) {
-+	/* restore APEX features if disabled */
-+	if (!wakeup && st->apex.wom.enable) {
- 		ret = inv_icm42600_enable_wom(st);
- 		if (ret)
- 			goto out_unlock;
-
--- 
-2.49.0
-
-
+Cheers,
+Prabhakar
 
