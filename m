@@ -1,132 +1,105 @@
-Return-Path: <linux-kernel+bounces-610959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1A37A93ACF
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 18:27:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21FDAA93ADF
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 18:32:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E9E77AD5B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 16:25:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 892827B2EDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 16:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27AC215168;
-	Fri, 18 Apr 2025 16:24:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426551C57B2;
+	Fri, 18 Apr 2025 16:32:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iIvHfHJ6"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68EA721170D;
-	Fri, 18 Apr 2025 16:24:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	dkim=pass (1024-bit key) header.d=pku.edu.cn header.i=@pku.edu.cn header.b="Pb6AFGXq"
+Received: from pku.edu.cn (mx17.pku.edu.cn [162.105.129.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D575433C4
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 16:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.105.129.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744993480; cv=none; b=IqVTt2MwumVLg4GtsUHuipNNi3FYwS34pR7dUZPLL1odHouVpejxv7qjN0T5Mug7ZEhywdh9vTwP7hP3mA+CXAT7rU4mVzWPARW6S6Q7weagki4A28C73LHcyVSXLtC7TxqYlc0N4e7dWK1yg7TrMZ6KjBXtHlS/Woh8fdDSuAk=
+	t=1744993951; cv=none; b=scPmCakBi5VhZrSFNKwSqYentyvss0CrSFGQEnQ8/xlmdio7633piAy6NSiWMk6tMfDs2voRjtHQXmn9CNvuQmtv+i6h/aBhw7vBDI+w4DXCv63HxfR60M1mQBz0zAN6RHO63znHP6reVFpgAHXvUb4/OBExet/MKOkLmkT0Rrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744993480; c=relaxed/simple;
-	bh=nsaZPdmWgVvguNtZOwRGLuxY8iSRGpPgrmr3CDVcCC8=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=QYJNopbMNQx/eBYdUFBigtV7eTnw9cp8Jsn5GuSMeiIXUvnX1QQjkhO5ZnNF4f8R0jigQ5NM3fEFlxrN8upxjlgqmnsKVF84NeefL/Vpsc0ucBlJtJISlVoGV1BRMyhGxJ9XIxnACEhLae7dNIJ+Q+Vv4ePkqPEzDLOLitqFrm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iIvHfHJ6; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-54996d30bfbso1889521e87.2;
-        Fri, 18 Apr 2025 09:24:38 -0700 (PDT)
+	s=arc-20240116; t=1744993951; c=relaxed/simple;
+	bh=jtJlER8Kh77wvIs7Efci+IP/JTJP7Oidp+gy0wCLX5U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nPWKc6oMZmPRydA8yWD1cmwMbMORInR8rUNtjbwwSJRcBPcwM9snl3DZ5vfDWdBCjYnei2i43NHa4H3ElS6qydzXbPfGIyN6Onhc8zfy1twzeMUWP53LgrdWOygrtEZbfNelESiK2kQhnFNdQXrNPqQ9vXenDANVdrJFuW7NNFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=pku.edu.cn; spf=pass smtp.mailfrom=pku.edu.cn; dkim=pass (1024-bit key) header.d=pku.edu.cn header.i=@pku.edu.cn header.b=Pb6AFGXq; arc=none smtp.client-ip=162.105.129.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=pku.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pku.edu.cn
+Received: from pku.edu.cn (unknown [10.4.225.203])
+	by mtasvr (Coremail) with SMTP id _____7DwygmBfQJoTxNLAA--.9685S3;
+	Sat, 19 Apr 2025 00:27:46 +0800 (CST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744993476; x=1745598276; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=N3fjnglQ9I2MXOdr777pvs+iSblzgDUOB41zVUcYzEo=;
-        b=iIvHfHJ6x9HEpe9tg8oqjciWdWVwRpXmjP4i+H4c/UN+QDn71EL1H7rB7jdQDAatLa
-         XcxONj1IkWqPxLfjjgLadGRJsFEiy0n4Jn0vwxXEEZZfPmRHg3scpkFXUoI3wCZHqPli
-         wS2EArJUUerHwlBqMAfwavglJU6728JxP59jQWOV06W6hm/84geJgCPRZmUDdVIIm3U1
-         EWyabugEzvusjW6xQM8isXoSV9fKNdrmrKyZVVpcf3b6UEKnk6r4nXbMFc7uDE/HTV+g
-         87G4waPEVoTqtV7ILQZI+VNv2vkww/zrh91iwoN+U2F8XgFYL9WEAPDsPvLRLq30HEqo
-         DEnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744993476; x=1745598276;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=N3fjnglQ9I2MXOdr777pvs+iSblzgDUOB41zVUcYzEo=;
-        b=mKqtcQnslY2X6ex81P9pwcVmd27/5YuZdbN9xrDabuEGIdXhM/ht/+fSqBBCdCNnNf
-         l76kkdL4sY/U6tHQSW/28PmHNGkRhO4oAgEgkAwplNQHZfc8LxxIAL3YaffAnTVp6TRy
-         hopZVOrG8qB7VgfgOY0eaFf7TVUrd/4M0jB/1Bk/5dlS/lXSJZqOqrUe+CYeHgpcabU/
-         qg+3BkiKL3AAQimbk/T/3U0jF4kak9EOybTD7IoASUQqfrux1aX7zEnGRawT3F0EHuEQ
-         vFpOrEw79EJGIbya508PmC0vpBp9KijW0DeBAcTwkwScvYpC3rxRh1VFSrUv3V8VgBy+
-         o9Rw==
-X-Forwarded-Encrypted: i=1; AJvYcCURjhir8t7i9qkOoz/YCep+ZVxrAW1rlmYMTwXkSMLoK+vosT0a1rTs7hncuPLQIZ52C9/FUxxWcKN8@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiNTLvKQ5nIOJexKj9Bq6BnmJiHBRLlsM9ROU1CgDw1sDk7/3U
-	PBr64zZ/cwHt8SgCa9KBHVm1bSDWB37ryJYT+S4hdoKruPdV4a+AYjiLoQNN5xZVU/E4iax2J7N
-	0YsJ1U18KwdK+yFPdVf9tuci94L5utxqh
-X-Gm-Gg: ASbGnctZFVfaa09vOKfN+YceynegOCMUZEcD/JDZBRYvfqL/NoHZqov7GxkqYFaF1FE
-	Vu31PCrHpyOY/8p7giGkYa73ZwJapBTmVI+U4YMFfTOzSgzMitu2537ItnmFCJ8H1Lr+5JjHWnn
-	WengthBO99clCt/dy7GUxdIrbPQAM7E1uoVydtiZ+A9Gb5V3cwrEKJ8kslYogWYf80SxM=
-X-Google-Smtp-Source: AGHT+IHkGnG7OlU6mZ3tDDLadfjNlWj0uAaKRd4MgPgvgjI8bi0X2QM2g22TzadWaI84KtIU3taX6GXsDJIz+HRACN8=
-X-Received: by 2002:a05:6512:1104:b0:545:d27:e375 with SMTP id
- 2adb3069b0e04-54d6e65db34mr931032e87.42.1744993476082; Fri, 18 Apr 2025
- 09:24:36 -0700 (PDT)
+	d=pku.edu.cn; s=dkim; h=Received:From:To:Cc:Subject:Date:
+	Message-ID:MIME-Version:Content-Transfer-Encoding; bh=MjC1UiVgx6
+	t8vymYAgIB/8OCTv6MNdGah24Cp6lJ0PM=; b=Pb6AFGXqbY9rf/a2nyq/kl7xR2
+	LYNkgRRdKzIPcy8r8+weWLAVDhKG4g/10Dsq7fzCpsR657KJcznblEAeDo93Lo5p
+	9oYTqcOKxw1JR5G0IpWSgHuVDbfIlDzUErbhlnklSyOyY3yW0PPCzz1tzZv6N0l9
+	o1LRaJtuxaYSBDn0s=
+Received: from localhost.localdomain (unknown [10.4.225.203])
+	by front01 (Coremail) with SMTP id 5oFpogCXbcd9fQJo4ZwQAA--.9688S2;
+	Sat, 19 Apr 2025 00:27:45 +0800 (CST)
+From: Ruihan Li <lrh2000@pku.edu.cn>
+To: Mike Rapoport <rppt@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org,
+	Ruihan Li <lrh2000@pku.edu.cn>
+Subject: [PATCH] mm/mm_init: Don't iterate pages below ARCH_PFN_OFFSET
+Date: Sat, 19 Apr 2025 00:27:27 +0800
+Message-ID: <20250418162727.1535335-1-lrh2000@pku.edu.cn>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Fri, 18 Apr 2025 11:24:24 -0500
-X-Gm-Features: ATxdqUF54QLIM7a09DJdqkvGI4NRXLLLa_K7hI1gBMLxcL3-gqLeJ7vOI4gycY0
-Message-ID: <CAH2r5msB5K8EdzYK3JXe5Rzo-yGpOk_y6qJghBOO770SpjHrDA@mail.gmail.com>
-Subject: [GIT PULL] ksmbd server fixes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>, 
-	Namjae Jeon <linkinjeon@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:5oFpogCXbcd9fQJo4ZwQAA--.9688S2
+X-CM-SenderInfo: yssqiiarrvmko6sn3hxhgxhubq/1tbiAgEIBWf35XUDOwALs9
+X-CM-DELIVERINFO: =?B?FMI+P6aAH6dYjNjDbLdWX9VB7ttaQFyXTaecYZzOeDisy/krtsX5TsLkpeAzENeCPc
+	0+BDdXjm5Mlm64oODP/CxX7CfVLni9Tfp1zfQxCWN8VB6Q31UtKCC16PIt30HY+/E8pUc7
+	d+yaDfFdCcwUIsdrIXjB/DMJ8BbkAvMOkWIiFx0Mg+INz0+BGBeWEvME05QNHA==
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
+	nUUI43ZEXa7xR_UUUUUUUUU==
 
-Please pull the following changes since commit
-8ffd015db85fea3e15a77027fda6c02ced4d2444:
+Currently, memmap_init initializes pfn_hole with 0 instead of
+ARCH_PFN_OFFSET. Then init_unavailable_range will start iterating each
+page from the page at address zero to the first available page, but it
+won't do anything for pages below ARCH_PFN_OFFSET because pfn_valid
+won't pass.
 
-  Linux 6.15-rc2 (2025-04-13 11:54:49 -0700)
+If ARCH_PFN_OFFSET is very large (e.g., something like 2^64-2GiB if the
+kernel is used as a library and loaded at a very high address), the
+pointless iteration for pages below ARCH_PFN_OFFSET will take a very
+long time, and the kernel will look stuck at boot time.
 
-are available in the Git repository at:
+This commit sets the initial value of pfn_hole to ARCH_PFN_OFFSET, which
+avoids the problematic and useless iteration mentioned above.
 
-  git://git.samba.org/ksmbd.git tags/v6.15-rc2-ksmbd-server-fixes
+Fixes: 907ec5fca3dc ("mm: zero remaining unavailable struct pages")
+Signed-off-by: Ruihan Li <lrh2000@pku.edu.cn>
+---
+ mm/mm_init.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-for you to fetch changes up to a93ff742820f75bf8bb3fcf21d9f25ca6eb3d4c6:
-
-  ksmbd: Prevent integer overflow in calculation of deadtime
-(2025-04-14 22:21:26 -0500)
-
-----------------------------------------------------------------
-6 ksmbd SMB3 server fixes, most also for stable
-- FIx integer overflow in server disconnect deadtime calculation
-- Three fixes for potential use after frees: one for oplocks, and one for leases
-   and one for kerberos authentication
-- Fix to prevent attempted write to directory
-- Fix locking warning for durable scavenger thread
-----------------------------------------------------------------
-Denis Arefev (1):
-      ksmbd: Prevent integer overflow in calculation of deadtime
-
-Namjae Jeon (4):
-      ksmbd: fix WARNING "do not call blocking ops when !TASK_RUNNING"
-      ksmbd: fix use-after-free in __smb2_lease_break_noti()
-      ksmbd: fix use-after-free in smb_break_all_levII_oplock()
-      ksmbd: fix the warning from __kernel_write_iter
-
-Sean Heelan (1):
-      ksmbd: Fix dangling pointer in krb_authenticate
-
- fs/smb/server/connection.c    |  4 +++-
- fs/smb/server/oplock.c        | 29 +++++++++--------------------
- fs/smb/server/oplock.h        |  1 -
- fs/smb/server/smb2pdu.c       |  4 +++-
- fs/smb/server/transport_ipc.c |  7 ++++++-
- fs/smb/server/transport_tcp.c | 14 +++++++++-----
- fs/smb/server/transport_tcp.h |  1 +
- fs/smb/server/vfs.c           |  3 ++-
- fs/smb/server/vfs_cache.c     |  8 +-------
- 9 files changed, 34 insertions(+), 37 deletions(-)
-
+diff --git a/mm/mm_init.c b/mm/mm_init.c
+index 84f14fa12..b3ae9f797 100644
+--- a/mm/mm_init.c
++++ b/mm/mm_init.c
+@@ -966,7 +966,7 @@ static void __init memmap_init_zone_range(struct zone *zone,
+ static void __init memmap_init(void)
+ {
+ 	unsigned long start_pfn, end_pfn;
+-	unsigned long hole_pfn = 0;
++	unsigned long hole_pfn = ARCH_PFN_OFFSET;
+ 	int i, j, zone_id = 0, nid;
+ 
+ 	for_each_mem_pfn_range(i, MAX_NUMNODES, &start_pfn, &end_pfn, &nid) {
 -- 
-Thanks,
+2.49.0
 
-Steve
 
