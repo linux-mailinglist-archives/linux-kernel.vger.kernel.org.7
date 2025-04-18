@@ -1,133 +1,144 @@
-Return-Path: <linux-kernel+bounces-610987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C38D6A93B85
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 18:59:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92341A93B8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 19:00:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DB598A7316
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 16:59:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2431744115C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 17:00:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69EDC218AD4;
-	Fri, 18 Apr 2025 16:59:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD66215047;
+	Fri, 18 Apr 2025 17:00:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="P1RFJC1C"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="PVpSCnLC"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE391DED51;
-	Fri, 18 Apr 2025 16:59:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744995564; cv=none; b=HcOqOdqeEoYojaxckLwl0dh4CHkqBt+TwS6+JTR4qyg2aT0vbY7UoDqTYikP0YhygN/ImW4z8r/lnbhWtx5JiivXM19A1yZrY1C42uzMLuC+rKAqOKsUsKJ64lhTKcnK+LGMvYp9xc2Q80a+Z8s3P8YhfckU7Hsrn2sy8gaHjCY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744995564; c=relaxed/simple;
-	bh=RKNC8LuEadBrzXxwi5W2L+472XmL48vNI/jIDqdaCQA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IhVRK6E5YNXXB+5TR5BBANtVQfkRGEpns/jGdQ06fL8rMfoTHSz/aXUsgzTiID5jOOcXI65QlMZD+E4IAkr+C0aZNt+6DGxNiJbKA4Tbm3WtmRKQC/KZh6EmjUWk06lF6S2Z/B647f1P05TZQs3c8mpsqc9BHTR85BSnnjfiYoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=P1RFJC1C; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EF6C2102E6336;
-	Fri, 18 Apr 2025 18:59:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1744995560; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=aSYTOYrhvq3xoKuHguEK0iR48SX9BrWOGc8iTYg7DdE=;
-	b=P1RFJC1CKiZdbWyNLxS8wmpRGBCJfNwPaHTfS+UrXLAwjv7kF1KBCtu622uQPthc7zgDls
-	z5bZbf0j+s/sZVuPU42o8fULO+bCG4o+0HC6h9fFkZFL4qqgThZ8qN/jL8nOc5o/KMVKM7
-	IYfaMwIzwY6Kwl0f+5Z+Qb/cn8d/0FO9N2IEUEA6fQ7DRGLq3wILIFM/OaFh29cFsgeoWx
-	auwEz43jwimW9cYfZzWY/Hw7zr2CNIJ9mGc7sghjf1lks0XxUQWcrQwSCBzl0lo0KcU+e5
-	kmLBIqZtB8cIv9Uy4jVwpgXglL1In3PkNBUxhSr9ZWaf10IC8OvOIR+LQrNNvQ==
-Date: Fri, 18 Apr 2025 18:59:14 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Sasha Levin <sashal@kernel.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Shengjiu Wang <shengjiu.wang@nxp.com>,
-	Mark Brown <broonie@kernel.org>, shengjiu.wang@gmail.com,
-	Xiubo.Lee@gmail.com, lgirdwood@gmail.com, perex@perex.cz,
-	tiwai@suse.com, linux-sound@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH AUTOSEL 6.1 6/9] ASoC: fsl_audmix: register card device
- depends on 'dais' property
-Message-ID: <aAKE4kb6gImSpK5L@duo.ucw.cz>
-References: <20250331145642.1706037-1-sashal@kernel.org>
- <20250331145642.1706037-6-sashal@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 733CE2144D6;
+	Fri, 18 Apr 2025 17:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744995633; cv=pass; b=btAxbycRqp47k+8QecoMh+tbAvm219Wu56HHs3StwHgz+QGIh+s+9CK577hVxM1v7omqFup+pWc/YiFUowZg9frESuSGbmTrAj37YJoIveA2BAo+Mxv0xTesYVDay/2Qw1H5K4YyQkbC2UARXxEZQlx3WS1aWI41x8JgI5DjXGc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744995633; c=relaxed/simple;
+	bh=xktUs2v9KD5eUgHu2Ln2vol8RxOCZC31KIr4DrmFaxY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZnS5mKnd5cTv6xm7BYBoJl/FPbBHDOyi59zdfBC3lOaczkJVbrhCKozCjFGwa5QiG6faEPgNg80uI6u55v9yZsyivFBu2AKvlXBNxyIyyf4ba7yGZGkqbem/gfpdgEPHrAVNtHMIK4avwngm/hlVvyIURw8p0TBhnRED3I/kzlw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=PVpSCnLC; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1744995597; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=TABNMTXczUmypmLF5NI67Ehx4FufK3RoCt4eVfLNWK8KWcTIN3pUIbjMpZlhwi8Q+TZaJJXC6l6GbOW+BV5HNaFRclRV5xPCD6+/2TwTFU+k6MaJeVjddWtN3rItcPn2S7Fq1rb0kUtbeyYz7TjeRIBs0aVols0CSnStSROTlI8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1744995597; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=nBJdsehFovjFuaNlwazdQn8NDRTSTC5soMPWxmppM74=; 
+	b=ZrFeDomAugSxCyeOh3buIy9rELiYe2//jiRWwXVCRIkFcLJeHvSNuVXVCiA6Yv3lsL7vTqLEtKuXYgMB+trgAtzpz9JhQjf82UIi8qezkK7edVrwHCFN6keMExVhfilbjjAWvTSts2NO4AhNzeD3Uq7n4vTDkQZmNsrQUYB2BfY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
+	dmarc=pass header.from=<usama.anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1744995597;
+	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=nBJdsehFovjFuaNlwazdQn8NDRTSTC5soMPWxmppM74=;
+	b=PVpSCnLCpGAYmE0cUUbclP9VIF8Hb+JwYQa6yoz+zaTho4g9WorRVqNUXCfiJJwu
+	0pYr0ObS+qMGwBXWW8GdZeh03O228fXcyI+nWS1JNkUr4q/Prj+uQ1LSPfWMgwxFKfD
+	OkQW6UFOQ508BCfdTop5Sn2aGYZZYNCCffrNL24w=
+Received: by mx.zohomail.com with SMTPS id 1744995594398563.499854046974;
+	Fri, 18 Apr 2025 09:59:54 -0700 (PDT)
+Message-ID: <941334a9-a438-4b0f-a439-bd8cc1e847b3@collabora.com>
+Date: Fri, 18 Apr 2025 21:59:46 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="/Tn6/BGpnTOBLo3b"
-Content-Disposition: inline
-In-Reply-To: <20250331145642.1706037-6-sashal@kernel.org>
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 04/32] selftests: harness: Mark functions without
+ prototypes static
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ Shuah Khan <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>,
+ Willy Tarreau <w@1wt.eu>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?=
+ <linux@weissschuh.net>, Kees Cook <kees@kernel.org>
+Cc: Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20250411-nolibc-kselftest-harness-v3-0-4d9c0295893f@linutronix.de>
+ <20250411-nolibc-kselftest-harness-v3-4-4d9c0295893f@linutronix.de>
+Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <20250411-nolibc-kselftest-harness-v3-4-4d9c0295893f@linutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
+
+On 4/11/25 2:00 PM, Thomas Weißschuh wrote:
+> With -Wmissing-prototypes the compiler will warn about non-static
+> functions which don't have a prototype defined.
+> As they are not used from a different compilation unit they don't need to
+> be defined globally.
+> 
+> Avoid the issue by marking the functions static.
+> 
+> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+
+> ---
+>  tools/testing/selftests/kselftest_harness.h | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
+> index 2b350ed60b2bf1cbede8e3a9b4ac5fe716900144..5822bc0b86a3c623fd34830fb8b541b27672a00b 100644
+> --- a/tools/testing/selftests/kselftest_harness.h
+> +++ b/tools/testing/selftests/kselftest_harness.h
+> @@ -258,7 +258,7 @@
+>   * A bare "return;" statement may be used to return early.
+>   */
+>  #define FIXTURE_SETUP(fixture_name) \
+> -	void fixture_name##_setup( \
+> +	static void fixture_name##_setup( \
+>  		struct __test_metadata __attribute__((unused)) *_metadata, \
+>  		FIXTURE_DATA(fixture_name) __attribute__((unused)) *self, \
+>  		const FIXTURE_VARIANT(fixture_name) \
+> @@ -307,7 +307,7 @@
+>  	__FIXTURE_TEARDOWN(fixture_name)
+>  
+>  #define __FIXTURE_TEARDOWN(fixture_name) \
+> -	void fixture_name##_teardown( \
+> +	static void fixture_name##_teardown( \
+>  		struct __test_metadata __attribute__((unused)) *_metadata, \
+>  		FIXTURE_DATA(fixture_name) __attribute__((unused)) *self, \
+>  		const FIXTURE_VARIANT(fixture_name) \
+> @@ -987,7 +987,7 @@ static void __timeout_handler(int sig, siginfo_t *info, void *ucontext)
+>  	kill(-(t->pid), SIGKILL);
+>  }
+>  
+> -void __wait_for_test(struct __test_metadata *t)
+> +static void __wait_for_test(struct __test_metadata *t)
+>  {
+>  	struct sigaction action = {
+>  		.sa_sigaction = __timeout_handler,
+> @@ -1205,9 +1205,9 @@ static bool test_enabled(int argc, char **argv,
+>  	return !has_positive;
+>  }
+>  
+> -void __run_test(struct __fixture_metadata *f,
+> -		struct __fixture_variant_metadata *variant,
+> -		struct __test_metadata *t)
+> +static void __run_test(struct __fixture_metadata *f,
+> +		       struct __fixture_variant_metadata *variant,
+> +		       struct __test_metadata *t)
+>  {
+>  	struct __test_xfail *xfail;
+>  	char test_name[1024];
+> 
 
 
---/Tn6/BGpnTOBLo3b
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-> [ Upstream commit 294a60e5e9830045c161181286d44ce669f88833 ]
->=20
-> In order to make the audmix device linked by audio graph card, make
-> 'dais' property to be optional.
->=20
-> If 'dais' property exists, then register the imx-audmix card driver.
-> otherwise, it should be linked by audio graph card.
-
-This is part of series, AFAICT; should we have it in -stable?
-
-Best regards,
-									Pavel
-
-> +++ b/sound/soc/fsl/fsl_audmix.c
-> @@ -492,11 +492,17 @@ static int fsl_audmix_probe(struct platform_device =
-*pdev)
->  		goto err_disable_pm;
->  	}
-> =20
-> -	priv->pdev =3D platform_device_register_data(dev, "imx-audmix", 0, NULL=
-, 0);
-> -	if (IS_ERR(priv->pdev)) {
-> -		ret =3D PTR_ERR(priv->pdev);
-> -		dev_err(dev, "failed to register platform: %d\n", ret);
-> -		goto err_disable_pm;
-> +	/*
-> +	 * If dais property exist, then register the imx-audmix card driver.
-> +	 * otherwise, it should be linked by audio graph card.
-> +	 */
-> +	if (of_find_property(pdev->dev.of_node, "dais", NULL)) {
-> +		priv->pdev =3D platform_device_register_data(dev, "imx-audmix", 0, NUL=
-L, 0);
-> +		if (IS_ERR(priv->pdev)) {
-> +			ret =3D PTR_ERR(priv->pdev);
-> +			dev_err(dev, "failed to register platform: %d\n", ret);
-> +			goto err_disable_pm;
-> +		}
->  	}
-> =20
->  	return 0;
-
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---/Tn6/BGpnTOBLo3b
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaAKE4gAKCRAw5/Bqldv6
-8hsNAJ9H7kuYWcCsw1LeV5TOvp6rZ2J1rACghLqa+XYVc6jaUuETLw1RElPql14=
-=wIoA
------END PGP SIGNATURE-----
-
---/Tn6/BGpnTOBLo3b--
+-- 
+Regards,
+Usama
 
