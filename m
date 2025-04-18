@@ -1,170 +1,112 @@
-Return-Path: <linux-kernel+bounces-610732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 639A7A93853
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 16:11:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B2F1A9384A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 16:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A45D53B7D7F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 14:11:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FB823B6187
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 14:10:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A1B156237;
-	Fri, 18 Apr 2025 14:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b="Hum3u1Xb"
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012001.outbound.protection.outlook.com [52.101.126.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B26D915530C;
+	Fri, 18 Apr 2025 14:10:29 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A21153BED;
-	Fri, 18 Apr 2025 14:11:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.1
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744985502; cv=fail; b=cyPTeHkUvERqvdRb2DXGuFvhYiXJdaxlE1UTeYKVLr/pySqcvWJ0xVixCRlCIcVgUgMXWI26ObfiqxwtW6cx/MNIOVbv3esW0kRG8/xMhRVcVlnWWUv6I+tI0Z/0LZyotW/scFW00aiq8gOhQi//HGuqAGrf+t//BL7yNG080vs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744985502; c=relaxed/simple;
-	bh=BvyX+5lZGLwkcycoGqKOauyLP94E19WOIXJ17ucEzk4=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=OjPbbrEbOVT52wK4AtYEFFVCx00Iuagcv8SAzhEvmrKI4l3M9PFGvseDlCd1kjFNLUXn6OupC2G+N3Ye2sKQh2E+fNe6YvfrSFaexNVAIGInP5YTWiEV8yO48sDiAEhcKRMUIL261/Hc6DKUdY72ppwccKj19k/30K+EHsWMexI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b=Hum3u1Xb; arc=fail smtp.client-ip=52.101.126.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siemens.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EDN6W7ptVCgILyn6hMpuh50HRmVQQGJY6HIYZf+E2G4CkN7PSiUEyNozjNbQI19/kEty9s+R3uchST8BXYhuAwehGFFnHqGlWuh/rtV8MHSsnD/gAD378QGujcjgaNdrzhUkyyB4KZWI2GHiVUtf3Lr4rDOaQW8HjfhdmrXx1k9NEEwSbYSQOGQsSFGtnGSRgrrQyqd8Q+ooeXOO09vKPEvLadwtLLyQ4r5XQHz7UJUbLRbeXkHgFSVxqTzQ9E5Jy3su5XkRM5yOa40PKzBZ5aF+IcseYDN9hm3q7MKomFmPvQn5hUyw8umBiRkpAx9tvF5eO5lPtu3kQcehtKCGzQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BvyX+5lZGLwkcycoGqKOauyLP94E19WOIXJ17ucEzk4=;
- b=cJnBsB59fQFduyaD1jvbkrwiNt37NXYXXH477o3p3F3BvW5quvBXC8nxCjN+1vQjz/rTapz/ZAte6lvGODwFgVLpyUFUL5RWfxUNcawEO1jAFkVrJDWiFz4ceIagoEKQd7bjrY04XJTvtEDP7BJgzx6NUxl27GM4Jato7DViNzhqGr9zlA90uDRvopxE5g60DapH3P8B4IDEsnoj+srmZfmRh0t6/TAi/LOiwlyRoGpUnZfh+0d8yAULwejbCuqIRg2j5Brw3pdIEyCwLnXPlTJX/0lIT2y4mx8yurcBe1Z1LVbM54A5sHlDJCmwKz1dmqsBZaikSRZP8M2JcO0bmg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BvyX+5lZGLwkcycoGqKOauyLP94E19WOIXJ17ucEzk4=;
- b=Hum3u1XbewZLSsL51ZgQYJVdr20lOsxSIIBodTlF+zR9gqKvmB2aQjMT2iMLt4vV8eDTQ8vDzKfluNIIvTZZt9lldwLbDT16vhLmyp45K/+E0tMELLXLU7TU/TcHXykGErTbHzGgdg5Q/VnG+aBx7mY8WXQ7ho+iDwolzzl7MUHv/SC/BjTWIkzv+k9/U8Nlwepcvgrj/zarWBRe/pYopq1kkT3PoZB7sprV/+0Qym9aBxifNaFPTQWaZ1UEb1SkI386mHpKRdlCg6+IL2wY6eVIoXlQepQjiG/R1aWZt9LWJyxciLZMdrdjZtFrqG/YSg9mYialdXpvlhh3FU5zIA==
-Received: from JH0PR06MB7294.apcprd06.prod.outlook.com (2603:1096:990:a1::6)
- by SEZPR06MB7023.apcprd06.prod.outlook.com (2603:1096:101:1f4::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.22; Fri, 18 Apr
- 2025 14:11:37 +0000
-Received: from JH0PR06MB7294.apcprd06.prod.outlook.com
- ([fe80::6bd3:c327:c5c2:bbbe]) by JH0PR06MB7294.apcprd06.prod.outlook.com
- ([fe80::6bd3:c327:c5c2:bbbe%6]) with mapi id 15.20.8655.022; Fri, 18 Apr 2025
- 14:11:37 +0000
-From: "Chen, Jay" <jay.chen@siemens.com>
-To: Mathias Nyman <mathias.nyman@intel.com>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Shao, Tzi
- Yang" <tziyang.shao@siemens.com>
-Subject: Recall: [Bug 220033] xhci: Compliance Issue - avg_trb_len not set for
- EP0 during Address Device Command
-Thread-Topic: [Bug 220033] xhci: Compliance Issue - avg_trb_len not set for
- EP0 during Address Device Command
-Thread-Index: AQHbsGvM1t/aP14bBEu43pMuonep9g==
-X-CallingTelephoneNumber: IPM.Note
-X-VoiceMessageDuration: 1
-X-FaxNumberOfPages: 0
-Date: Fri, 18 Apr 2025 14:11:36 +0000
-Message-ID:
- <JH0PR06MB7294ED0E59CA35509EC73C9083BF2@JH0PR06MB7294.apcprd06.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-x-ms-traffictypediagnostic:
- JH0PR06MB7294:EE_|SEZPR06MB7023:EE_LegacyOutlookRecall
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: ef32741a-84e7-4cde-9216-08dd7e82ee91
-x-ms-exchange-recallreportgenerated: true
-x-ms-exchange-recallreportcfmgenerated: true
-x-ms-exchange-atpmessageproperties: SA
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?XJeCTV4lOipcTiyyJg4oqEJmc7tsMRvnOKmUqxQsiqNdCsAl2WTRyYj+4bG3?=
- =?us-ascii?Q?Dt0FVbV52C/aADkwd4J6Y9lKZw3bQ50htdmCrAP4ydHV2CYd7ImS/l2EQoBG?=
- =?us-ascii?Q?AZRqIWiEDSCVBVgzArKsMC6FGAePWoqMe+TjxJeuO6oshc18cYH5/dS4lACa?=
- =?us-ascii?Q?8/7FhpWCODoMYpMSbB3fniPwrvJ1sOwC/RwgEGO/p/3xP1yI4hXKo44Cb+H5?=
- =?us-ascii?Q?Lb5OGCkPGKHdOfCoV1gC2V1sRsfvmMsn9Z8L42B9UDJMhePhSWP06q9Cw27M?=
- =?us-ascii?Q?JIpokYZz3rD2/mWwiozcB9NLlpV8Mxfb+hIhWAB8VXjxjJdGmX7cKZKwL0yS?=
- =?us-ascii?Q?vtakrHyGYZWyOvzmr21gIjS/eDR/NOwxHoockaJVYD6z3guLn3dU05afvIsP?=
- =?us-ascii?Q?a/9rEZZC+hc/g23ZXAck1GAY1yLldXsMjysFf1FZ8E5YSTzSCTnQq6S4DVTF?=
- =?us-ascii?Q?Pz1oTbI/VVMaiNbiAiJJaZSOfgE6Byx3WughUcOo/JvoIvGMOZpZ/q6tJfCG?=
- =?us-ascii?Q?OQT0atNNZxsxtMYRfGPGfHr9fBkeVS78sTTmpc4R2HlYzI3PynmuLuFdjz1X?=
- =?us-ascii?Q?T94Q/F8p0TplCEOX30cgG3KjQylgN3G02o/D+xTplUwpuHl8XswLyCmS20pH?=
- =?us-ascii?Q?SqAz5pyIb/6nY6DIfTdYHu/1VxGkEK5jlQ437hyUWJer4pAD2crmyLoondqf?=
- =?us-ascii?Q?KP4Gxitqd3F2OStLqcOJl0jUCe/QDg6aUMGHPLiVZeeJr9yyLMF2i3PfxvFB?=
- =?us-ascii?Q?F88dHxgneXx2D2/UBm7frFGhSb3CbvEFlMHeJim6ACAT0Bm5zlyE/0HFRn85?=
- =?us-ascii?Q?FZXIS4mJiMl4utf5WTkuENTaWKFsYUKpxYMRIhsG69gv0DCdPqLE8Nkkchvo?=
- =?us-ascii?Q?oeCvkG3KuMjtGIKqUw5gmfg/JbwCZIQTBrNZ1Aa8mrwuxrZ5gV9s8bn4tL6k?=
- =?us-ascii?Q?uLCA13HMg0jQk9jRWObkMDh2EhuPKvXQen3N/+8T/jzoxtt5QlL8iGCasOaf?=
- =?us-ascii?Q?jyIjcy2awd1VcMAeWVycjimhvdV2GfdRgFbqEPe48mFv8CYaIrNFU+5RfZwf?=
- =?us-ascii?Q?rGUsTPIf+WW2pFnKbFgPOdN0l76ZpR5psXf0n6akkHVTXV7ScSOAKMn3hdq7?=
- =?us-ascii?Q?b8G/oLNFvdjt2nDCw1pfzsCYy43RnrL+kUGa8ACy6IhC0vTcfZZd7ojH8xIb?=
- =?us-ascii?Q?xIT88Y/Tul5nPQhtec+e/xTXCP7P5gwDJVxB2n75qexPAv8GtSklV4/ix+rm?=
- =?us-ascii?Q?euQLNKd2LGTZYu3c6tUikW44wxumnEZsUxWy0UQ1V1S5RKDyFGxbZlKw4utY?=
- =?us-ascii?Q?QNQldL0HqabFAW0G3btV5sIQrlt4RA9i1a1SoBvaz6XRskowtUYTS+BCKMgO?=
- =?us-ascii?Q?37dR1mP9Dkpi9WAu8GrqdT1nxE2nvhNsMfxLzlfD6YFcZPgrWAjdFBeCUqUS?=
- =?us-ascii?Q?sJAbyK/FJSfLEC3z4QlAAzdPBP5/51WGrG9Hi6Hl4cLppoaTBCgRxoiVJtO+?=
- =?us-ascii?Q?elmWwvUY12lE7MM=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:JH0PR06MB7294.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?exC+ypzHL83+dro141fcDLi+dQ+HYCFYe58F+9Au/xz+qVgWMsJGqQEzoOkp?=
- =?us-ascii?Q?nUv6vkQg0nttrIC6Df3uYKgqUM6x/tT2L4jW71yFjXWR5uoUWzwHLFNSoqp7?=
- =?us-ascii?Q?t1f2EPrYjG9wKyDye1TmX289iPOMgVrqJk5GN8JpDWp6oAmprMHJWK8dLoOv?=
- =?us-ascii?Q?u/jZ4lDO0RvnQVxNA4qDCL9XW4LTLD3JjUvxRuGBSM13CjEWi69ARyJGICA8?=
- =?us-ascii?Q?4IO3w55VEhZzNQcOcMMUHxfHCDXRDJs489wWvfKZSyvT3ybgVFDKaV1uFS+5?=
- =?us-ascii?Q?oSz3moNyNQXFwgpuSH8HFrmbrQBZnT5jvbp39CpCNkxa50UZlJM0FrqJ5c/b?=
- =?us-ascii?Q?tKBJ7bXzi2tnWPPmgz2efSDREpS7EreKOrcA5o0IkrXDv8QML8otCKakMfjS?=
- =?us-ascii?Q?1WJGZe9qAjUfAD4FQXK061OpQ80PctXqI/nb2OYqIM6rx8+noTshI3xba/o3?=
- =?us-ascii?Q?4IGwxk6ouXrrLtWxORlFqBW+juHnpeIJ/u+lcU4skf0b9keFjWx72V1gl1mn?=
- =?us-ascii?Q?epe3kHOsxlSY8Kk/Yj81Abl41FkXJjMHHFkHZcTKfq+0L47i+h5hMC2wBk7v?=
- =?us-ascii?Q?peAzPyL7H7jowJNKx+7KE+aoW9FAcr69c3fn6jfbbFxKXBTufQ0YVK3hhheO?=
- =?us-ascii?Q?AwX/xngDbY+hPv0p5ePvsIwExJp/b6x1zTylbVDVTQPIAahX5U3zDHrrMCjF?=
- =?us-ascii?Q?t4C3TQnPDEQMnCy43qQPWY1D5o+rKJCvboMKhHj4JWcHcaKsXFANIGUimT/2?=
- =?us-ascii?Q?AzkEe5fSaqJEe0Uo9Ue2vcpEXrotCUyi+wiR52JqeUfY+2FDtFxY9l24dJ9n?=
- =?us-ascii?Q?OiP1Raj6GODY9CXtyH9DzKHL8PBwf/KvWof3HysAi6zl0j3nQ2QLxHTiI8q1?=
- =?us-ascii?Q?FiY4Q81qVdw8VgAuiBPB3fQa8JeXQooXhsVzRop8xvzTSMuQMo7OwWbw2e2S?=
- =?us-ascii?Q?ZN4ciKwbsgc2TjaY+fSJbdHwUQbv1JJ3VCfbXf88lCP0ssbZ27DDzMMoe3uI?=
- =?us-ascii?Q?r8FdI13QrS90FUAgLLkdJPLHYNfrL9wpjJWSShVJU3e4WvGp8Tz5g6ZxAu8A?=
- =?us-ascii?Q?1XfHmDsOL6Xf3I+ui6Pw1H1KMMzo3ag1jpKdA/rxW/vkvveY4oEvH7kNmwKO?=
- =?us-ascii?Q?+/4hQXsI14xRCGFb/q6/IPZ/qxnF/9ofkJrF6e+qzLmrRu6nRDV20OBtFKIV?=
- =?us-ascii?Q?BLLcAfBF8scV7P70frRU/6mk0cbrHwV1bGQYdAG98vamQLqE/K5TdSHdMkUF?=
- =?us-ascii?Q?+8vbNBkEPcq3jH23V6RrWTf9Sb4r+kVtg5QHscob8UpQHi/u+gjCGc/9kjlM?=
- =?us-ascii?Q?hTieFaDx3hygMYSsrWkHjBDjq6RWPFodGPJ9mE9aXxihPoYV2wAeTQ4Y7cMT?=
- =?us-ascii?Q?/Ahnr9dtsWbKoJ/lH4E3bMnJ5sAt8kC6mV0LB1PSnTNNleb4spPrbIDT3Mcg?=
- =?us-ascii?Q?MQbwGqohXL6cp3PWfqdsPRwQy2x2f64J/gFBLhAdFCaS/+U2xYcj6iosx6U3?=
- =?us-ascii?Q?g+winiVKpRgExa/cSGWOW+57L7r7RPEqt3Sa+qlzEOVfe+bZ1bHvJH7o6ooL?=
- =?us-ascii?Q?OXai0jZ0K4H1XkWWHs2/Qo9baFsIbMYPzS5pEu65?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F1B14BF89;
+	Fri, 18 Apr 2025 14:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744985429; cv=none; b=JnlUVfIvuSOJmrmYy503/QJX78PqnLx+b/aMEtZm1S1DkxrogWPAWP0Y8tJjLVFfmV06ysjdHfXOljiGwTTtyU5eixjuL/kZeBkpQzWqPQEigCVY7RDHSGfU+Xq9L2X5JU7wIFiboPVbFPlJg2zwRBVkkRbN58wNvensvnhJQ2g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744985429; c=relaxed/simple;
+	bh=CKMzXx+F3E9vv2gepTCO1uz+atgs62bkZ8bLdGreiWA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Xug/U0QD2GcUIwf73sjOWB9GkGIGsrJuwAvexmOaBWMtXT7I34Mh/ped7TR/L1XXHAzII9AOUZ23Gsyo8ROlCon3P2szGBetkyz1do9ZwndZXGEVt+V8NAx+Ae6ycU7QqBiFvUC6rtU5zW+bLniD44LE4g3qaKO+O9Ag5fdVyCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 008D6C4CEE2;
+	Fri, 18 Apr 2025 14:10:27 +0000 (UTC)
+Date: Fri, 18 Apr 2025 10:12:08 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Shuah Khan <skhan@linuxfoundation.org>,
+ linux-kselftest@vger.kernel.org
+Subject: [PATCH v2] tracing: selftests: Add testing a user string to filters
+Message-ID: <20250418101208.38dc81f5@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: JH0PR06MB7294.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ef32741a-84e7-4cde-9216-08dd7e82ee91
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Apr 2025 14:11:36.9415
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: j9Nl5a6qABSHYNgzJtbltqY8IxbG8uU9yhbXr2PIw/LrszggZsFVBQMvkp6cjhAihWCt+yHvqLqrcXqTZqch0Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB7023
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Chen, Jay (DI SW EDA DVT RD IN AVE US3) would like to recall the message, "=
-[Bug 220033] xhci: Compliance Issue - avg_trb_len not set for EP0 during Ad=
-dress Device Command".=
+From: Steven Rostedt <rostedt@goodmis.org>
+
+Running the following commands was broken:
+
+  # cd /sys/kernel/tracing
+  # echo "filename.ustring ~ \"/proc*\"" > events/syscalls/sys_enter_openat/filter
+  # echo 1 > events/syscalls/sys_enter_openat/enable
+  # ls /proc/$$/maps
+  # cat trace
+
+And would produce nothing when it should have produced something like:
+
+      ls-1192    [007] .....  8169.828333: sys_openat(dfd: ffffffffffffff9c, filename: 7efc18359904, flags: 80000, mode: 0)
+
+Add a test to check this case so that it will be caught if it breaks
+again.
+
+Link: https://lore.kernel.org/linux-trace-kernel/20250417183003.505835fb@gandalf.local.home/
+
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+Changes since v1: https://lore.kernel.org/20250417223323.3edb4f6c@batman.local.home
+
+- Use $TMPDIR instead of $TESTDIR as test file (Masami Hiramatsu)
+
+ .../test.d/filter/event-filter-function.tc    | 20 +++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/tools/testing/selftests/ftrace/test.d/filter/event-filter-function.tc b/tools/testing/selftests/ftrace/test.d/filter/event-filter-function.tc
+index 118247b8dd84..c62165fabd0c 100644
+--- a/tools/testing/selftests/ftrace/test.d/filter/event-filter-function.tc
++++ b/tools/testing/selftests/ftrace/test.d/filter/event-filter-function.tc
+@@ -80,6 +80,26 @@ if [ $misscnt -gt 0 ]; then
+ 	exit_fail
+ fi
+ 
++# Check strings too
++if [ -f events/syscalls/sys_enter_openat/filter ]; then
++	DIRNAME=`basename $TMPDIR`
++	echo "filename.ustring ~ \"*$DIRNAME*\"" > events/syscalls/sys_enter_openat/filter
++	echo 1 > events/syscalls/sys_enter_openat/enable
++	echo 1 > tracing_on
++	ls /bin/sh
++	nocnt=`grep openat trace | wc -l`
++	ls $TMPDIR
++	echo 0 > tracing_on
++	hitcnt=`grep openat trace | wc -l`;
++	echo 0 > events/syscalls/sys_enter_openat/enable
++	if [ $nocnt -gt 0 ]; then
++		exit_fail
++	fi
++	if [ $hitcnt -eq 0 ]; then
++		exit_fail
++	fi
++fi
++
+ reset_events_filter
+ 
+ exit 0
+-- 
+2.47.2
+
 
