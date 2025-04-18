@@ -1,98 +1,141 @@
-Return-Path: <linux-kernel+bounces-611080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF29AA93CA5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 20:14:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 616F3A93CAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 20:17:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A43E1B6103A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 18:14:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87C7D447C05
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 18:17:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB2112222CA;
-	Fri, 18 Apr 2025 18:14:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 858CE222597;
+	Fri, 18 Apr 2025 18:16:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mxXCbYz1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iWKsCClJ"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1777921C18A;
-	Fri, 18 Apr 2025 18:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8502E215795;
+	Fri, 18 Apr 2025 18:16:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745000062; cv=none; b=aeG/pJcI3sZiT/sAep94JXhwT7jGjIikx/umRwbq4zfJwOvoYvithw9IpWKdq00vgibnXzvvWe7gKcJcixyd8ZNWkmMEe5Ku7AYKwgCFSrzQSX7myrn/9SdOsc4BX19IXHm/aE+Rp9xp2toBRFB4/3wiOmk+qfbXg33ma5NAosc=
+	t=1745000217; cv=none; b=YeVtndBYyj7AXL38reh5O1cxDXKlGca1JrlSA5u74l8xLRHXl3N7YwLHjfIT64AJPUwWAoSuWqdL6dX4pVwrul4mdyxELNvnvP6AHhMxLEB/vsVw85NK7WrPQsPv+N3BuTEfTJPQbh6tv7RXcef6RZQOnxb3TyCY7O6KeLhv8Fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745000062; c=relaxed/simple;
-	bh=1vBnar/9xtJqF5Pl52RY5X2KmdSf4G3dV/3MlXqODMQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jgoqYkpEkdUEqcVBZNfqsnYsTtZSX0k7WUiWkDZFJZajwv/j6UaqAUJXJnjMGKlxLgwcASeyg1XdNV+Rota16YErn7fJjAGjdpyeJtyg2yrHpfqKZhPHwAL3KsQ0hFe6eziSPCJ/UxP+lcQHUvAta4sfRchGvgbBTGdH2msCE1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mxXCbYz1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50A14C4CEE2;
-	Fri, 18 Apr 2025 18:14:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745000061;
-	bh=1vBnar/9xtJqF5Pl52RY5X2KmdSf4G3dV/3MlXqODMQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=mxXCbYz1/GiaZsMLnL8K6mfTPo/Osn7YfbXFPww47EpFsFM5kqbxYmU5S+WGZbVwl
-	 QZ9TL43wLkk6HUBIoD2uuTxsr58qEgPDffDsXv/GmTwhFoLvRizYgnxWy55xf41x+v
-	 CIT2484NtwIaKL0tCa6pot0P1mz84R3R2T+b4ouxx0CAKQ7GMArYuRNxcJnGssHh00
-	 tH1bEf3w2mb20midqzlPN9Apov3fVjFnYllLqCnxekI5zHIpnha6bD+GxyPiOajb/U
-	 7MA8pORipf5SOT4th97As4mhrqZHhj0SOLHU8xFjbRh4R1wQThbm16F5p6u1vO4y+G
-	 IpXuV8w10Ue4w==
-Date: Fri, 18 Apr 2025 19:14:13 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- eraretuya@gmail.com
-Subject: Re: [PATCH v6 04/11] iio: accel: adxl345: set the tap suppress bit
- permanently
-Message-ID: <20250418191413.4a0a873e@jic23-huawei>
-In-Reply-To: <20250414184245.100280-5-l.rubusch@gmail.com>
-References: <20250414184245.100280-1-l.rubusch@gmail.com>
-	<20250414184245.100280-5-l.rubusch@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1745000217; c=relaxed/simple;
+	bh=UAlPrAxnp/DLqF+0rLeMaenQeG5p6cS3srtCNlyxhGY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TkAwD30cHHApYcoGjTMfJmWsw1kkU43Ik2gi2e15lOtpcKrIwGCzUBucSWmo8fkj1uPv8o+l60UZ1EklZAK/VNYqdtSBZa8zMAZIqs22JH0v8e7ott+0pI8qfnkR93YW7KvxNfY8Fxa2JyPnNs6VhBaS3Iii1queCr0IcXIT2Sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iWKsCClJ; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-73972a54919so1868039b3a.3;
+        Fri, 18 Apr 2025 11:16:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745000216; x=1745605016; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RtR9yi+Z296JQYsaYU+wI+paZc4GBr03eUA9SnJEG0s=;
+        b=iWKsCClJyP+kHRGa1OWFPEIZcMXw0udk+eUXArIjIh2kzPCSJFLW/5ZaPbS5E5pVlE
+         1a8Smp8IcL2CTHqtdW9d6qCLYHkpVIfQ1OOUGi13kfxFLi/2pwS0drLFZNqh8jsIM6x3
+         9D0wY6qxkK3ZmqPx/lJPbuljbpu3LUSKQwQ3sBmD01P0AbkAwWgAoNn+0x0KSSevEzud
+         Exb/KheIocIwzdGVHrqmVAbAddC8bgHp0RfK0sxad/ZykYtxnKxBrlohh8AutRvZ568i
+         VPuE8cTaizyXsNgwsUTUO356ERZwi9QFfo1KTd8PSckTEftEKvWfrLQSoBBgFuZHQ+Gv
+         5xhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745000216; x=1745605016;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RtR9yi+Z296JQYsaYU+wI+paZc4GBr03eUA9SnJEG0s=;
+        b=Gd6dZ6pypa3DCErUj+9TH3N/MpnxN6rDmPIDihSrq19rc2Oj17NRxlsOEzkyUIhlQd
+         vld5meKkOkdPzTzatp2YRjbFiq8Jkg+Gs88aHHiS/IKm/JNoZo4PtabZwPzDfoGBCWEM
+         3w3I/jQk79vSHmSLWRF/WNckv5Cx6ashyrVP5jz2t4BBqFydnwjXn7XqhWkPXzjGlC0q
+         R0tN0YqmIpLWrgADSlOkPf3ee8MAlIXwgHZKCzTZDTNkKHQWNpdSlpOd83Qm0PH7vknx
+         Zn9l7m/1dgvgwo8mY+idHVjvwTT4h3EZ8zivVwUk2ASMkFAeeDMbuNzM6eJUMl+sfIXJ
+         Rs4A==
+X-Forwarded-Encrypted: i=1; AJvYcCU5atMSF5a5zaqn1jq83bPjgDoZ9a6t38HHTBP5MADkit8tu/dfwO3cbvSlGwlmadXndUXEs4yHsapGu2IC@vger.kernel.org, AJvYcCVVLJ8f9tUCeOk749Q32G4QSySdD8mNqGaJFL0URGpz2X233JzT4tsgtNPiIHAYCFOSk/0O8zfYSJHrpW8=@vger.kernel.org, AJvYcCWIGcz0hbzU3/clPuyFe7wRs15nBX2YYQfhiGpvUGAWDa3AL4BvaTn9czk5K8JMkM1rmHA2tDJ9W1xb/w==@vger.kernel.org, AJvYcCX0WnWx76FmwY3ZGYlyqO+yk0bXO3RoPrH9fBvseT6ksf8DdX3MeqgFLVhcz+HSeliiip2J9STJSa7e@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9GQjVwyMLDJ5EEowVyOLUzgLeZfGwEGRxuYM1z4nz9fFFVCCP
+	VWMW/qTU7//kD4XUzCcGxre/uG7QucB3Ii1mPO2xO2HxDGBQkpZc
+X-Gm-Gg: ASbGnctsEFAtryZefhFdf6NHtwrdTFOtvQvusRCy70gZuQBvW1mvPPzadsWqVv55SPB
+	/u3N5lH4wultka1jg416noskrVGNCKvdYzhLZKk0ld4aDArcW7xEgov/D3Ep6IM5pKKUKzLAaTC
+	iMXlVop33TGxwWJ/1OgmwI/Kzc/pgPkRqT+N0fVvkKHhKtAejmGyxzAaJK7U0UbWns/dc/L2rtY
+	exlwfiSjmg9oMLQvSSnNnzD9un3kqlcz7WBJAd7qmNofxeRKHs06b2HYfNQFs5z36KmMdduttSs
+	YzxQbVEQHbstMY46PYIBAkHmXg9i8/Q1IsKOA4c=
+X-Google-Smtp-Source: AGHT+IEgYyHoFNXqS+ng4zUSLjzFVHFHhp6c/GtXYk71PYeQLEijwI6Tlhvtyx+SG+0mbA7k2GDG+A==
+X-Received: by 2002:a17:90b:5884:b0:2fe:a545:4c84 with SMTP id 98e67ed59e1d1-3087bcc72c1mr4640664a91.34.1745000215613;
+        Fri, 18 Apr 2025 11:16:55 -0700 (PDT)
+Received: from nuvole.. ([144.202.86.13])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3087df25d80sm1560674a91.25.2025.04.18.11.16.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Apr 2025 11:16:55 -0700 (PDT)
+From: Pengyu Luo <mitltlatltl@gmail.com>
+To: krzk@kernel.org
+Cc: conor+dt@kernel.org,
+	danielt@kernel.org,
+	deller@gmx.de,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	jingoohan1@gmail.com,
+	krzk+dt@kernel.org,
+	lee@kernel.org,
+	linux-fbdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	lujianhua000@gmail.com,
+	mitltlatltl@gmail.com,
+	pavel@kernel.org,
+	robh@kernel.org
+Subject: Re: [PATCH 2/4] backlight: ktz8866: add slave handler
+Date: Sat, 19 Apr 2025 02:14:41 +0800
+Message-ID: <20250418181442.207436-1-mitltlatltl@gmail.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <eb23737f-5b6c-47fd-8b39-637e059bd5f1@kernel.org>
+References: <eb23737f-5b6c-47fd-8b39-637e059bd5f1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, 14 Apr 2025 18:42:38 +0000
-Lothar Rubusch <l.rubusch@gmail.com> wrote:
+On Mon, Apr 7, 2025 at 6:00 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> On 07/04/2025 11:51, Pengyu Luo wrote:
+> > Kinetic ktz8866, found in many android devices, nowadays, some oem use
+> > dual ktz8866 to support a larger panel and  higher brightness, original
+> > driver would only handle half backlight region on these devices,
+> > registering it twice is unreasonable, so adding the slave handler to
+> > support it.
 
-> Set the suppress bit feature to the double tap detection, whenever
-> double tap is enabled. This impedes the suppress bit dangling in any
-> state, and thus varying in sensitivity for double tap detection.
-> 
-> Any tap event is defined by a rising signal edge above threshold, i.e.
-> duration time starts counting; and the falling edge under threshold
-> within duration time, i.e. then the tap event is issued. This means
-> duration is used individually for each tap event.
-> 
-> For double tap detection after a single tap, a latency time needs to be
-> specified. Usually tap events, i.e. spikes above and returning below
-> threshold will be ignored within latency. After latency, the window
-> time starts counting for a second tap detection which has to happen
-> within a duration time.
-> 
-> If the suppress bit is not set, spikes within latency time are ignored.
-> Setting the suppress bit will invalidate the double tap function. The
-> sensor will thus be able to save the window time for double tap
-> detection, and follow a more strict definition of what signal qualifies
-> for a double tap.
-> 
-> In a summary having the suppress bit set, fewer signal spikes will be
-> considered as double taps. This is an optional add on to double tap,
-> thus a separate patch.
-> 
-> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
-Applied 1-4.
+[...]
 
-Thanks,
-Jonathan
+> 
+> I wrote on IRC - phandle to express the relationship between hardware -
+> and I do not see it implemented.
+> 
+> If you have devices depending on each other, you need to express it -
+> for links, for resource dependencies etc. phandle is for that usually.
+> Or OF graph. Or parent-child relationship.
+> 
+
+I got you now, as a non-native speaker, I often misunderstood the first
+time, you expected that accessing node phandle in relationship or graph
+way, I did only access node phandle regardless of relationship or graph
+description, I only implied it in compatible string, but there would be
+a better way.
+
+> You did not provide any description of the hardware in the binding, so I
+> really do not have any idea what is this setup thus how to represent it.
+> Use hardware terms, diagrams etc to explain the hardware in the bindings
+> commit. What are the addresses? Are there any shared resources? What
+> buses are devices sitting on, etc.
+
+Agree.
+
+Best wishes,
+Pengyu
 
