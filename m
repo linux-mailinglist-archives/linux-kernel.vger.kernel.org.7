@@ -1,164 +1,232 @@
-Return-Path: <linux-kernel+bounces-610570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E729DA9366F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 13:20:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFEB8A9367C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 13:23:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 391248E0F0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 11:20:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F416F8A6AF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 11:23:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FFB02741D8;
-	Fri, 18 Apr 2025 11:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0375627585B;
+	Fri, 18 Apr 2025 11:23:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="j8UA000Q"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="ysCg+gDi"
+Received: from relay5.mymailcheap.com (relay5.mymailcheap.com [159.100.241.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA95270EB0
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 11:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E822749E7;
+	Fri, 18 Apr 2025 11:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.100.241.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744975219; cv=none; b=Psaif6M9iUz/Dkt0kgbR/xjIWqvUhNy0nWN6UuWH2sQV7ntY/WztqYmA+KC8KlTlwQUyx7qJSTUutgSH1VMnlYTmlY3sJlfmTYF3oZMPYslHhZalopT/xL5cUX93LA9DXCS5qIUIkO1fKf0hsSv3fMWJSLjkMkhbbBxZvVxg1hM=
+	t=1744975387; cv=none; b=L9VzZpTg1msrEeS1K+R4clwe6z+E+ZRd/77bTqrH35eRapnyNSGrYUkKavGy+oIU7/yT/TMlUXp4rOKK9L/6GIX/f8IpfbyjPXk5kas9eXJ3xB26nCsbWzJY/deOHfDIrVylna+GdJ3y6akxORZFRcJ7aDAkba4uffNvRVbOAKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744975219; c=relaxed/simple;
-	bh=Sj8X2Lm6wKekaBjcx9Vsfq4exmy8nxBLBwcn+T7xo+U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z1zN6IN1HjUViJsiJZrLg2+0yQlrNYlqWWnLDgsAy1AQPbboZzOg4LnhCafRldE86DUx/tvOIskn7pqBA/RATq9pqpFJnmpAJI8tj4f154Yo8K0HhFhT6nw6kxdF9as+DT7qkcnYDjgIXKC87NKrOlOHlNJVRGDoQyC4Yi6XiV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=j8UA000Q; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-39c1ef4ae3aso1118896f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 04:20:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1744975215; x=1745580015; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZJj8Rfgi9EbV15zm3T8GaXom1YrGzd0C3xNCTSZPHuE=;
-        b=j8UA000QIQkKpdWrRa/axOMJaoNjF3ix6zOsUjvMc+/cg97871DIOvaq4qcthpUoIL
-         dr2bihlN7/wbIWb/Xl5figifHjowTitSWCkFs7G7f0Pb7qP0blE2hQqCbuYbSSrO0r23
-         7q+9wR1hxYkJmh3CjVnuaB3ad1jJMyZhOx5AQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744975215; x=1745580015;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZJj8Rfgi9EbV15zm3T8GaXom1YrGzd0C3xNCTSZPHuE=;
-        b=O+J1NwihN/qS2WRkwclCNMRcYxMRlHc/FYKsz/gU/tk26ZKOM5hoJoZBGsKO1KoCk3
-         LtJHJ9QaDihlvhXaDrYqiy0Sa/f0p4IceDRLsbHCdqeddThdK0Vlb0GDaSD3JCHNfGz1
-         D69B5K9EdTosyLA3AoZdW6HY7dfKwGVQvBthJE614Wm3VsFVBg9Z10mBzZPDsRXYnQQv
-         y8vhQse9Zoai+1hbKKhvrpL5NQnlEVR4tRA2cAjkHXnQyulg3JM+eK5r0URVaA0htML9
-         iOmVgN5L+R5g4J62XiPwiET+1TQtyz3O/OQB3BJ4VDshaof7oQ8yEex7IkEyAIhYKpVz
-         eS6A==
-X-Forwarded-Encrypted: i=1; AJvYcCXR39cBpXS4547r0cicnvx41HM32gTMiULJE/DyYNCejJU5oZd5s5qn3cMG8xABEwfeZkqIxFvxcw3nymk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yymp/bVJp2z7v/7HobZgrT/ZVNsAPfzG0KjKLJ+6kT4qh6dRBED
-	jBAc6nZo77ruffVN4XGN9qYGsdFtvwwn5ekgQqJFUYPzDCOiRfN4WnPBtNK0OfE=
-X-Gm-Gg: ASbGncsqwd/RfI+mCS7PhXvvyGkdoGiOThU0wXo38By21oAnE6garORXmqm9ImwSi1n
-	kQxKrd6yaLlBB+NURyq6iNEwKXGxIgrkRFiaH0EL56HK2aspaXfflAvOYpokkBMArgWsGEbuwe4
-	u2v1e6CGVmJF66d96MT18+EVXmzh/dwGTOsCo739EPR/uHKXIm1cXagL03T3rC7WgnczlPzGf2S
-	dQjaP2e3VpA9/N62h8emKxsQf7cB1D3I4FEAtjIqVS9zVLEOulSawx1pp/ArDEr9fZSvOzHXOxm
-	peSwGVweCdioIZ1G+cXHQVQJJTG9VhHpR1zyDcQi0Pg9UExhWWlbu4TP+FMk79qlxSYNck37VAr
-	8w7m5aQ==
-X-Google-Smtp-Source: AGHT+IEH86lkzDB8iD2jcwBv9xObYazBn81tO8e62htfmOl2I85kmXIxDh76Itbbny1GahYRs6qSCQ==
-X-Received: by 2002:a05:6000:184f:b0:39b:f44b:e176 with SMTP id ffacd0b85a97d-39ef9466f36mr2679870f8f.24.1744975215276;
-        Fri, 18 Apr 2025 04:20:15 -0700 (PDT)
-Received: from [192.168.1.183] (host-92-26-98-202.as13285.net. [92.26.98.202])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4406d5cf2easm18698005e9.31.2025.04.18.04.20.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Apr 2025 04:20:14 -0700 (PDT)
-Message-ID: <4fb6d880-3d5f-4d42-8419-dcc697949a10@citrix.com>
-Date: Fri, 18 Apr 2025 12:20:13 +0100
+	s=arc-20240116; t=1744975387; c=relaxed/simple;
+	bh=XugppIIAJO9PkEAXCDE1zf/7oX/SgdA4rqZh/Cbb2oE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Rj4ix7iSbEi8IuG1L0eoZDLAXtevkNTFPT2IfjC8n0ZB2Mqzpddjp1ixe1OIyhIgJD6sxwSDCG6mZIECnL354oBjL1dWrwHwkIZ/SrDQF43PkVz5SNKYwtznCv7lzBTTg4IoQNXniS95ZPMRK9UKPksNDqD8KUpe5PVft9gbCSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=ysCg+gDi; arc=none smtp.client-ip=159.100.241.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
+Received: from relay4.mymailcheap.com (relay4.mymailcheap.com [137.74.80.155])
+	by relay5.mymailcheap.com (Postfix) with ESMTPS id 5022E20076;
+	Fri, 18 Apr 2025 11:22:57 +0000 (UTC)
+Received: from nf2.mymailcheap.com (nf2.mymailcheap.com [54.39.180.165])
+	by relay4.mymailcheap.com (Postfix) with ESMTPS id 470FD2012A;
+	Fri, 18 Apr 2025 11:22:49 +0000 (UTC)
+Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
+	by nf2.mymailcheap.com (Postfix) with ESMTPSA id BB8BB400F2;
+	Fri, 18 Apr 2025 11:22:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
+	t=1744975366; bh=XugppIIAJO9PkEAXCDE1zf/7oX/SgdA4rqZh/Cbb2oE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ysCg+gDi0HY22e+jhMxa5iReSpbDDeR/QPiEz3mmOctnS67uNcSf6IohFYCM8uvBr
+	 LfBF0YaBVEsTxaL0G4Vz41pSy/S15+sp3J4jOtjIV2bCtyb3me6xuyLL97Eckw3HGl
+	 it50ZczlJLCDXoD/Bnud391KyjyFjaHTU9uSJ/D0=
+Received: from hrh-ofice.wok.cipunited.com (unknown [60.247.127.212])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail20.mymailcheap.com (Postfix) with ESMTPSA id CD13C406FC;
+	Fri, 18 Apr 2025 11:22:41 +0000 (UTC)
+From: Runhua He <hua@aosc.io>
+To: linux-kernel@vger.kernel.org
+Cc: Kexy Biscuit <kexybiscuit@aosc.io>,
+	Runhua He <hua@aosc.io>,
+	Mingcong Bai <jeffbai@aosc.io>,
+	Yemu Lu <prcups@krgm.moe>,
+	Xinhui Yang <cyan@cyano.uk>,
+	Rong Zhang <i@rong.moe>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	linux-acpi@vger.kernel.org
+Subject: [RFC PATCH] ACPI: EC: Set ec_no_wakeup for MECHREVO Wujie 14XA (GX4HRXL)
+Date: Fri, 18 Apr 2025 19:22:27 +0800
+Message-ID: <20250418112229.93075-1-hua@aosc.io>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -tip v2 1/2] x86/boot: Remove semicolon from "rep"
- prefixes
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: x86@kernel.org, linux-video@atrey.karlin.mff.cuni.cz,
- xen-devel@lists.xenproject.org, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Martin Mares <mj@ucw.cz>
-References: <20250418071437.4144391-1-ubizjak@gmail.com>
- <50bf962c-2c9e-46a2-bbac-cba9cf229e79@citrix.com>
- <CAFULd4ZNiRdARn8O98zROQRWoL1ASQ+iPPTTmLRxjo9SGRHyRg@mail.gmail.com>
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- xsFNBFLhNn8BEADVhE+Hb8i0GV6mihnnr/uiQQdPF8kUoFzCOPXkf7jQ5sLYeJa0cQi6Penp
- VtiFYznTairnVsN5J+ujSTIb+OlMSJUWV4opS7WVNnxHbFTPYZVQ3erv7NKc2iVizCRZ2Kxn
- srM1oPXWRic8BIAdYOKOloF2300SL/bIpeD+x7h3w9B/qez7nOin5NzkxgFoaUeIal12pXSR
- Q354FKFoy6Vh96gc4VRqte3jw8mPuJQpfws+Pb+swvSf/i1q1+1I4jsRQQh2m6OTADHIqg2E
- ofTYAEh7R5HfPx0EXoEDMdRjOeKn8+vvkAwhviWXTHlG3R1QkbE5M/oywnZ83udJmi+lxjJ5
- YhQ5IzomvJ16H0Bq+TLyVLO/VRksp1VR9HxCzItLNCS8PdpYYz5TC204ViycobYU65WMpzWe
- LFAGn8jSS25XIpqv0Y9k87dLbctKKA14Ifw2kq5OIVu2FuX+3i446JOa2vpCI9GcjCzi3oHV
- e00bzYiHMIl0FICrNJU0Kjho8pdo0m2uxkn6SYEpogAy9pnatUlO+erL4LqFUO7GXSdBRbw5
- gNt25XTLdSFuZtMxkY3tq8MFss5QnjhehCVPEpE6y9ZjI4XB8ad1G4oBHVGK5LMsvg22PfMJ
- ISWFSHoF/B5+lHkCKWkFxZ0gZn33ju5n6/FOdEx4B8cMJt+cWwARAQABzSlBbmRyZXcgQ29v
- cGVyIDxhbmRyZXcuY29vcGVyM0BjaXRyaXguY29tPsLBegQTAQgAJAIbAwULCQgHAwUVCgkI
- CwUWAgMBAAIeAQIXgAUCWKD95wIZAQAKCRBlw/kGpdefoHbdD/9AIoR3k6fKl+RFiFpyAhvO
- 59ttDFI7nIAnlYngev2XUR3acFElJATHSDO0ju+hqWqAb8kVijXLops0gOfqt3VPZq9cuHlh
- IMDquatGLzAadfFx2eQYIYT+FYuMoPZy/aTUazmJIDVxP7L383grjIkn+7tAv+qeDfE+txL4
- SAm1UHNvmdfgL2/lcmL3xRh7sub3nJilM93RWX1Pe5LBSDXO45uzCGEdst6uSlzYR/MEr+5Z
- JQQ32JV64zwvf/aKaagSQSQMYNX9JFgfZ3TKWC1KJQbX5ssoX/5hNLqxMcZV3TN7kU8I3kjK
- mPec9+1nECOjjJSO/h4P0sBZyIUGfguwzhEeGf4sMCuSEM4xjCnwiBwftR17sr0spYcOpqET
- ZGcAmyYcNjy6CYadNCnfR40vhhWuCfNCBzWnUW0lFoo12wb0YnzoOLjvfD6OL3JjIUJNOmJy
- RCsJ5IA/Iz33RhSVRmROu+TztwuThClw63g7+hoyewv7BemKyuU6FTVhjjW+XUWmS/FzknSi
- dAG+insr0746cTPpSkGl3KAXeWDGJzve7/SBBfyznWCMGaf8E2P1oOdIZRxHgWj0zNr1+ooF
- /PzgLPiCI4OMUttTlEKChgbUTQ+5o0P080JojqfXwbPAyumbaYcQNiH1/xYbJdOFSiBv9rpt
- TQTBLzDKXok86M7BTQRS4TZ/ARAAkgqudHsp+hd82UVkvgnlqZjzz2vyrYfz7bkPtXaGb9H4
- Rfo7mQsEQavEBdWWjbga6eMnDqtu+FC+qeTGYebToxEyp2lKDSoAsvt8w82tIlP/EbmRbDVn
- 7bhjBlfRcFjVYw8uVDPptT0TV47vpoCVkTwcyb6OltJrvg/QzV9f07DJswuda1JH3/qvYu0p
- vjPnYvCq4NsqY2XSdAJ02HrdYPFtNyPEntu1n1KK+gJrstjtw7KsZ4ygXYrsm/oCBiVW/OgU
- g/XIlGErkrxe4vQvJyVwg6YH653YTX5hLLUEL1NS4TCo47RP+wi6y+TnuAL36UtK/uFyEuPy
- wwrDVcC4cIFhYSfsO0BumEI65yu7a8aHbGfq2lW251UcoU48Z27ZUUZd2Dr6O/n8poQHbaTd
- 6bJJSjzGGHZVbRP9UQ3lkmkmc0+XCHmj5WhwNNYjgbbmML7y0fsJT5RgvefAIFfHBg7fTY/i
- kBEimoUsTEQz+N4hbKwo1hULfVxDJStE4sbPhjbsPCrlXf6W9CxSyQ0qmZ2bXsLQYRj2xqd1
- bpA+1o1j2N4/au1R/uSiUFjewJdT/LX1EklKDcQwpk06Af/N7VZtSfEJeRV04unbsKVXWZAk
- uAJyDDKN99ziC0Wz5kcPyVD1HNf8bgaqGDzrv3TfYjwqayRFcMf7xJaL9xXedMcAEQEAAcLB
- XwQYAQgACQUCUuE2fwIbDAAKCRBlw/kGpdefoG4XEACD1Qf/er8EA7g23HMxYWd3FXHThrVQ
- HgiGdk5Yh632vjOm9L4sd/GCEACVQKjsu98e8o3ysitFlznEns5EAAXEbITrgKWXDDUWGYxd
- pnjj2u+GkVdsOAGk0kxczX6s+VRBhpbBI2PWnOsRJgU2n10PZ3mZD4Xu9kU2IXYmuW+e5KCA
- vTArRUdCrAtIa1k01sPipPPw6dfxx2e5asy21YOytzxuWFfJTGnVxZZSCyLUO83sh6OZhJkk
- b9rxL9wPmpN/t2IPaEKoAc0FTQZS36wAMOXkBh24PQ9gaLJvfPKpNzGD8XWR5HHF0NLIJhgg
- 4ZlEXQ2fVp3XrtocHqhu4UZR4koCijgB8sB7Tb0GCpwK+C4UePdFLfhKyRdSXuvY3AHJd4CP
- 4JzW0Bzq/WXY3XMOzUTYApGQpnUpdOmuQSfpV9MQO+/jo7r6yPbxT7CwRS5dcQPzUiuHLK9i
- nvjREdh84qycnx0/6dDroYhp0DFv4udxuAvt1h4wGwTPRQZerSm4xaYegEFusyhbZrI0U9tJ
- B8WrhBLXDiYlyJT6zOV2yZFuW47VrLsjYnHwn27hmxTC/7tvG3euCklmkn9Sl9IAKFu29RSo
- d5bD8kMSCYsTqtTfT6W4A3qHGvIDta3ptLYpIAOD2sY3GYq2nf3Bbzx81wZK14JdDDHUX2Rs
- 6+ahAA==
-In-Reply-To: <CAFULd4ZNiRdARn8O98zROQRWoL1ASQ+iPPTTmLRxjo9SGRHyRg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: BB8BB400F2
+X-Rspamd-Server: nf2.mymailcheap.com
+X-Spamd-Result: default: False [1.40 / 10.00];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_ONE(0.00)[1];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	SPFBL_URIBL_EMAIL_FAIL(0.00)[jeffbai.aosc.io:server fail,hua.aosc.io:server fail,cyan.cyano.uk:server fail,i.rong.moe:server fail,prcups.krgm.moe:server fail];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[]
+X-Rspamd-Action: no action
 
-On 18/04/2025 12:15 pm, Uros Bizjak wrote:
-> On Fri, Apr 18, 2025 at 12:24 PM Andrew Cooper
-> <andrew.cooper3@citrix.com> wrote:
->> On 18/04/2025 8:13 am, Uros Bizjak wrote:
->>> diff --git a/arch/x86/boot/video.c b/arch/x86/boot/video.c
->>> index f2e96905b3fe..0641c8c46aee 100644
->>> --- a/arch/x86/boot/video.c
->>> +++ b/arch/x86/boot/video.c
->>> @@ -292,7 +292,7 @@ static void restore_screen(void)
->>>                            "shrw %%cx ; "
->>>                            "jnc 1f ; "
->>>                            "stosw \n\t"
->>> -                          "1: rep;stosl ; "
->>> +                          "1: rep stosl ; "
->>>                            "popw %%es"
->> Doesn't this one still need a separator between STOSL and POPW ?
-> ";" is a separator as well.
+MECHREVO Wujie 14XA (GX4HRXL) wakes up immediately after s2idle entry.
+This happens regardless of whether the laptop is plugged into AC power, or
+whether any peripheral is plugged into the laptop.
 
-Yes, it is.  I've clearly not had enough coffee yet.  Sorry for the noise.
+Using `amd_s2idle.py --debug-ec', we found that the laptop has a wakeup
+event triggered by IRQ 1 (PS/2 Controller) and IRQ 9 (ACPI SCI), and was
+eventually woken up by IRQ 9. Taking a look at `dmesg', we found that the
+EC was quite chatty after s2idle entry:
 
-~Andrew
+[ 1842.317151] PM: suspend-to-idle
+[ 1842.317178] ACPI: EC: ACPI EC GPE status set
+[ 1842.317184] ACPI: EC: IRQ (5)
+[ 1842.317190] ACPI: EC: EC_SC(R) = 0x28 SCI_EVT=1 BURST=0 CMD=1 IBF=0 OBF=0
+[ 1842.317196] ACPI: EC: Polling enabled
+[ 1842.317198] ACPI: EC: Command(QR_EC) submitted/blocked
+[ 1842.317202] ACPI: EC: ACPI EC GPE dispatched
+[ 1842.317248] ACPI: EC: Event started
+[ 1842.317259] ACPI: EC: 2: Increase command
+[ 1842.317264] ACPI: EC: Command(QR_EC) started
+[ 1842.317271] ACPI: EC: TASK (14)
+[ 1842.317288] ACPI: EC: EC_SC(R) = 0x28 SCI_EVT=1 BURST=0 CMD=1 IBF=0 OBF=0
+[ 1842.317294] ACPI: EC: EC_SC(W) = 0x84
+[ 1842.317303] ACPI: EC: TASK (14)
+[ 1842.317324] ACPI: EC: EC_SC(R) = 0x2a SCI_EVT=1 BURST=0 CMD=1 IBF=1 OBF=0
+[ 1842.317329] ACPI: EC: TASK (14)
+[ 1842.317336] ACPI: EC: EC_SC(R) = 0x2a SCI_EVT=1 BURST=0 CMD=1 IBF=1 OBF=0
+
+[...]
+
+[ 1842.317399] ACPI: EC: EC_SC(R) = 0x28 SCI_EVT=1 BURST=0 CMD=1 IBF=0 OBF=0
+[ 1842.317405] ACPI: EC: TASK (14)
+[ 1842.317412] ACPI: EC: EC_SC(R) = 0x28 SCI_EVT=1 BURST=0 CMD=1 IBF=0 OBF=0
+[ 1842.317418] ACPI: EC: TASK (14)
+[ 1842.317425] ACPI: EC: EC_SC(R) = 0x29 SCI_EVT=1 BURST=0 CMD=1 IBF=0 OBF=1
+[ 1842.317432] ACPI: EC: EC_DATA(R) = 0x7b
+[ 1842.317436] ACPI: EC: Command(QR_EC) unblocked
+[ 1842.317445] ACPI: EC: Polling quirk
+[ 1842.317448] ACPI: EC: TASK (14)
+[ 1842.317455] ACPI: EC: EC_SC(R) = 0x28 SCI_EVT=1 BURST=0 CMD=1 IBF=0 OBF=0
+[ 1842.317463] ACPI: EC: Polling enabled
+[ 1842.317466] ACPI: EC: Command(QR_EC) submitted/blocked
+[ 1842.317469] ACPI: EC: Polling disabled
+[ 1842.317472] ACPI: EC: Command(QR_EC) completed by hardware
+[ 1842.317476] ACPI: EC: Command(QR_EC) stopped
+[ 1842.317480] ACPI: EC: 1: Decrease command
+[ 1842.317484] ACPI: EC: Query(0x7b) scheduled
+[ 1842.317495] ACPI: EC: 2: Increase command
+[ 1842.317499] ACPI: EC: Command(QR_EC) started
+[ 1842.317504] ACPI: EC: TASK (14)
+[ 1842.317516] ACPI: EC: EC_SC(R) = 0x08 SCI_EVT=0 BURST=0 CMD=1 IBF=0 OBF=0
+[ 1842.317521] ACPI: EC: EC_SC(W) = 0x84
+[ 1842.317529] ACPI: EC: TASK (14)
+[ 1842.317537] ACPI: EC: EC_SC(R) = 0x0a SCI_EVT=0 BURST=0 CMD=1 IBF=1 OBF=0
+[ 1842.317543] ACPI: EC: TASK (14)
+[ 1842.317550] ACPI: EC: EC_SC(R) = 0x0a SCI_EVT=0 BURST=0 CMD=1 IBF=1 OBF=0
+[ 1842.317555] ACPI: EC: TASK (14)
+
+[...]
+
+[ 1842.317638] ACPI: EC: EC_SC(R) = 0x08 SCI_EVT=0 BURST=0 CMD=1 IBF=0 OBF=0
+[ 1842.317643] ACPI: EC: TASK (14)
+[ 1842.317650] ACPI: EC: EC_SC(R) = 0x08 SCI_EVT=0 BURST=0 CMD=1 IBF=0 OBF=0
+[ 1842.317656] ACPI: EC: TASK (14)
+[ 1842.317663] ACPI: EC: EC_SC(R) = 0x09 SCI_EVT=0 BURST=0 CMD=1 IBF=0 OBF=1
+[ 1842.317670] ACPI: EC: EC_DATA(R) = 0x00
+[ 1842.317674] ACPI: EC: Command(QR_EC) unblocked
+[ 1842.317682] ACPI: EC: Polling quirk
+[ 1842.317685] ACPI: EC: TASK (14)
+[ 1842.317692] ACPI: EC: EC_SC(R) = 0x08 SCI_EVT=0 BURST=0 CMD=1 IBF=0 OBF=0
+[ 1842.317697] ACPI: EC: Polling disabled
+[ 1842.317700] ACPI: EC: Command(QR_EC) completed by hardware
+[ 1842.317704] ACPI: EC: Command(QR_EC) stopped
+[ 1842.317707] ACPI: EC: 1: Decrease command
+[ 1842.317711] ACPI: EC: Event stopped
+[ 1842.317723] ACPI: EC: Query(0x7b) started
+[ 1842.318142] ACPI: EC: Query(0x7b) stopped
+[ 1842.318150] ACPI: EC: ACPI EC work flushed
+[ 1842.318158] ACPI: PM: Rearming ACPI SCI for wakeup
+[ 1842.318169] amd_pmc: SMU idlemask s0i3: 0x1ffb3ebd
+[ 1842.318193] PM: Triggering wakeup from IRQ 9
+[ 1842.318244] ACPI: EC: ACPI EC GPE status set
+[ 1842.318249] ACPI: EC: IRQ (5)
+[ 1842.318254] ACPI: EC: EC_SC(R) = 0x08 SCI_EVT=0 BURST=0 CMD=1 IBF=0 OBF=0
+[ 1842.318263] ACPI: PM: Rearming ACPI SCI for wakeup
+
+I'm not quite sure what the EC was during this time. As
+`acpi.ec_no_wakeup=1' works around this issue, I believe that the EC had
+for some reason caused the system to wake up.
+
+Browsing the source code, I found that in `drivers/acpi/ec.c',
+`struct dmi_system_id acpi_ec_no_wakeup[]' records a few machines with
+incorrect suspend behaviors caused by EC wakeup.
+
+As this struct corresponds to a series of machines that needs
+`acpi.ec_no_wakeup' enabled by default, add GX4HRXL to this struct. Note
+that I have only matched the motherboard model, as MECHREVO is a "white
+label" manufacturer using commonly used chassis and motherboards - GX4HRXL
+may be found in a variety of laptops sold under different brands and model
+names.
+
+Since the reason behind this EC wakeup is not yet clear to me, I'm sending
+this patch in hope of getting more comments and guidance on how to further
+debug this issue.
+
+Suggested-by: Mingcong Bai <jeffbai@aosc.io>
+Link: https://zhuanlan.zhihu.com/p/730538041
+Tested-by: Yemu Lu <prcups@krgm.moe>
+Co-developed-by: Xinhui Yang <cyan@cyano.uk>
+Signed-off-by: Xinhui Yang <cyan@cyano.uk>
+Co-developed-by: Rong Zhang <i@rong.moe>
+Signed-off-by: Rong Zhang <i@rong.moe>
+Signed-off-by: Runhua He <hua@aosc.io>
+---
+ drivers/acpi/ec.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/acpi/ec.c b/drivers/acpi/ec.c
+index 3c5f34892..19f1d36a5 100644
+--- a/drivers/acpi/ec.c
++++ b/drivers/acpi/ec.c
+@@ -2329,6 +2329,12 @@ static const struct dmi_system_id acpi_ec_no_wakeup[] = {
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "83Q3"),
+ 		}
+ 	},
++	{
++		/* MECHREVO Wujie 14 Series (GX4HRXL) */
++		.matches = {
++			DMI_MATCH(DMI_BOARD_NAME, "GX4HRXL"),
++		}
++	},
+ 	{ },
+ };
+ 
+-- 
+2.49.0
+
 
