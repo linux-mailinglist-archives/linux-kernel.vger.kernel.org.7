@@ -1,130 +1,113 @@
-Return-Path: <linux-kernel+bounces-610965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C943BA93B00
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 18:38:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0800A93B3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 18:46:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE8C2463C9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 16:38:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F57219E0EAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 16:46:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D769D21506E;
-	Fri, 18 Apr 2025 16:38:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0534A2CCC0;
+	Fri, 18 Apr 2025 16:46:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="chyBpRXQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="SWy0NpBd"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720931DF968;
-	Fri, 18 Apr 2025 16:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EAB4214A81;
+	Fri, 18 Apr 2025 16:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744994314; cv=none; b=DAi/RHtNKr1gMK5eJH9c7t1c2NhoEYhlOVj0iX96G97XRE+REwO2+jdRvYe9KWrFayiEC591SwyJ1OFC2rSaQ38ovwViITDandPalj7oFbypCnQfi0tzGJUkAiIgdI8X8Awl7XRg6bMPoUpYnSwbhHcbRdxiVwsg5cjclolKQyk=
+	t=1744994773; cv=none; b=XcDZD88jWgzYMTkPtH/QZh1Y16WHd4PXDpadBI/DznEDLpTBB6t35NHsvICnjuWy//udS+x31UeHO2vCgSDV0IeXBczHlfm8TMDsN407co3GfQZrZPaSe6IRnxcdiboamGqBclggTtYX+Pm3gA1S2y5bfIoyziLBVyiOdjax7ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744994314; c=relaxed/simple;
-	bh=DAIIt6eRSIzIJLTvfxaGOkPKtc1ZafUVlq7juo2C4hw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cRhLvwTCbYwTkQMQt0thigf2t9xBWTCmyT2hFm5CEOxXOAs27FtismJNNUTinZw03UeoPvVwErx3hLgLwMBgnqOWQ67RbNsboOZWD8bJN2aElk/vj2wE5sb6oa1VF5CqyUezFNcM6Wrxe5Qr//YH9eqfV3Gb9TZpBasIIjAyYPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=chyBpRXQ; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744994312; x=1776530312;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=DAIIt6eRSIzIJLTvfxaGOkPKtc1ZafUVlq7juo2C4hw=;
-  b=chyBpRXQk0e0kDxF4AP/E6Ki2O+0e4mmoMIGZH7y4KW70Qp4bM3HlvOd
-   DxvPl2mw/3T+NYbb3ALcpbAXpAthSyXO/dn9H7pwv3OwBRMlr+x3ygFmg
-   nR4uVgrG0sMMipnU7BsAjVU6+T6FN2S752bOn+BOmI6ssDAEFndPWZ8eO
-   frWyB85QmdIQveMZ1HxHYTEGhiMwahJ3P/Td+86KeF9Q8zrIq+CIw3Vs1
-   583kmiUkz7jHQ1l+ZR6bZbzpFVJQiJXz4qGzA4oHLjwwc7OvsZpt3vQJn
-   G7Cg/s0JRexwS4vOY/4VAT+D0DPF/fIJAYbdTKqanu5tQ/nM8GFTApesl
-   w==;
-X-CSE-ConnectionGUID: 0O0B1LnPTH+emeIBZz+GIQ==
-X-CSE-MsgGUID: j8AJ/HDZR6uHEIATe9EA0w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11407"; a="57287776"
-X-IronPort-AV: E=Sophos;i="6.15,222,1739865600"; 
-   d="scan'208";a="57287776"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Apr 2025 09:38:31 -0700
-X-CSE-ConnectionGUID: rhxGGFi9RuyasET+Dyyu8Q==
-X-CSE-MsgGUID: 7PZSg75KR3iF05yDhhAWfw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,222,1739865600"; 
-   d="scan'208";a="132046673"
-Received: from dwoodwor-mobl2.amr.corp.intel.com (HELO [10.125.110.182]) ([10.125.110.182])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Apr 2025 09:38:31 -0700
-Message-ID: <e2ef92a1-3f9d-4c03-8528-be4c45449511@intel.com>
-Date: Fri, 18 Apr 2025 09:38:27 -0700
+	s=arc-20240116; t=1744994773; c=relaxed/simple;
+	bh=fH24bE4dwfXOPFlUf+/olVRNCkzpuNpmBABGQPIvUdc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iQTDymcoSAsfiWwpy26/OWd33HxasrVrmgHDSgi+Bg0EP7bMn/y41TlcpBdlHPDm5k91GzV9RVLHvaju4WRwMwpQ4dqiOH56TConFHUnB7zwCtkTgQIQqE14N8aOs/9WpgPlyfCjVN2mfQ8uzUsNxYUNSg15BF9L8ccYiLScZek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=SWy0NpBd; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4252E102E6336;
+	Fri, 18 Apr 2025 18:46:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1744994768; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=tUP8AY3kaYPIAoLu0xw+IYDW6ceng/eKtdbV9czoT1M=;
+	b=SWy0NpBdIgK2+4pIaJiE1CtrBlvf/WGXxAKquwIU8zudlWNfZIywM3zeiU3hmGdL2AQKMS
+	JcvdCu+t6IZpHtk5Fs/vR7NodnMGqj1AMF3T3OfeRgyNaQE8MdRQgAgAofeYv+Qy8IgSSA
+	Ll+aR1H/nonmL8vwHcswqt3sUTbfb9huqsOx4H/juV2fuEAJGlSE+PyBeaWQa+ssZ5nWS5
+	NItKxmuN2doSIYLNxzPXjobEGZRy+FpUamMTmxGS7YEj0ZSzAh1r1tN7TzTlwNkYPnLbJ3
+	CQNzQlAROup4h/5JH0nRn70E9sc7Bz7nMyQtNkctB0oxXyVfqHjucGeUagXZ8A==
+Date: Fri, 18 Apr 2025 18:46:00 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 6.14 000/447] 6.14.3-rc2 review
+Message-ID: <aAKByDU2Ow28fuN8@duo.ucw.cz>
+References: <20250418110423.925580973@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] cxl/feature: Update out_len in set feature failure
- case
-To: Li Ming <ming.li@zohomail.com>, dave@stgolabs.net,
- jonathan.cameron@huawei.com, alison.schofield@intel.com,
- vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250410024521.514095-1-ming.li@zohomail.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250410024521.514095-1-ming.li@zohomail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="AdVqRUXHox3P+QDa"
+Content-Disposition: inline
+In-Reply-To: <20250418110423.925580973@linuxfoundation.org>
+X-Last-TLS-Session-Version: TLSv1.3
 
 
+--AdVqRUXHox3P+QDa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 4/9/25 7:45 PM, Li Ming wrote:
-> CXL subsystem supports userspace to configure features via fwctl
-> interface, it will configure features by using Set Feature command.
-> Whatever Set Feature succeeds or fails, CXL driver always needs to
-> return a structure fwctl_rpc_cxl_out to caller, and returned size is
-> updated in a out_len parameter. The out_len should be updated not only
-> when the set feature succeeds, but also when the set feature fails.
-> 
-> Fixes: eb5dfcb9e36d ("cxl: Add support to handle user feature commands for set feature")
-> Signed-off-by: Li Ming <ming.li@zohomail.com>
-> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+Hi!
 
-Applied to cxl/fixes
+> This is the start of the stable review cycle for the 6.14.3 release.
+> There are 447 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-> ---
-> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8 v6.15-rc1
-> 
-> v3:
-> - Add fixes tag
-> v2:
-> - Adjust changelog
-> ---
->  drivers/cxl/core/features.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cxl/core/features.c b/drivers/cxl/core/features.c
-> index fcc624cefe89..63f24f032209 100644
-> --- a/drivers/cxl/core/features.c
-> +++ b/drivers/cxl/core/features.c
-> @@ -540,13 +540,13 @@ static void *cxlctl_set_feature(struct cxl_features_state *cxlfs,
->  	rc = cxl_set_feature(cxl_mbox, &feat_in->uuid,
->  			     feat_in->version, feat_in->feat_data,
->  			     data_size, flags, offset, &return_code);
-> +	*out_len = sizeof(*rpc_out);
->  	if (rc) {
->  		rpc_out->retval = return_code;
->  		return no_free_ptr(rpc_out);
->  	}
->  
->  	rpc_out->retval = CXL_MBOX_CMD_RC_SUCCESS;
-> -	*out_len = sizeof(*rpc_out);
->  
->  	return no_free_ptr(rpc_out);
->  }
 
+CIP testing did not find any problems here:
+
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.14.y
+
+6.12 and 6.13 pass our testing, too:
+
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.12.y
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.13.y
+
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+
+Best regards,
+                                                                Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--AdVqRUXHox3P+QDa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaAKByAAKCRAw5/Bqldv6
+8iBsAJ9Byb+KM0+bz+3i8J7CHhm8Tf3D6wCgmH2DT3yM0mw/2OhR8XWd9EzFrB8=
+=JsDX
+-----END PGP SIGNATURE-----
+
+--AdVqRUXHox3P+QDa--
 
