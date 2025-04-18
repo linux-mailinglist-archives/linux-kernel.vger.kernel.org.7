@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-610014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C647FA92F2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 03:18:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2241A92F0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 03:10:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B70648A3196
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 01:17:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB115465C0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 01:10:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2DB1632DD;
-	Fri, 18 Apr 2025 01:16:56 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32979335BA;
+	Fri, 18 Apr 2025 01:10:44 +0000 (UTC)
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50AD78F32;
-	Fri, 18 Apr 2025 01:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D508D208A7;
+	Fri, 18 Apr 2025 01:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744939015; cv=none; b=RC7ZZIcnxnX3r8F+3nEsAaiNbJ9TFDt6MDcrxo6IQPzOsoss63qdolgXx5xl38HfoYH0crNFu1Y6vC9kF6FNkeZ1gB92qpS2EeMkIWx0xqBdfLJos9LlIx4PcGEPNmE+kZ3lHzdd+OvvtbVG/KMuBdoWxGglNQeSodBPgLy7heo=
+	t=1744938643; cv=none; b=gR75qVoeMgFlU8PoOcYJs27AJwD9tHHtekSEaJ2ctSulYbWgUXEOkY1FwLd2yfwRFX3KUFibbvTKtN9+ODuyV7lGq+48abtsUTlOIOcP4xPiM1LhITlARV1tquX12pJEjlouoGJ6vhOCct/weJVWYPRa0eNfte+/moCJS0nXu/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744939015; c=relaxed/simple;
-	bh=J5DTBmaMUMn88myuXmQXHIFEYhw/gvxfPajXf5dOIWk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dXQH18DtLjlUnm4EPlabpEKkBqmQFyzlmRARv+kpH+mnUkVCBnKV6njEv2Kq3P8AMZtBwtelTZVezQmK8E3mBL8wYtEqxFxq8jVhFIY6r1piXobSOfmJqW5c+B2UhRlBCd5oUts/vuWcoOxtAPNS0w3O0IZsFLbWNyBlwnYqrwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Zdxg42sZzz4f3jt7;
-	Fri, 18 Apr 2025 09:16:32 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id BEDD01A19CC;
-	Fri, 18 Apr 2025 09:16:50 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgDHK2D8pwFoK5w2Jw--.18201S9;
-	Fri, 18 Apr 2025 09:16:50 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: axboe@kernel.dk,
-	xni@redhat.com,
-	agk@redhat.com,
-	snitzer@kernel.org,
-	mpatocka@redhat.com,
-	song@kernel.org,
-	yukuai3@huawei.com,
-	viro@zeniv.linux.org.uk,
-	akpm@linux-foundation.org,
-	nadav.amit@gmail.com,
-	ubizjak@gmail.com,
-	cl@linux.com
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dm-devel@lists.linux.dev,
-	linux-raid@vger.kernel.org,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	johnny.chenyi@huawei.com
-Subject: [PATCH v2 5/5] md: cleanup accounting for issued sync IO
-Date: Fri, 18 Apr 2025 09:09:41 +0800
-Message-Id: <20250418010941.667138-6-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250418010941.667138-1-yukuai1@huaweicloud.com>
-References: <20250418010941.667138-1-yukuai1@huaweicloud.com>
+	s=arc-20240116; t=1744938643; c=relaxed/simple;
+	bh=Wm3jESX1tSXKrRgd3rN1JaV4baNtzAdeNWIoNwdac84=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Pac6qGQ+ulg9uSpl6a8CQwR5I5TRYzw7hjLTV9P7lid9NCK6rJYJs0CP48QvhUpUQPWTIvVy9cE83RZuT7V8qm4UNr2zNkPM83Y64+9iIbE+zJ4QfOPbxYSaS47g12/vgpT2cKlLoBKSH6ti/TKbkMNflinSLGY/dDvE8BoiysQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43cfdc2c8c9so7815525e9.2;
+        Thu, 17 Apr 2025 18:10:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744938639; x=1745543439;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mV2eRB/9HhN4nfM5WxV5V6je33xWSYCMep3QIWs+pqQ=;
+        b=u4ZweN4gL5s+cliSyQUAKGVbh5lVM1A+IjEZ7AhUxck8m2sEAIT9IFrIikVR2YEAzl
+         jMANP/XvM1CyYTp7xfdM5l68c+4o6aKiOqc+SLQHBPydlKy9zdOsKaP3QXTsjMXnFqvn
+         s5COV5/pWCRp40Bw2ufVydWVLV5a6vB3dbsk7kCSmd+xqnzD7DPm6D5U9J3uutA4H1IY
+         bPnEW4qO4N2C9V0DFgw9yReHd9nOccFIE3cnKrSo3lBmqkmKjnN+1HksdKUgMnOkFmMQ
+         Ay9X9RTUL4DOFh7GxUYFBIlsj4Zd7NeYoQLbQXr8gY4MphSvd2mEpkbgAvTskhXaKFtq
+         j2mA==
+X-Gm-Message-State: AOJu0YzPSE47yrQPXiLL4Esa2RMdso+dHLgX2fSXFbqPCtFP5Suz//K9
+	VTQe4HIm/dC5k5rCJCulyLMIpZJiy/w+isz0LBVNDoP+0r74BIqfDIPvXXLw
+X-Gm-Gg: ASbGnct3rcsADgBh8eNuhWSKW6k1+M9wj/NPonCi4/v+zU8s0jfN81/d4yJGxN4bJBj
+	nW8JxB+tl1F0jFK/jw/1JGaAMz0AV58+v/x1bUZwhinaMdJFZkRRjbfbfad+O4Kys/hdtuyiIhk
+	7VHNqLftdYocSQlW56olT8bXNES/XiqM3vJOmrf/eSbIYSRPbuCBpBvByptaiG+SDSf/cB2qB0H
+	B9FGlSH5NK6CRtq4fhmcImFxs56Vn2D8zQ6BotocgPMOH5J6ZVF8gtkrdkEm+np6VlRIP7Mt1PL
+	yFsvuknXXpWUX86TwxWFkNj1Ud+U0zFGR6ajxc5LmlGklkNKQ92iMQ==
+X-Google-Smtp-Source: AGHT+IFz5jZP9x+SOYZ41gAgzoF64w9L9eHlg2qtqBAU9HBKFrkrVkO8g5qpBsCvyciVmej1pU53tQ==
+X-Received: by 2002:a05:600c:3c9b:b0:43c:ec4c:25b1 with SMTP id 5b1f17b1804b1-4406abfbcd7mr5751055e9.23.1744938639306;
+        Thu, 17 Apr 2025 18:10:39 -0700 (PDT)
+Received: from iss.intel.com ([82.213.226.154])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4406d5acccdsm2605615e9.11.2025.04.17.18.10.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Apr 2025 18:10:38 -0700 (PDT)
+From: Andrew Zaborowski <andrew.zaborowski@intel.com>
+To: linux-nfs@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	balrogg@gmail.com
+Subject: [RFC][PATCH] nfs: Revert "nfs: fix the fetch of FATTR4_OPEN_ARGUMENTS"
+Date: Fri, 18 Apr 2025 03:10:09 +0200
+Message-ID: <20250418011009.1135794-1-andrew.zaborowski@intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,188 +73,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDHK2D8pwFoK5w2Jw--.18201S9
-X-Coremail-Antispam: 1UD129KBjvJXoW3Ww13JrWrJF4fKFy8uw18uFg_yoW7Zw1Upa
-	9xXa4xAFWUGrWF93WDJrWqk3ZY9347KrW7ArW7u393u3WFyryDZF1UJFWYqF98AFy5urW5
-	Xa4kGan8CFs7tFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmS14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
-	bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI
-	42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF
-	4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBI
-	daVFxhVjvjDU0xZFpf9x0pRQJ5wUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-From: Yu Kuai <yukuai3@huawei.com>
+This mainly reverts commit cb78f9b7d0c0c9f86d8c0ac9c46b8b684d8785a9
+which added the requesting of FATTR4_OPEN_ARGUMENTS through
+GETATTR_BITMAP to the get server capabilities sequence whenever protocol
+version is 4.1 or higher.  This attribute was apparently defined in
+RFC9754 as an extension to v4.2, never valid in v4.1, but it is neither
+valid for use in OP_GETATTR.  As far as I understand, the client is
+supposed to detect support for FATTR4_OPEN_ARGUMENTS using
+FATTR4_SUPPORTED_ATTRS only.
 
-It's no longer used and can be removed, also remove the field
-'gendisk->sync_io'.
+In effect this seemed to break v4.1 client, server would return error to
+this request.
 
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+While there, remove the unneeded initialization of bitmask[0] which is
+soon overwritten.  The initialization was added in commit 707f13b3d081
+which cb78f9b7d0c0 purported to fix.
+
+Signed-off-by: Andrew Zaborowski <andrew.zaborowski@intel.com>
 ---
- drivers/md/md.h        | 11 -----------
- drivers/md/raid1.c     |  3 ---
- drivers/md/raid10.c    |  9 ---------
- drivers/md/raid5.c     |  8 --------
- include/linux/blkdev.h |  1 -
- 5 files changed, 32 deletions(-)
+ fs/nfs/nfs4proc.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/md/md.h b/drivers/md/md.h
-index 1d51c2405d3d..07b40a55ed5f 100644
---- a/drivers/md/md.h
-+++ b/drivers/md/md.h
-@@ -717,17 +717,6 @@ static inline int mddev_trylock(struct mddev *mddev)
- }
- extern void mddev_unlock(struct mddev *mddev);
- 
--static inline void md_sync_acct(struct block_device *bdev, unsigned long nr_sectors)
--{
--	if (blk_queue_io_stat(bdev->bd_disk->queue))
--		atomic_add(nr_sectors, &bdev->bd_disk->sync_io);
--}
--
--static inline void md_sync_acct_bio(struct bio *bio, unsigned long nr_sectors)
--{
--	md_sync_acct(bio->bi_bdev, nr_sectors);
--}
--
- struct md_personality
+diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+index 970f28dbf253..3003f78e8764 100644
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -3943,9 +3943,7 @@ static bool nfs4_server_delegtime_capable(struct nfs4_server_caps_res *res)
+ static int _nfs4_server_capabilities(struct nfs_server *server, struct nfs_fh *fhandle)
  {
- 	struct md_submodule_head head;
-diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-index de9bccbe7337..657d481525be 100644
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -2382,7 +2382,6 @@ static void sync_request_write(struct mddev *mddev, struct r1bio *r1_bio)
+ 	u32 minorversion = server->nfs_client->cl_minorversion;
+-	u32 bitmask[3] = {
+-		[0] = FATTR4_WORD0_SUPPORTED_ATTRS,
+-	};
++	u32 bitmask[3] = {};
+ 	struct nfs4_server_caps_arg args = {
+ 		.fhandle = fhandle,
+ 		.bitmask = bitmask,
+@@ -3967,8 +3965,7 @@ static int _nfs4_server_capabilities(struct nfs_server *server, struct nfs_fh *f
+ 		     FATTR4_WORD0_CASE_INSENSITIVE |
+ 		     FATTR4_WORD0_CASE_PRESERVING;
+ 	if (minorversion)
+-		bitmask[2] = FATTR4_WORD2_SUPPATTR_EXCLCREAT |
+-			     FATTR4_WORD2_OPEN_ARGUMENTS;
++		bitmask[2] = FATTR4_WORD2_SUPPATTR_EXCLCREAT;
  
- 		wbio->bi_end_io = end_sync_write;
- 		atomic_inc(&r1_bio->remaining);
--		md_sync_acct(conf->mirrors[i].rdev->bdev, bio_sectors(wbio));
- 
- 		submit_bio_noacct(wbio);
- 	}
-@@ -3055,7 +3054,6 @@ static sector_t raid1_sync_request(struct mddev *mddev, sector_t sector_nr,
- 			bio = r1_bio->bios[i];
- 			if (bio->bi_end_io == end_sync_read) {
- 				read_targets--;
--				md_sync_acct_bio(bio, nr_sectors);
- 				if (read_targets == 1)
- 					bio->bi_opf &= ~MD_FAILFAST;
- 				submit_bio_noacct(bio);
-@@ -3064,7 +3062,6 @@ static sector_t raid1_sync_request(struct mddev *mddev, sector_t sector_nr,
- 	} else {
- 		atomic_set(&r1_bio->remaining, 1);
- 		bio = r1_bio->bios[r1_bio->read_disk];
--		md_sync_acct_bio(bio, nr_sectors);
- 		if (read_targets == 1)
- 			bio->bi_opf &= ~MD_FAILFAST;
- 		submit_bio_noacct(bio);
-diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-index ba32bac975b8..dce06bf65016 100644
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -2426,7 +2426,6 @@ static void sync_request_write(struct mddev *mddev, struct r10bio *r10_bio)
- 
- 		atomic_inc(&conf->mirrors[d].rdev->nr_pending);
- 		atomic_inc(&r10_bio->remaining);
--		md_sync_acct(conf->mirrors[d].rdev->bdev, bio_sectors(tbio));
- 
- 		if (test_bit(FailFast, &conf->mirrors[d].rdev->flags))
- 			tbio->bi_opf |= MD_FAILFAST;
-@@ -2448,8 +2447,6 @@ static void sync_request_write(struct mddev *mddev, struct r10bio *r10_bio)
- 			bio_copy_data(tbio, fbio);
- 		d = r10_bio->devs[i].devnum;
- 		atomic_inc(&r10_bio->remaining);
--		md_sync_acct(conf->mirrors[d].replacement->bdev,
--			     bio_sectors(tbio));
- 		submit_bio_noacct(tbio);
- 	}
- 
-@@ -2583,13 +2580,10 @@ static void recovery_request_write(struct mddev *mddev, struct r10bio *r10_bio)
- 	d = r10_bio->devs[1].devnum;
- 	if (wbio->bi_end_io) {
- 		atomic_inc(&conf->mirrors[d].rdev->nr_pending);
--		md_sync_acct(conf->mirrors[d].rdev->bdev, bio_sectors(wbio));
- 		submit_bio_noacct(wbio);
- 	}
- 	if (wbio2) {
- 		atomic_inc(&conf->mirrors[d].replacement->nr_pending);
--		md_sync_acct(conf->mirrors[d].replacement->bdev,
--			     bio_sectors(wbio2));
- 		submit_bio_noacct(wbio2);
- 	}
- }
-@@ -3757,7 +3751,6 @@ static sector_t raid10_sync_request(struct mddev *mddev, sector_t sector_nr,
- 		r10_bio->sectors = nr_sectors;
- 
- 		if (bio->bi_end_io == end_sync_read) {
--			md_sync_acct_bio(bio, nr_sectors);
- 			bio->bi_status = 0;
- 			submit_bio_noacct(bio);
- 		}
-@@ -4880,7 +4873,6 @@ static sector_t reshape_request(struct mddev *mddev, sector_t sector_nr,
- 	r10_bio->sectors = nr_sectors;
- 
- 	/* Now submit the read */
--	md_sync_acct_bio(read_bio, r10_bio->sectors);
- 	atomic_inc(&r10_bio->remaining);
- 	read_bio->bi_next = NULL;
- 	submit_bio_noacct(read_bio);
-@@ -4940,7 +4932,6 @@ static void reshape_request_write(struct mddev *mddev, struct r10bio *r10_bio)
- 			continue;
- 
- 		atomic_inc(&rdev->nr_pending);
--		md_sync_acct_bio(b, r10_bio->sectors);
- 		atomic_inc(&r10_bio->remaining);
- 		b->bi_next = NULL;
- 		submit_bio_noacct(b);
-diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
-index 6389383166c0..ca5b0e8ba707 100644
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -1240,10 +1240,6 @@ static void ops_run_io(struct stripe_head *sh, struct stripe_head_state *s)
- 		}
- 
- 		if (rdev) {
--			if (s->syncing || s->expanding || s->expanded
--			    || s->replacing)
--				md_sync_acct(rdev->bdev, RAID5_STRIPE_SECTORS(conf));
--
- 			set_bit(STRIPE_IO_STARTED, &sh->state);
- 
- 			bio_init(bi, rdev->bdev, &dev->vec, 1, op | op_flags);
-@@ -1300,10 +1296,6 @@ static void ops_run_io(struct stripe_head *sh, struct stripe_head_state *s)
- 				submit_bio_noacct(bi);
- 		}
- 		if (rrdev) {
--			if (s->syncing || s->expanding || s->expanded
--			    || s->replacing)
--				md_sync_acct(rrdev->bdev, RAID5_STRIPE_SECTORS(conf));
--
- 			set_bit(STRIPE_IO_STARTED, &sh->state);
- 
- 			bio_init(rbi, rrdev->bdev, &dev->rvec, 1, op | op_flags);
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index e39c45bc0a97..f3a625b00734 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -182,7 +182,6 @@ struct gendisk {
- 	struct list_head slave_bdevs;
- #endif
- 	struct timer_rand_state *random;
--	atomic_t sync_io;		/* RAID */
- 	struct disk_events *ev;
- 
- #ifdef CONFIG_BLK_DEV_ZONED
+ 	status = nfs4_call_sync(server->client, server, &msg, &args.seq_args, &res.seq_res, 0);
+ 	if (status == 0) {
 -- 
-2.39.2
+2.47.1
 
 
