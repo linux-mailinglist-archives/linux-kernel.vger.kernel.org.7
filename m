@@ -1,151 +1,135 @@
-Return-Path: <linux-kernel+bounces-610242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77F82A93231
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 08:44:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93102A93228
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 08:37:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CA3E462F9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 06:44:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D14E1B66E16
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 06:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 204952698A2;
-	Fri, 18 Apr 2025 06:44:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C368269880;
+	Fri, 18 Apr 2025 06:37:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0IfBuvu4";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mwp4jAzo"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GsVx85DA";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Dsh66z6h"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0604E268C5D;
-	Fri, 18 Apr 2025 06:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12801269801;
+	Fri, 18 Apr 2025 06:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744958670; cv=none; b=X5r9hlpK4m8+8aXX8QOML0PL01/gSnAvXIzmp67/+ilMNaI+Au9pI/+pTrEAg+GaynANMYnE6cjLiO5IAWpvue3NNcb+pLtHZP9IM0/cD1A2khy0aRdMvDsoFbwqfDwmR8rL84KWqQ8D1xQ9KvJm+9jFPsWYyTHqGOSx4NI3ufs=
+	t=1744958260; cv=none; b=BsDNaeZZaC2XcH9K6BNk1lFmOF/5NPl6L1vIEZfI/7PdoRl42E9oD0bGS06kUNkKnwj207UhtVxQLTWZw7cThXG+SRv811x6vs3F+brMsb2tPl0/5WIQzZ5BQlfVkdplVgn0rwY9cVNeSOYAU2NTsFMletYR3SyDJSWPLTvMMOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744958670; c=relaxed/simple;
-	bh=xFjwdh5zXJsl4jdplxYeKbRKXf0sjx7mjLgO9ma1Dbc=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=NFgoHCeMaHpLiPB3dTFbcPAa5oBWEkwzH09IZ8QpoPZrYJb5EWZJ0Ho+cjS+uhLWWpzZKAWzm2mvipW/f6Pc1i3rr14klBOEXr5bNGX1QTxb6rTEfh1VGab3eF4o6etTpYhoLwh9edcPxj0Pl/JLfH0g9S1e8oLEQQhueBLH36c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0IfBuvu4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mwp4jAzo; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1744958260; c=relaxed/simple;
+	bh=0aBynvLXG7RFAuhSAB7nkyhz3bwLN7OMHNJoYY+pKY0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=dG6scDpIf9RiORu54hVACJKh03Jvf8ETngEPBN3vhTwWYICJCN0ZEWavggG2kY7IKp8BFZn6Wdl7NfylD4ffSS3ShQ9pgD5s6rxvKOpMz8mrumDmBlAF2fkzSIE6Y6B+KDul4N278Qje3y60dxi4mMKtVu1DwLf4SO+4cYREosg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GsVx85DA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Dsh66z6h; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 18 Apr 2025 06:36:19 -0000
+From: Thomas Gleixner <tglx@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744958185;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
+	s=2020; t=1744958257;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=BvUR9r0Nx9ybqwkRq9Dm8Rrk5uvOYBOtpGL96xkz9h0=;
-	b=0IfBuvu4Dr+cUnfFf3dFvdHx7BEyUprRF+1L7Q7BQv5GwIre5Cc4rB2ORY8G47FaFDqw1I
-	nmgTURFxwrUaA/kUZS40r/zGImF9UlPz6zY2gnNhC9FNn1VUR2Q/JBxh5f8tVaA69gLt8t
-	j2RZwlVIRuS81Dx0A0KeAdp3F081JKUeNurVo8xWon16+xHbtTPOwwAy9s5ZthtkoyG58g
-	JTLFPgf24UfxSyFL8lej2W05Zga+tgDxZMnjIhN03y6TM2jI7LAVHIEwKwNq4N7t7fcU2G
-	G1DCIEUswp/EZkUi7St9LK4nGDDVdx71qQXi25RUjkKbnZ+uJ786wLObb//9JQ==
+	bh=wPPChowSmI742MDoycbATSJM4vPswT2WvPmIjq0t7Ik=;
+	b=GsVx85DA+WxqGAi+60Q+e8FtM1t2J8aJCRc//BBw2pJxfuKRbnXVl6DkpNzhFq6o8Qx4+m
+	vg+mN461NZGFa0BMQ7BvdZSlWsqrPmRLddgTUV6BFEL8bXn5jNbMlBGNJfT9uqUmRqdWDF
+	md3/tF3EgmIL1+To4vwoJZrCymn1y2AiwDTevCtGo0x/zcn34MTvJjHSstn1M4lS1hHqLp
+	4x3mrYXFZBThydOzFUOQ/eYxzbBDViwsMabrcOUlO57tLPSXFfSsEsXWBa3jeuWB/RCAtE
+	C4sgIIKYbrZPVM2qFsnnSY7nOAUPsGfoEp2cwYUvntF9H6fW+AD5bBqCnDe2Vw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744958185;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
+	s=2020e; t=1744958257;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=BvUR9r0Nx9ybqwkRq9Dm8Rrk5uvOYBOtpGL96xkz9h0=;
-	b=mwp4jAzobfHwc1Y4c7BP3rlZopVieA0j5oLUpWucun5ORBP0KLIDdTWYoLmBVG7919cVpz
-	9uzBnCkEzTLL3gDQ==
-From: "tip-bot2 for Sandipan Das" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/cpu/amd: Fix workaround for erratum 1054
-Cc: Sandipan Das <sandipan.das@amd.com>, Ingo Molnar <mingo@kernel.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: =?utf-8?q?=3Ccaa057a9d6f8ad579e2f1abaa71efbd5bd4eaf6d=2E17449?=
- =?utf-8?q?56467=2Egit=2Esandipan=2Edas=40amd=2Ecom=3E?=
-References: =?utf-8?q?=3Ccaa057a9d6f8ad579e2f1abaa71efbd5bd4eaf6d=2E174495?=
- =?utf-8?q?6467=2Egit=2Esandipan=2Edas=40amd=2Ecom=3E?=
+	bh=wPPChowSmI742MDoycbATSJM4vPswT2WvPmIjq0t7Ik=;
+	b=Dsh66z6hmGNwSnPQOmSj+XpMcABwG6e2vMhU5wPIlb8TCZgzgrpubZOod5i93rTbQXA9+n
+	qThs4ATOuuV5yxDA==
+To: John Stultz <jstultz@google.com>
+Cc: Miroslav Lichvar <mlichvar@redhat.com>, LKML
+ <linux-kernel@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
+ <frederic@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ linux-kselftest@vger.kernel.org, kernel-team@android.com, Lei Chen
+ <lei.chen@smartx.com>
+Subject: Re: [PATCH] timekeeping: Prevent coarse clocks going backwards
+In-Reply-To: <CANDhNCrUhZktW=_h9YTZndmyHwe9YbUMG6uVYaEuQyuKsG4AEg@mail.gmail.com>
+References: <20250320200306.1712599-1-jstultz@google.com>
+ <Z-KURRE_Gr72Xv_n@localhost> <874izezv3c.ffs@tglx>
+ <Z-Vx8kV4M3khPknC@localhost> <Z-qsg6iDGlcIJulJ@localhost>
+ <87o6xgwftc.ffs@tglx> <Z-vL3cVZuQ8XQXhG@localhost> <87iknnwxa4.ffs@tglx>
+ <Z-5HlSUEh1xgCi4f@localhost> <877c41wkis.ffs@tglx> <87h632wals.ffs@tglx>
+ <CANDhNCrUhZktW=_h9YTZndmyHwe9YbUMG6uVYaEuQyuKsG4AEg@mail.gmail.com>
+Date: Fri, 18 Apr 2025 08:37:36 +0200
+Message-ID: <87tt6mq8jz.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174495817953.31282.5641497960291856424.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the x86/urgent branch of tip:
+On Thu, Apr 17 2025 at 17:46, John Stultz wrote:
+> On Sat, Apr 5, 2025 at 2:40=E2=80=AFPM Thomas Gleixner <tglx@linutronix.d=
+e> wrote:
+>> @@ -1831,6 +1847,8 @@ void timekeeping_resume(void)
+>>         /* Re-base the last cycle value */
+>>         tks->tkr_mono.cycle_last =3D cycle_now;
+>>         tks->tkr_raw.cycle_last  =3D cycle_now;
+>> +       /* Reset the offset for the coarse time getters */
+>> +       tks->coarse_nsec =3D 0;
+>>
+>>         tks->ntp_error =3D 0;
+>>         timekeeping_suspended =3D 0;
+>
+>
+> So using the clocksource-switch test in kselftest, I can pretty easily
+> hit inconsistencies with this.
+>
+> The reason is since we use the coarse_nsec as the nanosecond portion
+> of the coarse clockids, I don't think we ever want to set it to zero,
+> as whenever we do so, we lose the previous contents and cause the
+> coarse time to jump back.
 
-Commit-ID:     f4efdb357680bef4584faedbd44b90cd53d3245f
-Gitweb:        https://git.kernel.org/tip/f4efdb357680bef4584faedbd44b90cd53d3245f
-Author:        Sandipan Das <sandipan.das@amd.com>
-AuthorDate:    Fri, 18 Apr 2025 11:49:40 +05:30
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 18 Apr 2025 08:31:07 +02:00
+Bah. Obviously. What was I thinking?
 
-x86/cpu/amd: Fix workaround for erratum 1054
+> It seems more likely that we'd want to do something similar to
+> tk_update_coarse_nsecs() filling it in with the shifted down
+> tk->tkr_mono.xtime_nsec.
 
-Erratum 1054 affects AMD Zen processors that are a part of Family 17h
-Models 00-2Fh and the workaround is to not set HWCR[IRPerfEn]. However,
-when X86_FEATURE_ZEN1 was introduced, the condition to detect unaffected
-processors was incorrectly changed in a way that the IRPerfEn bit gets
-set only for unaffected Zen 1 processors.
+Indeed. The earlier approach of handing the offset to
+timekeeping_update_from_shadow() was exactly doing that. I dropped that
+because of the uglyness vs. the TAI update case in adjtimex().
 
-Ensure that HWCR[IRPerfEn] is set for all unaffected processors. This
-includes a subset of Zen 1 (Family 17h Models 30h and above) and all
-later processors. Also clear X86_FEATURE_IRPERF on affected processors
-so that the IRPerfCount register is not used by other entities like the
-MSR PMU driver.
+>> +static inline void tk_update_coarse_nsecs(struct timekeeper *tk, u64 of=
+fset)
+>> +{
+>> +       offset *=3D tk->tkr_mono.mult;
+>> +       tk->coarse_nsec =3D (tk->tkr_mono.xtime_nsec + offset) >> tk->tk=
+r_mono.shift;
+>> +}
+>
+> Thinking more on this, I get that you're providing the offset to save
+> the "at the point" time into the coarse value, but I think this ends
+> up complicating things.
+>
+> Instead it seems like we should just do:
+>   tk->coarse_nsec =3D tk->tkr_mono.xtime_nsec >> tk->tkr_mono.shift;
 
-Fixes: 232afb557835 ("x86/CPU/AMD: Add X86_FEATURE_ZEN1")
-Signed-off-by: Sandipan Das <sandipan.das@amd.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lore.kernel.org/r/caa057a9d6f8ad579e2f1abaa71efbd5bd4eaf6d.1744956467.git.sandipan.das@amd.com
----
- arch/x86/kernel/cpu/amd.c | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+You end up with the same problem again because xtime_nsec can move
+backwards when the multiplier is updated, no?
 
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index a839ff5..2b36379 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -869,6 +869,16 @@ static void init_amd_zen1(struct cpuinfo_x86 *c)
- 
- 	pr_notice_once("AMD Zen1 DIV0 bug detected. Disable SMT for full protection.\n");
- 	setup_force_cpu_bug(X86_BUG_DIV0);
-+
-+	/*
-+	 * Turn off the Instructions Retired free counter on machines that are
-+	 * susceptible to erratum #1054 "Instructions Retired Performance
-+	 * Counter May Be Inaccurate".
-+	 */
-+	if (c->x86_model < 0x30) {
-+		msr_clear_bit(MSR_K7_HWCR, MSR_K7_HWCR_IRPERF_EN_BIT);
-+		clear_cpu_cap(c, X86_FEATURE_IRPERF);
-+	}
- }
- 
- static bool cpu_has_zenbleed_microcode(void)
-@@ -1052,13 +1062,8 @@ static void init_amd(struct cpuinfo_x86 *c)
- 	if (!cpu_feature_enabled(X86_FEATURE_XENPV))
- 		set_cpu_bug(c, X86_BUG_SYSRET_SS_ATTRS);
- 
--	/*
--	 * Turn on the Instructions Retired free counter on machines not
--	 * susceptible to erratum #1054 "Instructions Retired Performance
--	 * Counter May Be Inaccurate".
--	 */
--	if (cpu_has(c, X86_FEATURE_IRPERF) &&
--	    (boot_cpu_has(X86_FEATURE_ZEN1) && c->x86_model > 0x2f))
-+	/* Enable the Instructions Retired free counter */
-+	if (cpu_has(c, X86_FEATURE_IRPERF))
- 		msr_set_bit(MSR_K7_HWCR, MSR_K7_HWCR_IRPERF_EN_BIT);
- 
- 	check_null_seg_clears_base(c);
+Thanks,
+
+        tglx
 
