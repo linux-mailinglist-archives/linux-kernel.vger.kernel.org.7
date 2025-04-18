@@ -1,109 +1,139 @@
-Return-Path: <linux-kernel+bounces-610078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74AB6A93005
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 04:36:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAD54A93012
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 04:39:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5750188EB30
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 02:36:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FFFD7B13EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 02:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D64C770E2;
-	Fri, 18 Apr 2025 02:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB9B267B9B;
+	Fri, 18 Apr 2025 02:39:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="aaTqAWJ4"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sze9aXEi"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B2D1C84A0
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 02:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926F72673AF
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 02:38:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744943790; cv=none; b=VRbl6UBdGVc3UcGVT6jrL6la/gbTCpPtvJtvBoqT0ipzqdGCJF9wVZXj378AW96QE8qU3+rQS7CLBVDTQkRrLwbV9EZ2J0XpylSblqj26vVsClL9lWCPnQoi0GuShl0QadyTAFKug9xKo4WHIWmK7JLGf45OgHlspZtsDPH38zo=
+	t=1744943940; cv=none; b=U3LdIwwwOFWkgdxmJKMzN0uhWXio/0AsdWjAyGj68qg+coANNZcg2elbO5sTrGWSsnzZcMYLiZ18vQ6IHaLUh+LY+rJPEE35y702XWHRWnTd+6ObERe6CyR2h2ZUfuYYhuKtp4gllihQDnIepKyQknoyGRQ9HtPmbrABPD61+Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744943790; c=relaxed/simple;
-	bh=FTl7Q5XRnGG/z7yA2jnIcdaCMVMzFKXY7SOCzfxworo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X//YFC/LKIOaXF/CpnJPGtBJvEXViLTbTXB4rmpms8rlFJfV0PeH9ViL2R7Hhg2CkNY7x+TQ+HgAwrchnRS0WcDaiTcVeg9+kyF8QGee1IIsuoFyPwM4DNKpuUoDNAClx4IjN+5bzN4LxoSNllaGIoyVEg7q7FfhQM/t/ZOrwJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=aaTqAWJ4; arc=none smtp.client-ip=91.218.175.182
+	s=arc-20240116; t=1744943940; c=relaxed/simple;
+	bh=qV1odNb6L0lGUDLMPzAp+dLpmFc6+O5QpFjH5I0hzos=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=bi8qKsAud1HvRKZsu9AhEfCVwdFFzWv4KQWK1lmIRdHGAXlfGoG0qpfbFN/zWLEF4qKDl/I0/d+d5SAiHFvqSS1Qd5Yw8FD76/OWpJsENwCXsawGek7whYoDhvso4sqzvtU22x3LwDF0Zv6C/vqXfkATbQvMLhqZr4QvVEOOsdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sze9aXEi; arc=none smtp.client-ip=95.215.58.189
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <cf8e2dba-83dd-4ad3-b98d-2e463ea569d9@linux.dev>
+Content-Type: text/plain;
+	charset=us-ascii
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1744943775;
+	t=1744943935;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=pbE8PCxj37IlfzeB23r98u0SEU9TacNSUq2UwVU1+Ag=;
-	b=aaTqAWJ4vWMSW3JKJLdxB+V6toZe5COJtDrFrTe3YygJoTCx+cj8cFUMAZxFSQa0VdkWaG
-	mOGyXLvF1+F/KnTGW10tDstqV04gRCIoK76cl2pcDZmw6SOQkrAKqbchj65/FIr6YdDkMN
-	gZl4IdXmdFc2lbgbELuxvI/JHf414V0=
-Date: Fri, 18 Apr 2025 10:36:03 +0800
+	bh=3T5feFtMm9osiqs4YoVP8jsIW7MLQcBFz0h+GbzCeOU=;
+	b=sze9aXEi7pXJRNYM0HR3oAbpsg50yYWuYiYEjWnQFJglSUh3bULKkNzrb6DIRlm1WdF8JT
+	P3BA5uj0f0oiW0FLFQl5Qkq+0GSOa0MSLfF6D6gffcOl1bYRz4Sy3QWuP4MNmi/ZJPrP6t
+	nW1+WXYjbeEqYSIKeFlEDUqE0jCkyxc=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH RFC 21/28] mm: zswap: prevent lruvec release in
- zswap_folio_swapin()
-To: Muchun Song <songmuchun@bytedance.com>, hannes@cmpxchg.org,
- mhocko@kernel.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev,
- muchun.song@linux.dev, akpm@linux-foundation.org, david@fromorbit.com,
- zhengqi.arch@bytedance.com, yosry.ahmed@linux.dev, nphamcs@gmail.com
-Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
- linux-mm@kvack.org, hamzamahfooz@linux.microsoft.com,
- apais@linux.microsoft.com
-References: <20250415024532.26632-1-songmuchun@bytedance.com>
- <20250415024532.26632-22-songmuchun@bytedance.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
+Subject: Re: [PATCH RFC 02/28] mm: memcontrol: use folio_memcg_charged() to
+ avoid potential rcu lock holding
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Chengming Zhou <chengming.zhou@linux.dev>
-In-Reply-To: <20250415024532.26632-22-songmuchun@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Muchun Song <muchun.song@linux.dev>
+In-Reply-To: <20250417144835.GE780688@cmpxchg.org>
+Date: Fri, 18 Apr 2025 10:38:10 +0800
+Cc: Muchun Song <songmuchun@bytedance.com>,
+ mhocko@kernel.org,
+ roman.gushchin@linux.dev,
+ shakeel.butt@linux.dev,
+ akpm@linux-foundation.org,
+ david@fromorbit.com,
+ zhengqi.arch@bytedance.com,
+ yosry.ahmed@linux.dev,
+ nphamcs@gmail.com,
+ chengming.zhou@linux.dev,
+ linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org,
+ linux-mm@kvack.org,
+ hamzamahfooz@linux.microsoft.com,
+ apais@linux.microsoft.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <CD857422-95FD-477D-809A-C7ED0780E188@linux.dev>
+References: <20250415024532.26632-1-songmuchun@bytedance.com>
+ <20250415024532.26632-3-songmuchun@bytedance.com>
+ <20250417144835.GE780688@cmpxchg.org>
+To: Johannes Weiner <hannes@cmpxchg.org>
 X-Migadu-Flow: FLOW_OUT
 
-On 2025/4/15 10:45, Muchun Song wrote:
-> In the near future, a folio will no longer pin its corresponding
-> memory cgroup. So an lruvec returned by folio_lruvec() could be
-> released without the rcu read lock or a reference to its memory
-> cgroup.
-> 
-> In the current patch, the rcu read lock is employed to safeguard
-> against the release of the lruvec in zswap_folio_swapin().
-> 
-> This serves as a preparatory measure for the reparenting of the
-> LRU pages.
-> 
-> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
 
-It should be rare to race with folio reparenting process, so
-it seems ok not to "reparent" this counter "nr_disk_swapins".
 
-Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
+> On Apr 17, 2025, at 22:48, Johannes Weiner <hannes@cmpxchg.org> wrote:
+>=20
+> On Tue, Apr 15, 2025 at 10:45:06AM +0800, Muchun Song wrote:
+>> If a folio isn't charged to the memory cgroup, holding an rcu read =
+lock
+>> is needless. Users only want to know its charge status, so use
+>> folio_memcg_charged() here.
+>>=20
+>> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+>> ---
+>> mm/memcontrol.c | 11 ++++-------
+>> 1 file changed, 4 insertions(+), 7 deletions(-)
+>>=20
+>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+>> index 61488e45cab2..0fc76d50bc23 100644
+>> --- a/mm/memcontrol.c
+>> +++ b/mm/memcontrol.c
+>> @@ -797,20 +797,17 @@ void __mod_lruvec_state(struct lruvec *lruvec, =
+enum node_stat_item idx,
+>> void __lruvec_stat_mod_folio(struct folio *folio, enum node_stat_item =
+idx,
+>>      int val)
+>> {
+>> - 	struct mem_cgroup *memcg;
+>> 	pg_data_t *pgdat =3D folio_pgdat(folio);
+>> 	struct lruvec *lruvec;
+>>=20
+>> - 	rcu_read_lock();
+>> - 	memcg =3D folio_memcg(folio);
+>> - 	/* Untracked pages have no memcg, no lruvec. Update only the =
+node */
+>> - 	if (!memcg) {
+>> - 		rcu_read_unlock();
+>> + 	if (!folio_memcg_charged(folio)) {
+>> + 		/* Untracked pages have no memcg, no lruvec. Update only =
+the node */
+>> 		__mod_node_page_state(pgdat, idx, val);
+>> 		return;
+>> 	}
+>>=20
+>> - 	lruvec =3D mem_cgroup_lruvec(memcg, pgdat);
+>> + 	rcu_read_lock();
+>> + 	lruvec =3D mem_cgroup_lruvec(folio_memcg(folio), pgdat);
+>> 	__mod_lruvec_state(lruvec, idx, val);
+>> 	rcu_read_unlock();
+>=20
+> Hm, but untracked pages are the rare exception. It would seem better
+> for that case to take the rcu_read_lock() unnecessarily, than it is to
+> look up folio->memcg_data twice in the fast path?
 
+Yep, you are right. I'll drop this next version. Thanks.
+
+Muchun,
 Thanks.
 
-> ---
->   mm/zswap.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/mm/zswap.c b/mm/zswap.c
-> index 204fb59da33c..4a41c2371f3d 100644
-> --- a/mm/zswap.c
-> +++ b/mm/zswap.c
-> @@ -752,8 +752,10 @@ void zswap_folio_swapin(struct folio *folio)
->   	struct lruvec *lruvec;
->   
->   	if (folio) {
-> +		rcu_read_lock();
->   		lruvec = folio_lruvec(folio);
->   		atomic_long_inc(&lruvec->zswap_lruvec_state.nr_disk_swapins);
-> +		rcu_read_unlock();
->   	}
->   }
->   
+
+
 
