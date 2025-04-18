@@ -1,171 +1,88 @@
-Return-Path: <linux-kernel+bounces-610117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3408A930B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 05:14:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FA8FA930AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 05:12:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E65C7ABD52
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 03:13:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 129127AEBFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 03:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AEC8267F62;
-	Fri, 18 Apr 2025 03:14:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B43267F79;
+	Fri, 18 Apr 2025 03:12:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S7rzM1A+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="lB9E6cNu"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF2B267B61
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 03:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38404267F61;
+	Fri, 18 Apr 2025 03:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744946059; cv=none; b=NSZXduyekUS6OjVHPgNY5xRG22brUihiZ/OruSt2HMV121S5wC8EgaVHWHgmaLitYSduoeFkf+f+GMaburIc7I6F9Ne9tAez9+FKdKOyeqqGxRYA4KAtnp/+ESyD3f82ITy8G+/BtOnfNVn2eg+6qXkAQM3LuPhBJ0nnPZw45os=
+	t=1744945959; cv=none; b=rcEfor8l243IPoXY+mexYEFAVOfOIHFU9HEaQ3wOW/QadOTms6nB4HoZ3rpGBN/Zjzamj0p8JTzPV64FjkWs9I6DRIUjlGQmWzURKv2Nes61/b8zcbei6ZJk6R3h5FJlcX5NgGN41ez1sySpydX4CP4Zyt4kXzj4Y2rf9c37Cdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744946059; c=relaxed/simple;
-	bh=uDfQLr4ARvAlEOQ1dy/LniGonsGL72LeFkxn78P1KxU=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=TgPP2HkGtvN/qpjsZ9UEfzvl9c2M2nlq7IMJgKCaYAhOpp4QihjjGDsdoLbn37NLgF5uRwbHf1YWmT5tbI9q+qQZ4JlR+u3rG5FetIBaGaHuetauyLrjWdRGgKRHMFqIvCgQHzZ7SGanDqHqv8m2KVVfDUyVqYLvZ+rlXQ3fs1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S7rzM1A+; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744946058; x=1776482058;
-  h=message-id:date:mime-version:subject:from:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=uDfQLr4ARvAlEOQ1dy/LniGonsGL72LeFkxn78P1KxU=;
-  b=S7rzM1A+2jPsXjpa3FwkqihXOw4WqdmhVztPH4XbaG+7yMGIm7I+UBbj
-   1VyXDNvg8qWxvvlVghwkYLwNdS9hZI2bXRExTq9aDE3cN0ii59q53Y0DF
-   KJDv9mUwSqfcGB0mQryED9jzpjtKdcBBSEhBj/MUu1dYkauy9snDNJ6hV
-   pHd3utqYfHp7F6SDz7O1eYZsNVvZxdYJPRr8I2tQ4gpoEOjU2UlQoFm2V
-   2TFjLpJYK0YFmR8GUHrNVHOHHSdvWGtAkfoQfi87ZJ+XJ/ZrtppHPD04O
-   4qUjEjBRF+6onr0T0iPgwI37ZmW3s/ViGU2cS9HzV9lg/MJgUX/cb6gZd
-   g==;
-X-CSE-ConnectionGUID: dw1S/KQOQOWvVqHuG4j+hw==
-X-CSE-MsgGUID: YNXBrbeUTeuCzMbMx4k1Yw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11406"; a="34188835"
-X-IronPort-AV: E=Sophos;i="6.15,221,1739865600"; 
-   d="scan'208";a="34188835"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2025 20:14:17 -0700
-X-CSE-ConnectionGUID: H58/4Er8TIi83gnb7xE0ow==
-X-CSE-MsgGUID: 0GRdEfFzRzuQl+FBTCWEIg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,221,1739865600"; 
-   d="scan'208";a="136176956"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2025 20:14:15 -0700
-Message-ID: <80df27f5-19f1-48a1-9db5-c29a85d4bb11@linux.intel.com>
-Date: Fri, 18 Apr 2025 11:10:09 +0800
+	s=arc-20240116; t=1744945959; c=relaxed/simple;
+	bh=4ex6FyLQ/Vb/QweVloEYl+7EtT2oyd+yA46KuHB2smE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=koJz5oBSKEUxhxT/MBiq/O8JKjA4WLneV0v9svdGtjFP8/URFxt3Gz/MwZPFh1uoj1yzrhRmkKkG9mL1T7XjGVpWBLHInWaZkXlXqQ3Kd/M5sOc2znaoOYFeGmDWcar3R6zzAHqcO6GiGjzeg+AjtO6yPAvAdAsKvg7IUCZUeqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=lB9E6cNu; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:Message-ID:Subject:Cc:To:
+	From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=qq3IJ8JynJU7O/u61XzBFurm3qauuCX8QJaB8lmSmMc=; b=lB9E6cNuSpcyi+wIu4AqMWeil0
+	alzcTCb8M0sQjC3ocdCcpRZ7ehcuXZCrNwyx1ktrooWWCIj9iFB6ayBnatRwq92K37AmhyCcFpXLM
+	OR9e6IryCcw4t9lLbx+iOgIT/J6/Nf7SPfzVxH+nsHHDbyUlxK9gArH9xK0tEh68vW8tpZqshwV60
+	srqfoeG+JXGqwaRw7MJ5peD3FZ4dVqaCTIk4WCfXtFicKq71IJL7/pd35ZfY6eJZdKDcfGOtNV+RZ
+	uMoaQcAjSWR5DbCKLE+VpsD4RlHlZGjqodehTXvdjY2oZGusKWENmpVPPhYzvxILIptYXb2DLX0SE
+	9vbdVKHg==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1u5c9Z-00GeXp-1B;
+	Fri, 18 Apr 2025 11:12:34 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 18 Apr 2025 11:12:33 +0800
+Date: Fri, 18 Apr 2025 11:12:33 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-crypto@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
+	x86@kernel.org, Jason@zx2c4.com, ardb@kernel.org
+Subject: Re: [PATCH 01/15] crypto: arm - remove CRYPTO dependency of library
+ functions
+Message-ID: <aAHDIRlSNLsYYZmW@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH RESEND] iommu: intel: apply quirk_iommu_igfx for
- 8086:0044 (QM57/QS57)
-From: Baolu Lu <baolu.lu@linux.intel.com>
-To: Mingcong Bai <jeffbai@aosc.io>
-Cc: intel-gfx@lists.freedesktop.org, kexybiscuit@aosc.io,
- Wenhao Sun <weiguangtwk@outlook.com>, David Woodhouse <dwmw2@infradead.org>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250120093540.512825-1-jeffbai@aosc.io>
- <9fce601e-b557-4454-8698-6c63303999a1@linux.intel.com>
-Content-Language: en-US
-In-Reply-To: <9fce601e-b557-4454-8698-6c63303999a1@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250417182623.67808-2-ebiggers@kernel.org>
+X-Newsgroups: apana.lists.os.linux.cryptoapi,apana.lists.os.linux.kernel
 
-On 4/18/25 11:07, Baolu Lu wrote:
-> On 1/20/25 17:35, Mingcong Bai wrote:
->> (I'm not very confident about the approach of this patch but I failed to
->> find a better way to address the issue I have on hand, so please consider
->> this patch as an RFC...)
->>
->> On the Lenovo ThinkPad X201, when Intel VT-d is enabled in the BIOS, the
->> kernel boots with errors related to DMAR, the graphical interface 
->> appeared
->> quite choppy, and the system resets erratically within a minute after it
->> booted:
->>
->> DMAR: DRHD: handling fault status reg 3
->> DMAR: [DMA Write NO_PASID] Request device [00:02.0] fault addr 0xb97ff000
->> [fault reason 0x05] PTE Write access is not set
->>
->> Upon comparing boot logs with VT-d on/off, I found that the Intel 
->> Calpella
->> quirk (`quirk_calpella_no_shadow_gtt()') correctly applied the igfx IOMMU
->> disable/quirk correctly:
->>
->> pci 0000:00:00.0: DMAR: BIOS has allocated no shadow GTT; disabling IOMMU
->> for graphics
->>
->> Whereas with VT-d on, it went into the "else" branch, which then
->> triggered the DMAR handling fault above:
->>
->> ... else if (!disable_igfx_iommu) {
->>     /* we have to ensure the gfx device is idle before we flush */
->>     pci_info(dev, "Disabling batched IOTLB flush on Ironlake\n");
->>     iommu_set_dma_strict();
->> }
->>
->> Now, this is not exactly scientific, but moving 0x0044 to 
->> quirk_iommu_igfx
->> seems to have fixed the aforementioned issue. Running a few `git blame'
->> runs on the function, I have found that the quirk was originally
->> introduced as a fix specific to ThinkPad X201:
->>
->> commit 9eecabcb9a92 ("intel-iommu: Abort IOMMU setup for igfx if BIOS 
->> gave
->> no shadow GTT space")
->>
->> Which was later revised twice to the "else" branch we saw above:
->>
->> - 2011: commit 6fbcfb3e467a ("intel-iommu: Workaround IOTLB hang on
->>    Ironlake GPU")
->> - 2024: commit ba00196ca41c ("iommu/vt-d: Decouple igfx_off from graphic
->>    identity mapping")
->>
->> I'm uncertain whether further testings on this particular laptops were
->> done in 2011 and (honestly I'm not sure) 2024, but I would be happy to do
->> some distro-specific testing if that's what would be required to verify
->> this patch.
->>
->> P.S., I also see IDs 0x0040, 0x0062, and 0x006a listed under the same
->> `quirk_calpella_no_shadow_gtt()' quirk, but I'm not sure how similar 
->> these
->> chipsets are (if they share the same issue with VT-d or even, indeed, if
->> this issue is specific to a bug in the Lenovo BIOS). With regards to
->> 0x0062, it seems to be a Centrino wireless card, but not a chipset?
->>
->> I have also listed a couple (distro and kernel) bug reports below as
->> references (some of them are from 7-8 years ago!), as they seem to be
->> similar issue found on different Westmere/Ironlake, Haswell, and 
->> Broadwell
->> hardware setups.
->>
->> Link:https://bugzilla.kernel.org/show_bug.cgi?id=197029
->> Link:https://groups.google.com/g/qubes-users/c/4NP4goUds2c?pli=1
->> Link:https://bugs.archlinux.org/task/65362
->> Link:https://bbs.archlinux.org/viewtopic.php?id=230323
->> Reported-by: Wenhao Sun<weiguangtwk@outlook.com>
->> Signed-off-by: Mingcong Bai<jeffbai@aosc.io>
->> ---
->>   drivers/iommu/intel/iommu.c | 4 +++-
->>   1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> Queued for v6.15-rc. Thank you!
+Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> config CRYPTO_CURVE25519_NEON
+>        tristate
+> -       depends on KERNEL_MODE_NEON
+> +       depends on CRYPTO && KERNEL_MODE_NEON
 
-Please ignore this. I picked the latest one instead.
+Rather than adding CRYPTO to each symbol, how about grouping all
+the CRYPTO symbols together under one if statement?
 
-https://lore.kernel.org/r/20250415133330.12528-1-jeffbai@aosc.io
-
-Sorry for the inconvenience.
-
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
