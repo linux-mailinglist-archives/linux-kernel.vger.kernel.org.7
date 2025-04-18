@@ -1,139 +1,183 @@
-Return-Path: <linux-kernel+bounces-610755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C782A938AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 16:30:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C9F1A938B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 16:30:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD401920C61
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 14:29:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D69A61886342
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 14:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0E01A83FB;
-	Fri, 18 Apr 2025 14:30:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D0764AEE2;
+	Fri, 18 Apr 2025 14:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hYflkgTx"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MNLs05/C"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F2BF19ADA4;
-	Fri, 18 Apr 2025 14:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8C82AE6F;
+	Fri, 18 Apr 2025 14:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744986605; cv=none; b=eFy4+FyZV1Je7gxE8sIpjR3JtbBKs0YZjsJM4kQFyS9UR0znfKaKqqSJSR8LRHTzS42RvFyC811VAMFy0eEb+8BN9peU1gQe0xjK3nuhOgwDktrS3QJzXf8758H2ECu/jiUQ0ApnHsWXRg/aMKs9AjyyMEYOCfuT4NPlX0pYBkk=
+	t=1744986637; cv=none; b=ZW0rOwXb+T4qt0hAbzBFNpYXtgUq2tojAVePisGpmFQFZetWKXqpMXWnbNtu9w4HX7yb/vS6+9uy+ZO2SodU7ZDbKcUWIAzzujPq6bF6hdbaRjUgBU8pKl/JHrzqkrQH65QVkSmjf5RYZ3ozXQ+vAaXlUaOFODZAycYRRefKO/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744986605; c=relaxed/simple;
-	bh=wUzmH4xqUNFx6Lqx2Itt/tpaeGYM05BZoZ1guKnRXn4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DKm70yev4s8pBrMd80zeEzGlrEpUY5wy2wph177IH71Vqi0LaAWz//k8k+AkJxaOkzYJS4fQGKFPlCgjWNq9w4YlVkumMYAFW5OtcdoYovv4/h0DAV48Fa3cvzblzH36u114JiVdKNmOngTncRsK80GIqpzF6lUGpYpLit7pclY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hYflkgTx; arc=none smtp.client-ip=209.85.208.43
+	s=arc-20240116; t=1744986637; c=relaxed/simple;
+	bh=RMdr9RCsAmDBDpL2Q1fjaP6KuXUrNRzArbFdLtTAYw4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sZsy8qEKpiKL5Vq1uGNLgYthPtArwtL8DixAHasMbV/UnsP1ZrsfRGbcD6ZYhrdL0kvsTSMmTBfpaW57hl+VkwH1hwVp/92HIV4tCqrXR6F9N0sHOrx16W3ypwyu+4s4jmNZd7aMdqs7vwmOvxOOA2CnuG0hgrCXuAi09ybmV1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MNLs05/C; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5f37f45e819so317816a12.3;
-        Fri, 18 Apr 2025 07:30:03 -0700 (PDT)
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3995ff6b066so1076350f8f.3;
+        Fri, 18 Apr 2025 07:30:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744986602; x=1745591402; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=jEb+3qqZQ6y0qknhmyqZMe7sYP4AQ+xYtScn/gz9NwM=;
-        b=hYflkgTx6BEiK0mbALMwmYMJvprDRft4ylwPl6KN++Pq0ZG9lMv/z23w6bPVW5l9WK
-         KNhcxWWAHUeZrNALRzJZc8vt8LH257AMg9nhN9wCLeUgRtL3QaSKgQwqATYW/775Rleg
-         AHHtsKJwiRNpHmbVEruly2LQEJ9206cCCcSfj4avsr8Gw5uwZnj/agmHdBhFrgHfgDSI
-         +6wViNH5u7+jIo4NLuJKleXQxNQZD9EoJuPIfsELNVlUfGVQ0WqE/L6AlefYu9Fl2toN
-         8fVvgeFPZjbKA7vuHhpXCbKlFQnFANKgxpRo6sy1MI9ph0AkwfXG9F6THlwA70zj8Q54
-         ccLQ==
+        d=gmail.com; s=20230601; t=1744986634; x=1745591434; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=62uDSKULOQW8NIOGli1V4xfgLN9nhpayc/ZbXb4OndY=;
+        b=MNLs05/CNdq3+Ub4eyMsyzT2j1p9byMal/bqXBDeU6idLZjkJxs0VrgSknLbkD/Icl
+         cqG7nLJL/Mm9lmOpB2wJcmOTiLRw+qkLUgEs+M5QIx4diZ17D9ab4t2M590IQRfkJUqz
+         PGYok8zyPkxw9xYstmNPc0qGLyS04jcC0NQFOp3RECaKXCQSC4vSl7ZYs7OVbuZv68JF
+         OwwAbZ+F60bIc5P/J7lA2Y9BOcSTZpgb5vUr/0qou0U4k5LA5rm7M27tBipz+v0JQ4lx
+         oMg6SV95j6Um5JDDgdhlvzFJmC2b22fu1xy1m181IxK7mQMHOHpmzFL7w+ehTwdXrV5W
+         rUBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744986602; x=1745591402;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jEb+3qqZQ6y0qknhmyqZMe7sYP4AQ+xYtScn/gz9NwM=;
-        b=Z+vIO/5LWae8jjL6h1OdR4OrJG0hxZQ4u0opLwlj0S6eSPKnGORP78iu688s/S8r1x
-         XRaZLEbwFyLU1l9rL0qJnhA7ozgjXXdnPOqA4C4ZYV1978aAFRwEhW8ietZ4pvFVnM0Z
-         c2y/srgZOikZ6UIBdrOkqOfZYj1zBSRT9jrorCZd5jRYtoaouRoW7IVmfvZqUi6JRDoe
-         J04ZMuNq72HAerqcM6j9uhHHGea9KgYAHU+AJXJ90U/g16D8mTAR114FCjgtCDefk3u3
-         ghQdRrRL0fOWu2GchCbaMkHVg/vB8b8DxK7MBfwlCQ5veWpAQiFvOxn/0dSz7oNLbCC7
-         kgAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDlS1bYqh/jLNg7Qm6mC7IENS/hPhiRMRrNNreHxjaWffZDTRkSwIHLLbVX7l6fr1dks1RAEC1esJJi5o=@vger.kernel.org, AJvYcCUr+OtCLFPK09tdMvFtWmRS5f47noHa3/YX7o0APHEAch4G36tagNoBf8uZN79Ndgau3SHnRrqC@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1co47s5GJS4ohFpzzu/LNzsKQ6Sx/1rrXinqdkYkq8myEIRIq
-	ILTesK+rfIBhs43D63zhIKJrEzonYwbGagG/x+Vb6dGrGrLFpoRH
-X-Gm-Gg: ASbGnctjgL1svjQQREtXiwRBwCyynf6i3EuTG7ghuPlt9fWhHeZ/vPGaB6IRB/ZjyaO
-	jwMWlOW2MJqiofuh6A+do9n5kLC3l0boxVpyCkIA/1gUCOdAHXgzuVVif3TwO/5ElmCoTKnXNdO
-	jZWSgqLd3L6EEU0cHF8WYkGdIwdSWIFLesGwPeF5vQIz7QlVt1Bx2Wpn8awLLzfxGGj/hX8DkWb
-	5TIURacNsNVFvF6yciJyDkzqcO8lihHFJdncqSaZRSxqAV7H0tl2uQ+qpbQ58PlYOAr0axnLOgm
-	THjSrhgWbc3x8Eru/+w/E8BMuoff
-X-Google-Smtp-Source: AGHT+IGdnYDFhquPDANBW/t8s+v17pRTpxTdgVNlSSlgqLevLyFnxfpZxlTzVSiFWuujrFYTqz760Q==
-X-Received: by 2002:a17:907:6e8d:b0:ac7:2aa7:5ba6 with SMTP id a640c23a62f3a-acb74b2d23emr92002066b.5.1744986601569;
-        Fri, 18 Apr 2025 07:30:01 -0700 (PDT)
-Received: from skbuf ([188.25.50.178])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb6ef41605sm123261366b.124.2025.04.18.07.30.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Apr 2025 07:30:00 -0700 (PDT)
-Date: Fri, 18 Apr 2025 17:29:58 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: Jakub Kicinski <kuba@kernel.org>,
-	Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Clark Wang <xiaoning.wang@nxp.com>,
-	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"christophe.leroy@csgroup.eu" <christophe.leroy@csgroup.eu>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v5 net-next 04/14] net: enetc: add MAC filtering for
- i.MX95 ENETC PF
-Message-ID: <20250418142958.6ews5uuoqayc7lof@skbuf>
-References: <20250411095752.3072696-1-wei.fang@nxp.com>
- <20250411095752.3072696-5-wei.fang@nxp.com>
- <20250415204238.4e0634f8@kernel.org>
- <PAXPR04MB85100BB81C6B25BFC69B32B588BD2@PAXPR04MB8510.eurprd04.prod.outlook.com>
+        d=1e100.net; s=20230601; t=1744986634; x=1745591434;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=62uDSKULOQW8NIOGli1V4xfgLN9nhpayc/ZbXb4OndY=;
+        b=h8Rc/2DpO0v86z4x3D5TcwQYsKm3DQ74H3KgUVULjU24jPsrlrjq1s+XW5xln77opz
+         MvVeaxU18Qc6Z4tmNwn25Ihpjsq0/OFpFOln1aNmhjskB9CTAFUvtG14G/VphsYvaHvl
+         h+Coqdb9Ej0ra3uzA8oRHvbs2FO6j2dlvqhaCDfhZn4b1il+yDUXLCWZu0behIX+zuaf
+         lNpgfnfHDgnldYIIBd43zGUKzfrkYBDnwwfjJ5X6xaLZyzW206lHb2exhc/zXoq7K5Oz
+         xb49gZ7fqCJa8nyvMhtetiUd4ctF95X5CaQvyWu5ZytnSLHcf97Nhqawq4HMxvC/zjNa
+         MpRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUc50TykKOiE+t/rhwo0KB1Hk2eb3f2B5PyqNgXJpW4OEdfjeZVdXoXkvEHDw8pzNQS9llTkeuwzj/C2gnFXMlRHLM=@vger.kernel.org, AJvYcCUh57YmabxAqC8A0jUQZ8YgC+Lm+L5ZtBbRJ5BIHuXeEwcdkOlcJLI6RkaU1zRj2UqKtnRtnf4Uepdn@vger.kernel.org, AJvYcCVbOgDkjESxRhmn5yQ9aeucb8RaZXDw18jHv6TIh/4E9p4BvpuOARtHGcbcXaUu9fJFgjymtFuWhBJ+@vger.kernel.org, AJvYcCWXsLKz213UdLSvorRMsm+nUbiKQpZ/Nu39SzptI17O967eeSXeEabwrcyyh5GgIu+kg7mXxFUeGg8xz30E@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6yDo1Dso5mjyaKD5hSQhRTBUtEd6l5DBdJWQPaQA0LzAuOSYL
+	GVPWayegOHPiQOWSxTtXzSJ78ATQjbDKDGcI+T9kfIKFB0zh+w3nm5RiQ5y52/dly0+mBHHmQ9H
+	3DQ8R0WyQLyOKNAjCESZzXfggbX8=
+X-Gm-Gg: ASbGncuAhmV4Q7N3tnnXRBTqH2985Vo1gtcblnqD1Q9Ntf7PrWcfHEQzRX3ESQGseME
+	77azVf5wPOxZklXa1qIv2S+YUHj5XpFwWPzdorRxwREy273HmIKIcvWq7MzCFbBMz3duLq5mD2z
+	SgRJCydk5DQalS5ynNxyv4VTSxd2h5ucepdRu3iRXCHGEe74Mr3kELqJM=
+X-Google-Smtp-Source: AGHT+IF2YDFY26SFz6yJ6te4w1o3CM07r77TE60wclzSHhGI/3BbOPR9AyZkyyT+Ks7mBSB9PgtHJ74qZ3OP8eES/jc=
+X-Received: by 2002:a05:6000:40dd:b0:39c:27cc:7ba3 with SMTP id
+ ffacd0b85a97d-39efba6d50bmr2513996f8f.33.1744986634020; Fri, 18 Apr 2025
+ 07:30:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <PAXPR04MB85100BB81C6B25BFC69B32B588BD2@PAXPR04MB8510.eurprd04.prod.outlook.com>
+References: <20250408200916.93793-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250408200916.93793-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdWj91VbxRbb_pZ23ySbvjzzgfTgy83GXTEtC9CAS=d5Sg@mail.gmail.com>
+In-Reply-To: <CAMuHMdWj91VbxRbb_pZ23ySbvjzzgfTgy83GXTEtC9CAS=d5Sg@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 18 Apr 2025 15:30:07 +0100
+X-Gm-Features: ATxdqUEqe-OZRpZOWalEsUu1IPPnxFVUfBtvGQi_mtWwVxlP_KYiJrsbtYHkusk
+Message-ID: <CA+V-a8sbZ95xzhyg51TCzfrX3WrUWZm4DRHy15Uk4n3AFxKUqQ@mail.gmail.com>
+Subject: Re: [PATCH v2 02/15] clk: renesas: r9a09g057: Add clock and reset
+ entries for DSI and LCDC
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Magnus Damm <magnus.damm@gmail.com>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 16, 2025 at 05:16:15AM +0000, Wei Fang wrote:
-> > -----Original Message-----
-> > From: Jakub Kicinski <kuba@kernel.org>
-> > Sent: 2025年4月16日 11:43
-> > To: Wei Fang <wei.fang@nxp.com>
-> > Cc: Claudiu Manoil <claudiu.manoil@nxp.com>; Vladimir Oltean
-> > <vladimir.oltean@nxp.com>; Clark Wang <xiaoning.wang@nxp.com>;
-> > andrew+netdev@lunn.ch; davem@davemloft.net; edumazet@google.com;
-> > pabeni@redhat.com; christophe.leroy@csgroup.eu; netdev@vger.kernel.org;
-> > linux-kernel@vger.kernel.org; imx@lists.linux.dev; linuxppc-dev@lists.ozlabs.org;
-> > linux-arm-kernel@lists.infradead.org
-> > Subject: Re: [PATCH v5 net-next 04/14] net: enetc: add MAC filtering for i.MX95
-> > ENETC PF
-> > 
-> > On Fri, 11 Apr 2025 17:57:42 +0800 Wei Fang wrote:
-> > >  	enetc4_pf_netdev_destroy(si);
-> > >  	enetc4_pf_free(pf);
-> > > +	destroy_workqueue(si->workqueue);
-> > 
-> > I think that you need to flush or cancel the work after unregistering
-> > the netdev but before freeing it? The work may access netdev after its
-> > freed.
-> 
-> Yes, you are right, I will improve it. thanks.
+Hi Geert,
 
-I think the workqueue creation needs to be handled in
-enetc4_pf_netdev_create() somewhere in between alloc_etherdev_mqs() and
-register_netdev(), so that the workqueue is available as soon as the
-interface is registered, but also so that the workqueue teardown takes
-places naturally where Jakub indicated.
+Thank you for the review.
+
+On Tue, Apr 15, 2025 at 4:51=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Tue, 8 Apr 2025 at 22:09, Prabhakar <prabhakar.csengg@gmail.com> wrote=
+:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add clock and reset entries for the DSI and LCDC peripherals.
+> >
+> > Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> > v1->v2:
+> > - No changes
+>
+> You did change CSDIV0_DIVCTL2 to the NO_RMW-variant...
+>
+Ouch missed that.
+
+> > --- a/drivers/clk/renesas/r9a09g057-cpg.c
+> > +++ b/drivers/clk/renesas/r9a09g057-cpg.c
+>
+> > @@ -148,6 +182,12 @@ static const struct cpg_core_clk r9a09g057_core_cl=
+ks[] __initconst =3D {
+> >         DEF_SMUX(".smux2_gbe0_rxclk", CLK_SMUX2_GBE0_RXCLK, SSEL0_SELCT=
+L3, smux2_gbe0_rxclk),
+> >         DEF_SMUX(".smux2_gbe1_txclk", CLK_SMUX2_GBE1_TXCLK, SSEL1_SELCT=
+L0, smux2_gbe1_txclk),
+> >         DEF_SMUX(".smux2_gbe1_rxclk", CLK_SMUX2_GBE1_RXCLK, SSEL1_SELCT=
+L1, smux2_gbe1_rxclk),
+> > +       DEF_FIXED(".plleth_lpclk_div4", CLK_DIV_PLLETH_LPCLK, CLK_PLLET=
+H, 1, 4),
+> > +       DEF_CSDIV(".plleth_lpclk", CLK_CSDIV_PLLETH_LPCLK, CLK_DIV_PLLE=
+TH_LPCLK,
+> > +                 CSDIV0_DIVCTL2, dtable_16_128),
+>
+> The clock names look strange to me: "plleth_lpclk_div4" sounds like it is
+> "plleth_lpclk" divided by four, but that is not the case here.
+>
+Maybe ".cdiv4_plleth_lpclk" and ".plleth_lpclk_gear"?
+
+> > +
+> > +       DEF_PLLDSI_DIV(".plldsi_sdiv2", CLK_PLLDSI_SDIV2, CLK_PLLDSI,
+> > +                      CSDIV1_DIVCTL2, dtable_2_32),
+> >
+> >         DEF_DDIV(".pllgpu_gear", CLK_PLLGPU_GEAR, CLK_PLLGPU, CDDIV3_DI=
+VCTL1, dtable_2_64),
+> >
+>
+> > --- a/drivers/clk/renesas/rzv2h-cpg.h
+> > +++ b/drivers/clk/renesas/rzv2h-cpg.h
+>
+> > @@ -117,6 +118,8 @@ struct smuxed {
+> >
+> >  #define CSDIV0_DIVCTL0 DDIV_PACK(CPG_CSDIV0, 0, 2, CSDIV_NO_MON)
+> >  #define CSDIV0_DIVCTL1 DDIV_PACK(CPG_CSDIV0, 4, 2, CSDIV_NO_MON)
+> > +#define CSDIV0_DIVCTL2 DDIV_PACK_NO_RMW(CPG_CSDIV0, 8, 2, CSDIV_NO_MON=
+)
+>
+> The documentation says:
+>
+>     DIVCTL2[3:2] is reserved.
+>     When writing, read modify write is needed.
+>
+> So the NO_RMW-logic seems to be inverted?
+>
+Yes.
+
+Cheers,
+Prabhakar
 
