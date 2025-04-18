@@ -1,133 +1,156 @@
-Return-Path: <linux-kernel+bounces-610338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 906B2A933AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 09:47:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48B8FA933B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 09:48:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABD324675B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 07:47:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA2AE1B605B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 07:48:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4B026981A;
-	Fri, 18 Apr 2025 07:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PUDNmr+r"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E990E26A0E4;
+	Fri, 18 Apr 2025 07:48:09 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE79019D898;
-	Fri, 18 Apr 2025 07:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B6A19D898;
+	Fri, 18 Apr 2025 07:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744962434; cv=none; b=riDkVb1VhVSfX8JDN3WU+VF3M1ZtbdE+ogdhT8LZhuidq0v4+jhLGF67klxgPqV+smeRdWC5u5IsvxI+dTnLnuGitjscqdg5hxU2yKDuZuWjOuzfWGCWsZCom3VoXBz9OJmijiEOS8UKbyhYrJAqzgk08p3+tSSshRa+KyBl91c=
+	t=1744962489; cv=none; b=MCw2KyvYi38xfS8gy98uk/LyoN4MhWcC7+yH2QwzWlek0EoQd/fgG4OA07cdpWi7++6vClW1MDDO3ZA5Tp6tRxAY/WU0tro8D3KGaiVTBgghUt7DIsaGqwJeULLbov6lpIHaJgfqqcisgJe02ral9/qrHkOJdLCOq7lv7rWsuBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744962434; c=relaxed/simple;
-	bh=MbtUPtvvj3TCYAMSHd4Kc+YfY9lvMZ5DrE3AulrQrNk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sxMY7lNfD2dQT+CKXgSBzquj2qr713+oWH5bLGtiMZozVvsrH2+bazxHGnIctvK7nz/LzYB/wyXknpiC2nOVzhujWAypVzLDHAfVYJtSU9/AC+GHgIqU7+Y2ND1ZAlA9Mq9k7YNw356sGUwrIDdDakmZpo2/HzX2wEViDcMHZ80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PUDNmr+r; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3995ff6b066so890899f8f.3;
-        Fri, 18 Apr 2025 00:47:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744962431; x=1745567231; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TzOX89SomSA3xclvKwx4fBR00BceY95Bv5Epbfz39/Q=;
-        b=PUDNmr+rfioxcFLrfpsnJawpXfnef+3HzZbG1mWIou3NpNkOOx9jo+vESejLfgZI4R
-         6PerfDEvYf7uzUfwtwFIAAEfacatb1Hi+e2Wemxmel5r16OkGIV+DDtqpz5+hDUVTLA6
-         nXour3uojjdbnQ6Bs0rJH9h9oxVXytnI1cTUZydVAE5JaH74XhcAfH3R9Hwg1UpfgO6z
-         yzdqgbq08X9IhwjtRq2rrcYOCzgrmWTWYMYUNsDmHvMxopnhmILmladJLy2/QZHNkafp
-         A+JoBbGudOyKiI/k7GHJZODqFcb2c7HWI1TlWq/7ikfDS+v2jZ+6Id1Rr7QKQO8rhHkB
-         ehGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744962431; x=1745567231;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TzOX89SomSA3xclvKwx4fBR00BceY95Bv5Epbfz39/Q=;
-        b=IT4jaTM+LVIxSt6NhFtNllw5ZrPUwIf0+BRVMPaG1gXkuuA7JZje+08Mni40wEGSIU
-         hmhUigZlOrXe2Ex78mGrKsK38OTgBXYQg1e68QCPxVVO6jf4J1+cw3GKHBD0/5pZ3Q2J
-         5pDEg/zSxSqZCBPya8L0J3+iNYWo4eykQ135a889ypL8MAPNXGavODZmjwyGRbU7EUOG
-         w5KuB1hCkt+1tQOcD+i/kGcW9mmzjLpSQ28OJtRVWKn1JDOFw8jriYuwS6dnF3MWOX1k
-         UJAJV0hU4tqkRekOBcvid7n3ezsD5BwI0+pakrwqGuRLXH/sqPMZ3/wQy0rw3Z+8T0rv
-         XeeA==
-X-Forwarded-Encrypted: i=1; AJvYcCUcY/QfKrxT/Siw7rGMK5Zn/wxvb1tjbYWBSw4yqA6YedEkN9aFL2eOhdL4aGBzs/9ZczWg9MD5qekJBPOlFnw=@vger.kernel.org, AJvYcCXKX9FY8dCmo3hieTqom3P58CJF0RPF59BHewPOHPuYk3Svyk2nXpvY8HZceZ0PcdOcz+ZVXyiMtD9cn+Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAIlYSHbhltt8Cy3dylo7PKD5Jp2yqnHUu5DZ5mbIaZKZm7qBK
-	LeLxp9eqbP0VYpifi/yhfpoXFKPme5gtGXXEv3tK2XmAS6MbSShr
-X-Gm-Gg: ASbGncs45Lnv8LtCpu5LMUCsqrOuP8OezZb1dH/O22A+YozHKH5fhrTiMrepZ2p+5fZ
-	ydLxpclgMo5HLG0mAdkf1LJ2Xtdh3TKs0oF7V4Fa3DmXfyaY5ocQ/c7viv8ZwJJ64s9mxp3L/BY
-	bvMp3x5yWRMlmMmGBINhp4+ZB06gL40XZt1YLIuemvOW5TvxF3WjWLXjeve7AncZq5ocqoQ8HWo
-	6r/kSvjSOptNmXIMG/AeVHcxqUtFGY+YQkxTJfbHg0QAbInybpPJbbTg2kukoCMTjokJF35u+Ks
-	vKtVTT3zayLoiYRwxofb2utG/TPYZxffuJw5QuW46k98Oyaj2JXQCPITGcOeRJEF2qZa5E/GSOZ
-	UZo5Z7+G09gkK/yM=
-X-Google-Smtp-Source: AGHT+IGwANU2quVjQS0PiBWL+69cn6sm4Ww5tz2IbDKvbOcZeplsf7AT2NCq1b9uV9IL8fRr+0aRoQ==
-X-Received: by 2002:a5d:6485:0:b0:397:3900:ef80 with SMTP id ffacd0b85a97d-39efba52e6dmr1167558f8f.22.1744962430967;
-        Fri, 18 Apr 2025 00:47:10 -0700 (PDT)
-Received: from localhost (cpc1-brnt4-2-0-cust862.4-2.cable.virginm.net. [86.9.131.95])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4406d5bbcaasm12371985e9.21.2025.04.18.00.47.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Apr 2025 00:47:09 -0700 (PDT)
-Date: Fri, 18 Apr 2025 08:47:09 +0100
-From: Stafford Horne <shorne@gmail.com>
-To: Sahil Siddiq <icegambit91@gmail.com>
-Cc: jonas@southpole.se, stefan.kristiansson@saunalahti.fi,
-	sahilcdq@proton.me, linux-openrisc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] openrisc: Fix build warning in cache.c
-Message-ID: <aAIDfcZ4XD5f6mA4@antec>
-References: <20250401200129.287769-1-sahilcdq@proton.me>
- <Z-6VyRhGdInVidsw@antec>
- <af85b465-13e5-44e5-a0af-c7c68af7d43e@gmail.com>
+	s=arc-20240116; t=1744962489; c=relaxed/simple;
+	bh=7D01KTsaBaAzHl+6tugyPk21Tdkm0UkrepK1ah5zag0=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=B3Y4C+J2sdeaiJTfVMDvYnwvmL8vDinBuOj7CAEv0qCwoEJUKNXnS7ZR7UWbKEWhKRRcuW2eKLelGwXmE0sWnrVQ5sdZyUjSF2N+dOmRg1C54p/I5wQs0pWuSqQE3nyF4JNp8xb9nn6uKLTxsal3+gqPpP9mGPER1Eh+L1V+ZsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Zf6Lc4S9yz2TS3t;
+	Fri, 18 Apr 2025 15:47:52 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id A0D301400D4;
+	Fri, 18 Apr 2025 15:48:02 +0800 (CST)
+Received: from [10.174.178.247] (10.174.178.247) by
+ dggpemf500002.china.huawei.com (7.185.36.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 18 Apr 2025 15:48:01 +0800
+Subject: Re: [RESEND PATCH v18 1/2] ACPI: APEI: send SIGBUS to current task if
+ synchronous memory error not recovered
+To: Shuai Xue <xueshuai@linux.alibaba.com>, <catalin.marinas@arm.com>,
+	<sudeep.holla@arm.com>, <lpieralisi@kernel.org>,
+	<linux-acpi@vger.kernel.org>, <yazen.ghannam@amd.com>,
+	<mark.rutland@arm.com>, <mingo@redhat.com>, <robin.murphy@arm.com>,
+	<Jonathan.Cameron@Huawei.com>, <bp@alien8.de>, <rafael@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <wangkefeng.wang@huawei.com>,
+	<tanxiaofei@huawei.com>, <mawupeng1@huawei.com>, <tony.luck@intel.com>,
+	<linmiaohe@huawei.com>, <naoya.horiguchi@nec.com>, <james.morse@arm.com>,
+	<tongtiangen@huawei.com>, <gregkh@linuxfoundation.org>, <will@kernel.org>,
+	<jarkko@kernel.org>
+CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+	<akpm@linux-foundation.org>, <linux-edac@vger.kernel.org>, <x86@kernel.org>,
+	<justin.he@arm.com>, <ardb@kernel.org>, <ying.huang@linux.alibaba.com>,
+	<ashish.kalra@amd.com>, <baolin.wang@linux.alibaba.com>,
+	<tglx@linutronix.de>, <dave.hansen@linux.intel.com>, <lenb@kernel.org>,
+	<hpa@zytor.com>, <robert.moore@intel.com>, <lvying6@huawei.com>,
+	<xiexiuqi@huawei.com>, <zhuo.song@linux.alibaba.com>
+References: <20250404112050.42040-1-xueshuai@linux.alibaba.com>
+ <20250404112050.42040-2-xueshuai@linux.alibaba.com>
+ <0c0bc332-0323-4e43-a96b-dd5f5957ecc9@huawei.com>
+ <709ee8d2-8969-424c-b32b-101c6a8220fb@linux.alibaba.com>
+From: Hanjun Guo <guohanjun@huawei.com>
+Message-ID: <353809e7-5373-0d54-6ddb-767bc5af9e5f@huawei.com>
+Date: Fri, 18 Apr 2025 15:48:00 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <af85b465-13e5-44e5-a0af-c7c68af7d43e@gmail.com>
+In-Reply-To: <709ee8d2-8969-424c-b32b-101c6a8220fb@linux.alibaba.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-On Fri, Apr 04, 2025 at 10:39:22AM +0530, Sahil Siddiq wrote:
-> Hi Stafford,
+On 2025/4/14 23:02, Shuai Xue wrote:
 > 
-> On 4/3/25 7:36 PM, Stafford Horne wrote:
-> > [...]
-> > I will just take this fix and apply it to the series (git fixup) rather than
-> > take this patch as is.  Also, as registers should be unsigned short, I think
-> > we should change the type to that.
-> > 
-> > I will fixup patches in place.
-> > 
 > 
-> Sure thing. Will you be changing the register types as well in place with this
-> fix? Let me know if I should send v2 of this patch so the changes are together.
+> 在 2025/4/14 22:37, Hanjun Guo 写道:
+>> On 2025/4/4 19:20, Shuai Xue wrote:
+>>> Synchronous error was detected as a result of user-space process 
+>>> accessing
+>>> a 2-bit uncorrected error. The CPU will take a synchronous error 
+>>> exception
+>>> such as Synchronous External Abort (SEA) on Arm64. The kernel will 
+>>> queue a
+>>> memory_failure() work which poisons the related page, unmaps the 
+>>> page, and
+>>> then sends a SIGBUS to the process, so that a system wide panic can be
+>>> avoided.
+>>>
+>>> However, no memory_failure() work will be queued when abnormal 
+>>> synchronous
+>>> errors occur. These errors can include situations such as invalid PA,
+>>> unexpected severity, no memory failure config support, invalid GUID
+>>> section, etc. In such case, the user-space process will trigger SEA 
+>>> again.
+>>> This loop can potentially exceed the platform firmware threshold or even
+>>> trigger a kernel hard lockup, leading to a system reboot.
+>>>
+>>> Fix it by performing a force kill if no memory_failure() work is queued
+>>> for synchronous errors.
+>>>
+>>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+>>> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+>>> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+>>> Reviewed-by: Yazen Ghannam <yazen.ghannam@amd.com>
+>>> Reviewed-by: Jane Chu <jane.chu@oracle.com>
+>>> ---
+>>>   drivers/acpi/apei/ghes.c | 11 +++++++++++
+>>>   1 file changed, 11 insertions(+)
+>>>
+>>> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+>>> index b72772494655..50e4d924aa8b 100644
+>>> --- a/drivers/acpi/apei/ghes.c
+>>> +++ b/drivers/acpi/apei/ghes.c
+>>> @@ -799,6 +799,17 @@ static bool ghes_do_proc(struct ghes *ghes,
+>>>           }
+>>>       }
+>>> +    /*
+>>> +     * If no memory failure work is queued for abnormal synchronous
+>>> +     * errors, do a force kill.
+>>> +     */
+>>> +    if (sync && !queued) {
+>>> +        dev_err(ghes->dev,
+>>> +            HW_ERR GHES_PFX "%s:%d: synchronous unrecoverable error 
+>>> (SIGBUS)\n",
+>>> +            current->comm, task_pid_nr(current));
+>>> +        force_sig(SIGBUS);
+>>> +    }
+>>
+>> I think it's reasonable to send a force kill to the task when the
+>> synchronous memory error is not recovered.
+>>
+>> But I hope this code will not trigger some legacy firmware issues,
+>> let's be careful for this, so can we just introduce arch specific
+>> callbacks for this?
+> 
+> Sorry, can you give more details? I am not sure I got your point.
+> 
+> For x86, Tony confirmed that ghes will not dispatch x86 synchronous errors
+> (a.k.a machine check exception), in previous vesion.
+> Sync is only used in arm64 platform, see is_hest_sync_notify().
 
-Hi Sahil,
+Sorry for the late reply, from the code I can see that x86 will reuse
+ghes_do_proc(), if Tony confirmed that x86 is OK, it's OK to me as well.
 
-Sorry for delay in getting back on this.  I was working on getting this patches
-ready for upstreaming and noticed one thing:
-
-    ---------------------------------------------------------------------------------------
-    ./patches/or1k-20250418/0001-openrisc-Refactor-struct-cpuinfo_or1k-to-reduce-dupl.patch
-    ---------------------------------------------------------------------------------------
-    WARNING: From:/Signed-off-by: email address mismatch: 'From: Sahil Siddiq <icegambit91@gmail.com>' != 'Signed-off-by: Sahil Siddiq <sahilcdq@proton.me>'
-
-    total: 0 errors, 1 warnings, 102 lines checked
-
-As you can see above the scripts/checkpatch.pl is failing with the warning
-about your email and signed-off-by not matching.  You can see more about it
-in the FROM_SIGN_OFF_MISMATCH section of the checkpatch[0] docs.
-
-How would you like to resolve this?
-
--Stafford
-
-[0] https://docs.kernel.org/dev-tools/checkpatch.html
-
-
+Thanks
+Hanjun
 
