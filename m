@@ -1,112 +1,111 @@
-Return-Path: <linux-kernel+bounces-610729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B2F1A9384A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 16:10:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32C6FA93869
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 16:12:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FB823B6187
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 14:10:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4AC47A5343
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 14:11:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B26D915530C;
-	Fri, 18 Apr 2025 14:10:29 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F7FA156C40;
+	Fri, 18 Apr 2025 14:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RFvFP825"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F1B14BF89;
-	Fri, 18 Apr 2025 14:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2D41547F5
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 14:12:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744985429; cv=none; b=JnlUVfIvuSOJmrmYy503/QJX78PqnLx+b/aMEtZm1S1DkxrogWPAWP0Y8tJjLVFfmV06ysjdHfXOljiGwTTtyU5eixjuL/kZeBkpQzWqPQEigCVY7RDHSGfU+Xq9L2X5JU7wIFiboPVbFPlJg2zwRBVkkRbN58wNvensvnhJQ2g=
+	t=1744985555; cv=none; b=D2rwcoNHV5a5PBWhvaxRwYwo9qD1kEcIaBe6v1Wk9/uiK7GN02RIoYrc4ddJ0UwCV1Rv4gCw58+asJsPQrKgmDJ7+3+2jHrtxL17Rpnhy62Od9JrhTPSmFj8A8uj6t3HggAmgrABH3tsKs9yyZNtC1ZAG4dXH/3gmf9GTp+5PnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744985429; c=relaxed/simple;
-	bh=CKMzXx+F3E9vv2gepTCO1uz+atgs62bkZ8bLdGreiWA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Xug/U0QD2GcUIwf73sjOWB9GkGIGsrJuwAvexmOaBWMtXT7I34Mh/ped7TR/L1XXHAzII9AOUZ23Gsyo8ROlCon3P2szGBetkyz1do9ZwndZXGEVt+V8NAx+Ae6ycU7QqBiFvUC6rtU5zW+bLniD44LE4g3qaKO+O9Ag5fdVyCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 008D6C4CEE2;
-	Fri, 18 Apr 2025 14:10:27 +0000 (UTC)
-Date: Fri, 18 Apr 2025 10:12:08 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, Shuah Khan <skhan@linuxfoundation.org>,
- linux-kselftest@vger.kernel.org
-Subject: [PATCH v2] tracing: selftests: Add testing a user string to filters
-Message-ID: <20250418101208.38dc81f5@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1744985555; c=relaxed/simple;
+	bh=lysuQwd/oA1BxXJ97bQDpT5Y2SC1klYrQG7+OQOoD70=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=FMUHeX3MdTMj0LKu0agFEUaIN3cJWSNlYfd377mYDA7TNZ3d0x0v34GIs5HUu470uS7Mpg15qR/xdfBubwHLaeb8D5EAs3kDQOYlEoG+9qkR1HV35jNq3IEIOpyFG1tvvZ9SnMY6XfbfKyyRiKBaaYi5LiHm2/kvQ/OqGYmHW6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RFvFP825; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744985554; x=1776521554;
+  h=date:from:to:cc:subject:message-id;
+  bh=lysuQwd/oA1BxXJ97bQDpT5Y2SC1klYrQG7+OQOoD70=;
+  b=RFvFP825v5eOL5HXuapOKNqo32nKsBXn98rQt897IbY76dcrUx53gBMg
+   NoNd2KP3mxmfTYce5JVsWaBkVvhpSTOQ+MfMNgWIjGfv2LMERlms9lDBO
+   H+aMgnXRwwK23FGozg2YHoHo0IDcQTQ5ETon6gxa4NgsqwWQBS47a8+I0
+   NeS6IIRJ4yyEiyy66SHmvu0oWQmW1Gu7r3b746Dt1qbiDeOqbZ0WHAmQb
+   HTD3X1QunbInJRVaPmscMTllouDmdfpdKVgSMZPvejw+u76WFua/Xx45/
+   YXwiV7zc9zsicSRiSpzupLpMFcGtZqcHik1N8/ZjwPq8QrYYH2kBK5l34
+   w==;
+X-CSE-ConnectionGUID: rnQZad90Qe2UE71aOwJLKQ==
+X-CSE-MsgGUID: 1IfnF0+8QB6ADOyrJM2FoA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11407"; a="46777546"
+X-IronPort-AV: E=Sophos;i="6.15,222,1739865600"; 
+   d="scan'208";a="46777546"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Apr 2025 07:12:33 -0700
+X-CSE-ConnectionGUID: 2cwPIFQRR6G85F7lZsd6/A==
+X-CSE-MsgGUID: /r9fiezVRFi0Umb8nmzSBg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,222,1739865600"; 
+   d="scan'208";a="132108673"
+Received: from lkp-server01.sh.intel.com (HELO 61e10e65ea0f) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 18 Apr 2025 07:12:33 -0700
+Received: from kbuild by 61e10e65ea0f with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u5mSE-0002w3-1Q;
+	Fri, 18 Apr 2025 14:12:30 +0000
+Date: Fri, 18 Apr 2025 22:12:20 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:perf/urgent] BUILD SUCCESS
+ 7950de14ff5fd8da355d872b887ee8b7b5a1f327
+Message-ID: <202504182210.xSiwJnV8-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-From: Steven Rostedt <rostedt@goodmis.org>
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/urgent
+branch HEAD: 7950de14ff5fd8da355d872b887ee8b7b5a1f327  perf/x86/intel: Add Panther Lake support
 
-Running the following commands was broken:
+elapsed time: 1453m
 
-  # cd /sys/kernel/tracing
-  # echo "filename.ustring ~ \"/proc*\"" > events/syscalls/sys_enter_openat/filter
-  # echo 1 > events/syscalls/sys_enter_openat/enable
-  # ls /proc/$$/maps
-  # cat trace
+configs tested: 19
+configs skipped: 140
 
-And would produce nothing when it should have produced something like:
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-      ls-1192    [007] .....  8169.828333: sys_openat(dfd: ffffffffffffff9c, filename: 7efc18359904, flags: 80000, mode: 0)
+tested configs:
+i386                         allmodconfig    gcc-12
+i386                          allnoconfig    gcc-12
+i386                         allyesconfig    gcc-12
+i386    buildonly-randconfig-001-20250417    clang-20
+i386    buildonly-randconfig-002-20250417    gcc-12
+i386    buildonly-randconfig-003-20250417    gcc-12
+i386    buildonly-randconfig-004-20250417    gcc-12
+i386    buildonly-randconfig-005-20250417    clang-20
+i386    buildonly-randconfig-006-20250417    gcc-12
+i386                            defconfig    clang-20
+x86_64                        allnoconfig    clang-20
+x86_64                       allyesconfig    clang-20
+x86_64  buildonly-randconfig-001-20250417    clang-20
+x86_64  buildonly-randconfig-002-20250417    clang-20
+x86_64  buildonly-randconfig-003-20250417    gcc-12
+x86_64  buildonly-randconfig-004-20250417    clang-20
+x86_64  buildonly-randconfig-005-20250417    clang-20
+x86_64  buildonly-randconfig-006-20250417    clang-20
+x86_64                          defconfig    gcc-11
 
-Add a test to check this case so that it will be caught if it breaks
-again.
-
-Link: https://lore.kernel.org/linux-trace-kernel/20250417183003.505835fb@gandalf.local.home/
-
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
-Changes since v1: https://lore.kernel.org/20250417223323.3edb4f6c@batman.local.home
-
-- Use $TMPDIR instead of $TESTDIR as test file (Masami Hiramatsu)
-
- .../test.d/filter/event-filter-function.tc    | 20 +++++++++++++++++++
- 1 file changed, 20 insertions(+)
-
-diff --git a/tools/testing/selftests/ftrace/test.d/filter/event-filter-function.tc b/tools/testing/selftests/ftrace/test.d/filter/event-filter-function.tc
-index 118247b8dd84..c62165fabd0c 100644
---- a/tools/testing/selftests/ftrace/test.d/filter/event-filter-function.tc
-+++ b/tools/testing/selftests/ftrace/test.d/filter/event-filter-function.tc
-@@ -80,6 +80,26 @@ if [ $misscnt -gt 0 ]; then
- 	exit_fail
- fi
- 
-+# Check strings too
-+if [ -f events/syscalls/sys_enter_openat/filter ]; then
-+	DIRNAME=`basename $TMPDIR`
-+	echo "filename.ustring ~ \"*$DIRNAME*\"" > events/syscalls/sys_enter_openat/filter
-+	echo 1 > events/syscalls/sys_enter_openat/enable
-+	echo 1 > tracing_on
-+	ls /bin/sh
-+	nocnt=`grep openat trace | wc -l`
-+	ls $TMPDIR
-+	echo 0 > tracing_on
-+	hitcnt=`grep openat trace | wc -l`;
-+	echo 0 > events/syscalls/sys_enter_openat/enable
-+	if [ $nocnt -gt 0 ]; then
-+		exit_fail
-+	fi
-+	if [ $hitcnt -eq 0 ]; then
-+		exit_fail
-+	fi
-+fi
-+
- reset_events_filter
- 
- exit 0
--- 
-2.47.2
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
