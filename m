@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-610837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9349CA9399F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 17:28:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1904A9397E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 17:18:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9954464F44
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 15:28:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CFBC7B24AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 15:17:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D1121322E;
-	Fri, 18 Apr 2025 15:28:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951E5213E97;
+	Fri, 18 Apr 2025 15:18:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="rJzEsqIn"
-Received: from sonic308-55.consmr.mail.gq1.yahoo.com (sonic308-55.consmr.mail.gq1.yahoo.com [98.137.68.31])
+	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="RRV/5uU+"
+Received: from sonic303-24.consmr.mail.gq1.yahoo.com (sonic303-24.consmr.mail.gq1.yahoo.com [98.137.64.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C44211278
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 15:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.68.31
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAB6A211285
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 15:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.64.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744990109; cv=none; b=IBxLxciPdGwdxNTiELiJzvWNfYJm/34kTIx1Xv4BK+AyWr0Loe7D3DkhFYI09MF7FpQO+0AEA17OeF0B/Uc8xr0xpcecVvAGxNnHq0hFqr6G2mcIY8D+YZ9hiU9HHS9cDTwDyMFTAPbcTvUJmIpVsKi/o3pqPNB4VPqNvhxyamY=
+	t=1744989505; cv=none; b=ablD69nsMDukgnk6R6Wh24OMdAZayjVfsqZFWn16lNtJPdNQblT7w1/CRr9GZxJX2jiAgLciYbK/5UpRr/7p4n2vbeuYgSuRPDKt7MAKgdV8jm1iqLIFJ0JyxG/8bU7mJg68zyiXf80VriyIsCuvEIk63HE+rOxVpEveY5Uja4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744990109; c=relaxed/simple;
-	bh=xOdu2gi8L6DYGYuLQPtrq+ir8L1ZoeFhePuMunbTn+o=;
+	s=arc-20240116; t=1744989505; c=relaxed/simple;
+	bh=0egqAhQ+l5rRA7yaNYbjCrgURYXpcpUo1RvqDyp+R6Q=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Cm9OgeH1oekfNVxu1GDvTfjc43iFIEJgrTi0BRWmnTqUfDC4QiJQW56LwJu+hL+3ZuYBePEQ7fugoAP9UmtL3KA31qv/dJuhKD7in+nZVbP6KvLu/7aLUwFS+K62FOLp/krLxceI5MVfDkbX5JLq1hLAJ+wmmZZq2zS3unUwjEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com; spf=pass smtp.mailfrom=aol.com; dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b=rJzEsqIn; arc=none smtp.client-ip=98.137.68.31
+	 MIME-Version; b=TozIs8ca/c4X0ilaBPUd3RvqZ9Q0lNKqRTaDxzpX8Z+EqPuf+X97ATuD3VSfo2JzH3zxCL94RGK1Uqs4fBF0xAePcrMnU8huJlDukhY1BkVxVwHBA9n8AEpX3nPLY6xwl0HjQzLYI+c+2ZMVm7FVz/T4o2Rc1q09gAh48wtCc0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com; spf=pass smtp.mailfrom=aol.com; dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b=RRV/5uU+; arc=none smtp.client-ip=98.137.64.205
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aol.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1744990107; bh=kB+h5yP3IPBkJvaAFUAFuyiqySzIbHuteHH3qZOlXl8=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=rJzEsqInC1RDsxj+G270jVBsMBhWKxdw4ooK5amM+Bf+84aCjBnRVnM3tFZuPZVPh2/g7ve3u97Dq4dSODdOEOH1Lo6EUhV/UVo8ghSRfYQDnml4uO1mWFGuqfS3Ea386hej0UEc0raWwGHcx+0aN+8j4ehSn6gcISugeGrkqkcPnfRgdVsFMXLXIM3+KQv2En6hzZoH2WzFLLVzYpmrhdN/jofBuHBIEJcYjTYEnmGl4b8km/94FErvF/OWDWeqp++Q0OzJFdUry9E3lO3Guqb17r1xr1q7xATASc+3qC7CP6Ug/oih3RY4XBg9ujQbk4Rl2W7NXFMEDYmO+8rVSw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1744990107; bh=avsB6DeRRN5e4dF7qJdg86POIxnErrXo1w/slz28sug=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=o3DJ1ZZwLwroqdM5Z4hSHVS7hL6rYBNDP4lYtce/+Woi52ODeiquB+W9htlGDbe+JBgxcKXRL3IhAkHQV0B4BRmHdhEk9xkHmTns7gpywoRUjDN8sHp6LhvL/uQlgL3rxjI1HNoWUQH34aYA8jBVAoy4pEczoH0OD21oD0nEznD2y/QtMrrIGrdugHt47yN3G4+gbRnPjWDCT3dms2C2N26GU+klO59vxCmZxTmMDndEkbr9i8fwJuVYetMSoye74h7mjhacj+xMjSP6uByhadqutLN0R0zjdOutJzKH4dEXS+TZIFLbocLS/5VmWm/zxaPCiZLmdNIQbaeDDZgm7A==
-X-YMail-OSG: iFmeQr8VM1mK_jNd.0.YHVw17zxxRzQSTY7SP1AgC95pD2cm4xCrWmnp5SEeUvU
- 3cMYSZZ_hz1dUPEiP3o7UifiYq.lVv6rHJsScsTR2ubLm8uT5FKpPDW8tW9PD45APwRRLMOQNFac
- KsXnGz49X12lwJL4_lGGDQLbCMasL36JcqWo37W9O1UUsRZlN2pcuvMiPiVhJm4p.0a8C0BjezKg
- wLpGH3zm.ntvSrpFXf5jW0MWQAoZtKcUx2HdoFoxGKzAyJv5NGNCwOlVlx6uVN6x6Z7UTU0AkRwj
- tbkH0QzPyrGFPO2uCz9OuWTZKoW1Uio6nLU_tISN2ct_p93EYalMt3EztL0jWx3O0YWQ2bUXT7Fg
- nDiUYJ7HxBI8x3hOX6wDdoIzVQmRizXZh6LcpTORteK9Wxv1aAMfpKhL_uhDLSdPiuDUomv7vIYV
- 3npGshp_jWNCil_HM1PIdZ2WoLrJ.SkqZ6ufoHPOmiISuLwQbW36Qmo3DkRNJhfosOhNSUUb7KNK
- tN_wAcM54RRkICYyXjOB2rilJgCBjPCLyRlOltWDBHmdMW7Clm.Z_WbxgwlEWapicLi_NzK7pRos
- Vijp5ndAhi6XtHCBL7IZPxPsipRv.GHmNUF9emJCaq97E_dJvw_UfaRTyDdP7PmpSzZsHUi_UKt9
- dBHfivjz.1nfT3zcDIXnkRsfVNvJRSNiK7c7AEFp536mKAmlcGDAgh_aJwHKrtsejZ0_jfVN4PiN
- BkZm2brGZ82B6EJf2hlugkBz.ypPSoNpy8baOjL0oNGqJWw9VdbuaGpan_RvVPbsaBnY.mMD8siq
- YRZIPqxKV2uMmlK1PsWumNUZHakSX48PNKjFs794Qo5196KSep0dWU6dPA5zlxKK3bXHWsysOycT
- nwvsgQjDwrZkxA3Tc6LQ_mda9P6xsRGFf_tPBZCWXUMEF9gTbFkNhCNnXFHxB8TLR.zMYDg7zo_.
- k549VfLHGVSR3FXhLnDBfNgHq.hNCzgyzsi6cqjH38a_Lwqf0xd_zpwCplCuM9L.sVUPV811jJNk
- M5eKwjbseFmnwsQ53TIPBqUUIhj9yCwoZMsbj6wpCmhKJbIZanaDyjHNZNTkBGelVtHN9Qj7rMx_
- iV2L2QsThAEupDxhCc5tBV6_ZGThTDFE4PBsHRw.XmgIqvZGnd3XBSVJIgMkjHzNF1sdMftRAkEW
- jLCtz2phbZTmr2GujdYIDghKFuNFfKrZfZ9btHG.2Nr0kD2ZCjjSIzmDCdaZg6YxyeOv7F3domNF
- bBOLuUxVehnS67I5uCqnDUzU9K8uxWaqrr5gqH6Ww8BUFmg1BtdIrCJkB3IIRqwYdHkq_7Ks9OEA
- fMIoTk5GIL7H84bRZJbEaffBHvyoItYnrTaxRxt7o8OWNjKLWWvxZb2kFiR.dpSuQJ6ujpB8ZeU4
- QHkO5Lr2UlkyZdbBvaRVA4T.sdtkm3TlbId8VXcJePMXu6zOiovfmrrQqfPdjHE.8wVO3DgxhO.r
- 6Nyb6LmmzhEO9h7aOvLKV0UMZ_uUutgLjjNFl91H2Sc7X5mVdHPdpYdX2KPScPiwbCSqjwbsNXAd
- gUWwTrVVHQ0JISWMDu0HzGAj2HAivGfL4VBNIXFj1F_.rj7y86m8BdeeT7lHE5T0O7SbabIZrXWl
- RuBuBXF01RM92mwlL7XV7iASsb.VN6tJUcErfMc5Tq2YVN8xzQ6eiekthBQHJkV8CKC88IaKKg2c
- x2mFxgy2EfYIDdKXaaHdY5waRX.Ip_FLU7HhjbJQLUSNeQQktgwjTDFxFoU0VB_4U3IC74UXvsOW
- H3jfWJjAQrWrIwd2JKmeJDVB7pfEzhkUQT2GnpxSr_1pRtErQRmPzLiAYzIvSKPkqsmHvDXhbsZU
- dHHlk1H0kcoqolEcj_sp811A8Fb2TPHqMb7YlPM_S3g1OwLzdHkOEA..LIYa4LuZGGsJREC_Qu94
- LxkgZRKgtp97XlaiIiXPqMYnddR686q2ZRnTz1GGdKX3vDr7XZ0q9M1fouTJCfN1NXjNuSoB_11A
- HGkO6zex8A9NQUxazvlL._Eoa2X8V096cJbZfBZeENFQzSWkQ4z_cNp3pRnlKD7mcWPIff1rEhmR
- kksRD7.gFGIGHdk.M0EGkAQfHhBXPrXvQL3fULmNphnN4hT4pe4BY_.nBaR9jJZLfloq8LvbONCG
- 8WHUaMCJNEajvirlqN_tXe3o6iyBOTVSDbUnoXuHWyZ1nLbUUF.hNQ4DbgMnfkvS1M3dZ8SaGXmD
- 8v.xKVoknx5LGB5UOQfzqqD80.7fdlHmpcdRfQg_ML3F4sPT3Jn2LXM.7vWQ4Bxz_Sa41kuT3fto
- 2g4VxQg--
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1744989502; bh=3+QIDz+8a7WhEyG6a1nGl5YyF8rJ364ekdxk7SsUvjg=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=RRV/5uU+qkyg3fr0lX0p9ok+UdJy3DruN7vTOu9HW6nEf//7g3MFv5nf5dcXL5mzOhy9a5PdwvkEkueEG/tZY4wHTERuOiSG0ZU1aVXq5oXqIgqptKtbSB+t0KNxa6nHJcvUxtPW/sc+WheG7kBQDC+zEbcgYSq8UWkKlxLsywsDN/uJMFzDT0qvsnrk06z+MLIBOvmRaCP6mmsqxXDKyELoAjxc8pZo95KgCkinW87D4m7VDxwnP2tRaIVYZm21rkITHIfxadkyz8eY1mnKQFFekzJk3xF5xxGa81YwqfNIUp5wDdXESmCpfwhofiRzcEnW6foimEHuT3kTs7b7fA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1744989502; bh=PYwPYcuRky0Fcfb87XVACXGqNNtWIgyTXDuHfjjFk8p=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=aRmeFxBV8GN3jEiaMkbOYX0/4HrpdGIvOSBo9KVt4PDnU210vKisueQKV4SPfqELD1mrMoWrgUwMQAOomM68PnxhBmanxHKn5ajeEdG5VneOtH8cixH6sx4KAlJi4WmP0yLFuv8l5I//PPF8vcehsnNM9FCDsU2Y3ls2aOUIfYnYNDdemjbM8RChAU1WtNy90zkcbc8tQxpC2dYa0uGBCdnafeyMygypvghv0VxZrgwCjIgyIXKgpm553lixnA0+fQj5sq/HPyZnen+gmb3yzvMu3EyOg9fNejWK4Vt9efgMgIUZtIst8f7dIFUvSI7gEa+G/fPswe2rhoX7XjLX4A==
+X-YMail-OSG: z5VYAMMVM1k89tlHf2BhUz_gQAURrg1v1yR_T.Dz.sRWKqW1olZArnKpDCmvIIw
+ GGSlIz9qHIxZSPRS1ZMUT9ajAK8_TkrlzYCdr.MJpIxPt.vnJm4m4MHFEPR6WXR_QXmgdRMea2R6
+ YIcRpeZUdNVnCUkdx_equXA75yBShFV3MOfiPRSs4sVf6g9.CmMtKkOdOW8BAWa1mBpaW7i.ST8f
+ 0MF.HjQu_LJc1Qn4jMW6iAr1BlUFlfkwsK3P4DiPyRoRCK3bobbwV86qC2ZNMIUpcyK0.apXGzOF
+ weIrIQcPLEVonucSeYVd8jqzLRjpjkZtZa.3UPTr4lseh2t6hTXSZTPfrQ.Txlsgcm9P5fUako4L
+ nz3.3j.p2VLjslLIEcFIkh_yP_CmjXwuTR_6ELQmcejzwFUayNDILfXRll1b2xJ5fa58nLn0XWIw
+ UKSb.aFNXm02Ujr7_lRUsqkgwHibx9XaKJ8_fMkfDrpTtoMTq92iV9OaBZe98qoLILUuwfRgi6zc
+ hFAv0ADoPgnHqjtkS1epCnIF_r03tdITFCMluWtClLkI.BjRDrm4l0VMBA6rWBGxk6efSD445oTf
+ FPfStIZxHEe29wFHTYfB0zeltRgSZyVUlmrnuEsbaRVPAI.uAqitAtYNFEgSFKxfebt10K.vjK0M
+ xVC3IF232PZY0I0jk99Jnk5IvAFHU7dvix3oHLSAVYUWtAaUy3odoXZG4ZUR72IKUoXzigr.jPzI
+ KlVOsyCiVHdCkDjYROYr92liA1AUOKmjTr05sWjQ4lX1Fbrq6GWxZH_lFcLSz7XB7AH5Kwtw7ZHT
+ dzgYo6F.DBhVvsci59_Abx4GLIUGwqcVkeDgK1m.2Gj7njt3maP1SKArHboxadulsqBz7zd43lwC
+ oFft19HhaUNSCSXWQ4_EPPQMvZ1Mur.2xPzC8lYrOfepy4NFbxOLbGSx.UKxGcWssMeRkEHPNkuF
+ MafMAcBvXKKVxv_YzYOmPuLHnhH53MW_Nb4R5ileb6ytBZvn0liaK7yADrt5YkiCv66Dwo7VWj89
+ 0HJZlQJ0O6j8D11jGXfioW7vT8I8AihEZB.6daoq2GMM6BqKM_Cwujf23kfWBxhSkxky4d81x74S
+ ur1IPtynQ9dp4Dr0OYSjKd83zebzAOl9f_JhdE3cA1FsvqDAnma9XEovP5WM1_S_AAh3rpKCRcUX
+ EhQ9n9NRcSa5me.hMMHiPoN1R1PLqtxBrbHd57MPHhhv7NrN90m62swq7mZpBWEuVYU52Axt_fXc
+ zSY4R0YnvLxA4.0z01soOKqoqc4fwF0PzGVFQmcw1n_QHeYpL9EVYz3ajRPbQb2BYLWXqDcGfzjD
+ eBZToUbcdt4HRJ031L.K9K_Xbjk9mLGV1U7Yxc4hv_1ivhUqDtk2l74qgpkUz4_L0ztN_gg5If_l
+ 8kBViatGgB8p_7wLgTRSE8eUCC9Z1_gysqkOGfdQOj4rw65wU1ef00fUWZzOIf6a7XiGwl6IS322
+ JPYp6VF0Yp.pQvhpCITSXcMJYSIlAnECfG6NdSDivonGMVa.crwjQuENM4htNffGMm2aieGL1ZEf
+ 3_20hrnSu6uiFCgW.rRr5E2UROVHqC9LDDAf7Stsrl2Lh1saPF7.YWbHwc9zxcGA0vBEArmTnYkC
+ plgCILskRmC2dSiBmVa6MdUKOqmIKE6fCQ08Mtgs_sUyO89YyjcKkdaDuIDVHQWYGVGAfsRDHZa1
+ dAnlWCf9Oyp4JogTzyCwRQSoSdiBAd49Wwi21_6Q2DcKJZvw1gs9NJPdWE8n1cuHcZh7qXlKwdip
+ _3In_wPRhLr6lHmNC.3TxHO7adpDmpZGcvmpZGYjXSV3Rasayr89XxOeknpBkolGjrGZwsI.w1Ql
+ .6BbIThPEId0fH_im0eRyVmpZqKnWpRYiPOOEsbbA5_vKqm3nGslXHmVLW5zGvaeHWwXT5Mv8V0z
+ WhD3GbAAl.98zHkibUF8kMbVxrWosPT8JjHhl0M93fqskOBqP6tU8lpy0ZFLWGaF6ucGbPbxdy7K
+ TEljkt5vKq3xt0lTV4gcDqMDeA6ioy6J5zmsUcu5uyT96nZcPmyq_IKaXo.66XaQbe37D14ImWcX
+ RHKQquugwKTeEcqA3UnvwTUvQu7AJRuB7hSc8dfVnSNj9VGBu4LF1NCfzJxhCbHVfkJBjX2oJeP6
+ 2r4oBAuBnQkxaU4J1qdZwlvbBUOa7qhiDWNvFdtKw5KEWnbF9aqvAYmPvfKx5uFaqb_MCjYeL2PR
+ JbmF2oXKyuEJ9B4ZxeLg2WTt2SUPUZbZN1Y4V2xvjw_A9KASCc2XII7UHvCsR32P78hDqC0GOZbk
+ vJsnw7rY-
 X-Sonic-MF: <rubenru09@aol.com>
-X-Sonic-ID: 9b098b5c-327d-4449-9d38-6829aed84013
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.gq1.yahoo.com with HTTP; Fri, 18 Apr 2025 15:28:27 +0000
+X-Sonic-ID: 55914de9-c7f4-4caa-a157-6e1755fef135
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.gq1.yahoo.com with HTTP; Fri, 18 Apr 2025 15:18:22 +0000
 Received: by hermes--production-ir2-858bd4ff7b-rjtcv (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 8d9c4354726140fe64c22851ae4eda49;
-          Fri, 18 Apr 2025 15:18:15 +0000 (UTC)
+          Fri, 18 Apr 2025 15:18:17 +0000 (UTC)
 From: Ruben Wauters <rubenru09@aol.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
@@ -78,9 +78,9 @@ Cc: Ruben Wauters <rubenru09@aol.com>,
 	linux-fbdev@vger.kernel.org,
 	linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/4] staging: sm750fb: remove ddk750_dvi
-Date: Fri, 18 Apr 2025 16:17:48 +0100
-Message-ID: <20250418151755.42624-3-rubenru09@aol.com>
+Subject: [PATCH 3/4] staging: sm750fb: remove ddk750_hwi2c
+Date: Fri, 18 Apr 2025 16:17:49 +0100
+Message-ID: <20250418151755.42624-4-rubenru09@aol.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250418151755.42624-1-rubenru09@aol.com>
 References: <20250418151755.42624-1-rubenru09@aol.com>
@@ -92,157 +92,314 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This file and the code present was unused in the whole
-driver, therefore this patch removes the file and unused
-reference to the header.
+With the removal of ddk750_sii164.c, the functions in
+ddk750_hwi2c are now also unused. This patch removes them
+and the files they are in.
 
 Signed-off-by: Ruben Wauters <rubenru09@aol.com>
 ---
- drivers/staging/sm750fb/Makefile         |  3 +-
- drivers/staging/sm750fb/ddk750_display.c |  1 -
- drivers/staging/sm750fb/ddk750_dvi.c     | 45 -------------------
- drivers/staging/sm750fb/ddk750_dvi.h     | 57 ------------------------
- 4 files changed, 1 insertion(+), 105 deletions(-)
- delete mode 100644 drivers/staging/sm750fb/ddk750_dvi.c
- delete mode 100644 drivers/staging/sm750fb/ddk750_dvi.h
+ drivers/staging/sm750fb/Makefile       |   2 +-
+ drivers/staging/sm750fb/ddk750.h       |   3 -
+ drivers/staging/sm750fb/ddk750_hwi2c.c | 247 -------------------------
+ drivers/staging/sm750fb/ddk750_hwi2c.h |  12 --
+ 4 files changed, 1 insertion(+), 263 deletions(-)
+ delete mode 100644 drivers/staging/sm750fb/ddk750_hwi2c.c
+ delete mode 100644 drivers/staging/sm750fb/ddk750_hwi2c.h
 
 diff --git a/drivers/staging/sm750fb/Makefile b/drivers/staging/sm750fb/Makefile
-index 1926376664ca..b3cb973e2672 100644
+index b3cb973e2672..f7e227df0e54 100644
 --- a/drivers/staging/sm750fb/Makefile
 +++ b/drivers/staging/sm750fb/Makefile
-@@ -3,5 +3,4 @@ obj-$(CONFIG_FB_SM750)	+= sm750fb.o
+@@ -3,4 +3,4 @@ obj-$(CONFIG_FB_SM750)	+= sm750fb.o
  
  sm750fb-objs		:= sm750.o sm750_hw.o sm750_accel.o sm750_cursor.o \
  			   ddk750_chip.o ddk750_power.o ddk750_mode.o \
--			   ddk750_display.o ddk750_swi2c.o ddk750_dvi.o  \
--			   ddk750_hwi2c.o
-+			   ddk750_display.o ddk750_swi2c.o ddk750_hwi2c.o 
-diff --git a/drivers/staging/sm750fb/ddk750_display.c b/drivers/staging/sm750fb/ddk750_display.c
-index 172624ff98b0..4e390541a507 100644
---- a/drivers/staging/sm750fb/ddk750_display.c
-+++ b/drivers/staging/sm750fb/ddk750_display.c
-@@ -3,7 +3,6 @@
+-			   ddk750_display.o ddk750_swi2c.o ddk750_hwi2c.o 
++			   ddk750_display.o ddk750_swi2c.o
+diff --git a/drivers/staging/sm750fb/ddk750.h b/drivers/staging/sm750fb/ddk750.h
+index 64ef4d258a91..8a32f8cf3a98 100644
+--- a/drivers/staging/sm750fb/ddk750.h
++++ b/drivers/staging/sm750fb/ddk750.h
+@@ -14,8 +14,5 @@
  #include "ddk750_chip.h"
  #include "ddk750_display.h"
  #include "ddk750_power.h"
--#include "ddk750_dvi.h"
- 
- static void set_display_control(int ctrl, int disp_state)
- {
-diff --git a/drivers/staging/sm750fb/ddk750_dvi.c b/drivers/staging/sm750fb/ddk750_dvi.c
+-#ifdef USE_HW_I2C
+-#include "ddk750_hwi2c.h"
+-#endif
+ #include "ddk750_swi2c.h"
+ #endif
+diff --git a/drivers/staging/sm750fb/ddk750_hwi2c.c b/drivers/staging/sm750fb/ddk750_hwi2c.c
 deleted file mode 100644
-index 9842c4e4cdf8..000000000000
---- a/drivers/staging/sm750fb/ddk750_dvi.c
+index 8482689b665b..000000000000
+--- a/drivers/staging/sm750fb/ddk750_hwi2c.c
 +++ /dev/null
-@@ -1,45 +0,0 @@
+@@ -1,247 +0,0 @@
 -// SPDX-License-Identifier: GPL-2.0
--#define USE_DVICHIP
--#ifdef USE_DVICHIP
+-#define USE_HW_I2C
+-#ifdef USE_HW_I2C
 -#include "ddk750_chip.h"
 -#include "ddk750_reg.h"
--#include "ddk750_dvi.h"
+-#include "ddk750_hwi2c.h"
+-#include "ddk750_power.h"
+-
+-#define MAX_HWI2C_FIFO                  16
+-#define HWI2C_WAIT_TIMEOUT              0xF0000
+-
+-int sm750_hw_i2c_init(unsigned char bus_speed_mode)
+-{
+-	unsigned int value;
+-
+-	/* Enable GPIO 30 & 31 as IIC clock & data */
+-	value = peek32(GPIO_MUX);
+-
+-	value |= (GPIO_MUX_30 | GPIO_MUX_31);
+-	poke32(GPIO_MUX, value);
+-
+-	/*
+-	 * Enable Hardware I2C power.
+-	 * TODO: Check if we need to enable GPIO power?
+-	 */
+-	sm750_enable_i2c(1);
+-
+-	/* Enable the I2C Controller and set the bus speed mode */
+-	value = peek32(I2C_CTRL) & ~(I2C_CTRL_MODE | I2C_CTRL_EN);
+-	if (bus_speed_mode)
+-		value |= I2C_CTRL_MODE;
+-	value |= I2C_CTRL_EN;
+-	poke32(I2C_CTRL, value);
+-
+-	return 0;
+-}
+-
+-void sm750_hw_i2c_close(void)
+-{
+-	unsigned int value;
+-
+-	/* Disable I2C controller */
+-	value = peek32(I2C_CTRL) & ~I2C_CTRL_EN;
+-	poke32(I2C_CTRL, value);
+-
+-	/* Disable I2C Power */
+-	sm750_enable_i2c(0);
+-
+-	/* Set GPIO 30 & 31 back as GPIO pins */
+-	value = peek32(GPIO_MUX);
+-	value &= ~GPIO_MUX_30;
+-	value &= ~GPIO_MUX_31;
+-	poke32(GPIO_MUX, value);
+-}
+-
+-static long hw_i2c_wait_tx_done(void)
+-{
+-	unsigned int timeout;
+-
+-	/* Wait until the transfer is completed. */
+-	timeout = HWI2C_WAIT_TIMEOUT;
+-	while (!(peek32(I2C_STATUS) & I2C_STATUS_TX) && (timeout != 0))
+-		timeout--;
+-
+-	if (timeout == 0)
+-		return -1;
+-
+-	return 0;
+-}
 -
 -/*
-- * This global variable contains all the supported driver and its corresponding
-- * function API. Please set the function pointer to NULL whenever the function
-- * is not supported.
+- *  This function writes data to the i2c slave device registers.
+- *
+- *  Parameters:
+- *      addr            - i2c Slave device address
+- *      length          - Total number of bytes to be written to the device
+- *      buf             - The buffer that contains the data to be written to the
+- *                     i2c device.
+- *
+- *  Return Value:
+- *      Total number of bytes those are actually written.
 - */
--
--static struct dvi_ctrl_device dcft_supported_dvi_controller[] = { };
--
--int dvi_init(unsigned char edge_select,
--	     unsigned char bus_select,
--	     unsigned char dual_edge_clk_select,
--	     unsigned char hsync_enable,
--	     unsigned char vsync_enable,
--	     unsigned char deskew_enable,
--	     unsigned char deskew_setting,
--	     unsigned char continuous_sync_enable,
--	     unsigned char pll_filter_enable,
--	     unsigned char pll_filter_value)
+-static unsigned int hw_i2c_write_data(unsigned char addr,
+-				      unsigned int length,
+-				      unsigned char *buf)
 -{
--	struct dvi_ctrl_device *current_dvi_ctrl;
+-	unsigned char count, i;
+-	unsigned int total_bytes = 0;
 -
--	current_dvi_ctrl = dcft_supported_dvi_controller;
--	if (current_dvi_ctrl->init) {
--		return current_dvi_ctrl->init(edge_select,
--					      bus_select,
--					      dual_edge_clk_select,
--					      hsync_enable,
--					      vsync_enable,
--					      deskew_enable,
--					      deskew_setting,
--					      continuous_sync_enable,
--					      pll_filter_enable,
--					      pll_filter_value);
--	}
--	return -1; /* error */
+-	/* Set the Device Address */
+-	poke32(I2C_SLAVE_ADDRESS, addr & ~0x01);
+-
+-	/*
+-	 * Write data.
+-	 * Note:
+-	 *      Only 16 byte can be accessed per i2c start instruction.
+-	 */
+-	do {
+-		/*
+-		 * Reset I2C by writing 0 to I2C_RESET register to
+-		 * clear the previous status.
+-		 */
+-		poke32(I2C_RESET, 0);
+-
+-		/* Set the number of bytes to be written */
+-		if (length < MAX_HWI2C_FIFO)
+-			count = length - 1;
+-		else
+-			count = MAX_HWI2C_FIFO - 1;
+-		poke32(I2C_BYTE_COUNT, count);
+-
+-		/* Move the data to the I2C data register */
+-		for (i = 0; i <= count; i++)
+-			poke32(I2C_DATA0 + i, *buf++);
+-
+-		/* Start the I2C */
+-		poke32(I2C_CTRL, peek32(I2C_CTRL) | I2C_CTRL_CTRL);
+-
+-		/* Wait until the transfer is completed. */
+-		if (hw_i2c_wait_tx_done() != 0)
+-			break;
+-
+-		/* Subtract length */
+-		length -= (count + 1);
+-
+-		/* Total byte written */
+-		total_bytes += (count + 1);
+-
+-	} while (length > 0);
+-
+-	return total_bytes;
+-}
+-
+-/*
+- *  This function reads data from the slave device and stores them
+- *  in the given buffer
+- *
+- *  Parameters:
+- *      addr            - i2c Slave device address
+- *      length          - Total number of bytes to be read
+- *      buf             - Pointer to a buffer to be filled with the data read
+- *                     from the slave device. It has to be the same size as the
+- *                     length to make sure that it can keep all the data read.
+- *
+- *  Return Value:
+- *      Total number of actual bytes read from the slave device
+- */
+-static unsigned int hw_i2c_read_data(unsigned char addr,
+-				     unsigned int length,
+-				     unsigned char *buf)
+-{
+-	unsigned char count, i;
+-	unsigned int total_bytes = 0;
+-
+-	/* Set the Device Address */
+-	poke32(I2C_SLAVE_ADDRESS, addr | 0x01);
+-
+-	/*
+-	 * Read data and save them to the buffer.
+-	 * Note:
+-	 *      Only 16 byte can be accessed per i2c start instruction.
+-	 */
+-	do {
+-		/*
+-		 * Reset I2C by writing 0 to I2C_RESET register to
+-		 * clear all the status.
+-		 */
+-		poke32(I2C_RESET, 0);
+-
+-		/* Set the number of bytes to be read */
+-		if (length <= MAX_HWI2C_FIFO)
+-			count = length - 1;
+-		else
+-			count = MAX_HWI2C_FIFO - 1;
+-		poke32(I2C_BYTE_COUNT, count);
+-
+-		/* Start the I2C */
+-		poke32(I2C_CTRL, peek32(I2C_CTRL) | I2C_CTRL_CTRL);
+-
+-		/* Wait until transaction done. */
+-		if (hw_i2c_wait_tx_done() != 0)
+-			break;
+-
+-		/* Save the data to the given buffer */
+-		for (i = 0; i <= count; i++)
+-			*buf++ = peek32(I2C_DATA0 + i);
+-
+-		/* Subtract length by 16 */
+-		length -= (count + 1);
+-
+-		/* Number of bytes read. */
+-		total_bytes += (count + 1);
+-
+-	} while (length > 0);
+-
+-	return total_bytes;
+-}
+-
+-/*
+- *  This function reads the slave device's register
+- *
+- *  Parameters:
+- *      deviceAddress   - i2c Slave device address which register
+- *                        to be read from
+- *      registerIndex   - Slave device's register to be read
+- *
+- *  Return Value:
+- *      Register value
+- */
+-unsigned char sm750_hw_i2c_read_reg(unsigned char addr, unsigned char reg)
+-{
+-	unsigned char value = 0xFF;
+-
+-	if (hw_i2c_write_data(addr, 1, &reg) == 1)
+-		hw_i2c_read_data(addr, 1, &value);
+-
+-	return value;
+-}
+-
+-/*
+- *  This function writes a value to the slave device's register
+- *
+- *  Parameters:
+- *      deviceAddress   - i2c Slave device address which register
+- *                        to be written
+- *      registerIndex   - Slave device's register to be written
+- *      data            - Data to be written to the register
+- *
+- *  Result:
+- *          0   - Success
+- *         -1   - Fail
+- */
+-int sm750_hw_i2c_write_reg(unsigned char addr,
+-			   unsigned char reg,
+-			   unsigned char data)
+-{
+-	unsigned char value[2];
+-
+-	value[0] = reg;
+-	value[1] = data;
+-	if (hw_i2c_write_data(addr, 2, value) == 2)
+-		return 0;
+-
+-	return -1;
 -}
 -
 -#endif
-diff --git a/drivers/staging/sm750fb/ddk750_dvi.h b/drivers/staging/sm750fb/ddk750_dvi.h
+diff --git a/drivers/staging/sm750fb/ddk750_hwi2c.h b/drivers/staging/sm750fb/ddk750_hwi2c.h
 deleted file mode 100644
-index c2518b73bdbd..000000000000
---- a/drivers/staging/sm750fb/ddk750_dvi.h
+index 337c6493ca61..000000000000
+--- a/drivers/staging/sm750fb/ddk750_hwi2c.h
 +++ /dev/null
-@@ -1,57 +0,0 @@
+@@ -1,12 +0,0 @@
 -/* SPDX-License-Identifier: GPL-2.0 */
--#ifndef DDK750_DVI_H__
--#define DDK750_DVI_H__
+-#ifndef DDK750_HWI2C_H__
+-#define DDK750_HWI2C_H__
 -
--/* dvi chip stuffs structros */
+-/* hwi2c functions */
+-int sm750_hw_i2c_init(unsigned char bus_speed_mode);
+-void sm750_hw_i2c_close(void);
 -
--typedef long (*PFN_DVICTRL_INIT)(unsigned char edge_select,
--				 unsigned char bus_select,
--				 unsigned char dual_edge_clk_select,
--				 unsigned char hsync_enable,
--				 unsigned char vsync_enable,
--				 unsigned char deskew_enable,
--				 unsigned char deskew_setting,
--				 unsigned char continuous_sync_enable,
--				 unsigned char pll_filter_enable,
--				 unsigned char pll_filter_value);
--
--typedef void (*PFN_DVICTRL_RESETCHIP)(void);
--typedef char* (*PFN_DVICTRL_GETCHIPSTRING)(void);
--typedef unsigned short (*PFN_DVICTRL_GETVENDORID)(void);
--typedef unsigned short (*PFN_DVICTRL_GETDEVICEID)(void);
--typedef void (*PFN_DVICTRL_SETPOWER)(unsigned char power_up);
--typedef void (*PFN_DVICTRL_HOTPLUGDETECTION)(unsigned char enable_hot_plug);
--typedef unsigned char (*PFN_DVICTRL_ISCONNECTED)(void);
--typedef unsigned char (*PFN_DVICTRL_CHECKINTERRUPT)(void);
--typedef void (*PFN_DVICTRL_CLEARINTERRUPT)(void);
--
--/* Structure to hold all the function pointer to the DVI Controller. */
--struct dvi_ctrl_device {
--	PFN_DVICTRL_INIT		init;
--	PFN_DVICTRL_RESETCHIP		reset_chip;
--	PFN_DVICTRL_GETCHIPSTRING	get_chip_string;
--	PFN_DVICTRL_GETVENDORID		get_vendor_id;
--	PFN_DVICTRL_GETDEVICEID		get_device_id;
--	PFN_DVICTRL_SETPOWER		set_power;
--	PFN_DVICTRL_HOTPLUGDETECTION	enable_hot_plug_detection;
--	PFN_DVICTRL_ISCONNECTED		is_connected;
--	PFN_DVICTRL_CHECKINTERRUPT	check_interrupt;
--	PFN_DVICTRL_CLEARINTERRUPT	clear_interrupt;
--};
--
--#define DVI_CTRL_SII164
--
--/* dvi functions prototype */
--int dvi_init(unsigned char edge_select,
--	     unsigned char bus_select,
--	     unsigned char dual_edge_clk_select,
--	     unsigned char hsync_enable,
--	     unsigned char vsync_enable,
--	     unsigned char deskew_enable,
--	     unsigned char deskew_setting,
--	     unsigned char continuous_sync_enable,
--	     unsigned char pll_filter_enable,
--	     unsigned char pll_filter_value);
--
+-unsigned char sm750_hw_i2c_read_reg(unsigned char addr, unsigned char reg);
+-int sm750_hw_i2c_write_reg(unsigned char addr, unsigned char reg,
+-			   unsigned char data);
 -#endif
--
 -- 
 2.48.1
 
