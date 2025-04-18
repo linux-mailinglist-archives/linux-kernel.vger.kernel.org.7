@@ -1,97 +1,120 @@
-Return-Path: <linux-kernel+bounces-610991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF065A93B8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 19:00:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B9F1A93B99
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 19:02:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 940183BE12D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 17:00:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CE784A0B34
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 17:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 094BF219E9E;
-	Fri, 18 Apr 2025 17:00:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100D821A449;
+	Fri, 18 Apr 2025 17:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oyRmt8ta"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="AbRcBNBH"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA8B1C3306;
-	Fri, 18 Apr 2025 17:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744995649; cv=none; b=m9h0ilNXyDWi4xaa1WM/Al6tpUTrNvxeu78AEX8H6gdny0TcYT+QoeqCFQT3SoDlIILTIwjyyOuz/ovMMaPjlhGG/evmG0hSgO/fysYV6I2zYPw0IPebaPhXlKNRjlvxoldfwpIXaJksWangj35MSygECyEJQSKt2kh5I4CZiY8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744995649; c=relaxed/simple;
-	bh=KN5qU6sNgXb/lB3tOKNCKsgEQKT9PjlafHKBd6uAs1Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ABacL+nnkE0Ha23CSF0p3XPMFqnq9EIhTcYtUg+TtzFvEuTxTLZUqzhN9Z9Np4bYrt74yoAIy4Jo33mkgS+NFJgEl8cfN/jeyZrfrtRQJrSEHl+N4bpOR3+uW6nLY87X7NuczI+WKrUJFLPPiq4iR1PXpnfgB0WBljT12oLfoOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oyRmt8ta; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C740C4CEE2;
-	Fri, 18 Apr 2025 17:00:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744995648;
-	bh=KN5qU6sNgXb/lB3tOKNCKsgEQKT9PjlafHKBd6uAs1Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oyRmt8ta0EKg/VIkuao40EQIX29eTgTxTMHT47FwGRw6sK6rjLOi0yFgnahdMHnac
-	 t75NYzMpEKgXmLTEcH6w/nQWeq6k9RlDuqIs+VX54Pcd+gsgo7eRC2UIpzPUOHtCUv
-	 Yoz8uUigK67i0brdGb8AgogwQkGEi9QdVefE58LK4iIDVXU+zmrOmzd3CCRNlFPxZy
-	 D43WFaaRe1aIWBNGOhwcXEDbSFFAVcao8R58IJ0rFno3oseIqaxU3m3LqIe5XeuqIB
-	 +ba6bR7WYGKDL1Y4oObnIpOk2RkClsABc5WwRHQPf8HUTqLsOsEMO7lSL5mDgbTAGw
-	 4puU/kpivKT/A==
-Date: Fri, 18 Apr 2025 18:00:44 +0100
-From: Simon Horman <horms@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: David Howells <dhowells@redhat.com>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-afs@lists.infradead.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] rxrpc: rxgk: Set error code in
- rxgk_yfs_decode_ticket()
-Message-ID: <20250418170044.GB2676982@horms.kernel.org>
-References: <Z_-P_1iLDWksH1ik@stanley.mountain>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35D221A43D;
+	Fri, 18 Apr 2025 17:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744995703; cv=pass; b=F+4l8IJjkKQSLIdW8v8ythAQbMORhVnYBUGqPQlMFdVRlxVj6wGUVBz/T8v7LG5SWptf2Ad8ism/830CoIiy38N8ZuOjaTEa0n5nET9gnGtKZJoARdNV1h+dSTWuTVXgZc/42XpZvq5GcHFyUCRoo0fQbkHN06ArhUTsBJESeeE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744995703; c=relaxed/simple;
+	bh=acKeuEYRQlP9fZhfZf7ovti3rK3Hpmy1lIjyi3a+Me0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R0ZIUjp5LMtZcDrYRYC+XgtGLB2kU3yDMnoyyeGoFP3eCBpaffnL8opek8HOVhR8xUF9Fsh7nmEVgmcsd3LpJwjqOD7bb9iGHRmgsVVk0lqSgJ9REAojetABJLY1dFmcVBGAYXykLFHvPZnG2Flc1qU4UZY6v7ao02lTubgg9KY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=AbRcBNBH; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1744995668; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=mNqvsJIV4jp04Jvj7dGEQOYwKXb+tbrByLE7Srh+r1yBHVZvPe/QjNFjHo9EZp3qvxxtJbWwA0sbDeryv5Kk6NSqWNf9c8Sut+nSftxwxNjtRGtVs07Kg9wdebga1s6a+c71e1WdR6tzMbmDLYjDOKwsIsp95ADaimi/F5KSmBg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1744995668; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=w2aPdjKz5lGmhA4ac7WZyVYSfIQHzkE0P21tdEqps0s=; 
+	b=KhD1YjzYPiU+boHpdIoCAyfNqLHi7qz1zlBqqeW7u33u6ktsAz0XBfH/qaur4H3hML5VEKyNAG7GkqichLVRlNyqQgXtrMuLqN5Nu+IKbCYlnbzYDKqOeKkn0XMm3cY8ddvKdqtUl4xxqCywsOUxCQ80iBLTAlmpskswxrMuPZM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
+	dmarc=pass header.from=<usama.anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1744995668;
+	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=w2aPdjKz5lGmhA4ac7WZyVYSfIQHzkE0P21tdEqps0s=;
+	b=AbRcBNBHgS8GcEE4MC0tEkZYQJzIyCYPgz5yYFqNwz+jLs93meK9+q2COWCkU0RH
+	f/rx2tPVIP/HVzYg5uFcAaQDDZxP2WENTU0PD3PP4xv7g0y5qsVFrM7xjqOI+XA4iO8
+	uvOJ9Eue2SY3oA88lbppS/7GLrgoGM7fTgzUZLJE=
+Received: by mx.zohomail.com with SMTPS id 1744995665226730.3558457461216;
+	Fri, 18 Apr 2025 10:01:05 -0700 (PDT)
+Message-ID: <8204b57b-45c8-40e6-a936-915e8c45f3e4@collabora.com>
+Date: Fri, 18 Apr 2025 22:00:59 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z_-P_1iLDWksH1ik@stanley.mountain>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 05/32] selftests: harness: Remove inline qualifier for
+ wrappers
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ Shuah Khan <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>,
+ Willy Tarreau <w@1wt.eu>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?=
+ <linux@weissschuh.net>, Kees Cook <kees@kernel.org>
+Cc: Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20250411-nolibc-kselftest-harness-v3-0-4d9c0295893f@linutronix.de>
+ <20250411-nolibc-kselftest-harness-v3-5-4d9c0295893f@linutronix.de>
+Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <20250411-nolibc-kselftest-harness-v3-5-4d9c0295893f@linutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Wed, Apr 16, 2025 at 02:09:51PM +0300, Dan Carpenter wrote:
-> Propagate the error code if key_alloc() fails.  Don't return
-> success.
+On 4/11/25 2:00 PM, Thomas Weißschuh wrote:
+> The pointers to the wrappers are stored in function pointers,
+> preventing them from actually being inlined.
+> Remove the inline qualifier, aligning these wrappers with the other
+> functions defined through macros.
 > 
-> Fixes: 9d1d2b59341f ("rxrpc: rxgk: Implement the yfs-rxgk security class (GSSAPI)")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 
-Reviewed-by: Simon Horman <horms@kernel.org>
-
-...
-
-> diff --git a/net/rxrpc/rxgk_app.c b/net/rxrpc/rxgk_app.c
-> index 6206a84395b8..b94b77a1c317 100644
-> --- a/net/rxrpc/rxgk_app.c
-> +++ b/net/rxrpc/rxgk_app.c
-> @@ -141,6 +141,7 @@ int rxgk_yfs_decode_ticket(struct rxrpc_connection *conn, struct sk_buff *skb,
->  			KEY_ALLOC_NOT_IN_QUOTA, NULL);
->  	if (IS_ERR(key)) {
->  		_leave(" = -ENOMEM [alloc %ld]", PTR_ERR(key));
-
-Not a bug, but it doesn't seem ideal that _leave(), which logs a debug
-message, is called here and with a more general format in the error label.
-
-> +		ret = PTR_ERR(key);
->  		goto error;
->  	}
+> ---
+>  tools/testing/selftests/kselftest_harness.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
+> index 5822bc0b86a3c623fd34830fb8b541b27672a00b..222a4f51a8d704c41597e09a241ad887ef787139 100644
+> --- a/tools/testing/selftests/kselftest_harness.h
+> +++ b/tools/testing/selftests/kselftest_harness.h
+> @@ -172,7 +172,7 @@
 >  
-> -- 
-> 2.47.2
+>  #define __TEST_IMPL(test_name, _signal) \
+>  	static void test_name(struct __test_metadata *_metadata); \
+> -	static inline void wrapper_##test_name( \
+> +	static void wrapper_##test_name( \
+>  		struct __test_metadata *_metadata, \
+>  		struct __fixture_variant_metadata __attribute__((unused)) *variant) \
+>  	{ \
+> @@ -401,7 +401,7 @@
+>  		struct __test_metadata *_metadata, \
+>  		FIXTURE_DATA(fixture_name) *self, \
+>  		const FIXTURE_VARIANT(fixture_name) *variant); \
+> -	static inline void wrapper_##fixture_name##_##test_name( \
+> +	static void wrapper_##fixture_name##_##test_name( \
+>  		struct __test_metadata *_metadata, \
+>  		struct __fixture_variant_metadata *variant) \
+>  	{ \
 > 
+
+
+-- 
+Regards,
+Usama
 
