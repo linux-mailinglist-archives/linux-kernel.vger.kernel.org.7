@@ -1,105 +1,111 @@
-Return-Path: <linux-kernel+bounces-611207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EB22A93ED1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 22:22:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08552A93EEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 22:29:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 138A77B037F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 20:20:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC9581B67C11
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 20:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576DD23C384;
-	Fri, 18 Apr 2025 20:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA3C22FACE;
+	Fri, 18 Apr 2025 20:28:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hr8afw54"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oawa8Hfn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFF4878F29;
-	Fri, 18 Apr 2025 20:21:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768252A1C9;
+	Fri, 18 Apr 2025 20:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745007702; cv=none; b=Rp1jNJbtgzTtzRuj4JQoICZncPefNiqR0yc8QZQZ5x0rZf6/vh1DwsAmYwjBItXV8tLCxj/Mq9bvjx0+LlWmG1BWC5X/9geHiUZKnA2mxeE/5COAwGIzMhgof6UsFmoTC+5eVAgGcr5ND16SL98GMo1zJUrYsLLHIQX4yI6OLcQ=
+	t=1745008122; cv=none; b=aJZLixeGeMaKiLYtQec5YHvI4s494gj+2s+dlNBjnB6p8mPBNELUvZOFq8O4zLEphFiAVwnolV1OGRDbZQFFYgynBHGD2Mo5oxXTAB4JI2XT/K05HuIJJaeC8OTc1UUJusP8sYmrs7fnhDbwP+tDV18dUTH+dXPR6KlvwE0NjS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745007702; c=relaxed/simple;
-	bh=ejGqMxBwLKw1sJ1i/ZxUZ+LGirhTccZnFytelkYVwuI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dnXC2pu+IsPiO7l4nReI0RuMJ/3t7sqUFbm6GO9YMVF6AyVlL3KOrGVYyOxh37FkDi+r68RURPcQ4MdmZ7n4f7GPL6vTUZL9wuT+UBRV1lrH5KIfrd1EhNdkhWcdX4Ysju5s8MQgs3ypYFusxcx/K8HH718NDzGA1tTyTU2CeMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hr8afw54; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3355AC4CEE2;
-	Fri, 18 Apr 2025 20:21:42 +0000 (UTC)
+	s=arc-20240116; t=1745008122; c=relaxed/simple;
+	bh=RuioFoYnoKWbVRePkkXFNsFVrOmVWmnElk3I3DxzO8Y=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=tKsp3JdvRGE7mYLJdQy2i0AwMwqTk2fXzRM8BiqNhpdI+p8BK23a2xwvPKwaw92CdbRCLEj3xfG3mwpNpLrbyVnTr78p2CeGxkeUZeTecmddJR2PsBK8tiv0IrQE3uQv5sqBf3ErWCWllFp8HTu0p4kWAvAx2W79IlhUTym9Clw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oawa8Hfn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 51D59C4CEE7;
+	Fri, 18 Apr 2025 20:28:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745007702;
-	bh=ejGqMxBwLKw1sJ1i/ZxUZ+LGirhTccZnFytelkYVwuI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Hr8afw54ncK1nddacm/HaH2IvzmGtQ5de4Y5qp/hEL+zRmNWuh/LfCQ8plPxkLNoE
-	 pSL4Fudc2BdNNtyuJCVv5VY5o1g5zyu5XKSxXSzF4P//LujEgf94L4hG9x71PHu453
-	 ijQWTfRXk1TrTGHzpuUOtsc62SCbowj3vfdq93GF6T88W7OPVOd6KIg6i7bcQ9L0Ld
-	 8KPHO5ISTv4NyLSgwYbjOzovGnFE+5wC8tNIaQUw87F5C4GlR6Z6ouCPpN9FhxPoxl
-	 ZEa6+U/0lovUNfe/rAPivjy3InWKFLTN2ib4OgIkVvkqTwfFrsitolUV3bRS4n/cVF
-	 CQTyqCVwnTLgQ==
-From: Kees Cook <kees@kernel.org>
-To: Coly Li <colyli@kernel.org>
-Cc: Kees Cook <kees@kernel.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	linux-bcache@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH v2] md/bcache: Mark __nonstring look-up table
-Date: Fri, 18 Apr 2025 13:21:36 -0700
-Message-Id: <20250418202130.it.887-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=k20201202; t=1745008122;
+	bh=RuioFoYnoKWbVRePkkXFNsFVrOmVWmnElk3I3DxzO8Y=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=oawa8HfnYofsd2nLXgjSpZShip+TlWRE+b+RYt7dlSygCsxVlYuuoXzHBIG5Uj1+E
+	 sOHixzhjybWwLiklj9AHOfyU+mp9o8TP+YhxtL2Vu6ikf0TvuwdCIRWbV2IIIaEFW2
+	 4rrNs7uzAeLKReQEbz/u1ECXHsR+7sUPZhjUClGniWrFhwzA8wshc1988sRJrYRAxq
+	 5DUqvoOwjlswRYS4r4SB/zLr+1qjnWhxpiU+Be85Q9oQ5bNS1oo2vxxxLesdhFZGNa
+	 3xyMxjaLciqV30gVibj5GsD8ep2E861CS0iOghlwVpbWlAnnRuZiqQgyED79GWETmS
+	 EdnGeJe8lHQDA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A98CC369AB;
+	Fri, 18 Apr 2025 20:28:42 +0000 (UTC)
+From: =?utf-8?q?Andr=C3=A9_Apitzsch_via_B4_Relay?= <devnull+git.apitzsch.eu@kernel.org>
+Date: Fri, 18 Apr 2025 22:22:04 +0200
+Subject: [PATCH] ASoC: wm8998: Add Kconfig prompt
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1729; i=kees@kernel.org; h=from:subject:message-id; bh=ejGqMxBwLKw1sJ1i/ZxUZ+LGirhTccZnFytelkYVwuI=; b=owGbwMvMwCVmps19z/KJym7G02pJDBlMWwLKdu898ifiXN2Kdv+XT474Nf2vmMQ8YbH3tye3F wqocl2X6yhlYRDjYpAVU2QJsnOPc/F42x7uPlcRZg4rE8gQBi5OAZhIz2VGhu4Dylu4VB3jajO3 8jPOTfgpyvhh1f3Fjjv3bb4Vaq7L+4jhf1SKYETSp58Jy05ej3vJXDrj++6i9l9dIRzXTr122S6 6lAMA
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-Id: <20250418-wm8998-v1-1-21c4bead9cd8@apitzsch.eu>
+X-B4-Tracking: v=1; b=H4sIAGu0AmgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDE0ML3fJcC0tLC92U1LTEVHPjJGNjIwMloOKCotS0zAqwQdGxtbUA6EN
+ tIlgAAAA=
+X-Change-ID: 20250418-wm8998-defae73b3320
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1745008121; l=825;
+ i=git@apitzsch.eu; s=20240325; h=from:subject:message-id;
+ bh=XALZ1vwO3j84k8/8tKGcIPipHuf/haqg80zA+h6cAEU=;
+ b=m8KI2nZB1kokmZ/pFqGBnA6F17BLosVjzj+zt8/Fxvr5ikwtcS6hhTZ9VNWofL/DBsr+Z9pn9
+ AKqhs4dg9EUB/RRqdR4kFtSE1UMbEZ61MK8g3lgZcSkBX0Mu5cw9Dnh
+X-Developer-Key: i=git@apitzsch.eu; a=ed25519;
+ pk=wxovcZRfvNYBMcTw4QFFtNEP4qv39gnBfnfyImXZxiU=
+X-Endpoint-Received: by B4 Relay for git@apitzsch.eu/20240325 with
+ auth_id=142
+X-Original-From: =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
+Reply-To: git@apitzsch.eu
 
-GCC 15's new -Wunterminated-string-initialization notices that the 16
-character lookup table "zero_uuid" (which is not used as a C-String)
-needs to be marked as "nonstring":
+From: André Apitzsch <git@apitzsch.eu>
 
-drivers/md/bcache/super.c: In function 'uuid_find_empty':
-drivers/md/bcache/super.c:549:43: warning: initializer-string for array of 'char' truncates NUL terminator but destination lacks 'nonstring' attribute (17 chars into 16 available) [-Wunterminated-string-initialization]
-  549 |         static const char zero_uuid[16] = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
-      |                                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Add tristate prompt to allow codec selection.
 
-Add the annotation (since it is not used as a C-String), and switch the
-initializer to an array of bytes.
-
-Signed-off-by: Kees Cook <kees@kernel.org>
+Signed-off-by: André Apitzsch <git@apitzsch.eu>
 ---
- v2: use byte array initializer (colyli)
- v1: https://lore.kernel.org/all/20250416220135.work.394-kees@kernel.org/
-Cc: Coly Li <colyli@kernel.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Ard Biesheuvel <ardb@kernel.org>
-Cc: linux-bcache@vger.kernel.org
----
- drivers/md/bcache/super.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ sound/soc/codecs/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index e42f1400cea9..a76ce92502ed 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -546,7 +546,8 @@ static struct uuid_entry *uuid_find(struct cache_set *c, const char *uuid)
+diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
+index 40bb7a1d44bcfa4c386f2eba0f475efeeedf1bdb..9ecc4bb7f75ff9fce87970d2e46ace72444e55b4 100644
+--- a/sound/soc/codecs/Kconfig
++++ b/sound/soc/codecs/Kconfig
+@@ -2479,7 +2479,7 @@ config SND_SOC_WM8997
+ 	depends on MFD_WM8997 && MFD_ARIZONA
  
- static struct uuid_entry *uuid_find_empty(struct cache_set *c)
- {
--	static const char zero_uuid[16] = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
-+	static const char zero_uuid[] __nonstring =
-+		{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+ config SND_SOC_WM8998
+-	tristate
++	tristate "Wolfson Microelectronics WM8998 codec driver"
+ 	depends on MFD_WM8998 && MFD_ARIZONA
  
- 	return uuid_find(c, zero_uuid);
- }
+ config SND_SOC_WM9081
+
+---
+base-commit: 7e74f756f5f643148ca5537bf2fee6767e4b0ed9
+change-id: 20250418-wm8998-defae73b3320
+
+Best regards,
 -- 
-2.34.1
+André Apitzsch <git@apitzsch.eu>
+
 
 
