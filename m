@@ -1,133 +1,156 @@
-Return-Path: <linux-kernel+bounces-610110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43B8FA93096
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 05:04:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92714A930A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 05:11:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BA01466B33
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 03:04:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4446466C72
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 03:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 339DA22ACD1;
-	Fri, 18 Apr 2025 03:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773E2267F74;
+	Fri, 18 Apr 2025 03:11:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BgXaWFb/"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HwVifRXE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAB44219ED
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 03:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28870267F45
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 03:11:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744945487; cv=none; b=FjVGYl6R4r2/Mn3pZfEpulfq61pmi6pk/TNFXmNSjIImr72j6XsY5XsGjERLMJGSC+oef6hNewHL11wFusV36QO77kZuABRSWxw9oMPmfFWvpq/3dG1VdzX6UF9WHfwrv4Ns/Flv/Q+CWbSOmFdJWwnajgKhlFCqzco6gBcOS28=
+	t=1744945889; cv=none; b=XqGApQ55YzeITWf9F13pdUE6gxOFmjmkWjh0k45n10ez202u8TKuZsU4NUOOvTBNHUScUAqtG8hAz1ow6UuBhbDf9e7O93/5kktag93QzL6YysguRSDXSTcIADF7omaJOBXp4nE8pcoD5SIhwK/dAMQxqeMzbww7UAsU1yZnKZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744945487; c=relaxed/simple;
-	bh=POlyqR7bxQJ/BpFBsufNtXDCrH5Btr8A0wQhLed120M=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=hOhanCrbGKB/yQeqLABLBlGkeyXDb9JUW+FqWy53rsTt6vXxL5NJEXbx4CnH4nYY0JO7b55gU1T1CKSfSesIs59Q1DrLRhNgDJjbR48apneQrLBrIlgsYjJUzKFkp4iSNQKKUc27yTYfBBgBAQwAcXuDNyBp/3wuB9w7j1FP8xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BgXaWFb/; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1744945482;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QW73lLVQDBY9HtHolp7BHyp40jQLsHqENKUtxI23Uy4=;
-	b=BgXaWFb/z/6fIAeyooi3ncmg1VmTUKlE9phpAZgqbaA4RHskhpG7t4Luln+2WtKYBozZwV
-	Lchr5k+Rcjod13GCpPf/zg664IGhet4uJuQIdiakGJL/67CHGcPtIXjR42fdQ5h8zHXw+W
-	Ktf30sYm6Y2cWRzf3T1r6cv+STEImz0=
+	s=arc-20240116; t=1744945889; c=relaxed/simple;
+	bh=2Gi98+Gx3q2+a5abm9nQzow/IATwvJxJ6qoPMe2C2Ao=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SxbzukI6wiYHH2cMK751w8kieYkSZrMGnhveEpYR+PZr9Bdngu0cZxu2GlbJ6LHhJWG8LHO94V9ZvIv6SqOsKIUbERbGkc8YXov7leEkJNiI50+qrftTqHh30/9tBHaE7qt8iYSS5D1uZ2LdxgLiUZfR2aP+Aa3Qf8paCtl5hoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HwVifRXE; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744945888; x=1776481888;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=2Gi98+Gx3q2+a5abm9nQzow/IATwvJxJ6qoPMe2C2Ao=;
+  b=HwVifRXEl4ZStzKR/jk7gKFU/VbQnDO1oOZm0+OwPRsfhhGvG2EhRYae
+   ZXuA92JGzJNnE69d3VTYFk1hDpLLiWk0K1e6/Fl9UMh0HAdZ0551jg5zo
+   PcDj9kO9RrO3PDXZHcNhx60B6CWshGDjV8LEG8cx/4WmRJBQKZVgZVqik
+   GHm0h7wVXPm39m4MHepVde3rvYjwmhcFRqUMvLXdbjrQZymVNtB6a6xU9
+   H9fzHfuvHeOSRtmHcBKGWGrywNzJpxtvsaS7/6mls9wnesbrLoWhSZwKH
+   e2PBgFxxlRy4NbejgzSB3LEtOeNFnP4oBysJl2m/R9EvYD9L6LKet2RjD
+   A==;
+X-CSE-ConnectionGUID: 8UNhxpsmQFG8hFsMc2/ahQ==
+X-CSE-MsgGUID: S+AqD+rvSE6/C8juV6BqVQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11406"; a="50374179"
+X-IronPort-AV: E=Sophos;i="6.15,220,1739865600"; 
+   d="scan'208";a="50374179"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2025 20:11:27 -0700
+X-CSE-ConnectionGUID: q3K0h6HTReu4AhjaznOcbg==
+X-CSE-MsgGUID: 9ThdzKhWSYi5yCKJ4vhfVw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,221,1739865600"; 
+   d="scan'208";a="131312815"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2025 20:11:23 -0700
+Message-ID: <9fce601e-b557-4454-8698-6c63303999a1@linux.intel.com>
+Date: Fri, 18 Apr 2025 11:07:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
-Subject: Re: [PATCH 3/3] mm/hugetlb: Refactor __unmap_hugepage_range() to take
- folio instead of page
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <aAEteJh4Gb8R7gPm@debian>
-Date: Fri, 18 Apr 2025 11:03:59 +0800
-Cc: Sidhartha Kumar <sidhartha.kumar@oracle.com>,
- willy@infradead.org,
- mcgrof@kernel.org,
- a.manzanares@samsung.com,
- dave@stgolabs.net,
- akpm@linux-foundation.org,
- david@redhat.com,
- linux-mm@kvack.org,
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH RESEND] iommu: intel: apply quirk_iommu_igfx for
+ 8086:0044 (QM57/QS57)
+To: Mingcong Bai <jeffbai@aosc.io>
+Cc: intel-gfx@lists.freedesktop.org, kexybiscuit@aosc.io,
+ Wenhao Sun <weiguangtwk@outlook.com>, David Woodhouse <dwmw2@infradead.org>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev,
  linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <363E4489-76E8-4FD2-AD17-2E0B46160CAB@linux.dev>
-References: <20250417155530.124073-1-nifan.cxl@gmail.com>
- <20250417155530.124073-3-nifan.cxl@gmail.com>
- <daaeffe6-f9b8-4923-a273-0dab573aa749@oracle.com> <aAEteJh4Gb8R7gPm@debian>
-To: Fan Ni <nifan.cxl@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+References: <20250120093540.512825-1-jeffbai@aosc.io>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20250120093540.512825-1-jeffbai@aosc.io>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 1/20/25 17:35, Mingcong Bai wrote:
+> (I'm not very confident about the approach of this patch but I failed to
+> find a better way to address the issue I have on hand, so please consider
+> this patch as an RFC...)
+> 
+> On the Lenovo ThinkPad X201, when Intel VT-d is enabled in the BIOS, the
+> kernel boots with errors related to DMAR, the graphical interface appeared
+> quite choppy, and the system resets erratically within a minute after it
+> booted:
+> 
+> DMAR: DRHD: handling fault status reg 3
+> DMAR: [DMA Write NO_PASID] Request device [00:02.0] fault addr 0xb97ff000
+> [fault reason 0x05] PTE Write access is not set
+> 
+> Upon comparing boot logs with VT-d on/off, I found that the Intel Calpella
+> quirk (`quirk_calpella_no_shadow_gtt()') correctly applied the igfx IOMMU
+> disable/quirk correctly:
+> 
+> pci 0000:00:00.0: DMAR: BIOS has allocated no shadow GTT; disabling IOMMU
+> for graphics
+> 
+> Whereas with VT-d on, it went into the "else" branch, which then
+> triggered the DMAR handling fault above:
+> 
+> ... else if (!disable_igfx_iommu) {
+> 	/* we have to ensure the gfx device is idle before we flush */
+> 	pci_info(dev, "Disabling batched IOTLB flush on Ironlake\n");
+> 	iommu_set_dma_strict();
+> }
+> 
+> Now, this is not exactly scientific, but moving 0x0044 to quirk_iommu_igfx
+> seems to have fixed the aforementioned issue. Running a few `git blame'
+> runs on the function, I have found that the quirk was originally
+> introduced as a fix specific to ThinkPad X201:
+> 
+> commit 9eecabcb9a92 ("intel-iommu: Abort IOMMU setup for igfx if BIOS gave
+> no shadow GTT space")
+> 
+> Which was later revised twice to the "else" branch we saw above:
+> 
+> - 2011: commit 6fbcfb3e467a ("intel-iommu: Workaround IOTLB hang on
+>    Ironlake GPU")
+> - 2024: commit ba00196ca41c ("iommu/vt-d: Decouple igfx_off from graphic
+>    identity mapping")
+> 
+> I'm uncertain whether further testings on this particular laptops were
+> done in 2011 and (honestly I'm not sure) 2024, but I would be happy to do
+> some distro-specific testing if that's what would be required to verify
+> this patch.
+> 
+> P.S., I also see IDs 0x0040, 0x0062, and 0x006a listed under the same
+> `quirk_calpella_no_shadow_gtt()' quirk, but I'm not sure how similar these
+> chipsets are (if they share the same issue with VT-d or even, indeed, if
+> this issue is specific to a bug in the Lenovo BIOS). With regards to
+> 0x0062, it seems to be a Centrino wireless card, but not a chipset?
+> 
+> I have also listed a couple (distro and kernel) bug reports below as
+> references (some of them are from 7-8 years ago!), as they seem to be
+> similar issue found on different Westmere/Ironlake, Haswell, and Broadwell
+> hardware setups.
+> 
+> Link:https://bugzilla.kernel.org/show_bug.cgi?id=197029
+> Link:https://groups.google.com/g/qubes-users/c/4NP4goUds2c?pli=1
+> Link:https://bugs.archlinux.org/task/65362
+> Link:https://bbs.archlinux.org/viewtopic.php?id=230323
+> Reported-by: Wenhao Sun<weiguangtwk@outlook.com>
+> Signed-off-by: Mingcong Bai<jeffbai@aosc.io>
+> ---
+>   drivers/iommu/intel/iommu.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
 
-
-> On Apr 18, 2025, at 00:34, Fan Ni <nifan.cxl@gmail.com> wrote:
->=20
-> On Thu, Apr 17, 2025 at 12:21:55PM -0400, Sidhartha Kumar wrote:
->> On 4/17/25 11:43 AM, nifan.cxl@gmail.com wrote:
->>> From: Fan Ni <fan.ni@samsung.com>
->>>=20
->>> The function __unmap_hugepage_range() has two kinds of users:
->>> 1) unmap_hugepage_range(), which passes in the head page of a folio.
->>>    Since unmap_hugepage_range() already takes folio and there are no =
-other
->>>    uses of the folio struct in the function, it is natural for
->>>    __unmap_hugepage_range() to take folio also.
->>> 2) All other uses, which pass in NULL pointer.
->>>=20
->>> In both cases, we can pass in folio. Refactor =
-__unmap_hugepage_range() to
->>> take folio.
->>>=20
->>> Signed-off-by: Fan Ni <fan.ni@samsung.com>
->>> ---
->>>=20
->>> Question: If the change in the patch makes sense, should we try to =
-convert all
->>> "page" uses in __unmap_hugepage_range() to folio?
->>>=20
->>=20
->> For this to be correct, we have to ensure that the pte in:
->>=20
->> 	page =3D pte_page(pte);
->>=20
->> only refers to the pte of a head page. pte comes from:
->>=20
->> 	pte =3D huge_ptep_get(mm, address, ptep);
->>=20
->> and in the for loop above:
->>=20
->> 	for (; address < end; address +=3D sz)
->>=20
->> address is incremented by the huge page size so I think address here =
-only
->> points to head pages of hugetlb folios and it would make sense to =
-convert
->> page to folio here.
->>=20
->=20
-> Thanks Sidhartha for reviewing the series. I have similar =
-understanding and
-> wanted to get confirmation from experts in this area.
-
-I think your understanding is right. BTW, you forgot to update =
-definition of
-__unmap_hugepage_range() under !CONFIG_HUGETLB_PAGE case.
-
->=20
-> Thanks.
-> Fan
-
+Queued for v6.15-rc. Thank you!
 
