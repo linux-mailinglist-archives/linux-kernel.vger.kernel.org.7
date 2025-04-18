@@ -1,200 +1,175 @@
-Return-Path: <linux-kernel+bounces-610211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97CD8A931E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 08:20:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0919A93222
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 08:34:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F40407A9909
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 06:18:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A7BF1B66CFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 06:34:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C1B26868A;
-	Fri, 18 Apr 2025 06:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 453E726A0A2;
+	Fri, 18 Apr 2025 06:33:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="i7dTyjtE"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2068.outbound.protection.outlook.com [40.107.92.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="rhvzCAfX"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A29FE2E40B;
-	Fri, 18 Apr 2025 06:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744957199; cv=fail; b=bhddHqmuDCFZPEdQPdhlsgUwt27DbY0vJ8rfA0PcVClIUamk6CbJ2WHDXhik2IkoIpTFbYOivRln48XshlzE0EVSnVQ8mJSV36Hwg3uMPBtuxlM1w7UK9zLOwgD7LbKWG9eWtNGUKAHvNLkRsrvnOROM4F1rFz7clY3lAsZLXpc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744957199; c=relaxed/simple;
-	bh=hXZbvuzCaN2j02etROoefEyyTjhsq4vSZ97MNoz53qQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dog7TUHJdy4pxdmA6TAWT6B5lg7bWID7PmTPEm8SL1p8roEDBtASmecvh29cdj6Ba/xF4Q+gK24SMfDYolP143c5V1Yf4fQg4uNdw7Czjqyw1jUYv5mggq3iqQ7IviXqCCCs8aQgka0I6W/J7rtUr+vHmM0u7Be48pacJTapQ54=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=i7dTyjtE; arc=fail smtp.client-ip=40.107.92.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SpMAi7vVSx46MsEwZMTbW8xAmyqOKJI+Wwv2yHLWkFeDBItdjCOL4s3AbFa1xQe3mIHb6+EbR6fcA/iwUTrgS8dyh1PUelITDttNsVZ9TsYw8m9Uks87rQ137vBTAHBXVgVhO1ANTUS6oKNiBWRiYVAZdn0aU6mv664tXOTmkSe8TUwGgyWOq1vW9GiTUL750i7s9s8LNBB860UM6wI9scqkEczl4gBGWJuEXqXPmb/gJBIbgP7bKhAT2CS6naZdGTJ34dYJ0eaE+yYVM06U5Q1WlCf9XwmOBTl4ncWlsIMBc8py11coEDJXLG2+WjPi/vCYG/6GRsjhqczAuEHOhQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Y/gBVeY2GDUE2rVJ5phvun090ntjVuNt6rw8dv4dSGw=;
- b=BG1bvHrmtP37FlFVCA3MOy/O692wttiZUiAxEFynQLD3RC10O7E9QeUHRty/kKp07SVX2QV35Vd/2HixFkt3nS/utXXEZwhwSIgGgZvFw26O/c/yUuDbbmarWXdo1CdfJXY3eGTKivXNhKA4dvS1WsgVgTKEUjCE3tjHbtE7fao4yfE4H031/euiPyFxqVLmFQER9dIm8RSfjYEzFvFgKrHR4MvooDWCwYMzX7vTmVdeODi7WDTZ96ackbxiCi4wafz7X6IZ2MIU2UUC3NsQgOivSJDoxlBnWeVH/D+Oo7Wx4Z0/RxPj5prFDWv7KqzOtiQa6Rzoz92vnWVuX79lHQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Y/gBVeY2GDUE2rVJ5phvun090ntjVuNt6rw8dv4dSGw=;
- b=i7dTyjtE9Aqr/mi4/0KWz9TpHd9uUgScN1YxtXsR+d59nzkobx5Mf6UqqKSkKtxgrueaaJKXFWk4Wb6lobzKu3/WMsKAUmdYTMxdqOqidsnDyUuFSBKDNUf7Q8N0rGsbCNaSFL4XUVzoOK6R0zsG9WVXc8dO+h79+J4RYhaXgRg=
-Received: from SN7PR04CA0081.namprd04.prod.outlook.com (2603:10b6:806:121::26)
- by SA1PR12MB6822.namprd12.prod.outlook.com (2603:10b6:806:25d::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.36; Fri, 18 Apr
- 2025 06:19:54 +0000
-Received: from SJ1PEPF00001CE2.namprd05.prod.outlook.com
- (2603:10b6:806:121:cafe::27) by SN7PR04CA0081.outlook.office365.com
- (2603:10b6:806:121::26) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.22 via Frontend Transport; Fri,
- 18 Apr 2025 06:19:54 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ1PEPF00001CE2.mail.protection.outlook.com (10.167.242.10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8655.12 via Frontend Transport; Fri, 18 Apr 2025 06:19:53 +0000
-Received: from sindhu.amdval.net (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 18 Apr
- 2025 01:19:48 -0500
-From: Sandipan Das <sandipan.das@amd.com>
-To: <linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <tglx@linutronix.de>, <mingo@redhat.com>, <namhyung@kernel.org>,
-	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <x86@kernel.org>,
-	<hpa@zytor.com>, <riel@surriel.com>, <perry.yuan@amd.com>,
-	<mario.limonciello@amd.com>, <mjguzik@gmail.com>, <bigeasy@linutronix.de>,
-	<darwi@linutronix.de>, <eranian@google.com>, <ravi.bangoria@amd.com>,
-	<ananth.narayan@amd.com>, <sandipan.das@amd.com>
-Subject: [PATCH] x86/cpu/amd: Fix workaround for erratum 1054
-Date: Fri, 18 Apr 2025 11:49:40 +0530
-Message-ID: <caa057a9d6f8ad579e2f1abaa71efbd5bd4eaf6d.1744956467.git.sandipan.das@amd.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 054CE26A092
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 06:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744958000; cv=none; b=PTwh37b9c6gwyP28Sw0AI2Jc219VrEl/XN1lx+StyY4DMEsTqyjSypHFBz3w/T/8oiPGwj6StRq1FRWJ1cGUqKLmM77XZ83udTxwIOC3AO8ZF80wKLGjcIR35MNLh2nmb0LJqlS8IH5OxLA57Nfyb+fF9j2Z6gwavLA0wBH38IE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744958000; c=relaxed/simple;
+	bh=ZlP6EPK4+fZnrQcl5kjy+YB9vBk4s18QuHHhKRtoZmg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qdVqBpMHBeKxgaYQkbXHsIYVL2u8yetJwf/OIwnFrGh/wRtEoBtyPKB/KVjJ7O+PZsj+l52cRA85+x55jVaO1CcHUCWsdTZNTd17abaYjMeGbrPuOYwAMdp1AhXJiajN0UmTJx3yZZiP1muFWIpE0hriVSkAjgmfa9Fy+tnDFis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=rhvzCAfX; arc=none smtp.client-ip=121.127.44.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1744957991;
+ bh=LWB/lzW41QdtP1PkM2f6gfH2fV5BGNGd/A9YQFiDNfw=;
+ b=rhvzCAfXV839+8f9YwCX+XOQEkNgiszueHyowH/X0ELG+3AEodFwtgXGfh7Pm5vylfS7Z+MkF
+ kKID1V/rIlnLgNg1/DnI8wVJB9igXpsk2Vp6j209dLOW7GwivVxGxvT7+HTjIGwpNQTSyycfqHI
+ f9VODWhbcjvedZWBatzW8gzMSc1gVyEJSMlm4wdTia9GZKjeyfNyFzq8uGRYwwEssmPO312qGn/
+ tiTgR579zzRFtJuVka6MpWqQrmOcrsxHlQrkkPryuONG/aHWBQKj8uvhFpKWhAsSevE+SAOyXV7
+ rtX+67JM70SYM0/CC3SC3GvJjT6nuJrNYPIJeCIHmnJg==
+X-Forward-Email-ID: 6801efb8c6b251c2d5bebe82
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 121.127.44.73
+X-Forward-Email-Version: 1.0.2
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <8d1c3c82-dbdc-4064-8188-bab586996302@kwiboo.se>
+Date: Fri, 18 Apr 2025 08:22:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CE2:EE_|SA1PR12MB6822:EE_
-X-MS-Office365-Filtering-Correlation-Id: acf5aa6f-38b3-4f0d-05fe-08dd7e41089f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?2fdGlOEvAYeNdO8eKqkbsfUdnHj0z3XRvsWwPZXXP11o8kWRThliy/q69NuL?=
- =?us-ascii?Q?q4EbmTJTzsc20hNWBEdD3oZFyGMecMvNwQzCqb1iulsAb0Zfi+me5of3+RkH?=
- =?us-ascii?Q?nyo0R5v/PHhVwnd6YjRcUtz30y299d8aiFN4Vn3PfhXfK/3j+uCIfxynbwA2?=
- =?us-ascii?Q?bXUBJT6EO6toe+mNFXOofQ8bKAzFakKSwpamkkXAX6IU6Sp+uVciJgR3jELb?=
- =?us-ascii?Q?lO30KYs1hujIjTfMCfK+5N0g+e/j8UMpq5AJaVcO0SHlaQwqLUaN/uwwF8GE?=
- =?us-ascii?Q?0wu7jkQpaI2cn0VVdDiPtgYYnUvolUm87Wp3ObMvjLW/GqrHWs6Oe7Wc4Ag0?=
- =?us-ascii?Q?nM2P6N8GOgOY6m9HKcAET2WMQOz7A0mX7X4p7LImxyNGCmEUnDM/ReZscfR4?=
- =?us-ascii?Q?y2ymuOmf4ZMp5yU1qLHKnQ+UcrW+fpeFp3f3zRq4G8Cg9zinEtQw8tNrYVr4?=
- =?us-ascii?Q?EIUxJaUWrzhxsQbHZHymeUGG+BiYmcj630TvWbDHLHOLt6ls1/N5yRIHrgkp?=
- =?us-ascii?Q?Rp7QmBS0vfOdqy79lxeJYmAHeTpFSuzsBammjMgZcAkecZz1MxVO3yVc3A+y?=
- =?us-ascii?Q?L5dHWh0yBw57vf4WIG3ocQtGuCM4AC3JsQ8ENcg6Z7SOJE7WsiE18+j2wtdj?=
- =?us-ascii?Q?oD8rvydbiCAtPBZuBzSucaviS1UEl3A7r8qHYgG8soy7u8do+7dqH+KGcbYx?=
- =?us-ascii?Q?3Cvsief0JBRMI2yA07XhWLy8bc6JL4ciEbVEXYKK44FGqctFVTRxmnlOhHY8?=
- =?us-ascii?Q?KHkOPI3OaCxsqDexk9+OCQawDqkAOhjOX20C62qC6pkff+ag8p6kCMbth7Id?=
- =?us-ascii?Q?sy+oqmcC9vnbgPDACGLhFC6JZHykjQMjazFzyq5653Wk7U2W+sV8UYpywa2w?=
- =?us-ascii?Q?VKe0HNF5cVUCRhXy8RRraPpNa7Wuz01MliO7052SShXUcihnX0c6SOSoqfFa?=
- =?us-ascii?Q?Enrabs6C8fUda+b8OPJ69Sgv78hre12i9/gdWMC3fjSed09fCBqzCferOCiU?=
- =?us-ascii?Q?TJTExNxZqrV/zEqbo2vSe9EoeJDbOa/bYcW7Z9ZqYpN5PPHlXnZXrKe/Dvag?=
- =?us-ascii?Q?dc8XDBCnXtLHz18xtVOxxtFHiV0SCS8C4bRIDEI5OdFeS8E32pBCzt8iCn3k?=
- =?us-ascii?Q?VwqlmIA/ZP6HfDB1seLczY9ElDamaAwrarBCdBtMlfC+uXyvx164IEpPc9aj?=
- =?us-ascii?Q?oPvATnKYpXaUgIgzbA/gcV8KQF5bESXn9NdTlCxjirJ2QhvpyEl/u+m1hqZ8?=
- =?us-ascii?Q?rWk9lKInKlKNxUY99XTRvUNThCAJ0Hg+UIkmaJ2KpRLsTj5BTPh5wNX461Dp?=
- =?us-ascii?Q?vSOKY8OKP+T3bn/LFn8bsi3g6WYZZ96T1DIp/PLmMsOsDXlqTbPMNCzdGcxi?=
- =?us-ascii?Q?Wy/GIgPI/duGkabxi2D9130rp62QL2Hn8TWgX/uGdWtghw26yAlmFL7eSyUc?=
- =?us-ascii?Q?qr+3Oi5zgUFPGkTag21+UCRv3QB58yeABmtdQZf7NMzkW7ofiStu/UBdJOpI?=
- =?us-ascii?Q?tSaIjITio3S1jjLMM91zOaEw9WcrTm2y7ZRy?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Apr 2025 06:19:53.7841
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: acf5aa6f-38b3-4f0d-05fe-08dd7e41089f
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00001CE2.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6822
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 3/4] media: rkvdec: Add get_image_fmt ops
+To: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250417-b4-rkvdec_h264_high10_and_422_support-v9-0-0e8738ccb46b@collabora.com>
+ <20250417-b4-rkvdec_h264_high10_and_422_support-v9-3-0e8738ccb46b@collabora.com>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <20250417-b4-rkvdec_h264_high10_and_422_support-v9-3-0e8738ccb46b@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Erratum 1054 affects AMD Zen processors that are a part of Family 17h
-Models 00-2Fh and the workaround is to not set HWCR[IRPerfEn]. However,
-when X86_FEATURE_ZEN1 was introduced, the condition to detect unaffected
-processors was incorrectly changed in a way that the IRPerfEn bit gets
-set only for unaffected Zen 1 processors.
+Hi Nicolas,
 
-Ensure that HWCR[IRPerfEn] is set for all unaffected processors. This
-includes a subset of Zen 1 (Family 17h Models 30h and above) and all
-later processors. Also clear X86_FEATURE_IRPERF on affected processors
-so that the IRPerfCount register is not used by other entities like the
-MSR PMU driver.
+On 2025-04-17 23:58, Nicolas Dufresne wrote:
+> From: Jonas Karlman <jonas@kwiboo.se>
+> 
+> Add support for a get_image_fmt() ops that returns the required image
+> format.
+> 
+> The CAPTURE format is reset when the required image format changes and
+> the buffer queue is not busy.
+> 
+> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+> Tested-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+> Co-developed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+> Signed-off-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+> ---
+>  drivers/staging/media/rkvdec/rkvdec.c | 35 +++++++++++++++++++++++++++++++++++
+>  drivers/staging/media/rkvdec/rkvdec.h |  2 ++
+>  2 files changed, 37 insertions(+)
+> 
+> diff --git a/drivers/staging/media/rkvdec/rkvdec.c b/drivers/staging/media/rkvdec/rkvdec.c
+> index 7b780392bb6a63cc954655ef940e87146d2b852f..6c6fe411f48772419e1810d869ab40d168848e65 100644
+> --- a/drivers/staging/media/rkvdec/rkvdec.c
+> +++ b/drivers/staging/media/rkvdec/rkvdec.c
+> @@ -72,6 +72,15 @@ static bool rkvdec_is_valid_fmt(struct rkvdec_ctx *ctx, u32 fourcc,
+>  	return false;
+>  }
+>  
+> +static bool rkvdec_fmt_changed(struct rkvdec_ctx *ctx,
+> +			       enum rkvdec_image_fmt image_fmt)
 
-Fixes: 232afb557835 ("x86/CPU/AMD: Add X86_FEATURE_ZEN1")
-Signed-off-by: Sandipan Das <sandipan.das@amd.com>
----
- arch/x86/kernel/cpu/amd.c | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+Just a small nitpick:
 
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index a839ff506f45..2b36379ff675 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -869,6 +869,16 @@ static void init_amd_zen1(struct cpuinfo_x86 *c)
- 
- 	pr_notice_once("AMD Zen1 DIV0 bug detected. Disable SMT for full protection.\n");
- 	setup_force_cpu_bug(X86_BUG_DIV0);
-+
-+	/*
-+	 * Turn off the Instructions Retired free counter on machines that are
-+	 * susceptible to erratum #1054 "Instructions Retired Performance
-+	 * Counter May Be Inaccurate".
-+	 */
-+	if (c->x86_model < 0x30) {
-+		msr_clear_bit(MSR_K7_HWCR, MSR_K7_HWCR_IRPERF_EN_BIT);
-+		clear_cpu_cap(c, X86_FEATURE_IRPERF);
-+	}
- }
- 
- static bool cpu_has_zenbleed_microcode(void)
-@@ -1052,13 +1062,8 @@ static void init_amd(struct cpuinfo_x86 *c)
- 	if (!cpu_feature_enabled(X86_FEATURE_XENPV))
- 		set_cpu_bug(c, X86_BUG_SYSRET_SS_ATTRS);
- 
--	/*
--	 * Turn on the Instructions Retired free counter on machines not
--	 * susceptible to erratum #1054 "Instructions Retired Performance
--	 * Counter May Be Inaccurate".
--	 */
--	if (cpu_has(c, X86_FEATURE_IRPERF) &&
--	    (boot_cpu_has(X86_FEATURE_ZEN1) && c->x86_model > 0x2f))
-+	/* Enable the Instructions Retired free counter */
-+	if (cpu_has(c, X86_FEATURE_IRPERF))
- 		msr_set_bit(MSR_K7_HWCR, MSR_K7_HWCR_IRPERF_EN_BIT);
- 
- 	check_null_seg_clears_base(c);
--- 
-2.43.0
+Maybe this function should be called rkvdec_image_fmt_changed() and
+could be moved closer to rkvdec_image_fmt_match() as those two are
+related to image_fmt and not the pixfmt/fourcc.
+
+Regards,
+Jonas
+
+> +{
+> +	if (image_fmt == RKVDEC_IMG_FMT_ANY)
+> +		return false;
+> +
+> +	return ctx->image_fmt != image_fmt;
+> +}
+> +
+>  static void rkvdec_fill_decoded_pixfmt(struct rkvdec_ctx *ctx,
+>  				       struct v4l2_pix_format_mplane *pix_mp)
+>  {
+> @@ -118,8 +127,34 @@ static int rkvdec_try_ctrl(struct v4l2_ctrl *ctrl)
+>  	return 0;
+>  }
+>  
+> +static int rkvdec_s_ctrl(struct v4l2_ctrl *ctrl)
+> +{
+> +	struct rkvdec_ctx *ctx = container_of(ctrl->handler, struct rkvdec_ctx, ctrl_hdl);
+> +	const struct rkvdec_coded_fmt_desc *desc = ctx->coded_fmt_desc;
+> +	enum rkvdec_image_fmt image_fmt;
+> +	struct vb2_queue *vq;
+> +
+> +	/* Check if this change requires a capture format reset */
+> +	if (!desc->ops->get_image_fmt)
+> +		return 0;
+> +
+> +	image_fmt = desc->ops->get_image_fmt(ctx, ctrl);
+> +	if (rkvdec_fmt_changed(ctx, image_fmt)) {
+> +		vq = v4l2_m2m_get_vq(ctx->fh.m2m_ctx,
+> +				     V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE);
+> +		if (vb2_is_busy(vq))
+> +			return -EBUSY;
+> +
+> +		ctx->image_fmt = image_fmt;
+> +		rkvdec_reset_decoded_fmt(ctx);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct v4l2_ctrl_ops rkvdec_ctrl_ops = {
+>  	.try_ctrl = rkvdec_try_ctrl,
+> +	.s_ctrl = rkvdec_s_ctrl,
+>  };
+>  
+>  static const struct rkvdec_ctrl_desc rkvdec_h264_ctrl_descs[] = {
+> diff --git a/drivers/staging/media/rkvdec/rkvdec.h b/drivers/staging/media/rkvdec/rkvdec.h
+> index 6f8cf50c5d99aad2f52e321f54f3ca17166ddf98..e466a2753ccfc13738e0a672bc578e521af2c3f2 100644
+> --- a/drivers/staging/media/rkvdec/rkvdec.h
+> +++ b/drivers/staging/media/rkvdec/rkvdec.h
+> @@ -73,6 +73,8 @@ struct rkvdec_coded_fmt_ops {
+>  		     struct vb2_v4l2_buffer *dst_buf,
+>  		     enum vb2_buffer_state result);
+>  	int (*try_ctrl)(struct rkvdec_ctx *ctx, struct v4l2_ctrl *ctrl);
+> +	enum rkvdec_image_fmt (*get_image_fmt)(struct rkvdec_ctx *ctx,
+> +					       struct v4l2_ctrl *ctrl);
+>  };
+>  
+>  enum rkvdec_image_fmt {
+> 
 
 
