@@ -1,90 +1,105 @@
-Return-Path: <linux-kernel+bounces-610612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F7A2A936F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 14:19:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14E42A93712
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 14:30:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8A5B8A72B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 12:18:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8EED19E3A24
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 12:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28D027465F;
-	Fri, 18 Apr 2025 12:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D2C274FC4;
+	Fri, 18 Apr 2025 12:29:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jjvk5QoY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="c3UDLAiN"
+Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372F91B4145;
-	Fri, 18 Apr 2025 12:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA67C26FD91;
+	Fri, 18 Apr 2025 12:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.26
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744978728; cv=none; b=NgppPqCwClqm1Lq8gXr8P+16vAw4LweYRdA627YrH5QASpkucRFukWX6hn4+zy+vNbIZpeRWwBJGevCg7BOIuz70tgfT2a4gCaoEPKuPSte6w7YOA+ow85SjbwL69X1htsp8wephjAfa9woIcD0z2R+H04S6ZWRkQ1YgouILrlk=
+	t=1744979394; cv=none; b=tayFO0wUvOebyC0GsJv9wRwgvySbWr+q8s2dhXrnPuKr1LlSkl7rYj0Nhuoq2/8nMMzLQ3w76aY1nwOsRK5Lo603jU465ZGS91x9aTUnYDKArpcWAG1fqZVR6hoqJpfSvjpOjy0k0EFKDXdW4+SyiZm9fu4FzB4p+Qw6VA1oLR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744978728; c=relaxed/simple;
-	bh=9SK70E7929mT6SYZygI4BwxZ2Vh/2y0vyBLbyfLsegA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=EtA4bm1BRv1SaJ2rWAIF8pqFweDpgbPg8dOWHF3kIGDcULXXBS2IywVeu8FYUDwvTnH4+/yZKXJm8xDkr29IMYwAtaprTqvmtVDYQEnqzlM50tyPAjyLJM+XVKQa+ZK+8vDtLSmlU549lN5d0BQNz1LKPgKec4+WPf3Ae1uq81o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jjvk5QoY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C034FC4CEE2;
-	Fri, 18 Apr 2025 12:18:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744978727;
-	bh=9SK70E7929mT6SYZygI4BwxZ2Vh/2y0vyBLbyfLsegA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=jjvk5QoYQOkxdCHXMhTrvXH37XF8cEF4CFCvpMeDDlr9zk+uf9g7mngNtH1u2nm8w
-	 5gmtOd48jSHIWeamx107cep58/QEog2nhfIv/QrNY15YdF/0fDW9rrx58mG5s7SeRi
-	 p2OhO7X+L6L6Rq3dtjwJnp3+g1LgW+ZRsFfrPp4cBiW/+BS509i6NLzvtZRW8yoNpQ
-	 S6MmDLmUfLHBHhBFAOfWQTidCUHf5xDRkiLDkvL5xhhRja5+VAmR8upfRY7Yg9qe/Q
-	 ola8y2MMe9kdfxA+9mr939xrL2pdvZSW2JPrUfUtFELgjrM8PvIPButhhy9FQ4rt40
-	 G02O41kIFLv7g==
-Date: Fri, 18 Apr 2025 14:18:43 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c <linux-i2c@vger.kernel.org>, 
-	lkml <linux-kernel@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>
-Subject: [GIT PULL] i2c-host-fixes for v6.15-rc3
-Message-ID: <mtqiyp7mtyuivs7snzfp3dcinr2u5jw63afxqto4s2rnqe6nyc@ozaxoxvtvdxt>
+	s=arc-20240116; t=1744979394; c=relaxed/simple;
+	bh=XaIY/xQVxAgcWLZ8epbYfw6+SNdjl9PnTABlVOKgxAg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QIIUjJzlnmOguX3bj0ybA/bLFZsu5xxuXsr/v4Nn0VcsITVWgx15GZlKkzZjnapnbBWjzzhw6IzsfbqFb7EX6Ic62vOfgYiPwY5+V7bmE865vcKPpDHLxNS3JzwJAmQiyNAesbcR84c/GBLY0cbjb1uGDm3wFu49o/meHVEU4iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=c3UDLAiN; arc=none smtp.client-ip=80.12.242.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id 5khfuawZP2zsA5khiuLkN8; Fri, 18 Apr 2025 14:20:24 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1744978824;
+	bh=8k3JMAls+GQlxYkbc31pLWubjNcA+n4tKYL4qcb01q8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=c3UDLAiNAdgLs93k5n13OjKXU1eQHkZjqRYCwDjFQw+hJZJbMhcK/Q2vEba2GECIH
+	 jQ4C6zqdYrmkkDi7pwNdezlK7smSs4yzSj1rTs0jMUS1Hxou6Y/0HwPKaZaDD73A+b
+	 ceSBDUulm6zB6g9E1tayiI2McCbCLGTPmREqzUbMjuGDpSyaoAs+eP4siDFK/np4iO
+	 pO7elE6u7+2f6Z8aBd7joo7wnH7Ha/asmqLEpKSoc6srKHVRvf4O1w3zfjIO41idG9
+	 cV54wdfcI8N85nLHUdhjYiwCKTWOpeDBydRNIYb4BVMFZIoJS8plNeBAYMrDqyV0se
+	 dsZp2sO0Ms/CQ==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Fri, 18 Apr 2025 14:20:24 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <e148faa8-6ee0-45bd-8cd8-37ea42a1de2a@wanadoo.fr>
+Date: Fri, 18 Apr 2025 14:20:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] spi: stm32-ospi: Fix an error handling path in
+ stm32_ospi_probe()
+To: quic_msavaliy@quicinc.com
+Cc: alexandre.torgue@foss.st.com, broonie@kernel.org,
+ christophe.jaillet@wanadoo.fr, kernel-janitors@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-spi@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ mcoquelin.stm32@gmail.com, patrice.chotard@foss.st.com
+References: <2674c8df1d05ab312826b69bfe9559f81d125a0b.1744975624.git.christophe.jaillet@wanadoo.fr>
+ <72f49447-5c99-4028-90cf-3f5cc11e8b53@quicinc.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <72f49447-5c99-4028-90cf-3f5cc11e8b53@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Wolfram,
+Le 18/04/2025 à 14:09, Mukesh Kumar Savaliya a écrit :
+> 
+> 
+> On 4/18/2025 4:57 PM, Christophe JAILLET wrote:
+> [...]
+>> diff --git a/drivers/spi/spi-stm32-ospi.c b/drivers/spi/spi-stm32-ospi.c
+>> index 668022098b1e..9ec9823409cc 100644
+>> --- a/drivers/spi/spi-stm32-ospi.c
+>> +++ b/drivers/spi/spi-stm32-ospi.c
+>> @@ -960,6 +960,10 @@ static int stm32_ospi_probe(struct 
+>> platform_device *pdev)
+>>   err_pm_enable:
+>>       pm_runtime_force_suspend(ospi->dev);
+>>       mutex_destroy(&ospi->lock);
+>> +    if (ospi->dma_chtx)
+>> +        dma_release_channel(ospi->dma_chtx);
+> why can't you move to devm_dma_request_chan ? No need to cleanup.
 
-one fix for this week which prevents a potential NULL pointer
-dereference by adding an extra check in probe.
+Unless I miss something obvious, this function does not exist.
 
-Have a good weekend,
-Andi
+CJ
 
-The following changes since commit 8ffd015db85fea3e15a77027fda6c02ced4d2444:
+>> +    if (ospi->dma_chrx)
+>> +        dma_release_channel(ospi->dma_chrx);
+>>       return ret;
+>>   }
+> 
+> 
+> 
 
-  Linux 6.15-rc2 (2025-04-13 11:54:49 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags/i2c-host-fixes-6.15-rc3
-
-for you to fetch changes up to 424eafe65647a8d6c690284536e711977153195a:
-
-  i2c: cros-ec-tunnel: defer probe if parent EC is not present (2025-04-13 21:33:44 +0200)
-
-----------------------------------------------------------------
-i2c-host-fixes for v6.15-rc3
-
-- ChromeOS EC tunnel: fix potential NULL pointer dereference
-
-----------------------------------------------------------------
-Thadeu Lima de Souza Cascardo (1):
-      i2c: cros-ec-tunnel: defer probe if parent EC is not present
-
- drivers/i2c/busses/i2c-cros-ec-tunnel.c | 3 +++
- 1 file changed, 3 insertions(+)
 
