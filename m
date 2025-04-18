@@ -1,175 +1,101 @@
-Return-Path: <linux-kernel+bounces-610960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34492A93ADA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 18:28:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5DD1A93AE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 18:34:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FEFB7A7A56
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 16:27:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F6278A101C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 16:33:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD3E52144D8;
-	Fri, 18 Apr 2025 16:28:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92EE6214A92;
+	Fri, 18 Apr 2025 16:34:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cSotlHhr"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ui/c38Nb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73A1986250;
-	Fri, 18 Apr 2025 16:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E6E433C4;
+	Fri, 18 Apr 2025 16:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744993730; cv=none; b=Kwr7GKS/VfZ13YGzaw1XbRjG0xzYyiuyPwM99kBZmn4XQAjE2ZYSM5wr5eviysVtbtgSrIIBonqCoMxrCNiNLFwrGWY2UrQatfbVSCt9ATMQgssrQ4hKxmYwv9qkKmTS/UGLwDaSFbkd7tGbDKzzXZBDdbL+cTiQqGEsa/gibgM=
+	t=1744994044; cv=none; b=gcX2UCTghwg7tRQZFi8zzoOtTrRps9fUEYvGD8KA8XsIvu7Vq7i3PhNxU16M3EULnvb80nL8NuO0U/h/DaOYv9EPGvTZnBt+bX42DHpa1Gat+JrKQXjIbR58YrRhVSsATxDccjd6eXrvCm4CmAjINCreAfMP7S2duJYFBRk81Vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744993730; c=relaxed/simple;
-	bh=jM2jCqNrk/+awn4rQJCPLFiok9w2WoVJQHUX2vbK3do=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ibziMoVpWqZaCNozF9kI4LtPnD9oxK2/rgVPSClJ5LzpSwxSeVTZBc025VI6FSV7ZsH7PYIvrw/TJN9j7r7bq+PNK6bXyTuxG0d/Ml6cuiy8GE1vV0H80NmQG3p9lyhFREwt4jwLVpb5n4//ZakP3z0jyK1d9tJf8Vpl+5KkQgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cSotlHhr; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744993728; x=1776529728;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=jM2jCqNrk/+awn4rQJCPLFiok9w2WoVJQHUX2vbK3do=;
-  b=cSotlHhrS4RaBOaP2z2KrcmEjKd+pyJK6j0pIB7QlY9oeC7atcwFNxSC
-   bOS4GTHRlV+omtiPxsE+H4o7UfwF8R9qM09DoZCi45OXIPuq3n5HPktqK
-   mrzAP+xkG9PpK73QaL0Zv3EzvhQaIZ0O0qXT31kOo62TsZNPUr3bC60+N
-   9tOtnwHRmnWKTtotkp2edP4SG0i5chC3MZi9ZJIJ31CNP8MEWnVi3qdw+
-   vKFJLGpfO4p+RJUKlSvu6xRRFQQUYWc6IKvUoND4jHxVXTAwCZQ3GErQ6
-   w6FQy863vPBLFpSKG0JHv+pr536kif0m5NmTTSGtZtvqGl8DLF+T14e7v
-   A==;
-X-CSE-ConnectionGUID: wA0Vx0A7SxyzvvdmqKTFOw==
-X-CSE-MsgGUID: +SW2H5bdT+mAd7xxGFUd6A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11407"; a="57286889"
-X-IronPort-AV: E=Sophos;i="6.15,222,1739865600"; 
-   d="asc'?scan'208";a="57286889"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Apr 2025 09:28:47 -0700
-X-CSE-ConnectionGUID: hg6qTNsRRBmoWzU31FojWA==
-X-CSE-MsgGUID: f4KMTDDURxiYJhW9LRwumw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,222,1739865600"; 
-   d="asc'?scan'208";a="131098439"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO fdefranc-mobl3.localnet) ([10.245.246.252])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Apr 2025 09:28:44 -0700
-From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-To: Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>, Davidlohr Bueso <dave@stgolabs.net>,
- Robert Richter <rrichter@amd.com>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- Gregory Price <gourry@gourry.net>, Terry Bowman <terry.bowman@amd.com>,
- Robert Richter <rrichter@amd.com>
-Subject: Re: [PATCH v4 02/14] cxl/pci: Moving code in cxl_hdm_decode_init()
-Date: Fri, 18 Apr 2025 18:28:40 +0200
-Message-ID: <5321893.0KrE1Onz32@fdefranc-mobl3>
-In-Reply-To: <20250306164448.3354845-3-rrichter@amd.com>
-References:
- <20250306164448.3354845-1-rrichter@amd.com>
- <20250306164448.3354845-3-rrichter@amd.com>
+	s=arc-20240116; t=1744994044; c=relaxed/simple;
+	bh=ed3FOAzpZAREOk5SHpU5+5vpIY0q3AAD2Ue6wKBsD4w=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=AAxiJK0qlHlp2ICQnGcYduetg4zv/W642frOFcMkRwxzD11R4TzlDikUzGyP0XT/MAEcwt4r5Ziuln9cVfp2YDHkxj9YoSj2zBrAQXvBYHV6wpSoizlODifAH2oBY7q7h2NWhMyoDoH5OFM9J1OuFaC330CtcNO33i8D7WfuTek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ui/c38Nb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21E0BC4CEE2;
+	Fri, 18 Apr 2025 16:34:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744994043;
+	bh=ed3FOAzpZAREOk5SHpU5+5vpIY0q3AAD2Ue6wKBsD4w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=ui/c38NbH9ruZHxr8vvOvTLlkpoR0fAjRPRj/AoBYuFSyPo6Bdg4oK2pwjR9+lDbV
+	 97EHazWSbHuoTN7bNvnbWYCV2MiXK4ccaJ11/MLxaAnYjCg3AqZCxjduTZzZoG+Z3m
+	 wrH0kqYAkGSn0p4oIT+ICPA6wHS+iQ4gJ1EdSgjpmLC+Sx6L8fLJ7B1EJmj8bfwSwZ
+	 L5VJcVcEZQ88MjuWWjeMpLoZ+7uciEZPY/a8W97aDd8Sq8k7/5afqK0f06OVrtvVyq
+	 bOJvNJw6ZerlcwDQufJKpCEiA6PpXmEBOa9JjbI9zH+NxjhelDieZrRhDoBgF/9eks
+	 PJdzC2yUBwupg==
+Date: Fri, 18 Apr 2025 11:34:01 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Nishanth Menon <nm@ti.com>
+Cc: huaqian.li@siemens.com, m.szyprowski@samsung.com, robin.murphy@arm.com,
+	baocheng.su@siemens.com, bhelgaas@google.com, conor+dt@kernel.org,
+	devicetree@vger.kernel.org, diogo.ivo@siemens.com,
+	jan.kiszka@siemens.com, kristo@kernel.org, krzk+dt@kernel.org,
+	kw@linux.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	lpieralisi@kernel.org, robh@kernel.org, s-vadapalli@ti.com,
+	ssantosh@kernel.org, vigneshr@ti.com, iommu@lists.linux.dev
+Subject: Re: [PATCH v7 0/8] soc: ti: Add and use PVU on K3-AM65 for DMA
+ isolation
+Message-ID: <20250418163401.GA159541@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart3307009.N2xkq1pzWS";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250418134324.ewsfnze2btnx2r2w@country>
 
---nextPart3307009.N2xkq1pzWS
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-Date: Fri, 18 Apr 2025 18:28:32 +0200
-Message-ID: <5321893.0KrE1Onz32@fdefranc-mobl3>
-In-Reply-To: <20250306164448.3354845-3-rrichter@amd.com>
-MIME-Version: 1.0
+On Fri, Apr 18, 2025 at 08:43:24AM -0500, Nishanth Menon wrote:
+> On 15:30-20250418, huaqian.li@siemens.com wrote:
+> > 
+> > Jan Kiszka (7):
+> >   dt-bindings: soc: ti: Add AM65 peripheral virtualization unit
+> >   dt-bindings: PCI: ti,am65: Extend for use with PVU
+> >   soc: ti: Add IOMMU-like PVU driver
+> >   PCI: keystone: Add support for PVU-based DMA isolation on AM654
+> >   arm64: dts: ti: k3-am65-main: Add PVU nodes
+> >   arm64: dts: ti: k3-am65-main: Add VMAP registers to PCI root complexes
+> >   arm64: dts: ti: iot2050: Add overlay for DMA isolation for devices
+> >     behind PCI RC
+> > 
+> > Li Hua Qian (1):
+> >   swiotlb: Make IO_TLB_SEGSIZE configurable
+> 
+> I see at least 3 or 4 maintainers needing to co-ordinate, gets
+> complicated as I am not sure which maintainer needs to pick up what
+> patches in what dependency order. This looks like a mixed bag. Can
+> we split this patch into independent series for each maintainer with
+> clear indication of dependencies that is spread around a couple of
+> kernel windows (maybe dts comes in last?)
 
-On Thursday, March 6, 2025 5:44:36=E2=80=AFPM Central European Summer Time =
-Robert Richter wrote:
-> Commit 3f9e07531778 ("cxl/pci: simplify the check of mem_enabled in
-> cxl_hdm_decode_init()") changed the code flow in this function. The
-> root port is determined before a check to leave the function. Since
-> the root port is not used by the check it can be moved to run the
-> check first. This improves code readability and avoids unnesessary
-> code execution.
->=20
-> Signed-off-by: Robert Richter <rrichter@amd.com>
-> Reviewed-by: Gregory Price <gourry@gourry.net>
-> Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
-> Tested-by: Gregory Price <gourry@gourry.net>
->
-Reviewed-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
->
-> ---
->  drivers/cxl/core/pci.c | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
->=20
-> diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
-> index 33c3bdd35b24..6386e84e51a4 100644
-> --- a/drivers/cxl/core/pci.c
-> +++ b/drivers/cxl/core/pci.c
-> @@ -419,14 +419,6 @@ int cxl_hdm_decode_init(struct cxl_dev_state *cxlds,=
- struct cxl_hdm *cxlhdm,
->  	if (!hdm)
->  		return -ENODEV;
-> =20
-> -	root =3D to_cxl_port(port->dev.parent);
-> -	while (!is_cxl_root(root) && is_cxl_port(root->dev.parent))
-> -		root =3D to_cxl_port(root->dev.parent);
-> -	if (!is_cxl_root(root)) {
-> -		dev_err(dev, "Failed to acquire root port for HDM enable\n");
-> -		return -ENODEV;
-> -	}
-> -
->  	if (!info->mem_enabled) {
->  		rc =3D devm_cxl_enable_hdm(&port->dev, cxlhdm);
->  		if (rc)
-> @@ -435,6 +427,14 @@ int cxl_hdm_decode_init(struct cxl_dev_state *cxlds,=
- struct cxl_hdm *cxlhdm,
->  		return devm_cxl_enable_mem(&port->dev, cxlds);
->  	}
-> =20
-> +	root =3D to_cxl_port(port->dev.parent);
-> +	while (!is_cxl_root(root) && is_cxl_port(root->dev.parent))
-> +		root =3D to_cxl_port(root->dev.parent);
-> +	if (!is_cxl_root(root)) {
-> +		dev_err(dev, "Failed to acquire root port for HDM enable\n");
-> +		return -ENODEV;
-> +	}
-> +
->  	for (i =3D 0, allowed =3D 0; i < info->ranges; i++) {
->  		struct device *cxld_dev;
-> =20
->=20
+The keystone patch ("[4/8] PCI: keystone: Add support for PVU-based
+DMA isolation on AM654") depends on interfaces added by "[3/8] soc:
+ti: Add IOMMU-like PVU driver", so I can't really take 4/8 by itself.
 
+But I've acked 4/8, so it can be merged along with the rest of the
+series.  I assumed the easiest would be via the drivers/soc/ti/
+maintainer, i.e., you, Nisanth :)
 
---nextPart3307009.N2xkq1pzWS
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
+Let me know if I can do anything.
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEPKnol7Erd70tN+Lb50DaXiQpiWEFAmgCfbAACgkQ50DaXiQp
-iWHSngf/Yl+uC0WI+tOT/54ojH6pu6UvRd/tzd0NRl2/pw9LBmL/huF9Y/Tke+ev
-84/MvS6Muipa9mDq5RFSIs3rCpIMTCj9uW/hLm0gcih0FnUWAIbNOHjWn91WoZLF
-jvLluz2mbHhIceBlKh1C4T/FQJVoo3dWbuQ56DrpvQTO3R/djrf9eaEvAk+51Gbq
-i4csZwNlYfvefN4TmMUoQSMymmyxNVeWksOid2gFpv4PCDWBYLnFhTENxE9ZO2EK
-nWEoeeP+9Tenuwj7V4AdpMbyH1bCG1jDIicBbv5u9Ag4TY7SR1uwA9Cp+3csQlVW
-CfATgNN1oO08U9doGb+M7aGCQbBvkw==
-=Cj3P
------END PGP SIGNATURE-----
-
---nextPart3307009.N2xkq1pzWS--
-
-
-
+Bjorn
 
