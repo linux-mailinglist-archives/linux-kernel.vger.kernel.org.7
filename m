@@ -1,96 +1,152 @@
-Return-Path: <linux-kernel+bounces-610023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04DF8A92F53
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 03:36:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BCF2A92F5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 03:38:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 255604A1676
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 01:36:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9792A3B32EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 01:37:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAEB11DA31D;
-	Fri, 18 Apr 2025 01:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1AF81DF99C;
+	Fri, 18 Apr 2025 01:37:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D1w4HMo+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="KBwZwn04"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9342D184E
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 01:36:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1FEC1D79BE
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 01:37:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744940208; cv=none; b=qhOVshXmwtWI4jKb8EKp8TpsYFeyv0TtQUpG1EDBDehgW1SdvG5MFrkmHGGkPnLFbvdUmpuAGryqtalmcWosgRWy9C8VI5ThSmZvw8a6Frn2ZlPkn5WhYDflNY19I8/8QU136SoEB3SM2wR0LlLjG//d4bcglXZkF75eL4lvJVg=
+	t=1744940266; cv=none; b=bPJ5opzKC6q5MOjW53nZ1A9jHYIWnvquXtWf5gIKLXCuBLPkhZrRZtI/OYH6/AdS7DzPBxByY9NhiEPCNjmERfg3mXy6L5hLM3O9N/HKld7+rptfh6fhgTU0vhCiFPMyqnB0S44dJAEichd9V99Nk95oDbf0JXzBFCGmmFnxm5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744940208; c=relaxed/simple;
-	bh=SekIIecffDhznCWSL1ttezk93b5xIuQU1BogoGx9lq0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jaDAo2uSodz2yO0PVsbFCVzwpNnZh9Fs34ODN/gpVzhDb9pCiqDhyx0j6f3+I6zMgOM4uYtQei2XjDvA8AekoRGwKrniu+S2M1BwpMoVQh6cbzrYd9FjUn6KHeZk5t/dFR27GPt5A/ln0qcZa/MnD+v6yTqWaLNm9Tfd8vYyUak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D1w4HMo+; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744940204;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DPRKEE2pPqqXh55VK4O93js2Z6aBFP+KbTUlePrKSuI=;
-	b=D1w4HMo+EplVgTkK1Y0yC4OV0GFld/SvqZc1x2a7uq/OdfeirmGR1X33WRUAL4GesdOxSd
-	MwV8irj+AAnnSS4Yixodn76v7JWDSx3A14/MJT03tpHLQXAd2YMHksN2v6HsVjibEUV93c
-	AwRLxOVO+VS1yOFHh7oJ35Bd3P1oFgY=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-622-TCMRb19APSGqUBiv_ILfpw-1; Thu,
- 17 Apr 2025 21:36:42 -0400
-X-MC-Unique: TCMRb19APSGqUBiv_ILfpw-1
-X-Mimecast-MFC-AGG-ID: TCMRb19APSGqUBiv_ILfpw_1744940201
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7ED4E1800879;
-	Fri, 18 Apr 2025 01:36:41 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.88])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0F51719560BA;
-	Fri, 18 Apr 2025 01:36:37 +0000 (UTC)
-Date: Fri, 18 Apr 2025 09:36:33 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Uday Shankar <ushankar@purestorage.com>
-Cc: Jens Axboe <axboe@kernel.dk>,
-	Caleb Sander Mateos <csander@purestorage.com>,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 3/4] ublk: mark ublk_queue as const for
- ublk_register_io_buf
-Message-ID: <aAGsodNqMvuq5eIs@fedora>
-References: <20250416-ublk_task_per_io-v5-0-9261ad7bff20@purestorage.com>
- <20250416-ublk_task_per_io-v5-3-9261ad7bff20@purestorage.com>
+	s=arc-20240116; t=1744940266; c=relaxed/simple;
+	bh=83ine0mrSdz+4LSvDN5s7gcTAppP0Ss3rM2gY/WezSY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bmf5B4gCXl9Aac+29shJp+bs+FVajFfwwBrfZfIi+XBGfJw0iQLN+qntZE7qPS8uRR7NMldHKernz+D3chMrMt+qKAVTEiFJj2gsKHaYjmZE+3AsQEDmnFGDZ225ffigyZV8Hc2uzjj9UnJuv9pN4c5GNNv929BzoGmriZQg3X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=KBwZwn04; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-af5139ad9a2so928670a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 18:37:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1744940262; x=1745545062; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7I8NgF9RlR8FwCsr9V1VCpYsrKioxWgjmoDan09dvi8=;
+        b=KBwZwn04q/Az4CTzRDbtKoSU00TO9Z/xrWcUsw7FM+2ozNDJiRe3Ps777sLenVxfv0
+         Hs+fzwD/qoGgS/vO0s0GfFXJqE/JEl3pNsiPxu0NViu5v6gqgmhkb+VfggCFol6FVNDP
+         np2CMOiGNp+thzOhK4wZrb/c+aflqjbvFCrWk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744940262; x=1745545062;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7I8NgF9RlR8FwCsr9V1VCpYsrKioxWgjmoDan09dvi8=;
+        b=i64OcmodUjIpDC5EJ7VzDkvfpXxJpCpuZApF2YUWrC4YRIJjcx733BKx3jFc28IYgb
+         kOGu2z6icfdJD/7voouMRxtw/Mez0l1svTRe+V/5siHi3hB+6VyE+75mwwhLxntckoWS
+         IZjqO4GTM93UKEEcxgKlcSmLcxNAmRGNab1TR1tDvMhnZhFrFy4IQjCEj77C8uth6F+n
+         VaJ/8kmZxuw+kEU0EqsCnnSPcTIKCn2nMHtzCuXsANGnsQ500LYYrhfT4JsxaGiyXLKV
+         odjiC2E4A4YXFdi4vCeghFTnCAog7T4oiCAQb3f9V4nV99vdny58MjxSA3I+Pcl8uxkS
+         sETQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWXG106hvWcjup9B+mqVL+btBwjbw/YjMMDYLTWUcFwSXCTVmfpffFDvECeF6W1oqH5LkSRNzqepQc5T9I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDKXcYZsi8Fr1WSxzaRvAzWk6mRSzGWYqXSYg3DkCyXczHNNCo
+	o8uW//9fwpiWy9kEEEODNAnoDYv1PUQMjb9FCQ1eeEoR5xTprrs/jF1gg/PhPK8=
+X-Gm-Gg: ASbGncscUZhBRAmbzsLLJNTSw4sNH0mTMAPPY92yXOuXLEy5jp1XNT7Zb8p2CbQvVwk
+	EMDFrW2iGPgnJhEl6sSkz4Io4v9ceNqJKYuotFFhilVU3ZUp/01JcvUKEDCOkkeHtx9nKKeDlDU
+	uTTl5TxbucPhqDe1CMIkQQXWqoBkzvVcPYfy0Zwi6cQMRGnROEEAR1gLznfLT5SKhrvut1AGCja
+	jhycVy/u6SM2ZD+IuQrwcVfHe2dZBCt9xDfzN2YZqvDSrMfIrAoctZm4eAsgK19ZcpSbFB0/iXZ
+	vcPL3G8TWRjvllXCQ6ZQ7VuDO34hUF/y1mEnn1Ybn2tnckkT
+X-Google-Smtp-Source: AGHT+IE6KmDOqTadvPBOoP6NCbep8sj/+WD00V+zMFXa6ok1PnWjm2kVgaHVjOv1izpghACtKB8Bjw==
+X-Received: by 2002:a17:90b:568b:b0:2ef:67c2:4030 with SMTP id 98e67ed59e1d1-3087bbc4d52mr1273243a91.27.1744940261993;
+        Thu, 17 Apr 2025 18:37:41 -0700 (PDT)
+Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3087df21278sm131772a91.29.2025.04.17.18.37.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Apr 2025 18:37:41 -0700 (PDT)
+From: Joe Damato <jdamato@fastly.com>
+To: netdev@vger.kernel.org
+Cc: kuba@kernel.org,
+	pabeni@redhat.com,
+	shaw.leon@gmail.com,
+	Joe Damato <jdamato@fastly.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	bpf@vger.kernel.org (open list:XDP (eXpress Data Path):Keyword:(?:\b|_)xdp(?:\b|_)),
+	Daniel Borkmann <daniel@iogearbox.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	linux-kernel@vger.kernel.org (open list),
+	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK),
+	Shuah Khan <shuah@kernel.org>
+Subject: [PATCH net-next v3 0/3] Fix netdevim to correctly mark NAPI IDs
+Date: Fri, 18 Apr 2025 01:37:02 +0000
+Message-ID: <20250418013719.12094-1-jdamato@fastly.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250416-ublk_task_per_io-v5-3-9261ad7bff20@purestorage.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 16, 2025 at 01:46:07PM -0600, Uday Shankar wrote:
-> We now allow multiple tasks to operate on I/Os belonging to the same
-> queue concurrently. This means that any writes to ublk_queue in the I/O
-> path are potential sources of data races. Try to prevent these by
-> marking ublk_queue pointers as const in ublk_register_io_buf.
-> 
-> Suggested-by: Ming Lei <ming.lei@redhat.com>
-> Signed-off-by: Uday Shankar <ushankar@purestorage.com>
-> Reviewed-by: Caleb Sander Mateos <csander@purestorage.com>
+Greetings:
 
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Welcome to v3.
 
+This series fixes netdevsim to correctly set the NAPI ID on the skb.
+This is helpful for writing tests around features that use
+SO_INCOMING_NAPI_ID.
+
+In addition to the netdevsim fix in patch 1, patches 2 & 3 do some self
+test refactoring and add a test for NAPI IDs. The test itself (patch 4)
+introduces a C helper because apparently python doesn't have
+socket.SO_INCOMING_NAPI_ID.
 
 Thanks,
-Ming
+Joe
+
+v3:
+  - Dropped patch 3 from v2 as it is no longer necessary.
+  - Patch 3 from this series (which was patch 4 in the v2)
+    - Sorted .gitignore alphabetically
+    - added cfg.remote_deploy so the test supports real remote machines
+    - Dropped the NetNSEnter as it is unnecessary
+    - Fixed a string interpolation issue that Paolo hit with his Python
+      version
+
+v2: https://lore.kernel.org/netdev/20250417013301.39228-1-jdamato@fastly.com/
+  - No longer an RFC
+  - Minor whitespace change in patch 1 (no functional change).
+  - Patches 2-4 new in v2
+
+rfcv1: https://lore.kernel.org/netdev/20250329000030.39543-1-jdamato@fastly.com/
+
+Joe Damato (3):
+  netdevsim: Mark NAPI ID on skb in nsim_rcv
+  selftests: drv-net: Factor out ksft C helpers
+  selftests: drv-net: Test that NAPI ID is non-zero
+
+ drivers/net/netdevsim/netdev.c                |  2 +
+ .../testing/selftests/drivers/net/.gitignore  |  1 +
+ tools/testing/selftests/drivers/net/Makefile  |  6 +-
+ tools/testing/selftests/drivers/net/ksft.h    | 56 +++++++++++++
+ .../testing/selftests/drivers/net/napi_id.py  | 24 ++++++
+ .../selftests/drivers/net/napi_id_helper.c    | 83 +++++++++++++++++++
+ .../selftests/drivers/net/xdp_helper.c        | 49 +----------
+ 7 files changed, 173 insertions(+), 48 deletions(-)
+ create mode 100644 tools/testing/selftests/drivers/net/ksft.h
+ create mode 100755 tools/testing/selftests/drivers/net/napi_id.py
+ create mode 100644 tools/testing/selftests/drivers/net/napi_id_helper.c
+
+
+base-commit: 22ab6b9467c1822291a1175a0eb825b7ec057ef9
+-- 
+2.43.0
 
 
