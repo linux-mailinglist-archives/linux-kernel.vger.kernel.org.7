@@ -1,157 +1,111 @@
-Return-Path: <linux-kernel+bounces-610501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A085EA935AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 11:57:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5125FA934FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 10:59:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B4AB19E2925
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 09:57:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 407094A056C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 08:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17B226FA7D;
-	Fri, 18 Apr 2025 09:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B8326FD84;
+	Fri, 18 Apr 2025 08:59:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HwQtpWjb"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WYbfwUqq"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67841269CF1;
-	Fri, 18 Apr 2025 09:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F51E1A2658;
+	Fri, 18 Apr 2025 08:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744970243; cv=none; b=L7yueyKa5cZYUhuVqn1hc93PZpwbYOdpWMaWQpMdl5f/ElcG2tPe7LY7+erBU2AF/3kaBweM2sWd5WVdluPXY6LJfAFibS9H5DiQF8jtldIcMZWbwloaHLQoaDYUe5LRZfDYsKIqXbNYuKOAvdTtbPVGtvT9J+bWdZ+l/kCcmsc=
+	t=1744966747; cv=none; b=iQboN+GNVqcYXVhxc+Z+LnCN0Fe2HIlMCblmKqtgGimEusN3GMoAqmCNBi2LzCnx6WNDPWPCSI8rkOXHGPbOzdmKMopqT4Py+/s8Aokh1a+Iv4jOKfTP5yp7F6UFwpq/s2CCgdUKLO+eI1gFDrWPj7E7aiM03xqRdMKauErPiX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744970243; c=relaxed/simple;
-	bh=WmaSvDoeqoFzaQP/Y7NFJdAouhFUwa+QoPNGy2guwBw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=PLN5CAgn6gqEVaYMZGZLosLIsWcC0qU58U6gTRQW6Pbhlsir8b7n1jf3m9VlT9S3ifiSYox/8CcpQOnkWzw2wS6oGcFNtNj2x/sMjUSQ85chGh+A0S1twcwedOYeB7f+grIpBFFjVrzpG9HjVIYZIEBlx5cyEfqvo3bwJvU3a3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HwQtpWjb; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-39ee57c0b8cso1641312f8f.0;
-        Fri, 18 Apr 2025 02:57:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744970239; x=1745575039; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=kJPUilpm25GT69DD5Yt1sEWK/7fI6b7BM1tjdZsDCdE=;
-        b=HwQtpWjbmR6ph3fshygqFYNno+mwlQ+tSO1rWvEbJmphZXi35K/Wj8oKfKooGxZoqR
-         D1Mh/S1qJKhtBIGAXzZzoBEBHrsyI9b6k3nL9tUzbrZZXoJP9tnjMYxs/jHUrX4D9Moh
-         qPaSrLLr8xzIsncMjqH1ZNjVeIMRGB0q7PoVV5cDDmTy/lIiqM/+5Z0mN6La0kThsG8a
-         AphpT8aB7IKrcL04rqSU2lVhW6XXkt3slk6vYY6mFYhHm2ygckqSuesolTH/WdKti5rL
-         3nMjeclOO9xvzhfFz+xYMCGqiNAPdFRL96QR1wRpLdiVFgVN08zmsOFUeQ5YaIa8KhdT
-         YbNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744970239; x=1745575039;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kJPUilpm25GT69DD5Yt1sEWK/7fI6b7BM1tjdZsDCdE=;
-        b=furco27ur4G0K9xyinIBcV5ktHfy+xO3064gjo7H+qhQaun99HGNV9n+E43i1M1cIk
-         yYQr0nnfrsQ5/4vYlUgNFpv1Qk3f4zEZrZKScW07S4aZI1P1p6JuEx7WDtEtmow91dQg
-         z9hk/L/0ZlhEaZ0bzbBAghic46Mrz4pQ/Fvgf89r6ShGRTOUwm3XFHq4Pv+Jf92seKHU
-         LXKIuwRrMcXDoDRekvkKQtHbJiXscRU6WubvHKOuL7xvpjjyoztup9tRHcYMiYyYHHhK
-         cWgRKQ8tDnjDmE0qQ6MV8phrGo0v6nEVmQSWBfDlWhjUKMHBuQnCBBZM/JMKs4Qs67bP
-         ba5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV7H63URhxit/8bARs500JA/UsPSlnhWC9YG1eXBIY0kdoC3shkzac0gWvbHZphXZjKXY2npHtB01Lr40g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUXuoYKS+fV2xwG3Wp4Olm+gaIaFY37SxPX1pUUmAbAAZyAyq/
-	Atr5i0EWjm1Mj6IS122TUCLend8C3TsRgtmBCIKhtFfOcyPfdmft
-X-Gm-Gg: ASbGncsUQ/dU+7xzMOXTUFuiGP5H0HwBbV6sO7lAb/c2yI7121B9i212dllJSZ0AIKC
-	FTw/i7apEnJcBOUAI1V/asamkE5/kgKIi14BtRzIqvJxKyCXCsNs5fYldN/JDNrUy5bidbhGey7
-	hN+grbo3oFofCEBVv8NSbwVnVdKyuQFDMABfums2+5spV7MV0/jRVWRpMlBT1PUWNnRkLm/zbNB
-	i1TDv6lQ3pY5FzCetaSYmLyB8MKzkgYvc3I+YvXf2I6ZVyuFr5fdiFiZKYfIf7xCiRPiJF8rzYv
-	GjotACeSh6VRr8+OhfzpqCaF+x9oG3eG2l8LCtEdXASINWwh2lvXXMU6HfMgnhC0ftqU6kFopiD
-	6gt02sEbuJo/uTIs=
-X-Google-Smtp-Source: AGHT+IHyu7Y9UocFj6NyupWQTlJdBONm83Bu6jCvrQKTBDg/mDOlNqwmUghvwlMKZE314LRRl+t+tg==
-X-Received: by 2002:a05:6000:4201:b0:391:456b:6ab7 with SMTP id ffacd0b85a97d-39efba5db9bmr1508046f8f.34.1744970239352;
-        Fri, 18 Apr 2025 02:57:19 -0700 (PDT)
-Received: from ?IPv6:2001:818:ea56:d000:56e0:ceba:7da4:6673? ([2001:818:ea56:d000:56e0:ceba:7da4:6673])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa4207afsm2310967f8f.12.2025.04.18.02.57.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Apr 2025 02:57:19 -0700 (PDT)
-Message-ID: <057bec6375819c3a4cd227c20a60ec1dbb7405c3.camel@gmail.com>
-Subject: Re: [PATCH 3/8] iio: addac: ad74413r: use aligned_s64 for timestamp
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Jonathan Cameron
- <jic23@kernel.org>,  Nuno =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Lars-Peter Clausen <lars@metafoo.de>,  Michael Hennerich
- <Michael.Hennerich@analog.com>, Cosmin Tanislav
- <cosmin.tanislav@analog.com>, Tomasz Duszynski <tduszyns@gmail.com>,
- Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>,  Andreas Klinger
- <ak@it-klinger.de>, Petre Rodan <petre.rodan@subdimension.ro>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Date: Fri, 18 Apr 2025 09:57:38 +0100
-In-Reply-To: <20250417-iio-more-timestamp-alignment-v1-3-eafac1e22318@baylibre.com>
-References: 
-	<20250417-iio-more-timestamp-alignment-v1-0-eafac1e22318@baylibre.com>
-	 <20250417-iio-more-timestamp-alignment-v1-3-eafac1e22318@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1744966747; c=relaxed/simple;
+	bh=aE+TolPpJytr2bw3ArY9+yrf8+LfS2HJO8eTc40Sjxg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oh8FcqTyvlVHIgFKOkg8UMLGlsy9HSeFqGqPQHN1OebX4WffylBWJ8t/a63YEO+DCOgHp4Hql/zXkxvmHf+THjwfKUYXWhts3/+gAEa6QXWAtXDv/atxWELk2ybsYY5RvJOQusVxjGXGqPqTD+n0pksZ1Kmp0l8hMei0eMRed38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WYbfwUqq; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=QGIn3gg2dSpEZDpP3MpEJCGISaE8mMh3VrAkEfJj674=; b=WYbfwUqqSNrv/qSY0jjMdawH2e
+	JIfhUbsbV4Gad4WhGnQqV5z563hDFi0QdB9/PBe+y2BqYnUtfiPC5ovxA+BEDDwXqSdAQtkjyk1YC
+	stwUw8pSaGpiZlud6UiVNsRzxUDCoF3uNFwBMSTdCh1LCdhA4kE8A0kQsWpsryZ8+W+BGJi0AsO2p
+	kLHVQhhfauHugr1HewzcBxsxzY39r5ssPH62L2CGfAww3xsjZz7OPXPYCKsRIVHEC3YW33wkae7gx
+	aLoBns7p9Gh2CGaISqEKdXQvNDIjQDKGz9rZ0G9rXb9wQ0WzIrMwRlrneRI73AWTH97EYVMPZIM0K
+	LjBMijnA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1u5hXc-0000000CZza-2Wqf;
+	Fri, 18 Apr 2025 08:58:19 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 0D5E4300619; Fri, 18 Apr 2025 10:57:44 +0200 (CEST)
+Date: Fri, 18 Apr 2025 10:57:43 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Qing Wong <wangqing7171@gmail.com>
+Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] Revert "perf/core: Fix hardlockup failure caused by
+ perf throttle"
+Message-ID: <20250418085743.GN38216@noisy.programming.kicks-ass.net>
+References: <20250405141635.243786-1-wangqing7171@gmail.com>
+ <20250405141635.243786-2-wangqing7171@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250405141635.243786-2-wangqing7171@gmail.com>
 
-On Thu, 2025-04-17 at 11:52 -0500, David Lechner wrote:
-> Follow the pattern of other drivers and use aligned_s64 for the
-> timestamp. Technically there was no issue here since
-> AD74413R_FRAME_SIZE * AD74413R_CHANNEL_MAX =3D=3D 16 and IIO_DMA_MINALIGN
-> is always a multiple of 8. But best to conform in case someone copies
-> this to new code and then tweaks something.
->=20
-> Also move the unaligned.h header while touching this since it was the
-> only one not in alphabetical order.
->=20
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
+On Sat, Apr 05, 2025 at 10:16:34PM +0800, Qing Wong wrote:
+> From: Qing Wang <wangqing7171@gmail.com>
+> 
+> This reverts commit 15def34e2635ab7e0e96f1bc32e1b69609f14942.
+> 
+> The hardlockup failure does not exist because:
+> 1. The hardlockup's watchdog event is a pinned event, which exclusively
+> occupies a dedicated PMC (Performance Monitoring Counter) and is unaffected
+> by PMC scheduling.
+> 2. The hardware event throttling mechanism only disables the specific PMC
+> where throttling occurs, without impacting other PMCs. Consequently, The
+> hardlockup event's dedicated PMC remains entirely unaffected.
+> 
+> Signed-off-by: Qing Wang <wangqing7171@gmail.com>
 > ---
+>  kernel/events/core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 0bb21659e252..29cdb240e104 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -10049,8 +10049,8 @@ __perf_event_account_interrupt(struct perf_event *event, int throttle)
+>  		hwc->interrupts = 1;
+>  	} else {
+>  		hwc->interrupts++;
+> -		if (unlikely(throttle &&
+> -			     hwc->interrupts > max_samples_per_tick)) {
+> +		if (unlikely(throttle
+> +			     && hwc->interrupts >= max_samples_per_tick)) {
 
-Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+Well, it restores bad coding style. The referred commit also states that
+max_samples_per_tick can be 1, at which point we'll always throttle the
+thing, since we've just increased.
 
-> =C2=A0drivers/iio/addac/ad74413r.c | 5 +++--
-> =C2=A01 file changed, 3 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/iio/addac/ad74413r.c b/drivers/iio/addac/ad74413r.c
-> index
-> f0929616ab899cb374f00869787321eed4ccde16..a0bb1dbcb7ad9d02337d0990e5a3f90=
-be7eaa4ac
-> 100644
-> --- a/drivers/iio/addac/ad74413r.c
-> +++ b/drivers/iio/addac/ad74413r.c
-> @@ -4,7 +4,6 @@
-> =C2=A0 * Author: Cosmin Tanislav <cosmin.tanislav@analog.com>
-> =C2=A0 */
-> =C2=A0
-> -#include <linux/unaligned.h>
-> =C2=A0#include <linux/bitfield.h>
-> =C2=A0#include <linux/cleanup.h>
-> =C2=A0#include <linux/crc8.h>
-> @@ -24,6 +23,8 @@
-> =C2=A0#include <linux/regmap.h>
-> =C2=A0#include <linux/regulator/consumer.h>
-> =C2=A0#include <linux/spi/spi.h>
-> +#include <linux/types.h>
-> +#include <linux/unaligned.h>
-> =C2=A0
-> =C2=A0#include <dt-bindings/iio/addac/adi,ad74413r.h>
-> =C2=A0
-> @@ -84,7 +85,7 @@ struct ad74413r_state {
-> =C2=A0	 */
-> =C2=A0	struct {
-> =C2=A0		u8 rx_buf[AD74413R_FRAME_SIZE * AD74413R_CHANNEL_MAX];
-> -		s64 timestamp;
-> +		aligned_s64 timestamp;
-> =C2=A0	} adc_samples_buf __aligned(IIO_DMA_MINALIGN);
-> =C2=A0
-> =C2=A0	u8	adc_samples_tx_buf[AD74413R_FRAME_SIZE * AD74413R_CHANNEL_MAX];
->=20
-
+That is, the part of the old commit that argued about e050e3f0a71bf
+flipped the compare and the increment is still true. So even though it
+might not be related to the hardlockup problem, I still don't think the
+patch was wrong.
 
