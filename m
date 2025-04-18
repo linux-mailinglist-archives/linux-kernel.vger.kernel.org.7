@@ -1,118 +1,151 @@
-Return-Path: <linux-kernel+bounces-610236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B27FA93223
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 08:35:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77F82A93231
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 08:44:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F10688E5B07
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 06:34:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CA3E462F9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 06:44:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D283F269AE6;
-	Fri, 18 Apr 2025 06:33:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 204952698A2;
+	Fri, 18 Apr 2025 06:44:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fDB6cTas"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0IfBuvu4";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mwp4jAzo"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4B6255E23;
-	Fri, 18 Apr 2025 06:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0604E268C5D;
+	Fri, 18 Apr 2025 06:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744957989; cv=none; b=cAe+q1tMvg1GCWUWhWHPDVHEOb5ifFx9BeD25Uw9DIEu4H9qXNWL5W8Egjhknky5j9zHRWP7S3YjIQj88IoNq37eJ14lhIqu/OzzdCz0hlAo2kWJF5XkcLEbqlrygEY4kFXH2zJlnGOJRq8BvfJVve/ZQfUQTtLgUxxOrdwGnaU=
+	t=1744958670; cv=none; b=X5r9hlpK4m8+8aXX8QOML0PL01/gSnAvXIzmp67/+ilMNaI+Au9pI/+pTrEAg+GaynANMYnE6cjLiO5IAWpvue3NNcb+pLtHZP9IM0/cD1A2khy0aRdMvDsoFbwqfDwmR8rL84KWqQ8D1xQ9KvJm+9jFPsWYyTHqGOSx4NI3ufs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744957989; c=relaxed/simple;
-	bh=/Hsg/wIAip3bXNiSNJ1fUrWPjc6vdLW/C5QDVAAVH/o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eVmamcO1K5+mZDtz1tBCwaG8NsYB/gJj48oU5stzf73XApCe9MrkVENC0OltgIKcKm1vJ7HTTm5JbK206NfWAdx2YNrZcObm/Kf31XIXxxB226oc0vAse8OA0A2kN2tyWj4zrPt+SaviOdyUTvF3PJ428hjlOUAW53IWq73SsWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fDB6cTas; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79D54C4CEE7;
-	Fri, 18 Apr 2025 06:33:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744957988;
-	bh=/Hsg/wIAip3bXNiSNJ1fUrWPjc6vdLW/C5QDVAAVH/o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fDB6cTas7MpmIUNXLReHxeCEJW+YiHQTxAb5KF0YomPXB6llTHu3OYGfLNBwFtTO8
-	 VLM1Xw6sNHca2y8L6v0LacS1bElaZ9WIE9VDVnapTvj3jt77NUrdL8Vj4FlMFKmb9Y
-	 pZEHl49jmyV6sAQnGoRNTljnBydFEZoAND0ezMLGODN7VjCOB8sby0db6wnGbH8Q8A
-	 yiCJMaOhVCov3l4+uLPrKufVLGcyx4yoL2OlhdSSn3AIip5gpjYwFnLpn9gYPCq4aK
-	 +ao7+U39Gfozhoigyybw3yK/5IqeAw/TzeEV23bmkzx8Khis6QjxYRsa+VTfX7s8YG
-	 jwGYJYnVkbd0Q==
-Date: Fri, 18 Apr 2025 08:33:02 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Mike Rapoport <rppt@kernel.org>, Andy Shevchenko <andy@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, Arnd Bergmann <arnd@kernel.org>,
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Davide Ciminaghi <ciminaghi@gnudd.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH] x86/e820: discard high memory that can't be addressed by
- 32-bit systems
-Message-ID: <aAHyHuwbmhjWmDqc@gmail.com>
-References: <Z_rDdnlSs0rts3b9@gmail.com>
- <20250413080858.743221-1-rppt@kernel.org>
- <20250417162206.GA104424@ax162>
+	s=arc-20240116; t=1744958670; c=relaxed/simple;
+	bh=xFjwdh5zXJsl4jdplxYeKbRKXf0sjx7mjLgO9ma1Dbc=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=NFgoHCeMaHpLiPB3dTFbcPAa5oBWEkwzH09IZ8QpoPZrYJb5EWZJ0Ho+cjS+uhLWWpzZKAWzm2mvipW/f6Pc1i3rr14klBOEXr5bNGX1QTxb6rTEfh1VGab3eF4o6etTpYhoLwh9edcPxj0Pl/JLfH0g9S1e8oLEQQhueBLH36c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0IfBuvu4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mwp4jAzo; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 18 Apr 2025 06:36:19 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744958185;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BvUR9r0Nx9ybqwkRq9Dm8Rrk5uvOYBOtpGL96xkz9h0=;
+	b=0IfBuvu4Dr+cUnfFf3dFvdHx7BEyUprRF+1L7Q7BQv5GwIre5Cc4rB2ORY8G47FaFDqw1I
+	nmgTURFxwrUaA/kUZS40r/zGImF9UlPz6zY2gnNhC9FNn1VUR2Q/JBxh5f8tVaA69gLt8t
+	j2RZwlVIRuS81Dx0A0KeAdp3F081JKUeNurVo8xWon16+xHbtTPOwwAy9s5ZthtkoyG58g
+	JTLFPgf24UfxSyFL8lej2W05Zga+tgDxZMnjIhN03y6TM2jI7LAVHIEwKwNq4N7t7fcU2G
+	G1DCIEUswp/EZkUi7St9LK4nGDDVdx71qQXi25RUjkKbnZ+uJ786wLObb//9JQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744958185;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BvUR9r0Nx9ybqwkRq9Dm8Rrk5uvOYBOtpGL96xkz9h0=;
+	b=mwp4jAzobfHwc1Y4c7BP3rlZopVieA0j5oLUpWucun5ORBP0KLIDdTWYoLmBVG7919cVpz
+	9uzBnCkEzTLL3gDQ==
+From: "tip-bot2 for Sandipan Das" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/cpu/amd: Fix workaround for erratum 1054
+Cc: Sandipan Das <sandipan.das@amd.com>, Ingo Molnar <mingo@kernel.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: =?utf-8?q?=3Ccaa057a9d6f8ad579e2f1abaa71efbd5bd4eaf6d=2E17449?=
+ =?utf-8?q?56467=2Egit=2Esandipan=2Edas=40amd=2Ecom=3E?=
+References: =?utf-8?q?=3Ccaa057a9d6f8ad579e2f1abaa71efbd5bd4eaf6d=2E174495?=
+ =?utf-8?q?6467=2Egit=2Esandipan=2Edas=40amd=2Ecom=3E?=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250417162206.GA104424@ax162>
+Message-ID: <174495817953.31282.5641497960291856424.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the x86/urgent branch of tip:
 
-* Nathan Chancellor <nathan@kernel.org> wrote:
+Commit-ID:     f4efdb357680bef4584faedbd44b90cd53d3245f
+Gitweb:        https://git.kernel.org/tip/f4efdb357680bef4584faedbd44b90cd53d3245f
+Author:        Sandipan Das <sandipan.das@amd.com>
+AuthorDate:    Fri, 18 Apr 2025 11:49:40 +05:30
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Fri, 18 Apr 2025 08:31:07 +02:00
 
-> Hi Mike,
-> 
-> On Sun, Apr 13, 2025 at 11:08:58AM +0300, Mike Rapoport wrote:
-> ...
-> >  arch/x86/kernel/e820.c | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> > 
-> > diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
-> > index 57120f0749cc..5f673bd6c7d7 100644
-> > --- a/arch/x86/kernel/e820.c
-> > +++ b/arch/x86/kernel/e820.c
-> > @@ -1300,6 +1300,14 @@ void __init e820__memblock_setup(void)
-> >  		memblock_add(entry->addr, entry->size);
-> >  	}
-> >  
-> > +	/*
-> > +	 * 32-bit systems are limited to 4BG of memory even with HIGHMEM and
-> > +	 * to even less without it.
-> > +	 * Discard memory after max_pfn - the actual limit detected at runtime.
-> > +	 */
-> > +	if (IS_ENABLED(CONFIG_X86_32))
-> > +		memblock_remove(PFN_PHYS(max_pfn), -1);
-> > +
-> >  	/* Throw away partial pages: */
-> >  	memblock_trim_memory(PAGE_SIZE);
-> 
-> Our CI noticed a boot failure after this change as commit 1e07b9fad022
-> ("x86/e820: Discard high memory that can't be addressed by 32-bit
-> systems") in -tip when booting i386_defconfig with a simple buildroot
-> initrd.
+x86/cpu/amd: Fix workaround for erratum 1054
 
-I've zapped this commit from tip:x86/urgent for the time being:
+Erratum 1054 affects AMD Zen processors that are a part of Family 17h
+Models 00-2Fh and the workaround is to not set HWCR[IRPerfEn]. However,
+when X86_FEATURE_ZEN1 was introduced, the condition to detect unaffected
+processors was incorrectly changed in a way that the IRPerfEn bit gets
+set only for unaffected Zen 1 processors.
 
-  1e07b9fad022 ("x86/e820: Discard high memory that can't be addressed by 32-bit systems")
+Ensure that HWCR[IRPerfEn] is set for all unaffected processors. This
+includes a subset of Zen 1 (Family 17h Models 30h and above) and all
+later processors. Also clear X86_FEATURE_IRPERF on affected processors
+so that the IRPerfCount register is not used by other entities like the
+MSR PMU driver.
 
-until these bugs are better understood.
+Fixes: 232afb557835 ("x86/CPU/AMD: Add X86_FEATURE_ZEN1")
+Signed-off-by: Sandipan Das <sandipan.das@amd.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lore.kernel.org/r/caa057a9d6f8ad579e2f1abaa71efbd5bd4eaf6d.1744956467.git.sandipan.das@amd.com
+---
+ arch/x86/kernel/cpu/amd.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
-Thanks,
-
-	Ingo
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index a839ff5..2b36379 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -869,6 +869,16 @@ static void init_amd_zen1(struct cpuinfo_x86 *c)
+ 
+ 	pr_notice_once("AMD Zen1 DIV0 bug detected. Disable SMT for full protection.\n");
+ 	setup_force_cpu_bug(X86_BUG_DIV0);
++
++	/*
++	 * Turn off the Instructions Retired free counter on machines that are
++	 * susceptible to erratum #1054 "Instructions Retired Performance
++	 * Counter May Be Inaccurate".
++	 */
++	if (c->x86_model < 0x30) {
++		msr_clear_bit(MSR_K7_HWCR, MSR_K7_HWCR_IRPERF_EN_BIT);
++		clear_cpu_cap(c, X86_FEATURE_IRPERF);
++	}
+ }
+ 
+ static bool cpu_has_zenbleed_microcode(void)
+@@ -1052,13 +1062,8 @@ static void init_amd(struct cpuinfo_x86 *c)
+ 	if (!cpu_feature_enabled(X86_FEATURE_XENPV))
+ 		set_cpu_bug(c, X86_BUG_SYSRET_SS_ATTRS);
+ 
+-	/*
+-	 * Turn on the Instructions Retired free counter on machines not
+-	 * susceptible to erratum #1054 "Instructions Retired Performance
+-	 * Counter May Be Inaccurate".
+-	 */
+-	if (cpu_has(c, X86_FEATURE_IRPERF) &&
+-	    (boot_cpu_has(X86_FEATURE_ZEN1) && c->x86_model > 0x2f))
++	/* Enable the Instructions Retired free counter */
++	if (cpu_has(c, X86_FEATURE_IRPERF))
+ 		msr_set_bit(MSR_K7_HWCR, MSR_K7_HWCR_IRPERF_EN_BIT);
+ 
+ 	check_null_seg_clears_base(c);
 
