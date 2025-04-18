@@ -1,78 +1,111 @@
-Return-Path: <linux-kernel+bounces-611221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E5A6A93EEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 22:29:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75AF7A93EEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 22:29:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C41B88E609C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 20:28:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BC267A70FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 20:28:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46568254B0E;
-	Fri, 18 Apr 2025 20:27:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFC2B24169E;
+	Fri, 18 Apr 2025 20:28:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gl5RuDWU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="emkHc8Bf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B71233128
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 20:27:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D1923F40C;
+	Fri, 18 Apr 2025 20:28:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745008050; cv=none; b=dtg0Yr9ubJ6mpT8cQSVdZu658nA/79glSHv5s308tkc44uCIveoT9fdTy7xqTDrvGLxulwqdSIOB8MFQeyNIrezOOHUknnHhxPGd7OgT4A/wn2Q+tqiy0nEuw3lNWySKn+1uMJ/Q++lW5ZzrlPUIz/Zp2umXdFuYlDyyZs2cTYE=
+	t=1745008129; cv=none; b=e750Gz4Tm8AqMN4ZK1Lg/+miVM1NzNsJqyp4/MvE4vzMc0NbSs+bEIt+VCp7Uk15DCpCjQWZvWDtwSHeWB7Cg0TcciFO7qnNdvd323LHi2Z6aXCpnsi7pOufFE2rS+xkNu0aXy6zezSLOaTZr6syxTl7UrgjSQ1z5gUtjvuT+tE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745008050; c=relaxed/simple;
-	bh=UwICu4pD1DUPAL3W3TTTjj3fAPZ3z9yvP7OFHr44eJI=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=CBYsNl0ltdG+kWaolvzyVg4L3+pL2WFyiLIPfVK+RR+lAzW4bAp0vf3h9Jq9KnZxUwxTUkR2yNezwG0tOlJx4HWc+2z3/zu2TC1fGOO/Bw5ZhfXR+DK5GA3pHaHvNd4MKMaJnf4SmscbWrDAfJwUAbhts/BFfsekACKvmQoHKiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gl5RuDWU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84255C4CEE2;
-	Fri, 18 Apr 2025 20:27:30 +0000 (UTC)
+	s=arc-20240116; t=1745008129; c=relaxed/simple;
+	bh=e4VxNsvSZ16THA298RXtulbkphYJ1Y/POENNBgWIozU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cRcTN00vWXpHf7wG0rVBRHsWA1931piEf8QDdiwXkCCxP/eqha+JMDs1zz+TxjNLUCKiUbCsyqRbVkNOVVoluFnlUdIecKLaYH1+o2804cqF/GEnV/YYYpIAnuzzTgaLD2Bn9T0nQaqF4K90tDqs7UnaHZjBZKByMrBILA7gY4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=emkHc8Bf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 066D8C4CEE2;
+	Fri, 18 Apr 2025 20:28:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745008050;
-	bh=UwICu4pD1DUPAL3W3TTTjj3fAPZ3z9yvP7OFHr44eJI=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=gl5RuDWUojIKoLj5TdCYI2YaiMsJYMOJ8/R/QtwEt6SRCSe4gi4+uunSOmvd+yEiv
-	 s9+NQgeJLPbSzYr4sJLt4H0BND5mK/FNZVFml4hFggjYQJho8pYXiscZMj5B4eEqaP
-	 tH/a9HM2y+Ug1HOFOo3SqB2qjoRKkaV8TaPAL4uS7tAyoWSIj8vHYNjCC5us+zBuAm
-	 S4yLAlBXdvhjXemhnbARJEYXQDn141gq2zlagV8lOs05gynHKyqO5rwXffMKvUD1Q6
-	 SzLy7EoNtxAwd8K7AoiUJ711AcRh7ndxofhSxxbcCYb1yvb6qA6dAKLM4ODzcjV8DR
-	 G4SraPxLc8m3A==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAF843822E09;
-	Fri, 18 Apr 2025 20:28:09 +0000 (UTC)
-Subject: Re: [GIT PULL] core/urgent fixes
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <aAKzo5Bmkp3BSqsO@gmail.com>
-References: <aAKzo5Bmkp3BSqsO@gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <aAKzo5Bmkp3BSqsO@gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-urgent-2025-04-18
-X-PR-Tracked-Commit-Id: 1013f5636fd808569c1f4c40a58a4efc70713a28
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 84aca3ca6a42dade09d05a541c8aaab5ea228087
-Message-Id: <174500808846.316726.7937771514984300900.pr-tracker-bot@kernel.org>
-Date: Fri, 18 Apr 2025 20:28:08 +0000
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Borislav Petkov <bp@alien8.de>, Andrew Morton <akpm@linux-foundation.org>
+	s=k20201202; t=1745008129;
+	bh=e4VxNsvSZ16THA298RXtulbkphYJ1Y/POENNBgWIozU=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=emkHc8BfxSLCXF7voFL0ws4qpZ5RaMIB7Y2p6QCZC6+Qt6Q0g/yEa/GLATp6+1gJI
+	 bDanaG08pREZTWWHWXf/TbJI5fRbq5q+o0v2asunefHJk8nRb3lpCei2IGWMsuq3sn
+	 T/zCLO9bXDqksvAe8VsffE85y+mhvY/39NhN4ye9RyfemdsVwqZoKQ3P4iQReUHAOn
+	 nbfdbHWed0uaDUwd5BTJjaKr7GSEHwFp38qSRzeULFhE/9lDWj0Lj5e7jx7Xwv9ysP
+	 z3HlsvSH3VRjcvnKh97h2JvJKktviwQ+ph58kJHIyR+OQP1Y54rPDOu+ZkUeTWH+IY
+	 BoqYkFVQ3OvSA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 9849CCE077B; Fri, 18 Apr 2025 13:28:43 -0700 (PDT)
+Date: Fri, 18 Apr 2025 13:28:43 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Joel Fernandes <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org,
+	Josh Triplett <josh@joshtriplett.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Shuah Khan <shuah@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, rcu@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH 12/14] torture: Add testing of RCU's Rust bindings to
+ torture.sh
+Message-ID: <cbf1a147-0a24-4146-98a0-a9666bb60433@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250418161005.2425391-1-joelagnelf@nvidia.com>
+ <20250418161005.2425391-13-joelagnelf@nvidia.com>
+ <CANiq72nCfBdsfKzP72DWxLBh+Eueack9sS-E97wtsr0UtkAnUA@mail.gmail.com>
+ <42da7c8e-08ff-4b04-ab58-6c0c2e287eb3@paulmck-laptop>
+ <CANiq72nE2cH93W2qZrzAxfbz3hjsw4Xy0YYNwOUQ74SeGiirgw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72nE2cH93W2qZrzAxfbz3hjsw4Xy0YYNwOUQ74SeGiirgw@mail.gmail.com>
 
-The pull request you sent on Fri, 18 Apr 2025 22:18:43 +0200:
+On Fri, Apr 18, 2025 at 08:32:46PM +0200, Miguel Ojeda wrote:
+> On Fri, Apr 18, 2025 at 8:04 PM Paul E. McKenney <paulmck@kernel.org> wrote:
+> >
+> > Suppose we fired up a guest OS and captured the console output.  Is there
+> > a way to make that guest OS shut down automatically at the end of the
+> > test and to extract the test results?
+> 
+> Ah, sorry, I thought you were already doing something like that, i.e.
+> that perhaps you could reuse some kernel build you already had and
+> avoiding a full rebuild/`mrproper`. The KUnit Python script uses QEMU
+> and parses the results; e.g. you could look for the results lines
+> like:
+> 
+>     # Totals: pass:133 fail:0 skip:0 total:133
+>     ok 2 rust_doctests_kernel
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-urgent-2025-04-18
+Alternatively, I could clone a copy of the current archive into a
+temporary directory, "make mrproper" there, run kunit normally, then
+clean up the temporary directory.  Extra storage, but quite a bit
+more robust and user-friendly.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/84aca3ca6a42dade09d05a541c8aaab5ea228087
+Other thoughts?
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+							Thanx, Paul
 
