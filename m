@@ -1,319 +1,215 @@
-Return-Path: <linux-kernel+bounces-611172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B276A93E76
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 21:59:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD774A93E99
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 22:02:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AB5C4670C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 19:59:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A752188F6B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 20:02:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 459A322DF84;
-	Fri, 18 Apr 2025 19:59:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94CDA22D7B9;
+	Fri, 18 Apr 2025 20:00:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iytmxcsy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AevEJF20"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7C56DCE1;
-	Fri, 18 Apr 2025 19:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609D3254AE5
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 20:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745006370; cv=none; b=BDhu5/130bzOnpYVOgrZI0aU1cYL64rNojs+gh08gR/0KzpcLGXUIiCX0RQbhLe6dOsPBb7eqohGCJuHetBvODoPyxC2gFl0GgfHAeuM13JSypwwckFPcLkQhH88rUg7TQnNOj61Ujq6RGdIp0vgf/kneHGvhxB6Fz4NqQTZhBI=
+	t=1745006415; cv=none; b=h2oZRJKhWSDzI1ohwtrIppnHoURmuLdyui9ozHNXXXcLgmntzlZRFR9gzrFgzD7q7MXePYd7jbZhh4MLqRYq7UOqW1GPC0S8YCV11d7MbUbrBE9xK49yCuKColGMgxTppfFyX3vmOSC31QABgW1xzY/XOz+2S12tGVHPxhnjr20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745006370; c=relaxed/simple;
-	bh=gyBw2DM+jIc/hhY3YexqUJogoosVscXTFjVJLt9Ef30=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=llo5ICodRuAHoaw9eEbqc59DfGRY7VTzZVf7ZUh6rJsb1kT8RgqLu1BjDXWxtTmLFXcHXsJ7eo2NwOuAUeiLzcsThCypboa7I03erUJH8zw9Qep6DR/AGfnhplQ8MMYroGQfahR8uGyecWkkWGrtNdX2MjVB61hqXIkmgDAqePE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iytmxcsy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51051C4CEE2;
-	Fri, 18 Apr 2025 19:59:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745006369;
-	bh=gyBw2DM+jIc/hhY3YexqUJogoosVscXTFjVJLt9Ef30=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iytmxcsyDe4jUx0gkedpiUtXOUpHB9SO/UiRwbo0c+v78CKAIazj89BlCMaO0X0Df
-	 CJ7koj2bke+s/btBuPmO3gdkLNZ/OsvcKXcZJVxpYSqPPxkOwuS/mfRvaZ4u/PG3jZ
-	 MPo7Xi71Q0eR4rKzLPqe2I7hUjusCSQW0oQWdmuEB6LQCGuYduG1Uavj3e+aYMquae
-	 g6o0HJTOugTN1kODHkuS0dayczZJfrdxtlxXyQofAvYPW63tzbOpxvyn5nrqn7mg3G
-	 6j2kPTlaIAmUlGs/2SZdIUXfxX2oaTq4e/n09Rht9Sf+lxVn1tabvgE+mwOuiS7FN5
-	 xAV2AW88lSnrw==
-Date: Fri, 18 Apr 2025 21:59:23 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Ian Kent <raven@themaw.net>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Mark Brown <broonie@kernel.org>, Eric Chanudet <echanude@redhat.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Clark Williams <clrkwllms@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ian Kent <ikent@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
-	Alexander Larsson <alexl@redhat.com>, Lucas Karpinski <lkarpins@redhat.com>, Aishwarya.TCV@arm.com
-Subject: Re: [PATCH v4] fs/namespace: defer RCU sync for MNT_DETACH umount
-Message-ID: <20250418-armselig-kabel-4710dc466170@brauner>
-References: <20250417-wolfsrudel-zubewegt-10514f07d837@brauner>
- <fb566638-a739-41dc-bafc-aa8c74496fa4@themaw.net>
- <20250417-abartig-abfuhr-40e558b85f97@brauner>
- <20250417-outen-dreihundert-7a772f78f685@brauner>
- <20250417-zappeln-angesagt-f172a71839d3@brauner>
- <20250417153126.QrVXSjt-@linutronix.de>
- <20250417-pyrotechnik-neigung-f4a727a5c76b@brauner>
- <39c36187-615e-4f83-b05e-419015d885e6@themaw.net>
- <125df195-5cac-4a65-b8bb-8b1146132667@themaw.net>
- <20250418-razzia-fixkosten-0569cf9f7b9d@brauner>
+	s=arc-20240116; t=1745006415; c=relaxed/simple;
+	bh=wLnzr4bOfzqYdCAyeTv4QjUsgHNv49qasvWWQj0nzCg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l6YHlbbZRet3Jl+tI4JJEkmCa1diDbZEQlJh2NCI+uHx2l1IrrU1u/9IrlrtSO97wWIKWXW9NpKW8fkemKKLPbgE5dUWmdbXFRV4xPQDBs4Miomt3RJbEGUkCrE+IkJASQhHfkb2qfS/skp5hMt0GSNan1/Usmo+ytz4D/b6Q7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AevEJF20; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1745006410;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=2Na1iVU527apBOW1sOmwLdGAvVcNB8dCTxjKe4PtoUU=;
+	b=AevEJF208O05qljzylM/N2TRNMcrG0DH9Q0fNNroc3ECn9M7ewD/MHGjwTLpa6ruLstY1g
+	s8K9HPCBGFZp6o+jfehX/o/lZGn9vrXlBEdUabsOm2yCcKRNILmod3n/lRcBS/evu4IWwa
+	EgBimydmDaG9WYOddbgpwjrcn20weo4=
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Yosry Ahmed <yosry.ahmed@linux.dev>,
+	Tejun Heo <tj@kernel.org>,
+	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+	linux-mm@kvack.org,
+	cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>
+Subject: [PATCH] memcg: introduce non-blocking limit setting interfaces
+Date: Fri, 18 Apr 2025 12:59:56 -0700
+Message-ID: <20250418195956.64824-1-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="wlvjtn7bxagetzkl"
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250418-razzia-fixkosten-0569cf9f7b9d@brauner>
+X-Migadu-Flow: FLOW_OUT
 
+Setting the max and high limits can trigger synchronous reclaim and/or
+oom-kill if the usage is higher than the given limit. This behavior is
+fine for newly created cgroups but it can cause issues for the node
+controller while setting limits for existing cgroups.
 
---wlvjtn7bxagetzkl
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+In our production multi-tenant and overcommitted environment, we are
+seeing priority inversion when the node controller dynamically adjusts
+the limits of running jobs of different priorities. Based on the system
+situation, the node controller may reduce the limits of lower priority
+jobs and increase the limits of higher priority jobs. However we are
+seeing node controller getting stuck for long period of time while
+reclaiming from lower priority jobs while setting their limits and also
+spends a lot of its own CPU.
 
-On Fri, Apr 18, 2025 at 10:47:10AM +0200, Christian Brauner wrote:
-> On Fri, Apr 18, 2025 at 09:20:52AM +0800, Ian Kent wrote:
-> > On 18/4/25 09:13, Ian Kent wrote:
-> > > 
-> > > On 18/4/25 00:28, Christian Brauner wrote:
-> > > > On Thu, Apr 17, 2025 at 05:31:26PM +0200, Sebastian Andrzej Siewior
-> > > > wrote:
-> > > > > On 2025-04-17 17:28:20 [+0200], Christian Brauner wrote:
-> > > > > > >      So if there's some userspace process with a broken
-> > > > > > > NFS server and it
-> > > > > > >      does umount(MNT_DETACH) it will end up hanging every other
-> > > > > > >      umount(MNT_DETACH) on the system because the dealyed_mntput_work
-> > > > > > >      workqueue (to my understanding) cannot make progress.
-> > > > > > Ok, "to my understanding" has been updated after going back
-> > > > > > and reading
-> > > > > > the delayed work code. Luckily it's not as bad as I thought it is
-> > > > > > because it's queued on system_wq which is multi-threaded so it's at
-> > > > > > least not causing everyone with MNT_DETACH to get stuck. I'm still
-> > > > > > skeptical how safe this all is.
-> > > > > I would (again) throw system_unbound_wq into the game because
-> > > > > the former
-> > > > > will remain on the CPU on which has been enqueued (if speaking about
-> > > > > multi threading).
-> > > > Yes, good point.
-> > > > 
-> > > > However, what about using polled grace periods?
-> > > > 
-> > > > A first simple-minded thing to do would be to record the grace period
-> > > > after umount_tree() has finished and the check it in namespace_unlock():
-> > > > 
-> > > > diff --git a/fs/namespace.c b/fs/namespace.c
-> > > > index d9ca80dcc544..1e7ebcdd1ebc 100644
-> > > > --- a/fs/namespace.c
-> > > > +++ b/fs/namespace.c
-> > > > @@ -77,6 +77,7 @@ static struct hlist_head *mount_hashtable
-> > > > __ro_after_init;
-> > > >   static struct hlist_head *mountpoint_hashtable __ro_after_init;
-> > > >   static struct kmem_cache *mnt_cache __ro_after_init;
-> > > >   static DECLARE_RWSEM(namespace_sem);
-> > > > +static unsigned long rcu_unmount_seq; /* protected by namespace_sem */
-> > > >   static HLIST_HEAD(unmounted);  /* protected by namespace_sem */
-> > > >   static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
-> > > >   static DEFINE_SEQLOCK(mnt_ns_tree_lock);
-> > > > @@ -1794,6 +1795,7 @@ static void namespace_unlock(void)
-> > > >          struct hlist_head head;
-> > > >          struct hlist_node *p;
-> > > >          struct mount *m;
-> > > > +       unsigned long unmount_seq = rcu_unmount_seq;
-> > > >          LIST_HEAD(list);
-> > > > 
-> > > >          hlist_move_list(&unmounted, &head);
-> > > > @@ -1817,7 +1819,7 @@ static void namespace_unlock(void)
-> > > >          if (likely(hlist_empty(&head)))
-> > > >                  return;
-> > > > 
-> > > > -       synchronize_rcu_expedited();
-> > > > +       cond_synchronize_rcu_expedited(unmount_seq);
-> > > > 
-> > > >          hlist_for_each_entry_safe(m, p, &head, mnt_umount) {
-> > > >                  hlist_del(&m->mnt_umount);
-> > > > @@ -1939,6 +1941,8 @@ static void umount_tree(struct mount *mnt,
-> > > > enum umount_tree_flags how)
-> > > >                   */
-> > > >                  mnt_notify_add(p);
-> > > >          }
-> > > > +
-> > > > +       rcu_unmount_seq = get_state_synchronize_rcu();
-> > > >   }
-> > > > 
-> > > >   static void shrink_submounts(struct mount *mnt);
-> > > > 
-> > > > 
-> > > > I'm not sure how much that would buy us. If it doesn't then it should be
-> > > > possible to play with the following possibly strange idea:
-> > > > 
-> > > > diff --git a/fs/mount.h b/fs/mount.h
-> > > > index 7aecf2a60472..51b86300dc50 100644
-> > > > --- a/fs/mount.h
-> > > > +++ b/fs/mount.h
-> > > > @@ -61,6 +61,7 @@ struct mount {
-> > > >                  struct rb_node mnt_node; /* node in the ns->mounts
-> > > > rbtree */
-> > > >                  struct rcu_head mnt_rcu;
-> > > >                  struct llist_node mnt_llist;
-> > > > +               unsigned long mnt_rcu_unmount_seq;
-> > > >          };
-> > > >   #ifdef CONFIG_SMP
-> > > >          struct mnt_pcp __percpu *mnt_pcp;
-> > > > diff --git a/fs/namespace.c b/fs/namespace.c
-> > > > index d9ca80dcc544..aae9df75beed 100644
-> > > > --- a/fs/namespace.c
-> > > > +++ b/fs/namespace.c
-> > > > @@ -1794,6 +1794,7 @@ static void namespace_unlock(void)
-> > > >          struct hlist_head head;
-> > > >          struct hlist_node *p;
-> > > >          struct mount *m;
-> > > > +       bool needs_synchronize_rcu = false;
-> > > >          LIST_HEAD(list);
-> > > > 
-> > > >          hlist_move_list(&unmounted, &head);
-> > > > @@ -1817,7 +1818,16 @@ static void namespace_unlock(void)
-> > > >          if (likely(hlist_empty(&head)))
-> > > >                  return;
-> > > > 
-> > > > -       synchronize_rcu_expedited();
-> > > > +       hlist_for_each_entry_safe(m, p, &head, mnt_umount) {
-> > > > +               if (!poll_state_synchronize_rcu(m->mnt_rcu_unmount_seq))
-> > > > +                       continue;
-> 
-> This has a bug. This needs to be:
-> 
-> 	/* A grace period has already elapsed. */
-> 	if (poll_state_synchronize_rcu(m->mnt_rcu_unmount_seq))
-> 		continue;
-> 
-> 	/* Oh oh, we have to pay up. */
-> 	needs_synchronize_rcu = true;
-> 	break;
-> 
-> which I'm pretty sure will eradicate most of the performance gain you've
-> seen because fundamentally the two version shouldn't be different (Note,
-> I drafted this while on my way out the door. r.
-> 
-> I would test the following version where we pay the cost of the
-> smb_mb() from poll_state_synchronize_rcu() exactly one time:
-> 
-> diff --git a/fs/mount.h b/fs/mount.h
-> index 7aecf2a60472..51b86300dc50 100644
-> --- a/fs/mount.h
-> +++ b/fs/mount.h
-> @@ -61,6 +61,7 @@ struct mount {
->                 struct rb_node mnt_node; /* node in the ns->mounts rbtree */
->                 struct rcu_head mnt_rcu;
->                 struct llist_node mnt_llist;
-> +               unsigned long mnt_rcu_unmount_seq;
->         };
->  #ifdef CONFIG_SMP
->         struct mnt_pcp __percpu *mnt_pcp;
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index d9ca80dcc544..dd367c54bc29 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -1794,6 +1794,7 @@ static void namespace_unlock(void)
->         struct hlist_head head;
->         struct hlist_node *p;
->         struct mount *m;
-> +       unsigned long mnt_rcu_unmount_seq = 0;
->         LIST_HEAD(list);
-> 
->         hlist_move_list(&unmounted, &head);
-> @@ -1817,7 +1818,10 @@ static void namespace_unlock(void)
->         if (likely(hlist_empty(&head)))
->                 return;
-> 
-> -       synchronize_rcu_expedited();
-> +       hlist_for_each_entry_safe(m, p, &head, mnt_umount)
-> +               mnt_rcu_unmount_seq = max(m->mnt_rcu_unmount_seq, mnt_rcu_unmount_seq);
-> +
-> +       cond_synchronize_rcu_expedited(mnt_rcu_unmount_seq);
-> 
->         hlist_for_each_entry_safe(m, p, &head, mnt_umount) {
->                 hlist_del(&m->mnt_umount);
-> @@ -1923,8 +1927,10 @@ static void umount_tree(struct mount *mnt, enum umount_tree_flags how)
->                         }
->                 }
->                 change_mnt_propagation(p, MS_PRIVATE);
-> -               if (disconnect)
-> +               if (disconnect) {
-> +                       p->mnt_rcu_unmount_seq = get_state_synchronize_rcu();
->                         hlist_add_head(&p->mnt_umount, &unmounted);
-> +               }
-> 
->                 /*
->                  * At this point p->mnt_ns is NULL, notification will be queued
+One of the workaround we are trying is to fork a new process which sets
+the limit of the lower priority job along with setting an alarm to get
+itself killed if it get stuck in the reclaim for lower priority job.
+However we are finding it very unreliable and costly. Either we need a
+good enough time buffer for the alarm to be delivered after setting
+limit and potentialy spend a lot of CPU in the reclaim or be unreliable
+in setting the limit for much shorter but cheaper (less reclaim) alarms.
 
-I'm appending a patch that improves on the first version of this patch.
-Instead of simply sampling the current rcu state and hoping that the rcu
-grace period has elapsed by the time we get to put the mounts we sample
-the rcu state and kick off a new grace period at the end of
-umount_tree(). That could even get us some performance improvement by on
-non-RT kernels. I have no clue how well this will fare on RT though.
+Let's introduce new limit setting interfaces which does not trigger
+reclaim and/or oom-kill and let the processes in the target cgroup to
+trigger reclaim and/or throttling and/or oom-kill in their next charge
+request. This will make the node controller on multi-tenant
+overcommitted environment much more reliable.
 
---wlvjtn7bxagetzkl
-Content-Type: text/x-diff; charset=utf-8
-Content-Disposition: attachment;
-	filename="0001-UNTESTED-mount-sample-and-kick-of-grace-period-durin.patch"
-
-From 660bddec1241c46a7722f5c9b66a2450b5f85751 Mon Sep 17 00:00:00 2001
-From: Christian Brauner <brauner@kernel.org>
-Date: Fri, 18 Apr 2025 13:33:43 +0200
-Subject: [PATCH] [UNTESTED]: mount: sample and kick of grace period during
- umount
-
-Sample the current rcu state and kick off a new grace period after we're
-done with umount_tree() and make namespace_unlock() take the previous
-state into account before invoking synchronize_rcu_expedited().
-
-Signed-off-by: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
 ---
- fs/namespace.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ Documentation/admin-guide/cgroup-v2.rst | 16 +++++++++
+ mm/memcontrol.c                         | 46 +++++++++++++++++++++++++
+ 2 files changed, 62 insertions(+)
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index d9ca80dcc544..287189e85af5 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -77,6 +77,7 @@ static struct hlist_head *mount_hashtable __ro_after_init;
- static struct hlist_head *mountpoint_hashtable __ro_after_init;
- static struct kmem_cache *mnt_cache __ro_after_init;
- static DECLARE_RWSEM(namespace_sem);
-+static struct rcu_gp_oldstate rcu_unmount_gp;
- static HLIST_HEAD(unmounted);	/* protected by namespace_sem */
- static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
- static DEFINE_SEQLOCK(mnt_ns_tree_lock);
-@@ -1817,7 +1818,7 @@ static void namespace_unlock(void)
- 	if (likely(hlist_empty(&head)))
- 		return;
+diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+index 8fb14ffab7d1..7b459c821afa 100644
+--- a/Documentation/admin-guide/cgroup-v2.rst
++++ b/Documentation/admin-guide/cgroup-v2.rst
+@@ -1299,6 +1299,14 @@ PAGE_SIZE multiple when read back.
+ 	monitors the limited cgroup to alleviate heavy reclaim
+ 	pressure.
  
--	synchronize_rcu_expedited();
-+	cond_synchronize_rcu_expedited_full(&rcu_unmount_gp);
- 
- 	hlist_for_each_entry_safe(m, p, &head, mnt_umount) {
- 		hlist_del(&m->mnt_umount);
-@@ -1939,6 +1940,9 @@ static void umount_tree(struct mount *mnt, enum umount_tree_flags how)
- 		 */
- 		mnt_notify_add(p);
- 	}
++  memory.high.nonblock
++        This is the same limit as memory.high but have different
++        behaviour for the writer of this interface. The program setting
++        the limit will not trigger reclaim synchronously if the
++        usage is higher than the limit and let the processes in the
++        target cgroup to trigger reclaim and/or get throttled on
++        hitting the high limit.
 +
-+	/* Record current grace period state and kick of new grace period. */
-+	start_poll_synchronize_rcu_expedited_full(&rcu_unmount_gp);
+   memory.max
+ 	A read-write single value file which exists on non-root
+ 	cgroups.  The default is "max".
+@@ -1316,6 +1324,14 @@ PAGE_SIZE multiple when read back.
+ 	Caller could retry them differently, return into userspace
+ 	as -ENOMEM or silently ignore in cases like disk readahead.
+ 
++  memory.max.nonblock
++        This is the same limit as memory.max but have different
++        behaviour for the writer of this interface. The program setting
++        the limit will not trigger reclaim synchronously and/or trigger
++        the oom-kill if the usage is higher than the limit and let the
++        processes in the target cgroup to trigger reclaim and/or get
++        oom-killed on hitting their max limit.
++
+   memory.reclaim
+ 	A write-only nested-keyed file which exists for all cgroups.
+ 
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 5e2ea8b8a898..6ad1464b621a 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -4279,6 +4279,23 @@ static ssize_t memory_high_write(struct kernfs_open_file *of,
+ 	return nbytes;
  }
  
- static void shrink_submounts(struct mount *mnt);
++static ssize_t memory_high_nonblock_write(struct kernfs_open_file *of,
++					  char *buf, size_t nbytes, loff_t off)
++{
++	struct mem_cgroup *memcg = mem_cgroup_from_css(of_css(of));
++	unsigned long high;
++	int err;
++
++	buf = strstrip(buf);
++	err = page_counter_memparse(buf, "max", &high);
++	if (err)
++		return err;
++
++	page_counter_set_high(&memcg->memory, high);
++	memcg_wb_domain_size_changed(memcg);
++	return nbytes;
++}
++
+ static int memory_max_show(struct seq_file *m, void *v)
+ {
+ 	return seq_puts_memcg_tunable(m,
+@@ -4333,6 +4350,23 @@ static ssize_t memory_max_write(struct kernfs_open_file *of,
+ 	return nbytes;
+ }
+ 
++static ssize_t memory_max_nonblock_write(struct kernfs_open_file *of,
++					 char *buf, size_t nbytes, loff_t off)
++{
++	struct mem_cgroup *memcg = mem_cgroup_from_css(of_css(of));
++	unsigned long max;
++	int err;
++
++	buf = strstrip(buf);
++	err = page_counter_memparse(buf, "max", &max);
++	if (err)
++		return err;
++
++	xchg(&memcg->memory.max, max);
++	memcg_wb_domain_size_changed(memcg);
++	return nbytes;
++}
++
+ /*
+  * Note: don't forget to update the 'samples/cgroup/memcg_event_listener'
+  * if any new events become available.
+@@ -4557,12 +4591,24 @@ static struct cftype memory_files[] = {
+ 		.seq_show = memory_high_show,
+ 		.write = memory_high_write,
+ 	},
++	{
++		.name = "high.nonblock",
++		.flags = CFTYPE_NOT_ON_ROOT,
++		.seq_show = memory_high_show,
++		.write = memory_high_nonblock_write,
++	},
+ 	{
+ 		.name = "max",
+ 		.flags = CFTYPE_NOT_ON_ROOT,
+ 		.seq_show = memory_max_show,
+ 		.write = memory_max_write,
+ 	},
++	{
++		.name = "max.nonblock",
++		.flags = CFTYPE_NOT_ON_ROOT,
++		.seq_show = memory_max_show,
++		.write = memory_max_nonblock_write,
++	},
+ 	{
+ 		.name = "events",
+ 		.flags = CFTYPE_NOT_ON_ROOT,
 -- 
-2.47.2
+2.47.1
 
-
---wlvjtn7bxagetzkl--
 
