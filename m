@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-611093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E232A93CD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 20:33:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6BA2A93CD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 20:34:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 913C17ACBC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 18:32:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A0B08E1A46
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 18:33:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD45225A47;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80164227B9F;
 	Fri, 18 Apr 2025 18:33:47 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6510215F48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13308225A40
 	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 18:33:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745001226; cv=none; b=rP461nh2QzoisnJ4IvVOBXsX3v0Xsot+BGjlBdwIe3dmyC8w/g9RyhOcqEHf45d+Y2vgdikvzUKvy+QaF88qDz9cGWQdNDqS2o5E+cGBzOFHiFBwYk2Pkgai8T/Oz5NTI7Nmx2HQd45rxvuJXers8Q6bWI/GBUME0VamOilMoAE=
+	t=1745001227; cv=none; b=Cg4d+D+h2QOLoKR9H+T/E4BLqYqIO/H2oERtPsm873MiYC5TwrNHr5FwW1cpQwCB2CwKS7ARJi54AMMADVvy0BGv2IR7aFFgQlVbUnVJDqzm1Ilqa/IclzcEB86uxF0NkRp4DeKoYt/YvsTda8AZ5LWZjyic3y77fMtdphff/gE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745001226; c=relaxed/simple;
-	bh=EBaTiX+dfxsPN83en/R/JsxwKPbYDZy60fWfphErIg8=;
+	s=arc-20240116; t=1745001227; c=relaxed/simple;
+	bh=uhtNNEK3AzOJ+nkTlNvjXHmDg+41VU+N5ya7K2e9R9Y=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=BHNDjuaR4WA+jX0QhT3r5y5Kl5ASeFV4eGk8WlEeTzBEXH0tIb3P30Blag08BTrvpEkn1j5YCco5aH4cyyR3/m0Zxk1fSWqLqMCtWqaYaqUFiWYZkPO1p/SIHWiefvdMRrkcGloR1+fj+OhiBvnw2c/bIqc6G/kSEdFxeyvexWs=
+	 Content-Type; b=biDQ4BIJjQzDFSkPFl5te6u1TFRyJjUd6iGlE3j0xRdG65g2YgNhELB3G1WE/BK1o086ixCP/lrekzD8ftV8HHVGFOmCYG4Zfyggg2O1Z/Wdz1Xtt7IahdXzkP89ZVpK0iuoou2QLWw/zMxCAAqbYj8GuUt6t07/BvEbjuF++ZY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66953C4CEEE;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5C5FC4CEF0;
 	Fri, 18 Apr 2025 18:33:46 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1u5qYi-0000000Db7i-1sTw;
+	id 1u5qYi-0000000Db8C-2bP4;
 	Fri, 18 Apr 2025 14:35:28 -0400
-Message-ID: <20250418183528.298934811@goodmis.org>
+Message-ID: <20250418183528.469164383@goodmis.org>
 User-Agent: quilt/0.68
-Date: Fri, 18 Apr 2025 14:34:48 -0400
+Date: Fri, 18 Apr 2025 14:34:49 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-linus][PATCH 2/7] ftrace: Reinitialize hash to EMPTY_HASH after freeing
+Subject: [for-linus][PATCH 3/7] ftrace: Free ftrace hashes after they are replaced in the subops code
 References: <20250418183446.383784216@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -53,49 +53,47 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Steven Rostedt <rostedt@goodmis.org>
 
-There's several locations that free a ftrace hash pointer but may be
-referenced again. Reset them to EMPTY_HASH so that a u-a-f bug doesn't
-happen.
+The subops processing creates new hashes when adding and removing subops.
+There were some places that the old hashes that were replaced were not
+freed and this caused some memory leaks.
 
 Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Link: https://lore.kernel.org/20250417110933.20ab718b@gandalf.local.home
+Link: https://lore.kernel.org/20250417135939.245b128d@gandalf.local.home
 Fixes: 0ae6b8ce200d ("ftrace: Fix accounting of subop hashes")
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/ftrace.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ kernel/trace/ftrace.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 43394445390c..d0e4a902bb40 100644
+index d0e4a902bb40..41dcfcf8b40a 100644
 --- a/kernel/trace/ftrace.c
 +++ b/kernel/trace/ftrace.c
-@@ -1297,6 +1297,8 @@ void ftrace_free_filter(struct ftrace_ops *ops)
- 		return;
- 	free_ftrace_hash(ops->func_hash->filter_hash);
- 	free_ftrace_hash(ops->func_hash->notrace_hash);
-+	ops->func_hash->filter_hash = EMPTY_HASH;
-+	ops->func_hash->notrace_hash = EMPTY_HASH;
- }
- EXPORT_SYMBOL_GPL(ftrace_free_filter);
+@@ -3609,6 +3609,9 @@ static int rebuild_hashes(struct ftrace_hash **filter_hash, struct ftrace_hash *
+ 			}
+ 		}
  
-@@ -3443,6 +3445,7 @@ static int add_next_hash(struct ftrace_hash **filter_hash, struct ftrace_hash **
- 				  size_bits);
- 		if (ret < 0) {
- 			free_ftrace_hash(*filter_hash);
-+			*filter_hash = EMPTY_HASH;
- 			return ret;
- 		}
++		free_ftrace_hash(temp_hash.filter_hash);
++		free_ftrace_hash(temp_hash.notrace_hash);
++
+ 		temp_hash.filter_hash = *filter_hash;
+ 		temp_hash.notrace_hash = *notrace_hash;
  	}
-@@ -3472,6 +3475,7 @@ static int add_next_hash(struct ftrace_hash **filter_hash, struct ftrace_hash **
- 				     subops_hash->notrace_hash);
- 		if (ret < 0) {
- 			free_ftrace_hash(*notrace_hash);
-+			*notrace_hash = EMPTY_HASH;
- 			return ret;
- 		}
+@@ -3703,8 +3706,11 @@ static int ftrace_hash_move_and_update_subops(struct ftrace_ops *subops,
  	}
+ 
+ 	ret = rebuild_hashes(&filter_hash, &notrace_hash, ops);
+-	if (!ret)
++	if (!ret) {
+ 		ret = ftrace_update_ops(ops, filter_hash, notrace_hash);
++		free_ftrace_hash(filter_hash);
++		free_ftrace_hash(notrace_hash);
++	}
+ 
+ 	if (ret) {
+ 		/* Put back the original hash */
 -- 
 2.47.2
 
