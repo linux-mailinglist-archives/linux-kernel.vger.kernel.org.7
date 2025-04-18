@@ -1,349 +1,146 @@
-Return-Path: <linux-kernel+bounces-610634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2EF3A93733
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 14:36:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80E83A9372A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 14:34:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C4653AFAC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 12:35:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4E17463042
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 12:34:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6929E1DF246;
-	Fri, 18 Apr 2025 12:35:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A9D12749CD;
+	Fri, 18 Apr 2025 12:34:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iozACYlE"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=orbstack.dev header.i=@orbstack.dev header.b="lFzcgBr2"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4475678F3B
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 12:35:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7796E2116EE
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 12:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744979750; cv=none; b=DQyV32SAqWYcspSzLvxXRz6a9WwpVxnlTv4zMb14UmLTN4pCuX9Rb7pkb/7u4CIRrTTUk1Yd1w80lye6rh9k+FI4hznMum1t1g8RLN2XwbsmmucSop1GPszAr8eloqanF3nonz9rdIxxFOQHvcVSA1W2xAupuPbGMhpm1wXcRH8=
+	t=1744979688; cv=none; b=hGf5U7rlXCVj0F6Z0f1Ger9R2XVi4foTd9caQ6NEXMv535rzFUW0iBlcR/7GuTycrhKR/6QFc1hG9FgaKW0HtEDDnHxrGpx3jZ3xEURmsHzpFaglUwbffZ3sPBrK1XQBY8FLCKkOhMSdVOlRe7wanedTxelMonjXq/iu5wm1Bdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744979750; c=relaxed/simple;
-	bh=Ri+MFqoimvVwoyn+O8wjRhQJH8YuG78xibiFhwSj/vo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sgLU/8qXLaLCKNy1S8bR4tcea3gdV1b5lMzvyFfdc0C9O9JQt6Ny651aaWoSPTzxS96yd4xT7d0zoqm9vwP4RtVwBK/J6RpHpj2WD6z8wJchyMj2GMrYzNe3+5gc4R1MHRTTBXkryt7hUH6XfssuZ2veiCuAMEUTPF5lW4O7CJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iozACYlE; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744979748; x=1776515748;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Ri+MFqoimvVwoyn+O8wjRhQJH8YuG78xibiFhwSj/vo=;
-  b=iozACYlEqYJxDwZFhrx7CwGOLZaPs64OpoFhw4rGbeGyYFgHEmY/s1IO
-   AhFa/XkooZToaq3eIFShntsBLFsvtMjnmcWBdR3OmUbnIsuYGIhxGAjBm
-   kJ/p5QqLKc2oFAedOM7KbN9mfEbs6GtaGHpbAgaevTw9J1+0XIBAh1RRZ
-   Osx2Cy7xtSq/HqUDjWsY1mhnK7f33puR4qn1OXJpjgx/jm1+UPUJdqoR3
-   woLZCs3f5DmP+1SYwKl0aajNBddTrgpO/N/o+uZJICDqMZkC6sWxK0gp7
-   O+oadope4l0H1h5+SmDr2CVJ6V4A22D8JqD6NDrIkCdM+rtwNRDAa0535
-   g==;
-X-CSE-ConnectionGUID: uiw1kFcJR0i7XRJnQ5E8XQ==
-X-CSE-MsgGUID: rIRCa1cKQSi8YWw0rt9x8w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11407"; a="50406376"
-X-IronPort-AV: E=Sophos;i="6.15,222,1739865600"; 
-   d="scan'208";a="50406376"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Apr 2025 05:35:48 -0700
-X-CSE-ConnectionGUID: JQF4jjTlQP6QkeC0KWmr4w==
-X-CSE-MsgGUID: lu6XsW9ZQH+eTJ4dUx7CrQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,222,1739865600"; 
-   d="scan'208";a="131123144"
-Received: from jraag-z790m-itx-wifi.iind.intel.com ([10.190.239.23])
-  by fmviesa007.fm.intel.com with ESMTP; 18 Apr 2025 05:35:44 -0700
-From: Raag Jadav <raag.jadav@intel.com>
-To: gregkh@linuxfoundation.org,
-	david.m.ertman@intel.com,
-	ira.weiny@intel.com,
-	lee@kernel.org,
-	andriy.shevchenko@linux.intel.com,
-	mika.westerberg@linux.intel.com,
-	heikki.krogerus@linux.intel.com
-Cc: linux-kernel@vger.kernel.org,
-	Raag Jadav <raag.jadav@intel.com>
-Subject: [PATCH v3] mfd: core: Support auxiliary device
-Date: Fri, 18 Apr 2025 18:04:33 +0530
-Message-Id: <20250418123433.2586383-1-raag.jadav@intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1744979688; c=relaxed/simple;
+	bh=43hHFRCwrwfsE5PGa6AoyXcX6jfLuJQDkXOgCch4+f4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dTf6yzvEg2SvdTpaaiDRl2J58WytXbXkMcYYaHesG1CKWDiq1Fb4pHRWFLSKvwi1YqHrNnucZLhzV6oPBZtbWIcWdtgoClJsiIpENsvoeqyLMf0t89hVRwFSL/K3PUgmtrY/9747KzKYs9yVi0icFfsIoULiRwma2muytyd0S7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=orbstack.dev; spf=pass smtp.mailfrom=orbstack.dev; dkim=pass (2048-bit key) header.d=orbstack.dev header.i=@orbstack.dev header.b=lFzcgBr2; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=orbstack.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orbstack.dev
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-ae727e87c26so1207358a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 05:34:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=orbstack.dev; s=google; t=1744979687; x=1745584487; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=43hHFRCwrwfsE5PGa6AoyXcX6jfLuJQDkXOgCch4+f4=;
+        b=lFzcgBr2a6tbyJ3q7TWhNXxd2ok5oySM2t0HdSkPholovtgTP7LwzPpOOzxlb4AP8F
+         LTiS0xTnmRSualSki2EM01N+cPcE7XT99zyJknyApjl97ufDbuHbURArb0k0wOmbkRti
+         EmWovSoeYSIWpYnQH7TIKTES+YHNCDyIpdhWZ+9Zc8MCj3G+XE+UXqLyalWAUkjJQfZS
+         cYNX9FYOjZlHm7QBS3TVfTf2yfkNh8TalEYODimEJSVyIdfScL+2kaNXrM+h2Nd3dgMU
+         ApvDEWiEy9gloFvZ5zxDyrksDc+oexU99V9XZ193DNr3yBzAFPjRAEOhAxk9kFSfBuFS
+         tbkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744979687; x=1745584487;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=43hHFRCwrwfsE5PGa6AoyXcX6jfLuJQDkXOgCch4+f4=;
+        b=heOFgidHlVA0UhqgDY18BCNi3YWM7ny0uVN48aT/kLTuWqIqDc1fmVwfYmbImBzC+1
+         sIYjdiYQKXxe9kP82OkfBm8I/RfSGbRU2ZLGbPf3fMzT3c2m6uTfyhtp4Uxn1yWaszqT
+         0oQrwAUQdpfp5Uj3HYsZtFqJLDO9ihiE1unAlJHs6j2sst7vzKaNpRJDI0wWHkrx1cpx
+         rUOTOFtpBvOwMKPZYFO47NiZpEackxUWG7Bptdiu0AMuejdc/YiseNHIvMv3imLXXJiE
+         afDzc0cfu9e/wbujibRJu4sp9ZhcBmwRXJ71YYdGPtObUsTyceprziqZRsawBlcrwhh+
+         R8rA==
+X-Forwarded-Encrypted: i=1; AJvYcCUqUq/LCbAr9coc3LDBzDGt7lHjv5Dib7m4m4GJqbW0OBwqYWVZAP9Mr76LUxYvlGhe1GAIRWkIQvcm+RM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJo9VgX7EypGD8LRb1RKjPEFZym1vTKTDhUoXw13vlL0wzqOet
+	8M3VYXOjhM5gHQFtwX0uUzIbCLXwAD0QLqagS6lMMCBAGuFcLMDxLGTOTHPlwfIl96YRg9H/Q+2
+	vgvMpvwvtrwHr9kSarzFnsokcUsebJV6PJbwKpQ==
+X-Gm-Gg: ASbGncs6v+wxXB1PL4eZLGFS8ebTklyevXDfLLO7LzTp1b1zeK1banZ6p2qXkfyswnQ
+	n7O4O663rj4GJMQ+ybKsWi30G7UCV/PUEynRhz49vChcllg8C84xz/ycN+bCQHyp01nCrn8Vxco
+	GMEb22UTbomotuq1T9M2gwwGgkkSJGy93MqXDLxIlK0lXy8s2x/Lw2QkDH
+X-Google-Smtp-Source: AGHT+IG5hnVsBWjkUmDaGddd3kNxM76BE02aaGQ6/6mkeMa3Whu0GdcJvbuW86cKDIht0D9pPl2GmX8ETJhwFoXXPkE=
+X-Received: by 2002:a17:90a:d64f:b0:2fe:d766:ad95 with SMTP id
+ 98e67ed59e1d1-3087bb47646mr4283842a91.9.1744979686618; Fri, 18 Apr 2025
+ 05:34:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250325121745.8061-1-danny@orbstack.dev> <CAFnufp14ap0UfJcn2uwU4-3cstr313J86HvRCcKULZLRU=nZ6Q@mail.gmail.com>
+In-Reply-To: <CAFnufp14ap0UfJcn2uwU4-3cstr313J86HvRCcKULZLRU=nZ6Q@mail.gmail.com>
+From: Danny Lin <danny@orbstack.dev>
+Date: Fri, 18 Apr 2025 05:34:35 -0700
+X-Gm-Features: ATxdqUEj80hmbgdtqMeJNMf-q7-FLAiu7bNMA3xCWWCR3yFNOjqZUWqbn0J4ixs
+Message-ID: <CAEFvpLe=wtaRGx0QyzCFgwhr+gWXHjWgcQLJrppb0EdsCFw7UQ@mail.gmail.com>
+Subject: Re: [PATCH v4] net: fully namespace net.core.{r,w}mem_{default,max} sysctls
+To: Matteo Croce <technoboy85@gmail.com>
+Cc: netdev@vger.kernel.org, Matteo Croce <teknoraver@meta.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	David Ahern <dsahern@kernel.org>, linux-kernel@vger.kernel.org, 
+	Shakeel Butt <shakeel.butt@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Extend MFD subsystem to support auxiliary child device. This is useful
-for MFD usecases where parent device is on a discoverable bus and doesn't
-fit into the platform device criteria. Purpose of this implementation is
-to provide discoverable MFDs just enough infrastructure to register
-independent child devices with their own memory and interrupt resources
-without abusing the platform device.
+On Fri, Apr 18, 2025 at 3:11=E2=80=AFAM Matteo Croce <technoboy85@gmail.com=
+> wrote:
+>
+> Il giorno ven 18 apr 2025 alle ore 12:06 Danny Lin
+> <danny@orbstack.dev> ha scritto:
+> >
+> > This builds on commit 19249c0724f2 ("net: make net.core.{r,w}mem_{defau=
+lt,max} namespaced")
+> > by adding support for writing the sysctls from within net namespaces,
+> > rather than only reading the values that were set in init_net. These ar=
+e
+> > relatively commonly-used sysctls, so programs may try to set them witho=
+ut
+> > knowing that they're in a container. It can be surprising for such atte=
+mpts
+> > to fail with EACCES.
+> >
+> > Unlike other net sysctls that were converted to namespaced ones, many
+> > systems have a sysctl.conf (or other configs) that globally write to
+> > net.core.rmem_default on boot and expect the value to propagate to
+> > containers, and programs running in containers may depend on the increa=
+sed
+> > buffer sizes in order to work properly. This means that namespacing the
+> > sysctls and using the kernel default values in each new netns would bre=
+ak
+> > existing workloads.
+> >
+> > As a compromise, inherit the initial net.core.*mem_* values from the
+> > current process' netns when creating a new netns. This is not standard
+> > behavior for most netns sysctls, but it avoids breaking existing worklo=
+ads.
+> >
+> > Signed-off-by: Danny Lin <danny@orbstack.dev>
+>
+> Hi,
+>
+> does this allow to set, in a namespace, a larger buffer than the one
+> in the init namespace?
 
-Current support is limited to just PCI type MFDs, but this can be further
-extended to support other types like USB in the future.
+Yes, the idea is that each net namespace is controlled independently.
+Privileges are still required to write to the sysctl for whichever
+namespace you're in, so unprivileged containers wouldn't be able to
+exceed host limits.
 
-Signed-off-by: Raag Jadav <raag.jadav@intel.com>
----
+Best,
+Danny
+Founder @ OrbStack
 
-v2: Introduce a shared struct mfd_aux_device
-    Introduce MFD_AUX_TYPE flag for auxiliary device opt-in
-
-v3: Fix device_type ABI breakage (Andy)
-    Aesthetic adjustments (Andy)
-
-PS: I'm leaning towards leaving the ioremap or regmap complexity out of
-MFD core and think that we should enforce child devices to not overlap.
-
-If there's a need to handle common register access by parent device, then
-I think it warrants its own driver which adds auxiliary devices along with
-a custom interface to communicate with them without involving MFD core.
-
- drivers/mfd/Kconfig      |   1 +
- drivers/mfd/mfd-core.c   | 123 ++++++++++++++++++++++++++++++++++++---
- include/linux/mfd/aux.h  |  30 ++++++++++
- include/linux/mfd/core.h |   3 +
- 4 files changed, 149 insertions(+), 8 deletions(-)
- create mode 100644 include/linux/mfd/aux.h
-
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index 93773201a517..8c8e6797307c 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -8,6 +8,7 @@ menu "Multifunction device drivers"
- 
- config MFD_CORE
- 	tristate
-+	select AUXILIARY_BUS
- 	select IRQ_DOMAIN
- 	default n
- 
-diff --git a/drivers/mfd/mfd-core.c b/drivers/mfd/mfd-core.c
-index 76bd316a50af..fc6a34a045be 100644
---- a/drivers/mfd/mfd-core.c
-+++ b/drivers/mfd/mfd-core.c
-@@ -10,8 +10,11 @@
- #include <linux/kernel.h>
- #include <linux/platform_device.h>
- #include <linux/acpi.h>
-+#include <linux/auxiliary_bus.h>
-+#include <linux/pci.h>
- #include <linux/list.h>
- #include <linux/property.h>
-+#include <linux/mfd/aux.h>
- #include <linux/mfd/core.h>
- #include <linux/pm_runtime.h>
- #include <linux/slab.h>
-@@ -136,10 +139,87 @@ static int mfd_match_of_node_to_dev(struct platform_device *pdev,
- 	return 0;
- }
- 
--static int mfd_add_device(struct device *parent, int id,
--			  const struct mfd_cell *cell,
--			  struct resource *mem_base,
--			  int irq_base, struct irq_domain *domain)
-+static void mfd_release_auxiliary_device(struct device *dev)
-+{
-+	struct auxiliary_device *auxdev = to_auxiliary_dev(dev);
-+	struct mfd_aux_device *mfd_aux = auxiliary_dev_to_mfd_aux_dev(auxdev);
-+
-+	kfree(mfd_aux);
-+}
-+
-+static int mfd_add_auxiliary_device(struct device *parent, int id, const struct mfd_cell *cell,
-+				    struct resource *mem_base, int irq_base,
-+				    struct irq_domain *domain)
-+{
-+	struct mfd_aux_device *mfd_aux;
-+	struct auxiliary_device *auxdev;
-+	int r, ret;
-+
-+	mfd_aux = kzalloc(sizeof(*mfd_aux), GFP_KERNEL);
-+	if (!mfd_aux)
-+		return -ENOMEM;
-+
-+	for (r = 0; r < cell->num_resources; r++) {
-+		/* Find out base to use */
-+		if ((cell->resources[r].flags & IORESOURCE_MEM) && mem_base) {
-+			mfd_aux->mem.name = cell->resources[r].name;
-+			mfd_aux->mem.flags = cell->resources[r].flags;
-+
-+			mfd_aux->mem.parent = mem_base;
-+			mfd_aux->mem.start = mem_base->start + cell->resources[r].start;
-+			mfd_aux->mem.end = mem_base->start + cell->resources[r].end;
-+		} else if (cell->resources[r].flags & IORESOURCE_IRQ) {
-+			mfd_aux->irq.name = cell->resources[r].name;
-+			mfd_aux->irq.flags = cell->resources[r].flags;
-+
-+			if (domain) {
-+				/* Unable to create mappings for IRQ ranges */
-+				WARN_ON(cell->resources[r].start != cell->resources[r].end);
-+				mfd_aux->irq.start = mfd_aux->irq.end = irq_create_mapping(
-+						domain, cell->resources[r].start);
-+			} else {
-+				mfd_aux->irq.start = irq_base + cell->resources[r].start;
-+				mfd_aux->irq.end = irq_base + cell->resources[r].end;
-+			}
-+		} else {
-+			mfd_aux->ext.name = cell->resources[r].name;
-+			mfd_aux->ext.flags = cell->resources[r].flags;
-+			mfd_aux->ext.parent = cell->resources[r].parent;
-+			mfd_aux->ext.start = cell->resources[r].start;
-+			mfd_aux->ext.end = cell->resources[r].end;
-+		}
-+	}
-+
-+	auxdev = &mfd_aux->auxdev;
-+	auxdev->name = cell->name;
-+	/* Use parent id for discoverable devices */
-+	auxdev->id = dev_is_pci(parent) ? pci_dev_id(to_pci_dev(parent)) : cell->id;
-+
-+	auxdev->dev.parent = parent;
-+	auxdev->dev.type = &mfd_dev_type;
-+	auxdev->dev.release = mfd_release_auxiliary_device;
-+
-+	ret = auxiliary_device_init(auxdev);
-+	if (ret)
-+		goto fail_aux_init;
-+
-+	ret = __auxiliary_device_add(auxdev, parent->driver->name);
-+	if (ret)
-+		goto fail_aux_add;
-+
-+	return 0;
-+
-+fail_aux_add:
-+	/* auxdev will be freed with the put_device() and .release sequence */
-+	auxiliary_device_uninit(auxdev);
-+fail_aux_init:
-+	kfree(mfd_aux);
-+	return ret;
-+}
-+
-+static int mfd_add_platform_device(struct device *parent, int id, const struct mfd_cell *cell,
-+				   struct resource *mem_base, int irq_base,
-+				   struct irq_domain *domain)
- {
- 	struct resource *res;
- 	struct platform_device *pdev;
-@@ -302,6 +382,16 @@ static int mfd_add_device(struct device *parent, int id,
- 	return ret;
- }
- 
-+static int mfd_add_device(struct device *parent, int id, const struct mfd_cell *cells,
-+			  struct resource *mem_base, int irq_base, struct irq_domain *domain)
-+{
-+	/* TODO: Convert the platform device abusers and remove this flag */
-+	if (dev_is_pci(parent) && id == MFD_AUX_TYPE)
-+		return mfd_add_auxiliary_device(parent, id, cells, mem_base, irq_base, domain);
-+
-+	return mfd_add_platform_device(parent, id, cells, mem_base, irq_base, domain);
-+}
-+
- /**
-  * mfd_add_devices - register child devices
-  *
-@@ -340,16 +430,22 @@ int mfd_add_devices(struct device *parent, int id,
- }
- EXPORT_SYMBOL(mfd_add_devices);
- 
--static int mfd_remove_devices_fn(struct device *dev, void *data)
-+static int mfd_remove_auxiliary_device(struct device *dev, void *data)
-+{
-+	struct auxiliary_device *auxdev = to_auxiliary_dev(dev);
-+
-+	auxiliary_device_delete(auxdev);
-+	auxiliary_device_uninit(auxdev);
-+	return 0;
-+}
-+
-+static int mfd_remove_platform_device(struct device *dev, void *data)
- {
- 	struct platform_device *pdev;
- 	const struct mfd_cell *cell;
- 	struct mfd_of_node_entry *of_entry, *tmp;
- 	int *level = data;
- 
--	if (dev->type != &mfd_dev_type)
--		return 0;
--
- 	pdev = to_platform_device(dev);
- 	cell = mfd_get_cell(pdev);
- 
-@@ -372,6 +468,17 @@ static int mfd_remove_devices_fn(struct device *dev, void *data)
- 	return 0;
- }
- 
-+static int mfd_remove_devices_fn(struct device *dev, void *data)
-+{
-+	if (dev->type != &mfd_dev_type)
-+		return 0;
-+
-+	if (dev->bus == &platform_bus_type)
-+		return mfd_remove_platform_device(dev, data);
-+
-+	return mfd_remove_auxiliary_device(dev, data);
-+}
-+
- void mfd_remove_devices_late(struct device *parent)
- {
- 	int level = MFD_DEP_LEVEL_HIGH;
-diff --git a/include/linux/mfd/aux.h b/include/linux/mfd/aux.h
-new file mode 100644
-index 000000000000..826a0a05e9e9
---- /dev/null
-+++ b/include/linux/mfd/aux.h
-@@ -0,0 +1,30 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * MFD auxiliary device
-+ *
-+ * Copyright (c) 2025 Raag Jadav <raag.jadav@intel.com>
-+ */
-+
-+#ifndef MFD_AUX_H
-+#define MFD_AUX_H
-+
-+#include <linux/auxiliary_bus.h>
-+#include <linux/container_of.h>
-+#include <linux/ioport.h>
-+
-+/*
-+ * Common structure between MFD parent and auxiliary child device.
-+ * To be used by leaf drivers to access child device resources.
-+ */
-+struct mfd_aux_device {
-+	struct auxiliary_device auxdev;
-+	struct resource	mem;
-+	struct resource	irq;
-+	/* Place holder for other types */
-+	struct resource	ext;
-+};
-+
-+#define auxiliary_dev_to_mfd_aux_dev(auxiliary_dev) \
-+	container_of(auxiliary_dev, struct mfd_aux_device, auxdev)
-+
-+#endif
-diff --git a/include/linux/mfd/core.h b/include/linux/mfd/core.h
-index faeea7abd688..96f6ff98a111 100644
---- a/include/linux/mfd/core.h
-+++ b/include/linux/mfd/core.h
-@@ -12,6 +12,9 @@
- 
- #include <linux/platform_device.h>
- 
-+/* TODO: Convert the platform device abusers and remove this flag */
-+#define MFD_AUX_TYPE	BIT(31)
-+
- #define MFD_RES_SIZE(arr) (sizeof(arr) / sizeof(struct resource))
- 
- #define MFD_CELL_ALL(_name, _res, _pdata, _pdsize, _id, _compat, _of_reg, _use_of_reg, _match) \
--- 
-2.34.1
-
+>
+> Regards,
+> --
+> Matteo Croce
+>
+> perl -e 'for($t=3D0;;$t++){print chr($t*($t>>8|$t>>13)&255)}' |aplay
 
