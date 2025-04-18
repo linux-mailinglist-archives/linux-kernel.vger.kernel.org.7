@@ -1,140 +1,112 @@
-Return-Path: <linux-kernel+bounces-610527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48CE3A935EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 12:19:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF574A935F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 12:23:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA9C81B60642
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 10:19:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 009097A9C83
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 10:22:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8855A26FDB0;
-	Fri, 18 Apr 2025 10:19:06 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA242528EA
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 10:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 990F62741A0;
+	Fri, 18 Apr 2025 10:23:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="hQtio7i4"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B79270EAF
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 10:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744971546; cv=none; b=V2BJVnIy16igNRVLtbBFAwCfzNhoArKD7t4Xp5pnm2WdCosLQNZdYPw1vwxOT++qAMSJoX13fvLH6jOFMPsBRvg3DjCSKkep9W2yZClJ97ViWLYlvIYMEqA3r3eUOg4C7hTbpQZMaIB+KG0iQkJJpsyHHxtk6P8rmDdA5vPd74Q=
+	t=1744971820; cv=none; b=BR9YE0MHBYCgeLThjAcvdJc2WZmbNmkJs13A0z2YWUWruT7vwmsVXXngnNjzXlXRHAPkZ/VrdOcpXCY8x1dOHIxorhVZodDTmgh45hqkttFD+9jQ1cJuj6/72jDUrhxIkImDXUe3k7r5H9TNeCCAW9F2gqZOICu7MgmiGODB9X8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744971546; c=relaxed/simple;
-	bh=95SfZOeYAeBnbtPj+ch2OlRTzEjL07zzmSFe0I3ojWY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=OUDAIVeVjDN+63s+AIpTFKgP2gBW6xwiLeJxm/p1lxYX3mK2cBkfs5lYaGTzal/NGLG2+G1IE+A2MTps0hTJbbOcVZ9Kw8rSmC22ihi6xdMQMMn0P9TRjzXMZJpaPMMXS33Emj4c7YQxFusRemhvnNyhRQ8wtRQhHviUmJDta40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3d44dc8a9b4so17956135ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 03:19:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744971543; x=1745576343;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JGvdcpQTR+H9ML+IgvScLBjHWYqaU7DIkR0hwufUa/Y=;
-        b=Dxcdr/FN6i+jV1CUGMdKMTMzABFW42ufb4jDTIroegjpU3vGGD4IwQSDHtkvVcARWC
-         2ytRc9cwELkwjQusxOpV+WWO6SeIodGPrnsX3p1e1weRGIaV8kQvK4fHDopSB2P1GQed
-         Ynn1suWXFu9pCURsGw4PN8KWEzyPLOrzcp61FFlVz5UYJgEHGtuad9sJsmyHx2AkhK9G
-         rIgjzBQ2wLirEyMbErdvbSpkCh0w8qhYUiq8YXkKUNYXXKJVrzb8VDV32nv5Fhkx4cwB
-         bDwVEwUwQ41tld60yVVKcZCvR7coRIP3subs8prA4NEAr8OQGVaXp/q+PkoBfQ/DIOk0
-         6OZQ==
-X-Gm-Message-State: AOJu0YwkZuHbt1EVYszdmqxHg/jErgSGZkVS1WshzauFjxelZ5RCQz4Q
-	lX7/sBRypF1Ay6KEFAjOKdFoJ6m5kyaaOUY1mcuEB70ucr4mzS3RV1PXi7uW893acnY/Dl9Mz8z
-	puyKklsT0vN2OxxMT5+nz6C0qyBHvUuvTHZrxcDqb6ZUxd98gBdc47eE=
-X-Google-Smtp-Source: AGHT+IE9+6p8L1mqljpbtdwLxsCJw3my16mbcphwfS44q8D33yrZHM2qOuWbPxn9sS3qCOIwSHgNgIfHgqtOaR7rITIDJv5yZGSM
+	s=arc-20240116; t=1744971820; c=relaxed/simple;
+	bh=fmgRhL5vXUT7FBS7t9CJnezLjJZ3VCbnBZ4KpmUy6hQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=I+rux/tAuWq2Y7Qgy6UpiRS6K778hjEvwDKj1PnJJ416YaKK0IyDxTJwuF3rEI21XiqsBuFs+13SQL1Ynbz7RlC4JAk86T79b7kHWxTSrSr25nHNI8cJ0IMmCIFFz982T4AmOvoEj1Rgmz6qEsJ9k/f8yOUhwK1PNG3aDI5wVXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=hQtio7i4; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=cC8Ld
+	NPkcT/2u1+ijE6L5FTUaxOiURX2AC0fC5IpUbw=; b=hQtio7i45XsBdvW0furfB
+	S0+QnlQmxaNRB/LCk5JO73Oocg/f0lT84+GA80l0WE3F1oCuou/OVB4/d7FIGkvR
+	LTsmZbJzVQrOGn4uOR61CIWAR7rae++EDhf3uquLh6HGyc+HfpJ5HyiHqnjJKgP6
+	zUV/8hUheMNSZu0MOq/ksI=
+Received: from node-1.domain.tld (unknown [])
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wDX34b+JwJoXuTCAw--.12581S2;
+	Fri, 18 Apr 2025 18:22:56 +0800 (CST)
+From: Jiayuan Liang <ljykernel@163.com>
+To: Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>
+Cc: Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Jiayuan Liang <ljykernel@163.com>
+Subject: [RFC PATCH 0/1] KVM-arm: Optimize cache flush by only flushing on vcpu0
+Date: Fri, 18 Apr 2025 18:22:43 +0800
+Message-ID: <20250418102244.2182975-1-ljykernel@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1987:b0:3cf:c7d3:e4b with SMTP id
- e9e14a558f8ab-3d894286fa1mr22023255ab.21.1744971543744; Fri, 18 Apr 2025
- 03:19:03 -0700 (PDT)
-Date: Fri, 18 Apr 2025 03:19:03 -0700
-In-Reply-To: <20250418094635.237960-1-richard120310@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68022717.050a0220.243d89.001a.GAE@google.com>
-Subject: Re: [syzbot] [jfs?] [bcachefs?] KASAN: null-ptr-deref Read in
- drop_buffers (3)
-From: syzbot <syzbot+de1498ff3a934ac5e8b4@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, richard120310@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDX34b+JwJoXuTCAw--.12581S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Cr15ZF4kXFy3CF48uF1kGrg_yoW8AF1fpF
+	WkA3sYgr4kW34fu3WUJ3yvgw1rGrZ5GFs8JFn8Aw40krs8A3Wvkr9ay3yUZFWUGF95tr47
+	GrWqqFyDZrn0yFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0p_YFCUUUUUU=
+X-CM-SenderInfo: 5om1yvhuqhzqqrwthudrp/1tbiSg0zbmgCIJDq2gAAsw
 
-Hello,
+This is an RFC patch to optimize cache flushing behavior in KVM/arm64.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-kernel BUG in z3fold_page_migrate
+When toggling cache state in a multi-vCPU guest, we currently flush the VM's
+stage2 page tables on every vCPU that transitions cache state. This leads to
+redundant cache flushes during guest boot, as each vCPU performs the same
+flush operation.
 
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0xabe/0x18e0 kernel/workqueue.c:3319
- worker_thread+0x870/0xd30 kernel/workqueue.c:3400
- kthread+0x7a9/0x920 kernel/kthread.c:464
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-------------[ cut here ]------------
-kernel BUG at mm/z3fold.c:1293!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 30 Comm: kcompactd1 Not tainted 6.14.0-rc6-syzkaller-00253-gcb82ca153949-dirty #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:z3fold_page_migrate+0xc22/0x1170 mm/z3fold.c:1293
-Code: ff 48 89 ef 48 c7 c6 a0 3e 38 8c e8 f8 1a d8 ff 90 0f 0b e8 60 85 8d ff 48 8b 7c 24 10 48 c7 c6 00 3f 38 8c e8 df 1a d8 ff 90 <0f> 0b 48 85 db 0f 85 83 00 00 00 0f 1f 44 00 00 e8 39 85 8d ff e9
-RSP: 0018:ffffc90000516eb8 EFLAGS: 00010246
-RAX: 760a2d6b4e715d00 RBX: 0000000000000000 RCX: 0000000000000001
-RDX: dffffc0000000000 RSI: ffffffff8c2ab220 RDI: 0000000000000001
-RBP: ffffea00014d6180 R08: ffffffff903cfd77 R09: 1ffffffff2079fae
-R10: dffffc0000000000 R11: fffffbfff2079faf R12: dffffc0000000000
-R13: ffffffff8c383d08 R14: 04fff00000010001 R15: 1ffffd400029ac30
-FS:  0000000000000000(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000c00018b600 CR3: 0000000053580000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- move_to_new_folio+0x9a5/0xc20 mm/migrate.c:1071
- migrate_folio_move mm/migrate.c:1360 [inline]
- migrate_folios_move mm/migrate.c:1712 [inline]
- migrate_pages_batch+0x1e84/0x30b0 mm/migrate.c:1959
- migrate_pages_sync mm/migrate.c:2016 [inline]
- migrate_pages+0x2701/0x3680 mm/migrate.c:2098
- compact_zone+0x33d5/0x4ae0 mm/compaction.c:2663
- kcompactd_do_work mm/compaction.c:3111 [inline]
- kcompactd+0x9a5/0x1540 mm/compaction.c:3205
- kthread+0x7a9/0x920 kernel/kthread.c:464
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:z3fold_page_migrate+0xc22/0x1170 mm/z3fold.c:1293
-Code: ff 48 89 ef 48 c7 c6 a0 3e 38 8c e8 f8 1a d8 ff 90 0f 0b e8 60 85 8d ff 48 8b 7c 24 10 48 c7 c6 00 3f 38 8c e8 df 1a d8 ff 90 <0f> 0b 48 85 db 0f 85 83 00 00 00 0f 1f 44 00 00 e8 39 85 8d ff e9
-RSP: 0018:ffffc90000516eb8 EFLAGS: 00010246
-RAX: 760a2d6b4e715d00 RBX: 0000000000000000 RCX: 0000000000000001
-RDX: dffffc0000000000 RSI: ffffffff8c2ab220 RDI: 0000000000000001
-RBP: ffffea00014d6180 R08: ffffffff903cfd77 R09: 1ffffffff2079fae
-R10: dffffc0000000000 R11: fffffbfff2079faf R12: dffffc0000000000
-R13: ffffffff8c383d08 R14: 04fff00000010001 R15: 1ffffd400029ac30
-FS:  0000000000000000(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fd22cd0bfd8 CR3: 00000000534f0000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+In a typical guest boot sequence, vcpu0 is the first to enable caches, and
+other vCPUs follow afterward. By the time secondary vCPUs enable their caches,
+the flush performed by vcpu0 has already ensured cache coherency for the
+entire VM.
+
+I'm proposing to optimize this by only performing the stage2_flush_vm() operation 
+on vcpu0, which is sufficient to maintain cache coherency while eliminating redundant
+flushes on other vCPUs. This can improve performance during guest boot in
+multi-vCPU configurations.
+
+I'm submitting this as RFC because:
+1. This is my first contribution to the KVM/arm64 subsystem
+2. I want to confirm if this approach is architecturally sound
+3. I'd like feedback on potential corner cases I may have missed:
+   - Could there be scenarios where secondary vCPUs need their own flushes?
+   - Is the assumption about vcpu0 always being first valid?
+
+Implementation details:
+- The patch identifies vcpu0 by checking if vcpu->vcpu_id == 0
+
+Testing with a 64-core VM with 128GB memory using hugepages shows dramatic
+performance improvements, reducing busybox boot time from 33s to 5s.
+
+I'd appreciate any feedback on the correctness and approach of this optimization.
+
+Jiayuan Liang (1):
+  KVM: arm: Optimize cache flush by only flushing on vcpu0
+
+ arch/arm64/kvm/mmu.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 
-Tested on:
-
-commit:         cb82ca15 Merge tag 'usb-6.14-rc7' of git://git.kernel...
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=108a24cc580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=522f1f3e5f61442b
-dashboard link: https://syzkaller.appspot.com/bug?extid=de1498ff3a934ac5e8b4
-compiler:       Debian clang version 15.0.6, Debian LLD 15.0.6
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=17949fe4580000
+base-commit: fc96b232f8e7c0a6c282f47726b2ff6a5fb341d2
+--
+2.43.0
 
 
