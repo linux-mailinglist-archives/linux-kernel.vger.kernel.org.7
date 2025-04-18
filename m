@@ -1,106 +1,99 @@
-Return-Path: <linux-kernel+bounces-610400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E992FA934A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 10:29:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BC28A934A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 10:31:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 179CC4444BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 08:29:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4C334475C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 08:31:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AFC426B2D7;
-	Fri, 18 Apr 2025 08:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F095C26B2A5;
+	Fri, 18 Apr 2025 08:31:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G0Ixu8ln"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="Zlm/WRwQ"
+Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A6191DA21;
-	Fri, 18 Apr 2025 08:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB611FF1A6;
+	Fri, 18 Apr 2025 08:31:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744964974; cv=none; b=CMLfQMzCqEPXGNJ1DXivmW1Ejx67Z7eNI605G9OctHfyFR98DkyXQRiPMrH2WtbUa78gTAGMJNzS9iOEqUmcNPA41NXCpUrxeBgnvygbLE3GFtEFbpHLJafwaE4I0M3YqioWy+XEjKtMJAtJ1gLVEW2decO7yQ9oK/zGWh9Mmak=
+	t=1744965105; cv=none; b=uFhLHWi4Z3YU+AyPNNwvI0BbEVks4Loe9zY1sTeB6ltvauko8kFS4ykr9ptbogPPTtTrCZQtqN3FbuydzhpKrLvI9YHYYD0Kdl/ZL7G9IRNWRXWu0SJxijb+IKcUMYSrnU9DGVKBvE8K5bpjUfgyIqKPGYkx8CXeqwK+wrzWmZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744964974; c=relaxed/simple;
-	bh=s92j6pxzvlqV+3o2hee8gDhoG89WN1vgnuclnd0mk+Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ehyTs0wrUNzCXknN4X3zt9wNxjOMV28UrQUZDg3vCc54gn7uqSQLMCUaO6UY04AqB6Um8jlO2Ralp2noxN4bFgTB+t+XOq1GrRGRSGPKRtpQHIju4DAbG3b6xuUoiQkm0F7hwl65Rj1020TLSiHk4IskekYW6R+f9Pp5LB1K81E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G0Ixu8ln; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-549b159c84cso2086811e87.3;
-        Fri, 18 Apr 2025 01:29:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744964971; x=1745569771; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=s92j6pxzvlqV+3o2hee8gDhoG89WN1vgnuclnd0mk+Q=;
-        b=G0Ixu8lnu1iqlOTLMwLa3u9p6orBujj2XUA9n25sGYBwXBhfQD+bYaMYeCD2JZE4Pt
-         eVXhgjLDo9LnKnq+RhDCxfc8OB0DtTj1HuPtGyEMG3zwh/y0P3OHco55qtRxPbuOFUtD
-         cD8V0BUoRqJkYGXOfON/0xz9YxyrXgsoVJecgbrRDOH7rCaZR5Cbs31nMXGlfLg0qi0z
-         yQ7hkcATA5/jSJ9brr4xstuK49UcRtJlW+t4qZqrkbjdLCiDCWs106PEogLHAK8DiEL+
-         ReNVqgyZVytFZMrJXORCFlnXY9xjh6w0QWNI9SdSdsS8GkBS1udYoq5bU8SfIogMLwmC
-         MoPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744964971; x=1745569771;
-        h=content-transfer-encoding:mime-version:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=s92j6pxzvlqV+3o2hee8gDhoG89WN1vgnuclnd0mk+Q=;
-        b=SttvKVr3IFtvxzvUwv0t6DXn0+sppl6EE/d9/Z3Frt8A/Cy+K0Awe1IgsclitBIV8z
-         gxjD018XYYXMmS9/NDHgGuNBGoLN51YDeE7jwO00hZUA2MBcBkP1GjzgRg+fyi9TmcQE
-         QjdEq2c059itJYokKLppYbI1Pwy2hI+R2trcEGg3SY9ya6mb1BULfOfpYh7N/9cWVDdx
-         fd8xS5lPzg6I7dIDLydN/LmpaxgKu75Ei438B+tALOHrQu1eRE64oQ3r9dsJ48E3Lc95
-         bujp95kcP9zN0v0ZcIQrS3tUrbw65mn08hbG/e4stnPz4OpqkyC3rzWicHdIxaCTwlRu
-         7hcw==
-X-Gm-Message-State: AOJu0Yw/5PNcrrC4/ttAGKJ2nUY6NzK1lyY+RG97ZP4xcJrPxSZDIdN7
-	/4sB3kv8vMQ8070UVz29gNuLUgSJbOqsontkDYrsA2MGjeu1eV/bmPJ+Wg==
-X-Gm-Gg: ASbGncsPrfqzjNCNrmDsnQwkNeM5EPqkiYbDlAfdQ040qLob8TQkW/5pwTPgb/9v6sk
-	qrm85vwxmUdmTLpflOVnU/0+cc9arhFFCVM0qKLe+ID7dY6dvuwCy5O6dHxF5ABxt+pbLpGhlcQ
-	vPNwxCtWeoxWHxMmQ9fQk/gcQeFLqu2HvDqCSlNllTTBn9C2z2yelxbtByGK1wJlHmdpSU2rJgM
-	WyN70HeQWUvennFUIDLf4XzB6mvTBbRgyFX7535fTN7LsMoGDIVqcrI908fjIAC2zq0KlWD7Jyw
-	4wsEdyy9pIepNhyBe+uQmf/pCiaDRU4T4yOsQa2MY58hHmQrKu0DA64eBA==
-X-Google-Smtp-Source: AGHT+IFUTm0W49Qs/USupxCHL/NXGEOwE+ROyG8Iv52IIXe6ndsNi4djYlFd0wAdt3CQ7vpCPkN3hw==
-X-Received: by 2002:a05:6512:2346:b0:545:e19:ba1c with SMTP id 2adb3069b0e04-54d6e62cb0amr470052e87.19.1744964970781;
-        Fri, 18 Apr 2025 01:29:30 -0700 (PDT)
-Received: from foxbook (adtu187.neoplus.adsl.tpnet.pl. [79.185.232.187])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54d6e5e524csm129527e87.182.2025.04.18.01.29.29
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Fri, 18 Apr 2025 01:29:30 -0700 (PDT)
-Date: Fri, 18 Apr 2025 10:29:26 +0200
-From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
-To: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-kernel@vger.kernel.org, regressions@lists.linux.dev
-Subject: [REGRESSION 6.14] Some PCI device BARs inacessible
-Message-ID: <20250418102926.690ac42c@foxbook>
+	s=arc-20240116; t=1744965105; c=relaxed/simple;
+	bh=qgRPG664md7WzPIJokBTw0TpvU/BTuBy3s7oOPxiohk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kAe5bQFj98Z4gqojTBOTernA5M70nVvB2mjrmxS4driEEnu4bIl5lXGwddeZQ8dICh2dxHmySUI1hMBskD18jdxNcZFKoRrYpeEsiA+eLEBXiBWUeMsFAW9OWMLnNxF+PpMZMn9eXxphgU0sc7Kke/k1ZzcnfghNl7TYBW5HVtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=Zlm/WRwQ; arc=none smtp.client-ip=95.143.211.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
+From: Denis Arefev <arefev@swemel.ru>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
+	t=1744965090;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=9Fkkq5isjGMmYO0XquNBWOmOM8h/DO8YafFqbHxC1G8=;
+	b=Zlm/WRwQZgiQoeAvLcqEuRclvt0sHh5uh1ff0FcCW1gt3wshdcWkDH373Y/SOJM65upjvy
+	aUho3Bb8UsT3uPJjALO/f5wHORbP48iGKaYd+p13s+jA4BX4iYGXAn69S7cakwkC5qohHy
+	xok9Lp/LgYjLM/Q53dce59tKgagRVzs=
+To: Alex Deucher <alexander.deucher@amd.com>
+Cc: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Andrey Grodzovsky <andrey.grodzovsky@amd.com>,
+	Chunming Zhou <david1.zhou@amd.com>,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	stable@vger.kernel.org
+Subject: [PATCH v2] drm/amdgpu: check a user-provided number of BOs in list
+Date: Fri, 18 Apr 2025 11:31:27 +0300
+Message-ID: <20250418083129.9739-1-arefev@swemel.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi,
+The user can set any value to the variable ‘bo_number’, via the ioctl
+command DRM_IOCTL_AMDGPU_BO_LIST. This will affect the arithmetic
+expression ‘in->bo_number * in->bo_info_size’, which is prone to
+overflow. Add a valid value check.
 
-This is a heads up that an apparent PCI regression has been reported
-and mistakenly assigned to USB in the kernel bugzilla:
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-https://bugzilla.kernel.org/show_bug.cgi?id=220016
+Fixes: 964d0fbf6301 ("drm/amdgpu: Allow to create BO lists in CS ioctl v3")
+Cc: stable@vger.kernel.org
+Signed-off-by: Denis Arefev <arefev@swemel.ru>
+---
+V1 -> V2:
+Set a reasonable limit 'USHRT_MAX' for 'bo_number' it as Christian König <christian.koenig@amd.com> suggested
 
-Visible symptom is missing USB devices, but the whole controller fails
-to probe, apparently due to devm_request_mem_region() returning NULL,
-see drivers/usb/core/hcd-pci.c and usb_hcd_pci_probe().
+ drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Same systems also show a similar failure with some AHCI controller.
-It seems specific to particular ASUS AMD motherboards.
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c
+index 702f6610d024..85f7ee1e085d 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c
+@@ -189,6 +189,9 @@ int amdgpu_bo_create_list_entry_array(struct drm_amdgpu_bo_list_in *in,
+ 	struct drm_amdgpu_bo_list_entry *info;
+ 	int r;
+ 
++	if (!in->bo_number || in->bo_number > USHRT_MAX)
++		return -EINVAL;
++
+ 	info = kvmalloc_array(in->bo_number, info_size, GFP_KERNEL);
+ 	if (!info)
+ 		return -ENOMEM;
+-- 
+2.43.0
 
-Somebody found that disabling CONFIG_PCI_REALLOC_ENABLE_AUTO helps.
-
-That's all I know, reporters can be reached via bugzilla.
-
-Regards,
-Michal
 
