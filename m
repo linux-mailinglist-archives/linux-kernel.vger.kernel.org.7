@@ -1,163 +1,137 @@
-Return-Path: <linux-kernel+bounces-610434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A045A934FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 10:59:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BC18A935B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 11:58:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6CFD8E2143
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 08:59:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28BE97B524C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 09:56:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA86270EA5;
-	Fri, 18 Apr 2025 08:59:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4A026F46D;
+	Fri, 18 Apr 2025 09:57:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="HnD7GPY/"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kvNas3wH"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE2626FD82;
-	Fri, 18 Apr 2025 08:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE14269CF1;
+	Fri, 18 Apr 2025 09:57:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744966764; cv=none; b=RLfR5GgzVpFw9xz9q9rhk6fteV7yje5C4Cd0PXrCCtrZSsPRFNbiwLuW3Ht2lb6ip84bWvA9G5sP23jAY7c+p2T9s27JLkY2bQFe2N1BahQ3es2kyzCHFlh9VYJQwaN1x/7/6AWrPSj2kwNy9VY/i9kouLlS5KdMDZ0GmmrVNwc=
+	t=1744970266; cv=none; b=GgGoeJSuOA4wtmieg2vVH5Kf7kzIK5EcYaghxlYHWmbC3uzJNGgtD2EgnsbE0k7F3G6NOGACAIXJnHTsnpIOa/E+KyoyU5KKxsTh/UvDd0JuRYEyeRhdPiUMbZGh7CYaRpNJwSe8wROKTRamah9sbE6nXL5ralXy8odkdUrGZpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744966764; c=relaxed/simple;
-	bh=KlZox/FhfiDHrEDYrtGoIjJ878K+yX47TPz+ztcPYt0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XXlbUWiHb48WGZNsIjgSTkDJgWSwenVoMKLEFhlZArB1hVQuf5WUdX1ie3uPNRmH4WXrScXJm84GgQ6a4hXHk3WHKF3dftCXPxU1IECKuZeKo+MoEJKLrh3cUnV25T5JOy70XyaMr7HOrWj5BxhMF6xF9R4/RLmhscustmUlKQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=HnD7GPY/; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
-	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=2cOFs7O7/L6f8JwExiEKzmQTdI10W4SPn5o+BQaDJHw=; b=HnD7GPY/+mHCutXBYnAlJE3wac
-	EeJ/7Og8qsfX9ScGMa/uxwMJ6ASHNNp28hbX0SLTMqL/GgTy/65C/M+hl0pteLaqkT7z9DdS/0lbu
-	S2X8UGDbfGd8JZi9+GQEKOCpk0tzcmwmo9RJUOS6lJPaG28cSZTIQioaYrDM3EJG3OTgQWuAqQttU
-	FLlyaHGKG3XBFEeDDtSFzKdWlTR5ATR2Gt/wCdNnZu7gqDSoMD5omRurzXix/Sj8sIkv1PSenuB8k
-	ba8d3denksSZfmcbp1GN+DcPxhV9j3axez0gDGbWPHH+w436h4Z3j3XsUI+slB/18Kse+maq4mnuT
-	482TkmZQ==;
-Received: from 114-44-248-24.dynamic-ip.hinet.net ([114.44.248.24] helo=gavin-HP-Z840-Workstation..)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1u5hYp-001AVr-3u; Fri, 18 Apr 2025 10:58:59 +0200
-From: Gavin Guo <gavinguo@igalia.com>
-To: linux-mm@kvack.org,
-	akpm@linux-foundation.org
-Cc: david@redhat.com,
-	willy@infradead.org,
-	ziy@nvidia.com,
-	linmiaohe@huawei.com,
-	hughd@google.com,
-	revest@google.com,
-	kernel-dev@igalia.com,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH v2] mm/huge_memory: fix dereferencing invalid pmd migration entry
-Date: Fri, 18 Apr 2025 16:58:02 +0800
-Message-ID: <20250418085802.2973519-1-gavinguo@igalia.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1744970266; c=relaxed/simple;
+	bh=DPXCXDdzGRDaJBA7PVkaoaMrxHBF6CLQ3KTY//OOtRs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QDXncTZj6Ip0EPY1K5t9Qiddg1H8KeOPVUMFDLai2QmxyIQ8ZfiWbIT4stfgn89rZOKGoUSYVAviY2ZTz3Qs2IYiDAessxByPjhfxJjGjBebjO/7M6BstXz2EqglTaoTvj2ZpfTP2kIPERbMiYqzJNDeMeCpT/KSVcz9shnPBlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kvNas3wH; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-39c31e4c3e5so1143696f8f.0;
+        Fri, 18 Apr 2025 02:57:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744970263; x=1745575063; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=vyt8vlbCUmrgxaje/SGVdwJgpors68AcKgtfPJppRuw=;
+        b=kvNas3wH9KjdkD6kYAI7jCIGb/zEsCLCwNATt993BLHD8qzpb0FmsYghQjWGDo3Av/
+         VWnSexhjZJLD49361Sl8LNQ3CjmWnz9Q5KHXGzcp1McwP6W9EDRcm7Il1P80XTgUFaI1
+         sovKG5mV8iG6DHzOfHuWK7B4q1fToUn3ObovixtZAacnaqhWkpa0JKgjT3CfKknzdt5V
+         87stbE36w96UBNY16hCa2ZzaAJoW1iMTpqbaUED8j/XksR9PLguvt1wz7D3iBQTfm4A7
+         sHPKJcou3DW77upJLINvqJmyaf1NMWoqsyi3MXgL4b+IqhAPGNhsoQxDmjsjfXSpUlpN
+         SiKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744970263; x=1745575063;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vyt8vlbCUmrgxaje/SGVdwJgpors68AcKgtfPJppRuw=;
+        b=IJBYVLb0eVJL9W90Iaim6zxa7ML9VIs/hdnaooV/MtA7XENseZqCymahgW/Z5p3P2V
+         Z6Kr9adg6SwPn3hgj9aTHvgpjFksFBwKiQU9VzQDfy9B2XCbTQmDW4CveCC2SoQaZ1PE
+         tIb9Hw/nmSWgeHMpFKTXiIngiWr2XNUYCWOPa7ors7m4mDpEtH3uSz55byIIOsD4iXcQ
+         QIlPrHrgmxmsJ+ON+4vpebmNCNbZWi48F55UFxRZyHIMAJcF38NUryo8Tfi3//U0b9ra
+         Ssxw+Ip7oro7iKM08BVSsntvzpOr1yd7suyYD8dgDwwCZG/st32OwEqnXJ9PHSB0X3ls
+         huJg==
+X-Forwarded-Encrypted: i=1; AJvYcCX/Fs7ldur5k0N2yruQ2sMouMW+bqsJg5wJEL5ozWn2/tEJ+WgUnJ+vfw63+s+oKX37C2xgJIQDQjxGtJk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3rWOHgmCGYmPhRW48LFM9fquqMBSPKFRroP8qsMUocxoJirIg
+	idEGmZuQJ59eLg24E+4ceTIyZu48s/DwetG5EvOKXmCETfGDL4Ja
+X-Gm-Gg: ASbGncs1D9ze/7qIZeqCIM4sYk0fT0E9PbkKNjoEAaF2d65yMJhcRG6dUstdS9gfdh6
+	FfRDjMs5gdEbie849rMO8WEeSx6MiPW3cqVLYISSjsdSBsxF9UETSMlBbH73xICJbg5NDfZXfYE
+	LgXThA3gSHQcP8W7fo9QW6pr5IotwRTDQDNq3ON304JZULctIUyCnCpvStVE8lNzQpWUNu0W3G+
+	EqhdqbeWKXHhDNeznKFxEF/7ITJYIvkQT/6i0/9Xc/MKOGptEu8eQOTzYyb750cHdbbam44q8Kv
+	QCBbsgZNxhtPhuyrCd/rNO507Og0yjn9o7p1Z4MCTa32uzQE8RLhC8gg/4dMeZsB0wsRWo/ru5S
+	sV4TR1lXWn0q0los=
+X-Google-Smtp-Source: AGHT+IFJu/NfcqWAjNuPs+r5w0auetjnU6mwnE3w1maeyZRnlV35H6XNIlmASm/PfX9aMr3HbzbBqw==
+X-Received: by 2002:a5d:47c9:0:b0:39e:e588:6746 with SMTP id ffacd0b85a97d-39efbb240e7mr1584070f8f.57.1744970263248;
+        Fri, 18 Apr 2025 02:57:43 -0700 (PDT)
+Received: from ?IPv6:2001:818:ea56:d000:56e0:ceba:7da4:6673? ([2001:818:ea56:d000:56e0:ceba:7da4:6673])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa4a4b68sm2247940f8f.87.2025.04.18.02.57.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Apr 2025 02:57:42 -0700 (PDT)
+Message-ID: <494ee0cc5be01cb6a4db29d7f1a11dcee22850d6.camel@gmail.com>
+Subject: Re: [PATCH 1/8] iio: adc: dln2-adc: use aligned_s64 for timestamp
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Jonathan Cameron
+ <jic23@kernel.org>,  Nuno =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Lars-Peter Clausen <lars@metafoo.de>,  Michael Hennerich
+ <Michael.Hennerich@analog.com>, Cosmin Tanislav
+ <cosmin.tanislav@analog.com>, Tomasz Duszynski <tduszyns@gmail.com>,
+ Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>,  Andreas Klinger
+ <ak@it-klinger.de>, Petre Rodan <petre.rodan@subdimension.ro>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Date: Fri, 18 Apr 2025 09:58:04 +0100
+In-Reply-To: <20250417-iio-more-timestamp-alignment-v1-1-eafac1e22318@baylibre.com>
+References: 
+	<20250417-iio-more-timestamp-alignment-v1-0-eafac1e22318@baylibre.com>
+	 <20250417-iio-more-timestamp-alignment-v1-1-eafac1e22318@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-When migrating a THP, concurrent access to the PMD migration entry
-during a deferred split scan can lead to a invalid address access, as
-illustrated below. To prevent this page fault, it is necessary to check
-the PMD migration entry and return early. In this context, there is no
-need to use pmd_to_swp_entry and pfn_swap_entry_to_page to verify the
-equality of the target folio. Since the PMD migration entry is locked,
-it cannot be served as the target.
+On Thu, 2025-04-17 at 11:52 -0500, David Lechner wrote:
+> Follow the pattern of other drivers and use aligned_s64 for the
+> timestamp. This will ensure the struct itself it also 8-byte aligned.
+>=20
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
 
-Mailing list discussion and explanation from Hugh Dickins:
-"An anon_vma lookup points to a location which may contain the folio of
-interest, but might instead contain another folio: and weeding out those
-other folios is precisely what the "folio != pmd_folio((*pmd)" check
-(and the "risk of replacing the wrong folio" comment a few lines above
-it) is for."
+With the fixes tag:
 
-BUG: unable to handle page fault for address: ffffea60001db008
-CPU: 0 UID: 0 PID: 2199114 Comm: tee Not tainted 6.14.0+ #4 NONE
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-RIP: 0010:split_huge_pmd_locked+0x3b5/0x2b60
-Call Trace:
-<TASK>
-try_to_migrate_one+0x28c/0x3730
-rmap_walk_anon+0x4f6/0x770
-unmap_folio+0x196/0x1f0
-split_huge_page_to_list_to_order+0x9f6/0x1560
-deferred_split_scan+0xac5/0x12a0
-shrinker_debugfs_scan_write+0x376/0x470
-full_proxy_write+0x15c/0x220
-vfs_write+0x2fc/0xcb0
-ksys_write+0x146/0x250
-do_syscall_64+0x6a/0x120
-entry_SYSCALL_64_after_hwframe+0x76/0x7e
+Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
 
-The bug is found by syzkaller on an internal kernel, then confirmed on
-upstream.
-
-Fixes: 84c3fc4e9c56 ("mm: thp: check pmd migration entry in common path")
-Cc: stable@vger.kernel.org
-Signed-off-by: Gavin Guo <gavinguo@igalia.com>
-Acked-by: David Hildenbrand <david@redhat.com>
-Acked-by: Hugh Dickins <hughd@google.com>
-Acked-by: Zi Yan <ziy@nvidia.com>
-Link: https://lore.kernel.org/all/20250414072737.1698513-1-gavinguo@igalia.com/
----
-V1 -> V2: Add explanation from Hugh and correct the wording from page
-fault to invalid address access.
-
- mm/huge_memory.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
-
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 2a47682d1ab7..0cb9547dcff2 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -3075,6 +3075,8 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
- void split_huge_pmd_locked(struct vm_area_struct *vma, unsigned long address,
- 			   pmd_t *pmd, bool freeze, struct folio *folio)
- {
-+	bool pmd_migration = is_pmd_migration_entry(*pmd);
-+
- 	VM_WARN_ON_ONCE(folio && !folio_test_pmd_mappable(folio));
- 	VM_WARN_ON_ONCE(!IS_ALIGNED(address, HPAGE_PMD_SIZE));
- 	VM_WARN_ON_ONCE(folio && !folio_test_locked(folio));
-@@ -3085,10 +3087,18 @@ void split_huge_pmd_locked(struct vm_area_struct *vma, unsigned long address,
- 	 * require a folio to check the PMD against. Otherwise, there
- 	 * is a risk of replacing the wrong folio.
- 	 */
--	if (pmd_trans_huge(*pmd) || pmd_devmap(*pmd) ||
--	    is_pmd_migration_entry(*pmd)) {
--		if (folio && folio != pmd_folio(*pmd))
--			return;
-+	if (pmd_trans_huge(*pmd) || pmd_devmap(*pmd) || pmd_migration) {
-+		if (folio) {
-+			/*
-+			 * Do not apply pmd_folio() to a migration entry; and
-+			 * folio lock guarantees that it must be of the wrong
-+			 * folio anyway.
-+			 */
-+			if (pmd_migration)
-+				return;
-+			if (folio != pmd_folio(*pmd))
-+				return;
-+		}
- 		__split_huge_pmd_locked(vma, pmd, address, freeze);
- 	}
- }
-
-base-commit: a24588245776dafc227243a01bfbeb8a59bafba9
--- 
-2.43.0
+> =C2=A0drivers/iio/adc/dln2-adc.c | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/iio/adc/dln2-adc.c b/drivers/iio/adc/dln2-adc.c
+> index
+> a1e48a756a7b519105393f77c4aebde1f2f85d50..359e26e3f5bcfe16d723f621bdfc01d=
+f2dfcf6a9
+> 100644
+> --- a/drivers/iio/adc/dln2-adc.c
+> +++ b/drivers/iio/adc/dln2-adc.c
+> @@ -466,7 +466,7 @@ static irqreturn_t dln2_adc_trigger_h(int irq, void *=
+p)
+> =C2=A0	struct iio_dev *indio_dev =3D pf->indio_dev;
+> =C2=A0	struct {
+> =C2=A0		__le16 values[DLN2_ADC_MAX_CHANNELS];
+> -		int64_t timestamp_space;
+> +		aligned_s64 timestamp_space;
+> =C2=A0	} data;
+> =C2=A0	struct dln2_adc_get_all_vals dev_data;
+> =C2=A0	struct dln2_adc *dln2 =3D iio_priv(indio_dev);
+>=20
 
 
