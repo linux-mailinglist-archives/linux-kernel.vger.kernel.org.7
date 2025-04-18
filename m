@@ -1,274 +1,175 @@
-Return-Path: <linux-kernel+bounces-610393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AF0CA93485
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 10:16:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C7F4A9348B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 10:19:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C4193ABBC3
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 08:16:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F3B2461C6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 08:19:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB1926B953;
-	Fri, 18 Apr 2025 08:16:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0ABD268C5E;
+	Fri, 18 Apr 2025 08:19:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3RAbjq6b";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="v+zoPpOq"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YcTBS4l6"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B551D5ACE;
-	Fri, 18 Apr 2025 08:16:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FD18211460
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 08:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744964194; cv=none; b=bN0Vx/eIDmyS6jZw1k+vfpjgjBEScWmz2vtmd2VR7LLvw0uwYuG2msnX7F/RmT3B831BY9Wro2V1q+cg+d61l2G3zmuYFvLaOqwR3qjqg1WLxsVtqe6pZtBpxqzJq/itD+2kL67/c/ND+bRdW04iFwiM6geq/ktIaSI9JnsT1yg=
+	t=1744964377; cv=none; b=DbgXlMB84a2eHJy8UwDUiAgXQGRs3lfCpd14SralP254R3reb4DtLrcQ8wtO2HwWGkorAzFTE99n4Rs4ENz8LfxCoMwjzD9WK3+K2WB+K3ZK4cAALzHja++PzrvveWy8ymStTXmses/OApVXkauDe7Wr9TEQV//h5L2DoI1NwNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744964194; c=relaxed/simple;
-	bh=A/cIS9O9ihetzF82juTc/GeppFS9eo1M3cHFEV89k2o=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Wq8D7Cvp350VwAYVGBf8w4fFh+JmtKv2ZwdyV2V5piJrR5/CvGx925ShCsDx4OURp9nqDaBJRFkQ43DlMmajJjVfSTOFVPhtrIo5GVVoGO0qmXKcfHUji5obSlG6yL+k8/ptnszI53pctLSL19sLxZFCyh95SbuRI8dF9h/m/tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3RAbjq6b; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=v+zoPpOq; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 18 Apr 2025 08:16:29 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744964190;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JGS99lfdrgA1Vl2luL9p0HsgAfvhOWL6PlH9I7e+0iA=;
-	b=3RAbjq6bjy2BISZjtbSBOPvCfEvYqggoxouchu2OenEX02o9KGH4J4TC4je8efxvNarFHa
-	I/lKFEqGrsl3U+hkaYTJ0CF//qiQlN4+uLSBatPrXeFa8t5TrKMqPyMff1ZMbUUpHpooML
-	r2Ib+5GBrXrEH6FkoKDn4wk6LKRhxx4hAiE+ioBCoP4j6ka5f56IedlZnUMKSJ0B5XePs1
-	zd6RQPlO/Edrn9rW6qzImQJgbib/0WLLDti7bxjFdbHT9odxyE+NDSXNvX2ESnlwywy/8M
-	rG6wWrXXq0TJifQbI5SgO4ySDHIh/15lht1HXWdeIogZ4QT2do3IwvW0Pzq0jA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744964190;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JGS99lfdrgA1Vl2luL9p0HsgAfvhOWL6PlH9I7e+0iA=;
-	b=v+zoPpOqWgQxzcR/tnjC+5BO1cfKbZ6alctLwx97h3F0GiTgdzoC01sQYop7Ap9VkST11E
-	THGRiAgBSC6UxxBw==
-From: "tip-bot2 for Uros Bizjak" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/boot] x86/boot: Remove semicolon from "rep" prefixes
-Cc: Uros Bizjak <ubizjak@gmail.com>, Ingo Molnar <mingo@kernel.org>,
- Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Josh Poimboeuf <jpoimboe@redhat.com>,
- Juergen Gross <jgross@suse.com>, Kees Cook <keescook@chromium.org>,
- Linus Torvalds <torvalds@linux-foundation.org>, Martin Mares <mj@ucw.cz>,
- Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250418071437.4144391-1-ubizjak@gmail.com>
-References: <20250418071437.4144391-1-ubizjak@gmail.com>
+	s=arc-20240116; t=1744964377; c=relaxed/simple;
+	bh=OyANNumqNGehMqydbT5YMfLr7i8JOGPuL+legh4Nnyc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JvGptbRI1oQjELurUQdjUn9A2PYGXy0lVf52hj5Caa9XRwcclbraIKGHOL/MYg5kilVCvGB2Bod7569OZ6wgJEpAleInpqw28ENJid54px9FSdBxn1GYztOj4c36Q9YejSecas2YAQ+D/OKJUZW7uif+sKOCvaaJLf9c81zFLdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YcTBS4l6; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43ede096d73so11285525e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 01:19:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744964373; x=1745569173; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=L630Qky/UZ9kI7H0yEROeZ3XG2IusjzeuDyDM/AGMdw=;
+        b=YcTBS4l6O3ZSPlDTtRF+jrzXv5lAIuT1X2lVKW5Sk5v1I4R4gi/8eIjsqyHymN6wZ9
+         u5YzPyLDu3YXvOijF6POiBJvZ4DofWDfCHfz+/dxd653CUggHyKf5QIjN7FSrvUCdfi0
+         x2CMz4ei3FTmVkLHcBto55wrwVdTWqAA76u2I+yV4GJNgb1bSTeoEL9C5PbrsYOOmqrO
+         9E5VrCGu40v2eQrKj+gdgyRRU4BJLUBs/4SPRmejtt2ZcR/gbLDb2r5aC1f/iE2DEjfl
+         Ga+0Ljm52RQ5sNzyuXO1vjsVkdQD7Ar4Me+4d3QuqX4Dd1V4OqPNgVys1+xkqy/KJREH
+         36eQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744964373; x=1745569173;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=L630Qky/UZ9kI7H0yEROeZ3XG2IusjzeuDyDM/AGMdw=;
+        b=elpUaY2oeGgT3gEUgZquJRs3X6j6jU9nzyPEzaG/2e9KTUao56fhQ1+xy4xcnSzu8A
+         Wp2yN5XwawKxrHlYdVV+AqR1GhWATs2tvWivTnaTFVfUFb5br5ARvkAkvth6LRxFjkmm
+         hOZ0MLo/yHIJo9HVl/lB57FZmKlNK2GYYLvYhQxNFbvjcEjkI7GltU8aLYe04Foew4Gr
+         l6IIL18GJlSZSPbUUBnADS1nRFRtIPG01HFdlwA4hgaXbH0eID4SeBUxD82jQ1faiJft
+         KZc1B21dSVCLHXjsVv8haNq7uwZfOt14c+TBnP1+T38Hv2ksbkaBamFlA6WlNYHZqAmG
+         TJww==
+X-Forwarded-Encrypted: i=1; AJvYcCXRO8PVtF2B+mu/QgdJL7H6jrp30N1whN79gGGDB9baKRnuAq02aFCc+NJPD9pZ4yDNCHpNESmx14ap0/g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyY5VYpTiFeqX4+IAtPG7HI7FAkdpQ/hlRmLbSvcZrybybFmggY
+	1Fo0NazX0ek3l87GBmlkmFmIbgTzxJNrKhdPCdAcCkxNFd9TQkEkogK1WpIykcI=
+X-Gm-Gg: ASbGncvaUMAQf/8rgHKcVXEit2TyAFGzMaB2KPhUSmPUSo5J9am0zTnzowc6ut7m+bi
+	BRhHmdBGbrMvd75yTne5+aDq0tgLoHMQCY1vc2DPG7VcWPm7fJuf4gq+W2hmYQntSNLzUtrMSUA
+	PZOY6+i+1KgoDFlhHIPnj75KtbZhT1O0TmAXC+xlHgXEbgPJj0blxO6b0J5Lzb10AE+dMdbHMgP
+	a8RvP/rArABGKfAb4uYtZxZ6Y4nUSBy/F5p9iw+UrPlDcMTBs7aJkA7srvM5+dA93NHZ4ZQ46Ns
+	59Nj732Ai8IWhpR+B8YL+5VgAwEaxiWLGu/rip9Ov8eNKhBb9ygt/3W0dadGFHqLSh5NgMbJAty
+	MEh0=
+X-Google-Smtp-Source: AGHT+IHprYn4MpD5iVpcM5XtKPgBCL4PbwyZvt4l+PuNDtvWyynJ4XbaF2lxnyotFbTDZATgIX8ZLA==
+X-Received: by 2002:a05:600c:35c9:b0:43d:fa59:cc8f with SMTP id 5b1f17b1804b1-4406ac412f2mr11115405e9.33.1744964373510;
+        Fri, 18 Apr 2025 01:19:33 -0700 (PDT)
+Received: from mai.linaro.org (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa433354sm2079318f8f.32.2025.04.18.01.19.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Apr 2025 01:19:32 -0700 (PDT)
+Date: Fri, 18 Apr 2025 10:19:31 +0200
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	"open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>,
+	"open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>,
+	"moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:CLANG/LLVM BUILD SUPPORT:Keyword:b(?i:clang|llvm)b" <llvm@lists.linux.dev>
+Subject: Re: [PATCH v5 3/3] drivers/thermal/exymos: Fixed the efuse min max
+ value for exynos5422
+Message-ID: <aAILE01SjRR874jc@mai.linaro.org>
+References: <20250410063754.5483-1-linux.amoon@gmail.com>
+ <20250410063754.5483-4-linux.amoon@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174496418962.31282.13369844056848991237.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250410063754.5483-4-linux.amoon@gmail.com>
 
-The following commit has been merged into the x86/boot branch of tip:
+On Thu, Apr 10, 2025 at 12:07:50PM +0530, Anand Moon wrote:
+> As per Exynos5422 user manual e-Fuse range min~max range is 16~76.
+> if e-Fuse value is out of this range, then thermal sensor may not
+> sense thermal data properly. Refactors the efuse value
+> initialization logic within exynos_map_dt_data function by
+> replacing the nested if-else statements with a switch statement.
+> Ensures proper initialization of efuse values based on the SOC type.
+> 
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 
-Commit-ID:     0dcc51477b94d87f23aeb400b78fbdfb09363000
-Gitweb:        https://git.kernel.org/tip/0dcc51477b94d87f23aeb400b78fbdfb09363000
-Author:        Uros Bizjak <ubizjak@gmail.com>
-AuthorDate:    Fri, 18 Apr 2025 09:13:50 +02:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 18 Apr 2025 09:32:57 +02:00
+Same subject typo: s/exymos/exynos/
 
-x86/boot: Remove semicolon from "rep" prefixes
+> ---
+> v5: None
+> v4: None
+> v3: Improve the logic to convert if/else to switch
+> ---
+>  drivers/thermal/samsung/exynos_tmu.c | 19 +++++++++++++++----
+>  1 file changed, 15 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> index ac3b9d2c900c..a71cde0a4b17 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -899,12 +899,23 @@ static int exynos_map_dt_data(struct platform_device *pdev)
+>  		data->gain = 8;
+>  		data->reference_voltage = 16;
+>  		data->efuse_value = 55;
+> -		if (data->soc != SOC_ARCH_EXYNOS5420 &&
+> -		    data->soc != SOC_ARCH_EXYNOS5420_TRIMINFO)
+> +		data->max_efuse_value = 100;
+> +		switch (data->soc) {
+> +		case SOC_ARCH_EXYNOS3250:
+> +		case SOC_ARCH_EXYNOS4412:
+> +		case SOC_ARCH_EXYNOS5250:
+> +		case SOC_ARCH_EXYNOS5260:
+>  			data->min_efuse_value = 40;
+> -		else
+> +			break;
+> +		case SOC_ARCH_EXYNOS5420:
+> +		case SOC_ARCH_EXYNOS5420_TRIMINFO:
+> +			data->min_efuse_value = 16;
+> +			data->max_efuse_value = 76;
+> +			break;
+> +		default:
+>  			data->min_efuse_value = 0;
+> -		data->max_efuse_value = 100;
+> +			break;
+> +		}
+>  		break;
+>  	case SOC_ARCH_EXYNOS5433:
+>  		data->tmu_set_low_temp = exynos5433_tmu_set_low_temp;
 
-Minimum version of binutils required to compile the kernel is 2.25.
-This version correctly handles the "rep" prefixes, so it is possible
-to remove the semicolon, which was used to support ancient versions
-of GNU as.
+Thanks for taking care of cleaning up this portion of code. IMO, it would be
+interesting to go a bit further in the house keeping by replacing this big
+switch with a set of structures stored as __init sections. The initialization
+finds the right structure and does a structure copy to 'data'.
 
-Due to the semicolon, the compiler considers "rep; insn" (or its
-alternate "rep\n\tinsn" form) as two separate instructions. Removing
-the semicolon makes asm length calculations more accurate, consequently
-making scheduling and inlining decisions of the compiler more accurate.
+It is up to you to do this change or not.
 
-Removing the semicolon also enables assembler checks involving "rep"
-prefixes. Trying to assemble e.g. "rep addl %eax, %ebx" results in:
+-- 
 
-  Error: invalid instruction `add' after `rep'
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Martin Mares <mj@ucw.cz>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lore.kernel.org/r/20250418071437.4144391-1-ubizjak@gmail.com
----
- arch/x86/boot/bioscall.S          | 4 ++--
- arch/x86/boot/boot.h              | 4 ++--
- arch/x86/boot/compressed/string.c | 8 ++++----
- arch/x86/boot/copy.S              | 8 ++++----
- arch/x86/boot/header.S            | 2 +-
- arch/x86/boot/string.c            | 2 +-
- arch/x86/boot/video.c             | 2 +-
- 7 files changed, 15 insertions(+), 15 deletions(-)
-
-diff --git a/arch/x86/boot/bioscall.S b/arch/x86/boot/bioscall.S
-index aa9b964..cf4a615 100644
---- a/arch/x86/boot/bioscall.S
-+++ b/arch/x86/boot/bioscall.S
-@@ -32,7 +32,7 @@ intcall:
- 	movw	%dx, %si
- 	movw	%sp, %di
- 	movw	$11, %cx
--	rep; movsl
-+	rep movsl
- 
- 	/* Pop full state from the stack */
- 	popal
-@@ -67,7 +67,7 @@ intcall:
- 	jz	4f
- 	movw	%sp, %si
- 	movw	$11, %cx
--	rep; movsl
-+	rep movsl
- 4:	addw	$44, %sp
- 
- 	/* Restore state and return */
-diff --git a/arch/x86/boot/boot.h b/arch/x86/boot/boot.h
-index 38f17a1..f3771a6 100644
---- a/arch/x86/boot/boot.h
-+++ b/arch/x86/boot/boot.h
-@@ -155,14 +155,14 @@ static inline void wrgs32(u32 v, addr_t addr)
- static inline bool memcmp_fs(const void *s1, addr_t s2, size_t len)
- {
- 	bool diff;
--	asm volatile("fs; repe; cmpsb" CC_SET(nz)
-+	asm volatile("fs repe cmpsb" CC_SET(nz)
- 		     : CC_OUT(nz) (diff), "+D" (s1), "+S" (s2), "+c" (len));
- 	return diff;
- }
- static inline bool memcmp_gs(const void *s1, addr_t s2, size_t len)
- {
- 	bool diff;
--	asm volatile("gs; repe; cmpsb" CC_SET(nz)
-+	asm volatile("gs repe cmpsb" CC_SET(nz)
- 		     : CC_OUT(nz) (diff), "+D" (s1), "+S" (s2), "+c" (len));
- 	return diff;
- }
-diff --git a/arch/x86/boot/compressed/string.c b/arch/x86/boot/compressed/string.c
-index 81fc1ea..9af19d9 100644
---- a/arch/x86/boot/compressed/string.c
-+++ b/arch/x86/boot/compressed/string.c
-@@ -15,9 +15,9 @@ static void *____memcpy(void *dest, const void *src, size_t n)
- {
- 	int d0, d1, d2;
- 	asm volatile(
--		"rep ; movsl\n\t"
-+		"rep movsl\n\t"
- 		"movl %4,%%ecx\n\t"
--		"rep ; movsb\n\t"
-+		"rep movsb"
- 		: "=&c" (d0), "=&D" (d1), "=&S" (d2)
- 		: "0" (n >> 2), "g" (n & 3), "1" (dest), "2" (src)
- 		: "memory");
-@@ -29,9 +29,9 @@ static void *____memcpy(void *dest, const void *src, size_t n)
- {
- 	long d0, d1, d2;
- 	asm volatile(
--		"rep ; movsq\n\t"
-+		"rep movsq\n\t"
- 		"movq %4,%%rcx\n\t"
--		"rep ; movsb\n\t"
-+		"rep movsb"
- 		: "=&c" (d0), "=&D" (d1), "=&S" (d2)
- 		: "0" (n >> 3), "g" (n & 7), "1" (dest), "2" (src)
- 		: "memory");
-diff --git a/arch/x86/boot/copy.S b/arch/x86/boot/copy.S
-index 6afd05e..3973a67 100644
---- a/arch/x86/boot/copy.S
-+++ b/arch/x86/boot/copy.S
-@@ -22,10 +22,10 @@ SYM_FUNC_START_NOALIGN(memcpy)
- 	movw	%dx, %si
- 	pushw	%cx
- 	shrw	$2, %cx
--	rep; movsl
-+	rep movsl
- 	popw	%cx
- 	andw	$3, %cx
--	rep; movsb
-+	rep movsb
- 	popw	%di
- 	popw	%si
- 	retl
-@@ -38,10 +38,10 @@ SYM_FUNC_START_NOALIGN(memset)
- 	imull	$0x01010101,%eax
- 	pushw	%cx
- 	shrw	$2, %cx
--	rep; stosl
-+	rep stosl
- 	popw	%cx
- 	andw	$3, %cx
--	rep; stosb
-+	rep stosb
- 	popw	%di
- 	retl
- SYM_FUNC_END(memset)
-diff --git a/arch/x86/boot/header.S b/arch/x86/boot/header.S
-index b5c79f4..9cb9142 100644
---- a/arch/x86/boot/header.S
-+++ b/arch/x86/boot/header.S
-@@ -585,7 +585,7 @@ start_of_setup:
- 	xorl	%eax, %eax
- 	subw	%di, %cx
- 	shrw	$2, %cx
--	rep; stosl
-+	rep stosl
- 
- # Jump to C code (should not return)
- 	calll	main
-diff --git a/arch/x86/boot/string.c b/arch/x86/boot/string.c
-index 84f7a88..f35369b 100644
---- a/arch/x86/boot/string.c
-+++ b/arch/x86/boot/string.c
-@@ -32,7 +32,7 @@
- int memcmp(const void *s1, const void *s2, size_t len)
- {
- 	bool diff;
--	asm("repe; cmpsb" CC_SET(nz)
-+	asm("repe cmpsb" CC_SET(nz)
- 	    : CC_OUT(nz) (diff), "+D" (s1), "+S" (s2), "+c" (len));
- 	return diff;
- }
-diff --git a/arch/x86/boot/video.c b/arch/x86/boot/video.c
-index f2e9690..0641c8c 100644
---- a/arch/x86/boot/video.c
-+++ b/arch/x86/boot/video.c
-@@ -292,7 +292,7 @@ static void restore_screen(void)
- 			     "shrw %%cx ; "
- 			     "jnc 1f ; "
- 			     "stosw \n\t"
--			     "1: rep;stosl ; "
-+			     "1: rep stosl ; "
- 			     "popw %%es"
- 			     : "+D" (dst), "+c" (npad)
- 			     : "bdS" (video_segment),
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
