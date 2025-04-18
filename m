@@ -1,140 +1,137 @@
-Return-Path: <linux-kernel+bounces-611269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 741E7A93F83
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 23:39:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0C2CA93F87
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 23:40:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F28C1466CFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 21:39:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 317088E1DEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 21:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7ABB22DFA7;
-	Fri, 18 Apr 2025 21:39:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7202417F2;
+	Fri, 18 Apr 2025 21:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="EVIjeafT"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="jcn++Xx+"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D294822D4E3
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 21:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 401E841760;
+	Fri, 18 Apr 2025 21:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745012340; cv=none; b=PA36mONEaY3HL9WVPWfxOXYzLqJ+tLPnTA2oieOWxE4+1RablM6LItwV1Qcf9Xd0sreTA88Vgatm4JOTRzvVAeRFuQ+rlqbY+Ng80z1WxWydHKcGN2O4vZuJyMuM1ZDyKhRNnaeEAmuJAK0vHcDXWdLx080BFLSZVxjyQVhVppA=
+	t=1745012407; cv=none; b=BfsS+z2wpJLW72b/btZFHkEnUTUY0VdQdbXIz6awXobmEKkNoOdMdesWhFrHMkOJx1PbNsIRtqsKZOAFZa4Wk503vpi3vlORGGyArT7fsaj0hYiaFeo41SvUaKswulrJ7NoFmY4aUNWMgkP6Aaz2zQPcHR64xlXNyeZQvpWk7Ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745012340; c=relaxed/simple;
-	bh=akhokAyyxuJx/KmpleZXsSJynmRELlCqLTRjS09IYBY=;
+	s=arc-20240116; t=1745012407; c=relaxed/simple;
+	bh=sQEx6WpaCkvi5Us7tJM0a9nl3EWEOVwUYkXrEEL6APA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CxiWbdFz0N+RImsUOpO0UZXktwMkTXgEbAEbQqPm4ZTFcKLvp1firakl2Ue26PtoDpVL6WFnj7JG//cLW3jW8IYqIn0HpaK+VY+jV7DYO1TvIp2Pwg8NT3iZROYJBMsKT36t4JSq4gRIR48QHdqmQ7936YSfo7GTViyYD3aFnoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=EVIjeafT; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=akho
-	kAyyxuJx/KmpleZXsSJynmRELlCqLTRjS09IYBY=; b=EVIjeafTdhRjdFUigNJA
-	iLVz1CXziirZB6FEnltL4s6gvg3uqsO5j0OpWDlN4wi1bTJHDbRtiPH8cI6IbnA2
-	KB08FFrQ8YYjilvGr+sQfmfnaA6KJ6qAayxVp4SJKoHi2RLZuXaj4BJRPHAgZMQq
-	Vy8XckOcRo1hlGx6fLbStFP96bnJLbtUfb0kBZ3kc7N5rx9vXBxTb06HEP9REGOF
-	d/uXHV5gnQMfluLToKwmAtioSinJMS9Ru1T97fYrYfPTMe1OGC0YCmLMlqIsEsr7
-	+6QwMUwnhBa5LRfffEA8Lrzt/DS3r1gab5hQ8vPBAzF1NiYzmjhCAlvg8WeQFwee
-	Zg==
-Received: (qmail 1538474 invoked from network); 18 Apr 2025 23:38:53 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 18 Apr 2025 23:38:53 +0200
-X-UD-Smtp-Session: l3s3148p1@zMZAWBQz6uEujnsE
-Date: Fri, 18 Apr 2025 23:38:53 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Andi Shyti <andi.shyti@kernel.org>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Cosmin Tanislav <demonsingur@gmail.com>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v9 0/9] misc: Support TI FPC202 dual-port controller
-Message-ID: <aALGbZtz9mN3F7q4@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Cosmin Tanislav <demonsingur@gmail.com>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>
-References: <20250306-fpc202-v9-0-2779af6780f6@bootlin.com>
- <avat6oilygpkcngtpuyentyvjqifav4f3zzvrtnsdybfl6uqja@i2surd4ywu73>
- <2025041525-smoking-among-4b51@gregkh>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gTSPri5M4JEqwTnPHUw0a4qLwIwUjVD2Dp/I6IrLyqxoypY6lnPbYVcxIJp7FoO2LLhjyR0XtIxSBQFU08n2ZVcGxFvn9IlsIh41larf8Z7PZA+Dry+GRJt6do3Pkxzj7s6vhe7uDzcfnqEU504FSqChWrIFDtG+RT/DdnhvVwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=jcn++Xx+; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id CB61840E0214;
+	Fri, 18 Apr 2025 21:40:02 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id ZQKSbkzc1mB7; Fri, 18 Apr 2025 21:39:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1745012398; bh=v7R7rbBwsqRL92iwFhFa621dkOiszs3z49cg4ID99vc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jcn++Xx+48DhLijziurjXTK5hrKPIUEK5a1xIC9z1nL7wqe9VrwPdIQNcArRhSjBG
+	 fuQ+UA9NLJmNaAvPbj4L1lvX61v1c4bPImdLkQVo2BgEsfa5IXC8ozcK67iQ81Abbj
+	 ONQd4ISB+PQii5tgcWFKFCgWTOjo8um2pGb2C6R1ydEv9CAE9AVC/gELfo6XDq2JOt
+	 2fIC9qia/rfZUiu7vp8WNaOpO0+4PDCAbnXZjmivkdgQ3/ZLnOqO57YnQGBvhSBd8I
+	 CRGHI822G1+5xSeYXLUrd3MgNdNpt4nUJ/ezf3/8eMdcimHp3NuKDLHiVPGrgd+S4A
+	 v2qmWWQwx5NnM/ZzcYo97s7C2xLoK+UrlBBwH7Ns1ObfXkk/e+3fZzBDNbCKXIW0gi
+	 U6ulRGLEgCtGZgUxHsNANRQ0b6GmWTp4WSgNfrkSc+i2k1+Gt0HgnDq30NqJxaFFfQ
+	 Cp3vsx9GOe8qYln+6KzhFqhcj3Qxm48UNt6tz+niYsgOAD65F5VLoALvluaNI2s0wp
+	 ac8HJ2igVLk61yc/GV/Y/Qks6eCUxRo0t7/oRKG5T9GCcVFj93/g4z0byWyylgMuPK
+	 ZF9eILscrj2vghM8j1Q+LuUULutm4cKeDVnFBz3xvwKL23lU7GZ/LUWEkVbMNwhs/r
+	 KcFQv7MbwDG4phxqBpmwqixk=
+Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AE43040E023A;
+	Fri, 18 Apr 2025 21:39:46 +0000 (UTC)
+Date: Fri, 18 Apr 2025 23:39:45 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Junxuan Liao <ljx@cs.wisc.edu>, linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>
+Subject: Re: [PATCH] x86/tracing: introduce enter/exit tracepoint pairs for
+ page faults
+Message-ID: <20250418213945.GJaALGod4-j86Squ43@fat_crate.local>
+References: <e7d4cd81-c0a5-446c-95d2-6142d660c15b@cs.wisc.edu>
+ <20250414205441.GGZ_12Eew18bGcPTG0@fat_crate.local>
+ <20250414182050.213480aa@gandalf.local.home>
+ <20250416174714.GGZ__tIi3yNzNKoKFE@fat_crate.local>
+ <20250416140115.5b836b33@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ou49x9tjXwiyVr2v"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <2025041525-smoking-among-4b51@gregkh>
+In-Reply-To: <20250416140115.5b836b33@gandalf.local.home>
 
+On Wed, Apr 16, 2025 at 02:01:15PM -0400, Steven Rostedt wrote:
+> The above was created by:
+> 
+>  # trace-cmd sqlhist -e -n user_faults SELECT TIMESTAMP_DELTA_USECS as delta FROM page_fault_user_enter as start JOIN \
+>      page_fault_user_exit as end ON start.common_pid = end.common_pid
 
---ou49x9tjXwiyVr2v
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Pfff, that's SQL.
 
+You're too old fashioned - you need an AI thing now :-P
 
-> > I had a look at the whole series and looks quite all right to me.
->=20
-> I recommend just taking it all through i2c, thanks.
+So tell me: I as a silly user, how do I figure out how to use trace-cmd?
+I guess it has docs somewhere...
 
-Okay I applied to i2c/for-next, thanks!
+And apparently I need trace-cmd now - I can't type all that into sysfs... Or
+I guess I can use trace-cmd to generate the commands and then I can echo them
+into the target machine.
 
+I.e., ftrace still doesn't need a special tool to be used...
 
---ou49x9tjXwiyVr2v
-Content-Type: application/pgp-signature; name="signature.asc"
+> This was just a simple example. I rather see where in the kernel it happens.
+> I can still use the synthetic events and user stack trace to find where the
+> big faults occur.
 
------BEGIN PGP SIGNATURE-----
+Right, so it would be great to have the actual use case in a patch's commit
+message... i.e., why is a patch important.
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmgCxmUACgkQFA3kzBSg
-KbZaOxAAhbVhuhyQYC1gaHi1J0SCUVJJBYZwLmkQ8tc2p4O02kYIgZNO1xumXFai
-RqdZsz6fG1x4RLL61oQCdV7Rm/WQ9rU737de6MjtJ3/vn1EmdNQ9+XgwQ+tvSJbj
-oLFGOusP+BNOZba9IwupE26Tfrl/leFnnWm/lp8//DZGLTgOsRpgmIIWRe6PU91T
-XY7oEJ9T6QseZFbH6O3cGZ7QF56FJ9AVLIVhx8aSa9fz3BJq2gAWmSz8whq+383p
-iF1OLVfIxWq7uHtYJUsSLUx4Jmhvj1UpFtdaGcFijCjgmSDGzZF01MFsFvZRD7it
-NRGBcBmWEb1bzQsZMapXuwvUdSAisAO0Zhx4ANFt9039o8XIJPddVJjCSfv05Vjm
-3jfki9O7p3b0LQ+vhDbZPjogThitWk1dQV/X+agUKPYMYZIgTFcASkgxiWuX411N
-ut+VWGlTmtF9p9cggDVSpkWQwCLzyDhW4u47A/vG6bh+3sRIEVcsRM2o/X8cUrsj
-UmBRZkMpr6gH7lFgRYCjuMqdpHqalUoEJYaKsNSx3bKSImX117m0/v63WQv+3uNi
-nQHAF7+SJPy1CyXwMGsrH17+lbqwodXCEoGcGFeBa6fbwTGhrHlne7GR6B1KVIUA
-WzmALhuX0OvCeiVTdZ2oV6SfQYV/HGoayhpqNhD2Pu9X8Mnq/FI=
-=nnhF
------END PGP SIGNATURE-----
+> > Now if only that info were in the commit message along with the usage scenario
+> > so that people can *actually* do what you guys are bragging about...
+> 
+> I plan on adding things like this to Documentation/trace/debugging.rst
+> 
+> I need to get time out to add a bunch of helpful tricks there.
 
---ou49x9tjXwiyVr2v--
+Yap, please.
+
+I have to admit I was able to catch a trace for tglx using only the ftrace
+documentation we have so it must be good. But moar is better. :-P
+
+Thx man!
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
