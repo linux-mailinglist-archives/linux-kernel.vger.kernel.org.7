@@ -1,132 +1,118 @@
-Return-Path: <linux-kernel+bounces-610868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 412CCA93A2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 17:56:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93027A93A30
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 17:57:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 967217B2EFD
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 15:55:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBFB81B672AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 15:57:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D3DB214A73;
-	Fri, 18 Apr 2025 15:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD9321421B;
+	Fri, 18 Apr 2025 15:56:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AKUvwCpR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qMDUQT2I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 148FC21421B
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 15:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3004213E71;
+	Fri, 18 Apr 2025 15:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744991777; cv=none; b=m8VShQI0ddhgmurQYx2w8liGiPA6U3BBIQuR8d5UhRrKRyXLYQ71umGNRE0gyakwa1v4Whi/LwouQiK7+fcfSeXKI1ZKgiobIgKeFlXMffjo5aYCMFcIiXgaFmhMN827c2MFA+L40Y95texUrggiZLcE0p3hxIDSKOGc+bvyfz8=
+	t=1744991818; cv=none; b=ElonUwdB46vZBmM7WK2URYWXEeG4zmmjKh7PIqjRCM/BLRvdm0MyB5yHpYLrcDKc9hsJbu4OfQ4zm5vRm2gixjNjVY0yRh71HDiXjP3gHO9dZf+p52ihdRFFE0s/LJHoUTJClIAXzKc6YuX0QprUZ0Ss3b8yloTndscy+DYUnRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744991777; c=relaxed/simple;
-	bh=m9VYpqH1Phf0B/tx5ueFdQbWu07BUOyrKunKIcW6NMA=;
-	h=Subject:To:Cc:From:Date:References:In-Reply-To:Message-Id; b=GyBY5FVmipzwh9KGRioOkjCRnwa9Xsgn55aU3WiLdFzQZFWneSZkicEWabDohfkzitBHIMhnMTVEM74pnRIe/2Of92ueTZvk5S+Gbd8qZdo1MFDNQEUXMbu8IOWwq7MssAD1vs9tewMrvDOCE+C7WDkGZ5KTxlLLVujSteMFkbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AKUvwCpR; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744991776; x=1776527776;
-  h=subject:to:cc:from:date:references:in-reply-to:
-   message-id;
-  bh=m9VYpqH1Phf0B/tx5ueFdQbWu07BUOyrKunKIcW6NMA=;
-  b=AKUvwCpRlwWfReuMuU/iPan97xoatUkU/KidZJGkJ87C6fHncLRn7+jy
-   ar6pE+jvatS1gExF7gLhcA33vobQhgk/uy3qRH6goNASy9QFpeNJNgsGJ
-   BrXlsFvnU5Ke1AYB0mHZlglxq/ijoUet2r9tLKfvhZ/3LtpK8jLlHaYSq
-   9TMP0QuiG0MktDdJndEltwc1KRELhZRUVTff4KI+zP6rde7i2Xk54lZFE
-   c5v0NS11khxJa3eo4XjAwrQlkJM/C6Es1HsMi1ROp1TYFM8lhmaH+eFSw
-   p1LwQi0NGDjGZLfpgqRp/Oo2rug/Yo0c0zZgAV4+ECuYVAtLDVPBIsHKh
-   w==;
-X-CSE-ConnectionGUID: x1rlV57iRj+r0x5N3Tq4FQ==
-X-CSE-MsgGUID: /Mic3tpDT2yIFWF7G1sN3Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11407"; a="46742633"
-X-IronPort-AV: E=Sophos;i="6.15,222,1739865600"; 
-   d="scan'208";a="46742633"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Apr 2025 08:56:16 -0700
-X-CSE-ConnectionGUID: 6fT0BW9CRua+bxmQmjVxpg==
-X-CSE-MsgGUID: nvZXoFbyQNqHnWIvBHLnhA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,222,1739865600"; 
-   d="scan'208";a="168347211"
-Received: from davehans-spike.ostc.intel.com (HELO localhost.localdomain) ([10.165.164.11])
-  by orviesa001.jf.intel.com with ESMTP; 18 Apr 2025 08:56:16 -0700
-Subject: [PATCH 2/2] x86/mm: Move duplicated 32-bit page table sync mask to common code
-To: linux-kernel@vger.kernel.org
-Cc: x86@kernel.org,tglx@linutronix.de,bp@alien8.de,joro@8bytes.org,luto@kernel.org,peterz@infradead.org,kirill.shutemov@linux.intel.com,rick.p.edgecombe@intel.com,jgross@suse.com,Dave Hansen <dave.hansen@linux.intel.com>
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Date: Fri, 18 Apr 2025 08:56:15 -0700
-References: <20250418155612.8F276BC7@davehans-spike.ostc.intel.com>
-In-Reply-To: <20250418155612.8F276BC7@davehans-spike.ostc.intel.com>
-Message-Id: <20250418155615.79C12364@davehans-spike.ostc.intel.com>
+	s=arc-20240116; t=1744991818; c=relaxed/simple;
+	bh=kAkUEz69oJCELBzCTlECNHedtSRMFyPaN9/Bbtue/z4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XMYIPugHFVpBFlWvcB7qSJar+KYzb+4wiUgCUwsjFTsW9Co2UQaxmVfdSZXl3mae+PQ/3fAJ2TUop8yX96vAEsJYIvfGgy6tkhVPzbZGyLSUCd31KPliRQ7lICnxVQKabDKD8W6Rd4zyzanqEgauvB4DWAKTI3ENJvyEsb+dQx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qMDUQT2I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 183FEC4CEE2;
+	Fri, 18 Apr 2025 15:56:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744991817;
+	bh=kAkUEz69oJCELBzCTlECNHedtSRMFyPaN9/Bbtue/z4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qMDUQT2IrPcckBqQ9XeOFzjtwmXgggNvKwVsamHPO0HyjCFdc9zov8guqGIpfDIqi
+	 52NKMU0BGiGE/XMLJJxCOgkGSKG+6f1955I1cHSH9F/ch8CM6uMLumM5+/Qn0YN13G
+	 i0gBH2lnwdMgGb3FxoI3W345xhycOWReGMnNKeXekGW0CDvLMDc8yf9al4RXvP68ER
+	 TknO7ebeAIA2+QH4aH8rmgC6w0GuCU7hXIV5rW7UPns50/O1BNq7+csp5bp2HFouX3
+	 SZvitIxHV0aLabOkEcRah1g0OeskERf3/6ZrnYDj3fkt//xE0MSUTQoN3OnQF0jnr4
+	 Cu68WpZC2Kcvw==
+Date: Fri, 18 Apr 2025 16:56:49 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Angelo Dureghello <adureghello@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, David Lechner <dlechner@baylibre.com>, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Beniamin Bia <beniamin.bia@analog.com>, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: adc: ad7606: fix serial register access
+Message-ID: <20250418165649.64ebef8b@jic23-huawei>
+In-Reply-To: <20250417-wip-bl-ad7606-fix-reg-access-v1-1-0ce341f3cfc3@baylibre.com>
+References: <20250417-wip-bl-ad7606-fix-reg-access-v1-1-0ce341f3cfc3@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Thu, 17 Apr 2025 23:42:51 +0200
+Angelo Dureghello <adureghello@baylibre.com> wrote:
 
-From: Dave Hansen <dave.hansen@linux.intel.com>
+> From: Angelo Dureghello <adureghello@baylibre.com>
+> 
+> Fix register read/write routine as per datasheet.
+> 
+> When reading multiple consecutive registers, only the first one is read
+> properly. This is due to missing chip select between first and second
+> 16bit transfer.
+In what sense of missing? Given code you mean missing being unselected
+briefly between transfers I think.
 
-The vmalloc() code needs to know when to propagate changes to across
-mms because the rules differ based on architecture and kernel config.
-It does this with a bitmap: ARCH_PAGE_TABLE_SYNC_MASK which tells
-vmalloc when to call back in to arch-specific code to propagate
-page table changes.
+chip select itself is always set in current code and hence the 'missing'
+description had me confused!
 
-The 32-bit x86 rules are less exciting now and are unified across
-PAE (3-level) and 2-level paging so the two for their constants
-define the same value.
+Anyhow, looks fine to me but I'd like this on list a little longer before
+I pick it up.
 
-Move the common value to the common pgtable_32_types.h.
+Thanks,
 
-Suggested-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
----
+Jonathan
 
- b/arch/x86/include/asm/pgtable-2level_types.h |    2 --
- b/arch/x86/include/asm/pgtable-3level_types.h |    2 --
- b/arch/x86/include/asm/pgtable_32_types.h     |    2 ++
- 3 files changed, 2 insertions(+), 4 deletions(-)
+> Add chip select between the two 16bit transfers as per datasheet
+> AD7606C-16, rev 0, figure 110.
+> 
+> Fixes: f2a22e1e172f ("iio: adc: ad7606: Add support for software mode for ad7616")
+> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> ---
+>  drivers/iio/adc/ad7606_spi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/adc/ad7606_spi.c b/drivers/iio/adc/ad7606_spi.c
+> index 997be483ebb93293481b922e13ece4edb47e940a..bd05357a542cf7234d5bb6b718829d6b720262cd 100644
+> --- a/drivers/iio/adc/ad7606_spi.c
+> +++ b/drivers/iio/adc/ad7606_spi.c
+> @@ -103,7 +103,7 @@ static int ad7606_spi_reg_read(struct ad7606_state *st, unsigned int addr)
+>  		{
+>  			.tx_buf = &st->d16[0],
+>  			.len = 2,
+> -			.cs_change = 0,
+> +			.cs_change = 1,
+>  		}, {
+>  			.rx_buf = &st->d16[1],
+>  			.len = 2,
+> 
+> ---
+> base-commit: 8dc6b228d746b1a900bed28568defb2266fa4c43
+> change-id: 20250417-wip-bl-ad7606-fix-reg-access-729c21478d1f
+> 
+> Best regards,
 
-diff -puN arch/x86/include/asm/pgtable-2level_types.h~move-ARCH_PAGE_TABLE_SYNC_MASK arch/x86/include/asm/pgtable-2level_types.h
---- a/arch/x86/include/asm/pgtable-2level_types.h~move-ARCH_PAGE_TABLE_SYNC_MASK	2025-04-18 08:37:32.631950373 -0700
-+++ b/arch/x86/include/asm/pgtable-2level_types.h	2025-04-18 08:37:32.640950703 -0700
-@@ -18,8 +18,6 @@ typedef union {
- } pte_t;
- #endif	/* !__ASSEMBLER__ */
- 
--#define ARCH_PAGE_TABLE_SYNC_MASK	PGTBL_PMD_MODIFIED
--
- /*
-  * Traditional i386 two-level paging structure:
-  */
-diff -puN arch/x86/include/asm/pgtable_32_types.h~move-ARCH_PAGE_TABLE_SYNC_MASK arch/x86/include/asm/pgtable_32_types.h
---- a/arch/x86/include/asm/pgtable_32_types.h~move-ARCH_PAGE_TABLE_SYNC_MASK	2025-04-18 08:37:32.635950520 -0700
-+++ b/arch/x86/include/asm/pgtable_32_types.h	2025-04-18 08:37:32.640950703 -0700
-@@ -20,4 +20,6 @@
- #define PGDIR_SIZE	(1UL << PGDIR_SHIFT)
- #define PGDIR_MASK	(~(PGDIR_SIZE - 1))
- 
-+#define ARCH_PAGE_TABLE_SYNC_MASK	PGTBL_PMD_MODIFIED
-+
- #endif /* _ASM_X86_PGTABLE_32_TYPES_H */
-diff -puN arch/x86/include/asm/pgtable-3level_types.h~move-ARCH_PAGE_TABLE_SYNC_MASK arch/x86/include/asm/pgtable-3level_types.h
---- a/arch/x86/include/asm/pgtable-3level_types.h~move-ARCH_PAGE_TABLE_SYNC_MASK	2025-04-18 08:37:32.637950593 -0700
-+++ b/arch/x86/include/asm/pgtable-3level_types.h	2025-04-18 08:37:32.640950703 -0700
-@@ -27,8 +27,6 @@ typedef union {
- } pmd_t;
- #endif	/* !__ASSEMBLER__ */
- 
--#define ARCH_PAGE_TABLE_SYNC_MASK	PGTBL_PMD_MODIFIED
--
- /*
-  * PGDIR_SHIFT determines what a top-level page table entry can map
-  */
-_
 
