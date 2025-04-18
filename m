@@ -1,170 +1,91 @@
-Return-Path: <linux-kernel+bounces-610653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 771E9A9376D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 14:48:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 229C9A93766
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 14:47:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 100618E372B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 12:48:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C745C1B632F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 12:48:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D829527584A;
-	Fri, 18 Apr 2025 12:48:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 445D0274FF4;
+	Fri, 18 Apr 2025 12:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dYboGRGQ"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="hT1FhWO0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A434275114
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 12:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951A9111AD;
+	Fri, 18 Apr 2025 12:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744980489; cv=none; b=cgckMpQfMFnWAm+O2K9DSb3U0g7ZQMB9TV+0m0UaXL7PWeCrRrfQe94K9onpCyUGGn+8myaOzQCbJap/NuBvwtdT6lHKDDsg7cvEwM5VCD+g1bii6N7stGZMmzTlE5fe5auA6HrpeagGSQhfVeGKVagcYF5YBCYwx0zQr4Z+XFQ=
+	t=1744980462; cv=none; b=lUpeuWwX0XOE1M4isZeGs8PFqyZYuREo9k3sY+EcGPYt3ejCFtWHNpTHksCQE8xP+wHJ4Xxdfl8kAZ5nkKCaTX+vALTAHZ68ZF9Z2Pj+fsHTSYDmFWds8X1hkuAdHUpxtde9gW4o2kc2X1QuRA8cjJ6OQHk9uoJU4e49TWTyzmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744980489; c=relaxed/simple;
-	bh=pV1rzCsr8FYCVhfWMYFrJeFTmf49atITKo8uKg1wnyg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P+eNULktOtsnw3qtSIWGeHo4yHEfZbNqbrcfH0Py3g0ROvsBPQz9C3yC7onQWcoYeqkq5YIAqtHmIwpHp14ZBnSUqQVw2LNQqpkpFoCpUlg6udDysotPrrlWEuUktoIrJV/ZjJAI0RshkOlW82yCRY4Zjoh+31/z+20bIOadV7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dYboGRGQ; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac2902f7c2aso283340966b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 05:48:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1744980485; x=1745585285; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7XNN0Tem4xu6RZArPHYvTvbcnQvUc79+UNyXgXNy6Cc=;
-        b=dYboGRGQLK/iphKt7or08i312U/MdrGDeftywb+tVOJQpvcy/mUsyvNaMOBOTJppEO
-         3UsCcvCYjQCsbNfWO0txdRxeXTJO1SluqgTWXoANT74n+IKwn2+GX3jRx7JQLelr2m/0
-         wzJJHAhVLCYEI066TNZ7Yym3ABAt49RqxsGtQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744980485; x=1745585285;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7XNN0Tem4xu6RZArPHYvTvbcnQvUc79+UNyXgXNy6Cc=;
-        b=rjvLVbOjr9ZlEVk3bqHwOvohRF2hd1Blkmk5GwmhQdZ1mQ4Pd22D7852PcisJvvl47
-         B4/RzXFX7HVVtW7EtIimvzAEgGrSoLVpahy8Ph0joq6RBuz4S04uIxf4wGN3/9/PvfB8
-         MkaxRS/6kd5+gReoQyzhO6GwvbrMsSq0CJxxtY5rMFa279bKd/5atbpZJdkgf0WI0Lje
-         ooDvUHOe20yvSKK8PQ5BUPTOPKFAJvEtFJRfkgNFpPcQ+DnNEJJuPstm7WdP/BZQDhvX
-         BIrF08DoEC8MmL1DJvRMfkqI35Rc4Z+2sS9jzE5A1IUwJMK+0MWs1sPdzP02fLLbC7dS
-         YvWg==
-X-Forwarded-Encrypted: i=1; AJvYcCW5Z1GvWwica0lg8TurJm99/0UBhsi/clq/pX/gcbCm7IJ7COwAFminxOiAFgTpA9HffIKuqXmgLd6PScM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKhON+w3QnQ2cb34iIJPv81AycLGr1XXEW7HMNbA55n+3jWfMg
-	3O/gJYpAIjOdcn2aZKQaU65zrkQHWabPG30gsnXtoJtIjZ82q81/ikPesCipsQ==
-X-Gm-Gg: ASbGncunDKIsgKN9yrtofQ4kQ6Z/Oz9TqtYIxB3P24GJzRoy9i8idNLl4/fkWKTigaG
-	UBUrzoc+1ae9jQ5bSwTeC0oajA6SD0ZvU4926Yen8VpfiMTfptJci7BOXBGemoqcXvQC1OKW7lh
-	BTRfvEXJJei/f2XUVdWtT8Mv6igjYFtlBcccYH8mK2d2XLIhQ9kkI9qsG6v3sqpPwFo0K6sv14s
-	Z9W2vqlIcQVwaYN2qQjW6YS9x4qpAc9AhxwOXAxFtvpiEZK3UPV0ZEzGU4KX5S8mjnWFDeSc6N5
-	qsg0AFm7A3RbxEpBw9jdWpqWBodZIHBQifs1SYPtr52uNVuHp7oOzA+Tivxt7bsPUBdMXv9tIoG
-	GQwZfr2nqJxXTyEpFTeZodwTDnwCNMAZeTw==
-X-Google-Smtp-Source: AGHT+IG6P9eJLmL9+eikfNPnUZ7wxWv+V7OiUcpJHJFZyEg5TP66XxZUXXNNSx/PygO5dYxQPBqHMg==
-X-Received: by 2002:a17:907:3d8a:b0:ac7:150e:8013 with SMTP id a640c23a62f3a-acb74b1ce20mr256181666b.15.1744980484716;
-        Fri, 18 Apr 2025 05:48:04 -0700 (PDT)
-Received: from jaz-virt.c.googlers.com.com (8.236.90.34.bc.googleusercontent.com. [34.90.236.8])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb6ec51601sm117445166b.74.2025.04.18.05.48.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Apr 2025 05:48:03 -0700 (PDT)
-From: Grzegorz Jaszczyk <jaszczyk@chromium.org>
-To: tglx@linutronix.de,
-	robh@kernel.org
-Cc: mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	hpa@zytor.com,
-	saravanak@google.com,
-	dmaluka@chromium.org,
-	bgrzesik@google.com,
-	jaszczyk@google.com,
-	ilpo.jarvinen@linux.intel.com,
-	usamaarif642@gmail.com,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	tnowicki@google.com,
-	mazurekm@google.com,
-	vineethrp@google.com
-Subject: [PATCH v2 2/2] x86/of: add support for reserved memory defined by DT
-Date: Fri, 18 Apr 2025 12:47:18 +0000
-Message-ID: <20250418124718.1009563-3-jaszczyk@chromium.org>
-X-Mailer: git-send-email 2.49.0.805.g082f7c87e0-goog
-In-Reply-To: <20250418124718.1009563-1-jaszczyk@chromium.org>
-References: <20250418124718.1009563-1-jaszczyk@chromium.org>
+	s=arc-20240116; t=1744980462; c=relaxed/simple;
+	bh=AKYSGSUPyGIy8xIEhLwCfNdUR+vWKRQk1g6IgWAJC00=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cxpOprGDG/dUfPhRhMMFx28sgh3DXMCccz0griIdsfQQ7HyHdFFHASDVqdBUQNLWPhuVpxKGhD4GsGCo3gq8GyOKiJC/deX/1J1/AepMXv4dMNGgPEbYHmDWBU6ox27e0KpuE0SWsAd81azJaZZCFww7irm5qCLslbiMmgGOwDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=hT1FhWO0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64554C4CEE2;
+	Fri, 18 Apr 2025 12:47:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1744980462;
+	bh=AKYSGSUPyGIy8xIEhLwCfNdUR+vWKRQk1g6IgWAJC00=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hT1FhWO0M9WV4ZUPGM27RWRcxXZ3smE4KawuKuuP656odzxEs8QznRVffmfzmZqUW
+	 Fp/gOl7WkSUt+fFdMBH1j/nmL9aDgPiYt/PE5LfR6jeKpMFb3LWCRuPdZP3FZW+RCc
+	 VxJb3481+2mj2vkKAg/PQY37/1K0X/rKjbT1rrDQ=
+Date: Fri, 18 Apr 2025 14:47:39 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Ingo Molnar <mingo@kernel.org>, stable <stable@vger.kernel.org>,
+	linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+	Sandipan Das <sandipan.das@amd.com>, x86@kernel.org
+Subject: Re: [tip: x86/urgent] x86/cpu/amd: Fix workaround for erratum 1054
+Message-ID: <2025041819-harsh-outreach-dd6d@gregkh>
+References: <174495817953.31282.5641497960291856424.tip-bot2@tip-bot2>
+ <20250418104013.GAaAIsDW2skB12L-nm@renoirsky.local>
+ <aAJBgCjGpvyI43E3@gmail.com>
+ <20250418123713.GCaAJHedTC_JWN__Td@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250418123713.GCaAJHedTC_JWN__Td@fat_crate.local>
 
-From: Grzegorz Jaszczyk <jaszczyk@google.com>
+On Fri, Apr 18, 2025 at 02:37:13PM +0200, Borislav Petkov wrote:
+> On Fri, Apr 18, 2025 at 02:11:44PM +0200, Ingo Molnar wrote:
+> > No, it doesn't really 'need' a stable tag, it has a Fixes tag already, 
+> > which gets processed by the -stable team.
 
-The DT reserved-memory nodes can be present in DT as described in
-Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml.
-Similar to other architecture, which supports DT, there is a need to
-create reserved memory regions for such nodes.
+NOOOOOO!!!!
 
-Additionally, the x86 architecture builds its memory map based on E820
-description passed by bootloader and not on DT. Since x86 already has
-some DT support and allows booting with both ACPI and DT at the same
-time, let's register an arch specific hook which will validate if a
-reserved-memory region passed by DT is valid (covered by E820 reserved
-region entry).
+> Last time I asked Greg, he said they scan for those tags but it doesn't hurt
+> to Cc stable as it helps.
+> 
+> Greg?
 
-Without this check, the reserved memory from DT could be successfully
-registered, even though such a region could conflict with e820
-description e.g. it could be described as E820_RAM and could be already
-used at early x86 boot stage for memblock initialization (which happens
-before DT parsing).
+Fixes: is a "best effort if we get around to it because a maintainer
+forgot to put an actual cc: stable tag on it".
 
-Co-developed-by: Bartłomiej Grzesik <bgrzesik@google.com>
-Signed-off-by: Bartłomiej Grzesik <bgrzesik@google.com>
-Signed-off-by: Grzegorz Jaszczyk <jaszczyk@google.com>
----
- arch/x86/kernel/devicetree.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+As the documentation has stated, since the start of the stable kernel
+tree work, use a cc: stable tag if you want it to go to a stable tree.
+Fixes came years later and we are forced to dig through them
+occasionally because people forget.  But you do NOT get a FAILED email
+if the commit does not apply to a stable tree, and sometimes we just
+ignore them entirely if we are busy with other stuff.
 
-diff --git a/arch/x86/kernel/devicetree.c b/arch/x86/kernel/devicetree.c
-index dd8748c45529..9a93eddfcedb 100644
---- a/arch/x86/kernel/devicetree.c
-+++ b/arch/x86/kernel/devicetree.c
-@@ -18,6 +18,7 @@
- #include <linux/of_pci.h>
- #include <linux/initrd.h>
- 
-+#include <asm/e820/api.h>
- #include <asm/irqdomain.h>
- #include <asm/hpet.h>
- #include <asm/apic.h>
-@@ -289,6 +290,11 @@ static void __init x86_dtb_parse_smp_config(void)
- 	dtb_apic_setup();
- }
- 
-+static bool __init x86_is_region_reserved(phys_addr_t base, phys_addr_t size)
-+{
-+	return e820__mapped_all(base, base + size, E820_TYPE_RESERVED);
-+}
-+
- void __init x86_flattree_get_config(void)
- {
- #ifdef CONFIG_OF_EARLY_FLATTREE
-@@ -307,6 +313,9 @@ void __init x86_flattree_get_config(void)
- 		}
- 
- 		early_init_dt_verify(dt, __pa(dt));
-+
-+		early_init_set_rsv_region_verifier(x86_is_region_reserved);
-+		early_init_fdt_scan_reserved_mem();
- 	}
- 
- 	unflatten_and_copy_device_tree();
--- 
-2.49.0.805.g082f7c87e0-goog
+So please ALWAYS use cc: stable@ on patches you know you want to be
+applied to stable trees.  Use the Fixes: tag to tell us how far back to
+backport them.  That's it.  Use both.
 
+thanks,
+
+greg k-h
 
