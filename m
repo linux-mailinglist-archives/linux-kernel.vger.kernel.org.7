@@ -1,40 +1,41 @@
-Return-Path: <linux-kernel+bounces-610304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16A3EA9334B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 09:14:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39C09A93352
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 09:15:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 659983AA685
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 07:14:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5C81189A137
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 07:15:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E482C26A08F;
-	Fri, 18 Apr 2025 07:14:40 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2679326A086;
+	Fri, 18 Apr 2025 07:14:46 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A825211460;
-	Fri, 18 Apr 2025 07:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5418626AAB7;
+	Fri, 18 Apr 2025 07:14:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744960480; cv=none; b=NOO3P7PNSBrouGfDXzWQgua6Jtmj7s2HgBSq0zamdS1a5dICiMXUwDdCcq73b6Dl1BLmj9tUkfVVDb22PuuuVRZioziWVDpSi1vC5aQ1ajXMOCTgq0hT6bhUDZjoYruWaFAsOM9i7vFH6lgXbWAG1hfCjTk37yc+U2f2BzvKIRs=
+	t=1744960485; cv=none; b=mYjBc2A5AwBHkwdj7+ouVAbu2c/COk/2c7U29MX0cU/xBp1fuiaXetpKiJDJxQZX8k1jNtS8fx1tdPdq++Bfe5NqISe8d5mkgMsEVw/d1uBgTemCW2atjI9dYuFgYlIXPDHVC7mSLxtRIdXXrSntlvG+I/fry6tv907PSgInj6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744960480; c=relaxed/simple;
-	bh=73Ej3bQ6VAuYzOOdWfwhXB+DTMiSF9Ozf6blmvRLeys=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kqZ3z4nkqVi2pIptZB5DX1HMBzlL9WnCKagOVLBLN/CammE20M4WP1jV7UqBCqbRJW4+dYvm8ANiDCeCpa9KouxYvCmbXZJHqxEk2N3l9sx9XwzbLmRx28qRh7IEC2rNxhRs/5PmkwBHDnVqLawHg6xNE+dmnKjD4dwUdCsJFLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+	s=arc-20240116; t=1744960485; c=relaxed/simple;
+	bh=TXfqXhEswk5Q1AKwsmLi9EY1plg8goxgfhuNtpCkBNk=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=I0XH0nc3fQRRDQo/rLXlERS+6++iuX9tpDyRVaB9WYOwPsIIeiilpIWr7Id3mXpWXOOpuZGM7lJglrT5AoQ1k159f7TyDUxcVJ4/sdSmRqPqhqfTOpltlaPbGyE56Vc8pQ7P978cyFs5hE+bgoXsNHf03jNvSoQI4qq8uNHhySc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Zf5Wn1BJRz5vM7;
-	Fri, 18 Apr 2025 15:10:45 +0800 (CST)
-Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 403F1180B51;
-	Fri, 18 Apr 2025 15:14:34 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Zf5c13Xhnz1j5tc;
+	Fri, 18 Apr 2025 15:14:25 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0D99F18001B;
+	Fri, 18 Apr 2025 15:14:35 +0800 (CST)
 Received: from kwepemn500004.china.huawei.com (7.202.194.145) by
- dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
  15.2.1544.11; Fri, 18 Apr 2025 15:14:34 +0800
 Received: from localhost.localdomain (10.90.30.45) by
@@ -51,10 +52,12 @@ To: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
 CC: <linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<linuxarm@huawei.com>, <hejunhao3@huawei.com>,
 	<linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v2 0/3] perf vendor events arm64: Do some cleanup for Hisi hip08 json
-Date: Fri, 18 Apr 2025 15:08:09 +0800
-Message-ID: <20250418070812.3771441-1-hejunhao3@huawei.com>
+Subject: [PATCH v2 1/3] perf vendor events arm64: Fill up Desc field for Hisi hip08 hha pmu
+Date: Fri, 18 Apr 2025 15:08:10 +0800
+Message-ID: <20250418070812.3771441-2-hejunhao3@huawei.com>
 X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20250418070812.3771441-1-hejunhao3@huawei.com>
+References: <20250418070812.3771441-1-hejunhao3@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,26 +69,145 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
  kwepemn500004.china.huawei.com (7.202.194.145)
 
-Add missing field for Hisi hip08 json and list hisilicon pmu json
-events under the its entry to MAINTAINERS.
+In the same PMU, when some JSON events have the "BriefDescription" field
+populated while others do not, the cmp_sevent() function will split these
+two types of events into separate groups. As a result, when using perf
+list to display events, the two types of events cannot be grouped together
+in the output.
 
-Changes in v2:
-- drop this PublicDescription addressed James's comment
-- fix commit of patch 2
-- add new patch to drop other hip08 uncore PMU PublicDescriptions
+before patch:
+ $ perf list pmu
+ ...
+ uncore hha:
+   hisi_sccl1_hha2/sdir-hit/
+   hisi_sccl1_hha2/sdir-lookup/
+ ...
+ uncore hha:
+   edir-hit
+      [Count of The number of HHA E-Dir hit operations. Unit: hisi_sccl1_hha2]
+ ...
 
-Junhao He (3):
-  perf vendor events arm64: Fill up Desc field for Hisi hip08 hha pmu
-  perf vendor events arm64: Drop hip08 PublicDescription if same as
-    BriefDescription
-  MAINTAINERS: Add hisilicon pmu json events under its entry
+after patch:
+ $ perf list pmu
+ ...
+ uncore hha:
+   edir-hit
+      [Count of The number of HHA E-Dir hit operations. Unit: hisi_sccl1_hha2]
+   sdir-hit
+      [Count of The number of HHA S-Dir hit operations. Unit: hisi_sccl1_hha2]
+   sdir-lookup
+      [Count of the number of HHA S-Dir lookup operations. Unit: hisi_sccl1_hha2]
+ ...
 
- MAINTAINERS                                   |  1 +
- .../arm64/hisilicon/hip08/uncore-ddrc.json    |  8 ------
- .../arm64/hisilicon/hip08/uncore-hha.json     | 26 ++++++++++++-------
- .../arm64/hisilicon/hip08/uncore-l3c.json     | 13 ----------
- 4 files changed, 17 insertions(+), 31 deletions(-)
+Signed-off-by: Junhao He <hejunhao3@huawei.com>
+Reviewed-by: James Clark <james.clark@linaro.org>
+---
+ .../arch/arm64/hisilicon/hip08/uncore-hha.json   | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
+diff --git a/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-hha.json b/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-hha.json
+index 9a7ec7af2060..b52f056d0255 100644
+--- a/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-hha.json
++++ b/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-hha.json
+@@ -30,15 +30,18 @@
+    {
+ 	    "ConfigCode": "0x4",
+ 	    "EventName": "rx_wbi",
++	    "BriefDescription": "Count of the number of WriteBackI operations that HHA has received",
+ 	    "Unit": "hisi_sccl,hha"
+    },
+    {
+ 	    "ConfigCode": "0x5",
+ 	    "EventName": "rx_wbip",
++	    "BriefDescription": "Count of the number of WriteBackIPtl operations that HHA has received",
+ 	    "Unit": "hisi_sccl,hha"
+    },
+    {
+ 	    "ConfigCode": "0x11",
++	    "BriefDescription": "Count of the number of WriteThruIStash operations that HHA has received",
+ 	    "EventName": "rx_wtistash",
+ 	    "Unit": "hisi_sccl,hha"
+    },
+@@ -87,66 +90,79 @@
+    {
+ 	    "ConfigCode": "0x23",
+ 	    "EventName": "bi_num",
++	    "BriefDescription": "Count of the number of HHA BackInvalid operations",
+ 	    "Unit": "hisi_sccl,hha"
+    },
+    {
+ 	    "ConfigCode": "0x32",
+ 	    "EventName": "mediated_num",
++	    "BriefDescription": "Count of the number of Mediated operations that the HHA has forwarded",
+ 	    "Unit": "hisi_sccl,hha"
+    },
+    {
+ 	    "ConfigCode": "0x33",
+ 	    "EventName": "tx_snp_num",
++	    "BriefDescription": "Count of the number of Snoop operations that the HHA has sent",
+ 	    "Unit": "hisi_sccl,hha"
+    },
+    {
+ 	    "ConfigCode": "0x34",
+ 	    "EventName": "tx_snp_outer",
++	    "BriefDescription": "Count of the number of Snoop operations that the HHA has sent to another socket",
+ 	    "Unit": "hisi_sccl,hha"
+    },
+    {
+ 	    "ConfigCode": "0x35",
+ 	    "EventName": "tx_snp_ccix",
++	    "BriefDescription": "Count of the number of Snoop operations that the HHA has sent to CCIX",
+ 	    "Unit": "hisi_sccl,hha"
+    },
+    {
+ 	    "ConfigCode": "0x38",
+ 	    "EventName": "rx_snprspdata",
++	    "BriefDescription": "Count of the number of SnprspData flit operations that HHA has received",
+ 	    "Unit": "hisi_sccl,hha"
+    },
+    {
+ 	    "ConfigCode": "0x3c",
+ 	    "EventName": "rx_snprsp_outer",
++	    "BriefDescription": "Count of the number of SnprspData operations that HHA has received from another socket",
+ 	    "Unit": "hisi_sccl,hha"
+    },
+    {
+ 	    "ConfigCode": "0x40",
+ 	    "EventName": "sdir-lookup",
++	    "BriefDescription": "Count of the number of HHA S-Dir lookup operations",
+ 	    "Unit": "hisi_sccl,hha"
+    },
+    {
+ 	    "ConfigCode": "0x41",
+ 	    "EventName": "edir-lookup",
++	    "BriefDescription": "Count of the number of HHA E-Dir lookup operations",
+ 	    "Unit": "hisi_sccl,hha"
+    },
+    {
+ 	    "ConfigCode": "0x42",
+ 	    "EventName": "sdir-hit",
++	    "BriefDescription": "Count of the number of HHA S-Dir hit operations",
+ 	    "Unit": "hisi_sccl,hha"
+    },
+    {
+ 	    "ConfigCode": "0x43",
+ 	    "EventName": "edir-hit",
++	    "BriefDescription": "Count of the number of HHA E-Dir hit operations",
+ 	    "Unit": "hisi_sccl,hha"
+    },
+    {
+ 	    "ConfigCode": "0x4c",
+ 	    "EventName": "sdir-home-migrate",
++	    "BriefDescription": "Count of the number of HHA S-Dir read home migrate operations",
+ 	    "Unit": "hisi_sccl,hha"
+    },
+    {
+ 	    "ConfigCode": "0x4d",
+ 	    "EventName": "edir-home-migrate",
++	    "BriefDescription": "Count of the number of HHA E-Dir read home migrate operations",
+ 	    "Unit": "hisi_sccl,hha"
+    }
+ ]
 -- 
 2.33.0
 
