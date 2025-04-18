@@ -1,114 +1,188 @@
-Return-Path: <linux-kernel+bounces-610474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6019EA9356E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 11:43:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACEA3A9357D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 11:46:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F0FD7A535E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 09:42:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B589F465DE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 09:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6FF626FDB5;
-	Fri, 18 Apr 2025 09:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84726269B11;
+	Fri, 18 Apr 2025 09:45:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="I47fiTUm"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Il525ew/"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03AE126A1CF
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 09:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE1320897F;
+	Fri, 18 Apr 2025 09:45:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744969414; cv=none; b=nMKDIsjOa8fRwkguNEoRfcu8SNv1IC/wwqAfqUunROQWZCdW7kvu8+wPT1zvSVHVe5nOTqwe3oM43FyuZIGqlB5wvOqfyyuBkBV7BtQ5PuTmsrdNdAPIwKZfrpfc0V+wHFPdI9Dw5lZ+L/50lrRltNu+myjE1/+7QUMo7fdn1QE=
+	t=1744969550; cv=none; b=MRp5IvfIubEQthS9k46Se6J/o2UU5bKgwZhHs2oUKw7Am2vSsSgLYCpSacksScRmcoDehfE6qqrYQIaDOnxMWGOIEoj0Ns8V2AIVSH195XYtsYkAx/jLKm93KxhH3ejD9v1rBueo+wGT01d5uPBO0hZQAUuFY2YLaeyK3BVCOWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744969414; c=relaxed/simple;
-	bh=31c6mk3Qppusl0KxmurGZOtNxpuNOByMJpInrgjLOxM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dvE4X2b7l4L5VQcyz+pz+zyBUPj8x0p32Tf7Tbhtezzo0v0vISGtsghsTTOtieyBE7SjfcAElvEiZXfe9lWB95NZhLSOyo9sFAmKmuVwFAJgzA3sd38TdyEGrr2FVt9GvI5o2SulRzBo/98MQ0q6HPzzNWdcbrwoZDARLRU+C/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=I47fiTUm; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-47677b77725so18378201cf.3
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 02:43:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fooishbar.org; s=google; t=1744969410; x=1745574210; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kFpo5oEBW5stbppkFOY++LlhDbuxsd6jJIOfBbyrv08=;
-        b=I47fiTUmdn1TqlyZDbr1OgzBROzaOvXLkmOu/Lj8PINtOHe/0vpBpvQAP6EpVj5yz5
-         eAUJlfwOhgebTyXWqqxasHwQhrpLHapjpYe4jWGPF9tA+MJ9Fdl+5h7+5bu2RR85aj7X
-         5RLQiC/PjlWW8xsLxy1zimSyY/HJ+prZNM27QqP6UOcIbehjnxVHjKtqn/ajiHxEQzKq
-         FpYbnNPC9tqX474PjxKng6nhpKEXlfah8sp0d9yRZV2EsU28yq5DPZCC267SzwzHadkG
-         RVXJekK+0VJQlcUktFqwqLKlNkijxDOPaAabEmg/pN8A6umKMRTCBjx++6AhOLa/uXPo
-         TknQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744969410; x=1745574210;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kFpo5oEBW5stbppkFOY++LlhDbuxsd6jJIOfBbyrv08=;
-        b=AtG2jZ+CbiJ78v+znp7HNycvB0ToNyWUMPBuih/unwrPmQH9U3ExywZwDrmnuov7gz
-         tycaGZoKaEw90CJTvPAzOlqyxSCkaPmDtAqbr9ySjv/+eMWTUqzuSyKsoy1j694TT3m8
-         CITb5FEvdxy4h4uhQbELTc4S+Y6fWMEwqOoThJKuU2/ZFwRynaKPuNVSjr683wyKWWGz
-         aNiurwsJ62znb2vcKPFTVj27Xsf15oCVixVIK4xiCjOaih4xdGz/LJdCDX4gWW4eZjRL
-         qtD+KIG/2jli64C7P1ckCFxdoDCylBff+4NxpjCL/YAl2PEhUghXAMG1IjHd7hfILosC
-         vD+g==
-X-Forwarded-Encrypted: i=1; AJvYcCU140wwKlNwCXKrn/qpx6eCpvVnYKjLmJjTxxVVwneT8HwN0NscmsHbkSYTAcmFHz4wxSGxtpjmBRKp9sM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMmkFYgP0TuuLSd+7BaC8x+HT1jHbBTf1M63CKrTiyUpm68Sil
-	khprqdYSWs1d/OBKm2xwh35YfFGFqoIDUiNMNFTQ4oD9ShBPvtX9JcL3KSHEBNH33/w0ipmJB5z
-	fo2+ZbAx2jSnRsdo56xDPZpWDkZb2M9YVOMGouQ==
-X-Gm-Gg: ASbGncvflu416G63MR3zIS0GByQOEOmk5cDSGOU3Cx8SdvD7sZ5aBXTvuao2aeUsklT
-	Bg56m/knXbpfdk7DVmnahYh8Hhhh/1xozkexi/g2llM5XliHPEZw0MuYsBQaKxl8m/dIzP854xf
-	JqtUYvm1OfzjxyOjvsrqJ+hE2oBVjgbg==
-X-Google-Smtp-Source: AGHT+IELNPez3z5hE7XPdAn+/JmuPm4/LRceRqb1tqN8GldH7aTJ6b0D5paprWRXm4NnYwwtrill8wPC4uiDxVjoiEM=
-X-Received: by 2002:a05:622a:1a95:b0:47a:e53a:5762 with SMTP id
- d75a77b69052e-47aec394ccdmr27568231cf.22.1744969410714; Fri, 18 Apr 2025
- 02:43:30 -0700 (PDT)
+	s=arc-20240116; t=1744969550; c=relaxed/simple;
+	bh=/VWk/qu/0SLEGpG0adrMSRjkwdkd7Frqc1J6jZHqJZI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BbmaHbNuKWDbW7Cb+ZPEXAGp4wmUWegYkc4qu2AzLKhI3hAeL77P+WhVOz6qCzZPdRgFJAM2j+NIPDQskSgp0+0tep+s2Xx72k+T0UDaj/X4mSDANNI39eosRxTSJeKFUTNI5G/tsjYowO1rt4iL74G7CgN1N7vfvyaRMJfUNUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Il525ew/; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=sIOGNKasiXmdrAug0qXJ+2iRTYzL03tYy35iVUrubZc=; b=Il525ew/r4P1f0A3Mg9F7+nTRf
+	vRmuZuMJISMCS+R+mq7UQoFIJvH45DNRPQQKpTl5XbiTTVpcGcOsp7PVS2ztWmixHWTMVtV4V3ERy
+	aqKKCHOPSfx9LqzLe2TILAut33vCTvaTXqG6znyvu+cUITHRxx0YfWLVq//O8mEf6jUMZS8JuBach
+	SGx3gF4Sn42oNj+TAEYNlAyWSPOGULVYXsskjj369eSCkjNy6B2CNxjhFbp1ao09ptiNYJcAatu/V
+	IxuaIfP5Rqcf5CHzDMspX7J8hZ5VvinfaoTF7OphAOYZFyrlQGavSlLxka0xnc+a7D+yn1qHW7Ot2
+	A+i/m7XA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1u5iHj-0000000Cdoy-2oOK;
+	Fri, 18 Apr 2025 09:45:24 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 2B671300619; Fri, 18 Apr 2025 11:45:22 +0200 (CEST)
+Date: Fri, 18 Apr 2025 11:45:21 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Kees Cook <kees@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+	=?utf-8?B?UGF3ZcWC?= Anikiel <panikiel@google.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Nathan Chancellor <nathan@kernel.org>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	Matthew Maurer <mmaurer@google.com>,
+	Ramon de C Valle <rcvalle@google.com>
+Subject: Re: [PATCH] x86/Kconfig: make CFI_AUTO_DEFAULT depend on !RUST
+Message-ID: <20250418094521.GQ38216@noisy.programming.kicks-ass.net>
+References: <CANiq72=k+tZ3ACEB5k9qwJ8ZYu-dXkA3=Lisg1b8ze-2D0STog@mail.gmail.com>
+ <20250410132649.GE9833@noisy.programming.kicks-ass.net>
+ <CANiq72=Q_Z8KfV+n4z9wWVJsZwVevag=Vh3URe71XkUuWuqEDg@mail.gmail.com>
+ <20250410133446.GF9833@noisy.programming.kicks-ass.net>
+ <CAH5fLghrcqSYwkqbC4SSp6oYCny0riMRGA6W+oqQ69aA=NwYWw@mail.gmail.com>
+ <CANiq72k0AM3v9JZe=8mDN6T1ToiAt1-1e1zJ3z0Oh6ZWfchzag@mail.gmail.com>
+ <20250416202040.GD38216@noisy.programming.kicks-ass.net>
+ <202504161442.66CE2596@keescook>
+ <20250417081818.GJ38216@noisy.programming.kicks-ass.net>
+ <CANiq72kjDM0cKALVy4POEzhfdT4nO7tqz0Pm7xM+3=_0+L1t=A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250414095332.9674-1-mail@etehtsea.me> <20250417065759.5948-1-mail@etehtsea.me>
- <17402f2e.360.1964640c3d3.Coremail.andyshrk@163.com>
-In-Reply-To: <17402f2e.360.1964640c3d3.Coremail.andyshrk@163.com>
-From: Daniel Stone <daniel@fooishbar.org>
-Date: Fri, 18 Apr 2025 10:43:19 +0100
-X-Gm-Features: ATxdqUGMyPtODmDTih2v_sR4LqFZ8n_GN4IoaxZBEb6HaOtqp6Dx3gQ7MviTVqg
-Message-ID: <CAPj87rNDsyBfy=P=0SzTm7u6Na6BpeZSpEt1mRPhLCd6rHXzTA@mail.gmail.com>
-Subject: Re: [PATCH v4] drm/rockchip: Disable AFBC for res >2560 on rk3399
-To: Andy Yan <andyshrk@163.com>
-Cc: Konstantin Shabanov <mail@etehtsea.me>, Sandy Huang <hjc@rock-chips.com>, 
-	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
-	Andy Yan <andy.yan@rock-chips.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Dan Callaghan <djc@djc.id.au>, dri-devel@lists.freedesktop.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72kjDM0cKALVy4POEzhfdT4nO7tqz0Pm7xM+3=_0+L1t=A@mail.gmail.com>
 
-Hi Andy,
+On Thu, Apr 17, 2025 at 08:40:24PM +0200, Miguel Ojeda wrote:
 
-On Fri, 18 Apr 2025 at 01:16, Andy Yan <andyshrk@163.com> wrote:
-> I prefer the V1 version PATCH[0]. This is because we do not deal with hardware-related
-> differences at this level.  It involves a VOP-related restriction and we always  handle
-> limitiation like this  within the VOP driver .
+> From 2c6636c82f8c6c18e18c085fe69d0cd3dbe3b991 Mon Sep 17 00:00:00 2001
+> From: =?UTF-8?q?Pawe=C5=82=20Anikiel?= <panikiel@google.com>
+> Date: Thu, 10 Apr 2025 11:54:20 +0000
+> Subject: [PATCH] x86/Kconfig: make CFI_AUTO_DEFAULT depend on !RUST or Rust >=
+>  1.88
+> MIME-Version: 1.0
+> Content-Type: text/plain; charset=UTF-8
+> Content-Transfer-Encoding: 8bit
+> 
+> Calling core::fmt::write() from rust code while FineIBT is enabled
+> results in a kernel panic:
+> 
+> [ 4614.199779] kernel BUG at arch/x86/kernel/cet.c:132!
+> [ 4614.205343] Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+> [ 4614.211781] CPU: 2 UID: 0 PID: 6057 Comm: dmabuf_dump Tainted: G     U     O       6.12.17-android16-0-g6ab38c534a43 #1 9da040f27673ec3945e23b998a0f8bd64c846599
+> [ 4614.227832] Tainted: [U]=USER, [O]=OOT_MODULE
+> [ 4614.241247] RIP: 0010:do_kernel_cp_fault+0xea/0xf0
 
-As said in the review for v1, this is not enough for generic userspace.
+Might want to 'compress' the splat a bit, lots of useless bits on etc.
 
-If drmModeAddFB2WithModifiers() fails, userspace knows that the buffer
-can never work in that configuration, and it should fall back. If
-drmModeAtomicCommit(DRM_MODE_ATOMIC_TEST_ONLY) fails, userspace does
-not know that the buffer can _never_ work, because the failure may be
-transient or due to a combination of things.
+> [ 4614.398144] RIP: 0010:_RNvXs5_NtNtNtCs3o2tGsuHyou_4core3fmt3num3impyNtB9_7Display3fmt+0x0/0x20
+> [ 4614.407792] Code: 48 f7 df 48 0f 48 f9 48 89 f2 89 c6 5d e9 18 fd ff ff 0f 1f 84 00 00 00 00 00 f3 0f 1e fa 41 81 ea 14 61 af 2c 74 03 0f 0b 90 <66> 0f 1f 00 55 48 89 e5 48 89 f2 48 8b 3f be 01 00 00 00 5d e9 e7
+> [ 4614.428775] RSP: 0018:ffffb95acfa4ba68 EFLAGS: 00010246
+> [ 4614.434609] RAX: 0000000000000000 RBX: 0000000000000010 RCX: 0000000000000000
+> [ 4614.442587] RDX: 0000000000000007 RSI: ffffb95acfa4ba70 RDI: ffffb95acfa4bc88
+> [ 4614.450557] RBP: ffffb95acfa4bae0 R08: ffff0a00ffffff05 R09: 0000000000000070
+> [ 4614.458527] R10: 0000000000000000 R11: ffffffffab67eaf0 R12: ffffb95acfa4bcc8
+> [ 4614.466493] R13: ffffffffac5d50f0 R14: 0000000000000000 R15: 0000000000000000
+> [ 4614.474473]  ? __cfi__RNvXs5_NtNtNtCs3o2tGsuHyou_4core3fmt3num3impyNtB9_7Display3fmt+0x10/0x10
+> [ 4614.484118]  ? _RNvNtCs3o2tGsuHyou_4core3fmt5write+0x1d2/0x250
+> 
+> This happens because core::fmt::write() calls
+> core::fmt::rt::Argument::fmt(), which currently has CFI disabled:
+> 
+> library/core/src/fmt/rt.rs:
+> 171     // FIXME: Transmuting formatter in new and indirectly branching to/calling
+> 172     // it here is an explicit CFI violation.
+> 173     #[allow(inline_no_sanitize)]
+> 174     #[no_sanitize(cfi, kcfi)]
+> 175     #[inline]
+> 176     pub(super) unsafe fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+> 
+> This causes a Control Protection exception, because FineIBT has sealed
+> off the original function's endbr64.
 
-Returning the more localised error saves userspace a lot of work and
-enables a more optimal system.
+Right, doing an indirect call without the CFI adornment to a CFI adorned
+function is explicitly not supported.
 
-Cheers,
-Daniel
+> This makes rust currently incompatible with FineIBT. Add a Kconfig
+> dependency that prevents FineIBT from getting turned on by default
+> if rust is enabled.
+> 
+> [ Rust 1.88.0 (scheduled for 2025-06-26) should have this fixed [1],
+>   and thus we relaxed the condition with Rust >= 1.88.
+> 
+>   When `objtool` lands checking for this with e.g. [2], the plan is
+>   to ideally run that in upstream Rust's CI to prevent regressions
+>   early [3], since we do not control `core`'s source code.
+
+I'm still firmly of the opinion Rust should grow up and have a stable
+core which we can pull into the kernel. Relying on that much out of tree
+code is 'unfortunate'.
+
+>   Alice tested the Rust PR backported to an older compiler.
+> 
+>     - Miguel ]
+> 
+> Signed-off-by: Paweł Anikiel <panikiel@google.com>
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> Acked-by: Peter Zijlstra <peterz@infradead.org>
+> Link: https://github.com/rust-lang/rust/pull/139632 [1]
+> Link: https://lore.kernel.org/rust-for-linux/20250410154556.GB9003@noisy.programming.kicks-ass.net/ [2]
+> Link: https://github.com/rust-lang/rust/pull/139632#issuecomment-2801950873 [3]
+> Link: https://lore.kernel.org/r/20250410115420.366349-1-panikiel@google.com
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> ---
+>  arch/x86/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index 4b9f378e05f6..5873c9e39919 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -2368,6 +2368,7 @@ config STRICT_SIGALTSTACK_SIZE
+>  config CFI_AUTO_DEFAULT
+>  	bool "Attempt to use FineIBT by default at boot time"
+>  	depends on FINEIBT
+> +	depends on !RUST || RUSTC_VERSION >= 108800
+>  	default y
+>  	help
+>  	  Attempt to use FineIBT by default at boot time. If enabled,
+> 
+> base-commit: c1b4071ec3a6a594df6c49bf8f04a60a88072525
+> -- 
+> 2.49.0
+> 
+
 
