@@ -1,281 +1,120 @@
-Return-Path: <linux-kernel+bounces-610573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1F90A9367A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 13:23:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63CCCA9367F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 13:25:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C11097A9643
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 11:22:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E5333AF83B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 11:24:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C085D2749FD;
-	Fri, 18 Apr 2025 11:23:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7BCE274676;
+	Fri, 18 Apr 2025 11:24:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VrknImwW"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TPM05IST"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E508A2741CC
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 11:23:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960131FC0ED;
+	Fri, 18 Apr 2025 11:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744975383; cv=none; b=tNa2VxVhB+1FtBKIzerFrih1aTZ2tF7TC3U4qG0tJCeYnuQ2IuQtvAvfsDQLMl+hNTrzLNCgjc347E+3ZicjJreDs449rFSjyxlHkceqTWDhtHBppCnUQe0AROrx2+EB3UeMvDjKrNCOYtBdEO6ncaVhvR7zIRjuR8+rDJi/ays=
+	t=1744975497; cv=none; b=kEHuebHiu/fNVXIHAlkyMQf4ues7J3tx92ZNKq/LI/jI6OhglfXYDXrenHzA7KUZ/SPBwuTAgN53ALmynM4r2lpGROee7sb8GnfIC4JUGwsPmyEezy6lTycGZzcKY3ATyPvywUHggnQKzazdadkBbBolbRwEQpbA3C7Onr65YR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744975383; c=relaxed/simple;
-	bh=6i1+QoXm49QJYEYcGjGNq6z2EoWpPvD6xRmHxlH46XU=;
-	h=From:Date:Subject:MIME-Version:Message-Id:In-Reply-To:To:Cc:
-	 Content-Type:References; b=rPlhTsDpksGy4iesv+RksEIMDhygfTHFaxCLHm54aYc875NN7ULadbClNE0KCSCg16inGoJGsREgadcwKCBsnCF4pjJkYOyMzbFOR6HJEsGtec1jZsgAPYuTbFbK/4NJ+YxUAtDsqCclp0ncxEFiaQ12UjdQMoJ912hjPnkv9ZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=VrknImwW; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250418112300euoutp01658a9bbbd96d600d60d3185722359a27~3Zdz1xNNY2567425674euoutp01A
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 11:23:00 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250418112300euoutp01658a9bbbd96d600d60d3185722359a27~3Zdz1xNNY2567425674euoutp01A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1744975380;
-	bh=MPodoGkYgD+LDDjpcK9QQWYlA+NIEGfrgZ+qS1XcPAU=;
-	h=From:Date:Subject:In-Reply-To:To:Cc:References:From;
-	b=VrknImwWzYK/oZuXjFzTl+K7cNa1l4rZJhsdu8w3NY1pwA0f+KwFoH35hxLsfAJQv
-	 cp0pj/igi68r32dED6RQP1jcn11fpgO+TSI4vXc7HFBWKgJRtTzzXwPwW2NUN6JjLX
-	 t8kjEzQKkmo3QzbfVPSkFG3S096D9CqaRQuUkbmw=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20250418112259eucas1p1a6626dd8eac8b929bc3ffe28ec9d3974~3ZdzS6BU60672806728eucas1p1J;
-	Fri, 18 Apr 2025 11:22:59 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id B3.80.20397.31632086; Fri, 18
-	Apr 2025 12:22:59 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250418112259eucas1p14c8a04007b0e279b8e134db9e1502d7c~3Zdy0pq2o1923119231eucas1p1H;
-	Fri, 18 Apr 2025 11:22:59 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250418112259eusmtrp1c4563c242c38fbb0d4aafc9845af9d96~3Zdy0BbFg2607526075eusmtrp1r;
-	Fri, 18 Apr 2025 11:22:59 +0000 (GMT)
-X-AuditID: cbfec7f5-e59c770000004fad-d7-680236137e23
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id A5.98.19654.31632086; Fri, 18
-	Apr 2025 12:22:59 +0100 (BST)
-Received: from AMDC4942.eu.corp.samsungelectronics.net (unknown
-	[106.210.136.40]) by eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250418112258eusmtip296f42d06655dda5479fe46c400db9487~3ZdyF1NmM1751317513eusmtip2C;
-	Fri, 18 Apr 2025 11:22:58 +0000 (GMT)
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-Date: Fri, 18 Apr 2025 13:22:49 +0200
-Subject: [PATCH v6 2/2] drm/imagination: Add reset controller support for
- GPU initialization
+	s=arc-20240116; t=1744975497; c=relaxed/simple;
+	bh=QdJJGvEiz5pjNXqTtarXbU7YwPu1LSLqeT8h32rut74=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OSqUHsVgMDYcv6L6HC95IQiinoJ2YZnKxy3EbZEQVW4U9cHEUW8ACPA7CnxaGC5mYlohHz7fABX0FzB5xgemc4odyESfuZiT9UkKZ5MDV534WS/el6R8I9rUadsZOO25kRaAPN4xPJwHPDwJLZJRrf9QmSoS8uPUJT+tTvac9oM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TPM05IST; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43d04dc73b7so17079575e9.3;
+        Fri, 18 Apr 2025 04:24:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744975494; x=1745580294; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=W//o/Ys/rBW7MLdSpGEG/ep49Nq5wGldQX5Bh4Q01DA=;
+        b=TPM05IST9GkwrNSB4SWmZZUru0S3vd4JyrfJr4sRO6IxX22sHmlu4Xn1KQRD3gM7BT
+         PCeq5+jfDRG4zszpX/a8s3g+a7CwkBA/HFUBroYTcoNOa6Qz8MI5NJiR/cw2hu4BALTA
+         6rqIxdIlbsYhkwIlmicHgiagrkqetZSVNf84LTipNTKXuIf6R4taEc9OCByV3Ul+Bocu
+         tPSgNtnFpOBAEmoaxv2vCTm+MwDbLtqcGY0RjlsIOqiHIVauPMy+GhWtLRaho37l0uhV
+         I4dqL0k0KB4Q80rSBakoscleBH7SF0Yx0mATySUPMTAwR3D0i8kxqt97K+z76pqhxKpU
+         7W0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744975494; x=1745580294;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W//o/Ys/rBW7MLdSpGEG/ep49Nq5wGldQX5Bh4Q01DA=;
+        b=Og+GX70drqsdUoDk4iqg0ReGkSGRqYe/j9FYFNR2hhcue/xNu2d1y01EMz0zBnZlkE
+         JcXN0ahCxlGuDZZfYtBWT1R8WSJ5gIzs6kBvS9M3ibaMeuVsU0F0JtRsoxTuZNLOAn8m
+         f+Qh9HM73ZSwWtQU7vL7ZLnryADKKJvA2tHGUO9UZS315FLY07wMK1l3aEjArrecVf2P
+         xyqsDldx5qSiyyT46xT6vONWMg3IYNZJ+yq2eciOiriZSSKiOq9jHzp8W2rCRQ4vMylY
+         G2N/MKBCx5f83rvSXZuj26eKuLI+OAlyWfGq7geyXJbZUkE6aDp0QuTgZ+2reuF4N+Oq
+         V0FA==
+X-Forwarded-Encrypted: i=1; AJvYcCVd9E99TJS3XXmnCwyNw8U0d4h9/vJ/02FT39CGtBLViGmZAufYOBeDBrnFjFg5SpcF8nVUKdSfyQl/zgY=@vger.kernel.org, AJvYcCXDC0I9sgUR0yY2WcHHKYPLyyBpOv1AhSaoV4XHuYSDQ7Z/vHfoxyt4RQbmKOmcgMhR81tQ8MgR@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywz+qjidytCW4eBsxTgVFIvxV9R444ntPzYHDNByaxhsilQ719s
+	mBAWNolpkEeUJD+lLZsuf4dZPiRgNQdpPED4kzZYiCbuF/tro8AtSx4swRwl1Ed1uQ==
+X-Gm-Gg: ASbGncuYYT9KI3prqzOVzRBkFICtMsHWay8XPQAUYYh1gUFd0EA3f3S6ecRArhZCWDZ
+	Qh/aRn2vI+HsNOa3LkGUCSj7SMXeHjr9I/KftGmcR5yH7EQvaJjQh9sJo++pmvXTIS6Yn5cAV5w
+	tZ6cEHj/nAHSbPH2JrT+bwndRkwLJgFL4ytxKfx4d/+r24WQGRDG8nfNAZxIZLNTAFLyU+g/iOE
+	y203kf2voWg31csFshKDRJg+/vUzX/uT/1pyesm/3bWLqbtgUKM2EVEknn5qHzie4bYbwZ/toGV
+	RPIq3gkRY214wWEZ/nuAXsrUbYxYy6VnrtrCxsRVQg==
+X-Google-Smtp-Source: AGHT+IG30iTqc/o70q9K2Hbdi1h5RZUfJobP4PRf5VUTOWgsiua+PVOrKWb3LlV6dsQiTSdoLK3P/g==
+X-Received: by 2002:a05:600c:c0f:b0:43d:7588:6688 with SMTP id 5b1f17b1804b1-4406ab93badmr21238555e9.12.1744975493673;
+        Fri, 18 Apr 2025 04:24:53 -0700 (PDT)
+Received: from localhost ([194.120.133.58])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4406d5a9e0esm19272115e9.5.2025.04.18.04.24.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Apr 2025 04:24:53 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Michal Simek <michal.simek@amd.com>,
+	netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] net: axienet: Fix spelling mistake "archecture" -> "architecture"
+Date: Fri, 18 Apr 2025 12:24:47 +0100
+Message-ID: <20250418112447.533746-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250418-apr_18_reset_img-v6-2-85a06757b698@samsung.com>
-In-Reply-To: <20250418-apr_18_reset_img-v6-0-85a06757b698@samsung.com>
-To: Frank Binns <frank.binns@imgtec.com>,  Matt Coster
-	<matt.coster@imgtec.com>, David Airlie <airlied@gmail.com>,  Simona Vetter
-	<simona@ffwll.ch>,  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Michal Wilczynski <m.wilczynski@samsung.com>
-X-Mailer: b4 0.15-dev
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMKsWRmVeSWpSXmKPExsWy7djPc7rCZkwZBvMOalicuL6IyWLN3nNM
-	FvOPnGO1uPL1PZvFuqcX2C1ezrrHZnF51xw2i7VH7rJbrP86n8li4cetLBZLduxitGjrXMZq
-	cffeCRaL/3t2sFvMfref3WLLm4msDgIee78tYPHYOesuu0fPzjOMHptWdbJ5zDsZ6HG/+ziT
-	R/9fA4++LasYPTafrvb4vEkugCuKyyYlNSezLLVI3y6BK2POzsesBW/UKxraz7M0MC5Q7GLk
-	5JAQMJHon3uGrYuRi0NIYAWjxKx7O5khnC+MEkvmHmIEqRIS+Mwo8e9AKEzHjU0TGCGKljNK
-	rNv2mhXCaWOSOLX/NxNIFZuAkcSD5fNZQWwWAVWJ/XPfsIHYwgJxEisnHWMGsXkFBCVOznzC
-	AmIzC8hLbH87ByruKjFzTy/YZk4BN4lJN5+xgywQEXjJLHFh3RKw1cwCvYwSt/++Z4O4SVTi
-	9+RdLBD2dk6Jwx+AJnEA2S4SrWucIcLCEq+Ob2GHsGUkTk/ugSrPl3iw9RMzhF0jsbPnOJRt
-	LXHn3C82kDHMApoS63fpQ4QdJa6fvMEIMZ1P4sZbQYjz+SQmbZsOtZRXoqNNCKJaTWJqTy/c
-	0nMrtjFB2B4Sr7sWM05gVJyFFBCzkAJiFsLeBYzMqxjFU0uLc9NTi43zUsv1ihNzi0vz0vWS
-	83M3MQLT3el/x7/uYFzx6qPeIUYmDsZDjBIczEoivNN1mDKEeFMSK6tSi/Lji0pzUosPMUpz
-	sCiJ8y7a35ouJJCeWJKanZpakFoEk2Xi4JRqYGKWdN/9R6aopvjZ3vkHeeq10+YF/bVYpF8X
-	7zK3qNbzw86qCPfbD9k+nrzgEbbz5bHyvzWdPG0inbyTfaXXtXdLna8IY2N3Pf7W9Fmo/a+J
-	obcXrzHZr/VIOKeLVb5+4rJJq523tdYdvSWk+XO20tElga7B3yqsd+n92fzN9MibzM8iF22T
-	v3ee4Hwwy43P5dqaGYErvvFwB19WuMbn+2Bb7LVTe14ft3eSDZ21TvXWjlR/h2sZPlfmPFyx
-	dtlc2w18Gw8w6l02m78ttklH72zJjXx9013uJwrPzQk5wr/unIbxF58tjzoLl6x61/xrnWCP
-	+g3215oBjzbOuFm47Ki8spnykadZL/J/ra746fZEiaU4I9FQi7moOBEAbqK8vuYDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrFIsWRmVeSWpSXmKPExsVy+t/xe7rCZkwZBisfcVqcuL6IyWLN3nNM
-	FvOPnGO1uPL1PZvFuqcX2C1ezrrHZnF51xw2i7VH7rJbrP86n8li4cetLBZLduxitGjrXMZq
-	cffeCRaL/3t2sFvMfref3WLLm4msDgIee78tYPHYOesuu0fPzjOMHptWdbJ5zDsZ6HG/+ziT
-	R/9fA4++LasYPTafrvb4vEkugCtKz6Yov7QkVSEjv7jEVina0MJIz9DSQs/IxFLP0Ng81srI
-	VEnfziYlNSezLLVI3y5BL2POzsesBW/UKxraz7M0MC5Q7GLk5JAQMJG4sWkCYxcjF4eQwFJG
-	iQc/brBBJGQkrnW/ZIGwhSX+XOtigyhqYZI4++QQE0iCTcBI4sHy+awgNouAqsT+uW/AmoUF
-	4iRWTjrGDGLzCghKnJz5BGgQBwezgKbE+l36IGFmAXmJ7W/nQJW4Sszc08sIUiIEZL/dWAsS
-	5hRwk5h08xk7yFoRgTfMEisffAM7lFmgj1Gi/dRqJojjRCV+T97FMoFRcBaSdbMQ1s1Csm4B
-	I/MqRpHU0uLc9NxiI73ixNzi0rx0veT83E2MwEjeduznlh2MK1991DvEyMTBeIhRgoNZSYR3
-	ug5ThhBvSmJlVWpRfnxRaU5q8SFGU6CXJzJLiSbnA1NJXkm8oZmBqaGJmaWBqaWZsZI4L9uV
-	82lCAumJJanZqakFqUUwfUwcnFINTPv15zuLy57QWWp29/PJtUat37xMO3a9CN7rMtV60ru+
-	o/v/9i470H9kx+8VYm0VZi2T1kmwhe6+wGL240bGjxtZvEsidqgdaDa8wnj9L4P+t91blH/1
-	K7/IS7iiuyEnKk7jaIb00s3Trbw783g2WcpdPZ80/S5jVnShXceNLwtnd4Y/mfb3heJugX8z
-	ehnLvOYK3rV3OxvVZih+vCJl1byffN+X6W1pu/Mos+9O5733su35b8JmLYnyc9ZSTBZtS50Q
-	Vv1IOqnhxcrFhXEfP/H+++U1w1CB+/7E1W/8ty/pYK24q8bZmle0VlXk/5U9zeel7/D8W/Zh
-	ecqFxpt7+VlyRV/EaliefBjYfPOn9XIlluKMREMt5qLiRAAs+EdWbQMAAA==
-X-CMS-MailID: 20250418112259eucas1p14c8a04007b0e279b8e134db9e1502d7c
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250418112259eucas1p14c8a04007b0e279b8e134db9e1502d7c
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20250418112259eucas1p14c8a04007b0e279b8e134db9e1502d7c
-References: <20250418-apr_18_reset_img-v6-0-85a06757b698@samsung.com>
-	<CGME20250418112259eucas1p14c8a04007b0e279b8e134db9e1502d7c@eucas1p1.samsung.com>
+Content-Transfer-Encoding: 8bit
 
-All IMG Rogue GPUs include a reset line that participates in the
-power-up sequence. On some SoCs (e.g., T-Head TH1520 and Banana Pi
-BPI-F3), this reset line is exposed and must be driven explicitly to
-ensure proper initialization.  On others, such as the currently
-supported TI SoC, the reset logic is handled in hardware or firmware
-without exposing the line directly. In platforms where the reset line is
-externally accessible, if it is not driven correctly, the GPU may remain
-in an undefined state, leading to instability or performance issues.
+There is a spelling mistake in a dev_error message. Fix it.
 
-This commit adds a dedicated reset controller to the drm/imagination
-driver.  By managing the reset line (where applicable) as part of normal
-GPU bring-up, the driver ensures reliable initialization across
-platforms regardless of whether the reset is controlled externally or
-handled internally.
-
-Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/gpu/drm/imagination/pvr_device.c | 21 +++++++++++++++++++++
- drivers/gpu/drm/imagination/pvr_device.h |  9 +++++++++
- drivers/gpu/drm/imagination/pvr_power.c  | 22 +++++++++++++++++++++-
- 3 files changed, 51 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/imagination/pvr_device.c b/drivers/gpu/drm/imagination/pvr_device.c
-index 1704c0268589bdeb65fa6535f9ec63182b0a3e94..ef73e95157eeb127f3d7543d77f82242d01a2d43 100644
---- a/drivers/gpu/drm/imagination/pvr_device.c
-+++ b/drivers/gpu/drm/imagination/pvr_device.c
-@@ -25,6 +25,7 @@
- #include <linux/interrupt.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-+#include <linux/reset.h>
- #include <linux/slab.h>
- #include <linux/stddef.h>
- #include <linux/types.h>
-@@ -120,6 +121,21 @@ static int pvr_device_clk_init(struct pvr_device *pvr_dev)
- 	return 0;
- }
- 
-+static int pvr_device_reset_init(struct pvr_device *pvr_dev)
-+{
-+	struct drm_device *drm_dev = from_pvr_device(pvr_dev);
-+	struct reset_control *reset;
-+
-+	reset = devm_reset_control_get_optional_exclusive(drm_dev->dev, NULL);
-+	if (IS_ERR(reset))
-+		return dev_err_probe(drm_dev->dev, PTR_ERR(reset),
-+				     "failed to get gpu reset line\n");
-+
-+	pvr_dev->reset = reset;
-+
-+	return 0;
-+}
-+
- /**
-  * pvr_device_process_active_queues() - Process all queue related events.
-  * @pvr_dev: PowerVR device to check
-@@ -509,6 +525,11 @@ pvr_device_init(struct pvr_device *pvr_dev)
- 	if (err)
- 		return err;
- 
-+	/* Get the reset line for the GPU */
-+	err = pvr_device_reset_init(pvr_dev);
-+	if (err)
-+		return err;
-+
- 	/* Explicitly power the GPU so we can access control registers before the FW is booted. */
- 	err = pm_runtime_resume_and_get(dev);
- 	if (err)
-diff --git a/drivers/gpu/drm/imagination/pvr_device.h b/drivers/gpu/drm/imagination/pvr_device.h
-index 6d0dfacb677b46a880f37f419dfa7b67c68fe63d..f6576c08111c86f2a771dfe99b5518795b6aead7 100644
---- a/drivers/gpu/drm/imagination/pvr_device.h
-+++ b/drivers/gpu/drm/imagination/pvr_device.h
-@@ -131,6 +131,15 @@ struct pvr_device {
- 	 */
- 	struct clk *mem_clk;
- 
-+	/**
-+	 * @reset: Optional reset line.
-+	 *
-+	 * This may be used on some platforms to provide a reset line that needs to be de-asserted
-+	 * after power-up procedure. It would also need to be asserted after the power-down
-+	 * procedure.
-+	 */
-+	struct reset_control *reset;
-+
- 	/** @irq: IRQ number. */
- 	int irq;
- 
-diff --git a/drivers/gpu/drm/imagination/pvr_power.c b/drivers/gpu/drm/imagination/pvr_power.c
-index ba7816fd28ec77e6ca5ce408302a413ce1afeb6e..5944645bf1b2f5ba6c954a841d85d043db171c4b 100644
---- a/drivers/gpu/drm/imagination/pvr_power.c
-+++ b/drivers/gpu/drm/imagination/pvr_power.c
-@@ -15,6 +15,7 @@
- #include <linux/mutex.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-+#include <linux/reset.h>
- #include <linux/timer.h>
- #include <linux/types.h>
- #include <linux/workqueue.h>
-@@ -252,6 +253,8 @@ pvr_power_device_suspend(struct device *dev)
- 	clk_disable_unprepare(pvr_dev->sys_clk);
- 	clk_disable_unprepare(pvr_dev->core_clk);
- 
-+	err = reset_control_assert(pvr_dev->reset);
-+
- err_drm_dev_exit:
- 	drm_dev_exit(idx);
- 
-@@ -282,16 +285,33 @@ pvr_power_device_resume(struct device *dev)
- 	if (err)
- 		goto err_sys_clk_disable;
- 
-+	/*
-+	 * According to the hardware manual, a delay of at least 32 clock
-+	 * cycles is required between de-asserting the clkgen reset and
-+	 * de-asserting the GPU reset. Assuming a worst-case scenario with
-+	 * a very high GPU clock frequency, a delay of 1 microsecond is
-+	 * sufficient to ensure this requirement is met across all
-+	 * feasible GPU clock speeds.
-+	 */
-+	udelay(1);
-+
-+	err = reset_control_deassert(pvr_dev->reset);
-+	if (err)
-+		goto err_mem_clk_disable;
-+
- 	if (pvr_dev->fw_dev.booted) {
- 		err = pvr_power_fw_enable(pvr_dev);
- 		if (err)
--			goto err_mem_clk_disable;
-+			goto err_reset_assert;
- 	}
- 
- 	drm_dev_exit(idx);
- 
- 	return 0;
- 
-+err_reset_assert:
-+	reset_control_assert(pvr_dev->reset);
-+
- err_mem_clk_disable:
- 	clk_disable_unprepare(pvr_dev->mem_clk);
- 
-
+diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+index 054abf283ab3..1b7a653c1f4e 100644
+--- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
++++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+@@ -2980,7 +2980,7 @@ static int axienet_probe(struct platform_device *pdev)
+ 			}
+ 		}
+ 		if (!IS_ENABLED(CONFIG_64BIT) && lp->features & XAE_FEATURE_DMA_64BIT) {
+-			dev_err(&pdev->dev, "64-bit addressable DMA is not compatible with 32-bit archecture\n");
++			dev_err(&pdev->dev, "64-bit addressable DMA is not compatible with 32-bit architecture\n");
+ 			ret = -EINVAL;
+ 			goto cleanup_clk;
+ 		}
 -- 
-2.34.1
+2.49.0
 
 
