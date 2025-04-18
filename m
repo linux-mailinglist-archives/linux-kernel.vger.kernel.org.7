@@ -1,113 +1,118 @@
-Return-Path: <linux-kernel+bounces-610836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 869D2A9399B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 17:27:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FDE7A939A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 17:29:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DB20464CD2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 15:27:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAE64179499
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 15:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0210211285;
-	Fri, 18 Apr 2025 15:27:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 600422116F2;
+	Fri, 18 Apr 2025 15:29:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HvsGrvfV"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TjsiZXHJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E470520B213
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 15:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06AC721127E
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 15:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744990030; cv=none; b=oAcycGAQzLLrIvyilJR3CCXhHpvmRocuwgeCmAUAJxiLX9/mIzf/hOnBiOfVTbc4yGWtx8VxWdO2hd+9KvhfmHVtCKn72QqMlZqH5XRoovRcfxNiio3SG0sL6cgePJxLK4YipUEHn+qAmGM4NcoGw61pQhsda3YMJ0K1TFRrdSg=
+	t=1744990163; cv=none; b=pbQdd07tM5JURQrVn/O4TB9Irfxm/bl0KanCCNXqDnHVZPwRt+tRuE57qqMXyH4JnecAIBAQUIlGvKZkseK04rl43rEXKyBdTbBiY0vooPWYEpPu5QiRHJnWT7YpmGNx5ipBuXVM3dX1eVDZft+7iA5OqClH5jsACkdnAMLting=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744990030; c=relaxed/simple;
-	bh=1y2iPseqL2w86pZS2dL9URh+00OkH9KHtKB0vDKnJ98=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o3TJUTs3iCTkvkrDz4weHz1xQ1k11q8g4DG0ifddVdKxOLw35fb8qGk5woa1G9imxzjI3eFXU0nfw/UmPrRnz9FKvoatURaralfM+epLvu4IqReVAWxWu8QJx5wmdO+AcHRF4Op+y5mQ8rJPPaqnaDl6OYr/6Cys2OOnbETuol4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HvsGrvfV; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-224191d92e4so22567815ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 08:27:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744990028; x=1745594828; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xsrPSUNVhs8rFdAYEhSxzuxV/b3f8O8Pmn1WUkmnoGs=;
-        b=HvsGrvfVNn5pVW9AkjGVqQ5PTOC1fgdyYpUvdgqLy6kLKJHeEdhyvi9BwBzYF47zoD
-         Su6NxxdP5Aqnzh2esLJKeGWDL+5hxkuywgTCaB11kTvCSSmatvv5VZW4wqGE3931REcd
-         3/tL6dSsL/Y+LHuokqkT/GUKz7NddWql+Em0wxLdX/FoZmzQ7jjQT+z9VTFdPoB7nhg+
-         2r7TW1Lay67mu2TvKfMldv5lb9gux7beVtyRnC4+KvD7U/Hkc08wkb8EzbujuMsSZ6h2
-         vSPhJsb8yG2DslH5WSHlWk6NWMjOqYkHofigE0N/9Nv/VAQF+vaxOxLj39u0tTfzuWtU
-         FnnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744990028; x=1745594828;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xsrPSUNVhs8rFdAYEhSxzuxV/b3f8O8Pmn1WUkmnoGs=;
-        b=dNgZdf84z/MN2mvwiU6w2u1t3zgmJgi8sBQ4inLcQfKntEVXf3cWhUs2RkT5FNLw+u
-         /bacdKwOXC3yHJwtLbcjfIoLn4VhsXziokhurMEb0cU8iY6nLmBuA/Z+cOjH78dRq+RK
-         yJalVQOX2rOqBhTkSB4/29m6LvMdbBRubSbagy9o57xV0tFch/Uua8nOzNEISwO4HeFZ
-         4EkKoEbEKFQ5GI7afH/DHPhzH4km9O90+rzHKW23V75MIss34+OcDEMUh2Yt2eGJe0U+
-         DmqGECbWxfn/HaCwFqldkTwGUb9sSKXfFcteXSGUbsk2/yUA9iSs3vEyDD1cdoHJ+Jt3
-         bYMw==
-X-Gm-Message-State: AOJu0Yx6As3L9nx0+tKyUEfS8p+v/wxPhZZHcmw8l2fQ9jdJ1nHoxTWx
-	sYTpQoPECz4AYScxBYMdMAoXy+qMTx9ObuEZasYaiwIzylZSJiHHC09/sEpn
-X-Gm-Gg: ASbGncu0749LnLJ0R/jBJDc42aG7IIujc/6UzqLAEMNr11Ndz+NmeeQAzoZ8FBt2V7e
-	7dmcpo+bWsByV764onXuIJ/TRuoRANwp3yhUF8hwwvITjxBjmITEBliUXvDtQzS0C7p7hraAvuf
-	01Qlzp5mPAoDyiqzN7P6G+kBnShazYGkUf1OiOY1peiAi/chxe62P/hNhfklSU/ijmKdCzV+A1X
-	2Nj10U18mEPvRCPma1vhWSu+orJO3WzuNn2VzOlOwMYVWVIG0Zv2tJbUt17vqNhQJCDNACe+Mc3
-	uSMM/o8muzbn3L4GLs6Y4nYsXLSNqLZuc1fFLwNk
-X-Google-Smtp-Source: AGHT+IFPpY3AqHEGN+2bikmaarSJdAe7G4sJHwQs1lzBSoepGKAswgBppOLcaCIGETxxligMJ8lpxA==
-X-Received: by 2002:a17:903:46c8:b0:224:584:6eef with SMTP id d9443c01a7336-22c53606ee5mr52825455ad.41.1744990028178;
-        Fri, 18 Apr 2025 08:27:08 -0700 (PDT)
-Received: from localhost ([216.228.127.131])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50bf30f3sm18295105ad.59.2025.04.18.08.27.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Apr 2025 08:27:07 -0700 (PDT)
-Date: Fri, 18 Apr 2025 11:27:03 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: [PATCH v3 0/2] bitmap-str: A couple of cleanups
-Message-ID: <aAJvHI-iTejAImul@yury>
-References: <20250417161858.611211-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1744990163; c=relaxed/simple;
+	bh=yhg61Z5FgdpTqeKa66MzWE8kZ0brp5lJvNYoMhx0bKU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oFJIBpN9MqNHBDKyGj/rfL/B8Y1/qY8tfR+P4GhnWG8y6s4IiF97c9HBixA5ZsBZeB6DRDevOGjXbyX4T3N077Kg9OIHpup/TTPcfVek+0Z8pWMyLbUPqpp7q/pI+uF2oIJSnUjsLDHbn4AAxRW8mEpI64+koIvjCXuyvVz2Hps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TjsiZXHJ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744990160;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=EBkbeEOM4+zmvVxiJ3s2YnpGyrudvKTNT92Qch4FMKk=;
+	b=TjsiZXHJjCGE9Oj/7/rI43hvr7Jf2F2AZVHMUqnliWCbn95EHtwexMaa5zN9wcarZOmaS1
+	gmkI8bXiATEJCkBWr6zaaX+0RrRbeaOvX0aLH4l5qzb289MPClj5tBMQXwx6s01upq7fgG
+	OtQlcnGcOsd2FN5p0PtZ+llUbGIDJVk=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-395-osmMWsiJPxWyysTSjw8FUw-1; Fri,
+ 18 Apr 2025 11:29:17 -0400
+X-MC-Unique: osmMWsiJPxWyysTSjw8FUw-1
+X-Mimecast-MFC-AGG-ID: osmMWsiJPxWyysTSjw8FUw_1744990156
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 789031956088;
+	Fri, 18 Apr 2025 15:29:16 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.22.89.24])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 77CBC1800965;
+	Fri, 18 Apr 2025 15:29:15 +0000 (UTC)
+From: Joel Savitz <jsavitz@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: Joel Savitz <jsavitz@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org
+Subject: [PATCH] docs: namespace: Tweak and reword resource control doc
+Date: Fri, 18 Apr 2025 11:29:10 -0400
+Message-ID: <20250418152910.1121670-1-jsavitz@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250417161858.611211-1-andriy.shevchenko@linux.intel.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Thu, Apr 17, 2025 at 07:17:14PM +0300, Andy Shevchenko wrote:
-> A couple of simple cleanups to the bitmap-str.h.
+Fix the document title and reword the phrasing to active voice.
 
-Applied, thanks!
+Signed-off-by: Joel Savitz <jsavitz@redhat.com>
+---
+ .../namespaces/resource-control.rst           | 24 +++++++++----------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-Thanks,
-Yury
+diff --git a/Documentation/admin-guide/namespaces/resource-control.rst b/Documentation/admin-guide/namespaces/resource-control.rst
+index 369556e00f0c..624f4dceea46 100644
+--- a/Documentation/admin-guide/namespaces/resource-control.rst
++++ b/Documentation/admin-guide/namespaces/resource-control.rst
+@@ -1,17 +1,17 @@
+-===========================
+-Namespaces research control
+-===========================
++====================================
++User namespaces and resoruce control
++====================================
  
-> In v3:
-> - elaborated even more what is missing and why it's good to have (Yury)
-> 
-> In v2:
-> - filled the commit messages (Yury)
-> 
-> Andy Shevchenko (2):
->   bitmap-str: Get rid of 'extern' for function prototypes
->   bitmap-str: Add missing header(s)
-> 
->  include/linux/bitmap-str.h | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> -- 
-> 2.47.2
+-There are a lot of kinds of objects in the kernel that don't have
+-individual limits or that have limits that are ineffective when a set
+-of processes is allowed to switch user ids.  With user namespaces
+-enabled in a kernel for people who don't trust their users or their
+-users programs to play nice this problems becomes more acute.
++The kernel contains many kinds of objects that either don't have
++individual limits or that have limits which are ineffective when
++a set of processes is allowed to switch their UID. On a system
++where there admins don't trust their users or their users' programs,
++user namespaces expose the system to potential misuse of resources.
+ 
+-Therefore it is recommended that memory control groups be enabled in
+-kernels that enable user namespaces, and it is further recommended
+-that userspace configure memory control groups to limit how much
+-memory user's they don't trust to play nice can use.
++In order to mitigate this, we recommend that admins enable memory
++control groups on any system that enables user namespaces.
++Furthermore, we recommend that admins configure the memory control
++groups to limit the maximum memory usable by any untrusted user.
+ 
+ Memory control groups can be configured by installing the libcgroup
+ package present on most distros editing /etc/cgrules.conf,
+-- 
+2.45.2
+
 
