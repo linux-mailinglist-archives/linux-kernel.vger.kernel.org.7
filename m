@@ -1,131 +1,98 @@
-Return-Path: <linux-kernel+bounces-611079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6B2DA93CA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 20:13:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF29AA93CA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 20:14:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4B0C3B779C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 18:12:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A43E1B6103A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 18:14:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25816222597;
-	Fri, 18 Apr 2025 18:13:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB2112222CA;
+	Fri, 18 Apr 2025 18:14:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MYTxo33H"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mxXCbYz1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 890C4221F0A;
-	Fri, 18 Apr 2025 18:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1777921C18A;
+	Fri, 18 Apr 2025 18:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744999985; cv=none; b=iKeOcFBHyZeK+mzVHA5YH8bLHwEGK59tEIzUZ08fb3fXo1yFSlzXCrGAubt/qd1SOxmiJfabiSDmEnSXGEF6hHLJv9b930lajc+5sdTxeM6H2per8Q2Pg7DcEcCn8lpFzJlSjCnWE2tBWSgbwyTYUXmc3jjwhfx0q/Lr0w78UJE=
+	t=1745000062; cv=none; b=aeG/pJcI3sZiT/sAep94JXhwT7jGjIikx/umRwbq4zfJwOvoYvithw9IpWKdq00vgibnXzvvWe7gKcJcixyd8ZNWkmMEe5Ku7AYKwgCFSrzQSX7myrn/9SdOsc4BX19IXHm/aE+Rp9xp2toBRFB4/3wiOmk+qfbXg33ma5NAosc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744999985; c=relaxed/simple;
-	bh=QmVNNm0yCXUzgegJjSuzQSEat+pAuOJqxBaJs9whs1k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kqxpGPprLQEPzjTjoyKGXWfQT4aHIupm1SofLGcC1RlfNDK8P77yqEkTv99XBlUPBgc8nEUvCt6rOcCDR7RGICRCnn799JGbr75uYKEocp373Mt/qKqG+xkNVy5Prqcy6L7NRTU541Pnlz/xneXY4tTNT0fpslsI4M4rxVXL068=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MYTxo33H; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744999983; x=1776535983;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=QmVNNm0yCXUzgegJjSuzQSEat+pAuOJqxBaJs9whs1k=;
-  b=MYTxo33Hg1Ga+9TeehhmnYx/FQl2pl69VGxcyQordyuCMnwfePlRzkm8
-   N6yjPy+DJssbXVvGr8PfsWUP9xg2bK7p9WgRtxK8j/wg4KDtEFm7OHo6Z
-   lwLj/W5c2AA4z4Ncn+o+sF4jpYlm+ioya7QBswrR7ldokXYMIyqNaWkph
-   dYCGrjoKDgDfBgEIv5XSXWUhx+y3hll4iJHsYO05LhmQsmsoI02KX0WBA
-   Gjjm3Y3jXiob7F/g8A9hUZrXaJQnOa+h8J/iZR3ON9Gq0WFwFKNRgEaMe
-   k/yJdPeDjRo++rFWdwXH2t/z+peTRcW009pnXZMQ2+dPTe/W5QEivI5Cf
-   A==;
-X-CSE-ConnectionGUID: 9OwJ7KAqT5i1mHnUEQzheA==
-X-CSE-MsgGUID: 6vYWZYubT6e1nC0P/+Ep+w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11407"; a="57296072"
-X-IronPort-AV: E=Sophos;i="6.15,222,1739865600"; 
-   d="scan'208";a="57296072"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Apr 2025 11:13:02 -0700
-X-CSE-ConnectionGUID: /IqsmET/QzyMnsLY4JUGdg==
-X-CSE-MsgGUID: i6LVBPnvQBGrpL7TnOsFdw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,222,1739865600"; 
-   d="scan'208";a="131041341"
-Received: from lkp-server01.sh.intel.com (HELO 61e10e65ea0f) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 18 Apr 2025 11:12:57 -0700
-Received: from kbuild by 61e10e65ea0f with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u5qCt-0003Ax-12;
-	Fri, 18 Apr 2025 18:12:55 +0000
-Date: Sat, 19 Apr 2025 02:12:44 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@intel.com>,
-	David Airlie <airlied@gmail.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] scripts/kernel-doc.py: don't create *.pyc files
-Message-ID: <202504190154.lSj16P1a-lkp@intel.com>
-References: <4ad5eb8d4b819997c1615d2401581c22a32bb2c1.1744789777.git.mchehab+huawei@kernel.org>
+	s=arc-20240116; t=1745000062; c=relaxed/simple;
+	bh=1vBnar/9xtJqF5Pl52RY5X2KmdSf4G3dV/3MlXqODMQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jgoqYkpEkdUEqcVBZNfqsnYsTtZSX0k7WUiWkDZFJZajwv/j6UaqAUJXJnjMGKlxLgwcASeyg1XdNV+Rota16YErn7fJjAGjdpyeJtyg2yrHpfqKZhPHwAL3KsQ0hFe6eziSPCJ/UxP+lcQHUvAta4sfRchGvgbBTGdH2msCE1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mxXCbYz1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50A14C4CEE2;
+	Fri, 18 Apr 2025 18:14:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745000061;
+	bh=1vBnar/9xtJqF5Pl52RY5X2KmdSf4G3dV/3MlXqODMQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=mxXCbYz1/GiaZsMLnL8K6mfTPo/Osn7YfbXFPww47EpFsFM5kqbxYmU5S+WGZbVwl
+	 QZ9TL43wLkk6HUBIoD2uuTxsr58qEgPDffDsXv/GmTwhFoLvRizYgnxWy55xf41x+v
+	 CIT2484NtwIaKL0tCa6pot0P1mz84R3R2T+b4ouxx0CAKQ7GMArYuRNxcJnGssHh00
+	 tH1bEf3w2mb20midqzlPN9Apov3fVjFnYllLqCnxekI5zHIpnha6bD+GxyPiOajb/U
+	 7MA8pORipf5SOT4th97As4mhrqZHhj0SOLHU8xFjbRh4R1wQThbm16F5p6u1vO4y+G
+	 IpXuV8w10Ue4w==
+Date: Fri, 18 Apr 2025 19:14:13 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Lothar Rubusch <l.rubusch@gmail.com>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ eraretuya@gmail.com
+Subject: Re: [PATCH v6 04/11] iio: accel: adxl345: set the tap suppress bit
+ permanently
+Message-ID: <20250418191413.4a0a873e@jic23-huawei>
+In-Reply-To: <20250414184245.100280-5-l.rubusch@gmail.com>
+References: <20250414184245.100280-1-l.rubusch@gmail.com>
+	<20250414184245.100280-5-l.rubusch@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4ad5eb8d4b819997c1615d2401581c22a32bb2c1.1744789777.git.mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Mauro,
+On Mon, 14 Apr 2025 18:42:38 +0000
+Lothar Rubusch <l.rubusch@gmail.com> wrote:
 
-kernel test robot noticed the following build errors:
+> Set the suppress bit feature to the double tap detection, whenever
+> double tap is enabled. This impedes the suppress bit dangling in any
+> state, and thus varying in sensitivity for double tap detection.
+> 
+> Any tap event is defined by a rising signal edge above threshold, i.e.
+> duration time starts counting; and the falling edge under threshold
+> within duration time, i.e. then the tap event is issued. This means
+> duration is used individually for each tap event.
+> 
+> For double tap detection after a single tap, a latency time needs to be
+> specified. Usually tap events, i.e. spikes above and returning below
+> threshold will be ignored within latency. After latency, the window
+> time starts counting for a second tap detection which has to happen
+> within a duration time.
+> 
+> If the suppress bit is not set, spikes within latency time are ignored.
+> Setting the suppress bit will invalidate the double tap function. The
+> sensor will thus be able to save the window time for double tap
+> detection, and follow a more strict definition of what signal qualifies
+> for a double tap.
+> 
+> In a summary having the suppress bit set, fewer signal spikes will be
+> considered as double taps. This is an optional add on to double tap,
+> thus a separate patch.
+> 
+> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+Applied 1-4.
 
-[auto build test ERROR on lwn/docs-next]
-[also build test ERROR on drm-i915/for-linux-next drm-i915/for-linux-next-fixes linus/master v6.15-rc2 next-20250417]
-[cannot apply to masahiroy-kbuild/for-next masahiroy-kbuild/fixes]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Mauro-Carvalho-Chehab/scripts-kernel-doc-py-don-t-create-pyc-files/20250416-155336
-base:   git://git.lwn.net/linux.git docs-next
-patch link:    https://lore.kernel.org/r/4ad5eb8d4b819997c1615d2401581c22a32bb2c1.1744789777.git.mchehab%2Bhuawei%40kernel.org
-patch subject: [PATCH v3 1/2] scripts/kernel-doc.py: don't create *.pyc files
-config: x86_64-rhel-9.4-rust (https://download.01.org/0day-ci/archive/20250419/202504190154.lSj16P1a-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-rustc: rustc 1.78.0 (9b00956e5 2024-04-29)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250419/202504190154.lSj16P1a-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504190154.lSj16P1a-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> /bin/bash: line 1: -none: command not found
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Jonathan
 
