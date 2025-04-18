@@ -1,125 +1,103 @@
-Return-Path: <linux-kernel+bounces-610241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EDB4A9322F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 08:43:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 761AFA93237
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 08:45:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2E4F19E77E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 06:43:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18A8A8E2812
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 06:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3179826982E;
-	Fri, 18 Apr 2025 06:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YHkU5/fh"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32C4C268FE9;
+	Fri, 18 Apr 2025 06:44:52 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F552690C8
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 06:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BBBA269AE3;
+	Fri, 18 Apr 2025 06:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744958614; cv=none; b=bBYQug95mbMigEK4TpTSAlCo0nIU2s6XeJKxsbRmdsA5FoUGXKr2kuoQlU9jGLdap1xZYQJYxIUYPR2YrPUVhDBluiLp3ZS6bipllosC/Vt1hO+Nlcagioq7qxTiscCJrA1VRcqd54B66dqNErEBVE+LElayEEjlBLx99Pcaw0Q=
+	t=1744958691; cv=none; b=tKs9KM0I1+VPrSn1y4XKN2eS3U953M4O9ttAHF7yjjNnf3t4yDIZakAgrEvezZDwcFntlV81fY/wfUh2neGkbL/v5sNN6bMxgv9WpvU1QgyjvOb4/1rR8GU+UtHvhEejlRXZsuFe+nJMvKQ+V9OuSG0t7AIPS0cqvw15YHILsDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744958614; c=relaxed/simple;
-	bh=l12G9/KABGBWRLrSnjVdfQ0Z2bSs/KbpUquxhRC9aSo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=udtLxkelFdvbO9vha/f/hJ3IHDJiaHXJZ0TJ0rXL0AeoCWPxxuXZavgyNnM0AwndA6/oqoude7WyhSLdC08emfbnIMdN52dieYTN6s9WTogUXMmBmzYvoE9NVbbPkcUHZUOM/8gvTYLChI6cOjgVpz3zCEJCjwNI3AbdLlX7f3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YHkU5/fh; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43d04ea9d9aso7359555e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Apr 2025 23:43:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744958611; x=1745563411; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0eX8qj76kO14FK/DjeL3E1y5jYurP6zJ1Vl1XJVXa+E=;
-        b=YHkU5/fhGsvhddvp7bArMOJkKLi96Ack+TpRrXiq0Z6g36V4oKohDljaaIweKk12sD
-         3ZXmQVN0EFWjAAFCqb9kFA3D0R+LjRPzELtICO4if85cplch3G7/Hyv8qtSwAKdw3gxQ
-         1hKd/kM6at/tSJ6GHOIDpL1BmRvKaS8K5LOVKRztz/Y1VZv2gtUYsMRJgrYcJCwzWsf2
-         XYc3b/NRcmCGbUn7pUarnUvEewJVX5KR+df1r/iUzDthw0cpgnc7U8BoixxZRuzSGQKz
-         Trgh92vxi4O3XK9R+dPV9iLmfh0dBfoFIiJTFmldKo14kt/StMtDBy2Na26FkzP89IGZ
-         /wOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744958611; x=1745563411;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0eX8qj76kO14FK/DjeL3E1y5jYurP6zJ1Vl1XJVXa+E=;
-        b=nwWmf2omjezQ3kRmhk1Cl9QdkFr+FTMzhtMOh9Y7VhCt2ieD2sUw5+gv9wk4yWetf1
-         DDYhjWxPKgKmIE2RzQcygUlv2sRj6LW++GRhHRXfiw1CSD81H5C07bL1BT/StehAe0vT
-         Va9J4Dwa9RxRTXM4vYEZCCHAHVt6h86MI4dkOCVNucDY/KK9Ftq6Gsf4CqpF2VspLpjn
-         k0bQQWPky5DONlUr/BupgxijYMEilxzxDKazDmrsEBaMjscbAbBM5T81qZMSZvz5qkub
-         1zypVjk/DbgrwEKuyN9RXPEaxq5t4sM/5QxAsMBWHhsCy67e+Pc0Cx+Hh4R91B97wqFj
-         zd5Q==
-X-Gm-Message-State: AOJu0YzvwIlhMSP3t29GiFN8WrUo30G2ikEP+HZh5lF8VZLrMed3HBKb
-	Z/2hkiPyIejKRFBe6fU0jYcRB4ZCiaFSwnXYFQjDrkNw7o60mtkv
-X-Gm-Gg: ASbGnctl6yTwAfSeroxyoUgZPhRCsKBDeQxhYE+tCFBSj421WuIh1ClScNJe6oAssCw
-	gUM9rlx4IVzaMdviA4Lc7EW5mkFNAG8kNw7hmmaopzafLX/G0QMleUvffY1Qqy6reETrfXaFG6l
-	cLBrA7Lw5dROxn6bKYihN9W8inDLLRJrm8TNIaGop7bw4eufvAOdzrO08KPysoLAK9EXjFvOtir
-	YT0CCHL1FqOimI/2iRLxoKlc8qZ9fN1dzMEdE+hc9Phmnh3UweyXzZJC/dFFdy5rF1s4Sfytmgp
-	6mAfk3RZ1oUhfB71bVVa8UnQDDgvYi/5gaIU0YfxWfE=
-X-Google-Smtp-Source: AGHT+IElSs7WpG30PXcCOYLok608/TQYkm0oTnUFtMIlxhvmGvRCS45j7AuHs1Dz3kgju+dDdObtIA==
-X-Received: by 2002:a05:600c:4688:b0:43c:eea9:f45d with SMTP id 5b1f17b1804b1-4406abb2cd0mr12023375e9.18.1744958611068;
-        Thu, 17 Apr 2025 23:43:31 -0700 (PDT)
-Received: from localhost ([77.237.184.200])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4406d5bbcb6sm10216245e9.18.2025.04.17.23.43.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Apr 2025 23:43:29 -0700 (PDT)
-Date: Fri, 18 Apr 2025 10:13:21 +0330
-From: Ali Nasrolahi <a.nasrolahi01@gmail.com>
-To: Linux Newbies <linux-newbies.vger.kernel.org@zephyr.smtp.subspace.kernel.org>
-Cc: Linux Kernel <linux-kernel@vger.kernel.org>
-Subject: Documentation for Regmap API?
-Message-ID: <l5l7jdkvrwkwo3dtfow55ot4jj4rp7z6nuz5ijlj52vgmqhwth@uvks72vz4lpd>
+	s=arc-20240116; t=1744958691; c=relaxed/simple;
+	bh=LrwLfBRZnZK9oZ7k+rNHR2IYtR1qCr/BvhI32qDcZrM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d32KqOywCLcE+57fygqvj1IewI00CKsHjifcTmcrJtcWiu/0ChM0wCKd+P8hlegcUx9KDHeszYgnVy+A5y/5IAd1ECVOCkL2aDv+m0N64SFQVDybHcSsEOyFvx1Bf357XtMjVtTRmwD9gRhSXVzDmz10FzCfKTWIUsZ7opawvgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Zf4xL0NVGz4f3jrg;
+	Fri, 18 Apr 2025 14:44:22 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id C56551A0359;
+	Fri, 18 Apr 2025 14:44:45 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP2 (Coremail) with SMTP id Syh0CgCnr2Lb9AFoaycGJw--.42714S3;
+	Fri, 18 Apr 2025 14:44:45 +0800 (CST)
+Message-ID: <75df71e2-5d0c-42bd-b80d-bdda5444eddb@huaweicloud.com>
+Date: Fri, 18 Apr 2025 14:44:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH -next v3 07/10] fs: introduce FALLOC_FL_WRITE_ZEROES
+ to fallocate
+To: Christian Brauner <brauner@kernel.org>, Christoph Hellwig <hch@lst.de>
+Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
+ linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
+ linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
+ djwong@kernel.org, john.g.garry@oracle.com, bmarzins@redhat.com,
+ chaitanyak@nvidia.com, shinichiro.kawasaki@wdc.com, yi.zhang@huawei.com,
+ chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
+References: <20250318073545.3518707-1-yi.zhang@huaweicloud.com>
+ <20250318073545.3518707-8-yi.zhang@huaweicloud.com>
+ <20250409103548.GC4950@lst.de>
+ <20250409-ausdauer-weingut-4025b274ee63@brauner>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <20250409-ausdauer-weingut-4025b274ee63@brauner>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgCnr2Lb9AFoaycGJw--.42714S3
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYV7kC6x804xWl14x267AKxVW5JVWrJwAF
+	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
+	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xv
+	wVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4
+	x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
+	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r
+	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kI
+	c2xKxwCF04k20xvY0x0EwIxGrwCF54CYxVCY1x0262kKe7AKxVW8ZVWrXwCFx2IqxVCFs4
+	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
+	MI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
+	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
+	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
+	BIdaVFxhVjvjDU0xZFpf9x07UZ18PUUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Hi,
+On 2025/4/9 18:50, Christian Brauner wrote:
+> On Wed, Apr 09, 2025 at 12:35:48PM +0200, Christoph Hellwig wrote:
+>> On Tue, Mar 18, 2025 at 03:35:42PM +0800, Zhang Yi wrote:
+>>> Users can check the disk support of unmap write zeroes command by
+>>> querying:
+>>>
+>>>     /sys/block/<disk>/queue/write_zeroes_unmap
+>>
+>> No, that is not in any way a good user interface.  Users need to be
+>> able to query this on a per-file basis.
+> 
+> Agreed. This should get a statx attribute most likely.
 
-I've been exploring the Regmap API and
-was wondering if there’s a dedicated documentation page
-that provides an overview or explanation of the API itself.
+Sorry for the late. Sure, I will add a statx attribute for both bdev and ext4.
 
-So far, I’ve looked into the following:
-
-1. https://docs.kernel.org/driver-api/index.html
-2. The Documentation/ directory in both the mainline and linux-next trees.
-3. The regmap tree mentioned in the MAINTAINERS file:
----
-   REGISTER MAP ABSTRACTION
-   M:  Mark Brown <broonie@kernel.org>
-   L:  linux-kernel@vger.kernel.org
-   S:  Supported
-   T:  git git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git
-   F:  Documentation/devicetree/bindings/regmap/
-   F:  drivers/base/regmap/
-   F:  include/linux/regmap.h
----
-
-Despite checking these locations,
-I couldn’t find a dedicated document explaining the Regmap API in detail.
-
-1. Is there any such documentation available that I might have missed?
-
-2. If not, I’d be happy to contribute and help write one.
-Should I bring this up on the linux-doc mailing list for further guidance on how to proceed?
-
-Any pointers or suggestions would be greatly appreciated.
-
-Thanks a lot,
-Ali
-
+Thanks,
+Yi.
 
 
