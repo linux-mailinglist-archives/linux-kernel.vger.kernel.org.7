@@ -1,120 +1,218 @@
-Return-Path: <linux-kernel+bounces-611091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 795FCA93CD1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 20:33:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 941EDA93CDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 20:35:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB8027B37A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 18:32:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 217A41B651A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 18:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B26F22578A;
-	Fri, 18 Apr 2025 18:33:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20746225A4F;
+	Fri, 18 Apr 2025 18:34:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DTkfKw4e"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KvjHq0QD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF591C5F2C;
-	Fri, 18 Apr 2025 18:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6900222541C;
+	Fri, 18 Apr 2025 18:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745001180; cv=none; b=boDnlNv+Yi5QbEuOVIes93DBzsLnInucxe/hF6QJ9a+ljmb3g6lM6uoWpOV9UmoGDgUNFZdOat3jD1u0QgHfmAmXvxzCa4I+HkoaDGLh24UUNPic1XVIt4sbiOp2tgJje0KFH76wp2i8N7vv69xHtyZTLMYDFXSgukmpiUp3Heg=
+	t=1745001260; cv=none; b=ts1i9G/o1qgomJnw4gtQUJKAaV88ayj4xPxv7/O+6tK0s6R5oaLxyAF1AHUPMPK5vN0HuA3CN49dix6bGJMgBAeJL0AoamSNGeQ9wSOblyT54VyIPEvrtmn/YxEVGKYFwvfainkYwS628WnPzsUhq4zEBlULWQ5ms5ERRBdMGv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745001180; c=relaxed/simple;
-	bh=ou5tcv9JxiL2u1j3f5J7z0CBvUbEeh6Xv6UWW41q/Ts=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PIKGvnzxPoBsNSjHGV7G/i5tIHPHR6XzM0SRVp8mU2ReJjuX74SQDJE/fVYLmQU8vUswxRfxZO9ekltSaDgzF4IhHnKpiLMnzD4ZzyAz7uGnmeBp4Ug8Oe5BFCzhmYcbptKDMBG5W3rQ089BBi5FVewIBDIO0qZ8nftemLsRoak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DTkfKw4e; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-227e29b6c55so3339165ad.1;
-        Fri, 18 Apr 2025 11:32:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745001179; x=1745605979; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HFANXjtKTfEx9kV/YD0moYxXkPIgDxsA41WYPtohNLk=;
-        b=DTkfKw4etkWpNh+RFUp8WY1PgivSEv9PZw17qp44dcaCOl3v7OYsw2IPxNSuD7N2k+
-         eWGOXbUuIfoYl9XNNNmKnxQrbqmTPXrOK7lnf0rj40wSQjandtGCbllalR1idb5xZbFR
-         YkwW5YQDYzdTcAcd/RaF++/VlPVZVtWmx78DZW2Cpp4DBCe6PTPDcY48KN3DDg6qmM12
-         4iayocZ2eJFMo0DOl78m97Mm8F1g6lv3qa73/Fp3cMVqUjWWUfSXaL1AkTp8avv8MJzM
-         2tpaWNbLwSx+RFg4K6446CdmdXcJVSMYYCfCYsUgI+fZRQNnEhH8ya0ui9R3uaX0rhL6
-         bg+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745001179; x=1745605979;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HFANXjtKTfEx9kV/YD0moYxXkPIgDxsA41WYPtohNLk=;
-        b=DfD7NCvQCl4XBQzpuyMYsjh7WQgIPnik++OqFFv+dDbteWxE81kEZFWZ9Qf9KyPMlI
-         yw9R1WqxrPTgD9juQsx8fxdib6B+iyG3xT03HZzzo/+341U6KRxBDXQAV9ka/MfshVZk
-         mmu/HQN7OlBlt7oaaHrhKy9nkBNJ/E+T0SBx98aHocGTnWeHZfAy/ufjuu8wyuj2hrfW
-         +hTDkIMtVPyPM0Zbpf/yrarWDr5pRXHMrbYC4uuPKofr0zPOFjZHQAu/p9MiV7UUdbsQ
-         14ff+8oBgrFe4UQXuC4gOz/IzbN6ddrK8tG8Z2oIu1KRGNfUFoAve5QbGE1qPmPeAhFL
-         mdzg==
-X-Forwarded-Encrypted: i=1; AJvYcCVCv31lp3b3yhOT0tHEzABNB3MZh1FML4CtPe/9knpAOxzsVRzo5wuC4XIgjNRxF/2JPLT5W62OsfYQCe7oy0U=@vger.kernel.org, AJvYcCVFMqCYaN+nQe8rfjF8W3CSMV9C1t+parxQ6h4FccePISEDj4cR8pjng8zO7y4AcJqdVq5o@vger.kernel.org, AJvYcCVdg0h/ox9pTpMpVSs294Jrs/vkl7u8Lwz6+GE3dppBU7jis/r91GJoqFRs2XGdJTWx+ud1J9QEGlwpxu2wiLbh@vger.kernel.org, AJvYcCWdEP0lb1EiHWqMeam0t9glxtbC/KJGMZig4sc4SiwtdoMqs1eziVHT4KTBda6uw7qIeP/oqm8tFYZFNe8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLrgXMqFevOaeqoJg3hkL6mPY5eglY7jH/WqP18RE5tdpANI0q
-	Hwp7qDYTU/3DQELJYspcosEEPFHoCyJnpUc/RHvypz4y/8bFIyFqxITx6/SkVNUUov7b91IIMpp
-	Wkl7FOgZLtlE5Tb+6vUpIzZEPI/Q=
-X-Gm-Gg: ASbGncu1tjehtdweVcFwppYC6Qmkuyexnk5H135pjuJEUWDgHv+ImTcE1RqZcJ4NRgO
-	usb9xkRg6cM/2j6gAv9/l2vRek0RgX16G5mtNjA1Cpif4ypwb1B7R96QF6zW1KfH12JX+XWJpmY
-	8xhHbH4/rt7f1wPmDQmBKQSA==
-X-Google-Smtp-Source: AGHT+IFADhdep+T0QJPWyAyGB7omOjzqUUQUGaXKFwOncpJL98lO4epAjyTx4Uxd27a0AOpj/taau4IzgTr9RsgnsRg=
-X-Received: by 2002:a17:90b:1b44:b0:2fe:7f51:d2ec with SMTP id
- 98e67ed59e1d1-3087ba5cf08mr1856703a91.0.1745001178768; Fri, 18 Apr 2025
- 11:32:58 -0700 (PDT)
+	s=arc-20240116; t=1745001260; c=relaxed/simple;
+	bh=FIXqyEgN8djbMnz6M52LLP9Fcc8mMMOnGHMLKvGIrF0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cTN8uZQEqxMdx3ied5aEloeWrVRGfifuLo1dSxfkmMtPb9tXJCOAn36uftidZ/5cSDPy4TaUHaP1XHFHJIqWMifP4HuXKVBxEQl48FNAvm0BXyRHhAUyjK7H43kMXglowVA+59Lh9dBA704X1ef6M4gLnmZTPQeQSvMlG7w4dvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KvjHq0QD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36338C4CEE2;
+	Fri, 18 Apr 2025 18:34:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745001259;
+	bh=FIXqyEgN8djbMnz6M52LLP9Fcc8mMMOnGHMLKvGIrF0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=KvjHq0QDPF/hR500jhetMspxBZuSG7SCq1YxUsD+wXrBB7GQDq5jDVirp5RlAMChT
+	 Pztiuefxw9ChrQzuNpC8VgOIrQ952P4bMMOgdgm9t+43PydglthgoGdCMzY7vNumn5
+	 CKsZ88rEyPMDvN4z40R6sC9uMgZI9lHIZ4LzB4sAW8G3w1M9ePrxa0Djd/StLFPPfn
+	 uYbKQqCoOiEfWF2n+1wXdq+bawsmHmkcjVwMH7a7qU0YB2Jw1j7wWViqinT7oCRMHG
+	 +CK8iohchoN8giBh/X+bsZVPdVcX+s42k3XQB6wkqofWUdMC1z93m5GP673Vf6mF9Z
+	 M2/Zg/pttkcfw==
+Date: Fri, 18 Apr 2025 19:34:11 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Lothar Rubusch <l.rubusch@gmail.com>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ eraretuya@gmail.com
+Subject: Re: [PATCH v6 09/11] iio: accel: adxl345: add inactivity feature
+Message-ID: <20250418193411.406bd974@jic23-huawei>
+In-Reply-To: <20250414184245.100280-10-l.rubusch@gmail.com>
+References: <20250414184245.100280-1-l.rubusch@gmail.com>
+	<20250414184245.100280-10-l.rubusch@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250418161005.2425391-1-joelagnelf@nvidia.com>
- <20250418161005.2425391-13-joelagnelf@nvidia.com> <CANiq72nCfBdsfKzP72DWxLBh+Eueack9sS-E97wtsr0UtkAnUA@mail.gmail.com>
- <42da7c8e-08ff-4b04-ab58-6c0c2e287eb3@paulmck-laptop>
-In-Reply-To: <42da7c8e-08ff-4b04-ab58-6c0c2e287eb3@paulmck-laptop>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 18 Apr 2025 20:32:46 +0200
-X-Gm-Features: ATxdqUE11d5kf2E85BZuTAmKAI_UEsrp_SwqW-Oi0y3Ijarw0S_IvhRNYkCwLgs
-Message-ID: <CANiq72nE2cH93W2qZrzAxfbz3hjsw4Xy0YYNwOUQ74SeGiirgw@mail.gmail.com>
-Subject: Re: [PATCH 12/14] torture: Add testing of RCU's Rust bindings to torture.sh
-To: paulmck@kernel.org
-Cc: Joel Fernandes <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org, 
-	Josh Triplett <josh@joshtriplett.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Lai Jiangshan <jiangshanlai@gmail.com>, 
-	Shuah Khan <shuah@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, rcu@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Apr 18, 2025 at 8:04=E2=80=AFPM Paul E. McKenney <paulmck@kernel.or=
-g> wrote:
->
-> Suppose we fired up a guest OS and captured the console output.  Is there
-> a way to make that guest OS shut down automatically at the end of the
-> test and to extract the test results?
+On Mon, 14 Apr 2025 18:42:43 +0000
+Lothar Rubusch <l.rubusch@gmail.com> wrote:
 
-Ah, sorry, I thought you were already doing something like that, i.e.
-that perhaps you could reuse some kernel build you already had and
-avoiding a full rebuild/`mrproper`. The KUnit Python script uses QEMU
-and parses the results; e.g. you could look for the results lines
-like:
+> Add the inactivity feature of the sensor. When activity and inactivity
+> are enabled, a link bit will be set linking activity and inactivity
+> handling. Additionally, the auto-sleep mode will be enabled. Due to the
+> link bit the sensor is going to auto-sleep when inactivity was
+> detected.
+> 
+> Inactivity detection needs a threshold to be configured, and a time
+> after which it will go into inactivity state if measurements under
+> threshold.
+> 
+> When a ODR is configured this time for inactivity is adjusted with a
+> corresponding reasonable default value, in order to have higher
+> frequencies and lower inactivity times, and lower sample frequency but
+> give more time until inactivity. Both with reasonable upper and lower
+> boundaries, since many of the sensor's features (e.g. auto-sleep) will
+> need to operate beween 12.5 Hz and 400 Hz. This is a default setting
+> when actively changing sample frequency, explicitly setting the time
+> until inactivity will overwrite the default.
+> 
+> Similarly, setting the g-range will provide a default value for the
+> activity and inactivity thresholds. Both are implicit defaults, but
+> equally can be overwritten to be explicitly configured.
+> 
+> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+Hi Lothar,
 
-    # Totals: pass:133 fail:0 skip:0 total:133
-    ok 2 rust_doctests_kernel
+Patches 6-8 look good to me.
 
-Cheers,
-Miguel
+This runs into a similar issue to the freefall one. I haven't dug into
+the datasheet but does it report on one channel going inactive, or
+all being inactive at the same time?  I checked and it is the all
+case so we should be both on a pseudo channel to describe it right
+and reporting IIO_MOD_X_AND_Y_AND_Z not the OR form.
+
+Sorry again that I'm only realising this on v6 :(
+
+Difference is for Activity the definition is:
+"The activity bit is set when acceleration greater than the value
+stored in the THRESH_ACT register (Address 0x24) is experienced
+on _any_ participating axis, set by the ACT_INACT_CTL register
+(Address 0x27)."
+vs Inactivity:
+"The inactivity bit is set when acceleration of less than the value
+stored in the THRESH_INACT register (Address 0x25) is experienced
+for more time than is specified in the TIME_INACT
+register (Address 0x26) on _all_ participating axes, as set by the
+ACT_INACT_CTL register (Address 0x27). "
+
+So all vs any.
+
+> +
+> +/**
+> + * adxl345_set_inact_time_s - Configure inactivity time explicitly or by ODR.
+> + * @st: The sensor state instance.
+> + * @val_s: A desired time value, between 0 and 255.
+> + *
+> + * Inactivity time can be configured between 1 and 255 sec. If a val_s of 0
+> + * is configured by a user, then a default inactivity time will be computed.
+> + *
+> + * In such case, it should take power consumption into consideration. Thus it
+> + * shall be shorter for higher frequencies and longer for lower frequencies.
+> + * Hence, frequencies above 255 Hz shall default to 10 s and frequencies below
+> + * 10 Hz shall result in 255 s to detect inactivity.
+> + *
+> + * The approach simply subtracts the pre-decimal figure of the configured
+> + * sample frequency from 255 s to compute inactivity time [s]. Sub-Hz are thus
+> + * ignored in this estimation. The recommended ODRs for various features
+> + * (activity/inactivity, sleep modes, free fall, etc.) lie between 12.5 Hz and
+> + * 400 Hz, thus higher or lower frequencies will result in the boundary
+> + * defaults or need to be explicitly specified via val_s.
+> + *
+> + * Return: 0 or error value.
+> + */
+> +static int adxl345_set_inact_time_s(struct adxl345_state *st, u32 val_s)
+> +{
+> +	unsigned int max_boundary = 255;
+> +	unsigned int min_boundary = 10;
+> +	unsigned int val = min(val_s, max_boundary);
+> +	enum adxl345_odr odr;
+> +	unsigned int regval;
+> +	int ret;
+> +
+> +	if (val == 0) {
+> +		ret = regmap_read(st->regmap, ADXL345_REG_BW_RATE, &regval);
+> +		if (ret)
+> +			return ret;
+> +		odr = FIELD_GET(ADXL345_BW_RATE_MSK, regval);
+> +
+> +		val = (adxl345_odr_tbl[odr][0] > max_boundary)
+> +			? min_boundary : max_boundary -	adxl345_odr_tbl[odr][0];
+> +	}
+> +
+> +	return regmap_write(st->regmap, ADXL345_REG_TIME_INACT, val);
+>  }
+>  
+>  /* tap */
+> @@ -837,6 +943,13 @@ static int adxl345_read_event_config(struct iio_dev *indio_dev,
+>  			if (ret)
+>  				return ret;
+>  			return int_en;
+> +		case IIO_EV_DIR_FALLING:
+> +			ret = adxl345_is_act_inact_en(st, chan->channel2,
+
+Does it makes sense to allow inactivity detection on a subset of channels but then
+report it as XYZ?  I guess it didn't matter when it was and OR, but if we
+change to AND as suggested that is going to be misleading.
+
+we might have to allow separate enables but report an event as the combination
+of channels that are enabled X_AND_Y, X_AND_Z etc  I guess we can improve activity
+channel case as well by doing that with the X_OR_Y etc
+
+
+
+> +						      ADXL345_INACTIVITY,
+> +						      &int_en);
+> +			if (ret)
+> +				return ret;
+> +			return int_en;
+>  		default:
+>  			return -EINVAL;
+>  		}
+> @@ -881,6 +994,9 @@ static int adxl345_write_event_config(struct iio_dev *indio_dev,
+>  		case IIO_EV_DIR_RISING:
+>  			return adxl345_set_act_inact_en(st, chan->channel2,
+>  							ADXL345_ACTIVITY, state);
+> +		case IIO_EV_DIR_FALLING:
+> +			return adxl345_set_act_inact_en(st, chan->channel2,
+> +							ADXL345_INACTIVITY, state);
+>  		default:
+>  			return -EINVAL;
+>  		}
+
+> @@ -1314,6 +1458,17 @@ static int adxl345_push_event(struct iio_dev *indio_dev, int int_stat,
+>  			return ret;
+>  	}
+>  
+> +	if (FIELD_GET(ADXL345_INT_INACTIVITY, int_stat)) {
+> +		ret = iio_push_event(indio_dev,
+> +				     IIO_MOD_EVENT_CODE(IIO_ACCEL, 0,
+> +							IIO_MOD_X_OR_Y_OR_Z,
+
+So this is our open question. Similar to the free fall case. Do we have the boolean
+logic right way around?
+
+> +							IIO_EV_TYPE_THRESH,
+> +							IIO_EV_DIR_FALLING),
+> +				     ts);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
 
