@@ -1,213 +1,132 @@
-Return-Path: <linux-kernel+bounces-611002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-611025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 796A8A93BAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 19:07:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37379A93BD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 19:18:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE26A3BB2E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 17:07:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF1941894CA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 17:18:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B811219E8C;
-	Fri, 18 Apr 2025 17:07:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A2E218EB0;
+	Fri, 18 Apr 2025 17:18:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VKy6O/Xf"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="WpjFVcl0"
+Received: from quail.birch.relay.mailchannels.net (quail.birch.relay.mailchannels.net [23.83.209.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79D186328
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 17:07:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744996055; cv=none; b=A4Fz2zzjKbTMpw0OgHgiAYQ6z7sgl/EbjN/sqdYkZ2/W2Q21SqRaUMoFqu0U5/3QbgWq3GTF6Q4chkeilFWv5hOWQ696W5lfA5C0Y2D4j2Uo7dN5gmOSx1ANz/UaOEajJNfub+10+TqXBkiPRc1kdaXexNCLPryOawcCaZtyyKA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744996055; c=relaxed/simple;
-	bh=WdGGHLlvsM/i1MnTQ2dVztvbpKZ3JQ0HRd4+rdRBjUY=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBDF94CB5B;
+	Fri, 18 Apr 2025 17:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.209.151
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744996705; cv=pass; b=bsl6LwxZpm4dhr5Xxr+FKmPTKOfvCzHAnSdzFjoOShqkeQSthwzDkaqTNWrkoExdp2LjBvWZS9OuCW1GOsz/Y4mYE7UvvrOkPlGpBrrr2v6+tagFMpsLwdCbwLLLwRgoBZAWAVgvTDVUifHVhxsuov4XofCeBz/emCJL1+kEwMo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744996705; c=relaxed/simple;
+	bh=nivJx+aWC/Paw9D42txKHWZuy3RESONw1UI4RDLpNAE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DZFmRMnYRlCXxmL51G8+P6BThNu5c+nKYaqBPHpOmw6GstoZLHVXUOb6aSJtxOt5K46p82Gl9JEbQb1oZ5PUPqC4gQVNvdsquXgzBEoH6am2krnkCfUgF5DnMPupMTKKoObdFAmaShNnXxAkFcwUeKhbTUTefTwNkNPqDhqBkck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VKy6O/Xf; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7399838db7fso2100344b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 10:07:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744996053; x=1745600853; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=nL6dqOeouWGje3PfIFhRZYZKH+4zhi7g+fExpzSbfis=;
-        b=VKy6O/XfVFphQtRBySCY2ghsxfKquvyOBCde+lPIIX1hKWhWiTgAb3GRZoiWbiZAVZ
-         LS9GnFy0PRVXc/PtlW2va/eU/n7OS1p9z6toQ6pIPI7oZp2IxdM9iYPBflwM38FW/n4B
-         wBe+9t1yLE5HuLQg1IDAv4UUFfxtrz+DcVD+hIiXf+fE5aH0ebq+D2P0GJTK85hfLMRW
-         IynIzKv0aAGmzmcz2NR7Mhj76+iBd8iMu2CUWl11vb7RWuhZQBUY+pny3EKQKohnUDk/
-         nFmuJP2MsyRdLEyBOyqyjQccNmiCqAbqEQeA6JVpCsmLajrbl67PUS122nzlGwhAadrJ
-         ejtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744996053; x=1745600853;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nL6dqOeouWGje3PfIFhRZYZKH+4zhi7g+fExpzSbfis=;
-        b=MiduXwImUFzmSzso6JyuXey1G4EmV4wi4Xe5hJ0FKBzGHyvDkaKF9q7izrQngwOfEs
-         1yXbF2NzmJLGMb9B2cSk5Lb10uHxX5BVx7N/HhSDIKDW9bHsVo+tqjhrdUU7UW3JjBds
-         ReueGEJdDNCf9BjXVeNVTQFn/9KZTWi6ixxS38k8Bhe0HlYji10Vix4eUS1nP6i3QP9N
-         81CRnzl8E/YzDgmWtp8IFJANiLicLR4h/VFDFeib+YS2haLYQxyUBL/shNANNVU1/+8T
-         CELQrwjfULg7rkOR4mNnfwcLH2SZjROjWYCoQieS7iaFwtPpl6q2ii+dE5mX9bXpsil/
-         QB2w==
-X-Forwarded-Encrypted: i=1; AJvYcCXfZ9/9t2horLYwABUQD3Rty9O5lQZcyuVdNRZL5PaJaXZmNXOUojb/6fMAQ8EuGbCqnFcvRafozMW9RHc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0RL+nkMSJqNx1V4XfIUWQoRRS2ATvRuzP44ExZ0bN0w/GOXPB
-	v02ot5U3ZiMge1vrF/v+hSg+fp5Da3bUGJ4KnI9Ci0k9RYFzO3xQEbUmA7bl5w==
-X-Gm-Gg: ASbGncuDaz/9UaNLa4WkqNSGdejyyVh+8T+cxIRMtqj3lyNEf9p2tv5XeW5zPDiIOmB
-	1HjWL28sKGQYOPzpij8DkLvNpfJ0vIJ5W/7wHU6kKQS4C8cNd6LskhwpGQbs+cM+IYDwkoMXfLk
-	mNYNei7ObvWsm+ZnOl79BCVZKbM290c8QQdJUhBpJ1tYdBUbO52WgVeIL5VWKeEPYjTvq9ospJQ
-	eSTR+VkzOoc0SpJm5ohHS4p0v2UZtw1H4IK2Ne+f1lz8Bvi3/I0ivmIpL6i7qEc6IclUTbERPri
-	0ucmF/1c0dXo95qnfItZ6XkE3CQkbzIYhInyXzaB4vhO5hOQ7Ys=
-X-Google-Smtp-Source: AGHT+IFd8ioW+E3Ktz8zI+ikNBXvvgjozvxKBov9f/KWyoLC0PTaG7crTd+nou7TAO4V0w0FxgrPdg==
-X-Received: by 2002:a05:6a00:3c76:b0:732:706c:c4ff with SMTP id d2e1a72fcca58-73dbe601c73mr4561736b3a.7.1744996052724;
-        Fri, 18 Apr 2025 10:07:32 -0700 (PDT)
-Received: from thinkpad ([36.255.17.199])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73dbfaee68bsm1880459b3a.175.2025.04.18.10.07.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Apr 2025 10:07:32 -0700 (PDT)
-Date: Fri, 18 Apr 2025 22:37:26 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org, 
-	bhelgaas@google.com, vigneshr@ti.com, kishon@kernel.org, 18255117159@163.com, 
-	cassel@kernel.org, wojciech.jasko-EXT@continental-corporation.com, 
-	thomas.richard@bootlin.com, bwawrzyn@cisco.com, linux-pci@vger.kernel.org, 
-	linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, srk@ti.com
-Subject: Re: [PATCH v4 4/4] PCI: j721e: Add support to build as a loadable
- module
-Message-ID: <gqeraipycu4blfye77oyaysxatz757r7lsw72kq26smj4dwxoj@cytxxhqjrnno>
-References: <20250417124408.2752248-1-s-vadapalli@ti.com>
- <20250417124408.2752248-5-s-vadapalli@ti.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=h4oasKlbbJlZsZzQXi9ULzkLzJgAYhIJ37LTTyqBPJKtqkLaOtmQ6QyX4RnEdFO3zBDOxFKu3XHpXyEiqAbRaef/MLR7NxCvEFoaEpU/hS4F2AiSjG8nLIVUSSURvmAtzrCYxwzt0ydNSjFTbDaWMTgR7xvQIA1CE0rMhZS69dU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=WpjFVcl0; arc=pass smtp.client-ip=23.83.209.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 6A654211ED;
+	Fri, 18 Apr 2025 17:08:34 +0000 (UTC)
+Received: from pdx1-sub0-mail-a237.dreamhost.com (100-103-157-141.trex-nlb.outbound.svc.cluster.local [100.103.157.141])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id CC8FF211A5;
+	Fri, 18 Apr 2025 17:08:33 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1744996114; a=rsa-sha256;
+	cv=none;
+	b=kgBcrXx0hv8mf7vIrzYjUNpQBN43GIjYFoBFgk0xFodyGAzmCWVnT0oWS2etWrKnqNXUjc
+	okpHnYRuXshLwTXcRZSJFAc6pf0Et1RlaZZTHnc5bykNFfJHQKrNRleYLz8PHME8d66LxP
+	36eTHyagX7wXUyNVPNm+sDAxX45mSitKrSgTgzBUphZrsHZMQjwmFlnPjL8DMO6HG7wBHU
+	X7IH4oRLReevtNhhQFpJQiCbeg1mJuSUgKryR+83KS6zfMOtyyfdJAU19A/zO/5sEQqZen
+	ELbhFOIzCx0zYd/36A9sUPxm9gWeIfJcg9KQVFjEY09jjSotUky0jHPX4aoKoQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1744996114;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=nivJx+aWC/Paw9D42txKHWZuy3RESONw1UI4RDLpNAE=;
+	b=VRM0tfHxg0QIuHjAFWy/a/8USNMx/g5z52kxu97w7PoJ3rJAcMkFDEXQoPzxVVQDRJZMp2
+	uMqzrYRAagZxyJmcY8sI2Utvw5twyoZfKP2I7OF7bOIDu1EQPH9t2HUz/Mw6BQbr4KYCt+
+	K/ewJfMxD+zyAXPTydKiksqHw334jrCp9C2h9gxJJcd5MN4RCZCBoOOVTOVfi3X9g0P43a
+	UXIGwqyOhKgYurBGnOMpTrnc1YqHCMUA32pJpLtdYrSNQPt5xP1NzzT5h3o+4NH+OGVD2i
+	NBLAwQDQB8vcu2zpYGaTXZnRxGlNh6oPTA3+Tg4fk4XiiVxBlOrEs9ZjnK0BUQ==
+ARC-Authentication-Results: i=1;
+	rspamd-77f95b8c6b-727mx;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
+X-MailChannels-Auth-Id: dreamhost
+X-Invention-Whispering: 04b2fc347a10453f_1744996114220_1610682428
+X-MC-Loop-Signature: 1744996114220:4071012686
+X-MC-Ingress-Time: 1744996114219
+Received: from pdx1-sub0-mail-a237.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.103.157.141 (trex/7.0.3);
+	Fri, 18 Apr 2025 17:08:34 +0000
+Received: from offworld (ip72-199-50-187.sd.sd.cox.net [72.199.50.187])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dave@stgolabs.net)
+	by pdx1-sub0-mail-a237.dreamhost.com (Postfix) with ESMTPSA id 4ZfLnX6zHzzZh;
+	Fri, 18 Apr 2025 10:08:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
+	s=dreamhost; t=1744996113;
+	bh=nivJx+aWC/Paw9D42txKHWZuy3RESONw1UI4RDLpNAE=;
+	h=Date:From:To:Cc:Subject:Content-Type;
+	b=WpjFVcl0xSzTJgGelxpfP8g84RwjiUFsPAF2LmooMkr9BgN9Q6PbCxpafsVorEtdY
+	 uq4xRm77ubp/3z5UplKcwMb+32XenpFoz2S/5Nc1LPJqqg55bop+U0/YzbS/Wghp0U
+	 /4rLWdTQL+KUcakg6GyOlJ03D4LJMSVIWdKhjH6cGAe6mxaZaadp3SJp0zIIPkS3t2
+	 4vd3WR+4/rdMS9hPquv3kx2izPRR8KXaIW9yBdvTf7Lk4Gz9/axENv4RlzC6vzu4DH
+	 NRk9XFJ2KnNIVE9YQ8KNFGM5dAqyQZCSxLr6bZy8iItWneqjL8YO29zyet25xWbGyJ
+	 VCIayLZC5C4nw==
+Date: Fri, 18 Apr 2025 10:08:30 -0700
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: nifan.cxl@gmail.com
+Cc: rostedt@goodmis.org, mhiramat@kernel.org, willy@infradead.org,
+	akpm@linux-foundation.org, david@redhat.com, fan.ni@samsung.com,
+	yang@os.amperecomputing.com, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org,
+	npache@redhat.com, mcgrof@kernel.org, a.manzanares@samsung.com
+Subject: Re: [PATCH] khugepaged: Refactor
+ trace_mm_collapse_huge_page_isolate() to take folio instead of page
+Message-ID: <20250418170830.csed2ihb6ypbrncm@offworld>
+Mail-Followup-To: nifan.cxl@gmail.com, rostedt@goodmis.org,
+	mhiramat@kernel.org, willy@infradead.org, akpm@linux-foundation.org,
+	david@redhat.com, fan.ni@samsung.com, yang@os.amperecomputing.com,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-mm@kvack.org, npache@redhat.com, mcgrof@kernel.org,
+	a.manzanares@samsung.com
+References: <20250417171758.142745-1-nifan.cxl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250417124408.2752248-5-s-vadapalli@ti.com>
+In-Reply-To: <20250417171758.142745-1-nifan.cxl@gmail.com>
+User-Agent: NeoMutt/20220429
 
-On Thu, Apr 17, 2025 at 06:14:08PM +0530, Siddharth Vadapalli wrote:
-> The 'pci-j721e.c' driver is the application/glue/wrapper driver for the
-> Cadence PCIe Controllers on TI SoCs. Implement support for building it as a
-> loadable module.
-> 
-> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+On Thu, 17 Apr 2025, nifan.cxl@gmail.com wrote:
 
-One nitpick below. But no need to respin just for this. Hopefully, this can be
-changed while applying the series.
+>From: Fan Ni <fan.ni@samsung.com>
+>
+>trace_mm_collapse_huge_page_isolate() is only used in
+>__collapse_huge_page_isolate(), which passes in the head page of a
+>folio, so refactor it to take folio directly.
+>
+>Signed-off-by: Fan Ni <fan.ni@samsung.com>
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-> ---
-> 
-> v3 patch is at:
-> https://lore.kernel.org/r/20250410104426.463453-5-s-vadapalli@ti.com/
-> Changes since v3:
-> - In the fourth patch of this series, the polarity for PERST# assert in
->   the driver's .remove callback has been fixed based on Mani's feedback at
->   https://lore.kernel.org/r/6bi5gul3sqvycmkf6cwokkvownjffaf2tkonjlefo2d7cautwx@uhfexzgz3okp/
-> 
-> Regards,
-> Siddharth.
-> 
->  drivers/pci/controller/cadence/Kconfig     |  6 ++---
->  drivers/pci/controller/cadence/pci-j721e.c | 31 +++++++++++++++++++++-
->  2 files changed, 33 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/cadence/Kconfig b/drivers/pci/controller/cadence/Kconfig
-> index 82b58096eea0..72d7d264d6c3 100644
-> --- a/drivers/pci/controller/cadence/Kconfig
-> +++ b/drivers/pci/controller/cadence/Kconfig
-> @@ -43,10 +43,10 @@ config PCIE_CADENCE_PLAT_EP
->  	  different vendors SoCs.
->  
->  config PCI_J721E
-> -	bool
-> +	tristate
->  
->  config PCI_J721E_HOST
-> -	bool "TI J721E PCIe controller (host mode)"
-> +	tristate "TI J721E PCIe controller (host mode)"
->  	depends on ARCH_K3 || COMPILE_TEST
->  	depends on OF
->  	select PCIE_CADENCE_HOST
-> @@ -57,7 +57,7 @@ config PCI_J721E_HOST
->  	  core.
->  
->  config PCI_J721E_EP
-> -	bool "TI J721E PCIe controller (endpoint mode)"
-> +	tristate "TI J721E PCIe controller (endpoint mode)"
->  	depends on ARCH_K3 || COMPILE_TEST
->  	depends on OF
->  	depends on PCI_ENDPOINT
-> diff --git a/drivers/pci/controller/cadence/pci-j721e.c b/drivers/pci/controller/cadence/pci-j721e.c
-> index ef1cfdae33bb..8a73a4d382d1 100644
-> --- a/drivers/pci/controller/cadence/pci-j721e.c
-> +++ b/drivers/pci/controller/cadence/pci-j721e.c
-> @@ -15,6 +15,7 @@
->  #include <linux/irqchip/chained_irq.h>
->  #include <linux/irqdomain.h>
->  #include <linux/mfd/syscon.h>
-> +#include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/pci.h>
->  #include <linux/platform_device.h>
-> @@ -27,6 +28,7 @@
->  #define cdns_pcie_to_rc(p) container_of(p, struct cdns_pcie_rc, pcie)
->  
->  #define ENABLE_REG_SYS_2	0x108
-> +#define ENABLE_CLR_REG_SYS_2	0x308
->  #define STATUS_REG_SYS_2	0x508
->  #define STATUS_CLR_REG_SYS_2	0x708
->  #define LINK_DOWN		BIT(1)
-> @@ -116,6 +118,15 @@ static irqreturn_t j721e_pcie_link_irq_handler(int irq, void *priv)
->  	return IRQ_HANDLED;
->  }
->  
-> +static void j721e_pcie_disable_link_irq(struct j721e_pcie *pcie)
-> +{
-> +	u32 reg;
-> +
-> +	reg = j721e_pcie_intd_readl(pcie, ENABLE_CLR_REG_SYS_2);
-> +	reg |= pcie->linkdown_irq_regfield;
-> +	j721e_pcie_intd_writel(pcie, ENABLE_CLR_REG_SYS_2, reg);
-> +}
-> +
->  static void j721e_pcie_config_link_irq(struct j721e_pcie *pcie)
->  {
->  	u32 reg;
-> @@ -633,9 +644,23 @@ static void j721e_pcie_remove(struct platform_device *pdev)
->  	struct j721e_pcie *pcie = platform_get_drvdata(pdev);
->  	struct cdns_pcie *cdns_pcie = pcie->cdns_pcie;
->  	struct device *dev = &pdev->dev;
-> +	struct cdns_pcie_ep *ep;
-> +	struct cdns_pcie_rc *rc;
-> +
-> +	if (pcie->mode == PCI_MODE_RC) {
-> +		rc = container_of(cdns_pcie, struct cdns_pcie_rc, pcie);
-> +		cdns_pcie_host_disable(rc);
-> +	} else {
-> +		ep = container_of(cdns_pcie, struct cdns_pcie_ep, pcie);
-> +		cdns_pcie_ep_disable(ep);
-> +	}
-> +
-> +	if (pcie->reset_gpio)
-
-All 'gpiod_*' APIs accept NULL descriptors. So you don't necessarily need the
-check here.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
 
