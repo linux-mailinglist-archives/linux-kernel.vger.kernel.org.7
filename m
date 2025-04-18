@@ -1,99 +1,175 @@
-Return-Path: <linux-kernel+bounces-610425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-610407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 064D8A934E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 10:53:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFB7BA934B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 10:36:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C4EA19E5F1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 08:53:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1ACF87AC6A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Apr 2025 08:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC25526F471;
-	Fri, 18 Apr 2025 08:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D4A26E15A;
+	Fri, 18 Apr 2025 08:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="cuGRZyjK"
-Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LGm6spvE"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF6F88C0E
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 08:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C7B26B0BF
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 08:36:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744966382; cv=none; b=ahDPF4rMnJQeGp4ZVO0NAX9tKAKqyGKUe1rStT5EftUaYRKwDlSkIt7+uk9f949T55rMrpzNRXlEkJaxV5c/F/mCf6o3DrF9HvyPcua0hlchLPk0uiC/eBffRuOLHo+Ik27JyNlruD01DtgVYeOTblGqTrwO752pJ6+sCJ+AP0M=
+	t=1744965392; cv=none; b=sG+AJ98NhsX/g6ReburNEZt34VtQPFkD7TqVnRQrI5IsDEV0D7czwKnJV/Hm5fqWGtSlIWEKM0zKDVyVU/EYlb5/GhHCvJtt5RM7BTdwnt2akIOj/hDm3+IQNbaKvMicJ9eNg2dtw2mb82bTJDdqzHnEJA2SXcuEe9CmLYQanyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744966382; c=relaxed/simple;
-	bh=dGPAZCJAO9LH9k9+kARVr8e1BoPkjZVxOA21Pk3pjJY=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=h+ZX4E3YUBvS5CunlUJEHI0DL8NKqrbOJ/5aI4xxYHUjCt8fG9b1Qd5BLTrCPXQsbrGkg+o/D7oLyYnzlifIwNxgU+2eHaKyhj/UOBVmNTE0w1jd3yTSzsw6y2QDe524tyQQ8EMrXRKtcAG6wZUNBVw+rxlUJF90GDyQecPu4uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=cuGRZyjK; arc=none smtp.client-ip=162.62.57.252
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1744966373;
-	bh=Shfyo13CoJP0LZK8BYiEvTiymcxKJVPkg/SIqQkMIZo=;
-	h=From:To:Cc:Subject:Date;
-	b=cuGRZyjKefEmY9JUPCf3NVCVd4QElD6JB6m0Rlid3Q2/nevfpPZvdebx2ZSufjBF9
-	 bmGUBECl17TWffntBk5X5QC2ABfvaNXf9Nroe7DNLQN/dRCblRltqyML+bWUK3hw1v
-	 twj0Fy1VIpsbig/XJ4J8ex9xe/IFF5+berJlrMcE=
-Received: from localhost.localdomain ([116.128.244.169])
-	by newxmesmtplogicsvrszgpua8-1.qq.com (NewEsmtp) with SMTP
-	id 8CC84448; Fri, 18 Apr 2025 16:35:12 +0800
-X-QQ-mid: xmsmtpt1744965312t10mud38m
-Message-ID: <tencent_A513B1B90557A0084DEE7DAA51C831AF9207@qq.com>
-X-QQ-XMAILINFO: McQ2ZMlMYdZ83/0a4mQtvhXIPjb2aFzV0s/wNz6UqnIx85A1D3UDVDmgk65wEo
-	 yHWGpSXDIJy6CCW0bkv++iV56yl5kxpYYyY8Ebh9NONwiQt/bjgBJXkxDni1+ekbFInlbvs2vnyu
-	 GvnWlM5TZajxlcga1CY7wSwy/anXIEeOmo3aMjby+J4IgMBK0qE1EJf3Bpi43nHZNatkNKzEgeab
-	 UmZWe7MfJ64U2Y1IPKc8V9+py792hAmfUXWZu4jYmvgDDewnLfEXHHVieQVo5kxb/OuSieeh+o1d
-	 SJFN53cnlPNTFnsVfubXAXWOzQLFKa8/yyOOigo9DW35Fker0nIxxhTbUmwFDbbrkJQJYobdLShW
-	 sroHXheDOnxvtIO2ZixiGDFmKIvulEMwNwu2+BrhUg/KGDW0qe8kkKOMYmWotydmMUxVAjvvzDqZ
-	 gzc+ifDhEx9iAV+uDSIrLGTLjcVaInr9s+3vJdIjTJ5A2N4MeTcZK7kuFIkW04CUShyO8fD8GipR
-	 JKsSVpamjb1v9wW+KYegla9GYWcfjybWCitvp7gYN8LrMro7oDp9xHOliRiMkdTUn6Xwf9Hkarss
-	 PgIbdbnVn7hPgx/5OqgqA0a+C4lFBFvS54JI81lyK+iz6FixTsgy90ovjgtlL+0FN/IGhPz8ts3r
-	 nSXenJFFkk+xX8t5BcAtDDJm9vVeFCvU6lD4qQWW8UgV/F5kCIgNfLXhxB9DiMEJMRTWJW/cvv6N
-	 8DbY1OEAgvLjGgnkMEfb8KzQkvaYS826kR22ww2oLqYojfH0l8ZhygT0S3xdm6lSrztQFinxRejh
-	 HmonQiRgxxip6XRpUnBHvoU4vqRucTcFTpG00kSWohlPr49FFayvBISshnf3t8z4GIYayZkZa/Fo
-	 ki3JlPJG0PRJBhKYCISMqN/m4CG0u9YuUoxb8HFStGHA2K/G+3+M2J+f7P6kiGs2UTbbVgCRFXFG
-	 dYResjft/SbkiEf1fmICdSoh73DPvKFsYLhRFVofBKEYT0+GYlo/8PczevbLeXrha2lTpgbUbemu
-	 NgeijRgmP64K4IWqTzkoCqJ2Qt0AqMCKP6rlk2pUpl6MqNDtkL
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-From: xiaopeitux@foxmail.com
-To: linux-kernel@vger.kernel.org,
-	f.fangjian@huawei.com,
-	robh@kernel.org,
-	john.g.garry@oracle.com,
-	andriy.shevchenko@linux.intel.com,
-	xuwei5@hisilicon.com
-Cc: Pei Xiao <xiaopei01@kylinos.cn>
-Subject: [PATCH 0/2] logic_pio: clean hisi_lpc and logic_pio
-Date: Fri, 18 Apr 2025 16:34:59 +0800
-X-OQ-MSGID: <cover.1744964101.git.xiaopei01@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1744965392; c=relaxed/simple;
+	bh=LUkyc/BgQX9YR/2tc5k3KKNPguD1blkucYPDKasBHFs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M03x/BdlEtSTh1gUa8Yx5/5qsh96nZYg2TaPdBKAUvVTjg0zzYJ26bHDnAA5pZzbBj1755msLV5Q02pEN3/FRM4s74uaTjSIKEPUh7hg1FcGwhjxJ40rTocDPbORf4bbRYSynhJgJC3Xap4meQeeE0Db0v0oOmxBaXX4vxMrIJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LGm6spvE; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-227a8cdd241so21040955ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Apr 2025 01:36:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744965388; x=1745570188; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=tsPJ7r05GCU8U5IpYvKGSTH/BPi5kWm5knrn6+oWvqM=;
+        b=LGm6spvEjriy1udH5Mg/CIBE7fuNlLHG7fNFugdxOIl1fKCnp624YUjUE70ReJnJ55
+         f/cHezvRgOYRsm5dGU6feno5s/J1HkhV+UTu0x0VVQuap1tRTEuiRLmQ7rAGrQCoqOdU
+         nExQsjp2KrBC2pLoEA/mW7pL7J3bCogXsqVJKeBpMBSeVhqUGQS8t1utTQJpsLAnQTOB
+         4C743CU9D53M5/0huLUZ3oTU/XSFRtXnyr0iUoo2rSz7r++U5qbvtEKdXFCPJLbGPhTO
+         501f/NA3BtmjZqChnZIx2qOVjpswfR0ZPJQSNpxySk8Nr97wZiKh9bFkTboroaMAowqU
+         hUFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744965388; x=1745570188;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tsPJ7r05GCU8U5IpYvKGSTH/BPi5kWm5knrn6+oWvqM=;
+        b=bXnrSE0IseW+l8u0bLRU9AzM068YVkVtIIi+3C3jns++uVFuVl02uYpxuprwYxSEq9
+         NqDbI7aAPrzy/G+ORiD5Irm6MddLGB+lkExcWo/jECcfNjTivtR/D6ETheeKFfXGFI+D
+         M0XoeUqykvV5fM7muPFbjXDtqDqTXqnqPvEjnBd+5VNjAognSJlchmXiFz2W8Ert7fmj
+         ibaDFMd5tc/SppC9pe8NjZvwEgMHR47Q5P/Dtd5v0qwSQykNjBqnPFIkCfmCqth61OaH
+         CSBORGr+VbiDpkFt/dR09CC+0BDURFIi6y0NYX2aZHEAuoKSLH2k9oVooBU/0PzJpQ6h
+         Np1g==
+X-Forwarded-Encrypted: i=1; AJvYcCVsHJonqdavspY80JAneLNqF/hjrS9FY5KvFk4frPkCbeglI6Tds66GJANNnRs+3Oubj+ahJONuDljFojU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybWJGCgNzjNnnh6S0M4ewwqnXDzfgnlytMm8INznV2sFD/7pgU
+	qiAbebg+UvGy7w1OvGwBSZg0Ge25IXfdKjaYdiltzRewyf+yxVYhNQLydvr21kaarpEEjW35q3U
+	=
+X-Gm-Gg: ASbGnct0Qs81RLarm8ppLOmfV2d1G1hJ7FBiuhVwA55fMfWbkHml9+YJqLI/+rhY0s+
+	tDxm8+V2T7LeEwAtsWxYTdR42XC5qtzu/4lGApWkiJeJyZAWyt+sLzHA+qHTJrenQtqQwNHH+Kq
+	C4uUzD/y6uZJkNXcIUiGaMlvR33rxRKN/Njrt84oIGPUeOE+tWtXHaiDPPg1qdF3z6kcsXSb3k6
+	UAIzSANtZWfIQpJEJ8THp2dGy5gU40La8inurKqTer8+QNbLDHwOurjBMJNUkfgH/yVzEdwfDHn
+	2lRd6JXAzt1xk4r2D94eQxMGtluGnPXHggwQPv5S18aELtRasQ==
+X-Google-Smtp-Source: AGHT+IFLyewdVLNunGSr5XLsO/KxZg8Iz7L/FhZpjjgmaKyjexZSMUlGGQgBTl9NsTgGtdYk/Ywm+Q==
+X-Received: by 2002:a17:903:24c:b0:224:1074:63a0 with SMTP id d9443c01a7336-22c53619da7mr24538145ad.34.1744965388315;
+        Fri, 18 Apr 2025 01:36:28 -0700 (PDT)
+Received: from thinkpad ([36.255.17.72])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c50eb4622sm12135005ad.108.2025.04.18.01.36.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Apr 2025 01:36:27 -0700 (PDT)
+Date: Fri, 18 Apr 2025 14:06:23 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Vivek Pernamitta <quic_vpernami@quicinc.com>
+Cc: Veerabhadrarao Badiganti <quic_vbadigan@quicinc.com>, 
+	mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] bus: mhi: host: pci: Disable runtime PM for QDU100
+Message-ID: <qrb4ozkj3zxfpo733mf6xf35tetfyekytkty6sq7civhycbahm@c6s3wfvmdycs>
+References: <20250414-vdev_next-20250411_pm_disable-v1-1-e963677636ca@quicinc.com>
+ <ec99379e-fd54-42b0-a383-8ed212072396@quicinc.com>
+ <o7rv3xgg3btaoqjlzfenbfkrp3fuw54cx6zqojclcfslfg3ha4@c3sqaqqdjdjv>
+ <c8699f79-54cc-4adb-8047-b37a69e69d96@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <c8699f79-54cc-4adb-8047-b37a69e69d96@quicinc.com>
 
-From: Pei Xiao <xiaopei01@kylinos.cn>
+On Fri, Apr 18, 2025 at 11:55:24AM +0530, Vivek Pernamitta wrote:
+> 
+> 
+> On 4/17/2025 11:37 AM, Manivannan Sadhasivam wrote:
+> > On Thu, Apr 17, 2025 at 10:00:38AM +0530, Veerabhadrarao Badiganti wrote:
+> > > 
+> > > On 4/14/2025 1:17 PM, Vivek Pernamitta wrote:
+> > > > The QDU100 device does not support the MHI M3 state, necessitating the
+> > > > disabling of runtime PM for this device. Since the PCIe core framework
+> > > > enables runtime PM by default for all clients, it is essential to disable
+> > > > runtime PM if the device does not support Low Power Mode (LPM).
+> > > > 
 
-This two patches for hisi_lpc and logic pio.
+Not true... See below.
 
-1.remove unused head file.
-2.add comments for logic_pio.
+> > > > Signed-off-by: Vivek Pernamitta<quic_vpernami@quicinc.com>
+> > > > ---
+> > > >    drivers/bus/mhi/host/pci_generic.c | 10 ++++++++++
+> > > >    1 file changed, 10 insertions(+)
+> > > > 
+> > > > diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
+> > > > index 03aa887952098661a488650053a357f883d1559b..a011fd2d48c57cf9d1aec74040153267a206d797 100644
+> > > > --- a/drivers/bus/mhi/host/pci_generic.c
+> > > > +++ b/drivers/bus/mhi/host/pci_generic.c
+> > > > @@ -43,6 +43,7 @@
+> > > >     * @mru_default: default MRU size for MBIM network packets
+> > > >     * @sideband_wake: Devices using dedicated sideband GPIO for wakeup instead
+> > > >     *		   of inband wake support (such as sdx24)
+> > > > + * @pm_disable: disables runtime PM (optional)
+> > > >     */
+> > > >    struct mhi_pci_dev_info {
+> > > >    	const struct mhi_controller_config *config;
+> > > > @@ -54,6 +55,7 @@ struct mhi_pci_dev_info {
+> > > >    	unsigned int dma_data_width;
+> > > >    	unsigned int mru_default;
+> > > >    	bool sideband_wake;
+> > > > +	bool pm_disable;
+> > > >    };
+> > > >    #define MHI_CHANNEL_CONFIG_UL(ch_num, ch_name, el_count, ev_ring) \
+> > > > @@ -295,6 +297,7 @@ static const struct mhi_pci_dev_info mhi_qcom_qdu100_info = {
+> > > >    	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+> > > >    	.dma_data_width = 32,
+> > > >    	.sideband_wake = false,
+> > > > +	.pm_disable = true,
+> > > 
+> > > |no_m3|orno_|m3_support|would be more suitable than|pm_disable|
+> > 
+> > Yes!
+> > 
+> > But does the device not supporting M3 only or D3Hot also? If the former, then we
+> > should prevent MHI host to enter/exit M3 state in mhi_pm_suspend/ mhi_pm_resume.
+> > There is an incentive in allowing D3Hot if the device supports it.
+> > 
+> > Also, is there a way we could probe M3 support in the device so that we can
+> > check it during runtime?
+> > 
+> > - Mani
+> > 
+> In QDU100 device does not support M3 state, D3_hot will be supported. As
+> QDU100 is an accelerator card which needs high-throughout, LPM needs to
+> disabled here. So we are trying to disable runtime PM here, without M3 ,
+> D3_hot will not have effect in QDU100.
+> Also in MHI we don't have provision to check device M3 capability, so we are
+> trying to disable runtime PM here.
+> 
 
-Pei Xiao (2):
-  bus: hisi_lpc: remove unused head file in hisi_lpc.c
-  logic_pio: Add detailed comments for find_io_range() and
-    logic_pio_trans_cpuaddr()
+Even though PCI core is enabling runtime PM for devices, it also prevents the
+devices from getting suspended unless the drivers explicitly asks for it. So
+this driver is using autosuspend feature to allow the devices to be suspended
+if PME is supported from D3Hot.
 
- drivers/bus/hisi_lpc.c |  4 ----
- lib/logic_pio.c        | 16 +++++++++++++++-
- 2 files changed, 15 insertions(+), 5 deletions(-)
+If you want to prevent the device from getting runtime suspended, you should
+just skip autosuspend.
+
+- Mani
 
 -- 
-2.25.1
-
+மணிவண்ணன் சதாசிவம்
 
